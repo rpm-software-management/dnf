@@ -5,7 +5,6 @@ PKGNAME = yum
 VERSION=$(shell awk '/Version:/ { print $$2 }' ${PKGNAME}.spec)
 RELEASE=$(shell awk '/Release:/ { print $$2 }' ${PKGNAME}.spec)
 CVSTAG=yum-$(subst .,_,$(VERSION)-$(RELEASE))
-
 PYTHON=python
 
 all: subdirs
@@ -22,7 +21,7 @@ install:
 	for p in $(PYFILES) ; do \
 		install -m 644 $$p $(DESTDIR)/usr/share/yum-cli/$$p; \
 	done
-	$(PYTHON) -c "import compileall; compileall.compile_dir('$(DESTDIR)/usr/share/yum', 1, '$(PYDIR)', 1)"
+	$(PYTHON) -c "import compileall; compileall.compile_dir('$(DESTDIR)/usr/share/yum-cli', 1, '$(PYDIR)', 1)"
 
 	mkdir -p $(DESTDIR)/usr/bin $(DESTDIR)/usr/bin
 	install -m 755 bin/yum.py $(DESTDIR)/usr/bin/yum
@@ -30,7 +29,7 @@ install:
 
 	mkdir -p $(DESTDIR)/var/cache/yum
 
-	for d in $(SUBDIRS); do make DESTDIR=`cd $(DESTDIR); pwd` -C $$d install; [ $$? = 0 ] || exit 1; done
+	for d in $(SUBDIRS); do make PYTHON=$(PYTHON) DESTDIR=`cd $(DESTDIR); pwd` -C $$d install; [ $$? = 0 ] || exit 1; done
 
 archive:
 	@rm -rf ${PKGNAME}-%{VERSION}.tar.gz
