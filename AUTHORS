@@ -8,17 +8,19 @@ based in huge parts off of code from yup - the yellowdog updater. Yum has used
 a bunch of code from other gpl'd projects - up2date, anaconda and yup.  Folks below
 are thanked for their help/code/smarts.
 
-	Jeremy Katz <katzj@linuxpower.org>
-	Adrian Likins <alikins@redhat.com>
-	Matthew Miller <mattdm@mattdm.org>
-	Michael Stenner <mstenner@phy.duke.edu>
-	Icon Riabitsev <icon@phy.duke.edu>
-	Robert G. Brown <rgb@phy.duke.edu>
-	Hollis Blanchard
-
+    Jeremy Katz <katzj@linuxpower.org>
+    Adrian Likins <alikins@redhat.com>
+    Matthew Miller <mattdm@mattdm.org>
+    Michael Stenner <mstenner@phy.duke.edu>
+    Icon Riabitsev <icon@phy.duke.edu>
+    Robert G. Brown <rgb@phy.duke.edu>
+    Hollis Blanchard
+    Grigory Bakunov <black@asplinux.ru>
+    
+    
 Original Yup people:
-	Bryan Stillwell <bstill@terraplex.com>. 
-	Stephen Edie
-	Dan Burcaw <dburcaw@yellowdoglinux.com>
-	Troy Bengegerdes <troy@blacklablinux.com> 
+    Bryan Stillwell <bstill@terraplex.com>. 
+    Stephen Edie
+    Dan Burcaw <dburcaw@yellowdoglinux.com>
+    Troy Bengegerdes <troy@blacklablinux.com> 
 
