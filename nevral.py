@@ -32,7 +32,9 @@ class nevral:
     def __init__(self):
         self.rpmbyname = {}
         self.rpmbynamearch = {}
-            
+        self.localrpmpath = {}
+        self.localhdrpath = {}
+
     def add(self,(name,epoch,ver,rel,arch,rpmloc,serverid),state):
 #        if self.rpmbyname.haskey(name):
 #            ((e,v,r,a,l,i),state) = self._get_data(name)
@@ -372,7 +374,7 @@ class nevral:
                         arch = archwork.bestarch(archlist)
                         (e1, v1, r1) = rpmDBInfo.evr(reqname,arch)
                         (e2, v2, r2) = self.evr(reqname,arch)
-                        rc = rpmUtils.compareEVR((e1,v1,r1), (e2,v2,r2))
+                        rc = clientStuff.compareEVR((e1,v1,r1), (e2,v2,r2))
                         if rc<0:
                             log(4, 'conflict: setting %s to upgrade' % (reqname))
                             self.setPkgState(reqname, arch, 'ud')
