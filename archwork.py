@@ -16,7 +16,6 @@
 # Copyright 2002 Duke University 
 
 
-import rpm, sys, types
 
 def getArch():
     import os
@@ -31,6 +30,7 @@ def getArch():
 def betterarch(arch1, arch2):
     """Take two archs, return the better of the two, returns none if both \
     of them come out to 0, returns either if they are the same archscore"""
+    import rpm
     score1 = rpm.archscore(arch1)  
     score2 = rpm.archscore(arch2)  
     if score1 == 0 and score2 == 0:
@@ -49,7 +49,6 @@ def betterarch(arch1, arch2):
         return arch1
     del score1
     del score2
-
 
 def bestarch(archlist):
 

@@ -17,8 +17,6 @@
 
 import os
 import sys
-import rpm
-import string
 import getopt
 
 def main():

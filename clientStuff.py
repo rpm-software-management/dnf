@@ -286,8 +286,6 @@ def getupdatedhdrlist(headernevral, rpmnevral):
     uplist = []
     newlist = []
     for (name, arch) in headernevral.NAkeys():
-        hdrfile = headernevral.hdrfn(name, arch)
-        serverid = headernevral.serverid(name, arch)
         # this is all hard and goofy to deal with pkgs changing arch
         # if we have the package installed
         # check to see if we have that specific arch
@@ -454,7 +452,6 @@ def getfilelist(path, ext, list):
 def clean_up_headers():
     serverlist = conf.servers
     for serverid in serverlist:
-        servername = conf.servername[serverid]
         hdrdir = conf.serverhdrdir[serverid]
         hdrlist = getfilelist(hdrdir, '.hdr', [])
         for hdr in hdrlist:
@@ -466,7 +463,6 @@ def clean_up_headers():
 def clean_up_packages():
     serverlist = conf.servers
     for serverid in serverlist:
-        servername = conf.servername[serverid]
         rpmdir = conf.serverpkgdir[serverid]
         rpmlist = getfilelist(rpmdir, '.rpm', [])
         for rpm in rpmlist:
@@ -478,7 +474,6 @@ def clean_up_old_headers(rpmDBInfo, HeaderInfo):
     serverlist = conf.servers
     hdrlist = []
     for serverid in serverlist:
-        servername = conf.servername[serverid]
         hdrdir = conf.serverhdrdir[serverid]
         hdrlist = getfilelist(hdrdir, '.hdr', hdrlist)
     for hdrfn in hdrlist:

@@ -298,7 +298,7 @@ class nevral:
                         rc = clientStuff.compareEVR((e1,v1,r1), (e2,v2,r2))
                         if rc<0:
                             log(4, 'conflict: setting %s to upgrade' % (reqname))
-                            ((e,v,r,a,l,i),s)=tsInfo._get_data(reqname,arch)
+                            ((e,v,r,a,l,i),s)=self._get_data(reqname,arch)
                             self.add((name,e,v,r,a,l,i),'ud')
                             CheckDeps=1
                         else:
