@@ -333,14 +333,54 @@ class Updates:
         self.updatesdict = updatedict                    
         
 
+
+# FIX ME
+# why do the name='bar' not work but name='foo' do work in the code below
         
     def getUpdatesTuples(self, name=None, arch=None):
         """returns updates for packages in a list of tuples of:
           (updating naevr, installed naevr)"""
+        returnlist = []
+        for oldtup in self.updatesdict.keys():
+            (old_n, old_a, old_e, old_v, old_r) = oldtup
+            for newtup in self.updatesdict[oldtup]:
+                returnlist.append((newtup, oldtup))
+        
+        if name:
+            for ((n, a, e, v, r), oldtup) in returnlist:
+                if name != n:
+                    returnlist.remove(((n, a, e, v, r), oldtup))
+        if arch:
+            for ((n, a, e, v, r), oldtup) in returnlist:
+                if arch != a:
+                    returnlist.remove(((n, a, e, v, r), oldtup))
+                    
+        return returnlist            
 
     def getUpdatesList(self, name=None, arch=None):
         """returns updating packages in a list of (naevr) tuples"""
-        
+        mylist = []
+        for oldtup in self.updatesdict.keys():
+            for newtup in self.updatesdict[oldtup]:
+                mylist.append(newtup)
+        print mylist
+                
+        if name is not None:
+            for (n, a, e, v, r) in mylist:
+                print 'checking'
+                if n != name:
+                    mylist.remove((n, a, e, v, r))
+                    print 'rm %s' % n
+                else:
+                    print '%s equls %s' % (n, name)
+                    
+        if arch is not None:
+            for (n, a, e, v, r) in mylist:
+                if a != arch:
+                    mylist.remove((n, a, e, v, r))
+                
+        return mylist
+                
     def getObsoletesTuples(self, name=None, arch=None):
         """returns obsoletes for packages in a list of tuples of:
            (obsoleting naevr, installed naevr)"""
