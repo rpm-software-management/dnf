@@ -40,7 +40,7 @@ from i18n import _
 import callback
 
 
-__version__ = '2.1.11'
+__version__ = '2.1.12'
 
 
 class YumBaseCli(yum.YumBase, output.YumOutput):
