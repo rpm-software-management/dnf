@@ -21,6 +21,8 @@ try:
     rpm = rpm404
 except ImportError, e:
     import rpm
+    rpm404 = rpm
+    
 import string
 import sys
 import archwork
