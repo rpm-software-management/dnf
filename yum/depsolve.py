@@ -78,7 +78,23 @@ class Depsolve:
         
         return defSack
         
-    
+    def allowedMultipleInstalls(self, po):
+        """takes a packageObject, returns 1 or 0 depending on if the package 
+           should/can be installed multiple times with different vers
+           like kernels and kernel modules, for example"""
+           
+        if po.name in self.conf.getConfigOption('installonlypkgs'):
+            return 1
+        
+        provides = po.getProvidesNames()
+        if 'kernel-modules' in provides:
+            return 1
+        
+        if 'kernel' in provides:
+            return 1
+        
+        return 0
+        
     def populateTs(self, test=0, keepold=1):
         """take transactionData class and populate transaction set"""
 
@@ -106,12 +122,8 @@ class Depsolve:
                 self.downloadHeader(po)
                 hdr = po.returnLocalHeader()
                 rpmfile = po.localPkg()
-                if test:
-                    provides = po.getProvidesNames()
-                else:
-                    provides = []
                 if txmbr.ts_state == 'u':
-                    if txmbr.name in self.conf.getConfigOption('installonlypkgs') or 'kernel-modules' in provides or 'kernel' in provides:
+                    if self.allowedMultipleInstalls(po):
                         txmbr.ts_state = 'i'
                         txmbr.output_state = 'installing'
                         # pkg converted, it will get caught below
@@ -326,9 +338,10 @@ class Depsolve:
             for insttuple in providers:
                 inst_str = '%s.%s %s:%s-%s' % insttuple
                 (i_n, i_a, i_e, i_v, i_r) = insttuple
-                self.log(5, '-->Potential Provider: %s' % inst_str)
+                self.log(5, 'Potential Provider: %s' % inst_str)
                 thismode = self.tsInfo.getMode(name=i_n, arch=i_a, 
                                 epoch=i_e, ver=i_v, rel=i_r)
+                            
                 if thismode is None and self.conf.getConfigOption('exactarch'):
                     # check for mode by the same name+arch
                     thismode = self.tsInfo.getMode(name=i_n, arch=i_a)
@@ -339,7 +352,7 @@ class Depsolve:
                 
                 if thismode is not None:
                     needmode = thismode
-                    self.log(5, '-->Mode is %s for provider of %s: %s' % 
+                    self.log(5, 'Mode is %s for provider of %s: %s' % 
                                 (needmode, niceformatneed, inst_str))
                     break
                     
@@ -434,12 +447,14 @@ class Depsolve:
         provSack = self.whatProvides(needname, needflags, needversion)
 
         # get rid of things that are already in the rpmdb - b/c it's pointless to use them here
+
         for pkg in provSack.returnPackages():
             if pkg.pkgtup() in self.rpmdb.getPkgList(): # is it already installed?
                 self.log(5, '%s is in providing packages but it is already installed, removing.' % pkg)
                 provSack.delPackage(pkg)
-                
-        
+                provSack.buildIndexes()
+
+
         if len(provSack) == 0: # unresolveable
             missingdep = 1
             msg = 'missing dep: %s for pkg %s' % (rpmUtils.miscutils.formatRequire(needname, needversion, needflags), name)
@@ -479,6 +494,29 @@ class Depsolve:
             msg = 'Missing Dependency: %s is needed by package %s' % (needname, name)
             errorlist.append(msg)
             return checkdeps, missingdep
+        
+        # we need to check to see, if we have anything similar to it (name-wise)
+        # installed, and this isn't a package that allows multiple installs
+        # then if it's newer, fine - continue on, if not, then we're unresolveable
+        # cite it and exit
+        
+        tspkgs = []
+        if not self.allowedMultipleInstalls(best):
+            tspkgs = self.tsInfo.matchNaevr(name=best.name, arch=best.arch)
+            
+        (bn, ba, be, bv, br) = best.pkgtup()
+        for tspkg in tspkgs:
+            (tn, ta, te, tv, tr) = tspkg.pkgtup
+            rc = rpmUtils.miscutils.compareEVR((be, bv, br), (te, tv, tr))
+            if rc < 0:
+                self.log(5, 'Resolving package has newer instance in ts and cannot be installed multiple times')
+                missingdep = 1
+                checkdeps = 0
+                msg = 'Missing Dependency: %s is needed by package %s' % (needname, name)
+                errorlist.append(msg)
+                return checkdeps, missingdep
+                
+            
             
         if (best.name, best.arch) in self.rpmdb.getNameArchPkgList():
             self.log(3, 'TSINFO: Marking %s as update for %s' % (best, name))        
