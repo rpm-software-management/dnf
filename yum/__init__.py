@@ -51,6 +51,8 @@ class YumBase(depsolve.Depsolve):
         depsolve.Depsolve.__init__(self)
         self.localdbimported = 0
         self.repos = repos.RepoStorage() # class of repositories
+        if (not self.repos.sqlite):
+            self.log(1,"Warning, could not load sqlite, falling back to pickle")
     
     def log(self, value, msg):
         """dummy log stub"""

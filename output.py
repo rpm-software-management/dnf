@@ -208,6 +208,11 @@ class YumOutput:
         # build up changelog
         changelog = ''
         cnt = 0
+        # For sqlite caches not all changelogs are loaded automaticly
+        # If there is no changelog and there is a function loadChangelog
+        # call it, to load the changelog
+        if (pkg.changelog == None) and (hasattr(pkg,'loadChangelog')):
+            pkg.loadChangelog()
         for e in pkg.changelog:
             cnt += 1
             if cnt > 3: 

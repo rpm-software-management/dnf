@@ -13,7 +13,7 @@ BuildArchitectures: noarch
 BuildRequires: python
 BuildRequires: gettext
 Obsoletes: yum-phoebe
-Requires: python, rpm-python, rpm >= 0:4.1.1, libxml2-python
+Requires: python, rpm-python, rpm >= 0:4.1.1, libxml2-python, python-sqlite
 Prereq: /sbin/chkconfig, /sbin/service, coreutils
 
 %description
@@ -73,6 +73,9 @@ exit 0
 %{_mandir}/man*/*
 
 %changelog
+* Fri Feb 25 2005 Gijs Hollestelle <gijs@gewis.nl>
+- Require python-sqlite
+
 * Fri Feb 25 2005 Seth Vidal <skvidal@phy.duke.edu>
 - add yum.cron to weekly to clean packages
 

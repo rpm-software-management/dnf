@@ -90,9 +90,23 @@ class RepoStorage:
     def __init__(self):
         self.repos = {} # list of repos by repoid pointing a repo object 
                         # of repo options/misc data
-        self.pkgSack = YumPackageSack(YumAvailablePackage)
         self.callback = None # progress callback used for populateSack() for importing the xml files
         self.cache = 0
+        # Check to see if we can import sqlite stuff
+        try:
+            import sqlitecache
+            import sqlitesack
+        except ImportError:
+            self.sqlite = False
+        else:
+            self.sqlite = True
+            self.sqlitecache = sqlitecache
+            
+        if (self.sqlite):
+            self.pkgSack = sqlitesack.YumSqlitePackageSack(sqlitesack.YumAvailablePackageSqlite)
+        else:
+            self.pkgSack = YumPackageSack(YumAvailablePackage)
+            
     
     def __str__(self):
         return self.repos.keys()
@@ -194,10 +208,13 @@ class RepoStorage:
             data = ['metadata', 'filelists', 'otherdata']
         else:
             data = [ with ]
-        
+         
         for repo in myrepos:
             if not hasattr(repo, 'cacheHandler'):
-                repo.cacheHandler = mdcache.RepodataParser(storedir=repo.cachedir, callback=callback)
+                if (self.sqlite):
+                    repo.cacheHandler = self.sqlitecache.RepodataParserSqlite(storedir=repo.cachedir, callback=callback)
+                else:
+                    repo.cacheHandler = mdcache.RepodataParser(storedir=repo.cachedir, callback=callback)
             for item in data:
                 if self.pkgSack.added.has_key(repo.id):
                     if item in self.pkgSack.added[repo.id]:
