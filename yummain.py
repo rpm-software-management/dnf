@@ -28,6 +28,7 @@ import locale
 import rpm
 import rpmUtils
 import yumcomps
+import yumlock
 
 from logger import Logger
 from config import yumconf
@@ -113,6 +114,38 @@ def parseCmdArgs(args):
         
     return (log, errorlog, filelog, conf, cmds)
     
+
+def lock(lockfile, mypid):
+    """do the lock file work"""
+    #check out/get the lockfile
+    if yumlock.lock(lockfile, mypid, 0644):
+        pass
+    else:
+        fd = open(lockfile, 'r')
+        try: oldpid = int(fd.readline())
+        except ValueError:
+            # bogus data in the pid file. Throw away.
+            yumlock.unlock(lockfile)
+        else:
+            try: os.kill(oldpid, 0)
+            except OSError, e:
+                import errno
+                if e[0] == errno.ESRCH:
+                    print _('Unable to find pid')
+                    # The pid doesn't exist
+                    yumlock.unlock(lockfile)
+                else:
+                    # Whoa. What the heck happened?
+                    print _('Unable to check if PID %s is active') % oldpid
+                    sys.exit(200)
+            else:
+                # Another copy seems to be running.
+                msg = _('Existing lock %s: another copy is running. Aborting.')
+                print msg % lockfile
+                sys.exit(200)
+        # lock again.
+        yumlock.lock(lockfile, mypid, 0644)
+
 def main(args):
     """This does all the real work"""
 
@@ -133,6 +166,11 @@ def main(args):
                        'remove', 'provides', 'check-update', 'search'):
         usage()
     process = cmds[0]
+    
+    # ok at this point lets check the lock/set the lock if we can
+    if conf.uid == 0:
+        mypid = str(os.getpid())
+        lock('/var/run/yum.pid', mypid)
     
     # some misc speedups/sanity checks
     if conf.uid != 0:

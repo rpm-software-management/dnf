@@ -15,4 +15,7 @@ def lock(filename, contents='', mode=0777):
         return 1
 
 def unlock(filename):
-    os.unlink(filename)
+    try:
+        os.unlink(filename)
+    except OSError, msg:
+        pass

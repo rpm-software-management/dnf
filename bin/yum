@@ -25,42 +25,13 @@ import yumlock
 
 uid = os.geteuid()
 lockfile = '/var/run/yum.pid'
-mypid = str(os.getpid())
-
-if uid == 0:
-    #check out/get the lockfile
-    if yumlock.lock(lockfile, mypid, 0644):
-        pass
-    else:
-        fd = open(lockfile, 'r')
-        try: oldpid = int(fd.readline())
-        except ValueError:
-            # bogus data in the pid file. Throw away.
-            os.unlink(lockfile)
-        else:
-            try: os.kill(oldpid, 0)
-            except OSError, e:
-                import errno
-                if e[0] == errno.ESRCH:
-                    # The pid doesn't exist
-                    os.unlink(lockfile)
-                else:
-                    # Whoa. What the heck happened?
-                    print _('Unable to check if PID %s is active') % oldpid
-                    sys.exit(1)
-            else:
-                # Another copy seems to be running.
-                msg = _('Existing lock %s: another copy is running. Aborting.')
-                print msg % lockfile
-                sys.exit(1)
-        # lock again.
-        yumlock.lock(lockfile, mypid, 0644)
 
 try:
     yummain.main(sys.argv[1:])
 except SystemExit, e:
-    if uid == 0:
-        yumlock.unlock(lockfile)
+    if e.code != 200:
+        if uid == 0:
+            yumlock.unlock(lockfile)
     sys.exit(e)
 except KeyboardInterrupt, e:
     print _('Exiting on User Cancel')
@@ -72,5 +43,3 @@ except IOError, (errno, strerror):
     if uid == 0:
         yumlock.unlock(lockfile)
     sys.exit(1)
-
-
