@@ -105,12 +105,17 @@ class RepoStorage:
             self.sqlite = True
             self.sqlitecache = sqlitecache
             
+        self._selectSackType()
+    
+    def _selectSackType(self):
+
         if (self.sqlite):
+            import sqlitecache
+            import sqlitesack
             self.pkgSack = sqlitesack.YumSqlitePackageSack(sqlitesack.YumAvailablePackageSqlite)
         else:
             self.pkgSack = YumPackageSack(YumAvailablePackage)
-            
-    
+        
     def __str__(self):
         return self.repos.keys()
     

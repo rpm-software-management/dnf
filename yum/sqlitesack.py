@@ -71,7 +71,7 @@ class YumAvailablePackageSqlite(YumAvailablePackage):
 
     def returnPrco(self, prcotype):
         if not self.prco[prcotype]:
-           self.prco = self.sack.getPrco(self.pkgId)
+           self.prco = self.sack.getPrco(self.pkgId, prcotype)
         return self.prco[prcotype]
 
 class YumSqlitePackageSack(repos.YumPackageSack):
@@ -136,8 +136,11 @@ class YumSqlitePackageSack(repos.YumPackageSack):
                               ))
         return result
 
-    def getPrco(self, pkgId):
-        result = {'requires': [], 'provides': [], 'obsoletes': [], 'conflicts': []}
+    def getPrco(self,pkgId, prcotype=None):
+        if prcotype is not None:
+            result = {'requires': [], 'provides': [], 'obsoletes': [], 'conflicts': []}
+        else:
+            result = { prcotype: [] }
         for (rep, cache) in self.primarydb.items():
             cur = cache.cursor()
             for prco in result.keys():
@@ -291,6 +294,7 @@ class YumSqlitePackageSack(repos.YumPackageSack):
                       ]
                     }
                     results.append(self.pc(pkg,rep))
+
 
         # If it's not a provides or a filename, we are done
         if (prcotype != "provides" or name.find('/') != 0):
