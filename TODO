@@ -4,7 +4,6 @@ Critical:
  - Implement pkg excludes on the server side
 
 Important:
-- gzip the headers so they are smaller to move across the network
 - Work on making the frontend more spiffy/more responsive when 
   running in interactive mode
 - Implement a status/progress bar for downloading pkgs

@@ -2,6 +2,6 @@
 
 if [ -f /var/lock/subsys/yum ]; then
 	sleep `perl -e 'print (int(rand(180))*60) . "\n";'`
-	/usr/sbin/yum -d 0 -y update yum
-	/usr/sbin/yum -d 0 -y update
+	/usr/sbin/yum -e 0 -d 0 -y update yum
+	/usr/sbin/yum -e 0 -d 0 -y update
 fi
