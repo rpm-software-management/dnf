@@ -137,7 +137,12 @@ class YumShell(cmd.Cmd):
             self.base.doRpmDBSetup()
         
         elif cmd == 'solve':
-            (code, msgs) = self.base.buildTransaction()
+            try:
+                (code, msgs) = self.base.buildTransaction()
+            except Errors.YumBaseError, e:
+                self.base.errorlog(0, 'Error building transaction: %s' % e)
+                return False
+                
             if code == 1:
                 for msg in msgs:
                     self.base.errorlog(0, 'Error: %s' % msg)
@@ -266,7 +271,7 @@ class YumShell(cmd.Cmd):
             try:
                 returnval = self.base.doTransaction()
             except Errors.YumBaseError, e:
-                self.base.errorlog(0, '%s' % e)
+                self.base.errorlog(0, 'Error: %s' % e)
             except KeyboardInterrupt, e:
                 self.base.errorlog(0, '\n\nExiting on user cancel')
             except IOError, e:
