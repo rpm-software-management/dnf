@@ -19,11 +19,45 @@ import os
 import errno
 import Errors
 
+import rpmUtils
+import rpmUtils.transaction
+
+
 class YumBase:
-    """this is a base class that is used to hold things"""
+    """This is a primary structure and base class. It houses the objects and
+       methods needed to perform most things in yum. It is almost an abstract
+       class in that you will need to add your own class above it for most
+       real use."""
+    
     def __init__(self):
-       pass
-      
+        self.read_ts = rpmUtils.transaction.initReadOnlyTransaction()
+        self.tsInfo = rpmUtils.transaction.TransactionData()
+        
+    def doRpmDBSetup(self):
+        """sets up a holder object for important information from the rpmdb"""
+        
+        self.rpmdb = rpmUtils.RpmDBHolder()
+        self.rpmdb.addDB(self.read_ts)
+
+    def doSackSetup(self, callback=None):
+        """populates the package sacks for information from our repositories"""
+        
+        self.repos.populateSack(callback=callback)
+        self.pkgSack = self.repos.pkgSack
+
+
+    def doUpdateSetup(self):
+        """setups up the update object in the base class and fills out the
+           updates, obsoletes and others lists"""
+        
+        self.up = rpmUtils.updates.Updates(self.rpmdb.getPkgList(),
+                                           self.pkgSack.simplePkgList())
+                                       
+        self.up.exactarch = self.conf.getConfigOption('exactarch')
+        self.up.doUpdates()
+        self.up.condenseUpdates()
+        
+        
     def doLock(self, lockfile):
         """perform the yum locking, raise yum-based exceptions, not OSErrors"""
         
