@@ -288,7 +288,10 @@ class RpmBase:
                         return 1
         return 0
         
-
+    def returnChangelog(self):
+        """return changelog entries"""
+        return self.changelog
+        
     def returnFileEntries(self, ftype='file'):
         """return list of files based on type"""
         if self.files.has_key(ftype):
