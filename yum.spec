@@ -1,7 +1,7 @@
 Summary: RPM installer/updater
 Name: yum
 Version: 2.1.0
-Release: 0
+Release: 1
 License: GPL
 Group: System Environment/Base
 Source: %{name}-%{version}.tar.gz
