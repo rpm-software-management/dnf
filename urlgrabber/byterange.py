@@ -12,7 +12,9 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
-# Copyright 2002-2003 Michael D. Stenner, Ryan D. Tomayko
+# Copyright 2002-2004 Michael D. Stenner, Ryan D. Tomayko
+
+# $Id$
 
 import os
 import stat
@@ -20,8 +22,10 @@ import urllib
 import urllib2
 import rfc822
 
-try:    from cStringIO import StringIO
-except: from StringIO import StringIO
+try:    
+    from cStringIO import StringIO
+except ImportError, msg: 
+    from StringIO import StringIO
 
 class RangeError(IOError):
     """Error raised when an unsatisfiable range is requested."""
@@ -37,7 +41,7 @@ class HTTPRangeHandler(urllib2.BaseHandler):
     
     Example:
         import urllib2
-        import range
+        import byterange
         
         range_handler = range.HTTPRangeHandler()
         opener = urllib2.build_opener(range_handler)
@@ -52,8 +56,13 @@ class HTTPRangeHandler(urllib2.BaseHandler):
     """
     
     def http_error_206(self, req, fp, code, msg, hdrs):
+        # 206 Partial Content Response
         return urllib.addinfourl(fp, hdrs, req.get_full_url())
-        
+    
+    def http_error_416(self, req, fp, code, msg, hdrs):
+        # HTTP's Range Not Satisfiable error
+        raise RangeError('Requested Range Not Satisfiable')
+
 class RangeableFileObject:
     """File object wrapper to enable raw range handling.
     This was implemented primarilary for handling range 
@@ -75,17 +84,17 @@ class RangeableFileObject:
         >>> fo.read(30)
     """
     
-    def __init__(self, fo, range):
+    def __init__(self, fo, rangetup):
         """Create a RangeableFileObject.
-        fo    -- a file like object. only the read() method need be 
-                 supported but supporting an optimized seek() is 
-                 preferable.
-        range -- a (firstbyte,lastbyte) tuple specifying the range
-                 to work over. 
+        fo       -- a file like object. only the read() method need be 
+                    supported but supporting an optimized seek() is 
+                    preferable.
+        rangetup -- a (firstbyte,lastbyte) tuple specifying the range
+                    to work over.
         The file object provided is assumed to be at byte offset 0.
         """
         self.fo = fo
-        (self.firstbyte,self.lastbyte) = range_tuple_normalize(range)
+        (self.firstbyte, self.lastbyte) = range_tuple_normalize(rangetup)
         self.realpos = 0
         self._do_seek(self.firstbyte)
         
@@ -116,7 +125,7 @@ class RangeableFileObject:
         elif whence == 1: # relative seek
             realoffset = self.realpos + offset
         elif whence == 2: # absolute from end of file
-            # TODO: are we raising the right Error here?
+            # XXX: are we raising the right Error here?
             raise IOError('seek from end of file not supported.')
         
         # do not allow seek past lastbyte in range
@@ -183,9 +192,8 @@ class RangeableFileObject:
                 bufsize = offset - pos
             buf = self.fo.read(bufsize)
             if len(buf) != bufsize:
-                raise RangeError('Cannot satisfy byte range starting at %s' % (self.firstbyte,))
+                raise RangeError('Requested Range Not Satisfiable')
             pos+= bufsize
-
 
 class FileRangeHandler(urllib2.FileHandler):
     """FileHandler subclass that adds Range support.
@@ -195,7 +203,6 @@ class FileRangeHandler(urllib2.FileHandler):
     def open_local_file(self, req):
         import mimetypes
         import mimetools
-
         host = req.get_host()
         file = req.get_selector()
         localfile = urllib.url2pathname(file)
@@ -203,27 +210,25 @@ class FileRangeHandler(urllib2.FileHandler):
         size = stats[stat.ST_SIZE]
         modified = rfc822.formatdate(stats[stat.ST_MTIME])
         mtype = mimetypes.guess_type(file)[0]
-        
         if host:
             host, port = urllib.splitport(host)
             if port or socket.gethostbyname(host) not in self.get_names():
                 raise URLError('file not on local host')
         fo = open(localfile,'rb')
-        range = req.headers.get('Range',None)
-        range = range_header_to_tuple(range)
-        assert range != ()
-        if range:
-            (fb,lb) = range
+        brange = req.headers.get('Range',None)
+        brange = range_header_to_tuple(brange)
+        assert brange != ()
+        if brange:
+            (fb,lb) = brange
             if lb == '': lb = size
+            if fb < 0 or fb > size or lb > size:
+                raise RangeError('Requested Range Not Satisfiable')
             size = (lb - fb)
             fo = RangeableFileObject(fo, (fb,lb))
-            
         headers = mimetools.Message(StringIO(
             'Content-Type: %s\nContent-Length: %d\nLast-modified: %s\n' %
             (mtype or 'text/plain', size, modified)))
-        
         return urllib.addinfourl(fo, headers, 'file:'+file)
-
 
 # FTP Range Support 
 # Unfortunately, a large amount of base FTP code had to be copied
@@ -240,7 +245,6 @@ import sys
 import ftplib
 import mimetypes
 import mimetools
-
 
 class FTPRangeHandler(urllib2.FTPHandler):
     def ftp_open(self, req):
@@ -296,9 +300,12 @@ class FTPRangeHandler(urllib2.FTPHandler):
                 (fb,lb) = range_tup
                 if lb == '': 
                     if retrlen is None or retrlen == 0:
-                        raise RangeError('Could not satisfy range due to unobtainable file length.')
+                        raise RangeError('Requested Range Not Satisfiable due to unobtainable file length.')
                     lb = retrlen
                     retrlen = lb - fb
+                    if retrlen < 0:
+                        # beginning of range is larger than file
+                        raise RangeError('Requested Range Not Satisfiable')
                 else:
                     retrlen = lb - fb
                     fp = RangeableFileObject(fp, (0,retrlen))
@@ -362,9 +369,10 @@ class ftpwrapper(urllib.ftpwrapper):
         return (addclosehook(conn[0].makefile('rb'),
                             self.endtransfer), conn[1])
 
+
 ####################################################################
 # Range Tuple Functions
-# TODO: These range tuple functions might go better in a class.
+# XXX: These range tuple functions might go better in a class.
 
 _rangere = None
 def range_header_to_tuple(range_header):
@@ -396,7 +404,6 @@ def range_header_to_tuple(range_header):
 
 def range_tuple_to_header(range_tup):
     """Convert a range tuple to a Range header value.
-    
     Return a string of the form "bytes=<firstbyte>-<lastbyte>".
     """
     if range_tup is None: return None
@@ -404,17 +411,14 @@ def range_tuple_to_header(range_tup):
     if range_tup:
         if range_tup[1]: 
             range_tup = (range_tup[0],range_tup[1] - 1)
-    
     return 'bytes=%s-%s' % range_tup
     
 def range_tuple_normalize(range_tup):
     """Normalize a (first_byte,last_byte) range tuple.
-    
     Return a tuple whose first element is guaranteed to be an int
     and whose second element will be '' (meaning: the last byte) or 
     an int. Finally, return None if the normalized tuple == (0,'')
     as that is equivelant to retrieving the entire file.
-    
     """
     if range_tup is None: return None
     # handle first byte

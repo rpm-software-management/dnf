@@ -12,163 +12,239 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
-# Copyright 2002-2003 Michael D. Stenner
+# Copyright 2002-2004 Michael D. Stenner, Ryan Tomayko
 
 """A high-level cross-protocol url-grabber.
 
-
-
 GENERAL ARGUMENTS (kwargs)
 
-copy_local is ignored except for file:// urls, in which case it
-specifies whether urlgrab should still make a copy of the file, or
-simply point to the existing copy. The module level default for this
-option is 0. 
+  Where possible, the module-level default is indicated, and legal
+  values are provided.
 
-close_connection tells URLGrabber to close the connection after a
-file has been transfered. This is ignored unless the download 
-happens with the http keepalive handler (keepalive=1).  Otherwise, 
-the connection is left open for further use. The module level 
-default for this option is 0 (keepalive connections will not be 
-closed).
+  copy_local = 0   [0|1]
 
-keepalive specifies whether keepalive should be used for HTTP/1.1 
-servers that support it. The module level default for this option is
-1 (keepalive is enabled).
+    ignored except for file:// urls, in which case it specifies
+    whether urlgrab should still make a copy of the file, or simply
+    point to the existing copy. The module level default for this
+    option is 0.
 
-progress_obj is a class instance that supports the following methods:
-po.start(filename, url, basename, length)
-# length will be None if unknown
-po.update(read) # read == bytes read so far
-po.end()
+  close_connection = 0   [0|1]
 
-throttle is a number - if it's an int, it's the bytes/second throttle
-limit.  If it's a float, it is first multiplied by bandwidth.  If
-throttle == 0, throttling is disabled.  If None, the module-level
-default (which can be set on default_grabber.throttle) is used. 
-See BANDWIDTH THROTTLING for more information.
+    tells URLGrabber to close the connection after a file has been
+    transfered. This is ignored unless the download happens with the
+    http keepalive handler (keepalive=1).  Otherwise, the connection
+    is left open for further use. The module level default for this
+    option is 0 (keepalive connections will not be closed).
 
-bandwidth is the nominal max bandwidth in bytes/second.  If throttle
-is a float and bandwidth == 0, throttling is disabled.  If None,
-the module-level default (which can be set on default_grabber.bandwidth) 
-is used. See BANDWIDTH THROTTLING for more information.
+  keepalive = 1   [0|1]
 
-range is a tuple of the form (first_byte, last_byte) describing a 
-byte range to retrieve. Either or both of the values may be specified. 
-If first_byte is None, byte offset 0 is assumed. If last_byte is None,
-the last byte available is assumed. Note that both first and last_byte 
-values are inclusive so a range of (10,11) would return the 10th and 11th
-byte of the resource.
+    specifies whether keepalive should be used for HTTP/1.1 servers
+    that support it. The module level default for this option is 1
+    (keepalive is enabled).
 
-user_agent is a string, usually of the form 'AGENT/VERSION' that is 
-provided to HTTP servers in the User-agent header. The module level
-default for this option is "urlgrabber/VERSION".
+  progress_obj = None
 
-proxies is a dictionary mapping protocol schemes to proxy hosts. For
-example, to use a proxy server on host "foo" port 3128 for http and
-https URLs:
-  proxies={ 'http' : 'http://foo:3128', 'https' : 'http://foo:3128' }
-note that proxy authentication information may be provided using normal
-URL constructs:
-  proxies={ 'http' : 'http://user:host@foo:3128' }
-Lastly, if proxies is None, the default environment settings will be 
-used.
+    a class instance that supports the following methods:
+      po.start(filename, url, basename, length)
+      # length will be None if unknown
+      po.update(read) # read == bytes read so far
+      po.end()
+
+  throttle = 1.0
+
+    a number - if it's an int, it's the bytes/second throttle limit.
+    If it's a float, it is first multiplied by bandwidth.  If throttle
+    == 0, throttling is disabled.  If None, the module-level default
+    (which can be set on default_grabber.throttle) is used. See
+    BANDWIDTH THROTTLING for more information.
+
+  bandwidth = 0
+
+    the nominal max bandwidth in bytes/second.  If throttle is a float
+    and bandwidth == 0, throttling is disabled.  If None, the
+    module-level default (which can be set on
+    default_grabber.bandwidth) is used. See BANDWIDTH THROTTLING for
+    more information.
+
+  range = None
+
+    a tuple of the form (first_byte, last_byte) describing a byte
+    range to retrieve. Either or both of the values may set to
+    None. If first_byte is None, byte offset 0 is assumed. If
+    last_byte is None, the last byte available is assumed. Note that
+    both first and last_byte values are inclusive so a range of
+    (10,11) would return the 10th and 11th byte of the resource.
+
+    If set to None, no range will be used.
+
+    XXX -- is this correct?  It seems like it behaves like
+    python slices (which I think is good) -mds
+    
+  reget = None   [None|'simple'|'check_timestamp']
+
+    whether to attempt to reget a partially-downloaded file.  Reget
+    only applies to .urlgrab and (obviously) only if there is a
+    partially downloaded file.  Reget has two modes:
+
+      'simple' -- the local file will always be trusted.  If there
+        are 100 bytes in the local file, then the download will always
+        begin 100 bytes into the requested file.
+
+      'check_timestamp' -- the timestamp of the server file will be
+        compared to the timestamp of the local file.  ONLY if the
+        local file is newer than or the same age as the server file
+        will reget be used.  If the server file is newer, or the
+        timestamp is not returned, the entire file will be fetched.
+
+    NOTE: urlgrabber can do very little to verify that the partial
+    file on disk is identical to the beginning of the remote file.
+    You may want to either employ a custom "checkfunc" or simply avoid
+    using reget in situations where corruption is a concern.
+
+  user_agent = 'urlgrabber/VERSION'
+
+    a string, usually of the form 'AGENT/VERSION' that is provided to
+    HTTP servers in the User-agent header. The module level default
+    for this option is "urlgrabber/VERSION".
+
+  proxies = None
+
+    a dictionary that maps protocol schemes to proxy hosts. For
+    example, to use a proxy server on host "foo" port 3128 for http
+    and https URLs:
+      proxies={ 'http' : 'http://foo:3128', 'https' : 'http://foo:3128' }
+    note that proxy authentication information may be provided using
+    normal URL constructs:
+      proxies={ 'http' : 'http://user:host@foo:3128' }
+    Lastly, if proxies is None, the default environment settings will
+    be used.
+
+  prefix = None
+
+    a url prefix that will be prepended to all requested urls.  For
+    example:
+      g = URLGrabber(prefix='http://foo.com/mirror/')
+      g.urlgrab('some/file.txt')
+      ## this will fetch 'http://foo.com/mirror/some/file.txt'
+    This option exists primarily to allow identical behavior to
+    MirrorGroup (and derived) instances.  Note: a '/' will be inserted
+    if necessary, so you cannot specify a prefix that ends with a
+    partial file or directory name.
 
 RETRY RELATED ARGUMENTS
 
-retry is the number of times to retry the grab before bailing.  If 
-this is zero, it will retry forever. This was intentional... really,
-it was :). If this value is not supplied or is supplied but is None
-retrying does not occur.
+  retry = None
 
-retrycodes is a sequence of errorcodes (values of e.errno) for which 
-it should retry. See the doc on URLGrabError for more details on this. 
-retrycodes defaults to [-1,2,4,5,6,7] if not specified explicitly.
+    the number of times to retry the grab before bailing.  If this is
+    zero, it will retry forever. This was intentional... really, it
+    was :). If this value is not supplied or is supplied but is None
+    retrying does not occur.
 
-checkfunc is a function to do additional checks. This defaults to None,
-which means no additional checking.  The function should simply
-return on a successful check.  It should raise URLGrabError on
-and unsuccessful check.  Raising of any other exception will
-be considered immediate failure and no retries will occur.
+  retrycodes = [-1,2,4,5,6,7]
 
-Negative error numbers are reserved for use by these passed in
-functions.  By default, -1 results in a retry, but this can be
-customized with retrycodes.
+    a sequence of errorcodes (values of e.errno) for which it should
+    retry. See the doc on URLGrabError for more details on
+    this. retrycodes defaults to [-1,2,4,5,6,7] if not specified
+    explicitly.
 
-If you simply pass in a function, it will be given exactly one
-argument: the local file name as returned by urlgrab.  If you
-need to pass in other arguments,  you can do so like this:
+  checkfunc = None
 
-    checkfunc=(function, ('arg1', 2), {'kwarg': 3})
+    a function to do additional checks. This defaults to None, which
+    means no additional checking.  The function should simply return
+    on a successful check.  It should raise URLGrabError on an
+    unsuccessful check.  Raising of any other exception will be
+    considered immediate failure and no retries will occur.
 
-if the downloaded file as filename /tmp/stuff, then this will
-result in this call:
+    Negative error numbers are reserved for use by these passed in
+    functions.  By default, -1 results in a retry, but this can be
+    customized with retrycodes.
 
-    function('/tmp/stuff', 'arg1', 2, kwarg=3)
+    If you simply pass in a function, it will be given exactly one
+    argument: the local file name as returned by urlgrab.  If you need
+    to pass in other arguments, you can do so like this:
 
-NOTE: both the "args" tuple and "kwargs" dict must be present
-if you use this syntax, but either (or both) can be empty.    
+      checkfunc=(function, ('arg1', 2), {'kwarg': 3})
 
+    if the downloaded file as filename /tmp/stuff, then this will
+    result in this call:
+
+      function('/tmp/stuff', 'arg1', 2, kwarg=3)
+
+    NOTE: both the "args" tuple and "kwargs" dict must be present if
+    you use this syntax, but either (or both) can be empty.
+
+  failure_callback = None
+
+    The callback that gets called during retries when an attempt to
+    fetch a file fails.  The syntax for specifying the callback is
+    identical to checkfunc, except that it will be passed the raised
+    exception rather than a filename.
+
+    The callback is present primarily to inform the calling program of
+    the failure, but if it raises an exception (including the one it's
+    passed) that exception will NOT be caught and will therefore cause
+    future retries to be aborted.
 
 BANDWIDTH THROTTLING
 
-urlgrabber supports throttling via two values: throttle and bandwidth
-Between the two, you can either specify and absolute throttle threshold
-or specify a theshold as a fraction of maximum available bandwidth.
+  urlgrabber supports throttling via two values: throttle and
+  bandwidth Between the two, you can either specify and absolute
+  throttle threshold or specify a theshold as a fraction of maximum
+  available bandwidth.
 
-throttle is a number - if it's an int, it's the bytes/second throttle
-limit.  If it's a float, it is first multiplied by bandwidth.  If
-throttle == 0, throttling is disabled.  If None, the module-level
-default (which can be set with set_throttle) is used.
+  throttle is a number - if it's an int, it's the bytes/second
+  throttle limit.  If it's a float, it is first multiplied by
+  bandwidth.  If throttle == 0, throttling is disabled.  If None, the
+  module-level default (which can be set with set_throttle) is used.
 
-bandwidth is the nominal max bandwidth in bytes/second.  If throttle
-is a float and bandwidth == 0, throttling is disabled.  If None,
-the module-level default (which can be set with set_bandwidth) is
-used.
+  bandwidth is the nominal max bandwidth in bytes/second.  If throttle
+  is a float and bandwidth == 0, throttling is disabled.  If None, the
+  module-level default (which can be set with set_bandwidth) is used.
 
-THROTTLING EXAMPLES:
+  THROTTLING EXAMPLES:
 
-Lets say you have a 100 Mbps connection.  This is (about) 10^8 bits
-per second, or 12,500,000 Bytes per second.  You have a number of
-throttling options:
+  Lets say you have a 100 Mbps connection.  This is (about) 10^8 bits
+  per second, or 12,500,000 Bytes per second.  You have a number of
+  throttling options:
 
-*) set_bandwidth(12500000); set_throttle(0.5) # throttle is a float
+  *) set_bandwidth(12500000); set_throttle(0.5) # throttle is a float
 
-    This will limit urlgrab to use half of your available bandwidth.
+     This will limit urlgrab to use half of your available bandwidth.
 
-*) set_throttle(6250000) # throttle is an int
+  *) set_throttle(6250000) # throttle is an int
 
-    This will also limit urlgrab to use half of your available
-    bandwidth, regardless of what bandwidth is set to.
+     This will also limit urlgrab to use half of your available
+     bandwidth, regardless of what bandwidth is set to.
 
-*) set_throttle(6250000); set_throttle(1.0) # float
+  *) set_throttle(6250000); set_throttle(1.0) # float
 
-    Use half your bandwidth
+     Use half your bandwidth
 
-*) set_throttle(6250000); set_throttle(2.0) # float
+  *) set_throttle(6250000); set_throttle(2.0) # float
 
     Use up to 12,500,000 Bytes per second (your nominal max bandwidth)
 
-*) set_throttle(6250000); set_throttle(0) # throttle = 0
+  *) set_throttle(6250000); set_throttle(0) # throttle = 0
 
-    Disable throttling - this is more efficient than a very large
-    throttle setting.
+     Disable throttling - this is more efficient than a very large
+     throttle setting.
 
-*) set_throttle(0); set_throttle(1.0) # throttle is float, bandwidth = 0
+  *) set_throttle(0); set_throttle(1.0) # throttle is float, bandwidth = 0
 
-    Disable throttling - this is the default when the module is loaded.
+     Disable throttling - this is the default when the module is loaded.
 
+  SUGGESTED AUTHOR IMPLEMENTATION (THROTTLING)
 
-SUGGESTED AUTHOR IMPLEMENTATION (THROTTLING)
+  While this is flexible, it's not extremely obvious to the user.  I
+  suggest you implement a float throttle as a percent to make the
+  distinction between absolute and relative throttling very explicit.
 
-While this is flexible, it's not extremely obvious to the user.  I
-suggest you implement a float throttle as a percent to make the
-distinction between absolute and relative throttling very explicit.
-
-Also, you may want to convert the units to something more convenient
-than bytes/second, such as kbps or kB/s, etc.
+  Also, you may want to convert the units to something more convenient
+  than bytes/second, such as kbps or kB/s, etc.
 
 """
+
+# $Id$
 
 import os
 import os.path
@@ -176,9 +252,17 @@ import urlparse
 import rfc822
 import time
 import string
+import urllib2
+from stat import *  # S_* and ST_*
 
-DEBUG=1
-VERSION='0.2'
+from urlgrabber import __version__
+
+# XXX: leaving this global may cause problems with
+#      multiple threads. -rtomayko
+auth_handler = urllib2.HTTPBasicAuthHandler( \
+     urllib2.HTTPPasswordMgrWithDefaultRealm())
+
+DEBUG=0
 
 try:
     from i18n import _
@@ -191,19 +275,6 @@ except ImportError, msg:
     HTTPException = None
 
 try:
-    import urllib2
-except ImportError, msg:
-    import urllib
-    urllib._urlopener = urllib.FancyURLopener() # make sure it ready now
-    urllib2 = urllib   # this way, we can always just do urllib.urlopen()
-    have_urllib2 = 0
-    auth_handler = None
-else:
-    have_urllib2 = 1
-    auth_handler = urllib2.HTTPBasicAuthHandler( \
-        urllib2.HTTPPasswordMgrWithDefaultRealm())
-
-try:
     # This is a convenient way to make keepalive optional.
     # Just rename the module so it can't be imported.
     from keepalive import HTTPHandler
@@ -212,12 +283,14 @@ except ImportError, msg:
 else:
     keepalive_handler = HTTPHandler()
 
-# add in range support conditionally too
 try:
-    from byterange import HTTPRangeHandler,FileRangeHandler,FTPRangeHandler
-    from byterange import range_tuple_normalize, range_tuple_to_header
+    # add in range support conditionally too
+    from urlgrabber.byterange import HTTPRangeHandler, FileRangeHandler, \
+         FTPRangeHandler, range_tuple_normalize, range_tuple_to_header, \
+         RangeError
 except ImportError, msg:
     range_handlers = ()
+    RangeError = None
     have_range = 0
 else:
     range_handlers = (HTTPRangeHandler(), FileRangeHandler(), FTPRangeHandler())
@@ -227,21 +300,43 @@ else:
 class URLGrabError(IOError):
     """
     URLGrabError error codes:
-      -1 - default retry code for retrygrab check functions
-      0  - everything looks good (you should never see this)
-      1  - malformed url
-      2  - local file doesn't exist
-      3  - request for non-file local file (dir, etc)
-      4  - IOError on fetch
-      5  - OSError on fetch
-      6  - no content length header when we expected one
-      7  - HTTPException
-      8  - Exceeded read limit (for urlread)
- 
-    Negative codes are reserved for use by functions passed in to
-    retrygrab with checkfunc.
 
-    You can use it like this:
+      URLGrabber error codes (0 -- 255)
+        0    - everything looks good (you should never see this)
+        1    - malformed url
+        2    - local file doesn't exist
+        3    - request for non-file local file (dir, etc)
+        4    - IOError on fetch
+        5    - OSError on fetch
+        6    - no content length header when we expected one
+        7    - HTTPException
+        8    - Exceeded read limit (for urlread)
+        9    - Requested byte range not satisfiable.
+        10   - Byte range requested, but range support unavailable
+        11   - Illegal reget mode
+
+      MirrorGroup error codes (256 -- 511)
+        256  - No more mirrors left to try
+
+      Custom (non-builtin) classes derived from MirrorGroup (512 -- 767)
+        [ this range reserved for application-specific error codes ]
+
+      Retry codes (< 0)
+        -1   - retry the download, unknown reason
+
+    Note: to test which group a code is in, you can simply do integer
+    division by 256: e.errno / 256
+
+    Negative codes are reserved for use by functions passed in to
+    retrygrab with checkfunc.  The value -1 is built in as a generic
+    retry code and is already included in the retrycodes list.
+    Therefore, you can create a custom check function that simply
+    returns -1 and the fetch will be re-tried.  For more customized
+    retries, you can use other negative number and include them in
+    retry-codes.  This is nice for outputting useful messages about
+    what failed.
+
+    You can use these error codes like so:
       try: urlgrab(url)
       except URLGrabError, e:
          if e.errno == 3: ...
@@ -305,9 +400,12 @@ class URLGrabberOptions:
         self.copy_local = 0
         self.close_connection = 0
         self.range = None
-        self.user_agent = 'urlgrabber/%s' % VERSION
+        self.user_agent = 'urlgrabber/%s' % __version__
         self.keepalive = 1
         self.proxies = None
+        self.reget = None
+        self.failure_callback = None
+        self.prefix = None
         # update all attributes with supplied kwargs
         self._set_attributes(**kwargs)
         
@@ -340,7 +438,9 @@ class URLGrabberOptions:
         if have_range and kwargs.has_key('range'):
             # normalize the supplied range value
             self.range = range_tuple_normalize(self.range)
-
+        if not self.reget in [None, 'simple', 'check_timestamp']:
+            raise URLGrabError(11, _('Illegal reget mode: %s') \
+                               % (self.reget, ))
 
 class URLGrabber:
     """Provides easy opening of URLs with a variety of options.
@@ -365,10 +465,15 @@ class URLGrabber:
                 if (opts.retry is None) \
                     or (tries == opts.retry) \
                     or (e.errno not in opts.retrycodes): raise
+                if self.failure_callback:
+                    if type(self.failure_callback) == type( () ):
+                        cb, args, kwargs = self.failure_callback
+                    else:
+                        cb, args, kwargs = self.failure_callback, (), {}
+                    cb(e, *args, **kwargs)
     
     def urlopen(self, url, **kwargs):
         """open the url and return a file object
-
         If a progress object or throttle value specified when this 
         object was created, then  a special file object will be 
         returned that supports them. The file object can be treated 
@@ -382,20 +487,15 @@ class URLGrabber:
     
     def urlgrab(self, url, filename=None, **kwargs):
         """grab the file at <url> and make a local copy at <filename>
-
         If filename is none, the basename of the url is used.
-    
         urlgrab returns the filename of the local file, which may be 
         different from the passed-in filename if copy_local == 0.
-        
         """
         opts = self.opts.derive(**kwargs)
         (url, parts) = self._parse_url(url)
         (scheme, host, path, parm, query, frag) = parts
-        
         if filename is None:
             filename = os.path.basename( path )
-        
         if scheme == 'file' and not opts.copy_local:
             # just return the name of the local file - don't make a 
             # copy currently
@@ -405,7 +505,7 @@ class URLGrabber:
             elif not os.path.isfile(path):
                 raise URLGrabError(3, 
                               _('Not a normal file: %s') % (path, ))
-            else:
+            elif not opts.range:
                 return path
         
         def retryfunc(opts, url, filename):
@@ -424,15 +524,12 @@ class URLGrabber:
         
         return self._retry(opts, retryfunc, url, filename)
     
-        
     def urlread(self, url, limit=None, **kwargs):
         """read the url into a string, up to 'limit' bytes
-
         If the limit is exceeded, an exception will be thrown.  Note
         that urlread is NOT intended to be used as a way of saying 
         "I want the first N bytes" but rather 'read the whole file 
         into memory, but don't use too much'
-        
         """
         opts = self.opts.derive(**kwargs)
         (url, parts) = self._parse_url(url)
@@ -441,8 +538,24 @@ class URLGrabber:
             
         def retryfunc(opts, url, limit):
             fo = URLGrabberFileObject(url, filename=None, opts=opts)
-            s = fo.read(limit)
-            fo.close()
+            s = ''
+            try:
+                # this is an unfortunate thing.  Some file-like objects
+                # have a default "limit" of None, while the built-in (real)
+                # file objects have -1.  They each break the other, so for
+                # now, we just force the default if necessary.
+                if limit is None: s = fo.read()
+                else: s = fo.read(limit)
+
+
+                if not opts.checkfunc is None:
+                    if callable(opts.checkfunc):
+                        func, args, kwargs = opts.checkfunc, (), {}
+                    else:
+                        func, args, kwargs = opts.checkfunc
+                    apply(func, (s, )+args, kwargs)
+            finally:
+                fo.close()
             return s
             
         s = self._retry(opts, retryfunc, url, limit)
@@ -460,25 +573,27 @@ class URLGrabber:
 
         it returns the (cleaned) url and a tuple of component parts
         """
+        if self.opts.prefix:
+            p = self.opts.prefix
+            if p[-1] == '/' or url[0] == '/': url = p + url
+            else: url = p + '/' + url
+            
         (scheme, host, path, parm, query, frag) = \
                                              urlparse.urlparse(url)
         if not scheme:
+            if not url[0] == '/': url = os.path.abspath(url)
             url = 'file:' + url
             (scheme, host, path, parm, query, frag) = \
                                              urlparse.urlparse(url)
         path = os.path.normpath(path)
-        
         if '@' in host and auth_handler and scheme in ['http', 'https']:
             try:
-                # should we be using urllib.splituser and 
-                # splitpasswd instead?
-                user_password, host = string.split(host, '@', 1)
-                user, password = string.split(user_password, ':', 1)
+                user_pass, host = host.split('@', 1)
+                if ':' in user_pass: user, password = user_pass.split(':', 1)
             except ValueError, e:
                 raise URLGrabError(1, _('Bad URL: %s') % url)
             if DEBUG: print 'adding HTTP auth: %s, %s' % (user, password)
             auth_handler.add_password(None, host, user, password)
-        
         parts = (scheme, host, path, parm, query, frag)
         url = urlparse.urlunparse(parts)
         return url, parts
@@ -486,7 +601,7 @@ class URLGrabber:
 # create the default URLGrabber used by urlXXX functions.
 # NOTE: actual defaults are set in URLGrabberOptions
 default_grabber = URLGrabber()
-                            
+
 class URLGrabberFileObject:
     """This is a file-object wrapper that supports progress objects 
     and throttling.
@@ -527,34 +642,97 @@ class URLGrabberFileObject:
             # it _must_ come before all other handlers in the list or urllib2
             # chokes.
             if self.opts.proxies:
-                handlers.append( urllib2.ProxyHandler( self.opts.proxies ) )
+                handlers.append( CachedProxyHandler(self.opts.proxies) )
             if keepalive_handler and self.opts.keepalive:
                 handlers.append( keepalive_handler )
-            if range_handlers and self.opts.range:
+            if range_handlers and (self.opts.range or self.opts.reget):
                 handlers.extend( range_handlers )
-            if auth_handler:
-                handlers.append( auth_handler )
-            self._opener = urllib2.build_opener( *handlers )
+            handlers.append( auth_handler )
+            self._opener = CachedOpenerDirector(*handlers)
         return self._opener
         
     def _do_open(self):
-        # build request object if any options require setting headers.
-        if have_urllib2:
-            req = urllib2.Request(self.url)
-            if have_range and self.opts.range:
-                req.add_header('Range', range_tuple_to_header(self.opts.range))
-            if self.opts.user_agent:
-                req.add_header('User-agent', self.opts.user_agent)
-        else:
-            req = self.url
         opener = self._get_opener()
+
+        # build request object
+        req = urllib2.Request(self.url)
+        if self.opts.user_agent:
+            req.add_header('User-agent', self.opts.user_agent)
+
+        self._build_range(req) # take care of reget and byterange stuff
+        fo, hdr = self._make_request(req, opener)
+        if self.reget_time and self.opts.reget == 'check_timestamp':
+            fetch_again = 0
+            try:
+                modified_tuple  = hdr.getdate_tz('last-modified')
+                modified_stamp  = rfc822.mktime_tz(modified_tuple)
+                if modified_stamp > self.reget_time: fetch_again = 1
+            except (TypeError,):
+                fetch_again = 1
+            
+            if fetch_again:
+                # the server version is newer than the (incomplete) local
+                # version, so we should abandon the version we're getting
+                # and fetch the whole thing again.
+                fo.close()
+                self.opts.reget = None
+                del req.headers['Range']
+                self._build_range(req)
+                fo, hdr = self._make_request(req, opener)
+
         (scheme, host, path, parm, query, frag) = urlparse.urlparse(self.url)
-        
+        if not (self.opts.progress_obj or self.opts.raw_throttle()):
+            # if we're not using the progress_obj or throttling
+            # we can get a performance boost by going directly to
+            # the underlying fileobject for reads.
+            self.read = fo.read
+            if hasattr(fo, 'readline'):
+                self.readline = fo.readline
+        elif self.opts.progress_obj:
+            try:    length = int(hdr['Content-Length'])
+            except: length = None
+            self.opts.progress_obj.start(str(self.filename), self.url, 
+                                         os.path.basename(path), 
+                                         length)
+            self.opts.progress_obj.update(0)
+        (self.fo, self.hdr) = (fo, hdr)
+    
+    def _build_range(self, req):
+        self.reget_time = None
+        self.append = 0
+        reget_length = 0
+        rt = None
+        if have_range and self.opts.reget and type(self.filename) == type(''):
+            # we have reget turned on and we're dumping to a file
+            try:
+                s = os.stat(self.filename)
+            except OSError:
+                pass
+            else:
+                self.reget_time = s[ST_MTIME]
+                reget_length = s[ST_SIZE]
+                rt = reget_length, ''
+                self.append = 1
+                
+        if self.opts.range:
+            if not have_range:
+                raise URLGrabError(10, _('Byte range requested but range '\
+                                         'support unavailable'))
+            rt = self.opts.range
+            if rt[0]: rt = (rt[0] + reget_length, rt[1])
+
+        if rt:
+            header = range_tuple_to_header(rt)
+            if header: req.add_header('Range', header)
+
+    def _make_request(self, req, opener):
         try:
             fo = opener.open(req)
             hdr = fo.info()
         except ValueError, e:
             raise URLGrabError(1, _('Bad URL: %s') % (e, ))
+        except RangeError, e:
+            raise URLGrabError(9, _('%s') % (e, ))
         except IOError, e:
             raise URLGrabError(4, _('IOError: %s') % (e, ))
         except OSError, e:
@@ -562,20 +740,13 @@ class URLGrabberFileObject:
         except HTTPException, e:
             raise URLGrabError(7, _('HTTP Error (%s): %s') % \
                             (e.__class__.__name__, e))
+        else:
+            return (fo, hdr)
         
-        if self.opts.progress_obj:
-            try:    length = int(hdr['Content-Length'])
-            except: length = None
-            self.opts.progress_obj.start(self.filename, self.url, 
-                                         os.path.basename(path), 
-                                         length)
-            self.opts.progress_obj.update(0)
-        (self.fo, self.hdr) = (fo, hdr)
-    
     def _do_grab(self):
         """dump the file to self.filename."""
-        assert self.filename is not None
-        new_fo = open(self.filename, 'wb')
+        if self.append: new_fo = open(self.filename, 'ab')
+        else: new_fo = open(self.filename, 'wb')
         bs = 1024*8
         size = 0
 
@@ -671,6 +842,22 @@ class URLGrabberFileObject:
             try: self.fo.close_connection()
             except: pass
 
+_handler_cache = []
+def CachedOpenerDirector(*handlers):
+    for (cached_handlers, opener) in _handler_cache:
+        if cached_handlers == handlers:
+            return opener
+    opener = urllib2.build_opener(*handlers)
+    _handler_cache.append( (handlers, opener) )
+    return opener
+
+_proxy_cache = []
+def CachedProxyHandler(proxies):
+    for (pdict, handler) in _proxy_cache:
+        if pdict == proxies:
+            return handler
+    handler = urllib2.ProxyHandler(proxies)
+    _proxy_cache.append( (proxies,handler) )
 
 #####################################################################
 # DEPRECATED FUNCTIONS
@@ -734,73 +921,6 @@ def _main_test():
     except URLGrabError, e: print e
     else: print 'LOCAL FILE:', name
 
-
-def _speed_test():
-    #### speed test --- see comment below
-    import sys
-    
-    full_times = []
-    raw_times = []
-    set_throttle(2**40) # throttle to 1 TB/s   :)
-
-    try:
-        from progress import text_progress_meter
-    except ImportError, e:
-        tpm = None
-        print 'not using progress meter'
-    else:
-        tpm = text_progress_meter(fo=open('/dev/null', 'w'))
-
-    # to address concerns that the overhead from the progress meter
-    # and throttling slow things down, we do this little test.  Make
-    # sure /tmp/test holds a sanely-sized file (like .2 MB)
-    #
-    # using this test, you get the FULL overhead of the progress
-    # meter and throttling, without the benefit: the meter is directed
-    # to /dev/null and the throttle bandwidth is set EXTREMELY high.
-    #
-    # note: it _is_ even slower to direct the progress meter to a real
-    # tty or file, but I'm just interested in the overhead from _this_
-    # module.
-    
-    # get it nicely cached before we start comparing
-    print 'pre-caching'
-    for i in range(100):
-        urlgrab('file:///tmp/test', '/tmp/test2',
-                copy_local=1)
-
-    reps = 1000
-    for i in range(reps):
-        print '\r%4i/%-4i' % (i, reps),
-        sys.stdout.flush()
-        t = time.time()
-        urlgrab('file:///tmp/test', '/tmp/test2',
-                copy_local=1, progress_obj=tpm)
-        full_times.append(1000 * (time.time() - t))
-
-        t = time.time()
-        urlgrab('file:///tmp/test', '/tmp/test2',
-                copy_local=1, progress_obj=None)
-        raw_times.append(1000* (time.time() - t))
-    print '\r'
-    
-    full_times.sort()
-    full_mean = 0.0
-    for i in full_times: full_mean = full_mean + i
-    full_mean = full_mean/len(full_times)
-    print '[full] mean: %.3f ms, median: %.3f ms, min: %.3f ms, max: %.3f ms' % \
-          (full_mean, full_times[int(len(full_times)/2)], min(full_times),
-           max(full_times))
-
-    raw_times.sort()
-    raw_mean = 0.0
-    for i in raw_times: raw_mean = raw_mean + i
-    raw_mean = raw_mean/len(raw_times)
-    print '[raw]  mean: %.3f ms, median: %.3f ms, min: %.3f ms, max: %.3f ms' % \
-          (raw_mean, raw_times[int(len(raw_times)/2)], min(raw_times),
-           max(raw_times))
-
-    close_all()
 
 def _retry_test():
     import sys
@@ -884,7 +1004,6 @@ def _test_file_object_readlines(wrapper, fo_output):
 
 if __name__ == '__main__':
     _main_test()
-    _speed_test()
     _retry_test()
     _file_object_test('test')
     
