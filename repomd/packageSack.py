@@ -164,7 +164,11 @@ class PackageSack:
             for repo in self.pkgsByRepo.keys():
                 returnList.extend(self.pkgsByRepo[repo])
         else:
-            returnList = self.pkgsByRepo[repoid]
+            try:
+                returnList = self.pkgsByRepo[repoid]
+            except KeyError:
+                # nothing to return
+                pass
         
         return returnList
 
@@ -432,6 +436,3 @@ class ListPackageSack(PackageSack):
         for pkgobj in ObjList:
             self.addPackage(pkgobj)
     
-    def addPkg(self, po):
-        self.addPackage(po)
-        
