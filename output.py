@@ -141,8 +141,8 @@ def generateRSS(lst):
     
     RSS 2.0 Specification: http://blogs.law.harvard.edu/tech/rss
     """
-    iso8601_format = "%Y-%m-%dT%H:%M:%S.00Z"
     rfc822_format = "%a, %d %b %Y %X GMT"
+    clog_format = "%a, %d %b %Y GMT"
     xhtml_ns = "http://www.w3.org/1999/xhtml"
     now = time.strftime(rfc822_format, time.gmtime())
     doc = libxml2.newDoc('1.0')
@@ -170,7 +170,7 @@ def generateRSS(lst):
                 changelog += '...'
                 break
             (date, author, desc) = e
-            date = time.strftime(rfc822_format, time.gmtime(float(date)))
+            date = time.strftime(clog_format, time.gmtime(float(date)))
             changelog += '%s - %s\n%s\n\n' % (date, author, desc)
         body = item.newChild(None, "body", None)
         body.newNs(xhtml_ns, None)
@@ -178,7 +178,8 @@ def generateRSS(lst):
         body.newChild(None, "pre", escape(pkg.returnSimple('description')))
         body.newChild(None, "p", 'Change Log:')
         body.newChild(None, "pre", escape(changelog))
-        item.newChild(None, 'description', escape(changelog))
+        description = escape('<pre>%s</pre>' % escape(changelog))
+        item.newChild(None, 'description', description)
     return doc
     
 def userconfirm():
