@@ -1,6 +1,7 @@
 import os.path
 import urlparse
 import time
+import string
 
 DEBUG=0
 
@@ -280,8 +281,9 @@ def urlgrab(url, filename=None, copy_local=0, close_connection=0,
     # header then its probably something generated dynamically, such
     # as php, cgi, a directory listing, or an error message.  It is
     # probably not what we want.
-    if not hdr is None and not hdr.has_key('Content-Length'):
-        raise URLGrabError(6, _('ERROR: Url Return no Content-Length  - something is wrong'))
+    if scheme != 'file':
+        if not hdr is None and not hdr.has_key('Content-Length'):
+            raise URLGrabError(6, _('ERROR: Url Return no Content-Length  - something is wrong'))
 
     # download and store the file
     try:
@@ -370,7 +372,7 @@ def _main_test():
 
     kwargs = {}
     for a in sys.argv[3:]:
-        k, v = a.split('=', 1)
+        k, v = string.split(a, '=', 1)
         kwargs[k] = int(v)
 
     set_throttle(1.0)
@@ -460,7 +462,7 @@ def _retry_test():
 
     kwargs = {}
     for a in sys.argv[3:]:
-        k, v = a.split('=', 1)
+        k, v = string.split(a, '=', 1)
         kwargs[k] = int(v)
 
     try: from progress_meter import text_progress_meter
