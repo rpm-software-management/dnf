@@ -202,6 +202,7 @@ class Groups_Info:
                     if self.installed_pkgs.has_key(anypkg):
                         groupinstalled = 1
                 self.group_installed[id]=groupinstalled
+                
         # now we need to check metapkgs in the groups and see which are mandatory
         # and make sure they're installed if they are
         # if there is a mandatory metapkg and it's not installed then the

@@ -304,7 +304,11 @@ def stringToVersion(verstring):
         return (None, None, None)
     i = string.find(verstring, ':')
     if i != -1:
-        epoch = string.atol(verstring[:i])
+        try:
+            epoch = string.atol(verstring[:i])
+        except ValueError:
+            # look, garbage in the epoch field, how fun, kill it
+            epoch = '0' # this is our fallback, deal
     else:
         epoch = '0'
     j = string.find(verstring, '-')
