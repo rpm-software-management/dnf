@@ -412,14 +412,15 @@ def range_header_to_tuple(range_header):
 
 def range_tuple_to_header(range_tup):
     """Convert a range tuple to a Range header value.
-    Return a string of the form "bytes=<firstbyte>-<lastbyte>".
+    Return a string of the form "bytes=<firstbyte>-<lastbyte>" or None
+    if no range is needed.
     """
     if range_tup is None: return None
     range_tup = range_tuple_normalize(range_tup)
     if range_tup:
         if range_tup[1]: 
             range_tup = (range_tup[0],range_tup[1] - 1)
-    return 'bytes=%s-%s' % range_tup
+        return 'bytes=%s-%s' % range_tup
     
 def range_tuple_normalize(range_tup):
     """Normalize a (first_byte,last_byte) range tuple.
