@@ -218,8 +218,8 @@ class YumOutput:
     def listTransaction(self):
         """returns a string rep of the  transaction in an easy-to-read way."""
         
-        updated, installed, removed, obsoleted, depup, depinst, deprem = self.tsInfo.makelists()
-        if len(updated+installed+removed+obsoleted+depup+depinst+deprem) > 0:
+        self.tsInfo.makelists()
+        if len(self.tsInfo) > 0:
             out = """
 =============================================================================
  %-22.22s  %-9.9s  %-15.15s  %-16.16s  %-5.5s
@@ -228,12 +228,12 @@ class YumOutput:
         else:
             out = ""
 
-        for (action, pkglist) in [('Installing', installed),
-                                  ('Updating', updated),
-                                  ('Removing', removed),
-                                  ('Installing for dependencies', depinst),
-                                  ('Updating for dependencies', depup),
-                                  ('Removing for dependencies', deprem)]:
+        for (action, pkglist) in [('Installing', self.tsInfo.installed),
+                            ('Updating', self.tsInfo.updated),
+                            ('Removing', self.tsInfo.removed),
+                            ('Installing for dependencies', self.tsInfo.depinstalled),
+                            ('Updating for dependencies', self.tsInfo.depupdated),
+                            ('Removing for dependencies', self.tsInfo.depremoved)]:
             if pkglist:
                 totalmsg = "%s:\n" % action
             for txmbr in pkglist:
@@ -244,34 +244,15 @@ class YumOutput:
                 size = self.format_number(pkgsize)
                 msg = " %-22.22s  %-9.9s  %-15.15s  %-16.16s  %5.5s\n" % (n, a,
                               evr, repoid, size)
+                for (obspo, relationship) in txmbr.relatedto:
+                    if relationship == 'obsoletes':
+                        appended = '     replacing  %-22.22s  %-9.9s  %-15.15s\n\n' % (obspo.name,
+                            obspo.arch, obspo.printVer())
+                        msg = msg+appended
                 totalmsg = totalmsg + msg
         
             if pkglist:
                 out = out + totalmsg
-        
-        obs = """
-Other Actions:
-=============================================================================
-Obsoletes:
-"""
-        for txmbr in obsoleted:
-            (n,a,e,v,r) = txmbr.pkgtup
-            obspkg = None
-            evr = txmbr.po.printVer()
-            for (obspo, relationship) in txmbr.relatedto:
-                if relationship == 'obsoletedby':
-                    obspkg = 1
-                    obs_evr = obspo.printVer()
-            if obspkg is not None:
-                msg1 = " %-22.22s  %-9.9s  %-15.15s  %-16.16s\n" % (n, a, evr,
-                                                        'installed')
-                msg2 = "   obsoleted by\n"
-                msg3 = " %-22.22s  %-9.9s  %-15.15s  %-16.16s\n\n" % (obspo.name,
-                                obspo.arch, obs_evr, obspo.repoid)
-                obs = obs + msg1 + msg2 + msg3
-                
-        if obsoleted:
-            out = out + obs
 
         summary = """
 Transaction Summary
@@ -279,9 +260,9 @@ Transaction Summary
 Install  %5.5s Package(s)         
 Update   %5.5s Package(s)         
 Remove   %5.5s Package(s)         
-Obsolete %5.5s Packages(s)
-""" % (len(installed + depinst), len(updated + depup), len(removed + deprem),
-       len(obsoleted))
+""" % (len(self.tsInfo.installed + self.tsInfo.depinstalled),
+       len(self.tsInfo.updated + self.tsInfo.depupdated),
+       len(self.tsInfo.removed + self.tsInfo.depremoved))
         out = out + summary
         
         return out
@@ -289,12 +270,15 @@ Obsolete %5.5s Packages(s)
     def postTransactionOutput(self):
         out = ''
         
-        updated, installed, removed, obsoleted, depup, depinst, deprem = self.tsInfo.makelists()
+        self.tsInfo.makelists()
 
-        for (action, pkglist) in [('Removed', removed), ('Dependency Removed', deprem),
-                                  ('Installed', installed), ('Dependency Installed', depinst),
-                                  ('Updated', updated), ('Dependency Updated', depup),
-                                  ('Obsoleted', obsoleted)]:
+        for (action, pkglist) in [('Removed', self.tsInfo.removed), 
+                                  ('Dependency Removed', self.tsInfo.depremoved),
+                                  ('Installed', self.tsInfo.installed), 
+                                  ('Dependency Installed', self.tsInfo.depinstalled),
+                                  ('Updated', self.tsInfo.updated),
+                                  ('Dependency Updated', self.tsInfo.depupdated),
+                                  ('Replaced', self.tsInfo.obsoleted)]:
             
             if len(pkglist) > 0:
                 out += '\n%s:' % action

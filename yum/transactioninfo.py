@@ -138,51 +138,50 @@ class TransactionData:
            updated, installed, erased, obsoleted, depupdated, depinstalled
            deperased"""
            
-        removed = []
-        installed = []
-        updated = []
-        obsoleted = []
-        depremoved = []
-        depinstalled = []
-        depupdated = []
+        self.removed = []
+        self.installed = []
+        self.updated = []
+        self.obsoleted = []
+        self.depremoved = []
+        self.depinstalled = []
+        self.depupdated = []
         
         for txmbr in self.getMembers():
             if txmbr.output_state == 'updating':
                 if txmbr.isDep:
-                    depupdated.append(txmbr)
+                    self.depupdated.append(txmbr)
                 else:
-                    updated.append(txmbr)
+                    self.updated.append(txmbr)
                     
             elif txmbr.output_state == 'installing':
                 if txmbr.isDep:
-                    depinstalled.append(txmbr)
+                    self.depinstalled.append(txmbr)
                 else:
-                    installed.append(txmbr)
+                    self.installed.append(txmbr)
             
             elif txmbr.output_state == 'erasing':
                 if txmbr.isDep:
-                    depremoved.append(txmbr)
+                    self.depremoved.append(txmbr)
                 else:
-                    removed.append(txmbr)
+                    self.removed.append(txmbr)
                     
             elif txmbr.output_state == 'obsoleted':
-                obsoleted.append(txmbr)
+                self.obsoleted.append(txmbr)
                 
             elif txmbr.output_state == 'obsoleting':
-                installed.append(txmbr)
+                self.installed.append(txmbr)
                 
             else:
                 pass
     
-            updated.sort()
-            installed.sort()
-            removed.sort()
-            obsoleted.sort()
-            depupdated.sort()
-            depinstalled.sort()
-            depremoved.sort()
+            self.updated.sort()
+            self.installed.sort()
+            self.removed.sort()
+            self.obsoleted.sort()
+            self.depupdated.sort()
+            self.depinstalled.sort()
+            self.depremoved.sort()
 
-        return updated, installed, removed, obsoleted, depupdated, depinstalled, depremoved
     
     def addInstall(self, po):
         """adds a package as an install but in mode 'u' to the ts
