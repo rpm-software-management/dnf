@@ -1,7 +1,7 @@
 Summary: RPM installer/updater
 Name: yum
-Version: 0.9.4
-Release: 1_7x
+Version: 0.9.5
+Release: 1_73
 License: GPL
 Group: System Environment/Base
 Source: %{name}-%{version}.tar.gz
@@ -29,9 +29,12 @@ make
 [ "$RPM_BUILD_ROOT" != "/" ] && rm -rf $RPM_BUILD_ROOT
 make DESTDIR=$RPM_BUILD_ROOT install
 mkdir -p $RPM_BUILD_ROOT/%{_sbindir}
+install -m 644 etc/yum-7.3.conf $RPM_BUILD_ROOT/etc/yum.conf
 cd $RPM_BUILD_ROOT/%{_sbindir}
 ln -s ../bin/yum .
 ln -s ../bin/yum-arch .
+
+
 
 %clean
 [ "$RPM_BUILD_ROOT" != "/" ] && rm -rf $RPM_BUILD_ROOT
@@ -70,6 +73,11 @@ exit 0
 %{_mandir}/man*/*
 
 %changelog
+* Tue Mar 11 2003 Seth Vidal <skvidal@phy.duke.edu>
+- bump ver to 0.9.5
+- fix conf file
+- for rhl 7.3
+
 * Sun Dec 22 2002 Seth Vidal <skvidal@phy.duke.edu>
 - bumped to ver 0.9.4
 - split spec file for rhl 7x vs 8

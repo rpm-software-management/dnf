@@ -1,7 +1,7 @@
 Summary: RPM installer/updater
 Name: yum
-Version: 0.9.4
-Release: 1_8x
+Version: 0.9.5
+Release: 1_80
 License: GPL
 Group: System Environment/Base
 Source: %{name}-%{version}.tar.gz
@@ -70,6 +70,10 @@ exit 0
 %{_mandir}/man*/*
 
 %changelog
+* Tue Mar 11 2003 Seth Vidal <skvidal@phy.duke.edu>
+- default spec for rhl 8.0
+- ver to 0.9.5
+
 * Sun Dec 22 2002 Seth Vidal <skvidal@phy.duke.edu>
 - bumped ver to 0.9.4
 - new spec file for rhl 8.0
