@@ -320,7 +320,9 @@ def doRepoSection(globconfig, thisconfig, section):
 
 
 def getMirrorList(mirrorlist):
-    """retrieve a mirrorlist file from a url"""
+    """retrieve an up2date-style mirrorlist file from a url, 
+       we also s/$ARCH/$BASEARCH/ and move along"""
+       
     returnlist = []
     if hasattr(urlgrabber.grabber, 'urlopen'):
         urlresolver = urlgrabber.grabber
@@ -342,6 +344,7 @@ def getMirrorList(mirrorlist):
         content = fo.readlines()
         for line in content:
             mirror = re.sub('\n$', '', line) # no more trailing \n's
+            (mirror, count) = re.subn('\$ARCH', '$BASEARCH', mirror)
             returnlist.append(mirror)
     
     return returnlist
