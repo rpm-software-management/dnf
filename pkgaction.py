@@ -306,21 +306,24 @@ def kernelupdate(tsnevral):
                 kernel_list.append((verRel, extraInfo))
         
     if len(kernel_list) > 0:
-        log(2,"Kernel Updated/Installed, fixing the bootloader")
+        log(2, 'Kernel Updated/Installed, checking for bootloader')
         # code from up2date/up2date.py
         #figure out which bootloader, run the script for that bootloader
         import checkbootloader
         bootloader = checkbootloader.whichBootLoader()
         import up2datetheft
         if bootloader == "LILO":
-            log(2,"Lilo found - adding kernel to lilo and making it the default")
+            log(2, 'Lilo found - adding kernel to lilo and making it the default')
             up2datetheft.install_lilo(kernel_list)
         elif bootloader == "GRUB":
             # at the moment, kernel rpms are supposed to grok grub
             # and do the Right Thing. Just a placeholder for doc purposes and
             #to put the kernels in the right order
-            log(2,"Grub found - making this kernel the default")
+            log(2,'Grub found - making this kernel the default')
             up2datetheft.install_grub(kernel_list)
+        else:
+            errorlog(1, 'No bootloader found, Cannot configure kernel, continuing.')
+            filelog(1, 'No bootloader found, Cannot configure kernel.')
 
 def checkRpmMD5(package):
     check=rpm.CHECKSIG_MD5
