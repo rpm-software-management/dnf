@@ -68,7 +68,7 @@ class Depsolve:
                 loc = po.returnSimple('relativepath')
                 provides = po.getProvidesNames()
                 if mode == 'u':
-                    if n in self.installonly or 'kernel-modules' in provides:
+                    if n in self.conf.getConfigOption('installonlypkgs') or 'kernel-modules' in provides:
                         self.tsInfo.changeMode(pkginfo, 'i')
                         self.ts.addInstall(hdr, (hdr, loc), 'i')
                         self.log(5, 'Adding Package %s in mode i' % po)
@@ -79,7 +79,7 @@ class Depsolve:
                     self.ts.addInstall(hdr, (hdr, loc), 'i')                                            
                     self.log(5, 'Adding Package %s in mode i' % po)
             elif mode in ['e']:
-                indexes = rpmUtils.getIndexesByKeyword(self.base.ts, name=n,
+                indexes = rpmUtils.getIndexesByKeyword(self.read_ts, name=n,
                           arch=a, epoch=e, version=v, release=r)
                 for idx in indexes:
                     self.ts.addErase(idx)                          
@@ -91,7 +91,7 @@ class Depsolve:
         unresolvable = 0
         depscopy = []
         unresolveableloop = 0
-        while CheckDeps==1 or conflicts != 1 or unresolvable != 1:
+        while CheckDeps==1 or conflicts != 1 or unresolvableloop != 1:
             errors=[]
             self.populateTs()
             deps = self.ts.check()
@@ -122,11 +122,12 @@ class Depsolve:
                 if sense == rpm.RPMDEP_SENSE_REQUIRES:
                     # silly silly silly easy case
                     self.log(4, '%s requires: %s' % (name, rpmUtils.miscutils.formatRequire(reqname, reqversion, flags)))
-                    pkgs = self.base.pkgSack.searchProvides(reqname)
+                    pkgs = self.pkgSack.searchProvides(reqname)
                     if flags == 0:
                         flags = None
                     (r_e, r_v, r_r) = rpmUtils.miscutils.stringToVersion(reqversion)
                     for po in pkgs:
+                        self.log(3, 'Matched %s to %s' % (reqname, po))
                         if po.checkPrco('provides', (reqname, flags, (r_e, r_v, r_r))):
                             # first one? <shrug>
                             (n, e, v, r, a) = po.returnNevraTuple() # this is stupid the po should be emitting matching tuple types
@@ -144,8 +145,10 @@ class Depsolve:
             self.log.write(2, '.')
             del deps
             self.ts.clean()
-            if len(errors) > 0:
-                return(1, errors)
-            if self.tsInfo.count() > 0:
-                return(2, ['Run Callback'])
+        
+        
+        if len(errors) > 0:
+            return(1, errors)
+        if self.tsInfo.count() > 0:
+            return(2, ['Run Callback'])
 

@@ -99,10 +99,10 @@ def main(args):
         unlock()
         sys.exit(1)
 
-    base.log(2, 'Dependencies Resolved')
+    base.log(2, '\nDependencies Resolved')
     #run post-depresolve script here
     #run  pre-trans script here
-
+    print base.tsInfo.display()
     # run the transaction
     try:
         base.doTransaction()

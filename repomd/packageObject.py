@@ -269,13 +269,13 @@ class RpmBase:
                 rc = mdUtils.compareEVR((e, v, r), (reqe, reqv, reqr))
                 
                 if rc >= 1:
-                    if reqf in ['GT', 'GE']:
+                    if reqf in ['GT', 'GE', 4, 12]:
                         return 1
                 if rc == 0:
-                    if reqf in ['GE', 'LE', 'EQ']:
+                    if reqf in ['GE', 'LE', 'EQ', 8, 10, 12]:
                         return 1
                 if rc <= -1:
-                    if reqf in ['LT', 'LE']:
+                    if reqf in ['LT', 'LE', 2, 10]:
                         return 1
         return 0
         
