@@ -880,6 +880,8 @@ def create_final_ts(tsInfo, rpmdb):
                     errorlog(0, '%s' % e)
                     sys.exit(1)
                 tsInfo.setlocalrpmpath(name, arch, localrpmpath)
+            #oo where the file is may have changed - lets get that again
+            rpmloc = tsInfo.localRpmPath(name, arch)
             # sigcheck here :)
             pkgaction.checkRpmMD5(rpmloc)
             if conf.servergpgcheck[serverid]:
