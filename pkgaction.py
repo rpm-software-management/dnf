@@ -138,10 +138,12 @@ def updatepkgs(tsnevral,hinevral,rpmnevral,nulist,uplist,obslist,userlist):
                         foundit=1
                         archlist = archwork.availablearchs(hinevral,name)
                         bestarch = archwork.bestarch(archlist)
+                        log(4,"bestarch %s" % bestarch)
                         for currarch in archlist:
+                            log(4, "arch = %s" % currarch)
                             if uplist.count((name,currarch))>0:
                                 #its one of the archs we do and its in the uplist - update it
-                                log(4,"Updating %s" % (name))
+                                log(4, "Updating %s" % (name))
                                 ((e, v, r, a, l, i), s)=hinevral._get_data(name,currarch)
                                 tsnevral.add((name,e,v,r,a,l,i),'u')            
                             elif uplist.count((name,currarch)) < 1 and nulist.count((name,currarch))>0:
@@ -152,8 +154,8 @@ def updatepkgs(tsnevral,hinevral,rpmnevral,nulist,uplist,obslist,userlist):
                                     tsnevral.add((name,e,v,r,a,l,i),'iu')
                             elif uplist.count((name,currarch)) < 1 and nulist.count((name,currarch))<1:
                                 #its an arch we do, its not updated and its installed
-                                errorlog(1,"%s is the latest version" % (name))
-                                sys.exit(1)
+                                #but we keep going b/c we may not be done
+                                log(5, "nope not %s" % currarch)
                 if foundit==0:
                     if rpmnevral.exists(n):
                         errorlog(1,"%s is installed and the latest version." % (n))
