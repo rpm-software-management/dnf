@@ -109,13 +109,11 @@ class YumSqlitePackageSack(repos.YumPackageSack):
               return
             self.added[repoid] = ['filelists']
             self.filelistsdb[repoid] = dataobj
-            print "Added filelists for %s" % (repoid)
         elif datatype == 'otherdata':
             if (self.otherdb.has_key(repoid)):
               return
             self.added[repoid] = ['otherdata']
             self.otherdb[repoid] = dataobj
-            print "Added otherdata for %s" % (repoid)
         else:
             # We can not handle this yet...
             raise "Sorry sqlite does not support %s" % (datatype)
