@@ -277,6 +277,9 @@ class nevral:
 								else:
 									errors.append("package %s needs %s (not provided)" % (name, clientStuff.formatRequire(reqname, reqversion, flags)))
 				elif sense == rpm.RPMDEP_SENSE_CONFLICTS:
+					#much more shit should happen here. specifically:
+					#if you have a conflict b/t two pkgs, try to upgrade the reqname pkg. - see if that solves the problem
+					#also something like a "this isn't our fault and we can't help it, continue on" should happen.like in anaconda
 					print reqname
 					print reqversion
 					conflicts = 1

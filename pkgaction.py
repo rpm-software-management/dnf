@@ -21,7 +21,7 @@ def installpkgs(tsnevral,nulist,userlist,hinevral,rpmnevral):
 	#check to see if they are already installed - if they are try to upgrade them
 	#if they are the latest version then error and exit
 	#if they are not, check to see if there is more than one arch, if so pass it to bestarch then use the bestone for this platform
-	#add that one as 'i' to the tsinfo
+	#add that one as 'iu' to the tsinfo
 	#if they are not a pkg and you can't find it at all error and exit
 	import fnmatch, archwork
 	if len(nulist) > 0:
