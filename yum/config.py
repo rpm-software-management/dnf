@@ -89,7 +89,7 @@ class yumconf:
                          ('installroot', '/'),
                          ('commands', []),
                          ('exclude', []),
-                         ('failovermethod', 'roundrobin')
+                         ('failovermethod', 'roundrobin'),
                          ('yumversion', 'unversioned'),
                          ('proxy', None),
                          ('proxy_username', None),
