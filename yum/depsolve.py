@@ -16,6 +16,7 @@
 
 import os
 import os.path
+import re
 
 import rpmUtils.transaction
 import rpmUtils.miscutils
@@ -46,6 +47,17 @@ class Depsolve:
         # we need to check the name - if it doesn't match:
         # /etc/* bin/* or /usr/lib/sendmail then we should fetch the 
         # filelists.xml for all repos to make the searchProvides more complete.
+        if name[0] == '/':
+            matched = 0
+            globs = ['.*bin\/.*', '^\/etc\/.*', '^\/usr\/lib\/sendmail$']
+            for glob in globs:
+                globc = re.compile(glob)
+                if globc.match(name):
+                    matched = 1
+            if not matched:
+                self.log(2, 'Importing Additional filelist information for depresolution')
+                self.repos.populateSack(with='filelists')
+                
         pkgs = self.pkgSack.searchProvides(name)
         if flags == 0:
             flags = None

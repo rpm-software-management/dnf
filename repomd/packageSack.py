@@ -399,7 +399,7 @@ class XMLPackageSack(PackageSack):
                                     break
                                     
                                 elif reader.NodeType() == 14:
-                                    ret = reader.Read()                                                        
+                                    ret = reader.Read()
                                     continue
 
                                 elif reader.NodeType() == 1:
@@ -422,6 +422,9 @@ class XMLPackageSack(PackageSack):
         # update the repostatus
         if not 'filelist' in self.repoStatus[repoid]:
             self.repoStatus[repoid].append('filelist')
+        # we've just added file items - build up the indexes again
+        self.buildIndexes()
+        
             
     def loadOtherMD(self, reader, repoid, callback=None):
         """load the changelog, etc data from the other.xml file"""
@@ -476,6 +479,8 @@ class XMLPackageSack(PackageSack):
                                         
         if not 'other' in self.repoStatus[repoid]:
             self.repoStatus[repoid].append('other')
+        # we've just added file items - build up the indexes again
+        self.buildIndexes()
         
 
 class ListPackageSack(PackageSack):
