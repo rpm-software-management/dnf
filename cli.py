@@ -155,18 +155,18 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
             
             # syslog-style log
             if self.conf.getConfigOption('uid') == 0:
-                logpath = os.path.dirname(self.getConfigOption('logfile'))
+                logpath = os.path.dirname(self.conf.logfile)
                 if not os.path.exists(logpath):
                     try:
-                        os.makedirs(dir, mode=0755)
+                        os.makedirs(logpath, mode=0755)
                     except OSError, e:
                         self.errorlog(0, _('Cannot make directory for logfile %s' % logpath))
                         sys.exit(1)
                 try:
-                    logfd = os.open(self.conf.getConfigOption('logfile'), os.O_WRONLY |
+                    logfd = os.open(self.conf.logfile, os.O_WRONLY |
                                     os.O_APPEND | os.O_CREAT, 0644)
                 except OSError, e:
-                    self.errorlog(0, _('Cannot open logfile %s' % self.getConfigOption('logfile')))
+                    self.errorlog(0, _('Cannot open logfile %s' % self.conf.logfile))
                     sys.exit(1)
 
                 logfile =  os.fdopen(logfd, 'a')

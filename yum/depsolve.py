@@ -418,6 +418,13 @@ class Depsolve:
         #                       - be confused but continue
 
         provSack = self.whatProvides(needname, needflags, needversion)
+
+        # get rid of things that are already in the rpmdb - b/c it's pointless to use them here
+        for pkg in provSack.returnPackages():
+            if pkg.pkgtup() in self.rpmdb.getPkgList(): # is it already installed?
+                self.log(5, '%s is in providing packages but it is already installed, removing.' % pkg)
+                provSack.delPackage(pkg)
+                
         
         if len(provSack) == 0: # unresolveable
             missingdep = 1
@@ -435,9 +442,10 @@ class Depsolve:
                 self.log(5, '%s already in ts, skipping this one' % (n))
                 checkdeps = 1
                 return checkdeps, missingdep
+        
 
         # find the best one 
-        newest = provSack.returnNewestByNameArch() 
+        newest = provSack.returnNewestByNameArch()
         if len(newest) > 1: # there's no way this can be zero
             best = newest[0]
             for po in newest[1:]:

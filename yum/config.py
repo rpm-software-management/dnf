@@ -192,8 +192,8 @@ class yumconf(object):
                       
                       
         #defaults -either get them or set them
-        optionstrings = [('cachedir', root + '/var/cache/yum'), 
-                         ('logfile', root + '/var/log/yum.log'), 
+        optionstrings = [('cachedir', '/var/cache/yum'), 
+                         ('logfile', '/var/log/yum.log'), 
                          ('reposdir', '/etc/yum.repos.d'),
                          ('rss-filename', 'yum-rss.xml'),
                          ('pkgpolicy', 'newest'),
@@ -267,12 +267,13 @@ class yumconf(object):
             
             
         # do the dirs - set the root if there is one (grumble)
-        for opt in ['cachedir', 'reposdir', 'logfile']:
-            path = self.configdata[opt]
+        for option in ['cachedir', 'logfile']:
+            path = self.configdata[option]
             root = self.configdata['installroot']
             rootedpath = root + path
-            self.configdata[opt] = rootedpath
-
+            self.configdata[option] = rootedpath
+            setattr(self, option, rootedpath)
+            
         # bandwidth limit options require special parsing
         for option, getfunc in (('bandwidth', self.cfg.getbytes), 
                                 ('throttle', self.cfg.getthrottle)):
@@ -311,9 +312,9 @@ class yumconf(object):
         # read each of them in using confpp, then parse them same as any other repo
         # section - as above.
         reposdir = self.getConfigOption('reposdir')
-        if not os.path.exists(self.getConfigOption('installroot') + reposdir):
-            reposdir = '/' + reposdir
-            
+        if os.path.exists(self.getConfigOption('installroot') + '/' + reposdir):
+            reposdir = self.getConfigOption('installroot') + '/' + reposdir
+        
         reposglob = reposdir + '/*.repo'
         if os.path.exists(reposdir) and os.path.isdir(reposdir):
             repofn = glob.glob(reposglob)
