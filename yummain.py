@@ -49,21 +49,14 @@ def main(args):
     # parse our cli args, read in the config file and setup the logs
     cli.getOptionsConfig(args, base)
     
-    if len(base.conf.getConfigOption('commands')) == 0 and len(base.cmds) < 1:
-        base.cmds = base.conf.getConfigOption('commands')
-    else:
-        base.conf.setConfigOption('commands', base.cmds)
-        
-    if len (base.cmds) < 1:
-        base.errorlog(0, _('Options Error: no commands found'))
-        cli.usage()
+ 
+    process = base.cmds[0]           
+    # set our caching mode correctly
+    if base.conf.getConfigOption('uid') != 0:
+        base.conf.setConfigOption('cache', 1)
+    if process == 'clean':
+        base.conf.setConfigOption('cache', 1)
 
-    if base.cmds[0] not in ('update', 'install','info', 'list', 'erase',\
-                       'grouplist','groupupdate','groupinstall','clean', \
-                       'remove', 'provides', 'check-update', 'search'):
-        cli.usage()
-    process = base.cmds[0]
-    
     # ok at this point lets check the lock/set the lock if we can
     if base.conf.getConfigOption('uid') == 0:
         mypid = str(os.getpid())
@@ -72,13 +65,7 @@ def main(args):
         except Errors.LockError, e:
             print _('%s') % e.msg
             sys.exit(200)
-            
-    # set our caching mode correctly
-    if base.conf.getConfigOption('uid') != 0:
-        base.conf.setConfigOption('cache', 1)
-    if process == 'clean':
-        base.conf.setConfigOption('cache', 1)
-
+ 
     # get our transaction set together that we'll use all over the place
     base.read_ts = rpmUtils.transaction.initReadOnlyTransaction()
     
@@ -87,7 +74,6 @@ def main(args):
     base.rpmdb.addDB(base.read_ts)
     base.log(2, '#pkgs in db = %s' % len(base.rpmdb.getPkgList()))
 
-    
     if process in ['groupupdate', 'groupinstall', 'grouplist', 'groupremove']:
         base.grpInfo = yum.yumcomps.Groups_Info(base.rpmdb.getPkgList(),
                                  base.conf.getConfigOption('overwrite_groups'))

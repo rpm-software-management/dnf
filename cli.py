@@ -191,7 +191,19 @@ def parseCommands(baseclass):
     """reads baseclass.cmds and parses them out to make sure that the requested 
        base command + argument makes any sense at all""" 
 
+    if len(baseclass.conf.getConfigOption('commands')) == 0 and len(base.cmds) < 1:
+        baseclass.cmds = baseclass.conf.getConfigOption('commands')
+    else:
+        baseclass.conf.setConfigOption('commands', baseclass.cmds)
+        
+
+    if baseclass.cmds[0] not in ('update', 'install','info', 'list', 'erase',\
+                       'grouplist','groupupdate','groupinstall','clean', \
+                       'remove', 'provides', 'check-update', 'search'):
+        usage()
+        
     cmds = baseclass.cmds          
+
     if len(cmds) < 1:
         baseclass.errorlog(0, _('You need to give some command'))
         usage()
@@ -245,7 +257,13 @@ def doCommands(baseclass):
 
     elif basecmd in ['erase', 'remove']:
         matched, unmatched = parsePackages(baseclass.rpmdb.getPkgList(), args)
-        
+
+    elif basecmd == 'list':
+        totalpkgs = []
+        totalpkgs.extend(baseclass.rpmdb.getPkgList())
+        totalpkgs.extend(baseclass.pkgSack.simplePkgList())
+        matched, unmatched = parsePackages(totalpkgs, args)        
+
     return basecmd, matched, unmatched    
         
    
