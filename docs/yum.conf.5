@@ -28,6 +28,11 @@ default is 2.
 boolean - tells yum to check for diskspace issues or not
 default is 1 (so yes do the check)
 
+.IP \fBtolerant\fR
+1 or 0 - Tells yum to be tolerant of errors on the command line with regard
+to packages. For example: if you request to install foo, bar and baz and baz is
+installed; yum won't error out complaining that baz is already installed.
+same as -t on the command line. Default to 0(not tolerant)
 
 .IP \fBerrorlevel\fR
 debug level. valid numbers are 0\-2.

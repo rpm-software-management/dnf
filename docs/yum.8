@@ -99,6 +99,8 @@ Specifies the config file location\&.
 Sets the debugging level to [number] \- turns up or down the amount of things that are printed\&.
 .IP "\fB\-e [number]\fP" 
 Sets the error level to [number] 0 \- 10. 0 means print only critical errors about which you must be told. 1 means print all errors, even ones that are not overly important. 1+ means print more errors (if any) \-e 0 is good for cron jobs.
+.IP "\fB\-t\fP" 
+Tells yum to be tolerant of errors on the command line with regard to packages on the commandline. For example: if you request to install foo, bar and baz and baz is installed; yum won't error out complaining that baz is already installed.
 .IP "\fB\-R [time in minutes]\fP" 
 Sets the maximum amount of time yum will wait before performing a command \- it randomizes over the time.
 .IP "\fB\-C\fP" 
