@@ -30,6 +30,7 @@ from urlgrabber.progress import TextMeter
 import yum
 import yum.Errors
 import yum.misc
+import rpmUtils.arch
 from rpmUtils.miscutils import compareEVR
 from yum.packages import parsePackages, returnBestPackages, YumInstalledPackage, YumLocalPackage
 from yum.logger import Logger
@@ -709,14 +710,23 @@ For more information contact your distribution or package provider.
                 (n, e, v, r, a) = pkg.returnNevraTuple()
                 pkgtup = (n, a, e, v, r)
                 if pkgtup in installed:
+                    self.log(6, 'Package %s is already installed, skipping' % pkg)
                     continue
                 
                 # everything installed that matches the name
                 installedByKey = self.rpmdb.returnTupleByKeyword(name=n)
-
+                comparable = []
+                for instTup in installedByKey:
+                    (n2, a2, e2, v2, r2) = instTup
+                    if rpmUtils.arch.isMultiLibArch(a2) == rpmUtils.arch.isMultiLibArch(pkg.arch):
+                        comparable.append(instTup)
+                    else:
+                        self.log(6, 'Discarding non-comparable pkg %s.%s' % (n2, a2))
+                        continue
+                        
                 # go through each package 
-                if len(installedByKey) > 0:
-                    for instTup in installedByKey:
+                if len(comparable) > 0:
+                    for instTup in comparable:
                         (n2, a2, e2, v2, r2) = instTup
                         rc = compareEVR((e2, v2, r2), (e, v, r))
                         if rc < 0: # we're newer - this is an update, pass to them
@@ -736,6 +746,7 @@ For more information contact your distribution or package provider.
                                 if not toBeInstalled.has_key(n): toBeInstalled[n] = []
                                 toBeInstalled[n].append(pkgtup)
                 else: # we've not got any installed that match n or n+a
+                    self.log(5, 'No other %s installed, adding to list for install' % pkg.name)
                     if not toBeInstalled.has_key(n): toBeInstalled[n] = []
                     toBeInstalled[n].append(pkgtup)
         

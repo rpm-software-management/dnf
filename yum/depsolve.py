@@ -244,6 +244,9 @@ class Depsolve:
             hdrs = self.rpmdb.returnHeaderByTuple(pkgtuple)
             for hdr in hdrs:
                 po = packages.YumInstalledPackage(hdr)
+                if self.tsInfo.getMode(name=po.name, arch=po.arch, epoch=po.epoch, ver=po.version, rel=po.release):
+                    self.log(7, 'Skipping package already in Transaction Set: %s' % po)
+                    continue
                 if niceformatneed in po.requiresList():
                     pkgs.append(po)
 
