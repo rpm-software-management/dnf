@@ -373,7 +373,6 @@ class PackageToDBAdapter:
     '''
 
     NAME_MAPS = {
-        'pkgId': 'pkgid',
         'rpm_package': 'package',
         'version': 'ver',
         'release': 'rel',
@@ -382,8 +381,8 @@ class PackageToDBAdapter:
         'rpm_group': 'group',
         'rpm_buildhost': 'buildhost',
         'rpm_sourcerpm': 'sourcerpm',
+        'rpm_packager': 'packager',
         }
-    
     
     COLUMNS = (
             'pkgId',
