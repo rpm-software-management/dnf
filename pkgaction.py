@@ -169,7 +169,7 @@ def updatepkgs(tsnevral, hinevral, rpmnevral, nulist, uplist, userlist):
                 errorlog(0,"Cannot find any package matching %s available to be updated." % (n))
             sys.exit(1)
             
-def upgradepkgs(tsnevral, hinevral, rpmnevral, nulist, uplist, obsoleted_list, obsdict, userlist):
+def upgradepkgs(tsnevral, hinevral, rpmnevral, nulist, uplist, obsoleted, obsoleting, userlist):
     # must take user arguments
     # this is just like update except it must check for obsoleting pkgs first
     # so if foobar = 1.0 and you have foobar-1.1 in the repo and bazquux1.2 
@@ -183,24 +183,51 @@ def upgradepkgs(tsnevral, hinevral, rpmnevral, nulist, uplist, obsoleted_list, o
     # check for duping problems - if something is updateable AND obsoleted
     # we want to obsoleted to take precedence over updateable
     
-    completeuplist = []
-    uplistnames = []
-    for (name, arch) in uplist:
-        uplistnames.append(name)
-        completeuplist.append((name,arch))
-        log(4,"Updating: %s" % name)
+
+    # we have to look at pkgs that are available to update
+    # AND pkgs that are obsoleted - b/c something could be obsoletable
+    # but not updateable
+    
+    # best to build one list with updated and obsoleteable
+    oulist = []
+    globalupgrade = 0
+    for oname in obsoleted.keys():
+        if rpmnevral.exists(oname):
+            ((e, v, r, oarch, l, i), s) = rpmnevral._get_data(oname)
+            oulist.append((oname, oarch))
+
+    for (name,  arch) in uplist:
+        oulist.append((name, arch))
+
+    if type(userlist) is types.StringType and userlist == 'all':
+        userlist = ['*']
+        globalupgrade = 1
+
+    for n in userlist:
+        pkgfound = 0
+        for (name, arch) in oulist:
+            if n == name or fnmatch.fnmatch(name, n):
+                pkgfound = 1
+                if obsoleted.has_key(name):
+                    (obsname, obsarch) = obsoleted[name][0]
+                    log(4, '%s obsoleted by %s' % (name, obsname))
+                    ((e, v, r, a, l, i), s)=hinevral._get_data(obsname, obsarch)
+                    tsnevral.add((obsname,e,v,r,a,l,i),'u')
+                else:
+                    log(4,"Updating: %s" % name)
+                    ((e, v, r, a, l, i), s)=hinevral._get_data(name, arch)
+                    tsnevral.add((name,e,v,r,a,l,i),'u')
+        if not pkgfound:
+            if rpmnevral.exists(n):
+                errorlog(1,"No Upgrades available for %s." % (n))
+            else:
+                if globalupgrade:
+                    errorlog(0,"No Upgrades available." % (n))
+                else:
+                    errorlog(0,"Cannot find any package matching %s available to be upgraded." % (n))
+            sys.exit(1)
         
-    for (name, arch) in obsdict.keys():
-        if obsdict[(name,arch)] not in uplistnames:
-            completeuplist.append((name,arch))
-            log(4,"Obsolete: %s by %s" % (obsdict[(name,arch)], name))
-            
-    if len(completeuplist) > 0 :
-        for (name,arch) in completeuplist:
-            ((e, v, r, a, l, i), s)=hinevral._get_data(name,arch)
-            tsnevral.add((name,e,v,r,a,l,i),'u')
-    else:
-        errorlog(1,"No Packages Available for Update or Install")
+    
 
 def erasepkgs(tsnevral,rpmnevral,userlist):
     #mark for erase iff the userlist item exists in the rpmnevral

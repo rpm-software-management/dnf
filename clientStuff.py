@@ -202,8 +202,8 @@ def readHeader(rpmfn):
 
 
 def returnObsoletes(headerNevral, rpmNevral, uninstNAlist):
-    obsdict = {} # obsdict[obseletinglist]=packageitobsoletes
-    obsoleted_list = []
+    obsoleting = {} # obsoleting[pkgobsoleting]=[list of pkgs it obsoletes]
+    obsoleted = {} # obsoleted[pkgobsoleted]=[list of pkgs obsoleting it]
     for (name, arch) in uninstNAlist:
         # DEBUG print '%s, %s' % (name, arch)
         header = headerNevral.getHeader(name, arch)
@@ -224,58 +224,77 @@ def returnObsoletes(headerNevral, rpmNevral, uninstNAlist):
         if obs:
             for ob in obs:
                 obvalue = string.split(ob)
-                if rpmNevral.exists(obvalue[0]):
-                    if len(obvalue) == 1:
-                        obsdict[(name, arch)]=obvalue[0]
-                        obsoleted_list.append(obvalue[0])
-                        log(4, '%s obsoleting %s' % (name, ob))
+                obspkg = obvalue[0]
+                if rpmNevral.exists(obspkg):
+                    if len(obvalue) == 1: #unversioned obsolete
+                        if not obsoleting.has_key((name, arch)):
+                            obsoleting[(name, arch)] = []
+                        obsoleting[(name, arch)].append(obspkg)
+                        if not obsoleted.has_key(obspkg):
+                            obsoleted[obspkg] = []
+                        obsoleted[obspkg].append((name, arch))
+                        log(4, '%s obsoleting %s' % (name, obspkg))
                     elif len(obvalue) == 3:
+                        obscomp = obvalue[1]
+                        obsver = obsvalue[2]
                         (e1, v1, r1) = rpmNevral.evr(name, arch)
-                        (e2, v2, r2) = str_to_version(obvalue[2])
+                        (e2, v2, r2) = str_to_version(obsver)
                         rc = compareEVR((e1, v1, r1), (e2, v2, r2))
-                        if obvalue[1] == '>':
+                        if obscomp == '>':
                             if rc >= 1:
-                                obsoleted_list.append(obvalue[0])
-                                obsdict[(name, arch)]=obvalue[0]
-                            elif rc == 0:
-                                pass
-                            elif rc <= -1:
-                                pass
-                        elif obvalue[1] == '>=':
+                                if not obsoleting.has_key((name, arch)):
+                                    obsoleting[(name, arch)] = []
+                                obsoleting[(name, arch)].append(obspkg)
+                                if not obsoleted.has_key(obspkg):
+                                    obsoleted[obspkg] = []
+                                obsoleted[obspkg].append((name, arch))
+                        elif obscomp == '>=':
                             if rc >= 1:
-                                obsoleted_list.append(obvalue[0])
-                                obsdict[(name, arch)]=obvalue[0]
+                                if not obsoleting.has_key((name, arch)):
+                                    obsoleting[(name, arch)] = []
+                                obsoleting[(name, arch)].append(obspkg)
+                                if not obsoleted.has_key(obspkg):
+                                    obsoleted[obspkg] = []
+                                obsoleted[obspkg].append((name, arch))
                             elif rc == 0:
-                                obsoleted_list.append(obvalue[0])
-                                obsdict[(name, arch)]=obvalue[0]
+                                if not obsoleting.has_key((name, arch)):
+                                    obsoleting[(name, arch)] = []
+                                obsoleting[(name, arch)].append(obspkg)
+                                if not obsoleted.has_key(obspkg):
+                                    obsoleted[obspkg] = []
+                                obsoleted[obspkg].append((name, arch))
+                        elif obscomp == '=':
+                            if rc == 0:
+                                if not obsoleting.has_key((name, arch)):
+                                    obsoleting[(name, arch)] = []
+                                obsoleting[(name, arch)].append(obspkg)
+                                if not obsoleted.has_key(obspkg):
+                                    obsoleted[obspkg] = []
+                                obsoleted[obspkg].append((name, arch))
+                        elif obscomp == '<=':
+                            if rc == 0:
+                                if not obsoleting.has_key((name, arch)):
+                                    obsoleting[(name, arch)] = []
+                                obsoleting[(name, arch)].append(obspkg)
+                                if not obsoleted.has_key(obspkg):
+                                    obsoleted[obspkg] = []
+                                obsoleted[obspkg].append((name, arch))
                             elif rc <= -1:
-                                pass
-                        elif obvalue[1] == '=':
-                            if rc >= 1:
-                                pass
-                            elif rc == 0:
-                                obsoleted_list.append(obvalue[0])
-                                obsdict[(name, arch)]=obvalue[0]
-                            elif rc <= -1:
-                                pass
-                        elif obvalue[1] == '<=':
-                            if rc >= 1:
-                                pass
-                            elif rc == 0:
-                                obsoleted_list.append(obvalue[0])
-                                obsdict[(name, arch)]=obvalue[0]
-                            elif rc <= -1:
-                                obsoleted_list.append(obvalue[0])
-                                obsdict[(name, arch)]=obvalue[0]
-                        elif obvalue[1] == '<':
-                            if rc >= 1:
-                                pass
-                            elif rc == 0:
-                                pass
-                            elif rc <= -1:
-                                obsoleted_list.append(obvalue[0])
-                                obsdict[(name, arch)]=obvalue[0]
-    return obsdict, obsoleted_list
+                                if not obsoleting.has_key((name, arch)):
+                                    obsoleting[(name, arch)] = []
+                                obsoleting[(name, arch)].append(obspkg)
+                                if not obsoleted.has_key(obspkg):
+                                    obsoleted[obspkg] = []
+                                obsoleted[obspkg].append((name, arch))
+                        elif obscomp == '<':
+                            if rc <= -1:
+                                if not obsoleting.has_key((name, arch)):
+                                    obsoleting[(name, arch)] = []
+                                obsoleting[(name, arch)].append(obspkg)
+                                if not obsoleted.has_key(obspkg):
+                                    obsoleted[obspkg] = []
+                                obsoleted[obspkg].append((name, arch))
+    return obsoleting, obsoleted
 
 def progresshook(blocks, blocksize, total):
     totalblocks = total/blocksize
@@ -699,7 +718,7 @@ def download_headers(HeaderInfo, nulist):
                 os.unlink(LocalHeaderFile)
                 good = 0
 
-def take_action(cmds, nulist, uplist, newlist, obsoleting_list, tsInfo, HeaderInfo, rpmDBInfo, obsdict, obsoleted_list):
+def take_action(cmds, nulist, uplist, newlist, obsoleting, tsInfo, HeaderInfo, rpmDBInfo, obsoleted):
     import pkgaction
     from yummain import usage
     if conf.uid != 0:
@@ -736,9 +755,9 @@ def take_action(cmds, nulist, uplist, newlist, obsoleting_list, tsInfo, HeaderIn
     elif cmds[0] == 'upgrade':
         cmds.remove(cmds[0])
         if len(cmds) == 0:
-            pkgaction.upgradepkgs(tsInfo, HeaderInfo, rpmDBInfo, nulist, uplist, obsoleted_list, obsdict, 'all')
+            pkgaction.upgradepkgs(tsInfo, HeaderInfo, rpmDBInfo, nulist, uplist, obsoleted, obsoleting 'all')
         else:
-            pkgaction.upgradepkgs(tsInfo, HeaderInfo, rpmDBInfo, nulist, uplist, obsoleted_list, obsdict, cmds)
+            pkgaction.upgradepkgs(tsInfo, HeaderInfo, rpmDBInfo, nulist, uplist, obsoleted, obsoleting, cmds)
             
     elif cmds[0] == 'erase' or cmds[0] == 'remove':
         cmds.remove(cmds[0])
