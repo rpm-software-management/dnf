@@ -73,7 +73,12 @@ def main(args):
         base.errorlog(0, '\n\nExiting on user cancel')
         unlock()
         sys.exit(1)
-        
+    except IOError, e:
+        if e.errno == 32:
+            base.errorlog(0, '\n\nExiting on Broken Pipe')
+        unlock()
+        sys.exit(1)
+            
     if result not in [0, 1, 2, 100]:
         base.errorlog(0, 'Unknown Error(s): Exit Code: %d:' % result)
         for msg in resultmsgs:
@@ -109,6 +114,11 @@ def main(args):
         base.errorlog(0, '\n\nExiting on user cancel')
         unlock()
         sys.exit(1)
+    except IOError, e:
+        if e.errno == 32:
+            base.errorlog(0, '\n\nExiting on Broken Pipe')
+        unlock()
+        sys.exit(1)
     
     if result not in [0, 1, 2]:
         base.errorlog(0, 'Unknown Error(s): Exit Code: %d:' % result)
@@ -140,6 +150,11 @@ def main(args):
         sys.exit(1)
     except KeyboardInterrupt, e:
         base.errorlog(0, '\n\nExiting on user cancel')
+        unlock()
+        sys.exit(1)
+    except IOError, e:
+        if e.errno == 32:
+            base.errorlog(0, '\n\nExiting on Broken Pipe')
         unlock()
         sys.exit(1)
 
