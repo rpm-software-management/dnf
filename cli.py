@@ -549,11 +549,11 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
            RUNNING the transaction"""
 
         # output what will be done:
-        self.log(2, self.tsInfo.display())
+        self.log(1, self.listTransaction())
         # confirm with user
         if not self.conf.getConfigOption('assumeyes'):
             if not self.userconfirm():
-                self.log(0, 'Exiting on user Command')
+                self.log(0, '\n\nExiting on user Command')
                 return
 
         
@@ -594,6 +594,7 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         # clean out the ts b/c we have to give it new paths to the rpms 
         del self.ts
         self.initActionTs()
+        self.dsCallback = None # dumb, dumb dumb dumb!
         self.populateTs(keepold=0) # sigh
         tserrors = self.ts.test(testcb, conf=tsConf)
         del testcb

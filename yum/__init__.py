@@ -418,7 +418,9 @@ class YumBase(depsolve.Depsolve):
             if self.conf.cache:
                 raise Errors.RepoError, \
                 'Header not in local cache and caching-only mode enabled. Cannot download %s' % remote
-
+        
+        if self.dsCallback: self.dsCallback.downloadHeader(po.name)
+        
         try:
             checkfunc = (self.verifyHeader, (po, 1), {})
             hdrpath = repo.get(relative=remote, local=local, start=start, 
@@ -648,7 +650,6 @@ class YumBase(depsolve.Depsolve):
         
         return ygh
 
-    
     def _refineSearchPattern(self, arg):
         """Takes a search string from the cli for Search or Provides
            and cleans it up so it doesn't make us vomit"""
@@ -818,4 +819,33 @@ class YumBase(depsolve.Depsolve):
                 available.append(group)
         
         return installed, available
+    def getPackageObject(self, pkgtup):
+        """retrieves a packageObject from a pkgtuple - if we need
+           to pick and choose which one is best we better call out
+           to some method from here to pick the best pkgobj if there are
+           more than one response - right now it's more rudimentary."""
+           
+        
+        (n,a,e,v,r) = pkgtup
+        
+        # look it up in the self.localPackages first:
+        for po in self.localPackages:
+            if po.pkgtup() == pkgtup:
+                return po
+                
+        pkgs = self.pkgSack.searchNevra(name=n, arch=a, epoch=e, ver=v, rel=r)
+
+        if len(pkgs) == 0:
+            raise DepError, 'Package tuple %s could not be found in packagesack' % pkgtup
+            return None
+            
+        if len(pkgs) > 1: # boy it'd be nice to do something smarter here FIXME
+            result = pkgs[0]
+        else:
+            result = pkgs[0] # which should be the only
+        
+            # this is where we could do something to figure out which repository
+            # is the best one to pull from
+        
+        return result
         

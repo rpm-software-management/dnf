@@ -78,39 +78,11 @@ class Depsolve:
         
         return defSack
         
-    def getPackageObject(self, pkgtup):
-        """retrieves the packageObject from a pkginfo tuple - if we need
-           to pick and choose which one is best we better call out
-           to some method from here to pick the best pkgobj if there are
-           more than one response - right now it's more rudimentary"""
-           
-        
-        (n,a,e,v,r) = pkgtup
-        
-        # look it up in the self.localPackages first:
-        for po in self.localPackages:
-            if po.pkgtup() == pkgtup:
-                return po
-                
-        pkgs = self.pkgSack.searchNevra(name=n, arch=a, epoch=e, ver=v, rel=r)
-
-        if len(pkgs) == 0:
-            raise DepError, 'Package tuple %s could not be found in packagesack' % pkgtup
-            return None
-            
-        if len(pkgs) > 1: # boy it'd be nice to do something smarter here FIXME
-            result = pkgs[0]
-        else:
-            result = pkgs[0] # which should be the only
-        
-            # this is where we could do something to figure out which repository
-            # is the best one to pull from
-        
-        return result
     
     def populateTs(self, test=0, keepold=1):
         """take transactionData class and populate transaction set"""
 
+        if self.dsCallback: self.dsCallback.transactionPopulation()
         ts_elem = []
         if keepold:
             for te in self.ts:
@@ -174,6 +146,7 @@ class Depsolve:
 
         while CheckDeps > 0:
             self.populateTs(test=1)
+            if self.dsCallback: self.dsCallback.tscheck()
             deps = self.ts.check()
             deps = unique(deps) # get rid of duplicate deps
             

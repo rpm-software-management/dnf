@@ -319,6 +319,63 @@ class YumOutput:
         for item in values:
             self.log(2, '%s' % item)
 
+    def listTransaction(self):
+        """displays the transaction in an easy-to-read way."""
+        
+        out = ''
+        removed = []
+        installed = []
+        updated = []
+        misc = []
+        obsoleted = []
+        userout = ''
+        depout = ''
+        otherout = ''
+        
+        for (pkgInfo, mode) in self.tsInfo.dump():
+            if mode == 'u':
+                updated.append(pkgInfo)
+            elif mode == 'i':
+                installed.append(pkgInfo)
+            elif mode == 'e':
+                removed.append(pkgInfo)
+            elif mode == 'o':
+                obsoleted.append(pkgInfo)
+            else:
+                misc.append(pkgInfo)
+
+            misc.sort()
+            updated.sort()
+            installed.sort()
+            removed.sort()
+            obsoleted.sort()
+        
+
+        for (action, pkglist) in [('Remove', removed), ('Install', installed), 
+                                  ('Update', updated)]:
+
+            for pkgtup in pkglist:
+                (n,a,e,v,r) = pkgtup
+                msg = "  %s: %s.%s %s:%s-%s\n" % (action, n,a,e,v,r)
+                
+                if self.tsInfo.reason[pkgtup] == 'dep':
+                   depout = depout + msg
+                else:
+                    userout = userout + msg
+                   
+        for pkgtup in obsoleted:
+            (n,a,e,v,r) = pkgtup
+            obspkg = self.tsInfo.reason[pkgtup]
+            otherout = otherout + "  Obsoleting: %s.%s %s:%s-%s with %s\n" % (n, a, e, v, r, obspkg)
+
+        out = "Transaction Listing:\n%s\n\n" % userout 
+        if depout != '':
+            out = out + "Performing the following to resolve dependencies:\n%s\n\n" % depout
+        if otherout != '':
+            out = out + "Other Transactions:\n%s\n" % otherout
+              
+        return out
+
     def pickleRecipe(self):
         """ don't ask """
         
@@ -372,29 +429,37 @@ class DepSolveProgressCallBack:
                      'e': 'erased'}
         (n, a, e, v, r) = pkgtup
         modeterm = modedict[mode]
-        self.log(3, 'Package %s.%s %s:%s-%s set to be %s' % (n, a, e, v, r, modeterm))
+        self.log(2, '---> Package %s.%s %s:%s-%s set to be %s' % (n, a, e, v, r, modeterm))
         
     def start(self):
         self.loops += 1
         
-    
+    def tscheck(self):
+        self.log(2, '--> Running transaction check')
+        
     def restartLoop(self):
         self.loops += 1
-        self.log(2, '\n\nRestarting Dependency Resolution with new Changes.')
-        self.log(2, 'Loop Number: %d' % self.loops)
+        self.log(2, '--> Restarting Dependency Resolution with new Changes.')
+        self.log(3, '---> Loop Number: %d' % self.loops)
     
     def end(self):
-        self.log(2, 'Finished Dependency Resolution')
+        self.log(2, '--> Finished Dependency Resolution')
 
     
     def procReq(self, name, formatted_req):
-        self.log(2, 'Processing Dependency: %s for package: %s' % (formatted_req, name))
+        self.log(2, '--> Processing Dependency: %s for package: %s' % (formatted_req, name))
         
     
     def unresolved(self, msg):
-        self.log(2, 'Unresolved Dependency: %s' % msg)
+        self.log(2, '--> Unresolved Dependency: %s' % msg)
 
     
     def procConflict(self, name, confname):
-        self.log(2, 'Processing Conflict: %s conflicts %s' % (name, confname))
+        self.log(2, '--> Processing Conflict: %s conflicts %s' % (name, confname))
 
+    def transactionPopulation(self):
+        self.log(2, '--> Populating transaction set with selected packages. Please Wait.')
+    
+    def downloadHeader(self, name):
+        self.log(2, '--> Downloading header for %s to pack into transaction set.' % name)
+        
