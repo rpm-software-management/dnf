@@ -313,6 +313,7 @@ def main():
 			errorlog(1,"Errors installing:")
 			for error in errors:
 				errorlog(1,error)
+			sys.exit(1)
 		
 		del dbfin
 		del tsfin
