@@ -87,27 +87,27 @@ class YumShell(cmd.Cmd):
     """
         if arg in ['transaction', 'ts']:
             msg = """
-    transaction arg
+    %s arg
       list: lists the contents of the transaction
       reset: reset (zero-out) the transaction
       solve: run the dependency solver on the transaction
       run: run the transaction
-                  """
+                  """ % arg
         elif arg in ['repo', 'repository']:
             msg = """
-    repos arg [option]
+    %s arg [option]
       list: lists repositories and their status
       enable: enable repositories. option = repository id
       disable: disable repositories. option = repository id
-    """
+    """ % arg
     
         elif arg == 'config':
             msg = """
-    config arg [value]
+    %s arg [value]
       args: debuglevel, errorlevel, obsoletes, gpgcheck, assumeyes, exclude
         If no value is given it prints the current value.
         If value is given it sets that value.
-        """
+        """ % arg
         
         self.base.log(0, msg)
         
@@ -205,7 +205,7 @@ class YumShell(cmd.Cmd):
             self.do_help('config')
 
     def do_repository(self, line):
-        self.do_repos(line)
+        self.do_repo(line)
         
     def do_repo(self, line):
         (cmd, args, line) = self.parseline(line)
@@ -252,7 +252,7 @@ class YumShell(cmd.Cmd):
                     self.base.doRpmDBSetup()
         
         else:
-            self.do_help('repos')
+            self.do_help('repo')
                 
     def do_test(self, line):
         (cmd, args, line) = self.parseline(line)
