@@ -24,6 +24,7 @@ import pkgaction
 import callback
 import time
 import random
+import rpm
 from logger import Logger
 from config import yumconf
 
