@@ -289,19 +289,6 @@ class Repository:
                                    
         self.grab = mgclass(self.grabfunc, self.urls)
 
-        
-    def remoteGroups(self):
-        return os.path.join(self.baseURL(), self.groupsfilename)
-    
-    def localGroups(self):
-        return os.path.join(self.cachedir, self.groupsfilename)
-
-    def baseURL(self):
-        return self.failover.get_serverurl()
-        
-    def failed(self):
-        self.failover.server_failed()
-
     def dirSetup(self):
         """make the necessary dirs, if possible, raise on failure"""
         for dir in [self.cachedir, self.hdrdir, self.pkgdir]:
