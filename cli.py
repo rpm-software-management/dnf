@@ -306,10 +306,10 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
     
         elif self.basecmd == 'clean':
             if len(self.extcmds) == 0:
-                self.errorlog(0, _('Error: Clean Now Requires an option: \
-                                    headers, packages, all'))
+                self.errorlog(0, _('Error: clean requires an option: \
+                                    headers, packages, cache, metadata, all'))
             for cmd in self.extcmds:
-                if cmd not in ['headers', 'packages', 'all']:
+                if cmd not in ['headers', 'packages', 'metadata', 'cache', 'all']:
                     self.usage()
         elif self.basecmd == 'generate-rss':
             if len(self.extcmds) == 0:
@@ -440,16 +440,18 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
                 
         elif self.basecmd == 'clean':
             self.conf.setConfigOption('cache', 1)
-            hdrcode = 0
-            pkgcode = 0
-            pkgresults = []
-            hdrresults = []
+            hdrcode = pkgcode = xmlcode = piklcode = 0
+            pkgresults = hdrresults = xmlresults = piklresults = []
+
             if 'all' in self.extcmds:
-                self.log(2, 'Cleaning up Packages and Headers')
+                self.log(2, 'Cleaning up Everything')
                 pkgcode, pkgresults = self.cleanPackages()
                 hdrcode, hdrresults = self.cleanHeaders()
-                code = hdrcode + pkgcode
-                results = hdrresults + pkgresults
+                xmlcode, xmlresults = self.cleanMetadata()
+                piklcode, piklresults = self.cleanPickles()
+                
+                code = hdrcode + pkgcode + xmlcode + piklcode
+                results = hdrresults + pkgresults + xmlresults + piklresults
                 return code, results
             if 'headers' in self.extcmds:
                 self.log(2, 'Cleaning up Headers')
@@ -457,9 +459,15 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
             if 'packages' in self.extcmds:
                 self.log(2, 'Cleaning up Packages')
                 pkgcode, pkgresults = self.cleanPackages()
-            
-            code = hdrcode + pkgcode
-            results = hdrresults + pkgresults
+            if 'metadata' in self.extcmds:
+                self.log(2, 'Cleaning up xml metadata')
+                xmlcode, xmlresults = self.cleanMetadata()
+            if 'cache' in self.extcmds:
+                self.log(2, 'Cleaning up pickled cache')
+                piklcode, piklresults =  self.cleanPickles()
+                
+            code = hdrcode + pkgcode + xmlcode + piklcode
+            results = hdrresults + pkgresults + xmlresults + piklresults
             return code, results
             
         
@@ -522,18 +530,7 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
             self.log(3, '%s' % self.pickleRecipe())
             try:
                 self.doRepoSetup(nosack=1)
-                x = map(len, locals()); x.sort(); x.reverse(); print x[:64]
                 self.repos.populateSack(with='metadata', pickleonly=1)
-                #x = map(len, globals()); x.sort(); x.reverse(); print x[:64]
-                #self.repos.populateSack(with='metadata', pickleonly=1)
-                #x = map(len, globals()); x.sort(); x.reverse(); print x[:64]
-                #self.repos.populateSack(with='metadata', pickleonly=1)
-                #x = map(len, globals()); x.sort(); x.reverse(); print x[:64]
-                #self.repos.populateSack(with='metadata', pickleonly=1)
-                #x = map(len, globals()); x.sort(); x.reverse(); print x[:64]
-                #self.repos.populateSack(with='metadata', pickleonly=1)
-                #x = map(len, globals()); x.sort(); x.reverse(); print x[:64]
-                
                 self.repos.populateSack(with='filelists', pickleonly=1)
                 self.repos.populateSack(with='otherdata', pickleonly=1)
                 

@@ -513,7 +513,52 @@ class YumBase(depsolve.Depsolve):
         
         msg = '%d packages removed' % removed
         return 0, [msg]
+
+    def cleanPickles(self):
+        filelist = []
+        ext = 'pickle'
+        removed = 0
+        for repo in self.repos.listEnabled():
+            repo.dirSetup()
+            path = repo.cachedir
+            filelist = misc.getFileList(path, ext, filelist)
+            
+        for item in filelist:
+            try:
+                os.unlink(item)
+            except OSError, e:
+                self.errorlog(0, 'Cannot remove cache file %s' % item)
+                continue
+            else:
+                self.log(7, 'Cache file %s removed' % item)
+                removed+=1
+        msg = '%d cache files removed' % removed
+        return 0, [msg]
     
+
+    def cleanMetadata(self):
+        filelist = []
+        exts = ['xml.gz', 'xml']
+        
+        removed = 0
+        for ext in exts:
+            for repo in self.repos.listEnabled():
+                repo.dirSetup()
+                path = repo.cachedir
+                filelist = misc.getFileList(path, ext, filelist)
+            
+        for item in filelist:
+            try:
+                os.unlink(item)
+            except OSError, e:
+                self.errorlog(0, 'Cannot remove metadata file %s' % item)
+                continue
+            else:
+                self.log(7, 'metadata file %s removed' % item)
+                removed+=1
+        msg = '%d metadata files removed' % removed
+        return 0, [msg]
+        
     def sortPkgObj(self, pkg1 ,pkg2):
         """sorts a list of package tuples by name"""
         if pkg1.name > pkg2.name:
