@@ -1,3 +1,17 @@
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Library General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+# Copyright 2005 Duke University
 
 import os
 import glob
@@ -8,14 +22,27 @@ import ConfigParser
 import config 
 import Errors
 
-# TODO: update yum.conf man page with plugin related opts
-
 # TODO: better documentation of how the whole thing works (esp. addition of
 # config options)
+#       - use epydoc for this?
 #       - document from user perspective in yum man page
 #       - PLUGINS.txt for developers
 
 # TODO: test the API by implementing some crack from bugzilla
+#         - http://devel.linux.duke.edu/bugzilla/show_bug.cgi?id=181 
+#         - http://devel.linux.duke.edu/bugzilla/show_bug.cgi?id=270
+#         - http://devel.linux.duke.edu/bugzilla/show_bug.cgi?id=310
+#         - http://devel.linux.duke.edu/bugzilla/show_bug.cgi?id=431
+#         - http://devel.linux.duke.edu/bugzilla/show_bug.cgi?id=88 (?)
+#         - http://devel.linux.duke.edu/bugzilla/show_bug.cgi?id=396 (DONE)
+
+# TODO: expose progress bar 
+
+# TODO: allow plugins to define new repository types
+
+# TODO: allow a plugin to signal that the remainder of the calling function
+# should be skipped so that the plugin can override the caller?
+#   - there may be a better way to do this
 
 # TODO: check for *_hook methods that aren't supported
 
@@ -30,6 +57,10 @@ import Errors
 
 # TODO: config vars marked as PLUG_OPT_WHERE_ALL should inherit defaults from
 #   the [main] setting if the user doesn't specify them
+
+# TODO: allow plugins to extend shell commands
+
+# TODO: allow plugins to extend command line options and commands
 
 # TODO: plugins should be able to specify convertor functions for config vars
 
@@ -54,10 +85,10 @@ import Errors
 # API, the major version number must be incremented and the minor version number
 # reset to 0. If a change is made that doesn't break backwards compatibility,
 # then the minor number must be incremented.
-API_VERSION = '0.2'
+API_VERSION = '0.3'
 
-SLOTS = ('config', 'init', 'reposetup', 'exclude', 'pretrans', 'posttrans',
-        'close')
+SLOTS = ('config', 'init', 'predownload', 'postdownload', 'reposetup',
+        'exclude', 'pretrans', 'posttrans', 'close')
 
 class PluginYumExit(Errors.YumBaseError):
     '''Used by plugins to signal that yum should stop
@@ -79,7 +110,7 @@ class YumPlugins:
         # Let plugins register custom config file options
         self.run('config')
 
-    def run(self, slotname):
+    def run(self, slotname, **kwargs):
         '''Run all plugin functions for the given slot.
         '''
         if not self.enabled:
@@ -90,6 +121,8 @@ class YumPlugins:
             conduitcls = ConfigPluginConduit
         elif slotname == 'init':
             conduitcls = InitPluginConduit
+        elif slotname in ('predownload', 'postdownload'):
+            conduitcls = DownloadPluginConduit
         elif slotname == 'reposetup':
             conduitcls = RepoSetupPluginConduit
         elif slotname == 'close':
@@ -105,7 +138,7 @@ class YumPlugins:
                 slotname, modname))
     
             _, conf = self._plugins[modname]
-            func(conduitcls(self, self.base, conf))
+            func(conduitcls(self, self.base, conf, **kwargs))
 
     def _importplugins(self):
 
@@ -297,8 +330,39 @@ class InitPluginConduit(PluginConduit):
 
 class RepoSetupPluginConduit(InitPluginConduit):
 
+    def getRepo(self, repoid):
+        '''Return a repository object by its id
+        '''
+        return self._base.repos.getRepo(repoid)
+
     def getRepos(self, pattern='*'):
+        '''Return a list of repository objects using wildward patterns.
+        Default is to return all repositories.
+        '''
         return self._base.repos.findRepos(pattern)
+
+class DownloadPluginConduit(RepoSetupPluginConduit):
+
+    def __init__(self, parent, base, conf, pkglist, errors=None):
+        RepoSetupPluginConduit.__init__(self, parent, base, conf)
+        self._pkglist = pkglist
+        self._errors = errors
+
+    def getDownloadPackages(self):
+        '''Return a list of package objects representing packages to be
+        downloaded.
+        '''
+        return self._pkglist
+
+    def getErrors(self):
+        '''Return a dictionary of download errors. 
+        
+        The returned dictionary is indexed by package object. Each element is a
+        list of strings describing the error.
+        '''
+        if not self._errors:
+            return {}
+        return self._errors
 
 class MainPluginConduit(RepoSetupPluginConduit):
 
@@ -314,6 +378,7 @@ class MainPluginConduit(RepoSetupPluginConduit):
 
     def getTsInfo(self):
         return self._base.tsInfo
+
 
 def parsever(apiver):
     maj, min = apiver.split('.')
@@ -332,6 +397,3 @@ def apiverok(a, b):
         return 1
 
     return 0
-
-
-
