@@ -81,7 +81,7 @@ class YumBase(depsolve.Depsolve):
                 try:
                     thisrepo = config.cfgParserRepo(section, self.conf, self.conf.cfg)
                 except (Errors.RepoError, Errors.ConfigError), e:
-                    self.errorlog(e)
+                    self.errorlog(2, e)
                     continue
                 else:
                     reposlist.append(thisrepo)
@@ -105,14 +105,14 @@ class YumBase(depsolve.Depsolve):
                 try:
                     cfg, sections = config.parseDotRepo(fn)
                 except Errors.ConfigError, e:
-                    self.errorlog(e)
+                    self.errorlog(2, e)
                     continue
 
                 for section in sections:
                     try:
                         thisrepo = config.cfgParserRepo(section, self.conf, cfg)
                     except (Errors.RepoError, Errors.ConfigError), e:
-                        self.errorlog(e)
+                        self.errorlog(2, e)
                         continue
                     else:
                         reposlist.append(thisrepo)
@@ -122,7 +122,7 @@ class YumBase(depsolve.Depsolve):
             try:
                 self.repos.add(thisrepo)
             except Errors.RepoError, e: 
-                self.errorlog(e)
+                self.errorlog(2, e)
                 continue
         
     def doTsSetup(self):
