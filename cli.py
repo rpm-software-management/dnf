@@ -410,7 +410,7 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
             except yum.Errors.YumBaseError, e:
                 return 1, [str(e)]
             else:
-                return 0, []
+                return 0, ['Done']
                 
         elif self.basecmd == 'clean':
             self.conf.setConfigOption('cache', 1)

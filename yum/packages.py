@@ -268,9 +268,18 @@ class YumAvailablePackage(repomd.packageObject.PackageObject, repomd.packageObje
     """derived class for the repomd packageobject and RpmBase packageobject yum
        uses this for dealing with packages in a repository"""
 
-    def __init__(self):
-        XMLPackageObject.__init__(self)
-        RpmBase.__init__(self)
+    def __init__(self, pkgdict, repoid):
+        repomd.packageObject.PackageObject.__init__(self)
+        repomd.packageObject.RpmBase.__init__(self)
+        
+        self.importFromDict(pkgdict, repoid)
+        # quick, common definitions
+        self.name = self.returnSimple('name')
+        self.epoch = self.returnSimple('epoch')
+        self.version = self.returnSimple('version')
+        self.release = self.returnSimple('release')
+        self.arch = self.returnSimple('arch')
+        self.repoid = self.returnSimple('repoid')
 
     def size(self):
         return self.returnSimple('packagesize')
@@ -377,7 +386,7 @@ class YumAvailablePackage(repomd.packageObject.PackageObject, repomd.packageObje
             self.simple['installedsize'] = pkgdict.size['installed']
         
         if hasattr(pkgdict, 'location'):
-            if pkgdict.location['value'] = ''
+            if pkgdict.location['value'] == '':
                 url = None
             else:
                 url = pkgdict.location['value']
@@ -390,4 +399,38 @@ class YumAvailablePackage(repomd.packageObject.PackageObject, repomd.packageObje
             self.simple['hdrend'] = pkgdict.hdrange['end']
         
         if hasattr(pkgdict, 'info'):
-            FIXME
+            infodict = pkgdict.info
+            for item in ['summary', 'description', 'packager', 'group',
+                         'buildhost', 'sourcerpm', 'url', 'vendor']:
+                self.simple[item] = infodict[item]
+            
+            self.licenses.append(infodict['license'])
+        
+        if hasattr(pkgdict, 'files'):
+            for file in pkgdict.files.keys():
+                ftype = pkgdict.files[file]
+                if not self.files.has_key(ftype):
+                    self.files[ftype] = []
+                self.files[ftype].append(file)
+        
+        if hasattr(pkgdict, 'prco'):
+            for rtype in pkgdict.prco.keys():
+                for rdict in pkgdict.prco[rtype]:
+                    name = rdict['name']
+                    f = e = v = r  = None
+                    if rdict.has_key('flags'): f = rdict['flags']
+                    if rdict.has_key('epoch'): e = rdict['epoch']
+                    if rdict.has_key('ver'): v = rdict['ver']
+                    if rdict.has_key('rel'): r = rdict['rel']
+                    self.prco[rtype].append((name, f, (e,v,r)))
+
+        if hasattr(pkgdict, 'changelog'):
+            for cdict in pkgdict.changelog:
+                date = text = author = None
+                if cdict.has_key('date'): date = cdict['date']
+                if cdict.has_key('value'): text = cdict['value']
+                if cdict.has_key('author'): author = cdict['author']
+                self.changelog.append((date, author, text))
+                    
+    
+    

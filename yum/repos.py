@@ -30,20 +30,23 @@ from repomd import packageSack
 from packages import YumAvailablePackage
 import mdcache
 
-class YumPackageSack(repomd.packageSack.PackageSack):
+class YumPackageSack(packageSack.PackageSack):
     """imports/handles package objects from an mdcache dict object"""
     def __init__(self, packageClass):
-        repomd.packageSack.PackageSack.__init__(self)
+        packageSack.PackageSack.__init__(self)
         self.pc = packageClass
         self.added = {}
         
     def addDict(self, repoid, datatype, datadict, callback=None):
         total = len(datadict.keys())
         if datatype == 'primary':
+            current = 0        
             for pkgid in datadict.keys():
+                current += 1
+                if callback: callback(current, total, repoid)
                 pkgdict = datadict[pkgid]
-                po = self.pc()
-                po.importFromDict(pkgdict, repoid)
+                po = self.pc(pkgdict, repoid)
+                po.simple['id'] = pkgid
                 self._addToDictAsList(self.pkgsByID, pkgid, po)
                 self.addPackage(po)
             
@@ -51,13 +54,15 @@ class YumPackageSack(repomd.packageSack.PackageSack):
                 self.added[repoid] = []
             self.added[repoid].append('primary')
             
-        elif datatype == 'filelists':
+        elif datatype in ['filelists', 'other']:
             if self.added.has_key(repoid):
                 if 'primary' not in self.added[repoid]:
                     raise Errors.RepoError, '%s md for %s imported before primary' \
                            % (datatype, repoid)
-                           
+            current = 0
             for pkgid in datadict.keys():
+                current += 1
+                if callback: callback(current, total, repoid)
                 pkgdict = datadict[pkgid]
                 if self.pkgsByID.has_key(pkgid):
                     for po in self.pkgsByID[pkgid]:
@@ -186,23 +191,25 @@ class RepoStorage:
                     xml = repo.getPrimaryXML()
                     (ctype, csum) = repo.repoXML.primaryChecksum()
                     repo.cacheHandler.getPrimary(xml, csum)
-                    data = repo.cacheHandler.repodata['metadata']
-                    self.pkgSack.addDict(repo.id, item, data, callback) 
+                    dtype = repo.cacheHandler.repodata['metadata']
+                    self.pkgSack.addDict(repo.id, item, dtype, callback) 
                 elif item == 'filelists':
                     xml = repo.getFileListsXML()
                     (ctype, csum) = repo.repoXML.filelistsChecksum()
-                    repo.cacheHandler.getFileLists(xml, csum)
-                    data = repo.cacheHandler.repodata['filelists']
-                    self.pkgSack.addDict(repo.id, item, data, callback) 
+                    repo.cacheHandler.getFilelists(xml, csum)
+                    dtype = repo.cacheHandler.repodata['filelists']
+                    self.pkgSack.addDict(repo.id, item, dtype, callback) 
                 elif item == 'other':
                     xml = repo.getOtherXML()
                     (ctype, csum) = repo.repoXML.otherChecksum()
                     repo.cacheHandler.getOtherdata(xml, csum)
-                    data = repo.cacheHandler.repodata['otherdata']
-                    self.pkgSack.addDict(repo.id, item, data, callback)
+                    dtype = repo.cacheHandler.repodata['otherdata']
+                    self.pkgSack.addDict(repo.id, item, dtype, callback)
                 else:
                     # how odd, just move along
                     continue
+                # get rid of all this stuff we don't need now
+                del repo.cacheHandler
                 
 
                 
