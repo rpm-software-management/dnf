@@ -90,7 +90,7 @@ def str_to_version(str):
 
 def HeaderInfoNevralLoad(filename, nevral, serverid):
     info = []
-    in_file = open(filename,'r')
+    in_file = open(filename, 'r')
     while 1:
         in_line = in_file.readline()
         if in_line == '':
@@ -99,9 +99,9 @@ def HeaderInfoNevralLoad(filename, nevral, serverid):
     in_file.close()
 
     for line in info:
-        (envraStr, rpmpath) = string.split(line,'=')
+        (envraStr, rpmpath) = string.split(line, '=')
         (epoch, name, ver, rel, arch) = stripENVRA(envraStr)
-        rpmpath = string.replace(rpmpath, '\n','')
+        rpmpath = string.replace(rpmpath, '\n', '')
         if name not in conf.excludes:
             if conf.pkgpolicy == 'last':
                 nevral.add((name, epoch, ver, rel, arch, rpmpath, serverid), 'a')
@@ -140,13 +140,13 @@ def rpmdbNevralLoad(nevral):
         (epoch, name, ver, rel, arch) = getENVRA(rpmdbh)
         # deal with multiple versioned dupes and dupe entries in localdb
         if not rpmdbdict.has_key((name, arch)):
-            rpmdbdict[(name,arch)] = (epoch, ver, rel)
+            rpmdbdict[(name, arch)] = (epoch, ver, rel)
         else:
             (e1, v1, r1) = (rpmdbdict[(name, arch)])
             (e2, v2, r2) = (epoch, ver, rel)    
             rc = compareEVR((e1,v1,r1), (e2,v2,r2))
             if (rc <= -1):
-                rpmdbdict[(name,arch)] = (epoch, ver, rel)
+                rpmdbdict[(name, arch)] = (epoch, ver, rel)
             elif (rc == 0):
                 log(4, 'dupe entry in rpmdb %s %s' % (name, arch))
         index = db.nextkey(index)
@@ -196,7 +196,7 @@ def returnObsoletes(headerNevral, rpmNevral, uninstNAlist):
                 obvalue = string.split(ob)
                 if rpmNevral.exists(obvalue[0]):
                     if len(obvalue) == 1:
-                        obsdict[(name,arch)]=obvalue[0]
+                        obsdict[(name, arch)]=obvalue[0]
                         log(4, '%s obsoleting %s' % (name, ob))
                     elif len(obvalue) == 3:
                         (e1, v1, r1) = rpmNevral.evr(name, arch)
@@ -241,7 +241,7 @@ def returnObsoletes(headerNevral, rpmNevral, uninstNAlist):
 
 def progresshook(blocks, blocksize, total):
     totalblocks = total/blocksize
-    curbytes=blocks*blocksize
+    curbytes = blocks*blocksize
     sys.stdout.write('\r' + ' ' * 80)
     sys.stdout.write('\rblock: %d/%d' % (blocks, totalblocks))
     sys.stdout.flush()
@@ -287,8 +287,8 @@ def getupdatedhdrlist(headernevral, rpmnevral):
         # if we don't have that specific arch, then if its the best arch in the headernevral, compare
         # it to what we have, if its newer then mark it as updateable
         if rpmnevral.exists(name):
-            if rpmnevral.exists(name,arch):
-                archlist = archwork.availablearchs(rpmnevral,name)
+            if rpmnevral.exists(name, arch):
+                archlist = archwork.availablearchs(rpmnevral, name)
                 bestarch = archwork.bestarch(archlist)
                 rc = compareEVR(headernevral.evr(name, arch), rpmnevral.evr(name, bestarch))
                 if (rc > 0):
@@ -304,7 +304,7 @@ def getupdatedhdrlist(headernevral, rpmnevral):
                 archlist = archwork.availablearchs(headernevral, name)
                 bestarch = archwork.bestarch(archlist)
                 if arch == bestarch:
-                    rpmarchlist = archwork.availablearchs(rpmnevral,name)
+                    rpmarchlist = archwork.availablearchs(rpmnevral, name)
                     bestrpmarch = archwork.bestarch(rpmarchlist)
                     rc = compareEVR(headernevral.evr(name, arch), rpmnevral.evr(name, bestrpmarch))
                     if (rc > 0):
@@ -502,7 +502,7 @@ def clean_up_old_headers(rpmDBInfo, HeaderInfo):
 
 def printtime():
     import time
-    return time.strftime('%m/%d/%y %H:%M:%S ',time.localtime(time.time()))
+    return time.strftime('%m/%d/%y %H:%M:%S ', time.localtime(time.time()))
 
 def get_package_info_from_servers(conf, HeaderInfo):
     # this function should be split into - server paths etc and getting the header info/populating the 
@@ -696,8 +696,7 @@ def create_final_ts(tsInfo, rpmdb):
     tserrors = tsfin.run(rpm.RPMTRANS_FLAG_TEST, ~rpm.RPMPROB_FILTER_DISKSPACE, callback.install_callback, '')
     
     if tserrors:
-        for tserror in tserrors:
-            log(3,'Error %s' % tserror)
+        log(2, 'Error: Disk space Error')
         errorlog(0, 'You appear to have insufficient disk space to handle these packages')
         sys.exit(1)
     return tsfin
