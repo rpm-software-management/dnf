@@ -20,8 +20,6 @@ import os
 import sys
 import gzip
 
-from config import conf
-
 def stripENVRA(foo):
   archIndex = string.rfind(foo, ".")
   arch = foo[archIndex+1:]
