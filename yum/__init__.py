@@ -148,8 +148,12 @@ class YumBase(depsolve.Depsolve):
         self.groupInfo = groups.Groups_Info(pkgtuples, overwrite_groups = overwrite)
 
         for repo in reposWithGroups:
+            self.log(4, 'Adding group file from repository: %s' % repo)
             groupfile = repo.getGroups()
-            self.groupInfo.add(groupfile)
+            try:
+                self.groupInfo.add(groupfile)
+            except Errors.GroupsError, e:
+                self.errorlog(0, 'Failed to add groups file for repository: %s' % repo)
 
         if self.groupInfo.compscount == 0:
             raise Errors.GroupsError, 'No Groups Available in any repository'

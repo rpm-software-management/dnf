@@ -1,6 +1,6 @@
 Summary: RPM installer/updater
 Name: yum
-Version: 2.1.9
+Version: 2.1.10
 Release: 1
 License: GPL
 Group: System Environment/Base
@@ -72,6 +72,9 @@ exit 0
 %{_mandir}/man*/*
 
 %changelog
+* Tue Oct 19 2004 Seth Vidal <skvidal@phy.duke.edu>
+- 2.1.10
+
 * Mon Oct 18 2004 Seth Vidal <skvidal@phy.duke.edu>
 - 2.1.9 - paper bag release
 
