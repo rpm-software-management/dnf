@@ -1,3 +1,56 @@
+2004-10-06 22:56  skvidal
+
+	* cli.py, yum-daily.spec, yum.spec: 
+	2.1.6
+
+2004-10-06 22:48  skvidal
+
+	* yum.conf: 
+	removed stray yum.conf
+
+2004-10-06 22:25  skvidal
+
+	* output.py, yum/__init__.py, yum/config.py, yum/packages.py: add
+	showdupesfromrepos option to config - boolean if set then duplicate
+	packages of different versions will be shown if unset then only the
+	newest packages in a repository will be shown this only affects
+	display it does not affect depresolution or other functions.
+	
+	defaults to 0
+
+2004-10-06 21:58  skvidal
+
+	* cli.py, yum/packages.py, yum/repos.py: 
+	mdcache import working and fixed a bug where the repomd.xml would
+	be downloaded twice and imported twice.
+
+2004-10-06 02:40  skvidal
+
+	* cli.py, repomd/packageObject.py, yum/mdcache.py, yum/packages.py,
+	yum/repos.py: 
+	mdcache implemented.  Need to write yum clean mdcache
+
+2004-10-05 10:43  skvidal
+
+	* yum/packages.py: 
+	fleshed out some of the PrimaryEntry object parsing
+
+2004-10-05 03:49  skvidal
+
+	* repomd/packageObject.py, yum/__init__.py, yum/mdcache.py,
+	yum/packages.py, yum/repos.py: 
+	incomplete modifications to incorporate icon's pickle handler for
+	metadata caching
+
+2004-10-04 02:42  skvidal
+
+	* yum/__init__.py: 
+	whoops - last minute fix
+
+2004-10-04 02:32  skvidal
+
+	* ChangeLog: update changelog for 2.1.5
+
 2004-10-04 02:30  skvidal
 
 	* cli.py, yum-daily.spec, yum.spec: 
