@@ -303,81 +303,98 @@ def getupdatedhdrlist(headernevral, rpmnevral):
     "returns (name, arch) tuples of updated and uninstalled pkgs"
     uplist = []
     newlist = []
+    simpleupdate = []
+    complexupdate = []
     uplist_archdict = {}
-    for (name, arch) in headernevral.NAkeys():
         # this is all hard and goofy to deal with pkgs changing arch
         # if we have the package installed
-        # get the archs that we have for its
-        # if its more than 1 then compare to see the highest version
-        # then get the highest version and the best arch available in the headernevral
-        # compare these two, put the best one in to be updated.
-        if rpmnevral.exists(name):
-            archlist = archwork.availablearchs(rpmnevral, name)
-            finalarch = archlist.pop()
-            if len(archlist) > 0:
-                log(3, 'multiple archs in rpmdb for pkg: %s' % name)
-                for otherarch in archlist:
-                    rc = compareEVR(rpmnevral.evr(name, finalarch), rpmnevral.evr(name, otherarch))
-                    if rc > 0:
-                        pass
-                    elif rc < 0:
-                        finalarch = otherarch
-                    elif rc == 0:
-                        log(5, 'Deeply odd, two pkgs of same version but different arch %s - %s and %s' % (name, otherarch, finalarch))
-            # at this point we know that name+finalarch is the highest version of the pkgname on the system
-            (e, v, r ) = rpmnevral.evr(name, finalarch)
-            log(3, 'Best of %s on system is %s arch, %s %s %s' % (name, finalarch, e, v, r))
-            # we compare this best version vs the best version and bestarch in the headernevral
-            # if the headernevral one is newer then we mark it as updateable
-            # the rpmnevral one is newer or the same version then we move along
-            archlist = archwork.availablearchs(headernevral, name)
-            hdr_finalarch = archlist.pop()
-            if len(archlist) > 0:
-                log(3, 'Multiple available archs for pkg %s - %s' % (name, arch))
-                for otherarch in archlist:
-                    log(5, 'compete %s vs %s' % (hdr_finalarch, otherarch))
-                    rc = compareEVR(headernevral.evr(name, hdr_finalarch), headernevral.evr(name, otherarch))
-                    if rc > 0:
-                        pass
-                    elif rc < 0:
-                        hdr_finalarch = otherarch
-                    elif rc == 0:
-                        # Same version - but we want the best arch of those so
-                        hdr_finalarch = archwork.bestarch([hdr_finalarch, otherarch])
+        # if the pkg isn't installed then it's a new pkg
+        # else
+        #   if there isn't more than on available arch from the hinevral 
+        #       then compare it to the installed one 
+        #   if there is more than one installed or available:
+        #   compare highest version and bestarch (in that order of precdence) of installed pkgs
+        #   to highest version and bestarch of available pkgs
+        
+        # best bet is to chew through the pkgs and throw out the new ones early
+        # then deal with the ones where there are a single pkg installed and a single pkg available
+        # then deal with the multiples
+        # write a sub-function that takes (nevral, name) and returns highest version + bestarch
 
-            (e, v, r) = headernevral.evr(name, hdr_finalarch)
-            log(3, 'Best of %s available is %s arch, %s %s %s' % (name, hdr_finalarch, e, v, r))
-            # right now we know that name+hdr_finalarch is the best version of the bestarch available in the headerinfo
-            rc = compareEVR(headernevral.evr(name, hdr_finalarch), rpmnevral.evr(name, finalarch))
-            # so we do the comparison to the best we have on the system
-            if rc > 0:
-                #look it's newer and we don't have it - add it to the list and finish
-                if not uplist_archdict.has_key(name):
-                    uplist_archdict[name]=hdr_finalarch
-                #we already have one so lets compare them in arch and ver
-                else:
-                    rc = compareEVR(headernevral.evr(name, hdr_finalarch), headernevral.evr(name, uplist_archdict[name]))
-                    # new one is newer, so we look at the arch
-                    if rc > 0:
-                        uplist_archdict[name]=hdr_finalarch
-                    # older one, move along
-                    elif rc < 0:
-                        pass
-                    # same - find the better arch
-                    elif rc == 0:
-                        updating_finalarch = archwork.bestarch([hdr_finalarch, uplist_archdict[name]])
-                        uplist_archdict[name]=updating_finalarch
-                        
-        else:
+    for (name, arch) in headernevral.NAkeys():
+        if not rpmnevral.exists(name):
             newlist.append((name, arch))
-
-    for name in uplist_archdict.keys():
-        uplist.append((name,uplist_archdict[name]))
-
+        else:
+            hdrarchs = archwork.availablearchs(headernevral, name)
+            rpmarchs = archwork.availablearchs(rpmnevral, name)
+            if len(hdrarchs) > 1 or len(rpmarchs) > 1:
+                if name not in complexupdate:
+                    log(4, 'putting %s in complex' % name)
+                    complexupdate.append(name)
+            else:
+                log(4, 'putting %s in simple' % name)
+                simpleupdate.append((name, arch))
+    # we have our lists to work with now
+    
+    # simple cases
+    for (name, arch) in simpleupdate:
+        # try to be as precise as possible
+        if rpmnevral.exists(name, arch):
+            (rpm_e, rpm_v, rpm_r) = rpmnevral.evr(name, arch)
+        else:
+            (rpm_e, rpm_v, rpm_r) = rpmnevral.evr(name)
+        rc = compareEVR(headernevral.evr(name), (rpm_e, rpm_v, rpm_r))
+        if rc > 0:
+            uplist.append((name, arch))
+    
+    # complex cases
+    for name in complexupdate:
+        hdrarchs = bestversion(headernevral, name)
+        rpmarchs = bestversion(rpmnevral, name)
+        hdr_best_arch = archwork.bestarch(hdrarchs)
+        log(5, 'Best ver+arch avail for %s is %s' % (name, hdr_best_arch))
+        rpm_best_arch = archwork.bestarch(rpmarchs)
+        log(5, 'Best ver+arch installed for %s is %s' % (name, rpm_best_arch))
+        rc = compareEVR(headernevral.evr(name, hdr_best_arch), rpmnevral.evr(name, rpm_best_arch))
+        if rc > 0:
+            uplist.appned((name, hdr_best_arch))
+    
     nulist=uplist+newlist
     return (uplist, newlist, nulist)
 
 
+def bestversion(nevral, name):
+    """this takes a nevral and a pkg name - it iterates through them to return
+       the list of archs having the highest version number - so if someone has
+       package foo.i386 and foo.i686 then we'll get a list of i386 and i686 returned
+       minimum of one thing returned"""
+    # first we get a list of the archs
+    # determine the best e-v-r
+    # then we determine the archs that have that version and append them to a list
+    returnarchs = []
+    
+    archs = archwork.availablearchs(nevral, name)
+    currentarch = archs[0]
+    for arch in archs[1:]:
+        rc = compareEVR(nevral.evr(name, currentarch), nevral.evr(name, arch))
+        if rc < 0:
+            currentarch = arch
+        elif rc == 0:
+            pass
+        elif rc > 0:
+            pass
+    (best_e, best_v, best_r) = nevral.evr(name, currentarch)
+    log(3, 'Best version for %s is %s:%s-%s' % (name, best_e, best_v, best_r))
+    
+    for arch in archs:
+        rc = compareEVR(nevral.evr(name, arch), (best_e, best_v, best_r))
+        if rc == 0:
+            returnarchs.append(arch)
+        elif rc > 0:
+            log(4, 'What the hell, we just determined it was the bestversion')
+    
+    log(7, returnarchs)
+    return returnarchs
 
     
 def formatRequire (name, version, flags):
