@@ -95,13 +95,8 @@ def str_to_version(str):
     return (epoch, version, release)
 
 def HeaderInfoNevralLoad(filename, nevral, serverid):
-    info = []
     in_file = open(filename, 'r')
-    while 1:
-        in_line = in_file.readline()
-        if in_line == '':
-            break
-        info.append(in_line)
+    info = in_file.readlines()
     in_file.close()
 
     for line in info:
