@@ -112,7 +112,7 @@ class yumconf:
         releasever = self._getsysver(self.distroverpkg)
         # compile the regexes
         basearch_reg = re.compile('\$basearch')
-        arch_reg = re.compile('\$myarch')
+        arch_reg = re.compile('\$arch')
         releasever_reg = re.compile('\$releasever')
         
         
