@@ -156,30 +156,29 @@ def generateRSS(lst):
     channel.newChild(None, 'pubDate', now)
     channel.newChild(None, 'generator', 'Yum')
     for pkg in lst:
-      item = channel.newChild(None, 'item', None)
-      title = escape(str(pkg))
-      title = escape(title)
-      item.newChild(None, 'title', title)
-      date = time.gmtime(float(pkg.returnSimple('buildtime')))
-      item.newChild(None, 'pubDate', time.strftime(rfc822_format, date))
-      # build up changelog
-      changelog = ''
-      cnt = 0
-      for e in pkg.changelog:
-        cnt += 1
-        if cnt > 3: 
-          changelog += '...'
-          break
-        (date, author, desc) = e
-        date = time.strftime(rfc822_format, time.gmtime(float(date)))
-        changelog += '%s - %s\n%s\n\n' % (date, author, desc)
-      body = item.newChild(None, "body", None)
-      body.newNs(xhtml_ns, None)
-      body.newChild(None, "p", escape(pkg.returnSimple('summary')))
-      body.newChild(None, "pre", escape(pkg.returnSimple('description')))
-      body.newChild(None, "p", 'Change Log:')
-      body.newChild(None, "pre", escape(changelog))
-      item.newChild(None, 'description', escape(changelog))
+        item = channel.newChild(None, 'item', None)
+        title = escape(str(pkg))
+        item.newChild(None, 'title', title)
+        date = time.gmtime(float(pkg.returnSimple('buildtime')))
+        item.newChild(None, 'pubDate', time.strftime(rfc822_format, date))
+        # build up changelog
+        changelog = ''
+        cnt = 0
+        for e in pkg.changelog:
+            cnt += 1
+            if cnt > 3: 
+                changelog += '...'
+                break
+            (date, author, desc) = e
+            date = time.strftime(rfc822_format, time.gmtime(float(date)))
+            changelog += '%s - %s\n%s\n\n' % (date, author, desc)
+        body = item.newChild(None, "body", None)
+        body.newNs(xhtml_ns, None)
+        body.newChild(None, "p", escape(pkg.returnSimple('summary')))
+        body.newChild(None, "pre", escape(pkg.returnSimple('description')))
+        body.newChild(None, "p", 'Change Log:')
+        body.newChild(None, "pre", escape(changelog))
+        item.newChild(None, 'description', escape(changelog))
     return doc
     
 def userconfirm():
