@@ -32,13 +32,12 @@ class YumOutput:
         return time.strftime('%b %d %H:%M:%S ', time.localtime(time.time()))
         
     
-    def failureReport(self, msg, errorlog=None, relative=None):
+    def failureReport(self, errobj):
         """failure output for failovers from urlgrabber"""
         
-        #FIXME - Bwah?
-        if errorlog:
-            errorlog(1, '%s: %s' % (relative, msg))
-        raise msg
+        self.errorlog(1, '%s: %s' % (errobj.url, str(errobj.exception)))
+        self.errorlog(1, 'Trying other mirror.')
+        raise errobj.exception
     
         
     def simpleProgressBar(self, current, total, name=None):

@@ -47,8 +47,13 @@ def main(args):
 
     # do our cli parsing and config file setup
     # also sanity check the things being passed on the cli
-    base.getOptionsConfig(args)
-    
+    try:
+        base.getOptionsConfig(args)
+    except Errors.YumBaseError, e:
+        result = 1
+        resultmsgs = [str(e)]
+        sys.exit(1)
+        
     try:
         base.doLock('/var/run/yum.pid')
     except Errors.LockError, e:

@@ -59,6 +59,7 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
                 continue
             self.log(2, 'Setting up Repo:  %s' % repo)
             try:
+                repo.check()
                 repo.cache = self.conf.getConfigOption('cache')
                 repo.dirSetup()
                 self.log(3, 'Baseurl(s) for repo: %s' % repo.urls)
@@ -224,7 +225,7 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
             self.conf.repos.callback = self.simpleProgressBar
 
         # setup our failure report for failover
-        freport = (self.failureReport,(),{'errorlog':self.errorlog})
+        freport = (self.failureReport,(),{})
         self.conf.repos.setFailureCallback(freport)
         
         # setup our depsolve progress callback
