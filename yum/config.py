@@ -60,7 +60,7 @@ class CFParser(ConfigParser.ConfigParser):
 class yumconf(object):
     """primary config class for yum"""
     
-    def __init__(self, configfile = '/etc/yum.conf'):
+    def __init__(self, configfile = '/etc/yum.conf', root='/'):
         self.cfg = CFParser()
         configh = confpp(configfile)
         try:
@@ -74,10 +74,10 @@ class yumconf(object):
        
         #defaults -either get them or set them
         
-        optionstrings = [('cachedir', '/var/cache/yum'), 
+        optionstrings = [('cachedir', root + '/var/cache/yum'), 
                          ('debuglevel', 2),
-                         ('logfile', '/var/log/yum.log'), 
-                         ('reposdir', '/etc/yum.repos.d'),
+                         ('logfile', root + '/var/log/yum.log'), 
+                         ('reposdir', root + '/etc/yum.repos.d'),
                          ('pkgpolicy', 'newest'),
                          ('errorlevel', 2), 
                          ('syslog_ident', None),
@@ -87,7 +87,7 @@ class yumconf(object):
                          ('throttle', None),
                          ('retries', 10),
                          ('numrecent', 30),
-                         ('installroot', '/'),
+                         ('installroot', root),
                          ('commands', []),
                          ('exclude', []),
                          ('failovermethod', 'roundrobin'),
@@ -137,6 +137,13 @@ class yumconf(object):
             self.configdata[option] = value
             setattr(self, option, value)
 
+        # do the dirs - set the root if there is one (grumble)
+        for opt in ['cachedir', 'reposdir', 'logfile']:
+            path = self.configdata[opt]
+            root = self.configdata['installroot']
+            rootedpath = root + path
+            self.configdata[opt] = rootedpath
+            
         # and push our process object around a bit to things beneath us
         self.repos.progress = self.getConfigOption('progress_obj')
         
@@ -207,7 +214,7 @@ class yumconf(object):
             return default
 
     def _getsysver(self):
-        ts = rpmUtils.transaction.initReadOnlyTransaction()
+        ts = rpmUtils.transaction.initReadOnlyTransaction(root=self.getConfigOption('installroot', '/'))
         ts.pushVSFlags(~(rpm._RPMVSF_NOSIGNATURES|rpm._RPMVSF_NODIGESTS))
         idx = ts.dbMatch('provides', self.getConfigOption('distroverpkg'))
         # we're going to take the first one - if there is more than one of these
@@ -244,7 +251,7 @@ class yumconf(object):
         
         for section in repoconf.sections():
             if section != 'main': # check for morons
-                # this sucks but show me a nice way of doing this.                                    
+                # this sucks but show me a nice way of doing this.
                 doRepoSection(self, repoconf, section)
 
 def doRepoSection(globconfig, thisconfig, section):
@@ -310,6 +317,7 @@ def doRepoSection(globconfig, thisconfig, section):
         thisrepo.set('includepkgs', includelist)
 
         thisrepo.set('enablegroups', thisconfig._getboolean(section, 'enablegroups', 1))
+        
         cachedir = os.path.join(globconfig.getConfigOption('cachedir'), section)
         pkgdir = os.path.join(cachedir, 'packages')
         hdrdir = os.path.join(cachedir, 'headers')

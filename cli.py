@@ -60,6 +60,7 @@ class YumBaseCli(yum.YumBase):
                 repo.getRepoXML()
             except yum.Errors.RepoError, e:
                 self.errorlog(0, 'Cannot open/read repomd.xml file for repository: %s' % repo)
+                print e
                 sys.exit(1)
         self.doSackSetup()
     
@@ -118,6 +119,7 @@ class YumBaseCli(yum.YumBase):
         
         # our sleep variable for the random start time
         sleeptime=0
+        root = '/'
         
         try: 
             for o,a in gopts:
@@ -125,6 +127,7 @@ class YumBaseCli(yum.YumBase):
                     print __version__
                     sys.exit(0)
                 if o == '--installroot':
+                    root = a
                     if os.access(a + "/etc/yum.conf", os.R_OK):
                         yumconffile = a + '/etc/yum.conf'
                 if o == '-c':
@@ -132,7 +135,7 @@ class YumBaseCli(yum.YumBase):
     
             if yumconffile:
                 try:
-                    self.conf = yumconf(configfile = yumconffile)
+                    self.conf = yumconf(configfile = yumconffile, root=root)
                 except yum.Errors.ConfigError, e:
                     self.errorlog(0, _('Config Error: %s.') % e)
                     sys.exit(1)
@@ -256,7 +259,8 @@ class YumBaseCli(yum.YumBase):
         """reads self.cmds and parses them out to make sure that the requested 
         base command + argument makes any sense at all""" 
 
-        self.log(3,'COMMAND: %s' % self.cmdstring)
+        self.log(3, 'COMMAND: %s' % self.cmdstring)
+        self.log(3, 'Installroot: %s' % self.conf.getConfigOption('installroot'))
         
         if len(self.conf.getConfigOption('commands')) == 0 and len(self.cmds) < 1:
             self.cmds = self.conf.getConfigOption('commands')
@@ -320,6 +324,13 @@ class YumBaseCli(yum.YumBase):
         # at this point we know the args are valid - we don't know their meaning
         # but we know we're not being sent garbage
         
+        # setup our transaction sets (needed globally, here's a good a place as any)
+        try:
+            self.doTsSetup()
+        except yum.Errors.YumBaseError, e:
+            return 1, [str(e)]
+
+
         if self.basecmd == 'install':
             self.log(2, "Setting up Install Process")
             return self.installPkgs()
@@ -658,7 +669,6 @@ class YumBaseCli(yum.YumBase):
                 else:
                     self.log(4, 'Nothing matches %s.%s %s:%s-%s from update' % (n,a,e,v,r))
 
-                
 
         elif pkgnarrow == 'installed':
             self.doRpmDBSetup()

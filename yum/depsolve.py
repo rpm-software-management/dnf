@@ -33,12 +33,11 @@ import packages
 class Depsolve:
     def __init__(self):
         packages.base = self
-        self.initActionTs()
     
     def initActionTs(self):
         """sets up the ts we'll use for all the work"""
-        #FIXME - should add flags and macros here
-        self.ts = rpmUtils.transaction.TransactionWrapper() # deal with flags, etc
+        
+        self.ts = rpmUtils.transaction.TransactionWrapper(self.conf.getConfigOption('installroot'))
 
     def getPackageObject(self, pkgtup):
         """retrieves the packageObject from a pkginfo tuple - if we need
@@ -265,6 +264,7 @@ class Depsolve:
 
         else:
             # we need to find the package from the repositories
+            self.log(4, 'Searching pkgSack for dep: %s' % needname)
             pkgs = self.pkgSack.searchProvides(needname)
             if flags == 0:
                 flags = None
@@ -272,9 +272,14 @@ class Depsolve:
             defSack = ListPackageSack() # list of items definitely providing this requirment
             for po in pkgs:
                 self.log(5, 'Potential match %s to %s' % (needname, po))
+                if needname[0] == '/':
+                    # file dep add all matches to the defSack
+                    defSack.addPackage(po)
+                    continue
                 if po.checkPrco('provides', (needname, flags, (r_e, r_v, r_r))):
                     defSack.addPackage(po)
                     self.log(3, 'Matched %s to require for %s' % (po, name))
+
             
             # iterate the defSack briefly, if we find the package is already in the 
             # tsInfo then just skip this run

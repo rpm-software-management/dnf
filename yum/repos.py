@@ -388,6 +388,7 @@ class Repository:
 
         remote = self.repoMDFile
         local = self.cachedir + '/repomd.xml'
+        
         if self.cache == 1:
             if not os.path.exists(local):
                 raise Errors.RepoError, 'Cannot find repomd.xml file for %s' % (self)

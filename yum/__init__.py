@@ -34,10 +34,21 @@ class YumBase(depsolve.Depsolve):
     
     def __init__(self):
         depsolve.Depsolve.__init__(self)
-        self.read_ts = rpmUtils.transaction.initReadOnlyTransaction()
+
+        
+    def doTsSetup(self):
+        """setup all the transaction set storage items we'll need
+           This can't happen in __init__ b/c we don't know our installroot
+           yet"""
+        if not self.conf.getConfigOption('installroot'):
+            raise Errors.YumBaseError, 'Setting up TransactionSets before config class is up'
+        
+        installroot = self.conf.getConfigOption('installroot')
+        self.read_ts = rpmUtils.transaction.initReadOnlyTransaction(root=installroot)
         self.tsInfo = rpmUtils.transaction.TransactionData()
         self.rpmdb = rpmUtils.RpmDBHolder()
-
+        self.initActionTs()
+        
     def doRpmDBSetup(self):
         """sets up a holder object for important information from the rpmdb"""
         self.log(3, 'Reading Local RPMDB')
@@ -104,7 +115,6 @@ class YumBase(depsolve.Depsolve):
             repoid = repo.id
 
         if len(excludelist) == 0:
-            self.log(2, 'Nothing to exclude')
             return
         exactmatch, matched, unmatched = \
            parsePackages(self.pkgSack.returnPackages(repoid), excludelist)

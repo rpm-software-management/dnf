@@ -158,8 +158,8 @@ class TransactionData:
 # wrapper/proxy class for rpm.Transaction so we can
 # instrument it, etc easily
 class TransactionWrapper:
-    def __init__(self):
-        self.ts = rpm.TransactionSet()
+    def __init__(self, root='/'):
+        self.ts = rpm.TransactionSet(root)
         self._methods = ['dbMatch',
                          'check',
                          'order',
@@ -261,10 +261,10 @@ class TransactionWrapper:
         return orphan
 
         
-def initReadOnlyTransaction():
-    global read_ts
-    if read_ts == None:
-        read_ts =  TransactionWrapper()
-        read_ts.pushVSFlags(~(rpm._RPMVSF_NOSIGNATURES|rpm._RPMVSF_NODIGESTS))
+def initReadOnlyTransaction(root='/'):
+    #global read_ts
+    #if read_ts == None:
+    read_ts =  TransactionWrapper(root=root)
+    read_ts.pushVSFlags(~(rpm._RPMVSF_NOSIGNATURES|rpm._RPMVSF_NODIGESTS))
     return read_ts
 
