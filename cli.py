@@ -256,7 +256,7 @@ class YumBaseCli(yum.YumBase):
         if self.basecmd not in ('update', 'install','info', 'list', 'erase',\
                                 'grouplist', 'groupupdate', 'groupinstall',\
                                 'clean', 'remove', 'provides', 'check-update',\
-                                'search'):
+                                'search', 'generate-rss'):
             self.usage()
             
     
@@ -577,8 +577,7 @@ class YumBaseCli(yum.YumBase):
             num_pkgs = 30
             ftimehash = {}
             self.doRepoSetup()
-            pkgs = self.pkgSack.returnPackages()
-            for po in pkgs:
+            for po in self.pkgSack.returnPackages():
                 ftime = po.returnSimple('filetime')
                 if not ftimehash.has_key(ftime):
                     ftimehash[ftime] = [po]
@@ -593,8 +592,9 @@ class YumBaseCli(yum.YumBase):
                 for po in ftimehash[sometime]:
                     if count < num_pkgs:
                         recent.append(po)
-                    else:
                         count += 1
+                    else:
+                        break
         
         returnlist = []
         for (lst, description) in [(updates, 'Updated'), (available, 'Available'), 

@@ -42,8 +42,8 @@ class YumBase(depsolve.Depsolve):
 
     def doSackSetup(self, callback=None):
         """populates the package sacks for information from our repositories"""
-        
-        self.repos.populateSack(callback=callback)
+        cache = self.conf.getConfigOption('cache')
+        self.repos.populateSack(callback=callback, cache=cache)
         self.pkgSack = self.repos.pkgSack
 
 

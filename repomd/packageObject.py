@@ -123,11 +123,13 @@ class XMLPackageObject(PackageObject):
         """takes a location element, returnsbase url path, relative path to package"""
         
         base = node.GetAttribute('base')
-        relative = node.GetAttribute('href')    
+        relative = node.GetAttribute('href')
         return base, relative
         
     def parseSimple(self, node):
         """takes a simple unattributed CDATA element and returns its value"""
+        if node.IsEmptyElement():
+            return ''
         node.Read() # get the next node
         return node.Value()
         

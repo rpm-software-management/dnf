@@ -91,7 +91,7 @@ class RepoStorage:
 
         return returnlist
                 
-    def populateSack(self, which='enabled', with='primary', callback=None):
+    def populateSack(self, which='enabled', with='primary', callback=None, cache=0):
         """This populates the package sack from the repositories, two optional 
            arguments: which='repoid, enabled, all'
                       with='primary, filelists, other, all'"""
@@ -117,11 +117,11 @@ class RepoStorage:
         for repo in myrepos:
             for item in data:
                 if item == 'primary':
-                    xml = repo.getPrimaryXML()
+                    xml = repo.getPrimaryXML(cache=cache)
                 elif item == 'filelists':
-                    xml = repo.getFileListsXML()
+                    xml = repo.getFileListsXML(cache=cache)
                 elif item == 'other':
-                    xml = repo.getOtherXML()
+                    xml = repo.getOtherXML(cache=cache)
                 else:
                     # how odd, just move along
                     continue

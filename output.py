@@ -97,7 +97,8 @@ def listPkgs(pkgLists, outputType):
             if len(lst) > 0:
                 thingslisted = 1
                 print '%s packages' % description
-                lst.sort(sortPkgObj)
+                if description != 'Recently available':
+                    lst.sort(sortPkgObj)
                 for pkg in lst:
                     if outputType == 'list':
                         simpleList(pkg)
@@ -112,7 +113,11 @@ def listPkgs(pkgLists, outputType):
     
     elif outputType == 'rss':
         # take recent updates only and dump to an rss compat output
-        pass
+        for (lst, description) in pkgLists:
+            if description == 'Recently available':
+                for pkg in lst:
+                    print pkg
+
     
 
 def userconfirm(self):
