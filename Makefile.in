@@ -128,7 +128,7 @@ daily:
 	$(MAKE) dailyfiles
 	distdir=$(PACKAGE); \
 	cd .disttmp; \
-	tar -cvz > ../$$distdir.tar.gz $$distdir; \
+	tar -cvz > ../$$distdir-`date +%Y%m%d`.tar.gz $$distdir; \
 	cd $$olddir
 	rm -rf .disttmp
 
