@@ -39,10 +39,12 @@ def parseCmdArgs(args):
         
     try:
         gopts, cmds = getopt.getopt(args, 'c:hR:e:d:y', ['help'])
+        if len (cmds) < 1:
+            errorlog(0, 'Options Error: no commands found')
+            usage()
     except getopt.error, e:
         errorlog(0, 'Options Error: %s' % e)
         usage()
-        sys.exit(1)
    
     try: 
         for o,a in gopts:
@@ -58,7 +60,6 @@ def parseCmdArgs(args):
                 else:
                     errorlog(0, 'Cannot find conf file %s' % a)
                     usage()
-                    sys.exit(1)
 
         if yumconffile:
             conf=yumconf(configfile=yumconffile)
@@ -87,7 +88,6 @@ def parseCmdArgs(args):
     except ValueError, e:
         errorlog(0, 'Options Error: %s' % e)
         usage()
-        sys.exit(1)
         
     return (log, errorlog, filelog, conf, cmds)
     
