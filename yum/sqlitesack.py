@@ -126,8 +126,8 @@ class YumSqlitePackageSack(repos.YumPackageSack):
         result = []
         for (rep,cache) in self.otherdb.items():
             cur = cache.cursor()
-            cur.execute("select chagelog.date as date,\
-                chagelog.author as author.\
+            cur.execute("select changelog.date as date,\
+                changelog.author as author.\
                 changelog.changelog as changelog from packages,changelog where packages.pkgId = %s and packages.pkgKey = changelog.pkgKey",pkgId)
             for ob in cur.fetchall():
                 result.append(( ob['date'],
