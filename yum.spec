@@ -1,10 +1,11 @@
 Summary: RPM installer/updater
 Name: yum
-Version: 0.8.6
+Version: 0.8.7
 Release: 1
 License: GPL
 Group: System Environment/Base
 Source: %{name}-%{version}.tar.gz
+#Source2: yum.conf
 URL: http://www.dulug.duke.edu/yum/
 BuildRoot: %{_tmppath}/%{name}-%{version}root
 BuildArchitectures: noarch
@@ -29,6 +30,8 @@ make
 [ "$RPM_BUILD_ROOT" != "/" ] && rm -rf $RPM_BUILD_ROOT
 make DESTDIR=$RPM_BUILD_ROOT install
 
+#install -m 644 %{SOURCE2} $RPM_BUILD_ROOT/%{_sysconfdir}/yum.conf
+
 %clean
 [ "$RPM_BUILD_ROOT" != "/" ] && rm -rf $RPM_BUILD_ROOT
 
@@ -36,14 +39,14 @@ make DESTDIR=$RPM_BUILD_ROOT install
 %post
 /sbin/chkconfig --add yum
 /sbin/chkconfig yum on
-/sbin/service yum condrestart
+/sbin/service yum condrestart >> /dev/null
 exit 0
 
 
 %preun
 if [ $1 = 0 ]; then
  /sbin/chkconfig --del yum
- /sbin/service yum stop
+ /sbin/service yum stop >> /dev/null
 fi
 exit 0
 
@@ -64,6 +67,9 @@ exit 0
 %{_mandir}/man*/*
 
 %changelog
+* Fri Jun 14 2002 Seth Vidal <skvidal@phy.duke.edu>
+- 0.8.7
+
 * Thu Jun 13 2002 Seth Vidal <skvidal@phy.duke.edu>
 - bumped to 0.8.5
 

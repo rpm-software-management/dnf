@@ -30,4 +30,4 @@ dnl Checks for typedefs, structures, and compiler characteristics.
 
 dnl Checks for library functions.
 
-AC_OUTPUT(sbin/Makefile etc/Makefile Makefile docs/Makefile yum.spec)
+AC_OUTPUT(sbin/Makefile etc/Makefile Makefile docs/Makefile)

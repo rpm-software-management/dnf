@@ -186,6 +186,8 @@ def create_final_ts(tsInfo, rpmdb):
 
 	#one last test run for diskspace
 	log(2,"Calculating available disk space - this could take a bit")
+	if errors:
+		del errors
 	errors = tsfin.run(rpm.RPMTRANS_FLAG_TEST, ~rpm.RPMPROB_FILTER_DISKSPACE, callback.install_callback, '')
 	
 	if errors:
