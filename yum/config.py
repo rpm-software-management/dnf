@@ -87,7 +87,9 @@ class yumconf(object):
             self.cfg.readfp(configh)
         except ConfigParser.MissingSectionHeaderError, e:
             raise Errors.ConfigError,  'Error accessing config file: %s' % configfile
-        
+        except ConfigParser.ParsingError, e:
+            raise Errors.ConfigError, str(e)
+            
         self.repos = repos.RepoStorage() # class of repositories
         
         self.configdata = {} # dict to hold all the data goodies
@@ -231,7 +233,7 @@ class yumconf(object):
         # bail out with an exception raised so yummain can catch it
         if len(self.repos.listEnabled()) < 1:
             raise Errors.ConfigError, \
-                    'Insufficient repository config. No repositories Found/Enabled. Aborting.'
+                    'Insufficient repository configuration. No repositories Found/Enabled. Aborting.'
 
     def listConfigOptions(self):
         """return list of options available for global config"""
