@@ -818,7 +818,7 @@ For more information contact your distribution or package provider.
                     matched.extend(mtch)
             
             installable = yum.misc.unique(exactmatch + matched)
-            exactarch = self.conf.exactarch
+            exactarchlist = self.conf.exactarchlist
             
             # we look through each returned possibility and rule out the
             # ones that we obviously can't use
@@ -844,7 +844,7 @@ For more information contact your distribution or package provider.
                         (n2, a2, e2, v2, r2) = instTup
                         rc = compareEVR((e2, v2, r2), (pkg.epoch, pkg.version, pkg.release))
                         if rc < 0: # we're newer - this is an update, pass to them
-                            if exactarch:
+                            if n2 in exactarchlist:
                                 if pkg.arch == a2:
                                     passToUpdate.append(pkg.pkgtup)
                             else:
@@ -1052,7 +1052,7 @@ For more information contact your distribution or package provider.
                 (n2, a2, e2, v2, r2) = installed_pkg.pkgtup
                 rc = compareEVR((e2, v2, r2), (e, v, r))
                 if rc < 0: # we're newer - this is an update, pass to them
-                    if self.conf.exactarch:
+                    if n2 in self.conf.exactarchlist:
                         if a == a2:
                             updatepkgs.append((po, installed_pkg))
                             continue

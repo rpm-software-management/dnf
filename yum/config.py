@@ -216,6 +216,9 @@ class yumconf(object):
                          ('kernelpkgnames', ['kernel','kernel-smp',
                                              'kernel-enterprise', 'kernel-bigmem',
                                              'kernel-BOOT']),
+                         ('exactarchlist', ['kernel', 'kernel-smp', 'glibc',
+                                            'kernel-hugemem', 'kernel-enterprise',
+                                            'kernel-bigmem']
                          ('tsflags', [])]
                          
         optionbools = [('assumeyes', 'False'),

@@ -388,11 +388,11 @@ class Depsolve:
             thismode = self.tsInfo.getMode(name=i_n, arch=i_a, 
                             epoch=i_e, ver=i_v, rel=i_r)
                         
-            if thismode is None and self.conf.exactarch:
+            if thismode is None and i_n in self.conf.exactarchlist:
                 # check for mode by the same name+arch
                 thismode = self.tsInfo.getMode(name=i_n, arch=i_a)
             
-            if thismode is None and not self.conf.exactarch:
+            if thismode is None and i_n not in self.conf.exactarchlist:
                 # check for mode by just the name
                 thismode = self.tsInfo.getMode(name=i_n)
             
@@ -444,7 +444,7 @@ class Depsolve:
             
             po = None
             if len(uplist) > 0:
-                if not self.conf.exactarch:
+                if name not in self.conf.exactarchlist:
                     pkgs = self.pkgSack.returnNewestByName(name)
                     archs = []
                     for pkg in pkgs:
@@ -650,7 +650,7 @@ class Depsolve:
 
             # if there's an update for the reqpkg, then update it
             if len(uplist) > 0:
-                if not self.conf.exactarch:
+                if confname not in self.conf.exactarchlist:
                     pkgs = self.pkgSack.returnNewestByName(confname)
                     archs = []
                     for pkg in pkgs:

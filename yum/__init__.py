@@ -238,6 +238,7 @@ class YumBase(depsolve.Depsolve):
             self.up.rawobsoletes = self.pkgSack.returnObsoletes()
             
         self.up.exactarch = self.conf.getConfigOption('exactarch')
+        self.up.exactarchlist = self.conf.getConfigOption('exactarchlist')
         self.up.doUpdates()
 
         if self.conf.getConfigOption('obsoletes'):
