@@ -110,14 +110,20 @@ def main(args):
         usage()
     (log, errorlog, filelog, conf, cmds) = parseCmdArgs(args)
 
-    if conf.uid != 0:
-        conf.cache=1
-
     if cmds[0] not in ('update', 'upgrade', 'install','info', 'list', 'erase',\
                        'grouplist','groupupdate','groupinstall','clean','remove', 'provides'):
         usage()
     process=cmds[0]
     
+    # some misc speedups/sanity checks
+    if conf.uid != 0:
+        conf.cache=1
+    if process == 'clean':
+        conf.cache=1
+        
+
+
+
     # push the logs into the other namespaces
     pkgaction.log=log
     clientStuff.log=log
