@@ -402,8 +402,11 @@ For more information contact your distribution or package provider.
 
         elif self.basecmd in ['localinstall', 'localupdate']:
             self.log(2, "Setting up Local Package Process")
+            updateonly=0
+            if self.basecmd == 'localupdate': updateonly=1
+                
             try:
-                return self.localInstall()
+                return self.localInstall(updateonly=updateonly)
             except yum.Errors.YumBaseError, e:
                 return 1, [str(e)]
 
@@ -791,6 +794,18 @@ For more information contact your distribution or package provider.
                     self.log(5, 'Not Updating Package that is already obsoleted: %s.%s %s:%s-%s' % old)
 
         else:
+            # go through the userlist - look for items that are local rpms. If we find them
+            # pass them off to localInstall() and then move on
+            localupdates = []
+            for item in userlist:
+                if os.path.exists(item) and item[-4:] == '.rpm': # this is hurky, deal w/it
+                    localupdates.append(item)
+            
+            if len(localupdates) > 0:
+                val, msglist = self.localInstall(filelist=localupdates, updateonly=1)
+                for item in localupdates:
+                    userlist.remove(item)
+                
             # we've got a userlist, match it against updates tuples and populate
             # the tsInfo with the matches
             updatesPo = []
@@ -851,7 +866,7 @@ For more information contact your distribution or package provider.
         else:
             return 0, ['No Packages marked for removal']
     
-    def localInstall(self, filelist=None):
+    def localInstall(self, filelist=None, updateonly=0):
         """handles installs/updates of rpms provided on the filesystem in a 
            local dir (ie: not from a repo)"""
            
@@ -885,7 +900,10 @@ For more information contact your distribution or package provider.
             installedByKey = self.rpmdb.returnTupleByKeyword(name=po.name)
             # go through each package 
             if len(installedByKey) == 0: # nothing installed by that name
-                installpkgs.append(po)
+                if updateonly:
+                    self.errorlog(2, 'Package %s not installed, cannot update it. Run yum install to install it instead.' % po.name)
+                else:
+                    installpkgs.append(po)
                 continue
 
             for instTup in installedByKey:

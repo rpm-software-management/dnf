@@ -45,7 +45,7 @@ class YumBase(depsolve.Depsolve):
     
     def __init__(self):
         depsolve.Depsolve.__init__(self)
-
+        self.localdbimported = 0
         
     def doTsSetup(self):
         """setup all the transaction set storage items we'll need
@@ -62,8 +62,11 @@ class YumBase(depsolve.Depsolve):
         
     def doRpmDBSetup(self):
         """sets up a holder object for important information from the rpmdb"""
-        self.log(3, 'Reading Local RPMDB')
-        self.rpmdb.addDB(self.read_ts)
+        
+        if not self.localdbimported:
+            self.log(3, 'Reading Local RPMDB')
+            self.rpmdb.addDB(self.read_ts)
+            self.localdbimported = 1
 
     def closeRpmDB(self):
         """closes down the instances of the rpmdb we have wangling around"""

@@ -65,6 +65,8 @@ class RpmDBHolder:
             pkgtuple = self._hdr2pkgTuple(hdr)
             if not self.indexdict.has_key(pkgtuple):
                 self.indexdict[pkgtuple] = []
+            else:
+                continue
             self.indexdict[pkgtuple].append(mi.instance())
             self.pkglists.append(pkgtuple)
         del mi
