@@ -18,8 +18,11 @@
 import Errors
 import os
 import os.path
-import failover    
+
 from urlgrabber.grabber import URLGrabber
+import urlgrabber.mirror
+from metadata import repoMDObject
+from metadata import mdErrors
 
 class RepoStorage:
     """This class contains multiple repositories and core configuration data
@@ -88,6 +91,10 @@ class Repository:
         self.groupsfilename = 'yumgroups.xml' # something some freaks might 
                                               # eventually want
         self.setkeys = []
+        # throw in some stubs for things that will be set by the config class
+        self.cache = ""
+        self.pkgdir = ""
+        self.hdrdir = ""        
         
     def __cmp__(self, other):
         if self.id > other.id:
@@ -136,8 +143,7 @@ class Repository:
     def setupGrab(self):
         """sets up the grabber functions with the already stocked in urls for
            the mirror groups"""
-        # FIXME this should do things with our proxy and keepalive info here
-        # too
+        # FIXME this should do things with our proxy info too
         if self.failmeth == 'roundrobin':
             mgclass = urlgrabber.mirror.MGRandomOrder
         else:
@@ -150,7 +156,6 @@ class Repository:
         self.grab = mgclass(self.grabfunc, self.urls)
 
         # now repo.grab.urlgrab('relativepath/some.file') should do the right thing
-        
         
     def remoteGroups(self):
         return os.path.join(self.baseURL(), self.groupsfilename)
@@ -172,7 +177,17 @@ class Repository:
         
     def getRepoXML(self, cache=0):
         """retrieve/check/read in repomd.xml from the repository"""
-        pass
+        # retrieve, if we can, the repomd.xml from the repo
+        # read it in
+        # store the data about the other MD files in the class
+        repomdxmlfile = self.cache + '/repomd.xml'
+        try:
+            self.repoXML = repoMDObject.RepoMD(self.id, repomdxmlfile)
+        except mdErrors.RepoMDError, e:
+            raise Errors.RepoError, 'Error importing repomd.xml from %s: %s' % (self.id, e)
+        # populate some other default attributes of the repo class based on the contents
+        # of self.repoXML
+        
         
     def getPrimaryXML(self, cache=0):
         pass
