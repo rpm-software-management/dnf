@@ -21,11 +21,8 @@ import locale
 import time # test purposes only
 
 import yum
-import rpmUtils.updates
 import yum.Errors as Errors
-import yum.depsolve
 import cli
-import output
 
 
 from i18n import _
