@@ -309,15 +309,17 @@ class Repository:
             raise Errors.RepoError, 'Error opening file for checksum'
         
     def dump(self):
-        string = 'repo: %s\n' % self.id
+        string = '[%s]\n' % self.id
         for attr in dir(self):
-            if attr not in ['id', 'set', 'unset', 'setFailover',
-                            'remoteGroups', 'remoteMetadata', 'localGroups',
-                            'baseURL', 'failed', 'repomd', '__str__', '__init__',
-                            '__doc__', '__module__', '__cmp__', 'dump', 'enable',
-                            'disable']:
+            if attr in ['name', 'bandwidth', 'enabled', 'enablegroups', 
+                        'gpgcheck', 'includepkgs', 'keepalive', 'proxy'
+                        'proxy_password', 'proxy_username', 'excludes', 
+                        'retries', 'throttle', 'timeout']:
                 
                 string = string + '%s = %s\n' % (attr, getattr(self, attr))
+        string = string + 'baseurl='
+        for url in self.urls:
+            string = string + ' %s\n' % url
         
         return string
     
