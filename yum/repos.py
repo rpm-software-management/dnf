@@ -355,6 +355,7 @@ class Repository:
                             retry = self.retries,
                             throttle = self.throttle,
                             progres_obj = self.callback,
+                            copy_local = copy_local,
                             failure_callback = self.failure_obj,
                             checkfunc = checkfunc)
             
@@ -392,12 +393,12 @@ class Repository:
                 raise Errors.RepoError, 'Cannot find repomd.xml file for %s' % (self)
         else:
             try:
-                local = self.get(relative=remote, local=local, copy_local=1)
+                result = self.get(relative=remote, local=local, copy_local=1)
             except URLGrabError, e:
                 raise Errors.RepoError, 'Error downloading file %s: %s' % (local, e)
 
         try:
-            self.repoXML = repoMDObject.RepoMD(self.id, local)
+            self.repoXML = repoMDObject.RepoMD(self.id, result)
         except mdErrors.RepoMDError, e:
             raise Errors.RepoError, 'Error importing repomd.xml from %s: %s' % (self, e)
 

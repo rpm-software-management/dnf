@@ -399,12 +399,16 @@ class YumBaseCli(yum.YumBase):
                 errstring += problem
             
             raise yum.Errors.YumBaseError, errstring
-    
+        
         tsConf = {}
         for feature in ['diskspacecheck']: # more to come, I'm sure
             tsConf['diskspacecheck'] = self.conf.getConfigOption('diskspacecheck')
         
         testcb = callback.RPMInstallCallback()
+        # clean out the ts b/c we have to give it new paths to the rpms 
+        del self.ts
+        self.initActionTs()
+        self.populateTs(keepold=0) # sigh
         tserrors = self.ts.test(testcb, conf=tsConf)
         del testcb
         self.log(2, 'Finished Transaction Test')
@@ -418,7 +422,7 @@ class YumBaseCli(yum.YumBase):
         del self.ts
         
         self.initActionTs() # make a new, blank ts to populate
-        self.populateTs() # populate the ts
+        self.populateTs(keepold=0) # populate the ts
         self.ts.check() #required for ordering
         self.ts.order() # order
         self.ts.setFlags(0) # unset the test flag

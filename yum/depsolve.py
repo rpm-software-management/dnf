@@ -60,21 +60,22 @@ class Depsolve:
         
         return result
     
-    def populateTs(self, test=0):
+    def populateTs(self, test=0, keepold=1):
         """take transactionData class and populate transaction set"""
 
         ts_elem = []
-        for te in self.ts:
-            epoch = te.E()
-            if epoch is None:
-                epoch = '0'
-            pkginfo = (te.N(), te.A(), epoch, te.V(), te.R())
-            if te.Type() == 1:
-                mode = 'i'
-            elif te.Type() == 2:
-                mode = 'e'
-            
-            ts_elem.append((pkginfo, mode))
+        if keepold:
+            for te in self.ts:
+                epoch = te.E()
+                if epoch is None:
+                    epoch = '0'
+                pkginfo = (te.N(), te.A(), epoch, te.V(), te.R())
+                if te.Type() == 1:
+                    mode = 'i'
+                elif te.Type() == 2:
+                    mode = 'e'
+                
+                ts_elem.append((pkginfo, mode))
         
         for (pkginfo, mode) in self.tsInfo.dump():
             (n, a, e, v, r) = pkginfo
@@ -84,6 +85,7 @@ class Depsolve:
                 po = self.getPackageObject(pkginfo)
                 hdr = po.getHeader()
                 rpmfile = po.localPkg()
+
                 if test:
                     provides = po.getProvidesNames()
                 else:
