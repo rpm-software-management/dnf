@@ -58,6 +58,16 @@ def archDifference(myarch, targetarch):
 def score(arch):
     return archDifference(canonArch, arch)
 
+def isMultiLibArch(arch=None):
+    """returns true if arch is a multilib arch, false if not"""
+    if arch is None:
+        arch = getCanonArch()
+    
+    if multilibArches.has_key(arch):
+        return 1
+    
+    return 0
+    
 def getBestArchFromList(archlist, myarch=None):
     """ 
         return the best arch from the list for myarch if - myarch is not given,

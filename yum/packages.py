@@ -119,7 +119,7 @@ def returnBestPackages(pkgdict, arch=None):
             (n, a, e, v, r) = pkg
             if a not in compatArchList:
                 continue
-            elif rpmUtils.arch.multilibArches.has_key(a):
+            elif rpmUtils.arch.isMultiLibArch(arch=a):
                 multiLib.append(pkg)
             else:
                 singleLib.append(pkg)

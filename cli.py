@@ -640,26 +640,23 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
             for pkg in installable:
                 (n, e, v, r, a) = pkg.returnNevraTuple()
                 pkgtup = (n, a, e, v, r)
-                if a == 'src':
-                    continue
                 if pkgtup in installed:
                     continue
+                
+                # everything installed that matches the name
+                installedByKey = self.rpmdb.returnTupleByKeyword(name=n)
 
-                # look up the installed packages based on name or name+arch, 
-                # depending on exactarch being set.
-                if exactarch:
-                    installedByKey = self.rpmdb.returnTupleByKeyword(name=n, arch=a)
-                else:
-                    installedByKey = self.rpmdb.returnTupleByKeyword(name=n)
-                
-                
                 # go through each package 
                 if len(installedByKey) > 0:
                     for instTup in installedByKey:
                         (n2, a2, e2, v2, r2) = instTup
                         rc = compareEVR((e2, v2, r2), (e, v, r))
                         if rc < 0: # we're newer - this is an update, pass to them
-                            passToUpdate.append(pkgtup)
+                            if exactarch:
+                                if a == a2:
+                                    passToUpdate.append(pkgtup)
+                            else:
+                                passToUpdate.append(pkgtup)
                         elif rc == 0: # same, ignore
                             continue
                         elif rc > 0: # lesser, check if the pkgtup is an exactmatch
@@ -690,20 +687,14 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
                 self.log(3, '   %s.%s %s:%s-%s' % (n, a, e, v, r))
                 pkgstring = '%s:%s-%s-%s.%s' % (e,n,v,r,a)
                 updatelist.append(pkgstring)
-            self.updatePkgs(userlist=updatelist)
+            self.updatePkgs(userlist=updatelist, quiet=1)
 
         if self.tsInfo.count() > oldcount:
             return 2, ['Package(s) to install']
         return 0, ['Nothing to do']
         
-        #FIXME - what do I do in the case of yum install kernel\*
-        # where kernel-1.1-1.i686 is installed and kernel-1.2-1.i[3456]86 are
-        # available. the i686 kernel is an update, but the rest are potential
-        # installs, right? Or in the event of one member of an arch being
-        # an update all other members should be considered potential upgrades
-        # unless the other member is also a multilib Arch.
         
-    def updatePkgs(self, userlist=None):
+    def updatePkgs(self, userlist=None, quiet=0):
         """take user commands and populate transaction wrapper with 
            packages to be updated"""
         
@@ -752,7 +743,8 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
                                  
             exactmatch, matched, unmatched = yum.packages.parsePackages(updatesPo, userlist)
             for userarg in unmatched:
-                self.errorlog(1, 'Could not find update match for %s' % userarg)
+                if not quiet:
+                    self.errorlog(1, 'Could not find update match for %s' % userarg)
 
             updateMatches = yum.misc.unique(matched + exactmatch)
             for po in updateMatches:
