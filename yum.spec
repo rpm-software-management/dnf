@@ -1,6 +1,6 @@
 Summary: RPM installer/updater
 Name: yum
-Version: 2.1.1
+Version: 2.1.2
 Release: 1
 License: GPL
 Group: System Environment/Base

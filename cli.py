@@ -206,7 +206,7 @@ class YumBaseCli(yum.YumBase):
         # if we're below 2 on the debug level we don't need to be outputting
         # progress bars - this is hacky - I'm open to other options
         # One of these is a download
-        if self.conf.getConfigOption('debuglevel') < 2:
+        if self.conf.getConfigOption('debuglevel') < 2 or not sys.stdout.isatty():
             self.conf.repos.setProgressBar(None)
             self.conf.repos.callback = None
         else:
@@ -358,6 +358,7 @@ class YumBaseCli(yum.YumBase):
             
             
         elif self.basecmd == 'generate-rss':
+            self.log(2, 'Generating RSS File')
             self.extcmds.insert(0, 'recent')
             try:
                 pkgLists = self.genPkgLists()
