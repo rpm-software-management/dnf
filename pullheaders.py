@@ -28,7 +28,7 @@ import serverStuff
 import clientStuff
 from logger import Logger
 
-log=Logger(threshold=0,default=2,prefix='',preprefix='')
+log=Logger(threshold=2,default=2,prefix='',preprefix='')
 serverStuff.log = log
 clientStuff.log = log
 
