@@ -128,6 +128,7 @@ distfiles:
 	$(srcdir)/INSTALL \
 	$(srcdir)/README \
 	$(srcdir)/TODO \
+	$(srcdir)/ChangeLog \
 	$(srcdir)/py-compile \
 	$(srcdir)/Makefile.in \
 	$(srcdir)/configure.in \
