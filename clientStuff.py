@@ -229,37 +229,37 @@ def returnObsoletes(headerNevral, rpmNevral, uninstNAlist):
                         log(4, '%s obsoleting %s' % (name, ob))
                     elif len(obvalue) == 3:
                         (e1, v1, r1) = rpmNevral.evr(name, arch)
-                        (e2, v2, r2) = str_to_version(obvalue[3])
+                        (e2, v2, r2) = str_to_version(obvalue[2])
                         rc = compareEVR((e1, v1, r1), (e2, v2, r2))
-                        if obvalue[2] == '>':
+                        if obvalue[1] == '>':
                             if rc >= 1:
                                 obsdict[(name, arch)]=obvalue[0]
                             elif rc == 0:
                                 pass
                             elif rc <= -1:
                                 pass
-                        elif obvalue[2] == '>=':
+                        elif obvalue[1] == '>=':
                             if rc >= 1:
                                 obsdict[(name, arch)]=obvalue[0]
                             elif rc == 0:
                                 obsdict[(name, arch)]=obvalue[0]
                             elif rc <= -1:
                                 pass
-                        elif obvalue[2] == '=':
+                        elif obvalue[1] == '=':
                             if rc >= 1:
                                 pass
                             elif rc == 0:
                                 obsdict[(name, arch)]=obvalue[0]
                             elif rc <= -1:
                                 pass
-                        elif obvalue[2] == '<=':
+                        elif obvalue[1] == '<=':
                             if rc >= 1:
                                 pass
                             elif rc == 0:
                                 obsdict[(name, arch)]=obvalue[0]
                             elif rc <= -1:
                                 obsdict[(name, arch)]=obvalue[0]
-                        elif obvalue[2] == '<':
+                        elif obvalue[1] == '<':
                             if rc >= 1:
                                 pass
                             elif rc == 0:
@@ -728,6 +728,8 @@ def take_action(cmds, nulist, uplist, newlist, obslist, tsInfo, HeaderInfo, rpmD
         cmds.remove(cmds[0])
         if len(cmds) == 0:
             pkgaction.upgradepkgs(tsInfo, HeaderInfo, rpmDBInfo, nulist, uplist, obslist, obsdict, 'all')
+        else:
+            pkgaction.upgradepkgs(tsInfo, HeaderInfo, rpmDBInfo, nulist, uplist, obslist, cmds)
             
     elif cmds[0] == 'erase' or cmds[0] == 'remove':
         cmds.remove(cmds[0])
