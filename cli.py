@@ -23,12 +23,15 @@ import fcntl
 import fnmatch
 import re
 import output
-import misc
 
 import progress_meter
 import yum
 import yum.yumcomps
 import yum.Errors
+import yum.misc
+from rpmUtils.miscutils import compareEVR
+from yum.packages import parsePackages
+
 from yum.logger import Logger
 from yum.config import yumconf
 from i18n import _
@@ -319,7 +322,7 @@ class YumBaseCli(yum.YumBase):
             # if we're cleaning then we don't need to talk to the net
             self.conf.setConfigOption('cache', 1)
 
-    def installPkgs(self):
+    def installPkgs(self, userlist=self.extcmds):
         """Attempts to take the user specified list of packages/wildcards
            and install them, or if they are installed, update them to a newer
            version. If a complete version number if specified, attempt to 
@@ -330,7 +333,62 @@ class YumBaseCli(yum.YumBase):
         # if we've added any packages to the transaction then return 2 and a string
         # if we've hit a snag, return 1 and the failure explanation
         # if we've got nothing to do, return 0 and a 'nothing available to install' string
+        self.doRpmDBSetup()
+        installed = self.rpmdb.getPkgList()
+        self.doRepoSetup()
+        avail = self.pkgSack.simplePkgList()
 
+        for arg in userlist:
+            exactmatch, matched, unmatched = parsePackages(avail, arg)
+            if len(unmatched) > 0: # if we get back anything in unmatched, it fails
+                self.errorlog(0, _('No Match for argument %s') % arg)
+                continue
+            
+            installable = yum.misc.unique(exactmatch + matched)
+            toBeInstalled = {} # keyed on name
+            passToUpdate = [] # list of pkgtups to pass along to updatecheck
+            
+            exactarch = self.conf.getConfigOption('exactarch')
+            # we look through each returned possibility and rule out the
+            # ones that we obviously can't use
+            for pkgtup in installable:
+                if pkgtup in installed:
+                    continue
+
+                (n, a, e, v, r) = pkgtup
+                # look up the installed packages based on name or name+arch, 
+                # depending on exactarch being set.
+                if exactarch:
+                    installedByKey = self.rpmdb.returnTupleByKeyword(name=n, arch=a)
+                else:
+                    installedByKey = self.rpmdb.returnTupleByKeyword(name=n)
+                
+                # go through each package 
+                if len(installedByKey) > 0:
+                    for instTup in installedByKey:
+                        (n2, a2, e2, v2, r2) = instTup
+                        rc = compareEVR((e2, v2, r2), (e, v, r))
+                        if rc < 0: # we're newer - this is an update, pass to them
+                            if pkgtup not in passToUpdate:
+                                passToUpdate.append(pkgtup)
+                        else if rc == 0: # same, ignore
+                            continue
+                        else if rc > 0: # lesser, check if the pkgtup is an exactmatch
+                                        # if so then add it to be installed,
+                                        # the user explicitly wants this version
+                                        # FIXME this is untrue if the exactmatch
+                                        # does not include a version-rel section
+                            if pkgtup in exactmatch:
+                                if toBeInstalled.has_key(n): toBeInstalled[n] = []
+                                toBeInstalled[n].append(pkgtup)
+                else: # we've not got any installed that match n or n+a
+                    if toBeInstalled.has_key(n): toBeInstalled[n] = []
+                    toBeInstalled[n].append(pkgtup)
+
+        # go through each key in toBeInstalled and get bestver+bestarch
+        # need to be aware of multilib here so a user can do
+        # yum install foo.* and get foo.i386 and foo.x86_64, cleanly.
+        # pass off updates to update, then return
 
     def listPkgs(self, disp='output.rpm listDisplay'):
         """Generates the lists of packages based on arguments on the cli.
@@ -427,8 +485,8 @@ class YumBaseCli(yum.YumBase):
                             (obsoletes, 'Obsoleting'), (extras, 'Extra')]:
             if len(lst) > 0:
                 if len(self.extcmds) > 0:
-                    matched, unmatched = parsePackages(lst, self.extcmds)
-                    lst = matched
+                    exactmatch, matched, unmatched = yum.packages.parsePackages(lst, self.extcmds)
+                    lst = yum.misc.unique(matched + exactmatch)
 
         # check our reduced list
             if len(lst) > 0:
@@ -477,73 +535,6 @@ class YumBaseCli(yum.YumBase):
         sys.exit(1)
 
            
-def buildPkgRefDict(pkgs):
-    """take a list of pkg tuples and return a dict the contains all the possible
-       naming conventions for them eg: for (name,i386,0,1,1)
-       dict[name] = (name, i386, 0, 1, 1)
-       dict[name.i386] = (name, i386, 0, 1, 1)
-       dict[name-1-1.i386] = (name, i386, 0, 1, 1)       
-       dict[name-1] = (name, i386, 0, 1, 1)       
-       dict[name-1-1] = (name, i386, 0, 1, 1)
-       dict[0:name-1-1.i386] = (name, i386, 0, 1, 1)
-       """
-    pkgdict = {}
-    for pkgtup in pkgs:
-        (n, a, e, v, r) = pkgtup
-        name = n
-        nameArch = '%s.%s' % (n, a)
-        nameVerRelArch = '%s-%s-%s.%s' % (n, v, r, a)
-        nameVer = '%s-%s' % (n, v)
-        nameVerRel = '%s-%s-%s' % (n, v, r)
-        full = '%s:%s-%s-%s.%s' % (e, n, v, r, a)
-        for item in [name, nameArch, nameVerRelArch, nameVer, nameVerRel, full]:
-            if not pkgdict.has_key(item):
-                pkgdict[item] = []
-            pkgdict[item].append(pkgtup)
-            
-    return pkgdict            
-       
-def parsePackages(pkgs, usercommands, casematch=0):
-    """matches up the user request versus a pkg list:
-       for installs/updates available pkgs should be the 'others list' 
-       for removes it should be the installed list of pkgs
-       takes an optional casematch option to determine if case should be matched
-       exactly. Defaults to not matching."""
-
-    pkgdict = buildPkgRefDict(pkgs)
-    matched = []
-    unmatched = []
-    for command in usercommands:
-        if pkgdict.has_key(command):
-            matched.extend(pkgdict[command])
-            del pkgdict[command]
-        else:
-            # anything we couldn't find a match for
-            # could mean it's not there, could mean it's a wildcard
-            if re.match('.*[\*,\[,\],\{,\},\?].*', command):
-                trylist = pkgdict.keys()
-                restring = fnmatch.translate(command)
-                if casematch:
-                    regex = re.compile(restring) # case sensitive
-                else:
-                    regex = re.compile(restring, flags=re.I) # case insensitive
-                foundit = 0
-                for item in trylist:
-                    if regex.match(item):
-                        matched.extend(pkgdict[item])
-                        del pkgdict[item]
-                        foundit = 1
- 
-                if not foundit:    
-                    unmatched.append(command)
-                    
-            else:
-                # we got nada
-                unmatched.append(command)
-
-    matched = misc.unique(matched)
-    unmatched = misc.unique(unmatched)
-    return matched, unmatched
 
 
         

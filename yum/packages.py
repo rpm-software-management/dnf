@@ -18,12 +18,86 @@
 import rpm
 import os
 import os.path
+import misc
 
 import metadata.packageObject
 base=None # will be filled with the baseclass
 
+def buildPkgRefDict(pkgs):
+    """take a list of pkg tuples and return a dict the contains all the possible
+       naming conventions for them eg: for (name,i386,0,1,1)
+       dict[name] = (name, i386, 0, 1, 1)
+       dict[name.i386] = (name, i386, 0, 1, 1)
+       dict[name-1-1.i386] = (name, i386, 0, 1, 1)       
+       dict[name-1] = (name, i386, 0, 1, 1)       
+       dict[name-1-1] = (name, i386, 0, 1, 1)
+       dict[0:name-1-1.i386] = (name, i386, 0, 1, 1)
+       """
+    pkgdict = {}
+    for pkgtup in pkgs:
+        (n, a, e, v, r) = pkgtup
+        name = n
+        nameArch = '%s.%s' % (n, a)
+        nameVerRelArch = '%s-%s-%s.%s' % (n, v, r, a)
+        nameVer = '%s-%s' % (n, v)
+        nameVerRel = '%s-%s-%s' % (n, v, r)
+        full = '%s:%s-%s-%s.%s' % (e, n, v, r, a)
+        for item in [name, nameArch, nameVerRelArch, nameVer, nameVerRel, full]:
+            if not pkgdict.has_key(item):
+                pkgdict[item] = []
+            pkgdict[item].append(pkgtup)
+            
+    return pkgdict
+       
+def parsePackages(pkgs, usercommands, casematch=0):
+    """matches up the user request versus a pkg list:
+       for installs/updates available pkgs should be the 'others list' 
+       for removes it should be the installed list of pkgs
+       takes an optional casematch option to determine if case should be matched
+       exactly. Defaults to not matching."""
+
+    pkgdict = buildPkgRefDict(pkgs)
+    exactmatch = []
+    matched = []
+    unmatched = []
+    for command in usercommands:
+        if pkgdict.has_key(command):
+            excactmatch.extend(pkgdict[command])
+            del pkgdict[command]
+        else:
+            # anything we couldn't find a match for
+            # could mean it's not there, could mean it's a wildcard
+            if re.match('.*[\*,\[,\],\{,\},\?].*', command):
+                trylist = pkgdict.keys()
+                restring = fnmatch.translate(command)
+                if casematch:
+                    regex = re.compile(restring) # case sensitive
+                else:
+                    regex = re.compile(restring, flags=re.I) # case insensitive
+                foundit = 0
+                for item in trylist:
+                    if regex.match(item):
+                        matched.extend(pkgdict[item])
+                        del pkgdict[item]
+                        foundit = 1
+ 
+                if not foundit:    
+                    unmatched.append(command)
+                    
+            else:
+                # we got nada
+                unmatched.append(command)
+
+    matched = misc.unique(matched)
+    unmatched = misc.unique(unmatched)
+    exactmatch = misc.unique(exactmatch)
+    return exactmatch, matched, unmatched
+
+
+
 # goal for the below is to have a packageobject that can be used by generic
 # functions independent of the type of package - ie: installed or available
+
 
 class YumInstalledPackage:
     """super class for dealing with packages in the rpmdb"""
