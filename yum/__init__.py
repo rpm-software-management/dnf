@@ -23,6 +23,7 @@ import fnmatch
 import types
 import errno
 import time
+import sre_constants
 
 import Errors
 import rpmUtils
@@ -331,11 +332,10 @@ class YumBase(depsolve.Depsolve):
 
         errors = {}
         for po in pkglist:
-            if hasattr(po, 'pkgtype'):
-                if po.pkgtype == 'local':
-                    continue
+            if hasattr(po, 'pkgtype') and po.pkgtype == 'local':
+                continue
                     
-            local =  po.localPkg()
+            local = po.localPkg()
             if os.path.exists(local):
                 try:
                     result = self.verifyPkg(local, po, raiseError=1)
@@ -392,9 +392,8 @@ class YumBase(depsolve.Depsolve):
         """download a header from a package object.
            output based on callback, raise yum.Errors.YumBaseError on problems"""
 
-        if hasattr(po, 'pkgtype'):
-            if po.pkgtype == 'local':
-                return
+        if hasattr(po, 'pkgtype') and po.pkgtype == 'local':
+            return
                 
         errors = {}
         local =  po.localHdr()
@@ -441,9 +440,8 @@ class YumBase(depsolve.Depsolve):
            a list of failures"""
         errorlist = []
         for po in pkgs:
-            if hasattr(po, 'pkgtype'):
-                if po.pkgtype == 'local':
-                    check = self.conf.gpgcheck
+            if hasattr(po, 'pkgtype') and po.pkgtype == 'local':
+                check = self.conf.gpgcheck
             else:
                 repo = self.repos.getRepo(po.repoid)
                 check = repo.gpgcheck
@@ -650,6 +648,18 @@ class YumBase(depsolve.Depsolve):
         
         return ygh
 
+    
+    def _refineSearchPattern(self, arg):
+        """Takes a search string from the cli for Search or Provides
+           and cleans it up so it doesn't make us vomit"""
+           
+        if re.match('.*[\*,\[,\],\{,\},\?,\+].*', arg):
+            restring = fnmatch.translate(arg)
+        else:
+            restring = arg
+        
+        return restring
+        
     def searchPackages(self, fields, criteria, callback=None):
         """Search specified fields for matches to criteria
            optional callback specified to print out results
@@ -661,7 +671,13 @@ class YumBase(depsolve.Depsolve):
         self.doRpmDBSetup()
         matches = {}
         for string in criteria:
-            crit_re = re.compile(string, flags=re.I)
+            restring = self._refineSearchPattern(string)
+            
+            try: crit_re = re.compile(restring, flags=re.I)
+            except sre_constants.error, e:
+                raise Errors.MiscError, \
+                 'Search Expression: %s is an invalid Regular Expression.\n' % string
+                  
             for po in self.pkgSack:
                 tmpvalues = []
                 for field in fields:
@@ -677,8 +693,14 @@ class YumBase(depsolve.Depsolve):
         for hdr in self.rpmdb.getHdrList(): # this is more expensive so this is the  top op
             po = YumInstalledPackage(hdr)
             tmpvalues = []
-            for search in criteria:
-                crit_re = re.compile(string, flags=re.I)
+            for string in criteria:
+                restring = self._refineSearchPattern(string)
+                
+                try: crit_re = re.compile(restring, flags=re.I)
+                except sre_constants.error, e:
+                    raise Errors.MiscError, \
+                     'Search Expression: %s is an invalid Regular Expression.\n' % string
+
                 for field in fields:
                     value = po.returnSimple(field)
                     if type(value) is types.ListType: # this is annoying
@@ -712,12 +734,12 @@ class YumBase(depsolve.Depsolve):
                 self.repos.populateSack(with='filelists')
 
         for arg in args:
-            if re.match('.*[\*,\[,\],\{,\},\?].*', arg):
-                restring = fnmatch.translate(arg)
-            else:
-                restring = arg
-                
-            arg_re = re.compile(restring, flags=re.I)
+            restring = self._refineSearchPattern(arg)
+            try: arg_re = re.compile(restring, flags=re.I)
+            except sre_constants.error, e:
+                raise Errors.MiscError, \
+                 'Search Expression: %s is an invalid Regular Expression.\n' % arg
+            
             for po in self.pkgSack:
                 tmpvalues = []
                 for filetype in po.returnFileTypes():
@@ -739,11 +761,13 @@ class YumBase(depsolve.Depsolve):
         taglist = ['filenames', 'dirnames', 'provides']
         arg_re = []
         for arg in args:
-            if re.match('.*[\*,\[,\],\{,\},\?].*', arg):
-                restring = fnmatch.translate(arg)
-            else:
-                restring = arg
-            reg = re.compile(arg, flags=re.I)
+            restring = self._refineSearchPattern(arg)
+
+            try: reg = re.compile(restring, flags=re.I)
+            except sre_constants.error, e:
+                raise Errors.MiscError, \
+                 'Search Expression: %s is an invalid Regular Expression.\n' % arg
+            
             arg_re.append(reg)
 
         for hdr in self.rpmdb.getHdrList():

@@ -62,7 +62,7 @@ def main(args):
         result = 1
         resultmsgs = [str(e)]
     except KeyboardInterrupt, e:
-        base.errorlog(0, 'Exiting on user cancel')
+        base.errorlog(0, '\n\nExiting on user cancel')
         unlock()
         sys.exit(1)
         
@@ -98,7 +98,7 @@ def main(args):
         result = 1
         resultmsgs = [str(e)]
     except KeyboardInterrupt, e:
-        base.errorlog(0, 'Exiting on user cancel')
+        base.errorlog(0, '\n\nExiting on user cancel')
         unlock()
         sys.exit(1)
     
@@ -131,7 +131,7 @@ def main(args):
         unlock()
         sys.exit(1)
     except KeyboardInterrupt, e:
-        base.errorlog(0, 'Exiting on user cancel')
+        base.errorlog(0, '\n\nExiting on user cancel')
         unlock()
         sys.exit(1)
 
@@ -149,5 +149,5 @@ if __name__ == "__main__":
     try:
         main(sys.argv[1:])
     except KeyboardInterrupt, e:
-        print >> sys.stderr, "\nExiting on user cancel."
+        print >> sys.stderr, "\n\nExiting on user cancel."
         sys.exit(1)

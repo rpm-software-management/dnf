@@ -257,8 +257,6 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         self.log(3, 'Yum Version: %s' % self.conf.getConfigOption('yumversion'))
         self.log(3, 'COMMAND: %s' % self.cmdstring)
         self.log(3, 'Installroot: %s' % self.conf.getConfigOption('installroot'))
-        
-        
         if len(self.conf.getConfigOption('commands')) == 0 and len(self.cmds) < 1:
             self.cmds = self.conf.getConfigOption('commands')
         else:
@@ -269,6 +267,11 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
 
         self.basecmd = self.cmds[0] # our base command
         self.extcmds = self.cmds[1:] # out extended arguments/commands
+        
+        if len(self.extcmds) > 0:
+            self.log(3, 'Ext Commands:\n')
+            for arg in self.extcmds:
+                self.log(3, '   %s' % arg)
         
         if self.basecmd not in ['update', 'install','info', 'list', 'erase',
                                 'grouplist', 'groupupdate', 'groupinstall',
