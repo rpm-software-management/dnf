@@ -279,14 +279,14 @@ class YumBase(depsolve.Depsolve):
             pass
 
 
-    def verifyPkg(self, file, po, raiseError):
+    def verifyPkg(self, fo, po, raiseError):
         """verifies the package is what we expect it to be
            raiseError  = defaults to 0 - if 1 then will raise
            a URLGrabError if the file does not check out.
            otherwise it returns false for a failure, true for success"""
         
-        if type(file) is types.InstanceType:
-            file = file.filename
+        if type(fo) is types.InstanceType:
+            fo = fo.filename
 
         for (csumtype, csum, csumid) in po.checksums:
             if csumid:
@@ -294,14 +294,14 @@ class YumBase(depsolve.Depsolve):
                 checksumType = csumtype
                 break
         try:
-            self.verifyChecksum(file, checksumType, checksum)
+            self.verifyChecksum(fo, checksumType, checksum)
         except URLGrabError, e:
             if raiseError:
                 raise
             else:
                 return 0
 
-        ylp = YumLocalPackage(self.read_ts, file)
+        ylp = YumLocalPackage(self.read_ts, fo)
         if ylp.pkgtup() != po.pkgtup():
             if raiseError:
                 raise URLGrabError(-1, 'Package does not match intended download')
@@ -311,12 +311,12 @@ class YumBase(depsolve.Depsolve):
         return 1
         
         
-    def verifyChecksum(self, file, checksumType, csum):
+    def verifyChecksum(self, fo, checksumType, csum):
         """Verify the checksum of the file versus the 
            provided checksum"""
 
         try:
-            filesum = misc.checksum(checksumType, file)
+            filesum = misc.checksum(checksumType, fo)
         except Errors.MiscError, e:
             raise URLGrabError(-3, 'Could not perform checksum')
             
@@ -364,13 +364,13 @@ class YumBase(depsolve.Depsolve):
 
         return errors
 
-    def verifyHeader(self, file, po, raiseError):
+    def verifyHeader(self, fo, po, raiseError):
         """check the header out via it's naevr, internally"""
-        if type(file) is types.InstanceType:
-            file = file.filename
+        if type(fo) is types.InstanceType:
+            fo = fo.filename
             
         try:
-            hlist = rpm.readHeaderListFromFile(file)
+            hlist = rpm.readHeaderListFromFile(fo)
             hdr = hlist[0]
         except (rpm.error, IndexError):
             if raiseError:
@@ -789,9 +789,9 @@ class YumBase(depsolve.Depsolve):
             for po in self.pkgSack:
                 tmpvalues = []
                 for filetype in po.returnFileTypes():
-                    for file in po.returnFileEntries(ftype=filetype):
-                        if arg_re.search(file):
-                            tmpvalues.append(file)
+                    for fn in po.returnFileEntries(ftype=filetype):
+                        if arg_re.search(fn):
+                            tmpvalues.append(fn)
 
                 for (p_name, p_flag, (p_e, p_v, p_r)) in po.returnPrco('provides'):
                     if arg_re.search(p_name):
@@ -881,7 +881,7 @@ class YumBase(depsolve.Depsolve):
         pkgs = self.pkgSack.searchNevra(name=n, arch=a, epoch=e, ver=v, rel=r)
 
         if len(pkgs) == 0:
-            raise DepError, 'Package tuple %s could not be found in packagesack' % pkgtup
+            raise Errors.DepError, 'Package tuple %s could not be found in packagesack' % pkgtup
             return None
             
         if len(pkgs) > 1: # boy it'd be nice to do something smarter here FIXME
@@ -896,7 +896,7 @@ class YumBase(depsolve.Depsolve):
     def gpgKeyCheck(self):
         """checks for the presence of gpg keys in the rpmdb
            returns 0 if no keys returns 1 if keys"""
-        cachedir = self.conf.cachedir
+
         gpgkeyschecked = self.conf.cachedir + '/gpgkeyschecked.yum'
         if os.path.exists(gpgkeyschecked):
             return 1

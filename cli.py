@@ -607,7 +607,7 @@ For more information contact your distribution or package provider.
         self.log(2, 'Running Transaction Test')
         tsConf = {}
         for feature in ['diskspacecheck']: # more to come, I'm sure
-            tsConf['diskspacecheck'] = self.conf.getConfigOption('diskspacecheck')
+            tsConf[feature] = self.conf.getConfigOption(feature)
         
         testcb = callback.RPMInstallCallback()
         # clean out the ts b/c we have to give it new paths to the rpms 
