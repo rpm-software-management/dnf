@@ -262,14 +262,14 @@ else:
 class i18n:
     def __init__(self):
         self.langs = lang
-        self.cat = Catalog("up2date")
+        self.cat = Catalog("yum")
 
     def getlangs(self):
         return self.langs
 
     def setlangs(self, langs):
         self.langs = setlangs(langs)
-        self.cat = Catalog("up2date")
+        self.cat = Catalog("yum")
 
     def gettext(self, string):
         return self.cat.gettext(string)

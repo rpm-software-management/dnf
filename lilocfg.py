@@ -63,7 +63,7 @@ class LiloConfReadError(Error):
 
 class LiloConfParseError(Error):
     def __repr__(self):
-        msg = _("lilo options that are not supported by up2date are used in the default lilo.conf. This file will not be modified. The options include:\n") + self.errmsg
+        msg = _("lilo options that are not supported by yum are used in the default lilo.conf. This file will not be modified. The options include:\n") + self.errmsg
         return msg
 
 
@@ -345,7 +345,7 @@ def installNewImages(imageList,test=0,filename=None):
             config.addEntry("default", label)
         
     # the default "backupname"
-    backupfile = filename + ".up2date-" + repr(time.time())
+    backupfile = filename + ".yum-" + repr(time.time())
     # first, see if there are existing backup files
     # if so, choose-another
     while os.access(backupfile, os.F_OK):

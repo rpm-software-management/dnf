@@ -349,8 +349,20 @@ def kernelupdate(tsnevral):
         bootloader = checkbootloader.whichBootLoader()
         import up2datetheft
         if bootloader == "LILO":
+            from lilocfg import LiloConfError, LiloConfRestoreError, LiloInstallError, LiloConfReadError, LiloConfParseError
             log(2, 'Lilo found - adding kernel to lilo and making it the default')
-            up2datetheft.install_lilo(kernel_list)
+            try:
+                up2datetheft.install_lilo(kernel_list)
+            except LiloConfError, e:
+                errorlog(0, '%s' % e)
+            except LiloConfRestoreError, e:
+                errorlog(0, '%s' % e)
+            except LiloConfReadError, e:
+                errorlog(0, '%s' % e)
+            except LiloInstallError, e:
+                errorlog(0, '%s' % e)
+            except LiloConfParserError, e:
+                errorlog(0, '%s' % e)
         elif bootloader == "GRUB":
             # at the moment, kernel rpms are supposed to grok grub
             # and do the Right Thing. Just a placeholder for doc purposes and
