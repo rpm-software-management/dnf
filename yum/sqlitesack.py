@@ -37,6 +37,9 @@ class YumAvailablePackageSqlite(YumAvailablePackage):
         self.changelog = None
     
     def loadChangelog(self):
+        if hasattr(self, 'dbusedother'):
+            return
+        self.dbusedother = 1
         self.changelog = self.sack.getChangelog(self.pkgId)
 
     def returnSimple(self, varname):
@@ -51,7 +54,12 @@ class YumAvailablePackageSqlite(YumAvailablePackage):
     def loadFiles(self):
         if (hasattr(self,'dbusedfiles')):
             return
+        self.dbusedfiles = 1
         self.files = self.sack.getFiles(self.pkgId)
+
+    def returnChangelog(self):
+        self.loadChangelog()
+        return YumAvailablePackage.returnChangelog(self)
             
     def returnFileEntries(self, ftype='file'):
         self.loadFiles()
@@ -114,14 +122,14 @@ class YumSqlitePackageSack(repos.YumPackageSack):
     
     def getChangelog(self,pkgId):
         result = []
-        for (rep,cache) in self.filelistsdb.items():
+        for (rep,cache) in self.otherdb.items():
             cur = cache.cursor()
             cur.execute("select * from packages,changelog where packages.pkgId = %s and packages.pkgKey = changelog.pkgKey",pkgId)
             for ob in cur.fetchall():
-                result.append({ 'author': ob['author'],
-                                'value': ob['changelog'],
-                                'data': ob['data']
-                              })
+                result.append(( ob['changelog.date'],
+                                ob['changelog.author'],
+                                ob['changelog.changelog']
+                              ))
         return result
 
     # Get all files for a certain pkgId from the filelists.xml metadata
@@ -134,8 +142,8 @@ class YumSqlitePackageSack(repos.YumPackageSack):
             for ob in cur.fetchall():
                 found = True
                 dirname = ob['filelist.dirname']
-                filetypes = ob['filelist.filetypes'].split('|')[1:-2]
-                filenames = ob['filelist.filenames'].split('|')[1:-2]
+                filetypes = ob['filelist.filetypes'].split('|')[1:-1]
+                filenames = ob['filelist.filenames'].split('|')[1:-1]
                 while(filenames):
                     filename = dirname+'/'+filenames.pop()
                     filetype = filetypes.pop()

@@ -74,7 +74,9 @@ class PackageObject:
         
         return                            
 
-
+    def returnChangelog(self):
+        """return changelog entries"""
+        return self.changelog
 
 class XMLPackageObject(PackageObject):
     """inherits from PackageObject, does the functions to parse an xml package format
@@ -286,7 +288,7 @@ class RpmBase:
                         return 1
         return 0
         
-        
+
     def returnFileEntries(self, ftype='file'):
         """return list of files based on type"""
         if self.files.has_key(ftype):
