@@ -410,26 +410,6 @@ For more information contact your distribution or package provider.
         yumshell.cmdloop()
         
         return yumshell.result, yumshell.resultmsgs
-        
-        
-        
-        #~ if self.cmdstring == 'run':
-                #~ if len(self.tsInfo) > 0:
-                    #~ return 2, ['Running Commands']
-                #~ else:
-                    #~ return 0, ['Nothing to do']
-                
-            #~ elif self.cmdstring in ['quit', 'exit']:
-                #~ return 0, ['Leaving Shell']
-            
-            #~ else:
-                #~ try:
-                    #~ self.parseCommands()
-                #~ except CliError:
-                    #~ pass
-                #~ else:
-                    #~ self.doCommands()
-                
 
     def doCommands(self):
         """calls the base command passes the extended commands/args out to be
