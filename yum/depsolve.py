@@ -256,8 +256,7 @@ class Depsolve:
             for po in pkgs:
                 self.log(5, 'Potential match %s to %s' % (needname, po))
                 if po.checkPrco('provides', (needname, flags, (r_e, r_v, r_r))):
-                    # first one? <shrug>
-                    defSack.addPkg(po)
+                    defSack.addPackage(po)
                     self.log(3, 'Matched %s to require for %s' % (po, name))
             
             # iterate the defSack briefly, if we find the package is already in the 
