@@ -16,6 +16,7 @@
 
 import os
 import sys
+import types
 try:
     import rpm404
     rpm = rpm404
@@ -53,7 +54,7 @@ def genhdrs(rpms, headerdir, cmds):
             serverStuff.checkSig(rpmfn)
         header = serverStuff.readHeader(rpmfn)
         #check to ignore src.rpms
-        if header != 'source':
+        if type(header) != types.StringType:
             if header[rpm.RPMTAG_EPOCH] == None:
                 epoch = '0'
             else:
@@ -98,7 +99,10 @@ def genhdrs(rpms, headerdir, cmds):
                 rpminfo[rpmtup]=(epoch,ver,rel,rpmloc)
                 goodrpm = goodrpm + 1
         else:
-            log(2,"ignoring srpm: %s" % rpmfn)
+            if header == 'source':
+                log(2,"ignoring srpm: %s" % rpmfn)
+            else:
+                log(2, "ignoring bad rpm: %s" % rpmfn)
     if not cmds['quiet']:
         print "\n   Total: %d\n   Used: %d" %(numrpms, goodrpm)
     return rpminfo

@@ -117,7 +117,10 @@ def readHeader(rpmfn):
         if src:
             return 'source'
         else:
-            return h
+            if h == None:
+                return 'bad'
+            else:
+                return h
     else:
         fd = open(rpmfn, "r")
         h = rpm.headerLoad(fd.read())
@@ -208,5 +211,3 @@ def checkSig(package):
         sys.stderr.write('Doing nothing.\n')
         sys.exit(1)
     return
-
-
