@@ -88,6 +88,12 @@ class YumShell(cmd.Cmd):
             self.base.doTsSetup()
             self.base.doRpmDBSetup()
         
+        elif cmd == 'solve':
+            (code, msgs) = self.base.buildTransaction()
+            if code == 1:
+                for msg in msgs:
+                    self.base.errorlog(0, 'Error: %s' % msg)
+        
         elif cmd == 'run':
             return self.do_run('')
             
@@ -99,12 +105,6 @@ class YumShell(cmd.Cmd):
         print cmd
         print args
         print line
-        
-    def do_depsolve(self, line):
-        (code, msgs) = self.base.buildTransaction()
-        if code == 1:
-            for msg in msgs:
-                self.base.errorlog(0, 'Error: %s' % msg)
         
     def do_run(self, line):
         if len(self.base.tsInfo) > 0:
