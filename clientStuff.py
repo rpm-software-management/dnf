@@ -315,35 +315,49 @@ def getupdatedhdrlist(headernevral, rpmnevral):
         # if we don't have that specific arch, then if its the best arch in the headernevral, compare
         # it to what we have, if its newer then mark it as updateable
         if rpmnevral.exists(name):
-            if rpmnevral.exists(name, arch):
-                archlist = archwork.availablearchs(rpmnevral, name)
-                bestarch = archwork.bestarch(archlist)
-                rc = compareEVR(headernevral.evr(name, arch), rpmnevral.evr(name, bestarch))
-                if (rc > 0):
-                    if not uplist_archdict.has_key(name):
-                        uplist_archdict[name]=bestarch
-                    else:
-                        rc = compareEVR(headernevral.evr(name, bestarch), headernevral.evr(name, uplist_archdict[name]))
-                        if (rc > 0):
-                            finalarch = archwork.bestarch([bestarch, uplist_archdict[name]])
-                            if finalarch == bestarch:
-                                 uplist_archdict[name]=bestarch                 
-            else:
-                archlist = archwork.availablearchs(headernevral, name)
-                bestarch = archwork.bestarch(archlist)
-                if arch == bestarch:
-                    rpmarchlist = archwork.availablearchs(rpmnevral, name)
-                    bestrpmarch = archwork.bestarch(rpmarchlist)
-                    rc = compareEVR(headernevral.evr(name, arch), rpmnevral.evr(name, bestrpmarch))
+            archlist = archwork.availablearchs(rpmnevral, name)
+            finalarch = archlist.pop()
+            if len(archlist) > 1:
+                log(4, 'multiple archs in rpmdb for pkg: %s' % name)
+                for otherarch in archlist:
+                    rc = compareEVR(rpmnevral.evr(name, finalarch), rpmnevral.evr(name, otherarch))
+                    if rc > 0:
+                        pass
+                    elif rc < 0:
+                        finalarch = otherarch
+                    elif rc == 0:
+                        log(5, 'Deeply odd, two pkgs of same arch and same version %s - %s' % (name, currentarch))
+            # at this point we know that name+finalarch is the highest version of the pkgname on the system
+            # we compare this best version vs the best version and bestarch in the headernevral
+            # if the headernevral one is newer then we mark it as updateable
+            # the rpmnevral one is newer or the same version then we move along
+            archlist = archwork.availablearchs(headernevral, name)
+            hdr_finalarch = archlist.pop()
+            if len(archlist) > 1:
+                for otherarch in archlist:
+                    rc = compareEVR(headernevral.evr(name, hdr_finalarch), headernevral.evr(name, otherarch))
+                    if rc > 0:
+                        pass
+                    elif rc < 0:
+                        hdr_finalarch = otherarch
+                    elif rc == 0:
+                        log(5, 'Deeply odd, two pkgs of same arch and same version %s - %s' % (name, currentarch))
+                        # we can continue though, b/c if they are same we have an odd state but the same version info
+
+            # right now we know that name+hdr_finalarch is the best version of the bestarch available in the headerinfo
+            rc = compareEVR(headernevral.evr(name, hdr_finalarch), rpmnevral.evr(name, finalarch)
+            # so we do the comparison to the best we have on the system
+            if (rc > 0):
+                #look it's newer and we don't have it - add it to the list and finish
+                if not uplist_archdict.has_key(name):
+                    uplist_archdict[name]=hdr_finalarch
+                #it's newer and we already have one so lets compare them in arch and ver
+                else:
+                    rc = compareEVR(headernevral.evr(name, hdr_finalarch), headernevral.evr(name, uplist_archdict[name]))
                     if (rc > 0):
-                        if not uplist_archdict.has_key(name):
-                            uplist_archdict[name]=bestarch
-                        else:
-                            rc = compareEVR(headernevral.evr(name, bestarch), headernevral.evr(name, uplist_archdict[name]))
-                            if (rc > 0):
-                                finalarch = archwork.bestarch([bestarch, uplist_archdict[name]])
-                                if finalarch == bestarch:
-                                     uplist_archdict[name]=bestarch                 
+                        updating_finalarch = archwork.bestarch([hdr_finalarch, uplist_archdict[name]])
+                        if updating_finalarch == hdr_finalarch:
+                            uplist_archdict[name]=hdr_finalarch
         else:
             newlist.append((name, arch))
 
