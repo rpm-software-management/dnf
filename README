@@ -32,16 +32,7 @@ yum-arch is run in one of two ways:
 	yum-arch <top level of archive>
 
 
+For a complete explanation of yum visit:
 
+http://www.dulug.duke.edu/yum/
 
-Theory of operation/use:Yum works by providing the headers of all the rpm packages in any system
-repository. These headers are stored on the webserver in a subdir of the 
-top level of the repository. The client downloads all of the headers of 
-the packages it doesn't have installed or of packages that have been updated.
-It uses the headers to determine the dependencies it will need using rpm's internal 
-dependency calculation. Once it knows what rpms it will need it downloads them and
-performs the transaction.
-
-Multiple repositories - explanation of how it came out/why.
-
-Explanation of why not apt-rpm

@@ -195,6 +195,7 @@ def readHeader(rpmfn):
                 errorlog(0,'Damaged Header %s' % rpmfn)
                 return None
         except ValueError, e:
+            errorlog (0, 'Damaged Header Gzip CRC error: %s' % rpmfn)
             return None
     fd.close()
     return h

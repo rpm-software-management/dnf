@@ -38,6 +38,10 @@ alternative keyring filename. Default is use normal keyring location
 .IP \fBlogfile\fR
 full directory and file name for where yum should write its log file.
 
+.IP \fBassumeyes\fR
+1 or 0 - tells yum whether or not to prompt you for confirmation of actions.
+Same as -y on the command line. Default to 0.
+
 .IP \fBpkgpolicy=\fI[newest|last]\fR
 Default: \fInewest\fR.  Package sorting order.  When a package is available from 
 multiple servers, \fInewest\fR will install the most recent version of the package 
