@@ -1,66 +1,54 @@
 Things that must be done:
 
-Put the sigcheck function in :)
- make it an option per server not global.
+Critical:
+ - Put the sigcheck function in, make it an option per server not global.
+ - make the cmdline options (-d, -q ,-y etc) be pushed into the config.conf 
+   class so we don't have to pass them around
+ - Implement pkg excludes for new packages on the client side
+ - Implement pkg excludes on the server side
+ - Make -q and -d 0 VERY quiet
+ - quiet down the callback for rpm installs if -q is invoked.
+ - Make the syslog, log be sane
 
-fix the nevral so newest wins for the headerInfoNevral by default and
-last-in as an option. *** done - pkgpolicy=[newest|last] - newest is default
+Important:
+- gzip the headers so they are smaller to move across the network
+- Work on making the frontend more spiffy/more responsive when 
+  running in interactive mode
+- Implement a status/progress bar for downloading pkgs
+- put together a brief quickstart guide and a webpage.
+- Implement the comps parsing and group* functions
+- Implement a server-side config file or commandline option to let it 
+  know where to get the comps/group list from
+- Implement some sort of silly lock file for making sure two yum's can't be run 
+  at the same time
 
 
-Implement the comps parsing and group* functions
-Implement clean * - shouldn't be terribly hard. *** done clean
 
-Implement pkg excludes for new packages on the client side
-Implement pkg excludes on the server side
-Implement a server-side config file or commandline option to let it know where to get the comps/group list from
+Useful:
+- sanity check on the rpmdb:
+  option 1 - don't do it - write an external script to do it and it 
+    attempts to fix the rpmdb if its broken by looking to see if we
+	have what it needs. If its a conflict, then tell them they need 
+	to sort that out themselves :)
+  option 2 - have it - and just make it optional to be listened to.
 
-Make it possible to have an http-accesible global conf file for excludes and
-what not.
+  option 3 - have it - but fork it into the background so it occurs 
+    while the header download is happening  or something like that - 
+    that way it doesn't seemto take nearly as fscking long.
 
-gzip the headers so they are smaller to move across the network
 
-Implement a status/progress bar for downloading pkgs
-Make -q and -d 0 VERY quiet
-Make the syslog, log be sane
 
-rewrite the man pages so they have some meaning :) *** done
-
-Work on making the frontend more spiffy
-
-quiet down the callback for rpm installs if -q is invoked.
-
-work on making file urls work (ick)
-
-test on non x86 archs and make sure grub and lilo stuff are not run for this 
-arch possibly implement a per-arch pkgaction.kernelupdate function
-
-implement some sort of silly lock file for making sure two yum's can't be run 
-at the same time
-
-put together a brief quickstart guide and a webpage.
-
-make a yum list updates option (lists obs and updates) ** done
-
-also maybe make an option for:
-yum mail notices
-
-so that it could be used to check for updates and mail root@ or 
-config option admin=blah@host.com what updates are available
-MAYBE even listing the description or summary of the package
-with the update.
-
-it'd be silly but nice for people who don't want it running automatically
-
-sanity check on the rpmdb:
-option 1 - don't do it - write an external script to do it and it 
-attempts to fix the rpmdb if its broken by looking to see if we have what
-it needs. If its a conflict, then tell them they need to sort that out 
-themselves :)
-
-option 2 - have it - and just make it optional to be listened to.
-
-option 3 - have it - but fork it into the background so it occurs while the 
-header download is happening  or something like that - that way it doesn't seem
-to take nearly as fscking long.
-
+Wishlist/Cool:
+- Make it possible to have an http-accesible global conf file for excludes and
+  what not.
+- work on making file urls work (ick)
+- test on non x86 archs and make sure grub and lilo stuff are not run for this 
+  arch possibly implement a per-arch pkgaction.kernelupdate function
+- make an option for:
+  yum mail notices
+  so that it could be used to check for updates and mail root@ or 
+  config option admin=blah@host.com what updates are available
+  MAYBE even listing the description or summary of the package
+  with the update.
+  it'd be silly but nice for people who don't want it running automatically
 
