@@ -223,11 +223,12 @@ def keyIdToRPMVer(keyid):
     return "%08x" % (keyid & 0xffffffffL)
 
 
-def keyInstalled(keyid, timestamp):
+def keyInstalled(ts, keyid, timestamp):
     '''Return if the GPG key described by the given keyid and timestamp are
     installed in the rpmdb.  
 
     The keyid and timestamp should both be passed as integers.
+    The ts is an rpm transaction set object
 
     Return values:
         -1      key is not installed
@@ -240,10 +241,6 @@ def keyInstalled(keyid, timestamp):
     '''
     # Convert key id to 'RPM' form
     keyid = keyIdToRPMVer(keyid)
-
-    # Init transaction
-    ts = rpmUtils.transaction.initReadOnlyTransaction()
-    ts.pushVSFlags(~(rpm._RPMVSF_NOSIGNATURES|rpm._RPMVSF_NODIGESTS))
 
     # Search
     for hdr in ts.dbMatch('name', 'gpg-pubkey'):

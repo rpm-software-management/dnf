@@ -800,7 +800,7 @@ For more information contact your distribution or package provider.
                             'GPG key parsing failed: ' + str(e)
 
                 # Check if key is already installed
-                if yum.misc.keyInstalled(keyid, timestamp) >= 0:
+                if yum.misc.keyInstalled(self.read_ts, keyid, timestamp) >= 0:
                     self.log(0, '\n')
                     raise yum.Errors.YumBaseError, \
                             'The GPG key at %s (0x%s) \n' \
