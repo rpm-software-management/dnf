@@ -300,13 +300,15 @@ class YumBaseCli(yum.YumBase):
                 pkgnarrow = self.extcmds.pop(0)
 
         if pkgnarrow == 'all':
-            self.doSackSetup(callback=output.simpleProgressBar)
-            available = self.pkgSack.simplePkgList()
             self.doRpmDBSetup()
             installed = self.rpmdb.getPkgList()
+            self.doRepoSetup()
+            available = self.pkgSack.simplePkgList()
         
         elif pkgnarrow == 'updates':
-            self.doUpdateSetup(callback=output.simpleProgressBar)
+            self.doRpmDBSetup()
+            self.doRepoSetup()
+            self.doUpdateSetup()
             available = self.up.getUpdatesList()
             installed = []
 
@@ -317,7 +319,7 @@ class YumBaseCli(yum.YumBase):
             
         elif pkgnarrow == 'available':
             self.doRpmDBSetup()
-            self.doSackSetup(callback=output.simpleProgressBar)
+            self.doRepoSetup()
             repocomplete = self.pkgSack.simplePkgList()
             inst = self.rpmdb.getPkgList()
             available = []
@@ -380,8 +382,8 @@ class YumBaseCli(yum.YumBase):
            of the repository"""
         for repo in self.repos.listEnabled():
             self.log(2, 'Setting up Repo:  %s' % repo)
-            repo.getRepoXML(cache=self.conf.getConfigOption('cache'))            
-
+            repo.getRepoXML(cache=self.conf.getConfigOption('cache'))
+        self.doSackSetup(callback=output.simpleProgressBar)
     
     def doGroupSetup(self):
         """determines which repos have groups and builds the groups lists"""

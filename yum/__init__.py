@@ -46,12 +46,12 @@ class YumBase:
         self.pkgSack = self.repos.pkgSack
 
 
-    def doUpdateSetup(self, callback=None):
+    def doUpdateSetup(self):
         """setups up the update object in the base class and fills out the
            updates, obsoletes and others lists"""
         
-        self.doRpmDBSetup()
-        self.doSackSetup(callback=callback)
+        #FIXME - add checks for the other pkglists to see if we should
+        # raise an error
         self.up = rpmUtils.updates.Updates(self.rpmdb.getPkgList(),
                                            self.pkgSack.simplePkgList())
                                        

@@ -110,7 +110,6 @@ class RepoStorage:
 
         # MAybe worth looking at using excludelist here            
         for repo in myrepos:
-            repo.getRepoXML()
             for item in data:
                 if item == 'primary':
                     xml = repo.getPrimaryXML()
@@ -282,19 +281,18 @@ class Repository:
                        throttle=self.throttle)
             remote=url + '/' + relative
             try:           
-                ug.urlgrab(remote, local, range=(start, end))
+                result = ug.urlgrab(remote, local, range=(start, end))
             except URLGrabError, e:
                 raise
               
             # setup a grabber and use it - same general rules
         else:
             try:
-                self.grab.urlgrab(relative, local, range=(start, end))
+                result = self.grab.urlgrab(relative, local, range=(start, end))
             except URLGrabError, e:
                 raise
                 
-
-        return local
+        return result
            
         
     def getRepoXML(self, cache=0):
@@ -307,7 +305,7 @@ class Repository:
                 raise Errors.RepoError, 'Cannot find repomd.xml file for %s' % (self)
         else:                
             local = self.get(relative=remote, local=local)
-    
+
         try:
             self.repoXML = repoMDObject.RepoMD(self.id, local)
         except mdErrors.RepoMDError, e:

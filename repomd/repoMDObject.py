@@ -26,8 +26,10 @@ class RepoMD:
         
         self.repoid = repoid
         self.repoData = {}
-        
-        doc = libxml2.parseFile(file)
+        try:
+            doc = libxml2.parseFile(file)
+        except libxml2.parserError:
+            raise RepoMDError, 'Error: could not parse file %s' % file
         root = doc.getRootElement()
         xmlfiletype = root.name
         node = root.children
