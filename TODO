@@ -3,7 +3,6 @@ Things that must be done:
 Critical:
  - make the cmdline options (-d, -q ,-y etc) be pushed into the config.conf 
    class so we don't have to pass them around
- - Implement pkg excludes for new packages on the client side
  - Implement pkg excludes on the server side
  - Make -q and -d 0 VERY quiet
  - quiet down the callback for rpm installs if -q is invoked.
