@@ -487,5 +487,151 @@ def printtime():
     import time
     return time.strftime('%m/%d/%y %H:%M:%S ',time.localtime(time.time()))
 
+def get_package_info_from_servers(conf,HeaderInfo):
+    #this function should be split into - server paths etc and getting the header info/populating the 
+    #the HeaderInfo nevral class so we can do non-root runs of yum
+    log(2,"Gathering package information from servers")
+    #sorting the servers so that sort() will order them consistently
+    serverlist=conf.servers
+    serverlist.sort()
+    for serverid in serverlist:
+        baseurl = conf.serverurl[serverid]
+        servername = conf.servername[serverid]
+        serverheader = os.path.join(baseurl,'headers/header.info')
+        servercache = conf.servercache[serverid]
+        log(4,'server name/cachedir:' + servername + '-' + servercache)
+        log(2,'Getting headers from: %s' % (servername))
+        localpkgs = conf.serverpkgdir[serverid]
+        localhdrs = conf.serverhdrdir[serverid]
+        localheaderinfo = os.path.join(servercache,'header.info')
+        if not os.path.exists(servercache):
+            os.mkdir(servercache)
+        if not os.path.exists(localpkgs):
+            os.mkdir(localpkgs)
+        if not os.path.exists(localhdrs):
+            os.mkdir(localhdrs)
+        headerinfofn = urlgrab(serverheader, localheaderinfo,'nohook')
+        log(4,'headerinfofn: ' + headerinfofn)
+        HeaderInfoNevralLoad(headerinfofn,HeaderInfo,serverid)
+
+
+def download_headers(HeaderInfo,nulist):
+    for (name,arch) in nulist:
+        #this should do something real, like, oh I dunno, check the header - but I'll be damned if I know how
+        if os.path.exists(HeaderInfo.localHdrPath(name, arch)):
+            log(4,"cached %s" % (HeaderInfo.hdrfn(name,arch)))
+            pass
+        else:
+            log(2,"getting %s" % (HeaderInfo.hdrfn(name,arch)))
+            urlgrab(HeaderInfo.remoteHdrUrl(name,arch), HeaderInfo.localHdrPath(name,arch),'nohook')
+
+def take_action(cmds,nulist,uplist,newlist,obslist,tsInfo,HeaderInfo,rpmDBInfo,obsdict):
+    import pkgaction
+    if cmds[0] == "install":
+        cmds.remove(cmds[0])
+        if len(cmds)==0:
+            errorlog(0,"Need to pass a list of pkgs to install")
+            usage()
+        else:
+            pkgaction.installpkgs(tsInfo,nulist,cmds,HeaderInfo,rpmDBInfo)
+    elif cmds[0] == "update":
+        cmds.remove(cmds[0])
+        if len(cmds)==0:
+            pkgaction.updatepkgs(tsInfo,HeaderInfo,rpmDBInfo,nulist,uplist,obslist,'all')
+        else:
+            pkgaction.updatepkgs(tsInfo,HeaderInfo,rpmDBInfo,nulist,uplist,obslist,cmds)
+    elif cmds[0] == "upgrade":
+        cmds.remove(cmds[0])
+        if len(cmds)==0:
+            pkgaction.upgradepkgs(tsInfo,HeaderInfo,rpmDBInfo,nulist,uplist,obslist,obsdict,'all')
+    elif cmds[0] == "erase" or cmds[0] == "remove":
+        cmds.remove(cmds[0])
+        if len(cmds)==0:
+            errorlog (0,"Need to pass a list of pkgs to erase")
+            usage()
+        else:
+            pkgaction.erasepkgs(tsInfo,rpmDBInfo,cmds)
+    elif cmds[0] == "list":
+        cmds.remove(cmds[0])
+        if len(cmds)==0:
+            pkgaction.listpkgs(nulist,'all',HeaderInfo)
+            sys.exit(0)
+        else:
+            if cmds[0] == 'updates':
+                pkgaction.listpkgs(uplist,'updates',HeaderInfo)
+            else:    
+                pkgaction.listpkgs(nulist,cmds,HeaderInfo)
+        sys.exit(0)
+    elif cmds[0] == "clean":
+        cmds.remove(cmds[0])
+        if len(cmds)==0 or cmds[0]=='all':
+            log(2,"Cleaning packages and old headers")
+            clean_up_packages()
+            clean_up_old_headers(rpmDBInfo,HeaderInfo)
+        elif cmds[0]=='packages':
+            log(2,"Cleaning packages")
+            clean_up_packages()
+        elif cmds[0]=='headers':
+            log(2,"Cleaning all headers")
+            clean_up_headers()
+        elif cmds[0]=='oldheaders':
+            log(2,"Cleaning old headers")
+            clean_up_old_headers(rpmDBInfo,HeaderInfo)
+        else:
+            errorlog(0,"Invalid clean option %s" % cmds[0])
+            sys.exit(1)
+        sys.exit(0)    
+    else:
+        usage()
+
+def create_final_ts(tsInfo, rpmdb):
+    import pkgaction
+    import callback
+    #download the pkgs to the local paths and add them to final transaction set
+    #might be worth adding the sigchecking in here
+    tsfin=rpm.TransactionSet('/', rpmdb)
+    for (name, arch) in tsInfo.NAkeys():
+        pkghdr=tsInfo.getHeader(name,arch)
+        rpmloc=tsInfo.localRpmPath(name,arch)
+        serverid=tsInfo.serverid(name,arch)
+        if tsInfo.state(name, arch) in ('u','ud','iu'):
+            if os.path.exists(tsInfo.localRpmPath(name, arch)):
+                log(4,"Using cached %s" % (os.path.basename(tsInfo.localRpmPath(name,arch))))
+            else:
+                log(2,"Getting %s" % (os.path.basename(tsInfo.localRpmPath(name,arch))))
+                urlgrab(tsInfo.remoteRpmUrl(name,arch), tsInfo.localRpmPath(name,arch))
+            #sigcheck here :)
+            if conf.servergpgcheck[serverid]:
+                pkgaction.checkSig(rpmloc,'gpg')
+            else:
+                pkgaction.checkSig(rpmloc)
+            tsfin.add(pkghdr,(pkghdr,rpmloc),'u')
+        elif tsInfo.state(name,arch) == 'i':
+            if os.path.exists(tsInfo.localRpmPath(name, arch)):
+                log(4,"Using cached %s" % (os.path.basename(tsInfo.localRpmPath(name,arch))))
+            else:
+                log(2,"Getting %s" % (os.path.basename(tsInfo.localRpmPath(name,arch))))
+                urlgrab(tsInfo.remoteRpmUrl(name,arch), tsInfo.localRpmPath(name,arch))
+            #sigchecking we will go
+            if conf.servergpgcheck[serverid]:
+                pkgaction.checkSig(rpmloc,'gpg')
+            else:
+                pkgaction.checkSig(rpmloc)
+            tsfin.add(pkghdr,(pkghdr,rpmloc),'i')
+            #theoretically, at this point, we shouldn't need to make pkgs available
+        elif tsInfo.state(name,arch) == 'a':
+            pass
+        elif tsInfo.state(name,arch) == 'e' or tsInfo.state(name,arch) == 'ed':
+            tsfin.remove(name)
+
+    #one last test run for diskspace
+    log(2,"Calculating available disk space - this could take a bit")
+    tserrors = tsfin.run(rpm.RPMTRANS_FLAG_TEST, ~rpm.RPMPROB_FILTER_DISKSPACE, callback.install_callback, '')
+    
+    if tserrors:
+        errorlog(0,"You appear to have insufficient disk space to handle these packages")
+        sys.exit(1)
+    return tsfin
+    
 
 

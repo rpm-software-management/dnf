@@ -17,9 +17,9 @@
 import ConfigParser,sys,os, urlparse, string
 class yumconf:
 
-    def __init__(self):
+    def __init__(self, configfile="/etc/yum.conf"):
         self.cfg = ConfigParser.ConfigParser()
-        self.cfg.read(["/etc/yum.conf"])
+        self.cfg.read(configfile)
         self.servers = []
         self.servername = {}
         self.serverurl = {}

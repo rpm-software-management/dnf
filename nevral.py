@@ -15,7 +15,6 @@
 # Copyright 2002 Duke University 
 
 import os
-import config
 import clientStuff
 import rpm
 import string
@@ -136,7 +135,7 @@ class nevral:
         if l == 'in_rpm_db':
             return l
         hdrfn = self.hdrfn(name,arch)
-        base = config.conf.serverurl[i]
+        base = conf.serverurl[i]
         return base + '/headers/' + hdrfn
     
     def localHdrPath(self, name, arch=None):
@@ -146,7 +145,7 @@ class nevral:
         if l == 'in_rpm_db':
             return l
         hdrfn = self.hdrfn(name,arch)
-        base = config.conf.serverhdrdir[i]
+        base = conf.serverhdrdir[i]
         log(6,"localhdrpath= %s for %s %s" % (base + '/' + hdrfn, name, arch))
         return base + '/' + hdrfn
         
@@ -156,7 +155,7 @@ class nevral:
             return None
         if l == 'in_rpm_db':
             return l
-        base = config.conf.serverurl[i]
+        base = conf.serverurl[i]
         return base +'/'+ l
     
     def localRpmPath(self, name, arch=None):
@@ -166,7 +165,7 @@ class nevral:
         if l == 'in_rpm_db':
             return l
         rpmfn = os.path.basename(l)
-        base = config.conf.serverpkgdir[i]
+        base = conf.serverpkgdir[i]
         return base + '/' + rpmfn
                 
     def resolvedeps(self,rpmDBInfo):
