@@ -755,7 +755,7 @@ def take_action(cmds, nulist, uplist, newlist, obsoleting, tsInfo, HeaderInfo, r
     elif cmds[0] == 'upgrade':
         cmds.remove(cmds[0])
         if len(cmds) == 0:
-            pkgaction.upgradepkgs(tsInfo, HeaderInfo, rpmDBInfo, nulist, uplist, obsoleted, obsoleting 'all')
+            pkgaction.upgradepkgs(tsInfo, HeaderInfo, rpmDBInfo, nulist, uplist, obsoleted, obsoleting, 'all')
         else:
             pkgaction.upgradepkgs(tsInfo, HeaderInfo, rpmDBInfo, nulist, uplist, obsoleted, obsoleting, cmds)
             

@@ -222,7 +222,7 @@ def upgradepkgs(tsnevral, hinevral, rpmnevral, nulist, uplist, obsoleted, obsole
                 errorlog(1,"No Upgrades available for %s." % (n))
             else:
                 if globalupgrade:
-                    errorlog(0,"No Upgrades available." % (n))
+                    errorlog(0,"No Upgrades available.")
                 else:
                     errorlog(0,"Cannot find any package matching %s available to be upgraded." % (n))
             sys.exit(1)
