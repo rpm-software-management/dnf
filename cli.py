@@ -313,22 +313,26 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
 
         if self.basecmd in ['install', 'update', 'upgrade', 'groupinstall',
                             'groupupdate', 'localinstall', 'localupdate']:
-            repocheck = 0
-            for repo in self.repos.listEnabled():
-                repocheck += repo.gpgcheck
 
-            if self.conf.gpgcheck or repocheck > 0:
-                if not self.gpgKeyCheck():
-                    msg = _("""
+            if not self.gpgKeyCheck():
+                for repo in self.repos.listEnabled():
+                    if repo.gpgcheck and repo.gpgkey == '':
+                        msg = _("""
 You have enabled checking of packages via GPG keys. This is a good thing. 
 However, you do not have any GPG public keys installed. You need to download
 the keys for packages you wish to install and install them.
 You can do that by running the command:
     rpm --import public.gpg.key
+
+
+Alternatively you can specify the url to the key you would like to use
+for a repository in the 'gpgkey' option in a repository section and yum 
+will install it for you.
+
 For more information contact your distribution or package provider.
 """)
-                    self.errorlog(0, msg)
-                    sys.exit(1)
+                        self.errorlog(0, msg)
+                        sys.exit(1)
 
                 
         if self.basecmd in ['install', 'erase', 'remove', 'localinstall', 'localupdate']:
