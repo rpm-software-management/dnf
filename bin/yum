@@ -17,16 +17,39 @@
 
 
 import sys
-
+import os
 sys.path.insert(1,'/usr/lib/yum')
+sys.path.insert(2,'/xtmp/work/yum')
 import yummain
+import yumlock
+
+uid = os.geteuid()
+lockfile = '/var/run/yum/pid'
+mypid = str(os.getpid())
+
+if uid == 0:
+    #check out/get the lockfile
+    if yumlock.lock(lockfile, mypid, 0644):
+        pass
+    else:
+        print 'Existing lock %s. Aborting.' % lockfile
+        sys.exit(1)
+
 try:
     yummain.main(sys.argv[1:])
+except SystemExit, e:
+    if uid == 0:
+        yumlock.unlock(lockfile)
+    sys.exit(e)
 except KeyboardInterrupt, e:
     print 'Exiting on User Cancel'
+    if uid == 0:
+        yumlock.unlock(lockfile)
     sys.exit(1)
 except IOError, (errno, strerror):
     print 'IOError - # %s - %s' % (errno, strerror)
+    if uid == 0:
+        yumlock.unlock(lockfile)
     sys.exit(1)
 
 
