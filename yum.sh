@@ -1,3 +1,3 @@
 #!/bin/sh
 
-exec python /usr/share/yum/yummain.py $*
+exec python /usr/share/yum-cli/yummain.py $*

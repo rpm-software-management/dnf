@@ -18,9 +18,9 @@ subdirs:
 	for d in $(SUBDIRS); do make -C $$d; [ $$? = 0 ] || exit 1 ; done
 
 install:
-	mkdir -p $(DESTDIR)/usr/share/yum
+	mkdir -p $(DESTDIR)/usr/share/yum-cli
 	for p in $(PYFILES) ; do \
-		install -m 644 $$p $(DESTDIR)/usr/share/yum/$$p; \
+		install -m 644 $$p $(DESTDIR)/usr/share/yum-cli/$$p; \
 	done
 	$(PYTHON) -c "import compileall; compileall.compile_dir('$(DESTDIR)/usr/share/yum', 1, '$(PYDIR)', 1)"
 
@@ -35,6 +35,17 @@ archive:
 	@rm -rf ${PKGNAME}-%{VERSION}.tar.gz
 	@rm -rf /tmp/${PKGNAME}-$(VERSION) /tmp/${PKGNAME}
 	@dir=$$PWD; cd /tmp; cp -a $$dir ${PKGNAME}
+	@rm -f /tmp/${PKGNAME}/${PKGNAME}-daily.spec
+	@mv /tmp/${PKGNAME} /tmp/${PKGNAME}-$(VERSION)
+	@dir=$$PWD; cd /tmp; tar cvzf $$dir/${PKGNAME}-$(VERSION).tar.gz ${PKGNAME}-$(VERSION)
+	@rm -rf /tmp/${PKGNAME}-$(VERSION)	
+	@echo "The archive is in ${PKGNAME}-$(VERSION).tar.gz"
+
+daily:
+	@rm -rf ${PKGNAME}-%{VERSION}.tar.gz
+	@rm -rf /tmp/${PKGNAME}-$(VERSION) /tmp/${PKGNAME}
+	@dir=$$PWD; cd /tmp; cp -a $$dir ${PKGNAME}
+	@rm -f /tmp/${PKGNAME}/${PKGNAME}.spec
 	@mv /tmp/${PKGNAME} /tmp/${PKGNAME}-$(VERSION)
 	@dir=$$PWD; cd /tmp; tar cvzf $$dir/${PKGNAME}-$(VERSION).tar.gz ${PKGNAME}-$(VERSION)
 	@rm -rf /tmp/${PKGNAME}-$(VERSION)	

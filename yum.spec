@@ -1,6 +1,6 @@
 Summary: RPM installer/updater
 Name: yum
-Version: 2.1.0
+Version: 2.1.1
 Release: 1
 License: GPL
 Group: System Environment/Base
@@ -45,12 +45,6 @@ make DESTDIR=$RPM_BUILD_ROOT install
 #exit 0
 
 
-%pre
-# necessary to get rid of old .pyc files mucking up the works
-if [ -d /usr/share/yum ]; then
-  rm -f /usr/share/yum/*.pyc
-fi
-
 %preun
 if [ $1 = 0 ]; then
  /sbin/chkconfig --del yum
@@ -67,7 +61,7 @@ exit 0
 %config(noreplace) %{_sysconfdir}/cron.daily/yum.cron
 %config %{_sysconfdir}/rc.d/init.d/%{name}
 %config %{_sysconfdir}/logrotate.d/%{name}
-%{_datadir}/yum/*
+%{_datadir}/yum-cli/*
 %{_bindir}/yum
 /usr/lib/python?.?/site-packages/yum
 /usr/lib/python?.?/site-packages/repomd
@@ -77,6 +71,9 @@ exit 0
 %{_mandir}/man*/*
 
 %changelog
+* Wed Sep  1 2004 Seth Vidal <skvidal@phy.duke.edu>
+- more changes
+
 * Tue Aug 31 2004 Seth Vidal <skvidal@phy.duke.edu>
 - all new stuff for 2.1.X
 
