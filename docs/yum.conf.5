@@ -20,6 +20,10 @@ The [main] section must exist for yum to do anything. It consists of the followi
 .IP \fBcachedir\fR
 directory where yum should store its cache and db files.
 
+.IP \fBreposdir\fR
+directory where yum should look for .repo files for its configuration
+of repositories. Defaul is /etc/yum.repos.d
+
 .IP \fBdebuglevel\fR
 debug level. practical range is 0\-10.
 default is 2.
@@ -44,6 +48,11 @@ Filename globs *,?,., etc are allowed
 packages that you have installed. IE: with this enabled yum will not install an i686
 package to update an i386 package.
 
+.IP \fBobsoletes\fR 
+boolean - set to 1 to make yum look at obsoleting packages when processing
+updates. Set to 0 to disable obsolete processing. Default 0.
+
+
 .IP \fBcommands\fR
 list of functional commands to run if no functional commands are specified
 on the command line. ie: commands  = update foo bar baz quux
@@ -57,13 +66,19 @@ package you have installed - defaults to redhat-release.
 set this to 0 to disable the checking for sufficient diskspace before the
 rpm transaction is run. default is 1 (to perform the check)
 
+.IP \fBrecent\fR
+number of days back to look for 'recent' packages added to a repository.
+Used by the 'list recent' and generate-rss commands. Default is 7 days.
+
 .IP \fBretries\fR
 Set the number of times any attempt to retrieve a file should retry before 
 returning an error. Setting this to 0 makes it try forever. Default to 6.
 
-.IP \fBkernelpkgnames \fR
-list of package names that are kernels - this is really only here for the
-kernel updating portion - this should be removed out in 2.1 series.
+.IP \fBshowdupesfromrepos\fR
+Boolean - set to 1 if you wish to show any duplicate packages from any
+repository. Set to 0 if you want only to see the newest packages from any
+repository. Default 0.
+
 
 .IP \fBinstallonlypkgs \fR
 list of packages that should only ever be installed, never updated - kernels
@@ -119,6 +134,10 @@ a human readable string describing the repository.
 
 .IP \fBgpgcheck\fR
 either '1' or '0'. This tells yum whether or not it should perform a gpg signature check on the packages gotten from this server
+
+.IP \fBmirrorlist\fR
+specifies a url to a file containing a list of baseurls.
+
 
 .IP \fBfailovermethod\fR
 can be either 'roundrobin' or 'priority'.
