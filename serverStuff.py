@@ -125,7 +125,6 @@ def Usage():
 
 
 def formatRequire (name, version, flags):
-    import rpm
     string = name
         
     if flags:
