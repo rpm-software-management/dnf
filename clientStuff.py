@@ -19,6 +19,7 @@ import rpm
 import os
 import sys
 import gzip
+import archwork
 
 def stripENVRA(foo):
     archIndex = string.rfind(foo, '.')
@@ -287,17 +288,31 @@ def getupdatedhdrlist(headernevral, rpmnevral):
     for (name, arch) in headernevral.NAkeys():
         hdrfile = headernevral.hdrfn(name, arch)
         serverid = headernevral.serverid(name, arch)
-        if rpmnevral.exists(name, arch):
-            # here we check if we are better than the installed version - including arch
-            rc = compareEVR(headernevral.evr(name, arch), rpmnevral.evr(name, arch))
-            if (rc > 0):
-                # here we check if we are the best ignoring arch (this is to deal with multiple kernel archs
-                # it catches the problem of kernel-2.4.18-4 (athlon) being installed but also kernel-2.4.31-9 (i686)
-                # installed. Before this catch it would always answer that the kernel needed to be upgraded b/c the old i686
-                # kernel was there and there was an available i686 kernel in the headernevral
-                rc = compareEVR(headernevral.evr(name, arch), rpmnevral.evr(name))
-                if rc > 0:
+        # this is all hard and goofy to deal with pkgs changing arch
+        # if we have the package installed
+        # check to see if we have that specific arch
+        # if so compare that name,arch vs the bestarch in the rpmdb 
+        # this deals with us having 2.4.9-31.i686 kernels installed AND 2.4.18-4.athlon kernels installed
+        # b/c a 2.4.18-4.i686 would constantly showed up on an athlon
+        # if its newer then mark it as updateable
+        # if we don't have that specific arch, then if its the best arch in the headernevral, compare
+        # it to what we have, if its newer then mark it as updateable
+        if rpmnevral.exists(name):
+            if rpmnevral.exists(name,arch):
+                archlist = archwork.availablearchs(rpmnevral,name)
+                bestarch = archwork.bestarch(archlist)
+                rc = compareEVR(headernevral.evr(name, arch), rpmnevral.evr(name, bestarch))
+                if (rc > 0):
                     uplist.append((name, arch))
+            else:
+                archlist = archwork.availablearchs(headernevral, name)
+                bestarch = archwork.bestarch(archlist)
+                if arch == bestarch:
+                    rpmarchlist = archwork.availablearchs(rpmnevral,name)
+                    bestrpmarch = archwork.bestarch(rpmarchlist)
+                    rc = compareEVR(headernevral.evr(name, arch), rpmnevral.evr(name, bestrpmarch))
+                    if (rc > 0):
+                        uplist.append((name, arch))
         else:
             newlist.append((name, arch))
     nulist=uplist+newlist
