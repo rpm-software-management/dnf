@@ -9,7 +9,6 @@
 #   slower) use cpickle.dumps to store an array of filenames in a string
 
 import os
-import sys
 import mdcache
 import sqlite
 import time
@@ -258,7 +257,6 @@ class RepodataParserSqlite(mdcache.RepodataParser):
 
     def addFilelists(self, pkgId, package,cur):
         """Add a package to the filelists cache"""
-        sep = '|'
         pkginfo = {'pkgId': pkgId}
         pkgKey = self.insertHash('packages',pkginfo, cur)
         dirs = {}

@@ -57,6 +57,7 @@ class YumSqlitePackageSack(repos.YumPackageSack):
         self.primarydb = {}
         self.filelistsdb = {}
         self.otherdb = {}
+        self.excludes = {}
         
     def buildIndexes(self):
         # We don't need these
@@ -65,7 +66,16 @@ class YumSqlitePackageSack(repos.YumPackageSack):
     def _checkIndexes(self, failure='error'):
         return
 
+    # Remove a package
+    # Because we don't want to remove a package from the database we just
+    # add it to the exclude list
+    def delPackage(self, obj):
+        repoid = obj.repoid
+        self.excludes[repoid][obj.pkgId] = 1
+
     def addDict(self, repoid, datatype, dataobj, callback=None):
+        if (not self.excludes.has_key(repoid)): 
+            self.excludes[repoid] = {}
         if datatype == 'metadata':
             if (self.primarydb.has_key(repoid)):
               return
@@ -90,6 +100,7 @@ class YumSqlitePackageSack(repos.YumPackageSack):
     def getChangelog(self,pkgId):
         result = []
         for (rep,cache) in self.filelistsdb.items():
+            cur = cache.cursor()
             cur.execute("select * from packages,changelog where packages.pkgId = %s and packages.pkgKey = changelog.pkgKey",pkgId)
             for ob in cur.fetchall():
                 result.append({ 'author': ob['author'],
@@ -124,6 +135,10 @@ class YumSqlitePackageSack(repos.YumPackageSack):
             cur = cache.cursor()
             cur.execute("select * from obsoletes,packages where obsoletes.pkgKey = packages.pkgKey")
             for ob in cur.fetchall():
+                # If the package that is causing the obsoletes is excluded
+                # continue without processing the obsoletes
+                if (self.excludes[rep].has_key(ob['packages.pkgId'])):
+                    continue
                 key = ( ob['packages.name'],ob['packages.arch'],
                         ob['packages.epoch'],ob['packages.version'],
                         ob['packages.release'])
@@ -155,6 +170,9 @@ class YumSqlitePackageSack(repos.YumPackageSack):
                 cur.execute("select * from packages where pkgKey = %s" , (res['pkgKey']))
                 for x in cur.fetchall():
                     pkg = self.db2class(x)
+                    if (self.excludes[rep].has_key(pkg.pkgId)):
+                        continue
+                                            
                     # Add this provides to prco otherwise yum doesn't understand
                     # that it matches
                     pkg.prco = {'provides': 
@@ -182,6 +200,9 @@ class YumSqlitePackageSack(repos.YumPackageSack):
                 cur.execute("select * from packages where pkgKey = %s" , (res['pkgKey']))
                 for x in cur.fetchall():
                     pkg = self.db2class(x)
+                    if (self.excludes[rep].has_key(pkg.pkgId)):
+                        continue
+                                            
                     pkg.files = {name: res['type']}
                     provides.append(self.pc(pkg,rep))
 
@@ -192,6 +213,9 @@ class YumSqlitePackageSack(repos.YumPackageSack):
             cur.execute("select * from filelist,packages where dirname = %s AND filelist.pkgKey = packages.pkgKey" , (dirname))
             provs = cur.fetchall()
             for res in provs:
+                if (self.excludes[rep].has_key(res['packages.pkgId'])):
+                    continue
+                                        
                 # If it matches the dirname, that doesnt mean it matches
                 # the filename, check if it does
                 if (filename and res['filelist.filenames'].find('|%s|' % filename) == -1):
@@ -225,31 +249,34 @@ class YumSqlitePackageSack(repos.YumPackageSack):
 
     def simplePkgList(self, repoid=None):
         """returns a list of pkg tuples (n, a, e, v, r) optionally from a single repoid"""
-        if (hasattr(self,'simplelist') and not repoid):
-            return self.simplelist 
         simplelist = []
         for (rep,cache) in self.primarydb.items():
-            if (repoid == None or repoid == x):
+            if (repoid == None or repoid == rep):
                 cur = cache.cursor()
-                cur.execute("select name,epoch,version,release,arch from packages")
-                simplelist.extend([(pkg.name, pkg.arch, pkg.epoch, pkg.version, pkg.release) for pkg in cur.fetchall()])
-        if (not repoid):
-            self.simplelist = simplelist
+                cur.execute("select pkgId,name,epoch,version,release,arch from packages")
+                for pkg in cur.fetchall():
+                    if (self.excludes[rep].has_key(pkg.pkgId)):
+                        continue                        
+                    simplelist.append((pkg.name, pkg.arch, pkg.epoch, pkg.version, pkg.release)) 
+                    
         return simplelist
 
     def returnNewestByNameArch(self, naTup=None):
         # If naTup is set do it from the database otherwise use our parent's
         # returnNewestByNameArch
         if (not naTup):
-           return repos.YumPackageSack.returnNewestByNameArch(self, naTup)
+            # TODO process obsoletes here
+            return repos.YumPackageSack.returnNewestByNameArch(self, naTup)
 
         # First find all packages that fulfill naTup
         allpkg = []
         for (rep,cache) in self.primarydb.items():
             cur = cache.cursor()
             cur.execute("select pkgId,name,epoch,version,release,arch from packages where name=%s and arch=%s",naTup)
-            res = [self.pc(self.db2class(x,True),rep) for x in cur.fetchall()] 
-            allpkg.extend(res)
+            for x in cur.fetchall():
+                if (self.excludes[rep].has_key(x.pkgId)):
+                    continue                    
+                allpkg.append = self.pc(self.db2class(x,True),rep) 
         # Now find the newest one
         newest = allpkg.pop()
         for pkg in allpkg:
@@ -264,21 +291,24 @@ class YumSqlitePackageSack(repos.YumPackageSack):
         """Returns a list of packages, only containing nevra information """
         returnList = []
         for (rep,cache) in self.primarydb.items():
-            if (repoid == None or repoid == x):
+            if (repoid == None or repoid == rep):
                 cur = cache.cursor()
                 cur.execute("select pkgId,name,epoch,version,release,arch from packages")
-                res = [self.pc(self.db2class(x,True),rep) for x in cur.fetchall()] 
-                returnList.extend(res)
+                for x in cur.fetchall():
+                    if (self.excludes[rep].has_key(x.pkgId)):
+                        continue                    
+                    returnList.append(self.pc(self.db2class(x,True),rep))
         return returnList
 
     def searchNevra(self, name=None, epoch=None, ver=None, rel=None, arch=None):        
         """return list of pkgobjects matching the nevra requested"""
         returnList = []
-        nevra = (name,epoch,ver,rel,arch)
         # Search all repositories
         for (rep,cache) in self.primarydb.items():
             cur = cache.cursor()
             cur.execute("select * from packages WHERE name = %s AND epoch = %s AND version = %s AND release = %s AND arch = %s" , (name,epoch,ver,rel,arch))
-            returnList.extend([self.pc(self.db2class(x),rep) for x in cur.fetchall()]
-            )
+            for x in cur.fetchall():
+                if (self.excludes[rep].has_key(x.pkgId)):
+                    continue
+                returnList.append(self.pc(self.db2class(x),rep))
         return returnList
