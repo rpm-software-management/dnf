@@ -1,15 +1,413 @@
-* Sat Jun 15 2002 Seth Vidal <skvidal@phy.duke.edu>
-- Ver set to 0.8.7
-- various errors fixed
-- -e # cmd added to yum client - see man pages for info on
-  how to use it.
+2002-06-16 12:04  skvidal
 
-* Sat Jun  8 2002 Seth Vidal <skvidal@phy.duke.edu>
-- changed ver number to 0.8.1
-- changed spec file
+	* TODO, configure.in, yum.spec, etc/yum.cron: 
+	spec file and configure changes, add -e 0 to yum.cron
 
-* Sat Jun  8 2002 Seth Vidal <skvidal@phy.duke.edu>
-- started the changelog
-- pkgpolicy for newest vs last implemented.
-- implemented yup list updates
+2002-06-16 01:00  skvidal
+
+	* clientStuff.py, yummain.py: 
+	make the non-gzipped header reading actually work
+
+2002-06-16 00:44  skvidal
+
+	* clientStuff.py: clean up dumb-o in clientStuff.py
+
+2002-06-16 00:41  skvidal
+
+	* clientStuff.py, pullheaders.py, serverStuff.py, docs/yum-arch.8: 
+	make gzip'd headers work - used most of grigory's patch
+
+2002-06-15 17:41  skvidal
+
+	* ChangeLog, pkgaction.py: 
+	Fixed dumb bug - thanks to Grigory Bakunov
+
+2002-06-14 16:18  skvidal
+
+	* configure.in, yum.spec, yummain.py: 
+	fix spec file, back <sigh> update configure, again.
+	
+	add dumbass check for undeleted vars in yummain.py
+
+2002-06-14 09:43  skvidal
+
+	* Makefile.in, configure.in, yum.spec.in: 
+	Added entries for yum.spec's version to be automatically changed
+	with configure
+
+2002-06-13 21:01  skvidal
+
+	* docs/: yum.8, yum.conf.5: updated man pages to reflect errorlevel
+	and -e options
+
+2002-06-13 20:56  skvidal
+
+	* clientStuff.py, config.py, nevral.py, pkgaction.py, yummain.py: 
+	change errorlogs so they are leveled add -e option to set errorlog
+	level = default is 2 which means print all errors even if they
+	aren't really serious
+
+2002-06-13 10:42  skvidal
+
+	* configure.in, yum.spec: 
+	bumped version number, again.
+
+2002-06-13 10:38  skvidal
+
+	* pullheaders.py: 
+	fix logger.py class change in pullheaders.py (doh!)
+
+2002-06-13 08:09  skvidal
+
+	* configure.in, yum.spec: 
+	updated ver number after fixing kinda serious kernel problem,
+	earlier
+
+2002-06-13 08:07  skvidal
+
+	* yummain.py: 
+	if we return errors from the tsfin.run then we want to exit with an
+	error condition, not continue and possibly fuckup lilo.conf or
+	grub.conf
+
+2002-06-13 08:03  skvidal
+
+	* clientStuff.py: 
+	fix a problem where yum would attempt to install all the archs of
+	kernels installed.  Read the comment in
+	clientStuff.getupdatehdrlist (line 283 or so) for an explanation
+
+2002-06-13 00:19  skvidal
+
+	* yum.spec: 
+	duh
+
+2002-06-13 00:18  skvidal
+
+	* TODO, callback.py, clientStuff.py, config.py, configure.in,
+	nevral.py, pkgaction.py, yummain.py: 
+	made the cmd line args nice and tidy made the logging make more
+	sense made the rpm callback quiet when it should be quiet
+
+2002-06-12 18:09  skvidal
+
+	* yummain.py: [no log message]
+
+2002-06-12 16:09  skvidal
+
+	* callback.py, clientStuff.py, logger.py, nevral.py, pkgaction.py: 
+	fix a lot of -d # logging problems.  made logging more consistent. 
+	file logs still need to be used more cmdline options need to be
+	pushed into the config class and handled in callback.py
+
+2002-06-12 16:08  skvidal
+
+	* yummain.py: 
+	fix the logfile need to make yummain non-root-happy.
+
+2002-06-12 16:06  skvidal
+
+	* yummain.py: 
+	logs work like this:
+	
+	log(2,"words") 2 is default - print to stdout - nothing fancy
+	anything above 2 is debug to stdout errorlog is print to stderr
+	filelog is print to conf.logfile
+	
+	when you yum -d # - the number is what level of those logs you want
+	to see.
+	
+	if the number is 3 then you see all logs at level 3 or lower (this
+	only effects the 'log' object - errorlog and filelog ALWAYS happen)
+	
+	yum -d 0 should show nothing b/c there is nothing that low.
+
+2002-06-11 15:23  skvidal
+
+	* yummain.py: 
+	add a message to tell people more about what is going on.
+
+2002-06-11 10:07  skvidal
+
+	* nevral.py, yum.spec: 
+	<sigh> the dependency loops grow ever longer.
+	
+	I want to write out a complete diagram of all possible states for
+	this loop.
+	
+	then just fulfill them all. That'd probably be best.
+
+2002-06-11 09:42  skvidal
+
+	* configure.in: 
+	bumped version
+
+2002-06-11 09:40  skvidal
+
+	* nevral.py: 
+	more debugging info.
+
+2002-06-11 08:03  skvidal
+
+	* pkgaction.py: 
+	fixing thinko in pkg installs should be (name,bestarch) not
+	(name,arch)
+
+2002-06-11 00:33  skvidal
+
+	* nevral.py: 
+	and once more, with feeling so much pain
+
+2002-06-11 00:30  skvidal
+
+	* nevral.py: 
+	this might help some of the conflict problems.	it at least targets
+	a particular problem
+
+2002-06-10 23:52  skvidal
+
+	* yummain.py: 
+	its amazing what you learn when someone tells you specifically
+	where in the fucking MODULE source to look for it.  <sigh>
+
+2002-06-10 23:38  skvidal
+
+	* nevral.py, pkgaction.py: 
+	"fixes" and an intelligent comment
+
+2002-06-10 23:06  skvidal
+
+	* TODO, clientStuff.py, nevral.py, pkgaction.py, yummain.py: 
+	attempt to solve stupid update/install conflicts.
+	
+	might have to fudge conflicts like anaconda does.
+
+2002-06-09 17:42  skvidal
+
+	* nevral.py: 
+	one letter fix to the kernel upgrade problem.
+
+2002-06-09 17:04  skvidal
+
+	* nevral.py: 
+	<sigh>
+
+2002-06-09 17:03  skvidal
+
+	* nevral.py: 
+	ridiculous special case for the kernel.  I think I'm going to cry
+
+2002-06-09 16:31  skvidal
+
+	* pkgaction.py: 
+	test to see if this fixes an obsoleting problem
+
+2002-06-09 16:12  skvidal
+
+	* nevral.py: 
+	GAH! one more dep problem - I think this should solve it.  I hope
+	please
+
+2002-06-09 14:04  skvidal
+
+	* nevral.py, yummain.py: 
+	After much pain and agony recursive erase dependencies appear to
+	work.  I need to comment A LOT more in nevral.nevral.resolvedeps
+	but it appears to work "mostly" correct.
+
+2002-06-09 12:25  skvidal
+
+	* configure.in, yum.spec: 
+	iterate version to 0.8.2 - update spec file too
+
+2002-06-09 12:20  skvidal
+
+	* TODO: 
+	remove client-side excludes todo item
+
+2002-06-09 12:18  skvidal
+
+	* clientStuff.py, config.py, nevral.py, docs/yum.conf.5: 
+	nevral	- put back the thinko b/c I'm really a dumbass and
+	shouldn't program this early.  yum.conf.5 - add exclude option
+	clientStuff - add support for client-side excludes from
+	updates/installs config.py - add support for exclude option
+	excludes are a space separated list of pkgs to exclude - it is in
+	the [main] section of the yum.conf file.
+
+2002-06-09 11:53  skvidal
+
+	* clientStuff.py, yummain.py: 
+	clean ups trying to fix a depresolve bug
+
+2002-06-09 11:53  skvidal
+
+	* nevral.py: 
+	fix a depresolve thinko
+
+2002-06-09 11:36  skvidal
+
+	* serverStuff.py: 
+	fix dumbass display issue on depcheck
+
+2002-06-09 02:09  skvidal
+
+	* TODO, config.py, pkgaction.py, yummain.py: 
+	
+	implemented sigchecking - gpg and md5. md5 will always happen gpg
+	will only happen if gpgcheck=1 is set in the yum.conf file in each
+	server section ie:
+	
+	[serverid] baseurl=blarg name=blarg gpgcheck=1
+
+2002-06-09 01:48  skvidal
+
+	* TODO: 
+	Prioritized and cleaned up TODO list.
+
+2002-06-09 01:34  skvidal
+
+	* TODO, clientStuff.py, yummain.py, docs/yum.8: 
+	implemented yum clean * - updated man page to reflect that change
+
+2002-06-09 00:40  skvidal
+
+	* clientStuff.py, yummain.py: 
+	Reorder things in yummain and clientStuff a little to make
+	yummain.main() shorter and perhaps easier to follow.
+
+2002-06-08 20:13  skvidal
+
+	* docs/yum.conf.5: 
+	real conf file man page
+
+2002-06-08 18:12  skvidal
+
+	* docs/yum-arch.8: 
+	yum-arch has _some_ meaning and should work
+
+2002-06-08 18:12  skvidal
+
+	* docs/yum.8: 
+	man page now has some meaning
+
+2002-06-08 12:33  skvidal
+
+	* yummain.py: 
+	--help -h and just typing 'yum' now work to display the usage. 
+	That was annoying the crap out of me.
+
+2002-06-08 12:12  skvidal
+
+	* yum.conf, yummain.py: 
+	consistent sort order in the servers list. using sort()
+
+2002-06-08 09:12  skvidal
+
+	* ChangeLog, configure.in, yum.spec: 
+	changed ver to 0.8.1
+
+2002-06-08 02:41  skvidal
+
+	* ChangeLog, TODO, pkgaction.py, yummain.py: 
+	added yum list updates command
+
+2002-06-08 02:22  skvidal
+
+	* Makefile.in: 
+	Added ChangeLog to Makefile.in
+
+2002-06-08 02:21  skvidal
+
+	* ChangeLog, TODO: 
+	
+	added Changelog - updated TODO
+
+2002-06-08 02:11  skvidal
+
+	* clientStuff.py, config.py, yum.conf: 
+	clientStuff.py: made the headerinfo nevral do pkgpolicy for last vs
+	newest - default is newest. this means that the servers are loaded
+	in the order they appear in the conf file. If you have
+	pkgpolicy=last then the last server's pkgs if they conflict/collide
+	with the others will win.
+	
+	pkgpolicy=newest (or nothing) will mean the newest pkgs get into
+	the headerInfonevral.
+	
+	modifications to config.py to accomodate this yum.conf to show it.
+
+2002-06-08 01:31  skvidal
+
+	* TODO, clientStuff.py: 
+	clientstuff.py: make http url error spit out the url too TODO: more
+	fun and painful things
+
+2002-06-07 23:42  skvidal
+
+	* clientStuff.py, config.py, pkgaction.py, yum.conf: 
+	Made urlgrab handle ftp urls and better broken url handling made
+	config allow http and ftp urls fixed dumbass comma in pkgaction
+	example changed in yum.conf
+
+2002-06-07 20:31  skvidal
+
+	* TODO: 
+	updated for docs information
+
+2002-06-07 19:00  skvidal
+
+	* README: 
+	Updated theory and use
+
+2002-06-07 01:37  skvidal
+
+	* TODO: [no log message]
+
+2002-06-07 01:37  skvidal
+
+	* pkgaction.py: 
+	Added in checksig and cleanpackages functions  - cleanpackages
+	needs to be fleshed out.
+
+2002-06-07 01:27  skvidal
+
+	* yummain.py: 
+	added note in yummain where sigchecking should go
+
+2002-06-07 01:14  skvidal
+
+	* yum.spec: 
+	fix the source
+
+2002-06-07 01:12  skvidal
+
+	* yum.spec: 
+	Changed the %setup to not have -n
+
+2002-06-07 01:11  skvidal
+
+	* AUTHORS, Makefile.in, TODO, COPYING, INSTALL, README,
+	archwork.py, bootloadercfg.py, callback.py, checkbootloader.py,
+	clientStuff.py, config.py, configure.in, depchecktree.py,
+	grubcfg.py, install-sh, iutil.py, lilo.py, lilocfg.py, logger.py,
+	mkinstalldirs, nevral.py, pkgaction.py, pullheaders.py, py-compile,
+	serverStuff.py, up2datetheft.py, yum.conf, yum.spec, translate.py,
+	yummain.py, docs/Makefile.in, docs/yum-arch.8, docs/yum.8,
+	docs/yum.conf.5, etc/Makefile.in, etc/yum.conf, etc/yum.cron,
+	etc/yum.init, etc/yum.logrotate, sbin/yum, sbin/Makefile.in,
+	sbin/yum-arch: Initial revision
+
+2002-06-07 01:11  skvidal
+
+	* AUTHORS, Makefile.in, TODO, COPYING, INSTALL, README,
+	archwork.py, bootloadercfg.py, callback.py, checkbootloader.py,
+	clientStuff.py, config.py, configure.in, depchecktree.py,
+	grubcfg.py, install-sh, iutil.py, lilo.py, lilocfg.py, logger.py,
+	mkinstalldirs, nevral.py, pkgaction.py, pullheaders.py, py-compile,
+	serverStuff.py, up2datetheft.py, yum.conf, yum.spec, translate.py,
+	yummain.py, docs/Makefile.in, docs/yum-arch.8, docs/yum.8,
+	docs/yum.conf.5, etc/Makefile.in, etc/yum.conf, etc/yum.cron,
+	etc/yum.init, etc/yum.logrotate, sbin/yum, sbin/Makefile.in,
+	sbin/yum-arch: Yum first import
 
