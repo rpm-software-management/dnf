@@ -667,22 +667,66 @@ def main(args):
                 print line,
             sys.exit(0)
 
-    conf = yumconf(configfile = myfile)                
+    conf = yumconf(configfile = myfile)
 
 
     for option in conf.listConfigOptions():
         print '%s = %s' % (option, conf.getConfigOption(option))
         
     print '\n\n'
-    repositories = conf.repos
-    repolist = repositories.sort()
+
+    reposlist = []
+    # look through our repositories.
+    for section in conf.cfg.sections(): # loop through the list of sections
+        if section != 'main': # must be a repoid
+            try:
+                thisrepo = cfgParserRepo(section, conf, conf.cfg)
+            except (Errors.RepoError, Errors.ConfigError), e:
+                print >> sys.stderr, e
+                continue
+            else:
+                reposlist.append(thisrepo)
+
+    # reads through reposdir for *.repo
+    # does not read recursively
+    # read each of them in using confpp, then parse them same as any other repo
+    # section - as above.
+    reposdir = conf.reposdir
+    if os.path.exists(conf.installroot + '/' + reposdir):
+        reposdir = conf.installroot + '/' + reposdir
     
-    for repo in repolist:
-        print repo.dump()
-            
+    reposglob = reposdir + '/*.repo'
+    if os.path.exists(reposdir) and os.path.isdir(reposdir):
+        repofn = glob.glob(reposglob)
+        repofn.sort()
+        
+        for fn in repofn:
+            if not os.path.isfile(fn):
+                continue
+            try:
+                cfg, sections = parseDotRepo(fn)
+            except Errors.ConfigError, e:
+                print >> sys.stderr, e
+                continue
+
+            for section in sections:
+                try:
+                    thisrepo = cfgParserRepo(section, conf, cfg)
+                except (Errors.RepoError, Errors.ConfigError), e:
+                    print >> sys.stderr, e
+                    continue
+                else:
+                    reposlist.append(thisrepo)
+
+    # got our list of repo objects
+    reposlist.sort()
+    for thisrepo in reposlist:
+        try:
+            thisrepo.baseurlSetup()
+        except Errors.RepoError, e:
+            pass
+        print thisrepo.dump()
         print ''
-    
-    
 
 if __name__ == "__main__":
         if len(sys.argv) < 2:
