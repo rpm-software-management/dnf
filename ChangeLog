@@ -1,3 +1,56 @@
+2004-10-04 02:30  skvidal
+
+	* cli.py, yum-daily.spec, yum.spec: 
+	update to 2.1.5
+
+2004-10-04 02:27  skvidal
+
+	* cli.py, output.py, yum/__init__.py: 
+	made yum list recent be sane and sensible
+
+2004-10-04 01:35  skvidal
+
+	* yummain.py: 
+	remove a bunch of unused imports
+
+2004-10-04 01:26  skvidal
+
+	* yummain.py: 
+	uncommented something that should not have been commented
+
+2004-10-04 01:20  skvidal
+
+	* output.py, yummain.py, rpmUtils/updates.py, yum/__init__.py: 
+	explicitly delete all transaction set objects in unlock() to make
+	sure we free up any lockers. It boggles my mind why this isn't
+	caught by another item but <shrug>
+
+2004-10-02 21:11  skvidal
+
+	* output.py, rpmUtils/__init__.py: 
+	fix for lists being > 80chars deleted all match iterators I create,
+	just in case
+
+2004-10-01 02:15  skvidal
+
+	* output.py, yum/__init__.py: 
+	- Fix for Bug 324 - when in caching-only mode and the header is not
+	available then it would traceback - fix for typo in yum info
+	function.
+
+2004-09-30 02:13  skvidal
+
+	* cli.py, yum/__init__.py, yum/groups.py: 
+	stubs for group functions in place cleaned up groupsetup so it's no
+	longer importing metadata it doesn't, yet, need added a nosack
+	option to doRepoSetup() so it will setup the repo dirs and get the
+	repomd.xml but not download primary.xml.gz or import the metadata
+
+2004-09-28 23:23  skvidal
+
+	* ChangeLog: 
+	updated changelog - call it 2.1.4
+
 2004-09-28 19:14  skvidal
 
 	* cli.py, yum-daily.spec, yum.spec, etc/yum.conf: 
