@@ -264,7 +264,7 @@ def urlgrab(url, filename=None):
 def getupdatedhdrlist(headernevral, rpmnevral): 
 	"returns (name,arch) tuples of updated and uninstalled pkgs"
 	uplist = []
-	unlist = []
+	newlist = []
 	for key in headernevral.NAkeys():
 		(name, arch) = key
 		hdrfile = headernevral.hdrfn(name, arch)
@@ -274,8 +274,9 @@ def getupdatedhdrlist(headernevral, rpmnevral):
 			if (rc > 0):
 				uplist.append((name,arch))
 		else:
-			unlist.append((name,arch))
-	return (uplist,unlist)
+			newlist.append((name,arch))
+	nulist=uplist+newlist
+	return (uplist,newlist,nulist)
 
     
 def formatRequire (name, version, flags):
@@ -307,21 +308,21 @@ def printactions(nevral):
 			erase_list.append((name,arch))
 		if nevral.state(name,arch) == 'ud':
 			deps_list.append((name,arch))
-	print "I will do the following:"
+	log(2,"I will do the following:")
 	for pkg in install_list:
 		(name,arch) = pkg
-		print "[install: %s.%s]" % (name,arch)
+		log(2,"[install: %s.%s]" % (name,arch))
 	for pkg in update_list:
 		(name,arch) = pkg
-		print "[update: %s.%s]" % (name,arch)
+		log(2,"[update: %s.%s]" % (name,arch))
 	for pkg in erase_list:
 		(name,arch) = pkg
-		print "[erase: %s.%s]" % (name,arch)
+		log(2,"[erase: %s.%s]" % (name,arch))
 	if len(deps_list) > 0:
-		print "I will install/upgrade these to satisfy the depedencies:"
+		log(2,"I will install/upgrade these to satisfy the depedencies:")
 		for pkg in deps_list:
 			(name,arch) = pkg
-			print "[deps: %s.%s]" %(name,arch)
+			log(2, "[deps: %s.%s]" %(name,arch))
 			
 
 

@@ -26,44 +26,22 @@ from logger import logger
 ##############################################################
 
 #setup log class
-logfile = open(conf.logfile,'w')
+#logfile = open(conf.logfile,'w')
 loglevel = conf.debuglevel
 log=logger(verbosity=loglevel,default=2,prefix='',preprefix='')
 
 #push the logs into the other namespaces
 pkgaction.log=log
 clientStuff.log=log
+nevral.log=log
+#push the conf file into the other namespaces
+nevral.conf=conf
+clientStuff.conf=conf
+pkgaction.conf=conf
+callback.conf=conf
 
-
-def main():
-	"""This does all the real work"""
-	#make remote nevral class
-	HeaderInfo = nevral.nevral()
-	#who are we:
-	uid=os.geteuid()
-
-	#parse commandline options here - leave the user instructions (cmds) until after the startup stuff is done
-	args = sys.argv[1:]
-	if len(args) < 1:
-		usage()
-	userask=1
-	try:
-		gopts,cmds = getopt.getopt(args, 'hd:y',['help'])
-	except getopt.error, e:
-		print "Options Error: %s" % e
-		sys.exit(1)
-			
-	for o,a in gopts:
-		if o =='-d':
-			log.verbosity=int(a)
-		if o =='-y':
-			userask=0
-		if o in ('-h', '--help'):
-			usage()
-	if cmds[0] not in ('update','install','list','erase','grouplist','groupupdate','groupinstall','clean','remove'):
-		usage()
-
-	log("Gathering package information from servers")
+def get_package_info_from_servers(conf,HeaderInfo):
+	log(2,"Gathering package information from servers")
 	#sorting the servers so that sort() will order them consistently
 	serverlist=conf.servers
 	serverlist.sort()
@@ -86,18 +64,8 @@ def main():
 		log(4,'headerinfofn: ' + headerinfofn)
 		clientStuff.HeaderInfoNevralLoad(headerinfofn,HeaderInfo,serverid)
 
-	#make local nevral class
-	rpmDBInfo = nevral.nevral()
-	clientStuff.rpmdbNevralLoad(rpmDBInfo)
 
-	#create transaction set nevral class
-	tsInfo = nevral.nevral()
-
-	#download all the headers we don't have or the server has newer of
-	#don't do anything fancy here - just download the headers not in our db
-	(uplist,newlist) = clientStuff.getupdatedhdrlist(HeaderInfo,rpmDBInfo)
-	nulist = uplist + newlist
-	log("Downloading needed headers")
+def download_headers(HeaderInfo,nulist):
 	for (name,arch) in nulist:
 		#this should do something real, like, oh I dunno, check the header - but I'll be damned if I know how
 		if os.path.exists(HeaderInfo.localHdrPath(name, arch)):
@@ -106,23 +74,8 @@ def main():
 		else:
 			log(2,"getting %s" % (HeaderInfo.hdrfn(name,arch)))
 			clientStuff.urlgrab(HeaderInfo.remoteHdrUrl(name,arch), HeaderInfo.localHdrPath(name,arch))
-	log("Finding updated and obsoleted packages")
-	obslist=clientStuff.returnObsoletes(HeaderInfo,rpmDBInfo,nulist)
 
-	
-	log(4,"nulist = %s" % len(nulist))
-	log(4,"uplist = %s" % len(uplist))
-	log(4,"newlist = %s" % len(newlist))
-	log(4,"obslist = %s" % len(obslist))
-	
-
-##################################################################
-#at this point we have all the prereq info we could ask for. we know whats in the rpmdb
-#whats available, whats updated and what obsoletes. We should be able to do everything we 
-#want from here w/o getting anymore header info
-##################################################################
-
-	
+def take_action(cmds,nulist,uplist,newlist,obslist,tsInfo,HeaderInfo,rpmDBInfo):
 	if cmds[0] == "install":
 		cmds.remove(cmds[0])
 		if len(cmds)==0:
@@ -157,61 +110,26 @@ def main():
 		sys.exit(0)
 	else:
 		usage()
-	
 
-	#at this point we should have a tsInfo nevral with all we need to complete our task.
-	#if for some reason we've gotten all the way through this step with an empty tsInfo then exit and be confused :)
-	if len(tsInfo.NAkeys()) < 1:
-		print "No actions to take"
-		sys.exit(0)
-		
-	#put available pkgs in tsInfonevral in state 'a'
-	for (name,arch) in nulist:
-		if not tsInfo.exists(name, arch):
-			((e, v, r, a, l, i), s)=HeaderInfo._get_data(name,arch)
-			log(6,"making available: %s" % name)
-			tsInfo.add((name,e,v,r,arch,l,i),'a')   
-
-	##need to change kernels into 'i' if they are in state 'u'
-	log("Resolving dependencies")
-	(code, msgs) = tsInfo.resolvedeps()
-	if code == 1:
-		for msg in msgs:
-			print msg
-		sys.exit(1)
-	log("Dependencies resolved")
-	
-	#prompt for use permission to do stuff in tsInfo - list all the actions (i, u, e)
-	#confirm w/the user
-	clientStuff.printactions(tsInfo)
-	if userask==1:
-		if clientStuff.userconfirm():
-			print "Exiting on user command."
-			sys.exit(1)
-	
-
+def create_final_ts(tsInfo, rpmdb):
 	#download the pkgs to the local paths and add them to final transaction set
-	if uid==0:
-		dbfin = clientStuff.openrpmdb(1,'/')
-	else:
-		dbfin = clientStuff.openrpmdb(0,'/')
-
-	tsfin=rpm.TransactionSet('/', dbfin)
+	#might be worth adding the sigchecking in here
+	tsfin=rpm.TransactionSet('/', rpmdb)
 	for (name, arch) in tsInfo.NAkeys():
 		pkghdr=tsInfo.getHeader(name,arch)
 		rpmloc=tsInfo.localRpmPath(name,arch)
 		if tsInfo.state(name, arch) == 'u' or tsInfo.state(name,arch) == 'ud':
 			if os.path.exists(tsInfo.localRpmPath(name, arch)):
-				print "Using cached %s" % (os.path.basename(tsInfo.localRpmPath(name,arch)))
+				log(2,"Using cached %s" % (os.path.basename(tsInfo.localRpmPath(name,arch))))
 			else:
-				print "getting %s" % (os.path.basename(tsInfo.localRpmPath(name,arch)))
+				log(2,"Getting %s" % (os.path.basename(tsInfo.localRpmPath(name,arch))))
 				clientStuff.urlgrab(tsInfo.remoteRpmUrl(name,arch), tsInfo.localRpmPath(name,arch))
 			tsfin.add(pkghdr,(pkghdr,rpmloc),'u')
 		elif tsInfo.state(name,arch) == 'i':
 			if os.path.exists(tsInfo.localRpmPath(name, arch)):
-				print "Using cached %s" % (os.path.basename(tsInfo.localRpmPath(name,arch)))
+				log(2,"Using cached %s" % (os.path.basename(tsInfo.localRpmPath(name,arch))))
 			else:
-				print "getting %s" % (os.path.basename(tsInfo.localRpmPath(name,arch)))
+				log(2,"Getting %s" % (os.path.basename(tsInfo.localRpmPath(name,arch))))
 				clientStuff.urlgrab(tsInfo.remoteRpmUrl(name,arch), tsInfo.localRpmPath(name,arch))
 			#print 'installing %s, %s' % (name, arch)
 			tsfin.add(pkghdr,(pkghdr,rpmloc),'i')
@@ -225,14 +143,123 @@ def main():
 	#rpmpath - and pass that to checksig - it should check the serversig[serverid] if its on then check the gpg sig and md5 sig if
 	#its off then just check the md5 sig
 	
-	
 	#one last test run for diskspace
-	errors = tsfin.run(rpm.RPMTRANS_FLAG_TEST, ~rpm.RPMPROB_FILTER_DISKSPACE, callback.install_callback, 'test')
+	errors = tsfin.run(rpm.RPMTRANS_FLAG_TEST, ~rpm.RPMPROB_FILTER_DISKSPACE, callback.install_callback, '')
+	
 	if errors:
 		print "You appear to have insufficient disk space to handle these packages"
 		sys.exit(1)
+	return tsfin
+	
+
+def main():
+	"""This does all the real work"""
+	#who are we:
+	uid=os.geteuid()
+
+	#parse commandline options here - leave the user instructions (cmds) 
+	#until after the startup stuff is done
+	#something else needs to happen here - I need the commandline options to
+	#be available from the conf class ideally.
+	
+	args = sys.argv[1:]
+	if len(args) < 1:
+		usage()
+	userask=1
+	try:
+		gopts,cmds = getopt.getopt(args, 'hd:y',['help'])
+	except getopt.error, e:
+		print "Options Error: %s" % e
+		sys.exit(1)
+			
+	for o,a in gopts:
+		if o =='-d':
+			log.verbosity=int(a)
+		if o =='-y':
+			userask=0
+		if o in ('-h', '--help'):
+			usage()
+	if cmds[0] not in ('update','install','list','erase','grouplist','groupupdate','groupinstall','clean','remove'):
+		usage()
+
+	#make remote nevral class
+	HeaderInfo = nevral.nevral()
+	
+	#get the package info file
+	get_package_info_from_servers(conf, HeaderInfo)
+	
+	#make local nevral class
+	rpmDBInfo = nevral.nevral()
+	clientStuff.rpmdbNevralLoad(rpmDBInfo)
+
+	#create transaction set nevral class
+	tsInfo = nevral.nevral()
+	#################################################################################
+	#generate all the lists we'll need to quickly iterate through the lists.
+	#uplist == list of updated packages
+	#newlist == list of uninstall/available NEW packages (ones we don't any copy of)
+	#nulist == combination of the two
+	#obslist == packages obsoleting a package we have installed
+	################################################################################
+	log(2,"Finding updated packages")
+	(uplist,newlist,nulist) = clientStuff.getupdatedhdrlist(HeaderInfo,rpmDBInfo)
+	log(2,"Downloading needed headers")
+	download_headers(HeaderInfo, nulist)
+	log(2,"Finding obsoleted packages")
+	obslist=clientStuff.returnObsoletes(HeaderInfo,rpmDBInfo,nulist)
+
+	log(4,"nulist = %s" % len(nulist))
+	log(4,"uplist = %s" % len(uplist))
+	log(4,"newlist = %s" % len(newlist))
+	log(4,"obslist = %s" % len(obslist))
+	
+	##################################################################
+	#at this point we have all the prereq info we could ask for. we 
+	#know whats in the rpmdb whats available, whats updated and what 
+	#obsoletes. We should be able to do everything we want from here 
+	#w/o getting anymore header info
+	##################################################################
+
+	take_action(cmds,nulist,uplist,newlist,obslist,tsInfo,HeaderInfo,rpmDBInfo)
+	
+	#at this point we should have a tsInfo nevral with all we need to complete our task.
+	#if for some reason we've gotten all the way through this step with an empty tsInfo then exit and be confused :)
+	if len(tsInfo.NAkeys()) < 1:
+		print "No actions to take"
+		sys.exit(0)
+		
+	#put available pkgs in tsInfonevral in state 'a'
+	for (name,arch) in nulist:
+		if not tsInfo.exists(name, arch):
+			((e, v, r, a, l, i), s)=HeaderInfo._get_data(name,arch)
+			log(6,"making available: %s" % name)
+			tsInfo.add((name,e,v,r,arch,l,i),'a')   
+
+	log("Resolving dependencies")
+	(code, msgs) = tsInfo.resolvedeps()
+	if code == 1:
+		for msg in msgs:
+			print msg
+		sys.exit(1)
+	log("Dependencies resolved")
+	
+	#prompt for use permission to do stuff in tsInfo - list all the actions 
+	#(i, u, e, ud) confirm w/the user
+	clientStuff.printactions(tsInfo)
+	if userask==1:
+		if clientStuff.userconfirm():
+			print "Exiting on user command."
+			sys.exit(1)
+	
+	if uid==0:
+		dbfin = clientStuff.openrpmdb(1,'/')
+	else:
+		dbfin = clientStuff.openrpmdb(0,'/')
+	
+	tsfin = create_final_ts(tsInfo,dbfin)
+
 	if uid == 0:
-		errors == tsfin.run(0, 0, callback.install_callback, '')
+		errors = tsfin.run(0, 0, callback.install_callback, '')
 		if errors:
 			print "Errors installing:"
 			for error in errors:
@@ -240,6 +267,7 @@ def main():
 		
 		del dbfin
 		del tsfin
+		
 		#Check to see if we've got a new kernel and put it in the right place in grub/lilo
 		pkgaction.kernelupdate(tsInfo)
 		
@@ -247,7 +275,7 @@ def main():
 		print "You're not root, we can't install things"
 		sys.exit(0)
 		
-	print "Transaction(s) Complete"
+	log(2,"Transaction(s) Complete")
 	sys.exit(0)
 
 
