@@ -255,6 +255,12 @@ class nevral:
 										self.add((name,e,v,r,a,l,i),'ed')
 										log(4,"Got Erase Dep: %s, %s" %(name,arch))
 										CheckDeps=1
+									else:
+										unresolvable = 1
+										if reqname in conf.excludes:
+											errors.append("package %s needs %s that has been excluded" % (name, reqname))
+										else:
+											errors.append("package %s needs %s (not provided)" % (name, clientStuff.formatRequire(reqname, reqversion, flags)))
 							else:
 								unresolvable = 1
 								if reqname in conf.excludes:
