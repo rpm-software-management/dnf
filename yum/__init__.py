@@ -104,7 +104,21 @@ class YumBase(depsolve.Depsolve):
             return
         self._unlock(lockfile)
         
-        
+    def downloadPkgs(self, pkglist, callback=None):
+        """download list of package objects handed to you, output based on
+           callback, raise yum.Errors.YumBaseError on problems"""
+
+        #downloading
+        # build up list of things needed to download
+        # get po for each item
+        # pass list of po to downloader method
+        # download
+        # checksum from po.checksums
+        # if we get an error we can't surmount exit and go away
+
+        for po in pkglist:
+            FIXMEp
+            
     def _lock(self, filename, contents='', mode=0777):
         try:
             fd = os.open(filename, os.O_EXCL|os.O_CREAT|os.O_WRONLY, mode)

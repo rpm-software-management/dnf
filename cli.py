@@ -347,7 +347,7 @@ class YumBaseCli(yum.YumBase):
                 if po:
                     downloadpkgs.append(po)
         try:
-            self.downloadPkgs(downloadpkgs)
+            self.downloadPkgs(downloadpkgs, callback)
         except yum.Errors.YumBaseError, e:
             self.errorlog(0, 'Error Downloading Packages')
             raise
@@ -361,13 +361,6 @@ class YumBaseCli(yum.YumBase):
             
             raise yum.Errors.YumBaseError, errstring
         
-        #downloading
-         # build up list of things needed to download
-         # get po for each item
-         # pass list of po to downloader method
-         # download
-         # checksum from po.checksums
-         # if we get an error we can't surmount exit and go away
          
          
 

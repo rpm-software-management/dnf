@@ -37,7 +37,7 @@ class RepoStorage:
     def __init__(self):
         self.repos = {} # list of repos by repoid pointing a repo object 
                         # of repo options/misc data
-        self.pkgSack = packageSack.XMLPackageSack(YumPackage)
+        self.pkgSack = packageSack.XMLPackageSack(YumAvailablePackage)
         
     def add(self, repoid):
         if self.repos.has_key(repoid):

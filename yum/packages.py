@@ -168,13 +168,14 @@ def bestPackage(pkg1, pkg2):
 class YumInstalledPackage:
     """super class for dealing with packages in the rpmdb"""
     
-class YumAvailablePackage:
-    """super class for dealing with packages in a repository"""
-    
-    
-class YumPackage(metadata.packageObject.RpmXMLPackageObject):
-    """derived class for the metadata packageobject we use"""
-       
+class YumAvailablePackage(metadata.packageObject.RpmXMLPackageObject):
+    """derived class for the metadata packageobject we use
+    this for dealing with packages in a repository"""
+
+    def pkgtup(self):
+        (n,e,v,r,a) = self.returnNevraTuple()
+        return (n,a,e,v,r)
+
     def getHeader(self):
         """returns an rpm header object from the package object"""
         # this function sucks - it should use the urlgrabber
