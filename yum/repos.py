@@ -514,7 +514,6 @@ class Repository:
         prxy = None
         if self.proxy_dict:
             prxy = self.proxy_dict
-            print prxy
         if url is not None:
             ug = URLGrabber(keepalive = self.keepalive, 
                             bandwidth = self.bandwidth,

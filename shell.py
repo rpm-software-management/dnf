@@ -81,7 +81,7 @@ class YumShell(cmd.Cmd):
             pass
             
         elif cmd == 'list':
-            print self.base.listTransaction()
+            self.base.log(2,self.base.listTransaction())
         
         elif cmd == 'reset':
             self.base.closeRpmDB()
@@ -101,13 +101,25 @@ class YumShell(cmd.Cmd):
         print line
         
     def do_depsolve(self, line):
-        self.base.buildTransaction()
+        (code, msgs) = self.base.buildTransaction()
+        if code == 1:
+            for msg in msgs:
+                self.base.errorlog(0, 'Error: %s' % msg)
         
     def do_run(self, line):
         if len(self.base.tsInfo) > 0:
-            self.result = 2
-            self.resultmsgs = ['Running commands']
-            return True
-        else:
-            self.resultmsgs = ['Nothing to do']
-        
+            try:
+                self.base.doTransaction()
+            except Errors.YumBaseError, e:
+                self.base.errorlog(0, '%s' % e)
+            except KeyboardInterrupt, e:
+                self.base.errorlog(0, '\n\nExiting on user cancel')
+            except IOError, e:
+                if e.errno == 32:
+                    self.base.errorlog(0, '\n\nExiting on Broken Pipe')
+            else:
+                self.base.log(2, 'Finished Transaction')
+                self.base.closeRpmDB()
+                self.base.doTsSetup()
+                self.base.doRpmDBSetup()
+

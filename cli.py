@@ -722,10 +722,15 @@ For more information contact your distribution or package provider.
         del self.ts
         
         self.initActionTs()
+        # save our dsCallback out
+        dscb = self.dsCallback
         self.dsCallback = None # dumb, dumb dumb dumb!
         self.populateTs(keepold=0) # sigh
         tserrors = self.ts.test(testcb, conf=tsConf)
         del testcb
+        # put it back
+        self.dsCallback = dscb
+        
         self.log(2, 'Finished Transaction Test')
         if len(tserrors) > 0:
             errstring = 'Transaction Check Error: '
