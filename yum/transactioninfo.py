@@ -177,7 +177,8 @@ class TransactionData:
            takes a packages object and returns a TransactionMember Object"""
     
         txmbr = TransactionMember()
-        txmbr.pkgtup = po.pkgtup()
+        txmbr.po = po
+        txmbr.pkgtup = po.pkgtup
         txmbr.current_state = 'repo'
         txmbr.output_state = 'installing'
         txmbr.ts_state = 'u'
@@ -196,7 +197,8 @@ class TransactionData:
            takes a packages object and returns a TransactionMember Object"""
     
         txmbr = TransactionMember()
-        txmbr.pkgtup = po.pkgtup()
+        txmbr.po = po        
+        txmbr.pkgtup = po.pkgtup
         txmbr.current_state = 'repo'
         txmbr.output_state = 'installing'
         txmbr.ts_state = 'i'
@@ -216,7 +218,8 @@ class TransactionData:
            takes a packages object and returns a TransactionMember Object"""
     
         txmbr = TransactionMember()
-        txmbr.pkgtup = po.pkgtup()
+        txmbr.po = po        
+        txmbr.pkgtup = po.pkgtup
         txmbr.current_state = 'installed'
         txmbr.output_state = 'erasing'
         txmbr.ts_state = 'e'
@@ -234,7 +237,8 @@ class TransactionData:
            takes a packages object and returns a TransactionMember Object"""
     
         txmbr = TransactionMember()
-        txmbr.pkgtup = po.pkgtup()
+        txmbr.po = po        
+        txmbr.pkgtup = po.pkgtup
         txmbr.current_state = 'repo'
         txmbr.output_state = 'updating'
         txmbr.ts_state = 'u'
@@ -245,7 +249,7 @@ class TransactionData:
         txmbr.rel = po.release
         txmbr.repoid = po.repoid
         if oldpo:
-            txmbr.relatedto.append((oldpo.pkgtup(), 'updates'))
+            txmbr.relatedto.append((oldpo.pkgtup, 'updates'))
         self.add(txmbr)
         return txmbr
 
@@ -254,7 +258,8 @@ class TransactionData:
            takes a packages object and returns a TransactionMember Object"""
     
         txmbr = TransactionMember()
-        txmbr.pkgtup = po.pkgtup()
+        txmbr.po = po        
+        txmbr.pkgtup = po.pkgtup
         txmbr.current_state = 'repo'
         txmbr.output_state = 'obsoleting'
         txmbr.ts_state = 'u'
@@ -264,7 +269,7 @@ class TransactionData:
         txmbr.ver = po.version
         txmbr.rel = po.release
         txmbr.repoid = po.repoid
-        txmbr.relatedto.append((oldpo.pkgtup(), 'obsoletes'))
+        txmbr.relatedto.append((oldpo.pkgtup, 'obsoletes'))
         self.add(txmbr)
         return txmbr
 
@@ -273,7 +278,8 @@ class TransactionData:
            takes a packages object and returns a TransactionMember Object"""
     
         txmbr = TransactionMember()
-        txmbr.pkgtup = po.pkgtup()
+        txmbr.po = po        
+        txmbr.pkgtup = po.pkgtup
         txmbr.current_state = 'installed'
         txmbr.output_state = 'obsoleted'
         txmbr.ts_state = None
@@ -283,7 +289,7 @@ class TransactionData:
         txmbr.ver = po.version
         txmbr.rel = po.release
         txmbr.repoid = po.repoid
-        txmbr.relatedto.append((obsoleting_po.pkgtup(), 'obsoletedby'))
+        txmbr.relatedto.append((obsoleting_po.pkgtup, 'obsoletedby'))
         self.add(txmbr)
         return txmbr
 
@@ -294,6 +300,7 @@ class TransactionMember:
     
     def __init__(self):
         # holders for data
+        self.po = None # package object
         self.pkgtup = None # package tuple
         self.current_state = None # where the package currently is (repo, installed)
         self.ts_state = None # what state to put it into in the transaction set

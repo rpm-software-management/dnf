@@ -140,7 +140,7 @@ def returnBestPackages(pkgdict, arch=None):
     return returnlist
 
 def bestPackage(pkg1, pkg2):
-    """compares two packages (assumes the names are the same), and returns
+    """compares two package tuples (assumes the names are the same), and returns
        the one with the best version and the best arch, the sorting is:
        for compatible arches, the highest version is best so:
        foo-1.1-1.i686 is better than foo-1.1-1.i386 on an i686 machine
@@ -178,6 +178,7 @@ class YumInstalledPackage:
         self.epoch = self.doepoch()
         self.version = self.tagByName('version')
         self.release = self.tagByName('release')
+        self.pkgtup = self._pkgtup()
         self.repoid = 'installed'
         self.summary = self.tagByName('summary')
         self.description = self.tagByName('description')
@@ -191,7 +192,7 @@ class YumInstalledPackage:
             val = '%s - %s:%s-%s.%s' % (self.name, self.epoch, self.version,
                                            self.release, self.arch)
         return val
-        
+
     def tagByName(self, tag):
         data = self.hdr[tag]
         return data
@@ -213,6 +214,7 @@ class YumInstalledPackage:
 
     def returnLocalHeader(self):
         return self.hdr
+
 
     def getProvidesNames(self):
         """returns a list of providesNames"""
@@ -241,7 +243,7 @@ class YumInstalledPackage:
         
         return reqlist
 
-    def pkgtup(self):
+    def _pkgtup(self):
         return (self.name, self.arch, self.epoch, self.version, self.release)
     
     def size(self):
@@ -291,9 +293,12 @@ class YumLocalPackage(YumInstalledPackage):
         self.release = self.tagByName('release')
         self.summary = self.tagByName('summary')
         self.description = self.tagByName('description')
+        self.pkgtup = self._pkgtup()
         
     
-        
+    def _pkgtup(self):
+        return (self.name, self.arch, self.epoch, self.version, self.release)
+    
     def localPkg(self):
         return self.localpath
     
@@ -316,11 +321,12 @@ class YumAvailablePackage(repomd.packageObject.PackageObject, repomd.packageObje
         self.release = self.returnSimple('release')
         self.arch = self.returnSimple('arch')
         self.repoid = self.returnSimple('repoid')
+        self.pkgtup = self._pkgtup()
 
     def size(self):
         return self.returnSimple('packagesize')
 
-    def pkgtup(self):
+    def _pkgtup(self):
         return self.returnPackageTuple()
 
     def printVer(self):

@@ -268,7 +268,7 @@ class Depsolve:
             hdrs = self.rpmdb.returnHeaderByTuple(pkgtuple)
             for hdr in hdrs:
                 po = packages.YumInstalledPackage(hdr)
-                if self.tsInfo.exists(po.pkgtup()):
+                if self.tsInfo.exists(po.pkgtup):
                     self.log(7, 'Skipping package already in Transaction Set: %s' % po)
                     continue
                 if niceformatneed in po.requiresList():
@@ -308,7 +308,7 @@ class Depsolve:
                 for po in pkgs:
                     # if one of them is (name, arch) already in the tsInfo somewhere, 
                     # pop it out of the list
-                    (n,a,e,v,r) = po.pkgtup()
+                    (n,a,e,v,r) = po.pkgtup
                     thismode = self.tsInfo.getMode(name=n, arch=a)
                     if thismode is not None:
                         self.log(5, '   %s already in ts %s, skipping' % (po, thismode))
@@ -335,7 +335,7 @@ class Depsolve:
             
             requirementTuple = (needname, flags, needversion)
             
-            CheckDeps, missingdep = self._requiringFromInstalled(requiringPkg.pkgtup(), requirementTuple, errormsgs)
+            CheckDeps, missingdep = self._requiringFromInstalled(requiringPkg.pkgtup, requirementTuple, errormsgs)
 
 
         return (CheckDeps, missingdep, conflicts, errormsgs)
@@ -404,18 +404,18 @@ class Depsolve:
                     pkgs = self.pkgSack.returnNewestByName(name)
                     archs = []
                     for pkg in pkgs:
-                        (n,a,e,v,r) = pkg.pkgtup()
+                        (n,a,e,v,r) = pkg.pkgtup
                         archs.append(a)
                     a = rpmUtils.arch.getBestArchFromList(archs)
                     po = self.pkgSack.returnNewestByNameArch((n,a))
                 else:
                     po = self.pkgSack.returnNewestByNameArch((name,arch))
-                if po.pkgtup() not in uplist:
+                if po.pkgtup not in uplist:
                     po = None
 
             if po:
                 for (new, old) in self.up.getUpdatesTuples():
-                    if po.pkgtup() == new:
+                    if po.pkgtup == new:
                         updated_pkg = packages.YumInstalledPackage(self.rpmdb.returnHeaderByTuple(old)[0])
                         txmbr = self.tsInfo.addUpdate(po, updated_pkg)
                         txmbr.setAsDep()
@@ -476,7 +476,7 @@ class Depsolve:
         # get rid of things that are already in the rpmdb - b/c it's pointless to use them here
 
         for pkg in provSack.returnPackages():
-            if pkg.pkgtup() in self.rpmdb.getPkgList(): # is it already installed?
+            if pkg.pkgtup in self.rpmdb.getPkgList(): # is it already installed?
                 self.log(5, '%s is in providing packages but it is already installed, removing.' % pkg)
                 provSack.delPackage(pkg)
                 continue
@@ -488,7 +488,7 @@ class Depsolve:
         
             tspkgs = []
             if not self.allowedMultipleInstalls(pkg):
-                (n, a, e, v, r) = pkg.pkgtup()
+                (n, a, e, v, r) = pkg.pkgtup
                 
                 # from ts
                 tspkgs = self.tsInfo.matchNaevr(name=pkg.name, arch=pkg.arch)
@@ -521,7 +521,7 @@ class Depsolve:
         # iterate the provSack briefly, if we find the package is already in the 
         # tsInfo then just skip this run
         for pkg in provSack.returnPackages():
-            (n,a,e,v,r) = pkg.pkgtup()
+            (n,a,e,v,r) = pkg.pkgtup
             pkgmode = self.tsInfo.getMode(name=n, arch=a, epoch=e, ver=v, rel=r)
             if pkgmode in ['i', 'u']:
                 self.doUpdateSetup()
@@ -545,7 +545,7 @@ class Depsolve:
         elif len(newest) == 1:
             best = newest[0]
         
-        if best.pkgtup() in self.rpmdb.getPkgList(): # is it already installed?
+        if best.pkgtup in self.rpmdb.getPkgList(): # is it already installed?
             missingdep = 1
             checkdeps = 0
             msg = 'Missing Dependency: %s is needed by package %s' % (needname, name)
@@ -609,13 +609,13 @@ class Depsolve:
                     pkgs = self.pkgSack.returnNewestByName(confname)
                     archs = []
                     for pkg in pkgs:
-                        (n,a,e,v,r) = pkg.pkgtup()
+                        (n,a,e,v,r) = pkg.pkgtup
                         archs.append(a)
                     a = rpmUtils.arch.getBestArchFromList(archs)
                     po = self.pkgSack.returnNewestByNameArch((n,a))
                 else:
                     po = self.pkgSack.returnNewestByNameArch((confname,confarch))
-                if po.pkgtup() not in uplist:
+                if po.pkgtup not in uplist:
                     po = None
 
         if po:

@@ -887,7 +887,7 @@ For more information contact your distribution or package provider.
             # we look through each returned possibility and rule out the
             # ones that we obviously can't use
             for pkg in installable:
-                if pkg.pkgtup() in installed:
+                if pkg.pkgtup in installed:
                     self.log(6, 'Package %s is already installed, skipping' % pkg)
                     continue
                 
@@ -910,9 +910,9 @@ For more information contact your distribution or package provider.
                         if rc < 0: # we're newer - this is an update, pass to them
                             if exactarch:
                                 if pkg.arch == a2:
-                                    passToUpdate.append(pkg.pkgtup())
+                                    passToUpdate.append(pkg.pkgtup)
                             else:
-                                passToUpdate.append(pkg.pkgtup())
+                                passToUpdate.append(pkg.pkgtup)
                         elif rc == 0: # same, ignore
                             continue
                         elif rc > 0: # lesser, check if the pkgtup is an exactmatch
@@ -920,13 +920,13 @@ For more information contact your distribution or package provider.
                                         # the user explicitly wants this version
                                         # FIXME this is untrue if the exactmatch
                                         # does not include a version-rel section
-                            if pkg.pkgtup() in exactmatch:
+                            if pkg.pkgtup in exactmatch:
                                 if not toBeInstalled.has_key(pkg.name): toBeInstalled[pkg.name] = []
-                                toBeInstalled[pkg.name].append(pkg.pkgtup())
+                                toBeInstalled[pkg.name].append(pkg.pkgtup)
                 else: # we've not got any installed that match n or n+a
                     self.log(4, 'No other %s installed, adding to list for potential install' % pkg.name)
                     if not toBeInstalled.has_key(pkg.name): toBeInstalled[pkg.name] = []
-                    toBeInstalled[pkg.name].append(pkg.pkgtup())
+                    toBeInstalled[pkg.name].append(pkg.pkgtup)
         
         
         # this is where I could catch the installs of compat and multilib 
@@ -1026,7 +1026,7 @@ For more information contact your distribution or package provider.
             updateMatches = yum.misc.unique(matched + exactmatch)
             for po in updateMatches:
                 for (new, old) in updates:
-                    if po.pkgtup() == new:
+                    if po.pkgtup == new:
                         updated_pkg = YumInstalledPackage(self.rpmdb.returnHeaderByTuple(old)[0])
                         self.tsInfo.addUpdate(po, updated_pkg)
 
@@ -1112,8 +1112,8 @@ For more information contact your distribution or package provider.
 
             for instTup in installedByKey:
                 installed_pkg = YumInstalledPackage(self.rpmdb.returnHeaderByTuple(instTup)[0])
-                (n, a, e, v, r) = po.pkgtup()
-                (n2, a2, e2, v2, r2) = installed_pkg.pkgtup()
+                (n, a, e, v, r) = po.pkgtup
+                (n2, a2, e2, v2, r2) = installed_pkg.pkgtup
                 rc = compareEVR((e2, v2, r2), (e, v, r))
                 if rc < 0: # we're newer - this is an update, pass to them
                     if self.conf.exactarch:
@@ -1301,7 +1301,7 @@ For more information contact your distribution or package provider.
         installed = self.rpmdb.getPkgList()
         availablepackages = {}
         for po in self.pkgSack.returnPackages():
-            if po.pkgtup() not in installed:
+            if po.pkgtup not in installed:
                     availablepackages[po.name] = 1
 
         for group in grouplist:

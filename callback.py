@@ -30,7 +30,7 @@ class RPMInstallCallback:
         self.installed_pkg_names = []
         self.total_removed = 0
         self.mark = "#"
-        self.marks = 34
+        self.marks = 27
         self.filelog = None
 
         self.myprocess = { 'updating': 'Updating', 'erasing': 'Erasing',
@@ -70,10 +70,10 @@ class RPMInstallCallback:
         fmt_bar = "%-" + width + "s"
         if progress:
             bar = fmt_bar % (self.mark * int(marks * (percent / 100.0)), )
-            fmt = "\r  %-3.3s: %-28.28s " + bar + " " + done
+            fmt = "\r  %-10.10s: %-28.28s " + bar + " " + done
         else:
             bar = fmt_bar % (self.mark * marks, )
-            fmt = "  %-3.3s: %-28.28s "  + bar + " " + done
+            fmt = "  %-10.10s: %-28.28s "  + bar + " " + done
         return fmt
 
     def _logPkgString(self, hdr):
@@ -172,7 +172,7 @@ class RPMInstallCallback:
                 if h not in self.installed_pkg_names:
                     process = "Removing"
                 else:
-                    process = "Updating"
+                    process = "Cleanup"
                 percent = 100
                 fmt = self._makefmt(percent, False)
                 msg = fmt % (process, h)

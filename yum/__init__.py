@@ -271,12 +271,6 @@ class YumBase(depsolve.Depsolve):
     def buildTransaction(self):
         """go through the packages in the transaction set, find them in the
            packageSack or rpmdb, and pack up the ts accordingly"""
-        #FIXME - dup this function out into cli.py to add callbacks for
-        # the depresolution process
-        # callbacks should be:
-        # - each package added to ts
-        # - each dep processed
-        # - each restart of dep resolution loop
         (rescode, restring) = self.resolveDeps()
         return rescode, restring
 
@@ -435,7 +429,7 @@ class YumBase(depsolve.Depsolve):
                 return 0
 
         ylp = YumLocalPackage(self.read_ts, fo)
-        if ylp.pkgtup() != po.pkgtup():
+        if ylp.pkgtup != po.pkgtup:
             if raiseError:
                 raise URLGrabError(-1, 'Package does not match intended download')
             else:
@@ -528,7 +522,7 @@ class YumBase(depsolve.Depsolve):
                 
         yip = YumInstalledPackage(hdr) # we're using YumInstalledPackage b/c
                                        # it takes headers <shrug>
-        if yip.pkgtup() != po.pkgtup():
+        if yip.pkgtup != po.pkgtup:
             if raiseError:
                 raise URLGrabError(-1, 'Header does not match intended download')
             else:
@@ -726,7 +720,7 @@ class YumBase(depsolve.Depsolve):
                 removed+=1
         msg = '%d metadata files removed' % removed
         return 0, [msg]
-        
+
     def sortPkgObj(self, pkg1 ,pkg2):
         """sorts a list of package tuples by name"""
         if pkg1.name > pkg2.name:
@@ -735,7 +729,7 @@ class YumBase(depsolve.Depsolve):
             return 0
         else:
             return -1
-    
+        
     def doPackageLists(self, pkgnarrow='all'):
         """generates lists of packages, un-reduced, based on pkgnarrow option"""
         
@@ -815,7 +809,7 @@ class YumBase(depsolve.Depsolve):
             avail = self.pkgSack.simplePkgList()
             for hdr in self.rpmdb.getHdrList():
                 po = YumInstalledPackage(hdr)
-                if po.pkgtup() not in avail:
+                if po.pkgtup not in avail:
                     extras.append(po)
 
         # obsoleting packages (and what they obsolete)
@@ -1054,7 +1048,7 @@ class YumBase(depsolve.Depsolve):
         
         # look it up in the self.localPackages first:
         for po in self.localPackages:
-            if po.pkgtup() == pkgtup:
+            if po.pkgtup == pkgtup:
                 return po
                 
         pkgs = self.pkgSack.searchNevra(name=n, arch=a, epoch=e, ver=v, rel=r)
