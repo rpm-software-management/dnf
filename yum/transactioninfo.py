@@ -33,7 +33,7 @@ class TransactionData:
 
         return None
         
-    def add(self, pkgtup)
+    def add(self, pkgtup):
         """add a package to the transaction"""
             
     def remove(self, pkgtup):
