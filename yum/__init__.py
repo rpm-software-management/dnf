@@ -1069,6 +1069,8 @@ class YumBase(depsolve.Depsolve):
             if len(pkg.name) < len(best.name): # shortest name silliness
                 best = pkg
                 continue
+            elif len(pkg.name) > len(best.name):
+                continue
 
             # compare arch
             arch = rpmUtils.arch.getBestArchFromList([pkg.arch, best.arch])
