@@ -18,7 +18,7 @@
 
 import sys
 
-sys.path.append('/usr/lib/yum')
+sys.path.insert('/usr/lib/yum')
 import pullheaders
 pullheaders.main()
 
