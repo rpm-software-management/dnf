@@ -7,4 +7,5 @@ clean:
 install:
 	mkdir -p $(DESTDIR)/usr/share/man/man{5,8}
 	install -m 644 yum.8 $(DESTDIR)/usr/share/man/man8/yum.8
+	install -m 644 yum-arch.8 $(DESTDIR)/usr/share/man/man8/yum-arch.8
 	install -m 644 yum.conf.5 $(DESTDIR)/usr/share/man/man5/yum.conf.5

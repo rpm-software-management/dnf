@@ -3,6 +3,7 @@
 import rpm
 import miscutils
 import exceptions
+import oldUtils
 
 
 class RpmUtilsError(exceptions.Exception):

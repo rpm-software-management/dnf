@@ -26,6 +26,7 @@ install:
 
 	mkdir -p $(DESTDIR)/usr/bin $(DESTDIR)/usr/bin
 	install -m 755 yum.sh $(DESTDIR)/usr/bin/yum
+	install -m 755 yum-arch $(DESTDIR)/usr/bin/yum-arch
 
 	mkdir -p $(DESTDIR)/var/cache/yum
 

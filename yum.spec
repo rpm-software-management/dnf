@@ -63,6 +63,7 @@ exit 0
 %config %{_sysconfdir}/logrotate.d/%{name}
 %{_datadir}/yum-cli/*
 %{_bindir}/yum
+%{_bindir}/yum-arch
 /usr/lib/python?.?/site-packages/yum
 /usr/lib/python?.?/site-packages/repomd
 /usr/lib/python?.?/site-packages/rpmUtils
