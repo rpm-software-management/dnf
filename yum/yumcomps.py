@@ -1,9 +1,7 @@
 #!/usr/bin/python
 
-import rpm
 import comps
 import sys
-import rpmUtils
 from libxml2 import parserError
 
 # goals
@@ -38,7 +36,7 @@ from libxml2 import parserError
 # need to deal with groupname vs groupid
 
 class Groups_Info:
-    def __init__(self, overwrite_groups = 0):
+    def __init__(self, pkgtuples, overwrite_groups = 0):
         self.overwrite_groups = overwrite_groups
         self.group_installed = {}
         self.sub_groups = {}
@@ -58,7 +56,7 @@ class Groups_Info:
         self.pkgs_per_group = {}
         self.compscount = 0
         # get our list of installed stuff real quickly
-        self._get_installed()
+        self._get_installed(pkgtuples)
         
     def add(self, filename):
         """This method takes a filename and populates the above dicts"""
@@ -217,12 +215,9 @@ class Groups_Info:
                     if not self.group_installed[metapkg]:
                         groupinstalled = 0
         
-    def _get_installed(self):
-        """this should reference rpmUtils and or the nevral for speed
-           also it needs to obey the excludes - so probably nevral"""
-        mi = ts.dbMatch()
-        for hdr in mi:
-            self.installed_pkgs[hdr['name']]=1
+    def _get_installed(self, pkgs):
+        for (n, a, e, v, r) in pkgs:
+            self.installed_pkgs[n]=1
         
         
     def isGroupInstalled(self, groupname):
@@ -316,8 +311,8 @@ class Groups_Info:
                 
 
 
-def main():
-    compsgrpfun = Groups_Info(overwrite_groups)
+def main(pkgtuples):
+    compsgrpfun = Groups_Info(pkgtuples, overwrite_groups)
     compsgrpfun.add('./comps.xml')
     compsgrpfun.add('./othercomps.xml')
     compsgrpfun.compileGroups()
@@ -332,6 +327,19 @@ def main():
 
 
 if __name__ == '__main__':
+    import rpm
     overwrite_groups = 1
     ts = rpm.TransactionSet()
-    main()
+    ts.setVSFlags(-1)
+    mi = ts.dbMatch()
+    pkgtuples = []
+    for hdr in mi:
+        if hdr['epoch'] is None:
+            epoch = 0
+        else:
+            epoch = hdr['epoch']
+            
+        pkgtuples.append((hdr['name'], hdr['arch'], epoch, hdr['version'],
+                          hdr['release']))
+                          
+    main(pkgtuples)
