@@ -232,6 +232,14 @@ class nevral:
                     if suggest:
                         (header, sugname) = suggest
                         (name, arch) = self.nafromloc(sugname)
+                        archlist = archwork.availablearchs(self,name)
+                        bestarch = archwork.bestarch(archlist)
+                        log(3, 'bestarch = %s' % arch)
+                        if arch == bestarch:
+                            ((e, v, r, a, l, i), s)=self._get_data(name,arch)
+                            self.add((name,e,v,r,arch,l,i),'ud')
+                            log(4, 'Got dep: %s, %s' % (name,arch))
+                            CheckDeps = 1
                         ((e, v, r, a, l, i), s)=self._get_data(name,arch)
                         self.add((name,e,v,r,arch,l,i),'ud')          
                         log(4, 'Got dep: %s, %s' % (name,arch))
