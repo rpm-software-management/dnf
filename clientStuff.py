@@ -214,16 +214,7 @@ def shortlogactions(i_list, u_list, e_list, ud_list, ed_list, nevral):
         
 
 
-def userconfirm():
-    """gets a yes or no from the user, defaults to No"""
-    choice = raw_input('Is this ok [y/N]: ')
-    if len(choice) == 0:
-        return 1
-    else:
-        if choice[0] != 'y' and choice[0] != 'Y':
-            return 1
-        else:
-            return 0
+
         
 
 
@@ -379,157 +370,6 @@ def download_headers(HeaderInfo, nulist):
         current = current + 1
     close_all()
                 
-def take_action(cmds, nulist, uplist, newlist, obsoleting, tsInfo, HeaderInfo, rpmDBInfo, obsoleted):
-    from yummain import usage
-    
-    basecmd = cmds.pop(0)
-    
-    if conf.uid != 0:
-        if basecmd in ['install','update','clean','upgrade','erase', 'groupupdate', 'groupupgrade', 'groupinstall']:
-            errorlog(0, _('You need to be root to perform these commands'))
-            sys.exit(1)
-    
-    if basecmd == 'install':
-        if len(cmds) == 0:
-            errorlog(0, _('Need to pass a list of pkgs to install'))
-            usage()
-        else:
-            if conf.tolerant:
-                pkgaction.installpkgs(tsInfo, nulist, cmds, HeaderInfo, rpmDBInfo, 0)
-            else: 
-                pkgaction.installpkgs(tsInfo, nulist, cmds, HeaderInfo, rpmDBInfo, 1)
-                
-    elif basecmd == 'provides':
-        taglist = ['filenames', 'dirnames', 'provides']
-        if len(cmds) == 0:
-            errorlog(0, _('Need a provides to match'))
-            usage()
-        else:
-            log(2, _('Looking in available packages for a providing package'))
-            pkgaction.search(cmds, nulist, HeaderInfo, 0, taglist)
-            log(2, _('Looking in installed packages for a providing package'))
-            pkgaction.search(cmds, nulist, rpmDBInfo, 1, taglist)
-        sys.exit(0)
-    
-    elif basecmd == 'search':
-        taglist = ['description', 'summary', 'packager', 'name']
-        if len(cmds) == 0:
-            errorlog(0, _('Need an item to search'))
-            usage()
-        else:
-            log(2, _('Looking in available packages for a providing package'))
-            pkgaction.search(cmds, nulist, HeaderInfo, 0, taglist)
-            log(2, _('Looking in installed packages for a providing package'))
-            pkgaction.search(cmds, nulist, rpmDBInfo, 1, taglist)
-        sys.exit(0)
-
-    elif basecmd == 'update':
-        if len(cmds) == 0:
-            pkgaction.updatepkgs(tsInfo, HeaderInfo, rpmDBInfo, nulist, uplist, 'all', 0)
-        else:
-            if conf.tolerant:
-                pkgaction.updatepkgs(tsInfo, HeaderInfo, rpmDBInfo, nulist, uplist, cmds, 0)
-            else:
-                pkgaction.updatepkgs(tsInfo, HeaderInfo, rpmDBInfo, nulist, uplist, cmds, 1)
-            
-    elif basecmd in ('erase', 'remove'):
-        if len(cmds) == 0:
-            usage()
-            errorlog (0, _('Need to pass a list of pkgs to erase'))
-        else:
-            if conf.tolerant:
-                pkgaction.erasepkgs(tsInfo, rpmDBInfo, cmds, 0)
-            else:
-                pkgaction.erasepkgs(tsInfo, rpmDBInfo, cmds, 1)
-    
-    elif basecmd == 'check-update':
-        if len(uplist) > 0:
-            pkgaction.listpkginfo(uplist, 'all', HeaderInfo, 1)
-            sys.exit(100)
-        else:
-            sys.exit(0)
-            
-    elif basecmd in ['list', 'info']:
-        if basecmd == 'list':
-            short = 1
-        else:
-            short = 0
-        if len(cmds) == 0:
-            pkgaction.listpkginfo(nulist, 'all', HeaderInfo, short)
-            sys.exit(0)
-        else:
-            if cmds[0] == 'updates':
-                pkgaction.listpkginfo(uplist, 'updates', HeaderInfo, short)
-            elif cmds[0] == 'available':
-                pkgaction.listpkginfo(newlist, 'all', HeaderInfo, short)
-            elif cmds[0] == 'installed':
-                pkglist = rpmDBInfo.NAkeys()
-                pkgaction.listpkginfo(pkglist, 'all', rpmDBInfo, short)
-            elif cmds[0] == 'extras':
-                pkglist=[]
-                for (name, arch) in rpmDBInfo.NAkeys():
-                    if not HeaderInfo.exists(name, arch):
-                        pkglist.append((name,arch))
-                if len(pkglist) > 0:
-                    pkgaction.listpkginfo(pkglist, 'all', rpmDBInfo, short)
-                else:
-                    log(2, _('No Packages installed not included in a repository'))
-            else:    
-                log(2, _('Looking in Available Packages:'))
-                pkgaction.listpkginfo(nulist, cmds, HeaderInfo, short)
-                log(2, _('Looking in Installed Packages:'))
-                pkglist = rpmDBInfo.NAkeys()
-                pkgaction.listpkginfo(pkglist, cmds, rpmDBInfo, short)
-        sys.exit(0)
-    elif basecmd == 'grouplist':
-        pkgaction.listgroups(cmds)
-        sys.exit(0)
-    
-    elif basecmd == 'groupupdate':
-        if len(cmds) == 0:
-            errorlog(0, _('Need a list of groups to update'))
-            sys.exit(1)
-        installs, updates = pkgaction.updategroups(rpmDBInfo, nulist, uplist, cmds)
-        if len(updates) > 0:
-            pkglist = []
-            for (group, pkg) in updates:
-                pkglist.append(pkg)
-            pkgaction.updatepkgs(tsInfo, HeaderInfo, rpmDBInfo, nulist, uplist, pkglist, 0)
-        if len(installs) > 0:
-            pkglist = []
-            for (group, pkg) in installs:
-                pkglist.append(pkg)
-            pkgaction.installpkgs(tsInfo, nulist, pkglist, HeaderInfo, rpmDBInfo, 0)
-            
-    elif basecmd == 'groupinstall':
-        if len(cmds) == 0:
-            errorlog(0, _('Need a list of groups to update'))
-            sys.exit(1)
-        instpkglist = pkgaction.installgroups(rpmDBInfo, nulist, uplist, cmds)
-        if len(instpkglist) > 0:
-            pkgaction.installpkgs(tsInfo, nulist, instpkglist, HeaderInfo, rpmDBInfo, 0)
-        
-            
-    elif basecmd == 'clean':
-        if len(cmds) == 0 or cmds[0] == 'all':
-            log(2, _('Cleaning packages and old headers'))
-            clean_up_packages()
-            clean_up_old_headers(rpmDBInfo, HeaderInfo)
-        elif cmds[0] == 'packages':
-            log(2, _('Cleaning packages'))
-            clean_up_packages()
-        elif cmds[0] == 'headers':
-            log(2, _('Cleaning all headers'))
-            clean_up_headers()
-        elif cmds[0] == 'oldheaders':
-            log(2, _('Cleaning old headers'))
-            clean_up_old_headers(rpmDBInfo, HeaderInfo)
-        else:
-            errorlog(0, _('Invalid clean option %s') % cmds[0])
-            sys.exit(1)
-        sys.exit(0)    
-    else:
-        usage()
 
 def create_final_ts(tsInfo):
     # download the pkgs to the local paths and add them to final transaction set
@@ -629,20 +469,6 @@ def tsTest(checkts):
 
 
 
-def descfsize(size):
-    """The purpose of this function is to accept a file size in bytes,
-    and describe it in a human readable fashion."""
-    if size < 1000:
-        return "%d bytes" % size
-    elif size < 1000000:
-        size = size / 1000.0
-        return "%.2f kB" % size
-    elif size < 1000000000:
-        size = size / 1000000.0
-        return "%.2f MB" % size
-    else:
-        size = size / 1000000000.0
-        return "%.2f GB" % size
 
 def grab(serverID, url, filename=None, nofail=0, copy_local=0, 
           close_connection=0,

@@ -26,8 +26,8 @@ class TransactionData:
         # a list of tuples of pkginfo, and mode ('e', 'i', 'u')
         # the pkgInfo is tuple of (name, arch, epoch, version, release)
         # example self.data['packages'].append((pkginfo, mode))
-    	self.data['packages'] = []
-    	
+        self.data['packages'] = []
+        
         # list of flags to set for the transaction
         self.data['flags'] = []
         self.data['vsflags'] = []
@@ -79,9 +79,9 @@ class TransactionWrapper:
                          'IDTXload',
                          'IDTXglob',
                          'rollback',
-            			 'pgpImportPubkey',
-			             'pgpPrtPkts',
-            			 'Debug',
+                         'pgpImportPubkey',
+                         'pgpPrtPkts',
+                         'Debug',
                          'setFlags',
                          'setVSFlags',
                          'setProbFilter',

@@ -88,7 +88,7 @@ class RepoStorage:
 
         return returnlist
                 
-    def populateSack(self, which='enabled', with='primary'):
+    def populateSack(self, which='enabled', with='primary', callback=None):
         """This populates the package sack from the repositories, two optional 
            arguments: which='repoid, enabled, all'
                       with='primary, filelists, other, all'"""
@@ -104,7 +104,8 @@ class RepoStorage:
             data = ['primary', 'filelists', 'other']
         else:
             data = [ with ]
-            
+
+        # MAybe worth looking at using excludelist here            
         for repo in myrepos:
             for item in data:
                 if item == 'primary':
@@ -116,7 +117,7 @@ class RepoStorage:
                 else:
                     # how odd, just move along
                     continue
-                self.pkgSack.addFile(repo.id, xml, self.progress)
+                self.pkgSack.addFile(repo.id, xml, callback)
                     
 
                 

@@ -364,6 +364,25 @@ class Updates:
                    
         self.updatesdict = updatedict                    
         
+    def reduceListByNameArch(self, pkglist, name=None, arch=None):
+        """returns a set of pkg naevr tuples reduced based on name or arch"""
+        returnlist = []
+       
+        if name or arch:
+            for (n, a, e, v, r) in pkglist:
+                if name:
+                    if name == n:
+                        returnlist.append((n, a, e, v, r))
+                        continue
+                if arch:
+                    if arch == a:
+                        returnlist.append((n, a, e, v, r))
+                        continue
+        else:
+            returnlist = pkglist
+
+        return returnlist
+        
         
     def getUpdatesTuples(self, name=None, arch=None):
         """returns updates for packages in a list of tuples of:
@@ -399,24 +418,9 @@ class Updates:
         for oldtup in self.updatesdict.keys():
             for newtup in self.updatesdict[oldtup]:
                 returnlist.append(newtup)
-
-        tmplist = []                
-        if name:
-            for (n, a, e, v, r) in returnlist:
-                if n != name:
-                    tmplist.append((n, a, e, v, r))
-                    
-        if arch:
-            for (n, a, e, v, r) in returnlist:
-                if a != arch:
-                    tmplist.append((n, a, e, v, r))
-
-        for item in tmplist:
-            try:
-                returnlist.remove(item)
-            except ValueError:
-                pass
-
+        
+        returnlist = self.reduceListByNameArch(returnlist, name, arch)
+        
         return returnlist
                 
     def getObsoletesTuples(self, name=None, arch=None):
@@ -454,22 +458,30 @@ class Updates:
            
         tmplist = self.obsoletes.keys()
         
-        returnlist = []
-        if name or arch:
-            for (n, a, e, v, r) in tmplist:
-                if name:
-                    if name == n:
-                        returnlist.append((n, a, e, v, r))
-                        continue
-                if arch:
-                    if arch == a:
-                        returnlist.append((n, a, e, v, r))
-                        continue
-        else:
-            returnlist = tmplist
-
+        returnlist = self.reduceListByNameArch(tmplist, name, arch)
+        
         return returnlist
+        
+    def getOthersList(self, name=None, arch=None):
+        """returns a naevr tuple of the packages that are neither installed
+           nor an update - this may include something that obsoletes an installed
+           package"""
+        updates = {}
+        tmplist = []
+        
+        for pkgtup in self.getUpdatesList():
+            updates[pkgtup] = 1
+            
+        for pkgtup in self.available:
+            if not updates.has_key(pkgtup):
+                tmplist.append(pkgtup)
 
+        returnlist = self.reduceListByNameArch(tmplist, name, arch)
+        
+        return returnlist
+         
+               
+            
 #    def getProblems(self):
 #        """return list of problems:
 #           - Packages that are both obsoleted and updated.
