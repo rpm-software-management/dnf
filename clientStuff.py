@@ -896,27 +896,30 @@ def create_final_ts(tsInfo, rpmdb):
             tsfin.remove(name)
 
     if conf.diskspacecheck:
-        log(2, 'Calculating available disk space - this could take a bit')
-        tserrors = tsfin.run(rpm.RPMTRANS_FLAG_TEST, ~rpm.RPMPROB_FILTER_DISKSPACE, callback.install_callback, '')
-        if tserrors:
-            diskerrors = []
-            othererrors = []
-            for (descr, (type, mount, need)) in tserrors:
-                if type == rpm.RPMPROB_DISKSPACE:
-                    diskerrors.append(descr)
-                else:
-                    othererrors.append(descr)
-            if len(diskerrors) > 0:
-                log(2, 'Error: Disk space Error')
-                errorlog(0, 'You appear to have insufficient disk space to handle these packages')
-                for error in diskerrors:
-                    errorlog(1, '%s' % error)
-            if len(othererrors) > 0:
-                log(2, 'Error reported but not a disk space error')
-                errorlog(0, 'Unknown error testing transaction set:')
-                for error in othererrors:
-                    errorlog(1, '%s' % error)
-            sys.exit(1)
+        # we need to get our actionlists to check if this is all erasures.
+        (i_list, u_list, e_list, ud_list, ed_list) = actionslists(tsInfo)
+        if len(i_list + u_list + ud_list) > 0:
+            log(2, 'Calculating available disk space - this could take a bit')
+            tserrors = tsfin.run(rpm.RPMTRANS_FLAG_TEST, ~rpm.RPMPROB_FILTER_DISKSPACE, callback.install_callback, '')
+            if tserrors:
+                diskerrors = []
+                othererrors = []
+                for (descr, (type, mount, need)) in tserrors:
+                    if type == rpm.RPMPROB_DISKSPACE:
+                        diskerrors.append(descr)
+                    else:
+                        othererrors.append(descr)
+                if len(diskerrors) > 0:
+                    log(2, 'Error: Disk space Error')
+                    errorlog(0, 'You appear to have insufficient disk space to handle these packages')
+                    for error in diskerrors:
+                        errorlog(1, '%s' % error)
+                if len(othererrors) > 0:
+                    log(2, 'Error reported but not a disk space error')
+                    errorlog(0, 'Unknown error testing transaction set:')
+                    for error in othererrors:
+                        errorlog(1, '%s' % error)
+                sys.exit(1)
     close_all()
     return tsfin
     
