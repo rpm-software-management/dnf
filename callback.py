@@ -32,9 +32,11 @@ class RPMInstallCallback:
         self.filelog = None
         
         self.myprocess = { 'updating': 'Updating', 'erasing': 'Erasing', 
-                           'installing': 'Installing', 'obsoleted': 'Obsoleted' }
+                           'installing': 'Installing', 'obsoleted': 'Obsoleted',
+                           'obsoleting': 'Obsoleting'}
         self.mypostprocess = { 'updating': 'Updated', 'erasing': 'Erased',
-                               'installing': 'Installed', 'obsoleted': 'Obsoleted' }
+                               'installing': 'Installed', 'obsoleted': 'Obsoleted',
+                               'obsoleting': 'Obsoleting'}
         
         self.tsInfo = None # this needs to be set for anything else to work
                            
@@ -127,15 +129,15 @@ class RPMInstallCallback:
                 except KeyError, e:
                     print "Error: invalid output state: %s for %s" % \
                        (txmbr.output_state, hdr['name'])
-
-                if self.output and sys.stdout.isatty():
-                    sys.stdout.write("\r%s: %s %d %% done %d/%d" % (process, 
-                       hdr['name'], percent, self.total_installed + self.total_removed, 
-                       self.total_actions))
-                   
-                    if bytes == total:
-                        print " "
-                        
+                else:
+                    if self.output and sys.stdout.isatty():
+                        sys.stdout.write("\r%s: %s %d %% done %d/%d" % (process, 
+                           hdr['name'], percent, self.total_installed + self.total_removed, 
+                           self.total_actions))
+                       
+                        if bytes == total:
+                            print " "
+                            
         elif what == rpm.RPMCALLBACK_UNINST_START:
             pass
             
