@@ -18,6 +18,7 @@ import os
 import clientStuff
 import rpm
 import string
+import sys
 
 class nevral:
 

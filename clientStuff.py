@@ -563,6 +563,14 @@ def take_action(cmds, nulist, uplist, newlist, obslist, tsInfo, HeaderInfo, rpmD
             usage()
         else:
             pkgaction.installpkgs(tsInfo, nulist, cmds, HeaderInfo, rpmDBInfo)
+    elif cmds[0] == 'provides':
+        cmds.remove(cmds[0])
+        if len(cmds) == 0:
+            errorlog(0, 'Need a provides to match')
+            usage()
+        else:
+            pkgaction.whatprovides(cmds, nulist, HeaderInfo, rpmDBInfo)
+            
     elif cmds[0] == 'update':
         cmds.remove(cmds[0])
         if len(cmds) == 0:

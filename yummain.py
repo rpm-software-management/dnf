@@ -99,12 +99,16 @@ def main(args):
     ##############################################################
     # who are we:
     uid=os.geteuid()
-
+        
     if len(args) < 1:
         usage()
     (log, errorlog, filelog, conf, cmds) = parseCmdArgs(args)
+
+    if uid != 0:
+        conf.cache=1
+
     if cmds[0] not in ('update', 'upgrade', 'install','info', 'list', 'erase',\
-                       'grouplist','groupupdate','groupinstall','clean','remove'):
+                       'grouplist','groupupdate','groupinstall','clean','remove', 'provides'):
         usage()
     process=cmds[0]
     

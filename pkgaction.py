@@ -197,7 +197,7 @@ def erasepkgs(tsnevral,rpmnevral,userlist):
             errorlog(0,"Erase: No matches for %s" % n)
             sys.exit(1)
 
-def findrequires(usereq, hinevral, rpmnevral):
+def whatprovides(usereq, nulist, hinevral, rpmnevral):
     import fnmatch
     # figure out what the user wants, traverse all the provides and file lists 
     # in every file in the header, return the fnmatch()es for the usereq
@@ -210,6 +210,50 @@ def findrequires(usereq, hinevral, rpmnevral):
     #    
     #else:
     #    print "No Packages Available"
+    
+    # short term - must check if its installed - if it is then make it check the rpmdb
+    # do each matching quickly - at select time
+    # long term
+    # push all of provides+files+dirs into a dict dict[pkg]=list
+    # deal with "where the hell is the pkg - hi or rpm
+    # figure out how to make nevral.getHeader more robust
+    results = 0
+    for (name, arch) in nulist:
+        hdr = hinevral.getHeader(name, arch)
+        fullprovideslist = hdr[rpm.RPMTAG_PROVIDES] + hdr[rpm.RPMTAG_FILENAMES]
+        if hdr[rpm.RPMTAG_DIRNAMES] != None:
+            fullprovideslist = fullprovideslist + hdr[rpm.RPMTAG_DIRNAMES]
+        for req in usereq:
+            for item in fullprovideslist:
+                log(3, '%s vs %s' % (item, req))
+                if req == item or fnmatch.fnmatch(item, req):
+                    results = results + 1
+                    log(2,'Available package: %s provides %s' % (name, item))
+        del fullprovideslist
+    for (name, arch) in rpmnevral.NAkeys():
+        log(3, '%s' % name)
+        hdr=rpmnevral.getHeader(name,arch)
+        fullprovideslist = hdr[rpm.RPMTAG_PROVIDES] + hdr[rpm.RPMTAG_FILENAMES]
+        if hdr[rpm.RPMTAG_DIRNAMES] != None:
+            fullprovideslist = fullprovideslist + hdr[rpm.RPMTAG_DIRNAMES]
+        for req in usereq:
+            for item in fullprovideslist:
+                log(3, '%s vs %s' % (item, req))
+                if req == item or fnmatch.fnmatch(item, req):
+                    results = results + 1
+                    log(2,'Installed package: %s provides %s' % (name, item))
+        del fullprovideslist
+        
+    
+    
+    
+    if results > 0:
+        log(2,'%s results returned' % results)
+    else:
+        log(2,'No packages found')
+    sys.exit(0)
+    
+    
 
 def kernelupdate(tsnevral):
     #figure out if we have updated a kernel
@@ -296,7 +340,6 @@ def checkRpmMD5(package):
         errorlog(0, 'You may want to run yum clean or remove the file:\n %s' % (package))
         errorlog(0, 'Exiting.')
         sys.exit(1)
-    return
 
 
 def checkRpmSig(package):
