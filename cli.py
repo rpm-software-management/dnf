@@ -25,9 +25,10 @@ import random
 import fcntl
 import fnmatch
 import re
-import output
 
+import output
 from urlgrabber.progress import TextMeter
+import shell
 import yum
 import yum.Errors
 import yum.misc
@@ -405,29 +406,29 @@ For more information contact your distribution or package provider.
         running = True;
         self.doTsSetup()
         self.doRpmDBSetup()
+        yumshell = shell.YumShell(base=self)
+        yumshell.cmdloop()
         
-        while running:
-            sys.stdout.write ("> ")
-            self.cmdstring = sys.stdin.readline()
-            self.cmdstring = self.cmdstring.replace('\n', '')
-            self.cmds = self.cmdstring.split()
-            
-            if self.cmdstring == 'run':
-                if len(self.tsInfo) > 0:
-                    return 2, ['Running Commands']
-                else:
-                    return 0, ['Nothing to do']
+        return yumshell.result, yumshell.resultmsgs
+        
+        
+        
+        #~ if self.cmdstring == 'run':
+                #~ if len(self.tsInfo) > 0:
+                    #~ return 2, ['Running Commands']
+                #~ else:
+                    #~ return 0, ['Nothing to do']
                 
-            elif self.cmdstring in ['quit', 'exit']:
-                return 0, ['Leaving Shell']
+            #~ elif self.cmdstring in ['quit', 'exit']:
+                #~ return 0, ['Leaving Shell']
             
-            else:
-                try:
-                    self.parseCommands()
-                except CliError:
-                    pass
-                else:
-                    self.doCommands()
+            #~ else:
+                #~ try:
+                    #~ self.parseCommands()
+                #~ except CliError:
+                    #~ pass
+                #~ else:
+                    #~ self.doCommands()
                 
 
     def doCommands(self):
