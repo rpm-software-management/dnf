@@ -26,6 +26,7 @@ import time
 
 import Errors
 import rpmUtils
+import rpmUtils.updates
 import rpmUtils.transaction
 import rpmUtils.arch
 import groups
