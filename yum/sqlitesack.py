@@ -68,7 +68,11 @@ class YumAvailablePackageSqlite(YumAvailablePackage):
     def returnFileTypes(self):
         self.loadFiles()
         return YumAvailablePackage.returnFileTypes(self)
-        
+
+    def returnPrco(self, prcotype):
+        if not self.prco[prcotype]:
+           self.prco = self.sack.getPrco(self.pkgId)
+        return self.prco[prcotype]
 
 class YumSqlitePackageSack(repos.YumPackageSack):
     """ Implementation of a PackageSack that uses sqlite cache instead of fully
@@ -128,6 +132,22 @@ class YumSqlitePackageSack(repos.YumPackageSack):
                                 ob['changelog.author'],
                                 ob['changelog.changelog']
                               ))
+        return result
+
+    def getPrco(self, pkgId):
+        result = {}
+        for (rep, cache) in self.primarydb.items():
+            cur = cache.cursor()
+            for prco in ['requires', 'provides', 'obsoletes', 'conflicts']:
+                result[prco] = []
+                cur.execute("select * from packages,%s where packages.pkgId = %s and packages.pkgKey = %s.pkgKey", prco, pkgId, prco)
+                for ob in cur.fetchall():
+                    name = ob['%s.name' % prco ]
+                    version = ob['%s.version' % prco ]
+                    release = ob['%s.release' % prco ]
+                    epoch = ob['%s.epoch' % prco ]
+                    flags = ob['%s.flags' % prco ]
+                    result[prco].append((name, flags, (version, release, epoch)))
         return result
 
     # Get all files for a certain pkgId from the filelists.xml metadata
