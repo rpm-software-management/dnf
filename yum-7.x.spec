@@ -1,6 +1,6 @@
 Summary: RPM installer/updater
 Name: yum
-Version: 1.0.1
+Version: 1.0.2
 Release: 1_73
 License: GPL
 Group: System Environment/Base
@@ -66,6 +66,9 @@ exit 0
 %{_mandir}/man*/*
 
 %changelog
+* Mon Sep  8 2003 Seth Vidal <skvidal@phy.duke.edu>
+- ver to 1.0.2
+
 * Mon May 19 2003 Seth Vidal <skvidal@phy.duke.edu>
 - ver to 1.0.1
 
