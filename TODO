@@ -33,8 +33,6 @@ Wishlist/Cool:
 - Make it possible to have an http-accesible global conf file for excludes and
   what not.
 - work on making file urls work (ick)
-- test on non x86 archs and make sure grub and lilo stuff are not run for this 
-  arch possibly implement a per-arch pkgaction.kernelupdate function
 - make an option for:
   yum mail notices
   so that it could be used to check for updates and mail root@ or 
