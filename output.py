@@ -330,6 +330,25 @@ class YumOutput:
         for item in values:
             self.log(2, '%s' % item)
 
+    def reportDownloadSize(self,packages):
+        """Report the total download size for a set of packages"""
+        totsize = 0
+        error = False
+        for pkg in packages:
+            # Just to be on the safe side, if for some reason getting
+            # the package size fails, log the error and don't report download
+            # size
+            try:
+                size = int(pkg.size())
+                totsize += size
+            except:
+                 error = True
+                 self.log(5, 'There was an error calculating total download size')
+                 break
+
+        if (not error):
+            print "Total download size: %s" % (self.format_number(totsize))
+            
     def listTransaction(self):
         """displays the transaction in an easy-to-read way."""
         

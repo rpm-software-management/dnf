@@ -605,6 +605,19 @@ For more information contact your distribution or package provider.
 
         # output what will be done:
         self.log(1, self.listTransaction())
+        
+        # Check which packages have to be downloaded
+        downloadpkgs = []
+        for txmbr in self.tsInfo.getMembers():
+            if txmbr.ts_state in ['i', 'u']:
+                po = self.getPackageObject(txmbr.pkgtup)
+                if po:
+                    downloadpkgs.append(po)
+
+        # Report the total download size to the user, so he/she can base
+        # the answer on this info
+        self.reportDownloadSize(downloadpkgs)
+        
         # confirm with user
         if not self.conf.getConfigOption('assumeyes'):
             if not self.userconfirm():
@@ -612,13 +625,7 @@ For more information contact your distribution or package provider.
                 return
 
         
-        # download all pkgs in the tsInfo - md5sum vs the metadata as you go 
-        downloadpkgs = []
-        for txmbr in self.tsInfo.getMembers():
-            if txmbr.ts_state in ['i', 'u']:
-                po = self.getPackageObject(txmbr.pkgtup)
-                if po:
-                    downloadpkgs.append(po)
+
         self.log(2, 'Downloading Packages:')
         problems = self.downloadPkgs(downloadpkgs) 
 
