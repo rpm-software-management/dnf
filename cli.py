@@ -555,8 +555,8 @@ For more information contact your distribution or package provider.
                 
         elif self.basecmd == 'clean':
             self.conf.setConfigOption('cache', 1)
-            hdrcode = pkgcode = xmlcode = piklcode = 0
-            pkgresults = hdrresults = xmlresults = piklresults = []
+            hdrcode = pkgcode = xmlcode = piklcode = dbcode = 0
+            pkgresults = hdrresults = xmlresults = piklresults = dbresults = []
 
             if 'all' in self.extcmds:
                 self.log(2, 'Cleaning up Everything')
