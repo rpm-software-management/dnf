@@ -161,6 +161,10 @@ def generateRSS(lst):
         item.newChild(None, 'title', title)
         date = time.gmtime(float(pkg.returnSimple('buildtime')))
         item.newChild(None, 'pubDate', time.strftime(rfc822_format, date))
+        item.newChild(None, 'guid', pkg.returnSimple('id'))
+        #in order to do the link we need to have the repos dict to pull
+        # out which of the mirror baseurls the relative could be attached to
+        #item.newChild(None, 'link', link)
         # build up changelog
         changelog = ''
         cnt = 0
@@ -178,7 +182,10 @@ def generateRSS(lst):
         body.newChild(None, "pre", escape(pkg.returnSimple('description')))
         body.newChild(None, "p", 'Change Log:')
         body.newChild(None, "pre", escape(changelog))
-        description = escape('<pre>%s</pre>' % escape(changelog))
+        description = '<pre>%s - %s\n\n' % (escape(pkg.name), 
+                                            escape(pkg.returnSimple('summary')))
+        description += '%s\n\nChange Log:\n\n</pre>' % escape(pkg.returnSimple('description'))
+        description += escape('<pre>%s</pre>' % escape(changelog))
         item.newChild(None, 'description', description)
     return doc
     
