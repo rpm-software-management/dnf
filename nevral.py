@@ -280,10 +280,23 @@ class nevral:
 					#much more shit should happen here. specifically:
 					#if you have a conflict b/t two pkgs, try to upgrade the reqname pkg. - see if that solves the problem
 					#also something like a "this isn't our fault and we can't help it, continue on" should happen.like in anaconda
-					print reqname
-					print reqversion
-					conflicts = 1
-					errors.append("conflict between %s and %s" % (name, reqname))
+					log(4,"conflict: %s %s %s" % (name, reqname, reqversion))
+					if rpmDBInfo.exists(reqname) and self.exists(reqname) and self.state(reqname) not in ('i','iu','u','ud'):
+						
+						(e1, v1, r1) = rpmDBInfo.evr(reqname)
+						(e2, v2, r2) = self.evr(reqname)
+						rc = clientStuff.compareEVR((e1,v1,r1), (e2,v2,r2))
+						if rc<=0:
+							log(4, "conflict: setting %s to upgrade" % (reqname))
+							((e,v,r,a,l,i),s)=tsInfo._get_data(reqname)
+							self.add((name,e,v,r,a,l,i),'ud')
+							CheckDeps=1
+						else:
+							errors.append("conflict between %s and %s" % (name, reqname))
+							conflicts=1
+					else:
+						errors.append("conflict between %s and %s" % (name, reqname))
+						conflicts=1
 			log(4,"whee dep loop")
 			del ts
 			del db
