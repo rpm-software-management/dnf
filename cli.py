@@ -379,7 +379,7 @@ For more information contact your distribution or package provider.
                 self.errorlog(0,
                     _('Error: clean requires an option: headers, packages, cache, metadata, all'))
             for cmd in self.extcmds:
-                if cmd not in ['headers', 'packages', 'metadata', 'cache', 'all']:
+                if cmd not in ['headers', 'packages', 'metadata', 'cache', 'dbcache', 'all']:
                     self.usage()
                     raise CliError
                     
@@ -562,11 +562,13 @@ For more information contact your distribution or package provider.
                 pkgcode, pkgresults = self.cleanPackages()
                 hdrcode, hdrresults = self.cleanHeaders()
                 xmlcode, xmlresults = self.cleanMetadata()
+                dbcode, dbresults = self.cleanSqlite()
                 piklcode, piklresults = self.cleanPickles()
                 
-                code = hdrcode + pkgcode + xmlcode + piklcode
-                results = hdrresults + pkgresults + xmlresults + piklresults
+                code = hdrcode + pkgcode + xmlcode + piklcode + dbcode
+                results = hdrresults + pkgresults + xmlresults + piklresults + dbresults
                 return code, results
+                
             if 'headers' in self.extcmds:
                 self.log(2, 'Cleaning up Headers')
                 hdrcode, hdrresults = self.cleanHeaders()
@@ -579,9 +581,12 @@ For more information contact your distribution or package provider.
             if 'cache' in self.extcmds:
                 self.log(2, 'Cleaning up pickled cache')
                 piklcode, piklresults =  self.cleanPickles()
+            if 'dbcache' in self.extcmds:
+                self.log(2, 'Cleaning up database cache')
+                dbcode, dbresults =  self.cleanSqlite()
                 
-            code = hdrcode + pkgcode + xmlcode + piklcode
-            results = hdrresults + pkgresults + xmlresults + piklresults
+            code = hdrcode + pkgcode + xmlcode + piklcode + dbcode
+            results = hdrresults + pkgresults + xmlresults + piklresults + dbresults
             return code, results
             
         
