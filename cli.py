@@ -156,7 +156,7 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
             # syslog-style log
             if self.conf.getConfigOption('uid') == 0:
                 logfd = os.open(self.conf.getConfigOption('logfile'), os.O_WRONLY |
-                                os.O_APPEND | os.O_CREAT)
+                                os.O_APPEND | os.O_CREAT, 0644)
                 logfile =  os.fdopen(logfd, 'a')
                 fcntl.fcntl(logfd, fcntl.F_SETFD)
                 self.filelog = Logger(threshold = 10, file_object = logfile, 
