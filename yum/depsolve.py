@@ -202,7 +202,7 @@ class Depsolve:
                     pkgs = self.pkgSack.returnNewestByName(n)
                     archs = []
                     for pkg in pkgs:
-                        (n,e,v,r,a) = po.returnNewestByName()
+                        (n,e,v,r,a) = pkg.returnNevraTuple()
                         archs.append(a)
                     a = rpmUtils.arch.getBestArchFromList(archs)
                     po = self.pkgSack.returnNewestByNameArch((n,a))
@@ -215,6 +215,7 @@ class Depsolve:
                     CheckDeps = 1
 
         else:
+            # we need to find the package from the repositories
             pkgs = self.pkgSack.searchProvides(needname)
             if flags == 0:
                 flags = None
@@ -226,8 +227,18 @@ class Depsolve:
                     # first one? <shrug>
                     defSack.addPkg(po)
                     self.log(3, 'Matched %s to require for %s' % (po, name))
+            
+            # iterate the defSack briefly, if we find the package is already in the 
+            # tsInfo then just skip this run
+            for pkg in defSack.returnPackages():
+                (n,e,v,r,a) = pkg.returnNevraTuple()
+                pkgmode = self.tsInfo.getMode(name=n, arch=a, epoch=e, ver=v, rel=r)
+                if pkgmode in ['i', 'u']:
+                    self.log(5, '%s already in ts, skipping this one' % (n))
+                    CheckDeps = 1
+                    return (CheckDeps, missingdep, conflicts, errormsgs)
                     
-            #self.bestPackageFromList(defSack, reqtup)
+            #self.bestPackageFromList(defSack, reqtup) # useful function to have
             newest = defSack.returnNewestByNameArch()
             if len(newest) > 1:
                 best = newest[0]

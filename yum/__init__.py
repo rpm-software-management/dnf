@@ -16,6 +16,7 @@
 
 
 import os
+import os.path
 import errno
 import Errors
 
@@ -124,14 +125,6 @@ class YumBase(depsolve.Depsolve):
         """download list of package objects handed to you, output based on
            callback, raise yum.Errors.YumBaseError on problems"""
 
-        #downloading
-        # build up list of things needed to download
-        # get po for each item
-        # pass list of po to downloader method
-        # download
-        # checksum from po.checksums
-        # if we get an error we can't surmount exit and go away
-
         errors = {}
         for po in pkglist:
             for (csumtype, csum, csumid) in po.checksums:
@@ -143,6 +136,17 @@ class YumBase(depsolve.Depsolve):
             remote = po.returnSimple('relativepath')
             rpmfn = os.path.basename(remote)
             local = repo.pkgdir + '/' + rpmfn
+            
+            if os.path.exists(local):
+                try:
+                    result = self.verifyChecksum(local, checksumType, checksum)
+                except URLGrabError, e:
+                    os.unlink(local)
+                else:
+                    if result == 0:
+                        continue
+                    else:
+                        os.unlink(local)
             
             checkfunc = (self.verifyChecksum, (checksumType, csum), {})
 
