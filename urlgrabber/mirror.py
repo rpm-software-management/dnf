@@ -1,17 +1,20 @@
-# This program is free software; you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation; either version 2 of the License, or
-# (at your option) any later version.
+#   This library is free software; you can redistribute it and/or
+#   modify it under the terms of the GNU Lesser General Public
+#   License as published by the Free Software Foundation; either
+#   version 2.1 of the License, or (at your option) any later version.
 #
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU Library General Public License for more details.
+#   This library is distributed in the hope that it will be useful,
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+#   Lesser General Public License for more details.
 #
-# You should have received a copy of the GNU General Public License
-# along with this program; if not, write to the Free Software
-# Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+#   You should have received a copy of the GNU Lesser General Public
+#   License along with this library; if not, write to the 
+#      Free Software Foundation, Inc., 
+#      59 Temple Place, Suite 330, 
+#      Boston, MA  02111-1307  USA
 
+# This file is part of urlgrabber, a high-level cross-protocol url-grabber
 # Copyright 2002-2004 Michael D. Stenner, Ryan Tomayko
 
 """Module for downloading files from a pool of mirrors
@@ -45,7 +48,7 @@ FAILOVER
   the classes maintain a master mirror list and a "current mirror"
   index.  When a download is initiated, a copy of this list and index
   is created for that download only.  The specific failover policy
-  depends ont he class used, and so is documented in the class
+  depends on the class used, and so is documented in the class
   documentation.  Note that ANY behavior of the class can be
   overridden, so any failover policy at all is possible (although
   you may need to change the interface in extreme cases).

@@ -48,8 +48,7 @@ def main(args):
     
     # parse our cli args, read in the config file and setup the logs
     cli.getOptionsConfig(args, base)
-    
- 
+
     process = base.cmds[0]           
     # set our caching mode correctly
     if base.conf.getConfigOption('uid') != 0:
@@ -74,6 +73,11 @@ def main(args):
     base.rpmdb.addDB(base.read_ts)
     base.log(2, '#pkgs in db = %s' % len(base.rpmdb.getPkgList()))
 
+
+    for repo in base.repos.listEnabled(): # grabs the repomd.xml for each and sets us up
+        base.log(2, 'Setting up Repo:  %s' % repo)
+        repo.getRepoXML(cache=base.conf.getConfigOption('cache'))
+        
     if process in ['groupupdate', 'groupinstall', 'grouplist', 'groupremove']:
         base.grpInfo = yum.yumcomps.Groups_Info(base.rpmdb.getPkgList(),
                                  base.conf.getConfigOption('overwrite_groups'))
@@ -92,6 +96,7 @@ def main(args):
             base.errorlog(1, _('Exiting.'))
             sys.exit(1)
 
+               
     base.repos.populateSack(callback=output.simpleProgressBar)
     base.pkgSack = base.repos.pkgSack
     base.log(2, '#pkgs in repos = %s' % len(base.pkgSack))
@@ -108,24 +113,23 @@ def main(args):
     
     base.tsInfo = rpmUtils.transaction.TransactionData()
 
-    basecmd, matched, unmatched = cli.doCommands(base)
+#    basecmd, matched, unmatched = cli.doCommands(base)
 
-    modedict = { 'install':'i',
-                 'update':'u',
-                 'erase':'e',
-                 'remove':'e'
-                }
-    mode = modedict[basecmd]
+#    modedict = { 'install':'i',
+#                 'update':'u',
+#                 'erase':'e',
+#                 'remove':'e'
+#                }
 
-    for pkgtup in matched:
-        base.tsInfo.add(pkgtup, mode)
+#    mode = modedict[basecmd]
+
+#    for pkgtup in matched:
+#        base.tsInfo.add(pkgtup, mode)
         
     
-    print base.tsInfo.display()
-    for item in unmatched:
-        print item
-
-
+#    print base.tsInfo.display()
+#    for item in unmatched:
+#        print item
 
    
 #    base.tsInfo = rpmUtils.transaction.TransactionData()

@@ -15,12 +15,15 @@
 # Copyright 2004 Duke University 
 
 
-import Errors
+
 import os
 import os.path
+import types
 
+import Errors
 from urlgrabber.grabber import URLGrabber
 import urlgrabber.mirror
+from urlgrabber.grabber import URLGrabError
 from metadata import repoMDObject
 from metadata import mdErrors
 from metadata import packageSack
@@ -137,10 +140,15 @@ class Repository:
         self.groupsfilename = 'yumgroups.xml' # something some freaks might 
                                               # eventually want
         self.setkeys = []
+        self.repoMDFile = 'repodata/repomd.xml'
+        self.repoXML = None
+        
         # throw in some stubs for things that will be set by the config class
         self.cache = ""
         self.pkgdir = ""
         self.hdrdir = ""        
+        # holder for stuff we've grabbed
+        self.retrieved = { 'primary':0, 'filelists':0, 'other':0, 'groups':0 }        
         
     def __cmp__(self, other):
         if self.id > other.id:
@@ -152,6 +160,41 @@ class Repository:
 
     def __str__(self):
         return self.id
+
+    def _checksum(self, sumtype, file, CHUNK=2**16):
+        """takes filename, hand back Checksum of it
+           sumtype = md5 or sha
+           filename = /path/to/file
+           CHUNK=65536 by default"""
+           
+        # chunking brazenly lifted from Ryan Tomayko
+        try:
+            if type(file) is not types.StringType:
+                fo = file # assume it's a file-like-object
+            else:           
+                fo = open(file, 'r', CHUNK)
+                
+            if sumtype == 'md5':
+                import md5
+                sum = md5.new()
+            elif sumtype == 'sha':
+                import sha
+                sum = sha.new()
+            else:
+                raise Errors.RepoError, 'Error Checksumming file, wrong \
+                                         checksum type %s' % sumtype
+            chunk = fo.read
+            while chunk: 
+                chunk = fo.read(CHUNK)
+                sum.update(chunk)
+    
+            if type(file) is types.StringType:
+                fo.close()
+                del fo
+                
+            return sum.hexdigest()
+        except EnvironmentError:
+            raise Errors.RepoError, 'Error opening file for checksum'
         
     def dump(self):
         string = 'repo: %s\n' % self.id
@@ -199,9 +242,10 @@ class Repository:
                                    bandwidth=self.bandwidth,
                                    retry=self.retries,
                                    throttle=self.throttle)
+                                   
+        # FIXME - needs a failure callback and it needs  to specify it
         self.grab = mgclass(self.grabfunc, self.urls)
 
-        # now repo.grab.urlgrab('relativepath/some.file') should do the right thing
         
     def remoteGroups(self):
         return os.path.join(self.baseURL(), self.groupsfilename)
@@ -209,9 +253,6 @@ class Repository:
     def localGroups(self):
         return os.path.join(self.cache, self.groupsfilename)
 
-    def remoteMetadata(self):
-        return os.path.join(self.baseURL(), 'repodata/repomd.xml')
-        
     def baseURL(self):
         return self.failover.get_serverurl()
         
@@ -228,52 +269,122 @@ class Repository:
         # the mirror, raise errors as need be
         # if url is None do a grab via the mirror group/grab for the repo
         # return the path to the local file
+
         if local is None or relative is None:
-            raise Errors.RepoErrors, \
+            raise Errors.RepoError, \
                   "get request for Repo %s, gave no source or dest" % self.id
         if url is not None:
-            pass
+            ug = URLGrabber(keepalive=self.keepalive, 
+                       bandwidth=self.bandwidth,
+                       retry=self.retries,
+                       throttle=self.throttle)
+            remote=url + '/' + relative
+            try:           
+                ug.urlgrab(remote, local, range=(start, end))
+            except URLGrabError, e:
+                raise
+              
             # setup a grabber and use it - same general rules
         else:
-           self.grab.urlgrab('relative', local, range=(start, end))
+            try:
+                self.grab.urlgrab(relative, local, range=(start, end))
+            except URLGrabError, e:
+                raise
+                
+
         return local
            
-    def _retrieveMD(self, url, local):
-        """base function to retrieve data from the remote url"""
-        self.get(relative=url, local=local)
         
     def getRepoXML(self, cache=0):
         """retrieve/check/read in repomd.xml from the repository"""
-        # retrieve, if we can, the repomd.xml from the repo
-        # read it in
-        # store the data about the other MD files in the class
-        repomdxmlfile = self.cache + '/repomd.xml'
+
+        remote = self.repoMDFile
+        local = self.cache + '/repomd.xml'
+        if cache:
+            if not os.path.exists(local):
+                raise Errors.RepoError, 'Cannot find repomd.xml file for %s' % (self)
+        else:                
+            local = self.get(relative=remote, local=local)
+    
         try:
-            self.repoXML = repoMDObject.RepoMD(self.id, repomdxmlfile)
+            self.repoXML = repoMDObject.RepoMD(self.id, local)
         except mdErrors.RepoMDError, e:
-            raise Errors.RepoError, 'Error importing repomd.xml from %s: %s' % (self.id, e)
-        # populate some other default attributes of the repo class based on the contents
-        # of self.repoXML
+            raise Errors.RepoError, 'Error importing repomd.xml from %s: %s' % (self, e)
+
         
+    def _retrieveMD(self, mdtype, cache=0):
+        """base function to retrieve data from the remote url"""
+        locDict = { 'primary' : self.repoXML.primaryLocation,
+                    'filelists' : self.repoXML.filelistsLocation,
+                    'other' : self.repoXML.otherLocation,
+                    'group' : self.repoXML.groupLocation }
         
+        csumDict = { 'primary' : self.repoXML.primaryChecksum,
+                     'filelists' : self.repoXML.filelistsChecksum,
+                     'other' : self.repoXML.otherChecksum,
+                     'group' : self.repoXML.groupChecksum }
+                     
+        locMethod = locDict[mdtype]
+        csumMethod = csumDict[mdtype]
+        
+        (r_base, remote) = locMethod()
+        fname = os.path.basename(remote)
+        local = self.cache + '/' + fname
+
+        if self.retrieved[mdtype]: # got it, move along
+            return local
+
+        if cache: # cached - just go
+            if os.path.exists(local):
+                return local
+            else: # ain't there - raise
+                raise Errors.RepoErrors, \
+                    "Caching enabled but no local cache of %s from %s" % (local,
+                           self)
+                           
+        (r_ctype, r_csum) = csumMethod() # get the remote checksum
+        
+        if os.path.exists(local): 
+            l_csum = self._checksum(r_ctype, local) # get the local checksum
+            if l_csum == r_csum: 
+                self.retrieved[mdtype] = 1
+                return local # it's the same return the local one
+
+        try:        
+            local = self.get(relative=remote, local=local)        
+        except URLGrabError, e:
+            raise
+
+        self.retrieved[mdtype] = 1
+        return local
+
+    
     def getPrimaryXML(self, cache=0):
         """this gets you the path to the primary.xml file, retrieving it if we 
            need a new one"""
-        # this should check the checksum of the package versus the one we have
-        # download a new one if we need it
-        # return the path to the local one so it can be added to the packageSack
-        return self.cache + '/primary.xml.gz'
+
+        return self._retrieveMD('primary', cache)
+        
     
     def getFileListsXML(self, cache=0):
-        return self.cache + '/filelists.xml.gz'
+        """this gets you the path to the filelists.xml file, retrieving it if we 
+           need a new one"""
+
+        return self._retrieveMD('filelists', cache)
 
     def getOtherXML(self, cache=0):
-        return self.cache + '/other.xml.gz'
+        return self._retrieveMD('other', cache)
 
     def getGroups(self, cache=0):
         """gets groups and returns group file path for the repository, if there 
            is none it returns None"""
-           
-        return self.cache + '/yumgroups.xml'
+        try:
+            file = self._retrieveMD('group', cache)
+        except URLGrabError:
+            file = None
+        
+        return file
+        
+        
     
 

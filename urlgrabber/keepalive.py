@@ -1,19 +1,20 @@
-#!/usr/bin/python2
-
-# This program is free software; you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation; either version 2 of the License, or
-# (at your option) any later version.
+#   This library is free software; you can redistribute it and/or
+#   modify it under the terms of the GNU Lesser General Public
+#   License as published by the Free Software Foundation; either
+#   version 2.1 of the License, or (at your option) any later version.
 #
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU Library General Public License for more details.
+#   This library is distributed in the hope that it will be useful,
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+#   Lesser General Public License for more details.
 #
-# You should have received a copy of the GNU General Public License
-# along with this program; if not, write to the Free Software
-# Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+#   You should have received a copy of the GNU Lesser General Public
+#   License along with this library; if not, write to the 
+#      Free Software Foundation, Inc., 
+#      59 Temple Place, Suite 330, 
+#      Boston, MA  02111-1307  USA
 
+# This file is part of urlgrabber, a high-level cross-protocol url-grabber
 # Copyright 2002-2004 Michael D. Stenner, Ryan Tomayko
 
 """An HTTP handler for urllib2 that supports HTTP 1.1 and keepalive.
@@ -338,7 +339,9 @@ class HTTPResponse(httplib.HTTPResponse):
         if self.fp:
             self.fp.close()
             self.fp = None
-            self._handler._request_closed(self, self._host, self._connection)
+            if self._handler:
+                self._handler._request_closed(self, self._host,
+                                              self._connection)
 
     def close_connection(self):
         self._handler._remove_connection(self._host, self._connection, close=1)
@@ -425,7 +428,7 @@ def error_handler(url):
             print "  status = %s, reason = %s" % (status, reason)
     HANDLE_ERRORS = orig
     hosts = keepalive_handler.open_connections()
-    print "open connections:", ' '.join(hosts)
+    print "open connections:", hosts
     keepalive_handler.close_all()
 
 def continuity(url):
@@ -508,8 +511,8 @@ def test_timeout(url):
     data1 = fo.read()
     fo.close()
  
-    print "  waiting 60 seconds for the server to close the connection"
-    i = 60
+    i = 20
+    print "  waiting %i seconds for the server to close the connection" % i
     while i > 0:
         sys.stdout.write('\r  %2i' % i)
         sys.stdout.flush()

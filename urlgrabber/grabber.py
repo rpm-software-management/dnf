@@ -1,17 +1,20 @@
-# This program is free software; you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation; either version 2 of the License, or
-# (at your option) any later version.
+#   This library is free software; you can redistribute it and/or
+#   modify it under the terms of the GNU Lesser General Public
+#   License as published by the Free Software Foundation; either
+#   version 2.1 of the License, or (at your option) any later version.
 #
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU Library General Public License for more details.
+#   This library is distributed in the hope that it will be useful,
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+#   Lesser General Public License for more details.
 #
-# You should have received a copy of the GNU General Public License
-# along with this program; if not, write to the Free Software
-# Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+#   You should have received a copy of the GNU Lesser General Public
+#   License along with this library; if not, write to the 
+#      Free Software Foundation, Inc., 
+#      59 Temple Place, Suite 330, 
+#      Boston, MA  02111-1307  USA
 
+# This file is part of urlgrabber, a high-level cross-protocol url-grabber
 # Copyright 2002-2004 Michael D. Stenner, Ryan Tomayko
 
 """A high-level cross-protocol url-grabber.
@@ -72,13 +75,10 @@ GENERAL ARGUMENTS (kwargs)
     range to retrieve. Either or both of the values may set to
     None. If first_byte is None, byte offset 0 is assumed. If
     last_byte is None, the last byte available is assumed. Note that
-    both first and last_byte values are inclusive so a range of
-    (10,11) would return the 10th and 11th byte of the resource.
+    the range specification is python-like in that (0,10) will yeild
+    the first 10 bytes of the file.
 
     If set to None, no range will be used.
-
-    XXX -- is this correct?  It seems like it behaves like
-    python slices (which I think is good) -mds
     
   reget = None   [None|'simple'|'check_timestamp']
 
@@ -131,6 +131,17 @@ GENERAL ARGUMENTS (kwargs)
     if necessary, so you cannot specify a prefix that ends with a
     partial file or directory name.
 
+  opener = None
+  
+    Overrides the default urllib2.OpenerDirector provided to urllib2
+    when making requests.  This option exists so that the urllib2
+    handler chain may be customized.  Note that the range, reget,
+    proxy, and keepalive features require that custom handlers be
+    provided to urllib2 in order to function properly.  If an opener
+    option is provided, no attempt is made by urlgrabber to ensure
+    chain integrity.  You are responsible for ensuring that any
+    extension handlers are present if said features are required.
+    
 RETRY RELATED ARGUMENTS
 
   retry = None
@@ -385,12 +396,54 @@ def urlread(url, limit=None, **kwargs):
 class URLGrabberOptions:
     """Class to ease kwargs handling."""
 
-    def __init__(self, **kwargs):
+    def __init__(self, delegate=None, **kwargs):
         """Initialize URLGrabberOptions object.
         Set default values for all options and then update options specified
         in kwargs.
         """
-        # ensure defaults are present
+        self.delegate = delegate
+        if delegate is None:
+            self._set_defaults()
+        self._set_attributes(**kwargs)
+    
+    def __getattr__(self, name):
+        if self.delegate and hasattr(self.delegate, name):
+            return getattr(self.delegate, name)
+        raise AttributeError, name
+    
+    def raw_throttle(self):
+        """Calculate raw throttle value from throttle and bandwidth 
+        values.
+        """
+        if self.throttle <= 0:  
+            return 0
+        elif type(self.throttle) == type(0): 
+            return float(self.throttle)
+        else: # throttle is a float
+            return self.bandwidth * self.throttle
+        
+    def derive(self, **kwargs):
+        """Create a derived URLGrabberOptions instance.
+        This method creates a new instance and overrides the
+        options specified in kwargs.
+        """
+        return URLGrabberOptions(delegate=self, **kwargs)
+        
+    def _set_attributes(self, **kwargs):
+        """Update object attributes with those provided in kwargs."""
+        self.__dict__.update(kwargs)
+        if have_range and kwargs.has_key('range'):
+            # normalize the supplied range value
+            self.range = range_tuple_normalize(self.range)
+        if not self.reget in [None, 'simple', 'check_timestamp']:
+            raise URLGrabError(11, _('Illegal reget mode: %s') \
+                               % (self.reget, ))
+
+    def _set_defaults(self):
+        """Set all options to their default values. 
+        When adding new options, make sure a default is
+        provided here.
+        """
         self.progress_obj = None
         self.throttle = 1.0
         self.bandwidth = 0
@@ -406,42 +459,8 @@ class URLGrabberOptions:
         self.reget = None
         self.failure_callback = None
         self.prefix = None
-        # update all attributes with supplied kwargs
-        self._set_attributes(**kwargs)
-        
-    def raw_throttle(self):
-        """Calculate raw throttle value from throttle and bandwidth 
-        values.
-        """
-        if self.throttle <= 0:  
-            return 0
-        elif type(self.throttle) == type(0): 
-            return float(self.throttle)
-        else: # throttle is a float
-            return self.bandwidth * self.throttle
-        
-    def derive(self, **kwargs):
-        """Copy this object and then override the specified options.
-        This method does *not* return a copy if no kwargs are supplied.
-        """
-        if len(kwargs) > 0:
-            from copy import copy
-            clone = copy(self)
-            clone._set_attributes(**kwargs)
-            return clone
-        else:
-            return self
-        
-    def _set_attributes(self, **kwargs):
-        """Update object attributes with those provided in kwargs."""
-        self.__dict__.update(kwargs)
-        if have_range and kwargs.has_key('range'):
-            # normalize the supplied range value
-            self.range = range_tuple_normalize(self.range)
-        if not self.reget in [None, 'simple', 'check_timestamp']:
-            raise URLGrabError(11, _('Illegal reget mode: %s') \
-                               % (self.reget, ))
-
+        self.opener = None
+                           
 class URLGrabber:
     """Provides easy opening of URLs with a variety of options.
     
@@ -466,11 +485,9 @@ class URLGrabber:
                     or (tries == opts.retry) \
                     or (e.errno not in opts.retrycodes): raise
                 if self.failure_callback:
-                    if type(self.failure_callback) == type( () ):
-                        cb, args, kwargs = self.failure_callback
-                    else:
-                        cb, args, kwargs = self.failure_callback, (), {}
-                    cb(e, *args, **kwargs)
+                    func, args, kwargs = \
+                          self._make_callback(opts.failure_callback)
+                    func(e, *args, **kwargs)
     
     def urlopen(self, url, **kwargs):
         """open the url and return a file object
@@ -513,10 +530,7 @@ class URLGrabber:
             try:
                 fo._do_grab()
                 if not opts.checkfunc is None:
-                    if callable(opts.checkfunc):
-                        func, args, kwargs = opts.checkfunc, (), {}
-                    else:
-                        func, args, kwargs = opts.checkfunc
+                    func, args, kwargs = self._make_callback(opts.checkfunc)
                     apply(func, (filename, )+args, kwargs)
             finally:
                 fo.close()
@@ -547,12 +561,8 @@ class URLGrabber:
                 if limit is None: s = fo.read()
                 else: s = fo.read(limit)
 
-
                 if not opts.checkfunc is None:
-                    if callable(opts.checkfunc):
-                        func, args, kwargs = opts.checkfunc, (), {}
-                    else:
-                        func, args, kwargs = opts.checkfunc
+                    func, args, kwargs = self._make_callback(opts.checkfunc)
                     apply(func, (s, )+args, kwargs)
             finally:
                 fo.close()
@@ -598,6 +608,12 @@ class URLGrabber:
         url = urlparse.urlunparse(parts)
         return url, parts
         
+    def _make_callback(self, callback_obj):
+        if callable(callback_obj):
+            return callback_obj, (), {}
+        else:
+            return callaopts.checkfunc
+
 # create the default URLGrabber used by urlXXX functions.
 # NOTE: actual defaults are set in URLGrabberOptions
 default_grabber = URLGrabber()
@@ -636,7 +652,9 @@ class URLGrabberFileObject:
     
     def _get_opener(self):
         """Build a urllib2 OpenerDirector based on request options."""
-        if self._opener is None:
+        if self.opts.opener:
+            return self.opts.opener
+        elif self._opener is None:
             handlers = []
             # if you specify a ProxyHandler when creating the opener
             # it _must_ come before all other handlers in the list or urllib2
@@ -648,7 +666,14 @@ class URLGrabberFileObject:
             if range_handlers and (self.opts.range or self.opts.reget):
                 handlers.extend( range_handlers )
             handlers.append( auth_handler )
-            self._opener = CachedOpenerDirector(*handlers)
+            # Temporarily disabling this because it doesn't yet work
+            # correctly.  Some reget tests fail.  I really don't understand
+            # why, but some of the error handlers aren't set correctly.
+            #self._opener = CachedOpenerDirector(*handlers)
+            self._opener = urllib2.build_opener(*handlers)
+            # OK, I don't like to do this, but otherwise, we end up with
+            # TWO user-agent headers.
+            self._opener.addheaders = []
         return self._opener
         
     def _do_open(self):
