@@ -107,8 +107,13 @@ class RepoStorage:
             data = ['primary', 'filelists', 'other']
         else:
             data = [ with ]
-
-        # MAybe worth looking at using excludelist here            
+        
+        # FIXME !!!!
+        # MAybe worth looking at using excludelist here
+        # pop open another packageSack, fill it with packages
+        # matching the exclude list as we go. Use it to check 
+        # for excluded packages without having to remove them from
+        # a usable set in case someone wants to re-include them later.
         for repo in myrepos:
             for item in data:
                 if item == 'primary':

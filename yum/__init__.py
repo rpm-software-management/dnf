@@ -23,13 +23,14 @@ import rpmUtils
 import rpmUtils.transaction
 import depsolve
 
-class YumBase:
+class YumBase(depsolve.Depsolve):
     """This is a primary structure and base class. It houses the objects and
        methods needed to perform most things in yum. It is almost an abstract
        class in that you will need to add your own class above it for most
        real use."""
     
     def __init__(self):
+        depsolve.Depsolve.__init__(self)
         self.read_ts = rpmUtils.transaction.initReadOnlyTransaction()
         self.tsInfo = rpmUtils.transaction.TransactionData()
         self.rpmdb = rpmUtils.RpmDBHolder()
@@ -63,8 +64,7 @@ class YumBase:
     def buildTransaction(self):
         """go through the packages in the transaction set, find them in the
            packageSack or rpmdb, and pack up the ts accordingly"""
-        self.ds = depsolve.Depsolve(self)
-        (rescode, restring) = self.ds.resolvedeps()
+        (rescode, restring) = self.resolveDeps()
         return rescode, restring
            
     def doLock(self, lockfile):

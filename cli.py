@@ -547,9 +547,14 @@ class YumBaseCli(yum.YumBase):
                 thingslisted = 1
                 self.log(2, '%s packages' % name)
                 lst.sort(sortPkgTup)
-                for pkg in lst:
-                    (n, a, e, v, r) = pkg
-                    self.log(2, '%s:%s-%s-%s.%s' % (e, n, v, r, a))
+                if name in ['Installed', 'Extra']:
+                    for pkg in lst:
+                        (n, a, e, v, r) = pkg
+                        self.log(2, '%s:%s-%s-%s.%s' % (e, n, v, r, a))
+                else:
+                    for pkg in lst:
+                        po = self.getPackageObject(pkg)
+                        self.log(2, '%s - %s' % (po.returnSimple('repoid'), po))
 
         if thingslisted == 0:
             self.errorlog(1, 'No Packages to list')

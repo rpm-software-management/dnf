@@ -28,17 +28,9 @@ from Errors import DepError
 import packages
 
 class Depsolve:
-    def __init__(self, YumBaseClass):
-        """takes an rpmUtils.transaction.TransactionData object"""
-        base = YumBaseClass
-        self.base = base
-        packages.base = base
-        self.tsInfo = base.tsInfo
-        #self.excludelists = base.conf.getConfigOption
-        self.installonly = base.conf.getConfigOption('installonlypkgs')
-        self.installroot = base.conf.getConfigOption('installroot')
+    def __init__(self):
+        packages.base = self
         self.ts = rpmUtils.transaction.TransactionWrapper() # FIXME - specify installroot?
-        self.pkgSack = base.pkgSack
         
     def whatProvides(self, req):
         """tells you what provides the requested string"""
@@ -79,21 +71,21 @@ class Depsolve:
                     if n in self.installonly or 'kernel-modules' in provides:
                         self.tsInfo.changeMode(pkginfo, 'i')
                         self.ts.addInstall(hdr, (hdr, loc), 'i')
-                        self.base.log(5, 'Adding Package %s in mode i' % po)
+                        self.log(5, 'Adding Package %s in mode i' % po)
                     else:
                         self.ts.addInstall(hdr, (hdr, loc), 'u')
-                        self.base.log(5, 'Adding Package %s in mode u' % po)
+                        self.log(5, 'Adding Package %s in mode u' % po)
                 if mode == 'i':
                     self.ts.addInstall(hdr, (hdr, loc), 'i')                                            
-                    self.base.log(5, 'Adding Package %s in mode i' % po)
+                    self.log(5, 'Adding Package %s in mode i' % po)
             elif mode in ['e']:
                 indexes = rpmUtils.getIndexesByKeyword(self.base.ts, name=n,
                           arch=a, epoch=e, version=v, release=r)
                 for idx in indexes:
                     self.ts.addErase(idx)                          
-                    self.base.log(5, 'Adding Package %s-%s-%s.%s in mode i' % (n, v, r, a))
+                    self.log(5, 'Adding Package %s-%s-%s.%s in mode i' % (n, v, r, a))
         
-    def resolvedeps(self):
+    def resolveDeps(self):
         CheckDeps = 1
         conflicts = 0
         unresolvable = 0
@@ -105,7 +97,7 @@ class Depsolve:
             deps = self.ts.check()
             if deps == depscopy:
                 unresolveableloop = unresolveableloop + 1
-                self.base.log(5, 'looping count = %d' % unresolveableloop)
+                self.log(5, 'looping count = %d' % unresolveableloop)
                 if unresolveableloop >= 2:
                     errors.append('Unable to satisfy dependencies')
                     for deptuple in deps:
@@ -122,14 +114,14 @@ class Depsolve:
             
             CheckDeps = 0
             if not deps:
-                return (0, 'Success - deps resolved')
-            self.base.log (3, '# of Deps = %d' % len(deps))
+                return (2, 'Success - deps resolved')
+            self.log (3, '# of Deps = %d' % len(deps))
             for ((name, version, release), (reqname, reqversion),
                                 flags, suggest, sense) in deps:
-                self.base.log (4, 'debug dep: %s req %s - %s - %s' % (name, reqname, reqversion, sense))
+                self.log (4, 'debug dep: %s req %s - %s - %s' % (name, reqname, reqversion, sense))
                 if sense == rpm.RPMDEP_SENSE_REQUIRES:
                     # silly silly silly easy case
-                    self.base.log(4, '%s requires: %s' % (name, rpmUtils.miscutils.formatRequire(reqname, reqversion, flags)))
+                    self.log(4, '%s requires: %s' % (name, rpmUtils.miscutils.formatRequire(reqname, reqversion, flags)))
                     pkgs = self.base.pkgSack.searchProvides(reqname)
                     if flags == 0:
                         flags = None
@@ -143,10 +135,17 @@ class Depsolve:
                             break
 
                 elif sense == rpm.RPMDEP_SENSE_CONFLICTS:
-                    self.base.log(4, '%s conflicts: %s' % (name, rpmUtils.miscutils.formatRequire(reqname, reqversion, flags)))
-            self.base.log(4, 'Restarting Dependency Process with new changes')
-            self.base.log.write(2, '.')
+                    self.log(4, '%s conflicts: %s' % (name, rpmUtils.miscutils.formatRequire(reqname, reqversion, flags)))
+                    
+                    
+                    
+                    
+            self.log(4, 'Restarting Dependency Process with new changes')
+            self.log.write(2, '.')
             del deps
             self.ts.clean()
             if len(errors) > 0:
                 return(1, errors)
+            if self.tsInfo.count() > 0:
+                return(2, ['Run Callback'])
+
