@@ -246,29 +246,33 @@ class YumOutput:
     
     def displayPkgsInGroups(self, group):
         print '\nGroup: %s' % group
-        if len(self.groupInfo.sub_groups[group]) > 0:
+        groupid = self.groupInfo.matchGroup(group)
+        if len(self.groupInfo.sub_groups[groupid]) > 0:
             print ' Required Groups:'
-            for item in self.groupInfo.sub_groups[group]:
-                print '   %s' % item
-        if len(self.groupInfo.default_metapkgs[group]) > 0:
+            for id in self.groupInfo.sub_groups[groupid]:
+                grp = self.groupInfo.group_by_id[id]
+                print '   %s' % grp.name
+        if len(self.groupInfo.default_metapkgs[groupid]) > 0:
             print ' Default Metapkgs:'
-            for item in self.groupInfo.default_metapkgs[group]:
-                print '   %s' % item
-        if len(self.groupInfo.optional_metapkgs[group]) > 0:
+            for id in self.groupInfo.default_metapkgs[groupid]:
+                grp = self.groupInfo.group_by_id[id]
+                print '   %s' % grp.name
+        if len(self.groupInfo.optional_metapkgs[groupid]) > 0:
             print ' Optional Metapkgs:'
-            for item in self.groupInfo.optional_metapkgs[group]:
-                print '   %s' % item
-        if len(self.groupInfo.mandatory_pkgs[group]) > 0:
+            for id in self.groupInfo.optional_metapkgs[groupid]:
+                grp = self.groupInfo.group_by_id[id]
+                print '   %s' % grp.name
+        if len(self.groupInfo.mandatory_pkgs[groupid]) > 0:
             print ' Mandatory Packages:'
-            for item in self.groupInfo.mandatory_pkgs[group]:
+            for item in self.groupInfo.mandatory_pkgs[groupid]:
                 print '   %s' % item
-        if len(self.groupInfo.default_pkgs[group]) > 0:
+        if len(self.groupInfo.default_pkgs[groupid]) > 0:
             print ' Default Packages:'
-            for item in self.groupInfo.default_pkgs[group]:
+            for item in self.groupInfo.default_pkgs[groupid]:
                 print '   %s' % item
-        if len(self.groupInfo.optional_pkgs[group]) > 0:
+        if len(self.groupInfo.optional_pkgs[groupid]) > 0:
             print ' Optional Packages'
-            for item in self.groupInfo.optional_pkgs[group]:
+            for item in self.groupInfo.optional_pkgs[groupid]:
                 print '   %s' % item
 
            

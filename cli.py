@@ -766,7 +766,13 @@ For more information contact your distribution or package provider.
                     toBeInstalled[pkg.name].append(pkg.pkgtup())
         
         
+        # this is where I could catch the installs of compat and multilib 
+        # arches on a single yum install command. 
         pkglist = returnBestPackages(toBeInstalled)
+        
+        # This is where we need to do a lookup to find out if this install
+        # is also an obsolete. if so then we need to mark it as such in the
+        # tsInfo.
         if len(pkglist) > 0:
             self.log(3, 'reduced installs :')
         for pkgtup in pkglist:
@@ -1096,7 +1102,7 @@ For more information contact your distribution or package provider.
             userlist = self.extcmds
         
         for group in userlist:
-            if self.groupInfo.group_by_name.has_key(group):
+            if self.groupInfo.groupExists(group):
                 self.displayPkgsInGroups(group)
             else:
                 self.errorlog(1, 'Warning: Group %s does not exist.' % group)
@@ -1119,7 +1125,7 @@ For more information contact your distribution or package provider.
                     availablepackages[po.name] = 1
 
         for group in grouplist:
-            if group not in self.groupInfo.grouplist:
+            if not self.groupInfo.groupExists(group):
                 self.errorlog(0, _('Warning: Group %s does not exist.') % group)
                 continue
             pkglist = self.groupInfo.pkgTree(group)
@@ -1158,7 +1164,7 @@ For more information contact your distribution or package provider.
         updateablenames = []
         
         for group in grouplist:
-            if group not in self.groupInfo.grouplist:
+            if not self.groupInfo.groupExists(group):
                 self.errorlog(0, _('Warning: Group %s does not exist.') % group)
                 continue
 
@@ -1205,7 +1211,7 @@ For more information contact your distribution or package provider.
         
         erasesbygroup = []
         for group in grouplist:
-            if group not in self.groupInfo.grouplist:
+            if not self.groupInfo.groupExists(group):
                 self.errorlog(0, _('Warning: Group %s does not exist.') % group)
                 continue
         

@@ -935,11 +935,12 @@ class YumBase(depsolve.Depsolve):
         installed = []
         available = []
         
-        for group in availgroups:
-            if self.groupInfo.isGroupInstalled(group):
-                installed.append(group)
+        for id in availgroups:
+            grp = self.groupInfo.group_by_id[id]
+            if self.groupInfo.isGroupInstalled(grp.name):
+                installed.append(grp.name)
             else:
-                available.append(group)
+                available.append(grp.name)
 
         installed.sort()
         available.sort()

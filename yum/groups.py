@@ -43,7 +43,7 @@ class Groups_Info:
         self.sub_groups = {}
         self.visible_groups = []
         self.group_by_id = {}
-        self.group_by_name = {}
+        self.id_by_name = {}
         self.optional_pkgs = {}
         self.mandatory_pkgs = {}
         self.default_pkgs = {}
@@ -73,45 +73,42 @@ class Groups_Info:
 
         self.compscount = self.compscount + 1
         groupsobj = compsobj.groups
-        groups = groupsobj.keys()
+        groups = groupsobj.values()
         
         # quick run through - create the groupid and groupname lookup
         # look out for groupmerging vs overwrite here
-        for groupname in groups:
-            id = groupsobj[groupname].id
-            self.group_by_id[id] = groupname
-            self.group_by_name[groupname] = id
+        for thisgroup in groups:
+            id = thisgroup.id
+            self.group_by_id[id] = thisgroup
+            self.id_by_name[thisgroup.name] = id
+            groupname = thisgroup.name
             
         # should populate for all groups but only act on uservisible groups only
-        
-        for groupname in groups:
-            thisgroup = groupsobj[groupname]
-            
             if thisgroup.user_visible:
-                self.visible_groups.append(groupname)
+                self.visible_groups.append(id)
             
             # make all the key entries if we don't already have them
-            if groupname not in self.grouplist:
-                self.grouplist.append(groupname)
-                self.group_installed[groupname]=0
-                self.mandatory_pkgs[groupname] = []
-                self.sub_groups[groupname] = []
-                self.optional_pkgs[groupname] = []
-                self.default_pkgs[groupname] = []
-                self.mandatory_metapkgs[groupname] = []
-                self.default_metapkgs[groupname] = []
-                self.optional_metapkgs[groupname] = []
+            if id not in self.grouplist:
+                self.grouplist.append(id)
+                self.group_installed[id]=0
+                self.mandatory_pkgs[id] = []
+                self.sub_groups[id] = []
+                self.optional_pkgs[id] = []
+                self.default_pkgs[id] = []
+                self.mandatory_metapkgs[id] = []
+                self.default_metapkgs[id] = []
+                self.optional_metapkgs[id] = []
                 
             # if we're overwriting groups - kill all the originals
             if self.overwrite_groups:
-                self.group_installed[groupname] = 0
-                self.mandatory_pkgs[groupname] = []
-                self.sub_groups[groupname] = []
-                self.optional_pkgs[groupname] = []
-                self.default_pkgs[groupname] = []
-                self.mandatory_metapkgs[groupname] = []
-                self.optional_metapkgs[groupname] = []
-                self.default_metapkgs[groupname] = []
+                self.group_installed[id] = 0
+                self.mandatory_pkgs[id] = []
+                self.sub_groups[id] = []
+                self.optional_pkgs[id] = []
+                self.default_pkgs[id] = []
+                self.mandatory_metapkgs[id] = []
+                self.optional_metapkgs[id] = []
+                self.default_metapkgs[id] = []
                 
             packageobj = thisgroup.packages
             pkgs = packageobj.keys()
@@ -119,27 +116,27 @@ class Groups_Info:
             for pkg in pkgs:
                 (type, name) = packageobj[pkg]
                 if type == u'mandatory':
-                    self.mandatory_pkgs[groupname].append(name)
+                    self.mandatory_pkgs[id].append(name)
                 elif type == u'optional':
-                    self.optional_pkgs[groupname].append(name)
+                    self.optional_pkgs[id].append(name)
                 elif type == u'default':
-                    self.default_pkgs[groupname].append(name)
+                    self.default_pkgs[id].append(name)
                 else:
                     self.debugprint('%s not optional, default or mandatory - ignoring' % name)
                 
             for sub_group_id in thisgroup.groups.keys():
-                if not sub_group_id in self.sub_groups[groupname]:
-                    self.sub_groups[groupname].append(sub_group_id)
+                if not sub_group_id in self.sub_groups[id]:
+                    self.sub_groups[id].append(sub_group_id)
             
             metapkgobj = thisgroup.metapkgs
             for metapkg in metapkgobj.keys():
                 (type, metapkgid) = metapkgobj[metapkg]
                 if type == u'mandatory':
-                    self.mandatory_metapkgs[groupname].append(metapkgid)
+                    self.mandatory_metapkgs[id].append(metapkgid)
                 elif type == u'optional':
-                    self.optional_metapkgs[groupname].append(metapkgid)
+                    self.optional_metapkgs[id].append(metapkgid)
                 elif type == u'default':
-                    self.default_metapkgs[groupname].append(metapkgid)
+                    self.default_metapkgs[id].append(metapkgid)
                 else:
                     self.debugprint('%s not optional, default or mandatory - ignoring' % metapkgid)
                     
@@ -155,7 +152,7 @@ class Groups_Info:
             for id in self.sub_groups[key]:
                 if self.group_by_id.has_key(id):
                     if not self.group_by_id[id] in newlist:
-                        newlist.append(self.group_by_id[id])
+                        newlist.append(id)
                 else:
                     self.debugprint('Invalid group id %s' % id)
             self.sub_groups[key] = newlist
@@ -165,7 +162,7 @@ class Groups_Info:
             for id in self.mandatory_metapkgs[key]:
                 if self.group_by_id.has_key(id):
                     if not self.group_by_id[id] in newlist:
-                        newlist.append(self.group_by_id[id])
+                        newlist.append(id)
                 else:
                     self.debugprint('Invalid metapkg id %s' % id)
             self.mandatory_metapkgs[key] = newlist
@@ -175,7 +172,7 @@ class Groups_Info:
             for id in self.default_metapkgs[key]:
                 if self.group_by_id.has_key(id):
                     if not self.group_by_id[id] in newlist:
-                        newlist.append(self.group_by_id[id])
+                        newlist.append(id)
                 else:
                     self.debugprint('Invalid metapkg id %s' % id)
             self.default_metapkgs[key] = newlist
@@ -185,34 +182,34 @@ class Groups_Info:
             for id in self.optional_metapkgs[key]:
                 if self.group_by_id.has_key(id):
                     if not self.group_by_id[id] in newlist:
-                        newlist.append(self.group_by_id[id])
+                        newlist.append(id)
                 else:
                     self.debugprint('Invalid metapkg id %s' % id)
             self.optional_metapkgs[key] = newlist
 
             
     def _installedgroups(self):
-        for groupname in self.grouplist:
-            if len(self.mandatory_pkgs[groupname]) > 0:
+        for id in self.grouplist:
+            if len(self.mandatory_pkgs[id]) > 0:
                 groupinstalled = 1
-                for reqpkg in self.mandatory_pkgs[groupname]:
+                for reqpkg in self.mandatory_pkgs[id]:
                     if not self.installed_pkgs.has_key(reqpkg):
                         groupinstalled = 0
-                self.group_installed[groupname]=groupinstalled
+                self.group_installed[id]=groupinstalled
             else:
                 groupinstalled = 0
-                for anypkg in self.optional_pkgs[groupname] + self.default_pkgs[groupname]:
+                for anypkg in self.optional_pkgs[id] + self.default_pkgs[id]:
                     if self.installed_pkgs.has_key(anypkg):
                         groupinstalled = 1
-                self.group_installed[groupname]=groupinstalled
+                self.group_installed[id]=groupinstalled
         # now we need to check metapkgs in the groups and see which are mandatory
         # and make sure they're installed if they are
         # if there is a mandatory metapkg and it's not installed then the
         # group that includes it is not installed
         # again - mandatory_metapkgs are just figments - nothing more
-        for groupname in self.grouplist:
-            if len(self.mandatory_metapkgs[groupname]) > 0:
-                for metapkg in self.mandatory_metapkgs[groupname]:
+        for id in self.grouplist:
+            if len(self.mandatory_metapkgs[id]) > 0:
+                for metapkg in self.mandatory_metapkgs[id]:
                     if not self.group_installed[metapkg]:
                         groupinstalled = 0
         
@@ -220,14 +217,34 @@ class Groups_Info:
         for (n, a, e, v, r) in pkgs:
             self.installed_pkgs[n] = 1
         
+    
+    def matchGroup(self, name):
+        """takes a name and returns the group id it most likely belongs to for searching"""
+        if self.group_by_id.has_key(name):
+            return name
+        elif self.id_by_name.has_key(name):
+            return self.id_by_name[name]
+        else:
+            return None # let the chips fall where they may (maybe we should raise an exception here)
+    
+    def groupExists(self, name):
+        if self.matchGroup(name):
+            return 1
+        
+        return 0
         
     def isGroupInstalled(self, groupname):
-        return self.group_installed[groupname]
+        id = self.matchGroup(groupname)
+        return self.group_installed[id]
     
     def groupTree(self, groupname):
         """returns list of all groups, recursively, needed by groupname"""
-        grouplist = [groupname] + self.sub_groups[groupname] + \
-                    self.mandatory_metapkgs[groupname] + self.default_metapkgs[groupname]
+        id = self.matchGroup(groupname)
+        grouplist = [id] 
+        grouplist.extend(self.sub_groups[id])
+        grouplist.extend(self.mandatory_metapkgs[id])
+        grouplist.extend(self.default_metapkgs[id])
+        
         for subgroup in grouplist:
             for group in self.sub_groups[subgroup] + self.mandatory_metapkgs[subgroup] + self.default_metapkgs[subgroup]:
                 if group not in grouplist:
@@ -238,7 +255,8 @@ class Groups_Info:
     def pkgTree(self, groupname):
         """get all pkgs in mandatory and default for all groups and their required 
            groups and metapkgs etc, recursing"""
-        grouplist = self.groupTree(groupname)
+        id = self.matchGroup(groupname)
+        grouplist = self.groupTree(id)
         pkglist = []
         for group in grouplist:
             for pkg in self.default_pkgs[group] + self.mandatory_pkgs[group]:
@@ -251,8 +269,10 @@ class Groups_Info:
         """return a list of all required pkgs and pkgs _ONLY_ to install this group
            this is not the same as pkgTree b/c it only lists packages for the group,
            it does not recurse through other groupreqs"""
+        
+        id = self.matchGroup(groupname)           
         pkglist = []
-        for pkg in self.default_pkgs[groupname] + self.mandatory_pkgs[groupname]:
+        for pkg in self.default_pkgs[id] + self.mandatory_pkgs[id]:
             if pkg not in pkglist:
                 pkglist.append(pkg)
                 
@@ -261,20 +281,23 @@ class Groups_Info:
     def requiredGroups(self, groupname):
         """return a list of required groups for this group. Do not recurse 
         through the groups"""
+        id = self.matchGroup(groupname)        
         grplist = []
-        for group in self.sub_groups[groupname] + self.mandatory_metapkgs[groupname] + self.default_metapkgs[groupname]:
+        for group in self.sub_groups[id] + self.mandatory_metapkgs[id] + self.default_metapkgs[id]:
             if group not in grplist:
                 grplist.append(group)
          
         return grplist
     
+            
     def debugprint(self, msg):
         if self.debug:
             print msg
 
     def allPkgs(self, groupname):
         """duh - return list of all pkgs in group"""
-        pkglist = self.requiredPkgs(groupname) + self.optional_pkgs[groupname]
+        id = self.matchGroup(groupname)        
+        pkglist = self.requiredPkgs(id) + self.optional_pkgs[id]
         return pkglist
         
     def _pkgs_per_group(self):
