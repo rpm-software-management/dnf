@@ -1,3 +1,13 @@
+2003-09-08 23:11  skvidal
+
+	* configure.in, yum-7.x.spec, yum.spec: 
+	update to make 1.0.3
+
+2003-09-08 22:02  skvidal
+
+	* ChangeLog: 
+	completely check in files <sigh>
+
 2003-09-08 00:08  skvidal
 
 	* configure.in, yum-7.x.spec, yum.spec: 
@@ -269,13 +279,13 @@
 
 2003-04-05 18:08  skvidal
 
-	* urlgrabber.py: file urlgrabber.py was initially added on branch
-	yum-rpm_4_2_branch.
+	* progress_meter.py: file progress_meter.py was initially added on
+	branch yum-rpm_4_2_branch.
 
 2003-04-05 18:08  skvidal
 
-	* progress_meter.py: file progress_meter.py was initially added on
-	branch yum-rpm_4_2_branch.
+	* urlgrabber.py: file urlgrabber.py was initially added on branch
+	yum-rpm_4_2_branch.
 
 2003-03-25 01:51  skvidal
 
