@@ -170,9 +170,17 @@ def depchecktree(rpmlist):
         sys.stdout.flush()
         h = readHeader(rpmfn)
         
-        if h != 'source':
+        if type(h) != types.StringType:
             ts.add(h, h[rpm.RPMTAG_NAME], 'i')
             log("adding %s" % h[rpm.RPMTAG_NAME])       
+        else:
+            if h == 'bad':
+                log(2, '\nignoring bad rpm: %s' % rpmfn)
+            elif h == 'source':
+                log(2, '\nignoring srpm: %s' % rpmfn)
+            else:
+                log(2, '\nignoring bad header string %s from %s' % (h, rpmfn))
+                
     errors = ts.depcheck()
     if errors:
         for ((name, version, release), (reqname, reqversion), \
