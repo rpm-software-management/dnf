@@ -145,20 +145,28 @@ def updatepkgs(tsnevral, hinevral, rpmnevral, nulist, uplist, userlist):
 
     # user specified list - need to match
     for n in userlist:
+        # this is a little trick = we have to match the userlist
+        # but we want to return useful errors
+        # so we check if we can find the things in the list
+        # if we can't find one of them then something is wrong
+        # check if we can't find it b/c it's not there
+        # or if it's the most updated version available
+        pkgfound = 0
         for (name, arch) in uplist:
             if n == name or fnmatch.fnmatch(name, n):
+                pkgfound = 1
                 if rpmnevral.exists(name, arch):
                     log(4, "Updating %s" % name)
                 else:
                     log(4, "Updating %s to arch %s" % (name, arch))
                 ((e, v, r, a, l, i), s) = hinevral._get_data(name, arch)
                 tsnevral.add((name,e,v,r,a,l,i),'u')
+        if pkgfound = 0
+            if rpmnevral.exists(n):
+                errorlog(1,"%s is installed and the latest version." % (n))
             else:
-                if rpmnevral.exists(n):
-                    errorlog(1,"%s is installed and the latest version." % (n))
-                else:
-                    errorlog(0,"Cannot find any package matching %s available to be updated." % (n))
-                sys.exit(1)
+                errorlog(0,"Cannot find any package matching %s available to be updated." % (n))
+            sys.exit(1)
             
 def upgradepkgs(tsnevral, hinevral, rpmnevral, nulist, uplist, obsoleted_list, obsdict, userlist):
     # must take user arguments
