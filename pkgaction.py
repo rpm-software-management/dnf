@@ -77,7 +77,7 @@ def installpkgs(tsnevral,nulist,userlist,hinevral,rpmnevral):
 def listpkgs(pkglist, userlist, nevral):
     if len(pkglist) > 0:
         pkglist.sort(clientStuff.nasort)
-        log(2,_( "%-40s %-10s %s" %('Name','Arch','Version')))
+        log(2, "%-40s %-10s %s" %('Name','Arch','Version'))
         log(2, "-" * 80)
         if type(userlist) is types.StringType:
             if userlist=='all' or userlist =='updates':
