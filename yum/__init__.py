@@ -77,8 +77,7 @@ class YumBase(depsolve.Depsolve):
         self.getReposFromConfig()
 
         # Initialise plugins
-        if self.plugins.run('init') != 0:
-            sys.exit()
+        self.plugins.run('init')
 
     def getReposFromConfig(self):
         """read in repositories from config main and .repo files"""
@@ -132,7 +131,7 @@ class YumBase(depsolve.Depsolve):
             except Errors.RepoError, e: 
                 self.errorlog(2, e)
                 continue
-        
+
     def doTsSetup(self):
         """setup all the transaction set storage items we'll need
            This can't happen in __init__ b/c we don't know our installroot
@@ -194,7 +193,6 @@ class YumBase(depsolve.Depsolve):
                 self.errorlog(0, str(e))
                 raise
 
-
     def doSackSetup(self, archlist=None):
         """populates the package sacks for information from our repositories,
            takes optional archlist for archs to include"""
@@ -215,8 +213,7 @@ class YumBase(depsolve.Depsolve):
         for repo in self.repos.listEnabled():
             self.excludePackages(repo)
             self.includePackages(repo)
-        if self.plugins.run('exclude') != 0:
-            sys.exit()
+        self.plugins.run('exclude')
         self.pkgSack.buildIndexes()
         
     def doUpdateSetup(self):
@@ -293,8 +290,7 @@ class YumBase(depsolve.Depsolve):
     def runTransaction(self, cb):
         """takes an rpm callback object, performs the transaction"""
 
-        if self.plugins.run('pretrans') != 0:
-            return
+        self.plugins.run('pretrans')
 
         errors = self.ts.run(cb.callback, '')
         if errors:
@@ -304,8 +300,7 @@ class YumBase(depsolve.Depsolve):
             
             raise yum.Errors.YumBaseError, errstring
 
-        if self.plugins.run('posttrans') != 0:
-            return
+        self.plugins.run('posttrans')
         
     def excludePackages(self, repo=None):
         """removes packages from packageSacks based on global exclude lists,

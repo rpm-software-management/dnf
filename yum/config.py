@@ -335,7 +335,7 @@ class yumconf(object):
             setattr(self, option, self.configdata[option])
 
         # Process options from plugins
-        dopluginopts(self.plugins, self.cfg, 'main', PLUG_OPT_WHERE_GLOBAL, 
+        dopluginopts(self.plugins, self.cfg, 'main', PLUG_OPT_WHERE_MAIN, 
                 self.setConfigOption)
 
     def listConfigOptions(self):
