@@ -29,8 +29,8 @@ from i18n import _
 
 log=Logger(threshold=2, default=2, prefix='', preprefix='')
 serverStuff.log = log
-rpmUtils.log = log
-rpmUtils.errorlog = log
+rpmUtils.oldUtils.log = log
+rpmUtils.oldUtils.errorlog = log
 ts = rpmUtils.oldUtils.Rpm_Ts_Work()
 rpmUtils.ts = ts
 rpmUtils.oldUtils.ts = ts
@@ -115,6 +115,9 @@ def trimRpms(rpms, excludeGlobs):
     return rpms
     
 def main(args):
+    log(0, '\n\n\nTHIS PROGRAM IS DEPRECATED!')
+    log(0, 'You should be generating xml metadata instead.')
+    log(0, 'Please see http://linux.duke.edu/metadata\n\n\n')
     tempheaderdir = '.newheaders'
     tempheaderinfo = tempheaderdir + '/' + 'header.info'
     tempsrcheaderinfo = tempheaderdir + '/' + 'header.src.info'
