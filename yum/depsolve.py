@@ -31,6 +31,7 @@ import packages
 class Depsolve:
     def __init__(self):
         packages.base = self
+        self.dsCallback = None
     
     def initActionTs(self):
         """sets up the ts we'll use for all the work"""
@@ -123,22 +124,27 @@ class Depsolve:
                     if n in self.conf.getConfigOption('installonlypkgs') or 'kernel-modules' in provides:
                         self.tsInfo.changeMode(pkginfo, 'i')
                         self.ts.addInstall(hdr, (hdr, rpmfile), 'i')
+                        if self.dsCallback: self.dsCallback.pkgAdded(pkginfo, 'i')
                         self.log(4, 'Adding Package %s in mode i' % po)
                     else:
                         self.ts.addInstall(hdr, (hdr, rpmfile), 'u')
                         self.log(4, 'Adding Package %s in mode u' % po)
+                        if self.dsCallback: self.dsCallback.pkgAdded(pkginfo, 'u')
                 if mode == 'i':
                     self.ts.addInstall(hdr, (hdr, rpmfile), 'i')
                     self.log(4, 'Adding Package %s in mode i' % po)
+                    if self.dsCallback: self.dsCallback.pkgAdded(pkginfo, 'i')
             elif mode in ['e']:
                 if (pkginfo, mode) in ts_elem:
                     continue
                 indexes = self.rpmdb.returnIndexByTuple(pkginfo)
                 for idx in indexes:
                     self.ts.addErase(idx)
+                    if self.dsCallback: self.dsCallback.pkgAdded(pkginfo, 'e')
                     self.log(4, 'Removing Package %s-%s-%s.%s' % (n, v, r, a))
         
     def resolveDeps(self):
+
         CheckDeps = 1
         conflicts = 0
         missingdep = 0
@@ -146,6 +152,7 @@ class Depsolve:
         unresolveableloop = 0
         self.cheaterlookup = {}
         errors = []
+        if self.dsCallback: self.dsCallback.start()
 
         while CheckDeps > 0:
             self.populateTs(test=1)
@@ -178,7 +185,7 @@ class Depsolve:
 
             # things to resolve
             self.log (3, '# of Deps = %d' % len(deps))
-            
+
             for dep in deps:
                 ((name, version, release), (needname, needversion), flags, suggest, sense) = dep
                 
@@ -204,8 +211,10 @@ class Depsolve:
             self.log(4, 'CheckDeps = %d' % CheckDeps)
 
             if CheckDeps > 0:
+                if self.dsCallback: self.dsCallback.restartLoop()
                 self.log(2, 'Restarting Dependency Process with new changes')
             else:
+                if self.dsCallback: self.dsCallback.end()
                 self.log(4, 'Dependency Process ending')
 
             del deps
@@ -230,6 +239,8 @@ class Depsolve:
         
         niceformatneed = rpmUtils.miscutils.formatRequire(needname, needversion, flags)
         self.log(4, '%s requires: %s' % (name, niceformatneed))
+        
+        if self.dsCallback: self.dsCallback.procReq(name, niceformatneed)
         
         # is requiring tuple (name, version, release) from an installed package?
         pkgs = []
@@ -308,7 +319,7 @@ class Depsolve:
             providers = self.rpmdb.whatProvides(needname, needflags, needversion)
             for insttuple in providers:
                 inst_str = '%s.%s %s:%s-%s' % insttuple
-                (i_n, i_a, i_e, i_v, i_r) = insttuple                
+                (i_n, i_a, i_e, i_v, i_r) = insttuple
                 self.log(5, '-->Potential Provider: %s' % inst_str)
                 thismode = self.tsInfo.getMode(name=i_n, arch=i_a, 
                                 epoch=i_e, ver=i_v, rel=i_r)
@@ -479,6 +490,7 @@ class Depsolve:
         missingdep = 1
         msg = 'missing dep: %s for pkg %s (%s)' % (req, name, namestate)
         errors.append(msg)
+        if self.dsCallback: self.dsCallback.unresolved(msg)
         return CheckDeps, missingdep
 
     def _unresolveableConflict(self, conf, name, errors):
