@@ -143,8 +143,7 @@ def main(args):
 
     base.log(2, '\nDependencies Resolved')
     base.log(3, time.time())
-    #run post-depresolve script here
-    #run  pre-trans script here
+
     # run the transaction
     try:
         base.doTransaction()
@@ -162,10 +161,6 @@ def main(args):
         unlock()
         sys.exit(1)
 
-    # run post-trans script here
-    # things ran correctly
-    # run a report function base.whatwedid() :)
-    
     base.log(2, 'Complete!')
     unlock()
     sys.exit(0)

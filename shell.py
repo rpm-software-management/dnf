@@ -58,7 +58,21 @@ class YumShell(cmd.Cmd):
         pass
     
     def do_help(self, arg):
-        self.base.usage()
+        msg = """
+    commands:  update, install, info, remove, list, clean, provides, search,
+    check-update, groupinstall, groupupdate, grouplist, groupinfo, groupremove,
+    makecache, localinstall, transaction, run, quit, exit
+    """
+        if arg in ['transaction', 'ts']:
+            msg = """
+    transaction arg
+      list: lists the contents of the transaction
+      reset: reset (zero-out) the transaction
+      solve: run the dependency solver on the transaction
+      run: run the transaction
+                  """
+
+        self.base.log(1, msg)
         
     def do_EOF(self, line):
         self.resultmsgs = ['Leaving Shell']
@@ -100,6 +114,42 @@ class YumShell(cmd.Cmd):
         else:
             self.do_help('transaction')
     
+    def do_enablerepo(self, line):
+        line = line.replace('\n', '')
+        repos = line.split()
+        for repo in repos:
+            try:
+                changed = self.base.repos.enableRepo(repo)
+            except yum.Errors.ConfigError, e:
+                self.base.errorlog(0, e)
+            else:
+                for repoid in changed:
+                    self.base.doRepoSetup(thisrepo=repoid)
+                
+                if hasattr(self.base, 'up'): # reset the updates
+                    del self.base.up
+
+
+    def do_disablerepo(self, line):
+        line = line.replace('\n', '')
+        repos = line.split()
+        for repo in repos:
+            try:
+                self.base.repos.disableRepo(repo)
+            except yum.Errors.ConfigError, e:
+                self.base.errorlog(0, e)
+
+            else:
+                if hasattr(self.base, 'pkgSack'): # kill the pkgSack
+                    del self.base.pkgSack
+                    self.base.repos._selectSackType()
+                if hasattr(self.base, 'up'): # reset the updates
+                    del self.base.up
+                # reset the transaction set and refresh everything
+                self.base.closeRpmDB() 
+                self.base.doTsSetup()
+                self.base.doRpmDBSetup()
+                
     def do_test(self, line):
         (cmd, args, line) = self.parseline(line)
         print cmd

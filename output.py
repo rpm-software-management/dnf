@@ -23,6 +23,8 @@ import sys
 import time
 from i18n import _
 
+from urlgrabber.progress import TextMeter
+
 try:
     import readline
 except:
@@ -285,7 +287,28 @@ class YumOutput:
         
         return out
 
+    def setupProgessCallbacks(self):
+        """sets up the progress callbacks and various 
+           output bars based on debug level"""
 
+        # if we're below 2 on the debug level we don't need to be outputting
+        # progress bars - this is hacky - I'm open to other options
+        # One of these is a download
+        if self.conf.debuglevel < 2 or not sys.stdout.isatty():
+            self.repos.setProgressBar(None)
+            self.repos.callback = None
+        else:
+            self.repos.setProgressBar(TextMeter(fo=sys.stdout))
+            self.repos.callback = CacheProgressCallback(self.log, self.errorlog,
+                                                        self.filelog)
+        # setup our failure report for failover
+        freport = (self.failureReport,(),{})
+        self.repos.setFailureCallback(freport)
+        
+        # setup our depsolve progress callback
+        dscb = DepSolveProgressCallBack(self.log, self.errorlog)
+        self.dsCallback = dscb
+            
     
     def pickleRecipe(self):
         """ don't ask """

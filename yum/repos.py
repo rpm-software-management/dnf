@@ -157,27 +157,40 @@ class RepoStorage:
         """disable a repository from use
         
         fnmatch wildcards may be used to disable a group of repositories.
+        returns repoid of disabled repos as list
         """
+        repos = []
         if _is_fnmatch_pattern(repoid):
             for repo in self.findRepos(repoid):
+                repos.append(repo.id)
                 repo.disable()
         else:
             thisrepo = self.getRepo(repoid)
+            repos.append(thisrepo.id)
             thisrepo.disable()
-                
+        
+        return repos
+        
     def enableRepo(self, repoid):
         """enable a repository for use
         
         fnmatch wildcards may be used to enable a group of repositories.
+        returns repoid of enables repos as list
         """
+        repos = []
+        
         if _is_fnmatch_pattern(repoid):
             repos = self.findRepos(repoid)
             for repo in self.findRepos(repoid):
+                repos.append(repo.id)
                 repo.enable()
         else:
             thisrepo = self.getRepo(repoid)
+            repos.append(thisrepo.id)
             thisrepo.enable()
-            
+        
+        return repos
+        
     def listEnabled(self):
         """return list of enabled repo objects"""
         returnlist = []
@@ -232,8 +245,11 @@ class RepoStorage:
         else:
             if type(which) == types.ListType:
                 for repo in which:
-                    repobj = self.getRepo(repo)
-                    myrepos.append(repobj)
+                    if isinstance(repo, Repository):
+                        myrepos.append(repo)
+                    else:
+                        repobj = self.getRepo(repo)
+                        myrepos.append(repobj)
             elif type(which) == types.StringType:
                 repobj = self.getRepo(which)
                 myrepos.append(repobj)

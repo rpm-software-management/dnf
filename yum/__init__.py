@@ -173,14 +173,23 @@ class YumBase(depsolve.Depsolve):
         if hasattr(self, 'up'):
             del self.up
 
-    def doRepoSetup(self):
-        """grabs the repomd.xml for each enabled repository and sets up the
-        basics of the repository - stub
-        """
-          
-        self.plugins.run('reposetup')
+    def doRepoSetup(self, thisrepo=None):
+        """grabs the repomd.xml for each enabled repository and sets up 
+           the basics of the repository"""
 
-        for repo in self.repos.listEnabled():
+        
+        self.plugins.run('reposetup')
+        
+        repos = []
+        if thisrepo is None:
+            repos = self.repos.listEnabled()
+        else:
+            repos = self.repos.findRepos(thisrepo)
+
+        if len(repos) < 1:
+            self.errorlog(0, 'No Repositories Available to Set Up')
+
+        for repo in repos:
             if repo.repoXML is not None and len(repo.urls) > 0:
                 continue
             try:
@@ -199,10 +208,16 @@ class YumBase(depsolve.Depsolve):
                 self.errorlog(0, str(e))
                 raise
 
-    def doSackSetup(self, archlist=None):
+    def doSackSetup(self, archlist=None, thisrepo=None):
         """populates the package sacks for information from our repositories,
            takes optional archlist for archs to include"""
            
+        
+        if thisrepo is None:
+            repos = self.repos.listEnabled()
+        else:
+            repos = self.repos.findRepos(thisrepo)
+            
         self.log(3, 'Setting up Package Sacks')
         if not archlist:
             archlist = rpmUtils.arch.getArchList()
@@ -212,11 +227,11 @@ class YumBase(depsolve.Depsolve):
             archdict[arch] = 1
 
         self.repos.pkgSack.compatarchs = archdict
-        self.repos.populateSack()
+        self.repos.populateSack(which=repos)
         self.pkgSack = self.repos.pkgSack
         self.excludePackages()
         self.excludeNonCompatArchs(archlist=archlist)
-        for repo in self.repos.listEnabled():
+        for repo in repos:
             self.excludePackages(repo)
             self.includePackages(repo)
         self.plugins.run('exclude')

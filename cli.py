@@ -27,7 +27,6 @@ import fnmatch
 import re
 
 import output
-from urlgrabber.progress import TextMeter
 import shell
 import yum
 import yum.Errors
@@ -57,12 +56,11 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         self.localPackages = [] # for local package handling - possibly needs
                                 # to move to the lower level class
 
-    def doRepoSetup(self, nosack=None):
-        """grabs the repomd.xml for each enabled repository and sets up the
-        basics of the repository
-        """
+    def doRepoSetup(self, dosack=1, thisrepo=None):
+        """grabs the repomd.xml for each enabled repository 
+           and sets up the basics of the repository"""
         
-        if hasattr(self, 'pkgSack'):
+        if hasattr(self, 'pkgSack') and thisrepo is None:
             self.log(7, 'skipping reposetup, pkgsack exists')
             return
             
@@ -71,19 +69,13 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         # Call parent class to do the bulk of work 
         # (this also ensures that reposetup plugin hook is called)
         try:
-            yum.YumBase.doRepoSetup(self)
+            yum.YumBase.doRepoSetup(self, thisrepo=thisrepo)
         except yum.Errors.RepoError, e:
             sys.exit(1)
 
-        # Error out if there's no actual repos
-        if len(self.repos.listEnabled()) < 1:
-            self.errorlog(0, 'No repositories available to set up')
-            sys.exit(1)
-
-        # So we can make the dirs and grab the repomd.xml but not import the md
-        if not nosack: 
+        if dosack: # so we can make the dirs and grab the repomd.xml but not import the md
             self.log(2, 'Reading repository metadata in from local files')
-            self.doSackSetup()
+            self.doSackSetup(thisrepo=thisrepo)
     
         
     def getOptionsConfig(self, args):
@@ -239,24 +231,8 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
             self.usage()
             sys.exit(1)
             
-        # if we're below 2 on the debug level we don't need to be outputting
-        # progress bars - this is hacky - I'm open to other options
-        # One of these is a download
-        if self.conf.getConfigOption('debuglevel') < 2 or not sys.stdout.isatty():
-            self.repos.setProgressBar(None)
-            self.repos.callback = None
-        else:
-            self.repos.setProgressBar(TextMeter(fo=sys.stdout))
-            self.repos.callback = output.CacheProgressCallback(self.log,
-                    self.errorlog, self.filelog)
-
-        # setup our failure report for failover
-        freport = (self.failureReport,(),{})
-        self.repos.setFailureCallback(freport)
-        
-        # setup our depsolve progress callback
-        dscb = output.DepSolveProgressCallBack(self.log, self.errorlog)
-        self.dsCallback = dscb
+        # setup the progress bars/callbacks
+        self.setupProgessCallbacks()
         
         # save our original args out
         self.args = args
@@ -266,8 +242,8 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
             self.cmdstring += '%s ' % arg
 
         try:
-            self.parseCommands() # before we exit check over the base command + args
-                             # make sure they match/make sense
+            self.parseCommands() # before we return check over the base command + args
+                                 # make sure they match/make sense
         except CliError:
             sys.exit(1)
     
@@ -512,7 +488,7 @@ For more information contact your distribution or package provider.
 
             self.log(2, "Setting up Group Process")
 
-            self.doRepoSetup(nosack=1)
+            self.doRepoSetup(dosack=0)
             try:
                 self.doGroupSetup()
             except yum.Errors.GroupsError:
@@ -572,7 +548,7 @@ For more information contact your distribution or package provider.
             self.log(2, "This may take a while depending on the speed of this computer")
             self.log(3, '%s' % self.pickleRecipe())
             try:
-                self.doRepoSetup(nosack=1)
+                self.doRepoSetup(dosack=0)
                 self.repos.populateSack(with='metadata', pickleonly=1)
                 self.repos.populateSack(with='filelists', pickleonly=1)
                 self.repos.populateSack(with='otherdata', pickleonly=1)
@@ -1401,11 +1377,6 @@ For more information contact your distribution or package provider.
         # otherwise, don't prompt        
         return False
 
-
-
-            
-        
-        
     def usage(self):
         print _("""
     Usage:  yum [options] < update | install | info | remove | list |
