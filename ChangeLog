@@ -1,3 +1,24 @@
+2002-12-09 00:38  skvidal
+
+	* TODO, docs/yum.conf.5: 
+	doc update for excludes changes
+
+2002-12-09 00:37  skvidal
+
+	* clientStuff.py, nevral.py, yum.conf: 
+	
+	make fnmatch glob excludes work
+
+2002-12-08 20:30  skvidal
+
+	* clientStuff.py: 
+	simple edits
+
+2002-12-06 18:46  skvidal
+
+	* ChangeLog, clientStuff.py: 
+	not quite complete changes for excludes
+
 2002-12-05 14:46  skvidal
 
 	* clientStuff.py: fix to use in_file.readlines() instead of dumb
