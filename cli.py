@@ -31,7 +31,6 @@ import yum.Errors
 import yum.misc
 from rpmUtils.miscutils import compareEVR
 from yum.packages import parsePackages, returnBestPackages
-
 from yum.logger import Logger
 from yum.config import yumconf
 from i18n import _
@@ -487,8 +486,8 @@ class YumBaseCli(yum.YumBase):
                 return -1
         
             
-        special = ['available', 'installed', 'all', 'extras', 'updates']
-                   #'obsoletes', 'recent']
+        special = ['available', 'installed', 'all', 'extras', 'updates', 'recent']
+                    # obsoletes
 
         installed = []
         available = []
@@ -552,10 +551,31 @@ class YumBaseCli(yum.YumBase):
             pass
 
         elif pkgnarrow == 'recent':
-            # a miracle occurs - iterate throuh the pkgobjects
-            # look for timestamp if it is in the last N days (lets say 2 weeks)
-            # add it to the list
-            pass
+            # return the most recent 14 times of packages based on file mtime (filetime)
+            num_times = 14
+            ftimehash = {}
+            self.doRepoSetup()
+            pkgs = self.pkgSack.returnPackages()
+            for po in pkgs:
+                ftime = po.returnSimple('filetime')
+                if not ftimehash.has_key(ftime):
+                    ftimehash[ftime] = [po]
+                else:
+                    ftimehash[ftime].append(po)
+            
+            timekeys = ftimehash.keys()
+            timekeys.sort()
+            timekeys.reverse()
+            count = 0
+            for sometime in timekeys:
+                if count < num_times:
+                    for po in ftimehash[sometime]:
+                        (n,e,v,r,a) = po.returnNevraTuple()
+                        recent.append((n,a,e,v,r))
+                    count += 1
+            
+            
+
 
     # Iterate through the packages (after a simple sort by name), create
     # a package object for them and call the display function.
