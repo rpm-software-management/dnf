@@ -34,8 +34,79 @@ class yumConfigParser(ConfigParser.ConfigParser):
                 filename = fp.name
             except AttributeError:
                 filename = '<???>'
-        self.__read(fp)
+        self.__read(fp, filename)
 
+    def __read(self, fp, filename):
+        """Parse a sectioned setup file.
+
+        The sections in setup file contains a title line at the top,
+        indicated by a name in square brackets (`[]'), plus key/value
+        options lines, indicated by `name: value' format lines.
+        Continuation are represented by an embedded newline then
+        leading whitespace.  Blank lines, lines beginning with a '#',
+        and just about everything else is ignored.
+        """
+        cursect = None                            # None, or a dictionary
+        optname = None
+        lineno = 0
+        e = None                                  # None, or an exception
+        while 1:
+            line = fp.readline()
+            if not line:
+                break
+            lineno = lineno + 1
+            # comment or blank line?
+            if string.strip(line) == '' or line[0] in '#;':
+                continue
+            if string.lower(string.split(line)[0]) == 'rem' \
+               and line[0] == "r":      # no leading whitespace
+                continue
+            # continuation line?
+            if line[0] in ' \t' and cursect is not None and optname:
+                value = string.strip(line)
+                if value:
+                    cursect[optname] = cursect[optname] + '\n ' + value
+            # a section header or option header?
+            else:
+                # is it a section header?
+                mo = self.__SECTCRE.match(line)
+                if mo:
+                    sectname = mo.group('header')
+                    if self.__sections.has_key(sectname):
+                        cursect = self.__sections[sectname]
+                    elif sectname == DEFAULTSECT:
+                        cursect = self.__defaults
+                    else:
+                        cursect = {'__name__': sectname}
+                        self.__sections[sectname] = cursect
+                    # So sections can't start with a continuation line
+                    optname = None
+                # no section header in the file?
+                elif cursect is None:
+                    raise MissingSectionHeaderError(filename, lineno, `line`)
+                # an option line?
+                else:
+                    mo = self.__OPTCRE.match(line)
+                    if mo:
+                        optname, optval = mo.group('option', 'value')
+                        optname = string.lower(optname)
+                        optval = string.strip(optval)
+                        # allow empty values
+                        if optval == '""':
+                            optval = ''
+                        cursect[optname] = optval
+                    else:
+                        # a non-fatal parsing error occurred.  set up the
+                        # exception but keep going. the exception will be
+                        # raised at the end of the file and will contain a
+                        # list of all bogus lines
+                        if not e:
+                            e = ParsingError(filename)
+                        e.append(lineno, `line`)
+        # if any parsing errors occurred, raise an exception
+        if e:
+            raise e
+            
 class yumconf:
     def __init__(self, configfile = '/etc/yum.conf'):
         self.cfg = yumConfigParser()
