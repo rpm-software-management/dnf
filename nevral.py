@@ -197,14 +197,15 @@ class nevral:
 						kernarchlist = archwork.availablearchs(self,name)
 						bestarch = archwork.bestarch(kernarchlist)
 						if arch == bestarch:
+							log(3, "Found best kernel arch: %s" %(arch))
 							ts.add(pkghdr,(pkghdr,rpmloc),'i')
 							((e, v, r, a, l, i), s)=self._get_data(name,arch)
 							self.add((name,e,v,r,arch,l,i),'i')
 						else:
-							log(4, "Removing dumb kernel with silly arch %s" %(bestarch))
+							log(3, "Removing dumb kernel with silly arch %s" %(arch))
 							ts.add(pkghdr,(pkghdr,rpmloc),'a')
 							((e,v,r,a,l,i),s)=self._get_data(name,arch)
-							self.add((name,e,v,r,arch,l,i),'i')
+							self.add((name,e,v,r,arch,l,i),'a')
 					else:
 						ts.add(pkghdr,(pkghdr,rpmloc),'u')
 					
