@@ -188,7 +188,9 @@ def getgpgkeyinfo(rawkey):
         key = pgpmsg.decode_msg(rawkey)
     except Exception, e:
         raise ValueError(str(e))
-
+    if key is None:
+        raise ValueError('No key found in given key data')
+        
     info = {
         'userid': key.user_id,
         'keyid': key.public_key.key_id,
