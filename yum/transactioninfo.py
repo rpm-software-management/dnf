@@ -45,7 +45,6 @@ class TransactionData:
         returnlist = []
         returnmembers = []
         
-        if name is not None and arch is not None and epoch is not None and ver is not
         for pkgtup in completelist:
             (n, a, e, v, r) = pkgtup
             if name is not None:
