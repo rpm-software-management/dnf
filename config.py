@@ -34,7 +34,7 @@ class yumConfigParser(ConfigParser.ConfigParser):
                 filename = fp.name
             except AttributeError:
                 filename = '<???>'
-        self.__read(fp, filename)
+        self._ConfigParser__read(fp)
 
 
 class yumconf:
