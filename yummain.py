@@ -271,7 +271,7 @@ def usage():
           -d [debug level] - set the debugging level
           -y answer yes to all questions
           -t be tolerant about errors in package commands
-          -R [time in minutes] - set the max amount of time to randonly run in.
+          -R [time in minutes] - set the max amount of time to randomly run in.
           -C run from cache only - do not update the cache
           -h, --help this screen
     """
