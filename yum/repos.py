@@ -407,6 +407,7 @@ class Repository:
                 self.baseurls.append(url)
         
         for url in self.baseurls:
+            url = variableReplace(self.yumvar, url)
             (s,b,p,q,f,o) = urlparse.urlparse(url)
             if s not in ['http', 'ftp', 'file', 'https']:
                 print 'not using ftp, http[s], or file for repos, skipping - %s' % (url)
