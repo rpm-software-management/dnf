@@ -33,6 +33,9 @@ class Updates:
         self.available = availlist # list of available pkgs (n, a, e, v, r)
         self.rawobsoletes = {} # dict of obsoleting package->[what it obsoletes]
         self.exactarch = 1 # don't change archs by default
+        self.exactarchlist = ['kernel', 'kernel-smp', 'glibc', 'kernel-hugemem',
+                              'kernel-enterprise', 'kernel-bigmem', 'kernel-BOOT']
+                              
         self.myarch = rpmUtils.arch.getCanonArch() # this is for debugging only 
                                                    # set this if you want to 
                                                    # test on some other arch
@@ -283,7 +286,7 @@ class Updates:
         # simple cases
         for (n, a) in simpleupdate:
             # try to be as precise as possible
-            if self.exactarch:
+            if n in self.exactarchlist:
                 if self.installdict.has_key((n, a)):
                     (rpm_e, rpm_v, rpm_r) = self.returnNewest(self.installdict[(n, a)])
                     if newpkgs.has_key((n,a)):
@@ -354,7 +357,7 @@ class Updates:
                 hipdict = self.makeNADict(highestinstalledpkgs, 0)
 
                 # now we have the two sets of pkgs
-                if self.exactarch:              
+                if n in self.exactarchlist:
                     for (n, a) in hipdict:
                         if hapdict.has_key((n, a)):
                             self.debugprint('processing %s.%s' % (n, a))

@@ -2,14 +2,19 @@
 import rpmUtils.updates
 
 instlist = [('foo', 'i386', '0', '1', '1'),
+            ('do', 'i386', '0', '2', '3'),
+            ('glibc', 'i386', '0', '1', '1'),
             ('bar', 'noarch', '0', '2', '1'),
             ('baz', 'i686', '0', '2', '3'),
             ('baz', 'x86_64', '0','1','4'),
             ('foo', 'i686', '0', '1', '1')]
 
 availlist = [('foo', 'i686', '0', '1', '3'),
+             ('do', 'noarch', '0', '3', '3'), 
              ('foo', 'i386', '0', '1', '3'),
              ('foo', 'i686', '0', '1', '2'),
+             ('glibc', 'i686', '0', '1', '2'),
+             ('glibc', 'i386', '0', '1', '2'),
              ('bar', 'noarch', '0', '2', '2'),
              ('baz', 'noarch', '0', '2', '4'),
              ('baz', 'i686', '0', '2', '4'),
@@ -24,8 +29,9 @@ obslist = {('quux', 'noarch', '0', '1', '3'): [('bar', None, (None, None, None))
 
 up = rpmUtils.updates.Updates(instlist, availlist)
 up.debug=1
-up.exactarch=1
-#up.myarch = 'ppc'
+up.exactarch=0
+#up.exactarchlist.append('foo')
+#up.myarch = 'x86_64'
 up.doUpdates()
 up.condenseUpdates()
 
