@@ -694,8 +694,6 @@ For more information contact your distribution or package provider.
         self.populateTs(keepold=0) # sigh
         tserrors = self.ts.test(testcb, conf=tsConf)
         del testcb
-        # put it back
-        self.dsCallback = dscb
         
         self.log(2, 'Finished Transaction Test')
         if len(tserrors) > 0:
@@ -711,7 +709,10 @@ For more information contact your distribution or package provider.
         self.populateTs(keepold=0) # populate the ts
         self.ts.check() #required for ordering
         self.ts.order() # order
-        
+
+        # put back our depcheck callback
+        self.dsCallback = dscb
+
         output = 1
         if self.conf.debuglevel < 2:
             output = 0
