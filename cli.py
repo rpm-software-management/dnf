@@ -42,7 +42,7 @@ import callback
 import urlgrabber
 import urlgrabber.grabber
 
-__version__ = '2.1.12'
+__version__ = '2.1.13'
 
 
 class YumBaseCli(yum.YumBase, output.YumOutput):
