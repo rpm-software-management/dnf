@@ -41,6 +41,39 @@ class YumBaseCli(yum.YumBase):
     def __init__(self):
         yum.YumBase.__init__(self)
         
+    def doRepoSetup(self):
+        """grabs the repomd.xml for each enabled repository and sets up the basics
+           of the repository"""
+           
+        for repo in self.repos.listEnabled():
+            self.log(2, 'Setting up Repo:  %s' % repo)
+            try:
+                repo.getRepoXML(cache=self.conf.getConfigOption('cache'))
+            except yum.Errors.RepoError, e:
+                self.errorlog(0, 'Cannot open/read repomd.xml file for repository: %s' % repo)
+                sys.exit(1)
+        self.doSackSetup(callback=output.simpleProgressBar)
+    
+    def doGroupSetup(self):
+        """determines which repos have groups and builds the groups lists"""
+        
+        self.grpInfo = yum.yumcomps.Groups_Info(self.rpmdb.getPkgList(),
+                                 self.conf.getConfigOption('overwrite_groups'))
+                                 
+        for repo in self.repos.listGroupsEnabled():
+            groupfile = repo.getGroups(self.conf.getConfigOption('cache'))
+            if groupfile:
+                self.log(4, 'Group File found for %s' % repo)
+                self.log(4, 'Adding Groups from %s' % repo)
+                self.grpInfo.add(groupfile)
+
+        if self.grpInfo.compscount > 0:
+            self.grpInfo.compileGroups()
+        else:
+            self.errorlog(0, _('No groups provided or accessible on any repository.'))
+            self.errorlog(1, _('Exiting.'))
+            sys.exit(1)
+        
     def getOptionsConfig(self, args):
         """parses command line arguments, takes cli args:
         sets up self.conf and self.cmds as well as logger objects 
@@ -286,6 +319,16 @@ class YumBaseCli(yum.YumBase):
            calls out to a function for displaying the packages, that function
            is the second argument. Function takes a package object."""
 
+        def sortPkgTup((n1, a1, e1, v1, r1) ,(n2, a2, e2, v2, r2)):
+            """sorts a list of package tuples by name"""
+            if n1 > n2:
+                return 1
+            elif n1 == n2:
+                return 0
+            else:
+                return -1
+        
+            
         special = ['available', 'installed', 'all', 'extras', 'updates']
                    #'obsoletes', 'recent']
 
@@ -323,11 +366,10 @@ class YumBaseCli(yum.YumBase):
             repocomplete = self.pkgSack.simplePkgList()
             inst = self.rpmdb.getPkgList()
             available = []
-            installed = []            
             for pkg in repocomplete:
                 if pkg not in inst:
                     available.append(pkg)
-
+            installed = []
             
         elif pkgnarrow == 'extras':
             # we must compare the installed set versus the repo set
@@ -348,16 +390,18 @@ class YumBaseCli(yum.YumBase):
 
     # Iterate through the packages (after a simple sort by name), create
     # a package object for them and call the display function.
+    # FIXME - for now just output some string
 
         if len(available) > 0:
-            # setup the display here
             self.log(2, 'Available packages')
+            available.sort(sortPkgTup)
             for pkg in available:
                 (n, a, e, v, r) = pkg
                 self.log(2, '%s:%s-%s-%s.%s' % (e, n, v, r, a))
         
         if len(installed) > 0:
             self.log(2, 'Installed packages')
+            installed.sort(sortPkgTup)
             for pkg in installed:
                 (n, a, e, v, r) = pkg
                 self.log(2, '%s:%s-%s-%s.%s' % (e, n, v, r, a))
@@ -377,37 +421,6 @@ class YumBaseCli(yum.YumBase):
             else:
                 return 0        
                 
-    def doRepoSetup(self):
-        """grabs the repomd.xml for each enabled repository and sets up the basics
-           of the repository"""
-        for repo in self.repos.listEnabled():
-            self.log(2, 'Setting up Repo:  %s' % repo)
-            try:
-                repo.getRepoXML(cache=self.conf.getConfigOption('cache'))
-            except yum.Errors.RepoError, e:
-                self.errorlog(0, 'Cannot open/read repomd.xml file for %s' % repo)
-                sys.exit(1) # FIXME return code to the main exit?
-        self.doSackSetup(callback=output.simpleProgressBar)
-    
-    def doGroupSetup(self):
-        """determines which repos have groups and builds the groups lists"""
-        
-        self.grpInfo = yum.yumcomps.Groups_Info(self.rpmdb.getPkgList(),
-                                 self.conf.getConfigOption('overwrite_groups'))
-                                 
-        for repo in self.repos.listGroupsEnabled():
-            groupfile = repo.getGroups(self.conf.getConfigOption('cache'))
-            if groupfile:
-                self.log(4, 'Group File found for %s' % repo)
-                self.log(4, 'Adding Groups from %s' % repo)
-                self.grpInfo.add(groupfile)
-
-        if self.grpInfo.compscount > 0:
-            self.grpInfo.compileGroups()
-        else:
-            self.errorlog(0, _('No groups provided or accessible on any repository.'))
-            self.errorlog(1, _('Exiting.'))
-            sys.exit(1)
 
     def usage(self):
         print _("""
@@ -456,10 +469,12 @@ def buildPkgRefDict(pkgs):
             
     return pkgdict            
        
-def parsePackages(pkgs, usercommands):
+def parsePackages(pkgs, usercommands, casematch=0):
     """matches up the user request versus a pkg list:
        for installs/updates available pkgs should be the 'others list' 
-       for removes it should be the installed list of pkgs"""
+       for removes it should be the installed list of pkgs
+       takes an optional casematch option to determine if case should be matched
+       exactly. Defaults to not matching."""
 
     pkgdict = buildPkgRefDict(pkgs)
     matched = []
@@ -474,7 +489,10 @@ def parsePackages(pkgs, usercommands):
             if re.match('.*[\*,\[,\],\{,\},\?].*', command):
                 trylist = pkgdict.keys()
                 restring = fnmatch.translate(command)
-                regex = re.compile(restring, flags=re.I) # case insensitive
+                if casematch:
+                    regex = re.compile(restring) # case sensitive
+                else:
+                    regex = re.compile(restring, flags=re.I) # case insensitive
                 foundit = 0
                 for item in trylist:
                     if regex.match(item):
