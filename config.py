@@ -80,7 +80,8 @@ class yumconf:
         self.progress_obj = progress_meter.text_progress_meter(fo=sys.stdout)
         self.installroot = '/'
         self.installonlypkgs = ['kernel', 'kernel-bigmem', 'kernel-enterprise',
-                           'kernel-smp', 'kernel-debug', 'kernel-unsupported']
+                           'kernel-smp', 'kernel-debug', 'kernel-unsupported', 
+                           'kernel-source']
         self.kernelpkgnames = ['kernel','kernel-smp','kernel-enterprise',
                            'kernel-bigmem','kernel-BOOT']
       
@@ -122,17 +123,17 @@ class yumconf:
         if self._getoption('main','commands') != None:
             self.commands = self._getoption('main', 'commands')
             self.commands = self._doreplace(self.commands)
-            self.commands = self.commands.split(' ')
+            self.commands = self.parseList(self.commands)
 
         if self._getoption('main','installonlypkgs') != None:
             self.installonlypkgs = self._getoption('main', 'installonlypkgs')
             self.installonlypkgs = self._doreplace(self.installonlypkgs)
-            self.installonlypkgs = self.installonlypkgs.split(' ')
+            self.installonlypkgs = self.parseList(self.installonlypkgs)
 
         if self._getoption('main','kernelpkgnames') != None:
             self.kernelpkgnames = self._getoption('main', 'kernelpkgnames')
             self.kernelpkgnames = self._doreplace(self.kernelpkgnames)
-            self.kernelpkgnames = self.kernelpkgnames.split(' ')
+            self.kernelpkgnames = self.parseList(self.kernelpkgnames)
 
         # get the global exclude lists.
         if self._getoption('main','exclude') != None:
@@ -211,11 +212,13 @@ class yumconf:
         listvalue = []
         # we need to allow for the '\n[whitespace]' continuation - easier
         # to sub the \n with a space and then read the lines
-        listrepl = re.compile('\n')
-        (value, count) = listrepl.subn(' ', value)
-        listvalue = string.split(value)
+        slashnrepl = re.compile('\n')
+        commarepl = re.compile(',')
+        (value, count) = slashnrepl.subn(' ', value)
+        (value, count) = commarepl.subn(' ', value)
+        listvalue = value.split()
         return listvalue
-        
+
     def remoteGroups(self, serverid):
         return os.path.join(self.baseURL(serverid), 'yumgroups.xml')
     
