@@ -26,7 +26,6 @@ import output
 
 from urlgrabber.progress import TextMeter
 import yum
-import yum.yumcomps
 import yum.Errors
 import yum.misc
 from rpmUtils.miscutils import compareEVR
@@ -37,7 +36,7 @@ from i18n import _
 import callback
 
 
-__version__ = '2.1.0'
+__version__ = '2.1.1'
 
 
 class YumBaseCli(yum.YumBase):
@@ -754,10 +753,7 @@ class YumBaseCli(yum.YumBase):
             self.doRepoSetup()
             self.conf.setConfigOption('obsoletes', 1)
             self.doUpdateSetup()
-            #for (obs, inst) in self.up.getObsoletesTuples(newest=1):
-            #    print obs,
-            #    print 'obsoletes',
-            #    print inst
+
             for pkgtup in self.up.getObsoletesList():
                 (n,a,e,v,r) = pkgtup
                 pkgs = self.pkgSack.searchNevra(name=n, arch=a, ver=v, rel=r, epoch=e)
@@ -765,7 +761,6 @@ class YumBaseCli(yum.YumBase):
                     obsoletes.append(po)
 
         elif pkgnarrow == 'recent':
-            #num_pkgs = int(self.conf.getConfigOption('numrecent'))
             ftimehash = {}
             self.doRepoSetup()
             for po in self.pkgSack.returnPackages():
@@ -803,22 +798,22 @@ class YumBaseCli(yum.YumBase):
 
     def usage(self):
         print _("""
-        Usage:  yum [options] <update | install | info | remove | list |
-                clean | provides | search | check-update | groupinstall | 
-                groupupdate | grouplist | generate-rss >
-                    
-            Options:
-            -c [config file] - specify the config file to use
-            -e [error level] - set the error logging level
-            -d [debug level] - set the debugging level
-            -y - answer yes to all questions
-            -R [time in minutes] - set the max amount of time to randomly run in
-            -C run from cache only - do not update the cache
-            --installroot=[path] - set the install root (default '/')
-            --version - output the version of yum
-            --rss-filename=[path/filename] - set the filename to generate rss to
-            -h, --help  - this screen
-        """)
+    Usage:  yum [options] <update | install | info | remove | list |
+            clean | provides | search | check-update | groupinstall | 
+            groupupdate | grouplist | generate-rss >
+                
+        Options:
+        -c [config file] - specify the config file to use
+        -e [error level] - set the error logging level
+        -d [debug level] - set the debugging level
+        -y - answer yes to all questions
+        -R [time in minutes] - set the max amount of time to randomly run in
+        -C run from cache only - do not update the cache
+        --installroot=[path] - set the install root (default '/')
+        --version - output the version of yum
+        --rss-filename=[path/filename] - set the filename to generate rss to
+        -h, --help  - this screen
+    """)
         sys.exit(1)
 
            
