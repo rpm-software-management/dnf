@@ -478,7 +478,7 @@ class YumBaseCli(yum.YumBase):
         if len(tserrors) > 0:
             errstring = 'Transaction Check Error: '
             for (descr, (etype, mount, need)) in tserrors:
-                errstring += descr
+                errstring += '  %s\n' % descr 
             
             raise yum.Errors.YumBaseError, errstring
         self.log(2, 'Transaction Test Succeeded')
@@ -497,7 +497,7 @@ class YumBaseCli(yum.YumBase):
         if errors:
             errstring = 'Error in Transaction: '
             for (descr, (etype, mount, need)) in errors:
-                errstring += descr
+                errstring += '  %s\n' % descr
             
             raise yum.Errors.YumBaseError, errstring
 

@@ -32,11 +32,26 @@ class PackageSack:
         self.pkgsByRepo = {} #pkgsByRepo['repoid']= [pkg1, pkg2, pkg3]
         self.pkgsByID = {} #pkgsById[pkgid] = [pkg1, pkg2] (should really only ever be one value but
                            #you might have repos with the same package in them
+        self.compatarchs = None # dict of compatible archs for addPackage
+        self.indexesBuilt = 0
+        
+        
     def __len__(self):
         return len(self.simplePkgList())
-        
+    
+    def _checkIndexes(self, failure='error'):
+        """check to see if the indexes are built, if not do what failure demands
+           either error out or build the indexes, default is to error out"""
+           
+        if not self.indexesBuilt:
+            if failure == 'error':
+                raise PackageSackError, 'Indexes not yet built, cannot search'
+            elif failure == 'build':
+                self.buildIndexes()
+
     def searchNevra(self, name=None, epoch=None, ver=None, rel=None, arch=None):
         """return list of pkgobjects matching the nevra requested"""
+        self._checkIndexes(failure='build')
         if self.nevra.has_key((name, epoch, ver, rel, arch)):
             return self.nevra[(name, epoch, ver, rel, arch)]
         else:
@@ -45,6 +60,7 @@ class PackageSack:
         
     def searchID(self, pkgid):
         """return list of packages based on pkgid"""
+        self._checkIndexes(failure='build')        
         if self.pkgsByID.has_key(pkgid):
             return self.pkgsByID[pkgid]
         else:
@@ -52,6 +68,7 @@ class PackageSack:
             
     def searchRequires(self, name):
         """return list of package requiring the name (any evr and flag)"""
+        self._checkIndexes(failure='build')        
         if self.requires.has_key(name):
             return self.requires[name]
         else:
@@ -61,6 +78,7 @@ class PackageSack:
         """return list of package providing the name (any evr and flag)"""
         # FIXME - should this do a pkgobj.checkPrco((name, flag, (e,v,r,))??
         # has to do a searchFiles and a searchProvides for things starting with /
+        self._checkIndexes(failure='build')        
         returnList = []
         if name[0] == '/':
              returnList.extend(self.searchFiles(name))
@@ -70,6 +88,7 @@ class PackageSack:
 
     def searchConflicts(self, name):
         """return list of package conflicting with the name (any evr and flag)"""
+        self._checkIndexes(failure='build')        
         if self.conflicts.has_key(name):
             return self.conflicts[name]
         else:
@@ -77,6 +96,7 @@ class PackageSack:
 
     def searchObsoletes(self, name):
         """return list of package obsoleting the name (any evr and flag)"""
+        self._checkIndexes(failure='build')        
         if self.obsoletes.has_key(name):
             return self.obsoletes[name]
         else:
@@ -101,6 +121,7 @@ class PackageSack:
         """return list of packages by filename
            FIXME - need to add regex match against keys in file list
         """
+        self._checkIndexes(failure='build')
         if self.filenames.has_key(file):
             return self.filenames[file]
         else:
@@ -127,50 +148,60 @@ class PackageSack:
             
     def addPackage(self, obj):
         """add a pkgobject to the packageSack"""
+
+        repoid = obj.returnSimple('repoid')
         (name, epoch, ver, rel, arch) = obj.returnNevraTuple()
-        self._addToDictAsList(self.nevra, (name, epoch, ver, rel, arch), obj)
-        self._addToDictAsList(self.nevra, (name, None, None, None, None), obj)
         
-        # store the things provided just on name, not the whole require+version
-        # this lets us reduce the set of pkgs to search when we're trying to depSolve
-        for (n, fl, (e,v,r)) in obj.returnPrco('obsoletes'):
-            self._addToDictAsList(self.obsoletes, n, obj)
-        for (n, fl, (e,v,r)) in obj.returnPrco('requires'):
-            self._addToDictAsList(self.requires, n, obj)
-        for (n, fl, (e,v,r)) in obj.returnPrco('provides'):
-            self._addToDictAsList(self.provides, n, obj)
-        for (n, fl, (e,v,r)) in obj.returnPrco('conflicts'):
-            self._addToDictAsList(self.conflicts, n, obj)
-        for ftype in obj.returnFileTypes():
-            for file in obj.returnFileEntries(ftype):
-                self._addToDictAsList(self.filenames, file, obj)
-        self._addToDictAsList(self.pkgsByID, obj.returnSimple('id'), obj)
-        self._addToDictAsList(self.pkgsByRepo, obj.returnSimple('repoid'), obj)
-        return        
+        if self.compatarchs:
+            if self.compatarchs.has_key(arch):
+                self._addToDictAsList(self.pkgsByRepo, repoid, obj)
+        else:
+            self._addToDictAsList(self.pkgsByRepo, repoid, obj)
+
+
+    def buildIndexes(self):
+        """builds the useful indexes for searching/querying the packageSack
+           This should be called after all the necessary packages have been 
+           added/deleted"""
         
+        # blank out the indexes
+        self.obsoletes = {}
+        self.requires = {}
+        self.provides = {}
+        self.conflicts = {}
+        self.filenames = {}
+        self.nevra = {}
+        self.pkgsByID = {}
+        
+        for repoid in self.pkgsByRepo.keys():
+            for obj in self.pkgsByRepo[repoid]:
+            # store the things provided just on name, not the whole require+version
+            # this lets us reduce the set of pkgs to search when we're trying to depSolve
+                for (n, fl, (e,v,r)) in obj.returnPrco('obsoletes'):
+                    self._addToDictAsList(self.obsoletes, n, obj)
+                for (n, fl, (e,v,r)) in obj.returnPrco('requires'):
+                    self._addToDictAsList(self.requires, n, obj)
+                for (n, fl, (e,v,r)) in obj.returnPrco('provides'):
+                    self._addToDictAsList(self.provides, n, obj)
+                for (n, fl, (e,v,r)) in obj.returnPrco('conflicts'):
+                    self._addToDictAsList(self.conflicts, n, obj)
+                for ftype in obj.returnFileTypes():
+                    for file in obj.returnFileEntries(ftype):
+                        self._addToDictAsList(self.filenames, file, obj)
+                self._addToDictAsList(self.pkgsByID, obj.returnSimple('id'), obj)
+                (name, epoch, ver, rel, arch) = obj.returnNevraTuple()
+                self._addToDictAsList(self.nevra, (name, epoch, ver, rel, arch), obj)
+                self._addToDictAsList(self.nevra, (name, None, None, None, None), obj)
+        
+        self.indexesBuilt = 1
+        
+
         
     def delPackage(self, obj):
         """delete a pkgobject"""
-        # reverse addPackage
-        # remove it from all the dicts
-        (name, epoch, ver, rel, arch) = obj.returnNevraTuple()
-        self._delFromListOfDict(self.nevra, (name, epoch, ver, rel, arch), obj)
-        self._delFromListOfDict(self.nevra, (name, None, None, None, None), obj)
-
-        for (n, fl, (e,v,r)) in obj.returnPrco('obsoletes'):
-            self._delFromListOfDict(self.obsoletes, n, obj)
-        for (n, fl, (e,v,r)) in obj.returnPrco('requires'):
-            self._delFromListOfDict(self.requires, n, obj)
-        for (n, fl, (e,v,r)) in obj.returnPrco('provides'):
-            self._delFromListOfDict(self.provides, n, obj)
-        for (n, fl, (e,v,r)) in obj.returnPrco('conflicts'):
-            self._delFromListOfDict(self.conflicts, n, obj)
-        for ftype in obj.returnFileTypes():
-            for file in obj.returnFileEntries(ftype):
-                self._delFromListOfDict(self.filenames, file, obj)
-        self._delFromListOfDict(self.pkgsByID, obj.returnSimple('id'), obj)
         self._delFromListOfDict(self.pkgsByRepo, obj.returnSimple('repoid'), obj)
-        return
+        if self.indexesBuilt: # if we've built indexes, delete it b/c we've just deleted something
+            self.indexesBuilt = 0
         
     def returnPackages(self, repoid=None):
         """return list of all packages, takes optional repoid"""

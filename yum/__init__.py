@@ -22,6 +22,7 @@ import Errors
 
 import rpmUtils
 import rpmUtils.transaction
+import rpmUtils.arch
 import groups
 from urlgrabber.grabber import URLGrabError
 import depsolve
@@ -60,13 +61,20 @@ class YumBase(depsolve.Depsolve):
     def doSackSetup(self):
         """populates the package sacks for information from our repositories"""
         self.log(3, 'Setting up Package Sacks')
+        archlist = ['src'] # source rpms are allowed
+        archlist.extend(rpmUtils.arch.getArchList())
+        archdict = {}
+        for arch in archlist:
+            archdict[arch] = 1
+
+        self.repos.pkgSack.compatarchs = archdict
         self.repos.populateSack()
         self.pkgSack = self.repos.pkgSack
         self.excludePackages()
-        self.excludeNonCompatArchs()
         for repo in self.repos.listEnabled():
             self.excludePackages(repo)
-
+        self.pkgSack.buildIndexes()
+        
     def doUpdateSetup(self):
         """setups up the update object in the base class and fills out the
            updates, obsoletes and others lists"""
