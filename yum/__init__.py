@@ -1039,6 +1039,7 @@ class YumBase(depsolve.Depsolve):
         """Pass in a generic [build]require string and this function will 
            pass back the best(or first) package it finds providing that dep."""
         
+        flags = {'>':'GT', '<':'LT', '=': 'EQ', '>=':'GE', '<=':'LE'}
         self.doRepoSetup()
         # parse the string out
         #  either it is 'dep (some operator) e:v-r'
@@ -1051,9 +1052,9 @@ class YumBase(depsolve.Depsolve):
         if depstring[0] != '/':
             # not a file dep - look at it for being versioned
             if re.search('[>=<]', depstring):  # versioned
-                # parse out the versioned string 
-                pass # FIXMEMEMEMEME
-        
+                depname, flagsymbol, depver = depstring.split()
+                depflags = flags[flagsymbol]
+                
         sack = self.whatProvides(depname, depflags, depver)
         if len(sack) < 1:
             raise Errors.YumBaseError, 'No Packages found for %s' % depstring
