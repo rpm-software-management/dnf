@@ -100,7 +100,6 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
                                                             'disablerepo=',
                                                             'exclude=',
                                                             'obsoletes',
-                                                            'download-only',
                                                             'rss-filename=',
                                                             'tolerant'])
         except getopt.error, e:
