@@ -851,7 +851,7 @@ For more information contact your distribution or package provider.
                                 if not toBeInstalled.has_key(pkg.name): toBeInstalled[pkg.name] = []
                                 toBeInstalled[pkg.name].append(pkg.pkgtup())
                 else: # we've not got any installed that match n or n+a
-                    self.log(5, 'No other %s installed, adding to list for install' % pkg.name)
+                    self.log(4, 'No other %s installed, adding to list for potential install' % pkg.name)
                     if not toBeInstalled.has_key(pkg.name): toBeInstalled[pkg.name] = []
                     toBeInstalled[pkg.name].append(pkg.pkgtup())
         
@@ -1226,7 +1226,7 @@ For more information contact your distribution or package provider.
 
         if len(pkgs) > 0:
             self.log(2, 'Passing package list to Install Process')
-            self.log(4, 'Packates being passed:')
+            self.log(4, 'Packages being passed:')
             for pkg in pkgs:
                 self.log(4, '%s' % pkg)
             return self.installPkgs(userlist=pkgs)

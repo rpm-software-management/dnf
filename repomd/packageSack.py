@@ -230,7 +230,16 @@ class PackageSack:
            compared to each other for highest version only foo.i386 and 
            foo.i386 will be compared"""
         highdict = {}
-        for pkg in self.returnPackages():
+        # If naTup is set, only iterate through packages that match that
+        # name
+        if (naTup):
+            where = self.nevra.get((naTup[0],None,None,None,None))
+            if (not where):
+                raise PackageSackError, 'No Package Matching %s.%s' % naTup
+        else:
+            where = self.returnPackages()
+
+        for pkg in where:
             (n, e, v ,r, a) = pkg.returnNevraTuple()
             if not highdict.has_key((n, a)):
                 highdict[(n, a)] = pkg
