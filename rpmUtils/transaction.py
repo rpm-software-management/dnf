@@ -125,6 +125,8 @@ class TransactionData:
         installed = []
         updated = []
         misc = []
+        obsoleted = []
+        
         for (pkgInfo, mode) in self.data['packages']:
             if mode == 'u':
                 updated.append(pkgInfo)
@@ -132,6 +134,8 @@ class TransactionData:
                 installed.append(pkgInfo)
             elif mode == 'e':
                 removed.append(pkgInfo)
+            elif mode == 'o':
+                obsoleted.append(pkgInfo)
             else:
                 misc.append(pkgInfo)
 
@@ -139,6 +143,7 @@ class TransactionData:
             updated.sort()
             installed.sort()
             removed.sort()
+            obsoleted.sort()
             
         for (n, a, e, v, r) in removed:
             out = out + "\t\t[e] %s.%s %s:%s-%s - %s\n" % (n, a, e, v, r, self.reason[(n, a, e, v, r)])
@@ -148,6 +153,9 @@ class TransactionData:
 
         for (n, a, e, v, r) in updated:
             out = out + "\t\t[u] %s.%s %s:%s-%s - %s\n" % (n, a, e, v, r, self.reason[(n, a, e, v, r)])        
+
+        for (n, a, e, v, r) in obsoleted:
+            out = out + "\t\t[o] %s.%s %s:%s-%s - %s\n" % (n, a, e, v, r, self.reason[(n, a, e, v, r)])
 
         for (n, a, e, v, r) in misc:
             out = out + "\t\t[wtf] %s.%s %s:%s-%s - %s\n" % (n, a, e, v, r, self.reason[(n, a, e, v, r)])                

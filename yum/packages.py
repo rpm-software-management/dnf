@@ -224,9 +224,14 @@ class YumAvailablePackage(metadata.packageObject.RpmXMLPackageObject):
    
     def size(self):
         return self.returnSimple('packagesize')
+
     def pkgtup(self):
         return self.returnPackageTuple()
 
+
+    def _checkHeader(self, hdr):
+        pass
+        
     def getHeader(self):
         """returns an rpm header object from the package object"""
         # this function sucks - it should use the urlgrabber
@@ -246,7 +251,8 @@ class YumAvailablePackage(metadata.packageObject.RpmXMLPackageObject):
             base.log(6, 'Cached header %s exists, checking' % hdrpath)
             try: 
                 hlist = rpm.readHeaderListFromFile(hdrpath)
-            except rpm.error:
+                hdr = hlist[0]
+            except (rpm.error, IndexError):
                 os.unlink(hdrpath)
                 hdrpath = repo.get(url=url, relative=rel, local=hdrpath, 
                                    start=start, end=end)

@@ -60,7 +60,7 @@ class YumBaseCli(yum.YumBase):
                 repo.getRepoXML()
             except yum.Errors.RepoError, e:
                 self.errorlog(0, 'Cannot open/read repomd.xml file for repository: %s' % repo)
-                print e
+                self.errorlog(0, str(e))
                 sys.exit(1)
         self.doSackSetup()
     
@@ -475,6 +475,8 @@ class YumBaseCli(yum.YumBase):
         # if we've added any packages to the transaction then return 2 and a string
         # if we've hit a snag, return 1 and the failure explanation
         # if we've got nothing to do, return 0 and a 'nothing available to install' string
+        
+        oldcount = self.tsInfo.count()
         if not userlist:
             userlist = self.extcmds
             
@@ -543,15 +545,15 @@ class YumBaseCli(yum.YumBase):
         oldcount = self.tsInfo.count()
         pkglist = returnBestPackages(toBeInstalled)
         if len(pkglist) > 0:
-            print 'reduced installs :' #DEBUG
+            self.log(3, 'reduced installs :')
         for (n,a,e,v,r) in pkglist:
-            print '   %s.%s %s:%s-%s' % (n, a, e, v, r) #DEBUG
+            self.log(3,'   %s.%s %s:%s-%s' % (n, a, e, v, r))
             self.tsInfo.add((n,a,e,v,r), 'i')
 
         if len(passToUpdate) > 0:
-            print 'potential updates :' #DEBUG
+            self.log(3, 'potential updates :')
         for (n,a,e,v,r) in passToUpdate:
-            print '   %s.%s %s:%s-%s' % (n, a, e, v, r) #DEBUG
+            self.log(3, '   %s.%s %s:%s-%s' % (n, a, e, v, r))
             
         if self.tsInfo.count() > oldcount:
             return 2, ['Package(s) to install']
@@ -567,6 +569,12 @@ class YumBaseCli(yum.YumBase):
     def updatePkgs(self, userlist=None):
         """take user commands and populate transaction wrapper with 
            packages to be updated"""
+        
+        # if there is no userlist, then do global update below
+        # this is probably 90% of the calls
+        # if there is a userlist then it's for updating pkgs, not obsoleting
+        
+        oldcount = self.tsInfo.count()
         if not userlist:
             userlist = self.extcmds
 
@@ -583,11 +591,40 @@ class YumBaseCli(yum.YumBase):
 
 
         if len(userlist) == 0: # simple case - do them all
+            for (obsoleting,installed) in obsoletes:
+                (o_n, o_a, o_e, o_v, o_r) = obsoleting
+                self.tsInfo.add(obsoleting, 'u', 'user')
+                reason = '%s.%s %s:%s-%s' % obsoleting
+                self.tsInfo.add(installed, 'o', reason)
+                
             for pkgtup in updates:
-                (n, a, e, v, r) = pkgtup
                 self.tsInfo.add(pkgtup, 'u', 'user')
-        
-        return 2, ['Updated Packages in Transaction']
+
+        else:
+            # we've got a userlist, match it against updates tuples and populate
+            # the tsInfo with the matches
+            updatesPo = []
+            for (n,a,e,v,r) in updates:
+                updatesPo.extend(self.pkgSack.searchNevra(name=n, arch=a, epoch=e, 
+                                 ver=v, rel=r))
+                                 
+            exactmatch, matched, unmatched = yum.packages.parsePackages(updatesPo, userlist)
+            for userarg in unmatched:
+                self.errorlog(1, 'Could not find update match for %s' % userarg)
+
+            updateMatches = yum.misc.unique(matched + exactmatch)
+            for po in updateMatches:
+                self.tsInfo.add(po.pkgtup(), 'u', 'user')
+
+
+        if self.tsInfo.count() > oldcount:
+            change = self.tsInfo.count() - oldcount
+            msg = '%d packages marked for Update/Obsoletion' % change
+            return 2, [msg]
+        else:
+            return 0, ['No Packages marked for Update/Obsoletion']
+
+
         
     
     def erasePkgs(self, userlist=None):
@@ -616,7 +653,8 @@ class YumBaseCli(yum.YumBase):
         
         
         if self.tsInfo.count() > oldcount:
-            msg = '%d packages marked for removal' % self.tsInfo.count()
+            change = self.tsInfo.count() - oldcount
+            msg = '%d packages marked for removal' % change
             return 2, [msg]
         else:
             return 0, ['No Packages marked for removal']
@@ -761,11 +799,11 @@ class YumBaseCli(yum.YumBase):
             -e [error level] - set the error logging level
             -d [debug level] - set the debugging level
             -y answer yes to all questions
-            -t be tolerant about errors in package commands
             -R [time in minutes] - set the max amount of time to randomly run in.
             -C run from cache only - do not update the cache
             --installroot=[path] - set the install root (default '/')
             --version - output the version of yum
+            --rss-filename=[path/filename] - set the filename to generate rss to
             -h, --help this screen
         """)
         sys.exit(1)
