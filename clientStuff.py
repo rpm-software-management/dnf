@@ -357,7 +357,7 @@ def getupdatedhdrlist(headernevral, rpmnevral):
         log(5, 'Best ver+arch installed for %s is %s' % (name, rpm_best_arch))
         rc = compareEVR(headernevral.evr(name, hdr_best_arch), rpmnevral.evr(name, rpm_best_arch))
         if rc > 0:
-            uplist.appned((name, hdr_best_arch))
+            uplist.append((name, hdr_best_arch))
     
     nulist=uplist+newlist
     return (uplist, newlist, nulist)
