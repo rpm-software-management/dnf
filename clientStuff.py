@@ -33,7 +33,10 @@ import callback
 import time
 import zlib
 
+import urlgrabber
 from urlgrabber import close_all, urlgrab, URLGrabError, retrygrab
+# it would be nice to make this slurp the REAL version from somewhere :)
+urlgrabber.set_user_agent("Yum/1.X")
 
 
 def stripENVRA(foo):
