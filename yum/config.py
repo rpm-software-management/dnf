@@ -634,17 +634,17 @@ class confpp:
     def geturl(self): return self.name
 
 def main(args):
-    file = args[0]
+    myfile = args[0]
     if len(args) > 1:
         if args[1] == '--dump':
-            configh = confpp(file)        
+            configh = confpp(myfile)        
             while 1:
                 line = configh.readline()
                 if not line: break
                 print line,
             sys.exit(0)
 
-    conf = yumconf(configfile = file)                
+    conf = yumconf(configfile = myfile)                
 
 
     for option in conf.listConfigOptions():
