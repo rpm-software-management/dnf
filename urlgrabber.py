@@ -319,7 +319,7 @@ def urlgrab(url, filename=None, copy_local=0, close_connection=0,
     # header then its probably something generated dynamically, such
     # as php, cgi, a directory listing, or an error message.  It is
     # probably not what we want.
-    if have_urllib2 or scheme != file:
+    if have_urllib2 or scheme != 'file':
         # urllib does not provide content-length for local files
         if not hdr is None and not hdr.has_key('Content-Length'):
             raise URLGrabError(6, _('ERROR: Url Return no Content-Length  - something is wrong'))
