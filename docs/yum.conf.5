@@ -172,16 +172,6 @@ List of functional commands to run if no functional commands are specified
 on the command line (eg. "update foo bar baz quux").  None of the short options
 (eg. -y, -e, -d) are accepted for this option.
 
-." .IP \fBpkgpolicy=\fI[newest|last]\fR
-." XXX not implemented at present
-." Default: \fInewest\fR.  Package sorting order.  When a package is available
-." from multiple servers, \fInewest\fR will install the most recent version of
-." the package found. \fIlast\fR will sort the servers alphabetically by
-." \fBrespositoryid\fR and install the version of the package found on the last
-." server in the resulting list.
-." If you don't understand the above then you're best left not including this
-." option at all and letting the default occur.
-."
 ." .IP \fBsyslog_ident \fR
 ." XXX not implemented yet
 
@@ -196,6 +186,14 @@ username to use for proxy
 
 .IP \fBproxy_password \fR
 password for this proxy
+
+.IP \fBplugins \fR
+Either `0' or `1'. Global switch to enable or disable yum plugins. Default is
+`0' (plugins disabled).
+
+.IP \fBpluginpath \fR
+A list of directories where yum should look for plugin modules. Default is
+`/usr/lib/yum-plugins'.
 
 .SH "[repository] OPTIONS"
 .LP 
