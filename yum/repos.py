@@ -115,7 +115,6 @@ class Repository:
         
         return string
                 
-              
     def set(self, key, value):
         """sets a generic attribute of this repository"""
         setattr(self, key, value)
@@ -123,7 +122,12 @@ class Repository:
     def unset(self, key):
         """delete an attribute of this repository"""
         delattr(self, key)
-        
+
+    # urls should be handled in here somehow - possibly they should also allow the 
+    # variable ($arch, $basearch, $releasever) parsing in here as well            
+    # I can definitely see it being handy if I need, for some reason, to start
+    # adding repositories from a directory of xml repo-describing files.
+    
     def setFailover(self, failmeth):
         """takes a failover string and sets the failover class accordingly"""
 
