@@ -108,21 +108,20 @@ shell\-style glob and any matches are printed\&.
 .PP 
 .SH "CLEAN OPTIONS"
 The following are the ways which you can invoke \fByum\fP in clean
-mode\&.
-.IP 
+mode.
+
 .IP "\fByum clean packages\fP"
-Eliminate any cached packages from the system\&.  Note that packages are
-not automatically deleted after they are downloaded unless \fByum\fI
-is run with the \fB\-\-auto\-clean\fP option\&.
-.IP 
+Eliminate any cached packages from the system.  Note that packages are not automatically deleted after they are downloaded.
+
 .IP "\fByum clean headers\fP"
-Eliminate the files which \fByum\fP uses to determine the remote
-availablility of packages\&.
-.IP 
-.IP "\fByum clean all\fP"
-Remove all of the above\&.
-.IP "\fByum clean\fP"
-Without any options, clean mode works as \fByum clean packages\fP above\&.
+Eliminate all of the files which yum uses to determine the remote
+availablility of packages. Using this option will force yum to download all the headers the next time it is run.
+
+.IP "\fByum clean oldheaders\fP"
+Eliminate the old headers that yum no longer needs to determine the remote availablility of packages.
+
+.IP "\fByum clean [all]\fP"
+Runs \fByum clean packages\fP and \fByum clean oldheaders\fP as above.
 .PP 
 .SH "FILES"
 .nf 

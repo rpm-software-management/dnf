@@ -108,6 +108,25 @@ def take_action(cmds,nulist,uplist,newlist,obslist,tsInfo,HeaderInfo,rpmDBInfo):
 			else:	
 				pkgaction.listpkgs(nulist,cmds,HeaderInfo)
 		sys.exit(0)
+	elif cmds[0] == "clean":
+		cmds.remove(cmds[0])
+		if len(cmds)==0 or cmds[0]=='all':
+			log(2,"Cleaning packages and old headers")
+			clientStuff.clean_up_packages()
+			clientStuff.clean_up_old_headers(rpmDBInfo,HeaderInfo)
+		elif cmds[0]=='packages':
+			log(2,"Cleaning packages")
+			clientStuff.clean_up_packages()
+		elif cmds[0]=='headers':
+			log(2,"Cleaning all headers")
+			clientStuff.clean_up_headers()
+		elif cmds[0]=='oldheaders':
+			log(2,"Cleaning old headers")
+			clientStuff.clean_up_old_headers(rpmDBInfo,HeaderInfo)
+		else:
+			print "Invalid clean option %s" % cmds[0]
+			sys.exit(1)
+		sys.exit(0)	
 	else:
 		usage()
 

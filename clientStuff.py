@@ -347,4 +347,72 @@ def nasort((n1,a1), (n2, a2)):
 	else:
 		return -1
 		
-		
+def getfilelist(path, ext, list):
+	# get all the files matching the 3 letter extension that is ext in path, recursively
+	# store them in append them to list
+	# return list
+	# ignore symlinks
+	import os
+	import string
+
+	dir_list = os.listdir(path)
+
+	for d in dir_list:
+		if os.path.isdir(path + '/' + d):
+			list = getfilelist(path + '/' + d, ext, list)
+		else:
+			if string.lower(d[-4:]) == '%s' % (ext):
+				if not os.path.islink( path + '/' + d): 
+					newpath = os.path.normpath(path + '/' + d)
+					list.append(newpath)
+	return(list)
+
+def clean_up_headers():
+	serverlist=conf.servers
+	for serverid in serverlist:
+		servername = conf.servername[serverid]
+		hdrdir = conf.serverhdrdir[serverid]
+		hdrlist = getfilelist(hdrdir, '.hdr', [])
+		for hdr in hdrlist:
+			log(4,"Deleting Header %s" % hdr)
+			os.unlink(hdr)
+			
+
+
+def clean_up_packages():
+	serverlist=conf.servers
+	for serverid in serverlist:
+		servername = conf.servername[serverid]
+		rpmdir = conf.serverpkgdir[serverid]
+		rpmlist = getfilelist(rpmdir, '.rpm', [])
+		for rpm in rpmlist:
+			log(4,"Deleting Package %s" % rpm)
+			os.unlink(rpm)
+	
+
+def clean_up_old_headers(rpmDBInfo, HeaderInfo):
+	serverlist=conf.servers
+	hdrlist =[]
+	for serverid in serverlist:
+		servername = conf.servername[serverid]
+		hdrdir = conf.serverhdrdir[serverid]
+		hdrlist = getfilelist(hdrdir, '.hdr', hdrlist)
+	for hdrfn in hdrlist:
+		hdr = readHeader(hdrfn)
+		(e, n, v, r, a) = getENVRA(hdr)
+		if rpmDBInfo.exists(n, a):
+			(e1, v1, r1) = rpmDBInfo.evr(n, a)
+			rc = rpm.labelCompare((e1,v1,r1), (e,v,r))
+			#if the rpmdb has an equal or better rpm then delete
+			#the header
+			if (rc >= 0):
+				log(4,"Deleting Header %s" % hdrfn)
+				os.unlink(hdrfn)
+		if not HeaderInfo.exists(n,a):
+			#if its not in the HeaderInfo nevral anymore just kill it
+			log(4,"Deleting Header %s" % hdrfn)
+			os.unlink(hdrfn)
+			
+
+
+

@@ -8,7 +8,7 @@ last-in as an option. *** done - pkgpolicy=[newest|last] - newest is default
 
 
 Implement the comps parsing and group* functions
-Implement clean * - shouldn't be terribly hard.
+Implement clean * - shouldn't be terribly hard. *** done clean
 
 Implement pkg excludes for new packages on the client side
 Implement pkg excludes on the server side
@@ -23,7 +23,7 @@ Implement a status/progress bar for downloading pkgs
 Make -q and -d 0 VERY quiet
 Make the syslog, log be sane
 
-rewrite the man pages so they have some meaning :)
+rewrite the man pages so they have some meaning :) *** done
 
 Work on making the frontend more spiffy
 
@@ -37,12 +37,9 @@ arch possibly implement a per-arch pkgaction.kernelupdate function
 implement some sort of silly lock file for making sure two yum's can't be run 
 at the same time
 
-make the man pages have something that resembles ANY meaning.
-
 put together a brief quickstart guide and a webpage.
 
 make a yum list updates option (lists obs and updates) ** done
-
 
 also maybe make an option for:
 yum mail notices
