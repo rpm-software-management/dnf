@@ -978,7 +978,16 @@ class YumBase(depsolve.Depsolve):
                 raise Errors.MiscError, \
                  'Search Expression: %s is an invalid Regular Expression.\n' % arg
             
-            for po in self.pkgSack:
+            # If this is not a regular expression, only search in packages
+            # returned by pkgSack.searchAll
+            if restring.find('*') == restring.find('?') \
+              == restring.find('%') == -1 and \
+              hasattr(self.pkgSack,'searchAll'):
+                where = self.pkgSack.searchAll(restring)
+            else:
+                where = self.pkgSack
+
+            for po in where:
                 tmpvalues = []
                 for filetype in po.returnFileTypes():
                     for fn in po.returnFileEntries(ftype=filetype):

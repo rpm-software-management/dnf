@@ -150,6 +150,46 @@ class YumSqlitePackageSack(repos.YumPackageSack):
                 return result    
         return {}
             
+    # Search packages that either provide something containing name
+    # or provide a file containing name 
+    def searchAll(self,name):
+        # This should never be called with a name containing a %
+        assert(name.find('%') == -1)
+        result = []
+        quotename = name.replace("'","''")
+        for (rep,cache) in self.primarydb.items():
+            cur = cache.cursor()
+            cur.execute("select DISTINCT packages.pkgId from provides,packages where provides.name LIKE '%%%s%%' AND provides.pkgKey = packages.pkgKey" % quotename)
+            for ob in cur.fetchall():
+                pkg = self.getPackageDetails(ob['packages.pkgId'])
+                result.append((self.pc(pkg,rep)))
+
+        for (rep,cache) in self.filelistsdb.items():
+            cur = cache.cursor()
+            (dir,filename) = os.path.split(quotename)
+            # This query means:
+            # Either name is a substring of dirname or the directory part
+            # in name is a substring of dirname and the file part is part
+            # of filelist
+            cur.execute("select * from packages,filelist where \
+                (filelist.dirname LIKE '%%%s%%' \
+                OR (filelist.dirname LIKE '%%%s%%' AND\
+                filelist.filenames LIKE '%%%s%%'))\
+                AND (filelist.pkgKey = packages.pkgKey)" % (quotename,dir,filename))
+            for ob in cur.fetchall():
+                # Check if it is an actual match
+                # The query above can give false positives, when
+                # a package provides /foo/aaabar it will also match /foo/bar
+                real = False
+                for filename in ob['filelist.filenames'].split('/'):
+                    if (ob['filelist.dirname']+'/'+filename).find(name) != -1:
+                        real = True
+                if (not real):
+                    continue
+                pkg = self.getPackageDetails(ob['packages.pkgId'])
+                result.append((self.pc(pkg,rep)))
+        return result     
+    
     def returnObsoletes(self):
         obsoletes = {}
         for (rep,cache) in self.primarydb.items():
