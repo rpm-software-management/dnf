@@ -81,22 +81,27 @@ def writeHeader(headerdir,header,compress):
     return(headerfn)
 
 
-def getfilelist(path, ext, list):
+def getfilelist(path, ext, list, usesymlinks):
     # get all the files matching the 3 letter extension that is ext in path, recursively
     # store them in append them to list
     # return list
-    # ignore symlinks
+    # ignore symlinks unless told otherwise
 
     dir_list = os.listdir(path)
 
     for d in dir_list:
         if os.path.isdir(path + '/' + d):
-            list = getfilelist(path + '/' + d, ext, list)
+            list = getfilelist(path + '/' + d, ext, list, usesymlinks)
         else:
             if string.lower(d[-4:]) == '%s' % (ext):
-                if not os.path.islink( path + '/' + d): 
+                if usesymlinks:
                     newpath = os.path.normpath(path + '/' + d)
                     list.append(newpath)
+                else:
+                    if not os.path.islink( path + '/' + d): 
+                        newpath = os.path.normpath(path + '/' + d)
+                        list.append(newpath)
+                    
     return(list)
 
 
@@ -119,12 +124,13 @@ def readHeader(rpmfn):
 
 def Usage():
     print "Usage:"
-    print "yum-arch [-v] [-z] [-c] [-n] [-d] (path of dir where headers/ should/does live)"
+    print "yum-arch [-v] [-z] [-l] [-c] [-n] [-d] (path of dir where headers/ should/does live)"
     print "   -d = check dependencies and conflicts in tree"
     print "   -v = print debugging information"
     print "   -n = don't generate headers"
     print "   -c = check pkgs with gpg and md5 checksums - cannot be used with -n"
     print "   -z = gzip compress the headers [default, will be deprecated as an option]"
+    print "   -l = use symlinks as valid rpms when building headers"
     sys.exit(1)
 
 

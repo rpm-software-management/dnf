@@ -105,6 +105,7 @@ def main():
     writehdrs=1
     rpmcheck=0
     compress=1
+    usesymlinks=0
     if  len(sys.argv) < 2:
         serverStuff.Usage()
     args = sys.argv[1:]
@@ -121,6 +122,8 @@ def main():
             rpmcheck=1
         if arg == "-z":
             compress=1
+        if arg == "-l":
+            usesymlinks=1
         if arg in ['-h','--help']:
             serverStuff.Usage()
     #save where we are right now
@@ -137,7 +140,7 @@ def main():
     os.chdir(basedir)
 
     #get the list of rpms
-    rpms=serverStuff.getfilelist('./', '.rpm', [])
+    rpms=serverStuff.getfilelist('./', '.rpm', [], usesymlinks)
     #and a few more sanity checks
     if len(rpms) < 1:
         print "No rpms to look at. Exiting."
@@ -164,7 +167,7 @@ def main():
             os.mkdir(headerdir)
         # done with the sanity checks, on to the cleanups
         #looks for a list of .hdr files and the header.info file
-        hdrlist = serverStuff.getfilelist(headerdir, '.hdr', [])
+        hdrlist = serverStuff.getfilelist(headerdir, '.hdr', [], 0)
 
         #removes both entirely 
         for hdr in hdrlist:
