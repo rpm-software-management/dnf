@@ -58,36 +58,30 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
                                 # to move to the lower level class
 
     def doRepoSetup(self, nosack=None):
-        """grabs the repomd.xml for each enabled repository and sets up the basics
-           of the repository"""
+        """grabs the repomd.xml for each enabled repository and sets up the
+        basics of the repository
+        """
         
         if hasattr(self, 'pkgSack'):
             self.log(7, 'skipping reposetup, pkgsack exists')
             return
             
-        self.log(2, 'Setting up Repos')
-        if len(self.repos.listEnabled()) < 1:
-            self.errorlog(0, 'No Repositories Available to Set Up')
+        self.log(2, 'Setting up repositories')
+
+        # Call parent class to do the bulk of work 
+        # (this also ensures that reposetup plugin hook is called)
+        try:
+            yum.YumBase.doRepoSetup(self)
+        except yum.Errors.RepoError, e:
             sys.exit(1)
-        for repo in self.repos.listEnabled():
-            if repo.repoXML is not None and len(repo.urls) > 0:
-                continue
-            try:
-                repo.cache = self.conf.getConfigOption('cache')
-                repo.baseurlSetup()
-                repo.dirSetup()
-                self.log(3, 'Baseurl(s) for repo: %s' % repo.urls)
-            except yum.Errors.RepoError, e:
-                self.errorlog(0, '%s' % e)
-                sys.exit(1)
-            try:
-                repo.getRepoXML(text=repo)
-            except yum.Errors.RepoError, e:
-                self.errorlog(0, 'Cannot open/read repomd.xml file for repository: %s' % repo)
-                self.errorlog(0, str(e))
-                sys.exit(1)
-        
-        if not nosack: # so we can make the dirs and grab the repomd.xml but not import the md
+
+        # Error out if there's no actual repos
+        if len(self.repos.listEnabled()) < 1:
+            self.errorlog(0, 'No repositories available to set up')
+            sys.exit(1)
+
+        # So we can make the dirs and grab the repomd.xml but not import the md
+        if not nosack: 
             self.log(2, 'Reading repository metadata in from local files')
             self.doSackSetup()
     

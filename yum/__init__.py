@@ -173,10 +173,13 @@ class YumBase(depsolve.Depsolve):
         if hasattr(self, 'up'):
             del self.up
 
-    def doRepoSetup(self, nosack=None):
-        """grabs the repomd.xml for each enabled repository and sets up the basics
-           of the repository - stub"""
-           
+    def doRepoSetup(self):
+        """grabs the repomd.xml for each enabled repository and sets up the
+        basics of the repository - stub
+        """
+          
+        self.plugins.run('reposetup')
+
         for repo in self.repos.listEnabled():
             if repo.repoXML is not None and len(repo.urls) > 0:
                 continue
@@ -184,12 +187,13 @@ class YumBase(depsolve.Depsolve):
                 repo.cache = self.conf.getConfigOption('cache')
                 repo.baseurlSetup()
                 repo.dirSetup()
+                self.log(3, 'Baseurl(s) for repo: %s' % repo.urls)
             except Errors.RepoError, e:
                 self.errorlog(0, '%s' % e)
                 raise
                 
             try:
-                repo.getRepoXML()
+                repo.getRepoXML(text=repo)
             except Errors.RepoError, e:
                 self.errorlog(0, 'Cannot open/read repomd.xml file for repository: %s' % repo)
                 self.errorlog(0, str(e))

@@ -12,8 +12,6 @@ import Errors
 # is created) mean that all output goes to stdout regardless of the log settings.
 #   - peek at debuglevel option? 
 
-# TODO: finish reposetup slot: where to call from?
-
 # TODO: better documentation of how the whole thing works (esp. addition of
 # config options)
 #       - document from user perspective in yum man page
@@ -27,14 +25,11 @@ import Errors
 # TODO "log" slot? To allow plugins to do customised logging/history (say to a
 # SQL db)
 
-# TODO: method for plugins to retrieve running yum version (move __version__ to
-# yum/__init__.py?)
-
 # TODO: multiversion plugin support
 
 # TODO: cmd line options to disable plugins (all or specific)
 
-# TODO: cmdline/config option to specify additional plugin directories (plugin path)
+# TODO: cmdline option to override/specify additional plugin directories
 
 # TODO: config vars marked as PLUG_OPT_WHERE_ALL should inherit defaults from
 #   the [main] setting if the user doesn't specify them
