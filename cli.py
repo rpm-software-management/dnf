@@ -62,6 +62,11 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
     def doRepoSetup(self, nosack=None):
         """grabs the repomd.xml for each enabled repository and sets up the basics
            of the repository"""
+        
+        if hasattr(self, 'pkgSack'):
+            self.log(7, 'skipping reposetup, pkgsack exists')
+            return
+            
         self.log(2, 'Setting up Repos')
         if len(self.repos.listEnabled()) < 1:
             self.errorlog(0, 'No Repositories Available to Set Up')
@@ -860,6 +865,7 @@ For more information contact your distribution or package provider.
         toBeInstalled = {} # keyed on name
         passToUpdate = [] # list of pkgtups to pass along to updatecheck
 
+        self.log(2, _('Parsing package install arguments'))
         for arg in userlist:
             if os.path.exists(arg) and arg.endswith('.rpm'): # this is hurky, deal w/it
                 val, msglist = self.localInstall(filelist=[arg])
@@ -877,12 +883,22 @@ For more information contact your distribution or package provider.
 
             arglist = [arg]
             exactmatch, matched, unmatched = parsePackages(avail, arglist)
-            if len(unmatched) > 0: # if we get back anything in unmatched, it fails
-                self.errorlog(0, _('No Match for argument: %s') % arg)
-                continue
+            if len(unmatched) > 0: # if we get back anything in unmatched, check it for a virtual-provide
+                arg = unmatched[0] #only one in there
+                try:
+                    mypkg = self.returnPackageByDep(arg)
+                except yum.Errors.YumBaseError, e:
+                    self.errorlog(0, _('No Match for argument: %s') % arg)
+                else:
+                    arg = '%s:%s-%s-%s.%s' % (mypkg.epoch, mypkg.name,
+                                              mypkg.version, mypkg.release,
+                                              mypkg.arch)
+                    emtch, mtch, unmtch = parsePackages(avail, [arg])
+                    exactmatch.extend(emtch)
+                    matched.extend(mtch)
             
             installable = yum.misc.unique(exactmatch + matched)
-            exactarch = self.conf.getConfigOption('exactarch')
+            exactarch = self.conf.exactarch
             
             # we look through each returned possibility and rule out the
             # ones that we obviously can't use

@@ -342,7 +342,7 @@ class YumBase(depsolve.Depsolve):
         """runs through the whole packageSack and excludes any arch not compatible
            with the system"""
         
-        self.log(2, 'Excluding Incompatible Archs')
+        self.log(3, 'Excluding Incompatible Archs')
         if not archlist:
             #archlist = ['src'] # source rpms are allowed
             archlist.extend(rpmUtils.arch.getArchList())
@@ -351,7 +351,7 @@ class YumBase(depsolve.Depsolve):
             if po.arch not in archlist:
                 self.log(3, 'Arch Excluding %s' % po)
                 self.pkgSack.delPackage(po)
-        self.log(2, 'Finished')
+        self.log(3, 'Finished')
         
         
         
@@ -1098,7 +1098,7 @@ class YumBase(depsolve.Depsolve):
         """Pass in a generic [build]require string and this function will 
            pass back the best(or first) package it finds providing that dep."""
         
-        flags = {'>':'GT', '<':'LT', '=': 'EQ', '>=':'GE', '<=':'LE'}
+        flags = {'>':'GT', '<':'LT', '=': 'EQ', '==': 'EQ', '>=':'GE', '<=':'LE'}
         self.doRepoSetup()
         # parse the string out
         #  either it is 'dep (some operator) e:v-r'
@@ -1112,6 +1112,8 @@ class YumBase(depsolve.Depsolve):
             # not a file dep - look at it for being versioned
             if re.search('[>=<]', depstring):  # versioned
                 depname, flagsymbol, depver = depstring.split()
+                if not flags.has_key(flagsymbol):
+                    raise Errors.YumBaseError, 'No Packages found for %s' % depstring
                 depflags = flags[flagsymbol]
                 
         sack = self.whatProvides(depname, depflags, depver)
