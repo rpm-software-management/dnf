@@ -1,3 +1,16 @@
+2002-07-11 18:10  skvidal
+
+	* etc/yum.cron: 
+	Wow - lucky I'm a moron.
+	
+	yum -R not yum -r <sigh>
+
+2002-07-11 16:56  skvidal
+
+	* ChangeLog, configure.in, yum.spec: 
+	 bumped to 0.9.0
+	ChangeLog updated
+
 2002-07-11 16:55  skvidal
 
 	* yum.conf: 
