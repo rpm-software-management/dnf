@@ -1030,9 +1030,10 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         
     def usage(self):
         print _("""
-    Usage:  yum [options] <update | install | info | remove | list |
+    Usage:  yum [options] < update | install | info | remove | list |
             clean | provides | search | check-update | groupinstall | 
-            groupupdate | grouplist | groupinfo | groupremove | generate-rss >
+            groupupdate | grouplist | groupinfo | groupremove | generate-rss |
+            makecache >
                 
         Options:
         -c [config file] - specify the config file to use
