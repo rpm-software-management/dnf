@@ -43,7 +43,7 @@ def main():
     if len(args) < 1:
         usage()
     try:
-        gopts, cmds = getopt.getopt(args, 'c:hr:e:d:y', ['help'])
+        gopts, cmds = getopt.getopt(args, 'c:hR:e:d:y', ['help'])
     except getopt.error, e:
         errorlog(0, 'Options Error: %s' % e)
         usage()
@@ -62,7 +62,7 @@ def main():
                 conf=yumconf(configfile=yumconffile)
     
         for o,a in gopts:
-            if o == '-r':
+            if o == '-R':
                 import time
                 import random
                 sleeptime=random.randrange(int(a)*60)
@@ -239,7 +239,7 @@ def usage():
           -e [error level] - set the error logging level
           -d [debug level] - set the debugging level
           -y answer yes to all questions
-          -r [time in minutes] - set the max amount of time to randonly run in.
+          -R [time in minutes] - set the max amount of time to randonly run in.
           -h, --help this screen
     """
     sys.exit(1)
