@@ -26,6 +26,7 @@ import rpmUtils.updates
 import yum.yumcomps
 import yum.Errors
 import cli
+import output
 
 from i18n import _
 
@@ -105,7 +106,7 @@ def main(args):
             base.errorlog(1, _('Exiting.'))
             sys.exit(1)
 
-    base.repos.populateSack(callback=cli.simpleProgressBar)
+    base.repos.populateSack(callback=output.simpleProgressBar)
     base.pkgSack = base.repos.pkgSack
     base.log(2, '#pkgs in repos = %s' % len(base.pkgSack))
 
@@ -119,9 +120,11 @@ def main(args):
 
     base.log(2, '# of avail pkgs = %s' % len(base.up.getOthersList()))
     
-    # at this point we should have a tsInfo nevral with all we need to complete our task.
-    # if for some reason we've gotten all the way through this step with 
-    # an empty tsInfo then exit and be confused :)
+    base.tsInfo = rpmUtils.transaction.TransactionData()
+    for pkgtup in base.up.getUpdatesList():
+        base.tsInfo.add(pkgtup, 'u', 'user')
+        
+    print base.tsInfo.display()
 """
     if len(tsInfo.NAkeys()) < 1:
         log(2, _('No actions to take'))

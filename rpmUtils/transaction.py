@@ -27,13 +27,22 @@ class TransactionData:
         # the pkgInfo is tuple of (name, arch, epoch, version, release)
         # example self.data['packages'].append((pkginfo, mode))
         self.data['packages'] = []
-        
+        # stores the reason for the package being in the transaction set
+        self.reason = {} # self.reason[pkgtup] = 'user', 'dep'
+            # user = user requested
+            # dep = deps
+
         # list of flags to set for the transaction
         self.data['flags'] = []
         self.data['vsflags'] = []
         self.data['probFilterFlags'] = []
 
-
+    def add(self, pkgtup, mode, reason='user'):
+        """add one"""
+        
+        self.data['packages'].append((pkgtup, mode))
+        self.reason[pkgtup] = reason
+        
     def display(self):
         out = ""
         removed = []
@@ -50,6 +59,11 @@ class TransactionData:
             else:
                 misc.append(pkgInfo)
 
+            misc.sort()
+            updated.sort()
+            installed.sort()
+            removed.sort()
+            
         for (n, a, e, v, r) in removed:
             out = out + "\t\t[e] %s-%s %s:%s-%s\n" % (n, a, e, v, r)
 

@@ -22,6 +22,7 @@ import random
 import fcntl
 import fnmatch
 import re
+import output
 
 import progress_meter
 import yum.Errors
@@ -111,10 +112,10 @@ def getOptionsConfig(args, baseclass):
             logfile =  os.fdopen(logd, 'a')
             fcntl.fcntl(logfd, fcntl.F_SETFD)
             filelog = Logger(threshold = 10, file_object = logfile, 
-                             preprefix = printtime())
+                             preprefix = output.printtime())
         else:
             filelog = Logger(threshold = 10, file_object = None, 
-                             preprefix = printtime())
+                             preprefix = output.printtime())
         
        
         # now the rest of the options
@@ -181,67 +182,43 @@ def getOptionsConfig(args, baseclass):
     # save our original args out
     baseclass.args = args
     
-    parseCommands() # before we exit check over the base command + args
+    parseCommands(baseclass) # before we exit check over the base command + args
                     # make sure they match
         
 
-def printtime():
-    return time.strftime('%b %d %H:%M:%S', time.localtime(time.time()))
-    
 
-def simpleProgressBar(current, total, name=None):
-    """simple progress bar 50 # marks"""
-    
-    mark = '#'
-    
-    if current == 0:
-        percent = 0 
-    else:
-        percent = current*100/total
-
-    numblocks = int(percent/2)
-    hashbar = mark * numblocks
-    if name is None:
-        output = '\r%-50s %d/%d' % (hashbar, current, total)
-    else:
-        output = '\r%s:%-50s %d/%d' % (name, hashbar, current, total)
-     
-    sys.stdout.write(output)
-    if current == total:
-        sys.stdout.write('\n')
-        
-
-def parseCommands():
-    """reads base.cmds and parses them out to make sure that the requested 
+def parseCommands(baseclass):
+    """reads baseclass.cmds and parses them out to make sure that the requested 
        base command + argument makes any sense at all""" 
-          
-    basecmd = base.cmds[0]
-   
-    if base.conf.getConfigOption('uid') != 0:
+
+    cmds = baseclass.cmds          
+    basecmd = cmds[0]
+
+    if baseclass.conf.getConfigOption('uid') != 0:
         if basecmd in ['install', 'update', 'clean', 'upgrade','erase', 
                       'groupupdate', 'groupinstall', 
                       'groupremove']:
-            base.errorlog(0, _('You need to be root to perform these commands'))
+            baseclass.errorlog(0, _('You need to be root to perform these commands'))
             sys.exit(1)
     
     if basecmd in ['install', 'update', 'erase', 'remove']:
-        if len(base.cmds[1:]) == 0:
-            base.errorlog(0, _('Error: Need to pass a list of pkgs to %s') % basecmd)
+        if len(cmds[1:]) == 0:
+            baseclass.errorlog(0, _('Error: Need to pass a list of pkgs to %s') % basecmd)
             usage()
 
     elif basecmd in ['provides', 'search']:       
-        if len(base.cmds[1:]) == 0:
-            base.errorlog(0, _('Error: Need an item to match'))
+        if len(cmds[1:]) == 0:
+            baseclass.errorlog(0, _('Error: Need an item to match'))
             usage()
         
     elif basecmd in ['groupupdate', 'groupinstall', 'groupremove']:
-        if len(base.cmds[1:]) == 0:
-            base.errorlog(0, _('Error: Need a group or list of groups'))
+        if len(cmds[1:]) == 0:
+            baseclass.errorlog(0, _('Error: Need a group or list of groups'))
             usage()
 
     elif basecmd == 'clean':
-        if len(base.cmds[1:]) > 0 and cmds[1] not in ['packages' 'headers', 'all']:
-            base.errorlog(0, _('Error: Invalid clean option %s') % cmds[0])
+        if len(cmds[1:]) > 0 and cmds[1] not in ['packages' 'headers', 'all']:
+            baseclass.errorlog(0, _('Error: Invalid clean option %s') % cmds[1])
             usage()
 
     elif basecmd in ['list', 'check-update', 'info']:
@@ -250,45 +227,28 @@ def parseCommands():
         usage()
         
 
-def format_number(number, SI=0, space=' '):
-    """Turn numbers into human-readable metric-like numbers"""
-    symbols = ['',  # (none)
-                'k', # kilo
-                'M', # mega
-                'G', # giga
-                'T', # tera
-                'P', # peta
-                'E', # exa
-                'Z', # zetta
-                'Y'] # yotta
+def doCommands(baseclass):
+    """calls the command based on the args, also passes the args out to be 
+       parsed"""
+    
+    cmds = baseclass.cmds
+    basecmd = cmds[0]
+    args = cmds[1:]
+    
+    if basecmd in ['install', 'update', 'remove', 'erase', 'list']:
+        pass
+        
+        
+   
 
-    if SI: step = 1000.0
-    else: step = 1024.0
+def parsePackages(availpkgs, usercommands):
+    """matches up the user request versus the available package lists:
+       for installs/updates availpkgs should be the 'others list' for removes it should
+       be the installed list"""
+       
+    pass
 
-    thresh = 999
-    depth = 0
 
-    # we want numbers between 
-    while number > thresh:
-        depth  = depth + 1
-        number = number / step
-
-    # just in case someone needs more than 1000 yottabytes!
-    diff = depth - len(symbols) + 1
-    if diff > 0:
-        depth = depth - diff
-        number = number * thresh**depth
-
-    if type(number) == type(1) or type(number) == type(1L):
-        format = '%i%s%s'
-    elif number < 9.95:
-        # must use 9.95 for proper sizing.  For example, 9.99 will be
-        # rounded to 10.0 with the .1f format string (which is too long)
-        format = '%.1f%s%s'
-    else:
-        format = '%.0f%s%s'
-
-    return(format % (number, space, symbols[depth]))
         
 
 def userconfirm():

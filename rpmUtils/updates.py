@@ -471,13 +471,17 @@ class Updates:
            nor an update - this may include something that obsoletes an installed
            package"""
         updates = {}
+        inst = {}
         tmplist = []
         
         for pkgtup in self.getUpdatesList():
             updates[pkgtup] = 1
             
+        for pkgtup in self.installed:
+            inst[pkgtup] = 1
+            
         for pkgtup in self.available:
-            if not updates.has_key(pkgtup):
+            if not updates.has_key(pkgtup) and not inst.has_key(pkgtup):
                 tmplist.append(pkgtup)
 
         returnlist = self.reduceListByNameArch(tmplist, name, arch)
