@@ -322,7 +322,14 @@ class Repository:
     
     def disable(self):
         self.set('enabled', 0)
-        
+    
+    def check(self):
+        """self-check the repo information  - if we don't have enough to move
+           on then raise a repo error"""
+        if len(self.urls) < 1:
+            raise Errors.RepoError, \
+             'Cannot find a valid baseurl for repo: %s' % self.id
+           
                 
     def set(self, key, value):
         """sets a generic attribute of this repository"""
@@ -394,7 +401,6 @@ class Repository:
                   
         if self.failure_obj:
             (f_func, f_args, f_kwargs) = self.failure_obj
-            f_kwargs['relative'] = relative
             self.failure_obj = (f_func, f_args, f_kwargs)
         
         if self.cache == 1:

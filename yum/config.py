@@ -226,7 +226,7 @@ class yumconf(object):
                 try:
                     self._doFileRepo(fn)
                 except Errors.ConfigError, e:
-                    print e
+                    print >> sys.stderr, e
                     continue
 
         # if we don't have any enabled repositories then this is going to suck
@@ -300,7 +300,7 @@ def doRepoSection(globconfig, thisconfig, section):
     """do all the repo handling stuff for this config"""
 
     urls = thisconfig._getoption(section, 'baseurl', [])
-    name = thisconfig._getoption(section, 'name', None)
+    name = thisconfig._getoption(section, 'name', section)
     urls = variableReplace(globconfig.yumvar, urls)
     urls = parseList(urls)
     mirrorlist = thisconfig._getoption(section, 'mirrorlist', None)
@@ -313,66 +313,57 @@ def doRepoSection(globconfig, thisconfig, section):
             url = variableReplace(globconfig.yumvar, url)
             urls.append(url)
             
-    if name is not None and len(urls) > 0:
-        thisrepo = globconfig.repos.add(section)
-        name = variableReplace(globconfig.yumvar, name)
-        thisrepo.set('name', name)
+    thisrepo = globconfig.repos.add(section)
+    name = variableReplace(globconfig.yumvar, name)
+    thisrepo.set('name', name)
 
-        # vet the urls
-        goodurls = []
-        for url in urls:
-            (s,b,p,q,f,o) = urlparse.urlparse(url)
-            if s not in ['http', 'ftp', 'file', 'https']:
-                print 'not using ftp, http[s], or file for repos, skipping - %s' % (url)
-                continue
-            else:
-                goodurls.append(url)
-
-        if len(goodurls) > 0:
-            thisrepo.set('urls', goodurls)
+    # vet the urls
+    goodurls = []
+    for url in urls:
+        (s,b,p,q,f,o) = urlparse.urlparse(url)
+        if s not in ['http', 'ftp', 'file', 'https']:
+            print 'not using ftp, http[s], or file for repos, skipping - %s' % (url)
+            continue
         else:
-            globconfig.repos.delete(section)
-            print 'Error: Cannot find valid baseurl for repo: %s. Skipping' % (section)    
-            return
+            goodurls.append(url)
 
-        thisrepo.set('enabled', thisconfig._getboolean(section, 'enabled', 1))
+    thisrepo.set('urls', goodurls)
 
-        for keyword in ['bandwidth', 'throttle', 'proxy_username', 'proxy',
-                        'proxy_password', 'retries', 'failovermethod']:
+    thisrepo.set('enabled', thisconfig._getboolean(section, 'enabled', 1))
 
-            thisrepo.set(keyword, thisconfig._getoption(section, keyword, \
-                         globconfig.getConfigOption(keyword)))
+    for keyword in ['bandwidth', 'throttle', 'proxy_username', 'proxy',
+                    'proxy_password', 'retries', 'failovermethod']:
 
-        for keyword in ['gpgcheck', 'keepalive']:
-            thisrepo.set(keyword, thisconfig._getboolean(section, \
-                         keyword, globconfig.getConfigOption(keyword)))
-        
-        for keyword in ['timeout']:
-            thisrepo.set(keyword, thisconfig._getfloat(section, \
-                         keyword, globconfig.getConfigOption(keyword)))
-        
-        excludelist = thisconfig._getoption(section, 'exclude', [])
-        excludelist = variableReplace(globconfig.yumvar, excludelist)
-        excludelist = parseList(excludelist)
-        thisrepo.set('excludes', excludelist)
+        thisrepo.set(keyword, thisconfig._getoption(section, keyword, \
+                     globconfig.getConfigOption(keyword)))
 
-        includelist = thisconfig._getoption(section, 'includepkgs', [])
-        includelist = variableReplace(globconfig.yumvar, includelist)
-        includelist = parseList(includelist)
-        thisrepo.set('includepkgs', includelist)
+    for keyword in ['gpgcheck', 'keepalive']:
+        thisrepo.set(keyword, thisconfig._getboolean(section, \
+                     keyword, globconfig.getConfigOption(keyword)))
+    
+    for keyword in ['timeout']:
+        thisrepo.set(keyword, thisconfig._getfloat(section, \
+                     keyword, globconfig.getConfigOption(keyword)))
+    
+    excludelist = thisconfig._getoption(section, 'exclude', [])
+    excludelist = variableReplace(globconfig.yumvar, excludelist)
+    excludelist = parseList(excludelist)
+    thisrepo.set('excludes', excludelist)
 
-        thisrepo.set('enablegroups', thisconfig._getboolean(section, 'enablegroups', 1))
-        
-        cachedir = os.path.join(globconfig.getConfigOption('cachedir'), section)
-        pkgdir = os.path.join(cachedir, 'packages')
-        hdrdir = os.path.join(cachedir, 'headers')
-        thisrepo.set('cachedir', cachedir)
-        thisrepo.set('pkgdir', pkgdir)
-        thisrepo.set('hdrdir', hdrdir)
-        thisrepo.setupGrab()
+    includelist = thisconfig._getoption(section, 'includepkgs', [])
+    includelist = variableReplace(globconfig.yumvar, includelist)
+    includelist = parseList(includelist)
+    thisrepo.set('includepkgs', includelist)
 
-    else:
-        print 'Error: Cannot find baseurl or name for repo: %s. Skipping' % (section)    
+    thisrepo.set('enablegroups', thisconfig._getboolean(section, 'enablegroups', 1))
+    
+    cachedir = os.path.join(globconfig.getConfigOption('cachedir'), section)
+    pkgdir = os.path.join(cachedir, 'packages')
+    hdrdir = os.path.join(cachedir, 'headers')
+    thisrepo.set('cachedir', cachedir)
+    thisrepo.set('pkgdir', pkgdir)
+    thisrepo.set('hdrdir', hdrdir)
+    thisrepo.setupGrab()
 
 
 def getMirrorList(mirrorlist):
