@@ -671,6 +671,8 @@ def create_final_ts(tsInfo, rpmdb):
     tserrors = tsfin.run(rpm.RPMTRANS_FLAG_TEST, ~rpm.RPMPROB_FILTER_DISKSPACE, callback.install_callback, '')
     
     if tserrors:
+        for tserror in tserrors:
+            log(3,'Error %s' % tserror)
         errorlog(0, 'You appear to have insufficient disk space to handle these packages')
         sys.exit(1)
     return tsfin
@@ -698,3 +700,4 @@ def descfsize(size):
     else:
         size = size / 1000000000.0
         return "%.2f GB" % size
+        
