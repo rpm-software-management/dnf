@@ -1,4 +1,4 @@
-#!/usr/bin/python -tt
+#!/usr/bin/python -tts
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation; either version 2 of the License, or
@@ -16,6 +16,7 @@
 
 
 import os
+import sys
 import os.path
 import rpm
 import re
@@ -31,6 +32,7 @@ import rpmUtils.updates
 import rpmUtils.transaction
 import rpmUtils.arch
 import groups
+import config
 from urlgrabber.grabber import URLGrabError
 import depsolve
 
@@ -46,6 +48,23 @@ class YumBase(depsolve.Depsolve):
     def __init__(self):
         depsolve.Depsolve.__init__(self)
         self.localdbimported = 0
+    
+    def log(self, value, msg):
+        """dummy log stub"""
+        print msg
+
+    def errorlog(self, value, msg):
+        """dummy errorlog stub"""
+        print >> sys.stderr, msg
+
+    def filelog(self, value, msg):
+        print msg
+    
+    def doConfigSetup(self, fn='/etc/yum.conf'):
+        """basic stub function for doing configuration setup"""
+        
+        self.conf = config.yumconf(configfile=fn)
+        self.repos = self.conf.repos
         
     def doTsSetup(self):
         """setup all the transaction set storage items we'll need
@@ -79,6 +98,29 @@ class YumBase(depsolve.Depsolve):
         if hasattr(self, 'read_ts'):
             del self.read_ts.ts
             del self.read_ts
+
+    def doRepoSetup(self, nosack=None):
+        """grabs the repomd.xml for each enabled repository and sets up the basics
+           of the repository - stub"""
+           
+        for repo in self.repos.listEnabled():
+            if repo.repoXML is not None:
+                continue
+            try:
+                repo.check()
+                repo.cache = self.conf.getConfigOption('cache')
+                repo.dirSetup()
+            except Errors.RepoError, e:
+                self.errorlog(0, '%s' % e)
+                raise
+                
+            try:
+                repo.getRepoXML()
+            except Errors.RepoError, e:
+                self.errorlog(0, 'Cannot open/read repomd.xml file for repository: %s' % repo)
+                self.errorlog(0, str(e))
+                raise
+
 
     def doSackSetup(self, archlist=None):
         """populates the package sacks for information from our repositories,

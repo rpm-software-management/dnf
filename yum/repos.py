@@ -87,7 +87,11 @@ class RepoStorage:
         self.pkgSack = YumPackageSack(YumAvailablePackage)
         self.callback = None # progress callback used for populateSack() for importing the xml files
         self.cache = 0
-        
+    
+    def __str__(self):
+        return self.repos.keys()
+    
+
     def add(self, repoid):
         if self.repos.has_key(repoid):
             raise Errors.RepoError, 'Repository %s already added, not adding again' % (repoid)
