@@ -260,7 +260,24 @@ class YumBase(depsolve.Depsolve):
             return
         self._unlock(lockfile)
         
+    def _lock(self, filename, contents='', mode=0777):
+        try:
+            fd = os.open(filename, os.O_EXCL|os.O_CREAT|os.O_WRONLY, mode)
+        except OSError, msg:
+            if not msg.errno == errno.EEXIST: raise msg
+            return 0
+        else:
+            os.write(fd, contents)
+            os.close(fd)
+            return 1
     
+    def _unlock(self, filename):
+        try:
+            os.unlink(filename)
+        except OSError, msg:
+            pass
+
+
     def verifyPkg(self, file, po, raiseError):
         """verifies the package is what we expect it to be
            raiseError  = defaults to 0 - if 1 then will raise
@@ -433,23 +450,6 @@ class YumBase(depsolve.Depsolve):
         
     
         
-    def _lock(self, filename, contents='', mode=0777):
-        try:
-            fd = os.open(filename, os.O_EXCL|os.O_CREAT|os.O_WRONLY, mode)
-        except OSError, msg:
-            if not msg.errno == errno.EEXIST: raise msg
-            return 0
-        else:
-            os.write(fd, contents)
-            os.close(fd)
-            return 1
-    
-    def _unlock(self, filename):
-        try:
-            os.unlink(filename)
-        except OSError, msg:
-            pass
-
     def cleanHeaders(self):
         filelist = []
         ext = 'hdr'
@@ -753,7 +753,7 @@ class YumBase(depsolve.Depsolve):
             
             
         return matches
-    
+
     def doGroupLists(self, uservisible=0):
         """returns two lists of groups, installed groups and available groups
            optional 'uservisible' bool to tell it whether or not to return

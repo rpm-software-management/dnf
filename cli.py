@@ -270,6 +270,7 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         
         if self.basecmd not in ['update', 'install','info', 'list', 'erase',\
                                 'grouplist', 'groupupdate', 'groupinstall',\
+                                'groupremove', 'groupinfo', 'makecache',\
                                 'clean', 'remove', 'provides', 'check-update',\
                                 'search', 'generate-rss', 'upgrade', 'whatprovides']:
             self.usage()
@@ -278,8 +279,8 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         if self.conf.getConfigOption('uid') != 0:
             if self.basecmd in ['install', 'update', 'clean', 'upgrade','erase', 
                                 'groupupdate', 'groupinstall', 'remove',
-                                'groupremove', 'importkey']:
-                self.errorlog(0, _('You need to be root to perform these commands'))
+                                'groupremove', 'importkey', 'makecache']:
+                self.errorlog(0, _('You need to be root to perform this command.'))
                 sys.exit(1)
         
         if self.basecmd in ['install', 'erase', 'remove']:
@@ -292,7 +293,7 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
                 self.errorlog(0, _('Error: Need an item to match'))
                 self.usage()
             
-        elif self.basecmd in ['groupupdate', 'groupinstall', 'groupremove']:
+        elif self.basecmd in ['groupupdate', 'groupinstall', 'groupremove', 'groupinfo']:
             if len(self.extcmds) == 0:
                 self.errorlog(0, _('Error: Need a group or list of groups'))
                 self.usage()
@@ -306,7 +307,7 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
                     self.usage()
     
         elif self.basecmd in ['list', 'check-update', 'info', 'update', 'upgrade',
-                              'generate-rss', 'grouplist']:
+                              'generate-rss', 'grouplist', 'makecache']:
             pass
     
         else:
@@ -440,7 +441,7 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
             
         
         elif self.basecmd in ['groupupdate', 'groupinstall', 'groupremove', 
-                              'grouplist']:
+                              'grouplist', 'groupinfo']:
 
             self.log(2, "Setting up Group Process")
 
@@ -472,7 +473,11 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
                     return self.removeGroups()
                 except yum.Errors.YumBaseError, e:
                     return 1, [str(e)]
-            
+            elif self.basecmd == 'groupinfo':
+                try:
+                    return self.returnGroupInfo()
+                except yum.Errors.YumBaseError, e:
+                    return 1, [str(e)]
             
         elif self.basecmd in ['search']:
             self.log(2, "Searching Packages: ")
@@ -487,7 +492,18 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
                 return self.provides()
             except yum.Errors.YumBaseError, e:
                 return 1, [str(e)]
-
+        
+        elif self.basecmd in ['makecache']:
+            self.log(2, "Making cache files for all metadata files.")
+            self.log(2, "This may take a while depending on the speed of this computer")
+            self.log(3, '%s' % self.pickleRecipe())
+            try:
+                self.doRepoSetup()
+                self.repos.populateSack(with='all')
+            except yum.Errors.YumBaseError, e:
+                return 1, [str(e)]
+            return 0, ['Metadata Cache Created']
+            
         else:
             return 1, ['command not implemented/not found']
 

@@ -135,7 +135,7 @@ class RepoStorage:
     def listGroupsEnabled(self):
         """return a list of repo objects that have groups enabled"""
         returnlist = []
-        for repo in self.repos.values():
+        for repo in self.listEnabled():
             if repo.enablegroups:
                 returnlist.append(repo)
 
@@ -218,8 +218,8 @@ class RepoStorage:
                 else:
                     # how odd, just move along
                     continue
-                # get rid of all this stuff we don't need now
-                del repo.cacheHandler
+            # get rid of all this stuff we don't need now
+            del repo.cacheHandler
                 
 
                 
