@@ -179,6 +179,15 @@ class YumInstalledPackage:
         self.repoid = 'installed'
         self.summary = self.tagByName('summary')
         self.description = self.tagByName('description')
+    
+    def __str__(self):
+        if self.epoch == '0':
+            val = '%s - %s-%s.%s' % (self.name, self.version, self.release, 
+                                        self.arch)
+        else:
+            val = '%s - %s:%s-%s.%s' % (self.name, self.epoch, self.version,
+                                           self.release, self.arch)
+        return val
         
     def tagByName(self, tag):
         data = self.hdr[tag]

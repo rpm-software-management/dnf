@@ -1,3 +1,10 @@
+2004-09-02 11:00  skvidal
+
+	* ChangeLog, cli.py, yum.spec: 
+	Couple more doc strings updated changelog brand this as 2.1.2 made
+	isatty() work so outputting to a file doesn't show a bunch of
+	garbage
+
 2004-09-02 10:36  skvidal
 
 	* cli.py, yum/__init__.py, yum/misc.py: 

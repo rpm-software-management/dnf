@@ -63,6 +63,7 @@ class YumBase(depsolve.Depsolve):
         self.repos.populateSack()
         self.pkgSack = self.repos.pkgSack
         self.excludePackages()
+        self.excludeNonCompatArchs()
         for repo in self.repos.listEnabled():
             self.excludePackages(repo)
 
@@ -158,6 +159,20 @@ class YumBase(depsolve.Depsolve):
         
         self.log(2, 'Finished')
 
+    def excludeNonCompatArchs(self):
+        """runs through the whole packageSack and excludes any arch not compatible
+           with the system"""
+        
+        self.log(2, 'Excluding Incompatible Archs')
+        archlist = ['src'] # source rpms are allowed
+        archlist.extend(rpmUtils.arch.getArchList())
+        
+        for po in self.pkgSack.returnPackages():
+            if po.arch not in archlist:
+                self.log(3, 'Arch Excluding %s' % po)
+                self.pkgSack.delPackage(po)
+        self.log(2, 'Finished')
+        
     def includePackages(self, repoid):
         """removes packages from packageSacks based on list of packages, to include.
            takes repoid as a mandatory argument."""

@@ -242,8 +242,10 @@ class YumBaseCli(yum.YumBase):
         """reads self.cmds and parses them out to make sure that the requested 
         base command + argument makes any sense at all""" 
 
+        self.log(3, 'Yum Version: %s' % self.conf.getConfigOption('yumversion'))
         self.log(3, 'COMMAND: %s' % self.cmdstring)
         self.log(3, 'Installroot: %s' % self.conf.getConfigOption('installroot'))
+        
         
         if len(self.conf.getConfigOption('commands')) == 0 and len(self.cmds) < 1:
             self.cmds = self.conf.getConfigOption('commands')
@@ -620,7 +622,7 @@ class YumBaseCli(yum.YumBase):
         self.doRepoSetup()
         avail = self.pkgSack.simplePkgList()
         self.doUpdateSetup()
-        updates = self.up.getUpdatesList()
+        updates = self.up.getUpdatesTuples()
         if self.conf.getConfigOption('obsoletes'):
             obsoletes = self.up.getObsoletesTuples(newest=1)
         else:
@@ -634,14 +636,20 @@ class YumBaseCli(yum.YumBase):
                 reason = '%s.%s %s:%s-%s' % obsoleting
                 self.tsInfo.add(installed, 'o', reason)
                 
-            for pkgtup in updates:
-                self.tsInfo.add(pkgtup, 'u', 'user')
+            for (new, old) in updates:
+                (o_n, o_a, o_e, o_v, o_r) = old
+                oldstate = self.tsInfo.getMode(name=o_n, arch=o_a, epoch=o_e, ver=o_v, rel=o_r)
+                if oldstate != 'o':
+                    self.tsInfo.add(new, 'u', 'user')
+                else:
+                    self.log(5, 'Not Updating Package that is already obsoleted: %s.%s %s:%s-%s' % old)
 
         else:
             # we've got a userlist, match it against updates tuples and populate
             # the tsInfo with the matches
             updatesPo = []
-            for (n,a,e,v,r) in updates:
+            for (new, old) in updates:
+                (n,a,e,v,r) = new
                 updatesPo.extend(self.pkgSack.searchNevra(name=n, arch=a, epoch=e, 
                                  ver=v, rel=r))
                                  

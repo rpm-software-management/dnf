@@ -24,6 +24,7 @@ from misc import unique
 import rpm
 
 from repomd.packageSack import ListPackageSack
+from repomd.mdErrors import PackageSackError
 from Errors import DepError
 import packages
 
@@ -36,6 +37,34 @@ class Depsolve:
         
         self.ts = rpmUtils.transaction.TransactionWrapper(self.conf.getConfigOption('installroot'))
 
+    def whatProvides(self, name, flags, version):
+        """searches the packageSacks for what provides the arguments
+           returns a ListPackageSack of providing packages, possibly empty"""
+
+        self.log(4, 'Searching pkgSack for dep: %s' % name)
+        # we need to check the name - if it doesn't match:
+        # /etc/* bin/* or /usr/lib/sendmail then we should fetch the 
+        # filelists.xml for all repos to make the searchProvides more complete.
+        pkgs = self.pkgSack.searchProvides(name)
+        if flags == 0:
+            flags = None
+        
+        (r_e, r_v, r_r) = rpmUtils.miscutils.stringToVersion(version)
+        defSack = ListPackageSack() # holder for items definitely providing this dep
+        
+        for po in pkgs:
+            self.log(5, 'Potential match for %s from %s' % (name, po))
+            if name[0] == '/' and version is None:
+                # file dep add all matches to the defSack
+                defSack.addPackage(po)
+                continue
+
+            if po.checkPrco('provides', (name, flags, (r_e, r_v, r_r))):
+                defSack.addPackage(po)
+                self.log(3, 'Matched %s to require for %s' % (po, name))
+        
+        return defSack
+        
     def getPackageObject(self, pkgtup):
         """retrieves the packageObject from a pkginfo tuple - if we need
            to pick and choose which one is best we better call out
@@ -138,7 +167,8 @@ class Depsolve:
                               (name, rpmUtils.miscutils.formatRequire(needname, 
                                                             needversion, flags))
                         errors.append(msg)
-                        break
+                    CheckDeps = 0
+                    break
             else:
                 unresolveableloop = 0
 
@@ -151,17 +181,20 @@ class Depsolve:
             
             for dep in deps:
                 ((name, version, release), (needname, needversion), flags, suggest, sense) = dep
-                if sense == rpm.RPMDEP_SENSE_REQUIRES:
+                
+                if sense == rpm.RPMDEP_SENSE_REQUIRES: # requires
                     (checkdep, missing, conflict, errormsgs) = self._processReq(dep)
-                elif sense == rpm.RPMDEP_SENSE_CONFLICTS:
+                    
+                elif sense == rpm.RPMDEP_SENSE_CONFLICTS: # conflicts - this is gonna be short :)
                     (checkdep, missing, conflict, errormsgs) = self._processConflict(dep)
-                else:
+                    
+                else: # wtf?
                     self.errorlog(0, 'Unknown Sense: %d' (sense))
                     continue
 
-                missingdep+=missing
-                conflicts+=conflict
-                CheckDeps+=checkdep
+                missingdep += missing
+                conflicts += conflict
+                CheckDeps += checkdep
                 for error in errormsgs:
                     if error not in errors:
                         errors.append(error)
@@ -194,9 +227,11 @@ class Depsolve:
         errormsgs = []
         
         ((name, version, release), (needname, needversion), flags, suggest, sense) = dep
+        
         niceformatneed = rpmUtils.miscutils.formatRequire(needname, needversion, flags)
         self.log(4, '%s requires: %s' % (name, niceformatneed))
         
+        # is requiring tuple (name, version, release) from an installed package?
         pkgs = []
         dumbmatchpkgs = self.rpmdb.returnTupleByKeyword(name=name, ver=version, rel=release)
         for pkgtuple in dumbmatchpkgs:
@@ -204,142 +239,224 @@ class Depsolve:
             for hdr in hdrs:
                 po = packages.YumInstalledPackage(hdr)
                 if niceformatneed in po.requiresList():
-                    pkgs.append(po.pkgtup())
+                    pkgs.append(po)
 
-        if len(pkgs) > 0:
-            # the requiring package is installed, that means the item needed is in
-            # a package that is either being updated or erased/obsoleted
-            # check what state the needed item/package is in:
-            # if it's being upgraded then mark the requiring package to be upgraded too
-            # if it's being erased then mark the requiring package to be erased
-            self.log(5, 'Dep is from: installed pkg %s-%s-%s' % (name, version, release))
-            rpmdbNames = self.rpmdb.getNamePkgList()
-            needmode = None
-            
-            if needname in rpmdbNames:
-                needmode = self.tsInfo.getMode(name=needname)
-            else:
-                self.log(5, 'Req is not a package name. Looking up: %s' % niceformatneed) 
-                providers = self.rpmdb.whatProvides(needname, flags, needversion)
-                for insttuple in providers:
-                    (i_n, i_a, i_e, i_v, i_r) = insttuple
-                    thismode = self.tsInfo.getMode(name=i_n, arch=i_a, 
-                                    epoch=i_e, ver=i_v, rel=i_r)
-                    if thismode is not None:
-                        needmode = thismode
-                        break
-            
-            # if, after the above we still don't know the state of the package
-            # providing the needname, then it's most likely a pkg that is
-            # installed but is being updated or obsoleted. Therefore, we can
-            # do two things, first, try to update the requiring package
-            # if that isn't possible we exit w/unresolveable
-            
-            if needmode is None:
-                CheckDeps = 0
-                missingdep = 1
-                msg = 'missing dep: %s for pkg %s (installed)' % (needname, name)
+        if len(pkgs) < 1: # requiring tuple is not in the rpmdb
+            tsState = self.tsInfo.getMode(name=name, ver=version, rel=release)
+            if tsState is None:
+                msg = 'Requiring package %s-%s-%s not in transaction set \
+                                  nor in rpmdb' % (name, version, release)
+                self.log(4, msg)
                 errormsgs.append(msg)
-                
-            if needmode in ['e']:
-                for pkg in pkgs:
-                    (n,a,e,v,r) = pkg
-                    self.log(5, '%s package requiring %s marked as erase' % (n, needname))
-                    self.tsInfo.add(pkg, 'e', 'dep')
-                    CheckDeps = 1
+                missingdep = 1
+                CheckDeps = 0
 
-            if needmode in ['i', 'u']:
-                pkg = pkgs[0] #take the first one
-                po = None
-                self.log(5, 'needed packaged marked as update')
-                (n,a,e,v,r) = pkg
+            else:
+                self.log(4, 'Requiring package is from transaction set')
+                self.log(4, 'Resolving for requiring package: %s-%s-%s in state %s' %
+                            (name, version, release, tsState))
+                self.log(4, 'Resolving for requirement: %s' % 
+                    rpmUtils.miscutils.formatRequire(needname, needversion, flags))
+                requirementTuple = (needname, flags, needversion)
+                requiringPkg = (name, version, release, tsState) # should we figure out which is pkg it is from the tsInfo?
+                CheckDeps, missingdep = self._requiringFromTransaction(requiringPkg, requirementTuple, errormsgs)
+            
+        if len(pkgs) > 0:  # requring tuple is in the rpmdb
+            if len(pkgs) > 1:
+                self.log(5, 'Multiple Packages match. %s-%s-%s' % (name, version, release))
+                for po in pkgs:
+                    self.log(5, '   %s' % po)
+            if len(pkgs) == 1:
+                po = pkgs[0]
+                self.log(5, 'Requiring package is installed: %s' % po)
+
+            requiringPkg = pkgs[0] # take the first one, deal with the others (if there is one)
+                                   # on another dep.
+            
+            self.log(4, 'Resolving for installed requiring package: %s' % requiringPkg)
+            self.log(4, 'Resolving for requirement: %s' % 
+                rpmUtils.miscutils.formatRequire(needname, needversion, flags))
+            
+            requirementTuple = (needname, flags, needversion)
+            
+            CheckDeps, missingdep = self._requiringFromInstalled(requiringPkg.pkgtup(), requirementTuple, errormsgs)
+
+
+        return (CheckDeps, missingdep, conflicts, errormsgs)
+
+
+    def _requiringFromInstalled(self, requiringPkg, requirement, errorlist):
+        """processes the dependency resolution for a dep where the requiring 
+           package is installed"""
+        (name, arch, epoch, ver, rel) = requiringPkg
+        (needname, needflags, needversion) = requirement
+        niceformatneed = rpmUtils.miscutils.formatRequire(needname, needversion, needflags)
+        checkdeps = 0
+        missingdep = 0
+        reqpkg_print = '%s.%s %s:%s-%s' % requiringPkg
+        
+        # we must first find out why the requirement is no longer there
+        # we must find out what provides/provided it from the rpmdb (if anything)
+        # then check to see if that thing is being acted upon by the transaction set
+        # if it is then we need to find out what is being done to it and act accordingly
+        rpmdbNames = self.rpmdb.getNamePkgList()
+        needmode = None # mode in the transaction of the needed pkg (if any)
+        if needname in rpmdbNames:
+            needmode = self.tsInfo.getMode(name=needname) 
+        else:
+            self.log(5, 'Needed Require is not a package name. Looking up: %s' % niceformatneed)
+            providers = self.rpmdb.whatProvides(needname, needflags, needversion)
+            for insttuple in providers:
+                inst_str = '%s.%s %s:%s-%s' % insttuple
+                (i_n, i_a, i_e, i_v, i_r) = insttuple                
+                self.log(5, '-->Potential Provider: %s' % inst_str)
+                thismode = self.tsInfo.getMode(name=i_n, arch=i_a, 
+                                epoch=i_e, ver=i_v, rel=i_r)
+                if thismode is None and self.conf.getConfigOption('exactarch'):
+                    # check for mode by the same name+arch
+                    thismode = self.tsInfo.getMode(name=i_n, arch=i_a)
+                    
+                if thismode is None and not self.conf.getConfigOption('exactarch'):
+                    # check for mode by just the name
+                    thismode = self.tsInfo.getMode(name=i_n)
                 
+                if thismode is not None:
+                    needmode = thismode
+                    self.log(5, '-->Mode is %s for provider of %s: %s' % 
+                                (needmode, niceformatneed, inst_str))
+                    break
+                    
+        self.log(5, 'Mode for pkg providing %s: %s' % (niceformatneed, needmode))
+        
+        if needmode in ['e']:
+                self.log(5, 'TSINFO: %s package requiring %s marked as erase' %
+                                (reqpkg_print, needname))
+                self.tsInfo.add(requiringPkg, 'e', 'dep')
+                checkdeps = 1
+        
+        if needmode in ['i', 'u']:
+            uplist = self.up.getUpdatesList(name=name)
+            
+            po = None
+            # if there's an update for the reqpkg, then update it
+            if len(uplist) > 0:
                 if not self.conf.getConfigOption('exactarch'):
-                    pkgs = self.pkgSack.returnNewestByName(n)
+                    pkgs = self.pkgSack.returnNewestByName(name)
                     archs = []
                     for pkg in pkgs:
-                        (n,e,v,r,a) = pkg.returnNevraTuple()
+                        (n,a,e,v,r) = pkg.pkgtup()
                         archs.append(a)
                     a = rpmUtils.arch.getBestArchFromList(archs)
                     po = self.pkgSack.returnNewestByNameArch((n,a))
                 else:
-                    po = self.pkgSack.returnNewestByNameArch((n,a))
+                    po = self.pkgSack.returnNewestByNameArch((name,arch))
+                if po.pkgtup() not in uplist:
+                    po = None
 
-                if po:
-                    (n,e,v,r,a) = po.returnNevraTuple()
-                    self.tsInfo.add((n,a,e,v,r), 'u', 'dep')
-                    CheckDeps = 1
-
-        else:
-            # we need to find the package from the repositories
-            self.log(4, 'Searching pkgSack for dep: %s' % needname)
-            pkgs = self.pkgSack.searchProvides(needname)
-            if flags == 0:
-                flags = None
-            (r_e, r_v, r_r) = rpmUtils.miscutils.stringToVersion(needversion)
-            defSack = ListPackageSack() # list of items definitely providing this requirment
-            # we need to check the needname - if it doesn't match:
-            # /etc/* bin/* or /usr/lib/sendmail then we should fetch the filelists.xml for all repos
-            # to make the searchProvides more complete.
-            for po in pkgs:
-                self.log(5, 'Potential match %s to %s' % (needname, po))
-                if needname[0] == '/':
-                    # file dep add all matches to the defSack
-                    defSack.addPackage(po)
-                    continue
-
-                if po.checkPrco('provides', (needname, flags, (r_e, r_v, r_r))):
-                    defSack.addPackage(po)
-                    self.log(3, 'Matched %s to require for %s' % (po, name))
-
-            
-            # iterate the defSack briefly, if we find the package is already in the 
-            # tsInfo then just skip this run
-            for pkg in defSack.returnPackages():
-                (n,e,v,r,a) = pkg.returnNevraTuple()
-                pkgmode = self.tsInfo.getMode(name=n, arch=a, epoch=e, ver=v, rel=r)
-                if pkgmode in ['i', 'u']:
-                    self.log(5, '%s already in ts, skipping this one' % (n))
-                    CheckDeps = 1
-                    return (CheckDeps, missingdep, conflicts, errormsgs)
-                    
-            #self.bestPackageFromList(defSack, reqtup) # useful function to have
-            newest = defSack.returnNewestByNameArch()
-            if len(newest) > 0:
-                if len(newest) > 1:
-                    best = newest[0]
-                    for po in newest[1:]:
-                        if len(po.name) < len(best.name):
-                            best = po
-                        elif len(po.name) == len(best.name):
-                            # compare arch
-                            arch = rpmUtils.arch.getBestArchFromList([po.arch, best.arch])
-                            if arch == po.arch:
-                                best = po
-                elif len(newest) == 1:
-                    best = newest[0]
-
-                (n, e, v, r, a) = best.returnNevraTuple() # this is stupid the po should be emitting matching tuple types                    
-                self.tsInfo.add((n, a, e, v, r), 'i', 'dep')
-                self.log(3, 'Best of providing: %s to require for %s' % (best, name))
-                CheckDeps=1
-            else:
-                CheckDeps = 0
-                missingdep = 1
-                msg = 'missing dep: %s for pkg %s' % (needname, name)
-                errormsgs.append(msg)
-
+            if po:
+                self.log(5, 'TSINFO: Updating %s to resolve dep.' % po)
+                self.tsInfo.add(po.pkgtup(), 'u', 'dep')
+                checkdeps = 1
                 
-        # find out if the req package is in the tsInfo
-        # if it is, check which mode
-        # if i or u then we're installing or updating something - find it in the repos
-        # if e or ed then we're removing
-        # if it is not in the tsInfo, check what provides what it is requiring
-        # if the package that provides what we're requiring is in the tsInfo or the rpmdb
-        # if it is in both and the rpmdb one is a different version, try to change versions
-        # on the requiring package
-        return (CheckDeps, missingdep, conflicts, errormsgs)
+            else: # if there's no update then pass this over to requringFromTransaction()
+                self.log(5, 'Cannot find an update path for dep for: %s' % niceformatneed)
+                
+                reqpkg = (name, ver, rel, None)
+                return self._requiringFromTransaction(reqpkg, requirement, errorlist)
+            
+
+        if needmode is None:
+            reqpkg = (name, ver, rel, None)
+            if hasattr(self, 'pkgSack'):
+                return self._requiringFromTransaction(reqpkg, requirement, errorlist)
+            else:
+                self.log(5, 'Unresolveable requirement %s for %s' % (niceformatneed, reqpkg_print))
+                checkdeps = 0
+                missingdep = 1
+
+
+        return checkdeps, missingdep
         
+
+    def _requiringFromTransaction(self, requiringPkg, requirement, errorlist):
+        """processes the dependency resolution for a dep where requiring 
+           package is in the transaction set"""
+        
+        (name, version, release, tsState) = requiringPkg
+        (needname, needflags, needversion) = requirement
+        checkdeps = 0
+        missingdep = 0
+        
+        #~ - if it's not available from some repository:
+        #~     - mark as unresolveable.
+        #
+        #~ - if it's available from some repo:
+        #~    - if there is an another version of the package currently installed then
+        #        - if the other version is marked in the transaction set
+        #           - if it's marked as erase
+        #              - mark the dep as unresolveable
+         
+        #           - if it's marked as update or install
+        #              - check if the version for this requirement:
+        #                  - if it is higher 
+        #                       - mark this version to be updated/installed
+        #                       - remove the other version from the transaction set
+        #                       - tell the transaction set to be rebuilt
+        #                  - if it is lower
+        #                       - mark the dep as unresolveable
+        #                   - if they are the same
+        #                       - be confused but continue
+
+        provSack = self.whatProvides(needname, needflags, needversion)
+        
+        if len(provSack) == 0: # unresolveable
+            missingdep = 1
+            msg = 'missing dep: %s for pkg %s' % (needname, name)
+            errorlist.append(msg)
+            return checkdeps, missingdep
+        
+        # iterate the provSack briefly, if we find the package is already in the 
+        # tsInfo then just skip this run
+        for pkg in provSack.returnPackages():
+            (n,a,e,v,r) = pkg.pkgtup()
+            pkgmode = self.tsInfo.getMode(name=n, arch=a, epoch=e, ver=v, rel=r)
+            if pkgmode in ['i', 'u']:
+                self.log(5, '%s already in ts, skipping this one' % (n))
+                checkdeps = 1
+                return checkdeps, missingdep
+
+        # find the best one 
+        newest = provSack.returnNewestByNameArch() 
+        if len(newest) > 1: # there's no way this can be zero
+            best = newest[0]
+            for po in newest[1:]:
+                if len(po.name) < len(best.name):
+                    best = po
+                elif len(po.name) == len(best.name):
+                    # compare arch
+                    arch = rpmUtils.arch.getBestArchFromList([po.arch, best.arch])
+                    if arch == po.arch:
+                        best = po
+        elif len(newest) == 1:
+            best = newest[0]
+        
+        if best.pkgtup() in self.rpmdb.getPkgList(): # is it already installed?
+            missingdep = 1
+            checkdeps = 0
+            msg = 'missing dep: %s for pkg %s' % (needname, name)
+            errorlist.append(msg)
+            return checkdeps, missingdep
+        if (best.name, best.arch) in self.rpmdb.getNameArchPkgList():
+            self.tsInfo.add(best.pkgtup(), 'u', 'dep')
+            self.log(3, 'TSINFO: Marking %s as update for %s' % (best, name))
+        else:
+            self.tsInfo.add(best.pkgtup(), 'i', 'dep')
+            self.log(3, 'TSINFO: Marking %s as install for %s' % (best, name))
+        checkdeps = 1
+        
+        return checkdeps, missingdep
+
+
     def _processConflict(self, dep):
         """processes a Conflict dep from the resolveDeps() method"""
                 
@@ -347,11 +464,26 @@ class Depsolve:
         missingdep = 0
         conflicts = 0
         errormsgs = []
-
-        msg = '%s conflicts: %s' % (name, rpmUtils.miscutils.formatRequire(needname, needversion, flags))
-        self.log(4, '%s', msg)
-        conflicts = 1
-        errormsgs.append(msg)
         
-            
+        ((name, version, release), (needname, needversion), flags, suggest, sense) = dep
+        
+        conf = rpmUtils.miscutils.formatRequire(needname, needversion, flags)
+        CheckDeps, conflicts = self._unresolveableConflict(conf, name, errormsgs)
+        
+        self.log(4, '%s conflicts: %s' % (name, conf))
+        
         return (CheckDeps, missingdep, conflicts, errormsgs)
+
+    def _unresolveableReq(self, req, name, namestate, errors):
+        CheckDeps = 0
+        missingdep = 1
+        msg = 'missing dep: %s for pkg %s (%s)' % (req, name, namestate)
+        errors.append(msg)
+        return CheckDeps, missingdep
+
+    def _unresolveableConflict(self, conf, name, errors):
+        CheckDeps = 0
+        conflicts = 1
+        msg = '%s conflicts:  %s' % (name, conf)
+        errors.append(msg)
+        return CheckDeps, conflicts

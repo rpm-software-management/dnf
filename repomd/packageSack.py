@@ -205,7 +205,10 @@ class PackageSack:
                     highdict[(n, a)] = pkg
         
         if naTup:
-            return highdict[(naTup)]
+            if highdict.has_key(naTup):
+                return highdict[naTup]
+            else:
+                raise PackageSackError, 'No Package Matching %s.%s' % naTup
         
         return highdict.values()
         
@@ -229,7 +232,11 @@ class PackageSack:
                     highdict[n].append(pkg)
                 
         if name:
-            return highdict[name]
+            if highdict.has_key(name):
+                return highdict[name]
+            else:
+                raise PackageSackError, 'No Package Matching  %s' % name
+                
         return highdict.values()
            
     def simplePkgList(self, repoid=None):
