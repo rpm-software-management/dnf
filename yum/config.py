@@ -243,9 +243,16 @@ def doRepoSection(globconfig, thisconfig, section):
     urls = variableReplace(globconfig.yumvar, urls)
     urls = parseList(urls)
     mirrorlist = thisconfig._getoption(section, 'mirrorlist', None)
-    mirrorlist = variableReplace(globconfig.yumvar, mirrorlist) # FIXME it'd be neat if this did something
-    
-    if name is not None and (len(urls) > 0 or mirrorlist is not None):
+    mirrorlist = variableReplace(globconfig.yumvar, mirrorlist) 
+    if mirrorlist is not None:
+        # go get the mirrorlist, read through it and pump the results into
+        # the urls list - of course do the replace function on them
+        mirrorurls = getMirrorList(mirrorlist)
+        for url in mirrorurls:
+            url = variableReplace(globconfig.yumvar, url)
+            urls.append(url)
+            
+    if name is not None and len(urls) > 0:
         thisrepo = globconfig.repos.add(section)
         name = variableReplace(globconfig.yumvar, name)
         thisrepo.set('name', name)
@@ -301,6 +308,34 @@ def doRepoSection(globconfig, thisconfig, section):
         print 'Error: Cannot find baseurl or name for repo: %s. Skipping' % (section)    
 
 
+def getMirrorList(mirrorlist):
+    """retrieve a mirrorlist file from a url"""
+    returnlist = []
+    if hasattr(urlgrabber.grabber, 'urlopen'):
+        urlresolver = urlgrabber.grabber
+    else: 
+        urlresolver = urllib
+    
+    scheme = urlparse.urlparse(mirrorlist)[0]
+    if scheme == '':
+        url = 'file://' + mirrorlist
+    else:
+        url = mirrorlist
+
+    try:
+        fo = urlresolver.urlopen(url)
+    except urlgrabber.grabber.URLGrabError, e:
+        fo = None
+
+    if fo is not None: 
+        content = fo.readlines()
+        for line in content:
+            mirror = re.sub('\n$', '', line) # no more trailing \n's
+            returnlist.append(mirror)
+    
+    return returnlist
+
+    
 
 def parseList(value):
     """converts strings from a configparser option into a workable list
@@ -333,14 +368,14 @@ def variableReplace(yumvar, thing):
     if type(thing) is types.ListType:
         shortlist = thing
     
-    basearch_reg = re.compile('\$basearch')
-    arch_reg = re.compile('\$arch')
-    releasever_reg = re.compile('\$releasever')
+    basearch_reg = re.compile('\$basearch', re.I)
+    arch_reg = re.compile('\$arch', re.I)
+    releasever_reg = re.compile('\$releasever', re.I)
     yumvar_reg = {}
 
     for num in range(0,10):
         env = '\$YUM%s' % num
-        yumvar_reg[num] = re.compile(env)
+        yumvar_reg[num] = re.compile(env, re.I)
 
     returnlist = []        
     for string in shortlist:
@@ -385,8 +420,10 @@ class confpp:
         
         # establish whether to use urlgrabber or urllib
         # we want to use urlgrabber if it supports urlopen
-        if hasattr(urlgrabber.grabber,'urlopen'):   self._urlresolver = urlgrabber.grabber
-        else: self._urlresolver = urllib
+        if hasattr(urlgrabber.grabber, 'urlopen'):
+            self._urlresolver = urlgrabber.grabber
+        else: 
+            self._urlresolver = urllib
         
         # first make configfile a url even if it points to 
         # a local file
