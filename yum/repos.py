@@ -340,7 +340,15 @@ class Repository:
             (f_func, f_args, f_kwargs) = self.failure_obj
             f_kwargs['relative'] = relative
             self.failure_obj = (f_func, f_args, f_kwargs)
-            
+        
+        if self.cache == 1:
+            if os.path.exists(local):
+                return local
+            else: # ain't there - raise
+                raise Errors.RepoError, \
+                    "Caching enabled but no local cache of %s from %s" % (local,
+                           self)
+        
         if url is not None:
             ug = URLGrabber(keepalive = self.keepalive, 
                             bandwidth = self.bandwidth,

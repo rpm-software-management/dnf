@@ -81,7 +81,7 @@ class RPMInstallCallback:
             pass
         elif what == rpm.RPMCALLBACK_UNINST_STOP:
             self.total_removed += 1
-            if output:
+            if self.output:
                 if h not in self.installed_pkg_names:
                     print _('Erasing: %s %d/%d') % (h, self.total_removed + 
                       self.total_installed, self.total_actions)
