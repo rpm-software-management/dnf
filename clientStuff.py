@@ -237,13 +237,15 @@ def urlgrab(url, filename=None):
 	try:
 		(fh, hdr) = urllib.urlretrieve(url, filename)
 	except IOError, e:
-		print "IOError: %s\nURL: %s" % (e,url)
+		print "IOError: %s"  % (e)
+		print "URL: %s" % (url)
 		sys.exit(1)
 	#this is a cute little hack - if there isn't a "Content-Length" header then its either a 404 or a directory list
 	#either way its not what we want so I put this check in here as a little bit of sanity checking
 	if hdr != None:
 		if not hdr.has_key('Content-Length'):
 			print "ERROR: Url Return no Content-Length  - something is wrong"
+			print "URL: %s" % (url)
 			sys.exit(1)
 	return fh
 
