@@ -179,14 +179,14 @@ on the command line (eg. "update foo bar baz quux").  None of the short options
 ." .IP \fBsyslog_facility \fR
 ." XXX not implemented yet
 
-." .IP \fBproxy \fR
-." XXX not implemented yet
+.IP \fBproxy \fR
+url to the proxy server that yum should use.
 
-." .IP \fBproxy_username \fR
-." XXX not implemented yet
+.IP \fBproxy_username \fR
+username to use for proxy
 
-." .IP \fBproxy_password \fR
-." XXX not implemented yet
+.IP \fBproxy_password \fR
+password for this proxy
 
 .SH "[repository] OPTIONS"
 .LP 
@@ -285,10 +285,18 @@ repository.
 Overrides the \fBbandwidth\fR option from the [main] section for this
 repository.
 
-." XXX 
-." proxy, proxy_username and proxy_password are all available here but not
-." implemented yet.
+.IP \fBproxy \fR
+url to the proxy server for this repository. Set to '_none_' to disable the 
+global proxy setting for this repository. If this is unset it 
+inherits it from the global setting
 
+.IP \fBproxy_username \fR
+username to use for proxy.
+If this is unset it inherits it from the global setting
+
+.IP \fBproxy_password \fR
+password for this proxy.
+If this is unset it inherits it from the global setting
 
 .SH "URL INCLUDE SYNTAX"
 .LP 
