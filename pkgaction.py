@@ -14,7 +14,7 @@
 # Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 # Copyright 2002 Duke University 
 
-import os, sys, rpm, clientStuff
+import os, sys, rpm, clientStuff,
 
 def installpkgs(tsnevral,nulist,userlist,hinevral,rpmnevral):
 	#get the list of pkgs you want to install from userlist
@@ -197,3 +197,44 @@ def kernelupdate(tsnevral):
 			#to put the kernels in the right order
 			up2datetheft.install_grub(kernel_list)
 
+def checkSig(package,checktype):
+	import rpm, os, sys
+	if checktype=='gpg':
+		check=rpm.CHECKSIG_GPG | rpm.CHECKSIG_MD5
+	else:
+		check=rpm.CHECKSIG_MD5
+		
+	# RPM spews to stdout/stderr.  Redirect.
+	# code for this from up2date.py
+	saveStdout = os.dup(1)
+	saveStderr = os.dup(2)
+	redirStdout = os.open("/dev/null", os.O_WRONLY | os.O_APPEND)
+	redirStderr = os.open("/dev/null", os.O_WRONLY | os.O_APPEND)
+	os.dup2(redirStdout, 1)
+	os.dup2(redirStderr, 2)
+	# now do the rpm thing
+	sigcheck = rpm.checksig(package, check)
+	# restore normal stdout and stderr
+	os.dup2(saveStdout, 1)
+	os.dup2(saveStderr, 2)
+	# close the redirect files.
+	os.close(redirStdout)
+	os.close(redirStderr)
+	os.close(saveStdout)
+	os.close(saveStderr)
+	if sigcheck:
+		sys.stderr.write('Error:  Signature check failed for %s\n' %(package))
+		sys.stderr.write('Doing nothing.\n')
+		sys.exit(1)
+	return
+
+def cleanpackages(serverlist):
+	from config import conf
+	import os, sys
+	#for each of the servers find their packages dir
+	#find all rpms in that dir
+	#purge the files in that list
+	pass
+
+	
+	
