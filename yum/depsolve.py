@@ -490,27 +490,32 @@ class Depsolve:
             confname = name
         elif needmode is None:
             confname = needname
-        
+        else:
+            confname = name
+            
+        po = None        
         self.doUpdateSetup()
         uplist = self.up.getUpdatesList(name=confname)
-        conftuple = self.rpmdb.returnTupleByKeyword(name=confname)
-        (confname, confarch, confepoch, confver, confrel) = conftuple[0] # take the first one, probably the only one
         
-        po = None
-        # if there's an update for the reqpkg, then update it
-        if len(uplist) > 0:
-            if not self.conf.getConfigOption('exactarch'):
-                pkgs = self.pkgSack.returnNewestByName(confname)
-                archs = []
-                for pkg in pkgs:
-                    (n,a,e,v,r) = pkg.pkgtup()
-                    archs.append(a)
-                a = rpmUtils.arch.getBestArchFromList(archs)
-                po = self.pkgSack.returnNewestByNameArch((n,a))
-            else:
-                po = self.pkgSack.returnNewestByNameArch((confname,confarch))
-            if po.pkgtup() not in uplist:
-                po = None
+        conftuple = self.rpmdb.returnTupleByKeyword(name=confname)
+        if conftuple:
+            (confname, confarch, confepoch, confver, confrel) = conftuple[0] # take the first one, probably the only one
+                
+
+            # if there's an update for the reqpkg, then update it
+            if len(uplist) > 0:
+                if not self.conf.getConfigOption('exactarch'):
+                    pkgs = self.pkgSack.returnNewestByName(confname)
+                    archs = []
+                    for pkg in pkgs:
+                        (n,a,e,v,r) = pkg.pkgtup()
+                        archs.append(a)
+                    a = rpmUtils.arch.getBestArchFromList(archs)
+                    po = self.pkgSack.returnNewestByNameArch((n,a))
+                else:
+                    po = self.pkgSack.returnNewestByNameArch((confname,confarch))
+                if po.pkgtup() not in uplist:
+                    po = None
 
         if po:
             self.log(5, 'TSINFO: Updating %s to resolve conflict.' % po)
