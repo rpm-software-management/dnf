@@ -206,12 +206,15 @@ class RepodataParserSqlite:
             if (x == None):
               query += "NULL,"
             else:
-              query += "'%s'," % (str(x).replace("'","''"))
+              try:
+                query += "'%s'," % (x.replace("'","''"))
+              except AttributeError:
+                query += "'%s'," % x
         # Remove the last , from query
         query = query[:-1]
         # And replace it with )
         query += ")"
-        cursor.execute(query)
+        cursor.execute(query.encode('utf8'))
         return cursor.lastrowid
              
     def makeSqliteCacheFile(self, filename, cachetype):

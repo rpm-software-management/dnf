@@ -14,7 +14,9 @@
 # Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 # Copyright 2005 Duke University 
 
-import libxml2
+import gzip
+from cElementTree import iterparse
+
 try:
     from cStringIO import StringIO
 except ImportError:
@@ -28,61 +30,43 @@ class MDParser:
 
         # Set up mapping of meta types to handler classes 
         handlers = {
-            'metadata': PrimaryEntry,
-            'filelists': FilelistsEntry,
-            'otherdata': OtherEntry,
+            '{http://linux.duke.edu/metadata/common}metadata': PrimaryEntry,
+            '{http://linux.duke.edu/metadata/filelists}filelists': FilelistsEntry,
+            '{http://linux.duke.edu/metadata/other}otherdata': OtherEntry,
         }
             
-        self.reader = libxml2.newTextReaderFilename(filename)
         self.total = None
         self.count = 0
         self._handlercls = None
 
         # Read in type, set package node handler and get total number of
         # packages
-        while self.reader.Read():
-            if self.reader.NodeType() != 1:
-                continue
-
-            # Read the metadata type and determine handler class
-            metadatatype = self.reader.LocalName()
-            self._handlercls = handlers.get(metadatatype, None)
-
-            if not self._handlercls:
-                raise ValueError('Unknown repodata type "%s" in %s' % (
-                    metadatatype, filename))
-           
-            # Get the total number of packages
-            try:
-                self.total = int(self.reader.GetAttribute('packages'))
-            except ValueError: 
-                pass
-        
-            break
-
-        # Handle broken input
+        if filename[-3:] == '.gz': fh = gzip.open(filename, 'r')
+        else: fh = open(filename, 'r')
+        parser = iterparse(fh, events=('start', 'end'))
+        self.reader = parser.__iter__()
+        event, elem = self.reader.next()
+        self._handlercls = handlers.get(elem.tag, None)
         if not self._handlercls:
-            raise ValueError('no valid repository metadata found in %s' % (
-                filename))
+            raise ValueError('Unknown repodata type "%s" in %s' % (
+                elem.tag, filename))
+        # Get the total number of packages
+        total = elem.get('packages', None)
+        self.total = total is None and None or int(total)
 
     def __iter__(self):
         return self
 
     def next(self):
-        while self.reader.Read():
-
-            name = self.reader.LocalName()
-            if name != 'package':
-                continue
-
-            self.count += 1
-            return self._handlercls(self.reader)
-
+        for event, elem in self.reader:
+            if event == 'end' and elem.tag[-7:] == 'package':
+                self.count += 1
+                return self._handlercls(elem)
         raise StopIteration
 
 
 class BaseEntry:
-    def __init__(self, reader):
+    def __init__(self, elem):
         self._p = {} 
 
     def __getitem__(self, k):
@@ -102,143 +86,107 @@ class BaseEntry:
         keys = self.keys()
         keys.sort()
         for k in keys:
-            out.write('%s=%s\n' % (k, self[k]))
+            line = u'%s=%s\n' % (k, self[k])
+            out.write(line.encode('utf8'))
         return out.getvalue()
 
-    def _props(self, reader, keyprefix=''):
-        if not reader.HasAttributes(): return {}
-        propdict = {}
-        reader.MoveToFirstAttribute()
-        while 1:
-            propdict[keyprefix+reader.LocalName()] = reader.Value()
-            if not reader.MoveToNextAttribute(): break
-        reader.MoveToElement()
-        return propdict
+    def _bn(self, qn):
+        return qn.split('}')[1]
         
-    def _value(self, reader):
-        if reader.IsEmptyElement(): return ''
-        val = ''
-        while reader.Read():
-            if reader.NodeType() == 3: val += reader.Value()
-            else: break
-        return val
-
-    def _propswithvalue(self, reader, keyprefix=''):
-        out = self._props(reader, keyprefix)
-        out[keyprefix+'value'] = self._value(reader)
-        return out
-
-    def _getFileEntry(self, reader):
-        type = 'file'
-        props = self._props(reader)
-        if props.has_key('type'): type = props['type']
-        value = self._value(reader)
-        return (type, value)
+    def _prefixprops(self, elem, prefix):
+        ret = {}
+        for key in elem.attrib.keys():
+            ret[prefix + '_' + key] = elem.attrib[key]
+        return ret
 
 class PrimaryEntry(BaseEntry):
-    def __init__(self, reader):
-
-        BaseEntry.__init__(self, reader)
-
+    def __init__(self, elem):
+        BaseEntry.__init__(self, elem)
         # Avoid excess typing :)
         p = self._p
 
         self.prco = {}
         self.files = {}
 
-        while reader.Read():
-            if reader.NodeType() == 15 and reader.LocalName() == 'package':
-                break
-            if reader.NodeType() != 1: continue
-            name = reader.LocalName()
-
+        for child in elem:
+            name = self._bn(child.tag)
             if name in ('name', 'arch', 'summary', 'description', 'url', 
                     'packager'): 
-                p[name] = self._value(reader)
+                p[name] = child.text
 
             elif name == 'version': 
-                p.update(self._props(reader))
+                p.update(child.attrib)
 
             elif name in ('time', 'size'):
-                p.update(self._props(reader, name+'_'))
+                p.update(self._prefixprops(child, name))
 
             elif name in ('checksum', 'location'): 
-                p.update(self._propswithvalue(reader, name+'_'))
+                p.update(self._prefixprops(child, name))
+                p[name + '_value'] = child.text
             
             elif name == 'format': 
-                self.setFormat(reader)
+                self.setFormat(child)
 
         p['pkgId'] = p['checksum_value']
+        elem.clear()
 
-    def setFormat(self, reader):
+    def setFormat(self, elem):
 
         # Avoid excessive typing :)
         p = self._p
 
-        while reader.Read():
-            if reader.NodeType() == 15 and reader.LocalName() == 'format':
-                break
-            if reader.NodeType() != 1: continue
-            name = reader.LocalName()
+        for child in elem:
+            name = self._bn(child.tag)
 
             if name in ('license', 'vendor', 'group', 'buildhost',
                         'sourcerpm'):
-                p[name] = self._value(reader)
+                p[name] = child.text
 
             elif name in ('provides', 'requires', 'conflicts', 
                           'obsoletes'):
-                self.setPrco(reader)
+                self.prco[name] = self.getPrco(child)
 
             elif name == 'header-range':
-                p.update(self._props(reader, 'rpm_header_'))
+                p.update(self._prefixprops(child, 'rpm_header'))
 
             elif name == 'file':
-                (type, value) = self._getFileEntry(reader)
-                self.files[value] = type
+                type = child.get('type', 'file')
+                path = child.text
+                self.files[path] = type
 
-    def setPrco(self, reader):
+    def getPrco(self, elem):
         members = []
-        myname = reader.LocalName()
-        while reader.Read():
-            if reader.NodeType() == 15 and reader.LocalName() == myname:
-                break
-            if reader.NodeType() != 1: continue
-            name = reader.LocalName()
-            members.append(self._props(reader))
-        self.prco[myname] = members
+        for child in elem:
+            name = self._bn(child.tag)
+            members.append(child.attrib)
+        return members
         
         
 class FilelistsEntry(BaseEntry):
-    def __init__(self, reader):
-        BaseEntry.__init__(self, reader)
-        self._p['pkgId'] = reader.GetAttribute('pkgid')
+    def __init__(self, elem):
+        BaseEntry.__init__(self, elem)
+        self._p['pkgId'] = elem.attrib['pkgid']
         self.files = {}
-
-        while reader.Read():
-            if reader.NodeType() == 15 and reader.LocalName() == 'package':
-                break
-            if reader.NodeType() != 1: continue
-            name = reader.LocalName()
+        for child in elem:
+            name = self._bn(child.tag)
             if name == 'file':
-                (type, value) = self._getFileEntry(reader)
-                self.files[value] = type
+                type = child.get('type', 'file')
+                path = child.text
+                self.files[path] = type
+        elem.clear()
                 
 class OtherEntry(BaseEntry):
-    def __init__(self, reader):
-        BaseEntry.__init__(self, reader)
-
-        self._p['pkgId'] = reader.GetAttribute('pkgid')
+    def __init__(self, elem):
+        BaseEntry.__init__(self, elem)
+        self._p['pkgId'] = elem.attrib['pkgid']
         self._p['changelog'] = []
-        while reader.Read():
-            if reader.NodeType() == 15 and reader.LocalName() == 'package':
-                break
-            if reader.NodeType() != 1: continue
-            name = reader.LocalName()
+        for child in elem:
+            name = self._bn(child.tag)
             if name == 'changelog':
-                entry = self._props(reader)
-                entry['value'] = self._value(reader)
+                entry = child.attrib
+                entry['value'] = child.text
                 self._p['changelog'].append(entry)
-
+        elem.clear()
 
 
 
@@ -252,8 +200,7 @@ def test():
         print pkg
         pass
 
-    print parser.total
-    print parser.count
+    print 'read: %s packages (%s suggested)' % (parser.count, parser.total)
 
 if __name__ == '__main__':
     test()
