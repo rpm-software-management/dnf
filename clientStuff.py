@@ -27,6 +27,7 @@ import sys
 import gzip
 import archwork
 import fnmatch
+import types
 
 def stripENVRA(foo):
     archIndex = string.rfind(foo, '.')
