@@ -147,7 +147,7 @@ class YumOutput:
                 rss = doc.newChild(None, 'rss', None)
                 rss.setProp('version', '2.0')
                 node = rss.newChild(None, 'channel', None)
-                rssheader = self.startRSS()
+                rssheader = self.startRSS(description)
                 fo.write(rssheader)
                 for pkg in lst:
                     item = self.rssnode(node, pkg)
@@ -163,7 +163,7 @@ class YumOutput:
                 doc.freeDoc()
                 del doc
                 
-    def startRSS(self):
+    def startRSS(self, description='Yum Package List'):
         """return string representation of rss preamble"""
     
         rfc822_format = "%a, %d %b %Y %X GMT"
@@ -171,12 +171,12 @@ class YumOutput:
         rssheader = """<?xml version="1.0" encoding="utf-8"?>
     <rss version="2.0">
       <channel>
-        <title>Yum Package List</title>
+        <title>%s</title>
         <link>http://linux.duke.edu/projects/yum/</link>
-        <description>Yum Package List</description>
+        <description>%s</description>
         <pubDate>%s</pubDate>
         <generator>Yum</generator>
-        """ % now
+        """ % (description, description, now)
         
         return rssheader
     

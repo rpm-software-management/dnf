@@ -305,7 +305,14 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
             for cmd in self.extcmds:
                 if cmd not in ['headers', 'packages', 'all']:
                     self.usage()
-    
+        elif self.basecmd == 'generate-rss':
+            if len(self.extcmds) == 0:
+                self.extcmds[0] = 'recent'
+            
+            if self.extcmds[0] not in ['updates', 'recent']:
+                self.errorlog(0, _("Error: generate-rss takes no argument, 'updates' or 'recent'."))
+                self.usage()
+            
         elif self.basecmd in ['list', 'check-update', 'info', 'update', 'upgrade',
                               'generate-rss', 'grouplist', 'makecache']:
             pass
@@ -394,22 +401,26 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
             
         elif self.basecmd == 'generate-rss':
             self.log(2, 'Setting up RSS Generation')
-            self.extcmds.insert(0, 'recent')
+            titles = { 'recent': 'Recent Packages',
+                       'updates': 'Updated Packages'}
             try:
+                pkgtype = self.extcmds[0]
                 ypl = self.returnPkgLists()
-                if len(ypl.recent) > 0:
+                this_pkg_list = getattr(ypl, pkgtype)
+                if len(this_pkg_list) > 0:
                     needrepos = []
-                    
-                    for po in ypl.recent:
+                    for po in this_pkg_list:
                         if po.repoid not in needrepos:
                             needrepos.append(po.repoid)
 
                     self.log(2, 'Importing Changelog Metadata')
                     self.repos.populateSack(with='otherdata', which=needrepos)
-                    self.log(2, 'Generating RSS File')
-                    self.listPkgs(ypl.recent, 'Recent Packages', outputType='rss')
+                    self.log(2, 'Generating RSS File for %s' % pkgtype)
+                        
+                    self.listPkgs(this_pkg_list, titles[pkgtype], outputType='rss')
                 else:
                     self.errorlog(0, 'No Recent Packages')
+
             except yum.Errors.YumBaseError, e:
                 return 1, [str(e)]
             else:
