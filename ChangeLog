@@ -1,3 +1,47 @@
+2004-10-19 11:20  skvidal
+
+	* docs/yum.conf.5: more yum.conf updates
+
+2004-10-19 10:52  skvidal
+
+	* docs/yum.conf.5: yum.conf update for gpgcheck
+
+2004-10-19 10:09  skvidal
+
+	* cli.py, yum-daily.spec, yum.spec, yum/__init__.py: 
+	fixed problem if one repo had a broken groups file it would take
+	out the whole process.
+
+2004-10-19 09:44  skvidal
+
+	* yum/: groups.py, repos.py: minor pychecker catches
+
+2004-10-19 09:38  skvidal
+
+	* yum/config.py: 
+	minor pychecker fix
+
+2004-10-19 09:26  skvidal
+
+	* docs/yum.8: 
+	update man page
+
+2004-10-19 01:34  skvidal
+
+	* cli.py, output.py, yummain.py: 
+	handle failurereport properly Fix for: 136178
+
+2004-10-19 01:33  skvidal
+
+	* yum/: config.py, repos.py: 
+	now --disablerepo and --enablerepo work as you'd more or less
+	expect them to work
+
+2004-10-18 09:04  skvidal
+
+	* ChangeLog: 
+	Changelog for the moron-release
+
 2004-10-18 09:02  skvidal
 
 	* cli.py, yum-daily.spec, yum.spec: 
