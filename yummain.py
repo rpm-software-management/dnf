@@ -223,6 +223,8 @@ def main(args):
     if conf.uid == 0:
         # sigh - the magical "order" command - nice of this not to really be documented anywhere.
         tsfin.order()
+        # conf check as to which options to pass to tsfin - 0 or one disabling the
+        # diskspace check
         errors = tsfin.run(0, 0, callback.install_callback, '')
         if errors:
             errorlog(0, 'Errors installing:')

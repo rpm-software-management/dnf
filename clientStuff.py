@@ -895,7 +895,7 @@ def create_final_ts(tsInfo, rpmdb):
             pass
         elif tsInfo.state(name, arch) == 'e' or tsInfo.state(name, arch) == 'ed':
             tsfin.remove(name)
-
+    # check conf for ignorespace option as to whether or not to do this check
     #one last test run for diskspace
     log(2, 'Calculating available disk space - this could take a bit')
     tserrors = tsfin.run(rpm.RPMTRANS_FLAG_TEST, ~rpm.RPMPROB_FILTER_DISKSPACE, callback.install_callback, '')
