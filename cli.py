@@ -816,13 +816,22 @@ For more information contact your distribution or package provider.
         for arg in userlist:
             if os.path.exists(arg) and arg[-4:] == '.rpm': # this is hurky, deal w/it
                 val, msglist = self.localInstall(filelist=[arg])
-                if val == 2: # we added it to the transaction Set so don't try from the repos
+                if val == 2: # we added it to the transaction set so don't try from the repos
                     continue 
-                    
+
+            if arg[0] == '/':
+                try:
+                    mypkg = self.returnPackageByDep(arg)
+                except yum.Errors.YumBaseError, e:
+                    pass
+                else:
+                    arg = '%s:%s-%s-%s.%s' % (mypkg.epoch, mypkg.name, mypkg.version,
+                                              mypkg.release, mypkg.arch)
+
             arglist = [arg]
             exactmatch, matched, unmatched = parsePackages(avail, arglist)
             if len(unmatched) > 0: # if we get back anything in unmatched, it fails
-                self.errorlog(0, _('No Match for argument %s') % arg)
+                self.errorlog(0, _('No Match for argument: %s') % arg)
                 continue
             
             installable = yum.misc.unique(exactmatch + matched)
