@@ -48,6 +48,11 @@ class YumBaseCli(yum.YumBase):
         for repo in self.repos.listEnabled():
             self.log(2, 'Setting up Repo:  %s' % repo)
             try:
+                repo.dirSetup(cache=self.conf.getConfigOption('cache'))
+            except yum.Errors.RepoError, e:
+                self.errorlog(0, '%s' % e)
+                sys.exit(1)
+            try:
                 repo.getRepoXML(cache=self.conf.getConfigOption('cache'))
             except yum.Errors.RepoError, e:
                 self.errorlog(0, 'Cannot open/read repomd.xml file for repository: %s' % repo)

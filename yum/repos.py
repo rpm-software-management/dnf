@@ -259,6 +259,24 @@ class Repository:
     def failed(self):
         self.failover.server_failed()
 
+    def dirSetup(self, cache=0):
+        """make the necessary dirs, if possible, raise on failure"""
+        for dir in [self.cache, self.hdrdir, self.pkgdir]:
+            if not cache:
+                if os.path.exists(dir) and os.path.isdir(dir):
+                    continue
+                else:
+                    try:
+                        os.makedirs(dir, mode=0755)
+                    except OSError, e:
+                        raise Errors.RepoError, \
+                            "Error making cache directory: %s error was: %s" % (dir, e)
+            else:
+                if not os.path.exists(dir):
+                    raise Errors.RepoError, \
+                        "Cannot access repository dir %s" % dir
+ 
+
     def get(self, url = None, relative=None, local=None, start=None, end=None,
             copy_local=0):
         """retrieve file from the mirrorgroup for the repo
@@ -306,8 +324,11 @@ class Repository:
         if cache:
             if not os.path.exists(local):
                 raise Errors.RepoError, 'Cannot find repomd.xml file for %s' % (self)
-        else:                
-            local = self.get(relative=remote, local=local, copy_local=1)
+        else:
+            try:
+                local = self.get(relative=remote, local=local, copy_local=1)
+            except URLGrabError, e:
+                raise Errors.RepoError, 'Error downloading file %s: %s' % (local, e)
 
         try:
             self.repoXML = repoMDObject.RepoMD(self.id, local)
