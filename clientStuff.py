@@ -503,12 +503,12 @@ def printactions(i_list, u_list, e_list, ud_list, ed_list):
         (name,arch) = pkg
         log(2, '[erase: %s.%s]' % (name, arch))
     if len(ud_list) > 0:
-        log(2, 'I will install/upgrade these to satisfy the depedencies:')
+        log(2, 'I will install/upgrade these to satisfy the dependencies:')
         for pkg in ud_list:
             (name, arch) = pkg
             log(2, '[deps: %s.%s]' %(name, arch))
     if len(ed_list) > 0:
-        log(2, 'I will erase these to satisfy the depedencies:')
+        log(2, 'I will erase these to satisfy the dependencies:')
         for pkg in ed_list:
             (name, arch) = pkg
             log(2, '[deps: %s.%s]' %(name, arch))
@@ -733,7 +733,11 @@ def take_action(cmds, nulist, uplist, newlist, obsoleting, tsInfo, HeaderInfo, r
             errorlog(0, 'Need to pass a list of pkgs to install')
             usage()
         else:
-            pkgaction.installpkgs(tsInfo, nulist, cmds, HeaderInfo, rpmDBInfo)
+            if conf.tolerant:
+                pkgaction.installpkgs(tsInfo, nulist, cmds, HeaderInfo, rpmDBInfo, 0)
+            else: 
+                pkgaction.installpkgs(tsInfo, nulist, cmds, HeaderInfo, rpmDBInfo, 1)
+                
             
     elif cmds[0] == 'provides':
         cmds.remove(cmds[0])
@@ -752,14 +756,21 @@ def take_action(cmds, nulist, uplist, newlist, obsoleting, tsInfo, HeaderInfo, r
         if len(cmds) == 0:
             pkgaction.updatepkgs(tsInfo, HeaderInfo, rpmDBInfo, nulist, uplist, 'all')
         else:
-            pkgaction.updatepkgs(tsInfo, HeaderInfo, rpmDBInfo, nulist, uplist, cmds)
+            if conf.tolerant:
+                pkgaction.updatepkgs(tsInfo, HeaderInfo, rpmDBInfo, nulist, uplist, cmds, 0)
+            else:
+                pkgaction.updatepkgs(tsInfo, HeaderInfo, rpmDBInfo, nulist, uplist, cmds, 1)
 
     elif cmds[0] == 'upgrade':
         cmds.remove(cmds[0])
         if len(cmds) == 0:
             pkgaction.upgradepkgs(tsInfo, HeaderInfo, rpmDBInfo, nulist, uplist, obsoleted, obsoleting, 'all')
         else:
-            pkgaction.upgradepkgs(tsInfo, HeaderInfo, rpmDBInfo, nulist, uplist, obsoleted, obsoleting, cmds)
+            if conf.tolerant:
+                pkgaction.upgradepkgs(tsInfo, HeaderInfo, rpmDBInfo, nulist, uplist, obsoleted, obsoleting, cmds, 1)
+            else:
+                pkgaction.upgradepkgs(tsInfo, HeaderInfo, rpmDBInfo, nulist, uplist, obsoleted, obsoleting, cmds, 0)
+
             
     elif cmds[0] == 'erase' or cmds[0] == 'remove':
         cmds.remove(cmds[0])
@@ -767,8 +778,11 @@ def take_action(cmds, nulist, uplist, newlist, obsoleting, tsInfo, HeaderInfo, r
             errorlog (0, 'Need to pass a list of pkgs to erase')
             usage()
         else:
-            pkgaction.erasepkgs(tsInfo, rpmDBInfo, cmds)
-            
+            if conf.tolerant:
+                pkgaction.erasepkgs(tsInfo, rpmDBInfo, cmds, 0)
+            else:
+                pkgaction.erasepkgs(tsInfo, rpmDBInfo, cmds, 1)
+
     elif cmds[0] == 'check-update':
         cmds.remove(cmds[0])
         if len(uplist) > 0:

@@ -29,7 +29,7 @@ import archwork
 import types
 
 
-def installpkgs(tsnevral, nulist, userlist, hinevral, rpmnevral):
+def installpkgs(tsnevral, nulist, userlist, hinevral, rpmnevral, exitonerror = 1):
     #get the list of pkgs you want to install from userlist
     #check to see if they are already installed - if they are try to upgrade them
     #if they are the latest version then error and exit
@@ -58,7 +58,8 @@ def installpkgs(tsnevral, nulist, userlist, hinevral, rpmnevral):
                         else:
                             #this is the best there is :(
                             errorlog(1,"%s is installed and is the latest version." % (name))
-                            sys.exit(1)
+                            if exitonerror:
+                                sys.exit(1)
                     else:
                         #we should install this
                         ((e, v, r, a, l, i), s)=hinevral._get_data(name,bestarch)
@@ -67,9 +68,12 @@ def installpkgs(tsnevral, nulist, userlist, hinevral, rpmnevral):
             if foundit==0:
                 if rpmnevral.exists(n):
                     errorlog(1,"%s is installed and is the latest version." % (n))
+                    if exitonerror:
+                        sys.exit(1)
                 else:
                     errorlog(0,"Cannot find a package matching %s" % (n))
-                sys.exit(1)
+                    if exitonerror:
+                        sys.exit(1)
             
     else:
         errorlog(1,"No Packages Available for Update or Install")    
@@ -127,7 +131,7 @@ def displayinfo(hdr):
     print ""
     
 
-def updatepkgs(tsnevral, hinevral, rpmnevral, nulist, uplist, userlist):
+def updatepkgs(tsnevral, hinevral, rpmnevral, nulist, uplist, userlist, exitonerror = 1):
     """Update pkgs - will only update - will not install uninstalled pkgs.
        however it will, on occasion install a new, betterarch of a pkg"""
        
@@ -165,11 +169,14 @@ def updatepkgs(tsnevral, hinevral, rpmnevral, nulist, uplist, userlist):
         if not pkgfound:
             if rpmnevral.exists(n):
                 errorlog(1,"%s is installed and the latest version." % (n))
+                if exitonerror:
+                    sys.exit(1)
             else:
                 errorlog(0,"Cannot find any package matching %s available to be updated." % (n))
-            sys.exit(1)
+                if exitonerror:
+                    sys.exit(1)
             
-def upgradepkgs(tsnevral, hinevral, rpmnevral, nulist, uplist, obsoleted, obsoleting, userlist):
+def upgradepkgs(tsnevral, hinevral, rpmnevral, nulist, uplist, obsoleted, obsoleting, userlist, exitonerror = 1):
     # must take user arguments
     # this is just like update except it must check for obsoleting pkgs first
     # so if foobar = 1.0 and you have foobar-1.1 in the repo and bazquux1.2 
@@ -227,11 +234,12 @@ def upgradepkgs(tsnevral, hinevral, rpmnevral, nulist, uplist, obsoleted, obsole
                     errorlog(0,"No Upgrades available.")
                 else:
                     errorlog(0,"Cannot find any package matching %s available to be upgraded." % (n))
-            sys.exit(1)
+            if exitonerror:
+                sys.exit(1)
         
     
 
-def erasepkgs(tsnevral,rpmnevral,userlist):
+def erasepkgs(tsnevral, rpmnevral, userlist, exitonerror=1):
     #mark for erase iff the userlist item exists in the rpmnevral
     for n in userlist:
         foundit = 0
@@ -243,7 +251,8 @@ def erasepkgs(tsnevral,rpmnevral,userlist):
                 tsnevral.add((name,e,v,r,a,l,i),'e')                
         if foundit==0:
             errorlog(0,"Erase: No matches for %s" % n)
-            sys.exit(1)
+            if exitonerror:
+                sys.exit(1)
 
 def whatprovides(usereq, nulist, nevral, localrpmdb):
     # figure out what the user wants, traverse all the provides and file lists 
@@ -461,5 +470,3 @@ def checkRpmSig(package, serverid):
             errorlog(0, 'Exiting.')
             sys.exit(1)
         return 0
-        
-    

@@ -39,7 +39,7 @@ def parseCmdArgs(args):
         yumconffile="/etc/yum.conf"
         
     try:
-        gopts, cmds = getopt.getopt(args, 'Cc:hR:e:d:y', ['help'])
+        gopts, cmds = getopt.getopt(args, 'tCc:hR:e:d:y', ['help'])
     except getopt.error, e:
         errorlog(0, 'Options Error: %s' % e)
         usage()
@@ -84,6 +84,9 @@ def parseCmdArgs(args):
                 usage()
             if o =='-C':
                 conf.cache=1
+            if o == '-t':
+                conf.tolerant=1
+                
     except ValueError, e:
         errorlog(0, 'Options Error: %s' % e)
         usage()
@@ -267,6 +270,7 @@ def usage():
           -e [error level] - set the error logging level
           -d [debug level] - set the debugging level
           -y answer yes to all questions
+          -t be tolerant about errors in package commands
           -R [time in minutes] - set the max amount of time to randonly run in.
           -C run from cache only - do not update the cache
           -h, --help this screen
