@@ -31,6 +31,7 @@ class BaseMeter:
         self.filename   = None
         self.url        = None
         self.basename   = None
+        self.text       = None
         self.size       = None
         self.start_time = None
         self.last_amount_read = 0
@@ -38,10 +39,11 @@ class BaseMeter:
         self.re = RateEstimator()
         
     def start(self, filename=None, url=None, basename=None,
-              size=None, now=None):
+              size=None, now=None, text=None):
         self.filename = filename
         self.url      = url
         self.basename = basename
+        self.text     = text
 
         #size = None #########  TESTING
         self.size = size
@@ -91,29 +93,39 @@ class TextMeter(BaseMeter):
         fetime = format_time(etime)
         fread = format_number(amount_read)
         #self.size = None
+        if self.text is not None:
+            text = self.text
+        else:
+            text = self.basename
         if self.size is None:
             out = '\r%-60.60s    %5sB %s ' % \
-                  (self.basename, fread, fetime)
+                  (text, fread, fetime)
         else:
             rtime = self.re.remaining_time()
             frtime = format_time(rtime)
             frac = self.re.fraction_read()
             bar = '='*int(25 * frac)
+
             out = '\r%-25.25s %3i%% |%-25.25s| %5sB %8s ETA ' % \
-                  (self.basename, frac*100, bar, fread, frtime)
+                  (text, frac*100, bar, fread, frtime)
+
         self.fo.write(out)
         self.fo.flush()
 
     def _do_end(self, amount_read, now=None):
         total_time = format_time(self.re.elapsed_time())
         total_size = format_number(amount_read)
+        if self.text is not None:
+            text = self.text
+        else:
+            text = self.basename
         if self.size is None:
             out = '\r%-60.60s    %5sB %s ' % \
-                  (self.basename, total_size, total_time)
+                  (text, total_size, total_time)
         else:
             bar = '='*25
             out = '\r%-25.25s %3i%% |%-25.25s| %5sB %8s     ' % \
-                  (self.basename, 100, bar, total_size, total_time)
+                  (text, 100, bar, total_size, total_time)
         self.fo.write(out + '\n')
         self.fo.flush()
 
