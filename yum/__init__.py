@@ -23,47 +23,59 @@ class YumBase:
     """this is a base class that is used to hold things"""
     def __init__(self):
        pass
-       
-
-def doLock(lockfile, mypid):
-    """perform the yum locking, raise yum-based exceptions, not OSErrors"""
-    
-    while not lock(lockfile, mypid, 0644):
-        fd = open(lockfile, 'r')
-        try: oldpid = int(fd.readline())
-        except ValueError:
-            # bogus data in the pid file. Throw away.
-            unlock(lockfile)
-        else:
-            try: os.kill(oldpid, 0)
-            except OSError, e:
-                if e[0] == errno.ESRCH:
-                    # The pid doesn't exist
-                    unlock(lockfile)
-                else:
-                    # Whoa. What the heck happened?
-                    msg = 'Unable to check if PID %s is active' % oldpid
-                    raise Errors.LockError(1, msg)
+      
+    def doLock(self, lockfile):
+        """perform the yum locking, raise yum-based exceptions, not OSErrors"""
+        
+        # if we're not root then we don't lock - just return nicely
+        if self.conf.getConfigOption('uid') != 0:
+            return
+        
+        mypid=str(os.getpid())    
+        while not self._lock(lockfile, mypid, 0644):
+            fd = open(lockfile, 'r')
+            try: oldpid = int(fd.readline())
+            except ValueError:
+                # bogus data in the pid file. Throw away.
+                self._unlock(lockfile)
             else:
-                # Another copy seems to be running.
-                msg = 'Existing lock %s: another copy is running. Aborting.' % lockfile
-                raise Errors.LockError(0, msg)
-
-
-def lock(filename, contents='', mode=0777):
-    try:
-        fd = os.open(filename, os.O_EXCL|os.O_CREAT|os.O_WRONLY, mode)
-    except OSError, msg:
-        if not msg.errno == errno.EEXIST: raise msg
-        return 0
-    else:
-        os.write(fd, contents)
-        os.close(fd)
-        return 1
-
-def unlock(filename):
-    try:
-        os.unlink(filename)
-    except OSError, msg:
-        pass
+                try: os.kill(oldpid, 0)
+                except OSError, e:
+                    if e[0] == errno.ESRCH:
+                        # The pid doesn't exist
+                        self._unlock(lockfile)
+                    else:
+                        # Whoa. What the heck happened?
+                        msg = 'Unable to check if PID %s is active' % oldpid
+                        raise Errors.LockError(1, msg)
+                else:
+                    # Another copy seems to be running.
+                    msg = 'Existing lock %s: another copy is running. Aborting.' % lockfile
+                    raise Errors.LockError(0, msg)
+    
+    def doUnlock(self, lockfile):
+        """do the unlock for yum"""
+        
+        # if we're not root then we don't lock - just return nicely
+        if self.conf.getConfigOption('uid') != 0:
+            return
+        self._unlock(lockfile)
+        
+        
+    def _lock(self, filename, contents='', mode=0777):
+        try:
+            fd = os.open(filename, os.O_EXCL|os.O_CREAT|os.O_WRONLY, mode)
+        except OSError, msg:
+            if not msg.errno == errno.EEXIST: raise msg
+            return 0
+        else:
+            os.write(fd, contents)
+            os.close(fd)
+            return 1
+    
+    def _unlock(self, filename):
+        try:
+            os.unlink(filename)
+        except OSError, msg:
+            pass
         
