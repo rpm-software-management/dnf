@@ -190,10 +190,12 @@ def getgpgkeyinfo(rawkey):
         raise ValueError(str(e))
     if key is None:
         raise ValueError('No key found in given key data')
-        
+
+    keyid_blob = key.public_key.key_id()
+
     info = {
         'userid': key.user_id,
-        'keyid': key.public_key.key_id,
+        'keyid': struct.unpack('>Q', keyid_blob)[0],
         'timestamp': key.public_key.timestamp,
     }
 
@@ -203,9 +205,7 @@ def getgpgkeyinfo(rawkey):
         if not isinstance(userid, pgpmsg.signature):
             continue
 
-        keyid = struct.unpack(">Q", userid.key_id())[0]
-
-        if keyid == key.public_key.key_id:
+        if userid.key_id() == keyid_blob:
             # Get the creation time sub-packet if available
             if hasattr(userid, 'hashed_subpaks'):
                 tspkt = \
