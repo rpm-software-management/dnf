@@ -20,7 +20,7 @@ import rpm
 import clientStuff
 import fnmatch
 import archwork
-impport types
+import types
 
 
 def installpkgs(tsnevral,nulist,userlist,hinevral,rpmnevral):

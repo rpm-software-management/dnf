@@ -14,7 +14,9 @@
 # Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 # Copyright 2002 Duke University 
 
-import rpm, os, sys
+import rpm
+import os
+import sys
 
 callbackfilehandles = {}
 def install_callback(what, bytes, total, h, user):
