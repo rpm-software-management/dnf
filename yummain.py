@@ -60,7 +60,11 @@ def main():
 		usage()
 
 	log("Gathering package information from servers")
-	for serverid in conf.servers:
+	#sorting the servers so that sort() will order them consistently
+	serverlist=conf.servers
+	serverlist.sort()
+	print serverlist
+	for serverid in serverlist:
 		baseurl = conf.serverurl[serverid]
 		servername = conf.servername[serverid]
 		serverheader = os.path.join(baseurl,'headers/header.info')
