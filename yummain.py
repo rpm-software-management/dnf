@@ -97,7 +97,7 @@ def take_action(cmds,nulist,uplist,newlist,obslist,tsInfo,HeaderInfo,rpmDBInfo):
 	if cmds[0] == "install":
 		cmds.remove(cmds[0])
 		if len(cmds)==0:
-			errorlog(1,"\nNeed to pass a list of pkgs to install\n")
+			errorlog(1,"Need to pass a list of pkgs to install")
 			usage()
 		else:
 			pkgaction.installpkgs(tsInfo,nulist,cmds,HeaderInfo,rpmDBInfo)
@@ -111,7 +111,7 @@ def take_action(cmds,nulist,uplist,newlist,obslist,tsInfo,HeaderInfo,rpmDBInfo):
 	elif cmds[0] == "erase" or cmds[0] == "remove":
 		cmds.remove(cmds[0])
 		if len(cmds)==0:
-			errorlog (1,"\nNeed to pass a list of pkgs to erase\n")
+			errorlog (1,"Need to pass a list of pkgs to erase")
 			usage()
 		else:
 			pkgaction.erasepkgs(tsInfo,rpmDBInfo,cmds)
