@@ -197,7 +197,7 @@ def erasepkgs(tsnevral,rpmnevral,userlist):
             errorlog(0,"Erase: No matches for %s" % n)
             sys.exit(1)
 
-def whatprovides(usereq, nulist, hinevral, rpmnevral):
+def whatprovides(usereq, nulist, nevral, localrpmdb):
     import fnmatch
     # figure out what the user wants, traverse all the provides and file lists 
     # in every file in the header, return the fnmatch()es for the usereq
@@ -218,35 +218,36 @@ def whatprovides(usereq, nulist, hinevral, rpmnevral):
     # deal with "where the hell is the pkg - hi or rpm
     # figure out how to make nevral.getHeader more robust
     results = 0
-    for (name, arch) in nulist:
-        hdr = hinevral.getHeader(name, arch)
-        fullprovideslist = hdr[rpm.RPMTAG_PROVIDES] + hdr[rpm.RPMTAG_FILENAMES]
-        if hdr[rpm.RPMTAG_DIRNAMES] != None:
-            fullprovideslist = fullprovideslist + hdr[rpm.RPMTAG_DIRNAMES]
-        for req in usereq:
-            for item in fullprovideslist:
-                log(3, '%s vs %s' % (item, req))
-                if req == item or fnmatch.fnmatch(item, req):
-                    results = results + 1
-                    log(2,'Available package: %s provides %s' % (name, item))
-        del fullprovideslist
-    for (name, arch) in rpmnevral.NAkeys():
-        log(3, '%s' % name)
-        hdr=rpmnevral.getHeader(name,arch)
-        fullprovideslist = hdr[rpm.RPMTAG_PROVIDES] + hdr[rpm.RPMTAG_FILENAMES]
-        if hdr[rpm.RPMTAG_DIRNAMES] != None:
-            fullprovideslist = fullprovideslist + hdr[rpm.RPMTAG_DIRNAMES]
-        for req in usereq:
-            for item in fullprovideslist:
-                log(3, '%s vs %s' % (item, req))
-                if req == item or fnmatch.fnmatch(item, req):
-                    results = results + 1
-                    log(2,'Installed package: %s provides %s' % (name, item))
-        del fullprovideslist
+    if localrpmdb = 0:
+        for (name, arch) in nulist:
+            hdr = hinevral.getHeader(name, arch)
+            fullprovideslist = hdr[rpm.RPMTAG_PROVIDES] + hdr[rpm.RPMTAG_FILENAMES]
+            if hdr[rpm.RPMTAG_DIRNAMES] != None:
+                fullprovideslist = fullprovideslist + hdr[rpm.RPMTAG_DIRNAMES]
+            for req in usereq:
+                for item in fullprovideslist:
+                    log(6, '%s vs %s' % (item, req))
+                    if req == item or fnmatch.fnmatch(item, req):
+                        results = results + 1
+                        log(2,'Available package: %s provides %s' % (name, item))
+            del fullprovideslist
+    elif localrpmdb = 1:
+        for (name, arch) in rpmnevral.NAkeys():
+            hdr=rpmnevral.getHeader(name,arch)
+            fullprovideslist = hdr[rpm.RPMTAG_PROVIDES] + hdr[rpm.RPMTAG_FILENAMES]
+            if hdr[rpm.RPMTAG_DIRNAMES] != None:
+                fullprovideslist = fullprovideslist + hdr[rpm.RPMTAG_DIRNAMES]
+            for req in usereq:
+                for item in fullprovideslist:
+                    log(6, '%s vs %s' % (item, req))
+                    if req == item or fnmatch.fnmatch(item, req):
+                        results = results + 1
+                        log(2,'Installed package: %s provides %s' % (name, item))
+            del fullprovideslist
+    else:
+        errorlog(1,'localrpmdb not defined')
         
-    
-    
-    
+        
     if results > 0:
         log(2,'%s results returned' % results)
     else:
