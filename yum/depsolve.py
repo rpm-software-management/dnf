@@ -60,9 +60,13 @@ class Depsolve:
     
     def populateTs(self):
         """take transactionData class and populate transaction set"""
+
         ts_elem = []
         for te in self.ts:
-            pkginfo = (te.N(), te.A(), te.V(), te.E(), te.R())
+            epoch = te.E()
+            if epoch is None:
+                epoch = '0'
+            pkginfo = (te.N(), te.A(), epoch, te.V(), te.R())
             if te.Type() == 1:
                 mode = 'i'
             elif te.Type() == 2:
@@ -106,7 +110,7 @@ class Depsolve:
         unresolveableloop = 0
         self.cheaterlookup = {}
         errors = []
-        
+
         while CheckDeps == 1 and (missingdep == 0 or conflicts == 1):
             self.populateTs()
             deps = self.ts.check()
@@ -168,29 +172,45 @@ class Depsolve:
 
         if sense == rpm.RPMDEP_SENSE_REQUIRES:
             self.log(4, '%s requires: %s' % (name, rpmUtils.miscutils.formatRequire(needname, needversion, flags)))
-            if self.rpmdb.installed(name=name, ver=version, rel=release):
+            pkgs = self.rpmdb.returnTupleByKeyword(name=name, ver=version, rel=release)
+            if len(pkgs) > 0:
                 # the requiring package is installed, that means the item needed is in
                 # a package that is either being updated or erased/obsoleted
                 # check what state the needed item/package is in:
                 # if it's being upgraded then mark the requiring package to be upgraded too
                 # if it's being erased then mark the requiring package to be erased
-                print 'it is installed %s-%s-%s' % (name, version, release)
-                pass
-            pkgs = self.pkgSack.searchProvides(needname)
-            if flags == 0:
-                flags = None
-            (r_e, r_v, r_r) = rpmUtils.miscutils.stringToVersion(needversion)
-            for po in pkgs:
-                self.log(5, 'Potential match %s to %s' % (needname, po))
-                if po.checkPrco('provides', (needname, flags, (r_e, r_v, r_r))):
-                    # first one? <shrug>
-                    (n, e, v, r, a) = po.returnNevraTuple() # this is stupid the po should be emitting matching tuple types
-                    
-                    ### Why am I getting a po back and then just using the pkgtup info from it
-                    # why not just store the po itself in the tsInfo, and dispense with all these lookups
-                    self.tsInfo.add((n, a, e, v, r), 'u', 'dep')
-                    self.log(3, 'Matched %s to require for %s' % (po, name))
-                    CheckDeps=1
+                self.log(5, 'it is installed %s-%s-%s' % (name, version, release))
+                needmode = self.tsInfo.getMode(name=needname)
+                pkg = pkgs[0] #take the first one
+                if needmode in ['e']:
+                    self.log(5, 'needed package marked as erase')
+                    self.tsInfo.add(pkg, 'e', 'dep')
+                    CheckDeps = 1
+                if needmode in ['i', 'u']:
+                    self.log(5, 'needed packaged marked as update')
+                    (n,a,e,v,r) = pkg
+                    if self.conf.getConfigOption('exactarch'):
+                        po = self.pkgSack.returnNewestByNameArch((n,a))
+                        if po:
+                            (n,e,v,r,a) = po.returnNevraTuple()
+                            self.tsInfo.add((n,a,e,v,r), 'u', 'dep')
+                            CheckDeps = 1
+            else:
+                pkgs = self.pkgSack.searchProvides(needname)
+                if flags == 0:
+                    flags = None
+                (r_e, r_v, r_r) = rpmUtils.miscutils.stringToVersion(needversion)
+                for po in pkgs:
+                    self.log(5, 'Potential match %s to %s' % (needname, po))
+                    if po.checkPrco('provides', (needname, flags, (r_e, r_v, r_r))):
+                        # first one? <shrug>
+                        (n, e, v, r, a) = po.returnNevraTuple() # this is stupid the po should be emitting matching tuple types
+                        
+                        ### Why am I getting a po back and then just using the pkgtup info from it
+                        # why not just store the po itself in the tsInfo, and dispense with all these lookups
+                        self.tsInfo.add((n, a, e, v, r), 'u', 'dep')
+                        self.log(3, 'Matched %s to require for %s' % (po, name))
+                        CheckDeps=1
                     
             # find out if the req package is in the tsInfo
             # if it is, check which mode

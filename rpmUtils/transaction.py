@@ -32,7 +32,6 @@ class TransactionData:
             # user = user requested
             # dep = deps
             # others? ....
-            
         # list of flags to set for the transaction
         self.data['flags'] = []
         self.data['vsflags'] = []
@@ -41,14 +40,60 @@ class TransactionData:
     def count(self):
         """returns count of packages in transaction holder"""
         return len(self.data['packages'])
+    
+    def getMode(self, name=None, arch=None, epoch=None, ver=None, rel=None):
+        """give back the first mode that matches the keywords, return None for
+           no match."""
+        completelist = []
+        removedict = {}
+        returnlist = []
         
+        for ((n,a,e,v,r), mode) in self.data['packages']:
+            completelist.append((n,a,e,v,r))
+        
+        for pkgtup in completelist:
+            (n, a, e, v, r) = pkgtup
+            if name is not None:
+                if name != n:
+                    removedict[pkgtup] = 1
+                    continue
+            if arch is not None:
+                if arch != a:
+                    removedict[pkgtup] = 1
+                    continue
+            if epoch is not None:
+                if epoch != e:
+                    removedict[pkgtup] = 1
+                    continue
+            if ver is not None:
+                if ver != v:
+                    removedict[pkgtup] = 1
+                    continue
+            if rel is not None:
+                if rel != r:
+                    removedict[pkgtup] = 1
+                    continue
+        
+        for pkgtup in completelist:
+            if not removedict.has_key(pkgtup):
+                returnlist.append(pkgtup)
+        
+        for matched in returnlist:
+            for (pkgtup, mode) in self.data['packages']:
+                if matched == pkgtup:
+                    return mode
+
+        return None
+            
+            
+            
     def add(self, pkgtup, mode, reason='user'):
         """add a package to the transaction"""
         
         if (pkgtup, mode) not in self.data['packages']:
             self.data['packages'].append((pkgtup, mode))
             self.reason[pkgtup] = reason
-
+            
     def remove(self, pkgtup):
         """remove a package from the transaction"""
         

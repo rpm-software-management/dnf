@@ -168,7 +168,7 @@ class PackageSack:
         
         return returnList
 
-    def returnNewestByNameArch(self):
+    def returnNewestByNameArch(self, naTup=None):
         """return list of newest packages based on name, arch matching
            this means(in name.arch form): foo.i386 and foo.noarch are not 
            compared to each other for highest version only foo.i386 and 
@@ -184,10 +184,13 @@ class PackageSack:
                 rc = mdUtils.compareEVR((e,v,r), (e2, v2, r2))
                 if rc > 0:
                     highdict[(n, a)] = pkg
-                                    
+        
+        if naTup:
+            return highdict[(naTup)]
+        
         return highdict.values()
         
-    def returnNewestByName(self):
+    def returnNewestByName(self, name=None):
         """return list of newest packages based on name matching
            this means(in name.arch form): foo.i386 and foo.noarch will
            be compared to each other for highest version"""
@@ -204,8 +207,8 @@ class PackageSack:
                     highdict[n] = pkg
                 #elif rc == 0: FIXME  - this should do something to determine the best arch, I guess
                 
-                    
-                                    
+        if name:
+            return highdict[name]
         return highdict.values()
            
     def simplePkgList(self, repoid=None):
