@@ -514,6 +514,7 @@ def clean_up_old_headers(rpmDBInfo, HeaderInfo):
         hdrdir = conf.serverhdrdir[serverid]
         hdrlist = getfilelist(hdrdir, '.hdr', hdrlist)
     for hdrfn in hdrlist:
+        todel = 0
         hdr = readHeader(hdrfn)
         (e, n, v, r, a) = getENVRA(hdr)
         if rpmDBInfo.exists(n, a):
@@ -522,13 +523,14 @@ def clean_up_old_headers(rpmDBInfo, HeaderInfo):
             # if the rpmdb has an equal or better rpm then delete
             # the header
             if (rc >= 0):
-                log(4, 'Deleting Header %s' % hdrfn)
-                os.unlink(hdrfn)
+                todel = todel + 1
+                log(6, 'Header %s should be deleted' % hdrfn)
         if not HeaderInfo.exists(n, a):
             # if its not in the HeaderInfo nevral anymore just kill it
-            log(4, 'Deleting Header %s' % hdrfn)
+            todel = todel + 1
+            log(6, 'Deleting Header %s' % hdrfn)
+        if todel > 0:
             os.unlink(hdrfn)
-            
 
 def printtime():
     import time
