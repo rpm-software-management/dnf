@@ -1,3 +1,159 @@
+2004-11-27 10:12  skvidal
+
+	* cli.py, yum-daily.spec, yum.spec: 
+	update misc files to yum 2.1.12
+
+2004-11-27 10:08  skvidal
+
+	* yum/__init__.py: 
+	typo in #! line
+
+2004-11-25 18:20  skvidal
+
+	* cli.py: 
+	yum clean output fix - bug: 140872
+
+2004-11-25 15:00  skvidal
+
+	* cli.py, yum/config.py, yum/depsolve.py: 
+	fixes for installroot with logfiles and paths to repo.d dir fix for
+	bug 281 at atrpms fix for bug 140832
+
+2004-11-24 11:32  skvidal
+
+	* cli.py, yum/config.py: 
+	prelim fixes for logfile and chroot paths
+
+2004-11-24 11:16  skvidal
+
+	* bin/yum.py: 
+	try to catch keyboard interrupt earlier
+
+2004-11-24 10:22  skvidal
+
+	* docs/yum.conf.5, yum/config.py: 
+	check in throttle and bandwidth config option patch from Menno
+	Smits check in yum.conf.5 man page update from Menno Smits
+
+2004-11-24 09:12  skvidal
+
+	* cli.py: 
+	remove --download-only option so it doesn't pass through the
+	options check
+
+2004-11-19 02:14  skvidal
+
+	* cli.py: 
+	minor change in logging level for post-transaction output.
+
+2004-11-19 02:01  skvidal
+
+	* callback.py: 
+	minor logic change in patch for output in cron job.
+
+2004-11-17 09:02  skvidal
+
+	* callback.py, cli.py: 
+	fix for outputting in cron job to cron emails - whoops fix for
+	moving output when not on a tty.
+
+2004-11-12 02:57  skvidal
+
+	* yum/: __init__.py, repos.py: 
+	make it more reasonable to import yum as a module instead of
+	running it directly.
+
+2004-11-12 01:13  skvidal
+
+	* yum/transactioninfo.py: 
+	some nice, purty methods for the transactioninfo. Still not
+	complete but getting closer
+
+2004-11-09 03:43  skvidal
+
+	* cli.py: 
+	fix for generate-rss bug with 'recent' not specified
+
+2004-11-09 02:13  skvidal
+
+	* rpmUtils/miscutils.py, yum/depsolve.py: 
+	check in patch to make output look prettier and more accurate for
+	unresolveable dep
+
+2004-11-09 00:35  skvidal
+
+	* yum/depsolve.py: 
+	traceback when both packages of conflict in the ts.
+
+2004-11-05 03:59  skvidal
+
+	* yum/transactioninfo.py: 
+	more detail on what I need to do
+
+2004-11-03 08:12  skvidal
+
+	* cli.py: 
+	fix for log file being executable - rh bug #137963
+
+2004-10-31 11:36  skvidal
+
+	* cli.py, yum/depsolve.py: 
+	fix for two different bugs: 1. yum install foo.i386 on an x86_64
+	machine 2. yum remove foo where two different packages require
+	something from foo
+
+2004-10-30 23:29  skvidal
+
+	* rpmUtils/arch.py: 
+	fix for noarch pkg installs.
+
+2004-10-29 03:08  skvidal
+
+	* cli.py, output.py, yum/__init__.py: 
+	implement yum list obsoletes which outputs a nicer layout for
+	obsoletes
+
+2004-10-29 02:20  skvidal
+
+	* cli.py, rpmUtils/__init__.py, yum/__init__.py: 
+	- implement yum update /path/to/file.rpm - fix yum module so it
+	won't import the rpmdb more than once
+
+2004-10-28 18:13  skvidal
+
+	* rpmUtils/updates.py: 
+	remove debug print output
+
+2004-10-28 17:34  skvidal
+
+	* rpmUtils/updates.py: 
+	I'm beginning to hate ia32e
+
+2004-10-28 15:52  skvidal
+
+	* rpmUtils/arch.py: 
+	one more ia32e fix - this code needs a testunit, badly.
+
+2004-10-28 15:39  skvidal
+
+	* rpmUtils/updates.py: 
+	fix for ia32e on updates
+
+2004-10-28 14:20  skvidal
+
+	* rpmUtils/arch.py: 
+	fix ia32e and iseries to be picked up as multilib arches.
+
+2004-10-28 00:17  skvidal
+
+	* cli.py: 
+	Package is spelled with 2 As
+
+2004-10-28 00:00  skvidal
+
+	* ChangeLog: 
+	Changelog updates
+
 2004-10-27 23:50  skvidal
 
 	* cli.py, yum-daily.spec, yum.spec: 
