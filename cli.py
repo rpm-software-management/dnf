@@ -360,6 +360,8 @@ class YumBaseCli(yum.YumBase):
             # ones that we obviously can't use
             for pkgtup in installable:
                 (n, a, e, v, r) = pkgtup
+                if a == 'src':
+                    continue
                 if pkgtup in installed:
                     continue
 
