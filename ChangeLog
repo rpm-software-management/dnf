@@ -1,3 +1,10 @@
+2004-09-03 05:06  skvidal
+
+	* ChangeLog, cli.py, repomd/packageSack.py, yum/__init__.py,
+	yum/depsolve.py, yum/packages.py: 
+	Large number of depsolver changes and fixes. Should be much more
+	correct.
+
 2004-09-02 11:00  skvidal
 
 	* ChangeLog, cli.py, yum.spec: 

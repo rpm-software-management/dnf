@@ -1,6 +1,6 @@
 Summary: RPM installer/updater
 Name: yum
-Version: 2.1.2
+Version: 2.1.3
 Release: 1
 License: GPL
 Group: System Environment/Base
@@ -71,6 +71,9 @@ exit 0
 %{_mandir}/man*/*
 
 %changelog
+* Fri Sep  3 2004 Seth Vidal <skvidal@phy.duke.edu>
+- big depsolver update
+
 * Wed Sep  1 2004 Seth Vidal <skvidal@phy.duke.edu>
 - more changes
 

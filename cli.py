@@ -36,7 +36,7 @@ from i18n import _
 import callback
 
 
-__version__ = '2.1.2'
+__version__ = '2.1.3'
 
 
 class YumBaseCli(yum.YumBase):
@@ -477,8 +477,8 @@ class YumBaseCli(yum.YumBase):
         self.log(2, 'Finished Transaction Test')
         if len(tserrors) > 0:
             errstring = 'Transaction Check Error: '
-            for error in tserrors:
-                errstring += error
+            for (descr, (etype, mount, need)) in tserrors:
+                errstring += descr
             
             raise yum.Errors.YumBaseError, errstring
         self.log(2, 'Transaction Test Succeeded')
@@ -492,11 +492,12 @@ class YumBaseCli(yum.YumBase):
         cb = callback.RPMInstallCallback()
         # run ts
         self.log(2, 'Running Transaction')
+        
         errors = self.ts.run(cb.callback, '')
         if errors:
             errstring = 'Error in Transaction: '
-            for error in errors:
-                errstring += error
+            for (descr, (etype, mount, need)) in errors:
+                errstring += descr
             
             raise yum.Errors.YumBaseError, errstring
 
