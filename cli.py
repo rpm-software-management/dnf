@@ -43,7 +43,7 @@ import callback
 import urlgrabber
 import urlgrabber.grabber
 
-__version__ = '2.3.0'
+__version__ = '2.3.1'
 
 class CliError(yum.Errors.YumBaseError):
    def __init__(self, args=None):

@@ -1,7 +1,7 @@
 %define date #DATE#
 Summary: RPM installer/updater
 Name: yum
-Version: 2.3.0
+Version: 2.3.1
 Release: %{date}
 License: GPL
 Group: System Environment/Base
@@ -13,7 +13,6 @@ BuildRoot: %{_tmppath}/%{name}-%{version}root
 BuildArchitectures: noarch
 BuildRequires: python
 BuildRequires: gettext
-Obsoletes: yum-phoebe
 Requires: python, rpm-python, rpm >= 0:4.1.1, libxml2-python, python-sqlite
 Prereq: /sbin/chkconfig, /sbin/service
 
@@ -74,6 +73,9 @@ exit 0
 %{_mandir}/man*/*
 
 %changelog
+* Mon Mar  7 2005 Seth Vidal <skvidal@phy.duke.edu>
+- 2.3.1
+
 * Fri Feb 25 2005 Gijs Hollestelle <gijs@gewis.nl>
 - Require python-sqlite
 

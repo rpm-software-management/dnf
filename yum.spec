@@ -1,6 +1,6 @@
 Summary: RPM installer/updater
 Name: yum
-Version: 2.3.0
+Version: 2.3.1
 Release: 1
 License: GPL
 Group: System Environment/Base
@@ -12,8 +12,10 @@ BuildRoot: %{_tmppath}/%{name}-%{version}root
 BuildArchitectures: noarch
 BuildRequires: python
 BuildRequires: gettext
-Obsoletes: yum-phoebe
-Requires: python, rpm-python, rpm >= 0:4.1.1, libxml2-python, python-sqlite
+Requires: python, rpm-python, rpm >= 0:4.1.1
+Requires: libxml2-python
+Requires: python-sqlite
+Requires: urlgrabber
 Prereq: /sbin/chkconfig, /sbin/service, coreutils
 
 %description
@@ -68,11 +70,14 @@ exit 0
 /usr/lib/python?.?/site-packages/yum
 /usr/lib/python?.?/site-packages/repomd
 /usr/lib/python?.?/site-packages/rpmUtils
-/usr/lib/python?.?/site-packages/urlgrabber
 %dir /var/cache/yum
 %{_mandir}/man*/*
 
 %changelog
+* Mon Mar  7 2005 Seth Vidal <skvidal@phy.duke.edu>
+- 2.3.1
+- get rid of old obsoletes
+
 * Fri Feb 25 2005 Gijs Hollestelle <gijs@gewis.nl>
 - Require python-sqlite
 
