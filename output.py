@@ -19,6 +19,7 @@
 
 import sys
 import time
+from i18n import _
 
 def printtime():
     return time.strftime('%b %d %H:%M:%S', time.localtime(time.time()))
@@ -45,126 +46,88 @@ def simpleProgressBar(current, total, name=None):
     if current == total:
         sys.stdout.write('\n')
         
+def sortPkgObj(pkg1 ,pkg2):
+    """sorts a list of package tuples by name"""
+    if pkg1.name > pkg2.name:
+        return 1
+    elif pkg1.name == pkg2.name:
+        return 0
+    else:
+        return -1
+    
 
 
+def simpleList(pkg):
+    n = pkg.name
+    a = pkg.arch
+    e = pkg.epoch
+    v = pkg.version
+    r = pkg.release
+    repo = pkg.returnSimple('repoid')
+    if e != '0':
+        ver = '%s:%s-%s' % (e, v, r)
+    else:
+        ver = '%s-%s' % (v, r)
+    
+    print "%-36s%-7s%-25s%-12s" % (n, a, ver, repo)
+
+
+def infoOutput(pkg):
+    print _("Name   : %s") % pkg.name
+    print _("Arch   : %s") % pkg.arch
+    print _("Version: %s") % pkg.version
+    print _("Release: %s") % pkg.release
+#    print _("Size   : %s") % clientStuff.descfsize(hdr[rpm.RPMTAG_SIZE])
+#    print _("Group  : %s") % hdr[rpm.RPMTAG_GROUP]
+    print _("Repo   : %s") % pkg.returnSimple('repoid')
+    print _("Summary: %s") % pkg.returnSimple('summary')
+    print _("Description:\n %s") % pkg.returnSimple('description')
+    print ""
+
+    
 def listPkgs(pkgLists, outputType):
     """outputs based on whatever outputType is. Current options:
        'list' - simple pkg list
        'info' - similar to rpm -qi output
-       'genrate-rss' - rss feed-type output"""
+       'rss' - rss feed-type output"""
     
-    FIXMEFIXMEFIXME
-    if len(lst) > 0:
-            if len(self.extcmds) > 0:
-                exactmatch, matched, unmatched = yum.packages.parsePackages(lst, self.extcmds)
-                lst = yum.misc.unique(matched + exactmatch)
-
-    # check our reduced list
-        if len(lst) > 0:
-            thingslisted = 1
-            self.log(2, '%s packages' % name)
-            lst.sort(sortPkgTup)
-            if name in ['Installed', 'Extra']:
+    if outputType in ['list', 'info']:
+        thingslisted = 0
+        for (lst, description) in pkgLists:
+            if len(lst) > 0:
+                thingslisted = 1
+                print '%s packages' % description
+                lst.sort(sortPkgObj)
                 for pkg in lst:
-                    (n, a, e, v, r) = pkg
-                    if e != '0':
-                        ver = '%s:%s-%s' % (e, v, r)
+                    if outputType == 'list':
+                        simpleList(pkg)
+                    elif outputType == 'info':
+                        infoOutput(pkg)
                     else:
-                        ver = '%s-%s' % (v, r)
-                        
-                    self.log(2, "%-36s%-7s%-25s%-12s" % (n, a, ver, 'installed'))
-            else:
-                for pkg in lst:
-                    po = self.getPackageObject(pkg)
-                    if po.epoch != '0':
-                        ver = '%s:%s-%s' % (po.epoch, po.version, po.release)
-                    else:
-                        ver = '%s-%s' % (po.version, po.release)
-                    self.log(2, "%-36s%-7s%-25s%-12s" % (po.name, po.arch, 
-                                           ver, po.returnSimple('repoid')))
+                        print 'foo'
+                        pass
 
-    if thingslisted == 0:
-        self.errorlog(1, 'No Packages to list')
-
-    return 0, ['Success']
+        if thingslisted == 0:
+            return 1, ['No Packages to list']
     
-    def userconfirm(self):
-        """gets a yes or no from the user, defaults to No"""
-        choice = raw_input('Is this ok [y/N]: ')
-        if len(choice) == 0:
+    elif outputType == 'rss':
+        # take recent updates only and dump to an rss compat output
+        pass
+    
+
+def userconfirm(self):
+    """gets a yes or no from the user, defaults to No"""
+    choice = raw_input('Is this ok [y/N]: ')
+    if len(choice) == 0:
+        return 1
+    else:
+        if choice[0] != 'y' and choice[0] != 'Y':
             return 1
         else:
-            if choice[0] != 'y' and choice[0] != 'Y':
-                return 1
-            else:
-                return 0        
-                
+            return 0        
+            
 
 
-#FIXME - we should be taking a simple list of packages and displaying them or 
-#giving their info - consider copying the rpm -qi interface for the info output
-#need to get repo information per-pkg - so the search interface for the packageSack
-#should be better
-
-def listpkginfo(pkglist, userlist, nevral, short):
-    if len(pkglist) > 0:
-        if short:
-            log(2, "%-36s%-7s%-25s%-12s" %(_('Name'),_('Arch'),_('Version'), _('Repo')))
-            log(2, "-" * 80)
-        pkglist.sort(clientStuff.nasort)
-        if type(userlist) is types.StringType:
-            if userlist=='all' or userlist =='updates':
-                for (name, arch) in pkglist:
-                    if short:
-                        (e,v,r) = nevral.evr(name,arch)
-                        id = nevral.serverid(name, arch)
-                        if e == '0':
-                            ver = '%s-%s' % (v, r)
-                        else:
-                            ver = '%s:%s-%s' % (e, v, r)
-                        print "%-36s%-7s%-25s%-12s" %(name, arch, ver, id)
-                    else:
-                        displayinfo(name, arch, nevral)
-                print ' '
-        else:    
-            for (name,arch) in pkglist:
-                for n in userlist:
-                    pattern = fnmatch.translate(n)
-                    regex = re.compile(pattern, re.IGNORECASE)
-                    if n == name or regex.match(name):
-                        if short:
-                            (e,v,r)=nevral.evr(name,arch)
-                            id = nevral.serverid(name, arch)
-                            if e == '0':
-                                ver = '%s-%s' % (v, r)
-                            else:
-                                ver = '%s:%s-%s' % (e, v, r)
-                            print "%-36s%-7s%-25s%-12s" %(name, arch, ver, id)
-                        else:
-                            displayinfo(name, arch, nevral)
-            print ' '
-    else:
-        print _("No Packages Available to List")
-
-def displayinfo(name, arch, nevral):
-    hdr = nevral.getHeader(name, arch)
-    id = nevral.serverid(name, arch)
-    if id == 'db':
-        repo = 'Locally Installed'
-    else:
-        repo = conf.servername[id]
-        
-    print _("Name   : %s") % hdr[rpm.RPMTAG_NAME]
-    print _("Arch   : %s") % hdr[rpm.RPMTAG_ARCH]
-    print _("Version: %s") % hdr[rpm.RPMTAG_VERSION]
-    print _("Release: %s") % hdr[rpm.RPMTAG_RELEASE]
-    print _("Size   : %s") % clientStuff.descfsize(hdr[rpm.RPMTAG_SIZE])
-    print _("Group  : %s") % hdr[rpm.RPMTAG_GROUP]
-    print _("Repo   : %s") % repo
-    print _("Summary: %s") % hdr[rpm.RPMTAG_SUMMARY]
-    print _("Description:\n %s") % hdr[rpm.RPMTAG_DESCRIPTION]
-    print ""
-    
 
 def listgroups(userlist):
     """lists groups - should handle 'installed', 'all', glob, empty,

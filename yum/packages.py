@@ -40,7 +40,8 @@ def buildPkgRefDict(pkgs):
        dict[0:name-1-1.i386] = (name, i386, 0, 1, 1)
        """
     pkgdict = {}
-    for pkgtup in pkgs:
+    for pkg in pkgs:
+        pkgtup = (pkg.name, pkg.arch, pkg.epoch, pkg.version, pkg.release)
         (n, a, e, v, r) = pkgtup
         name = n
         nameArch = '%s.%s' % (n, a)
@@ -51,7 +52,7 @@ def buildPkgRefDict(pkgs):
         for item in [name, nameArch, nameVerRelArch, nameVer, nameVerRel, full]:
             if not pkgdict.has_key(item):
                 pkgdict[item] = []
-            pkgdict[item].append(pkgtup)
+            pkgdict[item].append(pkg)
             
     return pkgdict
        
@@ -172,16 +173,16 @@ class YumInstalledPackage:
         self.hdr = hdr
         self.name = self.tagByName('name')
         self.arch = self.tagByName('arch')
-        self.epoch = self.epoch()
-        self.ver = self.tagByName('version')
-        self.rel = self.tagByName('release')
-        self.repoid = 'rpmdb'
-        
+        self.epoch = self.doepoch()
+        self.version = self.tagByName('version')
+        self.release = self.tagByName('release')
+        self.repoid = 'installed'
+    
     def tagByName(self, tag):
         data = self.hdr[tag]
         return data
     
-    def epoch(self):
+    def doepoch(self):
         tmpepoch = self.hdr['epoch']
         if temepoch is None:
             epoch = 0
@@ -190,6 +191,9 @@ class YumInstalledPackage:
         
         return epoch
     
+    def returnSimple(self, thing):
+        return getattr(self, thing)
+
 class YumAvailablePackage(metadata.packageObject.RpmXMLPackageObject):
     """derived class for the metadata packageobject we use
     this for dealing with packages in a repository"""

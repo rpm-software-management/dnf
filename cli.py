@@ -314,15 +314,28 @@ class YumBaseCli(yum.YumBase):
             matched, unmatched = parsePackages(self.rpmdb.getPkgList(), 
                                                self.extcmds)
     
-        elif self.basecmd in ['list', 'info', 'generate-rss']:
+        elif self.basecmd in ['list', 'info']:
             try:
-                pkgLists = self.listPkgs()
+                pkgLists = self.genPkgLists()
             except yum.Errors.YumBaseError, e:
                 return 1, [str(e)]
             else:
                 output.listPkgs(pkgLists, outputType=self.basecmd)
                 return 0, []
-            
+
+        elif self.basecmd == 'generate-rss':
+            # import changelog metadata please
+            # insert 'recent' into extcmds to make generate-rss implicitly output most recent
+            # from repos
+            self.extcmds.insert(0, 'recent')
+            try:
+                pkgLists = self.genPkgLists()
+            except yum.Errors.YumBaseError, e:
+                return 1, [str(e)]
+            else:
+                output.listPkgs(pkgLists, outputType=self.basecmd)
+                return 0, []
+                
         elif self.basecmd == 'clean':
             # if we're cleaning then we don't need to talk to the net
             self.conf.setConfigOption('cache', 1)
@@ -492,15 +505,6 @@ class YumBaseCli(yum.YumBase):
            returns a list of tuples - tuples are ("list of pkg objects", string
            describing that list") object."""
 
-        def sortPkgTup((n1, a1, e1, v1, r1) ,(n2, a2, e2, v2, r2)):
-            """sorts a list of package tuples by name"""
-            if n1 > n2:
-                return 1
-            elif n1 == n2:
-                return 0
-            else:
-                return -1
-        
             
         special = ['available', 'installed', 'all', 'extras', 'updates', 'recent',
                    'obsoletes']
@@ -522,9 +526,9 @@ class YumBaseCli(yum.YumBase):
             self.doRpmDBSetup()
             installed = self.rpmdb.getPkgList()
             self.doRepoSetup()
-            avail = self.pkgSack.simplePkgList()
-            for pkg in avail:
-                if pkg not in installed:
+            for pkg in self.pkgSack.returnPackages():
+                pkgtup = (pkg.name, pkg.arch, pkg.epoch, pkg.version, pkg.release)
+                if pkgtup not in installed:
                     available.append(pkg)
             del avail
             
@@ -532,21 +536,23 @@ class YumBaseCli(yum.YumBase):
             self.doRpmDBSetup()
             self.doRepoSetup()
             self.doUpdateSetup()
+            #FIXME  - need pkgobjects here (grumble)
             updates = self.up.getUpdatesList()
 
         elif pkgnarrow == 'installed':
             self.doRpmDBSetup()
+            # return headers, I think.
             installed = self.rpmdb.getPkgList()
             
         elif pkgnarrow == 'available':
             self.doRpmDBSetup()
             self.doRepoSetup()
-            avail = self.pkgSack.simplePkgList()
             inst = self.rpmdb.getPkgList()
-            for pkg in avail:
-                if pkg not in inst:
+            for pkg in self.pkgSack.returnPackages():
+                pkgtup = (pkg.name, pkg.arch, pkg.epoch, pkg.version, pkg.release)
+                if pkgtup not in inst:
                     available.append(pkg)
-            del avail
+
 
         elif pkgnarrow == 'extras':
             # we must compare the installed set versus the repo set
@@ -589,9 +595,17 @@ class YumBaseCli(yum.YumBase):
                         recent.append(po)
                     else:
                         count += 1
-        returnlist = [(updates, 'Updated'), (available, 'Available'), 
+        
+        returnlist = []
+        for (lst, description) in [(updates, 'Updated'), (available, 'Available'), 
                       (installed, 'Installed'), (recent, 'Recently available'),
                       (obsoletes, 'Obsoleting'), (extras, 'Extra')]:
+
+            if len(lst) > 0 and len(self.extcmds) > 0:
+                exactmatch, matched, unmatched = yum.packages.parsePackages(lst, self.extcmds)
+                lst = yum.misc.unique(matched + exactmatch)
+
+            returnlist.append((lst, description))
 
         return returnlist
 
