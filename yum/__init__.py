@@ -675,6 +675,43 @@ class YumBase(depsolve.Depsolve):
                     if callback:
                         callback(po, tmpvalues)
                     matches[po] = tmpvalues
+        
+        # installed rpms, too
+        taglist = ['filenames', 'dirnames', 'provides']
+        arg_re = []
+        for arg in args:
+            if re.match('.*[\*,\[,\],\{,\},\?].*', arg):
+                restring = fnmatch.translate(arg)
+            else:
+                restring = arg
+            reg = re.compile(arg, flags=re.I)
+            arg_re.append(reg)
 
+        for hdr in self.rpmdb.getHdrList():
+            po = YumInstalledPackage(hdr)
+            tmpvalues = []
+            searchlist = []
+            for tag in taglist:
+                tagdata = po.returnSimple(tag)
+                if tagdata is None:
+                    continue
+                if type(tagdata) is types.ListType:
+                    searchlist.extend(tagdata)
+                else:
+                    searchlist.append(tagdata)
+            
+            for reg in arg_re:
+                for item in searchlist:
+                    if reg.search(item):
+                        tmpvalues.append(item)
+
+            del searchlist
+
+            if len(tmpvalues) > 0:
+                if callback:
+                    callback(po, tmpvalues)
+                matches[po] = tmpvalues
+            
+            
         return matches
         
