@@ -20,7 +20,6 @@ import rpm
 import re
 import clientStuff
 import fnmatch
-import archwork
 import types
 import rpmUtils
 from i18n import _

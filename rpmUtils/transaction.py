@@ -113,7 +113,6 @@ def initReadOnlyTransaction():
     global read_ts
     if read_ts == None:
         read_ts =  TransactionWrapper()
-        # FIXME: replace with macro definition
-        read_ts.pushVSFlags(-1)
+        read_ts.pushVSFlags(~(rpm._RPMVSF_NOSIGNATURES|rpm._RPMVSF_NODIGESTS))
     return read_ts
 

@@ -18,21 +18,19 @@
 import os
 import sys
 import getopt
-import clientStuff
-import nevral
-import pkgaction
-import callback
 import time
 import random
 import locale
 import rpm
-import yumlock
 
+import callback
+import yumlock
 import yum
-import yum.rpmUtils
+import rpmUtils.transaction
 import yum.yumcomps
 import yum.Errors
 import progress_meter
+import misc
 
 from yum.logger import Logger
 from yum.config import yumconf
@@ -41,16 +39,16 @@ from i18n import _
 __version__='2.1.0'
 
 def parseCmdArgs(args):
-   """parses command line arguments, takes cli args, returns:
-      config class, additional args not handled"""
+    """parses command line arguments, takes cli args, returns:
+       config class, additional args not handled"""
       
     # setup our errorlog object 
-    errorlog=Logger(threshold=2, file_object=sys.stderr)
+    errorlog = Logger(threshold=2, file_object=sys.stderr)
 
     # our default config file location
-    yumconffile=None
+    yumconffile = None
     if os.access("/etc/yum.conf", os.R_OK):
-        yumconffile="/etc/yum.conf"
+        yumconffile = "/etc/yum.conf"
         
     try:
         gopts, cmds = getopt.getopt(args, 'tCc:hR:e:d:y', ['help',
@@ -60,6 +58,7 @@ def parseCmdArgs(args):
                                                            'disablerepo=',
                                                            'exclude=',
                                                            'obsoletes',
+                                                           'download-only',
                                                            'tolerant'])
     except getopt.error, e:
         errorlog(0, _('Options Error: %s') % e)
@@ -111,10 +110,12 @@ def parseCmdArgs(args):
         
         # syslog-style log
         if conf.getConfigOption('uid') == 0:
-            logfile=open(conf.getConfigOption('logfile'),"a")
-            filelog=Logger(threshold=10, file_object=logfile,preprefix=clientStuff.printtime())
+            logfd = os.open(conf.getConfigOption('logfile'), os.WRONLY, os.O_APPEND)
+            logfile =  os.fdopen(logd, 'a')
+            fcntl.fcntl(logfd, fcntl.F_SETFD)
+            filelog=Logger(threshold = 10, file_object = logfile, preprefix = misc.printtime())
         else:
-            filelog=Logger(threshold=10, file_object=None,preprefix=clientStuff.printtime())
+            filelog=Logger(threshold = 10, file_object=None, preprefix = misc.printtime())
         conf.setConfigOption('filelog', filelog)
         
         # we already know about the errorlog
@@ -245,32 +246,13 @@ def main(args):
     if process == 'clean':
         conf.setConfigOption('cache', 1)
         
-    # push the logs into the other namespaces
-    pkgaction.log = log
-    clientStuff.log = log
-    rpmUtils.log = log
-
-    pkgaction.errorlog = errorlog
-    clientStuff.errorlog = errorlog
-    rpmUtils.errorlog = errorlog
     
-    pkgaction.filelog = filelog
-    clientStuff.filelog = filelog
-    rpmUtils.filelog = filelog
+    # push our global objects into the other major namespaces
     
-    # push the conf file into the other namespaces
-    clientStuff.conf = conf
-    pkgaction.conf = conf
-    callback.conf = conf
-    rpmUtils.conf = conf
-    
-    # get our ts together that we'll use all over the place
-    ts = yum.rpmUtils.Rpm_Ts_Work()
-    ts.sigChecking('none')
-    clientStuff.ts = ts
-    pkgaction.ts = ts
-    rpmUtils.ts = ts
-    yumcomps.ts = ts
+   
+    # get our transaction set together that we'll use all over the place
+    read_ts = rpmUtils.transactions.initReadOnlyTransaction()
+    yumcomps.ts = read_ts
     
     # sorting the repos so that sort() will order them consistently
     # If you wanted to add scoring or somesuch thing for repo preferences
@@ -285,39 +267,30 @@ def main(args):
     # figure out what we're going to do so we can make decisions about what
     # we need to snarf from a server or into memory
     # we know that 'process' is our primary command    
-    
 
-    # download repomd.xml from each enabled server, if we have it
+    # download repomd.xml from each enabled server.
     
-    # create struncts for local rpmdb
+    # read in all the packageSacks
     
-    #################################################################################
-    # generate all the lists we'll need to quickly iterate through the lists.
-    #  uplist == list of updated packages
-    #  newlist == list of uninstall/available NEW packages (ones we don't have at all)
-    #  nulist == combination of the two
-    #  obslist == packages obsoleting a package we have installed
-    ################################################################################
+    # create structs for local rpmdb
+    
     log(2, _('Finding updated packages'))
-    (uplist, newlist, nulist) = clientStuff.getupdatedhdrlist(HeaderInfo, rpmDBInfo)
+    #(uplist, newlist, nulist) = clientStuff.getupdatedhdrlist(HeaderInfo, rpmDBInfo)
     
     if process in ['groupupdate', 'groupinstall', 'grouplist', 'groupremove']:
-        for repoid in repolist:
-            repo = conf.repos.getRepo(repoid)
+        for repo in repolist:
             grouprepos = []
             if repo.enablegroups:
-                grouprepos.append(repoid)
-        groupservers = clientStuff.getGroupsFromServers(grouprepos)
+                grouprepos.append(repo)
+        serversWithGroups = clientStuff.getGroupsFromServers(grouprepos)
         GroupInfo = yumcomps.Groups_Info(conf.getConfigOption('overwrite_groups'))
-        if len(servers_with_groups) > 0:
-            for repoid in servers_with_groups:
-                log(4, 'Adding Group from %s' % repoid)
-                repo = conf.repos.getRepo(repoid)
+        if len(serversWithGroups) > 0:
+            for repo in serversWithGroups:
+                log(4, 'Adding Group from %s' % repo.id)
                 GroupInfo.add(repo.localGroups())
         if GroupInfo.compscount > 0:
             GroupInfo.compileGroups()
-            clientStuff.GroupInfo = GroupInfo
-            pkgaction.GroupInfo = GroupInfo
+            # put GroupInfo instance where needed
         else:
             errorlog(0, _('No groups provided or accessible on any repository.'))
             errorlog(1, _('Exiting.'))
@@ -337,7 +310,7 @@ def main(args):
     # w/o getting anymore header info
     ##################################################################
 
-    clientStuff.take_action(cmds, nulist, uplist, newlist, obsoleting, tsInfo,\
+    #clientStuff.take_action(cmds, nulist, uplist, newlist, obsoleting, tsInfo,\
                             HeaderInfo, rpmDBInfo, obsoleted)
     # back from taking actions - if we've not exited by this point then we have
     # an action that will install/erase/update something
