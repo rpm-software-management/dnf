@@ -569,7 +569,10 @@ def take_action(cmds, nulist, uplist, newlist, obslist, tsInfo, HeaderInfo, rpmD
             errorlog(0, 'Need a provides to match')
             usage()
         else:
-            pkgaction.whatprovides(cmds, nulist, HeaderInfo, rpmDBInfo)
+            log(2, 'Looking in available packages for a providing package')
+            pkgaction.whatprovides(cmds, nulist, HeaderInfo,0)
+            log(2, 'Looking in installed packages for a providing package')
+            pkgaction.whatprovides(cmds, nulist, rpmDBInfo,1)
             
     elif cmds[0] == 'update':
         cmds.remove(cmds[0])
@@ -596,6 +599,8 @@ def take_action(cmds, nulist, uplist, newlist, obslist, tsInfo, HeaderInfo, rpmD
         else:
             if cmds[0] == 'updates':
                 pkgaction.listpkgs(uplist, 'updates', HeaderInfo)
+            elif cmds[0] == 'new':
+                pkgaction.listpkgs(newlist, 'all', HeaderInfo)
             else:    
                 pkgaction.listpkgs(nulist, cmds, HeaderInfo)
         sys.exit(0)
