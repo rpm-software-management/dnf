@@ -228,17 +228,31 @@ class YumBase(depsolve.Depsolve):
 
         return errors
 
-    def sigCheckPkgs(self, downloadpkgs):
+    def sigCheckPkgs(self, pkgs):
         """takes a list of package objects, checks their sig/checksums, returns
            a list of failures"""
         errorlist = []
-        # go through each package
-        # check to see if the repo is supposed to gpg check
-        # if so then gpg check each package
-        # if not then just check the md5/sha1 sum via rpm
-        # if error collect the dict[package]=error message
-        # return the list of errors
-        return []
+        for po in pkgs:
+            repo = self.repos.getRepo(po.repoid)
+            if repo.gpgcheck:
+                result = rpmUtils.miscutils.checkSig(self.read_ts, po.localPkg())
+                localfn = po.localPkg()
+                
+                msg = ''
+                if result == 0:
+                    continue
+                elif result == 1:
+                    msg = 'public key not available for %s' % localfn
+                elif result == 2:
+                    msg = 'problem opening package %s' % localfn
+                elif result == 3:
+                    msg = 'untrusted public key for %s' % localfn
+                elif result == 4:
+                    msg = 'unsigned package %s' % localfn
+                
+                errorlist.append(msg)
+            
+        return errorlist
         
     
         

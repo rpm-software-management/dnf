@@ -14,7 +14,7 @@ BuildRequires: python
 BuildRequires: gettext
 Obsoletes: yum-phoebe
 Requires: python, rpm-python, rpm >= 0:4.1.1, libxml2-python
-Prereq: /sbin/chkconfig, /sbin/service
+Prereq: /sbin/chkconfig, /sbin/service, coreutils
 
 %description
 Yum is a utility that can check for and automatically download and

@@ -275,10 +275,10 @@ class YumBaseCli(yum.YumBase):
         self.basecmd = self.cmds[0] # our base command
         self.extcmds = self.cmds[1:] # out extended arguments/commands
         
-        if self.basecmd not in ('update', 'install','info', 'list', 'erase',\
+        if self.basecmd not in ['update', 'install','info', 'list', 'erase',\
                                 'grouplist', 'groupupdate', 'groupinstall',\
                                 'clean', 'remove', 'provides', 'check-update',\
-                                'search', 'generate-rss'):
+                                'search', 'generate-rss', 'upgrade']:
             self.usage()
             
     
@@ -415,7 +415,7 @@ class YumBaseCli(yum.YumBase):
             raise yum.Errors.YumBaseError, errstring
 
         # gpgcheck in a big pile, report all errors at once
-        problems = self.sigCheckPkgs(downloadpkgs) # FIXME this should do _something_
+        problems = self.sigCheckPkgs(downloadpkgs)
         
         if len(problems) > 0:
             errstring = ''
@@ -424,6 +424,7 @@ class YumBaseCli(yum.YumBase):
             
             raise yum.Errors.YumBaseError, errstring
         
+        self.log(2, 'Running Transaction Test')
         tsConf = {}
         for feature in ['diskspacecheck']: # more to come, I'm sure
             tsConf['diskspacecheck'] = self.conf.getConfigOption('diskspacecheck')
@@ -442,7 +443,7 @@ class YumBaseCli(yum.YumBase):
                 errstring += error
             
             raise yum.Errors.YumBaseError, errstring
-        self.log(2, 'Finished Successfully')
+        self.log(2, 'Transaction Test Succeeded')
         del self.ts
         
         self.initActionTs() # make a new, blank ts to populate
