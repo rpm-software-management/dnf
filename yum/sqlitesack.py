@@ -135,11 +135,10 @@ class YumSqlitePackageSack(repos.YumPackageSack):
         return result
 
     def getPrco(self, pkgId):
-        result = {}
+        result = {'requires': [], 'provides': [], 'obsoletes': [], 'conflicts': []}
         for (rep, cache) in self.primarydb.items():
             cur = cache.cursor()
-            for prco in ['requires', 'provides', 'obsoletes', 'conflicts']:
-                result[prco] = []
+            for prco in result.keys():
                 cur.execute("select * from packages,%s where packages.pkgId = %s and packages.pkgKey = %s.pkgKey", prco, pkgId, prco)
                 for ob in cur.fetchall():
                     name = ob['%s.name' % prco ]
@@ -163,7 +162,10 @@ class YumSqlitePackageSack(repos.YumPackageSack):
                 filetypes = decodefiletypelist(ob['filelist.filetypes'])
                 filenames = decodefilenamelist(ob['filelist.filenames'])
                 while(filenames):
-                    filename = dirname+'/'+filenames.pop()
+                    if dirname:
+                        filename = dirname+'/'+filenames.pop()
+                    else:
+                        filename = filenames.pop()
                     filetype = filetypes.pop()
                     result.setdefault(filetype,[]).append(filename)
             if (found):
