@@ -586,9 +586,7 @@ For more information contact your distribution or package provider.
         if self._promptWanted():
             if not self.userconfirm():
                 self.log(0, 'Exiting on user Command')
-                return
-
-        
+                return 1
 
         self.log(2, 'Downloading Packages:')
         problems = self.downloadPkgs(downloadpkgs) 
@@ -604,7 +602,7 @@ For more information contact your distribution or package provider.
 
         # Check GPG signatures
         if self.gpgsigcheck(downloadpkgs) != 0:
-            return
+            return 1
         
         self.log(2, 'Running Transaction Test')
         tsConf = {}
@@ -654,7 +652,8 @@ For more information contact your distribution or package provider.
 
         # close things
         self.log(1, self.postTransactionOutput())
-
+        return 0
+        
     def gpgsigcheck(self, pkgs):
         '''Perform GPG signature verification on the given packages, installing
         keys if possible

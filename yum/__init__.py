@@ -358,7 +358,7 @@ class YumBase(depsolve.Depsolve):
             self.log(2, 'Excluding Packages from %s' % repo.name)
             
         exactmatch, matched, unmatched = \
-           parsePackages(self.pkgSack.returnPackages(repoid), excludelist)
+           parsePackages(self.pkgSack.returnPackages(repoid), excludelist, casematch=1)
         
         for po in exactmatch + matched:
             self.log(3, 'Excluding %s' % po)
@@ -377,7 +377,7 @@ class YumBase(depsolve.Depsolve):
         
         pkglist = self.pkgSack.returnPackages(repo.id)
         exactmatch, matched, unmatched = \
-           parsePackages(pkglist, includelist)
+           parsePackages(pkglist, includelist, casematch=1)
         
         self.log(2, 'Reducing %s to included packages only' % repo.name)
         rmlist = []

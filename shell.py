@@ -16,6 +16,8 @@
 import sys
 import os.path
 import cmd
+import string
+
 from yum import Errors
 from yum.constants import *
 
@@ -37,6 +39,11 @@ class YumShell(cmd.Cmd):
         self.resultmsgs = ['Leaving Shell']
         if (len(base.extcmds)) > 0:
             self.file = base.extcmds[0]
+        self.commandlist = ['clean', 'repo', 'exit', 'groupinfo',
+            'groupinstall', 'grouplist', 'groupremove', 'groupupdate',
+            'info', 'install', 'list', 'localinstall', 'repository',
+            'makecache', 'provides', 'quit', 'remove', 'run', 'search',
+            'transaction', 'ts', 'update', 'config']
 
     def script(self):
         try:
@@ -54,6 +61,10 @@ class YumShell(cmd.Cmd):
         if len(line) > 0 and line.strip()[0] == '#':
             pass
         else:
+            (cmd, args, line) = self.parseline(line)
+            if cmd not in self.commandlist:
+                self.do_help('')
+                return False
             self.base.cmdstring = line
             self.base.cmdstring = self.base.cmdstring.replace('\n', '')
             self.base.cmds = self.base.cmdstring.split()
@@ -69,11 +80,10 @@ class YumShell(cmd.Cmd):
     
     def do_help(self, arg):
         msg = """
-    commands:  check-update, clean, disablerepo, enablerepo,
-               exit, groupinfo, groupinstall, grouplist,
+    commands:  clean, config, exit, groupinfo, groupinstall, grouplist,
                groupremove, groupupdate, info, install, list,
-               listrepos, localinstall, makecache, provides, quit,
-               remove, run, search, transaction, update
+               localinstall, makecache, provides, quit, remove, 
+               repo, run, search, transaction, update
     """
         if arg in ['transaction', 'ts']:
             msg = """
@@ -83,7 +93,7 @@ class YumShell(cmd.Cmd):
       solve: run the dependency solver on the transaction
       run: run the transaction
                   """
-        elif arg in ['repos', 'repositories']:
+        elif arg in ['repo', 'repository']:
             msg = """
     repos arg [option]
       list: lists repositories and their status
@@ -91,7 +101,15 @@ class YumShell(cmd.Cmd):
       disable: disable repositories. option = repository id
     """
     
-        self.base.log(1, msg)
+        elif arg == 'config':
+            msg = """
+    config arg [value]
+      args: debuglevel, errorlevel, obsoletes, gpgcheck, assumeyes, exclude
+        If no value is given it prints the current value.
+        If value is given it sets that value.
+        """
+        
+        self.base.log(0, msg)
         
     def do_EOF(self, line):
         self.resultmsgs = ['Leaving Shell']
@@ -132,7 +150,7 @@ class YumShell(cmd.Cmd):
     
     def do_config(self, line):
         (cmd, args, line) = self.parseline(line)
-        # ints
+        # logs
         if cmd in ['debuglevel', 'errorlevel']:
             opts = args.split()
             if not opts:
@@ -142,7 +160,7 @@ class YumShell(cmd.Cmd):
                 try:
                     val = int(val)
                 except ValueError, e:
-                    self.base.errorlog('Value %s for %s cannot be made to an int' % (val, cmd))
+                    self.base.errorlog(0, 'Value %s for %s cannot be made to an int' % (val, cmd))
                     return
                 self.base.conf.setConfigOption(cmd, val)
                 if cmd == 'debuglevel':
@@ -157,27 +175,48 @@ class YumShell(cmd.Cmd):
             else:
                 value = opts[0]
                 if value.lower() not in BOOLEAN_STATES:
-                    self.base.errorlog('Value %s for %s is not a Boolean' % (value, cmd))
+                    self.base.errorlog(0, 'Value %s for %s is not a Boolean' % (value, cmd))
                     return False
                 value = BOOLEAN_STATES[value.lower()]
                 self.base.conf.setConfigOption(cmd, value)
                 if cmd == 'obsoletes':
                     if hasattr(self.base, 'up'): # reset the updates
                         del self.base.up
+        
+        elif cmd in ['exclude']:
+            opts = args.split()
+            if not opts:
+                msg = '%s: ' % cmd
+                msg = msg + string.join(self.base.conf.getConfigOption(cmd))
+                self.base.log(2, msg)
+                return False
+            else:
+                self.base.conf.setConfigOption(cmd, opts)
+                if hasattr(self.base, 'pkgSack'): # kill the pkgSack
+                    del self.base.pkgSack
+                    self.base.repos._selectSackType()
+                if hasattr(self.base, 'up'): # reset the updates
+                    del self.base.up
+                # reset the transaction set, we have to or we shall surely die!
+                self.base.closeRpmDB() 
+                self.base.doTsSetup()
+                self.base.doRpmDBSetup()
+        else:
+            self.do_help('config')
 
-
-            
-    def do_repositories(self, line):
+    def do_repository(self, line):
         self.do_repos(line)
         
-    def do_repos(self, line):
+    def do_repo(self, line):
         (cmd, args, line) = self.parseline(line)
         if cmd in ['list', None]:
+            if self.base.repos.repos.values():
+                self.base.log(2, '%-20.20s %-40.40s status' % ('repo id', 'repo name'))
             for repo in self.base.repos.repos.values():
                 if repo in self.base.repos.listEnabled():
-                    self.base.log('%-20.20s %-40.40s  enabled' % (repo, repo.name))
+                    self.base.log(2, '%-20.20s %-40.40s  enabled' % (repo, repo.name))
                 else:
-                    self.base.log('%-20.20s %-40.40s  disabled' % (repo, repo.name))
+                    self.base.log(2, '%-20.20s %-40.40s  disabled' % (repo, repo.name))
         
         elif cmd == 'enable':
             repos = args.split()
@@ -224,7 +263,7 @@ class YumShell(cmd.Cmd):
     def do_run(self, line):
         if len(self.base.tsInfo) > 0:
             try:
-                self.base.doTransaction()
+                returnval = self.base.doTransaction()
             except Errors.YumBaseError, e:
                 self.base.errorlog(0, '%s' % e)
             except KeyboardInterrupt, e:
@@ -233,8 +272,11 @@ class YumShell(cmd.Cmd):
                 if e.errno == 32:
                     self.base.errorlog(0, '\n\nExiting on Broken Pipe')
             else:
-                self.base.log(2, 'Finished Transaction')
-                self.base.closeRpmDB()
-                self.base.doTsSetup()
-                self.base.doRpmDBSetup()
+                if returnval != 0:
+                    self.base.log(0, 'Transaction did not run.')
+                else:
+                    self.base.log(2, 'Finished Transaction')
+                    self.base.closeRpmDB()
+                    self.base.doTsSetup()
+                    self.base.doRpmDBSetup()
 
