@@ -23,7 +23,7 @@ import urllib
 
 class yumConfigParser(ConfigParser.ConfigParser):
     def readfp(self, fp, filename=None):
-    """Like read() but the argument must be a file-like object.
+        """Like read() but the argument must be a file-like object.
         The `fp' argument must have a `readline' method.  Optional
         second argument is the `filename', which if not given, is
         taken from fp.name.  If fp has no `name' attribute, `<???>' is
@@ -34,7 +34,7 @@ class yumConfigParser(ConfigParser.ConfigParser):
                 filename = fp.name
             except AttributeError:
                 filename = '<???>'
-        self.__read(fp, filename)
+        self.__read(fp)
 
 class yumconf:
     def __init__(self, configfile = '/etc/yum.conf'):
