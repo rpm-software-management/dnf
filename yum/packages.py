@@ -177,7 +177,9 @@ class YumInstalledPackage:
         self.version = self.tagByName('version')
         self.release = self.tagByName('release')
         self.repoid = 'installed'
-    
+        self.summary = self.tagByName('summary')
+        self.description = self.tagByName('description')
+        
     def tagByName(self, tag):
         data = self.hdr[tag]
         return data
@@ -211,15 +213,19 @@ class YumInstalledPackage:
 
     def pkgtup(self):
         return (self.name, self.arch, self.epoch, self.version, self.release)
-        
+    
+    def size(self):
+        return self.tagByName('size')
 
 class YumAvailablePackage(metadata.packageObject.RpmXMLPackageObject):
     """derived class for the metadata packageobject we use
     this for dealing with packages in a repository"""
 
+   
+    def size(self):
+        return self.returnSimple('packagesize')
     def pkgtup(self):
-        (n,e,v,r,a) = self.returnNevraTuple()
-        return (n,a,e,v,r)
+        return self.returnPackageTuple()
 
     def getHeader(self):
         """returns an rpm header object from the package object"""
