@@ -355,7 +355,7 @@ class YumOutput:
             for txmbr in pkglist:
                 (n,a,e,v,r) = txmbr.pkgtup
                 msg = "  %s: %s.%s %s:%s-%s\n" % (action, n,a,e,v,r)
-                userout = userout + msg
+                depout = depout + msg
 
         for txmbr in obsoleted:
             (n,a,e,v,r) = txmbr.pkgtup

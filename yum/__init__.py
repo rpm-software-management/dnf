@@ -349,7 +349,7 @@ class YumBase(depsolve.Depsolve):
         
         for po in self.pkgSack.returnPackages():
             if po.arch not in archlist:
-                self.log(3, 'Arch Excluding %s' % po)
+                self.log(7, 'Arch Excluding %s' % po)
                 self.pkgSack.delPackage(po)
         self.log(3, 'Finished')
         
