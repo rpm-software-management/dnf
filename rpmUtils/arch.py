@@ -56,10 +56,10 @@ def archDifference(myarch, targetarch):
 def score(arch):
     return archDifference(canonArch, arch)
 
-def bestArchFromList(archlist, myarch=None):
+def getBestArchFromList(archlist, myarch=None):
     """ 
-        return the best arch for myarch if - myarch is None then return
-        the best arch from the list for the canonArch.
+        return the best arch from the list for myarch if - myarch is not given,
+        then return the best arch from the list for the canonArch.
     """
     
     if myarch is None:
@@ -173,9 +173,9 @@ def getMultiArchInfo(arch = getCanonArch()):
     return None
 
 # get the best usual userspace arch for the arch we're on.  this is
-# out arch unless we're on an arch that uses the secondary as its
+# our arch unless we're on an arch that uses the secondary as its
 # userspace (eg ppc64, sparc64)
-def getBaseArch():
+def getBestArch():
     arch = canonArch
 
     if arch == "sparc64":
@@ -186,4 +186,27 @@ def getBaseArch():
 
     return arch
 
+def getBaseArch(myarch=None):
+    """returns 'base' arch for myarch, if specified, or canonArch if not.
+       base arch is the arch before noarch in the arches dict if myarch is not
+       a key in the multilibArches."""
+
+    if not myarch:
+        myarch = getCanonArch()
+
+    if not arches.has_key(myarch): # this is dumb, but <shrug>
+        return myarch
+        
+    if multilibArches.has_key(myarch):
+        return myarch
+    
+    if arches.has_key(myarch):
+        basearch = myarch
+        value = arches[basearch]
+        while value != 'noarch':
+            basearch = value
+            value = arches[basearch]
+    
+        return basearch
+        
 canonArch = getCanonArch()

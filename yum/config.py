@@ -21,9 +21,10 @@ import os.path
 import urlparse
 import types
 import urllib
+import rpmUtils.transaction
 import rpm
 import re
-import archwork
+import rpmUtils.arch
 import Errors
 import urlgrabber
 import urlgrabber.grabber
@@ -103,8 +104,8 @@ class yumconf:
        
         # get our variables parsed            
         self.yumvar = self._getEnvVar()
-        self.yumvar['basearch'] = archwork.getArch() # FIXME make this configurable??
-        self.yumvar['arch'] = os.uname()[4] # FIXME make this configurable??
+        self.yumvar['basearch'] = rpmUtils.arch.getBaseArch() # FIXME make this configurable??
+        self.yumvar['arch'] = rpmUtils.arch.getCanonArch() # FIXME make this configurable??
         # figure out what the releasever really is from the distroverpkg
         self.yumvar['releasever'] = self._getsysver()
 
@@ -118,28 +119,35 @@ class yumconf:
         
             for section in self.cfg.sections(): # loop through the list of sections
                 if section != 'main': # must be a repoid
-                    
+
                     urls = self._getoption(section, 'baseurl', [])
                     name = self._getoption(section, 'name', None)
                     urls = self._doreplace(urls)
                     urls = self._parseList(urls)
-                    # FIXME check to see if there is a mirrorlist option in the section too
-                    # if so, download the mirrorlist and iterate over the values
-                    # need to steal mirrorlist code from up2date
-    
-                    if name != None and len(urls) > 0 and urls[0] != None:
+                    mirrorlist = self._getoption(section, 'mirrorlist', None)
+                    mirrorlist = self._doreplace(mirrorlist) # FIXME it'd be neat if this did something
+                    
+                    if name is not None and (len(urls) > 0 or mirrorlist is not None):
                         thisrepo = self.repos.add(section)
                         name = self._doreplace(name)
                         thisrepo.set('name', name)
-                        thisrepo.set('urls', urls)
-                        
+
                         # vet the urls
-                        for url in thisrepo.urls:
+                        goodurls = []
+                        for url in urls:
                             (s,b,p,q,f,o) = urlparse.urlparse(url)
                             if s not in ['http', 'ftp', 'file', 'https']:
                                 print 'not using ftp, http[s], or file for repos, skipping - %s' % (url)
-                                thisrepo.urls.remove(url)
-                        
+                                continue
+                            else:
+                                goodurls.append(url)
+                        if len(goodurls) > 0:
+                            thisrepo.set('urls', goodurls)                        
+                        else:
+                            self.repos.delete(section)
+                            print 'Error: Cannot find valid baseurl for repo: %s. Skipping' % (section)    
+                            continue
+                            
                         failmeth = self._getoption(section,'failovermethod')
                         thisrepo.setFailover(failmeth)
                         
@@ -150,7 +158,7 @@ class yumconf:
                         thisrepo.set('proxy', self._getoption(section, 'proxy', None))
                         thisrepo.set('proxy_username', self._getoption(section, 'proxy_username', None))
                         thisrepo.set('proxy_password', self._getoption(section, 'proxy_password', None))
-                        
+                        thisrepo.set('keepalive', self._getboolean(section, 'keepalive', 1))                        
                         
                         excludelist = self._getoption(section, 'exclude', [])
                         excludelist = self._doreplace(excludelist)
@@ -217,8 +225,8 @@ class yumconf:
 
 
     def _getsysver(self):
-        ts = rpm.TransactionSet()
-        ts.setVSFlags(~(rpm._RPMVSF_NOSIGNATURES|rpm._RPMVSF_NODIGESTS))
+        ts = rpmUtils.transaction.initReadOnlyTransaction()
+        ts.pushVSFlags(~(rpm._RPMVSF_NOSIGNATURES|rpm._RPMVSF_NODIGESTS))
         idx = ts.dbMatch('provides', self.getConfigOption('distroverpkg'))
         # we're going to take the first one - if there is more than one of these
         # then the user needs a beating
@@ -240,7 +248,7 @@ class yumconf:
             yumvar[num] = os.environ.get(env, var)
         
         return yumvar
-            
+
     def _parseList(self, value):
         if type(value) is types.ListType:
             return value

@@ -35,7 +35,11 @@ class RepoStorage:
         self.repos[repoid] = thisrepo
         
         return thisrepo
-        
+
+    def delete(self, repoid):
+        if self.repos.has_key(repoid):
+            del self.repos[repoid]
+            
     def sort(self):
         repolist = self.repos.keys()
         repolist.sort()

@@ -339,8 +339,8 @@ class Updates:
                     for (n,a) in hapdict.keys():
                         availarchs.append(a)
                     
-                    rpm_a = rpmUtils.arch.bestArchFromList(instarchs, myarch=self.myarch)
-                    a = rpmUtils.arch.bestArchFromList(availarchs, myarch=self.myarch)
+                    rpm_a = rpmUtils.arch.getBestArchFromList(instarchs, myarch=self.myarch)
+                    a = rpmUtils.arch.getBestArchFromList(availarchs, myarch=self.myarch)
 
                     if rpm_a is None or a is None:
                         continue
@@ -359,10 +359,6 @@ class Updates:
                    
         self.updatesdict = updatedict                    
         
-
-
-# FIX ME
-# why do the name='bar' not work but name='foo' do work in the code below
         
     def getUpdatesTuples(self, name=None, arch=None):
         """returns updates for packages in a list of tuples of:
@@ -420,16 +416,60 @@ class Updates:
                 
     def getObsoletesTuples(self, name=None, arch=None):
         """returns obsoletes for packages in a list of tuples of:
-           (obsoleting naevr, installed naevr)"""
+           (obsoleting naevr, installed naevr). You can specify name and/or
+           arch of the installed package to narrow the results."""
+           
+        tmplist = []
+        for obstup in self.obsoletes.keys():
+            for rpmtup in self.obsoletes[obstup]:
+                tmplist.append((obstup, rpmtup))
+        
+        returnlist = []
+        if name or arch:
+            for (obstup, (n, a, e, v, r)) in tmplist:
+                if name:
+                    if name == n:
+                        returnlist.append((obstup, (n, a, e, v, r)))
+                        continue
+                if arch:
+                    if arch == a:
+                        returnlist.append((obstup, (n, a, e, v, r)))
+                        continue
+        else:
+            returnlist = tmplist
+
+        return returnlist
+                        
+           
            
     def getObsoletesList(self, name=None, arch=None):
-        """returns obsoleting packages in a list of naevr tuples"""
+        """returns obsoleting packages in a list of naevr tuples of just the
+           packages that obsolete something that is installed. You can specify
+           name and/or arch of the obsoleting packaging to narrow the results."""
+           
+        tmplist = self.obsoletes.keys()
+        
+        returnlist = []
+        if name or arch:
+            for (n, a, e, v, r) in tmplist:
+                if name:
+                    if name == n:
+                        returnlist.append((n, a, e, v, r))
+                        continue
+                if arch:
+                    if arch == a:
+                        returnlist.append((n, a, e, v, r))
+                        continue
+        else:
+            returnlist = tmplist
 
-    def getProblems(self):
-        """return list of problems:
-           - Packages that are both obsoleted and updated.
-           - Packages that have multiple obsoletes.
-           - Packages that _still_ have multiple updates
-        """
+        return returnlist
+
+#    def getProblems(self):
+#        """return list of problems:
+#           - Packages that are both obsoleted and updated.
+#           - Packages that have multiple obsoletes.
+#           - Packages that _still_ have multiple updates
+#        """
 
              
