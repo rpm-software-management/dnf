@@ -12,7 +12,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
-# Copyright 2002 Duke University 
+# Copyright 2002 Duke University
 
 
 import rpm
@@ -29,33 +29,52 @@ class RPMInstallCallback:
         self.total_installed = 0
         self.installed_pkg_names = []
         self.total_removed = 0
+        self.mark = "#"
+        self.marks = 34
         self.filelog = None
-        
-        self.myprocess = { 'updating': 'Updating', 'erasing': 'Erasing', 
+
+        self.myprocess = { 'updating': 'Updating', 'erasing': 'Erasing',
                            'installing': 'Installing', 'obsoleted': 'Obsoleted',
                            'obsoleting': 'Obsoleting'}
         self.mypostprocess = { 'updating': 'Updated', 'erasing': 'Erased',
                                'installing': 'Installed', 'obsoleted': 'Obsoleted',
                                'obsoleting': 'Obsoleting'}
-        
+
         self.tsInfo = None # this needs to be set for anything else to work
-                           
+
     def _dopkgtup(self, hdr):
         tmpepoch = hdr['epoch']
         if tmpepoch is None: epoch = '0'
         else: epoch = str(tmpepoch)
-        
+
         return (hdr['name'], hdr['arch'], epoch, hdr['version'], hdr['release'])
-        
+
     def _makeHandle(self, hdr):
         handle = '%s:%s.%s-%s-%s' % (hdr['epoch'], hdr['name'], hdr['version'],
           hdr['release'], hdr['arch'])
-        
+
         return handle
 
     def _localprint(self, msg):
         if self.output:
             print msg
+
+    def _makefmt(self, percent, progress = True):
+        l = len(str(self.total_actions))
+        size = "%s.%s" % (l, l)
+        fmt_done = "[%" + size + "s/%" + size + "s]"
+        done = fmt_done % (self.total_installed + self.total_removed,
+                           self.total_actions)
+        marks = self.marks - (2 * l)
+        width = "%s.%s" % (marks, marks)
+        fmt_bar = "%-" + width + "s"
+        if progress:
+            bar = fmt_bar % (self.mark * int(marks * (percent / 100.0)), )
+            fmt = "\r  %-3.3s: %-28.28s " + bar + " " + done
+        else:
+            bar = fmt_bar % (self.mark * marks, )
+            fmt = "  %-3.3s: %-28.28s "  + bar + " " + done
+        return fmt
 
     def _logPkgString(self, hdr):
         """return nice representation of the package for the log"""
@@ -64,21 +83,20 @@ class RPMInstallCallback:
             pkg = '%s.%s %s-%s' % (n, a, v, r)
         else:
             pkg = '%s.%s %s:%s-%s' % (n, a, e, v, r)
-        
+
         return pkg
-        
-        
+
     def callback(self, what, bytes, total, h, user):
         if what == rpm.RPMCALLBACK_TRANS_START:
             if bytes == 6:
                 self.total_actions = total
-        
+
         elif what == rpm.RPMCALLBACK_TRANS_PROGRESS:
             pass
-        
+
         elif what == rpm.RPMCALLBACK_TRANS_STOP:
             pass
-        
+
         elif what == rpm.RPMCALLBACK_INST_OPEN_FILE:
             hdr = None
             if h is not None:
@@ -91,7 +109,7 @@ class RPMInstallCallback:
                 return fd
             else:
                 self._localprint(_("No header - huh?"))
-  
+
         elif what == rpm.RPMCALLBACK_INST_CLOSE_FILE:
             hdr = None
             if h is not None:
@@ -99,7 +117,7 @@ class RPMInstallCallback:
                 handle = self._makeHandle(hdr)
                 os.close(self.callbackfilehandles[handle])
                 fd = 0
-                
+
                 # log stuff
                 pkgtup = self._dopkgtup(hdr)
                 txmbr = self.tsInfo.getMembers(pkgtup=pkgtup)[0] # if we have more than one I'll eat my hat
@@ -108,12 +126,12 @@ class RPMInstallCallback:
                     processed = self.mypostprocess[txmbr.output_state]
                 except KeyError, e:
                     pass
-                    
+
                 if self.filelog:
                     pkgrep = self._logPkgString(hdr)
                     msg = '%s: %s' % (processed, pkgrep)
                     self.filelog(0, msg)
-            
+
 
         elif what == rpm.RPMCALLBACK_INST_PROGRESS:
             if h is not None:
@@ -131,30 +149,32 @@ class RPMInstallCallback:
                        (txmbr.output_state, hdr['name'])
                 else:
                     if self.output and sys.stdout.isatty():
-                        sys.stdout.write("\r%s: %s %d %% done %d/%d" % (process, 
-                           hdr['name'], percent, self.total_installed + self.total_removed, 
-                           self.total_actions))
-                       
+                        fmt = self._makefmt(percent)
+                        msg = fmt % (process, hdr['name'])
+                        sys.stdout.write(msg)
+                        sys.stdout.flush()
                         if bytes == total:
                             print " "
-                            
+
         elif what == rpm.RPMCALLBACK_UNINST_START:
             pass
-            
+
+        elif what == rpm.RPMCALLBACK_UNINST_PROGRESS:
+            pass
+
         elif what == rpm.RPMCALLBACK_UNINST_STOP:
             self.total_removed += 1
-
             if h not in self.installed_pkg_names:
-                msg = _('Erasing: %s %d/%d') % (h, self.total_removed + 
-                  self.total_installed, self.total_actions)
-                self._localprint(msg)
-                
                 logmsg = _('Erased: %s' % (h))
                 if self.filelog: self.filelog(0, logmsg)
-                
-            else:
-                msg = _('Completing update for %s  - %d/%d') % (h, self.total_removed +
-                  self.total_installed, self.total_actions)
-                self._localprint(msg)
-
- 
+            
+            if self.output and sys.stdout.isatty():
+                if h not in self.installed_pkg_names:
+                    process = "Removing"
+                else:
+                    process = "Updating"
+                percent = 100
+                fmt = self._makefmt(percent, False)
+                msg = fmt % (process, h)
+                sys.stdout.write(msg + "\n")
+                sys.stdout.flush()
