@@ -30,7 +30,7 @@ import yum.yumcomps
 import yum.Errors
 import yum.misc
 from rpmUtils.miscutils import compareEVR
-from yum.packages import parsePackages, returnBestPackages
+from yum.packages import parsePackages, returnBestPackages, YumInstalledPackage
 from yum.logger import Logger
 from yum.config import yumconf
 from i18n import _
@@ -551,14 +551,25 @@ class YumBaseCli(yum.YumBase):
             self.doRpmDBSetup()
             self.doRepoSetup()
             self.doUpdateSetup()
-            #FIXME  - need pkgobjects here (grumble)
-            updates = self.up.getUpdatesList()
+            for (n,a,e,v,r) in self.up.getUpdatesList():
+                matches = self.pkgSack.searchNevra(name=n, arch=a, epoch=e, 
+                                                   ver=v, rel=r)
+                if len(matches) > 1:
+                    updates.append(matches[0])
+                    self.log(4, 'More than one identical match in sack for %s' % matches[0])
+                elif len(matches) == 1:
+                    updates.append(matches[0])
+                else:
+                    self.log(4, 'Nothing matches %s.%s %s:%s-%s from update' % (n,a,e,v,r))
+
+                
 
         elif pkgnarrow == 'installed':
             self.doRpmDBSetup()
-            # return headers, I think.
-            installed = self.rpmdb.getPkgList()
-            
+            for hdr in self.rpmdb.getHdrList():
+                po = YumInstalledPackage(hdr)
+                installed.append(po)
+
         elif pkgnarrow == 'available':
             self.doRpmDBSetup()
             self.doRepoSetup()

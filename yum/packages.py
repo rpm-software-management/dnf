@@ -184,7 +184,7 @@ class YumInstalledPackage:
     
     def doepoch(self):
         tmpepoch = self.hdr['epoch']
-        if temepoch is None:
+        if tmpepoch is None:
             epoch = 0
         else:
             epoch = tmpepoch

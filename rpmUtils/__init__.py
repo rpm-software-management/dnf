@@ -52,25 +52,33 @@ class RpmDBHolder:
         
     def addDB(self, ts):
         self.ts = ts
-        mi = ts.dbMatch()
-        if mi is not None:
-            for hdr in mi:
-                name = hdr['name']
-                arch = hdr['arch']
-                ver = str(hdr['version']) # convert these to strings to be sure
-                rel = str(hdr['release'])
-                epoch = hdr['epoch']
-                if epoch is None:
-                    epoch = '0'
-                else:
-                    epoch = str(epoch)
-                    
-                pkgtuple = (name, arch, epoch, ver, rel)                
-                self.pkglists.append(pkgtuple)
+        
+        for hdr in self.getHdrList():
+            name = hdr['name']
+            arch = hdr['arch']
+            ver = str(hdr['version']) # convert these to strings to be sure
+            rel = str(hdr['release'])
+            epoch = hdr['epoch']
+            if epoch is None:
+                epoch = '0'
+            else:
+                epoch = str(epoch)
+                
+            pkgtuple = (name, arch, epoch, ver, rel)                
+            self.pkglists.append(pkgtuple)
                 
     def getPkgList(self):
         return self.pkglists
+    
+    def getHdrList(self):
+        hdrlist = []
+        mi = self.ts.dbMatch()
+        if mi:
+            for hdr in mi:
+                hdrlist.append(hdr)
         
+        return hdrlist
+            
     def getNameArchPkgList(self):
         lst = []
         for (name, arch, epoch, ver, rel) in self.pkglists:
