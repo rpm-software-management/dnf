@@ -368,14 +368,15 @@ class YumBaseCli(yum.YumBase):
         elif pkgnarrow == 'available':
             self.doRpmDBSetup()
             self.doRepoSetup()
-            repocomplete = self.pkgSack.simplePkgList()
+            avail = self.pkgSack.simplePkgList()
             inst = self.rpmdb.getPkgList()
             available = []
-            for pkg in repocomplete:
+            for pkg in avail:
                 if pkg not in inst:
                     available.append(pkg)
             installed = []
-            
+            del avail
+
         elif pkgnarrow == 'extras':
             # we must compare the installed set versus the repo set
             # anything not in both is an 'extra'
