@@ -29,6 +29,7 @@ from logger import Logger
 def printtime():
 	return time.strftime('%m/%d/%y %H:%M:%S ',time.localtime(time.time()))
 #syslog-style log
+logfile=open(conf.logfile,"w")
 filelog=Logger(threshold=10, file_object=logfile,preprefix=printtime())
 #errorlog - sys.stderr - always
 errorlog=Logger(threshold=10, file_object=sys.stderr)
