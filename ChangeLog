@@ -1,3 +1,66 @@
+2003-09-08 00:08  skvidal
+
+	* configure.in, yum-7.x.spec, yum.spec: 
+	edits for version number 1.0.2
+
+2003-08-31 14:40  skvidal
+
+	* Makefile.in, yum-daily-7x.spec, yum-daily.spec, etc/Makefile.in: 
+	added yum-daily spec files, fixed up makefiles for them
+
+2003-08-31 14:00  skvidal
+
+	* urlgrabber.py: 
+	typo in urlgrabber
+
+2003-08-25 01:00  skvidal
+
+	* clientStuff.py, config.py: 
+	exactarch was never being checked for in the config file - so the
+	exactarch setting was doing exactly nothing.  exactly :) fixed -
+	thanks to frank costanza for pointing this out.
+
+2003-08-09 01:56  skvidal
+
+	* yum-daily.spec: file yum-daily.spec was initially added on branch
+	yum-rpm_4_2_branch.
+
+2003-07-28 13:50  mstenner
+
+	* urlgrabber.py: Dropped in the new urlgrabber from the yum-2
+	branch.  Not much has been added for yum-1 (user-agent support has)
+	but the two versions of urlgrabber are the same again.
+
+2003-07-28 13:48  mstenner
+
+	* clientStuff.py: Modified to push yum version into urlgrabber for
+	use in user-agent.  This happens at import.
+
+2003-07-17 00:57  skvidal
+
+	* clientStuff.py: 
+	catch a zlib.error - bug #71
+
+2003-07-02 22:17  skvidal
+
+	* docs/: yum.8, yum.conf.5: 
+	updated docs for tolerant mode
+
+2003-07-02 22:01  skvidal
+
+	* clientStuff.py, config.py, pkgaction.py, yummain.py: 
+	add in tolerant mode for 1.0/rpm 4.0.4 branch
+
+2003-05-31 12:33  skvidal
+
+	* ChangeLog, yummain.py: 
+	make docs consistent
+
+2003-05-27 13:32  skvidal
+
+	* failover.py: file failover.py was initially added on branch
+	yum-rpm_4_2_branch.
+
 2003-05-19 22:55  skvidal
 
 	* ChangeLog, configure.in, yum-7.x.spec, yum.conf, yum.spec: 
