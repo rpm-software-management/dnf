@@ -28,11 +28,6 @@ make
 %install
 [ "$RPM_BUILD_ROOT" != "/" ] && rm -rf $RPM_BUILD_ROOT
 make DESTDIR=$RPM_BUILD_ROOT install
-mkdir -p $RPM_BUILD_ROOT/%{_sbindir}
-install -m 644 etc/yum-7.3.conf $RPM_BUILD_ROOT/etc/yum.conf
-cd $RPM_BUILD_ROOT/%{_sbindir}
-ln -s ../bin/yum .
-ln -s ../bin/yum-arch .
 
 
 
@@ -42,7 +37,7 @@ ln -s ../bin/yum-arch .
 
 %post
 /sbin/chkconfig --add yum
-/sbin/chkconfig yum on
+#/sbin/chkconfig yum on
 /sbin/service yum condrestart >> /dev/null
 exit 0
 
@@ -64,15 +59,16 @@ exit 0
 %config %{_sysconfdir}/cron.daily/yum.cron
 %config %{_sysconfdir}/init.d/%{name}
 %config %{_sysconfdir}/logrotate.d/%{name}
-%{_libdir}/yum/*
-%{_sbindir}/yum
-%{_sbindir}/yum-arch
+%{_datadir}/yum/*
 %{_bindir}/yum
 %{_bindir}/yum-arch
 /var/cache/yum
 %{_mandir}/man*/*
 
 %changelog
+* Mon Apr 28 2003 Seth Vidal <skvidal@phy.duke.edu>
+- fix up for changes and fhs compliance
+
 * Tue Mar 11 2003 Seth Vidal <skvidal@phy.duke.edu>
 - bump ver to 1.0
 - fix conf file

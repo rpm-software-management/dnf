@@ -69,7 +69,7 @@ all: $(MODULES)
 
 install: all installdirs
 	for module in $(MODULES) ; do \
-	  $(INSTALL_DATA) $(srcdir)/$$module $(DESTDIR)$(pkglibdir) ; \
+	  $(INSTALL_DATA) $(srcdir)/$$module $(DESTDIR)$(pkgdatadir) ; \
 	done
 	for subdir in $(SUBDIRS) ; do \
 	  $(MAKE) -C $$subdir install ; \
@@ -77,7 +77,7 @@ install: all installdirs
 
 uninstall:
 	for module in $(MODULES) ; do \
-	  $(RM) $(pkglibdir)/$$module ; \
+	  $(RM) $(pkgdatadir)/$$module ; \
 	done
 	for subdir in $(SUBDIRS) ; do \
 	  $(MAKE) -C $$subdir uninstall ; \
@@ -182,7 +182,7 @@ distfiles:
 	done
 
 installdirs:
-	$(srcdir)/mkinstalldirs $(DESTDIR)$(bindir) $(DESTDIR)/etc $(DESTDIR)$(pkglibdir) $(DESTDIR)$(mandir)/man8 $(DESTDIR)$(mandir)/man5 $(DESTDIR)/var/cache/@PACKAGE@/
+	$(srcdir)/mkinstalldirs $(DESTDIR)$(bindir) $(DESTDIR)/etc $(DESTDIR)$(pkgdatadir) $(DESTDIR)$(mandir)/man8 $(DESTDIR)$(mandir)/man5 $(DESTDIR)/var/cache/@PACKAGE@/
 
 archive: dist
 
