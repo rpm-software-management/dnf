@@ -246,7 +246,7 @@ class YumOutput:
                               evr, repoid, size)
                 for (obspo, relationship) in txmbr.relatedto:
                     if relationship == 'obsoletes':
-                        appended = '     replacing  %-22.22s  %-9.9s  %-15.15s\n\n' % (obspo.name,
+                        appended = '     replacing  %s.%s %s\n\n' % (obspo.name,
                             obspo.arch, obspo.printVer())
                         msg = msg+appended
                 totalmsg = totalmsg + msg
