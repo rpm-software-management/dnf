@@ -1192,6 +1192,10 @@ class YumBase(depsolve.Depsolve):
         if keys == 0:
             return 0
         else:
+            mydir = os.path.dirname(gpgkeyschecked)
+            if not os.path.exists(mydir):
+                os.makedirs(mydir)
+                
             fo = open(gpgkeyschecked, 'w')
             fo.close()
             del fo
