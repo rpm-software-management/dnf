@@ -46,7 +46,7 @@ class PackageObject:
         return (self.returnSimple('name'), self.returnSimple('epoch'), 
                 self.returnSimple('version'),self.returnSimple('release'), 
                 self.returnSimple('arch'))
-
+    
     def returnNevraPrintable(self):
         """return printable string for the pkgname/object
            name - epoch:ver-rel.arch"""
@@ -80,18 +80,17 @@ class XMLPackageObject(PackageObject):
         
     def parseVersion(self, node):
         """takes a version element, returns a tuple of (epoch, ver, rel)"""
-        
-        epoch = node.prop('epoch')
-        ver = node.prop('ver')
-        rel = node.prop('rel')
+        epoch = node.GetAttribute('epoch')
+        ver = node.GetAttribute('ver')
+        rel = node.GetAttribute('rel')
         return (epoch, ver, rel)
         
     def parseChecksum(self, node):
         """takes a checksum element, returns a tuple of (type, checksum, 
            if it is the checksum to be used for the the package id)"""
            
-        csumtype = node.prop('type')
-        csumid = node.prop('pkgid')
+        csumtype = node.GetAttribute('type')
+        csumid = node.GetAttribute('pkgid')
         if csumid is None or csumid.upper() == 'NO':
             csumid = 0
         elif csumid.upper() == 'YES':
@@ -100,88 +99,100 @@ class XMLPackageObject(PackageObject):
             #FIXME - raise an exception
             print 'broken csumid - invalid document'
             csumid = 0
-        csum = node.content
+        node.Read()
+        csum = node.Value()
         return (csumtype, csum, csumid)
         
     def parseSize(self, node):
         """takes a size element, returns  package, 
            installed and archive size"""
            
-        pkg = node.prop('package')
-        installed = node.prop('installed')
-        archive = node.prop('archive')
+        pkg = node.GetAttribute('package')
+        installed = node.GetAttribute('installed')
+        archive = node.GetAttribute('archive')
         return pkg, installed, archive
 
     def parseTime(self, node):
         """takes a time element, returns buildtime, filetime(mtime)"""
          
-        build = node.prop('build')
-        mtime = node.prop('file')
+        build = node.GetAttribute('build')
+        mtime = node.GetAttribute('file')
         return build, mtime
 
     def parseLocation(self, node):
         """takes a location element, returnsbase url path, relative path to package"""
         
-        base = node.prop('base')
-        relative = node.prop('href')    
+        base = node.GetAttribute('base')
+        relative = node.GetAttribute('href')    
         return base, relative
         
     def parseSimple(self, node):
         """takes a simple unattributed CDATA element and returns its value"""
+        node.Read() # get the next node
+        return node.Value()
         
-        return node.content
-        
-    def readPkgNode(self, pkgnode):
+    def readPkgNode(self, reader):
         """primary package node reading and dumping"""
         
-        node = pkgnode.children
-        
-        while node is not None:
-            if node.type != 'element':
-                node = node.next
+        mydepth = reader.Depth()
+        ret = reader.Read()        
+        while ret:
+            if reader.NodeType() == 14:
+                ret = reader.Read()
                 continue
-            
-            if node.name in ['name', 'arch', 'summary', 'description', 'url',
-                          'packager', 'buildtime', 'filetime']:
-                    self.simple[node.name] = self.parseSimple(node)
 
-            elif node.name == 'version': 
-                (self.simple['epoch'], self.simple['version'], 
-                 self.simple['release']) = self.parseVersion(node)
-            
-            elif node.name == 'size':
-                self.simple['packagesize'], self.simple['installedsize'], \
-                 self.simple['archivesize'] = self.parseSize(node)
-            
-            elif node.name == 'time':
-                self.simple['buildtime'], self.simple['filetime'], = \
-                 self.parseTime(node)
-                 
-            
-            elif node.name == 'location':
-                self.simple['basepath'], self.simple['relativepath'] = \
-                 self.parseLocation(node)
-
-            elif node.name == 'checksum':
-                (sumtype, sumdata, sumid) = self.parseChecksum(node)
-                self.checksums.append((sumtype, sumdata, sumid))
-                if sumid:
-                    self.simple['id'] = sumdata
+            if reader.NodeType() == 15 and reader.Depth() == mydepth:
+                return
                 
-            elif node.name == 'format':
-                try:
-                    self.readFormatNode(node)
-                except AttributeError:
+            if reader.NodeType() == 1:
+                if reader.Depth() == mydepth:
+                    #print 'oh crap - we are outside - how did that happen??'
+                    return
+
+                nodeName = reader.LocalName()
+
+                if nodeName in ['name', 'arch', 'summary', 'description', 
+                                'url', 'packager', 'buildtime', 'filetime']:
+                                     
+                    self.simple[nodeName] = self.parseSimple(reader)
+
+                elif nodeName == 'version': 
+                    (self.simple['epoch'], self.simple['version'], 
+                     self.simple['release']) = self.parseVersion(reader)
+            
+                elif nodeName == 'size':
+                    self.simple['packagesize'], self.simple['installedsize'], \
+                     self.simple['archivesize'] = self.parseSize(reader)
+            
+                elif nodeName == 'time':
+                    self.simple['buildtime'], self.simple['filetime'], = \
+                     self.parseTime(reader)
+                     
+                
+                elif nodeName == 'location':
+                    self.simple['basepath'], self.simple['relativepath'] = \
+                     self.parseLocation(reader)
+    
+                elif nodeName == 'checksum':
+                    (sumtype, sumdata, sumid) = self.parseChecksum(reader)
+                    self.checksums.append((sumtype, sumdata, sumid))
+                    if sumid:
+                        self.simple['id'] = sumdata
+                    
+                elif nodeName == 'format':
+                    try:
+                        self.readFormatNode(reader)
+                    except AttributeError:
+                        # FIXME - should raise an exception
+                        print 'No method to handle format element'
+                else:
+                    pass
                     # FIXME - should raise an exception
-                    print 'No method to handle format element'
-                
-            else:
-                # FIXME - should raise an exception
-                print 'unknown element in package: %s' % node.name
-
-            node = node.next
+                    print 'unknown element in package: %s' % nodeName
+    
+            ret = reader.Read()
             continue
-
+    
 
 class RpmBase:
     """return functions and storage for rpm-specific data"""
@@ -323,82 +334,113 @@ class RpmXMLPackageObject(XMLPackageObject, RpmBase):
                     
                     
     
-    def readFormatNode(self, fmtNode):
+    def readFormatNode(self, reader):
         """reads the <format> element and hands off the elements to be 
            parsed elsewhere"""
            
-        node = fmtNode.children
-        while node is not None:
-            if node.type != 'element':
-                node = node.next
+        mydepth = reader.Depth()
+        ret = reader.Read()        
+        while ret:
+            if reader.NodeType() == 14:
+                ret = reader.Read()
                 continue
-            if node.name in ['vendor', 'group', 'buildhost', 'sourcerpm']:
-                self.simple[node.name] = self.parseSimple(node)
+
+            if reader.NodeType() == 15 and reader.Depth() == mydepth:
+                return
                 
-            elif node.name == 'license':
-                self.licenses.append(self.parseSimple(node))
-            
-            elif node.name == 'header-range':
-                self.simple['hdrstart'], self.simple['hdrend'] = \
-                 self.parseHdrRange(node)
-            
-            elif node.name in ['obsoletes', 'provides', 'requires', 'conflicts']:
-                objlist = self.parsePrco(node)
-                self.prco[node.name].extend(objlist)
+            if reader.NodeType() == 1:
+                if reader.Depth() == mydepth:
+                    #print 'oh crap - we are outside - how did that happen??'
+                    return
+
+                nodeName = reader.LocalName()
+
+                if nodeName in ['vendor', 'group', 'buildhost', 'sourcerpm']:
+                    self.simple[nodeName] = self.parseSimple(reader)
+                    
+                elif nodeName == 'license':
+                    self.licenses.append(self.parseSimple(reader))
                 
-            elif node.name == 'file':
-                self.loadFileEntry(node)
+                elif nodeName == 'header-range':
+                    self.simple['hdrstart'], self.simple['hdrend'] = \
+                     self.parseHdrRange(reader)
                 
-                
-            else:
-                # FIXME - should raise an exception
-                print 'unknown element in format: %s' % node.name
-                
-            node = node.next
+                elif nodeName in ['obsoletes', 'provides', 'requires', 'conflicts']:
+                    objlist = self.parsePrco(reader)
+                    self.prco[nodeName].extend(objlist)
+                    
+                elif nodeName == 'file':
+                    self.loadFileEntry(reader)
+                    
+                    
+                else:
+                    # FIXME - should raise an exception
+                    print 'unknown element in format: %s' % nodeName
+                    #pass
+
+            ret = reader.Read()
             continue
+
     
     def parseHdrRange(self, node):
         """parse header-range, returns (start, end) tuple"""
         
-        start = node.prop('start')
-        end = node.prop('end')
+        start = node.GetAttribute('start')
+        end = node.GetAttribute('end')
         return start, end
         
-    def parsePrco(self, node):
+    def parsePrco(self, reader):
         """parse a provides,requires,obsoletes,conflicts element"""
         objlist = []
-        prco = node.children
-        while prco is not None:
-            if prco.name == 'entry':
-                e = None
-                v = None
-                r = None
-                name = prco.prop('name')
-                flag = prco.prop('flags')
-                ver = prco.children
-                while ver is not None:
-                    if ver.name == 'version':
-                        (e,v,r) = self.parseVersion(ver)
-                    ver = ver.next
-                objlist.append((name, flag, (e, v, r)))
-            prco = prco.next                
+        mydepth = reader.Depth()
+        ret = reader.Read()        
+        while ret:
+            if reader.NodeType() == 14:
+                ret = reader.Read()
+                continue
+
+            if reader.NodeType() == 15 and reader.Depth() == mydepth:
+                return objlist
+                
+            if reader.NodeType() == 1:
+                if reader.Depth() == mydepth:
+                    #print 'oh crap - we are outside - how did that happen??'
+                    return objlist
+
+                prcoName = reader.LocalName()
+                
+                if prcoName == 'entry':
+                    name = reader.GetAttribute('name')
+                    flag = reader.GetAttribute('flags')
+                    e = reader.GetAttribute('epoch')
+                    v = reader.GetAttribute('ver')
+                    r = reader.GetAttribute('rel')
+                    objlist.append((name, flag, (e, v, r)))
+
+            ret = reader.Read()
+            continue
+            
         return objlist
 
     def loadFileEntry(self, node):
         """load a file/dir entry"""
-        ftype = node.prop('type')
-        file = node.content
-        if ftype is None:
+        ftype = node.GetAttribute('type')
+        node.Read() # content is file
+        file = node.Value()
+        if not ftype:
             ftype = 'file'
         if not self.files.has_key(ftype):
             self.files[ftype] = []
         #if file not in self.files[ftype]:
         self.files[ftype].append(file)
+
+        return (ftype, file)
             
     def loadChangeLogEntry(self, node):
         """load changelog data"""
-        time = node.prop('date')
-        author = node.prop('author')
-        content = node.content
+        time = node.GetAttribute('date')
+        author = node.GetAttribute('author')
+        node.Read()
+        content = node.Value()
         self.changelog.append((time, author, content))
         

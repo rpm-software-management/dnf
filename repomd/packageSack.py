@@ -242,25 +242,28 @@ class XMLPackageSack(PackageSack):
         """takes a repository id and an xml file. It populates whatever it can, 
            if you try to populate with a filelist or other metadata file 
            before the primary metadata you'll not like the results"""
-        try:           
-            doc = libxml2.parseFile(file)
-            root = doc.getRootElement()
-            xmlfiletype = root.name
-            node = root.children
-        except libxml2.parserError:
+        try:
+            reader = libxml2.newTextReaderFilename(file)
+        except libxml2.treeError:
             raise PackageSackError, "Invalid or non-existent file: %s" % (file)
-        else:            
+
+        else:
+            reader.Read()
+            xmlfiletype=reader.Name() # - first node should be the type
             if xmlfiletype == 'metadata':
-                self.loadPrimaryMD(node, repoid, callback)
+                self.loadPrimaryMD(reader, repoid, callback)
+
             elif xmlfiletype == 'filelists':
                 if self._checkRepoStatus(repoid):
-                    self.loadFileMD(node, repoid, callback)
+                    self.loadFileMD(reader, repoid, callback)
+
             elif xmlfiletype == 'otherdata':
                 if self._checkRepoStatus(repoid):
-                    self.loadOtherMD(node, repoid, callback)
+                    self.loadOtherMD(reader, repoid, callback)
+
             else:
                 print 'Error: other unknown root element %s' % xmlfiletype 
-            doc.freeDoc()
+
 
     def _checkRepoStatus(self, repoid, itemcheck='primary'):
         """return 1 if itemcheck is in repo"""
@@ -269,124 +272,142 @@ class XMLPackageSack(PackageSack):
                 return 1
         return 0
             
-    def loadPrimaryMD(self, node, repoid, callback=None):
+    def loadPrimaryMD(self, reader, repoid, callback=None):
         """load all the data from the primary metadata xml file"""
-        nodes = []
-        total = 0
-        while node is not None:
-            if node.type == 'element':
-                total+=1
-                nodes.append(node)
-            node = node.next
-            continue
-                        
-        processed = 0
-        for node in nodes:
-            if node.name == 'package':
-                if node.prop('type') == 'rpm':
-                    po = self.pkgObjectClass(node, repoid)
-                    self.addPackage(po)
-                    processed+=1
+        
+        pkgcount = 9999 # big number
+        current = 0
+        if reader.HasAttributes():
+            pkgcount = int(reader.GetAttribute('packages'))
+            
 
-            # callback call
-            if callback is not None:
-                callback(processed, total)                    
+        
+        ret = reader.Read()
+        while ret:
+            if reader.NodeType() == 14:
+                ret = reader.Read()
+                continue
+            
+            if reader.NodeType() == 1 and reader.Name() == 'package':
+                if reader.HasAttributes():
+                    if reader.GetAttribute('type') == 'rpm':
+                        current+=1
+                        po = self.pkgObjectClass(reader, repoid)
+                        self.addPackage(po)
+            callback(current, pkgcount)
+            ret = reader.Read()
+            continue
 
         # update the repoStatus                
         if not self.repoStatus.has_key(repoid):
             self.repoStatus[repoid] = []
         if not 'primary' in self.repoStatus[repoid]:
             self.repoStatus[repoid].append('primary')
-        
-    def loadFileMD(self, node, repoid, callback=None):
+
+
+    def loadFileMD(self, reader, repoid, callback=None):
         """load all the filelist metadata from the file"""
-        nodes = []
-        total = 0
-        while node is not None:
-            if node.type == 'element':
-                total+=1
-                nodes.append(node)
-            node = node.next
+
+        pkgcount = 9999 # big number
+        current = 0
+        if reader.HasAttributes():
+            pkgcount = int(reader.GetAttribute('packages'))
+
+        ret = reader.Read()
+        while ret:
+            if reader.NodeType() == 14:
+                ret = reader.Read()
+                continue
+            
+            if reader.NodeType() == 1 and reader.Name() == 'package':
+                if reader.HasAttributes():
+                    pkgid = reader.GetAttribute('pkgid')
+                    pkgs = self.searchID(pkgid)
+                    pkgmatch = 0
+                    mydepth = reader.Depth()
+
+                    for pkg in pkgs:
+                        if pkg.returnSimple('repoid') == repoid: # check for matching repo
+                            pkgmatch+=1
+                            current+=1
+                            reader.Read()
+                            while 1:
+                                if reader.NodeType() == 15 and reader.Depth() == mydepth:
+                                    break
+                                    
+                                elif reader.NodeType() == 14:
+                                    ret = reader.Read()                                                        
+                                    continue
+
+                                elif reader.NodeType() == 1:
+                                    if reader.LocalName() == 'file':
+                                        (ftype, file) = pkg.loadFileEntry(reader)
+                                        #self._addToDictAsList(self.filenames, file, pkg)
+
+                                ret = reader.Read()
+                                continue        
+
+                    if pkgmatch < 1:
+                        # FIXME - raise a warning? Emit error? bitch? moan?
+                        pass
+
+                               
+            ret = reader.Read()
+            callback(current, pkgcount) # give us some pretty output
             continue
-        
-        processed = 0
-        for node in nodes:       
-            if node.name == 'package':
-                pkgid = node.prop('pkgid')
-                pkgs = self.searchID(pkgid)
-                pkgmatch = 0
-                for pkg in pkgs:
-                    if pkg.returnSimple('repoid') == repoid: # check for matching repo
-                        pkgmatch+=1
-                        datanode = node.children
-                        datanodes = []
-                        while datanode is not None:
-                            if datanode.type == 'element':
-                                datanodes.append(datanode)
-                            datanode = datanode.next
-                            continue
-
-                        for datanode in datanodes:                            
-                            if datanode.name == 'file':
-                               pkg.loadFileEntry(datanode)
-                               file = datanode.content
-                               self._addToDictAsList(self.filenames, file, pkg)
-                            
-                if pkgmatch < 1:
-                    # FIXME - raise a warning? Emit error? bitch? moan?
-                    pass
-
-            # increment processed nodes                    
-            processed+=1 
-            # callback call
-            if callback is not None:
-                callback(processed, total)                    
 
         # update the repostatus
         if not 'filelist' in self.repoStatus[repoid]:
             self.repoStatus[repoid].append('filelist')
             
-    def loadOtherMD(self, node, repoid, callback=None):
+    def loadOtherMD(self, reader, repoid, callback=None):
         """load the changelog, etc data from the other.xml file"""
-        nodes = []
-        total = 0
-        while node is not None:
-            if node.type == 'element':
-                total+=1
-                nodes.append(node)
-            node = node.next
-            continue
-            
-        processed = 0
-        for node in nodes:
-            if node.name == 'package':
-                pkgid = node.prop('pkgid')
-                pkgs = self.searchID(pkgid)
-                pkgmatch = 0
-                for pkg in pkgs:
-                    if pkg.returnSimple('repoid') == repoid: # check for matching repo
-                        pkgmatch+=1
-                        datanode = node.children
-                        while datanode is not None:
-                            if datanode.type != 'element':
-                                datanode = datanode.next
-                                continue
-                            
-                            if datanode.name == 'changelog':
-                               pkg.loadChangeLogEntry(datanode)
-                            
-                            datanode = datanode.next
-                            continue
-                if pkgmatch < 1:
-                    # FIXME - raise a warning? Emit error? bitch? moan?
-                    pass
 
-            # increment processed nodes
-            processed+=1 
-            # callback call
-            if callback is not None:
-                callback(processed, total)                    
-                                   
+        pkgcount = 9999 # big number
+        current = 0
+        if reader.HasAttributes():
+            pkgcount = int(reader.GetAttribute('packages'))
+
+        ret = reader.Read()
+        while ret:
+            if reader.NodeType() == 14:
+                ret = reader.Read()
+                continue
+            
+            if reader.NodeType() == 1 and reader.Name() == 'package':
+                if reader.HasAttributes():
+                    pkgid = reader.GetAttribute('pkgid')
+                    pkgs = self.searchID(pkgid)
+                    pkgmatch = 0
+                    mydepth = reader.Depth()
+
+                    for pkg in pkgs:
+                        if pkg.returnSimple('repoid') == repoid: # check for matching repo
+                            pkgmatch+=1
+                            current+=1
+                            reader.Read()
+                            while 1:
+                                if reader.NodeType() == 15 and reader.Depth() == mydepth:
+                                    break
+                                    
+                                elif reader.NodeType() == 14:
+                                    ret = reader.Read()                                                        
+                                    continue
+
+                                elif reader.NodeType() == 1:
+                                    if reader.LocalName() == 'changelog':
+                                        pkg.loadChangeLogEntry(reader)
+
+                                ret = reader.Read()
+                                continue        
+
+                    if pkgmatch < 1:
+                        # FIXME - raise a warning? Emit error? bitch? moan?
+                        pass
+            callback(current, pkgcount)
+            ret = reader.Read()
+            continue
+                                        
         if not 'other' in self.repoStatus[repoid]:
             self.repoStatus[repoid].append('other')
         
