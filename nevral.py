@@ -248,9 +248,16 @@ class nevral:
 							else:
 								archlist = archwork.availablearchs(self,name)
 								arch = archwork.bestarch(archlist)
-								((e, v, r, a, l, i), s)=self._get_data(name,arch)
-								self.add((name,e,v,r,arch,l,i),'ud')								
-								log(4,"Got Extra Dep: %s, %s" %(name,arch))
+								if arch != 'garbage':
+									((e, v, r, a, l, i), s)=self._get_data(name,arch)
+									self.add((name,e,v,r,arch,l,i),'ud')								
+									log(4,"Got Extra Dep: %s, %s" %(name,arch))
+								else:
+									unresolvable = 1
+									if reqname in conf.excludes:
+										errors.append("package %s needs %s that has been excluded" % (name, reqname))
+									else:
+										errors.append("package %s needs %s (not provided)" % (name, clientStuff.formatRequire(reqname, reqversion, flags)))
 							CheckDeps=1
 						else:
 							#this is horribly ugly but I have to find some way to see if what it needed is provided
