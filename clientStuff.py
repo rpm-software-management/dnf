@@ -26,6 +26,7 @@ import os
 import sys
 import gzip
 import archwork
+import fnmatch
 
 def stripENVRA(foo):
     archIndex = string.rfind(foo, '.')
@@ -103,7 +104,7 @@ def HeaderInfoNevralLoad(filename, nevral, serverid):
         (envraStr, rpmpath) = string.split(line, '=')
         (epoch, name, ver, rel, arch) = stripENVRA(envraStr)
         rpmpath = string.replace(rpmpath, '\n', '')
-        if name not in conf.excludes:
+        if not nameInExcludes(name):
             if conf.pkgpolicy == 'last':
                 nevral.add((name, epoch, ver, rel, arch, rpmpath, serverid), 'a')
             else:
@@ -123,7 +124,11 @@ def nameInExcludes(name):
     # shouldn't be in there
     # return true if it is in the Excludes list
     # return false if it is not in the Excludes list
-    
+    for exclude in conf.excludes:
+        if name == exclude or fnmatch.fnmatch(name, exclude):
+            return 1
+    return 0
+
 def openrpmdb(option=0, dbpath=None):
     dbpath = "/var/lib/rpm/"
     rpm.addMacro("_dbpath", dbpath)

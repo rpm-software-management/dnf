@@ -263,7 +263,7 @@ class nevral:
                                     log(4, 'Got Extra Dep: %s, %s' %(name,arch))
                                 else:
                                     unresolvable = 1
-                                    if reqname in conf.excludes:
+                                    if clientStuff.nameInExcludes(reqname):
                                         errors.append('package %s needs %s that has been excluded' % (name, reqname))
                                     else:
                                         errors.append('package %s needs %s (not provided)' % (name, clientStuff.formatRequire(reqname, reqversion, flags)))
@@ -282,13 +282,13 @@ class nevral:
                                         CheckDeps=1
                                     else:
                                         unresolvable = 1
-                                        if reqname in conf.excludes:
+                                        if clientStuff.nameInExcludes(reqname):
                                             errors.append('package %s needs %s that has been excluded' % (name, reqname))
                                         else:
                                             errors.append('package %s needs %s (not provided)' % (name, clientStuff.formatRequire(reqname, reqversion, flags)))
                             else:
                                 unresolvable = 1
-                                if reqname in conf.excludes:
+                                if clientStuff.nameInExcludes(reqname):
                                     errors.append('package %s needs %s that has been excluded' % (name, reqname))
                                 else:
                                     errors.append('package %s needs %s (not provided)' % (name, clientStuff.formatRequire(reqname, reqversion, flags)))
