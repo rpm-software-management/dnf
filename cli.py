@@ -303,20 +303,33 @@ class YumBaseCli(yum.YumBase):
         # but we know we're not being sent garbage
         
         if self.basecmd in ['install', 'update']:
-            matched, unmatched = parsePackages(self.pkgSack.simplePkgList(), 
-                                               self.extcmds)
-                
+            return self.installPkgs()
+            
         elif self.basecmd in ['erase', 'remove']:
             matched, unmatched = parsePackages(self.rpmdb.getPkgList(), 
                                                self.extcmds)
     
         elif self.basecmd ==  'list':
-            self.listPkgs()
-            return 0, 'Success'
+            try:
+                return self.listPkgs()
+            except yum.Errors.YumBaseError, e:
+                return 1, '%s' % e
             
         elif self.basecmd == 'clean':
             # if we're cleaning then we don't need to talk to the net
             self.conf.setConfigOption('cache', 1)
+
+    def installPkgs(self):
+        """Attempts to take the user specified list of packages/wildcards
+           and install them, or if they are installed, update them to a newer
+           version. If a complete version number if specified, attempt to 
+           downgrade them to the specified version"""
+        # get the list of available packages
+        # iterate over the user's list
+        # add packages to Transaction holding class if they match.
+        # if we've added any packages to the transaction then return 2 and a string
+        # if we've hit a snag, return 1 and the failure explanation
+        # if we've got nothing to do, return 0 and a 'nothing available to install' string
 
 
     def listPkgs(self, disp='output.rpm listDisplay'):
@@ -428,7 +441,9 @@ class YumBaseCli(yum.YumBase):
 
         if thingslisted == 0:
             self.errorlog(1, 'No Packages to list')
-
+    
+    return 0, 'Success'
+    
     def userconfirm(self):
         """gets a yes or no from the user, defaults to No"""
         choice = raw_input('Is this ok [y/N]: ')
