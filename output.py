@@ -333,22 +333,31 @@ class YumOutput:
         
         updated, installed, removed, obsoleted, depup, depinst, deprem = self.tsInfo.makelists()
 
-        for (action, pkglist) in [('Remove', removed), ('Install', installed), 
-                                  ('Update', updated)]:
+        for (action, pkglist) in [('Install', installed), ('Update', updated)]:
 
+            for txmbr in pkglist:
+                (n,a,e,v,r) = txmbr.pkgtup
+                msg = "  %s: %s.%s %s:%s-%s - %s\n" % (action, n,a,e,v,r, txmbr.repoid)
+                userout = userout + msg
+        
+        for (action, pkglist) in [('Remove', removed)]:
             for txmbr in pkglist:
                 (n,a,e,v,r) = txmbr.pkgtup
                 msg = "  %s: %s.%s %s:%s-%s\n" % (action, n,a,e,v,r)
                 userout = userout + msg
-                   
-        for (action, pkglist) in [('Remove', deprem), ('Install', depinst), 
-                                  ('Update', depup)]:
+        
+        for (action, pkglist) in [('Install', depinst), ('Update', depup)]:
 
             for txmbr in pkglist:
                 (n,a,e,v,r) = txmbr.pkgtup
-                msg = "  %s: %s.%s %s:%s-%s\n" % (action, n,a,e,v,r)
+                msg = "  %s: %s.%s %s:%s-%s - %s\n" % (action, n,a,e,v,r, txmbr.repoid)
                 depout = depout + msg
                    
+        for (action, pkglist) in [('Remove', deprem)]:
+            for txmbr in pkglist:
+                (n,a,e,v,r) = txmbr.pkgtup
+                msg = "  %s: %s.%s %s:%s-%s\n" % (action, n,a,e,v,r)
+                userout = userout + msg
 
         for txmbr in obsoleted:
             (n,a,e,v,r) = txmbr.pkgtup
