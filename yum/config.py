@@ -228,7 +228,9 @@ class yumconf(object):
                 except Errors.ConfigError, e:
                     print >> sys.stderr, e
                     continue
-
+                except Errors.RepoError, e:
+                    print e
+                    
         # if we don't have any enabled repositories then this is going to suck
         # bail out with an exception raised so yummain can catch it
         if len(self.repos.listEnabled()) < 1:
@@ -313,10 +315,12 @@ def doRepoSection(globconfig, thisconfig, section):
             url = variableReplace(globconfig.yumvar, url)
             urls.append(url)
             
+    
     thisrepo = globconfig.repos.add(section)
     name = variableReplace(globconfig.yumvar, name)
-    thisrepo.set('name', name)
-
+    thisrepo.set('name', name) 
+    
+    
     # vet the urls
     goodurls = []
     for url in urls:

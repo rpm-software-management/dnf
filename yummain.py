@@ -52,6 +52,9 @@ def main(args):
     except Errors.YumBaseError, e:
         result = 1
         resultmsgs = [str(e)]
+        for msg in resultmsgs:
+            print >> sys.stderr, msg
+        
         sys.exit(1)
         
     try:
