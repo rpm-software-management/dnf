@@ -276,6 +276,7 @@ class Depsolve:
                     # file dep add all matches to the defSack
                     defSack.addPackage(po)
                     continue
+
                 if po.checkPrco('provides', (needname, flags, (r_e, r_v, r_r))):
                     defSack.addPackage(po)
                     self.log(3, 'Matched %s to require for %s' % (po, name))

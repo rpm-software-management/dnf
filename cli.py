@@ -106,6 +106,7 @@ class YumBaseCli(yum.YumBase):
                                                             'exclude=',
                                                             'obsoletes',
                                                             'download-only',
+                                                            'rss-filename=',
                                                             'tolerant'])
         except getopt.error, e:
             self.errorlog(0, _('Options Error: %s') % e)
@@ -189,10 +190,10 @@ class YumBaseCli(yum.YumBase):
                     sleeptime = random.randrange(int(a)*60)
                 elif o == '--obsoletes':
                     self.conf.setConfigOption('obsoletes', 1)
-                elif o in ['-t', '--tolerant']:
-                    self.conf.setConfigOption('tolerant', 1)
                 elif o == '--installroot':
                     self.conf.setConfigOption('installroot', a)
+                elif o == '--rss-filename':
+                    self.conf.setConfigOption('rss-filename', a)
                 elif o == '--enablerepo':
                     try:
                         self.conf.repos.enableRepo(a)
@@ -370,7 +371,7 @@ class YumBaseCli(yum.YumBase):
 
                     self.log(2, 'Importing Changelog Metadata')
                     self.repos.populateSack(with='other', which=needrepos)
-                    output.listPkgs(pkgLists, outputType='rss')
+                    output.listPkgs(pkgLists, outputType='rss', fn=self.conf.getConfigOption('rss-filename'))
             except yum.Errors.YumBaseError, e:
                 return 1, [str(e)]
             else:

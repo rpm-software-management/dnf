@@ -17,10 +17,14 @@
 # Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 # Copyright 2004 Duke University 
 
+import os
+import os.path
 import sys
 import time
 from i18n import _
 import libxml2
+import yum.Errors
+
 
 def printtime():
     return time.strftime('%b %d %H:%M:%S', time.localtime(time.time()))
@@ -101,7 +105,7 @@ def infoOutput(pkg):
     print ""
 
     
-def listPkgs(pkgLists, outputType):
+def listPkgs(pkgLists, outputType, fn=None):
     """outputs based on whatever outputType is. Current options:
        'list' - simple pkg list
        'info' - similar to rpm -qi output
@@ -134,7 +138,19 @@ def listPkgs(pkgLists, outputType):
             if description == 'Recently available':
                 if len(lst) > 0:
                     doc = generateRSS(lst)
-                    sys.stdout.write(doc.serialize('utf-8', format=1))
+                    if fn is None:
+                        sys.stdout.write(doc.serialize('utf-8', format=1))
+                    else:
+                        if fn[0] != '/':
+                            cwd = os.getcwd()
+                            fn = os.path.join(cwd, fn)
+                        try:
+                            fo = open(fn, 'w')
+                            fo.write(doc.serialize('utf-8', format=1))
+                            fo.close()
+                        except IOError, e:
+                            raise yum.Errors.YumBaseError, "Could not open file %s" % (e)
+                            
                     doc.freeDoc()
 
 def generateRSS(lst):

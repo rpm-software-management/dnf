@@ -78,6 +78,7 @@ class yumconf(object):
                          ('debuglevel', 2),
                          ('logfile', root + '/var/log/yum.log'), 
                          ('reposdir', root + '/etc/yum.repos.d'),
+                         ('rss-filename', 'yum-rss.xml'),
                          ('pkgpolicy', 'newest'),
                          ('errorlevel', 2), 
                          ('syslog_ident', None),
