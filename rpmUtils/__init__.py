@@ -63,7 +63,7 @@ class RpmDBHolder:
         try:
             mi = self.ts.dbMatch(0, 1)
             hdr = mi.next()
-        except TypeError, e:
+        except (TypeError, StopIteration), e:
             self.match_on_index = 0
         else:
             self.match_on_index = 1

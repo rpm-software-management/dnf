@@ -117,6 +117,8 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         # our sleep variable for the random start time
         sleeptime=0
         root = '/'
+        installroot = None
+        conffile = '/etc/yum.conf'
         
         try: 
             for o,a in gopts:
@@ -124,20 +126,22 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
                     print __version__
                     sys.exit(0)
                 if o == '--installroot':
-                    root = a
-                    if os.access(a + "/etc/yum.conf", os.R_OK):
-                        yumconffile = a + '/etc/yum.conf'
+                    installroot = a
                 if o == '-c':
-                    yumconffile = a
-    
-            if yumconffile:
-                try:
-                    self.conf = yumconf(configfile = yumconffile, root=root)
-                except yum.Errors.ConfigError, e:
-                    self.errorlog(0, _('Config Error: %s') % e)
-                    sys.exit(1)
-            else:
-                self.errorlog(0, _('Cannot find any conf file.'))
+                    conffile = a
+            
+            # if the conf file is inside the  installroot - use that.
+            # otherwise look for it in the normal root
+            if installroot:
+                if os.access(installroot + '/' + conffile, os.R_OK):
+                    conffile = installroot + '/' + conffile
+                    
+                root = installroot
+                    
+            try:
+                self.conf = yumconf(configfile = conffile, root = root)
+            except yum.Errors.ConfigError, e:
+                self.errorlog(0, _('Config Error: %s') % e)
                 sys.exit(1)
                 
             # config file is parsed and moving us forward
