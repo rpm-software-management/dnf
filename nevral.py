@@ -179,8 +179,89 @@ class nevral:
         base = conf.serverpkgdir[i]
         return base + '/' + rpmfn
                 
+    def setlocalrpmpath(self, name, arch, path):
+        ((e,v,r,a,l,i),state) = self._get_data(name, arch)
+        self.localrpmpath[(name, arch)] = path
+    
+    def setPkgState(self, name, arch, newstate):
+        ((e,v,r,a,l,i),state) = self._get_data(name, arch)
+        self.add((name,e,v,r,arch,l,i), newstate)
+    
+    def bestArchsByVersion(self, name):
+        """returns a list of archs that have the highest version for name"""
+        returnarchs = []
+
+        archs = archwork.availablearchs(self, name)
+        currentarch = archs[0]
+        for arch in archs[1:]:
+            rc = clientStuff.compareEVR(self.evr(name, currentarch), self.evr(name, arch))
+            if rc < 0:
+                currentarch = arch
+            elif rc == 0:
+                pass
+            elif rc > 0:
+                pass
+        (best_e, best_v, best_r) = self.evr(name, currentarch)
+        log(3, 'Best version for %s is %s:%s-%s' % (name, best_e, best_v, best_r))
+    
+        for arch in archs:
+            rc = clientStuff.compareEVR(self.evr(name, arch), (best_e, best_v, best_r))
+            if rc == 0:
+                returnarchs.append(arch)
+            elif rc > 0:
+                log(4, 'What the hell, we just determined it was the bestversion')
+        
+        log(7, returnarchs)
+        return returnarchs
+    
+    def populateTs(self, addavailable = 1):
+        installonlypkgs = ['kernel', 'kernel-bigmem', 'kernel-enterprise',
+                           'kernel-smp', 'kernel-debug']
+                           
+        _db = clientStuff.openrpmdb(0)
+        _ts = rpm.TransactionSet('/', _db)
+        for (name, arch) in self.NAkeys(): 
+            if self.state(name, arch) in ('u','ud','iu'):
+                log(4,'Updating: %s, %s' % (name, arch))
+                rpmloc = self.rpmlocation(name, arch)
+                pkghdr = self.getHeader(name, arch)
+                if name in installonlypkgs:
+                    bestarchlist = self.bestArchsByVersion(name)
+                    bestarch = archwork.bestarch(bestarchlist)
+                    if arch == bestarch:
+                        log(3, 'Found best arch for install only pkg %s' %(arch))
+                        _ts.add(pkghdr,(pkghdr,rpmloc),'i')
+                        self.setPkgState(name, arch, 'i')
+                    else:
+                        log(3, 'Removing dumb arch for install only pkg: %s' %(arch))
+                        if addavailable:
+                            _ts.add(pkghdr,(pkghdr,rpmloc),'a')
+                        self.setPkgState(name, arch, 'a')
+                else:
+                    log(5, 'Not an install only pkg, adding to ts')
+                    _ts.add(pkghdr,(pkghdr,rpmloc),'u')
+                    
+            elif self.state(name,arch) == 'i':
+                log(4, 'Installing: %s, %s' % (name, arch))
+                rpmloc = self.rpmlocation(name, arch)
+                pkghdr = self.getHeader(name, arch)
+                _ts.add(pkghdr,(pkghdr,rpmloc),'i')
+            elif self.state(name,arch) == 'a':
+                if addavailable:
+                    log(7, 'Adding %s into \'a\' state' % name)
+                    rpmloc = self.rpmlocation(name, arch)
+                    pkghdr = self.getHeader(name, arch)
+                    _ts.add(pkghdr,(pkghdr,rpmloc),'a')
+                else:
+                    pass
+            elif self.state(name,arch) == 'e' or self.state(name,arch) == 'ed':
+            # no no no - this should get ver-rel and mark that as what should
+            # be removed - not just name. so name-ver-rel
+                log(4, 'Erasing: %s-%s' % (name,arch))
+                _ts.remove(name)
+        return _ts
+
     def resolvedeps(self,rpmDBInfo):
-        #self == tsnevral
         #create db
         #create ts
         #populate ts
@@ -194,62 +275,42 @@ class nevral:
         CheckDeps = 1
         conflicts = 0
         unresolvable = 0
+        # this does a quick dep check without adding all the hdrs
+        # keeps mem usage small in the easy/quick case
+        _ts = self.populateTs(addavailable = 0)
+        deps = _ts.depcheck()
+        if not deps:
+            log(5, 'Quick Check only')
+            return (0, 'Success - deps resolved')
+        del deps
+        del _ts
+        log(5, 'Long Check')
+        
         while CheckDeps==1 or (conflicts != 1 and unresolvable != 1 ):
             errors=[]
-            db = clientStuff.openrpmdb(0)
-            ts = rpm.TransactionSet('/',db)
-            for (name, arch) in self.NAkeys(): 
-                if self.state(name, arch) in ('u','ud','iu'):
-                    log(4,'Updating: %s, %s' % (name, arch))
-                    rpmloc = self.rpmlocation(name, arch)
-                    pkghdr = self.getHeader(name, arch)
-                    if name == 'kernel' or name == 'kernel-bigmem' or name == 'kernel-enterprise' or name == 'kernel-smp' or name == 'kernel-debug':
-                        kernarchlist = archwork.availablearchs(self,name)
-                        bestarch = archwork.bestarch(kernarchlist)
-                        if arch == bestarch:
-                            log(3, 'Found best kernel arch: %s' %(arch))
-                            ts.add(pkghdr,(pkghdr,rpmloc),'i')
-                            ((e, v, r, a, l, i), s)=self._get_data(name,arch)
-                            self.add((name,e,v,r,arch,l,i),'i')
-                        else:
-                            log(3, 'Removing dumb kernel with silly arch %s' %(arch))
-                            ts.add(pkghdr,(pkghdr,rpmloc),'a')
-                            ((e,v,r,a,l,i),s)=self._get_data(name,arch)
-                            self.add((name,e,v,r,arch,l,i),'a')
-                    else:
-                        ts.add(pkghdr,(pkghdr,rpmloc),'u')
-                    
-                elif self.state(name,arch) == 'i':
-                    log(4,'Installing: %s, %s' % (name, arch))
-                    rpmloc = self.rpmlocation(name, arch)
-                    pkghdr = self.getHeader(name, arch)
-                    ts.add(pkghdr,(pkghdr,rpmloc),'i')
-                elif self.state(name,arch) == 'a':
-                    rpmloc = self.rpmlocation(name, arch)
-                    pkghdr = self.getHeader(name, arch)
-                    ts.add(pkghdr,(pkghdr,rpmloc),'a')
-                elif self.state(name,arch) == 'e' or self.state(name,arch) == 'ed':
-                    log(4,'Erasing: %s-%s' % (name,arch))
-                    ts.remove(name)
-            deps=ts.depcheck()
+            ts = self.populateTs(addavailable = 1)
+            deps = ts.depcheck()
+            
             CheckDeps = 0
             if not deps:
                 return (0, 'Success - deps resolved')
-                        
+            log (3, '# of Deps = %d' % len(deps))
             for ((name, version, release), (reqname, reqversion),
                                 flags, suggest, sense) in deps:
+                log (4, 'dep: %s req %s - %s - %s' % (name, reqname, reqversion, sense))
                 if sense == rpm.RPMDEP_SENSE_REQUIRES:
                     if suggest:
                         (header, sugname) = suggest
+                        log(4, '%s wants %s' % (name, sugname))
                         (name, arch) = self.nafromloc(sugname)
-                        archlist = archwork.availablearchs(self,name)
+                        archlist = self.bestArchsByVersion(name)
                         bestarch = archwork.bestarch(archlist)
                         log(3, 'bestarch = %s for %s' % (bestarch, name))
-                        ((e, v, r, a, l, i), s)=self._get_data(name,bestarch)
-                        self.add((name,e,v,r,bestarch,l,i),'ud')
+                        self.setPkgState(name, bestarch, 'ud')
                         log(4, 'Got dep: %s, %s' % (name,bestarch))
                         CheckDeps = 1
                     else:
+                        log(5, 'No suggestion for %s needing %s' % (name, reqname))
                         if self.exists(reqname):
                             if self.state(reqname) in ('e', 'ed'):
                                 # this is probably an erase depedency
@@ -259,19 +320,20 @@ class nevral:
                                 self.add((name,e,v,r,arch,l,i),'ed')
                                 log(4, 'Got Erase Dep: %s, %s' %(name,arch))
                             else:
-                                archlist = archwork.availablearchs(self,name)
+                                archlist = self.bestArchsByVersion(reqname)
                                 if len(archlist) > 0:
                                     arch = archwork.bestarch(archlist)
-                                    ((e, v, r, a, l, i), s)=self._get_data(name,arch)
-                                    self.add((name,e,v,r,arch,l,i),'ud')                                
-                                    log(4, 'Got Extra Dep: %s, %s' %(name,arch))
+                                    self.setPkgState(name, arch, 'ud')
+                                    log(4, 'Got Extra Dep: %s, %s' %(reqname,arch))
                                 else:
                                     unresolvable = 1
+                                    log(4, 'unresolvable - %s needs %s' % (name, clientStuff.formatRequire(reqname, reqversion, flags)))
                                     if clientStuff.nameInExcludes(reqname):
                                         errors.append('package %s needs %s that has been excluded' % (name, reqname))
                                     else:
                                         errors.append('package %s needs %s (not provided)' % (name, clientStuff.formatRequire(reqname, reqversion, flags)))
                             CheckDeps=1
+                            
                         else:
                             # this is horribly ugly but I have to find some way to see if what it needed is provided
                             # by what we are removing - if it is thien remove it -otherwise its a real dep problem - move along
@@ -288,6 +350,7 @@ class nevral:
                                         unresolvable = 1
                                         if clientStuff.nameInExcludes(reqname):
                                             errors.append('package %s needs %s that has been excluded' % (name, reqname))
+                                            log(5, 'Got to an unresolvable dep - %s %s' %(name, arch))
                                         else:
                                             errors.append('package %s needs %s (not provided)' % (name, clientStuff.formatRequire(reqname, reqversion, flags)))
                             else:
@@ -308,11 +371,10 @@ class nevral:
                         arch = archwork.bestarch(archlist)
                         (e1, v1, r1) = rpmDBInfo.evr(reqname,arch)
                         (e2, v2, r2) = self.evr(reqname,arch)
-                        rc = clientStuff.compareEVR((e1,v1,r1), (e2,v2,r2))
+                        rc = rpmUtils.compareEVR((e1,v1,r1), (e2,v2,r2))
                         if rc<0:
                             log(4, 'conflict: setting %s to upgrade' % (reqname))
-                            ((e,v,r,a,l,i),s)=self._get_data(reqname,arch)
-                            self.add((name,e,v,r,a,l,i),'ud')
+                            self.setPkgState(reqname, arch, 'ud')
                             CheckDeps=1
                         else:
                             errors.append('conflict between %s and %s' % (name, reqname))
@@ -320,11 +382,9 @@ class nevral:
                     else:
                         errors.append('conflict between %s and %s' % (name, reqname))
                         conflicts=1
-            log(4, 'whee dep loop')
+            log(4, 'Restarting Dependency Loop')
             del ts
             del db
+            del deps
             if len(errors) > 0:
                 return(1, errors)
-            
-
-   
