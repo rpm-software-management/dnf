@@ -30,6 +30,21 @@ def getHeadersByKeyword(ts, **kwargs):
                                                                                                         
     return lst
         
+def getIndexesByKeyword(ts, **kwargs):
+    """return list of headers Indexes from the rpmdb matching a keyword
+        ex: getHeadersByKeyword(name='foo', version='1', release='1')
+    """
+    lst = []
+    mi = ts.dbMatch()
+    for keyword in kwargs.keys():
+        mi.pattern(keyword, rpm.RPMMIRE_GLOB, kwargs[keyword])
+
+    # we really shouldnt be getting multiples here, but what the heck
+    for h in mi:
+        instance = mi.instance()
+        lst.append(instance)
+                                                                                                        
+    return lst
 
 class RpmDBHolder:
     def __init__(self):

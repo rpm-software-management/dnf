@@ -218,8 +218,29 @@ class Repository:
     def failed(self):
         self.failover.server_failed()
 
+    def get(self, url = None, relative=None, local=None, start=None, end=None):
+        """retrieve file from the mirrorgroup for the repo
+           relative to local, optionally get range from
+           start to end, also optionally retrieve from a specific baseurl"""
+           
+        # if local or relative is None: raise an exception b/c that shouldn't happen
+        # if url is not None - then do a grab from the complete url - not through
+        # the mirror, raise errors as need be
+        # if url is None do a grab via the mirror group/grab for the repo
+        # return the path to the local file
+        if local is None or relative is None:
+            raise Errors.RepoErrors, \
+                  "get request for Repo %s, gave no source or dest" % self.id
+        if url is not None:
+            pass
+            # setup a grabber and use it - same general rules
+        else:
+           self.grab.urlgrab('relative', local, range=(start, end))
+        return local
+           
     def _retrieveMD(self, url, local):
         """base function to retrieve data from the remote url"""
+        self.get(relative=url, local=local)
         
     def getRepoXML(self, cache=0):
         """retrieve/check/read in repomd.xml from the repository"""

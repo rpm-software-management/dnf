@@ -60,7 +60,15 @@ class TransactionData:
             del self.reason[pkgtup]
             
         self.data['packages'] = newlist
+
+    def changeMode(self, pkgtup, mode):
+        reason = self.reason[pkgtup]
+        self.remove(pkgtup)
+        self.add(pkgtup, mode, reason)
         
+    def dump(self):
+        """returns a list of the (pkginfo, mode) tuples"""
+        return self.data['packages']
         
     def display(self):
         out = ""
