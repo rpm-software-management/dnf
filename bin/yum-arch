@@ -20,5 +20,5 @@ import sys
 
 sys.path.insert(1,'/usr/share/yum')
 import pullheaders
-pullheaders.main()
+pullheaders.main(sys.argv[1:])
 
