@@ -20,6 +20,7 @@
 import sys
 import time
 from i18n import _
+import libxml2
 
 def printtime():
     return time.strftime('%b %d %H:%M:%S', time.localtime(time.time()))
@@ -129,25 +130,58 @@ def listPkgs(pkgLists, outputType):
             lst = pkgLists[description]
             if description == 'Recently available':
                 if len(lst) > 0:
-                    startRSS()
-                    
-                    for pkg in lst:
-                        pkgRSS(pkg)
-                    
-                    endRSS()
-                
+                    doc = generateRSS(lst)
+                    sys.stdout.write(doc.serialize('utf-8', format=1))
+                    doc.freeDoc()
 
-
-def startRSS():
-    pass
-
-def pkgRSS(pkgobj):
-    print pkgobj
-    pass
-
-def endRSS():
-    pass
-
+def generateRSS(lst):
+    """Generate a RSS 2.0 feed describing the list of packages.
+    Return the libxml2.xmlDoc of the feed. This document must be freed
+    using xmlDoc.freeDoc().
+    
+    RSS 2.0 Specification: http://blogs.law.harvard.edu/tech/rss
+    """
+    iso8601_format = "%Y-%m-%dT%H:%M:%S.00Z"
+    rfc822_format = "%a, %d %b %Y %X GMT"
+    xhtml_ns = "http://www.w3.org/1999/xhtml"
+    now = time.strftime(rfc822_format, time.gmtime())
+    doc = libxml2.newDoc('1.0')
+    escape = doc.encodeEntitiesReentrant
+    rss = doc.newChild(None, 'rss', None)
+    rss.setProp('version', '2.0')
+    channel = rss.newChild(None, 'channel', None)
+    channel.newChild(None, 'title', 'Yum Package List')
+    channel.newChild(None, 'link', 'http://linux.duke.edu/projects/yum/')
+    channel.newChild(None, 'description', 'Yum Package List')
+    channel.newChild(None, 'pubDate', now)
+    channel.newChild(None, 'generator', 'Yum')
+    for pkg in lst:
+      item = channel.newChild(None, 'item', None)
+      title = escape(str(pkg))
+      title = escape(title)
+      item.newChild(None, 'title', title)
+      date = time.gmtime(float(pkg.returnSimple('buildtime')))
+      item.newChild(None, 'pubDate', time.strftime(rfc822_format, date))
+      # build up changelog
+      changelog = ''
+      cnt = 0
+      for e in pkg.changelog:
+        cnt += 1
+        if cnt > 3: 
+          changelog += '...'
+          break
+        (date, author, desc) = e
+        date = time.strftime(rfc822_format, time.gmtime(float(date)))
+        changelog += '%s - %s\n%s\n\n' % (date, author, desc)
+      body = item.newChild(None, "body", None)
+      body.newNs(xhtml_ns, None)
+      body.newChild(None, "p", escape(pkg.returnSimple('summary')))
+      body.newChild(None, "pre", escape(pkg.returnSimple('description')))
+      body.newChild(None, "p", 'Change Log:')
+      body.newChild(None, "pre", escape(changelog))
+      item.newChild(None, 'description', escape(changelog))
+    return doc
+    
 def userconfirm():
     """gets a yes or no from the user, defaults to No"""
     choice = raw_input('Is this ok [y/N]: ')
