@@ -258,6 +258,7 @@ class Depsolve:
         pkgs = []
         dumbmatchpkgs = self.rpmdb.returnTupleByKeyword(name=name, ver=version, rel=release)
         for pkgtuple in dumbmatchpkgs:
+            self.log(6, 'Calling rpmdb.returnHeaderByTuple on %s.%s %s:%s-%s' % pkgtuple)
             hdrs = self.rpmdb.returnHeaderByTuple(pkgtuple)
             for hdr in hdrs:
                 po = packages.YumInstalledPackage(hdr)

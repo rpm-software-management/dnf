@@ -20,13 +20,17 @@ def getHeadersByKeyword(ts, **kwargs):
     lst = []
     # lifted from up2date - way to easy and useful NOT to steal - thanks adrian
     mi = ts.dbMatch()
-    for keyword in kwargs.keys():
-        mi.pattern(keyword, rpm.RPMMIRE_GLOB, kwargs[keyword])
-
-    # we really shouldnt be getting multiples here, but what the heck
-    for h in mi:
-        #print "%s-%s-%s.%s" % ( h['name'], h['version'], h['release'], h['arch'])
-        lst.append(h)
+    if kwargs.has_key('epoch'):
+        del(kwargs['epoch']) # epochs don't work here for None/0/'0' reasons
+        
+    keywords = len(kwargs.keys())
+    for hdr in mi:
+        match = 0
+        for keyword in kwargs.keys():
+            if hdr[keyword] == kwargs[keyword]:
+                match += 1
+        if match == keywords:
+            lst.append(hdr)
 
     return lst
         

@@ -373,7 +373,7 @@ class DepSolveProgressCallBack:
     
     def restartLoop(self):
         self.loops += 1
-        self.log(2, 'Restarting Dependency Resolution with new Changes.')
+        self.log(2, '\n\nRestarting Dependency Resolution with new Changes.')
         self.log(2, 'Loop Number: %d' % self.loops)
     
     def end(self):
