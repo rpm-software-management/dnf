@@ -1,3 +1,12 @@
+2002-12-19 23:12  skvidal
+
+	* bin/: yum, yum-arch: 
+	fixed sys.path.insert
+
+2002-12-09 00:46  skvidal
+
+	* ChangeLog: look an updated changelog
+
 2002-12-09 00:38  skvidal
 
 	* TODO, docs/yum.conf.5: 

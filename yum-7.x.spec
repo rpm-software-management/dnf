@@ -1,15 +1,15 @@
 Summary: RPM installer/updater
 Name: yum
 Version: 0.9.4
-Release: 1_8x
+Release: 1_7x
 License: GPL
 Group: System Environment/Base
 Source: %{name}-%{version}.tar.gz
 URL: http://www.dulug.duke.edu/yum/
 BuildRoot: %{_tmppath}/%{name}-%{version}root
 BuildArchitectures: noarch
-BuildRequires: python
-Requires: perl python librpm404 rpm404-python
+BuildRequires: rpm-python python >= 1.5.2
+Requires: rpm-python >= 4.0.4 perl python >= 1.5.2  rpm >= 4.0.4
 Prereq: /sbin/chkconfig, /sbin/service
 
 %description
@@ -71,8 +71,8 @@ exit 0
 
 %changelog
 * Sun Dec 22 2002 Seth Vidal <skvidal@phy.duke.edu>
-- bumped ver to 0.9.4
-- new spec file for rhl 8.0
+- bumped to ver 0.9.4
+- split spec file for rhl 7x vs 8
 
 * Sun Oct 20 2002 Seth Vidal <skvidal@phy.duke.edu>
 - bumped ver to 0.9.3

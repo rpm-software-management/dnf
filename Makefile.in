@@ -147,6 +147,7 @@ dailyfiles:
 	$(srcdir)/configure.in \
 	$(srcdir)/configure \
 	$(srcdir)/yum.spec \
+	$(srcdir)/yum-7.x.spec \
 	$(srcdir)/install-sh \
 	$(srcdir)/mkinstalldirs \
 	$(top_srcdir)/.disttmp/$$distdir
@@ -169,6 +170,7 @@ distfiles:
 	$(srcdir)/configure.in \
 	$(srcdir)/configure \
 	$(srcdir)/yum.spec \
+	$(srcdir)/yum-7.x.spec \
 	$(srcdir)/install-sh \
 	$(srcdir)/mkinstalldirs \
 	$(top_srcdir)/.disttmp/$$distdir
