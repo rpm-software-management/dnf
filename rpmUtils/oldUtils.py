@@ -5,8 +5,12 @@ import types
 import os
 import gzip
 import sys
-from i18n import _
 from gzip import write32u, FNAME
+
+
+def _(msg):
+    return msg
+    
 
 def checkheader(headerfile, name, arch):
     """check a header by opening it and comparing the results to the name and arch
