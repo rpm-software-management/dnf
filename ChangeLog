@@ -1,3 +1,17 @@
+2002-07-03 01:26  skvidal
+
+	* ChangeLog, archwork.py, clientStuff.py, config.py, nevral.py,
+	yummain.py: 
+	cleaned up comma space issues and single vs double quotes. Not
+	finished but a lot better. Also fixed a bizarre overlooked bug in
+	nevral load that would have almost never have been hit but could
+	have been.
+
+2002-07-01 11:18  skvidal
+
+	* yummain.py: 
+	fix things being out of order - pointed out by icon
+
 2002-07-01 02:08  skvidal
 
 	* Makefile.in: 
