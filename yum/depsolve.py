@@ -482,24 +482,35 @@ class Depsolve:
                 continue
 
             # we need to check to see, if we have anything similar to it (name-wise)
-            # installed, and this isn't a package that allows multiple installs
+            # installed or in the ts, and this isn't a package that allows multiple installs
             # then if it's newer, fine - continue on, if not, then we're unresolveable
             # cite it and exit
         
             tspkgs = []
             if not self.allowedMultipleInstalls(pkg):
-                tspkgs = self.tsInfo.matchNaevr(name=pkg.name, arch=pkg.arch)
-
                 (n, a, e, v, r) = pkg.pkgtup()
+                
+                # from ts
+                tspkgs = self.tsInfo.matchNaevr(name=pkg.name, arch=pkg.arch)
                 for tspkg in tspkgs:
                     (tn, ta, te, tv, tr) = tspkg.pkgtup
                     rc = rpmUtils.miscutils.compareEVR((e, v, r), (te, tv, tr))
                     if rc < 0:
-                        msg = 'Potential resolving packages %s has newer instance in ts.' % pkg
+                        msg = 'Potential resolving package %s has newer instance in ts.' % pkg
                         self.log(5, msg)
                         provSack.delPackage(pkg)
                         continue
-
+                
+                # from rpmdb
+                dbpkgs = self.rpmdb.returnTupleByKeyword(name=pkg.name, arch=pkg.arch)
+                for dbpkgtup in dbpkgs:
+                    (dn, da, de, dv, dr) = dbpkgtup
+                    rc = rpmUtils.miscutils.compareEVR((e, v, r), (de, dv, dr))
+                    if rc < 0:
+                        msg = 'Potential resolving package %s has newer instance installed.' % pkg
+                        self.log(5, msg)
+                        provSack.delPackage(pkg)
+                        continue
 
         if len(provSack) == 0: # unresolveable
             missingdep = 1
