@@ -82,8 +82,6 @@ class yumconf:
         self.commands = None
         self.exactarch = 0
         self.distroverpkg = 'redhat-release'
-        basearch = archwork.getArch()
-        arch = os.uname()[4]
         self.yumvar = self._getEnvVar()
         self.distroverpkg = 'redhat-release'
         self.yumvar['basearch'] = archwork.getArch()
@@ -161,7 +159,7 @@ class yumconf:
         except ConfigParser.NoOptionError, e:
             return None
         
-    def _getsysver(self, verpkg):
+    def _getsysver(self):
         db = clientStuff.openrpmdb()
         idx = db.findbyname(self.distroverpkg)
         # we're going to take the first one - if there is more than one of these
