@@ -54,7 +54,7 @@ class TransactionData:
         newlist = []
         for (tup, mode) in self.data['packages']:
             if pkgtup != tup:
-                newlist.append(tup, mode)
+                newlist.append((tup, mode))
 
         if self.reason.has_key(pkgtup):
             del self.reason[pkgtup]
@@ -126,7 +126,9 @@ class TransactionWrapper:
                          'setFlags',
                          'setVSFlags',
                          'setProbFilter',
-                         'hdrFromFdno']
+                         'hdrFromFdno',
+                         '__iter__',
+                         'next']
         self.tsflags = []
 
     def __getattr__(self, attr):

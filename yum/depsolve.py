@@ -21,7 +21,7 @@ import os
 import os.path
 
 import rpmUtils.transaction
-
+from packages import YumPackage
 
 class Depsolve:
     def __init__(self, YumBaseClass):
@@ -31,7 +31,7 @@ class Depsolve:
         self.tsInfo = base.tsInfo
         #self.excludelists = base.conf.getConfigOption
         self.installonly = base.conf.getConfigOption('installonlypkgs')
-        self.installroot = base.conf.getConfigOption('installroot')thanks
+        self.installroot = base.conf.getConfigOption('installroot')
         self.ts = rpmUtils.transaction.TransactionWrapper() # FIXME - specify installroot?
         self.pkgSack = base.pkgSack
         
@@ -49,46 +49,17 @@ class Depsolve:
            
         (n,a,e,v,r) = pkgtup
         pkgs = self.pkgSack.searchNevra(name=n, arch=a, epoch=e, ver=v, rel=r)
-        result = None
+
         if len(pkgs) == 0:
             # oh hell, how did this happen, we should raise or return None
-            pass
-        elif len(pkgs) > 1: # boy it'd be nice to do something smarter here FIXME
+            return None
+            
+        if len(pkgs) > 1: # boy it'd be nice to do something smarter here FIXME
             result = pkgs[0]
         else:
             result = pkgs[0] # which should be the only
-            
-        return result            
-    
-    def getHeader(self, po)
-        """takes a package tup and returns the header for the package"""
-        # this whole function should probably be moved to somewhere else
-        # as it is useful outside of here
-
-        rel = po.returnSimple('relativepath')
-        pkgname = os.path.basename(rel)
-        hdrname = pkgname[:-4] + '.hdr'
-        url = po.returnSimple('basepath')
-        start = po.returnSimple('hdrstart')
-        end = po.returnSimple('hdrend')
-        repoid = po.returnSimple('repoid')
-        repo = self.base.repos.getRepo(po.returnSimple('repoid'))
-        localfile = repo.hdrdir + '/' + hdrname
-        hdrpath = repo.get(url=url, relative=rel, local=localfile, 
-                           range=(start, end))
-        # need a function to open a hdr-range header and return it
-
-        return hdr                                   
-    def getProvidesNames(self, po):
-        """takes a package object returns a list of providesNames"""
         
-        provnames = []
-        prov = po.returnPrco('provides')
-        
-        for (name, flag, vertup) in prov:
-            provname.append(name)
-
-        return provnames
+        return result
     
     def populateTs(self):
         """take transactionData class and populate transaction set"""
@@ -96,9 +67,9 @@ class Depsolve:
             (n, a, e, v, r) = pkginfo
             if mode in ['u', 'i']:
                 po = self.getPackageObject(pkginfo)
-                hdr = self.getHeader(po)
+                hdr = po.getHeader()
                 loc = po.returnSimple('relativepath')
-                provides = self.getProvidesNames(po)
+                provides = po.getProvidesNames()
                 if mode == 'u':
                     if n in self.installonly or 'kernel-modules' in provides:
                         self.tsInfo.changeMode(pkginfo, 'i')

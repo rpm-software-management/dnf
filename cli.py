@@ -218,7 +218,7 @@ def parseCommands(baseclass):
             baseclass.errorlog(0, _('You need to be root to perform these commands'))
             sys.exit(1)
     
-    if basecmd in ['install', 'update', 'erase', 'remove']:
+    if basecmd in ['install', 'erase', 'remove']:
         if len(cmds[1:]) == 0:
             baseclass.errorlog(0, _('Error: Need to pass a list of pkgs to %s') % basecmd)
             usage()
@@ -238,8 +238,9 @@ def parseCommands(baseclass):
             baseclass.errorlog(0, _('Error: Invalid clean option %s') % cmds[1])
             usage()
 
-    elif basecmd in ['list', 'check-update', 'info']:
+    elif basecmd in ['list', 'check-update', 'info', 'update']:
         pass
+
     else:
         usage()
         

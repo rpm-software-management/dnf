@@ -28,7 +28,7 @@ from metadata import repoMDObject
 from metadata import mdErrors
 from metadata import packageSack
 from metadata import packageObject
-
+from packages import YumPackage
 
 class RepoStorage:
     """This class contains multiple repositories and core configuration data
@@ -37,7 +37,7 @@ class RepoStorage:
     def __init__(self):
         self.repos = {} # list of repos by repoid pointing a repo object 
                         # of repo options/misc data
-        self.pkgSack = packageSack.XMLPackageSack(packageObject.RpmXMLPackageObject)
+        self.pkgSack = packageSack.XMLPackageSack(YumPackage)
         
     def add(self, repoid):
         if self.repos.has_key(repoid):

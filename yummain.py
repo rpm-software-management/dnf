@@ -25,6 +25,7 @@ import rpmUtils.transaction
 import rpmUtils.updates
 import yum.yumcomps
 import yum.Errors
+import yum.depsolve
 import cli
 import output
 
@@ -132,10 +133,18 @@ def main(args):
 #        print item
 
    
-#    base.tsInfo = rpmUtils.transaction.TransactionData()
-#    for pkgtup in base.up.getUpdatesList():
-#        base.tsInfo.add(pkgtup, 'u', 'user')
 
+    for pkgtup in base.up.getUpdatesList():
+        base.tsInfo.add(pkgtup, 'u', 'user')
+
+    yum.packages.base = base
+    base.ds = yum.depsolve.Depsolve(base)
+    base.ds.populateTs()
+    for te in base.ds.ts:
+        print '%s - %s' % (te.Type(), te.N())
+
+      
+        
     # build up a list of pkgobj from the pkgsack to go with each item in a:
     # i or u mode in the tsInfo
 #    base.updatespkgs = []
