@@ -283,8 +283,6 @@ import rfc822
 import time
 import string
 import urllib2
-import socket
-socket.setdefaulttimeout(30.0)
 from stat import *  # S_* and ST_*
 
 try:
@@ -829,7 +827,7 @@ class URLGrabberFileObject:
         except RangeError, e:
             raise URLGrabError(9, _('%s') % (e, ))
         except IOError, e:
-            if isinstance(e.reason, TimeoutError):
+            if hasattr(e, 'reason') and isinstance(e.reason, TimeoutError):
                 raise URLGrabError(12, _('Timeout: %s') % (e, ))
             else:
                 raise URLGrabError(4, _('IOError: %s') % (e, ))
@@ -896,6 +894,8 @@ class URLGrabberFileObject:
             else:           readamount = min(amt, self._rbufsize)
             try:
                 new = self.fo.read(readamount)
+            except socket.error:
+                raise URLGrabError(4, _('Socket Error: %s') % (e, ))
             except TimeoutError, e:
                 raise URLGrabError(12, _('Timeout: %s') % (e, ))
             newsize = len(new)
