@@ -95,6 +95,7 @@ class YumBase(depsolve.Depsolve):
         self.excludePackages()
         for repo in self.repos.listEnabled():
             self.excludePackages(repo)
+            self.includePackages(repo)
         self.pkgSack.buildIndexes()
         
     def doUpdateSetup(self):
@@ -205,6 +206,35 @@ class YumBase(depsolve.Depsolve):
         
         self.log(2, 'Finished')
 
+    def includePackages(self, repo):
+        """removes packages from packageSacks based on list of packages, to include.
+           takes repoid as a mandatory argument."""
+        
+        includelist = repo.includepkgs
+        
+        if len(includelist) == 0:
+            return
+        
+        pkglist = self.pkgSack.returnPackages(repo.id)
+        exactmatch, matched, unmatched = \
+           parsePackages(pkglist, includelist)
+        
+        self.log(2, 'Reducing %s to included packages only' % repo.name)
+        rmlist = []
+        
+        for po in pkglist:
+            if po in exactmatch + matched:
+                self.log(3, 'Keeping included package %s' % po)
+                continue
+            else:
+                rmlist.append(po)
+        
+        for po in rmlist:
+            self.log(3, 'Removing unmatched package %s' % po)
+            self.pkgSack.delPackage(po)
+            
+        self.log(2, 'Finished')
+        
     def excludeNonCompatArchs(self):
         """runs through the whole packageSack and excludes any arch not compatible
            with the system"""
@@ -219,13 +249,6 @@ class YumBase(depsolve.Depsolve):
                 self.pkgSack.delPackage(po)
         self.log(2, 'Finished')
         
-    def includePackages(self, repoid):
-        """removes packages from packageSacks based on list of packages, to include.
-           takes repoid as a mandatory argument."""
-        
-        # if includepkgs is not set for that repo then return w/no changes
-        # otherwise remove all pkgs in the packageSack for that repo that
-        # do not match the includepkgs
         
         
     def doLock(self, lockfile):
