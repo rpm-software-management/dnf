@@ -137,7 +137,7 @@ def updatepkgs(tsnevral,hinevral,rpmnevral,nulist,uplist,obslist,userlist):
         else:        
             for n in userlist:
                 foundit=0
-                for (name,arch) in nulist:
+                for (name,arch) in uplist:
                     if n == name or fnmatch.fnmatch(name, n):
                         #found it
                         foundit=1

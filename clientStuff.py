@@ -480,6 +480,10 @@ def clean_up_headers():
     for serverid in serverlist:
         hdrdir = conf.serverhdrdir[serverid]
         hdrlist = getfilelist(hdrdir, '.hdr', [])
+        # remove header.info file too
+        headerinfofile = os.path.join(conf.cachedir, serverid, 'header.info')
+        log(4, 'Deleting header.info for %s' % serverid)
+        os.unlink(headerinfofile)
         for hdr in hdrlist:
             log(4, 'Deleting Header %s' % hdr)
             os.unlink(hdr)
