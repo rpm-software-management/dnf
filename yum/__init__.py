@@ -358,6 +358,9 @@ class YumBase(depsolve.Depsolve):
         # if we're not root then we don't lock - just return nicely
         if self.conf.getConfigOption('uid') != 0:
             return
+            
+        root = self.conf.installroot
+        lockfile = root + '/' + lockfile # lock in the chroot
         
         mypid=str(os.getpid())    
         while not self._lock(lockfile, mypid, 0644):
@@ -387,6 +390,10 @@ class YumBase(depsolve.Depsolve):
         # if we're not root then we don't lock - just return nicely
         if self.conf.getConfigOption('uid') != 0:
             return
+        
+        root = self.conf.installroot
+        lockfile = root + '/' + lockfile
+        
         self._unlock(lockfile)
         
     def _lock(self, filename, contents='', mode=0777):
