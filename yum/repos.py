@@ -342,7 +342,7 @@ class Repository:
         delattr(self, key)
    
     def listSetKeys(self):
-        return setkeys
+        return self.setkeys
         
     def setupGrab(self):
         """sets up the grabber functions with the already stocked in urls for

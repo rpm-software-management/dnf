@@ -125,7 +125,7 @@ class Groups_Info:
                 elif type == u'default':
                     self.default_pkgs[groupname].append(name)
                 else:
-                    debugprint('%s not optional, default or mandatory - ignoring' % name)
+                    self.debugprint('%s not optional, default or mandatory - ignoring' % name)
                 
             for sub_group_id in thisgroup.groups.keys():
                 if not sub_group_id in self.sub_groups[groupname]:
@@ -141,7 +141,7 @@ class Groups_Info:
                 elif type == u'default':
                     self.default_metapkgs[groupname].append(metapkgid)
                 else:
-                    debugprint('%s not optional, default or mandatory - ignoring' % metapkgid)
+                    self.debugprint('%s not optional, default or mandatory - ignoring' % metapkgid)
                     
         
     def compileGroups(self):
@@ -157,7 +157,7 @@ class Groups_Info:
                     if not self.group_by_id[id] in newlist:
                         newlist.append(self.group_by_id[id])
                 else:
-                    debugprint('Invalid group id %s' % id)
+                    self.debugprint('Invalid group id %s' % id)
             self.sub_groups[key] = newlist
         
         for key in self.mandatory_metapkgs.keys():
@@ -167,7 +167,7 @@ class Groups_Info:
                     if not self.group_by_id[id] in newlist:
                         newlist.append(self.group_by_id[id])
                 else:
-                    debugprint('Invalid metapkg id %s' % id)
+                    self.debugprint('Invalid metapkg id %s' % id)
             self.mandatory_metapkgs[key] = newlist
             
         for key in self.default_metapkgs.keys():
@@ -177,7 +177,7 @@ class Groups_Info:
                     if not self.group_by_id[id] in newlist:
                         newlist.append(self.group_by_id[id])
                 else:
-                    debugprint('Invalid metapkg id %s' % id)
+                    self.debugprint('Invalid metapkg id %s' % id)
             self.default_metapkgs[key] = newlist
 
         for key in self.optional_metapkgs.keys():
@@ -187,7 +187,7 @@ class Groups_Info:
                     if not self.group_by_id[id] in newlist:
                         newlist.append(self.group_by_id[id])
                 else:
-                    debugprint('Invalid metapkg id %s' % id)
+                    self.debugprint('Invalid metapkg id %s' % id)
             self.optional_metapkgs[key] = newlist
 
             
