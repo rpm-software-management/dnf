@@ -228,20 +228,23 @@ def returnObsoletes(headerNevral,rpmNevral,uninstNAlist):
 
 def urlgrab(url, filename=None):
 	#so this should really do something with the callbacks. Specifically it needs to print a silly little percentage done thing
-	import urllib, rfc822
-	if filename:
+	import urllib, rfc822, urlparse, os
+	(scheme,host, path, parm, query, frag) = urlparse.urlparse(url)
+	path = os.path.normpath(path)
+	url = urlparse.urlunparse((scheme,host,path,parm,query,frag))
+	if filename == None:
+		filename = os.path.basename(path)
+	try:
 		(fh, hdr) = urllib.urlretrieve(url, filename)
-	else:
-		fnindex = string.rfind(url, "/")
-		filename = url[fnindex+1:]
-		(fh, hdr) = urllib.urlretrieve(url, filename)    
-		#this is a cute little hack - if there isn't a "Content-Length" header then its either a 404 or a directory list
-		#either way its not what we want so I put this check in here as a little bit of sanity checking
-		if hdr != None:
-			if not hdr.has_key('Content-Length'):
-				print "ERROR: Url Returns no Content-Length  - something is wrong"
-				sys.exit(1)
-		
+	except IOError, e:
+		print "IOError: %s\nURL: %s" % (e,url)
+		sys.exit(1)
+	#this is a cute little hack - if there isn't a "Content-Length" header then its either a 404 or a directory list
+	#either way its not what we want so I put this check in here as a little bit of sanity checking
+	if hdr != None:
+		if not hdr.has_key('Content-Length'):
+			print "ERROR: Url Return no Content-Length  - something is wrong"
+			sys.exit(1)
 	return fh
 
 

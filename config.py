@@ -49,9 +49,9 @@ class yumconf:
 						self.servername[section] = name
 						self.serverurl[section] = url
 						(s,b,p,q,f,o) = urlparse.urlparse(self.serverurl[section])
-						#currently only allowing http servers - yes I know. I know.
-						if s != 'http':
-							print "Not using http for servers, Aborting"
+						#currently only allowing http and ftp servers 
+						if s not in ['http', 'ftp']:
+							print "Not using ftp or http for servers, Aborting - %s" % (self.serverurl[section])
 							sys.exit(1)
 						cache = os.path.join(self.cachedir,section)
 						pkgdir = os.path.join(cache,'packages')

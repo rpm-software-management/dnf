@@ -14,7 +14,7 @@
 # Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 # Copyright 2002 Duke University 
 
-import os, sys, rpm, clientStuff,
+import os, sys, rpm, clientStuff
 
 def installpkgs(tsnevral,nulist,userlist,hinevral,rpmnevral):
 	#get the list of pkgs you want to install from userlist
