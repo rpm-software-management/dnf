@@ -41,7 +41,9 @@ make the man pages have something that resembles ANY meaning.
 
 put together a brief quickstart guide and a webpage.
 
-make a yum list updates option (lists obs and updates)
+make a yum list updates option (lists obs and updates) ** done
+
+
 also maybe make an option for:
 yum mail notices
 

@@ -62,24 +62,29 @@ def installpkgs(tsnevral,nulist,userlist,hinevral,rpmnevral):
 		
 	
 
-def listpkgs(nulist, userlist, nevral):
+def listpkgs(pkglist, userlist, nevral):
 	import types,fnmatch
-	if len(nulist) > 0:
-		nulist.sort(clientStuff.nasort)
+	if len(pkglist) > 0:
+		pkglist.sort(clientStuff.nasort)
 		print "%-40s %-10s %s" %('Name','Arch','Version')
 		print "-" * 80
-		if type(userlist) is types.StringType and userlist=='all':
-			for (name, arch) in nulist:
-				(e,v,r)=nevral.evr(name,arch)
-				print "%-40s %-10s %s-%s" %(name, arch,v, r)
+		if type(userlist) is types.StringType:
+			if userlist=='all':
+				for (name, arch) in pkglist:
+					(e,v,r)=nevral.evr(name,arch)
+					print "%-40s %-10s %s-%s" %(name, arch,v, r)
+			if userlist=='updates':
+				for (name, arch) in pkglist:
+					(e,v,r)=nevral.evr(name,arch)
+					print "%-40s %-10s %s-%s" %(name, arch,v, r)
 		else:	
-			for (name,arch) in nulist:
+			for (name,arch) in pkglist:
 				for n in userlist:
 					if n == name or fnmatch.fnmatch(name, n):
 						(e,v,r)=nevral.evr(name,arch)
 						print "%-40s %-10s %s-%s" %(name, arch,v, r)
 	else:
-		print "No Packages Available for Update or Install"
+		print "No Packages Available"
 			
 def updatepkgs(tsnevral,hinevral,nulist,uplist,obslist,userlist):
 	#get the list of what people want upgraded, match like in install.

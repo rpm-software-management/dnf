@@ -143,8 +143,11 @@ def main():
 			pkgaction.listpkgs(nulist,'all',HeaderInfo)
 			sys.exit(0)
 		else:
-			pkgaction.listpkgs(nulist,cmds,HeaderInfo)
-			sys.exit(0)
+			if cmds[0] == 'updates':
+				pkgaction.listpkgs(uplist+obslist,'updates',HeaderInfo)
+			else:	
+				pkgaction.listpkgs(nulist,cmds,HeaderInfo)
+		sys.exit(0)
 	else:
 		usage()
 	
