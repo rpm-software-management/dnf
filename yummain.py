@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python -t
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation; either version 2 of the License, or
@@ -142,13 +142,13 @@ def parseCmdArgs(args):
                 conf.setConfigOption('installroot', a)
             elif o == '--enablerepo':
                 try:
-                    conf.enableRepo(a)
+                    conf.repos.enableRepo(a)
                 except yum.Errors.ConfigError, e:
                     errorlog(0, _(e))
                     usage()
             elif o == '--disablerepo':
                 try:
-                    conf.disableRepo(a)
+                    conf.repos.disableRepo(a)
                 except yum.Errors.ConfigError, e:
                     errorlog(0, _(e))
                     usage()
@@ -248,21 +248,17 @@ def main(args):
     # push the logs into the other namespaces
     pkgaction.log = log
     clientStuff.log = log
-    nevral.log = log
     rpmUtils.log = log
 
     pkgaction.errorlog = errorlog
     clientStuff.errorlog = errorlog
-    nevral.errorlog = errorlog
     rpmUtils.errorlog = errorlog
     
     pkgaction.filelog = filelog
     clientStuff.filelog = filelog
-    nevral.filelog = filelog
     rpmUtils.filelog = filelog
     
     # push the conf file into the other namespaces
-    nevral.conf = conf
     clientStuff.conf = conf
     pkgaction.conf = conf
     callback.conf = conf
@@ -273,12 +269,8 @@ def main(args):
     ts.sigChecking('none')
     clientStuff.ts = ts
     pkgaction.ts = ts
-    nevral.ts = ts
     rpmUtils.ts = ts
     yumcomps.ts = ts
-    
-    # make remote nevral class
-    HeaderInfo = nevral.nevral()
     
     # sorting the repos so that sort() will order them consistently
     # If you wanted to add scoring or somesuch thing for repo preferences
@@ -286,18 +278,19 @@ def main(args):
     # replace repolist.sort() with a function - all it has to do
     # is return an ordered list of repoids and have it stored in
     # repolist
-    repolist = conf.listEnabledRepos()
+    repolist = conf.repos.listEnabled()
     repolist.sort()
 
-    # get the package info file
-    clientStuff.get_package_info_from_servers(repolist, HeaderInfo)
-    
-    # make local nevral class
-    rpmDBInfo = nevral.nevral()
-    clientStuff.rpmdbNevralLoad(rpmDBInfo)
 
-    # create transaction set nevral class
-    tsInfo = nevral.nevral()
+    # figure out what we're going to do so we can make decisions about what
+    # we need to snarf from a server or into memory
+    # we know that 'process' is our primary command    
+    
+
+    # download repomd.xml from each enabled server, if we have it
+    
+    # create struncts for local rpmdb
+    
     #################################################################################
     # generate all the lists we'll need to quickly iterate through the lists.
     #  uplist == list of updated packages
@@ -308,27 +301,19 @@ def main(args):
     log(2, _('Finding updated packages'))
     (uplist, newlist, nulist) = clientStuff.getupdatedhdrlist(HeaderInfo, rpmDBInfo)
     
-    if process != 'clean':
-        log(2, _('Downloading needed headers'))
-        clientStuff.download_headers(HeaderInfo, nulist)
-    # once we've gone through and found out which headers we know about
-    # generate the lists again so there is no confusion about what is available
-    (uplist, newlist, nulist) = clientStuff.getupdatedhdrlist(HeaderInfo, rpmDBInfo)
-    
-    if process in ['upgrade', 'groupupgrade']:
-        log(2, _('Finding obsoleted packages'))
-        obsoleting, obsoleted = clientStuff.returnObsoletes(HeaderInfo, rpmDBInfo, nulist)
-    else:
-        obsoleting = {}
-        obsoleted = {}
-
-    if process in ['groupupdate', 'groupinstall', 'grouplist', 'groupupgrade']:
-        servers_with_groups = clientStuff.get_groups_from_servers(repolist)
-        GroupInfo = yumcomps.Groups_Info(conf.overwrite_groups)
+    if process in ['groupupdate', 'groupinstall', 'grouplist', 'groupremove']:
+        for repoid in repolist:
+            repo = conf.repos.getRepo(repoid)
+            grouprepos = []
+            if repo.enablegroups:
+                grouprepos.append(repoid)
+        groupservers = clientStuff.getGroupsFromServers(grouprepos)
+        GroupInfo = yumcomps.Groups_Info(conf.getConfigOption('overwrite_groups'))
         if len(servers_with_groups) > 0:
             for repoid in servers_with_groups:
                 log(4, 'Adding Group from %s' % repoid)
-                GroupInfo.add(conf.localGroups(repoid))
+                repo = conf.repos.getRepo(repoid)
+                GroupInfo.add(repo.localGroups())
         if GroupInfo.compscount > 0:
             GroupInfo.compileGroups()
             clientStuff.GroupInfo = GroupInfo

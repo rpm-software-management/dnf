@@ -15,23 +15,6 @@
 # Copyright 2004 Duke University 
 
 
-# this file handles how things are dealt with in /var/cache/yum/[repoid]/ more or less
-# - just stuff to do the meta-processes having to deal with the metadata.
-#  - ex: checksumming, comparisons of current ones, pickling, unpickling, 
-
-
-
-
-#questions: should all of the repos data be moved here - failover rules, mirrors lists, the whole 
-# nine yards
-# - then config could just fetch the defaults and you can stow it all in here for greater expansion 
-# and ignore   repos from the config class
-#   - that would mean dumping the config stuff out here, but maybe that's something worthwhile, 
-#    - maybe
-#     have this created from inside config for the repos - store as config.repos object.
-#   - would allow more flexible scoring of mirror lists and let those be handled better inside there
-#
-
 import Errors
 import os
 import os.path
@@ -42,7 +25,8 @@ class RepoStorage:
        about them."""
        
     def __init__(self):
-        self.repos = {} # dict of repos by repoid pointing a repo object of repo options/misc data
+        self.repos = {} # dict of repos by repoid pointing a repo object 
+                        # of repo options/misc data
     
     def add(self, repoid):
         if self.repos.has_key(repoid):
@@ -90,13 +74,14 @@ class Repository:
 
     def __init__(self, repoid):
         self.id = repoid
-        self.name = repoid # name is repoid until someone sets it to the longer name
+        self.name = repoid # name is repoid until someone sets it to a real name
         # some default (ish) things
         self.urls = []
         self.gpgcheck = 0
         self.enabled = 1
         self.enablegroups = 1  
-        self.groupsfilename = 'yumgroups.xml' # something some freaks might eventually want
+        self.groupsfilename = 'yumgroups.xml' # something some freaks might 
+                                              # eventually want
 
     def __str__(self):
         string = 'repo: %s\n' % self.id
