@@ -74,8 +74,18 @@ distfiles:
 	$(srcdir)/yum.conf.5 \
 	$(top_srcdir)/.disttmp/$$distdir/docs
 
+dailyfiles:
+	distdir=$(PACKAGE); \
+	mkdir $(top_srcdir)/.disttmp/$$distdir/docs;\
+	cp \
+	$(srcdir)/Makefile.in \
+	$(srcdir)/yum.8 \
+	$(srcdir)/yum-arch.8 \
+	$(srcdir)/yum.conf.5 \
+	$(top_srcdir)/.disttmp/$$distdir/docs
+
 installdirs:
 	$(MAKE) -C $(top_srcdir) installdirs
 
 
-.PHONY: all install install-strip uninstall clean distclean mostlyclean maintainer-clean info dvi dist distfiles check installcheck installdirs
+.PHONY: all install install-strip uninstall clean distclean mostlyclean maintainer-clean info dvi dist distfiles check installcheck installdirs dailyfiles

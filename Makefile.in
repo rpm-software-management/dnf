@@ -119,6 +119,41 @@ dist:
 	cd $$olddir
 	rm -rf .disttmp
 
+daily:
+	olddir=`pwd`; \
+	distdir=$(PACKAGE); \
+	rm -rf .disttmp; \
+	mkdir .disttmp; \
+	mkdir .disttmp/$$distdir; \
+	$(MAKE) dailyfiles
+	distdir=$(PACKAGE); \
+	cd .disttmp; \
+	tar -cvz > ../$$distdir.tar.gz $$distdir; \
+	cd $$olddir
+	rm -rf .disttmp
+
+dailyfiles:
+	distdir=$(PACKAGE); \
+	cp \
+	$(srcdir)/*.py \
+	$(srcdir)/AUTHORS \
+	$(srcdir)/COPYING \
+	$(srcdir)/INSTALL \
+	$(srcdir)/README \
+	$(srcdir)/TODO \
+	$(srcdir)/ChangeLog \
+	$(srcdir)/py-compile \
+	$(srcdir)/Makefile.in \
+	$(srcdir)/configure.in \
+	$(srcdir)/configure \
+	$(srcdir)/yum.spec \
+	$(srcdir)/install-sh \
+	$(srcdir)/mkinstalldirs \
+	$(top_srcdir)/.disttmp/$$distdir
+	for subdir in $(SUBDIRS) ; do \
+	  $(MAKE) -C $$subdir dailyfiles ; \
+	done
+
 distfiles:
 	distdir=$(PACKAGE)-$(VERSION); \
 	cp \
@@ -152,4 +187,4 @@ todo:
 	@echo ---------------===========================================
 	@grep -n TODO\\\|FIXME `find . -type f` | grep -v grep
 	@echo ---------------===========================================
-.PHONY: all install install-strip uninstall clean distclean mostlyclean maintainer-clean info dvi dist distfiles check installcheck installdirs
+.PHONY: all install install-strip uninstall clean distclean mostlyclean maintainer-clean info dvi dist distfiles check installcheck installdirs daily dailyfiles
