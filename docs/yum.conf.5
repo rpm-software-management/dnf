@@ -59,6 +59,16 @@ Filename globs *,?,., etc are allowed
 packages that you have installed. IE: with this enabled yum will not install an i686
 package to update an i386 package.
 
+.IP \fBcommands\fR
+list of functional commands to run if no functional commands are specified
+on the command line. ie: commands  = update foo bar baz quux
+none of the short options (-y, -e, -d, etc) will be taken in the field.
+
+.IP \fBdistroverpkg\fR
+package to use to determine the "version" of the distribution - can be any
+package you have installed - defaults to redhat-release.
+
+
 .SH "[server] options"
 .LP 
 The server section(s) take the following form:
@@ -72,18 +82,44 @@ baseurl=url://path/to/repository/
 gpgcheck=[1|0] 
 .br 
 
-.IP \fBserverid
+.IP \fBserverid\fR
 must be a unique name for each server, one word.
 
-.IP \fBbaseurl
+.IP \fBbaseurl\fR
 must be a url to the directory where the yum repository's 'headers' directory lives.
+ftp, http and file urls are allowed
 
-.IP \fBname
+.IP \fBname\fR
 a human readable string describing the repository.
 
-.IP \fBgpgcheck
+.IP \fBgpgcheck\fR
 either '1' or '0'. This tells yum whether or not it should perform a gpg signature check on the packages gotten from this server
 
+.SH "VARIABLES"
+.LP
+There are a number of variables you can use to ease maintenance of the
+configuration file. They are only useful inside the name, baseurl and
+commands fields in the config file.
+.LP
+
+.IP \fB$releasever\fR
+This will be replaced with the value of the version of the package listed
+in \fBdistroverpkg\fR. This defaults to the version of the package
+redhat-release
+
+.IP \fB$arch\fR
+This will be replaced with your architecture as listed by os.uname()[4] in
+pyhton.
+
+.IP \fB$basearch\fR
+This will be replaced with your base architecture as they are listed in
+archwork.py in yum. For example if your $arch is i686 your $basearch will be
+i386.
+
+.IP \fB$YUM0-$YUM9\fR
+These will be replaced with the value of the shell environment variable of
+the same name. If the shell environment variable does not exist then they
+will not be replaced.
 
 .SH "FILES"
 .LP 
