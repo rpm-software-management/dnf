@@ -144,7 +144,7 @@ def depchecktree(rpmlist):
 	for rpmfn in rpmlist:
 		currpm=currpm + 1
 		percent = (currpm*100)/numrpms
-		sys.stdout.write('\r' + ' ' * 100)
+		sys.stdout.write('\r' + ' ' * 80)
 		sys.stdout.write("\rChecking deps %d %% complete" %(percent))
 		sys.stdout.flush()
 		h = readHeader(rpmfn)
