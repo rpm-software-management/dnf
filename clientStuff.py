@@ -901,7 +901,7 @@ def create_final_ts(tsInfo, rpmdb):
         if tserrors:
             diskerrors = []
             othererrors = []
-            for (descr, (type, mount, need) in tserrors:
+            for (descr, (type, mount, need)) in tserrors:
                 if type == rpm.RPM_PROB_DISKSPACE:
                     diskerrors.append(descr)
                 else:
