@@ -57,11 +57,15 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
     def doRepoSetup(self, nosack=None):
         """grabs the repomd.xml for each enabled repository and sets up the basics
            of the repository"""
-        self.log(2, 'Setting up Repos')           
+        self.log(2, 'Setting up Repos')
+        if len(self.repos.listEnabled()) < 1:
+            self.errorlog(0, 'No Repositories Available to Set Up')
+            sys.exit(1)
         for repo in self.repos.listEnabled():
             if repo.repoXML is not None:
                 continue
             try:
+                repo.baseurlSetup()
                 repo.check()
                 repo.cache = self.conf.getConfigOption('cache')
                 repo.dirSetup()

@@ -107,6 +107,7 @@ class YumBase(depsolve.Depsolve):
             if repo.repoXML is not None:
                 continue
             try:
+                repo.baseurlSetup()
                 repo.check()
                 repo.cache = self.conf.getConfigOption('cache')
                 repo.dirSetup()

@@ -19,6 +19,8 @@
 import os
 import os.path
 import types
+import re
+import urlparse
 
 import Errors
 from urlgrabber.grabber import URLGrabber
@@ -244,7 +246,7 @@ class Repository:
         self.urls = []
         self.gpgcheck = 0
         self.enabled = 1
-        self.enablegroups = 1  
+        self.enablegroups = 1
         self.groupsfilename = 'yumgroups.xml' # something some freaks might 
                                               # eventually want
         self.setkeys = []
@@ -253,11 +255,15 @@ class Repository:
         self.cache = 0
         self.callback = None # callback for the grabber
         self.failure_obj = None
+        self.mirrorlistfn = None # filename/url of mirrorlist file
+        self.mirrorlistparsed = 0
+        self.baseurls = [] # baseurls from the config file
+        self.yumvar = {} # empty dict of yumvariables for $string replacement
         
         # throw in some stubs for things that will be set by the config class
         self.cachedir = ""
         self.pkgdir = ""
-        self.hdrdir = ""        
+        self.hdrdir = ""
         # holder for stuff we've grabbed
         self.retrieved = { 'primary':0, 'filelists':0, 'other':0, 'groups':0 }
 
@@ -324,6 +330,7 @@ class Repository:
         return string
     
     def enable(self):
+        self.baseurlSetup()
         self.set('enabled', 1)
     
     def disable(self):
@@ -388,6 +395,28 @@ class Repository:
                     raise Errors.RepoError, \
                         "Cannot access repository dir %s" % dir
  
+    def baseurlSetup(self):
+        """go through the baseurls and mirrorlists and populatr self.urls 
+           with valid ones, run  self.check() at the end to make sure it worked"""
+        goodurls = []
+        if self.mirrorlistfn and not self.mirrorlistparsed:
+            mirrorurls = getMirrorList(self.mirrorlistfn)
+            self.mirrorlistparsed = 1
+            for url in mirrorurls:
+                url = variableReplace(self.yumvar, url)
+                self.baseurls.append(url)
+        
+        for url in self.baseurls:
+            (s,b,p,q,f,o) = urlparse.urlparse(url)
+            if s not in ['http', 'ftp', 'file', 'https']:
+                print 'not using ftp, http[s], or file for repos, skipping - %s' % (url)
+                continue
+            else:
+                goodurls.append(url)
+                
+        self.set('urls', goodurls)
+        self.check()
+        self.setupGrab() # update the grabber for the urls
 
     def get(self, url=None, relative=None, local=None, start=None, end=None,
             copy_local=0, checkfunc=None, text=None):
@@ -593,5 +622,76 @@ class Repository:
         return file
         
         
-    
 
+def getMirrorList(mirrorlist):
+    """retrieve an up2date-style mirrorlist file from a url, 
+       we also s/$ARCH/$BASEARCH/ and move along
+       returns a list of the urls from that file"""
+       
+    returnlist = []
+    if hasattr(urlgrabber.grabber, 'urlopen'):
+        urlresolver = urlgrabber.grabber
+    else: 
+        urlresolver = urllib
+    
+    scheme = urlparse.urlparse(mirrorlist)[0]
+    if scheme == '':
+        url = 'file://' + mirrorlist
+    else:
+        url = mirrorlist
+
+    try:
+        fo = urlresolver.urlopen(url)
+    except urlgrabber.grabber.URLGrabError, e:
+        fo = None
+
+    if fo is not None: 
+        content = fo.readlines()
+        for line in content:
+            if re.match('^\s*\#.*', line) or re.match('^\s*$', line):
+                continue
+            mirror = re.sub('\n$', '', line) # no more trailing \n's
+            (mirror, count) = re.subn('\$ARCH', '$BASEARCH', mirror)
+            returnlist.append(mirror)
+    
+    return returnlist
+
+def variableReplace(yumvar, thing):
+    """ do the replacement of $ variables, releasever, arch and basearch on any 
+        string or list  passed to it - returns whatever you passed"""
+    
+    if thing is None:
+        return thing
+
+    if type(thing) is types.StringType:
+        shortlist = []
+        shortlist.append(thing)
+        
+    if type(thing) is types.ListType:
+        shortlist = thing
+    
+    basearch_reg = re.compile('\$basearch', re.I)
+    arch_reg = re.compile('\$arch', re.I)
+    releasever_reg = re.compile('\$releasever', re.I)
+    yumvar_reg = {}
+
+    for num in range(0,10):
+        env = '\$YUM%s' % num
+        yumvar_reg[num] = re.compile(env, re.I)
+
+    returnlist = []        
+    for string in shortlist:
+        (string, count) = basearch_reg.subn(yumvar['basearch'], string)
+        (string, count) = arch_reg.subn(yumvar['arch'], string)
+        (string, count) = releasever_reg.subn(yumvar['releasever'], string)
+        for num in range(0,10):
+            (string, count) = yumvar_reg[num].subn(yumvar[num], string)
+        returnlist.append(string)
+        
+    if type(thing) is types.StringType:
+        thing = returnlist[0]
+    
+    if type(thing) is types.ListType:
+        thing = returnlist
+        
+    return thing

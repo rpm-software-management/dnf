@@ -30,6 +30,7 @@ import rpmUtils.arch
 import Errors
 import urlgrabber
 import urlgrabber.grabber
+from repos import variableReplace
 import repos
 
 
@@ -291,14 +292,14 @@ class yumconf(object):
         self.yumvar['arch'] = rpmUtils.arch.getCanonArch() # FIXME make this configurable??
         # figure out what the releasever really is from the distroverpkg
         self.yumvar['releasever'] = self._getsysver()
-
+        
         # weird ones
         for option in ['commands', 'installonlypkgs', 'kernelpkgnames', 'exclude']:
             self.configdata[option] = variableReplace(self.yumvar, self.configdata[option])
             self.configdata[option] = variableReplace(self.yumvar, self.configdata[option])
 
         # make our lists into lists. :)
-        for option in ['exclude']:
+        for option in ['exclude', 'installonlypkgs', 'kernelpkgnames']:
             self.configdata[option] = parseList(self.configdata[option])
 
         # look through our repositories.
@@ -400,39 +401,24 @@ class yumconf(object):
 
 def doRepoSection(globconfig, thisconfig, section):
     """do all the repo handling stuff for this config"""
-
-    urls = thisconfig._getoption(section, 'baseurl', [])
-    name = thisconfig._getoption(section, 'name', section)
-    urls = variableReplace(globconfig.yumvar, urls)
-    urls = parseList(urls)
-    mirrorlist = thisconfig._getoption(section, 'mirrorlist', None)
-    mirrorlist = variableReplace(globconfig.yumvar, mirrorlist) 
-    if mirrorlist is not None:
-        # go get the mirrorlist, read through it and pump the results into
-        # the urls list - of course do the replace function on them
-        mirrorurls = getMirrorList(mirrorlist)
-        for url in mirrorurls:
-            url = variableReplace(globconfig.yumvar, url)
-            urls.append(url)
-            
+    
     
     thisrepo = globconfig.repos.add(section)
+    thisrepo.set('yumvar', globconfig.yumvar)
+    
+    enabled = thisconfig._getboolean(section, 'enabled', 1)
+    name = thisconfig._getoption(section, 'name', section)
     name = variableReplace(globconfig.yumvar, name)
     thisrepo.set('name', name) 
+    thisrepo.set('enabled', enabled)
     
+    baseurl = thisconfig._getoption(section, 'baseurl', [])
+    baseurls = parseList(baseurl)
+    mirrorlistfn = thisconfig._getoption(section, 'mirrorlist', None)
+    mirrorlistfn = variableReplace(globconfig.yumvar, mirrorlistfn)
+    thisrepo.set('mirrorlistfn', mirrorlistfn)
+    thisrepo.set('baseurls', baseurls)
     
-    # vet the urls
-    goodurls = []
-    for url in urls:
-        (s,b,p,q,f,o) = urlparse.urlparse(url)
-        if s not in ['http', 'ftp', 'file', 'https']:
-            print 'not using ftp, http[s], or file for repos, skipping - %s' % (url)
-            continue
-        else:
-            goodurls.append(url)
-
-    thisrepo.set('urls', goodurls)
-
     gpgkey = thisconfig._getoption(section, 'gpgkey', '')
     if gpgkey:
         (s,b,p,q,f,o) = urlparse.urlparse(gpgkey)
@@ -441,7 +427,6 @@ def doRepoSection(globconfig, thisconfig, section):
             gpgkey = ''
     thisrepo.set('gpgkey', gpgkey)
 
-    thisrepo.set('enabled', thisconfig._getboolean(section, 'enabled', 1))
 
     for keyword in ['proxy_username', 'proxy', 'proxy_password', 
                     'retries', 'failovermethod']:
@@ -480,42 +465,8 @@ def doRepoSection(globconfig, thisconfig, section):
     thisrepo.set('cachedir', cachedir)
     thisrepo.set('pkgdir', pkgdir)
     thisrepo.set('hdrdir', hdrdir)
-    thisrepo.setupGrab()
-
-
-def getMirrorList(mirrorlist):
-    """retrieve an up2date-style mirrorlist file from a url, 
-       we also s/$ARCH/$BASEARCH/ and move along"""
-       
-    returnlist = []
-    if hasattr(urlgrabber.grabber, 'urlopen'):
-        urlresolver = urlgrabber.grabber
-    else: 
-        urlresolver = urllib
     
-    scheme = urlparse.urlparse(mirrorlist)[0]
-    if scheme == '':
-        url = 'file://' + mirrorlist
-    else:
-        url = mirrorlist
 
-    try:
-        fo = urlresolver.urlopen(url)
-    except urlgrabber.grabber.URLGrabError, e:
-        fo = None
-
-    if fo is not None: 
-        content = fo.readlines()
-        for line in content:
-            if re.match('^\s*\#.*', line) or re.match('^\s*$', line):
-                continue
-            mirror = re.sub('\n$', '', line) # no more trailing \n's
-            (mirror, count) = re.subn('\$ARCH', '$BASEARCH', mirror)
-            returnlist.append(mirror)
-    
-    return returnlist
-
-    
 
 def parseList(value):
     """converts strings from a configparser option into a workable list
@@ -534,45 +485,6 @@ def parseList(value):
     listvalue = value.split()
     return listvalue
         
-def variableReplace(yumvar, thing):
-    """ do the replacement of $ variables, releasever, arch and basearch on any 
-        string or list  passed to it - returns whatever you passed"""
-    
-    if thing is None:
-        return thing
-
-    if type(thing) is types.StringType:
-        shortlist = []
-        shortlist.append(thing)
-        
-    if type(thing) is types.ListType:
-        shortlist = thing
-    
-    basearch_reg = re.compile('\$basearch', re.I)
-    arch_reg = re.compile('\$arch', re.I)
-    releasever_reg = re.compile('\$releasever', re.I)
-    yumvar_reg = {}
-
-    for num in range(0,10):
-        env = '\$YUM%s' % num
-        yumvar_reg[num] = re.compile(env, re.I)
-
-    returnlist = []        
-    for string in shortlist:
-        (string, count) = basearch_reg.subn(yumvar['basearch'], string)
-        (string, count) = arch_reg.subn(yumvar['arch'], string)
-        (string, count) = releasever_reg.subn(yumvar['releasever'], string)
-        for num in range(0,10):
-            (string, count) = yumvar_reg[num].subn(yumvar[num], string)
-        returnlist.append(string)
-        
-    if type(thing) is types.StringType:
-        thing = returnlist[0]
-    
-    if type(thing) is types.ListType:
-        thing = returnlist
-        
-    return thing
 
 
 class confpp:
