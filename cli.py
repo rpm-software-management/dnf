@@ -363,6 +363,14 @@ class YumBaseCli(yum.YumBase):
         """takes care of package downloading, checking, user confirmation and actually
            RUNNING the transaction"""
 
+        # output what will be done:
+        self.log(2, self.tsInfo.display())
+        # confirm with user
+        if not self.conf.getConfigOption('assumeyes'):
+            if not output.userconfirm():
+                self.log(0, 'Exiting on user Command')
+                return
+
         
         # download all pkgs in the tsInfo - md5sum vs the metadata as you go 
         downloadpkgs = []
@@ -392,13 +400,6 @@ class YumBaseCli(yum.YumBase):
             
             raise yum.Errors.YumBaseError, errstring
     
-        # output what will be done:
-        self.log(2, self.tsInfo.display())
-        # confirm with user
-        if not self.conf.getConfigOption('assumeyes'):
-            if not output.userconfirm():
-                return
-        
         tsConf = {}
         for feature in ['diskspacecheck']: # more to come, I'm sure
             tsConf['diskspacecheck'] = self.conf.getConfigOption('diskspacecheck')
