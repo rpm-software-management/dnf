@@ -33,7 +33,6 @@ if uid == 0:
     else:
         fd = open(lockfile, 'r')
         oldpid = fd.readline()
-        print oldpid
         if not os.path.exists('/proc/' + oldpid):
             os.unlink(lockfile)
             yumlock.lock(lockfile, mypid, 0644)
