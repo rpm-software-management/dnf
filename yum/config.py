@@ -89,6 +89,7 @@ class yumconf:
                          ('installroot', '/'),
                          ('commands', []),
                          ('exclude', []),
+                         ('failovermethod', 'roundrobin')
                          ('yumversion', 'unversioned'),
                          ('proxy', None),
                          ('proxy_username', None),
@@ -277,29 +278,24 @@ def doRepoSection(globconfig, thisconfig, section):
             globconfig.repos.delete(section)
             print 'Error: Cannot find valid baseurl for repo: %s. Skipping' % (section)    
             return
-            
-        failmeth = thisconfig._getoption(section,'failovermethod')
+
+        thisrepo.set('enabled', thisconfig._getboolean(section, 'enabled', 1))        
+
+        failmeth = thisconfig._getoption(section,'failovermethod',\
+                                globconfig.getConfigOption('failovermethod'))
+
         thisrepo.setFailover(failmeth)
-        
-        thisrepo.set('enabled', thisconfig._getboolean(section, 'enabled', 1))
-        
-        # for a number of these if we do not have a setting assert the setting
-        # from [main]
-        thisrepo.set('gpgcheck', thisconfig._getboolean(section, \
-                     'gpgcheck', globconfig.getConfigOption('gpgcheck')))
-                     
-        # get our proxy information if it is there
-        thisrepo.set('proxy', thisconfig._getoption(section, 'proxy', \
-                     globconfig.getConfigOption('proxy')))
-                     
-        thisrepo.set('proxy_username', thisconfig._getoption(section, \
-                     'proxy_username', globconfig.getConfigOption('proxy_username')))
-                     
-        thisrepo.set('proxy_password', thisconfig._getoption(section, \
-                     'proxy_password', globconfig.getConfigOption('proxy_password')))
-        
-        thisrepo.set('keepalive', thisconfig._getboolean(section, \
-                     'keepalive', globconfig.getConfigOption('keepalive')))
+ 
+        for keyword in ['bandwidth', 'throttle', 'proxy_username', 'proxy',
+                        'proxy_password', 'retries']:
+
+            thisrepo.set(keyword, thisconfig._getoption(section, keyword, \
+                         globconfig.getConfigOption(keyword)))
+
+        for keyword in ['gpgcheck', 'keepalive']:
+            thisrepo.set(keyword, thisconfig._getboolean(section, \
+                         keyword, globconfig.getConfigOption(keyword)))
+                         
         
         excludelist = thisconfig._getoption(section, 'exclude', [])
         excludelist = variableReplace(globconfig.yumvar, excludelist)
