@@ -26,6 +26,7 @@ import output
 
 import progress_meter
 import yum
+import yum.yumcomps
 import yum.Errors
 from yum.logger import Logger
 from yum.config import yumconf
@@ -189,9 +190,9 @@ class YumBaseCli(yum.YumBase):
                              # make sure they match
     
         # set our caching mode correctly
+        
         if self.conf.getConfigOption('uid') != 0:
             self.conf.setConfigOption('cache', 1)
-                             
         # run the sleep - if it's unchanged then it won't matter
         time.sleep(sleeptime)                        
 
@@ -253,7 +254,7 @@ class YumBaseCli(yum.YumBase):
 
     def doCommands(self):
         """calls the base command passes the extended commands/args out to be
-        parsed. (most notably package globs). """
+        parsed. (most notably package globs). returns a numeric result code"""
         
         # at this point we know the args are valid - we don't know their meaning
         # but we know we're not being sent garbage
@@ -277,6 +278,7 @@ class YumBaseCli(yum.YumBase):
             self.conf.setConfigOption('cache', 1)
 
         
+    
     def userconfirm(self):
         """gets a yes or no from the user, defaults to No"""
         choice = raw_input('Is this ok [y/N]: ')
@@ -287,7 +289,38 @@ class YumBaseCli(yum.YumBase):
                 return 1
             else:
                 return 0        
+                
+    def doRepoSetup(self):
+        """grabs the repomd.xml for each enabled repository and sets up the basics
+           of the repository"""
+        for repo in self.repos.listEnabled():
+            self.log(2, 'Setting up Repo:  %s' % repo)
+            repo.getRepoXML(cache=self.conf.getConfigOption('cache'))            
+
     
+    def doGroupSetup(self):
+        """determines which repos have groups and builds the groups lists"""
+        
+        self.grpInfo = yum.yumcomps.Groups_Info(self.rpmdb.getPkgList(),
+                                 self.conf.getConfigOption('overwrite_groups'))
+                                 
+        for repo in self.repos.listGroupsEnabled():
+            groupfile = repo.getGroups(self.conf.getConfigOption('cache'))
+            if groupfile:
+                self.log(4, 'Group File found for %s' % repo)
+                self.log(4, 'Adding Groups from %s' % repo)
+                self.grpInfo.add(groupfile)
+
+        if self.grpInfo.compscount > 0:
+            self.grpInfo.compileGroups()
+        else:
+            self.errorlog(0, _('No groups provided or accessible on any repository.'))
+            self.errorlog(1, _('Exiting.'))
+            sys.exit(1)
+
+   
+    
+                                 
     def usage(self):
         print _("""
         Usage:  yum [options] <update | install | info | remove | list |
