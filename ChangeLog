@@ -1,3 +1,19 @@
+2004-10-18 09:02  skvidal
+
+	* cli.py, yum-daily.spec, yum.spec: 
+	look, I'm an idiot, and I left a local devel path in the binary
+	2.1.9 iteration
+
+2004-10-18 08:58  skvidal
+
+	* bin/yum.py: 
+	damn it.
+
+2004-10-18 01:11  skvidal
+
+	* ChangeLog: 
+	Changelog checkin
+
 2004-10-18 01:08  skvidal
 
 	* cli.py, yum-daily.spec, yum.spec: 
