@@ -44,7 +44,13 @@ class Updates:
 
         # holder for our updates dict
         self.updatesdict = {}
+        #debug, ignore me
+        self.debug = 0
 
+    def debugprint(self, msg):
+        if self.debug:
+            print msg
+        
     def makeNADict(self, pkglist, Nonelists):
         """return lists of (e,v,r) tuples as value of a dict keyed on (n, a)
             optionally will return a (n, None) entry with all the a for that
@@ -237,12 +243,11 @@ class Updates:
                     installarchs.append(a)
 
                 if len(availarchs) > 1 or len(installarchs) > 1:
-                    #log(4, 'putting %s in complex update list' % name)
-                    #print 'putting %s in complex update' % n
+                    self.debugprint('putting %s in complex update' % n)
                     complexupdate.append(n)
                 else:
                     #log(4, 'putting %s in simple update list' % name)
-                    #print 'putting %s in simple update' % n
+                    self.debugprint('putting %s in simple update' % n)
                     simpleupdate.append((n, a))
 
         # we have our lists to work with now
@@ -329,7 +334,7 @@ class Updates:
                                     updatedict[(n, a, rpm_e, rpm_v, rpm_r)] = []
                                 updatedict[(n, a, rpm_e, rpm_v, rpm_r)].append((n, a, e, v, r))
                 else:
-                    #print 'processing %s' % n
+                    self.debugprint('processing %s' % n)
                     # this is where we have to have an arch contest if there
                     # is more than one arch updating with the highest ver
                     instarchs = []

@@ -12,6 +12,7 @@
 #
 
 import rpm
+import miscutils
 
 read_ts = None
 ts = None
@@ -108,6 +109,42 @@ class TransactionWrapper:
     def popVSFlags(self):
         del self.tsflags[-1]
         self.ts.setVSFlags(self.tsflags[-1])
+
+    def returnLeafNodes(self):
+        """returns a list of package tuples (n,a,e,v,r) that are not required by
+           any other package on the system"""
+        
+        req = {}
+        orphan = []
+    
+        mi = self.dbMatch()
+        if mi is None: # this is REALLY unlikely but let's just say it for the moment
+            return orphan    
+            
+        for h in mi:
+            tup = miscutils.pkgTupleFromHeader(h)    
+            if not h[rpm.RPMTAG_REQUIRENAME]:
+                continue
+            for r in h[rpm.RPMTAG_REQUIRENAME]:
+                req[r] = tup
+     
+     
+        mi = self.dbMatch()
+        if mi is None:
+            return orphan
+     
+        for h in mi:
+            preq = 0
+            tup = miscutils.pkgTupleFromHeader(h)
+            for p in h[rpm.RPMTAG_PROVIDES] + h[rpm.RPMTAG_FILENAMES]:
+                if req.has_key(p):
+                    preq = preq + 1
+        
+            if preq == 0:
+                orphan.append(tup)
+        
+        return orphan
+
         
 def initReadOnlyTransaction():
     global read_ts

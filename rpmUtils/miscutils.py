@@ -15,8 +15,14 @@
 # Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 # Copyright 2003 Duke University
 
+import string
 import rpm
 import types
+import gzip
+import os
+import sys
+
+import rpmUtils.transaction
 
 def rpmOutToStr(arg):
     if type(arg) != types.StringType:
@@ -94,7 +100,21 @@ def getSigInfo(hdr):
     infotuple = (sigtype, sigdate, sigid)
     return error, infotuple
 
-
+def pkgTupleFromHeader(hdr):
+    """return a pkgtuple (n, a, e, v, r) from a hdr object, converts
+       None epoch to 0, as well."""
+   
+    name = hdr['name']
+    arch = hdr['arch']
+    ver = hdr['version']
+    rel = hdr['release']
+    epoch = hdr['epoch']
+    if epoch is None:
+        epoch = '0'
+    pkgtuple = (name, arch, epoch, ver, rel)
+    return pkgtuple
+    
+    
 def rangeCheck(reqtuple, pkgtuple):
     """returns true if the package epoch-ver-rel satisfy the range
        requested in the reqtuple:
@@ -113,9 +133,9 @@ def rangeCheck(reqtuple, pkgtuple):
     if reqr is None:
         r = None
     if reqe is None:
-        e is None
+        e = None
     if reqv is None: # just for the record if ver is None then we're going to segfault
-        v is None
+        v = None
         
     rc = compareEVR((e, v, r), (reqe, reqv, reqr))
             
@@ -203,3 +223,56 @@ def unique(s):
             u.append(x)
     return u
 
+
+def splitFilename(filename):
+    """pass in a standard style rpm fullname and it returns
+    a name, version, release, epoch, arch
+    aka  foo-1.0-1.i386.rpm returns foo, 1.0, 1, i386
+         1:bar-9-123a.ia64.rpm returns bar, 9, 123a, 1, ia64
+    """
+
+    if filename[-4:] == '.rpm':
+        filename = filename[:-4]
+       
+    archIndex = string.rfind(filename, '.')
+    arch = filename[archIndex+1:]
+
+    relIndex = string.rfind(filename[:archIndex], '-')
+    rel = filename[relIndex+1:archIndex]
+
+    verIndex = string.rfind(filename[:relIndex], '-')
+    ver = filename[verIndex+1:relIndex]
+
+    epochIndex = string.find(filename, ':')
+    if epochIndex == -1:
+        epoch = ''
+    else:
+        epoch = filename[:epochIndex]
+        
+    name = filename[epochIndex + 1:verIndex]
+    return name, ver, rel, epoch, arch
+
+
+def rpm2cpio(fdno, out=sys.stdout, bufsize=2048):
+    """Performs roughly the equivalent of rpm2cpio(8).
+       Reads the package from fdno, and dumps the cpio payload to out,
+       using bufsize as the buffer size."""
+    ts = rpmUtils.transaction.initReadOnlyTransaction()
+    hdr = ts.hdrFromFdno(fdno)
+    del ts
+    
+    compr = hdr[rpm.RPMTAG_PAYLOADCOMPRESSOR] or 'gzip'
+    #XXX FIXME
+    #if compr == 'bzip2':
+        # TODO: someone implement me!
+    #el
+    if compr != 'gzip':
+        raise rpmUtils.RpmUtilsError, \
+              'Unsupported payload compressor: "%s"' % compr
+    f = gzip.GzipFile(None, 'rb', None, os.fdopen(fdno, 'rb', bufsize))
+    while 1:
+        tmp = f.read(bufsize)
+        if tmp == "": break
+        out.write(tmp)
+    f.close()
+                                                                                

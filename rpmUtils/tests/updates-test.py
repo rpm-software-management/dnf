@@ -23,6 +23,7 @@ obslist = {('quux', 'noarch', '0', '1', '3'): [('bar', None, (None, None, None))
            
 
 up = rpmUtils.updates.Updates(instlist, availlist)
+up.debug=1
 up.exactarch=1
 #up.myarch = 'ppc'
 up.doUpdates()
