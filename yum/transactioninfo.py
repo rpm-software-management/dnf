@@ -320,6 +320,15 @@ class TransactionMember:
         if pkgtup:
             self.relatedto.append((pkgtup, 'dependson'))
 
+    def __cmp__(self, other):
+        if self.name > other.name:
+            return 1
+        if self.name < other.name:
+            return -1
+        if self.name == other.name:
+            return 0
+
+            
     def __str__(self):
         return "%s.%s %s-%s-%s - %s" % (self.name, self.arch, self.epoch, self.ver, self.rel, self.ts_state)
         
