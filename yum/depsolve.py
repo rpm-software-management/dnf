@@ -421,7 +421,7 @@ class Depsolve:
         
         if len(provSack) == 0: # unresolveable
             missingdep = 1
-            msg = 'missing dep: %s for pkg %s' % (needname, name)
+            msg = 'missing dep: %s for pkg %s' % (rpmUtils.miscutils.formatRequire(needname, needversion, needflags), name)
             errorlist.append(msg)
             return checkdeps, missingdep
         
