@@ -59,9 +59,11 @@ class YumShell(cmd.Cmd):
     
     def do_help(self, arg):
         msg = """
-    commands:  update, install, info, remove, list, clean, provides, search,
-    check-update, groupinstall, groupupdate, grouplist, groupinfo, groupremove,
-    makecache, localinstall, transaction, run, quit, exit
+    commands:  check-update, clean, disablerepo, enablerepo,
+               exit, groupinfo, groupinstall, grouplist,
+               groupremove, groupupdate, info, install, list,
+               listrepos, localinstall, makecache, provides, quit,
+               remove, run, search, transaction, update
     """
         if arg in ['transaction', 'ts']:
             msg = """
@@ -71,7 +73,14 @@ class YumShell(cmd.Cmd):
       solve: run the dependency solver on the transaction
       run: run the transaction
                   """
-
+        elif arg in ['repos', 'repositories']:
+            msg = """
+    repos arg [option]
+      list: lists repositories and their status
+      enable: enable repositories. option = repository id
+      disable: disable repositories. option = repository id
+    """
+    
         self.base.log(1, msg)
         
     def do_EOF(self, line):
@@ -91,10 +100,7 @@ class YumShell(cmd.Cmd):
 
     def do_transaction(self, line):
         (cmd, args, line) = self.parseline(line)
-        if cmd is None:
-            pass
-            
-        elif cmd == 'list':
+        if cmd in ['list', None]:
             self.base.log(2,self.base.listTransaction())
         
         elif cmd == 'reset':
@@ -114,41 +120,53 @@ class YumShell(cmd.Cmd):
         else:
             self.do_help('transaction')
     
-    def do_enablerepo(self, line):
-        line = line.replace('\n', '')
-        repos = line.split()
-        for repo in repos:
-            try:
-                changed = self.base.repos.enableRepo(repo)
-            except yum.Errors.ConfigError, e:
-                self.base.errorlog(0, e)
-            else:
-                for repoid in changed:
-                    self.base.doRepoSetup(thisrepo=repoid)
-                
-                if hasattr(self.base, 'up'): # reset the updates
-                    del self.base.up
-
-
-    def do_disablerepo(self, line):
-        line = line.replace('\n', '')
-        repos = line.split()
-        for repo in repos:
-            try:
-                self.base.repos.disableRepo(repo)
-            except yum.Errors.ConfigError, e:
-                self.base.errorlog(0, e)
-
-            else:
-                if hasattr(self.base, 'pkgSack'): # kill the pkgSack
-                    del self.base.pkgSack
-                    self.base.repos._selectSackType()
-                if hasattr(self.base, 'up'): # reset the updates
-                    del self.base.up
-                # reset the transaction set and refresh everything
-                self.base.closeRpmDB() 
-                self.base.doTsSetup()
-                self.base.doRpmDBSetup()
+    def do_repositories(self, line):
+        self.do_repos(line)
+        
+    def do_repos(self, line):
+        (cmd, args, line) = self.parseline(line)
+        if cmd in ['list', None]:
+            for repo in self.base.repos.repos.values():
+                if repo in self.base.repos.listEnabled():
+                    self.base.log('%-20.20s %-40.40s  enabled' % (repo, repo.name))
+                else:
+                    self.base.log('%-20.20s %-40.40s  disabled' % (repo, repo.name))
+        
+        elif cmd == 'enable':
+            repos = args.split()
+            for repo in repos:
+                try:
+                    changed = self.base.repos.enableRepo(repo)
+                except yum.Errors.ConfigError, e:
+                    self.base.errorlog(0, e)
+                else:
+                    for repoid in changed:
+                        self.base.doRepoSetup(thisrepo=repoid)
+                    
+                    if hasattr(self.base, 'up'): # reset the updates
+                        del self.base.up
+            
+        elif cmd == 'disable':
+            repos = args.split()
+            for repo in repos:
+                try:
+                    self.base.repos.disableRepo(repo)
+                except yum.Errors.ConfigError, e:
+                    self.base.errorlog(0, e)
+    
+                else:
+                    if hasattr(self.base, 'pkgSack'): # kill the pkgSack
+                        del self.base.pkgSack
+                        self.base.repos._selectSackType()
+                    if hasattr(self.base, 'up'): # reset the updates
+                        del self.base.up
+                    # reset the transaction set and refresh everything
+                    self.base.closeRpmDB() 
+                    self.base.doTsSetup()
+                    self.base.doRpmDBSetup()
+        
+        else:
+            self.do_help('repos')
                 
     def do_test(self, line):
         (cmd, args, line) = self.parseline(line)
