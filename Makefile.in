@@ -52,7 +52,9 @@ MODULES = $(srcdir)/pullheaders.pyc \
 	  $(srcdir)/checkbootloader.pyc \
 	  $(srcdir)/bootloadercfg.pyc \
 	  $(srcdir)/up2datetheft.pyc \
-	  $(srcdir)/translate.pyc
+	  $(srcdir)/translate.pyc \
+	  $(srcdir)/urlgrabber.pyc 
+
 
 .SUFFIXES: .py .pyc
 .py.pyc: 
