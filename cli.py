@@ -414,12 +414,13 @@ class YumBaseCli(yum.YumBase):
             
         return 0, 'Nothing to do'
         
-        # FIXME
-        # go through each key in toBeInstalled and get bestver+bestarch
-        # need to be aware of multilib here so a user can do
-        # yum install foo.* and get foo.i386 and foo.x86_64, cleanly.
-        # pass off updates to update, then return
-
+        #FIXME - what do I do in the case of yum install kernel\*
+        # where kernel-1.1-1.i686 is installed and kernel-1.2-1.i[3456]86 are
+        # available. the i686 kernel is an update, but the rest are potential
+        # installs, right? Or in the event of one member of an arch being
+        # an update all other members should be considered potential upgrades
+        # unless the other member is also a multilib Arch.
+        
     def updatePkgs(self, userlist=None):
         """take user commands and populate transaction wrapper with 
            packages to be updated"""
