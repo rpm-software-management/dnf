@@ -14,7 +14,7 @@ clean:
 	for d in $(SUBDIRS); do make -C $$d clean ; done
 
 subdirs:
-	for d in $(SUBDIRS); do make -C $$d; [ $$? = 0 ] || exit 1 ; done
+	for d in $(SUBDIRS); do make PYTHON=$(PYTHON) -C $$d; [ $$? = 0 ] || exit 1 ; done
 
 install:
 	mkdir -p $(DESTDIR)/usr/share/yum-cli
