@@ -21,7 +21,16 @@
 # Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 
-import os, sys,rpm,re,string
+import os
+import sys
+import re
+import string
+try:
+    import rpm404 as rpm
+except ImportError, e:
+    import rpm
+except SyntaxError, e:
+    import rpm
 debug = 0
 
 

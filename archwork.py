@@ -16,7 +16,11 @@
 # Copyright 2002 Duke University 
 
 import os
-import rpm
+try:
+    import rpm404
+    rpm = rpm404
+except ImportError, e:
+    import rpm
 
 
 def getArch():

@@ -16,7 +16,12 @@
 
 import os
 import sys
-import rpm
+try:
+    import rpm404
+    rpm = rpm404
+except ImportError, e:
+    import rpm
+
 import clientStuff
 import fnmatch
 import archwork

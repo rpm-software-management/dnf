@@ -15,7 +15,12 @@
 # Copyright 2002 Duke University 
 
 import string
-import rpm
+try:
+    import rpm404
+    rpm = rpm404
+except ImportError, e:
+    import rpm
+
 import os
 import sys
 import gzip

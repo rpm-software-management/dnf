@@ -1,6 +1,10 @@
 import os
 import sys
-import rpm
+try:
+    import rpm404
+    rpm = rpm404
+except ImportError, e:
+    import rpm
 
 # these functions swiped from up2date.py, copyright Red Hat, Inc.
 def install_lilo(kernelList):
