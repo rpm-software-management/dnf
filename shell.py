@@ -17,6 +17,7 @@ import sys
 import os.path
 import cmd
 from yum import Errors
+from yum.constants import *
 
 # TODO: implement setconfig and getconfig - this should only expose a subset
 #       of the configuration options. exposing all of them, especially the lists
@@ -129,6 +130,30 @@ class YumShell(cmd.Cmd):
         else:
             self.do_help('transaction')
     
+    def do_config(self, line):
+        (cmd, args, line) = self.parseline(line)
+        # ints
+        if cmd in ['debuglevel', 'errorlevel']:
+            opts = args.split()
+            if not opts:
+                self.base.log(2, '%s' % (self.base.conf.getConfigOption(cmd)))
+            else:
+                val = int(opts[0])
+                self.base.conf.setConfigOption(cmd, val)
+        # bools
+        elif cmd in ['gpgcheck', 'obsoletes', 'assumeyes']:
+            opts = args.split()
+            if not opts:
+                self.base.log(2, '%s' % (self.base.conf.getConfigOption(cmd)))
+            else:
+                value = opts[0]
+                if value.lower() not in BOOLEAN_STATES:
+                    self.base.errorlog('Value %s for %s is not a Boolean' % (value, cmd))
+                    return False
+                value = BOOLEAN_STATES[value.lower()]
+                self.base.conf.setConfigOption(cmd, value)
+
+            
     def do_repositories(self, line):
         self.do_repos(line)
         
