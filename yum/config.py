@@ -76,7 +76,97 @@ class CFParser(ConfigParser.ConfigParser):
             return self.getfloat(section, option)
         except (ConfigParser.NoSectionError, ConfigParser.NoOptionError), e:            
             return default
-    
+
+    def getbytes(self, section, option, default=None):
+        """Get a friendly bytes/bandwidth option as bytes. 
+
+        See _parsebytes() method for valid option values.
+        """
+        try:
+             return self._parsebytes(self.get(section, option))
+        except (ConfigParser.NoSectionError, ConfigParser.NoOptionError), e:
+            return default
+
+    def getthrottle(self, section, option, default=None):
+        """Get a throttle option. 
+
+        Input may either be a percentage or a "friendly bandwidth value" as
+        accepted by the _parsebytes() method.
+
+        Valid inputs: 100, 50%, 80.5%, 123M, 45.6k, 12.4G, 100K, 786.0, 0
+        Invalid inputs: 100.1%, -4%, -500
+
+        Return value will be a int if a bandwidth value was specified or a
+        float if a percentage was given.
+
+        ValueError will be raised if input couldn't be parsed.
+        """
+        try:
+             optval = self.get(section, option)
+        except (ConfigParser.NoSectionError, ConfigParser.NoOptionError), e:
+            return default
+
+        if len(optval) < 1:
+            raise ValueError("no value specified")
+
+        if optval[-1] == '%':
+            n = optval[:-1]
+            try:
+                n = float(n)
+            except ValueError:
+                raise ValueError("couldn't convert '%s' to number" % n)
+            if n < 0 or n > 100:
+                raise ValueError("percentage is out of range")
+            return n / 100.0
+        else:
+            return self._parsebytes(optval)
+
+    def _parsebytes(self, optval):
+        """Parse a friendly bandwidth option to bytes
+
+        The input should be a string containing a (possibly floating point)
+        number followed by an optional single character unit. Valid units are
+        'k', 'M', 'G'. Case is ignored.
+       
+        Valid inputs: 100, 123M, 45.6k, 12.4G, 100K, 786.3, 0
+        Invalid inputs: -10, -0.1, 45.6L, 123Mb
+
+        Return value will always be an integer
+
+        1k = 1024 bytes.
+
+        ValueError will be raised if the option couldn't be parsed.
+        """
+        MULTS = {
+            'k': 1024,
+            'm': 1024*1024,
+            'g': 1024*1024*1024,
+        }
+
+        if len(optval) < 1:
+            raise ValueError("no value specified")
+
+        if optval[-1].isalpha():
+            n = optval[:-1]
+            unit = optval[-1].lower()
+            mult = MULTS.get(unit, None)
+            if not mult:
+                raise ValueError("unknown unit '%s'" % unit)
+        else:
+            n = optval
+            mult = 1
+             
+        try:
+            n = float(n)
+        except ValueError:
+            raise ValueError("couldn't convert '%s' to number" % n)
+
+        if n < 0:
+            raise ValueError("bytes value may not be negative")
+
+        return int(n * mult)
+
+
 class yumconf(object):
     """primary config class for yum"""
     
@@ -110,8 +200,6 @@ class yumconf(object):
                          ('syslog_ident', None),
                          ('syslog_facility', 'LOG_USER'),
                          ('distroverpkg', 'fedora-release'),
-                         ('bandwidth', None),
-                         ('throttle', None),
                          ('installroot', root),
                          ('commands', []),
                          ('exclude', []),
@@ -184,7 +272,15 @@ class yumconf(object):
             root = self.configdata['installroot']
             rootedpath = root + path
             self.configdata[opt] = rootedpath
-            
+
+        # bandwidth limit options require special parsing
+        for option, getfunc in (('bandwidth', self.cfg.getbytes), 
+                                ('throttle', self.cfg.getthrottle)):
+            value = getfunc('main', option, 0)
+            self.configdata[option] = value
+            setattr(self, option, value)
+
+        
         # and push our process object around a bit to things beneath us
         self.repos.progress = self.getConfigOption('progress_obj')
         
@@ -335,11 +431,16 @@ def doRepoSection(globconfig, thisconfig, section):
 
     thisrepo.set('enabled', thisconfig._getboolean(section, 'enabled', 1))
 
-    for keyword in ['bandwidth', 'throttle', 'proxy_username', 'proxy',
-                    'proxy_password', 'retries', 'failovermethod']:
+    for keyword in ['proxy_username', 'proxy', 'proxy_password', 
+                    'retries', 'failovermethod']:
 
         thisrepo.set(keyword, thisconfig._getoption(section, keyword, \
                      globconfig.getConfigOption(keyword)))
+                     
+    for keyword, getfunc in (('bandwidth', thisconfig.getbytes),
+                             ('throttle', thisconfig.getthrottle)):
+        thisrepo.set(keyword, getfunc(section, keyword, 
+                    globconfig.getConfigOption(keyword)))
 
     for keyword in ['gpgcheck', 'keepalive']:
         thisrepo.set(keyword, thisconfig._getboolean(section, \

@@ -10,114 +10,206 @@ in the following places:
 .LP 
 /etc/yum.conf
 .LP 
+Additional configuration files are also read from the directory set by the
+\fBreposdir\fR option (default is `/etc/yum.repos.d'). See the \fBreposdir\fR
+option below for further details.
+
 .SH "PARAMETERS"
 .LP 
-There are two types of sections in the yum.conf file: main and server. Main defines all the global configuration options. The server section(s) define the entries for each server.
-.SH "[main] options"
+There are two types of sections in the yum.conf file: main and repository. Main
+defines all global configuration options. There should be only one main section.
+The repository section(s) define the configuration for each repository/server.
+There should be one or more repository sections.
+
+.SH "[main] OPTIONS"
 .LP 
-The [main] section must exist for yum to do anything. It consists of the following options:
+The [main] section must exist for yum to do anything. It consists of the
+following options:
 
 .IP \fBcachedir\fR
-directory where yum should store its cache and db files.
+Directory where yum should store its cache and db files.
 
 .IP \fBreposdir\fR
-directory where yum should look for .repo files for its configuration
-of repositories. Defaul is /etc/yum.repos.d
+Directory where yum should look for .repo files for its configuration
+of repositories. Default is /etc/yum.repos.d. Each file in this directory
+should contain one or more repository sections as documented in the
+[repository] options below. These will be merged with the repositories defined
+in /etc/yum.conf to form the complete set of repositories that yum will use.
 
 .IP \fBdebuglevel\fR
-debug level. practical range is 0\-10.
-default is 2.
+Debug message output level. Practical range is 0\-10. Default is `2'.
 
 .IP \fBerrorlevel\fR
-debug level. practical range is 0\-10.
-default is 2.
+Error message output level. Practical range is 0\-10. Default is `2'.
 
 .IP \fBlogfile\fR
-full directory and file name for where yum should write its log file.
+Full directory and file name for where yum should write its log file.
+
+.IP \fBgpgcheck\fR
+Either `1' or `0'. This tells yum whether or not it should perform a GPG
+signature check on packages. When this is set in the [main] section it sets the
+default for all repositories. If \fBgpgcheck\fR is not specified in the
+repositories then whatever this is set to will be the default.  In addition,
+this option determines whether or not an install of a package from a local RPM
+file will be GPG signature checked. The default is `0'.
 
 .IP \fBassumeyes\fR
-1 or 0 - tells yum whether or not to prompt you for confirmation of actions.
-Same as -y on the command line. Default to 0.
+Either `1' or `0'. Tells yum whether or not to prompt you for confirmation of
+actions. Default is `0' (do prompt).
+.br
+Commmand-line option: \fB\-y\fP
+
+.IP \fBtolerant\fR
+Either `1' or `0'. Tells yum to be tolerant of errors on the command line with
+regard to packages. For example: if you request to install foo, bar and baz and
+baz is installed; yum won't error out complaining that baz is already
+installed. Default to `0' (not tolerant).
+.br
+Commmand-line option: \fB\-t\fP
 
 .IP \fBexclude\fR
-list of packages to exclude from updates or installs. This should be a space separated list.
-Filename globs *,?,., etc are allowed
+List of packages to exclude from updates or installs. This should be a space
+separated list.
+Shell globs using wildcards (eg. * and ?) are allowed.
 
 .IP \fBexactarch\fR
-1 or 0 - set to 1 to make yum update only update the architectures of
-packages that you have installed. IE: with this enabled yum will not install an i686
-package to update an i386 package.
+Either `1' or `0'. Set to `1' to make yum update only update the architectures
+of packages that you have installed. ie: with this enabled yum will not install
+an i686 package to update an i386 package. Default is `1'.
 
-.IP \fBobsoletes\fR 
-boolean - set to 1 to make yum look at obsoleting packages when processing
-updates. Set to 0 to disable obsolete processing. Default 0.
+.IP \fBinstallonlypkgs \fR
+List of packages that should only ever be installed, never updated. Kernels
+in particular fall into this category. Defaults to `kernel, kernel-smp,
+kernel-bigmem, kernel-enterprise, kernel-debug, kernel-unsupported'.
 
+.IP \fBkernelpkgnames \fR
+List of package names that are kernels. This is really only here for the
+updating of kernel packages and should be removed out in the yum 2.1 series.
 
-.IP \fBcommands\fR
-list of functional commands to run if no functional commands are specified
-on the command line. ie: commands  = update foo bar baz quux
-none of the short options (-y, -e, -d, etc) will be taken in the field.
+.IP \fBshowdupesfromrepos\fR
+Either `0' or `1'. Set to `1' if you wish to show any duplicate packages from
+any repository. Set to `0' if you want only to see the newest packages from any
+repository. Default is `0'.
+
+.IP \fBobsoletes \fR
+This option only has affect during an \fBupdate\fR. It enables yum's
+obsoletes processing logic. Useful when doing distribution level upgrades. See
+also the yum \fBupgrade\fR command documentation for more details (yum(8)).
+.br
+Commmand-line option: \fB\-\-obsoletes\fP
+
+.IP \fBoverwrite_groups \fR
+Either `0' or `1'. Used to determine yum's behaviour if two or more
+repositories offer the package groups with the same name. If
+\fBoverwrite_groups\fR is `1' then the group packages of the last matching
+repository will be used. If \fBoverwrite_groups\fR is `0' then the groups
+from all matching repositories will be merged together as one large group.
+
+.IP \fBinstallroot \fR
+Specifies an alternative installroot, relative to which all packages will be
+installed. 
+.br
+Commmand-line option: \fB\-\-installroot\fP
+
+.IP \fBrss-filename \fR
+Sets the RSS output file when the \fBgenerate-rss\fP command is used. 
+.br
+Commmand-line option: \fB\-\-rss-filename\fP
 
 .IP \fBdistroverpkg\fR
-package to use to determine the "version" of the distribution - can be any
-package you have installed - defaults to redhat-release.
+Package to use to determine the "version" of the distribution - can be any
+package you have installed. Default is 'redhat-release'.
 
 .IP \fBdiskspacecheck\fR
-set this to 0 to disable the checking for sufficient diskspace before the
-rpm transaction is run. default is 1 (to perform the check)
+Either `0' or `1'. Set this to `0' to disable the checking for sufficient
+diskspace before a RPM transaction is run. Default is `1' (perform the check).
 
 .IP \fBrecent\fR
-number of days back to look for 'recent' packages added to a repository.
-Used by the 'list recent' and generate-rss commands. Default is 7 days.
+Number of days back to look for `recent' packages added to a repository.
+Used by the \fBlist recent\fR and \fBgenerate-rss\fR commands. Default is `7'.
 
 .IP \fBretries\fR
 Set the number of times any attempt to retrieve a file should retry before 
-returning an error. Setting this to 0 makes it try forever. Default to 6.
+returning an error. Setting this to `0' makes it try forever. Default is `6'.
 
-.IP \fBshowdupesfromrepos\fR
-Boolean - set to 1 if you wish to show any duplicate packages from any
-repository. Set to 0 if you want only to see the newest packages from any
-repository. Default 0.
+.IP \fBkeepalive \fR
+Either `0' or `1'. Set whether HTTP keepalive should be used for HTTP/1.1
+servers that support it. This can improve transfer speeds by using one
+connection when downloading multiple files from a repository. Default is `1'.
 
+.IP \fBthrottle \fR
+Enable bandwidth throttling for downloads. This option can be expressed as a
+absolute data rate in bytes/sec. An SI prefix (k, M or G) may be appended to the
+bandwidth value (eg. `5.5k' is 5.5 kilobytes/sec, `2M' is 2 Megabytes/sec).
 
-.IP \fBinstallonlypkgs \fR
-list of packages that should only ever be installed, never updated - kernels
-in particular fall into this category. Defaults to kernel, kernel-smp,
-kernel-bigmem, kernel-enterprise, kernel-debug, kernel-unsupported.
+Alternatively, this option can specify the percentage of total bandwidth to use 
+(eg. `60%'). In this case the \fBbandwidth\fR option should be used to specify
+the maximum available bandwidth.
 
-.IP \fBgpgcheck\fR
-either '1' or '0'. This tells yum whether or not it should perform a gpg signature check 
-on packages. When this is set in the [main] section it sets the default for
-the repositories sections. If gpgcheck is not specified in the repositories
-then whatever this is set to will be their default. Its default is 0. In
-addition, this option determines whether or not an install of a package from
-a local rpm file will be gpg signature checked.
+Set to `0' to disable bandwidth throttling. This is the default.
 
-.SH "[server] options"
+.IP \fBbandwidth \fR
+Use to specify the maximum available network bandwidth in bytes/second.  Used
+with the \fBthrottle\fR option (above). If \fBthrottle\fR is a percentage and
+\fBbandwidth\fR is `0' then bandwidth throttling will be disabled. If
+\fBthrottle\fR is expressed as a data rate (bytes/sec) then this option is
+ignored. Default is `0' (no bandwidth throttling). 
+
+.IP \fBcommands\fR
+List of functional commands to run if no functional commands are specified
+on the command line. ie: commands  = update foo bar baz quux
+None of the short options (eg. -y, -e, -d) will be taken for this option.
+
+." .IP \fBpkgpolicy=\fI[newest|last]\fR
+." XXX not implemented at present
+." Default: \fInewest\fR.  Package sorting order.  When a package is available
+." from multiple servers, \fInewest\fR will install the most recent version of
+." the package found. \fIlast\fR will sort the servers alphabetically by
+." \fBrespositoryid\fR and install the version of the package found on the last
+." server in the resulting list.
+." If you don't understand the above then you're best left not including this
+." option at all and letting the default occur.
+."
+." .IP \fBsyslog_ident \fR
+." XXX not implemented yet
+
+." .IP \fBsyslog_facility \fR
+." XXX not implemented yet
+
+." .IP \fBproxy \fR
+." XXX not implemented yet
+
+." .IP \fBproxy_username \fR
+." XXX not implemented yet
+
+." .IP \fBproxy_password \fR
+." XXX not implemented yet
+
+.SH "[repository] OPTIONS"
 .LP 
-The server section(s) take the following form:
+The repository section(s) take the following form:
 .IP \fBExample\fP:
-[serverid] 
+[repositoryid] 
 .br 
-name=Some name for this server
+name=Some name for this repository
 .br 
 baseurl=url://path/to/repository/ 
 .br 
-gpgcheck=[1|0] 
-.br 
 
-.IP \fBserverid\fR
-must be a unique name for each server, one word.
+.IP \fBrepositoryid\fR
+Must be a unique name for each repository, one word.
+
+.IP \fBname\fR
+A human readable string describing the repository.
 
 .IP \fBbaseurl\fR
-must be a url to the directory where the yum repository's 'headers' directory lives.
-Can be an http://, ftp:// or file:// url.
-You can specify multiple urls in one baseurl statement. The best way to do
-this is like this:
+Must be a URL to the directory where the yum repository's `headers' directory
+lives. Can be an http://, ftp:// or file:// URL. You can specify multiple URLs
+in one baseurl statement. The best way to do this is like this:
 .br
-[serverid]
+[repositoryid]
 .br
-name=Some name for this server
+name=Some name for this repository
 .br
 baseurl=url://server1/path/to/repository/
 .br
@@ -129,35 +221,73 @@ If you list more than one baseurl= statement in a repository you will find
 yum will ignore the earlier ones and probably act bizarrely. Don't do this,
 you've been warned.
 
-.IP \fBname\fR
-a human readable string describing the repository.
+.IP \fBmirrorlist\fR
+Specifies a URL to a file containing a list of baseurls. This can be used
+instead of/with the \fBbaseurl\fR option. Substitution variables, described
+below, can be used with this option. 
+
+.IP \fBenabled\fR
+Either `1' or `0'. This tells yum whether or not use this repository.
 
 .IP \fBgpgcheck\fR
-either '1' or '0'. This tells yum whether or not it should perform a gpg signature check on the packages gotten from this server
-
-.IP \fBmirrorlist\fR
-specifies a url to a file containing a list of baseurls.
-
-
-.IP \fBfailovermethod\fR
-can be either 'roundrobin' or 'priority'.
-roundrobin randomly selects a url out of the list of urls to start with and
-proceeds through each of them as it encounters a failure contacting the
-host.
-.br
-priority starts from the first baseurl listed and reads through them
-sequentially.
-.br
-failovermethod defaults to roundrobin if not specified.
+Either `1' or `0'. This tells yum whether or not it should perform a GPG
+signature check on the packages gotten from this repository.
 
 .IP \fBexclude\fR
-same as the [main] exclude but this is only for this server
-variables, listed below, are honored here.
+Same as the [main] \fBexclude\fR option but this is only for this repository.
+Substution variables, as described below, are honored here.
 
-.IP \fBincludepkgs\fR
-Inverse of exclude. It is a list of the packages you want to use from a
-repository. So if the field only lists one package then that is all yum will
-ever see from the repository. Defaults to an empty list.
+.IP \fBenablegroups\fR
+Either `0' or `1'. Determines whether yum will allow the use of package groups
+for this repository. Default is `1'.
+
+.IP \fBfailovermethod\fR
+Either `roundrobin' or `priority'.
+
+`roundrobin' randomly selects a URL out of
+the list of URLs to start with and proceeds through each of them as it
+encounters a failure contacting the host. 
+
+`priority' starts from the first baseurl listed and reads through them
+sequentially.
+
+\fBfailovermethod\fR defaults to `roundrobin' if not specified.
+
+.IP \fBkeepalive\fR
+Either `1' or `0'. This tells yum whether or not HTTP/1.1 keepalive should be
+used with this repository. See the global option in the [main] section above
+for more information.
+
+.IP \fBretries\fR
+Overrides the \fBretries\fR option from the [main] section for this repository.
+
+.IP \fBthrottle\fR
+Overrides the \fBthrottle\fR option from the [main] section for this
+repository.
+
+.IP \fBbandwidth\fR
+Overrides the \fBbandwidth\fR option from the [main] section for this
+repository.
+
+." .IP \fBincludepkgs\fR
+." XXX doesn't appear to get used at the moment
+
+." XXX 
+." proxy, proxy_username and proxy_password are all available here but not
+." implemented yet.
+
+
+.SH "URL INCLUDE SYNTAX"
+.LP 
+The inclusion of external configuration files is supported for /etc/yum.conf
+and the any other files in the /etc/yum.repos.d directory. To include a URL,
+use a line of the following format:
+
+include=url://to/some/location
+
+The configuration file will be inserted at the position of the "include=" line.
+Included files may contain further include lines. Yum will abort with an error
+if an inclusion loop is detected.
 
 .SH "VARIABLES"
 .LP
@@ -173,7 +303,7 @@ redhat-release
 
 .IP \fB$arch\fR
 This will be replaced with your architecture as listed by os.uname()[4] in
-python.
+Python.
 
 .IP \fB$basearch\fR
 This will be replaced with your base architecture as they are listed in
@@ -192,3 +322,4 @@ will not be replaced.
 .SH "SEE ALSO"
 .LP 
 yum(8)
+
