@@ -509,7 +509,7 @@ class Depsolve:
             (tn, ta, te, tv, tr) = tspkg.pkgtup
             rc = rpmUtils.miscutils.compareEVR((be, bv, br), (te, tv, tr))
             if rc < 0:
-                self.log(5, 'Resolving package has newer instance in ts and cannot be installed multiple times')
+                self.log(2, 'Resolving package has newer instance in ts and cannot be installed multiple times')
                 missingdep = 1
                 checkdeps = 0
                 msg = 'Missing Dependency: %s is needed by package %s' % (needname, name)
