@@ -213,22 +213,27 @@ class Depsolve:
             # therefore we need to find what provides that virtual dep
             # if it is a package that we have in our tsInfo, then treat as below
             if needmode is None:
-                # need a function to tell if anything in the rpmdb provides
-                   # needname = needversion 
-                # take the prco matching function from the metadata
-                CheckDeps = 0
-                missingdep = 1
-                msg = 'missing dep: %s for pkg %s (installed)' % (needname, name)
-                errormsgs.append(msg)
+                providers = self.rpmdb.whatProvides(needname, flags, needversion)
+                if len(providers) > 0:
+                    for insttuple in providers:
+                        (i_n, i_a, i_e, i_v, i_r) = insttuple
+                        needmode = self.tsInfo.getMode(name=i_n, arch=i_a, 
+                                                epoch=i_e, ver=i_v, rel=i_r)
+                else:
+                    CheckDeps = 0
+                    missingdep = 1
+                    msg = 'missing dep: %s for pkg %s (installed)' % (needname, name)
+                    errormsgs.append(msg)
                 
-            pkg = pkgs[0] #take the first one
-            po = None
             if needmode in ['e']:
                 for pkg in pkgs:
                     (n,a,e,v,r) = pkg
                     self.log(5, '%s package requiring %s marked as erase' % (n, needname))
                     self.tsInfo.add(pkg, 'e', 'dep')
                     CheckDeps = 1
+
+            pkg = pkgs[0] #take the first one
+            po = None
             if needmode in ['i', 'u']:
                 self.log(5, 'needed packaged marked as update')
                 (n,a,e,v,r) = pkg

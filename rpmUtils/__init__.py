@@ -56,22 +56,25 @@ class RpmDBHolder:
         
         mi = self.ts.dbMatch()
         for hdr in mi:
-            name = hdr['name']
-            arch = hdr['arch']
-            ver = str(hdr['version']) # convert these to strings to be sure
-            rel = str(hdr['release'])
-            epoch = hdr['epoch']
-            if epoch is None:
-                epoch = '0'
-            else:
-                epoch = str(epoch)
-                
-            pkgtuple = (name, arch, epoch, ver, rel)
+            pkgtuple = self._hdr2pkgTuple(hdr)
             if not self.indexdict.has_key(pkgtuple):
                 self.indexdict[pkgtuple] = []
             self.indexdict[pkgtuple].append(mi.instance())
             self.pkglists.append(pkgtuple)
                 
+    def _hdr2pkgTuple(self, hdr):
+        name = hdr['name']
+        arch = hdr['arch']
+        ver = str(hdr['version']) # convert these to strings to be sure
+        rel = str(hdr['release'])
+        epoch = hdr['epoch']
+        if epoch is None:
+            epoch = '0'
+        else:
+            epoch = str(epoch)
+    
+        return (name, arch, epoch, ver, rel)
+    
     def getPkgList(self):
         return self.pkglists
     
@@ -189,4 +192,70 @@ class RpmDBHolder:
         
     def returnIndexByTuple(self, pkgtuple):
         return self.indexdict[pkgtuple]
+    
+    def whatProvides(self, provname, provflag, provver):
+        """uses the ts in this class to return a list of pkgtuples that match
+           the provide"""
         
+        matches = []
+        fileprov = 0
+        
+        if provname[0] == '/':
+            fileprov = 1
+            matchingHdrs = self.ts.dbMatch('basenames', provname)
+        else:
+            matchingHdrs = self.ts.dbMatch('provides', provname)
+
+        # now we have the list of pkgs installed in the rpmdb that
+        # have a the provname matching, now we need to find out
+        # if any/all of them match the flag/ver set
+        
+        if fileprov: # file provides don't have versions
+            for matchhdr in matchingHdrs:
+                pkgtuple = self._hdr2pkgTuple(matchhdr)
+                matches.append(pkgtuple)
+            return miscutils.unique(matches)
+
+        if provflag in [0, None] or provver is None: # if we've got no ver or flag
+                                                     # for comparison then they all match
+            for matchhdr in matchingHdrs:
+                pkgtuple = self._hdr2pkgTuple(matchhdr)
+                matches.append(pkgtuple)
+            return miscutils.unique(matches)
+        
+        for matchhdr in matchingHdrs:
+            (pkg_n, pkg_a, pkg_e, pkg_v, pkg_r) = self._hdr2pkgTuple(matchhdr)
+            pkgtuple = (pkg_n, pkg_a, pkg_e, pkg_v, pkg_r)
+            # break the provver up into e-v-r (e:v-r)
+            (prov_e, prov_v, prov_r) = miscutils.stringToVersion(provver)
+            provtuple = (provname, provflag, (prov_e, prov_v, prov_r))
+            # find the provide in the header 
+            providelist = self._providesList(matchhdr)
+            for (name, flag, ver) in providelist:
+                if name != provname: # definitely not
+                    continue
+
+                match_n = name
+                match_a = pkg_a # you got a better idea?
+                if ver is not None:
+                    (match_e, match_v, match_r) = miscutils.stringToVersion(ver)
+                else:
+                    match_e = pkg_e
+                    match_v = pkg_v
+                    match_r = pkg_r
+                    
+                matchtuple = (match_n, match_a, match_e, match_v, match_r)
+                if miscutils.rangeCheck(provtuple, matchtuple):
+                    matches.append(pkgtuple)
+        
+        return miscutils.unique(matches)
+            
+    def _providesList(self, hdr):
+        lst = []
+        names = hdr[rpm.RPMTAG_PROVIDENAME]
+        flags = hdr[rpm.RPMTAG_PROVIDEFLAGS]
+        vers = hdr[rpm.RPMTAG_PROVIDEVERSION]
+        if names is not None:
+            lst = zip(names, flags, vers)
+        return miscutils.unique(lst)
+
