@@ -1,6 +1,6 @@
 Summary: RPM installer/updater
 Name: yum
-Version: 2.1.4
+Version: 2.1.5
 Release: 1
 License: GPL
 Group: System Environment/Base
@@ -71,6 +71,12 @@ exit 0
 %{_mandir}/man*/*
 
 %changelog
+* Mon Oct  4 2004 Seth Vidal <skvidal@phy.duke.edu>
+- 2.1.5
+
+- lots of minor bugfixes and corrections
+
+
 * Tue Sep 28 2004 Seth Vidal <skvidal@phy.duke.edu>
 - 2.1.4
 
