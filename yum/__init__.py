@@ -21,6 +21,7 @@ import Errors
 
 import rpmUtils
 import rpmUtils.transaction
+from urlgrabber.grabber import URLGrabError
 import depsolve
 
 class YumBase(depsolve.Depsolve):
@@ -103,6 +104,22 @@ class YumBase(depsolve.Depsolve):
             return
         self._unlock(lockfile)
         
+    
+    def verifyChecksum(self, file, checksumType, csum):
+        """Verify the checksum of the file versus the 
+           provided checksum"""
+
+        try:
+            filesum = misc.checksum(checksumType, file)
+        except Errors.MiscError, e:
+            raise URLGrabError(-3, 'Could not perform checksum')
+            
+        if filesum != csum:
+            raise URLGrabError(-2, 'Package does not match checksum')
+        
+        return 0
+            
+           
     def downloadPkgs(self, pkglist, callback=None):
         """download list of package objects handed to you, output based on
            callback, raise yum.Errors.YumBaseError on problems"""
@@ -126,28 +143,19 @@ class YumBase(depsolve.Depsolve):
             remote = po.returnSimple('relativepath')
             rpmfn = os.path.basename(remote)
             local = repo.pkgdir + '/' + rpmfn
-            rpmgood = 0
-            retrycount = 0
-            while not rpmgood and retrycount < self.conf.getConfigOption('retries'):
-                try:
-                    #print po.name + ' start'
-                    mylocal = repo.get(relative=remote, local=local)
-                    #print po.name + ' end'
-                except Errors.RepoError, e:
-                    errors[po] = e
-                    retrycount+=1
-                else: # no errors doing the download, check the checksum
-                    filesum = misc.checksum(checksumType, local)
-                    if filesum != checksum:
-                        retrycount+=1
-                        self.errorlog(0, 'Package %s does not match checksum, removing' % mylocal)
-                        os.unlink(mylocal)
-                        continue
-                    
-                    if errors.has_key(po):
-                        del errors[po]
-                    rpmgood=1
-                
+            
+            checkfunc = (self.verifyChecksum, (checksumType, csum), {})
+
+            try:
+                mylocal = repo.get(relative=remote, local=local, checkfunc=checkfunc)
+            except Errors.RepoError, e:
+                if not errors.has_key(po):
+                    errors[po] = []
+                errors[po].append(str(e))
+            else:
+                if errors.has_key(po):
+                    del errors[po]
+
         return errors
 
     def sigCheckPkgs(self, downloadpkgs):

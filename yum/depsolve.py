@@ -25,6 +25,7 @@ import rpmUtils.miscutils
 import rpmUtils.arch
 import rpm
 
+from metadata.packageSack import ListPackageSack
 from Errors import DepError
 import packages
 
@@ -218,17 +219,33 @@ class Depsolve:
             if flags == 0:
                 flags = None
             (r_e, r_v, r_r) = rpmUtils.miscutils.stringToVersion(needversion)
+            defSack = ListPackageSack() # list of items definitely providing this requirment
             for po in pkgs:
                 self.log(5, 'Potential match %s to %s' % (needname, po))
                 if po.checkPrco('provides', (needname, flags, (r_e, r_v, r_r))):
                     # first one? <shrug>
-                    (n, e, v, r, a) = po.returnNevraTuple() # this is stupid the po should be emitting matching tuple types
-                    
-                    ### Why am I getting a po back and then just using the pkgtup info from it
-                    # why not just store the po itself in the tsInfo, and dispense with all these lookups
-                    self.tsInfo.add((n, a, e, v, r), 'i', 'dep')
+                    defSack.addPkg(po)
                     self.log(3, 'Matched %s to require for %s' % (po, name))
-                    CheckDeps=1
+                    
+            #self.bestPackageFromList(defSack, reqtup)
+            newest = defSack.returnNewestByNameArch()
+            if len(newest) > 1:
+                best = newest[0]
+                for po in newest[1:]:
+                    if len(po.name) < len(best.name):
+                        best = po
+                    elif len(po.name) == len(best.name):
+                        # compare arch
+                        arch = rpmUtils.arch.getBestArchFromList([po.arch, best.arch])
+                        if arch == po.arch:
+                            best = po
+            else:
+                best = newest[0]
+
+            (n, e, v, r, a) = best.returnNevraTuple() # this is stupid the po should be emitting matching tuple types                    
+            self.tsInfo.add((n, a, e, v, r), 'i', 'dep')
+            self.log(3, 'Best of providing: %s to require for %s' % (best, name))
+            CheckDeps=1
                 
         # find out if the req package is in the tsInfo
         # if it is, check which mode

@@ -25,10 +25,12 @@ def printtime():
     return time.strftime('%b %d %H:%M:%S', time.localtime(time.time()))
     
 
-def failureReport(msg, errorlog=None):
+def failureReport(msg, errorlog=None, relative=None):
     """failure output for failovers from urlgrabber"""
+    
     if errorlog:
-        errorlog(1, msg)
+        errorlog(1, '%s: %s' % (relative, msg))
+    raise msg
 
     
 def simpleProgressBar(current, total, name=None):

@@ -381,9 +381,10 @@ class YumBaseCli(yum.YumBase):
         if len(problems.keys()) > 0:
             errstring = ''
             errstring += 'Error Downloading Packages:\n'
-            for key in problems.keys:
-                for error in problems[key]:
-                    errstring += '%s: %s' % (key, problem)
+            for key in problems.keys():
+                errors = yum.misc.unique(problems[key])
+                for error in errors:
+                    errstring += '  %s: %s\n' % (key, error)
             raise yum.Errors.YumBaseError, errstring
         
         problems = self.sigCheckPkgs(downloadpkgs)

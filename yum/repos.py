@@ -233,7 +233,7 @@ class Repository:
                 del fo
                 
             return sum.hexdigest()
-        except EnvironmentError:
+        except (EnvironmentError, IOError, OSError):
             raise Errors.RepoError, 'Error opening file for checksum'
         
     def dump(self):
@@ -272,6 +272,7 @@ class Repository:
     def setupGrab(self):
         """sets up the grabber functions with the already stocked in urls for
            the mirror groups"""
+
         # FIXME this should do things with our proxy info too
         if self.failovermethod == 'roundrobin':
             mgclass = urlgrabber.mirror.MGRandomOrder
@@ -320,7 +321,7 @@ class Repository:
  
 
     def get(self, url=None, relative=None, local=None, start=None, end=None,
-            copy_local=0):
+            copy_local=0, checkfunc=None):
         """retrieve file from the mirrorgroup for the repo
            relative to local, optionally get range from
            start to end, also optionally retrieve from a specific baseurl"""
@@ -334,28 +335,41 @@ class Repository:
         if local is None or relative is None:
             raise Errors.RepoError, \
                   "get request for Repo %s, gave no source or dest" % self.id
+                  
+        if self.failure_obj:
+            (f_func, f_args, f_kwargs) = self.failure_obj
+            f_kwargs['relative'] = relative
+            self.failure_obj = (f_func, f_args, f_kwargs)
+            
         if url is not None:
-            ug = URLGrabber(keepalive=self.keepalive, 
-                       bandwidth=self.bandwidth,
-                       retry=self.retries,
-                       throttle=self.throttle,
-                       progres_obj=self.callback,
-                       failure_callback=self.failure_obj)
+            ug = URLGrabber(keepalive = self.keepalive, 
+                            bandwidth = self.bandwidth,
+                            retry = self.retries,
+                            throttle = self.throttle,
+                            progres_obj = self.callback,
+                            failure_callback = self.failure_obj,
+                            checkfunc = checkfunc)
+            
             remote = url + '/' + relative
-            try:           
-                result = ug.urlgrab(remote, local, range=(start, end), 
-                                    copy_local=copy_local)
+
+            try:
+                result = ug.urlgrab(remote, local,
+                                    range = (start, end), 
+                                    retry = self.retries,
+                                    copy_local = copy_local,
+                                    failure_callback = self.failure_obj,
+                                    checkfunc = checkfunc)
             except URLGrabError, e:
                 raise Errors.RepoError, \
                     "failed to retrieve %s from %s\nerror was %s" % (relative, self.id, e)
               
-            # setup a grabber and use it - same general rules
         else:
             try:
                 result = self.grab.urlgrab(relative, local, range=(start, end),
-                                           copy_local=copy_local)
+                                           copy_local=copy_local,
+                                           checkfunc=checkfunc)
             except URLGrabError, e:
-                raise "failed to retrieve %s from %s\nerror was %s" % (relative, self.id, e)
+                raise Errors.RepoError, "failure: %s from %s: %s" % (relative, self.id, e)
                 
         return result
            

@@ -114,7 +114,7 @@ def main(args):
     try:
         base.doTransaction()
     except Errors.YumBaseError, e:
-        base.errorlog(0, 'Error: %s' % e)
+        base.errorlog(0, '%s' % e)
         unlock()
         sys.exit(1)
 

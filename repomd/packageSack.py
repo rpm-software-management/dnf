@@ -431,4 +431,7 @@ class ListPackageSack(PackageSack):
     def addList(self, ObjList):
         for pkgobj in ObjList:
             self.addPackage(pkgobj)
-            
+    
+    def addPkg(self, po):
+        self.addPackage(po)
+        
