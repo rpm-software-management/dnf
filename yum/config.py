@@ -324,13 +324,13 @@ class yumconf(object):
         
         # weird ones
         for option in ['commands', 'installonlypkgs', 'kernelpkgnames', 'exclude',
-                       'reposdir']:
+                       'reposdir', 'exactarchlist']:
             self.configdata[option] = variableReplace(self.yumvar, self.configdata[option])
             setattr(self, option, self.configdata[option])
 
         # make our lists into lists. :)
         for option in ['exclude', 'installonlypkgs', 'kernelpkgnames', 
-                'tsflags', 'reposdir']:
+                'tsflags', 'reposdir', 'exactarchlist']:
             self.configdata[option] = parseList(self.configdata[option])
             setattr(self, option, self.configdata[option])
 
