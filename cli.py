@@ -509,8 +509,11 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
             self.log(2, "This may take a while depending on the speed of this computer")
             self.log(3, '%s' % self.pickleRecipe())
             try:
-                self.doRepoSetup()
-                self.repos.populateSack(with='all')
+                self.doRepoSetup(nosack=1)
+                self.repos.populateSack(with='metadata', pickleonly=1)
+                self.repos.populateSack(with='filelists', pickleonly=1)
+                self.repos.populateSack(with='otherdata', pickleonly=1)
+                
             except yum.Errors.YumBaseError, e:
                 return 1, [str(e)]
             return 0, ['Metadata Cache Created']

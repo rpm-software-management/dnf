@@ -40,7 +40,6 @@ class YumPackageSack(packageSack.PackageSack):
     def addDict(self, repoid, datatype, dataobj, callback=None):
         if self.added.has_key(repoid):
             if datatype in self.added[repoid]:
-                print 'not reloading'
                 return
 
         total = len(dataobj.keys())
@@ -162,7 +161,7 @@ class RepoStorage:
             repo.setupGrab()
             
                 
-    def populateSack(self, which='enabled', with='metadata', callback=None):
+    def populateSack(self, which='enabled', with='metadata', callback=None, pickleonly=0):
         """This populates the package sack from the repositories, two optional 
            arguments: which='repoid, enabled, all'
                       with='metadata, filelists, otherdata, all'"""
@@ -199,28 +198,39 @@ class RepoStorage:
                 if item == 'metadata':
                     xml = repo.getPrimaryXML()
                     (ctype, csum) = repo.repoXML.primaryChecksum()
-                    repo.cacheHandler.getPrimary(xml, csum)
-                    dobj = repo.cacheHandler.repodata[item]
-                    self.pkgSack.addDict(repo.id, item, dobj, callback) 
-
+                    dobj = repo.cacheHandler.getPrimary(xml, csum)
+                    if not pickleonly:
+                        self.pkgSack.addDict(repo.id, item, dobj, callback) 
+                    #else:
+                    #    del dobj
+                    #    del repo.cacheHandler
+                    #    gc.collect()
+                    #    for x in gc.garbage:
+                    #        s = str(x)
+                    #        if len(s) > 80: s = s[:80]
+                    #        print type(x),"\n  ", s                        
+                        
                 elif item == 'filelists':
                     xml = repo.getFileListsXML()
                     (ctype, csum) = repo.repoXML.filelistsChecksum()
-                    repo.cacheHandler.getFilelists(xml, csum)
-                    dobj = repo.cacheHandler.repodata[item]
-                    self.pkgSack.addDict(repo.id, item, dobj, callback) 
+                    dobj = repo.cacheHandler.getFilelists(xml, csum)
+                    if not pickleonly:
+                        self.pkgSack.addDict(repo.id, item, dobj, callback) 
+                        
+                        
                 elif item == 'otherdata':
                     xml = repo.getOtherXML()
                     (ctype, csum) = repo.repoXML.otherChecksum()
-                    repo.cacheHandler.getOtherdata(xml, csum)
-                    dobj = repo.cacheHandler.repodata[item]
-                    self.pkgSack.addDict(repo.id, item, dobj, callback)
+                    dobj = repo.cacheHandler.getOtherdata(xml, csum)
+                    if not pickleonly:
+                        self.pkgSack.addDict(repo.id, item, dobj, callback)
+                        
                 else:
                     # how odd, just move along
                     continue
             # get rid of all this stuff we don't need now
-            del repo.cacheHandler
-                
+            #del repo.cacheHandler
+
 
                 
         
