@@ -41,11 +41,8 @@ class yumconf:
         except ConfigParser.MissingSectionHeaderError, e:
             raise Errors.ConfigError,  'Error accessing config file: %s' % configfile
         
-        # for the purposes of this code SERVER == REPOSITORY in concept
-        # it does not mean one precise server machine it means a repository
-        # I wrote this early in yum before the terms got worked out.
-        self.servers = [] # list of servers/repositories
-        self.serverdata = {} # dict to hold the dicts of data :)
+        self.repos = [] # list of servers/repositories
+        self.repodata = {} # dict to hold the dicts of data :)
         self.configdata = {} # dict to hold all the data goodies
        
         #defaults -either get them or set them
@@ -86,7 +83,10 @@ class yumconf:
         # - but should be in the config class                       
         optionothers = [('uid', 0),
                         ('cache', 0),
-                        ('progess_obj', None)]
+                        ('progess_obj', None),
+                        ('log' , None),
+                        ('filelog', None),
+                        ('errorlog', None)]
 
 
         # do the strings        
@@ -101,6 +101,7 @@ class yumconf:
         for (option, default) in optionothers:
             self.configdata[option] = default
 
+       
         # get our variables parsed            
         self.yumvar = self._getEnvVar()
         self.yumvar['basearch'] = archwork.getArch() # FIXME make this configurable??
@@ -112,36 +113,33 @@ class yumconf:
         # weird ones
         for option in ['commands', 'installonlypkgs', 'kernelpkgnames', 'exclude']:
             self.configdata[option] = self._doreplace(self.configdata[option])
-            self.configdata[option] = self.parseList(self.configdata[option])
+            self.configdata[option] = self._parseList(self.configdata[option])
 
         if len(self.cfg.sections()) > 1:
         
             for section in self.cfg.sections(): # loop through the list of sections
-                if section != 'main': # must be a serverid
-                    enable = self._getboolean(section, 'enable', 1)
-                    if not enable: # if the server is disabled move along
-                        continue
+                if section != 'main': # must be a repoid
                     
                     urls = self._getoption(section, 'baseurl', [])
                     name = self._getoption(section, 'name', None)
                     urls = self._doreplace(urls)
-                    urls = self.parseList(urls)
+                    urls = self._parseList(urls)
 
     
                     if name != None and len(urls) > 0 and urls[0] != None:
-                        self.servers.append(section)
-                        self.serverdata[section] = {}
-                        thisServerData = self.serverdata[section]
+                        self.repos.append(section)
+                        self.repodata[section] = {}
+                        thisRepoData = self.repodata[section]
                         name = self._doreplace(name)
-                        thisServerData['name'] = name
-                        thisServerData['url'] = urls
-
-                        for url in thisServerData['url']:
+                        thisRepoData['name'] = name
+                        thisRepoData['url'] = urls
+                        
+                        # vet the urls
+                        for url in thisRepoData['url']:
                             (s,b,p,q,f,o) = urlparse.urlparse(url)
                             if s not in ['http', 'ftp', 'file', 'https']:
-                                raise Errors.ConfigError, \
-                                    'not using ftp, http[s], or file for servers, Aborting - %s' \
-                                    % (url)
+                                print 'not using ftp, http[s], or file for repos, skipping - %s' % (url)
+                                thisRepoData['url'].remove(url)
                         
                         failmeth = self._getoption(section,'failovermethod')
                         if failmeth == 'roundrobin':
@@ -150,33 +148,41 @@ class yumconf:
                             failclass = failover.priority(self, section)
                         else:
                             failclass = failover.roundRobin(self, section)
-                        thisServerData['failover'] = failclass
+                        thisRepoData['failover'] = failclass
                         
-                        if self._getoption(section,'gpgcheck') != None:
-                            thisServerData['gpgcheck']=self._getboolean(section,'gpgcheck', 0)
-                            
+                        thisRepoData['gpgcheck'] = self._getboolean(section, 'gpgcheck', 0)
+                        thisRepoData['enabled'] = self._getboolean(section, 'enabled', 1)
+
+                        # get our proxy information if it is there
+                        thisRepoData['proxy'] = self._getoption(section, 'proxy', None)
+                        thisRepoData['proxy_username'] = self._getoption(section, 'proxy_username', None)
+                        thisRepoData['proxy_password'] = self._getoption(section, 'proxy_password', None)
+                        
+                        
                         excludelist = self._getoption(section, 'exclude', [])
                         excludelist = self._doreplace(excludelist)
-                        excludelist = self.parseList(excludelist)
-                        thisServerData['excludes'] = excludelist
+                        excludelist = self._parseList(excludelist)
+                        thisRepoData['excludes'] = excludelist
 
                         includelist = self._getoption(section, 'includepkgs', [])
                         includelist = self._doreplace(includelist)
-                        includelist = self.parseList(includelist)
-                        thisServerData['includepkgs'] = includelist
+                        includelist = self._parseList(includelist)
+                        thisRepoData['includepkgs'] = includelist
 
-                        thisServerData['enablegroups'] = self._getboolean(section, 'enablegroups', 1)
+                        thisRepoData['enablegroups'] = self._getboolean(section, 'enablegroups', 1)
                         cache = os.path.join(self.getConfigOption('cachedir'), section)
                         pkgdir = os.path.join(cache, 'packages')
                         hdrdir = os.path.join(cache, 'headers')
-                        thisServerData['cache'] = cache
-                        thisServerData['pkgdir'] = pkgdir
-                        thisServerData['hdrdir'] = hdrdir
+                        thisRepoData['cache'] = cache
+                        thisRepoData['pkgdir'] = pkgdir
+                        thisRepoData['hdrdir'] = hdrdir
                     else:
-                        print 'Error: Cannot find baseurl or name for server: %s. Skipping' % (section)    
+                        print 'Error: Cannot find baseurl or name for repo: %s. Skipping' % (section)    
         else:
-            raise Errors.ConfigError, 'Insufficient server config - no servers found. Aborting.'
+            raise Errors.ConfigError, 'Insufficient repository config. No repositories Found/Enabled. Aborting.'
 
+
+           
     def _getoption(self, section, option, default=None):
         """section  - section of config
            option - option from section
@@ -203,7 +209,10 @@ class yumconf:
         
     def setConfigOption(self, option, value):
         """option, value to set for global config options"""
-        self.configdata[option] = value
+        try:
+            self.configdata[option] = value
+        except KeyError:
+            raise Errors.ConfigError, 'No such option %s' % option
 
     def getConfigOption(self, option, default=None):
         """gets global config setting, takes optional default value"""
@@ -212,55 +221,75 @@ class yumconf:
         except KeyError:
             return None
 
-    def setServerOption(self, server, option, value):
-        """serverid of config to set
+    def setRepoOption(self, repo, option, value):
+        """repoid of config to set
            option to set
            value to set it to
         """
-        self.serverdata[server][option] = value
+        try:
+            self.repodata[repo][option] = value
+        except KeyError:
+            raise Errors.ConfigError, 'No such repo %s and/or option %s' % (repo, option)
 
 
-    def getServerOption(self, serverid, thing):
-        if self.serverdata.has_key(serverid):
-            if self.serverdata[serverid].has_key(thing):
-                return self.serverdata[serverid][thing]
+    def getRepoOption(self, repoid, thing):
+        if self.repodata.has_key(repoid):
+            if self.repodata[repoid].has_key(thing):
+                return self.repodata[repoid][thing]
             else:
                 raise Errors.ConfigError, \
-                     'Error reading configuration option %s for server %s' % (thing, serverid)
+                     'Error reading configuration option %s for repo %s' % (thing, repoid)
         else:                                                  
             raise Errors.ConfigError, \
-                 'Error reading configuration option %s for server %s' % (thing, serverid)
+                 'Error reading configuration option %s for repo %s' % (thing, repoid)
 
-                                    
-    def listServerOptions(self, serverid):
-        """return list of config options for a specific serverid"""
-        if self.serverdata.has_key(serverid):
-            return self.serverdata[serverid]
+    def disableRepo(self, repoid):
+        """disable a repository from use"""
+        self.setRepoOption(repoid, 'enabled', 0)
+
+            
+    def enableRepo(self, repoid):
+        """enable a repository from use"""
+        self.setRepoOption(repod, 'enabled', 1)
+        
+    def listEnabledRepos(self):
+        """return list of repo ids for enabled repos"""
+        returnlist = []
+        for repoid in self.repos:
+            if self.getRepoOption(repoid, 'enabled'):
+                returnlist.append(repoid)
+        return returnlist
+
+                                                               
+    def listRepoOptions(self, repoid):
+        """return list of config options for a specific repoid"""
+        if self.repodata.has_key(repoid):
+            return self.repodata[repoid]
         else:
             raise Errors.ConfigError, \
-                 'Error reading configuration options for server %s' % (serverid)
+                 'Error reading configuration options for repository %s' % (repoid)
                  
-    def remoteGroups(self, serverid):
-        return os.path.join(self.baseURL(serverid), 'yumgroups.xml')
+    def remoteGroups(self, repoid):
+        return os.path.join(self.baseURL(repoid), 'yumgroups.xml')
     
-    def localGroups(self, serverid):
-        return os.path.join(self.getServerOption(serverid, 'cache'), 'yumgroups.xml')
+    def localGroups(self, repoid):
+        return os.path.join(self.getRepoOption(repoid, 'cache'), 'yumgroups.xml')
         
-    def baseURL(self, serverid):
-        return self.get_failClass(serverid).get_serverurl()
+    def baseURL(self, repoid):
+        return self.get_failClass(repoid).get_serverurl()
         
-    def server_failed(self, serverid):
-        failclass = self.getServerOption(serverid, 'failover')
+    def repo_failed(self, repoid):
+        failclass = self.getRepoOption(repoid, 'failover')
         failclass.server_failed()
     
-    def get_failClass(self, serverid):
-        return self.getServerOption(serverid, 'failover')
+    def get_failClass(self, repoid):
+        return self.getRepoOption(repoid, 'failover')
         
-    def remoteHeader(self, serverid):
-        return os.path.join(self.baseURL(serverid), 'headers/header.info')
+    def remoteHeader(self, repoid):
+        return os.path.join(self.baseURL(repoid), 'headers/header.info')
         
-    def localHeader(self, serverid):
-        return os.path.join(self.getServerOption(serverid, 'cache'), 'header.info')
+    def localHeader(self, repoid):
+        return os.path.join(self.getRepoOption(repoid, 'cache'), 'header.info')
 
     def _getsysver(self):
         ts = rpm.TransactionSet()
@@ -287,7 +316,7 @@ class yumconf:
         
         return yumvar
             
-    def parseList(self, value):
+    def _parseList(self, value):
         if type(value) is types.ListType:
             return value
             
@@ -531,17 +560,15 @@ def main(args):
         print '%s = %s' % (option, conf.getConfigOption(option))
         
     print '\n\n'
-    servers = conf.servers
-    servers.sort()
-    for srvid in servers:
+    repos = conf.repos
+    repos.sort()
+    for srvid in repos:
         print 'repo: %s' % srvid
-        for key in conf.listServerOptions(srvid):
-            print '%s = %s' % (key, conf.getServerOption(srvid, key))
+        for key in conf.listRepoOptions(srvid):
+            print '%s = %s' % (key, conf.getRepoOption(srvid, key))
             
         print ''
     
-    sys.exit(0)        
-
     
 
 if __name__ == "__main__":

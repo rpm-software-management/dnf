@@ -41,7 +41,9 @@ from i18n import _
 __version__='2.1.0'
 
 def parseCmdArgs(args):
-   
+   """parses command line arguments, takes cli args, returns:
+      config class, additional args not handled"""
+      
     # setup our errorlog object 
     errorlog=Logger(threshold=2, file_object=sys.stderr)
 
@@ -56,11 +58,20 @@ def parseCmdArgs(args):
                                                            'installroot=',
                                                            'enablerepo=',
                                                            'disablerepo=',
-                                                           'exclude='])
+                                                           'exclude=',
+                                                           'obsoletes',
+                                                           'tolerant'])
     except getopt.error, e:
         errorlog(0, _('Options Error: %s') % e)
         usage()
 
+    # get the early options out of the way
+    # these are ones that:
+    #  - we need to know about and do NOW
+    #  - answering quicker is better
+    #  - give us info for parsing the others
+    
+    
     try: 
         for o,a in gopts:
             if o == '--version':
@@ -71,7 +82,6 @@ def parseCmdArgs(args):
                     yumconffile = a + '/etc/yum.conf'
             if o == '-R':
                 sleeptime=random.randrange(int(a)*60)
-                # debug print sleeptime
                 time.sleep(sleeptime)
             if o == '-c':
                 yumconffile=a
@@ -86,38 +96,73 @@ def parseCmdArgs(args):
             errorlog(0, _('Cannot find any conf file.'))
             sys.exit(1)
             
+        # config file is parsed and moving us forward
+        # set some things in it.
             
         # who are we:
         conf.setConfigOption('uid', os.geteuid())
         # version of yum
         conf.setConfigOption('yumversion', __version__)
+        
+        
         # we'd like to have a log object now
         log=Logger(threshold=conf.getConfigOption('debuglevel'), file_object=sys.stdout)
+        conf.setConfigOption('log', log)
+        
         # syslog-style log
         if conf.getConfigOption('uid') == 0:
             logfile=open(conf.getConfigOption('logfile'),"a")
             filelog=Logger(threshold=10, file_object=logfile,preprefix=clientStuff.printtime())
         else:
             filelog=Logger(threshold=10, file_object=None,preprefix=clientStuff.printtime())
-
+        conf.setConfigOption('filelog', filelog)
+        
+        # we already know about the errorlog
+        conf.setConfigOption('errorlog', errorlog)
+        
+        # now the rest of the options
         for o,a in gopts:
             if o == '-d':
                 log.threshold=int(a)
                 conf.setConfigOption('debuglevel', int(a))
-            if o == '-e':
+            elif o == '-e':
                 errorlog.threshold=int(a)
                 conf.setConfigOption('errorlevel', int(a))
-            if o == '-y':
+            elif o == '-y':
                 conf.setConfigOption('assumeyes',1)
-            if o in ('-h', '--help'):
+            elif o in ['-h', '--help']:
                 usage()
-            if o == '-C':
+            elif o == '-C':
                 conf.setConfigOption('cache', 1)
-            if o == '-t':
+            elif o == '--obsoletes':
+                conf.setConfigOption('obsoletes', 1)
+            elif o in ['-t', '--tolerant']:
                 conf.setConfigOption('tolerant', 1)
-            if o == '--installroot':
+            elif o == '--installroot':
                 conf.setConfigOption('installroot', a)
-                
+            elif o == '--enablerepo':
+                try:
+                    conf.enableRepo(a)
+                except yum.Errors.ConfigError, e:
+                    errorlog(0, _(e))
+                    usage()
+            elif o == '--disablerepo':
+                try:
+                    conf.disableRepo(a)
+                except yum.Errors.ConfigError, e:
+                    errorlog(0, _(e))
+                    usage()
+                    
+            elif o == '--exclude':
+                try:
+                    excludelist = conf.getConfigOption('exclude')
+                    excludelist.append(a)
+                    conf.setConfigOption('exclude', excludelist)
+                except yum.Errors.ConfigError, e:
+                    errorlog(0, _(e))
+                    usage()
+            
+                        
     except ValueError, e:
         errorlog(0, _('Options Error: %s') % e)
         usage()
@@ -125,11 +170,11 @@ def parseCmdArgs(args):
     # if we're below 2 on the debug level we don't need to be outputting
     # progress bars - this is hacky - I'm open to other options
     if conf.getConfigOption('debuglevel') < 2:
-        conf.setConfigOption('progress_obj') = None
+        conf.setConfigOption('progress_obj', None)
     else:
-        conf.setConfigOption('progress_obj') = progress_meter.text_progress_meter(fo=sys.stdout)
+        conf.setConfigOption('progress_obj', progress_meter.text_progress_meter(fo=sys.stdout))
         
-    return (log, errorlog, filelog, conf, cmds)
+    return conf, cmds
     
 
 def lock(lockfile, mypid):
@@ -166,7 +211,14 @@ def main(args):
 
     if len(args) < 1:
         usage()
-    (log, errorlog, filelog, conf, cmds) = parseCmdArgs(args)
+        
+    conf, cmds = parseCmdArgs(args)
+    
+    errorlog = conf.getConfigOption('errorlog')
+    log = conf.getConfigOption('log')
+    filelog = conf.getConfigOption('filelog')
+
+    
     if len(conf.getConfigOption('commands')) == 0 and len(cmds) < 1:
         cmds = conf.getConfigOption('commands')
     else:
@@ -228,17 +280,17 @@ def main(args):
     # make remote nevral class
     HeaderInfo = nevral.nevral()
     
-    # sorting the servers so that sort() will order them consistently
-    # If you wanted to add scoring or somesuch thing for server preferences
-    # or even getting rid of servers b/c of some criteria you could
-    # replace serverlist.sort() with a function - all it has to do
-    # is return an ordered list of serverids and have it stored in
-    # serverlist
-    serverlist = conf.servers
-    serverlist.sort()
+    # sorting the repos so that sort() will order them consistently
+    # If you wanted to add scoring or somesuch thing for repo preferences
+    # or even getting rid of repos b/c of some criteria you could
+    # replace repolist.sort() with a function - all it has to do
+    # is return an ordered list of repoids and have it stored in
+    # repolist
+    repolist = conf.listEnabledRepos()
+    repolist.sort()
 
     # get the package info file
-    clientStuff.get_package_info_from_servers(serverlist, HeaderInfo)
+    clientStuff.get_package_info_from_servers(repolist, HeaderInfo)
     
     # make local nevral class
     rpmDBInfo = nevral.nevral()
@@ -271,18 +323,18 @@ def main(args):
         obsoleted = {}
 
     if process in ['groupupdate', 'groupinstall', 'grouplist', 'groupupgrade']:
-        servers_with_groups = clientStuff.get_groups_from_servers(serverlist)
+        servers_with_groups = clientStuff.get_groups_from_servers(repolist)
         GroupInfo = yumcomps.Groups_Info(conf.overwrite_groups)
         if len(servers_with_groups) > 0:
-            for serverid in servers_with_groups:
-                log(4, 'Adding Group from %s' % serverid)
-                GroupInfo.add(conf.localGroups(serverid))
+            for repoid in servers_with_groups:
+                log(4, 'Adding Group from %s' % repoid)
+                GroupInfo.add(conf.localGroups(repoid))
         if GroupInfo.compscount > 0:
             GroupInfo.compileGroups()
             clientStuff.GroupInfo = GroupInfo
             pkgaction.GroupInfo = GroupInfo
         else:
-            errorlog(0, _('No groups provided or accessible on any server.'))
+            errorlog(0, _('No groups provided or accessible on any repository.'))
             errorlog(1, _('Exiting.'))
             sys.exit(1)
     
