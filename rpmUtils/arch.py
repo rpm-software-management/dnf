@@ -65,6 +65,9 @@ def isMultiLibArch(arch=None):
     
     if multilibArches.has_key(arch):
         return 1
+
+    if multilibArches.has_key(arches[arch]):
+        return 1
     
     return 0
     
