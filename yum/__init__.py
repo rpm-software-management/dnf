@@ -98,6 +98,7 @@ class YumBase(depsolve.Depsolve):
             repoid = repo.id
 
         if len(excludelist) == 0:
+            self.log(2, 'Nothing to exclude')
             return
         exactmatch, matched, unmatched = \
            parsePackages(self.pkgSack.returnPackages(repoid), excludelist)
@@ -105,7 +106,8 @@ class YumBase(depsolve.Depsolve):
         for po in exactmatch + matched:
             self.log(3, 'Excluding %s' % po)
             self.pkgSack.delPackage(po)
-
+        
+        self.log(2, 'Finished')
 
     def includePackages(self, repoid):
         """removes packages from packageSacks based on list of packages, to include.
