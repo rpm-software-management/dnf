@@ -296,7 +296,14 @@ class PackageSack:
         for pkg in self.returnPackages():
             print pkg.returnNevraPrintable()
 
+    def excludeArches(self, archlist):
+        """exclude incompatible arches. archlist is a list of compatible arches"""
         
+        for pkg in self.returnPackages():
+            if pkg.arch not in archlist:
+                self.delPackage(pkg)
+
+
 
 # packageSack should be a base class
 # two derived classes could be DBPackageSack and XMLPackageSack

@@ -398,3 +398,19 @@ class YumSqlitePackageSack(repos.YumPackageSack):
                     continue
                 returnList.append(self.pc(self.db2class(x),rep))
         return returnList
+    
+    def excludeArchs(self, archlist):
+        """excludes incompatible arches - archlist is a list of compat arches"""
+        tmpstring = "select * from packages WHERE "
+        for arch in archlist:
+            tmpstring = tmpstring + 'arch != "%s" AND ' % arch
+        
+        last = tmpstring.rfind('AND') # clip that last AND
+        querystring = tmpstring[:last]
+        for (rep, cache) in self.primarydb.items():
+            cur = cache.cursor()
+            cur.execute(querystring)
+            for x in cur.fetchall():
+                obj = self.pc(self.db2class(x), rep)
+                self.delPackage(obj)
+

@@ -344,13 +344,8 @@ class YumBase(depsolve.Depsolve):
         
         self.log(3, 'Excluding Incompatible Archs')
         if not archlist:
-            #archlist = ['src'] # source rpms are allowed
             archlist.extend(rpmUtils.arch.getArchList())
-        
-        for po in self.pkgSack.returnPackages():
-            if po.arch not in archlist:
-                self.log(7, 'Arch Excluding %s' % po)
-                self.pkgSack.delPackage(po)
+        self.pkgSack.excludeArchs(archlist)
         self.log(3, 'Finished')
         
         
