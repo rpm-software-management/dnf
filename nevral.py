@@ -145,6 +145,7 @@ class nevral:
 		if l == 'in_rpm_db':
 			return l
 		hdrfn = self.hdrfn(name,arch)
+		#print "%s %s %s %s" % (name, arch, i, l)
 		base = config.conf.serverhdrdir[i]
 		return base + '/' + hdrfn
 		
@@ -204,7 +205,7 @@ class nevral:
 					ts.add(pkghdr,(pkghdr,rpmloc),'i')
 				elif self.state(name,arch) == 'a':
 					ts.add(pkghdr,(pkghdr,rpmloc),'a')
-				elif self.state(name,arch) == 'e':
+				elif self.state(name,arch) == 'e' or self.state(name,arch) == 'ed':
 					ts.remove(name)
 				#   state = self.state(name,arch)
 				#   ts.add(pkghdr,(pkghdr,rpmloc),state)   
@@ -224,7 +225,7 @@ class nevral:
 						#print "Got dep: %s, %s" % (name,arch)
 						CheckDeps = 1
 					else:
-						if self.exists(reqname):
+						if self.exists(name):
 							archlist = archwork.availablearchs(self,name)
 							arch = archwork.bestarch(archlist)
 							((e, v, r, a, l, i), s)=self._get_data(name,arch)
