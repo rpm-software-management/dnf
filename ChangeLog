@@ -1,3 +1,351 @@
+2003-05-19 22:40  skvidal
+
+	* lilocfg.py, pkgaction.py, translate.py: 
+	pkgaction: catch lilo test error more gracefully lilocfg: fix
+	s/up2date/yum/ translate: fix s/up2date/yum/ - those last two from
+	D. Burcaw's patches
+
+2003-05-11 13:35  skvidal
+
+	* clientStuff.py: 
+	----------------------------------------------------------------------
+	disable disk space check if there is nothing is nothing to be
+	installed.
+
+2003-05-09 02:19  skvidal
+
+	* docs/yum.conf.5: 
+	document it
+
+2003-05-09 02:12  skvidal
+
+	* yummain.py: 
+	import rpm needed in yummain (boggle)
+
+2003-05-09 02:10  skvidal
+
+	* clientStuff.py, yummain.py: 
+	fixing up the ignore disk space check
+
+2003-05-09 02:06  skvidal
+
+	* clientStuff.py: 
+	typo
+
+2003-05-09 02:05  skvidal
+
+	* clientStuff.py, config.py: 
+	ignore disk space check make disk check error codes not suck
+
+2003-05-05 23:01  skvidal
+
+	* nevral.py: 
+	space off
+
+2003-05-05 22:59  skvidal
+
+	* nevral.py: 
+	fixing some depresolution bugs
+
+2003-04-29 09:39  skvidal
+
+	* nevral.py: 
+	potential fix for remove error
+
+2003-04-29 01:53  skvidal
+
+	* serverStuff.py: 
+	need to import types to do that
+
+2003-04-29 01:53  skvidal
+
+	* serverStuff.py: 
+	depcheck update to deal with bad headers
+
+2003-04-29 01:48  skvidal
+
+	* pullheaders.py: 
+	make the log output suck less
+
+2003-04-29 01:46  skvidal
+
+	* pullheaders.py: 
+	this should be outputting more things
+
+2003-04-29 01:43  skvidal
+
+	* pullheaders.py: 
+	no more perl for you young man.
+
+2003-04-29 01:43  skvidal
+
+	* pullheaders.py: 
+	make it output more correct things
+
+2003-04-29 01:41  skvidal
+
+	* pullheaders.py, serverStuff.py: 
+	make yum-arch act sane if it encounters a non-rpm with a .rpm
+	extension
+
+2003-04-28 01:50  skvidal
+
+	* bin/: yum, yum-arch: 
+	these need to reference /usr/share/yum not /usr/lib/yum anymore
+
+2003-04-28 01:47  skvidal
+
+	* Makefile.in, yum-7.x.spec, yum.spec: 
+	updated Makefile for /usr/lib -> /usr/share updated spec files
+
+2003-04-28 01:30  skvidal
+
+	* etc/yum.conf: 
+	conf file now has $options
+
+2003-04-28 01:29  skvidal
+
+	* docs/yum.conf.5: 
+	updated docs for: $YUM0-$YUM9 $releasever $arch, $basearch
+	commands= distroverpkg= file:// support
+
+2003-04-28 01:08  skvidal
+
+	* nevral.py: 
+	more fixes
+
+2003-04-28 01:05  skvidal
+
+	* clientStuff.py: 
+	rpmloc not updated
+
+2003-04-28 01:00  skvidal
+
+	* nevral.py: 
+	setlocalhdrpath needed
+
+2003-04-28 00:57  skvidal
+
+	* urlgrabber.py: 
+	modifications to make it work with urllib under 1.5.2
+
+2003-04-28 00:30  skvidal
+
+	* Makefile.in, urlgrabber.py: 
+	added urlgrabber and Makefile.in updates to include it
+
+2003-04-28 00:29  skvidal
+
+	* clientStuff.py, config.py: 
+	file:// support and urlgrabber
+
+2003-04-21 01:36  skvidal
+
+	* nevral.py: 
+	catch problems that would eventually show up in the depresolution
+	code - thanks to pychecker
+
+2003-04-21 01:30  skvidal
+
+	* config.py: 
+	and more cleanups
+
+2003-04-21 01:29  skvidal
+
+	* config.py: fix useless variables that were created
+
+2003-04-21 01:18  skvidal
+
+	* clientStuff.py: 
+	need to include types
+
+2003-04-21 01:17  skvidal
+
+	* clientStuff.py, pullheaders.py: fix up pullheaders to correct for
+	int in labelCompare
+
+2003-04-21 00:54  skvidal
+
+	* checkbootloader.py: 
+	backport of checkbootloader.py too
+
+2003-04-21 00:46  skvidal
+
+	* clientStuff.py: 
+	only download archs for your architecture
+
+2003-04-21 00:23  skvidal
+
+	* nevral.py: 
+	ok, well, so - we need that db :)
+
+2003-04-21 00:16  skvidal
+
+	* nevral.py: 
+	fix fix fix - no db to delete
+
+2003-04-21 00:15  skvidal
+
+	* nevral.py: 
+	merge back the 2.x depresolution - much cleaner
+
+2003-04-20 14:19  skvidal
+
+	* yummain.py: allow empty command fields
+
+2003-04-20 14:10  skvidal
+
+	* config.py, yummain.py: 
+	backport: commands= $YUM0-9 options clean up regex use in config.py
+
+2003-04-05 18:08  skvidal
+
+	* urlgrabber.py: file urlgrabber.py was initially added on branch
+	yum-rpm_4_2_branch.
+
+2003-04-05 18:08  skvidal
+
+	* progress_meter.py: file progress_meter.py was initially added on
+	branch yum-rpm_4_2_branch.
+
+2003-03-25 01:51  skvidal
+
+	* comps.py: file comps.py was initially added on branch
+	yum-rpm_4_2_branch.
+
+2003-03-25 01:51  skvidal
+
+	* yumcomps.py: file yumcomps.py was initially added on branch
+	yum-rpm_4_2_branch.
+
+2003-03-22 16:05  skvidal
+
+	* clientStuff.py, yummain.py: 
+	Comments put in for diskspace check
+
+2003-03-21 00:25  skvidal
+
+	* nevral.py: 
+	fixing archwork callback for zero length arch list
+
+2003-03-17 17:40  skvidal
+
+	* pkgaction.py: 
+	modification to upgrade code testing
+
+2003-03-16 23:31  skvidal
+
+	* config.py: 
+	close out the db when I'm done
+
+2003-03-16 23:29  skvidal
+
+	* config.py: 
+	for real this time
+
+2003-03-16 23:29  skvidal
+
+	* config.py: 
+	make distroverpkg work
+
+2003-03-16 23:27  skvidal
+
+	* config.py: ooo - look - reading the code you copy and paste from
+	elsewhere what a novel idea!
+
+2003-03-16 23:26  skvidal
+
+	* config.py: 
+	and again - the right variables are handy
+
+2003-03-16 23:23  skvidal
+
+	* config.py: 
+	helps if you define the right variable
+
+2003-03-16 23:22  skvidal
+
+	* config.py: 
+	config variables in conf file - first pass
+
+2003-03-16 02:26  skvidal
+
+	* clientStuff.py, pkgaction.py: 
+	typos
+
+2003-03-16 02:22  skvidal
+
+	* clientStuff.py, pkgaction.py, yummain.py: 
+	first check-in for new upgrade with arguments
+
+2003-03-14 01:44  skvidal
+
+	* pkgaction.py: 
+	misc info on what to write tomorrow remember - useful if we can get
+	more fun things to list out of this like a list upgrades - maybe
+
+2003-03-14 01:26  skvidal
+
+	* pkgaction.py: 
+	ugh things to fix: 1. obsoletes need to be handled if pkgx
+	obsoletes pkgy AND pkgz 2. vice versa - if pkgx is obsoleted by
+	pkgy and pkgz which to we install? 3. continue the obsoletes
+	handling in general for yum upgrade [pkgs]
+
+2003-03-14 01:12  skvidal
+
+	* pkgaction.py: 
+	typo
+
+2003-03-14 01:11  skvidal
+
+	* pkgaction.py: 
+	ooo look, regression, how nice
+
+2003-03-14 01:02  skvidal
+
+	* clientStuff.py, pkgaction.py, yummain.py: 
+	modifications to make upgrade [pkgs] work - incomplete partial
+	rewrite of updatepkgs needed
+
+2003-03-12 23:25  skvidal
+
+	* clientStuff.py, pkgaction.py: 
+	fix to versioned obsoletes - Thanks to Phil Radden
+
+2003-03-12 11:13  skvidal
+
+	* yummain.py: 
+	remove other sillyness
+
+2003-03-12 11:13  skvidal
+
+	* config.py: 
+	new test to fix subclassing Thanks to michael stenner
+
+2003-03-12 01:45  skvidal
+
+	* config.py: 
+	put it back
+
+2003-03-12 01:43  skvidal
+
+	* config.py: a try
+
+2003-03-12 01:30  skvidal
+
+	* yummain.py: [no log message]
+
+2003-03-12 01:25  skvidal
+
+	* config.py: 
+	look - typing and reading - novel concepts
+
+2003-03-12 01:06  skvidal
+
+	* ChangeLog, config.py, yummain.py: 
+	try to subclass - first try
+
 2003-03-11 01:39  skvidal
 
 	* configure.in, yum-7.x.spec, yum.spec: 
@@ -129,6 +477,26 @@
 
 	* clientStuff.py: 
 	possible fix for odd arch case in updates
+
+2003-02-19 13:57  skvidal
+
+	* po/yum.pot: file yum.pot was initially added on branch
+	yum-rpm_4_2_branch.
+
+2003-02-19 13:57  skvidal
+
+	* po/ru.po: file ru.po was initially added on branch
+	yum-rpm_4_2_branch.
+
+2003-02-19 13:57  skvidal
+
+	* po/Makefile.in: file Makefile.in was initially added on branch
+	yum-rpm_4_2_branch.
+
+2003-02-19 13:57  skvidal
+
+	* po/pygettext.py: file pygettext.py was initially added on branch
+	yum-rpm_4_2_branch.
 
 2003-02-18 00:55  skvidal
 
