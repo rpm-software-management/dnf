@@ -43,7 +43,10 @@ def install_callback(what, bytes, total, h, user):
     elif what == rpm.RPMCALLBACK_INST_PROGRESS:
         if h != None:
             pkg, rpmloc = h
-            percent = (bytes*100L)/total
+            if total == 0:
+                percent=0
+            else:
+                percent = (bytes*100L)/total
             if conf.debuglevel >=2:
                 sys.stdout.write("\r%s %d %% done" % (pkg[rpm.RPMTAG_NAME], percent))
                 if bytes == total:
