@@ -106,7 +106,7 @@ class yumconf:
         if self._getoption('main','exactarch') != None:
             self.exactarch=self.cfg.getboolean('main','exactarch')
         if self._getoption('main', 'distroverpkg') != None:
-            self.distroverpkg = self.cfg.getoption('main','distroverpkg')
+            self.distroverpkg = self.cfg._getoption('main','distroverpkg')
         
         # go get the info from the rpmdb
         releasever = self._getsysver(self.distroverpkg)
