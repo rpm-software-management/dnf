@@ -346,40 +346,50 @@ class Updates:
             for newtup in self.updatesdict[oldtup]:
                 returnlist.append((newtup, oldtup))
         
+        tmplist = []
         if name:
             for ((n, a, e, v, r), oldtup) in returnlist:
                 if name != n:
-                    returnlist.remove(((n, a, e, v, r), oldtup))
+                    tmplist.append(((n, a, e, v, r), oldtup))
         if arch:
             for ((n, a, e, v, r), oldtup) in returnlist:
                 if arch != a:
-                    returnlist.remove(((n, a, e, v, r), oldtup))
-                    
+                    tmplist.append(((n, a, e, v, r), oldtup))
+
+        for item in tmplist:
+            try:
+                returnlist.remove(item)
+            except ValueError:
+                pass
+                
         return returnlist            
 
     def getUpdatesList(self, name=None, arch=None):
         """returns updating packages in a list of (naevr) tuples"""
-        mylist = []
+        returnlist = []
+
         for oldtup in self.updatesdict.keys():
             for newtup in self.updatesdict[oldtup]:
-                mylist.append(newtup)
-        print mylist
-                
+                returnlist.append(newtup)
+
+        tmplist = []                
         if name is not None:
-            for (n, a, e, v, r) in mylist:
-                print 'checking'
+            for (n, a, e, v, r) in returnlist:
                 if n != name:
-                    mylist.remove((n, a, e, v, r))
-                    print 'rm %s' % n
-                else:
-                    print '%s equls %s' % (n, name)
+                    tmplist.append((n, a, e, v, r))
                     
         if arch is not None:
-            for (n, a, e, v, r) in mylist:
+            for (n, a, e, v, r) in returnlist:
                 if a != arch:
-                    mylist.remove((n, a, e, v, r))
-                
-        return mylist
+                    tmplist.append((n, a, e, v, r))
+
+        for item in tmplist:
+            try:
+                returnlist.remove(item)
+            except ValueError:
+                pass
+
+        return returnlist
                 
     def getObsoletesTuples(self, name=None, arch=None):
         """returns obsoletes for packages in a list of tuples of:
