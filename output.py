@@ -343,11 +343,11 @@ class YumOutput:
                 totsize += size
             except:
                  error = True
-                 self.log(5, 'There was an error calculating total download size')
+                 self.errorlog(1, 'There was an error calculating total download size')
                  break
 
         if (not error):
-            print "Total download size: %s" % (self.format_number(totsize))
+            self.log(1, "Total download size: %s" % (self.format_number(totsize)))
             
     def listTransaction(self):
         """displays the transaction in an easy-to-read way."""
