@@ -26,10 +26,9 @@ import sys
 import re
 import string
 try:
-    import rpm404 as rpm
+    import rpm404
+    rpm = rpm404
 except ImportError, e:
-    import rpm
-except SyntaxError, e:
     import rpm
 debug = 0
 
