@@ -549,7 +549,7 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
            RUNNING the transaction"""
 
         # output what will be done:
-        self.log(1, self.listTransaction())
+        self.log(2, self.listTransaction())
         # confirm with user
         if not self.conf.getConfigOption('assumeyes'):
             if not self.userconfirm():

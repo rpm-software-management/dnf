@@ -74,7 +74,7 @@ class RPMInstallCallback:
         
         elif what == rpm.RPMCALLBACK_INST_OPEN_FILE:
             hdr = None
-            if h != None:
+            if h is not None:
                 hdr, rpmloc = h
                 handle = self._makeHandle(hdr)
                 fd = os.open(rpmloc, os.O_RDONLY)
@@ -87,27 +87,28 @@ class RPMInstallCallback:
   
         elif what == rpm.RPMCALLBACK_INST_CLOSE_FILE:
             hdr = None
-            if h != None:
+            if h is not None:
                 hdr, rpmloc = h
                 handle = self._makeHandle(hdr)
-            os.close(self.callbackfilehandles[handle])
-            fd = 0
-            # log stuff
-            pkgtup = self._dopkgtup(hdr)
-            try:
-                process = self.myprocess[self.packagedict[pkgtup]]
-                processed = self.mypostprocess[self.packagedict[pkgtup]]
-            except KeyError, e:
-                pass
+                os.close(self.callbackfilehandles[handle])
+                fd = 0
                 
-            if self.filelog:
-                pkgrep = self._logPkgString(hdr)
-                msg = '%s: %s' % (processed, pkgrep)
-                self.filelog(0, msg)
+                # log stuff
+                pkgtup = self._dopkgtup(hdr)
+                try:
+                    process = self.myprocess[self.packagedict[pkgtup]]
+                    processed = self.mypostprocess[self.packagedict[pkgtup]]
+                except KeyError, e:
+                    pass
+                    
+                if self.filelog:
+                    pkgrep = self._logPkgString(hdr)
+                    msg = '%s: %s' % (processed, pkgrep)
+                    self.filelog(0, msg)
             
 
         elif what == rpm.RPMCALLBACK_INST_PROGRESS:
-            if h != None:
+            if h is not None:
                 hdr, rpmloc = h
                 if total == 0:
                     percent = 0

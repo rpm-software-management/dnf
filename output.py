@@ -342,14 +342,13 @@ class YumOutput:
             elif mode == 'o':
                 obsoleted.append(pkgInfo)
             else:
-                misc.append(pkgInfo)
+                pass
 
-            misc.sort()
             updated.sort()
             installed.sort()
             removed.sort()
             obsoleted.sort()
-        
+    
 
         for (action, pkglist) in [('Remove', removed), ('Install', installed), 
                                   ('Update', updated)]:
