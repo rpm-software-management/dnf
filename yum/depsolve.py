@@ -451,7 +451,7 @@ class Depsolve:
         if best.pkgtup() in self.rpmdb.getPkgList(): # is it already installed?
             missingdep = 1
             checkdeps = 0
-            msg = 'missing dep: %s for pkg %s' % (needname, name)
+            msg = 'Missing Dependency: %s is needed by package %s' % (needname, name)
             errorlist.append(msg)
             return checkdeps, missingdep
         if (best.name, best.arch) in self.rpmdb.getNameArchPkgList():
@@ -524,7 +524,7 @@ class Depsolve:
     def _unresolveableReq(self, req, name, namestate, errors):
         CheckDeps = 0
         missingdep = 1
-        msg = 'missing dep: %s for pkg %s (%s)' % (req, name, namestate)
+        msg = 'Missing Dependency: %s needed for package %s (%s)' % (req, name, namestate)
         errors.append(msg)
         if self.dsCallback: self.dsCallback.unresolved(msg)
         return CheckDeps, missingdep
@@ -532,6 +532,6 @@ class Depsolve:
     def _unresolveableConflict(self, conf, name, errors):
         CheckDeps = 0
         conflicts = 1
-        msg = '%s conflicts:  %s' % (name, conf)
+        msg = '%s conflicts with %s' % (name, conf)
         errors.append(msg)
         return CheckDeps, conflicts

@@ -894,6 +894,7 @@ class YumBase(depsolve.Depsolve):
         available.sort()
         
         return installed, available
+        
     def getPackageObject(self, pkgtup):
         """retrieves a packageObject from a pkgtuple - if we need
            to pick and choose which one is best we better call out
