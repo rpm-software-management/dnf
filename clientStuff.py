@@ -147,7 +147,7 @@ def rpmdbNevralLoad(nevral):
 			if (rc == -1):
 				rpmdbdict[(name,arch)] = (epoch, ver, rel)
 			elif (rc == 0):
-				print "dupe entry in rpmdb %s\n" % key
+				log(4,"dupe entry in rpmdb %s\n" % key)
 		index = db.nextkey(index)
 	for value in rpmdbdict.keys():
 		(name, arch) = value
@@ -172,8 +172,6 @@ def returnObsoletes(headerNevral,rpmNevral,uninstNAlist):
 	for (name,arch) in uninstNAlist:
 		#print '%s, %s' % (name, arch)
 		header = headerNevral.getHeader(name, arch)
-		if not header:
-			print "die on %s, %s" %(name, arch)
 		obs = header[rpm.RPMTAG_OBSOLETES]
 		if obs:
 		#print "%s, %s obs something" % (name, arch)
@@ -193,7 +191,7 @@ def returnObsoletes(headerNevral,rpmNevral,uninstNAlist):
 				if rpmNevral.exists(obvalue[0]):
 					if len(obvalue) == 1:
 						packages.append((name, arch))
-						print "%s obsoleting %s" % (name,ob)
+						log(4,"%s obsoleting %s" % (name,ob))
 					elif len(obvalue) == 3:
 						(e1,v1,r1) = rpmNevral.evr(name, arch)
 						(e2,v2,r2) = str_to_version(obvalue[3])
@@ -255,15 +253,15 @@ def urlgrab(url, filename=None,nohook=None):
 	try:
 		(fh, hdr) = urllib.urlretrieve(url, filename)
 	except IOError, e:
-		print "IOError: %s"  % (e)
-		print "URL: %s" % (url)
+		errorlog(1,"IOError: %s"  % (e))
+		errorlog(1,"URL: %s" % (url))
 		sys.exit(1)
 	#this is a cute little hack - if there isn't a "Content-Length" header then its either a 404 or a directory list
 	#either way its not what we want so I put this check in here as a little bit of sanity checking
 	if hdr != None:
 		if not hdr.has_key('Content-Length'):
-			print "ERROR: Url Return no Content-Length  - something is wrong"
-			print "URL: %s" % (url)
+			errorlog(1,"ERROR: Url Return no Content-Length  - something is wrong")
+			errorlog(1,"URL: %s" % (url))
 			sys.exit(1)
 	return fh
 

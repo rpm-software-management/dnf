@@ -51,7 +51,9 @@ class nevral:
 
 	def getHeader(self, name, arch=None):
 		((e,v,r,a,l,i),state) = self._get_data(name, arch)
-		if state == None: 
+		if state == None:
+			errorlog(1,"Header for pkg %s not found" % (name))
+			sys.exit(1)
 			return None
 		else: 
 			if l == 'in_rpm_db':
@@ -64,7 +66,6 @@ class nevral:
 					return pkghdr
 			else:
 				#we're in a .hdr file
-				#         print '%s, %s' % (name, arch)
 				pkghdr = clientStuff.readHeader(self.localHdrPath(name, arch))
 				return pkghdr  
 
@@ -145,8 +146,8 @@ class nevral:
 		if l == 'in_rpm_db':
 			return l
 		hdrfn = self.hdrfn(name,arch)
-		#print "%s %s %s %s" % (name, arch, i, l)
 		base = config.conf.serverhdrdir[i]
+		log(4,"localhdrpath= %s for %s %s" % (base + '/' + hdrfn, name, arch)
 		return base + '/' + hdrfn
 		
 	def remoteRpmUrl(self, name, arch=None):

@@ -39,27 +39,27 @@ def installpkgs(tsnevral,nulist,userlist,hinevral,rpmnevral):
 						rc = clientStuff.compareEVR((e1,v1,r1),(e2,v2,r2))
 						if rc < 0:
 							#we should be upgrading this
-							#print "Switching to upgrading %s" % (name)
+							log(4,"Switching to upgrading %s" % (name))
 							((e, v, r, a, l, i), s)=hinevral._get_data(name,bestarch)
 							tsnevral.add((name,e,v,r,a,l,i),'u')            
 						else:
 							#this is the best there is :(
-							print "%s is installed and is the latest version. Exiting" % (name)
+							errorlog(1,"%s is installed and is the latest version. Exiting" % (name))
 							sys.exit(1)
 					else:
 						#we should install this
 						((e, v, r, a, l, i), s)=hinevral._get_data(name,bestarch)
+						log(4,"state - iu: %s, %s" % (name,bestarch))
 						tsnevral.add((name,e,v,r,a,l,i),'iu')
 			if foundit==0:
 				if rpmnevral.exists(n):
-					print "%s is installed and is the latest version. Exiting" % (n)
+					errorlog(1,"%s is installed and is the latest version. Exiting" % (n))
 				else:
-					print "Cannot find a package matching %s" % (n)
+					errorlog(1,"Cannot find a package matching %s" % (n))
 				sys.exit(1)
 			
 	else:
-		print "No Packages Available for Update or Install"
-		
+		errorlog(1,"No Packages Available for Update or Install")	
 	
 
 def listpkgs(pkglist, userlist, nevral):
@@ -125,13 +125,13 @@ def updatepkgs(tsnevral,hinevral,nulist,uplist,obslist,userlist):
 									tsnevral.add((name,e,v,r,a,l,i),'iu')
 							elif uplist.count((name,currarch)) < 1 and nulist.count((name,currarch))<1:
 								#its an arch we do, its not updated and its installed
-								print "%s is the latest version" % (name)
+								errorlog(1,"%s is the latest version" % (name))
 								sys.exit(1)
 				if foundit==0:
-					print "Cannot find any package matching %s. Exiting" % (n)
+					errorlog(1,"Cannot find any package matching %s. Exiting" % (n))
 					sys.exit(1)
 	else:
-		print "No Packages Available for Update or Install"
+		errorlog(1,"No Packages Available for Update or Install")
 			
 
 def erasepkgs(tsnevral,rpmnevral,userlist):
@@ -146,7 +146,7 @@ def erasepkgs(tsnevral,rpmnevral,userlist):
 				((e, v, r, a, l, i), s)=rpmnevral._get_data(name,arch)
 				tsnevral.add((name,e,v,r,a,l,i),'e')				
 		if foundit==0:
-			print "Erase: No matches for %s" % n
+			errolog(1,"Erase: No matches for %s" % n)
 			sys.exit(1)
 
 def kernelupdate(tsnevral):
@@ -228,18 +228,9 @@ def checkSig(package,checktype='md5'):
 	os.close(saveStdout)
 	os.close(saveStderr)
 	if sigcheck:
-		sys.stderr.write('Error:  Signature check failed for %s\n' %(package))
-		sys.stderr.write('Doing nothing.\n')
+		errorlog(1,'Error:  Signature check failed for %s' %(package))
+		errorlog(1,('Doing nothing'))
 		sys.exit(1)
 	return
 
-def cleanpackages(serverlist):
-	from config import conf
-	import os, sys
-	#for each of the servers find their packages dir
-	#find all rpms in that dir
-	#purge the files in that list
-	pass
-
-	
 	

@@ -1,24 +1,155 @@
 import sys
 import string
 
-class logger:
+"""
+A module for convenient yet powerful file-object logging
+
+BASIC USAGE
+
+  from logger import Logger
+
+  log = Logger(threshold=0)    # create the log object and give it
+                               # a threshold of 0
+  log.log(2, 'all done')       # send a log of priority 2 (not printed)
+  log(0, 'error: bandits!')    # send a log of priority 0 (printed)
+  log.write(0, stringvar)      # do a raw write on the file object
+
+DESCRIPTION
+
+  Each logging object is given a threshold.  Any messages that are
+  then sent to that object are logged only if their priority meets or
+  exceeds the threshold.  Lower numerical priority means that a
+  message is more important.  For example: if a log object has
+  threshold 2, then all messages of priority 2, 1, 0, -1, etc will be
+  logged, while those of priority 3, 4, etc. will not.  I suggest the
+  following scale:
+  
+     LOG PRIORITY    MEANING
+              -1     failure - cannot be ignored
+               0     important message - printed in default mode
+               1     informational message - printed with -v
+               2     debugging information
+
+        THRESHOLD    MEANING
+              -1     quiet mode (-q) only failures are printed
+               0     normal operation
+               1     verbose mode (-v)
+               2     debug mode (-vv or -d)
+
+  It can be extended farther in both directions, but that is rarely
+  useful.  It can also be shifted in either direction.  This might be
+  useful if you want o supply the threshold directly on the command
+  line but have trouble passing in negative numbers.  In that case,
+  add 1 to all thresholds and priorities listed above.
+
+BASIC OPTIONS
+
+  There are a couple of basic options that are commonly needed.  These
+  are attribues of instances of class Logger.
+
+  preprefix
+
+    Text that will be printed at the start of each line of output (for
+    log()ged, not write()en messages).  This might be your program's
+    name, for example.
+
+      log.preprefix = 'myprog'
+
+    If preprefix is callable, then it will be called for each log and
+    the returned value will be used.  This is useful for printing the
+    current time.
+
+      import time
+      def printtime():
+          return time.strftime('%m/%d/%y %H:%M:%S ',
+                               time.localtime(time.time()))
+      log.preprefix = printtime
+  
+  file_object
+
+    This is the file object to which output is directed.
+
+LOG CONTAINERS
+
+  If you want a program to log to multiple destinations, it might be
+  convenient to use log containers.  A log container is an object
+  which hold several log objects.  When you log to a log container it
+  passes the message on (with optional tests) to each of the log
+  objects it contains.  For example:
+
+    from logger import Logger, LogContainer
+
+    system = Logger(threshold=1, file_object=logfile)
+    debug  = Logger(threshold=5, file_object=sys.stdout)
+    log = LogContainer([system, debug])
+
+    log(3, 'sent to system and debug, but only debug will print it')
+    log(0, 'very important, both will print it')
+
+  In this mode, log containers are just shorthand for calling all
+  contained objects with the same priority and message.
+
+  When a log object is held in a container, it can still be used
+  directly.  For example, you can still do
+
+    debug(3, ['this will not be sent to the system log, even if its',
+              ' threshold is set very high'])
+
+  (Yes, you can send lists of strings and they will be formatted on
+  different lines.  It is pretty smart.)
+
+ADVANCED
+
+  There are a number of options available for both classes.  These are
+  documented below, in the respective classes and methods.  Here is a
+  list of some of the things you can do:
+
+    * make the prefix contain a string which gets repeated for more
+      important logs.  (prefix)
+    * directly test if a log object WOULD log, so you can do
+      complicated stuff, like efficient for loops. (test)
+    * make the priority, threshold arbitrary objects, with a
+      home-rolled test to see if it should log. (test)
+    * give log containers a "master threshold" and define arbitrary
+      behavior based on it.  Examples include:
+      - only pass on messages of sufficient priority (ragardless of
+        the thresholds of the log ojects).
+      - only pass on messages to objects whose thresholds are
+        (numerically) lower than the master threshold.
+
+SEE ALSO
+
+  Take a look at the examples at the end of this file in the test &
+  demo section.
+
+COMMENTS
+
+  I welcome comments, questions, bug reports and requests... I'm very
+  lonely. :)
+"""
+ 
+AUTHOR  = "Michael D. Stenner <mstenner@phy.duke.edu>"
+VERSION = "0.4"
+DATE    = "2002/06/07"
+
+class Logger:
     """
     USAGE:
-      from logger import logger
+      from logger import Logger
 
-      log_obj = logger(VERBOSITY)     # create the instance
+      log_obj = Logger(THRESHOLD)     # create the instance
 
-      log_obj.log(3, 'message')       # log a message with level 3
+      log_obj.log(3, 'message')       # log a message with priority 3
       log_obj(3, 'message')           # same thing
       log_obj(3, ['message'])         # same thing
 
       log_obj.test(3)                 # boolean - would a message of
-                                      # this level be printed?
+                                      # this priority be printed?
 
-      # a raw write call after the level test, for writing arbitrary text
+      # a raw write call after the priority test, for writing arbitrary text
       log_obj.write(3, 'thing\nto\nwrite')  # (will not be followed by \n)
       
-      pr = log_obj.gen_prefix(3)  # generate the prefix used for level 3
+      pr = log_obj.gen_prefix(3)  # generate the prefix used for priority 3
 
       # see the examples in the test section for more
 
@@ -27,166 +158,183 @@ class logger:
 
       ATTRIBUTES   DEFAULT      DESCRIPTION
       ----------------------------------------------------------
-      verbosity    = 0          how verbose the program should be
-      default      = 1          default level to log at
+      threshold    = 0          how verbose the program should be
       file_object  = sys.stderr file object to which output goes
-      prefix       = '='        prefix string - repeated for more
+      prefix       = ''         prefix string - repeated for more
                                 important logs
       prefix_depth = 5          times prefix is repeated for logs
-                                of level 0.  Basically, set this
+                                of priority 0.  Basically, set this
                                 one larger than your highest log
-                                level.
+                                priority.
       preprefix    = ''         string printed before the prefix
                                 if callable, returned string will
                                 be used (useful for printing time)
-      postprefix   = ' '        string printed after the prefix
-      children     = []         list of other logging objects
-                                every time the log method is
-                                called, the parent will also call
-                                it for each child.  Do not make
-                                it recursive.  I warned you.
-      
-
-    SUGGESTED USE:
-      I use the following rules of thumb:
-
-        LOG LEVEL    MEANING
-              -1     failure - cannot be ignored
-               0     important message - printed in default mode
-               1     informational message - printed with -v
-               2     debugging information
-
-      You can extend it farther in both directions, but I rarely
-      find it useful.
-
-        VERBOSITY    MEANING
-              -1     quiet mode (-q) only failures are printed
-               0     normal operation
-               1     verbose mode (-v)
-               2     debug mode (-vv or -d)
-
-      If you don't like the repeated prefix, set it to ''.  You can
-      still use preprefix to print your program name, for example.
+      postprefix   = ''         string printed after the prefix
+      default      = 1          default priority to log at
 
     """
 
-    AUTHOR  = "Michael D. Stenner <mstenner@phy.duke.edu>"
-    VERSION = "0.3"
-    DATE    = "2002/05/29"
-
     def __init__(self,
-                 verbosity    = 0,
-                 default      = 1,
+                 threshold    = 0,
                  file_object  = sys.stderr,
-                 prefix       = '=',
+                 prefix       = '',
                  prefix_depth = 5,
                  preprefix    = '',
-                 postprefix   = ' ',
-                 children     = None):
-        self.verbosity    = int(verbosity)
-        self.default      = default
+                 postprefix   = '',
+                 default      = 1):
+        self.threshold    = threshold
         self.file_object  = file_object
         self.prefix       = prefix
         self.prefix_depth = prefix_depth
         self.preprefix    = preprefix
         self.postprefix   = postprefix
-        if children == None: self.children = []
-        else: self.children = children
+        self.default      = default
 
-    def test(self, level):
+    def test(self, priority):
 
         """
-        Return true if a log of the given level would be printed.
+        Return true if a log of the given priority would be printed.
+
+        This can be overridden to do any test you like.  Specifically,
+        log and threshold need not be integers.  They be arbitrary
+        objects.  You need only override this method, possibly
+        gen_prefix.
         """
 
-        if self.verbosity >= int(level): return 1
-        else: return 0
+        return int(self.threshold) >= int(priority)
         
-    def gen_prefix(self, level):
+    def gen_prefix(self, priority):
 
         """
         Return the full prefix (including pre and post) for the
-        given level
+        given priority.
+
+        If you use prefix and use a more complicated priority and
+        verbosity (non-numerical), then you should either give the
+        chosen object a __int__ method, or override this function.
         """
         
         if callable(self.preprefix): prefix = self.preprefix()
         else: prefix = self.preprefix
 
         if self.prefix:
-            depth  = self.prefix_depth - level
+            depth  = self.prefix_depth - int(priority)
             if depth < 1: depth = 1
             for i in range(0, depth):
                 prefix = prefix + self.prefix
 
-        prefix = prefix + self.postprefix
-        return prefix
+        return prefix + self.postprefix
 
-    def __call__(self, level, message=None):
-
+    def log(self, priority, message=None):
         """
-        A convenient alternative to the log method.  Basically, I
-        like to name the instance "log" to minimize characters :)
+        Print a log message.  This prepends the prefix to each line
+        and does some basic formatting.
         """
-
-        self.log(level, message)
-
-    def log(self, level, message=None):
-        """
-        Print a log message.  This prepends the prefix to each line.
-        """
-
-        if message == None:
-            # using default level, and the variable 'level'
-            # actually contains the message
-            m = level
-            l = self.default
-        else:
-            l = level
-            m = message
-
-        if self.test(l):
+        p, m = self._use_default(priority, message)
+        if self.test(p):
             if type(m) == type(''): # message is a string
                 mlist = string.split(m, '\n')
                 if mlist[-1] == '': del mlist[-1] # string ends in \n
             elif type(m) == type([]): # message is a list
-                mlist = []
-                for line in m: mlist.append(string.rstrip(line))
+                mlist = map(string.rstrip, m)
             else: mlist = [str(m)] # message is other type
+
+            prefix = self.gen_prefix(p)
             for line in mlist:
-                self.file_object.write(self.gen_prefix(l) +
-                                       line + '\n')
+                self.file_object.write(prefix + line + '\n')
 
-        for child in self.children: child.log(level, message)
+    # make the objects callable
+    __call__ = log
 
-    def write(self, level, message=None):
+    def write(self, priority, message=None):
         """
         Print a log message.  In this case, 'message' must be a string
         as it will be passed directly to the file object's write method.
         """
-        
-        if message == None:
-            # using default level, and the variable 'level'
-            # actually contains the message
-            m = level
-            l = self.default
-        else:
-            l = level
-            m = message
+        p, m = self._use_default(priority, message)
+        if self.test(p): self.file_object.write(m)
 
-        if self.test(l): self.file_object.write(m)
+    def _use_default(self, priority, message):
+        """Substitute default priority if none was provided"""
+        if message == None: return self.default, priority
+        else: return priority, message
 
-        for child in self.children: child.write(level, message)
+class LogContainer:
+    def __init__(self, list=[], threshold=None, default=1):
+        self.logger_list = list
+        self.threshold = threshold
+        self.default = default
 
+    def add(self, log_obj):
+        """Add a log object to the container."""
+        self.logger_list.append(log_obj)
 
+    def log(self, priority, message=None):
+        """Log a message to all contained log objects, depending on
+        the results of test()
+        """
+        p, m = self._use_default(priority, message)
+        for log_obj in self.logger_list:
+            if self.test(p, m, self.threshold, log_obj):
+                log_obj.log(p, m)
+
+    __call__ = log
+    
+    def write(self, priority, message=None):
+        p, m = self._use_default(priority, message)
+        for log_obj in self.logger_list:
+            if self.test(p, m, self.threshold, log_obj):
+                log_obj.write(p, m)
+
+    def _use_default(self, priority, message):
+        """Substitute default priority if none was provided"""
+        if message == None: return self.default, priority
+        else: return priority, message
+
+    def test(self, priority, message, threshold, log_obj):
+        """Test which log objects should be passed a given message.
+
+        This method is used to determine if a given message (and
+        priority) should be passed on to a given log_obj.  The
+        container's threshold is also provided.
+
+        This method always returns 1, and is the default, meaning that
+        all messages will get passed to all objects.  It is intended
+        to be overridden if you want more complex behavior.  To
+        override with your own function, just do something like:
+
+          def hell_no(p, m, t, object): return 0
+          container.test = hell_no
+        """
+        return 1
+
+    def test_limit_priority(self, priority, message, threshold, log_obj):
+        """Only pass on messages with sufficient priority compared to
+        the master threshold.
+
+          container = LogContainer([system, debug], threshold = 2)
+          container.test = container.test_limit_priority
+        """
+        return priority <= threshold
+    
+    def test_limit_threshold(self, priority, message, threshold, log_obj):
+        """Only pass on messages to log objects whose threshold is
+        (numerically) lower than the master threshold.
+
+          container = LogContainer([system, debug], threshold = 2)
+          container.test = container.test_limit_threshold
+        """
+        return log_obj.threshold <= threshold
+    
 if __name__ == '__main__':
     ###### TESTING AND DEMONSTRATION
 
-    loglevel = 3
-    print 'LOGLEVEL = %s' % (loglevel)
-    log   = logger(loglevel,   preprefix = 'TEST  ')
+    threshold = 3
+    print 'THRESHOLD = %s' % (threshold)
+    log   = Logger(threshold,   preprefix = 'TEST  ')
 
     print " Lets log a few things!"
-    for i in range(-2, 10): log(i, 'log level %s' % (i))
+    for i in range(-2, 10): log(i, 'log priority %s' % (i))
 
     print "\n Now make it print the time for each log..."
     import time
@@ -195,17 +343,18 @@ if __name__ == '__main__':
     log.preprefix = printtime
 
     print " and log a few more things"
-    for i in range(-2, 10): log(i, 'log level %s' % (i))
+    for i in range(-2, 10): log(i, 'log priority %s' % (i))
  
-    print "\n now add a child with a different prefix and level..."
-    child = logger(loglevel-2, preprefix = 'CHILD ')
-    log.children.append(child)
-
+    print "\n now create another with a different prefix and priority..."
+    print " and put them in a container..."
+    log2 = Logger(threshold-2, preprefix = 'LOG2 ')
+    cont = LogContainer([log, log2], threshold=0)
+    cont.test = cont.test_limit_priority
+    
     print " and log a bit more"
-    for i in range(-2, 10): log(i, 'log level %s' % (i))
+    for i in range(-2, 10): cont(i, 'log priority %s' % (i))
 
-    print "\n OK, enough of the child... lets play with formatting"
-    log.children = []
+    print "\n OK, enough of the container... lets play with formatting"
 
     stuff = 'abcd\nefgh\nijkl'
 
