@@ -242,16 +242,15 @@ class YumSqlitePackageSack(repos.YumPackageSack):
             for ob in cur.fetchall():
                 pkg = self.db2class(ob)
                 return pkg
-    
-    def searchProvides(self, name):
-        """return list of package providing the name (any evr and flag)"""
-        provides = []
-        # First search the provides cache
+
+    def searchPrco(self, name, prcotype):
+        """return list of packages having prcotype name (any evr and flag)"""
+        results = []
         for (rep,cache) in self.primarydb.items():
             cur = cache.cursor()
-            cur.execute("select * from provides where name = %s" , (name))
-            provs = cur.fetchall()
-            for res in provs:
+            cur.execute("select * from %s where name = %s" , (prcotype, name))
+            prcos = cur.fetchall()
+            for res in prcos:
                 cur.execute("select * from packages where pkgKey = %s" , (res['pkgKey']))
                 for x in cur.fetchall():
                     pkg = self.db2class(x)
@@ -260,7 +259,7 @@ class YumSqlitePackageSack(repos.YumPackageSack):
                                             
                     # Add this provides to prco otherwise yum doesn't understand
                     # that it matches
-                    pkg.prco = {'provides': 
+                    pkg.prco = {prcotype: 
                       [
                       { 'name': res.name,
                         'flags': res.flags,
@@ -270,18 +269,18 @@ class YumSqlitePackageSack(repos.YumPackageSack):
                       }
                       ]
                     }
-                    provides.append(self.pc(pkg,rep))
+                    results.append(self.pc(pkg,rep))
 
-        # If it's not a filename, we are done
-        if (name.find('/') != 0):
-            return provides
+        # If it's not a provides or a filename, we are done
+        if (prcotype != "provides" or name.find('/') != 0):
+            return results
 
         # If it is a filename, search the primary.xml file info
         for (rep,cache) in self.primarydb.items():
             cur = cache.cursor()
             cur.execute("select * from files where name = %s" , (name))
-            provs = cur.fetchall()
-            for res in provs:
+            files = cur.fetchall()
+            for res in files:
                 cur.execute("select * from packages where pkgKey = %s" , (res['pkgKey']))
                 for x in cur.fetchall():
                     pkg = self.db2class(x)
@@ -289,15 +288,15 @@ class YumSqlitePackageSack(repos.YumPackageSack):
                         continue
                                             
                     pkg.files = {name: res['type']}
-                    provides.append(self.pc(pkg,rep))
+                    results.append(self.pc(pkg,rep))
 
-        # If it is a filename, search the primary.xml file info
+        # If it is a filename, search the files.xml file info
         for (rep,cache) in self.filelistsdb.items():
             cur = cache.cursor()
             (dirname,filename) = os.path.split(name)
             cur.execute("select * from filelist,packages where dirname = %s AND filelist.pkgKey = packages.pkgKey" , (dirname))
-            provs = cur.fetchall()
-            for res in provs:
+            files = cur.fetchall()
+            for res in files:
                 if (self.excludes[rep].has_key(res['packages.pkgId'])):
                     continue
                                         
@@ -308,9 +307,25 @@ class YumSqlitePackageSack(repos.YumPackageSack):
                     continue
                 # If it matches we only know the packageId
                 pkg = self.getPackageDetails(res['packages.pkgId'])
-                provides.append(self.pc(pkg,rep))
-        return provides
+                results.append(self.pc(pkg,rep))
+        return results
+
+    def searchProvides(self, name):
+        """return list of packages providing name (any evr and flag)"""
+        return self.searchPrco(name, "provides")
                 
+    def searchRequires(self, name):
+        """return list of packages requiring name (any evr and flag)"""
+        return self.searchPrco(name, "requires")
+
+    def searchObsoletes(self, name):
+        """return list of packages obsoleting name (any evr and flag)"""
+        return self.searchPrco(name, "obsoletes")
+
+    def searchConflicts(self, name):
+        """return list of packages conflicting with name (any evr and flag)"""
+        return self.searchPrco(name, "conflicts")
+
     # TODO this seems a bit ugly and hackish
     def db2class(self,db,nevra_only=False):
       class tmpObject:
