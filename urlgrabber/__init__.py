@@ -44,8 +44,8 @@ following features:
     automatically switching mirrors if there is a failure.
 """
 
-__version__ = '2.9.0'
-__date__    = '2004/08/21'
+__version__ = '2.9.2'
+__date__    = '2005/02/14'
 __author__  = 'Michael D. Stenner <mstenner@linux.duke.edu>, ' \
               'Ryan Tomayko <rtomayko@naeblis.cx>'
 __url__     = 'http://linux.duke.edu/projects/mini/urlgrabber/'

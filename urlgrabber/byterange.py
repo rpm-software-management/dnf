@@ -60,7 +60,10 @@ class HTTPRangeHandler(urllib2.BaseHandler):
     
     def http_error_206(self, req, fp, code, msg, hdrs):
         # 206 Partial Content Response
-        return urllib.addinfourl(fp, hdrs, req.get_full_url())
+        r = urllib.addinfourl(fp, hdrs, req.get_full_url())
+        r.code = code
+        r.msg = msg
+        return r
     
     def http_error_416(self, req, fp, code, msg, hdrs):
         # HTTP's Range Not Satisfiable error
@@ -232,6 +235,7 @@ class FileRangeHandler(urllib2.FileHandler):
             'Content-Type: %s\nContent-Length: %d\nLast-modified: %s\n' %
             (mtype or 'text/plain', size, modified)))
         return urllib.addinfourl(fo, headers, 'file:'+file)
+
 
 # FTP Range Support 
 # Unfortunately, a large amount of base FTP code had to be copied

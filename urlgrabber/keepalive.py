@@ -73,10 +73,29 @@ EXTRA ATTRIBUTES AND METHODS
   urllib2 tries to do clever things with error codes 301, 302, 401,
   and 407, and it wraps the object upon return.
 
-  You can optionally set the module-level global HANDLE_ERRORS to 0,
-  in which case the handler will always return the object directly.
-  If you like the fancy handling of errors, don't do this.  If you
-  prefer to see your error codes, then do.
+  For python versions earlier than 2.4, you can avoid this fancy error
+  handling by setting the module-level global HANDLE_ERRORS to zero.
+  You see, prior to 2.4, it's the HTTP Handler's job to determine what
+  to handle specially, and what to just pass up.  HANDLE_ERRORS == 0
+  means "pass everything up".  In python 2.4, however, this job no
+  longer belongs to the HTTP Handler and is now done by a NEW handler,
+  HTTPErrorProcessor.  Here's the bottom line:
+
+    python version < 2.4
+        HANDLE_ERRORS == 1  (default) pass up 200, treat the rest as
+                            errors
+        HANDLE_ERRORS == 0  pass everything up, error processing is
+                            left to the calling code
+    python version >= 2.4
+        HANDLE_ERRORS == 1  pass up 200, treat the rest as errors
+        HANDLE_ERRORS == 0  (default) pass everything up, let the
+                            other handlers (specifically,
+                            HTTPErrorProcessor) decide what to do
+
+  In practice, setting the variable either way makes little difference
+  in python 2.4, so for the most consistent behavior across versions,
+  you probably just want to use the defaults, which will give you
+  exceptions on errors.
 
 """
 
@@ -89,8 +108,12 @@ import thread
 
 DEBUG = 0
 def DBPRINT(*args): print ' '.join(args)
-HANDLE_ERRORS = 1
 
+import sys
+_python_version = map(int, sys.version.split()[0].split('.'))
+if _python_version < [2, 4]: HANDLE_ERRORS = 1
+else: HANDLE_ERRORS = 0
+    
 class ConnectionManager:
     """
     The connection manager must be able to:
@@ -227,7 +250,8 @@ class HTTPHandler(urllib2.HTTPHandler):
         r._host = host
         r._url = req.get_full_url()
         r._connection = h
-
+        r.code = r.status
+        
         if r.status == 200 or not HANDLE_ERRORS:
             return r
         else:
@@ -326,6 +350,7 @@ class HTTPResponse(httplib.HTTPResponse):
         else: # 2.2 doesn't
             httplib.HTTPResponse.__init__(self, sock, debuglevel)
         self.fileno = sock.fileno
+        self.code = None
         self._rbuf = ''
         self._rbufsize = 8096
         self._handler = None # inserted by the handler later

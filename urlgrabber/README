@@ -12,8 +12,12 @@ Take a look at the install options by doing
    python setup.py install --help
    
 If you are on a Red Hat Linux machine that still uses python 1.5.x by
-default, you may need to run python2 in place of python above.
+default, you may need to run python2 in place of python above.  Note
+that urlgrabber 0.3 and later will work for pre-2.0 python.
 
-If you just want to use urlgrabber.py (and/or keepalive.py) in your
-own programs, simply grab the file(s) and put it with the rest of your
-program's modules.
+With no arguments, distutils will add all modules to a 'urlgrabber'
+package under your python site-packages directory. 
+
+keepalive.py and byterange.py are generic urllib2 extension modules and
+can be used to add keepalive and range support to any urllib2 
+application.

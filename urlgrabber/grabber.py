@@ -287,6 +287,7 @@ import urlparse
 import rfc822
 import time
 import string
+import urllib
 import urllib2
 from stat import *  # S_* and ST_*
 
@@ -570,7 +571,10 @@ class URLGrabber:
         (url, parts) = self._parse_url(url)
         (scheme, host, path, parm, query, frag) = parts
         if filename is None:
-            filename = os.path.basename( path )
+            if scheme in [ 'http', 'https' ]:
+                filename = os.path.basename( urllib.unquote(path) )
+            else:
+                filename = os.path.basename( path )
         if scheme == 'file' and not opts.copy_local:
             # just return the name of the local file - don't make a 
             # copy currently
@@ -662,6 +666,7 @@ class URLGrabber:
             (scheme, host, path, parm, query, frag) = \
                                              urlparse.urlparse(url)
         path = os.path.normpath(path)
+        if scheme in ['http', 'https']: path = urllib.quote(path)
         if '@' in host and auth_handler and scheme in ['http', 'https']:
             try:
                 user_pass, host = host.split('@', 1)
@@ -834,7 +839,8 @@ class URLGrabberFileObject:
         except RangeError, e:
             raise URLGrabError(9, _('%s') % (e, ))
         except IOError, e:
-            if hasattr(e, 'reason') and isinstance(e.reason, TimeoutError):
+            if hasattr(e, 'reason') and have_socket_timeout and \
+                   isinstance(e.reason, TimeoutError):
                 raise URLGrabError(12, _('Timeout: %s') % (e, ))
             else:
                 raise URLGrabError(4, _('IOError: %s') % (e, ))
