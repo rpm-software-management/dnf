@@ -291,6 +291,23 @@ class YumBase(depsolve.Depsolve):
         (rescode, restring) = self.resolveDeps()
         return rescode, restring
 
+    def runTransaction(self, cb):
+        """takes an rpm callback object, performs the transaction"""
+
+        if self.plugins.run('pretrans') != 0:
+            return
+
+        errors = self.ts.run(cb.callback, '')
+        if errors:
+            errstring = 'Error in Transaction: '
+            for descr in errors:
+                errstring += '  %s\n' % str(descr)
+            
+            raise yum.Errors.YumBaseError, errstring
+
+        if self.plugins.run('posttrans') != 0:
+            return
+        
     def excludePackages(self, repo=None):
         """removes packages from packageSacks based on global exclude lists,
            command line excludes and per-repository excludes, takes optional 

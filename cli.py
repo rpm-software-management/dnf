@@ -678,25 +678,11 @@ For more information contact your distribution or package provider.
         cb.filelog = self.filelog # needed for log file output
         cb.tsInfo = self.tsInfo
 
-        if self.plugins.run('pretrans') != 0:
-            return
-
-        # run ts
         self.log(2, 'Running Transaction')
-        
-        errors = self.ts.run(cb.callback, '')
-        if errors:
-            errstring = 'Error in Transaction: '
-            for descr in errors:
-                errstring += '  %s\n' % str(descr)
-            
-            raise yum.Errors.YumBaseError, errstring
+        self.runTransaction(cb=cb)
 
         # close things
         self.log(1, self.postTransactionOutput())
-
-        if self.plugins.run('posttrans') != 0:
-            return
 
     def gpgsigcheck(self, pkgs):
         '''Perform GPG signature verification on the given packages, installing
