@@ -7,7 +7,7 @@ def lock(filename, contents='', mode=0777):
     try:
         fd = os.open(filename, os.O_EXCL|os.O_CREAT|os.O_WRONLY, mode)
     except OSError, msg:
-        if not msg.strerror == "File exists": raise msg
+        if not msg.errno == 17: raise msg
         return 0
     else:
         os.write(fd, contents)
