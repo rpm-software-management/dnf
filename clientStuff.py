@@ -180,20 +180,22 @@ def readHeader(rpmfn):
                 h = rpm.headerLoad(fd.read())
             except rpm404.error,e:
                 errorlog(0,'Damaged Header %s' % rpmfn)
-                sys.exit(1)
+                return None
             except rpm.error, e:
                 errorlog(0,'Damaged Header %s' % rpmfn)
-                sys.exit(1)
+                return None
         except IOError,e:
             fd = open(rpmfn, 'r')
             try:
                 h = rpm.headerLoad(fd.read())
             except rpm404.error,e:
                 errorlog(0,'Damaged Header %s' % rpmfn)
-                sys.exit(1)
+                return None
             except rpm.error, e:
                 errorlog(0,'Damaged Header %s' % rpmfn)
-                sys.exit(1)
+                return None
+        except ValueError, e:
+            return None
     fd.close()
     return h
 
@@ -569,12 +571,22 @@ def get_package_info_from_servers(conf, HeaderInfo):
         HeaderInfoNevralLoad(headerinfofn, HeaderInfo, serverid)
 
 
+def checkheader(headerfile):
+    
 def download_headers(HeaderInfo, nulist):
     for (name, arch) in nulist:
         # this should do something real, like, oh I dunno, check the header 
         # but I'll be damned if I know how
-        if os.path.exists(HeaderInfo.localHdrPath(name, arch)):
-            log(4, 'cached %s' % (HeaderInfo.hdrfn(name, arch)))
+        # if header exists - it gets checked
+        # if header does not exist it gets downloaded then checked
+        # this should happen in a loop - up to 3 times
+        # if we can't get a good header after 3 tries we bail.
+        checkpass = 0
+        good = 1
+        while checkpass != 3 and good != 1:
+            do
+                if os.path.exists(HeaderInfo.localHdrPath(name, arch)):
+                    log(4, 'cached %s' % (HeaderInfo.hdrfn(name, arch)))
             pass
         else:
             log(2, 'getting %s' % (HeaderInfo.hdrfn(name, arch)))
