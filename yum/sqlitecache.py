@@ -220,7 +220,10 @@ class RepodataParserSqlite:
         # If it exists, remove it as we were asked to create a new one
         if (os.path.exists(filename)):
             self.log(3, "Warning: cache already exists, removing old version")
-            os.unlink(filename)
+            try:
+                os.unlink(filename)
+            except OSError:
+                pass
 
         # Try to create the databse in filename, or use in memory when
         # this fails

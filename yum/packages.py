@@ -397,7 +397,7 @@ class YumAvailablePackage(repomd.packageObject.PackageObject, repomd.packageObje
         if flag is None:
             return name
         
-        base = 'name '
+        base = '%s %s ' % (name, flags[flag])
         if e not in [0, '0', None]:
             base += '%s:' % e
         if v is not None:
@@ -406,7 +406,18 @@ class YumAvailablePackage(repomd.packageObject.PackageObject, repomd.packageObje
             base += '-%s' % r
         
         return base
-
+    
+    def requiresList(self):
+        """return a list of requires in normal rpm format"""
+        
+        reqlist = []
+        
+        for prcoTuple in self.returnPrco('requires'):
+            prcostr = self.prcoPrintable(prcoTuple)
+            reqlist.append(prcostr)
+        
+        return reqlist
+        
     def importFromDict(self, pkgdict, repoid):
         """handles an mdCache package dictionary item to populate out 
            the package information"""
