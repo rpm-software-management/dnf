@@ -1,3 +1,59 @@
+2002-08-16 16:59  skvidal
+
+	* clientStuff.py, config.py, logger.py, pkgaction.py, yummain.py: 
+	
+	added the new logger module made non-root runs work properly made
+	'provides' work as non-root and work better in general
+
+2002-08-13 18:18  skvidal
+
+	* pkgaction.py: change how provides works a bit
+
+2002-08-13 18:18  skvidal
+
+	* clientStuff.py: make updates for yum list new - so it works
+	change how provides works a bit
+
+2002-08-07 22:16  skvidal
+
+	* clientStuff.py, nevral.py, pkgaction.py, yum.conf, yummain.py: 
+	added yum whatprovides support made non-root-run be caching-only
+
+2002-08-05 10:50  skvidal
+
+	* sbin/yum: added catch for Broken pipe/IoError
+
+2002-08-03 01:46  skvidal
+
+	* clientStuff.py, config.py, yummain.py: 
+	add -C option to work out of the cache make things faster by not
+	caring about obsoletes unless its during an operation where it
+	matters (upgrade)
+
+2002-07-31 00:23  skvidal
+
+	* pkgaction.py: 
+	stub in place for findrequires/findprovides so I can start a yum
+	find [thing] and have yum tell the user what pkg its in.
+
+2002-07-30 23:51  skvidal
+
+	* clientStuff.py: 
+	added some debugging information to the final diskspace-ts check.
+	
+	I think something odd is happening there when it comes to
+	conflicting pkgs.
+
+2002-07-21 23:13  skvidal
+
+	* yummain.py: 
+	usage patch from Bor
+
+2002-07-19 01:03  skvidal
+
+	* ChangeLog: 
+	updated changelog
+
 2002-07-19 00:54  skvidal
 
 	* pkgaction.py, docs/yum.8: 
