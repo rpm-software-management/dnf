@@ -1,3 +1,25 @@
+2002-07-08 01:47  skvidal
+
+	* clientStuff.py: 
+	fixes a case where a pkg changes arch in an update.  also fixes
+	some problems in the getupdatedhdrlist function
+
+2002-07-03 21:41  skvidal
+
+	* clientStuff.py: 
+	
+	cleaned up some dumb spacing things
+
+2002-07-03 01:33  skvidal
+
+	* docs/yum.8: 
+	add -c into man page
+
+2002-07-03 01:26  skvidal
+
+	* ChangeLog: 
+	new changelog
+
 2002-07-03 01:26  skvidal
 
 	* ChangeLog, archwork.py, clientStuff.py, config.py, nevral.py,
