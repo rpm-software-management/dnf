@@ -666,7 +666,7 @@ For more information contact your distribution or package provider.
             raise yum.Errors.YumBaseError, errstring
 
         # close things
-        self.log(2, self.postTransactionOutput())
+        self.log(1, self.postTransactionOutput())
 
     
     def installPkgs(self, userlist=None):
