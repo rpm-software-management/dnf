@@ -2,7 +2,6 @@
 
 import comps
 import sys
-from libxml2 import parserError
 from Errors import GroupsError
 
 # goals
@@ -65,11 +64,9 @@ class Groups_Info:
         try:
             compsobj = comps.Comps(filename)
         except comps.CompsException, e:
-            raise GroupsError, 'Damaged xml file error:\n %s' % e
-            return
-        except parserError, e:
-            raise GroupsError, 'Damaged or Empty xml file error:\n %s' % e
-            return
+            raise GroupsError, 'Damaged XML file:\n %s' % e
+        except SyntaxError, e:
+            raise GroupsError, 'Damaged or empty XML file:\n %s' % e
 
         self.compscount = self.compscount + 1
         groupsobj = compsobj.groups
