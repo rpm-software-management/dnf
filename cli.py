@@ -707,114 +707,31 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         else:
             return 0, ['No Packages marked for removal']
     
-    def genPkgLists(self):
-        """Generates lists of packages based on arguments on the cli.
-           returns a special object. key = string describing the list, value = list of pkg
-           objects"""
+    def returnPkgLists(self):
+        """Returns packages lists based on arguments on the cli.returns a 
+           GenericHolder instance with the following lists defined:
+           available = list of packageObjects
+           installed = list of packageObjects
+           updates = tuples of packageObjects (updating, installed)
+           extras = list of packageObjects
+           obsoletes = tuples of packageObjects (obsoleting, installed)
+           recent = list of packageObjects
+           """
         
         special = ['available', 'installed', 'all', 'extras', 'updates', 'recent',
                    'obsoletes']
-
-        installed = []
-        available = []
-        updates = []
-        obsoletes = []
-        recent = []
-        extras = []
         
-        pkgnarrow = 'all' # option used to narrow the subset of packages to
-                          # list from
-                        
-        if len(self.extcmds) > 0:
-            if self.extcmds[0] in special:
-                pkgnarrow = self.extcmds.pop(0)
-
-        if pkgnarrow == 'all':
-            self.doRpmDBSetup()
-            inst = self.rpmdb.getPkgList()
-            for hdr in self.rpmdb.getHdrList():
-                po = YumInstalledPackage(hdr)
-                installed.append(po)
-            self.doRepoSetup()
-            for pkg in self.pkgSack.returnPackages():
-                pkgtup = (pkg.name, pkg.arch, pkg.epoch, pkg.version, pkg.release)
-                if pkgtup not in inst:
-                    available.append(pkg)
-
+        if self.extcmds[0] in special:
+            pkgnarrow = self.extcmds.pop(0)
             
-        elif pkgnarrow == 'updates':
-            self.doRpmDBSetup()
-            self.doRepoSetup()
-            self.doUpdateSetup()
-            for (n,a,e,v,r) in self.up.getUpdatesList():
-                matches = self.pkgSack.searchNevra(name=n, arch=a, epoch=e, 
-                                                   ver=v, rel=r)
-                if len(matches) > 1:
-                    updates.append(matches[0])
-                    self.log(4, 'More than one identical match in sack for %s' % matches[0])
-                elif len(matches) == 1:
-                    updates.append(matches[0])
-                else:
-                    self.log(4, 'Nothing matches %s.%s %s:%s-%s from update' % (n,a,e,v,r))
-
-
-        elif pkgnarrow == 'installed':
-            self.doRpmDBSetup()
-            for hdr in self.rpmdb.getHdrList():
-                po = YumInstalledPackage(hdr)
-                installed.append(po)
-
-        elif pkgnarrow == 'available':
-            self.doRpmDBSetup()
-            self.doRepoSetup()
-            inst = self.rpmdb.getPkgList()
-            for pkg in self.pkgSack.returnPackages():
-                pkgtup = (pkg.name, pkg.arch, pkg.epoch, pkg.version, pkg.release)
-                if pkgtup not in inst:
-                    available.append(pkg)
-
-
-        elif pkgnarrow == 'extras':
-            # we must compare the installed set versus the repo set
-            # anything installed but not in a repo is an extra
-            self.doRpmDBSetup()
-            self.doRepoSetup()
-            avail = self.pkgSack.simplePkgList()
-            for hdr in self.rpmdb.getHdrList():
-                po = YumInstalledPackage(hdr)
-                if po.pkgtup() not in avail:
-                    extras.append(po)
-
-        elif pkgnarrow == 'obsoletes':
-            self.doRpmDBSetup()
-            self.doRepoSetup()
-            self.conf.setConfigOption('obsoletes', 1)
-            self.doUpdateSetup()
-
-            for pkgtup in self.up.getObsoletesList():
-                (n,a,e,v,r) = pkgtup
-                pkgs = self.pkgSack.searchNevra(name=n, arch=a, ver=v, rel=r, epoch=e)
-                for po in pkgs:
-                    obsoletes.append(po)
-
-        elif pkgnarrow == 'recent':
-            ftimehash = {}
-            self.doRepoSetup()
-            for po in self.pkgSack.returnPackages():
-                ftime = po.returnSimple('filetime')
-                if not ftimehash.has_key(ftime):
-                    ftimehash[ftime] = [po]
-                else:
-                    ftimehash[ftime].append(po)
-            
-            timekeys = ftimehash.keys()
-            timekeys.sort()
-            timekeys.reverse()
-            for sometime in timekeys:
-                for po in ftimehash[sometime]:
-                    recent.append(po)
+        ypl = self.doPackageLists(pkgnarrow)
         
-        returndict = {}
+        # FIXME make this work correctly for the holder object
+        # rework the list output code to know about:
+        # obsoletes output
+        # the updates format
+        
+
         for (lst, description) in [(updates, 'Updated'), (available, 'Available'), 
                       (installed, 'Installed'), (recent, 'Recently available'),
                       (obsoletes, 'Obsoleting'), (extras, 'Extra')]:
@@ -831,7 +748,7 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
 
             returndict[description] = lst
 
-        return returndict
+        return ygh
 
     def usage(self):
         print _("""

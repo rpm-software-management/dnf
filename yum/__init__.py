@@ -471,3 +471,114 @@ class YumBase(depsolve.Depsolve):
             return 0
         else:
             return -1
+    
+    def doPackageLists(self, pkgnarrow='all'):
+        """generates lists of packages, un-reduced, based on pkgnarrow option"""
+        
+        ygh = yum.misc.GenericHolder()
+        
+        installed = []
+        available = []
+        updates = []
+        obsoletes = []
+        recent = []
+        extras = []
+
+        # list all packages - those installed and available, don't 'think about it'
+        if pkgnarrow == 'all': 
+            self.doRpmDBSetup()
+            inst = self.rpmdb.getPkgList()
+            for hdr in self.rpmdb.getHdrList():
+                po = YumInstalledPackage(hdr)
+                installed.append(po)
+            self.doRepoSetup()
+            for pkg in self.pkgSack.returnPackages():
+                pkgtup = (pkg.name, pkg.arch, pkg.epoch, pkg.version, pkg.release)
+                if pkgtup not in inst:
+                    available.append(pkg)
+
+        # produce the updates list of tuples
+        elif pkgnarrow == 'updates':
+            self.doRpmDBSetup()
+            self.doRepoSetup()
+            self.doUpdateSetup()
+            for (n,a,e,v,r) in self.up.getUpdatesList():
+                matches = self.pkgSack.searchNevra(name=n, arch=a, epoch=e, 
+                                                   ver=v, rel=r)
+                if len(matches) > 1:
+                    updates.append(matches[0])
+                    self.log(4, 'More than one identical match in sack for %s' % matches[0])
+                elif len(matches) == 1:
+                    updates.append(matches[0])
+                else:
+                    self.log(4, 'Nothing matches %s.%s %s:%s-%s from update' % (n,a,e,v,r))
+
+        # installed only
+        elif pkgnarrow == 'installed':
+            self.doRpmDBSetup()
+            for hdr in self.rpmdb.getHdrList():
+                po = YumInstalledPackage(hdr)
+                installed.append(po)
+        
+        # available in a repository
+        elif pkgnarrow == 'available':
+            self.doRpmDBSetup()
+            self.doRepoSetup()
+            inst = self.rpmdb.getPkgList()
+            for pkg in self.pkgSack.returnPackages():
+                pkgtup = (pkg.name, pkg.arch, pkg.epoch, pkg.version, pkg.release)
+                if pkgtup not in inst:
+                    available.append(pkg)
+
+        # not in a repo but installed
+        elif pkgnarrow == 'extras':
+            # we must compare the installed set versus the repo set
+            # anything installed but not in a repo is an extra
+            self.doRpmDBSetup()
+            self.doRepoSetup()
+            avail = self.pkgSack.simplePkgList()
+            for hdr in self.rpmdb.getHdrList():
+                po = YumInstalledPackage(hdr)
+                if po.pkgtup() not in avail:
+                    extras.append(po)
+
+        # obsoleting packages (and what they obsolete)
+        elif pkgnarrow == 'obsoletes':
+            self.doRpmDBSetup()
+            self.doRepoSetup()
+            self.conf.setConfigOption('obsoletes', 1)
+            self.doUpdateSetup()
+
+            for pkgtup in self.up.getObsoletesList():
+                (n,a,e,v,r) = pkgtup
+                pkgs = self.pkgSack.searchNevra(name=n, arch=a, ver=v, rel=r, epoch=e)
+                for po in pkgs:
+                    obsoletes.append(po)
+        
+        # packages recently added to the repositories
+        elif pkgnarrow == 'recent':
+            ftimehash = {}
+            self.doRepoSetup()
+            for po in self.pkgSack.returnPackages():
+                ftime = po.returnSimple('filetime')
+                if not ftimehash.has_key(ftime):
+                    ftimehash[ftime] = [po]
+                else:
+                    ftimehash[ftime].append(po)
+            
+            timekeys = ftimehash.keys()
+            timekeys.sort()
+            timekeys.reverse()
+            for sometime in timekeys:
+                for po in ftimehash[sometime]:
+                    recent.append(po)
+        
+        
+        ygh.installed = installed
+        ygh.available = available
+        ygh.updates = updates
+        ygh.obsoletes = obsoletes
+        ygh.recent = recent
+        ygh.extras = extras
+        
+        return ygh
