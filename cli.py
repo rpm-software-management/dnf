@@ -555,10 +555,10 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         oldcount = self.tsInfo.count()
         if not userlist:
             userlist = self.extcmds
-            
+
+        self.doRepoSetup()
         self.doRpmDBSetup()
         installed = self.rpmdb.getPkgList()
-        self.doRepoSetup()
         avail = self.pkgSack.returnPackages()
         toBeInstalled = {} # keyed on name
         passToUpdate = [] # list of pkgtups to pass along to updatecheck
@@ -652,11 +652,10 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         oldcount = self.tsInfo.count()
         if not userlist:
             userlist = self.extcmds
-
-        self.doRpmDBSetup()
-        installed = self.rpmdb.getPkgList()
         self.doRepoSetup()
         avail = self.pkgSack.simplePkgList()
+        self.doRpmDBSetup()
+        installed = self.rpmdb.getPkgList()
         self.doUpdateSetup()
         updates = self.up.getUpdatesTuples()
         if self.conf.getConfigOption('obsoletes'):

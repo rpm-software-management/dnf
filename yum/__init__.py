@@ -488,12 +488,13 @@ class YumBase(depsolve.Depsolve):
 
         # list all packages - those installed and available, don't 'think about it'
         if pkgnarrow == 'all': 
+            self.doRepoSetup()
             self.doRpmDBSetup()
             inst = self.rpmdb.getPkgList()
             for hdr in self.rpmdb.getHdrList():
                 po = YumInstalledPackage(hdr)
                 installed.append(po)
-            self.doRepoSetup()
+
             for pkg in self.pkgSack.returnPackages():
                 pkgtup = (pkg.name, pkg.arch, pkg.epoch, pkg.version, pkg.release)
                 if pkgtup not in inst:
@@ -501,8 +502,8 @@ class YumBase(depsolve.Depsolve):
 
         # produce the updates list of tuples
         elif pkgnarrow == 'updates':
+            self.doRepoSetup()        
             self.doRpmDBSetup()
-            self.doRepoSetup()
             self.doUpdateSetup()
             for (n,a,e,v,r) in self.up.getUpdatesList():
                 matches = self.pkgSack.searchNevra(name=n, arch=a, epoch=e, 
@@ -524,8 +525,8 @@ class YumBase(depsolve.Depsolve):
         
         # available in a repository
         elif pkgnarrow == 'available':
+            self.doRepoSetup()        
             self.doRpmDBSetup()
-            self.doRepoSetup()
             inst = self.rpmdb.getPkgList()
             for pkg in self.pkgSack.returnPackages():
                 pkgtup = (pkg.name, pkg.arch, pkg.epoch, pkg.version, pkg.release)
@@ -536,8 +537,8 @@ class YumBase(depsolve.Depsolve):
         elif pkgnarrow == 'extras':
             # we must compare the installed set versus the repo set
             # anything installed but not in a repo is an extra
-            self.doRpmDBSetup()
             self.doRepoSetup()
+            self.doRpmDBSetup()
             avail = self.pkgSack.simplePkgList()
             for hdr in self.rpmdb.getHdrList():
                 po = YumInstalledPackage(hdr)
@@ -546,8 +547,8 @@ class YumBase(depsolve.Depsolve):
 
         # obsoleting packages (and what they obsolete)
         elif pkgnarrow == 'obsoletes':
-            self.doRpmDBSetup()
             self.doRepoSetup()
+            self.doRpmDBSetup()
             self.conf.setConfigOption('obsoletes', 1)
             self.doUpdateSetup()
 

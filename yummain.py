@@ -56,13 +56,17 @@ def main(args):
     except Errors.LockError, e:
         base.errorlog(0,'%s' % e.msg)
         sys.exit(200)
-    
+
     # build up an idea of what we're supposed to do
     try:
         result, resultmsgs = base.doCommands()
     except Errors, e:
         result = 1
         resultmsgs = [str(e)]
+#    except KeyboardInterrupt, e:
+#        base.errorlog(0, 'Exiting on user cancel')
+#        unlock()
+#        sys.exit(1)
         
     if result not in [0, 1, 2, 100]:
         base.errorlog(0, 'Unknown Error(s): Exit Code: %d:' % result)
@@ -95,6 +99,10 @@ def main(args):
     except Errors.YumBaseError, e:
         result = 1
         resultmsgs = [str(e)]
+    except KeyboardInterrupt, e:
+        base.errorlog(0, 'Exiting on user cancel')
+        unlock()
+        sys.exit(1)
     
     if result not in [0, 1, 2]:
         base.errorlog(0, 'Unknown Error(s): Exit Code: %d:' % result)
@@ -122,6 +130,10 @@ def main(args):
         base.doTransaction()
     except Errors.YumBaseError, e:
         base.errorlog(0, '%s' % e)
+        unlock()
+        sys.exit(1)
+    except KeyboardInterrupt, e:
+        base.errorlog(0, 'Exiting on user cancel')
         unlock()
         sys.exit(1)
 
