@@ -629,7 +629,7 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
             raise yum.Errors.YumBaseError, errstring
 
         # close things
-        
+        self.log(2, self.postTransactionOutput())
 
     
     def installPkgs(self, userlist=None):

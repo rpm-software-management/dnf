@@ -323,32 +323,11 @@ class YumOutput:
         """displays the transaction in an easy-to-read way."""
         
         out = ''
-        removed = []
-        installed = []
-        updated = []
-        misc = []
-        obsoleted = []
         userout = ''
         depout = ''
         otherout = ''
         
-        for (pkgInfo, mode) in self.tsInfo.dump():
-            if mode == 'u':
-                updated.append(pkgInfo)
-            elif mode == 'i':
-                installed.append(pkgInfo)
-            elif mode == 'e':
-                removed.append(pkgInfo)
-            elif mode == 'o':
-                obsoleted.append(pkgInfo)
-            else:
-                pass
-
-            updated.sort()
-            installed.sort()
-            removed.sort()
-            obsoleted.sort()
-    
+        updated, installed, removed, obsoleted, depup, depinst, deprem = self.tsInfo.makelists()        
 
         for (action, pkglist) in [('Remove', removed), ('Install', installed), 
                                   ('Update', updated)]:
@@ -356,12 +335,17 @@ class YumOutput:
             for pkgtup in pkglist:
                 (n,a,e,v,r) = pkgtup
                 msg = "  %s: %s.%s %s:%s-%s\n" % (action, n,a,e,v,r)
-                
-                if self.tsInfo.reason[pkgtup] == 'dep':
-                   depout = depout + msg
-                else:
-                    userout = userout + msg
+                userout = userout + msg
                    
+        for (action, pkglist) in [('Remove', deprem), ('Install', depinst), 
+                                  ('Update', depup)]:
+
+            for pkgtup in pkglist:
+                (n,a,e,v,r) = pkgtup
+                msg = "  %s: %s.%s %s:%s-%s\n" % (action, n,a,e,v,r)
+                depout = depout + msg
+                   
+
         for pkgtup in obsoleted:
             (n,a,e,v,r) = pkgtup
             obspkg = self.tsInfo.reason[pkgtup]
@@ -375,6 +359,27 @@ class YumOutput:
               
         return out
 
+    def postTransactionOutput(self):
+        out = ''
+        
+        updated, installed, removed, obsoleted, depup, depinst, deprem = self.tsInfo.makelists()
+
+        for (action, pkglist) in [('Removed', removed), ('Dependency Removed', deprem),
+                                  ('Installed', installed), ('Dependency Installed', depinst),
+                                  ('Updated', updated), ('Dependency Updated', depup),
+                                  ('Obsoleted', obsoleted)]:
+            
+            if len(pkglist) > 0:
+                out += '\n%s:' % action
+                for pkgtup in pkglist:
+                    (n,a,e,v,r) = pkgtup
+                    msg = " %s.%s %s:%s-%s" % (n,a,e,v,r)
+                    out += msg
+        
+        return out
+
+
+    
     def pickleRecipe(self):
         """ don't ask """
         
@@ -438,7 +443,7 @@ class DepSolveProgressCallBack:
         
     def restartLoop(self):
         self.loops += 1
-        self.log(2, '--> Restarting Dependency Resolution with new Changes.')
+        self.log(2, '--> Restarting Dependency Resolution with new changes.')
         self.log(3, '---> Loop Number: %d' % self.loops)
     
     def end(self):
@@ -457,7 +462,7 @@ class DepSolveProgressCallBack:
         self.log(2, '--> Processing Conflict: %s conflicts %s' % (name, confname))
 
     def transactionPopulation(self):
-        self.log(2, '--> Populating transaction set with selected packages. Please Wait.')
+        self.log(2, '--> Populating transaction set with selected packages. Please wait.')
     
     def downloadHeader(self, name):
         self.log(2, '---> Downloading header for %s to pack into transaction set.' % name)

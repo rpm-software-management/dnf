@@ -126,7 +126,53 @@ class TransactionData:
             returndict[pkginfo] = mode
         
         return returndict
+        
+    def makelists(self):
+        """returns lists of packages based on mode:
+           updated, installed, erased, obsoleted, depupdated, depinstalled
+           deperased"""
+           
+        removed = []
+        installed = []
+        updated = []
+        obsoleted = []
+        depremoved = []
+        depinstalled = []
+        depupdated = []
+        
+        for (pkgInfo, mode) in self.dump():
+            if mode == 'u':
+                if self.reason[pkgInfo] == 'dep':
+                    depupdated.append(pkgInfo)
+                else:
+                    updated.append(pkgInfo)
+                    
+            elif mode == 'i':
+                if self.reason[pkgInfo] == 'dep':
+                    depinstalled.append(pkgInfo)
+                else:
+                    installed.append(pkgInfo)
+            
+            elif mode == 'e':
+                if self.reason[pkgInfo] == 'dep':
+                    depremoved.append(pkgInfo)
+                else:
+                    removed.append(pkgInfo)
+            elif mode == 'o':
+                obsoleted.append(pkgInfo)
+            else:
+                pass
+    
+            updated.sort()
+            installed.sort()
+            removed.sort()
+            obsoleted.sort()
+            depupdated.sort()
+            depinstalled.sort()
+            depremoved.sort()
 
+        return updated, installed, removed, obsoleted, depupdated, depinstalled, depremoved
+        
     def display(self):
         out = ""
         removed = []
