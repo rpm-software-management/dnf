@@ -524,7 +524,12 @@ class YumBase(depsolve.Depsolve):
                 po = YumInstalledPackage(hdr)
                 installed.append(po)
 
-            for pkg in self.pkgSack.returnPackages():
+            if self.conf.showdupesfromrepos:
+                avail = self.pkgSack.returnPackages()
+            else:
+                avail = self.pkgSack.returnNewestByNameArch()
+
+            for pkg in avail:
                 pkgtup = (pkg.name, pkg.arch, pkg.epoch, pkg.version, pkg.release)
                 if pkgtup not in inst:
                     available.append(pkg)
@@ -557,7 +562,12 @@ class YumBase(depsolve.Depsolve):
             self.doRepoSetup()
             self.doRpmDBSetup()
             inst = self.rpmdb.getPkgList()
-            for pkg in self.pkgSack.returnPackages():
+            if self.conf.showdupesfromrepos:
+                avail = self.pkgSack.returnPackages()
+            else:
+                avail = self.pkgSack.returnNewestByNameArch()
+
+            for pkg in avail:
                 pkgtup = (pkg.name, pkg.arch, pkg.epoch, pkg.version, pkg.release)
                 if pkgtup not in inst:
                     available.append(pkg)
@@ -593,7 +603,12 @@ class YumBase(depsolve.Depsolve):
             recentlimit = now-(self.conf.recent*86400)
             ftimehash = {}
             self.doRepoSetup()
-            for po in self.pkgSack.returnPackages():
+            if self.conf.showdupesfromrepos:
+                avail = self.pkgSack.returnPackages()
+            else:
+                avail = self.pkgSack.returnNewestByNameArch()
+            
+            for po in avail:
                 ftime = int(po.returnSimple('filetime'))
                 if ftime > recentlimit:
                     if not ftimehash.has_key(ftime):

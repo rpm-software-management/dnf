@@ -112,7 +112,8 @@ class yumconf(object):
                        ('overwrite_groups', 0),
                        ('keepalive', 1),
                        ('gpgcheck', 0),
-                       ('obsoletes', 0)]
+                       ('obsoletes', 0),
+                       ('showdupesfromrepos', 0)]
 
         # not being set from the config file
         # or things that can't be handled like all the rest
