@@ -1,5 +1,5 @@
 .\" yum - Yellowdog Updater Modified
-.TH "yum" "8" "2004 Oct 3" "Seth Vidal" ""
+.TH "yum" "8" "2005 Jan 9" "Seth Vidal" ""
 .SH "NAME"
 yum \- Yellowdog Updater Modified
 .SH "SYNOPSIS"
@@ -91,13 +91,11 @@ section below\&.
 Is used to find out which package provides some feature
 or file. Just use a specific name or a file-glob-syntax wildcards to list
 the packages available or installed that provide that feature or file\&.
-Perl or python style regular expressions can be used.
 .IP 
 .IP "\fBsearch\fP"
 Is used to find any packages matching a string in the description, summary,
 packager and package name fields of an rpm. Useful for finding a package
-you do not know by name but know by some word related to it. Perl or python
-style regular expressions can be used.
+you do not know by name but know by some word related to it. 
 .IP 
 .IP "\fBinfo\fP"
 Is used to list a description and summary information about available
@@ -205,7 +203,7 @@ List the packages installed on the system that are obsoleted by packages
 in any yum repository listed in the config file.
 .IP
 .IP "\fBSpecifying package names\fP"
-All the list options mentioned above take regular expressions or package
+All the list options mentioned above take file-glob-syntax wildcards or package
 names as arguments, for example \fByum list available foo*\fP will list
 all available packages that match foo*.
 .IP
