@@ -21,7 +21,8 @@ import os.path
 import misc
 
 import metadata.packageObject
-base=None # will be filled with the baseclass
+
+base=None
 
 def buildPkgRefDict(pkgs):
     """take a list of pkg tuples and return a dict the contains all the possible
@@ -107,7 +108,7 @@ class YumAvailablePackage:
     
     
 class YumPackage(metadata.packageObject.RpmXMLPackageObject):
-    """super class for the metadata packageobject we use"""
+    """derived class for the metadata packageobject we use"""
        
     def getHeader(self):
         """returns an rpm header object from the package object"""
@@ -121,7 +122,7 @@ class YumPackage(metadata.packageObject.RpmXMLPackageObject):
         start = self.returnSimple('hdrstart')
         end = self.returnSimple('hdrend')
         repoid = self.returnSimple('repoid')
-        repo = base.repos.getRepo(self.returnSimple('repoid'))
+        repo = base.repos.getRepo(repoid)
         hdrpath = repo.hdrdir + '/' + hdrname
         if os.path.exists(hdrpath):
             base.log(4, 'Cached header %s exists, checking' % hdrpath)
@@ -129,17 +130,13 @@ class YumPackage(metadata.packageObject.RpmXMLPackageObject):
                 hlist = rpm.readHeaderListFromFile(hdrpath)
             except rpm.error:
                 os.unlink(hdrpath)
-                hdrpath = repo.get(url=url, relative=rel, local=hdrpath, 
-                               start=start, end=end)
-                hlist = rpm.readHeaderListFromFile(hdrpath)
-        else:
-            hdrpath = repo.get(url=url, relative=rel, local=hdrpath, 
-                            start=start, end=end)
-            hlist = rpm.readHeaderListFromFile(hdrpath)
 
+        hdrpath = repo.get(url=url, relative=rel, local=hdrpath, 
+                       start=start, end=end)
+        hlist = rpm.readHeaderListFromFile(hdrpath)
         hdr = hlist[0]
        
-        return hdr                                   
+        return hdr
 
     def getProvidesNames(self):
         """returns a list of providesNames"""

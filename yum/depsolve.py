@@ -24,13 +24,15 @@ import rpmUtils.transaction
 import rpmUtils.miscutils
 import rpm
 
-from packages import YumPackage
+from Errors import DepError
+import packages
 
 class Depsolve:
     def __init__(self, YumBaseClass):
         """takes an rpmUtils.transaction.TransactionData object"""
         base = YumBaseClass
         self.base = base
+        packages.base = base
         self.tsInfo = base.tsInfo
         #self.excludelists = base.conf.getConfigOption
         self.installonly = base.conf.getConfigOption('installonlypkgs')
@@ -54,7 +56,7 @@ class Depsolve:
         pkgs = self.pkgSack.searchNevra(name=n, arch=a, epoch=e, ver=v, rel=r)
 
         if len(pkgs) == 0:
-            # oh hell, how did this happen, we should raise or return None
+            raise DepError, 'Package tuple %s could not be found in packagesack' % pkgtup
             return None
             
         if len(pkgs) > 1: # boy it'd be nice to do something smarter here FIXME

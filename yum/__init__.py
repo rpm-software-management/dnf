@@ -21,7 +21,7 @@ import Errors
 
 import rpmUtils
 import rpmUtils.transaction
-
+import depsolve
 
 class YumBase:
     """This is a primary structure and base class. It houses the objects and
@@ -60,6 +60,13 @@ class YumBase:
         self.up.condenseUpdates()
         
         
+    def doTransaction(self):
+        """go through the packages in the transaction set, find them in the
+           packageSack or rpmdb, and pack up the ts accordingly"""
+        self.ds = depsolve.Depsolve(self)
+        (rescode, restring) = self.ds.resolvedeps()
+        print rescode, restring
+           
     def doLock(self, lockfile):
         """perform the yum locking, raise yum-based exceptions, not OSErrors"""
         
