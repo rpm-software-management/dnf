@@ -1,3 +1,88 @@
+2004-10-27 23:50  skvidal
+
+	* cli.py, yum-daily.spec, yum.spec: 
+	version number changes
+
+2004-10-27 23:39  skvidal
+
+	* docs/yum.conf.5: 
+	doc updates for includepkgs
+
+2004-10-27 23:29  skvidal
+
+	* yum/: __init__.py, depsolve.py: 
+	make some of the error messages from the depsolver a little more
+	verbose/clear
+
+2004-10-27 23:28  skvidal
+
+	* cli.py: 
+	fix traceback when group specified to update or remove does not
+	exist
+
+2004-10-27 23:25  skvidal
+
+	* etc/Makefile: 
+	Fix cron job perms
+
+2004-10-27 02:52  skvidal
+
+	* repomd/packageSack.py: 
+	fix for list objects not offering an __iter__ method in python 2.2
+
+2004-10-25 12:27  skvidal
+
+	* yum/depsolve.py: 
+	update out of conflict implemented - fixes bug 347
+
+2004-10-25 01:15  skvidal
+
+	* yum/transactioninfo.py: 
+	minor doc changes to transactioninfo.py - need to finish fleshing
+	out these classes
+
+2004-10-23 08:40  skvidal
+
+	* yum/transactioninfo.py: 
+	make an unused file compile
+
+2004-10-22 23:16  skvidal
+
+	* cli.py: 
+	output transaction info for confirmation from user when in
+	debuglevel 1
+
+2004-10-22 23:07  skvidal
+
+	* yummain.py, yum/config.py: 
+	fix for bug 344
+
+2004-10-22 02:51  skvidal
+
+	* yum/__init__.py: 
+	implemented includepkgs for repositories
+
+2004-10-21 01:39  skvidal
+
+	* yum/config.py: 
+	allow for #'s in mirrorlists as comments deal with blank lines more
+	gracefully in mirrorlists
+
+2004-10-21 01:20  skvidal
+
+	* docs/yum.8: 
+	remove --downloadonly option, for now
+
+2004-10-21 00:52  skvidal
+
+	* rpmUtils/__init__.py: 
+	fix for erasure dep problem in bug 340
+
+2004-10-19 11:28  skvidal
+
+	* ChangeLog: 
+	Check in the Changelog
+
 2004-10-19 11:20  skvidal
 
 	* docs/yum.conf.5: more yum.conf updates
