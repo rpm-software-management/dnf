@@ -306,13 +306,28 @@ class Depsolve:
             if len(pkgs) > 1:
                 self.log(5, 'Multiple Packages match. %s-%s-%s' % (name, version, release))
                 for po in pkgs:
-                    self.log(5, '   %s' % po)
+                    # if one of them is (name, arch) already in the tsInfo somewhere, 
+                    # pop it out of the list
+                    (n,a,e,v,r) = po.pkgtup()
+                    thismode = self.tsInfo.getMode(name=n, arch=a)
+                    if thismode is not None:
+                        self.log(5, '   %s already in ts %s, skipping' % (po, thismode))
+                        pkgs.remove(po)
+                        continue
+                    else:
+                        self.log(5, '   %s' % po)
+                    
             if len(pkgs) == 1:
                 po = pkgs[0]
                 self.log(5, 'Requiring package is installed: %s' % po)
-
-            requiringPkg = pkgs[0] # take the first one, deal with the others (if there is one)
+            
+            if len(pkgs) > 0:
+                requiringPkg = pkgs[0] # take the first one, deal with the others (if there is one)
                                    # on another dep.
+            else:
+                self.errorlog(1, 'All pkgs in depset are also in tsInfo, this is wrong and bad')
+                CheckDeps = 1
+                return (CheckDeps, missingdep, conflicts, errormsgs)
             
             self.log(4, 'Resolving for installed requiring package: %s' % requiringPkg)
             self.log(4, 'Resolving for requirement: %s' % 
