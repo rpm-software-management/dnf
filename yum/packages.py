@@ -195,9 +195,11 @@ class YumPackage(metadata.packageObject.RpmXMLPackageObject):
                 hlist = rpm.readHeaderListFromFile(hdrpath)
             except rpm.error:
                 os.unlink(hdrpath)
-
-        hdrpath = repo.get(url=url, relative=rel, local=hdrpath, 
-                       start=start, end=end)
+                hdrpath = repo.get(url=url, relative=rel, local=hdrpath, 
+                                   start=start, end=end)
+        else:
+            hdrpath = repo.get(url=url, relative=rel, local=hdrpath, 
+                                start=start, end=end)
         hlist = rpm.readHeaderListFromFile(hdrpath)
         hdr = hlist[0]
        

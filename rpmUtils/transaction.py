@@ -96,16 +96,16 @@ class TransactionData:
             removed.sort()
             
         for (n, a, e, v, r) in removed:
-            out = out + "\t\t[e] %s.%s %s:%s-%s\n" % (n, a, e, v, r)
+            out = out + "\t\t[e] %s.%s %s:%s-%s - %s\n" % (n, a, e, v, r, self.reason[(n, a, e, v, r)])
 
         for (n, a, e, v, r) in installed:
-            out = out + "\t\t[i] %s.%s %s:%s-%s\n" % (n, a, e, v, r)        
+            out = out + "\t\t[i] %s.%s %s:%s-%s - %s\n" % (n, a, e, v, r, self.reason[(n, a, e, v, r)])        
 
         for (n, a, e, v, r) in updated:
-            out = out + "\t\t[u] %s.%s %s:%s-%s\n" % (n, a, e, v, r)        
+            out = out + "\t\t[u] %s.%s %s:%s-%s - %s\n" % (n, a, e, v, r, self.reason[(n, a, e, v, r)])        
 
         for (n, a, e, v, r) in misc:
-            out = out + "\t\t[wtf] %s.%s %s:%s-%s\n" % (n, a, e, v, r)                
+            out = out + "\t\t[wtf] %s.%s %s:%s-%s - %s\n" % (n, a, e, v, r, self.reason[(n, a, e, v, r)])                
 
         return out
 

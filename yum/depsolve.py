@@ -60,9 +60,20 @@ class Depsolve:
     
     def populateTs(self):
         """take transactionData class and populate transaction set"""
+        ts_elem = []
+        for te in self.ts:
+            pkginfo = (te.N(), te.A(), te.V(), te.E(), te.R())
+            if te.Type() == 1:
+                mode = 'i'
+            elif te.Type() == 2:
+                mode = 'e'
+            ts_elem.append((pkginfo, mode))
+            
         for (pkginfo, mode) in self.tsInfo.dump():
             (n, a, e, v, r) = pkginfo
             if mode in ['u', 'i']:
+                if (pkginfo, 'i') in ts_elem:
+                    continue
                 po = self.getPackageObject(pkginfo)
                 hdr = po.getHeader()
                 loc = po.returnSimple('relativepath')
@@ -79,86 +90,125 @@ class Depsolve:
                     self.ts.addInstall(hdr, (hdr, loc), 'i')                                            
                     self.log(5, 'Adding Package %s in mode i' % po)
             elif mode in ['e']:
+                if (pkginfo, mode) in ts_elem:
+                    continue
                 indexes = rpmUtils.getIndexesByKeyword(self.read_ts, name=n,
                           arch=a, epoch=e, version=v, release=r)
                 for idx in indexes:
-                    self.ts.addErase(idx)                          
+                    self.ts.addErase(idx)
                     self.log(5, 'Adding Package %s-%s-%s.%s in mode i' % (n, v, r, a))
         
     def resolveDeps(self):
         CheckDeps = 1
         conflicts = 0
-        unresolvable = 0
+        missingdep = 0
         depscopy = []
         unresolveableloop = 0
-        while CheckDeps==1 or conflicts != 1 or unresolvableloop != 1:
-            errors=[]
+        self.cheaterlookup = {}
+        errors = []
+        
+        while CheckDeps == 1 and (missingdep == 0 or conflicts == 1):
             self.populateTs()
             deps = self.ts.check()
+
+            if not deps:
+                return (2, ['Success - deps resolved'])
+            
             if deps == depscopy:
-                unresolveableloop = unresolveableloop + 1
-                self.log(5, 'looping count = %d' % unresolveableloop)
+                unresolveableloop += 1
+                self.log(5, 'Identical Loop count = %d' % unresolveableloop)
                 if unresolveableloop >= 2:
                     errors.append('Unable to satisfy dependencies')
                     for deptuple in deps:
-                        ((name, version, release), (reqname, reqversion), flags, 
+                        ((name, version, release), (needname, needversion), flags, 
                           suggest, sense) = deptuple
                         msg = 'Package %s needs %s, this is not available.' % \
-                              (name, rpmUtils.miscutils.formatRequire(reqname, 
-                                                            reqversion, flags))
+                              (name, rpmUtils.miscutils.formatRequire(needname, 
+                                                            needversion, flags))
                         errors.append(msg)
+                        missingdep = 1
             else:
                 unresolveableloop = 0
-                           
-            depscopy = deps
-            
-            CheckDeps = 0
-            if not deps:
-                return (2, 'Success - deps resolved')
-            self.log (3, '# of Deps = %d' % len(deps))
-            for ((name, version, release), (reqname, reqversion),
-                                flags, suggest, sense) in deps:
-                self.log(6, 'debug dep: %s req %s - %s - %s' % (name, reqname, reqversion, sense))
-                if sense == rpm.RPMDEP_SENSE_REQUIRES:
-                    # find out if the req package is in the tsInfo
-                    # if it is, check which mode
-                    # if i or u then we're installing or updating something - find it in the repos
-                    # if e or ed then we're removing
-                    # if it is not in the tsInfo, check what provides what it is requiring
-                    # if the package that provides what we're requiring is in the tsInfo or the rpmdb
-                    # if it is in both and the rpmdb one is a different version, try to change versions
-                    # on the requiring package
-                
-                    # silly silly silly easy case
-                    self.log(4, '%s requires: %s' % (name, rpmUtils.miscutils.formatRequire(reqname, reqversion, flags)))
-                    pkgs = self.pkgSack.searchProvides(reqname)
-                    if flags == 0:
-                        flags = None
-                    (r_e, r_v, r_r) = rpmUtils.miscutils.stringToVersion(reqversion)
-                    for po in pkgs:
-                        self.log(3, 'Potential match %s to %s' % (reqname, po))
-                        if po.checkPrco('provides', (reqname, flags, (r_e, r_v, r_r))):
-                            # first one? <shrug>
-                            (n, e, v, r, a) = po.returnNevraTuple() # this is stupid the po should be emitting matching tuple types
-                            pkgtup = (n, a, e, v, r)
-                            self.tsInfo.add(pkgtup, 'u', 'dep')
-                            self.log(3, 'Matched %s to dep for %s' % (po, reqname))
-                            break
 
-                elif sense == rpm.RPMDEP_SENSE_CONFLICTS:
-                    self.log(4, '%s conflicts: %s' % (name, rpmUtils.miscutils.formatRequire(reqname, reqversion, flags)))
-                    
-                    
-                    
-                    
-            self.log(4, 'Restarting Dependency Process with new changes')
-            self.log.write(2, '.')
+            depscopy = deps
+            CheckDeps = 0
+
+
+            # things to resolve
+            self.log (3, '# of Deps = %d' % len(deps))
+            
+            for dep in deps:
+                (CheckDeps, missingdep, conflicts, errormsgs) = self._processDep(dep)
+                for error in errormsgs:
+                    errors.append(error)
+
+            if CheckDeps:
+                self.log(4, 'Restarting Dependency Process with new changes')
+            else:
+                self.log(4, 'Dependency Process ending')
+
             del deps
-            self.ts.clean()
-        
-        
+
         if len(errors) > 0:
             return(1, errors)
         if self.tsInfo.count() > 0:
             return(2, ['Run Callback'])
 
+    def _processDep(self, dep):
+        """processes a dependency from the resolveDeps functions, returns a tuple
+           of (CheckDeps, missingdep, conflicts, errors) the last item is an array
+           of error messages"""
+        
+        CheckDeps = 0
+        missingdep = 0
+        conflicts = 0
+        errormsgs = []
+        
+        ((name, version, release), (needname, needversion), flags, suggest, sense) = dep
+
+        if sense == rpm.RPMDEP_SENSE_REQUIRES:
+            self.log(4, '%s requires: %s' % (name, rpmUtils.miscutils.formatRequire(needname, needversion, flags)))
+            if self.rpmdb.installed(name=name, ver=version, rel=release):
+                # the requiring package is installed, that means the item needed is in
+                # a package that is either being updated or erased/obsoleted
+                # check what state the needed item/package is in:
+                # if it's being upgraded then mark the requiring package to be upgraded too
+                # if it's being erased then mark the requiring package to be erased
+                print 'it is installed %s-%s-%s' % (name, version, release)
+                pass
+            pkgs = self.pkgSack.searchProvides(needname)
+            if flags == 0:
+                flags = None
+            (r_e, r_v, r_r) = rpmUtils.miscutils.stringToVersion(needversion)
+            for po in pkgs:
+                self.log(5, 'Potential match %s to %s' % (needname, po))
+                if po.checkPrco('provides', (needname, flags, (r_e, r_v, r_r))):
+                    # first one? <shrug>
+                    (n, e, v, r, a) = po.returnNevraTuple() # this is stupid the po should be emitting matching tuple types
+                    
+                    ### Why am I getting a po back and then just using the pkgtup info from it
+                    # why not just store the po itself in the tsInfo, and dispense with all these lookups
+                    self.tsInfo.add((n, a, e, v, r), 'u', 'dep')
+                    self.log(3, 'Matched %s to require for %s' % (po, name))
+                    CheckDeps=1
+                    
+            # find out if the req package is in the tsInfo
+            # if it is, check which mode
+            # if i or u then we're installing or updating something - find it in the repos
+            # if e or ed then we're removing
+            # if it is not in the tsInfo, check what provides what it is requiring
+            # if the package that provides what we're requiring is in the tsInfo or the rpmdb
+            # if it is in both and the rpmdb one is a different version, try to change versions
+            # on the requiring package
+        
+
+        elif sense == rpm.RPMDEP_SENSE_CONFLICTS:
+            msg = '%s conflicts: %s' % (name, rpmUtils.miscutils.formatRequire(needname, needversion, flags))
+            self.log(4, '%s', msg)
+            conflicts = 1
+            errormsgs.append(msg)
+            
+        else:
+            self.log(4, 'Unknown Sense: %d' (sense))
+            
+        return (CheckDeps, missingdep, conflicts, errormsgs)

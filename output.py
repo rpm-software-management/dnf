@@ -28,7 +28,7 @@ def simpleProgressBar(current, total, name=None):
     """simple progress bar 50 # marks"""
     
     mark = '#'
-    
+
     if current == 0:
         percent = 0 
     else:
