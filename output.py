@@ -44,7 +44,9 @@ class YumOutput:
         """simple progress bar 50 # marks"""
         
         mark = '#'
-    
+        if not sys.stdout.isatty():
+            return
+            
         if current == 0:
             percent = 0 
         else:
@@ -200,10 +202,8 @@ class YumOutput:
         item.newChild(None, 'pubDate', time.strftime(rfc822_format, date))
         item.newChild(None, 'guid', pkg.returnSimple('id'))
         link = url + '/' + pkg.returnSimple('relativepath')
-        
-        #in order to do the link we need to have the repos dict to pull
-        # out which of the mirror baseurls the relative could be attached to
         item.newChild(None, 'link', escape(link))
+
         # build up changelog
         changelog = ''
         cnt = 0
@@ -346,3 +346,38 @@ class YumOutput:
             format = '%.0f%s%s'
     
         return(format % (number, space, symbols[depth]))
+
+class DepSolveProgressCallBack:
+    """provides text output callback functions for Dependency Solver callback"""
+    
+    def __init__(self):
+        # need print functions
+        # and error print functions
+        # to be set here
+        pass
+    
+    
+    def pkgAdded(self, pkginfo, mode):
+        pass
+        
+    def start(self):
+        pass
+    
+    def restartLoop(self):
+        pass
+    
+    def end(self):
+        pass
+    
+    def procReq(self, name, formatted_req):
+        pass
+    
+    def unresolved(self, msg):
+        pass
+    
+    def procConflict(self, name, confname):
+        pass
+        
+
+    
+    

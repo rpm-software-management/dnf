@@ -131,3 +131,11 @@ def getFileList(path, ext, filelist):
                filelist.append(newpath)
                     
     return filelist
+
+class GenericHolder:
+    """Generic Holder class used to hold other objects of known types
+       It exists purely to be able to do object.somestuff, object.someotherstuff
+       and pass object to another function that will understand it"""
+       
+    pass
+

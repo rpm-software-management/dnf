@@ -62,7 +62,8 @@ class YumBase(depsolve.Depsolve):
     def doSackSetup(self):
         """populates the package sacks for information from our repositories"""
         self.log(3, 'Setting up Package Sacks')
-        archlist = ['src'] # source rpms are allowed
+        #archlist = ['src'] # source rpms are allowed # FIXME decision about src?
+        archlist = []
         archlist.extend(rpmUtils.arch.getArchList())
         archdict = {}
         for arch in archlist:
@@ -85,7 +86,10 @@ class YumBase(depsolve.Depsolve):
         # raise an error
         self.up = rpmUtils.updates.Updates(self.rpmdb.getPkgList(),
                                            self.pkgSack.simplePkgList())
-        if self.conf.getConfigOption('debuglevel') > 4:
+        print self.conf.getConfigOption('debuglevel')
+        if self.conf.getConfigOption('debuglevel') >= 4:
+            print self.conf.getConfigOption('debuglevel')
+            print 'setting debug'
             self.up.debug = 1
             
         if self.conf.getConfigOption('obsoletes'):

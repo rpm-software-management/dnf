@@ -72,22 +72,23 @@ class yumconf(object):
         
         self.configdata = {} # dict to hold all the data goodies
        
+        optionints = [('debuglevel', 2),
+                      ('errorlevel', 2), 
+                      ('retries', 10),
+                      ('recent', 7)]
+                      
+                      
         #defaults -either get them or set them
-        
         optionstrings = [('cachedir', root + '/var/cache/yum'), 
-                         ('debuglevel', 2),
                          ('logfile', root + '/var/log/yum.log'), 
                          ('reposdir', root + '/etc/yum.repos.d'),
                          ('rss-filename', 'yum-rss.xml'),
                          ('pkgpolicy', 'newest'),
-                         ('errorlevel', 2), 
                          ('syslog_ident', None),
                          ('syslog_facility', 'LOG_USER'),
                          ('distroverpkg', 'fedora-release'),
                          ('bandwidth', None),
                          ('throttle', None),
-                         ('retries', 10),
-                         ('numrecent', 30),
                          ('installroot', root),
                          ('commands', []),
                          ('exclude', []),
@@ -120,6 +121,12 @@ class yumconf(object):
                         ('cache', 0),
                         ('progess_obj', None)]
 
+        # do the ints
+        for (option, default) in optionints:
+            value =  self.cfg._getoption('main', option, default)
+            value = int(value) # make it an int, just in case
+            self.configdata[option] = value
+            setattr(self, option, value)
 
         # do the strings        
         for (option, default) in optionstrings:
@@ -203,6 +210,7 @@ class yumconf(object):
         """option, value to set for global config options"""
         try:
             self.configdata[option] = value
+            setattr(self, option, value)
         except KeyError:
             raise Errors.ConfigError, 'No such option %s' % option
 

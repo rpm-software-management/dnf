@@ -709,9 +709,9 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
     
     def genPkgLists(self):
         """Generates lists of packages based on arguments on the cli.
-           returns a dict: key = string describing the list, value = list of pkg
+           returns a special object. key = string describing the list, value = list of pkg
            objects"""
-            
+        
         special = ['available', 'installed', 'all', 'extras', 'updates', 'recent',
                    'obsoletes']
 
@@ -721,6 +721,7 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         obsoletes = []
         recent = []
         extras = []
+        
         pkgnarrow = 'all' # option used to narrow the subset of packages to
                           # list from
                         
