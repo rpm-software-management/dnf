@@ -1,0 +1,207 @@
+.\" yup - Yellow Dog Linux Update Program
+.TH "yup" "8" "2001 Jan  8" "yup" ""
+.SH NAME
+yup \- Yellow Dog Linux Update Program
+.SH SYNOPSIS
+\fByup\fP [options] [command] [package ...]
+.SH DESCRIPTION
+.PP
+\fByup\fP is an interactive, automated update program which can be
+used for maintaining systems using rpm
+.PP
+\fIcommand\fP is one of:
+.br
+.I \fR * install package1 [package2] [\&.\&.\&.]
+.br
+.I \fR * update [package1] [package2] [\&.\&.\&.]
+.br
+.I \fR * remove [package1] [package2] [\&.\&.\&.]
+.br
+.I \fR * group-install group1 [group2] [\&.\&.\&.]
+.br
+.I \fR * group-update group1 [group2] [\&.\&.\&.]
+.br
+.I \fR * list [\&.\&.\&.]
+.br
+.I \fR * group-list [\&.\&.\&.]
+.br
+.I \fR * exclude package1 [package2] [\&.\&.\&.]
+.br
+.I \fR * config [dist | mirror]
+.br
+.I \fR * clean [packages | yupdb | mirror-list | all]
+.br
+.PP
+Unless the --help or -h option is given, one of the above commands
+must be present\&.
+.PP
+.IP "\fBinstall\fP"
+\fBinstall\fP is used to install the latest version of a package or
+group of packages while ensuring that all dependencies are
+satisfied\&.  If no package matches the given package name(s), they are
+assumed to be a shell glob and any matches are then installed\&.
+.IP
+.IP "\fBupdate\fP"
+If run without any packages, \fBupdate\fP will update every currently
+installed package.  If one or more packages are specified, YUP will
+only update the listed packages\&.  While updating packages, \fByup\fP
+will ensure that all dependencies are satisfied\&.  If no package
+matches the given package name(s), they are assumed to be a shell glob
+and any matches are then installed\&.
+.IP
+.IP "\fBremove\fP"
+\fBremove\fP is used to remove the specified packages from the system
+as well as removing any packages which depend on the package being
+removed\&.
+.IP
+.IP "\fBgroup-install\fP"
+\fBgroup-install\fP installs all packages in the specified package
+group\&.
+.IP
+.IP "\fBgroup-update\fP"
+\fBgroup-update\fP updates all currently installed packages as well as
+updating the specified group, installing any new packages in the group
+as well\&.
+.IP
+.IP "\fBlist\fP"
+\fBlist\fP can be used to list various information about available
+packages; more complete details are available in the \fIList Options\fP
+section below\&.
+.IP
+.IP "\fBgroup-list\fP"
+\fBgroup-list\fP without any arguments will list all of the available
+groups; if a group name is given, the packages in that group are listed\&.
+.IP
+.IP "\fBexclude\fP"
+\fBexclude\fP will add each of the packages specified to the exclude
+list in \fI/etc/yup.conf\fP\&.
+.IP
+.IP "\fBconfig\fP"
+\fBconfig\fP must be specified with an argument of either \fIdist\fP
+or f\Imirror\fP which will then cause yup to present an interactive
+configuration menu for either distribution or mirror selection,
+respectively\&.
+.IP
+.IP "\fBclean\fP"
+\fBclean\fP is used to clean up various things which accumulate in the
+yup cache directory over time.  More complete details can be found in
+the \fIClean Options\fP section below\&.
+.IP
+.PP
+.SH "GENERAL OPTIONS"
+Most command line options can be set using the configuration file as
+well and the descriptions indicate the necessary configuration option
+to set\&.
+.PP
+.IP "\fB-h, --help\fP"
+Help; display a help message and then quit\&.
+.IP "\fB-q, --quiet\fP"
+Quiet; produces a quieter output more suitable for logging or
+automated execution.\&.
+Configuration Item: \fBquiet\fP
+.IP "\fB-qq, --really-quiet\fP"
+Really quiet; produces virtually no output\&.
+Configuration Item: \fBreally-quiet\fP
+.IP "\fB-y, --assume-yes\fP"
+Assume yes; assume that the answer to answer to any question which
+would be asked is yes\&.
+Configuration Item: \fBassume-yes\fP
+.IP "\fB--ignore-deps\fP"
+Disable dependency checking\&.
+Configuration Item: \fBignore-deps\fP
+.IP "\fB--skip-install\fP"
+Skip installation; download files only and do not install them\&.
+Configuration Item: \fBskip-install\fP
+.IP "\fB--auto-clean\fP"
+Auto clean; automatically erase downloaded files when they are no
+longer needed\&.
+Configuration Item: \fBauto-clean\fP
+.IP "\fB-P, --passive-ftp\fP"
+Passive FTP; use passive FTP for file transfers\&.
+Configuration Item: \fBpassive-ftp\fP
+.IP "\fB-A [arch], --arch=[arch]\fP"
+Assume that architecture is \fIarch\fP\&.
+Configuration Item: \fBarch-option\fP
+.IP "\fB-D [dist], --dist-name=[dist]\fP"
+Assume that the running distribution is \fIdist\fP\&.
+Configuration Item: \fBdist-option\fP
+.IP "\fB-C [cachedir], --cachedir=[cachedir]\fP"
+Use \fIcachedir\fP for storing all of yup's cache information\&.  If
+unspecified, this defaults to \fI/var/cache/yup\fP\&.
+Configuration Item: \fBcachedir\fP
+
+.PP
+.SH "LIST OPTIONS"
+The following are the ways which you can invoke \fByup\fP in list
+mode\&.  Note that all \fBlist\fP commands include information on the
+version of the package which is available\&.
+.IP
+.IP "\fByup list\fP"
+list all packages in the yup repository\&.
+.IP
+.IP "\fByup list new\fP"
+list all packages in the yup repository not currently installed\&.
+.IP
+.IP "\fByup list updates\fP"
+list all packages with updates available in the yup repository\&.
+.IP
+.IP "\fByup list regex [args]\fP"
+list all packages which match each of the extended Perl regular
+expressions specified as \fIargs\fP\&.
+.IP
+.IP "\fByup list [args]\fP"
+list the packages specified by \fIargs\fP\&.  If an argument does not
+match the name of an available package, it is assumed to be a
+shell-style glob and any matches are printed\&.
+
+.PP
+.SH "CLEAN OPTIONS"
+The following are the ways which you can invoke \fByup\fP in clean
+mode\&.
+.IP
+.IP "\fByup clean packages\fP"
+Eliminate any cached packages from the system\&.  Note that packages are
+not automatically deleted after they are downloaded unless \fByup\fI
+is run with the \fB--auto-clean\fP option\&.
+.IP
+.IP "\fByup clean yupdb\fP"
+Eliminate the files which \fByup\fP uses to determine the remote
+availablility of packages\&.
+.IP
+.IP "\fByup clean mirror-list\fP"
+Remove the mirrors list from the system\&.
+.IP
+.IP "\fByup clean all\fP"
+Remove all of the above\&.
+.IP "\fByup clean\fP"
+Without any options, clean mode works as \fByup clean packages\fP above\&.
+
+.PP
+.SH "FILES"
+.nf
+/etc/yup.conf
+/var/cache/yup/
+.fi
+
+.PP
+.SH "SEE ALSO"
+.IR yup-arch (8) ,
+.IR yup.conf (5)
+.nf
+
+.PP
+.SH "AUTHORS"
+.nf
+Stephen Edie
+Jeremy Katz <katzj@linuxpower.org>
+Bryan Stillwell <bstill@terraplex.com>
+.fi
+
+.PP
+.SH "BUGS"
+There of course aren't any bugs, but if you find any, they can be
+entered in the bug database at Sourceforge
+<http://www.sourceforge.net/projects/yup/> 
+
+
+.fi

@@ -1,0 +1,35 @@
+Things that must be done:
+
+Put the sigcheck function in :)
+ make it an option per server not global.
+
+fix the nevral so newest wins for the headerInfoNevral by default and
+last-in as an option.
+
+Implement the comps parsing and group* functions
+Implement clean * - shouldn't be terribly hard.
+
+Implement pkg excludes for new packages on the client side
+Implement pkg excludes on the server side
+Implement a server-side config file or commandline option to let it know where to get the comps/group list from
+
+Make it possible to have an http-accesible global conf file for excludes and
+what not.
+
+gzip the headers so they are smaller to move across the network
+
+Implement a status/progress bar for downloading pkgs
+Make -q and -d 0 VERY quiet
+Make the syslog, log be sane
+
+rewrite the man pages so they have some meaning :)
+
+Work on making the frontend more spiffy
+
+quiet down the callback for rpm installs if -q is invoked.
+
+work on making ftp and file urls work
+
+test on non x86 archs and make sure grub and lilo stuff are not run for this arch
+possibly implement a per-arch pkgaction.kernelupdate function
+

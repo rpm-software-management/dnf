@@ -1,0 +1,36 @@
+-------------------------------------
+Yum - an automatic updater and installer for rpm-based systems
+-------------------------------------
+
+Included programs:
+/usr/sbin/yum		Main program
+/usr/sbin/yum-arch	Generate the database that yum downloads
+
+Basic usage description follows:
+
+Yum is run with one of the following options:
+
+ - update [package list]
+	If run without any packages, Yum will automatically upgrade every
+	currently installed package.  If one or more packages are
+	specified, Yum will only update the packages listed.
+
+ - install <package list>
+	Yum will install the latest version of the specified package
+	(don't specify version information).
+
+ - remove <package list>
+	Yum will remove the specified packages from the system.
+
+ - yum list [package list]
+        List available packages
+
+yum-arch is run from the distribution site in order to create the
+databases which Yum determines remote package availability.
+
+yum-arch is run in one of two ways:
+	yum-arch <top level of archive>
+
+
+
+

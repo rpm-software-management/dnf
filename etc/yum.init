@@ -1,0 +1,56 @@
+#!/bin/sh
+#
+# yum           This shell script enables the automatic use of YUM
+#
+# Author:       Seth Vidal <skvidal@phy.duke.edu>
+#
+# chkconfig:	345 50 01
+#
+# description:  Enable daily run of yum, a program updater
+#
+
+# source function library
+. /etc/rc.d/init.d/functions
+
+start() {
+	echo -n "Enabling yum: "
+	(/bin/touch /var/lock/subsys/yum && success) || failure
+	echo
+}
+
+stop() {
+	echo -n "Disabling yum: "
+	(/bin/rm -f /var/lock/subsys/yum && success) || failure
+	echo
+}
+
+case "$1" in
+  start)
+	start
+	;;
+  stop) 
+	stop
+	;;
+  restart)
+	stop
+	start
+	;;
+  condrestart)
+        if [ -f /var/lock/subsys/yum ]; then
+	    stop
+	    start
+	fi
+	;;
+  status)
+	if [ -f /var/lock/subsys/yum ]; then
+		echo "nightly yum update is enabled"
+	else
+		echo "nightly yum update is disabled"
+	fi
+	;;
+  *)
+	echo "*** Usage: yum {start|stop|restart|condrestart|status}"
+	exit 1
+esac
+
+exit 0

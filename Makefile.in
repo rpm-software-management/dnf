@@ -1,0 +1,154 @@
+SHELL = @SHELL@
+top_srcdir = @top_srcdir@
+srcdir = @top_srcdir@
+prefix = @prefix@
+exec_prefix = @exec_prefix@
+
+bindir = @bindir@
+sbindir = @sbindir@
+libexecdir = @libexecdir@
+datadir = @datadir@
+sysconfdir = @sysconfdir@
+sharedstatedir = @sharedstatedir@
+localstatedir = @localstatedir@
+libdir = @libdir@
+infodir = @infodir@
+docdir = @docdir@
+includedir = @includedir@
+oldincludedir = @oldincludedir@
+mandir = @mandir@
+
+pkgdocdir = $(docdir)/@PACKAGE@-@VERSION@
+pkgdatadir = $(datadir)/@PACKAGE@
+pkglibdir = $(libdir)/@PACKAGE@
+pkgincludedir = $(includedir)/@PACKAGE@
+
+top_builddir = @top_builddir@
+PACKAGE = @PACKAGE@
+VERSION = @VERSION@
+INSTALL = @INSTALL@
+INSTALL_PROGRAM = @INSTALL_PROGRAM@
+INSTALL_DATA = @INSTALL_DATA@
+INSTALL_SCRIPT = @INSTALL_SCRIPT@
+
+SUBDIRS = sbin etc docs
+
+MODULES = $(srcdir)/pullheaders.pyc \
+	  $(srcdir)/config.pyc \
+	  $(srcdir)/nevral.pyc \
+	  $(srcdir)/logger.pyc \
+	  $(srcdir)/yummain.pyc \
+	  $(srcdir)/pkgaction.pyc \
+          $(srcdir)/serverStuff.pyc \
+	  $(srcdir)/archwork.pyc \
+	  $(srcdir)/callback.pyc \
+	  $(srcdir)/clientStuff.pyc \
+	  $(srcdir)/depchecktree.pyc \
+	  $(srcdir)/iutil.pyc \
+	  $(srcdir)/lilocfg.pyc \
+	  $(srcdir)/lilo.pyc \
+	  $(srcdir)/grubcfg.pyc \
+	  $(srcdir)/checkbootloader.pyc \
+	  $(srcdir)/bootloadercfg.pyc \
+	  $(srcdir)/up2datetheft.pyc \
+	  $(srcdir)/translate.pyc
+
+.SUFFIXES: .py .pyc
+.py.pyc: 
+	./py-compile $*.py
+
+
+all: $(MODULES)
+	for subdir in $(SUBDIRS) ; do \
+	  $(MAKE) -C $$subdir ; \
+	done
+
+
+install: all installdirs
+	for module in $(MODULES) ; do \
+	  $(INSTALL_DATA) $(srcdir)/$$module $(DESTDIR)$(pkglibdir) ; \
+	done
+	for subdir in $(SUBDIRS) ; do \
+	  $(MAKE) -C $$subdir install ; \
+	done
+
+uninstall:
+	for module in $(MODULES) ; do \
+	  $(RM) $(pkglibdir)/$$module ; \
+	done
+	for subdir in $(SUBDIRS) ; do \
+	  $(MAKE) -C $$subdir uninstall ; \
+	done
+
+clean:
+	rm -f *.pyc *.pyo
+	for subdir in $(SUBDIRS) ; do \
+	  $(MAKE) -C $$subdir clean ; \
+	done
+
+distclean: clean
+	$(RM) $(srcdir)/config.log
+	$(RM) $(srcdir)/config.cache
+	$(RM) $(srcdir)/Makefile
+	$(RM) $(srcdir)/config.status
+	$(RM) -rf .libs
+	$(RM) -f core
+	for subdir in $(SUBDIRS) ; do \
+	  $(MAKE) -C $$subdir distclean ; \
+	done
+
+mostlyclean:
+	$(MAKE) clean
+
+
+maintainer-clean:
+	$(MAKE) distclean
+	$(RM) $(srcdir)/configure
+
+
+dist:
+	olddir=`pwd`; \
+	distdir=$(PACKAGE)-$(VERSION); \
+	rm -rf .disttmp; \
+	mkdir .disttmp; \
+	mkdir .disttmp/$$distdir; \
+	$(MAKE) distfiles
+	distdir=$(PACKAGE)-$(VERSION); \
+	cd .disttmp; \
+	tar -cvz > ../$$distdir.tar.gz $$distdir; \
+	cd $$olddir
+	rm -rf .disttmp
+
+distfiles:
+	distdir=$(PACKAGE)-$(VERSION); \
+	cp \
+	$(srcdir)/*.py \
+	$(srcdir)/AUTHORS \
+	$(srcdir)/COPYING \
+	$(srcdir)/INSTALL \
+	$(srcdir)/README \
+	$(srcdir)/TODO \
+	$(srcdir)/py-compile \
+	$(srcdir)/Makefile.in \
+	$(srcdir)/configure.in \
+	$(srcdir)/configure \
+	$(srcdir)/yum.spec \
+	$(srcdir)/install-sh \
+	$(srcdir)/mkinstalldirs \
+	$(top_srcdir)/.disttmp/$$distdir
+	for subdir in $(SUBDIRS) ; do \
+	  $(MAKE) -C $$subdir distfiles ; \
+	done
+
+installdirs:
+	$(srcdir)/mkinstalldirs $(DESTDIR)$(sbindir) $(DESTDIR)/etc $(DESTDIR)$(pkglibdir) $(DESTDIR)$(mandir)/man8 $(DESTDIR)$(mandir)/man5 $(DESTDIR)/var/cache/@PACKAGE@/
+
+archive: dist
+
+
+.PHONY: todo
+todo:
+	@echo ---------------===========================================
+	@grep -n TODO\\\|FIXME `find . -type f` | grep -v grep
+	@echo ---------------===========================================
+.PHONY: all install install-strip uninstall clean distclean mostlyclean maintainer-clean info dvi dist distfiles check installcheck installdirs

@@ -1,0 +1,85 @@
+.\" yup-arch - Yellow Dog Linux Update Program
+.TH "yup-arch" "8" "2001 Jan  8" "yup" ""
+.SH NAME
+yup-arch \- Creates YUP distribution database
+.SH SYNOPSIS
+\fByup-arch\fP command
+.PP
+.SH DESCRIPTION
+.PP
+\fByup-arch\fP is run from the distribution site in order to create the
+databases in which YUP determines remote package availability.
+.PP
+\fIcommand\fP is one of:
+.br
+.I \fR * init directory1 [directory2] [\&.\&.\&.]
+.br
+.I \fR * update directory1 [directory2] [\&.\&.\&.]
+.br
+.PP 
+One of the above commands must always be present
+.PP
+.IP "\fBinit\fP"
+\fBinit\fP is used to initialize the remote package database for the
+first time or re-initialize the database\&.  The directory for each
+supported architecture should be listed as options\&.
+.IP "\fBupdate\fP"
+\fBupdate\fP is used to update the remote package database with
+additional package information\&.  The new informaiton is stored 
+in a diff file.\&.
+
+.PP
+.SH "CONFIGURATION"
+Each directory specified as an argument to a \fByup-arch init\fP or
+\fByup-arch update\fP command can also optionally contain a
+\fI\&.yup.db.conf\fP file which includes configuration directives for
+that directory.  Possible options for this file include:
+.PP
+.IP "\fB\&.exclude [filename]\fP"
+Exclude filename from being updated on client workstations\&.  If
+filename is not found, it is assumed to be a shell glob and any
+matches are then ignored\&.  An example \&.exclude line to exclude all
+packages named \fIkernel*\fPwould look like:
+.IP
+.nf
+\&.exclude kernel*
+.fi
+.PP
+.IP "\fB\&.grouptype [type]\fP"
+Read in a file which gives information on package groups.  Currently
+supported values are \fBcomps34\fP, the version 3 or 4 comps file
+currently used in Red Hat Linux.  An example \&.grouptype line to
+include version 3 or 4 comps file groups would look like 
+.IP
+.nf
+\&.grouptype comps34
+.fi
+
+.PP
+.SH FILES
+.nf
+\&.yup.db.conf
+\&.yup.db.diff
+\&.yup.db.init
+\&.yup.db.list
+\&.yup.db.stat
+.fi
+
+.PP
+.SH "SEE ALSO"
+.IR yup (8)
+
+.PP
+.SH "AUTHORS"
+.nf
+Stephen Edie
+Jeremy Katz <katzj@linuxpower.org>
+Bryan Stillwell <bstill@terraplex.com>
+.fi
+
+.PP
+.SH BUGS
+Any bugs which are found can be entered in the bug database at
+Sourceforge <http://www.sourceforge.net/projects/yup/>\&.
+
+.fi

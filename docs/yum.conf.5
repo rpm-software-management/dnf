@@ -1,0 +1,122 @@
+.\" yup.conf - Yellow Dog Linux Update Program Config File
+.TH "yup.conf" "5" "2001 Jan  4" "yup" ""
+.SH NAME
+yup.conf - yup(8) configuration file
+.SH DESCRIPTION
+The \fIyup\&.conf\fP file is the configuration file for
+\fByup\fP(8)\&.  This file is used both for specifying options which
+should be used by default as well as specifying the location of the
+distribution being used\&.
+.SH GENERAL OPTIONS
+The general options can be specified anywhere within the
+\fIyup\&.conf\fP file and have the option and its value separated by
+whitespace.  
+.PP
+.IP "\fB\&.master\fP"
+\fB\&.master\fP is used to specify the Internet location of the yup
+master file which allows you to easily choose a mirror site for your
+specific distribution\&.  Value is the URL of the master file\&.
+.PP
+.IP "\fB\&.dist-option\fP"
+\fB\&.dist-option\fP is used to specify the name of the distribution
+which you are currently running\&.  Value is the name and version of
+the distribution\&.
+.PP
+.IP "\fB\&.arch-option\fP"
+\fB\&.arch-option\fP specifies what the primary architecture you wish
+to update is\&.  Value is main architecture of RPMS such as i386 or ppc\&.
+.PP
+.IP "\fB\&.passive-ftp\fP"
+\fB\&.passive-ftp\fP specifies whether or not passive FTP transfers
+should be used\&.  Value is \fIy\fP or \fIn\fP\&.
+.PP
+.IP "\fB\&.assume-yes\fP"
+\fB\&.assume-yes\fP specifies that the answer to any questions asked
+should be yes\&.   Value is \fIy\fP or \fIn\fP\&.
+.PP
+.IP "\fB\&.quiet\fP"
+\fB\&.quiet\fP specifies that no warnings should be displayed, only
+errors, in a way suitable for running in an automated fashion\&.
+Value is \fIy\fP or \fIn\fP\&.
+.PP
+.IP "\fB\&.really-quiet\fP"
+\fB\&.really-quiet\fP specifies that no warnings or errors should be
+displayed.  This is good only if you want to get no output from
+\fByup\fP\&. Value is \fIy\fP or \fIn\fP\&.
+.PP
+.IP "\fB\&.ignore-deps\fP"
+\fB\&.ignore-deps\fP specifies that yup's internal dependency check
+should be skipped\&.  Value is \fIy\fP or \fIn\fP\&.
+.PP
+.IP "\fB\&.skip-install\fP"
+\fB\&.skip-install\fP specifies that installation of any packages
+should be skipped; instead, they should just be downloaded\&. Value is
+\fIy\fP or \fIn\fP\&.
+.PP
+.IP "\fB\&.auto-clean\fP"
+\fB\&.auto-clean\fP specifies that package files should be removed
+after they are installed rather than leaving them in the cache directory\&.
+Value is \fIy\fP or \fIn\fP\&.
+.PP
+.IP "\fB\&.logfile\fP"
+\fB\&.logfile\fP specifies a file which yup should append information
+about all package operations to\&.  Value is the file to use\&.
+.PP
+.IP "\fB\&.cachedir\fP"
+\fB\&.cachedir\fP specifies the base directory which should be used
+for storing all of \fByup's\fP cached information such as package
+lists and packages.  If unspecified, defaults to
+\fI/var/cache/yup\fP\&.  Value is the directory to use\&.
+.PP
+.IP "\fB\&.exclude\fP"
+\fB\&.exclude\fP specifies the name of a package which should never be
+modified\&.  If the name does not match any package in the remote
+list, it is assumed to be a shell glob and any matched packages are
+excluded as though they were individually listed\&.  There can be
+multiple \fB\&.exclude\fP lines in the \fIyup.conf\fP file\f&.  An
+example \&.exclude line would look like
+.IP
+.nf
+\&.exclude kernel*
+.fi
+to exclude all packages named \fIkernel*\fP
+
+.SH MIRROR SELECTION
+The other thing specified in the \fIyup.conf\fP file is information
+regarding the mirror to use\&.  This section is a separate block which
+should look like
+.IP
+.nf
+\&.begin        mirror-option
+  \&.name       Yellow Dog Linux Official Mirror
+  \&.country    USA
+  \&.addr       ftp://ftp.yellowdoglinux.com/pub/yellowdog/champion-1.2/
+  \&.arch       ppc
+\&.end
+.fi
+The options here are as follows
+.PP
+.IP "\fB\&.name\fP"
+\fB\&.name\fP specifies the easy to remember name for the mirror
+(optional)
+.PP
+.IP "\fB\&.country\fP"
+\fB\&.country\fP specifies the country in which the mirror is located
+(optional)
+.PP
+.IP "\fB\&.addr\fP"
+\fB\&.addr\fP specifies the actual location of the mirror\&.  This can
+be an FTP site (\fBftp://url\fP), an HTTP site (\fBhttp://url\fP), or
+a local file location (\fBfile://absolute_path\fP)\&.  Note that the
+actual location of the remote packages is this location with the
+architecture appended\&.
+.PP
+.IP "\fB\&.arch\fP"
+\fB\&.arch\fP gives the architecture of the files in the remote
+list (optional)
+
+.SH SEE ALSO
+.IR yup(8)
+.nf
+
+.fi
