@@ -100,11 +100,11 @@ def genhdrs(rpms, headerdir, cmds):
                 goodrpm = goodrpm + 1
         else:
             if header == 'source':
-                log(2,"ignoring srpm: %s" % rpmfn)
+                log(2,"\nignoring srpm: %s" % rpmfn)
             elif header == 'bad':
-                log(2, "ignoring bad rpm: %s" % rpmfn)
+                log(2, "\nignoring bad rpm: %s" % rpmfn)
             else:
-                log(2, "ignoring header string %s in %s" % (header, rpmfn))
+                log(2, "\nignoring header string %s in %s" % (header, rpmfn))
     if not cmds['quiet']:
         print "\n   Total: %d\n   Used: %d" %(numrpms, goodrpm)
     return rpminfo
