@@ -51,6 +51,8 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
            of the repository"""
            
         for repo in self.repos.listEnabled():
+            if repo.repoXML is not None:
+                continue
             self.log(2, 'Setting up Repo:  %s' % repo)
             try:
                 repo.cache = self.conf.getConfigOption('cache')
@@ -402,7 +404,7 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
                             needrepos.append(po.repoid)
 
                     self.log(2, 'Importing Changelog Metadata')
-                    self.repos.populateSack(with='other', which=needrepos)
+                    self.repos.populateSack(with='otherdata', which=needrepos)
                     self.log(2, 'Generating RSS File')
                     self.listPkgs(ypl.recent, 'Recent Packages', outputType='rss')
                 else:

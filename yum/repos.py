@@ -37,14 +37,19 @@ class YumPackageSack(packageSack.PackageSack):
         self.pc = packageClass
         self.added = {}
         
-    def addDict(self, repoid, datatype, datadict, callback=None):
-        total = len(datadict.keys())
-        if datatype == 'primary':
+    def addDict(self, repoid, datatype, dataobj, callback=None):
+        if self.added.has_key(repoid):
+            if datatype in self.added[repoid]:
+                print 'not reloading'
+                return
+
+        total = len(dataobj.keys())
+        if datatype == 'metadata':
             current = 0        
-            for pkgid in datadict.keys():
+            for pkgid in dataobj.keys():
                 current += 1
                 if callback: callback(current, total, repoid)
-                pkgdict = datadict[pkgid]
+                pkgdict = dataobj[pkgid]
                 po = self.pc(pkgdict, repoid)
                 po.simple['id'] = pkgid
                 self._addToDictAsList(self.pkgsByID, pkgid, po)
@@ -52,18 +57,18 @@ class YumPackageSack(packageSack.PackageSack):
             
             if not self.added.has_key(repoid):
                 self.added[repoid] = []
-            self.added[repoid].append('primary')
+            self.added[repoid].append('metadata')
             
-        elif datatype in ['filelists', 'other']:
+        elif datatype in ['filelists', 'otherdata']:
             if self.added.has_key(repoid):
-                if 'primary' not in self.added[repoid]:
+                if 'metadata' not in self.added[repoid]:
                     raise Errors.RepoError, '%s md for %s imported before primary' \
                            % (datatype, repoid)
             current = 0
-            for pkgid in datadict.keys():
+            for pkgid in dataobj.keys():
                 current += 1
                 if callback: callback(current, total, repoid)
-                pkgdict = datadict[pkgid]
+                pkgdict = dataobj[pkgid]
                 if self.pkgsByID.has_key(pkgid):
                     for po in self.pkgsByID[pkgid]:
                         po.importFromDict(pkgdict, repoid)
@@ -157,10 +162,10 @@ class RepoStorage:
             repo.setupGrab()
             
                 
-    def populateSack(self, which='enabled', with='primary', callback=None):
+    def populateSack(self, which='enabled', with='metadata', callback=None):
         """This populates the package sack from the repositories, two optional 
            arguments: which='repoid, enabled, all'
-                      with='primary, filelists, other, all'"""
+                      with='metadata, filelists, otherdata, all'"""
 
         if not callback:
             callback = self.callback
@@ -179,7 +184,7 @@ class RepoStorage:
                 myrepos.append(repobj)
 
         if with == 'all':
-            data = ['primary', 'filelists', 'other']
+            data = ['metadata', 'filelists', 'otherdata']
         else:
             data = [ with ]
         
@@ -187,24 +192,29 @@ class RepoStorage:
             if not hasattr(repo, 'cacheHandler'):
                 repo.cacheHandler = mdcache.RepodataParser(storedir=repo.cachedir, callback=callback)
             for item in data:
-                if item == 'primary':
+                if self.pkgSack.added.has_key(repo.id):
+                    if item in self.pkgSack.added[repo.id]:
+                        continue
+                        
+                if item == 'metadata':
                     xml = repo.getPrimaryXML()
                     (ctype, csum) = repo.repoXML.primaryChecksum()
                     repo.cacheHandler.getPrimary(xml, csum)
-                    dtype = repo.cacheHandler.repodata['metadata']
-                    self.pkgSack.addDict(repo.id, item, dtype, callback) 
+                    dobj = repo.cacheHandler.repodata[item]
+                    self.pkgSack.addDict(repo.id, item, dobj, callback) 
+
                 elif item == 'filelists':
                     xml = repo.getFileListsXML()
                     (ctype, csum) = repo.repoXML.filelistsChecksum()
                     repo.cacheHandler.getFilelists(xml, csum)
-                    dtype = repo.cacheHandler.repodata['filelists']
-                    self.pkgSack.addDict(repo.id, item, dtype, callback) 
-                elif item == 'other':
+                    dobj = repo.cacheHandler.repodata[item]
+                    self.pkgSack.addDict(repo.id, item, dobj, callback) 
+                elif item == 'otherdata':
                     xml = repo.getOtherXML()
                     (ctype, csum) = repo.repoXML.otherChecksum()
                     repo.cacheHandler.getOtherdata(xml, csum)
-                    dtype = repo.cacheHandler.repodata['otherdata']
-                    self.pkgSack.addDict(repo.id, item, dtype, callback)
+                    dobj = repo.cacheHandler.repodata[item]
+                    self.pkgSack.addDict(repo.id, item, dobj, callback)
                 else:
                     # how odd, just move along
                     continue
@@ -428,7 +438,9 @@ class Repository:
 
         remote = self.repoMDFile
         local = self.cachedir + '/repomd.xml'
-        
+        if self.repoXML is not None:
+            return
+            
         if self.cache == 1:
             if not os.path.exists(local):
                 raise Errors.RepoError, 'Cannot find repomd.xml file for %s' % (self)

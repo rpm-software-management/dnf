@@ -431,6 +431,20 @@ class YumAvailablePackage(repomd.packageObject.PackageObject, repomd.packageObje
                 if cdict.has_key('value'): text = cdict['value']
                 if cdict.has_key('author'): author = cdict['author']
                 self.changelog.append((date, author, text))
-                    
+        
+        if hasattr(pkgdict, 'checksum'):
+            ctype = pkgdict.checksum['type']
+            csum = pkgdict.checksum['value']
+            csumid = pkgdict.checksum['pkgid']
+            if csumid is None or csumid.upper() == 'NO':
+                csumid = 0
+            elif csumid.upper() == 'YES':
+                csumid = 1
+            else:
+                csumid = 0
+            self.checksums.append((ctype, csum, csumid))
+            
+            
+        
     
     
