@@ -1,7 +1,7 @@
 #!/usr/bin/python
 
 import sys
-sys.path.insert(0, '/home/skvidal/cvs/yum-HEAD')
+sys.path.insert(0, '/usr/share/yum-cli')
 
 import yummain
 try:
