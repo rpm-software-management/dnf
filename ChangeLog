@@ -1,3 +1,9 @@
+2003-05-19 22:55  skvidal
+
+	* ChangeLog, configure.in, yum-7.x.spec, yum.conf, yum.spec: 
+	mark as 1.0.1 update changelog update spec files update silly conf
+	file
+
 2003-05-19 22:40  skvidal
 
 	* lilocfg.py, pkgaction.py, translate.py: 

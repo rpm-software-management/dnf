@@ -259,7 +259,7 @@ def main(args):
 
 def usage():
     print """
-    Usage:  yum [options] <update | upgrade | install | info | erase | list |
+    Usage:  yum [options] <update | upgrade | install | info | remove | list |
             clean | provides>
                 
          Options:
