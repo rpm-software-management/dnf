@@ -1,3 +1,153 @@
+2004-10-18 01:08  skvidal
+
+	* cli.py, yum-daily.spec, yum.spec: 
+	update version number to 2.1.8
+
+2004-10-18 01:05  skvidal
+
+	* yum/__init__.py: 
+	modified file name for gpgkeycheck caching
+
+2004-10-18 01:00  skvidal
+
+	* yum/__init__.py: 
+	sort groups for grouplist
+
+2004-10-18 00:42  skvidal
+
+	* cli.py, yum/__init__.py: 
+	misc fixed pychecker found
+
+2004-10-18 00:30  skvidal
+
+	* cli.py, yum/__init__.py: add in a function that will check if the
+	user has any gpg public keys installed in the rpmdb if the user has
+	gpgcheck=1 set anywhere.  If the user has it set and does not have
+	any gpg keys installed it will error out and report a sensible
+	message about how to solve it.
+	
+	If they do have keys installed it will save a file in cachedir so
+	it won't have to make the check again.	It's not intended to be a
+	serious measure to stop abuse, but it will catch 90% of the people
+	who have enabled gpgchecking w/o importing any keys
+
+2004-10-17 17:14  skvidal
+
+	* cli.py, output.py, rpmUtils/transaction.py: 
+	implemented post-transaction report output - just a short format of
+	what happened
+
+2004-10-17 10:32  skvidal
+
+	* urlgrabber/grabber.py: 
+	checked in fix to yum-urlgrabber for bug 335
+
+2004-10-17 05:02  skvidal
+
+	* cli.py, yum/__init__.py: 
+	add clean metadata and clean cache functions remove garbage print
+	output from makecache
+
+2004-10-17 04:21  skvidal
+
+	* cli.py: stray period
+
+2004-10-17 04:19  skvidal
+
+	* yum/config.py: 
+	minor string change for config error message
+
+2004-10-17 04:13  skvidal
+
+	* callback.py, cli.py, output.py: 
+	few more callback clean ups tidy up some output in different debug
+	levels
+
+2004-10-17 03:59  skvidal
+
+	* cli.py: 
+	fix for install with localrpm package via 'install' not
+	'localinstall'
+
+2004-10-17 03:55  skvidal
+
+	* callback.py, cli.py, output.py, rpmUtils/transaction.py: 
+	filelog functional
+
+2004-10-17 02:05  skvidal
+
+	* urlgrabber/: __init__.py, byterange.py, grabber.py, keepalive.py,
+	mirror.py, progress.py: 
+	update urlgrabber to fix up a couple of problems, Thanks to Ryan
+	for making these happen so quickly
+
+2004-10-16 20:16  skvidal
+
+	* cli.py, output.py, yum/__init__.py, yum/depsolve.py: 
+	lots of output changes to make the output and callbacks prettier
+
+2004-10-16 16:40  skvidal
+
+	* Makefile: modify makefile for transition from yum.sh -> yum.py in
+	bin/
+
+2004-10-16 16:39  skvidal
+
+	* bin/: yum.py, yum.sh: 
+	removing shell script which caused pain, adding python script that
+	removes pain
+
+2004-10-16 16:12  skvidal
+
+	* cli.py, yummain.py, yum/__init__.py: 
+	Check in Fix for duke bug #323
+
+2004-10-15 02:50  skvidal
+
+	* cli.py, yum/__init__.py, yum/depsolve.py, yum/packages.py,
+	yum/repos.py: 
+	implement a local package install mechanism
+	
+	you can now do: yum localinstall /path/to/a/file.rpm
+	
+	and it will install or update it depending on what should be done
+	to it.	you can also do: yum install /path/to/a/file.rpm
+	some_package_from_a_repo
+	
+	and it will 'do the right thing'
+	
+	However, you will pay the performance penalty of importing the
+	repository metadata if you do it w/install
+
+2004-10-15 02:48  skvidal
+
+	* yum/mdcache.py: 
+	grouse around in mdcache some more to make it delete the memory
+	it's holding. Ultimately to no avail.
+
+2004-10-14 23:51  skvidal
+
+	* rpmUtils/oldUtils.py: 
+	fix for i18n import that doesn't exist
+
+2004-10-14 01:33  skvidal
+
+	* cli.py, yummain.py, yum/__init__.py, yum/mdcache.py,
+	yum/repos.py: 
+	- make yum makecache just a little light - though clearly something
+	is wrong with the garbage collection
+	
+	- change a few debug outputs
+
+2004-10-13 02:20  skvidal
+
+	* cli.py: 
+	fix up usage()
+
+2004-10-13 02:03  skvidal
+
+	* ChangeLog: Check in Changelog
+
 2004-10-13 02:02  skvidal
 
 	* cli.py, yum-daily.spec, yum.spec: 
