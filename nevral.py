@@ -19,11 +19,11 @@ import clientStuff
 import rpm
 import string
 import sys
+import archwork
 
 class nevral:
 
     def __init__(self):
-        import string
         self.rpmbyname = {}
         self.rpmbynamearch = {}
             
@@ -181,7 +181,6 @@ class nevral:
         #    conflicts
         #return 0 and a message if all is fine
         #return 1 and a list of error messages if shit breaks
-        import clientStuff, rpm, archwork
         CheckDeps = 1
         conflicts = 0
         unresolvable = 0

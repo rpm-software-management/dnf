@@ -14,7 +14,12 @@
 # Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 # Copyright 2002 Duke University 
 
-import ConfigParser,sys,os, urlparse, string
+import ConfigParser
+import sys
+import os
+import urlparse
+import string
+
 class yumconf:
 
     def __init__(self, configfile = '/etc/yum.conf'):

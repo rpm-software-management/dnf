@@ -68,7 +68,6 @@ def getENVRA(header):
     return (epoch, name, ver, rel, arch)
 
 def str_to_version(str):
-    import string
     i = string.find(str, ':')
     if i != -1:
         epoch = string.atol(str[:i])
@@ -251,7 +250,7 @@ def progresshook(blocks, blocksize, total):
         
 
 def urlgrab(url, filename=None, nohook=None):
-    import urllib, rfc822, urlparse, os
+    import urllib, rfc822, urlparse
     (scheme,host, path, parm, query, frag) = urlparse.urlparse(url)
     path = os.path.normpath(path)
     url = urlparse.urlunparse((scheme, host, path, parm, query, frag))
@@ -446,11 +445,7 @@ def getfilelist(path, ext, list):
     # store them in append them to list
     # return list
     # ignore symlinks
-    import os
-    import string
-
     dir_list = os.listdir(path)
-
     for d in dir_list:
         if os.path.isdir(path + '/' + d):
             list = getfilelist(path + '/' + d, ext, list)
@@ -709,8 +704,6 @@ def create_final_ts(tsInfo, rpmdb):
     
 
 def checkGPGInstallation():
-    import os
-    import sys
     if not os.access("/usr/bin/gpg", os.X_OK):
         errorlog(0, "Error: GPG is not installed")
         return 1

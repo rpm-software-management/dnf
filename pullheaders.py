@@ -17,9 +17,12 @@
 #NTS XXX might be worthwhile to have an option to do sigchecking on the server side
 
 
-import os, sys, rpm
+import os
+import sys
+import rpm
 import serverStuff
 from logger import Logger
+
 log=Logger(threshold=0,default=2,prefix='',preprefix='')
 serverStuff.log = log
 

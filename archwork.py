@@ -15,10 +15,11 @@
 # Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 # Copyright 2002 Duke University 
 
+import os
+import rpm
 
 
 def getArch():
-    import os
     arch = os.uname()[4]
     if (len (arch) == 4 and arch[0] == 'i' and
         arch[2:4] == "86"):
@@ -30,7 +31,6 @@ def getArch():
 def betterarch(arch1, arch2):
     """Take two archs, return the better of the two, returns none if both \
     of them come out to 0, returns either if they are the same archscore"""
-    import rpm
     score1 = rpm.archscore(arch1)  
     score2 = rpm.archscore(arch2)  
     if score1 == 0 and score2 == 0:

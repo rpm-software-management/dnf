@@ -31,8 +31,7 @@ def parseCmdArgs(args):
     
     # setup our errorlog object 
     errorlog=Logger(threshold=10, file_object=sys.stderr)
-    
-    
+
     # our default config file location
     yumconffile=None
     if os.access("/etc/yum.conf", os.R_OK):
@@ -67,10 +66,8 @@ def parseCmdArgs(args):
         else:
             errorlog(0, 'Cannot find any conf file.')
             sys.exit(1)
-
         # who are we:
         conf.uid=os.geteuid()
-
             
         # we'd like to have a log object now
         log=Logger(threshold=conf.debuglevel, file_object=sys.stdout)
@@ -102,9 +99,6 @@ def parseCmdArgs(args):
     
 def main(args):
     """This does all the real work"""
-
-    ##############################################################
-
         
     if len(args) < 1:
         usage()
@@ -121,9 +115,6 @@ def main(args):
     if process == 'clean':
         conf.cache=1
         
-
-
-
     # push the logs into the other namespaces
     pkgaction.log=log
     clientStuff.log=log
