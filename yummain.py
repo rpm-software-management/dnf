@@ -57,36 +57,42 @@ def main(args):
     
     # build up an idea of what we're supposed to do
     try:
-        result, resstring = base.doCommands()
+        result, resultmsgs = base.doCommands()
     except Errors, e:
         result = 1
-        restring = str(e)
+        resultmsgs = [str(e)]
         
     if result not in [0, 1, 2]:
-        base.errorlog(0, 'Unknown Error: %d - %s' % (result, resstring))
+        base.errorlog(0, 'Unknown Error(s): Exit Code: %d:' % result)
+        for msg in resultmsgs:
+            base.errorlog(0, msg)
         unlock()
         sys.exit(3)
         
     if result == 0:
-        base.log(2, '%s' % resstring)
+        for msg in resultmsgs:
+            base.log(2, '%s' % msg)
         unlock()
         sys.exit(0)
             
     elif result == 1:
-        base.errorlog(0, 'Error: %s' % resstring)
+        for msg in resultmsgs:
+            base.errorlog(0, 'Error: %s' % msg)
         unlock()
         sys.exit(1)
             
     # Depsolve stage
     base.log(2, 'Resolving Dependencies')
     try:
-        (result, resstring) = base.buildTransaction() 
+        (result, resultmsgs) = base.buildTransaction() 
     except Errors.YumBaseError, e:
         result = 1
-        resstring = str(e)
+        resultmsgs = [str(e)]
     
     if result not in [0, 1, 2]:
-        base.errorlog(0, 'Unknown Error: %d - %s' % (result, resstring))
+        base.errorlog(0, 'Unknown Error(s): Exit Code: %d:' % result)
+        for msg in resultmsgs:
+            base.errorlog(0, msg)
         unlock()
         sys.exit(3)
         
@@ -95,7 +101,8 @@ def main(args):
         sys.exit(0)
             
     elif result == 1:
-        base.errorlog(0, 'Error: %s' % resstring)
+        for msg in resultmsgs:
+            base.errorlog(0, 'Error: %s' % msg)
         unlock()
         sys.exit(1)
 

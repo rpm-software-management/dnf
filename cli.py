@@ -319,13 +319,39 @@ class YumBaseCli(yum.YumBase):
             try:
                 return self.listPkgs()
             except yum.Errors.YumBaseError, e:
-                return 1, '%s' % e
+                return 1, [str(e)]
             
         elif self.basecmd == 'clean':
             # if we're cleaning then we don't need to talk to the net
             self.conf.setConfigOption('cache', 1)
+
+
     def doTransaction(self):
-        pass
+        """takes care of package downloading, checking, user confirmation and actually
+           RUNNING the transaction"""
+        
+        # download all pkgs in the tsInfo - md5sum vs the metadata as you go
+        # gpgcheck in a big pile, report all errors at once
+        # confirm with user
+        # create test/final ts - we can't use self.ts anymore it doesn't
+        #     have the packages final locations - kill it and replace it
+        #     remember the vs and other flags and installroot
+        # ts.check()
+        # ts.order()
+        # callback init
+        # run ts
+        # report errors
+        
+        #downloading
+         # build up list of things needed to download
+         # get po for each item
+         # pass list of po to downloader method
+         # download
+         # checksum from po.checksums
+         # if we get an error we can't surmount exit and go away
+         
+         
+
         
     def installPkgs(self, userlist=None):
         """Attempts to take the user specified list of packages/wildcards
@@ -416,8 +442,8 @@ class YumBaseCli(yum.YumBase):
             print '   %s.%s %s:%s-%s' % (n, a, e, v, r)
             
         if self.tsInfo.count() > oldcount:
-            return 2, 'Package(s) to install'
-        return 0, 'Nothing to do'
+            return 2, ['Package(s) to install']
+        return 0, ['Nothing to do']
         
         #FIXME - what do I do in the case of yum install kernel\*
         # where kernel-1.1-1.i686 is installed and kernel-1.2-1.i[3456]86 are
@@ -443,7 +469,7 @@ class YumBaseCli(yum.YumBase):
             (n, a, e, v, r) = pkgtup
             self.tsInfo.add(pkgtup, 'u', 'user')
         
-        return 2, 'Updated Packages in Transaction'
+        return 2, ['Updated Packages in Transaction']
         
            
     def listPkgs(self, disp='output.rpm listDisplay'):
@@ -552,16 +578,26 @@ class YumBaseCli(yum.YumBase):
                 if name in ['Installed', 'Extra']:
                     for pkg in lst:
                         (n, a, e, v, r) = pkg
-                        self.log(2, '%s:%s-%s-%s.%s' % (e, n, v, r, a))
+                        if e != '0':
+                            ver = '%s:%s-%s' % (e, v, r)
+                        else:
+                            ver = '%s-%s' % (v, r)
+                            
+                        self.log(2, "%-36s%-7s%-25s%-12s" % (n, a, ver, 'installed'))
                 else:
                     for pkg in lst:
                         po = self.getPackageObject(pkg)
-                        self.log(2, '%s - %s' % (po.returnSimple('repoid'), po))
+                        if po.epoch != '0':
+                            ver = '%s:%s-%s' % (po.epoch, po.version, po.release)
+                        else:
+                            ver = '%s-%s' % (po.version, po.release)
+                        self.log(2, "%-36s%-7s%-25s%-12s" % (po.name, po.arch, 
+                                               ver, po.returnSimple('repoid')))
 
         if thingslisted == 0:
             self.errorlog(1, 'No Packages to list')
     
-        return 0, 'Success'
+        return 0, ['Success']
     
     def userconfirm(self):
         """gets a yes or no from the user, defaults to No"""
