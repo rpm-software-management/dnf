@@ -710,7 +710,6 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
                     toBeInstalled[n].append(pkgtup)
         
         
-        oldcount = self.tsInfo.count()
         pkglist = returnBestPackages(toBeInstalled)
         if len(pkglist) > 0:
             self.log(3, 'reduced installs :')
