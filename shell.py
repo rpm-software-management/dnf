@@ -70,6 +70,12 @@ class YumShell(cmd.Cmd):
     def do_exit(self, line):
         self.resultmsgs = ['Leaving Shell']
         return True
+    
+    def do_listTransaction(self, line):
+        print self.base.listTransaction()
+        
+    def do_depsolve(self, line):
+        self.base.buildTransaction()
         
     def do_run(self, line):
         if len(self.base.tsInfo) > 0:
