@@ -4,7 +4,7 @@ Version: 0.8.0
 Release: 1
 License: GPL
 Group: System Environment/Base
-Source: yum.tar.gz
+Source: %{name}-%{version}.tar.gz
 URL: http://www.dulug.duke.edu/yum/
 BuildRoot: %{_tmppath}/%{name}-%{version}root
 BuildArchitectures: noarch
