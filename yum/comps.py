@@ -1,4 +1,4 @@
-#!/usr/bin/python2.2
+#!/usr/bin/python
 # -*- mode: python -*-
 
 from cElementTree import iterparse
