@@ -26,3 +26,5 @@ install:
 	mkdir -p $(DESTDIR)/etc/logrotate.d
 	install -m 644 yum.logrotate $(DESTDIR)/etc/logrotate.d/yum
 
+	mkdir -p $(DESTDIR)/etc/yum/
+	install -m 644 yum-daily.yum $(DESTDIR)/etc/yum/yum-daily.yum
