@@ -72,13 +72,15 @@ def listpkgs(pkglist, userlist, nevral):
             if userlist=='all' or userlist =='updates':
                 for (name, arch) in pkglist:
                     (e,v,r)=nevral.evr(name,arch)
-                    print "%-40s %-10s %s-%s" %(name, arch,v, r)
+                    print "%-40s %-10s %s-%s" %(name, arch, v, r)
+                print ' '
         else:    
             for (name,arch) in pkglist:
                 for n in userlist:
                     if n == name or fnmatch.fnmatch(name, n):
                         (e,v,r)=nevral.evr(name,arch)
-                        print "%-40s %-10s %s-%s" %(name, arch,v, r)
+                        print "%-40s %-10s %s-%s" %(name, arch, v, r)
+            print ' '
     else:
         print "No Packages Available"
             

@@ -603,10 +603,17 @@ def take_action(cmds, nulist, uplist, newlist, obslist, tsInfo, HeaderInfo, rpmD
         else:
             if cmds[0] == 'updates':
                 pkgaction.listpkgs(uplist, 'updates', HeaderInfo)
-            elif cmds[0] == 'new':
+            elif cmds[0] == 'available':
                 pkgaction.listpkgs(newlist, 'all', HeaderInfo)
+            elif cmds[0] == 'installed':
+                pkglist = rpmDBInfo.NAkeys()
+                pkgaction.listpkgs(pkglist, 'all', rpmDBInfo)
             else:    
+                log(2, 'Looking in Available Packages:')
                 pkgaction.listpkgs(nulist, cmds, HeaderInfo)
+                log(2, 'Looking in Installed Packages:')
+                pkglist = rpmDBInfo.NAkeys()
+                pkgaction.listpkgs(pkglist, cmds, rpmDBInfo)
         sys.exit(0)
     elif cmds[0] == 'info':
         cmds.remove(cmds[0])
@@ -616,8 +623,15 @@ def take_action(cmds, nulist, uplist, newlist, obslist, tsInfo, HeaderInfo, rpmD
         else:
             if cmds[0] == 'updates':
                 pkgaction.listpkginfo(uplist, 'updates', HeaderInfo)
+            elif cmds[0] == 'installed':
+                pkglist=rpmDBInfo.NAkeys()
+                pkgaction.listpkginfo(pkglist,'all', rpmDBInfo)
             else:    
+                log(2, 'Looking in Available Packages:')
                 pkgaction.listpkginfo(nulist, cmds, HeaderInfo)
+                log(2, 'Looking in Installed Packages:')
+                pkglist=rpmDBInfo.NAkeys()
+                pkgaction.listpkginfo(pkglist, cmds, rpmDBInfo)
         sys.exit(0)
 
     elif cmds[0] == 'clean':
