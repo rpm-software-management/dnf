@@ -311,8 +311,8 @@ class yumconf(object):
             setattr(self, option, rootedpath)
         
         # bandwidth limit options require special parsing
-        for option, getfunc in (('bandwidth', self.cfg.getbytes), 
-                                ('throttle', self.cfg.getthrottle)):
+        for option, getfunc in [('bandwidth', self.cfg.getbytes), 
+                                ('throttle', self.cfg.getthrottle)]:
             value = getfunc('main', option, 0)
             value = variableReplace(self.yumvar, value)
             self.configdata[option] = value
@@ -320,14 +320,14 @@ class yumconf(object):
 
         
         # weird ones
-        for option in ['commands', 'installonlypkgs', 'kernelpkgnames', 'exclude']:
-            self.configdata[option] = variableReplace(self.yumvar, self.configdata[option])
+        for option in ['commands', 'installonlypkgs', 'kernelpkgnames', 'exclude'
+                       'reposdir']:
             self.configdata[option] = variableReplace(self.yumvar, self.configdata[option])
             setattr(self, option, self.configdata[option])
 
         # make our lists into lists. :)
-        for option in ('exclude', 'installonlypkgs', 'kernelpkgnames', 
-                'tsflags', 'reposdir'):
+        for option in ['exclude', 'installonlypkgs', 'kernelpkgnames', 
+                'tsflags', 'reposdir']:
             self.configdata[option] = parseList(self.configdata[option])
             setattr(self, option, self.configdata[option])
 
