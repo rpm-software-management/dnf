@@ -907,8 +907,40 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         
         return 0, []
         
-    def installGroups(self, groups=None):
-        return 0, ['no op']
+    def installGroups(self, grouplist=None):
+        """for each group requested attempt to install all pkgs/metapkgs of default
+           or mandatory. Also recurse lists of groups to provide for them too."""
+        
+        if grouplist is None:
+            grouplist = self.extcmds
+        
+        self.doRepoSetup()
+        pkgs = [] # package objects to be installed
+        installed = self.rpmdb.getPkgList()
+        availablepackages = {}
+        for po in self.pkgSack.returnPackages():
+            if po.pkgtup() not in installed:
+                    availablepackages[po.name] = 1
+
+        for group in grouplist:
+            if group not in self.groupInfo.grouplist:
+                self.errorlog(0, _('Group %s does not exist.') % group)
+                continue
+            pkglist = self.groupInfo.pkgTree(group)
+            for pkg in pkglist:
+                if availablepackages.has_key(pkg):
+                    pkgs.append(pkg)
+                    self.log(4, 'Adding package %s from group %s to install.' % (pkg, group))
+
+        if len(pkgs) > 0:
+            self.log(2, 'Passing package list to Install Process')
+            self.log(4, 'Packates being passed:')
+            for pkg in pkgs:
+                self.log(4, '%s' % pkg)
+            return self.installPkgs(userlist=pkgs)
+        else:
+            return 0, ['No Packages in Groups to Install']
+
     
     def updateGroups(self, groups=None):
         return 0, ['no op']
@@ -920,7 +952,7 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         print _("""
     Usage:  yum [options] <update | install | info | remove | list |
             clean | provides | search | check-update | groupinstall | 
-            groupupdate | grouplist | generate-rss >
+            groupupdate | grouplist | groupinfo | groupremove | generate-rss >
                 
         Options:
         -c [config file] - specify the config file to use
