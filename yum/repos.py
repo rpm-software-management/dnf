@@ -259,7 +259,8 @@ class Repository:
     def failed(self):
         self.failover.server_failed()
 
-    def get(self, url = None, relative=None, local=None, start=None, end=None):
+    def get(self, url = None, relative=None, local=None, start=None, end=None,
+            copy_local=0):
         """retrieve file from the mirrorgroup for the repo
            relative to local, optionally get range from
            start to end, also optionally retrieve from a specific baseurl"""
@@ -281,14 +282,16 @@ class Repository:
                        throttle=self.throttle)
             remote=url + '/' + relative
             try:           
-                result = ug.urlgrab(remote, local, range=(start, end))
+                result = ug.urlgrab(remote, local, range=(start, end), 
+                                    copy_local=copy_local)
             except URLGrabError, e:
                 raise
               
             # setup a grabber and use it - same general rules
         else:
             try:
-                result = self.grab.urlgrab(relative, local, range=(start, end))
+                result = self.grab.urlgrab(relative, local, range=(start, end),
+                                           copy_local=copy_local)
             except URLGrabError, e:
                 raise
                 
@@ -304,7 +307,7 @@ class Repository:
             if not os.path.exists(local):
                 raise Errors.RepoError, 'Cannot find repomd.xml file for %s' % (self)
         else:                
-            local = self.get(relative=remote, local=local)
+            local = self.get(relative=remote, local=local, copy_local=1)
 
         try:
             self.repoXML = repoMDObject.RepoMD(self.id, local)
@@ -351,7 +354,7 @@ class Repository:
                 return local # it's the same return the local one
 
         try:        
-            local = self.get(relative=remote, local=local)        
+            local = self.get(relative=remote, local=local, copy_local=1)
         except URLGrabError, e:
             raise
 
