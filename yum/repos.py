@@ -270,6 +270,7 @@ class Repository:
         # if url is None do a grab via the mirror group/grab for the repo
         # return the path to the local file
 
+        # FIXME we need a failure callback!!!
         if local is None or relative is None:
             raise Errors.RepoError, \
                   "get request for Repo %s, gave no source or dest" % self.id
