@@ -16,6 +16,7 @@
 
 import os
 import sys
+import types
 try:
     import rpm404
     rpm = rpm404
