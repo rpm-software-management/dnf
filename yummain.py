@@ -25,7 +25,6 @@ import callback
 import time
 import random
 from logger import Logger
-from config import yumConfigParser
 from config import yumconf
 
 def parseCmdArgs(args):
