@@ -157,7 +157,7 @@ class nevral:
             return None
         if l == 'in_rpm_db':
             return l
-       if self.localhdrpath.has_key((name, arch)):
+        if self.localhdrpath.has_key((name, arch)):
             return self.localhdrpath[(name, arch)]
         else:
             hdrfn = self.hdrfn(name,arch)
