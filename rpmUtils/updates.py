@@ -136,9 +136,11 @@ class Updates:
                 if flag in [None, 0]: # unversioned obsolete
                     if self.installdict.has_key((obs_n, None)):
                         for (rpm_a, rpm_e, rpm_v, rpm_r) in self.installdict[(obs_n, None)]:
-                            if not obsdict.has_key(pkgtup):
-                                obsdict[pkgtup] = []
-                            obsdict[pkgtup].append((obs_n, rpm_a, rpm_e, rpm_v, rpm_r))
+                            # make sure the obsoleting pkg is not already installed
+                            if pkgtup not in self.installed:
+                                if not obsdict.has_key(pkgtup):
+                                    obsdict[pkgtup] = []
+                                obsdict[pkgtup].append((obs_n, rpm_a, rpm_e, rpm_v, rpm_r))
 
                 else: # versioned obsolete
                     if self.installdict.has_key((obs_n, None)):
@@ -146,9 +148,11 @@ class Updates:
                             if rpmUtils.miscutils.rangeCheck((obs_n, flag, (obs_e, \
                                                         obs_v, obs_r)), (obs_n,\
                                                         rpm_a, rpm_e, rpm_v, rpm_r)):
-                                if not obsdict.has_key(pkgtup):
-                                    obsdict[pkgtup] = []
-                                obsdict[pkgtup].append((obs_n, rpm_a, rpm_e, rpm_v, rpm_r))
+                                # make sure the obsoleting pkg is not already installed
+                                if pkgtup not in self.installed:
+                                    if not obsdict.has_key(pkgtup):
+                                        obsdict[pkgtup] = []
+                                    obsdict[pkgtup].append((obs_n, rpm_a, rpm_e, rpm_v, rpm_r))
            
         self.obsoletes = obsdict
            

@@ -79,7 +79,11 @@ def checkSig(ts, package):
         else:
             del hdr
 
-    os.close(fdno)
+    try:
+        os.close(fdno)
+    except OSError, e: # if we're not opened, don't scream about it
+        pass
+
     ts.setVSFlags(currentflags) # put things back like they were before
     return value
 
