@@ -230,7 +230,10 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
             self.errorlog(0, _('Options Error: %s') % e)
             self.usage()
             sys.exit(1)
-            
+         
+        # Initialise plugins
+        self.doPluginSetup()
+
         # setup the progress bars/callbacks
         self.setupProgessCallbacks()
         

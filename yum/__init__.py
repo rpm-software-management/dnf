@@ -56,6 +56,9 @@ class YumBase(depsolve.Depsolve):
         self.repos = repos.RepoStorage() # class of repositories
         if (not self.repos.sqlite):
             self.log(1,"Warning, could not load sqlite, falling back to pickle")
+
+        # Use a dummy object until plugins are initialised
+        self.plugins = plugins.DummyYumPlugins()
     
     def log(self, value, msg):
         """dummy log stub"""
@@ -71,15 +74,8 @@ class YumBase(depsolve.Depsolve):
     def doConfigSetup(self, fn='/etc/yum.conf', root='/'):
         """basic stub function for doing configuration setup"""
        
-        # Load plugins first as they make affect available config options
-        self.plugins = plugins.YumPlugins(self)
-
-        self.conf = config.yumconf(configfile=fn, root=root, 
-                plugins=self.plugins)
+        self.conf = config.yumconf(configfile=fn, root=root)
         self.getReposFromConfig()
-
-        # Initialise plugins
-        self.plugins.run('init')
 
     def getReposFromConfig(self):
         """read in repositories from config main and .repo files"""
@@ -133,6 +129,21 @@ class YumBase(depsolve.Depsolve):
             except Errors.RepoError, e: 
                 self.errorlog(2, e)
                 continue
+
+    def doPluginSetup(self):
+        '''Initialise yum plugins. 
+
+        If plugins are going to be used, this should be called soon after
+        doConfigSetup() has been called.
+        '''
+        # Load plugins first as they make affect available config options
+        self.plugins = plugins.YumPlugins(self)
+
+        # Process options registered by plugins
+        self.plugins.parseopts(self.conf, self.repos.findRepos('*'))
+
+        # Initialise plugins
+        self.plugins.run('init')
 
     def doTsSetup(self):
         """setup all the transaction set storage items we'll need

@@ -33,8 +33,6 @@ import urlgrabber
 import urlgrabber.grabber
 from repos import variableReplace, Repository
 
-from constants import *
-
 
 class CFParser(ConfigParser.ConfigParser):
     """wrapper around ConfigParser to provide two simple but useful functions:
@@ -173,7 +171,7 @@ class CFParser(ConfigParser.ConfigParser):
 class yumconf(object):
     """primary config class for yum"""
     
-    def __init__(self, configfile = '/etc/yum.conf', root='/', plugins=None):
+    def __init__(self, configfile = '/etc/yum.conf', root='/'):
         self.cfg = CFParser()
         configh = confpp(configfile)
         try:
@@ -183,7 +181,6 @@ class yumconf(object):
         except ConfigParser.ParsingError, e:
             raise Errors.ConfigError, str(e)
             
-        self.plugins = plugins
         self.configdata = {} # dict to hold all the data goodies
        
         
@@ -209,6 +206,7 @@ class yumconf(object):
                          ('proxy', None),
                          ('proxy_username', None),
                          ('proxy_password', None),
+                         ('pluginpath', ['/usr/lib/yum-plugins']),
                          ('installonlypkgs', ['kernel', 'kernel-bigmem', 
                                               'kernel-enterprise','kernel-smp',
                                               'kernel-debug', 'kernel-unsupported', 
@@ -232,6 +230,7 @@ class yumconf(object):
                        ('obsoletes', 'False'),
                        ('showdupesfromrepos', 'False'),
                        ('enabled', 'True'),
+                       ('plugins', 'False'),
                        ('enablegroups', 'True')]
 
         # not being set from the config file
@@ -323,20 +322,24 @@ class yumconf(object):
 
         
         # weird ones
-        for option in ['commands', 'installonlypkgs', 'kernelpkgnames', 'exclude',
-                       'reposdir', 'exactarchlist']:
-            self.configdata[option] = variableReplace(self.yumvar, self.configdata[option])
+        for option in ['commands', 'installonlypkgs', 'kernelpkgnames',
+            'exclude', 'reposdir', 'exactarchlist', 'pluginpath']:
+            self.configdata[option] = variableReplace(self.yumvar, 
+                    self.configdata[option])
             setattr(self, option, self.configdata[option])
 
         # make our lists into lists. :)
         for option in ['exclude', 'installonlypkgs', 'kernelpkgnames', 
-                'tsflags', 'reposdir', 'exactarchlist']:
+                'tsflags', 'reposdir', 'exactarchlist', 'pluginpath']:
             self.configdata[option] = parseList(self.configdata[option])
             setattr(self, option, self.configdata[option])
 
-        # Process options from plugins
-        dopluginopts(self.plugins, self.cfg, 'main', PLUG_OPT_WHERE_MAIN, 
-                self.setConfigOption)
+        # Check that plugin paths are all absolute
+        for path in self.pluginpath:
+            if path[:1] != '/':
+                raise Errors.ConfigError(
+                        "All plugin search paths must be absolute")
+
 
     def listConfigOptions(self):
         """return list of options available for global config"""
@@ -422,6 +425,7 @@ def cfgParserRepo(section, yumconfig, cfgparser):
        """
     
     thisrepo = Repository(section)
+    thisrepo.cfgparser = cfgparser
     thisrepo.set('yumvar', yumconfig.yumvar)
 
     for keyword in ['proxy_username', 'proxy', 'proxy_password',
@@ -480,10 +484,6 @@ def cfgParserRepo(section, yumconfig, cfgparser):
     thisrepo.set('pkgdir', pkgdir)
     thisrepo.set('hdrdir', hdrdir)
     
-    # Process options from plugins
-    dopluginopts(yumconfig.plugins, cfgparser, section, PLUG_OPT_WHERE_REPO, 
-            thisrepo.set)
-
     return thisrepo
 
 
@@ -504,19 +504,6 @@ def parseList(value):
     listvalue = value.split()
     return listvalue
       
-def dopluginopts(plugins, cfgparser, section, where, setfunc):
-    '''Process options from plugins
-    '''
-    if plugins:
-        typetofunc =  {
-            PLUG_OPT_STRING: cfgparser._getoption,
-            PLUG_OPT_INT: cfgparser._getint,
-            PLUG_OPT_BOOL: cfgparser._getboolean,
-            PLUG_OPT_FLOAT: cfgparser._getfloat,
-            }
-        for name, vtype, default in plugins.getopts(where):
-            setfunc(name, typetofunc[vtype](section, name, default))
-
 
 class confpp:
     """

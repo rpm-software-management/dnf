@@ -8,17 +8,14 @@ import ConfigParser
 import config 
 import Errors
 
-# TODO: fix log() during yum init: early calls to log() (before Logger instance
-# is created) mean that all output goes to stdout regardless of the log settings.
-#   - peek at debuglevel option? 
+# TODO: update yum.conf man page with plugin related opts
 
 # TODO: better documentation of how the whole thing works (esp. addition of
 # config options)
 #       - document from user perspective in yum man page
 #       - PLUGINS.txt for developers
 
-# TODO: require an explicit call to load plugins so that software using yum as
-# a library doesn't get nasty suprises
+# TODO: test the API by implementing some crack from bugzilla
 
 # TODO: check for *_hook methods that aren't supported
 
@@ -27,7 +24,7 @@ import Errors
 
 # TODO: multiversion plugin support
 
-# TODO: cmd line options to disable plugins (all or specific)
+# TODO: cmdline options to disable/enable plugins (all or specific)
 
 # TODO: cmdline option to override/specify additional plugin directories
 
@@ -59,7 +56,6 @@ import Errors
 # then the minor number must be incremented.
 API_VERSION = '0.2'
 
-PLUGINS_CONF = '/etc/yum/plugins.conf'
 SLOTS = ('config', 'init', 'reposetup', 'exclude', 'pretrans', 'posttrans',
         'close')
 
@@ -70,11 +66,10 @@ class PluginYumExit(Errors.YumBaseError):
 class YumPlugins:
 
     def __init__(self, base):
-        self.enabled = 0
-        self.searchpath = ['/usr/lib/yum-plugins']
+        self.enabled = base.conf.plugins
+        self.searchpath = base.conf.pluginpath
         self.base = base
 
-        self._getglobalconf()
         self._importplugins()
         self.opts = {}
 
@@ -84,38 +79,11 @@ class YumPlugins:
         # Let plugins register custom config file options
         self.run('config')
 
-    def _getglobalconf(self):
-        '''Read global plugin configuration 
-        '''
-        parser = config.CFParser()
-        try:
-            fin = open(PLUGINS_CONF, 'rt')
-            parser.readfp(fin)
-            fin.close()
-        except ConfigParser.Error, e:
-            raise Errors.ConfigError("Couldn't parse %s: %s" % (PLUGINS_CONF,
-                str(e)))
-
-        except IOError, e:
-            self.base.log(3, "Couldn't read %s: plugins disabled" % PLUGINS_CONF)
-            return
-
-        self.enabled = parser._getboolean('main', 'enabled', 0)
-        searchpath = parser._getoption('main', 'searchpath', '')
-        if searchpath:
-            self.searchpath = config.parseList(searchpath)
-            # Ensure that all search paths are absolute
-            for path in self.searchpath:
-                if path[0] != '/':
-                    raise Errors.ConfigError(
-                            "All plugin search paths must be absolute")
-
     def run(self, slotname):
         '''Run all plugin functions for the given slot.
-        Returns true if yum needs to quit, false otherwise.
         '''
         if not self.enabled:
-            return 0
+            return
        
         # Determine handler class to use
         if slotname in ('config'):
@@ -133,16 +101,11 @@ class YumPlugins:
 
 
         for modname, func in self._pluginfuncs[slotname]:
-            self.base.log(4, 'Running %s handler for %s plugin' % (
+            self.base.log(3, 'Running "%s" handler for "%s" plugin' % (
                 slotname, modname))
     
             _, conf = self._plugins[modname]
-            result = func(conduitcls(self, self.base, conf))
-            if result:
-                # Plugin said we need to terminate
-                self.base.log(2, "Exiting due to '%s' plugin." % modname)
-                return result
-        return 0
+            func(conduitcls(self, self.base, conf))
 
     def _importplugins(self):
 
@@ -171,7 +134,7 @@ class YumPlugins:
 
         conf = self._getpluginconf(modname)
         if not conf or not conf._getboolean('main', 'enabled', 0):
-            self.base.log(2, '"%s" plugin is disabled' % modname)
+            self.base.log(3, '"%s" plugin is disabled' % modname)
             return
 
         self.base.log(2, 'Loading "%s" plugin' % modname)
@@ -242,19 +205,42 @@ class YumPlugins:
                     )
         self.opts[name] = (valuetype, where, default)
 
-    def getopts(self, targetwhere):
-        '''Retrieve plugin defined options for the given part of the
-        configuration file. 
+    def parseopts(self, conf, repos):
+        '''Parse any configuration options registered by plugins
 
-        targetwhere: the type of option wanted. Should be
-            PLUG_OPT_WHERE_MAIN, PLUG_OPT_WHERE_REPO or PLUG_OPT_WHERE_ALL
-        return: A list of (name, value_type, default) tuples.
+        conf: the yumconf instance holding Yum's global options
+        repos: a list of all repository objects
         '''
-        out = []
-        for name, (valuetype, where, default) in self.opts.iteritems():
-            if where == targetwhere or where == PLUG_OPT_WHERE_ALL:
-                out.append((name, valuetype, default))
-        return out
+
+        # Process [main] options first
+        self._do_opts(conf.cfg, 'main', PLUG_OPT_WHERE_MAIN, 
+                conf.setConfigOption)
+
+        # Process repository level options
+        for repo in repos:
+            self._do_opts(repo.cfgparser, repo.id, PLUG_OPT_WHERE_REPO, 
+                repo.set)
+
+    def _do_opts(self, cfgparser, section, targetwhere, setfunc):
+        '''Process registered plugin options for one config file section
+        '''
+        typetofunc =  {
+            PLUG_OPT_STRING: cfgparser._getoption,
+            PLUG_OPT_INT: cfgparser._getint,
+            PLUG_OPT_BOOL: cfgparser._getboolean,
+            PLUG_OPT_FLOAT: cfgparser._getfloat,
+            }
+        for name, (vtype, where, default) in self.opts.iteritems(): 
+            if where in (targetwhere, PLUG_OPT_WHERE_ALL):
+                setfunc(name, typetofunc[vtype](section, name, default))
+
+class DummyYumPlugins:
+    '''
+    This class provides basic emulation of the YumPlugins class. It exists so
+    that calls to plugins.run() don't fail if plugins aren't in use.
+    '''
+    def run(self, *args, **kwargs):
+        pass
 
 class PluginConduit:
     def __init__(self, parent, base, conf):
