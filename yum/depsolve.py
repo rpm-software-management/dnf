@@ -98,6 +98,7 @@ class Depsolve:
                 ts_elem.append((pkginfo, mode))
         
         for txmbr in self.tsInfo.getMembers():
+            self.log(5, 'Member: %s' % txmbr)
             if txmbr.ts_state in ['u', 'i']:
                 if (txmbr.pkgtup, 'i') in ts_elem:
                     continue
@@ -110,11 +111,10 @@ class Depsolve:
                 else:
                     provides = []
                 if txmbr.ts_state == 'u':
-                    if txmbr.name in self.conf.getConfigOption('installonlypkgs') or 'kernel-modules' in provides:
+                    if txmbr.name in self.conf.getConfigOption('installonlypkgs') or 'kernel-modules' in provides or 'kernel' in provides:
                         txmbr.ts_state = 'i'
-                        self.ts.addInstall(hdr, (hdr, rpmfile), 'i')
-                        if self.dsCallback: self.dsCallback.pkgAdded(txmbr.pkgtup, 'i')
-                        self.log(4, 'Adding Package %s in mode i' % po)
+                        txmbr.output_state = 'installing'
+                        # pkg converted, it will get caught below
                     else:
                         self.ts.addInstall(hdr, (hdr, rpmfile), 'u')
                         self.log(4, 'Adding Package %s in mode u' % po)

@@ -320,7 +320,9 @@ class TransactionMember:
         if pkgtup:
             self.relatedto.append((pkgtup, 'dependson'))
 
-
+    def __str__(self):
+        return "%s.%s %s-%s-%s - %s" % (self.name, self.arch, self.epoch, self.ver, self.rel, self.ts_state)
+        
     # This is the tricky part - how do we nicely setup all this data w/o going insane
     # we could make the txmember object be created from a YumPackage base object
     # we still may need to pass in 'groups', 'ts_state', 'output_state', 'reason', 'current_state'
