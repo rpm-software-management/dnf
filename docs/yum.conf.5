@@ -235,7 +235,13 @@ signature check on the packages gotten from this repository.
 
 .IP \fBexclude\fR
 Same as the [main] \fBexclude\fR option but this is only for this repository.
-Substution variables, as described below, are honored here.
+Substitution variables, as described below, are honored here.
+
+.IP \fBincludepkgs\fR
+Inverse of exclude. This is a list of packages you want to use from a
+repository. If this option lists only one package then that is all yum will
+ever see from the repository. Defaults to an empty list.  Substitution
+variables, as described below, are honored here.
 
 .IP \fBenablegroups\fR
 Either `0' or `1'. Determines whether yum will allow the use of package groups
@@ -268,9 +274,6 @@ repository.
 .IP \fBbandwidth\fR
 Overrides the \fBbandwidth\fR option from the [main] section for this
 repository.
-
-." .IP \fBincludepkgs\fR
-." XXX doesn't appear to get used at the moment
 
 ." XXX 
 ." proxy, proxy_username and proxy_password are all available here but not
