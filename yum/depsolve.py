@@ -26,7 +26,7 @@ import rpmUtils.arch
 from misc import unique
 import rpm
 
-from metadata.packageSack import ListPackageSack
+from repomd.packageSack import ListPackageSack
 from Errors import DepError
 import packages
 

@@ -1,7 +1,7 @@
 Summary: RPM installer/updater
 Name: yum
-Version: 2.1
-Release: 1
+Version: 2.1.0
+Release: 0
 License: GPL
 Group: System Environment/Base
 Source: %{name}-%{version}.tar.gz
@@ -14,6 +14,7 @@ BuildRequires: python
 BuildRequires: gettext
 Obsoletes: yum-phoebe
 Requires: python, rpm-python, rpm >= 0:4.1.1, libxml2-python
+Requires: /usr/bin/consolehelper
 Prereq: /sbin/chkconfig, /sbin/service
 
 %description
@@ -25,7 +26,6 @@ automatically prompting the user as necessary.
 %setup -q
 
 %build
-%configure 
 make
 
 
@@ -34,8 +34,6 @@ make
 make DESTDIR=$RPM_BUILD_ROOT install
 # install -m 644 %{SOURCE1} $RPM_BUILD_ROOT/etc/yum.conf
 # install -m 755 %{SOURCE2} $RPM_BUILD_ROOT/etc/cron.daily/yum.cron
-
-%find_lang %{name}
 
 %clean
 [ "$RPM_BUILD_ROOT" != "/" ] && rm -rf $RPM_BUILD_ROOT
@@ -56,19 +54,24 @@ fi
 exit 0
 
 
-
-
-%files -f %{name}.lang
+%files
 %defattr(-, root, root)
 %doc README AUTHORS COPYING TODO INSTALL ChangeLog
 %config(noreplace) %{_sysconfdir}/yum.conf
+%dir %{_sysconfdir}/yum.repos.d
 %config(noreplace) %{_sysconfdir}/cron.daily/yum.cron
-%config %{_sysconfdir}/init.d/%{name}
+%config %{_sysconfdir}/rc.d/init.d/%{name}
 %config %{_sysconfdir}/logrotate.d/%{name}
+%config %{_sysconfdir}/pam.d/yum
+%config %{_sysconfdir}/security/console.apps/yum
 %{_datadir}/yum/*
 %{_bindir}/yum
-%{_bindir}/yum-arch
-/var/cache/yum
+%{_sbindir}/yum
+/usr/lib/python?.?/site-packages/yum
+/usr/lib/python?.?/site-packages/repomd
+/usr/lib/python?.?/site-packages/rpmUtils
+/usr/lib/python?.?/site-packages/urlgrabber
+%dir /var/cache/yum
 %{_mandir}/man*/*
 
 %changelog

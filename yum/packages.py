@@ -25,7 +25,7 @@ import rpmUtils
 import rpmUtils.arch
 import rpmUtils.miscutils
 
-import metadata.packageObject
+import repomd.packageObject
 
 base=None
 
@@ -217,8 +217,8 @@ class YumInstalledPackage:
     def size(self):
         return self.tagByName('size')
 
-class YumAvailablePackage(metadata.packageObject.RpmXMLPackageObject):
-    """derived class for the metadata packageobject we use
+class YumAvailablePackage(repomd.packageObject.RpmXMLPackageObject):
+    """derived class for the repomd packageobject we use
     this for dealing with packages in a repository"""
 
    
