@@ -27,6 +27,7 @@ import callback
 import yumlock
 import yum
 import rpmUtils.transaction
+import rpmUtils.updates
 import yum.yumcomps
 import yum.Errors
 import progress_meter
@@ -38,9 +39,10 @@ from i18n import _
 
 __version__='2.1.0'
 
-def parseCmdArgs(args):
-    """parses command line arguments, takes cli args, returns:
-       config class, additional args not handled"""
+def getOptionsConfig(args, baseclass):
+    """parses command line arguments, takes cli args, and a simple holder class:
+       sets up baseclass.conf and baseclass.cmds as well as logger objects 
+       in base instance"""
       
     # setup our errorlog object 
     errorlog = Logger(threshold=2, file_object=sys.stderr)
@@ -49,7 +51,7 @@ def parseCmdArgs(args):
     yumconffile = None
     if os.access("/etc/yum.conf", os.R_OK):
         yumconffile = "/etc/yum.conf"
-        
+
     try:
         gopts, cmds = getopt.getopt(args, 'tCc:hR:e:d:y', ['help',
                                                            'version',
@@ -87,7 +89,7 @@ def parseCmdArgs(args):
 
         if yumconffile:
             try:
-                conf=yumconf(configfile=yumconffile)
+                conf = yumconf(configfile = yumconffile)
             except yum.Errors.ConfigError, e:
                 errorlog(0, _('Config Error: %s.') % e)
                 sys.exit(1)
@@ -106,21 +108,17 @@ def parseCmdArgs(args):
         
         # we'd like to have a log object now
         log=Logger(threshold=conf.getConfigOption('debuglevel'), file_object=sys.stdout)
-        conf.setConfigOption('log', log)
         
         # syslog-style log
         if conf.getConfigOption('uid') == 0:
             logfd = os.open(conf.getConfigOption('logfile'), os.WRONLY, os.O_APPEND)
             logfile =  os.fdopen(logd, 'a')
             fcntl.fcntl(logfd, fcntl.F_SETFD)
-            filelog=Logger(threshold = 10, file_object = logfile, preprefix = misc.printtime())
+            filelog = Logger(threshold = 10, file_object = logfile, preprefix = misc.printtime())
         else:
-            filelog=Logger(threshold = 10, file_object=None, preprefix = misc.printtime())
-        conf.setConfigOption('filelog', filelog)
+            filelog = Logger(threshold = 10, file_object = None, preprefix = misc.printtime())
         
-        # we already know about the errorlog
-        conf.setConfigOption('errorlog', errorlog)
-        
+       
         # now the rest of the options
         for o,a in gopts:
             if o == '-d':
@@ -174,107 +172,97 @@ def parseCmdArgs(args):
         conf.setConfigOption('progress_obj', None)
     else:
         conf.setConfigOption('progress_obj', progress_meter.text_progress_meter(fo=sys.stdout))
-        
-    return conf, cmds
     
-
-def lock(lockfile, mypid):
-    """do the lock file work"""
-    #check out/get the lockfile
-    while not yumlock.lock(lockfile, mypid, 0644):
-        fd = open(lockfile, 'r')
-        try: oldpid = int(fd.readline())
-        except ValueError:
-            # bogus data in the pid file. Throw away.
-            yumlock.unlock(lockfile)
-        else:
-            try: os.kill(oldpid, 0)
-            except OSError, e:
-                import errno
-                if e[0] == errno.ESRCH:
-                    print _('Unable to find pid')
-                    # The pid doesn't exist
-                    yumlock.unlock(lockfile)
-                else:
-                    # Whoa. What the heck happened?
-                    print _('Unable to check if PID %s is active') % oldpid
-                    sys.exit(200)
-            else:
-                # Another copy seems to be running.
-                msg = _('Existing lock %s: another copy is running. Aborting.')
-                print msg % lockfile
-                sys.exit(200)
+    baseclass.conf = conf
+    baseclass.cmds = cmds
+    baseclass.errorlog = errorlog
+    baseclass.log = log
+    baseclass.filelog = filelog
+    # this is just a convenience reference
+    baseclass.repos = conf.repos
 
 def main(args):
     """This does all the real work"""
 
     locale.setlocale(locale.LC_ALL, '')
+    #DEBUG
+    print time.time()
+
 
     if len(args) < 1:
         usage()
-        
-    conf, cmds = parseCmdArgs(args)
-    
-    errorlog = conf.getConfigOption('errorlog')
-    log = conf.getConfigOption('log')
-    filelog = conf.getConfigOption('filelog')
 
+    # this will be our holder object, things will be pushed in here and passed around 
+    # think of this like a global
+    base = yum.YumBase()
+    # parse our cli args, read in the config file and setup the logs
+    getOptionsConfig(args, base)
     
-    if len(conf.getConfigOption('commands')) == 0 and len(cmds) < 1:
-        cmds = conf.getConfigOption('commands')
+    if len(base.conf.getConfigOption('commands')) == 0 and len(base.cmds) < 1:
+        base.cmds = base.conf.getConfigOption('commands')
     else:
-        conf.setConfigOption('commands', cmds)
+        base.conf.setConfigOption('commands', base.cmds)
         
-    if len (cmds) < 1:
-        errorlog(0, _('Options Error: no commands found'))
+    if len (base.cmds) < 1:
+        base.errorlog(0, _('Options Error: no commands found'))
         usage()
 
-    if cmds[0] not in ('update', 'upgrade', 'install','info', 'list', 'erase',\
+    if base.cmds[0] not in ('update', 'install','info', 'list', 'erase',\
                        'grouplist','groupupdate','groupinstall','clean', \
                        'remove', 'provides', 'check-update', 'search'):
         usage()
-    process = cmds[0]
+    process = base.cmds[0]
+    
+    #DEBUG
+    print time.time()    
     
     # ok at this point lets check the lock/set the lock if we can
-    if conf.getConfigOption('uid') == 0:
+    if base.conf.getConfigOption('uid') == 0:
         mypid = str(os.getpid())
-        lock('/var/run/yum.pid', mypid)
+        try:
+            yum.doLock('/var/run/yum.pid', mypid)
+        except Errors.LockError, e:
+            print _('%s') % e.msg
+            sys.exit(200)
+    #DEBUG
+    print time.time()
     
     # some misc speedups/sanity checks
-    if conf.getConfigOption('uid') != 0:
-        conf.setConfigOption('cache', 1)
+    if base.conf.getConfigOption('uid') != 0:
+        base.conf.setConfigOption('cache', 1)
     if process == 'clean':
-        conf.setConfigOption('cache', 1)
-        
+        base.conf.setConfigOption('cache', 1)
+
+    #DEBUG
+    print time.time()
+    base.repos.populateSack()
+    base.pkgSack = base.repos.pkgSack
+    base.log(2, '#pkgs in repos = %s' % len(base.pkgSack.returnPackages()))
+
+    #DEBUG
+    print time.time()
     
-    # push our global objects into the other major namespaces
-    
-   
     # get our transaction set together that we'll use all over the place
-    read_ts = rpmUtils.transactions.initReadOnlyTransaction()
-    yumcomps.ts = read_ts
-    
-    # sorting the repos so that sort() will order them consistently
-    # If you wanted to add scoring or somesuch thing for repo preferences
-    # or even getting rid of repos b/c of some criteria you could
-    # replace repolist.sort() with a function - all it has to do
-    # is return an ordered list of repoids and have it stored in
-    # repolist
-    repolist = conf.repos.listEnabled()
-    repolist.sort()
-
-
-    # figure out what we're going to do so we can make decisions about what
-    # we need to snarf from a server or into memory
-    # we know that 'process' is our primary command    
-
-    # download repomd.xml from each enabled server.
-    
-    # read in all the packageSacks
+    base.read_ts = rpmUtils.transaction.initReadOnlyTransaction()
     
     # create structs for local rpmdb
+    base.rpmdb = rpmUtils.RpmDBHolder()
+    base.rpmdb.addDB(base.read_ts)
+    base.log(2, '#pkgs in db = %s' % len(base.rpmdb.getPkgList()))
+
+    #DEBUG
+    print time.time()
     
-    log(2, _('Finding updated packages'))
+    base.log(2, _('Finding updated packages'))
+    base.up = rpmUtils.updates.Updates(base.rpmdb.getPkgList(), base.pkgSack.simplePkgList())
+    base.up.exactarch = base.conf.getConfigOption('exactarch')
+    base.up.doUpdates()
+    base.up.condenseUpdates()
+    print len(base.up.getUpdatesList())
+
+    #DEBUG
+    print time.time()
+    
     #(uplist, newlist, nulist) = clientStuff.getupdatedhdrlist(HeaderInfo, rpmDBInfo)
     
     if process in ['groupupdate', 'groupinstall', 'grouplist', 'groupremove']:
@@ -283,25 +271,19 @@ def main(args):
             if repo.enablegroups:
                 grouprepos.append(repo)
         serversWithGroups = clientStuff.getGroupsFromServers(grouprepos)
-        GroupInfo = yumcomps.Groups_Info(conf.getConfigOption('overwrite_groups'))
+        GroupInfo = yumcomps.Groups_Info(base.conf.getConfigOption('overwrite_groups'))
         if len(serversWithGroups) > 0:
             for repo in serversWithGroups:
-                log(4, 'Adding Group from %s' % repo.id)
+                base.log(4, 'Adding Group from %s' % repo.id)
                 GroupInfo.add(repo.localGroups())
         if GroupInfo.compscount > 0:
             GroupInfo.compileGroups()
             # put GroupInfo instance where needed
         else:
-            errorlog(0, _('No groups provided or accessible on any repository.'))
-            errorlog(1, _('Exiting.'))
+            base.errorlog(0, _('No groups provided or accessible on any repository.'))
+            base.errorlog(1, _('Exiting.'))
             sys.exit(1)
     
-    log(3, 'nulist = %s' % len(nulist))
-    log(3, 'uplist = %s' % len(uplist))
-    log(3, 'newlist = %s' % len(newlist))
-    log(3, 'obsoleting = %s' % len(obsoleting.keys()))
-    log(3, 'obsoleted = %s' % len(obsoleted.keys()))
-
     
     ##################################################################
     # at this point we have all the prereq info we could ask for. we 
@@ -311,13 +293,14 @@ def main(args):
     ##################################################################
 
     #clientStuff.take_action(cmds, nulist, uplist, newlist, obsoleting, tsInfo,\
-                            HeaderInfo, rpmDBInfo, obsoleted)
+    #                        HeaderInfo, rpmDBInfo, obsoleted)
     # back from taking actions - if we've not exited by this point then we have
     # an action that will install/erase/update something
     
     # at this point we should have a tsInfo nevral with all we need to complete our task.
     # if for some reason we've gotten all the way through this step with 
     # an empty tsInfo then exit and be confused :)
+"""
     if len(tsInfo.NAkeys()) < 1:
         log(2, _('No actions to take'))
         sys.exit(0)
@@ -394,11 +377,11 @@ def main(args):
         
     log(2, _('Transaction(s) Complete'))
     sys.exit(0)
-
+"""
 
 def usage():
     print _("""
-    Usage:  yum [options] <update | upgrade | install | info | remove | list |
+    Usage:  yum [options] <update | install | info | remove | list |
             clean | provides | search | check-update | groupinstall | groupupdate |
             grouplist >
                 

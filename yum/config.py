@@ -116,10 +116,7 @@ class yumconf:
         # - but should be in the config class                       
         optionothers = [('uid', 0),
                         ('cache', 0),
-                        ('progess_obj', None),
-                        ('log' , None),
-                        ('filelog', None),
-                        ('errorlog', None)]
+                        ('progess_obj', None)]
 
 
         # do the strings        
@@ -134,7 +131,9 @@ class yumconf:
         for (option, default) in optionothers:
             self.configdata[option] = default
 
-       
+        # and push our process object around a bit to things beneath us
+        self.repos.progress = self.getConfigOption('progress_obj')
+        
         # get our variables parsed            
         self.yumvar = self._getEnvVar()
         self.yumvar['basearch'] = rpmUtils.arch.getBaseArch() # FIXME make this configurable??

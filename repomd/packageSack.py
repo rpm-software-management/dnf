@@ -126,12 +126,14 @@ class PackageSack:
         # FIXME :)
         pass
     
-    def returnPackages(self):
-        """return list of all packages"""
+    def returnPackages(self, repoid=None):
+        """return list of all packages, takes optional repoid"""
         returnList = []
-        for repo in self.pkgsByRepo.keys():
-            for pkg in self.pkgsByRepo[repo]:
-                returnList.append(pkg)
+        if repoid is None:
+            for repo in self.pkgsByRepo.keys():
+                returnList.extend(self.pkgsByRepo[repo])
+        else:
+            returnlist = self.pkgsByRepo[repoid]
         
         return returnList
 
@@ -175,15 +177,19 @@ class PackageSack:
                                     
         return highdict.values()
            
-           
+    def simplePkgList(self, repoid=None):
+        """returns a list of pkg tuples (n, a, e, v, r) optionally from a single repoid"""
+        simplelist = []
+        for pkg in self.returnPackages(repoid):
+            (n, e, v, r, a) = pkg.returnNevraTuple()
+            simplelist.append((n, a, e, v, r))
+        return simplelist
+                       
     def printPackages(self):
         for pkg in self.returnPackages():
             print pkg.returnNevraPrintable()
 
         
-    def returnPackagesByRepo(self, repoid):
-        """list packages in repoid"""
-        pass        
 
 # packageSack should be a base class
 # two derived classes could be DBPackageSack and XMLPackageSack

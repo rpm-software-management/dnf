@@ -12,7 +12,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
-# Copyright 2003 Duke University
+# Copyright 2004 Duke University
 
 
 
@@ -23,6 +23,12 @@ class YumBaseError(exceptions.Exception):
     def __init__(self, args=None):
         exceptions.Exception.__init__(self)    
         self.args = args
+
+class LockError(YumBaseError):
+    def __init__(self, errno, msg):
+        YumBaseError.__init__(self)
+        self.errno = errno
+        self.msg = msg
         
 class DepError(YumBaseError):
     def __init__(self, args=None):

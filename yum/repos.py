@@ -23,6 +23,9 @@ from urlgrabber.grabber import URLGrabber
 import urlgrabber.mirror
 from metadata import repoMDObject
 from metadata import mdErrors
+from metadata import packageSack
+from metadata import packageObject
+
 
 class RepoStorage:
     """This class contains multiple repositories and core configuration data
@@ -31,7 +34,8 @@ class RepoStorage:
     def __init__(self):
         self.repos = {} # list of repos by repoid pointing a repo object 
                         # of repo options/misc data
-    
+        self.pkgSack = packageSack.XMLPackageSack(packageObject.RpmXMLPackageObject)
+        
     def add(self, repoid):
         if self.repos.has_key(repoid):
             raise Errors.RepoError, 'Repository %s already added, not adding again' % (repoid)
@@ -67,15 +71,47 @@ class RepoStorage:
         thisrepo.enable()
             
     def listEnabled(self):
-        """return list of repo ids for enabled repos"""
+        """return list of enabled repo objects"""
         returnlist = []
         for repo in self.repos.values():
             if repo.enabled:
                 returnlist.append(repo)
-                
+
         return returnlist
 
+    def populateSack(self, which='enabled', with='primary'):
+        """This populates the package sack from the repositories, two optional 
+           arguments: which='repoid, enabled, all'
+                      with='primary, filelists, other, all'"""
+        if which == 'enabled':
+            myrepos = self.listEnabled()
+        elif which == 'all':
+            myrepos = self.repos.values()
+        else:
+            myrepos = []
+            myrepos.append(self.getRepos(which))
+        
+        if with == 'all':
+            data = ['primary', 'filelists', 'other']
+        else:
+            data = [ with ]
+            
+        for repo in myrepos:
+            for item in data:
+                if item == 'primary':
+                    xml = repo.getPrimaryXML()
+                elif item == 'filelists':
+                    xml = repo.getFileListsXML()
+                elif item == 'other':
+                    xml = repo.getOtherXML()
+                else:
+                    # how odd, just move along
+                    continue
+                self.pkgSack.addFile(repo.id, xml, self.progress)
+                    
 
+                
+        
         
 class Repository:
     """this is an actual repository object"""       
@@ -144,7 +180,7 @@ class Repository:
         """sets up the grabber functions with the already stocked in urls for
            the mirror groups"""
         # FIXME this should do things with our proxy info too
-        if self.failmeth == 'roundrobin':
+        if self.failovermethod == 'roundrobin':
             mgclass = urlgrabber.mirror.MGRandomOrder
         else:
             mgclass = urlgrabber.mirror.MirrorGroup
@@ -190,11 +226,18 @@ class Repository:
         
         
     def getPrimaryXML(self, cache=0):
-        pass
+        """this gets you the path to the primary.xml file, retrieving it if we 
+           need a new one"""
+        # this should check the checksum of the package versus the one we have
+        # download a new one if we need it
+        # return the path to the local one so it can be added to the packageSack
+        return self.cache + '/primary.xml.gz'
     
     def getFileListsXML(self, cache=0):
-        pass    
+        return self.cache + '/filelists.xml.gz'
 
     def getOtherXML(self, cache=0):
-        pass    
+        return self.cache + '/other.xml.gz'
+
     
+
