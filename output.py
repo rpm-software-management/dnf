@@ -75,7 +75,7 @@ class YumOutput:
         compact = pkg.compactPrint()
         repo = pkg.returnSimple('repoid')
         
-        print "%-68s %-12s" % (compact, repo)
+        print "%-67s %-12s" % (compact, repo)
     
     
     def infoOutput(self, pkg):

@@ -31,7 +31,7 @@ def getHeadersByKeyword(ts, **kwargs):
                 match += 1
         if match == keywords:
             lst.append(hdr)
-
+    del mi
     return lst
         
 def getIndexesByKeyword(ts, **kwargs):
@@ -48,6 +48,7 @@ def getIndexesByKeyword(ts, **kwargs):
     for h in mi:
         instance = mi.instance()
         lst.append(instance)
+    del mi
     return lst
 
 class RpmDBHolder:
@@ -65,7 +66,8 @@ class RpmDBHolder:
                 self.indexdict[pkgtuple] = []
             self.indexdict[pkgtuple].append(mi.instance())
             self.pkglists.append(pkgtuple)
-                
+        del mi
+        
     def _hdr2pkgTuple(self, hdr):
         name = hdr['name']
         arch = hdr['arch']
@@ -88,7 +90,8 @@ class RpmDBHolder:
         if mi:
             for hdr in mi:
                 hdrlist.append(hdr)
-        
+
+        del mi
         return hdrlist
             
     def getNameArchPkgList(self):
@@ -218,6 +221,7 @@ class RpmDBHolder:
             for matchhdr in matchingHdrs:
                 pkgtuple = self._hdr2pkgTuple(matchhdr)
                 matches.append(pkgtuple)
+            del matchingHdrs
             return miscutils.unique(matches)
 
         if provflag in [0, None] or provver is None: # if we've got no ver or flag
@@ -225,6 +229,7 @@ class RpmDBHolder:
             for matchhdr in matchingHdrs:
                 pkgtuple = self._hdr2pkgTuple(matchhdr)
                 matches.append(pkgtuple)
+            del matchingHdrs
             return miscutils.unique(matches)
         
         for matchhdr in matchingHdrs:
@@ -251,7 +256,7 @@ class RpmDBHolder:
                 matchtuple = (match_n, match_a, match_e, match_v, match_r)
                 if miscutils.rangeCheck(provtuple, matchtuple):
                     matches.append(pkgtuple)
-        
+        del matchingHdrs
         return miscutils.unique(matches)
             
     def _providesList(self, hdr):
