@@ -338,7 +338,7 @@ For more information contact your distribution or package provider.
                     self.usage()
         elif self.basecmd == 'generate-rss':
             if len(self.extcmds) == 0:
-                self.extcmds[0] = 'recent'
+                self.extcmds.insert(0, 'recent')
             
             if self.extcmds[0] not in ['updates', 'recent']:
                 self.errorlog(0, _("Error: generate-rss takes no argument, 'updates' or 'recent'."))
