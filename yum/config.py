@@ -24,6 +24,7 @@ import urllib
 import glob
 import rpm
 import re
+import types
 
 import rpmUtils.transaction
 import rpmUtils.arch
@@ -54,7 +55,7 @@ class CFParser(ConfigParser.ConfigParser):
            """
         try:
             return self.getboolean(section, option)
-        except (ConfigParser.NoSectionError, ConfigParser.NoOptionError), e:            
+        except (ConfigParser.NoSectionError, ConfigParser.NoOptionError), e:
             return default
 
     def _getint(self, section, option, default=None):
@@ -216,15 +217,17 @@ class yumconf(object):
                                              'kernel-BOOT']),
                          ('tsflags', [])]
                          
-        optionbools = [('assumeyes', 0),
-                       ('exactarch', 1),
-                       ('tolerant', 1),
-                       ('diskspacecheck', 1),
-                       ('overwrite_groups', 0),
-                       ('keepalive', 1),
-                       ('gpgcheck', 0),
-                       ('obsoletes', 0),
-                       ('showdupesfromrepos', 0)]
+        optionbools = [('assumeyes', 'False'),
+                       ('exactarch', 'True'),
+                       ('tolerant', 'True'),
+                       ('diskspacecheck', 'True'),
+                       ('overwrite_groups', 'False'),
+                       ('keepalive', 'True'),
+                       ('gpgcheck', 'False'),
+                       ('obsoletes', 'False'),
+                       ('showdupesfromrepos', 'False'),
+                       ('enabled', 'True'),
+                       ('enablegroups', 'True')]
 
         # not being set from the config file
         # or things that can't be handled like all the rest
@@ -236,21 +239,60 @@ class yumconf(object):
         optionfloats = [('timeout', 30.0)]
 
 
-        # do the ints
-        for (option, default) in optionints:
-            value =  self.cfg._getint('main', option, default)
+        # do these two early so we can do the rest using variableReplace()
+        for (option, default) in [('distroverpkg' , 'fedora-release'),
+                                  ('installroot', root)]:
+            value =  self.cfg._getoption('main', option, default)
             self.configdata[option] = value
             setattr(self, option, value)
 
-        # do the strings        
+        # get our variables parsed
+        self.yumvar = self._getEnvVar()
+        self.yumvar['basearch'] = rpmUtils.arch.getBaseArch() # FIXME make this configurable??
+        self.yumvar['arch'] = rpmUtils.arch.getCanonArch() # FIXME make this configurable??
+        # figure out what the releasever really is from the distroverpkg
+        self.yumvar['releasever'] = self._getsysver()
+
+        # do the ints
+        for (option, default) in optionints:
+            try:
+                value =  self.cfg._getoption('main', option, default)
+                value = variableReplace(self.yumvar, value)
+                value = int(value)
+            except ValueError, e:
+                raise Errors.ConfigError, 'Invalid value in config for main::%s' % option
+            self.configdata[option] = value
+            setattr(self, option, value)
+
+        # do the floats
+        for (option, value) in optionfloats:
+            try:
+                value =  self.cfg._getoption('main', option, default)
+                value = variableReplace(self.yumvar, value)
+                value = float(value)
+            except ValueError, e:
+                raise Errors.ConfigError, 'Invalid value in config for main::%s' % option
+                
+            self.configdata[option] = value
+            setattr(self, option, value)
+
+        # do the strings
         for (option, default) in optionstrings:
             value =  self.cfg._getoption('main', option, default)
+            value = variableReplace(self.yumvar, value)
             self.configdata[option] = value
             setattr(self, option, value)
             
         # do the bools
+        self._boolean_states = {'1': True, 'yes': True, 'true': True, 'on': True,
+                           '0': False, 'no': False, 'false': False, 'off': False}
+        
         for (option, default) in optionbools:
-            value = self.cfg._getboolean('main', option, default)
+            value = self.cfg._getoption('main', option, default)
+            value = variableReplace(self.yumvar, value)
+            if value.lower() not in self._boolean_states:
+                raise Errors.ConfigError, 'Invalid value in config for main::%s' % option
+            value = self._boolean_states[value.lower()]
             self.configdata[option] = value
             setattr(self, option, value)
             
@@ -259,13 +301,6 @@ class yumconf(object):
             self.configdata[option] = value
             setattr(self, option, value)
 
-        # do the floats
-        for (option, value) in optionfloats:
-            value = self.cfg._getfloat('main', option, default)
-            self.configdata[option] = value
-            setattr(self, option, value)
-            
-            
         # do the dirs - set the root if there is one (grumble)
         for option in ['cachedir', 'logfile']:
             path = self.configdata[option]
@@ -278,17 +313,10 @@ class yumconf(object):
         for option, getfunc in (('bandwidth', self.cfg.getbytes), 
                                 ('throttle', self.cfg.getthrottle)):
             value = getfunc('main', option, 0)
+            value = variableReplace(self.yumvar, value)
             self.configdata[option] = value
             setattr(self, option, value)
 
-        
-        
-        # get our variables parsed
-        self.yumvar = self._getEnvVar()
-        self.yumvar['basearch'] = rpmUtils.arch.getBaseArch() # FIXME make this configurable??
-        self.yumvar['arch'] = rpmUtils.arch.getCanonArch() # FIXME make this configurable??
-        # figure out what the releasever really is from the distroverpkg
-        self.yumvar['releasever'] = self._getsysver()
         
         # weird ones
         for option in ['commands', 'installonlypkgs', 'kernelpkgnames', 'exclude']:
@@ -385,20 +413,36 @@ def cfgParserRepo(section, yumconfig, cfgparser):
     
     thisrepo = Repository(section)
     thisrepo.set('yumvar', yumconfig.yumvar)
+
+    for keyword in ['proxy_username', 'proxy', 'proxy_password',
+                    'retries', 'failovermethod', 'name']:
+        val = cfgparser._getoption(section, keyword, yumconfig.getConfigOption(keyword))
+        val = variableReplace(yumconfig.yumvar, val)
+        thisrepo.set(keyword, val)
     
-    enabled = cfgparser._getboolean(section, 'enabled', 1)
-    name = cfgparser._getoption(section, 'name', section)
-    name = variableReplace(yumconfig.yumvar, name)
-    thisrepo.set('name', name) 
-    thisrepo.set('enabled', enabled)
+    for keyword in ['gpgcheck', 'keepalive', 'enablegroups', 'enabled']:
+        val = cfgparser._getoption(section, keyword, yumconfig.getConfigOption(keyword))
+        val = variableReplace(yumconfig.yumvar, val)
+        if type(val) is not types.BooleanType:
+            if val.lower() not in yumconfig._boolean_states:
+                raise Errors.RepoError, 'Invalid value in repo config for %s::%s' % (section, keyword)
+            val = yumconfig._boolean_states[val.lower()]
+        thisrepo.set(keyword, val)
     
+    for (keyword, getfunc) in [('bandwidth', cfgparser.getbytes),
+                               ('throttle', cfgparser.getthrottle),
+                               ('timeout', cfgparser._getfloat)]:
+        val = getfunc(section, keyword, yumconfig.getConfigOption(keyword))
+        thisrepo.set(keyword, val)
+
+
+    # lists and weird items
     baseurl = cfgparser._getoption(section, 'baseurl', [])
     baseurls = parseList(baseurl)
     mirrorlistfn = cfgparser._getoption(section, 'mirrorlist', None)
     mirrorlistfn = variableReplace(yumconfig.yumvar, mirrorlistfn)
     thisrepo.set('mirrorlistfn', mirrorlistfn)
     thisrepo.set('baseurls', baseurls)
-    
 
     gpgkey = cfgparser._getoption(section, 'gpgkey', '')
     if gpgkey:
@@ -409,26 +453,6 @@ def cfgParserRepo(section, yumconfig, cfgparser):
     gpgkey = variableReplace(yumconfig.yumvar, gpgkey)
     thisrepo.set('gpgkey', gpgkey)
 
-
-    for keyword in ['proxy_username', 'proxy', 'proxy_password', 
-                    'retries', 'failovermethod']:
-
-        thisrepo.set(keyword, cfgparser._getoption(section, keyword, \
-                     yumconfig.getConfigOption(keyword)))
-                     
-    for keyword, getfunc in (('bandwidth', cfgparser.getbytes),
-                             ('throttle', cfgparser.getthrottle)):
-        thisrepo.set(keyword, getfunc(section, keyword, 
-                    yumconfig.getConfigOption(keyword)))
-
-    for keyword in ['gpgcheck', 'keepalive']:
-        thisrepo.set(keyword, cfgparser._getboolean(section, \
-                     keyword, yumconfig.getConfigOption(keyword)))
-    
-    for keyword in ['timeout']:
-        thisrepo.set(keyword, cfgparser._getfloat(section, \
-                     keyword, yumconfig.getConfigOption(keyword)))
-    
     excludelist = cfgparser._getoption(section, 'exclude', [])
     excludelist = variableReplace(yumconfig.yumvar, excludelist)
     excludelist = parseList(excludelist)
@@ -439,8 +463,6 @@ def cfgParserRepo(section, yumconfig, cfgparser):
     includelist = parseList(includelist)
     thisrepo.set('includepkgs', includelist)
 
-    thisrepo.set('enablegroups', cfgparser._getboolean(section, 'enablegroups', 1))
-    
     cachedir = os.path.join(yumconfig.getConfigOption('cachedir'), section)
     pkgdir = os.path.join(cachedir, 'packages')
     hdrdir = os.path.join(cachedir, 'headers')

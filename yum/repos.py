@@ -766,12 +766,16 @@ def variableReplace(yumvar, thing):
     if thing is None:
         return thing
 
-    if type(thing) is types.StringType:
+    elif type(thing) is types.ListType:
+        shortlist = thing
+
+    elif type(thing) is types.StringType:
         shortlist = []
         shortlist.append(thing)
         
-    if type(thing) is types.ListType:
-        shortlist = thing
+    else:
+        # not a list or string, screw it
+        return thing
     
     basearch_reg = re.compile('\$basearch', re.I)
     arch_reg = re.compile('\$arch', re.I)
