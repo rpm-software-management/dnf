@@ -982,7 +982,7 @@ class YumBase(depsolve.Depsolve):
                 tmpvalues = []
                 for field in fields:
                     value = po.returnSimple(field)
-                    if crit_re.search(value):
+                    if value and crit_re.search(value):
                         tmpvalues.append(value)
                 if len(tmpvalues) > 0:
                     if callback:
@@ -1005,7 +1005,7 @@ class YumBase(depsolve.Depsolve):
                     value = po.returnSimple(field)
                     if type(value) is types.ListType: # this is annoying
                         value = str(value)
-                    if crit_re.search(value):
+                    if value and crit_re.search(value):
                         tmpvalues.append(value)
             if len(tmpvalues) > 0:
                 if callback:
