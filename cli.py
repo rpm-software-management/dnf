@@ -493,7 +493,7 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         if len(problems) > 0:
             errstring = ''
             for problem in problems:
-                errstring += problem
+                errstring += '%s\n' % problem
             
             raise yum.Errors.YumBaseError, errstring
         
