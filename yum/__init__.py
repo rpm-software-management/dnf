@@ -104,12 +104,11 @@ class YumBase(depsolve.Depsolve):
            of the repository - stub"""
            
         for repo in self.repos.listEnabled():
-            if repo.repoXML is not None:
+            if repo.repoXML is not None and len(repo.urls) > 0:
                 continue
             try:
-                repo.baseurlSetup()
-                repo.check()
                 repo.cache = self.conf.getConfigOption('cache')
+                repo.baseurlSetup()
                 repo.dirSetup()
             except Errors.RepoError, e:
                 self.errorlog(0, '%s' % e)

@@ -62,12 +62,11 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
             self.errorlog(0, 'No Repositories Available to Set Up')
             sys.exit(1)
         for repo in self.repos.listEnabled():
-            if repo.repoXML is not None:
+            if repo.repoXML is not None and len(repo.urls) > 0:
                 continue
             try:
-                repo.baseurlSetup()
-                repo.check()
                 repo.cache = self.conf.getConfigOption('cache')
+                repo.baseurlSetup()
                 repo.dirSetup()
                 self.log(3, 'Baseurl(s) for repo: %s' % repo.urls)
             except yum.Errors.RepoError, e:

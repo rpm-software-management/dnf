@@ -396,8 +396,9 @@ class Repository:
                         "Cannot access repository dir %s" % dir
  
     def baseurlSetup(self):
-        """go through the baseurls and mirrorlists and populatr self.urls 
+        """go through the baseurls and mirrorlists and populate self.urls 
            with valid ones, run  self.check() at the end to make sure it worked"""
+
         goodurls = []
         if self.mirrorlistfn and not self.mirrorlistparsed:
             mirrorurls = getMirrorList(self.mirrorlistfn)
