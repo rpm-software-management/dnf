@@ -442,7 +442,7 @@ class YumBaseCli(yum.YumBase):
         if thingslisted == 0:
             self.errorlog(1, 'No Packages to list')
     
-    return 0, 'Success'
+        return 0, 'Success'
     
     def userconfirm(self):
         """gets a yes or no from the user, defaults to No"""
