@@ -100,7 +100,7 @@ class RepoStorage:
 
     def add(self, repoobj):
         if self.repos.has_key(repoobj.id):
-            raise Errors.RepoError, 'Repository %s already added, not adding again' % (repoid)
+            raise Errors.RepoError, 'Repository %s already added, not adding again' % (repoobj.id)
         self.repos[repoobj.id] = repoobj
         
 
