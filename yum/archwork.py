@@ -21,17 +21,20 @@ import re
 
 def getArch():
     arch = os.uname()[4]
+    newarch = None
     if re.search('86', arch):
-        arch = 'i386'
+        newarch = 'i386'
     if re.search('sparc', arch) or re.search('sun', arch):
-        arch = 'sparc'
+        newarch = 'sparc'
     if re.search('alpha', arch):
-        arch = 'alpha'
+        newarch = 'alpha'
     if re.search('ppc', arch):
-        arch = 'ppc'
+        newarch = 'ppc'
     if re.search('x86_64', arch):
-        arch = 'x86_64'
-    return arch
+        newarch = 'x86_64'
+    if not newarch:
+        newarch = arch
+    return newarch
 
 def betterarch(arch1, arch2):
     """Take two archs, return the better of the two, returns none if both \
@@ -71,7 +74,7 @@ def compatArchList():
     archdict['ia64']=['ia64','noarch', 'i686']
     archdict['s390']=['noarch','s390']
     archdict['s390x']=['noarch','s390','s390x']
-    archdict['x86_64']=['noarch','x86_64','athlon']
+    archdict['x86_64']=['noarch','x86_64','athlon','i386','i686']
     archdict['parisc']=['hppa2.0','hppa1.2','hppa1.2','hppa1.1','hppa1.0','paris','noarch']
     myarch=getArch()
     if archdict.has_key(myarch):

@@ -1,6 +1,4 @@
-#!/usr/bin/python
-# yum-arch -- Creates YUM distribution databases
-#
+#!/usr/bin/python -tt
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation; either version 2 of the License, or
@@ -14,11 +12,31 @@
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+# Copyright 2003 Duke University
 
 
-import sys
 
-sys.path.insert(1,'/usr/share/yum')
-import pullheaders
-pullheaders.main(sys.argv[1:])
+import exceptions
+
+
+class YumBaseError(exceptions.Exception):
+    def __init__(self, args=None):
+        exceptions.Exception.__init__(self)    
+        self.args = args
+        
+class DepError(YumBaseError):
+    def __init__(self, args=None):
+        YumBaseError.__init__(self)
+        self.args = args
+
+class RepoError(YumBaseError):
+    def __init__(self, args=None):
+        YumBaseError.__init__(self)
+        self.args = args
+
+class ConfigError(YumBaseError):
+    def __init__(self, args=None):
+        YumBaseError.__init__(self)
+        self.args = args
+    
 

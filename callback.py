@@ -82,8 +82,8 @@ class RPMInstallCallback:
             self.total_removed += 1
             if conf.debuglevel >= 2:
                 if h not in self.installed_pkg_names:
-                    print 'Erasing: %s %d/%d' % (h, self.total_removed + 
+                    print _('Erasing: %s %d/%d') % (h, self.total_removed + 
                       self.total_installed, self.total_actions)
                 else:
-                    print 'Completing update for %s  - %d/%d' % (h, self.total_removed +
+                    print _('Completing update for %s  - %d/%d') % (h, self.total_removed +
                       self.total_installed, self.total_actions)

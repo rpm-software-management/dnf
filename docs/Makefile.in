@@ -32,18 +32,16 @@ INSTALL_DATA = @INSTALL_DATA@
 INSTALL_SCRIPT = @INSTALL_SCRIPT@
 
 
-all: $(srcdir)/yum.8 $(srcdir)/yum-arch.8 $(srcdir)/yum.conf.5
+all: $(srcdir)/yum.8 $(srcdir)/yum.conf.5
 
 
 install: all installdirs
 	$(INSTALL_DATA) $(srcdir)/yum.8 $(DESTDIR)$(mandir)/man8/yum.8
-	$(INSTALL_DATA) $(srcdir)/yum-arch.8 $(DESTDIR)$(mandir)/man8/yum-arch.8
 	$(INSTALL_DATA) $(srcdir)/yum.conf.5 $(DESTDIR)$(mandir)/man5/yum.conf.5
 
 
 uninstall:
 	$(RM) $(mandir)/yum.8
-	$(RM) $(mandir)/yum-arch.8
 	$(RM) $(mandir)/yum.conf.5
 
 
@@ -70,7 +68,6 @@ distfiles:
 	cp \
 	$(srcdir)/Makefile.in \
 	$(srcdir)/yum.8 \
-	$(srcdir)/yum-arch.8 \
 	$(srcdir)/yum.conf.5 \
 	$(top_srcdir)/.disttmp/$$distdir/docs
 
@@ -80,7 +77,6 @@ dailyfiles:
 	cp \
 	$(srcdir)/Makefile.in \
 	$(srcdir)/yum.8 \
-	$(srcdir)/yum-arch.8 \
 	$(srcdir)/yum.conf.5 \
 	$(top_srcdir)/.disttmp/$$distdir/docs
 

@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"PO-Revision-Date: Wed Feb 19 14:16:18 2003\n"
+"PO-Revision-Date: Sun Oct 19 17:01:22 2003\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -13,331 +13,786 @@ msgstr ""
 "Content-Transfer-Encoding: ENCODING\n"
 "Generated-By: pygettext.py 1.1\n"
 
-#: ../pkgaction.py:306
-msgid "Kernel Updated/Installed, checking for bootloader"
-msgstr ""
-
-#: ../pullheaders.py:70
-msgid "Directory of rpms must exist"
-msgstr ""
-
-#: ../config.py:37
-msgid "Error accessing URL: %s"
-msgstr ""
-
-#: ../clientStuff.py:448
-msgid "[erase: %s.%s]"
-msgstr ""
-
-#: ../bin/yum:57
-msgid "IOError - # %s - %s"
-msgstr ""
-
-#: ../yummain.py:224
+#: ../yummain.py:277
+#, c-format
 msgid "Dependencies resolved"
 msgstr ""
 
-#: ../clientStuff.py:660
+#: ../pullheaders.py:86
+#, c-format
+msgid "Directory of rpms must exist"
+msgstr ""
+
+#: ../config.py:44
+#, c-format
+msgid "Error accessing URL: %s"
+msgstr ""
+
+#: ../urlgrabber.py:313 ../urlgrabber.py:346
+#, c-format
+msgid "OSError: %s"
+msgstr ""
+
+#: ../clientStuff.py:919
+#, c-format
+msgid "No Packages installed not included in a repository"
+msgstr ""
+
+#: ../pullheaders.py:293
+#, c-format
+msgid ""
+"\n"
+"   Total: %d\n"
+"   Used: %d\n"
+"   Src: %d"
+msgstr ""
+
+#: ../serverStuff.py:82
+#, c-format
+msgid "ignoring srpm: %s"
+msgstr ""
+
+#: ../lilocfg.py:49
+#, c-format
+msgid ""
+"Error restoring the backup of lilo.conf  The backup was:\n"
+msgstr ""
+
+#: ../clientStuff.py:842 ../clientStuff.py:854
+#, c-format
+msgid "Looking in available packages for a providing package"
+msgstr ""
+
+#: ../yummain.py:315
+#, c-format
+msgid "Errors installing:"
+msgstr ""
+
+#: ../clientStuff.py:1140
+#, c-format
+msgid ""
+"retrygrab() failed for:\n"
+"  %s%s\n"
+"  Executing failover method"
+msgstr ""
+
+#: ../clientStuff.py:498
+#, c-format
+msgid "I will install/upgrade these to satisfy the dependencies:"
+msgstr ""
+
+#: ../pullheaders.py:232
+#, c-format
+msgid "Cannot delete %s - check perms"
+msgstr ""
+
+#: ../clientStuff.py:881
+#, c-format
+msgid "Need to pass a list of pkgs to erase"
+msgstr ""
+
+#: ../clientStuff.py:839
+#, c-format
+msgid "Need a provides to match"
+msgstr ""
+
+#: ../lilocfg.py:67
+#, c-format
+msgid ""
+"lilo options that are not supported by yum are used in the default lilo.conf. This file will not be modified. The options include:\n"
+msgstr ""
+
+#: ../clientStuff.py:520 ../clientStuff.py:559
+#, c-format
+msgid "Installed: "
+msgstr ""
+
+#: ../clientStuff.py:715 ../clientStuff.py:751 ../clientStuff.py:804
+#: ../clientStuff.py:1017
+#, c-format
+msgid "Error getting file %s"
+msgstr ""
+
+#: ../yummain.py:51 ../yummain.py:106
+#, c-format
+msgid "Options Error: %s"
+msgstr ""
+
+#: ../pullheaders.py:200
+#, c-format
+msgid "%s is not writable"
+msgstr ""
+
+#: ../pullheaders.py:281
+#, c-format
+msgid ""
+"\n"
+"Already found tuple: %s %s:\n"
+"%s "
+msgstr ""
+
+#: ../rpmUtils.py:132
+#, c-format
+msgid "Could not open RPM database for reading. Perhaps it is already in use?"
+msgstr ""
+
+#: ../serverStuff.py:88
+#, c-format
+msgid "errors found"
+msgstr ""
+
+#: ../pkgaction.py:314
+#, c-format
+msgid "Size   : %s"
+msgstr ""
+
+#: ../clientStuff.py:523 ../clientStuff.py:562
+#, c-format
+msgid "Erased: "
+msgstr ""
+
+#: ../checkbootloader.py:167
+#, c-format
+msgid "Unable to determine boot loader."
+msgstr ""
+
+#: ../clientStuff.py:799
+#, c-format
+msgid "getting %s"
+msgstr ""
+
+#: ../clientStuff.py:1033
+#, c-format
+msgid "Error Reading Header on %s"
+msgstr ""
+
+#: ../config.py:50
+#, c-format
+msgid "Error accessing File: %s"
+msgstr ""
+
+#: ../yummain.py:330
+#, c-format
+msgid "You're not root, we can't install things"
+msgstr ""
+
+#: ../yummain.py:72
+#, c-format
+msgid "Cannot find any conf file."
+msgstr ""
+
+#: ../urlgrabber.py:291
+#, c-format
+msgid "Local file does not exist: %s"
+msgstr ""
+
+#: ../config.py:193
+#, c-format
+msgid "using ftp, http[s], or file for servers, Aborting - %s"
+msgstr ""
+
+#: ../checkbootloader.py:165
+#, c-format
+msgid "Found %s."
+msgstr ""
+
+#: ../yummain.py:203
+#, c-format
+msgid "Finding updated packages"
+msgstr ""
+
+#: ../yummain.py:333
+#, c-format
+msgid "Transaction(s) Complete"
+msgstr ""
+
+#: ../urlgrabber.py:311 ../urlgrabber.py:344
+#, c-format
+msgid "IOError: %s"
+msgstr ""
+
+#: ../clientStuff.py:958
+#, c-format
+msgid "Cleaning packages and old headers"
+msgstr ""
+
+#: ../clientStuff.py:809
+#, c-format
+msgid "Cannot download %s in caching only mode or when running as non-root user."
+msgstr ""
+
+#: ../clientStuff.py:1029 ../clientStuff.py:1034 ../clientStuff.py:1038
+#: ../clientStuff.py:1043
+#, c-format
+msgid ""
+"Error: You may want to run yum clean or remove the file: \n"
+" %s"
+msgstr ""
+
+#: ../bin/yum:49
+#, c-format
+msgid "Unable to check if PID %s is active"
+msgstr ""
+
+#: ../lilocfg.py:61
+#, c-format
+msgid ""
+"Error reading lilo.conf: The messages was:\n"
+msgstr ""
+
+#: ../yummain.py:232
+#, c-format
+msgid "No groups provided or accessible on any server."
+msgstr ""
+
+#: ../pkgaction.py:464
+#, c-format
+msgid "%s results returned"
+msgstr ""
+
+#: ../pullheaders.py:170 ../pullheaders.py:176
+#, c-format
+msgid "Error moving %s to %s, fatal"
+msgstr ""
+
+#: ../yummain.py:294
+#, c-format
+msgid "Running test transaction:"
+msgstr ""
+
+#: ../pullheaders.py:262
+#, c-format
+msgid ""
+"\n"
+"ignoring bad rpm: %s"
+msgstr ""
+
+#: ../clientStuff.py:495
+#, c-format
+msgid "[erase: %s]"
+msgstr ""
+
+#: ../pullheaders.py:196
+#, c-format
+msgid "%s is not a dir"
+msgstr ""
+
+#: ../nevral.py:349
+#, c-format
+msgid "bestarch = %s for %s"
+msgstr ""
+
+#: ../clientStuff.py:419 ../nevral.py:237
+#, c-format
+msgid "Best version for %s is %s:%s-%s"
+msgstr ""
+
+#: ../clientStuff.py:506 ../clientStuff.py:517
+#, c-format
+msgid "[deps: %s]"
+msgstr ""
+
+#: ../pkgaction.py:267
+#, c-format
+msgid "Version"
+msgstr ""
+
+#: ../clientStuff.py:921
+#, c-format
+msgid "Looking in Available Packages:"
+msgstr ""
+
+#: ../pullheaders.py:268
+#, c-format
+msgid ""
+"\n"
+"ignoring srpm: %s"
+msgstr ""
+
+#: ../serverStuff.py:77
+#, c-format
+msgid "Checking deps %d/%d complete"
+msgstr ""
+
+#: ../pkgaction.py:457
+#, c-format
+msgid ""
+"Installed package: %s.%s %s:%s-%s matches with\n"
+" %s"
+msgstr ""
+
+#: ../pullheaders.py:122
+#, c-format
+msgid ""
+"Errors within the dir(s):\n"
+" %s"
+msgstr ""
+
+#: ../pkgaction.py:317
+#, c-format
+msgid "Summary: %s"
+msgstr ""
+
+#: ../rpmUtils.py:260
+#, c-format
+msgid "Error opening rpm %s - error %s"
+msgstr ""
+
+#: ../clientStuff.py:763 ../clientStuff.py:789
+#, c-format
+msgid "Please run yum in non-caching mode to correct this header."
+msgstr ""
+
+#: ../pullheaders.py:222
+#, c-format
+msgid "Cannot delete file %s"
+msgstr ""
+
+#: ../lilocfg.py:43
+#, c-format
+msgid ""
+"Error installing lilo.conf  The message was:\n"
+msgstr ""
+
+#: ../clientStuff.py:1037
+#, c-format
+msgid "Error: Untrusted GPG key on %s"
+msgstr ""
+
+#: ../clientStuff.py:923
+#, c-format
+msgid "Looking in Installed Packages:"
+msgstr ""
+
+#: ../clientStuff.py:971
+#, c-format
+msgid "Invalid clean option %s"
+msgstr ""
+
+#: ../pullheaders.py:258
+#, c-format
+msgid ""
+"\n"
+"\n"
+"Problem with gpg sig or md5sum on %s\n"
+"\n"
+msgstr ""
+
+#: ../pkgaction.py:313
+#, c-format
+msgid "Release: %s"
+msgstr ""
+
+#: ../pkgaction.py:76
+#, c-format
+msgid "No Packages Available for Update or Install"
+msgstr ""
+
+#: ../pkgaction.py:56 ../pkgaction.py:67
+#, c-format
+msgid "%s is installed and is the latest version."
+msgstr ""
+
+#: ../nevral.py:261
+#, c-format
+msgid "Found best arch for install only pkg %s"
+msgstr ""
+
+#: ../clientStuff.py:844 ../clientStuff.py:856
+#, c-format
+msgid "Looking in installed packages for a providing package"
+msgstr ""
+
+#: ../clientStuff.py:468
+#, c-format
+msgid "I will do the following:"
+msgstr ""
+
+#: ../urlgrabber.py:279 ../urlgrabber.py:309
+#, c-format
+msgid "Bad URL: %s"
+msgstr ""
+
+#: ../clientStuff.py:1003
+#, c-format
+msgid "NonMatching RPM version, %s, removing."
+msgstr ""
+
+#: ../clientStuff.py:509
+#, c-format
+msgid "I will erase these to satisfy the dependencies:"
+msgstr ""
+
+#: ../clientStuff.py:522 ../clientStuff.py:561
+#, c-format
+msgid "Updated: "
+msgstr ""
+
+#: ../lilocfg.py:407
+#, c-format
+msgid "Error parsing command line arguments: %s"
+msgstr ""
+
+#: ../yummain.py:214
+#, c-format
+msgid "Finding obsoleted packages"
+msgstr ""
+
+#: ../urlgrabber.py:315 ../urlgrabber.py:348
+#, c-format
+msgid "HTTP Error (%s): %s"
+msgstr ""
+
+#: ../serverStuff.py:96
+#, c-format
+msgid "depcheck: package %s conflicts with %s"
+msgstr ""
+
+#: ../clientStuff.py:761 ../clientStuff.py:787
+#, c-format
+msgid "Please ask your sysadmin to update the headers on this system."
+msgstr ""
+
+#: ../clientStuff.py:851
+#, c-format
+msgid "Need an item to search"
+msgstr ""
+
+#: ../pullheaders.py:178
+#, c-format
+msgid "Putting back old headers"
+msgstr ""
+
+#: ../clientStuff.py:735
+#, c-format
+msgid "CacheDir: %s"
+msgstr ""
+
+#: ../callback.py:88
+#, c-format
+msgid "Completing update for %s  - %d/%d"
+msgstr ""
+
+#: ../clientStuff.py:1044
+#, c-format
+msgid ""
+"Error: You may need to disable gpg checking to install this package\n"
+msgstr ""
+
+#: ../yummain.py:128
+#, c-format
+msgid "Options Error: no commands found"
+msgstr ""
+
+#: ../serverStuff.py:85
+#, c-format
+msgid "adding %s"
+msgstr ""
+
+#: ../grubcfg.py:22
+#, c-format
+msgid ""
+"Unable to run grubby correctly: the message was:\n"
+msgstr ""
+
+#: ../urlgrabber.py:293
+#, c-format
+msgid "Not a normal file: %s"
+msgstr ""
+
+#: ../bin/yum:71
+#, c-format
+msgid "IOError - # %s - %s"
+msgstr ""
+
+#: ../pkgaction.py:510
+#, c-format
+msgid "Kernel Updated/Installed, checking for bootloader"
+msgstr ""
+
+#: ../clientStuff.py:828
+#, c-format
 msgid "Need to pass a list of pkgs to install"
 msgstr ""
 
-#: ../config.py:105
-msgid "Not using ftp, http or file for servers, Aborting - %s"
+#: ../clientStuff.py:790 ../clientStuff.py:810
+#, c-format
+msgid "Deleting entry from Available packages"
 msgstr ""
 
-#: ../depchecktree.py:132 ../pullheaders.py:94
-msgid "All dependencies resolved and no conflicts detected"
-msgstr ""
-
-#: ../yummain.py:282
+#: ../pullheaders.py:256
+#, c-format
 msgid ""
 "\n"
-"    Usage:  yum [options] <update | upgrade | install | info | erase | list |\n"
-"            clean | provides>\n"
+"Checking sig on %s"
+msgstr ""
+
+#: ../config.py:205
+#, c-format
+msgid "Insufficient server config - no servers found. Aborting."
+msgstr ""
+
+#: ../yummain.py:271
+#, c-format
+msgid "Resolving dependencies"
+msgstr ""
+
+#: ../pkgaction.py:312
+#, c-format
+msgid "Version: %s"
+msgstr ""
+
+#: ../yummain.py:338
+#, c-format
+msgid ""
+"\n"
+"    Usage:  yum [options] <update | upgrade | install | info | remove | list |\n"
+"            clean | provides | search | check-update | groupinstall | groupupdate |\n"
+"            grouplist >\n"
 "                \n"
 "         Options:\n"
 "          -c [config file] - specify the config file to use\n"
 "          -e [error level] - set the error logging level\n"
 "          -d [debug level] - set the debugging level\n"
 "          -y answer yes to all questions\n"
-"          -R [time in minutes] - set the max amount of time to randonly run in.\n"
+"          -t be tolerant about errors in package commands\n"
+"          -R [time in minutes] - set the max amount of time to randomly run in.\n"
 "          -C run from cache only - do not update the cache\n"
+"          --installroot=[path] - set the install root (default '/')\n"
+"          --version - output the version of yum\n"
 "          -h, --help this screen\n"
 "    "
 msgstr ""
 
-#: ../lilocfg.py:49
-msgid ""
-"Error restoring the backup of lilo.conf  The backup was:\n"
+#: ../pkgaction.py:259
+#, c-format
+msgid "From %s installing %s"
 msgstr ""
 
-#: ../clientStuff.py:670
-msgid "Looking in available packages for a providing package"
-msgstr ""
-
-#: ../config.py:116
-msgid "Insufficient server config - no servers found. Aborting."
-msgstr ""
-
-#: ../clientStuff.py:717 ../clientStuff.py:746
-msgid "Looking in Installed Packages:"
-msgstr ""
-
-#: ../pullheaders.py:99
-msgid "%s is a file"
-msgstr ""
-
-#: ../yummain.py:218
-msgid "Resolving dependencies"
-msgstr ""
-
-#: ../pkgaction.py:115
-msgid "Version: %s"
-msgstr ""
-
-#: ../clientStuff.py:688
-msgid "Need to pass a list of pkgs to erase"
-msgstr ""
-
-#: ../pkgaction.py:322
+#: ../pkgaction.py:538
+#, c-format
 msgid "No bootloader found, Cannot configure kernel, continuing."
 msgstr ""
 
-#: ../grubcfg.py:22
-msgid ""
-"Unable to run grubby correctly: the message was:\n"
+#: ../clientStuff.py:688 ../clientStuff.py:695
+#, c-format
+msgid "Attempt to delete a missing file %s - ignoring."
 msgstr ""
 
-#: ../pkgaction.py:164
-msgid "%s is installed and the latest version."
+#: ../rpmUtils.py:25
+#, c-format
+msgid "Header cannot be opened or does not match %s, %s."
 msgstr ""
 
-#: ../clientStuff.py:667
-msgid "Need a provides to match"
+#: ../bin/yum:66
+#, c-format
+msgid "Exiting on User Cancel"
 msgstr ""
 
-#: ../pullheaders.py:199
-msgid ""
-"\n"
-"   Total: %d\n"
-"   Used: %d"
+#: ../clientStuff.py:1011
+#, c-format
+msgid "Getting %s"
 msgstr ""
 
-#: ../yummain.py:178
-msgid "Finding obsoleted packages"
-msgstr ""
-
-#: ../pullheaders.py:83
-msgid "No rpms to look at. Exiting."
-msgstr ""
-
-#: ../yummain.py:274
-msgid "You're not root, we can't install things"
-msgstr ""
-
-#: ../pkgaction.py:331
-msgid "Error: MD5 Signature check failed for %s"
-msgstr ""
-
-#: ../pullheaders.py:117
+#: ../pullheaders.py:150
+#, c-format
 msgid ""
 "\n"
 "Writing header.info file"
 msgstr ""
 
-#: ../yummain.py:48 ../yummain.py:92
-msgid "Options Error: %s"
+#: ../pullheaders.py:208
+#, c-format
+msgid "Error creating dir %s: %s"
 msgstr ""
 
-#: ../pkgaction.py:75
+#: ../pkgaction.py:267
+#, c-format
 msgid "Arch"
 msgstr ""
 
-#: ../clientStuff.py:655
-msgid "You need to be root to perform these commands"
+#: ../clientStuff.py:729
+#, c-format
+msgid "Gathering header information file(s) from server(s)"
 msgstr ""
 
-#: ../pkgaction.py:319
-msgid "Grub found - making this kernel the default"
+#: ../clientStuff.py:756
+#, c-format
+msgid "Using cached header.info file"
 msgstr ""
 
-#: ../clientStuff.py:147 ../rpmUtils.py:60
-msgid "Could not open RPM database for reading. Perhaps it is already in use?"
+#: ../pkgaction.py:300
+#, c-format
+msgid "No Packages Available to List"
 msgstr ""
 
-#: ../clientStuff.py:331
-msgid "ERROR: Url Return no Content-Length  - something is wrong"
+#: ../clientStuff.py:1042
+#, c-format
+msgid "Error: Unsigned Package %s"
 msgstr ""
 
-#: ../pkgaction.py:256
+#: ../pkgaction.py:461
+#, c-format
 msgid "localrpmdb not defined"
 msgstr ""
 
 #: ../lilocfg.py:55
+#, c-format
 msgid ""
 "Error installing the new bootloader: \n"
 msgstr ""
 
-#: ../pkgaction.py:117
-msgid "Size   : %s"
+#: ../clientStuff.py:1028
+#, c-format
+msgid "Error: Could not find the GPG Key necessary to validate pkg %s"
 msgstr ""
 
-#: ../yummain.py:207
+#: ../yummain.py:259
+#, c-format
 msgid "No actions to take"
 msgstr ""
 
-#: ../clientStuff.py:713 ../clientStuff.py:742
-msgid "No Packages installed not included in a repository"
+#: ../pkgaction.py:431
+#, c-format
+msgid ""
+"Available package: %s.%s %s:%s-%s from %s matches with\n"
+" %s"
 msgstr ""
 
-#: ../clientStuff.py:450
-msgid "I will install/upgrade these to satisfy the depedencies:"
+#: ../pkgaction.py:201
+#, c-format
+msgid "Erase: No matches for %s"
 msgstr ""
 
-#: ../pullheaders.py:91
+#: ../pullheaders.py:124
+#, c-format
 msgid "   "
 msgstr ""
 
-#: ../checkbootloader.py:167
-msgid "Unable to determine boot loader."
-msgstr ""
-
-#: ../clientStuff.py:809
-msgid "Error: GPG is not installed"
-msgstr ""
-
-#: ../config.py:114
+#: ../config.py:203
+#, c-format
 msgid "Error: Cannot find baseurl or name for server '%s'. Skipping"
 msgstr ""
 
-#: ../pkgaction.py:54 ../pkgaction.py:63
-msgid "%s is installed and is the latest version."
+#: ../pullheaders.py:224
+#, c-format
+msgid "Odd header %s suddenly disappeared"
 msgstr ""
 
-#: ../pullheaders.py:184
-msgid ""
-"\n"
-"ignoring dupe pkg: %s"
+#: ../pullheaders.py:127
+#, c-format
+msgid "All dependencies resolved and no conflicts detected"
 msgstr ""
 
-#: ../config.py:43
-msgid "Error accessing File: %s"
+#: ../pkgaction.py:215
+#, c-format
+msgid "Group %s does not exist"
 msgstr ""
 
-#: ../yummain.py:65
-msgid "Cannot find any conf file."
-msgstr ""
-
-#: ../bin/yum:52
-msgid "Exiting on User Cancel"
-msgstr ""
-
-#: ../clientStuff.py:764
+#: ../clientStuff.py:968
+#, c-format
 msgid "Cleaning old headers"
 msgstr ""
 
-#: ../pkgaction.py:120
+#: ../pkgaction.py:318
+#, c-format
 msgid ""
 "Description:\n"
 " %s"
 msgstr ""
 
-#: ../checkbootloader.py:165
-msgid "Found %s."
+#: ../clientStuff.py:933 ../clientStuff.py:949
+#, c-format
+msgid "Need a list of groups to update"
 msgstr ""
 
-#: ../clientStuff.py:442
-msgid "[install: %s.%s]"
+#: ../clientStuff.py:719
+#, c-format
+msgid "using cached groups from server: %s"
 msgstr ""
 
-#: ../clientStuff.py:322
-msgid "IOError: %s"
+#: ../pkgaction.py:316
+#, c-format
+msgid "Repo   : %s"
 msgstr ""
 
-#: ../clientStuff.py:754
-msgid "Cleaning packages and old headers"
+#: ../clientStuff.py:711
+#, c-format
+msgid "getting groups from server: %s"
 msgstr ""
 
-#: ../pkgaction.py:395
-msgid "Error: GPG Signature check failed for %s"
+#: ../clientStuff.py:823
+#, c-format
+msgid "You need to be root to perform these commands"
 msgstr ""
 
-#: ../pkgaction.py:397
-msgid "You may also want to check to make sure you have the right gpg keys"
+#: ../pkgaction.py:466
+#, c-format
+msgid "No packages found"
 msgstr ""
 
-#: ../pkgaction.py:333 ../pkgaction.py:398
+#: ../yummain.py:233
+#, c-format
 msgid "Exiting."
 msgstr ""
 
-#: ../pkgaction.py:332 ../pkgaction.py:396
-msgid ""
-"You may want to run yum clean or remove the file:\n"
-" %s"
+#: ../nevral.py:183
+#, c-format
+msgid "asking for package %s.%s - does not exist in nevral - bailing out - check rpmdb for errors"
 msgstr ""
 
-#: ../lilocfg.py:61
-msgid ""
-"Error reading lilo.conf: The messages was:\n"
+#: ../clientStuff.py:1068
+#, c-format
+msgid "Errors reported doing trial run"
 msgstr ""
 
-#: ../pkgaction.py:260
-msgid "%s results returned"
-msgstr ""
-
-#: ../pkgaction.py:313
+#: ../pkgaction.py:518
+#, c-format
 msgid "Lilo found - adding kernel to lilo and making it the default"
 msgstr ""
 
-#: ../pkgaction.py:113
+#: ../pkgaction.py:310
+#, c-format
 msgid "Name   : %s"
 msgstr ""
 
-#: ../pullheaders.py:148
-msgid ""
-"\n"
-"Checking sig on %s"
+#: ../clientStuff.py:521 ../clientStuff.py:560
+#, c-format
+msgid "Dep Installed: "
 msgstr ""
 
-#: ../yummain.py:240
-msgid "Calculating available disk space - this could take a bit"
+#: ../clientStuff.py:486
+#, c-format
+msgid "[update: %s]"
 msgstr ""
 
-#: ../yummain.py:259
-msgid "Errors installing:"
-msgstr ""
-
-#: ../pkgaction.py:75
-msgid "Version"
-msgstr ""
-
-#: ../clientStuff.py:715 ../clientStuff.py:744
-msgid "Looking in Available Packages:"
-msgstr ""
-
-#: ../clientStuff.py:323 ../clientStuff.py:332
-msgid "URL: %s"
-msgstr ""
-
-#: ../yummain.py:277
-msgid "Transaction(s) Complete"
-msgstr ""
-
-#: ../depchecktree.py:128 ../pullheaders.py:89
-msgid ""
-"Errors within the dir(s):\n"
-" %s"
-msgstr ""
-
-#: ../pkgaction.py:65
+#: ../pkgaction.py:71
+#, c-format
 msgid "Cannot find a package matching %s"
 msgstr ""
 
-#: ../pkgaction.py:204
-msgid "Erase: No matches for %s"
+#: ../urlgrabber.py:325
+#, c-format
+msgid "ERROR: Url Return no Content-Length  - something is wrong"
 msgstr ""
 
-#: ../serverStuff.py:125
+#: ../clientStuff.py:721
+#, c-format
+msgid "Got a file - yay"
+msgstr ""
+
+#: ../pkgaction.py:257
+#, c-format
+msgid "From %s updating %s"
+msgstr ""
+
+#: ../yummain.py:298
+#, c-format
+msgid "Test transaction complete, Success!"
+msgstr ""
+
+#: ../serverStuff.py:52
+#, c-format
 msgid ""
 "Usage:\n"
 "yum-arch [-v] [-z] [-l] [-c] [-n] [-d] [-q] [-vv] (path of dir where headers/ should/does live)\n"
@@ -346,177 +801,190 @@ msgid ""
 "   -vv = even more verbose output\n"
 "   -n  = don't generate headers\n"
 "   -c  = check pkgs with gpg and md5 checksums - cannot be used with -n\n"
-"   -z  = gzip compress the headers [default, will be deprecated as an option]\n"
+"   -z  = gzip compress the headers (default, deprecated as an option)\n"
+"   -s  = generate headers for source packages too\n"
 "   -l  = use symlinks as valid rpms when building headers\n"
 "   -q  = make the display more quiet"
 msgstr ""
 
-#: ../yummain.py:173
-msgid "Finding updated packages"
+#: ../clientStuff.py:785
+#, c-format
+msgid "The file %s is damaged."
 msgstr ""
 
-#: ../pkgaction.py:166
-msgid "Cannot find any package matching %s available to be updated."
+#: ../pkgaction.py:267
+#, c-format
+msgid "Repo"
 msgstr ""
 
-#: ../clientStuff.py:445
-msgid "[update: %s.%s]"
+#: ../bin/yum:53
+#, c-format
+msgid "Existing lock %s: another copy is running. Aborting."
 msgstr ""
 
-#: ../yummain.py:175
-msgid "Downloading needed headers"
-msgstr ""
-
-#: ../pkgaction.py:355
-msgid "Error: /usr/bin/gpg could not be found"
-msgstr ""
-
-#: ../pkgaction.py:119
-msgid "Summary: %s"
-msgstr ""
-
-#: ../clientStuff.py:767
-msgid "Invalid clean option %s"
-msgstr ""
-
-#: ../clientStuff.py:188 ../clientStuff.py:195 ../rpmUtils.py:71
-#: ../rpmUtils.py:78
+#: ../clientStuff.py:188 ../clientStuff.py:195 ../rpmUtils.py:232
+#: ../rpmUtils.py:239 ../rpmUtils.py:242 ../rpmUtils.py:245
+#, c-format
 msgid "Damaged Header %s"
 msgstr ""
 
-#: ../pkgaction.py:116
-msgid "Release: %s"
-msgstr ""
-
-#: ../pkgaction.py:69 ../pkgaction.py:169 ../pkgaction.py:191
-msgid "No Packages Available for Update or Install"
-msgstr ""
-
-#: ../clientStuff.py:758
+#: ../clientStuff.py:962
+#, c-format
 msgid "Cleaning packages"
 msgstr ""
 
-#: ../pkgaction.py:118
+#: ../pkgaction.py:315
+#, c-format
 msgid "Group  : %s"
 msgstr ""
 
-#: ../clientStuff.py:672
-msgid "Looking in installed packages for a providing package"
+#: ../clientStuff.py:734
+#, c-format
+msgid "Server: %s"
 msgstr ""
 
-#: ../clientStuff.py:439
-msgid "I will do the following:"
+#: ../pkgaction.py:539
+#, c-format
+msgid "No bootloader found, Cannot configure kernel."
 msgstr ""
 
-#: ../lilocfg.py:67
-msgid ""
-"lilo options that are not supported by up2date are used in the default lilo.conf. This file will not be modified. The options include:\n"
-msgstr ""
-
-#: ../pkgaction.py:75
+#: ../pkgaction.py:267
+#, c-format
 msgid "Name"
 msgstr ""
 
-#: ../lilocfg.py:43
-msgid ""
-"Error installing lilo.conf  The message was:\n"
+#: ../clientStuff.py:477
+#, c-format
+msgid "[install: %s]"
 msgstr ""
 
-#: ../nevral.py:58
+#: ../yummain.py:207
+#, c-format
+msgid "Downloading needed headers"
+msgstr ""
+
+#: ../nevral.py:72
+#, c-format
 msgid "Header for pkg %s not found"
 msgstr ""
 
-#: ../pkgaction.py:253
-msgid "Installed package: %s provides %s"
-msgstr ""
-
-#: ../pkgaction.py:240
-msgid "Available package: %s provides %s"
-msgstr ""
-
-#: ../callback.py:46
+#: ../callback.py:55
+#, c-format
 msgid "No header - huh?"
 msgstr ""
 
-#: ../clientStuff.py:761
+#: ../clientStuff.py:965
+#, c-format
 msgid "Cleaning all headers"
 msgstr ""
 
-#: ../clientStuff.py:453
-msgid "[deps: %s.%s]"
+#: ../serverStuff.py:93
+#, c-format
+msgid "depcheck: package %s needs %s"
 msgstr ""
 
-#: ../lilocfg.py:407
-msgid "Error parsing command line arguments: %s"
+#: ../clientStuff.py:759
+#, c-format
+msgid "Error - %s cannot be found"
 msgstr ""
 
-#: ../pkgaction.py:361
-msgid "Exiting"
+#: ../rpmUtils.py:45
+#, c-format
+msgid "RPM %s fails md5 check"
 msgstr ""
 
-#: ../pkgaction.py:114
+#: ../callback.py:85
+#, c-format
+msgid "Erasing: %s %d/%d"
+msgstr ""
+
+#: ../pkgaction.py:261
+#, c-format
+msgid "Nothing in any group to update or install"
+msgstr ""
+
+#: ../pkgaction.py:311
+#, c-format
 msgid "Arch   : %s"
 msgstr ""
 
-#: ../pullheaders.py:165
-msgid "Already found tuple: %s %s "
+#: ../nevral.py:52
+#, c-format
+msgid "No Package %s, %s"
 msgstr ""
 
-#: ../pkgaction.py:359
-msgid "Warning: package %s is unsigned"
+#: ../pkgaction.py:84
+#, c-format
+msgid "No Packages Available for Update"
 msgstr ""
 
-#: ../pullheaders.py:142
+#: ../pkgaction.py:535
+#, c-format
+msgid "Grub found - making this kernel the default"
+msgstr ""
+
+#: ../pullheaders.py:250
+#, c-format
 msgid "Digesting rpm - %s - %d/%d"
 msgstr ""
 
-#: ../nevral.py:71
+#: ../clientStuff.py:994
+#, c-format
+msgid "Damaged RPM %s, removing."
+msgstr ""
+
+#: ../nevral.py:86
+#, c-format
 msgid "Bad Header for pkg %s.%s trying to get headers for the nevral - exiting"
 msgstr ""
 
-#: ../yummain.py:235
+#: ../clientStuff.py:1030 ../clientStuff.py:1039
+#, c-format
+msgid "Error: You may also check that you have the correct GPG keys installed"
+msgstr ""
+
+#: ../pullheaders.py:115
+#, c-format
+msgid "No rpms to work with and no header dir. Exiting."
+msgstr ""
+
+#: ../yummain.py:288
+#, c-format
 msgid "Exiting on user command."
 msgstr ""
 
-#: ../config.py:123
+#: ../config.py:212
+#, c-format
 msgid "Failed to find section: %s"
 msgstr ""
 
-#: ../pkgaction.py:91 ../pkgaction.py:110
-msgid "No Packages Available"
+#: ../rpmUtils.py:162
+#, c-format
+msgid "Got an empty Header, something has gone wrong"
 msgstr ""
 
-#: ../pkgaction.py:262
-msgid "No packages found"
+#: ../serverStuff.py:80
+#, c-format
+msgid "ignoring bad rpm: %s"
 msgstr ""
 
-#: ../yummain.py:109
-msgid "Options Error: no commands found"
-msgstr ""
-
-#: ../pullheaders.py:73
+#: ../pullheaders.py:89
+#, c-format
 msgid "Directory of rpms must be a directory."
 msgstr ""
 
-#: ../yummain.py:246
-msgid "You appear to have insufficient disk space to handle these packages"
+#: ../clientStuff.py:1149
+#, c-format
+msgid "failover: out of servers to try"
 msgstr ""
 
-#: ../depchecktree.py:37
-msgid "%s dirs you want to check"
+#: ../clientStuff.py:746
+#, c-format
+msgid "Getting header.info from server"
 msgstr ""
 
-#: ../bin/yum:42
-msgid "Existing lock %s. Aborting, running program."
-msgstr ""
-
-#: ../pkgaction.py:360
-msgid "You may want to disable GPG checking to install this package"
-msgstr ""
-
-#: ../pullheaders.py:174 ../pullheaders.py:187
-msgid ""
-"\n"
-"ignoring older pkg: %s"
+#: ../nevral.py:50
+#, c-format
+msgid "No Package %s"
 msgstr ""
 

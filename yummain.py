@@ -26,15 +26,19 @@ import time
 import random
 import locale
 import rpm
-import rpmUtils
-import yumcomps
 import yumlock
 
-from logger import Logger
-from config import yumconf
+import yum
+import yum.rpmUtils
+import yum.yumcomps
+import yum.Errors
+import progress_meter
+
+from yum.logger import Logger
+from yum.config import yumconf
 from i18n import _
 
-__version__='2.1'
+__version__='2.1.0'
 
 def parseCmdArgs(args):
    
@@ -47,16 +51,21 @@ def parseCmdArgs(args):
         yumconffile="/etc/yum.conf"
         
     try:
-        gopts, cmds = getopt.getopt(args, 'tCc:hR:e:d:y', ['help', 'version', 'installroot='])
+        gopts, cmds = getopt.getopt(args, 'tCc:hR:e:d:y', ['help',
+                                                           'version',
+                                                           'installroot=',
+                                                           'enablerepo=',
+                                                           'disablerepo=',
+                                                           'exclude='])
     except getopt.error, e:
         errorlog(0, _('Options Error: %s') % e)
         usage()
-   
+
     try: 
         for o,a in gopts:
             if o == '--version':
                 print __version__
-                sys.exit()
+                sys.exit(0)
             if o == '--installroot':
                 if os.access(a + "/etc/yum.conf", os.R_OK):
                     yumconffile = a + '/etc/yum.conf'
@@ -68,19 +77,25 @@ def parseCmdArgs(args):
                 yumconffile=a
 
         if yumconffile:
-            conf=yumconf(configfile=yumconffile)
+            try:
+                conf=yumconf(configfile=yumconffile)
+            except yum.Errors.ConfigError, e:
+                errorlog(0, _('Config Error: %s.') % e)
+                sys.exit(1)
         else:
             errorlog(0, _('Cannot find any conf file.'))
             sys.exit(1)
+            
+            
         # who are we:
-        conf.uid=os.geteuid()
+        conf.setConfigOption('uid', os.geteuid())
         # version of yum
-        conf.yumversion = __version__
+        conf.setConfigOption('yumversion', __version__)
         # we'd like to have a log object now
-        log=Logger(threshold=conf.debuglevel, file_object=sys.stdout)
+        log=Logger(threshold=conf.getConfigOption('debuglevel'), file_object=sys.stdout)
         # syslog-style log
-        if conf.uid == 0:
-            logfile=open(conf.logfile,"a")
+        if conf.getConfigOption('uid') == 0:
+            logfile=open(conf.getConfigOption('logfile'),"a")
             filelog=Logger(threshold=10, file_object=logfile,preprefix=clientStuff.printtime())
         else:
             filelog=Logger(threshold=10, file_object=None,preprefix=clientStuff.printtime())
@@ -88,20 +103,20 @@ def parseCmdArgs(args):
         for o,a in gopts:
             if o == '-d':
                 log.threshold=int(a)
-                conf.debuglevel=int(a)
+                conf.setConfigOption('debuglevel', int(a))
             if o == '-e':
                 errorlog.threshold=int(a)
-                conf.errorlevel=int(a)
+                conf.setConfigOption('errorlevel', int(a))
             if o == '-y':
-                conf.assumeyes=1
+                conf.setConfigOption('assumeyes',1)
             if o in ('-h', '--help'):
                 usage()
             if o == '-C':
-                conf.cache=1
+                conf.setConfigOption('cache', 1)
             if o == '-t':
-                conf.tolerant=1
+                conf.setConfigOption('tolerant', 1)
             if o == '--installroot':
-                conf.installroot=a
+                conf.setConfigOption('installroot', a)
                 
     except ValueError, e:
         errorlog(0, _('Options Error: %s') % e)
@@ -109,8 +124,10 @@ def parseCmdArgs(args):
     
     # if we're below 2 on the debug level we don't need to be outputting
     # progress bars - this is hacky - I'm open to other options
-    if conf.debuglevel < 2:
-        conf.progress_obj = None
+    if conf.getConfigOption('debuglevel') < 2:
+        conf.setConfigOption('progress_obj') = None
+    else:
+        conf.setConfigOption('progress_obj') = progress_meter.text_progress_meter(fo=sys.stdout)
         
     return (log, errorlog, filelog, conf, cmds)
     
@@ -118,9 +135,7 @@ def parseCmdArgs(args):
 def lock(lockfile, mypid):
     """do the lock file work"""
     #check out/get the lockfile
-    if yumlock.lock(lockfile, mypid, 0644):
-        pass
-    else:
+    while not yumlock.lock(lockfile, mypid, 0644):
         fd = open(lockfile, 'r')
         try: oldpid = int(fd.readline())
         except ValueError:
@@ -143,8 +158,6 @@ def lock(lockfile, mypid):
                 msg = _('Existing lock %s: another copy is running. Aborting.')
                 print msg % lockfile
                 sys.exit(200)
-        # lock again.
-        yumlock.lock(lockfile, mypid, 0644)
 
 def main(args):
     """This does all the real work"""
@@ -154,9 +167,11 @@ def main(args):
     if len(args) < 1:
         usage()
     (log, errorlog, filelog, conf, cmds) = parseCmdArgs(args)
-    if conf.commands != None and len(cmds) < 1:
-        cmds = conf.commands
-
+    if len(conf.getConfigOption('commands')) == 0 and len(cmds) < 1:
+        cmds = conf.getConfigOption('commands')
+    else:
+        conf.setConfigOption('commands', cmds)
+        
     if len (cmds) < 1:
         errorlog(0, _('Options Error: no commands found'))
         usage()
@@ -168,15 +183,15 @@ def main(args):
     process = cmds[0]
     
     # ok at this point lets check the lock/set the lock if we can
-    if conf.uid == 0:
+    if conf.getConfigOption('uid') == 0:
         mypid = str(os.getpid())
         lock('/var/run/yum.pid', mypid)
     
     # some misc speedups/sanity checks
-    if conf.uid != 0:
-        conf.cache=1
+    if conf.getConfigOption('uid') != 0:
+        conf.setConfigOption('cache', 1)
     if process == 'clean':
-        conf.cache=1
+        conf.setConfigOption('cache', 1)
         
     # push the logs into the other namespaces
     pkgaction.log = log
@@ -202,7 +217,7 @@ def main(args):
     rpmUtils.conf = conf
     
     # get our ts together that we'll use all over the place
-    ts = rpmUtils.Rpm_Ts_Work()
+    ts = yum.rpmUtils.Rpm_Ts_Work()
     ts.sigChecking('none')
     clientStuff.ts = ts
     pkgaction.ts = ts
@@ -267,8 +282,8 @@ def main(args):
             clientStuff.GroupInfo = GroupInfo
             pkgaction.GroupInfo = GroupInfo
         else:
-            errorlog(0, 'No groups provided or accessible on any server.')
-            errorlog(1, 'Exiting.')
+            errorlog(0, _('No groups provided or accessible on any server.'))
+            errorlog(1, _('Exiting.'))
             sys.exit(1)
     
     log(3, 'nulist = %s' % len(nulist))
@@ -325,7 +340,6 @@ def main(args):
         if clientStuff.userconfirm():
             errorlog(1, _('Exiting on user command.'))
             sys.exit(1)
-
     
     # Test run for file conflicts and diskspace check, etc.
     tstest = clientStuff.create_final_ts(tsInfo)
@@ -338,7 +352,7 @@ def main(args):
     # FIXME the actual run should probably be elsewhere and this should be
     # inside a try, except set
     tsfin = clientStuff.create_final_ts(tsInfo)
-    
+
     if conf.diskspacecheck == 0:
         tsfin.setProbFilter(rpm.RPMPROB_FILTER_DISKSPACE)
 

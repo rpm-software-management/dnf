@@ -33,32 +33,29 @@ INSTALL_SCRIPT = @INSTALL_SCRIPT@
 
 SUBDIRS = bin etc docs po
 
-MODULES = $(srcdir)/pullheaders.pyc \
-	  $(srcdir)/config.pyc \
-	  $(srcdir)/nevral.pyc \
-	  $(srcdir)/logger.pyc \
-	  $(srcdir)/yumlock.pyc \
-	  $(srcdir)/yummain.pyc \
-	  $(srcdir)/i18n.pyc \
-	  $(srcdir)/pkgaction.pyc \
-	  $(srcdir)/serverStuff.pyc \
-	  $(srcdir)/archwork.pyc \
-	  $(srcdir)/callback.pyc \
-	  $(srcdir)/clientStuff.pyc \
-	  $(srcdir)/iutil.pyc \
-	  $(srcdir)/lilocfg.pyc \
-	  $(srcdir)/lilo.pyc \
-	  $(srcdir)/grubcfg.pyc \
-	  $(srcdir)/checkbootloader.pyc \
-	  $(srcdir)/bootloadercfg.pyc \
-	  $(srcdir)/up2datetheft.pyc \
-	  $(srcdir)/keepalive.pyc \
-	  $(srcdir)/urlgrabber.pyc \
-	  $(srcdir)/progress_meter.pyc \
-	  $(srcdir)/yumcomps.pyc \
-	  $(srcdir)/failover.pyc \
-	  $(srcdir)/comps.pyc \
-	  $(srcdir)/rpmUtils.pyc 
+MODULES = $(srcdir)/config.py \
+	  $(srcdir)/nevral.py \
+	  $(srcdir)/logger.py \
+	  $(srcdir)/yumlock.py \
+	  $(srcdir)/yummain.py \
+	  $(srcdir)/i18n.py \
+	  $(srcdir)/pkgaction.py \
+	  $(srcdir)/archwork.py \
+	  $(srcdir)/callback.py \
+	  $(srcdir)/clientStuff.py \
+	  $(srcdir)/iutil.py \
+	  $(srcdir)/lilocfg.py \
+	  $(srcdir)/lilo.py \
+	  $(srcdir)/grubcfg.py \
+	  $(srcdir)/checkbootloader.py \
+	  $(srcdir)/bootloadercfg.py \
+	  $(srcdir)/up2datetheft.py \
+	  $(srcdir)/keepalive.py \
+	  $(srcdir)/progress_meter.py \
+	  $(srcdir)/yumcomps.py \
+	  $(srcdir)/failover.py \
+	  $(srcdir)/comps.py \
+	  $(srcdir)/rpmUtils.py 
 
 .SUFFIXES: .py .pyc
 .py.pyc: 

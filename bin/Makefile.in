@@ -32,7 +32,7 @@ INSTALL_DATA = @INSTALL_DATA@
 INSTALL_SCRIPT = @INSTALL_SCRIPT@
 
 
-all: $(srcdir)/yum-arch $(srcdir)/yum
+all: $(srcdir)/yum
 
 
 install: all installdirs
@@ -41,12 +41,10 @@ install: all installdirs
 
 
 uninstall:
-	$(RM) $(bindir)/yum-arch
 	$(RM) $(bindir)/yum
 
 
 install-strip: all installdirs
-	$(INSTALL_SCRIPT) $(srcdir)/yum-arch $(bindir)/yum-arch
 	$(INSTALL_SCRIPT) $(srcdir)/yum $(bindir)/yum
 
 
@@ -71,7 +69,6 @@ distfiles:
 	distdir=$(PACKAGE)-$(VERSION); \
 	mkdir $(top_srcdir)/.disttmp/$$distdir/bin;\
 	cp \
-	$(srcdir)/yum-arch \
 	$(srcdir)/yum \
 	$(srcdir)/Makefile.in \
 	$(top_srcdir)/.disttmp/$$distdir/bin
@@ -79,7 +76,6 @@ dailyfiles:
 	distdir=$(PACKAGE); \
 	mkdir $(top_srcdir)/.disttmp/$$distdir/bin;\
 	cp \
-	$(srcdir)/yum-arch \
 	$(srcdir)/yum \
 	$(srcdir)/Makefile.in \
 	$(top_srcdir)/.disttmp/$$distdir/bin

@@ -1,5 +1,5 @@
 """
-A module for convenient yet powerful file-object logging
+A module for convenient yet powerful file, console, and syslog logging
 
 BASIC USAGE
 
@@ -35,74 +35,36 @@ DESCRIPTION
 
   It can be extended farther in both directions, but that is rarely
   useful.  It can also be shifted in either direction.  This might be
-  useful if you want o supply the threshold directly on the command
+  useful if you want to supply the threshold directly on the command
   line but have trouble passing in negative numbers.  In that case,
   add 1 to all thresholds and priorities listed above.
 
-BASIC OPTIONS
+CLASSES
 
-  There are a couple of basic options that are commonly needed.  These
-  are attribues of instances of class Logger.
+  There are three primary classes defined in this module:
 
-  preprefix
+    Logger        Class for basic file and console logging
+    SysLogger     Class for syslog logging
+    LogContainer  Class for wrapping multiple other loggers together
+                  for convenient use
 
-    Text that will be printed at the start of each line of output (for
-    log()ged, not write()en messages).  This might be your program's
-    name, for example.
+  Instances of all of these support the same basic methods:
 
-      log.preprefix = 'myprog'
+    obj.log(priority, message)   # log a message with smart formatting
+    obj.write(priority, message) # log a string in a ver raw way
+    obj(priority, message)       # shorthand for obj.log(...)
 
-    If preprefix is callable, then it will be called for each log and
-    the returned value will be used.  This is useful for printing the
-    current time.
+  Different classes support other methods as well, but this is what you
+  will mostly use.
 
-      import time
-      def printtime():
-          return time.strftime('%m/%d/%y %H:%M:%S ',
-                               time.localtime(time.time()))
-      log.preprefix = printtime
-  
-  file_object
-
-    This is the file object to which output is directed.  If it is None,
-    then the logs are quietly dropped.
-
-LOG CONTAINERS
-
-  If you want a program to log to multiple destinations, it might be
-  convenient to use log containers.  A log container is an object
-  which hold several log objects.  When you log to a log container it
-  passes the message on (with optional tests) to each of the log
-  objects it contains.  For example:
-
-    from logger import Logger, LogContainer
-
-    system = Logger(threshold=1, file_object=logfile)
-    debug  = Logger(threshold=5, file_object=sys.stdout)
-    log = LogContainer([system, debug])
-
-    log(3, 'sent to system and debug, but only debug will print it')
-    log(0, 'very important, both will print it')
-
-  In this mode, log containers are just shorthand for calling all
-  contained objects with the same priority and message.
-
-  When a log object is held in a container, it can still be used
-  directly.  For example, you can still do
-
-    debug(3, ['this will not be sent to the system log, even if its',
-              ' threshold is set very high'])
-
-  (Yes, you can send lists of strings and they will be formatted on
-  different lines.  It is pretty smart.)
 
 ADVANCED
 
-  There are a number of options available for both classes.  These are
-  documented below, in the respective classes and methods.  Here is a
+  There are a number of options available for these classes.  These are
+  documented below in the respective classes and methods.  Here is a
   list of some of the things you can do:
 
-    * make the prefix contain a string which gets repeated for more
+    * make a prefix contain a string which gets repeated for more
       important logs.  (prefix)
     * directly test if a log object WOULD log, so you can do
       complicated stuff, like efficient for loops. (test)
@@ -140,16 +102,16 @@ COMMENTS
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
-# Copyright 2001-2002 Michael D. Stenner
+# Copyright 2001-2003 Michael D. Stenner
 
 import sys
 import string
-
+# syslog is imported from within SysLogger.__init__
 
 AUTHOR  = "Michael D. Stenner <mstenner@phy.duke.edu>"
-VERSION = "0.6"
-DATE    = "2002/08/13"
-URL     = "http://www.dulug.duke.edu/~mstenner/software/logger/"
+VERSION = "0.7"
+DATE    = "2003/09/20"
+URL     = "http://linux.duke.edu/projects/mini/logger/"
 
 class Logger:
     """A class for file-object logging
@@ -174,6 +136,37 @@ class Logger:
       pr = log_obj.gen_prefix(3)
 
       # see the examples in the test section for more
+
+    BASIC OPTIONS:
+
+      There are a couple of basic options that are commonly needed.
+      These are attribues of instances of class Logger.
+
+        preprefix
+
+          Text that will be printed at the start of each line of
+          output (for log()ged, not write()en messages).  This might
+          be your program's name, for example.
+
+            log.preprefix = 'myprog'
+
+          If preprefix is callable, then it will be called for each
+          log and the returned value will be used.  This is useful for
+          printing the current time.
+
+            import time
+            def printtime():
+                return time.strftime('%m/%d/%y %H:%M:%S ',
+                         time.localtime(time.time()))
+            log.preprefix = printtime
+      
+        file_object
+
+          This is the file object to which output is directed.  If it
+          is None, then the logs are quietly dropped.
+
+      There are other options described in the next section, but these
+      are the most commonly used.
 
     ATTRIBUTES:
       (all of these are settable as keyword args to __init__)
@@ -218,9 +211,9 @@ class Logger:
         Return true if a log of the given priority would be printed.
         
         This can be overridden to do any test you like.  Specifically,
-        log and threshold need not be integers.  They be arbitrary
-        objects.  You need only override this method, possibly
-        gen_prefix.
+        priority and threshold need not be integers.  They can be
+        arbitrary objects.  You need only override this method, and
+        possibly gen_prefix.
         """
 
         return int(self.threshold) >= int(priority)
@@ -284,26 +277,226 @@ class Logger:
         if message == None: return self.default, priority
         else: return priority, message
 
+class SysLogger:
+    """A class for file-object logging
+    
+    USAGE:
+      For the most part, SysLogger instances are used just like Logger
+      instances.  Notable exceptions:
+
+        * prefixes aren't used (at least not as they are for Logger)
+        * map_priority is pretty important because it controls
+          conversion between Logger priorities and syslog priorities
+        * although priority/threshold/test works the same, there is
+          also maskpri and your syslog config which will limit what
+          gets logged.  Keep this in mind if you see strange behavior.
+
+      The most sensible use of this class will be will a LogContainer.
+      You can create one Logger instance for writing to (say) stderr,
+      a second for writing to a verbose log file, and a SysLogger
+      instance for writing important things to syslog so your automated
+      log-readers can see them.  Then you put them all in a log container
+      for convenient access.  That would go something like this:
+
+        from logger import Logger, SysLogger, LogContainer
+        
+        fo = open(file_log, 'w')
+        file_logger    = Logger(4, file_object=fo) # print 4 and lower
+        console_logger = Logger(1)                 # print 1 and lower
+        syslog_logger  = SysLogger(0)              # print 0 and lower
+        log = LogContainer([file_logger, console_logger, syslog_logger])
+
+        log(3,  'some debugging message') # printed to file only
+        log(1,  'some warning message')   # printed to file and console
+        log(0,  'some error message')     # printed to all (ERR level)
+        log(-1, 'major problem')          # printed to all (CRIT level)
+      
+    ATTRIBUTES:
+      (all of these are settable as keyword args to __init__)
+
+      ARGUMENT     DEFAULT      DESCRIPTION
+      ----------------------------------------------------------
+      threshold    = 0          identical to Logger threshold
+      ident        = None       string prepended to each log, if None,
+                                it will be taken from the program name
+                                as it appears in sys.argv[0]
+      logopt       = 0          syslog log options
+      facility     = 'LOG_USER' syslog facility (it can be a string)
+      maskpri      = 0          syslog priority bitmask
+      default      = 1          default priority to log at
+
+    """
+
+    def __init__(self,
+                 threshold    = 0,
+                 ident        = None,
+                 logopt       = 0,
+                 facility     = 'LOG_USER',
+                 maskpri      = 0,
+                 default      = 1):
+        # putting imports here is kinda icky, but I don't want to import
+        # it if no SysLogger's are ever used.
+        global syslog
+        import syslog
+
+        self.threshold    = threshold
+        self.default      = default
+
+        if ident is None:
+            ind = string.rfind(sys.argv[0], '/')
+            if ind == -1: ident = sys.argv[0]
+            else: ident = sys.argv[0][ind+1:]
+
+        if type(facility) == type(''):
+            facility = getattr(syslog, facility)
+
+        syslog.openlog(ident, logopt, facility)
+        if maskpri: syslog.setlogmask(maskpri)
+        
+    def setlogmask(self, maskpri):
+        """a (very) thin wrapper over the syslog setlogmask function"""
+        return syslog.setlogmask(maskpri)
+
+    def map_priority(self, priority):
+        """Take a logger priority and return a syslog priority
+
+        Here are the syslog priorities (from syslog.h):
+          LOG_EMERG       0       /* system is unusable */
+          LOG_ALERT       1       /* action must be taken immediately */
+          LOG_CRIT        2       /* critical conditions */
+          LOG_ERR         3       /* error conditions */
+          LOG_WARNING     4       /* warning conditions */
+          LOG_NOTICE      5       /* normal but significant condition */
+          LOG_INFO        6       /* informational */
+          LOG_DEBUG       7       /* debug-level messages */
+
+        The syslog priority is simply equal to the logger priority plus 3.
+
+           0 ->  0 + 3 =  3
+          -5 -> -5 + 3 = -2  (which will be treated as 0)
+
+        You can override this very simply.  Just do:
+
+        def log_everything_emerg(priority): return 0
+        log_obj.map_priority = log_everything_emerg
+
+        The return value of this function does not need to be an integer or
+        within the allowed syslog range (0 to 7).  It will be converted to
+        an int and forced into this range if it lies outside it.
+        """
+        return priority + 3
+
+    def test(self, priority):
+        """
+        Return true if a log of the given priority would be printed.
+        
+        This can be overridden to do any test you like.  Specifically,
+        threshold and threshold need not be integers.  They can be
+        arbitrary objects.  If you override this and use non-integer
+        priorities, you will also need to override map_priority.
+        """
+        return int(self.threshold) >= int(priority)
+
+    def log(self, priority, message=None):
+        """
+        Print a log message with some simple formatting.
+        """
+        p, m = self._use_default(priority, message)
+        if self.test(p):
+            if type(m) == type(''): # message is a string
+                mlist = string.split(m, '\n')
+                if mlist[-1] == '': del mlist[-1] # string ends in \n
+            elif type(m) == type([]): # message is a list
+                mlist = map(string.rstrip, m)
+            else: mlist = [str(m)] # message is other type
+
+            sp = int(self.map_priority(p))
+            if sp < 0: sp = 0
+            if sp > 7: sp = 7
+            for line in mlist: syslog.syslog(sp, line)
+
+    # make the objects callable
+    __call__ = log
+
+    def write(self, priority, message=None):
+        """
+        Print a log message.
+        """
+        p, m = self._use_default(priority, message)
+        if self.test(p):
+            sp = int(self.map_priority(p))
+            if sp < 0: sp = 0
+            if sp > 7: sp = 7
+            
+            # we must split based on newlines for syslog because
+            # it doesn't deal with them well
+            mlist = string.split(m, '\n')
+            if mlist[-1] == '': del mlist[-1] # string ends in \n
+            for message in mlist: syslog.syslog(sp, message)
+
+    def _use_default(self, priority, message):
+        """Substitute default priority if none was provided"""
+        if message == None: return self.default, priority
+        else: return priority, message
+
 class LogContainer:
-    """A class for consolidating calls to multiple Logger objects
+    """A class for consolidating calls to multiple sub-objects
+
+    SUMMARY:
+      If you want a program to log to multiple destinations, it might
+      be convenient to use log containers.  A log container is an
+      object which can hold several sub-log-objects (including other
+      log containers).  When you log to a log container it passes the
+      message on (with optional tests) to each of the log objects it
+      contains.
 
     USAGE:
-      from logger import Logger, LogContainer
 
-      log_1 = Logger(threshold=1, file_object=sys.stdout)
-      log_2 = Logger(threshold=2, preprefix='LOG2')
+      The basic usage is very simple.  LogContainer's simply pass on
+      logs to the contained Logger, SysLogger, or LogContainer
+      objects.
 
-      log = LogContainer([log_1, log_2])
+        from logger import Logger, LogContainer
 
-      log(1, 'message')               # printed by log_1 and log_2
-      log(2, 'message')               # only printed by log_2
+        log_1 = Logger(threshold=1, file_object=sys.stdout)
+        log_2 = Logger(threshold=2, preprefix='LOG2')
+
+        log = LogContainer([log_1, log_2])
+
+        log(1, 'message')               # printed by log_1 and log_2
+        log(2, 'message')               # only printed by log_2
+
+      A more common example would be something like this:
+      
+        from logger import Logger, LogContainer
+
+        system = Logger(threshold=1, file_object=logfile)
+        debug  = Logger(threshold=5, file_object=sys.stdout)
+        log = LogContainer([system, debug])
+
+        log(3, 'sent to system and debug, but only debug will print it')
+        log(0, 'very important, both will print it')
+
+      In this mode, log containers are just shorthand for calling all
+      contained objects with the same priority and message.
+
+      When a log object is held in a container, it can still be used
+      directly.  For example, you can still do
+
+        debug(3, ['this will not be sent to the system log, even if its',
+                  ' threshold is set very high'])
+
+      (Yes, you can send lists of strings and they will be formatted
+      on different lines.  The log methods are pretty smart.)
+
+      There are more examples in the SysLogger docs.
 
     ATTRIBUTES:
       (all of these are settable as keyword args to __init__)
 
       ATTRIBUTES   DEFAULT      DESCRIPTION
       ----------------------------------------------------------
-      list         = []         list of Logger objects
+      list         = []         list of contained objects
       threshold    = None       meaning depends on test - by default
                                 threshold has no effect
       default      = 1          default priority to log at
@@ -434,3 +627,19 @@ if __name__ == '__main__':
     log.file_object = None
     log("THIS SHOULD NOT BE PRINTED")
     log.write("THIS SHOULD NOT BE PRINTED")
+
+    if not (sys.argv[1:] and sys.argv[1] == 'syslog'):
+        print '\n skipping syslog test (because they would annoy your admin)'
+        print ' add "syslog" to the command line to enable syslog tests'
+        sys.exit(0)
+
+    print '\n performing syslog tests'
+    print ' creating logger with threshold: 3'
+    slog = SysLogger(3, 'logger-test')
+
+    print ' logging at (logger) priorities from -2 to 9 (but only'
+    print ' priorities <= 3 should show up'
+    for i in range(-2, 10): slog(i, 'log priority %s' % (i))
+
+    print '\n now test the write() method'
+    slog.write(0, 'first line\nsecond line\nthird line')

@@ -12,10 +12,14 @@ __date__ = "$Date$"[7:-2]
 
 try: 
     import gettext
-    gettext.bindtextdomain('yum', '/usr/share/locale')
-    gettext.textdomain('yum')
-
-    _ = gettext.gettext
+    import sys
+    if sys.version_info[0] == 2:
+        t = gettext.translation('yum')
+        _ = t.gettext
+    else:
+        gettext.bindtextdomain('yum', '/usr/share/locale')
+        gettext.textdomain('yum')
+        _ = gettext.gettext
 
 except:
     def _(str):

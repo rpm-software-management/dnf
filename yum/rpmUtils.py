@@ -92,6 +92,17 @@ def getSigInfo(hdr):
     infotuple = (sigtype, sigdate, sigid)
     return error, infotuple
 
+def getProvides(header):
+    provnames = []
+    provides = header[rpm.RPMTAG_PROVIDENAME]
+    if provides is None:
+        pass
+    elif type(provides) is types.ListType:
+        provnames.extend(provides)
+    else:
+        provnames.append(provides)
+    return provnames
+    
 def compareEVR((e1, v1, r1), (e2, v2, r2)):
     # return 1: a is newer than b 
     # 0: a and b are the same version 

@@ -27,6 +27,7 @@ import callback
 import rpmUtils
 import time
 import urlparse
+import types
 
 import urlgrabber
 from urlgrabber import close_all, urlgrab, URLGrabError, retrygrab
@@ -100,8 +101,13 @@ def HeaderInfoNevralLoad(filename, nevral, serverid):
     in_file.close()
     archlist = archwork.compatArchList()
     for line in info:
-        (envraStr, rpmpath) = string.split(line, '=')
-        (epoch, name, ver, rel, arch) = stripENVRA(envraStr)
+        try:
+            (envraStr, rpmpath) = string.split(line, '=')
+            (epoch, name, ver, rel, arch) = stripENVRA(envraStr)
+        except ValueError, e:
+            errorlog(0, _('Damaged or Bad header.info from %s') % conf.servername[serverid])
+            errorlog(0, _('This is probably because of a downed server or an invalid header.info on a repository.'))
+            sys.exit(1)
         rpmpath = string.replace(rpmpath, '\n', '')
         if arch in archlist:
             if not nameInExcludes(name, serverid):
@@ -199,46 +205,86 @@ def readHeader(rpmfn):
     fd.close()
     return h
 
+
+def correctFlags(flags):
+    returnflags=[]
+    if flags is None:
+        return returnflags
+                                                                               
+    if type(flags) is not types.ListType:
+        newflag = flags & 0xf
+        returnflags.append(newflag)
+    else:
+        for flag in flags:
+            newflag = flag
+            if flag is not None:
+                newflag = flag & 0xf
+            returnflags.append(newflag)
+    return returnflags
+
+
+def correctVersion(vers):
+     returnvers = []
+     vertuple = (None, None, None)
+     if vers is None:
+         returnvers.append(vertuple)
+         return returnvers
+         
+     if type(vers) is not types.ListType:
+         if vers is not None:
+             vertuple = str_to_version(vers)
+         else:
+             vertuple = (None, None, None)
+         returnvers.append(vertuple)
+     else:
+         for ver in vers:
+             if ver is not None:
+                 vertuple = str_to_version(ver)
+             else:
+                 vertuple = (None, None, None)
+             returnvers.append(vertuple)
+     return returnvers
+
 def returnObsoletes(headerNevral, rpmNevral, uninstNAlist):
     obsoleting = {} # obsoleting[pkgobsoleting]=[list of pkgs it obsoletes]
     obsoleted = {} # obsoleted[pkgobsoleted]=[list of pkgs obsoleting it]
     for (name, arch) in uninstNAlist:
-        # DEBUG print '%s, %s' % (name, arch)
         header = headerNevral.getHeader(name, arch)
-        obs = header[rpm.RPMTAG_OBSOLETES]
+        obs = []
+        names = header[rpm.RPMTAG_OBSOLETENAME]
+        tmpflags = header[rpm.RPMTAG_OBSOLETEFLAGS]
+        flags = correctFlags(tmpflags)
+        ver = correctVersion(header[rpm.RPMTAG_OBSOLETEVERSION])
+        if names is not None:
+            obs = zip(names, flags, ver)
         del header
 
-        # if there is one its a nonversioned obsolete
-        # if there are 3 its a versioned obsolete
         # nonversioned are obvious - check the rpmdb if it exists
         # then the pkg obsoletes something in the rpmdb
         # versioned obsolete - obvalue[0] is the name of the pkg
         #                      obvalue[1] is >,>=,<,<=,=
-        #                      obvalue[2] is an e:v-r string
+        #                      obvalue[2] is an (e,v,r) tuple
         # get the two version strings - labelcompare them
         # get the return value - then run through
         # an if/elif statement regarding obvalue[1] and determine
         # if the pkg obsoletes something in the rpmdb
         if obs:
-            for ob in obs:
-                obvalue = string.split(ob)
-                obspkg = obvalue[0]
+            for (obspkg, obscomp, (obe, obv, obr)) in obs:
                 if rpmNevral.exists(obspkg):
-                    if len(obvalue) == 1: #unversioned obsolete
+                    if obscomp == 0: #unversioned obsolete
                         if not obsoleting.has_key((name, arch)):
                             obsoleting[(name, arch)] = []
                         obsoleting[(name, arch)].append(obspkg)
                         if not obsoleted.has_key(obspkg):
                             obsoleted[obspkg] = []
                         obsoleted[obspkg].append((name, arch))
-                        log(4, '%s obsoleting %s' % (name, obspkg))
-                    elif len(obvalue) == 3:
-                        obscomp = obvalue[1]
-                        obsver = obsvalue[2]
+                        log(4,'%s obsoleting %s' % (name, obspkg))
+                    else:
+                        log(4,'versioned obsolete')
+                        log(5, '%s, %s, %s, %s, %s' % (obspkg, obscomp, obe, obv, obr))
                         (e1, v1, r1) = rpmNevral.evr(name, arch)
-                        (e2, v2, r2) = str_to_version(obsver)
-                        rc = rpmUtils.compareEVR((e1, v1, r1), (e2, v2, r2))
-                        if obscomp == '>':
+                        rc = rpmUtils.compareEVR((e1, v1, r1), (obe, obv, obr))
+                        if obscomp == 4:
                             if rc >= 1:
                                 if not obsoleting.has_key((name, arch)):
                                     obsoleting[(name, arch)] = []
@@ -246,7 +292,8 @@ def returnObsoletes(headerNevral, rpmNevral, uninstNAlist):
                                 if not obsoleted.has_key(obspkg):
                                     obsoleted[obspkg] = []
                                 obsoleted[obspkg].append((name, arch))
-                        elif obscomp == '>=':
+                                log(4,'%s obsoleting %s' % (name, obspkg))
+                        elif obscomp == 12:
                             if rc >= 1:
                                 if not obsoleting.has_key((name, arch)):
                                     obsoleting[(name, arch)] = []
@@ -254,6 +301,7 @@ def returnObsoletes(headerNevral, rpmNevral, uninstNAlist):
                                 if not obsoleted.has_key(obspkg):
                                     obsoleted[obspkg] = []
                                 obsoleted[obspkg].append((name, arch))
+                                log(4,'%s obsoleting %s' % (name, obspkg))
                             elif rc == 0:
                                 if not obsoleting.has_key((name, arch)):
                                     obsoleting[(name, arch)] = []
@@ -261,7 +309,8 @@ def returnObsoletes(headerNevral, rpmNevral, uninstNAlist):
                                 if not obsoleted.has_key(obspkg):
                                     obsoleted[obspkg] = []
                                 obsoleted[obspkg].append((name, arch))
-                        elif obscomp == '=':
+                                log(4,'%s obsoleting %s' % (name, obspkg))
+                        elif obscomp == 8:
                             if rc == 0:
                                 if not obsoleting.has_key((name, arch)):
                                     obsoleting[(name, arch)] = []
@@ -269,7 +318,8 @@ def returnObsoletes(headerNevral, rpmNevral, uninstNAlist):
                                 if not obsoleted.has_key(obspkg):
                                     obsoleted[obspkg] = []
                                 obsoleted[obspkg].append((name, arch))
-                        elif obscomp == '<=':
+                                log(4,'%s obsoleting %s' % (name, obspkg))
+                        elif obscomp == 10:
                             if rc == 0:
                                 if not obsoleting.has_key((name, arch)):
                                     obsoleting[(name, arch)] = []
@@ -277,6 +327,7 @@ def returnObsoletes(headerNevral, rpmNevral, uninstNAlist):
                                 if not obsoleted.has_key(obspkg):
                                     obsoleted[obspkg] = []
                                 obsoleted[obspkg].append((name, arch))
+                                log(4,'%s obsoleting %s' % (name, obspkg))
                             elif rc <= -1:
                                 if not obsoleting.has_key((name, arch)):
                                     obsoleting[(name, arch)] = []
@@ -284,7 +335,8 @@ def returnObsoletes(headerNevral, rpmNevral, uninstNAlist):
                                 if not obsoleted.has_key(obspkg):
                                     obsoleted[obspkg] = []
                                 obsoleted[obspkg].append((name, arch))
-                        elif obscomp == '<':
+                                log(4,'%s obsoleting %s' % (name, obspkg))
+                        elif obscomp == 2:
                             if rc <= -1:
                                 if not obsoleting.has_key((name, arch)):
                                     obsoleting[(name, arch)] = []
@@ -292,6 +344,7 @@ def returnObsoletes(headerNevral, rpmNevral, uninstNAlist):
                                 if not obsoleted.has_key(obspkg):
                                     obsoleted[obspkg] = []
                                 obsoleted[obspkg].append((name, arch))
+                                log(4,'%s obsoleting %s' % (name, obspkg))
     return obsoleting, obsoleted
 
 def getupdatedhdrlist(headernevral, rpmnevral):
@@ -321,10 +374,44 @@ def getupdatedhdrlist(headernevral, rpmnevral):
         # update identical matches so glibc.i386 can only be updated by 
         # glibc.i386 not by glibc.i686 - this is for the anal and bizare
         
+        # look at the fresh new pain - what about multilib
+        # I need to have foo.i386 and foo.x86_64 both installed and visible as
+        # available, if one isn't installed. 
+        # so a complex update really isn't the difficult part
+        # i need to mark foo.arch as newlist if it is
+        # pretty much if: it's not precisely what we have installed then it's in
+        # newlist unless it is precisely a name.arch match for update.
+        # those that aren't a name.arch match but are a name match get dealt with like
+        #  if exactarch:
+        #   newer different arch then it's available but not an update
+        #   newer same arch as installed then it's an update not available
+        #   equal and same arch as installed then ignore it
+        #   older and different arch as installed then grab it
+        #   older and same arch as installed then ignore it        
+        
+        # we should take the whole list as a 'newlist' and remove those entries
+        # which are clearly:
+        #   1. updates 
+        #   2. identical to rpmnevral
+        #   3. not in our archdict at all
+        
+    newlist.extend(headernevral.NAkeys())
+    
     for (name, arch) in headernevral.NAkeys():
-        if not rpmnevral.exists(name):
-            newlist.append((name, arch))
-        else:
+        # remove stuff not in our archdict
+        if arch not in archwork.compatArchList():
+            newlist.remove((name, arch))
+            continue
+            
+        # simple ones - look for exact matches or older stuff
+        if rpmnevral.exists(name, arch):
+            (rpm_e, rpm_v, rpm_r) = rpmnevral.evr(name, arch)
+            rc = rpmUtils.compareEVR(headernevral.evr(name, arch), (rpm_e, rpm_v, rpm_r))
+            if rc <= 0:
+                newlist.remove((name, arch))
+                continue
+
+        if rpmnevral.exists(name):
             hdrarchs = archwork.availablearchs(headernevral, name)
             rpmarchs = archwork.availablearchs(rpmnevral, name)
             if len(hdrarchs) > 1 or len(rpmarchs) > 1:
@@ -340,23 +427,20 @@ def getupdatedhdrlist(headernevral, rpmnevral):
     for (name, arch) in simpleupdate:
         # try to be as precise as possible
         if conf.exactarch:
-            # make the default case false
-            exactmatch = 0
-        else:
-            # make the default case true
-            exactmatch = 1
-        
-        if rpmnevral.exists(name, arch):
-            exactmatch = 1
-            (rpm_e, rpm_v, rpm_r) = rpmnevral.evr(name, arch)
+            if rpmnevral.exists(name, arch):
+                (rpm_e, rpm_v, rpm_r) = rpmnevral.evr(name, arch)
+                rc = rpmUtils.compareEVR(headernevral.evr(name), (rpm_e, rpm_v, rpm_r))
+                if rc > 0:
+                    uplist.append((name,arch))
+                    newlist.remove((name, arch))
+
         else:
             (rpm_e, rpm_v, rpm_r) = rpmnevral.evr(name)
-            
-        if exactmatch:
             rc = rpmUtils.compareEVR(headernevral.evr(name), (rpm_e, rpm_v, rpm_r))
             if rc > 0:
                 uplist.append((name, arch))
-        
+                newlist.remove((name, arch))
+            
     # complex cases
     for name in complexupdate:
         hdrarchs = bestversion(headernevral, name)
@@ -384,13 +468,15 @@ def getupdatedhdrlist(headernevral, rpmnevral):
                     rc = rpmUtils.compareEVR(headernevral.evr(name, arch), rpmnevral.evr(name, arch))
                     if rc > 0:
                         uplist.append((name, arch))
+                        newlist.remove((name, arch))
                 else:
                     log(5, 'Inexact match in complex for %s - %s' % (name, arch))
         else:
             rc = rpmUtils.compareEVR(headernevral.evr(name, hdr_best_arch), rpmnevral.evr(name, rpm_best_arch))
             if rc > 0:
                 uplist.append((name, hdr_best_arch))
-
+                newlist.remove((name, hdr_best_arch))
+                
     nulist=uplist+newlist
     return (uplist, newlist, nulist)
 
@@ -416,7 +502,7 @@ def bestversion(nevral, name):
         elif rc > 0:
             pass
     (best_e, best_v, best_r) = nevral.evr(name, currentarch)
-    log(3, 'Best version for %s is %s:%s-%s' % (name, best_e, best_v, best_r))
+    log(3, _('Best version for %s is %s:%s-%s') % (name, best_e, best_v, best_r))
     
     for arch in archs:
         rc = rpmUtils.compareEVR(nevral.evr(name, arch), (best_e, best_v, best_r))
@@ -506,7 +592,7 @@ def printactions(i_list, u_list, e_list, ud_list, ed_list, nevral):
             log(2, _('[deps: %s]') % pkgstring)
             
     if len(ed_list) > 0:
-        log(2, 'I will erase these to satisfy the dependencies:')
+        log(2, _('I will erase these to satisfy the dependencies:'))
         for pkg in ed_list:
             (name, arch) = pkg
             (e, v, r) = nevral.evr(name, arch)
@@ -517,10 +603,10 @@ def printactions(i_list, u_list, e_list, ud_list, ed_list, nevral):
             log(2, _('[deps: %s]') % pkgstring)
 
 def filelogactions(i_list, u_list, e_list, ud_list, ed_list, nevral):
-    i_log = 'Installed: '
-    ud_log = 'Dep Installed: '
-    u_log = 'Updated: '
-    e_log = 'Erased: '
+    i_log = _('Installed: ')
+    ud_log = _('Dep Installed: ')
+    u_log = _('Updated: ')
+    e_log = _('Erased: ')
         
     for (name, arch) in i_list:
         (e, v, r) = nevral.evr(name, arch)
@@ -556,10 +642,10 @@ def filelogactions(i_list, u_list, e_list, ud_list, ed_list, nevral):
         
 
 def shortlogactions(i_list, u_list, e_list, ud_list, ed_list, nevral):
-    i_log = 'Installed: '
-    ud_log = 'Dep Installed: '
-    u_log = 'Updated: '
-    e_log = 'Erased: '
+    i_log = _('Installed: ')
+    ud_log = _('Dep Installed: ')
+    u_log = _('Updated: ')
+    e_log = _('Erased: ')
     
     for (name, arch) in i_list:
         (e, v, r) = nevral.evr(name, arch)
@@ -685,14 +771,14 @@ def clean_up_old_headers(rpmDBInfo, HeaderInfo):
                 try:
                     os.unlink(hdrfn)
                 except OSError, e:
-                    errorlog(2, 'Attempt to delete a missing file %s - ignoring.' % hdrfn)
+                    errorlog(2, _('Attempt to delete a missing file %s - ignoring.') % hdrfn)
         if not HeaderInfo.exists(n, a):
             # if its not in the HeaderInfo nevral anymore just kill it
             log(5, 'Deleting Header %s' % hdrfn)
             try:
                 os.unlink(hdrfn)
             except OSError, e:
-                errorlog(2, 'Attempt to delete a missing file %s - ignoring.' % hdrfn)
+                errorlog(2, _('Attempt to delete a missing file %s - ignoring.') % hdrfn)
             
 
 def printtime():
@@ -708,17 +794,17 @@ def get_groups_from_servers(serveridlist):
         remotegroupfile = conf.remoteGroups(serverid)
         localgroupfile = conf.localGroups(serverid)
         if not conf.cache:
-            log(3, 'getting groups from server: %s' % serverid)
+            log(3, _('getting groups from server: %s') % serverid)
             try:
                 localgroupfile = grab(serverid, remotegroupfile, localgroupfile, nofail=1, copy_local=1)
             except URLGrabError, e:
-                log(3, 'Error getting file %s' % remotegroupfile)
+                log(3, _('Error getting file %s') % remotegroupfile)
                 log(3, '%s' % e)
         else:
             if os.path.exists(localgroupfile):
-                log(2, 'using cached groups from server: %s' % serverid)
+                log(2, _('using cached groups from server: %s') % serverid)
         if os.path.exists(localgroupfile):
-            log(3, 'Got a file - yay')
+            log(3, _('Got a file - yay'))
             validservers.append(serverid)
     return validservers
         
@@ -726,13 +812,13 @@ def get_package_info_from_servers(serveridlist, HeaderInfo):
     """gets header.info from each server if it can, checks it, if it can, then
        builds the list of available pkgs from there by handing each headerinfofn
        to HeaderInfoNevralLoad()"""
-    log(2, 'Gathering header information file(s) from server(s)')
+    log(2, _('Gathering header information file(s) from server(s)'))
     for serverid in serveridlist:
         servername = conf.servername[serverid]
         serverheader = conf.remoteHeader(serverid)
         servercache = conf.servercache[serverid]
-        log(2, 'Server: %s' % (servername))
-        log(4, 'CacheDir: %s' % (servercache))
+        log(2, _('Server: %s') % (servername))
+        log(4, _('CacheDir: %s') % (servercache))
         localpkgs = conf.serverpkgdir[serverid]
         localhdrs = conf.serverhdrdir[serverid]
         localheaderinfo = conf.localHeader(serverid)
@@ -743,24 +829,24 @@ def get_package_info_from_servers(serveridlist, HeaderInfo):
                 os.mkdir(localpkgs)
             if not os.path.exists(localhdrs):
                 os.mkdir(localhdrs)
-            log(3, 'Getting header.info from server')
+            log(3, _('Getting header.info from server'))
             try:
                 headerinfofn = grab(serverid, serverheader, localheaderinfo, copy_local=1,
                                     progress_obj=None)
             except URLGrabError, e:
-                errorlog(0, 'Error getting file %s' % serverheader)
+                errorlog(0, _('Error getting file %s') % serverheader)
                 errorlog(0, '%s' % e)
                 sys.exit(1)
         else:
             if os.path.exists(localheaderinfo):
-                log(3, 'Using cached header.info file')
+                log(3, _('Using cached header.info file'))
                 headerinfofn = localheaderinfo
             else:
-                errorlog(0, 'Error - %s cannot be found' % localheaderinfo)
+                errorlog(0, _('Error - %s cannot be found') % localheaderinfo)
                 if conf.uid != 0:
-                    errorlog(1, 'Please ask your sysadmin to update the headers on this system.')
+                    errorlog(1, _('Please ask your sysadmin to update the headers on this system.'))
                 else:
-                    errorlog(1, 'Please run yum in non-caching mode to correct this header.')
+                    errorlog(1, _('Please run yum in non-caching mode to correct this header.'))
                 sys.exit(1)
         log(4,'headerinfofn: ' + headerinfofn)
         HeaderInfoNevralLoad(headerinfofn, HeaderInfo, serverid)
@@ -782,12 +868,12 @@ def download_headers(HeaderInfo, nulist):
                 rpmUtils.checkheader(LocalHeaderFile, name, arch)
             except URLGrabError, e:
                 if conf.cache:
-                    errorlog(0, 'The file %s is damaged.' % LocalHeaderFile)
+                    errorlog(0, _('The file %s is damaged.') % LocalHeaderFile)
                     if conf.uid != 0:
-                        errorlog(1, 'Please ask your sysadmin to update the headers on this system.')
+                        errorlog(1, _('Please ask your sysadmin to update the headers on this system.'))
                     else:
-                        errorlog(1, 'Please run yum in non-caching mode to correct this header.')
-                    errorlog(1, 'Deleting entry from Available packages')
+                        errorlog(1, _('Please run yum in non-caching mode to correct this header.'))
+                    errorlog(1, _('Deleting entry from Available packages'))
                     HeaderInfo.delete(name, arch)
                     #sys.exit(1)
                 else:
@@ -796,18 +882,18 @@ def download_headers(HeaderInfo, nulist):
                 continue
                 
         if not conf.cache:
-            log(2, 'getting %s' % (LocalHeaderFile))
+            log(3, _('getting %s') % (LocalHeaderFile))
             try:
                 hdrfn = grab(serverid, RemoteHeaderFile, LocalHeaderFile, copy_local=1,
                                   checkfunc=(rpmUtils.checkheader, (name, arch), {}))
             except URLGrabError, e:
-                errorlog(0, 'Error getting file %s' % RemoteHeaderFile)
+                errorlog(0, _('Error getting file %s') % RemoteHeaderFile)
                 errorlog(0, '%s' % e)
                 sys.exit(1)
             HeaderInfo.setlocalhdrpath(name, arch, hdrfn)
         else:
-            errorlog(1, 'Cannot download %s in caching only mode or when running as non-root user.' % RemoteHeaderFile)
-            errorlog(1, 'Deleting entry from Available packages')
+            errorlog(1, _('Cannot download %s in caching only mode or when running as non-root user.') % RemoteHeaderFile)
+            errorlog(1, _('Deleting entry from Available packages'))
             HeaderInfo.delete(name, arch)
             #sys.exit(1)
         current = current + 1
@@ -991,7 +1077,7 @@ def create_final_ts(tsInfo):
             if os.path.exists(rpmloc):
                 log(4, 'Checking cached RPM %s' % (os.path.basename(rpmloc)))
                 if not rpmUtils.checkRpmMD5(rpmloc):
-                    errorlog(0, 'Damaged RPM %s, removing.' % (rpmloc))
+                    errorlog(0, _('Damaged RPM %s, removing.') % (rpmloc))
                     os.unlink(rpmloc)
                 else:
                     rpmobj = rpmUtils.RPM_Work(rpmloc)
@@ -1000,7 +1086,7 @@ def create_final_ts(tsInfo):
                     hdrr = pkghdr['release']
                     (rpme, rpmv, rpmr) = rpmobj.evr()
                     if (rpme, rpmv, rpmr) != (hdre, hdrv, hdrr):
-                        errorlog(2, 'NonMatching RPM version, %s, removing.' %(rpmloc))
+                        errorlog(2, _('NonMatching RPM version, %s, removing.') %(rpmloc))
                         os.unlink(rpmloc)
 
             # gotten rid of the bad ones
@@ -1008,13 +1094,13 @@ def create_final_ts(tsInfo):
             if os.path.exists(rpmloc):
                 pass
             else:
-                log(2, 'Getting %s' % (os.path.basename(rpmloc)))
+                log(2, _('Getting %s') % (os.path.basename(rpmloc)))
                 remoterpmurl = tsInfo.remoteRpmUrl(name, arch)
                 try:
                     localrpmpath = grab(serverid, remoterpmurl, rpmloc, copy_local=0,
                                              checkfunc=(rpmUtils.checkRpmMD5, (), {'urlgraberror':1})) 
                 except URLGrabError, e:
-                    errorlog(0, 'Error getting file %s' % remoterpmurl)
+                    errorlog(0, _('Error getting file %s') % remoterpmurl)
                     errorlog(0, '%s' % e)
                     sys.exit(1)
                 else:
@@ -1065,7 +1151,7 @@ def tsTest(checkts):
         for (descr, (type, mount, need)) in tserrors:
             reserrors.append(descr)
     if len(reserrors) > 0:
-        errorlog(0, 'Errors reported doing trial run')
+        errorlog(0, _('Errors reported doing trial run'))
         for error in reserrors:
             errorlog(0, '%s' % error)
         sys.exit(1)
@@ -1101,7 +1187,10 @@ def grab(serverID, url, filename=None, nofail=0, copy_local=0,
 
     We do look at retrycodes here to see if we should return or failover.
     On fail we will raise the last exception that we got."""
-    
+    if not conf.keepalive:
+        log(5, 'Disabling Keepalive support by user configuration')
+        urlgrabber.disable_keepalive()
+
     if progress_obj == 'normal':
         progress_obj = conf.progress_obj
         
@@ -1137,7 +1226,7 @@ def grab(serverID, url, filename=None, nofail=0, copy_local=0,
         except URLGrabError, e:
             if e.errno in retrycodes:
                 if not nofail:
-                    errorlog(1, "retrygrab() failed for:\n  %s%s\n  Executing failover method" % (base, filepath))
+                    errorlog(1, _("retrygrab() failed for:\n  %s%s\n  Executing failover method") % (base, filepath))
                 if nofail:
                     findex = findex + 1
                     base = fc.get_serverurl(findex)
@@ -1146,7 +1235,7 @@ def grab(serverID, url, filename=None, nofail=0, copy_local=0,
                     base = fc.get_serverurl()
                 if base == None:
                     if not nofail:
-                        errorlog(1, "failover: out of servers to try")
+                        errorlog(1, _("failover: out of servers to try"))
                     raise
             else:
                 raise

@@ -297,6 +297,7 @@ class TokenEater:
                             locline = "#:" + s
                     if len(locline) > 2:
                         print locline
+                print "#, c-format"
                 # TBD: sorting, normalizing
                 print 'msgid', normalize(k)
                 print 'msgstr ""\n'
