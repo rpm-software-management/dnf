@@ -36,6 +36,10 @@ def main():
     ##############################################################
     #who are we:
     uid=os.geteuid()
+    # setup our errorlog object - need to get the config file before
+    # we do filelog and log
+    #errorlog - sys.stderr - always
+    errorlog=Logger(threshold=10, file_object=sys.stderr)
 
     args = sys.argv[1:]
     if len(args) < 1:
@@ -45,8 +49,22 @@ def main():
     except getopt.error, e:
         errorlog(0,"Options Error: %s" % e)
         sys.exit(1)
+    # get the conf stuff first
     # our default config file location
     yumconffile="/etc/yum.conf"
+    conf=yumconf(configfile=yumconffile)
+    
+    for o,a in gopts:
+        if o == '-c':
+            yumconffile=a
+            #get rid of the old conf object
+            del conf
+            # setup the conf object
+            conf=yumconf(configfile=yumconffile)
+    
+    # we'd like to have a log object now
+    log=Logger(threshold=conf.debuglevel, file_object=sys.stdout)
+    
     for o,a in gopts:
         if o =='-d':
             log.threshold=int(a)
@@ -56,25 +74,16 @@ def main():
             conf.errorlevel=int(a)
         if o =='-y':
             conf.assumeyes=1
-        if o =='-c':
-            yumconffile=a
         if o in ('-h', '--help'):
             usage()
     if cmds[0] not in ('update','upgrade','install','list','erase','grouplist','groupupdate','groupinstall','clean','remove'):
         usage()
     process=cmds[0]
 
-    conf=yumconf(configfile=yumconffile)
     
-    #setup log classes
-    #used for the syslog-style log
     #syslog-style log
     logfile=open(conf.logfile,"a")
     filelog=Logger(threshold=10, file_object=logfile,preprefix=clientStuff.printtime())
-    #errorlog - sys.stderr - always
-    errorlog=Logger(threshold=10, file_object=sys.stderr)
-    #normal printing/debug log - this is what -d # affects
-    log=Logger(threshold=conf.debuglevel, file_object=sys.stdout)
 
     #push the logs into the other namespaces
     pkgaction.log=log
