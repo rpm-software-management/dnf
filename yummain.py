@@ -155,17 +155,18 @@ def main(args):
     clientStuff.download_headers(HeaderInfo, nulist)
     if cmds[0] == 'upgrade':
         log(2, 'Finding obsoleted packages')
-        obsdict=clientStuff.returnObsoletes(HeaderInfo, rpmDBInfo, nulist)
-        obslist=obsdict.keys()
+        obsdict, obsoleted_list = clientStuff.returnObsoletes(HeaderInfo, rpmDBInfo, nulist)
+        obsoleting_list = obsdict.keys()
     else:
         obsdict={}
-        obslist=[]
+        obsoleting_list = []
+        obsoleted_list = []
         
 
     log(3, 'nulist = %s' % len(nulist))
     log(3, 'uplist = %s' % len(uplist))
     log(3, 'newlist = %s' % len(newlist))
-    log(3, 'obslist = %s' % len(obslist))
+    log(3, 'obsoleting_list = %s' % len(obsoleting_list))
     
     ##################################################################
     # at this point we have all the prereq info we could ask for. we 
@@ -174,8 +175,8 @@ def main(args):
     # w/o getting anymore header info
     ##################################################################
 
-    clientStuff.take_action(cmds, nulist, uplist, newlist, obslist, tsInfo,\
-                            HeaderInfo, rpmDBInfo, obsdict)
+    clientStuff.take_action(cmds, nulist, uplist, newlist, obsoleting_list, tsInfo,\
+                            HeaderInfo, rpmDBInfo, obsdict, obsoleted_list)
     # back from taking actions - if we've not exited by this point then we have
     # an action that will install/erase/update something
     

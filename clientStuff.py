@@ -203,13 +203,13 @@ def readHeader(rpmfn):
 
 def returnObsoletes(headerNevral, rpmNevral, uninstNAlist):
     obsdict = {} # obsdict[obseletinglist]=packageitobsoletes
+    obsoleted_list = []
     for (name, arch) in uninstNAlist:
         # DEBUG print '%s, %s' % (name, arch)
         header = headerNevral.getHeader(name, arch)
         obs = header[rpm.RPMTAG_OBSOLETES]
         del header
-        if obs:
-        # DEBUG print "%s, %s obs something" % (name, arch)
+
         # if there is one its a nonversioned obsolete
         # if there are 3 its a versioned obsolete
         # nonversioned are obvious - check the rpmdb if it exists
@@ -221,11 +221,13 @@ def returnObsoletes(headerNevral, rpmNevral, uninstNAlist):
         # get the return value - then run through
         # an if/elif statement regarding obvalue[1] and determine
         # if the pkg obsoletes something in the rpmdb
+        if obs:
             for ob in obs:
                 obvalue = string.split(ob)
                 if rpmNevral.exists(obvalue[0]):
                     if len(obvalue) == 1:
                         obsdict[(name, arch)]=obvalue[0]
+                        obsoleted_list.append(obvalue[0])
                         log(4, '%s obsoleting %s' % (name, ob))
                     elif len(obvalue) == 3:
                         (e1, v1, r1) = rpmNevral.evr(name, arch)
@@ -233,6 +235,7 @@ def returnObsoletes(headerNevral, rpmNevral, uninstNAlist):
                         rc = compareEVR((e1, v1, r1), (e2, v2, r2))
                         if obvalue[1] == '>':
                             if rc >= 1:
+                                obsoleted_list.append(obvalue[0])
                                 obsdict[(name, arch)]=obvalue[0]
                             elif rc == 0:
                                 pass
@@ -240,8 +243,10 @@ def returnObsoletes(headerNevral, rpmNevral, uninstNAlist):
                                 pass
                         elif obvalue[1] == '>=':
                             if rc >= 1:
+                                obsoleted_list.append(obvalue[0])
                                 obsdict[(name, arch)]=obvalue[0]
                             elif rc == 0:
+                                obsoleted_list.append(obvalue[0])
                                 obsdict[(name, arch)]=obvalue[0]
                             elif rc <= -1:
                                 pass
@@ -249,6 +254,7 @@ def returnObsoletes(headerNevral, rpmNevral, uninstNAlist):
                             if rc >= 1:
                                 pass
                             elif rc == 0:
+                                obsoleted_list.append(obvalue[0])
                                 obsdict[(name, arch)]=obvalue[0]
                             elif rc <= -1:
                                 pass
@@ -256,8 +262,10 @@ def returnObsoletes(headerNevral, rpmNevral, uninstNAlist):
                             if rc >= 1:
                                 pass
                             elif rc == 0:
+                                obsoleted_list.append(obvalue[0])
                                 obsdict[(name, arch)]=obvalue[0]
                             elif rc <= -1:
+                                obsoleted_list.append(obvalue[0])
                                 obsdict[(name, arch)]=obvalue[0]
                         elif obvalue[1] == '<':
                             if rc >= 1:
@@ -265,8 +273,9 @@ def returnObsoletes(headerNevral, rpmNevral, uninstNAlist):
                             elif rc == 0:
                                 pass
                             elif rc <= -1:
+                                obsoleted_list.append(obvalue[0])
                                 obsdict[(name, arch)]=obvalue[0]
-    return obsdict
+    return obsdict, obsoleted_list
 
 def progresshook(blocks, blocksize, total):
     totalblocks = total/blocksize
@@ -690,7 +699,7 @@ def download_headers(HeaderInfo, nulist):
                 os.unlink(LocalHeaderFile)
                 good = 0
 
-def take_action(cmds, nulist, uplist, newlist, obslist, tsInfo, HeaderInfo, rpmDBInfo, obsdict):
+def take_action(cmds, nulist, uplist, newlist, obsoleting_list, tsInfo, HeaderInfo, rpmDBInfo, obsdict, obsoleted_list):
     import pkgaction
     from yummain import usage
     if conf.uid != 0:
@@ -720,16 +729,16 @@ def take_action(cmds, nulist, uplist, newlist, obslist, tsInfo, HeaderInfo, rpmD
     elif cmds[0] == 'update':
         cmds.remove(cmds[0])
         if len(cmds) == 0:
-            pkgaction.updatepkgs(tsInfo, HeaderInfo, rpmDBInfo, nulist, uplist, obslist, 'all')
+            pkgaction.updatepkgs(tsInfo, HeaderInfo, rpmDBInfo, nulist, uplist, 'all')
         else:
-            pkgaction.updatepkgs(tsInfo, HeaderInfo, rpmDBInfo, nulist, uplist, obslist, cmds)
+            pkgaction.updatepkgs(tsInfo, HeaderInfo, rpmDBInfo, nulist, uplist, cmds)
 
     elif cmds[0] == 'upgrade':
         cmds.remove(cmds[0])
         if len(cmds) == 0:
-            pkgaction.upgradepkgs(tsInfo, HeaderInfo, rpmDBInfo, nulist, uplist, obslist, obsdict, 'all')
+            pkgaction.upgradepkgs(tsInfo, HeaderInfo, rpmDBInfo, nulist, uplist, obsoleted_list, obsdict, 'all')
         else:
-            pkgaction.upgradepkgs(tsInfo, HeaderInfo, rpmDBInfo, nulist, uplist, obslist, cmds)
+            pkgaction.upgradepkgs(tsInfo, HeaderInfo, rpmDBInfo, nulist, uplist, obsoleted_list, obsdict, cmds)
             
     elif cmds[0] == 'erase' or cmds[0] == 'remove':
         cmds.remove(cmds[0])
