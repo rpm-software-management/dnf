@@ -862,6 +862,9 @@ class YumBase(depsolve.Depsolve):
                 installed.append(group)
             else:
                 available.append(group)
+
+        installed.sort()
+        available.sort()
         
         return installed, available
     def getPackageObject(self, pkgtup):
