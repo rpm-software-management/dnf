@@ -60,6 +60,8 @@ exit 0
 %doc README AUTHORS COPYING TODO INSTALL ChangeLog
 %config(noreplace) %{_sysconfdir}/yum.conf
 %dir %{_sysconfdir}/yum.repos.d
+%dir ${_sysconfdir}/%{name}
+%config(noreplace) ${_sysconfdir}/%{name}/*.yum
 %config(noreplace) %{_sysconfdir}/cron.daily/yum.cron
 %config(noreplace) %{_sysconfdir}/cron.weekly/yum.cron
 %config %{_sysconfdir}/rc.d/init.d/%{name}
@@ -74,6 +76,9 @@ exit 0
 %{_mandir}/man*/*
 
 %changelog
+* Mon Mar 28 2005 Seth Vidal <skvidal@phy.duke.edu>
+- add in the /etc/yum/*.yum yum shell files
+
 * Mon Mar  7 2005 Seth Vidal <skvidal@phy.duke.edu>
 - 2.3.1
 - get rid of old obsoletes
