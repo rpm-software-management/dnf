@@ -94,8 +94,11 @@ def getBestArchFromList(archlist, myarch=None):
     return thisarch
         
           
-def getArchList(thisarch):
+def getArchList(thisarch=None):
     # this returns a list of archs that are compatible with arch given
+    if not thisarch:
+        thisarch = getCanonArch()
+    
     archlist = [thisarch]
     while arches.has_key(thisarch):
         thisarch = arches[thisarch]

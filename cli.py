@@ -30,7 +30,7 @@ import yum.yumcomps
 import yum.Errors
 import yum.misc
 from rpmUtils.miscutils import compareEVR
-from yum.packages import parsePackages
+from yum.packages import parsePackages, returnBestPackages
 
 from yum.logger import Logger
 from yum.config import yumconf
@@ -399,6 +399,19 @@ class YumBaseCli(yum.YumBase):
             for tup in toBeInstalled[n]:
                 print tup,
             print ''
+        
+        pkglist = returnBestPackages(toBeInstalled)
+        if len(pkglist) > 0:
+            print 'reduced installs :'
+        for (n,a,e,v,r) in pkglist:
+            print '   %s.%s %s:%s-%s' % (n, a, e, v, r)
+            
+
+        if len(passToUpdate) > 0:
+            print 'potential updates :'
+        for (n,a,e,v,r) in passToUpdate:
+            print '   %s.%s %s:%s-%s' % (n, a, e, v, r)
+            
         return 0, 'Nothing to do'
         
         # FIXME

@@ -86,6 +86,7 @@ def getSigInfo(hdr):
     """checks signature from an hdr hand back signature information and/or
        an error code"""
        
+    # FIXME set the locale to C before you do this or shit will break in CZ locale
     string = '%|DSAHEADER?{%{DSAHEADER:pgpsig}}:{%|RSAHEADER?{%{RSAHEADER:pgpsig}}:{%|SIGGPG?{%{SIGGPG:pgpsig}}:{%|SIGPGP?{%{SIGPGP:pgpsig}}:{(none)}|}|}|}|'
     siginfo = hdr.sprintf(string)
     if siginfo != '(none)':
