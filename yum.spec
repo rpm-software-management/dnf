@@ -45,6 +45,12 @@ make DESTDIR=$RPM_BUILD_ROOT install
 #exit 0
 
 
+%pre
+# necessary to get rid of old .pyc files mucking up the works
+if [ -d /usr/share/yum ]; then
+  rm -f /usr/share/yum/*.pyc
+fi
+
 %preun
 if [ $1 = 0 ]; then
  /sbin/chkconfig --del yum
