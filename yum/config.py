@@ -21,9 +21,11 @@ import os.path
 import urlparse
 import types
 import urllib
-import rpmUtils.transaction
+import glob
 import rpm
 import re
+
+import rpmUtils.transaction
 import rpmUtils.arch
 import Errors
 import urlgrabber
@@ -31,10 +33,31 @@ import urlgrabber.grabber
 import repos
 
 
+class CFParser(ConfigParser.ConfigParser):
+    def _getoption(self, section, option, default=None):
+        """section  - section of config
+           option - option from section
+           default - if there is no setting
+           """
+        try:
+            return self.get(section, option)
+        except (ConfigParser.NoSectionError, ConfigParser.NoOptionError), e:
+            return default
+
+    def _getboolean(self, section, option, default=None):
+        """section  - section of config
+           option - option from section
+           default - if there is no setting
+           """
+        try:
+            return self.getboolean(section, option)
+        except (ConfigParser.NoSectionError, ConfigParser.NoOptionError), e:            
+            return default
+    
 class yumconf:
 
     def __init__(self, configfile = '/etc/yum.conf'):
-        self.cfg = ConfigParser.ConfigParser()
+        self.cfg = CFParser()
         configh = confpp(configfile)
         try:
             self.cfg.readfp(configh)
@@ -50,6 +73,7 @@ class yumconf:
         optionstrings = [('cachedir', '/var/cache/yum'), 
                          ('debuglevel', 2),
                          ('logfile', '/var/log/yum.log'), 
+                         ('reposdir', '/etc/yum.repos.d'),
                          ('pkgpolicy', 'newest'),
                          ('errorlevel', 2), 
                          ('syslog_ident', None),
@@ -91,11 +115,11 @@ class yumconf:
 
         # do the strings        
         for (option, default) in optionstrings:
-            self.configdata[option] = self._getoption('main', option, default)
+            self.configdata[option] = self.cfg._getoption('main', option, default)
 
         # do the bools
         for (option, default) in optionbools:
-            self.configdata[option] = self._getboolean('main', option, default)
+            self.configdata[option] = self.cfg._getboolean('main', option, default)
 
         # do the others            
         for (option, default) in optionothers:
@@ -112,111 +136,40 @@ class yumconf:
         #progress_meter.text_progress_meter(fo=sys.stdout)        
         # weird ones
         for option in ['commands', 'installonlypkgs', 'kernelpkgnames', 'exclude']:
-            self.configdata[option] = self._doreplace(self.configdata[option])
-            self.configdata[option] = self._parseList(self.configdata[option])
+            self.configdata[option] = variableReplace(self.yumvar, self.configdata[option])
+            self.configdata[option] = variableReplace(self.yumvar, self.configdata[option])
 
         # look through our repositories.
         
-        if len(self.cfg.sections()) > 1:
-            for section in self.cfg.sections(): # loop through the list of sections
-                if section != 'main': # must be a repoid
-                    self._doRepoSection(section)
+        for section in self.cfg.sections(): # loop through the list of sections
+            if section != 'main': # must be a repoid
+                doRepoSection(self, self.cfg, section)
 
-        # should read through self.reposdir for *.conf.
+        # should read through self.getConfigOption('reposdir') for *.repo
+        # does not read recursively
         # read each of them in using confpp, then parse them same as any other repo
         # section - as above.
+        reposdir = self.getConfigOption('reposdir')
+        reposglob = reposdir + '/*.repo'
+        if os.path.exists(reposdir) and os.path.isdir(reposdir):
+            repofn = glob.glob(reposglob)
+            repofn.sort()
+            
+            for fn in repofn:
+                if not os.path.isfile(fn):
+                    continue
+                try:
+                    self._doFileRepo(fn)
+                except Errors.ConfigError, e:
+                    print e
+                    continue
 
+        # if we don't have any enabled repositories then this is going to suck
+        # bail out with an exception raised so yummain can catch it
         if len(self.repos.listEnabled()) < 1:
             raise Errors.ConfigError, \
                     'Insufficient repository config. No repositories Found/Enabled. Aborting.'
 
-
-    def _doRepoSection(self, section):
-        """do all the repo handling stuff for this config"""
-
-        urls = self._getoption(section, 'baseurl', [])
-        name = self._getoption(section, 'name', None)
-        urls = self._doreplace(urls)
-        urls = self._parseList(urls)
-        mirrorlist = self._getoption(section, 'mirrorlist', None)
-        mirrorlist = self._doreplace(mirrorlist) # FIXME it'd be neat if this did something
-        
-        if name is not None and (len(urls) > 0 or mirrorlist is not None):
-            thisrepo = self.repos.add(section)
-            name = self._doreplace(name)
-            thisrepo.set('name', name)
-
-            # vet the urls
-            goodurls = []
-            for url in urls:
-                (s,b,p,q,f,o) = urlparse.urlparse(url)
-                if s not in ['http', 'ftp', 'file', 'https']:
-                    print 'not using ftp, http[s], or file for repos, skipping - %s' % (url)
-                    continue
-                else:
-                    goodurls.append(url)
-
-            if len(goodurls) > 0:
-                thisrepo.set('urls', goodurls)                        
-            else:
-                self.repos.delete(section)
-                print 'Error: Cannot find valid baseurl for repo: %s. Skipping' % (section)    
-                return
-                
-            failmeth = self._getoption(section,'failovermethod')
-            thisrepo.setFailover(failmeth)
-            
-            thisrepo.set('gpgcheck', self._getboolean(section, 'gpgcheck', 0))
-            thisrepo.set('enabled', self._getboolean(section, 'enabled', 1))
-
-            # get our proxy information if it is there
-            thisrepo.set('proxy', self._getoption(section, 'proxy', None))
-            thisrepo.set('proxy_username', self._getoption(section, 'proxy_username', None))
-            thisrepo.set('proxy_password', self._getoption(section, 'proxy_password', None))
-            thisrepo.set('keepalive', self._getboolean(section, 'keepalive', 1))                        
-            
-            excludelist = self._getoption(section, 'exclude', [])
-            excludelist = self._doreplace(excludelist)
-            excludelist = self._parseList(excludelist)
-            thisrepo.set('excludes', excludelist)
-
-            includelist = self._getoption(section, 'includepkgs', [])
-            includelist = self._doreplace(includelist)
-            includelist = self._parseList(includelist)
-            thisrepo.set('includepkgs', includelist)
-
-            thisrepo.set('enablegroups', self._getboolean(section, 'enablegroups', 1))
-            cache = os.path.join(self.getConfigOption('cachedir'), section)
-            pkgdir = os.path.join(cache, 'packages')
-            hdrdir = os.path.join(cache, 'headers')
-            thisrepo.set('cache', cache)
-            thisrepo.set('pkgdir', pkgdir)
-            thisrepo.set('hdrdir', hdrdir)
-
-        else:
-            print 'Error: Cannot find baseurl or name for repo: %s. Skipping' % (section)    
-
-           
-    def _getoption(self, section, option, default=None):
-        """section  - section of config
-           option - option from section
-           default - if there is no setting
-           """
-        try:
-            return self.cfg.get(section, option)
-        except (ConfigParser.NoSectionError, ConfigParser.NoOptionError), e:
-            return default
-
-    def _getboolean(self, section, option, default=None):
-        """section  - section of config
-           option - option from section
-           default - if there is no setting
-           """
-        try:
-            return self.cfg.getboolean(section, option)
-        except (ConfigParser.NoSectionError, ConfigParser.NoOptionError), e:            
-            return default
-                
     def listConfigOptions(self):
         """return list of options available for global config"""
         return self.configdata.keys()
@@ -227,6 +180,7 @@ class yumconf:
             self.configdata[option] = value
         except KeyError:
             raise Errors.ConfigError, 'No such option %s' % option
+
 
     def getConfigOption(self, option, default=None):
         """gets global config setting, takes optional default value"""
@@ -261,59 +215,145 @@ class yumconf:
         
         return yumvar
 
-    def _parseList(self, value):
-        if type(value) is types.ListType:
-            return value
-            
-        listvalue = []
-        # we need to allow for the '\n[whitespace]' continuation - easier
-        # to sub the \n with a space and then read the lines
-        slashnrepl = re.compile('\n')
-        commarepl = re.compile(',')
-        (value, count) = slashnrepl.subn(' ', value)
-        (value, count) = commarepl.subn(' ', value)
-        listvalue = value.split()
-        return listvalue
+    def _doFileRepo(self, fn):
+        """takes a filename of a repo config section and fills up the repo data
+           from it"""
+           
+        repoparsed = confpp(fn)
+        repoconf = CFParser()
+        try:
+            repoconf.readfp(repoparsed)
+        except ConfigParser.MissingSectionHeaderError, e:
+            raise Errors.ConfigError, 'Error: Bad repository file %s. Skipping' % fn
         
-    def _doreplace(self, thing):
-        """ do the replacement of yumvar, release, arch and basearch on any 
-            string or list  passed to it - returns whatever you passed"""
-        
-        if thing is None:
-            return thing
+        for section in repoconf.sections():
+            if section != 'main': # check for morons
+                # this sucks but show me a nice way of doing this.                                    
+                doRepoSection(self, repoconf, section)
 
-        if type(thing) is types.StringType:
-            shortlist = []
-            shortlist.append(thing)
-            
-        if type(thing) is types.ListType:
-            shortlist = thing
-        
-        basearch_reg = re.compile('\$basearch')
-        arch_reg = re.compile('\$arch')
-        releasever_reg = re.compile('\$releasever')
-        yumvar_reg = {}
+def doRepoSection(globconfig, thisconfig, section):
+    """do all the repo handling stuff for this config"""
 
-        for num in range(0,10):
-            env = '\$YUM%s' % num
-            yumvar_reg[num] = re.compile(env)
+    urls = thisconfig._getoption(section, 'baseurl', [])
+    name = thisconfig._getoption(section, 'name', None)
+    urls = variableReplace(globconfig.yumvar, urls)
+    urls = parseList(urls)
+    mirrorlist = thisconfig._getoption(section, 'mirrorlist', None)
+    mirrorlist = variableReplace(globconfig.yumvar, mirrorlist) # FIXME it'd be neat if this did something
+    
+    if name is not None and (len(urls) > 0 or mirrorlist is not None):
+        thisrepo = globconfig.repos.add(section)
+        name = variableReplace(globconfig.yumvar, name)
+        thisrepo.set('name', name)
 
-        returnlist = []        
-        for string in shortlist:
-            (string, count) = basearch_reg.subn(self.yumvar['basearch'], string)
-            (string, count) = arch_reg.subn(self.yumvar['arch'], string)
-            (string, count) = releasever_reg.subn(self.yumvar['releasever'], string)
-            for num in range(0,10):
-                (string, count) = yumvar_reg[num].subn(self.yumvar[num], string)
-            returnlist.append(string)
+        # vet the urls
+        goodurls = []
+        for url in urls:
+            (s,b,p,q,f,o) = urlparse.urlparse(url)
+            if s not in ['http', 'ftp', 'file', 'https']:
+                print 'not using ftp, http[s], or file for repos, skipping - %s' % (url)
+                continue
+            else:
+                goodurls.append(url)
+
+        if len(goodurls) > 0:
+            thisrepo.set('urls', goodurls)                        
+        else:
+            globconfig.repos.delete(section)
+            print 'Error: Cannot find valid baseurl for repo: %s. Skipping' % (section)    
+            return
             
-        if type(thing) is types.StringType:
-            thing = returnlist[0]
+        failmeth = thisconfig._getoption(section,'failovermethod')
+        thisrepo.setFailover(failmeth)
         
-        if type(thing) is types.ListType:
-            thing = returnlist
-            
+        thisrepo.set('gpgcheck', thisconfig._getboolean(section, 'gpgcheck', 0))
+        thisrepo.set('enabled', thisconfig._getboolean(section, 'enabled', 1))
+
+        # get our proxy information if it is there
+        thisrepo.set('proxy', thisconfig._getoption(section, 'proxy', None))
+        thisrepo.set('proxy_username', thisconfig._getoption(section, 'proxy_username', None))
+        thisrepo.set('proxy_password', thisconfig._getoption(section, 'proxy_password', None))
+        thisrepo.set('keepalive', thisconfig._getboolean(section, 'keepalive', 1))                        
+        
+        excludelist = thisconfig._getoption(section, 'exclude', [])
+        excludelist = variableReplace(globconfig.yumvar, excludelist)
+        excludelist = parseList(excludelist)
+        thisrepo.set('excludes', excludelist)
+
+        includelist = thisconfig._getoption(section, 'includepkgs', [])
+        includelist = variableReplace(globconfig.yumvar, includelist)
+        includelist = parseList(includelist)
+        thisrepo.set('includepkgs', includelist)
+
+        thisrepo.set('enablegroups', thisconfig._getboolean(section, 'enablegroups', 1))
+        cache = os.path.join(globconfig.getConfigOption('cachedir'), section)
+        pkgdir = os.path.join(cache, 'packages')
+        hdrdir = os.path.join(cache, 'headers')
+        thisrepo.set('cache', cache)
+        thisrepo.set('pkgdir', pkgdir)
+        thisrepo.set('hdrdir', hdrdir)
+
+    else:
+        print 'Error: Cannot find baseurl or name for repo: %s. Skipping' % (section)    
+
+
+
+def parseList(value):
+    """converts strings from a configparser option into a workable list
+       converts commas and spaces to separators for the list"""
+       
+    if type(value) is types.ListType:
+        return value
+        
+    listvalue = []
+    # we need to allow for the '\n[whitespace]' continuation - easier
+    # to sub the \n with a space and then read the lines
+    slashnrepl = re.compile('\n')
+    commarepl = re.compile(',')
+    (value, count) = slashnrepl.subn(' ', value)
+    (value, count) = commarepl.subn(' ', value)
+    listvalue = value.split()
+    return listvalue
+        
+def variableReplace(yumvar, thing):
+    """ do the replacement of $ variables, releasever, arch and basearch on any 
+        string or list  passed to it - returns whatever you passed"""
+    
+    if thing is None:
         return thing
+
+    if type(thing) is types.StringType:
+        shortlist = []
+        shortlist.append(thing)
+        
+    if type(thing) is types.ListType:
+        shortlist = thing
+    
+    basearch_reg = re.compile('\$basearch')
+    arch_reg = re.compile('\$arch')
+    releasever_reg = re.compile('\$releasever')
+    yumvar_reg = {}
+
+    for num in range(0,10):
+        env = '\$YUM%s' % num
+        yumvar_reg[num] = re.compile(env)
+
+    returnlist = []        
+    for string in shortlist:
+        (string, count) = basearch_reg.subn(yumvar['basearch'], string)
+        (string, count) = arch_reg.subn(yumvar['arch'], string)
+        (string, count) = releasever_reg.subn(yumvar['releasever'], string)
+        for num in range(0,10):
+            (string, count) = yumvar_reg[num].subn(yumvar[num], string)
+        returnlist.append(string)
+        
+    if type(thing) is types.StringType:
+        thing = returnlist[0]
+    
+    if type(thing) is types.ListType:
+        thing = returnlist
+        
+    return thing
 
 
 class confpp:

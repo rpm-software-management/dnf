@@ -19,7 +19,7 @@ import Errors
 import os
 import os.path
 import failover    
- 
+
 class RepoStorage:
     """This class contains multiple repositories and core configuration data
        about them."""
