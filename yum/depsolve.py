@@ -130,7 +130,7 @@ class Depsolve:
             if txmbr.ts_state in ['u', 'i']:
                 if (txmbr.pkgtup, 'i') in ts_elem:
                     continue
-                po = self.getPackageObject(txmbr.pkgtup)
+                po = txmbr.po
                 self.downloadHeader(po)
                 hdr = po.returnLocalHeader()
                 rpmfile = po.localPkg()

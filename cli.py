@@ -668,7 +668,7 @@ For more information contact your distribution or package provider.
         downloadpkgs = []
         for txmbr in self.tsInfo.getMembers():
             if txmbr.ts_state in ['i', 'u']:
-                po = self.getPackageObject(txmbr.pkgtup)
+                po = txmbr.po
                 if po:
                     downloadpkgs.append(po)
 
