@@ -20,6 +20,10 @@ import os
 import urlparse
 import string
 import urllib
+import archwork
+import clientStuff
+import rpm
+import re
 
 class yumConfigParser(ConfigParser.ConfigParser):
     def readfp(self, fp, filename=None):
@@ -76,6 +80,10 @@ class yumconf:
         self.cache=0
         self.uid=0
         self.exactarch = 0
+        self.distroverpkg = 'redhat-release'
+        basearch = archwork.getArch()
+        arch = os.uname()[4]
+        releasever = None
         
         if self._getoption('main','cachedir') != None:
             self.cachedir=self._getoption('main','cachedir')
@@ -97,7 +105,17 @@ class yumconf:
             self.gpgkeyring=self._getoption('main','gpgkeyring')
         if self._getoption('main','exactarch') != None:
             self.exactarch=self.cfg.getboolean('main','exactarch')
-            
+        if self._getoption('main', 'distroverpkg') != None:
+            self.distroverpkg = self.cfg.getoption('main','distroverpkg')
+        
+        # go get the info from the rpmdb
+        releasever = self._getsysver(self.distroverpkg)
+        # compile the regexes
+        basearch_reg = re.compile('\$basearch')
+        arch_reg = re.compile('\$myarch')
+        releasever_reg = re.compile('\$myver')
+        
+        
         if len(self.cfg.sections()) > 1:
             for section in self.cfg.sections(): # loop through the list of sections
                 if section != 'main': # must be a serverid
@@ -105,6 +123,14 @@ class yumconf:
                     url = self._getoption(section,'baseurl')
                     if name != None and url != None:
                         self.servers.append(section)
+                        # use the regexes
+                        (name, count) = basearch_reg.subn(basearch, name)
+                        (name, count) = arch_reg.subn(basearch, name)
+                        (name, count) = releasever_reg.subn(basearch, name)
+                        (url, count) = basearch_reg.subn(basearch, url)
+                        (url, count) = arch_reg.subn(basearch, url)
+                        (url, count) = releasever_reg.subn(basearch, url)
+                        
                         self.servername[section] = name
                         self.serverurl[section] = url
                         if self._getoption(section,'gpgcheck') != None:
@@ -136,4 +162,14 @@ class yumconf:
         except ConfigParser.NoOptionError, e:
             return None
         
-   
+    def _getsysver(self, verpkg):
+        db = clientStuff.openrpmdb()
+        idx = db.findbyname(self.distroverpkg)
+        # we're going to take the first one - if there is more than one of these
+        # then the user needs a beating
+        if len(idx) == 0:
+            releasever = 'Null'
+        else:
+            hdr = db[idx[0]]
+            releasever = hdr['version']
+        return releasever
