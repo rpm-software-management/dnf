@@ -31,17 +31,36 @@ class TransactionData:
         self.reason = {} # self.reason[pkgtup] = 'user', 'dep'
             # user = user requested
             # dep = deps
-
+            # others? ....
+            
         # list of flags to set for the transaction
         self.data['flags'] = []
         self.data['vsflags'] = []
         self.data['probFilterFlags'] = []
 
     def add(self, pkgtup, mode, reason='user'):
-        """add one"""
+        """add a package to the transaction"""
         
-        self.data['packages'].append((pkgtup, mode))
-        self.reason[pkgtup] = reason
+        if (pkgtup, mode) not in self.data['packages']:
+            self.data['packages'].append((pkgtup, mode))
+            self.reason[pkgtup] = reason
+
+    def remove(self, pkgtup):
+        """remove a package from the transaction"""
+        
+        # we're iterating the list and not including
+        # the pkgs matching pkgtup
+        
+        newlist = []
+        for (tup, mode) in self.data['packages']:
+            if pkgtup != tup:
+                newlist.append(tup, mode)
+
+        if self.reason.has_key(pkgtup):
+            del self.reason[pkgtup]
+            
+        self.data['packages'] = newlist
+        
         
     def display(self):
         out = ""
@@ -65,16 +84,16 @@ class TransactionData:
             removed.sort()
             
         for (n, a, e, v, r) in removed:
-            out = out + "\t\t[e] %s-%s %s:%s-%s\n" % (n, a, e, v, r)
+            out = out + "\t\t[e] %s.%s %s:%s-%s\n" % (n, a, e, v, r)
 
         for (n, a, e, v, r) in installed:
-            out = out + "\t\t[i] %s-%s %s:%s-%s\n" % (n, a, e, v, r)        
+            out = out + "\t\t[i] %s.%s %s:%s-%s\n" % (n, a, e, v, r)        
 
         for (n, a, e, v, r) in updated:
-            out = out + "\t\t[u] %s-%s %s:%s-%s\n" % (n, a, e, v, r)        
+            out = out + "\t\t[u] %s.%s %s:%s-%s\n" % (n, a, e, v, r)        
 
         for (n, a, e, v, r) in misc:
-            out = out + "\t\t[wtf] %s-%s %s:%s-%s\n" % (n, a, e, v, r)                
+            out = out + "\t\t[wtf] %s.%s %s:%s-%s\n" % (n, a, e, v, r)                
 
         return out
 

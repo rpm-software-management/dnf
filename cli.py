@@ -107,9 +107,9 @@ def getOptionsConfig(args, baseclass):
         
         # syslog-style log
         if conf.getConfigOption('uid') == 0:
-            logfd = os.open(conf.getConfigOption('logfile'), os.WRONLY |
+            logfd = os.open(conf.getConfigOption('logfile'), os.O_WRONLY |
                             os.O_APPEND | os.O_CREAT)
-            logfile =  os.fdopen(logd, 'a')
+            logfile =  os.fdopen(logfd, 'a')
             fcntl.fcntl(logfd, fcntl.F_SETFD)
             filelog = Logger(threshold = 10, file_object = logfile, 
                              preprefix = output.printtime())
@@ -201,7 +201,7 @@ def parseCommands(baseclass):
 
     if baseclass.conf.getConfigOption('uid') != 0:
         if basecmd in ['install', 'update', 'clean', 'upgrade','erase', 
-                      'groupupdate', 'groupinstall', 
+                      'groupupdate', 'groupinstall', 'remove',
                       'groupremove']:
             baseclass.errorlog(0, _('You need to be root to perform these commands'))
             sys.exit(1)
@@ -240,18 +240,76 @@ def doCommands(baseclass):
     basecmd = cmds[0]
     args = cmds[1:]
     
-    if basecmd in ['install', 'update', 'remove', 'erase', 'list']:
-        pass
+    if basecmd in ['install', 'update']:
+        matched, unmatched = parsePackages(baseclass.pkgSack.simplePkgList(), args)
+
+    elif basecmd in ['erase', 'remove']:
+        matched, unmatched = parsePackages(baseclass.rpmdb.getPkgList(), args)
         
+    return basecmd, matched, unmatched    
         
    
-
-def parsePackages(availpkgs, usercommands):
-    """matches up the user request versus the available package lists:
-       for installs/updates availpkgs should be the 'others list' for removes it should
-       be the installed list"""
+def buildPkgRefDict(pkgs):
+    """take a list of pkg tuples and return a dict the contains all the possible
+       naming conventions for them eg: for (name,i386,0,1,1)
+       dict[name] = (name, i386, 0, 1, 1)
+       dict[name.i386] = (name, i386, 0, 1, 1)
+       dict[name-1-1.i386] = (name, i386, 0, 1, 1)       
+       dict[name-1] = (name, i386, 0, 1, 1)       
+       dict[name-1-1] = (name, i386, 0, 1, 1)
+       dict[0:name-1-1.i386] = (name, i386, 0, 1, 1)
+       """
+    pkgdict = {}
+    for pkgtup in pkgs:
+        (n, a, e, v, r) = pkgtup
+        name = n
+        nameArch = '%s.%s' % (n, a)
+        nameVerRelArch = '%s-%s-%s.%s' % (n, v, r, a)
+        nameVer = '%s-%s' % (n, v)
+        nameVerRel = '%s-%s-%s' % (n, v, r)
+        full = '%s:%s-%s-%s.%s' % (e, n, v, r, a)
+        for item in [name, nameArch, nameVerRelArch, nameVer, nameVerRel, full]:
+            if not pkgdict.has_key(item):
+                pkgdict[item] = []
+            pkgdict[item].append(pkgtup)
+            
+    return pkgdict            
        
-    pass
+def parsePackages(pkgs, usercommands):
+    """matches up the user request versus a pkg list:
+       for installs/updates available pkgs should be the 'others list' for removes it should
+       be the installed list of pkgs"""
+
+    pkgdict = buildPkgRefDict(pkgs)
+    matched = []
+    unmatched = []
+    for command in usercommands:
+        if pkgdict.has_key(command):
+            matched.extend(pkgdict[command])
+            del pkgdict[command]
+        else:
+            # anything we couldn't find a match for
+            # could mean it's not there, could mean it's a wildcard
+            if re.match('.*[\*,\[,\],\{,\},\?].*', command):
+                trylist = pkgdict.keys()
+                restring = fnmatch.translate(command)
+                regex = re.compile(restring, flags=re.I) # case insensitive
+                foundit = 0
+                for item in trylist:
+                    if regex.match(item):
+                        matched.extend(pkgdict[item])
+                        del pkgdict[item]
+                        foundit = 1
+ 
+                if not foundit:    
+                    unmatched.append(command)
+                    
+            else:
+                # we got nada
+                unmatched.append(command)
+
+
+    return matched, unmatched
 
 
         

@@ -121,19 +121,40 @@ def main(args):
     base.log(2, '# of avail pkgs = %s' % len(base.up.getOthersList()))
     
     base.tsInfo = rpmUtils.transaction.TransactionData()
-    for pkgtup in base.up.getUpdatesList():
-        base.tsInfo.add(pkgtup, 'u', 'user')
+
+    basecmd, matched, unmatched = cli.doCommands(base)
+
+    modedict = { 'install':'i',
+                 'update':'u',
+                 'erase':'e',
+                 'remove':'e'
+                }
+    mode = modedict[basecmd]
+
+    for pkgtup in matched:
+        base.tsInfo.add(pkgtup, mode)
         
+    
     print base.tsInfo.display()
+    for item in unmatched:
+        print item
+
+
+
+   
+#    base.tsInfo = rpmUtils.transaction.TransactionData()
+#    for pkgtup in base.up.getUpdatesList():
+#        base.tsInfo.add(pkgtup, 'u', 'user')
+
     # build up a list of pkgobj from the pkgsack to go with each item in a:
     # i or u mode in the tsInfo
-    base.updatespkgs = []
-    for (pkgtup, mode) in base.tsInfo.data['packages']:
-        if mode in ['u', 'i']:
-            (n, a, e, v, r) = pkgtup
-            pkgs = base.pkgSack.searchNevra(name=n, arch=a, epoch=e, ver=v, rel=r)
-            for pkg in pkgs:
-               print pkg.returnSimple('relativepath')
+#    base.updatespkgs = []
+#    for (pkgtup, mode) in base.tsInfo.data['packages']:
+#        if mode in ['u', 'i']:
+#            (n, a, e, v, r) = pkgtup
+#            pkgs = base.pkgSack.searchNevra(name=n, arch=a, epoch=e, ver=v, rel=r)
+#            for pkg in pkgs:
+#               print pkg.returnSimple('relativepath')
  
 """
     if len(tsInfo.NAkeys()) < 1:
