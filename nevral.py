@@ -260,8 +260,8 @@ class nevral:
                                 log(4, 'Got Erase Dep: %s, %s' %(name,arch))
                             else:
                                 archlist = archwork.availablearchs(self,name)
-                                arch = archwork.bestarch(archlist)
-                                if arch != 'garbage':
+                                if len(archlist) > 0:
+                                    arch = archwork.bestarch(archlist)
                                     ((e, v, r, a, l, i), s)=self._get_data(name,arch)
                                     self.add((name,e,v,r,arch,l,i),'ud')                                
                                     log(4, 'Got Extra Dep: %s, %s' %(name,arch))
