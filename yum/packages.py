@@ -359,3 +359,35 @@ class YumAvailablePackage(repomd.packageObject.PackageObject, repomd.packageObje
         # translates from the pkgdict, populating out the information for the
         # packageObject
         
+        if hasattr(pkgdict, 'nevra'):
+            (n, e, v, r, a) = pkgdict.nevra
+            self.simple['name'] = n
+            self.simple['epoch'] = e
+            self.simple['version'] = v
+            self.simple['arch'] = a
+            self.simple['release'] = r
+        
+        if hasattr(pkgdict, 'time'):
+            self.simple['buildtime'] = pkgdict.time['build']
+            self.simple['filetime'] = pkgdict.time['file']
+        
+        if hasattr(pkgdict, 'size'):
+            self.simple['packagesize'] = pkgdict.size['package']
+            self.simple['archivesize'] = pkgdict.size['archive']
+            self.simple['installedsize'] = pkgdict.size['installed']
+        
+        if hasattr(pkgdict, 'location'):
+            if pkgdict.location['value'] = ''
+                url = None
+            else:
+                url = pkgdict.location['value']
+            
+            self.simple['basepath'] = url
+            self.simple['relativepath'] = pkgdict.location['href']
+        
+        if hasattr(pkgdict, 'hdrange'):
+            self.simple['hdrstart'] = pkgdict.hdrange['start']
+            self.simple['hdrend'] = pkgdict.hdrange['end']
+        
+        if hasattr(pkgdict, 'info'):
+            FIXME
