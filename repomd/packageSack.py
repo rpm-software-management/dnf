@@ -82,6 +82,21 @@ class PackageSack:
         else:
             return []
 
+    def returnObsoletes(self):
+        """returns a dict of obsoletes dict[obsoleting pkgtuple] = [list of obs]"""
+        obs = {}
+        for po in self.returnPackages():
+            pkgtuple = po.returnPackageTuple()
+            if len(po.returnPrco('obsoletes')) == 0:
+                continue
+
+            if not obs.has_key(pkgtuple):
+                obs[pkgtuple] = po.returnPrco('obsoletes')
+            else:
+                obs[pkgtuple].extend(po.returnPrco('obsoletes'))
+        
+        return obs
+        
     def searchFiles(self, file):
         """return list of packages by filename
            FIXME - need to add regex match against keys in file list
@@ -221,8 +236,7 @@ class PackageSack:
         """returns a list of pkg tuples (n, a, e, v, r) optionally from a single repoid"""
         simplelist = []
         for pkg in self.returnPackages(repoid):
-            (n, e, v, r, a) = pkg.returnNevraTuple()
-            simplelist.append((n, a, e, v, r))
+            simplelist.append(pkg.returnPackageTuple())
         return simplelist
                        
     def printPackages(self):

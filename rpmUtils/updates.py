@@ -30,7 +30,7 @@ class Updates:
                             # (oldpkg, newpkg, ['update'|'obsolete'])
 
         self.installed = instlist # list of installed pkgs (n, a, e, v, r)
-        self.available = availlist # list of available pkgs (n, a, e, v, r)                               
+        self.available = availlist # list of available pkgs (n, a, e, v, r)
         self.rawobsoletes = {} # dict of obsoleting package->[what it obsoletes]
         self.exactarch = 1 # don't change archs by default
         self.myarch = rpmUtils.arch.getCanonArch() # this is for debugging only 
@@ -115,7 +115,7 @@ class Updates:
             if (high_e, high_v, high_r) == (e, v, r):
                 returnlist.append((n,a,e,v,r))
                 
-        return returnlist               
+        return returnlist
            
     def condenseUpdates(self):
         """remove any accidental duplicates in updates"""
@@ -427,13 +427,19 @@ class Updates:
         
         return returnlist
                 
-    def getObsoletesTuples(self, name=None, arch=None):
+    def getObsoletesTuples(self, newest=0, name=None, arch=None):
         """returns obsoletes for packages in a list of tuples of:
            (obsoleting naevr, installed naevr). You can specify name and/or
-           arch of the installed package to narrow the results."""
+           arch of the installed package to narrow the results.
+           You can also specify newest=1 to get the set of newest pkgs (name, arch)
+           sorted, that obsolete something"""
            
         tmplist = []
-        for obstup in self.obsoletes.keys():
+        obslist = self.obsoletes.keys()
+        if newest:
+            obslist = self._reduceListNewestByNameArch(obslist)
+            
+        for obstup in obslist:
             for rpmtup in self.obsoletes[obstup]:
                 tmplist.append((obstup, rpmtup))
         
@@ -455,13 +461,17 @@ class Updates:
                         
            
            
-    def getObsoletesList(self, name=None, arch=None):
+    def getObsoletesList(self, newest=0, name=None, arch=None):
         """returns obsoleting packages in a list of naevr tuples of just the
            packages that obsolete something that is installed. You can specify
-           name and/or arch of the obsoleting packaging to narrow the results."""
+           name and/or arch of the obsoleting packaging to narrow the results.
+           You can also specify newest=1 to get the set of newest pkgs (name, arch)
+           sorted, that obsolete something"""
            
         tmplist = self.obsoletes.keys()
-        
+        if newest:
+            tmplist = self._reduceListNewestByNameArch(tmplist)
+
         returnlist = self.reduceListByNameArch(tmplist, name, arch)
         
         return returnlist
@@ -488,7 +498,27 @@ class Updates:
         
         return returnlist
          
-               
+
+
+    def _reduceListNewestByNameArch(self, tuplelist):
+        """return list of newest packages based on name, arch matching
+           this means(in name.arch form): foo.i386 and foo.noarch are not 
+           compared to each other for highest version only foo.i386 and 
+           foo.i386 will be compared"""
+        highdict = {}
+        for pkgtup in tuplelist:
+            (n, a, e, v, r) = pkgtup
+            if not highdict.has_key((n, a)):
+                highdict[(n, a)] = pkgtup
+            else:
+                pkgtup2 = highdict[(n, a)]
+                (n2, a2, e2, v2, r2) = pkgtup2
+                rc = rpmUtils.miscutils.compareEVR((e,v,r), (e2, v2, r2))
+                if rc > 0:
+                    highdict[(n, a)] = pkgtup
+        
+        return highdict.values()
+
             
 #    def getProblems(self):
 #        """return list of problems:

@@ -42,6 +42,11 @@ class PackageObject:
     def returnID(self):
         return self.returnSimple('id')
 
+    def returnPackageTuple(self):
+        return (self.returnSimple('name'), self.returnSimple('arch'), 
+                self.returnSimple('epoch'),self.returnSimple('version'), 
+                self.returnSimple('release'))
+        
     def returnNevraTuple(self):
         return (self.returnSimple('name'), self.returnSimple('epoch'), 
                 self.returnSimple('version'),self.returnSimple('release'), 

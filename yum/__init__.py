@@ -62,9 +62,15 @@ class YumBase(depsolve.Depsolve):
         # raise an error
         self.up = rpmUtils.updates.Updates(self.rpmdb.getPkgList(),
                                            self.pkgSack.simplePkgList())
-                                       
+        if self.conf.getConfigOption('obsoletes'):
+            self.up.rawobsoletes = self.pkgSack.returnObsoletes()
+            
         self.up.exactarch = self.conf.getConfigOption('exactarch')
         self.up.doUpdates()
+
+        if self.conf.getConfigOption('obsoletes'):
+            self.up.doObsoletes()
+
         self.up.condenseUpdates()
         
         

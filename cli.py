@@ -279,7 +279,7 @@ class YumBaseCli(yum.YumBase):
         if self.conf.getConfigOption('uid') != 0:
             if self.basecmd in ['install', 'update', 'clean', 'upgrade','erase', 
                                 'groupupdate', 'groupinstall', 'remove',
-                                'groupremove']:
+                                'groupremove', 'importkey']:
                 self.errorlog(0, _('You need to be root to perform these commands'))
                 sys.exit(1)
         
@@ -324,7 +324,12 @@ class YumBaseCli(yum.YumBase):
             self.log(2, "Setting up Install Process")
             return self.installPkgs()
         
-        if self.basecmd in ['update', 'upgrade']:
+        elif self.basecmd == 'update':
+            self.log(2, "Setting up Update Process")
+            return self.updatePkgs()
+            
+        elif self.basecmd == 'upgrade':
+            self.conf.setConfigOption('obsoletes', 1)
             self.log(2, "Setting up Update Process")
             return self.updatePkgs()
             
@@ -552,17 +557,23 @@ class YumBaseCli(yum.YumBase):
            packages to be updated"""
         if not userlist:
             userlist = self.extcmds
-        
-        # simple case - do them all
+
         self.doRpmDBSetup()
         installed = self.rpmdb.getPkgList()
         self.doRepoSetup()
         avail = self.pkgSack.simplePkgList()
         self.doUpdateSetup()
         updates = self.up.getUpdatesList()
-        for pkgtup in updates:
-            (n, a, e, v, r) = pkgtup
-            self.tsInfo.add(pkgtup, 'u', 'user')
+        if self.conf.getConfigOption('obsoletes'):
+            obsoletes = self.up.getObsoletesTuples(newest=1)
+        else:
+            obsoletes = []
+
+
+        if len(userlist) == 0: # simple case - do them all
+            for pkgtup in updates:
+                (n, a, e, v, r) = pkgtup
+                self.tsInfo.add(pkgtup, 'u', 'user')
         
         return 2, ['Updated Packages in Transaction']
         
@@ -667,21 +678,29 @@ class YumBaseCli(yum.YumBase):
 
         elif pkgnarrow == 'extras':
             # we must compare the installed set versus the repo set
-            # anything not in both is an 'extra'
-            # put into totalpkgs list
+            # anything installed but not in a repo is an extra
             self.doRpmDBSetup()
             self.doRepoSetup()
             avail = self.pkgSack.simplePkgList()
-            inst = self.rpmdb.getPkgList()
-            for pkg in inst:
-                if pkg not in avail:
-                    extras.append(pkg)
-            
+            for hdr in self.rpmdb.getHdrList():
+                po = YumInstalledPackage(hdr)
+                if po.pkgtup() not in avail:
+                    extras.append(po)
 
         elif pkgnarrow == 'obsoletes':
-            # get the list of obsoletes and list the available packages
-            # that obsolete an installed package
-            pass
+            self.doRpmDBSetup()
+            self.doRepoSetup()
+            self.conf.setConfigOption('obsoletes', 1)
+            self.doUpdateSetup()
+            #for (obs, inst) in self.up.getObsoletesTuples(newest=1):
+            #    print obs,
+            #    print 'obsoletes',
+            #    print inst
+            for pkgtup in self.up.getObsoletesList():
+                (n,a,e,v,r) = pkgtup
+                pkgs = self.pkgSack.searchNevra(name=n, arch=a, ver=v, rel=r, epoch=e)
+                for po in pkgs:
+                    obsoletes.append(po)
 
         elif pkgnarrow == 'recent':
             #num_pkgs = int(self.conf.getConfigOption('numrecent'))
