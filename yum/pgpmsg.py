@@ -575,7 +575,7 @@ class signature(pgp_packet) :
             idx = idx + val_len
             return (subtype, flg1, flg2, flg3, flg4, nam, val), idx
         if subtype == SIG_SUB_TYPE_KEY_SRV_PREF : # key server preferences
-            prefs = list(msg[idx:idx+sublen-1])
+            prefs = [ ord(x) for x in msg[idx:idx+sublen-1] ]
             idx = idx + sublen - 1
             return (subtype, prefs), idx
         if subtype == SIG_SUB_TYPE_PREF_KEY_SRVR : # preferred key server
@@ -595,8 +595,9 @@ class signature(pgp_packet) :
             return (subtype, signer_id), idx
         if subtype == SIG_SUB_TYPE_REVOKE_REASON : # reason for revocation
             rev_code, idx = get_whole_int(msg, idx, 1)
-            reas = msg[idx:idx+sublen-1]
-            idx = idx + sublen - 1
+            reas_len = sublen - 2
+            reas = msg[idx:idx+reas_len]
+            idx = idx + reas_len
             return (subtype, rev_code, reas), idx
         # otherwise the subpacket is an unknown type, so we just pack the data in it
         dat = msg[idx:idx+sublen-1]
@@ -772,7 +773,6 @@ class pgp_certificate :
     def __init__(self) :
         self.version = None
         self.public_key = None
-        self.cert_id = None
         self.revocation = None
         self.user_id = None
         self.user_ids = []
@@ -879,7 +879,6 @@ be scanned to make sure they are valid for a pgp certificate."""
                 if not self.cert_id and is_primary_user_id and not is_revoked :
                     # the cert type must be generic pubkey and user id
                     self.user_id = user_id[0].id
-                    self.cert_id = pkts[is_primary_user_id].key_id()
 
                 # append the user ID and signature(s) onto a list
                 if is_revoked :
@@ -937,14 +936,10 @@ be scanned to make sure they are valid for a pgp certificate."""
                         # is this the primary user id?
                         if pkts[pkt_idx].version == 4 and pkts[pkt_idx].is_primary_user_id() :
                             is_primary_user_id = 1
-                            self.cert_id = pkts[pkt_idx].key_id() # just a guess: we should really compute this
                         pkt_idx = pkt_idx + 1
 
                     # append the user ID and signature(s) onto the list
                     if is_revoked :
-                        # undo our set of key_id if we set it above
-                        if is_primary_user_id :
-                            self.cert_id = None
                         self.rvkd_user_ids.append(user_id)
                     else :
                         if is_primary_user_id :
@@ -984,8 +979,7 @@ be scanned to make sure they are valid for a pgp certificate."""
             if len(self.user_ids) == 0 :
                 raise ValueError('no user id packet was present in the cert')
             self.user_id = self.user_ids[0][0].id
-            # and get the cert_id
-            self.cert_id = self.user_ids[0][1].key_id()
+
 
 def get_ctb(msg, idx) :
     """get_ctb(msg, idx)
