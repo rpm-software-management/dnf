@@ -23,6 +23,7 @@ import fcntl
 import fnmatch
 import re
 import output
+import misc
 
 import progress_meter
 import yum
@@ -280,7 +281,7 @@ class YumBaseCli(yum.YumBase):
             self.conf.setConfigOption('cache', 1)
 
 
-    def listPkgs(self, disp='listDisplay'):
+    def listPkgs(self, disp='output.rpm listDisplay'):
         """Generates the lists of packages based on arguments on the cli.
            calls out to a function for displaying the packages, that function
            is the second argument. Function takes a package object."""
@@ -299,13 +300,13 @@ class YumBaseCli(yum.YumBase):
                 pkgnarrow = self.extcmds.pop(0)
 
         if pkgnarrow == 'all':
-            self.doSackSetup()
+            self.doSackSetup(callback=output.simpleProgressBar)
             available = self.pkgSack.simplePkgList()
             self.doRpmDBSetup()
             installed = self.rpmdb.getPkgList()
         
         elif pkgnarrow == 'updates':
-            self.doUpdateSetup()
+            self.doUpdateSetup(callback=output.simpleProgressBar)
             available = self.up.getUpdatesList()
             installed = []
 
@@ -316,7 +317,7 @@ class YumBaseCli(yum.YumBase):
             
         elif pkgnarrow == 'available':
             self.doRpmDBSetup()
-            self.doSackSetup()
+            self.doSackSetup(callback=output.simpleProgressBar)
             repocomplete = self.pkgSack.simplePkgList()
             inst = self.rpmdb.getPkgList()
             available = []
@@ -482,7 +483,8 @@ def parsePackages(pkgs, usercommands):
                 # we got nada
                 unmatched.append(command)
 
-
+    matched = misc.unique(matched)
+    unmatched = misc.unique(unmatched)
     return matched, unmatched
 
 
