@@ -95,6 +95,41 @@ def getSigInfo(hdr):
     return error, infotuple
 
 
+def rangeCheck(reqtuple, pkgtuple):
+    """returns true if the package epoch-ver-rel satisfy the range
+       requested in the reqtuple:
+       ex: foo >= 2.1-1"""
+    # we only ever get here if we have a versioned prco
+    # nameonly shouldn't ever raise it
+    (reqn, reqf, (reqe, reqv, reqr)) = reqtuple
+    (n, a, e, v, r) = pkgtuple
+    #simple failures
+    if reqn != n: return 0
+    # and you thought we were done having fun
+    # if the requested release is left out then we have
+    # to remove release from the package prco to make sure the match
+    # is a success - ie: if the request is EQ foo 1:3.0.0 and we have 
+    # foo 1:3.0.0-15 then we have to drop the 15 so we can match
+    if reqr is None:
+        r = None
+    if reqe is None:
+        e is None
+    if reqv is None: # just for the record if ver is None then we're going to segfault
+        v is None
+        
+    rc = compareEVR((e, v, r), (reqe, reqv, reqr))
+            
+    if rc >= 1:
+        if reqf in ['GT', 'GE']:
+            return 1
+    if rc == 0:
+        if reqf in ['GE', 'LE', 'EQ']:
+            return 1
+    if rc <= -1:
+        if reqf in ['LT', 'LE']:
+            return 1
+    return 0
+
 ###########
 # Title: Remove duplicates from a sequence
 # Submitter: Tim Peters 

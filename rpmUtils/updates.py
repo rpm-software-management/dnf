@@ -31,7 +31,7 @@ class Updates:
 
         self.installed = instlist # list of installed pkgs (n, a, e, v, r)
         self.available = availlist # list of available pkgs (n, a, e, v, r)                               
-        self.obsoletes = {} # dict of obsoleting package->[what it obsoletes]
+        self.rawobsoletes = {} # dict of obsoleting package->[what it obsoletes]
         self.exactarch = 1 # don't change archs by default
         self.myarch = rpmUtils.arch.getCanonArch() # this is for debugging only 
                                                    # set this if you want to 
@@ -119,6 +119,33 @@ class Updates:
                 mylist = self.updatesdict[tup]
                 self.updatesdict[tup] = rpmUtils.miscutils.unique(mylist)
         
+    def doObsoletes(self):
+        """figures out what things available obsolete things installed, returns
+           them in a dict attribute of the class."""
+
+        obsdict = {} # obseleting package -> [obsoleted package]
+
+        for pkgtup in self.rawobsoletes.keys():
+            for (obs_n, flag, (obs_e, obs_v, obs_r)) in self.rawobsoletes[(pkgtup)]:
+                if flag in [None, 0]: # unversioned obsolete
+                    if self.installdict.has_key((obs_n, None)):
+                        for (rpm_a, rpm_e, rpm_v, rpm_r) in self.installdict[(obs_n, None)]:
+                            if not obsdict.has_key(pkgtup):
+                                obsdict[pkgtup] = []
+                            obsdict[pkgtup].append((obs_n, rpm_a, rpm_e, rpm_v, rpm_r))
+
+                else: # versioned obsolete
+                    if self.installdict.has_key((obs_n, None)):
+                        for (rpm_a, rpm_e, rpm_v, rpm_r) in self.installdict[(obs_n, None)]:
+                            if rpmUtils.miscutils.rangeCheck((obs_n, flag, (obs_e, \
+                                                        obs_v, obs_r)), (obs_n,\
+                                                        rpm_a, rpm_e, rpm_v, rpm_r)):
+                                if not obsdict.has_key(pkgtup):
+                                    obsdict[pkgtup] = []
+                                obsdict[pkgtup].append((obs_n, rpm_a, rpm_e, rpm_v, rpm_r))
+           
+        self.obsoletes = obsdict
+           
     def doUpdates(self):
         """check for key lists as populated then commit acts of evil to
            determine what is updated and/or obsoleted, populate self.updatesdict
@@ -373,12 +400,12 @@ class Updates:
                 returnlist.append(newtup)
 
         tmplist = []                
-        if name is not None:
+        if name:
             for (n, a, e, v, r) in returnlist:
                 if n != name:
                     tmplist.append((n, a, e, v, r))
                     
-        if arch is not None:
+        if arch:
             for (n, a, e, v, r) in returnlist:
                 if a != arch:
                     tmplist.append((n, a, e, v, r))
