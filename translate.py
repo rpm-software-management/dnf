@@ -18,7 +18,7 @@ def _expandLang(str):
     # remove charset ...
     if '.' in str:
         langs.append(string.split(str, '.')[0])
-	# also add 2 character language code ...
+        # also add 2 character language code ...
     if len(str) > 2:
         langs.append(str[:2])
     return langs
@@ -261,14 +261,14 @@ else:
 
 class i18n:
     def __init__(self):
-	self.langs = lang
+        self.langs = lang
         self.cat = Catalog("up2date")
 
     def getlangs(self):
-	return self.langs
+        return self.langs
 
     def setlangs(self, langs):
-	self.langs = setlangs(langs)
+        self.langs = setlangs(langs)
         self.cat = Catalog("up2date")
 
     def gettext(self, string):

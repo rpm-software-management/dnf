@@ -19,64 +19,64 @@
 import rpm, sys, types
 
 def getArch():
-	import os
-	arch = os.uname()[4]
-	if (len (arch) == 4 and arch[0] == 'i' and
-		arch[2:4] == "86"):
-		arch = "i386"
-	if arch == "sparc64":
-		arch = "sparc"
-	return arch
+    import os
+    arch = os.uname()[4]
+    if (len (arch) == 4 and arch[0] == 'i' and
+        arch[2:4] == "86"):
+        arch = "i386"
+    if arch == "sparc64":
+        arch = "sparc"
+    return arch
 
 def betterarch(arch1, arch2):
-	"""Take two archs, return the better of the two, returns none if both \
-	of them come out to 0, returns either if they are the same archscore"""
-	score1 = rpm.archscore(arch1)  
-	score2 = rpm.archscore(arch2)  
-	if score1 == 0 and score2 == 0:
-		return None
-	if score1 < score2:
-		if score1 != 0:
-			return arch1
-		else:
-			return arch2  
-	if score2 < score1:
-		if score2 != 0:
-			return arch2
-		else:
-			return arch1   
-	if score1 == score2:
-		return arch1
-	del score1
-	del score2
+    """Take two archs, return the better of the two, returns none if both \
+    of them come out to 0, returns either if they are the same archscore"""
+    score1 = rpm.archscore(arch1)  
+    score2 = rpm.archscore(arch2)  
+    if score1 == 0 and score2 == 0:
+        return None
+    if score1 < score2:
+        if score1 != 0:
+            return arch1
+        else:
+            return arch2  
+    if score2 < score1:
+        if score2 != 0:
+            return arch2
+        else:
+            return arch1   
+    if score1 == score2:
+        return arch1
+    del score1
+    del score2
 
 
 def bestarch(archlist):
 
-	currentarch='garbage'
-	for arch in archlist:
-		if currentarch==None:
-			currentarch = betterarch('garbage', arch)
-		else:
-			currentarch = betterarch(currentarch, arch)
-	return currentarch
-	
+    currentarch='garbage'
+    for arch in archlist:
+        if currentarch==None:
+            currentarch = betterarch('garbage', arch)
+        else:
+            currentarch = betterarch(currentarch, arch)
+    return currentarch
+    
 
 def availablearchs(hinevral,name):
-	archdict = {}
-	archdict['i386']=['i386','i486','i586','i686','athlon','noarch']
-	archdict['alpha']=['alpha','alphaev6','noarch']
-	archdict['sparc']=['sparc','sparc64','noarch']
-	archdict['ppc']=['ppc','noarch']
-	archdict['ia64']=['ia64','noarch']
-	myarch=getArch()
-	archlist = []
-	
-	for arch in archdict[myarch]:
-		if hinevral.exists(name,arch):
-			archlist.append(arch)
-	return archlist
+    archdict = {}
+    archdict['i386']=['i386','i486','i586','i686','athlon','noarch']
+    archdict['alpha']=['alpha','alphaev6','noarch']
+    archdict['sparc']=['sparc','sparc64','noarch']
+    archdict['ppc']=['ppc','noarch']
+    archdict['ia64']=['ia64','noarch']
+    myarch=getArch()
+    archlist = []
+    
+    for arch in archdict[myarch]:
+        if hinevral.exists(name,arch):
+            archlist.append(arch)
+    return archlist
 
 
 
-	
+    

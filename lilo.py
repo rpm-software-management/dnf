@@ -61,12 +61,12 @@ def needsEnterpriseKernel():
     except IOError:
         return 0
     for l in f.readlines():
-	l = string.split(l)
-	if l[3] == '(reserved)': continue
+        l = string.split(l)
+        if l[3] == '(reserved)': continue
 
-	regionEnd = (string.atol(l[0], 16) - 1) + string.atol(l[2], 16)
-	if regionEnd > 0xffffffffL:
-	    rc = 1
+        regionEnd = (string.atol(l[0], 16) - 1) + string.atol(l[2], 16)
+        if regionEnd > 0xffffffffL:
+            rc = 1
 
     return rc
 
@@ -74,35 +74,35 @@ class LiloConfigFile:
     """class representing a lilo.conf lilo configuration file. Used to manipulate
     the file directly"""
     def __repr__ (self, tab = 0):
-	s = ""
-	for n in self.order:
-	    if (tab):
-		s = s + '\t'
-	    if n[0] == '#':
-		s = s + n[1:]
-	    else:
-		s = s + n
-		if self.items[n]:
-		    s = s + "=" + self.items[n]
-	    s = s + '\n'
+        s = ""
+        for n in self.order:
+            if (tab):
+                s = s + '\t'
+            if n[0] == '#':
+                s = s + n[1:]
+            else:
+                s = s + n
+                if self.items[n]:
+                    s = s + "=" + self.items[n]
+            s = s + '\n'
         for count in range(len(self.diskRemaps)):
             s = s + "disk = %s\n" % self.diskRemaps[count][1]
             s = s + "\tbios = %s\n" % self.biosRemaps[count][1] 
-	for cl in self.images:
-	    s = s + "\n%s=%s\n" % (cl.imageType, cl.path)
-	    s = s + cl.__repr__(1)
-	return s
+        for cl in self.images:
+            s = s + "\n%s=%s\n" % (cl.imageType, cl.path)
+            s = s + cl.__repr__(1)
+        return s
 
     def addEntry(self, item, val = None, replace = 1):
-	if not self.items.has_key(item):
-	    self.order.append(item)
-	elif not replace:
-	    return
+        if not self.items.has_key(item):
+            self.order.append(item)
+        elif not replace:
+            return
 
-	if (val):
-	    self.items[item] = str(val)
-	else:
-	    self.items[item] = None
+        if (val):
+            self.items[item] = str(val)
+        else:
+            self.items[item] = None
 
     def getEntry(self, item):
         if self.items.has_key(item):
@@ -111,12 +111,12 @@ class LiloConfigFile:
             return None
 
     def delEntry(self, item):
-	newOrder = []
-	for i in self.order:
-	    if item != i: newOrder.append(i)
-	self.order = newOrder
+        newOrder = []
+        for i in self.order:
+            if item != i: newOrder.append(i)
+        self.order = newOrder
 
-	del self.items[item]
+        del self.items[item]
 
     def listEntries(self):
         foo = self.items
@@ -130,20 +130,20 @@ class LiloConfigFile:
 
     def getImage(self, label):
         for config in self.images:
-	    if string.lower(config.getEntry('label')) == string.lower(label):
-		return (config.imageType, config,config.path,config.other)
+            if string.lower(config.getEntry('label')) == string.lower(label):
+                return (config.imageType, config,config.path,config.other)
             if config.getEntry('alias'):
                 if string.lower(config.getEntry('alias')) == string.lower(label):
                     return (config.imageType, config,config.path,config.other)
     
         
-	raise IndexError, "unknown image %s" % (label)
+        raise IndexError, "unknown image %s" % (label)
 
     def addImage (self, config,first=None):
-	# make sure the config has a valid label
-	config.getEntry('label')
-	if not config.path or not config.imageType:
-	    raise ValueError, "subconfig missing path or image type"
+        # make sure the config has a valid label
+        config.getEntry('label')
+        if not config.path or not config.imageType:
+            raise ValueError, "subconfig missing path or image type"
 
         if first:
             self.images = [config] + self.images
@@ -152,17 +152,17 @@ class LiloConfigFile:
 
     def delImage (self, label):
         for config in self.images:
-	    if string.lower(config.getEntry('label')) == string.lower(label):
+            if string.lower(config.getEntry('label')) == string.lower(label):
                 self.images.remove (config)
-		return
+                return
 
-	raise IndexError, "unknown image %s" % (label,)
+        raise IndexError, "unknown image %s" % (label,)
 
     def listImages (self):
-	l = []
+        l = []
         for config in self.images:
-	    l.append(config.getEntry('label'))
-	return l
+            l.append(config.getEntry('label'))
+        return l
 
     def listAliases (self):
         l = []
@@ -172,40 +172,40 @@ class LiloConfigFile:
         return l
 
     def getPath (self):
-	return self.path
+        return self.path
 
     def write(self, file, perms = 0644):
-	f = open(file, "w")
-	f.write(self.__repr__())
-	f.close()
-	os.chmod(file, perms)
+        f = open(file, "w")
+        f.write(self.__repr__())
+        f.close()
+        os.chmod(file, perms)
 
     def read (self, file):
-	f = open(file, "r")
-	image = None
-	for l in f.readlines():
-	    l = l[:-1]
-	    orig = l
-	    while (l and (l[0] == ' ' or l[0] == '\t')):
-		l = l[1:]
-	    if not l:
-		continue
-	    if l[0] == '#':
-		self.order.append('#' + orig)
-		continue
-	    fields = string.split(l, '=', 1)
-	    if (len(fields) == 2):
-		f0 = string.strip (fields [0])
-		f1 = string.strip (fields [1])
-		if (f0 == "image" or f0 == "other"):
-		    if image: self.addImage(image)
-		    image = LiloConfigFile(imageType = f0, 
-					   path = f1)
+        f = open(file, "r")
+        image = None
+        for l in f.readlines():
+            l = l[:-1]
+            orig = l
+            while (l and (l[0] == ' ' or l[0] == '\t')):
+                l = l[1:]
+            if not l:
+                continue
+            if l[0] == '#':
+                self.order.append('#' + orig)
+                continue
+            fields = string.split(l, '=', 1)
+            if (len(fields) == 2):
+                f0 = string.strip (fields [0])
+                f1 = string.strip (fields [1])
+                if (f0 == "image" or f0 == "other"):
+                    if image: self.addImage(image)
+                    image = LiloConfigFile(imageType = f0, 
+                                           path = f1)
                     if (f0 == "other"):
                         image.other = 1
-		    args = None
+                    args = None
                 else:
-		    args = (f0, f1)
+                    args = (f0, f1)
                 if (f0 == "disk"):
                     self.diskRemaps.append((f0,f1))
                     args = None
@@ -213,25 +213,25 @@ class LiloConfigFile:
                     self.biosRemaps.append((f0,f1))
                     args = None
 
-	    else:
-		args = (string.strip (l),)
+            else:
+                args = (string.strip (l),)
 
-	    if (args and image):
-		apply(image.addEntry, args)
-	    elif args:
-		apply(self.addEntry, args)
+            if (args and image):
+                apply(image.addEntry, args)
+            elif args:
+                apply(self.addEntry, args)
 
-	if image: self.addImage(image)
-	    
-	f.close()
+        if image: self.addImage(image)
+            
+        f.close()
 
     def __init__(self, imageType = None, path = None):
-	self.imageType = imageType
-	self.path = path
-	self.order = []
-	self.images = []
+        self.imageType = imageType
+        self.path = path
+        self.order = []
+        self.images = []
         self.other = None
-	self.items = UserDictCase()
+        self.items = UserDictCase()
         self.biosRemaps = []
         self.diskRemaps = []
         self.unsupported = []
@@ -240,52 +240,52 @@ class LiloConfigFile:
 class LiloConfiguration:
     """Class used to represent the data in the lilo.conf lilo configuration file."""
     def allowLiloLocationConfig(self, fstab):
-	bootDevice = fstab.getBootDevice()
-	if bootDevice[0:2] == "md":
-	    self.setDevice(("raid", bootDevice))
-	    return None
+        bootDevice = fstab.getBootDevice()
+        if bootDevice[0:2] == "md":
+            self.setDevice(("raid", bootDevice))
+            return None
 
-	return 1
+        return 1
 
     def setLiloImages(self, images):
-	self.liloImages = images
+        self.liloImages = images
 
 
     def setDevice(self, device):
-	if (type(device) == type((1,))):
-	    self.liloDevice = device
-	elif device != "mbr" and device != "partition" and device:
-	    raise ValueError, "device must be raid, mbr, partition, or None"
-	self.liloDevice = device
+        if (type(device) == type((1,))):
+            self.liloDevice = device
+        elif device != "mbr" and device != "partition" and device:
+            raise ValueError, "device must be raid, mbr, partition, or None"
+        self.liloDevice = device
 
     def setLinear(self, linear):
-	self.liloLinear = linear
+        self.liloLinear = linear
 
     def setAppend(self, append):
-	self.liloAppend = append
+        self.liloAppend = append
 
     def setDefault(self, default):
-	for (label, fsType) in self.liloImages.values():
-	    if label == default:
-		self.default = default
-		return
-	raise IndexError, "unknown lilo label %s" % (default,)
+        for (label, fsType) in self.liloImages.values():
+            if label == default:
+                self.default = default
+                return
+        raise IndexError, "unknown lilo label %s" % (default,)
 
     def getLinear(self):
-	return self.liloLinear
+        return self.liloLinear
 
     def getDevice(self):
-	return self.liloDevice
+        return self.liloDevice
 
     def getAppend(self):
-	return self.liloAppend
+        return self.liloAppend
 
     def __init__(self):
-	self.liloImages = {}
-	self.liloDevice = 'mbr'
-	self.liloLinear = 1
-	self.default = None
-	self.initrdsMade = {}
+        self.liloImages = {}
+        self.liloDevice = 'mbr'
+        self.liloLinear = 1
+        self.default = None
+        self.initrdsMade = {}
         # XXX only i386 supports edd, nothing else should
         # instantiate this class
         if iutil.getArch() == "i386":

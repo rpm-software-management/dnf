@@ -22,25 +22,25 @@ def getArch ():
 
 def getfd(filespec, readOnly = 0):
     if type(filespec) == types.IntType:
-	return filespec
+        return filespec
     if filespec == None:
-	filespec = "/dev/null"
+        filespec = "/dev/null"
 
     flags = os.O_RDWR | os.O_CREAT
     if (readOnly):
-	flags = os.O_RDONLY
+        flags = os.O_RDONLY
     return os.open(filespec, flags)
 
 def execWithRedirect(command, argv, stdin = 0, stdout = 1, stderr = 2,	
-		     searchPath = 0, root = '/', newPgrp = 0,
-		     ignoreTermSigs = 0):
+             searchPath = 0, root = '/', newPgrp = 0,
+             ignoreTermSigs = 0):
     stdin = getfd(stdin)
     if stdout == stderr:
-	stdout = getfd(stdout)
-	stderr = stdout
+        stdout = getfd(stdout)
+        stderr = stdout
     else:
-	stdout = getfd(stdout)
-	stderr = getfd(stderr)
+        stdout = getfd(stdout)
+        stderr = getfd(stderr)
 
     if not os.access (root + command, os.X_OK):
         if not os.access (command, os.X_OK):
@@ -51,42 +51,42 @@ def execWithRedirect(command, argv, stdin = 0, stdout = 1, stderr = 2,
     childpid = os.fork()
     if (not childpid):
 #        if (root and root != '/'): 
-#	    isys.chroot (root)
-#	    os.chdir("/")
+#       isys.chroot (root)
+#       os.chdir("/")
 
-	if ignoreTermSigs:
-	    signal.signal(signal.SIGTSTP, signal.SIG_IGN)
-	    signal.signal(signal.SIGINT, signal.SIG_IGN)
+        if ignoreTermSigs:
+            signal.signal(signal.SIGTSTP, signal.SIG_IGN)
+            signal.signal(signal.SIGINT, signal.SIG_IGN)
 
-	if type(stdin) == type("a"):
-	    stdin == os.open(stdin, os.O_RDONLY)
-	if type(stdout) == type("a"):
-	    stdout == os.open(stdout, os.O_RDWR)
-	if type(stderr) == type("a"):
-	    stderr = os.open(stderr, os.O_RDWR)
+        if type(stdin) == type("a"):
+            stdin == os.open(stdin, os.O_RDONLY)
+        if type(stdout) == type("a"):
+            stdout == os.open(stdout, os.O_RDWR)
+        if type(stderr) == type("a"):
+            stderr = os.open(stderr, os.O_RDWR)
 
-	if stdin != 0:
-	    os.dup2(stdin, 0)
-	    os.close(stdin)
-	if stdout != 1:
-	    os.dup2(stdout, 1)
-	    if stdout != stderr:
-		os.close(stdout)
-	if stderr != 2:
-	    os.dup2(stderr, 2)
-	    os.close(stderr)
+        if stdin != 0:
+            os.dup2(stdin, 0)
+            os.close(stdin)
+        if stdout != 1:
+            os.dup2(stdout, 1)
+            if stdout != stderr:
+                os.close(stdout)
+        if stderr != 2:
+            os.dup2(stderr, 2)
+            os.close(stderr)
 
-	if (searchPath):
-	    os.execvp(command, argv)
-	else:
-	    os.execv(command, argv)
+        if (searchPath):
+            os.execvp(command, argv)
+        else:
+            os.execv(command, argv)
 
-	sys.exit(1)
+        sys.exit(1)
 
     if newPgrp:
-	os.setpgid(childpid, childpid)
-	oldPgrp = os.tcgetpgrp(0)
-	os.tcsetpgrp(0, childpid)
+        os.setpgid(childpid, childpid)
+        oldPgrp = os.tcgetpgrp(0)
+        os.tcsetpgrp(0, childpid)
 
     status = -1
     try:
@@ -95,7 +95,7 @@ def execWithRedirect(command, argv, stdin = 0, stdout = 1, stderr = 2,
         print __name__, "waitpid:", msg
 
     if newPgrp:
-	os.tcsetpgrp(0, oldPgrp)
+        os.tcsetpgrp(0, oldPgrp)
 
     return status
 
@@ -112,27 +112,27 @@ def execWithCapture(command, argv, searchPath = 0, root = '/', stdin = 0):
     childpid = os.fork()
     if (not childpid):
 #        if (root and root != '/'): isys.chroot (root)
-#	os.dup2(write, 1)
+#       os.dup2(write, 1)
 
-	if stdin:
-	    os.dup2(stdin, 0)
-	    os.close(stdin)
+        if stdin:
+            os.dup2(stdin, 0)
+            os.close(stdin)
 
-	if (searchPath):
-	    os.execvp(command, argv)
-	else:
-	    os.execv(command, argv)
+        if (searchPath):
+            os.execvp(command, argv)
+        else:
+            os.execv(command, argv)
 
-	sys.exit(1)
+        sys.exit(1)
 
     os.close(write)
 
     rc = ""
     s = "1"
     while (s):
-	select.select([read], [], [])
-	s = os.read(read, 1000)
-	rc = rc + s
+        select.select([read], [], [])
+        s = os.read(read, 1000)
+        rc = rc + s
 
     os.close(read)
 
@@ -148,26 +148,26 @@ def copyFile(source, to, pw = None):
     t = os.open(to, os.O_RDWR | os.O_TRUNC | os.O_CREAT)
 
     if pw:
-	(fn, title, text) = pw
-	total = os.path.getsize(source)
-	win = fn(title, text, total)
+        (fn, title, text) = pw
+        total = os.path.getsize(source)
+        win = fn(title, text, total)
 
     try:
-	count = os.read(f, 262144)
-	total = 0
-	while (count):
-	    os.write(t, count)
+        count = os.read(f, 262144)
+        total = 0
+        while (count):
+            os.write(t, count)
 
-	    total = total + len(count)
-	    if pw:
-		win.set(total)
-	    count = os.read(f, 16384)
+            total = total + len(count)
+            if pw:
+                win.set(total)
+            count = os.read(f, 16384)
     finally:
-	os.close(f)
-	os.close(t)
+        os.close(f)
+        os.close(t)
 
-	if pw:
-	    win.pop()
+        if pw:
+            win.pop()
 
 def memInstalled(corrected = 1):
     global memoryOverhead
@@ -184,7 +184,7 @@ def memInstalled(corrected = 1):
         mem = 2097151
 
     if corrected:
-	mem = mem - memoryOverhead
+        mem = mem - memoryOverhead
 
     return mem
 
@@ -195,21 +195,21 @@ def mkdirChain(dir):
     elements = string.splitfields(dir, "/")
 
     if (len(elements[0])):
-	which = 1
-	path = elements[0] 
+        which = 1
+        path = elements[0] 
     else:
-	which = 2
-	path = "/" + elements[1]
+        which = 2
+        path = "/" + elements[1]
 
     if (not os.path.isdir(path)): 
-	os.mkdir(path, 0755)
+        os.mkdir(path, 0755)
 
     while (which < len(elements)):
-	path = path + "/" + elements[which]
-	which = which + 1
-	
-	if (not os.path.isdir(path)): 
-	    os.mkdir(path, 0755)
+        path = path + "/" + elements[which]
+        which = which + 1
+        
+        if (not os.path.isdir(path)): 
+            os.mkdir(path, 0755)
 
 #
 # get default runlevel - only for use in reconfig mode

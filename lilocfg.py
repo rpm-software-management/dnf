@@ -238,7 +238,7 @@ def genImageLabelType(imageType):
     res = string.split(imageType, "kernel")
     if len(res[1]) == 0:
         tmp = "-up"
-	return tmp
+        return tmp
 
     tmp = res[1][:10]
     return tmp
@@ -284,10 +284,10 @@ def installNewImages(imageList,test=0,filename=None):
         defaultType = header["name"]
     else:
         # since the image is to a file that we know
-	# nothing about but it's name, we cant do much.
-	# we could try to guess based on the image name
-	# if it's smp,enterprise,etc, but ick....
-	defaultType = None
+        # nothing about but it's name, we cant do much.
+        # we could try to guess based on the image name
+        # if it's smp,enterprise,etc, but ick....
+        defaultType = None
         
     rootDev = default_image.getEntry("root")
 
@@ -437,7 +437,7 @@ if __name__ == "__main__":
                     ('2.4.6-3.1BOOT', "kernel-BOOT")]
    
     kernel_list6 = [('2.4.9-13', "kernel"),
-		    ('2.4.9-13smp', "kernel-smp")]
+                    ('2.4.9-13smp', "kernel-smp")]
 
 
     print "filename: %s" % filename 
