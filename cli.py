@@ -930,7 +930,7 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
             for pkg in pkglist:
                 if availablepackages.has_key(pkg):
                     pkgs.append(pkg)
-                    self.log(4, 'Adding package %s from group %s to install.' % (pkg, group))
+                    self.log(4, 'Adding package %s for groupinstall of %s.' % (pkg, group))
 
         if len(pkgs) > 0:
             self.log(2, 'Passing package list to Install Process')
