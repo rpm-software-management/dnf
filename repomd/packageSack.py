@@ -256,14 +256,15 @@ class XMLPackageSack(PackageSack):
             reader.Read()
             xmlfiletype=reader.Name() # - first node should be the type
             if xmlfiletype == 'metadata':
-                self.loadPrimaryMD(reader, repoid, callback)
+                if not self._checkRepoStatus(repoid, itemcheck='primary'):
+                    self.loadPrimaryMD(reader, repoid, callback)
 
             elif xmlfiletype == 'filelists':
-                if self._checkRepoStatus(repoid):
+                if not self._checkRepoStatus(repoid, itemcheck='filelists'):
                     self.loadFileMD(reader, repoid, callback)
 
             elif xmlfiletype == 'otherdata':
-                if self._checkRepoStatus(repoid):
+                if not self._checkRepoStatus(repoid, itemcheck='other'):
                     self.loadOtherMD(reader, repoid, callback)
 
             else:
@@ -281,7 +282,7 @@ class XMLPackageSack(PackageSack):
         """load all the data from the primary metadata xml file"""
         
         pkgcount = 9999 # big number
-        current = 0
+        current = 1
         if reader.HasAttributes():
             pkgcount = int(reader.GetAttribute('packages'))
             
@@ -299,7 +300,7 @@ class XMLPackageSack(PackageSack):
                         current+=1
                         po = self.pkgObjectClass(reader, repoid)
                         self.addPackage(po)
-            callback(current, pkgcount)
+            callback(current, pkgcount, name=repoid)
             ret = reader.Read()
             continue
 
@@ -314,7 +315,7 @@ class XMLPackageSack(PackageSack):
         """load all the filelist metadata from the file"""
 
         pkgcount = 9999 # big number
-        current = 0
+        current = 1
         if reader.HasAttributes():
             pkgcount = int(reader.GetAttribute('packages'))
 
@@ -358,7 +359,7 @@ class XMLPackageSack(PackageSack):
 
                                
             ret = reader.Read()
-            callback(current, pkgcount) # give us some pretty output
+            callback(current, pkgcount, name=repoid) # give us some pretty output
             continue
 
         # update the repostatus
@@ -369,7 +370,7 @@ class XMLPackageSack(PackageSack):
         """load the changelog, etc data from the other.xml file"""
 
         pkgcount = 9999 # big number
-        current = 0
+        current = 1
         if reader.HasAttributes():
             pkgcount = int(reader.GetAttribute('packages'))
 
@@ -409,7 +410,7 @@ class XMLPackageSack(PackageSack):
                     if pkgmatch < 1:
                         # FIXME - raise a warning? Emit error? bitch? moan?
                         pass
-            callback(current, pkgcount)
+            callback(current, pkgcount, name=repoid)
             ret = reader.Read()
             continue
                                         

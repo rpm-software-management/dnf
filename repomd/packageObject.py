@@ -312,7 +312,7 @@ class RpmXMLPackageObject(XMLPackageObject, RpmBase):
         self.version = self.returnSimple('version')
         self.release = self.returnSimple('release')
         self.arch = self.returnSimple('arch')
-        
+        self.repoid = repoid
         
     def dumpPkg(self):
         fconv = { 'EQ':'=', 'LT':'<', 'LE':'<=',

@@ -59,7 +59,7 @@ class YumBaseCli(yum.YumBase):
             except yum.Errors.RepoError, e:
                 self.errorlog(0, 'Cannot open/read repomd.xml file for repository: %s' % repo)
                 sys.exit(1)
-        self.doSackSetup(callback=output.simpleProgressBar)
+        self.doSackSetup()
     
     def doGroupSetup(self):
         """determines which repos have groups and builds the groups lists"""
@@ -218,8 +218,10 @@ class YumBaseCli(yum.YumBase):
         # progress bars - this is hacky - I'm open to other options
         if self.conf.getConfigOption('debuglevel') < 2:
             self.conf.setConfigOption('progress_obj', None)
+            self.conf.repos.callback = None
         else:
             self.conf.setConfigOption('progress_obj', progress_meter.text_progress_meter(fo=sys.stdout))
+            self.conf.repos.callback = output.simpleProgressBar
             
         # this is just a convenience reference
         self.repos = self.conf.repos
@@ -324,16 +326,22 @@ class YumBaseCli(yum.YumBase):
                 return 0, []
 
         elif self.basecmd == 'generate-rss':
-            # import changelog metadata please
-            # insert 'recent' into extcmds to make generate-rss implicitly output most recent
-            # from repos
             self.extcmds.insert(0, 'recent')
             try:
                 pkgLists = self.genPkgLists()
+                if len(pkgLists['Recently available']) > 0:
+                    needrepos = []
+                    
+                    for po in pkgLists['Recently available']:
+                        if po.repoid not in needrepos:
+                            needrepos.append(po.repoid)
+
+                    self.log(2, 'Importing Changelog Metadata')
+                    self.repos.populateSack(with='other', which=needrepos)
+                    output.listPkgs(pkgLists, outputType='rss')
             except yum.Errors.YumBaseError, e:
                 return 1, [str(e)]
             else:
-                output.listPkgs(pkgLists, outputType=self.basecmd)
                 return 0, []
                 
         elif self.basecmd == 'clean':
@@ -501,10 +509,9 @@ class YumBaseCli(yum.YumBase):
         
            
     def genPkgLists(self):
-        """Generates the lists of packages based on arguments on the cli.
-           returns a list of tuples - tuples are ("list of pkg objects", string
-           describing that list") object."""
-
+        """Generates lists of packages based on arguments on the cli.
+           returns a dict: key = string describing the list, value = list of pkg
+           objects"""
             
         special = ['available', 'installed', 'all', 'extras', 'updates', 'recent',
                    'obsoletes']
@@ -596,7 +603,7 @@ class YumBaseCli(yum.YumBase):
                     else:
                         break
         
-        returnlist = []
+        returndict = {}
         for (lst, description) in [(updates, 'Updated'), (available, 'Available'), 
                       (installed, 'Installed'), (recent, 'Recently available'),
                       (obsoletes, 'Obsoleting'), (extras, 'Extra')]:
@@ -605,9 +612,9 @@ class YumBaseCli(yum.YumBase):
                 exactmatch, matched, unmatched = yum.packages.parsePackages(lst, self.extcmds)
                 lst = yum.misc.unique(matched + exactmatch)
 
-            returnlist.append((lst, description))
+            returndict[description] = lst
 
-        return returnlist
+        return returndict
 
     def usage(self):
         print _("""

@@ -40,12 +40,16 @@ def simpleProgressBar(current, total, name=None):
     if name is None:
         output = '\r%-50s %d/%d' % (hashbar, current, total)
     else:
-        output = '\r%s:%-50s %d/%d' % (name, hashbar, current, total)
+        output = '\r%-10.10s: %-50s %d/%d' % (name, hashbar, current, total)
      
-    sys.stdout.write(output)
+    if current <= total:
+        sys.stdout.write(output)
+
     if current == total:
         sys.stdout.write('\n')
-        
+
+    sys.stdout.flush()
+    
 def sortPkgObj(pkg1 ,pkg2):
     """sorts a list of package tuples by name"""
     if pkg1.name > pkg2.name:
@@ -93,7 +97,8 @@ def listPkgs(pkgLists, outputType):
     
     if outputType in ['list', 'info']:
         thingslisted = 0
-        for (lst, description) in pkgLists:
+        for description in pkgLists.keys():
+            lst = pkgLists[description]
             if len(lst) > 0:
                 thingslisted = 1
                 print '%s packages' % description
@@ -105,7 +110,6 @@ def listPkgs(pkgLists, outputType):
                     elif outputType == 'info':
                         infoOutput(pkg)
                     else:
-                        print 'foo'
                         pass
 
         if thingslisted == 0:
@@ -113,12 +117,28 @@ def listPkgs(pkgLists, outputType):
     
     elif outputType == 'rss':
         # take recent updates only and dump to an rss compat output
-        for (lst, description) in pkgLists:
+        for description in pkgLists.keys():
+            lst = pkgLists[description]
             if description == 'Recently available':
-                for pkg in lst:
-                    print pkg
+                if len(lst) > 0:
+                    startRSS()
+                    
+                    for pkg in lst:
+                        pkgRSS(pkg)
+                    
+                    endRSS()
+                
 
-    
+
+def startRSS():
+    pass
+
+def pkgRSS(pkgobj):
+    print pkgobj
+    pass
+
+def endRSS():
+    pass
 
 def userconfirm(self):
     """gets a yes or no from the user, defaults to No"""

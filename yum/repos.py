@@ -38,6 +38,8 @@ class RepoStorage:
         self.repos = {} # list of repos by repoid pointing a repo object 
                         # of repo options/misc data
         self.pkgSack = packageSack.XMLPackageSack(YumAvailablePackage)
+        self.callback = None # progress callback used for populateSack()
+        self.cache = 0
         
     def add(self, repoid):
         if self.repos.has_key(repoid):
@@ -91,18 +93,27 @@ class RepoStorage:
 
         return returnlist
                 
-    def populateSack(self, which='enabled', with='primary', callback=None, cache=0):
+    def populateSack(self, which='enabled', with='primary', callback=None):
         """This populates the package sack from the repositories, two optional 
            arguments: which='repoid, enabled, all'
                       with='primary, filelists, other, all'"""
+
+        if not callback:
+            callback = self.callback
+        myrepos = []
         if which == 'enabled':
             myrepos = self.listEnabled()
         elif which == 'all':
             myrepos = self.repos.values()
         else:
-            myrepos = []
-            myrepos.append(self.getRepos(which))
-        
+            if type(which) == types.ListType:
+                for repo in which:
+                    repobj = self.getRepo(repo)
+                    myrepos.append(repobj)
+            elif type(which) == types.StringType:
+                repobj = self.getRepo(which)
+                myrepos.append(repobj)
+
         if with == 'all':
             data = ['primary', 'filelists', 'other']
         else:
@@ -117,11 +128,11 @@ class RepoStorage:
         for repo in myrepos:
             for item in data:
                 if item == 'primary':
-                    xml = repo.getPrimaryXML(cache=cache)
+                    xml = repo.getPrimaryXML(cache=self.cache)
                 elif item == 'filelists':
-                    xml = repo.getFileListsXML(cache=cache)
+                    xml = repo.getFileListsXML(cache=self.cache)
                 elif item == 'other':
-                    xml = repo.getOtherXML(cache=cache)
+                    xml = repo.getOtherXML(cache=self.cache)
                 else:
                     # how odd, just move along
                     continue
@@ -367,7 +378,7 @@ class Repository:
             if os.path.exists(local):
                 return local
             else: # ain't there - raise
-                raise Errors.RepoErrors, \
+                raise Errors.RepoError, \
                     "Caching enabled but no local cache of %s from %s" % (local,
                            self)
                            
