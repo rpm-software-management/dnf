@@ -19,8 +19,8 @@
 
 import os, sys, rpm
 import serverStuff
-from logger import logger
-log=logger(verbosity=0,default=2,prefix='',preprefix='')
+from logger import Logger
+log=Logger(threshold=0,default=2,prefix='',preprefix='')
 serverStuff.log = log
 
 def genhdrs(rpms,headerdir,rpmcheck):
@@ -37,7 +37,7 @@ def genhdrs(rpms,headerdir,rpmcheck):
 		sys.stdout.write("\rDigesting rpms %d %% complete: %s" % (percent,rpmname))
 		sys.stdout.flush()
 		if rpmcheck==1:
-			log("\nChecking sig on %s" % (rpmname))
+			log(2,"\nChecking sig on %s" % (rpmname))
 			serverStuff.checkSig(rpmfn)
 		header=serverStuff.readHeader(rpmfn)
 		#check to ignore src.rpms
@@ -54,7 +54,7 @@ def genhdrs(rpms,headerdir,rpmcheck):
 			rpmtup = (name,arch)
 			# do we already have this name.arch tuple in the dict?
 			if rpminfo.has_key(rpmtup):
-				log("Already found tuple: %s %s " % (name, arch))
+				log(2,"Already found tuple: %s %s " % (name, arch))
 				(e1, v1, r1, l1) = rpminfo[rpmtup]
 				oldhdrfile = "%s/%s-%s-%s-%s.%s.hdr" % (headerdir, name, e1, v1, r1, arch) 
 				# which one is newer?
@@ -86,7 +86,7 @@ def genhdrs(rpms,headerdir,rpmcheck):
 				rpminfo[rpmtup]=(epoch,ver,rel,rpmloc)
 				goodrpm = goodrpm + 1
 		else:
-			log("ignoring srpm: %s" % rpmfn)
+			log(2,"ignoring srpm: %s" % rpmfn)
    
 	print "\n   Total: %d\n   Used: %d" %(numrpms, goodrpm)
 	return rpminfo
