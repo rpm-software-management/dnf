@@ -14,7 +14,14 @@
 # Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 # Copyright 2002 Duke University 
 
-import os, sys, rpm, clientStuff
+import os
+import sys
+import rpm
+import clientStuff
+import fnmatch
+import archwork
+impport types
+
 
 def installpkgs(tsnevral,nulist,userlist,hinevral,rpmnevral):
     #get the list of pkgs you want to install from userlist
@@ -23,7 +30,6 @@ def installpkgs(tsnevral,nulist,userlist,hinevral,rpmnevral):
     #if they are not, check to see if there is more than one arch, if so pass it to bestarch then use the bestone for this platform
     #add that one as 'iu' to the tsinfo
     #if they are not a pkg and you can't find it at all error and exit
-    import fnmatch, archwork
     if len(nulist) > 0:
         for n in userlist:
             foundit=0
@@ -63,7 +69,6 @@ def installpkgs(tsnevral,nulist,userlist,hinevral,rpmnevral):
     
 
 def listpkgs(pkglist, userlist, nevral):
-    import types,fnmatch
     if len(pkglist) > 0:
         pkglist.sort(clientStuff.nasort)
         print "%-40s %-10s %s" %('Name','Arch','Version')
@@ -85,7 +90,6 @@ def listpkgs(pkglist, userlist, nevral):
         print "No Packages Available"
             
 def listpkginfo(pkglist, userlist, nevral):
-    import types,fnmatch
     if len(pkglist) > 0:
         pkglist.sort(clientStuff.nasort)
         if type(userlist) is types.StringType:
@@ -119,7 +123,6 @@ def updatepkgs(tsnevral,hinevral,rpmnevral,nulist,uplist,obslist,userlist):
     #add as 'u' to the tsnevral if its already there, if its not then add as 'i' and warn
     #if its all then take obslist and uplist and iterate through the tsinfo'u'
     #
-    import fnmatch, archwork, types
     if len(nulist) > 0 :
         if type(userlist) is types.StringType and userlist=='all':
             for (name,arch) in uplist:
@@ -163,7 +166,6 @@ def updatepkgs(tsnevral,hinevral,rpmnevral,nulist,uplist,obslist,userlist):
 def upgradepkgs(tsnevral,hinevral,rpmnevral,nulist,uplist,obslist,obsdict,userlist):
     #global upgrade - including obsoletes - this must do the following:
     #if there is an update AND an obsolete - take the update first.
-    import archwork
     completeuplist=[]
     uplistnames=[]
     for (name, arch) in uplist:
@@ -186,7 +188,6 @@ def upgradepkgs(tsnevral,hinevral,rpmnevral,nulist,uplist,obslist,obsdict,userli
 
 def erasepkgs(tsnevral,rpmnevral,userlist):
     #mark for erase iff the userlist item exists in the rpmnevral
-    import fnmatch
     for n in userlist:
         foundit = 0
         for (name,arch) in rpmnevral.NAkeys():
@@ -200,7 +201,6 @@ def erasepkgs(tsnevral,rpmnevral,userlist):
             sys.exit(1)
 
 def whatprovides(usereq, nulist, nevral, localrpmdb):
-    import fnmatch
     # figure out what the user wants, traverse all the provides and file lists 
     # in every file in the header, return the fnmatch()es for the usereq
     # return the thing they match too.
@@ -314,10 +314,6 @@ def kernelupdate(tsnevral):
             up2datetheft.install_grub(kernel_list)
 
 def checkRpmMD5(package):
-    import rpm
-    import os
-    import sys
-    
     check=rpm.CHECKSIG_MD5
     # RPM spews to stdout/stderr.  Redirect.
     # code for this from up2date.py
@@ -345,10 +341,6 @@ def checkRpmMD5(package):
 
 
 def checkRpmSig(package):
-    import os
-    import sys
-    import rpm
-    import clientStuff
     # check for gpg
     # get the right sig information from config
     # if we have a keyring then use it

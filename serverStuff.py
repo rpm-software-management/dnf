@@ -14,12 +14,16 @@
 # Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 # Copyright 2002 Duke University 
 
+import os
+import sys
+import rpm
+import gzip
+import string
 
 def cleanHeader(header):
   # remove the below tags from all headers
   # dup stdout and stderr b/c the header rewriting spews a lot of crap
   # return the shortened header
-    import os,rpm
     badtags = [rpm.RPMTAG_POSTIN, rpm.RPMTAG_POSTUN, rpm.RPMTAG_PREIN, rpm.RPMTAG_PREUN, rpm.RPMTAG_FILEUSERNAME, \
             rpm.RPMTAG_FILEGROUPNAME, rpm.RPMTAG_FILEVERIFYFLAGS, rpm.RPMTAG_FILERDEVS, rpm.RPMTAG_FILEMTIMES, \
             rpm.RPMTAG_FILEDEVICES, rpm.RPMTAG_FILEINODES, rpm.RPMTAG_TRIGGERSCRIPTS, rpm.RPMTAG_TRIGGERVERSION, rpm.RPMTAG_TRIGGERFLAGS, \
@@ -51,8 +55,6 @@ def cleanHeader(header):
 def writeHeader(headerdir,header,compress):
     # write the header out to a file with the format: name-epoch-ver-rel.arch.hdr
     # return the name of the file it just made - no real reason :)
-    import rpm
-    import gzip
     
     name = header[rpm.RPMTAG_NAME]
     ver = header[rpm.RPMTAG_VERSION]
@@ -80,8 +82,6 @@ def getfilelist(path, ext, list):
     # store them in append them to list
     # return list
     # ignore symlinks
-    import os
-    import string
 
     dir_list = os.listdir(path)
 
@@ -99,9 +99,6 @@ def getfilelist(path, ext, list):
 def readHeader(rpmfn):
     # read the header from the rpm if its an rpm, from a file its a file
     # return 'source' if its a src.rpm - something useful here would be good probably.
-    import os
-    import string
-    import rpm
     if string.lower(rpmfn[-4:]) == '.rpm':
         fd = os.open(rpmfn, os.O_RDONLY)
         (h,src) = rpm.headerFromPackage(fd)
@@ -117,7 +114,6 @@ def readHeader(rpmfn):
         return h
 
 def Usage():
-    import sys
     print "Usage:"
     print "yum-arch [-v] [-z] [-c] [-n] [-d] (path of dir where headers/ should/does live)"
     print "\t-d = check dependencies and conflicts in tree"
@@ -145,8 +141,6 @@ def formatRequire (name, version, flags):
     return string
 
 def depchecktree(rpmlist):
-    import rpm
-    import sys
     ts = rpm.TransactionSet('/')
     error=0
     msgs=[]
@@ -177,9 +171,6 @@ def depchecktree(rpmlist):
     return (error,msgs)
 
 def checkSig(package):
-    import rpm
-    import os
-    import sys
     check = rpm.CHECKSIG_GPG | rpm.CHECKSIG_MD5
     # RPM spews to stdout/stderr.  Redirect.
     # code for this from up2date.py
