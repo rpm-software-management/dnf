@@ -194,7 +194,6 @@ class yumconf(object):
         optionstrings = [('cachedir', '/var/cache/yum'), 
                          ('logfile', '/var/log/yum.log'), 
                          ('reposdir', ['/etc/yum/repos.d', '/etc/yum.repos.d']),
-                         ('pkgpolicy', 'newest'),
                          ('syslog_ident', None),
                          ('syslog_facility', 'LOG_USER'),
                          ('distroverpkg', 'fedora-release'),
