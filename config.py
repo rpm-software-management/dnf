@@ -45,6 +45,7 @@ class yumconf:
         self.errorlevel=2
         self.cache=0
         self.uid=0
+        self.exactarch = 0
         
         if self._getoption('main','cachedir') != None:
             self.cachedir=self._getoption('main','cachedir')
@@ -64,7 +65,8 @@ class yumconf:
             self.gpghome=self._getoption('main','gpghome')
         if self._getoption('main','gpgkeyring') != None:
             self.gpgkeyring=self._getoption('main','gpgkeyring')
-            
+        if self._getoption('main','exactarch') != None:
+            self.exactarch=self.cfg.getboolean('main','exactarch')
             
         if len(self.cfg.sections()) > 1:
             for section in self.cfg.sections(): # loop through the list of sections
