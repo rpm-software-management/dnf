@@ -523,6 +523,8 @@ class YumBase(depsolve.Depsolve):
         """download list of package objects handed to you, output based on
            callback, raise yum.Errors.YumBaseError on problems"""
 
+        self.plugins.run('predownload', pkglist=pkglist)
+
         remote_pkgs = []
         for po in pkglist:
             if hasattr(po, 'pkgtype') and po.pkgtype == 'local':
@@ -569,6 +571,8 @@ class YumBase(depsolve.Depsolve):
                 po.localpath = mylocal
                 if errors.has_key(po):
                     del errors[po]
+
+        self.plugins.run('postdownload', pkglist=pkglist, errors=errors)
 
         return errors
 
