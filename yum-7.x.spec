@@ -9,7 +9,7 @@ URL: http://www.dulug.duke.edu/yum/
 BuildRoot: %{_tmppath}/%{name}-%{version}root
 BuildArchitectures: noarch
 BuildRequires: rpm-python python >= 1.5.2
-Requires: rpm-python >= 4.0.4 perl python >= 1.5.2  rpm >= 4.0.4
+Requires: rpm-python >= 4.0.4 python >= 1.5.2  rpm >= 4.0.4
 Prereq: /sbin/chkconfig, /sbin/service
 
 %description
