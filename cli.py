@@ -537,11 +537,6 @@ class YumBaseCli(yum.YumBase):
                     if not toBeInstalled.has_key(n): toBeInstalled[n] = []
                     toBeInstalled[n].append(pkgtup)
         
-        #for n in toBeInstalled.keys():
-        #    print '%s: ' % n,
-        #    for tup in toBeInstalled[n]:
-        #        print tup,
-        #    print ''
         
         oldcount = self.tsInfo.count()
         pkglist = returnBestPackages(toBeInstalled)
@@ -553,9 +548,13 @@ class YumBaseCli(yum.YumBase):
 
         if len(passToUpdate) > 0:
             self.log(3, 'potential updates :')
-        for (n,a,e,v,r) in passToUpdate:
-            self.log(3, '   %s.%s %s:%s-%s' % (n, a, e, v, r))
-            
+            updatelist = []
+            for (n,a,e,v,r) in passToUpdate:
+                self.log(3, '   %s.%s %s:%s-%s' % (n, a, e, v, r))
+                pkgstring = '%s:%s-%s-%s.%s' % (e,n,v,r,a)
+                updatelist.append(pkgstring)
+            self.updatePkgs(userlist=updatelist)
+
         if self.tsInfo.count() > oldcount:
             return 2, ['Package(s) to install']
         return 0, ['Nothing to do']
