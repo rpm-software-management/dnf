@@ -571,13 +571,13 @@ class confpp:
             fo = self._urlresolver.urlopen(absurl)
         except urlgrabber.grabber.URLGrabError, e:
             fo = None
-        if not fo is None:
+        if fo is not None:
             self.name = absurl
             self._incstack.append( fo )
             self._alreadyincluded.append(absurl)
         else:
             raise Errors.ConfigError, \
-                  'Error accessing file: Config file %s tried to include %s' % (self.name, absurl)
+                  'Error accessing file for config %s' % (absurl)
 
         return fo
     
