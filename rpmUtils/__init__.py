@@ -127,36 +127,39 @@ class RpmDBHolder:
     def returnTupleByKeyword(self, name=None, arch=None, epoch=None, ver=None, rel=None):
         """return a list of pkgtuples based on name, arch, epoch, ver and/or rel 
            matches."""
-        completelist = self.pkglists
-        removelist = []
+        
+        completelist = self.getPkgList()
+        removedict = {}
+        returnlist = []
+        
         for pkgtup in completelist:
             (n, a, e, v, r) = pkgtup
             if name is not None:
                 if name != n:
-                    removelist(pkgtup)
+                    removedict[pkgtup] = 1
                     continue
             if arch is not None:
                 if arch != a:
-                    removelist(pkgtup)
+                    removedict[pkgtup] = 1
                     continue
             if epoch is not None:
                 if epoch != e:
-                    removelist(pkgtup)
+                    removedict[pkgtup] = 1
                     continue
             if ver is not None:
                 if ver != v:
-                    removelist(pkgtup)
+                    removedict[pkgtup] = 1
                     continue
             if rel is not None:
                 if rel != r:
-                    removelist(pkgtup)
+                    removedict[pkgtup] = 1
                     continue
                     
-        for pkgtup in removelist:
-            completelist.remove(pkgtup)
+        for pkgtup in completelist:
+            if not removedict.has_key(pkgtup):
+                returnlist.append(pkgtup)
         
-        return completelist
-                
+        return returnlist
 
     def returnHeaderByTuple(self, pkgtuple):
         """returns a list of header(s) based on the pkgtuple provided"""
