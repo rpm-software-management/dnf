@@ -18,6 +18,7 @@
 import os
 import os.path
 import rpm
+import re
 import errno
 import Errors
 
@@ -582,3 +583,20 @@ class YumBase(depsolve.Depsolve):
         ygh.extras = extras
         
         return ygh
+
+    def searchPackages(self, fields, criteria):
+        """Search specified fields for matches to criteria"""
+        
+        self.doRepoSetup()
+        self.doRpmDBSetup()
+        matches = {}
+        for string in criteria:
+            crit_re = re.compile(string, flags=re.I)
+            for po in self.pkgSack:
+                for field in fields:
+                    value = po.returnSimple(field)
+                    if crit_re.search(value):
+                        if not matches.has_key(po): matches[po] = []
+                        matches[po].append(value)
+
+        return matches

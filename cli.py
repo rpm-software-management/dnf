@@ -295,7 +295,8 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
     
         elif self.basecmd == 'clean':
             if len(self.extcmds) == 0:
-                self.errorlog(0, _('Error: Clean Now Requires an option'))
+                self.errorlog(0, _('Error: Clean Now Requires an option: \
+                                    headers, packages, all'))
             for cmd in self.extcmds:
                 if cmd not in ['headers', 'packages', 'all']:
                     self.usage()
@@ -445,8 +446,15 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
             if self.basecmd == 'grouplist':
                 self.groupInfo._dumppkgs()
                 return 0, []
+        elif self.basecmd in ['search']:
+            self.log(2, "Searching Packages: ")
+            try:
+                return self.search()
+            except yum.Errors.YumBaseError, e:
+                return 1, [str(e)]
+            
         else:
-            return 1, ['command not implemented yet']
+            return 1, ['command not implemented/not found']
 
     def doTransaction(self):
         """takes care of package downloading, checking, user confirmation and actually
@@ -780,6 +788,24 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
                     
         return ypl
 
+    def search(self):
+        """cli wrapper method for module search function"""
+        
+        # call the yum module search function with lists of tags to search
+        # and what to search for
+        # display the list of matches
+        args = self.extcmds
+        searchlist = ['name', 'summary', 'description', 'packager', 'group', 'url']
+        matching = self.searchPackages(searchlist, args)
+        for po in matching.keys():
+            self.log(2, '\n\n')
+            self.simpleList(po)
+            self.log(2, 'Matched from:')
+            for item in matching[po]:
+                self.log(2, '%s' % item)
+        
+        return 0, []
+
     def usage(self):
         print _("""
     Usage:  yum [options] <update | install | info | remove | list |
@@ -796,6 +822,10 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         --installroot=[path] - set the install root (default '/')
         --version - output the version of yum
         --rss-filename=[path/filename] - set the filename to generate rss to
+        --exclude=package to exclude
+        --disablerepo=repository id to disable (overrides config file)
+        --enablerepo=repository id to enable (overrides config file)
+
         -h, --help  - this screen
     """)
         sys.exit(1)
