@@ -33,15 +33,6 @@ class RepodataParser:
         }
         self.debug = 0
     
-    def __del__(self):
-        for item in self.repodata.keys():
-            del self.repodata[item]
-        
-        self.repodata = {}
-        self.storedir = None
-        
-        
-        
         
     def debugprint(self, msg):
         if self.debug:
@@ -155,6 +146,7 @@ class RepodataParser:
                 if self.callback is not None: self.callback(count, total, 'MD Read')
         self.debugprint('Parsed %s packages' % count)
         reader.Close()
+        del reader
         return databank
 
 class BaseEntry:
