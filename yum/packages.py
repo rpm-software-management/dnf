@@ -187,7 +187,7 @@ class YumInstalledPackage:
         if tmpepoch is None:
             epoch = '0'
         else:
-            epoch = tmpepoch
+            epoch = str(tmpepoch)
         
         return epoch
     

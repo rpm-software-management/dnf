@@ -108,8 +108,7 @@ class Depsolve:
             elif mode in ['e']:
                 if (pkginfo, mode) in ts_elem:
                     continue
-                indexes = rpmUtils.getIndexesByKeyword(self.read_ts, name=str(n),
-                          arch=str(a), epoch=str(e), version=str(v), release=str(r))
+                indexes = self.rpmdb.returnIndexByTuple(pkginfo)
                 for idx in indexes:
                     self.ts.addErase(idx)
                     self.log(4, 'Removing Package %s-%s-%s.%s' % (n, v, r, a))

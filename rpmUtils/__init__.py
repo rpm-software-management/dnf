@@ -52,8 +52,10 @@ class RpmDBHolder:
         
     def addDB(self, ts):
         self.ts = ts
+        self.indexdict = {}
         
-        for hdr in self.getHdrList():
+        mi = self.ts.dbMatch()
+        for hdr in mi:
             name = hdr['name']
             arch = hdr['arch']
             ver = str(hdr['version']) # convert these to strings to be sure
@@ -64,7 +66,10 @@ class RpmDBHolder:
             else:
                 epoch = str(epoch)
                 
-            pkgtuple = (name, arch, epoch, ver, rel)                
+            pkgtuple = (name, arch, epoch, ver, rel)
+            if not self.indexdict.has_key(pkgtuple):
+                self.indexdict[pkgtuple] = []
+            self.indexdict[pkgtuple].append(mi.instance())
             self.pkglists.append(pkgtuple)
                 
     def getPkgList(self):
@@ -137,7 +142,7 @@ class RpmDBHolder:
             return 1
         return 0
 
-        
+    
     def returnTupleByKeyword(self, name=None, arch=None, epoch=None, ver=None, rel=None):
         """return a list of pkgtuples based on name, arch, epoch, ver and/or rel 
            matches."""
@@ -182,4 +187,6 @@ class RpmDBHolder:
                                   release=r)
         return lst
         
+    def returnIndexByTuple(self, pkgtuple):
+        return self.indexdict[pkgtuple]
         

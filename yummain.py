@@ -85,7 +85,7 @@ def main(args):
             
     # Depsolve stage
     base.log(2, 'Resolving Dependencies')
-    base.log(4, time.time())
+    base.log(3, time.time())
     try:
         (result, resultmsgs) = base.buildTransaction() 
     except Errors.YumBaseError, e:
@@ -110,7 +110,7 @@ def main(args):
         sys.exit(1)
 
     base.log(2, '\nDependencies Resolved')
-    base.log(4, time.time())
+    base.log(3, time.time())
     #run post-depresolve script here
     #run  pre-trans script here
     # run the transaction
