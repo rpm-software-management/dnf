@@ -1,3 +1,40 @@
+2003-03-05 00:01  skvidal
+
+	* docs/: yum.8, yum.conf.5: 
+	updates to the docs Thanks to Joshua Baker-LePain for the fixes to
+	the pkgpolicy statement
+
+2003-03-04 16:44  skvidal
+
+	* pullheaders.py: 
+	fix problems with empty repositories having trash lying about
+
+2003-03-03 23:44  skvidal
+
+	* pkgaction.py: 
+	reverting - don't want to mess with the print vs log inside 1.x
+
+2003-03-03 23:43  skvidal
+
+	* pkgaction.py: 
+	doh
+
+2003-03-03 23:42  skvidal
+
+	* pkgaction.py: 
+	modification number 2
+
+2003-03-03 23:37  skvidal
+
+	* ChangeLog, clientStuff.py, yummain.py: 
+	implement check-update - to test - might not stick around for yum
+	2.x
+
+2003-03-03 10:28  skvidal
+
+	* yum-7.x.spec, yum.spec: 
+	remove perl requirements
+
 2003-02-28 00:09  skvidal
 
 	* bin/yum: 
