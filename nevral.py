@@ -234,15 +234,10 @@ class nevral:
                         (name, arch) = self.nafromloc(sugname)
                         archlist = archwork.availablearchs(self,name)
                         bestarch = archwork.bestarch(archlist)
-                        log(3, 'bestarch = %s' % arch)
-                        if arch == bestarch:
-                            ((e, v, r, a, l, i), s)=self._get_data(name,arch)
-                            self.add((name,e,v,r,arch,l,i),'ud')
-                            log(4, 'Got dep: %s, %s' % (name,arch))
-                            CheckDeps = 1
-                        ((e, v, r, a, l, i), s)=self._get_data(name,arch)
-                        self.add((name,e,v,r,arch,l,i),'ud')          
-                        log(4, 'Got dep: %s, %s' % (name,arch))
+                        log(3, 'bestarch = %s for %s' % (bestarch, name))
+                        ((e, v, r, a, l, i), s)=self._get_data(name,bestarch)
+                        self.add((name,e,v,r,bestarch,l,i),'ud')
+                        log(4, 'Got dep: %s, %s' % (name,bestarch))
                         CheckDeps = 1
                     else:
                         if self.exists(reqname):
