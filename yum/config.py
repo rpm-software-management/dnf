@@ -218,6 +218,7 @@ class yumconf(object):
                          ('tsflags', [])]
                          
         optionbools = [('assumeyes', 'False'),
+                       ('alwaysprompt', 'True'),
                        ('exactarch', 'True'),
                        ('tolerant', 'True'),
                        ('diskspacecheck', 'True'),

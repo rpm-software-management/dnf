@@ -55,6 +55,14 @@ critical actions. Default is `0' (do prompt).
 .br
 Commmand-line option: \fB\-y\fP
 
+.IP \fBalwaysprompt\fR
+Either `1' or `0'. Without this option, yum will not prompt for confirmation
+when the list of packages to be installed exactly matches those given on the
+command line. Unless \fBassumeyes\fR is enabled, it will still prompt for
+package removal, or when additional packages need to be installed to fulfill
+dependencies. Default is `1'.
+.br
+
 .IP \fBtolerant\fR
 Either `1' or `0'. If enabled, then yum will be tolerant of errors on the
 command line with regard to packages. For example: if you request to install

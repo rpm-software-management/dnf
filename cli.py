@@ -654,7 +654,7 @@ For more information contact your distribution or package provider.
         self.reportDownloadSize(downloadpkgs)
         
         # confirm with user
-        if not self.conf.getConfigOption('assumeyes'):
+        if self._promptWanted():
             if not self.userconfirm():
                 self.log(0, 'Exiting on user Command')
                 return
@@ -1437,6 +1437,27 @@ For more information contact your distribution or package provider.
             return self.erasePkgs(userlist=erases)
         else:
             return 0, ['No packages to remove from groups']
+
+
+    def _promptWanted(self):
+        # shortcut for the always-off/always-on options
+        if self.conf.getConfigOption('assumeyes'):
+            return False
+        if self.conf.getConfigOption('alwaysprompt'):
+            return True
+        
+        # prompt if:
+        #  package was added to fill a dependency
+        #  package is being removed
+        #  package wasn't explictly given on the command line
+        for txmbr in self.tsInfo.getMembers():
+            if txmbr.isDep or \
+                   txmbr.ts_state == 'e' or \
+                   txmbr.name not in self.extcmds:
+                return True
+        
+        # otherwise, don't prompt        
+        return False
 
 
 
