@@ -126,11 +126,13 @@ class YumSqlitePackageSack(repos.YumPackageSack):
         result = []
         for (rep,cache) in self.otherdb.items():
             cur = cache.cursor()
-            cur.execute("select * from packages,changelog where packages.pkgId = %s and packages.pkgKey = changelog.pkgKey",pkgId)
+            cur.execute("select chagelog.date as date,\
+                chagelog.author as author.\
+                changelog.changelog as changelog from packages,changelog where packages.pkgId = %s and packages.pkgKey = changelog.pkgKey",pkgId)
             for ob in cur.fetchall():
-                result.append(( ob['changelog.date'],
-                                ob['changelog.author'],
-                                ob['changelog.changelog']
+                result.append(( ob['date'],
+                                ob['author'],
+                                ob['changelog']
                               ))
         return result
 
@@ -139,13 +141,16 @@ class YumSqlitePackageSack(repos.YumPackageSack):
         for (rep, cache) in self.primarydb.items():
             cur = cache.cursor()
             for prco in result.keys():
-                cur.execute("select * from packages,%s where packages.pkgId = %s and packages.pkgKey = %s.pkgKey", prco, pkgId, prco)
+                cur.execute("select %s.name as name, %s.version as version,\
+                    %s.release as release, %s.epoch as epoch, %s.flags as flags\
+                    from packages,%s\
+                    where packages.pkgId = %s and packages.pkgKey = %s.pkgKey", prco, prco, prco, prco, prco, prco, pkgId, prco)
                 for ob in cur.fetchall():
-                    name = ob['%s.name' % prco ]
-                    version = ob['%s.version' % prco ]
-                    release = ob['%s.release' % prco ]
-                    epoch = ob['%s.epoch' % prco ]
-                    flags = ob['%s.flags' % prco ]
+                    name = ob['name']
+                    version = ob['version']
+                    release = ob['release']
+                    epoch = ob['epoch']
+                    flags = ob['flags']
                     result[prco].append((name, flags, (epoch, version, release)))
         return result
 
@@ -155,12 +160,15 @@ class YumSqlitePackageSack(repos.YumPackageSack):
             found = False
             result = {}
             cur = cache.cursor()
-            cur.execute("select * from packages,filelist where packages.pkgId = %s and packages.pkgKey = filelist.pkgKey", pkgId)
+            cur.execute("select filelist.dirname as dirname,\
+                filelist.filetypes as filetypes,\
+                filelist.filenames as filenames from packages,filelist\
+                where packages.pkgId = %s and packages.pkgKey = filelist.pkgKey", pkgId)
             for ob in cur.fetchall():
                 found = True
-                dirname = ob['filelist.dirname']
-                filetypes = decodefiletypelist(ob['filelist.filetypes'])
-                filenames = decodefilenamelist(ob['filelist.filenames'])
+                dirname = ob['dirname']
+                filetypes = decodefiletypelist(ob['filetypes'])
+                filenames = decodefilenamelist(ob['filenames'])
                 while(filenames):
                     if dirname:
                         filename = dirname+'/'+filenames.pop()
@@ -181,11 +189,11 @@ class YumSqlitePackageSack(repos.YumPackageSack):
         quotename = name.replace("'","''")
         for (rep,cache) in self.primarydb.items():
             cur = cache.cursor()
-            cur.execute("select DISTINCT packages.pkgId from provides,packages where provides.name LIKE '%%%s%%' AND provides.pkgKey = packages.pkgKey" % quotename)
+            cur.execute("select DISTINCT packages.pkgId as pkgId from provides,packages where provides.name LIKE '%%%s%%' AND provides.pkgKey = packages.pkgKey" % quotename)
             for ob in cur.fetchall():
-                if (self.excludes[rep].has_key(ob['packages.pkgId'])):
+                if (self.excludes[rep].has_key(ob['pkgId'])):
                     continue
-                pkg = self.getPackageDetails(ob['packages.pkgId'])
+                pkg = self.getPackageDetails(ob['pkgId'])
                 result.append((self.pc(pkg,rep)))
 
         for (rep,cache) in self.filelistsdb.items():
@@ -195,7 +203,11 @@ class YumSqlitePackageSack(repos.YumPackageSack):
             # Either name is a substring of dirname or the directory part
             # in name is a substring of dirname and the file part is part
             # of filelist
-            cur.execute("select * from packages,filelist where \
+            cur.execute("select packages.pkgId as pkgId,\
+                filelist.dirname as dirname,\
+                filelist.filetypes as filetypes,\
+                filelist.filenames as filenames \
+                from packages,filelist where \
                 (filelist.dirname LIKE '%%%s%%' \
                 OR (filelist.dirname LIKE '%%%s%%' AND\
                 filelist.filenames LIKE '%%%s%%'))\
@@ -204,15 +216,15 @@ class YumSqlitePackageSack(repos.YumPackageSack):
                 # Check if it is an actual match
                 # The query above can give false positives, when
                 # a package provides /foo/aaabar it will also match /foo/bar
-                if (self.excludes[rep].has_key(ob['packages.pkgId'])):
+                if (self.excludes[rep].has_key(ob['pkgId'])):
                     continue
                 real = False
-                for filename in decodefilenamelist(ob['filelist.filenames']):
-                    if (ob['filelist.dirname']+'/'+filename).find(name) != -1:
+                for filename in decodefilenamelist(ob['filenames']):
+                    if (ob['dirname']+'/'+filename).find(name) != -1:
                         real = True
                 if (not real):
                     continue
-                pkg = self.getPackageDetails(ob['packages.pkgId'])
+                pkg = self.getPackageDetails(ob['pkgId'])
                 result.append((self.pc(pkg,rep)))
         return result     
     
@@ -220,18 +232,25 @@ class YumSqlitePackageSack(repos.YumPackageSack):
         obsoletes = {}
         for (rep,cache) in self.primarydb.items():
             cur = cache.cursor()
-            cur.execute("select * from obsoletes,packages where obsoletes.pkgKey = packages.pkgKey")
+            cur.execute("select packages.name as name,\
+                packages.pkgId as pkgId,\
+                packages.arch as arch, packages.epoch as epoch,\
+                packages.release as release, packages.version as version,\
+                obsoletes.name as oname, obsoletes.epoch as oepoch,\
+                obsoletes.release as orelease, obsoletes.version as oversion,\
+                obsoletes.flags as oflags\
+                from obsoletes,packages where obsoletes.pkgKey = packages.pkgKey")
             for ob in cur.fetchall():
                 # If the package that is causing the obsoletes is excluded
                 # continue without processing the obsoletes
-                if (self.excludes[rep].has_key(ob['packages.pkgId'])):
+                if (self.excludes[rep].has_key(ob['pkgId'])):
                     continue
-                key = ( ob['packages.name'],ob['packages.arch'],
-                        ob['packages.epoch'],ob['packages.version'],
-                        ob['packages.release'])
-                (n,f,e,v,r) = ( ob['obsoletes.name'],ob['obsoletes.flags'],
-                                ob['obsoletes.epoch'],ob['obsoletes.version'],
-                                ob['obsoletes.release'])
+                key = ( ob['name'],ob['arch'],
+                        ob['epoch'],ob['version'],
+                        ob['release'])
+                (n,f,e,v,r) = ( ob['oname'],ob['oflags'],
+                                ob['oepoch'],ob['oversion'],
+                                ob['orelease'])
 
                 obsoletes.setdefault(key,[]).append((n,f,(e,v,r)))
 
@@ -296,19 +315,23 @@ class YumSqlitePackageSack(repos.YumPackageSack):
         for (rep,cache) in self.filelistsdb.items():
             cur = cache.cursor()
             (dirname,filename) = os.path.split(name)
-            cur.execute("select * from filelist,packages where dirname = %s AND filelist.pkgKey = packages.pkgKey" , (dirname))
+            cur.execute("select packages.pkgId as pkgId,\
+                filelist.dirname as dirname,\
+                filelist.filetypes as filetypes,\
+                filelist.filenames as filenames \
+                from filelist,packages where dirname = %s AND filelist.pkgKey = packages.pkgKey" , (dirname))
             files = cur.fetchall()
             for res in files:
-                if (self.excludes[rep].has_key(res['packages.pkgId'])):
+                if (self.excludes[rep].has_key(res['pkgId'])):
                     continue
                                         
                 # If it matches the dirname, that doesnt mean it matches
                 # the filename, check if it does
                 if filename and \
-                  not filename in res['filelist.filenames'].split('/'):
+                  not filename in res['filenames'].split('/'):
                     continue
                 # If it matches we only know the packageId
-                pkg = self.getPackageDetails(res['packages.pkgId'])
+                pkg = self.getPackageDetails(res['pkgId'])
                 results.append(self.pc(pkg,rep))
         return results
 
