@@ -1,35 +1,37 @@
 #!/usr/bin/python2.2
 # -*- mode: python -*-
 
-
-import libxml2
+from cElementTree import iterparse
 import signal
 import getopt
 import sys
 import exceptions
-import string
+
 TRUE=1
 FALSE=0
 
-
-def totext(nodelist):
-    return nodelist
-# FIXME: I don't think this is relevant with libxml2
-#    return string.join(map(lambda node: node.toxml(), nodelist), '')
-
-
 def parse_boolean(s):
-    lower = string.lower (s)
-    if lower == 'yes' or lower == 'true':
+    if s.lower() in ('yes', 'true'):
         return TRUE
     return FALSE
 
+def getattrib(elem, key, default=None):
+    '''Retrieve an attribute named key from elem. Return default if not found.
 
-class CompsException (exceptions.Exception):
+    This is required because ElementTree includes namespace information in the
+    name of each attribute.
+    '''
+    for k, v in elem.attrib.iteritems():
+        k = k.split('}', 1)[-1]
+        if k == key:
+            return v
+    return default
+
+class CompsException(exceptions.Exception):
     pass
 
 class Group:
-    def __init__ (self, comps, node = None):
+    def __init__(self, comps, elem=None):
         self.comps = comps
         self.user_visible = TRUE
         self.default = FALSE
@@ -54,112 +56,111 @@ class Group:
         # is guaranteed to break within anaconda.    jlk - 12 aug 2002
         self.pkgConditionals = {}
         
-        if not node == None:
-            self.parse (node)
+        if elem:
+            self.parse(elem)
 
-    def parse (self, group_node):
-        node = group_node.children
+    def parse(self, elem):
 
-        while node != None:
-            if node.type != "element":
-                node = node.next
-                continue
-            if node.name == 'name':
-                lang = node.prop('lang')
+        for child in elem:
+            if child.tag == 'name':
+                text = child.text
+                if text:
+                    text = text.encode('utf8')
+                lang = getattrib(child, 'lang')
                 if lang:
-                    self.translated_name[lang] = totext(node.content)
+                    self.translated_name[lang] = text
                 else:
-                    self.name = totext(node.content)
-            elif node.name == 'id':
-                id = totext(node.content)
+                    self.name = text
+
+            elif child.tag == 'id':
+                id = child.text
                 if self.id is not None:
                     raise CompsException
                 self.id = id
-            elif node.name == 'description':
-                lang = node.prop ('lang')
+
+            elif child.tag == 'description':
+                text = child.text
+                if text:
+                    text = text.encode('utf8')
+                lang = getattrib(child, 'lang')
                 if lang:
-                    self.translated_description[lang] = totext (node.content)
+                    self.translated_description[lang] = text
                 else:
-                    self.description = totext (node.content)
-            elif node.name == 'uservisible':
-                if parse_boolean (totext (node.content)):
-                    self.user_visible = TRUE
-                else:
-                    self.user_visible = FALSE
-            elif node.name == 'default':
-                if parse_boolean (totext (node.content)):
-                    self.default = TRUE
-                else:
-                    self.default = FALSE
-            elif node.name == 'requires':
+                    self.description = text
+
+            elif child.tag == 'uservisible':
+                self.user_visible = parse_boolean(child.text)
+
+            elif child.tag == 'default':
+                self.default = parse_boolean(child.text)
+
+            elif child.tag == 'requires':
                 # FIXME: this isn't in use anymore
-                text = totext (node.content)
+                text = child.text
                 if text in self.requires:
                     raise CompsException
-                self.requires.append (text)
-            elif node.name == 'langonly':
-                text = totext (node.content)
+                self.requires.append(text)
+
+            elif child.tag == 'langonly':
+                text = child.text
                 if self.langonly is not None:
                     raise CompsException
                 self.langonly = text
-            elif node.name == 'packagelist':
-                self.parse_package_list (node)
-            elif node.name == 'grouplist':
-                self.parse_group_list (node)
-            node = node.next
-                
-    def parse_package_list (self, package_node):
-        node = package_node.children
-        while node is not None:
-            if node.type != "element":
-                node = node.next
-                continue
-            if node.name == 'packagereq':
-                type = node.prop ('type')
+
+            elif child.tag == 'packagelist':
+                self.parse_package_list(child)
+
+            elif child.tag == 'grouplist':
+                self.parse_group_list(child)
+
+    def parse_package_list(self, packagelist_elem):
+
+        for child in packagelist_elem:
+            if child.tag == 'packagereq':
+                type = child.attrib.get('type')
                 if not type:
                     type = u'mandatory'
-                if type != 'mandatory' and type != 'default' and type != 'optional':
+
+                if type not in ('mandatory', 'default', 'optional'):
                     raise CompsException
-                package = totext (node.content)
+
+                package = child.text
                 self.packages[package] = (type, package)
 
                 # see note above about the hack this is.
-                reqs = node.prop ('requires')
-                if reqs is not None:
+                reqs = child.attrib.get('requires')
+                if reqs:
                     self.pkgConditionals[package] = reqs
-            node = node.next
 
-    def parse_group_list (self, group_node):
-        node = group_node.children
-        while node is not None:
-            if node.type != "element":
-                node = node.next
-                continue
-            if node.name == 'groupreq':
-                type = node.prop ('type')
+    def parse_group_list(self, grouplist_elem):
+
+        for child in grouplist_elem:
+            if child.tag == 'groupreq':
+                type = getattrib(child, 'type')
                 if not type:
                     type = u'mandatory'
-                if type != 'mandatory' and type != 'default' and type != 'optional':
+
+                if type not in ('mandatory', 'default', 'optional'):
                     raise CompsException
-                group = totext (node.content)
+
+                group = child.text
                 self.groups[group] = (type, group)
-            elif node.name == 'metapkg':
-                type = node.prop ('type')
+
+            elif child.tag == 'metapkg':
+                type = getattrib(child, 'type')
                 if not type:
                     type = u'default'
-                if type != 'default' and type != 'optional':
+                if type not in ('default', 'optional'):
                     raise CompsException
-                group = totext (node.content)
+                group = child.text
                 self.metapkgs[group] = (type, group)
                 
-            node = node.next
-
-    def sanity_check (self):
+    def sanity_check(self):
         if not self.comps:
             raise CompsException
         if not self.name:
             raise CompsException
-        for (type, package) in self.packages.values ():
+        for (type, package) in self.packages.values():
             try:
                 self.comps.packages[package]
             except KeyError:
@@ -168,97 +169,85 @@ class Group:
             
 
 class Package:
-    def __init__ (self, comps, node = None):
+    def __init__(self, comps, elem=None):
         self.comps = comps
-        self.name=None
-        self.version=None
-        self.supported=FALSE
-        self.excludearch=None
-        self.dependencies=[]
+        self.name = None
+        self.version = None
+        self.supported = FALSE
+        self.excludearch = None
+        self.dependencies = []
         self.installed = 0
-        if node:
-            self.parse (node)
+        if elem:
+            self.parse(elem)
 
-    def sanity_check (self):
+    def sanity_check(self):
         if self.name == None:
             return FALSE
 
-    def parse_dependency_list (self, package_node):
-        node = package_node.children
-        while node is not None:
-            if node.type != "element":
-                node = node.next
-                continue
-            if node.name == 'dependency':
-                self.dependencies.append(totext (node.content))
-            node = node.next
+    def parse_dependency_list(self, packagedeps_elem):
+        for child in packagedeps_elem:
+            if child.tag == 'dependency':
+                self.dependencies.append(child.text)
 
-    def parse (self, group_node):
-        node = group_node.children
-        while node is not None:
-            if node.type != "element":
-                node = node.next
-                continue
-            if node.name == 'name':
-                self.name = totext (node.content)
-            elif node.name == 'version':
-                self.version = totext (node.content)
-            elif node.name == 'excludearch':
-                self.excludearch = totext (node.content)
-            elif node.name == 'packagelist':
-                self.parse_package_list (node)
-            elif node.name == 'supported':
-                if parse_boolean (totext (node.content)):
-                    self.supported = TRUE
-                else:
-                    self.supported = FALSE
-            elif node.name == 'dependencylist':
-                self.parse_dependency_list(node)
-            node = node.next
+    def parse(self, group_elem):
+        for child in group_elem:
+            if child.tag == 'name':
+                self.name = child.text
 
-class GroupHierarchy (dict):
-    def __init__(self, comps, node):
+            elif child.tag == 'version':
+                self.version = child.text
+
+            elif child.tag == 'excludearch':
+                self.excludearch = child.text
+
+            elif child.tag == 'packagelist':
+                self.parse_package_list(child)
+
+            elif child.tag == 'supported':
+                self.supported = parse_boolean(child.text)
+
+            elif child.tag == 'dependencylist':
+                self.parse_dependency_list(child)
+
+class GroupHierarchy(dict):
+    def __init__(self, comps, elem=None):
         self.comps = comps
         self.order = []
         self.translations = {}
-        if node:
-            self.parse(node)
+        if elem:
+            self.parse(elem)
 
-    def parse(self, main_node):
-        node = main_node.children
-        while node is not None:
-            if node.type != "element":
-                node = node.next
-                continue
-            if node.name == "category":
-                self.parse_category(node)
+    def parse(self, elem):
+        for child in elem:
+            if child.tag == "category":
+                self.parse_category(child)
             else:
-                print "unhandled node in <comps.grouphierarchy>: " + node.name
-            node = node.next
+                print "unhandled node in <comps.grouphierarchy>: " + child.tag
 
-    def parse_category(self, category_node):
-        node = category_node.children
+    def parse_category(self, category_elem):
         translations = {}
         subs = []
         name = None
         
-        while node is not None:
-            if node.type != "element":
-                node = node.next
-                continue
-            if node.name == "name":
-                lang = node.prop('lang')
+        for child in category_elem:
+            if child.tag == "name":
+                text = child.text
+                if text:
+                    text = text.encode('utf8')
+                lang = getattrib(child, 'lang')
                 if lang:
-                    translations[lang] = totext(node.content)
+                    translations[lang] = text
                 else:
-                    name = totext(node.content)
-            elif node.name == "subcategories":
-                subs.extend(self.parse_subcategories(node))
-            else:
-                print "unhandled node in <comps.grouphierarchy.category>: " + node.name
-            node = node.next
+                    name = text
 
-        if name is None:
+            elif child.tag == "subcategories":
+                subs.extend(self.parse_subcategories(child))
+
+            else:
+                print "unhandled node in <comps.grouphierarchy.category>: " + \
+                        elem.tag
+
+        if not name:
             raise CompsException, "no name specified"
 
         if not self.has_key(name):
@@ -268,61 +257,52 @@ class GroupHierarchy (dict):
             self[name] = self[name].extend(subs)
         self.translations[name] = translations
 
-    def parse_subcategories(self, category_node):
-        node = category_node.children
+    def parse_subcategories(self, category_elem):
         ret = []
-        while node is not None:
-            if node.type != "element":
-                node = node.next
-                continue
-            if node.name == "subcategory":
-                id = totext(node.content)
+        for child in category_elem:
+            if child.tag == "subcategory":
+                id = child.text
                 if not id:
                     raise CompsException
                 ret.append(id)
             else:
-                print "unhandled node in <comps.grouphierarchy.parse_category>:" + node.name
-            node = node.next
+                print "unhandled node in <comps.grouphierarchy.parse_category>:" + child.tag
+
         return ret
                 
         
 
-class Comps (object):
-    def __init__ (self, filename=None):
+class Comps(object):
+    def __init__(self, srcfile=None):
         self.groups = {}
         self.packages = {}
         self.hierarchy = {}
 
-        if filename != None:
-            self.load (filename)
+        if srcfile != None:
+            self.load(srcfile)
 
-    def load (self, filename):
-        if type(filename) == type('str'):
-            doc = libxml2.parseFile (filename)
+    def load(self, srcfile):
+        if type(srcfile) == type('str'):
+            # srcfile is a filename string
+            infile = open(srcfile, 'rt')
         else:
-            file = filename.read()
-            doc = libxml2.parseMemory(file, len(file))
-        root = doc.getRootElement()
+            # srcfile is a file object
+            infile = srcfile
 
-        node = root.children
-        while node is not None:
-            if node.type != "element":
-                node = node.next
-                continue
-            
-            if node.name == "group":
-                group = Group(self, node)
+        parser = iterparse(infile)
+
+        for event, elem in parser:
+            if elem.tag == "group":
+                group = Group(self, elem)
                 self.groups[group.name] = group
-            elif node.name == "package":
-                package = Package (self, node)
+
+            elif elem.tag == "package":
+                package = Package(self, elem)
                 self.packages[package.name] = package
-            elif node.name == "grouphierarchy":
-                self.hierarchy = GroupHierarchy(self, node)
-            else:
-                print "unhandled node in <comps>: " + node.name
-            node = node.next
- 
-        doc.freeDoc ()
+
+            elif elem.tag == "grouphierarchy":
+                self.hierarchy = GroupHierarchy(self, elem)
+
         if 0:
             for group in self.hierarchy.order:
                 print group
@@ -343,7 +323,7 @@ usage = "usage: pkggroup.py compsfile.xml"
 
 def main():
 
-    signal.signal (signal.SIGINT, signal.SIG_DFL)
+    signal.signal(signal.SIGINT, signal.SIG_DFL)
     opts, args = getopt.getopt(sys.argv[1:], '',
                                ['help'])
 
