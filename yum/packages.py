@@ -22,10 +22,19 @@ import os.path
 import metadata.packageObject
 base=None # will be filled with the baseclass
 
+# goal for the below is to have a packageobject that can be used by generic
+# functions independent of the type of package - ie: installed or available
+
+class YumInstalledPackage:
+    """super class for dealing with packages in the rpmdb"""
+    
+class YumAvailablePackage:
+    """super class for dealing with packages in a repository"""
+    
+    
 class YumPackage(metadata.packageObject.RpmXMLPackageObject):
     """super class for the metadata packageobject we use"""
        
-
     def getHeader(self):
         """returns an rpm header object from the package object"""
         # this function sucks - it should use the urlgrabber

@@ -32,11 +32,11 @@ class YumBase:
     def __init__(self):
         self.read_ts = rpmUtils.transaction.initReadOnlyTransaction()
         self.tsInfo = rpmUtils.transaction.TransactionData()
-        
+        self.rpmdb = rpmUtils.RpmDBHolder()
+
     def doRpmDBSetup(self):
         """sets up a holder object for important information from the rpmdb"""
         
-        self.rpmdb = rpmUtils.RpmDBHolder()
         self.rpmdb.addDB(self.read_ts)
 
     def doSackSetup(self, callback=None):
@@ -50,6 +50,8 @@ class YumBase:
         """setups up the update object in the base class and fills out the
            updates, obsoletes and others lists"""
         
+        self.doRpmDBSetup()
+        self.doSackSetup()
         self.up = rpmUtils.updates.Updates(self.rpmdb.getPkgList(),
                                            self.pkgSack.simplePkgList())
                                        

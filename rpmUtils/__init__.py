@@ -122,4 +122,11 @@ class RpmDBHolder:
             
         return returns
     
+    def returnHeaderByTuple(self, pkgtuple):
+        """returns a list of header(s) based on the pkgtuple provided"""
+        (n, a, e, v, r) = pkgtuple
+        lst = getHeadersByKeyword(self.ts, name=n, arch=a, epoch=e, version=v, 
+                                  release=r)
+        return lst
+        
         

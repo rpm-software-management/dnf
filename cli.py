@@ -237,7 +237,7 @@ class YumBaseCli(yum.YumBase):
                 self.usage()
             
         elif self.basecmd in ['groupupdate', 'groupinstall', 'groupremove']:
-            if len(self.extcmds]) == 0:
+            if len(self.extcmds) == 0:
                 self.errorlog(0, _('Error: Need a group or list of groups'))
                 self.usage()
     
@@ -254,7 +254,11 @@ class YumBaseCli(yum.YumBase):
 
     def doCommands(self):
         """calls the base command passes the extended commands/args out to be
-        parsed. (most notably package globs). returns a numeric result code"""
+        parsed. (most notably package globs). returns a numeric result code and
+        an optional string
+           0 = we're done, exit
+           1 = we've errored, exit with error string
+           2 = we've got work yet to do, onto the next stage"""
         
         # at this point we know the args are valid - we don't know their meaning
         # but we know we're not being sent garbage
@@ -267,18 +271,98 @@ class YumBaseCli(yum.YumBase):
             matched, unmatched = parsePackages(self.rpmdb.getPkgList(), 
                                                self.extcmds)
     
-        elif self.basecmd == 'list':
-            totalpkgs = []
-            totalpkgs.extend(self.rpmdb.getPkgList())
-            totalpkgs.extend(self.pkgSack.simplePkgList())
-            matched, unmatched = parsePackages(totalpkgs, self.extcmds)        
-
+        elif self.basecmd ==  'list':
+            self.listPkgs()
+            return 0, 'Success'
+            
         elif self.basecmd == 'clean':
             # if we're cleaning then we don't need to talk to the net
             self.conf.setConfigOption('cache', 1)
 
+
+    def listPkgs(self, disp='listDisplay'):
+        """Generates the lists of packages based on arguments on the cli.
+           calls out to a function for displaying the packages, that function
+           is the second argument. Function takes a package object."""
+
+        special = ['available', 'installed', 'all', 'extras', 'updates']
+                   #'obsoletes', 'recent']
+
+        installed = []
+        available = []
         
+        pkgnarrow = 'all' # option used to narrow the subset of packages to
+                          # list from
+                        
+        if len(self.extcmds) > 0:
+            if self.extcmds[0] in special:
+                pkgnarrow = self.extcmds.pop(0)
+
+        if pkgnarrow == 'all':
+            self.doSackSetup()
+            available = self.pkgSack.simplePkgList()
+            self.doRpmDBSetup()
+            installed = self.rpmdb.getPkgList()
+        
+        elif pkgnarrow == 'updates':
+            self.doUpdateSetup()
+            available = self.up.getUpdatesList()
+            installed = []
+
+        elif pkgnarrow == 'installed':
+            self.doRpmDBSetup()
+            installed = self.rpmdb.getPkgList()
+            available = []
+            
+        elif pkgnarrow == 'available':
+            self.doRpmDBSetup()
+            self.doSackSetup()
+            repocomplete = self.pkgSack.simplePkgList()
+            inst = self.rpmdb.getPkgList()
+            available = []
+            installed = []            
+            for pkg in repocomplete:
+                if pkg not in inst:
+                    available.append(pkg)
+
+            
+        elif pkgnarrow == 'extras':
+            # we must compare the installed set versus the repo set
+            # anything not in both is an 'extra'
+            # put into totalpkgs list
+            available = []
+            pass
+        
+    # if installed or available are of any length, search them for matches to
+    # the args from the user, if any exist.
+        if len(self.extcmds) > 0:
+            if len(installed) > 0:
+                matched, unmatched = parsePackages(installed, self.extcmds)
+                installed = matched
+            if len(available) > 0:
+                matched, unmatched = parsePackages(available, self.extcmds)
+                available = matched
+
+    # Iterate through the packages (after a simple sort by name), create
+    # a package object for them and call the display function.
+
+        if len(available) > 0:
+            # setup the display here
+            self.log(2, 'Available packages')
+            for pkg in available:
+                (n, a, e, v, r) = pkg
+                self.log(2, '%s:%s-%s-%s.%s' % (e, n, v, r, a))
+        
+        if len(installed) > 0:
+            self.log(2, 'Installed packages')
+            for pkg in installed:
+                (n, a, e, v, r) = pkg
+                self.log(2, '%s:%s-%s-%s.%s' % (e, n, v, r, a))
+
     
+        if len(installed) == 0 and len(available) == 0:
+            self.errorlog(1, 'No Packages available to List')
+
     def userconfirm(self):
         """gets a yes or no from the user, defaults to No"""
         choice = raw_input('Is this ok [y/N]: ')
@@ -318,9 +402,6 @@ class YumBaseCli(yum.YumBase):
             self.errorlog(1, _('Exiting.'))
             sys.exit(1)
 
-   
-    
-                                 
     def usage(self):
         print _("""
         Usage:  yum [options] <update | install | info | remove | list |
@@ -370,8 +451,8 @@ def buildPkgRefDict(pkgs):
        
 def parsePackages(pkgs, usercommands):
     """matches up the user request versus a pkg list:
-       for installs/updates available pkgs should be the 'others list' for removes it should
-       be the installed list of pkgs"""
+       for installs/updates available pkgs should be the 'others list' 
+       for removes it should be the installed list of pkgs"""
 
     pkgdict = buildPkgRefDict(pkgs)
     matched = []

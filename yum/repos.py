@@ -110,6 +110,7 @@ class RepoStorage:
 
         # MAybe worth looking at using excludelist here            
         for repo in myrepos:
+            repo.getRepoXML()
             for item in data:
                 if item == 'primary':
                     xml = repo.getPrimaryXML()

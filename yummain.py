@@ -36,7 +36,7 @@ def main(args):
     
     # our core object for the cli
     base = cli.YumBaseCli()
-    
+
     if len(args) < 1:
         base.usage()
 
@@ -54,22 +54,34 @@ def main(args):
     # all these things check out
     # the things we will require are dependent on the command invoked.
     try:
-        result = base.doCommands()  # this build
+        result, resstring = base.doCommands()
     except Errors, e:
         print 'raised error %s from doCommands()' % e
         raise
-    
+    if result == 0:
+        try:
+            base.doUnlock('/var/run/yum.pid')
+        except Errors.LockError, e:
+            sys.exit(200)
+        else:
+            sys.exit(0)
+    elif result == 2:
+        base.log(2, 'Continuing to Transaction')
+        base.doTransaction() # and a miracle occurs
+    else:
+        if result != 1:
+            resstring = resstring + '\nUnknown Result Code %d, Exiting' % result
+            try:
+                base.doUnlock('/var/run/yum.pid')
+            except Errors.LockError, e:
+                sys.exit(200)
+            else:
+                base.errorlog(0, 'Error: %s' % resstring)
+                sys.exit(1)
+
     # the result code from doCommands() determines where we go from here
     # this means we either do the transaction set we have or exit nicely    
     # we're done, unlock, and take us home mr. data.     
-    try:
-        base.doUnlock('/var/run/yum.pid')
-    except Errors.LockError, e:
-        base.errorlog(0,'%s' % e.msg)
-        sys.exit(200)
-    else:
-        sys.exit(0)
-        
     
 if __name__ == "__main__":
         main(sys.argv[1:])

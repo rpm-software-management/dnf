@@ -46,7 +46,7 @@ class PackageObject:
         return (self.returnSimple('name'), self.returnSimple('epoch'), 
                 self.returnSimple('version'),self.returnSimple('release'), 
                 self.returnSimple('arch'))
-    
+
     def returnNevraPrintable(self):
         """return printable string for the pkgname/object
            name - epoch:ver-rel.arch"""
@@ -252,9 +252,9 @@ class RpmBase:
                 if reqr is None:
                     r = None
                 if reqe is None:
-                    e is None
+                    e = None
                 if reqv is None: # just for the record if ver is None then we're going to segfault
-                    v is None
+                    v = None
                 rc = mdUtils.compareEVR((e, v, r), (reqe, reqv, reqr))
                 
                 if rc >= 1:

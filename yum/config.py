@@ -57,7 +57,7 @@ class CFParser(ConfigParser.ConfigParser):
         except (ConfigParser.NoSectionError, ConfigParser.NoOptionError), e:            
             return default
     
-class yumconf:
+class yumconf(object):
     """primary config class for yum"""
     
     def __init__(self, configfile = '/etc/yum.conf'):
@@ -113,7 +113,7 @@ class yumconf:
 
         # not being set from the config file
         # or things that can't be handled like all the rest
-        # - but should be in the config class                       
+        # - but should be in the config class
         optionothers = [('uid', 0),
                         ('cache', 0),
                         ('progess_obj', None)]
@@ -121,15 +121,20 @@ class yumconf:
 
         # do the strings        
         for (option, default) in optionstrings:
-            self.configdata[option] = self.cfg._getoption('main', option, default)
-
+            value =  self.cfg._getoption('main', option, default)
+            self.configdata[option] = value
+            setattr(self, option, value)
+            
         # do the bools
         for (option, default) in optionbools:
-            self.configdata[option] = self.cfg._getboolean('main', option, default)
-
+            value = self.cfg._getboolean('main', option, default)
+            self.configdata[option] = value
+            setattr(self, option, value)
+            
         # do the others            
-        for (option, default) in optionothers:
-            self.configdata[option] = default
+        for (option, value) in optionothers:
+            self.configdata[option] = value
+            setattr(self, option, value)
 
         # and push our process object around a bit to things beneath us
         self.repos.progress = self.getConfigOption('progress_obj')
