@@ -34,3 +34,7 @@ test on non x86 archs and make sure grub and lilo stuff are not run for this arc
 possibly implement a per-arch pkgaction.kernelupdate function
 
 implement some sort of silly lock file for making sure two yum's can't be run at the same time
+
+make the man pages have something that resembles ANY meaning.
+
+put together a brief quickstart guide and a webpage.
