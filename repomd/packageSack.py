@@ -55,6 +55,11 @@ class PackageSack:
             elif failure == 'build':
                 self.buildIndexes()
 
+    def packagesByTuple(self, pkgtup):
+        """return a list of package objects by (n,a,e,v,r) tuple"""
+        (n,a,e,v,r) = pkgtup
+        return self.searchNevra(name=n, arch=a, epoch=e, ver=v, rel=r)
+        
     def searchNevra(self, name=None, epoch=None, ver=None, rel=None, arch=None):
         """return list of pkgobjects matching the nevra requested"""
         self._checkIndexes(failure='build')

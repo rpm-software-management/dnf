@@ -493,7 +493,18 @@ class Updates:
         returnlist = self.reduceListByNameArch(tmplist, name, arch)
         
         return returnlist
-        
+    
+    def getObsoletedList(self, newest=0, name=None):
+        """returns a list of pkgtuples obsoleting the package in name"""
+        returnlist = []
+        for new in self.obsoletes.keys():
+            for obstup in self.obsoletes[new]:
+                (n, a, e, v, r) = obstup
+                if n == name:
+                    returnlist.append(new)
+                    continue
+        return returnlist
+
     def getOthersList(self, name=None, arch=None):
         """returns a naevr tuple of the packages that are neither installed
            nor an update - this may include something that obsoletes an installed
