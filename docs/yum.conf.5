@@ -6,9 +6,9 @@
 .LP 
 Yum uses a configuration file at \fB/etc/yum.conf\fR. 
 .LP
-Additional configuration files are also read from the directory set by the
-\fBreposdir\fR option (default is `/etc/yum.repos.d'). See the \fBreposdir\fR
-option below for further details.
+Additional configuration files are also read from the directories set by the
+\fBreposdir\fR option (default is `/etc/yum.repos.d' and `/etc/yum/repos.d'). 
+See the \fBreposdir\fR option below for further details.
 
 .SH "PARAMETERS"
 .LP 
@@ -27,11 +27,12 @@ Directory where yum should store its cache and db files. The default is
 `/var/cache/yum'.
 
 .IP \fBreposdir\fR
-Directory where yum should look for .repo files for its configuration
-of repositories. Default is `/etc/yum.repos.d'. Each file in this directory
-should contain one or more repository sections as documented in the
-repository options below. These will be merged with the repositories defined
-in /etc/yum.conf to form the complete set of repositories that yum will use.
+A list of directories where yum should look for .repo files which define
+repositories to use. Default is `/etc/yum.repos.d, /etc/yum/repos.d'. Each
+file in this directory should contain one or more repository sections as
+documented in \fB[repository] options\fR below. These will be merged with the
+repositories defined in /etc/yum.conf to form the complete set of repositories
+that yum will use.
 
 .IP \fBdebuglevel\fR
 Debug message output level. Practical range is 0\-10. Default is `2'.

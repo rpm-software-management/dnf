@@ -196,7 +196,7 @@ class yumconf(object):
         #defaults -either get them or set them
         optionstrings = [('cachedir', '/var/cache/yum'), 
                          ('logfile', '/var/log/yum.log'), 
-                         ('reposdir', '/etc/yum.repos.d'),
+                         ('reposdir', ['/etc/yum/repos.d', '/etc/yum.repos.d']),
                          ('pkgpolicy', 'newest'),
                          ('syslog_ident', None),
                          ('syslog_facility', 'LOG_USER'),
@@ -323,11 +323,13 @@ class yumconf(object):
         for option in ['commands', 'installonlypkgs', 'kernelpkgnames', 'exclude']:
             self.configdata[option] = variableReplace(self.yumvar, self.configdata[option])
             self.configdata[option] = variableReplace(self.yumvar, self.configdata[option])
+            setattr(self, option, self.configdata[option])
 
         # make our lists into lists. :)
-        for option in ['exclude', 'installonlypkgs', 'kernelpkgnames', 'tsflags']:
+        for option in ('exclude', 'installonlypkgs', 'kernelpkgnames', 
+                'tsflags', 'reposdir'):
             self.configdata[option] = parseList(self.configdata[option])
-
+            setattr(self, option, self.configdata[option])
 
         # Process options from plugins
         dopluginopts(self.plugins, self.cfg, 'main', PLUG_OPT_WHERE_GLOBAL, 
@@ -691,6 +693,7 @@ class confpp:
     def geturl(self): return self.name
 
 def main(args):
+
     myfile = args[0]
     if len(args) > 1:
         if args[1] == '--dump':
@@ -725,6 +728,7 @@ def main(args):
     # does not read recursively
     # read each of them in using confpp, then parse them same as any other repo
     # section - as above.
+
     reposdir = conf.reposdir
     if os.path.exists(conf.installroot + '/' + reposdir):
         reposdir = conf.installroot + '/' + reposdir

@@ -66,12 +66,11 @@ class YumBase(depsolve.Depsolve):
     def filelog(self, value, msg):
         print msg
    
-    def doConfigSetup(self, fn='/etc/yum.conf', root='/', 
-            plugindir='/usr/lib/yum-plugins'):
+    def doConfigSetup(self, fn='/etc/yum.conf', root='/'):
         """basic stub function for doing configuration setup"""
        
         # Load plugins first as they make affect available config options
-        self.plugins = plugins.YumPlugins(self, plugindir)
+        self.plugins = plugins.YumPlugins(self)
 
         self.conf = config.yumconf(configfile=fn, root=root, 
                 plugins=self.plugins)
@@ -96,36 +95,35 @@ class YumBase(depsolve.Depsolve):
                 else:
                     reposlist.append(thisrepo)
 
-        # reads through reposdir for *.repo
+        # reads through each reposdir for *.repo
         # does not read recursively
         # read each of them in using confpp, then parse them same as any other repo
         # section - as above.
-        reposdir = self.conf.reposdir
-        if os.path.exists(self.conf.installroot + '/' + reposdir):
-            reposdir = self.conf.installroot + '/' + reposdir
-        
-        reposglob = reposdir + '/*.repo'
-        if os.path.exists(reposdir) and os.path.isdir(reposdir):
-            repofn = glob.glob(reposglob)
-            repofn.sort()
+        for reposdir in self.conf.reposdir:
+            if os.path.exists(self.conf.installroot + '/' + reposdir):
+                reposdir = self.conf.installroot + '/' + reposdir
             
-            for fn in repofn:
-                if not os.path.isfile(fn):
-                    continue
-                try:
-                    cfg, sections = config.parseDotRepo(fn)
-                except Errors.ConfigError, e:
-                    self.errorlog(2, e)
-                    continue
-
-                for section in sections:
+            if os.path.isdir(reposdir):
+                repofn = glob.glob(reposdir+'/*.repo')
+                repofn.sort()
+                
+                for fn in repofn:
+                    if not os.path.isfile(fn):
+                        continue
                     try:
-                        thisrepo = config.cfgParserRepo(section, self.conf, cfg)
-                    except (Errors.RepoError, Errors.ConfigError), e:
+                        cfg, sections = config.parseDotRepo(fn)
+                    except Errors.ConfigError, e:
                         self.errorlog(2, e)
                         continue
-                    else:
-                        reposlist.append(thisrepo)
+
+                    for section in sections:
+                        try:
+                            thisrepo = config.cfgParserRepo(section, self.conf, 
+                                    cfg)
+                            reposlist.append(thisrepo)
+                        except (Errors.RepoError, Errors.ConfigError), e:
+                            self.errorlog(2, e)
+                            continue
 
         # got our list of repo objects
         for thisrepo in reposlist:
