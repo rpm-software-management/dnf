@@ -1,4 +1,4 @@
-SUBDIRS = repomd rpmUtils urlgrabber yum etc docs
+SUBDIRS = repomd rpmUtils yum etc docs
 PYFILES = $(wildcard *.py)
 
 PKGNAME = yum
