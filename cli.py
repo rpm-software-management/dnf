@@ -52,7 +52,9 @@ class YumBaseCli(yum.YumBase):
         for repo in self.repos.listEnabled():
             self.log(2, 'Setting up Repo:  %s' % repo)
             try:
+                repo.cache = self.conf.getConfigOption('cache')
                 repo.dirSetup()
+                self.log(3, 'Baseurl(s) for repo: %s' % repo.urls)
             except yum.Errors.RepoError, e:
                 self.errorlog(0, '%s' % e)
                 sys.exit(1)
@@ -185,7 +187,6 @@ class YumBaseCli(yum.YumBase):
                     self.usage()
                 elif o == '-C':
                     self.conf.setConfigOption('cache', 1)
-                    self.conf.repos.setCache(1)
                 elif o == '-R':
                     sleeptime = random.randrange(int(a)*60)
                 elif o == '--obsoletes':
@@ -251,7 +252,7 @@ class YumBaseCli(yum.YumBase):
         # set our caching mode correctly
         
         if self.conf.getConfigOption('uid') != 0:
-            self.conf.setCache(1)
+            self.conf.setConfigOption('cache', 1)
         # run the sleep - if it's unchanged then it won't matter
         time.sleep(sleeptime)
 
@@ -379,7 +380,7 @@ class YumBaseCli(yum.YumBase):
                 
         elif self.basecmd == 'clean':
             # if we're cleaning then we don't need to talk to the net
-            self.conf.setCache(1)
+            self.conf.setConfigOption('cache', 1)
 
 
     def doTransaction(self):

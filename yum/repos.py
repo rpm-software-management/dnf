@@ -140,12 +140,6 @@ class RepoStorage:
         else:
             data = [ with ]
         
-        # FIXME !!!!
-        # MAybe worth looking at using excludelist here
-        # pop open another packageSack, fill it with packages
-        # matching the exclude list as we go. Use it to check 
-        # for excluded packages without having to remove them from
-        # a usable set in case someone wants to re-include them later.
         for repo in myrepos:
             for item in data:
                 if item == 'primary':
@@ -379,6 +373,8 @@ class Repository:
         if self.cache == 1:
             if not os.path.exists(local):
                 raise Errors.RepoError, 'Cannot find repomd.xml file for %s' % (self)
+            else:
+                result = local
         else:
             try:
                 result = self.get(relative=remote, local=local, copy_local=1)

@@ -169,7 +169,6 @@ class Depsolve:
             self.log(4, 'conf = %d' % conflicts)
             self.log(4, 'CheckDeps = %d' % CheckDeps)
 
-                
             if CheckDeps > 0:
                 self.log(2, 'Restarting Dependency Process with new changes')
             else:
@@ -270,6 +269,9 @@ class Depsolve:
                 flags = None
             (r_e, r_v, r_r) = rpmUtils.miscutils.stringToVersion(needversion)
             defSack = ListPackageSack() # list of items definitely providing this requirment
+            # we need to check the needname - if it doesn't match:
+            # /etc/* bin/* or /usr/lib/sendmail then we should fetch the filelists.xml for all repos
+            # to make the searchProvides more complete.
             for po in pkgs:
                 self.log(5, 'Potential match %s to %s' % (needname, po))
                 if needname[0] == '/':
