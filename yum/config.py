@@ -212,7 +212,7 @@ class yumconf(object):
                          ('installonlypkgs', ['kernel', 'kernel-bigmem', 
                                               'kernel-enterprise','kernel-smp',
                                               'kernel-debug', 'kernel-unsupported', 
-                                              'kernel-source']),
+                                              'kernel-source', 'kernel-devel']),
                          ('kernelpkgnames', ['kernel','kernel-smp',
                                              'kernel-enterprise', 'kernel-bigmem',
                                              'kernel-BOOT'])]
