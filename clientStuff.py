@@ -118,7 +118,11 @@ def HeaderInfoNevralLoad(filename, nevral, serverid):
                     nevral.add((name, epoch, ver, rel, arch, rpmpath, serverid), 'a')
 
 
-def checkexcludes(name):
+def nameInExcludes(name):
+    # this function should take a name and check it against the excludes list to see if it
+    # shouldn't be in there
+    # return true if it is in the Excludes list
+    # return false if it is not in the Excludes list
     
 def openrpmdb(option=0, dbpath=None):
     dbpath = "/var/lib/rpm/"
