@@ -38,6 +38,10 @@ class TransactionData:
         self.data['vsflags'] = []
         self.data['probFilterFlags'] = []
 
+    def count(self):
+        """returns count of packages in transaction holder"""
+        return len(self.data['packages'])
+        
     def add(self, pkgtup, mode, reason='user'):
         """add a package to the transaction"""
         

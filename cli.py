@@ -394,24 +394,27 @@ class YumBaseCli(yum.YumBase):
                     if not toBeInstalled.has_key(n): toBeInstalled[n] = []
                     toBeInstalled[n].append(pkgtup)
         
-        for n in toBeInstalled.keys():
-            print '%s: ' % n,
-            for tup in toBeInstalled[n]:
-                print tup,
-            print ''
+        #for n in toBeInstalled.keys():
+        #    print '%s: ' % n,
+        #    for tup in toBeInstalled[n]:
+        #        print tup,
+        #    print ''
         
+        oldcount = self.tsInfo.count()
         pkglist = returnBestPackages(toBeInstalled)
         if len(pkglist) > 0:
             print 'reduced installs :'
         for (n,a,e,v,r) in pkglist:
             print '   %s.%s %s:%s-%s' % (n, a, e, v, r)
-            
+            self.tsInfo.add((n,a,e,v,r), 'i')
 
         if len(passToUpdate) > 0:
             print 'potential updates :'
         for (n,a,e,v,r) in passToUpdate:
             print '   %s.%s %s:%s-%s' % (n, a, e, v, r)
             
+        if self.tsInfo.count() > oldcount:
+            return 2, 'Package(s) to install'
         return 0, 'Nothing to do'
         
         #FIXME - what do I do in the case of yum install kernel\*
