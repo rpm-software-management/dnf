@@ -1,3 +1,244 @@
+2005-01-25 01:58  skvidal
+
+	* cli.py, yum-daily.spec, yum.spec: 
+	updated versions to 2.1.13
+
+2005-01-25 00:56  skvidal
+
+	* Makefile: 
+	fix up to Makefiles - patch by Paul Howarth
+
+2005-01-24 00:30  skvidal
+
+	* yum/config.py: 
+	add kernel-devel to installonlypkgs in config.py for those zany
+	kernel people
+
+2005-01-24 00:18  skvidal
+
+	* output.py: 
+	small changes to download total size output patches (mostly to make
+	them be quiet)
+
+2005-01-24 00:13  skvidal
+
+	* cli.py, output.py: 
+	included Gijs' patch to output total download amount before
+	confirming w/user
+
+2005-01-20 21:25  skvidal
+
+	* docs/yum.8: 
+	added url to webpage in manpage
+
+2005-01-20 01:59  skvidal
+
+	* urlgrabber/grabber.py, yum/__init__.py, yum/packages.py,
+	yum/repos.py: 
+	regets are enabled now. It looks like it should be handling
+	everything nicely, we'll see how well it works :) regets are
+	disabled for header downloads, though, due to the byte-range gets.
+
+2005-01-20 01:18  skvidal
+
+	* yum/repos.py: 
+	- fixing up proxy info - enabling regets makes all things fall
+	over.
+
+2005-01-19 02:11  skvidal
+
+	* yum/depsolve.py: 
+	more correct solution for aforementioned problem
+
+2005-01-19 01:50  skvidal
+
+	* yum/depsolve.py: 
+	slight output log adjustment
+
+2005-01-19 01:48  skvidal
+
+	* yum/depsolve.py: 
+	potential fix for problem of yum trying to install older versions
+	of things
+
+2005-01-18 01:07  skvidal
+
+	* cli.py, repomd/packageSack.py: 
+	cli.py - correct some typos and change a log level for some debug
+	output packageSack.py - apply Gijs' patch to reduce search size.
+
+2005-01-16 05:25  skvidal
+
+	* cli.py, yum/__init__.py, yum/repos.py: 
+	few more clean ups to baseurl parsing from repos.py
+
+2005-01-16 04:50  skvidal
+
+	* yum/misc.py: 
+	minor fix in gpgkeyinfo for garbage keys
+
+2005-01-16 04:42  skvidal
+
+	* yum/repos.py: 
+	fix for not doing a replacement variable call on baseurls
+
+2005-01-16 04:36  skvidal
+
+	* cli.py, docs/yum.conf.5, yum/misc.py, yum/pgpmsg.py: 
+	check in Menno's gpg key import enhancement and yum.conf man page
+	updates.
+
+2005-01-15 11:32  skvidal
+
+	* cli.py, yum/__init__.py, yum/config.py, yum/repos.py: 
+	make sure mirrorlists are not downloaded and parsed until repo is
+	explicitly enabled in repoSetup() or by repo.enable() or
+	repo.baseurlSetup()
+
+2005-01-15 01:22  skvidal
+
+	* cli.py: 
+	fixed up gpgcheck warning message if no keys in light of gpgkey
+	info
+
+2005-01-15 00:22  skvidal
+
+	* cli.py, rpmUtils/__init__.py: 
+	StopIteration added for empty rpmdb queries fixed yum -c option to
+	allow: url config files again and fix installroot specification.
+	
+	if installroot is specified then it will look for the config file
+	in the installroot path. If it can't find one there it defaults to
+	the normal / path.
+
+2005-01-14 13:31  skvidal
+
+	* cli.py, output.py, yum/__init__.py, yum/repos.py: 
+	merge terje's yum-ui patch to add a package download counter and
+	add a text information to repomd grabbing.
+
+2005-01-14 13:25  skvidal
+
+	* urlgrabber/: __init__.py, byterange.py, grabber.py, keepalive.py,
+	mirror.py, progress.py: 
+	terje's patches and new-merge of urlgrabber - include REST fixes
+
+2005-01-14 11:31  skvidal
+
+	* output.py: 
+	added repository to transaction confirmation listing.
+
+2005-01-14 11:20  skvidal
+
+	* serverStuff.py: 
+	Bug in Error reporting - closing bug #384 - thanks for the patch
+
+2005-01-14 11:16  skvidal
+
+	* yum/: depsolve.py, transactioninfo.py: 
+	Mark packages with Provides: kernel as kernels - and therefore only
+	install them
+
+2005-01-14 10:57  skvidal
+
+	* yum/depsolve.py: don't resolve deps for packages we're removing
+	resolve deps ON packages we're removing, but not FOR it.  closes
+	bug #386
+
+2005-01-10 23:07  skvidal
+
+	* AUTHORS: 
+	Added Menno Smits to AUTHORS file
+
+2005-01-10 22:52  skvidal
+
+	* cli.py, yum/__init__.py, yum/config.py, yum/misc.py,
+	yum/pgpmsg.py: 
+	changes for menno's pgp key importing routines - thanks to Menno
+	Smits
+
+2005-01-09 22:37  skvidal
+
+	* docs/yum.8: 
+	remove some ambiguity in the man page: close bug #144613
+
+2005-01-07 08:45  skvidal
+
+	* yummain.py: 
+	fix for bug 382
+
+2005-01-06 00:31  skvidal
+
+	* callback.py: 
+	fix for case in callback where package is obsoleting and updated
+	(grr)
+
+2005-01-04 01:33  skvidal
+
+	* yum/transactioninfo.py: 
+	don't add duplicates to the transaction info, no point.
+
+2004-12-21 02:43  skvidal
+
+	* rpmUtils/miscutils.py, yum/groups.py: 
+	apparently I needed more space in yum/groups.py :) fix for garbage
+	strings in epoch field in stringToVersion()
+
+2004-12-14 02:24  skvidal
+
+	* cli.py, output.py, yum/__init__.py, yum/groups.py: 
+	allow groups to take group.id's too not just group.names.
+
+2004-12-08 01:51  skvidal
+
+	* pullheaders.py: 
+	fix for signature checking in legacy yum-arch - closes rh bug
+	141758
+
+2004-12-05 23:11  skvidal
+
+	* docs/yum.conf.5: 
+	proper yum.conf - thanks to Menno Smits
+
+2004-12-05 17:18  skvidal
+
+	* rpmUtils/__init__.py: 
+	all the hdr pulling does so by using the hdr index in the rpmdb -
+	big speed up for removes and updates
+
+2004-12-05 04:31  skvidal
+
+	* callback.py, cli.py, output.py, yum/__init__.py, yum/depsolve.py,
+	yum/packages.py, yum/transactioninfo.py: 
+	much of transactioninfo is implemented god does some of this need
+	to be cleaned up, again.
+	
+	and why, just for fun, don't I make EVERYTHING take and return
+	package objects?
+
+2004-12-02 03:35  skvidal
+
+	* cli.py, yum/__init__.py, yum/transactioninfo.py: 
+	- modified __init__.py to use transactioninfo - made most of the
+	transactioninfo changes for cli - need to fix	updates uses of it
+	- modified getMember in transactioninfo.TransactionData to return
+	all   if none specified.
+
+2004-11-30 01:56  skvidal
+
+	* yum/transactioninfo.py: 
+	typo fix in matchNaevr()
+
+2004-11-30 01:54  skvidal
+
+	* yum/repos.py: 
+	cleaned up the config.py yum.conf output defaults
+
+2004-11-27 10:13  skvidal
+
+	* ChangeLog: 
+	changelog edits
+
 2004-11-27 10:12  skvidal
 
 	* cli.py, yum-daily.spec, yum.spec: 
