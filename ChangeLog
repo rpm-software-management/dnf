@@ -1,3 +1,21 @@
+2002-06-19 20:05  skvidal
+
+	* Makefile.in, docs/yum.8: 
+	updated docs to reflect addition of "upgrade" command
+
+2002-06-19 20:00  skvidal
+
+	* clientStuff.py, configure.in, pkgaction.py, yum.spec, yummain.py:
+	
+	added os.unlink on checkSig made a differentation from update to
+	upgrade upgrade includes obsoletes iff there is no update for the
+	same package update does not include obsoletes.
+
+2002-06-17 14:21  skvidal
+
+	* ChangeLog: 
+	Look Look a real ChangeLog!
+
 2002-06-16 12:04  skvidal
 
 	* TODO, configure.in, yum.spec, etc/yum.cron: 
