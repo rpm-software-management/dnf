@@ -23,7 +23,7 @@ from logger import Logger
 log=Logger(threshold=0,default=2,prefix='',preprefix='')
 serverStuff.log = log
 
-def genhdrs(rpms,headerdir,rpmcheck):
+def genhdrs(rpms,headerdir,rpmcheck,compress):
 	rpmdelete = 0 # define this if you have the rpmheader stripping patch built into rpm
 	rpminfo = {}
 	numrpms = len(rpms)
@@ -69,7 +69,7 @@ def genhdrs(rpms,headerdir,rpmcheck):
 						shortheader = serverStuff.cleanHeader(header)
 					else:
 						shortheader = header
-					headerloc = serverStuff.writeHeader(headerdir,shortheader)       
+					headerloc = serverStuff.writeHeader(headerdir,shortheader,compress)       
 					rpminfo[rpmtup]=(epoch,ver,rel,rpmloc)
 				elif rc == 0:
 					# hmm, they match complete - warn the user that they've got a dupe in the tree
@@ -82,7 +82,7 @@ def genhdrs(rpms,headerdir,rpmcheck):
 					shortheader = serverStuff.cleanHeader(header)
 				else:
 					shortheader = header
-				headerloc = serverStuff.writeHeader(headerdir,shortheader)
+				headerloc = serverStuff.writeHeader(headerdir,shortheader,compress)
 				rpminfo[rpmtup]=(epoch,ver,rel,rpmloc)
 				goodrpm = goodrpm + 1
 		else:
@@ -97,6 +97,7 @@ def main():
 	checkdeps=0
 	writehdrs=1
 	rpmcheck=0
+	compress=0
 	if  len(sys.argv) < 2:
 		serverStuff.Usage()
 	args = sys.argv[1:]
@@ -111,6 +112,8 @@ def main():
 			writehdrs=0
 		if arg == "-c":
 			rpmcheck=1
+		if arg == "-z":
+			compress=1
 		
 		
 	#save where we are right now
@@ -151,7 +154,7 @@ def main():
 			os.unlink(hdr)
 		if os.path.exists(headerinfo):
 			os.unlink(headerinfo)
-		rpminfo = genhdrs(rpms, headerdir,rpmcheck)
+		rpminfo = genhdrs(rpms, headerdir,rpmcheck,compress)
 
 		#Write header.info file
 		print "\nWriting header.info file"

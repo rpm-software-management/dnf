@@ -18,6 +18,8 @@ import string
 import rpm
 import os
 import sys
+import gzip
+
 from config import conf
 
 def stripENVRA(foo):
@@ -155,16 +157,19 @@ def rpmdbNevralLoad(nevral):
 		nevral.add((name,epoch,ver,rel,arch,rpmloc,serverid),'n')
 
 def readHeader(rpmfn):
-   if string.lower(rpmfn[-4:]) == '.rpm':
-     fd = open(rpmfn, "r")
-     h = rpm.headerFromPackage(fd)[0]
-     fd.close()
-     return h
-   else:
-     fd = open(rpmfn, "r")
-     h = rpm.headerLoad(fd.read())
-     fd.close()
-     return h
+	if string.lower(rpmfn[-4:]) == '.rpm':
+		fd = open(rpmfn, "r")
+		h = rpm.headerFromPackage(fd)[0]
+		fd.close()
+		return h
+	else:
+		try:
+			fd=gzip.open(rpmfn,"r")
+		except IOError:
+			fd = open(rpmfn, "r")
+	h = rpm.headerLoad(fd.read())
+	fd.close()
+	return h
 
 
 def returnObsoletes(headerNevral,rpmNevral,uninstNAlist):

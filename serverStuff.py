@@ -50,10 +50,11 @@ def cleanHeader(header):
 	return header
 
 
-def writeHeader(headerdir,header):
+def writeHeader(headerdir,header,compress):
 	# write the header out to a file with the format: name-epoch-ver-rel.arch.hdr
 	# return the name of the file it just made - no real reason :)
-	import os,rpm,sys
+	import os,rpm,sys,gzip
+	
 	name = header[rpm.RPMTAG_NAME]
 	ver = header[rpm.RPMTAG_VERSION]
 	rel = header[rpm.RPMTAG_RELEASE]
@@ -64,9 +65,14 @@ def writeHeader(headerdir,header):
 		epoch = '%s' % header[rpm.RPMTAG_EPOCH]
 
 	headerfn = "%s/%s-%s-%s-%s.%s.hdr" % (headerdir, name, epoch,ver, rel, arch)
-	headerout = open(headerfn, "w")
+	if compress:
+		headerout = gzip.open(headerfn, "w")
+	else:
+		headerout = open(headerfn, "w")
+		
 	headerout.write(header.unload(1))
 	headerout.close()
+	
 	return(headerfn)
 
 
@@ -112,11 +118,12 @@ def readHeader(rpmfn):
 def Usage():
 	import sys
 	print "Usage:"
-	print "yum-arch [-v] [-c] [-n] [-d] (path of dir where headers/ should/does live)"
+	print "yum-arch [-v] [-z] [-c] [-n] [-d] (path of dir where headers/ should/does live)"
 	print "\t-d = check dependencies and conflicts in tree"
 	print "\t-v = print debugging information"
 	print "\t-n = don't generate headers"
 	print "\t-c = check pkgs with gpg and md5 checksums - cannot be used with -n"
+	print "\t-z = gzip compress the headers"
 	sys.exit(1)
 
 
