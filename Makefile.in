@@ -90,6 +90,7 @@ distclean: clean
 	$(RM) $(srcdir)/config.log
 	$(RM) $(srcdir)/config.cache
 	$(RM) $(srcdir)/Makefile
+	$(RM) $(srcdir)/yum.spec
 	$(RM) $(srcdir)/config.status
 	$(RM) -rf .libs
 	$(RM) -f core
