@@ -161,6 +161,7 @@ def updatepkgs(tsnevral, hinevral, rpmnevral, nulist, uplist, userlist):
                     log(4, "Updating %s to arch %s" % (name, arch))
                 ((e, v, r, a, l, i), s) = hinevral._get_data(name, arch)
                 tsnevral.add((name,e,v,r,a,l,i),'u')
+                
         if not pkgfound:
             if rpmnevral.exists(n):
                 errorlog(1,"%s is installed and the latest version." % (n))
@@ -174,8 +175,8 @@ def upgradepkgs(tsnevral, hinevral, rpmnevral, nulist, uplist, obsoleted_list, o
     # so if foobar = 1.0 and you have foobar-1.1 in the repo and bazquux1.2 
     # obsoletes foobar then bazquux would get installed.
     
-    completeuplist=[]
-    uplistnames=[]
+    completeuplist = []
+    uplistnames = []
     for (name, arch) in uplist:
         uplistnames.append(name)
         completeuplist.append((name,arch))
