@@ -146,11 +146,14 @@ class yumconf(object):
         # figure out what the releasever really is from the distroverpkg
         self.yumvar['releasever'] = self._getsysver()
 
-        #progress_meter.text_progress_meter(fo=sys.stdout)        
         # weird ones
         for option in ['commands', 'installonlypkgs', 'kernelpkgnames', 'exclude']:
             self.configdata[option] = variableReplace(self.yumvar, self.configdata[option])
             self.configdata[option] = variableReplace(self.yumvar, self.configdata[option])
+
+        # make our lists into lists. :)
+        for option in ['exclude']:
+            self.configdata[option] = parseList(self.configdata[option])
 
         # look through our repositories.
         

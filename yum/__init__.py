@@ -24,6 +24,7 @@ import rpmUtils
 import rpmUtils.transaction
 from urlgrabber.grabber import URLGrabError
 import depsolve
+from packages import parsePackages
 
 class YumBase(depsolve.Depsolve):
     """This is a primary structure and base class. It houses the objects and
@@ -47,6 +48,9 @@ class YumBase(depsolve.Depsolve):
         self.log(3, 'Setting up Package Sacks')
         self.repos.populateSack()
         self.pkgSack = self.repos.pkgSack
+        self.excludePackages()
+        for repo in self.repos.listEnabled():
+            self.excludePackages(repo)
 
 
     def doUpdateSetup(self):
@@ -67,9 +71,51 @@ class YumBase(depsolve.Depsolve):
     def buildTransaction(self):
         """go through the packages in the transaction set, find them in the
            packageSack or rpmdb, and pack up the ts accordingly"""
+        #FIXME - dup this function out into cli.py to add callbacks for
+        # the depresolution process
+        # callbacks should be:
+        # - each package added to ts
+        # - each dep processed
+        # - each restart of dep resolution loop
         (rescode, restring) = self.resolveDeps()
         return rescode, restring
-    
+
+    def excludePackages(self, repo=None):
+        """removes packages from packageSacks based on global exclude lists,
+           command line excludes and per-repository excludes, takes optional 
+           repo object to use."""
+        
+        # if not repo: then assume global excludes, only
+        # if repo: then do only that repos' packages and excludes
+        
+        if not repo: # global only
+            self.log(2, 'Excluding Packages')
+            excludelist = self.conf.getConfigOption('exclude')
+            repoid = None
+        else:
+            self.log(2, 'Excluding Packages from %s' % repo.name)
+            excludelist = repo.excludes
+            repoid = repo.id
+
+        if len(excludelist) == 0:
+            return
+        exactmatch, matched, unmatched = \
+           parsePackages(self.pkgSack.returnPackages(repoid), excludelist)
+        
+        for po in exactmatch + matched:
+            self.log(3, 'Excluding %s' % po)
+            self.pkgSack.delPackage(po)
+
+
+    def includePackages(self, repoid):
+        """removes packages from packageSacks based on list of packages, to include.
+           takes repoid as a mandatory argument."""
+        
+        # if includepkgs is not set for that repo then return w/no changes
+        # otherwise remove all pkgs in the packageSack for that repo that
+        # do not match the includepkgs
+        
+        
     def doLock(self, lockfile):
         """perform the yum locking, raise yum-based exceptions, not OSErrors"""
         
