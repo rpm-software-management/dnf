@@ -42,7 +42,7 @@ import plugins
 from packages import parsePackages, YumLocalPackage, YumInstalledPackage, bestPackage
 from repomd import mdErrors
 
-__version__ = '2.3.1'
+__version__ = '2.3.2'
 
 class YumBase(depsolve.Depsolve):
     """This is a primary structure and base class. It houses the objects and

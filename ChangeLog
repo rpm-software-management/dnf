@@ -1,3 +1,435 @@
+2005-04-04 10:31  skvidal
+
+	* rpmUtils/tests/updates-test.py: 
+	add some items to the updates-test. Mostly to check out multiple,
+	lesser, updating pkgs.
+
+2005-03-30 07:55  mjs
+
+	* yum/plugins.py: - implemented predownload and postdownload slots
+	- documented bugzilla entries that should be do-able as plugins -
+	added GPL header - updated TODOs - added a little more
+	documentation
+
+2005-03-30 07:52  mjs
+
+	* yum/__init__.py: Added predownload and postdownload plugin hooks.
+
+2005-03-30 06:00  mjs
+
+	* docs/yum.conf.5: Documented plugin related options.
+
+2005-03-29 10:55  skvidal
+
+	* shell.py: catch traceback on ts solve errors
+
+2005-03-29 09:19  skvidal
+
+	* output.py: 
+	check in a few more modifications to the ts list
+
+2005-03-28 10:52  skvidal
+
+	* yum/comps.py: 
+	remove the python 2.2 shebang
+
+2005-03-28 09:38  skvidal
+
+	* output.py, yum/transactioninfo.py: 
+	cleanup transaction listing.
+
+2005-03-28 02:49  skvidal
+
+	* yum.spec: 
+	modify spec file for yum-daily.yum file
+
+2005-03-28 02:42  skvidal
+
+	* output.py, yum/transactioninfo.py: 
+	make listTransaction() output similar to michael favia's design at:
+	http://michael.insitesinc.com/mediawiki/index.php?title=Yum slight
+	modification to transactionInfo obsoleted pkg data to do that.
+
+2005-03-28 01:30  skvidal
+
+	* etc/: Makefile, yum-daily.yum, yum.cron: 
+	- add yum-daily.yum - make yum.cron use it for the daily cron job -
+	modify the Makefile to know about it
+
+2005-03-27 22:43  skvidal
+
+	* shell.py: 
+	when specifying a comma-separated-list for exclude, replace the
+	commas with spaces for split() to work on.
+
+2005-03-27 22:34  skvidal
+
+	* shell.py: 
+	display off by one in repo list
+
+2005-03-27 22:28  skvidal
+
+	* shell.py: 
+	fix some typos in the repos help output
+
+2005-03-27 22:21  skvidal
+
+	* cli.py, shell.py, yum/__init__.py: 
+	config exclude implemented when you exit a ts run w/o actually
+	finishing the transaction, don't reset the tsInfo class clean up
+	the help output in the shell.
+
+2005-03-27 19:08  skvidal
+
+	* shell.py: 
+	implement some config options that involve the least amount of pain
+
+2005-03-27 17:30  skvidal
+
+	* shell.py: 
+	add some limited config settings in the shell. More to go.
+
+2005-03-27 17:01  skvidal
+
+	* yum/: config.py, constants.py: add BOOLEAN_STATES to constants,
+	use it in config.py
+
+2005-03-27 16:53  skvidal
+
+	* yum/config.py: 
+	remove pkgpolicy option - it is unused, anyway.
+
+2005-03-27 16:22  skvidal
+
+	* yum/__init__.py: 
+	fix for a small problem in searchPackages()
+
+2005-03-27 06:51  mjs
+
+	* cli.py, yum/__init__.py, yum/config.py, yum/plugins.py: More
+	plugin related updates:     - rearranged plugin initialisation:    
+	    - YumBase.doPluginSetup() now exists and must be called to
+	initialise	     plugins.	       - Yum's config and command
+	line args are now parsed before plugins are	       initialised.
+	This fixes the problems with the debug level being	     
+	ignored for early plugin related output.	  - refactored the
+	plugin config registration stuff so its handled 	   outside
+	of config.py (much cleaner).	      - because yum config is
+	parsed before plugin initialisation, a separate 	  
+	plugin.conf is no longer required. Moved plugin settings to [main]
+	of	      yum.conf.      - cleaned up YumPlugins.run() (return
+	code not used anymore)	    - fixed up the levels on some plugin
+	related log output
+
+2005-03-27 04:22  skvidal
+
+	* cli.py, shell.py: 
+	modify order of args for cli.doRepoSetup() make todo list in
+	shell.py
+
+2005-03-27 04:13  skvidal
+
+	* shell.py: 
+	change semantic for repos commands in shell, add in list
+	functionality:
+	
+	yum shell:    repos list - lists repositories and their states	 
+	repos enable <repolist> - enables a list of repositories (space    
+				 separated)    repos disable <repolisT> -
+	disables a list of repositories (space				   
+	 separated)
+
+2005-03-27 03:46  skvidal
+
+	* cli.py, output.py, shell.py, yummain.py, yum/__init__.py,
+	yum/repos.py: 
+	add 'enablerepo' and 'disablerepo' commands to yum shell.   -
+	modified doRepoSetup() to take a thisrepo setup argument so we can
+	setup	  one repo at a time   - modified the
+	RepoStorage.populateSack() so that the repos list is checked	 if
+	it is repoids or repo objects and used correctly   - We might want
+	to think about a YumBase.reset() function that resets the    
+	internal state of the object.
+	
+	- cleaned up some garbage comments and white space in yummain.py
+	and cli.py
+
+2005-03-27 02:58  mjs
+
+	* cli.py, yum/__init__.py, yum/plugins.py: - modified doRepoSetup
+	so that cli.py calls YumBase to do most of the work.	This makes
+	the code cleaner (less duplication) and means the call for the	 
+	reposetup plugin hook is only in one place.  - added call reposetup
+	plugin hook
+
+2005-03-27 02:31  mjs
+
+	* cli.py, yum/__init__.py, yum/plugins.py: Moved __version__ to
+	yum/__init__.py Added getYumVersion() to PluginConduit
+
+2005-03-26 23:42  skvidal
+
+	* rpmUtils/transaction.py: 
+	remove old TransactionData class
+
+2005-03-26 22:21  mjs
+
+	* yum/: __init__.py, config.py, constants.py, plugins.py: Lots of
+	plugin related changes:     - API versioning	 - cleaned up API
+	somewhat     - hook methods now need a "_hook" suffix. This will
+	allow detection of	 plugins that are trying to register hooks
+	that aren't supported.	    - plugin hook method return codes are
+	now ignored. Plugins should now use	   PluginYumExit exception
+	if yum should terminate.      - started reposetup hook	    -
+	custom option conflict detection      - renamed
+	PLUG_OPT_WHERE_GLOBAL to PLUG_OPT_WHERE_MAIN
+
+2005-03-26 13:28  skvidal
+
+	* yum/config.py: 
+	exactarchlist put through the  variableReplace/listmaker routines
+
+2005-03-26 12:40  skvidal
+
+	* rpmUtils/updates.py: 
+	check in Adam Greenfield's patch for yum bug #410
+
+2005-03-26 11:38  skvidal
+
+	* rpmUtils/: updates.py, tests/updates-test.py: 
+	
+	make exactarch not used exactarchlist is used, If the pkg name
+	exists in this list then it will not be allowed to change archs. If
+	it does not exist in this list then it will be allowed to change
+	archs in an update.
+
+2005-03-26 07:20  mjs
+
+	* yum/groups.py: Changed Comps exception catching because of change
+	to cElementTree.
+
+2005-03-26 07:15  mjs
+
+	* yum/comps.py: Converted from libxml2 to cElementTree.  General
+	cleanup and style enhancements.
+
+2005-03-26 05:21  mjs
+
+	* yum/config.py: Fixed missing brackets.
+
+2005-03-26 02:54  skvidal
+
+	* cli.py, yum/__init__.py, yum/config.py, yum/depsolve.py: 
+	make exactarch not used exactarchlist is used, If the pkg name
+	exists in this list then it will not be allowed to change archs. If
+	it does not exist in this list then it will be allowed to change
+	archs in an update.
+
+2005-03-25 10:13  skvidal
+
+	* yum/config.py: 
+	missing , in a list
+
+2005-03-25 05:17  skvidal
+
+	* yum/config.py: 
+	minor changes in config.py  - make reposdir variableReplaced for
+	$vars  - make a couple of items that were uselessly tuples into
+	lists
+
+2005-03-25 04:47  mjs
+
+	* yum/plugins.py: Plugins now have a general config file at
+	/etc/yum/plugins.conf.	Each plugin also has a config file at
+	/etc/yum/pluginconf.d/<pluginname>.conf.  Added methods to
+	PluginConduit to allow retrieval of plugin specific options.
+
+2005-03-25 04:42  mjs
+
+	* docs/yum.conf.5, yum/__init__.py, yum/config.py: The "reposdir"
+	option now takes a list of directories to search for .repo files.
+	The default is /etc/yum/repos.d and /etc/yum.repos.d.
+
+2005-03-25 04:14  skvidal
+
+	* yum/__init__.py: 
+	copyright date change
+
+2005-03-24 03:14  skvidal
+
+	* cli.py, yum/__init__.py: 
+	move the plugins call outside of cli.py and into the yum module.
+
+2005-03-24 02:29  skvidal
+
+	* yum/sqlitesack.py: 
+	fix for rh bug: 151950
+
+2005-03-21 07:37  mjs
+
+	* cli.py, yum/__init__.py, yum/config.py, yum/constants.py,
+	yum/plugins.py: Initial yum plugin work.
+
+2005-03-21 06:49  mjs
+
+	* yum/pgpmsg.py: Updated pgpmsg to latest upstream version to fix
+	problems parsing some keys (eg. current ATrpms key).
+	
+	(This is NOT related to other recently reported pgpmsg issue:	 
+	http://devel.linux.duke.edu/bugzilla/show_bug.cgi?id=426)
+
+2005-03-18 08:47  skvidal
+
+	* yum/: repos.py, sqlitesack.py: 
+	make sqliteSack.getPrco only search for the requested prco type, If
+	none specified it searches for all.  modify yum/repos.py to allow
+	for unsetting sqlite backend db selection.
+
+2005-03-15 15:02  gijs
+
+	* yum/sqlitesack.py: Fixed another typo in changelog related
+	queries
+
+2005-03-15 14:59  gijs
+
+	* yum/sqlitesack.py: Fixed two typos in sql queries (spotted by
+	Hans-Peter Jansen).
+
+2005-03-15 12:05  gijs
+
+	* yum/sqlitesack.py: Explicitly name columns when doing selects
+	from multiple tables. This should fix sqlite 3.1 issues while
+	remaining compatible with sqlite 3.0 and older.
+
+2005-03-15 02:43  skvidal
+
+	* cli.py, output.py, yum/config.py: 
+	purge generate-rss and all of its reqs
+
+2005-03-15 02:33  skvidal
+
+	* yum/__init__.py: 
+	make the lock file dir, if it is not present
+
+2005-03-14 01:26  skvidal
+
+	* yum/__init__.py: 
+	make yum lock file aware of the installroot - no need for a global
+	lock
+
+2005-03-13 04:24  skvidal
+
+	* yum/: packages.py, sqlitecache.py: 
+	add a requiresList method to YumAvailablePackage to make it match
+	YumInstalledPackage. Fix up a case where sqlitecache would
+	traceback if the db file was not writable and we wanted to delete
+	it.
+
+2005-03-12 17:13  skvidal
+
+	* yum/constants.py: 
+	add constants.py - generic constants so we don't have to do so many
+	string comparisons for storing types of things. This isn't used
+	anywhere yet.
+
+2005-03-12 15:10  skvidal
+
+	* rpmUtils/updates.py: 
+	setup an 'obsoleted' dict for easy look up of what packages
+	obsolete an installed package
+
+2005-03-12 02:24  skvidal
+
+	* output.py, yum/__init__.py, yum/depsolve.py: 
+	- clean up some dumb code laste night - make obsoletes easier to
+	search - tidy up some code in depsolver - make obsoletes print out
+	in the transaction list again
+
+2005-03-11 04:08  skvidal
+
+	* repomd/packageSack.py, rpmUtils/updates.py: 
+	packageSack - packagesByTuple(pkgtup) updates - getObsoletedList()
+
+2005-03-11 04:00  skvidal
+
+	* yum/: __init__.py, depsolve.py: 
+	in the event we can't find a resolving package, look for obsoletes
+	(as well as updates) of the requiring package to get out of the
+	unresolveable dep.
+
+2005-03-10 22:17  skvidal
+
+	* cli.py, docs/yum.conf.5, yum/config.py: 
+	merge in the "turn off the confirm in 'expected' situations" patch
+	from Matt Miller
+
+2005-03-10 17:44  gijs
+
+	* yum/sqlitesack.py: Make getPrco return epoch version and release
+	in the correct order.
+
+2005-03-10 09:56  gijs
+
+	* yum/sqlitesack.py: Apply a patch by Panu Matilainen, fixing
+	getPrco returning empty sets and a bug triggered by files that have
+	no dirname (such specs in as SRPMS).
+
+2005-03-10 01:45  skvidal
+
+	* yum/transactioninfo.py: 
+	add an __iter__ method to the TransactionData class
+
+2005-03-09 11:03  gijs
+
+	* yum/: sqlitecache.py, sqlitesack.py: - store filetypes as one
+	char instead of as a / seperated string - move functions for
+	encoding and decoding lists of filenames / filetypes   to seperate
+	helper functions.  - update TODOs
+
+2005-03-09 03:14  skvidal
+
+	* yum/: config.py, repos.py: 
+	made the replacement variables in the config file ($releasever,
+	$basearch, $arch, $YUM0-$YUM9) apply to almost all of the options
+	equally. Cleaned up a fair bit of code and muddied some other code
+
+2005-03-09 01:36  skvidal
+
+	* yum/config.py: 
+	variableReplace() over gpgkey option
+
+2005-03-08 06:02  gijs
+
+	* repomd/packageSack.py: Fixed a typo in excludeArch(e)s that
+	caused yum to fail when sqlite was not available.
+
+2005-03-08 05:41  gijs
+
+	* yum/repos.py: Enable wildcards to be used for enabling and
+	disabling repositories.  Based on a patch by Terrel Shumway.
+
+2005-03-08 04:22  skvidal
+
+	* yum/: mdparser.py, sqlitecache.py: 
+	check in Icon's cElementTree patches and unicode patches to sqlite
+	backend.
+
+2005-03-08 04:17  skvidal
+
+	* cli.py: 
+	move callback return to better location - spews less crap
+	pre-final-transaction
+
+2005-03-08 03:54  skvidal
+
+	* yum/sqlitesack.py: 
+	merge Panu's searchPrco method for sqlitesack.py
+
+2005-03-07 11:20  skvidal
+
+	* ChangeLog: 
+	update changelog
+
 2005-03-07 10:50  skvidal
 
 	* cli.py, yum-daily.spec, yum.spec: 
@@ -41,8 +473,8 @@
 
 2005-03-04 13:29  skvidal
 
-	* yummain.py, repomd/packageSack.py, yum/__init__.py,
-	yum/sqlitesack.py: 
+	* yummain.py, yum/__init__.py, yum/sqlitesack.py,
+	repomd/packageSack.py: 
 	- made excludeArches in repomd pkgsack and sqlite pkgsack.  - makes
 	more sense to be in that class - sql select is a bit faster than
 	iterating all the packages and comparing
@@ -119,7 +551,7 @@
 
 2005-03-02 07:03  gijs
 
-	* output.py, repomd/packageObject.py, yum/sqlitesack.py: Fixes in
+	* output.py, yum/sqlitesack.py, repomd/packageObject.py: Fixes in
 	Changelog handling code, mostly contributed by Panu Matilainen.
 
 2005-03-02 05:43  mjs
@@ -213,7 +645,7 @@
 
 2005-02-25 02:46  skvidal
 
-	* Makefile, repomd/Makefile, rpmUtils/Makefile, yum/Makefile: 
+	* Makefile, yum/Makefile, repomd/Makefile, rpmUtils/Makefile: 
 	PYTHON override in makefiles - make it complete fixes:
 	http://devel.linux.duke.edu/bugzilla/show_bug.cgi?id=403 thanks to
 	bill nottingham
@@ -377,8 +809,8 @@
 
 2005-01-31 23:51  skvidal
 
-	* cli.py, rpmUtils/transaction.py, yum/__init__.py, yum/config.py,
-	yum/depsolve.py: 
+	* cli.py, yum/__init__.py, yum/config.py, yum/depsolve.py,
+	rpmUtils/transaction.py: 
 	add in tsflags config option. Allows you to set certain transaction
 	flags for use for your runs. Enabled flags are:
 	
@@ -607,7 +1039,7 @@
 
 2004-12-21 02:43  skvidal
 
-	* rpmUtils/miscutils.py, yum/groups.py: 
+	* yum/groups.py, rpmUtils/miscutils.py: 
 	apparently I needed more space in yum/groups.py :) fix for garbage
 	strings in epoch field in stringToVersion()
 
@@ -744,7 +1176,7 @@
 
 2004-11-09 02:13  skvidal
 
-	* rpmUtils/miscutils.py, yum/depsolve.py: 
+	* yum/depsolve.py, rpmUtils/miscutils.py: 
 	check in patch to make output look prettier and more accurate for
 	unresolveable dep
 
@@ -783,7 +1215,7 @@
 
 2004-10-29 02:20  skvidal
 
-	* cli.py, rpmUtils/__init__.py, yum/__init__.py: 
+	* cli.py, yum/__init__.py, rpmUtils/__init__.py: 
 	- implement yum update /path/to/file.rpm - fix yum module so it
 	won't import the rpmdb more than once
 
@@ -1159,7 +1591,7 @@
 
 2004-10-10 22:56  skvidal
 
-	* cli.py, rpmUtils/arch.py, yum/packages.py: 
+	* cli.py, yum/packages.py, rpmUtils/arch.py: 
 	fix situation with kernels of lesser archs getting installed on
 	calls to install when they should really be 'update' calls.
 
@@ -1227,8 +1659,8 @@
 
 2004-10-06 02:40  skvidal
 
-	* cli.py, repomd/packageObject.py, yum/mdcache.py, yum/packages.py,
-	yum/repos.py: 
+	* cli.py, yum/mdcache.py, yum/packages.py, yum/repos.py,
+	repomd/packageObject.py: 
 	mdcache implemented.  Need to write yum clean mdcache
 
 2004-10-05 10:43  skvidal
@@ -1238,8 +1670,8 @@
 
 2004-10-05 03:49  skvidal
 
-	* repomd/packageObject.py, yum/__init__.py, yum/mdcache.py,
-	yum/packages.py, yum/repos.py: 
+	* yum/__init__.py, yum/mdcache.py, yum/packages.py, yum/repos.py,
+	repomd/packageObject.py: 
 	incomplete modifications to incorporate icon's pickle handler for
 	metadata caching
 
@@ -1274,7 +1706,7 @@
 
 2004-10-04 01:20  skvidal
 
-	* output.py, yummain.py, rpmUtils/updates.py, yum/__init__.py: 
+	* output.py, yummain.py, yum/__init__.py, rpmUtils/updates.py: 
 	explicitly delete all transaction set objects in unlock() to make
 	sure we free up any lockers. It boggles my mind why this isn't
 	caught by another item but <shrug>
@@ -1312,7 +1744,7 @@
 
 2004-09-28 18:52  skvidal
 
-	* output.py, rpmUtils/__init__.py, yum/depsolve.py: 
+	* output.py, yum/depsolve.py, rpmUtils/__init__.py: 
 	speed up erasure depresolution a little.  mi.pattern() is
 	slooooooooow
 
@@ -1358,7 +1790,7 @@
 
 2004-09-26 17:12  skvidal
 
-	* cli.py, repomd/packageSack.py, yum/__init__.py: 
+	* cli.py, yum/__init__.py, repomd/packageSack.py: 
 	check in search function
 
 2004-09-26 11:34  skvidal
@@ -1379,7 +1811,7 @@
 
 2004-09-23 04:28  skvidal
 
-	* cli.py, output.py, rpmUtils/transaction.py, yum/__init__.py: 
+	* cli.py, output.py, yum/__init__.py, rpmUtils/transaction.py: 
 	potentional fix for rh bug# 133051 cleaned up list functions - a
 	lot more generic now need to clean up obsoletes lists and refine
 	recent metric.
@@ -1444,15 +1876,15 @@
 
 2004-09-17 01:51  skvidal
 
-	* rpmUtils/miscutils.py, yum/__init__.py, yum/depsolve.py,
-	yum/packages.py: 
+	* yum/__init__.py, yum/depsolve.py, yum/packages.py,
+	rpmUtils/miscutils.py: 
 	after much pain header downloading and checking work nicely package
 	downloading and checking work nicely.  especially cache
 	verification
 
 2004-09-08 02:10  skvidal
 
-	* repomd/packageSack.py, yum/depsolve.py: 
+	* yum/depsolve.py, repomd/packageSack.py: 
 	make filelists.xml be imported from all repos if a file dep exists
 	that does not match /etc/*, *bin/* or /usr/lib/sendmail.
 
@@ -1469,7 +1901,7 @@
 
 2004-09-08 00:47  skvidal
 
-	* rpmUtils/miscutils.py, rpmUtils/updates.py, yum/__init__.py: 
+	* yum/__init__.py, rpmUtils/miscutils.py, rpmUtils/updates.py: 
 	fixed traceback on bad pkg in sigcheck fixed problem with available
 	file also being installed and obsoleting something that is
 	installed, as well.  set debug mode on for updates parsing if
@@ -1477,7 +1909,7 @@
 
 2004-09-07 02:02  skvidal
 
-	* cli.py, repomd/packageSack.py, yum/__init__.py: 
+	* cli.py, yum/__init__.py, repomd/packageSack.py: 
 	make indexes be built after the package exclusions have occurred
 	speeds up excludes tremendously.
 
@@ -1489,8 +1921,8 @@
 
 2004-09-03 05:06  skvidal
 
-	* ChangeLog, cli.py, repomd/packageSack.py, yum/__init__.py,
-	yum/depsolve.py, yum/packages.py: 
+	* ChangeLog, cli.py, yum/__init__.py, yum/depsolve.py,
+	yum/packages.py, repomd/packageSack.py: 
 	Large number of depsolver changes and fixes. Should be much more
 	correct.
 
@@ -1630,7 +2062,7 @@
 
 2004-08-30 01:13  skvidal
 
-	* cli.py, rpmUtils/transaction.py, yum/packages.py: 
+	* cli.py, yum/packages.py, rpmUtils/transaction.py: 
 	update takes options now obsoletes should work better - a touch
 	weird though.
 
@@ -1651,15 +2083,15 @@
 
 2004-08-29 19:44  skvidal
 
-	* cli.py, rpmUtils/miscutils.py, rpmUtils/transaction.py,
-	yum/__init__.py, yum/config.py, yum/depsolve.py, yum/repos.py: 
+	* cli.py, yum/__init__.py, yum/config.py, rpmUtils/miscutils.py,
+	rpmUtils/transaction.py, yum/depsolve.py, yum/repos.py: 
 	- installroot now works - fix depsolving for filedeps in certain
 	situations - clean up cruft in all sorts of places
 
 2004-08-29 04:05  skvidal
 
-	* cli.py, repomd/packageObject.py, repomd/packageSack.py,
-	rpmUtils/updates.py, yum/__init__.py: 
+	* cli.py, yum/__init__.py, repomd/packageObject.py,
+	repomd/packageSack.py, rpmUtils/updates.py: 
 	--obsoletes working fixed extras
 
 2004-08-28 13:24  skvidal
@@ -1669,13 +2101,13 @@
 
 2004-08-27 02:55  skvidal
 
-	* cli.py, rpmUtils/miscutils.py, yum/depsolve.py, yum/packages.py: 
+	* cli.py, yum/depsolve.py, yum/packages.py, rpmUtils/miscutils.py: 
 	- fix for erasure problem with multilib - added some extra debug
 	information that will be handy later
 
 2004-08-25 04:03  skvidal
 
-	* rpmUtils/__init__.py, rpmUtils/miscutils.py, yum/depsolve.py: 
+	* yum/depsolve.py, rpmUtils/__init__.py, rpmUtils/miscutils.py: 
 	erase resolves out non-pkg requirements for depsolving
 
 2004-08-23 03:53  skvidal
@@ -1714,7 +2146,7 @@
 
 2004-08-23 01:09  skvidal
 
-	* cli.py, rpmUtils/__init__.py, yum/packages.py: 
+	* cli.py, yum/packages.py, rpmUtils/__init__.py: 
 	whitespace fix in rpmUtils fix docstring in yum/packages.py
 
 2004-08-23 01:08  skvidal
@@ -1801,8 +2233,8 @@
 
 2004-08-19 03:27  skvidal
 
-	* yummain.py, rpmUtils/__init__.py, yum/depsolve.py,
-	yum/packages.py: 
+	* yummain.py, yum/depsolve.py, yum/packages.py,
+	rpmUtils/__init__.py: 
 	still more dep resolution fixes and now erasures should be
 	significantly faster
 
@@ -1814,8 +2246,8 @@
 
 2004-08-19 02:30  skvidal
 
-	* cli.py, rpmUtils/__init__.py, rpmUtils/transaction.py,
-	yum/__init__.py, yum/depsolve.py: 
+	* cli.py, yum/__init__.py, yum/depsolve.py, rpmUtils/__init__.py,
+	rpmUtils/transaction.py: 
 	more noise on output note to some functions in rpmUtils
 	depresolution fixes
 
@@ -1847,14 +2279,14 @@
 
 2004-08-12 03:07  skvidal
 
-	* cli.py, rpmUtils/__init__.py, yum/packages.py: 
+	* cli.py, yum/packages.py, rpmUtils/__init__.py: 
 	fix how the available, update and install lists are handled as
 	package objects
 
 2004-08-11 03:46  skvidal
 
-	* cli.py, output.py, repomd/packageSack.py, yum/config.py,
-	yum/repos.py: 
+	* cli.py, output.py, yum/config.py, yum/repos.py,
+	repomd/packageSack.py: 
 	move around the cache and callback setup fix a typo in
 	packageSack.py - thanks to first, not so functioning, try at the
 	failover callback
@@ -1877,22 +2309,22 @@
 
 2004-08-06 02:15  skvidal
 
-	* repomd/packageSack.py, yum/Errors.py, yum/__init__.py,
-	yum/misc.py, yum/repos.py: 
+	* yum/Errors.py, yum/__init__.py, yum/misc.py, yum/repos.py,
+	repomd/packageSack.py: 
 	downloader work
 
 2004-07-30 02:30  skvidal
 
-	* cli.py, output.py, repomd/packageObject.py,
-	repomd/packageSack.py, yum/__init__.py, yum/repos.py: 
+	* cli.py, output.py, yum/__init__.py, yum/repos.py,
+	repomd/packageObject.py, repomd/packageSack.py: 
 	clean up rss generation, clear up some sillyness with callback
 	setup for repository, fix code for importing non-primary metadata,
 	fix double line output for metadata import callback
 
 2004-07-27 05:32  skvidal
 
-	* cli.py, output.py, repomd/packageObject.py, yum/__init__.py,
-	yum/repos.py: 
+	* cli.py, output.py, yum/__init__.py, yum/repos.py,
+	repomd/packageObject.py: 
 	found bug in the import packageObject parseSimple() method - empty
 	objects, not pretty printed were erroring on importing.
 
@@ -1917,9 +2349,7 @@
 
 	* bootloadercfg.py, checkbootloader.py, clientStuff.py, grubcfg.py,
 	iutil.py, lilo.py, lilocfg.py, nevral.py, pkgaction.py,
-	up2datetheft.py, posts/bootloadercfg.py, posts/checkbootloader.py,
-	posts/grubcfg.py, posts/iutil.py, posts/lilo.py, posts/lilocfg.py,
-	posts/up2datetheft.py: 
+	up2datetheft.py: 
 	remove old and move things into better locations
 
 2004-07-22 11:58  skvidal
@@ -1940,18 +2370,18 @@
 
 2004-07-12 02:51  skvidal
 
-	* repomd/packageSack.py, yum/depsolve.py, yum/packages.py: 
+	* yum/depsolve.py, yum/packages.py, repomd/packageSack.py: 
 	more depsolving goodness
 
 2004-07-11 14:22  skvidal
 
-	* repomd/packageSack.py, rpmUtils/transaction.py, yum/depsolve.py: 
+	* yum/depsolve.py, repomd/packageSack.py, rpmUtils/transaction.py: 
 	more working-ness in depsolve, onto erase and update actions
 
 2004-07-11 02:54  skvidal
 
-	* output.py, rpmUtils/__init__.py, rpmUtils/transaction.py,
-	yum/depsolve.py, yum/packages.py: 
+	* output.py, yum/depsolve.py, yum/packages.py,
+	rpmUtils/__init__.py, rpmUtils/transaction.py: 
 	more depresolution changes
 
 2004-07-09 03:52  skvidal
@@ -1966,7 +2396,7 @@
 
 2004-07-08 03:55  skvidal
 
-	* yummain.py, repomd/packageObject.py, yum/depsolve.py: 
+	* yummain.py, yum/depsolve.py, repomd/packageObject.py: 
 	clean it up and dump out some results.
 
 2004-07-08 03:27  skvidal
@@ -1989,7 +2419,7 @@
 
 2004-07-06 03:54  skvidal
 
-	* cli.py, rpmUtils/arch.py, rpmUtils/miscutils.py, yum/packages.py:
+	* cli.py, yum/packages.py, rpmUtils/arch.py, rpmUtils/miscutils.py:
 	
 	this should parse out the right arch/ver to use on installs when
 	multiples are available.
@@ -2043,7 +2473,7 @@
 
 2004-06-21 04:21  skvidal
 
-	* cli.py, rpmUtils/__init__.py, yum/misc.py, yum/packages.py: 
+	* cli.py, yum/misc.py, yum/packages.py, rpmUtils/__init__.py: 
 	add misc to yum for unique() and eventually other functions
 	partially implemented cli parsing for installing packages
 
@@ -2098,7 +2528,7 @@
 
 2004-05-29 17:39  skvidal
 
-	* cli.py, repomd/repoMDObject.py, yum/__init__.py, yum/repos.py: 
+	* cli.py, yum/__init__.py, yum/repos.py, repomd/repoMDObject.py: 
 	downloads of repomd.xml works again - fix the local file use for
 	caches.
 
@@ -2109,9 +2539,9 @@
 
 2004-05-26 03:30  skvidal
 
-	* cli.py, yummain.py, repomd/packageObject.py,
-	rpmUtils/__init__.py, yum/__init__.py, yum/config.py,
-	yum/packages.py, yum/repos.py: 
+	* cli.py, yummain.py, yum/__init__.py, yum/config.py,
+	yum/packages.py, yum/repos.py, repomd/packageObject.py,
+	rpmUtils/__init__.py: 
 	- much of yum list - test out the new classes - lots of places to
 	work on
 
@@ -2167,8 +2597,8 @@
 
 2004-04-25 17:07  skvidal
 
-	* cli.py, yummain.py, rpmUtils/transaction.py, yum/depsolve.py,
-	yum/repos.py: 
+	* cli.py, yummain.py, yum/depsolve.py, yum/repos.py,
+	rpmUtils/transaction.py: 
 	made the transaction.TransactionWrapper support iterating over the
 	rpm.ts to extract transaction elements made new YumPackage class
 	which subclasses packageObject.RpmXMLPackageObject   - need a nicer
@@ -2193,7 +2623,7 @@
 
 2004-04-21 01:54  skvidal
 
-	* rpmUtils/__init__.py, rpmUtils/transaction.py, yum/repos.py: 
+	* yum/repos.py, rpmUtils/__init__.py, rpmUtils/transaction.py: 
 	added a getIndexesByKeywords() function to rpmUtils/__init__.py -
 	to grab the rpmdb index based on pkgtup - to help with erasures
 	
@@ -2259,8 +2689,8 @@
 
 2004-03-29 02:48  skvidal
 
-	* cli.py, clientStuff.py, yummain.py, rpmUtils/transaction.py,
-	rpmUtils/updates.py, yum/repos.py: 
+	* cli.py, clientStuff.py, yummain.py, yum/repos.py,
+	rpmUtils/transaction.py, rpmUtils/updates.py: 
 	added cli.py to store all the output to the command-line functions
 	and parsing of the command line options
 	
@@ -2288,8 +2718,8 @@
 
 2004-03-22 01:23  skvidal
 
-	* yummain.py, repomd/packageSack.py, rpmUtils/updates.py,
-	yum/Errors.py, yum/__init__.py, yum/config.py, yum/repos.py: 
+	* yummain.py, yum/Errors.py, yum/__init__.py, yum/config.py,
+	yum/repos.py, repomd/packageSack.py, rpmUtils/updates.py: 
 	this is a temporary place with lots of debug output, deal. :)
 	
 	yummain.py - imports local cached xml metadata, prints out some
@@ -2395,8 +2825,8 @@
 
 2004-02-20 01:29  skvidal
 
-	* rpmUtils/arch.py, rpmUtils/updates.py, yum/config.py,
-	yum/repos.py: 
+	* yum/config.py, yum/repos.py, rpmUtils/arch.py,
+	rpmUtils/updates.py: 
 	updates.py: finished obsoletes code arch.py: added getBestArch()
 	and changed getBaseArch() config.py: fixed up baseurl lists, added
 	stubs for mirror list handling repos.py: added repos.delete()
@@ -2435,8 +2865,9 @@
 	* yummain.py, repomd/__init__.py, repomd/mdErrors.py,
 	repomd/mdUtils.py, repomd/packageObject.py, repomd/packageSack.py,
 	repomd/repoMDObject.py, repomd/test.py, rpmUtils/__init__.py,
-	rpmUtils/arch.py, rpmUtils/miscutils.py, rpmUtils/oldUtils.py,
-	rpmUtils/transaction.py, rpmUtils/updates.py, yum/repos.py: 
+	rpmUtils/arch.py, rpmUtils/miscutils.py, yum/repos.py,
+	rpmUtils/oldUtils.py, rpmUtils/transaction.py, rpmUtils/updates.py:
+	
 	create most of the rpmUtils new updates class import the metadata
 	stuff for now cleanups to yummain and repos much more to go
 
