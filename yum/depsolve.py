@@ -136,12 +136,13 @@ class Depsolve:
                         flags = None
                     (r_e, r_v, r_r) = rpmUtils.miscutils.stringToVersion(reqversion)
                     for po in pkgs:
-                        self.log(3, 'Matched %s to %s' % (reqname, po))
+                        self.log(3, 'Potential match %s to %s' % (reqname, po))
                         if po.checkPrco('provides', (reqname, flags, (r_e, r_v, r_r))):
                             # first one? <shrug>
                             (n, e, v, r, a) = po.returnNevraTuple() # this is stupid the po should be emitting matching tuple types
                             pkgtup = (n, a, e, v, r)
                             self.tsInfo.add(pkgtup, 'u', 'dep')
+                            self.log(3, 'Matched %s to dep for %s' % (po, reqname))
                             break
 
                 elif sense == rpm.RPMDEP_SENSE_CONFLICTS:
