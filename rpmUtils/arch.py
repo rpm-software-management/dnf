@@ -87,7 +87,7 @@ def bestArchFromList(archlist, myarch=None):
     # one final check to make sure we're not returning a bad arch
     val = archDifference(myarch, thisarch)
     if val == 0:
-        raise None
+        return None
 
     return thisarch
         

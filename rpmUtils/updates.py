@@ -33,6 +33,10 @@ class Updates:
         self.available = availlist # list of available pkgs (n, a, e, v, r)                               
         self.obsoletes = {} # dict of obsoleting package->[what it obsoletes]
         self.exactarch = 1 # don't change archs by default
+        self.myarch = rpmUtils.arch.getCanonArch() # this is for debugging only 
+                                                   # set this if you want to 
+                                                   # test on some other arch
+                                                   # otherwise leave it alone
         
         # make some dicts from installed and available
         self.installdict = self.makeNADict(self.installed, 1)
@@ -89,13 +93,17 @@ class Updates:
             if name == n:
                 if a in archlist:
                     matchlist.append((n, a, e, v, r))
-        
+
+        if len(matchlist) == 0:
+            return []
+            
         # get all the evr's in a tuple list for returning the highest
         verlist = []
         for (n, a, e, v, r) in matchlist:
             verlist.append((e,v,r))
-        
+
         (high_e, high_v, high_r) = self.returnNewest(verlist)
+            
         returnlist = []
         for (n, a, e, v, r) in matchlist:
             if (high_e, high_v, high_r) == (e, v, r):
@@ -113,49 +121,19 @@ class Updates:
         
     def doUpdates(self):
         """check for key lists as populated then commit acts of evil to
-           determine what is updated and/or obsoleted, populate the changeTup.
+           determine what is updated and/or obsoleted, populate self.updatesdict
         """
-        # this should completely blank out changeTup each time it runs so
-        # we don't have any holdovers if installed and available changes
-        # a miracle occurs
         
-        # this is all hard and goofy to deal with pkgs changing arch
-        # if we have the package installed
-        # if the pkg isn't installed then it's a new pkg
-        # else
-        #   if there isn't more than on available arch from the hinevral 
-        #       then compare it to the installed one 
-        #   if there is more than one installed or available:
-        #   compare highest version and bestarch (in that order of precdence) 
-        #   of installed pkgs to highest version and bestarch of available pkgs
         
         # best bet is to chew through the pkgs and throw out the new ones early
         # then deal with the ones where there are a single pkg installed and a 
         # single pkg available
         # then deal with the multiples
-        # write a sub-function that takes (nevral, name) and returns list of
-        # archs that have the highest version
-        
-        
-        # look at the fresh new pain - what about multilib
-        # I need to have foo.i386 and foo.x86_64 both installed and visible as
-        # available, if one isn't installed. 
-        # so a complex update really isn't the difficult part
-        # i need to mark foo.arch as newlist if it is
-        # pretty much if: it's not precisely what we have installed then it's in
-        # newlist unless it is precisely a name.arch match for update.
-        # those that aren't a name.arch match but are a name match get dealt with like
-        #  if exactarch:
-        #   newer different arch then it's available but not an update
-        #   newer same arch as installed then it's an update not available
-        #   equal and same arch as installed then ignore it
-        #   older and different arch as installed then grab it
-        #   older and same arch as installed then ignore it        
-        
+
         # we should take the whole list as a 'newlist' and remove those entries
         # which are clearly:
         #   1. updates 
-        #   2. identical to rpmnevral
+        #   2. identical to the ones in ourdb
         #   3. not in our archdict at all
         
         simpleupdate = []
@@ -168,8 +146,7 @@ class Updates:
         newpkgs = []
         newpkgs = self.availdict
         
-        myarch = rpmUtils.arch.getCanonArch()
-        archlist = rpmUtils.arch.getArchList(myarch)
+        archlist = rpmUtils.arch.getArchList(self.myarch)
                 
         for (n, a) in newpkgs.keys():
             # remove stuff not in our archdict
@@ -282,10 +259,10 @@ class Updates:
         # ie: x86_64 and athlon(i686-i386) - we don't want to descend
         # x86_64->i686 
         archlists = []
-        if rpmUtils.arch.multilibArches.has_key(myarch):
-            multicompat = rpmUtils.arch.getMultiArchInfo(myarch)[0]
+        if rpmUtils.arch.multilibArches.has_key(self.myarch):
+            multicompat = rpmUtils.arch.getMultiArchInfo(self.myarch)[0]
             multiarchlist = rpmUtils.arch.getArchList(multicompat)
-            archlists = [ [myarch], multiarchlist ]
+            archlists = [ [self.myarch], multiarchlist ]
         else:
             archlists = [ archlist ]
             
@@ -325,6 +302,7 @@ class Updates:
                                     updatedict[(n, a, rpm_e, rpm_v, rpm_r)] = []
                                 updatedict[(n, a, rpm_e, rpm_v, rpm_r)].append((n, a, e, v, r))
                 else:
+                    print 'processing %s' % n
                     # this is where we have to have an arch contest if there
                     # is more than one arch updating with the highest ver
                     instarchs = []
@@ -333,10 +311,13 @@ class Updates:
                         instarchs.append(a)
                     for (n,a) in hapdict.keys():
                         availarchs.append(a)
+                    
+                    rpm_a = rpmUtils.arch.bestArchFromList(instarchs, myarch=self.myarch)
+                    a = rpmUtils.arch.bestArchFromList(availarchs, myarch=self.myarch)
 
-                    rpm_a = rpmUtils.arch.bestArchFromList(instarchs)
-                    a = rpmUtils.arch.bestArchFromList(availarchs)
-
+                    if rpm_a is None or a is None:
+                        continue
+                        
                     (rpm_e, rpm_v, rpm_r) = hipdict[(n, rpm_a)][0] # there can be just one
                     (e, v, r) = hapdict[(n, a)][0] # just one, I'm sure, I swear!
 
