@@ -77,7 +77,9 @@ class yumconf:
                        ('exactarch', 1),
                        ('tolerant', 1),
                        ('diskspacecheck', 1),
-                       ('overwrite_groups', 0)]
+                       ('overwrite_groups', 0),
+                       ('keepalive', 1),
+                       ('obsoletes', 0)]
 
         # not being set from the config file
         # or things that can't be handled like all the rest

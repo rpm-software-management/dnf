@@ -19,7 +19,6 @@ import rpm
 import os
 import os.path
 import sys
-import gzip
 import archwork
 import fnmatch
 import pkgaction
@@ -36,107 +35,6 @@ urlgrabber.set_user_agent("Yum/2.X")
 
 from i18n import _
 
-def stripENVRA(str):
-    archIndex = string.rfind(str, '.')
-    arch = str[archIndex+1:]
-    relIndex = string.rfind(str[:archIndex], '-')
-    rel = str[relIndex+1:archIndex]
-    verIndex = string.rfind(str[:relIndex], '-')
-    ver = str[verIndex+1:relIndex]
-    epochIndex = string.find(str, ':')
-    epoch = str[:epochIndex]
-    name = str[epochIndex + 1:verIndex]
-    return (epoch, name, ver, rel, arch)
-
-def stripEVR(str):
-    epochIndex = string.find(str, ':')
-    epoch = str[:epochIndex]
-    relIndex = string.rfind(str, '-')
-    rel = str[relIndex+1:]
-    verIndex = string.rfind(str[:relIndex], '-')
-    ver = str[epochIndex+1:relIndex]  
-    return (epoch, ver, rel)
-
-def stripNA(str):
-    archIndex = string.rfind(str, '.')
-    arch = str[archIndex+1:]
-    name = str[:archIndex]
-    return (name, arch)
-
-def getENVRA(header):
-    if header[rpm.RPMTAG_EPOCH] == None:
-        epoch = '0'
-    else:
-        epoch = '%s' % header[rpm.RPMTAG_EPOCH]
-    name = header[rpm.RPMTAG_NAME]
-    ver = header[rpm.RPMTAG_VERSION]
-    rel = header[rpm.RPMTAG_RELEASE]
-    arch = header[rpm.RPMTAG_ARCH]
-    return (epoch, name, ver, rel, arch)
-
-def str_to_version(str):
-    i = string.find(str, ':')
-    if i != -1:
-        epoch = string.atol(str[:i])
-    else:
-        epoch = '0'
-    j = string.find(str, '-')
-    if j != -1:
-        if str[i + 1:j] == '':
-            version = None
-        else:
-            version = str[i + 1:j]
-        release = str[j + 1:]
-    else:
-        if str[i + 1:] == '':
-            version = None
-        else:
-            version = str[i + 1:]
-        release = None
-    return (epoch, version, release)
-
-def HeaderInfoNevralLoad(filename, nevral, serverid):
-    in_file = open(filename, 'r')
-    info = in_file.readlines()
-    in_file.close()
-    archlist = archwork.compatArchList()
-    for line in info:
-        try:
-            (envraStr, rpmpath) = string.split(line, '=')
-            (epoch, name, ver, rel, arch) = stripENVRA(envraStr)
-        except ValueError, e:
-            errorlog(0, _('Damaged or Bad header.info from %s') % conf.servername[serverid])
-            errorlog(0, _('This is probably because of a downed server or an invalid header.info on a repository.'))
-            sys.exit(1)
-        rpmpath = string.replace(rpmpath, '\n', '')
-        if arch in archlist:
-            if not nameInExcludes(name, serverid):
-                if conf.pkgpolicy == 'last':
-                    # just add in the last one don't compare
-                    if nevral.exists(name, arch):
-                        # but if one already exists in the nevral replace it
-                        if serverid == nevral.serverid(name, arch):
-                            # unless we're in the same serverid then we need to take the newest
-                            (e1, v1, r1) = nevral.evr(name, arch)
-                            (e2, v2, r2) = (epoch, ver, rel)    
-                            rc = rpmUtils.compareEVR((e1, v1, r1), (e2, v2, r2))
-                            if (rc < 0):
-                                # ooo  the second one is newer - push it in.
-                                nevral.add((name, epoch, ver, rel, arch, rpmpath, serverid), 'a')
-                        else:
-                            nevral.add((name, epoch, ver, rel, arch, rpmpath, serverid), 'a')
-                    else:
-                        nevral.add((name, epoch, ver, rel, arch, rpmpath, serverid), 'a')
-                else:
-                    if nevral.exists(name, arch):
-                        (e1, v1, r1) = nevral.evr(name, arch)
-                        (e2, v2, r2) = (epoch, ver, rel)    
-                        rc = rpmUtils.compareEVR((e1, v1, r1), (e2, v2, r2))
-                        if (rc < 0):
-                            # ooo  the second one is newer - push it in.
-                            nevral.add((name, epoch, ver, rel, arch, rpmpath, serverid), 'a')
-                    else:
-                        nevral.add((name, epoch, ver, rel, arch, rpmpath, serverid), 'a')
 
 
 def nameInExcludes(name, serverid=None):
@@ -153,97 +51,7 @@ def nameInExcludes(name, serverid=None):
                 return 1
     return 0
 
-def rpmdbNevralLoad(nevral):
-    rpmdbdict = {}
-    serverid = 'db'
-    rpmloc = 'in_rpm_db'
-    hdrs = ts.dbMatch()
-    for hdr in hdrs:
-        (epoch, name, ver, rel, arch) = getENVRA(hdr)
-        # deal with multiple versioned dupes and dupe entries in localdb
-        if not rpmdbdict.has_key((name, arch)):
-            rpmdbdict[(name, arch)] = (epoch, ver, rel)
-        else:
-            (e1, v1, r1) = (rpmdbdict[(name, arch)])
-            (e2, v2, r2) = (epoch, ver, rel)    
-            rc = rpmUtils.compareEVR((e1,v1,r1), (e2,v2,r2))
-            if (rc <= -1):
-                rpmdbdict[(name, arch)] = (epoch, ver, rel)
-            elif (rc == 0):
-                log(4, 'dupe entry in rpmdb %s %s' % (name, arch))
-    for value in rpmdbdict.keys():
-        (name, arch) = value
-        (epoch, ver, rel) = rpmdbdict[value]
-        nevral.add((name, epoch, ver, rel, arch, rpmloc, serverid), 'n')
 
-def readHeader(rpmfn):
-    if string.lower(rpmfn[-4:]) == '.rpm':
-        fd = os.open(rpmfn, os.O_RDONLY)
-        h = ts.hdrFromFdno(fd)
-        os.close(fd)
-        if h[rpm.RPMTAG_SOURCEPACKAGE]:
-            return 'source'
-        else:
-            return h
-    else:
-        try:
-            fd = gzip.open(rpmfn, 'r')
-            try: 
-                h = rpm.headerLoad(fd.read())
-            except rpm.error, e:
-                errorlog(0,_('Damaged Header %s') % rpmfn)
-                return None
-        except IOError,e:
-            fd = open(rpmfn, 'r')
-            try:
-                h = rpm.headerLoad(fd.read())
-            except rpm.error, e:
-                errorlog(0,_('Damaged Header %s') % rpmfn)
-                return None
-        except ValueError, e:
-            return None
-    fd.close()
-    return h
-
-
-def correctFlags(flags):
-    returnflags=[]
-    if flags is None:
-        return returnflags
-                                                                               
-    if type(flags) is not types.ListType:
-        newflag = flags & 0xf
-        returnflags.append(newflag)
-    else:
-        for flag in flags:
-            newflag = flag
-            if flag is not None:
-                newflag = flag & 0xf
-            returnflags.append(newflag)
-    return returnflags
-
-
-def correctVersion(vers):
-     returnvers = []
-     vertuple = (None, None, None)
-     if vers is None:
-         returnvers.append(vertuple)
-         return returnvers
-         
-     if type(vers) is not types.ListType:
-         if vers is not None:
-             vertuple = str_to_version(vers)
-         else:
-             vertuple = (None, None, None)
-         returnvers.append(vertuple)
-     else:
-         for ver in vers:
-             if ver is not None:
-                 vertuple = str_to_version(ver)
-             else:
-                 vertuple = (None, None, None)
-             returnvers.append(vertuple)
-     return returnvers
 
 def returnObsoletes(headerNevral, rpmNevral, uninstNAlist):
     obsoleting = {} # obsoleting[pkgobsoleting]=[list of pkgs it obsoletes]
@@ -514,21 +322,6 @@ def bestversion(nevral, name):
     log(7, returnarchs)
     return returnarchs
     
-def formatRequire (name, version, flags):
-    string = name
-        
-    if flags:
-        if flags & (rpm.RPMSENSE_LESS | rpm.RPMSENSE_GREATER | rpm.RPMSENSE_EQUAL):
-            string = string + ' '
-        if flags & rpm.RPMSENSE_LESS:
-            string = string + '<'
-        if flags & rpm.RPMSENSE_GREATER:
-            string = string + '>'
-        if flags & rpm.RPMSENSE_EQUAL:
-            string = string + '='
-            string = string + ' %s' % version
-    return string
-
 
 def actionslists(nevral):
     install_list = []
@@ -808,48 +601,6 @@ def get_groups_from_servers(serveridlist):
             validservers.append(serverid)
     return validservers
         
-def get_package_info_from_servers(serveridlist, HeaderInfo):
-    """gets header.info from each server if it can, checks it, if it can, then
-       builds the list of available pkgs from there by handing each headerinfofn
-       to HeaderInfoNevralLoad()"""
-    log(2, _('Gathering header information file(s) from server(s)'))
-    for serverid in serveridlist:
-        servername = conf.servername[serverid]
-        serverheader = conf.remoteHeader(serverid)
-        servercache = conf.servercache[serverid]
-        log(2, _('Server: %s') % (servername))
-        log(4, _('CacheDir: %s') % (servercache))
-        localpkgs = conf.serverpkgdir[serverid]
-        localhdrs = conf.serverhdrdir[serverid]
-        localheaderinfo = conf.localHeader(serverid)
-        if not conf.cache:
-            if not os.path.exists(servercache):
-                os.mkdir(servercache)
-            if not os.path.exists(localpkgs):
-                os.mkdir(localpkgs)
-            if not os.path.exists(localhdrs):
-                os.mkdir(localhdrs)
-            log(3, _('Getting header.info from server'))
-            try:
-                headerinfofn = grab(serverid, serverheader, localheaderinfo, copy_local=1,
-                                    progress_obj=None)
-            except URLGrabError, e:
-                errorlog(0, _('Error getting file %s') % serverheader)
-                errorlog(0, '%s' % e)
-                sys.exit(1)
-        else:
-            if os.path.exists(localheaderinfo):
-                log(3, _('Using cached header.info file'))
-                headerinfofn = localheaderinfo
-            else:
-                errorlog(0, _('Error - %s cannot be found') % localheaderinfo)
-                if conf.uid != 0:
-                    errorlog(1, _('Please ask your sysadmin to update the headers on this system.'))
-                else:
-                    errorlog(1, _('Please run yum in non-caching mode to correct this header.'))
-                sys.exit(1)
-        log(4,'headerinfofn: ' + headerinfofn)
-        HeaderInfoNevralLoad(headerinfofn, HeaderInfo, serverid)
 
 def download_headers(HeaderInfo, nulist):
     total = len(nulist)
@@ -952,15 +703,6 @@ def take_action(cmds, nulist, uplist, newlist, obsoleting, tsInfo, HeaderInfo, r
             else:
                 pkgaction.updatepkgs(tsInfo, HeaderInfo, rpmDBInfo, nulist, uplist, cmds, 1)
             
-    elif basecmd == 'upgrade':
-        if len(cmds) == 0:
-            pkgaction.upgradepkgs(tsInfo, HeaderInfo, rpmDBInfo, nulist, uplist, obsoleted, obsoleting, 'all', 0)
-        else:
-            if conf.tolerant:
-                pkgaction.upgradepkgs(tsInfo, HeaderInfo, rpmDBInfo, nulist, uplist, obsoleted, obsoleting, cmds, 1)
-            else:
-                pkgaction.upgradepkgs(tsInfo, HeaderInfo, rpmDBInfo, nulist, uplist, obsoleted, obsoleting, cmds, 0)
-    
     elif basecmd in ('erase', 'remove'):
         if len(cmds) == 0:
             usage()
