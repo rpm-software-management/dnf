@@ -294,7 +294,7 @@ class YumBaseCli(yum.YumBase):
                 self.errorlog(0, _('Error: Need to pass a list of pkgs to %s') % self.basecmd)
                 self.usage()
     
-        elif self.basecmd in ['provides', 'search']:       
+        elif self.basecmd in ['provides', 'search']:
             if len(self.extcmds) == 0:
                 self.errorlog(0, _('Error: Need an item to match'))
                 self.usage()
@@ -309,7 +309,8 @@ class YumBaseCli(yum.YumBase):
                 self.errorlog(0, _('Error: Invalid clean option %s') % self.extcmds[1])
                 self.usage()
     
-        elif self.basecmd in ['list', 'check-update', 'info', 'update', 'generate-rss']:
+        elif self.basecmd in ['list', 'check-update', 'info', 'update', 
+                              'generate-rss', 'grouplist']:
             pass
     
         else:
@@ -359,6 +360,20 @@ class YumBaseCli(yum.YumBase):
                 output.listPkgs(pkgLists, outputType=self.basecmd)
                 return 0, []
 
+        elif self.basecmd == 'check-update':
+            self.extcmds.insert(0, 'updates')
+            result = 0
+            try:
+                pkgLists = self.genPkgLists()
+                if len(pkgLists['Updated']) > 0:
+                    output.listPkgs(pkgLists, outputType='list')
+                    result = 100
+            except yum.Errors.YumBaseError, e:
+                return 1, [str(e)]
+            else:
+                return result, []
+            
+            
         elif self.basecmd == 'generate-rss':
             self.extcmds.insert(0, 'recent')
             try:
@@ -381,7 +396,9 @@ class YumBaseCli(yum.YumBase):
         elif self.basecmd == 'clean':
             # if we're cleaning then we don't need to talk to the net
             self.conf.setConfigOption('cache', 1)
-
+        
+        else:
+            return 1, ['command not implemented yet']
 
     def doTransaction(self):
         """takes care of package downloading, checking, user confirmation and actually
@@ -792,20 +809,20 @@ class YumBaseCli(yum.YumBase):
     def usage(self):
         print _("""
         Usage:  yum [options] <update | install | info | remove | list |
-                clean | provides | search | check-update | groupinstall | groupupdate |
-                grouplist | generate-rss >
+                clean | provides | search | check-update | groupinstall | 
+                groupupdate | grouplist | generate-rss >
                     
             Options:
             -c [config file] - specify the config file to use
             -e [error level] - set the error logging level
             -d [debug level] - set the debugging level
-            -y answer yes to all questions
-            -R [time in minutes] - set the max amount of time to randomly run in.
+            -y - answer yes to all questions
+            -R [time in minutes] - set the max amount of time to randomly run in
             -C run from cache only - do not update the cache
             --installroot=[path] - set the install root (default '/')
             --version - output the version of yum
             --rss-filename=[path/filename] - set the filename to generate rss to
-            -h, --help this screen
+            -h, --help  - this screen
         """)
         sys.exit(1)
 

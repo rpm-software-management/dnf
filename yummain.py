@@ -64,14 +64,18 @@ def main(args):
         result = 1
         resultmsgs = [str(e)]
         
-    if result not in [0, 1, 2]:
+    if result not in [0, 1, 2, 100]:
         base.errorlog(0, 'Unknown Error(s): Exit Code: %d:' % result)
         for msg in resultmsgs:
             base.errorlog(0, msg)
         unlock()
         sys.exit(3)
-        
-    if result == 0:
+    
+    if result == 100:
+        unlock()
+        sys.exit(100)
+
+    elif result == 0:
         for msg in resultmsgs:
             base.log(2, '%s' % msg)
         unlock()
