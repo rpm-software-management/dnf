@@ -38,7 +38,7 @@ import transactioninfo
 from urlgrabber.grabber import URLGrabError
 import depsolve
 
-from packages import parsePackages, YumLocalPackage, YumInstalledPackage
+from packages import parsePackages, YumLocalPackage, YumInstalledPackage, bestPackage
 from repomd import mdErrors
 
 class YumBase(depsolve.Depsolve):
@@ -1081,7 +1081,7 @@ class YumBase(depsolve.Depsolve):
             if po.pkgtup == pkgtup:
                 return po
                 
-        pkgs = self.pkgSack.searchNevra(name=n, arch=a, epoch=e, ver=v, rel=r)
+        pkgs = self.pkgSack.packagesByTuple(pkgtup)
 
         if len(pkgs) == 0:
             raise Errors.DepError, 'Package tuple %s could not be found in packagesack' % pkgtup
@@ -1166,3 +1166,36 @@ class YumBase(depsolve.Depsolve):
                 continue
         
         return best
+    
+    def bestPackageFromList(self, pkglist):
+        """take list of package objects and return the best package object.
+           If the list is empty, raise Errors.YumBaseError"""
+        
+        # duh
+        if len(pkglist) == 1:
+            for po in pkglist:
+                return po
+        
+        best = pkglist[0]
+        for pkg in pkglist[1:]:
+            if len(pkg.name) < len(best.name): # shortest name silliness
+                best = pkg
+                continue
+            elif len(pkg.name) > len(best.name):
+                continue
+            else:
+                if pkg.name == best.name:
+                    bestup = bestPackage(pkg.pkgtup, best.pkgtup)
+                    if best.pkgtup == bestup:
+                        continue
+                    elif pkg.pkgtup == bestup:
+                        best = pkg
+                        continue
+                else:
+                    mylist=[best, pkg]
+                    mylist.sort(cmp=self.sortPkgObj) # first name, alphabetically
+                    best = mylist[0]
+                    continue
+
+        return best
+        

@@ -415,10 +415,34 @@ class Depsolve:
         
         if needmode in ['i', 'u']:
             self.doUpdateSetup()
+            obslist = []
+            # check obsoletes first
+            if self.conf.obsoletes:
+                obslist = self.up.getObsoletedList(name=name)
+                self.log(4, 'Looking for Obsoletes for %s' % name)
+                
+            if len(obslist) > 0:
+                po = None
+                for pkgtup in obslist:
+                    po = self.getPackageObject(pkgtup)
+                if po:
+                    for (new, old) in self.up.getObsoletesTuples():
+                        if po.pkgtup == new:
+                            obsoleted_pkg = packages.YumInstalledPackage(self.rpmdb.returnHeaderByTuple(old)[0])
+                            txmbr = self.tsInfo.addObsoleting(po, obsoleted_pkg)
+                            self.tsInfo.addObsoleted(obsoleted_pkg, po)
+                            txmbr.setAsDep(pkgtup = needpkgtup)
+                            self.log(5, 'TSINFO: Obsoleting %s with %s to resolve dep.' % (obsoleted_pkg, po))
+                            checkdeps = 1
+                            return checkdeps, missingdep 
+                
+            
+            # check updates second
+            uplist = []                
             uplist = self.up.getUpdatesList(name=name)
+            # if there's an update for the reqpkg, then update it
             
             po = None
-            # if there's an update for the reqpkg, then update it
             if len(uplist) > 0:
                 if not self.conf.exactarch:
                     pkgs = self.pkgSack.returnNewestByName(name)
