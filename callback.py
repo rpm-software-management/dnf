@@ -125,7 +125,7 @@ class RPMInstallCallback:
                     print "Error: invalid process key: %s for %s" % \
                        (self.packagedict[pkgtup], hdr['name'])
 
-                if self.output or not sys.stdout.isatty():
+                if self.output and sys.stdout.isatty():
                     sys.stdout.write("\r%s: %s %d %% done %d/%d" % (process, 
                        hdr['name'], percent, self.total_installed + self.total_removed, 
                        self.total_actions))
