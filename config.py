@@ -113,7 +113,7 @@ class yumconf:
         # compile the regexes
         basearch_reg = re.compile('\$basearch')
         arch_reg = re.compile('\$myarch')
-        releasever_reg = re.compile('\$myver')
+        releasever_reg = re.compile('\$releasever')
         
         
         if len(self.cfg.sections()) > 1:
