@@ -146,7 +146,7 @@ class YumSqlitePackageSack(repos.YumPackageSack):
                     release = ob['%s.release' % prco ]
                     epoch = ob['%s.epoch' % prco ]
                     flags = ob['%s.flags' % prco ]
-                    result[prco].append((name, flags, (version, release, epoch)))
+                    result[prco].append((name, flags, (epoch, version, release)))
         return result
 
     # Get all files for a certain pkgId from the filelists.xml metadata
