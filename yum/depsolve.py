@@ -473,12 +473,51 @@ class Depsolve:
         conflicts = 0
         errormsgs = []
         
+
         ((name, version, release), (needname, needversion), flags, suggest, sense) = dep
         
-        conf = rpmUtils.miscutils.formatRequire(needname, needversion, flags)
-        CheckDeps, conflicts = self._unresolveableConflict(conf, name, errormsgs)
+        niceformatneed = rpmUtils.miscutils.formatRequire(needname, needversion, flags)
+        if self.dsCallback: self.dsCallback.procConflict(name, niceformatneed)
         
-        self.log(4, '%s conflicts: %s' % (name, conf))
+        # we should try to update out of the dep, if possible        
+        # see which side of the conflict is installed and which is in the transaction Set
+        needmode = self.tsInfo.getMode(name=needname)
+        confmode = self.tsInfo.getMode(name=name, ver=version, rel=release)
+        if confmode is None:
+            confname = name
+        elif needmode is None:
+            confname = needname
+        
+        self.doUpdateSetup()
+        uplist = self.up.getUpdatesList(name=confname)
+        conftuple = self.rpmdb.returnTupleByKeyword(name=confname)
+        (confname, confarch, confepoch, confver, confrel) = conftuple[0] # take the first one, probably the only one
+        
+        po = None
+        # if there's an update for the reqpkg, then update it
+        if len(uplist) > 0:
+            if not self.conf.getConfigOption('exactarch'):
+                pkgs = self.pkgSack.returnNewestByName(confname)
+                archs = []
+                for pkg in pkgs:
+                    (n,a,e,v,r) = pkg.pkgtup()
+                    archs.append(a)
+                a = rpmUtils.arch.getBestArchFromList(archs)
+                po = self.pkgSack.returnNewestByNameArch((n,a))
+            else:
+                po = self.pkgSack.returnNewestByNameArch((confname,confarch))
+            if po.pkgtup() not in uplist:
+                po = None
+
+        if po:
+            self.log(5, 'TSINFO: Updating %s to resolve conflict.' % po)
+            self.tsInfo.add(po.pkgtup(), 'u', 'dep')
+            CheckDeps = 1
+            
+        else:
+            conf = rpmUtils.miscutils.formatRequire(needname, needversion, flags)
+            CheckDeps, conflicts = self._unresolveableConflict(conf, name, errormsgs)
+            self.log(4, '%s conflicts: %s' % (name, conf))
         
         return (CheckDeps, missingdep, conflicts, errormsgs)
 
