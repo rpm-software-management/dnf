@@ -36,7 +36,7 @@ from i18n import _
 import callback
 
 
-__version__ = '2.1.1'
+__version__ = '2.1.2'
 
 
 class YumBaseCli(yum.YumBase):
@@ -63,6 +63,7 @@ class YumBaseCli(yum.YumBase):
                 self.errorlog(0, 'Cannot open/read repomd.xml file for repository: %s' % repo)
                 self.errorlog(0, str(e))
                 sys.exit(1)
+        self.log(2, 'Reading repository metadata in from local files')
         self.doSackSetup()
     
         
@@ -285,9 +286,11 @@ class YumBaseCli(yum.YumBase):
                 self.usage()
     
         elif self.basecmd == 'clean':
-            if len(self.extcmds) > 0 and self.extcmds[1] not in ['packages' 'headers', 'all']:
-                self.errorlog(0, _('Error: Invalid clean option %s') % self.extcmds[1])
-                self.usage()
+            if len(self.extcmds) == 0:
+                self.errorlog(0, _('Error: Clean Now Requires an option'))
+            for cmd in self.extcmds:
+                if cmd not in ['headers', 'packages', 'all']:
+                    self.usage()
     
         elif self.basecmd in ['list', 'check-update', 'info', 'update', 
                               'generate-rss', 'grouplist']:
@@ -374,8 +377,29 @@ class YumBaseCli(yum.YumBase):
                 return 0, []
                 
         elif self.basecmd == 'clean':
-            # if we're cleaning then we don't need to talk to the net
             self.conf.setConfigOption('cache', 1)
+            hdrcode = 0
+            pkgcode = 0
+            pkgresults = []
+            hdrresults = []
+            if 'all' in self.extcmds:
+                self.log(2, 'Cleaning up Packages and Headers')
+                pkgcode, pkgresults = self.cleanPackages()
+                hdrcode, hdrresults = self.cleanHeaders()
+                code = hdrcode + pkgcode
+                results = hdrresults + pkgresults
+                return code, results
+            if 'headers' in self.extcmds:
+                self.log(2, 'Cleaning up Headers')
+                hdrcode, hdrresults = self.cleanHeaders()
+            if 'packages' in self.extcmds:
+                self.log(2, 'Cleaning up Packages')
+                pkgcode, pkgresults = self.cleanPackages()
+            
+            code = hdrcode + pkgcode
+            results = hdrresults + pkgresults
+            return code, results
+            
         
         elif self.basecmd in ['groupupdate', 'groupinstall', 'groupremove', 
                               'grouplist']:

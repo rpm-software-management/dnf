@@ -305,4 +305,48 @@ class YumBase(depsolve.Depsolve):
             os.unlink(filename)
         except OSError, msg:
             pass
+
+    def cleanHeaders(self):
+        filelist = []
+        ext = 'hdr'
+        removed = 0
+        for repo in self.repos.listEnabled():
+            repo.dirSetup()
+            path = repo.hdrdir
+            filelist = misc.getFileList(path, ext, filelist)
+            
+        for hdr in filelist:
+            try:
+                os.unlink(hdr)
+            except OSError, e:
+                self.errorlog(0, 'Cannot remove header %s' % hdr)
+                continue
+            else:
+                self.log(7, 'Header %s removed' % hdr)
+                removed+=1
+        msg = '%d headers removed' % removed
+        return 0, [msg]
+
+            
+    def cleanPackages(self):
+        filelist = []
+        ext = 'rpm'
+        removed = 0
+        for repo in self.repos.listEnabled():
+            repo.dirSetup()
+            path = repo.pkgdir
+            filelist = misc.getFileList(path, ext, filelist)
+            
+        for pkg in filelist:
+            try:
+                os.unlink(pkg)
+            except OSError, e:
+                self.errorlog(0, 'Cannot remove package %s' % pkg)
+                continue
+            else:
+                self.log(7, 'Package %s removed' % pkg)
+                removed+=1
         
+        msg = '%d packages removed' % removed
+        return 0, [msg]
+    

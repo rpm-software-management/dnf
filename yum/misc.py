@@ -1,4 +1,7 @@
 import types
+import string
+import os
+import os.path
 
 from Errors import MiscError
 
@@ -108,3 +111,23 @@ def checksum(sumtype, file, CHUNK=2**16):
         return sum.hexdigest()
     except (IOError, OSError), e:
         raise MiscError, 'Error opening file for checksum: %s' % file
+
+def getFileList(path, ext, filelist):
+    """Return all files in path matching ext, store them in filelist, 
+       recurse dirs return list object"""
+    
+    extlen = len(ext)
+    try:
+        dir_list = os.listdir(path)
+    except OSError, e:
+        raise MiscError, ('Error accessing directory %s, %s') % (path, e)
+        
+    for d in dir_list:
+        if os.path.isdir(path + '/' + d):
+            filelist = getFileList(path + '/' + d, ext, filelist)
+        else:
+            if string.lower(d[-extlen:]) == '%s' % (ext):
+               newpath = os.path.normpath(path + '/' + d)
+               filelist.append(newpath)
+                    
+    return filelist
