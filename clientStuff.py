@@ -173,6 +173,7 @@ def readHeader(rpmfn):
 
 def returnObsoletes(headerNevral,rpmNevral,uninstNAlist):
 	packages = []
+	obsdict = {} #obsdict[obseletinglist]=packageitobsoletes
 	for (name,arch) in uninstNAlist:
 		#print '%s, %s' % (name, arch)
 		header = headerNevral.getHeader(name, arch)
@@ -195,6 +196,7 @@ def returnObsoletes(headerNevral,rpmNevral,uninstNAlist):
 				if rpmNevral.exists(obvalue[0]):
 					if len(obvalue) == 1:
 						packages.append((name, arch))
+						obsdict[(name,arch)]=obvalue[0]
 						log(4,"%s obsoleting %s" % (name,ob))
 					elif len(obvalue) == 3:
 						(e1,v1,r1) = rpmNevral.evr(name, arch)
@@ -203,6 +205,7 @@ def returnObsoletes(headerNevral,rpmNevral,uninstNAlist):
 						if obvalue[2] == '>':
 							if rc == 1:
 								packages.append((name, arch))
+								obsdict[(name,arch)]=obvalue[0]
 							elif rc == 0:
 								pass
 							elif rc == -1:
@@ -210,8 +213,10 @@ def returnObsoletes(headerNevral,rpmNevral,uninstNAlist):
 						elif obvalue[2] == '>=':
 							if rc == 1:
 								packages.append((name, arch))
+								obsdict[(name,arch)]=obvalue[0]
 							elif rc == 0:
 								packages.append((name, arch))
+								obsdict[(name,arch)]=obvalue[0]
 							elif rc == -1:
 								pass
 						elif obvalue[2] == '=':
@@ -219,6 +224,7 @@ def returnObsoletes(headerNevral,rpmNevral,uninstNAlist):
 								pass
 							elif rc == 0:
 								packages.append((name, arch))
+								obsdict[(name,arch)]=obvalue[0]
 							elif rc == -1:
 								pass
 						elif obvalue[2] == '<=':
@@ -226,8 +232,10 @@ def returnObsoletes(headerNevral,rpmNevral,uninstNAlist):
 								pass
 							elif rc == 0:
 								packages.append((name, arch))
+								obsdict[(name,arch)]=obvalue[0]
 							elif rc == -1:
 								packages.append((name, arch))
+								obsdict[(name,arch)]=obvalue[0]
 						elif obvalue[2] == '<':
 							if rc == 1:
 								pass
@@ -235,7 +243,8 @@ def returnObsoletes(headerNevral,rpmNevral,uninstNAlist):
 								pass
 							elif rc == -1:
 								packages.append((name, arch))
-	return packages
+								obsdict[(name,arch)]=obvalue[0]
+	return obsdict
 
 def progresshook(blocks, blocksize, total):
 	totalblocks=total/blocksize

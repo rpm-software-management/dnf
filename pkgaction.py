@@ -87,17 +87,13 @@ def listpkgs(pkglist, userlist, nevral):
 		print "No Packages Available"
 			
 def updatepkgs(tsnevral,hinevral,rpmnevral,nulist,uplist,obslist,userlist):
-	#get the list of what people want upgraded, match like in install.
+	#get the list of what people want updated, match like in install.
 	#add as 'u' to the tsnevral if its already there, if its not then add as 'i' and warn
 	#if its all then take obslist and uplist and iterate through the tsinfo'u'
 	#
 	import fnmatch, archwork, types
 	if len(nulist) > 0 :
 		if type(userlist) is types.StringType and userlist=='all':
-			for (name,arch) in obslist:
-				log(4,"Obsolete: %s" % name)
-				((e, v, r, a, l, i), s)=hinevral._get_data(name,arch)
-				tsnevral.add((name,e,v,r,a,l,i),'u')
 			for (name,arch) in uplist:
 				log(4,"Updating: %s" % name)
 				((e, v, r, a, l, i), s)=hinevral._get_data(name,arch)
@@ -136,6 +132,29 @@ def updatepkgs(tsnevral,hinevral,rpmnevral,nulist,uplist,obslist,userlist):
 	else:
 		errorlog(1,"No Packages Available for Update or Install")
 			
+def upgradepkgs(tsnevral,hinevral,rpmnevral,nulist,uplist,obslist,obsdict,userlist):
+	#global upgrade - including obsoletes - this must do the following:
+	#if there is an update AND an obsolete - take the update first.
+	import archwork
+	completeuplist=[]
+	uplistnames=[]
+	for (name, arch) in uplist:
+		uplistnames.append(name)
+		completeuplist.append((name,arch))
+		log(4,"Updating: %s" % name)
+		
+	for (name, arch) in obsdict.keys():
+		if obsdict[(name,arch)] not in uplistnames:
+			completeuplist.append((name,arch))
+			log(4,"Obsolete: %s by %s" % (obsdict[(name,arch)], name))
+			
+	import fnmatch, archwork, types
+	if len(completeuplist) > 0 :
+		for (name,arch) in completeuplist:
+			((e, v, r, a, l, i), s)=hinevral._get_data(name,arch)
+			tsnevral.add((name,e,v,r,a,l,i),'u')
+	else:
+		errorlog(1,"No Packages Available for Update or Install")
 
 def erasepkgs(tsnevral,rpmnevral,userlist):
 	#mark for erase iff the userlist item exists in the rpmnevral
@@ -236,6 +255,7 @@ def checkSig(package,checktype='md5'):
 	if sigcheck:
 		errorlog(0,'Error: GPG or MD5 Signature check failed for %s' %(package))
 		errorlog(0,'Doing nothing')
+		os.unlink(package)
 		sys.exit(1)
 	return
 

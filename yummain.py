@@ -91,7 +91,7 @@ def download_headers(HeaderInfo,nulist):
 			log(2,"getting %s" % (HeaderInfo.hdrfn(name,arch)))
 			clientStuff.urlgrab(HeaderInfo.remoteHdrUrl(name,arch), HeaderInfo.localHdrPath(name,arch),'nohook')
 
-def take_action(cmds,nulist,uplist,newlist,obslist,tsInfo,HeaderInfo,rpmDBInfo):
+def take_action(cmds,nulist,uplist,newlist,obslist,tsInfo,HeaderInfo,rpmDBInfo,obsdict):
 	if cmds[0] == "install":
 		cmds.remove(cmds[0])
 		if len(cmds)==0:
@@ -105,7 +105,10 @@ def take_action(cmds,nulist,uplist,newlist,obslist,tsInfo,HeaderInfo,rpmDBInfo):
 			pkgaction.updatepkgs(tsInfo,HeaderInfo,rpmDBInfo,nulist,uplist,obslist,'all')
 		else:
 			pkgaction.updatepkgs(tsInfo,HeaderInfo,rpmDBInfo,nulist,uplist,obslist,cmds)
-			
+	elif cmds[0] == "upgrade":
+		cmds.remove(cmds[0])
+		if len(cmds)==0:
+			pkgaction.upgradepkgs(tsInfo,HeaderInfo,rpmDBInfo,nulist,uplist,obslist,obsdict,'all')
 	elif cmds[0] == "erase" or cmds[0] == "remove":
 		cmds.remove(cmds[0])
 		if len(cmds)==0:
@@ -120,7 +123,7 @@ def take_action(cmds,nulist,uplist,newlist,obslist,tsInfo,HeaderInfo,rpmDBInfo):
 			sys.exit(0)
 		else:
 			if cmds[0] == 'updates':
-				pkgaction.listpkgs(uplist+obslist,'updates',HeaderInfo)
+				pkgaction.listpkgs(uplist,'updates',HeaderInfo)
 			else:	
 				pkgaction.listpkgs(nulist,cmds,HeaderInfo)
 		sys.exit(0)
@@ -224,7 +227,7 @@ def main():
 			conf.assumeyes=1
 		if o in ('-h', '--help'):
 			usage()
-	if cmds[0] not in ('update','install','list','erase','grouplist','groupupdate','groupinstall','clean','remove'):
+	if cmds[0] not in ('update','upgrade','install','list','erase','grouplist','groupupdate','groupinstall','clean','remove'):
 		usage()
 	process=cmds[0]
 
@@ -252,8 +255,9 @@ def main():
 	log(2,"Downloading needed headers")
 	download_headers(HeaderInfo, nulist)
 	log(2,"Finding obsoleted packages")
-	obslist=clientStuff.returnObsoletes(HeaderInfo,rpmDBInfo,nulist)
-
+	obsdict=clientStuff.returnObsoletes(HeaderInfo,rpmDBInfo,nulist)
+	obslist=obsdict.keys()
+	
 	log(4,"nulist = %s" % len(nulist))
 	log(4,"uplist = %s" % len(uplist))
 	log(4,"newlist = %s" % len(newlist))
@@ -266,7 +270,7 @@ def main():
 	#w/o getting anymore header info
 	##################################################################
 
-	take_action(cmds,nulist,uplist,newlist,obslist,tsInfo,HeaderInfo,rpmDBInfo)
+	take_action(cmds,nulist,uplist,newlist,obslist,tsInfo,HeaderInfo,rpmDBInfo,obsdict)
 	
 	#at this point we should have a tsInfo nevral with all we need to complete our task.
 	#if for some reason we've gotten all the way through this step with an empty tsInfo then exit and be confused :)
@@ -291,7 +295,7 @@ def main():
 	log(2,"Dependencies resolved")
 	
 	#prompt for use permission to do stuff in tsInfo - list all the actions 
-	#(i, u, e, ud,iu(installing, but marking as 'u' in the actual ts, just in case) confirm w/the user
+	#(i, u, e, ed, ud,iu(installing, but marking as 'u' in the actual ts, just in case)) confirm w/the user
 	
 	(i_list,u_list,e_list,ud_list,ed_list)=clientStuff.actionslists(tsInfo)
 	

@@ -1,6 +1,6 @@
 Summary: RPM installer/updater
 Name: yum
-Version: 0.8.8
+Version: 0.8.9
 Release: 1
 License: GPL
 Group: System Environment/Base
@@ -67,6 +67,9 @@ exit 0
 %{_mandir}/man*/*
 
 %changelog
+* Wed Jun 19 2002 Seth Vidal <skvidal@phy.duke.edu>
+- 0.8.9
+
 * Sun Jun 16 2002 Seth Vidal <skvidal@phy.duke.edu>
 - 0.8.8
 
