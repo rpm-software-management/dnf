@@ -389,10 +389,26 @@ For more information contact your distribution or package provider.
                 self.errorlog(0, _("Error: generate-rss takes no argument, 'updates' or 'recent'."))
                 self.usage()
                 raise CliError
-                
+            
+        elif self.basecmd == 'shell':
+            if len(self.extcmds) == 0:
+                self.log(3, "No argument to shell")
+                pass
+            elif len(self.extcmds) == 1:
+                self.log(3, "Filename passed to shell: %s" % self.extcmds[0])              
+                if not os.path.isfile(self.extcmds[0]):
+                    self.errorlog(
+                        0, _("File: %s given has argument to shell does not exists." % self.extcmds))
+                    self.usage()
+                    raise CliError
+            else:
+                self.errorlog(0,_("Error: more than one file given as argument to shell."))
+                self.usage()
+                raise CliError
+              
         elif self.basecmd in ['list', 'check-update', 'info', 'update', 'upgrade',
                               'generate-rss', 'grouplist', 'makecache',
-                              'resolvedep', 'shell']:
+                              'resolvedep']:
             pass
     
         else:
@@ -401,14 +417,16 @@ For more information contact your distribution or package provider.
 
     def doShell(self):
         """do a shell-like interface for yum commands"""
+
         self.log(2, 'Setting up Yum Shell')
-        
-        running = True;
         self.doTsSetup()
         self.doRpmDBSetup()
-        yumshell = shell.YumShell(base=self)
-        yumshell.cmdloop()
-        
+        if len(self.extcmds) == 0:
+            yumshell = shell.YumShell(base=self)
+            yumshell.cmdloop()
+        else:
+            yumshell = shell.YumShell(base=self)
+            yumshell.script()
         return yumshell.result, yumshell.resultmsgs
 
     def doCommands(self):

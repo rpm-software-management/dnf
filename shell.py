@@ -12,6 +12,8 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
+import sys
+import os.path
 import cmd
 from yum import Errors
 
@@ -22,17 +24,34 @@ class YumShell(cmd.Cmd):
         self.prompt = '> '
         self.result = 0
         self.resultmsgs = ['Leaving Shell']
-        
-    def default(self, line):
-        self.base.cmdstring = line
-        self.base.cmdstring = self.base.cmdstring.replace('\n', '')
-        self.base.cmds = self.base.cmdstring.split()
+        if (len(base.extcmds)) > 0:
+            self.file = base.extcmds[0]
+
+    def script(self):
         try:
-            self.base.parseCommands()
-        except Errors.YumBaseError:
+            fd = open(self.file, 'r')
+        except IOError, e:
+            sys.exit("Error: Cannot open %s for reading")
+        lines = fd.readlines()
+        fd.close()
+        for line in lines:
+            self.onecmd(line)
+        self.onecmd('EOF')
+        return True
+            
+    def default(self, line):
+        if len(line) > 0 and line.strip()[0] == '#':
             pass
         else:
-            self.base.doCommands()
+            self.base.cmdstring = line
+            self.base.cmdstring = self.base.cmdstring.replace('\n', '')
+            self.base.cmds = self.base.cmdstring.split()
+            try:
+                self.base.parseCommands()
+            except Errors.YumBaseError:
+                pass
+            else:
+                self.base.doCommands()
     
     def emptyline(self):
         pass
