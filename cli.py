@@ -43,8 +43,6 @@ import callback
 import urlgrabber
 import urlgrabber.grabber
 
-__version__ = '2.3.1'
-
 class CliError(yum.Errors.YumBaseError):
    def __init__(self, args=None):
         yum.Errors.YumBaseError.__init__(self)
@@ -136,7 +134,7 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         try: 
             for o,a in gopts:
                 if o == '--version':
-                    print __version__
+                    print yum.__version__
                     sys.exit(0)
                 if o == '--installroot':
                     installroot = a
@@ -164,7 +162,7 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
             self.conf.setConfigOption('uid', os.geteuid())
 
             # version of yum
-            self.conf.setConfigOption('yumversion', __version__)
+            self.conf.setConfigOption('yumversion', yum.__version__)
             
             
             # we'd like to have a log object now

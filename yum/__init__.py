@@ -42,6 +42,8 @@ import plugins
 from packages import parsePackages, YumLocalPackage, YumInstalledPackage, bestPackage
 from repomd import mdErrors
 
+__version__ = '2.3.1'
+
 class YumBase(depsolve.Depsolve):
     """This is a primary structure and base class. It houses the objects and
        methods needed to perform most things in yum. It is almost an abstract

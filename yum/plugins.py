@@ -280,6 +280,10 @@ class PluginConduit:
         else:
             return self._base.userconfirm()
 
+    def getYumVersion(self):
+        import yum
+        return yum.__version__
+
     def confString(self, section, opt, default=None):
         '''Read a string value from the plugin's own configuration file
         '''
