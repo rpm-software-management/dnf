@@ -169,10 +169,24 @@ def readHeader(rpmfn):
     else:
         try:
             fd = gzip.open(rpmfn, 'r')
-            h = rpm.headerLoad(fd.read())
+            try: 
+                h = rpm.headerLoad(fd.read())
+            except rpm404.error,e:
+                errorlog(0,'Damaged Header %s' % rpmfn)
+                sys.exit(1)
+            except rpm.error, e:
+                errorlog(0,'Damaged Header %s' % rpmfn)
+                sys.exit(1)
         except IOError,e:
             fd = open(rpmfn, 'r')
-            h = rpm.headerLoad(fd.read())
+            try:
+                h = rpm.headerLoad(fd.read())
+            except rpm404.error,e:
+                errorlog(0,'Damaged Header %s' % rpmfn)
+                sys.exit(1)
+            except rpm.error, e:
+                errorlog(0,'Damaged Header %s' % rpmfn)
+                sys.exit(1)
     fd.close()
     return h
 
