@@ -35,20 +35,6 @@ full directory and file name for where yum should write its log file.
 1 or 0 - tells yum whether or not to prompt you for confirmation of actions.
 Same as -y on the command line. Default to 0.
 
-.IP \fBtolerant\fR
-1 or 0 - Tells yum to be tolerant of errors on the command line with regard to 
-packages. For example: if you request to install foo, bar and baz and baz is 
-installed; yum won't error out complaining that baz is already installed.
-same as -t on the command line. Default to 0(not tolerant)
-
-.IP \fBpkgpolicy=\fI[newest|last]\fR
-Default: \fInewest\fR.  Package sorting order.  When a package is available from 
-multiple servers, \fInewest\fR will install the most recent version of the package 
-found. \fIlast\fR will sort the servers alphabetically by \fBserverid\fR and 
-install the version of the package found on the last server in the resulting list.
-If you don't understand the above then you're best left not including this option at 
-all and letting the default occur.
-
 .IP \fBexclude\fR
 list of packages to exclude from updates or installs. This should be a space separated list.
 Filename globs *,?,., etc are allowed
@@ -83,6 +69,14 @@ kernel updating portion - this should be removed out in 2.1 series.
 list of packages that should only ever be installed, never updated - kernels
 in particular fall into this category. Defaults to kernel, kernel-smp,
 kernel-bigmem, kernel-enterprise, kernel-debug, kernel-unsupported.
+
+.IP \fBgpgcheck\fR
+either '1' or '0'. This tells yum whether or not it should perform a gpg signature check 
+on packages. When this is set in the [main] section it sets the default for
+the repositories sections. If gpgcheck is not specified in the repositories
+then whatever this is set to will be their default. Its default is 0. In
+addition, this option determines whether or not an install of a package from
+a local rpm file will be gpg signature checked.
 
 .SH "[server] options"
 .LP 
