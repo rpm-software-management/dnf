@@ -323,20 +323,36 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
 
         if self.basecmd == 'install':
             self.log(2, "Setting up Install Process")
-            return self.installPkgs()
+            try:
+                return self.installPkgs()
+            except yum.Errors.YumBaseError, e:
+                return 1, [str(e)]
         
         elif self.basecmd == 'update':
             self.log(2, "Setting up Update Process")
-            return self.updatePkgs()
+            try:
+                return self.updatePkgs()
+            except yum.Errors.YumBaseError, e:
+                return 1, [str(e)]
+
             
         elif self.basecmd == 'upgrade':
             self.conf.setConfigOption('obsoletes', 1)
-            self.log(2, "Setting up Update Process")
-            return self.updatePkgs()
+            self.log(2, "Setting up Updgrade Process")
+            try:
+                return self.updatePkgs()
+            except yum.Errors.YumBaseError, e:
+                return 1, [str(e)]
+            
             
         elif self.basecmd in ['erase', 'remove']:
             self.log(2, "Setting up Remove Process")
-            return self.erasePkgs()
+            try:
+                return self.erasePkgs()
+            except yum.Errors.YumBaseError, e:
+                return 1, [str(e)]
+            
+
     
         elif self.basecmd in ['list', 'info']:
             try:

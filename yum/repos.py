@@ -386,6 +386,30 @@ class Repository:
         except mdErrors.RepoMDError, e:
             raise Errors.RepoError, 'Error importing repomd.xml from %s: %s' % (self, e)
 
+    
+    def _checkMD(self, fn, mdtype):
+        """check the metadata type against its checksum"""
+        
+        csumDict = { 'primary' : self.repoXML.primaryChecksum,
+                     'filelists' : self.repoXML.filelistsChecksum,
+                     'other' : self.repoXML.otherChecksum,
+                     'group' : self.repoXML.groupChecksum }
+                     
+        csumMethod = csumDict[mdtype]
+        
+        (r_ctype, r_csum) = csumMethod() # get the remote checksum
+        
+        try:
+            l_csum = self._checksum(r_ctype, fn) # get the local checksum
+        except Errors.RepoError, e:
+            raise URLGrabError(-3, 'Error performing checksum')
+            
+        if l_csum == r_csum: 
+            return 1
+        else:
+            raise URLGrabError(-1, 'Metadata file does not match checksum')
+        
+
         
     def _retrieveMD(self, mdtype):
         """base function to retrieve data from the remote url"""
@@ -394,13 +418,7 @@ class Repository:
                     'other' : self.repoXML.otherLocation,
                     'group' : self.repoXML.groupLocation }
         
-        csumDict = { 'primary' : self.repoXML.primaryChecksum,
-                     'filelists' : self.repoXML.filelistsChecksum,
-                     'other' : self.repoXML.otherChecksum,
-                     'group' : self.repoXML.groupChecksum }
-                     
         locMethod = locDict[mdtype]
-        csumMethod = csumDict[mdtype]
         
         (r_base, remote) = locMethod()
         fname = os.path.basename(remote)
@@ -412,27 +430,37 @@ class Repository:
 
         if self.cache == 1:
             if os.path.exists(local):
-                return local
+                try:
+                    self._checkMD(local, mdtype)
+                except URLGrabError, e:
+                    raise Errors.RepoError, \
+                        "Caching enabled and local cache: %s does not match checksum" % local
+                else:
+                    return local
+                    
             else: # ain't there - raise
                 raise Errors.RepoError, \
                     "Caching enabled but no local cache of %s from %s" % (local,
                            self)
                            
-        (r_ctype, r_csum) = csumMethod() # get the remote checksum
-        
-        if os.path.exists(local): 
-            l_csum = self._checksum(r_ctype, local) # get the local checksum
-            if l_csum == r_csum: 
+        if os.path.exists(local):
+            try:
+                self._checkMD(local, mdtype)
+            except URLGrabError, e:
+                pass
+            else:
                 self.retrieved[mdtype] = 1
                 return local # it's the same return the local one
 
-        try:        
-            local = self.get(relative=remote, local=local, copy_local=1)
+        try:
+            checkfunc = (self._checkMD, (mdtype,), {})
+            local = self.get(relative=remote, local=local, copy_local=1, checkfunc=checkfunc)
         except URLGrabError, e:
-            raise
-
-        self.retrieved[mdtype] = 1
-        return local
+            raise Errors.RepoError, \
+                "Could not retrieve %s matching remote checksum from %s" % (local, self)
+        else:
+            self.retrieved[mdtype] = 1
+            return local
 
     
     def getPrimaryXML(self):
