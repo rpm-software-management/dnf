@@ -227,8 +227,11 @@ def main(args):
         # sigh - the magical "order" command - nice of this not to really be documented anywhere.
         tsfin.order()
         # conf check as to which options to pass to tsfin - 0 or one disabling the
-        # diskspace check
-        errors = tsfin.run(0, 0, callback.install_callback, '')
+        if conf.diskspacecheck:
+            errors = tsfin.run(0, 0, callback.install_callback, '')
+        else:
+            errors = tsfin.run(0, rpm.RPMPROB_FILTER_DISKSPACE, callback.install_callback, '')
+            
         if errors:
             errorlog(0, 'Errors installing:')
             for error in errors:
