@@ -2,6 +2,13 @@ import types
 import string
 import os
 import os.path
+from cStringIO import StringIO
+import base64
+import struct
+import re
+import pgpmsg
+import rpm
+import rpmUtils
 
 from Errors import MiscError
 
@@ -139,3 +146,121 @@ class GenericHolder:
        
     pass
 
+
+def procgpgkey(rawkey):
+    '''Convert ASCII armoured GPG key to binary
+    '''
+    # TODO: CRC checking? (will RPM do this anyway?)
+    
+    # Normalise newlines
+    rawkey = re.compile('(\n|\r\n|\r)').sub('\n', rawkey)
+
+    # Extract block
+    block = StringIO()
+    inblock = 0
+    pastheaders = 0
+    for line in rawkey.split('\n'):
+        if line.startswith('-----BEGIN PGP PUBLIC KEY BLOCK-----'):
+            inblock = 1
+        elif inblock and line.strip() == '':
+            pastheaders = 1
+        elif inblock and line.startswith('-----END PGP PUBLIC KEY BLOCK-----'):
+            # Hit the end of the block, get out
+            break
+        elif pastheaders and line.startswith('='):
+            # Hit the CRC line, don't include this and stop
+            break
+        elif pastheaders:
+            block.write(line+'\n')
+  
+    # Decode and return
+    return base64.decodestring(block.getvalue())
+
+
+def getgpgkeyinfo(rawkey):
+    '''Return a dict of info for the given ASCII armoured key text
+
+    Returned dict will have the following keys:
+        'userid' - the key's user ID
+        'sigs' - a list of (signature_id, timestamp) pairs
+
+    Will raise ValueError if there was a problem decoding the key.
+    '''
+    # Catch all exceptions as there can be quite a variety raised by this call
+    try:
+        key = pgpmsg.decode_msg(rawkey)
+    except Exception, e:
+        raise ValueError(str(e))
+
+    # Establish a default time stamp for signatures that don't appear to have
+    # one
+    if hasattr(key.public_key, 'timestamp'):
+        deftimestamp = key.public_key.timestamp
+    else:
+        deftimestamp = None
+
+    # Retrieve all signature packets
+    sigs = []
+    for userid in key.user_ids[0]:
+
+        if not isinstance(userid, pgpmsg.signature):
+            continue
+
+        keyid = struct.unpack(">Q", userid.key_id())[0]
+
+        # Get the creation time sub-packet if possible, otherwise use the
+        # default timestamp.
+        timestamp = None
+        if hasattr(userid, 'hashed_subpaks'):
+            tspkt = userid.get_hashed_subpak(pgpmsg.SIG_SUB_TYPE_CREATE_TIME)
+            if tspkt != None:
+                timestamp = int(tspkt[1])
+        
+        if not timestamp:
+            timestamp = deftimestamp
+
+        sigs.append((keyid, timestamp))
+
+    return {
+        'userid': key.user_id,
+        'sigs': sigs
+    }
+
+def keyInstalled(keylist):
+    '''Return if a given any of the given GPG keys described by keylist are
+    installed in the rpmdb.  
+
+    keylist should be a list with elements of (keyid, timestamp) where keyid
+    and timestamp are ints.
+
+    Return values:
+        -1      key is not installed
+        0       key with matching ID and timestamp is installed
+        1       key with matching ID is installed but has a older timestamp
+        2       key with matching ID is installed but has a newer timestamp
+
+    No effort is made to handle duplicates. The first matching keyid is used to 
+    calculate the return result.
+    '''
+    # Convert key ids to 'RPM' form
+    kl = []
+    for id, timestamp in keylist:
+        kl.append(("%x" % (id & 0xFFFFFFFFL), timestamp))
+
+    # Init transaction
+    ts = rpmUtils.transaction.initReadOnlyTransaction()
+    ts.pushVSFlags(~(rpm._RPMVSF_NOSIGNATURES|rpm._RPMVSF_NODIGESTS))
+
+    # Search
+    for hdr in ts.dbMatch('name', 'gpg-pubkey'):
+        for id, timestamp in kl:
+            if hdr['version'] == id:
+                installedts = int(hdr['release'], 16)
+                if installedts == timestamp:
+                    return 0
+                elif installedts < timestamp:
+                    return 1    
+                else:
+                    return 2
+
+    return -1

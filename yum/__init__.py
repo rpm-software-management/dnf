@@ -509,38 +509,58 @@ class YumBase(depsolve.Depsolve):
             po.hdrpath = hdrpath
             return
 
-    def sigCheckPkgs(self, pkgs):
-        """takes a list of package objects, checks their sig/checksums, returns
-           a list of failures"""
-        errorlist = []
-        for po in pkgs:
-            if hasattr(po, 'pkgtype') and po.pkgtype == 'local':
-                check = self.conf.gpgcheck
-            else:
-                repo = self.repos.getRepo(po.repoid)
-                check = repo.gpgcheck
-                
-            if check:
-                result = rpmUtils.miscutils.checkSig(self.read_ts, po.localPkg())
-                localfn = po.localPkg()
-                
-                msg = ''
-                if result == 0:
-                    continue
-                elif result == 1:
-                    msg = 'public key not available for %s' % localfn
-                elif result == 2:
-                    msg = 'problem opening package %s' % localfn
-                elif result == 3:
-                    msg = 'untrusted public key for %s' % localfn
-                elif result == 4:
-                    msg = 'unsigned package %s' % localfn
-                
-                errorlist.append(msg)
-            
-        return errorlist
+    def sigCheckPkg(self, po):
+        '''Take a package object and attempt to verify GPG signature if required
+
+        Returns (result, error_string) where result is
+            0 - GPG signature verifies ok or verification is not required
+            1 - GPG verification failed but installation of the right GPG key might help
+            2 - Fatal GPG verifcation error, give up
+        '''
+        if hasattr(po, 'pkgtype') and po.pkgtype == 'local':
+            check = self.conf.gpgcheck
+            hasgpgkey = 0
+        else:
+            repo = self.repos.getRepo(po.repoid)
+            check = repo.gpgcheck
+            hasgpgkey = not not repo.gpgkey 
         
-    
+        if check:
+            sigresult = rpmUtils.miscutils.checkSig(self.read_ts, po.localPkg())
+            localfn = os.path.basename(po.localPkg())
+            
+            if sigresult == 0:
+                result = 0
+                msg = ''
+
+            elif sigresult == 1:
+                if hasgpgkey:
+                    result = 1
+                else:
+                    result = 2
+                msg = 'public key not available for %s' % localfn
+
+            elif sigresult == 2:
+                result = 2
+                msg = 'problem opening package %s' % localfn
+
+            elif sigresult == 3:
+                if hasgpgkey:
+                    result = 1
+                else:
+                    result = 2
+                result = 1
+                msg = 'untrusted public key for %s' % localfn
+
+            elif sigresult == 4:
+                result = 2 
+                msg = 'unsigned package %s' % localfn
+            
+        else:
+            result =0
+            msg = ''
+
+        return result, msg
         
     def cleanHeaders(self):
         filelist = []

@@ -433,6 +433,14 @@ def doRepoSection(globconfig, thisconfig, section):
 
     thisrepo.set('urls', goodurls)
 
+    gpgkey = thisconfig._getoption(section, 'gpgkey', '')
+    if gpgkey:
+        (s,b,p,q,f,o) = urlparse.urlparse(gpgkey)
+        if s not in ('http', 'ftp', 'file', 'https'):
+            print 'gpgkey must be ftp, http[s], or file URL, ignoring - %s' % gpgkey
+            gpgkey = ''
+    thisrepo.set('gpgkey', gpgkey)
+
     thisrepo.set('enabled', thisconfig._getboolean(section, 'enabled', 1))
 
     for keyword in ['proxy_username', 'proxy', 'proxy_password', 

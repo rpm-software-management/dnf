@@ -36,9 +36,11 @@ from rpmUtils.miscutils import compareEVR
 from yum.packages import parsePackages, returnBestPackages, YumInstalledPackage, YumLocalPackage
 from yum.logger import Logger
 from yum.config import yumconf
+from yum import pgpmsg
 from i18n import _
 import callback
-
+import urlgrabber
+import urlgrabber.grabber
 
 __version__ = '2.1.12'
 
@@ -619,15 +621,9 @@ For more information contact your distribution or package provider.
                     errstring += '  %s: %s\n' % (key, error)
             raise yum.Errors.YumBaseError, errstring
 
-        # gpgcheck in a big pile, report all errors at once
-        problems = self.sigCheckPkgs(downloadpkgs)
-        
-        if len(problems) > 0:
-            errstring = ''
-            for problem in problems:
-                errstring += '%s\n' % problem
-            
-            raise yum.Errors.YumBaseError, errstring
+        # Check GPG signatures
+        if self.gpgsigcheck(downloadpkgs) != 0:
+            return
         
         self.log(2, 'Running Transaction Test')
         tsConf = {}
@@ -680,6 +676,86 @@ For more information contact your distribution or package provider.
 
         # close things
         self.log(1, self.postTransactionOutput())
+
+    def gpgsigcheck(self, pkgs):
+        '''Perform GPG signature verification on the given packages, installing
+        keys if possible
+
+        Returns non-zero if execution should stop (user abort).
+        Will raise YumBaseError if there's a problem
+        '''
+        for po in pkgs:
+            result, errmsg = self.sigCheckPkg(po)
+
+            if result == 0:
+                # Verified ok, or verify not req'd
+                continue            
+
+            elif result == 1:
+                # Key needs to be installed
+                self.log(0, errmsg)
+    
+                # Bail if not -y and stdin isn't a tty as key import will
+                # require user confirmation
+                if not sys.stdin.isatty() and not \
+                            self.conf.getConfigOption('assumeyes'):
+                    raise yum.Errors.YumBaseError, \
+                        'Refusing to automatically import keys when running ' \
+                        'unattended.\nUse "-y" to override.'
+
+                repo = self.repos.getRepo(po.repoid)
+                keyurl = repo.gpgkey
+                self.log(0, 'Retrieving GPG key from %s' % keyurl)
+
+                # Go get the GPG key from the given URL
+                try:
+                    rawkey = urlgrabber.urlread(keyurl, limit=9999)
+                except urlgrabber.grabber.URLGrabError, e:
+                    raise yum.Errors.YumBaseError(
+                            'GPG key retrieval failed: ' + str(e))
+
+                # Parse the key
+                try:
+                    keyinfo = yum.misc.getgpgkeyinfo(rawkey)
+                except ValueError, e:
+                    raise yum.Errors.YumBaseError, \
+                            'GPG key parsing failed: ' + str(e)
+
+                # Check if key is already installed
+                if yum.misc.keyInstalled(keyinfo['sigs']) >= 0:
+                    self.log(0, '\n')
+                    raise yum.Errors.YumBaseError, \
+                            'The GPG key at %s \n' \
+                            'is already installed but is not the correct '\
+                            'key for this package.\nCheck that this is the ' \
+                            'correct key for the "%s" repository.' % \
+                                (keyurl, repo.name)
+
+                # Try installing/updating GPG key
+                self.log(0, 'Importing GPG key "%s"' % keyinfo['userid'])
+                if not self.conf.getConfigOption('assumeyes'):
+                    if not self.userconfirm():
+                        self.log(0, 'Exiting on user command')
+                        return 1
+        
+                # Import the key
+                result = self.ts.pgpImportPubkey(yum.misc.procgpgkey(rawkey))
+                if result != 0:
+                    raise yum.Errors.YumBaseError, \
+                            'Key import failed (code %d)' % result
+                self.log(1, 'Key imported successfully')
+    
+                # Check if the key helped
+                result, errmsg = self.sigCheckPkg(po)
+                if result != 0:
+                    self.log(0, "Key import didn't help, wrong key?")
+                    raise yum.Errors.YumBaseError, errmsg
+
+            else:
+                # Fatal error
+                raise yum.Errors.YumBaseError, errmsg
+
+        return 0
 
     
     def installPkgs(self, userlist=None):
