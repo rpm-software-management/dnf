@@ -901,7 +901,7 @@ class URLGrabberFileObject:
             else:           readamount = min(amt, self._rbufsize)
             try:
                 new = self.fo.read(readamount)
-            except socket.error:
+            except socket.error, e:
                 raise URLGrabError(4, _('Socket Error: %s') % (e, ))
             except TimeoutError, e:
                 raise URLGrabError(12, _('Timeout: %s') % (e, ))

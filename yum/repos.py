@@ -400,8 +400,8 @@ class Repository:
                                    progress_obj=self.callback,
                                    proxies = prxy,
                                    failure_callback=self.failure_obj,
-                                   timeout=self.timeout)
-                                   #reget='simple')
+                                   timeout=self.timeout,
+                                   reget='simple')
                                    
         self.grab = mgclass(self.grabfunc, self.urls)
 
@@ -448,7 +448,7 @@ class Repository:
         self.setupGrab() # update the grabber for the urls
 
     def get(self, url=None, relative=None, local=None, start=None, end=None,
-            copy_local=0, checkfunc=None, text=None):
+            copy_local=0, checkfunc=None, text=None, reget='simple'):
         """retrieve file from the mirrorgroup for the repo
            relative to local, optionally get range from
            start to end, also optionally retrieve from a specific baseurl"""
@@ -487,6 +487,7 @@ class Repository:
                             throttle = self.throttle,
                             progres_obj = self.callback,
                             copy_local = copy_local,
+                            reget = reget,
                             proxies = prxy,
                             failure_callback = self.failure_obj,
                             timeout = self.timeout,
@@ -500,6 +501,7 @@ class Repository:
                                     range = (start, end), 
                                     retry = self.retries,
                                     copy_local = copy_local,
+                                    reget = reget,
                                     proxies = prxy,
                                     failure_callback = self.failure_obj,
                                     timeout = self.timeout,
@@ -515,6 +517,7 @@ class Repository:
                                            text = text,
                                            range = (start, end),
                                            copy_local=copy_local,
+                                           reget = reget,
                                            checkfunc=checkfunc)
             except URLGrabError, e:
                 raise Errors.RepoError, "failure: %s from %s: %s" % (relative, self.id, e)
@@ -538,7 +541,7 @@ class Repository:
         else:
             try:
                 result = self.get(relative=remote, local=local,
-                                  copy_local=1, text=text)
+                                  copy_local=1, text=text, reget=None)
             except URLGrabError, e:
                 raise Errors.RepoError, 'Error downloading file %s: %s' % (local, e)
 
@@ -622,7 +625,8 @@ class Repository:
 
         try:
             checkfunc = (self._checkMD, (mdtype,), {})
-            local = self.get(relative=remote, local=local, copy_local=1, checkfunc=checkfunc)
+            local = self.get(relative=remote, local=local, copy_local=1,
+                             checkfunc=checkfunc, reget=None)
         except URLGrabError, e:
             raise Errors.RepoError, \
                 "Could not retrieve %s matching remote checksum from %s" % (local, self)

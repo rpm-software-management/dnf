@@ -293,6 +293,7 @@ class YumLocalPackage(YumInstalledPackage):
         self.description = self.tagByName('description')
         
     
+        
     def localPkg(self):
         return self.localpath
     

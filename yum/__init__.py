@@ -409,15 +409,19 @@ class YumBase(depsolve.Depsolve):
                     
             local = po.localPkg()
             if os.path.exists(local):
+                cursize = os.stat(local)[6]
+                totsize = int(po.size())
                 try:
                     result = self.verifyPkg(local, po, raiseError=1)
                 except URLGrabError, e:
-                    os.unlink(local)
+                    if cursize >= totsize: # keep it around for regetting
+                        os.unlink(local)
                 else:
                     if result:
                         continue
                     else:
-                        os.unlink(local)
+                        if cursize >= totsize: # keep it around for regetting
+                            os.unlink(local)
             remote_pkgs.append(po)
 
         errors = {}
@@ -506,7 +510,7 @@ class YumBase(depsolve.Depsolve):
         
         try:
             checkfunc = (self.verifyHeader, (po, 1), {})
-            hdrpath = repo.get(relative=remote, local=local, start=start, 
+            hdrpath = repo.get(relative=remote, local=local, start=start, reget=None, 
                                end=end, checkfunc=checkfunc, copy_local=1)
         except Errors.RepoError, e:
             saved_repo_error = e
