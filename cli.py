@@ -226,7 +226,7 @@ class YumBaseCli(yum.YumBase):
             self.conf.repos.callback = output.simpleProgressBar
 
         # setup our failure report for failover
-        freport = (output.failureReport,(),('errorlog', self.errorlog))
+        freport = (output.failureReport,(),{'errorlog':self.errorlog})
         self.conf.repos.setFailureCallback(freport)
         
         # this is just a convenience reference

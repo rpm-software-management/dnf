@@ -483,7 +483,7 @@ class URLGrabber:
                 if (opts.retry is None) \
                     or (tries == opts.retry) \
                     or (e.errno not in opts.retrycodes): raise
-                if self.failure_callback:
+                if opts.failure_callback:
                     func, args, kwargs = \
                           self._make_callback(opts.failure_callback)
                     func(e, *args, **kwargs)
@@ -611,7 +611,7 @@ class URLGrabber:
         if callable(callback_obj):
             return callback_obj, (), {}
         else:
-            return callaopts.checkfunc
+            return callback_obj
 
 # create the default URLGrabber used by urlXXX functions.
 # NOTE: actual defaults are set in URLGrabberOptions

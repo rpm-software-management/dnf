@@ -282,11 +282,10 @@ class Repository:
                                    bandwidth=self.bandwidth,
                                    retry=self.retries,
                                    throttle=self.throttle,
-                                   progress_obj=self.callback)
-                                   #failure_callback=self.failure_obj)
+                                   progress_obj=self.callback,
+                                   failure_callback=self.failure_obj)
                                    #reget='simple')
                                    
-        # FIXME - needs a failure callback and it needs  to specify it
         self.grab = mgclass(self.grabfunc, self.urls)
 
         

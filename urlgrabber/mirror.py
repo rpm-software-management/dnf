@@ -170,22 +170,22 @@ class MirrorGroup:
         in increasing precedence.
         
         If all three of these were done, the net result would be:
-              {'increment': 0,         # set at instantiation
+              {'increment': 0,         # set in method
                'increment_master': 1,  # class default
                'remove': 1,            # class default
                'remove_master': 0,     # class default
-               'fail': 0}              # set in methed, reset from
-                                       # callback
+               'fail': 0}              # set at instantiation, reset
+                                       # from callback
 
       failure_callback
 
         this is a callback that will be called when a mirror "fails",
         meaning the grabber raises some URLGrabError.  If this is a
-        tuple, it is enterpreted to be of the form (cb, args, kwargs)
+        tuple, it is interpreted to be of the form (cb, args, kwargs)
         where cb is the actual callable object (function, method,
         etc).  Otherwise, it is assumed to be the callable object
-        itself.  The callback will be passed exception that was raised
-        (and args and kwargs if present).
+        itself.  The callback will be passed the exception that was
+        raised (and args and kwargs if present).
 
         The failure callback can return an action dict, as described
         above.
