@@ -386,7 +386,7 @@ class DepSolveProgressCallBack:
     
     def unresolved(self, msg):
         self.log(2, 'Unresolved Dependency: %s' % msg)
-        pass
+
     
     def procConflict(self, name, confname):
         self.log(2, 'Processing Conflict: %s conflicts %s' % (name, confname))

@@ -62,6 +62,18 @@ class YumBase(depsolve.Depsolve):
         self.log(3, 'Reading Local RPMDB')
         self.rpmdb.addDB(self.read_ts)
 
+    def closeRpmDB(self):
+        """closes down the instances of the rpmdb we have wangling around"""
+        if hasattr(self, 'rpmdb'):
+            del self.rpmdb
+            
+        if hasattr(self, 'ts'):
+            del self.ts.ts
+            del self.ts
+        if hasattr(self, 'read_ts'):
+            del self.read_ts.ts
+            del self.read_ts
+
     def doSackSetup(self, archlist=None):
         """populates the package sacks for information from our repositories,
            takes optional archlist for archs to include"""
@@ -379,12 +391,14 @@ class YumBase(depsolve.Depsolve):
         try:
             checkfunc = (self.verifyHeader, (po, 1), {})
             hdrpath = repo.get(relative=remote, local=local, start=start, 
-                               end=end, checkfunc=checkfunc)
+                               end=end, checkfunc=checkfunc, copy_local=1)
         except Errors.RepoError, e:
-                try:
-                    os.unlink(local)
-                except OSError, e:
-                    pass
+            saved_repo_error = e
+            try:
+                os.unlink(local)
+            except OSError, e:
+                raise Errors.RepoError, saved_repo_error
+            else:
                 raise
         else:
             po.hdrpath = hdrpath
@@ -516,7 +530,7 @@ class YumBase(depsolve.Depsolve):
 
         # produce the updates list of tuples
         elif pkgnarrow == 'updates':
-            self.doRepoSetup()        
+            self.doRepoSetup()
             self.doRpmDBSetup()
             self.doUpdateSetup()
             for (n,a,e,v,r) in self.up.getUpdatesList():
@@ -539,7 +553,7 @@ class YumBase(depsolve.Depsolve):
         
         # available in a repository
         elif pkgnarrow == 'available':
-            self.doRepoSetup()        
+            self.doRepoSetup()
             self.doRpmDBSetup()
             inst = self.rpmdb.getPkgList()
             for pkg in self.pkgSack.returnPackages():

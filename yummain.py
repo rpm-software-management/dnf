@@ -43,6 +43,7 @@ def main(args):
 
     def unlock():
         try:
+            base.closeRpmDB()
             base.doUnlock('/var/run/yum.pid')
         except Errors.LockError, e:
             sys.exit(200)

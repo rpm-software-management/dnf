@@ -130,7 +130,15 @@ class Updates:
            them in a dict attribute of the class."""
 
         obsdict = {} # obseleting package -> [obsoleted package]
-
+        # this needs to keep arch in mind
+        # if foo.i386 obsoletes bar
+        # it needs to obsoletes bar.i386 preferentially, not bar.x86_64
+        # if there is only one bar and only one foo then obsolete it, but try to
+        # match the arch.
+        
+        # look through all the obsoleting packages look for multiple archs per name
+        # if you find it look for the packages they obsolete
+        # 
         for pkgtup in self.rawobsoletes.keys():
             for (obs_n, flag, (obs_e, obs_v, obs_r)) in self.rawobsoletes[(pkgtup)]:
                 if flag in [None, 0]: # unversioned obsolete
