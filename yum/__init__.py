@@ -17,6 +17,7 @@
 
 import os
 import os.path
+import rpm
 import errno
 import Errors
 
@@ -27,7 +28,7 @@ import groups
 from urlgrabber.grabber import URLGrabError
 import depsolve
 
-from packages import parsePackages
+from packages import parsePackages, YumLocalPackage, YumInstalledPackage
 from repomd import mdErrors
 
 class YumBase(depsolve.Depsolve):
@@ -231,6 +232,35 @@ class YumBase(depsolve.Depsolve):
         self._unlock(lockfile)
         
     
+    def verifyPkg(self, file, po, raiseError):
+        """verifies the package is what we expect it to be
+           raiseError  = defaults to 0 - if 1 then will raise
+           a URLGrabError if the file does not check out.
+           otherwise it returns false for a failure, true for success"""
+        
+        for (csumtype, csum, csumid) in po.checksums:
+            if csumid:
+                checksum = csum
+                checksumType = csumtype
+                break
+        try:
+            self.verifyChecksum(file, checksumType, checksum)
+        except URLGrabError, e:
+            if raiseError:
+                raise
+            else:
+                return 0
+
+        ylp = YumLocalPackage(self.read_ts, file)
+        if ylp.pkgtup() != po.pkgtup():
+            if raiseError:
+                raise URLGrabError(-1, 'Package does not match intended download')
+            else:
+                return 0
+        
+        return 1
+        
+        
     def verifyChecksum(self, file, checksumType, csum):
         """Verify the checksum of the file versus the 
            provided checksum"""
@@ -241,7 +271,7 @@ class YumBase(depsolve.Depsolve):
             raise URLGrabError(-3, 'Could not perform checksum')
             
         if filesum != csum:
-            raise URLGrabError(-2, 'Package does not match checksum')
+            raise URLGrabError(-1, 'Package does not match checksum')
         
         return 0
             
@@ -252,27 +282,21 @@ class YumBase(depsolve.Depsolve):
 
         errors = {}
         for po in pkglist:
-            for (csumtype, csum, csumid) in po.checksums:
-                if csumid:
-                    checksum = csum
-                    checksumType = csumtype
-                    break
-            
             local =  po.localPkg()
             repo = self.repos.getRepo(po.repoid)
             remote = po.returnSimple('relativepath')
             if os.path.exists(local):
                 try:
-                    result = self.verifyChecksum(local, checksumType, checksum)
+                    result = self.verifyPkg(local, po, raiseError=1)
                 except URLGrabError, e:
                     os.unlink(local)
                 else:
-                    if result == 0:
+                    if result:
                         continue
                     else:
                         os.unlink(local)
             
-            checkfunc = (self.verifyChecksum, (checksumType, csum), {})
+            checkfunc = (self.verifyPkg, (po, 1), {})
 
             try:
                 mylocal = repo.get(relative=remote, local=local, checkfunc=checkfunc)
@@ -286,6 +310,65 @@ class YumBase(depsolve.Depsolve):
                     del errors[po]
 
         return errors
+
+    def verifyHeader(self, file, po, raiseError):
+        """check the header out via it's naevr, internally"""
+        try:
+            hlist = rpm.readHeaderListFromFile(file)
+            hdr = hlist[0]
+        except (rpm.error, IndexError):
+            if raiseError:
+                raise URLGrabError(-1, 'Header is not complete.')
+            else:
+                return 0
+                
+        yip = YumInstalledPackage(hdr) # we're using YumInstalledPackage b/c
+                                       # it takes headers <shrug>
+        if yip.pkgtup() != po.pkgtup():
+            if raiseError:
+                raise URLGrabError(-1, 'Header does not match intended download')
+            else:
+                return 0
+        
+        return 1
+        
+    def downloadHeader(self, po):
+        """download a header from a package object.
+           output based on callback, raise yum.Errors.YumBaseError on problems"""
+
+        errors = {}
+        local =  po.localHdr()
+        start = po.returnSimple('hdrstart')
+        end = po.returnSimple('hdrend')
+        repo = self.repos.getRepo(po.repoid)
+        remote = po.returnSimple('relativepath')
+        if os.path.exists(local):
+            try:
+                result = self.verifyHeader(local, po, raiseError=1)
+            except URLGrabError, e:
+                # might add a check for length of file - if it is < 
+                # required doing a reget
+                try:
+                    os.unlink(local)
+                except OSError, e:
+                    pass
+            else:
+                po.hdrpath = local
+                return
+
+        try:
+            checkfunc = (self.verifyHeader, (po, 1), {})
+            hdrpath = repo.get(relative=remote, local=local, start=start, 
+                               end=end, checkfunc=checkfunc)
+        except Errors.RepoError, e:
+                try:
+                    os.unlink(local)
+                except OSError, e:
+                    pass
+                raise
+        else:
+            po.hdrpath = hdrpath
+            return
 
     def sigCheckPkgs(self, pkgs):
         """takes a list of package objects, checks their sig/checksums, returns

@@ -24,6 +24,7 @@ import fnmatch
 import rpmUtils
 import rpmUtils.arch
 import rpmUtils.miscutils
+import Errors
 
 import repomd.packageObject
 
@@ -226,6 +227,31 @@ class YumInstalledPackage:
     def size(self):
         return self.tagByName('size')
 
+class YumLocalPackage(YumInstalledPackage):
+    """Class to handle an arbitrary package from a file path
+       this inherits most things from YumInstalledPackage because
+       installed packages and an arbitrary package on disk act very
+       much alike. init takes a ts instance and a filename/path 
+       to the package."""
+
+    def __init__(self, ts=None, filename=None):
+        if ts is None:
+            raise Errors.MiscError, \
+                 'No Transaction Set Instance for YumLocalPackage instance creation'
+        if filename is None:
+            raise Errors.MiscError, \
+                 'No Filename specified for YumLocalPackage instance creation'
+        self.filename = filename
+        self.repoid = filename
+        self.hdr = rpmUtils.miscutils.hdrFromPackage(ts, self.filename)
+        self.name = self.tagByName('name')
+        self.arch = self.tagByName('arch')
+        self.epoch = self.doepoch()
+        self.version = self.tagByName('version')
+        self.release = self.tagByName('release')
+        self.summary = self.tagByName('summary')
+        self.description = self.tagByName('description')
+
 class YumAvailablePackage(repomd.packageObject.RpmXMLPackageObject):
     """derived class for the repomd packageobject we use
     this for dealing with packages in a repository"""
@@ -237,40 +263,19 @@ class YumAvailablePackage(repomd.packageObject.RpmXMLPackageObject):
     def pkgtup(self):
         return self.returnPackageTuple()
 
-
-    def _checkHeader(self, hdr):
-        pass
+    def returnLocalHeader(self):
+        """returns an rpm header object from the package object's local
+           header cache"""
         
-    def getHeader(self):
-        """returns an rpm header object from the package object"""
-        # this function sucks - it should use the urlgrabber
-        # testfunction to check the headers and loop on that
-
-        rel = self.returnSimple('relativepath')
-        pkgname = os.path.basename(rel)
-        hdrname = pkgname[:-4] + '.hdr'
-        url = self.returnSimple('basepath')
-        start = self.returnSimple('hdrstart')
-        end = self.returnSimple('hdrend')
-        repoid = self.returnSimple('repoid')
-        repo = base.repos.getRepo(repoid)
-        hdrpath = repo.hdrdir + '/' + hdrname
-        base.log(6, 'Downloading header from file %s' % rel)
-        if os.path.exists(hdrpath):
-            base.log(6, 'Cached header %s exists, checking' % hdrpath)
+        if os.path.exists(self.localHdr()):
             try: 
-                hlist = rpm.readHeaderListFromFile(hdrpath)
+                hlist = rpm.readHeaderListFromFile(self.localHdr())
                 hdr = hlist[0]
             except (rpm.error, IndexError):
-                os.unlink(hdrpath)
-                hdrpath = repo.get(url=url, relative=rel, local=hdrpath, 
-                                   start=start, end=end)
+                raise Errors.RepoError, 'Cannot open package header'
         else:
-            hdrpath = repo.get(url=url, relative=rel, local=hdrpath, 
-                                start=start, end=end)
-        hlist = rpm.readHeaderListFromFile(hdrpath)
-        hdr = hlist[0]
-       
+            raise Errors.RepoError, 'Package Header Not Available'
+
         return hdr
 
     def getProvidesNames(self):
@@ -293,4 +298,17 @@ class YumAvailablePackage(repomd.packageObject.RpmXMLPackageObject):
             self.localpath = repo.pkgdir + '/' + rpmfn
         return self.localpath
 
+    def localHdr(self):
+        """return path to local cached Header file downloaded from package 
+           byte ranges"""
+           
+        if not hasattr(self, 'hdrpath'):
+            repo = base.repos.getRepo(self.repoid)
+            pkgpath = self.returnSimple('relativepath')
+            pkgname = os.path.basename(pkgpath)
+            hdrname = pkgname[:-4] + '.hdr'
+            self.hdrpath = repo.hdrdir + '/' + hdrname
+
+        return self.hdrpath
         
+

@@ -318,3 +318,22 @@ def stringToVersion(verstring):
             version = verstring[i + 1:]
         release = None
     return (epoch, version, release)
+
+def hdrFromPackage(ts, package):
+    """hand back the rpm header or raise an Error if the pkg is fubar"""
+    try:
+        fdno = os.open(package, os.O_RDONLY)
+    except OSError, e:
+        raise rpmUtils.RpmUtilsError, 'Unable to open file'
+    
+    try:
+        hdr = ts.hdrFromFdno(fdno)
+    except rpm.error, e:
+        os.close(fdno)
+        raise rpmUtils.RpmUtilsError, "RPM Error opening Package"
+    if type(hdr) != rpm.hdr:
+        os.close(fdno)
+        raise rpmUtils.RpmUtilsError, "RPM Error opening Package"
+    
+    os.close(fdno)
+    return hdr

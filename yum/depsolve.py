@@ -26,7 +26,7 @@ import rpm
 
 from repomd.packageSack import ListPackageSack
 from repomd.mdErrors import PackageSackError
-from Errors import DepError
+from Errors import DepError, RepoError
 import packages
 
 class Depsolve:
@@ -125,9 +125,9 @@ class Depsolve:
                 if (pkginfo, 'i') in ts_elem:
                     continue
                 po = self.getPackageObject(pkginfo)
-                hdr = po.getHeader()
+                self.downloadHeader(po)
+                hdr = po.returnLocalHeader()
                 rpmfile = po.localPkg()
-
                 if test:
                     provides = po.getProvidesNames()
                 else:
