@@ -161,7 +161,11 @@ class nevral:
         base = conf.serverhdrdir[i]
         log(6, 'localhdrpath= %s for %s %s' % (base + '/' + hdrfn, name, arch))
         return base + '/' + hdrfn
-        
+
+    def setlocalhdrpath(self, name, arch, path):
+        ((e,v,r,a,l,i),state) = self._get_data(name, arch)
+        self.localhdrpath[(name, arch)] = path
+
     def remoteRpmUrl(self, name, arch=None):
         ((e,v,r,a,l,i),state) = self._get_data(name, arch)
         if state == None:
