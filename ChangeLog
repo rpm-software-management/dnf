@@ -1,3 +1,26 @@
+2002-07-11 16:55  skvidal
+
+	* yum.conf: 
+	fixed conf file
+
+2002-07-11 16:52  skvidal
+
+	* clientStuff.py, config.py, pkgaction.py, yum.conf, yum.spec,
+	yummain.py, docs/yum.conf.5: 
+	fixed gpg checking to make gpghome configurable and gpgkeyring made
+	gpg checking more like up2date's updated docs to reflect this fixed
+	the updatehrdlist function (again)
+
+2002-07-11 09:58  skvidal
+
+	* yummain.py, docs/yum.8: 
+	change -r option to -R
+
+2002-07-10 02:04  skvidal
+
+	* ChangeLog: 
+	changelog changed by cvs2cl
+
 2002-07-10 01:52  skvidal
 
 	* archwork.py, clientStuff.py, nevral.py, serverStuff.py,
