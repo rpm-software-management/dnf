@@ -43,3 +43,8 @@ Wishlist/Cool:
   with the update.
   it'd be silly but nice for people who don't want it running automatically
 
+
+Seriously wishlist:
+- Integration so that you can have yum run hourly/half hourly to poll for updates from
+  a centralized update location. Using something that integrates with a kickstart configuration server
+  
