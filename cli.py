@@ -453,9 +453,7 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
                 return 1, [str(e)]
             
             if self.basecmd == 'grouplist':
-                # self.returnGroupLists()
-                self.groupInfo._dumppkgs()
-                return 0, []
+                return self.returnGroupLists()
             
             elif self.basecmd == 'groupinstall':
                 try:
@@ -855,9 +853,35 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         
         return 0, []
         
-    def returnGroupLists(self, groups=None):
-        return 0, ['no op']
+    def returnGroupLists(self, userlist=None):
+
+        uservisible=1
+        if userlist is None:
+            userlist = self.extcmds
+            
+        if len(userlist) > 0:
+            if userlist[0] == 'hidden':
+                uservisible=0
+
+        installed, available = self.doGroupLists(uservisible=uservisible)
+
+        if len(installed) > 0:
+            self.log(2, 'Installed Groups:')
+            for group in installed:
+                self.log(2, '   %s' % group)
+        
+        if len(available) > 0:
+            self.log(2, 'Available Groups:')
+            for group in available:
+                self.log(2, '   %s' % group)
+
+            
+        return 0, ['Done']
     
+    def returnGroupInfo(self, groups=[]):
+        """returns complete information on a list of groups"""
+        return 0, ['no op']
+        
     def installGroups(self, groups=None):
         return 0, ['no op']
     

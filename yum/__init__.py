@@ -753,4 +753,25 @@ class YumBase(depsolve.Depsolve):
             
             
         return matches
+    
+    def doGroupLists(self, uservisible=0):
+        """returns two lists of groups, installed groups and available groups
+           optional 'uservisible' bool to tell it whether or not to return
+           only groups marked as uservisible"""
+        
+        if uservisible:
+            availgroups = self.groupInfo.visible_groups
+        else:
+            availgroups = self.groupInfo.grouplist
+        
+        installed = []
+        available = []
+        
+        for group in availgroups:
+            if self.groupInfo.isGroupInstalled(group):
+                installed.append(group)
+            else:
+                available.append(group)
+        
+        return installed, available
         

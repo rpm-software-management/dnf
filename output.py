@@ -79,7 +79,7 @@ class YumOutput:
         
         print "%-40.40s %-22.22s %-16.16s" % (na, ver, repo)
     
-    
+        
     def infoOutput(self, pkg):
         print _("Name   : %s") % pkg.name
         print _("Arch   : %s") % pkg.arch
