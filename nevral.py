@@ -52,7 +52,7 @@ class nevral:
 	def getHeader(self, name, arch=None):
 		((e,v,r,a,l,i),state) = self._get_data(name, arch)
 		if state == None:
-			errorlog(1,"Header for pkg %s not found" % (name))
+			errorlog(0,"Header for pkg %s not found" % (name))
 			sys.exit(1)
 			return None
 		else: 

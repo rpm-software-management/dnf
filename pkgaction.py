@@ -55,7 +55,7 @@ def installpkgs(tsnevral,nulist,userlist,hinevral,rpmnevral):
 				if rpmnevral.exists(n):
 					errorlog(1,"%s is installed and is the latest version." % (n))
 				else:
-					errorlog(1,"Cannot find a package matching %s" % (n))
+					errorlog(0,"Cannot find a package matching %s" % (n))
 				sys.exit(1)
 			
 	else:
@@ -131,7 +131,7 @@ def updatepkgs(tsnevral,hinevral,rpmnevral,nulist,uplist,obslist,userlist):
 					if rpmnevral.exists(n):
 						errorlog(1,"%s is installed and the latest version." % (n))
 					else:
-						errorlog(1,"Cannot find any package matching %s available to be upgraded." % (n))
+						errorlog(0,"Cannot find any package matching %s available to be upgraded." % (n))
 					sys.exit(1)
 	else:
 		errorlog(1,"No Packages Available for Update or Install")
@@ -149,7 +149,7 @@ def erasepkgs(tsnevral,rpmnevral,userlist):
 				((e, v, r, a, l, i), s)=rpmnevral._get_data(name,arch)
 				tsnevral.add((name,e,v,r,a,l,i),'e')				
 		if foundit==0:
-			errolog(1,"Erase: No matches for %s" % n)
+			errolog(0,"Erase: No matches for %s" % n)
 			sys.exit(1)
 
 def kernelupdate(tsnevral):
@@ -234,8 +234,8 @@ def checkSig(package,checktype='md5'):
 	os.close(saveStdout)
 	os.close(saveStderr)
 	if sigcheck:
-		errorlog(1,'Error:  Signature check failed for %s' %(package))
-		errorlog(1,('Doing nothing'))
+		errorlog(0,'Error: GPG or MD5 Signature check failed for %s' %(package))
+		errorlog(0,'Doing nothing')
 		sys.exit(1)
 	return
 

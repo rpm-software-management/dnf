@@ -95,7 +95,7 @@ def take_action(cmds,nulist,uplist,newlist,obslist,tsInfo,HeaderInfo,rpmDBInfo):
 	if cmds[0] == "install":
 		cmds.remove(cmds[0])
 		if len(cmds)==0:
-			errorlog(1,"Need to pass a list of pkgs to install")
+			errorlog(0,"Need to pass a list of pkgs to install")
 			usage()
 		else:
 			pkgaction.installpkgs(tsInfo,nulist,cmds,HeaderInfo,rpmDBInfo)
@@ -109,7 +109,7 @@ def take_action(cmds,nulist,uplist,newlist,obslist,tsInfo,HeaderInfo,rpmDBInfo):
 	elif cmds[0] == "erase" or cmds[0] == "remove":
 		cmds.remove(cmds[0])
 		if len(cmds)==0:
-			errorlog (1,"Need to pass a list of pkgs to erase")
+			errorlog (0,"Need to pass a list of pkgs to erase")
 			usage()
 		else:
 			pkgaction.erasepkgs(tsInfo,rpmDBInfo,cmds)
@@ -140,7 +140,7 @@ def take_action(cmds,nulist,uplist,newlist,obslist,tsInfo,HeaderInfo,rpmDBInfo):
 			log(2,"Cleaning old headers")
 			clientStuff.clean_up_old_headers(rpmDBInfo,HeaderInfo)
 		else:
-			errorlog(1,"Invalid clean option %s" % cmds[0])
+			errorlog(0,"Invalid clean option %s" % cmds[0])
 			sys.exit(1)
 		sys.exit(0)	
 	else:
@@ -189,7 +189,7 @@ def create_final_ts(tsInfo, rpmdb):
 	errors = tsfin.run(rpm.RPMTRANS_FLAG_TEST, ~rpm.RPMPROB_FILTER_DISKSPACE, callback.install_callback, '')
 	
 	if errors:
-		errorlog(1,"You appear to have insufficient disk space to handle these packages")
+		errorlog(0,"You appear to have insufficient disk space to handle these packages")
 		sys.exit(1)
 	return tsfin
 	
@@ -208,15 +208,18 @@ def main():
 	if len(args) < 1:
 		usage()
 	try:
-		gopts,cmds = getopt.getopt(args, 'hd:y',['help'])
+		gopts,cmds = getopt.getopt(args, 'he:d:y',['help'])
 	except getopt.error, e:
-		print "Options Error: %s" % e
+		errorlog(0,"Options Error: %s" % e)
 		sys.exit(1)
 			
 	for o,a in gopts:
 		if o =='-d':
 			log.threshold=int(a)
 			conf.debuglevel=int(a)
+		if o =='-e':
+			errorlog.threshold=int(a)
+			conf.errorlevel=int(a)
 		if o =='-y':
 			conf.assumeyes=1
 		if o in ('-h', '--help'):
@@ -310,9 +313,9 @@ def main():
 		tsfin.order()
 		errors = tsfin.run(0, 0, callback.install_callback, '')
 		if errors:
-			errorlog(1,"Errors installing:")
+			errorlog(0,"Errors installing:")
 			for error in errors:
-				errorlog(1,error)
+				errorlog(0,error)
 			sys.exit(1)
 		
 		del dbfin

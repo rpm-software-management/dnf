@@ -28,13 +28,14 @@ class yumconf:
 		self.servercache = {}
 		self.servergpgcheck={}
 		self.excludes=[]
-		self.assumeyes=0
 		
 		#defaults
 		self.cachedir='/var/cache/yum'
 		self.debuglevel=2
 		self.logfile='/var/log/yum.log'
 		self.pkgpolicy='newest'
+		self.assumeyes=0
+		self.errorlevel=2
 		
 		if self._getoption('main','cachedir') != None:
 			self.cachedir=self._getoption('main','cachedir')
@@ -48,6 +49,8 @@ class yumconf:
 			self.excludes=string.split(self._getoption('main','exclude'), ' ')
 		if self._getoption('main','assumeyes') != None:
 			self.assumeyes=self.cfg.getboolean('main','assumeyes')
+		if self._getoption('main','errorlevel') != None:
+			self.errorlevel=self._getoption('main','errorlevel')
 			
 			
 		if len(self.cfg.sections()) > 1:
