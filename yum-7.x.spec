@@ -1,6 +1,6 @@
 Summary: RPM installer/updater
 Name: yum
-Version: 0.9.5
+Version: 1.0
 Release: 1_73
 License: GPL
 Group: System Environment/Base
@@ -74,7 +74,7 @@ exit 0
 
 %changelog
 * Tue Mar 11 2003 Seth Vidal <skvidal@phy.duke.edu>
-- bump ver to 0.9.5
+- bump ver to 1.0
 - fix conf file
 - for rhl 7.3
 
