@@ -4,7 +4,7 @@ AC_INIT(yummain.py)
 
 dnl Package information.
 PACKAGE=yum
-VERSION=0.8.0
+VERSION=0.8.1
 AC_SUBST(VERSION)
 AC_SUBST(PACKAGE)
 
