@@ -459,3 +459,11 @@ class YumBase(depsolve.Depsolve):
         msg = '%d packages removed' % removed
         return 0, [msg]
     
+    def sortPkgObj(self, pkg1 ,pkg2):
+        """sorts a list of package tuples by name"""
+        if pkg1.name > pkg2.name:
+            return 1
+        elif pkg1.name == pkg2.name:
+            return 0
+        else:
+            return -1

@@ -39,8 +39,10 @@ import callback
 __version__ = '2.1.3'
 
 
-class YumBaseCli(yum.YumBase):
-    """Inherits from yum.YumBase this is the base class for yum cli."""
+class YumBaseCli(yum.YumBase, output.YumOutput):
+    """This is the base class for yum cli.
+       Inherits from yum.YumBase and output.YumOutput """
+       
     def __init__(self):
         yum.YumBase.__init__(self)
         
@@ -148,10 +150,10 @@ class YumBaseCli(yum.YumBase):
                 logfile =  os.fdopen(logfd, 'a')
                 fcntl.fcntl(logfd, fcntl.F_SETFD)
                 self.filelog = Logger(threshold = 10, file_object = logfile, 
-                                preprefix = output.printtime())
+                                preprefix = self.printtime())
             else:
                 self.filelog = Logger(threshold = 10, file_object = None, 
-                                preprefix = output.printtime())
+                                preprefix = self.printtime())
             
         
             # now the rest of the options
@@ -211,10 +213,10 @@ class YumBaseCli(yum.YumBase):
             self.conf.repos.callback = None
         else:
             self.conf.repos.setProgressBar(TextMeter(fo=sys.stdout))
-            self.conf.repos.callback = output.simpleProgressBar
+            self.conf.repos.callback = self.simpleProgressBar
 
         # setup our failure report for failover
-        freport = (output.failureReport,(),{'errorlog':self.errorlog})
+        freport = (self.failureReport,(),{'errorlog':self.errorlog})
         self.conf.repos.setFailureCallback(freport)
         
         # this is just a convenience reference
@@ -342,7 +344,7 @@ class YumBaseCli(yum.YumBase):
             except yum.Errors.YumBaseError, e:
                 return 1, [str(e)]
             else:
-                output.listPkgs(pkgLists, outputType=self.basecmd)
+                self.listPkgs(pkgLists, outputType=self.basecmd)
                 return 0, []
 
         elif self.basecmd == 'check-update':
@@ -351,7 +353,7 @@ class YumBaseCli(yum.YumBase):
             try:
                 pkgLists = self.genPkgLists()
                 if len(pkgLists['Updated']) > 0:
-                    output.listPkgs(pkgLists, outputType='list')
+                    self.listPkgs(pkgLists, outputType='list')
                     result = 100
             except yum.Errors.YumBaseError, e:
                 return 1, [str(e)]
@@ -373,7 +375,7 @@ class YumBaseCli(yum.YumBase):
 
                     self.log(2, 'Importing Changelog Metadata')
                     self.repos.populateSack(with='other', which=needrepos)
-                    output.listPkgs(pkgLists, outputType='rss', fn=self.conf.getConfigOption('rss-filename'))
+                    self.listPkgs(pkgLists, outputType='rss',)
             except yum.Errors.YumBaseError, e:
                 return 1, [str(e)]
             else:
@@ -429,7 +431,7 @@ class YumBaseCli(yum.YumBase):
         self.log(2, self.tsInfo.display())
         # confirm with user
         if not self.conf.getConfigOption('assumeyes'):
-            if not output.userconfirm():
+            if not self.userconfirm():
                 self.log(0, 'Exiting on user Command')
                 return
 
