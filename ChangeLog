@@ -1,3 +1,93 @@
+2002-10-20 21:46  skvidal
+
+	* configure.in, yum.spec: 
+	updated to 0.9.3 in spec and configure
+
+2002-10-20 21:26  skvidal
+
+	* docs/: yum-arch.8, yum.8: 
+	updated docs for  list extras and yum-arch -l
+
+2002-10-19 15:13  skvidal
+
+	* pkgaction.py: 
+	changed layout for yum info
+
+2002-10-18 14:28  skvidal
+
+	* clientStuff.py, pkgaction.py: 
+	yum info extras work added groups and arch to the display fields in
+	yum info.
+
+2002-10-18 01:42  skvidal
+
+	* clientStuff.py, pkgaction.py: 
+	stubs in place for per-server-section gpg-keyrings
+
+2002-10-18 01:35  skvidal
+
+	* clientStuff.py, pkgaction.py: 
+	made updates only operate on update-able packages.  so 'yum update
+	somepkgnotyetinstalled' won't install that package
+	
+	also made yum clean headers remove the header.info file as well as
+	the .hdr files
+
+2002-10-18 00:56  skvidal
+
+	* pullheaders.py, serverStuff.py: 
+	yum-arch -l implemented to make yum-arch pay attention to symlinks
+
+2002-10-14 01:11  skvidal
+
+	* clientStuff.py: 
+	made the header load catch bad headers and exit nicely w/ a real
+	error.
+
+2002-10-14 00:34  skvidal
+
+	* clientStuff.py, depchecktree.py: 
+	few more rpm vs rpm404 fixes and yum list extras is implemented. 
+	not documented (of course)
+
+2002-10-13 01:16  skvidal
+
+	* archwork.py, callback.py, clientStuff.py, depchecktree.py,
+	nevral.py, pkgaction.py, pullheaders.py, serverStuff.py,
+	up2datetheft.py: 
+	update all files for changes to make things potentially work for
+	rpm 4.1 and rpm 4.0.4 so it should work on rhl 7.X and 8.0
+
+2002-09-26 17:15  skvidal
+
+	* nevral.py: 
+	
+	updated nevral dep resolution to use the bestarch - not the first
+	arch.  thanks to slack for finding this.
+
+2002-09-25 17:32  skvidal
+
+	* nevral.py: 
+	add change to fix arch dep resolve for non-kernel bestarch
+	resolution also adds more logging/debug info here.
+
+2002-09-25 01:00  skvidal
+
+	* pkgaction.py: 
+	fix dumbass update bug when looping through archs - its nice to
+	actually finish the list before exiting <sigh>
+
+2002-09-13 00:09  skvidal
+
+	* clientStuff.py: 
+	fixed stupid diskspace check backtrace cleaned up a few comma space
+	problems
+
+2002-08-26 23:44  skvidal
+
+	* ChangeLog: 
+	updated changelog
+
 2002-08-26 23:41  skvidal
 
 	* docs/yum.8: 
