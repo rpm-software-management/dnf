@@ -4,7 +4,8 @@ Put the sigcheck function in :)
  make it an option per server not global.
 
 fix the nevral so newest wins for the headerInfoNevral by default and
-last-in as an option.
+last-in as an option. *** done - pkgpolicy=[newest|last] - newest is default
+
 
 Implement the comps parsing and group* functions
 Implement clean * - shouldn't be terribly hard.
