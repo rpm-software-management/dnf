@@ -189,6 +189,7 @@ class YumPackage(metadata.packageObject.RpmXMLPackageObject):
         repoid = self.returnSimple('repoid')
         repo = base.repos.getRepo(repoid)
         hdrpath = repo.hdrdir + '/' + hdrname
+        base.log(6, 'Downloading header from file %s' % rel)
         if os.path.exists(hdrpath):
             base.log(6, 'Cached header %s exists, checking' % hdrpath)
             try: 

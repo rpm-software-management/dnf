@@ -198,14 +198,16 @@ class PackageSack:
         for pkg in self.returnPackages():
             (n, e, v ,r, a) = pkg.returnNevraTuple()
             if not highdict.has_key(n):
-                highdict[n] = pkg
+                highdict[n] = []
+                highdict[n].append(pkg)
             else:
-                pkg2 = highdict[n]
+                pkg2 = highdict[n][0]
                 (e2, v2, r2) = pkg2.returnEVR()
                 rc = mdUtils.compareEVR((e,v,r), (e2, v2, r2))
                 if rc > 0:
-                    highdict[n] = pkg
-                #elif rc == 0: FIXME  - this should do something to determine the best arch, I guess
+                    highdict[n] = [pkg]
+                elif rc == 0:
+                    highdict[n].append(pkg)
                 
         if name:
             return highdict[name]
