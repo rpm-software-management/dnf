@@ -14,9 +14,6 @@
 # Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 # Copyright 2002 Duke University 
 
-#NTS XXX might be worthwhile to have an option to do sigchecking on the server side
-
-
 import os
 import sys
 try:
