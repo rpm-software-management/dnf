@@ -1,3 +1,6 @@
+
+from Errors import MiscError
+
 ###########
 # Title: Remove duplicates from a sequence
 # Submitter: Tim Peters 
@@ -70,3 +73,37 @@ def unique(s):
         if x not in u:
             u.append(x)
     return u
+
+def checksum(sumtype, file, CHUNK=2**16):
+    """takes filename, hand back Checksum of it
+       sumtype = md5 or sha
+       filename = /path/to/file
+       CHUNK=65536 by default"""
+       
+    # chunking brazenly lifted from Ryan Tomayko
+    try:
+        if type(file) is not types.StringType:
+            fo = file # assume it's a file-like-object
+        else:           
+            fo = open(file, 'r', CHUNK)
+            
+        if sumtype == 'md5':
+            import md5
+            sum = md5.new()
+        elif sumtype == 'sha':
+            import sha
+            sum = sha.new()
+        else:
+            raise MiscError, 'Error Checksumming file, bad checksum type %s' % sumtype
+        chunk = fo.read
+        while chunk: 
+            chunk = fo.read(CHUNK)
+            sum.update(chunk)
+
+        if type(file) is types.StringType:
+            fo.close()
+            del fo
+            
+        return sum.hexdigest()
+    except:
+        raise MiscError, 'Error opening file for checksum: %s' % file

@@ -300,7 +300,7 @@ class XMLPackageSack(PackageSack):
                         current+=1
                         po = self.pkgObjectClass(reader, repoid)
                         self.addPackage(po)
-            callback(current, pkgcount, name=repoid)
+            if callback: callback(current, pkgcount, name=repoid)
             ret = reader.Read()
             continue
 
@@ -359,7 +359,7 @@ class XMLPackageSack(PackageSack):
 
                                
             ret = reader.Read()
-            callback(current, pkgcount, name=repoid) # give us some pretty output
+            if callback: callback(current, pkgcount, name=repoid) # give us some pretty output
             continue
 
         # update the repostatus
@@ -410,7 +410,7 @@ class XMLPackageSack(PackageSack):
                     if pkgmatch < 1:
                         # FIXME - raise a warning? Emit error? bitch? moan?
                         pass
-            callback(current, pkgcount, name=repoid)
+            if callback: callback(current, pkgcount, name=repoid)
             ret = reader.Read()
             continue
                                         

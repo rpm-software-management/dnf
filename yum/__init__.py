@@ -115,8 +115,37 @@ class YumBase(depsolve.Depsolve):
         # checksum from po.checksums
         # if we get an error we can't surmount exit and go away
 
+        errors = {}
         for po in pkglist:
-            FIXMEp
+            for (csumtype, csum, csumid) in po.checksums:
+                if csumid:
+                    checksum = csum
+                    checksumType = csumtype
+                    break
+            repo = self.repos.getRepo(po.repoid)
+            remote = po.returnSimple('relativepath')
+            rpmfn = os.path.basename(remote)
+            local = repo.pkgdir + '/' + rpmfn
+            rpmgood = 0
+            retrycount = 0
+            while not rpmgood and retrycount < self.conf.getConfigOption('retries'):
+                try:
+                    mylocal = repo.get(relative=remote, local=local)
+                except Errors.RepoError, e:
+                    errors[po] = e
+                    retrycount+=1
+                else: # no errors doing the download, check the checksum
+                    filesum = misc.checksum(checksumType, local)
+                    if filesum != checksum:
+                        retrycount+=1
+                        self.errorlog(0, 'Package %s does not match checksum, removing' % mylocal)
+                        os.unlink(mylocal)
+                        continue
+                    
+                    if errors.has_key(po):
+                        del errors[po]
+                    rpmgood=1
+                
             
     def _lock(self, filename, contents='', mode=0777):
         try:

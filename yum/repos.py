@@ -293,7 +293,7 @@ class Repository:
                         "Cannot access repository dir %s" % dir
  
 
-    def get(self, url = None, relative=None, local=None, start=None, end=None,
+    def get(self, url=None, relative=None, local=None, start=None, end=None,
             copy_local=0):
         """retrieve file from the mirrorgroup for the repo
            relative to local, optionally get range from
@@ -319,7 +319,8 @@ class Repository:
                 result = ug.urlgrab(remote, local, range=(start, end), 
                                     copy_local=copy_local)
             except URLGrabError, e:
-                raise
+                raise Errors.RepoError, \
+                    "failed to retrieve %s from %s\nerror was %s" % (relative, self.id, e)
               
             # setup a grabber and use it - same general rules
         else:
@@ -327,7 +328,7 @@ class Repository:
                 result = self.grab.urlgrab(relative, local, range=(start, end),
                                            copy_local=copy_local)
             except URLGrabError, e:
-                raise
+                raise "failed to retrieve %s from %s\nerror was %s" % (relative, self.id, e)
                 
         return result
            
