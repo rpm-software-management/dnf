@@ -200,8 +200,6 @@ class RepoStorage:
         for repo in myrepos:
             if not hasattr(repo, 'cacheHandler'):
                 repo.cacheHandler = mdcache.RepodataParser(storedir=repo.cachedir, callback=callback)
-            else:
-                print 'object alread exists'
             for item in data:
                 if self.pkgSack.added.has_key(repo.id):
                     if item in self.pkgSack.added[repo.id]:
