@@ -45,41 +45,54 @@ def main():
     if len(args) < 1:
         usage()
     try:
-        gopts, cmds = getopt.getopt(args, 'c:he:d:y', ['help'])
+        gopts, cmds = getopt.getopt(args, 'c:hr:e:d:y', ['help'])
     except getopt.error, e:
         errorlog(0, 'Options Error: %s' % e)
+        usage()
         sys.exit(1)
     # get the conf stuff first
     # our default config file location
     yumconffile="/etc/yum.conf"
     conf=yumconf(configfile=yumconffile)
+    try: 
+        for o,a in gopts:
+            if o == '-c':
+                yumconffile=a
+                # get rid of the old conf object
+                del conf
+                # setup the conf object
+                conf=yumconf(configfile=yumconffile)
     
-    for o,a in gopts:
-        if o == '-c':
-            yumconffile=a
-            # get rid of the old conf object
-            del conf
-            # setup the conf object
-            conf=yumconf(configfile=yumconffile)
+        for o,a in gopts:
+            if o == '-r':
+                import time
+                import random
+                sleeptime=random.randrange(int(a)*60)
+                # debug print sleeptime
+                time.sleep(sleeptime)
+            
+        # we'd like to have a log object now
+        log=Logger(threshold=conf.debuglevel, file_object=sys.stdout)
     
-    # we'd like to have a log object now
-    log=Logger(threshold=conf.debuglevel, file_object=sys.stdout)
-    
-    for o,a in gopts:
-        if o =='-d':
-            log.threshold=int(a)
-            conf.debuglevel=int(a)
-        if o =='-e':
-            errorlog.threshold=int(a)
-            conf.errorlevel=int(a)
-        if o =='-y':
-            conf.assumeyes=1
-        if o in ('-h', '--help'):
-            usage()
-    if cmds[0] not in ('update', 'upgrade', 'install', 'list', 'erase',\
+        for o,a in gopts:
+            if o =='-d':
+                log.threshold=int(a)
+                conf.debuglevel=int(a)
+            if o =='-e':
+                errorlog.threshold=int(a)
+                conf.errorlevel=int(a)
+            if o =='-y':
+                conf.assumeyes=1
+            if o in ('-h', '--help'):
+                usage()
+        if cmds[0] not in ('update', 'upgrade', 'install', 'list', 'erase',\
                        'grouplist','groupupdate','groupinstall','clean','remove'):
+            usage()
+        process=cmds[0]
+    except ValueError, e:
+        errorlog(0, 'Options Error: %s' % e)
         usage()
-    process=cmds[0]
+        sys.exit(1)
 
     
     # syslog-style log
@@ -228,6 +241,7 @@ def usage():
           -e [error level] - set the error logging level
           -d [debug level] - set the debugging level
           -y answer yes to all questions
+          -r [time in minutes] - set the max amount of time to randonly run in.
           -h, --help this screen
     """
     sys.exit(1)

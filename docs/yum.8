@@ -18,13 +18,13 @@ yum \- Yellowdog Updater Modified
 .br 
 .I \fR * remove [package1] [package2] [\&.\&.\&.]
 .br 
-.I \fR * group\-install group1 [group2] [\&.\&.\&.]
+.I \fR * groupinstall group1 [group2] [\&.\&.\&.]
 .br 
-.I \fR * group\-update group1 [group2] [\&.\&.\&.]
+.I \fR * groupupdate group1 [group2] [\&.\&.\&.]
 .br 
 .I \fR * list [\&.\&.\&.]
 .br 
-.I \fR * group\-list [\&.\&.\&.]
+.I \fR * grouplist [\&.\&.\&.]
 .br 
 .I \fR * clean [packages | headers | old\-headers | all]
 .br 
@@ -95,6 +95,8 @@ Specifies the config file location\&.
 Sets the debugging level to [number] \- turns up or down the amount of things that are printed\&.
 .IP "\fB\-e [number]\fP" 
 Sets the error level to [number] 0 \- 10. 0 means print only critical errors about which you must be told. 1 means print all errors, even ones that are not overly important. 1+ means print more errors (if any) \-e 0 is good for cron jobs.
+.IP "\fB\-r [time in minutes]\fP" 
+Sets the maximum amount of time yum will wait before performing a command \- it randomizes over the time.
 .PP 
 .SH "LIST OPTIONS"
 The following are the ways which you can invoke \fByum\fP in list
