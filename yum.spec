@@ -18,7 +18,7 @@ install updated RPM packages. Dependencies are obtained and downloaded
 automatically prompting the user as necessary.
 
 %prep
-%setup -q -n yum
+%setup -q
 
 %build
 %configure 
