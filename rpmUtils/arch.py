@@ -238,8 +238,11 @@ def getBaseArch(myarch=None):
     if not arches.has_key(myarch): # this is dumb, but <shrug>
         return myarch
         
-    if multilibArches.has_key(myarch):
-        return myarch
+    if isMultiLibArch(arch=myarch):
+        if multilibArches.has_key(myarch):
+            return myarch
+        else:
+            return arches[myarch]
     
     if arches.has_key(myarch):
         basearch = myarch
