@@ -162,10 +162,11 @@ def readHeader(rpmfn):
 		return h
 	else:
 		try:
-			fd=gzip.open(rpmfn,"r")
-		except IOError:
+			fd = gzip.open(rpmfn,"r")
+			h = rpm.headerLoad(fd.read())
+		except IOError,e:
 			fd = open(rpmfn, "r")
-	h = rpm.headerLoad(fd.read())
+			h = rpm.headerLoad(fd.read())
 	fd.close()
 	return h
 
