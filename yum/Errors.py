@@ -49,4 +49,9 @@ class MiscError(YumBaseError):
     def __init__(self, args=None):
         YumBaseError.__init__(self)
         self.args = args
-    
+
+class GroupsError(YumBaseError):
+    def __init__(self, args=None):
+        YumBaseError.__init__(self)
+        self.args = args
+

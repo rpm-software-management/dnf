@@ -66,25 +66,6 @@ class YumBaseCli(yum.YumBase):
                 sys.exit(1)
         self.doSackSetup()
     
-    def doGroupSetup(self):
-        """determines which repos have groups and builds the groups lists"""
-        
-        self.grpInfo = yum.yumcomps.Groups_Info(self.rpmdb.getPkgList(),
-                                 self.conf.getConfigOption('overwrite_groups'))
-                                 
-        for repo in self.repos.listGroupsEnabled():
-            groupfile = repo.getGroups()
-            if groupfile:
-                self.log(4, 'Group File found for %s' % repo)
-                self.log(4, 'Adding Groups from %s' % repo)
-                self.grpInfo.add(groupfile)
-
-        if self.grpInfo.compscount > 0:
-            self.grpInfo.compileGroups()
-        else:
-            self.errorlog(0, _('No groups provided or accessible on any repository.'))
-            self.errorlog(1, _('Exiting.'))
-            sys.exit(1)
         
     def getOptionsConfig(self, args):
         """parses command line arguments, takes cli args:
@@ -397,6 +378,20 @@ class YumBaseCli(yum.YumBase):
             # if we're cleaning then we don't need to talk to the net
             self.conf.setConfigOption('cache', 1)
         
+        elif self.basecmd in ['groupupdate', 'groupinstall', 'groupremove', 
+                              'grouplist']:
+            self.doRepoSetup()
+            self.doRpmDBSetup()
+            try:
+                self.doGroupSetup()
+            except yum.Errors.GroupsError:
+                return 1, ['No Groups on which to run command']
+            except yum.Errors.YumBaseError, e:
+                return 1, [str(e)]
+                
+            if self.basecmd == 'grouplist':
+                self.groupInfo._dumppkgs()
+                return 0, []
         else:
             return 1, ['command not implemented yet']
 

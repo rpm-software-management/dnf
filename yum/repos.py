@@ -406,8 +406,9 @@ class Repository:
         fname = os.path.basename(remote)
         local = self.cachedir + '/' + fname
 
-        if self.retrieved[mdtype]: # got it, move along
-            return local
+        if self.retrieved.has_key(mdtype):
+            if self.retrieved[mdtype]: # got it, move along
+                return local
 
         if self.cache == 1:
             if os.path.exists(local):

@@ -3,6 +3,7 @@
 import comps
 import sys
 from libxml2 import parserError
+from Errors import GroupsError
 
 # goals
 # be able to list which groups a user has installed based on whether or
@@ -63,11 +64,12 @@ class Groups_Info:
         try:
             compsobj = comps.Comps(filename)
         except comps.CompsException, e:
-            print 'Damaged xml file error:\n %s' % e
+            raise GroupsError, 'Damaged xml file error:\n %s' % e
             return
         except parserError, e:
-            print 'Damaged or Empty xml file error: \n %s' % e
+            raise GroupsError, 'Damaged or Empty xml file error:\n %s' % e
             return
+
         self.compscount = self.compscount + 1
         groupsobj = compsobj.groups
         groups = groupsobj.keys()
@@ -217,7 +219,7 @@ class Groups_Info:
         
     def _get_installed(self, pkgs):
         for (n, a, e, v, r) in pkgs:
-            self.installed_pkgs[n]=1
+            self.installed_pkgs[n] = 1
         
         
     def isGroupInstalled(self, groupname):
@@ -305,9 +307,13 @@ class Groups_Info:
                 print '   %s' % item
         for group in groups:
             print 'Inst Pkgs: %s' % group
-            self.pkgs_per_group[group].sort()
-            for pkg in self.pkgs_per_group[group]:
-                print '   %s' % pkg
+            try:
+                self.pkgs_per_group[group].sort()
+            except KeyError:
+                print 'Error: Empty Group %s' % group
+            else:
+                for pkg in self.pkgs_per_group[group]:
+                    print '   %s' % pkg
                 
 
 

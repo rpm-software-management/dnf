@@ -22,9 +22,12 @@ import Errors
 
 import rpmUtils
 import rpmUtils.transaction
+import groups
 from urlgrabber.grabber import URLGrabError
 import depsolve
+
 from packages import parsePackages
+from repomd import mdErrors
 
 class YumBase(depsolve.Depsolve):
     """This is a primary structure and base class. It houses the objects and
@@ -63,7 +66,6 @@ class YumBase(depsolve.Depsolve):
         for repo in self.repos.listEnabled():
             self.excludePackages(repo)
 
-
     def doUpdateSetup(self):
         """setups up the update object in the base class and fills out the
            updates, obsoletes and others lists"""
@@ -84,7 +86,38 @@ class YumBase(depsolve.Depsolve):
 
         self.up.condenseUpdates()
         
+    
+    def doGroupSetup(self):
+        """create the groups object that will store the comps metadata
+           finds the repos with groups, gets their comps data and merge it
+           into the group object"""
         
+        reposWithGroups = []
+        for repo in self.repos.listGroupsEnabled():
+            if repo.repoXML is None:
+                raise Errors.RepoError, "Repository '%s' not yet setup" % repo
+            try:
+                groupremote = repo.repoXML.groupLocation()
+            except mdErrors.RepoMDError, e:
+                pass
+            else:
+                reposWithGroups.append(repo)
+        # now we know which repos actually have groups files.
+        
+        pkgtuples = self.rpmdb.getPkgList()
+        overwrite = self.conf.getConfigOption('overwrite_groups')
+        self.groupInfo = groups.Groups_Info(pkgtuples, overwrite_groups = overwrite)
+
+        for repo in reposWithGroups:
+            groupfile = repo.getGroups()
+            self.groupInfo.add(groupfile)
+
+        if self.groupInfo.compscount == 0:
+            raise Errors.GroupsError, 'No Groups Available in any repository'
+
+        self.groupInfo.compileGroups()
+
+
     def buildTransaction(self):
         """go through the packages in the transaction set, find them in the
            packageSack or rpmdb, and pack up the ts accordingly"""
