@@ -154,7 +154,7 @@ class Depsolve:
                 for idx in indexes:
                     self.ts.addErase(idx)
                     if self.dsCallback: self.dsCallback.pkgAdded(txmbr.pkgtup, 'e')
-                    self.log(4, 'Removing Package %s-%s-%s.%s' % (txmbr.name, txmbr.ver, txmbr.rel, txmbr.arch))
+                    self.log(4, 'Removing Package %s' % txmbr.po)
         
     def resolveDeps(self):
 
