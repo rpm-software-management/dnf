@@ -182,8 +182,11 @@ class HTTPResponse(httplib.HTTPResponse):
     # modification from socket.py
     
 
-    def __init__(self, sock, debuglevel=0, strict=0):
-        httplib.HTTPResponse.__init__(self, sock, debuglevel)
+    def __init__(self, sock, debuglevel=0, strict=0, method=None):
+        if method: # the httplib in python 2.3 uses the method arg
+            httplib.HTTPResponse.__init__(self, sock, debuglevel, method)
+        else: # 2.2 doesn't
+            httplib.HTTPResponse.__init__(self, sock, debuglevel)
         self.fileno = sock.fileno
         self._rbuf = ''
         self._rbufsize = 8096
