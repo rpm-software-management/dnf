@@ -218,9 +218,9 @@ def whatprovides(usereq, nulist, nevral, localrpmdb):
     # deal with "where the hell is the pkg - hi or rpm
     # figure out how to make nevral.getHeader more robust
     results = 0
-    if localrpmdb = 0:
+    if localrpmdb == 0:
         for (name, arch) in nulist:
-            hdr = hinevral.getHeader(name, arch)
+            hdr = nevral.getHeader(name, arch)
             fullprovideslist = hdr[rpm.RPMTAG_PROVIDES] + hdr[rpm.RPMTAG_FILENAMES]
             if hdr[rpm.RPMTAG_DIRNAMES] != None:
                 fullprovideslist = fullprovideslist + hdr[rpm.RPMTAG_DIRNAMES]
@@ -231,9 +231,9 @@ def whatprovides(usereq, nulist, nevral, localrpmdb):
                         results = results + 1
                         log(2,'Available package: %s provides %s' % (name, item))
             del fullprovideslist
-    elif localrpmdb = 1:
-        for (name, arch) in rpmnevral.NAkeys():
-            hdr=rpmnevral.getHeader(name,arch)
+    elif localrpmdb == 1:
+        for (name, arch) in nevral.NAkeys():
+            hdr=nevral.getHeader(name,arch)
             fullprovideslist = hdr[rpm.RPMTAG_PROVIDES] + hdr[rpm.RPMTAG_FILENAMES]
             if hdr[rpm.RPMTAG_DIRNAMES] != None:
                 fullprovideslist = fullprovideslist + hdr[rpm.RPMTAG_DIRNAMES]
@@ -252,7 +252,6 @@ def whatprovides(usereq, nulist, nevral, localrpmdb):
         log(2,'%s results returned' % results)
     else:
         log(2,'No packages found')
-    sys.exit(0)
     
     
 

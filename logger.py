@@ -1,6 +1,3 @@
-import sys
-import string
-
 """
 A module for convenient yet powerful file-object logging
 
@@ -67,7 +64,8 @@ BASIC OPTIONS
   
   file_object
 
-    This is the file object to which output is directed.
+    This is the file object to which output is directed.  If it is None,
+    then the logs are quietly dropped.
 
 LOG CONTAINERS
 
@@ -127,13 +125,35 @@ COMMENTS
   I welcome comments, questions, bug reports and requests... I'm very
   lonely. :)
 """
- 
+
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Library General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+
+# Copyright 2001-2002 Michael D. Stenner
+
+import sys
+import string
+
+
 AUTHOR  = "Michael D. Stenner <mstenner@phy.duke.edu>"
-VERSION = "0.4"
-DATE    = "2002/06/07"
+VERSION = "0.6"
+DATE    = "2002/08/13"
+URL     = "http://www.dulug.duke.edu/~mstenner/software/logger/"
 
 class Logger:
-    """
+    """A class for file-object logging
+    
     USAGE:
       from logger import Logger
 
@@ -146,10 +166,12 @@ class Logger:
       log_obj.test(3)                 # boolean - would a message of
                                       # this priority be printed?
 
-      # a raw write call after the priority test, for writing arbitrary text
-      log_obj.write(3, 'thing\nto\nwrite')  # (will not be followed by \n)
-      
-      pr = log_obj.gen_prefix(3)  # generate the prefix used for priority 3
+      # a raw write call after the priority test, for writing
+      # arbitrary text -- (this will not be followed by \\n)
+      log_obj.write(3, 'thing\\nto\\nwrite')  
+
+      # generate the prefix used for priority 3
+      pr = log_obj.gen_prefix(3)
 
       # see the examples in the test section for more
 
@@ -194,7 +216,7 @@ class Logger:
 
         """
         Return true if a log of the given priority would be printed.
-
+        
         This can be overridden to do any test you like.  Specifically,
         log and threshold need not be integers.  They be arbitrary
         objects.  You need only override this method, possibly
@@ -232,6 +254,7 @@ class Logger:
         """
         p, m = self._use_default(priority, message)
         if self.test(p):
+            if self.file_object is None: return
             if type(m) == type(''): # message is a string
                 mlist = string.split(m, '\n')
                 if mlist[-1] == '': del mlist[-1] # string ends in \n
@@ -252,7 +275,9 @@ class Logger:
         as it will be passed directly to the file object's write method.
         """
         p, m = self._use_default(priority, message)
-        if self.test(p): self.file_object.write(m)
+        if self.test(p):
+            if self.file_object is None: return
+            self.file_object.write(m)
 
     def _use_default(self, priority, message):
         """Substitute default priority if none was provided"""
@@ -260,21 +285,47 @@ class Logger:
         else: return priority, message
 
 class LogContainer:
+    """A class for consolidating calls to multiple Logger objects
+
+    USAGE:
+      from logger import Logger, LogContainer
+
+      log_1 = Logger(threshold=1, file_object=sys.stdout)
+      log_2 = Logger(threshold=2, preprefix='LOG2')
+
+      log = LogContainer([log_1, log_2])
+
+      log(1, 'message')               # printed by log_1 and log_2
+      log(2, 'message')               # only printed by log_2
+
+    ATTRIBUTES:
+      (all of these are settable as keyword args to __init__)
+
+      ATTRIBUTES   DEFAULT      DESCRIPTION
+      ----------------------------------------------------------
+      list         = []         list of Logger objects
+      threshold    = None       meaning depends on test - by default
+                                threshold has no effect
+      default      = 1          default priority to log at
+
+    """
+
+
     def __init__(self, list=[], threshold=None, default=1):
-        self.logger_list = list
+        self.list = list
         self.threshold = threshold
         self.default = default
 
     def add(self, log_obj):
         """Add a log object to the container."""
-        self.logger_list.append(log_obj)
+        self.list.append(log_obj)
 
     def log(self, priority, message=None):
         """Log a message to all contained log objects, depending on
         the results of test()
         """
         p, m = self._use_default(priority, message)
-        for log_obj in self.logger_list:
+        for log_obj in self.list:
             if self.test(p, m, self.threshold, log_obj):
                 log_obj.log(p, m)
 
@@ -282,7 +333,7 @@ class LogContainer:
     
     def write(self, priority, message=None):
         p, m = self._use_default(priority, message)
-        for log_obj in self.logger_list:
+        for log_obj in self.list:
             if self.test(p, m, self.threshold, log_obj):
                 log_obj.write(p, m)
 
@@ -379,3 +430,7 @@ if __name__ == '__main__':
     print "\n print some complex object"
     log(1, {'key': 'value'}) # non-strings should be no trouble
 
+    print "\n now set the file object to None (nothing should be printed)"
+    log.file_object = None
+    log("THIS SHOULD NOT BE PRINTED")
+    log.write("THIS SHOULD NOT BE PRINTED")

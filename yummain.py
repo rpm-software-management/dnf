@@ -31,7 +31,8 @@ def parseCmdArgs(args):
     
     # setup our errorlog object 
     errorlog=Logger(threshold=10, file_object=sys.stderr)
-
+    
+    
     # our default config file location
     yumconffile=None
     if os.access("/etc/yum.conf", os.R_OK):
@@ -67,12 +68,18 @@ def parseCmdArgs(args):
             errorlog(0, 'Cannot find any conf file.')
             sys.exit(1)
 
+        # who are we:
+        conf.uid=os.geteuid()
+
             
         # we'd like to have a log object now
         log=Logger(threshold=conf.debuglevel, file_object=sys.stdout)
         # syslog-style log
-        logfile=open(conf.logfile,"a")
-        filelog=Logger(threshold=10, file_object=logfile,preprefix=clientStuff.printtime())
+        if conf.uid == 0:
+            logfile=open(conf.logfile,"a")
+            filelog=Logger(threshold=10, file_object=logfile,preprefix=clientStuff.printtime())
+        else:
+            filelog=Logger(threshold=10, file_object=None,preprefix=clientStuff.printtime())
 
         for o,a in gopts:
             if o =='-d':
@@ -97,14 +104,13 @@ def main(args):
     """This does all the real work"""
 
     ##############################################################
-    # who are we:
-    uid=os.geteuid()
+
         
     if len(args) < 1:
         usage()
     (log, errorlog, filelog, conf, cmds) = parseCmdArgs(args)
 
-    if uid != 0:
+    if conf.uid != 0:
         conf.cache=1
 
     if cmds[0] not in ('update', 'upgrade', 'install','info', 'list', 'erase',\
@@ -214,14 +220,14 @@ def main(args):
             errorlog(1, 'Exiting on user command.')
             sys.exit(1)
     
-    if uid==0:
+    if conf.uid==0:
         dbfin = clientStuff.openrpmdb(1, '/')
     else:
         dbfin = clientStuff.openrpmdb(0, '/')
     
     tsfin = clientStuff.create_final_ts(tsInfo, dbfin)
 
-    if uid == 0:
+    if conf.uid == 0:
         # sigh - the magical "order" command - nice of this not to really be documented anywhere.
         tsfin.order()
         errors = tsfin.run(0, 0, callback.install_callback, '')

@@ -556,6 +556,10 @@ def download_headers(HeaderInfo, nulist):
 def take_action(cmds, nulist, uplist, newlist, obslist, tsInfo, HeaderInfo, rpmDBInfo, obsdict):
     import pkgaction
     from yummain import usage
+    if conf.uid != 0:
+        if cmds[0] in ['install','update','clean','upgrade']:
+            errorlog(0, 'You need to be root to perform these commands')
+            sys.exit(1)
     if cmds[0] == 'install':
         cmds.remove(cmds[0])
         if len(cmds) == 0:
@@ -573,7 +577,7 @@ def take_action(cmds, nulist, uplist, newlist, obslist, tsInfo, HeaderInfo, rpmD
             pkgaction.whatprovides(cmds, nulist, HeaderInfo,0)
             log(2, 'Looking in installed packages for a providing package')
             pkgaction.whatprovides(cmds, nulist, rpmDBInfo,1)
-            
+        sys.exit(0)
     elif cmds[0] == 'update':
         cmds.remove(cmds[0])
         if len(cmds) == 0:
