@@ -40,12 +40,6 @@ class Depsolve:
         #FIXME - should add flags and macros here
         self.ts = rpmUtils.transaction.TransactionWrapper() # deal with flags, etc
 
-    def whatProvides(self, req):
-        """tells you what provides the requested string"""
-        
-    def whatConflicts(self, pkgtup):
-        """tells you what packages conflict with the requested pkg"""
-
     def getPackageObject(self, pkgtup):
         """retrieves the packageObject from a pkginfo tuple - if we need
            to pick and choose which one is best we better call out
