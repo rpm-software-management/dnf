@@ -333,6 +333,6 @@ def initReadOnlyTransaction(root='/'):
     #global read_ts
     #if read_ts == None:
     read_ts =  TransactionWrapper(root=root)
-    read_ts.pushVSFlags(~(rpm._RPMVSF_NOSIGNATURES|rpm._RPMVSF_NODIGESTS))
+    read_ts.pushVSFlags((rpm._RPMVSF_NOSIGNATURES|rpm._RPMVSF_NODIGESTS))
     return read_ts
 
