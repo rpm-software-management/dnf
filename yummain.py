@@ -211,6 +211,11 @@ def main():
 		elif tsInfo.state(name,arch) == 'e':
 			tsfin.remove(name)
 
+	#NTS XXXX - this is where sigchecking should occur - it should grab all the pkgs in the i, u or ud states and look for their
+	#rpmpath - and pass that to checksig - it should check the serversig[serverid] if its on then check the gpg sig and md5 sig if
+	#its off then just check the md5 sig
+	
+	
 	#one last test run for diskspace
 	errors = tsfin.run(rpm.RPMTRANS_FLAG_TEST, ~rpm.RPMPROB_FILTER_DISKSPACE, callback.install_callback, 'test')
 	if errors:
