@@ -86,6 +86,7 @@ class yumconf(object):
                          ('bandwidth', None),
                          ('throttle', None),
                          ('retries', 10),
+                         ('numrecent', 30),
                          ('installroot', '/'),
                          ('commands', []),
                          ('exclude', []),

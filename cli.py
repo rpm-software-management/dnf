@@ -674,7 +674,7 @@ class YumBaseCli(yum.YumBase):
             pass
 
         elif pkgnarrow == 'recent':
-            num_pkgs = self.conf.getConfigOption('numrecent')
+            #num_pkgs = int(self.conf.getConfigOption('numrecent'))
             ftimehash = {}
             self.doRepoSetup()
             for po in self.pkgSack.returnPackages():
@@ -687,14 +687,9 @@ class YumBaseCli(yum.YumBase):
             timekeys = ftimehash.keys()
             timekeys.sort()
             timekeys.reverse()
-            count = 0
             for sometime in timekeys:
                 for po in ftimehash[sometime]:
-                    if count < num_pkgs:
-                        recent.append(po)
-                        count += 1
-                    else:
-                        break
+                    recent.append(po)
         
         returndict = {}
         for (lst, description) in [(updates, 'Updated'), (available, 'Available'), 
@@ -705,6 +700,11 @@ class YumBaseCli(yum.YumBase):
                 self.log(4, 'Matching packages for %s list to user args' % description)
                 exactmatch, matched, unmatched = yum.packages.parsePackages(lst, self.extcmds)
                 lst = yum.misc.unique(matched + exactmatch)
+                
+            # reduce recent to the top N
+            if description == 'Recently available':
+                num = int(self.conf.getConfigOption('numrecent'))
+                lst = lst[:num]
 
             returndict[description] = lst
 
