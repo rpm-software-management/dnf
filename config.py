@@ -17,7 +17,7 @@
 import ConfigParser,sys,os, urlparse, string
 class yumconf:
 
-    def __init__(self, configfile="/etc/yum.conf"):
+    def __init__(self, configfile = '/etc/yum.conf'):
         self.cfg = ConfigParser.ConfigParser()
         self.cfg.read(configfile)
         self.servers = []
@@ -55,7 +55,7 @@ class yumconf:
             
         if len(self.cfg.sections()) > 1:
             for section in self.cfg.sections(): # loop through the list of sections
-                if section != 'main': #must be a serverid
+                if section != 'main': # must be a serverid
                     name = self._getoption(section,'name')
                     url = self._getoption(section,'baseurl')
                     if name != None and url != None:
@@ -67,27 +67,27 @@ class yumconf:
                         else:
                             self.servergpgcheck[section]=0
                         (s,b,p,q,f,o) = urlparse.urlparse(self.serverurl[section])
-                        #currently only allowing http and ftp servers 
+                        # currently only allowing http and ftp servers 
                         if s not in ['http', 'ftp']:
-                            print "Not using ftp or http for servers, Aborting - %s" % (self.serverurl[section])
+                            print 'Not using ftp or http for servers, Aborting - %s' % (self.serverurl[section])
                             sys.exit(1)
                         cache = os.path.join(self.cachedir,section)
-                        pkgdir = os.path.join(cache,'packages')
-                        hdrdir = os.path.join(cache,'headers')
+                        pkgdir = os.path.join(cache, 'packages')
+                        hdrdir = os.path.join(cache, 'headers')
                         self.servercache[section] = cache
                         self.serverpkgdir[section] = pkgdir
                         self.serverhdrdir[section] = hdrdir
                     else:
-                        print "Error: Cannot find baseurl or name for server '%s'. Skipping" %(section)    
+                        print 'Error: Cannot find baseurl or name for server \'%s\'. Skipping' %(section)    
         else:
-            print "Insufficient server config - no servers found. Aborting."
+            print 'Insufficient server config - no servers found. Aborting.'
             sys.exit(1)
 
     def _getoption(self, section, option):
         try:
             return self.cfg.get(section, option)
         except ConfigParser.NoSectionError, e:
-            print "Failed to find section: %s" % section
+            print 'Failed to find section: %s' % section
         except ConfigParser.NoOptionError, e:
             return None
 

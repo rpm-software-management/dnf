@@ -23,8 +23,8 @@ import getopt
 
 def main():
     """This does all the real work"""
-    #parse commandline options here - leave the user instructions (cmds) 
-    #until after the startup stuff is done
+    # parse commandline options here - leave the user instructions (cmds) 
+    # until after the startup stuff is done
 
     import clientStuff
     import nevral
@@ -34,20 +34,20 @@ def main():
     from config import yumconf
 
     ##############################################################
-    #who are we:
+    # who are we:
     uid=os.geteuid()
     # setup our errorlog object - need to get the config file before
     # we do filelog and log
-    #errorlog - sys.stderr - always
+    # errorlog - sys.stderr - always
     errorlog=Logger(threshold=10, file_object=sys.stderr)
 
     args = sys.argv[1:]
     if len(args) < 1:
         usage()
     try:
-        gopts,cmds = getopt.getopt(args, 'c:he:d:y',['help'])
+        gopts, cmds = getopt.getopt(args, 'c:he:d:y', ['help'])
     except getopt.error, e:
-        errorlog(0,"Options Error: %s" % e)
+        errorlog(0, 'Options Error: %s' % e)
         sys.exit(1)
     # get the conf stuff first
     # our default config file location
@@ -57,7 +57,7 @@ def main():
     for o,a in gopts:
         if o == '-c':
             yumconffile=a
-            #get rid of the old conf object
+            # get rid of the old conf object
             del conf
             # setup the conf object
             conf=yumconf(configfile=yumconffile)
@@ -76,16 +76,17 @@ def main():
             conf.assumeyes=1
         if o in ('-h', '--help'):
             usage()
-    if cmds[0] not in ('update','upgrade','install','list','erase','grouplist','groupupdate','groupinstall','clean','remove'):
+    if cmds[0] not in ('update', 'upgrade', 'install', 'list', 'erase',\
+                       'grouplist','groupupdate','groupinstall','clean','remove'):
         usage()
     process=cmds[0]
 
     
-    #syslog-style log
+    # syslog-style log
     logfile=open(conf.logfile,"a")
     filelog=Logger(threshold=10, file_object=logfile,preprefix=clientStuff.printtime())
 
-    #push the logs into the other namespaces
+    # push the logs into the other namespaces
     pkgaction.log=log
     clientStuff.log=log
     nevral.log=log
@@ -98,118 +99,120 @@ def main():
     clientStuff.filelog=filelog
     nevral.filelog=filelog
 
-    #push the conf file into the other namespaces
+    # push the conf file into the other namespaces
     nevral.conf=conf
     clientStuff.conf=conf
     pkgaction.conf=conf
     callback.conf=conf
 
-    #make remote nevral class
+    # make remote nevral class
     HeaderInfo = nevral.nevral()
     
-    #get the package info file
+    # get the package info file
     clientStuff.get_package_info_from_servers(conf, HeaderInfo)
     
-    #make local nevral class
+    # make local nevral class
     rpmDBInfo = nevral.nevral()
     clientStuff.rpmdbNevralLoad(rpmDBInfo)
 
-    #create transaction set nevral class
+    # create transaction set nevral class
     tsInfo = nevral.nevral()
     #################################################################################
-    #generate all the lists we'll need to quickly iterate through the lists.
-    #uplist == list of updated packages
-    #newlist == list of uninstall/available NEW packages (ones we don't any copy of)
-    #nulist == combination of the two
-    #obslist == packages obsoleting a package we have installed
+    # generate all the lists we'll need to quickly iterate through the lists.
+    #  uplist == list of updated packages
+    #  newlist == list of uninstall/available NEW packages (ones we don't any copy of)
+    #  nulist == combination of the two
+    #  obslist == packages obsoleting a package we have installed
     ################################################################################
-    log(2,"Finding updated packages")
-    (uplist,newlist,nulist) = clientStuff.getupdatedhdrlist(HeaderInfo,rpmDBInfo)
-    log(2,"Downloading needed headers")
+    log(2, 'Finding updated packages')
+    (uplist, newlist, nulist) = clientStuff.getupdatedhdrlist(HeaderInfo, rpmDBInfo)
+    log(2, 'Downloading needed headers')
     clientStuff.download_headers(HeaderInfo, nulist)
-    log(2,"Finding obsoleted packages")
-    obsdict=clientStuff.returnObsoletes(HeaderInfo,rpmDBInfo,nulist)
+    log(2, 'Finding obsoleted packages')
+    obsdict=clientStuff.returnObsoletes(HeaderInfo, rpmDBInfo, nulist)
     obslist=obsdict.keys()
     
-    log(4,"nulist = %s" % len(nulist))
-    log(4,"uplist = %s" % len(uplist))
-    log(4,"newlist = %s" % len(newlist))
-    log(4,"obslist = %s" % len(obslist))
+    log(4, 'nulist = %s' % len(nulist))
+    log(4, 'uplist = %s' % len(uplist))
+    log(4, 'newlist = %s' % len(newlist))
+    log(4, 'obslist = %s' % len(obslist))
     
     ##################################################################
-    #at this point we have all the prereq info we could ask for. we 
-    #know whats in the rpmdb whats available, whats updated and what 
-    #obsoletes. We should be able to do everything we want from here 
-    #w/o getting anymore header info
+    # at this point we have all the prereq info we could ask for. we 
+    # know whats in the rpmdb whats available, whats updated and what 
+    # obsoletes. We should be able to do everything we want from here 
+    # w/o getting anymore header info
     ##################################################################
 
-    clientStuff.take_action(cmds,nulist,uplist,newlist,obslist,tsInfo,HeaderInfo,rpmDBInfo,obsdict)
+    clientStuff.take_action(cmds, nulist, uplist, newlist, obslist, tsInfo,\
+                            HeaderInfo, rpmDBInfo, obsdict)
     
-    #at this point we should have a tsInfo nevral with all we need to complete our task.
-    #if for some reason we've gotten all the way through this step with an empty tsInfo then exit and be confused :)
+    # at this point we should have a tsInfo nevral with all we need to complete our task.
+    # if for some reason we've gotten all the way through this step with 
+    # an empty tsInfo then exit and be confused :)
     if len(tsInfo.NAkeys()) < 1:
-        log(2,"No actions to take")
+        log(2, 'No actions to take')
         sys.exit(0)
         
-    if process not in ('erase','remove'):
-        #put available pkgs in tsInfonevral in state 'a'
-        for (name,arch) in nulist:
+    if process not in ('erase', 'remove'):
+        # put available pkgs in tsInfonevral in state 'a'
+        for (name, arch) in nulist:
             if not tsInfo.exists(name, arch):
-                ((e, v, r, a, l, i), s)=HeaderInfo._get_data(name,arch)
-                log(6,"making available: %s" % name)
-                tsInfo.add((name,e,v,r,arch,l,i),'a')   
+                ((e, v, r, a, l, i), s)=HeaderInfo._get_data(name, arch)
+                log(6,'making available: %s' % name)
+                tsInfo.add((name, e, v, r, arch, l, i), 'a')   
 
-    log(2,"Resolving dependencies")
+    log(2, 'Resolving dependencies')
     (code, msgs) = tsInfo.resolvedeps(rpmDBInfo)
     if code == 1:
         for msg in msgs:
             print msg
         sys.exit(1)
-    log(2,"Dependencies resolved")
+    log(2, 'Dependencies resolved')
     
-    #prompt for use permission to do stuff in tsInfo - list all the actions 
-    #(i, u, e, ed, ud,iu(installing, but marking as 'u' in the actual ts, just in case)) confirm w/the user
+    # prompt for use permission to do stuff in tsInfo - list all the actions 
+    # (i, u, e, ed, ud,iu(installing, but marking as 'u' in the actual ts, just in case)) confirm w/the user
     
-    (i_list,u_list,e_list,ud_list,ed_list)=clientStuff.actionslists(tsInfo)
+    (i_list, u_list, e_list, ud_list, ed_list)=clientStuff.actionslists(tsInfo)
     
-    clientStuff.printactions(i_list,u_list,e_list,ud_list,ed_list)
+    clientStuff.printactions(i_list, u_list, e_list, ud_list, ed_list)
     if conf.assumeyes==0:
         if clientStuff.userconfirm():
-            errorlog(1,"Exiting on user command.")
+            errorlog(1, 'Exiting on user command.')
             sys.exit(1)
     
     if uid==0:
-        dbfin = clientStuff.openrpmdb(1,'/')
+        dbfin = clientStuff.openrpmdb(1, '/')
     else:
-        dbfin = clientStuff.openrpmdb(0,'/')
+        dbfin = clientStuff.openrpmdb(0, '/')
     
-    tsfin = clientStuff.create_final_ts(tsInfo,dbfin)
+    tsfin = clientStuff.create_final_ts(tsInfo, dbfin)
 
     if uid == 0:
-        #sigh - the magical "order" command - nice of this not to really be documented anywhere.
+        # sigh - the magical "order" command - nice of this not to really be documented anywhere.
         tsfin.order()
         errors = tsfin.run(0, 0, callback.install_callback, '')
         if errors:
-            errorlog(0,"Errors installing:")
+            errorlog(0, 'Errors installing:')
             for error in errors:
-                errorlog(0,error)
+                errorlog(0, error)
             sys.exit(1)
         
         del dbfin
         del tsfin
         
-        #Check to see if we've got a new kernel and put it in the right place in grub/lilo
+        # Check to see if we've got a new kernel and put it in the right place in grub/lilo
         pkgaction.kernelupdate(tsInfo)
         
-        #log what we did and also print it out
-        clientStuff.filelogactions(i_list,u_list,e_list,ud_list,ed_list)
-        clientStuff.shortlogactions(i_list,u_list,e_list,ud_list,ed_list)
+        # log what we did and also print it out
+        clientStuff.filelogactions(i_list, u_list, e_list, ud_list, ed_list)
+        clientStuff.shortlogactions(i_list, u_list, e_list, ud_list, ed_list)
         
     else:
-        errorlog(1,"You're not root, we can't install things")
+        errorlog(1, 'You\'re not root, we can\'t install things')
         sys.exit(0)
         
-    log(2,"Transaction(s) Complete")
+    log(2, 'Transaction(s) Complete')
     sys.exit(0)
 
 
@@ -221,6 +224,7 @@ def usage():
                 | groupupdate | list | grouplist | clean>
                 
          Options:
+          -c [config file] - specify the config file to use
           -e [error level] - set the error logging level
           -d [debug level] - set the debugging level
           -y answer yes to all questions

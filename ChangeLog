@@ -1,3 +1,58 @@
+2002-07-01 02:08  skvidal
+
+	* Makefile.in: 
+	date stamps for daily
+
+2002-07-01 01:26  skvidal
+
+	* Makefile.in, docs/Makefile.in, etc/Makefile.in, sbin/Makefile.in:
+	
+	add entries to Makefiles to make a daily tar-ball option
+
+2002-07-01 01:01  skvidal
+
+	* clientStuff.py, config.py, nevral.py, yummain.py: 
+	
+	switched from tabs to spaces modified startup so a -c [config file]
+	option is available probably broke the world moving shit around.
+
+2002-06-30 02:53  skvidal
+
+	* archwork.py, callback.py, clientStuff.py, config.py,
+	depchecktree.py, iutil.py, lilo.py, lilocfg.py, nevral.py,
+	pkgaction.py, pullheaders.py, serverStuff.py, translate.py,
+	yummain.py, sbin/yum: 
+	all files modified for tab->space conversion.,
+	
+	god, shit will probably break
+
+2002-06-30 00:43  skvidal
+
+	* yum.spec: 
+	fixed the spec file.
+
+2002-06-29 15:15  skvidal
+
+	* clientStuff.py, pullheaders.py, yum.spec: 
+	my doesn't that just suck - occasionally rpm.labelCompare returns <
+	-1 <boggle> thanks to icon and hunter
+
+2002-06-28 22:03  skvidal
+
+	* docs/yum-arch.8: 
+	
+	fixed typo from yup to yum :) thanks icon
+
+2002-06-21 13:55  skvidal
+
+	* TODO: 
+	more extreme wishlist items
+
+2002-06-19 20:05  skvidal
+
+	* ChangeLog: 
+	updated changelog
+
 2002-06-19 20:05  skvidal
 
 	* Makefile.in, docs/yum.8: 

@@ -53,16 +53,16 @@ def betterarch(arch1, arch2):
 
 def bestarch(archlist):
 
-    currentarch='garbage'
+    currentarch = 'garbage'
     for arch in archlist:
-        if currentarch==None:
+        if currentarch == None:
             currentarch = betterarch('garbage', arch)
         else:
             currentarch = betterarch(currentarch, arch)
     return currentarch
     
 
-def availablearchs(hinevral,name):
+def availablearchs(hinevral, name):
     archdict = {}
     archdict['i386']=['i386','i486','i586','i686','athlon','noarch']
     archdict['alpha']=['alpha','alphaev6','noarch']
@@ -73,7 +73,7 @@ def availablearchs(hinevral,name):
     archlist = []
     
     for arch in archdict[myarch]:
-        if hinevral.exists(name,arch):
+        if hinevral.exists(name, arch):
             archlist.append(arch)
     return archlist
 
