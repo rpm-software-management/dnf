@@ -47,8 +47,7 @@ class TransactionData:
         
         return 0
 
-            
-        
+
 
 class TransactionMember:
     """Class to describe a Transaction Member (a pkg to be installed/
@@ -56,17 +55,18 @@ class TransactionMember:
     
     def __init__(self):
         # holders for data
-        self.pkgtup = None
-        self.current_state = None
-        self.future_state = None
-        self.reason = None
-        self.repoid = None
+        self.pkgtup = None # package tuple
+        self.current_state = None # where the package currently is (repo, installed)
+        self.ts_state = None # what state to put it into in the transaction set
+        self.output_state = None # what state to list if printing it
+        self.reason = None # reason for it to be in the transaction set
+        self.repoid = None # repository id (if any)
         self.name = None
         self.arch = None
         self.epoch = None
         self.ver = None
         self.rel = None
-        self.process = None
+        self.process = None # 
         self.relatedto = [] # ([relatedpkg, relationship)]
         self.groups = [] # groups it's in
         self.pkgid = None # pkgid from the package, if it has one, so we can find it
