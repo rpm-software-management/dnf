@@ -160,8 +160,8 @@ class YumSqlitePackageSack(repos.YumPackageSack):
             for ob in cur.fetchall():
                 found = True
                 dirname = ob['filelist.dirname']
-                filetypes = ob['filelist.filetypes'].split('/')
-                filenames = ob['filelist.filenames'].split('/')
+                filetypes = decodefiletypelist(ob['filelist.filetypes'])
+                filenames = decodefilenamelist(ob['filelist.filenames'])
                 while(filenames):
                     filename = dirname+'/'+filenames.pop()
                     filetype = filetypes.pop()
@@ -205,7 +205,7 @@ class YumSqlitePackageSack(repos.YumPackageSack):
                 if (self.excludes[rep].has_key(ob['packages.pkgId'])):
                     continue
                 real = False
-                for filename in ob['filelist.filenames'].split('/'):
+                for filename in decodefilenamelist(ob['filelist.filenames']):
                     if (ob['filelist.dirname']+'/'+filename).find(name) != -1:
                         real = True
                 if (not real):
@@ -428,4 +428,29 @@ class YumSqlitePackageSack(repos.YumPackageSack):
             for x in cur.fetchall():
                 obj = self.pc(self.db2class(x), rep)
                 self.delPackage(obj)
+
+# Simple helper functions
+
+# Return a string representing filenamelist (filenames can not contain /)
+def encodefilenamelist(filenamelist):
+    return '/'.join(filenamelist)
+
+# Return a list representing filestring (filenames can not contain /)
+def decodefilenamelist(filenamestring):
+    return filenamestring.split('/')
+
+# Return a string representing filetypeslist
+# filetypes should be file, dir or ghost
+def encodefiletypelist(filetypelist):
+    result = ''
+    ft2string = {'file': 'f','dir': 'd','ghost': 'g'}
+    for x in filetypelist:
+        result += ft2string[x]
+    return result
+
+# Return a list representing filetypestring
+# filetypes should be file, dir or ghost
+def decodefiletypelist(filetypestring):
+    string2ft = {'f':'file','d': 'dir','g': 'ghost'}
+    return [string2ft[x] for x in filetypestring]
 

@@ -16,21 +16,18 @@
 # Copyright 2005 Duke University 
 
 # TODO
-# - Add support for multiple checksums per rpm (is this required??)
-# - Store filetypes as one char per type instead of a string
-# - Move the stuff that turns a list of files into a string into a helper unit
-# - Don't fall back to a memory sqlite cache but to pickles if a cache
-#   file can't be created.
+# - Add support for multiple checksums per rpm (not required)
 
 import os
 import sqlite
 import time
 import mdparser
+from sqlitesack import encodefiletypelist,encodefilenamelist
 
 # This version refers to the internal structure of the sqlite cache files
 # increasing this number forces all caches of a lower version number
 # to be re-generated
-dbversion = '5'
+dbversion = '6'
 
 class RepodataParserSqlite:
     def __init__(self, storedir, repoid, callback=None):
@@ -291,8 +288,8 @@ class RepodataParserSqlite:
             data = {
                 'pkgKey': pkgKey,
                 'dirname': dirname,
-                'filenames': '/'.join(dir['files']),
-                'filetypes': '/'.join(dir['types'])
+                'filenames': encodefilenamelist(dir['files']),
+                'filetypes': encodefiletypelist(dir['types'])
             }
             self.insertHash('filelist',data,cur)
 
