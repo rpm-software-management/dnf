@@ -59,6 +59,7 @@ exit 0
 %config(noreplace) %{_sysconfdir}/yum.conf
 %dir %{_sysconfdir}/yum.repos.d
 %config(noreplace) %{_sysconfdir}/cron.daily/yum.cron
+%config(noreplace) %{_sysconfdir}/cron.weekly/yum.cron
 %config %{_sysconfdir}/rc.d/init.d/%{name}
 %config %{_sysconfdir}/logrotate.d/%{name}
 %{_datadir}/yum-cli/*
@@ -72,6 +73,9 @@ exit 0
 %{_mandir}/man*/*
 
 %changelog
+* Fri Feb 25 2005 Seth Vidal <skvidal@phy.duke.edu>
+- add yum.cron to weekly to clean packages
+
 * Mon Feb 21 2005 Seth Vidal <skvidal@phy.duke.edu>
 - new devel branch - 2.3.0
 

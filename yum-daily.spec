@@ -64,6 +64,7 @@ exit 0
 %doc README AUTHORS COPYING TODO INSTALL ChangeLog
 %config(noreplace) %{_sysconfdir}/yum.conf
 %config(noreplace) %{_sysconfdir}/cron.daily/yum.cron
+%config(noreplace) %{_sysconfdir}/cron.weekly/yum.cron
 %config %{_sysconfdir}/init.d/%{name}
 %config %{_sysconfdir}/logrotate.d/%{name}
 %{_datadir}/yum/*
