@@ -101,7 +101,7 @@ def genhdrs(rpms, headerdir, cmds):
         else:
             if header == 'source':
                 log(2,"ignoring srpm: %s" % rpmfn)
-            elsif header == 'bad':
+            elif header == 'bad':
                 log(2, "ignoring bad rpm: %s" % rpmfn)
             else:
                 log(2, "ignoring header string %s in %s" % (header, rpmfn))
