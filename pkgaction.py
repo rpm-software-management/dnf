@@ -161,7 +161,7 @@ def updatepkgs(tsnevral, hinevral, rpmnevral, nulist, uplist, userlist):
                     log(4, "Updating %s to arch %s" % (name, arch))
                 ((e, v, r, a, l, i), s) = hinevral._get_data(name, arch)
                 tsnevral.add((name,e,v,r,a,l,i),'u')
-        if pkgfound = 0
+        if not pkgfound:
             if rpmnevral.exists(n):
                 errorlog(1,"%s is installed and the latest version." % (n))
             else:
