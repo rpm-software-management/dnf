@@ -64,10 +64,10 @@ def main(args):
     except Errors, e:
         result = 1
         resultmsgs = [str(e)]
-#    except KeyboardInterrupt, e:
-#        base.errorlog(0, 'Exiting on user cancel')
-#        unlock()
-#        sys.exit(1)
+    except KeyboardInterrupt, e:
+        base.errorlog(0, 'Exiting on user cancel')
+        unlock()
+        sys.exit(1)
         
     if result not in [0, 1, 2, 100]:
         base.errorlog(0, 'Unknown Error(s): Exit Code: %d:' % result)
