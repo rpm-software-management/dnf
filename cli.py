@@ -796,13 +796,9 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         # display the list of matches
         args = self.extcmds
         searchlist = ['name', 'summary', 'description', 'packager', 'group', 'url']
-        matching = self.searchPackages(searchlist, args)
-        for po in matching.keys():
-            self.log(2, '\n\n')
-            self.simpleList(po)
-            self.log(2, 'Matched from:')
-            for item in matching[po]:
-                self.log(2, '%s' % item)
+        matching = self.searchPackages(searchlist, args, callback=self.matchcallback)
+        del matching
+        
         
         return 0, []
 

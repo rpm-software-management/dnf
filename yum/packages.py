@@ -204,7 +204,10 @@ class YumInstalledPackage:
         return epoch
     
     def returnSimple(self, thing):
-        return getattr(self, thing)
+        if hasattr(self, thing):
+            return getattr(self, thing)
+        else:
+            return self.tagByName(thing)
     
     def requiresList(self):
         """return a list of all of the strings of the package requirements"""

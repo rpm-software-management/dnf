@@ -135,5 +135,8 @@ def main(args):
     
     
 if __name__ == "__main__":
-    
-    main(sys.argv[1:])
+    try:
+        main(sys.argv[1:])
+    except KeyboardInterrupt, e:
+        print >> sys.stderr, "\nExiting on user cancel."
+        sys.exit(1)

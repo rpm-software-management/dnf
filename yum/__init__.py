@@ -584,8 +584,12 @@ class YumBase(depsolve.Depsolve):
         
         return ygh
 
-    def searchPackages(self, fields, criteria):
-        """Search specified fields for matches to criteria"""
+    def searchPackages(self, fields, criteria, callback=None):
+        """Search specified fields for matches to criteria
+           optional callback specified to print out results
+           as you go. Callback is a simple function of:
+           callback(po, matched values list). It will 
+           just return a dict of dict[po]=matched values list"""
         
         self.doRepoSetup()
         self.doRpmDBSetup()
@@ -593,10 +597,15 @@ class YumBase(depsolve.Depsolve):
         for string in criteria:
             crit_re = re.compile(string, flags=re.I)
             for po in self.pkgSack:
+                tmpvalues = []
                 for field in fields:
                     value = po.returnSimple(field)
                     if crit_re.search(value):
-                        if not matches.has_key(po): matches[po] = []
-                        matches[po].append(value)
-
+                        tmpvalues.append(value)
+                if len(tmpvalues) > 0:
+                    if callback:
+                        callback(po, tmpvalues)
+                    matches[po] = tmpvalues
+        #FIXME the above searches available repos - need to search the rpmdb too
+        
         return matches

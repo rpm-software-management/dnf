@@ -342,6 +342,13 @@ class YumOutput:
     
         return(format % (number, space, symbols[depth]))
 
+    def matchcallback(self, po, values):
+        self.log(2, '\n\n')
+        self.simpleList(po)
+        self.log(2, 'Matched from:')
+        for item in values:
+            self.log(2, '%s' % item)
+
 class DepSolveProgressCallBack:
     """provides text output callback functions for Dependency Solver callback"""
     
