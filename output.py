@@ -196,7 +196,7 @@ class YumOutput:
         for item in values:
             self.log(2, '%s' % item)
 
-    def reportDownloadSize(self,packages):
+    def reportDownloadSize(self, packages):
         """Report the total download size for a set of packages"""
         totsize = 0
         error = False
@@ -216,58 +216,76 @@ class YumOutput:
             self.log(1, "Total download size: %s" % (self.format_number(totsize)))
             
     def listTransaction(self):
-        """displays the transaction in an easy-to-read way."""
-        
-        out = ''
-        userout = ''
-        depout = ''
-        otherout = ''
+        """returns a string rep of the  transaction in an easy-to-read way."""
         
         updated, installed, removed, obsoleted, depup, depinst, deprem = self.tsInfo.makelists()
+        if len(updated+installed+removed+obsoleted+depup+depinst+deprem) > 0:
+            out = """
+=============================================================================
+ %-22.22s  %-9.9s  %-15.15s  %-16.16s  %-5.5s
+=============================================================================
+""" % ('Package', 'Arch', 'Version', 'Repository', 'Size')
+        else:
+            out = ""
 
-        for (action, pkglist) in [('Install', installed), ('Update', updated)]:
-
+        for (action, pkglist) in [('Installing', installed),
+                                  ('Updating', updated),
+                                  ('Removing', removed),
+                                  ('Installing for dependencies', depinst),
+                                  ('Updating for dependencies', depup),
+                                  ('Removing for dependencies', deprem)]:
+            if pkglist:
+                totalmsg = "%s:\n" % action
             for txmbr in pkglist:
                 (n,a,e,v,r) = txmbr.pkgtup
-                msg = "  %s: %s.%s %s:%s-%s - %s\n" % (action, n,a,e,v,r, txmbr.repoid)
-                userout = userout + msg
+                evr = txmbr.po.printVer()
+                repoid = txmbr.repoid
+                pkgsize = float(txmbr.po.size())
+                size = self.format_number(pkgsize)
+                msg = " %-22.22s  %-9.9s  %-15.15s  %-16.16s  %5.5s\n" % (n, a,
+                              evr, repoid, size)
+                totalmsg = totalmsg + msg
         
-        for (action, pkglist) in [('Remove', removed)]:
-            for txmbr in pkglist:
-                (n,a,e,v,r) = txmbr.pkgtup
-                msg = "  %s: %s.%s %s:%s-%s\n" % (action, n,a,e,v,r)
-                userout = userout + msg
+            if pkglist:
+                out = out + totalmsg
         
-        for (action, pkglist) in [('Install', depinst), ('Update', depup)]:
-
-            for txmbr in pkglist:
-                (n,a,e,v,r) = txmbr.pkgtup
-                msg = "  %s: %s.%s %s:%s-%s - %s\n" % (action, n,a,e,v,r, txmbr.repoid)
-                depout = depout + msg
-                   
-        for (action, pkglist) in [('Remove', deprem)]:
-            for txmbr in pkglist:
-                (n,a,e,v,r) = txmbr.pkgtup
-                msg = "  %s: %s.%s %s:%s-%s\n" % (action, n,a,e,v,r)
-                depout = depout + msg
-
+        obs = """
+Other Actions:
+=============================================================================
+Obsoletes:
+"""
         for txmbr in obsoleted:
             (n,a,e,v,r) = txmbr.pkgtup
             obspkg = None
-            for (pkg, relationship) in txmbr.relatedto:
+            evr = txmbr.po.printVer()
+            for (obspo, relationship) in txmbr.relatedto:
                 if relationship == 'obsoletedby':
-                    obspkg = '%s.%s %s:%s-%s' % pkg
+                    obspkg = 1
+                    obs_evr = obspo.printVer()
             if obspkg is not None:
-                otherout = otherout + "  Obsoleting: %s.%s %s:%s-%s with %s\n" % (n, a, e, v, r, obspkg)
+                msg1 = " %-22.22s  %-9.9s  %-15.15s  %-16.16s\n" % (n, a, evr,
+                                                        'installed')
+                msg2 = "   obsoleted by\n"
+                msg3 = " %-22.22s  %-9.9s  %-15.15s  %-16.16s\n\n" % (obspo.name,
+                                obspo.arch, obs_evr, obspo.repoid)
+                obs = obs + msg1 + msg2 + msg3
+                
+        if obsoleted:
+            out = out + obs
 
-        out = "Transaction Listing:\n%s" % userout 
-        if depout != '':
-            out = out + "\nPerforming the following to resolve dependencies:\n%s" % depout
-        if otherout != '':
-            out = out + "\nOther Transactions:\n%s\n" % otherout
-              
+        summary = """
+Transaction Summary
+=============================================================================
+Install  %5.5s Package(s)         
+Update   %5.5s Package(s)         
+Remove   %5.5s Package(s)         
+Obsolete %5.5s Packages(s)
+""" % (len(installed + depinst), len(updated + depup), len(removed + deprem),
+       len(obsoleted))
+        out = out + summary
+        
         return out
-
+        
     def postTransactionOutput(self):
         out = ''
         

@@ -241,7 +241,7 @@ class TransactionData:
         txmbr.current_state = 'repo'
         txmbr.output_state = 'obsoleting'
         txmbr.ts_state = 'u'
-        txmbr.relatedto.append((oldpo.pkgtup, 'obsoletes'))
+        txmbr.relatedto.append((oldpo, 'obsoletes'))
         self.add(txmbr)
         return txmbr
 
@@ -253,7 +253,7 @@ class TransactionData:
         txmbr.current_state = 'installed'
         txmbr.output_state = 'obsoleted'
         txmbr.ts_state = None
-        txmbr.relatedto.append((obsoleting_po.pkgtup, 'obsoletedby'))
+        txmbr.relatedto.append((obsoleting_po, 'obsoletedby'))
         self.add(txmbr)
         return txmbr
 
