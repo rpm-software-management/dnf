@@ -401,7 +401,7 @@ For more information contact your distribution or package provider.
             
 
         elif self.basecmd in ['localinstall', 'localupdate']:
-            self.log(2, "Setting up Local Packge Process")
+            self.log(2, "Setting up Local Package Process")
             try:
                 return self.localInstall()
             except yum.Errors.YumBaseError, e:
