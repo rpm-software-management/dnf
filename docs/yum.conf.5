@@ -154,6 +154,11 @@ failovermethod defaults to roundrobin if not specified.
 same as the [main] exclude but this is only for this server
 variables, listed below, are honored here.
 
+.IP \fBincludepkgs\fR
+Inverse of exclude. It is a list of the packages you want to use from a
+repository. So if the field only lists one package then that is all yum will
+ever see from the repository. Defaults to an empty list.
+
 .SH "VARIABLES"
 .LP
 There are a number of variables you can use to ease maintenance of the
