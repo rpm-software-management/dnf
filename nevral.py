@@ -354,13 +354,13 @@ class nevral:
                                     if self.state(provhdr[rpm.RPMTAG_NAME],provhdr[rpm.RPMTAG_ARCH]) in ('e','ed'):
                                         ((e,v,r,a,l,i),s)=rpmDBInfo._get_data(name)
                                         self.add((name,e,v,r,a,l,i),'ed')
-                                        log(4, 'Got Erase Dep: %s, %s' %(name,arch))
+                                        log(4, 'Got Erase Dep: %s, %s' %(name, a))
                                         CheckDeps=1
                                     else:
                                         unresolvable = 1
                                         if clientStuff.nameInExcludes(reqname):
                                             errors.append('package %s needs %s that has been excluded' % (name, reqname))
-                                            log(5, 'Got to an unresolvable dep - %s %s' %(name, arch))
+                                            log(5, 'Got to an unresolvable dep - %s' %(name))
                                         else:
                                             errors.append('package %s needs %s (not provided)' % (name, clientStuff.formatRequire(reqname, reqversion, flags)))
                             else:
