@@ -206,11 +206,12 @@ class RpmDBHolder:
            the provide"""
         
         matches = []
-        fileprov = 0
+        checkfileprov = 0
         
         if provname[0] == '/':
-            fileprov = 1
-            matchingHdrs = self.ts.dbMatch('basenames', provname)
+            checkfileprov = 1
+            matchingFileHdrs = self.ts.dbMatch('basenames', provname)
+            matchingHdrs = self.ts.dbMatch('provides', provname)            
         else:
             matchingHdrs = self.ts.dbMatch('provides', provname)
 
@@ -218,11 +219,11 @@ class RpmDBHolder:
         # have a the provname matching, now we need to find out
         # if any/all of them match the flag/ver set
         
-        if fileprov: # file provides don't have versions
-            for matchhdr in matchingHdrs:
+        if checkfileprov and matchingFileHdrs.count() > 0:
+            for matchhdr in matchingFileHdrs:
                 pkgtuple = self._hdr2pkgTuple(matchhdr)
                 matches.append(pkgtuple)
-            del matchingHdrs
+            del matchingFileHdrs
             return miscutils.unique(matches)
 
         if provflag in [0, None] or provver is None: # if we've got no ver or flag
