@@ -352,13 +352,13 @@ def main():
             print usage
             sys.exit(0)
     if len(args) != 1:
-	print >> sys.stderr, usage
-	sys.exit(1)
+        print >> sys.stderr, usage
+        sys.exit(1)
     try:
         p = Comps(args[0])
 
     except IOError:
         print >> sys.stderr, "pkggroup.py: No such file:\'%s\'" % args[0]
-	sys.exit(1)
+        sys.exit(1)
 if __name__ == '__main__':
     main()
