@@ -16,7 +16,7 @@ yum \- Yellowdog Updater Modified
 .br 
 .I \fR * check\-update
 .br 
-.I \fR * upgrade [package1] [package2] [\&.\&.\&.]
+.I \fR * upgrade [package1] [package2] [\&.\&.\&.] *deprecated* this command may be removed in the future.
 .br 
 .I \fR * remove [package1] [package2] [\&.\&.\&.]
 .br 
@@ -63,7 +63,7 @@ update.
 Can take packages as arguments, upgrade is just like update except that it
 includes package obsoletes in its calculations - this makes it better for
 distro\-version changes, for example: upgrading from somelinux 8.0 to
-somelinux 9.
+somelinux 9. *deprecated* - this command may be removed in the future.
 .IP 
 .IP "\fBremove\fP"
 is used to remove the specified packages from the system
@@ -79,6 +79,12 @@ section below\&.
 can be used to find out which package provides some feature
 or file. Just use a specific name or a file-glob-syntax wildcards to list
 the packages available or installed that provide that feature or file\&.
+.IP 
+.IP "\fBsearch\fP"
+can be used to find any packages matching a string in the description, summary,
+packager and package name fields of an rpm. Useful for finding a package
+you do not know by name but know by some word related to it. Takes the same file
+glob wildcards as provides.
 .IP 
 .IP "\fBinfo\fP"
 can be used to list a description and summary information about available
@@ -106,9 +112,9 @@ Configuration Item: \fBassume\-yes\fP
 Specifies the config file location - can take http, ftp urls and local file
 paths\&.
 .IP "\fB\-d [number]\fP" 
-Sets the debugging level to [number] \- turns up or down the amount of things that are printed\&.
+Sets the debugging level to [number] \- turns up or down the amount of things that are printed\&. Practical range: 0 - 10
 .IP "\fB\-e [number]\fP" 
-Sets the error level to [number] 0 \- 10. 0 means print only critical errors about which you must be told. 1 means print all errors, even ones that are not overly important. 1+ means print more errors (if any) \-e 0 is good for cron jobs.
+Sets the error level to [number] Practical range 0 \- 10. 0 means print only critical errors about which you must be told. 1 means print all errors, even ones that are not overly important. 1+ means print more errors (if any) \-e 0 is good for cron jobs.
 .IP "\fB\-t\fP" 
 Tells yum to be tolerant of errors on the command line with regard to packages on the commandline. For example: if you request to install foo, bar and baz and baz is installed; yum won't error out complaining that baz is already installed.
 .IP "\fB\-R [time in minutes]\fP" 
@@ -191,4 +197,4 @@ Seth Vidal <skvidal@phy.duke.edu>
 .SH "BUGS"
 There of course aren't any bugs, but if you find any, they should be sent
 to the mailing list: yum@dulug.duke.edu
-.fi 
+.fi

@@ -6,7 +6,9 @@
 #
 # chkconfig:	- 50 01
 #
-# description:  Enable daily run of yum, a program updater
+# description:  Enable daily run of yum, a program updater.
+# processname:  yum
+# config: /etc/yum.conf
 #
 
 # source function library
@@ -14,20 +16,20 @@
 
 lockfile=/var/lock/subsys/yum
 
+RETVAL=0
+
 start() {
 	echo -n $"Enabling nightly yum update: "
-	touch $lockfile && success || failure
-	retval=$?
+	touch "$lockfile" && success || failure
+	RETVAL=$?
 	echo
-	return $retval
 }
 
 stop() {
 	echo -n $"Disabling nightly yum update: "
-	rm -f $lockfile && success || failure
-	retval=$?
+	rm -f "$lockfile" && success || failure
+	RETVAL=$?
 	echo
-	return $retval
 }
 
 restart() {
@@ -48,18 +50,20 @@ case "$1" in
   reload)
 	;;
   condrestart)
-	[ ! -f $lockfile ] || restart
+	[ -f "$lockfile" ] && restart
 	;;
   status)
 	if [ -f $lockfile ]; then
 		echo $"Nightly yum update is enabled."
-		exit 0
+		RETVAL=0
 	else
 		echo $"Nightly yum update is disabled."
-		exit 3
+		RETVAL=3
 	fi
 	;;
   *)
 	echo $"Usage: $0 {start|stop|status|restart|reload|force-reload|condrestart}"
 	exit 1
 esac
+
+exit $RETVAL

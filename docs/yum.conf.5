@@ -21,11 +21,11 @@ The [main] section must exist for yum to do anything. It consists of the followi
 directory where yum should store its cache and db files.
 
 .IP \fBdebuglevel\fR
-debug level. valid numbers are 0\-10.
+debug level. practical range is 0\-10.
 default is 2.
 
 .IP \fBerrorlevel\fR
-debug level. valid numbers are 0\-2.
+debug level. practical range is 0\-10.
 default is 2.
 
 .IP \fBlogfile\fR
@@ -73,7 +73,7 @@ rpm transaction is run. default is 1 (to perform the check)
 
 .IP \fBretries\fR
 Set the number of times any attempt to retrieve a file should retry before 
-returning an error. Setting this to 0 makes it try forever. Default to 3.
+returning an error. Setting this to 0 makes it try forever. Default to 6.
 
 .IP \fBkernelpkgnames \fR
 list of package names that are kernels - this is really only here for the

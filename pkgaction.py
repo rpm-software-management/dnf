@@ -17,6 +17,7 @@
 import os
 import sys
 import rpm
+import re
 import clientStuff
 import fnmatch
 import archwork
@@ -401,68 +402,63 @@ def displayPkgsInGroups(group):
         for item in GroupInfo.optional_pkgs[group]:
             print '   %s' % item
 
-                
-def whatprovides(usereq, nulist, nevral, localrpmdb):
-    # figure out what the user wants, traverse all the provides and file lists 
-    # in every file in the header, return the fnmatch()es for the usereq
-    # return the thing they match too.
-    # do this:
-    # get the header from the rpmnevral or the hinevral
-    # get list of filenames and dirnames, get list of provides
-    # traverse all searching for a match - hand back (name, arch) and what matched
-    #for (name, arch) in hinevral.NAkeys():
-    #    
-    #else:
-    #    print "No Packages Available"
-    
-    # short term - must check if its installed - if it is then make it check the rpmdb
-    # do each matching quickly - at select time
-    # long term
-    # push all of provides+files+dirs into a dict dict[pkg]=list
-    # deal with "where the hell is the pkg - hi or rpm
-    # figure out how to make nevral.getHeader more robust
+
+def search(usereq, nulist, nevral, localrpmdb, tagslist):
+    """search the requested tags for the userreq"""
+
     results = 0
     if localrpmdb == 0:
         for (name, arch) in nulist:
             hdr = nevral.getHeader(name, arch)
-            fullprovideslist = hdr[rpm.RPMTAG_PROVIDES]
-            if hdr[rpm.RPMTAG_FILENAMES] != None:
-                fullprovideslist = fullprovideslist + hdr[rpm.RPMTAG_FILENAMES]
-            if hdr[rpm.RPMTAG_DIRNAMES] != None:
-                fullprovideslist = fullprovideslist + hdr[rpm.RPMTAG_DIRNAMES]
+            (epoch, ver, rel) = nevral.evr(name, arch)
+            id = nevral.serverid(name, arch)
+            searchlist = []
+            for tag in tagslist:
+                tagdata = hdr[tag]
+                if tagdata is None:
+                    continue
+                if type(tagdata) is types.ListType:
+                    searchlist.extend(tagdata)
+                else:
+                    searchlist.append(tagdata)
+
             for req in usereq:
-                for item in fullprovideslist:
-                    log(6, '%s vs %s' % (item, req))
+                req = '*' + req + '*'
+                for item in searchlist:
+                    log(4, '%s vs %s' % (item, req))
                     if req == item or fnmatch.fnmatch(item, req):
                         results = results + 1
-                        log(2, _('Available package: %s provides %s') % (name, item))
-            del fullprovideslist
+                        log(2, _('Available package: %s.%s %s:%s-%s from %s matches with\n %s') % 
+                                (name, arch, epoch, ver, rel, id, item))
+            del searchlist
+            
     elif localrpmdb == 1:
         matchlist = ts.match()
         for hdrobj in matchlist:
-            name = hdrobj.name()
-            arch = hdrobj.arch()
-            filenames = []
-            filenames = hdrobj._getTag('filenames')
-            provides = hdrobj._getTag('providename')
-            dirnames = hdrobj._getTag('dirnames')
-            fullprovideslist = []
-            if provides != None:
-                fullprovideslist = fullprovideslist + provides
-            if filenames != None:
-                fullprovideslist = fullprovideslist + filenames
-            if dirnames != None:
-                fullprovideslist = fullprovideslist + dirnames
+            (name, epoch, ver, rel, arch) = hdrobj.nevra()
+            if epoch is None:
+                epoch = 0
+            searchlist = []
+            for tag in tagslist:
+                tagdata = hdrobj._getTag(tag)
+                if tagdata is None:
+                    continue
+                if type(tagdata) is types.ListType:
+                    searchlist.extend(tagdata)
+                else:
+                    searchlist.append(tagdata)
+
             for req in usereq:
-                for item in fullprovideslist:
-                    log(5, '%s vs %s' % (item, req))
+                req = '*' + req + '*'
+                for item in searchlist:
+                    log(4, '%s vs %s' % (item, req))
                     if req == item or fnmatch.fnmatch(item, req):
                         results = results + 1
-                        log(2, _('Installed package: %s provides %s') % (name, item))
-            del fullprovideslist
+                        log(2, _('Installed package: %s.%s %s:%s-%s matches with\n %s') % 
+                                (name, arch, epoch, ver, rel, item))
+            del searchlist
     else:
         errorlog(1, _('localrpmdb not defined'))
-        
         
     if results > 0:
         log(2, _('%s results returned') % results)

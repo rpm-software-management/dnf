@@ -29,6 +29,8 @@ def getArch():
         arch = 'alpha'
     if re.search('ppc', arch):
         arch = 'ppc'
+    if re.search('x86_64', arch):
+        arch = 'x86_64'
     return arch
 
 def betterarch(arch1, arch2):
@@ -69,7 +71,7 @@ def compatArchList():
     archdict['ia64']=['ia64','noarch', 'i686']
     archdict['s390']=['noarch','s390']
     archdict['s390x']=['noarch','s390','s390x']
-    archdict['x86_64']=['noarch','x86_64']
+    archdict['x86_64']=['noarch','x86_64','athlon']
     archdict['parisc']=['hppa2.0','hppa1.2','hppa1.2','hppa1.1','hppa1.0','paris','noarch']
     myarch=getArch()
     if archdict.has_key(myarch):
@@ -85,5 +87,3 @@ def availablearchs(nevral, name):
         if nevral.exists(name, arch):
             finalarchs.append(arch)
     return finalarchs
-
-

@@ -48,7 +48,7 @@ def checkRpmMD5(package, urlgraberror=0):
     else:
         return good
 
-def checkSig(package, serverid=None):
+def checkSig(package):
     """ take a package, check it's sigs, return 0 if they are all fine, return 
     1 if the gpg key can't be found,  2 if the header is in someway damaged,
     3 if the key is not trusted, 4 if the pkg is not gpg or pgp signed"""
@@ -288,7 +288,7 @@ class Rpm_Ts_Work:
         """hands back a list of Header_Work objects"""
         hwlist = []
         # hand back the whole list of hdrs
-        if mire == None and tag == None and search == None:
+        if mire is None and tag is None and search is None:
             hdrlist = self.ts.dbMatch()
             
         else:

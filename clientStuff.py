@@ -106,7 +106,21 @@ def HeaderInfoNevralLoad(filename, nevral, serverid):
         if arch in archlist:
             if not nameInExcludes(name, serverid):
                 if conf.pkgpolicy == 'last':
-                    nevral.add((name, epoch, ver, rel, arch, rpmpath, serverid), 'a')
+                    # just add in the last one don't compare
+                    if nevral.exists(name, arch):
+                        # but if one already exists in the nevral replace it
+                        if serverid == nevral.serverid(name, arch):
+                            # unless we're in the same serverid then we need to take the newest
+                            (e1, v1, r1) = nevral.evr(name, arch)
+                            (e2, v2, r2) = (epoch, ver, rel)    
+                            rc = rpmUtils.compareEVR((e1, v1, r1), (e2, v2, r2))
+                            if (rc < 0):
+                                # ooo  the second one is newer - push it in.
+                                nevral.add((name, epoch, ver, rel, arch, rpmpath, serverid), 'a')
+                        else:
+                            nevral.add((name, epoch, ver, rel, arch, rpmpath, serverid), 'a')
+                    else:
+                        nevral.add((name, epoch, ver, rel, arch, rpmpath, serverid), 'a')
                 else:
                     if nevral.exists(name, arch):
                         (e1, v1, r1) = nevral.evr(name, arch)
@@ -731,7 +745,8 @@ def get_package_info_from_servers(serveridlist, HeaderInfo):
                 os.mkdir(localhdrs)
             log(3, 'Getting header.info from server')
             try:
-                headerinfofn = grab(serverid, serverheader, localheaderinfo, copy_local=1)
+                headerinfofn = grab(serverid, serverheader, localheaderinfo, copy_local=1,
+                                    progress_obj=None)
             except URLGrabError, e:
                 errorlog(0, 'Error getting file %s' % serverheader)
                 errorlog(0, '%s' % e)
@@ -772,7 +787,9 @@ def download_headers(HeaderInfo, nulist):
                         errorlog(1, 'Please ask your sysadmin to update the headers on this system.')
                     else:
                         errorlog(1, 'Please run yum in non-caching mode to correct this header.')
-                    sys.exit(1)
+                    errorlog(1, 'Deleting entry from Available packages')
+                    HeaderInfo.delete(name, arch)
+                    #sys.exit(1)
                 else:
                     os.unlink(LocalHeaderFile)
             else:
@@ -790,7 +807,9 @@ def download_headers(HeaderInfo, nulist):
             HeaderInfo.setlocalhdrpath(name, arch, hdrfn)
         else:
             errorlog(1, 'Cannot download %s in caching only mode or when running as non-root user.' % RemoteHeaderFile)
-            sys.exit(1)
+            errorlog(1, 'Deleting entry from Available packages')
+            HeaderInfo.delete(name, arch)
+            #sys.exit(1)
         current = current + 1
     close_all()
                 
@@ -815,16 +834,29 @@ def take_action(cmds, nulist, uplist, newlist, obsoleting, tsInfo, HeaderInfo, r
                 pkgaction.installpkgs(tsInfo, nulist, cmds, HeaderInfo, rpmDBInfo, 1)
                 
     elif basecmd == 'provides':
+        taglist = ['filenames', 'dirnames', 'provides']
         if len(cmds) == 0:
             errorlog(0, _('Need a provides to match'))
             usage()
         else:
             log(2, _('Looking in available packages for a providing package'))
-            pkgaction.whatprovides(cmds, nulist, HeaderInfo,0)
+            pkgaction.search(cmds, nulist, HeaderInfo, 0, taglist)
             log(2, _('Looking in installed packages for a providing package'))
-            pkgaction.whatprovides(cmds, nulist, rpmDBInfo,1)
+            pkgaction.search(cmds, nulist, rpmDBInfo, 1, taglist)
         sys.exit(0)
     
+    elif basecmd == 'search':
+        taglist = ['description', 'summary', 'packager', 'name']
+        if len(cmds) == 0:
+            errorlog(0, _('Need an item to search'))
+            usage()
+        else:
+            log(2, _('Looking in available packages for a providing package'))
+            pkgaction.search(cmds, nulist, HeaderInfo, 0, taglist)
+            log(2, _('Looking in installed packages for a providing package'))
+            pkgaction.search(cmds, nulist, rpmDBInfo, 1, taglist)
+        sys.exit(0)
+
     elif basecmd == 'update':
         if len(cmds) == 0:
             pkgaction.updatepkgs(tsInfo, HeaderInfo, rpmDBInfo, nulist, uplist, 'all', 0)
@@ -991,7 +1023,7 @@ def create_final_ts(tsInfo):
             # we now actually have the rpm and we know where it is - so use it
             rpmloc = tsInfo.localRpmPath(name, arch)
             if conf.servergpgcheck[serverid]:
-                rc = rpmUtils.checkSig(rpmloc, serverid)
+                rc = rpmUtils.checkSig(rpmloc)
                 if rc == 1:
                     errorlog(0, _('Error: Could not find the GPG Key necessary to validate pkg %s') % rpmloc)
                     errorlog(0, _('Error: You may want to run yum clean or remove the file: \n %s') % rpmloc)
@@ -1022,30 +1054,22 @@ def create_final_ts(tsInfo):
     close_all()
     return tsfin
 
-def diskspacetest(diskcheckts):
-    diskcheckts.setFlags(rpm.RPMTRANS_FLAG_TEST)
-    diskcheckts.setProbFilter(~rpm.RPMPROB_FILTER_DISKSPACE)
+def tsTest(checkts):
+    checkts.setFlags(rpm.RPMTRANS_FLAG_TEST)
+    if conf.diskspacecheck == 0:
+        checkts.setProbFilter(rpm.RPMPROB_FILTER_DISKSPACE)
     cb = callback.RPMInstallCallback()
-    tserrors = diskcheckts.run(cb.callback, '')
+    tserrors = checkts.run(cb.callback, '')
+    reserrors = []
     if tserrors:
-        diskerrors = []
-        othererrors = []
         for (descr, (type, mount, need)) in tserrors:
-            if type == rpm.RPMPROB_DISKSPACE:
-                diskerrors.append(descr)
-            else:
-                othererrors.append(descr)
-        if len(diskerrors) > 0:
-            log(2, 'Error: Disk space Error')
-            errorlog(0, 'You appear to have insufficient disk space to handle these packages')
-            for error in diskerrors:
-                errorlog(1, '%s' % error)
-        if len(othererrors) > 0:
-            log(2, 'Error reported but not a disk space error')
-            errorlog(0, 'Unknown error testing transaction set:')
-            for error in othererrors:
-                errorlog(1, '%s' % error)
+            reserrors.append(descr)
+    if len(reserrors) > 0:
+        errorlog(0, 'Errors reported doing trial run')
+        for error in reserrors:
+            errorlog(0, '%s' % error)
         sys.exit(1)
+
 
 
 def descfsize(size):
@@ -1065,7 +1089,7 @@ def descfsize(size):
 
 def grab(serverID, url, filename=None, nofail=0, copy_local=0, 
           close_connection=0,
-          progress_obj=None, throttle=None, bandwidth=None,
+          progress_obj='normal', throttle=None, bandwidth=None,
           numtries=3, retrycodes=[-1,2,4,5,6,7], checkfunc=None):
 
     """Wrap retry grab and add in failover stuff.  This needs access to
@@ -1077,7 +1101,10 @@ def grab(serverID, url, filename=None, nofail=0, copy_local=0,
 
     We do look at retrycodes here to see if we should return or failover.
     On fail we will raise the last exception that we got."""
-
+    
+    if progress_obj == 'normal':
+        progress_obj = conf.progress_obj
+        
     fc = conf.get_failClass(serverID)
     base = ''
     findex = fc.get_index()
@@ -1109,7 +1136,8 @@ def grab(serverID, url, filename=None, nofail=0, copy_local=0,
             # What?  We were successful?
         except URLGrabError, e:
             if e.errno in retrycodes:
-                errorlog(1, "retrygrab() failed for:\n  %s%s\n  Executing failover method" % (base, filepath))
+                if not nofail:
+                    errorlog(1, "retrygrab() failed for:\n  %s%s\n  Executing failover method" % (base, filepath))
                 if nofail:
                     findex = findex + 1
                     base = fc.get_serverurl(findex)

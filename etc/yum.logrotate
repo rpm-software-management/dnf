@@ -1,4 +1,6 @@
 /var/log/yum.log {
     missingok
+    notifempty
+    size 30k
     create 0600 root root
 }

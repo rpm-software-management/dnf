@@ -105,6 +105,11 @@ def parseCmdArgs(args):
     except ValueError, e:
         errorlog(0, _('Options Error: %s') % e)
         usage()
+    
+    # if we're below 2 on the debug level we don't need to be outputting
+    # progress bars - this is hacky - I'm open to other options
+    if conf.debuglevel < 2:
+        conf.progress_obj = None
         
     return (log, errorlog, filelog, conf, cmds)
     
@@ -125,7 +130,7 @@ def main(args):
 
     if cmds[0] not in ('update', 'upgrade', 'install','info', 'list', 'erase',\
                        'grouplist','groupupdate','groupinstall','clean', \
-                       'remove', 'provides', 'check-update'):
+                       'remove', 'provides', 'check-update', 'search'):
         usage()
     process = cmds[0]
     
@@ -197,10 +202,14 @@ def main(args):
     ################################################################################
     log(2, _('Finding updated packages'))
     (uplist, newlist, nulist) = clientStuff.getupdatedhdrlist(HeaderInfo, rpmDBInfo)
+    
     if process != 'clean':
         log(2, _('Downloading needed headers'))
         clientStuff.download_headers(HeaderInfo, nulist)
-        
+    # once we've gone through and found out which headers we know about
+    # generate the lists again so there is no confusion about what is available
+    (uplist, newlist, nulist) = clientStuff.getupdatedhdrlist(HeaderInfo, rpmDBInfo)
+    
     if process in ['upgrade', 'groupupgrade']:
         log(2, _('Finding obsoleted packages'))
         obsoleting, obsoleted = clientStuff.returnObsoletes(HeaderInfo, rpmDBInfo, nulist)
@@ -280,16 +289,13 @@ def main(args):
             sys.exit(1)
 
     
-    # Test run for disk space checks
-    # only run it if diskspacecheck = 1 and if there is anything being installed
-    # or updated - erasures shouldn't need more disk space
-    if conf.diskspacecheck:
-        if len(i_list+u_list+ud_list) > 0:
-            tstest = clientStuff.create_final_ts(tsInfo)
-            log(2, _('Calculating available disk space - this could take a bit'))
-            clientStuff.diskspacetest(tstest)
-            tstest.closeDB()
-            del tstest
+    # Test run for file conflicts and diskspace check, etc.
+    tstest = clientStuff.create_final_ts(tsInfo)
+    log(2, _('Running test transaction:'))
+    clientStuff.tsTest(tstest)
+    tstest.closeDB()
+    del tstest
+    log(2, _('Test transaction complete, Success!'))
     
     # FIXME the actual run should probably be elsewhere and this should be
     # inside a try, except set
@@ -331,7 +337,7 @@ def main(args):
 def usage():
     print _("""
     Usage:  yum [options] <update | upgrade | install | info | remove | list |
-            clean | provides | check-update | groupinstall | groupupdate |
+            clean | provides | search | check-update | groupinstall | groupupdate |
             grouplist >
                 
          Options:

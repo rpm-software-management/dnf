@@ -66,6 +66,7 @@ class nevral:
                 return ((None,None,None,None,None,None),None)
 
     def getHeader(self, name, arch=None):
+        # FIXME - this should return a header object from rpmUtils
         ((e,v,r,a,l,i),state) = self._get_data(name, arch)
         if state == None:
             errorlog(0, _('Header for pkg %s not found') % (name))
@@ -110,7 +111,14 @@ class nevral:
             return None
         else:
             return l
-      
+    
+    def serverid(self, name, arch=None):
+        ((e,v,r,a,l,i),state) = self._get_data(name, arch)
+        if state == None: 
+            return None
+        else:
+            return i
+
     def evr(self, name, arch=None):
         ((e,v,r,a,l,i),state) = self._get_data(name, arch)
         if state == None: 
