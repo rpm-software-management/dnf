@@ -143,12 +143,21 @@ class Updates:
         # if you find it look for the packages they obsolete
         # 
         for pkgtup in self.rawobsoletes.keys():
+            (name, arch, epoch, ver, rel) = pkgtup
             for (obs_n, flag, (obs_e, obs_v, obs_r)) in self.rawobsoletes[(pkgtup)]:
                 if flag in [None, 0]: # unversioned obsolete
                     if self.installdict.has_key((obs_n, None)):
                         for (rpm_a, rpm_e, rpm_v, rpm_r) in self.installdict[(obs_n, None)]:
                             # make sure the obsoleting pkg is not already installed
-                            if pkgtup not in self.installed:
+                            willInstall = 1
+                            if self.installdict.has_key((name, None)):
+                                for (ins_a, ins_e, ins_v, ins_r) in self.installdict[(name, None)]:
+                                    pkgver = (epoch, ver, rel)
+                                    installedver = (ins_e, ins_v, ins_r)
+                                    if self.returnNewest((pkgver, installedver)) == installedver:
+                                        willInstall = 0
+                                        break
+                            if willInstall:
                                 if not obsdict.has_key(pkgtup):
                                     obsdict[pkgtup] = []
                                 obsdict[pkgtup].append((obs_n, rpm_a, rpm_e, rpm_v, rpm_r))
@@ -160,7 +169,15 @@ class Updates:
                                                         obs_v, obs_r)), (obs_n,\
                                                         rpm_a, rpm_e, rpm_v, rpm_r)):
                                 # make sure the obsoleting pkg is not already installed
-                                if pkgtup not in self.installed:
+                                willInstall = 1
+                                if self.installdict.has_key((name, None)):
+                                    for (ins_a, ins_e, ins_v, ins_r) in self.installdict[(name, None)]:
+                                        pkgver = (epoch, ver, rel)
+                                        installedver = (ins_e, ins_v, ins_r)
+                                        if self.returnNewest((pkgver, installedver)) == installedver:
+                                            willInstall = 0
+                                            break
+                                if willInstall:
                                     if not obsdict.has_key(pkgtup):
                                         obsdict[pkgtup] = []
                                     obsdict[pkgtup].append((obs_n, rpm_a, rpm_e, rpm_v, rpm_r))
