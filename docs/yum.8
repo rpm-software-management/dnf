@@ -1,5 +1,5 @@
 .\" yum - Yellowdog Updater Modified
-.TH "yum" "8" "2002 Jun 8" "Seth Vidal" ""
+.TH "yum" "8" "2004 Oct 3" "Seth Vidal" ""
 .SH "NAME"
 yum \- Yellowdog Updater Modified
 .SH "SYNOPSIS"
@@ -16,17 +16,17 @@ yum \- Yellowdog Updater Modified
 .br 
 .I \fR * check\-update
 .br 
-.I \fR * upgrade [package1] [package2] [\&.\&.\&.] *deprecated* this command may be removed in the future.
-.br 
-.I \fR * remove [package1] [package2] [\&.\&.\&.]
+.I \fR * upgrade [package1] [package2] [\&.\&.\&.] 
+.br
+.I \fR * remove | erase package1 [package2] [\&.\&.\&.]
 .br 
 .I \fR * list [\&.\&.\&.]
 .br 
 .I \fR * info [\&.\&.\&.]
 .br 
-.I \fR * provides [\&.\&.\&.]
+.I \fR * provides  | whatprovides feature1 [feature2] [\&.\&.\&.]
 .br  
-.I \fR * clean [ packages | headers | oldheaders | all ]
+.I \fR * clean [ packages | headers | all ]
 .br
 .I \fR * groupinstall [\&.\&.\&.]
 .br
@@ -34,23 +34,31 @@ yum \- Yellowdog Updater Modified
 .br 
 .I \fR * grouplist [\&.\&.\&.]
 .br
+.I \fR * search string1 [string2] [\&.\&.\&.]
+.br
+.I \fR * generate-rss
+.br
 .PP 
 Unless the \-\-help or \-h option is given, one of the above commands
 must be present\&.
 .PP 
 .IP "\fBinstall\fP"
-is used to install the latest version of a package or
+Is used to install the latest version of a package or
 group of packages while ensuring that all dependencies are
 satisfied\&.  If no package matches the given package name(s), they are
 assumed to be a shell glob and any matches are then installed\&.
 .IP 
 .IP "\fBupdate\fP"
-If run without any packages, \fBupdate\fP will update every currently
+If run without any packages, update will update every currently
 installed package.  If one or more packages are specified, Yum will
 only update the listed packages\&.  While updating packages, \fByum\fP
 will ensure that all dependencies are satisfied\&.  If no package
 matches the given package name(s), they are assumed to be a shell glob
-and any matches are then installed\&.
+and any matches are then installed\&. 
+
+If the \-\-obsoletes flag is present \fByum\fP will include package 
+obsoletes in its calculations - this makes it better for distro\-version 
+changes, for example: upgrading from somelinux 8.0 to somelinux 9.
 .IP 
 .IP "\fBcheck\-update\fP"
 Implemented so you could know if your machine had any updates that needed to
@@ -60,41 +68,44 @@ to be updated in list format. Returns 0 and no packages are available for
 update.
 .IP
 .IP "\fBupgrade\fP"
-Can take packages as arguments, upgrade is just like update except that it
-includes package obsoletes in its calculations - this makes it better for
-distro\-version changes, for example: upgrading from somelinux 8.0 to
-somelinux 9. *deprecated* - this command may be removed in the future.
+Is the same as the update command with the \-\-obsoletes flag set. See update 
+for more details.
 .IP 
-.IP "\fBremove\fP"
-is used to remove the specified packages from the system
+.IP "\fBremove\fP or \fBerase\fP"
+Are used to remove the specified packages from the system
 as well as removing any packages which depend on the package being
 removed\&.
 .IP 
 .IP "\fBlist\fP"
-can be used to list various information about available
+Is used to list various information about available
 packages; more complete details are available in the \fIList Options\fP
 section below\&.
 .IP 
-.IP "\fBprovides\fP"
-can be used to find out which package provides some feature
+.IP "\fBprovides\fP or \fBwhatprovides\fP"
+Is used to find out which package provides some feature
 or file. Just use a specific name or a file-glob-syntax wildcards to list
 the packages available or installed that provide that feature or file\&.
+Perl or python style regular expressions can be used.
 .IP 
 .IP "\fBsearch\fP"
-can be used to find any packages matching a string in the description, summary,
+Is used to find any packages matching a string in the description, summary,
 packager and package name fields of an rpm. Useful for finding a package
-you do not know by name but know by some word related to it. Takes the same file
-glob wildcards as provides.
+you do not know by name but know by some word related to it. Perl or python
+style regular expressions can be used.
 .IP 
 .IP "\fBinfo\fP"
-can be used to list a description and summary information about available
+Is used to list a description and summary information about available
 packages; takes the same arguments as in the \fIList Options\fP
 section below\&.
 .IP 
 .IP "\fBclean\fP"
-is used to clean up various things which accumulate in the
-yup cache directory over time.  More complete details can be found in
+Is used to clean up various things which accumulate in the
+\fByum\fP cache directory over time.  More complete details can be found in
 the \fIClean Options\fP section below\&.
+.IP 
+.IP "\fBgenerate-rss\fP" 
+Is used to create a rss file containing changelogs for all packages in the enabled
+repositories.
 .IP 
 .PP 
 .SH "GENERAL OPTIONS"
@@ -105,49 +116,92 @@ to set\&.
 .IP "\fB\-h, \-\-help\fP"
 Help; display a help message and then quit\&.
 .IP "\fB\-y\fP"
-Assume yes; assume that the answer to answer to any question which
-would be asked is yes\&.
-Configuration Item: \fBassume\-yes\fP
+Assume yes; assume that the answer to any question which would be asked 
+is yes\&.
+.br
+Configuration Option: \fBassume\-yes\fP
 .IP "\fB\-c [config file]\fP" 
 Specifies the config file location - can take http, ftp urls and local file
 paths\&.
 .IP "\fB\-d [number]\fP" 
 Sets the debugging level to [number] \- turns up or down the amount of things that are printed\&. Practical range: 0 - 10
+.br
+Configuration Option: \fBdebuglevel\fP
 .IP "\fB\-e [number]\fP" 
 Sets the error level to [number] Practical range 0 \- 10. 0 means print only critical errors about which you must be told. 1 means print all errors, even ones that are not overly important. 1+ means print more errors (if any) \-e 0 is good for cron jobs.
-.IP "\fB\-t\fP" 
+.br
+Configuration Option: \fBerrorlevel\fP
+.IP "\fB\-t, \-\-tolerant\fP" 
 Tells yum to be tolerant of errors on the command line with regard to packages on the commandline. For example: if you request to install foo, bar and baz and baz is installed; yum won't error out complaining that baz is already installed.
+.br
+Configuration Option: \fBtolerant\fP
 .IP "\fB\-R [time in minutes]\fP" 
 Sets the maximum amount of time yum will wait before performing a command \- it randomizes over the time.
 .IP "\fB\-C\fP" 
 Tells yum to run entirely from cache - does not download or update any
 headers unless it has to to perform the requested action.
+.IP "\fB\-\-version\fP" 
+Reports the \fByum\fP version number and exits.
+.IP "\fB\-\-installroot=root\fP" 
+Specifies an alternative installroot, relative to which all packages will be
+installed.
+.br
+Configuration Option: \fBinstallroot\fP
+.IP "\fB\-\-enablerepo=repoid\fP"
+Enables a specific repository that has been disabled in the configuration file
+using the enabled=0 option.
+.br
+Configuration Option: \fBenabled\fP
+.IP "\fB\-\-disablerepo=repoid\fP"
+Disables a specific repository. 
+.br
+Configuration Option: \fBenabled\fP
+.IP "\fB\-\-obsoletes\fP"
+This option only has affect for an update, it enables \fByum\fP\'s obsoletes
+processing logic. For more information see the \fBupdate\fP command above.
+.br
+Configuration Option: \fBobsoletes\fP
+.IP "\fB\-\-downloadonly\fP"
+Only download the required packages, do not install them.
+.IP "\fB\-\-rss-filename=filename\fP"
+Output rss data for the \fBgenerate-rss\fP command to the specified file.
+.br
+Configuration Option: \fBrss-filename\fP
+.IP "\fB\-\-exclude=package\fP"
+Exclude a specific package by name or glob from updates on all repositories.
+.br
+Configuration Option: \fBexclude\fP
 .PP 
 .SH "LIST OPTIONS"
 The following are the ways which you can invoke \fByum\fP in list
 mode\&.  Note that all \fBlist\fP commands include information on the
 version of the package\&.
 .IP 
-.IP "\fByum list [available]\fP"
-list all packages in the yum repositories available to be installed\&.
+.IP "\fByum list [all | regexp1] [regexp2] [\&.\&.\&.]\fP"
+List all available and installed packages\&.
+.IP "\fByum list available [regexp1] [\&.\&.\&.]\fP"
+List all packages in the yum repositories available to be installed\&.
 .IP 
-.IP "\fByum list updates\fP"
-list all packages with updates available in the yum repositories\&.
+.IP "\fByum list updates [regexp1] [\&.\&.\&.]\fP"
+List all packages with updates available in the yum repositories\&.
 .IP 
-.IP "\fByum list [args]\fP"
-list the packages specified by \fIargs\fP\&.  If an argument does not
-match the name of a package, it is assumed to be a
-shell\-style glob and any matches are printed\&.
-.IP
-.IP "\fByum list installed\fP"
-list the packages specified by \fIargs\fP\&.  If an argument does not
+.IP "\fByum list installed [regexp1] [\&.\&.\&.]\fP"
+List the packages specified by \fIargs\fP\&.  If an argument does not
 match the name of an available package, it is assumed to be a
 shell\-style glob and any matches are printed\&.
 .IP
-.IP "\fByum list extras\fP"
-list the packages installed on the system that are not available in any yum
+.IP "\fByum list extras [regexp1] [\&.\&.\&.]\fP"
+List the packages installed on the system that are not available in any yum
 repository listed in the config file.
 .IP
+.IP "\fByum list obsoletes [regexp1] [\&.\&.\&.]\fP"
+List the packages installed on the system that are obsoleted by packages
+in any yum repository listed in the config file.
+.IP
+.IP "\fBSpecifying package names\fP"
+All the list options mentioned above take regular expressions or package
+names as arguments, for example \fByum list available foo*\fP will list
+all available packages that match foo*.
 .IP
 .PP 
 .SH "CLEAN OPTIONS"
@@ -159,22 +213,32 @@ Eliminate any cached packages from the system.  Note that packages are not autom
 
 .IP "\fByum clean headers\fP"
 Eliminate all of the files which yum uses to determine the remote
-availablility of packages. Using this option will force yum to download all the headers the next time it is run.
+availability of packages. Using this option will force yum to download all the headers the next time it is run.
 
-.IP "\fByum clean oldheaders\fP"
-Eliminate the old headers that yum no longer needs to determine the remote availablility of packages.
-
-.IP "\fByum clean [all]\fP"
-Runs \fByum clean packages\fP and \fByum clean oldheaders\fP as above.
+.IP "\fByum clean all\fP"
+Runs \fByum clean packages\fP and \fByum clean headers\fP as above.
 
 .PP
 .SH "MISC"
-.IP "\fBProxy configuration\fP"
-If you would like to use a proxy with yum you can simply set a shell
-environment variable of http_proxy. Set it to the url for your proxy.
-Ex: "http://your_proxy:port/"
-
-.PP 
+.IP "\fBSpecifying package names\fP"
+A package can be referred to for install,update,list,remove etc with any 
+of the following:
+.IP
+.br
+\fBname\fP
+.br
+\fBname.arch\fP
+.br
+\fBname-ver\fP
+.br
+\fBname-ver-rel\fP
+.br
+\fBname-ver-rel.arch\fP
+.br
+\fBepoch:name-ver-rel.arch\fP
+.IP
+For example: \fByum remove kernel-2.4.1-10.i686\fP.
+.PP
 .SH "FILES"
 .nf 
 /etc/yum.conf
@@ -183,7 +247,6 @@ Ex: "http://your_proxy:port/"
 
 .PP 
 .SH "SEE ALSO"
-.I yum\-arch (8),
 .I yum.conf (5)
 .nf 
 
