@@ -21,6 +21,9 @@ import rpmUtils
 import serverStuff
 import rpm
 import types
+import getopt
+import fnmatch
+
 from logger import Logger
 from i18n import _
 
@@ -32,17 +35,11 @@ ts = rpmUtils.Rpm_Ts_Work()
 rpmUtils.ts = ts
 serverStuff.ts = ts
 
-def main():
-    tempheaderdir = '.newheaders'
-    tempheaderinfo = tempheaderdir + '/' + 'header.info'
-    tempsrcheaderinfo = tempheaderdir + '/' + 'header.src.info'
-    oldheaderdir = '.oldheaders'
-    oldheaderinfo = oldheaderdir + '/' + 'header.info'
-    oldsrcheaderinfo = oldheaderdir + '/' + 'header.src.info'
-    headerdir = 'headers'
-    headerinfo = headerdir + '/' + 'header.info'
-    srcheaderinfo = headerdir + '/' + 'header.src.info'
-    if  len(sys.argv) < 2:
+
+def argParse(args):
+    """get arguments from command line, return a nice dict of cmds=args + 
+       left over args"""
+    if  len(args) == 0:
         serverStuff.Usage()
     cmds = {}
     cmds['checkdeps'] = 0
@@ -53,32 +50,83 @@ def main():
     cmds['dosrpms'] = 0
     cmds['quiet'] = 0
     cmds['loud'] = 0
-    args = sys.argv[1:]
-    basedir = args[-1]
-    del args[-1]
-    for arg in args:
-        if arg == "-v":
-            cmds['loud'] = 1
-        elif arg == "-d":
-            cmds['checkdeps'] = 1
-        elif arg == "-n":
-            cmds['writehdrs'] = 0
-        elif arg == "-c":
-            cmds['rpmcheck'] = 1
-        elif arg == "-z":
-            cmds['compress'] = 1
-        elif arg == "-l":
-            cmds['usesymlinks'] = 1
-        elif arg == "-s":
-            cmds['dosrpms'] = 1
-        elif arg == "-q":
-            cmds['quiet'] = 1
-            log.threshold = 1
-        elif arg == "-vv":
-            cmds['loud'] = 1
-            log.threshold = 4
-        if arg in ['-h','--help']:
-            serverStuff.Usage()
+    cmds['exclude'] = []
+    try:
+        gopts, args = getopt.getopt(args, 'vv:qdncszlhx:', ['help', 'exclude'])
+    except getopt.error, e:
+        log(0, _('Options Error: %s') % e)
+        serverStuff.Usage()
+   
+    try: 
+        for arg,a in gopts:
+            if arg in ['-h','--help']:
+                serverStuff.Usage()
+            elif arg == '-v':
+                if cmds['loud'] == 1:
+                    log.threshold = 4
+                else:    
+                    cmds['loud'] = 1
+            elif arg == '-d':
+                cmds['checkdeps'] = 1
+            elif arg == '-n':
+                cmds['writehdrs'] = 0
+            elif arg == '-c':
+                cmds['rpmcheck'] = 1
+            elif arg == "-z":
+                cmds['compress'] = 1
+            elif arg == "-l":
+                cmds['usesymlinks'] = 1
+            elif arg == "-s":
+                cmds['dosrpms'] = 1
+            elif arg == "-q":
+                cmds['quiet'] = 1
+                log.threshold = 1
+            elif arg in ['-x', '--exclude']:
+                cmds['exclude'].append(a)
+                
+    except ValueError, e:
+        log(0, _('Options Error: %s') % e)
+        usage()
+    if type(args) is types.ListType:
+        if len(args) == 0:
+           serverStuff.Usage()
+        else:
+            basedir = args[0]
+    else:
+        basedir = args
+        
+    return (cmds, basedir)
+          
+    
+def trimRpms(rpms, excludeGlobs):
+    log(4, _('Pre-Trim Len: %d') % len(rpms))
+    badrpms = []
+    for file in rpms:
+        for glob in excludeGlobs:
+            if fnmatch.fnmatch(file, glob):
+                log(4, _('excluded: %s') % file)
+                if file not in badrpms:
+                    badrpms.append(file)
+    for file in badrpms:
+        if file in rpms:
+            rpms.remove(file)
+    log(4, _('Post-Trim Len: %d') % len(rpms))
+    return rpms
+    
+def main(args):
+    tempheaderdir = '.newheaders'
+    tempheaderinfo = tempheaderdir + '/' + 'header.info'
+    tempsrcheaderinfo = tempheaderdir + '/' + 'header.src.info'
+    oldheaderdir = '.oldheaders'
+    oldheaderinfo = oldheaderdir + '/' + 'header.info'
+    oldsrcheaderinfo = oldheaderdir + '/' + 'header.src.info'
+    headerdir = 'headers'
+    headerinfo = headerdir + '/' + 'header.info'
+    srcheaderinfo = headerdir + '/' + 'header.src.info'
+
+    # parse our args
+    (cmds, basedir) = argParse(args)
+    
     # save where we are right now
     curdir = os.getcwd()
     # start the sanity/stupidity checks
@@ -94,7 +142,8 @@ def main():
     
     # get the list of rpms
     rpms=serverStuff.getfilelist('./', '.rpm', [], cmds['usesymlinks'])
-
+    if len(cmds['exclude']) > 0:
+        rpms = trimRpms(rpms, cmds['exclude'])
     # some quick checks - we know we don't have ANY rpms - so, umm what do we
     # do? - if we have a headers dir then maybe we already had some and its
     # a now-empty repo - well, lets clean it up
@@ -259,13 +308,13 @@ def genhdrs(rpms,headerdir,cmds):
                 sys.exit(1)
         hobj = rpmUtils.RPM_Work(rpmfn)
         if hobj.hdr is None:
-            log(1, "\nignoring bad rpm: %s" % rpmfn)
+            log(1, _("\nignoring bad rpm: %s") % rpmfn)
         else:
             (name, epoch, ver, rel, arch) = hobj.nevra()
             if hobj.isSource():
                 if not cmds['dosrpms']:
                     if cmds['loud']:
-                        print "\nignoring srpm: %s" % rpmfn
+                        print _("\nignoring srpm: %s") % rpmfn
                     continue
                     
             if epoch is None:
@@ -296,4 +345,4 @@ def genhdrs(rpms,headerdir,cmds):
 
 
 if __name__ == "__main__":
-    main()
+    main(sys.argv[1:])
