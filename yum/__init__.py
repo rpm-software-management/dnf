@@ -130,7 +130,9 @@ class YumBase(depsolve.Depsolve):
             retrycount = 0
             while not rpmgood and retrycount < self.conf.getConfigOption('retries'):
                 try:
+                    #print po.name + ' start'
                     mylocal = repo.get(relative=remote, local=local)
+                    #print po.name + ' end'
                 except Errors.RepoError, e:
                     errors[po] = e
                     retrycount+=1
@@ -146,7 +148,12 @@ class YumBase(depsolve.Depsolve):
                         del errors[po]
                     rpmgood=1
                 
-            
+        return errors
+
+    def sigCheckPkgs(self, downloadpkgs):
+        return []
+        
+        
     def _lock(self, filename, contents='', mode=0777):
         try:
             fd = os.open(filename, os.O_EXCL|os.O_CREAT|os.O_WRONLY, mode)

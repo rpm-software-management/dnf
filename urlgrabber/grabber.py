@@ -268,8 +268,6 @@ from stat import *  # S_* and ST_*
 
 from urlgrabber import __version__
 
-# XXX: leaving this global may cause problems with
-#      multiple threads. -rtomayko
 auth_handler = urllib2.HTTPBasicAuthHandler( \
      urllib2.HTTPPasswordMgrWithDefaultRealm())
 
@@ -460,7 +458,8 @@ class URLGrabberOptions:
         self.failure_callback = None
         self.prefix = None
         self.opener = None
-                           
+        self.cache_openers = True
+ 
 class URLGrabber:
     """Provides easy opening of URLs with a variety of options.
     
@@ -666,11 +665,10 @@ class URLGrabberFileObject:
             if range_handlers and (self.opts.range or self.opts.reget):
                 handlers.extend( range_handlers )
             handlers.append( auth_handler )
-            # Temporarily disabling this because it doesn't yet work
-            # correctly.  Some reget tests fail.  I really don't understand
-            # why, but some of the error handlers aren't set correctly.
-            #self._opener = CachedOpenerDirector(*handlers)
-            self._opener = urllib2.build_opener(*handlers)
+            if self.opts.cache_openers:
+              self._opener = CachedOpenerDirector(*handlers)
+            else:
+              self._opener = urllib2.build_opener(*handlers)
             # OK, I don't like to do this, but otherwise, we end up with
             # TWO user-agent headers.
             self._opener.addheaders = []
@@ -861,7 +859,7 @@ class URLGrabberFileObject:
 
     def close(self):
         if self.opts.progress_obj:
-            self.opts.progress_obj.end()
+            self.opts.progress_obj.end(self._amount_read)
         self.fo.close()
         if self.opts.close_connection:
             try: self.fo.close_connection()
@@ -871,6 +869,8 @@ _handler_cache = []
 def CachedOpenerDirector(*handlers):
     for (cached_handlers, opener) in _handler_cache:
         if cached_handlers == handlers:
+            for handler in opener.handlers:
+                handler.add_parent(opener)
             return opener
     opener = urllib2.build_opener(*handlers)
     _handler_cache.append( (handlers, opener) )

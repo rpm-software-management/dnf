@@ -370,13 +370,17 @@ class YumBaseCli(yum.YumBase):
                 po = self.getPackageObject(pkg)
                 if po:
                     downloadpkgs.append(po)
-        try:
-            self.downloadPkgs(downloadpkgs, callback)
-        except yum.Errors.YumBaseError, e:
-            self.errorlog(0, 'Error Downloading Packages')
-            raise
+        problems = self.downloadPkgs(downloadpkgs) # FIXME, should be passing a callback too
+
+        if len(problems.keys()) > 0:
+            errstring = ''
+            errstring += 'Error Downloading Packages:\n'
+            for key in problems.keys:
+                for error in problems[key]:
+                    errstring += '%s: %s' % (key, problem)
+            raise yum.Errors.YumBaseError, errstring
         
-        problems = self.gpgCheckPkgs(downloadpkgs)
+        problems = self.sigCheckPkgs(downloadpkgs)
         
         if len(problems) > 0:
             errstring = ''
@@ -406,7 +410,7 @@ class YumBaseCli(yum.YumBase):
         self.doRpmDBSetup()
         installed = self.rpmdb.getPkgList()
         self.doRepoSetup()
-        avail = self.pkgSack.simplePkgList()
+        avail = self.pkgSack.returnPackages()
         toBeInstalled = {} # keyed on name
         passToUpdate = [] # list of pkgtups to pass along to updatecheck
 
@@ -422,8 +426,9 @@ class YumBaseCli(yum.YumBase):
             
             # we look through each returned possibility and rule out the
             # ones that we obviously can't use
-            for pkgtup in installable:
-                (n, a, e, v, r) = pkgtup
+            for pkg in installable:
+                (n, e, v, r, a) = pkg.returnNevraTuple()
+                pkgtup = (n, a, e, v, r)
                 if a == 'src':
                     continue
                 if pkgtup in installed:

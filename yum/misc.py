@@ -1,3 +1,4 @@
+import types
 
 from Errors import MiscError
 
@@ -105,5 +106,5 @@ def checksum(sumtype, file, CHUNK=2**16):
             del fo
             
         return sum.hexdigest()
-    except:
+    except (IOError, OSError), e:
         raise MiscError, 'Error opening file for checksum: %s' % file

@@ -314,7 +314,7 @@ class Repository:
                        bandwidth=self.bandwidth,
                        retry=self.retries,
                        throttle=self.throttle)
-            remote=url + '/' + relative
+            remote = url + '/' + relative
             try:           
                 result = ug.urlgrab(remote, local, range=(start, end), 
                                     copy_local=copy_local)
