@@ -184,6 +184,7 @@ class YumShell(cmd.Cmd):
                         del self.base.up
         
         elif cmd in ['exclude']:
+            args = args.replace(',', ' ')
             opts = args.split()
             if not opts:
                 msg = '%s: ' % cmd
