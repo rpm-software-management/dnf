@@ -157,10 +157,17 @@ class nevral:
             return None
         if l == 'in_rpm_db':
             return l
-        hdrfn = self.hdrfn(name,arch)
-        base = conf.serverhdrdir[i]
-        log(6, 'localhdrpath= %s for %s %s' % (base + '/' + hdrfn, name, arch))
-        return base + '/' + hdrfn
+       if self.localhdrpath.has_key((name, arch)):
+            return self.localhdrpath[(name, arch)]
+        else:
+            hdrfn = self.hdrfn(name,arch)
+            if conf.serverhdrdir.has_key(i):
+                base = conf.serverhdrdir[i]
+            else:
+                errorlog(0, 'asking for package %s.%s - does not exist in nevral - bailing out - check rpmdb for errors' % (name, arch))
+                sys.exit(1)
+            log(7, 'localhdrpath= %s for %s %s' % (base + '/' + hdrfn, name, arch))
+            return base + '/' + hdrfn
 
     def setlocalhdrpath(self, name, arch, path):
         ((e,v,r,a,l,i),state) = self._get_data(name, arch)
@@ -295,11 +302,23 @@ class nevral:
         del _ts
         del _db
         log(5, 'Long Check')
-        
-        while CheckDeps==1 or (conflicts != 1 and unresolvable != 1 ):
+        depscopy = []
+        unresolveableloop = 0
+        while CheckDeps==1 or conflicts != 1 or unresolvable != 1:
             errors=[]
             ts, db = self.populateTs(addavailable = 1)
             deps = ts.depcheck()
+            if deps == depscopy:
+                unresolveableloop = unresolveableloop + 1
+                log(5, 'looping count = %d' % unresolveableloop)
+                if unresolveableloop >= 3:
+                    errors.append('identical dependency loop exceeded')
+                    for ((name, version, release), (reqnam, reqversion), flags, suggest, sense) in deps:
+                        errors.append('package %s needs %s (not provided)' % (name, clientStuff.formatRequire(reqname, reqversion, flags)))
+            else:
+                unresolveableloop = 0
+                           
+            depscopy = deps
             
             CheckDeps = 0
             if not deps:
@@ -307,7 +326,7 @@ class nevral:
             log (3, '# of Deps = %d' % len(deps))
             for ((name, version, release), (reqname, reqversion),
                                 flags, suggest, sense) in deps:
-                log (4, 'dep: %s req %s - %s - %s' % (name, reqname, reqversion, sense))
+                log (4, 'debug dep: %s req %s - %s - %s' % (name, reqname, reqversion, sense))
                 if sense == rpm.RPMDEP_SENSE_REQUIRES:
                     if suggest:
                         (header, sugname) = suggest
@@ -327,13 +346,13 @@ class nevral:
                                 archlist = archwork.availablearchs(rpmDBInfo,name)
                                 arch = archwork.bestarch(archlist)
                                 ((e, v, r, a, l, i), s)=rpmDBInfo._get_data(name,arch)
-                                self.add((name,e,v,r,arch,l,i),'ed')
-                                log(4, 'Got Erase Dep: %s, %s' %(name,arch))
+                                self.add((name,e,v,r,a,l,i),'ed')
+                                log(4, 'Got Erase Dep: %s, %s' %(name, a))
                             else:
                                 archlist = self.bestArchsByVersion(reqname)
                                 if len(archlist) > 0:
                                     arch = archwork.bestarch(archlist)
-                                    self.setPkgState(name, arch, 'ud')
+                                    self.setPkgState(reqname, arch, 'ud')
                                     log(4, 'Got Extra Dep: %s, %s' %(reqname,arch))
                                 else:
                                     unresolvable = 1
@@ -393,6 +412,8 @@ class nevral:
                         errors.append('conflict between %s and %s' % (name, reqname))
                         conflicts=1
             log(4, 'Restarting Dependency Loop')
+            log.write(2, '.')
+            sys.stdout.flush()
             del ts
             del deps
             del db
