@@ -55,11 +55,7 @@ def parseCmdArgs(args):
 
         for o,a in gopts:
             if o == '-c':
-                if os.access(a, os.R_OK):
-                    yumconffile=a
-                else:
-                    errorlog(0, 'Cannot find conf file %s' % a)
-                    usage()
+                yumconffile = a
         if yumconffile:
             conf=yumconf(configfile=yumconffile)
         else:

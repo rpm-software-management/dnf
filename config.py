@@ -19,12 +19,41 @@ import sys
 import os
 import urlparse
 import string
+import urllib
+
+class yumConfigParser(ConfigParser.ConfigParser):
+    def readfp(self, fp, filename=None):
+    """Like read() but the argument must be a file-like object.
+        The `fp' argument must have a `readline' method.  Optional
+        second argument is the `filename', which if not given, is
+        taken from fp.name.  If fp has no `name' attribute, `<???>' is
+        used.
+        """
+        if filename is None:
+            try:
+                filename = fp.name
+            except AttributeError:
+                filename = '<???>'
+        self.__read(fp, filename)
 
 class yumconf:
-
     def __init__(self, configfile = '/etc/yum.conf'):
-        self.cfg = ConfigParser.ConfigParser()
-        self.cfg.read(configfile)
+        self.cfg = yumConfigParser()
+        (s,b,p,q,f,o) = urlparse.urlparse(configfile)
+        if s in ('http', 'ftp','file'):
+            configfh = urllib.urlopen(configfile)
+            try:
+                self.cfg.readfp(configfh)
+            except ConfigParser.MissingSectionHeaderError, e:
+                print ('Error accessing URL: %s') % configfile
+                sys.exit(1)
+        else:
+            if os.access(configfile, os.R_OK):
+                self.cfg.read(configfile)
+            else:
+                print ('Error accessing File: %s') % configfile
+                sys.exit(1)
+
         self.servers = []
         self.servername = {}
         self.serverurl = {}

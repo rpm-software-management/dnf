@@ -1,3 +1,39 @@
+2003-03-11 01:39  skvidal
+
+	* configure.in, yum-7.x.spec, yum.spec: 
+	mark as 1.0
+
+2003-03-11 01:36  skvidal
+
+	* configure.in, yum-7.x.spec, yum.spec: 
+	bump ver to 0.9.5, fix spec files
+
+2003-03-11 01:31  skvidal
+
+	* etc/: Makefile.in, yum.conf: 
+	add the 7.3 conf file to the release tarball
+
+2003-03-11 00:08  skvidal
+
+	* README, clientStuff.py, docs/yum.8, docs/yum.conf.5: 
+	doc fixes for assumeyes and proxy information Update the readme
+	make an error message have more oomph in clientStuff.py
+
+2003-03-08 20:34  skvidal
+
+	* pullheaders.py: 
+	remove old dead comment
+
+2003-03-05 01:44  skvidal
+
+	* docs/yum.conf.5: 
+	typo
+
+2003-03-05 00:05  skvidal
+
+	* ChangeLog, TODO: 
+	Update Changelog - update TODO
+
 2003-03-05 00:01  skvidal
 
 	* docs/: yum.8, yum.conf.5: 
