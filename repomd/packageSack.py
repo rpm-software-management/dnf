@@ -335,12 +335,13 @@ class XMLPackageSack(PackageSack):
                     pkgs = self.searchID(pkgid)
                     pkgmatch = 0
                     mydepth = reader.Depth()
+                    current+=1
 
                     for pkg in pkgs:
                         if pkg.returnSimple('repoid') == repoid: # check for matching repo
-                            pkgmatch+=1
-                            current+=1
                             reader.Read()
+                            pkgmatch+=1
+                            
                             while 1:
                                 if reader.NodeType() == 15 and reader.Depth() == mydepth:
                                     break
@@ -385,17 +386,20 @@ class XMLPackageSack(PackageSack):
                 continue
             
             if reader.NodeType() == 1 and reader.Name() == 'package':
+                current+=1
                 if reader.HasAttributes():
                     pkgid = reader.GetAttribute('pkgid')
                     pkgs = self.searchID(pkgid)
                     pkgmatch = 0
                     mydepth = reader.Depth()
+                    #current+=1
+                    
 
                     for pkg in pkgs:
                         if pkg.returnSimple('repoid') == repoid: # check for matching repo
-                            pkgmatch+=1
-                            current+=1
                             reader.Read()
+                            pkgmatch+=1
+                            
                             while 1:
                                 if reader.NodeType() == 15 and reader.Depth() == mydepth:
                                     break
