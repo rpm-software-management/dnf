@@ -316,9 +316,6 @@ class Updates:
             multicompat = rpmUtils.arch.getMultiArchInfo(self.myarch)[0]
             multiarchlist = rpmUtils.arch.getArchList(multicompat)
             archlists = [ biarches, multiarchlist ]
-            print biarches
-            print self.myarch
-            print multiarchlist
         else:
             archlists = [ archlist ]
             
