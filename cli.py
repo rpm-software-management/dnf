@@ -343,25 +343,26 @@ class YumBaseCli(yum.YumBase):
         installed = self.rpmdb.getPkgList()
         self.doRepoSetup()
         avail = self.pkgSack.simplePkgList()
+        toBeInstalled = {} # keyed on name
+        passToUpdate = [] # list of pkgtups to pass along to updatecheck
 
         for arg in userlist:
-            exactmatch, matched, unmatched = parsePackages(avail, arg)
+            arglist = [arg]
+            exactmatch, matched, unmatched = parsePackages(avail, arglist)
             if len(unmatched) > 0: # if we get back anything in unmatched, it fails
                 self.errorlog(0, _('No Match for argument %s') % arg)
                 continue
             
             installable = yum.misc.unique(exactmatch + matched)
-            toBeInstalled = {} # keyed on name
-            passToUpdate = [] # list of pkgtups to pass along to updatecheck
-            
             exactarch = self.conf.getConfigOption('exactarch')
+            
             # we look through each returned possibility and rule out the
             # ones that we obviously can't use
             for pkgtup in installable:
+                (n, a, e, v, r) = pkgtup
                 if pkgtup in installed:
                     continue
 
-                (n, a, e, v, r) = pkgtup
                 # look up the installed packages based on name or name+arch, 
                 # depending on exactarch being set.
                 if exactarch:
@@ -369,14 +370,14 @@ class YumBaseCli(yum.YumBase):
                 else:
                     installedByKey = self.rpmdb.returnTupleByKeyword(name=n)
                 
+                
                 # go through each package 
                 if len(installedByKey) > 0:
                     for instTup in installedByKey:
                         (n2, a2, e2, v2, r2) = instTup
                         rc = compareEVR((e2, v2, r2), (e, v, r))
                         if rc < 0: # we're newer - this is an update, pass to them
-                            if pkgtup not in passToUpdate:
-                                passToUpdate.append(pkgtup)
+                            passToUpdate.append(pkgtup)
                         elif rc == 0: # same, ignore
                             continue
                         elif rc > 0: # lesser, check if the pkgtup is an exactmatch
@@ -385,12 +386,19 @@ class YumBaseCli(yum.YumBase):
                                         # FIXME this is untrue if the exactmatch
                                         # does not include a version-rel section
                             if pkgtup in exactmatch:
-                                if toBeInstalled.has_key(n): toBeInstalled[n] = []
+                                if not toBeInstalled.has_key(n): toBeInstalled[n] = []
                                 toBeInstalled[n].append(pkgtup)
                 else: # we've not got any installed that match n or n+a
-                    if toBeInstalled.has_key(n): toBeInstalled[n] = []
+                    if not toBeInstalled.has_key(n): toBeInstalled[n] = []
                     toBeInstalled[n].append(pkgtup)
-
+        
+        for n in toBeInstalled.keys():
+            print '%s: ' % n,
+            for tup in toBeInstalled[n]:
+                print tup,
+            print ''
+        return 0, 'Nothing to do'
+        
         # FIXME
         # go through each key in toBeInstalled and get bestver+bestarch
         # need to be aware of multilib here so a user can do
