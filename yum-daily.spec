@@ -1,7 +1,7 @@
 %define date #DATE#
 Summary: RPM installer/updater
 Name: yum
-Version: 2.1.13
+Version: 2.3.0
 Release: %{date}
 License: GPL
 Group: System Environment/Base
@@ -73,6 +73,9 @@ exit 0
 %{_mandir}/man*/*
 
 %changelog
+* Mon Feb 21 2005 Seth Vidal <skvidal@phy.duke.edu>
+-  new devel branch - things will break - people will die!
+
 * Tue Jan 25 2005 Seth Vidal <skvidal@phy.duke.edu>
 - 2.1.13
 
