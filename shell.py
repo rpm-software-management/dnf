@@ -60,7 +60,7 @@ class YumShell(cmd.Cmd):
             try:
                 self.base.parseCommands()
             except Errors.YumBaseError:
-                pass
+                self.do_help('')
             else:
                 self.base.doCommands()
     
@@ -136,15 +136,24 @@ class YumShell(cmd.Cmd):
         if cmd in ['debuglevel', 'errorlevel']:
             opts = args.split()
             if not opts:
-                self.base.log(2, '%s' % (self.base.conf.getConfigOption(cmd)))
+                self.base.log(2, '%s: %s' % (cmd, self.base.conf.getConfigOption(cmd)))
             else:
-                val = int(opts[0])
+                val = opts[0]
+                try:
+                    val = int(val)
+                except ValueError, e:
+                    self.base.errorlog('Value %s for %s cannot be made to an int' % (val, cmd))
+                    return
                 self.base.conf.setConfigOption(cmd, val)
+                if cmd == 'debuglevel':
+                    self.base.log.threshold = val
+                elif cmd == 'errorlevel':
+                    self.base.errorlog.threshold = val
         # bools
         elif cmd in ['gpgcheck', 'obsoletes', 'assumeyes']:
             opts = args.split()
             if not opts:
-                self.base.log(2, '%s' % (self.base.conf.getConfigOption(cmd)))
+                self.base.log(2, '%s: %s' % (cmd, self.base.conf.getConfigOption(cmd)))
             else:
                 value = opts[0]
                 if value.lower() not in BOOLEAN_STATES:
@@ -152,6 +161,10 @@ class YumShell(cmd.Cmd):
                     return False
                 value = BOOLEAN_STATES[value.lower()]
                 self.base.conf.setConfigOption(cmd, value)
+                if cmd == 'obsoletes':
+                    if hasattr(self.base, 'up'): # reset the updates
+                        del self.base.up
+
 
             
     def do_repositories(self, line):
