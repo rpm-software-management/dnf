@@ -25,19 +25,16 @@ import os
 import sys
 import re
 import string
-try:
-    import rpm404
-    rpm = rpm404
-except ImportError, e:
-    import rpm
-    rpm404 = rpm
-    
+import rpm
+
+from i18n import _
+
 debug = 0
 
 
 def Usage():
     # yah, duh.
-    print "%s dirs you want to check" % (sys.argv[0])
+    print _("%s dirs you want to check") % (sys.argv[0])
     sys.exit(1)
 
 def log(mess):
@@ -128,11 +125,11 @@ def main():
     
     (error,msgs) = depchecktree(treerpmlist)
     if error==1:
-        print "Errors within the dir(s):\n %s" % sys.argv[1:]
+        print _("Errors within the dir(s):\n %s") % sys.argv[1:]
         for msg in msgs:
             print "   " + msg
     else:
-        print "All dependencies resolved and no conflicts detected"
+        print _("All dependencies resolved and no conflicts detected")
     
 if __name__ == "__main__":
     main()

@@ -16,14 +16,8 @@
 # Copyright 2002 Duke University 
 
 import os
+import rpm
 import re
-try:
-    import rpm404
-    rpm = rpm404
-except ImportError, e:
-    import rpm
-    rpm404 = rpm
-
 
 def getArch():
     arch = os.uname()[4]
@@ -65,6 +59,7 @@ def bestarch(archlist):
         currentarch = betterarch(currentarch, arch)
     return currentarch
 
+
 def compatArchList():
     archdict = {}
     archdict['i386']=['i386','i486','i586','i686','athlon','noarch']
@@ -82,7 +77,7 @@ def compatArchList():
     else:
         archlist = [myarch, 'noarch']
     return archlist
-
+    
 def availablearchs(nevral, name):
     archlist = compatArchList()
     finalarchs = []

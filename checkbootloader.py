@@ -16,6 +16,7 @@
 
 import os,sys
 import string
+from i18n import _
 
 
 grubConfigFile = "/boot/grub/grub.conf"
@@ -161,6 +162,6 @@ def whichBootLoader(instRoot = "/"):
 if __name__ == "__main__":
     bootloader = whichBootLoader()
     if bootloader:
-        print "Found %s." % (bootloader)
+        print _("Found %s.") % (bootloader)
     else:
-        print "Unable to determine boot loader."
+        print _("Unable to determine boot loader.")

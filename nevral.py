@@ -16,25 +16,21 @@
 
 import os
 import clientStuff
-try:
-    import rpm404
-    rpm = rpm404
-except ImportError, e:
-    import rpm
-    rpm404 = rpm
-    
+import rpm
 import string
 import sys
 import archwork
+import rpmUtils
+from i18n import _
+
 
 class nevral:
-
     def __init__(self):
         self.rpmbyname = {}
         self.rpmbynamearch = {}
         self.localrpmpath = {}
         self.localhdrpath = {}
-
+        
     def add(self,(name,epoch,ver,rel,arch,rpmloc,serverid),state):
 #        if self.rpmbyname.haskey(name):
 #            ((e,v,r,a,l,i),state) = self._get_data(name)
@@ -44,7 +40,19 @@ class nevral:
 #                    self.rpmbyname[name]=((epoch,ver,rel,arch,rpmloc,serverid), state)
         self.rpmbyname[name]=((epoch,ver,rel,arch,rpmloc,serverid), state)
         self.rpmbynamearch[(name,arch)]=((epoch,ver,rel,arch,rpmloc,serverid), state)
-        
+    
+    def delete(self, name, arch=None):
+        if self.exists(name, arch):
+            del self.rpmbyname[name]
+            del self.rpmbynamearch[(name, arch)]
+        else:
+            if arch is None:
+                errolog(2, 'No Package %s' % (name))
+            else:
+                errorlog(2, 'No Package %s, %s' %(name, arch))
+                
+            
+            
     def _get_data(self, name, arch=None):
         if arch != None: # search by name and arch
             if self.rpmbynamearch and self.rpmbynamearch.has_key((name, arch)):
@@ -60,26 +68,26 @@ class nevral:
     def getHeader(self, name, arch=None):
         ((e,v,r,a,l,i),state) = self._get_data(name, arch)
         if state == None:
-            errorlog(0, 'Header for pkg %s not found' % (name))
+            errorlog(0, _('Header for pkg %s not found') % (name))
+            #FIXME: should return none and/or raise Exception
             sys.exit(1)
             return None
         else: 
             if l == 'in_rpm_db':
                 # we're in the rpmdb - get the header from there
-                db = clientStuff.openrpmdb()
-                rpms = db.findbyname(name)
-                # this needs to do A LOT MORE if it find multiples
-                for rpm in rpms:
-                    pkghdr = db[rpm]
-                    return pkghdr
+                hindexes = ts.dbMatch('name', name)
+                for hdr in hindexes:
+                    return hdr
             else:
                 # we're in a .hdr file
                 pkghdr = clientStuff.readHeader(self.localHdrPath(name, arch))
                 if pkghdr == None:
-                    errorlog(0, 'Bad Header for pkg %s.%s trying to get headers for the nevral - exiting' % (name, arch))
+                    errorlog(0, _('Bad Header for pkg %s.%s trying to get headers for the nevral - exiting') % (name, arch))
+                    # FIXME - should raise exception and be handled elsewhere
                     sys.exit(1)
                 else:
                     return pkghdr
+                    
 
     def NAkeys(self):
         keys = self.rpmbynamearch.keys()
@@ -106,7 +114,7 @@ class nevral:
     def evr(self, name, arch=None):
         ((e,v,r,a,l,i),state) = self._get_data(name, arch)
         if state == None: 
-            return None
+            return (None, None, None)
         else:
             return (e, v, r)
 
@@ -130,7 +138,7 @@ class nevral:
             return None
         else:
             return i
-            
+    
     def nafromloc(self, loc):
         keys = self.rpmbynamearch.keys()
         for (name, arch) in keys:
@@ -148,7 +156,7 @@ class nevral:
         if l == 'in_rpm_db':
             return l
         hdrfn = self.hdrfn(name,arch)
-        base = conf.serverurl[i]
+        base = conf.baseURL(i)
         return base + '/headers/' + hdrfn
     
     def localHdrPath(self, name, arch=None):
@@ -168,7 +176,7 @@ class nevral:
                 sys.exit(1)
             log(7, 'localhdrpath= %s for %s %s' % (base + '/' + hdrfn, name, arch))
             return base + '/' + hdrfn
-
+        
     def setlocalhdrpath(self, name, arch, path):
         ((e,v,r,a,l,i),state) = self._get_data(name, arch)
         self.localhdrpath[(name, arch)] = path
@@ -179,7 +187,7 @@ class nevral:
             return None
         if l == 'in_rpm_db':
             return l
-        base = conf.serverurl[i]
+        base = conf.baseURL(i)
         return base +'/'+ l
     
     def localRpmPath(self, name, arch=None):
@@ -194,11 +202,11 @@ class nevral:
             rpmfn = os.path.basename(l)
             base = conf.serverpkgdir[i]
             return base + '/' + rpmfn
-                
+    
     def setlocalrpmpath(self, name, arch, path):
         ((e,v,r,a,l,i),state) = self._get_data(name, arch)
         self.localrpmpath[(name, arch)] = path
-    
+
     def setPkgState(self, name, arch, newstate):
         ((e,v,r,a,l,i),state) = self._get_data(name, arch)
         self.add((name,e,v,r,arch,l,i), newstate)
@@ -210,7 +218,7 @@ class nevral:
         archs = archwork.availablearchs(self, name)
         currentarch = archs[0]
         for arch in archs[1:]:
-            rc = clientStuff.compareEVR(self.evr(name, currentarch), self.evr(name, arch))
+            rc = rpmUtils.compareEVR(self.evr(name, currentarch), self.evr(name, arch))
             if rc < 0:
                 currentarch = arch
             elif rc == 0:
@@ -221,7 +229,7 @@ class nevral:
         log(3, 'Best version for %s is %s:%s-%s' % (name, best_e, best_v, best_r))
     
         for arch in archs:
-            rc = clientStuff.compareEVR(self.evr(name, arch), (best_e, best_v, best_r))
+            rc = rpmUtils.compareEVR(self.evr(name, arch), (best_e, best_v, best_r))
             if rc == 0:
                 returnarchs.append(arch)
             elif rc > 0:
@@ -231,55 +239,51 @@ class nevral:
         return returnarchs
     
     def populateTs(self, addavailable = 1):
-        installonlypkgs = ['kernel', 'kernel-bigmem', 'kernel-enterprise',
-                           'kernel-smp', 'kernel-debug']
-                           
-        _db = clientStuff.openrpmdb(0)
-        _ts = rpm.TransactionSet('/', _db)
+                     
+        _ts = rpmUtils.Rpm_Ts_Work(conf.installroot)
         for (name, arch) in self.NAkeys(): 
             if self.state(name, arch) in ('u','ud','iu'):
                 log(4,'Updating: %s, %s' % (name, arch))
                 rpmloc = self.rpmlocation(name, arch)
                 pkghdr = self.getHeader(name, arch)
-                if name in installonlypkgs:
+                if name in conf.installonlypkgs:
                     bestarchlist = self.bestArchsByVersion(name)
                     bestarch = archwork.bestarch(bestarchlist)
                     if arch == bestarch:
                         log(3, 'Found best arch for install only pkg %s' %(arch))
-                        _ts.add(pkghdr,(pkghdr,rpmloc),'i')
+                        _ts.addInstall(pkghdr,(pkghdr,rpmloc),'i')
                         self.setPkgState(name, arch, 'i')
                     else:
                         log(3, 'Removing dumb arch for install only pkg: %s' %(arch))
                         if addavailable:
-                            _ts.add(pkghdr,(pkghdr,rpmloc),'a')
+                            _ts.addInstall(pkghdr,(pkghdr,rpmloc),'a')
                         self.setPkgState(name, arch, 'a')
                 else:
                     log(5, 'Not an install only pkg, adding to ts')
-                    _ts.add(pkghdr,(pkghdr,rpmloc),'u')
+                    _ts.addInstall(pkghdr,(pkghdr,rpmloc),'u')
                     
             elif self.state(name,arch) == 'i':
                 log(4, 'Installing: %s, %s' % (name, arch))
                 rpmloc = self.rpmlocation(name, arch)
                 pkghdr = self.getHeader(name, arch)
-                _ts.add(pkghdr,(pkghdr,rpmloc),'i')
+                _ts.addInstall(pkghdr,(pkghdr,rpmloc),'i')
             elif self.state(name,arch) == 'a':
                 if addavailable:
                     log(7, 'Adding %s into \'a\' state' % name)
                     rpmloc = self.rpmlocation(name, arch)
                     pkghdr = self.getHeader(name, arch)
-                    _ts.add(pkghdr,(pkghdr,rpmloc),'a')
+                    _ts.addInstall(pkghdr,(pkghdr,rpmloc),'a')
                 else:
                     pass
             elif self.state(name,arch) == 'e' or self.state(name,arch) == 'ed':
             # no no no - this should get ver-rel and mark that as what should
             # be removed - not just name. so name-ver-rel
                 log(4, 'Erasing: %s-%s' % (name,arch))
-                _ts.remove(name)
-        return _ts, _db
-
-    def resolvedeps(self,rpmDBInfo):
-        #create db
-        #create ts
+                _ts.addErase(name)
+        return _ts
+        
+    def resolvedeps(self, rpmDBInfo):
+        #self == tsnevral
         #populate ts
         #depcheck
         #parse deps, if they exist, change nevral pkg states
@@ -291,30 +295,30 @@ class nevral:
         CheckDeps = 1
         conflicts = 0
         unresolvable = 0
-        # this does a quick dep check without adding all the hdrs
+        
+        # this does a quick dep check with adding all the archs
         # keeps mem usage small in the easy/quick case
-        _ts, _db = self.populateTs(addavailable = 0)
-        deps = _ts.depcheck()
+        _ts = self.populateTs(addavailable = 0)
+        deps = _ts.check()
         if not deps:
             log(5, 'Quick Check only')
             return (0, 'Success - deps resolved')
         del deps
         del _ts
-        del _db
         log(5, 'Long Check')
         depscopy = []
         unresolveableloop = 0
         while CheckDeps==1 or conflicts != 1 or unresolvable != 1:
             errors=[]
-            ts, db = self.populateTs(addavailable = 1)
-            deps = ts.depcheck()
+            _ts = self.populateTs(addavailable = 1)
+            deps = _ts.check()
             if deps == depscopy:
                 unresolveableloop = unresolveableloop + 1
                 log(5, 'looping count = %d' % unresolveableloop)
                 if unresolveableloop >= 3:
                     errors.append('identical dependency loop exceeded')
-                    for ((name, version, release), (reqnam, reqversion), flags, suggest, sense) in deps:
-                        errors.append('package %s needs %s (not provided)' % (name, clientStuff.formatRequire(reqname, reqversion, flags)))
+                    for ((name, version, release), (reqname, reqversion), flags, suggest, sense) in deps:
+                        errors.append('package %s needs %s (not provided)' % (name, rpmUtils.formatRequire(reqname, reqversion, flags)))
             else:
                 unresolveableloop = 0
                            
@@ -347,47 +351,79 @@ class nevral:
                                 arch = archwork.bestarch(archlist)
                                 ((e, v, r, a, l, i), s)=rpmDBInfo._get_data(name,arch)
                                 self.add((name,e,v,r,a,l,i),'ed')
-                                log(4, 'Got Erase Dep: %s, %s' %(name, a))
+                                log(4, 'Got Erase Dep: %s, %s' %(name,a))
                             else:
                                 archlist = self.bestArchsByVersion(reqname)
                                 if len(archlist) > 0:
                                     arch = archwork.bestarch(archlist)
-                                    self.setPkgState(reqname, arch, 'ud')
-                                    log(4, 'Got Extra Dep: %s, %s' %(reqname,arch))
+                                    if self.state(reqname, arch) not in ['ud','u','i']:
+                                        self.setPkgState(reqname, arch, 'ud')
+                                        log(4, 'Got Extra Dep: %s, %s' %(reqname,arch))
+                                    else:
+                                        log(4, '%s already to be installed/upgraded, trying to upgrade the requiring pkg' % (reqname))
+                                        if self.exists(name):
+                                            archlist = self.bestArchsByVersion(name)
+                                            if len(archlist) > 0:
+                                                arch = archwork.bestarch(archlist)
+                                                self.setPkgState(name, arch, 'ud')
+                                                log(4, 'Upgrading %s, %s' % (name, arch))
                                 else:
                                     unresolvable = 1
-                                    log(4, 'unresolvable - %s needs %s' % (name, clientStuff.formatRequire(reqname, reqversion, flags)))
+                                    log(4, 'unresolvable - %s needs %s' % (name, rpmUtils.formatRequire(reqname, reqversion, flags)))
                                     if clientStuff.nameInExcludes(reqname):
                                         errors.append('package %s needs %s that has been excluded' % (name, reqname))
                                     else:
-                                        errors.append('package %s needs %s (not provided)' % (name, clientStuff.formatRequire(reqname, reqversion, flags)))
+                                        errors.append('package %s needs %s (not provided)' % (name, rpmUtils.formatRequire(reqname, reqversion, flags)))
                             CheckDeps=1
-                            
                         else:
                             # this is horribly ugly but I have to find some way to see if what it needed is provided
-                            # by what we are removing - if it is thien remove it -otherwise its a real dep problem - move along
-                            whatprovides = db.findbyprovides(reqname)
-                            if len(whatprovides)>0:
-                                for provide in whatprovides:
-                                    provhdr=db[provide]
-                                    if self.state(provhdr[rpm.RPMTAG_NAME],provhdr[rpm.RPMTAG_ARCH]) in ('e','ed'):
+                            # by what we are removing - if it is then remove it -otherwise its a real dep problem - move along
+                            if reqname[0] == '/':
+                                whatprovides = _ts.dbMatch('basenames', reqname)
+                            else:
+                                whatprovides = _ts.dbMatch('provides', reqname)
+
+                            if whatprovides and whatprovides.count() != 0:
+                                log(5, 'Found some provides for %s' % (reqname))
+                                for provhdr in whatprovides:
+                                    if self.state(provhdr[rpm.RPMTAG_NAME],provhdr[rpm.RPMTAG_ARCH]) in ['e','ed']:
                                         ((e,v,r,a,l,i),s)=rpmDBInfo._get_data(name)
                                         self.add((name,e,v,r,a,l,i),'ed')
                                         log(4, 'Got Erase Dep: %s, %s' %(name, a))
                                         CheckDeps=1
                                     else:
-                                        unresolvable = 1
-                                        if clientStuff.nameInExcludes(reqname):
-                                            errors.append('package %s needs %s that has been excluded' % (name, reqname))
-                                            log(5, 'Got to an unresolvable dep - %s' %(name))
+                                    # help us obi-wan - you're our only hope!
+                                        log(4, 'Cannot find a resolution attempting update out of loop on %s' % (name))
+                                        if self.exists(name):
+                                            archlist = self.bestArchsByVersion(name)
+                                            if len(archlist) > 0:
+                                                arch = archwork.bestarch(archlist)
+                                                self.setPkgState(name, arch, 'ud')
+                                                log(4, 'Upgrading %s, %s' % (name, arch))                                
                                         else:
-                                            errors.append('package %s needs %s (not provided)' % (name, clientStuff.formatRequire(reqname, reqversion, flags)))
+                                        # it's as if a thousand dependencies cried out and were suddenly silenced!
+                                            unresolvable = 1
+                                            if clientStuff.nameInExcludes(reqname):
+                                                errors.append('package %s needs %s that has been excluded' % (name, reqname))
+                                            else:
+                                                errors.append('package %s needs %s (not provided)' % (name, rpmUtils.formatRequire(reqname, reqversion, flags)))
                             else:
-                                unresolvable = 1
-                                if clientStuff.nameInExcludes(reqname):
-                                    errors.append('package %s needs %s that has been excluded' % (name, reqname))
+                                # help us obi-wan - you're our only hope!
+                                log(4, 'Cannot find a resolution attempting update out of loop on %s' % (name))
+                                if self.exists(name):
+                                    archlist = self.bestArchsByVersion(name)
+                                    if len(archlist) > 0:
+                                        arch = archwork.bestarch(archlist)
+                                        self.setPkgState(name, arch, 'ud')
+                                        log(4, 'Upgrading %s, %s' % (name, arch))                                
                                 else:
-                                    errors.append('package %s needs %s (not provided)' % (name, clientStuff.formatRequire(reqname, reqversion, flags)))
+                                    # it's as if a thousand dependencies cried out and were suddenly silenced!
+                                    unresolvable = 1
+                                    if clientStuff.nameInExcludes(reqname):
+                                        errors.append('package %s needs %s that has been excluded' % (name, reqname))
+                                    else:
+                                        errors.append('package %s needs %s (not provided)' % (name, rpmUtils.formatRequire(reqname, reqversion, flags)))
+                                        
                 elif sense == rpm.RPMDEP_SENSE_CONFLICTS:
                     # much more shit should happen here. specifically:
                     # if you have a conflict b/t two pkgs, try to upgrade the reqname pkg. - see if that solves the problem
@@ -400,7 +436,7 @@ class nevral:
                         arch = archwork.bestarch(archlist)
                         (e1, v1, r1) = rpmDBInfo.evr(reqname,arch)
                         (e2, v2, r2) = self.evr(reqname,arch)
-                        rc = clientStuff.compareEVR((e1,v1,r1), (e2,v2,r2))
+                        rc = rpmUtils.compareEVR((e1,v1,r1), (e2,v2,r2))
                         if rc<0:
                             log(4, 'conflict: setting %s to upgrade' % (reqname))
                             self.setPkgState(reqname, arch, 'ud')
@@ -414,8 +450,7 @@ class nevral:
             log(4, 'Restarting Dependency Loop')
             log.write(2, '.')
             sys.stdout.flush()
-            del ts
+            del _ts
             del deps
-            del db
             if len(errors) > 0:
                 return(1, errors)

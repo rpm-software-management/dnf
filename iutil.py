@@ -1,6 +1,7 @@
 
 import types, os, sys, select, string, stat, signal
 import os.path
+from i18n import _
 
 memoryOverhead = 0
 

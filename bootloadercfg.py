@@ -8,8 +8,6 @@
 
 import os,sys
 import iutil
-#from translate import _, N_, cat
-#from up2date import log
 
 class Error:
     # base class for client errors

@@ -4,7 +4,7 @@
 \fByum.conf\fR \- Configuration file for \fByum(8)\fR.
 .SH "DESCRIPTION"
 .LP 
-Yum uses a configuration file called
+Yum uses uses a configuration file called
 \fByum.conf\fR. This configuration file is searched for
 in the following places:
 .LP 
@@ -24,26 +24,9 @@ directory where yum should store its cache and db files.
 debug level. valid numbers are 0\-10.
 default is 2.
 
-.IP \fBdiskspacecheck\fR
-boolean - tells yum to check for diskspace issues or not
-default is 1 (so yes do the check)
-
-.IP \fBtolerant\fR
-1 or 0 - Tells yum to be tolerant of errors on the command line with regard
-to packages. For example: if you request to install foo, bar and baz and baz is
-installed; yum won't error out complaining that baz is already installed.
-same as -t on the command line. Default to 0(not tolerant)
-
 .IP \fBerrorlevel\fR
 debug level. valid numbers are 0\-2.
 default is 2.
-
-.IP \fBgpghome\fR
-Directory to be used to look for the gpg public key ring
-default is /root/.gnupg
-
-.IP \fBgpgkeyring\fR
-alternative keyring filename. Default is use normal keyring location
 
 .IP \fBlogfile\fR
 full directory and file name for where yum should write its log file.
@@ -51,6 +34,12 @@ full directory and file name for where yum should write its log file.
 .IP \fBassumeyes\fR
 1 or 0 - tells yum whether or not to prompt you for confirmation of actions.
 Same as -y on the command line. Default to 0.
+
+.IP \fBtolerant\fR
+1 or 0 - Tells yum to be tolerant of errors on the command line with regard to 
+packages. For example: if you request to install foo, bar and baz and baz is 
+installed; yum won't error out complaining that baz is already installed.
+same as -t on the command line. Default to 0(not tolerant)
 
 .IP \fBpkgpolicy=\fI[newest|last]\fR
 Default: \fInewest\fR.  Package sorting order.  When a package is available from 
@@ -78,6 +67,22 @@ none of the short options (-y, -e, -d, etc) will be taken in the field.
 package to use to determine the "version" of the distribution - can be any
 package you have installed - defaults to redhat-release.
 
+.IP \fBdiskspacecheck\fR
+set this to 0 to disable the checking for sufficient diskspace before the
+rpm transaction is run. default is 1 (to perform the check)
+
+.IP \fBretries\fR
+Set the number of times any attempt to retrieve a file should retry before 
+returning an error. Setting this to 0 makes it try forever. Default to 3.
+
+.IP \fBkernelpkgnames \fR
+list of package names that are kernels - this is really only here for the
+kernel updating portion - this should be removed out in 2.1 series.
+
+.IP \fBinstallonlypkgs \fR
+list of packages that should only ever be installed, never updated - kernels
+in particular fall into this category. Defaults to kernel, kernel-smp,
+kernel-bigmem, kernel-enterprise, kernel-debug, kernel-unsupported.
 
 .SH "[server] options"
 .LP 
@@ -97,13 +102,44 @@ must be a unique name for each server, one word.
 
 .IP \fBbaseurl\fR
 must be a url to the directory where the yum repository's 'headers' directory lives.
-ftp, http and file urls are allowed
+Can be an http://, ftp:// or file:// url.
+You can specify multiple urls in one baseurl statement. The best way to do
+this is like this:
+.br
+[serverid]
+.br
+name=Some name for this server
+.br
+baseurl=url://server1/path/to/repository/
+.br
+        url://server2/path/to/repository/
+.br
+        url://server3/path/to/repository/
+.br
+If you list more than one baseurl= statement in a repository you will find
+yum will ignore the earlier ones and probably act bizarrely. Don't do this,
+you've been warned.
 
 .IP \fBname\fR
 a human readable string describing the repository.
 
 .IP \fBgpgcheck\fR
 either '1' or '0'. This tells yum whether or not it should perform a gpg signature check on the packages gotten from this server
+
+.IP \fBfailovermethod\fR
+can be either 'roundrobin' or 'priority'.
+roundrobin randomly selects a url out of the list of urls to start with and
+proceeds through each of them as it encounters a failure contacting the
+host.
+.br
+priority starts from the first baseurl listed and reads through them
+sequentially.
+.br
+failovermethod defaults to roundrobin if not specified.
+
+.IP \fBexclude\fR
+same as the [main] exclude but this is only for this server
+variables, listed below, are honored here.
 
 .SH "VARIABLES"
 .LP
@@ -130,6 +166,7 @@ i386.
 These will be replaced with the value of the shell environment variable of
 the same name. If the shell environment variable does not exist then they
 will not be replaced.
+
 
 .SH "FILES"
 .LP 

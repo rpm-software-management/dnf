@@ -31,7 +31,7 @@ INSTALL_PROGRAM = @INSTALL_PROGRAM@
 INSTALL_DATA = @INSTALL_DATA@
 INSTALL_SCRIPT = @INSTALL_SCRIPT@
 
-SUBDIRS = bin etc docs
+SUBDIRS = bin etc docs po
 
 MODULES = $(srcdir)/pullheaders.pyc \
 	  $(srcdir)/config.pyc \
@@ -39,12 +39,12 @@ MODULES = $(srcdir)/pullheaders.pyc \
 	  $(srcdir)/logger.pyc \
 	  $(srcdir)/yumlock.pyc \
 	  $(srcdir)/yummain.pyc \
+	  $(srcdir)/i18n.pyc \
 	  $(srcdir)/pkgaction.pyc \
-          $(srcdir)/serverStuff.pyc \
+	  $(srcdir)/serverStuff.pyc \
 	  $(srcdir)/archwork.pyc \
 	  $(srcdir)/callback.pyc \
 	  $(srcdir)/clientStuff.pyc \
-	  $(srcdir)/depchecktree.pyc \
 	  $(srcdir)/iutil.pyc \
 	  $(srcdir)/lilocfg.pyc \
 	  $(srcdir)/lilo.pyc \
@@ -52,9 +52,13 @@ MODULES = $(srcdir)/pullheaders.pyc \
 	  $(srcdir)/checkbootloader.pyc \
 	  $(srcdir)/bootloadercfg.pyc \
 	  $(srcdir)/up2datetheft.pyc \
-	  $(srcdir)/translate.pyc \
-	  $(srcdir)/urlgrabber.pyc 
-
+	  $(srcdir)/keepalive.pyc \
+	  $(srcdir)/urlgrabber.pyc \
+	  $(srcdir)/progress_meter.pyc \
+	  $(srcdir)/yumcomps.pyc \
+	  $(srcdir)/failover.pyc \
+	  $(srcdir)/comps.pyc \
+	  $(srcdir)/rpmUtils.pyc 
 
 .SUFFIXES: .py .pyc
 .py.pyc: 
@@ -131,7 +135,7 @@ daily:
 	$(MAKE) dailyfiles
 	day=`/bin/date +%Y%m%d`; \
 	distdir=$(PACKAGE); \
-	tarname=$$distdir-1.0-$$day ;\
+	tarname=$$distdir-$$day ;\
 	cd .disttmp; \
 	perl -pi -e "s/\#DATE\#/$$day/g" $$distdir/yum-daily.spec; \
 	echo $$day; \
@@ -176,7 +180,6 @@ distfiles:
 	$(srcdir)/configure.in \
 	$(srcdir)/configure \
 	$(srcdir)/yum.spec \
-	$(srcdir)/yum-7.x.spec \
 	$(srcdir)/install-sh \
 	$(srcdir)/mkinstalldirs \
 	$(top_srcdir)/.disttmp/$$distdir

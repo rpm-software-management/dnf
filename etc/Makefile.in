@@ -69,7 +69,6 @@ distfiles:
 	cp \
 	$(srcdir)/Makefile.in \
 	$(srcdir)/yum.conf \
-	$(srcdir)/yum-7.3.conf \
 	$(srcdir)/yum.cron \
 	$(srcdir)/yum.init \
 	$(srcdir)/yum.logrotate \

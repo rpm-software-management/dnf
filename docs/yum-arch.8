@@ -1,5 +1,5 @@
 .\" yum-arch - Yellowdog Updater Modified Arch Tool - creates yum archive databases
-.TH "yum-arch" "8" "2002 Jun 8" "Seth Vidal" ""
+.TH "yum-arch" "8" "2003 Aug 27" "Seth Vidal" ""
 .SH "NAME"
 yum\-arch \- Creates yum distribution database
 .SH "SYNOPSIS"
@@ -18,12 +18,14 @@ make output verbose.
 make output much more verbose.
 .IP "\fB\-n\fP"
 don't generate headers.
+.IP "\fB\-s\fP"
+generate headers for source packages too.
 .IP "\fB\-q\fP"
 make output more quiet.
 .IP "\fB\-c\fP"
 check pkgs with gpg and md5 checksums \- cannot be used with \-n.
 .IP "\fB\-z\fP"
-compress headers using gzip.
+compress headers using gzip (default, deprecated as an option).
 .IP "\fB\-l\fP"
 pay attention to symlinks (Default is to ignore symlinks).
 .br 
@@ -48,5 +50,5 @@ Seth Vidal <skvidal@phy.duke.edu>
 .PP 
 .SH "BUGS"
 Any bugs which are found should be emailed to the mailing list:
-yum@dulug.duke.edu
-.fi 
+yum@linux.duke.edu
+.fi

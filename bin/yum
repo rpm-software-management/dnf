@@ -20,6 +20,7 @@ import sys
 import os
 sys.path.insert(1,'/usr/share/yum')
 import yummain
+from i18n import _
 import yumlock
 
 uid = os.geteuid()
@@ -32,13 +33,28 @@ if uid == 0:
         pass
     else:
         fd = open(lockfile, 'r')
-        oldpid = fd.readline()
-        if not os.path.exists('/proc/' + oldpid):
+        try: oldpid = int(fd.readline())
+        except ValueError:
+            # bogus data in the pid file. Throw away.
             os.unlink(lockfile)
-            yumlock.lock(lockfile, mypid, 0644)
         else:
-            print 'Existing lock %s. Aborting.' % lockfile
-            sys.exit(1)
+            try: os.kill(oldpid, 0)
+            except OSError, e:
+                import errno
+                if e[0] == errno.ESRCH:
+                    # The pid doesn't exist
+                    os.unlink(lockfile)
+                else:
+                    # Whoa. What the heck happened?
+                    print _('Unable to check if PID %s is active') % oldpid
+                    sys.exit(1)
+            else:
+                # Another copy seems to be running.
+                msg = _('Existing lock %s: another copy is running. Aborting.')
+                print msg % lockfile
+                sys.exit(1)
+        # lock again.
+        yumlock.lock(lockfile, mypid, 0644)
 
 try:
     yummain.main(sys.argv[1:])
@@ -47,12 +63,12 @@ except SystemExit, e:
         yumlock.unlock(lockfile)
     sys.exit(e)
 except KeyboardInterrupt, e:
-    print 'Exiting on User Cancel'
+    print _('Exiting on User Cancel')
     if uid == 0:
         yumlock.unlock(lockfile)
     sys.exit(1)
 except IOError, (errno, strerror):
-    print 'IOError - # %s - %s' % (errno, strerror)
+    print _('IOError - # %s - %s') % (errno, strerror)
     if uid == 0:
         yumlock.unlock(lockfile)
     sys.exit(1)

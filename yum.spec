@@ -1,15 +1,19 @@
 Summary: RPM installer/updater
 Name: yum
-Version: 1.0.3
-Release: 1_80
+Version: 2.1
+Release: 1
 License: GPL
 Group: System Environment/Base
 Source: %{name}-%{version}.tar.gz
+#Source1: yum.conf
+#Source2: yum.cron
 URL: http://www.dulug.duke.edu/yum/
 BuildRoot: %{_tmppath}/%{name}-%{version}root
 BuildArchitectures: noarch
 BuildRequires: python
-Requires: python librpm404 rpm404-python
+BuildRequires: gettext
+Obsoletes: yum-phoebe
+Requires: python, rpm-python, rpm >= 0:4.1.1, libxml2-python
 Prereq: /sbin/chkconfig, /sbin/service
 
 %description
@@ -28,6 +32,10 @@ make
 %install
 [ "$RPM_BUILD_ROOT" != "/" ] && rm -rf $RPM_BUILD_ROOT
 make DESTDIR=$RPM_BUILD_ROOT install
+# install -m 644 %{SOURCE1} $RPM_BUILD_ROOT/etc/yum.conf
+# install -m 755 %{SOURCE2} $RPM_BUILD_ROOT/etc/cron.daily/yum.cron
+
+%find_lang %{name}
 
 %clean
 [ "$RPM_BUILD_ROOT" != "/" ] && rm -rf $RPM_BUILD_ROOT
@@ -36,8 +44,8 @@ make DESTDIR=$RPM_BUILD_ROOT install
 %post
 /sbin/chkconfig --add yum
 #/sbin/chkconfig yum on
-/sbin/service yum condrestart >> /dev/null
-exit 0
+#/sbin/service yum condrestart >> /dev/null
+#exit 0
 
 
 %preun
@@ -50,11 +58,11 @@ exit 0
 
 
 
-%files 
+%files -f %{name}.lang
 %defattr(-, root, root)
-%doc README AUTHORS COPYING TODO INSTALL
+%doc README AUTHORS COPYING TODO INSTALL ChangeLog
 %config(noreplace) %{_sysconfdir}/yum.conf
-%config %{_sysconfdir}/cron.daily/yum.cron
+%config(noreplace) %{_sysconfdir}/cron.daily/yum.cron
 %config %{_sysconfdir}/init.d/%{name}
 %config %{_sysconfdir}/logrotate.d/%{name}
 %{_datadir}/yum/*
@@ -65,20 +73,39 @@ exit 0
 
 %changelog
 * Mon Sep  8 2003 Seth Vidal <skvidal@phy.duke.edu>
-- brown paper-bag 1.0.3
+- brown paper-bag 2.0.3
 
-* Mon Sep  8 2003 Seth Vidal <skvidal@phy.duke.edu>
-- ver to 1.0.2
+* Sun Sep  7 2003 Seth Vidal <skvidal@phy.duke.edu>
+- bump to 2.0.2
 
-* Mon May 19 2003 Seth Vidal <skvidal@phy.duke.edu>
-- ver to 1.0.1
+* Fri Aug 15 2003 Seth Vidal <skvidal@phy.duke.edu>
+- bump to 2.0.1
 
-* Mon Apr 28 2003 Seth Vidal <skvidal@phy.duke.edu>
-- fix up for changes to layout and fhs compliance
+* Sun Jul 13 2003 Seth Vidal <skvidal@phy.duke.edu>
+- bump to 2.0
 
-* Tue Mar 11 2003 Seth Vidal <skvidal@phy.duke.edu>
-- default spec for rhl 8.0
-- ver to 1.0
+* Sat Jul 12 2003 Seth Vidal <skvidal@phy.duke.edu>
+- made yum.cron config(noreplace)
+
+* Sat Jun  7 2003 Seth Vidal <skvidal@phy.duke.edu>
+- add stubs to spec file for rebuilding easily with custom yum.conf and
+- yum.cron files
+
+* Sat May 31 2003 Seth Vidal <skvidal@phy.duke.edu>
+- bump to 1.98
+
+* Mon Apr 21 2003 Seth Vidal <skvidal@phy.duke.edu>
+- bump to 1.97
+
+* Wed Apr 16 2003 Seth Vidal <skvidal@phy.duke.edu>
+- moved to fhs compliance
+- ver to 1.96
+
+* Mon Apr  7 2003 Seth Vidal <skvidal@phy.duke.edu>
+- updated for 1.95 betaish release
+- remove /sbin legacy
+- no longer starts up by default
+- do the find_lang thing
 
 * Sun Dec 22 2002 Seth Vidal <skvidal@phy.duke.edu>
 - bumped ver to 0.9.4

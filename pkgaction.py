@@ -16,25 +16,20 @@
 
 import os
 import sys
-try:
-    import rpm404
-    rpm = rpm404
-except ImportError, e:
-    import rpm
-    rpm404 = rpm
-    
+import rpm
 import clientStuff
 import fnmatch
 import archwork
 import types
+import rpmUtils
+from i18n import _
 
 
-def installpkgs(tsnevral, nulist, userlist, hinevral, rpmnevral, exitonerror = 1):
+def installpkgs(tsnevral, nulist, userlist, hinevral, rpmnevral, exitoninstalled):
     #get the list of pkgs you want to install from userlist
     #check to see if they are already installed - if they are try to upgrade them
     #if they are the latest version then error and exit
-    #if they are not, check to see if there is more than one arch, 
-    #if so pass it to bestarch then use the bestone for this platform
+    #if they are not, check to see if there is more than one arch, if so pass it to bestarch then use the bestone for this platform
     #add that one as 'iu' to the tsinfo
     #if they are not a pkg and you can't find it at all error and exit
     if len(nulist) > 0:
@@ -49,17 +44,18 @@ def installpkgs(tsnevral, nulist, userlist, hinevral, rpmnevral, exitonerror = 1
                     if rpmnevral.exists(name,bestarch):
                         (e1,v1,r1)=rpmnevral.evr(name,bestarch)
                         (e2,v2,r2)=hinevral.evr(name,bestarch)
-                        rc = clientStuff.compareEVR((e1,v1,r1),(e2,v2,r2))
+                        rc = rpmUtils.compareEVR((e1,v1,r1),(e2,v2,r2))
                         if rc < 0:
                             #we should be upgrading this
-                            log(4,"Switching to upgrading %s" % (name))
+                            log(4,"Switching to updating %s" % (name))
                             ((e, v, r, a, l, i), s)=hinevral._get_data(name,bestarch)
                             tsnevral.add((name,e,v,r,a,l,i),'u')            
                         else:
                             #this is the best there is :(
-                            errorlog(1,"%s is installed and is the latest version." % (name))
-                            if exitonerror:
+                            errorlog(1, _("%s is installed and is the latest version.") % (name))
+                            if exitoninstalled:
                                 sys.exit(1)
+                                
                     else:
                         #we should install this
                         ((e, v, r, a, l, i), s)=hinevral._get_data(name,bestarch)
@@ -67,71 +63,18 @@ def installpkgs(tsnevral, nulist, userlist, hinevral, rpmnevral, exitonerror = 1
                         tsnevral.add((name,e,v,r,a,l,i),'iu')
             if foundit==0:
                 if rpmnevral.exists(n):
-                    errorlog(1,"%s is installed and is the latest version." % (n))
-                    if exitonerror:
+                    errorlog(1, _("%s is installed and is the latest version.") % (n))
+                    if exitoninstalled:
                         sys.exit(1)
                 else:
-                    errorlog(0,"Cannot find a package matching %s" % (n))
-                    if exitonerror:
+                    errorlog(0, _("Cannot find a package matching %s") % (n))
+                    if exitoninstalled:
                         sys.exit(1)
             
     else:
-        errorlog(1,"No Packages Available for Update or Install")    
+        errorlog(1, _("No Packages Available for Update or Install"))
     
-
-def listpkgs(pkglist, userlist, nevral):
-    if len(pkglist) > 0:
-        pkglist.sort(clientStuff.nasort)
-        print "%-40s %-10s %s" %('Name','Arch','Version')
-        print "-" * 80
-        if type(userlist) is types.StringType:
-            if userlist=='all' or userlist =='updates':
-                for (name, arch) in pkglist:
-                    (e,v,r)=nevral.evr(name,arch)
-                    print "%-40s %-10s %s-%s" %(name, arch, v, r)
-                print ' '
-        else:    
-            for (name,arch) in pkglist:
-                for n in userlist:
-                    if n == name or fnmatch.fnmatch(name, n):
-                        (e,v,r)=nevral.evr(name,arch)
-                        print "%-40s %-10s %s-%s" %(name, arch, v, r)
-            print ' '
-    else:
-        print "No Packages Available"
-            
-def listpkginfo(pkglist, userlist, nevral):
-    if len(pkglist) > 0:
-        pkglist.sort(clientStuff.nasort)
-        if type(userlist) is types.StringType:
-            if userlist=='all' or userlist=='updates':
-                for (name, arch) in pkglist:
-                    hdr=nevral.getHeader(name,arch)
-                    displayinfo(hdr)
-                    del hdr
-        else:    
-            for (name,arch) in pkglist:
-                for n in userlist:
-                    if n == name or fnmatch.fnmatch(name, n):
-                        hdr=nevral.getHeader(name,arch)
-                        displayinfo(hdr)
-                        del hdr
-    else:
-        print "No Packages Available"
-
-def displayinfo(hdr):
-    print "Name   : %s" % hdr[rpm.RPMTAG_NAME]
-    print "Arch   : %s" % hdr[rpm.RPMTAG_ARCH]
-    print "Version: %s" % hdr[rpm.RPMTAG_VERSION]
-    print "Release: %s" % hdr[rpm.RPMTAG_RELEASE]
-    print "Size   : %s" % clientStuff.descfsize(hdr[rpm.RPMTAG_SIZE])
-    print "Group  : %s" % hdr[rpm.RPMTAG_GROUP]
-    print "Summary: %s" % hdr[rpm.RPMTAG_SUMMARY]
-    print "Description:\n %s" % hdr[rpm.RPMTAG_DESCRIPTION]
-    print ""
-    
-
-def updatepkgs(tsnevral, hinevral, rpmnevral, nulist, uplist, userlist, exitonerror = 1):
+def updatepkgs(tsnevral, hinevral, rpmnevral, nulist, uplist, userlist, exitoninstalled):
     """Update pkgs - will only update - will not install uninstalled pkgs.
        however it will, on occasion install a new, betterarch of a pkg"""
        
@@ -169,14 +112,14 @@ def updatepkgs(tsnevral, hinevral, rpmnevral, nulist, uplist, userlist, exitoner
         if not pkgfound:
             if rpmnevral.exists(n):
                 errorlog(1,"%s is installed and the latest version." % (n))
-                if exitonerror:
+                if exitoninstalled:
                     sys.exit(1)
             else:
                 errorlog(0,"Cannot find any package matching %s available to be updated." % (n))
-                if exitonerror:
+                if exitoninstalled:
                     sys.exit(1)
             
-def upgradepkgs(tsnevral, hinevral, rpmnevral, nulist, uplist, obsoleted, obsoleting, userlist, exitonerror = 1):
+def upgradepkgs(tsnevral, hinevral, rpmnevral, nulist, uplist, obsoleted, obsoleting, userlist, exitoninstalled):
     # must take user arguments
     # this is just like update except it must check for obsoleting pkgs first
     # so if foobar = 1.0 and you have foobar-1.1 in the repo and bazquux1.2 
@@ -234,26 +177,231 @@ def upgradepkgs(tsnevral, hinevral, rpmnevral, nulist, uplist, obsoleted, obsole
                     errorlog(0,"No Upgrades available.")
                 else:
                     errorlog(0,"Cannot find any package matching %s available to be upgraded." % (n))
-            if exitonerror:
+            if exitoninstalled:
                 sys.exit(1)
-        
-    
+            
 
-def erasepkgs(tsnevral, rpmnevral, userlist, exitonerror=1):
+def erasepkgs(tsnevral,rpmnevral,userlist, exitoninstalled):
     #mark for erase iff the userlist item exists in the rpmnevral
+    # one thing this should do - it should look at the name of each item and see
+    # if it is specifying a certain version of a pkg
+    # if so it should parse the version and make sure we have it installed
+    # if so then mark that SPECIFIC version for removal.
+    
     for n in userlist:
         foundit = 0
         for (name,arch) in rpmnevral.NAkeys():
             if n == name or fnmatch.fnmatch(name, n):
-                foundit=1
+                foundit = 1
                 log(4,"Erasing %s" % (name))
                 ((e, v, r, a, l, i), s)=rpmnevral._get_data(name,arch)
-                tsnevral.add((name,e,v,r,a,l,i),'e')                
-        if foundit==0:
-            errorlog(0,"Erase: No matches for %s" % n)
-            if exitonerror:
+                tsnevral.add((name,e,v,r,a,l,i),'e')
+        if foundit == 0:
+            errorlog(0, _("Erase: No matches for %s") % n)
+            if exitoninstalled:
                 sys.exit(1)
 
+def installgroups(rpmnevral, nulist, uplist, grouplist):
+    """for each group requested attempt to install all pkgs/metapkgs of default
+       or mandatory. Also recurse lists of groups to provide for them too."""
+    returnlist = []
+    nupkglist = []
+    for (name, arch) in nulist:
+        nupkglist.append(name)
+        
+    for group in grouplist:
+        if group not in GroupInfo.grouplist:
+            errorlog(0, 'Group %s does not exist' % group)
+            return returnlist
+        pkglist = GroupInfo.pkgTree(group)
+        for pkg in pkglist:
+            if pkg in nupkglist:
+                log(4, 'Adding %s to groupinstall for %s' % (pkg, group))
+                returnlist.append(pkg)
+        
+    return returnlist
+        
+        
+        
+        
+def updategroups(rpmnevral, nulist, uplist, userlist):
+    """get list of any pkg in group that is installed, check to update it
+       get list of any mandatory or default pkg attempt to update it if it is installed
+       or install it if it is not installed"""
+    groups = GroupInfo.grouplist
+    groupsmatch = []
+    for group in groups:
+        for item in userlist:
+            if group == item or fnmatch.fnmatch(group, item):
+                groupsmatch.append(group)
+    uplist_names = []
+    groupsmatch.sort()
+    updatepkgs = []
+    installpkgs = []
+    for (name, arch) in uplist:
+        uplist_names.append(name)
+
+        
+    for group in groupsmatch:
+        required = GroupInfo.requiredPkgs(group)
+        all = GroupInfo.pkgTree(group)
+        for pkg in all:
+            if rpmnevral.exists(pkg):
+                if pkg in uplist_names:
+                    updatepkgs.append((group, pkg))
+            else:
+                if pkg in required:
+                    installpkgs.append((group, pkg))
+    for (group, pkg) in updatepkgs:
+        log(2, 'From %s updating %s' % (group, pkg))
+    for (group, pkg) in installpkgs:
+        log(2, 'From %s installing %s' % (group, pkg))
+    if len(installpkgs) + len(updatepkgs) == 0:
+        log(2,'Nothing in any group to update or install')
+    return installpkgs, updatepkgs
+             
+def listpkginfo(pkglist, userlist, nevral, short):
+    if len(pkglist) > 0:
+        if short:
+            log(2, "%-36s%-7s%-25s%-12s" %(_('Name'),_('Arch'),_('Version'), _('Repo')))
+            log(2, "-" * 80)
+        pkglist.sort(clientStuff.nasort)
+        if type(userlist) is types.StringType:
+            if userlist=='all' or userlist =='updates':
+                for (name, arch) in pkglist:
+                    if short:
+                        (e,v,r) = nevral.evr(name,arch)
+                        id = nevral.serverid(name, arch)
+                        if e == '0':
+                            ver = '%s-%s' % (v, r)
+                        else:
+                            ver = '%s:%s-%s' % (e, v, r)
+                        print "%-36s%-7s%-25s%-12s" %(name, arch, ver, id)
+                    else:
+                        displayinfo(name, arch, nevral)
+                print ' '
+        else:    
+            for (name,arch) in pkglist:
+                for n in userlist:
+                    if n == name or fnmatch.fnmatch(name, n):
+                        if short:
+                            (e,v,r)=nevral.evr(name,arch)
+                            id = nevral.serverid(name, arch)
+                            if e == '0':
+                                ver = '%s-%s' % (v, r)
+                            else:
+                                ver = '%s:%s-%s' % (e, v, r)
+                            print "%-36s%-7s%-25s%-12s" %(name, arch, ver, id)
+                        else:
+                            displayinfo(name, arch, nevral)
+            print ' '
+    else:
+        print _("No Packages Available to List")
+
+def displayinfo(name, arch, nevral):
+    hdr = nevral.getHeader(name, arch)
+    id = nevral.serverid(name, arch)
+    if id == 'db':
+        repo = 'Locally Installed'
+    else:
+        repo = conf.servername[id]
+        
+    print _("Name   : %s") % hdr[rpm.RPMTAG_NAME]
+    print _("Arch   : %s") % hdr[rpm.RPMTAG_ARCH]
+    print _("Version: %s") % hdr[rpm.RPMTAG_VERSION]
+    print _("Release: %s") % hdr[rpm.RPMTAG_RELEASE]
+    print _("Size   : %s") % clientStuff.descfsize(hdr[rpm.RPMTAG_SIZE])
+    print _("Group  : %s") % hdr[rpm.RPMTAG_GROUP]
+    print _("Repo   : %s") % repo
+    print _("Summary: %s") % hdr[rpm.RPMTAG_SUMMARY]
+    print _("Description:\n %s") % hdr[rpm.RPMTAG_DESCRIPTION]
+    print ""
+    
+
+def listgroups(userlist):
+    """lists groups - should handle 'installed', 'all', glob, empty,
+       maybe visible and invisible too"""
+    # this needs tidying and needs to handle empty statements and globs
+    # it also needs to handle a userlist - duh
+    # take list - if it's zero then it's '_all_' - push that into list
+    # otherwise iterate over list producing output
+    if len(userlist) > 0:
+        if userlist[0] == "hidden":
+            groups = GroupInfo.grouplist
+            userlist.pop(0)
+        else:
+            groups = GroupInfo.visible_groups
+    else:
+        groups = GroupInfo.visible_groups
+    
+    if len(userlist) == 0:
+        userlist = ['_all_']
+
+    groups.sort()
+    for item in userlist:
+        if item == 'installed':
+            print 'Installed Groups'
+            for group in groups:
+                if GroupInfo.isGroupInstalled(group):
+                    grpid = GroupInfo.group_by_name[group]
+                    log(4, '%s - %s' % (grpid, group))
+                    print '   %s' % group
+        elif item == 'available':
+            print 'Available Groups'
+            for group in groups:
+                if not GroupInfo.isGroupInstalled(group):
+                    grpid = GroupInfo.group_by_name[group]
+                    log(4, '%s - %s' % (grpid, group))
+                    print '   %s' % group
+        elif item == '_all_':
+            print 'Installed Groups'
+            for group in groups:
+                if GroupInfo.isGroupInstalled(group):
+                    grpid = GroupInfo.group_by_name[group]
+                    log(4, '%s - %s' % (grpid, group))
+                    print '   %s' % group
+                    
+            print 'Available Groups'
+            for group in groups:
+                if not GroupInfo.isGroupInstalled(group):
+                    grpid = GroupInfo.group_by_name[group]
+                    log(4, '%s - %s' % (grpid, group))
+                    print '   %s' % group
+        else:
+            for group in groups:
+                if group == item or fnmatch.fnmatch(group, item):
+                    grpid = GroupInfo.group_by_name[group]
+                    log(4, '%s - %s' % (grpid, group))
+                    displayPkgsInGroups(group)
+
+def displayPkgsInGroups(group):
+    print 'Group: %s' % group
+    if len(GroupInfo.sub_groups[group]) > 0:
+        print ' Required Groups:'
+        for item in GroupInfo.sub_groups[group]:
+            print '   %s' % item
+    if len(GroupInfo.default_metapkgs[group]) > 0:
+        print ' Default Metapkgs:'
+        for item in GroupInfo.default_metapkgs[group]:
+            print '   %s' % item
+    if len(GroupInfo.optional_metapkgs[group]) > 0:
+        print ' Optional Metapkgs:'
+        for item in GroupInfo.optional_metapkgs[group]:
+            print '   %s' % item
+    if len(GroupInfo.mandatory_pkgs[group]) > 0:
+        print ' Mandatory Packages:'
+        for item in GroupInfo.mandatory_pkgs[group]:
+            print '   %s' % item
+    if len(GroupInfo.default_pkgs[group]) > 0:
+        print ' Default Packages:'
+        for item in GroupInfo.default_pkgs[group]:
+            print '   %s' % item
+    if len(GroupInfo.optional_pkgs[group]) > 0:
+        print ' Optional Packages'
+        for item in GroupInfo.optional_pkgs[group]:
+            print '   %s' % item
+
+                
 def whatprovides(usereq, nulist, nevral, localrpmdb):
     # figure out what the user wants, traverse all the provides and file lists 
     # in every file in the header, return the fnmatch()es for the usereq
@@ -277,7 +425,9 @@ def whatprovides(usereq, nulist, nevral, localrpmdb):
     if localrpmdb == 0:
         for (name, arch) in nulist:
             hdr = nevral.getHeader(name, arch)
-            fullprovideslist = hdr[rpm.RPMTAG_PROVIDES] + hdr[rpm.RPMTAG_FILENAMES]
+            fullprovideslist = hdr[rpm.RPMTAG_PROVIDES]
+            if hdr[rpm.RPMTAG_FILENAMES] != None:
+                fullprovideslist = fullprovideslist + hdr[rpm.RPMTAG_FILENAMES]
             if hdr[rpm.RPMTAG_DIRNAMES] != None:
                 fullprovideslist = fullprovideslist + hdr[rpm.RPMTAG_DIRNAMES]
             for req in usereq:
@@ -285,29 +435,39 @@ def whatprovides(usereq, nulist, nevral, localrpmdb):
                     log(6, '%s vs %s' % (item, req))
                     if req == item or fnmatch.fnmatch(item, req):
                         results = results + 1
-                        log(2,'Available package: %s provides %s' % (name, item))
+                        log(2, _('Available package: %s provides %s') % (name, item))
             del fullprovideslist
     elif localrpmdb == 1:
-        for (name, arch) in nevral.NAkeys():
-            hdr=nevral.getHeader(name,arch)
-            fullprovideslist = hdr[rpm.RPMTAG_PROVIDES] + hdr[rpm.RPMTAG_FILENAMES]
-            if hdr[rpm.RPMTAG_DIRNAMES] != None:
-                fullprovideslist = fullprovideslist + hdr[rpm.RPMTAG_DIRNAMES]
+        matchlist = ts.match()
+        for hdrobj in matchlist:
+            name = hdrobj.name()
+            arch = hdrobj.arch()
+            filenames = []
+            filenames = hdrobj._getTag('filenames')
+            provides = hdrobj._getTag('providename')
+            dirnames = hdrobj._getTag('dirnames')
+            fullprovideslist = []
+            if provides != None:
+                fullprovideslist = fullprovideslist + provides
+            if filenames != None:
+                fullprovideslist = fullprovideslist + filenames
+            if dirnames != None:
+                fullprovideslist = fullprovideslist + dirnames
             for req in usereq:
                 for item in fullprovideslist:
-                    log(6, '%s vs %s' % (item, req))
+                    log(5, '%s vs %s' % (item, req))
                     if req == item or fnmatch.fnmatch(item, req):
                         results = results + 1
-                        log(2,'Installed package: %s provides %s' % (name, item))
+                        log(2, _('Installed package: %s provides %s') % (name, item))
             del fullprovideslist
     else:
-        errorlog(1,'localrpmdb not defined')
+        errorlog(1, _('localrpmdb not defined'))
         
         
     if results > 0:
-        log(2,'%s results returned' % results)
+        log(2, _('%s results returned') % results)
     else:
-        log(2,'No packages found')
+        log(2, _('No packages found'))
     
     
 
@@ -319,7 +479,7 @@ def kernelupdate(tsnevral):
     for (name,arch) in tsnevral.NAkeys():
         s = tsnevral.state(name,arch)
         if s in ['i','u','ud','iu']:
-            if name in ['kernel','kernel-smp','kernel-enterprise','kernel-bigmem','kernel-BOOT']:
+            if name in conf.kernelpkgnames:
                 hdr=tsnevral.getHeader(name,arch)
                 if "kernel-smp" in hdr[rpm.RPMTAG_PROVIDES]:
                     extraInfo = "kernel-smp"
@@ -351,7 +511,7 @@ def kernelupdate(tsnevral):
                 kernel_list.append((verRel, extraInfo))
         
     if len(kernel_list) > 0:
-        log(2, 'Kernel Updated/Installed, checking for bootloader')
+        log(2, _('Kernel Updated/Installed, checking for bootloader'))
         # code from up2date/up2date.py
         #figure out which bootloader, run the script for that bootloader
         import checkbootloader
@@ -376,97 +536,8 @@ def kernelupdate(tsnevral):
             # at the moment, kernel rpms are supposed to grok grub
             # and do the Right Thing. Just a placeholder for doc purposes and
             #to put the kernels in the right order
-            log(2,'Grub found - making this kernel the default')
+            log(2, _('Grub found - making this kernel the default'))
             up2datetheft.install_grub(kernel_list)
         else:
-            errorlog(1, 'No bootloader found, Cannot configure kernel, continuing.')
+            errorlog(1, _('No bootloader found, Cannot configure kernel, continuing.'))
             filelog(1, 'No bootloader found, Cannot configure kernel.')
-
-def checkRpmMD5(package):
-    check=rpm.CHECKSIG_MD5
-    # RPM spews to stdout/stderr.  Redirect.
-    # code for this from up2date.py
-    saveStdout = os.dup(1)
-    saveStderr = os.dup(2)
-    redirStdout = os.open("/dev/null", os.O_WRONLY | os.O_APPEND)
-    redirStderr = os.open("/dev/null", os.O_WRONLY | os.O_APPEND)
-    os.dup2(redirStdout, 1)
-    os.dup2(redirStderr, 2)
-    # now do the rpm thing
-    sigcheck = rpm.checksig(package, check)
-    # restore normal stdout and stderr
-    os.dup2(saveStdout, 1)
-    os.dup2(saveStderr, 2)
-    # close the redirect files.
-    os.close(redirStdout)
-    os.close(redirStderr)
-    os.close(saveStdout)
-    os.close(saveStderr)
-    if sigcheck:
-        errorlog(0, 'Error: MD5 Signature check failed for %s' %(package))
-        errorlog(0, 'You may want to run yum clean or remove the file:\n %s' % (package))
-        errorlog(0, 'Exiting.')
-        sys.exit(1)
-
-
-def checkRpmSig(package, serverid):
-    # check for gpg
-    # get the right sig information from config
-    # if we have a keyring then use it
-    # if not then just set gpg_home
-    # check the package
-    
-    # sig info should work like this:
-    # if we have a keyring defined for the server section - use that
-    # if not use the default
-    # if the default is not defined but gpgcheck is - use gpg_home
-    
-    hdr = clientStuff.readHeader(package)
-    
-    if clientStuff.checkGPGInstallation() != 0:
-        errorlog(0, 'Error: /usr/bin/gpg could not be found')
-        sys.exit(1)
-        return 1
-    if hdr['SIGGPG'] == None:
-        errorlog(0, 'Warning: package %s is unsigned' % package)
-        errorlog(0, 'You may want to disable GPG checking to install this package')
-        errorlog(0, 'Exiting')
-        sys.exit(1)
-        return 1
-    if clientStuff.checkGPGInstallation() == 0:
-        if conf.gpgkeyring:
-            gpg_flags = "--homedir %s --no-default-keyring --keyring %s" % (conf.gpghome, conf.gpgkeyring)
-        else:
-            gpg_flags = "--homedir %s" % conf.gpghome
-            
-        rpm.addMacro("__gpg_verify_cmd",
-                    """%%{__gpg} gpg %s --batch --no-verbose --verify %%{__signature_filename} %%{__plaintext_filename}""" % gpg_flags)
-        rpm.addMacro("_gpg_path", conf.gpghome)
-        check=rpm.CHECKSIG_GPG
-        # RPM spews to stdout/stderr.  Redirect.
-        # code for this from up2date.py
-        saveStdout = os.dup(1)
-        saveStderr = os.dup(2)
-        redirStdout = os.open("/dev/null", os.O_WRONLY | os.O_APPEND)
-        redirStderr = os.open("/dev/null", os.O_WRONLY | os.O_APPEND)
-        os.dup2(redirStdout, 1)
-        os.dup2(redirStderr, 2)
-        # now do the rpm thing
-        result = rpm.checksig(package, check)
-        # restore normal stdout and stderr
-        os.dup2(saveStdout, 1)
-        os.dup2(saveStderr, 2)
-        # close the redirect files.
-        os.close(redirStdout)
-        os.close(redirStderr)
-        os.close(saveStdout)
-        os.close(saveStderr)
-        rpm.delMacro("__gpg_verify_cmd")
-        rpm.delMacro("_gpg_path")
-        if result:
-            errorlog(0, 'Error: GPG Signature check failed for %s' %(package))
-            errorlog(0, 'You may want to run yum clean or remove the file:\n %s' % (package))
-            errorlog(0, 'You may also want to check to make sure you have the right gpg keys')
-            errorlog(0, 'Exiting.')
-            sys.exit(1)
-        return 0

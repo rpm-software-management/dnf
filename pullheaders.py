@@ -14,124 +14,34 @@
 # Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 # Copyright 2002 Duke University 
 
+
 import os
 import sys
-import types
-try:
-    import rpm404
-    rpm = rpm404
-except ImportError, e:
-    import rpm
-    rpm404 = rpm
-    
+import rpmUtils
 import serverStuff
-import clientStuff
+import rpm
+import types
 from logger import Logger
+from i18n import _
 
-log=Logger(threshold=2,default=2,prefix='',preprefix='')
+log=Logger(threshold=2, default=2, prefix='', preprefix='')
 serverStuff.log = log
-clientStuff.log = log
-
-def genhdrs(rpms, headerdir, cmds):
-    rpmdelete = 0 # define this if you have the rpmheader stripping patch built into rpm
-    rpminfo = {}
-    numrpms = len(rpms)
-    goodrpm = 0
-    currpm = 0
-    for rpmfn in rpms:
-        rpmname = os.path.basename(rpmfn)
-        currpm=currpm + 1
-        percent = (currpm*100)/numrpms
-        if not cmds['quiet']:
-            if cmds['loud']:
-                print 'Digesting rpm - %s - %d/%d' % (rpmname, currpm, numrpms)
-            else:
-                sys.stdout.write('\r' + ' ' * 80)
-                sys.stdout.write("\rDigesting rpms %d %% complete: %s" % (percent,rpmname))
-                sys.stdout.flush()
-        if cmds['rpmcheck']:
-            log(2,"\nChecking sig on %s" % (rpmname))
-            serverStuff.checkSig(rpmfn)
-        header = serverStuff.readHeader(rpmfn)
-        #check to ignore src.rpms
-        if type(header) != types.StringType:
-            if header[rpm.RPMTAG_EPOCH] == None:
-                epoch = '0'
-            else:
-                epoch = '%s' % header[rpm.RPMTAG_EPOCH]
-            name = header[rpm.RPMTAG_NAME]
-            ver = header[rpm.RPMTAG_VERSION]
-            rel = header[rpm.RPMTAG_RELEASE]
-            arch = header[rpm.RPMTAG_ARCH]
-            rpmloc = rpmfn
-            rpmtup = (name,arch)
-            # do we already have this name.arch tuple in the dict?
-            if rpminfo.has_key(rpmtup):
-                log(2,"Already found tuple: %s %s " % (name, arch))
-                (e1, v1, r1, l1) = rpminfo[rpmtup]
-                oldhdrfile = "%s/%s-%s-%s-%s.%s.hdr" % (headerdir, name, e1, v1, r1, arch) 
-                # which one is newer?
-                rc = clientStuff.compareEVR((e1,v1,r1), (epoch, ver, rel))
-                if rc <= -1:
-                    # if the more recent one in is newer then throw away the old one
-                    del rpminfo[rpmtup]
-                    if os.path.exists(oldhdrfile):
-                        print "\nignoring older pkg: %s" % (l1)
-                        os.unlink(oldhdrfile)
-                    if rpmdelete:
-                        shortheader = serverStuff.cleanHeader(header)
-                    else:
-                        shortheader = header
-                    headerloc = serverStuff.writeHeader(headerdir, shortheader, cmds['compress'])       
-                    rpminfo[rpmtup]=(epoch,ver,rel,rpmloc)
-                elif rc == 0:
-                    # hmm, they match complete - warn the user that they've got a dupe in the tree
-                    print "\nignoring dupe pkg: %s" % (rpmloc)
-                elif rc >= 1:
-                    # move along, move along, nothing more to see here
-                    print "\nignoring older pkg: %s" % (rpmloc)
-            else:
-                if rpmdelete:
-                    shortheader = serverStuff.cleanHeader(header)
-                else:
-                    shortheader = header
-                headerloc = serverStuff.writeHeader(headerdir,shortheader, cmds['compress'])
-                rpminfo[rpmtup]=(epoch,ver,rel,rpmloc)
-                goodrpm = goodrpm + 1
-        else:
-            if header == 'source':
-                log(2,"\nignoring srpm: %s" % rpmfn)
-            elif header == 'bad':
-                log(2, "\nignoring bad rpm: %s" % rpmfn)
-            else:
-                log(2, "\nignoring header string %s in %s" % (header, rpmfn))
-    if not cmds['quiet']:
-        print "\n   Total: %d\n   Used: %d" %(numrpms, goodrpm)
-    return rpminfo
-
-def removeCurrentHeaders(headerdir, hdrlist):
-    """remove the headers before building the new ones"""
-    for hdr in hdrlist:
-        if os.path.exists(hdr):
-            try:
-                os.unlink(hdr)
-            except OSerror, e:
-                print 'Cannot delete file %s' % hdr
-        else:
-            print 'Odd header %s suddenly disappeared' % hdr
-
-def removeHeaderInfo(headerinfo):
-    """remove header.info file"""
-    if os.path.exists(headerinfo):
-        try:
-            os.unlink(headerinfo)
-        except OSerror, e:
-            print 'Cannot delete header.info - check perms' % hdr
-            
+rpmUtils.log = log
+rpmUtils.errorlog = log
+ts = rpmUtils.Rpm_Ts_Work()
+rpmUtils.ts = ts
+serverStuff.ts = ts
 
 def main():
+    tempheaderdir = '.newheaders'
+    tempheaderinfo = tempheaderdir + '/' + 'header.info'
+    tempsrcheaderinfo = tempheaderdir + '/' + 'header.src.info'
+    oldheaderdir = '.oldheaders'
+    oldheaderinfo = oldheaderdir + '/' + 'header.info'
+    oldsrcheaderinfo = oldheaderdir + '/' + 'header.src.info'
     headerdir = 'headers'
     headerinfo = headerdir + '/' + 'header.info'
+    srcheaderinfo = headerdir + '/' + 'header.src.info'
     if  len(sys.argv) < 2:
         serverStuff.Usage()
     cmds = {}
@@ -139,9 +49,10 @@ def main():
     cmds['writehdrs'] = 1
     cmds['rpmcheck'] = 0
     cmds['compress'] = 1
-    cmds['loud'] = 0
-    cmds['quiet'] = 0
     cmds['usesymlinks'] = 0
+    cmds['dosrpms'] = 0
+    cmds['quiet'] = 0
+    cmds['loud'] = 0
     args = sys.argv[1:]
     basedir = args[-1]
     del args[-1]
@@ -158,30 +69,32 @@ def main():
             cmds['compress'] = 1
         elif arg == "-l":
             cmds['usesymlinks'] = 1
-        elif arg == "-vv":
-            cmds['loud'] = 1
-            log.verbosity = 4
+        elif arg == "-s":
+            cmds['dosrpms'] = 1
         elif arg == "-q":
             cmds['quiet'] = 1
-        elif arg in ['-h','--help']:
+            log.threshold = 1
+        elif arg == "-vv":
+            cmds['loud'] = 1
+            log.threshold = 4
+        if arg in ['-h','--help']:
             serverStuff.Usage()
-    #save where we are right now
+    # save where we are right now
     curdir = os.getcwd()
-    
-    #start the sanity/stupidity checks
+    # start the sanity/stupidity checks
     if not os.path.exists(basedir):
-        print "Directory of rpms must exist"
+        print _("Directory of rpms must exist")
         serverStuff.Usage()
     if not os.path.isdir(basedir):
-        print "Directory of rpms must be a directory."
+        print _("Directory of rpms must be a directory.")
         sys.exit(1)
         
     # change to the basedir to work from w/i the path - for relative url paths
     os.chdir(basedir)
-
-    # get the list of rpms
-    rpms = serverStuff.getfilelist('./', '.rpm', [], cmds['usesymlinks'])
     
+    # get the list of rpms
+    rpms=serverStuff.getfilelist('./', '.rpm', [], cmds['usesymlinks'])
+
     # some quick checks - we know we don't have ANY rpms - so, umm what do we
     # do? - if we have a headers dir then maybe we already had some and its
     # a now-empty repo - well, lets clean it up
@@ -189,58 +102,197 @@ def main():
     if len(rpms) == 0:
         if os.path.exists(headerdir):
             hdrlist = serverStuff.getfilelist(headerdir, '.hdr', [], 0)
-            removeCurrentHeaders(headerdir, hdrlist)
+            removeCurrentHeaders(hdrlist)
+            if cmds['dosrpms']:
+                removeHeaderInfo(srcheaderinfo)
+                srcheaderfd = open(srcheaderinfo, "w")
+                srcheaderfd.close()
             removeHeaderInfo(headerinfo)
             headerfd = open(headerinfo, "w")
             headerfd.close()
             sys.exit(0)
         else:
-            print 'No rpms to work with and no header dir. Exiting.'
+            print _('No rpms to work with and no header dir. Exiting.')
             sys.exit(1)
             
     # depcheck if requested
     if cmds['checkdeps']:
         (error, msgs) = serverStuff.depchecktree(rpms)
-        if error:
-            print "Errors within the dir(s):\n %s" % basedir
+        if error == 1:
+            print _("Errors within the dir(s):\n %s") % basedir
             for msg in msgs:
-                print "   " + msg
+                print _("   ") + msg
             sys.exit(1)
         else:
-            print "All dependencies resolved and no conflicts detected"
+            print _("All dependencies resolved and no conflicts detected")
     
     if cmds['writehdrs']:
+        # this should flow like this:
+        # make sure the tempheaderdir is made, etc
+        # check on the headerdir too
+        # make the newheaders and header.info in tempheaderdir
+        # mv the headers dir to .oldheaders
+        # mv .newheaders to headers
+        # clean out the old .hdrs
+        # remove the .oldheaders/header.info
+        # remove the .oldheaders dir
         # if the headerdir exists and its a file then we're in deep crap
-        if os.path.isfile(headerdir):
-            print "%s is a file" % (headerdir)
+        if not checkandMakeDir(headerdir):
+            sys.exit(1)
+        if not checkandMakeDir(tempheaderdir):
             sys.exit(1)
 
-        # if it doesn't exist then make the dir
-        if not os.path.exists(headerdir):
-            os.mkdir(headerdir)
-        # done with the sanity checks, on to the cleanups
-        
-        # looks for a list of .hdr files and the header.info file
-        hdrlist = serverStuff.getfilelist(headerdir, '.hdr', [], 0)
-        removeCurrentHeaders(headerdir, hdrlist)
-        removeHeaderInfo(headerinfo)
-
-        # do the header generation
-        rpminfo = genhdrs(rpms, headerdir, cmds)
+        # generate the new headers
+        rpminfo = genhdrs(rpms, tempheaderdir, cmds)
         
         # Write header.info file
-        print "\nWriting header.info file"
-        headerfd = open(headerinfo, "w")
+        if not cmds['quiet']:
+            print _("\nWriting header.info file")
+        headerfd = open(tempheaderinfo, "w")
+        if cmds['dosrpms']:
+            srcheaderfd = open(tempsrcheaderinfo, "w")
         for item in rpminfo.keys():
-            (name,arch) = item
-            (epoch, ver, rel, rpmloc) = rpminfo[item]
-            info = "%s:%s-%s-%s.%s=%s\n" % (epoch, name, ver, rel, arch, rpmloc)
-            headerfd.write(info)
+            (name,epoch, ver, rel, arch, source) = item
+            rpmloc = rpminfo[item]
+            if source:
+                info = "%s:%s-%s-%s.src=%s\n" % (epoch, name, ver, rel, rpmloc)
+                srcheaderfd.write(info)
+            else:
+                info = "%s:%s-%s-%s.%s=%s\n" % (epoch, name, ver, rel, arch, rpmloc)
+                headerfd.write(info)
+        if cmds['dosrpms']:
+            srcheaderfd.close()
         headerfd.close()
 
+        try:
+            os.rename(headerdir, oldheaderdir)
+        except OSError, e:
+            print _("Error moving %s to %s, fatal") % (headerdir, oldheaderdir)
+            sys.exit(1)
+        
+        try:
+            os.rename(tempheaderdir, headerdir)
+        except OSError, e:
+            print _("Error moving %s to %s, fatal") % (headerdir, oldheaderdir)
+            # put the old dir back, don't leave everything broken
+            print _("Putting back old headers")
+            os.rename(oldheaderdir, headerdir)
+            sys.exit(1)
+        
+        # looks for a list of .hdr files and the header.info file
+        hdrlist = serverStuff.getfilelist(oldheaderdir, '.hdr', [], 0)
+        removeCurrentHeaders(hdrlist)
+        removeHeaderInfo(oldheaderinfo)
+        removeHeaderInfo(oldsrcheaderinfo)
+        os.rmdir(oldheaderdir)
 
     # take us home mr. data
     os.chdir(curdir)
+
+def checkandMakeDir(dir):
+    """check out the dir and make it, if possible, return 1 if done, else return 0"""
+    if os.path.exists(dir):
+        if not os.path.isdir(dir):
+            print _("%s is not a dir") % dir
+            result = 0
+        else:
+            if not os.access(dir, os.W_OK):
+                print _("%s is not writable") % dir
+                result = 0
+            else:
+                result = 1
+    else:
+        try:
+            os.mkdir(dir)
+        except OSError, e:
+            print _('Error creating dir %s: %s') % (dir, e)
+            result = 0
+        else:
+            result = 1
+    return result
+            
+        
+def removeCurrentHeaders(hdrlist):
+    """remove the headers before building the new ones"""
+    for hdr in hdrlist:
+        if os.path.exists(hdr):
+            try:
+                os.unlink(hdr)
+            except OSerror, e:
+                print _('Cannot delete file %s') % hdr
+        else:
+            print _('Odd header %s suddenly disappeared') % hdr
+
+def removeHeaderInfo(headerinfo):
+    """remove header.info file"""
+    if os.path.exists(headerinfo):
+        try:
+            os.unlink(headerinfo)
+        except OSerror, e:
+            print _('Cannot delete %s - check perms') % headerinfo
+            
+
+def genhdrs(rpms,headerdir,cmds):
+    """ Take a list of rpms, a place to put the headers and a config dictionary.
+        outputs .hdr files and returns a dict containing all the header entries.
+    """
+    rpminfo = {}
+    numrpms = len(rpms)
+    goodrpm = 0
+    currpm = 0
+    srpms = 0
+    for rpmfn in rpms:
+        rpmname = os.path.basename(rpmfn)
+        currpm=currpm + 1
+        percent = (currpm*100)/numrpms
+        if not cmds['quiet']:
+            if cmds['loud']:
+                print _('Digesting rpm - %s - %d/%d') % (rpmname, currpm, numrpms)
+            else:
+                sys.stdout.write('\r' + ' ' * 80)
+                sys.stdout.write("\rDigesting rpms %d %% complete: %s" % (percent, rpmname))
+                sys.stdout.flush()
+        if cmds['rpmcheck']:
+            log(2,_("\nChecking sig on %s") % rpmname)
+            if rpmUtils.checkSig(rpmfn) > 0:
+                log(0, _("\n\nProblem with gpg sig or md5sum on %s\n\n") % rpmfn)
+                sys.exit(1)
+        hobj = rpmUtils.RPM_Work(rpmfn)
+        if hobj.hdr is None:
+            log(1, "\nignoring bad rpm: %s" % rpmfn)
+        else:
+            (name, epoch, ver, rel, arch) = hobj.nevra()
+            if hobj.isSource():
+                if not cmds['dosrpms']:
+                    if cmds['loud']:
+                        print "\nignoring srpm: %s" % rpmfn
+                    continue
+                    
+            if epoch is None:
+                epoch = '0'
+                
+            rpmloc = rpmfn
+            rpmstat = os.stat(rpmfn)
+            rpmmtime = rpmstat[-2]
+            rpmatime = rpmstat[-3]
+            rpmtup = (name, epoch, ver, rel, arch, hobj.isSource())
+            # do we already have this name.arch tuple in the dict?
+            if rpminfo.has_key(rpmtup):
+                log(2, _("\nAlready found tuple: %s %s:\n%s ") % (name, arch, rpmfn))
+                
+            headerloc = hobj.writeHeader(headerdir, cmds['compress'])
+            os.utime(headerloc, (rpmatime, rpmmtime))
+            
+            if hobj.isSource():
+                srpms = srpms + 1
+                
+            rpminfo[rpmtup]=rpmloc
+            goodrpm = goodrpm + 1
+            
+    if not cmds['quiet']:
+        print _("\n   Total: %d\n   Used: %d\n   Src: %d") %(numrpms, goodrpm, srpms)
+    return rpminfo
+
 
 
 if __name__ == "__main__":

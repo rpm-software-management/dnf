@@ -12,10 +12,11 @@
 
 import os,sys
 import lilo, iutil
-from translate import _, N_, cat
+from i18n import _
 import time
 import string
-from up2datetheft import findDepLocal,openrpmdb
+from up2datetheft import findDepLocal
+from rpmUtils import openrpmdb
 
 # this tool is designed to setup lilo properly, including building a initrd,
 # adding a new kernel to lilo.conf, testing lilo, and installing it
@@ -403,7 +404,7 @@ if __name__ == "__main__":
                                       ['add=','del=',
                                        'file=','default'])
     except getopt.error, e:
-        print("Error parsing command line arguments: %s") % e
+        print(_("Error parsing command line arguments: %s")) % e
         sys.exit(1)
 
     addimage = 0

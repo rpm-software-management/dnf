@@ -17,48 +17,37 @@
 import ConfigParser
 import sys
 import os
+import os.path
 import urlparse
 import string
 import urllib
-import archwork
-import clientStuff
 import rpm
 import re
+import failover
+import archwork
+import rpmUtils
 
-class yumConfigParser(ConfigParser.ConfigParser):
-    def readfp(self, fp, filename=None):
-        """Like read() but the argument must be a file-like object.
-        The `fp' argument must have a `readline' method.  Optional
-        second argument is the `filename', which if not given, is
-        taken from fp.name.  If fp has no `name' attribute, `<???>' is
-        used.
-        """
-        if filename is None:
-            try:
-                filename = fp.name
-            except AttributeError:
-                filename = '<???>'
-        self._ConfigParser__read(fp)
+from i18n import _
 
 
 class yumconf:
+
     def __init__(self, configfile = '/etc/yum.conf'):
-        self.cfg = yumConfigParser()
+        self.cfg = ConfigParser.ConfigParser()
         (s,b,p,q,f,o) = urlparse.urlparse(configfile)
         if s in ('http', 'ftp','file'):
             configfh = urllib.urlopen(configfile)
             try:
                 self.cfg.readfp(configfh)
             except ConfigParser.MissingSectionHeaderError, e:
-                print ('Error accessing URL: %s') % configfile
+                print _('Error accessing URL: %s') % configfile
                 sys.exit(1)
         else:
             if os.access(configfile, os.R_OK):
                 self.cfg.read(configfile)
             else:
-                print ('Error accessing File: %s') % configfile
+                print _('Error accessing File: %s') % configfile
                 sys.exit(1)
-
         self.servers = []
         self.servername = {}
         self.serverurl = {}
@@ -66,6 +55,8 @@ class yumconf:
         self.serverhdrdir = {}
         self.servercache = {}
         self.servergpgcheck={}
+        self.serverexclude={}
+        self.failoverclass = {}
         self.excludes=[]
         
         #defaults
@@ -73,78 +64,132 @@ class yumconf:
         self.debuglevel = 2
         self.logfile = '/var/log/yum.log'
         self.pkgpolicy = 'newest'
-        self.gpghome = '/root/.gnupg'
-        self.gpgkeyring = None
         self.assumeyes = 0
         self.errorlevel = 2
         self.cache = 0
         self.uid = 0
+        self.yumversion = 'unversioned'
         self.commands = None
         self.exactarch = 0
+        self.overwrite_groups = 0
+        self.groups_enabled = 0
         self.diskspacecheck = 1
         self.tolerant = 0
-        self.distroverpkg = 'redhat-release'
         self.yumvar = self._getEnvVar()
         self.distroverpkg = 'redhat-release'
         self.yumvar['basearch'] = archwork.getArch()
         self.yumvar['arch'] = os.uname()[4]
-        
+        self.bandwidth = None
+        self.throttle = None
+        self.retries = 3
+        self.installroot = '/'
+        self.installonlypkgs = ['kernel', 'kernel-bigmem', 'kernel-enterprise',
+                           'kernel-smp', 'kernel-debug', 'kernel-unsupported']
+        self.kernelpkgnames = ['kernel','kernel-smp','kernel-enterprise',
+                           'kernel-bigmem','kernel-BOOT']
+      
         if self._getoption('main','cachedir') != None:
-            self.cachedir=self._getoption('main','cachedir')
+            self.cachedir = self._getoption('main','cachedir')
         if self._getoption('main','debuglevel') != None:
-            self.debuglevel=self._getoption('main','debuglevel')
+            self.debuglevel = self._getoption('main','debuglevel')
         if self._getoption('main','logfile') != None:
-            self.logfile=self._getoption('main','logfile')
+            self.logfile = self._getoption('main','logfile')
         if self._getoption('main','pkgpolicy') != None:
-            self.pkgpolicy=self._getoption('main','pkgpolicy')
-        if self._getoption('main','exclude') != None:
-            self.excludes=string.split(self._getoption('main','exclude'), ' ')
+            self.pkgpolicy = self._getoption('main','pkgpolicy')
         if self._getoption('main','assumeyes') != None:
-            self.assumeyes=self.cfg.getboolean('main','assumeyes')
+            self.assumeyes = self.cfg.getboolean('main', 'assumeyes')
         if self._getoption('main','errorlevel') != None:
-            self.errorlevel=self._getoption('main','errorlevel')
-        if self._getoption('main','gpghome') != None:
-            self.gpghome=self._getoption('main','gpghome')
-        if self._getoption('main','gpgkeyring') != None:
-            self.gpgkeyring=self._getoption('main','gpgkeyring')
+            self.errorlevel = self._getoption('main', 'errorlevel')
+        if self._getoption('main','exactarch') != None:
+            self.exactarch = self.cfg.getboolean('main', 'exactarch')
+        if self._getoption('main','overwrite_groups') != None:
+            self.overwrite_groups = self.cfg.getboolean('main', 'overwrite_groups')
         if self._getoption('main','diskspacecheck') != None:
-            self.diskspacecheck=self.cfg.getboolean('main','diskspacecheck')
+            self.diskspacecheck = self.cfg.getboolean('main', 'diskspacecheck')
         if self._getoption('main','tolerant') != None:
             self.tolerant = self.cfg.getboolean('main', 'tolerant')
         if self._getoption('main', 'distroverpkg') != None:
             self.distroverpkg = self._getoption('main','distroverpkg')
-        if self._getoption('main','exactarch') != None:
-            self.exactarch = self.cfg.getboolean('main', 'exactarch')
-        
+        if self._getoption('main', 'bandwidth') != None:
+            self.bandwidth = self._getoption('main','bandwidth')
+        if self._getoption('main', 'throttle') != None:
+            self.throttle = self._getoption('main','throttle')
+        if self._getoption('main', 'retries') != None:
+            self.retries = self.cfg.getint('main','retries')
+        if self._getoption('main', 'installroot') != None:
+            self.installroot = self._getoption('main','installroot')
+
         # figure out what the releasever really is from the distroverpkg
         self.yumvar['releasever'] = self._getsysver()
         
         if self._getoption('main','commands') != None:
             self.commands = self._getoption('main', 'commands')
             self.commands = self._doreplace(self.commands)
-            self.commands = string.split(self.commands,' ')
+            self.commands = self.commands.split(' ')
+
+        if self._getoption('main','installonlypkgs') != None:
+            self.installonlypkgs = self._getoption('main', 'installonlypkgs')
+            self.installonlypkgs = self._doreplace(self.installonlypkgs)
+            self.installonlypkgs = self.installonlypkgs.split(' ')
+
+        if self._getoption('main','kernelpkgnames') != None:
+            self.kernelpkgnames = self._getoption('main', 'kernelpkgnames')
+            self.kernelpkgnames = self._doreplace(self.kernelpkgnames)
+            self.kernelpkgnames = self.kernelpkgnames.split(' ')
+
+        # get the global exclude lists.
+        if self._getoption('main','exclude') != None:
+            self.excludes = self._getoption('main','exclude')
+            self.excludes = self._doreplace(self.excludes)
+            self.excludes = self.parseList(self.excludes)
+            
 
         if len(self.cfg.sections()) > 1:
             for section in self.cfg.sections(): # loop through the list of sections
                 if section != 'main': # must be a serverid
-                    name = self._getoption(section,'name')
-                    url = self._getoption(section,'baseurl')
-                    if name != None and url != None:
+                    if self._getoption(section, 'baseurl') != None:
+                        name = self._getoption(section, 'name')
+                        urls = self._getoption(section, 'baseurl')
+                        urls = self._doreplace(urls)
+                        urls = self.parseList(urls)
+                    else:
+                        name = None
+                        urls = []
+                        
+                    if name != None and len(urls) > 0 and urls[0] != None:
                         self.servers.append(section)
-                        # regex replacing for baseurl and name
                         name = self._doreplace(name)
-                        url = self._doreplace(url)
                         self.servername[section] = name
-                        self.serverurl[section] = url
+                        self.serverurl[section] = urls
+                        
+                        failmeth = self._getoption(section,'failovermethod')
+                        if failmeth == 'roundrobin':
+                            failclass = failover.roundRobin(self, section)
+                        elif failmeth == 'priority':
+                            failclass = failover.priority(self, section)
+                        else:
+                            failclass = failover.roundRobin(self, section)
+                        self.failoverclass[section] = failclass
+                        
                         if self._getoption(section,'gpgcheck') != None:
                             self.servergpgcheck[section]=self.cfg.getboolean(section,'gpgcheck')
                         else:
                             self.servergpgcheck[section]=0
-                        (s,b,p,q,f,o) = urlparse.urlparse(self.serverurl[section])
-                        # currently only allowing http and ftp servers 
-                        if s not in ['http', 'ftp', 'file', 'https']:
-                            print 'Not using ftp, http[s], or file for servers, Aborting - %s' % (self.serverurl[section])
-                            sys.exit(1)
+                        if self._getoption(section, 'exclude') != None:
+                            srvexcludelist = self._getoption(section, 'exclude')
+                            srvexcludelist = self._doreplace(srvexcludelist)
+                            srvexcludelist = self.parseList(srvexcludelist)
+                        else:
+                            srvexcludelist = []
+                        self.serverexclude[section] = srvexcludelist
+                        
+                        for url in self.serverurl[section]:
+                            (s,b,p,q,f,o) = urlparse.urlparse(url)
+                            # currently only allowing http and ftp servers 
+                            if s not in ['http', 'ftp', 'file', 'https']:
+                                print _('using ftp, http[s], or file for servers, Aborting - %s') % (url)
+                                sys.exit(1)
+
                         cache = os.path.join(self.cachedir,section)
                         pkgdir = os.path.join(cache, 'packages')
                         hdrdir = os.path.join(cache, 'headers')
@@ -152,30 +197,63 @@ class yumconf:
                         self.serverpkgdir[section] = pkgdir
                         self.serverhdrdir[section] = hdrdir
                     else:
-                        print 'Error: Cannot find baseurl or name for server \'%s\'. Skipping' %(section)    
+                        print _('Error: Cannot find baseurl or name for server \'%s\'. Skipping') %(section)    
         else:
-            print 'Insufficient server config - no servers found. Aborting.'
+            print _('Insufficient server config - no servers found. Aborting.')
             sys.exit(1)
 
     def _getoption(self, section, option):
         try:
             return self.cfg.get(section, option)
         except ConfigParser.NoSectionError, e:
-            print 'Failed to find section: %s' % section
+            print _('Failed to find section: %s') % section
         except ConfigParser.NoOptionError, e:
             return None
+            
+    def parseList(self, value):
+        listvalue = []
+        # we need to allow for the '\n[whitespace]' continuation - easier
+        # to sub the \n with a space and then read the lines
+        listrepl = re.compile('\n')
+        (value, count) = listrepl.subn(' ', value)
+        listvalue = string.split(value)
+        return listvalue
         
+    def remoteGroups(self, serverid):
+        return os.path.join(self.baseURL(serverid), 'yumgroups.xml')
+    
+    def localGroups(self, serverid):
+        return os.path.join(self.servercache[serverid], 'yumgroups.xml')
+        
+    def baseURL(self, serverid):
+        return self.get_failClass(serverid).get_serverurl()
+        
+    def server_failed(self, serverid):
+        self.failoverclass[serverid].server_failed()
+    
+    def get_failClass(self, serverid):
+        return self.failoverclass[serverid]
+        
+    def remoteHeader(self, serverid):
+        return os.path.join(self.baseURL(serverid), 'headers/header.info')
+        
+    def localHeader(self, serverid):
+        return os.path.join(self.servercache[serverid], 'header.info')
+
     def _getsysver(self):
-        db = clientStuff.openrpmdb()
-        idx = db.findbyname(self.distroverpkg)
+        ts = rpm.TransactionSet()
+        ts.setVSFlags(~(rpm._RPMVSF_NOSIGNATURES|rpm._RPMVSF_NODIGESTS))
+        idx = ts.dbMatch('name', self.distroverpkg)
         # we're going to take the first one - if there is more than one of these
         # then the user needs a beating
-        if len(idx) == 0:
+        if idx.count() == 0:
             releasever = 'Null'
         else:
-            hdr = db[idx[0]]
+            hdr = idx.next()
             releasever = hdr['version']
-        del db
+            del hdr
+        del idx
+        del ts
         return releasever
     
     def _getEnvVar(self):
@@ -194,7 +272,10 @@ class yumconf:
         return yumvar
         
     def _doreplace(self, string):
-        """ do the replacement of yumvar, release, arch and basearch on any string passed to it"""
+        """ do the replacement of yumvar, release, arch and basearch on any 
+            string passed to it"""
+        if string is None:
+            return string
         basearch_reg = re.compile('\$basearch')
         arch_reg = re.compile('\$arch')
         releasever_reg = re.compile('\$releasever')
