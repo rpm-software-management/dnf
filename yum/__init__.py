@@ -70,6 +70,10 @@ class YumBase(depsolve.Depsolve):
         """setup all the transaction set storage items we'll need
            This can't happen in __init__ b/c we don't know our installroot
            yet"""
+        
+        if hasattr(self, 'read_ts'):
+            return
+            
         if not self.conf.getConfigOption('installroot'):
             raise Errors.YumBaseError, 'Setting up TransactionSets before config class is up'
         

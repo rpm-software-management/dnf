@@ -64,8 +64,12 @@ def main(args):
         sys.exit(200)
 
     # build up an idea of what we're supposed to do
+    if base.basecmd == 'shell':
+        do = base.doShell
+    else:
+        do = base.doCommands
     try:
-        result, resultmsgs = base.doCommands()
+        result, resultmsgs = do()
     except Errors, e:
         result = 1
         resultmsgs = [str(e)]
