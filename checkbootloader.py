@@ -5,7 +5,7 @@
 #
 # Jeremy Katz <katzj@redhat.com>
 #
-# Copyright 2001 Red Hat, Inc.
+# Copyright 2001-2002 Red Hat, Inc.
 #
 # This software may be freely redistributed under the terms of the GNU
 # library public license.
@@ -17,11 +17,108 @@
 import os,sys
 import string
 
+
 grubConfigFile = "/boot/grub/grub.conf"
 liloConfigFile = "/etc/lilo.conf"
 
 
-def whichBootLoader():
+# XXX: this is cut and pasted directly from booty/bootloaderInfo.py
+# should eventually just go from there
+def getDiskPart(dev):
+    """Return (disk, partition number) tuple for dev"""
+    cut = len(dev)
+    if (dev[:3] == "rd/" or dev[:4] == "ida/" or
+        dev[:6] == "cciss/"):
+        if dev[-2] == 'p':
+            cut = -1
+        elif dev[-3] == 'p':
+            cut = -2
+    else:
+        if dev[-2] in string.digits:
+            cut = -2
+        elif dev[-1] in string.digits:
+            cut = -1
+
+    name = dev[:cut]
+    
+    # hack off the trailing 'p' from /dev/cciss/*, for example
+    if name[-1] == 'p':
+        for letter in name:
+            if letter not in string.letters and letter != "/":
+                name = name[:-1]
+                break
+
+    if cut < 0:
+        partNum = int(dev[cut:]) - 1
+    else:
+        partNum = None
+
+    return (name, partNum)
+
+
+def getRaidDisks(raidDevice):
+    rc = []
+
+    try:
+        f = open("/proc/mdstat", "r")
+        lines = f.readlines()
+        f.close()
+    except:
+        return rc
+    
+    for line in lines:
+        fields = string.split(line, ' ')
+        if fields[0] == raidDevice:
+            for field in fields[4:]:
+                if string.find(field, "[") == -1:
+                    continue
+                dev = string.split(field, '[')[0]
+                if len(dev) == 0:
+                    continue
+                disk = getDiskPart(dev)[0]
+                rc.append(disk)
+
+    return rc
+            
+
+def getBootBlock(bootDev):
+    """Get the boot block from bootDev.  Return a 512 byte string."""
+    block = " " * 512
+    if bootDev is None:
+        return block
+
+    # get the devices in the raid device
+    if bootDev[5:7] == "md":
+        bootDevs = getRaidDisks(bootDev[5:])
+        bootDevs.sort()
+    else:
+        bootDevs = [ bootDev[5:] ]
+
+    # FIXME: this is kind of a hack
+    # look at all of the devs in the raid device until we can read the
+    # boot block for one of them.  should do this better at some point
+    # by looking at all of the drives properly
+    for dev in bootDevs:
+        try:
+#            print "checking %s\n" %(dev,)
+            fd = os.open("/dev/%s" % (dev,), os.O_RDONLY)
+            block = os.read(fd, 512)
+            os.close(fd)
+            return block
+        except:
+            pass
+    return block
+
+# takes a line like #boot=/dev/hda and returns /dev/hda
+# also handles cases like quoted versions and other nonsense
+def getBootDevString(line):
+    dev = string.split(line, '=')[1]
+    dev = string.strip(dev)
+    dev = string.replace(dev, '"', '')
+    dev = string.replace(dev, "'", "")
+    return dev
+
+def whichBootLoader(instRoot = "/"):
     haveGrubConf = 1
     haveLiloConf = 1
     
@@ -29,9 +126,9 @@ def whichBootLoader():
     
     # make sure they have the config file, otherwise we definitely can't
     # use that bootloader
-    if not os.access(grubConfigFile, os.R_OK):
+    if not os.access(instRoot + grubConfigFile, os.R_OK):
         haveGrubConf = 0
-    if not os.access(liloConfigFile, os.R_OK):
+    if not os.access(instRoot + liloConfigFile, os.R_OK):
         haveLiloConf = 0
 
     if haveGrubConf:
@@ -39,14 +136,11 @@ def whichBootLoader():
         lines = f.readlines()
         for line in lines:
             if line[0:6] == "#boot=":
-                bootDev = line[6:-1]
+                bootDev = getBootDevString(line)
                 break
 
-        fd = os.open(bootDev, os.O_RDONLY)
-        block = os.read(fd, 512)
-        os.close(fd)
-
-        # XXX I don't like this, but it's what the GRUB maintainer suggested
+        block = getBootBlock(bootDev)
+        # XXX I don't like this, but it's what the maintainer suggested :(
         if string.find(block, "GRUB") >= 0:
             return "GRUB"
 
@@ -55,13 +149,10 @@ def whichBootLoader():
         lines = f.readlines()
         for line in lines:
             if line[0:5] == "boot=":
-                bootDev = line[5:-1]
+                bootDev = getBootDevString(line)                
                 break
 
-        fd = os.open(bootDev, os.O_RDONLY)
-        block = os.read(fd, 512)
-        os.close(fd)
-
+        block = getBootBlock(bootDev)
         # this at least is well-defined
         if block[6:10] == "LILO":
             return "LILO"
