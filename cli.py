@@ -555,41 +555,7 @@ For more information contact your distribution or package provider.
                 
         elif self.basecmd == 'clean':
             self.conf.setConfigOption('cache', 1)
-            hdrcode = pkgcode = xmlcode = piklcode = dbcode = 0
-            pkgresults = hdrresults = xmlresults = piklresults = dbresults = []
-
-            if 'all' in self.extcmds:
-                self.log(2, 'Cleaning up Everything')
-                pkgcode, pkgresults = self.cleanPackages()
-                hdrcode, hdrresults = self.cleanHeaders()
-                xmlcode, xmlresults = self.cleanMetadata()
-                dbcode, dbresults = self.cleanSqlite()
-                piklcode, piklresults = self.cleanPickles()
-                
-                code = hdrcode + pkgcode + xmlcode + piklcode + dbcode
-                results = hdrresults + pkgresults + xmlresults + piklresults + dbresults
-                return code, results
-                
-            if 'headers' in self.extcmds:
-                self.log(2, 'Cleaning up Headers')
-                hdrcode, hdrresults = self.cleanHeaders()
-            if 'packages' in self.extcmds:
-                self.log(2, 'Cleaning up Packages')
-                pkgcode, pkgresults = self.cleanPackages()
-            if 'metadata' in self.extcmds:
-                self.log(2, 'Cleaning up xml metadata')
-                xmlcode, xmlresults = self.cleanMetadata()
-            if 'cache' in self.extcmds:
-                self.log(2, 'Cleaning up pickled cache')
-                piklcode, piklresults =  self.cleanPickles()
-            if 'dbcache' in self.extcmds:
-                self.log(2, 'Cleaning up database cache')
-                dbcode, dbresults =  self.cleanSqlite()
-                
-            code = hdrcode + pkgcode + xmlcode + piklcode + dbcode
-            results = hdrresults + pkgresults + xmlresults + piklresults + dbresults
-            return code, results
-            
+            return self.cleanCli()
         
         elif self.basecmd in ['groupupdate', 'groupinstall', 'groupremove', 
                               'grouplist', 'groupinfo']:
@@ -1269,7 +1235,49 @@ For more information contact your distribution or package provider.
                 self.log(0, msg)
 
         return 0, []
+    
+    def cleanCli(self, userlist=None):
+        if userlist is None:
+            userlist = self.extcmds
+        hdrcode = pkgcode = xmlcode = piklcode = dbcode = 0
+        pkgresults = hdrresults = xmlresults = piklresults = dbresults = []
+
+        if 'all' in self.extcmds:
+            self.log(2, 'Cleaning up Everything')
+            pkgcode, pkgresults = self.cleanPackages()
+            hdrcode, hdrresults = self.cleanHeaders()
+            xmlcode, xmlresults = self.cleanMetadata()
+            dbcode, dbresults = self.cleanSqlite()
+            piklcode, piklresults = self.cleanPickles()
             
+            code = hdrcode + pkgcode + xmlcode + piklcode + dbcode
+            results = hdrresults + pkgresults + xmlresults + piklresults + dbresults
+            for msg in results:
+                self.log(2, msg)
+            return code, []
+            
+        if 'headers' in self.extcmds:
+            self.log(2, 'Cleaning up Headers')
+            hdrcode, hdrresults = self.cleanHeaders()
+        if 'packages' in self.extcmds:
+            self.log(2, 'Cleaning up Packages')
+            pkgcode, pkgresults = self.cleanPackages()
+        if 'metadata' in self.extcmds:
+            self.log(2, 'Cleaning up xml metadata')
+            xmlcode, xmlresults = self.cleanMetadata()
+        if 'cache' in self.extcmds:
+            self.log(2, 'Cleaning up pickled cache')
+            piklcode, piklresults =  self.cleanPickles()
+        if 'dbcache' in self.extcmds:
+            self.log(2, 'Cleaning up database cache')
+            dbcode, dbresults =  self.cleanSqlite()
+            
+        code = hdrcode + pkgcode + xmlcode + piklcode + dbcode
+        results = hdrresults + pkgresults + xmlresults + piklresults + dbresults
+        for msg in results:
+            self.log(2, msg)
+        return code, []
+
     def returnGroupLists(self, userlist=None):
 
         uservisible=1
@@ -1439,7 +1447,7 @@ For more information contact your distribution or package provider.
     Usage:  yum [options] < update | install | info | remove | list |
             clean | provides | search | check-update | groupinstall | 
             groupupdate | grouplist | groupinfo | groupremove | generate-rss |
-            makecache | localinstall >
+            makecache | localinstall | shell >
                 
         Options:
         -c [config file] - specify the config file to use
