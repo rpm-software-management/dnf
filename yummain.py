@@ -286,6 +286,8 @@ def main():
 	tsfin = create_final_ts(tsInfo,dbfin)
 
 	if uid == 0:
+		#sigh - the magical "order" command - nice of this not to really be documented anywhere.
+		tsfin.order()
 		errors = tsfin.run(0, 0, callback.install_callback, '')
 		if errors:
 			print "Errors installing:"
