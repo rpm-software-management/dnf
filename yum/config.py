@@ -406,6 +406,7 @@ def cfgParserRepo(section, yumconfig, cfgparser):
         if s not in ('http', 'ftp', 'file', 'https'):
             print 'gpgkey must be ftp, http[s], or file URL, ignoring - %s' % gpgkey
             gpgkey = ''
+    gpgkey = variableReplace(yumconfig.yumvar, gpgkey)
     thisrepo.set('gpgkey', gpgkey)
 
 
