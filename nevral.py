@@ -280,15 +280,18 @@ class nevral:
 					#much more shit should happen here. specifically:
 					#if you have a conflict b/t two pkgs, try to upgrade the reqname pkg. - see if that solves the problem
 					#also something like a "this isn't our fault and we can't help it, continue on" should happen.like in anaconda
+					#more even than the below should happen here - but its getting closer - I need to flesh out all the horrible
+					#states it could be in.
 					log(4,"conflict: %s %s %s" % (name, reqname, reqversion))
 					if rpmDBInfo.exists(reqname) and self.exists(reqname) and self.state(reqname) not in ('i','iu','u','ud'):
-						
-						(e1, v1, r1) = rpmDBInfo.evr(reqname)
-						(e2, v2, r2) = self.evr(reqname)
+						archlist = archwork.availablearchs(rpmDBInfo,reqname)
+						arch = archwork.bestarch(archlist)
+						(e1, v1, r1) = rpmDBInfo.evr(reqname,arch)
+						(e2, v2, r2) = self.evr(reqname,arch)
 						rc = clientStuff.compareEVR((e1,v1,r1), (e2,v2,r2))
-						if rc<=0:
+						if rc<0:
 							log(4, "conflict: setting %s to upgrade" % (reqname))
-							((e,v,r,a,l,i),s)=tsInfo._get_data(reqname)
+							((e,v,r,a,l,i),s)=tsInfo._get_data(reqname,arch)
 							self.add((name,e,v,r,a,l,i),'ud')
 							CheckDeps=1
 						else:
