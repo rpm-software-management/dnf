@@ -83,7 +83,7 @@ class YumOutput:
         print _("Arch   : %s") % pkg.arch
         print _("Version: %s") % pkg.version
         print _("Release: %s") % pkg.release
-        print _("Size   : %s") % format_number(float(pkg.size()))
+        print _("Size   : %s") % self.format_number(float(pkg.size()))
         print _("Repo   : %s") % pkg.returnSimple('repoid')
         print _("Summary: %s") % pkg.returnSimple('summary')
         print _("Description:\n %s") % pkg.returnSimple('description')

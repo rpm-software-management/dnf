@@ -371,6 +371,10 @@ class YumBase(depsolve.Depsolve):
             else:
                 po.hdrpath = local
                 return
+        else:
+            if self.conf.cache:
+                raise Errors.RepoError, \
+                'Header not in local cache and caching-only mode enabled. Cannot download %s' % remote
 
         try:
             checkfunc = (self.verifyHeader, (po, 1), {})
