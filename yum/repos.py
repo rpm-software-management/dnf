@@ -49,7 +49,7 @@ class YumPackageSack(packageSack.PackageSack):
             current = 0        
             for pkgid in dataobj.keys():
                 current += 1
-                if callback: callback(current, total, repoid)
+                if callback: callback.progressbar(current, total, repoid)
                 pkgdict = dataobj[pkgid]
                 po = self.pc(pkgdict, repoid)
                 po.simple['id'] = pkgid
@@ -70,7 +70,7 @@ class YumPackageSack(packageSack.PackageSack):
             current = 0
             for pkgid in dataobj.keys():
                 current += 1
-                if callback: callback(current, total, repoid)
+                if callback: callback.progressbar(current, total, repoid)
                 pkgdict = dataobj[pkgid]
                 if self.pkgsByID.has_key(pkgid):
                     for po in self.pkgsByID[pkgid]:
@@ -212,9 +212,16 @@ class RepoStorage:
         for repo in myrepos:
             if not hasattr(repo, 'cacheHandler'):
                 if (self.sqlite):
-                    repo.cacheHandler = self.sqlitecache.RepodataParserSqlite(storedir=repo.cachedir, repoid=repo.id, callback=callback)
+                    repo.cacheHandler = self.sqlitecache.RepodataParserSqlite(
+                            storedir=repo.cachedir, 
+                            repoid=repo.id,
+                            callback=callback,
+                            )
                 else:
-                    repo.cacheHandler = mdcache.RepodataParser(storedir=repo.cachedir, callback=callback)
+                    repo.cacheHandler = mdcache.RepodataParser(
+                            storedir=repo.cachedir, 
+                            callback=callback
+                            )
             for item in data:
                 if self.pkgSack.added.has_key(repo.id):
                     if item in self.pkgSack.added[repo.id]:

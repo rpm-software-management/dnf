@@ -259,7 +259,8 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
             self.repos.callback = None
         else:
             self.repos.setProgressBar(TextMeter(fo=sys.stdout))
-            self.repos.callback = self.simpleProgressBar
+            self.repos.callback = output.CacheProgressCallback(self.log,
+                    self.errorlog, self.filelog)
 
         # setup our failure report for failover
         freport = (self.failureReport,(),{})

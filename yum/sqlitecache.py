@@ -15,11 +15,9 @@
 # Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 # Copyright 2005 Duke University 
 
-#
 # TODO
 # - Add support for multiple checksums per rpm (is this required??)
 # - Store filetypes as one char per type instead of a string
-# - don't use print for output, use yum's output functions instead
 # - Move the stuff that turns a list of files into a string into a helper unit
 # - Don't fall back to a memory sqlite cache but to pickles if a cache
 #   file can't be created.
@@ -61,8 +59,10 @@ class RepodataParserSqlite:
 
         # Now check the database version
         if (info['dbversion'] != dbversion):
-            print "Warning your cache file is version %s, we need %s" % (info['dbversion'],dbversion)
+            self.log(2, "Warning: cache file is version %s, we need %s, will regenerate" % (
+                info['dbversion'], dbversion))
             raise sqlite.DatabaseError, "Older version of yum sqlite"
+
         # This appears to be a valid database, return checksum value and 
         # database object
         return (info['checksum'],db)
@@ -87,9 +87,7 @@ class RepodataParserSqlite:
         # db should now contain a valid database object, check if it is
         # up to date
         if (checksum != dbchecksum):
-
-            print "%s sqlite cache needs updating, reading in metadata" % (
-                    metadatatype)
+            self.log(3, "%s sqlite cache needs updating, reading in metadata" % (metadatatype))
             parser = mdparser.MDParser(location)
             self.updateSqliteCache(db, parser, checksum, metadatatype)
         db.commit()
@@ -221,7 +219,7 @@ class RepodataParserSqlite:
 
         # If it exists, remove it as we were asked to create a new one
         if (os.path.exists(filename)):
-            print "Warning file already exists, removing old version"
+            self.log(3, "Warning: cache already exists, removing old version")
             os.unlink(filename)
 
         # Try to create the databse in filename, or use in memory when
@@ -230,7 +228,7 @@ class RepodataParserSqlite:
             f = open(filename,'w')
             db = sqlite.connect(filename) 
         except IOError:
-            print "Warning could not create sqlite cache file, using in memory cache instead"
+            self.log(1, "Warning could not create sqlite cache file, using in memory cache instead")
             db = sqlite.connect(":memory:")
 
         # The file has been created, now create the tables and indexes
@@ -343,7 +341,7 @@ class RepodataParserSqlite:
         for package in parser:
 
             if self.callback is not None:
-                self.callback(parser.count, parser.total, self.repoid)
+                self.callback.progressbar(parser.count, parser.total, self.repoid)
 
             pkgId = package['pkgId']
             all_pkgIds[pkgId] = 1
@@ -374,10 +372,15 @@ class RepodataParserSqlite:
         cur.execute("INSERT into db_info (dbversion,checksum) VALUES (%s,%s)",
                 (dbversion,checksum))
         db.commit()
-        print "Added %s new packages, deleted %s old in %.2f seconds" % (
-                newcount, delcount, time.time()-t)
+        self.log(2, "Added %s new packages, deleted %s old in %.2f seconds" % (
+                newcount, delcount, time.time()-t))
         return db
 
+    def log(self, level, msg):
+        '''Log to callback (if set)
+        '''
+        if self.callback:
+            self.callback.log(level, msg)
 
 class PackageToDBAdapter:
 

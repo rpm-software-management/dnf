@@ -143,7 +143,8 @@ class RepodataParser:
                     if pkgid:
                         obj = OtherEntry(reader)
                         databank[pkgid] = obj
-                if self.callback is not None: self.callback(count, total, 'MD Read')
+                if self.callback: 
+                    self.callback.progressbar(count, total, 'MD Read')
         self.debugprint('Parsed %s packages' % count)
         reader.Close()
         del reader

@@ -46,35 +46,7 @@ class YumOutput:
     
         
     def simpleProgressBar(self, current, total, name=None):
-        """simple progress bar 50 # marks"""
-        
-        mark = '#'
-        if not sys.stdout.isatty():
-            return
-            
-        if current == 0:
-            percent = 0 
-        else:
-            if total != 0:
-                percent = current*100/total
-            else:
-                percent = 0
-    
-        numblocks = int(percent/2)
-        hashbar = mark * numblocks
-        if name is None:
-            output = '\r%-50s %d/%d' % (hashbar, current, total)
-        else:
-            output = '\r%-10.10s: %-50s %d/%d' % (name, hashbar, current, total)
-         
-        if current <= total:
-            sys.stdout.write(output)
-    
-        if current == total:
-            sys.stdout.write('\n')
-    
-        sys.stdout.flush()
-        
+        progressbar(current, total, name)
     
     def simpleList(self, pkg):
         ver = pkg.printVer()
@@ -509,4 +481,61 @@ class DepSolveProgressCallBack:
     
     def downloadHeader(self, name):
         self.log(2, '---> Downloading header for %s to pack into transaction set.' % name)
+       
+
+class CacheProgressCallback:
+
+    '''
+    The class handles text output callbacks during metadata cache updates.
+    '''
+    
+    def __init__(self, log, errorlog, filelog=None):
+        self.log = log
+        self.errorlog = errorlog
+        self.filelog = filelog
+
+    def log(self, level, message):
+        self.log(level, message)
+
+    def errorlog(self, level, message):
+        if self.errorlog:
+            self.errorlog(level, message)
+
+    def filelog(self, level, message):
+        if self.filelog:
+            self.filelog(level, message)
+
+    def progressbar(self, current, total, name=None):
+        progressbar(current, total, name)
+
+
+def progressbar(current, total, name=None):
+    """simple progress bar 50 # marks"""
+    
+    mark = '#'
+    if not sys.stdout.isatty():
+        return
+        
+    if current == 0:
+        percent = 0 
+    else:
+        if total != 0:
+            percent = current*100/total
+        else:
+            percent = 0
+
+    numblocks = int(percent/2)
+    hashbar = mark * numblocks
+    if name is None:
+        output = '\r%-50s %d/%d' % (hashbar, current, total)
+    else:
+        output = '\r%-10.10s: %-50s %d/%d' % (name, hashbar, current, total)
+     
+    if current <= total:
+        sys.stdout.write(output)
+
+    if current == total:
+        sys.stdout.write('\n')
+
+    sys.stdout.flush()
         
