@@ -21,19 +21,33 @@ import callback
 import nevral
 import pkgaction
 from config import conf
-from logger import logger
-
+from logger import Logger
 ##############################################################
 
-#setup log class
-#logfile = open(conf.logfile,'w')
-loglevel = conf.debuglevel
-log=logger(verbosity=loglevel,default=2,prefix='',preprefix='')
+#setup log classes
+#used for the syslog-style log
+def printtime():
+	return time.strftime('%m/%d/%y %H:%M:%S ',time.localtime(time.time()))
+#syslog-style log
+filelog=Logger(threshold=10, file_object=logfile,preprefix=printtime())
+#errorlog - sys.stderr - always
+errorlog=Logger(threshold=10, file_object=sys.stderr)
+#normal printing/debug log - this is what -d # affects
+log=Logger(threshold=conf.debuglevel, file_object=sys.stdout)
 
 #push the logs into the other namespaces
 pkgaction.log=log
 clientStuff.log=log
 nevral.log=log
+
+pkgaction.errorlog=errorlog
+clientStuff.errorlog=errorlog
+nevral.errorlog=errorlog
+
+pkgaction.filelog=filelog
+clientStuff.filelog=filelog
+nevral.filelog=filelog
+
 #push the conf file into the other namespaces
 nevral.conf=conf
 clientStuff.conf=conf
@@ -41,6 +55,8 @@ pkgaction.conf=conf
 callback.conf=conf
 
 def get_package_info_from_servers(conf,HeaderInfo):
+	#this function should be split into - server paths etc and getting the header info/populating the 
+	#the HeaderInfo nevral class so we can do non-root runs of yum
 	log(2,"Gathering package information from servers")
 	#sorting the servers so that sort() will order them consistently
 	serverlist=conf.servers
@@ -51,6 +67,7 @@ def get_package_info_from_servers(conf,HeaderInfo):
 		serverheader = os.path.join(baseurl,'headers/header.info')
 		servercache = conf.servercache[serverid]
 		log(4,'server name/cachedir:' + servername + '-' + servercache)
+		log(2,'Getting headers from: %s' % (servername))
 		localpkgs = conf.serverpkgdir[serverid]
 		localhdrs = conf.serverhdrdir[serverid]
 		localheaderinfo = os.path.join(servercache,'header.info')
@@ -79,7 +96,7 @@ def take_action(cmds,nulist,uplist,newlist,obslist,tsInfo,HeaderInfo,rpmDBInfo):
 	if cmds[0] == "install":
 		cmds.remove(cmds[0])
 		if len(cmds)==0:
-			print"\nNeed to pass a list of pkgs to install\n"
+			errorlog(1,"\nNeed to pass a list of pkgs to install\n")
 			usage()
 		else:
 			pkgaction.installpkgs(tsInfo,nulist,cmds,HeaderInfo,rpmDBInfo)
@@ -93,7 +110,7 @@ def take_action(cmds,nulist,uplist,newlist,obslist,tsInfo,HeaderInfo,rpmDBInfo):
 	elif cmds[0] == "erase" or cmds[0] == "remove":
 		cmds.remove(cmds[0])
 		if len(cmds)==0:
-			print"\nNeed to pass a list of pkgs to erase\n"
+			errorlog (1,"\nNeed to pass a list of pkgs to erase\n")
 			usage()
 		else:
 			pkgaction.erasepkgs(tsInfo,rpmDBInfo,cmds)
@@ -124,7 +141,7 @@ def take_action(cmds,nulist,uplist,newlist,obslist,tsInfo,HeaderInfo,rpmDBInfo):
 			log(2,"Cleaning old headers")
 			clientStuff.clean_up_old_headers(rpmDBInfo,HeaderInfo)
 		else:
-			print "Invalid clean option %s" % cmds[0]
+			errorlog(1,"Invalid clean option %s" % cmds[0])
 			sys.exit(1)
 		sys.exit(0)	
 	else:
@@ -140,7 +157,7 @@ def create_final_ts(tsInfo, rpmdb):
 		serverid=tsInfo.serverid(name,arch)
 		if tsInfo.state(name, arch) in ('u','ud','iu'):
 			if os.path.exists(tsInfo.localRpmPath(name, arch)):
-				log(2,"Using cached %s" % (os.path.basename(tsInfo.localRpmPath(name,arch))))
+				log(4,"Using cached %s" % (os.path.basename(tsInfo.localRpmPath(name,arch))))
 			else:
 				log(2,"Getting %s" % (os.path.basename(tsInfo.localRpmPath(name,arch))))
 				clientStuff.urlgrab(tsInfo.remoteRpmUrl(name,arch), tsInfo.localRpmPath(name,arch))
@@ -152,7 +169,7 @@ def create_final_ts(tsInfo, rpmdb):
 			tsfin.add(pkghdr,(pkghdr,rpmloc),'u')
 		elif tsInfo.state(name,arch) == 'i':
 			if os.path.exists(tsInfo.localRpmPath(name, arch)):
-				log(2,"Using cached %s" % (os.path.basename(tsInfo.localRpmPath(name,arch))))
+				log(4,"Using cached %s" % (os.path.basename(tsInfo.localRpmPath(name,arch))))
 			else:
 				log(2,"Getting %s" % (os.path.basename(tsInfo.localRpmPath(name,arch))))
 				clientStuff.urlgrab(tsInfo.remoteRpmUrl(name,arch), tsInfo.localRpmPath(name,arch))
@@ -173,7 +190,7 @@ def create_final_ts(tsInfo, rpmdb):
 	errors = tsfin.run(rpm.RPMTRANS_FLAG_TEST, ~rpm.RPMPROB_FILTER_DISKSPACE, callback.install_callback, '')
 	
 	if errors:
-		print "You appear to have insufficient disk space to handle these packages"
+		errorlog(1,"You appear to have insufficient disk space to handle these packages")
 		sys.exit(1)
 	return tsfin
 	
@@ -252,7 +269,7 @@ def main():
 	#at this point we should have a tsInfo nevral with all we need to complete our task.
 	#if for some reason we've gotten all the way through this step with an empty tsInfo then exit and be confused :)
 	if len(tsInfo.NAkeys()) < 1:
-		print "No actions to take"
+		log(2,"No actions to take")
 		sys.exit(0)
 		
 	if process not in ('erase','remove'):
@@ -263,20 +280,20 @@ def main():
 				log(6,"making available: %s" % name)
 				tsInfo.add((name,e,v,r,arch,l,i),'a')   
 
-	log("Resolving dependencies")
+	log(2,"Resolving dependencies")
 	(code, msgs) = tsInfo.resolvedeps(rpmDBInfo)
 	if code == 1:
 		for msg in msgs:
 			print msg
 		sys.exit(1)
-	log("Dependencies resolved")
+	log(2,"Dependencies resolved")
 	
 	#prompt for use permission to do stuff in tsInfo - list all the actions 
 	#(i, u, e, ud,iu(installing, but marking as 'u' in the actual ts, just in case) confirm w/the user
 	clientStuff.printactions(tsInfo)
 	if userask==1:
 		if clientStuff.userconfirm():
-			print "Exiting on user command."
+			errorlog(1,"Exiting on user command.")
 			sys.exit(1)
 	
 	if uid==0:
@@ -291,9 +308,9 @@ def main():
 		tsfin.order()
 		errors = tsfin.run(0, 0, callback.install_callback, '')
 		if errors:
-			print "Errors installing:"
+			errorlog(1,"Errors installing:")
 			for error in errors:
-				print error
+				errorlog(1,error)
 		
 		del dbfin
 		del tsfin
@@ -302,7 +319,7 @@ def main():
 		pkgaction.kernelupdate(tsInfo)
 		
 	else:
-		print "You're not root, we can't install things"
+		errorlog(1,"You're not root, we can't install things")
 		sys.exit(0)
 		
 	log(2,"Transaction(s) Complete")
