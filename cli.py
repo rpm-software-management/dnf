@@ -346,8 +346,13 @@ class YumBaseCli(yum.YumBase):
             self.doRpmDBSetup()
             installed = self.rpmdb.getPkgList()
             self.doRepoSetup()
-            available = self.pkgSack.simplePkgList()
-        
+            avail = self.pkgSack.simplePkgList()
+            available = []
+            for pkg in avail:
+                if pkg not in installed:
+                    available.append(pkg)
+            del avail
+            
         elif pkgnarrow == 'updates':
             self.doRpmDBSetup()
             self.doRepoSetup()
@@ -375,9 +380,28 @@ class YumBaseCli(yum.YumBase):
             # we must compare the installed set versus the repo set
             # anything not in both is an 'extra'
             # put into totalpkgs list
+            self.doRpmDBSetup()
+            self.doRepoSetup()
+            available = self.pkgSack.simplePkgList()
+            installed = self.rpmdb.getPkgList()
+            extras = []
+            for pkg in installed:
+                if pkg not in available:
+                    extras.append(pkg)
+            
+            installed = extras
             available = []
+
+        elif pkgnarrow == 'obsoletes':
+            # get the list of obsoletes and list the available packages
+            # that obsolete an installed package
             pass
-        
+
+        elif pkgnarrow == 'recent':
+            # a miracle occurs - iterate throuh the pkgobjects
+            # look for timestamp if it is in the last N days (lets say 2 weeks)
+            # add it to the list
+            passes
     # if installed or available are of any length, search them for matches to
     # the args from the user, if any exist.
         if len(self.extcmds) > 0:

@@ -57,12 +57,14 @@ class RpmDBHolder:
             for hdr in mi:
                 name = hdr['name']
                 arch = hdr['arch']
-                ver = hdr['version']
-                rel = hdr['release']
+                ver = str(hdr['version']) # convert these to strings to be sure
+                rel = str(hdr['release'])
                 epoch = hdr['epoch']
                 if epoch is None:
                     epoch = '0'
-
+                else:
+                    epoch = str(epoch)
+                    
                 pkgtuple = (name, arch, epoch, ver, rel)                
                 self.pkglists.append(pkgtuple)
                 
