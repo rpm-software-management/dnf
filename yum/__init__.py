@@ -19,6 +19,7 @@ import os
 import os.path
 import rpm
 import re
+import types
 import errno
 import Errors
 
@@ -606,6 +607,22 @@ class YumBase(depsolve.Depsolve):
                     if callback:
                         callback(po, tmpvalues)
                     matches[po] = tmpvalues
-        #FIXME the above searches available repos - need to search the rpmdb too
+        
+        # do the same for installed pkgs
+        for hdr in self.rpmdb.getHdrList(): # this is more expensive so this is the  top op
+            po = YumInstalledPackage(hdr)
+            tmpvalues = []
+            for search in criteria:
+                crit_re = re.compile(string, flags=re.I)
+                for field in fields:
+                    value = po.returnSimple(field)
+                    if type(value) is types.ListType: # this is annoying
+                        value = str(value)
+                    if crit_re.search(value):
+                        tmpvalues.append(value)
+            if len(tmpvalues) > 0:
+                if callback:
+                    callback(po, tmpvalues)
+                matches[po] = tmpvalues
         
         return matches
