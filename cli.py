@@ -611,11 +611,14 @@ class YumBaseCli(yum.YumBase):
 
         if pkgnarrow == 'all':
             self.doRpmDBSetup()
-            installed = self.rpmdb.getPkgList()
+            inst = self.rpmdb.getPkgList()
+            for hdr in self.rpmdb.getHdrList():
+                po = YumInstalledPackage(hdr)
+                installed.append(po)
             self.doRepoSetup()
             for pkg in self.pkgSack.returnPackages():
                 pkgtup = (pkg.name, pkg.arch, pkg.epoch, pkg.version, pkg.release)
-                if pkgtup not in installed:
+                if pkgtup not in inst:
                     available.append(pkg)
 
             
@@ -671,8 +674,7 @@ class YumBaseCli(yum.YumBase):
             pass
 
         elif pkgnarrow == 'recent':
-            # returns 30 pkgs (this should be a config variable: FIXME)
-            num_pkgs = 30
+            num_pkgs = self.conf.getConfigOption('numrecent')
             ftimehash = {}
             self.doRepoSetup()
             for po in self.pkgSack.returnPackages():
@@ -700,6 +702,7 @@ class YumBaseCli(yum.YumBase):
                       (obsoletes, 'Obsoleting'), (extras, 'Extra')]:
 
             if len(lst) > 0 and len(self.extcmds) > 0:
+                self.log(4, 'Matching packages for %s list to user args' % description)
                 exactmatch, matched, unmatched = yum.packages.parsePackages(lst, self.extcmds)
                 lst = yum.misc.unique(matched + exactmatch)
 
