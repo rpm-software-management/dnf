@@ -1,3 +1,47 @@
+2002-08-26 23:41  skvidal
+
+	* docs/yum.8: 
+	updated docs to list yum list and yum info options
+
+2002-08-26 23:30  skvidal
+
+	* yum.conf: 
+	updated conf file - in / too :)
+
+2002-08-26 23:29  skvidal
+
+	* etc/yum.conf: 
+	updated conf file
+
+2002-08-26 23:18  skvidal
+
+	* Makefile.in, configure.in, pullheaders.py, serverStuff.py,
+	yum.conf, yum.spec, yummain.py, docs/yum-arch.8, docs/yum.8,
+	etc/yum.conf, etc/yum.cron: 
+	Bumped version number Fixed -h and --help in yum-arch Moved yum and
+	yum-arch to /usr/bin updated docs updated cron jobs made conf file
+	have more meaning and use.
+
+2002-08-26 23:15  skvidal
+
+	* bin/: Makefile.in, yum, yum-arch: 
+	added to repository moved from /sbin
+
+2002-08-26 00:22  skvidal
+
+	* archwork.py, pkgaction.py: 
+	pychecker run caught a couple of mistakes
+
+2002-08-25 00:23  skvidal
+
+	* callback.py: fixed an odd divide by zero error under rpm404 in
+	(null)
+
+2002-08-24 16:15  skvidal
+
+	* ChangeLog, archwork.py: 
+	changelog update - fix - no newline at end of archwork.py
+
 2002-08-24 16:11  skvidal
 
 	* archwork.py, clientStuff.py, config.py, nevral.py,
@@ -85,10 +129,6 @@
 	* clientStuff.py, nevral.py, pkgaction.py, yum.conf, yummain.py: 
 	added yum whatprovides support made non-root-run be caching-only
 
-2002-08-05 10:50  skvidal
-
-	* sbin/yum: added catch for Broken pipe/IoError
-
 2002-08-03 01:46  skvidal
 
 	* clientStuff.py, config.py, yummain.py: 
@@ -127,7 +167,7 @@
 
 2002-07-19 00:48  skvidal
 
-	* yummain.py, sbin/yum: 
+	* yummain.py: 
 	clean up main() some - make it shorted - break out cmd parsing to a
 	separate function. pychecker no longer tells me I'm a loser.
 
@@ -245,8 +285,7 @@
 
 2002-07-01 01:26  skvidal
 
-	* Makefile.in, docs/Makefile.in, etc/Makefile.in, sbin/Makefile.in:
-	
+	* Makefile.in, docs/Makefile.in, etc/Makefile.in: 
 	add entries to Makefiles to make a daily tar-ball option
 
 2002-07-01 01:01  skvidal
@@ -261,7 +300,7 @@
 	* archwork.py, callback.py, clientStuff.py, config.py,
 	depchecktree.py, iutil.py, lilo.py, lilocfg.py, nevral.py,
 	pkgaction.py, pullheaders.py, serverStuff.py, translate.py,
-	yummain.py, sbin/yum: 
+	yummain.py: 
 	all files modified for tab->space conversion.,
 	
 	god, shit will probably break
@@ -344,7 +383,7 @@
 
 2002-06-14 09:43  skvidal
 
-	* Makefile.in, configure.in, yum.spec.in: 
+	* Makefile.in, configure.in: 
 	Added entries for yum.spec's version to be automatically changed
 	with configure
 
@@ -708,8 +747,7 @@
 	serverStuff.py, up2datetheft.py, yum.conf, yum.spec, translate.py,
 	yummain.py, docs/Makefile.in, docs/yum-arch.8, docs/yum.8,
 	docs/yum.conf.5, etc/Makefile.in, etc/yum.conf, etc/yum.cron,
-	etc/yum.init, etc/yum.logrotate, sbin/yum, sbin/Makefile.in,
-	sbin/yum-arch: Initial revision
+	etc/yum.init, etc/yum.logrotate: Initial revision
 
 2002-06-07 01:11  skvidal
 
@@ -721,6 +759,5 @@
 	serverStuff.py, up2datetheft.py, yum.conf, yum.spec, translate.py,
 	yummain.py, docs/Makefile.in, docs/yum-arch.8, docs/yum.8,
 	docs/yum.conf.5, etc/Makefile.in, etc/yum.conf, etc/yum.cron,
-	etc/yum.init, etc/yum.logrotate, sbin/yum, sbin/Makefile.in,
-	sbin/yum-arch: Yum first import
+	etc/yum.init, etc/yum.logrotate: Yum first import
 
