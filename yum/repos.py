@@ -368,17 +368,20 @@ class Repository:
             return
         
         self.proxy_dict = {} # zap it
-        if self.proxy is not None or self.proxy is not '_none_':
+        proxy_string = None
+        if self.proxy not in [None, '_none_']:
             proxy_string = '%s' % self.proxy
             if self.proxy_username is not None:
                 proxy_string = '%s@%s' % (self.proxy_username, self.proxy)
                 if self.proxy_password is not None:
                     proxy_string = '%s:%s@%s' % (self.proxy_username,
                                                  self.proxy_password, self.proxy)
+                                                 
+        if proxy_string is not None:
             self.proxy_dict['http'] = proxy_string
             self.proxy_dict['https'] = proxy_string
             self.proxy_dict['ftp'] = proxy_string
-        
+
     def setupGrab(self):
         """sets up the grabber functions with the already stocked in urls for
            the mirror groups"""
