@@ -343,8 +343,8 @@ For more information contact your distribution or package provider.
     
         elif self.basecmd == 'clean':
             if len(self.extcmds) == 0:
-                self.errorlog(0, _('Error: clean requires an option: \
-                                    headers, packages, cache, metadata, all'))
+                self.errorlog(0,
+                    _('Error: clean requires an option: headers, packages, cache, metadata, all'))
             for cmd in self.extcmds:
                 if cmd not in ['headers', 'packages', 'metadata', 'cache', 'all']:
                     self.usage()
