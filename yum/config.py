@@ -299,16 +299,6 @@ class yumconf(object):
         for option in ['exclude', 'installonlypkgs', 'kernelpkgnames', 'tsflags']:
             self.configdata[option] = parseList(self.configdata[option])
 
-
-
-
-                    
-        # if we don't have any enabled repositories then this is going to suck
-        # bail out with an exception raised so yummain can catch it
-#        if len(self.repos.listEnabled()) < 1:
-#            raise Errors.ConfigError, \
-#                    'Insufficient repository configuration. No repositories Found/Enabled. Aborting.'
-
     def listConfigOptions(self):
         """return list of options available for global config"""
         return self.configdata.keys()
