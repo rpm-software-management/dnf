@@ -232,13 +232,19 @@ def returnObsoletes(headerNevral,rpmNevral,uninstNAlist):
 								pass
 							elif rc == -1:
 								packages.append((name, arch))
-	#for (name, arch) in packages:
-		#print "Dump - %s, %s" %(name, arch)
-		#sys.exit(1)
 	return packages
 
-def urlgrab(url, filename=None):
-	#so this should really do something with the callbacks. Specifically it needs to print a silly little percentage done thing
+def progresshook(blocks, blocksize, total):
+	totalblocks=total/blocksize
+	curbytes=blocks*blocksize
+	sys.stdout.write("\r" + " " * 80)
+	sys.stdout.write("\rblock: %d/%d" % (blocks,totalblocks))
+	sys.stdout.flush()
+	if curbytes==total:
+		print " "
+		
+
+def urlgrab(url, filename=None,nohook=None):
 	import urllib, rfc822, urlparse, os
 	(scheme,host, path, parm, query, frag) = urlparse.urlparse(url)
 	path = os.path.normpath(path)
@@ -298,7 +304,8 @@ def printactions(nevral):
 	install_list = []
 	update_list = []
 	erase_list = []
-	deps_list = []
+	updatedeps_list = []
+	erasedeps_list = []
 	for (name, arch) in nevral.NAkeys():
 		if nevral.state(name,arch) == 'i':
 			install_list.append((name,arch))
@@ -307,7 +314,10 @@ def printactions(nevral):
 		if nevral.state(name,arch) == 'e':
 			erase_list.append((name,arch))
 		if nevral.state(name,arch) == 'ud':
-			deps_list.append((name,arch))
+			updatedeps_list.append((name,arch))
+		if nevral.state(name,arch) == 'ed':
+			erasedeps_list.append((name,arch))
+			
 	log(2,"I will do the following:")
 	for pkg in install_list:
 		(name,arch) = pkg
@@ -318,12 +328,16 @@ def printactions(nevral):
 	for pkg in erase_list:
 		(name,arch) = pkg
 		log(2,"[erase: %s.%s]" % (name,arch))
-	if len(deps_list) > 0:
+	if len(updatedeps_list) > 0:
 		log(2,"I will install/upgrade these to satisfy the depedencies:")
-		for pkg in deps_list:
+		for pkg in updatedeps_list:
 			(name,arch) = pkg
 			log(2, "[deps: %s.%s]" %(name,arch))
-			
+	if len(erasedeps_list) > 0:
+		log(2,"I will erase these to satisfy the depedencies:")
+		for pkg in erasedeps_list:
+			(name,arch) = pkg
+			log(2, "[deps: %s.%s]" %(name,arch))
 
 
 def userconfirm():

@@ -60,7 +60,7 @@ def get_package_info_from_servers(conf,HeaderInfo):
 			os.mkdir(localpkgs)
 		if not os.path.exists(localhdrs):
 			os.mkdir(localhdrs)
-		headerinfofn = clientStuff.urlgrab(serverheader, localheaderinfo)
+		headerinfofn = clientStuff.urlgrab(serverheader, localheaderinfo,'nohook')
 		log(4,'headerinfofn: ' + headerinfofn)
 		clientStuff.HeaderInfoNevralLoad(headerinfofn,HeaderInfo,serverid)
 
@@ -73,7 +73,7 @@ def download_headers(HeaderInfo,nulist):
 			pass
 		else:
 			log(2,"getting %s" % (HeaderInfo.hdrfn(name,arch)))
-			clientStuff.urlgrab(HeaderInfo.remoteHdrUrl(name,arch), HeaderInfo.localHdrPath(name,arch))
+			clientStuff.urlgrab(HeaderInfo.remoteHdrUrl(name,arch), HeaderInfo.localHdrPath(name,arch),'nohook')
 
 def take_action(cmds,nulist,uplist,newlist,obslist,tsInfo,HeaderInfo,rpmDBInfo):
 	if cmds[0] == "install":
@@ -165,7 +165,7 @@ def create_final_ts(tsInfo, rpmdb):
 			#theoretically, at this point, we shouldn't need to make pkgs available
 		elif tsInfo.state(name,arch) == 'a':
 			pass
-		elif tsInfo.state(name,arch) == 'e':
+		elif tsInfo.state(name,arch) == 'e' or tsInfo.state(name,arch) == 'ed':
 			tsfin.remove(name)
 
 	#one last test run for diskspace
