@@ -190,9 +190,9 @@ class nevral:
 			ts = rpm.TransactionSet('/',db)
 			for (name, arch) in self.NAkeys(): 
 				if self.state(name, arch) in ('u','ud','iu'):
+					log(4,'Updating: %s, %s' % (name, arch))
 					rpmloc = self.rpmlocation(name, arch)
 					pkghdr = self.getHeader(name, arch)
-					log(4,'Updating: %s, %s' % (name, arch))
 					if name == 'kernel' or name == 'kernel-bigmem' or name == 'kernel-enterprise' or name == 'kernel-smp' or name == 'kernel-debug':
 						kernarchlist = archwork.availablearchs(self,name)
 						bestarch = archwork.bestarch(kernarchlist)
@@ -210,9 +210,9 @@ class nevral:
 						ts.add(pkghdr,(pkghdr,rpmloc),'u')
 					
 				elif self.state(name,arch) == 'i':
+					log(4,'Installing: %s, %s' % (name, arch))
 					rpmloc = self.rpmlocation(name, arch)
 					pkghdr = self.getHeader(name, arch)
-					log(4,'Installing: %s, %s' % (name, arch))
 					ts.add(pkghdr,(pkghdr,rpmloc),'i')
 				elif self.state(name,arch) == 'a':
 					rpmloc = self.rpmlocation(name, arch)
