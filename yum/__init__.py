@@ -60,12 +60,12 @@ class YumBase:
         self.up.condenseUpdates()
         
         
-    def doTransaction(self):
+    def buildTransaction(self):
         """go through the packages in the transaction set, find them in the
            packageSack or rpmdb, and pack up the ts accordingly"""
         self.ds = depsolve.Depsolve(self)
         (rescode, restring) = self.ds.resolvedeps()
-        print rescode, restring
+        return rescode, restring
            
     def doLock(self, lockfile):
         """perform the yum locking, raise yum-based exceptions, not OSErrors"""
