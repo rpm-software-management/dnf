@@ -32,6 +32,12 @@ class TransactionData:
 
     def __len__(self):
         return len(self.pkgdict.values())
+        
+    def __iter__(self):
+        if hasattr(self.getMembers(), '__iter__'):
+            return self.getMembers().__iter__()
+        else:
+            return iter(self.getMembers())
 
     def debugprint(self, msg):
         if self.debug:
