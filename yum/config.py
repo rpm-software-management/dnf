@@ -23,12 +23,11 @@ import types
 import urllib
 import rpm
 import re
-import failover
 import archwork
 import Errors
 import urlgrabber
 import urlgrabber.grabber
-
+import repos
 
 
 class yumconf:
@@ -41,8 +40,8 @@ class yumconf:
         except ConfigParser.MissingSectionHeaderError, e:
             raise Errors.ConfigError,  'Error accessing config file: %s' % configfile
         
-        self.repos = [] # list of servers/repositories
-        self.repodata = {} # dict to hold the dicts of data :)
+        self.repos = repos.RepoStorage() # class of repositories
+        
         self.configdata = {} # dict to hold all the data goodies
        
         #defaults -either get them or set them
@@ -124,58 +123,52 @@ class yumconf:
                     name = self._getoption(section, 'name', None)
                     urls = self._doreplace(urls)
                     urls = self._parseList(urls)
-
+                    # FIXME check to see if there is a mirrorlist option in the section too
+                    # if so, download the mirrorlist and iterate over the values
+                    # need to steal mirrorlist code from up2date
     
                     if name != None and len(urls) > 0 and urls[0] != None:
-                        self.repos.append(section)
-                        self.repodata[section] = {}
-                        thisRepoData = self.repodata[section]
+                        thisrepo = self.repos.add(section)
                         name = self._doreplace(name)
-                        thisRepoData['name'] = name
-                        thisRepoData['url'] = urls
+                        thisrepo.set('name', name)
+                        thisrepo.set('urls', urls)
                         
                         # vet the urls
-                        for url in thisRepoData['url']:
+                        for url in thisrepo.urls:
                             (s,b,p,q,f,o) = urlparse.urlparse(url)
                             if s not in ['http', 'ftp', 'file', 'https']:
                                 print 'not using ftp, http[s], or file for repos, skipping - %s' % (url)
-                                thisRepoData['url'].remove(url)
+                                thisrepo.urls.remove(url)
                         
                         failmeth = self._getoption(section,'failovermethod')
-                        if failmeth == 'roundrobin':
-                            failclass = failover.roundRobin(self, section)
-                        elif failmeth == 'priority':
-                            failclass = failover.priority(self, section)
-                        else:
-                            failclass = failover.roundRobin(self, section)
-                        thisRepoData['failover'] = failclass
+                        thisrepo.setFailover(failmeth)
                         
-                        thisRepoData['gpgcheck'] = self._getboolean(section, 'gpgcheck', 0)
-                        thisRepoData['enabled'] = self._getboolean(section, 'enabled', 1)
+                        thisrepo.set('gpgcheck', self._getboolean(section, 'gpgcheck', 0))
+                        thisrepo.set('enabled', self._getboolean(section, 'enabled', 1))
 
                         # get our proxy information if it is there
-                        thisRepoData['proxy'] = self._getoption(section, 'proxy', None)
-                        thisRepoData['proxy_username'] = self._getoption(section, 'proxy_username', None)
-                        thisRepoData['proxy_password'] = self._getoption(section, 'proxy_password', None)
+                        thisrepo.set('proxy', self._getoption(section, 'proxy', None))
+                        thisrepo.set('proxy_username', self._getoption(section, 'proxy_username', None))
+                        thisrepo.set('proxy_password', self._getoption(section, 'proxy_password', None))
                         
                         
                         excludelist = self._getoption(section, 'exclude', [])
                         excludelist = self._doreplace(excludelist)
                         excludelist = self._parseList(excludelist)
-                        thisRepoData['excludes'] = excludelist
+                        thisrepo.set('excludes', excludelist)
 
                         includelist = self._getoption(section, 'includepkgs', [])
                         includelist = self._doreplace(includelist)
                         includelist = self._parseList(includelist)
-                        thisRepoData['includepkgs'] = includelist
+                        thisrepo.set('includepkgs', includelist)
 
-                        thisRepoData['enablegroups'] = self._getboolean(section, 'enablegroups', 1)
+                        thisrepo.set('enablegroups', self._getboolean(section, 'enablegroups', 1))
                         cache = os.path.join(self.getConfigOption('cachedir'), section)
                         pkgdir = os.path.join(cache, 'packages')
                         hdrdir = os.path.join(cache, 'headers')
-                        thisRepoData['cache'] = cache
-                        thisRepoData['pkgdir'] = pkgdir
-                        thisRepoData['hdrdir'] = hdrdir
+                        thisrepo.set('cache', cache)
+                        thisrepo.set('pkgdir', pkgdir)
+                        thisrepo.set('hdrdir', hdrdir)
                     else:
                         print 'Error: Cannot find baseurl or name for repo: %s. Skipping' % (section)    
         else:
@@ -221,75 +214,6 @@ class yumconf:
         except KeyError:
             return None
 
-    def setRepoOption(self, repo, option, value):
-        """repoid of config to set
-           option to set
-           value to set it to
-        """
-        try:
-            self.repodata[repo][option] = value
-        except KeyError:
-            raise Errors.ConfigError, 'No such repo %s and/or option %s' % (repo, option)
-
-
-    def getRepoOption(self, repoid, thing):
-        if self.repodata.has_key(repoid):
-            if self.repodata[repoid].has_key(thing):
-                return self.repodata[repoid][thing]
-            else:
-                raise Errors.ConfigError, \
-                     'Error reading configuration option %s for repo %s' % (thing, repoid)
-        else:                                                  
-            raise Errors.ConfigError, \
-                 'Error reading configuration option %s for repo %s' % (thing, repoid)
-
-    def disableRepo(self, repoid):
-        """disable a repository from use"""
-        self.setRepoOption(repoid, 'enabled', 0)
-
-            
-    def enableRepo(self, repoid):
-        """enable a repository from use"""
-        self.setRepoOption(repod, 'enabled', 1)
-        
-    def listEnabledRepos(self):
-        """return list of repo ids for enabled repos"""
-        returnlist = []
-        for repoid in self.repos:
-            if self.getRepoOption(repoid, 'enabled'):
-                returnlist.append(repoid)
-        return returnlist
-
-                                                               
-    def listRepoOptions(self, repoid):
-        """return list of config options for a specific repoid"""
-        if self.repodata.has_key(repoid):
-            return self.repodata[repoid]
-        else:
-            raise Errors.ConfigError, \
-                 'Error reading configuration options for repository %s' % (repoid)
-                 
-    def remoteGroups(self, repoid):
-        return os.path.join(self.baseURL(repoid), 'yumgroups.xml')
-    
-    def localGroups(self, repoid):
-        return os.path.join(self.getRepoOption(repoid, 'cache'), 'yumgroups.xml')
-        
-    def baseURL(self, repoid):
-        return self.get_failClass(repoid).get_serverurl()
-        
-    def repo_failed(self, repoid):
-        failclass = self.getRepoOption(repoid, 'failover')
-        failclass.server_failed()
-    
-    def get_failClass(self, repoid):
-        return self.getRepoOption(repoid, 'failover')
-        
-    def remoteHeader(self, repoid):
-        return os.path.join(self.baseURL(repoid), 'headers/header.info')
-        
-    def localHeader(self, repoid):
-        return os.path.join(self.getRepoOption(repoid, 'cache'), 'header.info')
 
     def _getsysver(self):
         ts = rpm.TransactionSet()
@@ -560,12 +484,12 @@ def main(args):
         print '%s = %s' % (option, conf.getConfigOption(option))
         
     print '\n\n'
-    repos = conf.repos
-    repos.sort()
-    for srvid in repos:
-        print 'repo: %s' % srvid
-        for key in conf.listRepoOptions(srvid):
-            print '%s = %s' % (key, conf.getRepoOption(srvid, key))
+    repositories = conf.repos
+    repolist = repositories.sort()
+    
+    for srvid in repolist:
+        repo = repositories.getRepo(srvid)
+        print repo
             
         print ''
     

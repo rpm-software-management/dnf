@@ -23,10 +23,8 @@ import random
 
 class baseFailOverMethod:
 
-    def __init__(self, conf, serverID):
-        # the yum conf structure
-        self.conf = conf
-        self.serverID = serverID
+    def __init__(self, repo):
+        self.repo = repo
         self.failures = 0
     
     def get_serverurl(self, i=None):
@@ -55,7 +53,7 @@ class baseFailOverMethod:
     def len(self):
         """Returns the how many URLs we've got to cycle through."""
 
-        return len(self.conf.serverurl[self.serverID])
+        return len(self.repo.urls)
         
             
 
@@ -71,10 +69,10 @@ class priority(baseFailOverMethod):
         else:
             index = i
         
-        if index >= len(self.conf.serverurl[self.serverID]):
+        if index >= len(self.repo.urls):
             return None
         
-        return self.conf.serverurl[self.serverID][index]
+        return self.repos.urls[index]
         
         
     
@@ -82,8 +80,8 @@ class roundRobin(baseFailOverMethod):
 
     """Chooses server based on a round robin."""
     
-    def __init__(self, conf, serverID):
-        baseFailOverMethod.__init__(self, conf, serverID)
+    def __init__(self, repo):
+        baseFailOverMethod.__init__(self, repo)
         random.seed()
         self.offset = random.randint(0, 37)
     
@@ -95,10 +93,10 @@ class roundRobin(baseFailOverMethod):
         else:
             index = i
         
-        if index >= len(self.conf.serverurl[self.serverID]):
+        if index >= len(self.repo.urls):
             return None
         
-        rr = (index + self.offset) % len(self.conf.serverurl[self.serverID])
-        return self.conf.serverurl[self.serverID][rr]   
+        rr = (index + self.offset) % len(self.repo.urls)
+        return self.repo.urls[rr]   
 
 # SDG
