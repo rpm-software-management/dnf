@@ -125,6 +125,16 @@ def main(args):
         base.tsInfo.add(pkgtup, 'u', 'user')
         
     print base.tsInfo.display()
+    # build up a list of pkgobj from the pkgsack to go with each item in a:
+    # i or u mode in the tsInfo
+    base.updatespkgs = []
+    for (pkgtup, mode) in base.tsInfo.data['packages']:
+        if mode in ['u', 'i']:
+            (n, a, e, v, r) = pkgtup
+            pkgs = base.pkgSack.searchNevra(name=n, arch=a, epoch=e, ver=v, rel=r)
+            for pkg in pkgs:
+               print pkg.returnSimple('relativepath')
+ 
 """
     if len(tsInfo.NAkeys()) < 1:
         log(2, _('No actions to take'))

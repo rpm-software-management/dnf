@@ -192,7 +192,12 @@ def parseCommands(baseclass):
        base command + argument makes any sense at all""" 
 
     cmds = baseclass.cmds          
+    if len(cmds) < 1:
+        baseclass.errorlog(0, _('You need to give some command'))
+        usage()
+        
     basecmd = cmds[0]
+    
 
     if baseclass.conf.getConfigOption('uid') != 0:
         if basecmd in ['install', 'update', 'clean', 'upgrade','erase', 
