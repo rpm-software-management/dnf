@@ -48,7 +48,7 @@ def installpkgs(tsnevral,nulist,userlist,hinevral,rpmnevral):
 							sys.exit(1)
 					else:
 						#we should install this
-						((e, v, r, a, l, i), s)=hinevral._get_data(name,arch)
+						((e, v, r, a, l, i), s)=hinevral._get_data(name,bestarch)
 						tsnevral.add((name,e,v,r,a,l,i),'iu')
 			if foundit==0:
 				if rpmnevral.exists(n):
