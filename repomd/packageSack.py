@@ -296,7 +296,7 @@ class PackageSack:
         for pkg in self.returnPackages():
             print pkg.returnNevraPrintable()
 
-    def excludeArches(self, archlist):
+    def excludeArchs(self, archlist):
         """exclude incompatible arches. archlist is a list of compatible arches"""
         
         for pkg in self.returnPackages():
