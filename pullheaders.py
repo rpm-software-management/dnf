@@ -136,7 +136,7 @@ def main():
         elif arg == "-vv":
             cmds['loud'] = 1
             log.verbosity = 4
-        elif arg == " -q":
+        elif arg == "-q":
             cmds['quiet'] = 1
         elif arg in ['-h','--help']:
             serverStuff.Usage()
