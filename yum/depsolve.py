@@ -45,6 +45,7 @@ class Depsolve:
            to some method from here to pick the best pkgobj if there are
            more than one response - right now it's more rudimentary"""
            
+        
         (n,a,e,v,r) = pkgtup
         pkgs = self.pkgSack.searchNevra(name=n, arch=a, epoch=e, ver=v, rel=r)
 
@@ -56,6 +57,9 @@ class Depsolve:
             result = pkgs[0]
         else:
             result = pkgs[0] # which should be the only
+        
+            # this is where we could do something to figure out which repository
+            # is the best one to pull from
         
         return result
     
