@@ -73,7 +73,11 @@ class nevral:
             else:
                 # we're in a .hdr file
                 pkghdr = clientStuff.readHeader(self.localHdrPath(name, arch))
-                return pkghdr  
+                if pkghdr == None:
+                    errorlog(0, 'Bad Header for pkg %s.%s trying to get headers for the nevral - exiting' % (name, arch))
+                    sys.exit(1)
+                else:
+                    return pkghdr
 
     def NAkeys(self):
         keys = self.rpmbynamearch.keys()

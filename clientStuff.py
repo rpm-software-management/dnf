@@ -518,21 +518,25 @@ def clean_up_old_headers(rpmDBInfo, HeaderInfo):
     for hdrfn in hdrlist:
         todel = 0
         hdr = readHeader(hdrfn)
-        (e, n, v, r, a) = getENVRA(hdr)
-        if rpmDBInfo.exists(n, a):
-            (e1, v1, r1) = rpmDBInfo.evr(n, a)
-            rc = compareEVR((e1, v1, r1), (e, v, r))
-            # if the rpmdb has an equal or better rpm then delete
-            # the header
-            if (rc >= 0):
+        if hdr == None
+            errorlog(0, 'Possibly damaged Header %s' % hdrfn)
+            pass
+        else:
+            (e, n, v, r, a) = getENVRA(hdr)
+            if rpmDBInfo.exists(n, a):
+                (e1, v1, r1) = rpmDBInfo.evr(n, a)
+                rc = compareEVR((e1, v1, r1), (e, v, r))
+                # if the rpmdb has an equal or better rpm then delete
+                # the header
+                if (rc >= 0):
+                    todel = todel + 1
+                    log(6, 'Header %s should be deleted' % hdrfn)
+            if not HeaderInfo.exists(n, a):
+                # if its not in the HeaderInfo nevral anymore just kill it
                 todel = todel + 1
-                log(6, 'Header %s should be deleted' % hdrfn)
-        if not HeaderInfo.exists(n, a):
-            # if its not in the HeaderInfo nevral anymore just kill it
-            todel = todel + 1
-            log(6, 'Deleting Header %s' % hdrfn)
-        if todel > 0:
-            os.unlink(hdrfn)
+                log(6, 'Deleting Header %s' % hdrfn)
+            if todel > 0:
+                os.unlink(hdrfn)
 
 def printtime():
     import time
@@ -571,26 +575,40 @@ def get_package_info_from_servers(conf, HeaderInfo):
         HeaderInfoNevralLoad(headerinfofn, HeaderInfo, serverid)
 
 
-def checkheader(headerfile):
-    
+def checkheader(headerfile, name, arch):
+    #return true(1) if the header is good
+    #return  false(0) if the header is bad
+    # test is fairly rudimentary - read in header - read two portions of the header
+    h = readHeader(headerfile):
+    if h == None:
+        return 0
+    else:
+        if name != h[rpm.RPMTAG_NAME] or arch != h[rpm.RPMTAG_ARCH]:
+            return 0
+    return 1
+
 def download_headers(HeaderInfo, nulist):
     for (name, arch) in nulist:
-        # this should do something real, like, oh I dunno, check the header 
-        # but I'll be damned if I know how
         # if header exists - it gets checked
         # if header does not exist it gets downloaded then checked
         # this should happen in a loop - up to 3 times
         # if we can't get a good header after 3 tries we bail.
-        checkpass = 0
-        good = 1
-        while checkpass != 3 and good != 1:
-            do
-                if os.path.exists(HeaderInfo.localHdrPath(name, arch)):
-                    log(4, 'cached %s' % (HeaderInfo.hdrfn(name, arch)))
-            pass
-        else:
-            log(2, 'getting %s' % (HeaderInfo.hdrfn(name, arch)))
-            urlgrab(HeaderInfo.remoteHdrUrl(name, arch), HeaderInfo.localHdrPath(name, arch), 'nohook')
+        checkpass = 1
+        LocalHeaderFile = HeaderInfo.localHdrPath(name, arch)
+        RemoteHeaderFile = HeaderInfo.remoteHdrUrl(name, arch)
+        while checkpass <= 3:
+            if os.path.exists(LocalHeaderFile):
+                log(4, 'cached %s' % LocalHeaderFile)
+            else:
+                log(2, 'getting %s' % LocalHeaderFile)
+                urlgrab(RemoteHeaderFile, LocalHeaderFile, 'nohook')
+            if checkheader(LocalHeaderFile, name, arch):
+                    break
+            else:
+                log(3, 'damaged header %s try - %d' % (LocalHeaderFile, checkpass))
+                checkpass = checkpass + 1
+                os.unlink(LocalHeaderFile)
+                good = 0
 
 def take_action(cmds, nulist, uplist, newlist, obslist, tsInfo, HeaderInfo, rpmDBInfo, obsdict):
     import pkgaction
