@@ -172,4 +172,5 @@ class yumconf:
         else:
             hdr = db[idx[0]]
             releasever = hdr['version']
+        del db
         return releasever
