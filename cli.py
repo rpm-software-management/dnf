@@ -504,7 +504,7 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         self.log(2, 'Finished Transaction Test')
         if len(tserrors) > 0:
             errstring = 'Transaction Check Error: '
-            for (descr, (etype, mount, need)) in tserrors:
+            for descr in tserrors:
                 errstring += '  %s\n' % descr 
             
             raise yum.Errors.YumBaseError, errstring
@@ -523,7 +523,7 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         errors = self.ts.run(cb.callback, '')
         if errors:
             errstring = 'Error in Transaction: '
-            for (descr, (etype, mount, need)) in errors:
+            for descr in errors:
                 errstring += '  %s\n' % descr
             
             raise yum.Errors.YumBaseError, errstring

@@ -227,6 +227,15 @@ class YumInstalledPackage:
     def size(self):
         return self.tagByName('size')
 
+    def compactPrint(self):
+        if self.epoch != '0':
+            ver = '%s:%s-%s' % (self.epoch, self.version, self.release)
+        else:
+            ver = '%s-%s' % (self.version, self.release)
+        
+        return "%s.%s %s" % (self.name, self.arch, ver)
+        
+
 class YumLocalPackage(YumInstalledPackage):
     """Class to handle an arbitrary package from a file path
        this inherits most things from YumInstalledPackage because
@@ -262,6 +271,14 @@ class YumAvailablePackage(repomd.packageObject.RpmXMLPackageObject):
 
     def pkgtup(self):
         return self.returnPackageTuple()
+
+    def compactPrint(self):
+        if self.epoch != '0':
+            ver = '%s:%s-%s' % (self.epoch, self.version, self.release)
+        else:
+            ver = '%s-%s' % (self.version, self.release)
+        
+        return "%s.%s %s" % (self.name, self.arch, ver)
 
     def returnLocalHeader(self):
         """returns an rpm header object from the package object's local

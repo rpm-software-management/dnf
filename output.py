@@ -72,18 +72,10 @@ class YumOutput:
         
     
     def simpleList(self, pkg):
-        n = pkg.name
-        a = pkg.arch
-        e = pkg.epoch
-        v = pkg.version
-        r = pkg.release
+        compact = pkg.compactPrint()
         repo = pkg.returnSimple('repoid')
-        if e != '0':
-            ver = '%s:%s-%s' % (e, v, r)
-        else:
-            ver = '%s-%s' % (v, r)
         
-        print "%-36s%-7s%-25s%-12s" % (n, a, ver, repo)
+        print "%-68s %-12s" % (compact, repo)
     
     
     def infoOutput(self, pkg):
@@ -97,7 +89,16 @@ class YumOutput:
         print _("Description:\n %s") % pkg.returnSimple('description')
         print ""
     
-        
+    def updatesObsoletesList(self, uotup, changetype):
+        """takes an updates or obsoletes tuple of pkgobjects and
+           returns a simple printed string of the output and a string
+           explaining the relationship between the tuple members"""
+        (changePkg, instPkg) = uotup
+        c_compact = changePkg.compactPrint()
+        i_compact = instPkg.compactPrint()
+        c_repo = changePkg.repoid
+        print '%-30s (%s) %s %s' % (c_compact, c_repo, changetype, i_compact)
+
     def listPkgs(self, lst, description, outputType):
         """outputs based on whatever outputType is. Current options:
            'list' - simple pkg list
