@@ -728,22 +728,26 @@ For more information contact your distribution or package provider.
                 # Parse the key
                 try:
                     keyinfo = yum.misc.getgpgkeyinfo(rawkey)
+                    keyid = keyinfo['keyid']
+                    hexkeyid = yum.misc.keyIdToRPMVer(keyid).upper()
+                    timestamp = keyinfo['timestamp']
+                    userid = keyinfo['userid']
                 except ValueError, e:
                     raise yum.Errors.YumBaseError, \
                             'GPG key parsing failed: ' + str(e)
 
                 # Check if key is already installed
-                if yum.misc.keyInstalled(keyinfo['sigs']) >= 0:
+                if yum.misc.keyInstalled(keyid, timestamp) >= 0:
                     self.log(0, '\n')
                     raise yum.Errors.YumBaseError, \
-                            'The GPG key at %s \n' \
+                            'The GPG key at %s (0x%s) \n' \
                             'is already installed but is not the correct '\
                             'key for this package.\nCheck that this is the ' \
                             'correct key for the "%s" repository.' % \
-                                (keyurl, repo.name)
+                                (keyurl, hexkeyid, repo.name)
 
                 # Try installing/updating GPG key
-                self.log(0, 'Importing GPG key "%s"' % keyinfo['userid'])
+                self.log(0, 'Importing GPG key 0x%s "%s"' % (hexkeyid, userid))
                 if not self.conf.getConfigOption('assumeyes'):
                     if not self.userconfirm():
                         self.log(0, 'Exiting on user command')

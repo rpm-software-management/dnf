@@ -4,22 +4,18 @@
 \fByum.conf\fR \- Configuration file for \fByum(8)\fR.
 .SH "DESCRIPTION"
 .LP 
-Yum uses uses a configuration file called
-\fByum.conf\fR. This configuration file is searched for
-in the following places:
-.LP 
-/etc/yum.conf
-.LP 
+Yum uses a configuration file at \fB/etc/yum.conf\fR. 
+.LP
 Additional configuration files are also read from the directory set by the
 \fBreposdir\fR option (default is `/etc/yum.repos.d'). See the \fBreposdir\fR
 option below for further details.
 
 .SH "PARAMETERS"
 .LP 
-There are two types of sections in the yum.conf file: main and repository. Main
-defines all global configuration options. There should be only one main section.
-The repository section(s) define the configuration for each repository/server.
-There should be one or more repository sections.
+There are two types of sections in the yum configuration file(s): main and
+repository. Main defines all global configuration options. There should be only
+one main section. The repository section(s) define the configuration for each
+repository/server. There should be one or more repository sections.
 
 .SH "[main] OPTIONS"
 .LP 
@@ -27,13 +23,14 @@ The [main] section must exist for yum to do anything. It consists of the
 following options:
 
 .IP \fBcachedir\fR
-Directory where yum should store its cache and db files.
+Directory where yum should store its cache and db files. The default is
+`/var/cache/yum'.
 
 .IP \fBreposdir\fR
 Directory where yum should look for .repo files for its configuration
-of repositories. Default is /etc/yum.repos.d. Each file in this directory
+of repositories. Default is `/etc/yum.repos.d'. Each file in this directory
 should contain one or more repository sections as documented in the
-[repository] options below. These will be merged with the repositories defined
+repository options below. These will be merged with the repositories defined
 in /etc/yum.conf to form the complete set of repositories that yum will use.
 
 .IP \fBdebuglevel\fR
@@ -48,22 +45,21 @@ Full directory and file name for where yum should write its log file.
 .IP \fBgpgcheck\fR
 Either `1' or `0'. This tells yum whether or not it should perform a GPG
 signature check on packages. When this is set in the [main] section it sets the
-default for all repositories. If \fBgpgcheck\fR is not specified in the
-repositories then whatever this is set to will be the default.  In addition,
-this option determines whether or not an install of a package from a local RPM
-file will be GPG signature checked. The default is `0'.
+default for all repositories. This option also determines whether or not an
+install of a package from a local RPM file will be GPG signature checked. The
+default is `0'.
 
 .IP \fBassumeyes\fR
-Either `1' or `0'. Tells yum whether or not to prompt you for confirmation of
-actions. Default is `0' (do prompt).
+Either `1' or `0'. Determines whether or not yum prompts for confirmation of
+critical actions. Default is `0' (do prompt).
 .br
 Commmand-line option: \fB\-y\fP
 
 .IP \fBtolerant\fR
-Either `1' or `0'. Tells yum to be tolerant of errors on the command line with
-regard to packages. For example: if you request to install foo, bar and baz and
-baz is installed; yum won't error out complaining that baz is already
-installed. Default to `0' (not tolerant).
+Either `1' or `0'. If enabled, then yum will be tolerant of errors on the
+command line with regard to packages. For example: if you request to install
+foo, bar and baz and baz is installed; yum won't error out complaining that baz
+is already installed. Default to `0' (not tolerant).
 .br
 Commmand-line option: \fB\-t\fP
 
@@ -117,8 +113,8 @@ Sets the RSS output file when the \fBgenerate-rss\fP command is used.
 Commmand-line option: \fB\-\-rss-filename\fP
 
 .IP \fBdistroverpkg\fR
-Package to use to determine the "version" of the distribution - can be any
-package you have installed. Default is 'redhat-release'.
+The package used by yum to determine the "version" of the distribution. This
+can be any installed package. Default is `redhat-release'.
 
 .IP \fBdiskspacecheck\fR
 Either `0' or `1'. Set this to `0' to disable the checking for sufficient
@@ -130,7 +126,7 @@ Used by the \fBlist recent\fR and \fBgenerate-rss\fR commands. Default is `7'.
 
 .IP \fBretries\fR
 Set the number of times any attempt to retrieve a file should retry before 
-returning an error. Setting this to `0' makes it try forever. Default is `6'.
+returning an error. Setting this to `0' makes yum try forever. Default is `6'.
 
 .IP \fBkeepalive \fR
 Either `0' or `1'. Set whether HTTP keepalive should be used for HTTP/1.1
@@ -157,8 +153,8 @@ ignored. Default is `0' (no bandwidth throttling).
 
 .IP \fBcommands\fR
 List of functional commands to run if no functional commands are specified
-on the command line. ie: commands  = update foo bar baz quux
-None of the short options (eg. -y, -e, -d) will be taken for this option.
+on the command line (eg. "update foo bar baz quux").  None of the short options
+(eg. -y, -e, -d) are accepted for this option.
 
 ." .IP \fBpkgpolicy=\fI[newest|last]\fR
 ." XXX not implemented at present
@@ -203,7 +199,7 @@ Must be a unique name for each repository, one word.
 A human readable string describing the repository.
 
 .IP \fBbaseurl\fR
-Must be a URL to the directory where the yum repository's `headers' directory
+Must be a URL to the directory where the yum repository's `repodata' directory
 lives. Can be an http://, ftp:// or file:// URL. You can specify multiple URLs
 in one baseurl statement. The best way to do this is like this:
 .br
@@ -223,7 +219,7 @@ you've been warned.
 
 .IP \fBmirrorlist\fR
 Specifies a URL to a file containing a list of baseurls. This can be used
-instead of/with the \fBbaseurl\fR option. Substitution variables, described
+instead of or with the \fBbaseurl\fR option. Substitution variables, described
 below, can be used with this option. 
 
 .IP \fBenabled\fR
@@ -233,19 +229,26 @@ Either `1' or `0'. This tells yum whether or not use this repository.
 Either `1' or `0'. This tells yum whether or not it should perform a GPG
 signature check on the packages gotten from this repository.
 
+.IP \fBgpgkey\fR
+A URL pointing to the ASCII-armoured GPG key file for the repository. This
+option is used if yum needs a public key to verify a package and the required
+key hasn't been imported into the RPM database. If this option is set, yum will
+automatically import the key from the specified URL. You will be prompted before
+the key is installed unless the \fBassumeyes\fR option is set.
+
 .IP \fBexclude\fR
-Same as the [main] \fBexclude\fR option but this is only for this repository.
-Substitution variables, as described below, are honored here.
+Same as the [main] \fBexclude\fR option but only for this repository.
+Substitution variables, described below, are honored here.
 
 .IP \fBincludepkgs\fR
 Inverse of exclude. This is a list of packages you want to use from a
 repository. If this option lists only one package then that is all yum will
 ever see from the repository. Defaults to an empty list.  Substitution
-variables, as described below, are honored here.
+variables, described below, are honored here.
 
 .IP \fBenablegroups\fR
 Either `0' or `1'. Determines whether yum will allow the use of package groups
-for this repository. Default is `1'.
+for this repository. Default is `1' (package groups are allowed).
 
 .IP \fBfailovermethod\fR
 Either `roundrobin' or `priority'.
@@ -283,8 +286,8 @@ repository.
 .SH "URL INCLUDE SYNTAX"
 .LP 
 The inclusion of external configuration files is supported for /etc/yum.conf
-and the any other files in the /etc/yum.repos.d directory. To include a URL,
-use a line of the following format:
+and the .repo files in the /etc/yum.repos.d directory. To include a URL, use a
+line of the following format:
 
 include=url://to/some/location
 
@@ -294,29 +297,28 @@ if an inclusion loop is detected.
 
 .SH "VARIABLES"
 .LP
-There are a number of variables you can use to ease maintenance of the
-configuration file. They are only useful inside the name, baseurl and
-commands fields in the config file.
+There are a number of variables you can use to ease maintenance of yum's
+configuration files. They are available in the values of several options
+including \fBname\fR, \fBbaseurl\fR and \fBcommands\fB.
 .LP
 
 .IP \fB$releasever\fR
 This will be replaced with the value of the version of the package listed
-in \fBdistroverpkg\fR. This defaults to the version of the package
-redhat-release
+in \fBdistroverpkg\fR. This defaults to the version of `redhat-release'
+package.
 
 .IP \fB$arch\fR
 This will be replaced with your architecture as listed by os.uname()[4] in
 Python.
 
 .IP \fB$basearch\fR
-This will be replaced with your base architecture as they are listed in
-archwork.py in yum. For example if your $arch is i686 your $basearch will be
-i386.
+This will be replaced with your base architecture as listed in archwork.py in
+yum. For example, if your $arch is i686 your $basearch will be i386.
 
 .IP \fB$YUM0-$YUM9\fR
 These will be replaced with the value of the shell environment variable of
-the same name. If the shell environment variable does not exist then they
-will not be replaced.
+the same name. If the shell environment variable does not exist then the
+configuration file variable will not be replaced.
 
 
 .SH "FILES"

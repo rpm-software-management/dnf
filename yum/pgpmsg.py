@@ -13,7 +13,7 @@
 ##You should have received a copy of the GNU General Public License
 ##along with this program; if not, write to the Free Software
 ##Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
-import string, struct, time, cStringIO, base64, types
+import string, struct, time, cStringIO, base64, types, sha
 
 debug = None
 
@@ -338,8 +338,9 @@ class pgp_packet :
         return map_to_str(ctb_pkt_to_str, self.pkt_typ)
 
 class public_key(pgp_packet) :
-    def __init__(self) :
+    def __init__(self, pkttag):
         # just initialize the fields
+        self.pkttag = pkttag
         self.version = None
         self.pk_algo = None
         self.key_size = 0
@@ -348,9 +349,14 @@ class public_key(pgp_packet) :
         idx_save = idx
         self.version, idx = get_whole_int(msg, idx, 1)
         if self.version != 2 and self.version != 3 and self.version != 4 :
-            raise 'unknown public key packet version %d at %d' % (self.version, idx_save)
-        if self.version == 2 : # map v2 into v3 for coding simplicity since they're structurally the same
+            raise 'unknown public key packet version %d at %d' % (self.version,
+                    idx_save)
+
+        # map v2 into v3 for coding simplicity since they're structurally the
+        # same
+        if self.version == 2: 
             self.version = 3
+
         self.timestamp, idx = get_whole_number(msg, idx, 4)
         self.timestamp = float(self.timestamp)
         if self.version == 3 :
@@ -370,7 +376,21 @@ class public_key(pgp_packet) :
             self.pk_elgamal_grp_gen_g, idx = get_mpi(msg, idx)
             self.pk_elgamal_pub_key, idx = get_mpi(msg, idx)
         else :
-            raise "unknown signature algorithm %d at %d" % (self.pk_algo, idx_save)
+            raise "unknown signature algorithm %d at %d" % (self.pk_algo, 
+                    idx_save)
+
+        # Calculate the key id and fingerprint
+        if self.version == 3:
+            self.key_id = self.pk_rsa_mod & 0xffffffffffffffffL
+            #XXX do the v3 fingerprint here
+        
+        elif self.version == 4:
+            s = sha.new()
+            s.update(self.pkttag)
+            s.update(struct.pack(">H", pkt_len))
+            s.update(msg[idx_save:idx_save+pkt_len])
+            self.fingerprint = int(s.hexdigest(), 16)
+            self.key_id = self.fingerprint & 0xffffffffffffffffL
 
     def __str__(self) :
         sio = cStringIO.StringIO()
@@ -961,10 +981,11 @@ def decode(msg) :
     idx = 0
     msg_len = len(msg)
     while idx < msg_len :
+        pkttag = msg[idx]       # Save this as a public key needs it
         pkt_typ, pkt_len, idx = get_ctb(msg, idx)
         pkt = None
         if pkt_typ == CTB_PKT_PK_CERT or pkt_typ == CTB_PKT_PK_SUB :
-            pkt = public_key()
+            pkt = public_key(pkttag)
 
         elif pkt_typ == CTB_PKT_USER_ID :
             pkt = user_id()

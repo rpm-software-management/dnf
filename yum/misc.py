@@ -176,13 +176,10 @@ def procgpgkey(rawkey):
     # Decode and return
     return base64.decodestring(block.getvalue())
 
-
 def getgpgkeyinfo(rawkey):
     '''Return a dict of info for the given ASCII armoured key text
 
-    Returned dict will have the following keys:
-        'userid' - the key's user ID
-        'sigs' - a list of (signature_id, timestamp) pairs
+    Returned dict will have the following keys: 'userid', 'keyid', 'timestamp'
 
     Will raise ValueError if there was a problem decoding the key.
     '''
@@ -192,46 +189,43 @@ def getgpgkeyinfo(rawkey):
     except Exception, e:
         raise ValueError(str(e))
 
-    # Establish a default time stamp for signatures that don't appear to have
-    # one
-    if hasattr(key.public_key, 'timestamp'):
-        deftimestamp = key.public_key.timestamp
-    else:
-        deftimestamp = None
+    info = {
+        'userid': key.user_id,
+        'keyid': key.public_key.key_id,
+        'timestamp': key.public_key.timestamp,
+    }
 
-    # Retrieve all signature packets
-    sigs = []
+    # Retrieve the timestamp from the matching signature packet 
+    # (this is what RPM appears to do) 
     for userid in key.user_ids[0]:
-
         if not isinstance(userid, pgpmsg.signature):
             continue
 
         keyid = struct.unpack(">Q", userid.key_id())[0]
 
-        # Get the creation time sub-packet if possible, otherwise use the
-        # default timestamp.
-        timestamp = None
-        if hasattr(userid, 'hashed_subpaks'):
-            tspkt = userid.get_hashed_subpak(pgpmsg.SIG_SUB_TYPE_CREATE_TIME)
-            if tspkt != None:
-                timestamp = int(tspkt[1])
+        if keyid == key.public_key.key_id:
+            # Get the creation time sub-packet if available
+            if hasattr(userid, 'hashed_subpaks'):
+                tspkt = \
+                    userid.get_hashed_subpak(pgpmsg.SIG_SUB_TYPE_CREATE_TIME)
+                if tspkt != None:
+                    info['timestamp'] = int(tspkt[1])
+                    break
         
-        if not timestamp:
-            timestamp = deftimestamp
+    return info
 
-        sigs.append((keyid, timestamp))
+def keyIdToRPMVer(keyid):
+    '''Convert an integer representing a GPG key ID to the hex version string
+    used by RPM
+    '''
+    return "%08x" % (keyid & 0xffffffffL)
 
-    return {
-        'userid': key.user_id,
-        'sigs': sigs
-    }
 
-def keyInstalled(keylist):
-    '''Return if a given any of the given GPG keys described by keylist are
+def keyInstalled(keyid, timestamp):
+    '''Return if the GPG key described by the given keyid and timestamp are
     installed in the rpmdb.  
 
-    keylist should be a list with elements of (keyid, timestamp) where keyid
-    and timestamp are ints.
+    The keyid and timestamp should both be passed as integers.
 
     Return values:
         -1      key is not installed
@@ -242,10 +236,8 @@ def keyInstalled(keylist):
     No effort is made to handle duplicates. The first matching keyid is used to 
     calculate the return result.
     '''
-    # Convert key ids to 'RPM' form
-    kl = []
-    for id, timestamp in keylist:
-        kl.append(("%x" % (id & 0xFFFFFFFFL), timestamp))
+    # Convert key id to 'RPM' form
+    keyid = keyIdToRPMVer(keyid)
 
     # Init transaction
     ts = rpmUtils.transaction.initReadOnlyTransaction()
@@ -253,14 +245,13 @@ def keyInstalled(keylist):
 
     # Search
     for hdr in ts.dbMatch('name', 'gpg-pubkey'):
-        for id, timestamp in kl:
-            if hdr['version'] == id:
-                installedts = int(hdr['release'], 16)
-                if installedts == timestamp:
-                    return 0
-                elif installedts < timestamp:
-                    return 1    
-                else:
-                    return 2
+        if hdr['version'] == keyid:
+            installedts = int(hdr['release'], 16)
+            if installedts == timestamp:
+                return 0
+            elif installedts < timestamp:
+                return 1    
+            else:
+                return 2
 
     return -1
