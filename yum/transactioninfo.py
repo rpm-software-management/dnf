@@ -22,20 +22,64 @@ class TransactionData:
         self.probFilterFlags = []
         self.root = '/'
         self.pkgdict = {} # key = pkgtup, val = list of TransactionMember obj
-        
 
     def __len__(self):
         return len(self.pkgdict.values())
     
-    def getMode(self, name=None, arch=None, epoch=None, ver=None, rel=None):
-        """give back the first mode that matches the keywords, return None for
-           no match."""
+    def getPackage(self, pkgtup):
+        """takes a package tuple and returns all transaction members matching"""
+        if pkgdict.has_key(pkgtup):
+            return pkgdict[pkgtup]
+        else:
+            return []
 
-        return None
+    def matchNaevr(self, name=None, arch=None, epoch=None, ver=None, rel=None):
+        """returns the list of packages matching the args above"""
+        completelist = self.pkgdict.keys()
+        removedict = {}
+        returnlist = []
+        returnmembers = []
         
-    def add(self, pkgtup):
+        if name is not None and arch is not None and epoch is not None and ver is not
+        for pkgtup in completelist:
+            (n, a, e, v, r) = pkgtup
+            if name is not None:
+                if name != n:
+                    removedict[pkgtup] = 1
+                    continue
+            if arch is not None:
+                if arch != a:
+                    removedict[pkgtup] = 1
+                    continue
+            if epoch is not None:
+                if epoch != e:
+                    removedict[pkgtup] = 1
+                    continue
+            if ver is not None:
+                if ver != v:
+                    removedict[pkgtup] = 1
+                    continue
+            if rel is not None:
+                if rel != r:
+                    removedict[pkgtup] = 1
+                    continue
+        
+        for pkgtup in completelist:
+            if not removedict.has_key(pkgtup):
+                returnlist.append(pkgtup)
+        
+        for matched in returnlist:
+            returnmembers.extend(self.pkgdict[matched])
+
+        return returnmembers
+
+    def add(self, txmember):
         """add a package to the transaction"""
-            
+        if not self.pkgdict.has_key(txmember.pkgtup):
+            self.pkgdict[txmember.pkgtup] = []
+        self.pkgdict[txmember.pkgtup].append(txmember)
+
+        
     def remove(self, pkgtup):
         """remove a package from the transaction"""
     
@@ -67,7 +111,31 @@ class TransactionMember:
         self.ver = None
         self.rel = None
         self.process = None # 
-        self.relatedto = [] # ([relatedpkg, relationship)]
+        self.relatedto = [] # ([relatedpkgtup, relationship)]
         self.groups = [] # groups it's in
         self.pkgid = None # pkgid from the package, if it has one, so we can find it
-        
+    
+
+    # This is the tricky part - how do we nicely setup all this data w/o going insane
+    # we could make the txmember object be created from a YumPackage base object
+    # we still may need to pass in 'groups', 'ts_state', 'output_state', 'reason', 'current_state'
+    # and any related packages. A world of fun that will be, you betcha
+    
+    
+    # things to define:
+    # types of relationships
+    # types of reasons
+    # ts, current and output states
+    
+    # output states are:
+    # update, install, remove, obsoleted
+    
+    # ts states are: u, i, e
+    
+    # current_states are:
+    # installed, repo
+    
+    #relationships:
+    # obsoletedby, updates, obsoletes, updatedby, 
+    # dependencyof, dependson
+    
