@@ -28,6 +28,7 @@ class yumconf:
 		self.servercache = {}
 		self.servergpgcheck={}
 		self.excludes=[]
+		self.assumeyes=0
 		
 		#defaults
 		self.cachedir='/var/cache/yum'
@@ -45,7 +46,10 @@ class yumconf:
 			self.pkgpolicy=self._getoption('main','pkgpolicy')
 		if self._getoption('main','exclude') != None:
 			self.excludes=string.split(self._getoption('main','exclude'), ' ')
-		
+		if self._getoption('main','assumeyes') != None:
+			self.assumeyes=self.cfg.getboolean('main','assumeyes')
+			
+			
 		if len(self.cfg.sections()) > 1:
 			for section in self.cfg.sections(): # loop through the list of sections
 				if section != 'main': #must be a serverid

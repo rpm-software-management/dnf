@@ -299,7 +299,8 @@ def formatRequire (name, version, flags):
 			string = string + " %s" % version
 	return string
 
-def printactions(nevral):
+
+def actionslists(nevral):
 	install_list = []
 	update_list = []
 	erase_list = []
@@ -316,29 +317,64 @@ def printactions(nevral):
 			updatedeps_list.append((name,arch))
 		if nevral.state(name,arch) == 'ed':
 			erasedeps_list.append((name,arch))
-			
+	
+	return install_list, update_list, erase_list, updatedeps_list, erasedeps_list
+	
+def printactions(i_list, u_list, e_list, ud_list, ed_list):
 	log(2,"I will do the following:")
-	for pkg in install_list:
+	for pkg in i_list:
 		(name,arch) = pkg
 		log(2,"[install: %s.%s]" % (name,arch))
-	for pkg in update_list:
+	for pkg in u_list:
 		(name,arch) = pkg
 		log(2,"[update: %s.%s]" % (name,arch))
-	for pkg in erase_list:
+	for pkg in e_list:
 		(name,arch) = pkg
 		log(2,"[erase: %s.%s]" % (name,arch))
-	if len(updatedeps_list) > 0:
+	if len(ud_list) > 0:
 		log(2,"I will install/upgrade these to satisfy the depedencies:")
-		for pkg in updatedeps_list:
+		for pkg in ud_list:
 			(name,arch) = pkg
 			log(2, "[deps: %s.%s]" %(name,arch))
-	if len(erasedeps_list) > 0:
+	if len(ed_list) > 0:
 		log(2,"I will erase these to satisfy the depedencies:")
-		for pkg in erasedeps_list:
+		for pkg in ed_list:
 			(name,arch) = pkg
 			log(2, "[deps: %s.%s]" %(name,arch))
 
+def filelogactions(i_list, u_list,e_list,ud_list,ed_list):
+	i_log="Installed: "
+	u_log="Updated: "
+	e_log="Erased: "
+		
+	for (name, arch) in i_list:
+		filelog(1,i_log + name + '-' + arch)
+	for (name, arch) in u_list+ud_list:
+		filelog(1,u_log + name + '-' + arch)
+	for (name, arch) in e_list+ed_list:
+		filelog(1,e_log + name + '-' + arch)
+		
 
+def shortlogactions(i_list, u_list,e_list,ud_list,ed_list):
+	i_log="Installed: "
+	u_log="Updated: "
+	e_log="Erased: "
+	
+	for (name, arch) in i_list:
+		i_log=i_log + ' ' + name + '-' + arch
+	for (name, arch) in u_list+ud_list:
+		u_log=u_log + ' ' + name + '-' + arch
+	for (name, arch) in e_list+ed_list:
+		e_log=e_log + ' ' + name + '-' + arch
+	if len(i_list) > 0:
+		log(1, i_log)
+	if len(u_list+ud_list) > 0:
+		log(1, u_log)
+	if len(e_list+ed_list) > 0:
+		log(1, e_log)
+		
+	
+	
 def userconfirm():
 	"""gets a yes or no from the user, defaults to No"""
 	choice = raw_input('Is this ok [y/N]: ')
@@ -426,6 +462,10 @@ def clean_up_old_headers(rpmDBInfo, HeaderInfo):
 			log(4,"Deleting Header %s" % hdrfn)
 			os.unlink(hdrfn)
 			
+
+def printtime():
+	import time
+	return time.strftime('%m/%d/%y %H:%M:%S ',time.localtime(time.time()))
 
 
 

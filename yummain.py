@@ -26,11 +26,9 @@ from logger import Logger
 
 #setup log classes
 #used for the syslog-style log
-def printtime():
-	return time.strftime('%m/%d/%y %H:%M:%S ',time.localtime(time.time()))
 #syslog-style log
-logfile=open(conf.logfile,"w")
-filelog=Logger(threshold=10, file_object=logfile,preprefix=printtime())
+logfile=open(conf.logfile,"a")
+filelog=Logger(threshold=10, file_object=logfile,preprefix=clientStuff.printtime())
 #errorlog - sys.stderr - always
 errorlog=Logger(threshold=10, file_object=sys.stderr)
 #normal printing/debug log - this is what -d # affects
@@ -104,9 +102,9 @@ def take_action(cmds,nulist,uplist,newlist,obslist,tsInfo,HeaderInfo,rpmDBInfo):
 	elif cmds[0] == "update":
 		cmds.remove(cmds[0])
 		if len(cmds)==0:
-			pkgaction.updatepkgs(tsInfo,HeaderInfo,nulist,uplist,obslist,'all')
+			pkgaction.updatepkgs(tsInfo,HeaderInfo,rpmDBInfo,nulist,uplist,obslist,'all')
 		else:
-			pkgaction.updatepkgs(tsInfo,HeaderInfo,nulist,uplist,obslist,cmds)
+			pkgaction.updatepkgs(tsInfo,HeaderInfo,rpmDBInfo,nulist,uplist,obslist,cmds)
 			
 	elif cmds[0] == "erase" or cmds[0] == "remove":
 		cmds.remove(cmds[0])
@@ -209,7 +207,6 @@ def main():
 	args = sys.argv[1:]
 	if len(args) < 1:
 		usage()
-	userask=1
 	try:
 		gopts,cmds = getopt.getopt(args, 'hd:y',['help'])
 	except getopt.error, e:
@@ -218,9 +215,10 @@ def main():
 			
 	for o,a in gopts:
 		if o =='-d':
-			log.verbosity=int(a)
+			log.threshold=int(a)
+			conf.debuglevel=int(a)
 		if o =='-y':
-			userask=0
+			conf.assumeyes=1
 		if o in ('-h', '--help'):
 			usage()
 	if cmds[0] not in ('update','install','list','erase','grouplist','groupupdate','groupinstall','clean','remove'):
@@ -291,8 +289,11 @@ def main():
 	
 	#prompt for use permission to do stuff in tsInfo - list all the actions 
 	#(i, u, e, ud,iu(installing, but marking as 'u' in the actual ts, just in case) confirm w/the user
-	clientStuff.printactions(tsInfo)
-	if userask==1:
+	
+	(i_list,u_list,e_list,ud_list,ed_list)=clientStuff.actionslists(tsInfo)
+	
+	clientStuff.printactions(i_list,u_list,e_list,ud_list,ed_list)
+	if conf.assumeyes==0:
 		if clientStuff.userconfirm():
 			errorlog(1,"Exiting on user command.")
 			sys.exit(1)
@@ -319,6 +320,10 @@ def main():
 		#Check to see if we've got a new kernel and put it in the right place in grub/lilo
 		pkgaction.kernelupdate(tsInfo)
 		
+		#log what we did and also print it out
+		clientStuff.filelogactions(i_list,u_list,e_list,ud_list,ed_list)
+		clientStuff.shortlogactions(i_list,u_list,e_list,ud_list,ed_list)
+		
 	else:
 		errorlog(1,"You're not root, we can't install things")
 		sys.exit(0)
@@ -335,7 +340,7 @@ def usage():
 	            | groupupdate | list | grouplist | clean>
 				
          Options:
-          -d [debug level] - set the debugging verbosity level
+          -d [debug level] - set the debugging level
           -y answer yes to all questions
           -h, --help this screen
 	"""

@@ -1,12 +1,7 @@
 Things that must be done:
 
 Critical:
- - make the cmdline options (-d, -q ,-y etc) be pushed into the config.conf 
-   class so we don't have to pass them around
  - Implement pkg excludes on the server side
- - Make -q and -d 0 VERY quiet
- - quiet down the callback for rpm installs if -q is invoked.
- - Make the syslog, log be sane
 
 Important:
 - gzip the headers so they are smaller to move across the network

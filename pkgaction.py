@@ -44,7 +44,7 @@ def installpkgs(tsnevral,nulist,userlist,hinevral,rpmnevral):
 							tsnevral.add((name,e,v,r,a,l,i),'u')            
 						else:
 							#this is the best there is :(
-							errorlog(1,"%s is installed and is the latest version. Exiting" % (name))
+							errorlog(1,"%s is installed and is the latest version." % (name))
 							sys.exit(1)
 					else:
 						#we should install this
@@ -53,7 +53,7 @@ def installpkgs(tsnevral,nulist,userlist,hinevral,rpmnevral):
 						tsnevral.add((name,e,v,r,a,l,i),'iu')
 			if foundit==0:
 				if rpmnevral.exists(n):
-					errorlog(1,"%s is installed and is the latest version. Exiting" % (n))
+					errorlog(1,"%s is installed and is the latest version." % (n))
 				else:
 					errorlog(1,"Cannot find a package matching %s" % (n))
 				sys.exit(1)
@@ -86,7 +86,7 @@ def listpkgs(pkglist, userlist, nevral):
 	else:
 		print "No Packages Available"
 			
-def updatepkgs(tsnevral,hinevral,nulist,uplist,obslist,userlist):
+def updatepkgs(tsnevral,hinevral,rpmnevral,nulist,uplist,obslist,userlist):
 	#get the list of what people want upgraded, match like in install.
 	#add as 'u' to the tsnevral if its already there, if its not then add as 'i' and warn
 	#if its all then take obslist and uplist and iterate through the tsinfo'u'
@@ -128,7 +128,10 @@ def updatepkgs(tsnevral,hinevral,nulist,uplist,obslist,userlist):
 								errorlog(1,"%s is the latest version" % (name))
 								sys.exit(1)
 				if foundit==0:
-					errorlog(1,"Cannot find any package matching %s. Exiting" % (n))
+					if rpmnevral.exists(n):
+						errorlog(1,"%s is installed and the latest version." % (n))
+					else:
+						errorlog(1,"Cannot find any package matching %s available to be upgraded." % (n))
 					sys.exit(1)
 	else:
 		errorlog(1,"No Packages Available for Update or Install")
@@ -189,17 +192,20 @@ def kernelupdate(tsnevral):
 				kernel_list.append((verRel, extraInfo))
 		
 	if len(kernel_list) > 0:
+		log(2,"Kernel Updated/Installed, fixing the bootloader")
 		# code from up2date/up2date.py
 		#figure out which bootloader, run the script for that bootloader
 		import checkbootloader
 		bootloader = checkbootloader.whichBootLoader()
 		import up2datetheft
 		if bootloader == "LILO":
+			log(2,"Lilo found - adding kernel to lilo and making it the default")
 			up2datetheft.install_lilo(kernel_list)
 		elif bootloader == "GRUB":
 			# at the moment, kernel rpms are supposed to grok grub
 			# and do the Right Thing. Just a placeholder for doc purposes and
 			#to put the kernels in the right order
+			log(2,"Grub found - making this kernel the default")
 			up2datetheft.install_grub(kernel_list)
 
 def checkSig(package,checktype='md5'):

@@ -147,7 +147,7 @@ class nevral:
 			return l
 		hdrfn = self.hdrfn(name,arch)
 		base = config.conf.serverhdrdir[i]
-		log(4,"localhdrpath= %s for %s %s" % (base + '/' + hdrfn, name, arch)
+		log(6,"localhdrpath= %s for %s %s" % (base + '/' + hdrfn, name, arch))
 		return base + '/' + hdrfn
 		
 	def remoteRpmUrl(self, name, arch=None):
