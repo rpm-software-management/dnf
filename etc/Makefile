@@ -17,7 +17,7 @@ install:
 	mkdir -p $(DESTDIR)/etc/cron.daily
 	install -m 755 yum.cron $(DESTDIR)/etc/cron.daily/yum.cron
 
-	mkdir -p $(DESTDIR)/etc/cron.daily
+	mkdir -p $(DESTDIR)/etc/cron.weekly
 	install -m 755 yum.cron.weekly $(DESTDIR)/etc/cron.weekly/yum.cron
 
 	mkdir -p $(DESTDIR)/etc/rc.d/init.d
