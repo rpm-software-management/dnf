@@ -1,3 +1,25 @@
+2002-07-19 00:54  skvidal
+
+	* pkgaction.py, docs/yum.8: 
+	fix a duplication in listpkgs and add 'info' to the man page
+
+2002-07-19 00:48  skvidal
+
+	* yummain.py, sbin/yum: 
+	clean up main() some - make it shorted - break out cmd parsing to a
+	separate function. pychecker no longer tells me I'm a loser.
+
+2002-07-19 00:00  skvidal
+
+	* clientStuff.py, pkgaction.py, yum.conf, yummain.py: 
+	made yum info [pkgname] work.  not documented yet - probably not
+	finished yet either.
+
+2002-07-11 18:13  skvidal
+
+	* ChangeLog, configure.in, yum.spec: 
+	updated for 0.9.1 <sigh>
+
 2002-07-11 18:10  skvidal
 
 	* etc/yum.cron: 
