@@ -118,7 +118,15 @@ class TransactionData:
     def dump(self):
         """returns a list of the (pkginfo, mode) tuples"""
         return self.data['packages']
+    
+    def makedict(self):
+        """returns a dict of the self.dump()"""
+        returndict = {}
+        for (pkginfo, mode) in self.dump():
+            returndict[pkginfo] = mode
         
+        return returndict
+
     def display(self):
         out = ""
         removed = []

@@ -156,10 +156,10 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
                 logfile =  os.fdopen(logfd, 'a')
                 fcntl.fcntl(logfd, fcntl.F_SETFD)
                 self.filelog = Logger(threshold = 10, file_object = logfile, 
-                                preprefix = self.printtime())
+                                preprefix = self.printtime)
             else:
                 self.filelog = Logger(threshold = 10, file_object = None, 
-                                preprefix = self.printtime())
+                                preprefix = self.printtime)
             
         
             # now the rest of the options
@@ -553,7 +553,7 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         # confirm with user
         if not self.conf.getConfigOption('assumeyes'):
             if not self.userconfirm():
-                self.log(0, '\n\nExiting on user Command')
+                self.log(0, 'Exiting on user Command')
                 return
 
         
@@ -564,6 +564,7 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
                 po = self.getPackageObject(pkg)
                 if po:
                     downloadpkgs.append(po)
+        self.log(2, 'Downloading Packages:')
         problems = self.downloadPkgs(downloadpkgs) 
 
         if len(problems.keys()) > 0:
@@ -593,6 +594,7 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         testcb = callback.RPMInstallCallback()
         # clean out the ts b/c we have to give it new paths to the rpms 
         del self.ts
+        
         self.initActionTs()
         self.dsCallback = None # dumb, dumb dumb dumb!
         self.populateTs(keepold=0) # sigh
@@ -613,7 +615,11 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         self.ts.check() #required for ordering
         self.ts.order() # order
         self.ts.setFlags(0) # unset the test flag
+        
         cb = callback.RPMInstallCallback()
+        cb.filelog = self.filelog # needed for log file output
+        cb.packagedict = self.tsInfo.makedict() # to make log output not suck
+        
         # run ts
         self.log(2, 'Running Transaction')
         

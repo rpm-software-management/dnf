@@ -29,7 +29,7 @@ import yum.Errors
 class YumOutput:
 
     def printtime(self):
-        return time.strftime('%b %d %H:%M:%S', time.localtime(time.time()))
+        return time.strftime('%b %d %H:%M:%S ', time.localtime(time.time()))
         
     
     def failureReport(self, msg, errorlog=None, relative=None):
@@ -368,11 +368,11 @@ class YumOutput:
             obspkg = self.tsInfo.reason[pkgtup]
             otherout = otherout + "  Obsoleting: %s.%s %s:%s-%s with %s\n" % (n, a, e, v, r, obspkg)
 
-        out = "Transaction Listing:\n%s\n\n" % userout 
+        out = "Transaction Listing:\n%s" % userout 
         if depout != '':
-            out = out + "Performing the following to resolve dependencies:\n%s\n\n" % depout
+            out = out + "\nPerforming the following to resolve dependencies:\n%s" % depout
         if otherout != '':
-            out = out + "Other Transactions:\n%s\n" % otherout
+            out = out + "\nOther Transactions:\n%s\n" % otherout
               
         return out
 
@@ -461,5 +461,5 @@ class DepSolveProgressCallBack:
         self.log(2, '--> Populating transaction set with selected packages. Please Wait.')
     
     def downloadHeader(self, name):
-        self.log(2, '--> Downloading header for %s to pack into transaction set.' % name)
+        self.log(2, '---> Downloading header for %s to pack into transaction set.' % name)
         

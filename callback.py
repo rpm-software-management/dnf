@@ -29,6 +29,38 @@ class RPMInstallCallback:
         self.total_installed = 0
         self.installed_pkg_names = []
         self.total_removed = 0
+        self.filelog = None
+        self.packagedict = {}
+        self.myprocess = { 'u': 'Updating', 'e': 'Erasing', 'i': 'Installing',
+                           'o': 'Obsoleted' }
+        self.mypostprocess = { 'u': 'Updated', 'e': 'Erased', 'i': 'Installed',
+                               'o': 'Obsoleted' }
+                           
+                           
+    def _dopkgtup(self, hdr):
+        tmpepoch = hdr['epoch']
+        if tmpepoch is None: epoch = '0'
+        else: epoch = str(tmpepoch)
+        
+        return (hdr['name'], hdr['arch'], epoch, hdr['version'], hdr['release'])
+        
+    def _makeHandle(self, hdr):
+        handle = '%s:%s.%s-%s-%s' % (hdr['epoch'], hdr['name'], hdr['version'],
+          hdr['release'], hdr['arch'])
+        
+        return handle
+
+    def _logPkgString(self, hdr):
+        """return nice representation of the package for the log"""
+        (n,a,e,v,r) = self._dopkgtup(hdr)
+        if e == '0':
+            pkg = '%s.%s %s-%s' % (n, a, v, r)
+        else:
+            pkg = '%s.%s %s:%s-%s' % (n, a, e, v, r)
+        
+        return pkg
+        
+        
     def callback(self, what, bytes, total, h, user):
         if what == rpm.RPMCALLBACK_TRANS_START:
             if bytes == 6:
@@ -44,13 +76,11 @@ class RPMInstallCallback:
             hdr = None
             if h != None:
                 hdr, rpmloc = h
-                handle = '%s:%s.%s-%s-%s' % (hdr[rpm.RPMTAG_EPOCH],
-                    hdr[rpm.RPMTAG_NAME], hdr[rpm.RPMTAG_VERSION],
-                    hdr[rpm.RPMTAG_RELEASE], hdr[rpm.RPMTAG_ARCH])
+                handle = self._makeHandle(hdr)
                 fd = os.open(rpmloc, os.O_RDONLY)
                 self.callbackfilehandles[handle]=fd
                 self.total_installed += 1
-                self.installed_pkg_names.append(hdr[rpm.RPMTAG_NAME])
+                self.installed_pkg_names.append(hdr['name'])
                 return fd
             else:
                 print _("No header - huh?")
@@ -59,32 +89,63 @@ class RPMInstallCallback:
             hdr = None
             if h != None:
                 hdr, rpmloc = h
-                handle = '%s:%s.%s-%s-%s' % (hdr[rpm.RPMTAG_EPOCH],
-                  hdr[rpm.RPMTAG_NAME], hdr[rpm.RPMTAG_VERSION],
-                  hdr[rpm.RPMTAG_RELEASE], hdr[rpm.RPMTAG_ARCH])
+                handle = self._makeHandle(hdr)
             os.close(self.callbackfilehandles[handle])
             fd = 0
+            # log stuff
+            pkgtup = self._dopkgtup(hdr)
+            try:
+                process = self.myprocess[self.packagedict[pkgtup]]
+                processed = self.mypostprocess[self.packagedict[pkgtup]]
+            except KeyError, e:
+                pass
+                
+            if self.filelog:
+                pkgrep = self._logPkgString(hdr)
+                msg = '%s: %s' % (processed, pkgrep)
+                self.filelog(0, msg)
+            
 
         elif what == rpm.RPMCALLBACK_INST_PROGRESS:
             if h != None:
-                pkg, rpmloc = h
+                hdr, rpmloc = h
                 if total == 0:
                     percent = 0
                 else:
                     percent = (bytes*100L)/total
                 if self.output:
-                    sys.stdout.write("\r%s %d %% done %d/%d" % (pkg[rpm.RPMTAG_NAME], 
-                      percent, self.total_installed + self.total_removed, self.total_actions))
+                    pkgtup = self._dopkgtup(hdr)
+                    try:
+                        process = self.myprocess[self.packagedict[pkgtup]]
+                    except KeyError, e:
+                        print "Error: invalid process key: %s for %s" % \
+                           (self.packagedict[pkgtup], hdr['name'])
+                
+                    sys.stdout.write("\r%s: %s %d %% done %d/%d" % (process, 
+                       hdr['name'], percent, self.total_installed + self.total_removed, 
+                       self.total_actions))
+                       
                     if bytes == total:
                         print " "
+                        
         elif what == rpm.RPMCALLBACK_UNINST_START:
             pass
+            
         elif what == rpm.RPMCALLBACK_UNINST_STOP:
             self.total_removed += 1
+
             if self.output:
                 if h not in self.installed_pkg_names:
-                    print _('Erasing: %s %d/%d') % (h, self.total_removed + 
+                    msg = _('Erasing: %s %d/%d') % (h, self.total_removed + 
                       self.total_installed, self.total_actions)
+                    print msg
+                    
+                    logmsg = _('Erased: %s' % (h))
+                    if self.filelog: self.filelog(0, logmsg)
+                    
                 else:
-                    print _('Completing update for %s  - %d/%d') % (h, self.total_removed +
+                    msg = _('Completing update for %s  - %d/%d') % (h, self.total_removed +
                       self.total_installed, self.total_actions)
+                    print msg
+
+ 
