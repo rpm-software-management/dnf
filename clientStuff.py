@@ -18,7 +18,7 @@ import string
 import rpm
 import os
 import sys
-import config
+from config import conf
 
 def stripENVRA(foo):
   archIndex = string.rfind(foo, ".")
@@ -87,7 +87,7 @@ def str_to_version(str):
 		release = None
 	return (epoch, version, release)
 
-def HeaderInfoNevralLoad(filename,nevralClass,serverid):
+def HeaderInfoNevralLoad(filename,nevral,serverid):
 	info = []
 	in_file = open(filename,"r")
 	while 1:
@@ -101,7 +101,18 @@ def HeaderInfoNevralLoad(filename,nevralClass,serverid):
 		(envraStr, rpmpath) = string.split(line,'=')
 		(epoch, name, ver, rel, arch) = stripENVRA(envraStr)
 		rpmpath = string.replace(rpmpath, "\n","")
-		nevralClass.add((name,epoch,ver,rel,arch,rpmpath,serverid),'a')
+		if conf.pkgpolicy=="last":
+			nevral.add((name,epoch,ver,rel,arch,rpmpath,serverid),'a')	
+		else:
+			if nevral.exists(name, arch):
+				(e1, v1, r1) = nevral.evr(name, arch)
+				(e2, v2, r2) = (epoch, ver, rel)    
+				rc = rpm.labelCompare((e1,v1,r1), (e2,v2,r2))
+				if (rc == -1):
+					#ooo  the second one is newer - push it in.
+					nevral.add((name,epoch,ver,rel,arch,rpmpath,serverid),'a')
+			else:
+				nevral.add((name,epoch,ver,rel,arch,rpmpath,serverid),'a')
 
 
 def openrpmdb(option=0, dbpath=None):
@@ -116,31 +127,31 @@ def openrpmdb(option=0, dbpath=None):
 	return db
 
 
-def rpmdbNevralLoad(nevralClass):
-   rpmdbdict = {}
-   db = openrpmdb()
-   serverid = "db"
-   rpmloc = "in_rpm_db"
-   index = db.firstkey()
-   while index:
-     rpmdbh = db[index]
-     (epoch, name, ver, rel, arch) = getENVRA(rpmdbh)
-     #deal with multiple versioned dupes and dupe entries in localdb
-     if not rpmdbdict.has_key((name, arch)):
-       rpmdbdict[(name,arch)] = (epoch, ver, rel)
-     else:
-       (e1, v1, r1) = (rpmdbdict[(name, arch)])
-       (e2, v2, r2) = (epoch, ver, rel)    
-       rc = rpm.labelCompare((e1,v1,r1), (e2,v2,r2))
-       if (rc == -1):
-        rpmdbdict[(name,arch)] = (epoch, ver, rel)
-       elif (rc == 0):
-         print "dupe entry in rpmdb %s\n" % key
-     index = db.nextkey(index)
-   for value in rpmdbdict.keys():
-     (name, arch) = value
-     (epoch,ver, rel) = rpmdbdict[value]
-     nevralClass.add((name,epoch,ver,rel,arch,rpmloc,serverid),'n')
+def rpmdbNevralLoad(nevral):
+	rpmdbdict = {}
+	db = openrpmdb()
+	serverid = "db"
+	rpmloc = "in_rpm_db"
+	index = db.firstkey()
+	while index:
+		rpmdbh = db[index]
+		(epoch, name, ver, rel, arch) = getENVRA(rpmdbh)
+		#deal with multiple versioned dupes and dupe entries in localdb
+		if not rpmdbdict.has_key((name, arch)):
+			rpmdbdict[(name,arch)] = (epoch, ver, rel)
+		else:
+			(e1, v1, r1) = (rpmdbdict[(name, arch)])
+			(e2, v2, r2) = (epoch, ver, rel)    
+			rc = rpm.labelCompare((e1,v1,r1), (e2,v2,r2))
+			if (rc == -1):
+				rpmdbdict[(name,arch)] = (epoch, ver, rel)
+			elif (rc == 0):
+				print "dupe entry in rpmdb %s\n" % key
+		index = db.nextkey(index)
+	for value in rpmdbdict.keys():
+		(name, arch) = value
+		(epoch,ver, rel) = rpmdbdict[value]
+		nevral.add((name,epoch,ver,rel,arch,rpmloc,serverid),'n')
 
 def readHeader(rpmfn):
    if string.lower(rpmfn[-4:]) == '.rpm':

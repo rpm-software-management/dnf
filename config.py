@@ -27,9 +27,10 @@ class yumconf:
 		self.serverhdrdir = {}
 		self.servercache = {}
 		#defaults
-		self.cachedir='/tmp'
+		self.cachedir='/var/cache/yum'
 		self.debuglevel=2
-		self.logfile='/tmp/yum.log'
+		self.logfile='/var/log/yum.log'
+		self.pkgpolicy='newest'
 		
 		if self._getoption('main','cachedir') != None:
 			self.cachedir=self._getoption('main','cachedir')
@@ -37,7 +38,8 @@ class yumconf:
 			self.debuglevel=self._getoption('main','debuglevel')
 		if self._getoption('main','logfile') != None:
 			self.logfile=self._getoption('main','logfile')
-			
+		if self._getoption('main','pkgpolicy') != None:
+			self.pkgpolicy=self._getoption('main','pkgpolicy')
 		
 		if len(self.cfg.sections()) > 1:
 			for section in self.cfg.sections(): # loop through the list of sections
