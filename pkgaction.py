@@ -197,6 +197,20 @@ def erasepkgs(tsnevral,rpmnevral,userlist):
             errorlog(0,"Erase: No matches for %s" % n)
             sys.exit(1)
 
+def findrequires(usereq, hinevral, rpmnevral):
+    import fnmatch
+    # figure out what the user wants, traverse all the provides and file lists 
+    # in every file in the header, return the fnmatch()es for the usereq
+    # return the thing they match too.
+    # do this:
+    # get the header from the rpmnevral or the hinevral
+    # get list of filenames and dirnames, get list of provides
+    # traverse all searching for a match - hand back (name, arch) and what matched
+    #for (name, arch) in hinevral.NAkeys():
+    #    
+    #else:
+    #    print "No Packages Available"
+
 def kernelupdate(tsnevral):
     #figure out if we have updated a kernel
     #do what up2date does to update lilo and/or grub
