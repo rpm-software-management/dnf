@@ -864,10 +864,10 @@ For more information contact your distribution or package provider.
         passToUpdate = [] # list of pkgtups to pass along to updatecheck
 
         for arg in userlist:
-            if os.path.exists(arg) and arg[-4:] == '.rpm': # this is hurky, deal w/it
+            if os.path.exists(arg) and arg.endswith('.rpm'): # this is hurky, deal w/it
                 val, msglist = self.localInstall(filelist=[arg])
-                if val == 2: # we added it to the transaction set so don't try from the repos
-                    continue 
+                continue # it was something on disk and it ended in rpm 
+                         # no matter what we don't go looking at repos
 
             if arg[0] == '/':
                 try:
@@ -1143,12 +1143,12 @@ For more information contact your distribution or package provider.
             self.tsInfo.addInstall(po)
         
         for (po, oldpo) in updatepkgs:
-            self.log(2, 'Marking %s as an update to %s' % po.localpath, oldpo)
+            self.log(2, 'Marking %s as an update to %s' % (po.localpath, oldpo))
             self.localPackages.append(po)
             self.tsInfo.addUpdate(po, oldpo)
         
         for po in donothingpkgs:
-            self.log(2, '%s: installed versions are equal or greater' % po.localpath)
+            self.log(2, '%s: does not update installed package.' % po.localpath)
         
         if len(self.tsInfo) > oldcount:
             
