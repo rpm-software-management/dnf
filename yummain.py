@@ -24,7 +24,7 @@ import yum
 import rpmUtils.transaction
 import rpmUtils.updates
 import yum.yumcomps
-import yum.Errors
+import yum.Errors as Errors
 import yum.depsolve
 import cli
 import output
@@ -38,34 +38,33 @@ def main(args):
     """This does all the real work"""
 
     locale.setlocale(locale.LC_ALL, '')
+    # hold object - holder and overall methods
+    base = cli.YumBaseCli()
     
     if len(args) < 1:
-        cli.usage()
+        base.usage()
 
-    # this will be our holder object, things will be pushed in here and passed around 
-    # think of this like a global
-    base = yum.YumBase()
-    cli.base = base # push it into the cli namespace for future use
+    # do our cli parsing and config file setup
+    # also sanity check the things being passed on the cli
+    base.getOptionsConfig(args)
     
-    # parse our cli args, read in the config file and setup the logs
-    cli.getOptionsConfig(args, base)
-
-    process = base.cmds[0]           
-    # set our caching mode correctly
-    if base.conf.getConfigOption('uid') != 0:
-        base.conf.setConfigOption('cache', 1)
-    if process == 'clean':
-        base.conf.setConfigOption('cache', 1)
-
-    # ok at this point lets check the lock/set the lock if we can
-    if base.conf.getConfigOption('uid') == 0:
-        mypid = str(os.getpid())
-        try:
-            yum.doLock('/var/run/yum.pid', mypid)
-        except Errors.LockError, e:
-            print _('%s') % e.msg
-            sys.exit(200)
- 
+    try:
+        base.doLock('/var/run/yum.pid')
+    except Errors.LockError, e:
+        base.errorlog(0,'%s' % e.msg)
+        sys.exit(200)
+    
+    # right now we've parsed the config, we've parsed the cli
+    # all these things check out
+    # the things we will require are dependent on the command invoked.
+    try:
+        base.doCommands()  # this build
+    except Errors, e:
+        print 'raised error %s from doCommands()' % e
+        raise
+    
+    
+    
     # get our transaction set together that we'll use all over the place
     base.read_ts = rpmUtils.transaction.initReadOnlyTransaction()
     
@@ -104,7 +103,9 @@ def main(args):
 
    
     base.log(2, _('Finding updated packages'))
-    base.up = rpmUtils.updates.Updates(base.rpmdb.getPkgList(), base.pkgSack.simplePkgList())
+    base.up = rpmUtils.updates.Updates(base.rpmdb.getPkgList(),
+                                       base.pkgSack.simplePkgList())
+                                       
     base.up.exactarch = base.conf.getConfigOption('exactarch')
     base.up.doUpdates()
     base.up.condenseUpdates()
@@ -134,15 +135,13 @@ def main(args):
 
    
 
-    for pkgtup in base.up.getUpdatesList():
-        base.tsInfo.add(pkgtup, 'u', 'user')
+#    for pkgtup in base.up.getUpdatesList():
+#        base.tsInfo.add(pkgtup, 'u', 'user')
 
-    yum.packages.base = base
-    base.ds = yum.depsolve.Depsolve(base)
-    base.ds.populateTs()
-    for te in base.ds.ts:
-        print '%s - %s' % (te.Type(), te.N())
-
+#    yum.packages.base = base
+#    base.ds = yum.depsolve.Depsolve(base)
+#    errors = base.ds.resolvedeps()
+#    print errors
       
         
     # build up a list of pkgobj from the pkgsack to go with each item in a:
