@@ -50,6 +50,10 @@ class RPMInstallCallback:
         
         return handle
 
+    def _localprint(self, msg):
+        if self.output:
+            print msg
+
     def _logPkgString(self, hdr):
         """return nice representation of the package for the log"""
         (n,a,e,v,r) = self._dopkgtup(hdr)
@@ -83,7 +87,7 @@ class RPMInstallCallback:
                 self.installed_pkg_names.append(hdr['name'])
                 return fd
             else:
-                print _("No header - huh?")
+                self._localprint(_("No header - huh?"))
   
         elif what == rpm.RPMCALLBACK_INST_CLOSE_FILE:
             hdr = None
@@ -114,18 +118,18 @@ class RPMInstallCallback:
                     percent = 0
                 else:
                     percent = (bytes*100L)/total
-                if self.output:
-                    pkgtup = self._dopkgtup(hdr)
-                    try:
-                        process = self.myprocess[self.packagedict[pkgtup]]
-                    except KeyError, e:
-                        print "Error: invalid process key: %s for %s" % \
-                           (self.packagedict[pkgtup], hdr['name'])
-                
+                pkgtup = self._dopkgtup(hdr)
+                try:
+                    process = self.myprocess[self.packagedict[pkgtup]]
+                except KeyError, e:
+                    print "Error: invalid process key: %s for %s" % \
+                       (self.packagedict[pkgtup], hdr['name'])
+
+                if self.output or not sys.stdout.isatty():
                     sys.stdout.write("\r%s: %s %d %% done %d/%d" % (process, 
                        hdr['name'], percent, self.total_installed + self.total_removed, 
                        self.total_actions))
-                       
+                   
                     if bytes == total:
                         print " "
                         
@@ -135,18 +139,17 @@ class RPMInstallCallback:
         elif what == rpm.RPMCALLBACK_UNINST_STOP:
             self.total_removed += 1
 
-            if self.output:
-                if h not in self.installed_pkg_names:
-                    msg = _('Erasing: %s %d/%d') % (h, self.total_removed + 
-                      self.total_installed, self.total_actions)
-                    print msg
-                    
-                    logmsg = _('Erased: %s' % (h))
-                    if self.filelog: self.filelog(0, logmsg)
-                    
-                else:
-                    msg = _('Completing update for %s  - %d/%d') % (h, self.total_removed +
-                      self.total_installed, self.total_actions)
-                    print msg
+            if h not in self.installed_pkg_names:
+                msg = _('Erasing: %s %d/%d') % (h, self.total_removed + 
+                  self.total_installed, self.total_actions)
+                self._localprint(msg)
+                
+                logmsg = _('Erased: %s' % (h))
+                if self.filelog: self.filelog(0, logmsg)
+                
+            else:
+                msg = _('Completing update for %s  - %d/%d') % (h, self.total_removed +
+                  self.total_installed, self.total_actions)
+                self._localprint(msg)
 
  

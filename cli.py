@@ -622,7 +622,7 @@ For more information contact your distribution or package provider.
         for feature in ['diskspacecheck']: # more to come, I'm sure
             tsConf[feature] = self.conf.getConfigOption(feature)
         
-        testcb = callback.RPMInstallCallback()
+        testcb = callback.RPMInstallCallback(output=0)
         # clean out the ts b/c we have to give it new paths to the rpms 
         del self.ts
         
@@ -647,7 +647,10 @@ For more information contact your distribution or package provider.
         self.ts.order() # order
         self.ts.setFlags(0) # unset the test flag
         
-        cb = callback.RPMInstallCallback()
+        output = 1
+        if self.conf.debuglevel < 2:
+            output = 0
+        cb = callback.RPMInstallCallback(output=output)
         cb.filelog = self.filelog # needed for log file output
         cb.packagedict = self.tsInfo.makedict() # to make log output not suck
         
