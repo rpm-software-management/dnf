@@ -14,6 +14,8 @@ yum \- Yellowdog Updater Modified
 .br 
 .I \fR * update [package1] [package2] [\&.\&.\&.]
 .br 
+.I \fR * check-update
+.br 
 .I \fR * upgrade
 .br 
 .I \fR * remove [package1] [package2] [\&.\&.\&.]
@@ -44,6 +46,13 @@ will ensure that all dependencies are satisfied\&.  If no package
 matches the given package name(s), they are assumed to be a shell glob
 and any matches are then installed\&.
 .IP 
+.IP "\fBcheck-update\fP"
+Implemented so you could know if your machine had any updates that needed to
+be applied without running it interactively. Returns exit value of 100 if
+there are packages available for an update. Also returns a list of the pkgs
+to be updated in list format. Returns 0 and no packages are available for
+update.
+.IP
 .IP "\fBupgrade\fP"
 takes no arguments, this performs a complete upgrade of the system \- good for distro\-version changes as it includes packages obsoleting other packages in its updating calculations.
 .IP 
