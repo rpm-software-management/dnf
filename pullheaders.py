@@ -100,7 +100,7 @@ def main():
     checkdeps=0
     writehdrs=1
     rpmcheck=0
-    compress=0
+    compress=1
     if  len(sys.argv) < 2:
         serverStuff.Usage()
     args = sys.argv[1:]
@@ -117,16 +117,16 @@ def main():
             rpmcheck=1
         if arg == "-z":
             compress=1
-        
-        
+        if arg in ['-h','--help']:
+            serverStuff.Usage()
     #save where we are right now
     curdir = os.getcwd()
     #start the sanity/stupidity checks
     if not os.path.exists(basedir):
         print "Directory of rpms must exist"
-        sys.exit(1)
+        serverStuff.Usage()
     if not os.path.isdir(basedir):
-        print "Directory of rpms must be a directory, dolt!"
+        print "Directory of rpms must be a directory."
         sys.exit(1)
         
     #change to the basedir to work from w/i the path - for relative url paths
@@ -182,6 +182,7 @@ def main():
 
     #take us home mr. data
     os.chdir(curdir)
+
 
 if __name__ == "__main__":
     main()

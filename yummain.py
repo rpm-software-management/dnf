@@ -60,7 +60,6 @@ def parseCmdArgs(args):
                 else:
                     errorlog(0, 'Cannot find conf file %s' % a)
                     usage()
-
         if yumconffile:
             conf=yumconf(configfile=yumconffile)
         else:
@@ -254,8 +253,8 @@ def main(args):
 
 def usage():
     print """
-    Usage:  yum [options] <update | install | info | erase | groupinstall
-                | groupupdate | list | grouplist | clean | provides>
+    Usage:  yum [options] <update | upgrade | install | info | erase | list |
+            clean | provides>
                 
          Options:
           -c [config file] - specify the config file to use

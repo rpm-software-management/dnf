@@ -31,7 +31,7 @@ INSTALL_PROGRAM = @INSTALL_PROGRAM@
 INSTALL_DATA = @INSTALL_DATA@
 INSTALL_SCRIPT = @INSTALL_SCRIPT@
 
-SUBDIRS = sbin etc docs
+SUBDIRS = bin etc docs
 
 MODULES = $(srcdir)/pullheaders.pyc \
 	  $(srcdir)/config.pyc \
@@ -177,7 +177,7 @@ distfiles:
 	done
 
 installdirs:
-	$(srcdir)/mkinstalldirs $(DESTDIR)$(sbindir) $(DESTDIR)/etc $(DESTDIR)$(pkglibdir) $(DESTDIR)$(mandir)/man8 $(DESTDIR)$(mandir)/man5 $(DESTDIR)/var/cache/@PACKAGE@/
+	$(srcdir)/mkinstalldirs $(DESTDIR)$(bindir) $(DESTDIR)/etc $(DESTDIR)$(pkglibdir) $(DESTDIR)$(mandir)/man8 $(DESTDIR)$(mandir)/man5 $(DESTDIR)/var/cache/@PACKAGE@/
 
 archive: dist
 

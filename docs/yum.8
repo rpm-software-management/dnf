@@ -18,16 +18,10 @@ yum \- Yellowdog Updater Modified
 .br 
 .I \fR * remove [package1] [package2] [\&.\&.\&.]
 .br 
-.I \fR * groupinstall group1 [group2] [\&.\&.\&.]
-.br 
-.I \fR * groupupdate group1 [group2] [\&.\&.\&.]
-.br 
 .I \fR * list [\&.\&.\&.]
 .br 
 .I \fR * info [\&.\&.\&.]
 .br 
-.I \fR * grouplist [\&.\&.\&.]
-.br
 .I \fR * provides [\&.\&.\&.]
 .br  
 .I \fR * clean [packages | headers | old\-headers | all]
@@ -37,7 +31,7 @@ Unless the \-\-help or \-h option is given, one of the above commands
 must be present\&.
 .PP 
 .IP "\fBinstall\fP"
-\fBinstall\fP is used to install the latest version of a package or
+is used to install the latest version of a package or
 group of packages while ensuring that all dependencies are
 satisfied\&.  If no package matches the given package name(s), they are
 assumed to be a shell glob and any matches are then installed\&.
@@ -51,43 +45,30 @@ matches the given package name(s), they are assumed to be a shell glob
 and any matches are then installed\&.
 .IP 
 .IP "\fBupgrade\fP"
-Takes no arguments, this performs a complete upgrade of the system \- good for distro\-version changes as it includes packages obsoleting other packages in its updating calculations.
+takes no arguments, this performs a complete upgrade of the system \- good for distro\-version changes as it includes packages obsoleting other packages in its updating calculations.
 .IP 
 .IP "\fBremove\fP"
-\fBremove\fP is used to remove the specified packages from the system
+is used to remove the specified packages from the system
 as well as removing any packages which depend on the package being
 removed\&.
 .IP 
-.IP "\fBgroup\-install\fP"
-\fBgroup\-install\fP installs all packages in the specified package
-group\&.
-.IP 
-.IP "\fBgroup\-update\fP"
-\fBgroup\-update\fP updates all currently installed packages as well as
-updating the specified group, installing any new packages in the group
-as well\&.
-.IP 
 .IP "\fBlist\fP"
-\fBlist\fP can be used to list various information about available
+can be used to list various information about available
 packages; more complete details are available in the \fIList Options\fP
 section below\&.
 .IP 
 .IP "\fBprovides\fP"
-\fBprovides\fP can be used to find out which package provides some feature
+can be used to find out which package provides some feature
 or file. Just use a specific name or a file-glob-syntax wildcards to list
 the packages available or installed that provide that feature or file\&.
 .IP 
 .IP "\fBinfo\fP"
-\fBinfo\fP can be used to list a description and summary information about available
+can be used to list a description and summary information about available
 packages; takes the same arguments as in the \fIList Options\fP
 section below\&.
 .IP 
-.IP "\fBgroup\-list\fP"
-\fBgroup\-list\fP without any arguments will list all of the available
-groups; if a group name is given, the packages in that group are listed\&.
-.IP 
 .IP "\fBclean\fP"
-\fBclean\fP is used to clean up various things which accumulate in the
+is used to clean up various things which accumulate in the
 yup cache directory over time.  More complete details can be found in
 the \fIClean Options\fP section below\&.
 .IP 
@@ -169,5 +150,5 @@ Seth Vidal <skvidal@phy.duke.edu>
 .PP 
 .SH "BUGS"
 There of course aren't any bugs, but if you find any, they should be sent
-to the author(s).
+to the mailing list: yum@dulug.duke.edu
 .fi 

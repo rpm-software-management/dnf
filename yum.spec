@@ -1,6 +1,6 @@
 Summary: RPM installer/updater
 Name: yum
-Version: 0.9.1
+Version: 0.9.2
 Release: 1
 License: GPL
 Group: System Environment/Base
@@ -28,6 +28,10 @@ make
 %install
 [ "$RPM_BUILD_ROOT" != "/" ] && rm -rf $RPM_BUILD_ROOT
 make DESTDIR=$RPM_BUILD_ROOT install
+mkdir -p $RPM_BUILD_ROOT/%{_sbindir}
+cd $RPM_BUILD_ROOT/%{_sbindir}
+ln -s ../bin/yum .
+ln -s ../bin/yum-arch .
 
 %clean
 [ "$RPM_BUILD_ROOT" != "/" ] && rm -rf $RPM_BUILD_ROOT
@@ -60,10 +64,15 @@ exit 0
 %{_libdir}/yum/*
 %{_sbindir}/yum
 %{_sbindir}/yum-arch
+%{_bindir}/yum
+%{_bindir}/yum-arch
 /var/cache/yum
 %{_mandir}/man*/*
 
 %changelog
+* Mon Aug 26 2002 Seth Vidal <skvidal@phy.duke.edu>
+- bumped ver to 0.9.2
+
 * Thu Jul 11 2002 Seth Vidal <skvidal@phy.duke.edu>
 - bumped ver to 0.9.1
 

@@ -116,11 +116,11 @@ def readHeader(rpmfn):
 def Usage():
     print "Usage:"
     print "yum-arch [-v] [-z] [-c] [-n] [-d] (path of dir where headers/ should/does live)"
-    print "\t-d = check dependencies and conflicts in tree"
-    print "\t-v = print debugging information"
-    print "\t-n = don't generate headers"
-    print "\t-c = check pkgs with gpg and md5 checksums - cannot be used with -n"
-    print "\t-z = gzip compress the headers"
+    print "   -d = check dependencies and conflicts in tree"
+    print "   -v = print debugging information"
+    print "   -n = don't generate headers"
+    print "   -c = check pkgs with gpg and md5 checksums - cannot be used with -n"
+    print "   -z = gzip compress the headers [default, will be deprecated as an option]"
     sys.exit(1)
 
 
