@@ -81,6 +81,7 @@ class yumconf:
         self.uid = 0
         self.commands = None
         self.exactarch = 0
+        self.diskspacecheck = 1
         self.distroverpkg = 'redhat-release'
         self.yumvar = self._getEnvVar()
         self.distroverpkg = 'redhat-release'
@@ -105,8 +106,8 @@ class yumconf:
             self.gpghome=self._getoption('main','gpghome')
         if self._getoption('main','gpgkeyring') != None:
             self.gpgkeyring=self._getoption('main','gpgkeyring')
-        if self._getoption('main','exactarch') != None:
-            self.exactarch=self.cfg.getboolean('main','exactarch')
+        if self._getoption('main','diskspacecheck') != None:
+            self.diskspacecheck=self.cfg.getboolean('main','diskspacecheck')
         if self._getoption('main', 'distroverpkg') != None:
             self.distroverpkg = self._getoption('main','distroverpkg')
         
