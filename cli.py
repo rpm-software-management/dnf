@@ -178,7 +178,8 @@ class YumBaseCli(yum.YumBase):
                 elif o in ['-h', '--help']:
                     self.usage()
                 elif o == '-C':
-                    self.conf.setCache(1)
+                    self.conf.setConfigOption('cache', 1)
+                    self.conf.repos.setCache(1)
                 elif o == '-R':
                     sleeptime = random.randrange(int(a)*60)
                 elif o == '--obsoletes':
@@ -218,12 +219,16 @@ class YumBaseCli(yum.YumBase):
         # progress bars - this is hacky - I'm open to other options
         # One of these is a download
         if self.conf.getConfigOption('debuglevel') < 2:
-            self.conf.setProgressBar(None)
+            self.conf.repos.setProgressBar(None)
             self.conf.repos.callback = None
         else:
-            self.conf.setProgressBar(TextMeter(fo=sys.stdout))
+            self.conf.repos.setProgressBar(TextMeter(fo=sys.stdout))
             self.conf.repos.callback = output.simpleProgressBar
-            
+
+        # setup our failure report for failover
+        freport = (output.failureReport,(),('errorlog', self.errorlog))
+        self.conf.repos.setFailureCallback(freport)
+        
         # this is just a convenience reference
         self.repos = self.conf.repos
         
@@ -371,7 +376,7 @@ class YumBaseCli(yum.YumBase):
                 po = self.getPackageObject(pkg)
                 if po:
                     downloadpkgs.append(po)
-        problems = self.downloadPkgs(downloadpkgs) # FIXME, should be passing a callback too
+        problems = self.downloadPkgs(downloadpkgs) 
 
         if len(problems.keys()) > 0:
             errstring = ''

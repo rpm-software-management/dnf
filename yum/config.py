@@ -202,20 +202,6 @@ class yumconf(object):
         except KeyError:
             return default
 
-    def setCache(self, cacheval):
-        """set's cache value in config, and in all repos"""
-        self.setConfigOption('cache', cacheval)
-        self.repos.cache = cacheval
-        for repo in self.repos.repos.values():
-            repo.cache = cacheval
-
-    def setProgressBar(self, obj):
-        """set's the progress bar for downloading files from repos"""
-        self.setConfigOption('progress_obj', obj)
-        for repo in self.repos.repos.values():
-            repo.callback = obj
-            repo.setupGrab()
-        
     def _getsysver(self):
         ts = rpmUtils.transaction.initReadOnlyTransaction()
         ts.pushVSFlags(~(rpm._RPMVSF_NOSIGNATURES|rpm._RPMVSF_NODIGESTS))

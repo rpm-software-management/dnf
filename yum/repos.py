@@ -92,6 +92,27 @@ class RepoStorage:
                 returnlist.append(repo)
 
         return returnlist
+
+    def setCache(self, cacheval):
+        """set's cache value in all repos"""
+        self.cache = cacheval
+        for repo in self.repos.values():
+            repo.cache = cacheval
+
+    def setProgressBar(self, obj):
+        """set's the progress bar for downloading files from repos"""
+        
+        for repo in self.repos.values():
+            repo.callback = obj
+            repo.setupGrab()
+
+    def setFailureCallback(self, obj):
+        """set's the failure callback for all repos"""
+        
+        for repo in self.repos.values():
+            repo.failure_obj = obj
+            repo.setupGrab()
+            
                 
     def populateSack(self, which='enabled', with='primary', callback=None):
         """This populates the package sack from the repositories, two optional 
@@ -160,6 +181,7 @@ class Repository:
         self.repoXML = None
         self.cache = 0
         self.callback = None # callback for the grabber
+        self.failure_obj = None
         
         # throw in some stubs for things that will be set by the config class
         self.cachedir = ""
@@ -261,6 +283,7 @@ class Repository:
                                    retry=self.retries,
                                    throttle=self.throttle,
                                    progress_obj=self.callback)
+                                   #failure_callback=self.failure_obj)
                                    #reget='simple')
                                    
         # FIXME - needs a failure callback and it needs  to specify it
@@ -317,7 +340,8 @@ class Repository:
                        bandwidth=self.bandwidth,
                        retry=self.retries,
                        throttle=self.throttle,
-                       progres_obj=self.callback)
+                       progres_obj=self.callback,
+                       failure_callback=self.failure_obj)
             remote = url + '/' + relative
             try:           
                 result = ug.urlgrab(remote, local, range=(start, end), 

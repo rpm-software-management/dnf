@@ -164,7 +164,7 @@ class PackageSack:
             for repo in self.pkgsByRepo.keys():
                 returnList.extend(self.pkgsByRepo[repo])
         else:
-            returnlist = self.pkgsByRepo[repoid]
+            returnList = self.pkgsByRepo[repoid]
         
         return returnList
 
