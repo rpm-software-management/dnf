@@ -1,3 +1,181 @@
+2005-02-21 00:23  skvidal
+
+	* yum-template.xml: 
+	remove template xml that has no value anymore
+
+2005-02-21 00:15  skvidal
+
+	* yum-daily.spec, yum.spec: 
+	updated spec file for versin changes - 2.3.0
+
+2005-02-21 00:08  skvidal
+
+	* urlgrabber/: LICENSE, README, __init__.py, byterange.py,
+	grabber.py, keepalive.py, mirror.py: 
+	check new urlgrabber into yum-HEAD. Once urlgrabber package is made
+	this will be removed from this source tree
+
+2005-02-19 17:28  skvidal
+
+	* yum/repos.py: 
+	proxy fixes
+
+2005-02-19 17:27  skvidal
+
+	* docs/yum.conf.5: 
+	updated docs for proxy options that are now implemented
+
+2005-02-17 02:16  skvidal
+
+	* yum/: config.py, repos.py: 
+	allow undefining proxies in repo sections use _none_ to disable
+	proxy for a repo.  abstract out the repos classes from the config
+	class
+
+2005-02-14 01:00  skvidal
+
+	* callback.py, cli.py, yum/__init__.py, yum/depsolve.py,
+	yum/packages.py, yum/transactioninfo.py: 
+	- added in Terje's new patch for the rpm callback - setup some
+	background for some items in transactioninfo.py - specifically
+	storing the package object in the transaction member object.  -
+	made pkgtup an attribute of every package object rather than a
+	callable method.
+
+2005-02-11 04:10  skvidal
+
+	* cli.py, yum/__init__.py, yum/config.py, yum/repos.py: 
+	rearranged repository configuration. Instead of repos being an
+	attribute of the config class it is now split out as a base
+	attribute from the YumBase object. This gives us better separation
+	from the configParser format and let's us do newer things with
+	resetting information in repositories
+
+2005-02-11 02:04  skvidal
+
+	* cli.py: 
+	fix for localupdate/localinstall where it could not update b/c of
+	arch change on localPackage. Also fix two related bugs: 1.
+	unnecessary searching of filelists when the local package cannot be
+	   installed 2. error in output string for localupdate output -
+	surprised no one has seen    that one yet
+	
+	merge to HEAD
+
+2005-02-11 01:45  skvidal
+
+	* yum/depsolve.py: 
+	fix for: https://bugzilla.redhat.com/beta/show_bug.cgi?id=147275
+	merge to HEAD
+
+2005-02-10 02:58  skvidal
+
+	* callback.py: 
+	checked in Terje's callback progress changes to HEAD
+
+2005-02-09 17:33  skvidal
+
+	* urlgrabber/byterange.py: 
+	HEAD check in of byterange, for now.
+
+2005-02-05 15:42  skvidal
+
+	* yum/repos.py: 
+	get rid of bogus print statement in repo class
+
+2005-02-03 03:23  skvidal
+
+	* yum/depsolve.py: 
+	fix for case where it keeps picking the wrong package to solve for
+	in a list of two possible cases.
+	
+	This whole problem will go away when we stop 'GUESSING' which arch
+	on a multilib has the requirement.
+
+2005-02-01 18:35  skvidal
+
+	* cli.py, shell.py: 
+	implement yum shell filename - patch from Terje Rosten.
+	
+	now you can do:
+	
+	#!/usr/bin/yum shell install foo bar baz remove quux update dor run
+	
+	and have it do those all in one transaction.
+
+2005-02-01 12:19  skvidal
+
+	* cli.py: 
+	remove crap
+
+2005-02-01 02:48  skvidal
+
+	* cli.py, shell.py: 
+	split shell out into separate class using cmd.Cmd cleaned up cruft
+	in cli from shell
+
+2005-01-31 23:54  skvidal
+
+	* docs/yum.conf.5: 
+	add yum.conf man page entries for tsflags
+
+2005-01-31 23:51  skvidal
+
+	* cli.py, rpmUtils/transaction.py, yum/__init__.py, yum/config.py,
+	yum/depsolve.py: 
+	add in tsflags config option. Allows you to set certain transaction
+	flags for use for your runs. Enabled flags are:
+	
+	noscripts notriggers nodocs test
+	
+	default is no tsflags.
+
+2005-01-31 03:32  skvidal
+
+	* cli.py, yummain.py, yum/__init__.py: 
+	Very early implementation of a yum shell.  For most very simple
+	cases it appears to work.  It doesn't look very pretty, though.
+
+2005-01-31 00:28  skvidal
+
+	* cli.py: 
+	crack resulting from this weekends 'resolvedep'
+	
+	for all the apt addicts who seem to think this command matters: yum
+	install /some/path/to/some/file
+	
+	it will search the provide files for a match and install the
+	package providing that.
+	
+	it doesn't work for updates it doesn't work for erases don't ask.
+
+2005-01-30 14:05  skvidal
+
+	* yum/transactioninfo.py: 
+	fix for not alphabetizing pre-trans and post-trans pkg listings
+
+2005-01-30 13:57  skvidal
+
+	* yum/__init__.py: 
+	minor fix in how the 'best package' is selected
+	(craaaaaaaaaaaaaack)
+
+2005-01-30 13:22  skvidal
+
+	* yum/__init__.py: 
+	finish out dep search for versioned deps
+
+2005-01-30 13:12  skvidal
+
+	* cli.py, yum/__init__.py, yum/depsolve.py, yum/repos.py: 
+	check in resolvedeps function not quite complete but most of the
+	way there and cleaned up a bug that might show up in dep resolution
+
+2005-01-25 01:59  skvidal
+
+	* ChangeLog: 
+	updated changelog
+
 2005-01-25 01:58  skvidal
 
 	* cli.py, yum-daily.spec, yum.spec: 
