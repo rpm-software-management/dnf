@@ -627,8 +627,6 @@ def take_action(cmds, nulist, uplist, newlist, obslist, tsInfo, HeaderInfo, rpmD
                 pkglist = rpmDBInfo.NAkeys()
                 pkgaction.listpkgs(pkglist, 'all', rpmDBInfo)
             elif cmds[0] == 'extras':
-                #get list of all pkgs in rpmdb, match to headerinfo, any not in header info throw into new pkglist
-                #pass pkglist + rpmDBInfo and all to listpkgs
                 pkglist=[]
                 for (name, arch) in rpmDBInfo.NAkeys():
                     if not HeaderInfo.exists(name, arch):
@@ -657,6 +655,15 @@ def take_action(cmds, nulist, uplist, newlist, obslist, tsInfo, HeaderInfo, rpmD
             elif cmds[0] == 'installed':
                 pkglist=rpmDBInfo.NAkeys()
                 pkgaction.listpkginfo(pkglist,'all', rpmDBInfo)
+            elif cmds[0] == 'extras':
+                pkglist=[]
+                for (name, arch) in rpmDBInfo.NAkeys():
+                    if not HeaderInfo.exists(name, arch):
+                        pkglist.append((name,arch))
+                if len(pkglist) > 0:
+                    pkgaction.listpkginfo(pkglist, 'all', rpmDBInfo)
+                else:
+                    log(2, 'No Packages installed not included in a repository')
             else:    
                 log(2, 'Looking in Available Packages:')
                 pkgaction.listpkginfo(nulist, cmds, HeaderInfo)

@@ -114,10 +114,11 @@ def listpkginfo(pkglist, userlist, nevral):
         print "No Packages Available"
 
 def displayinfo(hdr):
-    print "Name   : %s" % hdr[rpm.RPMTAG_NAME]
+    print "Name   : %s\t\tArch: %s" % (hdr[rpm.RPMTAG_NAME], hdr[rpm.RPMTAG_ARCH])
     print "Version: %s" % hdr[rpm.RPMTAG_VERSION]
     print "Release: %s" % hdr[rpm.RPMTAG_RELEASE]
     print "Size   : %s" % clientStuff.descfsize(hdr[rpm.RPMTAG_SIZE])
+    print "Group  : %s" % hdr[rpm.RPMTAG_GROUP]
     print "Summary: %s" % hdr[rpm.RPMTAG_SUMMARY]
     print "Description:\n %s" % hdr[rpm.RPMTAG_DESCRIPTION]
     print ""
