@@ -154,7 +154,7 @@ class YumBase(depsolve.Depsolve):
         """closes down the instances of the rpmdb we have wangling around"""
         if hasattr(self, 'rpmdb'):
             del self.rpmdb
-            
+            self.localdbimported = 0
         if hasattr(self, 'ts'):
             del self.ts.ts
             del self.ts

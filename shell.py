@@ -72,8 +72,33 @@ class YumShell(cmd.Cmd):
         self.resultmsgs = ['Leaving Shell']
         return True
     
-    def do_listTransaction(self, line):
-        print self.base.listTransaction()
+    def do_ts(self, line):
+        self.do_transaction(line)
+
+    def do_transaction(self, line):
+        (cmd, args, line) = self.parseline(line)
+        if cmd is None:
+            pass
+            
+        elif cmd == 'list':
+            print self.base.listTransaction()
+        
+        elif cmd == 'reset':
+            self.base.closeRpmDB()
+            self.base.doTsSetup()
+            self.base.doRpmDBSetup()
+        
+        elif cmd == 'run':
+            return self.do_run('')
+            
+        else:
+            self.do_help('transaction')
+    
+    def do_test(self, line):
+        (cmd, args, line) = self.parseline(line)
+        print cmd
+        print args
+        print line
         
     def do_depsolve(self, line):
         self.base.buildTransaction()
