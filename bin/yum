@@ -24,7 +24,7 @@ import yummain
 import yumlock
 
 uid = os.geteuid()
-lockfile = '/var/run/yum/pid'
+lockfile = '/var/run/yum.pid'
 mypid = str(os.getpid())
 
 if uid == 0:
