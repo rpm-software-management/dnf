@@ -86,6 +86,36 @@ def listpkgs(pkglist, userlist, nevral):
     else:
         print "No Packages Available"
             
+def listpkginfo(pkglist, userlist, nevral):
+    import types,fnmatch
+    if len(pkglist) > 0:
+        pkglist.sort(clientStuff.nasort)
+        if type(userlist) is types.StringType:
+            if userlist=='all' or userlist=='updates':
+                for (name, arch) in pkglist:
+                    hdr=nevral.getHeader(name,arch)
+                    displayinfo(hdr)
+                    del hdr
+        else:    
+            for (name,arch) in pkglist:
+                for n in userlist:
+                    if n == name or fnmatch.fnmatch(name, n):
+                        hdr=nevral.getHeader(name,arch)
+                        displayinfo(hdr)
+                        del hdr
+    else:
+        print "No Packages Available"
+
+def displayinfo(hdr):
+    print "Name   : %s" % hdr[rpm.RPMTAG_NAME]
+    print "Version: %s" % hdr[rpm.RPMTAG_VERSION]
+    print "Release: %s" % hdr[rpm.RPMTAG_RELEASE]
+    print "Size   : %s" % clientStuff.descfsize(hdr[rpm.RPMTAG_SIZE])
+    print "Summary: %s" % hdr[rpm.RPMTAG_SUMMARY]
+    print "Description:\n %s" % hdr[rpm.RPMTAG_DESCRIPTION]
+    print ""
+    
+
 def updatepkgs(tsnevral,hinevral,rpmnevral,nulist,uplist,obslist,userlist):
     #get the list of what people want updated, match like in install.
     #add as 'u' to the tsnevral if its already there, if its not then add as 'i' and warn
@@ -320,3 +350,4 @@ def checkRpmSig(package):
             sys.exit(1)
         return 0
         
+    

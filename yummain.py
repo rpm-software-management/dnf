@@ -93,7 +93,7 @@ def main():
                 conf.assumeyes=1
             if o in ('-h', '--help'):
                 usage()
-        if cmds[0] not in ('update', 'upgrade', 'install', 'list', 'erase',\
+        if cmds[0] not in ('update', 'upgrade', 'install','info', 'list', 'erase',\
                        'grouplist','groupupdate','groupinstall','clean','remove'):
             usage()
         process=cmds[0]
@@ -241,7 +241,7 @@ def main():
 
 def usage():
     print """
-    Usage:  yum [options] <update | install | erase | groupinstall
+    Usage:  yum [options] <update | install | info | erase | groupinstall
                 | groupupdate | list | grouplist | clean>
                 
          Options:

@@ -594,6 +594,18 @@ def take_action(cmds, nulist, uplist, newlist, obslist, tsInfo, HeaderInfo, rpmD
             else:    
                 pkgaction.listpkgs(nulist, cmds, HeaderInfo)
         sys.exit(0)
+    elif cmds[0] == 'info':
+        cmds.remove(cmds[0])
+        if len(cmds) == 0:
+            pkgaction.listpkginfo(nulist, 'all', HeaderInfo)
+            sys.exit(0)
+        else:
+            if cmds[0] == 'updates':
+                pkgaction.listpkginfo(uplist, 'updates', HeaderInfo)
+            else:    
+                pkgaction.listpkginfo(nulist, cmds, HeaderInfo)
+        sys.exit(0)
+
     elif cmds[0] == 'clean':
         cmds.remove(cmds[0])
         if len(cmds) == 0 or cmds[0] == 'all':
@@ -672,3 +684,17 @@ def checkGPGInstallation():
         return 1
     return 0
     
+def descfsize(size):
+    """The purpose of this function is to accept a file size in bytes,
+    and describe it in a human readable fashion."""
+    if size < 1000:
+        return "%d bytes" % size
+    elif size < 1000000:
+        size = size / 1000.0
+        return "%.2f kB" % size
+    elif size < 1000000000:
+        size = size / 1000000.0
+        return "%.2f MB" % size
+    else:
+        size = size / 1000000000.0
+        return "%.2f GB" % size
