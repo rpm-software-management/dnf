@@ -96,9 +96,10 @@ class YumOutput:
            explaining the relationship between the tuple members"""
         (changePkg, instPkg) = uotup
         c_compact = changePkg.compactPrint()
-        i_compact = instPkg.compactPrint()
+        i_compact = '%s.%s' % (instPkg.name, instPkg.arch)
         c_repo = changePkg.repoid
-        print '%-30s (%s) %s %s' % (c_compact, c_repo, changetype, i_compact)
+        # FIXME - other ideas for how to print this out?
+        print '%-35.35s [%.12s] %.10s %-20.20s' % (c_compact, c_repo, changetype, i_compact)
 
     def listPkgs(self, lst, description, outputType):
         """outputs based on whatever outputType is. Current options:

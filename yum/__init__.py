@@ -607,6 +607,7 @@ class YumBase(depsolve.Depsolve):
         available = []
         updates = []
         obsoletes = []
+        obsoletesTuples = []
         recent = []
         extras = []
 
@@ -686,11 +687,14 @@ class YumBase(depsolve.Depsolve):
             self.conf.setConfigOption('obsoletes', 1)
             self.doUpdateSetup()
 
-            for pkgtup in self.up.getObsoletesList():
+            for (pkgtup, instTup) in self.up.getObsoletesTuples():
                 (n,a,e,v,r) = pkgtup
                 pkgs = self.pkgSack.searchNevra(name=n, arch=a, ver=v, rel=r, epoch=e)
+                hdr = self.rpmdb.returnHeaderByTuple(instTup)[0] # the first one
+                instpo = YumInstalledPackage(hdr)
                 for po in pkgs:
                     obsoletes.append(po)
+                    obsoletesTuples.append((po, instpo))
         
         # packages recently added to the repositories
         elif pkgnarrow == 'recent':
@@ -720,8 +724,10 @@ class YumBase(depsolve.Depsolve):
         ygh.available = available
         ygh.updates = updates
         ygh.obsoletes = obsoletes
+        ygh.obsoletesTuples = obsoletesTuples
         ygh.recent = recent
         ygh.extras = extras
+
         
         return ygh
 

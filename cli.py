@@ -420,7 +420,13 @@ For more information contact your distribution or package provider.
                 self.listPkgs(ypl.available, 'Available Packages', self.basecmd)
                 self.listPkgs(ypl.extras, 'Extra Packages', self.basecmd)
                 self.listPkgs(ypl.updates, 'Updated Packages', self.basecmd)
-                self.listPkgs(ypl.obsoletes, 'Obsoleting Packages', self.basecmd)
+                if len(ypl.obsoletes) > 0 and self.basecmd == 'list': 
+                # if we've looked up obsolete lists and it's a list request
+                    print 'Obsoleting Packages'
+                    for obtup in ypl.obsoletesTuples:
+                        self.updatesObsoletesList(obtup, 'obsoletes')
+                else:
+                    self.listPkgs(ypl.obsoletes, 'Obsoleting Packages', self.basecmd)
                 self.listPkgs(ypl.recent, 'Recently Added Packages', self.basecmd)
                 return 0, []
 
