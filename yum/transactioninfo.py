@@ -104,6 +104,10 @@ class TransactionData:
             self.pkgdict[txmember.pkgtup] = []
         else:
             self.debugprint("Package: %s.%s - %s:%s-%s already in ts" % txmember.pkgtup)
+            for member in self.pkgdict[txmember.pkgtup]:
+                if member.ts_state == txmember.ts_state:
+                    self.debugprint("Package in same mode, skipping.")
+                    return
         self.pkgdict[txmember.pkgtup].append(txmember)
 
     def remove(self, pkgtup):
