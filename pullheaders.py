@@ -136,6 +136,16 @@ def main():
         print "No rpms to look at. Exiting."
         sys.exit(1)
 
+    if checkdeps==1:
+        (error,msgs) = serverStuff.depchecktree(rpms)
+        if error==1:
+            print "Errors within the dir(s):\n %s" % basedir
+            for msg in msgs:
+                print "   " + msg
+            sys.exit(1)
+        else:
+            print "All dependencies resolved and no conflicts detected"
+    
     if writehdrs==1:
         #if the headerdir exists and its a file then we're in deep crap
         if os.path.isfile(headerdir):
@@ -166,15 +176,7 @@ def main():
             headerfd.write(info)
         headerfd.close()
 
-    if checkdeps==1:
-        (error,msgs) = serverStuff.depchecktree(rpms)
-        if error==1:
-            print "Errors within the dir(s):\n %s" % basedir
-            for msg in msgs:
-                print "   " + msg
-        else:
-            print "All dependencies resolved and no conflicts detected"
-    
+
     #take us home mr. data
     os.chdir(curdir)
 

@@ -155,7 +155,7 @@ def updatepkgs(tsnevral,hinevral,rpmnevral,nulist,uplist,obslist,userlist):
                     if rpmnevral.exists(n):
                         errorlog(1,"%s is installed and the latest version." % (n))
                     else:
-                        errorlog(0,"Cannot find any package matching %s available to be upgraded." % (n))
+                        errorlog(0,"Cannot find any package matching %s available to be updated." % (n))
                     sys.exit(1)
     else:
         errorlog(1,"No Packages Available for Update or Install")
