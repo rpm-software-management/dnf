@@ -91,7 +91,7 @@ CUSTOMIZATION
 import random
 import thread  # needed for locking to make this threadsafe
 
-from urlgrabber.grabber import URLGrabError
+from grabber import URLGrabError, CallbackObject
 
 DEBUG=0
 def DBPRINT(*args): print ' '.join(args)
@@ -184,8 +184,16 @@ class MirrorGroup:
         tuple, it is interpreted to be of the form (cb, args, kwargs)
         where cb is the actual callable object (function, method,
         etc).  Otherwise, it is assumed to be the callable object
-        itself.  The callback will be passed the exception that was
-        raised (and args and kwargs if present).
+        itself.  The callback will be passed a grabber.CallbackObject
+        instance along with args and kwargs (if present).  The following
+        attributes are defined withing the instance:
+
+           obj.exception    = < exception that was raised >
+           obj.mirror       = < the mirror that was tried >
+           obj.relative_url = < url relative to the mirror >
+           obj.url          = < full url that failed >
+                              # .url is just the combination of .mirror
+                              # and .relative_url
 
         The failure callback can return an action dict, as described
         above.
@@ -194,14 +202,14 @@ class MirrorGroup:
         instantiation time or when the urlXXX method is called.  In
         the latter case, it applies only for that fetch.
 
-        The callback can re-raise the exception simply by calling
-        "raise" with no arguments.  For example, this is a perfectly
-        adequate callback function:
+        The callback can re-raise the exception quite easily.  For
+        example, this is a perfectly adequate callback function:
 
-          def callback(e): raise
+          def callback(obj): raise obj.exception
 
-        WARNING: do not save the exception object.  As they contain
-        stack frame references, they can lead to circular references.
+        WARNING: do not save the exception object (or the
+        CallbackObject instance).  As they contain stack frame
+        references, they can lead to circular references.
 
     Notes:
       * The behavior can be customized by deriving and overriding the
@@ -257,7 +265,7 @@ class MirrorGroup:
     def _process_kwargs(self, kwargs):
         self.failure_callback = kwargs.get('failure_callback')
         self.default_action   = kwargs.get('default_action')
-        
+       
     def _parse_mirrors(self, mirrors):
         parsed_mirrors = []
         for m in mirrors:
@@ -281,7 +289,7 @@ class MirrorGroup:
             raise URLGrabError(256, _('No more mirrors to try.'))
         return gr.mirrors[gr._next]
 
-    def _failure(self, gr, e):
+    def _failure(self, gr, cb_obj):
         # OVERRIDE IDEAS:
         #   inspect the error - remove=1 for 404, remove=2 for connection
         #                       refused, etc. (this can also be done via
@@ -292,11 +300,11 @@ class MirrorGroup:
                 cb, args, kwargs = cb
             else:
                 args, kwargs = (), {}
-            action = cb(e, *args, **kwargs) or {}
+            action = cb(cb_obj, *args, **kwargs) or {}
         else:
             action = {}
         # XXXX - decide - there are two ways to do this
-        # the first is action overriding as a whole - use the entire action
+        # the first is action-overriding as a whole - use the entire action
         # or fall back on module level defaults
         #action = action or gr.kw.get('default_action') or self.default_action
         # the other is to fall through for each element in the action dict
@@ -392,7 +400,12 @@ class MirrorGroup:
                 return func_ref( *(fullurl,), **kwargs )
             except URLGrabError, e:
                 if DEBUG: DBPRINT('MIRROR: failed')
-                self._failure(gr, e)
+                obj = CallbackObject()
+                obj.exception = e
+                obj.mirror = mirrorchoice['mirror']
+                obj.relative_url = gr.url
+                obj.url = fullurl
+                self._failure(gr, obj)
 
     def urlgrab(self, url, filename=None, **kwargs):
         kw = dict(kwargs)

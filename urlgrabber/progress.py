@@ -288,11 +288,11 @@ class TextMultiFileMeter(MultiFileMeter):
             format = "files: %3i/%-3i %3i%%   data: %6.6s/%-6.6s %3i%%   " \
                      "time: %8.8s/%8.8s"
             df = self.finished_files
-            tf = self.numfiles
+            tf = self.numfiles or 1
             pf = 100 * float(df)/tf + 0.49
             dd = self.re.last_amount_read
             td = self.total_size
-            pd = 100 * self.re.fraction_read() + 0.49
+            pd = 100 * (self.re.fraction_read() or 0) + 0.49
             dt = self.re.elapsed_time()
             rt = self.re.remaining_time()
             if rt is None: tt = None
@@ -477,7 +477,7 @@ def format_time(seconds, use_hours=0):
             return '%02i:%02i:%02i' % (hours, minutes, seconds)
         else:
             return '%02i:%02i' % (minutes, seconds)
-        
+            
 def format_number(number, SI=0, space=' '):
     """Turn numbers into human-readable metric-like numbers"""
     symbols = ['',  # (none)
@@ -516,4 +516,4 @@ def format_number(number, SI=0, space=' '):
     else:
         format = '%.0f%s%s'
         
-    return(format % (number, space, symbols[depth]))
+    return(format % (float(number or 0), space, symbols[depth]))

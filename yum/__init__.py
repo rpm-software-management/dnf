@@ -284,6 +284,9 @@ class YumBase(depsolve.Depsolve):
            a URLGrabError if the file does not check out.
            otherwise it returns false for a failure, true for success"""
         
+        if type(file) is types.InstanceType:
+            file = file.filename
+
         for (csumtype, csum, csumid) in po.checksums:
             if csumid:
                 checksum = csum
@@ -359,6 +362,9 @@ class YumBase(depsolve.Depsolve):
 
     def verifyHeader(self, file, po, raiseError):
         """check the header out via it's naevr, internally"""
+        if type(file) is types.InstanceType:
+            file = file.filename
+            
         try:
             hlist = rpm.readHeaderListFromFile(file)
             hdr = hlist[0]

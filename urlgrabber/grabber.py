@@ -61,6 +61,15 @@ GENERAL ARGUMENTS (kwargs)
     (which can be set on default_grabber.throttle) is used. See
     BANDWIDTH THROTTLING for more information.
 
+  timeout = None
+
+    a positive float expressing the number of seconds to wait for socket
+    operations. If the value is None or 0.0, socket operations will block
+    forever. Setting this option causes urlgrabber to call the settimeout
+    method on the Socket object used for the request. See the Python
+    documentation on settimeout for more information.
+    http://www.python.org/doc/current/lib/socket-objects.html
+
   bandwidth = 0
 
     the nominal max bandwidth in bytes/second.  If throttle is a float
@@ -166,21 +175,29 @@ RETRY RELATED ARGUMENTS
     unsuccessful check.  Raising of any other exception will be
     considered immediate failure and no retries will occur.
 
-    Negative error numbers are reserved for use by these passed in
-    functions.  By default, -1 results in a retry, but this can be
-    customized with retrycodes.
+    If it raises URLGrabError, the error code will determine the retry
+    behavior.  Negative error numbers are reserved for use by these
+    passed in functions, so you can use many negative numbers for
+    different types of failure.  By default, -1 results in a retry,
+    but this can be customized with retrycodes.
 
     If you simply pass in a function, it will be given exactly one
-    argument: the local file name as returned by urlgrab.  If you need
-    to pass in other arguments, you can do so like this:
+    argument: a CallbackObject instance with the .url attribute
+    defined and either .filename (for urlgrab) or .data (for urlread).
+    For urlgrab, .filename is the name of the local file.  For
+    urlread, .data is the actual string data.  If you need other
+    arguments passed to the callback (program state of some sort), you
+    can do so like this:
 
       checkfunc=(function, ('arg1', 2), {'kwarg': 3})
 
-    if the downloaded file as filename /tmp/stuff, then this will
-    result in this call:
+    if the downloaded file has filename /tmp/stuff, then this will
+    result in this call (for urlgrab):
 
-      function('/tmp/stuff', 'arg1', 2, kwarg=3)
-
+      function(obj, 'arg1', 2, kwarg=3)
+      # obj.filename = '/tmp/stuff'
+      # obj.url = 'http://foo.com/stuff'
+      
     NOTE: both the "args" tuple and "kwargs" dict must be present if
     you use this syntax, but either (or both) can be empty.
 
@@ -188,8 +205,10 @@ RETRY RELATED ARGUMENTS
 
     The callback that gets called during retries when an attempt to
     fetch a file fails.  The syntax for specifying the callback is
-    identical to checkfunc, except that it will be passed the raised
-    exception rather than a filename.
+    identical to checkfunc, except for the attributes defined in the
+    CallbackObject instance.  In this case, it will have .exception
+    and .url defined.  As you might suspect, .exception is the
+    exception that was raised.
 
     The callback is present primarily to inform the calling program of
     the failure, but if it raises an exception (including the one it's
@@ -264,9 +283,14 @@ import rfc822
 import time
 import string
 import urllib2
+import socket
+socket.setdefaulttimeout(30.0)
 from stat import *  # S_* and ST_*
 
-from urlgrabber import __version__
+try:
+    exec('from ' + (__name__.split('.'))[0] + ' import __version__')
+except:
+    __version__ = '???'
 
 auth_handler = urllib2.HTTPBasicAuthHandler( \
      urllib2.HTTPPasswordMgrWithDefaultRealm())
@@ -306,6 +330,15 @@ else:
     have_range = 1
 
 
+# check whether socket timeout support is available (Python >= 2.3)
+import socket
+try:
+    TimeoutError = socket.timeout
+    have_socket_timeout = True
+except AttributeError:
+    TimeoutError = None
+    have_socket_timeout = False
+
 class URLGrabError(IOError):
     """
     URLGrabError error codes:
@@ -323,6 +356,7 @@ class URLGrabError(IOError):
         9    - Requested byte range not satisfiable.
         10   - Byte range requested, but range support unavailable
         11   - Illegal reget mode
+        12   - Socket timeout.
 
       MirrorGroup error codes (256 -- 511)
         256  - No more mirrors left to try
@@ -353,6 +387,20 @@ class URLGrabError(IOError):
          print e.strerror
            # or simply
          print e  #### print '[Errno %i] %s' % (e.errno, e.strerror)
+    """
+    pass
+
+class CallbackObject:
+    """Container for returned callback data.
+
+    This is currently a dummy class into which urlgrabber can stuff
+    information for passing to callbacks.  This way, the prototype for
+    all callbacks is the same, regardless of the data that will be
+    passed back.  Any function that accepts a callback function as an
+    argument SHOULD document what it will define in this object.
+
+    It is possible that this class will have some greater
+    functionality in the future.
     """
     pass
 
@@ -459,6 +507,7 @@ class URLGrabberOptions:
         self.prefix = None
         self.opener = None
         self.cache_openers = True
+        self.timeout = None
  
 class URLGrabber:
     """Provides easy opening of URLs with a variety of options.
@@ -484,9 +533,15 @@ class URLGrabber:
                     or (tries == opts.retry) \
                     or (e.errno not in opts.retrycodes): raise
                 if opts.failure_callback:
-                    func, args, kwargs = \
+                    cb_func, cb_args, cb_kwargs = \
                           self._make_callback(opts.failure_callback)
-                    func(e, *args, **kwargs)
+                    # this is a little icky - for now, the first element
+                    # of args is the url.  we might consider a way to tidy
+                    # that up, though
+                    obj = CallbackObject()
+                    obj.exception = e
+                    obj.url = args[0]
+                    cb_func(obj, *cb_args, **cb_kwargs)
     
     def urlopen(self, url, **kwargs):
         """open the url and return a file object
@@ -529,8 +584,12 @@ class URLGrabber:
             try:
                 fo._do_grab()
                 if not opts.checkfunc is None:
-                    func, args, kwargs = self._make_callback(opts.checkfunc)
-                    apply(func, (filename, )+args, kwargs)
+                    cb_func, cb_args, cb_kwargs = \
+                             self._make_callback(opts.checkfunc)
+                    obj = CallbackObject()
+                    obj.filename = filename
+                    obj.url = url
+                    apply(cb_func, (obj, )+cb_args, cb_kwargs)
             finally:
                 fo.close()
             return filename
@@ -561,8 +620,12 @@ class URLGrabber:
                 else: s = fo.read(limit)
 
                 if not opts.checkfunc is None:
-                    func, args, kwargs = self._make_callback(opts.checkfunc)
-                    apply(func, (s, )+args, kwargs)
+                    cb_func, cb_args, cb_kwargs = \
+                             self._make_callback(opts.checkfunc)
+                    obj = CallbackObject()
+                    obj.data = s
+                    obj.url = url
+                    apply(cb_func, (obj, )+cb_args, cb_kwargs)
             finally:
                 fo.close()
             return s
@@ -704,8 +767,9 @@ class URLGrabberFileObject:
                 fo, hdr = self._make_request(req, opener)
 
         (scheme, host, path, parm, query, frag) = urlparse.urlparse(self.url)
-        if not (self.opts.progress_obj or self.opts.raw_throttle()):
-            # if we're not using the progress_obj or throttling
+        if not (self.opts.progress_obj or self.opts.raw_throttle() \
+                or self.opts.timeout):
+            # if we're not using the progress_obj, throttling, or timeout
             # we can get a performance boost by going directly to
             # the underlying fileobject for reads.
             self.read = fo.read
@@ -750,14 +814,25 @@ class URLGrabberFileObject:
 
     def _make_request(self, req, opener):
         try:
-            fo = opener.open(req)
+            if have_socket_timeout and self.opts.timeout:
+                old_to = socket.getdefaulttimeout()
+                socket.setdefaulttimeout(self.opts.timeout)
+                try:
+                    fo = opener.open(req)
+                finally:
+                    socket.setdefaulttimeout(old_to)
+            else:
+                fo = opener.open(req)
             hdr = fo.info()
         except ValueError, e:
             raise URLGrabError(1, _('Bad URL: %s') % (e, ))
         except RangeError, e:
             raise URLGrabError(9, _('%s') % (e, ))
         except IOError, e:
-            raise URLGrabError(4, _('IOError: %s') % (e, ))
+            if isinstance(e.reason, TimeoutError):
+                raise URLGrabError(12, _('Timeout: %s') % (e, ))
+            else:
+                raise URLGrabError(4, _('IOError: %s') % (e, ))
         except OSError, e:
             raise URLGrabError(5, _('OSError: %s') % (e, ))
         except HTTPException, e:
@@ -819,7 +894,10 @@ class URLGrabberFileObject:
             # now read some data, up to self._rbufsize
             if amt is None: readamount = self._rbufsize
             else:           readamount = min(amt, self._rbufsize)
-            new = self.fo.read(readamount)
+            try:
+                new = self.fo.read(readamount)
+            except TimeoutError, e:
+                raise URLGrabError(12, _('Timeout: %s') % (e, ))
             newsize = len(new)
             if not newsize: break # no more to read
 
@@ -883,6 +961,7 @@ def CachedProxyHandler(proxies):
             return handler
     handler = urllib2.ProxyHandler(proxies)
     _proxy_cache.append( (proxies,handler) )
+
 
 #####################################################################
 # DEPRECATED FUNCTIONS

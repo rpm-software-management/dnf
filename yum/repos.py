@@ -347,7 +347,8 @@ class Repository:
                                    retry=self.retries,
                                    throttle=self.throttle,
                                    progress_obj=self.callback,
-                                   failure_callback=self.failure_obj)
+                                   failure_callback=self.failure_obj,
+                                   timeout=self.timeout)
                                    #reget='simple')
                                    
         self.grab = mgclass(self.grabfunc, self.urls)
@@ -407,6 +408,7 @@ class Repository:
                             progres_obj = self.callback,
                             copy_local = copy_local,
                             failure_callback = self.failure_obj,
+                            timeout = self.timeout,
                             checkfunc = checkfunc)
             
             remote = url + '/' + relative
@@ -417,6 +419,7 @@ class Repository:
                                     retry = self.retries,
                                     copy_local = copy_local,
                                     failure_callback = self.failure_obj,
+                                    timeout = self.timeout,
                                     checkfunc = checkfunc)
             except URLGrabError, e:
                 raise Errors.RepoError, \
@@ -470,8 +473,13 @@ class Repository:
         
         (r_ctype, r_csum) = csumMethod() # get the remote checksum
         
+        if type(fn) == types.InstanceType: # this is an urlgrabber check
+            file = fn.filename
+        else:
+            file = fn
+            
         try:
-            l_csum = self._checksum(r_ctype, fn) # get the local checksum
+            l_csum = self._checksum(r_ctype, file) # get the local checksum
         except Errors.RepoError, e:
             raise URLGrabError(-3, 'Error performing checksum')
             

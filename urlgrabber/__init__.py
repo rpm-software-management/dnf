@@ -21,32 +21,33 @@
 Using urlgrabber, data can be fetched in three basic ways:
 
   urlgrab(url) copy the file to the local filesystem
-  urlopen(url) open the remote file and return a file object (like urllib2.urlopen)
+  urlopen(url) open the remote file and return a file object
+     (like urllib2.urlopen)
   urlread(url) return the contents of the file as a string
 
-When using these functions (or methods), urlgrabber supports the following 
-features:
+When using these functions (or methods), urlgrabber supports the
+following features:
 
   * identical behavior for http://, ftp://, and file:// urls
-  * http keepalive - faster downloads of many files by using only a single 
-    connection
+  * http keepalive - faster downloads of many files by using
+    only a single connection
   * byte ranges - fetch only a portion of the file
   * reget - for a urlgrab, resume a partial download
-  * progress meters - the ability to report download progress automatically, 
-    even when using urlopen!
+  * progress meters - the ability to report download progress
+    automatically, even when using urlopen!
   * throttling - restrict bandwidth usage
-  * retries - automatically retry a download if it fails. The number of retries 
-    and failure types are configurable.
+  * retries - automatically retry a download if it fails. The
+    number of retries and failure types are configurable.
   * authenticated server access for http and ftp
   * proxy support - support for authenticated http and ftp proxies
-  * mirror groups - treat a list of mirrors as a single source, automatically 
-    switching mirrors if there is a failure.
+  * mirror groups - treat a list of mirrors as a single source,
+    automatically switching mirrors if there is a failure.
 """
 
 __version__ = '2.9.0'
-__date__    = '2004/07/18'
+__date__    = '2004/08/21'
 __author__  = 'Michael D. Stenner <mstenner@linux.duke.edu>, ' \
               'Ryan Tomayko <rtomayko@naeblis.cx>'
 __url__     = 'http://linux.duke.edu/projects/mini/urlgrabber/'
 
-from urlgrabber.grabber import urlgrab, urlopen, urlread
+from grabber import urlgrab, urlopen, urlread

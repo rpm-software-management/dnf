@@ -56,6 +56,26 @@ class CFParser(ConfigParser.ConfigParser):
             return self.getboolean(section, option)
         except (ConfigParser.NoSectionError, ConfigParser.NoOptionError), e:            
             return default
+
+    def _getint(self, section, option, default=None):
+        """section  - section of config
+           option - option from section
+           default - if there is no setting
+           """
+        try:
+            return self.getint(section, option)
+        except (ConfigParser.NoSectionError, ConfigParser.NoOptionError), e:            
+            return default
+    
+    def _getfloat(self, section, option, default=None):
+        """section  - section of config
+           option - option from section
+           default - if there is no setting
+           """
+        try:
+            return self.getfloat(section, option)
+        except (ConfigParser.NoSectionError, ConfigParser.NoOptionError), e:            
+            return default
     
 class yumconf(object):
     """primary config class for yum"""
@@ -72,6 +92,7 @@ class yumconf(object):
         
         self.configdata = {} # dict to hold all the data goodies
        
+        
         optionints = [('debuglevel', 2),
                       ('errorlevel', 2), 
                       ('retries', 10),
@@ -122,10 +143,12 @@ class yumconf(object):
                         ('cache', 0),
                         ('progess_obj', None)]
 
+        optionfloats = [('timeout', 30.0)]
+
+
         # do the ints
         for (option, default) in optionints:
-            value =  self.cfg._getoption('main', option, default)
-            value = int(value) # make it an int, just in case
+            value =  self.cfg._getint('main', option, default)
             self.configdata[option] = value
             setattr(self, option, value)
 
@@ -146,6 +169,13 @@ class yumconf(object):
             self.configdata[option] = value
             setattr(self, option, value)
 
+        # do the floats
+        for (option, value) in optionfloats:
+            value = self.cfg._getfloat('main', option, default)
+            self.configdata[option] = value
+            setattr(self, option, value)
+            
+            
         # do the dirs - set the root if there is one (grumble)
         for opt in ['cachedir', 'reposdir', 'logfile']:
             path = self.configdata[opt]
@@ -156,7 +186,7 @@ class yumconf(object):
         # and push our process object around a bit to things beneath us
         self.repos.progress = self.getConfigOption('progress_obj')
         
-        # get our variables parsed            
+        # get our variables parsed
         self.yumvar = self._getEnvVar()
         self.yumvar['basearch'] = rpmUtils.arch.getBaseArch() # FIXME make this configurable??
         self.yumvar['arch'] = rpmUtils.arch.getCanonArch() # FIXME make this configurable??
@@ -297,13 +327,13 @@ def doRepoSection(globconfig, thisconfig, section):
                 goodurls.append(url)
 
         if len(goodurls) > 0:
-            thisrepo.set('urls', goodurls)                        
+            thisrepo.set('urls', goodurls)
         else:
             globconfig.repos.delete(section)
             print 'Error: Cannot find valid baseurl for repo: %s. Skipping' % (section)    
             return
 
-        thisrepo.set('enabled', thisconfig._getboolean(section, 'enabled', 1))        
+        thisrepo.set('enabled', thisconfig._getboolean(section, 'enabled', 1))
 
         for keyword in ['bandwidth', 'throttle', 'proxy_username', 'proxy',
                         'proxy_password', 'retries', 'failovermethod']:
@@ -314,7 +344,10 @@ def doRepoSection(globconfig, thisconfig, section):
         for keyword in ['gpgcheck', 'keepalive']:
             thisrepo.set(keyword, thisconfig._getboolean(section, \
                          keyword, globconfig.getConfigOption(keyword)))
-                         
+        
+        for keyword in ['timeout']:
+            thisrepo.set(keyword, thisconfig._getfloat(section, \
+                         keyword, globconfig.getConfigOption(keyword)))
         
         excludelist = thisconfig._getoption(section, 'exclude', [])
         excludelist = variableReplace(globconfig.yumvar, excludelist)
