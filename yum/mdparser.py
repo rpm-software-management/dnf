@@ -70,14 +70,7 @@ class BaseEntry:
         self._p = {} 
 
     def __getitem__(self, k):
-        '''Access entry data. 
-
-        Returns None by default to avoid having to set defaults for all
-        attributes.
-        '''
-        if self._p.has_key(k):
-            return self._p[k]
-        return None
+        return self._p[k]
 
     def keys(self):
         return self._p.keys()
@@ -159,7 +152,7 @@ class PrimaryEntry(BaseEntry):
             elif name == 'format': 
                 self.setFormat(reader)
 
-        p['pkgid'] = p['checksum_value']
+        p['pkgId'] = p['checksum_value']
 
     def setFormat(self, reader):
 
@@ -202,7 +195,7 @@ class PrimaryEntry(BaseEntry):
 class FilelistsEntry(BaseEntry):
     def __init__(self, reader):
         BaseEntry.__init__(self, reader)
-        self._p['pkgid'] = reader.GetAttribute('pkgid')
+        self._p['pkgId'] = reader.GetAttribute('pkgid')
         self.files = {}
 
         while reader.Read():
@@ -218,7 +211,7 @@ class OtherEntry(BaseEntry):
     def __init__(self, reader):
         BaseEntry.__init__(self, reader)
 
-        self._p['pkgid'] = reader.GetAttribute('pkgid')
+        self._p['pkgId'] = reader.GetAttribute('pkgid')
         self._p['changelog'] = []
         while reader.Read():
             if reader.NodeType() == 15 and reader.LocalName() == 'package':
