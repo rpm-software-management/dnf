@@ -308,9 +308,17 @@ class Updates:
         # x86_64->i686 
         archlists = []
         if rpmUtils.arch.isMultiLibArch(arch=self.myarch):
+            if rpmUtils.arch.multilibArches.has_key(self.myarch):
+                biarches = [self.myarch]
+            else:
+                biarches = [self.myarch, rpmUtils.arch.arches[self.myarch]]
+
             multicompat = rpmUtils.arch.getMultiArchInfo(self.myarch)[0]
             multiarchlist = rpmUtils.arch.getArchList(multicompat)
-            archlists = [ [self.myarch], multiarchlist ]
+            archlists = [ biarches, multiarchlist ]
+            print biarches
+            print self.myarch
+            print multiarchlist
         else:
             archlists = [ archlist ]
             
@@ -340,6 +348,7 @@ class Updates:
                 if self.exactarch:              
                     for (n, a) in hipdict:
                         if hapdict.has_key((n, a)):
+                            self.debugprint('processing %s.%s' % (n, a))
                             # we've got a match - get our versions and compare
                             (rpm_e, rpm_v, rpm_r) = hipdict[(n, a)][0] # only ever going to be first one
                             (e, v, r) = hapdict[(n, a)][0] # there can be only one
