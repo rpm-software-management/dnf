@@ -216,25 +216,33 @@ class Depsolve:
             # if it's being upgraded then mark the requiring package to be upgraded too
             # if it's being erased then mark the requiring package to be erased
             self.log(5, 'Dep is from: installed pkg %s-%s-%s' % (name, version, release))
-            needmode = self.tsInfo.getMode(name=needname)
+            rpmdbNames = self.rpmdb.getNamePkgList()
+            needmode = None
             
-            # if the needmode is None then what the package needs is not in our tsInfo
-            # and may very well be a virtual dep (kernel-drm = 4.3.0, for example)
-            # therefore we need to find what provides that virtual dep
-            # if it is a package that we have in our tsInfo, then treat as below
-            if not needmode:
+            if needname in rpmdbNames:
+                needmode = self.tsInfo.getMode(name=needname)
+            else:
                 self.log(5, 'Req is not a package name. Looking up: %s' % niceformatneed) 
                 providers = self.rpmdb.whatProvides(needname, flags, needversion)
-                if len(providers) > 0:
-                    for insttuple in providers:
-                        (i_n, i_a, i_e, i_v, i_r) = insttuple
-                        needmode = self.tsInfo.getMode(name=i_n, arch=i_a, 
-                                                epoch=i_e, ver=i_v, rel=i_r)
-                else:
-                    CheckDeps = 0
-                    missingdep = 1
-                    msg = 'missing dep: %s for pkg %s (installed)' % (needname, name)
-                    errormsgs.append(msg)
+                for insttuple in providers:
+                    (i_n, i_a, i_e, i_v, i_r) = insttuple
+                    thismode = self.tsInfo.getMode(name=i_n, arch=i_a, 
+                                    epoch=i_e, ver=i_v, rel=i_r)
+                    if thismode is not None:
+                        needmode = thismode
+                        break
+            
+            # if, after the above we still don't know the state of the package
+            # providing the needname, then it's most likely a pkg that is
+            # installed but is being updated or obsoleted. Therefore, we can
+            # do two things, first, try to update the requiring package
+            # if that isn't possible we exit w/unresolveable
+            
+            if needmode is None:
+                CheckDeps = 0
+                missingdep = 1
+                msg = 'missing dep: %s for pkg %s (installed)' % (needname, name)
+                errormsgs.append(msg)
                 
             if needmode in ['e']:
                 for pkg in pkgs:
