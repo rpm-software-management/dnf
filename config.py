@@ -111,7 +111,7 @@ class yumconf:
             self.distroverpkg = self._getoption('main','distroverpkg')
         
         # figure out what the releasever really is from the distroverpkg
-        self.yumvar['releasever'] = self._getsysver(self.distroverpkg)
+        self.yumvar['releasever'] = self._getsysver()
         
         if self._getoption('main','commands') != None:
             self.commands = self._getoption('main', 'commands')
