@@ -26,6 +26,8 @@ class yumconf:
 		self.serverpkgdir = {}
 		self.serverhdrdir = {}
 		self.servercache = {}
+		self.servergpgcheck={}
+			
 		#defaults
 		self.cachedir='/var/cache/yum'
 		self.debuglevel=2
@@ -50,6 +52,10 @@ class yumconf:
 						self.servers.append(section)
 						self.servername[section] = name
 						self.serverurl[section] = url
+						if self._getoption(section,'gpgcheck') != None:
+							self.servergpgcheck[section]=self.cfg.getboolean(section,'gpgcheck')
+						else:
+							self.servergpgcheck[section]=0
 						(s,b,p,q,f,o) = urlparse.urlparse(self.serverurl[section])
 						#currently only allowing http and ftp servers 
 						if s not in ['http', 'ftp']:

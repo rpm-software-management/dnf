@@ -202,7 +202,7 @@ def kernelupdate(tsnevral):
 			#to put the kernels in the right order
 			up2datetheft.install_grub(kernel_list)
 
-def checkSig(package,checktype):
+def checkSig(package,checktype='md5'):
 	import rpm, os, sys
 	if checktype=='gpg':
 		check=rpm.CHECKSIG_GPG | rpm.CHECKSIG_MD5

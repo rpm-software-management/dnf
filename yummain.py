@@ -137,12 +137,18 @@ def create_final_ts(tsInfo, rpmdb):
 	for (name, arch) in tsInfo.NAkeys():
 		pkghdr=tsInfo.getHeader(name,arch)
 		rpmloc=tsInfo.localRpmPath(name,arch)
+		serverid=tsInfo.serverid(name,arch)
 		if tsInfo.state(name, arch) == 'u' or tsInfo.state(name,arch) == 'ud':
 			if os.path.exists(tsInfo.localRpmPath(name, arch)):
 				log(2,"Using cached %s" % (os.path.basename(tsInfo.localRpmPath(name,arch))))
 			else:
 				log(2,"Getting %s" % (os.path.basename(tsInfo.localRpmPath(name,arch))))
 				clientStuff.urlgrab(tsInfo.remoteRpmUrl(name,arch), tsInfo.localRpmPath(name,arch))
+			#sigcheck here :)
+			if conf.servergpgcheck[serverid]:
+				pkgaction.checkSig(rpmloc,'gpg')
+			else:
+				pkgaction.checkSig(rpmloc)
 			tsfin.add(pkghdr,(pkghdr,rpmloc),'u')
 		elif tsInfo.state(name,arch) == 'i':
 			if os.path.exists(tsInfo.localRpmPath(name, arch)):
@@ -150,7 +156,11 @@ def create_final_ts(tsInfo, rpmdb):
 			else:
 				log(2,"Getting %s" % (os.path.basename(tsInfo.localRpmPath(name,arch))))
 				clientStuff.urlgrab(tsInfo.remoteRpmUrl(name,arch), tsInfo.localRpmPath(name,arch))
-			#print 'installing %s, %s' % (name, arch)
+			#sigchecking we will go
+			if conf.servergpgcheck[serverid]:
+				pkgaction.checkSig(rpmloc,'gpg')
+			else:
+				pkgaction.checkSig(rpmloc)
 			tsfin.add(pkghdr,(pkghdr,rpmloc),'i')
 			#theoretically, at this point, we shouldn't need to make pkgs available
 		elif tsInfo.state(name,arch) == 'a':
@@ -158,10 +168,6 @@ def create_final_ts(tsInfo, rpmdb):
 		elif tsInfo.state(name,arch) == 'e':
 			tsfin.remove(name)
 
-	#NTS XXXX - this is where sigchecking should occur - it should grab all the pkgs in the i, u or ud states and look for their
-	#rpmpath - and pass that to checksig - it should check the serversig[serverid] if its on then check the gpg sig and md5 sig if
-	#its off then just check the md5 sig
-	
 	#one last test run for diskspace
 	errors = tsfin.run(rpm.RPMTRANS_FLAG_TEST, ~rpm.RPMPROB_FILTER_DISKSPACE, callback.install_callback, '')
 	

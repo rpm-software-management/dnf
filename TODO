@@ -1,7 +1,6 @@
 Things that must be done:
 
 Critical:
- - Put the sigcheck function in, make it an option per server not global.
  - make the cmdline options (-d, -q ,-y etc) be pushed into the config.conf 
    class so we don't have to pass them around
  - Implement pkg excludes for new packages on the client side
