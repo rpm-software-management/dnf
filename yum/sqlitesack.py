@@ -276,7 +276,7 @@ class YumSqlitePackageSack(repos.YumPackageSack):
             for x in cur.fetchall():
                 if (self.excludes[rep].has_key(x.pkgId)):
                     continue                    
-                allpkg.append = self.pc(self.db2class(x,True),rep) 
+                allpkg.append(self.pc(self.db2class(x,True),rep))
         # Now find the newest one
         newest = allpkg.pop()
         for pkg in allpkg:
