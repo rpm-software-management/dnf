@@ -1066,7 +1066,7 @@ For more information contact your distribution or package provider.
 
         for group in grouplist:
             if group not in self.groupInfo.grouplist:
-                self.errorlog(0, _('Group %s does not exist.') % group)
+                self.errorlog(0, _('Warning: Group %s does not exist.') % group)
                 continue
             pkglist = self.groupInfo.pkgTree(group)
             for pkg in pkglist:
@@ -1081,7 +1081,7 @@ For more information contact your distribution or package provider.
                 self.log(4, '%s' % pkg)
             return self.installPkgs(userlist=pkgs)
         else:
-            return 0, ['No Packages in Groups to Install']
+            return 0, ['No packages in any requested group available to install']
 
     
     def updateGroups(self, grouplist=None):
@@ -1104,6 +1104,10 @@ For more information contact your distribution or package provider.
         updateablenames = []
         
         for group in grouplist:
+            if group not in self.groupInfo.grouplist:
+                self.errorlog(0, _('Warning: Group %s does not exist.') % group)
+                continue
+
             required = self.groupInfo.requiredPkgs(group)
             all = self.groupInfo.pkgTree(group)
             for pkgn in all:
@@ -1147,6 +1151,10 @@ For more information contact your distribution or package provider.
         
         erasesbygroup = []
         for group in grouplist:
+            if group not in self.groupInfo.grouplist:
+                self.errorlog(0, _('Warning: Group %s does not exist.') % group)
+                continue
+        
             allpkgs = self.groupInfo.allPkgs(group)
             for pkg in allpkgs:
                 if self.rpmdb.installed(name=pkg):
