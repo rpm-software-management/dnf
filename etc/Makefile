@@ -5,11 +5,11 @@ clean:
 	rm -f *.pyc *.pyo *~
 
 install:
-	mkdir -p $(DESTDIR)/etc/security/console.apps 
-	install -m 644 yum.console $(DESTDIR)/etc/security/console.apps/yum
+	#mkdir -p $(DESTDIR)/etc/security/console.apps 
+	#install -m 644 yum.console $(DESTDIR)/etc/security/console.apps/yum
 
-	mkdir -p $(DESTDIR)/etc/pam.d
-	install -m 644 yum.pam $(DESTDIR)/etc/pam.d/yum
+	#mkdir -p $(DESTDIR)/etc/pam.d
+	#install -m 644 yum.pam $(DESTDIR)/etc/pam.d/yum
 
 	mkdir -p $(DESTDIR)/etc/yum.repos.d
 	install -m 644 yum.conf $(DESTDIR)/etc/yum.conf

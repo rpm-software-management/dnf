@@ -7,14 +7,13 @@ Group: System Environment/Base
 Source: %{name}-%{version}.tar.gz
 #Source1: yum.conf
 #Source2: yum.cron
-URL: http://www.dulug.duke.edu/yum/
+URL: http://linux.duke.edu/yum/
 BuildRoot: %{_tmppath}/%{name}-%{version}root
 BuildArchitectures: noarch
 BuildRequires: python
 BuildRequires: gettext
 Obsoletes: yum-phoebe
 Requires: python, rpm-python, rpm >= 0:4.1.1, libxml2-python
-Requires: /usr/bin/consolehelper
 Prereq: /sbin/chkconfig, /sbin/service
 
 %description
@@ -62,11 +61,8 @@ exit 0
 %config(noreplace) %{_sysconfdir}/cron.daily/yum.cron
 %config %{_sysconfdir}/rc.d/init.d/%{name}
 %config %{_sysconfdir}/logrotate.d/%{name}
-%config %{_sysconfdir}/pam.d/yum
-%config %{_sysconfdir}/security/console.apps/yum
 %{_datadir}/yum/*
 %{_bindir}/yum
-%{_sbindir}/yum
 /usr/lib/python?.?/site-packages/yum
 /usr/lib/python?.?/site-packages/repomd
 /usr/lib/python?.?/site-packages/rpmUtils
@@ -75,6 +71,9 @@ exit 0
 %{_mandir}/man*/*
 
 %changelog
+* Tue Aug 31 2004 Seth Vidal <skvidal@phy.duke.edu>
+- all new stuff for 2.1.X
+
 * Mon Sep  8 2003 Seth Vidal <skvidal@phy.duke.edu>
 - brown paper-bag 2.0.3
 

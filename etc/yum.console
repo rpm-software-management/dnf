@@ -1,0 +1,4 @@
+USER=root
+PROGRAM=/usr/sbin/yum
+GUI=no
+SESSION=true

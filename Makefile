@@ -24,9 +24,8 @@ install:
 	done
 	$(PYTHON) -c "import compileall; compileall.compile_dir('$(DESTDIR)/usr/share/yum', 1, '$(PYDIR)', 1)"
 
-	mkdir -p $(DESTDIR)/usr/bin $(DESTDIR)/usr/sbin
-	install -m 755 yum.sh $(DESTDIR)/usr/sbin/yum
-	ln -sf consolehelper $(DESTDIR)/usr/bin/yum
+	mkdir -p $(DESTDIR)/usr/bin $(DESTDIR)/usr/bin
+	install -m 755 yum.sh $(DESTDIR)/usr/bin/yum
 
 	mkdir -p $(DESTDIR)/var/cache/yum
 
