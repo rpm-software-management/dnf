@@ -21,8 +21,8 @@
 # - Store filetypes as one char per type instead of a string
 # - display the name of the repository when caching metadata
 # - don't use print for output, use yum's output functions instead
-# - don't use | as a seperator for files, use / or to be cleaner (but
-#   slower) use cpickle.dumps to store an array of filenames in a string
+# - Move the stuff that turns a list of files into a string into a helper
+#   unit
 
 import os
 import mdcache
@@ -33,7 +33,7 @@ import mdparser
 # This version refers to the internal structure of the sqlite cache files
 # increasing this number forces all caches of a lower version number
 # to be re-generated
-dbversion = '4'
+dbversion = '5'
 
 # TODO
 # We probably don't really need to subclass RepodataParser anymore, just use
@@ -279,19 +279,19 @@ class RepodataParserSqlite(mdcache.RepodataParser):
         for (filename,filetype) in package.files.iteritems():
             (dirname,filename) = (os.path.split(filename))
             if (dirs.has_key(dirname)):
-                dirs[dirname]['files'] += filename+'|'
-                dirs[dirname]['types'] += filetype+'|'
+                dirs[dirname]['files'].append(filename)
+                dirs[dirname]['types'].append(filetype)
             else:
                 dirs[dirname] = {}
-                dirs[dirname]['files'] = '|'+filename+'|'
-                dirs[dirname]['types'] = '|'+filetype+'|'
+                dirs[dirname]['files'] = [filename]
+                dirs[dirname]['types'] = [filetype]
 
         for (dirname,dir) in dirs.items():
             data = {
                 'pkgKey': pkgKey,
                 'dirname': dirname,
-                'filenames': dir['files'],
-                'filetypes': dir['types']
+                'filenames': '/'.join(dir['files']),
+                'filetypes': '/'.join(dir['types'])
             }
             self.insertHash('filelist',data,cur)
 

@@ -142,8 +142,8 @@ class YumSqlitePackageSack(repos.YumPackageSack):
             for ob in cur.fetchall():
                 found = True
                 dirname = ob['filelist.dirname']
-                filetypes = ob['filelist.filetypes'].split('|')[1:-1]
-                filenames = ob['filelist.filenames'].split('|')[1:-1]
+                filetypes = ob['filelist.filetypes'].split('/')
+                filenames = ob['filelist.filenames'].split('/')
                 while(filenames):
                     filename = dirname+'/'+filenames.pop()
                     filetype = filetypes.pop()
@@ -241,7 +241,8 @@ class YumSqlitePackageSack(repos.YumPackageSack):
                                         
                 # If it matches the dirname, that doesnt mean it matches
                 # the filename, check if it does
-                if (filename and res['filelist.filenames'].find('|%s|' % filename) == -1):
+                if filename and \
+                  not filename in res['filelist.filenames'].split('/'):
                     continue
                 # If it matches we only know the packageId
                 pkg = self.getPackageDetails(res['packages.pkgId'])
