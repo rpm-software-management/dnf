@@ -24,10 +24,12 @@ except ImportError, e:
     rpm404 = rpm
     
 import serverStuff
+import clientStuff
 from logger import Logger
 
 log=Logger(threshold=0,default=2,prefix='',preprefix='')
 serverStuff.log = log
+clientStuff.log = log
 
 def genhdrs(rpms, headerdir, cmds):
     rpmdelete = 0 # define this if you have the rpmheader stripping patch built into rpm
@@ -49,7 +51,7 @@ def genhdrs(rpms, headerdir, cmds):
         if cmds['rpmcheck']:
             log(2,"\nChecking sig on %s" % (rpmname))
             serverStuff.checkSig(rpmfn)
-        header=serverStuff.readHeader(rpmfn)
+        header = serverStuff.readHeader(rpmfn)
         #check to ignore src.rpms
         if header != 'source':
             if header[rpm.RPMTAG_EPOCH] == None:
@@ -68,7 +70,7 @@ def genhdrs(rpms, headerdir, cmds):
                 (e1, v1, r1, l1) = rpminfo[rpmtup]
                 oldhdrfile = "%s/%s-%s-%s-%s.%s.hdr" % (headerdir, name, e1, v1, r1, arch) 
                 # which one is newer?
-                rc = rpm.labelCompare((e1,v1,r1), (epoch, ver, rel))
+                rc = clientStuff.compareEVR((e1,v1,r1), (epoch, ver, rel))
                 if rc <= -1:
                     # if the more recent one in is newer then throw away the old one
                     del rpminfo[rpmtup]
@@ -237,5 +239,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-
