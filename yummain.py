@@ -104,7 +104,8 @@ def main(args):
     (log, errorlog, filelog, conf, cmds) = parseCmdArgs(args)
 
     if cmds[0] not in ('update', 'upgrade', 'install','info', 'list', 'erase',\
-                       'grouplist','groupupdate','groupinstall','clean','remove', 'provides'):
+                       'grouplist','groupupdate','groupinstall','clean','remove',\
+                       'provides', 'check-update'):
         usage()
     process=cmds[0]
     

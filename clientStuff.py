@@ -703,6 +703,7 @@ def take_action(cmds, nulist, uplist, newlist, obslist, tsInfo, HeaderInfo, rpmD
             usage()
         else:
             pkgaction.installpkgs(tsInfo, nulist, cmds, HeaderInfo, rpmDBInfo)
+            
     elif cmds[0] == 'provides':
         cmds.remove(cmds[0])
         if len(cmds) == 0:
@@ -714,16 +715,19 @@ def take_action(cmds, nulist, uplist, newlist, obslist, tsInfo, HeaderInfo, rpmD
             log(2, 'Looking in installed packages for a providing package')
             pkgaction.whatprovides(cmds, nulist, rpmDBInfo,1)
         sys.exit(0)
+        
     elif cmds[0] == 'update':
         cmds.remove(cmds[0])
         if len(cmds) == 0:
             pkgaction.updatepkgs(tsInfo, HeaderInfo, rpmDBInfo, nulist, uplist, obslist, 'all')
         else:
             pkgaction.updatepkgs(tsInfo, HeaderInfo, rpmDBInfo, nulist, uplist, obslist, cmds)
+
     elif cmds[0] == 'upgrade':
         cmds.remove(cmds[0])
         if len(cmds) == 0:
             pkgaction.upgradepkgs(tsInfo, HeaderInfo, rpmDBInfo, nulist, uplist, obslist, obsdict, 'all')
+            
     elif cmds[0] == 'erase' or cmds[0] == 'remove':
         cmds.remove(cmds[0])
         if len(cmds) == 0:
@@ -731,6 +735,16 @@ def take_action(cmds, nulist, uplist, newlist, obslist, tsInfo, HeaderInfo, rpmD
             usage()
         else:
             pkgaction.erasepkgs(tsInfo, rpmDBInfo, cmds)
+            
+    elif cmds[0] == 'check-update':
+        cmds.remove(cmds[0])
+        if len(uplist) > 0:
+            pkgaction.listpkgs(uplist, 'all', HeaderInfo)
+            # we have updates so we exit with a different code
+            sys.exit(100)
+        else:
+            sys.exit(0)
+
     elif cmds[0] == 'list':
         cmds.remove(cmds[0])
         if len(cmds) == 0:
@@ -760,6 +774,7 @@ def take_action(cmds, nulist, uplist, newlist, obslist, tsInfo, HeaderInfo, rpmD
                 pkglist = rpmDBInfo.NAkeys()
                 pkgaction.listpkgs(pkglist, cmds, rpmDBInfo)
         sys.exit(0)
+        
     elif cmds[0] == 'info':
         cmds.remove(cmds[0])
         if len(cmds) == 0:

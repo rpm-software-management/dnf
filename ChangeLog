@@ -1,3 +1,127 @@
+2003-02-28 00:09  skvidal
+
+	* bin/yum: 
+	and one more little fix
+
+2003-02-28 00:05  skvidal
+
+	* bin/yum: 
+	update lockfile stuff to clear old locks
+
+2003-02-28 00:02  skvidal
+
+	* archwork.py: 
+	archwork backport for more archs
+
+2003-02-27 23:54  skvidal
+
+	* pullheaders.py: typo in -q
+
+2003-02-27 23:50  skvidal
+
+	* docs/yum-arch.8: 
+	update docs to explain -q and -vv
+
+2003-02-27 23:49  skvidal
+
+	* pullheaders.py, serverStuff.py: 
+	update yum-arch stuff to include -q and -vv
+
+2003-02-26 11:14  skvidal
+
+	* clientStuff.py, config.py: 
+	implement exactarch - config and getupdatedhdrlist
+
+2003-02-26 00:13  skvidal
+
+	* clientStuff.py: 
+	wow, this is SO MUCH nicer and it appears to work
+
+2003-02-26 00:09  skvidal
+
+	* clientStuff.py: 
+	new way to do the getupdatedhdrlist helluva lot tidier too
+
+2003-02-25 15:52  skvidal
+
+	* archwork.py, clientStuff.py: 
+	fix up archwork further fixing of clientstuff.getupdatedhdrlist
+
+2003-02-25 15:32  skvidal
+
+	* clientStuff.py: 
+	I think I fixed the arch problem.
+
+2003-02-25 13:40  skvidal
+
+	* clientStuff.py: 
+	possible fix for odd arch case in updates
+
+2003-02-18 00:55  skvidal
+
+	* rpmUtils.py: file rpmUtils.py was initially added on branch
+	yum-rpm_4_2_branch.
+
+2003-02-15 22:33  skvidal
+
+	* i18n.py: file i18n.py was initially added on branch
+	yum-rpm_4_2_branch.
+
+2003-02-09 16:13  skvidal
+
+	* keepalive.py: file keepalive.py was initially added on branch
+	yum-rpm_4_2_branch.
+
+2003-01-18 18:17  skvidal
+
+	* Makefile.in, clientStuff.py, yum.conf: 
+	Fix makefile.in to include yumlock.py, clientstuff.py typos,
+	yum.conf and yum.spec trash
+
+2003-01-18 17:46  skvidal
+
+	* Makefile.in, clientStuff.py, nevral.py: 
+	made changes that _should_ make header checking do _something_ and
+	retry if one is damaged more testing needed
+
+2003-01-17 17:02  skvidal
+
+	* bin/yum: [no log message]
+
+2003-01-17 16:58  skvidal
+
+	* bin/yum: 
+	hehe that's yum.pid not yum/pid
+
+2003-01-17 16:58  skvidal
+
+	* yumlock.py, bin/yum: 
+	added yumlock from michael stenner for locking functionality made
+	yum support lockfiles for root uses
+
+2003-01-15 23:47  skvidal
+
+	* clientStuff.py: 
+	unfinished changes to readHeader and get header to make it more
+	robust for bad headers
+	
+	it should: check for headers, and if, when reading it, it
+	encounters an error return none. this means edits in other
+	locations to deal with the possibility of getting a none instead of
+	a hdr - but only in a few spots.
+	
+	finish this tomorrow?
+
+2003-01-15 19:58  skvidal
+
+	* clientStuff.py: 
+	fix for clean_old_headers to deal with double deletion silliness
+
+2002-12-22 12:52  skvidal
+
+	* ChangeLog, Makefile.in, configure.in, yum-7.x.spec, yum.spec: 
+	Update to 0.9.4 - split into two spec files for 7.x and 8.0
+
 2002-12-19 23:12  skvidal
 
 	* bin/: yum, yum-arch: 
@@ -901,16 +1025,4 @@
 	yummain.py, docs/Makefile.in, docs/yum-arch.8, docs/yum.8,
 	docs/yum.conf.5, etc/Makefile.in, etc/yum.conf, etc/yum.cron,
 	etc/yum.init, etc/yum.logrotate: Initial revision
-
-2002-06-07 01:11  skvidal
-
-	* AUTHORS, Makefile.in, TODO, COPYING, INSTALL, README,
-	archwork.py, bootloadercfg.py, callback.py, checkbootloader.py,
-	clientStuff.py, config.py, configure.in, depchecktree.py,
-	grubcfg.py, install-sh, iutil.py, lilo.py, lilocfg.py, logger.py,
-	mkinstalldirs, nevral.py, pkgaction.py, pullheaders.py, py-compile,
-	serverStuff.py, up2datetheft.py, yum.conf, yum.spec, translate.py,
-	yummain.py, docs/Makefile.in, docs/yum-arch.8, docs/yum.8,
-	docs/yum.conf.5, etc/Makefile.in, etc/yum.conf, etc/yum.cron,
-	etc/yum.init, etc/yum.logrotate: Yum first import
 
