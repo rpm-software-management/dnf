@@ -34,6 +34,9 @@ import repos
 
 
 class CFParser(ConfigParser.ConfigParser):
+    """wrapper around ConfigParser to provide two simple but useful functions:
+       _getoption() and _getboolean()"""
+    
     def _getoption(self, section, option, default=None):
         """section  - section of config
            option - option from section
@@ -55,7 +58,8 @@ class CFParser(ConfigParser.ConfigParser):
             return default
     
 class yumconf:
-
+    """primary config class for yum"""
+    
     def __init__(self, configfile = '/etc/yum.conf'):
         self.cfg = CFParser()
         configh = confpp(configfile)
