@@ -706,7 +706,7 @@ def create_final_ts(tsInfo, rpmdb):
             # sigcheck here :)
             pkgaction.checkRpmMD5(rpmloc)
             if conf.servergpgcheck[serverid]:
-                pkgaction.checkRpmSig(rpmloc)
+                pkgaction.checkRpmSig(rpmloc, serverid)
             tsfin.add(pkghdr, (pkghdr, rpmloc), 'u')
         elif tsInfo.state(name, arch) == 'i':
             if os.path.exists(tsInfo.localRpmPath(name, arch)):
@@ -717,7 +717,7 @@ def create_final_ts(tsInfo, rpmdb):
             # sigchecking we will go
             pkgaction.checkRpmMD5(rpmloc)
             if conf.servergpgcheck[serverid]:
-                pkgaction.checkRpmSig(rpmloc)
+                pkgaction.checkRpmSig(rpmloc, serverid)
             tsfin.add(pkghdr, (pkghdr, rpmloc), 'i')
             #theoretically, at this point, we shouldn't need to make pkgs available
         elif tsInfo.state(name, arch) == 'a':

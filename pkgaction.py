@@ -346,12 +346,17 @@ def checkRpmMD5(package):
         sys.exit(1)
 
 
-def checkRpmSig(package):
+def checkRpmSig(package, serverid):
     # check for gpg
     # get the right sig information from config
     # if we have a keyring then use it
     # if not then just set gpg_home
     # check the package
+    
+    # sig info should work like this:
+    # if we have a keyring defined for the server section - use that
+    # if not use the default
+    # if the default is not defined but gpgcheck is - use gpg_home
     
     hdr = clientStuff.readHeader(package)
     
