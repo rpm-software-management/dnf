@@ -29,10 +29,10 @@ import sre_constants
 import Errors
 import rpmUtils
 import rpmUtils.updates
-import rpmUtils.transaction
 import rpmUtils.arch
 import groups
 import config
+import transactioninfo
 from urlgrabber.grabber import URLGrabError
 import depsolve
 
@@ -75,7 +75,7 @@ class YumBase(depsolve.Depsolve):
         
         installroot = self.conf.getConfigOption('installroot')
         self.read_ts = rpmUtils.transaction.initReadOnlyTransaction(root=installroot)
-        self.tsInfo = rpmUtils.transaction.TransactionData()
+        self.tsInfo = transactioninfo.TransactionData()
         self.rpmdb = rpmUtils.RpmDBHolder()
         self.initActionTs()
         

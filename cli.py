@@ -602,8 +602,8 @@ For more information contact your distribution or package provider.
         
         # download all pkgs in the tsInfo - md5sum vs the metadata as you go 
         downloadpkgs = []
-        for (pkg, mode) in self.tsInfo.dump():
-            if mode in ['i', 'u']:
+        for txmbr in self.tsInfo.getMembers():
+            if txmbr.ts_state in ['i', 'u']:
                 po = self.getPackageObject(pkg)
                 if po:
                     downloadpkgs.append(po)
@@ -664,6 +664,7 @@ For more information contact your distribution or package provider.
             output = 0
         cb = callback.RPMInstallCallback(output=output)
         cb.filelog = self.filelog # needed for log file output
+            #FIXME FIXME FIXME
         cb.packagedict = self.tsInfo.makedict() # to make log output not suck
         
         # run ts
@@ -693,7 +694,8 @@ For more information contact your distribution or package provider.
         # if we've hit a snag, return 1 and the failure explanation
         # if we've got nothing to do, return 0 and a 'nothing available to install' string
         
-        oldcount = self.tsInfo.count()
+        oldcount = len(self.tsInfo)
+        
         if not userlist:
             userlist = self.extcmds
 
@@ -722,9 +724,7 @@ For more information contact your distribution or package provider.
             # we look through each returned possibility and rule out the
             # ones that we obviously can't use
             for pkg in installable:
-                (n, e, v, r, a) = pkg.returnNevraTuple()
-                pkgtup = (n, a, e, v, r)
-                if pkgtup in installed:
+                if pkg.pkgtup in installed:
                     self.log(6, 'Package %s is already installed, skipping' % pkg)
                     continue
                 
@@ -743,13 +743,13 @@ For more information contact your distribution or package provider.
                 if len(comparable) > 0:
                     for instTup in comparable:
                         (n2, a2, e2, v2, r2) = instTup
-                        rc = compareEVR((e2, v2, r2), (e, v, r))
+                        rc = compareEVR((e2, v2, r2), (pkg.epoch, pkg.ver, pkg.rel))
                         if rc < 0: # we're newer - this is an update, pass to them
                             if exactarch:
-                                if a == a2:
-                                    passToUpdate.append(pkgtup)
+                                if pkg.arch == a2:
+                                    passToUpdate.append(pkg.pkgtup)
                             else:
-                                passToUpdate.append(pkgtup)
+                                passToUpdate.append(pkg.pkgtup)
                         elif rc == 0: # same, ignore
                             continue
                         elif rc > 0: # lesser, check if the pkgtup is an exactmatch
@@ -757,21 +757,21 @@ For more information contact your distribution or package provider.
                                         # the user explicitly wants this version
                                         # FIXME this is untrue if the exactmatch
                                         # does not include a version-rel section
-                            if pkgtup in exactmatch:
-                                if not toBeInstalled.has_key(n): toBeInstalled[n] = []
-                                toBeInstalled[n].append(pkgtup)
+                            if pkg.pkgtup in exactmatch:
+                                if not toBeInstalled.has_key(pkg.name): toBeInstalled[pkg.name] = []
+                                toBeInstalled[pgk.name].append(pkg)
                 else: # we've not got any installed that match n or n+a
                     self.log(5, 'No other %s installed, adding to list for install' % pkg.name)
-                    if not toBeInstalled.has_key(n): toBeInstalled[n] = []
-                    toBeInstalled[n].append(pkgtup)
+                    if not toBeInstalled.has_key(pkg.name): toBeInstalled[pkg.name] = []
+                    toBeInstalled[pkg.name].append(pkg)
         
         
         pkglist = returnBestPackages(toBeInstalled)
         if len(pkglist) > 0:
             self.log(3, 'reduced installs :')
-        for (n,a,e,v,r) in pkglist:
-            self.log(3,'   %s.%s %s:%s-%s' % (n, a, e, v, r))
-            self.tsInfo.add((n,a,e,v,r), 'i')
+        for pkg in pkglist:
+            self.log(3,'   %s.%s %s:%s-%s' % pkg.pkgtup)
+            self.tsInfo.addInstall(pkg)
 
         if len(passToUpdate) > 0:
             self.log(3, 'potential updates :')
@@ -782,7 +782,7 @@ For more information contact your distribution or package provider.
                 updatelist.append(pkgstring)
             self.updatePkgs(userlist=updatelist, quiet=1)
 
-        if self.tsInfo.count() > oldcount:
+        if len(self.tsInfo) > oldcount:
             return 2, ['Package(s) to install']
         return 0, ['Nothing to do']
         
@@ -795,7 +795,7 @@ For more information contact your distribution or package provider.
         # this is probably 90% of the calls
         # if there is a userlist then it's for updating pkgs, not obsoleting
         
-        oldcount = self.tsInfo.count()
+        oldcount = len(self.tsInfo)
         if not userlist:
             userlist = self.extcmds
         self.doRepoSetup()
@@ -809,7 +809,9 @@ For more information contact your distribution or package provider.
         else:
             obsoletes = []
 
-
+        # need to convert updates and obsoletes list back into package
+        # objects before we mark them in the tsInfo
+        # FIX ME FIX ME FIXME FIXME 
         if len(userlist) == 0: # simple case - do them all
             for (obsoleting,installed) in obsoletes:
                 (o_n, o_a, o_e, o_v, o_r) = obsoleting
@@ -856,8 +858,8 @@ For more information contact your distribution or package provider.
                 self.tsInfo.add(po.pkgtup(), 'u', 'user')
 
 
-        if self.tsInfo.count() > oldcount:
-            change = self.tsInfo.count() - oldcount
+        if len(self.tsInfo) > oldcount:
+            change = len(self.tsInfo) - oldcount
             msg = '%d packages marked for Update/Obsoletion' % change
             return 2, [msg]
         else:
@@ -870,7 +872,7 @@ For more information contact your distribution or package provider.
         """take user commands and populate a transaction wrapper with packages
            to be erased/removed"""
         
-        oldcount = self.tsInfo.count()
+        oldcount = len(self.tsInfo)
         
         if not userlist:
             userlist = self.extcmds
@@ -886,13 +888,10 @@ For more information contact your distribution or package provider.
             erases = yum.misc.unique(matched + exactmatch)
         
         for pkg in erases:
-            pkgtup = (pkg.name, pkg.arch, pkg.epoch, pkg.version, pkg.release)
-            self.tsInfo.add(pkgtup, 'e', 'user')
+            self.tsInfo.addErase(pkg)
         
-        
-        
-        if self.tsInfo.count() > oldcount:
-            change = self.tsInfo.count() - oldcount
+        if len(self.tsInfo) > oldcount:
+            change = len(self.tsInfo) - oldcount
             msg = '%d packages marked for removal' % change
             return 2, [msg]
         else:
@@ -907,7 +906,7 @@ For more information contact your distribution or package provider.
         # check if it can be installed or updated based on nevra versus rpmdb
         # don't import the repos until we absolutely need them for depsolving
         
-        oldcount = self.tsInfo.count()
+        oldcount = len(self.tsInfo)
         
         if not filelist:
             filelist = self.extcmds
@@ -964,17 +963,18 @@ For more information contact your distribution or package provider.
         for po in installpkgs:
             self.log(2, 'Marking %s to be installed' % po.localpath)
             self.localPackages.append(po)
-            self.tsInfo.add(po.pkgtup(), 'i')
+            self.tsInfo.addInstall(po)
         
         for po in updatepkgs:
             self.log(2, 'Marking %s as an update' % po.localpath)
             self.localPackages.append(po)
-            self.tsInfo.add(po.pkgtup(), 'u')
+            # FIXME - needs the oldpo for listing as an 'update'
+            self.tsInfo.addUpdate(po, oldpo)
         
         for po in donothingpkgs:
             self.log(2, '%s: installed versions are equal or greater' % po.localpath)
         
-        if self.tsInfo.count() > oldcount:
+        if len(self.tsInfo) > oldcount:
             
             return 2, ['Package(s) to install']
         return 0, ['Nothing to do']
@@ -1185,7 +1185,7 @@ For more information contact your distribution or package provider.
         if len(updatepkgs) > 0:
             self.updatePkgs(userlist=updatepkgs, quiet=1)
         
-        if self.tsInfo.count() > 0:
+        if len(self.tsInfo) > 0:
             return 2, ['Group updating']
         else:
             return 0, [_('Nothing in any group to update or install')]

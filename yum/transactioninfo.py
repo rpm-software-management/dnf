@@ -31,10 +31,16 @@ class TransactionData:
         if self.debug:
             print msg
     
-    def getMembers(self, pkgtup):
-        """takes a package tuple and returns all transaction members matching"""
-        if pkgdict.has_key(pkgtup):
-            return pkgdict[pkgtup]
+   
+    def getMembers(self, pkgtup=None):
+        """takes an optional package tuple and returns all transaction members 
+           matching, no pkgtup means it returns all transaction members"""
+        
+        if pkgtup is None:
+            return self.pkgdict.values()
+
+        if self.pkgdict.has_key(pkgtup):
+            return self.pkgdict[pkgtup]
         else:
             return []
 
