@@ -331,9 +331,11 @@ class YumBase(depsolve.Depsolve):
 
         errors = {}
         for po in pkglist:
+            if hasattr(po, 'pkgtype'):
+                if po.pkgtype == 'local':
+                    continue
+                    
             local =  po.localPkg()
-            repo = self.repos.getRepo(po.repoid)
-            remote = po.returnSimple('relativepath')
             if os.path.exists(local):
                 try:
                     result = self.verifyPkg(local, po, raiseError=1)
@@ -344,7 +346,9 @@ class YumBase(depsolve.Depsolve):
                         continue
                     else:
                         os.unlink(local)
-            
+
+            repo = self.repos.getRepo(po.repoid)
+            remote = po.returnSimple('relativepath')
             checkfunc = (self.verifyPkg, (po, 1), {})
 
             try:
@@ -388,6 +392,10 @@ class YumBase(depsolve.Depsolve):
         """download a header from a package object.
            output based on callback, raise yum.Errors.YumBaseError on problems"""
 
+        if hasattr(po, 'pkgtype'):
+            if po.pkgtype == 'local':
+                return
+                
         errors = {}
         local =  po.localHdr()
         start = po.returnSimple('hdrstart')
@@ -433,8 +441,14 @@ class YumBase(depsolve.Depsolve):
            a list of failures"""
         errorlist = []
         for po in pkgs:
-            repo = self.repos.getRepo(po.repoid)
-            if repo.gpgcheck:
+            if hasattr(po, 'pkgtype'):
+                if po.pkgtype == 'local':
+                    check = self.conf.gpgcheck
+            else:
+                repo = self.repos.getRepo(po.repoid)
+                check = repo.gpgcheck
+                
+            if check:
                 result = rpmUtils.miscutils.checkSig(self.read_ts, po.localPkg())
                 localfn = po.localPkg()
                 

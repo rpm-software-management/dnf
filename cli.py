@@ -29,7 +29,7 @@ import yum
 import yum.Errors
 import yum.misc
 from rpmUtils.miscutils import compareEVR
-from yum.packages import parsePackages, returnBestPackages, YumInstalledPackage
+from yum.packages import parsePackages, returnBestPackages, YumInstalledPackage, YumLocalPackage
 from yum.logger import Logger
 from yum.config import yumconf
 from i18n import _
@@ -45,6 +45,8 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
        
     def __init__(self):
         yum.YumBase.__init__(self)
+        self.localPackages = [] # for local package handling - possibly needs
+                                # to move to the lower level class
 
     def doRepoSetup(self, nosack=None):
         """grabs the repomd.xml for each enabled repository and sets up the basics
@@ -268,11 +270,12 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         self.basecmd = self.cmds[0] # our base command
         self.extcmds = self.cmds[1:] # out extended arguments/commands
         
-        if self.basecmd not in ['update', 'install','info', 'list', 'erase',\
-                                'grouplist', 'groupupdate', 'groupinstall',\
-                                'groupremove', 'groupinfo', 'makecache',\
-                                'clean', 'remove', 'provides', 'check-update',\
-                                'search', 'generate-rss', 'upgrade', 'whatprovides']:
+        if self.basecmd not in ['update', 'install','info', 'list', 'erase',
+                                'grouplist', 'groupupdate', 'groupinstall',
+                                'groupremove', 'groupinfo', 'makecache',
+                                'clean', 'remove', 'provides', 'check-update',
+                                'search', 'generate-rss', 'upgrade', 
+                                'whatprovides', 'localinstall', 'localupdate']:
             self.usage()
             
     
@@ -283,7 +286,7 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
                 self.errorlog(0, _('You need to be root to perform this command.'))
                 sys.exit(1)
         
-        if self.basecmd in ['install', 'erase', 'remove']:
+        if self.basecmd in ['install', 'erase', 'remove', 'localinstall', 'localupdate']:
             if len(self.extcmds) == 0:
                 self.errorlog(0, _('Error: Need to pass a list of pkgs to %s') % self.basecmd)
                 self.usage()
@@ -370,7 +373,13 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
                 return 1, [str(e)]
             
 
-    
+        elif self.basecmd in ['localinstall', 'localupdate']:
+            self.log(2, "Setting up Local Packge Process")
+            try:
+                return self.localInstall()
+            except yum.Errors.YumBaseError, e:
+                return 1, [str(e)]
+
         elif self.basecmd in ['list', 'info']:
             try:
                 ypl = self.returnPkgLists()
@@ -510,7 +519,18 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
             self.log(3, '%s' % self.pickleRecipe())
             try:
                 self.doRepoSetup(nosack=1)
+                x = map(len, locals()); x.sort(); x.reverse(); print x[:64]
                 self.repos.populateSack(with='metadata', pickleonly=1)
+                #x = map(len, globals()); x.sort(); x.reverse(); print x[:64]
+                #self.repos.populateSack(with='metadata', pickleonly=1)
+                #x = map(len, globals()); x.sort(); x.reverse(); print x[:64]
+                #self.repos.populateSack(with='metadata', pickleonly=1)
+                #x = map(len, globals()); x.sort(); x.reverse(); print x[:64]
+                #self.repos.populateSack(with='metadata', pickleonly=1)
+                #x = map(len, globals()); x.sort(); x.reverse(); print x[:64]
+                #self.repos.populateSack(with='metadata', pickleonly=1)
+                #x = map(len, globals()); x.sort(); x.reverse(); print x[:64]
+                
                 self.repos.populateSack(with='filelists', pickleonly=1)
                 self.repos.populateSack(with='otherdata', pickleonly=1)
                 
@@ -629,6 +649,11 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         passToUpdate = [] # list of pkgtups to pass along to updatecheck
 
         for arg in userlist:
+            if os.path.exists(arg) and arg[-4:] == '.rpm': # this is hurky, deal w/it
+                val, msglist = self.localInstall(filelist=[arg])
+                if val == 2: # we added it to the transaction Set so don't try from the repos
+                    continue 
+                    
             arglist = [arg]
             exactmatch, matched, unmatched = parsePackages(avail, arglist)
             if len(unmatched) > 0: # if we get back anything in unmatched, it fails
@@ -796,6 +821,87 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         else:
             return 0, ['No Packages marked for removal']
     
+    def localInstall(self, filelist=None):
+        """handles installs/updates of rpms provided on the filesystem in a 
+           local dir (ie: not from a repo)"""
+           
+        # read in each package into a YumLocalPackage Object
+        # append it to self.localPackages
+        # check if it can be installed or updated based on nevra versus rpmdb
+        # don't import the repos until we absolutely need them for depsolving
+        
+        oldcount = self.tsInfo.count()
+        
+        if not filelist:
+            filelist = self.extcmds
+        
+        if len(filelist) == 0:
+            return 0, ['No Packages Provided']
+        
+        self.doRpmDBSetup()
+        installpkgs = []
+        updatepkgs = []
+        donothingpkgs = []
+        
+        for pkg in filelist:
+            try:
+                po = YumLocalPackage(ts=self.read_ts, filename=pkg)
+            except yum.Errors.MiscError, e:
+                self.errorlog(0, 'Cannot open file: %s. Skipping.' % pkg)
+                continue
+            self.log(2, 'Examining %s: %s' % (po.localpath, po))
+
+            # everything installed that matches the name
+            installedByKey = self.rpmdb.returnTupleByKeyword(name=po.name)
+            # go through each package 
+            if len(installedByKey) == 0: # nothing installed by that name
+                installpkgs.append(po)
+                continue
+
+            for instTup in installedByKey:
+                (n, a, e, v, r) = po.pkgtup()
+                (n2, a2, e2, v2, r2) = instTup
+                rc = compareEVR((e2, v2, r2), (e, v, r))
+                if rc < 0: # we're newer - this is an update, pass to them
+                    if self.conf.exactarch:
+                        if a == a2:
+                            updatepkgs.append(po)
+                            continue
+                        else:
+                            donothingpkgs.append(po)
+                            continue
+                    else:
+                        updatepkgs.append(po)
+                        continue
+                elif rc == 0: # same, ignore
+                    donothingpkgs.append(po)
+                    continue
+                elif rc > 0: 
+                    donothingpkgs.append(po)
+                    continue
+
+
+        for po in installpkgs:
+            self.log(2, 'Marking %s to be installed' % po.localpath)
+            self.localPackages.append(po)
+            self.tsInfo.add(po.pkgtup(), 'i')
+        
+        for po in updatepkgs:
+            self.log(2, 'Marking %s as an update' % po.localpath)
+            self.localPackages.append(po)
+            self.tsInfo.add(po.pkgtup(), 'u')
+        
+        for po in donothingpkgs:
+            self.log(2, '%s: installed versions are equal or greater' % po.localpath)
+        
+        if self.tsInfo.count() > oldcount:
+            
+            return 2, ['Package(s) to install']
+        return 0, ['Nothing to do']
+        
+            
+        
+        
     def returnPkgLists(self):
         """Returns packages lists based on arguments on the cli.returns a 
            GenericHolder instance with the following lists defined:
@@ -1036,7 +1142,7 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
     Usage:  yum [options] < update | install | info | remove | list |
             clean | provides | search | check-update | groupinstall | 
             groupupdate | grouplist | groupinfo | groupremove | generate-rss |
-            makecache >
+            makecache | localinstall >
                 
         Options:
         -c [config file] - specify the config file to use

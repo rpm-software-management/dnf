@@ -86,6 +86,12 @@ class Depsolve:
            
         
         (n,a,e,v,r) = pkgtup
+        
+        # look it up in the self.localPackages first:
+        for po in self.localPackages:
+            if po.pkgtup() == pkgtup:
+                return po
+                
         pkgs = self.pkgSack.searchNevra(name=n, arch=a, epoch=e, ver=v, rel=r)
 
         if len(pkgs) == 0:
@@ -202,6 +208,9 @@ class Depsolve:
                 ((name, version, release), (needname, needversion), flags, suggest, sense) = dep
                 
                 if sense == rpm.RPMDEP_SENSE_REQUIRES: # requires
+                    # if our packageSacks aren't here, then set them up
+                    if not hasattr(self, 'pkgSack'):
+                        self.doRepoSetup()
                     (checkdep, missing, conflict, errormsgs) = self._processReq(dep)
                     
                 elif sense == rpm.RPMDEP_SENSE_CONFLICTS: # conflicts - this is gonna be short :)

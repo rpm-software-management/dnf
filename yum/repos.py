@@ -190,6 +190,8 @@ class RepoStorage:
         for repo in myrepos:
             if not hasattr(repo, 'cacheHandler'):
                 repo.cacheHandler = mdcache.RepodataParser(storedir=repo.cachedir, callback=callback)
+            else:
+                print 'object alread exists'
             for item in data:
                 if self.pkgSack.added.has_key(repo.id):
                     if item in self.pkgSack.added[repo.id]:
@@ -201,14 +203,7 @@ class RepoStorage:
                     dobj = repo.cacheHandler.getPrimary(xml, csum)
                     if not pickleonly:
                         self.pkgSack.addDict(repo.id, item, dobj, callback) 
-                    #else:
-                    #    del dobj
-                    #    del repo.cacheHandler
-                    #    gc.collect()
-                    #    for x in gc.garbage:
-                    #        s = str(x)
-                    #        if len(s) > 80: s = s[:80]
-                    #        print type(x),"\n  ", s                        
+                    del dobj
                         
                 elif item == 'filelists':
                     xml = repo.getFileListsXML()
@@ -216,6 +211,7 @@ class RepoStorage:
                     dobj = repo.cacheHandler.getFilelists(xml, csum)
                     if not pickleonly:
                         self.pkgSack.addDict(repo.id, item, dobj, callback) 
+                    del dobj
                         
                         
                 elif item == 'otherdata':
@@ -224,15 +220,14 @@ class RepoStorage:
                     dobj = repo.cacheHandler.getOtherdata(xml, csum)
                     if not pickleonly:
                         self.pkgSack.addDict(repo.id, item, dobj, callback)
+                    del dobj
+                    
                         
                 else:
                     # how odd, just move along
                     continue
             # get rid of all this stuff we don't need now
-            #del repo.cacheHandler
-
-
-                
+            del repo.cacheHandler
         
         
 class Repository:

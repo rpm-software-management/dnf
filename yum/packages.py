@@ -20,6 +20,7 @@ import os
 import os.path
 import misc
 import re
+import types
 import fnmatch
 import rpmUtils
 import rpmUtils.arch
@@ -208,7 +209,22 @@ class YumInstalledPackage:
             return getattr(self, thing)
         else:
             return self.tagByName(thing)
-    
+
+    def returnLocalHeader(self):
+        return self.hdr
+
+    def getProvidesNames(self):
+        """returns a list of providesNames"""
+        
+        provnames = self.tagByName('providename')
+        if type(provnames) is not types.ListType():
+            if type(provnames) is types.StringType():
+                provnames = [provnames]
+            else:
+                provnames = []
+
+        return provnames
+
     def requiresList(self):
         """return a list of all of the strings of the package requirements"""
         reqlist = []
@@ -258,9 +274,15 @@ class YumLocalPackage(YumInstalledPackage):
         if filename is None:
             raise Errors.MiscError, \
                  'No Filename specified for YumLocalPackage instance creation'
-        self.filename = filename
+                 
+        self.pkgtype = 'local'
+        self.localpath = filename
         self.repoid = filename
-        self.hdr = rpmUtils.miscutils.hdrFromPackage(ts, self.filename)
+        try:
+            self.hdr = rpmUtils.miscutils.hdrFromPackage(ts, self.localpath)
+        except rpmUtils.RpmUtilsError, e:
+            raise Errors.MiscError, \
+                'Could not open local rpm file: %s' % self.localpath
         self.name = self.tagByName('name')
         self.arch = self.tagByName('arch')
         self.epoch = self.doepoch()
@@ -268,6 +290,13 @@ class YumLocalPackage(YumInstalledPackage):
         self.release = self.tagByName('release')
         self.summary = self.tagByName('summary')
         self.description = self.tagByName('description')
+        
+    
+    def localPkg(self):
+        return self.localpath
+    
+        
+
 
 class YumAvailablePackage(repomd.packageObject.PackageObject, repomd.packageObject.RpmBase):
     """derived class for the repomd packageobject and RpmBase packageobject yum
