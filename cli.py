@@ -36,7 +36,7 @@ from i18n import _
 import callback
 
 
-__version__ = '2.1.6'
+__version__ = '2.1.7'
 
 
 class YumBaseCli(yum.YumBase, output.YumOutput):
