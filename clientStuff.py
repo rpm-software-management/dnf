@@ -623,6 +623,8 @@ def take_action(cmds, nulist, uplist, newlist, obslist, tsInfo, HeaderInfo, rpmD
         else:
             if cmds[0] == 'updates':
                 pkgaction.listpkginfo(uplist, 'updates', HeaderInfo)
+            elif cmds[0] == 'available':
+                pkgaction.listpkginfo(newlist, 'all', HeaderInfo)
             elif cmds[0] == 'installed':
                 pkglist=rpmDBInfo.NAkeys()
                 pkgaction.listpkginfo(pkglist,'all', rpmDBInfo)
