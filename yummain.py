@@ -18,35 +18,25 @@
 import os
 import sys
 import getopt
+import clientStuff
+import nevral
+import pkgaction
+import callback
+import time
+import random
+from logger import Logger
+from config import yumconf
 
-def main():
-    """This does all the real work"""
-    # parse commandline options here - leave the user instructions (cmds) 
-    # until after the startup stuff is done
-
-    import clientStuff
-    import nevral
-    import pkgaction
-    import callback
-    from logger import Logger
-    from config import yumconf
-
-    ##############################################################
-    # who are we:
-    uid=os.geteuid()
-    # setup our errorlog object - need to get the config file before
-    # we do filelog and log
-    # errorlog - sys.stderr - always
+def parseCmdArgs(args):
+    
+    # setup our errorlog object 
     errorlog=Logger(threshold=10, file_object=sys.stderr)
 
     # our default config file location
     yumconffile=None
     if os.access("/etc/yum.conf", os.R_OK):
         yumconffile="/etc/yum.conf"
-
-    args = sys.argv[1:]
-    if len(args) < 1:
-        usage()
+        
     try:
         gopts, cmds = getopt.getopt(args, 'c:hR:e:d:y', ['help'])
     except getopt.error, e:
@@ -57,8 +47,6 @@ def main():
     try: 
         for o,a in gopts:
             if o == '-R':
-                import time
-                import random
                 sleeptime=random.randrange(int(a)*60)
                 # debug print sleeptime
                 time.sleep(sleeptime)
@@ -81,7 +69,10 @@ def main():
             
         # we'd like to have a log object now
         log=Logger(threshold=conf.debuglevel, file_object=sys.stdout)
-    
+        # syslog-style log
+        logfile=open(conf.logfile,"a")
+        filelog=Logger(threshold=10, file_object=logfile,preprefix=clientStuff.printtime())
+
         for o,a in gopts:
             if o =='-d':
                 log.threshold=int(a)
@@ -93,20 +84,28 @@ def main():
                 conf.assumeyes=1
             if o in ('-h', '--help'):
                 usage()
-        if cmds[0] not in ('update', 'upgrade', 'install','info', 'list', 'erase',\
-                       'grouplist','groupupdate','groupinstall','clean','remove'):
-            usage()
-        process=cmds[0]
     except ValueError, e:
         errorlog(0, 'Options Error: %s' % e)
         usage()
         sys.exit(1)
-
+        
+    return (log, errorlog, filelog, conf, cmds)
     
-    # syslog-style log
-    logfile=open(conf.logfile,"a")
-    filelog=Logger(threshold=10, file_object=logfile,preprefix=clientStuff.printtime())
+def main(args):
+    """This does all the real work"""
 
+    ##############################################################
+    # who are we:
+    uid=os.geteuid()
+
+    if len(args) < 1:
+        usage()
+    (log, errorlog, filelog, conf, cmds) = parseCmdArgs(args)
+    if cmds[0] not in ('update', 'upgrade', 'install','info', 'list', 'erase',\
+                       'grouplist','groupupdate','groupinstall','clean','remove'):
+        usage()
+    process=cmds[0]
+    
     # push the logs into the other namespaces
     pkgaction.log=log
     clientStuff.log=log
@@ -153,10 +152,10 @@ def main():
     obsdict=clientStuff.returnObsoletes(HeaderInfo, rpmDBInfo, nulist)
     obslist=obsdict.keys()
     
-    log(4, 'nulist = %s' % len(nulist))
-    log(4, 'uplist = %s' % len(uplist))
-    log(4, 'newlist = %s' % len(newlist))
-    log(4, 'obslist = %s' % len(obslist))
+    log(3, 'nulist = %s' % len(nulist))
+    log(3, 'uplist = %s' % len(uplist))
+    log(3, 'newlist = %s' % len(newlist))
+    log(3, 'obslist = %s' % len(obslist))
     
     ##################################################################
     # at this point we have all the prereq info we could ask for. we 
@@ -167,6 +166,8 @@ def main():
 
     clientStuff.take_action(cmds, nulist, uplist, newlist, obslist, tsInfo,\
                             HeaderInfo, rpmDBInfo, obsdict)
+    # back from taking actions - if we've not exited by this point then we have
+    # an action that will install/erase/update something
     
     # at this point we should have a tsInfo nevral with all we need to complete our task.
     # if for some reason we've gotten all the way through this step with 
@@ -235,8 +236,6 @@ def main():
         
     log(2, 'Transaction(s) Complete')
     sys.exit(0)
-
-
 
 
 def usage():
