@@ -59,6 +59,8 @@ class YumPackageSack(packageSack.PackageSack):
             if not self.added.has_key(repoid):
                 self.added[repoid] = []
             self.added[repoid].append('metadata')
+            # indexes will need to be rebuilt
+            self.indexesBuilt = 0
             
         elif datatype in ['filelists', 'otherdata']:
             if self.added.has_key(repoid):
@@ -75,6 +77,8 @@ class YumPackageSack(packageSack.PackageSack):
                         po.importFromDict(pkgdict, repoid)
 
             self.added[repoid].append(datatype)
+            # indexes will need to be rebuilt
+            self.indexesBuilt = 0
         else:
             # umm, wtf?
             pass

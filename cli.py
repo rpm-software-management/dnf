@@ -302,7 +302,8 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
                                 'groupremove', 'groupinfo', 'makecache',
                                 'clean', 'remove', 'provides', 'check-update',
                                 'search', 'generate-rss', 'upgrade', 
-                                'whatprovides', 'localinstall', 'localupdate']:
+                                'whatprovides', 'localinstall', 'localupdate',
+                                'resolvedep']:
             self.usage()
             
     
@@ -369,7 +370,8 @@ For more information contact your distribution or package provider.
                 self.usage()
             
         elif self.basecmd in ['list', 'check-update', 'info', 'update', 'upgrade',
-                              'generate-rss', 'grouplist', 'makecache']:
+                              'generate-rss', 'grouplist', 'makecache',
+                              'resolvedep']:
             pass
     
         else:
@@ -435,6 +437,7 @@ For more information contact your distribution or package provider.
             except yum.Errors.YumBaseError, e:
                 return 1, [str(e)]
 
+            
         elif self.basecmd in ['list', 'info']:
             try:
                 ypl = self.returnPkgLists()
@@ -579,6 +582,13 @@ For more information contact your distribution or package provider.
             self.log(2, "Searching Packages: ")
             try:
                 return self.provides()
+            except yum.Errors.YumBaseError, e:
+                return 1, [str(e)]
+
+        elif self.basecmd in ['resolvedep']:
+            self.log(2, "Searching Packages for Dependency:")
+            try:
+                return self.resolveDepCli()
             except yum.Errors.YumBaseError, e:
                 return 1, [str(e)]
         
@@ -1167,7 +1177,24 @@ For more information contact your distribution or package provider.
             return 0, ['No Matches found']
         
         return 0, []
+    
+    def resolveDepCli(self, args=None):
+        """returns a package (one per user arg) that provide the supplied arg"""
         
+        if not args:
+            args = self.extcmds
+        
+        for arg in args:
+            try:
+                pkg = self.returnPackageByDep(arg)
+            except yum.Errors.YumBaseError, e:
+                self.errorlog(0, _('No Package Found for %s') % arg)
+            else:
+                msg = '%s:%s-%s-%s.%s' % (pkg.epoch, pkg.name, pkg.version, pkg.release, pkg.arch)
+                self.log(0, msg)
+
+        return 0, []
+            
     def returnGroupLists(self, userlist=None):
 
         uservisible=1

@@ -1035,3 +1035,44 @@ class YumBase(depsolve.Depsolve):
             del fo
             return 1
 
+    def returnPackageByDep(self, depstring):
+        """Pass in a generic [build]require string and this function will 
+           pass back the best(or first) package it finds providing that dep."""
+        
+        self.doRepoSetup()
+        # parse the string out
+        #  either it is 'dep (some operator) e:v-r'
+        #  or /file/dep
+        #  or packagename
+        depname = depstring
+        depflags = None
+        depver = None
+        
+        if depstring[0] != '/':
+            # not a file dep - look at it for being versioned
+            if re.search('[>=<]', depstring):  # versioned
+                # parse out the versioned string 
+                pass # FIXMEMEMEMEME
+        
+        sack = self.whatProvides(depname, depflags, depver)
+        if len(sack) < 1:
+            raise Errors.YumBaseError, 'No Packages found for %s' % depstring
+        
+        if len(sack) == 1:
+            for po in sack:
+                return po
+        
+        pkglist = sack.returnNewestByNameArch()
+        best = pkglist[0]
+        for pkg in pkglist[1:]:
+            if len(pkg.name) < len(best.name): # shortest name silliness
+                best = pkg
+                continue
+
+            # compare arch
+            arch = rpmUtils.arch.getBestArchFromList([pkg.arch, best.arch])
+            if arch == pkg.arch:
+                best = pkg
+                continue
+        
+        return best

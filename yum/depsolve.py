@@ -55,7 +55,7 @@ class Depsolve:
                 if globc.match(name):
                     matched = 1
             if not matched:
-                self.log(2, 'Importing Additional filelist information for depresolution')
+                self.log(2, 'Importing Additional filelist information for dependency resolution')
                 self.repos.populateSack(with='filelists')
                 
         pkgs = self.pkgSack.searchProvides(name)
