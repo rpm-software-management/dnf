@@ -25,7 +25,7 @@ class RepoStorage:
        about them."""
        
     def __init__(self):
-        self.repos = {} # dict of repos by repoid pointing a repo object 
+        self.repos = {} # list of repos by repoid pointing a repo object 
                         # of repo options/misc data
     
     def add(self, repoid):
@@ -41,7 +41,7 @@ class RepoStorage:
             del self.repos[repoid]
             
     def sort(self):
-        repolist = self.repos.keys()
+        repolist = self.repos.values()
         repolist.sort()
         return repolist
         
@@ -55,19 +55,19 @@ class RepoStorage:
     def disableRepo(self, repoid):
         """disable a repository from use"""
         thisrepo = self.getRepo(repoid)
-        thisrepo.set('enabled', 0)
+        thisrepo.disable()
             
     def enableRepo(self, repoid):
         """disable a repository from use"""
         thisrepo = self.getRepo(repoid)
-        thisrepo.set('enabled', 1)
+        thisrepo.enable()
             
     def listEnabled(self):
         """return list of repo ids for enabled repos"""
         returnlist = []
         for repo in self.repos.values():
             if repo.enabled:
-                returnlist.append(repo.id)
+                returnlist.append(repo)
                 
         return returnlist
 
@@ -87,16 +87,36 @@ class Repository:
         self.groupsfilename = 'yumgroups.xml' # something some freaks might 
                                               # eventually want
 
+    def __cmp__(self, other):
+        if self.id > other.id:
+            return 1
+        elif self.id < other.id:
+            return -1
+        else:
+            return 0
+
     def __str__(self):
+        return self.id
+        
+    def dump(self):
         string = 'repo: %s\n' % self.id
         for attr in dir(self):
             if attr not in ['id', 'set', 'unset', 'setFailover',
                             'remoteGroups', 'remoteMetadata', 'localGroups',
                             'baseURL', 'failed', 'repomd', '__str__', '__init__',
-                            '__doc__', '__module__']:
+                            '__doc__', '__module__', '__cmp__', 'dump', 'enable',
+                            'disable']:
+                
                 string = string + '%s = %s\n' % (attr, getattr(self, attr))
         
         return string
+    
+    def enable(self):
+        self.set('enabled', 1)
+    
+    def disable(self):
+        self.set('enabled', 0)
+        
                 
     def set(self, key, value):
         """sets a generic attribute of this repository"""
@@ -140,7 +160,3 @@ class Repository:
         """returns a repomd object for this repository"""
         pass         
 
-    # methods needed:
-    # checksum file
-    # return fo or file for md import
-    # other shorthand functions about repositories

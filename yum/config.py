@@ -115,74 +115,86 @@ class yumconf:
             self.configdata[option] = self._doreplace(self.configdata[option])
             self.configdata[option] = self._parseList(self.configdata[option])
 
-        if len(self.cfg.sections()) > 1:
+        # look through our repositories.
         
+        if len(self.cfg.sections()) > 1:
             for section in self.cfg.sections(): # loop through the list of sections
                 if section != 'main': # must be a repoid
+                    self._doRepoSection(section)
 
-                    urls = self._getoption(section, 'baseurl', [])
-                    name = self._getoption(section, 'name', None)
-                    urls = self._doreplace(urls)
-                    urls = self._parseList(urls)
-                    mirrorlist = self._getoption(section, 'mirrorlist', None)
-                    mirrorlist = self._doreplace(mirrorlist) # FIXME it'd be neat if this did something
-                    
-                    if name is not None and (len(urls) > 0 or mirrorlist is not None):
-                        thisrepo = self.repos.add(section)
-                        name = self._doreplace(name)
-                        thisrepo.set('name', name)
+        # should read through self.reposdir for *.conf.
+        # read each of them in using confpp, then parse them same as any other repo
+        # section - as above.
 
-                        # vet the urls
-                        goodurls = []
-                        for url in urls:
-                            (s,b,p,q,f,o) = urlparse.urlparse(url)
-                            if s not in ['http', 'ftp', 'file', 'https']:
-                                print 'not using ftp, http[s], or file for repos, skipping - %s' % (url)
-                                continue
-                            else:
-                                goodurls.append(url)
-                        if len(goodurls) > 0:
-                            thisrepo.set('urls', goodurls)                        
-                        else:
-                            self.repos.delete(section)
-                            print 'Error: Cannot find valid baseurl for repo: %s. Skipping' % (section)    
-                            continue
-                            
-                        failmeth = self._getoption(section,'failovermethod')
-                        thisrepo.setFailover(failmeth)
-                        
-                        thisrepo.set('gpgcheck', self._getboolean(section, 'gpgcheck', 0))
-                        thisrepo.set('enabled', self._getboolean(section, 'enabled', 1))
-
-                        # get our proxy information if it is there
-                        thisrepo.set('proxy', self._getoption(section, 'proxy', None))
-                        thisrepo.set('proxy_username', self._getoption(section, 'proxy_username', None))
-                        thisrepo.set('proxy_password', self._getoption(section, 'proxy_password', None))
-                        thisrepo.set('keepalive', self._getboolean(section, 'keepalive', 1))                        
-                        
-                        excludelist = self._getoption(section, 'exclude', [])
-                        excludelist = self._doreplace(excludelist)
-                        excludelist = self._parseList(excludelist)
-                        thisrepo.set('excludes', excludelist)
-
-                        includelist = self._getoption(section, 'includepkgs', [])
-                        includelist = self._doreplace(includelist)
-                        includelist = self._parseList(includelist)
-                        thisrepo.set('includepkgs', includelist)
-
-                        thisrepo.set('enablegroups', self._getboolean(section, 'enablegroups', 1))
-                        cache = os.path.join(self.getConfigOption('cachedir'), section)
-                        pkgdir = os.path.join(cache, 'packages')
-                        hdrdir = os.path.join(cache, 'headers')
-                        thisrepo.set('cache', cache)
-                        thisrepo.set('pkgdir', pkgdir)
-                        thisrepo.set('hdrdir', hdrdir)
-                    else:
-                        print 'Error: Cannot find baseurl or name for repo: %s. Skipping' % (section)    
-        else:
+        if len(self.repos.listEnabled()) < 1:
             raise Errors.ConfigError, \
                     'Insufficient repository config. No repositories Found/Enabled. Aborting.'
 
+
+    def _doRepoSection(self, section):
+        """do all the repo handling stuff for this config"""
+
+        urls = self._getoption(section, 'baseurl', [])
+        name = self._getoption(section, 'name', None)
+        urls = self._doreplace(urls)
+        urls = self._parseList(urls)
+        mirrorlist = self._getoption(section, 'mirrorlist', None)
+        mirrorlist = self._doreplace(mirrorlist) # FIXME it'd be neat if this did something
+        
+        if name is not None and (len(urls) > 0 or mirrorlist is not None):
+            thisrepo = self.repos.add(section)
+            name = self._doreplace(name)
+            thisrepo.set('name', name)
+
+            # vet the urls
+            goodurls = []
+            for url in urls:
+                (s,b,p,q,f,o) = urlparse.urlparse(url)
+                if s not in ['http', 'ftp', 'file', 'https']:
+                    print 'not using ftp, http[s], or file for repos, skipping - %s' % (url)
+                    continue
+                else:
+                    goodurls.append(url)
+
+            if len(goodurls) > 0:
+                thisrepo.set('urls', goodurls)                        
+            else:
+                self.repos.delete(section)
+                print 'Error: Cannot find valid baseurl for repo: %s. Skipping' % (section)    
+                return
+                
+            failmeth = self._getoption(section,'failovermethod')
+            thisrepo.setFailover(failmeth)
+            
+            thisrepo.set('gpgcheck', self._getboolean(section, 'gpgcheck', 0))
+            thisrepo.set('enabled', self._getboolean(section, 'enabled', 1))
+
+            # get our proxy information if it is there
+            thisrepo.set('proxy', self._getoption(section, 'proxy', None))
+            thisrepo.set('proxy_username', self._getoption(section, 'proxy_username', None))
+            thisrepo.set('proxy_password', self._getoption(section, 'proxy_password', None))
+            thisrepo.set('keepalive', self._getboolean(section, 'keepalive', 1))                        
+            
+            excludelist = self._getoption(section, 'exclude', [])
+            excludelist = self._doreplace(excludelist)
+            excludelist = self._parseList(excludelist)
+            thisrepo.set('excludes', excludelist)
+
+            includelist = self._getoption(section, 'includepkgs', [])
+            includelist = self._doreplace(includelist)
+            includelist = self._parseList(includelist)
+            thisrepo.set('includepkgs', includelist)
+
+            thisrepo.set('enablegroups', self._getboolean(section, 'enablegroups', 1))
+            cache = os.path.join(self.getConfigOption('cachedir'), section)
+            pkgdir = os.path.join(cache, 'packages')
+            hdrdir = os.path.join(cache, 'headers')
+            thisrepo.set('cache', cache)
+            thisrepo.set('pkgdir', pkgdir)
+            thisrepo.set('hdrdir', hdrdir)
+
+        else:
+            print 'Error: Cannot find baseurl or name for repo: %s. Skipping' % (section)    
 
            
     def _getoption(self, section, option, default=None):
@@ -496,13 +508,16 @@ def main(args):
     repositories = conf.repos
     repolist = repositories.sort()
     
-    for srvid in repolist:
-        repo = repositories.getRepo(srvid)
-        print repo
+    for repo in repolist:
+        print repo.dump()
             
         print ''
     
     
 
 if __name__ == "__main__":
+        if len(sys.argv) < 2:
+            print 'command: config file'
+            sys.exit(1)
+            
         main(sys.argv[1:])
