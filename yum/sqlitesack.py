@@ -161,6 +161,8 @@ class YumSqlitePackageSack(repos.YumPackageSack):
             cur = cache.cursor()
             cur.execute("select DISTINCT packages.pkgId from provides,packages where provides.name LIKE '%%%s%%' AND provides.pkgKey = packages.pkgKey" % quotename)
             for ob in cur.fetchall():
+                if (self.excludes[rep].has_key(ob['packages.pkgId'])):
+                    continue
                 pkg = self.getPackageDetails(ob['packages.pkgId'])
                 result.append((self.pc(pkg,rep)))
 
@@ -180,6 +182,8 @@ class YumSqlitePackageSack(repos.YumPackageSack):
                 # Check if it is an actual match
                 # The query above can give false positives, when
                 # a package provides /foo/aaabar it will also match /foo/bar
+                if (self.excludes[rep].has_key(ob['packages.pkgId'])):
+                    continue
                 real = False
                 for filename in ob['filelist.filenames'].split('/'):
                     if (ob['filelist.dirname']+'/'+filename).find(name) != -1:
