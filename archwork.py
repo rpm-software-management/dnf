@@ -56,12 +56,9 @@ def betterarch(arch1, arch2):
     del score2
 
 def bestarch(archlist):
-    currentarch = 'garbage'
-    for arch in archlist:
-        if currentarch == None:
-            currentarch = betterarch('garbage', arch)
-        else:
-            currentarch = betterarch(currentarch, arch)
+    currentarch = archlist[0]
+    for arch in archlist[1:]:
+        currentarch = betterarch(currentarch, arch)
     return currentarch
 
 

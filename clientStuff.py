@@ -307,13 +307,10 @@ def getupdatedhdrlist(headernevral, rpmnevral):
     for (name, arch) in headernevral.NAkeys():
         # this is all hard and goofy to deal with pkgs changing arch
         # if we have the package installed
-        # check to see if we have that specific arch
-        # if so compare that name,arch vs the bestarch in the rpmdb 
-        # this deals with us having 2.4.9-31.i686 kernels installed AND 2.4.18-4.athlon kernels installed
-        # b/c a 2.4.18-4.i686 would constantly showed up on an athlon
-        # if its newer then mark it as updateable
-        # if we don't have that specific arch, then if its the best arch in the headernevral, compare
-        # it to what we have, if its newer then mark it as updateable
+        # get the archs that we have for its
+        # if its more than 1 then compare to see the highest version
+        # then get the highest version and the best arch available in the headernevral
+        # compare these two, put the best one in to be updated.
         if rpmnevral.exists(name):
             archlist = archwork.availablearchs(rpmnevral, name)
             finalarch = archlist.pop()
@@ -357,13 +354,20 @@ def getupdatedhdrlist(headernevral, rpmnevral):
                 #look it's newer and we don't have it - add it to the list and finish
                 if not uplist_archdict.has_key(name):
                     uplist_archdict[name]=hdr_finalarch
-                #it's newer and we already have one so lets compare them in arch and ver
+                #we already have one so lets compare them in arch and ver
                 else:
                     rc = compareEVR(headernevral.evr(name, hdr_finalarch), headernevral.evr(name, uplist_archdict[name]))
-                    if (rc > 0):
+                    # new one is newer, so we look at the arch
+                    if rc > 0:
+                        uplist_archdict[name]=hdr_finalarch
+                    # older one, move along
+                    elif rc < 0:
+                        pass
+                    # same - find the better arch
+                    elif rc == 0:
                         updating_finalarch = archwork.bestarch([hdr_finalarch, uplist_archdict[name]])
-                        if updating_finalarch == hdr_finalarch:
-                            uplist_archdict[name]=hdr_finalarch
+                        uplist_archdict[name]=updating_finalarch
+                        
         else:
             newlist.append((name, arch))
 
