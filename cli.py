@@ -340,6 +340,26 @@ class YumBaseCli(yum.YumBase):
         # callback init
         # run ts
         # report errors
+        downloadpkgs = []
+        for (pkg, mode) in self.tsInfo.dump():
+            if mode in ['i', 'u']:
+                po = self.getPackageObject(pkg)
+                if po:
+                    downloadpkgs.append(po)
+        try:
+            self.downloadPkgs(downloadpkgs)
+        except yum.Errors.YumBaseError, e:
+            self.errorlog(0, 'Error Downloading Packages')
+            raise
+        
+        problems = self.gpgCheckPkgs(downloadpkgs)
+        
+        if len(problems) > 0:
+            errstring = ''
+            for problem in problems:
+                errstring += problem
+            
+            raise yum.Errors.YumBaseError, errstring
         
         #downloading
          # build up list of things needed to download
