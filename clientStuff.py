@@ -118,6 +118,8 @@ def HeaderInfoNevralLoad(filename, nevral, serverid):
                     nevral.add((name, epoch, ver, rel, arch, rpmpath, serverid), 'a')
 
 
+def checkexcludes(name):
+    
 def openrpmdb(option=0, dbpath=None):
     dbpath = "/var/lib/rpm/"
     rpm.addMacro("_dbpath", dbpath)

@@ -1,3 +1,36 @@
+2002-12-05 14:46  skvidal
+
+	* clientStuff.py: fix to use in_file.readlines() instead of dumb
+	line by line in HeaderInfoNevralLoad
+	
+	Thanks to Bor for that patch
+
+2002-12-05 14:43  skvidal
+
+	* pkgaction.py: added stuff into the kernel updating so if it can't
+	find either bootloader it exits nicely and notifies the user on the
+	console and in the yum.log stopgap to deal with ydl and other
+	non-x86 systems
+
+2002-12-05 13:00  skvidal
+
+	* bin/: yum, yum-arch: 
+	fix append vs insert to avoid namespace collision
+
+2002-10-22 18:12  skvidal
+
+	* archwork.py, callback.py, clientStuff.py, depchecktree.py,
+	nevral.py, pkgaction.py, pullheaders.py, serverStuff.py,
+	up2datetheft.py: 
+	fix rpm404 import in clientStuff and everywhere to deal with
+	exception handling on 7.x machines. This is ugly but theoretically
+	it is temporary.
+
+2002-10-20 21:58  skvidal
+
+	* ChangeLog: 
+	Changelog updates
+
 2002-10-20 21:46  skvidal
 
 	* configure.in, yum.spec: 
