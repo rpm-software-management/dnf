@@ -872,19 +872,11 @@ For more information contact your distribution or package provider.
                 continue # it was something on disk and it ended in rpm 
                          # no matter what we don't go looking at repos
 
-            if arg[0] == '/':
-                try:
-                    mypkg = self.returnPackageByDep(arg)
-                except yum.Errors.YumBaseError, e:
-                    pass
-                else:
-                    arg = '%s:%s-%s-%s.%s' % (mypkg.epoch, mypkg.name, mypkg.version,
-                                              mypkg.release, mypkg.arch)
-
             arglist = [arg]
             exactmatch, matched, unmatched = parsePackages(avail, arglist)
             if len(unmatched) > 0: # if we get back anything in unmatched, check it for a virtual-provide
                 arg = unmatched[0] #only one in there
+                self.log(3, 'Checking for virtual provide or file-provide for %s' % arg)
                 try:
                     mypkg = self.returnPackageByDep(arg)
                 except yum.Errors.YumBaseError, e:
