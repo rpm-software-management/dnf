@@ -259,11 +259,16 @@ class Repository:
         self.mirrorlistparsed = 0
         self.baseurls = [] # baseurls from the config file
         self.yumvar = {} # empty dict of yumvariables for $string replacement
+        self.proxy_password = None
+        self.proxy_username = None
+        self.proxy = None
+        self.proxy_dict = {}
         
         # throw in some stubs for things that will be set by the config class
         self.cachedir = ""
         self.pkgdir = ""
         self.hdrdir = ""
+
         # holder for stuff we've grabbed
         self.retrieved = { 'primary':0, 'filelists':0, 'other':0, 'groups':0 }
 
@@ -356,22 +361,44 @@ class Repository:
    
     def listSetKeys(self):
         return self.setkeys
+    
+    def doProxyDict(self):
+        if self.proxy_dict:
+            return
+        
+        self.proxy_dict = {} # zap it
+        if self.proxy is not None:
+            proxy_string = '%s' % self.proxy
+            if self.proxy_username is not None:
+                proxy_string = '%s@%s' % (self.proxy_username, self.proxy)
+                if self.proxy_password is not None:
+                    proxy_string = '%s:%s@%s' % (self.proxy_username,
+                                                 self.proxy_password, self.proxy)
+            self.proxy_dict['http'] = proxy_string
+            self.proxy_dict['https'] = proxy_string
+            self.proxy_dict['ftp'] = proxy_string
         
     def setupGrab(self):
         """sets up the grabber functions with the already stocked in urls for
            the mirror groups"""
 
-        # FIXME this should do things with our proxy info too
         if self.failovermethod == 'roundrobin':
             mgclass = urlgrabber.mirror.MGRandomOrder
         else:
             mgclass = urlgrabber.mirror.MirrorGroup
-            
+        
+        
+        self.doProxyDict()
+        prxy = None
+        if self.proxy_dict:
+            pryx = self.proxy_dict
+        
         self.grabfunc = URLGrabber(keepalive=self.keepalive, 
                                    bandwidth=self.bandwidth,
                                    retry=self.retries,
                                    throttle=self.throttle,
                                    progress_obj=self.callback,
+                                   proxies = prxy,
                                    failure_callback=self.failure_obj,
                                    timeout=self.timeout)
                                    #reget='simple')
@@ -448,6 +475,11 @@ class Repository:
                     "Caching enabled but no local cache of %s from %s" % (local,
                            self)
 
+        self.doProxyDict()
+        prxy = None
+        if self.proxy_dict:
+            pryx = self.proxy_dict
+
         if url is not None:
             ug = URLGrabber(keepalive = self.keepalive, 
                             bandwidth = self.bandwidth,
@@ -455,6 +487,7 @@ class Repository:
                             throttle = self.throttle,
                             progres_obj = self.callback,
                             copy_local = copy_local,
+                            proxies = prxy,
                             failure_callback = self.failure_obj,
                             timeout = self.timeout,
                             checkfunc = checkfunc)
@@ -467,6 +500,7 @@ class Repository:
                                     range = (start, end), 
                                     retry = self.retries,
                                     copy_local = copy_local,
+                                    proxies = prxy,
                                     failure_callback = self.failure_obj,
                                     timeout = self.timeout,
                                     checkfunc = checkfunc)
