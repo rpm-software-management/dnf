@@ -308,7 +308,7 @@ def genhdrs(rpms,headerdir,cmds):
                 sys.stdout.flush()
         if cmds['rpmcheck']:
             log(2,_("\nChecking sig on %s") % rpmname)
-            if rpmUtils.checkSig(rpmfn) > 0:
+            if rpmUtils.oldUtils.checkSig(rpmfn) > 0:
                 log(0, _("\n\nProblem with gpg sig or md5sum on %s\n\n") % rpmfn)
                 sys.exit(1)
         hobj = rpmUtils.oldUtils.RPM_Work(rpmfn)
