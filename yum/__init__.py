@@ -1097,6 +1097,14 @@ class YumBase(depsolve.Depsolve):
         
         return result
 
+    def getInstalledPackageObject(self, pkgtup):
+        """returns a YumInstallPackage object for the pkgtup specified"""
+        
+        hdrs = self.rpmdb.returnHeaderByTuple(pkgtup)
+        hdr = hdrs[0]
+        po = YumInstalledPackage(hdr)
+        return po
+        
     def gpgKeyCheck(self):
         """checks for the presence of gpg keys in the rpmdb
            returns 0 if no keys returns 1 if keys"""

@@ -351,11 +351,12 @@ class Depsolve:
         """processes the dependency resolution for a dep where the requiring 
            package is installed"""
         (name, arch, epoch, ver, rel) = requiringPkg
+        requiringPo = self.getInstalledPackageObject(requiringPkg)
+        
         (needname, needflags, needversion) = requirement
         niceformatneed = rpmUtils.miscutils.formatRequire(needname, needversion, needflags)
         checkdeps = 0
         missingdep = 0
-        reqpkg_print = '%s.%s %s:%s-%s' % requiringPkg
         
         # we must first find out why the requirement is no longer there
         # we must find out what provides/provided it from the rpmdb (if anything)
@@ -407,9 +408,8 @@ class Depsolve:
         
         if needmode in ['e']:
                 self.log(5, 'TSINFO: %s package requiring %s marked as erase' %
-                                (reqpkg_print, needname))
-                pkg = packages.YumInstalledPackage(self.rpmdb.returnHeaderByTuple(requiringPkg)[0])
-                txmbr = self.tsInfo.addErase(pkg)
+                                (requiringPo, needname))
+                txmbr = self.tsInfo.addErase(requiringPo)
                 txmbr.setAsDep(pkgtup = needpkgtup)
                 checkdeps = 1
         
@@ -418,8 +418,9 @@ class Depsolve:
             obslist = []
             # check obsoletes first
             if self.conf.obsoletes:
-                obslist = self.up.getObsoletedList(name=name)
-                self.log(4, 'Looking for Obsoletes for %s' % name)
+                if self.up.obsoleted_dict.has_key(requiringPo.pkgtup):
+                    obslist = self.up.obsoleted_dict[requiringPo.pkgtup]
+                    self.log(4, 'Looking for Obsoletes for %s' % requiringPo)
                 
             if len(obslist) > 0:
                 po = None
@@ -428,11 +429,10 @@ class Depsolve:
                 if po:
                     for (new, old) in self.up.getObsoletesTuples():
                         if po.pkgtup == new:
-                            obsoleted_pkg = packages.YumInstalledPackage(self.rpmdb.returnHeaderByTuple(old)[0])
-                            txmbr = self.tsInfo.addObsoleting(po, obsoleted_pkg)
-                            self.tsInfo.addObsoleted(obsoleted_pkg, po)
+                            txmbr = self.tsInfo.addObsoleting(po, requiringPo)
+                            self.tsInfo.addObsoleted(requiringPo, po)
                             txmbr.setAsDep(pkgtup = needpkgtup)
-                            self.log(5, 'TSINFO: Obsoleting %s with %s to resolve dep.' % (obsoleted_pkg, po))
+                            self.log(5, 'TSINFO: Obsoleting %s with %s to resolve dep.' % (requiringPo, po))
                             checkdeps = 1
                             return checkdeps, missingdep 
                 
@@ -460,8 +460,7 @@ class Depsolve:
             if po:
                 for (new, old) in self.up.getUpdatesTuples():
                     if po.pkgtup == new:
-                        updated_pkg = packages.YumInstalledPackage(self.rpmdb.returnHeaderByTuple(old)[0])
-                        txmbr = self.tsInfo.addUpdate(po, updated_pkg)
+                        txmbr = self.tsInfo.addUpdate(po, requiringPo)
                         txmbr.setAsDep(pkgtup = needpkgtup)
                         self.log(5, 'TSINFO: Updating %s to resolve dep.' % po)
                 checkdeps = 1
