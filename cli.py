@@ -826,7 +826,7 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
                 
             # reduce recent to the top N
             if description == 'Recently available':
-                num = int(self.conf.getConfigOption('numrecent'))
+                num = self.conf.getConfigOption('recent')
                 lst = lst[:num]
 
             returndict[description] = lst
