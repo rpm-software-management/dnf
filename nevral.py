@@ -181,9 +181,12 @@ class nevral:
             return None
         if l == 'in_rpm_db':
             return l
-        rpmfn = os.path.basename(l)
-        base = conf.serverpkgdir[i]
-        return base + '/' + rpmfn
+        if self.localrpmpath.has_key((name, arch)):
+            return self.localrpmpath[(name, arch)]
+        else:
+            rpmfn = os.path.basename(l)
+            base = conf.serverpkgdir[i]
+            return base + '/' + rpmfn
                 
     def setlocalrpmpath(self, name, arch, path):
         ((e,v,r,a,l,i),state) = self._get_data(name, arch)
