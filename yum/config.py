@@ -390,6 +390,8 @@ def getMirrorList(mirrorlist):
     if fo is not None: 
         content = fo.readlines()
         for line in content:
+            if re.match('^\s*\#.*', line) or re.match('^\s*$', line):
+                continue
             mirror = re.sub('\n$', '', line) # no more trailing \n's
             (mirror, count) = re.subn('\$ARCH', '$BASEARCH', mirror)
             returnlist.append(mirror)
