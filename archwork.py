@@ -51,7 +51,6 @@ def betterarch(arch1, arch2):
     del score2
 
 def bestarch(archlist):
-
     currentarch = 'garbage'
     for arch in archlist:
         if currentarch == None:
@@ -59,7 +58,7 @@ def bestarch(archlist):
         else:
             currentarch = betterarch(currentarch, arch)
     return currentarch
-    
+
 
 def availablearchs(hinevral, name):
     archdict = {}

@@ -178,7 +178,6 @@ def upgradepkgs(tsnevral,hinevral,rpmnevral,nulist,uplist,obslist,obsdict,userli
             completeuplist.append((name,arch))
             log(4,"Obsolete: %s by %s" % (obsdict[(name,arch)], name))
             
-    import fnmatch, archwork, types
     if len(completeuplist) > 0 :
         for (name,arch) in completeuplist:
             ((e, v, r, a, l, i), s)=hinevral._get_data(name,arch)
