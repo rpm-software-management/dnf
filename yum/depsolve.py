@@ -97,12 +97,11 @@ class Depsolve:
                 
                 ts_elem.append((pkginfo, mode))
         
-        for (pkginfo, mode) in self.tsInfo.dump():
-            (n, a, e, v, r) = pkginfo
-            if mode in ['u', 'i']:
-                if (pkginfo, 'i') in ts_elem:
+        for txmbr in self.tsInfo.getMembers():
+            if txmbr.ts_state in ['u', 'i']:
+                if (txmbr.pkgtup, 'i') in ts_elem:
                     continue
-                po = self.getPackageObject(pkginfo)
+                po = self.getPackageObject(txmbr.pkgtup)
                 self.downloadHeader(po)
                 hdr = po.returnLocalHeader()
                 rpmfile = po.localPkg()
@@ -110,28 +109,28 @@ class Depsolve:
                     provides = po.getProvidesNames()
                 else:
                     provides = []
-                if mode == 'u':
-                    if n in self.conf.getConfigOption('installonlypkgs') or 'kernel-modules' in provides:
-                        self.tsInfo.changeMode(pkginfo, 'i')
+                if txmbr.ts_state == 'u':
+                    if txmbr.name in self.conf.getConfigOption('installonlypkgs') or 'kernel-modules' in provides:
+                        txmbr.ts_state = 'i'
                         self.ts.addInstall(hdr, (hdr, rpmfile), 'i')
-                        if self.dsCallback: self.dsCallback.pkgAdded(pkginfo, 'i')
+                        if self.dsCallback: self.dsCallback.pkgAdded(txmbr.pkgtup, 'i')
                         self.log(4, 'Adding Package %s in mode i' % po)
                     else:
                         self.ts.addInstall(hdr, (hdr, rpmfile), 'u')
                         self.log(4, 'Adding Package %s in mode u' % po)
-                        if self.dsCallback: self.dsCallback.pkgAdded(pkginfo, 'u')
-                if mode == 'i':
+                        if self.dsCallback: self.dsCallback.pkgAdded(txmbr.pkgtup, 'u')
+                if txmbr.ts_state == 'i':
                     self.ts.addInstall(hdr, (hdr, rpmfile), 'i')
                     self.log(4, 'Adding Package %s in mode i' % po)
-                    if self.dsCallback: self.dsCallback.pkgAdded(pkginfo, 'i')
-            elif mode in ['e']:
-                if (pkginfo, mode) in ts_elem:
+                    if self.dsCallback: self.dsCallback.pkgAdded(txmbr.pkgtup, 'i')
+            elif txmbr.ts_state in ['e']:
+                if (txmbr.pkgtup, txmbr.ts_state) in ts_elem:
                     continue
-                indexes = self.rpmdb.returnIndexByTuple(pkginfo)
+                indexes = self.rpmdb.returnIndexByTuple(txmbr.pkgtup)
                 for idx in indexes:
                     self.ts.addErase(idx)
-                    if self.dsCallback: self.dsCallback.pkgAdded(pkginfo, 'e')
-                    self.log(4, 'Removing Package %s-%s-%s.%s' % (n, v, r, a))
+                    if self.dsCallback: self.dsCallback.pkgAdded(txmbr.pkgtup, 'e')
+                    self.log(4, 'Removing Package %s-%s-%s.%s' % (txmbr.name, txmbr.ver, txmbr.rel, txmbr.arch))
         
     def resolveDeps(self):
 
@@ -216,7 +215,7 @@ class Depsolve:
 
         if len(errors) > 0:
             return (1, errors)
-        if self.tsInfo.count() > 0:
+        if len(self.tsInfo) > 0:
             return (2, ['Run Callback'])
 
     def _processReq(self, dep):
@@ -244,15 +243,15 @@ class Depsolve:
             hdrs = self.rpmdb.returnHeaderByTuple(pkgtuple)
             for hdr in hdrs:
                 po = packages.YumInstalledPackage(hdr)
-                if self.tsInfo.getMode(name=po.name, arch=po.arch, epoch=po.epoch, ver=po.version, rel=po.release):
+                if self.tsInfo.exists(po.pkgtup()):
                     self.log(7, 'Skipping package already in Transaction Set: %s' % po)
                     continue
                 if niceformatneed in po.requiresList():
                     pkgs.append(po)
 
         if len(pkgs) < 1: # requiring tuple is not in the rpmdb
-            tsState = self.tsInfo.getMode(name=name, ver=version, rel=release)
-            if tsState is None:
+            txmbrs = self.tsInfo.matchNaevr(name=name, ver=version, rel=release)
+            if len(txmbrs) < 1:
                 msg = 'Requiring package %s-%s-%s not in transaction set \
                                   nor in rpmdb' % (name, version, release)
                 self.log(4, msg)
@@ -261,13 +260,14 @@ class Depsolve:
                 CheckDeps = 0
 
             else:
+                txmbr = txmbrs[0]
                 self.log(4, 'Requiring package is from transaction set')
                 self.log(4, 'Resolving for requiring package: %s-%s-%s in state %s' %
-                            (name, version, release, tsState))
+                            (name, version, release, txmbr.ts_state))
                 self.log(4, 'Resolving for requirement: %s' % 
                     rpmUtils.miscutils.formatRequire(needname, needversion, flags))
                 requirementTuple = (needname, flags, needversion)
-                requiringPkg = (name, version, release, tsState) # should we figure out which is pkg it is from the tsInfo?
+                requiringPkg = (name, version, release, txmbr.ts_state) # should we figure out which is pkg it is from the tsInfo?
                 CheckDeps, missingdep = self._requiringFromTransaction(requiringPkg, requirementTuple, errormsgs)
             
         if len(pkgs) > 0:  # requring tuple is in the rpmdb
@@ -311,7 +311,7 @@ class Depsolve:
         rpmdbNames = self.rpmdb.getNamePkgList()
         needmode = None # mode in the transaction of the needed pkg (if any)
         if needname in rpmdbNames:
-            needmode = self.tsInfo.getMode(name=needname) 
+            needmode = self.tsInfo.getMode(name=needname)
         else:
             self.log(5, 'Needed Require is not a package name. Looking up: %s' % niceformatneed)
             providers = self.rpmdb.whatProvides(needname, needflags, needversion)
@@ -340,7 +340,9 @@ class Depsolve:
         if needmode in ['e']:
                 self.log(5, 'TSINFO: %s package requiring %s marked as erase' %
                                 (reqpkg_print, needname))
-                self.tsInfo.add(requiringPkg, 'e', 'dep')
+                pkg = packages.YumInstalledPackage(self.rpmdb.returnHeaderByTuple(requiringPkg)[0])
+                txmbr = self.tsInfo.addErase(pkg)
+                txmbr.setAsDep() # I should figure out what it's depending on - grrr
                 checkdeps = 1
         
         if needmode in ['i', 'u']:
@@ -364,8 +366,12 @@ class Depsolve:
                     po = None
 
             if po:
-                self.log(5, 'TSINFO: Updating %s to resolve dep.' % po)
-                self.tsInfo.add(po.pkgtup(), 'u', 'dep')
+                for (new, old) in self.up.getUpdatesTuples():
+                    if po.pkgtup() == new:
+                        updated_pkg = packages.YumInstalledPackage(self.rpmdb.returnHeaderByTuple(old)[0])
+                        txmbr = self.tsInfo.addUpdate(po, updated_pkg)
+                        txmbr.setAsDep()
+                        self.log(5, 'TSINFO: Updating %s to resolve dep.' % po)
                 checkdeps = 1
                 
             else: # if there's no update then pass this over to requringFromTransaction()
@@ -465,12 +471,16 @@ class Depsolve:
             msg = 'Missing Dependency: %s is needed by package %s' % (needname, name)
             errorlist.append(msg)
             return checkdeps, missingdep
+            
         if (best.name, best.arch) in self.rpmdb.getNameArchPkgList():
-            self.tsInfo.add(best.pkgtup(), 'u', 'dep')
-            self.log(3, 'TSINFO: Marking %s as update for %s' % (best, name))
+            self.log(3, 'TSINFO: Marking %s as update for %s' % (best, name))        
+            txmbr = self.tsInfo.addUpdate(best)
+            txmbr.setAsDep()
         else:
-            self.tsInfo.add(best.pkgtup(), 'i', 'dep')
-            self.log(3, 'TSINFO: Marking %s as install for %s' % (best, name))
+            self.log(3, 'TSINFO: Marking %s as install for %s' % (best, name))        
+            txmbr = self.tsInfo.addInstall(best)
+            txmbr.setAsDep()
+
         checkdeps = 1
         
         return checkdeps, missingdep
@@ -527,7 +537,8 @@ class Depsolve:
 
         if po:
             self.log(5, 'TSINFO: Updating %s to resolve conflict.' % po)
-            self.tsInfo.add(po.pkgtup(), 'u', 'dep')
+            txmbr = self.tsInfo.addUpdate(po)
+            txmbr.setAsDep()
             CheckDeps = 1
             
         else:

@@ -37,13 +37,28 @@ class TransactionData:
            matching, no pkgtup means it returns all transaction members"""
         
         if pkgtup is None:
-            return self.pkgdict.values()
+            returnlist = []
+            for key in self.pkgdict.keys():
+                returnlist.extend(self.pkgdict[key])
+                
+            return returnlist
 
         if self.pkgdict.has_key(pkgtup):
             return self.pkgdict[pkgtup]
         else:
             return []
+            
+    def getMode(self, name=None, arch=None, epoch=None, ver=None, rel=None):
+        """returns the mode of the first match from the transaction set, 
+           otherwise, returns None"""
 
+        txmbrs = self.matchNaevr(name=name, arch=arch, epoch=epoch, ver=ver, rel=rel)
+        if len(txmbrs):
+            return txmbrs[0].ts_state
+        else:
+            return None
+
+    
     def matchNaevr(self, name=None, arch=None, epoch=None, ver=None, rel=None):
         """returns the list of packages matching the args above"""
         completelist = self.pkgdict.keys()
@@ -88,7 +103,7 @@ class TransactionData:
         if not self.pkgdict.has_key(txmember.pkgtup):
             self.pkgdict[txmember.pkgtup] = []
         else:
-            self.debugprint("Package: %s already in ts" % txmember.pkgtup)
+            self.debugprint("Package: %s.%s - %s:%s-%s already in ts" % txmember.pkgtup)
         self.pkgdict[txmember.pkgtup].append(txmember)
 
     def remove(self, pkgtup):
@@ -101,6 +116,57 @@ class TransactionData:
                 return 1
         
         return 0
+
+    def makelists(self):
+        """returns lists of transaction Member objects based on mode:
+           updated, installed, erased, obsoleted, depupdated, depinstalled
+           deperased"""
+           
+        removed = []
+        installed = []
+        updated = []
+        obsoleted = []
+        depremoved = []
+        depinstalled = []
+        depupdated = []
+        
+        for txmbr in self.getMembers():
+            if txmbr.output_state == 'updating':
+                if txmbr.isDep:
+                    depupdated.append(txmbr)
+                else:
+                    updated.append(txmbr)
+                    
+            elif txmbr.output_state == 'installing':
+                if txmbr.isDep:
+                    depinstalled.append(txmbr)
+                else:
+                    installed.append(txmbr)
+            
+            elif txmbr.output_state == 'erasing':
+                if txmbr.isDep:
+                    depremoved.append(txmbr)
+                else:
+                    removed.append(txmbr)
+                    
+            elif txmbr.output_state == 'obsoleted':
+                obsoleted.append(txmbr)
+                
+            elif txmbr.output_state == 'obsoleting':
+                installed.append(txmbr)
+                
+            else:
+                pass
+    
+            updated.sort()
+            installed.sort()
+            removed.sort()
+            obsoleted.sort()
+            depupdated.sort()
+            depinstalled.sort()
+            depremoved.sort()
+
+        return updated, installed, removed, obsoleted, depupdated, depinstalled, depremoved
     
     def addInstall(self, po):
         """adds a package as an install but in mode 'u' to the ts
@@ -109,35 +175,33 @@ class TransactionData:
         txmbr = TransactionMember()
         txmbr.pkgtup = po.pkgtup()
         txmbr.current_state = 'repo'
-        txmbr.output_state = 'i'
+        txmbr.output_state = 'installing'
         txmbr.ts_state = 'u'
         txmbr.reason = 'user'
         txmbr.name = po.name
         txmbr.arch = po.arch
         txmbr.epoch = po.epoch
-        txmbr.ver = po.ver
-        txmbr.rel = po.rel
-        txmbr.pkgid = po.pkgid
+        txmbr.ver = po.version
+        txmbr.rel = po.release
         txmbr.repoid = po.repoid
         self.add(txmbr)
         return txmbr
 
-    def addTrueInstall(self, po)
+    def addTrueInstall(self, po):
         """adds a package as an install
            takes a packages object and returns a TransactionMember Object"""
     
         txmbr = TransactionMember()
         txmbr.pkgtup = po.pkgtup()
         txmbr.current_state = 'repo'
-        txmbr.output_state = 'i'
+        txmbr.output_state = 'installing'
         txmbr.ts_state = 'i'
         txmbr.reason = 'user'
         txmbr.name = po.name
         txmbr.arch = po.arch
         txmbr.epoch = po.epoch
-        txmbr.ver = po.ver
-        txmbr.rel = po.rel
-        txmbr.pkgid = po.pkgid
+        txmbr.ver = po.version
+        txmbr.rel = po.release
         txmbr.repoid = po.repoid
         self.add(txmbr)
         return txmbr
@@ -150,58 +214,74 @@ class TransactionData:
         txmbr = TransactionMember()
         txmbr.pkgtup = po.pkgtup()
         txmbr.current_state = 'installed'
-        txmbr.output_state = 'e'
+        txmbr.output_state = 'erasing'
         txmbr.ts_state = 'e'
         txmbr.name = po.name
         txmbr.arch = po.arch
         txmbr.epoch = po.epoch
-        txmbr.ver = po.ver
-        txmbr.rel = po.rel
-        txmbr.pkgid = po.pkgid
+        txmbr.ver = po.version
+        txmbr.rel = po.release
         txmbr.repoid = po.repoid
         self.add(txmbr)
         return txmbr
 
-    def addUpdate(self, po, oldpo):
+    def addUpdate(self, po, oldpo=None):
         """adds a package as an update
            takes a packages object and returns a TransactionMember Object"""
     
         txmbr = TransactionMember()
         txmbr.pkgtup = po.pkgtup()
         txmbr.current_state = 'repo'
-        txmbr.output_state = 'u'
-        txmbr.ts_state = 'i'
+        txmbr.output_state = 'updating'
+        txmbr.ts_state = 'u'
         txmbr.name = po.name
         txmbr.arch = po.arch
         txmbr.epoch = po.epoch
-        txmbr.ver = po.ver
-        txmbr.rel = po.rel
-        txmbr.pkgid = po.pkgid
+        txmbr.ver = po.version
+        txmbr.rel = po.release
         txmbr.repoid = po.repoid
-        txmbr.relatedto.append((oldpo.pkgtup(), 'updates'))
+        if oldpo:
+            txmbr.relatedto.append((oldpo.pkgtup(), 'updates'))
         self.add(txmbr)
         return txmbr
 
-    def addObsolete(self, po, oldpo):
-        """adds a package as an obsolete
+    def addObsoleting(self, po, oldpo):
+        """adds a package as an obsolete over another pkg
            takes a packages object and returns a TransactionMember Object"""
     
         txmbr = TransactionMember()
         txmbr.pkgtup = po.pkgtup()
         txmbr.current_state = 'repo'
-        txmbr.output_state = 'o'
+        txmbr.output_state = 'obsoleting'
         txmbr.ts_state = 'u'
         txmbr.name = po.name
         txmbr.arch = po.arch
         txmbr.epoch = po.epoch
-        txmbr.ver = po.ver
-        txmbr.rel = po.rel
-        txmbr.pkgid = po.pkgid
+        txmbr.ver = po.version
+        txmbr.rel = po.release
         txmbr.repoid = po.repoid
         txmbr.relatedto.append((oldpo.pkgtup(), 'obsoletes'))
         self.add(txmbr)
         return txmbr
 
+    def addObsoleted(self, po, obsoleting_po):
+        """adds a package as being obsoleted by another pkg
+           takes a packages object and returns a TransactionMember Object"""
+    
+        txmbr = TransactionMember()
+        txmbr.pkgtup = po.pkgtup()
+        txmbr.current_state = 'installed'
+        txmbr.output_state = 'obsoleted'
+        txmbr.ts_state = None
+        txmbr.name = po.name
+        txmbr.arch = po.arch
+        txmbr.epoch = po.epoch
+        txmbr.ver = po.version
+        txmbr.rel = po.release
+        txmbr.repoid = po.repoid
+        txmbr.relatedto.append((obsoleting_po.pkgtup(), 'obsoletedby'))
+        self.add(txmbr)
+        return txmbr
 
 
 class TransactionMember:
@@ -215,7 +295,7 @@ class TransactionMember:
         self.ts_state = None # what state to put it into in the transaction set
         self.output_state = None # what state to list if printing it
         self.isDep = 0
-        self.reason = None # reason for it to be in the transaction set
+        self.reason = 'user' # reason for it to be in the transaction set
         self.repoid = None # repository id (if any)
         self.name = None
         self.arch = None
@@ -228,12 +308,13 @@ class TransactionMember:
         self.pkgid = None # pkgid from the package, if it has one, so we can find it
         self.repoid = None
     
-    def setAsDep(self, pkgtup):
+    def setAsDep(self, pkgtup=None):
         """sets the transaction member as a dependency and maps the dep into the
            relationship list attribute"""
         
         self.isDep = 1
-        self.relatedto.append((pkgtup, 'dependson'))
+        if pkgtup:
+            self.relatedto.append((pkgtup, 'dependson'))
 
 
     # This is the tricky part - how do we nicely setup all this data w/o going insane

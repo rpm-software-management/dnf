@@ -975,6 +975,7 @@ class YumBase(depsolve.Depsolve):
             # is the best one to pull from
         
         return result
+
     def gpgKeyCheck(self):
         """checks for the presence of gpg keys in the rpmdb
            returns 0 if no keys returns 1 if keys"""

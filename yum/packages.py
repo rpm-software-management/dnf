@@ -181,6 +181,7 @@ class YumInstalledPackage:
         self.repoid = 'installed'
         self.summary = self.tagByName('summary')
         self.description = self.tagByName('description')
+        self.pkgid = self.tagByName(rpm.RPMTAG_SHA1HEADER)
     
     def __str__(self):
         if self.epoch == '0':

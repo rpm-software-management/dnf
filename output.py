@@ -327,29 +327,33 @@ class YumOutput:
         depout = ''
         otherout = ''
         
-        updated, installed, removed, obsoleted, depup, depinst, deprem = self.tsInfo.makelists()        
+        updated, installed, removed, obsoleted, depup, depinst, deprem = self.tsInfo.makelists()
 
         for (action, pkglist) in [('Remove', removed), ('Install', installed), 
                                   ('Update', updated)]:
 
-            for pkgtup in pkglist:
-                (n,a,e,v,r) = pkgtup
+            for txmbr in pkglist:
+                (n,a,e,v,r) = txmbr.pkgtup
                 msg = "  %s: %s.%s %s:%s-%s\n" % (action, n,a,e,v,r)
                 userout = userout + msg
                    
         for (action, pkglist) in [('Remove', deprem), ('Install', depinst), 
                                   ('Update', depup)]:
 
-            for pkgtup in pkglist:
-                (n,a,e,v,r) = pkgtup
+            for txmbr in pkglist:
+                (n,a,e,v,r) = txmbr.pkgtup
                 msg = "  %s: %s.%s %s:%s-%s\n" % (action, n,a,e,v,r)
                 depout = depout + msg
                    
 
-        for pkgtup in obsoleted:
-            (n,a,e,v,r) = pkgtup
-            obspkg = self.tsInfo.reason[pkgtup]
-            otherout = otherout + "  Obsoleting: %s.%s %s:%s-%s with %s\n" % (n, a, e, v, r, obspkg)
+        for txmbr in obsoleted:
+            (n,a,e,v,r) = txmbr.pkgtup
+            obspkg = None
+            for (pkg, relationship) in txmbr.relatedto:
+                if relationship == 'osboletedby':
+                    obspkg = '%s.%s %s:%s-%s' % pkg
+            if obspkg is not None:
+                otherout = otherout + "  Obsoleting: %s.%s %s:%s-%s with %s\n" % (n, a, e, v, r, obspkg)
 
         out = "Transaction Listing:\n%s" % userout 
         if depout != '':
@@ -371,8 +375,8 @@ class YumOutput:
             
             if len(pkglist) > 0:
                 out += '\n%s:' % action
-                for pkgtup in pkglist:
-                    (n,a,e,v,r) = pkgtup
+                for txmbr in pkglist:
+                    (n,a,e,v,r) = txmbr.pkgtup
                     msg = " %s.%s %s:%s-%s" % (n,a,e,v,r)
                     out += msg
         

@@ -30,12 +30,13 @@ class RPMInstallCallback:
         self.installed_pkg_names = []
         self.total_removed = 0
         self.filelog = None
-        self.packagedict = {}
-        self.myprocess = { 'u': 'Updating', 'e': 'Erasing', 'i': 'Installing',
-                           'o': 'Obsoleted' }
-        self.mypostprocess = { 'u': 'Updated', 'e': 'Erased', 'i': 'Installed',
-                               'o': 'Obsoleted' }
-                           
+        
+        self.myprocess = { 'updating': 'Updating', 'erasing': 'Erasing', 
+                           'installing': 'Installing', 'obsoleted': 'Obsoleted' }
+        self.mypostprocess = { 'updating': 'Updated', 'erasing': 'Erased',
+                               'installing': 'Installed', 'obsoleted': 'Obsoleted' }
+        
+        self.tsInfo = None # this needs to be set for anything else to work
                            
     def _dopkgtup(self, hdr):
         tmpepoch = hdr['epoch']
@@ -99,9 +100,10 @@ class RPMInstallCallback:
                 
                 # log stuff
                 pkgtup = self._dopkgtup(hdr)
+                txmbr = self.tsInfo.getMembers(pkgtup=pkgtup)[0] # if we have more than one I'll eat my hat
                 try:
-                    process = self.myprocess[self.packagedict[pkgtup]]
-                    processed = self.mypostprocess[self.packagedict[pkgtup]]
+                    process = self.myprocess[txmbr.output_state]
+                    processed = self.mypostprocess[txmbr.output_state]
                 except KeyError, e:
                     pass
                     
@@ -119,11 +121,12 @@ class RPMInstallCallback:
                 else:
                     percent = (bytes*100L)/total
                 pkgtup = self._dopkgtup(hdr)
+                txmbr = self.tsInfo.getMembers(pkgtup=pkgtup)[0]
                 try:
-                    process = self.myprocess[self.packagedict[pkgtup]]
+                    process = self.myprocess[txmbr.output_state]
                 except KeyError, e:
-                    print "Error: invalid process key: %s for %s" % \
-                       (self.packagedict[pkgtup], hdr['name'])
+                    print "Error: invalid output state: %s for %s" % \
+                       (txmbr.output_state, hdr['name'])
 
                 if self.output and sys.stdout.isatty():
                     sys.stdout.write("\r%s: %s %d %% done %d/%d" % (process, 

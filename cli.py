@@ -604,7 +604,7 @@ For more information contact your distribution or package provider.
         downloadpkgs = []
         for txmbr in self.tsInfo.getMembers():
             if txmbr.ts_state in ['i', 'u']:
-                po = self.getPackageObject(pkg)
+                po = self.getPackageObject(txmbr.pkgtup)
                 if po:
                     downloadpkgs.append(po)
         self.log(2, 'Downloading Packages:')
@@ -635,6 +635,7 @@ For more information contact your distribution or package provider.
             tsConf[feature] = self.conf.getConfigOption(feature)
         
         testcb = callback.RPMInstallCallback(output=0)
+        testcb.tsInfo = self.tsInfo
         # clean out the ts b/c we have to give it new paths to the rpms 
         del self.ts
         
@@ -664,8 +665,7 @@ For more information contact your distribution or package provider.
             output = 0
         cb = callback.RPMInstallCallback(output=output)
         cb.filelog = self.filelog # needed for log file output
-            #FIXME FIXME FIXME
-        cb.packagedict = self.tsInfo.makedict() # to make log output not suck
+        cb.tsInfo = self.tsInfo
         
         # run ts
         self.log(2, 'Running Transaction')
@@ -724,12 +724,12 @@ For more information contact your distribution or package provider.
             # we look through each returned possibility and rule out the
             # ones that we obviously can't use
             for pkg in installable:
-                if pkg.pkgtup in installed:
+                if pkg.pkgtup() in installed:
                     self.log(6, 'Package %s is already installed, skipping' % pkg)
                     continue
                 
                 # everything installed that matches the name
-                installedByKey = self.rpmdb.returnTupleByKeyword(name=n)
+                installedByKey = self.rpmdb.returnTupleByKeyword(name=pkg.name)
                 comparable = []
                 for instTup in installedByKey:
                     (n2, a2, e2, v2, r2) = instTup
@@ -743,13 +743,13 @@ For more information contact your distribution or package provider.
                 if len(comparable) > 0:
                     for instTup in comparable:
                         (n2, a2, e2, v2, r2) = instTup
-                        rc = compareEVR((e2, v2, r2), (pkg.epoch, pkg.ver, pkg.rel))
+                        rc = compareEVR((e2, v2, r2), (pkg.epoch, pkg.version, pkg.release))
                         if rc < 0: # we're newer - this is an update, pass to them
                             if exactarch:
                                 if pkg.arch == a2:
-                                    passToUpdate.append(pkg.pkgtup)
+                                    passToUpdate.append(pkg.pkgtup())
                             else:
-                                passToUpdate.append(pkg.pkgtup)
+                                passToUpdate.append(pkg.pkgtup())
                         elif rc == 0: # same, ignore
                             continue
                         elif rc > 0: # lesser, check if the pkgtup is an exactmatch
@@ -757,21 +757,22 @@ For more information contact your distribution or package provider.
                                         # the user explicitly wants this version
                                         # FIXME this is untrue if the exactmatch
                                         # does not include a version-rel section
-                            if pkg.pkgtup in exactmatch:
+                            if pkg.pkgtup() in exactmatch:
                                 if not toBeInstalled.has_key(pkg.name): toBeInstalled[pkg.name] = []
-                                toBeInstalled[pgk.name].append(pkg)
+                                toBeInstalled[pkg.name].append(pkg.pkgtup())
                 else: # we've not got any installed that match n or n+a
                     self.log(5, 'No other %s installed, adding to list for install' % pkg.name)
                     if not toBeInstalled.has_key(pkg.name): toBeInstalled[pkg.name] = []
-                    toBeInstalled[pkg.name].append(pkg)
+                    toBeInstalled[pkg.name].append(pkg.pkgtup())
         
         
         pkglist = returnBestPackages(toBeInstalled)
         if len(pkglist) > 0:
             self.log(3, 'reduced installs :')
-        for pkg in pkglist:
-            self.log(3,'   %s.%s %s:%s-%s' % pkg.pkgtup)
-            self.tsInfo.addInstall(pkg)
+        for pkgtup in pkglist:
+            self.log(3,'   %s.%s %s:%s-%s' % pkgtup)
+            po = self.getPackageObject(pkgtup)
+            self.tsInfo.addInstall(po)
 
         if len(passToUpdate) > 0:
             self.log(3, 'potential updates :')
@@ -809,23 +810,23 @@ For more information contact your distribution or package provider.
         else:
             obsoletes = []
 
-        # need to convert updates and obsoletes list back into package
-        # objects before we mark them in the tsInfo
-        # FIX ME FIX ME FIXME FIXME 
         if len(userlist) == 0: # simple case - do them all
-            for (obsoleting,installed) in obsoletes:
-                (o_n, o_a, o_e, o_v, o_r) = obsoleting
-                self.tsInfo.add(obsoleting, 'u', 'user')
-                reason = '%s.%s %s:%s-%s' % obsoleting
-                self.tsInfo.add(installed, 'o', reason)
-                
+            for (obsoleting, installed) in obsoletes:
+                obsoleting_pkg = self.getPackageObject(obsoleting)
+                installed_pkg =  YumInstalledPackage(self.rpmdb.returnHeaderByTuple(installed)[0])
+                self.tsInfo.addObsoleting(obsoleting_pkg, installed_pkg)
+                self.tsInfo.addObsoleted(installed_pkg, obsoleting_pkg)
+                                
             for (new, old) in updates:
-                (o_n, o_a, o_e, o_v, o_r) = old
-                oldstate = self.tsInfo.getMode(name=o_n, arch=o_a, epoch=o_e, ver=o_v, rel=o_r)
-                if oldstate != 'o':
-                    self.tsInfo.add(new, 'u', 'user')
-                else:
+                txmbrs = self.tsInfo.getMembers(pkgtup=old)
+
+                if txmbrs and txmbrs[0].output_state == 'obsoleted':
                     self.log(5, 'Not Updating Package that is already obsoleted: %s.%s %s:%s-%s' % old)
+                else:
+                    updating_pkg = self.getPackageObject(new)
+                    updated_pkg = YumInstalledPackage(self.rpmdb.returnHeaderByTuple(old)[0])
+                    self.tsInfo.addUpdate(updating_pkg, updated_pkg)
+
 
         else:
             # go through the userlist - look for items that are local rpms. If we find them
@@ -855,7 +856,10 @@ For more information contact your distribution or package provider.
 
             updateMatches = yum.misc.unique(matched + exactmatch)
             for po in updateMatches:
-                self.tsInfo.add(po.pkgtup(), 'u', 'user')
+                for (new, old) in updates:
+                    if po.pkgtup() == new:
+                        updated_pkg = YumInstalledPackage(self.rpmdb.returnHeaderByTuple(old)[0])
+                        self.tsInfo.addUpdate(po, updated_pkg)
 
 
         if len(self.tsInfo) > oldcount:
@@ -938,19 +942,20 @@ For more information contact your distribution or package provider.
                 continue
 
             for instTup in installedByKey:
+                installed_pkg = YumInstalledPackage(self.rpmdb.returnHeaderByTuple(instTup)[0])
                 (n, a, e, v, r) = po.pkgtup()
-                (n2, a2, e2, v2, r2) = instTup
+                (n2, a2, e2, v2, r2) = installed_pkg.pkgtup()
                 rc = compareEVR((e2, v2, r2), (e, v, r))
                 if rc < 0: # we're newer - this is an update, pass to them
                     if self.conf.exactarch:
                         if a == a2:
-                            updatepkgs.append(po)
+                            updatepkgs.append((po, installed_pkg))
                             continue
                         else:
                             donothingpkgs.append(po)
                             continue
                     else:
-                        updatepkgs.append(po)
+                        updatepkgs.append((po, installed_pkg))
                         continue
                 elif rc == 0: # same, ignore
                     donothingpkgs.append(po)
@@ -965,10 +970,9 @@ For more information contact your distribution or package provider.
             self.localPackages.append(po)
             self.tsInfo.addInstall(po)
         
-        for po in updatepkgs:
-            self.log(2, 'Marking %s as an update' % po.localpath)
+        for (po, oldpo) in updatepkgs:
+            self.log(2, 'Marking %s as an update to %s' % po.localpath, oldpo)
             self.localPackages.append(po)
-            # FIXME - needs the oldpo for listing as an 'update'
             self.tsInfo.addUpdate(po, oldpo)
         
         for po in donothingpkgs:
