@@ -90,6 +90,9 @@ class yumconf:
                          ('commands', []),
                          ('exclude', []),
                          ('yumversion', 'unversioned'),
+                         ('proxy', None),
+                         ('proxy_username', None),
+                         ('proxy_password', None),
                          ('installonlypkgs', ['kernel', 'kernel-bigmem', 
                                               'kernel-enterprise','kernel-smp',
                                               'kernel-debug', 'kernel-unsupported', 
@@ -104,6 +107,7 @@ class yumconf:
                        ('diskspacecheck', 1),
                        ('overwrite_groups', 0),
                        ('keepalive', 1),
+                       ('gpgcheck', 0),
                        ('obsoletes', 0)]
 
         # not being set from the config file
@@ -191,7 +195,7 @@ class yumconf:
         try:
             return self.configdata[option]
         except KeyError:
-            return None
+            return default
 
 
     def _getsysver(self):
@@ -277,14 +281,25 @@ def doRepoSection(globconfig, thisconfig, section):
         failmeth = thisconfig._getoption(section,'failovermethod')
         thisrepo.setFailover(failmeth)
         
-        thisrepo.set('gpgcheck', thisconfig._getboolean(section, 'gpgcheck', 0))
         thisrepo.set('enabled', thisconfig._getboolean(section, 'enabled', 1))
-
+        
+        # for a number of these if we do not have a setting assert the setting
+        # from [main]
+        thisrepo.set('gpgcheck', thisconfig._getboolean(section, \
+                     'gpgcheck', globconfig.getConfigOption('gpgcheck')))
+                     
         # get our proxy information if it is there
-        thisrepo.set('proxy', thisconfig._getoption(section, 'proxy', None))
-        thisrepo.set('proxy_username', thisconfig._getoption(section, 'proxy_username', None))
-        thisrepo.set('proxy_password', thisconfig._getoption(section, 'proxy_password', None))
-        thisrepo.set('keepalive', thisconfig._getboolean(section, 'keepalive', 1))                        
+        thisrepo.set('proxy', thisconfig._getoption(section, 'proxy', \
+                     globconfig.getConfigOption('proxy')))
+                     
+        thisrepo.set('proxy_username', thisconfig._getoption(section, \
+                     'proxy_username', globconfig.getConfigOption('proxy_username')))
+                     
+        thisrepo.set('proxy_password', thisconfig._getoption(section, \
+                     'proxy_password', globconfig.getConfigOption('proxy_password')))
+        
+        thisrepo.set('keepalive', thisconfig._getboolean(section, \
+                     'keepalive', globconfig.getConfigOption('keepalive')))
         
         excludelist = thisconfig._getoption(section, 'exclude', [])
         excludelist = variableReplace(globconfig.yumvar, excludelist)
