@@ -42,7 +42,10 @@ def simpleProgressBar(current, total, name=None):
     if current == 0:
         percent = 0 
     else:
-        percent = current*100/total
+        if total != 0:
+            percent = current*100/total
+        else:
+            percent = 0
 
     numblocks = int(percent/2)
     hashbar = mark * numblocks

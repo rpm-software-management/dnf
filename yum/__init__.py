@@ -213,6 +213,15 @@ class YumBase(depsolve.Depsolve):
         return errors
 
     def sigCheckPkgs(self, downloadpkgs):
+        """takes a list of package objects, checks their sig/checksums, returns
+           a list of failures"""
+        errorlist = []
+        # go through each package
+        # check to see if the repo is supposed to gpg check
+        # if so then gpg check each package
+        # if not then just check the md5/sha1 sum via rpm
+        # if error collect the dict[package]=error message
+        # return the list of errors
         return []
         
     

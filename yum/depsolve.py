@@ -166,9 +166,9 @@ class Depsolve:
                     if error not in errors:
                         errors.append(error)
 
-            print 'miss = %d' % missingdep #DEBUG
-            print 'conf = %d' % conflicts #DEBUG
-            print 'CheckDeps = %d' % CheckDeps #DEBUG
+            self.log(4, 'miss = %d' % missingdep)
+            self.log(4, 'conf = %d' % conflicts)
+            self.log(4, 'CheckDeps = %d' % CheckDeps)
 
                 
             if CheckDeps > 0:
