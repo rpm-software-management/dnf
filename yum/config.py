@@ -439,10 +439,14 @@ class confpp:
         else: 
             self._urlresolver = urllib
         
+        
         # first make configfile a url even if it points to 
         # a local file
         scheme = urlparse.urlparse(configfile)[0]
         if scheme == '':
+            # check it to make sure it's not a relative file url
+            if configfile[0] != '/':
+                configfile = os.getcwd() + '/' + configfile
             url = 'file://' + configfile
         else:
             url = configfile
