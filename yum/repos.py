@@ -27,9 +27,47 @@ from urlgrabber.grabber import URLGrabError
 from repomd import repoMDObject
 from repomd import mdErrors
 from repomd import packageSack
-from repomd import packageObject
 from packages import YumAvailablePackage
+import mdcache
 
+class YumPackageSack(repomd.packageSack.PackageSack):
+    """imports/handles package objects from an mdcache dict object"""
+    def __init__(self, packageClass):
+        repomd.packageSack.PackageSack.__init__(self)
+        self.pc = packageClass
+        self.added = {}
+        
+    def addDict(self, repoid, datatype, datadict, callback=None):
+        total = len(datadict.keys())
+        if datatype == 'primary':
+            for pkgid in datadict.keys():
+                pkgdict = datadict[pkgid]
+                po = self.pc()
+                po.importFromDict(pkgdict, repoid)
+                self._addToDictAsList(self.pkgsByID, pkgid, po)
+                self.addPackage(po)
+            
+            if not self.added.has_key(repoid):
+                self.added[repoid] = []
+            self.added[repoid].append('primary')
+            
+        elif datatype == 'filelists':
+            if self.added.has_key(repoid):
+                if 'primary' not in self.added[repoid]:
+                    raise Errors.RepoError, '%s md for %s imported before primary' \
+                           % (datatype, repoid)
+                           
+            for pkgid in datadict.keys():
+                pkgdict = datadict[pkgid]
+                if self.pkgsByID.has_key(pkgid):
+                    for po in self.pkgsByID[pkgid]:
+                        po.importFromDict(pkgdict, repoid)
+
+            self.added[repoid].append(datatype)
+        else:
+            # umm, wtf?
+            pass
+            
 class RepoStorage:
     """This class contains multiple repositories and core configuration data
        about them."""
@@ -37,7 +75,7 @@ class RepoStorage:
     def __init__(self):
         self.repos = {} # list of repos by repoid pointing a repo object 
                         # of repo options/misc data
-        self.pkgSack = packageSack.XMLPackageSack(YumAvailablePackage)
+        self.pkgSack = YumPackageSack(YumAvailablePackage)
         self.callback = None # progress callback used for populateSack() for importing the xml files
         self.cache = 0
         
@@ -141,18 +179,31 @@ class RepoStorage:
             data = [ with ]
         
         for repo in myrepos:
+            if not hasattr(repo, 'cacheHandler'):
+                repo.cacheHandler = mdcache.RepodataParser(storedir=repo.cachedir, callback=callback)
             for item in data:
                 if item == 'primary':
                     xml = repo.getPrimaryXML()
+                    (ctype, csum) = repo.repoXML.primaryChecksum()
+                    repo.cacheHandler.getPrimary(xml, csum)
+                    data = repo.cacheHandler.repodata['metadata']
+                    self.pkgSack.addDict(repo.id, item, data, callback) 
                 elif item == 'filelists':
                     xml = repo.getFileListsXML()
+                    (ctype, csum) = repo.repoXML.filelistsChecksum()
+                    repo.cacheHandler.getFileLists(xml, csum)
+                    data = repo.cacheHandler.repodata['filelists']
+                    self.pkgSack.addDict(repo.id, item, data, callback) 
                 elif item == 'other':
                     xml = repo.getOtherXML()
+                    (ctype, csum) = repo.repoXML.otherChecksum()
+                    repo.cacheHandler.getOtherdata(xml, csum)
+                    data = repo.cacheHandler.repodata['otherdata']
+                    self.pkgSack.addDict(repo.id, item, data, callback)
                 else:
                     # how odd, just move along
                     continue
-                self.pkgSack.addFile(repo.id, xml, callback)
-                    
+                
 
                 
         
@@ -182,7 +233,8 @@ class Repository:
         self.pkgdir = ""
         self.hdrdir = ""        
         # holder for stuff we've grabbed
-        self.retrieved = { 'primary':0, 'filelists':0, 'other':0, 'groups':0 }        
+        self.retrieved = { 'primary':0, 'filelists':0, 'other':0, 'groups':0 }
+
         
     def __cmp__(self, other):
         if self.id > other.id:
@@ -412,7 +464,9 @@ class Repository:
 
         
     def _retrieveMD(self, mdtype):
-        """base function to retrieve data from the remote url"""
+        """base function to retrieve metadata files from the remote url
+           returns the path to the local metadata file of a 'mdtype'
+           mdtype can be 'primary', 'filelists', 'other' or 'group'."""
         locDict = { 'primary' : self.repoXML.primaryLocation,
                     'filelists' : self.repoXML.filelistsLocation,
                     'other' : self.repoXML.otherLocation,

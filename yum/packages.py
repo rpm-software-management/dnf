@@ -264,11 +264,14 @@ class YumLocalPackage(YumInstalledPackage):
         self.summary = self.tagByName('summary')
         self.description = self.tagByName('description')
 
-class YumAvailablePackage(repomd.packageObject.RpmXMLPackageObject):
-    """derived class for the repomd packageobject we use
-    this for dealing with packages in a repository"""
+class YumAvailablePackage(repomd.packageObject.PackageObject, repomd.packageObject.RpmBase):
+    """derived class for the repomd packageobject and RpmBase packageobject yum
+       uses this for dealing with packages in a repository"""
 
-   
+    def __init__(self):
+        XMLPackageObject.__init__(self)
+        RpmBase.__init__(self)
+
     def size(self):
         return self.returnSimple('packagesize')
 
@@ -348,3 +351,11 @@ class YumAvailablePackage(repomd.packageObject.RpmXMLPackageObject):
         
         return base
 
+    def importFromDict(self, pkgdict, repoid):
+        """handles an mdCache package dictionary item to populate out 
+           the package information"""
+        
+        self.simple['repoid'] = repoid
+        # translates from the pkgdict, populating out the information for the
+        # packageObject
+        

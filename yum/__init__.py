@@ -82,8 +82,7 @@ class YumBase(depsolve.Depsolve):
            
         self.log(3, 'Setting up Package Sacks')
         if not archlist:
-            archlist = []
-            archlist.extend(rpmUtils.arch.getArchList())
+            archlist = rpmUtils.arch.getArchList()
 
         archdict = {}
         for arch in archlist:

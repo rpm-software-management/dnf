@@ -29,6 +29,13 @@ class PackageObject:
     def __init__(self):
         self.simple = {} # simple things, name, arch, e,v,r, size, etc
         self.checksums = [] # (type, checksum, id(0,1)
+        # quick defs for commonly used things
+        self.name = self.returnSimple('name')
+        self.epoch = self.returnSimple('epoch')
+        self.version = self.returnSimple('version')
+        self.release = self.returnSimple('release')
+        self.arch = self.returnSimple('arch')
+        self.repoid = self.returnSimple('repoid')
 
     def __str__(self):
         return self.returnNevraPrintable()
@@ -311,14 +318,8 @@ class RpmXMLPackageObject(XMLPackageObject, RpmBase):
         self.simple['repoid'] = repoid
 
         self.readPkgNode(node)
-        # quick defs for commonly used things
-        self.name = self.returnSimple('name')
-        self.epoch = self.returnSimple('epoch')
-        self.version = self.returnSimple('version')
-        self.release = self.returnSimple('release')
-        self.arch = self.returnSimple('arch')
         self.repoid = repoid
-        
+
     def dumpPkg(self):
         fconv = { 'EQ':'=', 'LT':'<', 'LE':'<=',
                   'GT':'>', 'GE':'>='} 
