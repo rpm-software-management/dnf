@@ -97,7 +97,7 @@ def depchecktree(rpmlist):
             flags, suggest, sense) in errors:
             if sense==rpm.RPMDEP_SENSE_REQUIRES:
                 error=1
-                msgs.append(_("depcheck: package %s needs %s") % ( name, rpmUtils.formatRequire(reqname, reqversion, flags)))
+                msgs.append(_("depcheck: package %s needs %s") % ( name, rpmUtils.miscutils.formatRequire(reqname, reqversion, flags)))
             elif sense==rpm.RPMDEP_SENSE_CONFLICTS:
                 error=1
                 msgs.append(_("depcheck: package %s conflicts with %s") % (name, reqname))
