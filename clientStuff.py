@@ -21,25 +21,25 @@ import sys
 import gzip
 
 def stripENVRA(foo):
-  archIndex = string.rfind(foo, '.')
-  arch = foo[archIndex+1:]
-  relIndex = string.rfind(foo[:archIndex], '-')
-  rel = foo[relIndex+1:archIndex]
-  verIndex = string.rfind(foo[:relIndex], '-')
-  ver = foo[verIndex+1:relIndex]
-  epochIndex = string.find(foo, ':')
-  epoch = foo[:epochIndex]
-  name = foo[epochIndex + 1:verIndex]
-  return (epoch, name, ver, rel, arch)
+    archIndex = string.rfind(foo, '.')
+    arch = foo[archIndex+1:]
+    relIndex = string.rfind(foo[:archIndex], '-')
+    rel = foo[relIndex+1:archIndex]
+    verIndex = string.rfind(foo[:relIndex], '-')
+    ver = foo[verIndex+1:relIndex]
+    epochIndex = string.find(foo, ':')
+    epoch = foo[:epochIndex]
+    name = foo[epochIndex + 1:verIndex]
+    return (epoch, name, ver, rel, arch)
 
 def stripEVR(str):
-   epochIndex = string.find(str, ':')
-   epoch = str[:epochIndex]
-   relIndex = string.rfind(str, '-')
-   rel = str[relIndex+1:]
-   verIndex = string.rfind(str[:relIndex], '-')
-   ver = str[epochIndex+1:relIndex]  
-   return (epoch, ver, rel)
+    epochIndex = string.find(str, ':')
+    epoch = str[:epochIndex]
+    relIndex = string.rfind(str, '-')
+    rel = str[relIndex+1:]
+    verIndex = string.rfind(str[:relIndex], '-')
+    ver = str[epochIndex+1:relIndex]  
+    return (epoch, ver, rel)
 
 def stripNA(str):
     archIndex = string.rfind(str, '.')
@@ -368,11 +368,11 @@ def filelogactions(i_list, u_list, e_list, ud_list, ed_list):
     e_log = 'Erased: '
         
     for (name, arch) in i_list:
-        filelog(1,i_log + name + '.' + arch)
+        filelog(1, i_log + name + '.' + arch)
     for (name, arch) in u_list+ud_list:
-        filelog(1,u_log + name + '.' + arch)
+        filelog(1, u_log + name + '.' + arch)
     for (name, arch) in e_list+ed_list:
-        filelog(1,e_log + name + '.' + arch)
+        filelog(1, e_log + name + '.' + arch)
         
 
 def shortlogactions(i_list, u_list, e_list, ud_list, ed_list):
@@ -437,7 +437,7 @@ def getfilelist(path, ext, list):
     return(list)
 
 def clean_up_headers():
-    serverlist=conf.servers
+    serverlist = conf.servers
     for serverid in serverlist:
         servername = conf.servername[serverid]
         hdrdir = conf.serverhdrdir[serverid]
@@ -449,7 +449,7 @@ def clean_up_headers():
 
 
 def clean_up_packages():
-    serverlist=conf.servers
+    serverlist = conf.servers
     for serverid in serverlist:
         servername = conf.servername[serverid]
         rpmdir = conf.serverpkgdir[serverid]
@@ -460,8 +460,8 @@ def clean_up_packages():
     
 
 def clean_up_old_headers(rpmDBInfo, HeaderInfo):
-    serverlist=conf.servers
-    hdrlist =[]
+    serverlist = conf.servers
+    hdrlist = []
     for serverid in serverlist:
         servername = conf.servername[serverid]
         hdrdir = conf.serverhdrdir[serverid]
@@ -492,7 +492,7 @@ def get_package_info_from_servers(conf, HeaderInfo):
     # the HeaderInfo nevral class so we can do non-root runs of yum
     log(2, 'Gathering package information from servers')
     # sorting the servers so that sort() will order them consistently
-    serverlist=conf.servers
+    serverlist = conf.servers
     serverlist.sort()
     for serverid in serverlist:
         baseurl = conf.serverurl[serverid]
@@ -591,11 +591,11 @@ def create_final_ts(tsInfo, rpmdb):
     import callback
     # download the pkgs to the local paths and add them to final transaction set
     # might be worth adding the sigchecking in here
-    tsfin=rpm.TransactionSet('/', rpmdb)
+    tsfin = rpm.TransactionSet('/', rpmdb)
     for (name, arch) in tsInfo.NAkeys():
-        pkghdr=tsInfo.getHeader(name, arch)
-        rpmloc=tsInfo.localRpmPath(name, arch)
-        serverid=tsInfo.serverid(name, arch)
+        pkghdr = tsInfo.getHeader(name, arch)
+        rpmloc = tsInfo.localRpmPath(name, arch)
+        serverid = tsInfo.serverid(name, arch)
         if tsInfo.state(name, arch) in ('u', 'ud', 'iu'):
             if os.path.exists(tsInfo.localRpmPath(name, arch)):
                 log(4, 'Using cached %s' % (os.path.basename(tsInfo.localRpmPath(name, arch))))
