@@ -195,24 +195,33 @@ class Depsolve:
         errormsgs = []
         
         ((name, version, release), (needname, needversion), flags, suggest, sense) = dep
-        self.log(4, '%s requires: %s' % (name, rpmUtils.miscutils.formatRequire(needname, needversion, flags)))
+        niceformatneed = rpmUtils.miscutils.formatRequire(needname, needversion, flags)
+        self.log(4, '%s requires: %s' % (name, niceformatneed))
         
-        pkgs = self.rpmdb.returnTupleByKeyword(name=name, ver=version, rel=release)
-        
+        pkgs = []
+        dumbmatchpkgs = self.rpmdb.returnTupleByKeyword(name=name, ver=version, rel=release)
+        for pkgtuple in dumbmatchpkgs:
+            hdrs = self.rpmdb.returnHeaderByTuple(pkgtuple)
+            for hdr in hdrs:
+                po = packages.YumInstalledPackage(hdr)
+                if niceformatneed in po.requiresList():
+                    pkgs.append(po.pkgtup())
+
         if len(pkgs) > 0:
             # the requiring package is installed, that means the item needed is in
             # a package that is either being updated or erased/obsoleted
             # check what state the needed item/package is in:
             # if it's being upgraded then mark the requiring package to be upgraded too
             # if it's being erased then mark the requiring package to be erased
-            self.log(5, 'installed pkg: %s-%s-%s' % (name, version, release))
+            self.log(5, 'Dep is from: installed pkg %s-%s-%s' % (name, version, release))
             needmode = self.tsInfo.getMode(name=needname)
             
             # if the needmode is None then what the package needs is not in our tsInfo
             # and may very well be a virtual dep (kernel-drm = 4.3.0, for example)
             # therefore we need to find what provides that virtual dep
             # if it is a package that we have in our tsInfo, then treat as below
-            if needmode is None:
+            if not needmode:
+                self.log(5, 'Req is not a package name. Looking up: %s' % niceformatneed) 
                 providers = self.rpmdb.whatProvides(needname, flags, needversion)
                 if len(providers) > 0:
                     for insttuple in providers:
@@ -232,11 +241,12 @@ class Depsolve:
                     self.tsInfo.add(pkg, 'e', 'dep')
                     CheckDeps = 1
 
-            pkg = pkgs[0] #take the first one
-            po = None
             if needmode in ['i', 'u']:
+                pkg = pkgs[0] #take the first one
+                po = None
                 self.log(5, 'needed packaged marked as update')
                 (n,a,e,v,r) = pkg
+                
                 if not self.conf.getConfigOption('exactarch'):
                     pkgs = self.pkgSack.returnNewestByName(n)
                     archs = []

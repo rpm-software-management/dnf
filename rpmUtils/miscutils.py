@@ -280,14 +280,15 @@ def rpm2cpio(fdno, out=sys.stdout, bufsize=2048):
 def formatRequire (name, version, flags):
     if flags:
         if flags & (rpm.RPMSENSE_LESS | rpm.RPMSENSE_GREATER | rpm.RPMSENSE_EQUAL):
-            name = name + ' '
+            name = name
         if flags & rpm.RPMSENSE_LESS:
             name = name + '<'
         if flags & rpm.RPMSENSE_GREATER:
             name = name + '>'
         if flags & rpm.RPMSENSE_EQUAL:
             name = name + '='
-        name = name + ' %s' % version
+        if version:
+            name = name + ' %s' % version
     return name
     
 def stringToVersion(verstring):

@@ -236,7 +236,11 @@ class YumBaseCli(yum.YumBase):
         
         # save our original args out
         self.args = args
-        
+        # save out as a nice command string
+        self.cmdstring = 'yum '
+        for arg in self.args:
+            self.cmdstring += '%s ' % arg
+
         self.parseCommands() # before we exit check over the base command + args
                              # make sure they match
     
@@ -251,7 +255,9 @@ class YumBaseCli(yum.YumBase):
     def parseCommands(self):
         """reads self.cmds and parses them out to make sure that the requested 
         base command + argument makes any sense at all""" 
-    
+
+        self.log(3,'COMMAND: %s' % self.cmdstring)
+        
         if len(self.conf.getConfigOption('commands')) == 0 and len(self.cmds) < 1:
             self.cmds = self.conf.getConfigOption('commands')
         else:

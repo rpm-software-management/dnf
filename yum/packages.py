@@ -193,6 +193,25 @@ class YumInstalledPackage:
     
     def returnSimple(self, thing):
         return getattr(self, thing)
+    
+    def requiresList(self):
+        """return a list of all of the strings of the package requirements"""
+        reqlist = []
+        names = self.hdr[rpm.RPMTAG_REQUIRENAME]
+        flags = self.hdr[rpm.RPMTAG_REQUIREFLAGS]
+        ver = self.hdr[rpm.RPMTAG_REQUIREVERSION]
+        if names is not None:
+            tmplst = zip(names, flags, ver)
+        
+        for (n, f, v) in tmplst:
+            req = rpmUtils.miscutils.formatRequire(n, v, f)
+            reqlist.append(req)
+        
+        return reqlist
+
+    def pkgtup(self):
+        return (self.name, self.arch, self.epoch, self.version, self.release)
+        
 
 class YumAvailablePackage(metadata.packageObject.RpmXMLPackageObject):
     """derived class for the metadata packageobject we use
