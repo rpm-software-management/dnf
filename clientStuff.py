@@ -308,7 +308,7 @@ def printactions(nevral):
 	updatedeps_list = []
 	erasedeps_list = []
 	for (name, arch) in nevral.NAkeys():
-		if nevral.state(name,arch) == 'i':
+		if nevral.state(name,arch) in ('i','iu'):
 			install_list.append((name,arch))
 		if nevral.state(name,arch) == 'u':
 			update_list.append((name,arch))

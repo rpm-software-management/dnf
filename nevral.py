@@ -189,7 +189,7 @@ class nevral:
 			db = clientStuff.openrpmdb(0)
 			ts = rpm.TransactionSet('/',db)
 			for (name, arch) in self.NAkeys(): 
-				if self.state(name, arch) == 'u' or self.state(name,arch) == 'ud':
+				if self.state(name, arch) in ('u','ud','iu'):
 					rpmloc = self.rpmlocation(name, arch)
 					pkghdr = self.getHeader(name, arch)
 					log(4,'Updating: %s, %s' % (name, arch))

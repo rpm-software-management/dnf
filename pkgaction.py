@@ -49,7 +49,7 @@ def installpkgs(tsnevral,nulist,userlist,hinevral,rpmnevral):
 					else:
 						#we should install this
 						((e, v, r, a, l, i), s)=hinevral._get_data(name,arch)
-						tsnevral.add((name,e,v,r,a,l,i),'i')
+						tsnevral.add((name,e,v,r,a,l,i),'iu')
 			if foundit==0:
 				if rpmnevral.exists(n):
 					print "%s is installed and is the latest version. Exiting" % (n)
@@ -122,7 +122,7 @@ def updatepkgs(tsnevral,hinevral,nulist,uplist,obslist,userlist):
 								if currarch == bestarch:
 									log(4,"Installing %s" % (name))
 									((e, v, r, a, l, i), s)=hinevral._get_data(name,currarch)
-									tsnevral.add((name,e,v,r,a,l,i),'i')
+									tsnevral.add((name,e,v,r,a,l,i),'iu')
 							elif uplist.count((name,currarch)) < 1 and nulist.count((name,currarch))<1:
 								#its an arch we do, its not updated and its installed
 								print "%s is the latest version" % (name)
@@ -156,7 +156,7 @@ def kernelupdate(tsnevral):
     # reopen the database read/write
 	for (name,arch) in tsnevral.NAkeys():
 		s = tsnevral.state(name,arch)
-		if s in ['i','u','ud']:
+		if s in ['i','u','ud','iu']:
 			if name in ['kernel','kernel-smp','kernel-enterprise','kernel-bigmem','kernel-BOOT']:
 				hdr=tsnevral.getHeader(name,arch)
 				if "kernel-smp" in hdr[rpm.RPMTAG_PROVIDES]:

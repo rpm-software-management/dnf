@@ -13,7 +13,6 @@ Important:
 - Work on making the frontend more spiffy/more responsive when 
   running in interactive mode
 - Implement a status/progress bar for downloading pkgs
-- put together a brief quickstart guide and a webpage.
 - Implement the comps parsing and group* functions
 - Implement a server-side config file or commandline option to let it 
   know where to get the comps/group list from

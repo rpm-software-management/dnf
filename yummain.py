@@ -138,7 +138,7 @@ def create_final_ts(tsInfo, rpmdb):
 		pkghdr=tsInfo.getHeader(name,arch)
 		rpmloc=tsInfo.localRpmPath(name,arch)
 		serverid=tsInfo.serverid(name,arch)
-		if tsInfo.state(name, arch) == 'u' or tsInfo.state(name,arch) == 'ud':
+		if tsInfo.state(name, arch) in ('u','ud','iu'):
 			if os.path.exists(tsInfo.localRpmPath(name, arch)):
 				log(2,"Using cached %s" % (os.path.basename(tsInfo.localRpmPath(name,arch))))
 			else:
@@ -271,7 +271,7 @@ def main():
 	log("Dependencies resolved")
 	
 	#prompt for use permission to do stuff in tsInfo - list all the actions 
-	#(i, u, e, ud) confirm w/the user
+	#(i, u, e, ud,iu(installing, but marking as 'u' in the actual ts, just in case) confirm w/the user
 	clientStuff.printactions(tsInfo)
 	if userask==1:
 		if clientStuff.userconfirm():
