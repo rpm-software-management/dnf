@@ -39,3 +39,13 @@ PO_INSTALLEDPKG = 3
 SYMBOLFLAGS = {'>':'GT', '<':'LT', '=': 'EQ', '==': 'EQ', '>=':'GE', '<=':'LE'}
 LETTERFLAGS = {'GT':'>', 'LT':'<', 'EQ':'=', 'GE': '>=', 'LE': '<='}
 
+# Constants for plugin config option registration
+PLUG_OPT_STRING = 0
+PLUG_OPT_INT = 1
+PLUG_OPT_FLOAT = 2
+PLUG_OPT_BOOL = 3
+
+PLUG_OPT_WHERE_GLOBAL = 0
+PLUG_OPT_WHERE_REPO = 1
+PLUG_OPT_WHERE_ALL = 2
+

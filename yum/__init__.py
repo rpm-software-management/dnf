@@ -37,6 +37,7 @@ import repos
 import transactioninfo
 from urlgrabber.grabber import URLGrabError
 import depsolve
+import plugins
 
 from packages import parsePackages, YumLocalPackage, YumInstalledPackage, bestPackage
 from repomd import mdErrors
@@ -64,12 +65,21 @@ class YumBase(depsolve.Depsolve):
 
     def filelog(self, value, msg):
         print msg
-    
-    def doConfigSetup(self, fn='/etc/yum.conf', root='/'):
+   
+    def doConfigSetup(self, fn='/etc/yum.conf', root='/', 
+            plugindir='/usr/lib/yum-plugins'):
         """basic stub function for doing configuration setup"""
-        
-        self.conf = config.yumconf(configfile=fn, root=root)
+       
+        # Load plugins first as they make affect available config options
+        self.plugins = plugins.YumPlugins(self, plugindir)
+
+        self.conf = config.yumconf(configfile=fn, root=root, 
+                plugins=self.plugins)
         self.getReposFromConfig()
+
+        # Initialise plugins
+        if self.plugins.run('init') != 0:
+            sys.exit()
 
     def getReposFromConfig(self):
         """read in repositories from config main and .repo files"""
@@ -207,6 +217,8 @@ class YumBase(depsolve.Depsolve):
         for repo in self.repos.listEnabled():
             self.excludePackages(repo)
             self.includePackages(repo)
+        if self.plugins.run('exclude') != 0:
+            sys.exit()
         self.pkgSack.buildIndexes()
         
     def doUpdateSetup(self):
@@ -308,7 +320,7 @@ class YumBase(depsolve.Depsolve):
         for po in exactmatch + matched:
             self.log(3, 'Excluding %s' % po)
             self.pkgSack.delPackage(po)
-        
+      
         self.log(2, 'Finished')
 
     def includePackages(self, repo):

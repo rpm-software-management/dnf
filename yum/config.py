@@ -33,6 +33,8 @@ import urlgrabber
 import urlgrabber.grabber
 from repos import variableReplace, Repository
 
+from constants import *
+
 
 class CFParser(ConfigParser.ConfigParser):
     """wrapper around ConfigParser to provide two simple but useful functions:
@@ -171,7 +173,7 @@ class CFParser(ConfigParser.ConfigParser):
 class yumconf(object):
     """primary config class for yum"""
     
-    def __init__(self, configfile = '/etc/yum.conf', root='/'):
+    def __init__(self, configfile = '/etc/yum.conf', root='/', plugins=None):
         self.cfg = CFParser()
         configh = confpp(configfile)
         try:
@@ -181,7 +183,7 @@ class yumconf(object):
         except ConfigParser.ParsingError, e:
             raise Errors.ConfigError, str(e)
             
-
+        self.plugins = plugins
         self.configdata = {} # dict to hold all the data goodies
        
         
@@ -237,7 +239,6 @@ class yumconf(object):
                         ('progess_obj', None)]
 
         optionfloats = [('timeout', 30.0)]
-
 
         # do these two early so we can do the rest using variableReplace()
         for (option, default) in [('distroverpkg' , 'fedora-release'),
@@ -327,6 +328,11 @@ class yumconf(object):
         for option in ['exclude', 'installonlypkgs', 'kernelpkgnames', 'tsflags']:
             self.configdata[option] = parseList(self.configdata[option])
 
+
+        # Process options from plugins
+        dopluginopts(self.plugins, self.cfg, 'main', PLUG_OPT_WHERE_GLOBAL, 
+                self.setConfigOption)
+
     def listConfigOptions(self):
         """return list of options available for global config"""
         return self.configdata.keys()
@@ -410,7 +416,6 @@ def cfgParserRepo(section, yumconfig, cfgparser):
        Returns a repos.Repository object
        """
     
-    
     thisrepo = Repository(section)
     thisrepo.set('yumvar', yumconfig.yumvar)
 
@@ -470,6 +475,10 @@ def cfgParserRepo(section, yumconfig, cfgparser):
     thisrepo.set('pkgdir', pkgdir)
     thisrepo.set('hdrdir', hdrdir)
     
+    # Process options from plugins
+    dopluginopts(yumconfig.plugins, cfgparser, section, PLUG_OPT_WHERE_REPO, 
+            thisrepo.set)
+
     return thisrepo
 
 
@@ -489,7 +498,19 @@ def parseList(value):
     (value, count) = commarepl.subn(' ', value)
     listvalue = value.split()
     return listvalue
-        
+      
+def dopluginopts(plugins, cfgparser, section, where, setfunc):
+    '''Process options from plugins
+    '''
+    if plugins:
+        typetofunc =  {
+            PLUG_OPT_STRING: cfgparser._getoption,
+            PLUG_OPT_INT: cfgparser._getint,
+            PLUG_OPT_BOOL: cfgparser._getboolean,
+            PLUG_OPT_FLOAT: cfgparser._getfloat,
+            }
+        for name, vtype, default in plugins.getopts(where):
+            setfunc(name, typetofunc[vtype](section, name, default))
 
 
 class confpp:

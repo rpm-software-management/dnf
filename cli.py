@@ -170,7 +170,6 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
             # we'd like to have a log object now
             self.log=Logger(threshold=self.conf.getConfigOption('debuglevel'), file_object = 
                                                                         sys.stdout)
-            
             # syslog-style log
             if self.conf.getConfigOption('uid') == 0:
                 logpath = os.path.dirname(self.conf.logfile)
@@ -678,7 +677,10 @@ For more information contact your distribution or package provider.
         cb = callback.RPMInstallCallback(output=output)
         cb.filelog = self.filelog # needed for log file output
         cb.tsInfo = self.tsInfo
-        
+
+        if self.plugins.run('pretrans') != 0:
+            return
+
         # run ts
         self.log(2, 'Running Transaction')
         
@@ -692,6 +694,9 @@ For more information contact your distribution or package provider.
 
         # close things
         self.log(1, self.postTransactionOutput())
+
+        if self.plugins.run('posttrans') != 0:
+            return
 
     def gpgsigcheck(self, pkgs):
         '''Perform GPG signature verification on the given packages, installing
