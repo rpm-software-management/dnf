@@ -214,13 +214,17 @@ class Updates:
             # simple ones - look for exact matches or older stuff
             if self.installdict.has_key((n, a)):
                 for (rpm_e, rpm_v, rpm_r) in self.installdict[(n, a)]:
-                    (e, v, r) = self.returnNewest(newpkgs[(n,a)])
-                    rc = rpmUtils.miscutils.compareEVR((e, v, r), (rpm_e, rpm_v, rpm_r))
-                    if rc <= 0:
-                        try:
-                            newpkgs[(n, a)].remove((e, v, r))
-                        except ValueError:
-                            pass
+                    try:
+                        (e, v, r) = self.returnNewest(newpkgs[(n,a)])
+                    except rpmUtils.RpmUtilsError:
+                        continue
+                    else:
+                        rc = rpmUtils.miscutils.compareEVR((e, v, r), (rpm_e, rpm_v, rpm_r))
+                        if rc <= 0:
+                            try:
+                                newpkgs[(n, a)].remove((e, v, r))
+                            except ValueError:
+                               pass
 
         # get rid of all the empty dict entries:
         for nakey in newpkgs.keys():
