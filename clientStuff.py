@@ -28,6 +28,13 @@ import gzip
 import archwork
 import fnmatch
 import types
+import pkgaction
+import callback
+import time
+
+
+from urlgrabber import close_all, urlgrab, URLGrabError, retrygrab
+
 
 def stripENVRA(foo):
     archIndex = string.rfind(foo, '.')
@@ -311,37 +318,6 @@ def returnObsoletes(headerNevral, rpmNevral, uninstNAlist):
                                 obsoleted[obspkg].append((name, arch))
     return obsoleting, obsoleted
 
-def progresshook(blocks, blocksize, total):
-    totalblocks = total/blocksize
-    curbytes = blocks*blocksize
-    sys.stdout.write('\r' + ' ' * 80)
-    sys.stdout.write('\rblock: %d/%d' % (blocks, totalblocks))
-    sys.stdout.flush()
-    if curbytes == total:
-        print ' '
-        
-
-def urlgrab(url, filename=None, nohook=None):
-    import urllib, rfc822, urlparse
-    (scheme,host, path, parm, query, frag) = urlparse.urlparse(url)
-    path = os.path.normpath(path)
-    url = urlparse.urlunparse((scheme, host, path, parm, query, frag))
-    if filename == None:
-        filename = os.path.basename(path)
-    try:
-        (fh, hdr) = urllib.urlretrieve(url, filename)
-    except IOError, e:
-        errorlog(0, 'IOError: %s'  % (e))
-        errorlog(0, 'URL: %s' % (url))
-        sys.exit(1)
-    # this is a cute little hack - if there isn't a "Content-Length" header then its either 
-    # a 404 or a directory list either way its not what we want
-    if hdr != None:
-        if not hdr.has_key('Content-Length'):
-            errorlog(0, 'ERROR: Url Return no Content-Length  - something is wrong')
-            errorlog(0, 'URL: %s' % (url))
-            sys.exit(1)
-    return fh
 
 def getupdatedhdrlist(headernevral, rpmnevral):
     "returns (name, arch) tuples of updated and uninstalled pkgs"
@@ -662,7 +638,6 @@ def clean_up_old_headers(rpmDBInfo, HeaderInfo):
                 os.unlink(hdrfn)
 
 def printtime():
-    import time
     return time.strftime('%m/%d/%y %H:%M:%S ', time.localtime(time.time()))
 
 def get_package_info_from_servers(conf, HeaderInfo):
@@ -690,7 +665,13 @@ def get_package_info_from_servers(conf, HeaderInfo):
             os.mkdir(localhdrs)
         if not conf.cache:
             log(3, 'getting header.info from server')
-            headerinfofn = urlgrab(serverheader, localheaderinfo, 'nohook')
+            try:
+                # FIXME - do a test of the header.info too
+                headerinfofn = retrygrab(serverheader, localheaderinfo, copy_local=1)
+            except URLGrabError, e:
+                errorlog(0, 'Error getting file %s' % serverheader)
+                errorlog(0, '%s' % e)
+                sys.exit(1)
         else:
             log(3, 'using cached header.info file')
             headerinfofn=localheaderinfo
@@ -724,7 +705,13 @@ def download_headers(HeaderInfo, nulist):
                 log(4, 'cached %s' % LocalHeaderFile)
             else:
                 log(2, 'getting %s' % LocalHeaderFile)
-                urlgrab(RemoteHeaderFile, LocalHeaderFile, 'nohook')
+                try:
+                    hdrfn = retrygrab(RemoteHeaderFile, LocalHeaderFile, copy_local=1)
+                except URLGrabError, e:
+                    errorlog(0, 'Error getting file %s' % RemoteHeaderFile)
+                    errorlog(0, '%s' % e)
+                    sys.exit(1)
+                HeaderInfo.setlocalhdrpath(name, arch, hdrfn)
             if checkheader(LocalHeaderFile, name, arch):
                     break
             else:
@@ -732,9 +719,9 @@ def download_headers(HeaderInfo, nulist):
                 checkpass = checkpass + 1
                 os.unlink(LocalHeaderFile)
                 good = 0
+    close_all()
 
 def take_action(cmds, nulist, uplist, newlist, obsoleting, tsInfo, HeaderInfo, rpmDBInfo, obsoleted):
-    import pkgaction
     from yummain import usage
     if conf.uid != 0:
         if cmds[0] in ['install','update','clean','upgrade','erase']:
@@ -874,41 +861,36 @@ def take_action(cmds, nulist, uplist, newlist, obsoleting, tsInfo, HeaderInfo, r
         usage()
 
 def create_final_ts(tsInfo, rpmdb):
-    import pkgaction
-    import callback
     # download the pkgs to the local paths and add them to final transaction set
-    # might be worth adding the sigchecking in here
     tsfin = rpm.TransactionSet('/', rpmdb)
     for (name, arch) in tsInfo.NAkeys():
         pkghdr = tsInfo.getHeader(name, arch)
         rpmloc = tsInfo.localRpmPath(name, arch)
         serverid = tsInfo.serverid(name, arch)
-        if tsInfo.state(name, arch) in ('u', 'ud', 'iu'):
-            if os.path.exists(tsInfo.localRpmPath(name, arch)):
-                log(4, 'Using cached %s' % (os.path.basename(tsInfo.localRpmPath(name, arch))))
+        state = tsInfo.state(name, arch)
+        if state in ('u', 'ud', 'iu', 'i'):
+            if os.path.exists(rpmloc):
+                log(4, 'Using cached %s' % (os.path.basename(rpmloc)))
             else:
-                log(2, 'Getting %s' % (os.path.basename(tsInfo.localRpmPath(name, arch))))
-                urlgrab(tsInfo.remoteRpmUrl(name, arch), tsInfo.localRpmPath(name, arch))
+                log(2, 'Getting %s' % (os.path.basename(rpmloc)))
+                try:
+                    localrpmpath = retrygrab(tsInfo.remoteRpmUrl(name, arch), rpmloc, copy_local=0) 
+                except URLGrabError, e:
+                    errorlog(0, 'Error getting file %s' % tsInfo.remoteRpmUrl(name, arch))
+                    errorlog(0, '%s' % e)
+                    sys.exit(1)
+                tsInfo.setlocalrpmpath(name, arch, localrpmpath)
             # sigcheck here :)
             pkgaction.checkRpmMD5(rpmloc)
             if conf.servergpgcheck[serverid]:
                 pkgaction.checkRpmSig(rpmloc, serverid)
-            tsfin.add(pkghdr, (pkghdr, rpmloc), 'u')
-        elif tsInfo.state(name, arch) == 'i':
-            if os.path.exists(tsInfo.localRpmPath(name, arch)):
-                log(4, 'Using cached %s' % (os.path.basename(tsInfo.localRpmPath(name, arch))))
+            if state == 'i':
+                tsfin.add(pkghdr, (pkghdr, rpmloc), 'i')
             else:
-                log(2, 'Getting %s' % (os.path.basename(tsInfo.localRpmPath(name, arch))))
-                urlgrab(tsInfo.remoteRpmUrl(name, arch), tsInfo.localRpmPath(name, arch))
-            # sigchecking we will go
-            pkgaction.checkRpmMD5(rpmloc)
-            if conf.servergpgcheck[serverid]:
-                pkgaction.checkRpmSig(rpmloc, serverid)
-            tsfin.add(pkghdr, (pkghdr, rpmloc), 'i')
-            #theoretically, at this point, we shouldn't need to make pkgs available
-        elif tsInfo.state(name, arch) == 'a':
+                tsfin.add(pkghdr, (pkghdr, rpmloc), 'u')
+        elif state == 'a':
             pass
-        elif tsInfo.state(name, arch) == 'e' or tsInfo.state(name, arch) == 'ed':
+        elif state == 'e' or state == 'ed':
             tsfin.remove(name)
     # check conf for ignorespace option as to whether or not to do this check
     #one last test run for diskspace
@@ -919,6 +901,7 @@ def create_final_ts(tsInfo, rpmdb):
         log(2, 'Error: Disk space Error')
         errorlog(0, 'You appear to have insufficient disk space to handle these packages')
         sys.exit(1)
+    close_all()
     return tsfin
     
 
