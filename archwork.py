@@ -16,6 +16,7 @@
 # Copyright 2002 Duke University 
 
 import os
+import re
 try:
     import rpm404
     rpm = rpm404
@@ -26,11 +27,14 @@ except ImportError, e:
 
 def getArch():
     arch = os.uname()[4]
-    if (len (arch) == 4 and arch[0] == 'i' and
-        arch[2:4] == "86"):
-        arch = "i386"
-    if arch == "sparc64":
-        arch = "sparc"
+    if re.search('86', arch):
+        arch = 'i386'
+    if re.search('sparc', arch) or re.search('sun', arch):
+        arch = 'sparc'
+    if re.search('alpha', arch):
+        arch = 'alpha'
+    if re.search('ppc', arch):
+        arch = 'ppc'
     return arch
 
 def betterarch(arch1, arch2):
@@ -61,23 +65,30 @@ def bestarch(archlist):
         currentarch = betterarch(currentarch, arch)
     return currentarch
 
-
-def availablearchs(hinevral, name):
+def compatArchList():
     archdict = {}
     archdict['i386']=['i386','i486','i586','i686','athlon','noarch']
     archdict['alpha']=['alpha','alphaev6','noarch']
-    archdict['sparc']=['sparc','sparc64','noarch']
-    archdict['ppc']=['ppc','noarch']
-    archdict['ia64']=['ia64','noarch']
+    archdict['sparc']=['sparc','sparc64','noarch','sun4c','sun4u','sun4d','sun4m','sparcv9']
+    archdict['ppc']=['ppc','noarch','ppc64','powerpc','powerppc','osfmach3_ppc','ppciseries','ppcpseries','rs6000']
+    archdict['ia64']=['ia64','noarch', 'i686']
+    archdict['s390']=['noarch','s390']
+    archdict['s390x']=['noarch','s390','s390x']
+    archdict['x86_64']=['noarch','x86_64']
+    archdict['parisc']=['hppa2.0','hppa1.2','hppa1.2','hppa1.1','hppa1.0','paris','noarch']
     myarch=getArch()
-    archlist = []
-    
-    for arch in archdict[myarch]:
-        if hinevral.exists(name, arch):
-            archlist.append(arch)
+    if archdict.has_key(myarch):
+        archlist = archdict[myarch]
+    else:
+        archlist = [myarch, 'noarch']
     return archlist
 
+def availablearchs(nevral, name):
+    archlist = compatArchList()
+    finalarchs = []
+    for arch in archlist:
+        if nevral.exists(name, arch):
+            finalarchs.append(arch)
+    return finalarchs
 
-
-    
 
