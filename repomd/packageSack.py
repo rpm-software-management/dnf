@@ -40,7 +40,10 @@ class PackageSack:
         return len(self.simplePkgList())
     
     def __iter__(self):
-        return self.returnPackages().__iter__()
+        if hasattr(self.returnPackages(), '__iter__'):
+            return self.returnPackages().__iter__()
+        else:
+            return iter(self.returnPackages())
 
     def _checkIndexes(self, failure='error'):
         """check to see if the indexes are built, if not do what failure demands
