@@ -174,12 +174,12 @@ def readHeader(rpmfn):
 
 
 def returnObsoletes(headerNevral, rpmNevral, uninstNAlist):
-    packages = []
     obsdict = {} # obsdict[obseletinglist]=packageitobsoletes
     for (name, arch) in uninstNAlist:
         # DEBUG print '%s, %s' % (name, arch)
         header = headerNevral.getHeader(name, arch)
         obs = header[rpm.RPMTAG_OBSOLETES]
+        del header
         if obs:
         # DEBUG print "%s, %s obs something" % (name, arch)
         # if there is one its a nonversioned obsolete
@@ -197,7 +197,6 @@ def returnObsoletes(headerNevral, rpmNevral, uninstNAlist):
                 obvalue = string.split(ob)
                 if rpmNevral.exists(obvalue[0]):
                     if len(obvalue) == 1:
-                        packages.append((name, arch))
                         obsdict[(name,arch)]=obvalue[0]
                         log(4, '%s obsoleting %s' % (name, ob))
                     elif len(obvalue) == 3:
@@ -206,7 +205,6 @@ def returnObsoletes(headerNevral, rpmNevral, uninstNAlist):
                         rc = compareEVR((e1, v1, r1), (e2, v2, r2))
                         if obvalue[2] == '>':
                             if rc >= 1:
-                                packages.append((name, arch))
                                 obsdict[(name, arch)]=obvalue[0]
                             elif rc == 0:
                                 pass
@@ -214,10 +212,8 @@ def returnObsoletes(headerNevral, rpmNevral, uninstNAlist):
                                 pass
                         elif obvalue[2] == '>=':
                             if rc >= 1:
-                                packages.append((name, arch))
                                 obsdict[(name, arch)]=obvalue[0]
                             elif rc == 0:
-                                packages.append((name, arch))
                                 obsdict[(name, arch)]=obvalue[0]
                             elif rc <= -1:
                                 pass
@@ -225,7 +221,6 @@ def returnObsoletes(headerNevral, rpmNevral, uninstNAlist):
                             if rc >= 1:
                                 pass
                             elif rc == 0:
-                                packages.append((name, arch))
                                 obsdict[(name, arch)]=obvalue[0]
                             elif rc <= -1:
                                 pass
@@ -233,10 +228,8 @@ def returnObsoletes(headerNevral, rpmNevral, uninstNAlist):
                             if rc >= 1:
                                 pass
                             elif rc == 0:
-                                packages.append((name, arch))
                                 obsdict[(name, arch)]=obvalue[0]
                             elif rc <= -1:
-                                packages.append((name, arch))
                                 obsdict[(name, arch)]=obvalue[0]
                         elif obvalue[2] == '<':
                             if rc >= 1:
@@ -244,7 +237,6 @@ def returnObsoletes(headerNevral, rpmNevral, uninstNAlist):
                             elif rc == 0:
                                 pass
                             elif rc <= -1:
-                                packages.append((name, arch))
                                 obsdict[(name, arch)]=obvalue[0]
     return obsdict
 
@@ -540,7 +532,12 @@ def get_package_info_from_servers(conf, HeaderInfo):
             os.mkdir(localpkgs)
         if not os.path.exists(localhdrs):
             os.mkdir(localhdrs)
-        headerinfofn = urlgrab(serverheader, localheaderinfo, 'nohook')
+        if not conf.cache:
+            log(3, 'getting header.info from server')
+            headerinfofn = urlgrab(serverheader, localheaderinfo, 'nohook')
+        else:
+            log(3, 'using cached header.info file')
+            headerinfofn=localheaderinfo
         log(4,'headerinfofn: ' + headerinfofn)
         HeaderInfoNevralLoad(headerinfofn, HeaderInfo, serverid)
 

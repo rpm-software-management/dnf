@@ -38,6 +38,7 @@ class yumconf:
         self.gpgkeyring=None
         self.assumeyes=0
         self.errorlevel=2
+        self.cache=0
         
         if self._getoption('main','cachedir') != None:
             self.cachedir=self._getoption('main','cachedir')

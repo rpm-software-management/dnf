@@ -38,7 +38,7 @@ def parseCmdArgs(args):
         yumconffile="/etc/yum.conf"
         
     try:
-        gopts, cmds = getopt.getopt(args, 'c:hR:e:d:y', ['help'])
+        gopts, cmds = getopt.getopt(args, 'Cc:hR:e:d:y', ['help'])
         if len (cmds) < 1:
             errorlog(0, 'Options Error: no commands found')
             usage()
@@ -85,6 +85,8 @@ def parseCmdArgs(args):
                 conf.assumeyes=1
             if o in ('-h', '--help'):
                 usage()
+            if o =='-C':
+                conf.cache=1
     except ValueError, e:
         errorlog(0, 'Options Error: %s' % e)
         usage()
@@ -148,10 +150,15 @@ def main(args):
     (uplist, newlist, nulist) = clientStuff.getupdatedhdrlist(HeaderInfo, rpmDBInfo)
     log(2, 'Downloading needed headers')
     clientStuff.download_headers(HeaderInfo, nulist)
-    log(2, 'Finding obsoleted packages')
-    obsdict=clientStuff.returnObsoletes(HeaderInfo, rpmDBInfo, nulist)
-    obslist=obsdict.keys()
-    
+    if cmds[0] == 'upgrade':
+        log(2, 'Finding obsoleted packages')
+        obsdict=clientStuff.returnObsoletes(HeaderInfo, rpmDBInfo, nulist)
+        obslist=obsdict.keys()
+    else:
+        obsdict={}
+        obslist=[]
+        
+
     log(3, 'nulist = %s' % len(nulist))
     log(3, 'uplist = %s' % len(uplist))
     log(3, 'newlist = %s' % len(newlist))
