@@ -305,8 +305,11 @@ class YumBaseCli(yum.YumBase):
         # at this point we know the args are valid - we don't know their meaning
         # but we know we're not being sent garbage
         
-        if self.basecmd in ['install', 'update']:
+        if self.basecmd == 'install':
             return self.installPkgs()
+        
+        if self.basecmd in ['update', 'upgrade']:
+            return self.updatePkgs()
             
         elif self.basecmd in ['erase', 'remove']:
             matched, unmatched = parsePackages(self.rpmdb.getPkgList(), 
@@ -322,7 +325,7 @@ class YumBaseCli(yum.YumBase):
             # if we're cleaning then we don't need to talk to the net
             self.conf.setConfigOption('cache', 1)
 
-    def installPkgs(self, userlist=self.extcmds):
+    def installPkgs(self, userlist=None):
         """Attempts to take the user specified list of packages/wildcards
            and install them, or if they are installed, update them to a newer
            version. If a complete version number if specified, attempt to 
@@ -333,6 +336,9 @@ class YumBaseCli(yum.YumBase):
         # if we've added any packages to the transaction then return 2 and a string
         # if we've hit a snag, return 1 and the failure explanation
         # if we've got nothing to do, return 0 and a 'nothing available to install' string
+        if not userlist:
+            userlist = self.extcmds
+            
         self.doRpmDBSetup()
         installed = self.rpmdb.getPkgList()
         self.doRepoSetup()
@@ -371,9 +377,9 @@ class YumBaseCli(yum.YumBase):
                         if rc < 0: # we're newer - this is an update, pass to them
                             if pkgtup not in passToUpdate:
                                 passToUpdate.append(pkgtup)
-                        else if rc == 0: # same, ignore
+                        elif rc == 0: # same, ignore
                             continue
-                        else if rc > 0: # lesser, check if the pkgtup is an exactmatch
+                        elif rc > 0: # lesser, check if the pkgtup is an exactmatch
                                         # if so then add it to be installed,
                                         # the user explicitly wants this version
                                         # FIXME this is untrue if the exactmatch
@@ -385,11 +391,32 @@ class YumBaseCli(yum.YumBase):
                     if toBeInstalled.has_key(n): toBeInstalled[n] = []
                     toBeInstalled[n].append(pkgtup)
 
+        # FIXME
         # go through each key in toBeInstalled and get bestver+bestarch
         # need to be aware of multilib here so a user can do
         # yum install foo.* and get foo.i386 and foo.x86_64, cleanly.
         # pass off updates to update, then return
 
+    def updatePkgs(self, userlist=None):
+        """take user commands and populate transaction wrapper with 
+           packages to be updated"""
+        if not userlist:
+            userlist = self.extcmds
+        
+        # simple case - do them all
+        self.doRpmDBSetup()
+        installed = self.rpmdb.getPkgList()
+        self.doRepoSetup()
+        avail = self.pkgSack.simplePkgList()
+        self.doUpdateSetup()
+        updates = self.up.getUpdatesList()
+        for pkgtup in updates:
+            (n, a, e, v, r) = pkgtup
+            self.tsInfo.add(pkgtup, 'u', 'user')
+        
+        return 2, 'Updated Packages in Transaction'
+        
+           
     def listPkgs(self, disp='output.rpm listDisplay'):
         """Generates the lists of packages based on arguments on the cli.
            calls out to a function for displaying the packages, that function
