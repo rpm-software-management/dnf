@@ -43,7 +43,7 @@ import callback
 import urlgrabber
 import urlgrabber.grabber
 
-__version__ = '2.1.13'
+__version__ = '2.3.0'
 
 class CliError(yum.Errors.YumBaseError):
    def __init__(self, args=None):
@@ -148,7 +148,7 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
                 root = installroot
                     
             try:
-                self.conf = yumconf(configfile = conffile, root = root)
+                self.doConfigSetup(fn = conffile, root = root)
             except yum.Errors.ConfigError, e:
                 self.errorlog(0, _('Config Error: %s') % e)
                 sys.exit(1)
@@ -217,14 +217,14 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
                     self.conf.setConfigOption('rss-filename', a)
                 elif o == '--enablerepo':
                     try:
-                        self.conf.repos.enableRepo(a)
+                        self.repos.enableRepo(a)
                     except yum.Errors.ConfigError, e:
                         self.errorlog(0, _(e))
                         self.usage()
                         sys.exit(1)
                 elif o == '--disablerepo':
                     try:
-                        self.conf.repos.disableRepo(a)
+                        self.repos.disableRepo(a)
                     except yum.Errors.ConfigError, e:
                         self.errorlog(0, _(e))
                         self.usage()
@@ -250,22 +250,19 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         # progress bars - this is hacky - I'm open to other options
         # One of these is a download
         if self.conf.getConfigOption('debuglevel') < 2 or not sys.stdout.isatty():
-            self.conf.repos.setProgressBar(None)
-            self.conf.repos.callback = None
+            self.repos.setProgressBar(None)
+            self.repos.callback = None
         else:
-            self.conf.repos.setProgressBar(TextMeter(fo=sys.stdout))
-            self.conf.repos.callback = self.simpleProgressBar
+            self.repos.setProgressBar(TextMeter(fo=sys.stdout))
+            self.repos.callback = self.simpleProgressBar
 
         # setup our failure report for failover
         freport = (self.failureReport,(),{})
-        self.conf.repos.setFailureCallback(freport)
+        self.repos.setFailureCallback(freport)
         
         # setup our depsolve progress callback
         dscb = output.DepSolveProgressCallBack(self.log, self.errorlog)
         self.dsCallback = dscb
-        
-        # this is just a convenience reference
-        self.repos = self.conf.repos
         
         # save our original args out
         self.args = args

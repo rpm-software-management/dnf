@@ -98,13 +98,11 @@ class RepoStorage:
         return self.repos.keys()
     
 
-    def add(self, repoid):
-        if self.repos.has_key(repoid):
+    def add(self, repoobj):
+        if self.repos.has_key(repoobj.id):
             raise Errors.RepoError, 'Repository %s already added, not adding again' % (repoid)
-        thisrepo = Repository(repoid)
-        self.repos[repoid] = thisrepo
+        self.repos[repoobj.id] = repoobj
         
-        return thisrepo
 
     def delete(self, repoid):
         if self.repos.has_key(repoid):

@@ -30,8 +30,7 @@ import rpmUtils.arch
 import Errors
 import urlgrabber
 import urlgrabber.grabber
-from repos import variableReplace
-import repos
+from repos import variableReplace, Repository
 
 
 class CFParser(ConfigParser.ConfigParser):
@@ -181,8 +180,7 @@ class yumconf(object):
         except ConfigParser.ParsingError, e:
             raise Errors.ConfigError, str(e)
             
-        self.repos = repos.RepoStorage() # class of repositories
-        
+
         self.configdata = {} # dict to hold all the data goodies
        
         
@@ -284,8 +282,6 @@ class yumconf(object):
             setattr(self, option, value)
 
         
-        # and push our process object around a bit to things beneath us
-        self.repos.progress = self.getConfigOption('progress_obj')
         
         # get our variables parsed
         self.yumvar = self._getEnvVar()
@@ -303,41 +299,15 @@ class yumconf(object):
         for option in ['exclude', 'installonlypkgs', 'kernelpkgnames', 'tsflags']:
             self.configdata[option] = parseList(self.configdata[option])
 
-        # look through our repositories.
-        
-        for section in self.cfg.sections(): # loop through the list of sections
-            if section != 'main': # must be a repoid
-                doRepoSection(self, self.cfg, section)
 
-        # should read through self.getConfigOption('reposdir') for *.repo
-        # does not read recursively
-        # read each of them in using confpp, then parse them same as any other repo
-        # section - as above.
-        reposdir = self.getConfigOption('reposdir')
-        if os.path.exists(self.getConfigOption('installroot') + '/' + reposdir):
-            reposdir = self.getConfigOption('installroot') + '/' + reposdir
-        
-        reposglob = reposdir + '/*.repo'
-        if os.path.exists(reposdir) and os.path.isdir(reposdir):
-            repofn = glob.glob(reposglob)
-            repofn.sort()
-            
-            for fn in repofn:
-                if not os.path.isfile(fn):
-                    continue
-                try:
-                    self._doFileRepo(fn)
-                except Errors.ConfigError, e:
-                    print >> sys.stderr, e
-                    continue
-                except Errors.RepoError, e:
-                    print e
+
+
                     
         # if we don't have any enabled repositories then this is going to suck
         # bail out with an exception raised so yummain can catch it
-        if len(self.repos.listEnabled()) < 1:
-            raise Errors.ConfigError, \
-                    'Insufficient repository configuration. No repositories Found/Enabled. Aborting.'
+#        if len(self.repos.listEnabled()) < 1:
+#            raise Errors.ConfigError, \
+#                    'Insufficient repository configuration. No repositories Found/Enabled. Aborting.'
 
     def listConfigOptions(self):
         """return list of options available for global config"""
@@ -350,8 +320,7 @@ class yumconf(object):
             setattr(self, option, value)
         except KeyError:
             raise Errors.ConfigError, 'No such option %s' % option
-
-
+        
     def getConfigOption(self, option, default=None):
         """gets global config setting, takes optional default value"""
         try:
@@ -384,43 +353,64 @@ class yumconf(object):
         
         return yumvar
 
-    def _doFileRepo(self, fn):
-        """takes a filename of a repo config section and fills up the repo data
-           from it"""
-           
-        repoparsed = confpp(fn)
-        repoconf = CFParser()
-        try:
-            repoconf.readfp(repoparsed)
-        except ConfigParser.MissingSectionHeaderError, e:
-            raise Errors.ConfigError, 'Error: Bad repository file %s. Skipping' % fn
-        
-        for section in repoconf.sections():
-            if section != 'main': # check for morons
-                # this sucks but show me a nice way of doing this.
-                doRepoSection(self, repoconf, section)
 
-def doRepoSection(globconfig, thisconfig, section):
-    """do all the repo handling stuff for this config"""
+
+
+
+def parseDotRepo(fn):
+    """returns config parser object and a list of sections from parsing .repo files
+       fn = filename of config file
+       raises Errors.ConfigError if: file is broken or no repository sections available
+       """
+           
+    repoparsed = confpp(fn)
+    repoconf = CFParser()
+    try:
+        repoconf.readfp(repoparsed)
+    except ConfigParser.MissingSectionHeaderError, e:
+        raise Errors.ConfigError, 'Error: Bad repository file %s.' % fn
+    
+    good_sections = []
+    for section in repoconf.sections():
+        if section != 'main': # check for morons
+            good_sections.append(section)
+        
+    if len(good_sections) < 1:
+        raise Errors.ConfigError, 'Error: Bad repository file %s, no repo stanzas.' % fn
+    
+    return repoconf, good_sections
+        
+
+def cfgParserRepo(section, yumconfig, cfgparser):
+    """take a configparser object and extract repository information
+       from it. 
+
+       section: section name to grab from cfgparser object data
+       yumconfig: the global yumconfig to apply to this repo
+       cfgparser: cfgparser object
+       
+       Returns a repos.Repository object
+       """
     
     
-    thisrepo = globconfig.repos.add(section)
-    thisrepo.set('yumvar', globconfig.yumvar)
+    thisrepo = Repository(section)
+    thisrepo.set('yumvar', yumconfig.yumvar)
     
-    enabled = thisconfig._getboolean(section, 'enabled', 1)
-    name = thisconfig._getoption(section, 'name', section)
-    name = variableReplace(globconfig.yumvar, name)
+    enabled = cfgparser._getboolean(section, 'enabled', 1)
+    name = cfgparser._getoption(section, 'name', section)
+    name = variableReplace(yumconfig.yumvar, name)
     thisrepo.set('name', name) 
     thisrepo.set('enabled', enabled)
     
-    baseurl = thisconfig._getoption(section, 'baseurl', [])
+    baseurl = cfgparser._getoption(section, 'baseurl', [])
     baseurls = parseList(baseurl)
-    mirrorlistfn = thisconfig._getoption(section, 'mirrorlist', None)
-    mirrorlistfn = variableReplace(globconfig.yumvar, mirrorlistfn)
+    mirrorlistfn = cfgparser._getoption(section, 'mirrorlist', None)
+    mirrorlistfn = variableReplace(yumconfig.yumvar, mirrorlistfn)
     thisrepo.set('mirrorlistfn', mirrorlistfn)
     thisrepo.set('baseurls', baseurls)
     
-    gpgkey = thisconfig._getoption(section, 'gpgkey', '')
+
+    gpgkey = cfgparser._getoption(section, 'gpgkey', '')
     if gpgkey:
         (s,b,p,q,f,o) = urlparse.urlparse(gpgkey)
         if s not in ('http', 'ftp', 'file', 'https'):
@@ -432,41 +422,42 @@ def doRepoSection(globconfig, thisconfig, section):
     for keyword in ['proxy_username', 'proxy', 'proxy_password', 
                     'retries', 'failovermethod']:
 
-        thisrepo.set(keyword, thisconfig._getoption(section, keyword, \
-                     globconfig.getConfigOption(keyword)))
+        thisrepo.set(keyword, cfgparser._getoption(section, keyword, \
+                     yumconfig.getConfigOption(keyword)))
                      
-    for keyword, getfunc in (('bandwidth', thisconfig.getbytes),
-                             ('throttle', thisconfig.getthrottle)):
+    for keyword, getfunc in (('bandwidth', cfgparser.getbytes),
+                             ('throttle', cfgparser.getthrottle)):
         thisrepo.set(keyword, getfunc(section, keyword, 
-                    globconfig.getConfigOption(keyword)))
+                    yumconfig.getConfigOption(keyword)))
 
     for keyword in ['gpgcheck', 'keepalive']:
-        thisrepo.set(keyword, thisconfig._getboolean(section, \
-                     keyword, globconfig.getConfigOption(keyword)))
+        thisrepo.set(keyword, cfgparser._getboolean(section, \
+                     keyword, yumconfig.getConfigOption(keyword)))
     
     for keyword in ['timeout']:
-        thisrepo.set(keyword, thisconfig._getfloat(section, \
-                     keyword, globconfig.getConfigOption(keyword)))
+        thisrepo.set(keyword, cfgparser._getfloat(section, \
+                     keyword, yumconfig.getConfigOption(keyword)))
     
-    excludelist = thisconfig._getoption(section, 'exclude', [])
-    excludelist = variableReplace(globconfig.yumvar, excludelist)
+    excludelist = cfgparser._getoption(section, 'exclude', [])
+    excludelist = variableReplace(yumconfig.yumvar, excludelist)
     excludelist = parseList(excludelist)
     thisrepo.set('excludes', excludelist)
 
-    includelist = thisconfig._getoption(section, 'includepkgs', [])
-    includelist = variableReplace(globconfig.yumvar, includelist)
+    includelist = cfgparser._getoption(section, 'includepkgs', [])
+    includelist = variableReplace(yumconfig.yumvar, includelist)
     includelist = parseList(includelist)
     thisrepo.set('includepkgs', includelist)
 
-    thisrepo.set('enablegroups', thisconfig._getboolean(section, 'enablegroups', 1))
+    thisrepo.set('enablegroups', cfgparser._getboolean(section, 'enablegroups', 1))
     
-    cachedir = os.path.join(globconfig.getConfigOption('cachedir'), section)
+    cachedir = os.path.join(yumconfig.getConfigOption('cachedir'), section)
     pkgdir = os.path.join(cachedir, 'packages')
     hdrdir = os.path.join(cachedir, 'headers')
     thisrepo.set('cachedir', cachedir)
     thisrepo.set('pkgdir', pkgdir)
     thisrepo.set('hdrdir', hdrdir)
     
+    return thisrepo
 
 
 def parseList(value):

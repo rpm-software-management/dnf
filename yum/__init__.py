@@ -25,6 +25,7 @@ import types
 import errno
 import time
 import sre_constants
+import glob
 
 import Errors
 import rpmUtils
@@ -32,6 +33,7 @@ import rpmUtils.updates
 import rpmUtils.arch
 import groups
 import config
+import repos
 import transactioninfo
 from urlgrabber.grabber import URLGrabError
 import depsolve
@@ -48,6 +50,7 @@ class YumBase(depsolve.Depsolve):
     def __init__(self):
         depsolve.Depsolve.__init__(self)
         self.localdbimported = 0
+        self.repos = repos.RepoStorage() # class of repositories
     
     def log(self, value, msg):
         """dummy log stub"""
@@ -60,12 +63,65 @@ class YumBase(depsolve.Depsolve):
     def filelog(self, value, msg):
         print msg
     
-    def doConfigSetup(self, fn='/etc/yum.conf'):
+    def doConfigSetup(self, fn='/etc/yum.conf', root='/'):
         """basic stub function for doing configuration setup"""
         
-        self.conf = config.yumconf(configfile=fn)
-        self.repos = self.conf.repos
+        self.conf = config.yumconf(configfile=fn, root=root)
+        self.getReposFromConfig()
+
+    def getReposFromConfig(self):
+        """read in repositories from config main and .repo files"""
         
+        reposlist = []
+        # look through our repositories.
+        for section in self.conf.cfg.sections(): # loop through the list of sections
+            if section != 'main': # must be a repoid
+                try:
+                    thisrepo = config.cfgParserRepo(section, self.conf, self.conf.cfg)
+                except (Errors.RepoError, Errors.ConfigError), e:
+                    self.errorlog(e)
+                    continue
+                else:
+                    reposlist.append(thisrepo)
+
+        # reads through reposdir for *.repo
+        # does not read recursively
+        # read each of them in using confpp, then parse them same as any other repo
+        # section - as above.
+        reposdir = self.conf.reposdir
+        if os.path.exists(self.conf.installroot + '/' + reposdir):
+            reposdir = self.conf.installroot + '/' + reposdir
+        
+        reposglob = reposdir + '/*.repo'
+        if os.path.exists(reposdir) and os.path.isdir(reposdir):
+            repofn = glob.glob(reposglob)
+            repofn.sort()
+            
+            for fn in repofn:
+                if not os.path.isfile(fn):
+                    continue
+                try:
+                    cfg, sections = config.parseDotRepo(fn)
+                except Errors.ConfigError, e:
+                    self.errorlog(e)
+                    continue
+
+                for section in sections:
+                    try:
+                        thisrepo = config.cfgParserRepo(section, self.conf, cfg)
+                    except (Errors.RepoError, Errors.ConfigError), e:
+                        self.errorlog(e)
+                        continue
+                    else:
+                        reposlist.append(thisrepo)
+
+        # got our list of repo objects
+        for thisrepo in reposlist:
+            try:
+                self.repos.add(thisrepo)
+            except Errors.RepoError, e: 
+                self.errorlog(e)
+                continue
         
     def doTsSetup(self):
         """setup all the transaction set storage items we'll need
