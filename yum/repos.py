@@ -87,6 +87,8 @@ class Repository:
         self.groupsfilename = 'yumgroups.xml' # something some freaks might 
                                               # eventually want
 
+        self.setkeys = []
+        
     def __cmp__(self, other):
         if self.id > other.id:
             return 1
@@ -120,12 +122,17 @@ class Repository:
                 
     def set(self, key, value):
         """sets a generic attribute of this repository"""
+        self.setkeys.append(key)
         setattr(self, key, value)
         
     def unset(self, key):
         """delete an attribute of this repository"""
+        self.setkeys.remove(key)
         delattr(self, key)
    
+    def listSetKeys(self):
+        return setkeys
+        
     def setFailover(self, failmeth):
         """takes a failover string and sets the failover class accordingly"""
 
@@ -150,8 +157,20 @@ class Repository:
         
     def failed(self):
         self.failover.server_failed()
-            
-    def repomd(self):
-        """returns a repomd object for this repository"""
-        pass         
 
+    def _retrieveMD(self, url, local):
+        """base function to retrieve data from the remote url"""
+        
+    def getRepoXML(self, cache=0):
+        """retrieve/check/read in repomd.xml from the repository"""
+        pass
+        
+    def getPrimaryXML(self, cache=0):
+        pass
+    
+    def getFileListsXML(self, cache=0):
+        pass    
+
+    def getOtherXML(self, cache=0):
+        pass    
+    
