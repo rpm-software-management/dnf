@@ -11,8 +11,14 @@
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
-# Copyright 2004 Duke University
+# Copyright 2005 Duke University
 # Written by Seth Vidal
+
+# TODOS: make all the package relationships deal with package objects
+# search by package object for TransactionData, etc.
+# provide a real TransactionData.remove(txmbr) method, It should 
+# remove the given txmbr and iterate to remove all those in depedent relationships
+# with the given txmbr. 
 
 class TransactionData:
     """Data Structure designed to hold information on a yum Transaction Set"""
