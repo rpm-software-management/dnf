@@ -45,6 +45,62 @@ def simpleProgressBar(current, total, name=None):
     if current == total:
         sys.stdout.write('\n')
         
+
+
+def listPkgs(pkgLists, outputType):
+    """outputs based on whatever outputType is. Current options:
+       'list' - simple pkg list
+       'info' - similar to rpm -qi output
+       'genrate-rss' - rss feed-type output"""
+    
+    FIXMEFIXMEFIXME
+    if len(lst) > 0:
+            if len(self.extcmds) > 0:
+                exactmatch, matched, unmatched = yum.packages.parsePackages(lst, self.extcmds)
+                lst = yum.misc.unique(matched + exactmatch)
+
+    # check our reduced list
+        if len(lst) > 0:
+            thingslisted = 1
+            self.log(2, '%s packages' % name)
+            lst.sort(sortPkgTup)
+            if name in ['Installed', 'Extra']:
+                for pkg in lst:
+                    (n, a, e, v, r) = pkg
+                    if e != '0':
+                        ver = '%s:%s-%s' % (e, v, r)
+                    else:
+                        ver = '%s-%s' % (v, r)
+                        
+                    self.log(2, "%-36s%-7s%-25s%-12s" % (n, a, ver, 'installed'))
+            else:
+                for pkg in lst:
+                    po = self.getPackageObject(pkg)
+                    if po.epoch != '0':
+                        ver = '%s:%s-%s' % (po.epoch, po.version, po.release)
+                    else:
+                        ver = '%s-%s' % (po.version, po.release)
+                    self.log(2, "%-36s%-7s%-25s%-12s" % (po.name, po.arch, 
+                                           ver, po.returnSimple('repoid')))
+
+    if thingslisted == 0:
+        self.errorlog(1, 'No Packages to list')
+
+    return 0, ['Success']
+    
+    def userconfirm(self):
+        """gets a yes or no from the user, defaults to No"""
+        choice = raw_input('Is this ok [y/N]: ')
+        if len(choice) == 0:
+            return 1
+        else:
+            if choice[0] != 'y' and choice[0] != 'Y':
+                return 1
+            else:
+                return 0        
+                
+
+
 #FIXME - we should be taking a simple list of packages and displaying them or 
 #giving their info - consider copying the rpm -qi interface for the info output
 #need to get repo information per-pkg - so the search interface for the packageSack

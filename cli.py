@@ -287,7 +287,7 @@ class YumBaseCli(yum.YumBase):
                 self.errorlog(0, _('Error: Invalid clean option %s') % self.extcmds[1])
                 self.usage()
     
-        elif self.basecmd in ['list', 'check-update', 'info', 'update']:
+        elif self.basecmd in ['list', 'check-update', 'info', 'update', 'generate-rss']:
             pass
     
         else:
@@ -314,11 +314,14 @@ class YumBaseCli(yum.YumBase):
             matched, unmatched = parsePackages(self.rpmdb.getPkgList(), 
                                                self.extcmds)
     
-        elif self.basecmd ==  'list':
+        elif self.basecmd in ['list', 'info', 'generate-rss']:
             try:
-                return self.listPkgs()
+                pkgLists = self.listPkgs()
             except yum.Errors.YumBaseError, e:
                 return 1, [str(e)]
+            else:
+                output.listPkgs(pkgLists, outputType=self.basecmd)
+                return 0, []
             
         elif self.basecmd == 'clean':
             # if we're cleaning then we don't need to talk to the net
@@ -484,10 +487,10 @@ class YumBaseCli(yum.YumBase):
         return 2, ['Updated Packages in Transaction']
         
            
-    def listPkgs(self, disp='output.rpm listDisplay'):
+    def genPkgLists(self):
         """Generates the lists of packages based on arguments on the cli.
-           calls out to a function for displaying the packages, that function
-           is the second argument. Function takes a package object."""
+           returns a list of tuples - tuples are ("list of pkg objects", string
+           describing that list") object."""
 
         def sortPkgTup((n1, a1, e1, v1, r1) ,(n2, a2, e2, v2, r2)):
             """sorts a list of package tuples by name"""
@@ -499,8 +502,8 @@ class YumBaseCli(yum.YumBase):
                 return -1
         
             
-        special = ['available', 'installed', 'all', 'extras', 'updates', 'recent']
-                    # obsoletes
+        special = ['available', 'installed', 'all', 'extras', 'updates', 'recent',
+                   'obsoletes']
 
         installed = []
         available = []
@@ -564,8 +567,8 @@ class YumBaseCli(yum.YumBase):
             pass
 
         elif pkgnarrow == 'recent':
-            # return the most recent 14 times of packages based on file mtime (filetime)
-            num_times = 14
+            # returns 30 pkgs (this should be a config variable: FIXME)
+            num_pkgs = 30
             ftimehash = {}
             self.doRepoSetup()
             pkgs = self.pkgSack.returnPackages()
@@ -581,74 +584,22 @@ class YumBaseCli(yum.YumBase):
             timekeys.reverse()
             count = 0
             for sometime in timekeys:
-                if count < num_times:
-                    for po in ftimehash[sometime]:
-                        (n,e,v,r,a) = po.returnNevraTuple()
-                        recent.append((n,a,e,v,r))
-                    count += 1
-            
-            
+                for po in ftimehash[sometime]:
+                    if count < num_pkgs:
+                        recent.append(po)
+                    else:
+                        count += 1
+        returnlist = [(updates, 'Updated'), (available, 'Available'), 
+                      (installed, 'Installed'), (recent, 'Recently available'),
+                      (obsoletes, 'Obsoleting'), (extras, 'Extra')]:
 
-
-    # Iterate through the packages (after a simple sort by name), create
-    # a package object for them and call the display function.
-    # FIXME - for now just output some string
-
-        thingslisted = 0
-        for (lst, name) in [(updates, 'Updated'), (available, 'Available'), 
-                            (installed, 'Installed'), (recent, 'Recently available'),
-                            (obsoletes, 'Obsoleting'), (extras, 'Extra')]:
-            if len(lst) > 0:
-                if len(self.extcmds) > 0:
-                    exactmatch, matched, unmatched = yum.packages.parsePackages(lst, self.extcmds)
-                    lst = yum.misc.unique(matched + exactmatch)
-
-        # check our reduced list
-            if len(lst) > 0:
-                thingslisted = 1
-                self.log(2, '%s packages' % name)
-                lst.sort(sortPkgTup)
-                if name in ['Installed', 'Extra']:
-                    for pkg in lst:
-                        (n, a, e, v, r) = pkg
-                        if e != '0':
-                            ver = '%s:%s-%s' % (e, v, r)
-                        else:
-                            ver = '%s-%s' % (v, r)
-                            
-                        self.log(2, "%-36s%-7s%-25s%-12s" % (n, a, ver, 'installed'))
-                else:
-                    for pkg in lst:
-                        po = self.getPackageObject(pkg)
-                        if po.epoch != '0':
-                            ver = '%s:%s-%s' % (po.epoch, po.version, po.release)
-                        else:
-                            ver = '%s-%s' % (po.version, po.release)
-                        self.log(2, "%-36s%-7s%-25s%-12s" % (po.name, po.arch, 
-                                               ver, po.returnSimple('repoid')))
-
-        if thingslisted == 0:
-            self.errorlog(1, 'No Packages to list')
-    
-        return 0, ['Success']
-    
-    def userconfirm(self):
-        """gets a yes or no from the user, defaults to No"""
-        choice = raw_input('Is this ok [y/N]: ')
-        if len(choice) == 0:
-            return 1
-        else:
-            if choice[0] != 'y' and choice[0] != 'Y':
-                return 1
-            else:
-                return 0        
-                
+        return returnlist
 
     def usage(self):
         print _("""
         Usage:  yum [options] <update | install | info | remove | list |
                 clean | provides | search | check-update | groupinstall | groupupdate |
-                grouplist >
+                grouplist | generate-rss >
                     
             Options:
             -c [config file] - specify the config file to use

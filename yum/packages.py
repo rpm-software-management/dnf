@@ -167,6 +167,28 @@ def bestPackage(pkg1, pkg2):
 
 class YumInstalledPackage:
     """super class for dealing with packages in the rpmdb"""
+    def __init__(self, hdr):
+        """hand in an rpm header, we'll assume it's installed and query from there"""
+        self.hdr = hdr
+        self.name = self.tagByName('name')
+        self.arch = self.tagByName('arch')
+        self.epoch = self.epoch()
+        self.ver = self.tagByName('version')
+        self.rel = self.tagByName('release')
+        self.repoid = 'rpmdb'
+        
+    def tagByName(self, tag):
+        data = self.hdr[tag]
+        return data
+    
+    def epoch(self):
+        tmpepoch = self.hdr['epoch']
+        if temepoch is None:
+            epoch = 0
+        else:
+            epoch = tmpepoch
+        
+        return epoch
     
 class YumAvailablePackage(metadata.packageObject.RpmXMLPackageObject):
     """derived class for the metadata packageobject we use
