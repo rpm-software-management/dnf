@@ -204,15 +204,17 @@ def upgradepkgs(tsnevral, hinevral, rpmnevral, nulist, uplist, obsoleted, obsole
         globalupgrade = 1
 
     for n in userlist:
+        log(5, 'userlist entry %s' % n)
         pkgfound = 0
         for (name, arch) in oulist:
             if n == name or fnmatch.fnmatch(name, n):
                 pkgfound = 1
+                log(4, '%s matched in oulist' % name)
                 if obsoleted.has_key(name):
-                    (obsname, obsarch) = obsoleted[name][0]
-                    log(4, '%s obsoleted by %s' % (name, obsname))
-                    ((e, v, r, a, l, i), s)=hinevral._get_data(obsname, obsarch)
-                    tsnevral.add((obsname,e,v,r,a,l,i),'u')
+                    for (obsname, obsarch) in obsoleted[name]:
+                        log(4, '%s obsoleted by %s' % (name, obsname))
+                        ((e, v, r, a, l, i), s) = hinevral._get_data(obsname, obsarch)
+                        tsnevral.add((obsname,e,v,r,a,l,i),'u')
                 else:
                     log(4,"Updating: %s" % name)
                     ((e, v, r, a, l, i), s)=hinevral._get_data(name, arch)
