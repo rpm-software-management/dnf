@@ -115,7 +115,6 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
                                                             'disablerepo=',
                                                             'exclude=',
                                                             'obsoletes',
-                                                            'rss-filename=',
                                                             'tolerant'])
         except getopt.error, e:
             self.errorlog(0, _('Options Error: %s') % e)
@@ -218,8 +217,6 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
                     self.conf.setConfigOption('obsoletes', 1)
                 elif o == '--installroot':
                     self.conf.setConfigOption('installroot', a)
-                elif o == '--rss-filename':
-                    self.conf.setConfigOption('rss-filename', a)
                 elif o == '--enablerepo':
                     try:
                         self.repos.enableRepo(a)
@@ -319,8 +316,8 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
                                 'grouplist', 'groupupdate', 'groupinstall',
                                 'groupremove', 'groupinfo', 'makecache',
                                 'clean', 'remove', 'provides', 'check-update',
-                                'search', 'generate-rss', 'upgrade', 
-                                'whatprovides', 'localinstall', 'localupdate',
+                                'search', 'upgrade', 'whatprovides',
+                                'localinstall', 'localupdate',
                                 'resolvedep', 'shell']:
             self.usage()
             raise CliError
@@ -384,15 +381,6 @@ For more information contact your distribution or package provider.
                     self.usage()
                     raise CliError
                     
-        elif self.basecmd == 'generate-rss':
-            if len(self.extcmds) == 0:
-                self.extcmds.insert(0, 'recent')
-            
-            if self.extcmds[0] not in ['updates', 'recent']:
-                self.errorlog(0, _("Error: generate-rss takes no argument, 'updates' or 'recent'."))
-                self.usage()
-                raise CliError
-            
         elif self.basecmd == 'shell':
             if len(self.extcmds) == 0:
                 self.log(3, "No argument to shell")
@@ -410,8 +398,7 @@ For more information contact your distribution or package provider.
                 raise CliError
               
         elif self.basecmd in ['list', 'check-update', 'info', 'update', 'upgrade',
-                              'generate-rss', 'grouplist', 'makecache',
-                              'resolvedep']:
+                              'grouplist', 'makecache', 'resolvedep']:
             pass
     
         else:
@@ -525,34 +512,6 @@ For more information contact your distribution or package provider.
             else:
                 return result, []
             
-            
-        elif self.basecmd == 'generate-rss':
-            self.log(2, 'Setting up RSS Generation')
-            titles = { 'recent': 'Recent Packages',
-                       'updates': 'Updated Packages'}
-            try:
-                pkgtype = self.extcmds[0]
-                ypl = self.returnPkgLists()
-                this_pkg_list = getattr(ypl, pkgtype)
-                if len(this_pkg_list) > 0:
-                    needrepos = []
-                    for po in this_pkg_list:
-                        if po.repoid not in needrepos:
-                            needrepos.append(po.repoid)
-
-                    self.log(2, 'Importing Changelog Metadata')
-                    self.repos.populateSack(with='otherdata', which=needrepos)
-                    self.log(2, 'Generating RSS File for %s' % pkgtype)
-                        
-                    self.listPkgs(this_pkg_list, titles[pkgtype], outputType='rss')
-                else:
-                    self.errorlog(0, 'No Recent Packages')
-
-            except yum.Errors.YumBaseError, e:
-                return 1, [str(e)]
-            else:
-                return 0, ['Done']
-                
         elif self.basecmd == 'clean':
             self.conf.setConfigOption('cache', 1)
             return self.cleanCli()
@@ -1468,7 +1427,7 @@ For more information contact your distribution or package provider.
         print _("""
     Usage:  yum [options] < update | install | info | remove | list |
             clean | provides | search | check-update | groupinstall | 
-            groupupdate | grouplist | groupinfo | groupremove | generate-rss |
+            groupupdate | grouplist | groupinfo | groupremove |
             makecache | localinstall | shell >
                 
         Options:
@@ -1480,7 +1439,6 @@ For more information contact your distribution or package provider.
         -C run from cache only - do not update the cache
         --installroot=[path] - set the install root (default '/')
         --version - output the version of yum
-        --rss-filename=[path/filename] - set the filename to generate rss to
         --exclude=package to exclude
         --disablerepo=repository id to disable (overrides config file)
         --enablerepo=repository id to enable (overrides config file)

@@ -195,7 +195,6 @@ class yumconf(object):
         optionstrings = [('cachedir', '/var/cache/yum'), 
                          ('logfile', '/var/log/yum.log'), 
                          ('reposdir', '/etc/yum.repos.d'),
-                         ('rss-filename', 'yum-rss.xml'),
                          ('pkgpolicy', 'newest'),
                          ('syslog_ident', None),
                          ('syslog_facility', 'LOG_USER'),

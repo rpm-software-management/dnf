@@ -22,7 +22,6 @@ import os.path
 import sys
 import time
 from i18n import _
-import libxml2
 
 try:
     import readline
@@ -81,8 +80,7 @@ class YumOutput:
     def listPkgs(self, lst, description, outputType):
         """outputs based on whatever outputType is. Current options:
            'list' - simple pkg list
-           'info' - similar to rpm -qi output
-           'rss' - rss feed-type output"""
+           'info' - similar to rpm -qi output"""
         
         if outputType in ['list', 'info']:
             thingslisted = 0
@@ -101,112 +99,6 @@ class YumOutput:
             if thingslisted == 0:
                 return 1, ['No Packages to list']
         
-        elif outputType == 'rss':
-            # take recent updates only and dump to an rss compat output
-            if len(lst) > 0:
-                if self.conf.getConfigOption('rss-filename') is None:
-                    raise yum.Errors.YumBaseError, \
-                       "No File specified for rss create"
-                else:
-                    fn = self.conf.getConfigOption('rss-filename')
-    
-                if fn[0] != '/':
-                    cwd = os.getcwd()
-                    fn = os.path.join(cwd, fn)
-                try:
-                    fo = open(fn, 'w')
-                except IOError, e:
-                    raise yum.Errors.YumBaseError, \
-                       "Could not open file %s for rss create" % (e)
-
-                doc = libxml2.newDoc('1.0')
-                self.xmlescape = doc.encodeEntitiesReentrant
-                rss = doc.newChild(None, 'rss', None)
-                rss.setProp('version', '2.0')
-                node = rss.newChild(None, 'channel', None)
-                rssheader = self.startRSS(description)
-                fo.write(rssheader)
-                for pkg in lst:
-                    item = self.rssnode(node, pkg)
-                    fo.write(item.serialize("utf-8", 1))
-                    item.unlinkNode()
-                    item.freeNode()
-                    del item
-                
-                end = self.endRSS()
-                fo.write(end)
-                fo.close()
-                del fo
-                doc.freeDoc()
-                del doc
-                
-    def startRSS(self, description='Yum Package List'):
-        """return string representation of rss preamble"""
-    
-        rfc822_format = "%a, %d %b %Y %X GMT"
-        now = time.strftime(rfc822_format, time.gmtime())
-        rssheader = """<?xml version="1.0" encoding="utf-8"?>
-    <rss version="2.0">
-      <channel>
-        <title>%s</title>
-        <link>http://linux.duke.edu/projects/yum/</link>
-        <description>%s</description>
-        <pubDate>%s</pubDate>
-        <generator>Yum</generator>
-        """ % (description, description, now)
-        
-        return rssheader
-    
-    def rssnode(self, node, pkg):
-        """return an rss20 compliant item node
-           takes a node, and a pkg object"""
-        
-        repo = self.repos.getRepo(pkg.repoid)
-        url = repo.urls[0]
-        rfc822_format = "%a, %d %b %Y %X GMT"
-        clog_format = "%a, %d %b %Y GMT"
-        xhtml_ns = "http://www.w3.org/1999/xhtml"
-        escape = self.xmlescape
-        
-        item = node.newChild(None, 'item', None)
-        title = escape(str(pkg))
-        item.newChild(None, 'title', title)
-        date = time.gmtime(float(pkg.returnSimple('buildtime')))
-        item.newChild(None, 'pubDate', time.strftime(rfc822_format, date))
-        item.newChild(None, 'guid', pkg.returnSimple('id'))
-        link = url + '/' + pkg.returnSimple('relativepath')
-        item.newChild(None, 'link', escape(link))
-
-        # build up changelog
-        changelog = ''
-        cnt = 0
-        for e in pkg.returnChangelog():
-            cnt += 1
-            if cnt > 3: 
-                changelog += '...'
-                break
-            (date, author, desc) = e
-            date = time.strftime(clog_format, time.gmtime(float(date)))
-            changelog += '%s - %s\n%s\n\n' % (date, author, desc)
-        body = item.newChild(None, "body", None)
-        body.newNs(xhtml_ns, None)
-        body.newChild(None, "p", escape(pkg.returnSimple('summary')))
-        body.newChild(None, "pre", escape(pkg.returnSimple('description')))
-        body.newChild(None, "p", 'Change Log:')
-        body.newChild(None, "pre", escape(changelog))
-        description = '<pre>%s - %s\n\n' % (escape(pkg.name), 
-                                            escape(pkg.returnSimple('summary')))
-        description += '%s\n\nChange Log:\n\n</pre>' % escape(pkg.returnSimple('description'))
-        description += escape('<pre>%s</pre>' % escape(changelog))
-        item.newChild(None, 'description', description)
-        
-        return item
-        
-    
-    def endRSS(self):
-        """end the rss output"""
-        end="\n  </channel>\n</rss>\n"
-        return end
     
         
     def userconfirm(self):
