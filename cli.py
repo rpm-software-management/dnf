@@ -46,7 +46,7 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
     def __init__(self):
         yum.YumBase.__init__(self)
 
-    def doRepoSetup(self):
+    def doRepoSetup(self, nosack=None):
         """grabs the repomd.xml for each enabled repository and sets up the basics
            of the repository"""
            
@@ -65,8 +65,10 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
                 self.errorlog(0, 'Cannot open/read repomd.xml file for repository: %s' % repo)
                 self.errorlog(0, str(e))
                 sys.exit(1)
-        self.log(2, 'Reading repository metadata in from local files')
-        self.doSackSetup()
+        
+        if not nosack: # so we can make the dirs and grab the repomd.xml but not import the md
+            self.log(2, 'Reading repository metadata in from local files')
+            self.doSackSetup()
     
         
     def getOptionsConfig(self, args):
@@ -434,18 +436,41 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         
         elif self.basecmd in ['groupupdate', 'groupinstall', 'groupremove', 
                               'grouplist']:
-            self.doRepoSetup()
-            self.doRpmDBSetup()
+
+            self.log(2, "Setting up Group Process")
+
+            self.doRepoSetup(nosack=1)
             try:
                 self.doGroupSetup()
             except yum.Errors.GroupsError:
                 return 1, ['No Groups on which to run command']
             except yum.Errors.YumBaseError, e:
                 return 1, [str(e)]
-                
+            
             if self.basecmd == 'grouplist':
+                # self.returnGroupLists()
                 self.groupInfo._dumppkgs()
                 return 0, []
+            
+            elif self.basecmd == 'groupinstall':
+                try:
+                    return self.installGroups()
+                except yum.Errors.YumBaseError, e:
+                    return 1, [str(e)]
+            
+            elif self.basecmd == 'groupupdate':
+                try:
+                    return self.updateGroups()
+                except yum.Errors.YumBaseError, e:
+                    return 1, [str(e)]
+            
+            elif self.basecmd == 'groupremove':
+                try:
+                    return self.removeGroups()
+                except yum.Errors.YumBaseError, e:
+                    return 1, [str(e)]
+            
+            
         elif self.basecmd in ['search']:
             self.log(2, "Searching Packages: ")
             try:
@@ -824,6 +849,18 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
             return 0, ['No Matches found']
         
         return 0, []
+        
+    def returnGroupLists(self, groups=None):
+        return 0, ['no op']
+    
+    def installGroups(self, groups=None):
+        return 0, ['no op']
+    
+    def updateGroups(self, groups=None):
+        return 0, ['no op']
+    
+    def removeGroups(self, groups=None):
+        return 0, ['no op']
         
     def usage(self):
         print _("""

@@ -58,6 +58,7 @@ class Groups_Info:
         self.compscount = 0
         # get our list of installed stuff real quickly
         self._get_installed(pkgtuples)
+        self.debug = 0
         
     def add(self, filename):
         """This method takes a filename and populates the above dicts"""
@@ -124,12 +125,10 @@ class Groups_Info:
                 elif type == u'default':
                     self.default_pkgs[groupname].append(name)
                 else:
-                    print '%s not optional, default or mandatory - ignoring' % name
+                    debugprint('%s not optional, default or mandatory - ignoring' % name)
                 
             for sub_group_id in thisgroup.groups.keys():
-                if sub_group_id in self.sub_groups[groupname]:
-                    print 'Duplicate group entry %s in %s' % (sub_group_id, groupname)
-                else:
+                if not sub_group_id in self.sub_groups[groupname]:
                     self.sub_groups[groupname].append(sub_group_id)
             
             metapkgobj = thisgroup.metapkgs
@@ -142,7 +141,7 @@ class Groups_Info:
                 elif type == u'default':
                     self.default_metapkgs[groupname].append(metapkgid)
                 else:
-                    print '%s not optional, default or mandatory - ignoring' % metapkgid
+                    debugprint('%s not optional, default or mandatory - ignoring' % metapkgid)
                     
         
     def compileGroups(self):
@@ -158,7 +157,7 @@ class Groups_Info:
                     if not self.group_by_id[id] in newlist:
                         newlist.append(self.group_by_id[id])
                 else:
-                    print 'Invalid group id %s' % id
+                    debugprint('Invalid group id %s' % id)
             self.sub_groups[key] = newlist
         
         for key in self.mandatory_metapkgs.keys():
@@ -168,7 +167,7 @@ class Groups_Info:
                     if not self.group_by_id[id] in newlist:
                         newlist.append(self.group_by_id[id])
                 else:
-                    print 'Invalid metapkg id %s' % id
+                    debugprint('Invalid metapkg id %s' % id)
             self.mandatory_metapkgs[key] = newlist
             
         for key in self.default_metapkgs.keys():
@@ -178,7 +177,7 @@ class Groups_Info:
                     if not self.group_by_id[id] in newlist:
                         newlist.append(self.group_by_id[id])
                 else:
-                    print 'Invalid metapkg id %s' % id
+                    debugprint('Invalid metapkg id %s' % id)
             self.default_metapkgs[key] = newlist
 
         for key in self.optional_metapkgs.keys():
@@ -188,7 +187,7 @@ class Groups_Info:
                     if not self.group_by_id[id] in newlist:
                         newlist.append(self.group_by_id[id])
                 else:
-                    print 'Invalid metapkg id %s' % id
+                    debugprint('Invalid metapkg id %s' % id)
             self.optional_metapkgs[key] = newlist
 
             
@@ -269,6 +268,10 @@ class Groups_Info:
          
         return grplist
     
+    def debugprint(self, msg):
+        if self.debug:
+            print msg
+
     def allPkgs(self, groupname):
         """duh - return list of all pkgs in group"""
         pkglist = self.requiredPkgs(groupname) + self.optional_pkgs[groupname]

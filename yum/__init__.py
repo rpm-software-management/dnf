@@ -62,12 +62,15 @@ class YumBase(depsolve.Depsolve):
         self.log(3, 'Reading Local RPMDB')
         self.rpmdb.addDB(self.read_ts)
 
-    def doSackSetup(self):
-        """populates the package sacks for information from our repositories"""
+    def doSackSetup(self, archlist=None):
+        """populates the package sacks for information from our repositories,
+           takes optional archlist for archs to include"""
+           
         self.log(3, 'Setting up Package Sacks')
-        #archlist = ['src'] # source rpms are allowed # FIXME decision about src?
-        archlist = []
-        archlist.extend(rpmUtils.arch.getArchList())
+        if not archlist:
+            archlist = []
+            archlist.extend(rpmUtils.arch.getArchList())
+
         archdict = {}
         for arch in archlist:
             archdict[arch] = 1
@@ -112,6 +115,7 @@ class YumBase(depsolve.Depsolve):
            finds the repos with groups, gets their comps data and merge it
            into the group object"""
         
+        self.log(3, 'Getting group metadata')
         reposWithGroups = []
         for repo in self.repos.listGroupsEnabled():
             if repo.repoXML is None:
@@ -123,7 +127,8 @@ class YumBase(depsolve.Depsolve):
             else:
                 reposWithGroups.append(repo)
         # now we know which repos actually have groups files.
-        
+
+        self.doRpmDBSetup()
         pkgtuples = self.rpmdb.getPkgList()
         overwrite = self.conf.getConfigOption('overwrite_groups')
         self.groupInfo = groups.Groups_Info(pkgtuples, overwrite_groups = overwrite)
