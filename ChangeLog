@@ -1,3 +1,13 @@
+2002-08-16 17:07  skvidal
+
+	* clientStuff.py, yummain.py, docs/yum.8: 
+	updated docs and misc to note the changes in functionality
+
+2002-08-16 16:59  skvidal
+
+	* ChangeLog: 
+	changelog update
+
 2002-08-16 16:59  skvidal
 
 	* clientStuff.py, config.py, logger.py, pkgaction.py, yummain.py: 
