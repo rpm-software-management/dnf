@@ -175,10 +175,11 @@ class Depsolve:
 
             # things to resolve
             self.log (3, '# of Deps = %d' % len(deps))
-
+            depcount = 0
             for dep in deps:
                 ((name, version, release), (needname, needversion), flags, suggest, sense) = dep
-                
+                depcount += 1
+                self.log(5, '\nDep Number: %d/%d\n' % (depcount, len(deps)))
                 if sense == rpm.RPMDEP_SENSE_REQUIRES: # requires
                     # if our packageSacks aren't here, then set them up
                     if not hasattr(self, 'pkgSack'):
@@ -235,7 +236,7 @@ class Depsolve:
         
         if self.dsCallback: self.dsCallback.procReq(name, niceformatneed)
         
-        # is requiring tuple (name, version, release) from an installed package?
+        # is the requiring tuple (name, version, release) from an installed package?
         pkgs = []
         dumbmatchpkgs = self.rpmdb.returnTupleByKeyword(name=name, ver=version, rel=release)
         for pkgtuple in dumbmatchpkgs:
@@ -262,13 +263,20 @@ class Depsolve:
             else:
                 txmbr = txmbrs[0]
                 self.log(4, 'Requiring package is from transaction set')
-                self.log(4, 'Resolving for requiring package: %s-%s-%s in state %s' %
-                            (name, version, release, txmbr.ts_state))
-                self.log(4, 'Resolving for requirement: %s' % 
-                    rpmUtils.miscutils.formatRequire(needname, needversion, flags))
-                requirementTuple = (needname, flags, needversion)
-                requiringPkg = (name, version, release, txmbr.ts_state) # should we figure out which is pkg it is from the tsInfo?
-                CheckDeps, missingdep = self._requiringFromTransaction(requiringPkg, requirementTuple, errormsgs)
+                if txmbr.ts_state == 'e':
+                    self.log(5, 'Requiring package %s is set to be erased, probably processing an old dep, restarting loop early.' % txmbr.name) 
+                    CheckDeps=1
+                    missingdep=0
+                    return (CheckDeps, missingdep, conflicts, errormsgs)
+                    
+                else:
+                    self.log(4, 'Resolving for requiring package: %s-%s-%s in state %s' %
+                                (name, version, release, txmbr.ts_state))
+                    self.log(4, 'Resolving for requirement: %s' % 
+                        rpmUtils.miscutils.formatRequire(needname, needversion, flags))
+                    requirementTuple = (needname, flags, needversion)
+                    requiringPkg = (name, version, release, txmbr.ts_state) # should we figure out which is pkg it is from the tsInfo?
+                    CheckDeps, missingdep = self._requiringFromTransaction(requiringPkg, requirementTuple, errormsgs)
             
         if len(pkgs) > 0:  # requring tuple is in the rpmdb
             if len(pkgs) > 1:
