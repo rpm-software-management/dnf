@@ -267,6 +267,10 @@ class TransactionWrapper:
         del self.tsflags[-1]
         self.ts.setVSFlags(self.tsflags[-1])
 
+    def addTsFlag(self, flag):
+        curflags = self.ts.setFlags(0)
+        self.ts.setFlags(curflags | flag)
+        
     def test(self, cb, conf={}):
         """tests the ts we've setup, takes a callback function and a conf dict 
            for flags and what not"""
@@ -274,7 +278,7 @@ class TransactionWrapper:
         # I don't like this function - it should test, sure - but not
         # with this conf dict, we should be doing that beforehand and
         # we should be packing this information away elsewhere.
-        self.ts.setFlags(rpm.RPMTRANS_FLAG_TEST)
+        self.addTsFlag(rpm.RPMTRANS_FLAG_TEST)
         if conf.has_key('diskspacecheck'):
             if conf['diskspacecheck'] == 0:
                 self.ts.setProbFilter(rpm.RPMPROB_FILTER_DISKSPACE)

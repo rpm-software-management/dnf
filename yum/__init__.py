@@ -66,6 +66,7 @@ class YumBase(depsolve.Depsolve):
         self.conf = config.yumconf(configfile=fn)
         self.repos = self.conf.repos
         
+        
     def doTsSetup(self):
         """setup all the transaction set storage items we'll need
            This can't happen in __init__ b/c we don't know our installroot

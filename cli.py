@@ -733,7 +733,6 @@ For more information contact your distribution or package provider.
         self.populateTs(keepold=0) # populate the ts
         self.ts.check() #required for ordering
         self.ts.order() # order
-        self.ts.setFlags(0) # unset the test flag
         
         output = 1
         if self.conf.debuglevel < 2:

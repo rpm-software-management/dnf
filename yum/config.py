@@ -215,7 +215,8 @@ class yumconf(object):
                                               'kernel-source', 'kernel-devel']),
                          ('kernelpkgnames', ['kernel','kernel-smp',
                                              'kernel-enterprise', 'kernel-bigmem',
-                                             'kernel-BOOT'])]
+                                             'kernel-BOOT']),
+                         ('tsflags', [])]
                          
         optionbools = [('assumeyes', 0),
                        ('exactarch', 1),
@@ -274,7 +275,7 @@ class yumconf(object):
             rootedpath = root + path
             self.configdata[option] = rootedpath
             setattr(self, option, rootedpath)
-            
+        
         # bandwidth limit options require special parsing
         for option, getfunc in (('bandwidth', self.cfg.getbytes), 
                                 ('throttle', self.cfg.getthrottle)):
@@ -299,7 +300,7 @@ class yumconf(object):
             self.configdata[option] = variableReplace(self.yumvar, self.configdata[option])
 
         # make our lists into lists. :)
-        for option in ['exclude', 'installonlypkgs', 'kernelpkgnames']:
+        for option in ['exclude', 'installonlypkgs', 'kernelpkgnames', 'tsflags']:
             self.configdata[option] = parseList(self.configdata[option])
 
         # look through our repositories.
