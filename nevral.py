@@ -259,7 +259,7 @@ class nevral:
             # be removed - not just name. so name-ver-rel
                 log(4, 'Erasing: %s-%s' % (name,arch))
                 _ts.remove(name)
-        return _ts
+        return _ts, _db
 
     def resolvedeps(self,rpmDBInfo):
         #create db
@@ -277,18 +277,19 @@ class nevral:
         unresolvable = 0
         # this does a quick dep check without adding all the hdrs
         # keeps mem usage small in the easy/quick case
-        _ts = self.populateTs(addavailable = 0)
+        _ts, _db = self.populateTs(addavailable = 0)
         deps = _ts.depcheck()
         if not deps:
             log(5, 'Quick Check only')
             return (0, 'Success - deps resolved')
         del deps
         del _ts
+        del _db
         log(5, 'Long Check')
         
         while CheckDeps==1 or (conflicts != 1 and unresolvable != 1 ):
             errors=[]
-            ts = self.populateTs(addavailable = 1)
+            ts, db = self.populateTs(addavailable = 1)
             deps = ts.depcheck()
             
             CheckDeps = 0
@@ -385,5 +386,6 @@ class nevral:
             log(4, 'Restarting Dependency Loop')
             del ts
             del deps
+            del db
             if len(errors) > 0:
                 return(1, errors)
