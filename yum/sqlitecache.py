@@ -19,13 +19,12 @@
 # TODO
 # - Add support for multiple checksums per rpm (is this required??)
 # - Store filetypes as one char per type instead of a string
-# - display the name of the repository when caching metadata
 # - don't use print for output, use yum's output functions instead
-# - Move the stuff that turns a list of files into a string into a helper
-#   unit
+# - Move the stuff that turns a list of files into a string into a helper unit
+# - Don't fall back to a memory sqlite cache but to pickles if a cache
+#   file can't be created.
 
 import os
-import mdcache
 import sqlite
 import time
 import mdparser
@@ -35,12 +34,18 @@ import mdparser
 # to be re-generated
 dbversion = '5'
 
-# TODO
-# We probably don't really need to subclass RepodataParser anymore, just use
-# the same interface. sqlitecache.py and mdparser.py combined replaces all the
-# functionality from mdcache.py. We should aim for removal of mdcache.py.
-class RepodataParserSqlite(mdcache.RepodataParser):
-    
+class RepodataParserSqlite:
+    def __init__(self, storedir, repoid, callback=None):
+        self.storedir = storedir
+        self.callback = callback
+        self.repodata = {
+            'metadata': {},
+            'filelists': {},
+            'otherdata': {}
+        }
+        self.repoid = repoid
+        self.debug = 0
+
     def loadCache(self,filename):
         """Load cache from filename, check if it is valid and that dbversion 
         matches the required dbversion"""
@@ -221,11 +226,6 @@ class RepodataParserSqlite(mdcache.RepodataParser):
 
         # Try to create the databse in filename, or use in memory when
         # this fails
-        # TODO in memory sqlite probably is not worth the overhead of creating
-        # the database, maybe we should fall back to using old skool pickle
-        # caches if this fails, i.e. raise some exception that yum
-        # will catch and will cause it to fall back to non-sqlite for
-        # this repo
         try:
             f = open(filename,'w')
             db = sqlite.connect(filename) 
@@ -343,7 +343,7 @@ class RepodataParserSqlite(mdcache.RepodataParser):
         for package in parser:
 
             if self.callback is not None:
-                self.callback(parser.count, parser.total, "Caching")
+                self.callback(parser.count, parser.total, self.repoid)
 
             pkgId = package['pkgId']
             all_pkgIds[pkgId] = 1

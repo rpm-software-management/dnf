@@ -331,7 +331,7 @@ class YumSqlitePackageSack(repos.YumPackageSack):
         # If naTup is set do it from the database otherwise use our parent's
         # returnNewestByNameArch
         if (not naTup):
-            # TODO process obsoletes here
+            # TODO process excludes here
             return repos.YumPackageSack.returnNewestByNameArch(self, naTup)
 
         # First find all packages that fulfill naTup

@@ -212,7 +212,7 @@ class RepoStorage:
         for repo in myrepos:
             if not hasattr(repo, 'cacheHandler'):
                 if (self.sqlite):
-                    repo.cacheHandler = self.sqlitecache.RepodataParserSqlite(storedir=repo.cachedir, callback=callback)
+                    repo.cacheHandler = self.sqlitecache.RepodataParserSqlite(storedir=repo.cachedir, repoid=repo.id, callback=callback)
                 else:
                     repo.cacheHandler = mdcache.RepodataParser(storedir=repo.cachedir, callback=callback)
             for item in data:
