@@ -384,7 +384,6 @@ class nevral:
                         conflicts=1
             log(4, 'Restarting Dependency Loop')
             del ts
-            del db
             del deps
             if len(errors) > 0:
                 return(1, errors)
