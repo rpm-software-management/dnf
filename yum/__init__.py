@@ -900,7 +900,7 @@ class YumBase(depsolve.Depsolve):
         """checks for the presence of gpg keys in the rpmdb
            returns 0 if no keys returns 1 if keys"""
 
-        gpgkeyschecked = self.conf.cachedir + '/gpgkeyschecked.yum'
+        gpgkeyschecked = self.conf.cachedir + '/.gpgkeyschecked.yum'
         if os.path.exists(gpgkeyschecked):
             return 1
             
