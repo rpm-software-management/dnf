@@ -285,10 +285,31 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         if self.conf.getConfigOption('uid') != 0:
             if self.basecmd in ['install', 'update', 'clean', 'upgrade','erase', 
                                 'groupupdate', 'groupinstall', 'remove',
-                                'groupremove', 'importkey', 'makecache']:
+                                'groupremove', 'importkey', 'makecache', 
+                                'localinstall', 'localupdate']:
                 self.errorlog(0, _('You need to be root to perform this command.'))
                 sys.exit(1)
-        
+
+        if self.basecmd in ['install', 'update', 'upgrade', 'groupinstall',
+                            'groupupdate', 'localinstall', 'localupdate']:
+            repocheck = 0
+            for repo in self.repos.listEnabled():
+                repocheck += repo.gpgcheck
+
+            if self.conf.gpgcheck or repocheck > 0:
+                if not self.gpgKeyCheck():
+                    msg = _("""
+You have enabled checking of packages via GPG keys. This is a good thing. 
+However, you do not have any GPG public keys installed. You need to download
+the keys for packages you wish to install and install them.
+You can do that by running the command:
+    rpm --import public.gpg.key
+For more information contact your distribution or package provider.
+""")
+                    self.errorlog(0, msg)
+                    sys.exit(1)
+
+                
         if self.basecmd in ['install', 'erase', 'remove', 'localinstall', 'localupdate']:
             if len(self.extcmds) == 0:
                 self.errorlog(0, _('Error: Need to pass a list of pkgs to %s') % self.basecmd)

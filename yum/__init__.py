@@ -893,4 +893,26 @@ class YumBase(depsolve.Depsolve):
             # is the best one to pull from
         
         return result
+    def gpgKeyCheck(self):
+        """checks for the presence of gpg keys in the rpmdb
+           returns 0 if no keys returns 1 if keys"""
+        cachedir = self.conf.cachedir
+        gpgkeyschecked = self.conf.cachedir + '/gpgkeyschecked.yum'
+        if os.path.exists(gpgkeyschecked):
+            return 1
+            
+        myts = rpmUtils.transaction.initReadOnlyTransaction(root=self.conf.installroot)
+        myts.pushVSFlags(~(rpm._RPMVSF_NOSIGNATURES|rpm._RPMVSF_NODIGESTS))
+        idx = myts.dbMatch('name', 'gpg-pubkey')
+        keys = idx.count()
+        del idx
+        del myts
         
+        if keys == 0:
+            return 0
+        else:
+            fo = open(gpgkeyschecked, 'w')
+            fo.close()
+            del fo
+            return 1
+
