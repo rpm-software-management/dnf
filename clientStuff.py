@@ -518,7 +518,7 @@ def clean_up_old_headers(rpmDBInfo, HeaderInfo):
     for hdrfn in hdrlist:
         todel = 0
         hdr = readHeader(hdrfn)
-        if hdr == None
+        if hdr == None:
             errorlog(0, 'Possibly damaged Header %s' % hdrfn)
             pass
         else:
@@ -579,7 +579,7 @@ def checkheader(headerfile, name, arch):
     #return true(1) if the header is good
     #return  false(0) if the header is bad
     # test is fairly rudimentary - read in header - read two portions of the header
-    h = readHeader(headerfile):
+    h = readHeader(headerfile)
     if h == None:
         return 0
     else:

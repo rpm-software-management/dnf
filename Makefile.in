@@ -37,7 +37,7 @@ MODULES = $(srcdir)/pullheaders.pyc \
 	  $(srcdir)/config.pyc \
 	  $(srcdir)/nevral.pyc \
 	  $(srcdir)/logger.pyc \
-      $(srcdir)/yumlock.pyc \
+	  $(srcdir)/yumlock.pyc \
 	  $(srcdir)/yummain.pyc \
 	  $(srcdir)/pkgaction.pyc \
           $(srcdir)/serverStuff.pyc \
