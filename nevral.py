@@ -194,9 +194,17 @@ class nevral:
 					pkghdr = self.getHeader(name, arch)
 					log(4,'Updating: %s, %s' % (name, arch))
 					if name == 'kernel' or name == 'kernel-bigmem' or name == 'kernel-enterprise' or name == 'kernel-smp' or name == 'kernel-debug':
-						ts.add(pkghdr,(pkghdr,rpmloc),'i')
-						((e, v, r, a, l, i), s)=self._get_data(name,arch)
-						self.add((name,e,v,r,arch,l,i),'i')            
+						kernarchlist = archwork.availablearchs(self,name)
+						bestarch = archwork.bestarch(kernarchlist)
+						if arch == bestarch:
+							ts.add(pkghdr,(pkghdr,rpmloc),'i')
+							((e, v, r, a, l, i), s)=self._get_data(name,arch)
+							self.add((name,e,v,r,arch,l,i),'i')
+						else:
+							log(4, "Removing dumb kernel with silly arch %" %(bestarch))
+							ts.add(pkghdr,(pkghdr,rpmloc),'a')
+							((e,v,r,a,l,i),s)=self._get_data(name,arch)
+							self.add((name,e,v,r,arch,l,i),'i')
 					else:
 						ts.add(pkghdr,(pkghdr,rpmloc),'u')
 					
