@@ -1,3 +1,100 @@
+2004-10-13 02:02  skvidal
+
+	* cli.py, yum-daily.spec, yum.spec: 
+	update version strings
+
+2004-10-13 02:01  skvidal
+
+	* docs/yum.8: 
+	modifications to the yum man page
+
+2004-10-13 01:59  skvidal
+
+	* docs/yum.8: 
+	checked in Gijs Hollestelle's updated yum man page Thanks!
+
+2004-10-13 01:57  skvidal
+
+	* Makefile, yum-arch, yum.sh, bin/yum-arch, bin/yum.sh: 
+	move yum-arch and yum.sh into bin/ dir
+
+2004-10-13 01:55  skvidal
+
+	* docs/yum-arch.8: 
+	add in yum-arch man page
+
+2004-10-13 01:43  skvidal
+
+	* pullheaders.py: 
+	fix minor bug in pullheaders and add warning expression
+
+2004-10-13 01:38  skvidal
+
+	* bin/yum: 
+	remove obsolete yum bin file
+
+2004-10-13 01:36  skvidal
+
+	* Makefile, pullheaders.py, serverStuff.py, yum-arch, yum.spec,
+	docs/Makefile, rpmUtils/__init__.py, rpmUtils/oldUtils.py: 
+	merge in yum-arch
+
+2004-10-13 01:16  skvidal
+
+	* urlgrabber/__init__.py, urlgrabber/byterange.py,
+	urlgrabber/grabber.py, urlgrabber/keepalive.py,
+	urlgrabber/mirror.py, urlgrabber/progress.py, yum/__init__.py,
+	yum/config.py, yum/repos.py: 
+	added in new urlgrabber implemented timeout and fixed up changes
+	for new urlgrabber checkfunc api
+
+2004-10-11 00:01  skvidal
+
+	* cli.py, rpmUtils/__init__.py: 
+	implemented groupupdate and groupremove
+
+2004-10-10 22:56  skvidal
+
+	* cli.py, rpmUtils/arch.py, yum/packages.py: 
+	fix situation with kernels of lesser archs getting installed on
+	calls to install when they should really be 'update' calls.
+
+2004-10-09 14:20  skvidal
+
+	* cli.py, output.py: 
+	yum generate-rss updates option added
+
+2004-10-08 02:20  skvidal
+
+	* cli.py: 
+	clean up debug wording
+
+2004-10-08 02:19  skvidal
+
+	* cli.py: 
+	partial implementation of groupinstall - need to clean up the yum
+	install kernel problem w/older non-bestarch kernels
+
+2004-10-08 01:51  skvidal
+
+	* cli.py, output.py: implemented groupinfo
+
+2004-10-08 01:36  skvidal
+
+	* cli.py, output.py, yum/__init__.py, yum/repos.py: fix grouplist
+	for nonroot users added yum makecache to setup all the metadata
+	cache pickles.
+
+2004-10-08 01:10  skvidal
+
+	* cli.py, output.py, yum/__init__.py: 
+	grouplist now works correctly - takes one argument 'hidden'
+
+2004-10-06 22:57  skvidal
+
+	* ChangeLog: 
+	changelog update
+
 2004-10-06 22:56  skvidal
 
 	* cli.py, yum-daily.spec, yum.spec: 
