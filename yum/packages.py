@@ -19,6 +19,8 @@ import rpm
 import os
 import os.path
 import misc
+import re
+import fnmatch
 
 import metadata.packageObject
 
@@ -63,7 +65,7 @@ def parsePackages(pkgs, usercommands, casematch=0):
     unmatched = []
     for command in usercommands:
         if pkgdict.has_key(command):
-            excactmatch.extend(pkgdict[command])
+            exactmatch.extend(pkgdict[command])
             del pkgdict[command]
         else:
             # anything we couldn't find a match for
