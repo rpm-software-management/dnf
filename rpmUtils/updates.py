@@ -307,7 +307,7 @@ class Updates:
         # ie: x86_64 and athlon(i686-i386) - we don't want to descend
         # x86_64->i686 
         archlists = []
-        if rpmUtils.arch.multilibArches.has_key(self.myarch):
+        if rpmUtils.arch.isMultiLibArch(arch=self.myarch):
             multicompat = rpmUtils.arch.getMultiArchInfo(self.myarch)[0]
             multiarchlist = rpmUtils.arch.getArchList(multicompat)
             archlists = [ [self.myarch], multiarchlist ]
