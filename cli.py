@@ -13,6 +13,8 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 # Copyright 2004 Duke University 
+# Written by Seth Vidal
+
 
 import os
 import sys
@@ -36,7 +38,7 @@ from i18n import _
 import callback
 
 
-__version__ = '2.1.7'
+__version__ = '2.1.8'
 
 
 class YumBaseCli(yum.YumBase, output.YumOutput):

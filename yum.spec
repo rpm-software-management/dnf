@@ -1,6 +1,6 @@
 Summary: RPM installer/updater
 Name: yum
-Version: 2.1.7
+Version: 2.1.8
 Release: 1
 License: GPL
 Group: System Environment/Base
@@ -72,6 +72,10 @@ exit 0
 %{_mandir}/man*/*
 
 %changelog
+* Mon Oct 18 2004 Seth Vidal <skvidal@phy.duke.edu>
+- 2.1.8
+
+
 * Wed Oct 13 2004 Seth Vidal <skvidal@phy.duke.edu>
 - update to 2.1.7
 - re-include yum-arch w/deprecation notice
