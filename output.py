@@ -244,64 +244,33 @@ class YumOutput:
                 return 1
                 
     
-    
-    
-    def listgroups(self, userlist):
-        """lists groups - should handle 'installed', 'all', glob, empty,
-           maybe visible and invisible too"""
-        # this needs tidying and needs to handle empty statements and globs
-        # it also needs to handle a userlist - duh
-        # take list - if it's zero then it's '_all_' - push that into list
-        # otherwise iterate over list producing output
-        if len(userlist) > 0:
-            if userlist[0] == "hidden":
-                groups = GroupInfo.grouplist
-                userlist.pop(0)
-            else:
-                groups = GroupInfo.visible_groups
-        else:
-            groups = GroupInfo.visible_groups
-        
-        if len(userlist) == 0:
-            userlist = ['_all_']
-    
-        groups.sort()
-        for item in userlist:
-            if item == 'installed':
-                print 'Installed Groups'
-                for group in groups:
-                    if GroupInfo.isGroupInstalled(group):
-                        grpid = GroupInfo.group_by_name[group]
-                        log(4, '%s - %s' % (grpid, group))
-                        print '   %s' % group
-            elif item == 'available':
-                print 'Available Groups'
-                for group in groups:
-                    if not GroupInfo.isGroupInstalled(group):
-                        grpid = GroupInfo.group_by_name[group]
-                        log(4, '%s - %s' % (grpid, group))
-                        print '   %s' % group
-            elif item == '_all_':
-                print 'Installed Groups'
-                for group in groups:
-                    if GroupInfo.isGroupInstalled(group):
-                        grpid = GroupInfo.group_by_name[group]
-                        log(4, '%s - %s' % (grpid, group))
-                        print '   %s' % group
-                        
-                print 'Available Groups'
-                for group in groups:
-                    if not GroupInfo.isGroupInstalled(group):
-                        grpid = GroupInfo.group_by_name[group]
-                        log(4, '%s - %s' % (grpid, group))
-                        print '   %s' % group
-            else:
-                for group in groups:
-                    if group == item or fnmatch.fnmatch(group, item):
-                        grpid = GroupInfo.group_by_name[group]
-                        log(4, '%s - %s' % (grpid, group))
-                        displayPkgsInGroups(group)
-    
+    def displayPkgsInGroups(self, group):
+        print '\nGroup: %s' % group
+        if len(self.groupInfo.sub_groups[group]) > 0:
+            print ' Required Groups:'
+            for item in self.groupInfo.sub_groups[group]:
+                print '   %s' % item
+        if len(self.groupInfo.default_metapkgs[group]) > 0:
+            print ' Default Metapkgs:'
+            for item in self.groupInfo.default_metapkgs[group]:
+                print '   %s' % item
+        if len(self.groupInfo.optional_metapkgs[group]) > 0:
+            print ' Optional Metapkgs:'
+            for item in self.groupInfo.optional_metapkgs[group]:
+                print '   %s' % item
+        if len(self.groupInfo.mandatory_pkgs[group]) > 0:
+            print ' Mandatory Packages:'
+            for item in self.groupInfo.mandatory_pkgs[group]:
+                print '   %s' % item
+        if len(self.groupInfo.default_pkgs[group]) > 0:
+            print ' Default Packages:'
+            for item in self.groupInfo.default_pkgs[group]:
+                print '   %s' % item
+        if len(self.groupInfo.optional_pkgs[group]) > 0:
+            print ' Optional Packages'
+            for item in self.groupInfo.optional_pkgs[group]:
+                print '   %s' % item
+
            
     def format_number(self, number, SI=0, space=' '):
         """Turn numbers into human-readable metric-like numbers"""

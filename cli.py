@@ -894,9 +894,18 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
             
         return 0, ['Done']
     
-    def returnGroupInfo(self, groups=[]):
+    def returnGroupInfo(self, userlist=None):
         """returns complete information on a list of groups"""
-        return 0, ['no op']
+        if userlist is None:
+            userlist = self.extcmds
+        
+        for group in userlist:
+            if self.groupInfo.group_by_name.has_key(group):
+                self.displayPkgsInGroups(group)
+            else:
+                self.errorlog(1, 'Warning: Group %s does not exist.' % group)
+        
+        return 0, []
         
     def installGroups(self, groups=None):
         return 0, ['no op']
