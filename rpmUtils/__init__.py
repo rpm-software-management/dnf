@@ -58,6 +58,16 @@ class RpmDBHolder:
         
     def addDB(self, ts):
         self.ts = ts
+        self.match_on_index = 0
+        
+        try:
+            mi = self.ts.dbMatch(0, 1)
+            hdr = mi.next()
+        except TypeError, e:
+            self.match_on_index = 0
+        else:
+            self.match_on_index = 1
+            
         self.indexdict = {}
         
         mi = self.ts.dbMatch()
@@ -196,9 +206,18 @@ class RpmDBHolder:
     def returnHeaderByTuple(self, pkgtuple):
         """returns a list of header(s) based on the pkgtuple provided"""
         (n, a, e, v, r) = pkgtuple
-        lst = getHeadersByKeyword(self.ts, name=n, arch=a, epoch=e, version=v, 
+        
+        if not self.match_on_index:
+            lst = getHeadersByKeyword(self.ts, name=n, arch=a, epoch=e, version=v, 
                                   release=r)
-        return lst
+            return lst
+        else:
+            idxs = self.returnIndexByTuple(pkgtuple)
+            idx = idxs[0]
+            mi = self.ts.dbMatch(0, idx)
+            hdr = mi.next()
+            return [hdr]
+
         
     def returnIndexByTuple(self, pkgtuple):
         return self.indexdict[pkgtuple]
