@@ -44,9 +44,11 @@ def main():
 
 	#parse commandline options here - leave the user instructions (cmds) until after the startup stuff is done
 	args = sys.argv[1:]
+	if len(args) < 1:
+		usage()
 	userask=1
 	try:
-		gopts,cmds = getopt.getopt(args, 'd:y')
+		gopts,cmds = getopt.getopt(args, 'hd:y',['help'])
 	except getopt.error, e:
 		print "Options Error: %s" % e
 		sys.exit(1)
@@ -56,6 +58,8 @@ def main():
 			log.verbosity=int(a)
 		if o =='-y':
 			userask=0
+		if o in ('-h', '--help'):
+			usage()
 	if cmds[0] not in ('update','install','list','erase','grouplist','groupupdate','groupinstall','clean','remove'):
 		usage()
 
@@ -63,7 +67,6 @@ def main():
 	#sorting the servers so that sort() will order them consistently
 	serverlist=conf.servers
 	serverlist.sort()
-	print serverlist
 	for serverid in serverlist:
 		baseurl = conf.serverurl[serverid]
 		servername = conf.servername[serverid]
@@ -252,11 +255,13 @@ def main():
 
 def usage():
 	print """
-	Usage:  yum [options] <update | install | erase | groupinstall
-	| groupupdate | list | grouplist | clean>
-	Options:
-	-d [debug level] - set the debugging verbosity level
-	-y answer yes to all questions
+    Usage:  yum [options] <update | install | erase | groupinstall
+	            | groupupdate | list | grouplist | clean>
+				
+         Options:
+          -d [debug level] - set the debugging verbosity level
+          -y answer yes to all questions
+          -h, --help this screen
 	"""
 	sys.exit(1)
 	
