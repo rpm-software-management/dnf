@@ -24,7 +24,7 @@ import os.path
 import types
 import repos
 from packages import YumAvailablePackage
-from repomd import mdUtils
+from repomd import mdUtils, mdErrors
 
 # Simple subclass of YumAvailablePackage that can load 'simple headers' from
 # the database when they are requested
@@ -407,7 +407,11 @@ class YumSqlitePackageSack(repos.YumPackageSack):
                 if (self.excludes[rep].has_key(x.pkgId)):
                     continue                    
                 allpkg.append(self.pc(self.db2class(x,True),rep))
-        # Now find the newest one
+        
+        # if we've got zilch then raise
+        if not allpkg:
+            raise mdErrors.PackageSackError, 'No Package Matching %s.%s' % naTup
+        # Now find the newest one        
         newest = allpkg.pop()
         for pkg in allpkg:
             (e2, v2, r2) = newest.returnEVR()
