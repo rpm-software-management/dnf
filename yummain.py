@@ -33,12 +33,17 @@ def main(args):
     """This does all the real work"""
 
     locale.setlocale(locale.LC_ALL, '')
-    
     # our core object for the cli
     base = cli.YumBaseCli()
 
     if len(args) < 1:
         base.usage()
+
+    def unlock():
+        try:
+            base.doUnlock('/var/run/yum.pid')
+        except Errors.LockError, e:
+            sys.exit(200)
 
     # do our cli parsing and config file setup
     # also sanity check the things being passed on the cli
@@ -50,38 +55,67 @@ def main(args):
         base.errorlog(0,'%s' % e.msg)
         sys.exit(200)
     
-    # right now we've parsed the config, we've parsed the cli
-    # all these things check out
-    # the things we will require are dependent on the command invoked.
+    # build up an idea of what we're supposed to do
     try:
         result, resstring = base.doCommands()
     except Errors, e:
-        print 'raised error %s from doCommands()' % e
-        raise
+        result = 1
+        restring = str(e)
+        
+    if result not in [0, 1, 2]:
+        base.errorlog(0, 'Unknown Error: %d - %s' % (result, resstring))
+        unlock()
+        sys.exit(3)
+        
     if result == 0:
-        try:
-            base.doUnlock('/var/run/yum.pid')
-        except Errors.LockError, e:
-            sys.exit(200)
-        else:
-            sys.exit(0)
-    elif result == 2:
-        base.log(2, 'Continuing to Transaction')
-        base.doTransaction() # and a miracle occurs
-    else:
-        if result != 1:
-            resstring = resstring + '\nUnknown Result Code %d, Exiting' % result
-            try:
-                base.doUnlock('/var/run/yum.pid')
-            except Errors.LockError, e:
-                sys.exit(200)
-            else:
-                base.errorlog(0, 'Error: %s' % resstring)
-                sys.exit(1)
+        base.log(2, '%s' % resstring)
+        unlock()
+        sys.exit(0)
+            
+    elif result == 1:
+        base.errorlog(0, 'Error: %s' % resstring)
+        unlock()
+        sys.exit(1)
+            
+    # Depsolve stage
+    base.log(2, 'Resolving Dependencies')
+    try:
+        (result, resstring) = base.buildTransaction() 
+    except Errors.YumBaseError, e:
+        result = 1
+        resstring = str(e)
+    
+    if result not in [0, 1, 2]:
+        base.errorlog(0, 'Unknown Error: %d - %s' % (result, resstring))
+        unlock()
+        sys.exit(3)
+        
+    if result == 0:
+        unlock()
+        sys.exit(0)
+            
+    elif result == 1:
+        base.errorlog(0, 'Error: %s' % resstring)
+        unlock()
+        sys.exit(1)
 
-    # the result code from doCommands() determines where we go from here
-    # this means we either do the transaction set we have or exit nicely    
-    # we're done, unlock, and take us home mr. data.     
+    base.log(2, 'Dependencies Resolved')
+    #run post-depresolve script here
+    #run  pre-trans script here
+
+    # run the transaction
+    try:
+        base.doTransaction()
+    except Errors.YumBaseError, e:
+        base.errorlog(0, 'Error: %s' % e)
+        unlock()
+        sys.exit(1)
+
+    # run post-trans script here
+    base.log(2, 'Complete!')
+    unlock()
+    sys.exit(0)
+    
     
 if __name__ == "__main__":
         main(sys.argv[1:])
