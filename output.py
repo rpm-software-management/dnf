@@ -35,6 +35,7 @@ class YumOutput:
     def failureReport(self, msg, errorlog=None, relative=None):
         """failure output for failovers from urlgrabber"""
         
+        #FIXME - Bwah?
         if errorlog:
             errorlog(1, '%s: %s' % (relative, msg))
         raise msg
@@ -124,23 +125,22 @@ class YumOutput:
         
         elif outputType == 'rss':
             # take recent updates only and dump to an rss compat output
-    
-            if self.conf.getConfigOption('rss-filename') is None:
-                raise yum.Errors.YumBaseError, \
-                   "No File specified for rss create"
-            else:
-                fn = self.conf.getConfigOption('rss-filename')
-
-            if fn[0] != '/':
-                cwd = os.getcwd()
-                fn = os.path.join(cwd, fn)
-            try:
-                fo = open(fn, 'w')
-            except IOError, e:
-                raise yum.Errors.YumBaseError, \
-                   "Could not open file %s for rss create" % (e)
-    
             if len(lst) > 0:
+                if self.conf.getConfigOption('rss-filename') is None:
+                    raise yum.Errors.YumBaseError, \
+                       "No File specified for rss create"
+                else:
+                    fn = self.conf.getConfigOption('rss-filename')
+    
+                if fn[0] != '/':
+                    cwd = os.getcwd()
+                    fn = os.path.join(cwd, fn)
+                try:
+                    fo = open(fn, 'w')
+                except IOError, e:
+                    raise yum.Errors.YumBaseError, \
+                       "Could not open file %s for rss create" % (e)
+
                 doc = libxml2.newDoc('1.0')
                 self.xmlescape = doc.encodeEntitiesReentrant
                 rss = doc.newChild(None, 'rss', None)
@@ -161,7 +161,7 @@ class YumOutput:
                 del fo
                 doc.freeDoc()
                 del doc
-    
+                
     def startRSS(self):
         """return string representation of rss preamble"""
     

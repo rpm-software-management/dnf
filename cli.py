@@ -390,7 +390,7 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
             
             
         elif self.basecmd == 'generate-rss':
-            self.log(2, 'Generating RSS File')
+            self.log(2, 'Setting up RSS Generation')
             self.extcmds.insert(0, 'recent')
             try:
                 ypl = self.returnPkgLists()
@@ -403,7 +403,10 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
 
                     self.log(2, 'Importing Changelog Metadata')
                     self.repos.populateSack(with='other', which=needrepos)
+                    self.log(2, 'Generating RSS File')
                     self.listPkgs(ypl.recent, 'Recent Packages', outputType='rss')
+                else:
+                    self.errorlog(0, 'No Recent Packages')
             except yum.Errors.YumBaseError, e:
                 return 1, [str(e)]
             else:

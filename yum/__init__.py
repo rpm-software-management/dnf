@@ -22,8 +22,9 @@ import re
 import fnmatch
 import types
 import errno
-import Errors
+import time
 
+import Errors
 import rpmUtils
 import rpmUtils.transaction
 import rpmUtils.arch
@@ -588,19 +589,19 @@ class YumBase(depsolve.Depsolve):
         
         # packages recently added to the repositories
         elif pkgnarrow == 'recent':
+            now = time.time()
+            recentlimit = now-(self.conf.recent*86400)
             ftimehash = {}
             self.doRepoSetup()
             for po in self.pkgSack.returnPackages():
-                ftime = po.returnSimple('filetime')
-                if not ftimehash.has_key(ftime):
-                    ftimehash[ftime] = [po]
-                else:
-                    ftimehash[ftime].append(po)
-            
-            timekeys = ftimehash.keys()
-            timekeys.sort()
-            timekeys.reverse()
-            for sometime in timekeys:
+                ftime = int(po.returnSimple('filetime'))
+                if ftime > recentlimit:
+                    if not ftimehash.has_key(ftime):
+                        ftimehash[ftime] = [po]
+                    else:
+                        ftimehash[ftime].append(po)
+
+            for sometime in ftimehash.keys():
                 for po in ftimehash[sometime]:
                     recent.append(po)
         
