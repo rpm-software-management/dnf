@@ -26,17 +26,19 @@ yum \- Yellowdog Updater Modified
 .br 
 .I \fR * provides  | whatprovides feature1 [feature2] [\&.\&.\&.]
 .br  
-.I \fR * clean [ packages | headers | all ]
+.I \fR * clean [ packages | headers | metadata | cache | all ]
 .br
-.I \fR * groupinstall [\&.\&.\&.]
+.I \fR * makecache
 .br
-.I \fR * groupupdate [\&.\&.\&.]
+.I \fR * groupinstall group1 [group2] [\&.\&.\&.]
+.br
+.I \fR * groupupdate group1 [group2] [\&.\&.\&.]
 .br 
 .I \fR * grouplist
 .br
-.I \fR * groupremove [\&.\&.\&.]
+.I \fR * groupremove group1 [group2] [\&.\&.\&.]
 .br
-.I \fR * groupinfo [\&.\&.\&.]
+.I \fR * groupinfo group1 [\&.\&.\&.]
 .br
 .I \fR * search string1 [string2] [\&.\&.\&.]
 .br
@@ -109,7 +111,9 @@ the \fIClean Options\fP section below\&.
 .IP 
 .IP "\fBgenerate-rss\fP" 
 Is used to create a rss file containing changelogs for all packages in the enabled
-repositories.
+repositories. By default it will list only the most recent packages. If the
+'updates' argument is given then it will list updates available for that
+system.
 .IP 
 .PP 
 .SH "GENERAL OPTIONS"
@@ -263,5 +267,5 @@ Seth Vidal <skvidal@phy.duke.edu>
 .PP 
 .SH "BUGS"
 There of course aren't any bugs, but if you find any, they should be sent
-to the mailing list: yum@dulug.duke.edu
+to the mailing list: yum@lists.linux.duke.edu or filed in bugzilla.
 .fi
