@@ -148,7 +148,7 @@ class RpmDBHolder:
         return returns
     
     def installed(self, name=None, arch=None, epoch=None, ver=None, rel=None):
-        if len(returnTupleByKeyword(name=name, arch=arch, epoch=epoch, ver=ver, rel=rel)) > 0:
+        if len(self.returnTupleByKeyword(name=name, arch=arch, epoch=epoch, ver=ver, rel=rel)) > 0:
             return 1
         return 0
 
