@@ -31,7 +31,7 @@ import types
 import pkgaction
 import callback
 import time
-
+import zlib
 
 from urlgrabber import close_all, urlgrab, URLGrabError, retrygrab
 
@@ -218,6 +218,9 @@ def readHeader(rpmfn):
                 return None
         except ValueError, e:
             errorlog (0, 'Damaged Header Gzip CRC error: %s' % rpmfn)
+            return None
+        except zlib.error, e:
+            errorlog (0, 'Damaged Header zlib error: %s' % rpmfn)
             return None
     fd.close()
     return h
