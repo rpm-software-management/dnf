@@ -24,7 +24,7 @@ import fnmatch
 import re
 import output
 
-import progress_meter
+from urlgrabber.progress import TextMeter
 import yum
 import yum.yumcomps
 import yum.Errors
@@ -216,11 +216,12 @@ class YumBaseCli(yum.YumBase):
         
         # if we're below 2 on the debug level we don't need to be outputting
         # progress bars - this is hacky - I'm open to other options
+        # One of these is a download
         if self.conf.getConfigOption('debuglevel') < 2:
-            self.conf.setConfigOption('progress_obj', None)
+            self.conf.setProgressBar(None)
             self.conf.repos.callback = None
         else:
-            self.conf.setConfigOption('progress_obj', progress_meter.text_progress_meter(fo=sys.stdout))
+            self.conf.setProgressBar(TextMeter(fo=sys.stdout))
             self.conf.repos.callback = output.simpleProgressBar
             
         # this is just a convenience reference

@@ -38,7 +38,7 @@ class RepoStorage:
         self.repos = {} # list of repos by repoid pointing a repo object 
                         # of repo options/misc data
         self.pkgSack = packageSack.XMLPackageSack(YumAvailablePackage)
-        self.callback = None # progress callback used for populateSack()
+        self.callback = None # progress callback used for populateSack() for importing the xml files
         self.cache = 0
         
     def add(self, repoid):
@@ -159,6 +159,7 @@ class Repository:
         self.repoMDFile = 'repodata/repomd.xml'
         self.repoXML = None
         self.cache = 0
+        self.callback = None # callback for the grabber
         
         # throw in some stubs for things that will be set by the config class
         self.cachedir = ""
@@ -258,7 +259,8 @@ class Repository:
         self.grabfunc = URLGrabber(keepalive=self.keepalive, 
                                    bandwidth=self.bandwidth,
                                    retry=self.retries,
-                                   throttle=self.throttle)
+                                   throttle=self.throttle,
+                                   progress_obj=self.callback)
                                    #reget='simple')
                                    
         # FIXME - needs a failure callback and it needs  to specify it
@@ -307,7 +309,6 @@ class Repository:
         # if url is None do a grab via the mirror group/grab for the repo
         # return the path to the local file
 
-        # FIXME we need a failure callback!!!
         if local is None or relative is None:
             raise Errors.RepoError, \
                   "get request for Repo %s, gave no source or dest" % self.id
@@ -315,7 +316,8 @@ class Repository:
             ug = URLGrabber(keepalive=self.keepalive, 
                        bandwidth=self.bandwidth,
                        retry=self.retries,
-                       throttle=self.throttle)
+                       throttle=self.throttle,
+                       progres_obj=self.callback)
             remote = url + '/' + relative
             try:           
                 result = ug.urlgrab(remote, local, range=(start, end), 
