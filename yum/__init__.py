@@ -392,13 +392,16 @@ class YumBase(depsolve.Depsolve):
             return
         
         root = self.conf.installroot
-        lockfile = root + '/' + lockfile
+        lockfile = root + '/' + lockfile # lock in the chroot
         
         self._unlock(lockfile)
         
     def _lock(self, filename, contents='', mode=0777):
+        lockdir = os.path.dirname(filename)
         try:
-            fd = os.open(filename, os.O_EXCL|os.O_CREAT|os.O_WRONLY, mode)
+            if not os.path.exists(lockdir):
+                os.makedirs(lockdir, mode=0755)
+            fd = os.open(filename, os.O_EXCL|os.O_CREAT|os.O_WRONLY, mode)    
         except OSError, msg:
             if not msg.errno == errno.EEXIST: raise msg
             return 0
