@@ -149,7 +149,7 @@ def erasepkgs(tsnevral,rpmnevral,userlist):
 				((e, v, r, a, l, i), s)=rpmnevral._get_data(name,arch)
 				tsnevral.add((name,e,v,r,a,l,i),'e')				
 		if foundit==0:
-			errolog(0,"Erase: No matches for %s" % n)
+			errorlog(0,"Erase: No matches for %s" % n)
 			sys.exit(1)
 
 def kernelupdate(tsnevral):
