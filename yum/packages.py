@@ -30,7 +30,7 @@ import metadata.packageObject
 base=None
 
 def buildPkgRefDict(pkgs):
-    """take a list of pkg tuples and return a dict the contains all the possible
+    """take a list of pkg objects and return a dict the contains all the possible
        naming conventions for them eg: for (name,i386,0,1,1)
        dict[name] = (name, i386, 0, 1, 1)
        dict[name.i386] = (name, i386, 0, 1, 1)

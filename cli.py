@@ -205,7 +205,7 @@ class YumBaseCli(yum.YumBase):
                         
                 elif o == '--exclude':
                     try:
-                        excludelist = conf.getConfigOption('exclude')
+                        excludelist = self.conf.getConfigOption('exclude')
                         excludelist.append(a)
                         self.conf.setConfigOption('exclude', excludelist)
                     except yum.Errors.ConfigError, e:

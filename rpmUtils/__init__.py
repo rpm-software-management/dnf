@@ -27,7 +27,7 @@ def getHeadersByKeyword(ts, **kwargs):
     for h in mi:
         #print "%s-%s-%s.%s" % ( h['name'], h['version'], h['release'], h['arch'])
         lst.append(h)
-                                                                                                        
+
     return lst
         
 def getIndexesByKeyword(ts, **kwargs):
