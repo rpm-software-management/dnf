@@ -356,20 +356,25 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
     
         elif self.basecmd in ['list', 'info']:
             try:
-                pkgLists = self.genPkgLists()
+                ypl = self.returnPkgLists()
             except yum.Errors.YumBaseError, e:
                 return 1, [str(e)]
             else:
-                self.listPkgs(pkgLists, outputType=self.basecmd)
+                self.listPkgs(ypl.installed, 'Installed Packages', self.basecmd)
+                self.listPkgs(ypl.available, 'Available Packages', self.basecmd)
+                self.listPkgs(ypl.extras, 'Extra Packages', self.basecmd)
+                self.listPkgs(ypl.updates, 'Updated Packages', self.basecmd)
+                self.listPkgs(ypl.obsoletes, 'Obsoleting Packages', self.basecmd)
+                self.listPkgs(ypl.recent, 'Recently Added Packages', self.basecmd)
                 return 0, []
 
         elif self.basecmd == 'check-update':
             self.extcmds.insert(0, 'updates')
             result = 0
             try:
-                pkgLists = self.genPkgLists()
-                if len(pkgLists['Updated']) > 0:
-                    self.listPkgs(pkgLists, outputType='list')
+                ypl = self.returnPkgLists()
+                if len(ypl.updates) > 0:
+                    self.listPkgs(ypl.updates, '', outputType='list')
                     result = 100
             except yum.Errors.YumBaseError, e:
                 return 1, [str(e)]
@@ -381,17 +386,17 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
             self.log(2, 'Generating RSS File')
             self.extcmds.insert(0, 'recent')
             try:
-                pkgLists = self.genPkgLists()
-                if len(pkgLists['Recently available']) > 0:
+                ypl = self.returnPkgLists()
+                if len(ypl.recent) > 0:
                     needrepos = []
                     
-                    for po in pkgLists['Recently available']:
+                    for po in ypl.recent:
                         if po.repoid not in needrepos:
                             needrepos.append(po.repoid)
 
                     self.log(2, 'Importing Changelog Metadata')
                     self.repos.populateSack(with='other', which=needrepos)
-                    self.listPkgs(pkgLists, outputType='rss',)
+                    self.listPkgs(ypl.recent, 'Recent Packages', outputType='rss')
             except yum.Errors.YumBaseError, e:
                 return 1, [str(e)]
             else:
@@ -737,34 +742,41 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         special = ['available', 'installed', 'all', 'extras', 'updates', 'recent',
                    'obsoletes']
         
-        if self.extcmds[0] in special:
-            pkgnarrow = self.extcmds.pop(0)
+        if len(self.extcmds) > 0:
+            if self.extcmds[0] in special:
+                pkgnarrow = self.extcmds.pop(0)
+        else:
+            pkgnarrow = 'all'
             
-        ypl = self.doPackageLists(pkgnarrow)
+        ypl = self.doPackageLists(pkgnarrow=pkgnarrow)
         
         # FIXME make this work correctly for the holder object
         # rework the list output code to know about:
         # obsoletes output
         # the updates format
+
+        def _shrinklist(lst, args):
+            if len(lst) > 0 and len(args) > 0:
+                self.log(4, 'Matching packages for package list to user args')
+                exactmatch, matched, unmatched = yum.packages.parsePackages(lst, args)
+                return yum.misc.unique(matched + exactmatch)
+            else:
+                return lst
         
-
-        for (lst, description) in [(updates, 'Updated'), (available, 'Available'), 
-                      (installed, 'Installed'), (recent, 'Recently available'),
-                      (obsoletes, 'Obsoleting'), (extras, 'Extra')]:
-
-            if len(lst) > 0 and len(self.extcmds) > 0:
-                self.log(4, 'Matching packages for %s list to user args' % description)
-                exactmatch, matched, unmatched = yum.packages.parsePackages(lst, self.extcmds)
-                lst = yum.misc.unique(matched + exactmatch)
-                
-            # reduce recent to the top N
-            if description == 'Recently available':
-                num = self.conf.getConfigOption('recent')
-                lst = lst[:num]
-
-            returndict[description] = lst
-
-        return ygh
+        ypl.updates = _shrinklist(ypl.updates, self.extcmds)
+        ypl.installed = _shrinklist(ypl.installed, self.extcmds)
+        ypl.available = _shrinklist(ypl.available, self.extcmds)
+        ypl.recent = _shrinklist(ypl.recent, self.extcmds)
+        ypl.extras = _shrinklist(ypl.extras, self.extcmds)
+        ypl.obsoletes = _shrinklist(ypl.obsoletes, self.extcmds)
+        
+#        for lst in [ypl.obsoletes, ypl.updates]:
+#            if len(lst) > 0 and len(self.extcmds) > 0:
+#                self.log(4, 'Matching packages for tupled package list to user args')
+#                for (pkg, instpkg) in lst:
+#                    exactmatch, matched, unmatched = yum.packages.parsePackages(lst, self.extcmds)
+                    
+        return ypl
 
     def usage(self):
         print _("""

@@ -184,7 +184,6 @@ class TransactionWrapper:
                          'setVSFlags',
                          'setProbFilter',
                          'hdrFromFdno',
-                         '__iter__',
                          'next',
                          'clean']
         self.tsflags = []
@@ -195,6 +194,9 @@ class TransactionWrapper:
         else:
             raise AttributeError, attr
 
+    def __iter__(self):
+        return self.ts
+        
     def getMethod(self, method):
         # in theory, we can override this with
         # profile/etc info

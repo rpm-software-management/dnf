@@ -475,7 +475,7 @@ class YumBase(depsolve.Depsolve):
     def doPackageLists(self, pkgnarrow='all'):
         """generates lists of packages, un-reduced, based on pkgnarrow option"""
         
-        ygh = yum.misc.GenericHolder()
+        ygh = misc.GenericHolder()
         
         installed = []
         available = []

@@ -98,7 +98,7 @@ class YumOutput:
         print ""
     
         
-    def listPkgs(self, pkgLists, outputType):
+    def listPkgs(self, lst, description, outputType):
         """outputs based on whatever outputType is. Current options:
            'list' - simple pkg list
            'info' - similar to rpm -qi output
@@ -106,20 +106,17 @@ class YumOutput:
         
         if outputType in ['list', 'info']:
             thingslisted = 0
-            for description in pkgLists.keys():
-                lst = pkgLists[description]
-                if len(lst) > 0:
-                    thingslisted = 1
-                    print '%s packages' % description
-                    if description != 'Recently available':
-                        lst.sort(self.sortPkgObj)
-                    for pkg in lst:
-                        if outputType == 'list':
-                            self.simpleList(pkg)
-                        elif outputType == 'info':
-                            self.infoOutput(pkg)
-                        else:
-                            pass
+            if len(lst) > 0:
+                thingslisted = 1
+                print '%s' % description
+                lst.sort(self.sortPkgObj)
+                for pkg in lst:
+                    if outputType == 'list':
+                        self.simpleList(pkg)
+                    elif outputType == 'info':
+                        self.infoOutput(pkg)
+                    else:
+                        pass
     
             if thingslisted == 0:
                 return 1, ['No Packages to list']
@@ -142,30 +139,27 @@ class YumOutput:
                 raise yum.Errors.YumBaseError, \
                    "Could not open file %s for rss create" % (e)
     
-            for description in pkgLists.keys():
-                lst = pkgLists[description]
-                if description == 'Recently available':
-                    if len(lst) > 0:
-                        doc = libxml2.newDoc('1.0')
-                        self.xmlescape = doc.encodeEntitiesReentrant
-                        rss = doc.newChild(None, 'rss', None)
-                        rss.setProp('version', '2.0')
-                        node = rss.newChild(None, 'channel', None)
-                        rssheader = self.startRSS()
-                        fo.write(rssheader)
-                        for pkg in lst:
-                            item = self.rssnode(node, pkg)
-                            fo.write(item.serialize("utf-8", 1))
-                            item.unlinkNode()
-                            item.freeNode()
-                            del item
-                        
-                        end = self.endRSS()
-                        fo.write(end)
-                        fo.close()
-                        del fo
-                        doc.freeDoc()
-                        del doc
+            if len(lst) > 0:
+                doc = libxml2.newDoc('1.0')
+                self.xmlescape = doc.encodeEntitiesReentrant
+                rss = doc.newChild(None, 'rss', None)
+                rss.setProp('version', '2.0')
+                node = rss.newChild(None, 'channel', None)
+                rssheader = self.startRSS()
+                fo.write(rssheader)
+                for pkg in lst:
+                    item = self.rssnode(node, pkg)
+                    fo.write(item.serialize("utf-8", 1))
+                    item.unlinkNode()
+                    item.freeNode()
+                    del item
+                
+                end = self.endRSS()
+                fo.write(end)
+                fo.close()
+                del fo
+                doc.freeDoc()
+                del doc
     
     def startRSS(self):
         """return string representation of rss preamble"""
@@ -180,7 +174,7 @@ class YumOutput:
         <description>Yum Package List</description>
         <pubDate>%s</pubDate>
         <generator>Yum</generator>
-        """
+        """ % now
         
         return rssheader
     
