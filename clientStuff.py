@@ -266,18 +266,24 @@ def urlgrab(url, filename=None,nohook=None):
 	return fh
 
 
-def getupdatedhdrlist(headernevral, rpmnevral): 
+def getupdatedhdrlist(headernevral, rpmnevral):
 	"returns (name,arch) tuples of updated and uninstalled pkgs"
 	uplist = []
 	newlist = []
-	for key in headernevral.NAkeys():
-		(name, arch) = key
+	for (name, arch) in headernevral.NAkeys():
 		hdrfile = headernevral.hdrfn(name, arch)
 		serverid = headernevral.serverid(name, arch)
 		if rpmnevral.exists(name, arch):
+			#here we check if we are better than the installed version - including arch
 			rc = compareEVR(headernevral.evr(name, arch), rpmnevral.evr(name, arch))
 			if (rc > 0):
-				uplist.append((name,arch))
+				#here we check if we are the best ignoring arch (this is to deal with multiple kernel archs
+				#it catches the problem of kernel-2.4.18-4 (athlon) being installed but also kernel-2.4.31-9 (i686)
+				#installed. Before this catch it would always answer that the kernel needed to be upgraded b/c the old i686
+				#kernel was there and there was an available i686 kernel in the headernevral
+				rc = compareEVR(headernevral.evr(name, arch), rpmnevral.evr(name))
+				if rc > 0:
+					uplist.append((name,arch))
 		else:
 			newlist.append((name,arch))
 	nulist=uplist+newlist
