@@ -39,6 +39,11 @@ def main():
     # errorlog - sys.stderr - always
     errorlog=Logger(threshold=10, file_object=sys.stderr)
 
+    # our default config file location
+    yumconffile=None
+    if os.access("/etc/yum.conf", os.R_OK):
+        yumconffile="/etc/yum.conf"
+
     args = sys.argv[1:]
     if len(args) < 1:
         usage()
@@ -48,19 +53,8 @@ def main():
         errorlog(0, 'Options Error: %s' % e)
         usage()
         sys.exit(1)
-    # get the conf stuff first
-    # our default config file location
-    yumconffile="/etc/yum.conf"
-    conf=yumconf(configfile=yumconffile)
+   
     try: 
-        for o,a in gopts:
-            if o == '-c':
-                yumconffile=a
-                # get rid of the old conf object
-                del conf
-                # setup the conf object
-                conf=yumconf(configfile=yumconffile)
-    
         for o,a in gopts:
             if o == '-R':
                 import time
@@ -68,6 +62,22 @@ def main():
                 sleeptime=random.randrange(int(a)*60)
                 # debug print sleeptime
                 time.sleep(sleeptime)
+
+        for o,a in gopts:
+            if o == '-c':
+                if os.access(a, os.R_OK):
+                    yumconffile=a
+                else:
+                    errorlog(0, 'Cannot find conf file %s' % a)
+                    usage()
+                    sys.exit(1)
+
+        if yumconffile:
+            conf=yumconf(configfile=yumconffile)
+        else:
+            errorlog(0, 'Cannot find any conf file.')
+            sys.exit(1)
+
             
         # we'd like to have a log object now
         log=Logger(threshold=conf.debuglevel, file_object=sys.stdout)

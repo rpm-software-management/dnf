@@ -158,9 +158,9 @@ def rpmdbNevralLoad(nevral):
 
 def readHeader(rpmfn):
     if string.lower(rpmfn[-4:]) == '.rpm':
-        fd = open(rpmfn, 'r')
+        fd = os.open(rpmfn, os.O_RDONLY)
         h = rpm.headerFromPackage(fd)[0]
-        fd.close()
+        os.close(fd)
         return h
     else:
         try:
@@ -280,11 +280,11 @@ def urlgrab(url, filename=None, nohook=None):
             sys.exit(1)
     return fh
 
-
 def getupdatedhdrlist(headernevral, rpmnevral):
     "returns (name, arch) tuples of updated and uninstalled pkgs"
     uplist = []
     newlist = []
+    uplist_archdict = {}
     for (name, arch) in headernevral.NAkeys():
         # this is all hard and goofy to deal with pkgs changing arch
         # if we have the package installed
@@ -301,7 +301,14 @@ def getupdatedhdrlist(headernevral, rpmnevral):
                 bestarch = archwork.bestarch(archlist)
                 rc = compareEVR(headernevral.evr(name, arch), rpmnevral.evr(name, bestarch))
                 if (rc > 0):
-                    uplist.append((name, arch))
+                    if not uplist_archdict.has_key(name):
+                        uplist_archdict[name]=bestarch
+                    else:
+                        rc = compareEVR(headernevral.evr(name, bestarch), headernevral.evr(name, uplist_archdict[name]))
+                        if (rc > 0):
+                            finalarch = archwork.bestarch([bestarch, uplist_archdict[name]])
+                            if finalarch == bestarch:
+                                 uplist_archdict[name]=bestarch                 
             else:
                 archlist = archwork.availablearchs(headernevral, name)
                 bestarch = archwork.bestarch(archlist)
@@ -310,11 +317,24 @@ def getupdatedhdrlist(headernevral, rpmnevral):
                     bestrpmarch = archwork.bestarch(rpmarchlist)
                     rc = compareEVR(headernevral.evr(name, arch), rpmnevral.evr(name, bestrpmarch))
                     if (rc > 0):
-                        uplist.append((name, arch))
+                        if not uplist_archdict.has_key(name):
+                            uplist_archdict[name]=bestarch
+                        else:
+                            rc = compareEVR(headernevral.evr(name, bestarch), headernevral.evr(name, uplist_archdict[name]))
+                            if (rc > 0):
+                                finalarch = archwork.bestarch([bestarch, uplist_archdict[name]])
+                                if finalarch == bestarch:
+                                     uplist_archdict[name]=bestarch                 
         else:
             newlist.append((name, arch))
+
+    for name in uplist_archdict.keys():
+        uplist.append((name,uplist_archdict[name]))
+
     nulist=uplist+newlist
     return (uplist, newlist, nulist)
+
+
 
     
 def formatRequire (name, version, flags):
@@ -613,10 +633,9 @@ def create_final_ts(tsInfo, rpmdb):
                 log(2, 'Getting %s' % (os.path.basename(tsInfo.localRpmPath(name, arch))))
                 urlgrab(tsInfo.remoteRpmUrl(name, arch), tsInfo.localRpmPath(name, arch))
             # sigcheck here :)
+            pkgaction.checkRpmMD5(rpmloc)
             if conf.servergpgcheck[serverid]:
-                pkgaction.checkSig(rpmloc, 'gpg')
-            else:
-                pkgaction.checkSig(rpmloc)
+                pkgaction.checkRpmSig(rpmloc)
             tsfin.add(pkghdr, (pkghdr, rpmloc), 'u')
         elif tsInfo.state(name, arch) == 'i':
             if os.path.exists(tsInfo.localRpmPath(name, arch)):
@@ -625,10 +644,9 @@ def create_final_ts(tsInfo, rpmdb):
                 log(2, 'Getting %s' % (os.path.basename(tsInfo.localRpmPath(name, arch))))
                 urlgrab(tsInfo.remoteRpmUrl(name, arch), tsInfo.localRpmPath(name, arch))
             # sigchecking we will go
+            pkgaction.checkRpmMD5(rpmloc)
             if conf.servergpgcheck[serverid]:
-                pkgaction.checkSig(rpmloc, 'gpg')
-            else:
-                pkgaction.checkSig(rpmloc)
+                pkgaction.checkRpmSig(rpmloc)
             tsfin.add(pkghdr, (pkghdr, rpmloc), 'i')
             #theoretically, at this point, we shouldn't need to make pkgs available
         elif tsInfo.state(name, arch) == 'a':
@@ -646,4 +664,11 @@ def create_final_ts(tsInfo, rpmdb):
     return tsfin
     
 
-
+def checkGPGInstallation():
+    import os
+    import sys
+    if not os.access("/usr/bin/gpg", os.X_OK):
+        errorlog(0, "Error: GPG is not installed")
+        return 1
+    return 0
+    

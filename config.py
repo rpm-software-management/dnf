@@ -34,6 +34,8 @@ class yumconf:
         self.debuglevel=2
         self.logfile='/var/log/yum.log'
         self.pkgpolicy='newest'
+        self.gpghome='/root/.gnupg'
+        self.gpgkeyring=None
         self.assumeyes=0
         self.errorlevel=2
         
@@ -51,6 +53,10 @@ class yumconf:
             self.assumeyes=self.cfg.getboolean('main','assumeyes')
         if self._getoption('main','errorlevel') != None:
             self.errorlevel=self._getoption('main','errorlevel')
+        if self._getoption('main','gpghome') != None:
+            self.gpghome=self._getoption('main','gpghome')
+        if self._getoption('main','gpgkeyring') != None:
+            self.gpgkeyring=self._getoption('main','gpgkeyring')
             
             
         if len(self.cfg.sections()) > 1:
@@ -90,7 +96,5 @@ class yumconf:
             print 'Failed to find section: %s' % section
         except ConfigParser.NoOptionError, e:
             return None
-
-conf=yumconf()
         
    

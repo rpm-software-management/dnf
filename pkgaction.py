@@ -227,13 +227,12 @@ def kernelupdate(tsnevral):
             log(2,"Grub found - making this kernel the default")
             up2datetheft.install_grub(kernel_list)
 
-def checkSig(package,checktype='md5'):
-    import rpm, os, sys
-    if checktype=='gpg':
-        check=rpm.CHECKSIG_GPG | rpm.CHECKSIG_MD5
-    else:
-        check=rpm.CHECKSIG_MD5
-        
+def checkRpmMD5(package):
+    import rpm
+    import os
+    import sys
+    
+    check=rpm.CHECKSIG_MD5
     # RPM spews to stdout/stderr.  Redirect.
     # code for this from up2date.py
     saveStdout = os.dup(1)
@@ -253,10 +252,71 @@ def checkSig(package,checktype='md5'):
     os.close(saveStdout)
     os.close(saveStderr)
     if sigcheck:
-        errorlog(0,'Error: GPG or MD5 Signature check failed for %s' %(package))
-        errorlog(0,'Doing nothing')
-        os.unlink(package)
+        errorlog(0, 'Error: MD5 Signature check failed for %s' %(package))
+        errorlog(0, 'You may want to run yum clean or remove the file:\n %s' % (package))
+        errorlog(0, 'Exiting.')
         sys.exit(1)
     return
 
+
+def checkRpmSig(package):
+    import os
+    import sys
+    import rpm
+    import clientStuff
+    # check for gpg
+    # get the right sig information from config
+    # if we have a keyring then use it
+    # if not then just set gpg_home
+    # check the package
     
+    hdr = clientStuff.readHeader(package)
+    
+    if clientStuff.checkGPGInstallation() != 0:
+        errorlog(0, 'Error: /usr/bin/gpg could not be found')
+        sys.exit(1)
+        return 1
+    if hdr['SIGGPG'] == None:
+        errorlog(0, 'Warning: package %s is unsigned' % package)
+        errorlog(0, 'You may want to disable GPG checking to install this package')
+        errorlog(0, 'Exiting')
+        sys.exit(1)
+        return 1
+    if clientStuff.checkGPGInstallation() == 0:
+        if conf.gpgkeyring:
+            gpg_flags = "--homedir %s --no-default-keyring --keyring %s" % (conf.gpghome, conf.gpgkeyring)
+        else:
+            gpg_flags = "--homedir %s" % conf.gpghome
+            
+        rpm.addMacro("__gpg_verify_cmd",
+                    """%%{__gpg} gpg %s --batch --no-verbose --verify %%{__signature_filename} %%{__plaintext_filename}""" % gpg_flags)
+        rpm.addMacro("_gpg_path", conf.gpghome)
+        check=rpm.CHECKSIG_GPG
+        # RPM spews to stdout/stderr.  Redirect.
+        # code for this from up2date.py
+        saveStdout = os.dup(1)
+        saveStderr = os.dup(2)
+        redirStdout = os.open("/dev/null", os.O_WRONLY | os.O_APPEND)
+        redirStderr = os.open("/dev/null", os.O_WRONLY | os.O_APPEND)
+        os.dup2(redirStdout, 1)
+        os.dup2(redirStderr, 2)
+        # now do the rpm thing
+        result = rpm.checksig(package, check)
+        # restore normal stdout and stderr
+        os.dup2(saveStdout, 1)
+        os.dup2(saveStderr, 2)
+        # close the redirect files.
+        os.close(redirStdout)
+        os.close(redirStderr)
+        os.close(saveStdout)
+        os.close(saveStderr)
+        rpm.delMacro("__gpg_verify_cmd")
+        rpm.delMacro("_gpg_path")
+        if result:
+            errorlog(0, 'Error: GPG Signature check failed for %s' %(package))
+            errorlog(0, 'You may want to run yum clean or remove the file:\n %s' % (package))
+            errorlog(0, 'You may also want to check to make sure you have the right gpg keys')
+            errorlog(0, 'Exiting.')
+            sys.exit(1)
+        return 0
+        
