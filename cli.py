@@ -315,12 +315,15 @@ class YumBaseCli(yum.YumBase):
         # but we know we're not being sent garbage
         
         if self.basecmd == 'install':
+            self.log(2, "Setting up Install Process")
             return self.installPkgs()
         
         if self.basecmd in ['update', 'upgrade']:
+            self.log(2, "Setting up Update Process")
             return self.updatePkgs()
             
         elif self.basecmd in ['erase', 'remove']:
+            self.log(2, "Setting up Remove Process")
             return self.erasePkgs()
     
         elif self.basecmd in ['list', 'info']:

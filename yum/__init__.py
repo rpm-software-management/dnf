@@ -39,11 +39,12 @@ class YumBase(depsolve.Depsolve):
 
     def doRpmDBSetup(self):
         """sets up a holder object for important information from the rpmdb"""
-        
+        self.log(3, 'Reading Local RPMDB')
         self.rpmdb.addDB(self.read_ts)
 
     def doSackSetup(self):
         """populates the package sacks for information from our repositories"""
+        self.log(3, 'Setting up Package Sacks')
         self.repos.populateSack()
         self.pkgSack = self.repos.pkgSack
 
@@ -52,6 +53,7 @@ class YumBase(depsolve.Depsolve):
         """setups up the update object in the base class and fills out the
            updates, obsoletes and others lists"""
         
+        self.log(3, 'Building updates object')
         #FIXME - add checks for the other pkglists to see if we should
         # raise an error
         self.up = rpmUtils.updates.Updates(self.rpmdb.getPkgList(),

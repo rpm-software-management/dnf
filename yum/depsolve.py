@@ -23,6 +23,7 @@ import os.path
 import rpmUtils.transaction
 import rpmUtils.miscutils
 import rpmUtils.arch
+from misc import unique
 import rpm
 
 from metadata.packageSack import ListPackageSack
@@ -36,6 +37,7 @@ class Depsolve:
     
     def initActionTs(self):
         """sets up the ts we'll use for all the work"""
+        #FIXME - should add flags and macros here
         self.ts = rpmUtils.transaction.TransactionWrapper() # deal with flags, etc
 
     def whatProvides(self, req):
@@ -121,10 +123,11 @@ class Depsolve:
         self.cheaterlookup = {}
         errors = []
 
-        while CheckDeps == 1 and (missingdep == 0 or conflicts == 1):
+        while CheckDeps > 0:
             self.populateTs(test=1)
             deps = self.ts.check()
-
+            deps = unique(deps) # get rid of duplicate deps
+            
             if not deps:
                 return (2, ['Success - deps resolved'])
             
@@ -140,7 +143,7 @@ class Depsolve:
                               (name, rpmUtils.miscutils.formatRequire(needname, 
                                                             needversion, flags))
                         errors.append(msg)
-                        missingdep = 1
+                        break
             else:
                 unresolveableloop = 0
 
@@ -154,27 +157,37 @@ class Depsolve:
             for dep in deps:
                 ((name, version, release), (needname, needversion), flags, suggest, sense) = dep
                 if sense == rpm.RPMDEP_SENSE_REQUIRES:
-                    (CheckDeps, missingdep, conflicts, errormsgs) = self._processReq(dep)
+                    (checkdep, missing, conflict, errormsgs) = self._processReq(dep)
                 elif sense == rpm.RPMDEP_SENSE_CONFLICTS:
-                    (CheckDeps, missingdep, conflicts, errormsgs) = self._processConflict(dep)
+                    (checkdep, missing, conflict, errormsgs) = self._processConflict(dep)
                 else:
                     self.errorlog(0, 'Unknown Sense: %d' (sense))
                     continue
-                    
-                for error in errormsgs:
-                    errors.append(error)
 
-            if CheckDeps:
+                missingdep+=missing
+                conflicts+=conflict
+                CheckDeps+=checkdep
+                for error in errormsgs:
+                    if error not in errors:
+                        errors.append(error)
+
+            print 'miss = %d' % missingdep
+            print 'conf = %d' % conflicts
+            print 'CheckDeps = %d' % CheckDeps
+
+                
+            if CheckDeps > 0:
                 self.log(2, 'Restarting Dependency Process with new changes')
             else:
                 self.log(4, 'Dependency Process ending')
 
             del deps
+            
 
         if len(errors) > 0:
-            return(1, errors)
+            return (1, errors)
         if self.tsInfo.count() > 0:
-            return(2, ['Run Callback'])
+            return (2, ['Run Callback'])
 
     def _processReq(self, dep):
         """processes a Requires dep from the resolveDeps functions, returns a tuple
@@ -208,8 +221,11 @@ class Depsolve:
                 # need a function to tell if anything in the rpmdb provides
                    # needname = needversion 
                 # take the prco matching function from the metadata
-                pass
-
+                CheckDeps = 0
+                missingdep = 1
+                msg = 'missing dep: %s for pkg %s (installed)' % (needname, name)
+                errormsgs.append(msg)
+                
             pkg = pkgs[0] #take the first one
             po = None
             if needmode in ['e']:
@@ -263,23 +279,30 @@ class Depsolve:
                     
             #self.bestPackageFromList(defSack, reqtup) # useful function to have
             newest = defSack.returnNewestByNameArch()
-            if len(newest) > 1:
-                best = newest[0]
-                for po in newest[1:]:
-                    if len(po.name) < len(best.name):
-                        best = po
-                    elif len(po.name) == len(best.name):
-                        # compare arch
-                        arch = rpmUtils.arch.getBestArchFromList([po.arch, best.arch])
-                        if arch == po.arch:
+            if len(newest) > 0:
+                if len(newest) > 1:
+                    best = newest[0]
+                    for po in newest[1:]:
+                        if len(po.name) < len(best.name):
                             best = po
-            else:
-                best = newest[0]
+                        elif len(po.name) == len(best.name):
+                            # compare arch
+                            arch = rpmUtils.arch.getBestArchFromList([po.arch, best.arch])
+                            if arch == po.arch:
+                                best = po
+                elif len(newest) == 1:
+                    best = newest[0]
 
-            (n, e, v, r, a) = best.returnNevraTuple() # this is stupid the po should be emitting matching tuple types                    
-            self.tsInfo.add((n, a, e, v, r), 'i', 'dep')
-            self.log(3, 'Best of providing: %s to require for %s' % (best, name))
-            CheckDeps=1
+                (n, e, v, r, a) = best.returnNevraTuple() # this is stupid the po should be emitting matching tuple types                    
+                self.tsInfo.add((n, a, e, v, r), 'i', 'dep')
+                self.log(3, 'Best of providing: %s to require for %s' % (best, name))
+                CheckDeps=1
+            else:
+                CheckDeps = 0
+                missingdep = 1
+                msg = 'missing dep: %s for pkg %s' % (needname, name)
+                errormsgs.append(msg)
+
                 
         # find out if the req package is in the tsInfo
         # if it is, check which mode

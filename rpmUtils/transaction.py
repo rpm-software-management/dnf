@@ -206,7 +206,7 @@ class TransactionWrapper:
     def test(self, cb, conf={}):
         """tests the ts we've setup, takes a callback function and a conf dict 
            for flags and what not"""
-        
+        #FIXME
         # I don't like this function - it should test, sure - but not
         # with this conf dict, we should be doing that beforehand and
         # we should be packing this information away elsewhere.

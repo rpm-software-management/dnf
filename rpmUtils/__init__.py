@@ -34,6 +34,7 @@ def getIndexesByKeyword(ts, **kwargs):
     """return list of headers Indexes from the rpmdb matching a keyword
         ex: getHeadersByKeyword(name='foo', version='1', release='1')
     """
+    # THIS IS EXCRUCIATINGLY SLOW
     lst = []
     mi = ts.dbMatch()
     for keyword in kwargs.keys():
