@@ -320,7 +320,7 @@ class yumconf(object):
 
         
         # weird ones
-        for option in ['commands', 'installonlypkgs', 'kernelpkgnames', 'exclude'
+        for option in ['commands', 'installonlypkgs', 'kernelpkgnames', 'exclude',
                        'reposdir']:
             self.configdata[option] = variableReplace(self.yumvar, self.configdata[option])
             setattr(self, option, self.configdata[option])
