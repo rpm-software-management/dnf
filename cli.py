@@ -129,7 +129,7 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
                 try:
                     self.conf = yumconf(configfile = yumconffile, root=root)
                 except yum.Errors.ConfigError, e:
-                    self.errorlog(0, _('Config Error: %s.') % e)
+                    self.errorlog(0, _('Config Error: %s') % e)
                     sys.exit(1)
             else:
                 self.errorlog(0, _('Cannot find any conf file.'))
