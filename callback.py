@@ -22,7 +22,8 @@ import sys
 from i18n import _
 
 class RPMInstallCallback:
-    def __init__(self):
+    def __init__(self, output=1):
+        self.output = output
         self.callbackfilehandles = {}
         self.total_actions = 0
         self.total_installed = 0
@@ -71,7 +72,7 @@ class RPMInstallCallback:
                     percent = 0
                 else:
                     percent = (bytes*100L)/total
-                if conf.debuglevel >= 2:
+                if self.output:
                     sys.stdout.write("\r%s %d %% done %d/%d" % (pkg[rpm.RPMTAG_NAME], 
                       percent, self.total_installed + self.total_removed, self.total_actions))
                     if bytes == total:
@@ -80,7 +81,7 @@ class RPMInstallCallback:
             pass
         elif what == rpm.RPMCALLBACK_UNINST_STOP:
             self.total_removed += 1
-            if conf.debuglevel >= 2:
+            if output:
                 if h not in self.installed_pkg_names:
                     print _('Erasing: %s %d/%d') % (h, self.total_removed + 
                       self.total_installed, self.total_actions)

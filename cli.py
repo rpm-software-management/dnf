@@ -34,6 +34,8 @@ from yum.packages import parsePackages, returnBestPackages, YumInstalledPackage
 from yum.logger import Logger
 from yum.config import yumconf
 from i18n import _
+import callback
+
 
 __version__ = '2.1.0'
 
@@ -106,7 +108,7 @@ class YumBaseCli(yum.YumBase):
                                                             'tolerant'])
         except getopt.error, e:
             self.errorlog(0, _('Options Error: %s') % e)
-            usage()
+            self.usage()
     
         # get the early options out of the way
         # these are ones that:
@@ -319,8 +321,7 @@ class YumBaseCli(yum.YumBase):
             return self.updatePkgs()
             
         elif self.basecmd in ['erase', 'remove']:
-            matched, unmatched = parsePackages(self.rpmdb.getPkgList(), 
-                                               self.extcmds)
+            return self.erasePkgs()
     
         elif self.basecmd in ['list', 'info']:
             try:
@@ -358,18 +359,9 @@ class YumBaseCli(yum.YumBase):
     def doTransaction(self):
         """takes care of package downloading, checking, user confirmation and actually
            RUNNING the transaction"""
+
         
-        # download all pkgs in the tsInfo - md5sum vs the metadata as you go
-        # gpgcheck in a big pile, report all errors at once
-        # confirm with user
-        # create test/final ts - we can't use self.ts anymore it doesn't
-        #     have the packages final locations - kill it and replace it
-        #     remember the vs and other flags and installroot
-        # ts.check()
-        # ts.order()
-        # callback init
-        # run ts
-        # report errors
+        # download all pkgs in the tsInfo - md5sum vs the metadata as you go 
         downloadpkgs = []
         for (pkg, mode) in self.tsInfo.dump():
             if mode in ['i', 'u']:
@@ -386,8 +378,9 @@ class YumBaseCli(yum.YumBase):
                 for error in errors:
                     errstring += '  %s: %s\n' % (key, error)
             raise yum.Errors.YumBaseError, errstring
-        
-        problems = self.sigCheckPkgs(downloadpkgs)
+
+        # gpgcheck in a big pile, report all errors at once
+        problems = self.sigCheckPkgs(downloadpkgs) # FIXME this should do _something_
         
         if len(problems) > 0:
             errstring = ''
@@ -395,8 +388,51 @@ class YumBaseCli(yum.YumBase):
                 errstring += problem
             
             raise yum.Errors.YumBaseError, errstring
+    
+        # output what will be done:
+        self.log(2, self.tsInfo.display())
+        # confirm with user
+        if not self.conf.getConfigOption('assumeyes'):
+            if not output.userconfirm():
+                return
         
+        tsConf = {}
+        for feature in ['diskspacecheck']: # more to come, I'm sure
+            tsConf['diskspacecheck'] = self.conf.getConfigOption('diskspacecheck')
         
+        testcb = callback.RPMInstallCallback()
+        tserrors = self.ts.test(testcb, conf=tsConf)
+        del testcb
+        self.log(2, 'Finished Transaction Test')
+        if len(tserrors) > 0:
+            errstring = 'Transaction Check Error: '
+            for error in tserrors:
+                errstring += error
+            
+            raise yum.Errors.YumBaseError, errstring
+        self.log(2, 'Finished Successfully')
+        del self.ts
+        
+        self.initActionTs() # make a new, blank ts to populate
+        self.populateTs() # populate the ts
+        self.ts.check() #required for ordering
+        self.ts.order() # order
+        self.ts.setFlags(0) # unset the test flag
+        cb = callback.RPMInstallCallback()
+        # run ts
+        self.log(2, 'Running Transaction')
+        errors = self.ts.run(cb.callback, '')
+        if errors:
+            errstring = 'Error in Transaction: '
+            for error in errors:
+                errstring += error
+            
+            raise yum.Errors.YumBaseError, errstring
+
+        # close things
+        
+
+    
     def installPkgs(self, userlist=None):
         """Attempts to take the user specified list of packages/wildcards
            and install them, or if they are installed, update them to a newer
@@ -516,7 +552,38 @@ class YumBaseCli(yum.YumBase):
         
         return 2, ['Updated Packages in Transaction']
         
-           
+    
+    def erasePkgs(self, userlist=None):
+        """take user commands and populate a transaction wrapper with packages
+           to be erased/removed"""
+        
+        oldcount = self.tsInfo.count()
+        
+        if not userlist:
+            userlist = self.extcmds
+        
+        self.doRpmDBSetup()
+        installed = []
+        for hdr in self.rpmdb.getHdrList():
+            po = YumInstalledPackage(hdr)
+            installed.append(po)
+        
+        if len(userlist) > 0: # if it ain't well, that'd be real _bad_ :)
+            exactmatch, matched, unmatched = yum.packages.parsePackages(installed, userlist)
+            erases = yum.misc.unique(matched + exactmatch)
+        
+        for pkg in erases:
+            pkgtup = (pkg.name, pkg.arch, pkg.epoch, pkg.version, pkg.release)
+            self.tsInfo.add(pkgtup, 'e', 'user')
+        
+        
+        
+        if self.tsInfo.count() > oldcount:
+            msg = '%d packages marked for removal' % self.tsInfo.count()
+            return 2, [msg]
+        else:
+            return 0, ['No Packages marked for removal']
+    
     def genPkgLists(self):
         """Generates lists of packages based on arguments on the cli.
            returns a dict: key = string describing the list, value = list of pkg
@@ -546,7 +613,7 @@ class YumBaseCli(yum.YumBase):
                 pkgtup = (pkg.name, pkg.arch, pkg.epoch, pkg.version, pkg.release)
                 if pkgtup not in installed:
                     available.append(pkg)
-            del avail
+
             
         elif pkgnarrow == 'updates':
             self.doRpmDBSetup()

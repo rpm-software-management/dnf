@@ -43,7 +43,6 @@ def getIndexesByKeyword(ts, **kwargs):
     for h in mi:
         instance = mi.instance()
         lst.append(instance)
-                                                                                                        
     return lst
 
 class RpmDBHolder:

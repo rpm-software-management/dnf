@@ -148,16 +148,16 @@ def pkgRSS(pkgobj):
 def endRSS():
     pass
 
-def userconfirm(self):
+def userconfirm():
     """gets a yes or no from the user, defaults to No"""
     choice = raw_input('Is this ok [y/N]: ')
     if len(choice) == 0:
-        return 1
+        return 0
     else:
         if choice[0] != 'y' and choice[0] != 'Y':
-            return 1
+            return 0
         else:
-            return 0        
+            return 1
             
 
 

@@ -18,6 +18,7 @@
 import os
 import sys
 import locale
+import time # test purposes only
 
 import yum
 import rpmUtils.updates
@@ -25,6 +26,7 @@ import yum.Errors as Errors
 import yum.depsolve
 import cli
 import output
+
 
 from i18n import _
 
@@ -83,6 +85,7 @@ def main(args):
             
     # Depsolve stage
     base.log(2, 'Resolving Dependencies')
+    base.log(4, time.time())
     try:
         (result, resultmsgs) = base.buildTransaction() 
     except Errors.YumBaseError, e:
@@ -107,9 +110,9 @@ def main(args):
         sys.exit(1)
 
     base.log(2, '\nDependencies Resolved')
+    base.log(4, time.time())
     #run post-depresolve script here
     #run  pre-trans script here
-    print base.tsInfo.display()
     # run the transaction
     try:
         base.doTransaction()
@@ -119,10 +122,14 @@ def main(args):
         sys.exit(1)
 
     # run post-trans script here
+    # things ran correctly
+    # run a report function base.whatwedid() :)
+    
     base.log(2, 'Complete!')
     unlock()
     sys.exit(0)
     
     
 if __name__ == "__main__":
-        main(sys.argv[1:])
+    
+    main(sys.argv[1:])

@@ -132,11 +132,10 @@ class YumBase(depsolve.Depsolve):
                     checksum = csum
                     checksumType = csumtype
                     break
+            
+            local =  po.localPkg()
             repo = self.repos.getRepo(po.repoid)
             remote = po.returnSimple('relativepath')
-            rpmfn = os.path.basename(remote)
-            local = repo.pkgdir + '/' + rpmfn
-            
             if os.path.exists(local):
                 try:
                     result = self.verifyChecksum(local, checksumType, checksum)
@@ -157,6 +156,7 @@ class YumBase(depsolve.Depsolve):
                     errors[po] = []
                 errors[po].append(str(e))
             else:
+                po.localpath = mylocal
                 if errors.has_key(po):
                     del errors[po]
 
@@ -165,6 +165,7 @@ class YumBase(depsolve.Depsolve):
     def sigCheckPkgs(self, downloadpkgs):
         return []
         
+    
         
     def _lock(self, filename, contents='', mode=0777):
         try:

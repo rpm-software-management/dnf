@@ -32,8 +32,12 @@ import packages
 class Depsolve:
     def __init__(self):
         packages.base = self
-        self.ts = rpmUtils.transaction.TransactionWrapper() # FIXME - specify installroot?
-        
+        self.initActionTs()
+    
+    def initActionTs(self):
+        """sets up the ts we'll use for all the work"""
+        self.ts = rpmUtils.transaction.TransactionWrapper() # deal with flags, etc
+
     def whatProvides(self, req):
         """tells you what provides the requested string"""
         
@@ -60,7 +64,7 @@ class Depsolve:
         
         return result
     
-    def populateTs(self):
+    def populateTs(self, test=0):
         """take transactionData class and populate transaction set"""
 
         ts_elem = []
@@ -73,8 +77,9 @@ class Depsolve:
                 mode = 'i'
             elif te.Type() == 2:
                 mode = 'e'
-            ts_elem.append((pkginfo, mode))
             
+            ts_elem.append((pkginfo, mode))
+        
         for (pkginfo, mode) in self.tsInfo.dump():
             (n, a, e, v, r) = pkginfo
             if mode in ['u', 'i']:
@@ -82,27 +87,30 @@ class Depsolve:
                     continue
                 po = self.getPackageObject(pkginfo)
                 hdr = po.getHeader()
-                loc = po.returnSimple('relativepath')
-                provides = po.getProvidesNames()
+                rpmfile = po.localPkg()
+                if test:
+                    provides = po.getProvidesNames()
+                else:
+                    provides = []
                 if mode == 'u':
                     if n in self.conf.getConfigOption('installonlypkgs') or 'kernel-modules' in provides:
                         self.tsInfo.changeMode(pkginfo, 'i')
-                        self.ts.addInstall(hdr, (hdr, loc), 'i')
-                        self.log(5, 'Adding Package %s in mode i' % po)
+                        self.ts.addInstall(hdr, (hdr, rpmfile), 'i')
+                        self.log(4, 'Adding Package %s in mode i' % po)
                     else:
-                        self.ts.addInstall(hdr, (hdr, loc), 'u')
-                        self.log(5, 'Adding Package %s in mode u' % po)
+                        self.ts.addInstall(hdr, (hdr, rpmfile), 'u')
+                        self.log(4, 'Adding Package %s in mode u' % po)
                 if mode == 'i':
-                    self.ts.addInstall(hdr, (hdr, loc), 'i')                                            
-                    self.log(5, 'Adding Package %s in mode i' % po)
+                    self.ts.addInstall(hdr, (hdr, rpmfile), 'i')
+                    self.log(4, 'Adding Package %s in mode i' % po)
             elif mode in ['e']:
                 if (pkginfo, mode) in ts_elem:
                     continue
-                indexes = rpmUtils.getIndexesByKeyword(self.read_ts, name=n,
-                          arch=a, epoch=e, version=v, release=r)
+                indexes = rpmUtils.getIndexesByKeyword(self.read_ts, name=str(n),
+                          arch=str(a), epoch=str(e), version=str(v), release=str(r))
                 for idx in indexes:
                     self.ts.addErase(idx)
-                    self.log(5, 'Adding Package %s-%s-%s.%s in mode i' % (n, v, r, a))
+                    self.log(4, 'Removing Package %s-%s-%s.%s' % (n, v, r, a))
         
     def resolveDeps(self):
         CheckDeps = 1
@@ -114,7 +122,7 @@ class Depsolve:
         errors = []
 
         while CheckDeps == 1 and (missingdep == 0 or conflicts == 1):
-            self.populateTs()
+            self.populateTs(test=1)
             deps = self.ts.check()
 
             if not deps:
@@ -157,7 +165,7 @@ class Depsolve:
                     errors.append(error)
 
             if CheckDeps:
-                self.log(4, 'Restarting Dependency Process with new changes')
+                self.log(2, 'Restarting Dependency Process with new changes')
             else:
                 self.log(4, 'Dependency Process ending')
 
@@ -180,21 +188,36 @@ class Depsolve:
         
         ((name, version, release), (needname, needversion), flags, suggest, sense) = dep
         self.log(4, '%s requires: %s' % (name, rpmUtils.miscutils.formatRequire(needname, needversion, flags)))
+        
         pkgs = self.rpmdb.returnTupleByKeyword(name=name, ver=version, rel=release)
+        
         if len(pkgs) > 0:
             # the requiring package is installed, that means the item needed is in
             # a package that is either being updated or erased/obsoleted
             # check what state the needed item/package is in:
             # if it's being upgraded then mark the requiring package to be upgraded too
             # if it's being erased then mark the requiring package to be erased
-            self.log(5, 'it is installed %s-%s-%s' % (name, version, release))
+            self.log(5, 'installed pkg: %s-%s-%s' % (name, version, release))
             needmode = self.tsInfo.getMode(name=needname)
+            
+            # if the needmode is None then what the package needs is not in our tsInfo
+            # and may very well be a virtual dep (kernel-drm = 4.3.0, for example)
+            # therefore we need to find what provides that virtual dep
+            # if it is a package that we have in our tsInfo, then treat as below
+            if needmode is None:
+                # need a function to tell if anything in the rpmdb provides
+                   # needname = needversion 
+                # take the prco matching function from the metadata
+                pass
+
             pkg = pkgs[0] #take the first one
             po = None
             if needmode in ['e']:
-                self.log(5, 'needed package marked as erase')
-                self.tsInfo.add(pkg, 'e', 'dep')
-                CheckDeps = 1
+                for pkg in pkgs:
+                    (n,a,e,v,r) = pkg
+                    self.log(5, '%s package requiring %s marked as erase' % (n, needname))
+                    self.tsInfo.add(pkg, 'e', 'dep')
+                    CheckDeps = 1
             if needmode in ['i', 'u']:
                 self.log(5, 'needed packaged marked as update')
                 (n,a,e,v,r) = pkg

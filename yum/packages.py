@@ -185,7 +185,7 @@ class YumInstalledPackage:
     def doepoch(self):
         tmpepoch = self.hdr['epoch']
         if tmpepoch is None:
-            epoch = 0
+            epoch = '0'
         else:
             epoch = tmpepoch
         
@@ -244,4 +244,13 @@ class YumAvailablePackage(metadata.packageObject.RpmXMLPackageObject):
 
         return provnames
        
+    def localPkg(self):
+        """return path to local package (whether it is present there, or not)"""
+        if not hasattr(self, 'localpath'):
+            repo = base.repos.getRepo(self.repoid)
+            remote = self.returnSimple('relativepath')
+            rpmfn = os.path.basename(remote)
+            self.localpath = repo.pkgdir + '/' + rpmfn
+        return self.localpath
 
+        

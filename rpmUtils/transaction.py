@@ -203,6 +203,28 @@ class TransactionWrapper:
         del self.tsflags[-1]
         self.ts.setVSFlags(self.tsflags[-1])
 
+    def test(self, cb, conf={}):
+        """tests the ts we've setup, takes a callback function and a conf dict 
+           for flags and what not"""
+        
+        # I don't like this function - it should test, sure - but not
+        # with this conf dict, we should be doing that beforehand and
+        # we should be packing this information away elsewhere.
+        self.ts.setFlags(rpm.RPMTRANS_FLAG_TEST)
+        if conf.has_key('diskspacecheck'):
+            if conf['diskspacecheck'] == 0:
+                self.ts.setProbFilter(rpm.RPMPROB_FILTER_DISKSPACE)
+    
+        tserrors = self.ts.run(cb.callback, '')
+    
+        reserrors = []
+        if tserrors:
+            for (descr, (etype, mount, need)) in tserrors:
+                reserrors.append(descr)
+        
+        return reserrors
+            
+        
     def returnLeafNodes(self):
         """returns a list of package tuples (n,a,e,v,r) that are not required by
            any other package on the system"""
