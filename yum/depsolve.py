@@ -224,7 +224,7 @@ class Depsolve:
 
             if CheckDeps > 0:
                 if self.dsCallback: self.dsCallback.restartLoop()
-                self.log(2, 'Restarting Dependency Process with new changes')
+                self.log(4, 'Restarting Loop')
             else:
                 if self.dsCallback: self.dsCallback.end()
                 self.log(4, 'Dependency Process ending')

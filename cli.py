@@ -45,7 +45,7 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
        
     def __init__(self):
         yum.YumBase.__init__(self)
-        
+
     def doRepoSetup(self):
         """grabs the repomd.xml for each enabled repository and sets up the basics
            of the repository"""
@@ -219,6 +219,10 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         freport = (self.failureReport,(),{'errorlog':self.errorlog})
         self.conf.repos.setFailureCallback(freport)
         
+        # setup our depsolve progress callback
+        dscb = output.DepSolveProgressCallBack(self.log, self.errorlog)
+        self.dsCallback = dscb
+        
         # this is just a convenience reference
         self.repos = self.conf.repos
         
@@ -296,7 +300,7 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
                 if cmd not in ['headers', 'packages', 'all']:
                     self.usage()
     
-        elif self.basecmd in ['list', 'check-update', 'info', 'update', 
+        elif self.basecmd in ['list', 'check-update', 'info', 'update', 'upgrade',
                               'generate-rss', 'grouplist']:
             pass
     
@@ -338,7 +342,7 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
             
         elif self.basecmd == 'upgrade':
             self.conf.setConfigOption('obsoletes', 1)
-            self.log(2, "Setting up Updgrade Process")
+            self.log(2, "Setting up Upgrade Process")
             try:
                 return self.updatePkgs()
             except yum.Errors.YumBaseError, e:

@@ -344,34 +344,42 @@ class YumOutput:
 class DepSolveProgressCallBack:
     """provides text output callback functions for Dependency Solver callback"""
     
-    def __init__(self):
-        # need print functions
-        # and error print functions
-        # to be set here
-        pass
+    def __init__(self, log, errorlog):
+        """requires yum-cli log and errorlog functions as arguments"""
+        self.log = log
+        self.errorlog = errorlog
+        self.loops = 0
     
-    
-    def pkgAdded(self, pkginfo, mode):
-        pass
+    def pkgAdded(self, pkgtup, mode):
+        modedict = { 'i': 'installed',
+                     'u': 'updated',
+                     'o': 'obsoleted',
+                     'e': 'erased'}
+        (n, a, e, v, r) = pkgtup
+        modeterm = modedict[mode]
+        self.log(3, 'Package %s.%s %s:%s-%s set to be %s' % (n, a, e, v, r, modeterm))
         
     def start(self):
-        pass
+        self.loops += 1
+        
     
     def restartLoop(self):
-        pass
+        self.loops += 1
+        self.log(2, 'Restarting Dependency Resolution with new Changes.')
+        self.log(2, 'Loop Number: %d' % self.loops)
     
     def end(self):
-        pass
+        self.log(2, 'Finished Dependency Resolution')
+
     
     def procReq(self, name, formatted_req):
-        pass
+        self.log(2, 'Processing Dependency: %s for package: %s' % (formatted_req, name))
+        
     
     def unresolved(self, msg):
+        self.log(2, 'Unresolved Dependency: %s' % msg)
         pass
     
     def procConflict(self, name, confname):
-        pass
-        
+        self.log(2, 'Processing Conflict: %s conflicts %s' % (name, confname))
 
-    
-    
