@@ -201,7 +201,7 @@ class nevral:
 							((e, v, r, a, l, i), s)=self._get_data(name,arch)
 							self.add((name,e,v,r,arch,l,i),'i')
 						else:
-							log(4, "Removing dumb kernel with silly arch %" %(bestarch))
+							log(4, "Removing dumb kernel with silly arch %s" %(bestarch))
 							ts.add(pkghdr,(pkghdr,rpmloc),'a')
 							((e,v,r,a,l,i),s)=self._get_data(name,arch)
 							self.add((name,e,v,r,arch,l,i),'i')
