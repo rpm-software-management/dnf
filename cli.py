@@ -17,6 +17,7 @@
 
 
 import os
+import os.path
 import sys
 import time
 import getopt
@@ -154,8 +155,20 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
             
             # syslog-style log
             if self.conf.getConfigOption('uid') == 0:
-                logfd = os.open(self.conf.getConfigOption('logfile'), os.O_WRONLY |
-                                os.O_APPEND | os.O_CREAT, 0644)
+                logpath = os.path.dirname(self.getConfigOption('logfile'))
+                if not os.path.exists(logpath):
+                    try:
+                        os.makedirs(dir, mode=0755)
+                    except OSError, e:
+                        self.errorlog(0, _('Cannot make directory for logfile %s' % logpath))
+                        sys.exit(1)
+                try:
+                    logfd = os.open(self.conf.getConfigOption('logfile'), os.O_WRONLY |
+                                    os.O_APPEND | os.O_CREAT, 0644)
+                except OSError, e:
+                    self.errorlog(0, _('Cannot open logfile %s' % self.getConfigOption('logfile')))
+                    sys.exit(1)
+
                 logfile =  os.fdopen(logfd, 'a')
                 fcntl.fcntl(logfd, fcntl.F_SETFD)
                 self.filelog = Logger(threshold = 10, file_object = logfile, 

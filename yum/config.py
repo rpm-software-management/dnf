@@ -194,7 +194,7 @@ class yumconf(object):
         #defaults -either get them or set them
         optionstrings = [('cachedir', root + '/var/cache/yum'), 
                          ('logfile', root + '/var/log/yum.log'), 
-                         ('reposdir', root + '/etc/yum.repos.d'),
+                         ('reposdir', '/etc/yum.repos.d'),
                          ('rss-filename', 'yum-rss.xml'),
                          ('pkgpolicy', 'newest'),
                          ('syslog_ident', None),
@@ -311,6 +311,9 @@ class yumconf(object):
         # read each of them in using confpp, then parse them same as any other repo
         # section - as above.
         reposdir = self.getConfigOption('reposdir')
+        if not os.path.exists(self.getConfigOption('installroot') + reposdir):
+            reposdir = '/' + reposdir
+            
         reposglob = reposdir + '/*.repo'
         if os.path.exists(reposdir) and os.path.isdir(reposdir):
             repofn = glob.glob(reposglob)
