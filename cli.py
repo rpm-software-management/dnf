@@ -746,15 +746,13 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         special = ['available', 'installed', 'all', 'extras', 'updates', 'recent',
                    'obsoletes']
         
+        pkgnarrow = 'all'
         if len(self.extcmds) > 0:
             if self.extcmds[0] in special:
                 pkgnarrow = self.extcmds.pop(0)
-        else:
-            pkgnarrow = 'all'
             
         ypl = self.doPackageLists(pkgnarrow=pkgnarrow)
         
-        # FIXME make this work correctly for the holder object
         # rework the list output code to know about:
         # obsoletes output
         # the updates format
