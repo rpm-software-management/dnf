@@ -168,7 +168,7 @@ class nevral:
 		base = config.conf.serverpkgdir[i]
 		return base + '/' + rpmfn
 				
-	def resolvedeps(self):
+	def resolvedeps(self,rpmDBInfo):
 		#self == tsnevral
 		#create db
 		#create ts
@@ -184,15 +184,15 @@ class nevral:
 		CheckDeps = 1
 		conflicts = 0
 		unresolvable = 0
-		errors=[]
 		while CheckDeps==1 or (conflicts != 1 and unresolvable != 1 ):
+			errors=[]
 			db = clientStuff.openrpmdb(0)
 			ts = rpm.TransactionSet('/',db)
 			for (name, arch) in self.NAkeys(): 
-				rpmloc = self.rpmlocation(name, arch)
-				pkghdr = self.getHeader(name, arch)
 				if self.state(name, arch) == 'u' or self.state(name,arch) == 'ud':
-					#print 'updating %s, %s' % (name, arch)
+					rpmloc = self.rpmlocation(name, arch)
+					pkghdr = self.getHeader(name, arch)
+					log(4,'Updating: %s, %s' % (name, arch))
 					if name == 'kernel' or name == 'kernel-bigmem' or name == 'kernel-enterprise' or name == 'kernel-smp' or name == 'kernel-debug':
 						ts.add(pkghdr,(pkghdr,rpmloc),'i')
 						((e, v, r, a, l, i), s)=self._get_data(name,arch)
@@ -201,11 +201,16 @@ class nevral:
 						ts.add(pkghdr,(pkghdr,rpmloc),'u')
 					
 				elif self.state(name,arch) == 'i':
-					#print 'installing %s, %s' % (name, arch)
+					rpmloc = self.rpmlocation(name, arch)
+					pkghdr = self.getHeader(name, arch)
+					log(4,'Installing: %s, %s' % (name, arch))
 					ts.add(pkghdr,(pkghdr,rpmloc),'i')
 				elif self.state(name,arch) == 'a':
+					rpmloc = self.rpmlocation(name, arch)
+					pkghdr = self.getHeader(name, arch)
 					ts.add(pkghdr,(pkghdr,rpmloc),'a')
 				elif self.state(name,arch) == 'e' or self.state(name,arch) == 'ed':
+					log(4,'Erasing: %s-%s' % (name,arch))
 					ts.remove(name)
 			deps=ts.depcheck()
 			CheckDeps = 0
@@ -224,17 +229,38 @@ class nevral:
 						CheckDeps = 1
 					else:
 						if self.exists(reqname):
-							archlist = archwork.availablearchs(self,name)
-							arch = archwork.bestarch(archlist)
-							((e, v, r, a, l, i), s)=self._get_data(name,arch)
-							self.add((name,e,v,r,arch,l,i),'ud')
-							log(4,"Got extra dep: %s, %s" %(name,arch))
-						else:
-							unresolvable = 1
-							if reqname in conf.excludes:
-								errors.append("package %s needs %s that has been excluded" % (name, reqname))
+							if self.state(reqname) in ('e', 'ed'):
+								#this is probably an erase depedency
+								archlist = archwork.availablearchs(rpmDBInfo,name)
+								arch = archwork.bestarch(archlist)
+								((e, v, r, a, l, i), s)=rpmDBInfo._get_data(name,arch)
+								self.add((name,e,v,r,arch,l,i),'ed')
+								log(4,"Got Erase Dep: %s, %s" %(name,arch))
 							else:
-								errors.append("package %s needs %s (not provided)" % (name, clientStuff.formatRequire(reqname, reqversion, flags)))
+								archlist = archwork.availablearchs(self,name)
+								arch = archwork.bestarch(archlist)
+								((e, v, r, a, l, i), s)=self._get_data(name,arch)
+								self.add((name,e,v,r,arch,l,i),'ud')								
+								log(4,"Got Extra Dep: %s, %s" %(name,arch))
+							CheckDeps=1
+						else:
+							#this is horribly ugly but I have to find some way to see if what it needed is provided
+							#by what we are removing - if it is thien remove it -otherwise its a real dep problem - move along
+							whatprovides = db.findbyprovides(reqname)
+							if len(whatprovides)>0:
+								for provide in whatprovides:
+									provhdr=db[provide]
+									if self.state(provhdr[rpm.RPMTAG_NAME],provhdr[rpm.RPMTAG_ARCH]) in ('e','ed'):
+										((e,v,r,a,l,i),s)=rpmDBInfo._get_data(name)
+										self.add((name,e,v,r,a,l,i),'ed')
+										log(4,"Got Erase Dep: %s, %s" %(name,arch))
+										CheckDeps=1
+							else:
+								unresolvable = 1
+								if reqname in conf.excludes:
+									errors.append("package %s needs %s that has been excluded" % (name, reqname))
+								else:
+									errors.append("package %s needs %s (not provided)" % (name, clientStuff.formatRequire(reqname, reqversion, flags)))
 				elif sense == rpm.RPMDEP_SENSE_CONFLICTS:
 					print reqname
 					print reqversion

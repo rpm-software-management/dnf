@@ -206,6 +206,7 @@ def main():
 			usage()
 	if cmds[0] not in ('update','install','list','erase','grouplist','groupupdate','groupinstall','clean','remove'):
 		usage()
+	process=cmds[0]
 
 	#make remote nevral class
 	HeaderInfo = nevral.nevral()
@@ -253,15 +254,16 @@ def main():
 		print "No actions to take"
 		sys.exit(0)
 		
-	#put available pkgs in tsInfonevral in state 'a'
-	for (name,arch) in nulist:
-		if not tsInfo.exists(name, arch):
-			((e, v, r, a, l, i), s)=HeaderInfo._get_data(name,arch)
-			log(6,"making available: %s" % name)
-			tsInfo.add((name,e,v,r,arch,l,i),'a')   
+	if process not in ('erase','remove'):
+		#put available pkgs in tsInfonevral in state 'a'
+		for (name,arch) in nulist:
+			if not tsInfo.exists(name, arch):
+				((e, v, r, a, l, i), s)=HeaderInfo._get_data(name,arch)
+				log(6,"making available: %s" % name)
+				tsInfo.add((name,e,v,r,arch,l,i),'a')   
 
 	log("Resolving dependencies")
-	(code, msgs) = tsInfo.resolvedeps()
+	(code, msgs) = tsInfo.resolvedeps(rpmDBInfo)
 	if code == 1:
 		for msg in msgs:
 			print msg
