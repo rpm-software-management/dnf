@@ -24,6 +24,8 @@ yum \- Yellowdog Updater Modified
 .br 
 .I \fR * list [\&.\&.\&.]
 .br 
+.I \fR * info [\&.\&.\&.]
+.br 
 .I \fR * grouplist [\&.\&.\&.]
 .br 
 .I \fR * clean [packages | headers | old\-headers | all]
@@ -68,6 +70,11 @@ as well\&.
 packages; more complete details are available in the \fIList Options\fP
 section below\&.
 .IP 
+.IP "\fBinfo\fP"
+\fBinfo\fP can be used to list a description and summary information about available
+packages; takes the same arguments as in the \fIList Options\fP
+section below\&.
+.IP 
 .IP "\fBgroup\-list\fP"
 \fBgroup\-list\fP without any arguments will list all of the available
 groups; if a group name is given, the packages in that group are listed\&.
@@ -105,9 +112,6 @@ version of the package which is available\&.
 .IP 
 .IP "\fByum list\fP"
 list all packages in the yum repositories available to be installed\&.
-.IP 
-.IP "\fByum list new\fP"
-list all packages in the yum repositories not currently installed\&.
 .IP 
 .IP "\fByum list updates\fP"
 list all packages with updates available in the yum repositories\&.

@@ -69,11 +69,7 @@ def listpkgs(pkglist, userlist, nevral):
         print "%-40s %-10s %s" %('Name','Arch','Version')
         print "-" * 80
         if type(userlist) is types.StringType:
-            if userlist=='all':
-                for (name, arch) in pkglist:
-                    (e,v,r)=nevral.evr(name,arch)
-                    print "%-40s %-10s %s-%s" %(name, arch,v, r)
-            if userlist=='updates':
+            if userlist=='all' or userlist =='updates':
                 for (name, arch) in pkglist:
                     (e,v,r)=nevral.evr(name,arch)
                     print "%-40s %-10s %s-%s" %(name, arch,v, r)
