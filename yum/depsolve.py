@@ -452,12 +452,31 @@ class Depsolve:
             if pkg.pkgtup() in self.rpmdb.getPkgList(): # is it already installed?
                 self.log(5, '%s is in providing packages but it is already installed, removing.' % pkg)
                 provSack.delPackage(pkg)
-                provSack.buildIndexes()
+                continue
+
+            # we need to check to see, if we have anything similar to it (name-wise)
+            # installed, and this isn't a package that allows multiple installs
+            # then if it's newer, fine - continue on, if not, then we're unresolveable
+            # cite it and exit
+        
+            tspkgs = []
+            if not self.allowedMultipleInstalls(pkg):
+                tspkgs = self.tsInfo.matchNaevr(name=pkg.name, arch=pkg.arch)
+
+                (n, a, e, v, r) = pkg.pkgtup()
+                for tspkg in tspkgs:
+                    (tn, ta, te, tv, tr) = tspkg.pkgtup
+                    rc = rpmUtils.miscutils.compareEVR((e, v, r), (te, tv, tr))
+                    if rc < 0:
+                        msg = 'Potential resolving packages %s has newer instance in ts.' % pkg
+                        self.log(5, msg)
+                        provSack.delPackage(pkg)
+                        continue
 
 
         if len(provSack) == 0: # unresolveable
             missingdep = 1
-            msg = 'missing dep: %s for pkg %s' % (rpmUtils.miscutils.formatRequire(needname, needversion, needflags), name)
+            msg = 'Missing Dependency: %s is needed by package %s' % (rpmUtils.miscutils.formatRequire(needname, needversion, needflags), name)
             errorlist.append(msg)
             return checkdeps, missingdep
         
@@ -495,26 +514,6 @@ class Depsolve:
             errorlist.append(msg)
             return checkdeps, missingdep
         
-        # we need to check to see, if we have anything similar to it (name-wise)
-        # installed, and this isn't a package that allows multiple installs
-        # then if it's newer, fine - continue on, if not, then we're unresolveable
-        # cite it and exit
-        
-        tspkgs = []
-        if not self.allowedMultipleInstalls(best):
-            tspkgs = self.tsInfo.matchNaevr(name=best.name, arch=best.arch)
-            
-        (bn, ba, be, bv, br) = best.pkgtup()
-        for tspkg in tspkgs:
-            (tn, ta, te, tv, tr) = tspkg.pkgtup
-            rc = rpmUtils.miscutils.compareEVR((be, bv, br), (te, tv, tr))
-            if rc < 0:
-                self.log(2, 'Resolving package has newer instance in ts and cannot be installed multiple times')
-                missingdep = 1
-                checkdeps = 0
-                msg = 'Missing Dependency: %s is needed by package %s' % (needname, name)
-                errorlist.append(msg)
-                return checkdeps, missingdep
                 
             
             
