@@ -129,9 +129,13 @@ daily:
 	mkdir .disttmp; \
 	mkdir .disttmp/$$distdir; \
 	$(MAKE) dailyfiles
+	day=`/bin/date +%Y%m%d`; \
 	distdir=$(PACKAGE); \
+	tarname=$$distdir-1.0-$$day ;\
 	cd .disttmp; \
-	tar -cvz > ../$$distdir-`date +%Y%m%d`.tar.gz $$distdir; \
+	perl -pi -e "s/\#DATE\#/$$day/g" $$distdir/yum-daily.spec; \
+	echo $$day; \
+	tar -cvz > ../$$tarname.tar.gz $$distdir; \
 	cd $$olddir
 	rm -rf .disttmp
 
@@ -149,8 +153,7 @@ dailyfiles:
 	$(srcdir)/Makefile.in \
 	$(srcdir)/configure.in \
 	$(srcdir)/configure \
-	$(srcdir)/yum.spec \
-	$(srcdir)/yum-7.x.spec \
+	$(srcdir)/yum-daily.spec \
 	$(srcdir)/install-sh \
 	$(srcdir)/mkinstalldirs \
 	$(top_srcdir)/.disttmp/$$distdir
