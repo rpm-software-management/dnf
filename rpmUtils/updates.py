@@ -163,7 +163,19 @@ class Updates:
                                     obsdict[pkgtup].append((obs_n, rpm_a, rpm_e, rpm_v, rpm_r))
            
         self.obsoletes = obsdict
-           
+        self.makeObsoletedDict()
+
+    def makeObsoletedDict(self):
+        """creates a dict of obsoleted packages -> [obsoleting package], this
+           is to make it easier to look up what package obsoletes what item in 
+           the rpmdb"""
+        self.obsoleted_dict = {}
+        for new in self.obsoletes.keys():
+            for old in self.obsoletes[new]:
+                if not self.obsoleted_dict.has_key(old):
+                    self.obsoleted_dict[old] = []
+                self.obsoleted_dict[old].append(new)
+    
     def doUpdates(self):
         """check for key lists as populated then commit acts of evil to
            determine what is updated and/or obsoleted, populate self.updatesdict
@@ -505,6 +517,8 @@ class Updates:
                     continue
         return returnlist
 
+
+        
     def getOthersList(self, name=None, arch=None):
         """returns a naevr tuple of the packages that are neither installed
            nor an update - this may include something that obsoletes an installed
