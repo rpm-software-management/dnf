@@ -32,6 +32,7 @@ import Errors
 import urlgrabber
 import urlgrabber.grabber
 from repos import variableReplace, Repository
+from constants import *
 
 
 class CFParser(ConfigParser.ConfigParser):
@@ -286,15 +287,13 @@ class yumconf(object):
             setattr(self, option, value)
             
         # do the bools
-        self._boolean_states = {'1': True, 'yes': True, 'true': True, 'on': True,
-                           '0': False, 'no': False, 'false': False, 'off': False}
         
         for (option, default) in optionbools:
             value = self.cfg._getoption('main', option, default)
             value = variableReplace(self.yumvar, value)
-            if value.lower() not in self._boolean_states:
+            if value.lower() not in BOOLEAN_STATES:
                 raise Errors.ConfigError, 'Invalid value in config for main::%s' % option
-            value = self._boolean_states[value.lower()]
+            value = BOOLEAN_STATES[value.lower()]
             self.configdata[option] = value
             setattr(self, option, value)
             
@@ -437,9 +436,9 @@ def cfgParserRepo(section, yumconfig, cfgparser):
         val = cfgparser._getoption(section, keyword, yumconfig.getConfigOption(keyword))
         val = variableReplace(yumconfig.yumvar, val)
         if type(val) is not types.BooleanType:
-            if val.lower() not in yumconfig._boolean_states:
+            if val.lower() not in BOOLEAN_STATES:
                 raise Errors.RepoError, 'Invalid value in repo config for %s::%s' % (section, keyword)
-            val = yumconfig._boolean_states[val.lower()]
+            val = BOOLEAN_STATES[val.lower()]
         thisrepo.set(keyword, val)
     
     for (keyword, getfunc) in [('bandwidth', cfgparser.getbytes),
