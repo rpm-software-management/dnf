@@ -18,6 +18,15 @@ import os.path
 import cmd
 from yum import Errors
 
+# TODO: implement setconfig and getconfig - this should only expose a subset
+#       of the configuration options. exposing all of them, especially the lists
+#       would be a pain to parse and handle but the int, string and booleans
+#       should be doable. Config only affects global config settings not
+#       repo configuration.
+#       one of the oft-requested lists will be 'exclude' - this should be its 
+#       own command, probably so we can set excludes. make it a space separated
+#       list
+
 class YumShell(cmd.Cmd):
     def __init__(self, base):
         cmd.Cmd.__init__(self)

@@ -56,7 +56,7 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         self.localPackages = [] # for local package handling - possibly needs
                                 # to move to the lower level class
 
-    def doRepoSetup(self, dosack=1, thisrepo=None):
+    def doRepoSetup(self, thisrepo=None, dosack=1):
         """grabs the repomd.xml for each enabled repository 
            and sets up the basics of the repository"""
         
