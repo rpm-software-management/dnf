@@ -79,6 +79,15 @@ class RepoStorage:
 
         return returnlist
 
+    def listGroupsEnabled(self):
+        """return a list of repo objects that have groups enabled"""
+        returnlist = []
+        for repo in self.repos.values():
+            if repo.enablegroups:
+                returnlist.append(repo)
+
+        return returnlist
+                
     def populateSack(self, which='enabled', with='primary'):
         """This populates the package sack from the repositories, two optional 
            arguments: which='repoid, enabled, all'
@@ -239,5 +248,10 @@ class Repository:
     def getOtherXML(self, cache=0):
         return self.cache + '/other.xml.gz'
 
+    def getGroups(self, cache=0):
+        """gets groups and returns group file path for the repository, if there 
+           is none it returns None"""
+           
+        return self.cache + '/yumgroups.xml'
     
 

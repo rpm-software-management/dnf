@@ -227,21 +227,12 @@ def main(args):
     #DEBUG
     print time.time()
     
-    # some misc speedups/sanity checks
+    # set our caching mode correctly
     if base.conf.getConfigOption('uid') != 0:
         base.conf.setConfigOption('cache', 1)
     if process == 'clean':
         base.conf.setConfigOption('cache', 1)
 
-    #DEBUG
-    print time.time()
-    base.repos.populateSack()
-    base.pkgSack = base.repos.pkgSack
-    base.log(2, '#pkgs in repos = %s' % len(base.pkgSack.returnPackages()))
-
-    #DEBUG
-    print time.time()
-    
     # get our transaction set together that we'll use all over the place
     base.read_ts = rpmUtils.transaction.initReadOnlyTransaction()
     
@@ -249,6 +240,31 @@ def main(args):
     base.rpmdb = rpmUtils.RpmDBHolder()
     base.rpmdb.addDB(base.read_ts)
     base.log(2, '#pkgs in db = %s' % len(base.rpmdb.getPkgList()))
+
+    
+    if process in ['groupupdate', 'groupinstall', 'grouplist', 'groupremove']:
+        base.grpInfo = yum.yumcomps.Groups_Info(base.rpmdb.getPkgList(),
+                                 base.conf.getConfigOption('overwrite_groups'))
+                                 
+        for repo in base.repos.listGroupsEnabled():
+            groupfile = repo.getGroups(base.conf.getConfigOption('cache'))
+            if groupfile:
+                base.log(4, 'Group File found for %s' % repo)
+                base.log(4, 'Adding Groups from %s' % repo)
+                base.grpInfo.add(groupfile)
+
+        if base.grpInfo.compscount > 0:
+            base.grpInfo.compileGroups()
+        else:
+            base.errorlog(0, _('No groups provided or accessible on any repository.'))
+            base.errorlog(1, _('Exiting.'))
+            sys.exit(1)
+
+    #DEBUG
+    print time.time()
+    base.repos.populateSack()
+    base.pkgSack = base.repos.pkgSack
+    base.log(2, '#pkgs in repos = %s' % len(base.pkgSack.returnPackages()))
 
     #DEBUG
     print time.time()
@@ -262,28 +278,7 @@ def main(args):
 
     #DEBUG
     print time.time()
-    
-    #(uplist, newlist, nulist) = clientStuff.getupdatedhdrlist(HeaderInfo, rpmDBInfo)
-    
-    if process in ['groupupdate', 'groupinstall', 'grouplist', 'groupremove']:
-        for repo in repolist:
-            grouprepos = []
-            if repo.enablegroups:
-                grouprepos.append(repo)
-        serversWithGroups = clientStuff.getGroupsFromServers(grouprepos)
-        GroupInfo = yumcomps.Groups_Info(base.conf.getConfigOption('overwrite_groups'))
-        if len(serversWithGroups) > 0:
-            for repo in serversWithGroups:
-                base.log(4, 'Adding Group from %s' % repo.id)
-                GroupInfo.add(repo.localGroups())
-        if GroupInfo.compscount > 0:
-            GroupInfo.compileGroups()
-            # put GroupInfo instance where needed
-        else:
-            base.errorlog(0, _('No groups provided or accessible on any repository.'))
-            base.errorlog(1, _('Exiting.'))
-            sys.exit(1)
-    
+        
     
     ##################################################################
     # at this point we have all the prereq info we could ask for. we 
