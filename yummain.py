@@ -258,7 +258,7 @@ def main(args):
 def usage():
     print """
     Usage:  yum [options] <update | install | info | erase | groupinstall
-                | groupupdate | list | grouplist | clean>
+                | groupupdate | list | grouplist | clean | provides>
                 
          Options:
           -c [config file] - specify the config file to use
@@ -266,6 +266,7 @@ def usage():
           -d [debug level] - set the debugging level
           -y answer yes to all questions
           -R [time in minutes] - set the max amount of time to randonly run in.
+          -C run from cache only - do not update the cache
           -h, --help this screen
     """
     sys.exit(1)

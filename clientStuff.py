@@ -557,7 +557,7 @@ def take_action(cmds, nulist, uplist, newlist, obslist, tsInfo, HeaderInfo, rpmD
     import pkgaction
     from yummain import usage
     if conf.uid != 0:
-        if cmds[0] in ['install','update','clean','upgrade']:
+        if cmds[0] in ['install','update','clean','upgrade','erase']:
             errorlog(0, 'You need to be root to perform these commands')
             sys.exit(1)
     if cmds[0] == 'install':

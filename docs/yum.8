@@ -27,7 +27,9 @@ yum \- Yellowdog Updater Modified
 .I \fR * info [\&.\&.\&.]
 .br 
 .I \fR * grouplist [\&.\&.\&.]
-.br 
+.br
+.I \fR * provides [\&.\&.\&.]
+.br  
 .I \fR * clean [packages | headers | old\-headers | all]
 .br 
 .PP 
@@ -70,6 +72,11 @@ as well\&.
 packages; more complete details are available in the \fIList Options\fP
 section below\&.
 .IP 
+.IP "\fBprovides\fP"
+\fBprovides\fP can be used to find out which package provides some feature
+or file. Just use a specific name or a file-glob-syntax wildcards to list
+the packages available or installed that provide that feature or file\&.
+.IP 
 .IP "\fBinfo\fP"
 \fBinfo\fP can be used to list a description and summary information about available
 packages; takes the same arguments as in the \fIList Options\fP
@@ -104,6 +111,9 @@ Sets the debugging level to [number] \- turns up or down the amount of things th
 Sets the error level to [number] 0 \- 10. 0 means print only critical errors about which you must be told. 1 means print all errors, even ones that are not overly important. 1+ means print more errors (if any) \-e 0 is good for cron jobs.
 .IP "\fB\-R [time in minutes]\fP" 
 Sets the maximum amount of time yum will wait before performing a command \- it randomizes over the time.
+.IP "\fB\-C\fP" 
+Tells yum to run entirely from cache - does not download or update any
+headers unless it has to to perform the requested action.
 .PP 
 .SH "LIST OPTIONS"
 The following are the ways which you can invoke \fByum\fP in list
