@@ -334,7 +334,10 @@ class YumBaseCli(yum.YumBase):
 
         installed = []
         available = []
-        
+        updates = []
+        obsoletes = []
+        recent = []
+        extras = []
         pkgnarrow = 'all' # option used to narrow the subset of packages to
                           # list from
                         
@@ -347,7 +350,6 @@ class YumBaseCli(yum.YumBase):
             installed = self.rpmdb.getPkgList()
             self.doRepoSetup()
             avail = self.pkgSack.simplePkgList()
-            available = []
             for pkg in avail:
                 if pkg not in installed:
                     available.append(pkg)
@@ -357,24 +359,20 @@ class YumBaseCli(yum.YumBase):
             self.doRpmDBSetup()
             self.doRepoSetup()
             self.doUpdateSetup()
-            available = self.up.getUpdatesList()
-            installed = []
+            updates = self.up.getUpdatesList()
 
         elif pkgnarrow == 'installed':
             self.doRpmDBSetup()
             installed = self.rpmdb.getPkgList()
-            available = []
             
         elif pkgnarrow == 'available':
             self.doRpmDBSetup()
             self.doRepoSetup()
             avail = self.pkgSack.simplePkgList()
             inst = self.rpmdb.getPkgList()
-            available = []
             for pkg in avail:
                 if pkg not in inst:
                     available.append(pkg)
-            installed = []
             del avail
 
         elif pkgnarrow == 'extras':
@@ -383,15 +381,12 @@ class YumBaseCli(yum.YumBase):
             # put into totalpkgs list
             self.doRpmDBSetup()
             self.doRepoSetup()
-            available = self.pkgSack.simplePkgList()
-            installed = self.rpmdb.getPkgList()
-            extras = []
-            for pkg in installed:
-                if pkg not in available:
+            avail = self.pkgSack.simplePkgList()
+            inst = self.rpmdb.getPkgList()
+            for pkg in inst:
+                if pkg not in avail:
                     extras.append(pkg)
             
-            installed = extras
-            available = []
 
         elif pkgnarrow == 'obsoletes':
             # get the list of obsoletes and list the available packages
@@ -402,38 +397,32 @@ class YumBaseCli(yum.YumBase):
             # a miracle occurs - iterate throuh the pkgobjects
             # look for timestamp if it is in the last N days (lets say 2 weeks)
             # add it to the list
-            passes
-    # if installed or available are of any length, search them for matches to
-    # the args from the user, if any exist.
-        if len(self.extcmds) > 0:
-            if len(installed) > 0:
-                matched, unmatched = parsePackages(installed, self.extcmds)
-                installed = matched
-            if len(available) > 0:
-                matched, unmatched = parsePackages(available, self.extcmds)
-                available = matched
+            pass
 
     # Iterate through the packages (after a simple sort by name), create
     # a package object for them and call the display function.
     # FIXME - for now just output some string
 
-        if len(available) > 0:
-            self.log(2, 'Available packages')
-            available.sort(sortPkgTup)
-            for pkg in available:
-                (n, a, e, v, r) = pkg
-                self.log(2, '%s:%s-%s-%s.%s' % (e, n, v, r, a))
-        
-        if len(installed) > 0:
-            self.log(2, 'Installed packages')
-            installed.sort(sortPkgTup)
-            for pkg in installed:
-                (n, a, e, v, r) = pkg
-                self.log(2, '%s:%s-%s-%s.%s' % (e, n, v, r, a))
+        thingslisted = 0
+        for (lst, name) in [(updates, 'Updated'), (available, 'Available'), 
+                            (installed, 'Installed'), (recent, 'Recently available'),
+                            (obsoletes, 'Obsoleting'), (extras, 'Extra')]:
+            if len(lst) > 0:
+                if len(self.extcmds) > 0:
+                    matched, unmatched = parsePackages(lst, self.extcmds)
+                    lst = matched
 
-    
-        if len(installed) == 0 and len(available) == 0:
-            self.errorlog(1, 'No Packages available to List')
+        # check our reduced list
+            if len(lst) > 0:
+                thingslisted = 1
+                self.log(2, '%s packages' % name)
+                lst.sort(sortPkgTup)
+                for pkg in lst:
+                    (n, a, e, v, r) = pkg
+                    self.log(2, '%s:%s-%s-%s.%s' % (e, n, v, r, a))
+
+        if thingslisted == 0:
+            self.errorlog(1, 'No Packages to list')
 
     def userconfirm(self):
         """gets a yes or no from the user, defaults to No"""
