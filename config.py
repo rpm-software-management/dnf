@@ -113,6 +113,8 @@ class yumconf:
             self.tolerant = self.cfg.getboolean('main', 'tolerant')
         if self._getoption('main', 'distroverpkg') != None:
             self.distroverpkg = self._getoption('main','distroverpkg')
+        if self._getoption('main','exactarch') != None:
+            self.exactarch = self.cfg.getboolean('main', 'exactarch')
         
         # figure out what the releasever really is from the distroverpkg
         self.yumvar['releasever'] = self._getsysver()

@@ -377,16 +377,19 @@ def getupdatedhdrlist(headernevral, rpmnevral):
         else:
             # make the default case true
             exactmatch = 1
-        
+
         if rpmnevral.exists(name, arch):
             exactmatch = 1
+            log(5, 'Simple exact match for %s %s' % (name, arch))
             (rpm_e, rpm_v, rpm_r) = rpmnevral.evr(name, arch)
         else:
+            log(5, 'Inexact match for %s %s - exactmatch = %d' % (name, arch, exactmatch))
             (rpm_e, rpm_v, rpm_r) = rpmnevral.evr(name)
             
         if exactmatch:
             rc = compareEVR(headernevral.evr(name), (rpm_e, rpm_v, rpm_r))
             if rc > 0:
+                log(7, 'putting %s - %s into update list' %(name, arch))
                 uplist.append((name, arch))
         
     # complex cases
