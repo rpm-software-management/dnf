@@ -14,6 +14,8 @@ yum \- Yellowdog Updater Modified
 .br 
 .I \fR * update [package1] [package2] [\&.\&.\&.]
 .br 
+.I \fR * upgrade
+.br 
 .I \fR * remove [package1] [package2] [\&.\&.\&.]
 .br 
 .I \fR * group\-install group1 [group2] [\&.\&.\&.]
@@ -43,6 +45,9 @@ only update the listed packages\&.  While updating packages, \fByum\fP
 will ensure that all dependencies are satisfied\&.  If no package
 matches the given package name(s), they are assumed to be a shell glob
 and any matches are then installed\&.
+.IP 
+.IP "\fBupgrade\fP"
+Takes no arguments, this performs a complete upgrade of the system \- good for distro\-version changes as it includes packages obsoleting other packages in its updating calculations.
 .IP 
 .IP "\fBremove\fP"
 \fBremove\fP is used to remove the specified packages from the system
