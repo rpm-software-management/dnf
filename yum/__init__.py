@@ -66,7 +66,7 @@ class YumBase(depsolve.Depsolve):
            packageSack or rpmdb, and pack up the ts accordingly"""
         (rescode, restring) = self.resolveDeps()
         return rescode, restring
-           
+    
     def doLock(self, lockfile):
         """perform the yum locking, raise yum-based exceptions, not OSErrors"""
         

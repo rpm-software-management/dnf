@@ -118,8 +118,17 @@ class Depsolve:
             self.log (3, '# of Deps = %d' % len(deps))
             for ((name, version, release), (reqname, reqversion),
                                 flags, suggest, sense) in deps:
-                self.log (4, 'debug dep: %s req %s - %s - %s' % (name, reqname, reqversion, sense))
+                self.log(6, 'debug dep: %s req %s - %s - %s' % (name, reqname, reqversion, sense))
                 if sense == rpm.RPMDEP_SENSE_REQUIRES:
+                    # find out if the req package is in the tsInfo
+                    # if it is, check which mode
+                    # if i or u then we're installing or updating something - find it in the repos
+                    # if e or ed then we're removing
+                    # if it is not in the tsInfo, check what provides what it is requiring
+                    # if the package that provides what we're requiring is in the tsInfo or the rpmdb
+                    # if it is in both and the rpmdb one is a different version, try to change versions
+                    # on the requiring package
+                
                     # silly silly silly easy case
                     self.log(4, '%s requires: %s' % (name, rpmUtils.miscutils.formatRequire(reqname, reqversion, flags)))
                     pkgs = self.pkgSack.searchProvides(reqname)

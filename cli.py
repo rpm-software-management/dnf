@@ -324,7 +324,9 @@ class YumBaseCli(yum.YumBase):
         elif self.basecmd == 'clean':
             # if we're cleaning then we don't need to talk to the net
             self.conf.setConfigOption('cache', 1)
-
+    def doTransaction(self):
+        pass
+        
     def installPkgs(self, userlist=None):
         """Attempts to take the user specified list of packages/wildcards
            and install them, or if they are installed, update them to a newer

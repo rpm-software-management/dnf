@@ -190,7 +190,7 @@ class YumPackage(metadata.packageObject.RpmXMLPackageObject):
         repo = base.repos.getRepo(repoid)
         hdrpath = repo.hdrdir + '/' + hdrname
         if os.path.exists(hdrpath):
-            base.log(4, 'Cached header %s exists, checking' % hdrpath)
+            base.log(6, 'Cached header %s exists, checking' % hdrpath)
             try: 
                 hlist = rpm.readHeaderListFromFile(hdrpath)
             except rpm.error:
