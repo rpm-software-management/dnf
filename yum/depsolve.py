@@ -358,6 +358,7 @@ class Depsolve:
                 checkdeps = 1
         
         if needmode in ['i', 'u']:
+            self.doUpdateSetup()
             uplist = self.up.getUpdatesList(name=name)
             
             po = None
@@ -444,6 +445,7 @@ class Depsolve:
             (n,a,e,v,r) = pkg.pkgtup()
             pkgmode = self.tsInfo.getMode(name=n, arch=a, epoch=e, ver=v, rel=r)
             if pkgmode in ['i', 'u']:
+                self.doUpdateSetup()
                 self.log(5, '%s already in ts, skipping this one' % (n))
                 checkdeps = 1
                 return checkdeps, missingdep

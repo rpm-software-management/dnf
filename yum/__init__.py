@@ -81,15 +81,15 @@ class YumBase(depsolve.Depsolve):
         """setups up the update object in the base class and fills out the
            updates, obsoletes and others lists"""
         
+        if hasattr(self, 'up'):
+            return
+            
         self.log(3, 'Building updates object')
         #FIXME - add checks for the other pkglists to see if we should
         # raise an error
         self.up = rpmUtils.updates.Updates(self.rpmdb.getPkgList(),
                                            self.pkgSack.simplePkgList())
-        print self.conf.getConfigOption('debuglevel')
         if self.conf.getConfigOption('debuglevel') >= 4:
-            print self.conf.getConfigOption('debuglevel')
-            print 'setting debug'
             self.up.debug = 1
             
         if self.conf.getConfigOption('obsoletes'):
