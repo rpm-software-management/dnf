@@ -19,6 +19,7 @@ import Errors
 import os
 import os.path
 import failover    
+from urlgrabber.grabber import URLGrabber
 
 class RepoStorage:
     """This class contains multiple repositories and core configuration data
@@ -86,7 +87,6 @@ class Repository:
         self.enablegroups = 1  
         self.groupsfilename = 'yumgroups.xml' # something some freaks might 
                                               # eventually want
-
         self.setkeys = []
         
     def __cmp__(self, other):
@@ -133,15 +133,24 @@ class Repository:
     def listSetKeys(self):
         return setkeys
         
-    def setFailover(self, failmeth):
-        """takes a failover string and sets the failover class accordingly"""
-
-        if failmeth == 'roundrobin':
-            self.failover = failover.roundRobin(self)
-        elif failmeth == 'priority':
-            self.failover = failover.priority(self)
+    def setupGrab(self):
+        """sets up the grabber functions with the already stocked in urls for
+           the mirror groups"""
+        # FIXME this should do things with our proxy and keepalive info here
+        # too
+        if self.failmeth == 'roundrobin':
+            mgclass = urlgrabber.mirror.MGRandomOrder
         else:
-            self.failover = failover.roundRobin(self)
+            mgclass = urlgrabber.mirror.MirrorGroup
+            
+        self.grabfunc = URLGrabber(keepalive=self.keepalive, 
+                                   bandwidth=self.bandwidth,
+                                   retry=self.retries,
+                                   throttle=self.throttle)
+        self.grab = mgclass(self.grabfunc, self.urls)
+
+        # now repo.grab.urlgrab('relativepath/some.file') should do the right thing
+        
         
     def remoteGroups(self):
         return os.path.join(self.baseURL(), self.groupsfilename)

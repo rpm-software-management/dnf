@@ -314,6 +314,7 @@ def doRepoSection(globconfig, thisconfig, section):
         thisrepo.set('cache', cache)
         thisrepo.set('pkgdir', pkgdir)
         thisrepo.set('hdrdir', hdrdir)
+        thisrepo.setupGrab()
 
     else:
         print 'Error: Cannot find baseurl or name for repo: %s. Skipping' % (section)    
