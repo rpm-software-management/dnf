@@ -48,11 +48,12 @@ def stripNA(str):
     return (name, arch)
 
 def compareEVR((e1,v1,r1), (e2,v2,r2)):
-   # return 1: a is newer than b 
-   # 0: a and b are the same version 
-   # -1: b is newer than a */
-    rc = rpm.labelCompare((e1,v1,r1), (e2,v2,r2))
-    return rc
+	# return 1: a is newer than b 
+	# 0: a and b are the same version 
+	# -1: b is newer than a 
+	rc = rpm.labelCompare((e1,v1,r1), (e2,v2,r2))
+	log(6, "%s, %s, %s vs %s, %s, %s = %s" % (e1, v1, r1, e2, v2, r2, rc))
+	return rc
 
 def getENVRA(header):
 	if header[rpm.RPMTAG_EPOCH] == None:
@@ -108,8 +109,8 @@ def HeaderInfoNevralLoad(filename,nevral,serverid):
 				if nevral.exists(name, arch):
 					(e1, v1, r1) = nevral.evr(name, arch)
 					(e2, v2, r2) = (epoch, ver, rel)    
-					rc = rpm.labelCompare((e1,v1,r1), (e2,v2,r2))
-					if (rc == -1):
+					rc = compareEVR((e1,v1,r1), (e2,v2,r2))
+					if (rc < 0):
 						#ooo  the second one is newer - push it in.
 						nevral.add((name,epoch,ver,rel,arch,rpmpath,serverid),'a')
 				else:
@@ -143,8 +144,8 @@ def rpmdbNevralLoad(nevral):
 		else:
 			(e1, v1, r1) = (rpmdbdict[(name, arch)])
 			(e2, v2, r2) = (epoch, ver, rel)    
-			rc = rpm.labelCompare((e1,v1,r1), (e2,v2,r2))
-			if (rc == -1):
+			rc = compareEVR((e1,v1,r1), (e2,v2,r2))
+			if (rc <= -1):
 				rpmdbdict[(name,arch)] = (epoch, ver, rel)
 			elif (rc == 0):
 				log(4,"dupe entry in rpmdb %s\n" % key)
@@ -201,47 +202,47 @@ def returnObsoletes(headerNevral,rpmNevral,uninstNAlist):
 					elif len(obvalue) == 3:
 						(e1,v1,r1) = rpmNevral.evr(name, arch)
 						(e2,v2,r2) = str_to_version(obvalue[3])
-						rc = rpm.labelCompare((e1,v1,r1), (e2,v2,r2))
+						rc = compareEVR((e1,v1,r1), (e2,v2,r2))
 						if obvalue[2] == '>':
-							if rc == 1:
+							if rc >= 1:
 								packages.append((name, arch))
 								obsdict[(name,arch)]=obvalue[0]
 							elif rc == 0:
 								pass
-							elif rc == -1:
+							elif rc <= -1:
 								pass
 						elif obvalue[2] == '>=':
-							if rc == 1:
+							if rc >= 1:
 								packages.append((name, arch))
 								obsdict[(name,arch)]=obvalue[0]
 							elif rc == 0:
 								packages.append((name, arch))
 								obsdict[(name,arch)]=obvalue[0]
-							elif rc == -1:
+							elif rc <= -1:
 								pass
 						elif obvalue[2] == '=':
-							if rc == 1:
+							if rc >= 1:
 								pass
 							elif rc == 0:
 								packages.append((name, arch))
 								obsdict[(name,arch)]=obvalue[0]
-							elif rc == -1:
+							elif rc <= -1:
 								pass
 						elif obvalue[2] == '<=':
-							if rc == 1:
+							if rc >= 1:
 								pass
 							elif rc == 0:
 								packages.append((name, arch))
 								obsdict[(name,arch)]=obvalue[0]
-							elif rc == -1:
+							elif rc <= -1:
 								packages.append((name, arch))
 								obsdict[(name,arch)]=obvalue[0]
 						elif obvalue[2] == '<':
-							if rc == 1:
+							if rc >= 1:
 								pass
 							elif rc == 0:
 								pass
-							elif rc == -1:
+							elif rc <= -1:
 								packages.append((name, arch))
 								obsdict[(name,arch)]=obvalue[0]
 	return obsdict
@@ -470,7 +471,7 @@ def clean_up_old_headers(rpmDBInfo, HeaderInfo):
 		(e, n, v, r, a) = getENVRA(hdr)
 		if rpmDBInfo.exists(n, a):
 			(e1, v1, r1) = rpmDBInfo.evr(n, a)
-			rc = rpm.labelCompare((e1,v1,r1), (e,v,r))
+			rc = compareEVR((e1,v1,r1), (e,v,r))
 			#if the rpmdb has an equal or better rpm then delete
 			#the header
 			if (rc >= 0):

@@ -59,7 +59,7 @@ def genhdrs(rpms,headerdir,rpmcheck,compress):
 				oldhdrfile = "%s/%s-%s-%s-%s.%s.hdr" % (headerdir, name, e1, v1, r1, arch) 
 				# which one is newer?
 				rc = rpm.labelCompare((e1,v1,r1), (epoch, ver, rel))
-				if rc == -1:
+				if rc <= -1:
 					# if the more recent one in is newer then throw away the old one
 					del rpminfo[rpmtup]
 					if os.path.exists(oldhdrfile):
@@ -74,7 +74,7 @@ def genhdrs(rpms,headerdir,rpmcheck,compress):
 				elif rc == 0:
 					# hmm, they match complete - warn the user that they've got a dupe in the tree
 					print "\nignoring dupe pkg: %s" % (rpmloc)
-				elif rc == 1:
+				elif rc >= 1:
 					# move along, move along, nothing more to see here
 					print "\nignoring older pkg: %s" % (rpmloc)
 			else:

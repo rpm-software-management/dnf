@@ -1,11 +1,10 @@
 Summary: RPM installer/updater
 Name: yum
-Version: 0.8.9
+Version: 0.8.7
 Release: 1
 License: GPL
 Group: System Environment/Base
 Source: %{name}-%{version}.tar.gz
-#Source2: yum.conf
 URL: http://www.dulug.duke.edu/yum/
 BuildRoot: %{_tmppath}/%{name}-%{version}root
 BuildArchitectures: noarch
@@ -29,8 +28,6 @@ make
 %install
 [ "$RPM_BUILD_ROOT" != "/" ] && rm -rf $RPM_BUILD_ROOT
 make DESTDIR=$RPM_BUILD_ROOT install
-
-#install -m 644 %{SOURCE2} $RPM_BUILD_ROOT/%{_sysconfdir}/yum.conf
 
 %clean
 [ "$RPM_BUILD_ROOT" != "/" ] && rm -rf $RPM_BUILD_ROOT
@@ -67,12 +64,6 @@ exit 0
 %{_mandir}/man*/*
 
 %changelog
-* Wed Jun 19 2002 Seth Vidal <skvidal@phy.duke.edu>
-- 0.8.9
-
-* Sun Jun 16 2002 Seth Vidal <skvidal@phy.duke.edu>
-- 0.8.8
-
 * Fri Jun 14 2002 Seth Vidal <skvidal@phy.duke.edu>
 - 0.8.7
 
