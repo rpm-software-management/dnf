@@ -211,7 +211,7 @@ class YumShell(cmd.Cmd):
         (cmd, args, line) = self.parseline(line)
         if cmd in ['list', None]:
             if self.base.repos.repos.values():
-                self.base.log(2, '%-20.20s %-40.40s status' % ('repo id', 'repo name'))
+                self.base.log(2, '%-20.20s %-40.40s  status' % ('repo id', 'repo name'))
             for repo in self.base.repos.repos.values():
                 if repo in self.base.repos.listEnabled():
                     self.base.log(2, '%-20.20s %-40.40s  enabled' % (repo, repo.name))
