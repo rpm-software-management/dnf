@@ -128,7 +128,8 @@ class TransactionWrapper:
                          'setProbFilter',
                          'hdrFromFdno',
                          '__iter__',
-                         'next']
+                         'next',
+                         'clean']
         self.tsflags = []
 
     def __getattr__(self, attr):

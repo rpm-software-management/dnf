@@ -5,7 +5,7 @@ import os
 
 # dict mapping arch -> ( multicompat, best personality, biarch personality )
 multilibArches = { "x86_64":  ( "athlon", "x86_64", "athlon" ),
-                   "sparc64": ( "sparcv9", "sparcv9", "sparc64" ),
+                   "sparc64": ( "sparc", "sparc", "sparc64" ),
                    "ppc64":   ( "ppc", "ppc", "ppc64" ),
                    "s390x":   ( "s390", "s390x", "s390" ),
                    "ia64":    ( "i686", "ia64", "i686" )
@@ -21,6 +21,8 @@ arches = {
     
     # amd64
     "x86_64": "athlon",
+    "amd64": "x86_64",
+    "ia32e": "x86_64",
     
     # itanium
     "ia64": "i686",
@@ -142,6 +144,27 @@ def getCanonPPCArch(arch):
     if machine.find("iSeries") != -1:
         return "ppc64iseries"
     return arch
+
+def getCanonX86_64Arch(arch):
+    if arch != "x86_64":
+        return arch
+
+    vendor = None
+    f = open("/proc/cpuinfo", "r")
+    lines = f.readlines()
+    f.close()
+    for line in lines:
+        if line.startswith("vendor_id"):
+            vendor = line.split(':')[1]
+            break
+    if vendor is None:
+        return arch
+
+    if vendor.find("Authentic AMD") != -1:
+        return "amd64"
+    if vendor.find("GenuineIntel") != -1:
+        return "ia32e"
+    return arch
         
 def getCanonArch(skipRpmPlatform = 0):
     if not skipRpmPlatform and os.access("/etc/rpm/platform", os.R_OK):
@@ -161,6 +184,8 @@ def getCanonArch(skipRpmPlatform = 0):
 
     if arch.startswith("ppc"):
         return getCanonPPCArch(arch)
+    if arch == "x86_64":
+        return getCanonX86_64Arch(arch)
 
     return arch
 
