@@ -202,6 +202,12 @@ class yumconf(object):
         except KeyError:
             return default
 
+    def setCache(self, cacheval):
+        """set's cache value in config, and in all repos"""
+        self.setConfigOption('cache', cacheval)
+        self.repos.cache = cacheval
+        for repo in self.repos.repos.keys():
+            repo.cache = cacheval
 
     def _getsysver(self):
         ts = rpmUtils.transaction.initReadOnlyTransaction()
@@ -307,10 +313,10 @@ def doRepoSection(globconfig, thisconfig, section):
         thisrepo.set('includepkgs', includelist)
 
         thisrepo.set('enablegroups', thisconfig._getboolean(section, 'enablegroups', 1))
-        cache = os.path.join(globconfig.getConfigOption('cachedir'), section)
-        pkgdir = os.path.join(cache, 'packages')
-        hdrdir = os.path.join(cache, 'headers')
-        thisrepo.set('cache', cache)
+        cachedir = os.path.join(globconfig.getConfigOption('cachedir'), section)
+        pkgdir = os.path.join(cachedir, 'packages')
+        hdrdir = os.path.join(cachedir, 'headers')
+        thisrepo.set('cachedir', cachedir)
         thisrepo.set('pkgdir', pkgdir)
         thisrepo.set('hdrdir', hdrdir)
         thisrepo.setupGrab()

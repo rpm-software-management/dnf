@@ -50,12 +50,12 @@ class YumBaseCli(yum.YumBase):
         for repo in self.repos.listEnabled():
             self.log(2, 'Setting up Repo:  %s' % repo)
             try:
-                repo.dirSetup(cache=self.conf.getConfigOption('cache'))
+                repo.dirSetup()
             except yum.Errors.RepoError, e:
                 self.errorlog(0, '%s' % e)
                 sys.exit(1)
             try:
-                repo.getRepoXML(cache=self.conf.getConfigOption('cache'))
+                repo.getRepoXML()
             except yum.Errors.RepoError, e:
                 self.errorlog(0, 'Cannot open/read repomd.xml file for repository: %s' % repo)
                 sys.exit(1)
@@ -68,7 +68,7 @@ class YumBaseCli(yum.YumBase):
                                  self.conf.getConfigOption('overwrite_groups'))
                                  
         for repo in self.repos.listGroupsEnabled():
-            groupfile = repo.getGroups(self.conf.getConfigOption('cache'))
+            groupfile = repo.getGroups()
             if groupfile:
                 self.log(4, 'Group File found for %s' % repo)
                 self.log(4, 'Adding Groups from %s' % repo)
@@ -178,7 +178,7 @@ class YumBaseCli(yum.YumBase):
                 elif o in ['-h', '--help']:
                     self.usage()
                 elif o == '-C':
-                    self.conf.setConfigOption('cache', 1)
+                    self.conf.setCache(1)
                 elif o == '-R':
                     sleeptime = random.randrange(int(a)*60)
                 elif o == '--obsoletes':
@@ -235,9 +235,9 @@ class YumBaseCli(yum.YumBase):
         # set our caching mode correctly
         
         if self.conf.getConfigOption('uid') != 0:
-            self.conf.setConfigOption('cache', 1)
+            self.conf.setCache(1)
         # run the sleep - if it's unchanged then it won't matter
-        time.sleep(sleeptime)                        
+        time.sleep(sleeptime)
 
 
     def parseCommands(self):
@@ -346,7 +346,7 @@ class YumBaseCli(yum.YumBase):
                 
         elif self.basecmd == 'clean':
             # if we're cleaning then we don't need to talk to the net
-            self.conf.setConfigOption('cache', 1)
+            self.conf.setCache(1)
 
 
     def doTransaction(self):
@@ -389,9 +389,6 @@ class YumBaseCli(yum.YumBase):
             
             raise yum.Errors.YumBaseError, errstring
         
-         
-         
-
         
     def installPkgs(self, userlist=None):
         """Attempts to take the user specified list of packages/wildcards
@@ -472,15 +469,15 @@ class YumBaseCli(yum.YumBase):
         oldcount = self.tsInfo.count()
         pkglist = returnBestPackages(toBeInstalled)
         if len(pkglist) > 0:
-            print 'reduced installs :'
+            print 'reduced installs :' #DEBUG
         for (n,a,e,v,r) in pkglist:
-            print '   %s.%s %s:%s-%s' % (n, a, e, v, r)
+            print '   %s.%s %s:%s-%s' % (n, a, e, v, r) #DEBUG
             self.tsInfo.add((n,a,e,v,r), 'i')
 
         if len(passToUpdate) > 0:
-            print 'potential updates :'
+            print 'potential updates :' #DEBUG
         for (n,a,e,v,r) in passToUpdate:
-            print '   %s.%s %s:%s-%s' % (n, a, e, v, r)
+            print '   %s.%s %s:%s-%s' % (n, a, e, v, r) #DEBUG
             
         if self.tsInfo.count() > oldcount:
             return 2, ['Package(s) to install']

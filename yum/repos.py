@@ -64,7 +64,7 @@ class RepoStorage:
         except KeyError, e:
             raise Errors.RepoError, \
                 'Error getting repository data for %s, repository not found' % (repoid)
-                
+
     def disableRepo(self, repoid):
         """disable a repository from use"""
         thisrepo = self.getRepo(repoid)
@@ -128,11 +128,11 @@ class RepoStorage:
         for repo in myrepos:
             for item in data:
                 if item == 'primary':
-                    xml = repo.getPrimaryXML(cache=self.cache)
+                    xml = repo.getPrimaryXML()
                 elif item == 'filelists':
-                    xml = repo.getFileListsXML(cache=self.cache)
+                    xml = repo.getFileListsXML()
                 elif item == 'other':
-                    xml = repo.getOtherXML(cache=self.cache)
+                    xml = repo.getOtherXML()
                 else:
                     # how odd, just move along
                     continue
@@ -158,9 +158,10 @@ class Repository:
         self.setkeys = []
         self.repoMDFile = 'repodata/repomd.xml'
         self.repoXML = None
+        self.cache = 0
         
         # throw in some stubs for things that will be set by the config class
-        self.cache = ""
+        self.cachedir = ""
         self.pkgdir = ""
         self.hdrdir = ""        
         # holder for stuff we've grabbed
@@ -258,6 +259,7 @@ class Repository:
                                    bandwidth=self.bandwidth,
                                    retry=self.retries,
                                    throttle=self.throttle)
+                                   #reget='simple')
                                    
         # FIXME - needs a failure callback and it needs  to specify it
         self.grab = mgclass(self.grabfunc, self.urls)
@@ -267,7 +269,7 @@ class Repository:
         return os.path.join(self.baseURL(), self.groupsfilename)
     
     def localGroups(self):
-        return os.path.join(self.cache, self.groupsfilename)
+        return os.path.join(self.cachedir, self.groupsfilename)
 
     def baseURL(self):
         return self.failover.get_serverurl()
@@ -275,10 +277,10 @@ class Repository:
     def failed(self):
         self.failover.server_failed()
 
-    def dirSetup(self, cache=0):
+    def dirSetup(self):
         """make the necessary dirs, if possible, raise on failure"""
-        for dir in [self.cache, self.hdrdir, self.pkgdir]:
-            if not cache:
+        for dir in [self.cachedir, self.hdrdir, self.pkgdir]:
+            if self.cache == 0:
                 if os.path.exists(dir) and os.path.isdir(dir):
                     continue
                 else:
@@ -333,12 +335,12 @@ class Repository:
         return result
            
         
-    def getRepoXML(self, cache=0):
+    def getRepoXML(self):
         """retrieve/check/read in repomd.xml from the repository"""
 
         remote = self.repoMDFile
-        local = self.cache + '/repomd.xml'
-        if cache:
+        local = self.cachedir + '/repomd.xml'
+        if self.cache == 1:
             if not os.path.exists(local):
                 raise Errors.RepoError, 'Cannot find repomd.xml file for %s' % (self)
         else:
@@ -353,7 +355,7 @@ class Repository:
             raise Errors.RepoError, 'Error importing repomd.xml from %s: %s' % (self, e)
 
         
-    def _retrieveMD(self, mdtype, cache=0):
+    def _retrieveMD(self, mdtype):
         """base function to retrieve data from the remote url"""
         locDict = { 'primary' : self.repoXML.primaryLocation,
                     'filelists' : self.repoXML.filelistsLocation,
@@ -370,12 +372,12 @@ class Repository:
         
         (r_base, remote) = locMethod()
         fname = os.path.basename(remote)
-        local = self.cache + '/' + fname
+        local = self.cachedir + '/' + fname
 
         if self.retrieved[mdtype]: # got it, move along
             return local
 
-        if cache: # cached - just go
+        if self.cache == 1:
             if os.path.exists(local):
                 return local
             else: # ain't there - raise
@@ -400,27 +402,27 @@ class Repository:
         return local
 
     
-    def getPrimaryXML(self, cache=0):
+    def getPrimaryXML(self):
         """this gets you the path to the primary.xml file, retrieving it if we 
            need a new one"""
 
-        return self._retrieveMD('primary', cache)
+        return self._retrieveMD('primary')
         
     
-    def getFileListsXML(self, cache=0):
+    def getFileListsXML(self):
         """this gets you the path to the filelists.xml file, retrieving it if we 
            need a new one"""
 
-        return self._retrieveMD('filelists', cache)
+        return self._retrieveMD('filelists')
 
-    def getOtherXML(self, cache=0):
-        return self._retrieveMD('other', cache)
+    def getOtherXML(self):
+        return self._retrieveMD('other')
 
-    def getGroups(self, cache=0):
+    def getGroups(self):
         """gets groups and returns group file path for the repository, if there 
            is none it returns None"""
         try:
-            file = self._retrieveMD('group', cache)
+            file = self._retrieveMD('group')
         except URLGrabError:
             file = None
         
