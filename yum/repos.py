@@ -390,7 +390,7 @@ class Repository:
  
 
     def get(self, url=None, relative=None, local=None, start=None, end=None,
-            copy_local=0, checkfunc=None):
+            copy_local=0, checkfunc=None, text=None):
         """retrieve file from the mirrorgroup for the repo
            relative to local, optionally get range from
            start to end, also optionally retrieve from a specific baseurl"""
@@ -416,7 +416,7 @@ class Repository:
                 raise Errors.RepoError, \
                     "Caching enabled but no local cache of %s from %s" % (local,
                            self)
-        
+
         if url is not None:
             ug = URLGrabber(keepalive = self.keepalive, 
                             bandwidth = self.bandwidth,
@@ -432,19 +432,23 @@ class Repository:
 
             try:
                 result = ug.urlgrab(remote, local,
+                                    text = text,
                                     range = (start, end), 
                                     retry = self.retries,
                                     copy_local = copy_local,
                                     failure_callback = self.failure_obj,
                                     timeout = self.timeout,
                                     checkfunc = checkfunc)
+                                    
             except URLGrabError, e:
                 raise Errors.RepoError, \
                     "failed to retrieve %s from %s\nerror was %s" % (relative, self.id, e)
               
         else:
             try:
-                result = self.grab.urlgrab(relative, local, range=(start, end),
+                result = self.grab.urlgrab(relative, local,
+                                           text = text,
+                                           range = (start, end),
                                            copy_local=copy_local,
                                            checkfunc=checkfunc)
             except URLGrabError, e:
@@ -453,7 +457,7 @@ class Repository:
         return result
            
         
-    def getRepoXML(self):
+    def getRepoXML(self, text=None):
         """retrieve/check/read in repomd.xml from the repository"""
 
         remote = self.repoMDFile
@@ -468,7 +472,8 @@ class Repository:
                 result = local
         else:
             try:
-                result = self.get(relative=remote, local=local, copy_local=1)
+                result = self.get(relative=remote, local=local,
+                                  copy_local=1, text=text)
             except URLGrabError, e:
                 raise Errors.RepoError, 'Error downloading file %s: %s' % (local, e)
 

@@ -402,7 +402,7 @@ class YumBase(depsolve.Depsolve):
         """download list of package objects handed to you, output based on
            callback, raise yum.Errors.YumBaseError on problems"""
 
-        errors = {}
+        remote_pkgs = []
         for po in pkglist:
             if hasattr(po, 'pkgtype') and po.pkgtype == 'local':
                 continue
@@ -418,13 +418,24 @@ class YumBase(depsolve.Depsolve):
                         continue
                     else:
                         os.unlink(local)
+            remote_pkgs.append(po)
 
+        errors = {}
+        i = 0
+        for po in remote_pkgs:
+            i += 1
             repo = self.repos.getRepo(po.repoid)
             remote = po.returnSimple('relativepath')
             checkfunc = (self.verifyPkg, (po, 1), {})
 
             try:
-                mylocal = repo.get(relative=remote, local=local, checkfunc=checkfunc)
+                text = '(%s/%s): %s' % (i, len(remote_pkgs),
+                                        os.path.basename(remote))
+                local = po.localPkg()
+                mylocal = repo.get(relative=remote,
+                                   local=local,
+                                   checkfunc=checkfunc,
+                                   text=text)
             except Errors.RepoError, e:
                 if not errors.has_key(po):
                     errors[po] = []

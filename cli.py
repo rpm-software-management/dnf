@@ -57,11 +57,10 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
     def doRepoSetup(self, nosack=None):
         """grabs the repomd.xml for each enabled repository and sets up the basics
            of the repository"""
-           
+        self.log(2, 'Setting up Repos')           
         for repo in self.repos.listEnabled():
             if repo.repoXML is not None:
                 continue
-            self.log(2, 'Setting up Repo:  %s' % repo)
             try:
                 repo.check()
                 repo.cache = self.conf.getConfigOption('cache')
@@ -71,7 +70,7 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
                 self.errorlog(0, '%s' % e)
                 sys.exit(1)
             try:
-                repo.getRepoXML()
+                repo.getRepoXML(text=repo)
             except yum.Errors.RepoError, e:
                 self.errorlog(0, 'Cannot open/read repomd.xml file for repository: %s' % repo)
                 self.errorlog(0, str(e))

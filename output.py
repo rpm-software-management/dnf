@@ -24,6 +24,11 @@ import time
 from i18n import _
 import libxml2
 
+try:
+    import readline
+except:
+    pass
+
 import yum.Errors
 
 class YumOutput:
@@ -234,14 +239,16 @@ class YumOutput:
         
     def userconfirm(self):
         """gets a yes or no from the user, defaults to No"""
-        choice = raw_input('Is this ok [y/N]: ')
-        if len(choice) == 0:
+
+        while 1:            
+            choice = raw_input('Is this ok [y/N]: ')
+            if len(choice) == 0 or choice[0] in ['Y', 'y', 'N','n']:
+                break
+
+        if len(choice) == 0 or choice[0] not in ['y', 'Y']:
             return 0
-        else:
-            if choice[0] != 'y' and choice[0] != 'Y':
-                return 0
-            else:
-                return 1
+        else:            
+            return 1
                 
     
     def displayPkgsInGroups(self, group):
