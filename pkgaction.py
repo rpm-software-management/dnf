@@ -175,6 +175,14 @@ def upgradepkgs(tsnevral, hinevral, rpmnevral, nulist, uplist, obsoleted_list, o
     # so if foobar = 1.0 and you have foobar-1.1 in the repo and bazquux1.2 
     # obsoletes foobar then bazquux would get installed.
     
+    #tricksy - 
+    # go through list of pkgs - obsoleted and uplist
+    # if match then obsolete those that can be obsoleted
+    #     update those that can only be updated
+    # if not match bitch and moan
+    # check for duping problems - if something is updateable AND obsoleted
+    # we want to obsoleted to take precedence over updateable
+    
     completeuplist = []
     uplistnames = []
     for (name, arch) in uplist:
