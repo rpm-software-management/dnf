@@ -107,7 +107,7 @@ def main(args):
 
     base.repos.populateSack(callback=cli.simpleProgressBar)
     base.pkgSack = base.repos.pkgSack
-    base.log(2, '#pkgs in repos = %s' % len(base.pkgSack.returnPackages()))
+    base.log(2, '#pkgs in repos = %s' % len(base.pkgSack))
 
    
     base.log(2, _('Finding updated packages'))
@@ -119,8 +119,6 @@ def main(args):
 
     base.log(2, '# of avail pkgs = %s' % len(base.up.getOthersList()))
     
-
-        
     # at this point we should have a tsInfo nevral with all we need to complete our task.
     # if for some reason we've gotten all the way through this step with 
     # an empty tsInfo then exit and be confused :)

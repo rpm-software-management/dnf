@@ -32,6 +32,8 @@ class PackageSack:
         self.pkgsByRepo = {} #pkgsByRepo['repoid']= [pkg1, pkg2, pkg3]
         self.pkgsByID = {} #pkgsById[pkgid] = [pkg1, pkg2] (should really only ever be one value but
                            #you might have repos with the same package in them
+    def __len__(self):
+        return len(self.simplePkgList())
         
     def searchNevra(self, name=None, epoch=None, ver=None, rel=None, arch=None):
         """return list of pkgobjects matching the nevra requested"""
@@ -95,6 +97,18 @@ class PackageSack:
         #if data not in dict[key]: - if I enable this the whole world grinds to a halt
         # need a faster way of looking for the object in any particular list
         dict[key].append(data)
+
+    def _delFromListOfDict(self, dict, key, data):
+        if not dict.has_key(key):
+            dict[key] = []
+        try:
+            dict[key].remove(data)
+        except ValueError:
+            pass
+            
+        if len(dict[key]) == 0: # if it's an empty list of the dict, then kill it
+            del dict[key]
+            
             
     def addPackage(self, obj):
         """add a pkgobject to the packageSack"""
@@ -122,10 +136,27 @@ class PackageSack:
         
     def delPackage(self, obj):
         """delete a pkgobject"""
-        # this must remove the object from all lists
-        # FIXME :)
-        pass
-    
+        # reverse addPackage
+        # remove it from all the dicts
+        (name, epoch, ver, rel, arch) = obj.returnNevraTuple()
+        self._delFromListOfDict(self.nevra, (name, epoch, ver, rel, arch), obj)
+        self._delFromListOfDict(self.nevra, (name, None, None, None, None), obj)
+
+        for (n, fl, (e,v,r)) in obj.returnPrco('obsoletes'):
+            self._delFromListOfDict(self.obsoletes, n, obj)
+        for (n, fl, (e,v,r)) in obj.returnPrco('requires'):
+            self._delFromListOfDict(self.requires, n, obj)
+        for (n, fl, (e,v,r)) in obj.returnPrco('provides'):
+            self._delFromListOfDict(self.provides, n, obj)
+        for (n, fl, (e,v,r)) in obj.returnPrco('conflicts'):
+            self._delFromListOfDict(self.conflicts, n, obj)
+        for ftype in obj.returnFileTypes():
+            for file in obj.returnFileEntries(ftype):
+                self._delFromListOfDict(self.filenames, file, obj)
+        self._delFromListOfDict(self.pkgsByID, obj.returnSimple('id'), obj)
+        self._delFromListOfDict(self.pkgsByRepo, obj.returnSimple('repoid'), obj)
+        return
+        
     def returnPackages(self, repoid=None):
         """return list of all packages, takes optional repoid"""
         returnList = []
