@@ -1,3 +1,21 @@
+2002-08-23 00:28  skvidal
+
+	* clientStuff.py, pkgaction.py: 
+	made yum info work on the installed pkgs too made yum list
+	installed dtrt/work made yum list availabe exist instead of yum
+	list new - it was confusingly named
+
+2002-08-16 22:41  skvidal
+
+	* yummain.py: added mode so clean commands are always run in
+	cache-only mode.  need to make cache-only  brighter but this is
+	probably going to be ok for now
+
+2002-08-16 17:07  skvidal
+
+	* ChangeLog: 
+	changelog update
+
 2002-08-16 17:07  skvidal
 
 	* clientStuff.py, yummain.py, docs/yum.8: 
