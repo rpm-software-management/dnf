@@ -281,13 +281,8 @@ def doRepoSection(globconfig, thisconfig, section):
 
         thisrepo.set('enabled', thisconfig._getboolean(section, 'enabled', 1))        
 
-        failmeth = thisconfig._getoption(section,'failovermethod',\
-                                globconfig.getConfigOption('failovermethod'))
-
-        thisrepo.setFailover(failmeth)
- 
         for keyword in ['bandwidth', 'throttle', 'proxy_username', 'proxy',
-                        'proxy_password', 'retries']:
+                        'proxy_password', 'retries', 'failovermethod']:
 
             thisrepo.set(keyword, thisconfig._getoption(section, keyword, \
                          globconfig.getConfigOption(keyword)))
