@@ -21,19 +21,13 @@
 
 
 
-#This should be a class of repoMDObjects for all of our repositories - so we can ask it for information
-#about any given repoid.
 
-#So, after we get our config data set, we create this class. This class requests all the other repomd.xml
-#files if it can - or looks in the local cache for the ones to use.
-
-#Then you request access to the filenames/fileobjects through this object to be handled by the other classes.
-
-
-#questions: should all of the repos data be moved here - failover rules, mirrors lists, the whole nine yards
-# - then config could just fetch the defaults and you can stow it all in here for greater expansion and ignore
-#   repos from the config class
-#   - that would mean dumping the config stuff out here, but maybe that's something worthwhile, - maybe
+#questions: should all of the repos data be moved here - failover rules, mirrors lists, the whole 
+# nine yards
+# - then config could just fetch the defaults and you can stow it all in here for greater expansion 
+# and ignore   repos from the config class
+#   - that would mean dumping the config stuff out here, but maybe that's something worthwhile, 
+#    - maybe
 #     have this created from inside config for the repos - store as config.repos object.
 #   - would allow more flexible scoring of mirror lists and let those be handled better inside there
 #

@@ -172,7 +172,8 @@ class yumconf:
                     else:
                         print 'Error: Cannot find baseurl or name for repo: %s. Skipping' % (section)    
         else:
-            raise Errors.ConfigError, 'Insufficient repository config. No repositories Found/Enabled. Aborting.'
+            raise Errors.ConfigError, \
+                    'Insufficient repository config. No repositories Found/Enabled. Aborting.'
 
 
            
