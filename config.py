@@ -125,11 +125,11 @@ class yumconf:
                         self.servers.append(section)
                         # use the regexes
                         (name, count) = basearch_reg.subn(basearch, name)
-                        (name, count) = arch_reg.subn(basearch, name)
-                        (name, count) = releasever_reg.subn(basearch, name)
+                        (name, count) = arch_reg.subn(arch, name)
+                        (name, count) = releasever_reg.subn(releasever, name)
                         (url, count) = basearch_reg.subn(basearch, url)
-                        (url, count) = arch_reg.subn(basearch, url)
-                        (url, count) = releasever_reg.subn(basearch, url)
+                        (url, count) = arch_reg.subn(arch, url)
+                        (url, count) = releasever_reg.subn(releasever, url)
                         
                         self.servername[section] = name
                         self.serverurl[section] = url
