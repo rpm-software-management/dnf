@@ -29,6 +29,9 @@ full directory and file name for where yum should write its log file.
 .IP \fBpkgpolicy\fR
 package sorting order. Options are \fBnewest\fR and \fBlast\fR. newest is the default. This means that if you have two yum repositories and one of them provides foo\-1.3\-4 and the other provides foo\-1.2\-3, then this rule might help you if you would want foo\-1.2\-3 to appear as available. By default the newest package would appear in the available lists. In this case foo\-1.3\-4. If you don't understand the above then you're best left not including this option at all and letting the default occur.
 
+.IP \fBexclude\fR
+list of packages to exclude from updates or installs. This should be a space separated list.
+
 .SH "[server] options"
 .LP 
 The server section(s) take the following form:

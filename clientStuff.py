@@ -101,18 +101,19 @@ def HeaderInfoNevralLoad(filename,nevral,serverid):
 		(envraStr, rpmpath) = string.split(line,'=')
 		(epoch, name, ver, rel, arch) = stripENVRA(envraStr)
 		rpmpath = string.replace(rpmpath, "\n","")
-		if conf.pkgpolicy=="last":
-			nevral.add((name,epoch,ver,rel,arch,rpmpath,serverid),'a')	
-		else:
-			if nevral.exists(name, arch):
-				(e1, v1, r1) = nevral.evr(name, arch)
-				(e2, v2, r2) = (epoch, ver, rel)    
-				rc = rpm.labelCompare((e1,v1,r1), (e2,v2,r2))
-				if (rc == -1):
-					#ooo  the second one is newer - push it in.
-					nevral.add((name,epoch,ver,rel,arch,rpmpath,serverid),'a')
+		if name not in conf.excludes:
+			if conf.pkgpolicy=="last":
+				nevral.add((name,epoch,ver,rel,arch,rpmpath,serverid),'a')	
 			else:
-				nevral.add((name,epoch,ver,rel,arch,rpmpath,serverid),'a')
+				if nevral.exists(name, arch):
+					(e1, v1, r1) = nevral.evr(name, arch)
+					(e2, v2, r2) = (epoch, ver, rel)    
+					rc = rpm.labelCompare((e1,v1,r1), (e2,v2,r2))
+					if (rc == -1):
+						#ooo  the second one is newer - push it in.
+						nevral.add((name,epoch,ver,rel,arch,rpmpath,serverid),'a')
+				else:
+					nevral.add((name,epoch,ver,rel,arch,rpmpath,serverid),'a')
 
 
 def openrpmdb(option=0, dbpath=None):

@@ -207,8 +207,6 @@ class nevral:
 					ts.add(pkghdr,(pkghdr,rpmloc),'a')
 				elif self.state(name,arch) == 'e' or self.state(name,arch) == 'ed':
 					ts.remove(name)
-				#   state = self.state(name,arch)
-				#   ts.add(pkghdr,(pkghdr,rpmloc),state)   
 			deps=ts.depcheck()
 			CheckDeps = 0
 			if not deps:
@@ -222,22 +220,27 @@ class nevral:
 						(name, arch) = self.nafromloc(sugname)
 						((e, v, r, a, l, i), s)=self._get_data(name,arch)
 						self.add((name,e,v,r,arch,l,i),'ud')          
-						#print "Got dep: %s, %s" % (name,arch)
+						log(4,"Got dep: %s, %s" % (name,arch))
 						CheckDeps = 1
 					else:
-						if self.exists(name):
+						if self.exists(reqname):
 							archlist = archwork.availablearchs(self,name)
 							arch = archwork.bestarch(archlist)
 							((e, v, r, a, l, i), s)=self._get_data(name,arch)
-							self.add((name,e,v,r,arch,l,i),'ud')          
+							self.add((name,e,v,r,arch,l,i),'ud')
+							log(4,"Got extra dep: %s, %s" %(name,arch))
 						else:
 							unresolvable = 1
-							errors.append("package %s needs %s (not provided)" % (name, clientStuff.formatRequire(reqname, reqversion, flags)))
+							if reqname in conf.excludes:
+								errors.append("package %s needs %s that has been excluded" % (name, reqname))
+							else:
+								errors.append("package %s needs %s (not provided)" % (name, clientStuff.formatRequire(reqname, reqversion, flags)))
 				elif sense == rpm.RPMDEP_SENSE_CONFLICTS:
 					print reqname
 					print reqversion
 					conflicts = 1
 					errors.append("conflict between %s and %s" % (name, reqname))
+			log(4,"whee dep loop")
 			del ts
 			del db
 			if len(errors) > 0:

@@ -14,7 +14,7 @@
 # Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 # Copyright 2002 Duke University 
 
-import ConfigParser,sys,os, urlparse
+import ConfigParser,sys,os, urlparse, string
 class yumconf:
 
 	def __init__(self):
@@ -27,7 +27,8 @@ class yumconf:
 		self.serverhdrdir = {}
 		self.servercache = {}
 		self.servergpgcheck={}
-			
+		self.excludes=[]
+		
 		#defaults
 		self.cachedir='/var/cache/yum'
 		self.debuglevel=2
@@ -42,6 +43,8 @@ class yumconf:
 			self.logfile=self._getoption('main','logfile')
 		if self._getoption('main','pkgpolicy') != None:
 			self.pkgpolicy=self._getoption('main','pkgpolicy')
+		if self._getoption('main','exclude') != None:
+			self.excludes=string.split(self._getoption('main','exclude'), ' ')
 		
 		if len(self.cfg.sections()) > 1:
 			for section in self.cfg.sections(): # loop through the list of sections
