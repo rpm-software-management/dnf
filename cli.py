@@ -532,7 +532,7 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         if errors:
             errstring = 'Error in Transaction: '
             for descr in errors:
-                errstring += '  %s\n' % descr
+                errstring += '  %s\n' % str(descr)
             
             raise yum.Errors.YumBaseError, errstring
 
