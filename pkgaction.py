@@ -97,7 +97,7 @@ def updatepkgs(tsnevral,hinevral,nulist,uplist,obslist,userlist):
 			for (name,arch) in obslist:
 				log(4,"Obsolete: %s" % name)
 				((e, v, r, a, l, i), s)=hinevral._get_data(name,arch)
-				tsnevral.add((name,e,v,r,a,l,i),'i')
+				tsnevral.add((name,e,v,r,a,l,i),'u')
 			for (name,arch) in uplist:
 				log(4,"Updating: %s" % name)
 				((e, v, r, a, l, i), s)=hinevral._get_data(name,arch)
