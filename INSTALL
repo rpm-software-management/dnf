@@ -1,8 +1,7 @@
 For usage information, please see the README.
 
-yum uses a relatively standard ./configure ; make ; make install to
-work, although it is recommended that you install an RPM as yum
-requires that it be installed as an RPM.  
+run make
+run make install, if you're a masochist.
 
-If checking code out of CVS, you will need to run autoconf first to
-create the configure script.
+you're better off making an rpm and installing it
+
