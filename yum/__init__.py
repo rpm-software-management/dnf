@@ -19,6 +19,7 @@ import os
 import os.path
 import rpm
 import re
+import fnmatch
 import types
 import errno
 import Errors
@@ -158,16 +159,20 @@ class YumBase(depsolve.Depsolve):
         # if repo: then do only that repos' packages and excludes
         
         if not repo: # global only
-            self.log(2, 'Excluding Packages')
             excludelist = self.conf.getConfigOption('exclude')
             repoid = None
         else:
-            self.log(2, 'Excluding Packages from %s' % repo.name)
             excludelist = repo.excludes
             repoid = repo.id
 
         if len(excludelist) == 0:
             return
+        
+        if not repo:
+            self.log(2, 'Excluding Packages in global exclude list')
+        else:
+            self.log(2, 'Excluding Packages from %s' % repo.name)
+            
         exactmatch, matched, unmatched = \
            parsePackages(self.pkgSack.returnPackages(repoid), excludelist)
         
@@ -627,3 +632,49 @@ class YumBase(depsolve.Depsolve):
                 matches[po] = tmpvalues
         
         return matches
+    
+    def searchPackageProvides(self, args, callback=None):
+        
+        self.doRepoSetup()
+        self.doRpmDBSetup()
+        matches = {}
+        
+        # search pkgSack - fully populate the worthwhile metadata to search
+        # if it even vaguely matches
+        for arg in args:
+            matched = 0
+            globs = ['.*bin\/.*', '.*\/etc\/.*', '^\/usr\/lib\/sendmail$']
+            for glob in globs:
+                globc = re.compile(glob)
+                if globc.match(arg):
+                    matched = 1
+            if not matched:
+                self.log(2, 'Importing Additional filelist information for packages')
+                self.repos.populateSack(with='filelists')
+
+        for arg in args:
+            if re.match('.*[\*,\[,\],\{,\},\?].*', arg):
+                restring = fnmatch.translate(arg)
+            else:
+                restring = arg
+                
+            arg_re = re.compile(restring, flags=re.I)
+            for po in self.pkgSack:
+                tmpvalues = []
+                for filetype in po.returnFileTypes():
+                    for file in po.returnFileEntries(ftype=filetype):
+                        if arg_re.search(file):
+                            tmpvalues.append(file)
+
+                for (p_name, p_flag, (p_e, p_v, p_r)) in po.returnPrco('provides'):
+                    if arg_re.search(p_name):
+                        prov = po.prcoPrintable((p_name, p_flag, (p_e, p_v, p_r)))
+                        tmpvalues.append(prov)
+
+                if len(tmpvalues) > 0:
+                    if callback:
+                        callback(po, tmpvalues)
+                    matches[po] = tmpvalues
+
+        return matches
+        

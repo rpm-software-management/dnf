@@ -267,7 +267,7 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         if self.basecmd not in ['update', 'install','info', 'list', 'erase',\
                                 'grouplist', 'groupupdate', 'groupinstall',\
                                 'clean', 'remove', 'provides', 'check-update',\
-                                'search', 'generate-rss', 'upgrade']:
+                                'search', 'generate-rss', 'upgrade', 'whatprovides']:
             self.usage()
             
     
@@ -283,7 +283,7 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
                 self.errorlog(0, _('Error: Need to pass a list of pkgs to %s') % self.basecmd)
                 self.usage()
     
-        elif self.basecmd in ['provides', 'search']:
+        elif self.basecmd in ['provides', 'search', 'whatprovides']:
             if len(self.extcmds) == 0:
                 self.errorlog(0, _('Error: Need an item to match'))
                 self.usage()
@@ -452,7 +452,14 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
                 return self.search()
             except yum.Errors.YumBaseError, e:
                 return 1, [str(e)]
-            
+        
+        elif self.basecmd in ['provides', 'whatprovides']:
+            self.log(2, "Searching Packages: ")
+            try:
+                return self.provides()
+            except yum.Errors.YumBaseError, e:
+                return 1, [str(e)]
+
         else:
             return 1, ['command not implemented/not found']
 
@@ -787,13 +794,16 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
                     
         return ypl
 
-    def search(self):
-        """cli wrapper method for module search function"""
+    def search(self, args=None):
+        """cli wrapper method for module search function, searches simple
+           text tags in a package object"""
         
         # call the yum module search function with lists of tags to search
         # and what to search for
         # display the list of matches
-        args = self.extcmds
+        if not args:
+            args = self.extcmds
+            
         searchlist = ['name', 'summary', 'description', 'packager', 'group', 'url']
         matching = self.searchPackages(searchlist, args, callback=self.matchcallback)
 
@@ -801,6 +811,20 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
             return 0, ['No Matches found']
         return 0, []
 
+    def provides(self, args=None):
+        """use the provides methods in the rpmdb and pkgsack to produce a list 
+           of items matching the provides strings. This is a cli wrapper to the 
+           module"""
+        if not args:
+            args = self.extcmds
+        
+        matching = self.searchPackageProvides(args, callback=self.matchcallback)
+        
+        if len(matching.keys()) == 0:
+            return 0, ['No Matches found']
+        
+        return 0, []
+        
     def usage(self):
         print _("""
     Usage:  yum [options] <update | install | info | remove | list |

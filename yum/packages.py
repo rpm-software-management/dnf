@@ -330,5 +330,21 @@ class YumAvailablePackage(repomd.packageObject.RpmXMLPackageObject):
             self.hdrpath = repo.hdrdir + '/' + hdrname
 
         return self.hdrpath
+    
+    def prcoPrintable(self, prcoTuple):
+        """convert the prco tuples into a nicer human string"""
+        (name, flag, (e, v, r)) = prcoTuple
+        flags = {'GT':'>', 'GE':'>=', 'EQ':'=', 'LT':'<', 'LE':'<='}
+        if flag is None:
+            return name
         
+        base = 'name '
+        if e not in [0, '0', None]:
+            base += '%s:' % e
+        if v is not None:
+            base += '%s' % v
+        if r is not None:
+            base += '-%s' % r
+        
+        return base
 
