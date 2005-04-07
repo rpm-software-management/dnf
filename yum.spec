@@ -13,10 +13,11 @@ BuildArchitectures: noarch
 BuildRequires: python
 BuildRequires: gettext
 Requires: python, rpm-python, rpm >= 0:4.1.1
-Requires: libxml2-python
 Requires: python-sqlite
 Requires: urlgrabber
+Requires: python-elementtree
 Prereq: /sbin/chkconfig, /sbin/service, coreutils
+
 
 %description
 Yum is a utility that can check for and automatically download and
@@ -76,6 +77,9 @@ exit 0
 %{_mandir}/man*/*
 
 %changelog
+* Wed Apr  6 2005 Seth Vidal <skvidal@phy.duke.edu>
+- added python-elementtree dep, remove libxml2 dep
+
 * Mon Apr  4 2005 Seth Vidal <skvidal@phy.duke.edu>
 - 2.3.2
 
