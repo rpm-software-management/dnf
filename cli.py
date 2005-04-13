@@ -1384,7 +1384,8 @@ For more information contact your distribution or package provider.
     Usage:  yum [options] < update | install | info | remove | list |
             clean | provides | search | check-update | groupinstall | 
             groupupdate | grouplist | groupinfo | groupremove |
-            makecache | localinstall | shell >
+            makecache | localinstall | erase | upgrade | whatprovides |
+            localupdate | resolvedep | shell >
                 
         Options:
         -c [config file] - specify the config file to use
@@ -1396,8 +1397,8 @@ For more information contact your distribution or package provider.
         --installroot=[path] - set the install root (default '/')
         --version - output the version of yum
         --exclude=package to exclude
-        --disablerepo=repository id to disable (overrides config file)
-        --enablerepo=repository id to enable (overrides config file)
+        --disablerepo=repository glob to disable (overrides config file)
+        --enablerepo=repository glob to enable (overrides config file)
 
         -h, --help  - this screen
     """)

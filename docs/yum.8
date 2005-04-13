@@ -42,7 +42,13 @@ yum \- Yellowdog Updater Modified
 .br
 .I \fR * search string1 [string2] [\&.\&.\&.]
 .br
-.I \fR * generate-rss [updates]
+.I \fR * shell [filename]
+.br
+.I \fR * resolvedep dep1 [dep2] [\&.\&.\&.] 
+.br
+.I \fR * localinstall rpmfile1 [rpmfile2] [\&.\&.\&.] 
+.br
+.I \fR * localupdate rpmfile1 [rpmfile2] [\&.\&.\&.] 
 .br
 .PP 
 Unless the \-\-help or \-h option is given, one of the above commands
@@ -107,12 +113,24 @@ Is used to clean up various things which accumulate in the
 \fByum\fP cache directory over time.  More complete details can be found in
 the \fIClean Options\fP section below\&.
 .IP 
-.IP "\fBgenerate-rss\fP" 
-Is used to create a rss file containing changelogs for all packages in the enabled
-repositories. By default it will list only the most recent packages. If the
-'updates' argument is given then it will list updates available for that
-system.
-.IP 
+.IP "\fBshell\fP"
+Is used to enter the 'yum shell', when a filename is specified the contents of
+that file is executed in yum shell mode. 
+.IP
+.IP "\fBresolvedep\fP"
+Is used to list packages providing the specified dependencies, at most one
+package is listed per dependency. 
+.IP
+.IP "\fBlocalinstall\fP"
+Is used to install a set of local rpm files. If required the enabled 
+repositories will be used to resolve dependencies. 
+.IP
+.IP "\fBlocalupdate\fP"
+Is used to update the system by specifying local rpm files. Only the specified 
+rpm files of which an older version is already installed will be installed,
+the remaining specified packages will be ignored.
+If required the enabled repositories will be used to resolve dependencies.
+.IP
 .PP 
 .SH "GENERAL OPTIONS"
 Most command line options can be set using the configuration file as
@@ -137,10 +155,6 @@ Configuration Option: \fBdebuglevel\fP
 Sets the error level to [number] Practical range 0 \- 10. 0 means print only critical errors about which you must be told. 1 means print all errors, even ones that are not overly important. 1+ means print more errors (if any) \-e 0 is good for cron jobs.
 .br
 Configuration Option: \fBerrorlevel\fP
-.IP "\fB\-t, \-\-tolerant\fP" 
-Tells yum to be tolerant of errors on the command line with regard to packages on the commandline. For example: if you request to install foo, bar and baz and baz is installed; yum won't error out complaining that baz is already installed.
-.br
-Configuration Option: \fBtolerant\fP
 .IP "\fB\-R [time in minutes]\fP" 
 Sets the maximum amount of time yum will wait before performing a command \- it randomizes over the time.
 .IP "\fB\-C\fP" 
@@ -153,13 +167,13 @@ Specifies an alternative installroot, relative to which all packages will be
 installed.
 .br
 Configuration Option: \fBinstallroot\fP
-.IP "\fB\-\-enablerepo=repoid\fP"
-Enables a specific repository that has been disabled in the configuration file
-using the enabled=0 option.
+.IP "\fB\-\-enablerepo=repoidglob\fP"
+Enables specific repositories by id or glob that have been disabled in the 
+configuration file using the enabled=0 option.
 .br
 Configuration Option: \fBenabled\fP
-.IP "\fB\-\-disablerepo=repoid\fP"
-Disables a specific repository. 
+.IP "\fB\-\-disablerepo=repoidglob\fP"
+Disables specific repositories by id or glob. 
 .br
 Configuration Option: \fBenabled\fP
 .IP "\fB\-\-obsoletes\fP"
@@ -167,10 +181,6 @@ This option only has affect for an update, it enables \fByum\fP\'s obsoletes
 processing logic. For more information see the \fBupdate\fP command above.
 .br
 Configuration Option: \fBobsoletes\fP
-.IP "\fB\-\-rss-filename=filename\fP"
-Output rss data for the \fBgenerate-rss\fP command to the specified file.
-.br
-Configuration Option: \fBrss-filename\fP
 .IP "\fB\-\-exclude=package\fP"
 Exclude a specific package by name or glob from updates on all repositories.
 .br
