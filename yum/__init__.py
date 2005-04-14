@@ -330,7 +330,7 @@ class YumBase(depsolve.Depsolve):
             for descr in errors:
                 errstring += '  %s\n' % str(descr)
             
-            raise yum.Errors.YumBaseError, errstring
+            raise Errors.YumBaseError, errstring
 
         self.plugins.run('posttrans')
         
