@@ -85,10 +85,16 @@ import Errors
 # API, the major version number must be incremented and the minor version number
 # reset to 0. If a change is made that doesn't break backwards compatibility,
 # then the minor number must be incremented.
-API_VERSION = '0.3'
+API_VERSION = '1.0'
 
-SLOTS = ('config', 'init', 'predownload', 'postdownload', 'reposetup',
-        'exclude', 'pretrans', 'posttrans', 'close')
+SLOTS = (
+        'config', 'init', 
+        'predownload', 'postdownload', 
+        'prereposetup', 'postreposetup', 
+        'exclude', 
+        'pretrans', 'posttrans', 
+        'close'
+    )
 
 class PluginYumExit(Errors.YumBaseError):
     '''Used by plugins to signal that yum should stop
@@ -123,7 +129,9 @@ class YumPlugins:
             conduitcls = InitPluginConduit
         elif slotname in ('predownload', 'postdownload'):
             conduitcls = DownloadPluginConduit
-        elif slotname == 'reposetup':
+        elif slotname == 'prereposetup':
+            conduitcls = RepoSetupPluginConduit
+        elif slotname == 'postreposetup':
             conduitcls = RepoSetupPluginConduit
         elif slotname == 'close':
             conduitcls = PluginConduit
@@ -341,6 +349,16 @@ class RepoSetupPluginConduit(InitPluginConduit):
         '''
         return self._base.repos.findRepos(pattern)
 
+    def getRpmDB(self):
+        '''Return a representation of local RPM database. This allows querying
+        of installed packages.
+
+        @return: rpmUtils.RpmDBHolder instance
+        '''
+        self._base.doTsSetup()
+        self._base.doRpmDBSetup()
+        return self._base.rpmdb
+
 class DownloadPluginConduit(RepoSetupPluginConduit):
 
     def __init__(self, parent, base, conf, pkglist, errors=None):
@@ -372,6 +390,16 @@ class MainPluginConduit(RepoSetupPluginConduit):
         else:
             arg = None
         return self._base.pkgSack.returnPackages(arg)
+
+    def getPackageByNevra(self, nevra):
+        '''Retrieve a package object from the packages loaded by Yum using
+        nevra information 
+        
+        @param nevra: A tuple holding (name, epoch, version, release, arch)
+            for a package
+        @return: A PackageObject instance (or subclass)
+        '''
+        return self._base.getPackageObject(nevra)
 
     def delPackage(self, po):
         self._base.pkgSack.delPackage(po)

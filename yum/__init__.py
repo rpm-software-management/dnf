@@ -189,7 +189,7 @@ class YumBase(depsolve.Depsolve):
            the basics of the repository"""
 
         
-        self.plugins.run('reposetup')
+        self.plugins.run('prereposetup')
         
         repos = []
         if thisrepo is None:
@@ -218,6 +218,8 @@ class YumBase(depsolve.Depsolve):
                 self.errorlog(0, 'Cannot open/read repomd.xml file for repository: %s' % repo)
                 self.errorlog(0, str(e))
                 raise
+
+        self.plugins.run('postreposetup')
 
     def doSackSetup(self, archlist=None, thisrepo=None):
         """populates the package sacks for information from our repositories,
@@ -477,7 +479,7 @@ class YumBase(depsolve.Depsolve):
            raiseError  = defaults to 0 - if 1 then will raise
            a URLGrabError if the file does not check out.
            otherwise it returns false for a failure, true for success"""
-        
+
         if type(fo) is types.InstanceType:
             fo = fo.filename
 
