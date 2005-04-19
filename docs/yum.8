@@ -252,10 +252,36 @@ of the following:
 \fBepoch:name-ver-rel.arch\fP
 .IP
 For example: \fByum remove kernel-2.4.1-10.i686\fP.
+
+.PP 
+.SH "PLUGINS"
+Yum can be extended through the use of plugins. A plugin is a Python ".py" file
+which is installed in one of the directories specified by the \fBpluginpath\fP
+option in yum.conf. For a plugin to work, the following conditions must be met:
+.LP
+1. The plugin module file must be installed in the plugin path as just
+described.
+.LP
+2. The global \fBplugins\fP option in /etc/yum.conf must be set to `1'.
+.LP
+3. A configuration file for the plugin must exist in 
+/etc/yum/pluginconf.d/<plugin_name>.conf and the \fBenabled\fR setting in this
+file must set to `1'. The minimal content for such a configuration file is:
+.IP
+[main]
+.br
+enabled = 1
+.LP
+See the \fByum.conf(5)\fR man page for more information on plugin related
+configuration options.
+
 .PP
 .SH "FILES"
 .nf 
 /etc/yum.conf
+/etc/yum/repos.d/
+/etc/yum.repos.d/
+/etc/yum/pluginconf.d/
 /var/cache/yum/
 .fi 
 

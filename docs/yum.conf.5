@@ -189,7 +189,8 @@ password for this proxy
 
 .IP \fBplugins \fR
 Either `0' or `1'. Global switch to enable or disable yum plugins. Default is
-`0' (plugins disabled).
+`0' (plugins disabled). See the \fBPLUGINS\fR section of the \fByum(8)\fR man
+for more information on installing yum plugins.
 
 .IP \fBpluginpath \fR
 A list of directories where yum should look for plugin modules. Default is
@@ -344,8 +345,12 @@ configuration file variable will not be replaced.
 
 
 .SH "FILES"
-.LP 
+.nf 
 /etc/yum.conf
+/etc/yum/repos.d/
+/etc/yum.repos.d/
+/etc/yum/pluginconf.d/
+
 .SH "SEE ALSO"
 .LP 
 yum(8)
