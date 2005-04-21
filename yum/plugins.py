@@ -22,21 +22,10 @@ import ConfigParser
 import config 
 import Errors
 
-# TODO: better documentation of how the whole thing works (esp. addition of
-# config options)
-#       - use epydoc for this?
-#       - document from user perspective in yum man page
-#       - PLUGINS.txt for developers
+# TODO: cmdline option to disable plugins "--noplugins" (for support problems)
+#   - document
 
-# TODO: test the API by implementing some crack from bugzilla
-#         - http://devel.linux.duke.edu/bugzilla/show_bug.cgi?id=181 
-#         - http://devel.linux.duke.edu/bugzilla/show_bug.cgi?id=270
-#         - http://devel.linux.duke.edu/bugzilla/show_bug.cgi?id=310
-#         - http://devel.linux.duke.edu/bugzilla/show_bug.cgi?id=431
-#         - http://devel.linux.duke.edu/bugzilla/show_bug.cgi?id=88 (?)
-#         - http://devel.linux.duke.edu/bugzilla/show_bug.cgi?id=396 (DONE)
-
-# TODO: expose progress bar 
+# TODO: expose progress bar interface
 
 # TODO: allow plugins to define new repository types
 
@@ -50,10 +39,6 @@ import Errors
 # SQL db)
 
 # TODO: multiversion plugin support
-
-# TODO: cmdline options to disable/enable plugins (all or specific)
-
-# TODO: cmdline option to override/specify additional plugin directories
 
 # TODO: config vars marked as PLUG_OPT_WHERE_ALL should inherit defaults from
 #   the [main] setting if the user doesn't specify them
@@ -69,6 +54,18 @@ import Errors
 
 # TODO: detect conflicts between builtin yum options and registered plugin
 # options (will require refactoring of config.py)
+
+# TODO: Developer docs:
+#       - PLUGINS.(txt|html?)
+#       - use epydoc as API begins to stablise
+
+# TODO: test the API by implementing some crack from bugzilla
+#         - http://devel.linux.duke.edu/bugzilla/show_bug.cgi?id=181 
+#         - http://devel.linux.duke.edu/bugzilla/show_bug.cgi?id=270
+#         - http://devel.linux.duke.edu/bugzilla/show_bug.cgi?id=310
+#         - http://devel.linux.duke.edu/bugzilla/show_bug.cgi?id=431
+#         - http://devel.linux.duke.edu/bugzilla/show_bug.cgi?id=88 (?)
+#         - http://devel.linux.duke.edu/bugzilla/show_bug.cgi?id=396 (DONE)
 
 
 # The API_VERSION constant defines the current plugin API version. It is used
@@ -123,7 +120,7 @@ class YumPlugins:
             return
        
         # Determine handler class to use
-        if slotname in ('config'):
+        if slotname == 'config':
             conduitcls = ConfigPluginConduit
         elif slotname == 'init':
             conduitcls = InitPluginConduit
