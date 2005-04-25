@@ -277,7 +277,10 @@ class RpmDBHolder:
                     match_r = pkg_r
                     
                 matchtuple = (match_n, match_a, match_e, match_v, match_r)
-                if miscutils.rangeCheck(provtuple, matchtuple):
+                # This provides matches if the version is in the requested
+                # range or the providing package provides the resource
+                # without a version (meaning that it matches all EVR) 
+                if miscutils.rangeCheck(provtuple, matchtuple) or (match_v == None):
                     matches.append(pkgtuple)
         del matchingHdrs
         return miscutils.unique(matches)
