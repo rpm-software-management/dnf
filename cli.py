@@ -20,11 +20,11 @@ import os
 import os.path
 import sys
 import time
-import getopt
 import random
 import fcntl
 import fnmatch
 import re
+from optparse import OptionParser
 
 import output
 import shell
@@ -86,61 +86,123 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         # setup our errorlog object 
         self.errorlog = Logger(threshold=2, file_object=sys.stderr)
     
-        # our default config file location
-        yumconffile = None
-        if os.access("/etc/yum.conf", os.R_OK):
-            yumconffile = "/etc/yum.conf"
-    
+        def repo_optcb(optobj, opt, value, parser):
+            '''Callback for the enablerepo and disablerepo option. 
+            
+            Combines the values given for these options while preserving order
+            from command line.
+            '''
+            dest = eval('parser.values.%s' % optobj.dest)
+            dest.append((opt, value))
+
+        self.optparser = YumOptionParser(base=self, usage='''\
+yum [options] < update | install | info | remove | list |
+    clean | provides | search | check-update | groupinstall | 
+    groupupdate | grouplist | groupinfo | groupremove |
+    makecache | localinstall | erase | upgrade | whatprovides |
+    localupdate | resolvedep | shell >''')
+
+        self.optparser.add_option("-t", "--tolerant", dest="tolerant",
+                action="store_true", default=False, help="be tolerant of errors")
+        self.optparser.add_option("-C", "", dest="cacheonly",
+                action="store_true", default=False, 
+                help="run entirely from cache, don't update cache")
+        self.optparser.add_option("-c", "", dest="conffile", action="store", 
+                default='/etc/yum.conf', help="config file location", 
+                metavar=' [config file]')
+        self.optparser.add_option("-R", "", dest="sleeptime", action="store", 
+                type='int', default=None, help="maximum command wait time",
+                metavar=' [minutes]')
+        self.optparser.add_option("-d", "", dest="debuglevel", action="store", 
+                default=None, help="debugging output level", type='int',
+                metavar=' [debug level]')
+        self.optparser.add_option("-e", "", dest="errorlevel", action="store", 
+                default=None, help="error output level", type='int',
+                metavar=' [error level]')
+        self.optparser.add_option("-y", "", dest="assumeyes",
+                action="store_true", default=False, 
+                help="answer yes for all questions")
+        self.optparser.add_option("", "--version", dest="version",
+                default=False, action="store_true", 
+                help="show Yum version and exit")
+        self.optparser.add_option("", "--installroot", dest="installroot",
+                action="store", default=None, help="set install root", 
+                metavar='[path]')
+        self.optparser.add_option("", "--enablerepo", action='callback',
+                type='string', callback=repo_optcb, dest='repos', default=[],
+                help="enable one or more repositories (wildcards allowed)",
+                metavar='[repo]')
+        self.optparser.add_option("", "--disablerepo", action='callback',
+                type='string', callback=repo_optcb, dest='repos', default=[],
+                help="disable one or more repositories (wildcards allowed)",
+                metavar='[repo]')
+        self.optparser.add_option("", "--exclude", dest="exclude", default=[], 
+                action="append", help="exclude package(s) by name or glob",
+                metavar='[package]')
+        self.optparser.add_option("", "--obsoletes", dest="obsoletes",
+                default=False, action="store_true", 
+                help="enable obsoletes processing during updates")
+
+        
+        # Parse only command line options that affect basic yum setup
         try:
-            gopts, self.cmds = getopt.getopt(args, 'tCc:hR:e:d:y', ['help',
-                                                            'version',
-                                                            'installroot=',
-                                                            'enablerepo=',
-                                                            'disablerepo=',
-                                                            'exclude=',
-                                                            'obsoletes',
-                                                            'tolerant'])
-        except getopt.error, e:
-            self.errorlog(0, _('Options Error: %s') % e)
+            args = _filtercmdline([], ['-c', '-d', '-e', '--installroot'], 
+                        args)
+        except ValueError:
             self.usage()
             sys.exit(1)
-            
-        # get the early options out of the way
-        # these are ones that:
-        #  - we need to know about and do NOW
-        #  - answering quicker is better
-        #  - give us info for parsing the others
-        
-        # our sleep variable for the random start time
-        sleeptime=0
-        root = '/'
-        installroot = None
-        conffile = '/etc/yum.conf'
-        
+        opts = self.optparser.parse_args(args=args)[0]
+
         try: 
-            for o,a in gopts:
-                if o == '--version':
-                    print yum.__version__
-                    sys.exit(0)
-                if o == '--installroot':
-                    installroot = a
-                if o == '-c':
-                    conffile = a
-            
-            # if the conf file is inside the  installroot - use that.
+            # If the conf file is inside the  installroot - use that.
             # otherwise look for it in the normal root
-            if installroot:
-                if os.access(installroot + '/' + conffile, os.R_OK):
-                    conffile = installroot + '/' + conffile
+            if opts.installroot:
+                if os.access(opts.installroot+'/'+opts.conffile, os.R_OK):
+                    opts.conffile = opts.installroot+'/'+opts.conffile
+                root=opts.installroot
+            else:
+                root = '/'
                     
-                root = installroot
-                    
+            # Parse the configuration file
             try:
-                self.doConfigSetup(fn = conffile, root = root)
+                self.doConfigSetup(fn=opts.conffile, root=root)
             except yum.Errors.ConfigError, e:
                 self.errorlog(0, _('Config Error: %s') % e)
                 sys.exit(1)
                 
+            # Initialise logger object
+            self.log=Logger(threshold=self.conf.getConfigOption('debuglevel'), 
+                    file_object=sys.stdout)
+
+            # Setup debug and error levels
+            if opts.debuglevel is not None:
+                self.log.threshold=opts.debuglevel
+                self.conf.setConfigOption('debuglevel', opts.debuglevel)
+
+            if opts.errorlevel is not None:
+                self.errorlog.threshold=opts.errorlevel
+                self.conf.setConfigOption('errorlevel', opts.errorlevel)
+
+        except ValueError, e:
+            self.errorlog(0, _('Options Error: %s') % e)
+            self.usage()
+            sys.exit(1)
+
+        # Initialise plugins (this may add extra command line options)
+        self.doPluginSetup(self.optparser)
+
+        # Now parse the command line for real
+        (opts, self.cmds) = self.optparser.parse_args()
+
+        # Just print out the version if that's what the user wanted
+        if opts.version:
+            print yum.__version__
+            sys.exit(0)
+
+        # Let the plugins know what happened on the command line
+        self.plugins.setCmdLine(opts, self.cmds)
+
+        try:
             # config file is parsed and moving us forward
             # set some things in it.
                 
@@ -150,10 +212,6 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
             # version of yum
             self.conf.setConfigOption('yumversion', yum.__version__)
             
-            
-            # we'd like to have a log object now
-            self.log=Logger(threshold=self.conf.getConfigOption('debuglevel'), file_object = 
-                                                                        sys.stdout)
             # syslog-style log
             if self.conf.getConfigOption('uid') == 0:
                 logpath = os.path.dirname(self.conf.logfile)
@@ -178,62 +236,51 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
                 self.filelog = Logger(threshold = 10, file_object = None, 
                                 preprefix = self.printtime)
             
-        
-            # now the rest of the options
-            for o,a in gopts:
-                if o == '-d':
-                    self.log.threshold=int(a)
-                    self.conf.setConfigOption('debuglevel', int(a))
-                elif o == '-e':
-                    self.errorlog.threshold=int(a)
-                    self.conf.setConfigOption('errorlevel', int(a))
-                elif o == '-y':
-                    self.conf.setConfigOption('assumeyes',1)
-                elif o in ['-h', '--help']:
+            # Handle remaining options
+            if opts.assumeyes:
+                self.conf.setConfigOption('assumeyes',1)
+
+            if opts.cacheonly:
+                self.conf.setConfigOption('cache', 1)
+
+            if opts.sleeptime is not None:
+                sleeptime = random.randrange(opts.sleeptime*60)
+            else:
+                sleeptime = 0
+
+            if opts.obsoletes:
+                self.conf.setConfigOption('obsoletes', 1)
+
+            if opts.installroot:
+                self.conf.setConfigOption('installroot', opts.installroot)
+
+            for exclude in opts.exclude:
+                try:
+                    excludelist = self.conf.getConfigOption('exclude')
+                    excludelist.append(exclude)
+                    self.conf.setConfigOption('exclude', excludelist)
+                except yum.Errors.ConfigError, e:
+                    self.errorlog(0, _(e))
                     self.usage()
-                    sys.exit(0)
-                elif o == '-C':
-                    self.conf.setConfigOption('cache', 1)
-                elif o == '-R':
-                    sleeptime = random.randrange(int(a)*60)
-                elif o == '--obsoletes':
-                    self.conf.setConfigOption('obsoletes', 1)
-                elif o == '--installroot':
-                    self.conf.setConfigOption('installroot', a)
-                elif o == '--enablerepo':
-                    try:
-                        self.repos.enableRepo(a)
-                    except yum.Errors.ConfigError, e:
-                        self.errorlog(0, _(e))
-                        self.usage()
-                        sys.exit(1)
-                elif o == '--disablerepo':
-                    try:
-                        self.repos.disableRepo(a)
-                    except yum.Errors.ConfigError, e:
-                        self.errorlog(0, _(e))
-                        self.usage()
-                        sys.exit(1)
-                        
-                elif o == '--exclude':
-                    try:
-                        excludelist = self.conf.getConfigOption('exclude')
-                        excludelist.append(a)
-                        self.conf.setConfigOption('exclude', excludelist)
-                    except yum.Errors.ConfigError, e:
-                        self.errorlog(0, _(e))
-                        self.usage()
-                        sys.exit(1)
-                
+                    sys.exit(1)
+               
+            # Process repo enables and disables in order
+            for opt, repoexp in opts.repos:
+                try:
+                    if opt == '--enablerepo':
+                        self.repos.enableRepo(repoexp)
+                    elif opt == '--disablerepo':
+                        self.repos.disableRepo(repoexp)
+                except yum.Errors.ConfigError, e:
+                    self.errorlog(0, _(e))
+                    self.usage()
+                    sys.exit(1)
                             
         except ValueError, e:
             self.errorlog(0, _('Options Error: %s') % e)
             self.usage()
             sys.exit(1)
          
-        # Initialise plugins
-        self.doPluginSetup()
-
         # setup the progress bars/callbacks
         self.setupProgessCallbacks()
         
@@ -1380,32 +1427,61 @@ For more information contact your distribution or package provider.
         return False
 
     def usage(self):
-        print _("""
-    Usage:  yum [options] < update | install | info | remove | list |
-            clean | provides | search | check-update | groupinstall | 
-            groupupdate | grouplist | groupinfo | groupremove |
-            makecache | localinstall | erase | upgrade | whatprovides |
-            localupdate | resolvedep | shell >
-                
-        Options:
-        -c [config file] - specify the config file to use
-        -e [error level] - set the error logging level
-        -d [debug level] - set the debugging level
-        -y - answer yes to all questions
-        -R [time in minutes] - set the max amount of time to randomly run in
-        -C run from cache only - do not update the cache
-        --installroot=[path] - set the install root (default '/')
-        --version - output the version of yum
-        --exclude=package to exclude
-        --disablerepo=repository glob to disable (overrides config file)
-        --enablerepo=repository glob to enable (overrides config file)
+        '''Print out command line usage
+        '''
+        print
+        self.optparser.print_help()
 
-        -h, --help  - this screen
-    """)
+class YumOptionParser(OptionParser):
+    '''Subclass that makes some minor tweaks to make OptionParser do things the
+    "yum way".
+    '''
 
+    def __init__(self, base, **kwargs):
+        OptionParser.__init__(self, **kwargs)
+        self.base = base
 
-           
+    def error(self, msg):
+        '''This method is overridden so that error output goes to errorlog
+        '''
+        self.print_usage()
+        self.base.errorlog(0, "Command line error: "+msg)
+        sys.exit(1)
 
+def _filtercmdline(novalopts, valopts, args):
+    '''Keep only specific options from the command line argument list
 
-        
+    This function allows us to peek at specific command line options when using
+    the optparse module. This is useful when some options affect what other
+    options should be available.
 
+    @param novalopts: A list of options to keep that don't take an argument.
+    @param valopts: A list options to keep that take a single argument.
+    @param args: The command line arguments to parse (as per sys.argv[:1]
+    @return: A list of strings containing the filtered version of args.
+
+    Will raise ValueError if there was a problem parsing the command line.
+    '''
+    out = []
+    args = list(args)       # Make a copy because this func is destructive
+
+    while len(args) > 0:
+        a = args.pop(0)
+        if '=' in a:
+            opt, _ = a.split('=', 1)
+            if opt in valopts:
+                out.append(a)
+
+        elif a in novalopts:
+            out.append(a)
+
+        elif a in valopts:
+            if len(args) < 1:
+                raise ValueError
+            next = args.pop(0)
+            if next[0] == '-':
+                raise ValueError
+
+            out.extend([a, next])
+
+    return out

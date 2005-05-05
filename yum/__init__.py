@@ -57,9 +57,9 @@ class YumBase(depsolve.Depsolve):
         if (not self.repos.sqlite):
             self.log(1,"Warning, could not load sqlite, falling back to pickle")
 
-        # Use a dummy object until plugins are initialised
-        self.plugins = plugins.DummyYumPlugins()
-    
+        # Start with plugins disabled
+        self.disablePlugins()
+
     def log(self, value, msg):
         """dummy log stub"""
         print msg
@@ -130,14 +130,19 @@ class YumBase(depsolve.Depsolve):
                 self.errorlog(2, e)
                 continue
 
-    def doPluginSetup(self):
-        '''Initialise yum plugins. 
+    def disablePlugins(self):
+        '''Disable yum plugins
+        '''
+        self.plugins = plugins.DummyYumPlugins()
+    
+    def doPluginSetup(self, optparser=None):
+        '''Initialise and enable yum plugins. 
 
         If plugins are going to be used, this should be called soon after
         doConfigSetup() has been called.
         '''
         # Load plugins first as they make affect available config options
-        self.plugins = plugins.YumPlugins(self)
+        self.plugins = plugins.YumPlugins(self, optparser)
 
         # Process options registered by plugins
         self.plugins.parseopts(self.conf, self.repos.findRepos('*'))

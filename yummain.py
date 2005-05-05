@@ -35,9 +35,6 @@ def main(args):
     # our core object for the cli
     base = cli.YumBaseCli()
 
-    if len(args) < 1:
-        base.usage()
-
     def unlock():
         try:
             base.closeRpmDB()

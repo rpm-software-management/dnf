@@ -25,6 +25,12 @@ import Errors
 # TODO: cmdline option to disable plugins "--noplugins" (for support problems)
 #   - document
 
+# TODO: should plugin searchpath be affected by installroot option?
+
+# TODO: better handling of PluginYumExit
+
+# TODO: consistent case of YumPlugins methods
+
 # TODO: expose progress bar interface
 
 # TODO: allow plugins to define new repository types
@@ -45,7 +51,7 @@ import Errors
 
 # TODO: allow plugins to extend shell commands
 
-# TODO: allow plugins to extend command line options and commands
+# TODO: allow plugins to commands
 
 # TODO: plugins should be able to specify convertor functions for config vars
 
@@ -82,7 +88,7 @@ import Errors
 # API, the major version number must be incremented and the minor version number
 # reset to 0. If a change is made that doesn't break backwards compatibility,
 # then the minor number must be incremented.
-API_VERSION = '1.0'
+API_VERSION = '1.1'
 
 SLOTS = (
         'config', 'init', 
@@ -99,13 +105,16 @@ class PluginYumExit(Errors.YumBaseError):
 
 class YumPlugins:
 
-    def __init__(self, base):
+    def __init__(self, base, optparser=None):
         self.enabled = base.conf.plugins
         self.searchpath = base.conf.pluginpath
         self.base = base
+        self.optparser = optparser
+        self.cmdline = (None, None)
 
         self._importplugins()
         self.opts = {}
+        self.cmdlines = {}
 
         # Call close handlers when yum exit's
         atexit.register(self.run, 'close')
@@ -272,6 +281,12 @@ class YumPlugins:
             if where in (targetwhere, PLUG_OPT_WHERE_ALL):
                 setfunc(name, typetofunc[vtype](section, name, default))
 
+    def setCmdLine(self, opts, commands):
+        '''Set the parsed command line options so that plugins can access them
+        '''
+        self.cmdline = (opts, commands)
+
+
 class DummyYumPlugins:
     '''
     This class provides basic emulation of the YumPlugins class. It exists so
@@ -303,6 +318,23 @@ class PluginConduit:
         import yum
         return yum.__version__
 
+    def getOptParser(self):
+        '''Return the optparse.OptionParser instance for this execution of Yum
+
+        In the "config" and "init" slots a plugin may add extra options to this
+        instance to extend the command line options that Yum exposes.
+
+        In all other slots a plugin may only read the OptionParser instance.
+        Any modification of the instance at this point will have no effect. 
+        
+        See the getCmdLine() method for details on how to retrieve the parsed
+        values of command line options.
+
+        @return: the global optparse.OptionParser instance used by Yum. May be
+            None if an OptionParser isn't in use.
+        '''
+        return self._parent.optparser
+
     def confString(self, section, opt, default=None):
         '''Read a string value from the plugin's own configuration file
         '''
@@ -326,7 +358,12 @@ class PluginConduit:
 class ConfigPluginConduit(PluginConduit):
 
     def registerOpt(self, *args, **kwargs):
+        '''Register a yum configuration file option.
+
+        Arguments are as for YumPlugins.registeropt().
+        '''
         self._parent.registeropt(*args, **kwargs)
+
 
 class InitPluginConduit(PluginConduit):
 
@@ -334,6 +371,13 @@ class InitPluginConduit(PluginConduit):
         return self._base.conf
 
 class RepoSetupPluginConduit(InitPluginConduit):
+
+    def getCmdLine(self):
+        '''Return parsed command line options.
+
+        @return: (options, commands) as returned by OptionParser.parse_args()
+        '''
+        return self._parent.cmdline
 
     def getRepo(self, repoid):
         '''Return a repository object by its id
