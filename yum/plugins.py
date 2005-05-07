@@ -88,7 +88,7 @@ import Errors
 # API, the major version number must be incremented and the minor version number
 # reset to 0. If a change is made that doesn't break backwards compatibility,
 # then the minor number must be incremented.
-API_VERSION = '1.1'
+API_VERSION = '2.0'
 
 SLOTS = (
         'config', 'init', 
@@ -370,6 +370,13 @@ class InitPluginConduit(PluginConduit):
     def getConf(self):
         return self._base.conf
 
+    def getRepos(self):
+        '''Return Yum's container object for all configured repositories.
+
+        @return: Yum's RepoStorage instance
+        '''
+        return self._base.repos
+
 class RepoSetupPluginConduit(InitPluginConduit):
 
     def getCmdLine(self):
@@ -378,17 +385,6 @@ class RepoSetupPluginConduit(InitPluginConduit):
         @return: (options, commands) as returned by OptionParser.parse_args()
         '''
         return self._parent.cmdline
-
-    def getRepo(self, repoid):
-        '''Return a repository object by its id
-        '''
-        return self._base.repos.getRepo(repoid)
-
-    def getRepos(self, pattern='*'):
-        '''Return a list of repository objects using wildward patterns.
-        Default is to return all repositories.
-        '''
-        return self._base.repos.findRepos(pattern)
 
     def getRpmDB(self):
         '''Return a representation of local RPM database. This allows querying
