@@ -117,7 +117,7 @@ class RepoStorage:
             self.pkgSack = YumPackageSack(YumAvailablePackage)
         
     def __str__(self):
-        return self.repos.keys()
+        return str(self.repos.keys())
     
 
     def add(self, repoobj):
