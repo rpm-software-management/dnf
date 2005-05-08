@@ -142,7 +142,7 @@ class YumBase(depsolve.Depsolve):
         doConfigSetup() has been called.
         '''
         # Load plugins first as they make affect available config options
-        self.plugins = plugins.YumPlugins(self, optparser)
+        self.plugins = plugins.YumPlugins(self, self.conf.pluginpath, optparser)
 
         # Process options registered by plugins
         self.plugins.parseopts(self.conf, self.repos.findRepos('*'))

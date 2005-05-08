@@ -22,9 +22,6 @@ import ConfigParser
 import config 
 import Errors
 
-# TODO: cmdline option to disable plugins "--noplugins" (for support problems)
-#   - document
-
 # TODO: should plugin searchpath be affected by installroot option?
 
 # TODO: better handling of PluginYumExit
@@ -105,9 +102,8 @@ class PluginYumExit(Errors.YumBaseError):
 
 class YumPlugins:
 
-    def __init__(self, base, optparser=None):
-        self.enabled = base.conf.plugins
-        self.searchpath = base.conf.pluginpath
+    def __init__(self, base, searchpath, optparser=None):
+        self.searchpath = searchpath
         self.base = base
         self.optparser = optparser
         self.cmdline = (None, None)
@@ -125,9 +121,6 @@ class YumPlugins:
     def run(self, slotname, **kwargs):
         '''Run all plugin functions for the given slot.
         '''
-        if not self.enabled:
-            return
-       
         # Determine handler class to use
         if slotname == 'config':
             conduitcls = ConfigPluginConduit
@@ -155,9 +148,6 @@ class YumPlugins:
             func(conduitcls(self, self.base, conf, **kwargs))
 
     def _importplugins(self):
-
-        if not self.enabled:
-            return 0
 
         # Initialise plugin dict
         self._plugins = {}
@@ -293,6 +283,9 @@ class DummyYumPlugins:
     that calls to plugins.run() don't fail if plugins aren't in use.
     '''
     def run(self, *args, **kwargs):
+        pass
+
+    def setCmdLine(self, *args, **kwargs):
         pass
 
 class PluginConduit:

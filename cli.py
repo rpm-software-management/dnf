@@ -142,12 +142,17 @@ yum [options] < update | install | info | remove | list |
         self.optparser.add_option("", "--obsoletes", dest="obsoletes",
                 default=False, action="store_true", 
                 help="enable obsoletes processing during updates")
-
+        self.optparser.add_option("", "--noplugins", dest="noplugins",
+                default=False, action="store_true", 
+                help="disable Yum plugins")
         
         # Parse only command line options that affect basic yum setup
         try:
-            args = _filtercmdline([], ['-c', '-d', '-e', '--installroot'], 
-                        args)
+            args = _filtercmdline(
+                        ('--noplugins',), 
+                        ('-c', '-d', '-e', '--installroot'), 
+                        args,
+                    )
         except ValueError:
             self.usage()
             sys.exit(1)
@@ -188,8 +193,10 @@ yum [options] < update | install | info | remove | list |
             self.usage()
             sys.exit(1)
 
-        # Initialise plugins (this may add extra command line options)
-        self.doPluginSetup(self.optparser)
+        # Initialise plugins if cmd line and config file say these should be in
+        # use (this may add extra command line options)
+        if not opts.noplugins and self.conf.plugins:
+            self.doPluginSetup(self.optparser)
 
         # Now parse the command line for real
         (opts, self.cmds) = self.optparser.parse_args()
@@ -1455,8 +1462,8 @@ def _filtercmdline(novalopts, valopts, args):
     the optparse module. This is useful when some options affect what other
     options should be available.
 
-    @param novalopts: A list of options to keep that don't take an argument.
-    @param valopts: A list options to keep that take a single argument.
+    @param novalopts: A sequence of options to keep that don't take an argument.
+    @param valopts: A sequence of options to keep that take a single argument.
     @param args: The command line arguments to parse (as per sys.argv[:1]
     @return: A list of strings containing the filtered version of args.
 
