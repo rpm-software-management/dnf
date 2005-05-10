@@ -1,3 +1,9 @@
+2005-05-09  Jeremy Katz  <katzj@redhat.com>
+
+	* rpmUtils/arch.py (getBaseArch): ppc64 and sparc64 are odd in
+	that you want a mostly ppc and sparc userland respectively.  make
+	$basearch realize that.
+
 2005-04-04 10:31  skvidal
 
 	* rpmUtils/tests/updates-test.py: 
