@@ -146,7 +146,9 @@ class YumShell(cmd.Cmd):
             if code == 1:
                 for msg in msgs:
                     self.base.errorlog(0, 'Error: %s' % msg)
-        
+            else:
+                self.base.log(2, 'Success resolving dependencies')
+                
         elif cmd == 'run':
             return self.do_run('')
             
@@ -269,6 +271,12 @@ class YumShell(cmd.Cmd):
     def do_run(self, line):
         if len(self.base.tsInfo) > 0:
             try:
+                (code, msgs) = self.base.buildTransaction()
+                if code == 1:
+                    for msg in msgs:
+                        self.base.errorlog(0, 'Error: %s' % msg)
+                    return False
+
                 returnval = self.base.doTransaction()
             except Errors.YumBaseError, e:
                 self.base.errorlog(0, 'Error: %s' % e)
