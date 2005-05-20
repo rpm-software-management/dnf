@@ -222,7 +222,7 @@ class YumOutput:
         if len(self.tsInfo) > 0:
             out = """
 =============================================================================
- %-22.22s  %-9.9s  %-15.15s  %-16.16s  %-5.5s
+ %-22s  %-9s  %-15s  %-16s  %-5s
 =============================================================================
 """ % ('Package', 'Arch', 'Version', 'Repository', 'Size')
         else:
@@ -242,7 +242,7 @@ class YumOutput:
                 repoid = txmbr.repoid
                 pkgsize = float(txmbr.po.size())
                 size = self.format_number(pkgsize)
-                msg = " %-22.22s  %-9.9s  %-15.15s  %-16.16s  %5.5s\n" % (n, a,
+                msg = " %-22s  %-9s  %-15s  %-16s  %5s\n" % (n, a,
                               evr, repoid, size)
                 for (obspo, relationship) in txmbr.relatedto:
                     if relationship == 'obsoletes':
