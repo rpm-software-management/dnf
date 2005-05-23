@@ -42,6 +42,12 @@ arches = {
     "sparcv9": "sparcv8",
     "sparcv8": "sparc",
     "sparc": "noarch"
+
+    # alpha
+    "alphaev6": "alphaev56",
+    "alphaev56": "alphaev5",
+    "alphaev5": "alpha",
+    "alpha": "noarch" 
     }
 
 # this computes the difference between myarch and targetarch
