@@ -99,10 +99,7 @@ class Depsolve:
             return 1
         
         provides = po.getProvidesNames()
-        if 'kernel-modules' in provides:
-            return 1
-        
-        if 'kernel' in provides:
+        if filter (lambda prov: prov in self.conf.installonlypkgs, provides):
             return 1
         
         return 0

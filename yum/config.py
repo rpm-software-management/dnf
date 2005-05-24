@@ -209,6 +209,7 @@ class yumconf(object):
                          ('pluginpath', ['/usr/lib/yum-plugins']),
                          ('installonlypkgs', ['kernel', 'kernel-bigmem', 
                                               'kernel-enterprise','kernel-smp',
+                                              'kernel-modules',
                                               'kernel-debug', 'kernel-unsupported', 
                                               'kernel-source', 'kernel-devel']),
                          ('kernelpkgnames', ['kernel','kernel-smp',
