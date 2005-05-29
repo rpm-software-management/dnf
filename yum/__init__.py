@@ -27,6 +27,7 @@ import time
 import sre_constants
 import glob
 
+
 import Errors
 import rpmUtils
 import rpmUtils.updates
@@ -34,6 +35,7 @@ import rpmUtils.arch
 import groups
 import config
 import repos
+import misc
 import transactioninfo
 from urlgrabber.grabber import URLGrabError
 import depsolve
@@ -971,6 +973,46 @@ class YumBase(depsolve.Depsolve):
         
         return restring
         
+    def findDeps(self, pkgs):
+        """Return the dependencies for a given package, as well
+           possible solutions for those dependencies.
+           
+           Returns the deps as a dict  of:
+             packageobject = [reqs] = [list of satisfying pkgs]"""
+        
+        results = {}
+        self.doRepoSetup()
+        self.doRpmDBSetup()
+
+        avail = self.pkgSack.returnPackages()
+        exactmatch, matched, unmatched = parsePackages(avail, pkgs)
+
+        if len(unmatched) > 0:
+            self.errorlog(0, 'No Match for arguments: %s' % unmatched)
+
+        pkgs = misc.unique(exactmatch + matched)
+        
+        for pkg in pkgs:
+            results[pkg] = {} 
+            reqs = pkg.returnPrco('requires');
+            reqs.sort()
+            pkgresults = results[pkg] # shorthand so we don't have to do the
+                                      # double bracket thing
+            
+            for req in reqs:
+                (r,f,v) = req
+                if r.startswith('rpmlib('):
+                    continue
+                
+                satisfiers = []
+
+                for po in self.whatProvides(r, f, v):
+                    satisfiers.append(po)
+
+                pkgresults[req] = satisfiers
+        
+        return results
+    
     def searchPackages(self, fields, criteria, callback=None):
         """Search specified fields for matches to criteria
            optional callback specified to print out results

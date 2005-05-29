@@ -148,7 +148,28 @@ class YumOutput:
             for item in self.groupInfo.optional_pkgs[groupid]:
                 print '   %s' % item
 
-           
+
+    def depListOutput(self, results):
+        """take a list of findDeps results and 'pretty print' the output"""
+        
+        for pkg in results.keys():
+            print "package: %s" % pkg.compactPrint()
+            if len(results[pkg].keys()) == 0:
+                print "  No dependencies for this package"
+                continue
+
+            for req in results[pkg].keys():
+                reqlist = results[pkg][req] 
+                print "  dependency: %s" % pkg.prcoPrintable(req)
+                if not reqlist:
+                    print "   Unsatisfied dependency"
+                    continue
+                
+                for po in reqlist:
+                    print "   provider: %s" % po.compactPrint()
+
+
+        
     def format_number(self, number, SI=0, space=' '):
         """Turn numbers into human-readable metric-like numbers"""
         symbols = ['',  # (none)

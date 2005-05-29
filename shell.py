@@ -43,7 +43,7 @@ class YumShell(cmd.Cmd):
             'groupinstall', 'grouplist', 'groupremove', 'groupupdate',
             'info', 'install', 'list', 'localinstall', 'repository',
             'makecache', 'provides', 'quit', 'remove', 'run', 'search',
-            'transaction', 'ts', 'update', 'config']
+            'transaction', 'ts', 'update', 'config', 'deplist']
 
     def script(self):
         try:
@@ -83,7 +83,7 @@ class YumShell(cmd.Cmd):
     commands:  clean, config, exit, groupinfo, groupinstall, grouplist,
                groupremove, groupupdate, info, install, list,
                localinstall, makecache, provides, quit, remove, 
-               repo, run, search, transaction, update
+               repo, run, search, transaction, update, deplist
     """
         if arg in ['transaction', 'ts']:
             msg = """

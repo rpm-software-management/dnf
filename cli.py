@@ -100,7 +100,7 @@ yum [options] < update | install | info | remove | list |
     clean | provides | search | check-update | groupinstall | 
     groupupdate | grouplist | groupinfo | groupremove |
     makecache | localinstall | erase | upgrade | whatprovides |
-    localupdate | resolvedep | shell >''')
+    localupdate | resolvedep | shell | deplist >''')
 
         self.optparser.add_option("-t", "--tolerant", dest="tolerant",
                 action="store_true", default=False, help="be tolerant of errors")
@@ -342,7 +342,7 @@ yum [options] < update | install | info | remove | list |
                                 'clean', 'remove', 'provides', 'check-update',
                                 'search', 'upgrade', 'whatprovides',
                                 'localinstall', 'localupdate',
-                                'resolvedep', 'shell']:
+                                'resolvedep', 'shell', 'deplist']:
             self.usage()
             raise CliError
     
@@ -378,7 +378,7 @@ For more information contact your distribution or package provider.
                         raise CliError
 
                 
-        if self.basecmd in ['install', 'erase', 'remove', 'localinstall', 'localupdate']:
+        if self.basecmd in ['install', 'erase', 'remove', 'localinstall', 'localupdate', 'deplist']:
             if len(self.extcmds) == 0:
                 self.errorlog(0, _('Error: Need to pass a list of pkgs to %s') % self.basecmd)
                 self.usage()
@@ -428,6 +428,7 @@ For more information contact your distribution or package provider.
         else:
             self.usage()
             raise CliError
+
 
     def doShell(self):
         """do a shell-like interface for yum commands"""
@@ -536,6 +537,13 @@ For more information contact your distribution or package provider.
             else:
                 return result, []
             
+        elif self.basecmd in ['deplist']:
+           self.log(2, "Finding dependencies: ")
+           try:
+              return self.deplist()
+           except yum.Errors.YumBaseError, e:
+              return 1, [str(e)]
+
         elif self.basecmd == 'clean':
             self.conf.setConfigOption('cache', 1)
             return self.cleanCli()
@@ -1179,6 +1187,18 @@ For more information contact your distribution or package provider.
         if len(matching.keys()) == 0:
             return 0, ['No Matches found']
         return 0, []
+
+    def deplist(self, args=None):
+       """cli wrapper method for findDeps method takes a list of packages and 
+       returns a formatted deplist for that package"""
+
+       if not args:
+          args = self.extcmds
+
+       results = self.findDeps(args)
+       self.depListOutput(results)
+
+       return 0, []
 
     def provides(self, args=None):
         """use the provides methods in the rpmdb and pkgsack to produce a list 

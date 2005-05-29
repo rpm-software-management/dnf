@@ -17,6 +17,7 @@
 import os
 import os.path
 import re
+import types
 
 import rpmUtils.transaction
 import rpmUtils.miscutils
@@ -74,12 +75,17 @@ class Depsolve:
         if flags == 0:
             flags = None
         
-        (r_e, r_v, r_r) = rpmUtils.miscutils.stringToVersion(version)
+
+        if type(version) in (types.StringType, types.NoneType):
+            (r_e, r_v, r_r) = rpmUtils.miscutils.stringToVersion(version)
+        elif type(version) in (types.TupleType, types.ListType): # would this ever be a ListType?
+            (r_e, r_v, r_r) = version
+        
         defSack = ListPackageSack() # holder for items definitely providing this dep
         
         for po in pkgs:
             self.log(5, 'Potential match for %s from %s' % (name, po))
-            if name[0] == '/' and version is None:
+            if name[0] == '/' and r_v is None:
                 # file dep add all matches to the defSack
                 defSack.addPackage(po)
                 continue
