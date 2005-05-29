@@ -192,12 +192,14 @@ class Groups_Info:
                 for reqpkg in self.mandatory_pkgs[id]:
                     if not self.installed_pkgs.has_key(reqpkg):
                         groupinstalled = 0
+                        break
                 self.group_installed[id]=groupinstalled
             else:
                 groupinstalled = 0
                 for anypkg in self.optional_pkgs[id] + self.default_pkgs[id]:
                     if self.installed_pkgs.has_key(anypkg):
                         groupinstalled = 1
+                        break
                 self.group_installed[id]=groupinstalled
                 
         # now we need to check metapkgs in the groups and see which are mandatory
@@ -206,10 +208,10 @@ class Groups_Info:
         # group that includes it is not installed
         # again - mandatory_metapkgs are just figments - nothing more
         for id in self.grouplist:
-            if len(self.mandatory_metapkgs[id]) > 0:
-                for metapkg in self.mandatory_metapkgs[id]:
-                    if not self.group_installed[metapkg]:
-                        groupinstalled = 0
+            for metapkg in self.mandatory_metapkgs[id]:
+                if not self.group_installed[metapkg]:
+                    self.group_installed[id]=0
+                    break
         
     def _get_installed(self, pkgs):
         for (n, a, e, v, r) in pkgs:
