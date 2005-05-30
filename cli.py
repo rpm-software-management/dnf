@@ -833,7 +833,8 @@ For more information contact your distribution or package provider.
                          # no matter what we don't go looking at repos
 
             arglist = [arg]
-            exactmatch, matched, unmatched = parsePackages(avail, arglist)
+            exactmatch, matched, unmatched = parsePackages(avail, arglist, 
+                                                               casematch=1)
             if len(unmatched) > 0: # if we get back anything in unmatched, check it for a virtual-provide
                 arg = unmatched[0] #only one in there
                 self.log(3, 'Checking for virtual provide or file-provide for %s' % arg)
@@ -986,7 +987,8 @@ For more information contact your distribution or package provider.
                 updatesPo.extend(self.pkgSack.searchNevra(name=n, arch=a, epoch=e, 
                                  ver=v, rel=r))
                                  
-            exactmatch, matched, unmatched = yum.packages.parsePackages(updatesPo, userlist)
+            exactmatch, matched, unmatched = yum.packages.parsePackages(
+                                                updatesPo, userlist, casematch=1)
             for userarg in unmatched:
                 if not quiet:
                     self.errorlog(1, 'Could not find update match for %s' % userarg)
@@ -1025,7 +1027,8 @@ For more information contact your distribution or package provider.
             installed.append(po)
         
         if len(userlist) > 0: # if it ain't well, that'd be real _bad_ :)
-            exactmatch, matched, unmatched = yum.packages.parsePackages(installed, userlist)
+            exactmatch, matched, unmatched = yum.packages.parsePackages(
+                                             installed, userlist, casematch=1)
             erases = yum.misc.unique(matched + exactmatch)
         
         for pkg in erases:
