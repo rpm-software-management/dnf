@@ -325,7 +325,9 @@ class YumBase(depsolve.Depsolve):
     def buildTransaction(self):
         """go through the packages in the transaction set, find them in the
            packageSack or rpmdb, and pack up the ts accordingly"""
+        self.plugins.run('preresolve')
         (rescode, restring) = self.resolveDeps()
+        self.plugins.run('postresolve', rescode=rescode, restring=restring)
         return rescode, restring
 
     def runTransaction(self, cb):

@@ -85,13 +85,14 @@ import Errors
 # API, the major version number must be incremented and the minor version number
 # reset to 0. If a change is made that doesn't break backwards compatibility,
 # then the minor number must be incremented.
-API_VERSION = '2.0'
+API_VERSION = '2.1'
 
 SLOTS = (
         'config', 'init', 
         'predownload', 'postdownload', 
         'prereposetup', 'postreposetup', 
         'exclude', 
+        'preresolve', 'postresolve',
         'pretrans', 'posttrans', 
         'close'
     )
@@ -136,6 +137,8 @@ class YumPlugins:
             conduitcls = PluginConduit
         elif slotname in ('pretrans', 'posttrans', 'exclude'):
             conduitcls = MainPluginConduit
+        elif slotname in ('preresolve', 'postresolve'):
+            conduitcls = DepsolvePluginConduit
         else:
             raise ValueError('unknown slot name "%s"' % slotname)
 
@@ -437,6 +440,11 @@ class MainPluginConduit(RepoSetupPluginConduit):
     def getTsInfo(self):
         return self._base.tsInfo
 
+class DepsolvePluginConduit(MainPluginConduit):
+    def __init__(self, parent, base, conf, rescode=None, restring=[]):
+        MainPluginConduit.__init__(self, parent, base, conf)
+        self.resultcode = rescode
+        self.resultstring = restring
 
 def parsever(apiver):
     maj, min = apiver.split('.')
