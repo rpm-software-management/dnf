@@ -21,6 +21,7 @@ import os
 import os.path
 import sys
 import time
+import locale
 from i18n import _
 
 from urlgrabber.progress import TextMeter
@@ -35,7 +36,10 @@ import yum.Errors
 class YumOutput:
 
     def printtime(self):
-        return time.strftime('%b %d %H:%M:%S ', time.localtime(time.time()))
+        locale.setlocale(locale.LC_TIME, 'C')
+        ret = time.strftime('%b %d %H:%M:%S ', time.localtime(time.time()))
+        locale.resetlocale(locale.LC_TIME)
+        return ret
         
     
     def failureReport(self, errobj):
