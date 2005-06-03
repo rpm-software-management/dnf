@@ -436,7 +436,8 @@ def cfgParserRepo(section, yumconfig, cfgparser):
     for keyword in ['gpgcheck', 'keepalive', 'enablegroups', 'enabled']:
         val = cfgparser._getoption(section, keyword, yumconfig.getConfigOption(keyword))
         val = variableReplace(yumconfig.yumvar, val)
-        if type(val) is not types.BooleanType:
+        if type(val) not in (True, False):
+            val = str(val)
             if val.lower() not in BOOLEAN_STATES:
                 raise Errors.RepoError, 'Invalid value in repo config for %s::%s' % (section, keyword)
             val = BOOLEAN_STATES[val.lower()]
