@@ -3,9 +3,9 @@ import sys
 try:
    import yum
 except ImportError:
-   print >> sys.stderr, "The yum libraries do not seem to be available\
+   print >> sys.stderr, "The yum libraries do not seem to be available \
 on your system for this version of python ", sys.version
-   print >> sys.stderr, "Please make sure the package you used to install\
+   print >> sys.stderr, "Please make sure the package you used to install \
 yum was built for your install of python."
    sys.exit(1)
 
