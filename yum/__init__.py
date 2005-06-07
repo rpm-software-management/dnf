@@ -137,14 +137,21 @@ class YumBase(depsolve.Depsolve):
         '''
         self.plugins = plugins.DummyYumPlugins()
     
-    def doPluginSetup(self, optparser=None):
+    def doPluginSetup(self, optparser=None, typefilter=None):
         '''Initialise and enable yum plugins. 
 
         If plugins are going to be used, this should be called soon after
         doConfigSetup() has been called.
+
+        @param optparser: The OptionParser instance for this run (optional)
+        @param typefilter: A sequence specifying the types of plugins to load.
+            This should be sequnce containing one or more of the
+            yum.plugins.TYPE_...  constants. If None (the default), all plugins
+            will be loaded.
         '''
         # Load plugins first as they make affect available config options
-        self.plugins = plugins.YumPlugins(self, self.conf.pluginpath, optparser)
+        self.plugins = plugins.YumPlugins(self, self.conf.pluginpath,
+                optparser, typefilter)
 
         # Process options registered by plugins
         self.plugins.parseopts(self.conf, self.repos.findRepos('*'))

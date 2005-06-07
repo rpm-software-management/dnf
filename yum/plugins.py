@@ -32,10 +32,6 @@ import Errors
 
 # TODO: allow plugins to define new repository types
 
-# TODO: allow a plugin to signal that the remainder of the calling function
-# should be skipped so that the plugin can override the caller?
-#   - there may be a better way to do this
-
 # TODO: check for *_hook methods that aren't supported
 
 # TODO "log" slot? To allow plugins to do customised logging/history (say to a
@@ -87,6 +83,11 @@ import Errors
 # then the minor number must be incremented.
 API_VERSION = '2.1'
 
+# Plugin types
+TYPE_CORE = 0
+TYPE_INTERFACE = 1
+ALL_TYPES = (TYPE_CORE, TYPE_INTERFACE)
+
 SLOTS = (
         'config', 'init', 
         'predownload', 'postdownload', 
@@ -103,13 +104,31 @@ class PluginYumExit(Errors.YumBaseError):
 
 class YumPlugins:
 
-    def __init__(self, base, searchpath, optparser=None):
+    '''
+    Manager class for Yum plugins.
+    '''
+
+    def __init__(self, base, searchpath, optparser=None, typefilter=None):
+        '''Initialise the instance.
+
+        @param base: The
+        @param searchpath: A list of paths to look for plugin modules.
+        @param optparser: The OptionParser instance for this run (optional).
+            Use to allow plugins to extend command line options.
+        @param typefilter: A sequence specifying the types of plugins to load.
+            This should be sequnce containing one or more of the TYPE_...
+            constants. If None (the default), all plugins will be loaded.
+        '''
+
         self.searchpath = searchpath
         self.base = base
         self.optparser = optparser
         self.cmdline = (None, None)
+        if not typefilter:
+            typefilter = ALL_TYPES
 
-        self._importplugins()
+        self._importplugins(typefilter)
+
         self.opts = {}
         self.cmdlines = {}
 
@@ -150,7 +169,9 @@ class YumPlugins:
             _, conf = self._plugins[modname]
             func(conduitcls(self, self.base, conf, **kwargs))
 
-    def _importplugins(self):
+    def _importplugins(self, typefilter):
+        '''Load plugins matching the given types.
+        '''
 
         # Initialise plugin dict
         self._plugins = {}
@@ -163,9 +184,9 @@ class YumPlugins:
             if not os.path.isdir(dir):
                 continue
             for modulefile in glob.glob('%s/*.py' % dir):
-                self._loadplugin(modulefile)
+                self._loadplugin(modulefile, typefilter)
 
-    def _loadplugin(self, modulefile):
+    def _loadplugin(self, modulefile, typefilter):
         '''Attempt to import a plugin module and register the hook methods it
         uses.
         '''
@@ -176,8 +197,6 @@ class YumPlugins:
         if not conf or not conf._getboolean('main', 'enabled', 0):
             self.base.log(3, '"%s" plugin is disabled' % modname)
             return
-
-        self.base.log(2, 'Loading "%s" plugin' % modname)
 
         fp, pathname, description = imp.find_module(modname, [dir])
         module = imp.load_module(modname, fp, pathname, description)
@@ -194,6 +213,19 @@ class YumPlugins:
                     module.requires_api_version,
                     API_VERSION,
                     ))
+
+        # Check plugin type against filter
+        plugintypes = getattr(module, 'plugin_type', ALL_TYPES)
+        if not isinstance(plugintypes, (list, tuple)):
+            plugintypes = (plugintypes,)
+
+        if len(plugintypes) < 1:
+            return
+        for plugintype in plugintypes:
+            if plugintype not in typefilter:
+                return
+
+        self.base.log(2, 'Loading "%s" plugin' % modname)
 
         # Store the plugin module and its configuration file
         if not self._plugins.has_key(modname):
