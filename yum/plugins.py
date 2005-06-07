@@ -24,7 +24,10 @@ import Errors
 
 # TODO: should plugin searchpath be affected by installroot option?
 
-# TODO: better handling of PluginYumExit
+# TODO: cleaner method to query installed packages rather than exposing RpmDB
+# (Panu?)
+
+# TODO: PLUGINS document (mainly for plugin developers)
 
 # TODO: consistent case of YumPlugins methods
 
@@ -44,19 +47,14 @@ import Errors
 
 # TODO: allow plugins to extend shell commands
 
-# TODO: allow plugins to commands
+# TODO: allow plugins to extend commands (on the command line)
 
 # TODO: plugins should be able to specify convertor functions for config vars
-
-# TODO: investigate potential issues with plugins doing user output during
-#   their close handlers, esp wrt GUI apps
 
 # TODO: detect conflicts between builtin yum options and registered plugin
 # options (will require refactoring of config.py)
 
-# TODO: Developer docs:
-#       - PLUGINS.(txt|html?)
-#       - use epydoc as API begins to stablise
+# TODO: More developer docs:  use epydoc as API begins to stablise
 
 # TODO: test the API by implementing some crack from bugzilla
 #         - http://devel.linux.duke.edu/bugzilla/show_bug.cgi?id=181 
@@ -98,12 +96,11 @@ SLOTS = (
         'close'
     )
 
-class PluginYumExit(Errors.YumBaseError):
+class PluginYumExit(Exception):
     '''Used by plugins to signal that yum should stop
     '''
 
 class YumPlugins:
-
     '''
     Manager class for Yum plugins.
     '''
