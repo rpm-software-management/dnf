@@ -21,7 +21,6 @@ import os
 import os.path
 import sys
 import time
-import locale
 from i18n import _
 
 from urlgrabber.progress import TextMeter
@@ -36,12 +35,13 @@ import yum.Errors
 class YumOutput:
 
     def printtime(self):
-        locale.setlocale(locale.LC_TIME, 'C')
-        ret = time.strftime('%b %d %H:%M:%S ', time.localtime(time.time()))
-        locale.resetlocale(locale.LC_TIME)
+        months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+                  'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+        now = time.localtime(time.time())
+        ret = months[int(time.strftime('%m', now)) - 1] + \
+              time.strftime(' %d %T ', now)
         return ret
-        
-    
+         
     def failureReport(self, errobj):
         """failure output for failovers from urlgrabber"""
         
