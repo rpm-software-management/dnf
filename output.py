@@ -110,15 +110,16 @@ class YumOutput:
     def userconfirm(self):
         """gets a yes or no from the user, defaults to No"""
 
-        while 1:            
+        while True:            
             choice = raw_input('Is this ok [y/N]: ')
-            if len(choice) == 0 or choice[0] in ['Y', 'y', 'N','n']:
+            choice = choice.lower()
+            if len(choice) == 0 or choice[0] in ['y', 'n']:
                 break
 
-        if len(choice) == 0 or choice[0] not in ['y', 'Y']:
-            return 0
+        if len(choice) == 0 or choice[0] != 'y':
+            return False
         else:            
-            return 1
+            return True
                 
     
     def displayPkgsInGroups(self, group):
