@@ -1276,7 +1276,10 @@ class YumBase(depsolve.Depsolve):
         if depstring[0] != '/':
             # not a file dep - look at it for being versioned
             if re.search('[>=<]', depstring):  # versioned
-                depname, flagsymbol, depver = depstring.split()
+                try:
+                    depname, flagsymbol, depver = depstring.split()
+                except ValueError, e:
+                    raise Errors.YumBaseError, 'No Packages found for %s - have you tried quoting the string?' % depstring
                 if not flags.has_key(flagsymbol):
                     raise Errors.YumBaseError, 'No Packages found for %s' % depstring
                 depflags = flags[flagsymbol]
