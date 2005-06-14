@@ -1,6 +1,6 @@
 Summary: RPM installer/updater
 Name: yum
-Version: 2.3.2
+Version: 2.3.3
 Release: 1
 License: GPL
 Group: System Environment/Base
@@ -77,6 +77,9 @@ exit 0
 %{_mandir}/man*/*
 
 %changelog
+* Tue Jun 14 2005 Seth Vidal <skvidal@phy.duke.edu>
+- 2.3.3
+
 * Wed Apr  6 2005 Seth Vidal <skvidal@phy.duke.edu>
 - added python-elementtree dep, remove libxml2 dep
 

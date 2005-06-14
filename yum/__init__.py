@@ -43,8 +43,10 @@ import plugins
 
 from packages import parsePackages, YumLocalPackage, YumInstalledPackage, bestPackage
 from repomd import mdErrors
+from constants import *
 
-__version__ = '2.3.2'
+
+__version__ = '2.3.3'
 
 class YumBase(depsolve.Depsolve):
     """This is a primary structure and base class. It houses the objects and
@@ -1263,7 +1265,6 @@ class YumBase(depsolve.Depsolve):
         """Pass in a generic [build]require string and this function will 
            pass back the best(or first) package it finds providing that dep."""
         
-        flags = {'>':'GT', '<':'LT', '=': 'EQ', '==': 'EQ', '>=':'GE', '<=':'LE'}
         self.doRepoSetup()
         # parse the string out
         #  either it is 'dep (some operator) e:v-r'
@@ -1280,9 +1281,9 @@ class YumBase(depsolve.Depsolve):
                     depname, flagsymbol, depver = depstring.split()
                 except ValueError, e:
                     raise Errors.YumBaseError, 'No Packages found for %s - have you tried quoting the string?' % depstring
-                if not flags.has_key(flagsymbol):
+                if not SYMBOLFLAGS.has_key(flagsymbol):
                     raise Errors.YumBaseError, 'No Packages found for %s' % depstring
-                depflags = flags[flagsymbol]
+                depflags = SYMBOLFLAGS[flagsymbol]
                 
         sack = self.whatProvides(depname, depflags, depver)
         if len(sack) < 1:
