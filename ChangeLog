@@ -1,8 +1,201 @@
-2005-05-09  Jeremy Katz  <katzj@redhat.com>
+2005-06-14 18:40  skvidal
 
-	* rpmUtils/arch.py (getBaseArch): ppc64 and sparc64 are odd in
-	that you want a mostly ppc and sparc userland respectively.  make
-	$basearch realize that.
+	* yum-daily.spec: 
+	daily spec - unused
+
+2005-06-14 18:39  skvidal
+
+	* yum.spec, yum/__init__.py: 
+	- minor change to use constants - mark as 2.3.3
+
+2005-06-14 11:21  skvidal
+
+	* yum/__init__.py: 
+	resolve rh bug: 160328
+
+2005-06-12 22:09  skvidal
+
+	* output.py: cleanup userconfirm()
+
+2005-06-09 17:44  mjs
+
+	* output.py: Applied Terje's locale workaround.
+
+2005-06-07 09:47  mjs
+
+	* yum/plugins.py: - base PluginYumExit on Exception instead of
+	YumBaseError so that it can be	 handled separately - Updated TODO
+
+2005-06-07 09:46  mjs
+
+	* yummain.py: - refactored to avoid code duplication and clarify -
+	specialised handling for PluginYumExit exceptions - fixed exception
+	catching typo
+
+2005-06-07 07:34  mjs
+
+	* yum/: __init__.py, plugins.py: Plugin type support:	  - plugins
+	can specify what type they are via the plugin_type attribute	 -
+	the type(s) of plugin to load can be specified when calling	 
+	doPluginSetup() Updated plugin TODO.
+
+2005-06-04 01:13  skvidal
+
+	* bin/yum.py: rather funny little patch
+
+2005-06-03 17:21  skvidal
+
+	* output.py: check in terje rosten's patch for making timestamp in
+	log be consistently C locale.
+
+2005-06-03 16:10  skvidal
+
+	* yum/config.py: 
+	fix for bug 464
+
+2005-06-02 11:33  pmatilai
+
+	* yum/: __init__.py, plugins.py: Add preresolve and postresolve
+	slots to plugin interface, bump up plugin api version.
+
+2005-05-30 01:49  skvidal
+
+	* cli.py: 
+	make update, install, erase commands case sensitive rather than
+	insensitive.  yum install G* should not catch all g* and G*, just
+	G*
+
+2005-05-29 02:14  skvidal
+
+	* cli.py, output.py, shell.py, yum/__init__.py, yum/depsolve.py: 
+	deplist function from Chip Turner: yum deplist pkgglob returns a
+	list of package deps and the packages that satisfy those deps
+
+2005-05-28 23:16  skvidal
+
+	* yum/groups.py: 
+	added in Sean Dilda's patch to speed along the groups parsing and
+	fix a bug for mandatory metapackages
+
+2005-05-24 10:53  katzj
+
+	* yum/: config.py, depsolve.py: installonlypkgs should be matched
+	against provides also instead of just the explicit list of kernel,
+	kernel-modules. fixes the kernel-*-devel problem  (#155988)
+
+2005-05-23 15:22  katzj
+
+	* rpmUtils/arch.py: fix typo noticed by Terje Rosten
+	<terje.rosten@ntnu.no>
+
+2005-05-23 10:54  katzj
+
+	* rpmUtils/arch.py: add support for alpha arches from Balint
+	Cristian (#158550)
+
+2005-05-19 23:10  skvidal
+
+	* output.py: 
+	remove the truncation from the output
+
+2005-05-10 14:21  katzj
+
+	* yum/config.py: revert last change -- I fixed the kernel-*-devel
+	to provide kernel-devel
+
+2005-05-09 23:54  skvidal
+
+	* yum/config.py: 
+	kernel-smp-devel to installonly list
+
+2005-05-09 22:18  katzj
+
+	* ChangeLog, rpmUtils/arch.py: 2005-05-09  Jeremy Katz 
+	<katzj@redhat.com>
+	
+		* rpmUtils/arch.py (getBaseArch): ppc64 and sparc64 are odd
+	in
+		that you want a mostly ppc and sparc userland respectively.
+	 make
+		$basearch realize that.
+
+2005-05-09 20:57  skvidal
+
+	* shell.py: 
+	make sure you solve before you run (whoops) thanks to pjones for
+	the fix
+
+2005-05-07 23:05  mjs
+
+	* cli.py, docs/yum.8, yum/__init__.py, yum/plugins.py: Added
+	--noplugins command line option.
+
+2005-05-07 00:24  mjs
+
+	* yum/plugins.py: Allow plugins direct access to RepoStorage
+	instance rather than try and mimic it's API. This break backwards
+	compat. API_VERSION is now 2.0.
+
+2005-05-07 00:23  mjs
+
+	* yum/repos.py: RepoStorage.__str__() wasn't returning a string!
+
+2005-05-05 06:35  mjs
+
+	* cli.py, yummain.py, yum/__init__.py, yum/plugins.py: - Converted
+	command line option parsing from getopt to optparse module - Allow
+	plugins to modify command line options and query parsed command
+	line
+
+2005-04-25 05:39  gijs
+
+	* rpmUtils/__init__.py: Fixed an inconsistency between rpm and yum,
+	allow unversioned provides to fulfill versioned requires.
+
+2005-04-21 17:58  mjs
+
+	* yum/plugins.py: Fixed subtle problem that meant config slot check
+	was not working in Python 2.2.	Updated TODO items.
+
+2005-04-19 00:23  mjs
+
+	* docs/: yum.8, yum.conf.5: End user documentation for plugins.
+
+2005-04-15 00:02  mjs
+
+	* yum/: __init__.py, plugins.py: Panu's patch for prereposetup and
+	postreposetup slots.  Increased major API version number as the
+	above breaks backward compat.  Added getRpmDB() and
+	getPackageByNevra()
+
+2005-04-13 23:26  skvidal
+
+	* yum/__init__.py: 
+	obvious typo on exception raising
+
+2005-04-13 10:21  gijs
+
+	* cli.py, docs/yum.8: Updated yum.8 manpage and added missing
+	commands to the --help output of cli.py.
+
+2005-04-06 23:58  skvidal
+
+	* yum.spec: 
+	elementtree dep
+
+2005-04-05 02:13  skvidal
+
+	* yum/__init__.py: 
+	fix for rh bug: 153127
+
+2005-04-04 14:16  skvidal
+
+	* yum.spec: typo in spec file
+
+2005-04-04 14:13  skvidal
+
+	* ChangeLog, yum-daily.spec, yum.spec, yum/__init__.py: 
+	mark as 2.3.2
 
 2005-04-04 10:31  skvidal
 
