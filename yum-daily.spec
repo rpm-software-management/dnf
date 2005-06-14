@@ -1,7 +1,7 @@
 %define date #DATE#
 Summary: RPM installer/updater
 Name: yum
-Version: 2.3.2
+Version: 2.3.3
 Release: %{date}
 License: GPL
 Group: System Environment/Base
