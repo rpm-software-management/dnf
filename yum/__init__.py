@@ -698,11 +698,11 @@ class YumBase(depsolve.Depsolve):
                     result = 1
                 else:
                     result = 2
-                msg = 'public key not available for %s' % localfn
+                msg = 'Public key for %s is not installed' % localfn
 
             elif sigresult == 2:
                 result = 2
-                msg = 'problem opening package %s' % localfn
+                msg = 'Problem opening package %s' % localfn
 
             elif sigresult == 3:
                 if hasgpgkey:
@@ -710,11 +710,11 @@ class YumBase(depsolve.Depsolve):
                 else:
                     result = 2
                 result = 1
-                msg = 'untrusted public key for %s' % localfn
+                msg = 'Public key for %s is not trusted' % localfn
 
             elif sigresult == 4:
                 result = 2 
-                msg = 'unsigned package %s' % localfn
+                msg = 'Package %s is not signed' % localfn
             
         else:
             result =0

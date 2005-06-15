@@ -458,14 +458,15 @@ def cfgParserRepo(section, yumconfig, cfgparser):
     thisrepo.set('mirrorlistfn', mirrorlistfn)
     thisrepo.set('baseurls', baseurls)
 
-    gpgkey = cfgparser._getoption(section, 'gpgkey', '')
-    if gpgkey:
+    # Parse and check gpgkey URLs
+    gpgkeys = cfgparser._getoption(section, 'gpgkey', '')
+    gpgkeys = variableReplace(yumconfig.yumvar, gpgkeys)
+    gpgkeys = parseList(gpgkeys)
+    for gpgkey in gpgkeys:
         (s,b,p,q,f,o) = urlparse.urlparse(gpgkey)
         if s not in ('http', 'ftp', 'file', 'https'):
-            print 'gpgkey must be ftp, http[s], or file URL, ignoring - %s' % gpgkey
-            gpgkey = ''
-    gpgkey = variableReplace(yumconfig.yumvar, gpgkey)
-    thisrepo.set('gpgkey', gpgkey)
+            raise Errors.ConfigError, 'gpgkey must be ftp, http[s], or file URL: %s' % gpgkey
+    thisrepo.set('gpgkey', gpgkeys)
 
     excludelist = cfgparser._getoption(section, 'exclude', [])
     excludelist = variableReplace(yumconfig.yumvar, excludelist)

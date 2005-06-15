@@ -251,6 +251,10 @@ key hasn't been imported into the RPM database. If this option is set, yum will
 automatically import the key from the specified URL. You will be prompted before
 the key is installed unless the \fBassumeyes\fR option is set.
 
+Multiple URLs may be specified here in the same manner as the \fBbaseurl\fR
+option (above). If a GPG key is required to install a package from a
+repository, all keys specified for that repository will be installed.
+
 .IP \fBexclude\fR
 Same as the [main] \fBexclude\fR option but only for this repository.
 Substitution variables, described below, are honored here.
