@@ -34,6 +34,7 @@ import urlgrabber.grabber
 from repos import variableReplace, Repository
 from constants import *
 
+HTTP_CACHING_VALS = ('none', 'packages', 'all')
 
 class CFParser(ConfigParser.ConfigParser):
     """wrapper around ConfigParser to provide two simple but useful functions:
@@ -78,6 +79,17 @@ class CFParser(ConfigParser.ConfigParser):
             return self.getfloat(section, option)
         except (ConfigParser.NoSectionError, ConfigParser.NoOptionError), e:            
             return default
+
+    def getselection(self, section, option, default=None, allowed=()):
+        '''Get a string value that is only allowed to take specific values
+
+        Will raise ValueError if the value given is not allowed.
+        '''
+        val = self._getoption(section, option, default)
+        if val not in allowed:
+            raise ValueError('"%s" is not a valid value for %s' % (val, 
+                option))
+        return val
 
     def getbytes(self, section, option, default=None):
         """Get a friendly bytes/bandwidth option as bytes. 
@@ -218,7 +230,8 @@ class yumconf(object):
                          ('exactarchlist', ['kernel', 'kernel-smp', 'glibc',
                                             'kernel-hugemem', 'kernel-enterprise',
                                             'kernel-bigmem']),
-                         ('tsflags', [])]
+                         ('tsflags', []),
+                         ]
                          
         optionbools = [('assumeyes', 'False'),
                        ('alwaysprompt', 'True'),
@@ -319,6 +332,11 @@ class yumconf(object):
             self.configdata[option] = value
             setattr(self, option, value)
 
+        # http_caching needs special handling
+        value = self.cfg.getselection('main', 'http_caching', 'all', 
+                HTTP_CACHING_VALS)
+        setattr(self, 'http_caching', value)
+        self.configdata['http_caching'] = value
         
         # weird ones
         for option in ['commands', 'installonlypkgs', 'kernelpkgnames',
@@ -457,6 +475,13 @@ def cfgParserRepo(section, yumconfig, cfgparser):
     mirrorlistfn = variableReplace(yumconfig.yumvar, mirrorlistfn)
     thisrepo.set('mirrorlistfn', mirrorlistfn)
     thisrepo.set('baseurls', baseurls)
+
+    thisrepo.set('http_caching', cfgparser.getselection(
+            section, 'http_caching', 
+            yumconfig.getConfigOption('http_caching'),
+            HTTP_CACHING_VALS
+            )
+        )
 
     # Parse and check gpgkey URLs
     gpgkeys = cfgparser._getoption(section, 'gpgkey', '')

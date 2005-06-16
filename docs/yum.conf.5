@@ -149,6 +149,21 @@ Either `0' or `1'. Set whether HTTP keepalive should be used for HTTP/1.1
 servers that support it. This can improve transfer speeds by using one
 connection when downloading multiple files from a repository. Default is `1'.
 
+.IP \fBhttp_caching\fR
+Determines how upstream HTTP caches are instructed to handle any HTTP downloads
+that Yum does. This option can take the following values:
+
+`all' means that all HTTP downloads should be cached.
+
+`packages' means that only RPM package downloads should be cached (but not
+repository metadata downloads).
+
+`none' means that no HTTP downloads should be cached.
+
+The default is `all'. This is recommended unless you are experiencing caching
+related issues. Try to at least use `packages' to minimise load on repository
+servers.
+
 .IP \fBthrottle \fR
 Enable bandwidth throttling for downloads. This option can be expressed as a
 absolute data rate in bytes/sec. An SI prefix (k, M or G) may be appended to the
@@ -285,6 +300,9 @@ sequentially.
 Either `1' or `0'. This tells yum whether or not HTTP/1.1 keepalive should be
 used with this repository. See the global option in the [main] section above
 for more information.
+
+.IP \fBhttp_caching\fR
+Overrides the \fBhttp_caching\fR option from the [main] section for this repository.
 
 .IP \fBretries\fR
 Overrides the \fBretries\fR option from the [main] section for this repository.

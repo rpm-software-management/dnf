@@ -582,7 +582,9 @@ class YumBase(depsolve.Depsolve):
                 mylocal = repo.get(relative=remote,
                                    local=local,
                                    checkfunc=checkfunc,
-                                   text=text)
+                                   text=text,
+                                   cache=repo.http_caching != 'none',
+                                   )
             except Errors.RepoError, e:
                 if not errors.has_key(po):
                     errors[po] = []
@@ -655,8 +657,10 @@ class YumBase(depsolve.Depsolve):
         
         try:
             checkfunc = (self.verifyHeader, (po, 1), {})
-            hdrpath = repo.get(relative=remote, local=local, start=start, reget=None, 
-                               end=end, checkfunc=checkfunc, copy_local=1)
+            hdrpath = repo.get(relative=remote, local=local, start=start,
+                    reget=None, end=end, checkfunc=checkfunc, copy_local=1,
+                    cache=repo.http_caching != 'none',
+                    )
         except Errors.RepoError, e:
             saved_repo_error = e
             try:

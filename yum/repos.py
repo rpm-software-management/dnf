@@ -14,8 +14,6 @@
 # Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 # Copyright 2004 Duke University 
 
-
-
 import os
 import os.path
 import types
@@ -533,7 +531,7 @@ class Repository:
         self.setupGrab() # update the grabber for the urls
 
     def get(self, url=None, relative=None, local=None, start=None, end=None,
-            copy_local=0, checkfunc=None, text=None, reget='simple'):
+            copy_local=0, checkfunc=None, text=None, reget='simple', cache=True):
         """retrieve file from the mirrorgroup for the repo
            relative to local, optionally get range from
            start to end, also optionally retrieve from a specific baseurl"""
@@ -543,6 +541,11 @@ class Repository:
         # the mirror, raise errors as need be
         # if url is None do a grab via the mirror group/grab for the repo
         # return the path to the local file
+
+        if cache:
+            headers = None
+        else:
+            headers = (('Pragma', 'no-cache'),)
 
         if local is None or relative is None:
             raise Errors.RepoError, \
@@ -574,23 +577,18 @@ class Repository:
                             reget = reget,
                             proxies = prxy,
                             failure_callback = self.failure_obj,
-                            timeout = self.timeout,
-                            checkfunc = checkfunc)
+                            timeout=self.timeout,
+                            checkfunc=checkfunc,
+                            http_headers=headers,
+                            )
             
             remote = url + '/' + relative
 
             try:
                 result = ug.urlgrab(remote, local,
-                                    text = text,
-                                    range = (start, end), 
-                                    retry = self.retries,
-                                    copy_local = copy_local,
-                                    reget = reget,
-                                    proxies = prxy,
-                                    failure_callback = self.failure_obj,
-                                    timeout = self.timeout,
-                                    checkfunc = checkfunc)
-                                    
+                                    text=text,
+                                    range=(start, end), 
+                                    )
             except URLGrabError, e:
                 raise Errors.RepoError, \
                     "failed to retrieve %s from %s\nerror was %s" % (relative, self.id, e)
@@ -602,7 +600,9 @@ class Repository:
                                            range = (start, end),
                                            copy_local=copy_local,
                                            reget = reget,
-                                           checkfunc=checkfunc)
+                                           checkfunc=checkfunc,
+                                           http_headers=headers,
+                                           )
             except URLGrabError, e:
                 raise Errors.RepoError, "failure: %s from %s: %s" % (relative, self.id, e)
                 
@@ -625,7 +625,10 @@ class Repository:
         else:
             try:
                 result = self.get(relative=remote, local=local,
-                                  copy_local=1, text=text, reget=None)
+                                  copy_local=1, text=text, reget=None, 
+                                  cache=self.http_caching == 'all',
+                                  )
+
             except URLGrabError, e:
                 raise Errors.RepoError, 'Error downloading file %s: %s' % (local, e)
 
@@ -710,7 +713,8 @@ class Repository:
         try:
             checkfunc = (self._checkMD, (mdtype,), {})
             local = self.get(relative=remote, local=local, copy_local=1,
-                             checkfunc=checkfunc, reget=None)
+                             checkfunc=checkfunc, reget=None, 
+                             cache=self.http_caching == 'all')
         except URLGrabError, e:
             raise Errors.RepoError, \
                 "Could not retrieve %s matching remote checksum from %s" % (local, self)
