@@ -58,13 +58,15 @@ class RpmDBHolder:
         
     def addDB(self, ts):
         self.ts = ts
-        self.match_on_index = 0
+        self.match_on_index = 1
         
         try:
             mi = self.ts.dbMatch(0, 1)
             hdr = mi.next()
-        except (TypeError, StopIteration), e:
+        except TypeError, e:
             self.match_on_index = 0
+        except StopIteration, e:
+            pass
         else:
             self.match_on_index = 1
             
