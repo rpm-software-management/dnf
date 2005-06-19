@@ -337,6 +337,7 @@ class Repository:
         self.proxy_dict = {}
         
         # throw in some stubs for things that will be set by the config class
+        self.basecachedir = ""
         self.cachedir = ""
         self.pkgdir = ""
         self.hdrdir = ""
@@ -435,6 +436,18 @@ class Repository:
     def listSetKeys(self):
         return self.setkeys
     
+    def defineDirs(self):
+        """define the pkgdir, hdrdir and cachedir based on the contents of the
+           basecachedir"""
+
+        cachedir = os.path.join(self.basecachedir, self.id)
+        pkgdir = os.path.join(cachedir, 'packages')
+        hdrdir = os.path.join(cachedir, 'headers')
+        self.set('cachedir', cachedir)
+        self.set('pkgdir', pkgdir)
+        self.set('hdrdir', hdrdir)
+
+        
     def doProxyDict(self):
         if self.proxy_dict:
             return

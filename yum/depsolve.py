@@ -353,6 +353,7 @@ class Depsolve:
     def _requiringFromInstalled(self, requiringPkg, requirement, errorlist):
         """processes the dependency resolution for a dep where the requiring 
            package is installed"""
+           
         (name, arch, epoch, ver, rel) = requiringPkg
         requiringPo = self.getInstalledPackageObject(requiringPkg)
         

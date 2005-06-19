@@ -503,12 +503,9 @@ def cfgParserRepo(section, yumconfig, cfgparser):
     includelist = parseList(includelist)
     thisrepo.set('includepkgs', includelist)
 
-    cachedir = os.path.join(yumconfig.getConfigOption('cachedir'), section)
-    pkgdir = os.path.join(cachedir, 'packages')
-    hdrdir = os.path.join(cachedir, 'headers')
-    thisrepo.set('cachedir', cachedir)
-    thisrepo.set('pkgdir', pkgdir)
-    thisrepo.set('hdrdir', hdrdir)
+    thisrepo.set('basecachedir', yumconfig.getConfigOption('cachedir'))
+    
+    thisrepo.defineDirs()
     
     return thisrepo
 
