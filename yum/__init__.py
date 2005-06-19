@@ -436,6 +436,7 @@ class YumBase(depsolve.Depsolve):
             
         root = self.conf.installroot
         lockfile = root + '/' + lockfile # lock in the chroot
+        lockfile = os.path.normpath(lockfile) # get rid of silly preceding extra /
         
         mypid=str(os.getpid())    
         while not self._lock(lockfile, mypid, 0644):
