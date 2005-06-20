@@ -208,10 +208,16 @@ class RepoStorage:
         return returnlist
 
     def setCache(self, cacheval):
-        """set's cache value in all repos"""
+        """sets cache value in all repos"""
         self.cache = cacheval
         for repo in self.repos.values():
             repo.cache = cacheval
+
+    def setCacheDir(self, cachedir):
+        """sets the cachedir value in all repos"""
+
+        for repo in self.repos.values():
+            repo.basecachedir = cachedir
 
     def setProgressBar(self, obj):
         """set's the progress bar for downloading files from repos"""
@@ -436,18 +442,6 @@ class Repository:
     def listSetKeys(self):
         return self.setkeys
     
-    def defineDirs(self):
-        """define the pkgdir, hdrdir and cachedir based on the contents of the
-           basecachedir"""
-
-        cachedir = os.path.join(self.basecachedir, self.id)
-        pkgdir = os.path.join(cachedir, 'packages')
-        hdrdir = os.path.join(cachedir, 'headers')
-        self.set('cachedir', cachedir)
-        self.set('pkgdir', pkgdir)
-        self.set('hdrdir', hdrdir)
-
-        
     def doProxyDict(self):
         if self.proxy_dict:
             return
@@ -503,6 +497,14 @@ class Repository:
 
     def dirSetup(self):
         """make the necessary dirs, if possible, raise on failure"""
+
+        cachedir = os.path.join(self.basecachedir, self.id)
+        pkgdir = os.path.join(cachedir, 'packages')
+        hdrdir = os.path.join(cachedir, 'headers')
+        self.set('cachedir', cachedir)
+        self.set('pkgdir', pkgdir)
+        self.set('hdrdir', hdrdir)
+        
         for dir in [self.cachedir, self.hdrdir, self.pkgdir]:
             if self.cache == 0:
                 if os.path.exists(dir) and os.path.isdir(dir):

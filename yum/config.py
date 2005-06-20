@@ -505,8 +505,6 @@ def cfgParserRepo(section, yumconfig, cfgparser):
 
     thisrepo.set('basecachedir', yumconfig.getConfigOption('cachedir'))
     
-    thisrepo.defineDirs()
-    
     return thisrepo
 
 
