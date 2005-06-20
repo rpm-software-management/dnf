@@ -61,12 +61,15 @@ class RpmDBHolder:
         self.match_on_index = 1
         
         try:
-            mi = self.ts.dbMatch(0, 1)
+            # we need the find a known index so we can test if
+            # rpm/rpm-python allows us to grab packages by db index.
+            mi = self.ts.dbMatch()
             hdr = mi.next()
-        except TypeError, e:
+            known_index = mi.instance()
+            mi = self.ts.dbMatch(0, known_index)
+            hdr = mi.next()
+        except (TypeError, StopIteration), e:
             self.match_on_index = 0
-        except StopIteration, e:
-            pass
         else:
             self.match_on_index = 1
             
