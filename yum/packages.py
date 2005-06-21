@@ -40,6 +40,7 @@ def buildPkgRefDict(pkgs):
        dict[name-1] = (name, i386, 0, 1, 1)       
        dict[name-1-1] = (name, i386, 0, 1, 1)
        dict[0:name-1-1.i386] = (name, i386, 0, 1, 1)
+       dict[name-0:1-1.i386] = (name, i386, 0, 1, 1)
        """
     pkgdict = {}
     for pkg in pkgs:
@@ -50,8 +51,9 @@ def buildPkgRefDict(pkgs):
         nameVerRelArch = '%s-%s-%s.%s' % (n, v, r, a)
         nameVer = '%s-%s' % (n, v)
         nameVerRel = '%s-%s-%s' % (n, v, r)
-        full = '%s:%s-%s-%s.%s' % (e, n, v, r, a)
-        for item in [name, nameArch, nameVerRelArch, nameVer, nameVerRel, full]:
+        envra = '%s:%s-%s-%s.%s' % (e, n, v, r, a)
+        nevra = '%s-%s:%s-%s.%s' % (n, e, v, r, a)
+        for item in [name, nameArch, nameVerRelArch, nameVer, nameVerRel, envra, nevra]:
             if not pkgdict.has_key(item):
                 pkgdict[item] = []
             pkgdict[item].append(pkg)
