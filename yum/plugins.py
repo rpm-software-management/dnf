@@ -105,14 +105,14 @@ class YumPlugins:
     Manager class for Yum plugins.
     '''
 
-    def __init__(self, base, searchpath, optparser=None, typefilter=None):
+    def __init__(self, base, searchpath, optparser=None, types=None):
         '''Initialise the instance.
 
         @param base: The
         @param searchpath: A list of paths to look for plugin modules.
         @param optparser: The OptionParser instance for this run (optional).
             Use to allow plugins to extend command line options.
-        @param typefilter: A sequence specifying the types of plugins to load.
+        @param types: A sequence specifying the types of plugins to load.
             This should be sequnce containing one or more of the TYPE_...
             constants. If None (the default), all plugins will be loaded.
         '''
@@ -121,10 +121,10 @@ class YumPlugins:
         self.base = base
         self.optparser = optparser
         self.cmdline = (None, None)
-        if not typefilter:
-            typefilter = ALL_TYPES
+        if not types:
+            types = ALL_TYPES
 
-        self._importplugins(typefilter)
+        self._importplugins(types)
 
         self.opts = {}
         self.cmdlines = {}
@@ -166,7 +166,7 @@ class YumPlugins:
             _, conf = self._plugins[modname]
             func(conduitcls(self, self.base, conf, **kwargs))
 
-    def _importplugins(self, typefilter):
+    def _importplugins(self, types):
         '''Load plugins matching the given types.
         '''
 
@@ -181,9 +181,9 @@ class YumPlugins:
             if not os.path.isdir(dir):
                 continue
             for modulefile in glob.glob('%s/*.py' % dir):
-                self._loadplugin(modulefile, typefilter)
+                self._loadplugin(modulefile, types)
 
-    def _loadplugin(self, modulefile, typefilter):
+    def _loadplugin(self, modulefile, types):
         '''Attempt to import a plugin module and register the hook methods it
         uses.
         '''
@@ -219,7 +219,7 @@ class YumPlugins:
         if len(plugintypes) < 1:
             return
         for plugintype in plugintypes:
-            if plugintype not in typefilter:
+            if plugintype not in types:
                 return
 
         self.base.log(2, 'Loading "%s" plugin' % modname)
