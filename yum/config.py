@@ -740,32 +740,35 @@ def main(args):
     # read each of them in using confpp, then parse them same as any other repo
     # section - as above.
 
-    reposdir = conf.reposdir
-    if os.path.exists(conf.installroot + '/' + reposdir):
-        reposdir = conf.installroot + '/' + reposdir
-    
-    reposglob = reposdir + '/*.repo'
-    if os.path.exists(reposdir) and os.path.isdir(reposdir):
-        repofn = glob.glob(reposglob)
-        repofn.sort()
-        
-        for fn in repofn:
-            if not os.path.isfile(fn):
-                continue
+    reposdirs = []
+    for dir in conf.reposdir:
+        if os.path.exists(conf.installroot + '/' + dir):
+            reposdirs.append(conf.installroot + '/' + dir)
+
+    repofn = []
+    for reposdir in reposdirs:
+        if os.path.exists(reposdir) and os.path.isdir(reposdir):
+            reposglob = reposdir + '/*.repo'
+            repofn.extend(glob.glob(reposglob))
+
+    repofn.sort()
+    for fn in repofn:
+        if not os.path.isfile(fn):
+            continue
+        try:
+            cfg, sections = parseDotRepo(fn)
+        except Errors.ConfigError, e:
+            print >> sys.stderr, e
+            continue
+
+        for section in sections:
             try:
-                cfg, sections = parseDotRepo(fn)
-            except Errors.ConfigError, e:
+                thisrepo = cfgParserRepo(section, conf, cfg)
+            except (Errors.RepoError, Errors.ConfigError), e:
                 print >> sys.stderr, e
                 continue
-
-            for section in sections:
-                try:
-                    thisrepo = cfgParserRepo(section, conf, cfg)
-                except (Errors.RepoError, Errors.ConfigError), e:
-                    print >> sys.stderr, e
-                    continue
-                else:
-                    reposlist.append(thisrepo)
+            else:
+                reposlist.append(thisrepo)
 
     # got our list of repo objects
     reposlist.sort()
