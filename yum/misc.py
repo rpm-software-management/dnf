@@ -7,9 +7,13 @@ import base64
 import struct
 import re
 import pgpmsg
+import tempfile
+import glob
 import rpm
-import rpmUtils
+import pwd
+from stat import *
 
+import rpmUtils
 from Errors import MiscError
 
 ###########
@@ -254,3 +258,28 @@ def keyInstalled(ts, keyid, timestamp):
                 return 2
 
     return -1
+
+def getCacheDir(tmpdir='/var/tmp'):
+    """return a path to a valid and safe cachedir - only used when not running
+       as root or when --tempcache is set"""
+    
+    uid = os.geteuid()
+    try:
+        usertup = pwd.getpwuid(uid)
+        username = usertup[0]
+    except KeyError:
+        return None # if it returns None then, well, it's bollocksed
+
+    # check for /var/tmp/yum-username-* - 
+    prefix = 'yum-%s-' % username    
+    dirpath = '%s/%s*' % (tmpdir, prefix)
+    cachedirs = glob.glob(dirpath)
+    
+    for thisdir in cachedirs:
+        stats = os.lstat(thisdir)
+        if S_ISDIR(stats[0]) and S_IMODE(stats[0]) == 448 and stats[4] == uid:
+            return thisdir
+
+    # make the dir (tempfile.mkdtemp())
+    cachedir = tempfile.mkdtemp(prefix=prefix, dir=tmpdir)
+    return cachedir
