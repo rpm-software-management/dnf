@@ -41,10 +41,11 @@ from urlgrabber.grabber import URLGrabError
 import depsolve
 import plugins
 
+
 from packages import parsePackages, YumLocalPackage, YumInstalledPackage, bestPackage
 from repomd import mdErrors
 from constants import *
-
+from repomd.packageSack import ListPackageSack
 
 __version__ = '2.3.3'
 
@@ -1266,10 +1267,11 @@ class YumBase(depsolve.Depsolve):
             del fo
             return 1
 
-    def returnPackageByDep(self, depstring):
+    def returnPackagesByDep(self, depstring):
         """Pass in a generic [build]require string and this function will 
-           pass back the best(or first) package it finds providing that dep."""
+           pass back the packages it finds providing that dep."""
         
+        results = []
         self.doRepoSetup()
         # parse the string out
         #  either it is 'dep (some operator) e:v-r'
@@ -1285,22 +1287,40 @@ class YumBase(depsolve.Depsolve):
                 try:
                     depname, flagsymbol, depver = depstring.split()
                 except ValueError, e:
-                    raise Errors.YumBaseError, 'No Packages found for %s - have you tried quoting the string?' % depstring
+                    raise Errors.YumBaseError, 'Invalid versioned dependency string, try quoting it.'
                 if not SYMBOLFLAGS.has_key(flagsymbol):
-                    raise Errors.YumBaseError, 'No Packages found for %s' % depstring
+                    raise Errors.YumBaseError, 'Invalid version flag'
                 depflags = SYMBOLFLAGS[flagsymbol]
                 
         sack = self.whatProvides(depname, depflags, depver)
-        if len(sack) < 1:
-            raise Errors.YumBaseError, 'No Packages found for %s' % depstring
+        results = sack.returnPackages()
+        return results
         
-        if len(sack) == 1:
-            for po in sack:
-                return po
+
+    def returnPackageByDep(self, depstring):
+        """Pass in a generic [build]require string and this function will 
+           pass back the best(or first) package it finds providing that dep."""
         
-        pkglist = sack.returnNewestByNameArch()
-        best = pkglist[0]
-        for pkg in pkglist[1:]:
+        try:
+            pkglist = self.returnPackagesByDep(depstring)
+        except Errors.YumBaseError, e:
+            raise Errors.YumBaseError, 'No Package found for %s' % depstring
+        
+        
+        return self.bestPackageFromList(pkglist)
+        
+    def bestPackageFromList(self, pkglist):
+        """take list of package objects and return the best package object.
+           If the list is empty, raise Errors.YumBaseError"""
+        
+        if len(pkglist) == 1:
+            return pkglist[0]
+        
+        mysack = ListPackageSack() 
+        bestlist = mysack.returnNewestByNameArch() # get rid of all lesser vers
+        
+        best = bestlist[0]
+        for pkg in bestlist[1:]:
             if len(pkg.name) < len(best.name): # shortest name silliness
                 best = pkg
                 continue
@@ -1312,38 +1332,6 @@ class YumBase(depsolve.Depsolve):
             if arch == pkg.arch:
                 best = pkg
                 continue
-        
-        return best
-    
-    def bestPackageFromList(self, pkglist):
-        """take list of package objects and return the best package object.
-           If the list is empty, raise Errors.YumBaseError"""
-        
-        # duh
-        if len(pkglist) == 1:
-            for po in pkglist:
-                return po
-        
-        best = pkglist[0]
-        for pkg in pkglist[1:]:
-            if len(pkg.name) < len(best.name): # shortest name silliness
-                best = pkg
-                continue
-            elif len(pkg.name) > len(best.name):
-                continue
-            else:
-                if pkg.name == best.name:
-                    bestup = bestPackage(pkg.pkgtup, best.pkgtup)
-                    if best.pkgtup == bestup:
-                        continue
-                    elif pkg.pkgtup == bestup:
-                        best = pkg
-                        continue
-                else:
-                    mylist=[best, pkg]
-                    mylist.sort(cmp=self.sortPkgObj) # first name, alphabetically
-                    best = mylist[0]
-                    continue
 
         return best
-        
+
