@@ -133,7 +133,7 @@ an empty list.
 
 .IP \fBrecent\fR
 Number of days back to look for `recent' packages added to a repository.
-Used by the \fBlist recent\fR and \fBgenerate-rss\fR commands. Default is `7'.
+Used by the \fBlist recent\fR command. Default is `7'.
 
 .IP \fBretries\fR
 Set the number of times any attempt to retrieve a file should retry before 
@@ -143,6 +143,11 @@ returning an error. Setting this to `0' makes yum try forever. Default is `6'.
 Either `0' or `1'. Set whether HTTP keepalive should be used for HTTP/1.1
 servers that support it. This can improve transfer speeds by using one
 connection when downloading multiple files from a repository. Default is `1'.
+
+.IP \fBtimeout \fR
+Number of seconds to wait for a connection before timing out. Defaults to
+30 seconds. This may be too short of a time for extremely overloaded
+sites.
 
 .IP \fBhttp_caching\fR
 Determines how upstream HTTP caches are instructed to handle any HTTP downloads
@@ -295,6 +300,9 @@ sequentially.
 Either `1' or `0'. This tells yum whether or not HTTP/1.1 keepalive should be
 used with this repository. See the global option in the [main] section above
 for more information.
+
+.IP \fBtimeout\fR
+Overrides the \fBtimeout\fR option from the [main] section for this repository.
 
 .IP \fBhttp_caching\fR
 Overrides the \fBhttp_caching\fR option from the [main] section for this repository.
