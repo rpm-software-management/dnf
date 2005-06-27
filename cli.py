@@ -1525,8 +1525,8 @@ def _filtercmdline(novalopts, valopts, args):
             out.extend([a, next])
        
         else:
-            # Check for single letter options that take an option where the
-            # value right up against the option
+            # Check for single letter options that take a value, where the
+            # value is right up against the option
             for opt in valopts:
                 if len(opt) == 2 and a.startswith(opt):
                     out.append(a)
