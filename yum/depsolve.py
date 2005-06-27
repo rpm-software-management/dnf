@@ -42,7 +42,8 @@ class Depsolve:
         ts_flags_to_rpm = { 'noscripts': rpm.RPMTRANS_FLAG_NOSCRIPTS,
                             'notriggers': rpm.RPMTRANS_FLAG_NOTRIGGERS,
                             'nodocs': rpm.RPMTRANS_FLAG_NODOCS,
-                            'test': rpm.RPMTRANS_FLAG_TEST}
+                            'test': rpm.RPMTRANS_FLAG_TEST,
+                            'repackage': rpm.RPMTRANS_FLAG_REPACKAGE}
         
         self.ts.setFlags(0) # reset everything.
         

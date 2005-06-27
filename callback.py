@@ -135,26 +135,43 @@ class RPMInstallCallback:
 
         elif what == rpm.RPMCALLBACK_INST_PROGRESS:
             if h is not None:
-                hdr, rpmloc = h
-                if total == 0:
-                    percent = 0
-                else:
-                    percent = (bytes*100L)/total
-                pkgtup = self._dopkgtup(hdr)
-                txmbr = self.tsInfo.getMembers(pkgtup=pkgtup)[0]
-                try:
-                    process = self.myprocess[txmbr.output_state]
-                except KeyError, e:
-                    print "Error: invalid output state: %s for %s" % \
-                       (txmbr.output_state, hdr['name'])
-                else:
+                # If h is a string, we're repackaging.
+                # Why the RPMCALLBACK_REPACKAGE_PROGRESS flag isn't set, I have no idea
+                if type(h) == type(""):
+                    if total == 0:
+                        percent = 0
+                    else:
+                        percent = (bytes*100L)/total
                     if self.output and sys.stdout.isatty():
                         fmt = self._makefmt(percent)
-                        msg = fmt % (process, hdr['name'])
+                        msg = fmt % ('Repackage', h)
+                        if bytes == total:
+                            msg = msg + "\n"
+                            
                         sys.stdout.write(msg)
                         sys.stdout.flush()
-                        if bytes == total:
-                            print " "
+                else:
+                    hdr, rpmloc = h
+                    if total == 0:
+                        percent = 0
+                    else:
+                        percent = (bytes*100L)/total
+                    pkgtup = self._dopkgtup(hdr)
+                    txmbr = self.tsInfo.getMembers(pkgtup=pkgtup)[0]
+                    try:
+                        process = self.myprocess[txmbr.output_state]
+                    except KeyError, e:
+                        print "Error: invalid output state: %s for %s" % \
+                           (txmbr.output_state, hdr['name'])
+                    else:
+                        if self.output and sys.stdout.isatty():
+                            fmt = self._makefmt(percent)
+                            msg = fmt % (process, hdr['name'])
+                            sys.stdout.write(msg)
+                            sys.stdout.flush()
+                            if bytes == total:
+                                print " "
+
 
         elif what == rpm.RPMCALLBACK_UNINST_START:
             pass
@@ -178,3 +195,11 @@ class RPMInstallCallback:
                 msg = fmt % (process, h)
                 sys.stdout.write(msg + "\n")
                 sys.stdout.flush()
+
+        elif what == rpm.RPMCALLBACK_REPACKAGE_START:
+            pass
+        elif what == rpm.RPMCALLBACK_REPACKAGE_STOP:
+            pass
+        elif what == rpm.RPMCALLBACK_REPACKAGE_PROGRESS:
+            pass
+
