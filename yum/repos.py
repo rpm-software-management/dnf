@@ -16,7 +16,6 @@
 
 import os
 import os.path
-import types
 import re
 import fnmatch
 import urlparse
@@ -647,8 +646,7 @@ class Repository:
                                   text=text,
                                   reget=None,
                                   checkfunc=checkfunc,
-                                  cache=self.http_caching == 'all',
-                                  )
+                                  cache=self.http_caching == 'all')
 
             except URLGrabError, e:
                 raise Errors.RepoError, 'Error downloading file %s: %s' % (local, e)
