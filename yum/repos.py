@@ -20,6 +20,7 @@ import types
 import re
 import fnmatch
 import urlparse
+import types
 
 import Errors
 from urlgrabber.grabber import URLGrabber
@@ -638,21 +639,37 @@ class Repository:
             else:
                 result = local
         else:
+            checkfunc = (self._checkRepoXML, (), {})
             try:
-                result = self.get(relative=remote, local=local,
-                                  copy_local=1, text=text, reget=None, 
+                result = self.get(relative=remote,
+                                  local=local,
+                                  copy_local=1,
+                                  text=text,
+                                  reget=None,
+                                  checkfunc=checkfunc,
                                   cache=self.http_caching == 'all',
                                   )
 
             except URLGrabError, e:
                 raise Errors.RepoError, 'Error downloading file %s: %s' % (local, e)
-
+        
         try:
             self.repoXML = repoMDObject.RepoMD(self.id, result)
         except mdErrors.RepoMDError, e:
             raise Errors.RepoError, 'Error importing repomd.xml from %s: %s' % (self, e)
+            
+    def _checkRepoXML(self, fo):
+        if type(fo) is types.InstanceType:
+            filepath = fo.filename
+        else:
+            filepath = fo
+        
+        try:
+            foo = repoMDObject.RepoMD(self.id, filepath)
+        except mdErrors.RepoMDError, e:
+            raise URLGrabError(-1, 'Error importing repomd.xml for %s: %s' % (self, e))
 
-    
+
     def _checkMD(self, fn, mdtype):
         """check the metadata type against its checksum"""
         
