@@ -1523,5 +1523,11 @@ def _filtercmdline(novalopts, valopts, args):
                 raise ValueError
 
             out.extend([a, next])
+            continue 
+        
+        for opt in valopts:
+            if a.startswith(opt):
+                out.append(a)
+                
 
     return out
