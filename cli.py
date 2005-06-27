@@ -1519,15 +1519,16 @@ def _filtercmdline(novalopts, valopts, args):
             if len(args) < 1:
                 raise ValueError
             next = args.pop(0)
-            if next[0] == '-':
+            if next.startswith('-'):
                 raise ValueError
 
             out.extend([a, next])
-            continue 
-        
-        for opt in valopts:
-            if a.startswith(opt):
-                out.append(a)
-                
+       
+        else:
+            # Check for single letter options that take an option where the
+            # value right up against the option
+            for opt in valopts:
+                if len(opt) == 2 and a.startswith(opt):
+                    out.append(a)
 
     return out
