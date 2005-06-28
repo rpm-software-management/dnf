@@ -1306,17 +1306,25 @@ class YumBase(depsolve.Depsolve):
         except Errors.YumBaseError, e:
             raise Errors.YumBaseError, 'No Package found for %s' % depstring
         
+        result = self.bestPackageFromList(pkglist)
+        if result is None:
+            raise Errors.YumBaseError, 'No Package found for %s' % depstring
         
-        return self.bestPackageFromList(pkglist)
+        return result
         
     def bestPackageFromList(self, pkglist):
         """take list of package objects and return the best package object.
            If the list is empty, raise Errors.YumBaseError"""
         
+        
+        if len(pkglist) == 0:
+            return None
+            
         if len(pkglist) == 1:
             return pkglist[0]
         
-        mysack = ListPackageSack() 
+        mysack = ListPackageSack()
+        mysack.addList(pkglist)
         bestlist = mysack.returnNewestByNameArch() # get rid of all lesser vers
         
         best = bestlist[0]
