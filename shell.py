@@ -231,12 +231,20 @@ class YumShell(cmd.Cmd):
             for repo in repos:
                 try:
                     changed = self.base.repos.enableRepo(repo)
-                except yum.Errors.ConfigError, e:
+                except Errors.ConfigError, e:
                     self.base.errorlog(0, e)
+                except Errors.RepoError, e:
+                    self.base.errorlog(0, e)
+                    
                 else:
                     for repoid in changed:
-                        self.base.doRepoSetup(thisrepo=repoid)
-                    
+                        try:
+                            self.base.doRepoSetup(thisrepo=repoid)
+                        except Errors.RepoError, e:
+                            self.base.errorlog(0, 'Disabling Repository')
+                            self.base.repos.disableRepo(repo)
+                            return False
+                            
                     if hasattr(self.base, 'up'): # reset the updates
                         del self.base.up
             
@@ -245,9 +253,11 @@ class YumShell(cmd.Cmd):
             for repo in repos:
                 try:
                     self.base.repos.disableRepo(repo)
-                except yum.Errors.ConfigError, e:
+                except Errors.ConfigError, e:
                     self.base.errorlog(0, e)
-    
+                except Errors.RepoError, e:
+                    self.base.errorlog(0, e)
+
                 else:
                     if hasattr(self.base, 'pkgSack'): # kill the pkgSack
                         del self.base.pkgSack

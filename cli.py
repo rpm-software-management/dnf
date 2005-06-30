@@ -68,10 +68,7 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
 
         # Call parent class to do the bulk of work 
         # (this also ensures that reposetup plugin hook is called)
-        try:
-            yum.YumBase.doRepoSetup(self, thisrepo=thisrepo)
-        except yum.Errors.RepoError, e:
-            sys.exit(1)
+        yum.YumBase.doRepoSetup(self, thisrepo=thisrepo)
 
         if dosack: # so we can make the dirs and grab the repomd.xml but not import the md
             self.log(2, 'Reading repository metadata in from local files')
