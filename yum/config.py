@@ -495,9 +495,9 @@ def cfgParserRepo(section, yumconfig, cfgparser):
 
     # check out the proxy url
     (s,b,p,q,f,o) = urlparse.urlparse(thisrepo.proxy)
-        if s not in ('http', 'ftp', 'https'):
-            raise Errors.ConfigError, 'proxy must be ftp or http[s] URL: %s' % thisrepo.proxy
-    
+    if s not in ('http', 'ftp', 'https'):
+        raise Errors.ConfigError, 'proxy must be ftp or http[s] URL: %s' % thisrepo.proxy
+        thisrepo.set('proxy', None)
     
     excludelist = cfgparser._getoption(section, 'exclude', [])
     excludelist = variableReplace(yumconfig.yumvar, excludelist)
