@@ -982,12 +982,12 @@ class YumBase(depsolve.Depsolve):
     def _refineSearchPattern(self, arg):
         """Takes a search string from the cli for Search or Provides
            and cleans it up so it doesn't make us vomit"""
-           
+        
         if re.match('.*[\*,\[,\],\{,\},\?,\+].*', arg):
             restring = fnmatch.translate(arg)
         else:
-            restring = arg
-        
+            restring = re.escape(arg)
+            
         return restring
         
     def findDeps(self, pkgs):
@@ -1090,6 +1090,14 @@ class YumBase(depsolve.Depsolve):
         self.doRpmDBSetup()
         matches = {}
         
+        # search deps the simple way first
+        for arg in args:
+            pkgs = self.returnPackagesByDep(arg)
+            for po in pkgs:
+                if callback:
+                    callback(po, [arg])
+                matches[po] = [arg]
+
         # search pkgSack - fully populate the worthwhile metadata to search
         # if it even vaguely matches
         for arg in args:
@@ -1105,17 +1113,17 @@ class YumBase(depsolve.Depsolve):
 
         for arg in args:
             restring = self._refineSearchPattern(arg)
-            try: arg_re = re.compile(restring, flags=re.I)
+            try: 
+                arg_re = re.compile(restring, flags=re.I)
             except sre_constants.error, e:
                 raise Errors.MiscError, \
-                 'Search Expression: %s is an invalid Regular Expression.\n' % arg
+                  'Search Expression: %s is an invalid Regular Expression.\n' % arg
             
             # If this is not a regular expression, only search in packages
             # returned by pkgSack.searchAll
-            if restring.find('*') == restring.find('?') \
-              == restring.find('%') == -1 and \
+            if arg.find('*') == arg.find('?')  == arg.find('%') == -1 and \
               hasattr(self.pkgSack,'searchAll'):
-                where = self.pkgSack.searchAll(restring)
+                where = self.pkgSack.searchAll(arg)
             else:
                 where = self.pkgSack
 
