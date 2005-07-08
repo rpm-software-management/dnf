@@ -47,7 +47,7 @@ from repomd import mdErrors
 from constants import *
 from repomd.packageSack import ListPackageSack
 
-__version__ = '2.3.3'
+__version__ = '2.3.4'
 
 class YumBase(depsolve.Depsolve):
     """This is a primary structure and base class. It houses the objects and

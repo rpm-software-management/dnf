@@ -1,6 +1,6 @@
 Summary: RPM installer/updater
 Name: yum
-Version: 2.3.3
+Version: 2.3.4
 Release: 1
 License: GPL
 Group: System Environment/Base
@@ -77,6 +77,9 @@ exit 0
 %{_mandir}/man*/*
 
 %changelog
+* Fri Jul  8 2005 Seth Vidal <skvidal@phy.duke.edu>
+- 2.3.4
+
 * Tue Jun 14 2005 Seth Vidal <skvidal@phy.duke.edu>
 - 2.3.3
 
