@@ -1,3 +1,162 @@
+2005-07-08 01:20  skvidal
+
+	* yum-daily.spec, yum.spec, yum/__init__.py: 
+	mark as 2.3.4
+
+2005-07-08 01:07  skvidal
+
+	* docs/yum.8: 
+	document 'list recent' and 'deplist'
+
+2005-07-03 20:50  skvidal
+
+	* Makefile: 
+	add *.bak to clean removal
+
+2005-07-02 04:33  skvidal
+
+	* yum/__init__.py: 
+	fix the 'perl(foo::bar::baz)' searching provides bug.
+
+2005-07-01 16:40  skvidal
+
+	* yum/config.py: 
+	<sigh> fix proxy check if proxy is None
+
+2005-07-01 09:05  skvidal
+
+	* yum/config.py: 
+	make the proxy checking patch actually work.
+
+2005-07-01 08:56  skvidal
+
+	* yum/config.py: 
+	check if the proxy is anything sensible
+
+2005-06-30 01:58  skvidal
+
+	* cli.py, shell.py: 
+	- make yum shell not exit when failing to enable/disable a repo -
+	fix an unneccesary sys.exit() in doRepoSetup()
+
+2005-06-28 14:24  skvidal
+
+	* yum/__init__.py: 
+	when you're sorting a package Sack it is best if you've put
+	packages into it. la la la
+
+2005-06-27 08:24  mjs
+
+	* cli.py: Correct my grammar
+
+2005-06-27 08:23  mjs
+
+	* cli.py: Cleanup and clarification of _filtercmdline()
+
+2005-06-27 03:04  skvidal
+
+	* yum/repos.py: 
+	remove extras types, cleanup rogue ,
+
+2005-06-27 02:57  skvidal
+
+	* yum/repos.py: 
+	if repomd.xml is mangled, try another mirror for unmangled one.
+	This deals, correctly with horribly broken http servers that
+	redirect a 404 error to an error page and issue a 200 *Thwack*
+
+2005-06-27 02:34  skvidal
+
+	* callback.py, docs/yum.conf.5, yum/depsolve.py: 
+	- check in Christopher Weis's patch to enable repackaging support
+	in yum - modify the patch to ouput progress bars and semi-sensible
+	output for the rpm callback
+
+2005-06-26 23:19  skvidal
+
+	* cli.py: make -d0 and -e0 work again.
+
+2005-06-23 01:09  skvidal
+
+	* docs/: yum-arch.8, yum.8, yum.conf.5: 
+	- misc updates to the man pages - merge terje rosten's patch for
+	the new nevra package specification
+
+2005-06-23 01:01  skvidal
+
+	* docs/yum.conf.5: 
+	remove rss-filename
+
+2005-06-23 00:54  skvidal
+
+	* yum/misc.py: 
+	make tmpdir be an option to pass into getCacheDir()
+
+2005-06-23 00:11  skvidal
+
+	* yum/__init__.py: 
+	change out returnPackageByDep() to use returnPackagesByDep() and
+	bestPackageFromList() rather than duplicating a lot of simple code
+
+2005-06-22 00:27  skvidal
+
+	* yum/config.py: 
+	Check in terje rosten's patch to config.py to handle reposdir as a
+	list, not a string
+
+2005-06-21 14:25  pmatilai
+
+	* yum/packages.py: Add support for name-epoch:version-release.arch
+	naming convention to parsePackages()
+
+2005-06-21 08:22  mjs
+
+	* yum/: __init__.py, plugins.py: Renamed the plugin "typefilter"
+	argument to just "types" (sorry, couldn't stand it)
+
+2005-06-20 00:19  skvidal
+
+	* rpmUtils/__init__.py: 
+	make the header-by-index check work properly on older versions of
+	rpm
+
+2005-06-19 20:10  skvidal
+
+	* yum/: config.py, repos.py: 
+	get rid of defineDirs() method integrate it into dirSetup()
+
+2005-06-19 10:42  skvidal
+
+	* yum/__init__.py: 
+	add os.path.normcase() for lockfile to fix rh bug: 160928
+
+2005-06-19 02:33  skvidal
+
+	* yum/: config.py, depsolve.py, repos.py: 
+	needed a space there, I dunno
+
+2005-06-19 02:32  skvidal
+
+	* rpmUtils/__init__.py: 
+	- make the use-indexes-to-retrieve-hdrs mechanism work.  - this
+	makes a big speed up for yum remove calls when using rpm >= 4.4.1
+
+2005-06-16 08:23  mjs
+
+	* docs/yum.conf.5, yum/__init__.py, yum/config.py, yum/repos.py:
+	Added http_caching option to provide control over http caching
+	headers.  This addresses bug #412
+
+2005-06-15 07:49  mjs
+
+	* cli.py, docs/yum.conf.5, yum/__init__.py, yum/config.py: Support
+	for multple GPG keys per repo.
+
+2005-06-14 18:58  skvidal
+
+	* ChangeLog: 
+	changelog update from 2.3.3
+
 2005-06-14 18:40  skvidal
 
 	* yum-daily.spec: 
