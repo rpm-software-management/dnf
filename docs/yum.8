@@ -50,6 +50,9 @@ yum \- Yellowdog Updater Modified
 .br
 .I \fR * localupdate rpmfile1 [rpmfile2] [\&.\&.\&.] 
 .br
+.br
+.I \fR * deplist package1 [package2] [\&.\&.\&.] 
+.br
 .PP 
 Unless the \-\-help or \-h option is given, one of the above commands
 must be present\&.
@@ -130,6 +133,10 @@ Is used to update the system by specifying local rpm files. Only the specified
 rpm files of which an older version is already installed will be installed,
 the remaining specified packages will be ignored.
 If required the enabled repositories will be used to resolve dependencies.
+.IP
+.IP "\fBdeplist\fP"
+Produces a list of all dependencies and what packages provide those
+dependencies for the given packages.
 .IP
 .PP 
 .SH "GENERAL OPTIONS"
@@ -215,6 +222,9 @@ repository listed in the config file.
 .IP "\fByum list obsoletes [regexp1] [\&.\&.\&.]\fP"
 List the packages installed on the system that are obsoleted by packages
 in any yum repository listed in the config file.
+.IP
+.IP "\fByum list recent\fP"
+List packages recently added into the repositories. 
 .IP
 .IP "\fBSpecifying package names\fP"
 All the list options mentioned above take file-glob-syntax wildcards or package
