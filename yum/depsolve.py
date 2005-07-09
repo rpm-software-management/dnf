@@ -110,7 +110,39 @@ class Depsolve:
             return 1
         
         return 0
-        
+
+    def handleKernelModule(self, txmbr):
+        """Figure out what special magic needs to be done to install/upgrade
+           this kernel module."""
+
+        def getKernelReqs(hdr):
+            kernels = ["kernel-%s" % a for a in rpmUtils.arch.arches.keys()]
+            reqs = []
+            names = hdr[rpm.RPMTAG_REQUIRENAME]
+            flags = hdr[rpm.RPMTAG_REQUIREFLAGS]
+            ver =   hdr[rpm.RPMTAG_REQUIREVERSION]
+            if names is not None:
+                reqs = zip(names, flags, ver)
+            return filter(lambda r: r[0] in kernels, reqs)
+
+        kernelReqs = getKernelReqs(txmbr.po.returnLocalHeader())
+        instPkgs = self.rpmdb.returnTupleByKeyword(name=txmbr.po.name)
+        for pkg in instPkgs:
+            hdr = self.rpmdb.returnHeaderByTuple(pkg)[0]
+            instKernelReqs = getKernelReqs(hdr)
+            
+            for r in kernelReqs:
+                if r in instKernelReqs:
+                    # we know that an incoming kernel module requires the
+                    # same kernel as an already installed module of the
+                    # same name.  "Upgrade" this module instead of install
+                    po = packages.YumInstalledPackage(hdr)
+                    self.tsInfo.addErase(po)
+                    self.log(4, 'Removing kernel module %s upgraded to %s' %
+                             (po, txmbr.po))
+                    break
+       
+
     def populateTs(self, test=0, keepold=1):
         """take transactionData class and populate transaction set"""
 
@@ -139,6 +171,8 @@ class Depsolve:
                 rpmfile = txmbr.po.localPkg()
                 
                 if txmbr.ts_state == 'u':
+                    if txmbr.po.name.startswith("kernel-module-"):
+                        self.handleKernelModule(txmbr)
                     if self.allowedMultipleInstalls(txmbr.po):
                         self.log(5, '%s converted to install' % (txmbr.po))
                         txmbr.ts_state = 'i'
