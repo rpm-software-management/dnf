@@ -1227,7 +1227,7 @@ class YumBase(depsolve.Depsolve):
         pkgs = self.pkgSack.packagesByTuple(pkgtup)
 
         if len(pkgs) == 0:
-            raise Errors.DepError, 'Package tuple %s could not be found in packagesack' % pkgtup
+            raise Errors.DepError, 'Package tuple %s could not be found in packagesack' % str(pkgtup)
             return None
             
         if len(pkgs) > 1: # boy it'd be nice to do something smarter here FIXME
