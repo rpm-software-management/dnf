@@ -1351,3 +1351,35 @@ class YumBase(depsolve.Depsolve):
 
         return best
 
+    def returnInstalledPackagesByDep(self, depstring):
+        """Pass in a generic [build]require string and this function will 
+           pass back the installed packages it finds providing that dep."""
+        
+        results = []
+        self.doRpmDBSetup()
+        # parse the string out
+        #  either it is 'dep (some operator) e:v-r'
+        #  or /file/dep
+        #  or packagename
+        depname = depstring
+        depflags = None
+        depver = None
+        
+        if depstring[0] != '/':
+            # not a file dep - look at it for being versioned
+            if re.search('[>=<]', depstring):  # versioned
+                try:
+                    depname, flagsymbol, depver = depstring.split()
+                except ValueError, e:
+                    raise Errors.YumBaseError, 'Invalid versioned dependency string, try quoting it.'
+                if not SYMBOLFLAGS.has_key(flagsymbol):
+                    raise Errors.YumBaseError, 'Invalid version flag'
+                depflags = SYMBOLFLAGS[flagsymbol]
+                
+        pkglist = self.rpmdb.whatProvides(depname, depflags, depver)
+        
+        for pkgtup in pkglist:
+            results.append(self.getInstalledPackageObject(pkgtup))
+        
+        return results
+

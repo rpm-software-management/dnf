@@ -1037,7 +1037,15 @@ For more information contact your distribution or package provider.
             exactmatch, matched, unmatched = yum.packages.parsePackages(
                                              installed, userlist, casematch=1)
             erases = yum.misc.unique(matched + exactmatch)
-        
+
+        if unmatched:
+            for arg in unmatched:
+                depmatches = self.returnInstalledPackagesByDep(arg)
+                if not depmatches:
+                    self.errorlog(0, _('No Match for argument: %s') % arg)
+                else:
+                    erases.extend(depmatches)
+            
         for pkg in erases:
             self.tsInfo.addErase(pkg)
         
