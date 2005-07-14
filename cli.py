@@ -1040,7 +1040,12 @@ For more information contact your distribution or package provider.
 
         if unmatched:
             for arg in unmatched:
-                depmatches = self.returnInstalledPackagesByDep(arg)
+                try:
+                    depmatches = self.returnInstalledPackagesByDep(arg)
+                except yum.Errors.YumBaseError, e:
+                    self.errorlog(0, _('%s') % e)
+                    continue
+                    
                 if not depmatches:
                     self.errorlog(0, _('No Match for argument: %s') % arg)
                 else:
