@@ -27,8 +27,6 @@ import Errors
 # TODO: cleaner method to query installed packages rather than exposing RpmDB
 # (Panu?)
 
-# TODO: PLUGINS document (mainly for plugin developers)
-
 # TODO: consistent case of YumPlugins methods
 
 # TODO: expose progress bar interface
@@ -86,15 +84,24 @@ TYPE_CORE = 0
 TYPE_INTERFACE = 1
 ALL_TYPES = (TYPE_CORE, TYPE_INTERFACE)
 
-SLOTS = (
-        'config', 'init', 
-        'predownload', 'postdownload', 
-        'prereposetup', 'postreposetup', 
-        'exclude', 
-        'preresolve', 'postresolve',
-        'pretrans', 'posttrans', 
-        'close'
-    )
+# Mapping of slots to conduit classes
+SLOT_TO_CONDUIT = {
+    'config': 'ConfigPluginConduit',
+    'init': 'InitPluginConduit',
+    'predownload': 'DownloadPluginConduit',
+    'postdownload': 'DownloadPluginConduit',
+    'prereposetup': 'RepoSetupPluginConduit',
+    'postreposetup': 'RepoSetupPluginConduit',
+    'close': 'PluginConduit',
+    'pretrans': 'MainPluginConduit',
+    'posttrans': 'MainPluginConduit',
+    'exclude': 'MainPluginConduit',
+    'preresolve': 'DepsolvePluginConduit',
+    'postresolve': 'DepsolvePluginConduit',
+    }
+
+# Enumerate all slot names
+SLOTS = SLOT_TO_CONDUIT.keys()
 
 class PluginYumExit(Exception):
     '''Used by plugins to signal that yum should stop
@@ -139,25 +146,10 @@ class YumPlugins:
         '''Run all plugin functions for the given slot.
         '''
         # Determine handler class to use
-        if slotname == 'config':
-            conduitcls = ConfigPluginConduit
-        elif slotname == 'init':
-            conduitcls = InitPluginConduit
-        elif slotname in ('predownload', 'postdownload'):
-            conduitcls = DownloadPluginConduit
-        elif slotname == 'prereposetup':
-            conduitcls = RepoSetupPluginConduit
-        elif slotname == 'postreposetup':
-            conduitcls = RepoSetupPluginConduit
-        elif slotname == 'close':
-            conduitcls = PluginConduit
-        elif slotname in ('pretrans', 'posttrans', 'exclude'):
-            conduitcls = MainPluginConduit
-        elif slotname in ('preresolve', 'postresolve'):
-            conduitcls = DepsolvePluginConduit
-        else:
+        conduitcls = SLOT_TO_CONDUIT.get(slotname, None)
+        if conduitcls is None:
             raise ValueError('unknown slot name "%s"' % slotname)
-
+        conduitcls = eval(conduitcls)       # Convert name to class object
 
         for modname, func in self._pluginfuncs[slotname]:
             self.base.log(3, 'Running "%s" handler for "%s" plugin' % (
@@ -262,11 +254,11 @@ class YumPlugins:
     def registeropt(self, name, valuetype, where, default):
         '''Called from plugins to register a new config file option.
 
-        name: Name of the new option.
-        valuetype: Option type (PLUG_OPT_BOOL, PLUG_OPT_STRING ...)
-        where: Where the option should be available in the config file.
+        @param name: Name of the new option.
+        @param valuetype: Option type (PLUG_OPT_BOOL, PLUG_OPT_STRING ...)
+        @param where: Where the option should be available in the config file.
             (PLUG_OPT_WHERE_MAIN, PLUG_OPT_WHERE_REPO, ...)
-        default: Default value for the option if not set by the user.
+        @param default: Default value for the option if not set by the user.
         '''
         if self.opts.has_key(name):
             raise Errors.ConfigError('Plugin option conflict: ' \
@@ -362,21 +354,44 @@ class PluginConduit:
 
     def confString(self, section, opt, default=None):
         '''Read a string value from the plugin's own configuration file
+
+        @param section: Configuration file section to read.
+        @param opt: Option name to read.
+        @param default: Value to read if option is missing.
+        @return: String option value read, or default if option was missing.
         '''
         return self._conf._getoption(section, opt, default)
 
     def confInt(self, section, opt, default=None):
         '''Read an integer value from the plugin's own configuration file
+
+        @param section: Configuration file section to read.
+        @param opt: Option name to read.
+        @param default: Value to read if option is missing.
+        @return: Integer option value read, or default if option was missing or
+            could not be parsed.
         '''
         return self._conf._getint(section, opt, default)
 
     def confFloat(self, section, opt, default=None):
         '''Read a float value from the plugin's own configuration file
+
+        @param section: Configuration file section to read.
+        @param opt: Option name to read.
+        @param default: Value to read if option is missing.
+        @return: Float option value read, or default if option was missing or
+            could not be parsed.
         '''
         return self._conf._getfloat(section, opt, default)
 
     def confBool(self, section, opt, default=None):
         '''Read a boolean value from the plugin's own configuration file
+
+        @param section: Configuration file section to read.
+        @param opt: Option name to read.
+        @param default: Value to read if option is missing.
+        @return: Boolean option value read, or default if option was missing or
+            could not be parsed.
         '''
         return self._conf._getboolean(section, opt, default)
 
