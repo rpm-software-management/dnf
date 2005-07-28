@@ -571,8 +571,9 @@ class Repository:
             self.failure_obj = (f_func, f_args, f_kwargs)
         
         if self.cache == 1:
-            if os.path.exists(local):
-                return local
+            if os.path.exists(local): # FIXME - we should figure out a way
+                return local          # to run the checkfunc from here
+                
             else: # ain't there - raise
                 raise Errors.RepoError, \
                     "Caching enabled but no local cache of %s from %s" % (local,

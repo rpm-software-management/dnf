@@ -545,8 +545,9 @@ class YumBase(depsolve.Depsolve):
         """download list of package objects handed to you, output based on
            callback, raise yum.Errors.YumBaseError on problems"""
 
+        errors = {}
         self.plugins.run('predownload', pkglist=pkglist)
-
+        repo_cached = False
         remote_pkgs = []
         for po in pkglist:
             if hasattr(po, 'pkgtype') and po.pkgtype == 'local':
@@ -558,9 +559,18 @@ class YumBase(depsolve.Depsolve):
                 totsize = int(po.size())
                 try:
                     result = self.verifyPkg(local, po, raiseError=1)
-                except URLGrabError, e:
+                except URLGrabError, e: # fails the check
+                    
+                    repo = self.repos.getRepo(po.repoid)
+                    if repo.cache:
+                        repo_cached = True
+                        msg = 'package fails checksum but caching is enabled for %s' % repo.id
+                        if not errors.has_key(po): errors[po] = []
+                        errors[po].append(msg)
+                        
                     if cursize >= totsize: # keep it around for regetting
                         os.unlink(local)
+                        
                 else:
                     if result:
                         continue
@@ -568,8 +578,15 @@ class YumBase(depsolve.Depsolve):
                         if cursize >= totsize: # keep it around for regetting
                             os.unlink(local)
             remote_pkgs.append(po)
+            
+            # caching is enabled and the package 
+            # just failed to check out there's no 
+            # way to save this, report the error and return
+            if (self.conf.cache or repo_cached) and errors:
+                return errors
+                
 
-        errors = {}
+
         i = 0
         for po in remote_pkgs:
             i += 1
