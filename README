@@ -24,3 +24,7 @@ Yum is run with one of the following options:
  - yum list [package list]
         List available packages
 
+See the man page for more information (man yum)
+Also see the webpage and wiki for more information:
+web page: http://linux.duke.edu/yum/
+wiki: http://wiki.linux.duke.edu/Yum
