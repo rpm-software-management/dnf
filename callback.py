@@ -35,10 +35,10 @@ class RPMInstallCallback:
 
         self.myprocess = { 'updating': 'Updating', 'erasing': 'Erasing',
                            'installing': 'Installing', 'obsoleted': 'Obsoleted',
-                           'obsoleting': 'Obsoleting'}
+                           'obsoleting': 'Installing'}
         self.mypostprocess = { 'updating': 'Updated', 'erasing': 'Erased',
                                'installing': 'Installed', 'obsoleted': 'Obsoleted',
-                               'obsoleting': 'Obsoleting'}
+                               'obsoleting': 'Installed'}
 
         self.tsInfo = None # this needs to be set for anything else to work
 
