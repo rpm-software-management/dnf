@@ -3,10 +3,22 @@ import sys
 try:
    import yum
 except ImportError:
-   print >> sys.stderr, "The yum libraries do not seem to be available \
-on your system for this version of python ", sys.version
-   print >> sys.stderr, "Please make sure the package you used to install \
-yum was built for your install of python."
+   print >> sys.stderr, """\
+There was a problem importing one of the Python modules
+required to run yum. The error leading to this problem was:
+
+   %s
+
+Please install a package which provides this module, or
+verify that the module is installed correctly.
+
+It's possible that the above module doesn't match the
+current version of Python, which is:
+%s
+
+If you cannot solve this problem yourself, please send this
+message to <yum@lists.linux.duke.edu>.
+""" % (sys.exc_value, sys.version)
    sys.exit(1)
 
 sys.path.insert(0, '/usr/share/yum-cli')
