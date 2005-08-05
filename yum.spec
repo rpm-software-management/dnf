@@ -59,7 +59,7 @@ exit 0
 
 %files
 %defattr(-, root, root)
-%doc README AUTHORS COPYING TODO INSTALL ChangeLog
+%doc README AUTHORS COPYING TODO INSTALL ChangeLog PLUGINS
 %config(noreplace) %{_sysconfdir}/yum.conf
 %dir %{_sysconfdir}/yum.repos.d
 %dir %{_sysconfdir}/%{name}
