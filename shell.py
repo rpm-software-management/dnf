@@ -17,18 +17,11 @@ import sys
 import os.path
 import cmd
 import string
+import shlex
 
 from yum import Errors
 from yum.constants import *
 
-# TODO: implement setconfig and getconfig - this should only expose a subset
-#       of the configuration options. exposing all of them, especially the lists
-#       would be a pain to parse and handle but the int, string and booleans
-#       should be doable. Config only affects global config settings not
-#       repo configuration.
-#       one of the oft-requested lists will be 'exclude' - this should be its 
-#       own command, probably so we can set excludes. make it a space separated
-#       list
 
 class YumShell(cmd.Cmd):
     def __init__(self, base):
@@ -44,6 +37,7 @@ class YumShell(cmd.Cmd):
             'info', 'install', 'list', 'localinstall', 'repository',
             'makecache', 'provides', 'quit', 'remove', 'run', 'search',
             'transaction', 'ts', 'update', 'config', 'deplist']
+
 
     def script(self):
         try:
@@ -67,7 +61,7 @@ class YumShell(cmd.Cmd):
                 return False
             self.base.cmdstring = line
             self.base.cmdstring = self.base.cmdstring.replace('\n', '')
-            self.base.cmds = self.base.cmdstring.split()
+            self.base.cmds = shlex.split(self.base.cmdstring)
             try:
                 self.base.parseCommands()
             except Errors.YumBaseError:
@@ -159,7 +153,7 @@ class YumShell(cmd.Cmd):
         (cmd, args, line) = self.parseline(line)
         # logs
         if cmd in ['debuglevel', 'errorlevel']:
-            opts = args.split()
+            opts = shlex.split(args)
             if not opts:
                 self.base.log(2, '%s: %s' % (cmd, self.base.conf.getConfigOption(cmd)))
             else:
@@ -176,7 +170,7 @@ class YumShell(cmd.Cmd):
                     self.base.errorlog.threshold = val
         # bools
         elif cmd in ['gpgcheck', 'obsoletes', 'assumeyes']:
-            opts = args.split()
+            opts = shlex.split(args)
             if not opts:
                 self.base.log(2, '%s: %s' % (cmd, self.base.conf.getConfigOption(cmd)))
             else:
@@ -192,7 +186,7 @@ class YumShell(cmd.Cmd):
         
         elif cmd in ['exclude']:
             args = args.replace(',', ' ')
-            opts = args.split()
+            opts = shlex.split(args)
             if not opts:
                 msg = '%s: ' % cmd
                 msg = msg + string.join(self.base.conf.getConfigOption(cmd))
@@ -227,7 +221,7 @@ class YumShell(cmd.Cmd):
                     self.base.log(2, '%-20.20s %-40.40s  disabled' % (repo, repo.name))
         
         elif cmd == 'enable':
-            repos = args.split()
+            repos = shlex.split(args)
             for repo in repos:
                 try:
                     changed = self.base.repos.enableRepo(repo)
@@ -249,7 +243,7 @@ class YumShell(cmd.Cmd):
                         del self.base.up
             
         elif cmd == 'disable':
-            repos = args.split()
+            repos = shlex.split(args)
             for repo in repos:
                 try:
                     self.base.repos.disableRepo(repo)
