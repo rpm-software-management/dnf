@@ -1222,6 +1222,8 @@ class YumBase(depsolve.Depsolve):
             else:
                 available.append(grp.name)
 
+        installed = misc.unique(installed)
+        available = misc.unique(available)
         installed.sort()
         available.sort()
         
