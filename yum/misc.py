@@ -146,10 +146,14 @@ def getFileList(path, ext, filelist):
 class GenericHolder:
     """Generic Holder class used to hold other objects of known types
        It exists purely to be able to do object.somestuff, object.someotherstuff
-       and pass object to another function that will understand it"""
+       or object[key] and pass object to another function that will 
+       understand it"""
        
-    pass
-
+    def __getitem__(self, item):
+        if hasattr(self, item):
+            return getattr(self, item)
+        else:
+            raise KeyError, item
 
 def procgpgkey(rawkey):
     '''Convert ASCII armoured GPG key to binary
