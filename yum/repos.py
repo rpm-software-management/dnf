@@ -178,7 +178,6 @@ class RepoStorage:
         repos = []
         
         if _is_fnmatch_pattern(repoid):
-            repos = self.findRepos(repoid)
             for repo in self.findRepos(repoid):
                 repos.append(repo.id)
                 repo.enable()

@@ -231,9 +231,9 @@ class YumShell(cmd.Cmd):
                     self.base.errorlog(0, e)
                     
                 else:
-                    for repoid in changed:
+                    for repo in changed:
                         try:
-                            self.base.doRepoSetup(thisrepo=repoid)
+                            self.base.doRepoSetup(thisrepo=repo)
                         except Errors.RepoError, e:
                             self.base.errorlog(0, 'Disabling Repository')
                             self.base.repos.disableRepo(repo)
