@@ -1,6 +1,6 @@
 Summary: RPM installer/updater
 Name: yum
-Version: 2.3.4
+Version: 2.4.0
 Release: 1
 License: GPL
 Group: System Environment/Base
@@ -78,6 +78,9 @@ exit 0
 %{_mandir}/man*/*
 
 %changelog
+* Sun Aug 14 2005 Seth Vidal <skvidal@phy.duke.edu>
+- 2.4.0
+
 * Fri Aug  5 2005 Seth Vidal <skvidal@phy.duke.edu>
 - back to libxml2-python req
 

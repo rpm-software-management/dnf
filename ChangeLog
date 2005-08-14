@@ -1,3 +1,107 @@
+2005-08-08 11:45  pmatilai
+
+	* yum/misc.py: Allow misc.GenericHolder class to be accessed like a
+	dictionary.
+
+2005-08-08 10:57  skvidal
+
+	* shell.py, yum/repos.py: 
+	return consistent results from findRepos
+
+2005-08-07 13:28  skvidal
+
+	* yum/__init__.py: 
+	make  grouplist stop presenting duplicate groupnames
+
+2005-08-05 02:34  skvidal
+
+	* yum.spec: 
+	add plugins to docs
+
+2005-08-05 02:32  skvidal
+
+	* callback.py: 
+	'fix' for bug 481
+
+2005-08-05 01:56  skvidal
+
+	* bin/yum.py: 
+	check in Hans-Peter Jansen's patch to help make the error output
+	when a needed module is missing a bit easier.
+
+2005-08-05 01:46  skvidal
+
+	* README, yum.spec: 
+	README: point to webpage and wiki add libxml2-python req back into
+	spec file
+
+2005-08-05 01:41  skvidal
+
+	* shell.py, docs/Makefile, docs/yum-shell.8, docs/yum.8: shell.py:
+	support shell-like quoting of arguments - especially useful for    
+	      group names docs/yum-shell.8: document the yum shell
+	docs/yum.8: point to the yum shell docs docs/Makefile: install the
+	yum-shell man page.
+
+2005-07-28 02:53  skvidal
+
+	* yum/: __init__.py, repos.py: 
+	if caching is enabled and the package in the cache is
+	damaged/incomplete/corrupted. Make sure we exit out rather than
+	trying to install/update the package anyway. Closes rh bug: 164394
+	need to backport to  2.2.X
+
+2005-07-24 19:53  skvidal
+
+	* docs/yum.8: 
+	add hidden option for grouplist
+
+2005-07-22 12:09  skvidal
+
+	* yum/repos.py: 
+	clean up error string - bug #488
+
+2005-07-16 22:10  mjs
+
+	* PLUGINS: Initial add of developer docs for plugins.
+
+2005-07-16 22:09  mjs
+
+	* yum/plugins.py: - SLOT_TO_CONDUIT to clarify slot to conduit
+	class mapping - added and extended documentation
+
+2005-07-14 04:32  skvidal
+
+	* cli.py: 
+	obscure "broken depstring" case in remove by provides
+
+2005-07-14 04:28  skvidal
+
+	* cli.py, yum/__init__.py: 
+	allow remove option to handle virtual provides, versioned provides,
+	file-deps, etc, like install can deal with.
+
+2005-07-13 06:29  pmatilai
+
+	* yum/__init__.py: Fix TypeError traceback in
+	yum.getPackageObject() when package not found.	CVSr
+	----------------------------------------------------------------------
+
+2005-07-09 18:57  slack
+
+	* yum/depsolve.py: Beginings of support for kernel-module style
+	packages as described on fedora-packaging.  This patch attempts to
+	figure out if any kernel-module package should be removed when a
+	new one is installed.  This works by making sure there is only one
+	kernel-module-foo package that requires kernel-A = VR.
+	
+	Some other kernel-module package work is forth coming.
+
+2005-07-08 01:52  skvidal
+
+	* ChangeLog: 
+	update changelog
+
 2005-07-08 01:20  skvidal
 
 	* yum-daily.spec, yum.spec, yum/__init__.py: 
@@ -618,6 +722,12 @@
 	* cli.py, yum/__init__.py: 
 	move the plugins call outside of cli.py and into the yum module.
 
+2005-03-24 02:59  skvidal
+
+	* posts/: bootloadercfg.py, checkbootloader.py, grubcfg.py,
+	iutil.py, lilo.py, lilocfg.py, up2datetheft.py: 
+	remove all this old code
+
 2005-03-24 02:29  skvidal
 
 	* yum/sqlitesack.py: 
@@ -1031,7 +1141,10 @@
 
 2005-02-24 02:14  skvidal
 
-	* Makefile: 
+	* Makefile, urlgrabber/LICENSE, urlgrabber/Makefile,
+	urlgrabber/README, urlgrabber/__init__.py, urlgrabber/byterange.py,
+	urlgrabber/grabber.py, urlgrabber/keepalive.py,
+	urlgrabber/mirror.py, urlgrabber/progress.py: 
 	removed urlgrabber modified Makefile to remove urlgrabber
 
 2005-02-23 13:22  skvidal
@@ -1065,6 +1178,13 @@
 
 	* yum-daily.spec, yum.spec: 
 	updated spec file for versin changes - 2.3.0
+
+2005-02-21 00:08  skvidal
+
+	* urlgrabber/: LICENSE, README, __init__.py, byterange.py,
+	grabber.py, keepalive.py, mirror.py: 
+	check new urlgrabber into yum-HEAD. Once urlgrabber package is made
+	this will be removed from this source tree
 
 2005-02-19 17:28  skvidal
 
@@ -1123,6 +1243,11 @@
 
 	* callback.py: 
 	checked in Terje's callback progress changes to HEAD
+
+2005-02-09 17:33  skvidal
+
+	* urlgrabber/byterange.py: 
+	HEAD check in of byterange, for now.
 
 2005-02-05 15:42  skvidal
 
@@ -1257,7 +1382,8 @@
 
 2005-01-20 01:59  skvidal
 
-	* yum/: __init__.py, packages.py, repos.py: 
+	* urlgrabber/grabber.py, yum/__init__.py, yum/packages.py,
+	yum/repos.py: 
 	regets are enabled now. It looks like it should be handling
 	everything nicely, we'll see how well it works :) regets are
 	disabled for header downloads, though, due to the byte-range gets.
@@ -1339,6 +1465,12 @@
 	* cli.py, output.py, yum/__init__.py, yum/repos.py: 
 	merge terje's yum-ui patch to add a package download counter and
 	add a text information to repomd grabbing.
+
+2005-01-14 13:25  skvidal
+
+	* urlgrabber/: __init__.py, byterange.py, grabber.py, keepalive.py,
+	mirror.py, progress.py: 
+	terje's patches and new-merge of urlgrabber - include REST fixes
 
 2005-01-14 11:31  skvidal
 
@@ -1796,6 +1928,11 @@
 	implemented post-transaction report output - just a short format of
 	what happened
 
+2004-10-17 10:32  skvidal
+
+	* urlgrabber/grabber.py: 
+	checked in fix to yum-urlgrabber for bug 335
+
 2004-10-17 05:02  skvidal
 
 	* cli.py, yum/__init__.py: 
@@ -1827,6 +1964,13 @@
 
 	* callback.py, cli.py, output.py, rpmUtils/transaction.py: 
 	filelog functional
+
+2004-10-17 02:05  skvidal
+
+	* urlgrabber/: __init__.py, byterange.py, grabber.py, keepalive.py,
+	mirror.py, progress.py: 
+	update urlgrabber to fix up a couple of problems, Thanks to Ryan
+	for making these happen so quickly
 
 2004-10-16 20:16  skvidal
 
@@ -1938,7 +2082,10 @@
 
 2004-10-13 01:16  skvidal
 
-	* yum/: __init__.py, config.py, repos.py: 
+	* urlgrabber/__init__.py, urlgrabber/byterange.py,
+	urlgrabber/grabber.py, urlgrabber/keepalive.py,
+	urlgrabber/mirror.py, urlgrabber/progress.py, yum/__init__.py,
+	yum/config.py, yum/repos.py: 
 	added in new urlgrabber implemented timeout and fixed up changes
 	for new urlgrabber checkfunc api
 
@@ -2378,7 +2525,7 @@
 2004-08-31 00:20  skvidal
 
 	* Makefile, docs/Makefile, etc/Makefile, repomd/Makefile,
-	rpmUtils/Makefile, yum/Makefile: 
+	rpmUtils/Makefile, urlgrabber/Makefile, yum/Makefile: 
 	Add Makefiles
 
 2004-08-31 00:16  skvidal
@@ -2632,7 +2779,8 @@
 
 2004-08-12 03:35  skvidal
 
-	* cli.py, yum/repos.py: 
+	* cli.py, urlgrabber/grabber.py, urlgrabber/mirror.py,
+	yum/repos.py: 
 	fix up the failure callback merge in newest urlgrabber + a fix
 
 2004-08-12 03:07  skvidal
@@ -2661,7 +2809,9 @@
 
 2004-08-09 03:39  skvidal
 
-	* cli.py, yum/__init__.py, yum/misc.py, yum/repos.py: 
+	* cli.py, urlgrabber/__init__.py, urlgrabber/grabber.py,
+	urlgrabber/progress.py, yum/__init__.py, yum/misc.py, yum/repos.py:
+	
 	merge in latest urlgrabber fix up checksum routine (hahhah) make
 	downloads work at all
 
@@ -2707,7 +2857,9 @@
 
 	* bootloadercfg.py, checkbootloader.py, clientStuff.py, grubcfg.py,
 	iutil.py, lilo.py, lilocfg.py, nevral.py, pkgaction.py,
-	up2datetheft.py: 
+	up2datetheft.py, posts/bootloadercfg.py, posts/checkbootloader.py,
+	posts/grubcfg.py, posts/iutil.py, posts/lilo.py, posts/lilocfg.py,
+	posts/up2datetheft.py: 
 	remove old and move things into better locations
 
 2004-07-22 11:58  skvidal
@@ -2967,7 +3119,9 @@
 
 2004-04-22 03:36  skvidal
 
-	* yummain.py, yum/repos.py: 
+	* yummain.py, urlgrabber/__init__.py, urlgrabber/byterange.py,
+	urlgrabber/grabber.py, urlgrabber/keepalive.py,
+	urlgrabber/mirror.py, urlgrabber/progress.py, yum/repos.py: 
 	imported new urlgrabber fleshed out the metadata retrieval and
 	checksumming routines.
 
@@ -3090,6 +3244,17 @@
 	prettier needs to be done yum/repos.py - made it deal with
 	packageSacks and repositories - needs to take progress objects,
 	optionally at instantiation.
+
+2004-03-22 00:15  skvidal
+
+	* urlgrabber/mirror.py: 
+	add mirror.py
+
+2004-03-22 00:15  skvidal
+
+	* urlgrabber/: __init__.py, byterange.py, byterangetests.py,
+	grabber.py, grabbertests.py, keepalive.py, setup.py: 
+	update to newest urlgrabber
 
 2004-03-20 17:12  skvidal
 
@@ -3215,7 +3380,11 @@
 
 2004-02-17 00:28  skvidal
 
-	* yum/rpmUtils.py: 
+	* urlgrabber/LICENSE, urlgrabber/README, urlgrabber/__init__.py,
+	urlgrabber/byterange.py, urlgrabber/byterangetests.py,
+	urlgrabber/grabber.py, urlgrabber/grabbertests.py,
+	urlgrabber/keepalive.py, urlgrabber/progress.py,
+	urlgrabber/setup.py, yum/rpmUtils.py: 
 	added urlgrabber in the right place removed old rpmUtils
 
 2004-02-17 00:22  skvidal
