@@ -1,3 +1,8 @@
+2005-08-14 17:33  skvidal
+
+	* ChangeLog, yum-daily.spec, yum.spec, yum/__init__.py: 
+	update changelog mark as 2.4.0 in __init__.py and spec files
+
 2005-08-08 11:45  pmatilai
 
 	* yum/misc.py: Allow misc.GenericHolder class to be accessed like a
