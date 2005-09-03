@@ -181,6 +181,65 @@ class CFParser(ConfigParser.ConfigParser):
         return int(n * mult)
 
 
+
+class YumBaseConfig():
+    """Base config object - stores all the structures for the configuration
+       all the other config parsing mechanisms should inherit from here"""
+    
+    def __init__(self, root='/'):
+       
+        self.configdata = {'debuglevel': (2, types.IntType),
+                           'errorlevel': (2, types.IntType),
+                           'retries': (10, types.IntType),
+                           'recent': (7, types.IntType),
+                           'cachedir': ('/var/cache/yum', types.StringType), 
+                           'logfile': ('/var/log/yum.log', types.StringType), 
+                           'reposdir': (['/etc/yum/repos.d', '/etc/yum.repos.d'],
+                                      types.ListType),
+                           'distroverpkg': ('fedora-release', types.StringType), 
+                           'installroot': (root, types.StringType),
+                           'commands': ([], types.ListType),
+                           'exclude': ([], types.ListType),
+                           'failovermethod': ('roundrobin', types.StringType),
+                           'yumversion': ('unversioned', types.StringType),
+                           'proxy': (None, types.StringType),
+                           'proxy_username': (None, types.StringType),
+                           'proxy_password': (None, types.StringType),
+                           'pluginpath': (['/usr/lib/yum-plugins'], 
+                                          types.ListType),
+                           'installonlypkgs': (['kernel', 'kernel-bigmem', 
+                                              'kernel-enterprise','kernel-smp',
+                                              'kernel-modules',
+                                              'kernel-debug', 'kernel-unsupported', 
+                                              'kernel-source', 'kernel-devel'],
+                                               types.ListType),
+                           'kernelpkgnames': (['kernel','kernel-smp',
+                                             'kernel-enterprise', 'kernel-bigmem',
+                                             'kernel-BOOT'], types.ListType),
+                           'exactarchlist': (['kernel', 'kernel-smp', 'glibc',
+                                            'kernel-hugemem', 'kernel-enterprise',
+                                            'kernel-bigmem'], types.ListType),
+                           'tsflags': ([], types.ListType),
+                           'assumeyes': ('False', types.BooleanType),
+                           'alwaysprompt': ('True', types.BooleanType),
+                           'exactarch': ('True', types.BooleanType),
+                           'tolerant': ('True', types.BooleanType),
+                           'diskspacecheck': ('True', types.BooleanType),
+                           'overwrite_groups': ('False', types.BooleanType),
+                           'keepalive': ('True', types.BooleanType),
+                           'gpgcheck': ('False', types.BooleanType),
+                           'obsoletes': ('False', types.BooleanType),
+                           'showdupesfromrepos': ('False', types.BooleanType),
+                           'enabled': ('True', types.BooleanType),
+                           'plugins': ('False', types.BooleanType),
+                           'enablegroups': ('True', types.BooleanType),
+                           'timeout': (30.0, types.FloatType),
+                           'uid': (0, types.IntType),
+                           'cache': (0, types.BooleanType),
+                           'progress_obj', (None, types.ObjectType) 
+                            }
+
+        
 class yumconf(object):
     """primary config class for yum"""
     
@@ -193,68 +252,6 @@ class yumconf(object):
             raise Errors.ConfigError,  'Error accessing config file: %s' % configfile
         except ConfigParser.ParsingError, e:
             raise Errors.ConfigError, str(e)
-            
-        self.configdata = {} # dict to hold all the data goodies
-       
-        
-        optionints = [('debuglevel', 2),
-                      ('errorlevel', 2), 
-                      ('retries', 10),
-                      ('recent', 7)]
-                      
-                      
-        #defaults -either get them or set them
-        optionstrings = [('cachedir', '/var/cache/yum'), 
-                         ('logfile', '/var/log/yum.log'), 
-                         ('reposdir', ['/etc/yum/repos.d', '/etc/yum.repos.d']),
-                         ('syslog_ident', None),
-                         ('syslog_facility', 'LOG_USER'),
-                         ('distroverpkg', 'fedora-release'),
-                         ('installroot', root),
-                         ('commands', []),
-                         ('exclude', []),
-                         ('failovermethod', 'roundrobin'),
-                         ('yumversion', 'unversioned'),
-                         ('proxy', None),
-                         ('proxy_username', None),
-                         ('proxy_password', None),
-                         ('pluginpath', ['/usr/lib/yum-plugins']),
-                         ('installonlypkgs', ['kernel', 'kernel-bigmem', 
-                                              'kernel-enterprise','kernel-smp',
-                                              'kernel-modules',
-                                              'kernel-debug', 'kernel-unsupported', 
-                                              'kernel-source', 'kernel-devel']),
-                         ('kernelpkgnames', ['kernel','kernel-smp',
-                                             'kernel-enterprise', 'kernel-bigmem',
-                                             'kernel-BOOT']),
-                         ('exactarchlist', ['kernel', 'kernel-smp', 'glibc',
-                                            'kernel-hugemem', 'kernel-enterprise',
-                                            'kernel-bigmem']),
-                         ('tsflags', []),
-                         ]
-                         
-        optionbools = [('assumeyes', 'False'),
-                       ('alwaysprompt', 'True'),
-                       ('exactarch', 'True'),
-                       ('tolerant', 'True'),
-                       ('diskspacecheck', 'True'),
-                       ('overwrite_groups', 'False'),
-                       ('keepalive', 'True'),
-                       ('gpgcheck', 'False'),
-                       ('obsoletes', 'False'),
-                       ('showdupesfromrepos', 'False'),
-                       ('enabled', 'True'),
-                       ('plugins', 'False'),
-                       ('enablegroups', 'True')]
-
-        # not being set from the config file
-        # or things that can't be handled like all the rest
-        # - but should be in the config class
-        optionothers = [('uid', 0),
-                        ('cache', 0),
-                        ('progess_obj', None)]
-
-        optionfloats = [('timeout', 30.0)]
 
         # do these two early so we can do the rest using variableReplace()
         for (option, default) in [('distroverpkg' , 'fedora-release'),
