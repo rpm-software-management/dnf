@@ -236,7 +236,7 @@ class YumBaseConfig:
                            'timeout': (30.0, types.FloatType),
                            'uid': (0, types.IntType),
                            'cache': (0, types.BooleanType),
-                           'progress_obj', (None, types.ObjectType) 
+                           'progress_obj': (None, types.ObjectType) 
                             }
 
         
