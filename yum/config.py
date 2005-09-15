@@ -182,7 +182,7 @@ class CFParser(ConfigParser.ConfigParser):
 
 
 
-class YumBaseConfig():
+class YumBaseConfig:
     """Base config object - stores all the structures for the configuration
        all the other config parsing mechanisms should inherit from here"""
     
