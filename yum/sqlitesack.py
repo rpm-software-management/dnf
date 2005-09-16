@@ -411,15 +411,28 @@ class YumSqlitePackageSack(repos.YumPackageSack):
         # if we've got zilch then raise
         if not allpkg:
             raise mdErrors.PackageSackError, 'No Package Matching %s.%s' % naTup
-        # Now find the newest one        
-        newest = allpkg.pop()
-        for pkg in allpkg:
-            (e2, v2, r2) = newest.returnEVR()
-            (e,v,r) = pkg.returnEVR()
-            rc = mdUtils.compareEVR((e,v,r), (e2, v2, r2))
-            if (rc > 0):
-                newest = pkg
-        return newest
+        return mdUtils.newestInList(allpkg)
+
+    def returnNewestByName(self, name=None):
+        # If name is set do it from the database otherwise use our parent's
+        # returnNewestByName
+        if (not name):
+            return repos.YumPackageSack.returnNewestByName(self, name)
+
+        # First find all packages that fulfill name
+        allpkg = []
+        for (rep,cache) in self.primarydb.items():
+            cur = cache.cursor()
+            cur.execute("select pkgId,name,epoch,version,release,arch from packages where name=%s", name)
+            for x in cur.fetchall():
+                if (self.excludes[rep].has_key(x.pkgId)):
+                    continue                    
+                allpkg.append(self.pc(self.db2class(x,True),rep))
+        
+        # if we've got zilch then raise
+        if not allpkg:
+            raise mdErrors.PackageSackError, 'No Package Matching %s' % name
+        return mdUtils.newestInList(allpkg)
 
     def returnPackages(self, repoid=None):
         """Returns a list of packages, only containing nevra information """
