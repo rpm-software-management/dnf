@@ -41,6 +41,14 @@ def compareEVR((e1, v1, r1), (e2, v2, r2)):
     #print '%s, %s, %s vs %s, %s, %s = %s' % (e1, v1, r1, e2, v2, r2, rc)
     return rc
 
+def newestInList(pkgs):
+    # return the newest in the list of packages
+    new = pkgs.pop()
+    for pkg in pkgs:
+        if compareEVR(pkg.returnEVR(), new.returnEVR()) > 0:
+            new = pkg
+    return new
+
 ###########
 # Title: Remove duplicates from a sequence
 # Submitter: Tim Peters 
