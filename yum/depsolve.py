@@ -485,14 +485,14 @@ class Depsolve:
             if len(uplist) > 0:
                 if name not in self.conf.exactarchlist:
                     pkgs = self.pkgSack.returnNewestByName(name)
-                    archs = []
+                    archs = {}
                     for pkg in pkgs:
                         (n,a,e,v,r) = pkg.pkgtup
-                        archs.append(a)
-                    a = rpmUtils.arch.getBestArchFromList(archs)
-                    po = self.pkgSack.returnNewestByNameArch((n,a))
+                        archs[a] = pkg
+                    a = rpmUtils.arch.getBestArchFromList(archs.keys())
+                    po = archs[a]
                 else:
-                    po = self.pkgSack.returnNewestByNameArch((name,arch))
+                    po = self.pkgSack.returnNewestByNameArch((name,arch))[0]
                 if po.pkgtup not in uplist:
                     po = None
 
@@ -691,14 +691,14 @@ class Depsolve:
             if len(uplist) > 0:
                 if confname not in self.conf.exactarchlist:
                     pkgs = self.pkgSack.returnNewestByName(confname)
-                    archs = []
+                    archs = {}
                     for pkg in pkgs:
                         (n,a,e,v,r) = pkg.pkgtup
-                        archs.append(a)
-                    a = rpmUtils.arch.getBestArchFromList(archs)
-                    po = self.pkgSack.returnNewestByNameArch((n,a))
+                        archs[a] = pkg
+                    a = rpmUtils.arch.getBestArchFromList(archs.keys())
+                    po = archs[a]
                 else:
-                    po = self.pkgSack.returnNewestByNameArch((confname,confarch))
+                    po = self.pkgSack.returnNewestByNameArch((confname,confarch))[0]
                 if po.pkgtup not in uplist:
                     po = None
 
