@@ -125,7 +125,7 @@ class TransactionData:
     def remove(self, pkgtup):
         """remove a package from the transaction"""
         if not self.pkgdict.has_key(pkgtup):
-            self.debugprint("Package: %s not in ts" (pkgtup))
+            self.debugprint("Package: %s not in ts" %(pkgtup,))
             return
         del self.pkgdict[pkgtup]
     
