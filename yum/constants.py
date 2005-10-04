@@ -24,12 +24,12 @@ TS_OBSOLETING = 60
 TS_AVAILABLE = 70
 
 # Transaction Relationships
-TR_UPDATES = (1, "updates")
-TR_UPDATEDBY = (2, "updatedby")
-TR_OBSOLETES = (3, "obsoletes")
-TR_OBSOLETEDBY = (4, "obsoletedby")
-TR_DEPENDS = (5, "dependencyof")
-TR_DEPENDSON = (6, "dependson")
+TR_UPDATES = 1
+TR_UPDATEDBY = 2
+TR_OBSOLETES = 3
+TR_OBSOLETEDBY = 4
+TR_DEPENDS = 5
+TR_DEPENDSON = 6
 
 # package object file types
 PO_FILE = 1
