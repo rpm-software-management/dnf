@@ -18,6 +18,7 @@
 import rpm
 import os
 import sys
+from yum.constants import *
 
 from i18n import _
 
