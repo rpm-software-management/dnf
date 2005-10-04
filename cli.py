@@ -29,6 +29,7 @@ from optparse import OptionParser
 import output
 import shell
 import yum
+from yum.constants import *
 import yum.Errors
 import yum.misc
 import rpmUtils.arch
@@ -965,7 +966,7 @@ For more information contact your distribution or package provider.
             for (new, old) in updates:
                 txmbrs = self.tsInfo.getMembers(pkgtup=old)
 
-                if txmbrs and txmbrs[0].output_state == 'obsoleted':
+                if txmbrs and txmbrs[0].output_state == TS_OBSOLETED: 
                     self.log(5, 'Not Updating Package that is already obsoleted: %s.%s %s:%s-%s' % old)
                 else:
                     updating_pkg = self.getPackageObject(new)

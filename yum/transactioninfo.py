@@ -20,6 +20,8 @@
 # remove the given txmbr and iterate to remove all those in depedent relationships
 # with the given txmbr. 
 
+from constants import *
+
 class TransactionData:
     """Data Structure designed to hold information on a yum Transaction Set"""
     def __init__(self):
@@ -151,28 +153,28 @@ class TransactionData:
         self.depupdated = []
         
         for txmbr in self.getMembers():
-            if txmbr.output_state == 'updating':
+            if txmbr.output_state == TS_UPDATE:
                 if txmbr.isDep:
                     self.depupdated.append(txmbr)
                 else:
                     self.updated.append(txmbr)
                     
-            elif txmbr.output_state == 'installing':
+            elif txmbr.output_state == TS_INSTALL or txmbr.output_state == TS_TRUEINSTALL:
                 if txmbr.isDep:
                     self.depinstalled.append(txmbr)
                 else:
                     self.installed.append(txmbr)
             
-            elif txmbr.output_state == 'erasing':
+            elif txmbr.output_state == TS_ERASE:
                 if txmbr.isDep:
                     self.depremoved.append(txmbr)
                 else:
                     self.removed.append(txmbr)
                     
-            elif txmbr.output_state == 'obsoleted':
+            elif txmbr.output_state == TS_OBSOLETED:
                 self.obsoleted.append(txmbr)
                 
-            elif txmbr.output_state == 'obsoleting':
+            elif txmbr.output_state == TS_OBSOLETING:
                 self.installed.append(txmbr)
                 
             else:
@@ -192,8 +194,8 @@ class TransactionData:
            takes a packages object and returns a TransactionMember Object"""
     
         txmbr = TransactionMember(po)
-        txmbr.current_state = 'repo'
-        txmbr.output_state = 'installing'
+        txmbr.current_state = TS_AVAILABLE
+        txmbr.output_state = TS_INSTALL
         txmbr.ts_state = 'u'
         txmbr.reason = 'user'
         self.add(txmbr)
@@ -204,8 +206,8 @@ class TransactionData:
            takes a packages object and returns a TransactionMember Object"""
     
         txmbr = TransactionMember(po)
-        txmbr.current_state = 'repo'
-        txmbr.output_state = 'installing'
+        txmbr.current_state = TS_AVAILABLE
+        txmbr.output_state = TS_TRUEINSTALL
         txmbr.ts_state = 'i'
         txmbr.reason = 'user'
         self.add(txmbr)
@@ -217,8 +219,8 @@ class TransactionData:
            takes a packages object and returns a TransactionMember Object"""
     
         txmbr = TransactionMember(po)
-        txmbr.current_state = 'installed'
-        txmbr.output_state = 'erasing'
+        txmbr.current_state = TS_INSTALL
+        txmbr.output_state = TS_ERASE
         txmbr.ts_state = 'e'
         self.add(txmbr)
         return txmbr
@@ -228,8 +230,8 @@ class TransactionData:
            takes a packages object and returns a TransactionMember Object"""
     
         txmbr = TransactionMember(po)
-        txmbr.current_state = 'repo'
-        txmbr.output_state = 'updating'
+        txmbr.current_state = TS_AVAILABLE
+        txmbr.output_state = TS_UPDATE
         txmbr.ts_state = 'u'
         if oldpo:
             txmbr.relatedto.append((oldpo.pkgtup, 'updates'))
@@ -241,8 +243,8 @@ class TransactionData:
            takes a packages object and returns a TransactionMember Object"""
     
         txmbr = TransactionMember(po)
-        txmbr.current_state = 'repo'
-        txmbr.output_state = 'obsoleting'
+        txmbr.current_state = TS_AVAILABLE
+        txmbr.output_state = TS_OBSOLETING
         txmbr.ts_state = 'u'
         txmbr.relatedto.append((oldpo, 'obsoletes'))
         self.add(txmbr)
@@ -253,8 +255,8 @@ class TransactionData:
            takes a packages object and returns a TransactionMember Object"""
     
         txmbr = TransactionMember(po)
-        txmbr.current_state = 'installed'
-        txmbr.output_state = 'obsoleted'
+        txmbr.current_state = TS_INSTALL
+        txmbr.output_state =  TS_OBSOLETED
         txmbr.ts_state = None
         txmbr.relatedto.append((obsoleting_po, 'obsoletedby'))
         self.add(txmbr)
@@ -310,20 +312,8 @@ class TransactionMember:
     # and any related packages. A world of fun that will be, you betcha
     
     
-    # things to define:
-    # types of relationships
-    # types of reasons
-    # ts, current and output states
-    
-    # output states are:
-    # update, install, remove, obsoleted
-    
+    # definitions
+    # current and output states are defined in constants
+    # relationships are defined in constants
     # ts states are: u, i, e
-    
-    # current_states are:
-    # installed, repo
-    
-    #relationships:
-    # obsoletedby, updates, obsoletes, updatedby, 
-    # dependencyof, dependson
     

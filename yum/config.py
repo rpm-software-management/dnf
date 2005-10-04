@@ -240,10 +240,11 @@ class YumBaseConfig:
                             }
 
         
-class yumconf(object):
+class yumconf(YumBaseConfig):
     """primary config class for yum"""
     
     def __init__(self, configfile = '/etc/yum.conf', root='/'):
+        YumBaseConfig.__init__(self)
         self.cfg = CFParser()
         configh = confpp(configfile)
         try:

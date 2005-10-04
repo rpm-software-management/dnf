@@ -33,12 +33,18 @@ class RPMInstallCallback:
         self.marks = 27
         self.filelog = None
 
-        self.myprocess = { 'updating': 'Updating', 'erasing': 'Erasing',
-                           'installing': 'Installing', 'obsoleted': 'Obsoleted',
-                           'obsoleting': 'Installing'}
-        self.mypostprocess = { 'updating': 'Updated', 'erasing': 'Erased',
-                               'installing': 'Installed', 'obsoleted': 'Obsoleted',
-                               'obsoleting': 'Installed'}
+        self.myprocess = { TS_UPDATE : 'Updating', 
+                           TS_ERASE: 'Erasing',
+                           TS_INSTALL: 'Installing', 
+                           TS_TRUEINSTALL : 'Installing',
+                           TS_OBSOLETED: 'Obsoleted',
+                           TS_OBSOLETING: 'Installing'}
+        self.mypostprocess = { TS_UPDATE: 'Updated', 
+                               TS_ERASE: 'Erased',
+                               TS_INSTALL: 'Installed', 
+                               TS_TRUEINSTALL: 'Installed', 
+                               TS_OBSOLETED: 'Obsoleted',
+                               TS_OBSOLETING: 'Installed'}
 
         self.tsInfo = None # this needs to be set for anything else to work
 

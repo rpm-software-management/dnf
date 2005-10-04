@@ -28,6 +28,7 @@ import rpm
 from repomd.packageSack import ListPackageSack
 from repomd.mdErrors import PackageSackError
 from Errors import DepError, RepoError
+from constants import *
 import packages
 
 class Depsolve:
@@ -176,7 +177,7 @@ class Depsolve:
                     if self.allowedMultipleInstalls(txmbr.po):
                         self.log(5, '%s converted to install' % (txmbr.po))
                         txmbr.ts_state = 'i'
-                        txmbr.output_state = 'installing'
+                        txmbr.output_state = TS_INSTALL
 
                 
                 self.ts.addInstall(hdr, (hdr, rpmfile), txmbr.ts_state)

@@ -421,7 +421,8 @@ class RpmXMLPackageObject(XMLPackageObject, RpmBase):
                     e = reader.GetAttribute('epoch')
                     v = reader.GetAttribute('ver')
                     r = reader.GetAttribute('rel')
-                    objlist.append((name, flag, (e, v, r)))
+                    pre = reader.GetAttribte('pre')
+                    objlist.append((name, flag, (e, v, r), pre))
 
             ret = reader.Read()
             continue
