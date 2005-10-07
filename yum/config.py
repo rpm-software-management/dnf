@@ -187,58 +187,56 @@ class YumBaseConfig:
        all the other config parsing mechanisms should inherit from here"""
     
     def __init__(self, root='/'):
-       
-        self.configdata = {'debuglevel': (2, types.IntType),
-                           'errorlevel': (2, types.IntType),
-                           'retries': (10, types.IntType),
-                           'recent': (7, types.IntType),
-                           'cachedir': ('/var/cache/yum', types.StringType), 
-                           'logfile': ('/var/log/yum.log', types.StringType), 
-                           'reposdir': (['/etc/yum/repos.d', '/etc/yum.repos.d'],
-                                      types.ListType),
-                           'distroverpkg': ('fedora-release', types.StringType), 
-                           'installroot': (root, types.StringType),
-                           'commands': ([], types.ListType),
-                           'exclude': ([], types.ListType),
-                           'failovermethod': ('roundrobin', types.StringType),
-                           'yumversion': ('unversioned', types.StringType),
-                           'proxy': (None, types.StringType),
-                           'proxy_username': (None, types.StringType),
-                           'proxy_password': (None, types.StringType),
-                           'pluginpath': (['/usr/lib/yum-plugins'], 
-                                          types.ListType),
-                           'installonlypkgs': (['kernel', 'kernel-bigmem', 
-                                              'kernel-enterprise','kernel-smp',
-                                              'kernel-modules',
-                                              'kernel-debug', 'kernel-unsupported', 
-                                              'kernel-source', 'kernel-devel'],
-                                               types.ListType),
-                           'kernelpkgnames': (['kernel','kernel-smp',
-                                             'kernel-enterprise', 'kernel-bigmem',
-                                             'kernel-BOOT'], types.ListType),
-                           'exactarchlist': (['kernel', 'kernel-smp', 'glibc',
-                                            'kernel-hugemem', 'kernel-enterprise',
-                                            'kernel-bigmem'], types.ListType),
-                           'tsflags': ([], types.ListType),
-                           'assumeyes': ('False', types.BooleanType),
-                           'alwaysprompt': ('True', types.BooleanType),
-                           'exactarch': ('True', types.BooleanType),
-                           'tolerant': ('True', types.BooleanType),
-                           'diskspacecheck': ('True', types.BooleanType),
-                           'overwrite_groups': ('False', types.BooleanType),
-                           'keepalive': ('True', types.BooleanType),
-                           'gpgcheck': ('False', types.BooleanType),
-                           'obsoletes': ('False', types.BooleanType),
-                           'showdupesfromrepos': ('False', types.BooleanType),
-                           'enabled': ('True', types.BooleanType),
-                           'plugins': ('False', types.BooleanType),
-                           'enablegroups': ('True', types.BooleanType),
-                           'timeout': (30.0, types.FloatType),
-                           'uid': (0, types.IntType),
-                           'cache': (0, types.BooleanType),
-                           'progress_obj': (None, types.ObjectType) 
-                            }
+        self.debuglevel = 2
+        self.errorlevel = 2
+        self._retries = 10
+        self.recent = 7
+        self._cachedir = '/var/cache/yum'
+        self._logfile = '/var/log/yum.log'
+        self._reposdir = ['/etc/yum/repos.d', '/etc/yum.repos.d']
+        self.distroverpkg = 'fedora-release'
+        self.installroot = root
+        self.commands = []
+        self.exclude = []
+        self._failovermethod = 'roundrobin'
+        self.yumversion = 'unversioned'
+        self._proxy = None
+        self._proxy_username = None
+        self._proxy_password = None
+        self.pluginpath = ['/usr/lib/yum-plugins']
+        self.installonlypkgs = ['kernel', 'kernel-bigmem', 
+                                'kernel-enterprise','kernel-smp',
+                                'kernel-modules',
+                                'kernel-debug', 'kernel-unsupported', 
+                                'kernel-source', 'kernel-devel']
+        self.kernelpkgnames = ['kernel','kernel-smp',
+                                'kernel-enterprise', 'kernel-bigmem',
+                                'kernel-BOOT']
+        self.exactarchlist = ['kernel', 'kernel-smp', 'glibc',
+                              'kernel-hugemem', 'kernel-enterprise',
+                              'kernel-bigmem']
+        self.tsflags = []
+        self.assumeyes = False
+        self.alwaysprompt = True
+        self.exactarch = True
+        self.tolerant = True
+        self.diskspacecheck = True
+        self.overwrite_groups = False
+        self._keepalive = True
+        self.gpgcheck = False
+        self.obsoletes = False
+        self.showdupesfromrepos = False
+        self.enabled = True
+        self.plugins = False
+        self.enablegroups = True
+        self._timeout = 30.0
+        self.uid = 0
+        self._cache = False
+        self.progress_obj = None
 
+        # attributes that need properties??
+        # debuglevel, errorlevel?
+        # proxy*, keepalive, retries, failovermethod, timeout, tsflags?
         
 class yumconf(YumBaseConfig):
     """primary config class for yum"""
