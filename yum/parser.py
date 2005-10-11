@@ -132,7 +132,7 @@ class IncludingConfigParser(ConfigParser):
         filenames = shlex.split(inc)
         if filename in filenames:
             filenames.remove(filename)
-        self.set(section, self.include, string.join(filenames, ' ')
+        self.set(section, self.include, string.join(filenames, ' '))
         self._included.pop(filename)
 
     def _readincludes(self):
