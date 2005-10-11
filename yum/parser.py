@@ -1,5 +1,6 @@
 import re
 import copy
+import glob
 import shlex
 import string
 import os.path
@@ -208,7 +209,7 @@ class IncludedDirConfigParser(IncludingConfigParser):
     def __init__(self, defaults = None, includedir=None, includeglob="*.conf", include="include"):
         self.includeglob = includeglob
         self.includedir = includedir
-        IncludingConfigParser.__init__()
+        IncludingConfigParser.__init__(self,include=include)
 
     def read(self, filenames):
         for filename in shlex.split(filenames):
@@ -217,10 +218,17 @@ class IncludedDirConfigParser(IncludingConfigParser):
 
     def _includedir(self):
         for section in ConfigParser.sections(self):
-            if self.has_option(section, self.includedir):
-                dir = self.get(section, self.includedir)
-                matches = glob.glob("%s/%s" % dir, includeglob) 
+            if self.includedir:
+                matches = glob.glob("%s/%s" % (self.includedir, self.includeglob))
                 # glob dir, open files, include
                 for match in matches:
-                    self._add_include(section, filename)
+                    if os.path.exists(match):
+                        self._add_include(section, match)
+
+    def add_include(self, section, filename):
+        """Add a included file to config section"""
+        if not self.has_section(section):
+            raise NoSectionError(section)
+        self._add_include(section, filename)
+
 
