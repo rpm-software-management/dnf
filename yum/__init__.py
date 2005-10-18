@@ -32,7 +32,7 @@ import Errors
 import rpmUtils
 import rpmUtils.updates
 import rpmUtils.arch
-import groups
+import newcomps
 import config
 import repos
 import misc
@@ -311,25 +311,21 @@ class YumBase(depsolve.Depsolve):
                 pass
             else:
                 reposWithGroups.append(repo)
+                
         # now we know which repos actually have groups files.
-
-        self.doRpmDBSetup()
-        pkgtuples = self.rpmdb.getPkgList()
         overwrite = self.conf.getConfigOption('overwrite_groups')
-        self.groupInfo = groups.Groups_Info(pkgtuples, overwrite_groups = overwrite)
+        self.comps = newcomps.Comps(overwrite_groups = overwrite)
 
         for repo in reposWithGroups:
             self.log(4, 'Adding group file from repository: %s' % repo)
             groupfile = repo.getGroups()
             try:
-                self.groupInfo.add(groupfile)
+                self.comps.add(groupfile)
             except Errors.GroupsError, e:
                 self.errorlog(0, 'Failed to add groups file for repository: %s' % repo)
 
-        if self.groupInfo.compscount == 0:
+        if self.comps.compscount == 0:
             raise Errors.GroupsError, 'No Groups Available in any repository'
-
-        self.groupInfo.compileGroups()
 
 
     def buildTransaction(self):
@@ -585,7 +581,6 @@ class YumBase(depsolve.Depsolve):
             if (self.conf.cache or repo_cached) and errors:
                 return errors
                 
-
 
         i = 0
         for po in remote_pkgs:
@@ -1228,6 +1223,83 @@ class YumBase(depsolve.Depsolve):
         available.sort()
         
         return installed, available
+    
+    
+    def groupRemove(self, grpid):
+        """mark all the packages in this group to be removed"""
+        
+        if not self.comps:
+            self.doGroupSetup()
+        
+        if not self.comps.groups.has_key(grpid):
+            raise Errors.GroupsError, "No Group named %s exists" % grpid
+            
+        thisgroup = self.comps.groups[grpid]
+        pkgs = thisgroup.packages
+        for pkg in thisgroup.packages:
+            p = self.rpmdb.installed(name=pkg)
+            for po in p:
+                txmbr = self.tsInfo.addErase(po)
+            
+        
+    def selectGroup(self, grpid):
+        """mark all the packages in the group to be installed"""
+        
+        if not self.comps:
+            self.doGroupSetup()
+        
+        if not self.comps.groups.has_key(grpid):
+            raise Errors.GroupsError, "No Group named %s exists" % grpid
+            
+        thisgroup = self.comps.groups[grpid]
+        if thisgroup.selected:
+            return 
+        
+        thisgroup.selected = True
+        
+        pkgs = thisgroup.mandatory_packages.keys() + thisgroup.default_packages.keys()
+        for pkg in pkgs:
+            try:
+                p = self.pkgSack.returnNewestByName(pkg)
+            except repomd.mdErrors.PackageSackError:
+                self.log(4, "no such package %s from group %s" %(pkg, thisgroup))
+                continue
+            thispkg = p[0]
+            txmbr = self.tsInfo.addInstall(thispkg)
+            txmbr.group.append(thisgroup.grpid)
+
+    def deselectGroup(self, grpid):
+        """de-mark all the packages in the group for install"""
+        if not self.comps:
+            self.doGroupSetup()
+        
+        if not self.comps.groups.has_key(grpid):
+            raise Errors.GroupsError, "No Group named %s exists" % grpid
+            
+        thisgroup = self.comps.groups[grpid]
+        thisgroup.selected = False
+        
+        for pkg in thisgroup.packages:
+            try:
+                p = self.pkgSack.returnNewestByName(pkg)
+            except repomd.mdErrors.PackageSackError:
+                self.log(4, "no such package %s from group %s" %(pkg, thisgroup))
+                continue
+            
+            thispkg = p[0]
+            txmbrs = self.tsInfo.getMembers(pkgtuple = thispkg.pkgtup)
+            for txmbr in txmbrs:
+                try: 
+                    txmbr.group.remove(grpid)
+                except ValueError:
+                    self.log(4, "package %s was not marked in group %s" % (thispkg, grpid))
+                    continue
+                
+                # if there aren't any other groups mentioned then remove the pkg
+                if len(txmbr.group) == 0:
+                    self.tsInfo.remove(thispkg.pkgtup)
+
+                    
         
     def getPackageObject(self, pkgtup):
         """retrieves a packageObject from a pkgtuple - if we need
