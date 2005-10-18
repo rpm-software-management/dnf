@@ -1474,3 +1474,25 @@ class YumBase(depsolve.Depsolve):
         
         return results
 
+    def install(self, input):
+        """try to mark for install the input
+         - input can be a pkg object or string"""
+        # convert 'input'
+        # try to install 'best version of input'
+        # if nothing can be installed raise an exception
+        # if any pkgs can be installed then return a list of the
+        # transaction members for those.
+        pass
+    
+    def update(self, input):
+        """try to find and mark for update the input
+           - input can be a pkg object or string"""
+        pass
+        
+    def erase(self, input):
+        """try to find and mark for erase the input -
+           - input can be a pkg object or string"""
+        pass
+        
+         
+         
