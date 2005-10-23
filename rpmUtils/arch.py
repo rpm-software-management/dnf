@@ -249,7 +249,7 @@ def getBaseArch(myarch=None):
 
     if myarch == "sparc64":
         return "sparc"
-    elif myarch == "ppc64":
+    elif myarch.startswith("ppc64"):
         return "ppc"
         
     if isMultiLibArch(arch=myarch):
