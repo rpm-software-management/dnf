@@ -411,7 +411,7 @@ class YumSqlitePackageSack(repos.YumPackageSack):
         # if we've got zilch then raise
         if not allpkg:
             raise mdErrors.PackageSackError, 'No Package Matching %s.%s' % naTup
-        return [ mdUtils.newestInList(allpkg) ]
+        return mdUtils.newestInList(allpkg)
 
     def returnNewestByName(self, name=None):
         # If name is set do it from the database otherwise use our parent's
@@ -432,7 +432,7 @@ class YumSqlitePackageSack(repos.YumPackageSack):
         # if we've got zilch then raise
         if not allpkg:
             raise mdErrors.PackageSackError, 'No Package Matching %s' % name
-        return [ mdUtils.newestInList(allpkg) ]
+        return mdUtils.newestInList(allpkg)
 
     def returnPackages(self, repoid=None):
         """Returns a list of packages, only containing nevra information """
