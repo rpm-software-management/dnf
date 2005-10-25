@@ -1310,12 +1310,12 @@ For more information contact your distribution or package provider.
         if len(installed) > 0:
             self.log(2, 'Installed Groups:')
             for group in installed:
-                self.log(2, '   %s' % group)
+                self.log(2, '   %s' % group.name)
         
         if len(available) > 0:
             self.log(2, 'Available Groups:')
             for group in available:
-                self.log(2, '   %s' % group)
+                self.log(2, '   %s' % group.name)
 
             
         return 0, ['Done']

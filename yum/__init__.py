@@ -322,7 +322,11 @@ class YumBase(depsolve.Depsolve):
 
         if self.comps.compscount == 0:
             raise Errors.GroupsError, 'No Groups Available in any repository'
-
+        
+        self.doRpmDBSetup()
+        pkglist = self.rpmdb.getPkgList()
+        self.comps.compile(pkglist)
+        
 
     def buildTransaction(self):
         """go through the packages in the transaction set, find them in the
@@ -1198,26 +1202,24 @@ class YumBase(depsolve.Depsolve):
            optional 'uservisible' bool to tell it whether or not to return
            only groups marked as uservisible"""
         
-        if uservisible:
-            availgroups = self.groupInfo.visible_groups
-        else:
-            availgroups = self.groupInfo.grouplist
         
         installed = []
         available = []
         
-        for id in availgroups:
-            grp = self.groupInfo.group_by_id[id]
-            if self.groupInfo.isGroupInstalled(grp.name):
-                installed.append(grp.name)
+        for grp in self.comps.groups.values():
+            if grp.installed:
+                if uservisible:
+                    if grp.user_visible:
+                        installed.append(grp)
+                else:
+                    installed.append(grp)
             else:
-                available.append(grp.name)
-
-        installed = misc.unique(installed)
-        available = misc.unique(available)
-        installed.sort()
-        available.sort()
-        
+                if uservisible:
+                    if grp.user_visible:
+                        available.append(grp)
+                else:
+                    available.append(grp)
+            
         return installed, available
     
     

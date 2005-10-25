@@ -277,7 +277,6 @@ class Comps:
 
             if elem.tag == "category":
                 category = Category(elem)
-                print category.categoryid
                 if self.categories.has_key(category.categoryid):
                     thatcat = self.categories[category.categoryid]
                     thatcat.add(category)
@@ -286,35 +285,35 @@ class Comps:
         
         del parser
         
-        def compile(self, pkgtuplist):
-            """ compile the groups into installed/available groups """
-            
-            # convert the tuple list to a simple dict of pkgnames
-            inst_pkg_names = {}
-            for (n,a,e,v,r) in pkgtuplist:
-                inst_pkg_names[n] = 1
-            
+    def compile(self, pkgtuplist):
+        """ compile the groups into installed/available groups """
+        
+        # convert the tuple list to a simple dict of pkgnames
+        inst_pkg_names = {}
+        for (n,a,e,v,r) in pkgtuplist:
+            inst_pkg_names[n] = 1
+        
 
-            for group in self.groups.values():
-                # if it has any mandatory or default packages in the group, then
-                # make sure they're all installed, if any are missing then
-                # the group is not installed.
-                if len(group.mandatory_packages.keys()) > 0 or len(group.default_packages.keys()) > 0:
-                    check_pkgs = group.mandatory_packages.keys() + group.default_packages.keys()
-                    group.installed = True
-                    for pkgname in check_pkgs:
-                        if not inst_pkg_names.has_key(pkgname):
-                            group.installed = False
-                # if it doesn't have any of those then see if it has ANY of the
-                # optional packages installed. If so - then the group is installed
-                else:
-                    check_pkgs = group.optional_packages.keys()
-                    group.installed = False
-                    for pkgname in check_pkgs:
-                        if inst_pkg_names.has_key(pkgname):
-                            group.installed = True
-            
-            self.compiled = True
+        for group in self.groups.values():
+            # if it has any mandatory or default packages in the group, then
+            # make sure they're all installed, if any are missing then
+            # the group is not installed.
+            if len(group.mandatory_packages.keys()) > 0 or len(group.default_packages.keys()) > 0:
+                check_pkgs = group.mandatory_packages.keys() + group.default_packages.keys()
+                group.installed = True
+                for pkgname in check_pkgs:
+                    if not inst_pkg_names.has_key(pkgname):
+                        group.installed = False
+            # if it doesn't have any of those then see if it has ANY of the
+            # optional packages installed. If so - then the group is installed
+            else:
+                check_pkgs = group.optional_packages.keys()
+                group.installed = False
+                for pkgname in check_pkgs:
+                    if inst_pkg_names.has_key(pkgname):
+                        group.installed = True
+        
+        self.compiled = True
 
 def main():
 
