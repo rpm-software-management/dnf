@@ -123,36 +123,23 @@ class YumOutput:
                 
     
     def displayPkgsInGroups(self, group):
-        print '\nGroup: %s' % group
-        groupid = self.groupInfo.matchGroup(group)
-        if len(self.groupInfo.sub_groups[groupid]) > 0:
-            print ' Required Groups:'
-            for id in self.groupInfo.sub_groups[groupid]:
-                grp = self.groupInfo.group_by_id[id]
-                print '   %s' % grp.name
-        if len(self.groupInfo.default_metapkgs[groupid]) > 0:
-            print ' Default Metapkgs:'
-            for id in self.groupInfo.default_metapkgs[groupid]:
-                grp = self.groupInfo.group_by_id[id]
-                print '   %s' % grp.name
-        if len(self.groupInfo.optional_metapkgs[groupid]) > 0:
-            print ' Optional Metapkgs:'
-            for id in self.groupInfo.optional_metapkgs[groupid]:
-                grp = self.groupInfo.group_by_id[id]
-                print '   %s' % grp.name
-        if len(self.groupInfo.mandatory_pkgs[groupid]) > 0:
+        print '\nGroup: %s' % group.name
+        if group.description != "":
+            print ' Description: %s' % group.description
+        if len(group.mandatory_packages.keys()) > 0:
             print ' Mandatory Packages:'
-            for item in self.groupInfo.mandatory_pkgs[groupid]:
-                print '   %s' % item
-        if len(self.groupInfo.default_pkgs[groupid]) > 0:
-            print ' Default Packages:'
-            for item in self.groupInfo.default_pkgs[groupid]:
-                print '   %s' % item
-        if len(self.groupInfo.optional_pkgs[groupid]) > 0:
-            print ' Optional Packages'
-            for item in self.groupInfo.optional_pkgs[groupid]:
+            for item in group.mandatory_packages.keys():
                 print '   %s' % item
 
+        if len(group.default_packages.keys()) > 0:
+            print ' Default Packages:'
+            for item in group.default_packages.keys():
+                print '   %s' % item
+        
+        if len(group.optional_packages.keys()) > 0:
+            print ' Optional Packages:'
+            for item in group.optional_packages.keys():
+                print '   %s' % item
 
     def depListOutput(self, results):
         """take a list of findDeps results and 'pretty print' the output"""

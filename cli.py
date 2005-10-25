@@ -1325,11 +1325,17 @@ For more information contact your distribution or package provider.
         if userlist is None:
             userlist = self.extcmds
         
-        for group in userlist:
-            if self.groupInfo.groupExists(group):
-                self.displayPkgsInGroups(group)
-            else:
-                self.errorlog(1, 'Warning: Group %s does not exist.' % group)
+        for strng in userlist:
+            matched = False
+            for group in self.comps.groups.values():
+                names = [ group.name, group.groupid]
+                names.extend(group.translated_name.values())
+                if strng in names:
+                    self.displayPkgsInGroups(group)
+                    matched = True
+                    
+            if not matched:
+                self.errorlog(1, 'Warning: Group %s does not exist.' % strng)
         
         return 0, []
         
