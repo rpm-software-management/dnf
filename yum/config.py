@@ -1,4 +1,5 @@
 #!/usr/bin/python -t
+
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation; either version 2 of the License, or
@@ -14,128 +15,175 @@
 # Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 # Copyright 2002 Duke University 
 
-import ConfigParser
-import sys
-import os
-import os.path
-import urlparse
-import types
-import urllib
-import glob
-import rpm
-import re
-import types
+#TODO: scheme checking (xxx://) for URL options (gpgkey, proxy, baseurl ...)
+#TODO: docstrings
 
+import os
+import rpm
+import copy
+from parser import IncludingConfigParser, IncludedDirConfigParser
+from ConfigParser import NoSectionError, NoOptionError
 import rpmUtils.transaction
 import rpmUtils.arch
 import Errors
-import urlgrabber
-import urlgrabber.grabber
-from repos import variableReplace, Repository
-from constants import *
+from repos import Repository
 
-HTTP_CACHING_VALS = ('none', 'packages', 'all')
+class OptionData(object):
+    def __init__(self, parser, section, name):
+        self.parser = parser
+        self.section = section
+        self.name = name
+        self.value = None
 
-class CFParser(ConfigParser.ConfigParser):
-    """wrapper around ConfigParser to provide two simple but useful functions:
-       _getoption() and _getboolean()"""
-    
-    def _getoption(self, section, option, default=None):
-        """section  - section of config
-           option - option from section
-           default - if there is no setting
-           """
-        try:
-            return self.get(section, option)
-        except (ConfigParser.NoSectionError, ConfigParser.NoOptionError), e:
-            return default
+class Option(object):
 
-    def _getboolean(self, section, option, default=None):
-        """section  - section of config
-           option - option from section
-           default - if there is no setting
-           """
-        try:
-            return self.getboolean(section, option)
-        except (ConfigParser.NoSectionError, ConfigParser.NoOptionError), e:
-            return default
+    def __init__(self, default=None):
+        self._setattrname()
+        self.inherit = False
+        self.default = default
 
-    def _getint(self, section, option, default=None):
-        """section  - section of config
-           option - option from section
-           default - if there is no setting
-           """
-        try:
-            return self.getint(section, option)
-        except (ConfigParser.NoSectionError, ConfigParser.NoOptionError), e:            
-            return default
-    
-    def _getfloat(self, section, option, default=None):
-        """section  - section of config
-           option - option from section
-           default - if there is no setting
-           """
-        try:
-            return self.getfloat(section, option)
-        except (ConfigParser.NoSectionError, ConfigParser.NoOptionError), e:            
-            return default
+    def _setattrname(self):
+        self._attrname = '__opt%X' % id(self)
 
-    def getselection(self, section, option, default=None, allowed=()):
-        '''Get a string value that is only allowed to take specific values
-
-        Will raise ValueError if the value given is not allowed.
-        '''
-        val = self._getoption(section, option, default)
-        if val not in allowed:
-            raise ValueError('"%s" is not a valid value for %s' % (val, 
-                option))
-        return val
-
-    def getbytes(self, section, option, default=None):
-        """Get a friendly bytes/bandwidth option as bytes. 
-
-        See _parsebytes() method for valid option values.
-        """
-        try:
-             return self._parsebytes(self.get(section, option))
-        except (ConfigParser.NoSectionError, ConfigParser.NoOptionError), e:
-            return default
-
-    def getthrottle(self, section, option, default=None):
-        """Get a throttle option. 
-
-        Input may either be a percentage or a "friendly bandwidth value" as
-        accepted by the _parsebytes() method.
-
-        Valid inputs: 100, 50%, 80.5%, 123M, 45.6k, 12.4G, 100K, 786.0, 0
-        Invalid inputs: 100.1%, -4%, -500
-
-        Return value will be a int if a bandwidth value was specified or a
-        float if a percentage was given.
-
-        ValueError will be raised if input couldn't be parsed.
-        """
-        try:
-             optval = self.get(section, option)
-        except (ConfigParser.NoSectionError, ConfigParser.NoOptionError), e:
-            return default
-
-        if len(optval) < 1:
-            raise ValueError("no value specified")
-
-        if optval[-1] == '%':
-            n = optval[:-1]
-            try:
-                n = float(n)
-            except ValueError:
-                raise ValueError("couldn't convert '%s' to number" % n)
-            if n < 0 or n > 100:
-                raise ValueError("percentage is out of range")
-            return n / 100.0
+    def __get__(self, obj, objtype):
+        if obj is None:
+            return self
+        optdata = getattr(obj, self._attrname, None)
+        if optdata != None and optdata.value != None:
+            return optdata.value
         else:
-            return self._parsebytes(optval)
+            return self.default
 
-    def _parsebytes(self, optval):
+    def __set__(self, obj, value):
+        optdata = getattr(obj, self._attrname)
+
+        # Only try to parse if its a string
+        if isinstance(value, basestring):
+            try:
+                value = self.parse(value)
+            except ValueError, e:
+                # Add the field name onto the error
+                raise ValueError('Error parsing option %r: %s' % (optdata.name, str(e)))
+    
+        optdata.value = value
+
+        # Write string value back to parser instance
+        strvalue = self.tostring(value)
+        optdata.parser.set(optdata.section, optdata.name, strvalue)
+
+    def setup(self, obj, parser, section, name):
+        '''Initialise the option for a config instance. 
+        This must be called before the option can be set or retrieved. 
+
+        @param obj: BaseConfig (or subclass) instance.
+        @param parser: ConfigParser (or subclass) where the option is read from.
+        @param section: config file section where the option is from.
+        @param name: Name of the option.
+        @return: None
+        '''
+        setattr(obj, self._attrname, OptionData(parser, section, name))
+
+    def clone(self):
+        '''Return a safe copy of this Option instance
+        '''
+        new = copy.copy(self)
+        new._setattrname()
+        return new
+
+    def parse(self, s):
+        '''Parse the string value to the Option's native value.
+
+        Will raise ValueError if there was a problem parsing the string.
+        Subclasses should override this.
+        '''
+        return s
+
+    def tostring(self, value):
+        '''Convert the Option's native value to a string value.
+
+        This does the opposite fo the parse() method above.
+        Subclasses should override this.
+        '''
+        return str(value)
+
+def Inherit(option_obj):
+    new_option = option_obj.clone()
+    new_option.inherit = True
+    return new_option
+
+class ListOption(Option):
+
+    def __init__(self, default=None):
+        if default is None:
+            default = []
+        super(ListOption, self).__init__(default)
+
+    def parse(self, s):
+        """Converts a string from the config file to a workable list
+
+        Commas and spaces are used as separators for the list
+        """
+        # we need to allow for the '\n[whitespace]' continuation - easier
+        # to sub the \n with a space and then read the lines
+        s = s.replace('\n', ' ')
+        s = s.replace(',', ' ')
+        return s.split()
+
+    def tostring(self, value):
+        return '\n '.join(value)
+
+class IntOption(Option):
+    def parse(self, s):
+        try:
+            return int(s)
+        except (ValueError, TypeError), e:
+            raise ValueError('invalid integer value')
+
+class BoolOption(Option):
+    def parse(self, s):
+        s = s.lower()
+        if s in ('0', 'no', 'false'):
+            return False
+        elif s in ('1', 'yes', 'true'):
+            return True
+        else:
+            raise ValueError('invalid boolean value')
+
+    def tostring(self, value):
+        if value:
+            return "yes"
+        else:
+            return "no"
+
+class FloatOption(Option):
+    def parse(self, s):
+        try:
+            return float(s.strip())
+        except (ValueError, TypeError):
+            raise ValueError('invalid float value')
+
+class SelectionOption(Option):
+    '''Handles string values where only specific values are allowed
+    '''
+    def __init__(self, default=None, allowed=()):
+        super(SelectionOption, self).__init__(default)
+        self._allowed = allowed
+        
+    def parse(self, s):
+        if s not in self._allowed:
+            raise ValueError('"%s" is not an allowed value' % s)
+        return s
+
+class BytesOption(Option):
+
+    # Multipliers for unit symbols
+    MULTS = {
+        'k': 1024,
+        'm': 1024*1024,
+        'g': 1024*1024*1024,
+    }
+
+    def parse(self, s):
         """Parse a friendly bandwidth option to bytes
 
         The input should be a string containing a (possibly floating point)
@@ -151,23 +199,17 @@ class CFParser(ConfigParser.ConfigParser):
 
         ValueError will be raised if the option couldn't be parsed.
         """
-        MULTS = {
-            'k': 1024,
-            'm': 1024*1024,
-            'g': 1024*1024*1024,
-        }
-
-        if len(optval) < 1:
+        if len(s) < 1:
             raise ValueError("no value specified")
 
-        if optval[-1].isalpha():
-            n = optval[:-1]
-            unit = optval[-1].lower()
-            mult = MULTS.get(unit, None)
+        if s[-1].isalpha():
+            n = s[:-1]
+            unit = s[-1].lower()
+            mult = self.MULTS.get(unit, None)
             if not mult:
                 raise ValueError("unknown unit '%s'" % unit)
         else:
-            n = optval
+            n = s
             mult = 1
              
         try:
@@ -180,612 +222,274 @@ class CFParser(ConfigParser.ConfigParser):
 
         return int(n * mult)
 
+class ThrottleOption(BytesOption):
 
+    def parse(self, s):
+        """Get a throttle option. 
 
-class YumBaseConfig:
-    """Base config object - stores all the structures for the configuration
-       all the other config parsing mechanisms should inherit from here"""
-    
-    def __init__(self, root='/'):
-        self.debuglevel = 2
-        self.errorlevel = 2
-        self._retries = 10
-        self.recent = 7
-        self._cachedir = '/var/cache/yum'
-        self._logfile = '/var/log/yum.log'
-        self._reposdir = ['/etc/yum/repos.d', '/etc/yum.repos.d']
-        self.distroverpkg = 'fedora-release'
-        self.installroot = root
-        self.commands = []
-        self.exclude = []
-        self._failovermethod = 'roundrobin'
-        self.yumversion = 'unversioned'
-        self._proxy = None
-        self._proxy_username = None
-        self._proxy_password = None
-        self.pluginpath = ['/usr/lib/yum-plugins']
-        self.installonlypkgs = ['kernel', 'kernel-bigmem', 
-                                'kernel-enterprise','kernel-smp',
-                                'kernel-modules',
-                                'kernel-debug', 'kernel-unsupported', 
-                                'kernel-source', 'kernel-devel']
-        self.kernelpkgnames = ['kernel','kernel-smp',
-                                'kernel-enterprise', 'kernel-bigmem',
-                                'kernel-BOOT']
-        self.exactarchlist = ['kernel', 'kernel-smp', 'glibc',
-                              'kernel-hugemem', 'kernel-enterprise',
-                              'kernel-bigmem']
-        self.tsflags = []
-        self.assumeyes = False
-        self.alwaysprompt = True
-        self.exactarch = True
-        self.tolerant = True
-        self.diskspacecheck = True
-        self.overwrite_groups = False
-        self._keepalive = True
-        self.gpgcheck = False
-        self.obsoletes = False
-        self.showdupesfromrepos = False
-        self.enabled = True
-        self.plugins = False
-        self.enablegroups = True
-        self._timeout = 30.0
-        self.uid = 0
-        self._cache = False
-        self.progress_obj = None
+        Input may either be a percentage or a "friendly bandwidth value" as
+        accepted by the BytesOption.
 
-        # attributes that need properties??
-        # debuglevel, errorlevel?
-        # proxy*, keepalive, retries, failovermethod, timeout, tsflags?
-        
-class yumconf(YumBaseConfig):
-    """primary config class for yum"""
-    
-    def __init__(self, configfile = '/etc/yum.conf', root='/'):
-        YumBaseConfig.__init__(self)
-        self.cfg = CFParser()
-        configh = confpp(configfile)
-        try:
-            self.cfg.readfp(configh)
-        except ConfigParser.MissingSectionHeaderError, e:
-            raise Errors.ConfigError,  'Error accessing config file: %s' % configfile
-        except ConfigParser.ParsingError, e:
-            raise Errors.ConfigError, str(e)
+        Valid inputs: 100, 50%, 80.5%, 123M, 45.6k, 12.4G, 100K, 786.0, 0
+        Invalid inputs: 100.1%, -4%, -500
 
-        # do these two early so we can do the rest using variableReplace()
-        for (option, default) in [('distroverpkg' , 'fedora-release'),
-                                  ('installroot', root)]:
-            value =  self.cfg._getoption('main', option, default)
-            self.configdata[option] = value
-            setattr(self, option, value)
+        Return value will be a int if a bandwidth value was specified or a
+        float if a percentage was given.
 
-        # get our variables parsed
-        self.yumvar = self._getEnvVar()
-        self.yumvar['basearch'] = rpmUtils.arch.getBaseArch() # FIXME make this configurable??
-        self.yumvar['arch'] = rpmUtils.arch.getCanonArch() # FIXME make this configurable??
-        # figure out what the releasever really is from the distroverpkg
-        self.yumvar['releasever'] = self._getsysver()
+        ValueError will be raised if input couldn't be parsed.
+        """
+        if len(s) < 1:
+            raise ValueError("no value specified")
 
-        # do the ints
-        for (option, default) in optionints:
+        if s[-1] == '%':
+            n = s[:-1]
             try:
-                value =  self.cfg._getoption('main', option, default)
-                value = variableReplace(self.yumvar, value)
-                value = int(value)
-            except ValueError, e:
-                raise Errors.ConfigError, 'Invalid value in config for main::%s' % option
-            self.configdata[option] = value
-            setattr(self, option, value)
-
-        # do the floats
-        for (option, value) in optionfloats:
-            try:
-                value =  self.cfg._getoption('main', option, default)
-                value = variableReplace(self.yumvar, value)
-                value = float(value)
-            except ValueError, e:
-                raise Errors.ConfigError, 'Invalid value in config for main::%s' % option
-                
-            self.configdata[option] = value
-            setattr(self, option, value)
-
-        # do the strings
-        for (option, default) in optionstrings:
-            value =  self.cfg._getoption('main', option, default)
-            value = variableReplace(self.yumvar, value)
-            self.configdata[option] = value
-            setattr(self, option, value)
-            
-        # do the bools
-        
-        for (option, default) in optionbools:
-            value = self.cfg._getoption('main', option, default)
-            value = variableReplace(self.yumvar, value)
-            if value.lower() not in BOOLEAN_STATES:
-                raise Errors.ConfigError, 'Invalid value in config for main::%s' % option
-            value = BOOLEAN_STATES[value.lower()]
-            self.configdata[option] = value
-            setattr(self, option, value)
-            
-        # do the others            
-        for (option, value) in optionothers:
-            self.configdata[option] = value
-            setattr(self, option, value)
-
-        # do the dirs - set the root if there is one (grumble)
-        for option in ['cachedir', 'logfile']:
-            path = self.configdata[option]
-            root = self.configdata['installroot']
-            rootedpath = root + path
-            self.configdata[option] = rootedpath
-            setattr(self, option, rootedpath)
-        
-        # bandwidth limit options require special parsing
-        for option, getfunc in [('bandwidth', self.cfg.getbytes), 
-                                ('throttle', self.cfg.getthrottle)]:
-            value = getfunc('main', option, 0)
-            value = variableReplace(self.yumvar, value)
-            self.configdata[option] = value
-            setattr(self, option, value)
-
-        # http_caching needs special handling
-        value = self.cfg.getselection('main', 'http_caching', 'all', 
-                HTTP_CACHING_VALS)
-        setattr(self, 'http_caching', value)
-        self.configdata['http_caching'] = value
-        
-        # weird ones
-        for option in ['commands', 'installonlypkgs', 'kernelpkgnames',
-            'exclude', 'reposdir', 'exactarchlist', 'pluginpath']:
-            self.configdata[option] = variableReplace(self.yumvar, 
-                    self.configdata[option])
-            setattr(self, option, self.configdata[option])
-
-        # make our lists into lists. :)
-        for option in ['exclude', 'installonlypkgs', 'kernelpkgnames', 
-                'tsflags', 'reposdir', 'exactarchlist', 'pluginpath']:
-            self.configdata[option] = parseList(self.configdata[option])
-            setattr(self, option, self.configdata[option])
-
-        # Check that plugin paths are all absolute
-        for path in self.pluginpath:
-            if path[:1] != '/':
-                raise Errors.ConfigError(
-                        "All plugin search paths must be absolute")
-
-
-    def listConfigOptions(self):
-        """return list of options available for global config"""
-        return self.configdata.keys()
-        
-    def setConfigOption(self, option, value):
-        """option, value to set for global config options"""
-        try:
-            self.configdata[option] = value
-            setattr(self, option, value)
-        except KeyError:
-            raise Errors.ConfigError, 'No such option %s' % option
-        
-    def getConfigOption(self, option, default=None):
-        """gets global config setting, takes optional default value"""
-        try:
-            return self.configdata[option]
-        except KeyError:
-            return default
-
-    def _getsysver(self):
-        ts = rpmUtils.transaction.initReadOnlyTransaction(root=self.getConfigOption('installroot', '/'))
-        ts.pushVSFlags(~(rpm._RPMVSF_NOSIGNATURES|rpm._RPMVSF_NODIGESTS))
-        idx = ts.dbMatch('provides', self.getConfigOption('distroverpkg'))
-        # we're going to take the first one - if there is more than one of these
-        # then the user needs a beating
-        if idx.count() == 0:
-            releasever = 'Null'
+                n = float(n)
+            except ValueError:
+                raise ValueError("couldn't convert '%s' to number" % n)
+            if n < 0 or n > 100:
+                raise ValueError("percentage is out of range")
+            return n / 100.0
         else:
-            hdr = idx.next()
-            releasever = hdr['version']
-            del hdr
-        del idx
-        del ts
-        return releasever
+            return BytesOption.parse(self, optval)
+
+
+class BaseConfig(object):
+    #XXX: document
+
+    def __init__(self):
+        self._section = None
+
+    def __str__(self):
+        out = []
+        out.append('[%s]' % self._section)
+        for name, value in self.iteritems():
+            out.append('%s: %r' % (name, value))
+        return '\n'.join(out)
+
+    def populate(self, parser, section, parent=None):
+        self._section = section
+        self.cfg = parser           # Keep a reference to the parser
+
+        for name in self.iterkeys():
+            option = self.optionobj(name)
+            value = None
+            try:
+                value = parser.get(section, name)
+            except (NoSectionError, NoOptionError):
+                # No matching option in this section, try inheriting
+                if parent and option.inherit:
+                    value = getattr(parent, name)
+               
+            option.setup(self, parser, section, name)
+            if value is not None:
+                setattr(self, name, value)
+
+    def optionobj(cls, name):
+        '''Return the Option instance for the given name
+        '''
+        return cls.__dict__[name]
+    optionobj = classmethod(optionobj)
+
+    def iterkeys(self):
+        for name, item in  self.__class__.__dict__.iteritems():
+            if isinstance(item, Option):
+                yield name
+
+    def iteritems(self):
+        for name in self.iterkeys():
+            yield (name, getattr(self, name))
+
+class EarlyConf(BaseConfig):
+
+    distroverpkg = Option('fedora-release')
+    installroot = Option()
+
+class YumConf(EarlyConf):
+
+    debuglevel = IntOption(2)
+    errorlevel = IntOption(2)
+    retries = IntOption(10)
+    recent = IntOption(7)
+
+    cachedir = Option('/var/cache/yum')
+    logfile = Option('/var/log/yum.log')
+    reposdir = ListOption(['/etc/yum/repos.d', '/etc/yum.repos.d'])
+    syslog_ident = Option()
+    syslog_facility = Option()
+
+    commands = ListOption()
+    exclude = ListOption()
+    failovermethod = Option('roundrobin')
+    yumversion = Option('unversioned')
+    proxy = Option()
+    proxy_username = Option()
+    proxy_password = Option()
+    pluginpath = ListOption(['/usr/lib/yum-plugins'])
+    installonlypkgs = ListOption(['kernel', 'kernel-bigmem',
+            'kernel-enterprise','kernel-smp', 'kernel-modules', 'kernel-debug',
+            'kernel-unsupported', 'kernel-source', 'kernel-devel'])
+    kernelpkgnames = ListOption(['kernel','kernel-smp', 'kernel-enterprise',
+            'kernel-bigmem', 'kernel-BOOT'])
+    exactarchlist = ListOption(['kernel', 'kernel-smp', 'glibc',
+            'kernel-hugemem', 'kernel-enterprise', 'kernel-bigmem'])
+    tsflags = ListOption()
+
+    assumeyes = BoolOption(False)
+    alwaysprompt = BoolOption(True)
+    exactarch = BoolOption(True)
+    tolerant = BoolOption(True)
+    diskspacecheck = BoolOption(True)
+    overwrite_groups = BoolOption(False)
+    keepalive = BoolOption(True)
+    gpgcheck = BoolOption(False)
+    obsoletes = BoolOption(False)
+    showdupesfromrepos = BoolOption(False)
+    enabled = BoolOption(True)
+    plugins = BoolOption(False)
+    enablegroups = BoolOption(True)
+
+    timeout = FloatOption(30.0)
+
+    bandwidth = BytesOption(0)
+    throttle = ThrottleOption(0)
+
+    http_caching = SelectionOption('all', ('none', 'packages', 'all'))
+
+
+class RepoConf(BaseConfig):
+   
+    name = Option()         #XXX: error out if no name set
+    enabled = BoolOption(True)
+    baseurl = ListOption([])
+    mirrorlist = Option()
+    gpgkey = ListOption()
+    exclude = ListOption() 
+    includepkgs = ListOption() 
+
+    proxy_username = Inherit(YumConf.proxy_username)
+    proxy = Inherit(YumConf.proxy)
+    proxy_password = Inherit(YumConf.proxy_password)
+    retries = Inherit(YumConf.retries)
+    failovermethod = Inherit(YumConf.failovermethod)
+
+    gpgcheck = Inherit(YumConf.gpgcheck)
+    keepalive = Inherit(YumConf.keepalive)
+    enablegroups = Inherit(YumConf.enablegroups)
+
+    bandwidth = Inherit(YumConf.bandwidth)
+    throttle = Inherit(YumConf.throttle)
+    timeout = Inherit(YumConf.timeout)
+    http_caching = Inherit(YumConf.http_caching)
+
+
+def readMainConfig(configfile, root):
+    #XXX: document
+
+    # Read up config variables that are needed early to calculate substitution
+    # variables
+    EarlyConf.installroot.default = root
+    earlyconf = EarlyConf()
+    confparser = IncludingConfigParser()
+    confparser.read(configfile)
+    earlyconf.populate(confparser, 'main')
+
+    # Set up substitution vars
+    vars = _getEnvVar()
+    vars['basearch'] = rpmUtils.arch.getBaseArch()          # FIXME make this configurable??
+    vars['arch'] = rpmUtils.arch.getCanonArch()             # FIXME make this configurable??
+    vars['releasever'] = _getsysver(earlyconf.installroot, earlyconf.distroverpkg)
+
+    # Read [main] section
+    yumconf = YumConf()
+    confparser = IncludingConfigParser(vars=vars)
+    confparser.read(configfile)
+    yumconf.populate(confparser, 'main')
+
+    # Apply the installroot to directory options
+    for option in ('cachedir', 'logfile'):
+        path = getattr(yumconf, option)
+        setattr(yumconf, option, yumconf.installroot + path)
     
-    def _getEnvVar(self):
-        yumvar = {}
-        for num in range(0, 10):
-            env='YUM%s' % num
-            var='$%s' % env
-            yumvar[num] = os.environ.get(env, var)
-        
-        return yumvar
+    # Check that plugin paths are all absolute
+    for path in yumconf.pluginpath:
+        if not path.startswith('/'):
+            raise Errors.ConfigError("All plugin search paths must be absolute")
 
+    # Add in some extra attributes which aren't actually configuration values 
+    yumconf.yumvar = vars
+    yumconf.uid = 0
+    yumconf.cache = 0
+    yumconf.progess_obj = None
 
+    return yumconf
 
+def readRepoConfig(parser, section, mainconf):
+    #XXX: document
 
+    conf = RepoConf()
+    conf.populate(parser, section, mainconf)
 
-def parseDotRepo(fn):
-    """returns config parser object and a list of sections from parsing .repo files
-       fn = filename of config file
-       raises Errors.ConfigError if: file is broken or no repository sections available
-       """
-           
-    repoparsed = confpp(fn)
-    repoconf = CFParser()
-    try:
-        repoconf.readfp(repoparsed)
-    except ConfigParser.MissingSectionHeaderError, e:
-        raise Errors.ConfigError, 'Error: Bad repository file %s.' % fn
-    
-    good_sections = []
-    for section in repoconf.sections():
-        if section != 'main': # check for morons
-            good_sections.append(section)
-        
-    if len(good_sections) < 1:
-        raise Errors.ConfigError, 'Error: Bad repository file %s, no repo stanzas.' % fn
-    
-    return repoconf, good_sections
-        
-
-def cfgParserRepo(section, yumconfig, cfgparser):
-    """take a configparser object and extract repository information
-       from it. 
-
-       section: section name to grab from cfgparser object data
-       yumconfig: the global yumconfig to apply to this repo
-       cfgparser: cfgparser object
-       
-       Returns a repos.Repository object
-       """
-    
     thisrepo = Repository(section)
-    thisrepo.cfgparser = cfgparser
-    thisrepo.set('yumvar', yumconfig.yumvar)
 
-    for keyword in ['proxy_username', 'proxy', 'proxy_password',
-                    'retries', 'failovermethod', 'name']:
-        val = cfgparser._getoption(section, keyword, yumconfig.getConfigOption(keyword))
-        val = variableReplace(yumconfig.yumvar, val)
-        thisrepo.set(keyword, val)
-    
-    for keyword in ['gpgcheck', 'keepalive', 'enablegroups', 'enabled']:
-        val = cfgparser._getoption(section, keyword, yumconfig.getConfigOption(keyword))
-        val = variableReplace(yumconfig.yumvar, val)
-        if type(val) not in (True, False):
-            val = str(val)
-            if val.lower() not in BOOLEAN_STATES:
-                raise Errors.RepoError, 'Invalid value in repo config for %s::%s' % (section, keyword)
-            val = BOOLEAN_STATES[val.lower()]
-        thisrepo.set(keyword, val)
-    
-    for (keyword, getfunc) in [('bandwidth', cfgparser.getbytes),
-                               ('throttle', cfgparser.getthrottle),
-                               ('timeout', cfgparser._getfloat)]:
-        val = getfunc(section, keyword, yumconfig.getConfigOption(keyword))
-        thisrepo.set(keyword, val)
+    # Transfer attributes across
+    #TODO: merge RepoConf and Repository 
+    for k, v in conf.iteritems():
+        thisrepo.set(k, v)
 
+    # Set attributes not from the config file
+    thisrepo.basecachedir = mainconf.cachedir
+    thisrepo.yumvar.update(mainconf.yumvar)
+    thisrepo.cfg = parser
 
-    # lists and weird items
-    baseurl = cfgparser._getoption(section, 'baseurl', [])
-    baseurls = parseList(baseurl)
-    mirrorlistfn = cfgparser._getoption(section, 'mirrorlist', None)
-    mirrorlistfn = variableReplace(yumconfig.yumvar, mirrorlistfn)
-    thisrepo.set('mirrorlistfn', mirrorlistfn)
-    thisrepo.set('baseurls', baseurls)
-
-    thisrepo.set('http_caching', cfgparser.getselection(
-            section, 'http_caching', 
-            yumconfig.getConfigOption('http_caching'),
-            HTTP_CACHING_VALS
-            )
-        )
-
-    # Parse and check gpgkey URLs
-    gpgkeys = cfgparser._getoption(section, 'gpgkey', '')
-    gpgkeys = variableReplace(yumconfig.yumvar, gpgkeys)
-    gpgkeys = parseList(gpgkeys)
-    for gpgkey in gpgkeys:
-        (s,b,p,q,f,o) = urlparse.urlparse(gpgkey)
-        if s not in ('http', 'ftp', 'file', 'https'):
-            raise Errors.ConfigError, 'gpgkey must be ftp, http[s], or file URL: %s' % gpgkey
-    thisrepo.set('gpgkey', gpgkeys)
-
-    # check out the proxy url
-    if thisrepo.proxy:
-        (s,b,p,q,f,o) = urlparse.urlparse(thisrepo.proxy)
-        if s not in ('http', 'ftp', 'https'):
-            raise Errors.ConfigError, 'proxy must be ftp or http[s] URL: %s' % thisrepo.proxy
-            thisrepo.set('proxy', None)
-    
-    excludelist = cfgparser._getoption(section, 'exclude', [])
-    excludelist = variableReplace(yumconfig.yumvar, excludelist)
-    excludelist = parseList(excludelist)
-    thisrepo.set('excludes', excludelist)
-
-    includelist = cfgparser._getoption(section, 'includepkgs', [])
-    includelist = variableReplace(yumconfig.yumvar, includelist)
-    includelist = parseList(includelist)
-    thisrepo.set('includepkgs', includelist)
-
-    thisrepo.set('basecachedir', yumconfig.getConfigOption('cachedir'))
-    
     return thisrepo
 
+def getOption(conf, section, name, default, option):
+    '''Convenience function to retrieve a parsed and converted value from a
+    ConfigParser.
 
-def parseList(value):
-    """converts strings from a configparser option into a workable list
-       converts commas and spaces to separators for the list"""
-       
-    if type(value) is types.ListType:
-        return value
-        
-    listvalue = []
-    # we need to allow for the '\n[whitespace]' continuation - easier
-    # to sub the \n with a space and then read the lines
-    slashnrepl = re.compile('\n')
-    commarepl = re.compile(',')
-    (value, count) = slashnrepl.subn(' ', value)
-    (value, count) = commarepl.subn(' ', value)
-    listvalue = value.split()
-    return listvalue
-      
+    @param conf: ConfigParser instance or similar
+    @param section: Section name
+    @param name: Option name
+    @param default: Value to use if option is missing
+    @param option: Option instance to use for conversion.
+    @return: The parsed value or default if value was not present.
 
-class confpp:
-    """
-    ConfigParser Include Pre-Processor
-    
-        File-like Object capable of pre-processing include= lines for
-        a ConfigParser. 
-        
-        The readline function expands lines matching include=(url)
-        into lines from the url specified. Includes may occur in
-        included files as well. 
-        
-        Suggested Usage:
-            cfg = ConfigParser.ConfigParser()
-            fileobj = confpp( fileorurl )
-            cfg.readfp(fileobj)
-    """
-    
-    
-    def __init__(self, configfile):
-        # set some file-like object attributes for ConfigParser
-        # these just make confpp look more like a real file object.
-        self.mode = 'r' 
-        
-        # establish whether to use urlgrabber or urllib
-        # we want to use urlgrabber if it supports urlopen
-        if hasattr(urlgrabber.grabber, 'urlopen'):
-            self._urlresolver = urlgrabber.grabber
-        else: 
-            self._urlresolver = urllib
-        
-        
-        # first make configfile a url even if it points to 
-        # a local file
-        scheme = urlparse.urlparse(configfile)[0]
-        if scheme == '':
-            # check it to make sure it's not a relative file url
-            if configfile[0] != '/':
-                configfile = os.getcwd() + '/' + configfile
-            url = 'file://' + configfile
-        else:
-            url = configfile
-        
-        # these are used to maintain the include stack and check
-        # for recursive/duplicate includes
-        self._incstack = []
-        self._alreadyincluded = []
-        
-        # _pushfile will return None if he couldn't open the file
-        fo = self._pushfile( url )
-        if fo is None: 
-            raise Errors.ConfigError, 'Error accessing file: %s' % url
-        
-    def readline( self, size=0 ):
-        """
-        Implementation of File-Like Object readline function. This should be
-        the only function called by ConfigParser according to the python docs.
-        We maintain a stack of real FLOs and delegate readline calls to the 
-        FLO on top of the stack. When EOF occurs on the topmost FLO, it is 
-        popped off the stack and the next FLO takes over. include= lines 
-        found anywhere cause a new FLO to be opened and pushed onto the top 
-        of the stack. Finally, we return EOF when the bottom-most (configfile
-        arg to __init__) FLO returns EOF.
-        
-        Very Technical Pseudo Code:
-        
-        def confpp.readline() [this is called by ConfigParser]
-            open configfile, push on stack
-            while stack has some stuff on it
-                line = readline from file on top of stack
-                pop and continue if line is EOF
-                if line starts with 'include=' then
-                    error if file is recursive or duplicate
-                    otherwise open file, push on stack
-                    continue
-                else
-                    return line
-            
-            return EOF
-        """
-        
-        # set line to EOF initially. 
-        line=''
-        while len(self._incstack) > 0:
-            # peek at the file like object on top of the stack
-            fo = self._incstack[-1]
-            line = fo.readline()
-            if len(line) > 0:
-                m = re.match( r'\s*include\s*=\s*(?P<url>.*)', line )
-                if m:
-                    url = m.group('url')
-                    if len(url) == 0:
-                        raise Errors.ConfigError, \
-                             'Error parsing config %s: include must specify file to include.' % (self.name)
-                    else:
-                        # whooohoo a valid include line.. push it on the stack
-                        fo = self._pushfile( url )
-                else:
-                    # line didn't match include=, just return it as is
-                    # for the ConfigParser
-                    break
-            else:
-                # the current file returned EOF, pop it off the stack.
-                self._popfile()
-        
-        # at this point we have a line from the topmost file on the stack
-        # or EOF if the stack is empty
-        return line
-    
-    
-    def _absurl( self, url ):
-        """
-        Returns an absolute url for the (possibly) relative
-        url specified. The base url used to resolve the
-        missing bits of url is the url of the file currently
-        being included (i.e. the top of the stack).
-        """
-        
-        if len(self._incstack) == 0:
-            # it's the initial config file. No base url to resolve against.
-            return url
-        else:
-            return urlparse.urljoin( self.geturl(), url )
-    
-    
-    def _pushfile( self, url ):
-        """
-        Opens the url specified, pushes it on the stack, and 
-        returns a file like object. Returns None if the url 
-        has previously been included.
-        If the file can not be opened this function exits.
-        """
-        
-        # absolutize this url using the including files url
-        # as a base url.
-        absurl = self._absurl(url)
-        # check if this has previously been included.
-        if self._urlalreadyincluded(absurl):
-            return None
-        try:
-            fo = self._urlresolver.urlopen(absurl)
-        except urlgrabber.grabber.URLGrabError, e:
-            fo = None
-        if fo is not None:
-            self.name = absurl
-            self._incstack.append( fo )
-            self._alreadyincluded.append(absurl)
-        else:
-            raise Errors.ConfigError, \
-                  'Error accessing file for config %s' % (absurl)
-
-        return fo
-    
-    
-    def _popfile( self ):
-        """
-        Pop a file off the stack signaling completion of including that file.
-        """
-        fo = self._incstack.pop()
-        fo.close()
-        if len(self._incstack) > 0:
-            self.name = self._incstack[-1].geturl()
-        else:
-            self.name = None
-    
-    
-    def _urlalreadyincluded( self, url ):
-        """
-        Checks if the url has already been included at all.. this 
-        does not necessarily have to be recursive
-        """
-        for eurl in self._alreadyincluded:
-            if eurl == url: return 1
-        return 0
-    
-    
-    def geturl(self): return self.name
-
-def main(args):
-
-    myfile = args[0]
-    if len(args) > 1:
-        if args[1] == '--dump':
-            configh = confpp(myfile)        
-            while 1:
-                line = configh.readline()
-                if not line: break
-                print line,
-            sys.exit(0)
-
-    conf = yumconf(configfile = myfile)
+    Will raise ValueError if the option could not be parsed.
+    '''
+    try: 
+        val = conf.get(section, name)
+    except (NoSectionError, NoOptionError):
+        return default
+    return option.parse(val)
 
 
-    for option in conf.listConfigOptions():
-        print '%s = %s' % (option, conf.getConfigOption(option))
-        
-    print '\n\n'
+def _getEnvVar():
+    '''Return variable replacements from the environment variables YUM0 to YUM9
 
-    reposlist = []
-    # look through our repositories.
-    for section in conf.cfg.sections(): # loop through the list of sections
-        if section != 'main': # must be a repoid
-            try:
-                thisrepo = cfgParserRepo(section, conf, conf.cfg)
-            except (Errors.RepoError, Errors.ConfigError), e:
-                print >> sys.stderr, e
-                continue
-            else:
-                reposlist.append(thisrepo)
+    The result is intended to be used with parser.varReplace()
+    '''
+    yumvar = {}
+    for num in range(0, 10):
+        env = 'YUM%d' % num
+        val = os.environ.get(env, '')
+        if val:
+            yumvar[env.lower()] = val
+    return yumvar
 
-    # reads through reposdir for *.repo
-    # does not read recursively
-    # read each of them in using confpp, then parse them same as any other repo
-    # section - as above.
+def _getsysver(installroot, distroverpkg):
+    ts = rpmUtils.transaction.initReadOnlyTransaction(root=installroot)
+    ts.pushVSFlags(~(rpm._RPMVSF_NOSIGNATURES|rpm._RPMVSF_NODIGESTS))
+    idx = ts.dbMatch('provides', distroverpkg)
+    # we're going to take the first one - if there is more than one of these
+    # then the user needs a beating
+    if idx.count() == 0:
+        releasever = 'Null'
+    else:
+        hdr = idx.next()
+        releasever = hdr['version']
+        del hdr
+    del idx
+    del ts
+    return releasever
 
-    reposdirs = []
-    for dir in conf.reposdir:
-        if os.path.exists(conf.installroot + '/' + dir):
-            reposdirs.append(conf.installroot + '/' + dir)
-
-    repofn = []
-    for reposdir in reposdirs:
-        if os.path.exists(reposdir) and os.path.isdir(reposdir):
-            reposglob = reposdir + '/*.repo'
-            repofn.extend(glob.glob(reposglob))
-
-    repofn.sort()
-    for fn in repofn:
-        if not os.path.isfile(fn):
-            continue
-        try:
-            cfg, sections = parseDotRepo(fn)
-        except Errors.ConfigError, e:
-            print >> sys.stderr, e
-            continue
-
-        for section in sections:
-            try:
-                thisrepo = cfgParserRepo(section, conf, cfg)
-            except (Errors.RepoError, Errors.ConfigError), e:
-                print >> sys.stderr, e
-                continue
-            else:
-                reposlist.append(thisrepo)
-
-    # got our list of repo objects
-    reposlist.sort()
-    for thisrepo in reposlist:
-        try:
-            thisrepo.baseurlSetup()
-        except Errors.RepoError, e:
-            pass
-        print thisrepo.dump()
-        print ''
-
-if __name__ == "__main__":
-        if len(sys.argv) < 2:
-            print 'command: config file'
-            sys.exit(1)
-            
-        main(sys.argv[1:])

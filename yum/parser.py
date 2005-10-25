@@ -6,10 +6,11 @@ import string
 import os.path
 from ConfigParser import ConfigParser, NoSectionError, NoOptionError
 
+#TODO: include'ing of URLs (Yum currently supports this)
 #TODO: problem: interpolation tokens are lost when config files are rewritten
 #       - workaround is to not set vars, not sure if this is ok
 #       - maybe we should do interpolation at the Option level after all?
-#TODO: include'ing of URLs (Yum currently supports this)
+#       - preserve original uninterpolated value?
 #TODO: separate $var interpolation into YumParser?
 
 class IncludingConfigParser(ConfigParser):
@@ -175,41 +176,22 @@ class IncludingConfigParser(ConfigParser):
             inc = open(fn, 'w')
             self._fns[fn].write(inc)
 
-    _KEYCRE = re.compile(r"\$(\w+)")
-
     def _interpolate(self, section, option, rawval, vars):
         '''Perform $var subsitution (this overides the default %(..)s subsitution)
 
         Only the rawval and vars arguments are used. The rest are present for
         compatibility with the parent class.
         '''
-        done = []                           # Completed chunks to return
-
-        while rawval:
-            m = self._KEYCRE.search(rawval)
-            if not m:
-                done.append(rawval)
-                break
-
-            # Determine replacement value (if unknown variable then preserve original)
-            varname = m.group(1).lower()
-            replacement = vars.get(varname, m.group())
-
-            start, end = m.span()
-            done.append(rawval[:start])     # Keep stuff leading up to token
-            done.append(replacement)        # Append replacement value
-            rawval = rawval[end:]           # Continue with remainder of string
-
-        return ''.join(done)
+        return varReplace(rawval, vars)
 
 
 class IncludedDirConfigParser(IncludingConfigParser):
     """A conf.d recursive parser - supporting one level of included dirs"""
 
-    def __init__(self, defaults = None, includedir=None, includeglob="*.conf", include="include"):
+    def __init__(self, vars=None, includedir=None, includeglob="*.conf", include="include"):
         self.includeglob = includeglob
         self.includedir = includedir
-        IncludingConfigParser.__init__(self,include=include)
+        IncludingConfigParser.__init__(self, vars=vars, include=include)
 
     def read(self, filenames):
         for filename in shlex.split(filenames):
@@ -232,3 +214,29 @@ class IncludedDirConfigParser(IncludingConfigParser):
         self._add_include(section, filename)
 
 
+_KEYCRE = re.compile(r"\$(\w+)")
+
+def varReplace(raw, vars):
+    '''Perform variable replacement
+
+    @parma  
+    '''
+
+    done = []                      # Completed chunks to return
+
+    while raw:
+        m = _KEYCRE.search(raw)
+        if not m:
+            done.append(raw)
+            break
+
+        # Determine replacement value (if unknown variable then preserve original)
+        varname = m.group(1).lower()
+        replacement = vars.get(varname, m.group())
+
+        start, end = m.span()
+        done.append(raw[:start])    # Keep stuff leading up to token
+        done.append(replacement)    # Append replacement value
+        raw = raw[end:]             # Continue with remainder of string
+
+    return ''.join(done)

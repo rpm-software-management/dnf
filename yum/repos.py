@@ -30,6 +30,7 @@ from repomd import mdErrors
 from repomd import packageSack
 from packages import YumAvailablePackage
 import mdcache
+import parser
 
 _is_fnmatch_pattern = re.compile(r"[*?[]").search
 
@@ -332,9 +333,9 @@ class Repository:
         self.cache = 0
         self.callback = None # callback for the grabber
         self.failure_obj = None
-        self.mirrorlistfn = None # filename/url of mirrorlist file
+        self.mirrorlist = None # filename/url of mirrorlist file
         self.mirrorlistparsed = 0
-        self.baseurls = [] # baseurls from the config file
+        self.baseurl = [] # baseurls from the config file
         self.yumvar = {} # empty dict of yumvariables for $string replacement
         self.proxy_password = None
         self.proxy_username = None
@@ -401,8 +402,8 @@ class Repository:
         output = '[%s]\n' % self.id
         vars = ['name', 'bandwidth', 'enabled', 'enablegroups', 
                  'gpgcheck', 'includepkgs', 'keepalive', 'proxy',
-                 'proxy_password', 'proxy_username', 'excludes', 
-                 'retries', 'throttle', 'timeout', 'mirrorlistfn', 
+                 'proxy_password', 'proxy_username', 'exclude', 
+                 'retries', 'throttle', 'timeout', 'mirrorlist', 
                  'cachedir', 'gpgkey', 'pkgdir', 'hdrdir']
         vars.sort()
         for attr in vars:
@@ -524,15 +525,15 @@ class Repository:
            with valid ones, run  self.check() at the end to make sure it worked"""
 
         goodurls = []
-        if self.mirrorlistfn and not self.mirrorlistparsed:
-            mirrorurls = getMirrorList(self.mirrorlistfn)
+        if self.mirrorlist and not self.mirrorlistparsed:
+            mirrorurls = getMirrorList(self.mirrorlist)
             self.mirrorlistparsed = 1
             for url in mirrorurls:
-                url = variableReplace(self.yumvar, url)
-                self.baseurls.append(url)
-        
-        for url in self.baseurls:
-            url = variableReplace(self.yumvar, url)
+                url = parser.varReplace(url, self.yumvar)
+                self.baseurl.append(url)
+       
+        for url in self.baseurl:
+            url = parser.varReplace(url, self.yumvar)
             (s,b,p,q,f,o) = urlparse.urlparse(url)
             if s not in ['http', 'ftp', 'file', 'https']:
                 print 'not using ftp, http[s], or file for repos, skipping - %s' % (url)
@@ -814,46 +815,3 @@ def getMirrorList(mirrorlist):
     
     return returnlist
 
-def variableReplace(yumvar, thing):
-    """ do the replacement of $ variables, releasever, arch and basearch on any 
-        string or list  passed to it - returns whatever you passed"""
-    
-    if thing is None:
-        return thing
-
-    elif type(thing) is types.ListType:
-        shortlist = thing
-
-    elif type(thing) is types.StringType:
-        shortlist = []
-        shortlist.append(thing)
-        
-    else:
-        # not a list or string, screw it
-        return thing
-    
-    basearch_reg = re.compile('\$basearch', re.I)
-    arch_reg = re.compile('\$arch', re.I)
-    releasever_reg = re.compile('\$releasever', re.I)
-    yumvar_reg = {}
-
-    for num in range(0,10):
-        env = '\$YUM%s' % num
-        yumvar_reg[num] = re.compile(env, re.I)
-
-    returnlist = []        
-    for string in shortlist:
-        (string, count) = basearch_reg.subn(yumvar['basearch'], string)
-        (string, count) = arch_reg.subn(yumvar['arch'], string)
-        (string, count) = releasever_reg.subn(yumvar['releasever'], string)
-        for num in range(0,10):
-            (string, count) = yumvar_reg[num].subn(yumvar[num], string)
-        returnlist.append(string)
-        
-    if type(thing) is types.StringType:
-        thing = returnlist[0]
-    
-    if type(thing) is types.ListType:
-        thing = returnlist
-        
-    return thing

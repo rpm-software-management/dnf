@@ -36,7 +36,6 @@ import rpmUtils.arch
 from rpmUtils.miscutils import compareEVR
 from yum.packages import parsePackages, returnBestPackages, YumInstalledPackage, YumLocalPackage
 from yum.logger import Logger
-from yum.config import yumconf
 from yum import pgpmsg
 from i18n import _
 import callback
@@ -174,17 +173,17 @@ yum [options] < update | install | info | remove | list |
                 sys.exit(1)
                 
             # Initialise logger object
-            self.log=Logger(threshold=self.conf.getConfigOption('debuglevel'), 
+            self.log=Logger(threshold=self.conf.debuglevel,
                     file_object=sys.stdout)
 
             # Setup debug and error levels
             if opts.debuglevel is not None:
                 self.log.threshold=opts.debuglevel
-                self.conf.setConfigOption('debuglevel', opts.debuglevel)
+                self.conf.debuglevel = opts.debuglevel
 
             if opts.errorlevel is not None:
                 self.errorlog.threshold=opts.errorlevel
-                self.conf.setConfigOption('errorlevel', opts.errorlevel)
+                self.conf.errorlevel = opts.errorlevel
 
         except ValueError, e:
             self.errorlog(0, _('Options Error: %s') % e)
@@ -212,13 +211,13 @@ yum [options] < update | install | info | remove | list |
             # set some things in it.
                 
             # who are we:
-            self.conf.setConfigOption('uid', os.geteuid())
+            self.conf.uid = os.geteuid()
 
             # version of yum
-            self.conf.setConfigOption('yumversion', yum.__version__)
+            self.conf.yumversion = yum.__version__
             
             # syslog-style log
-            if self.conf.getConfigOption('uid') == 0:
+            if self.conf.uid == 0:
                 logpath = os.path.dirname(self.conf.logfile)
                 if not os.path.exists(logpath):
                     try:
@@ -243,10 +242,10 @@ yum [options] < update | install | info | remove | list |
             
             # Handle remaining options
             if opts.assumeyes:
-                self.conf.setConfigOption('assumeyes',1)
+                self.conf.assumeyes =1
 
             if opts.cacheonly:
-                self.conf.setConfigOption('cache', 1)
+                self.conf.cache = 1
 
             if opts.sleeptime is not None:
                 sleeptime = random.randrange(opts.sleeptime*60)
@@ -254,16 +253,16 @@ yum [options] < update | install | info | remove | list |
                 sleeptime = 0
 
             if opts.obsoletes:
-                self.conf.setConfigOption('obsoletes', 1)
+                self.conf.obsoletes = 1
 
             if opts.installroot:
-                self.conf.setConfigOption('installroot', opts.installroot)
+                self.conf.installroot = opts.installroot
 
             for exclude in opts.exclude:
                 try:
-                    excludelist = self.conf.getConfigOption('exclude')
+                    excludelist = self.conf.exclude
                     excludelist.append(exclude)
-                    self.conf.setConfigOption('exclude', excludelist)
+                    self.conf.exclude = excludelist
                 except yum.Errors.ConfigError, e:
                     self.errorlog(0, _(e))
                     self.usage()
@@ -303,9 +302,8 @@ yum [options] < update | install | info | remove | list |
             sys.exit(1)
     
         # set our caching mode correctly
-        
-        if self.conf.getConfigOption('uid') != 0:
-            self.conf.setConfigOption('cache', 1)
+        if self.conf.uid != 0:
+            self.conf.cache = 1
         # run the sleep - if it's unchanged then it won't matter
         time.sleep(sleeptime)
 
@@ -314,13 +312,13 @@ yum [options] < update | install | info | remove | list |
         """reads self.cmds and parses them out to make sure that the requested 
         base command + argument makes any sense at all""" 
 
-        self.log(3, 'Yum Version: %s' % self.conf.getConfigOption('yumversion'))
+        self.log(3, 'Yum Version: %s' % self.conf.yumversion)
         self.log(3, 'COMMAND: %s' % self.cmdstring)
-        self.log(3, 'Installroot: %s' % self.conf.getConfigOption('installroot'))
-        if len(self.conf.getConfigOption('commands')) == 0 and len(self.cmds) < 1:
-            self.cmds = self.conf.getConfigOption('commands')
+        self.log(3, 'Installroot: %s' % self.conf.installroot)
+        if len(self.conf.commands) == 0 and len(self.cmds) < 1:
+            self.cmds = self.conf.commands
         else:
-            self.conf.setConfigOption('commands', self.cmds)
+            self.conf.commands = self.cmds
         if len(self.cmds) < 1:
             self.errorlog(0, _('You need to give some command'))
             self.usage()
@@ -344,7 +342,7 @@ yum [options] < update | install | info | remove | list |
             self.usage()
             raise CliError
     
-        if self.conf.getConfigOption('uid') != 0:
+        if self.conf.uid != 0:
             if self.basecmd in ['install', 'update', 'clean', 'upgrade','erase', 
                                 'groupupdate', 'groupinstall', 'remove',
                                 'groupremove', 'importkey', 'makecache', 
@@ -475,7 +473,7 @@ For more information contact your distribution or package provider.
 
             
         elif self.basecmd == 'upgrade':
-            self.conf.setConfigOption('obsoletes', 1)
+            self.conf.obsoletes = 1
             self.log(2, "Setting up Upgrade Process")
             try:
                 return self.updatePkgs()
@@ -543,7 +541,7 @@ For more information contact your distribution or package provider.
               return 1, [str(e)]
 
         elif self.basecmd == 'clean':
-            self.conf.setConfigOption('cache', 1)
+            self.conf.cache = 1
             return self.cleanCli()
         
         elif self.basecmd in ['groupupdate', 'groupinstall', 'groupremove', 
@@ -667,7 +665,7 @@ For more information contact your distribution or package provider.
         self.log(2, 'Running Transaction Test')
         tsConf = {}
         for feature in ['diskspacecheck']: # more to come, I'm sure
-            tsConf[feature] = self.conf.getConfigOption(feature)
+            tsConf[feature] = getattr(self.conf, feature)
         
         testcb = callback.RPMInstallCallback(output=0)
         testcb.tsInfo = self.tsInfo
@@ -735,7 +733,7 @@ For more information contact your distribution or package provider.
                 # Bail if not -y and stdin isn't a tty as key import will
                 # require user confirmation
                 if not sys.stdin.isatty() and not \
-                            self.conf.getConfigOption('assumeyes'):
+                            self.conf.assumeyes:
                     raise yum.Errors.YumBaseError, \
                         'Refusing to automatically import keys when running ' \
                         'unattended.\nUse "-y" to override.'
@@ -775,7 +773,7 @@ For more information contact your distribution or package provider.
 
                     # Try installing/updating GPG key
                     self.log(0, 'Importing GPG key 0x%s "%s"' % (hexkeyid, userid))
-                    if not self.conf.getConfigOption('assumeyes'):
+                    if not self.conf.assumeyes:
                         if not self.userconfirm():
                             self.log(0, 'Exiting on user command')
                             return 1
@@ -951,7 +949,7 @@ For more information contact your distribution or package provider.
         installed = self.rpmdb.getPkgList()
         self.doUpdateSetup()
         updates = self.up.getUpdatesTuples()
-        if self.conf.getConfigOption('obsoletes'):
+        if self.conf.obsoletes:
             obsoletes = self.up.getObsoletesTuples(newest=1)
         else:
             obsoletes = []
@@ -1459,9 +1457,9 @@ For more information contact your distribution or package provider.
 
     def _promptWanted(self):
         # shortcut for the always-off/always-on options
-        if self.conf.getConfigOption('assumeyes'):
+        if self.conf.assumeyes:
             return False
-        if self.conf.getConfigOption('alwaysprompt'):
+        if self.conf.alwaysprompt:
             return True
         
         # prompt if:

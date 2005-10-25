@@ -155,7 +155,7 @@ class YumShell(cmd.Cmd):
         if cmd in ['debuglevel', 'errorlevel']:
             opts = shlex.split(args)
             if not opts:
-                self.base.log(2, '%s: %s' % (cmd, self.base.conf.getConfigOption(cmd)))
+                self.base.log(2, '%s: %s' % (cmd, getattr(self.base.conf, cmd)))
             else:
                 val = opts[0]
                 try:
@@ -163,7 +163,7 @@ class YumShell(cmd.Cmd):
                 except ValueError, e:
                     self.base.errorlog(0, 'Value %s for %s cannot be made to an int' % (val, cmd))
                     return
-                self.base.conf.setConfigOption(cmd, val)
+                setattr(self.base.conf, cmd, val)
                 if cmd == 'debuglevel':
                     self.base.log.threshold = val
                 elif cmd == 'errorlevel':
@@ -172,14 +172,14 @@ class YumShell(cmd.Cmd):
         elif cmd in ['gpgcheck', 'obsoletes', 'assumeyes']:
             opts = shlex.split(args)
             if not opts:
-                self.base.log(2, '%s: %s' % (cmd, self.base.conf.getConfigOption(cmd)))
+                self.base.log(2, '%s: %s' % (cmd, getattr(self.base.conf, cmd)))
             else:
                 value = opts[0]
                 if value.lower() not in BOOLEAN_STATES:
                     self.base.errorlog(0, 'Value %s for %s is not a Boolean' % (value, cmd))
                     return False
                 value = BOOLEAN_STATES[value.lower()]
-                self.base.conf.setConfigOption(cmd, value)
+                setattr(self.base.conf, cmd, value)
                 if cmd == 'obsoletes':
                     if hasattr(self.base, 'up'): # reset the updates
                         del self.base.up
@@ -189,11 +189,11 @@ class YumShell(cmd.Cmd):
             opts = shlex.split(args)
             if not opts:
                 msg = '%s: ' % cmd
-                msg = msg + string.join(self.base.conf.getConfigOption(cmd))
+                msg = msg + string.join(getattr(self.base.conf, cmd))
                 self.base.log(2, msg)
                 return False
             else:
-                self.base.conf.setConfigOption(cmd, opts)
+                setattr(self.base.conf, cmd, opts)
                 if hasattr(self.base, 'pkgSack'): # kill the pkgSack
                     del self.base.pkgSack
                     self.base.repos._selectSackType()

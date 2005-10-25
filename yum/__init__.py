@@ -34,6 +34,7 @@ import rpmUtils.updates
 import rpmUtils.arch
 import newcomps
 import config
+import parser
 import repos
 import misc
 import transactioninfo
@@ -79,55 +80,51 @@ class YumBase(depsolve.Depsolve):
     def doConfigSetup(self, fn='/etc/yum.conf', root='/'):
         """basic stub function for doing configuration setup"""
        
-        self.conf = config.yumconf(configfile=fn, root=root)
+        self.conf = config.readMainConfig(fn, root)
+        self.yumvar = self.conf.yumvar
         self.getReposFromConfig()
 
     def getReposFromConfig(self):
         """read in repositories from config main and .repo files"""
-        
+
         reposlist = []
-        # look through our repositories.
-        for section in self.conf.cfg.sections(): # loop through the list of sections
-            if section != 'main': # must be a repoid
-                try:
-                    thisrepo = config.cfgParserRepo(section, self.conf, self.conf.cfg)
-                except (Errors.RepoError, Errors.ConfigError), e:
-                    self.errorlog(2, e)
-                    continue
-                else:
-                    reposlist.append(thisrepo)
 
-        # reads through each reposdir for *.repo
-        # does not read recursively
-        # read each of them in using confpp, then parse them same as any other repo
-        # section - as above.
+        # Check yum.conf for repositories
+        for section in self.conf.cfg.sections():
+            # All sections except [main] are repositories
+            if section == 'main': 
+                continue
+
+            try:
+                thisrepo = config.readRepoConfig(self.conf.cfg, section, self.conf)
+            except (Errors.RepoError, Errors.ConfigError), e:
+                self.errorlog(2, e)
+            else:
+                reposlist.append(thisrepo)
+
+        # Read .repo files from directories specified by the reposdir option
+        # (typically /etc/yum.repos.d and /etc/yum/repos.d)
+        parser = config.IncludedDirConfigParser(vars=self.yumvar)
         for reposdir in self.conf.reposdir:
-            if os.path.exists(self.conf.installroot + '/' + reposdir):
+            if os.path.exists(self.conf.installroot+'/'+reposdir):
                 reposdir = self.conf.installroot + '/' + reposdir
-            
+
             if os.path.isdir(reposdir):
-                repofn = glob.glob(reposdir+'/*.repo')
-                repofn.sort()
-                
-                for fn in repofn:
-                    if not os.path.isfile(fn):
-                        continue
-                    try:
-                        cfg, sections = config.parseDotRepo(fn)
-                    except Errors.ConfigError, e:
-                        self.errorlog(2, e)
-                        continue
+                #XXX: why can't we just pass the list of files?
+                files = ' '.join(glob.glob('%s/*.repo' % reposdir))
+                #XXX: error catching here
+                parser.read(files)
 
-                    for section in sections:
-                        try:
-                            thisrepo = config.cfgParserRepo(section, self.conf, 
-                                    cfg)
-                            reposlist.append(thisrepo)
-                        except (Errors.RepoError, Errors.ConfigError), e:
-                            self.errorlog(2, e)
-                            continue
+        # Check sections in the .repo files that were just slurped up
+        for section in parser.sections():
+            try:
+                thisrepo = config.readRepoConfig(parser, section, self.conf)
+            except (Errors.RepoError, Errors.ConfigError), e:
+                self.errorlog(2, e)
+            else:
+                reposlist.append(thisrepo)
 
-        # got our list of repo objects
+        # Got our list of repo objects, add them to the repos collection
         for thisrepo in reposlist:
             try:
                 self.repos.add(thisrepo)
@@ -170,10 +167,10 @@ class YumBase(depsolve.Depsolve):
         if hasattr(self, 'read_ts'):
             return
             
-        if not self.conf.getConfigOption('installroot'):
+        if not self.conf.installroot:
             raise Errors.YumBaseError, 'Setting up TransactionSets before config class is up'
         
-        installroot = self.conf.getConfigOption('installroot')
+        installroot = self.conf.installroot
         self.read_ts = rpmUtils.transaction.initReadOnlyTransaction(root=installroot)
         self.tsInfo = transactioninfo.TransactionData()
         self.rpmdb = rpmUtils.RpmDBHolder()
@@ -205,7 +202,6 @@ class YumBase(depsolve.Depsolve):
         """grabs the repomd.xml for each enabled repository and sets up 
            the basics of the repository"""
 
-        
         self.plugins.run('prereposetup')
         
         repos = []
@@ -221,7 +217,7 @@ class YumBase(depsolve.Depsolve):
             if repo.repoXML is not None and len(repo.urls) > 0:
                 continue
             try:
-                repo.cache = self.conf.getConfigOption('cache')
+                repo.cache = self.conf.cache
                 repo.baseurlSetup()
                 repo.dirSetup()
                 self.log(3, 'Baseurl(s) for repo: %s' % repo.urls)
@@ -279,17 +275,17 @@ class YumBase(depsolve.Depsolve):
         # raise an error
         self.up = rpmUtils.updates.Updates(self.rpmdb.getPkgList(),
                                            self.pkgSack.simplePkgList())
-        if self.conf.getConfigOption('debuglevel') >= 6:
+        if self.conf.debuglevel >= 6:
             self.up.debug = 1
             
-        if self.conf.getConfigOption('obsoletes'):
+        if self.conf.obsoletes:
             self.up.rawobsoletes = self.pkgSack.returnObsoletes()
             
-        self.up.exactarch = self.conf.getConfigOption('exactarch')
-        self.up.exactarchlist = self.conf.getConfigOption('exactarchlist')
+        self.up.exactarch = self.conf.exactarch
+        self.up.exactarchlist = self.conf.exactarchlist
         self.up.doUpdates()
 
-        if self.conf.getConfigOption('obsoletes'):
+        if self.conf.obsoletes:
             self.up.doObsoletes()
 
         self.up.condenseUpdates()
@@ -313,7 +309,7 @@ class YumBase(depsolve.Depsolve):
                 reposWithGroups.append(repo)
                 
         # now we know which repos actually have groups files.
-        overwrite = self.conf.getConfigOption('overwrite_groups')
+        overwrite = self.conf.overwrite_groups
         self.comps = newcomps.Comps(overwrite_groups = overwrite)
 
         for repo in reposWithGroups:
@@ -360,10 +356,10 @@ class YumBase(depsolve.Depsolve):
         # if repo: then do only that repos' packages and excludes
         
         if not repo: # global only
-            excludelist = self.conf.getConfigOption('exclude')
+            excludelist = self.conf.exclude
             repoid = None
         else:
-            excludelist = repo.excludes
+            excludelist = repo.exclude
             repoid = repo.id
 
         if len(excludelist) == 0:
@@ -428,7 +424,7 @@ class YumBase(depsolve.Depsolve):
         """perform the yum locking, raise yum-based exceptions, not OSErrors"""
         
         # if we're not root then we don't lock - just return nicely
-        if self.conf.getConfigOption('uid') != 0:
+        if self.conf.uid != 0:
             return
             
         root = self.conf.installroot
@@ -461,7 +457,7 @@ class YumBase(depsolve.Depsolve):
         """do the unlock for yum"""
         
         # if we're not root then we don't lock - just return nicely
-        if self.conf.getConfigOption('uid') != 0:
+        if self.conf.uid != 0:
             return
         
         root = self.conf.installroot
@@ -944,7 +940,7 @@ class YumBase(depsolve.Depsolve):
         elif pkgnarrow == 'obsoletes':
             self.doRepoSetup()
             self.doRpmDBSetup()
-            self.conf.setConfigOption('obsoletes', 1)
+            self.conf.obsoletes = 1
             self.doUpdateSetup()
 
             for (pkgtup, instTup) in self.up.getObsoletesTuples():

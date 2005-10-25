@@ -22,6 +22,16 @@ import ConfigParser
 import config 
 import Errors
 
+# XXX: break the API for how plugins define config file options
+#   - they should just be able to manipulate the YumConf and RepoConf classes
+#     directly, adding Option instances as required
+#   - cleaner, more flexible and 
+#   - update PLUGINS document
+#   - will take care of the following existing TODOs:
+# TODO: detect conflicts between builtin yum options and registered plugin
+# options (will require refactoring of config.py)
+# TODO: plugins should be able to specify convertor functions for config vars
+
 # TODO: should plugin searchpath be affected by installroot option?
 
 # TODO: cleaner method to query installed packages rather than exposing RpmDB
@@ -46,11 +56,6 @@ import Errors
 # TODO: allow plugins to extend shell commands
 
 # TODO: allow plugins to extend commands (on the command line)
-
-# TODO: plugins should be able to specify convertor functions for config vars
-
-# TODO: detect conflicts between builtin yum options and registered plugin
-# options (will require refactoring of config.py)
 
 # TODO: More developer docs:  use epydoc as API begins to stablise
 
@@ -183,7 +188,8 @@ class YumPlugins:
         modname = modname.split('.py')[0]
 
         conf = self._getpluginconf(modname)
-        if not conf or not conf._getboolean('main', 'enabled', 0):
+        if not conf or not config.getOption(conf, 'main', 'enabled', False,
+                config.BoolOption()):
             self.base.log(3, '"%s" plugin is disabled' % modname)
             return
 
@@ -231,17 +237,16 @@ class YumPlugins:
                         )
 
     def _getpluginconf(self, modname):
-        '''Parse the plugin specific configuration file and return a CFParser
-        instance representing it. Returns None if there was an error reading or
-        parsing the configuration file.
+        '''Parse the plugin specific configuration file and return a
+        IncludingConfigParser instance representing it. Returns None if there
+        was an error reading or parsing the configuration file.
         '''
+        #XXX: should this use installroot?
         conffilename = os.path.join('/etc/yum/pluginconf.d', modname+'.conf')
 
-        parser = config.CFParser()
         try:
-            fin = open(conffilename, 'rt')
-            parser.readfp(fin)
-            fin.close()
+            parser = config.IncludingConfigParser()
+            parser.read(conffilename)
         except ConfigParser.Error, e:
             raise Errors.ConfigError("Couldn't parse %s: %s" % (conffilename,
                 str(e)))
@@ -269,31 +274,33 @@ class YumPlugins:
     def parseopts(self, conf, repos):
         '''Parse any configuration options registered by plugins
 
-        conf: the yumconf instance holding Yum's global options
-        repos: a list of all repository objects
+        @param conf: the yumconf instance holding Yum's global options
+        @param repos: a list of all repository objects
         '''
+        #XXX: with the new config stuff this is an ugly hack!
+        # See first TODO at top of this file
+
+        type2opt =  {
+            PLUG_OPT_STRING: config.Option(),
+            PLUG_OPT_INT: config.IntOption(),
+            PLUG_OPT_BOOL: config.BoolOption(),
+            PLUG_OPT_FLOAT: config.FloatOption(),
+            }
 
         # Process [main] options first
-        self._do_opts(conf.cfg, 'main', PLUG_OPT_WHERE_MAIN, 
-                conf.setConfigOption)
+        for name, (vtype, where, default) in self.opts.iteritems(): 
+            if where in (PLUG_OPT_WHERE_MAIN, PLUG_OPT_WHERE_ALL):
+                val = config.getOption(conf.cfg, 'main', name, default,
+                        type2opt[vtype])
+                setattr(conf, name, val)
 
         # Process repository level options
         for repo in repos:
-            self._do_opts(repo.cfgparser, repo.id, PLUG_OPT_WHERE_REPO, 
-                repo.set)
-
-    def _do_opts(self, cfgparser, section, targetwhere, setfunc):
-        '''Process registered plugin options for one config file section
-        '''
-        typetofunc =  {
-            PLUG_OPT_STRING: cfgparser._getoption,
-            PLUG_OPT_INT: cfgparser._getint,
-            PLUG_OPT_BOOL: cfgparser._getboolean,
-            PLUG_OPT_FLOAT: cfgparser._getfloat,
-            }
-        for name, (vtype, where, default) in self.opts.iteritems(): 
-            if where in (targetwhere, PLUG_OPT_WHERE_ALL):
-                setfunc(name, typetofunc[vtype](section, name, default))
+            for name, (vtype, where, default) in self.opts.iteritems(): 
+                if where in (PLUG_OPT_WHERE_REPO, PLUG_OPT_WHERE_ALL):
+                    val = config.getOption(conf.cfg, repo.id, name, default,
+                            type2opt[vtype])
+                    repo.set(name, val)
 
     def setCmdLine(self, opts, commands):
         '''Set the parsed command line options so that plugins can access them
@@ -326,7 +333,7 @@ class PluginConduit:
 
     def promptYN(self, msg):
         self.info(2, msg)
-        if self._base.conf.getConfigOption('assumeyes'):
+        if self._base.conf.assumeyes:
             return 1
         else:
             return self._base.userconfirm()
@@ -360,7 +367,8 @@ class PluginConduit:
         @param default: Value to read if option is missing.
         @return: String option value read, or default if option was missing.
         '''
-        return self._conf._getoption(section, opt, default)
+        return config.getoption(self._conf, section, opt, default,
+                config.Option())
 
     def confInt(self, section, opt, default=None):
         '''Read an integer value from the plugin's own configuration file
@@ -371,7 +379,8 @@ class PluginConduit:
         @return: Integer option value read, or default if option was missing or
             could not be parsed.
         '''
-        return self._conf._getint(section, opt, default)
+        return config.getoption(self._conf, section, opt, default,
+                config.IntOption())
 
     def confFloat(self, section, opt, default=None):
         '''Read a float value from the plugin's own configuration file
@@ -382,7 +391,8 @@ class PluginConduit:
         @return: Float option value read, or default if option was missing or
             could not be parsed.
         '''
-        return self._conf._getfloat(section, opt, default)
+        return config.getoption(self._conf, section, opt, default,
+                config.FloatOption())
 
     def confBool(self, section, opt, default=None):
         '''Read a boolean value from the plugin's own configuration file
@@ -393,7 +403,8 @@ class PluginConduit:
         @return: Boolean option value read, or default if option was missing or
             could not be parsed.
         '''
-        return self._conf._getboolean(section, opt, default)
+        return config.getoption(self._conf, section, opt, default,
+                config.BoolOption())
 
 class ConfigPluginConduit(PluginConduit):
 
