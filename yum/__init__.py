@@ -197,6 +197,9 @@ class YumBase(depsolve.Depsolve):
             del self.read_ts
         if hasattr(self, 'up'):
             del self.up
+        if hasattr(self, 'comps'):
+            self.comps.compiled = False
+            
 
     def doRepoSetup(self, thisrepo=None):
         """grabs the repomd.xml for each enabled repository and sets up 
