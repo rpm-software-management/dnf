@@ -130,6 +130,9 @@ class TransactionData:
         if not self.pkgdict.has_key(pkgtup):
             self.debugprint("Package: %s not in ts" %(pkgtup,))
             return
+        for txmbr in self.pkgdict[pkgtup]:
+            txmbr.po.state = None
+        
         del self.pkgdict[pkgtup]
     
     def exists(self, pkgtup):
