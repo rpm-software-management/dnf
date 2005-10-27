@@ -185,7 +185,8 @@ class YumInstalledPackage:
         self.summary = self.tagByName('summary')
         self.description = self.tagByName('description')
         self.pkgid = self.tagByName(rpm.RPMTAG_SHA1HEADER)
-    
+        self.state = None
+        
     def __str__(self):
         if self.epoch == '0':
             val = '%s - %s-%s.%s' % (self.name, self.version, self.release, 
@@ -296,7 +297,7 @@ class YumLocalPackage(YumInstalledPackage):
         self.summary = self.tagByName('summary')
         self.description = self.tagByName('description')
         self.pkgtup = self._pkgtup()
-        
+        self.state = None
     
     def _pkgtup(self):
         return (self.name, self.arch, self.epoch, self.version, self.release)
@@ -324,7 +325,8 @@ class YumAvailablePackage(repomd.packageObject.PackageObject, repomd.packageObje
         self.arch = self.returnSimple('arch')
         self.repoid = self.returnSimple('repoid')
         self.pkgtup = self._pkgtup()
-
+        self.state = None
+        
     def size(self):
         return self.returnSimple('packagesize')
 

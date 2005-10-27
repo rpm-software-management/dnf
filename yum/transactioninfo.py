@@ -114,6 +114,7 @@ class TransactionData:
 
     def add(self, txmember):
         """add a package to the transaction"""
+        
         if not self.pkgdict.has_key(txmember.pkgtup):
             self.pkgdict[txmember.pkgtup] = []
         else:
@@ -196,6 +197,7 @@ class TransactionData:
         txmbr = TransactionMember(po)
         txmbr.current_state = TS_AVAILABLE
         txmbr.output_state = TS_INSTALL
+        txmbr.po.state = TS_INSTALL        
         txmbr.ts_state = 'u'
         txmbr.reason = 'user'
         self.add(txmbr)
@@ -208,6 +210,7 @@ class TransactionData:
         txmbr = TransactionMember(po)
         txmbr.current_state = TS_AVAILABLE
         txmbr.output_state = TS_TRUEINSTALL
+        txmbr.po.state = TS_INSTALL        
         txmbr.ts_state = 'i'
         txmbr.reason = 'user'
         self.add(txmbr)
@@ -221,6 +224,7 @@ class TransactionData:
         txmbr = TransactionMember(po)
         txmbr.current_state = TS_INSTALL
         txmbr.output_state = TS_ERASE
+        txmbr.po.state = TS_INSTALL
         txmbr.ts_state = 'e'
         self.add(txmbr)
         return txmbr
@@ -232,6 +236,7 @@ class TransactionData:
         txmbr = TransactionMember(po)
         txmbr.current_state = TS_AVAILABLE
         txmbr.output_state = TS_UPDATE
+        txmbr.po.state = TS_UPDATE        
         txmbr.ts_state = 'u'
         if oldpo:
             txmbr.relatedto.append((oldpo.pkgtup, 'updates'))
@@ -245,6 +250,7 @@ class TransactionData:
         txmbr = TransactionMember(po)
         txmbr.current_state = TS_AVAILABLE
         txmbr.output_state = TS_OBSOLETING
+        txmbr.po.state = TS_OBSOLETING
         txmbr.ts_state = 'u'
         txmbr.relatedto.append((oldpo, 'obsoletes'))
         self.add(txmbr)
@@ -257,6 +263,7 @@ class TransactionData:
         txmbr = TransactionMember(po)
         txmbr.current_state = TS_INSTALL
         txmbr.output_state =  TS_OBSOLETED
+        txmbr.po.state = TS_OBSOLETED
         txmbr.ts_state = None
         txmbr.relatedto.append((obsoleting_po, 'obsoletedby'))
         self.add(txmbr)
