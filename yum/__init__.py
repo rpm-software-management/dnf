@@ -313,7 +313,7 @@ class YumBase(depsolve.Depsolve):
                 
         # now we know which repos actually have groups files.
         overwrite = self.conf.overwrite_groups
-        self.comps = newcomps.Comps(overwrite_groups = overwrite)
+        self.comps = comps.Comps(overwrite_groups = overwrite)
 
         for repo in reposWithGroups:
             self.log(4, 'Adding group file from repository: %s' % repo)
