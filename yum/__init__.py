@@ -32,7 +32,7 @@ import Errors
 import rpmUtils
 import rpmUtils.updates
 import rpmUtils.arch
-import newcomps
+import comps
 import config
 import parser
 import repos
@@ -1475,7 +1475,7 @@ class YumBase(depsolve.Depsolve):
         
         return results
 
-    def install(self, input):
+    def install(self, po=None, **kwargs):
         """try to mark for install the input
          - input can be a pkg object or string"""
         # convert 'input'
