@@ -16,8 +16,10 @@ It's possible that the above module doesn't match the
 current version of Python, which is:
 %s
 
-If you cannot solve this problem yourself, please send this
-message to <yum@lists.linux.duke.edu>.
+If you cannot solve this problem yourself, please go to 
+the yum faq at:
+  http://wiki.linux.duke.edu/YumFaq
+  
 """ % (sys.exc_value, sys.version)
    sys.exit(1)
 
