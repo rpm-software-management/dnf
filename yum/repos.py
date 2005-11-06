@@ -20,6 +20,7 @@ import re
 import fnmatch
 import urlparse
 import types
+import time
 
 import Errors
 from urlgrabber.grabber import URLGrabber
@@ -341,7 +342,7 @@ class Repository:
         self.proxy_username = None
         self.proxy = None
         self.proxy_dict = {}
-        self.metadata_cookie = self.cachedir + '/cachecookie'
+        self.metadata_cookie_fn = 'cachecookie'
         
         # throw in some stubs for things that will be set by the config class
         self.basecachedir = ""
@@ -505,7 +506,9 @@ class Repository:
         self.set('cachedir', cachedir)
         self.set('pkgdir', pkgdir)
         self.set('hdrdir', hdrdir)
-        
+        cookie = self.cachedir + '/' + self.metadata_cookie_fn
+        self.set('metadata_cookie', cookie)
+
         for dir in [self.cachedir, self.hdrdir, self.pkgdir]:
             if self.cache == 0:
                 if os.path.exists(dir) and os.path.isdir(dir):
@@ -644,15 +647,13 @@ class Repository:
         """if possible, set touch the metadata_cookie file"""
         
         check = self.metadata_cookie
-        if os.path.exists(self.metadata_cookie):
+        if not os.path.exists(self.metadata_cookie):
             check = self.cachedir
         
         if os.access(check, os.W_OK):
             fo = open(self.metadata_cookie, 'w+')
-            fo.write()
             fo.close()
-            del foo
-            
+            del fo
             
     def getRepoXML(self, text=None):
         """retrieve/check/read in repomd.xml from the repository"""
