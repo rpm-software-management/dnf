@@ -341,6 +341,7 @@ class Repository:
         self.proxy_username = None
         self.proxy = None
         self.proxy_dict = {}
+        self.metadata_cookie = self.cachedir + '/cachecookie'
         
         # throw in some stubs for things that will be set by the config class
         self.basecachedir = ""
@@ -625,6 +626,34 @@ class Repository:
         return result
            
         
+    def metadataCurrent(self):
+        """Check if there is a metadata_cookie and check its age. If the 
+        age of the cookie is less than metadata_expire time then return true
+        else return False"""
+        
+        val = False
+        if os.path.exists(self.metadata_cookie):
+            cookie_info = os.stat(self.metadata_cookie)
+            if cookie_info[8] + self.metadata_expire > time.time():
+                val = True
+        
+        return val
+
+    
+    def setMetadataCookie(self):
+        """if possible, set touch the metadata_cookie file"""
+        
+        check = self.metadata_cookie
+        if os.path.exists(self.metadata_cookie):
+            check = self.cachedir
+        
+        if os.access(check, os.W_OK):
+            fo = open(self.metadata_cookie, 'w+')
+            fo.write()
+            fo.close()
+            del foo
+            
+            
     def getRepoXML(self, text=None):
         """retrieve/check/read in repomd.xml from the repository"""
 
@@ -632,8 +661,8 @@ class Repository:
         local = self.cachedir + '/repomd.xml'
         if self.repoXML is not None:
             return
-            
-        if self.cache == 1:
+
+        if self.cache or self.metadataCurrent():
             if not os.path.exists(local):
                 raise Errors.RepoError, 'Cannot find repomd.xml file for %s' % (self)
             else:
@@ -651,12 +680,15 @@ class Repository:
 
             except URLGrabError, e:
                 raise Errors.RepoError, 'Error downloading file %s: %s' % (local, e)
-        
+            
+            # if we have a 'fresh' repomd.xml then update the cookie
+            self.setMetadataCookie()
+
         try:
             self.repoXML = repoMDObject.RepoMD(self.id, result)
         except mdErrors.RepoMDError, e:
             raise Errors.RepoError, 'Error importing repomd.xml from %s: %s' % (self, e)
-            
+    
     def _checkRepoXML(self, fo):
         if type(fo) is types.InstanceType:
             filepath = fo.filename

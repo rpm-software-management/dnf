@@ -355,7 +355,7 @@ class YumConf(EarlyConf):
     throttle = ThrottleOption(0)
 
     http_caching = SelectionOption('all', ('none', 'packages', 'all'))
-
+    metadata_expire = IntOption(28800)   # time in seconds
 
 class RepoConf(BaseConfig):
    
@@ -381,7 +381,7 @@ class RepoConf(BaseConfig):
     throttle = Inherit(YumConf.throttle)
     timeout = Inherit(YumConf.timeout)
     http_caching = Inherit(YumConf.http_caching)
-
+    metadata_expire = Inherit(YumConf.metadata_expire)
 
 def readMainConfig(configfile, root):
     #XXX: document

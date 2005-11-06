@@ -211,6 +211,11 @@ for more information on installing yum plugins.
 A list of directories where yum should look for plugin modules. Default is
 `/usr/lib/yum-plugins'.
 
+.IP \fBmetadata_expire \fR
+Time (in seconds) after which the metadata will expire. So that if the
+current metadata downloaded is less than this many seconds old then yum will
+not update the metadata against the repository
+
 .SH "[repository] OPTIONS"
 .LP 
 The repository section(s) take the following form:
@@ -316,6 +321,10 @@ repository.
 
 .IP \fBbandwidth\fR
 Overrides the \fBbandwidth\fR option from the [main] section for this
+repository.
+
+.IP \fBmetadata_expire \fR
+Overrides the \fBmetadata_expire\fR option from the [main] section for this
 repository.
 
 .IP \fBproxy \fR
