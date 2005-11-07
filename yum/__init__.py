@@ -77,6 +77,16 @@ class YumBase(depsolve.Depsolve):
     def filelog(self, value, msg):
         print msg
    
+    def doGenericSetup(self):
+        """do a default setup for all the normal/necessary yum components,
+           really just a shorthand for testing"""
+        
+        self.doConfigSetup()
+        self.doTsSetup()
+        self.doRpmDBSetup()
+        self.doRepoSetup()
+        self.doSackSetup()
+        
     def doConfigSetup(self, fn='/etc/yum.conf', root='/'):
         """basic stub function for doing configuration setup"""
        
@@ -1264,14 +1274,13 @@ class YumBase(depsolve.Depsolve):
         
         pkgs = thisgroup.mandatory_packages.keys() + thisgroup.default_packages.keys()
         for pkg in pkgs:
+            self.log(5, 'Adding package %s from group %s' % (pkg, thisgroup.groupid))
             try:
-                p = self.pkgSack.returnNewestByName(pkg)
-            except repomd.mdErrors.PackageSackError:
-                self.log(4, "no such package %s from group %s" %(pkg, thisgroup))
-                continue
-            thispkg = p[0]
-            txmbr = self.tsInfo.addInstall(thispkg)
-            txmbr.group.append(thisgroup.grpid)
+                txmbr = self.install(name = pkg)
+            except Errors.InstallError, e:
+                self.log(3, 'No package named %s available to be installed' % pkg)
+            else:
+                txmbr.groups.append(thisgroup.groupid)
 
     def deselectGroup(self, grpid):
         """de-mark all the packages in the group for install"""
@@ -1287,21 +1296,21 @@ class YumBase(depsolve.Depsolve):
         for pkg in thisgroup.packages:
             try:
                 p = self.pkgSack.returnNewestByName(pkg)
-            except repomd.mdErrors.PackageSackError:
+            except mdErrors.PackageSackError:
                 self.log(4, "no such package %s from group %s" %(pkg, thisgroup))
                 continue
             
             thispkg = p[0]
-            txmbrs = self.tsInfo.getMembers(pkgtuple = thispkg.pkgtup)
+            txmbrs = self.tsInfo.getMembers(pkgtup = thispkg.pkgtup)
             for txmbr in txmbrs:
                 try: 
-                    txmbr.group.remove(grpid)
+                    txmbr.groups.remove(grpid)
                 except ValueError:
                     self.log(4, "package %s was not marked in group %s" % (thispkg, grpid))
                     continue
                 
                 # if there aren't any other groups mentioned then remove the pkg
-                if len(txmbr.group) == 0:
+                if len(txmbr.groups) == 0:
                     self.tsInfo.remove(thispkg.pkgtup)
 
                     
@@ -1482,14 +1491,12 @@ class YumBase(depsolve.Depsolve):
     def install(self, po=None, **kwargs):
         """try to mark for install the item specified. Uses provided package 
            object, if available. If not it uses the kwargs and gets the best
-           package from the keyword options provided"""
+           package from the keyword options provided
+           returns the txmbr of the item it installed.
+           
+           Note: This function will only ever install a single item at a time"""
         
-        results = []
-        if po:
-            txmbr = self.tsInfo.addInstall(po)
-            results.append(txmbr)
-            
-        else:
+        if po is None:
             if not hasattr(self, 'pkgSack'):
                 self.doRepoSetup()
                 self.doSackSetup()
@@ -1501,19 +1508,35 @@ class YumBase(depsolve.Depsolve):
             except KeyError: pass
             try: arch = kwargs['arch']
             except KeyError: pass
+            
+            # get them as ver, version and rel, release - if someone
+            # specifies one of each then that's kinda silly.
             try: version = kwargs['version']
             except KeyError: pass
+            try: version = kwargs['ver']
+            except KeyError: pass
             try: release = kwargs['release']
+            except KeyError: pass
+            try: release = kwargs['rel']
             except KeyError: pass
 
             pkgs = self.pkgSack.searchNevra(name=name, epoch=epoch, arch=arch,
                     ver=version, rel=release)
             if pkgs:
                 po = self.bestPackageFromList(pkgs)
-                txmbr = self.tsInfo.addInstall(po)
-                results.append(txmbr)
+
+        if po is None:
+            raise Errors.InstallError, 'No package available to install'
         
-        return results
+        
+        txmbrs = self.tsInfo.getMembers(pkgtup=po.pkgtup)
+        if txmbrs:
+            self.log(4, 'Package: %s  - already in transaction set' % po)
+            return txmbrs[0]
+        else:
+            txmbr = self.tsInfo.addInstall(po)
+            return txmbr
+
     
     def update(self, input):
         """try to find and mark for update the input
