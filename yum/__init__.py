@@ -276,6 +276,10 @@ class YumBase(depsolve.Depsolve):
         self.log(3, 'Building updates object')
         #FIXME - add checks for the other pkglists to see if we should
         # raise an error
+        if not hasattr(self, 'pkgSack'):
+            self.doRepoSetup()
+            self.doSackSetup()
+        
         self.up = rpmUtils.updates.Updates(self.rpmdb.getPkgList(),
                                            self.pkgSack.simplePkgList())
         if self.conf.debuglevel >= 6:

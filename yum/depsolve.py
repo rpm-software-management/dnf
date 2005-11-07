@@ -249,6 +249,7 @@ class Depsolve:
                     # if our packageSacks aren't here, then set them up
                     if not hasattr(self, 'pkgSack'):
                         self.doRepoSetup()
+                        self.doSackSetup()
                     (checkdep, missing, conflict, errormsgs) = self._processReq(dep)
                     
                 elif sense == rpm.RPMDEP_SENSE_CONFLICTS: # conflicts - this is gonna be short :)
