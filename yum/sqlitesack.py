@@ -450,10 +450,30 @@ class YumSqlitePackageSack(repos.YumPackageSack):
     def searchNevra(self, name=None, epoch=None, ver=None, rel=None, arch=None):        
         """return list of pkgobjects matching the nevra requested"""
         returnList = []
-        # Search all repositories
+        
+        # make sure some dumbass didn't pass us NOTHING to search on
+        empty = True
+        for arg in (name, epoch, ver, rel, arch):
+            if arg:
+                empty = False
+        if empty:
+            return returnList
+        
+        # make up our execute string
+        q = "select * from packages WHERE"
+        for (col, var) in [('name', name), ('epoch', epoch), ('ver', ver),
+                           ('arch', arch), ('rel', rel)]:
+            if var:
+                if q[-5:] != 'WHERE':
+                    q = q + ' AND %s = "%s"' % (col, var)
+                else:
+                    q = q + ' %s = "%s"' % (col, var)
+            
+        # Search all repositories            
         for (rep,cache) in self.primarydb.items():
             cur = cache.cursor()
-            cur.execute("select * from packages WHERE name = %s AND epoch = %s AND version = %s AND release = %s AND arch = %s" , (name,epoch,ver,rel,arch))
+            #cur.execute("select * from packages WHERE name = %s AND epoch = %s AND version = %s AND release = %s AND arch = %s" , (name,epoch,ver,rel,arch))
+            cur.execute(q)
             for x in cur.fetchall():
                 if (self.excludes[rep].has_key(x.pkgId)):
                     continue

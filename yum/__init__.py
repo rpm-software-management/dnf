@@ -1480,14 +1480,40 @@ class YumBase(depsolve.Depsolve):
         return results
 
     def install(self, po=None, **kwargs):
-        """try to mark for install the input
-         - input can be a pkg object or string"""
-        # convert 'input'
-        # try to install 'best version of input'
-        # if nothing can be installed raise an exception
-        # if any pkgs can be installed then return a list of the
-        # transaction members for those.
-        pass
+        """try to mark for install the item specified. Uses provided package 
+           object, if available. If not it uses the kwargs and gets the best
+           package from the keyword options provided"""
+        
+        results = []
+        if po:
+            txmbr = self.tsInfo.addInstall(po)
+            results.append(txmbr)
+            
+        else:
+            if not hasattr(self, 'pkgSack'):
+                self.doRepoSetup()
+                self.doSackSetup()
+            # keys we care about:
+            name = epoch = arch = version = release = None
+            try: name = kwargs['name']
+            except KeyError: pass
+            try: epoch = kwargs['epoch']
+            except KeyError: pass
+            try: arch = kwargs['arch']
+            except KeyError: pass
+            try: version = kwargs['version']
+            except KeyError: pass
+            try: release = kwargs['release']
+            except KeyError: pass
+
+            pkgs = self.pkgSack.searchNevra(name=name, epoch=epoch, arch=arch,
+                    ver=version, rel=release)
+            if pkgs:
+                po = self.bestPackageFromList(pkgs)
+                txmbr = self.tsInfo.addInstall(po)
+                results.append(txmbr)
+        
+        return results
     
     def update(self, input):
         """try to find and mark for update the input
