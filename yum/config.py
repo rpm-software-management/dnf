@@ -15,12 +15,12 @@
 # Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 # Copyright 2002 Duke University 
 
-#TODO: scheme checking (xxx://) for URL options (gpgkey, proxy, baseurl ...)
 #TODO: docstrings
 
 import os
 import rpm
 import copy
+import urlparse
 from parser import IncludingConfigParser, IncludedDirConfigParser
 from ConfigParser import NoSectionError, NoOptionError
 import rpmUtils.transaction
@@ -63,7 +63,7 @@ class Option(object):
                 value = self.parse(value)
             except ValueError, e:
                 # Add the field name onto the error
-                raise ValueError('Error parsing option %r: %s' % (optdata.name, str(e)))
+                raise ValueError('Error parsing %r: %s' % (optdata.name, str(e)))
     
         optdata.value = value
 
@@ -131,6 +131,62 @@ class ListOption(Option):
 
     def tostring(self, value):
         return '\n '.join(value)
+
+class UrlOption(Option):
+    '''
+    This option handles lists of URLs with validation of the URL scheme.
+    '''
+
+    def __init__(self, default=None, schemes=('http', 'ftp', 'file', 'https'), 
+            allow_none=False):
+        super(UrlOption, self).__init__(default)
+        self.schemes = schemes
+        self.allow_none = allow_none
+
+    def parse(self, url):
+        url = url.strip()
+
+        # Handle the "_none_" special case
+        if url.lower() == '_none_':
+            if self.allow_none:
+                return None
+            else:
+                raise ValueError('"_none_" is not a valid value')
+
+        # Check that scheme is valid
+        (s,b,p,q,f,o) = urlparse.urlparse(url)
+        if s not in self.schemes:
+            raise ValueError('URL must be %s not "%s"' % (self._schemelist(), s))
+
+        return url
+
+    def _schemelist(self):
+        '''Return a user friendly list of the allowed schemes
+        '''
+        if len(self.schemes) < 1:
+            return 'empty'
+        elif len(self.schemes) == 1:
+            return self.schemes[0]
+        else:
+            return '%s or %s' % (', '.join(self.schemes[:-1]), self.schemes[-1])
+
+class UrlListOption(ListOption):
+    '''
+    Option for handling lists of URLs with validation of the URL scheme.
+    '''
+
+    def __init__(self, default=None, schemes=('http', 'ftp', 'file', 'https')):
+        super(UrlListOption, self).__init__(default)
+
+        # Hold a UrlOption instance to assist with parsing
+        self._urloption = UrlOption(schemes=schemes)
+        
+    def parse(self, s):
+        out = []
+        for url in super(UrlListOption, self).parse(s):
+            out.append(self._urloption.parse(url))
+        return out
+
 
 class IntOption(Option):
     def parse(self, s):
@@ -322,7 +378,7 @@ class YumConf(EarlyConf):
     exclude = ListOption()
     failovermethod = Option('roundrobin')
     yumversion = Option('unversioned')
-    proxy = Option()
+    proxy = UrlOption(schemes=('http', 'ftp', 'https'), allow_none=True)
     proxy_username = Option()
     proxy_password = Option()
     pluginpath = ListOption(['/usr/lib/yum-plugins'])
@@ -361,14 +417,14 @@ class RepoConf(BaseConfig):
    
     name = Option()         #XXX: error out if no name set
     enabled = BoolOption(True)
-    baseurl = ListOption([])
-    mirrorlist = Option()
-    gpgkey = ListOption()
+    baseurl = UrlListOption()
+    mirrorlist = UrlOption()
+    gpgkey = UrlListOption()
     exclude = ListOption() 
     includepkgs = ListOption() 
 
-    proxy_username = Inherit(YumConf.proxy_username)
     proxy = Inherit(YumConf.proxy)
+    proxy_username = Inherit(YumConf.proxy_username)
     proxy_password = Inherit(YumConf.proxy_password)
     retries = Inherit(YumConf.retries)
     failovermethod = Inherit(YumConf.failovermethod)
