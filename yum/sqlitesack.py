@@ -461,8 +461,8 @@ class YumSqlitePackageSack(repos.YumPackageSack):
         
         # make up our execute string
         q = "select * from packages WHERE"
-        for (col, var) in [('name', name), ('epoch', epoch), ('ver', ver),
-                           ('arch', arch), ('rel', rel)]:
+        for (col, var) in [('name', name), ('epoch', epoch), ('version', ver),
+                           ('arch', arch), ('release', rel)]:
             if var:
                 if q[-5:] != 'WHERE':
                     q = q + ' AND %s = "%s"' % (col, var)
