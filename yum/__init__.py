@@ -1528,7 +1528,10 @@ class YumBase(depsolve.Depsolve):
         if po is None:
             raise Errors.InstallError, 'No package available to install'
         
-        
+        # FIXME - lots more checking here
+        #  - update instead
+        #  - install instead of erase
+        #  - better exceptions
         txmbrs = self.tsInfo.getMembers(pkgtup=po.pkgtup)
         if txmbrs:
             self.log(4, 'Package: %s  - already in transaction set' % po)
