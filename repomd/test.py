@@ -29,7 +29,7 @@ import mdUtils
 import mdErrors
 
 
-def process(current, total):
+def process(current, total, name=None):
     sys.stdout.write('\r' + ' ' * 80)
     sys.stdout.write('\rNode %d of %d' % (current, total))
     sys.stdout.flush()
