@@ -43,7 +43,7 @@ import depsolve
 import plugins
 
 
-from packages import parsePackages, YumLocalPackage, YumInstalledPackage, bestPackage
+from packages import parsePackages, YumLocalPackage, YumInstalledPackage
 from repomd import mdErrors
 from constants import *
 from repomd.packageSack import ListPackageSack
@@ -77,11 +77,12 @@ class YumBase(depsolve.Depsolve):
     def filelog(self, value, msg):
         print msg
    
-    def doGenericSetup(self):
+    def doGenericSetup(self, cache=0):
         """do a default setup for all the normal/necessary yum components,
            really just a shorthand for testing"""
         
         self.doConfigSetup()
+        self.conf.cache = cache
         self.doTsSetup()
         self.doRpmDBSetup()
         self.doRepoSetup()
@@ -1276,11 +1277,12 @@ class YumBase(depsolve.Depsolve):
         for pkg in pkgs:
             self.log(5, 'Adding package %s from group %s' % (pkg, thisgroup.groupid))
             try:
-                txmbr = self.install(name = pkg)
+                txmbrs = self.install(name = pkg)
             except Errors.InstallError, e:
                 self.log(3, 'No package named %s available to be installed' % pkg)
             else:
-                txmbr.groups.append(thisgroup.groupid)
+                for txmbr in txmbrs:
+                    txmbr.groups.append(thisgroup.groupid)
 
     def deselectGroup(self, grpid):
         """de-mark all the packages in the group for install"""
@@ -1419,42 +1421,11 @@ class YumBase(depsolve.Depsolve):
         except Errors.YumBaseError, e:
             raise Errors.YumBaseError, 'No Package found for %s' % depstring
         
-        result = self.bestPackageFromList(pkglist)
+        result = self._bestPackageFromList(pkglist)
         if result is None:
             raise Errors.YumBaseError, 'No Package found for %s' % depstring
         
         return result
-        
-    def bestPackageFromList(self, pkglist):
-        """take list of package objects and return the best package object.
-           If the list is empty, raise Errors.YumBaseError"""
-        
-        
-        if len(pkglist) == 0:
-            return None
-            
-        if len(pkglist) == 1:
-            return pkglist[0]
-        
-        mysack = ListPackageSack()
-        mysack.addList(pkglist)
-        bestlist = mysack.returnNewestByNameArch() # get rid of all lesser vers
-        
-        best = bestlist[0]
-        for pkg in bestlist[1:]:
-            if len(pkg.name) < len(best.name): # shortest name silliness
-                best = pkg
-                continue
-            elif len(pkg.name) > len(best.name):
-                continue
-
-            # compare arch
-            arch = rpmUtils.arch.getBestArchFromList([pkg.arch, best.arch])
-            if arch == pkg.arch:
-                best = pkg
-                continue
-
-        return best
 
     def returnInstalledPackagesByDep(self, depstring):
         """Pass in a generic [build]require string and this function will 
@@ -1488,14 +1459,78 @@ class YumBase(depsolve.Depsolve):
         
         return results
 
+
+    def _bestPackageFromList(self, pkglist):
+        """take list of package objects and return the best package object.
+           If the list is empty, return None. 
+           
+           Note: this is not aware of multilib so make sure you're only
+           passing it packages of a single arch group."""
+        
+        
+        if len(pkglist) == 0:
+            return None
+            
+        if len(pkglist) == 1:
+            return pkglist[0]
+        
+        mysack = ListPackageSack()
+        mysack.addList(pkglist)
+        bestlist = mysack.returnNewestByNameArch() # get rid of all lesser vers
+        
+        best = bestlist[0]
+        for pkg in bestlist[1:]:
+            if len(pkg.name) < len(best.name): # shortest name silliness
+                best = pkg
+                continue
+            elif len(pkg.name) > len(best.name):
+                continue
+
+            # compare arch
+            arch = rpmUtils.arch.getBestArchFromList([pkg.arch, best.arch])
+            if arch == pkg.arch:
+                best = pkg
+                continue
+
+        return best
+
+    def bestPackagesFromList(self, pkglist, arch=None):
+        """Takes a list of packages, returns the best packages.
+           This function is multilib aware so that it will not compare
+           multilib to singlelib packages""" 
+    
+        returnlist = []
+        compatArchList = rpmUtils.arch.getArchList(arch)
+        multiLib = []
+        singleLib = []
+        for po in pkglist:
+            if po.arch not in compatArchList:
+                continue
+            elif rpmUtils.arch.isMultiLibArch(arch=po.arch):
+                multiLib.append(po)
+            else:
+                singleLib.append(po)
+                
+        # we should have two lists now - one of singleLib packages
+        # one of multilib packages
+        # go through each one and find the best package(s)
+        for pkglist in [multiLib, singleLib]:
+            best = self._bestPackageFromList(pkglist)
+            if best is not None:
+                returnlist.append(best)
+        
+        return returnlist
+
+
     def install(self, po=None, **kwargs):
         """try to mark for install the item specified. Uses provided package 
            object, if available. If not it uses the kwargs and gets the best
-           package from the keyword options provided
-           returns the txmbr of the item it installed.
+           packages from the keyword options provided 
+           returns the list of txmbr of the items it installs
            
-           Note: This function will only ever install a single item at a time"""
+           """
         
+        pkgs = []
         if po is None:
             if not hasattr(self, 'pkgSack'):
                 self.doRepoSetup()
@@ -1522,23 +1557,30 @@ class YumBase(depsolve.Depsolve):
 
             pkgs = self.pkgSack.searchNevra(name=name, epoch=epoch, arch=arch,
                     ver=version, rel=release)
+            
             if pkgs:
-                po = self.bestPackageFromList(pkgs)
+                pkgs = self.bestPackagesFromList(pkgs)
 
-        if po is None:
+        if len(pkgs) == 0:
             raise Errors.InstallError, 'No package available to install'
         
         # FIXME - lots more checking here
         #  - update instead
         #  - install instead of erase
         #  - better exceptions
-        txmbrs = self.tsInfo.getMembers(pkgtup=po.pkgtup)
-        if txmbrs:
-            self.log(4, 'Package: %s  - already in transaction set' % po)
-            return txmbrs[0]
-        else:
-            txmbr = self.tsInfo.addInstall(po)
-            return txmbr
+        
+        tx_return = []
+        for po in pkgs:
+            txmbrs = self.tsInfo.getMembers(pkgtup=po.pkgtup)
+            if txmbrs:
+                self.log(4, 'Package: %s  - already in transaction set' % po)
+                tx_return.extend(txmbrs)
+                
+            else:
+                txmbr = self.tsInfo.addInstall(po)
+                tx_return.append(txmbr)
+        
+        return tx_return
 
     
     def update(self, input):

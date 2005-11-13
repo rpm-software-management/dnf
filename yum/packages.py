@@ -105,67 +105,6 @@ def parsePackages(pkgs, usercommands, casematch=0):
     return exactmatch, matched, unmatched
 
 
-def returnBestPackages(pkgdict, arch=None):
-    """returns a list of package tuples that are the 'best' packages for this
-       arch. Best == highest version and best scoring/sorting arch
-       should consider multiarch separately"""
-    returnlist = []
-    compatArchList = rpmUtils.arch.getArchList(arch)
-    for pkgname in pkgdict.keys():
-        # go through the packages, pitch out the ones that can't be used
-        # on this system at all
-        pkglist = pkgdict[pkgname]
-        uselist = []
-        multiLib = []
-        singleLib = []
-        for pkg in pkglist:
-            (n, a, e, v, r) = pkg
-            if a not in compatArchList:
-                continue
-            elif rpmUtils.arch.isMultiLibArch(arch=a):
-                multiLib.append(pkg)
-            else:
-                singleLib.append(pkg)
-        # we should have two lists now - one of singleLib packages
-        # one of multilib packages
-        # go through each one and find the best package(s)
-        for pkglist in [multiLib, singleLib]:
-            if len(pkglist) > 0:
-                best = pkglist[0]
-            else:
-                continue
-            for pkg in pkglist[1:]:
-                best = bestPackage(best, pkg)
-            if best is not None:
-                returnlist.append(best)
-    
-    return returnlist
-
-def bestPackage(pkg1, pkg2):
-    """compares two package tuples (assumes the names are the same), and returns
-       the one with the best version and the best arch, the sorting is:
-       for compatible arches, the highest version is best so:
-       foo-1.1-1.i686 is better than foo-1.1-1.i386 on an i686 machine
-       but foo-1.2-1.alpha is not better than foo-1.1-1.i386 on an i686
-       machine and foo-1.3-1.i386 is better than foo-1.1-1.i686 on an i686
-       machine."""
-    (n1, a1, e1, v1, r1) = pkg1
-    (n2, a2, e2, v2, r2) = pkg2
-    rc = rpmUtils.miscutils.compareEVR((e1, v1, r1), (e2, v2, r2))
-    if rc == 0:
-        # tiebreaker
-        bestarch = rpmUtils.arch.getBestArchFromList([a1, a2])
-        if bestarch is None: # how the hell did this happen?
-            return None
-        if bestarch == a1:
-            return pkg1
-        if bestarch == a2:
-            return pkg2
-    elif rc > 0:
-        return pkg1
-    elif rc < 0:
-        return pkg2
-    
 # goal for the below is to have a packageobject that can be used by generic
 # functions independent of the type of package - ie: installed or available
 

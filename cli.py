@@ -34,7 +34,7 @@ import yum.Errors
 import yum.misc
 import rpmUtils.arch
 from rpmUtils.miscutils import compareEVR
-from yum.packages import parsePackages, returnBestPackages, YumInstalledPackage, YumLocalPackage
+from yum.packages import parsePackages, YumInstalledPackage, YumLocalPackage
 from yum.logger import Logger
 from yum import pgpmsg
 from i18n import _
@@ -897,25 +897,26 @@ For more information contact your distribution or package provider.
                                         # does not include a version-rel section
                             if pkg.pkgtup in exactmatch:
                                 if not toBeInstalled.has_key(pkg.name): toBeInstalled[pkg.name] = []
-                                toBeInstalled[pkg.name].append(pkg.pkgtup)
+                                toBeInstalled[pkg.name].append(pkg)
                 else: # we've not got any installed that match n or n+a
                     self.log(4, 'No other %s installed, adding to list for potential install' % pkg.name)
                     if not toBeInstalled.has_key(pkg.name): toBeInstalled[pkg.name] = []
-                    toBeInstalled[pkg.name].append(pkg.pkgtup)
+                    toBeInstalled[pkg.name].append(pkg)
         
         
         # this is where I could catch the installs of compat and multilib 
         # arches on a single yum install command. 
-        pkglist = returnBestPackages(toBeInstalled)
-        
+        pkglist = []
+        for name in toBeInstalled.keys():
+            pkglist.extend(self.bestPackagesFromList(toBeInstalled[name]))
+            
         # This is where we need to do a lookup to find out if this install
         # is also an obsolete. if so then we need to mark it as such in the
         # tsInfo.
         if len(pkglist) > 0:
             self.log(3, 'reduced installs :')
-        for pkgtup in pkglist:
-            self.log(3,'   %s.%s %s:%s-%s' % pkgtup)
-            po = self.getPackageObject(pkgtup)
+        for po in pkglist:
+            self.log(3,'   %s.%s %s:%s-%s' % po.pkgtup)
             self.tsInfo.addInstall(po)
 
         if len(passToUpdate) > 0:
