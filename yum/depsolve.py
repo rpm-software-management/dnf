@@ -212,11 +212,12 @@ class Depsolve:
             self.populateTs(test=1)
             if self.dsCallback: self.dsCallback.tscheck()
             deps = self.ts.check()
-            deps = unique(deps) # get rid of duplicate deps
+
             
             if not deps:
                 return (2, ['Success - deps resolved'])
-            
+
+            deps = unique(deps) # get rid of duplicate deps            
             if deps == depscopy:
                 unresolveableloop += 1
                 self.log(5, 'Identical Loop count = %d' % unresolveableloop)
