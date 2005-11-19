@@ -60,3 +60,8 @@ class InstallError(YumBaseError):
         YumBaseError.__init__(self)
         self.args = args
 
+class UpdateError(YumBaseError):
+    def __init__(self, args=None):
+        YumBaseError.__init__(self)
+        self.args = args
+

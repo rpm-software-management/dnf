@@ -66,6 +66,9 @@ class YumBase(depsolve.Depsolve):
         # Start with plugins disabled
         self.disablePlugins()
 
+        self.localPackages = [] # for local package handling 
+
+
     def log(self, value, msg):
         """dummy log stub"""
         print msg
@@ -1530,8 +1533,14 @@ class YumBase(depsolve.Depsolve):
            
            """
         
+        self.doRepoSetup()
+        self.doSackSetup()
+        self.doRpmDBSetup()
+
         pkgs = []
-        if po is None:
+        if po:
+            pkgs.append(po)
+        else:
             if not hasattr(self, 'pkgSack'):
                 self.doRepoSetup()
                 self.doSackSetup()
@@ -1583,13 +1592,121 @@ class YumBase(depsolve.Depsolve):
         return tx_return
 
     
-    def update(self, input):
-        """try to find and mark for update the input
-           - input can be a pkg object or string"""
-        pass
+    def update(self, po=None, **kwargs):
+        """try to mark for update the item(s) specified. 
+            po is a package object - if that is there, mark it for update,
+            if possible
+            else use **kwargs to match the package needing update
+            if nothing is specified at all then attempt to update everything
+            
+            returns the list of txmbr of the items it marked for update"""
         
-    def erase(self, input):
-        """try to find and mark for erase the input -
+        # do updates list
+        # do obsoletes list
+        
+        # check for args - if no po nor kwargs, do them all
+        # if po, do it, ignore all else
+        # if no po do kwargs
+        # uninstalled pkgs called for update get returned with errors in a list, maybe?
+
+        self.doRepoSetup()
+        self.doSackSetup()
+        self.doRpmDBSetup()
+        self.doUpdateSetup()
+        updates = self.up.getUpdatesTuples()
+        if self.conf.obsoletes:
+            obsoletes = self.up.getObsoletesTuples(newest=1)
+        else:
+            obsoletes = []
+
+
+        tx_return = []
+        if not po and not kwargs.keys(): # update everything (the easy case)
+            for (obsoleting, installed) in obsoletes:
+                obsoleting_pkg = self.getPackageObject(obsoleting)
+                hdr = self.rpmdb.returnHeaderByTuple(installed)[0]
+                installed_pkg =  YumInstalledPackage(hdr)
+                txmbr = self.tsInfo.addObsoleting(obsoleting_pkg, installed_pkg)
+                self.tsInfo.addObsoleted(installed_pkg, obsoleting_pkg)
+                tx_return.append(txmbr)
+                
+            for (new, old) in updates:
+                txmbrs = self.tsInfo.getMembers(pkgtup=old)
+
+                if txmbrs and txmbrs[0].output_state == TS_OBSOLETED: 
+                    self.log(5, 'Not Updating Package that is already obsoleted: %s.%s %s:%s-%s' % old)
+                else:
+                    updating_pkg = self.getPackageObject(new)
+                    hdr = self.rpmdb.returnHeaderByTuple(old)[0]
+                    updated_pkg = YumInstalledPackage(hdr)
+                    txmbr = self.tsInfo.addUpdate(updating_pkg, updated_pkg)
+                    tx_return.append(txmbr)
+            
+            # make sure we have more than nothing, maybe we shouldn't be raising here
+            if len(tx_return) == 0:
+                raise Errors.UpdateError, 'No packages to update'
+            
+            return tx_return
+
+        else:
+            pkgs = []
+            if po: # just a po
+                pkgs.append(po)
+                
+            else: # we have kwargs, sort them out.
+                name = epoch = arch = version = release = None
+                try: name = kwargs['name']
+                except KeyError: pass
+                try: epoch = kwargs['epoch']
+                except KeyError: pass
+                try: arch = kwargs['arch']
+                except KeyError: pass
+                
+                # get them as ver, version and rel, release - if someone
+                # specifies one of each then that's kinda silly.
+                try: version = kwargs['version']
+                except KeyError: pass
+                try: version = kwargs['ver']
+                except KeyError: pass
+                try: release = kwargs['release']
+                except KeyError: pass
+                try: release = kwargs['rel']
+                except KeyError: pass
+    
+                availpkgs = self.pkgSack.searchNevra(name=name, epoch=epoch, arch=arch,
+                        ver=version, rel=release)
+                instpkgs = self.rpmdb.returnTupleByKeyword(name=name,
+                        epoch=epoch, arch=arch, ver=version, rel=release)
+            
+            pass
+# FIXME b/c this is broken....            
+            # go through the pkgs and look for obsoletes first then updates
+#            for po in pkgs:
+#                if po.pkgtup in 
+            
+#            [16:57] <skvidal> check for things obsoleting the specified pkg
+#            [16:57] <skvidal> check for pkgs available for update matching 
+#                     the specified pkg (check available for the match)
+#            [16:57] <skvidal> check for pkgs available to update 
+#                     the specified pkg (check rpmdb for the pkg to look up in updated)
+#           problem - we go through the specification
+#           we do updates from avail first
+#           then we do updates based on installed second
+#           we'll get some doubles, won't we?
+            if self.up.obsoleted_dict.has_key(po.pkgtup):
+                # do the obsolete
+            elif self.up.updates.has_key(po.pkgtup):
+                # do the update
+            elif 
+            else:
+                # raise UpdateError  since it's not updatable
+
+            
+            
+        
+        
+    def remove(self, input):
+        """try to find and mark for remove the input -
            - input can be a pkg object or string"""
         pass
         
