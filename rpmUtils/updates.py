@@ -417,7 +417,19 @@ class Updates:
                    
                    
         self.updatesdict = updatedict                    
+        self.makeUpdatingDict()
         
+    def makeUpdatingDict(self):
+        """creates a dict of available packages -> [installed package], this
+           is to make it easier to look up what package  will be updating what
+           in the rpmdb"""
+        self.updating_dict = {}
+        for old in self.updatesdict.keys():
+            for new in self.updatesdict[old]:
+                if not self.updating_dict.has_key(new):
+                    self.updating_dict[new] = []
+                self.updating_dict[new].append(old)
+
     def reduceListByNameArch(self, pkglist, name=None, arch=None):
         """returns a set of pkg naevr tuples reduced based on name or arch"""
         returnlist = []
