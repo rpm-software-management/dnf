@@ -1648,10 +1648,15 @@ class YumBase(depsolve.Depsolve):
             
             return tx_return
 
+        # this all goes to hell here
         else:
-            pkgs = []
+            instpkgs = []
+            availpkgs = []
             if po: # just a po
-                pkgs.append(po)
+                if po.repoid == 'installed':
+                    instpkgs.append(po)
+                else:
+                    availpkgs.append(po)
                 
             else: # we have kwargs, sort them out.
                 name = epoch = arch = version = release = None
@@ -1675,34 +1680,55 @@ class YumBase(depsolve.Depsolve):
     
                 availpkgs = self.pkgSack.searchNevra(name=name, epoch=epoch, arch=arch,
                         ver=version, rel=release)
-                instpkgs = self.rpmdb.returnTupleByKeyword(name=name,
-                        epoch=epoch, arch=arch, ver=version, rel=release)
+                
+                installed_tuples = self.rpmdb.returnTupleByKeyword(name=name,
+                                                epoch=epoch, arch=arch,
+                                                ver=version, rel=release)
+                for tup in installed_tuples:
+                    hdr = self.rpmdb.returnHeaderByTuple(tup)[0]
+                    installed_pkg =  YumInstalledPackage(hdr)
+                    instpkgs.append(installed_pkg)
             
-            pass
-# FIXME b/c this is broken....            
-            # go through the pkgs and look for obsoletes first then updates
-#            for po in pkgs:
-#                if po.pkgtup in 
+            # for any thing specified
+            # get the list of available pkgs matching it (or take the po)
+            # get the list of installed pkgs matching it (or take the po)
+            # go through each list and look for:
+               # things obsoleting it if it is an installed pkg
+               # things it updates if it is an available pkg
+               # things updating it if it is an installed pkg
+               # in that order
+               # all along checking to make sure we:
+                # don't update something that's already been obsoleted
+                # update to the newesr version we can
+                # don't mark anything for update more than once
+        
+            for installed_pkg in instpkgs:
+                if self.up.obsoleted_dict.has_key(installed_pkg.pkgtup):
+                    obsoleting = self.up.obsoleted_dict[installed_pkg.pkgtup][0]
+                    obsoleting_pkg = self.getPackageObject(obsoleting)
+                    # FIXME check for what might be in there here
+                    txmbr = self.tsInfo.addObsoleting(obsoleting_pkg, installed_pkg)
+                    self.tsInfo.addObsoleted(installed_pkg, obsoleting_pkg)
+                    tx_return.append(txmbr)
             
-#            [16:57] <skvidal> check for things obsoleting the specified pkg
-#            [16:57] <skvidal> check for pkgs available for update matching 
-#                     the specified pkg (check available for the match)
-#            [16:57] <skvidal> check for pkgs available to update 
-#                     the specified pkg (check rpmdb for the pkg to look up in updated)
-#           problem - we go through the specification
-#           we do updates from avail first
-#           then we do updates based on installed second
-#           we'll get some doubles, won't we?
-            if self.up.obsoleted_dict.has_key(po.pkgtup):
-                # do the obsolete
-            elif self.up.updates.has_key(po.pkgtup):
-                # do the update
-            elif 
-            else:
-                # raise UpdateError  since it's not updatable
+            for available_pkg in availpkgs:
+                if self.up.updating_dict.has_key(available_pkg.pkgtup):
+                    updated = self.up.updating_dict[available_pkg.pkgtup][0]
+                    hdr = self.rpmdb.returnHeaderByTuple(updated)[0]
+                    updated_pkg =  YumInstalledPackage(hdr)
+                    # FIXME, check for what might already be in the tsInfo
+                    txmbr = self.tsInfo.addUpdate(available_pkg, updated_pkg)
+                    tx_return.append(txmbr)
+                    
+            for installed_pkg in instpkgs:
+                if self.up.updatesdict.has_key(installed_pkg.pkgtup):
+                    updating = self.up.updatesdict[installed_pkg.pkgtup][0]
+                    updating_pkg = self.getPackageObject(updating)
+                    # FIXME, check for what might already be in the tsInfo
+                    txmbr = self.tsInfo.addUpdate(updating_pkg, installed_pkg)
+                    tx_return.append(txmbr)
 
-            
-            
+        return tx_return
         
         
     def remove(self, input):
