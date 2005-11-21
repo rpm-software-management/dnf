@@ -143,6 +143,15 @@ class TransactionData:
         
         return 0
 
+    def isObsoleted(self, pkgtup):
+        """true if the pkgtup is marked to be obsoleted"""
+        if self.exists(pkgtup):
+            for txmbr in self.getMembers(pkgtup=pkgtup):
+                if txmbr.output_state == TS_OBSOLETED:
+                    return True
+        
+        return False
+                
     def makelists(self):
         """returns lists of transaction Member objects based on mode:
            updated, installed, erased, obsoleted, depupdated, depinstalled

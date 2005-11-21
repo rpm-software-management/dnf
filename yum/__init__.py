@@ -1699,11 +1699,10 @@ class YumBase(depsolve.Depsolve):
                # in that order
                # all along checking to make sure we:
                 # don't update something that's already been obsoleted
-                # update to the newesr version we can
-                # don't mark anything for update more than once
-        
+            
+            
             for installed_pkg in instpkgs:
-                if self.up.obsoleted_dict.has_key(installed_pkg.pkgtup):
+                if self.up.obsoleted_dict.has_key(installed_pkg.pkgtup) and self.conf.obsoletes:
                     obsoleting = self.up.obsoleted_dict[installed_pkg.pkgtup][0]
                     obsoleting_pkg = self.getPackageObject(obsoleting)
                     # FIXME check for what might be in there here
@@ -1714,19 +1713,23 @@ class YumBase(depsolve.Depsolve):
             for available_pkg in availpkgs:
                 if self.up.updating_dict.has_key(available_pkg.pkgtup):
                     updated = self.up.updating_dict[available_pkg.pkgtup][0]
-                    hdr = self.rpmdb.returnHeaderByTuple(updated)[0]
-                    updated_pkg =  YumInstalledPackage(hdr)
-                    # FIXME, check for what might already be in the tsInfo
-                    txmbr = self.tsInfo.addUpdate(available_pkg, updated_pkg)
-                    tx_return.append(txmbr)
+                    if self.tsInfo.isObsoleted(updated):
+                        self.log(5, 'Not Updating Package that is already obsoleted: %s.%s %s:%s-%s' % updated)
+                    else:
+                        hdr = self.rpmdb.returnHeaderByTuple(updated)[0]
+                        updated_pkg =  YumInstalledPackage(hdr)
+                        txmbr = self.tsInfo.addUpdate(available_pkg, updated_pkg)
+                        tx_return.append(txmbr)
                     
             for installed_pkg in instpkgs:
                 if self.up.updatesdict.has_key(installed_pkg.pkgtup):
                     updating = self.up.updatesdict[installed_pkg.pkgtup][0]
                     updating_pkg = self.getPackageObject(updating)
-                    # FIXME, check for what might already be in the tsInfo
-                    txmbr = self.tsInfo.addUpdate(updating_pkg, installed_pkg)
-                    tx_return.append(txmbr)
+                    if self.tsInfo.isObsoleted(installed_pkg.pkgtup):
+                        self.log(5, 'Not Updating Package that is already obsoleted: %s.%s %s:%s-%s' % installed_pkg.pkgtup)
+                    else:
+                        txmbr = self.tsInfo.addUpdate(updating_pkg, installed_pkg)
+                        tx_return.append(txmbr)
 
         return tx_return
         
