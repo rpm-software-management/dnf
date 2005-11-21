@@ -1536,7 +1536,8 @@ class YumBase(depsolve.Depsolve):
         self.doRepoSetup()
         self.doSackSetup()
         self.doRpmDBSetup()
-
+        self.doUpdateSetup()
+        
         pkgs = []
         if po:
             pkgs.append(po)
@@ -1580,11 +1581,15 @@ class YumBase(depsolve.Depsolve):
         
         tx_return = []
         for po in pkgs:
-            txmbrs = self.tsInfo.getMembers(pkgtup=po.pkgtup)
-            if txmbrs:
+            if self.tsInfo.exists(pkgtup=po.pkgtup):
                 self.log(4, 'Package: %s  - already in transaction set' % po)
+                tx_return.extend(self.tsInfo.getMembers(pkgtup=po.pkgtup))
+                continue
+
+            # make sure this shouldn't be passed to update:
+            if self.up.updating_dict.has_key(po.pkgtup):
+                txmbrs = self.update(po=po)
                 tx_return.extend(txmbrs)
-                
             else:
                 txmbr = self.tsInfo.addInstall(po)
                 tx_return.append(txmbr)
@@ -1631,7 +1636,7 @@ class YumBase(depsolve.Depsolve):
                 tx_return.append(txmbr)
                 
             for (new, old) in updates:
-                if self.tsInfo.isObsoleted(pkgtup=old)
+                if self.tsInfo.isObsoleted(pkgtup=old):
                     self.log(5, 'Not Updating Package that is already obsoleted: %s.%s %s:%s-%s' % old)
                 else:
                     updating_pkg = self.getPackageObject(new)
@@ -1646,7 +1651,6 @@ class YumBase(depsolve.Depsolve):
             
             return tx_return
 
-        # this all goes to hell here
         else:
             instpkgs = []
             availpkgs = []
