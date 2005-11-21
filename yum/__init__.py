@@ -255,7 +255,10 @@ class YumBase(depsolve.Depsolve):
         """populates the package sacks for information from our repositories,
            takes optional archlist for archs to include"""
            
-        
+        if hasattr(self, 'pkgSack') and thisrepo is None:
+            self.log(7, 'skipping reposetup, pkgsack exists')
+            return
+            
         if thisrepo is None:
             repos = self.repos.listEnabled()
         else:
@@ -1542,42 +1545,24 @@ class YumBase(depsolve.Depsolve):
         if po:
             pkgs.append(po)
         else:
-            if not hasattr(self, 'pkgSack'):
-                self.doRepoSetup()
-                self.doSackSetup()
-            # keys we care about:
-            name = epoch = arch = version = release = None
-            try: name = kwargs['name']
-            except KeyError: pass
-            try: epoch = kwargs['epoch']
-            except KeyError: pass
-            try: arch = kwargs['arch']
-            except KeyError: pass
-            
-            # get them as ver, version and rel, release - if someone
-            # specifies one of each then that's kinda silly.
-            try: version = kwargs['version']
-            except KeyError: pass
-            try: version = kwargs['ver']
-            except KeyError: pass
-            try: release = kwargs['release']
-            except KeyError: pass
-            try: release = kwargs['rel']
-            except KeyError: pass
+            if not kwargs.keys():
+                raise Errors.InstallError, 'Nothing specified to install'
 
-            pkgs = self.pkgSack.searchNevra(name=name, epoch=epoch, arch=arch,
-                    ver=version, rel=release)
+            nevra_dict = self._nevra_kwarg_parse(kwargs)
+
+            pkgs = self.pkgSack.searchNevra(name=nevra_dict['name'],
+                 epoch=nevra_dict['epoch'], arch=nevra_dict['arch'],
+                 ver=nevra_dict['version'], rel=nevra_dict['release'])
             
             if pkgs:
                 pkgs = self.bestPackagesFromList(pkgs)
 
         if len(pkgs) == 0:
-            raise Errors.InstallError, 'No package available to install'
+            raise Errors.InstallError, 'No package(s) available to install'
         
         # FIXME - lots more checking here
-        #  - update instead
         #  - install instead of erase
-        #  - better exceptions
+        #  - better error handling/reporting
         
         tx_return = []
         for po in pkgs:
@@ -1645,10 +1630,6 @@ class YumBase(depsolve.Depsolve):
                     txmbr = self.tsInfo.addUpdate(updating_pkg, updated_pkg)
                     tx_return.append(txmbr)
             
-            # make sure we have more than nothing, maybe we shouldn't be raising here
-            if len(tx_return) == 0:
-                raise Errors.UpdateError, 'No packages to update'
-            
             return tx_return
 
         else:
@@ -1661,31 +1642,17 @@ class YumBase(depsolve.Depsolve):
                     availpkgs.append(po)
                 
             else: # we have kwargs, sort them out.
-                name = epoch = arch = version = release = None
-                try: name = kwargs['name']
-                except KeyError: pass
-                try: epoch = kwargs['epoch']
-                except KeyError: pass
-                try: arch = kwargs['arch']
-                except KeyError: pass
+                nevra_dict = self._nevra_kwarg_parse(kwargs)
+
+                availpkgs = self.pkgSack.searchNevra(name=nevra_dict['name'],
+                          epoch=nevra_dict['epoch'], arch=nevra_dict['arch'],
+                        ver=nevra_dict['version'], rel=nevra_dict['release'])
                 
-                # get them as ver, version and rel, release - if someone
-                # specifies one of each then that's kinda silly.
-                try: version = kwargs['version']
-                except KeyError: pass
-                try: version = kwargs['ver']
-                except KeyError: pass
-                try: release = kwargs['release']
-                except KeyError: pass
-                try: release = kwargs['rel']
-                except KeyError: pass
-    
-                availpkgs = self.pkgSack.searchNevra(name=name, epoch=epoch, arch=arch,
-                        ver=version, rel=release)
-                
-                installed_tuples = self.rpmdb.returnTupleByKeyword(name=name,
-                                                epoch=epoch, arch=arch,
-                                                ver=version, rel=release)
+                installed_tuples = self.rpmdb.returnTupleByKeyword(
+                                name=nevra_dict['name'], epoch=nevra_dict['epoch'],
+                                arch=nevra_dict['arch'], ver=nevra_dict['version'],
+                                rel=nevra_dict['release'])
+            
                 for tup in installed_tuples:
                     hdr = self.rpmdb.returnHeaderByTuple(tup)[0]
                     installed_pkg =  YumInstalledPackage(hdr)
@@ -1736,10 +1703,67 @@ class YumBase(depsolve.Depsolve):
         return tx_return
         
         
-    def remove(self, input):
-        """try to find and mark for remove the input -
-           - input can be a pkg object or string"""
-        pass
+    def remove(self, po=None, **kwargs):
+        """try to find and mark for remove the specified package(s) -
+            if po is specified then that package object (if it is installed) 
+            will be marked for removal.
+            if no po then look at kwargs, if neither then raise an exception"""
+
+        if not po and not kwargs.keys():
+            raise Errors.RemoveError, 'Nothing specified to remove'
         
-         
-         
+        self.doRpmDBSetup()
+        tx_return = []
+        pkgs = []
+        
+        if po:
+            pkgs = [po]
+        else:
+            nevra_dict = self._nevra_kwarg_parse(kwargs)
+
+            installed_tuples = self.rpmdb.returnTupleByKeyword(
+                            name=nevra_dict['name'], epoch=nevra_dict['epoch'],
+                            arch=nevra_dict['arch'], ver=nevra_dict['version'],
+                            rel=nevra_dict['release'])
+
+            for tup in installed_tuples:
+                hdr = self.rpmdb.returnHeaderByTuple(tup)[0]
+                installed_pkg =  YumInstalledPackage(hdr)
+                pkgs.append(installed_pkg)
+
+        
+        for po in pkgs:
+            txmbr = self.tsInfo.addErase(po)
+            tx_return.append(txmbr)
+        
+        return tx_return
+
+    def _nevra_kwarg_parse(self, kwargs):
+            
+        returndict = {}
+        
+        try: returndict['name'] = kwargs['name']
+        except KeyError:  returndict['name'] = None
+
+        try: returndict['epoch'] = kwargs['epoch']
+        except KeyError: returndict['epoch'] = None
+
+        try: returndict['arch'] = kwargs['arch']
+        except KeyError: returndict['arch'] = None
+        
+        # get them as ver, version and rel, release - if someone
+        # specifies one of each then that's kinda silly.
+        try: returndict['version'] = kwargs['version']
+        except KeyError: returndict['version'] = None
+        if returndict['version'] is None:
+            try: returndict['version'] = kwargs['ver']
+            except KeyError: returndict['version'] = None
+
+        try: returndict['release'] = kwargs['release']
+        except KeyError: returndict['release'] = None
+        if returndict['release'] is None:
+            try: release = kwargs['rel']
+            except KeyError: returndict['release'] = None
+        
+        return returndict
+
