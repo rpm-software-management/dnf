@@ -1631,9 +1631,7 @@ class YumBase(depsolve.Depsolve):
                 tx_return.append(txmbr)
                 
             for (new, old) in updates:
-                txmbrs = self.tsInfo.getMembers(pkgtup=old)
-
-                if txmbrs and txmbrs[0].output_state == TS_OBSOLETED: 
+                if self.tsInfo.isObsoleted(pkgtup=old)
                     self.log(5, 'Not Updating Package that is already obsoleted: %s.%s %s:%s-%s' % old)
                 else:
                     updating_pkg = self.getPackageObject(new)
