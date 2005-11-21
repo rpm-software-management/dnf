@@ -1732,6 +1732,9 @@ class YumBase(depsolve.Depsolve):
                 pkgs.append(installed_pkg)
 
         
+        if len(pkgs) == 0: # should this even be happening?
+            self.errorlog(2, "Nothing to remove")
+
         for po in pkgs:
             txmbr = self.tsInfo.addErase(po)
             tx_return.append(txmbr)
