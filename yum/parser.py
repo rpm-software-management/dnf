@@ -1,12 +1,20 @@
 import re
-import copy
 import glob
 import shlex
 import string
+import urlparse
+import urlgrabber
 import os.path
 from ConfigParser import ConfigParser, NoSectionError, NoOptionError
 
-#TODO: include'ing of URLs (Yum currently supports this)
+#TODO: better handling of recursion
+#TODO: ability to handle bare includes (ie. before first [section])
+#TODO: avoid include line reordering on write
+
+# The above 3 items are probably handled best by more separation between
+# include functionality and ConfigParser. Delegate instead of subclass. See how
+# this was done in the previous implementation.
+
 #TODO: problem: interpolation tokens are lost when config files are rewritten
 #       - workaround is to not set vars, not sure if this is ok
 #       - maybe we should do interpolation at the Option level after all?
@@ -109,22 +117,38 @@ class IncludingConfigParser(ConfigParser):
         if not self._included.has_key(fn):
             return
 
-        
     def __sections(self):
         return ConfigParser.sections(self) 
 
     def read(self, filenames):
-        #XXX: support multiple filenames
         for filename in shlex.split(filenames):
             self.cwd = os.path.dirname(os.path.realpath(filename))
             ConfigParser.read(self,filename)
             self._readincludes()
 
+    def readfp(self, fp, filename=None):
+        ConfigParser.readfp(self, fp, filename)
+        self._readincludes()
+
     def _add_include(self, section, filename):
+        print '_add_include', section, filename
         c = IncludingConfigParser(self._defaults)
-        if not filename.startswith(os.path.sep):
-            filename = os.path.join(self.cwd, filename)
-        c.read(filename)
+
+        # Be aware of URL style includes
+        scheme, loc, path, params, qry, frag = urlparse.urlparse(filename, 'file')
+
+        # Normalise file URLs
+        if scheme == 'file':
+            filename = path
+
+        # Prepend current directory if absolute path wasn't given
+        if scheme == 'file':
+            if not filename.startswith(os.path.sep):
+                filename = os.path.join(self.cwd, filename)
+
+        c.readfp(urlgrabber.urlopen(filename), filename)
+
+        # Keep track of included sections
         for includesection in c.sections():
             self._included[includesection] = filename
         self._fns[filename] = c
@@ -173,8 +197,11 @@ class IncludingConfigParser(ConfigParser):
 
         # Write out any included files
         for fn in self._fns.keys():
-            inc = open(fn, 'w')
-            self._fns[fn].write(inc)
+            # Only bother for files since we can't easily write back to much else.
+            scheme = urlparse.urlparse(fn, 'file')[0]
+            if scheme == 'file':
+                inc = open(fn, 'w')
+                self._fns[fn].write(inc)
 
     def _interpolate(self, section, option, rawval, vars):
         '''Perform $var subsitution (this overides the default %(..)s subsitution)
@@ -219,7 +246,10 @@ _KEYCRE = re.compile(r"\$(\w+)")
 def varReplace(raw, vars):
     '''Perform variable replacement
 
-    @parma  
+    @param raw: String to perform substitution on.  
+    @param vars: Dictionary of variables to replace. Key is variable name
+        (without $ prefix). Value is replacement string.
+    @return: Input raw string with substituted values.
     '''
 
     done = []                      # Completed chunks to return
@@ -240,3 +270,24 @@ def varReplace(raw, vars):
         raw = raw[end:]             # Continue with remainder of string
 
     return ''.join(done)
+
+
+def _test():
+    import sys
+
+    p = IncludingConfigParser()
+    p.read(sys.argv[1])
+
+    p.set('one', 'a', '111')
+    p.set('three', 'foo', 'bar')
+
+    for section in p.sections():
+        print '***', section
+        for k, v in p.items(section):
+            print '%s = %r' % (k, v)
+
+    p.write(open(sys.argv[1], 'wt'))
+
+if __name__ == '__main__':
+    _test()
+
