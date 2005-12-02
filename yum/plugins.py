@@ -367,7 +367,7 @@ class PluginConduit:
         @param default: Value to read if option is missing.
         @return: String option value read, or default if option was missing.
         '''
-        return config.getoption(self._conf, section, opt, default,
+        return config.getOption(self._conf, section, opt, default,
                 config.Option())
 
     def confInt(self, section, opt, default=None):
@@ -379,7 +379,7 @@ class PluginConduit:
         @return: Integer option value read, or default if option was missing or
             could not be parsed.
         '''
-        return config.getoption(self._conf, section, opt, default,
+        return config.getOption(self._conf, section, opt, default,
                 config.IntOption())
 
     def confFloat(self, section, opt, default=None):
@@ -391,7 +391,7 @@ class PluginConduit:
         @return: Float option value read, or default if option was missing or
             could not be parsed.
         '''
-        return config.getoption(self._conf, section, opt, default,
+        return config.getOption(self._conf, section, opt, default,
                 config.FloatOption())
 
     def confBool(self, section, opt, default=None):
@@ -403,7 +403,7 @@ class PluginConduit:
         @return: Boolean option value read, or default if option was missing or
             could not be parsed.
         '''
-        return config.getoption(self._conf, section, opt, default,
+        return config.getOption(self._conf, section, opt, default,
                 config.BoolOption())
 
 class ConfigPluginConduit(PluginConduit):
