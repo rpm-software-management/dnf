@@ -607,6 +607,8 @@ For more information contact your distribution or package provider.
             self.log(2, "This may take a while depending on the speed of this computer")
             self.log(3, '%s' % self.pickleRecipe())
             try:
+                for repo in self.repos.findRepos('*'):
+                    repo.metadata_expire = 0
                 self.doRepoSetup(dosack=0)
                 self.repos.populateSack(with='metadata', pickleonly=1)
                 self.repos.populateSack(with='filelists', pickleonly=1)

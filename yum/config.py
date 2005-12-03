@@ -411,7 +411,7 @@ class YumConf(EarlyConf):
     throttle = ThrottleOption(0)
 
     http_caching = SelectionOption('all', ('none', 'packages', 'all'))
-    metadata_expire = IntOption(28800)   # time in seconds
+    metadata_expire = IntOption(1800)   # time in seconds
 
 class RepoConf(BaseConfig):
    
