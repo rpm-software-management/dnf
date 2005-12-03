@@ -276,7 +276,8 @@ class YumBase(depsolve.Depsolve):
         self.repos.populateSack(which=repos)
         self.pkgSack = self.repos.pkgSack
         self.excludePackages()
-        self.excludeNonCompatArchs(archlist=archlist)
+        self.pkgSack.excludeArchs(archlist)
+
         for repo in repos:
             self.excludePackages(repo)
             self.includePackages(repo)
@@ -435,18 +436,6 @@ class YumBase(depsolve.Depsolve):
             self.pkgSack.delPackage(po)
             
         self.log(2, 'Finished')
-        
-    def excludeNonCompatArchs(self, archlist=None):
-        """runs through the whole packageSack and excludes any arch not compatible
-           with the system"""
-        
-        self.log(3, 'Excluding Incompatible Archs')
-        if not archlist:
-            archlist.extend(rpmUtils.arch.getArchList())
-        self.pkgSack.excludeArchs(archlist)
-        self.log(3, 'Finished')
-        
-        
         
     def doLock(self, lockfile):
         """perform the yum locking, raise yum-based exceptions, not OSErrors"""
@@ -873,15 +862,6 @@ class YumBase(depsolve.Depsolve):
         msg = '%d metadata files removed' % removed
         return 0, [msg]
 
-    def sortPkgObj(self, pkg1 ,pkg2):
-        """sorts a list of package tuples by name"""
-        if pkg1.name > pkg2.name:
-            return 1
-        elif pkg1.name == pkg2.name:
-            return 0
-        else:
-            return -1
-        
     def doPackageLists(self, pkgnarrow='all'):
         """generates lists of packages, un-reduced, based on pkgnarrow option"""
         

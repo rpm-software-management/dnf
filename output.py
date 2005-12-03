@@ -24,6 +24,7 @@ import time
 from i18n import _
 
 from urlgrabber.progress import TextMeter
+from yum.misc import sortPkgObj
 
 try:
     import readline
@@ -93,7 +94,7 @@ class YumOutput:
             if len(lst) > 0:
                 thingslisted = 1
                 print '%s' % description
-                lst.sort(self.sortPkgObj)
+                lst.sort(sortPkgObj)
                 for pkg in lst:
                     if outputType == 'list':
                         self.simpleList(pkg)
