@@ -917,7 +917,7 @@ For more information contact your distribution or package provider.
             self.log(3, 'reduced installs :')
         for po in pkglist:
             self.log(3,'   %s.%s %s:%s-%s' % po.pkgtup)
-            self.tsInfo.addInstall(po)
+            self.install(po)
 
         if len(passToUpdate) > 0:
             self.log(3, 'potential updates :')
@@ -1052,7 +1052,7 @@ For more information contact your distribution or package provider.
                     erases.extend(depmatches)
             
         for pkg in erases:
-            self.tsInfo.addErase(pkg)
+            self.remove(po=pkg)
         
         if len(self.tsInfo) > oldcount:
             change = len(self.tsInfo) - oldcount
@@ -1128,7 +1128,7 @@ For more information contact your distribution or package provider.
         for po in installpkgs:
             self.log(2, 'Marking %s to be installed' % po.localpath)
             self.localPackages.append(po)
-            self.tsInfo.addInstall(po)
+            self.install(po=po)
         
         for (po, oldpo) in updatepkgs:
             self.log(2, 'Marking %s as an update to %s' % (po.localpath, oldpo))

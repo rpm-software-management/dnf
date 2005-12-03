@@ -1669,6 +1669,9 @@ class YumBase(depsolve.Depsolve):
                # all along checking to make sure we:
                 # don't update something that's already been obsoleted
             
+            # TODO: we should search the updates and obsoletes list and
+            # mark the package being updated or obsoleted away appropriately
+            # and the package relationship in the tsInfo
             
             for installed_pkg in instpkgs:
                 if self.up.obsoleted_dict.has_key(installed_pkg.pkgtup) and self.conf.obsoletes:
