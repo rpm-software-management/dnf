@@ -64,8 +64,13 @@ def main(args):
         except Errors.LockError, e:
             sys.exit(200)
 
-    locale.setlocale(locale.LC_ALL, '')
-
+    try:
+        locale.setlocale(locale.LC_ALL, '')
+    except locale.Error, e:
+        # default to C locale if we get a failure.
+        print >> sys.stderr, 'Failed to set locale, defaulting to C'
+        locale.setlocale(locale.LC_ALL, 'C')
+        
     # our core object for the cli
     base = cli.YumBaseCli()
 
