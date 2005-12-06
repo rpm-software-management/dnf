@@ -43,7 +43,7 @@ import depsolve
 import plugins
 
 
-from packages import parsePackages, YumLocalPackage, YumInstalledPackage
+from packages import parsePackages, YumAvailablePackage, YumLocalPackage, YumInstalledPackage
 from repomd import mdErrors
 from constants import *
 from repomd.packageSack import ListPackageSack
@@ -1523,7 +1523,11 @@ class YumBase(depsolve.Depsolve):
         
         pkgs = []
         if po:
-            pkgs.append(po)
+            if isinstance(po, YumAvailablePackage) or isinstance(po, YumLocalPackage):
+                pkgs.append(po)
+            else:
+                raise Errors.InstallError, 'Package Object was not a package object instance'
+            
         else:
             if not kwargs.keys():
                 raise Errors.InstallError, 'Nothing specified to install'
@@ -1550,14 +1554,21 @@ class YumBase(depsolve.Depsolve):
                 self.log(4, 'Package: %s  - already in transaction set' % po)
                 tx_return.extend(self.tsInfo.getMembers(pkgtup=po.pkgtup))
                 continue
-
+            
             # make sure this shouldn't be passed to update:
             if self.up.updating_dict.has_key(po.pkgtup):
                 txmbrs = self.update(po=po)
                 tx_return.extend(txmbrs)
-            else:
-                txmbr = self.tsInfo.addInstall(po)
-                tx_return.append(txmbr)
+                continue
+            
+            # make sure it's not already installed
+            if self.rpmdb.installed(name=po.name, arch=po.arch, epoch=po.epoch,
+                    rel=po.rel, ver=po.ver):
+                self.errorlog(2, 'Package: %s already installed' % po)
+                continue
+
+            txmbr = self.tsInfo.addInstall(po)
+            tx_return.append(txmbr)
         
         return tx_return
 
