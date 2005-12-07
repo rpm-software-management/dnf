@@ -1284,8 +1284,7 @@ class YumBase(depsolve.Depsolve):
         for pkgname in thisgroup.packages:
         
             for txmbr in self.tsInfo:
-                if txmbr.po.name == pkgname and txmbr.po.state in [TS_INSTALL,
-                                                    TS_UPDATE, TS_OBSOLETING]:
+                if txmbr.po.name == pkgname and txmbr.po.state in TS_INSTALL_STATES:
                     try: 
                         txmbr.groups.remove(grpid)
                     except ValueError:
