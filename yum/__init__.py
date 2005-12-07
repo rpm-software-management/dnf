@@ -1281,25 +1281,24 @@ class YumBase(depsolve.Depsolve):
         thisgroup = self.comps.groups[grpid]
         thisgroup.selected = False
         
-        for pkg in thisgroup.packages:
-            try:
-                p = self.pkgSack.returnNewestByName(pkg)
-            except mdErrors.PackageSackError:
-                self.log(4, "no such package %s from group %s" %(pkg, thisgroup))
+        for pkgname in thisgroup.packages:
+            p = self.pkgSack.searchNevra(name=pkgname)
+            if not p:
+                self.log(4, "no such package %s from group %s" %(pkgname, thisgroup))
                 continue
             
-            thispkg = p[0]
-            txmbrs = self.tsInfo.getMembers(pkgtup = thispkg.pkgtup)
-            for txmbr in txmbrs:
-                try: 
-                    txmbr.groups.remove(grpid)
-                except ValueError:
-                    self.log(4, "package %s was not marked in group %s" % (thispkg, grpid))
-                    continue
-                
-                # if there aren't any other groups mentioned then remove the pkg
-                if len(txmbr.groups) == 0:
-                    self.tsInfo.remove(thispkg.pkgtup)
+            for po in self.bestPackagesFromList(p):
+                txmbrs = self.tsInfo.getMembers(pkgtup = po.pkgtup)
+                for txmbr in txmbrs:
+                    try: 
+                        txmbr.groups.remove(grpid)
+                    except ValueError:
+                        self.log(4, "package %s was not marked in group %s" % (po, grpid))
+                        continue
+                    
+                    # if there aren't any other groups mentioned then remove the pkg
+                    if len(txmbr.groups) == 0:
+                        self.tsInfo.remove(po.pkgtup)
 
                     
         
