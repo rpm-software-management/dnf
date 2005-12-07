@@ -1282,14 +1282,11 @@ class YumBase(depsolve.Depsolve):
         thisgroup.selected = False
         
         for pkgname in thisgroup.packages:
-            p = self.pkgSack.searchNevra(name=pkgname)
-            if not p:
-                self.log(4, "no such package %s from group %s" %(pkgname, thisgroup))
-                continue
-            
-            for po in self.bestPackagesFromList(p):
-                txmbrs = self.tsInfo.getMembers(pkgtup = po.pkgtup)
-                for txmbr in txmbrs:
+        
+            for txmbr in self.tsInfo:
+                if txmbr.po.name == pkgname and txmbr.state in [TS_INSTALL,
+                                                                TS_UPDATE,
+                                                                TS_OBSOLETING]
                     try: 
                         txmbr.groups.remove(grpid)
                     except ValueError:
@@ -1298,7 +1295,7 @@ class YumBase(depsolve.Depsolve):
                     
                     # if there aren't any other groups mentioned then remove the pkg
                     if len(txmbr.groups) == 0:
-                        self.tsInfo.remove(po.pkgtup)
+                        self.tsInfo.remove(txmbr.po.pkgtup)
 
                     
         
