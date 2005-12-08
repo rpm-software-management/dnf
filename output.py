@@ -258,11 +258,10 @@ class YumOutput:
                 size = self.format_number(pkgsize)
                 msg = " %-22s  %-9s  %-15s  %-16s  %5s\n" % (n, a,
                               evr, repoid, size)
-                for (obspo, relationship) in txmbr.relatedto:
-                    if relationship == 'obsoletes':
-                        appended = '     replacing  %s.%s %s\n\n' % (obspo.name,
-                            obspo.arch, obspo.printVer())
-                        msg = msg+appended
+                for obspo in txmbr.obsoletes:
+                    appended = '     replacing  %s.%s %s\n\n' % (obspo.name,
+                        obspo.arch, obspo.printVer())
+                    msg = msg+appended
                 totalmsg = totalmsg + msg
         
             if pkglist:
