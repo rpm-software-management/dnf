@@ -361,6 +361,12 @@ class BaseConfig(object):
             return getattr(self, option)
         return default
 
+    def setConfigOption(self, option, value):
+        if hasattr(self, option):
+            setattr(self, option, value)
+        else:
+            raise Errors.ConfigError, 'No such option %s' % option
+
 class EarlyConf(BaseConfig):
 
     distroverpkg = Option('fedora-release')
