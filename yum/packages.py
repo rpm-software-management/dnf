@@ -393,11 +393,11 @@ class YumAvailablePackage(repomd.packageObject.PackageObject, repomd.packageObje
             self.simple['installedsize'] = pkgdict.size['installed']
         
         if hasattr(pkgdict, 'location'):
-            if pkgdict.location['value'] == '':
+            if pkgdict.location['base'] == '':
                 url = None
             else:
-                url = pkgdict.location['value']
-            
+                url = pkgdict.location['base']
+
             self.simple['basepath'] = url
             self.simple['relativepath'] = pkgdict.location['href']
         

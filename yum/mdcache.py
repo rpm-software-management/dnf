@@ -193,7 +193,7 @@ class PrimaryEntry(BaseEntry):
         }
         self.time = {'file': None, 'build': None}
         self.size = {'package': None, 'installed': None, 'archive': None}
-        self.location = {'href': None, 'value': None}
+        self.location = {'href': None, 'value': None, 'base': None}
         self.hdrange = {'start': None, 'end': None}
         self.prco = {}
         self.files = {}

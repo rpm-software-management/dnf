@@ -27,7 +27,7 @@ from sqlitesack import encodefiletypelist,encodefilenamelist
 # This version refers to the internal structure of the sqlite cache files
 # increasing this number forces all caches of a lower version number
 # to be re-generated
-dbversion = '6'
+dbversion = '7'
 
 class RepodataParserSqlite:
     def __init__(self, storedir, repoid, callback=None):
@@ -430,6 +430,7 @@ class PackageToDBAdapter:
             'size_installed',
             'size_archive',
             'location_href',
+            'location_base',
             'checksum_type',
             'checksum_value',
             )

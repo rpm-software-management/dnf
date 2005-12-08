@@ -366,7 +366,7 @@ class YumSqlitePackageSack(repos.YumPackageSack):
       if (nevra_only):
         return y
       y.hdrange = {'start': db.rpm_header_start,'end': db.rpm_header_end}
-      y.location = {'href': db.location_href,'value':''}
+      y.location = {'href': db.location_href,'value': '', 'base': db.location_base}
       y.checksum = {'pkgid': 'YES','type': db.checksum_type, 
                     'value': db.checksum_value }
       y.time = {'build': db.time_build, 'file': db.time_file }

@@ -91,12 +91,13 @@ class BaseEntry:
         return out.getvalue()
 
     def _bn(self, qn):
+        if qn.find('}') == -1: return qn 
         return qn.split('}')[1]
         
     def _prefixprops(self, elem, prefix):
         ret = {}
         for key in elem.attrib.keys():
-            ret[prefix + '_' + key] = elem.attrib[key]
+            ret[prefix + '_' + self._bn(key)] = elem.attrib[key]
         return ret
 
 class PrimaryEntry(BaseEntry):
@@ -123,6 +124,8 @@ class PrimaryEntry(BaseEntry):
             elif name in ('checksum', 'location'): 
                 p.update(self._prefixprops(child, name))
                 p[name + '_value'] = child.text
+                if name == 'location' and not p.has_key("location_base"):
+                    p["location_base"] = None
             
             elif name == 'format': 
                 self.setFormat(child)
