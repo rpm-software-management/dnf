@@ -391,6 +391,8 @@ class Depsolve:
     def _requiringFromInstalled(self, requiringPkg, requirement, errorlist):
         """processes the dependency resolution for a dep where the requiring 
            package is installed"""
+        
+        # FIXME - should we think about dealing exclusively in package objects?
            
         (name, arch, epoch, ver, rel) = requiringPkg
         requiringPo = self.getInstalledPackageObject(requiringPkg)
@@ -449,11 +451,16 @@ class Depsolve:
         self.log(5, 'Mode for pkg providing %s: %s' % (niceformatneed, needmode))
         
         if needmode in ['e']:
-                self.log(5, 'TSINFO: %s package requiring %s marked as erase' %
-                                (requiringPo, needname))
-                txmbr = self.tsInfo.addErase(requiringPo)
-                txmbr.setAsDep(pkgtup = needpkgtup)
-                checkdeps = 1
+            self.log(5, 'TSINFO: %s package requiring %s marked as erase' %
+                            (requiringPo, needname))
+            txmbr = self.tsInfo.addErase(requiringPo)
+            
+            needpo = None
+            if needpkgtup:
+                needpo = self.getInstalledPackageObject(needpkgtup)
+            
+            txmbr.setAsDep(po=needpo)
+            checkdeps = 1
         
         if needmode in ['i', 'u']:
             self.doUpdateSetup()
@@ -469,11 +476,14 @@ class Depsolve:
                 for pkgtup in obslist:
                     po = self.getPackageObject(pkgtup)
                 if po:
-                    for (new, old) in self.up.getObsoletesTuples():
+                    for (new, old) in self.up.getObsoletesTuples(): # FIXME query the obsoleting_list now?
                         if po.pkgtup == new:
                             txmbr = self.tsInfo.addObsoleting(po, requiringPo)
                             self.tsInfo.addObsoleted(requiringPo, po)
-                            txmbr.setAsDep(pkgtup = needpkgtup)
+                            needpo = None
+                            if needpkgtup:
+                                needpo = self.getPackageObject(needpkgtup)
+                            txmbr.setAsDep(po=needpo)
                             self.log(5, 'TSINFO: Obsoleting %s with %s to resolve dep.' % (requiringPo, po))
                             checkdeps = 1
                             return checkdeps, missingdep 
@@ -503,7 +513,11 @@ class Depsolve:
                 for (new, old) in self.up.getUpdatesTuples():
                     if po.pkgtup == new:
                         txmbr = self.tsInfo.addUpdate(po, requiringPo)
-                        txmbr.setAsDep(pkgtup = needpkgtup)
+                        needpo = None
+                        if needpkgtup:
+                            needpo = self.getPackageObject(needpkgtup)
+                        txmbr.setAsDep(po=needpo)
+                        
                         self.log(5, 'TSINFO: Updating %s to resolve dep.' % po)
                 checkdeps = 1
                 
@@ -641,7 +655,8 @@ class Depsolve:
         
                 
             
-            
+        # FIXME - why can't we look up in the transaction set for the requiringPkg
+        # and know what needs it that way and provide a more sensible dep structure in the txmbr
         if (best.name, best.arch) in self.rpmdb.getNameArchPkgList():
             self.log(3, 'TSINFO: Marking %s as update for %s' % (best, name))
             txmbr = self.tsInfo.addUpdate(best)

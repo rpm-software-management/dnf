@@ -312,14 +312,14 @@ class TransactionMember:
             val = getattr(self.po, attr)
             setattr(self, attr, val)
 
-    def setAsDep(self, pkgtup=None):
+    def setAsDep(self, po=None):
         """sets the transaction member as a dependency and maps the dep into the
            relationship list attribute"""
         
         self.isDep = 1
         if pkgtup:
-            self.relatedto.append((pkgtup, 'dependson'))
-            self.depends_on.append(pkgtup)
+            self.relatedto.append((po.pkgtup, 'dependson'))
+            self.depends_on.append(po)
 
     def __cmp__(self, other):
         if self.name > other.name:
