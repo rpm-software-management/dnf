@@ -356,6 +356,11 @@ class BaseConfig(object):
         for name in self.iterkeys():
             yield (name, getattr(self, name))
 
+    def getConfigOption(self, option, default=None):
+        if hasattr(self, option):
+            return getattr(self, option)
+        return default
+
 class EarlyConf(BaseConfig):
 
     distroverpkg = Option('fedora-release')
@@ -518,7 +523,6 @@ def getOption(conf, section, name, default, option):
     except (NoSectionError, NoOptionError):
         return default
     return option.parse(val)
-
 
 def _getEnvVar():
     '''Return variable replacements from the environment variables YUM0 to YUM9
