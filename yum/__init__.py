@@ -1607,6 +1607,7 @@ class YumBase(depsolve.Depsolve):
 
         tx_return = []
         if not po and not kwargs.keys(): # update everything (the easy case)
+            self.log(5, 'Updating Everything')
             for (obsoleting, installed) in obsoletes:
                 obsoleting_pkg = self.getPackageObject(obsoleting)
                 hdr = self.rpmdb.returnHeaderByTuple(installed)[0]
