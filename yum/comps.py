@@ -44,6 +44,7 @@ class Group(object):
         self.default_packages = {}
         self.langonly = None ## what the hell is this?
         self.groupid = None
+        self.display_order = 0
         self.installed = False
         
 
@@ -110,6 +111,9 @@ class Group(object):
             elif child.tag == 'uservisible':
                 self.user_visible = parse_boolean(child.text)
     
+            elif child.tag == 'display_order':
+                self.display_order = parse_boolean(child.text)
+
             elif child.tag == 'default':
                 self.default = parse_boolean(child.text)
     
@@ -173,6 +177,7 @@ class Category(object):
         self.description = ""
         self.translated_name = {}
         self.translated_description = {}
+        self.display_order = 0
         self._groups = {}        
 
         if elem:
@@ -219,6 +224,9 @@ class Category(object):
             elif child.tag == 'grouplist':
                 self.parse_group_list(child)
 
+            elif child.tag == 'display_order':
+                self.display_order = parse_boolean(child.text)
+
     def parse_group_list(self, grouplist_elem):
         for child in grouplist_elem:
             if child.tag == 'groupid':
@@ -243,13 +251,61 @@ class Category(object):
         
 class Comps:
     def __init__(self, overwrite_groups=False):
-        self.groups = {}
-        self.categories = {}
+        self._groups = {}
+        self._categories = {}
         self.compscount = 0
         self.overwrite_groups = overwrite_groups
         self.compiled = False # have groups been compiled into avail/installed 
                               # lists, yet.
-                              
+    
+    
+    def __sort_order(self, item1, item2):
+        if item1.display_order > item2.display_order:
+            return 1
+        elif item1.display_order == item2.display_order:
+            return 0
+        else:
+            return -1
+    
+    def get_groups(self):
+        grps = self._groups.values()
+        grps.sort(self.__sort_order)
+        return grps
+        
+    def get_categories(self):
+        cats = self._categories.values()
+        cats.sort(self.__sort_order)
+        return cats
+        
+    
+    groups = property(get_groups)
+    categories = property(get_categories)
+    
+    
+    
+    def has_group(self, grpid):
+        exists = self.return_group(grpid)
+            
+        if exists:
+            return True
+            
+        return False
+    
+    def return_group(self, grpid):
+        if self._groups.has_key(grpid):
+            return self._groups(grpid)
+        
+        # do matches against group names and ids, too
+        for group in self.groups:
+            names = [ group.name, group.groupid ]
+            names.extend(group.translated_name.values())
+            if grpid in names:
+                return group
+
+        
+        return None
+
+
     def add(self, srcfile = None):
         if not srcfile:
             raise CompsException
@@ -269,19 +325,19 @@ class Comps:
         for event, elem in parser:
             if elem.tag == "group":
                 group = Group(elem)
-                if self.groups.has_key(group.groupid):
-                    thatgroup = self.groups[group.groupid]
+                if self._groups.has_key(group.groupid):
+                    thatgroup = self._groups[group.groupid]
                     thatgroup.add(group)
                 else:
-                    self.groups[group.groupid] = group
+                    self._groups[group.groupid] = group
 
             if elem.tag == "category":
                 category = Category(elem)
-                if self.categories.has_key(category.categoryid):
-                    thatcat = self.categories[category.categoryid]
+                if self._categories.has_key(category.categoryid):
+                    thatcat = self._categories[category.categoryid]
                     thatcat.add(category)
                 else:
-                    self.categories[category.categoryid] = category
+                    self._categories[category.categoryid] = category
         
         del parser
         
@@ -294,7 +350,7 @@ class Comps:
             inst_pkg_names[n] = 1
         
 
-        for group in self.groups.values():
+        for group in self.groups:
             # if it has any mandatory or default packages in the group, then
             # make sure they're all installed, if any are missing then
             # the group is not installed.
@@ -323,12 +379,12 @@ def main():
         for srcfile in sys.argv[1:]:
             p.add(srcfile)
 
-        for group in p.groups.values():
+        for group in p.groups:
             print group
             for pkg in group.packages:
                 print '  ' + pkg
         
-        for category in p.categories.values():
+        for category in p.categories:
             print category.name
             for group in category.groups:
                 print '  ' + group

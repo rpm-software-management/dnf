@@ -1210,7 +1210,7 @@ class YumBase(depsolve.Depsolve):
         installed = []
         available = []
         
-        for grp in self.comps.groups.values():
+        for grp in self.comps.groups:
             if grp.installed:
                 if uservisible:
                     if grp.user_visible:
@@ -1233,10 +1233,13 @@ class YumBase(depsolve.Depsolve):
         if not self.comps:
             self.doGroupSetup()
         
-        if not self.comps.groups.has_key(grpid):
+        if not self.comps.has_grou(grpid):
             raise Errors.GroupsError, "No Group named %s exists" % grpid
             
-        thisgroup = self.comps.groups[grpid]
+        thisgroup = self.comps.return_group(grpid)
+        if not thisgroup:
+            raise Errors.GroupsError, "No Group named %s exists" % grpid
+            
         pkgs = thisgroup.packages
         for pkg in thisgroup.packages:
             p = self.rpmdb.installed(name=pkg)
@@ -1250,10 +1253,14 @@ class YumBase(depsolve.Depsolve):
         if not self.comps:
             self.doGroupSetup()
         
-        if not self.comps.groups.has_key(grpid):
+        if not self.comps.has_grou(grpid):
             raise Errors.GroupsError, "No Group named %s exists" % grpid
             
-        thisgroup = self.comps.groups[grpid]
+        thisgroup = self.comps.return_group(grpid)
+        
+        if not thisgroup:
+            raise Errors.GroupsError, "No Group named %s exists" % grpid
+        
         if thisgroup.selected:
             return 
         
@@ -1275,10 +1282,13 @@ class YumBase(depsolve.Depsolve):
         if not self.comps:
             self.doGroupSetup()
         
-        if not self.comps.groups.has_key(grpid):
+        if not self.comps.has_group(grpid):
             raise Errors.GroupsError, "No Group named %s exists" % grpid
             
-        thisgroup = self.comps.groups[grpid]
+        thisgroup = self.comps.return_group(grpid)
+        if not thisgroup:
+            raise Errors.GroupsError, "No Group named %s exists" % grpid
+        
         thisgroup.selected = False
         
         for pkgname in thisgroup.packages:

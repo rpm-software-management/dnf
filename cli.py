@@ -1327,15 +1327,10 @@ For more information contact your distribution or package provider.
             userlist = self.extcmds
         
         for strng in userlist:
-            matched = False
-            for group in self.comps.groups.values():
-                names = [ group.name, group.groupid]
-                names.extend(group.translated_name.values())
-                if strng in names:
-                    self.displayPkgsInGroups(group)
-                    matched = True
-                    
-            if not matched:
+            group = self.comps.return_group(strng)
+            if group:
+                self.displayPkgsInGroups(group)
+            else:
                 self.errorlog(1, 'Warning: Group %s does not exist.' % strng)
         
         return 0, []
