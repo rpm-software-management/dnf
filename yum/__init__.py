@@ -1253,7 +1253,7 @@ class YumBase(depsolve.Depsolve):
         if not self.comps:
             self.doGroupSetup()
         
-        if not self.comps.has_grou(grpid):
+        if not self.comps.has_group(grpid):
             raise Errors.GroupsError, "No Group named %s exists" % grpid
             
         thisgroup = self.comps.return_group(grpid)

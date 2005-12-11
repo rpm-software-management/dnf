@@ -26,7 +26,10 @@ def parse_boolean(strng):
         return BOOLEAN_STATES[strng.lower()]
     else:
         return False
-        
+
+def parse_number(strng):
+    return int(strng)
+
 class CompsException(exceptions.Exception):
     pass
         
@@ -44,7 +47,7 @@ class Group(object):
         self.default_packages = {}
         self.langonly = None ## what the hell is this?
         self.groupid = None
-        self.display_order = 0
+        self.display_order = 1024
         self.installed = False
         
 
@@ -112,7 +115,7 @@ class Group(object):
                 self.user_visible = parse_boolean(child.text)
     
             elif child.tag == 'display_order':
-                self.display_order = parse_boolean(child.text)
+                self.display_order = parse_number(child.text)
 
             elif child.tag == 'default':
                 self.default = parse_boolean(child.text)
@@ -177,7 +180,7 @@ class Category(object):
         self.description = ""
         self.translated_name = {}
         self.translated_description = {}
-        self.display_order = 0
+        self.display_order = 1024
         self._groups = {}        
 
         if elem:
@@ -225,7 +228,7 @@ class Category(object):
                 self.parse_group_list(child)
 
             elif child.tag == 'display_order':
-                self.display_order = parse_boolean(child.text)
+                self.display_order = parse_number(child.text)
 
     def parse_group_list(self, grouplist_elem):
         for child in grouplist_elem:
@@ -257,8 +260,8 @@ class Comps:
         self.overwrite_groups = overwrite_groups
         self.compiled = False # have groups been compiled into avail/installed 
                               # lists, yet.
-    
-    
+
+
     def __sort_order(self, item1, item2):
         if item1.display_order > item2.display_order:
             return 1
@@ -293,7 +296,7 @@ class Comps:
     
     def return_group(self, grpid):
         if self._groups.has_key(grpid):
-            return self._groups(grpid)
+            return self._groups[grpid]
         
         # do matches against group names and ids, too
         for group in self.groups:
