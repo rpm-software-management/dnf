@@ -317,7 +317,7 @@ class TransactionMember:
            relationship list attribute"""
         
         self.isDep = 1
-        if pkgtup:
+        if po:
             self.relatedto.append((po.pkgtup, 'dependson'))
             self.depends_on.append(po)
 
