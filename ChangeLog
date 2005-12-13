@@ -1,3 +1,431 @@
+2005-12-13 02:35  skvidal
+
+	* cli.py, shell.py: 
+	- make shell not traceback when user doesn't close a quoted string
+	- exit with a fatal error if running from file-based yum-shell
+	script, though.  - add a shortened usage() output if calling from
+	the shell as the --options won't help a someone in the shell.
+
+2005-12-13 01:51  skvidal
+
+	* cli.py, yum/__init__.py: 
+	make groupremove work reduce some code duplication in groupRemove()
+	and remove()
+
+2005-12-13 01:31  skvidal
+
+	* cli.py, yum/__init__.py: 
+	groupupdate is now just the same function as groupinstall - so make
+	the command continue to work but remove the unecessary code.
+
+2005-12-13 01:16  skvidal
+
+	* cli.py, yum/__init__.py, yum/repos.py: 
+	make yum groupinstall work again remove unnecessary recreation of
+	comps object
+
+2005-12-12 13:19  skvidal
+
+	* docs/yum.8: 
+	make the man page reference be more useful
+
+2005-12-10 19:38  katzj
+
+	* yum/: __init__.py, comps.py: * fix a few typos in the group code
+	* parse the order as an integer instead of a boolean * default
+	groups without an order to be a high number instead of 0 (so they  
+	end up shown later)
+
+2005-12-10 19:13  katzj
+
+	* yum/transactioninfo.py: typo fix
+
+2005-12-09 12:05  skvidal
+
+	* yum/__init__.py: 
+	add log output when update() is called w/o any options
+
+2005-12-09 10:31  skvidal
+
+	* cli.py, yum/__init__.py, yum/comps.py: 
+	many changes to comps. Cleans up the interface quite a bit.
+
+2005-12-08 18:24  katzj
+
+	* yum/config.py: suport the old option setting API too
+
+2005-12-08 18:19  katzj
+
+	* yum/config.py: fix for gratutious config API breakage
+
+2005-12-08 16:50  pnasrat
+
+	* yum/: mdcache.py, mdparser.py, packages.py, sqlitecache.py,
+	sqlitesack.py: Add location base/url to sqlite cache
+
+2005-12-08 03:33  skvidal
+
+	* yum/: depsolve.py, transactioninfo.py: 
+	depsolve.py:   - new api for txmbr.setAsDep()	- fix minor
+	indentation item   - label some fixmes and potential improvements
+
+2005-12-08 03:00  skvidal
+
+	* output.py, yum/transactioninfo.py: 
+	- store relationships in the transaction members a bit more sanely
+	- still supporting the older style (relatedto) style for now - make
+	it work in output.py
+
+2005-12-07 11:51  skvidal
+
+	* yum/: __init__.py, constants.py: add TS_INSTALL_STATES and
+	TS_REMOVE STATES into constants use them in deselectGroup()
+
+2005-12-07 11:49  skvidal
+
+	* yum/__init__.py: whoops
+
+2005-12-07 11:45  skvidal
+
+	* yum/__init__.py: 
+	oops
+
+2005-12-07 11:45  skvidal
+
+	* yum/__init__.py: 
+	make deselectGroup just look through the tsInfo rather than
+	traversing the pkgsack for no apparent reason
+
+2005-12-07 01:13  skvidal
+
+	* yum/__init__.py: 
+	make sure deselectGroup() removes all the packages it added,
+	including multilib
+
+2005-12-06 15:22  skvidal
+
+	* yum/: __init__.py, packages.py: 
+	- make install check if the package is already installed - add rel
+	and ver attributes to all the PackageObjects for convenience.
+
+2005-12-03 12:12  skvidal
+
+	* output.py, yum/__init__.py, yum/misc.py: 
+	kill off sortPkgObj() from __init__ remove excludeNonCompatArch as
+	it was trivial and useless
+
+2005-12-03 03:28  skvidal
+
+	* cli.py, yum/__init__.py: 
+	change minor mechanism in cli.py for installs until I can spend
+	some time better integrating the new methods
+
+2005-12-03 03:27  skvidal
+
+	* yummain.py: 
+	fix for rh bug: 174669 set locale to C if our locale assertion
+	fails.
+
+2005-12-03 02:15  skvidal
+
+	* cli.py, docs/yum.conf.5, yum/__init__.py, yum/config.py: 
+	- decrease default metadata_expire value from 8 hours to 30 minutes
+	- make yum clean metadata remove the cachecookie - make yum
+	makecache zero out the value of the metadata_expire so running	 it
+	will force cache updating
+
+2005-12-02 15:39  katzj
+
+	* yum/plugins.py: fix up for new config API
+
+2005-11-23 06:21  mjs
+
+	* yum/parser.py: - Added support for URL style includes. Not
+	perfect but good enough for now.  - Documentation
+
+2005-11-21 01:17  skvidal
+
+	* yum/__init__.py: 
+	log output from remove()
+
+2005-11-21 01:16  skvidal
+
+	* yum/: Errors.py, __init__.py: 
+	clean up some duplicated code initial stab at YumBase.remove()
+
+2005-11-21 00:10  skvidal
+
+	* yum/__init__.py: 
+	pass updates off to update() from install() if that's where they
+	should be
+
+2005-11-20 22:58  skvidal
+
+	* yum/__init__.py: use isObsoleted in other places
+
+2005-11-20 21:25  skvidal
+
+	* yum/: __init__.py, transactioninfo.py: 
+	do ts check for the updatable package already being obsoleted
+
+2005-11-20 04:15  skvidal
+
+	* rpmUtils/updates.py: more or less get yum.YumBase.update()
+	working add updating_dict to updates
+
+2005-11-20 04:15  skvidal
+
+	* yum/__init__.py: [no log message]
+
+2005-11-19 17:09  skvidal
+
+	* cli.py, yum/Errors.py, yum/__init__.py: 
+	- move localPackages out of YumBaseCli and into YumBase - fix a
+	minor bug in install() - start on update() but not finished for the
+	specific-package case
+
+2005-11-15 22:04  skvidal
+
+	* yum/depsolve.py: 
+	ts.check() can be None - don't unique if it is - bug #520 - thanks
+	to dgregor
+
+2005-11-13 06:02  skvidal
+
+	* cli.py, yum/__init__.py, yum/packages.py: 
+	- doGenericSetup() takes a cache argument so it can be used by
+	non-root users - remove several duplicate functions from
+	packages.py - make install() handle multilib correctly
+
+2005-11-09 14:48  pnasrat
+
+	* repomd/test.py: name arguement for callback
+
+2005-11-08 05:39  mjs
+
+	* yum/sqlitesack.py: Use correct db column names in new
+	searchNevra()
+
+2005-11-08 05:29  mjs
+
+	* yum/config.py: Added UrlOption and UrlListOption and used where
+	appropriate.
+
+2005-11-08 01:33  skvidal
+
+	* yum/__init__.py: 
+	fixme's notes for install()
+
+2005-11-07 03:23  skvidal
+
+	* yum/: Errors.py, __init__.py: 
+	- fix YumBase.install() method - still room for more work, though -
+	make YumBase.selectGroup() and deselectGroup() work more correctly
+	- implement a YumBase.doGenericSetup() method to simplify
+	testing/setup
+
+2005-11-07 01:55  skvidal
+
+	* yum/: __init__.py, sqlitesack.py: 
+	- initial implementation of yum.install() - make sqlitesack's
+	searchNevra() ignore args that are None - works more like the
+	repomd searchNevra()
+
+2005-11-07 01:00  skvidal
+
+	* docs/: yum.8, yum.conf.5: 
+	duplicate entry for yum.repos.d in man page close bug #507
+
+2005-11-07 00:10  skvidal
+
+	* yum/: __init__.py, depsolve.py: 
+	fix for rh bugzilla 172510
+
+2005-11-06 16:59  skvidal
+
+	* yum/repos.py: 
+	make the cookie check, you know, work.
+
+2005-11-06 16:47  skvidal
+
+	* docs/yum.conf.5, yum/config.py, yum/repos.py: 
+	implement checking for a repomd.xml cookie to allow us to fetch it
+	less often
+
+2005-11-02 17:22  skvidal
+
+	* bin/yum.py: 
+	add link to the faq, not post to the list
+
+2005-10-28 01:47  skvidal
+
+	* yum/__init__.py: 
+	fix silly newcomps reference
+
+2005-10-28 00:20  skvidal
+
+	* yum/: __init__.py, comps.py, groups.py, newcomps.py: 
+	removed groups.py, move newcomps.py to comps.py and remove old
+	comps.py
+
+2005-10-27 01:34  skvidal
+
+	* yum/transactioninfo.py: 
+	when removing the package from the transaction set, make sure you
+	unset the state attribute.
+
+2005-10-27 01:32  skvidal
+
+	* yum/: packages.py, transactioninfo.py: 
+	add state attribute to package objects and update this info in the
+	tsInfo
+
+2005-10-25 11:42  skvidal
+
+	* cli.py, output.py: 
+	fix up groupinfo command
+
+2005-10-25 11:08  skvidal
+
+	* yum/__init__.py: 
+	reset comps compiled when you close the rpmdb
+
+2005-10-25 11:07  skvidal
+
+	* cli.py, yum/__init__.py, yum/newcomps.py: 
+	make grouplist work.
+
+2005-10-25 08:28  mjs
+
+	* cli.py, shell.py, yum/__init__.py, yum/config.py, yum/parser.py,
+	yum/plugins.py, yum/repos.py: Major overhaul of configuration file
+	handling.
+
+2005-10-25 02:07  skvidal
+
+	* yum/newcomps.py: 
+	add mechanism for marking groups as installed or not.
+
+2005-10-24 12:01  katzj
+
+	* yum/sqlitesack.py, repomd/mdUtils.py: returnNewest* needs to
+	return all arches of equal "newness"
+
+2005-10-23 12:03  pnasrat
+
+	* rpmUtils/arch.py: correct basearch for ppc64pseries/iseries
+
+2005-10-23 00:47  mjs
+
+	* docs/yum.conf.5: Fixed small typo
+
+2005-10-21 11:53  pnasrat
+
+	* docs/yum.conf.5: remove archwork reference
+
+2005-10-21 11:21  pnasrat
+
+	* yum/archwork.py: archwork unused
+
+2005-10-18 01:27  skvidal
+
+	* yum/__init__.py: 
+	stubs for install(), update() and erase() methods for YumBase class
+
+2005-10-18 01:07  skvidal
+
+	* yum/newcomps.py: 
+	newcomps format handling - vastly simplified the comps handling
+
+2005-10-18 01:06  skvidal
+
+	* yum/__init__.py: 
+	new selectGroup and deselectGroup methods for handling groups fix
+	up doGroupSetup to work with the new group interface
+
+2005-10-11 17:11  pnasrat
+
+	* yum/parser.py: Make includeddir parser work
+
+2005-10-11 16:29  pnasrat
+
+	* yum/parser.py: fix typo
+
+2005-10-11 11:34  pnasrat
+
+	* yum/parser.py: New configuration parser routines
+
+2005-10-07 01:44  skvidal
+
+	* yum/config.py: 
+	getting rid of the tuples - back to simple attributes. This should
+	be headed in the direction to merge with what Menno and Paul have
+	been doing.
+
+2005-10-04 15:00  pnasrat
+
+	* callback.py: import constants
+
+2005-10-04 14:48  pnasrat
+
+	* yum/constants.py: output uses a dict anyway - simplify
+
+2005-10-04 14:43  pnasrat
+
+	* callback.py, cli.py, yum/config.py, yum/constants.py,
+	yum/depsolve.py, yum/transactioninfo.py, repomd/packageObject.py:
+	Move to use constants for transaction states
+
+2005-09-22 11:08  katzj
+
+	* yum/transactioninfo.py: fix typo
+
+2005-09-21 13:33  katzj
+
+	* yum/: depsolve.py, sqlitesack.py: returnByName* methods are
+	expected to return a list.  make sure we do so (and deal with it
+	being done) consistently.  (rh bug#168712)
+
+2005-09-16 18:03  katzj
+
+	* yum/transactioninfo.py: need to be able to remove a package from
+	the transaction for package exclusion in kickstart
+
+2005-09-16 18:02  katzj
+
+	* yum/sqlitesack.py: implement returnNewestByName for the sqlite
+	backend.  speeds up group selection in anaconda by about 2 minutes
+	:-)
+
+2005-09-16 18:02  katzj
+
+	* repomd/mdUtils.py: add utility function to find the newest
+	package in a list since I've seen this code a few times...
+
+2005-09-15 11:52  pnasrat
+
+	* yum/config.py: fix typo in YumBaseClass
+
+2005-09-15 11:45  pnasrat
+
+	* yum/config.py: fix class declaration
+
+2005-09-03 08:18  skvidal
+
+	* yum/config.py: 
+	start of new YumBaseConfig - not even remotely finished
+
+2005-08-14 18:39  skvidal
+
+	* yum-daily.spec, yum.spec, yum/__init__.py: 
+	remove yum-daily b/c we never use it rebrand as 2.5.0 - devel
+	series
+
+2005-08-14 18:06  skvidal
+
+	* ChangeLog: 
+	changelog for 2.4.0
+
 2005-08-14 17:33  skvidal
 
 	* ChangeLog, yum-daily.spec, yum.spec, yum/__init__.py: 
