@@ -43,7 +43,7 @@ import urlgrabber
 import urlgrabber.grabber
 
 class CliError(yum.Errors.YumBaseError):
-   def __init__(self, args=None):
+   def __init__(self, args=''):
         yum.Errors.YumBaseError.__init__(self)
         self.args = args
 
@@ -1409,9 +1409,11 @@ For more information contact your distribution or package provider.
         '''Print out command line usage
         '''
         if not self.in_shell:
-            print self.optparser.print_help()
+            print 
+            self.optparser.print_help()
         else:
-            print self.optparser.print_short_help()
+            print 
+            self.optparser.print_usage()
             
             
             
@@ -1432,17 +1434,6 @@ class YumOptionParser(OptionParser):
         self.base.errorlog(0, "Command line error: "+msg)
         sys.exit(1)
 
-    def print_short_help(self):
-        '''print a shorter help - mostly for use in the shell'''
-        
-        msg="""
-    usage: yum [options] < update | install | info | remove | list |
-           clean | provides | search | check-update | groupinstall |
-           groupupdate | grouplist | groupinfo | groupremove |
-           makecache | localinstall | erase | upgrade | whatprovides |
-           localupdate | resolvedep | shell | deplist >
-    """
-        return msg
 
         
 def _filtercmdline(novalopts, valopts, args):
