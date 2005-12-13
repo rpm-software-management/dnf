@@ -1346,7 +1346,7 @@ For more information contact your distribution or package provider.
             
             try:
                 txmbrs = self.selectGroup(group.groupid)
-            except Errors.GroupsError, e:
+            except yum.Errors.GroupsError, e:
                 self.errorlog(0, _('Warning: Group %s does not exist.') % group)
                 continue
             else:
@@ -1355,37 +1355,31 @@ For more information contact your distribution or package provider.
         if not pkgs_used:
             return 0, ['No packages in any requested group available to install or update']
         else:
-            return 2, ['Package(s) to Install']
+            return 2, ['%d Package(s) to Install' % len(pkgs_used)]
 
     def removeGroups(self, grouplist=None):
         """Remove only packages of the named group(s). Do not recurse."""
 
+        pkgs_used = []
+        
         if grouplist is None:
             grouplist = self.extcmds
         
-        if len(grouplist) == 0:
-            self.usage()
-        
         erasesbygroup = []
-        for group in grouplist:
-            if not self.groupInfo.groupExists(group):
-                self.errorlog(0, _('Warning: Group %s does not exist.') % group)
+        for group_string in grouplist:
+            try:
+                txmbrs = self.groupRemove(group_string)
+            except yum.Errors.GroupsError, e:
+                self.errorlog(0, 'No group named %s exists' % group_string)
                 continue
-        
-            allpkgs = self.groupInfo.allPkgs(group)
-            for pkg in allpkgs:
-                if self.rpmdb.installed(name=pkg):
-                    erasesbygroup.append((group, pkg))
-
-        erases = []
-        for (group, pkg) in erasesbygroup:
-            self.log(2, _('From %s removing %s') % (group, pkg))
-            erases.append(pkg)
-        
-        if len(erases) > 0:
-            return self.erasePkgs(userlist=erases)
-        else:
+            else:
+                pkgs_used.extend(txmbrs)
+                
+        if not pkgs_used:
             return 0, ['No packages to remove from groups']
+        else:
+            return 2, ['%d Package(s) to remove' % len(pkgs_used)]
+
 
 
     def _promptWanted(self):

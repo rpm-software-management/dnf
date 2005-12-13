@@ -1240,22 +1240,21 @@ class YumBase(depsolve.Depsolve):
     def groupRemove(self, grpid):
         """mark all the packages in this group to be removed"""
         
-        if not self.comps:
-            self.doGroupSetup()
+        txmbrs_used = []
+        self.doGroupSetup()
         
-        if not self.comps.has_group(grpid):
-            raise Errors.GroupsError, "No Group named %s exists" % grpid
-            
         thisgroup = self.comps.return_group(grpid)
         if not thisgroup:
             raise Errors.GroupsError, "No Group named %s exists" % grpid
             
         pkgs = thisgroup.packages
         for pkg in thisgroup.packages:
-            p = self.rpmdb.installed(name=pkg)
-            for po in p:
-                txmbr = self.tsInfo.addErase(po)
-            
+            txmbrs = self.remove(name=pkg)
+            txmbrs_used.extend(txmbrs)
+        
+        return txmbrs_used
+        
+        
         
     def selectGroup(self, grpid):
         """mark all the packages in the group to be installed
@@ -1750,7 +1749,7 @@ class YumBase(depsolve.Depsolve):
 
         
         if len(pkgs) == 0: # should this even be happening?
-            self.errorlog(2, "Nothing to remove")
+            self.errorlog(3, "No package matched to remove")
 
         for po in pkgs:
             txmbr = self.tsInfo.addErase(po)
