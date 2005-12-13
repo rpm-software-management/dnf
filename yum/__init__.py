@@ -324,6 +324,10 @@ class YumBase(depsolve.Depsolve):
         self.log(3, 'Getting group metadata')
         reposWithGroups = []
         for repo in self.repos.listGroupsEnabled():
+            if repo.groups_added: # already added the groups from this repo
+                reposWithGroups.append(repo)
+                continue
+                
             if repo.repoXML is None:
                 raise Errors.RepoError, "Repository '%s' not yet setup" % repo
             try:
@@ -335,15 +339,21 @@ class YumBase(depsolve.Depsolve):
                 
         # now we know which repos actually have groups files.
         overwrite = self.conf.overwrite_groups
-        self.comps = comps.Comps(overwrite_groups = overwrite)
+        if not hasattr(self, 'comps'):
+            self.comps = comps.Comps(overwrite_groups = overwrite)
 
         for repo in reposWithGroups:
+            if repo.groups_added: # already added the groups from this repo
+                continue
+                
             self.log(4, 'Adding group file from repository: %s' % repo)
             groupfile = repo.getGroups()
             try:
                 self.comps.add(groupfile)
             except Errors.GroupsError, e:
                 self.errorlog(0, 'Failed to add groups file for repository: %s' % repo)
+            else:
+                repo.groups_added = True
 
         if self.comps.compscount == 0:
             raise Errors.GroupsError, 'No Groups Available in any repository'
@@ -1233,7 +1243,7 @@ class YumBase(depsolve.Depsolve):
         if not self.comps:
             self.doGroupSetup()
         
-        if not self.comps.has_grou(grpid):
+        if not self.comps.has_group(grpid):
             raise Errors.GroupsError, "No Group named %s exists" % grpid
             
         thisgroup = self.comps.return_group(grpid)
@@ -1248,8 +1258,11 @@ class YumBase(depsolve.Depsolve):
             
         
     def selectGroup(self, grpid):
-        """mark all the packages in the group to be installed"""
+        """mark all the packages in the group to be installed
+           returns a list of transaction members it added to the transaction 
+           set"""
         
+        txmbrs_used = []
         if not self.comps:
             self.doGroupSetup()
         
@@ -1262,7 +1275,7 @@ class YumBase(depsolve.Depsolve):
             raise Errors.GroupsError, "No Group named %s exists" % grpid
         
         if thisgroup.selected:
-            return 
+            return txmbrs_used
         
         thisgroup.selected = True
         
@@ -1274,8 +1287,11 @@ class YumBase(depsolve.Depsolve):
             except Errors.InstallError, e:
                 self.log(3, 'No package named %s available to be installed' % pkg)
             else:
+                txmbrs_used.extend(txmbrs)
                 for txmbr in txmbrs:
                     txmbr.groups.append(thisgroup.groupid)
+        
+        return txmbrs_used
 
     def deselectGroup(self, grpid):
         """de-mark all the packages in the group for install"""
@@ -1546,6 +1562,8 @@ class YumBase(depsolve.Depsolve):
                 pkgs = self.bestPackagesFromList(pkgs)
 
         if len(pkgs) == 0:
+            #FIXME - this is where we could check to see if it already installed
+            # for returning better errors
             raise Errors.InstallError, 'No package(s) available to install'
         
         # FIXME - lots more checking here

@@ -343,6 +343,7 @@ class Repository:
         self.proxy = None
         self.proxy_dict = {}
         self.metadata_cookie_fn = 'cachecookie'
+        self.groups_added = False
         
         # throw in some stubs for things that will be set by the config class
         self.basecachedir = ""

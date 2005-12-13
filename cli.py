@@ -1336,38 +1336,34 @@ For more information contact your distribution or package provider.
         return 0, []
         
     def installGroups(self, grouplist=None):
-        """for each group requested attempt to install all pkgs/metapkgs of default
-           or mandatory. Also recurse lists of groups to provide for them too."""
+        """for each group requested do 'selectGroup' on them."""
+        
+        self.doRepoSetup()
+        pkgs_used = []
+        
+        
         
         if grouplist is None:
             grouplist = self.extcmds
         
-        self.doRepoSetup()
-        pkgs = [] # package objects to be installed
-        installed = self.rpmdb.getPkgList()
-        availablepackages = {}
-        for po in self.pkgSack.returnPackages():
-            if po.pkgtup not in installed:
-                    availablepackages[po.name] = 1
-
-        for group in grouplist:
-            if not self.groupInfo.groupExists(group):
+        for group_string in grouplist:
+            group = self.comps.return_group(group_string)
+            if not group:
                 self.errorlog(0, _('Warning: Group %s does not exist.') % group)
                 continue
-            pkglist = self.groupInfo.pkgTree(group)
-            for pkg in pkglist:
-                if availablepackages.has_key(pkg):
-                    pkgs.append(pkg)
-                    self.log(4, 'Adding package %s for groupinstall of %s.' % (pkg, group))
-
-        if len(pkgs) > 0:
-            self.log(2, 'Passing package list to Install Process')
-            self.log(4, 'Packages being passed:')
-            for pkg in pkgs:
-                self.log(4, '%s' % pkg)
-            return self.installPkgs(userlist=pkgs)
-        else:
+            
+            try:
+                txmbrs = self.selectGroup(group.groupid)
+            except Errors.GroupsError, e:
+                self.errorlog(0, _('Warning: Group %s does not exist.') % group)
+                continue
+            else:
+                pkgs_used.extend(txmbrs)
+            
+        if not pkgs_used:
             return 0, ['No packages in any requested group available to install']
+        else:
+            return 2, ['Package(s) to Install']
 
     
     def updateGroups(self, grouplist=None):
