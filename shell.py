@@ -29,6 +29,7 @@ class YumShell(cmd.Cmd):
         self.base = base
         self.prompt = '> '
         self.result = 0
+        self.from_file = False # if we're running from a file, set this
         self.resultmsgs = ['Leaving Shell']
         if (len(base.extcmds)) > 0:
             self.file = base.extcmds[0]
@@ -39,6 +40,19 @@ class YumShell(cmd.Cmd):
             'transaction', 'ts', 'update', 'config', 'deplist']
 
 
+    def _shlex_split(self, input_string):
+        """split the input using shlex rules, and error or exit accordingly"""
+        
+        inputs = []
+        try:
+            inputs = shlex.split(input_string)
+        except ValueError, e:
+            self.base.errorlog(0, 'Script Error: %s' % e)
+            if self.from_file:
+                raise Errors.YumBaseError, "Fatal error in script, exiting"
+        
+        return inputs
+        
     def script(self):
         try:
             fd = open(self.file, 'r')
@@ -46,6 +60,7 @@ class YumShell(cmd.Cmd):
             sys.exit("Error: Cannot open %s for reading")
         lines = fd.readlines()
         fd.close()
+        self.from_file = True
         for line in lines:
             self.onecmd(line)
         self.onecmd('EOF')
@@ -61,11 +76,12 @@ class YumShell(cmd.Cmd):
                 return False
             self.base.cmdstring = line
             self.base.cmdstring = self.base.cmdstring.replace('\n', '')
-            self.base.cmds = shlex.split(self.base.cmdstring)
+            self.base.cmds = self._shlex_split(self.base.cmdstring)
+
             try:
                 self.base.parseCommands()
             except Errors.YumBaseError:
-                self.do_help('')
+                pass
             else:
                 self.base.doCommands()
     
@@ -73,12 +89,7 @@ class YumShell(cmd.Cmd):
         pass
     
     def do_help(self, arg):
-        msg = """
-    commands:  clean, config, exit, groupinfo, groupinstall, grouplist,
-               groupremove, groupupdate, info, install, list,
-               localinstall, makecache, provides, quit, remove, 
-               repo, run, search, transaction, update, deplist
-    """
+        msg = self.base.optparser.print_short_help()
         if arg in ['transaction', 'ts']:
             msg = """
     %s arg
@@ -153,7 +164,7 @@ class YumShell(cmd.Cmd):
         (cmd, args, line) = self.parseline(line)
         # logs
         if cmd in ['debuglevel', 'errorlevel']:
-            opts = shlex.split(args)
+            opts = self._shlex_split(args)
             if not opts:
                 self.base.log(2, '%s: %s' % (cmd, getattr(self.base.conf, cmd)))
             else:
@@ -170,7 +181,7 @@ class YumShell(cmd.Cmd):
                     self.base.errorlog.threshold = val
         # bools
         elif cmd in ['gpgcheck', 'obsoletes', 'assumeyes']:
-            opts = shlex.split(args)
+            opts = self._shlex_split(args)
             if not opts:
                 self.base.log(2, '%s: %s' % (cmd, getattr(self.base.conf, cmd)))
             else:
@@ -186,7 +197,7 @@ class YumShell(cmd.Cmd):
         
         elif cmd in ['exclude']:
             args = args.replace(',', ' ')
-            opts = shlex.split(args)
+            opts = self._shlex_split(args)
             if not opts:
                 msg = '%s: ' % cmd
                 msg = msg + string.join(getattr(self.base.conf, cmd))
@@ -221,7 +232,7 @@ class YumShell(cmd.Cmd):
                     self.base.log(2, '%-20.20s %-40.40s  disabled' % (repo, repo.name))
         
         elif cmd == 'enable':
-            repos = shlex.split(args)
+            repos = self._shlex_split(args)
             for repo in repos:
                 try:
                     changed = self.base.repos.enableRepo(repo)
@@ -243,7 +254,7 @@ class YumShell(cmd.Cmd):
                         del self.base.up
             
         elif cmd == 'disable':
-            repos = shlex.split(args)
+            repos = self._shlex_split(args)
             for repo in repos:
                 try:
                     self.base.repos.disableRepo(repo)

@@ -53,7 +53,8 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
        
     def __init__(self):
         yum.YumBase.__init__(self)
-
+        self.in_shell = False
+        
     def doRepoSetup(self, thisrepo=None, dosack=1):
         """grabs the repomd.xml for each enabled repository 
            and sets up the basics of the repository"""
@@ -428,8 +429,10 @@ For more information contact your distribution or package provider.
         """do a shell-like interface for yum commands"""
 
         self.log(2, 'Setting up Yum Shell')
+        self.in_shell = True
         self.doTsSetup()
         self.doRpmDBSetup()
+        
         if len(self.extcmds) == 0:
             yumshell = shell.YumShell(base=self)
             yumshell.cmdloop()
@@ -1405,8 +1408,13 @@ For more information contact your distribution or package provider.
     def usage(self):
         '''Print out command line usage
         '''
-        print
-        self.optparser.print_help()
+        if not self.in_shell:
+            print self.optparser.print_help()
+        else:
+            print self.optparser.print_short_help()
+            
+            
+            
 
 class YumOptionParser(OptionParser):
     '''Subclass that makes some minor tweaks to make OptionParser do things the
@@ -1424,6 +1432,19 @@ class YumOptionParser(OptionParser):
         self.base.errorlog(0, "Command line error: "+msg)
         sys.exit(1)
 
+    def print_short_help(self):
+        '''print a shorter help - mostly for use in the shell'''
+        
+        msg="""
+    usage: yum [options] < update | install | info | remove | list |
+           clean | provides | search | check-update | groupinstall |
+           groupupdate | grouplist | groupinfo | groupremove |
+           makecache | localinstall | erase | upgrade | whatprovides |
+           localupdate | resolvedep | shell | deplist >
+    """
+        return msg
+
+        
 def _filtercmdline(novalopts, valopts, args):
     '''Keep only specific options from the command line argument list
 
