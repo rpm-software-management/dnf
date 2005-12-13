@@ -558,15 +558,9 @@ For more information contact your distribution or package provider.
             if self.basecmd == 'grouplist':
                 return self.returnGroupLists()
             
-            elif self.basecmd == 'groupinstall':
+            elif self.basecmd in ['groupinstall', 'groupupdate']:
                 try:
                     return self.installGroups()
-                except yum.Errors.YumBaseError, e:
-                    return 1, [str(e)]
-            
-            elif self.basecmd == 'groupupdate':
-                try:
-                    return self.updateGroups()
                 except yum.Errors.YumBaseError, e:
                     return 1, [str(e)]
             
@@ -1341,8 +1335,6 @@ For more information contact your distribution or package provider.
         self.doRepoSetup()
         pkgs_used = []
         
-        
-        
         if grouplist is None:
             grouplist = self.extcmds
         
@@ -1361,67 +1353,10 @@ For more information contact your distribution or package provider.
                 pkgs_used.extend(txmbrs)
             
         if not pkgs_used:
-            return 0, ['No packages in any requested group available to install']
+            return 0, ['No packages in any requested group available to install or update']
         else:
             return 2, ['Package(s) to Install']
 
-    
-    def updateGroups(self, grouplist=None):
-        """get list of any pkg in group that is installed, check to update it
-           get list of any mandatory or default pkg attempt to update it if it is installed
-           or install it if it is not installed"""
-
-        if grouplist is None:
-            grouplist = self.extcmds
-        
-        if len(grouplist) == 0:
-            self.usage()
-            
-        self.doRepoSetup()
-        self.doUpdateSetup()
-        
-        grouplist.sort()
-        updatesbygroup = []
-        installsbygroup = []
-        updateablenames = []
-        
-        for group in grouplist:
-            if not self.groupInfo.groupExists(group):
-                self.errorlog(0, _('Warning: Group %s does not exist.') % group)
-                continue
-
-            required = self.groupInfo.requiredPkgs(group)
-            all = self.groupInfo.pkgTree(group)
-            for pkgn in all:
-                if self.rpmdb.installed(name=pkgn):
-                    if len(self.up.getUpdatesList(name=pkgn)) > 0:
-                        updatesbygroup.append((group, pkgn))
-                else:
-                    if pkgn in required:
-                        installsbygroup.append((group, pkgn))
-        
-        updatepkgs = []
-        installpkgs = []
-        for (group, pkg) in updatesbygroup:
-            self.log(2, _('From %s updating %s') % (group, pkg))
-            updatepkgs.append(pkg)
-        for (group, pkg) in installsbygroup:
-            self.log(2, _('From %s installing %s') % (group, pkg))
-            installpkgs.append(pkg)
-
-        
-
-        if len(installpkgs) > 0:
-            self.installPkgs(userlist=installpkgs)
-        
-        if len(updatepkgs) > 0:
-            self.updatePkgs(userlist=updatepkgs, quiet=1)
-        
-        if len(self.tsInfo) > 0:
-            return 2, ['Group updating']
-        else:
-            return 0, [_('Nothing in any group to update or install')]
-    
     def removeGroups(self, grouplist=None):
         """Remove only packages of the named group(s). Do not recurse."""
 

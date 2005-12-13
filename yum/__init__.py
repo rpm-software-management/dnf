@@ -1586,7 +1586,7 @@ class YumBase(depsolve.Depsolve):
             # make sure it's not already installed
             if self.rpmdb.installed(name=po.name, arch=po.arch, epoch=po.epoch,
                     rel=po.rel, ver=po.ver):
-                self.errorlog(2, 'Package: %s already installed' % po)
+                self.errorlog(2, 'Package %s already installed and latest version' % po)
                 continue
 
             txmbr = self.tsInfo.addInstall(po)
