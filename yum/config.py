@@ -502,7 +502,8 @@ def readRepoConfig(parser, section, mainconf):
     # Transfer attributes across
     #TODO: merge RepoConf and Repository 
     for k, v in conf.iteritems():
-        thisrepo.set(k, v)
+        if v:
+            thisrepo.set(k, v)
 
     # Set attributes not from the config file
     thisrepo.basecachedir = mainconf.cachedir

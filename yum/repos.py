@@ -350,6 +350,13 @@ class Repository:
         self.cachedir = ""
         self.pkgdir = ""
         self.hdrdir = ""
+        self.retries = 0
+        self.bandwidth = 0
+        self.throttle = 0
+        self.timeout = 0
+        self.http_caching = 0
+        self.metadata_expire = 0
+        self.failovermethod = ""
 
         # holder for stuff we've grabbed
         self.retrieved = { 'primary':0, 'filelists':0, 'other':0, 'groups':0 }
@@ -536,7 +543,7 @@ class Repository:
             for url in mirrorurls:
                 url = parser.varReplace(url, self.yumvar)
                 self.baseurl.append(url)
-       
+
         for url in self.baseurl:
             url = parser.varReplace(url, self.yumvar)
             (s,b,p,q,f,o) = urlparse.urlparse(url)
