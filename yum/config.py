@@ -502,7 +502,7 @@ def readRepoConfig(parser, section, mainconf):
     # Transfer attributes across
     #TODO: merge RepoConf and Repository 
     for k, v in conf.iteritems():
-        if v:
+        if v or not hasattr(thisrepo, k):
             thisrepo.set(k, v)
 
     # Set attributes not from the config file

@@ -324,8 +324,8 @@ class Repository:
         # some default (ish) things
         self.urls = []
         self.gpgcheck = 0
-        self.enabled = 1
-        self.enablegroups = 1
+        self.enabled = 0
+        self.enablegroups = 0
         self.groupsfilename = 'yumgroups.xml' # something some freaks might 
                                               # eventually want
         self.setkeys = []
@@ -350,13 +350,6 @@ class Repository:
         self.cachedir = ""
         self.pkgdir = ""
         self.hdrdir = ""
-        self.retries = 0
-        self.bandwidth = 0
-        self.throttle = 0
-        self.timeout = 0
-        self.http_caching = 0
-        self.metadata_expire = 0
-        self.failovermethod = ""
 
         # holder for stuff we've grabbed
         self.retrieved = { 'primary':0, 'filelists':0, 'other':0, 'groups':0 }
