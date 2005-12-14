@@ -408,7 +408,7 @@ class Depsolve:
         # if it is then we need to find out what is being done to it and act accordingly
         rpmdbNames = self.rpmdb.getNamePkgList()
         needmode = None # mode in the transaction of the needed pkg (if any)
-        needpkgtup = None
+        needpo = None
         providers = []
         
         if self.cheaterlookup.has_key((needname, needflags, needversion)):
@@ -442,7 +442,10 @@ class Depsolve:
             
             if thismode is not None:
                 needmode = thismode
-                needpkgtup = insttuple
+                try:
+                    needpo = self.getInstalledPackageObject(insttuple)
+                except KeyError:
+                    needpo = self.getPackageObject(insttuple)
                 self.cheaterlookup[(needname, needflags, needversion)] = insttuple
                 self.log(5, 'Mode is %s for provider of %s: %s' % 
                             (needmode, niceformatneed, inst_str))
@@ -454,11 +457,6 @@ class Depsolve:
             self.log(5, 'TSINFO: %s package requiring %s marked as erase' %
                             (requiringPo, needname))
             txmbr = self.tsInfo.addErase(requiringPo)
-            
-            needpo = None
-            if needpkgtup:
-                needpo = self.getInstalledPackageObject(needpkgtup)
-            
             txmbr.setAsDep(po=needpo)
             checkdeps = 1
         
@@ -480,9 +478,6 @@ class Depsolve:
                         if po.pkgtup == new:
                             txmbr = self.tsInfo.addObsoleting(po, requiringPo)
                             self.tsInfo.addObsoleted(requiringPo, po)
-                            needpo = None
-                            if needpkgtup:
-                                needpo = self.getInstalledPackageObject(needpkgtup)
                             txmbr.setAsDep(po=needpo)
                             self.log(5, 'TSINFO: Obsoleting %s with %s to resolve dep.' % (requiringPo, po))
                             checkdeps = 1
@@ -513,11 +508,7 @@ class Depsolve:
                 for (new, old) in self.up.getUpdatesTuples():
                     if po.pkgtup == new:
                         txmbr = self.tsInfo.addUpdate(po, requiringPo)
-                        needpo = None
-                        if needpkgtup:
-                            needpo = self.getInstalledPackageObject(needpkgtup)
                         txmbr.setAsDep(po=needpo)
-                        
                         self.log(5, 'TSINFO: Updating %s to resolve dep.' % po)
                 checkdeps = 1
                 
