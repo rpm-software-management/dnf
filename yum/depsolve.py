@@ -482,7 +482,7 @@ class Depsolve:
                             self.tsInfo.addObsoleted(requiringPo, po)
                             needpo = None
                             if needpkgtup:
-                                needpo = self.getPackageObject(needpkgtup)
+                                needpo = self.getInstalledPackageObject(needpkgtup)
                             txmbr.setAsDep(po=needpo)
                             self.log(5, 'TSINFO: Obsoleting %s with %s to resolve dep.' % (requiringPo, po))
                             checkdeps = 1
@@ -515,7 +515,7 @@ class Depsolve:
                         txmbr = self.tsInfo.addUpdate(po, requiringPo)
                         needpo = None
                         if needpkgtup:
-                            needpo = self.getPackageObject(needpkgtup)
+                            needpo = self.getInstalledPackageObject(needpkgtup)
                         txmbr.setAsDep(po=needpo)
                         
                         self.log(5, 'TSINFO: Updating %s to resolve dep.' % po)
