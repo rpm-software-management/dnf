@@ -427,7 +427,7 @@ class YumConf(EarlyConf):
 class RepoConf(BaseConfig):
    
     name = Option()         #XXX: error out if no name set
-    enabled = BoolOption(True)
+    enabled = Inherit(YumConf.enabled)
     baseurl = UrlListOption()
     mirrorlist = UrlOption()
     gpgkey = UrlListOption()
