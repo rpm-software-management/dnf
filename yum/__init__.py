@@ -221,7 +221,6 @@ class YumBase(depsolve.Depsolve):
 
         self.plugins.run('prereposetup')
         
-        repos = []
         if thisrepo is None:
             repos = self.repos.listEnabled()
         else:
@@ -230,9 +229,13 @@ class YumBase(depsolve.Depsolve):
         if len(repos) < 1:
             self.errorlog(0, 'No Repositories Available to Set Up')
 
+        num = 1
         for repo in repos:
             if repo.repoXML is not None and len(repo.urls) > 0:
+                num += 1
                 continue
+            if self.repos.callback:
+                self.repos.callback.progressbar(num, len(repos), repo.id)
             try:
                 repo.cache = self.conf.cache
                 repo.baseurlSetup()
@@ -248,7 +251,10 @@ class YumBase(depsolve.Depsolve):
                 self.errorlog(0, 'Cannot open/read repomd.xml file for repository: %s' % repo)
                 self.errorlog(0, str(e))
                 raise
+            num += 1
 
+        if self.repos.callback:
+            self.repos.callback.progressbar(num, len(repos), repo.id)
         self.plugins.run('postreposetup')
 
     def doSackSetup(self, archlist=None, thisrepo=None):
