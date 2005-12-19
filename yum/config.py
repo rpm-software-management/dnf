@@ -307,7 +307,7 @@ class ThrottleOption(BytesOption):
                 raise ValueError("percentage is out of range")
             return n / 100.0
         else:
-            return BytesOption.parse(self, optval)
+            return BytesOption.parse(self, s)
 
 
 class BaseConfig(object):
@@ -399,7 +399,8 @@ class YumConf(EarlyConf):
     kernelpkgnames = ListOption(['kernel','kernel-smp', 'kernel-enterprise',
             'kernel-bigmem', 'kernel-BOOT'])
     exactarchlist = ListOption(['kernel', 'kernel-smp', 'glibc',
-            'kernel-hugemem', 'kernel-enterprise', 'kernel-bigmem'])
+            'kernel-hugemem', 'kernel-enterprise', 'kernel-bigmem',
+            'kernel-devel'])
     tsflags = ListOption()
 
     assumeyes = BoolOption(False)
