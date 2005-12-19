@@ -627,15 +627,18 @@ For more information contact your distribution or package provider.
         
         # Check which packages have to be downloaded
         downloadpkgs = []
+        stuff_to_download = False
         for txmbr in self.tsInfo.getMembers():
             if txmbr.ts_state in ['i', 'u']:
+                stuff_to_download = True
                 po = txmbr.po
                 if po:
                     downloadpkgs.append(po)
 
         # Report the total download size to the user, so he/she can base
         # the answer on this info
-        self.reportDownloadSize(downloadpkgs)
+        if stuff_to_download:
+            self.reportDownloadSize(downloadpkgs)
         
         # confirm with user
         if self._promptWanted():
