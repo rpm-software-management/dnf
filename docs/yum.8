@@ -56,6 +56,8 @@ yum \- Yellowdog Updater Modified
 .PP 
 Unless the \-\-help or \-h option is given, one of the above commands
 must be present\&.
+.PP
+Repository configuration is honored in all operations.
 .PP 
 .IP "\fBinstall\fP"
 Is used to install the latest version of a package or
@@ -138,7 +140,7 @@ If required the enabled repositories will be used to resolve dependencies.
 Produces a list of all dependencies and what packages provide those
 dependencies for the given packages.
 .IP
-.PP 
+.PP
 .SH "GENERAL OPTIONS"
 Most command line options can be set using the configuration file as
 well and the descriptions indicate the necessary configuration option
@@ -234,14 +236,21 @@ all available packages that match foo*.
 .PP 
 .SH "CLEAN OPTIONS"
 The following are the ways which you can invoke \fByum\fP in clean
-mode.
+mode. Note that "all files" in the commands below means 
+"all files in currently enabled repositories". 
+If you want to also clean any (temporarily) disabled repositories you need to
+use \fB--enablerepo='*'\fP option.
 
 .IP "\fByum clean packages\fP"
 Eliminate any cached packages from the system.  Note that packages are not automatically deleted after they are downloaded.
 
 .IP "\fByum clean headers\fP"
+Eliminate all of the header files which yum uses for dependency resolution.
+
+.IP "\fByum clean metadata\fP"
 Eliminate all of the files which yum uses to determine the remote
-availability of packages. Using this option will force yum to download all the headers the next time it is run.
+availability of packages. Using this option will force yum to download all the 
+metadata the next time it is run.
 
 .IP "\fByum clean all\fP"
 Runs \fByum clean packages\fP and \fByum clean headers\fP as above.
