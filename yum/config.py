@@ -370,10 +370,12 @@ class BaseConfig(object):
 class EarlyConf(BaseConfig):
 
     distroverpkg = Option('fedora-release')
-    installroot = Option()
+    installroot = Option('/')
 
 class YumConf(EarlyConf):
 
+    distroverpkg = Option('fedora-release')
+    installroot = Option('/')
     debuglevel = IntOption(2)
     errorlevel = IntOption(2)
     retries = IntOption(10)
