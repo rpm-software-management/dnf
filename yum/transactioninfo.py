@@ -329,6 +329,8 @@ class TransactionMember:
         if self.name == other.name:
             return 0
 
+    def __hash__(self):
+        return hash(self.po.pkgtup)
             
     def __str__(self):
         return "%s.%s %s-%s-%s - %s" % (self.name, self.arch, self.epoch,
