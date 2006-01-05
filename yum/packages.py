@@ -107,150 +107,6 @@ def parsePackages(pkgs, usercommands, casematch=0):
 
 # goal for the below is to have a packageobject that can be used by generic
 # functions independent of the type of package - ie: installed or available
-
-
-class YumInstalledPackage:
-    """super class for dealing with packages in the rpmdb"""
-    def __init__(self, hdr):
-        """hand in an rpm header, we'll assume it's installed and query from there"""
-        self.hdr = hdr
-        self.name = self.tagByName('name')
-        self.arch = self.tagByName('arch')
-        self.epoch = self.doepoch()
-        self.version = self.tagByName('version')
-        self.release = self.tagByName('release')
-        self.ver = self.tagByName('version')
-        self.rel = self.tagByName('release')
-        self.pkgtup = self._pkgtup()
-        self.repoid = 'installed'
-        self.summary = self.tagByName('summary')
-        self.description = self.tagByName('description')
-        self.pkgid = self.tagByName(rpm.RPMTAG_SHA1HEADER)
-        self.state = None
-        
-    def __str__(self):
-        if self.epoch == '0':
-            val = '%s - %s-%s.%s' % (self.name, self.version, self.release, 
-                                        self.arch)
-        else:
-            val = '%s - %s:%s-%s.%s' % (self.name, self.epoch, self.version,
-                                           self.release, self.arch)
-        return val
-
-    def tagByName(self, tag):
-        data = self.hdr[tag]
-        return data
-    
-    def doepoch(self):
-        tmpepoch = self.hdr['epoch']
-        if tmpepoch is None:
-            epoch = '0'
-        else:
-            epoch = str(tmpepoch)
-        
-        return epoch
-    
-    def returnSimple(self, thing):
-        if hasattr(self, thing):
-            return getattr(self, thing)
-        else:
-            return self.tagByName(thing)
-
-    def returnLocalHeader(self):
-        return self.hdr
-
-
-    def getProvidesNames(self):
-        """returns a list of providesNames"""
-        
-        provnames = self.tagByName('providename')
-        if type(provnames) is not types.ListType():
-            if type(provnames) is types.StringType():
-                provnames = [provnames]
-            else:
-                provnames = []
-
-        return provnames
-
-    def requiresList(self):
-        """return a list of all of the strings of the package requirements"""
-        reqlist = []
-        names = self.hdr[rpm.RPMTAG_REQUIRENAME]
-        flags = self.hdr[rpm.RPMTAG_REQUIREFLAGS]
-        ver = self.hdr[rpm.RPMTAG_REQUIREVERSION]
-        if names is not None:
-            tmplst = zip(names, flags, ver)
-        
-        for (n, f, v) in tmplst:
-            req = rpmUtils.miscutils.formatRequire(n, v, f)
-            reqlist.append(req)
-        
-        return reqlist
-
-    def _pkgtup(self):
-        return (self.name, self.arch, self.epoch, self.version, self.release)
-    
-    def size(self):
-        return self.tagByName('size')
-
-    def printVer(self):
-        """returns a printable version string - including epoch, if it's set"""
-        if self.epoch != '0':
-            ver = '%s:%s-%s' % (self.epoch, self.version, self.release)
-        else:
-            ver = '%s-%s' % (self.version, self.release)
-        
-        return ver
-    
-    def compactPrint(self):
-        ver = self.printVer()
-        return "%s.%s %s" % (self.name, self.arch, ver)
-    
-
-class YumLocalPackage(YumInstalledPackage):
-    """Class to handle an arbitrary package from a file path
-       this inherits most things from YumInstalledPackage because
-       installed packages and an arbitrary package on disk act very
-       much alike. init takes a ts instance and a filename/path 
-       to the package."""
-
-    def __init__(self, ts=None, filename=None):
-        if ts is None:
-            raise Errors.MiscError, \
-                 'No Transaction Set Instance for YumLocalPackage instance creation'
-        if filename is None:
-            raise Errors.MiscError, \
-                 'No Filename specified for YumLocalPackage instance creation'
-                 
-        self.pkgtype = 'local'
-        self.localpath = filename
-        self.repoid = filename
-        try:
-            self.hdr = rpmUtils.miscutils.hdrFromPackage(ts, self.localpath)
-        except rpmUtils.RpmUtilsError, e:
-            raise Errors.MiscError, \
-                'Could not open local rpm file: %s' % self.localpath
-        self.name = self.tagByName('name')
-        self.arch = self.tagByName('arch')
-        self.epoch = self.doepoch()
-        self.version = self.tagByName('version')
-        self.release = self.tagByName('release')
-        self.ver = self.tagByName('version')
-        self.rel = self.tagByName('release')
-        self.summary = self.tagByName('summary')
-        self.description = self.tagByName('description')
-        self.pkgtup = self._pkgtup()
-        self.state = None
-    
-    def _pkgtup(self):
-        return (self.name, self.arch, self.epoch, self.version, self.release)
-    
-    def localPkg(self):
-        return self.localpath
-    
-        
-
-
 class YumAvailablePackage(repomd.packageObject.PackageObject, repomd.packageObject.RpmBase):
     """derived class for the repomd packageobject and RpmBase packageobject yum
        uses this for dealing with packages in a repository"""
@@ -453,6 +309,150 @@ class YumAvailablePackage(repomd.packageObject.PackageObject, repomd.packageObje
                 csumid = 0
             self.checksums.append((ctype, csum, csumid))
             
+
+
+class YumInstalledPackage(YumAvailablePackage):
+    """super class for dealing with packages in the rpmdb"""
+    def __init__(self, hdr):
+        """hand in an rpm header, we'll assume it's installed and query from there"""
+        self.hdr = hdr
+        self.name = self.tagByName('name')
+        self.arch = self.tagByName('arch')
+        self.epoch = self.doepoch()
+        self.version = self.tagByName('version')
+        self.release = self.tagByName('release')
+        self.ver = self.tagByName('version')
+        self.rel = self.tagByName('release')
+        self.pkgtup = self._pkgtup()
+        self.repoid = 'installed'
+        self.summary = self.tagByName('summary')
+        self.description = self.tagByName('description')
+        self.pkgid = self.tagByName(rpm.RPMTAG_SHA1HEADER)
+        self.state = None
+        
+    def __str__(self):
+        if self.epoch == '0':
+            val = '%s - %s-%s.%s' % (self.name, self.version, self.release, 
+                                        self.arch)
+        else:
+            val = '%s - %s:%s-%s.%s' % (self.name, self.epoch, self.version,
+                                           self.release, self.arch)
+        return val
+
+    def tagByName(self, tag):
+        data = self.hdr[tag]
+        return data
+    
+    def doepoch(self):
+        tmpepoch = self.hdr['epoch']
+        if tmpepoch is None:
+            epoch = '0'
+        else:
+            epoch = str(tmpepoch)
+        
+        return epoch
+    
+    def returnSimple(self, thing):
+        if hasattr(self, thing):
+            return getattr(self, thing)
+        else:
+            return self.tagByName(thing)
+
+    def returnLocalHeader(self):
+        return self.hdr
+
+
+    def getProvidesNames(self):
+        """returns a list of providesNames"""
+        
+        provnames = self.tagByName('providename')
+        if type(provnames) is not types.ListType():
+            if type(provnames) is types.StringType():
+                provnames = [provnames]
+            else:
+                provnames = []
+
+        return provnames
+
+    def requiresList(self):
+        """return a list of all of the strings of the package requirements"""
+        reqlist = []
+        names = self.hdr[rpm.RPMTAG_REQUIRENAME]
+        flags = self.hdr[rpm.RPMTAG_REQUIREFLAGS]
+        ver = self.hdr[rpm.RPMTAG_REQUIREVERSION]
+        if names is not None:
+            tmplst = zip(names, flags, ver)
+        
+        for (n, f, v) in tmplst:
+            req = rpmUtils.miscutils.formatRequire(n, v, f)
+            reqlist.append(req)
+        
+        return reqlist
+
+    def _pkgtup(self):
+        return (self.name, self.arch, self.epoch, self.version, self.release)
+    
+    def size(self):
+        return self.tagByName('size')
+
+    def printVer(self):
+        """returns a printable version string - including epoch, if it's set"""
+        if self.epoch != '0':
+            ver = '%s:%s-%s' % (self.epoch, self.version, self.release)
+        else:
+            ver = '%s-%s' % (self.version, self.release)
+        
+        return ver
+    
+    def compactPrint(self):
+        ver = self.printVer()
+        return "%s.%s %s" % (self.name, self.arch, ver)
+    
+
+class YumLocalPackage(YumInstalledPackage):
+    """Class to handle an arbitrary package from a file path
+       this inherits most things from YumInstalledPackage because
+       installed packages and an arbitrary package on disk act very
+       much alike. init takes a ts instance and a filename/path 
+       to the package."""
+
+    def __init__(self, ts=None, filename=None):
+        if ts is None:
+            raise Errors.MiscError, \
+                 'No Transaction Set Instance for YumLocalPackage instance creation'
+        if filename is None:
+            raise Errors.MiscError, \
+                 'No Filename specified for YumLocalPackage instance creation'
+                 
+        self.pkgtype = 'local'
+        self.localpath = filename
+        self.repoid = filename
+        try:
+            self.hdr = rpmUtils.miscutils.hdrFromPackage(ts, self.localpath)
+        except rpmUtils.RpmUtilsError, e:
+            raise Errors.MiscError, \
+                'Could not open local rpm file: %s' % self.localpath
+        self.name = self.tagByName('name')
+        self.arch = self.tagByName('arch')
+        self.epoch = self.doepoch()
+        self.version = self.tagByName('version')
+        self.release = self.tagByName('release')
+        self.ver = self.tagByName('version')
+        self.rel = self.tagByName('release')
+        self.summary = self.tagByName('summary')
+        self.description = self.tagByName('description')
+        self.pkgtup = self._pkgtup()
+        self.state = None
+    
+    def _pkgtup(self):
+        return (self.name, self.arch, self.epoch, self.version, self.release)
+    
+    def localPkg(self):
+        return self.localpath
+    
+        
+
+
             
         
     
