@@ -1252,14 +1252,38 @@ class YumBase(depsolve.Depsolve):
         thisgroup = self.comps.return_group(grpid)
         if not thisgroup:
             raise Errors.GroupsError, "No Group named %s exists" % grpid
-            
+
+        thisgroup.toremove = True
         pkgs = thisgroup.packages
         for pkg in thisgroup.packages:
             txmbrs = self.remove(name=pkg)
             txmbrs_used.extend(txmbrs)
         
         return txmbrs_used
+
+    def groupUnremove(self, grpid):
+        """unmark any packages in the group from being removed"""
         
+        self.doGroupSetup()
+
+        thisgroup = self.comps.return_group(grpid)
+        if not thisgroup:
+            raise Errors.GroupsError, "No Group named %s exists" % grpid
+
+        thisgroup.toremove = False
+        pkgs = thisgroup.packages
+        for pkg in thisgroup.packages:
+            for txmbr in self.tsInfo:
+                if txmbr.po.name == pkg and txmbr.po.state in TS_INSTALL_STATES:
+                    try:
+                        txmbr.groups.remove(grpid)
+                    except ValueError:
+                        self.log(4, "package %s was not marked in group %s" % (po, grpid))
+                        continue
+                    
+                    # if there aren't any other groups mentioned then remove the pkg
+                    if len(txmbr.groups) == 0:
+                        self.tsInfo.remove(txmbr.po.pkgtup)
         
         
     def selectGroup(self, grpid):

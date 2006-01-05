@@ -49,6 +49,7 @@ class Group(object):
         self.groupid = None
         self.display_order = 1024
         self.installed = False
+        self.toremove = False
         
 
         if elem:
@@ -354,23 +355,27 @@ class Comps:
         
 
         for group in self.groups:
-            # if it has any mandatory or default packages in the group, then
-            # make sure they're all installed, if any are missing then
-            # the group is not installed.
-            if len(group.mandatory_packages.keys()) > 0 or len(group.default_packages.keys()) > 0:
-                check_pkgs = group.mandatory_packages.keys() + group.default_packages.keys()
+            # if there are mandatory packages in the group, then make sure
+            # they're all installed.  if any are missing, then the group
+            # isn't installed.
+            if len(group.mandatory_packages.keys()) > 0:
+                check_pkgs = group.mandatory_packages.keys()
                 group.installed = True
                 for pkgname in check_pkgs:
                     if not inst_pkg_names.has_key(pkgname):
                         group.installed = False
+                        break
             # if it doesn't have any of those then see if it has ANY of the
-            # optional packages installed. If so - then the group is installed
+            # optional/default packages installed.
+            # If so - then the group is installed
             else:
-                check_pkgs = group.optional_packages.keys()
+                check_pkgs = group.optional_packages.keys() + group.default_packages.keys()
                 group.installed = False
                 for pkgname in check_pkgs:
                     if inst_pkg_names.has_key(pkgname):
+                        print "%s is installed because of %s" %(group.name, pkgname)
                         group.installed = True
+                        break
         
         self.compiled = True
 
