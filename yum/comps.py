@@ -373,7 +373,6 @@ class Comps:
                 group.installed = False
                 for pkgname in check_pkgs:
                     if inst_pkg_names.has_key(pkgname):
-                        print "%s is installed because of %s" %(group.name, pkgname)
                         group.installed = True
                         break
         
