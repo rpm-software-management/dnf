@@ -31,7 +31,7 @@ from Errors import DepError, RepoError
 from constants import *
 import packages
 
-class Depsolve:
+class Depsolve(object):
     def __init__(self):
         packages.base = self
         self.dsCallback = None
