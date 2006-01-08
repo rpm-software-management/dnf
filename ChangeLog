@@ -1,3 +1,122 @@
+2006-01-08 18:57  skvidal
+
+	* yum.spec, yum/__init__.py: 
+	2.5.1 mark
+
+2006-01-04 22:45  katzj
+
+	* yum/comps.py: bye bye debug print
+
+2006-01-04 20:32  katzj
+
+	* yum/: __init__.py, comps.py: * fix determination of package
+	groups being installed to not require all the	default packages to
+	be there, just the mandatory * add support for reverting a
+	groupRemove (ie, a groupUnremove)
+
+2006-01-04 20:31  katzj
+
+	* yum/depsolve.py: make Depsolve an object
+
+2006-01-04 20:30  katzj
+
+	* yum/packages.py: make YumInstalledPackage a subclass of
+	YumAvailablePackage so that we can count on having the same methods
+	available in both
+
+2005-12-22 11:07  skvidal
+
+	* yum/update_md.py: 
+	- first checkin of update_md.py for update notice parsing - note -
+	this is not used anywhere, yet
+
+2005-12-21 11:01  pnasrat
+
+	* yum/transactioninfo.py: Make txmbr hashable
+
+2005-12-20 14:14  pmatilai
+
+	* docs/yum.8: - document "clean metadata" operation - document that
+	all yum operations use the active repository configuration,  
+	including clean
+
+2005-12-20 03:13  skvidal
+
+	* yum/config.py: 
+	fix for rh bug: 175505 needed installroot and distroverpkg options
+	in YumConf, too.  maybe key inheritance isn't working quite as it
+	should?
+
+2005-12-19 11:06  skvidal
+
+	* yum/config.py: 
+	- fix throttle config parsing problem - add kernel-devel to
+	exactarchlist
+
+2005-12-19 01:16  skvidal
+
+	* cli.py: 
+	fix for rh bug 175791, don't post 'download size needed if there's
+	nothing being installed/updated and therefore nothing to be
+	downloaded.
+
+2005-12-16 23:02  katzj
+
+	* yum/__init__.py: provide callback feedback in reposetup.  this is
+	especially important for UI code
+
+2005-12-16 11:44  pnasrat
+
+	* yum/packages.py: fix KeyError when no base in location
+
+2005-12-15 13:50  katzj
+
+	* yum/config.py: inherit the repo being enabled from the base
+	config per seth's request :)
+
+2005-12-14 16:17  katzj
+
+	* yum/: config.py, repos.py: better fix for the mirror problem. 
+	ensure we set the value if it doesn't exist in the repo object. 
+	also, default enabled/groupsenabled to 0 in the repo since we'll
+	override if the config says one.
+	
+	RepoConf and Repository really do need to be merged...
+
+2005-12-14 14:12  katzj
+
+	* yum/: config.py, repos.py: only set options which have a value. 
+	add more defaults.  fixes mirrorlists (and other stuff) getting
+	overwritten (#175436)
+
+2005-12-14 13:25  katzj
+
+	* yum/depsolve.py: better fix for #175647 -- find the package
+	object once and allow it to be either installed or from the sacks. 
+	tested with a) yum update libgcj on a system where updating gcj
+	would break deps b) yum update gnome-vfs2 where there are things
+	depending on gnome-vfs2 c) yum remove gnome-vfs2
+	
+	The only case I didn't check was the obsoletes case, but it looks
+	like the right thing should happen
+
+2005-12-13 22:55  katzj
+
+	* yum/depsolve.py: fix traceback with an installed package
+	requiring something that's no longer in any repos (#175647)
+
+2005-12-13 03:45  skvidal
+
+	* cli.py: 
+	1. get rid of unnecessary print_short_help method on our optparser
+	object	  - just use print_usage 2. fix silly 'None' Output in
+	usage as reported by Luke.
+
+2005-12-13 02:45  skvidal
+
+	* ChangeLog: 
+	check in changelog
+
 2005-12-13 02:35  skvidal
 
 	* cli.py, shell.py: 
