@@ -146,11 +146,13 @@ class RepoStorage:
         """find all repositories matching fnmatch `pattern`"""
 
         result = []
-        match = re.compile(fnmatch.translate(pattern)).match
-
-        for name,repo in self.repos.items():
-            if match(name):
-                result.append(repo)
+        
+        for item in pattern.split(','):
+            item = item.strip()
+            match = re.compile(fnmatch.translate(item)).match
+            for name,repo in self.repos.items():
+                if match(name):
+                    result.append(repo)
         return result
         
     def disableRepo(self, repoid):
@@ -160,7 +162,7 @@ class RepoStorage:
         returns repoid of disabled repos as list
         """
         repos = []
-        if _is_fnmatch_pattern(repoid):
+        if _is_fnmatch_pattern(repoid) or repoid.find(',') != -1:
             for repo in self.findRepos(repoid):
                 repos.append(repo.id)
                 repo.disable()
@@ -178,8 +180,7 @@ class RepoStorage:
         returns repoid of enables repos as list
         """
         repos = []
-        
-        if _is_fnmatch_pattern(repoid):
+        if _is_fnmatch_pattern(repoid) or repoid.find(',') != -1:
             for repo in self.findRepos(repoid):
                 repos.append(repo.id)
                 repo.enable()
