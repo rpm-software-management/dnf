@@ -70,12 +70,8 @@ class Depsolve(object):
                 if globc.match(name):
                     matched = 1
             if not matched:
-                for repo in self.repos.listEnabled():
-                    if 'filelists' in self.pkgSack.added[repo.id]:
-                        continue
-                    self.log(2, 'Importing Additional filelist information for dependency resolution')
-                    self.repos.populateSack(with='filelists', which=repo.id)
-                
+                self.doSackFilelistPopulate()
+            
         pkgs = self.pkgSack.searchProvides(name)
         if flags == 0:
             flags = None

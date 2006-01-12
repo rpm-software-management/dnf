@@ -369,6 +369,22 @@ class YumBase(depsolve.Depsolve):
         self.comps.compile(pkglist)
         
 
+    def doSackFilelistPopulate(self):
+        """convenience function to populate the repos with the filelist metadata
+           it also is simply to only emit a log if anything actually gets populated"""
+        
+        necessary = False
+        for repo in self.repos.listEnabled():
+            if 'filelists' in self.pkgSack.added[repo.id]:
+                continue
+            else:
+                necessary = True
+        
+        if necessary:
+            msg = 'Importing additional filelist information'
+            self.log(2, msg)
+            self.repos.populateSack(with='filelists')
+           
     def buildTransaction(self):
         """go through the packages in the transaction set, find them in the
            packageSack or rpmdb, and pack up the ts accordingly"""
@@ -1119,11 +1135,11 @@ class YumBase(depsolve.Depsolve):
     def searchPackageProvides(self, args, callback=None):
         
         self.doRepoSetup()
-        self.doRpmDBSetup()
         matches = {}
         
         # search deps the simple way first
         for arg in args:
+            self.log(4, 'searching the simple way')
             pkgs = self.returnPackagesByDep(arg)
             for po in pkgs:
                 if callback:
@@ -1132,6 +1148,7 @@ class YumBase(depsolve.Depsolve):
 
         # search pkgSack - fully populate the worthwhile metadata to search
         # if it even vaguely matches
+        self.log(4, 'fully populating the necessary data')
         for arg in args:
             matched = 0
             globs = ['.*bin\/.*', '.*\/etc\/.*', '^\/usr\/lib\/sendmail$']
@@ -1140,10 +1157,10 @@ class YumBase(depsolve.Depsolve):
                 if globc.match(arg):
                     matched = 1
             if not matched:
-                self.log(2, 'Importing Additional filelist information for packages')
-                self.repos.populateSack(with='filelists')
+                self.doSackFilelistPopulate()
 
         for arg in args:
+            self.log(4,'refining the search expression') 
             restring = self._refineSearchPattern(arg)
             try: 
                 arg_re = re.compile(restring, flags=re.I)
@@ -1151,21 +1168,29 @@ class YumBase(depsolve.Depsolve):
                 raise Errors.MiscError, \
                   'Search Expression: %s is an invalid Regular Expression.\n' % arg
             
-            # If this is not a regular expression, only search in packages
-            # returned by pkgSack.searchAll
-            if arg.find('*') == arg.find('?')  == arg.find('%') == -1 and \
-              hasattr(self.pkgSack,'searchAll'):
-                where = self.pkgSack.searchAll(arg)
-            else:
-                where = self.pkgSack
+            # assume we have to search every package, unless we can refine the search set
+            where = self.pkgSack
+            # if it is a glob and it's a sqlite sack, use the glob query_type
+            if hasattr(self.pkgSack, 'searchAll'):
+                if arg.find('*') != -1 or arg.find('?') != -1:
+                    self.log(4, 'Using the glob search')
+                    where = self.pkgSack.searchAll(arg, query_type='glob')
+                else:
+                    if arg.find('%') == -1:
+                        self.log(4, 'Using the like search')
+                        where = self.pkgSack.searchAll(arg, query_type='like')
 
             for po in where:
+                self.log(5, 'searching package %s' % po)
                 tmpvalues = []
+                
+                self.log(5, 'searching in file entries')
                 for filetype in po.returnFileTypes():
                     for fn in po.returnFileEntries(ftype=filetype):
                         if arg_re.search(fn):
                             tmpvalues.append(fn)
-
+                
+                self.log(5, 'searching in provides entries')
                 for (p_name, p_flag, (p_e, p_v, p_r)) in po.returnPrco('provides'):
                     if arg_re.search(p_name):
                         prov = po.prcoPrintable((p_name, p_flag, (p_e, p_v, p_r)))
@@ -1176,6 +1201,7 @@ class YumBase(depsolve.Depsolve):
                         callback(po, tmpvalues)
                     matches[po] = tmpvalues
         
+        self.doRpmDBSetup()
         # installed rpms, too
         taglist = ['filenames', 'dirnames', 'provides']
         arg_re = []
