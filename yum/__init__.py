@@ -253,8 +253,9 @@ class YumBase(depsolve.Depsolve):
                 raise
             num += 1
 
-        if self.repos.callback:
+        if self.repos.callback and len(repos) > 0:
             self.repos.callback.progressbar(num, len(repos), repo.id)
+            
         self.plugins.run('postreposetup')
 
     def doSackSetup(self, archlist=None, thisrepo=None):
