@@ -384,7 +384,7 @@ class YumConf(EarlyConf):
     cachedir = Option('/var/cache/yum')
     logfile = Option('/var/log/yum.log')
     reposdir = ListOption(['/etc/yum/repos.d', '/etc/yum.repos.d'])
-    syslog_ident = Option('yum')
+    syslog_ident = Option()
     syslog_facility = Option('LOG_DAEMON')
 
     commands = ListOption()

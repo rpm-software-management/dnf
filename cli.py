@@ -243,7 +243,7 @@ yum [options] < update | install | info | remove | list |
 
             syslog_object = SysLogger(threshold = 10, 
                                       facility=self.conf.syslog_facility,
-                                      ident=self.conf.syslog_ident)
+                                      ident='yum')
             
             self.filelog = LogContainer([syslog_object, filelog_object])
 
