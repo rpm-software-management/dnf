@@ -35,7 +35,7 @@ import yum.misc
 import rpmUtils.arch
 from rpmUtils.miscutils import compareEVR
 from yum.packages import parsePackages, YumInstalledPackage, YumLocalPackage
-from yum.logger import Logger
+from yum.logger import Logger, SysLogger, LogContainer
 from yum import pgpmsg
 from i18n import _
 import callback
@@ -233,12 +233,20 @@ yum [options] < update | install | info | remove | list |
 
                 logfile =  os.fdopen(logfd, 'a')
                 fcntl.fcntl(logfd, fcntl.F_SETFD)
-                self.filelog = Logger(threshold = 10, file_object = logfile, 
+            
+                                      
+                filelog_object = Logger(threshold = 10, file_object = logfile, 
                                 preprefix = self.printtime)
             else:
-                self.filelog = Logger(threshold = 10, file_object = None, 
+                filelog_object = Logger(threshold = 10, file_object = None, 
                                 preprefix = self.printtime)
+
+            syslog_object = SysLogger(threshold = 10, 
+                                      facility=self.conf.syslog_facility,
+                                      ident=self.conf.syslog_ident)
             
+            self.filelog = LogContainer([syslog_object, filelog_object])
+
             # Handle remaining options
             if opts.assumeyes:
                 self.conf.assumeyes =1
