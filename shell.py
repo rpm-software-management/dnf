@@ -89,7 +89,7 @@ class YumShell(cmd.Cmd):
         pass
     
     def do_help(self, arg):
-        msg = self.base.optparser.print_short_help()
+        msg = self.base.usage()
         if arg in ['transaction', 'ts']:
             msg = """
     %s arg
