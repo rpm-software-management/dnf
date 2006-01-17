@@ -635,6 +635,11 @@ class YumBase(depsolve.Depsolve):
             remote = po.returnSimple('relativepath')
             checkfunc = (self.verifyPkg, (po, 1), {})
 
+
+            # FIXME - add check here to make sure we have the disk space
+            # available to download the package. If we don't then politely
+            # bail out with an informative message.
+            # os.statvfs(repo's local path)[4]*[2] >= po.size
             try:
                 text = '(%s/%s): %s' % (i, len(remote_pkgs),
                                         os.path.basename(remote))
