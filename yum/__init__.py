@@ -235,7 +235,9 @@ class YumBase(depsolve.Depsolve):
                 num += 1
                 continue
             if self.repos.callback:
-                self.repos.callback.progressbar(num, len(repos), repo.id)
+                self.repos.callback.log('%-50s [%d/%d]' % 
+                                        (repo.id, num, len(repos)))
+                
             try:
                 repo.cache = self.conf.cache
                 repo.baseurlSetup()
@@ -252,7 +254,8 @@ class YumBase(depsolve.Depsolve):
                 self.errorlog(0, str(e))
                 raise
             num += 1
-
+            
+            
         if self.repos.callback and len(repos) > 0:
             self.repos.callback.progressbar(num, len(repos), repo.id)
             
