@@ -1378,7 +1378,7 @@ class YumBase(depsolve.Depsolve):
                     try: 
                         txmbr.groups.remove(grpid)
                     except ValueError:
-                        self.log(4, "package %s was not marked in group %s" % (po, grpid))
+                        self.log(4, "package %s was not marked in group %s" % (txmbr.po, grpid))
                         continue
                     
                     # if there aren't any other groups mentioned then remove the pkg
