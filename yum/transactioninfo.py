@@ -157,6 +157,7 @@ class TransactionData:
            updated, installed, erased, obsoleted, depupdated, depinstalled
            deperased"""
            
+        self.instgroups = []
         self.removed = []
         self.installed = []
         self.updated = []
@@ -173,6 +174,10 @@ class TransactionData:
                     self.updated.append(txmbr)
                     
             elif txmbr.output_state == TS_INSTALL or txmbr.output_state == TS_TRUEINSTALL:
+                if txmbr.groups:
+                    for g in txmbr.groups:
+                        if g not in self.instgroups:
+                            self.instgroups.append(g)
                 if txmbr.isDep:
                     self.depinstalled.append(txmbr)
                 else:
