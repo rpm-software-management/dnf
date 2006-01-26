@@ -15,12 +15,12 @@
 # Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 # Copyright 2002 Duke University 
 
-#TODO: docstrings
-
 import os
+import warnings
 import rpm
 import copy
 import urlparse
+import sys
 from parser import IncludingConfigParser, IncludedDirConfigParser
 from ConfigParser import NoSectionError, NoOptionError
 import rpmUtils.transaction
@@ -29,6 +29,9 @@ import Errors
 from repos import Repository
 
 class OptionData(object):
+    '''
+    Simple class to track state for a single option instance.
+    '''
     def __init__(self, parser, section, name):
         self.parser = parser
         self.section = section
@@ -36,6 +39,13 @@ class OptionData(object):
         self.value = None
 
 class Option(object):
+    '''
+    This class handles a single Yum configuration file option. Create
+    subclasses for each type of supported configuration option.
+    
+    Python descriptor foo (__get__ and __set__) is used to make option
+    definition easy and consise.
+    '''
 
     def __init__(self, default=None):
         self._setattrname()
@@ -43,9 +53,19 @@ class Option(object):
         self.default = default
 
     def _setattrname(self):
+        '''Calculate the internal attribute name used to store option state in
+        configuration instances.
+        '''
         self._attrname = '__opt%X' % id(self)
 
     def __get__(self, obj, objtype):
+        '''Called when the option is read (via the descriptor protocol). 
+
+        @param obj: The configuration instance to modify.
+        @param objtype: The type of the config instance (not used).
+        @return: The parsed option value or the default value if the value
+            wasn't set in the configuration file.
+        '''
         if obj is None:
             return self
         optdata = getattr(obj, self._attrname, None)
@@ -55,6 +75,12 @@ class Option(object):
             return self.default
 
     def __set__(self, obj, value):
+        '''Called when the option is set (via the descriptor protocol). 
+
+        @param obj: The configuration instance to modify.
+        @param value: The value to set the option to.
+        @return: Nothing.
+        '''
         optdata = getattr(obj, self._attrname)
 
         # Only try to parse if its a string
@@ -93,6 +119,9 @@ class Option(object):
     def parse(self, s):
         '''Parse the string value to the Option's native value.
 
+        @param s: Raw string value to parse.
+        @return: Validated native value.
+    
         Will raise ValueError if there was a problem parsing the string.
         Subclasses should override this.
         '''
@@ -101,12 +130,23 @@ class Option(object):
     def tostring(self, value):
         '''Convert the Option's native value to a string value.
 
-        This does the opposite fo the parse() method above.
+        @param value: Native option value.
+        @return: String representation of input.
+
+        This does the opposite of the parse() method above.
         Subclasses should override this.
         '''
         return str(value)
 
 def Inherit(option_obj):
+    '''Clone an Option instance for the purposes of inheritance. The returned
+    instance has all the same properties as the input Option and shares items
+    such as the default value. Use this to avoid redefinition of reused
+    options.
+
+    @param option_obj: Option instance to inherit.
+    @return: New Option instance inherited from the input.
+    '''
     new_option = option_obj.clone()
     new_option.inherit = True
     return new_option
@@ -311,7 +351,10 @@ class ThrottleOption(BytesOption):
 
 
 class BaseConfig(object):
-    #XXX: document
+    '''
+    Base class for storing configuration definitions. Subclass when creating
+    your own definitons.
+    '''
 
     def __init__(self):
         self._section = None
@@ -324,6 +367,13 @@ class BaseConfig(object):
         return '\n'.join(out)
 
     def populate(self, parser, section, parent=None):
+        '''Set option values from a INI file section.
+
+        @param parser: ConfParser instance (or subclass)
+        @param section: INI file section to read use.
+        @param parent: Optional parent BaseConfig (or subclass) instance to use
+            when doing option value inheritance.
+        '''
         self._section = section
         self.cfg = parser           # Keep a reference to the parser
 
@@ -344,38 +394,78 @@ class BaseConfig(object):
     def optionobj(cls, name):
         '''Return the Option instance for the given name
         '''
-        return cls.__dict__[name]
+        # Look for Option instances in this class and base classes so that
+        # option inheritance works
+        for klass in (cls,) + cls.__bases__:
+            obj = klass.__dict__.get(name, None)
+            if obj is not None:
+                break
+
+        if obj is not None and isinstance(obj, Option):
+            return obj
+        else:
+            raise KeyError
     optionobj = classmethod(optionobj)
 
+    def isoption(cls, name):
+        '''Return True if the given name refers to a defined option 
+        '''
+        try:
+            cls.optionobj(name)
+            return True
+        except KeyError:
+            return False
+    isoption = classmethod(isoption)
+
     def iterkeys(self):
-        for name, item in  self.__class__.__dict__.iteritems():
-            if isinstance(item, Option):
-                yield name
+        '''Yield the names of all defined options in the instance.
+        '''
+        for name, item in self.iteritems():
+            yield name
 
     def iteritems(self):
-        for name in self.iterkeys():
-            yield (name, getattr(self, name))
+        '''Yield (name, value) pairs for every option in the instance.
+
+        The value returned is the parsed, validated option value.
+        '''
+        # Use dir() so that we see inherited options too
+        for name in dir(self):
+            if self.isoption(name):
+                yield (name, getattr(self, name))
 
     def getConfigOption(self, option, default=None):
+        warnings.warn('getConfigOption() will go away in a future version of Yum.\n'
+                'Please access option values as attributes or using getattr().',
+                DeprecationWarning)
         if hasattr(self, option):
             return getattr(self, option)
         return default
 
     def setConfigOption(self, option, value):
+        warnings.warn('setConfigOption() will go away in a future version of Yum.\n'
+                'Please set option values as attributes or using setattr().',
+                DeprecationWarning)
         if hasattr(self, option):
             setattr(self, option, value)
         else:
             raise Errors.ConfigError, 'No such option %s' % option
 
 class EarlyConf(BaseConfig):
-
+    '''
+    Configuration option definitions for yum.conf's [main] section that are
+    required before the other [main] options can be parsed (mainly due to
+    variable substitution).
+    '''
     distroverpkg = Option('fedora-release')
     installroot = Option('/')
 
 class YumConf(EarlyConf):
+    '''
+    Configuration option definitions for yum.conf's [main] section.
 
-    distroverpkg = Option('fedora-release')
-    installroot = Option('/')
+    Note: inherits options from EarlyConf too.
+    '''
+
     debuglevel = IntOption(2)
     errorlevel = IntOption(2)
     retries = IntOption(10)
@@ -428,8 +518,10 @@ class YumConf(EarlyConf):
     metadata_expire = IntOption(1800)   # time in seconds
 
 class RepoConf(BaseConfig):
-   
-    name = Option()         #XXX: error out if no name set
+    '''
+    Option definitions for repository INI file sections.
+    '''
+    name = Option()
     enabled = Inherit(YumConf.enabled)
     baseurl = UrlListOption()
     mirrorlist = UrlOption()
@@ -454,7 +546,13 @@ class RepoConf(BaseConfig):
     metadata_expire = Inherit(YumConf.metadata_expire)
 
 def readMainConfig(configfile, root):
-    #XXX: document
+    '''Parse Yum's main configuration file
+
+    @param configfile: Path to the configuration file to parse (typically
+        '/etc/yum.conf').
+    @param root: The base path to use for installation (typically '/')
+    @return: Populated YumConf instance.
+    '''
 
     # Read up config variables that are needed early to calculate substitution
     # variables
@@ -495,10 +593,22 @@ def readMainConfig(configfile, root):
     return yumconf
 
 def readRepoConfig(parser, section, mainconf):
-    #XXX: document
+    '''Parse an INI file section for a repository.
+
+    @param parser: ConfParser or similar to read INI file values from.
+    @param section: INI file section to read.
+    @param mainconf: ConfParser or similar for yum.conf.
+    @return: Repository instance.
+    '''
 
     conf = RepoConf()
     conf.populate(parser, section, mainconf)
+
+    # Ensure that the repo name is set
+    if not conf.name:
+        conf.name = section
+        print >> sys.stderr, \
+            'Repository %r is missing name in configuration, using id' % section
 
     thisrepo = Repository(section)
 
@@ -548,6 +658,12 @@ def _getEnvVar():
     return yumvar
 
 def _getsysver(installroot, distroverpkg):
+    '''Calculate the release version for the system.
+
+    @param installroot: The value of the installroot option.
+    @param distroverpkg: The value of the distroverpkg option.
+    @return: The release version as a string (eg. '4' for FC4)
+    '''
     ts = rpmUtils.transaction.initReadOnlyTransaction(root=installroot)
     ts.pushVSFlags(~(rpm._RPMVSF_NOSIGNATURES|rpm._RPMVSF_NODIGESTS))
     idx = ts.dbMatch('provides', distroverpkg)
@@ -563,3 +679,12 @@ def _getsysver(installroot, distroverpkg):
     del ts
     return releasever
 
+
+#def main():
+#    mainconf = readMainConfig('/etc/yum.conf', '/') 
+#    repoconf = readRepoConfig(mainconf.cfg, 'core', mainconf)
+#
+#    print `repoconf.name`
+#
+#if __name__ == '__main__':
+#    main()
