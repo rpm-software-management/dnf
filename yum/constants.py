@@ -35,6 +35,14 @@ TR_OBSOLETEDBY = 4
 TR_DEPENDS = 5
 TR_DEPENDSON = 6
 
+# Transaction Member Sort Colors
+# Each node in a topological sort is colored
+# White nodes are unseen, black nodes are seen
+# grey nodes are in progress
+TX_WHITE = 0
+TX_GREY = 1
+TX_BLACK = 2
+
 # package object file types
 PO_FILE = 1
 PO_DIR = 2
