@@ -289,6 +289,58 @@ class TransactionData:
         self.add(txmbr)
         return txmbr
 
+class SortableTransactionData(TransactionData):
+    """A transaction data implementing topological sort on it's members"""
+    def __init__(self):
+        # Cache of sort
+        self._sorted = []
+        # Current dependency path
+        self.path = []
+        # List of loops
+        self.loops = []
+        # Only resort if transaction data changed
+        self.changed = True
+        TransactionData.__init__(self)
+
+    def _visit(self, txmbr):
+        self.path.append(txmbr.name)
+        txmbr.sortColour = TX_GREY
+        for po in txmbr.depends_on:
+            vertex = self.getMembers(pkgtup=po.pkgtup)[0]
+            if vertex.sortColour == TX_GREY:
+                self._doLoop(vertex.name)
+            if vertex.sortColour == TX_WHITE:
+                self._visit(vertex)
+        txmbr.sortColour = TX_BLACK
+        self._sorted.insert(0, txmbr.pkgtup)
+
+    def _doLoop(self, name):
+        self.path.append(name)
+        loop = self.path[self.path.index(self.path[-1]):]
+        if len(loop) > 2:
+            self.loops.append(loop)
+
+    def add(self, txmember):
+        txmember.sortColour = TX_WHITE
+        TransactionData.add(self, txmember)
+        self.changed = True
+
+    def remove(self, pkgtup):
+        TransactionData.remove(self, pkgtup)
+        self.changed = True
+
+    def sort(self):
+        if self._sorted and not self.changed:
+            return self._sorted
+        self._sorted = []
+        self.changed = False
+        # loop over all members
+        for txmbr in self.getMembers():
+            if txmbr.sortColour == TX_WHITE:
+                self.path = [ ]
+                self._visit(txmbr)
+        self._sorted.reverse()
+        return self._sorted
 
 class TransactionMember:
     """Class to describe a Transaction Member (a pkg to be installed/
