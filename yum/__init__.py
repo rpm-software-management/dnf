@@ -68,6 +68,9 @@ class YumBase(depsolve.Depsolve):
 
         self.localPackages = [] # for local package handling 
 
+    def _transactionDataFactory(self):
+        """Factory method returning TransactionData object"""
+        return transactioninfo.TransactionData()
 
     def log(self, value, msg):
         """dummy log stub"""
@@ -186,7 +189,7 @@ class YumBase(depsolve.Depsolve):
         
         installroot = self.conf.installroot
         self.read_ts = rpmUtils.transaction.initReadOnlyTransaction(root=installroot)
-        self.tsInfo = transactioninfo.TransactionData()
+        self.tsInfo = self._transactionDataFactory()
         self.rpmdb = rpmUtils.RpmDBHolder()
         self.initActionTs()
         
