@@ -1296,6 +1296,8 @@ class YumBase(depsolve.Depsolve):
         for pkg in thisgroup.packages:
             txmbrs = self.remove(name=pkg)
             txmbrs_used.extend(txmbrs)
+            for txmbr in txmbrs:
+                txmbr.groups.append(thisgroup.groupid)
         
         return txmbrs_used
 

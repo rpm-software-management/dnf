@@ -158,6 +158,7 @@ class TransactionData:
            deperased"""
            
         self.instgroups = []
+        self.removedgroups = []
         self.removed = []
         self.installed = []
         self.updated = []
@@ -184,6 +185,9 @@ class TransactionData:
                     self.installed.append(txmbr)
             
             elif txmbr.output_state == TS_ERASE:
+                for g in txmbr.groups:
+                    if g not in self.instgroups:
+                        self.removedgroups.append(g)
                 if txmbr.isDep:
                     self.depremoved.append(txmbr)
                 else:
@@ -205,6 +209,8 @@ class TransactionData:
             self.depupdated.sort()
             self.depinstalled.sort()
             self.depremoved.sort()
+            self.instgroups.sort()
+            self.removedgroups.sort()
 
     
     def addInstall(self, po):
