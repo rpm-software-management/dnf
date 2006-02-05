@@ -82,7 +82,7 @@ import Errors
 # API, the major version number must be incremented and the minor version number
 # reset to 0. If a change is made that doesn't break backwards compatibility,
 # then the minor number must be incremented.
-API_VERSION = '2.1'
+API_VERSION = '2.2'
 
 # Plugin types
 TYPE_CORE = 0
@@ -95,8 +95,8 @@ SLOT_TO_CONDUIT = {
     'init': 'InitPluginConduit',
     'predownload': 'DownloadPluginConduit',
     'postdownload': 'DownloadPluginConduit',
-    'prereposetup': 'RepoSetupPluginConduit',
-    'postreposetup': 'RepoSetupPluginConduit',
+    'prereposetup': 'PreRepoSetupPluginConduit',
+    'postreposetup': 'PostRepoSetupPluginConduit',
     'close': 'PluginConduit',
     'pretrans': 'MainPluginConduit',
     'posttrans': 'MainPluginConduit',
@@ -428,7 +428,7 @@ class InitPluginConduit(PluginConduit):
         '''
         return self._base.repos
 
-class RepoSetupPluginConduit(InitPluginConduit):
+class PreRepoSetupPluginConduit(InitPluginConduit):
 
     def getCmdLine(self):
         '''Return parsed command line options.
@@ -447,10 +447,20 @@ class RepoSetupPluginConduit(InitPluginConduit):
         self._base.doRpmDBSetup()
         return self._base.rpmdb
 
-class DownloadPluginConduit(RepoSetupPluginConduit):
+class PostRepoSetupPluginConduit(PreRepoSetupPluginConduit):
+
+    def getGroups(self):
+        '''Return group information.
+
+        @return: yum.comps.Comps instance
+        '''
+        self._base.doGroupSetup()
+        return self._base.comps
+
+class DownloadPluginConduit(PostRepoSetupPluginConduit):
 
     def __init__(self, parent, base, conf, pkglist, errors=None):
-        RepoSetupPluginConduit.__init__(self, parent, base, conf)
+        PostRepoSetupPluginConduit.__init__(self, parent, base, conf)
         self._pkglist = pkglist
         self._errors = errors
 
@@ -470,7 +480,7 @@ class DownloadPluginConduit(RepoSetupPluginConduit):
             return {}
         return self._errors
 
-class MainPluginConduit(RepoSetupPluginConduit):
+class MainPluginConduit(PostRepoSetupPluginConduit):
 
     def getPackages(self, repo=None):
         if repo:
