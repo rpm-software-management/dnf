@@ -41,7 +41,7 @@ class IncludingConfigParser(ConfigParser):
 
     def defaults(self):
         """Return a dictionary containing the instance-wide defaults."""
-        return self.defaults
+        return self._defaults
 
     def sections(self):
         """Return a list of the sections available in file and includes."""
