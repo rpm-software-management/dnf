@@ -250,9 +250,13 @@ baseurl=url://server1/path/to/repository/
 .br
         url://server3/path/to/repository/
 .br
+
 If you list more than one baseurl= statement in a repository you will find
 yum will ignore the earlier ones and probably act bizarrely. Don't do this,
 you've been warned.
+
+You can use HTTP basic auth by prepending "user:password@" to the server
+name in the baseurl line.  For example: "baseurl=http://user:passwd@example.com/".
 
 .IP \fBmirrorlist\fR
 Specifies a URL to a file containing a list of baseurls. This can be used
