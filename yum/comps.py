@@ -45,6 +45,7 @@ class Group(object):
         self.mandatory_packages = {}
         self.optional_packages = {}
         self.default_packages = {}
+        self.conditional_packages = {}
         self.langonly = None ## what the hell is this?
         self.groupid = None
         self.display_order = 1024
@@ -61,7 +62,8 @@ class Group(object):
     def _packageiter(self):
         lst = self.mandatory_packages.keys() + \
               self.optional_packages.keys() + \
-              self.default_packages.keys()
+              self.default_packages.keys() + \
+              self.conditional_packages.keys() 
         
         return lst
     
@@ -137,7 +139,7 @@ class Group(object):
                 if not type:
                     type = u'mandatory'
 
-                if type not in ('mandatory', 'default', 'optional'):
+                if type not in ('mandatory', 'default', 'optional', 'conditional'):
                     raise CompsException
 
                 package = child.text
@@ -147,6 +149,10 @@ class Group(object):
                     self.default_packages[package] = 1
                 elif type == 'optional':
                     self.optional_packages[package] = 1
+                elif type == 'conditional':
+                    self.conditional_packages[package] = child.attrib.get('requires')
+
+
 
     def add(self, obj):
         """Add another group object to this object"""
@@ -160,6 +166,8 @@ class Group(object):
             self.default_packages[pkg] = 1
         for pkg in obj.optional_packages.keys():
             self.optional_packages[pkg] = 1
+        for pkg in obj.conditional_packages.keys():
+            self.conditional_packages[pkg] = obj.conditional_packages[pkg]
         
         # name and description translations
         for lang in obj.translated_name.keys():
@@ -369,7 +377,7 @@ class Comps:
             # optional/default packages installed.
             # If so - then the group is installed
             else:
-                check_pkgs = group.optional_packages.keys() + group.default_packages.keys()
+                check_pkgs = group.optional_packages.keys() + group.default_packages.keys() + group.conditional_packages.keys()
                 group.installed = False
                 for pkgname in check_pkgs:
                     if inst_pkg_names.has_key(pkgname):
