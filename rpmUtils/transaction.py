@@ -13,6 +13,7 @@
 
 import rpm
 import miscutils
+from sets import Set
 
 read_ts = None
 ts = None
@@ -109,7 +110,9 @@ class TransactionWrapper:
             if not h[rpm.RPMTAG_REQUIRENAME]:
                 continue
             for r in h[rpm.RPMTAG_REQUIRENAME]:
-                req[r] = tup
+                if not req.has_key(r):
+                    req[r] = Set()
+                req[r].add(tup)
      
      
         mi = self.dbMatch()
@@ -121,7 +124,10 @@ class TransactionWrapper:
             tup = miscutils.pkgTupleFromHeader(h)
             for p in h[rpm.RPMTAG_PROVIDES] + h[rpm.RPMTAG_FILENAMES]:
                 if req.has_key(p):
-                    preq = preq + 1
+                    # Don't count a package that provides its require
+                    s = req[p]
+                    if len(s) > 1 or tup not in s:
+                        preq = preq + 1
         
             if preq == 0:
                 orphan.append(tup)
