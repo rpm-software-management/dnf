@@ -559,6 +559,9 @@ def readMainConfig(configfile, root):
     EarlyConf.installroot.default = root
     earlyconf = EarlyConf()
     confparser = IncludingConfigParser()
+    if not os.path.exists(configfile):
+        raise Errors.ConfigError, 'No such config file %s' % configfile
+
     confparser.read(configfile)
     earlyconf.populate(confparser, 'main')
 
