@@ -56,7 +56,7 @@ class Option(object):
         '''Calculate the internal attribute name used to store option state in
         configuration instances.
         '''
-        self._attrname = '__opt%X' % id(self)
+        self._attrname = '__opt%d' % id(self)
 
     def __get__(self, obj, objtype):
         '''Called when the option is read (via the descriptor protocol). 
