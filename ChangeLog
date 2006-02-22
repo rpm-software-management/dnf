@@ -1,3 +1,18 @@
+2006-02-22 16:25  skvidal
+
+	* cli.py, shell.py: 
+	a few more last minute changes to the shell and cli way of figuring
+	out if a command is valid
+
+2006-02-22 15:52  skvidal
+
+	* shell.py: fix minor bug in shell help
+
+2006-02-22 15:36  skvidal
+
+	* ChangeLog: 
+	Changelog update
+
 2006-02-22 15:33  skvidal
 
 	* yum.spec, yum/__init__.py: 
