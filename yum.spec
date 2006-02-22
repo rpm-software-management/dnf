@@ -1,6 +1,6 @@
 Summary: RPM installer/updater
 Name: yum
-Version: 2.5.2
+Version: 2.5.3
 Release: 1
 License: GPL
 Group: System Environment/Base
@@ -79,7 +79,7 @@ exit 0
 
 %changelog
 * Wed Feb 22 2006 Seth Vidal <skvidal@phy.duke.edu>
-- 2.5.2
+- 2.5.3
 
 * Sun Jan  8 2006 Seth Vidal <skvidal@phy.duke.edu>
 - 2.5.1
