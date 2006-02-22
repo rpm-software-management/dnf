@@ -54,6 +54,14 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
     def __init__(self):
         yum.YumBase.__init__(self)
         self.in_shell = False
+        self.yum_cli_commands = ['update', 'install','info', 'list', 'erase',
+                                'grouplist', 'groupupdate', 'groupinstall',
+                                'groupremove', 'groupinfo', 'makecache',
+                                'clean', 'remove', 'provides', 'check-update',
+                                'search', 'upgrade', 'whatprovides',
+                                'localinstall', 'localupdate',
+                                'resolvedep', 'shell', 'deplist']
+        
         
     def doRepoSetup(self, thisrepo=None, dosack=1):
         """grabs the repomd.xml for each enabled repository 
@@ -339,13 +347,7 @@ yum [options] < update | install | info | remove | list |
             for arg in self.extcmds:
                 self.log(3, '   %s' % arg)
         
-        if self.basecmd not in ['update', 'install','info', 'list', 'erase',
-                                'grouplist', 'groupupdate', 'groupinstall',
-                                'groupremove', 'groupinfo', 'makecache',
-                                'clean', 'remove', 'provides', 'check-update',
-                                'search', 'upgrade', 'whatprovides',
-                                'localinstall', 'localupdate',
-                                'resolvedep', 'shell', 'deplist']:
+        if self.basecmd not in self.yum_cli_commands:
             self.usage()
             raise CliError
     

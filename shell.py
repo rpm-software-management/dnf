@@ -33,11 +33,10 @@ class YumShell(cmd.Cmd):
         self.resultmsgs = ['Leaving Shell']
         if (len(base.extcmds)) > 0:
             self.file = base.extcmds[0]
-        self.commandlist = ['clean', 'repo', 'exit', 'groupinfo',
-            'groupinstall', 'grouplist', 'groupremove', 'groupupdate',
-            'info', 'install', 'list', 'localinstall', 'repository',
-            'makecache', 'provides', 'quit', 'remove', 'run', 'search',
-            'transaction', 'ts', 'update', 'config', 'deplist']
+        self.shell_specific_commands = ['repo', 'repository', 'exit', 'quit',
+                'run', 'ts', 'transaction', 'config']
+                
+        self.commandlist = self.shell_specific_commands + self.base.yum_cli_commands
 
 
     def _shlex_split(self, input_string):
@@ -89,7 +88,14 @@ class YumShell(cmd.Cmd):
         pass
     
     def do_help(self, arg):
-        msg = ''
+        msg = """
+    Shell specific arguments:
+      config - set config options
+      repository (or repo) - enable/disable repositories
+      transaction (or ts) - list, reset or run the transaction set
+      run - run the transaction set
+      exit or quit - exit the shell
+    """
             
         if arg in ['transaction', 'ts']:
             msg = """
