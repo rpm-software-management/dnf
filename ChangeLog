@@ -1,3 +1,20 @@
+2006-02-22 17:07  skvidal
+
+	* yum.spec, yum/__init__.py: 
+	mark as 2.5.3
+
+2006-02-22 16:56  katzj
+
+	* yum/__init__.py: make it a debug message instead
+
+2006-02-22 16:52  katzj
+
+	* yum/__init__.py: pass the right number of args for a log method
+
+2006-02-22 16:26  skvidal
+
+	* ChangeLog: update the changelog
+
 2006-02-22 16:25  skvidal
 
 	* cli.py, shell.py: 
