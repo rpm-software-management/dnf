@@ -1,3 +1,172 @@
+2006-02-22 15:33  skvidal
+
+	* yum.spec, yum/__init__.py: 
+	mark as 2.5.2
+
+2006-02-22 01:37  skvidal
+
+	* cli.py, yum/__init__.py: 
+	- remove useless log output - make 'yum search' use
+	searchGenerator()
+
+2006-02-22 01:30  skvidal
+
+	* yum/__init__.py: 
+	first stab at making the search function a generator.  In order to
+	maintain API I made a searchGenerator() method which is used by
+	searchPackages to get the same result. searchGenerator should be
+	much lighter on memory for big searches and give you more immediate
+	results.  Additionally, you don't need the search callback as
+	results are yielded immediately upon finding them.
+	
+	need to port searchPackageProvides() to use a generator as well.
+
+2006-02-11 00:21  mjs
+
+	* yum/config.py: Fix for bug #552.
+
+2006-02-10 09:01  pnasrat
+
+	* yum/comps.py: Handle conditional req types in comps
+
+2006-02-10 01:45  skvidal
+
+	* yum/config.py: 
+	fix for rh bug #179512
+	
+	make yum error out appropriately if config file does not exist
+
+2006-02-10 00:53  skvidal
+
+	* rpmUtils/transaction.py: 
+	add David Lutterkort's patch to fix returnLeafNodes to include
+	packages that are required only by themselves.
+
+2006-02-10 00:19  skvidal
+
+	* docs/yum.conf.5: added patch to conf man page to mention basic
+	auth from within the baseurl
+	
+	Thanks to  Sean Reifschneider <jafo at tummmy.com>
+
+2006-02-06 11:41  pnasrat
+
+	* yum/parser.py: Actually return default dict
+
+2006-02-05 17:03  mjs
+
+	* yum/plugins.py: Applied Paul Nasrat's patch to make plugins group
+	aware with some changes.  Since group information is only available
+	after repos have been set up, RepoSetupPluginConduit has been split
+	into PreRepoSetupPluginConduit and PostRepoSetupPluginConduit with
+	getGroups() available in the latter.
+
+2006-02-01 16:12  pnasrat
+
+	* yum/: __init__.py, transactioninfo.py: Record information about
+	removed groups
+
+2006-01-31 17:56  pnasrat
+
+	* yum/__init__.py: Add method to allow easy use of TransactionData
+	subclasses
+
+2006-01-31 17:55  pnasrat
+
+	* yum/transactioninfo.py: Add sortable transaction class
+
+2006-01-31 17:54  pnasrat
+
+	* yum/constants.py: Add constants for transaction sorting
+
+2006-01-26 22:15  skvidal
+
+	* yum/__init__.py: 
+	make repo processing less 'ugly' as described by menno
+
+2006-01-26 18:03  pnasrat
+
+	* yum/transactioninfo.py: Record installed groups in tsInfo lists
+
+2006-01-26 17:57  pnasrat
+
+	* yum/__init__.py: Fix group removal traceback
+
+2006-01-25 23:36  skvidal
+
+	* yum/__init__.py: 
+	make the repoSetup progress callback not overwrite each other.
+
+2006-01-25 23:08  mjs
+
+	* yum/config.py: - fixed bug that caused option inheritance via
+	class inheritance not to work	  (installroot and distroverpkg no
+	longer need to be defined twice) - lots of documentation - handle
+	repo sections that don't have a name set (warn and use id instead)
+	- warn when getConfigOption and setConfigOption are used
+
+2006-01-17 02:40  skvidal
+
+	* yum/__init__.py: 
+	make note about bug 550 and to make yum check if there is space
+	available in the cache dir before downloading packages.
+
+2006-01-16 15:42  slack
+
+	* yum/depsolve.py: This removes the previous support for
+	kernel-modules.  This code no longer conforms to the fedora
+	standards and kernel module code will live in a yum plugin instead.
+
+2006-01-15 18:31  skvidal
+
+	* shell.py: 
+	fix traceback when printing help
+
+2006-01-15 07:23  pnasrat
+
+	* yum/__init__.py: Fix traceback
+	https://bugzilla.redhat.com/bugzilla/show_bug.cgi?id=177737
+
+2006-01-13 01:07  skvidal
+
+	* cli.py, yum/config.py: 
+	fix up the ident
+
+2006-01-13 01:05  skvidal
+
+	* cli.py, yum/config.py: 
+	syslog logging support for the contents that go to yum.log
+
+2006-01-12 01:32  skvidal
+
+	* yum/__init__.py: 
+	- fix for rh bug 177528 - don't call the repos callback if there
+	are no repos defined.  - jeremy, look at this and see if it breaks
+	anything in pup or pirut
+
+2006-01-12 01:03  skvidal
+
+	* yum/: __init__.py, depsolve.py, sqlitesack.py: 
+	- remove some code duplication - add sqlitesack searchALL parameter
+	to do glob queries - massively speed up the searchPackageProvides()
+	method.
+
+2006-01-11 02:15  skvidal
+
+	* yum/repos.py: 
+	allow repos to be specified with commas to --enablerepo and
+	--disablerepo, partial application of tim lauridsen's patch.
+
+2006-01-11 02:14  skvidal
+
+	* yum/depsolve.py: 
+	make whatProvides a little less chatty if it doesn't need to be
+
+2006-01-08 18:58  skvidal
+
+	* ChangeLog: 
+	changelog update
+
 2006-01-08 18:57  skvidal
 
 	* yum.spec, yum/__init__.py: 
