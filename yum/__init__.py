@@ -238,7 +238,7 @@ class YumBase(depsolve.Depsolve):
                 num += 1
                 continue
             if self.repos.callback:
-                self.repos.callback.log('%-68s [%d/%d]' % 
+                self.repos.callback.log(0, '%-68s [%d/%d]' % 
                                         (repo.id, num, len(repos)))
                 
             try:
