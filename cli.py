@@ -1213,9 +1213,14 @@ For more information contact your distribution or package provider.
             args = self.extcmds
             
         searchlist = ['name', 'summary', 'description', 'packager', 'group', 'url']
-        matching = self.searchPackages(searchlist, args, callback=self.matchcallback)
-
-        if len(matching.keys()) == 0:
+        matching = self.searchGenerator(searchlist, args)
+        
+        total = 0
+        for (po, matched_value) in matching:
+            self.matchcallback(po, matched_value)
+            total += 1
+            
+        if total == 0:
             return 0, ['No Matches found']
         return 0, []
 

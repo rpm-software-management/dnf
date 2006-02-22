@@ -1098,7 +1098,6 @@ class YumBase(depsolve.Depsolve):
 
         for string in criteria:
             restring = self._refineSearchPattern(string)
-            self.log(7, '%s into %s' % (string, restring))
             try: crit_re = re.compile(restring, flags=re.I)
             except sre_constants.error, e:
                 raise Errors.MiscError, \
