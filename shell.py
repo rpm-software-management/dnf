@@ -89,7 +89,8 @@ class YumShell(cmd.Cmd):
         pass
     
     def do_help(self, arg):
-        msg = self.base.usage()
+        msg = ''
+            
         if arg in ['transaction', 'ts']:
             msg = """
     %s arg
@@ -113,6 +114,9 @@ class YumShell(cmd.Cmd):
         If no value is given it prints the current value.
         If value is given it sets that value.
         """ % arg
+        
+        else:
+            self.base.usage()
         
         self.base.log(0, msg)
         
