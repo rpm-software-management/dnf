@@ -1090,19 +1090,15 @@ class YumBase(depsolve.Depsolve):
         
         return results
     
-    def searchPackages(self, fields, criteria, callback=None):
-        """Search specified fields for matches to criteria
-           optional callback specified to print out results
-           as you go. Callback is a simple function of:
-           callback(po, matched values list). It will 
-           just return a dict of dict[po]=matched values list"""
-        
+    def searchGenerator(self, fields, criteria):
+        """Generator method to lighten memory load for some searches.
+           This is the preferred search function to use."""
         self.doRepoSetup()
-        self.doRpmDBSetup()
-        matches = {}
+
+
         for string in criteria:
             restring = self._refineSearchPattern(string)
-            
+            self.log(7, '%s into %s' % (string, restring))
             try: crit_re = re.compile(restring, flags=re.I)
             except sre_constants.error, e:
                 raise Errors.MiscError, \
@@ -1114,12 +1110,13 @@ class YumBase(depsolve.Depsolve):
                     value = po.returnSimple(field)
                     if value and crit_re.search(value):
                         tmpvalues.append(value)
+                
                 if len(tmpvalues) > 0:
-                    if callback:
-                        callback(po, tmpvalues)
-                    matches[po] = tmpvalues
+                    yield (po, tmpvalues)
         
         # do the same for installed pkgs
+        
+        self.doRpmDBSetup()        
         for hdr in self.rpmdb.getHdrList(): # this is more expensive so this is the  top op
             po = YumInstalledPackage(hdr)
             tmpvalues = []
@@ -1137,10 +1134,27 @@ class YumBase(depsolve.Depsolve):
                         value = str(value)
                     if value and crit_re.search(value):
                         tmpvalues.append(value)
+                        
             if len(tmpvalues) > 0:
-                if callback:
-                    callback(po, tmpvalues)
-                matches[po] = tmpvalues
+                yield (po, tmpvalues)        
+        
+    def searchPackages(self, fields, criteria, callback=None):
+        """Search specified fields for matches to criteria
+           optional callback specified to print out results
+           as you go. Callback is a simple function of:
+           callback(po, matched values list). It will 
+           just return a dict of dict[po]=matched values list"""
+        
+        matches = {}
+        match_gen = self.searchGenerator(fields, criteria)
+        
+        for (po, matched_strings) in match_gen:
+            if callback:
+                callback(po, matched_strings)
+            if not matches.has_key(po):
+                matches[po] = []
+            
+            matches[po].extend(matched_strings)
         
         return matches
     
