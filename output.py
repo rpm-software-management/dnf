@@ -142,6 +142,11 @@ class YumOutput:
             for item in group.optional_packages.keys():
                 print '   %s' % item
 
+        if len(group.conditional_packages.keys()) > 0:
+            print ' Conditional Packages:'
+            for item, cond in group.conditional_packages.iteritems():
+                print '   %s' % (item,)
+
     def depListOutput(self, results):
         """take a list of findDeps results and 'pretty print' the output"""
         
