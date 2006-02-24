@@ -204,24 +204,24 @@ The following are the ways which you can invoke \fByum\fP in list
 mode\&.  Note that all \fBlist\fP commands include information on the
 version of the package\&.
 .IP 
-.IP "\fByum list [all | regexp1] [regexp2] [\&.\&.\&.]\fP"
+.IP "\fByum list [all | glob_exp1] [glob_exp2] [\&.\&.\&.]\fP"
 List all available and installed packages\&.
-.IP "\fByum list available [regexp1] [\&.\&.\&.]\fP"
+.IP "\fByum list available [glob_exp1] [\&.\&.\&.]\fP"
 List all packages in the yum repositories available to be installed\&.
 .IP 
-.IP "\fByum list updates [regexp1] [\&.\&.\&.]\fP"
+.IP "\fByum list updates [glob_exp1] [\&.\&.\&.]\fP"
 List all packages with updates available in the yum repositories\&.
 .IP 
-.IP "\fByum list installed [regexp1] [\&.\&.\&.]\fP"
+.IP "\fByum list installed [glob_exp1] [\&.\&.\&.]\fP"
 List the packages specified by \fIargs\fP\&.  If an argument does not
 match the name of an available package, it is assumed to be a
 shell\-style glob and any matches are printed\&.
 .IP
-.IP "\fByum list extras [regexp1] [\&.\&.\&.]\fP"
+.IP "\fByum list extras [glob_exp1] [\&.\&.\&.]\fP"
 List the packages installed on the system that are not available in any yum
 repository listed in the config file.
 .IP
-.IP "\fByum list obsoletes [regexp1] [\&.\&.\&.]\fP"
+.IP "\fByum list obsoletes [glob_exp1] [\&.\&.\&.]\fP"
 List the packages installed on the system that are obsoleted by packages
 in any yum repository listed in the config file.
 .IP
@@ -230,8 +230,9 @@ List packages recently added into the repositories.
 .IP
 .IP "\fBSpecifying package names\fP"
 All the list options mentioned above take file-glob-syntax wildcards or package
-names as arguments, for example \fByum list available foo*\fP will list
-all available packages that match foo*.
+names as arguments, for example \fByum list available 'foo*'\fP will list
+all available packages that match 'foo*'. (The single quotes will keep your
+shell from expanding the globs.
 .IP
 .PP 
 .SH "CLEAN OPTIONS"
