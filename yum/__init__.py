@@ -1185,25 +1185,28 @@ class YumBase(depsolve.Depsolve):
                 self.doSackFilelistPopulate()
 
         for arg in args:
-            self.log(4,'refining the search expression') 
+            # assume we have to search every package, unless we can refine the search set
+            where = self.pkgSack
+            
+            # this is annoying. If the user doesn't use any glob or regex-like
+            # or regexes then we can use the where 'like' search in sqlite
+            # if they do use globs or regexes then we can't b/c the string
+            # will no longer have much meaning to use it for matches
+            
+            if hasattr(self.pkgSack, 'searchAll'):
+                if not re.match('.*[\*,\[,\],\{,\},\?,\+,\%].*', arg):
+                    self.log(4, 'Using the like search')
+                    where = self.pkgSack.searchAll(arg, query_type='like')
+            
+            self.log(4, 'Searching %d packages' % len(where))
+            self.log(4,'refining the search expression of %s' % arg) 
             restring = self._refineSearchPattern(arg)
+            self.log(4, 'refined search: %s' % restring)
             try: 
                 arg_re = re.compile(restring, flags=re.I)
             except sre_constants.error, e:
                 raise Errors.MiscError, \
                   'Search Expression: %s is an invalid Regular Expression.\n' % arg
-            
-            # assume we have to search every package, unless we can refine the search set
-            where = self.pkgSack
-            # if it is a glob and it's a sqlite sack, use the glob query_type
-            if hasattr(self.pkgSack, 'searchAll'):
-                if arg.find('*') != -1 or arg.find('?') != -1:
-                    self.log(4, 'Using the glob search')
-                    where = self.pkgSack.searchAll(arg, query_type='glob')
-                else:
-                    if arg.find('%') == -1:
-                        self.log(4, 'Using the like search')
-                        where = self.pkgSack.searchAll(arg, query_type='like')
 
             for po in where:
                 self.log(5, 'searching package %s' % po)
