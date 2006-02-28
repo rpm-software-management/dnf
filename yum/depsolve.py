@@ -191,9 +191,15 @@ class Depsolve(object):
                     for deptuple in deps:
                         ((name, version, release), (needname, needversion), flags, 
                           suggest, sense) = deptuple
-                        msg = 'Package %s needs %s, this is not available.' % \
-                              (name, rpmUtils.miscutils.formatRequire(needname, 
-                                                            needversion, flags))
+                        if sense == rpm.RPMDEP_SENSE_REQUIRES:
+                            msg = 'Package %s needs %s, this is not available.' % \
+                                  (name, rpmUtils.miscutils.formatRequire(needname, 
+                                                                          needversion, flags))
+                        elif sense == rpm.RPMDEP_SENSE_CONFLICTS:
+                            msg = 'Package %s conflicts with %s.' % \
+                                  (name, rpmUtils.miscutils.formatRequire(needname, 
+                                                                          needversion, flags))
+
                         errors.append(msg)
                     CheckDeps = 0
                     break
