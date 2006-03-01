@@ -110,6 +110,10 @@ repositories offer the package groups with the same name. If
 repository will be used. If \fBoverwrite_groups\fR is `0' then the groups
 from all matching repositories will be merged together as one large group.
 
+.IP \fBenable_group_conditionals\fR
+Either `0' or `1'. Determines whether yum will allow the use of conditionals
+packages. Default is `1' (package conditionals are allowed).
+
 .IP \fBinstallroot \fR
 Specifies an alternative installroot, relative to which all packages will be
 installed. 

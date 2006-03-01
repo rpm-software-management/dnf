@@ -508,6 +508,7 @@ class YumConf(EarlyConf):
     enabled = BoolOption(True)
     plugins = BoolOption(False)
     enablegroups = BoolOption(True)
+    enable_group_conditionals = BoolOption(True)
 
     timeout = FloatOption(30.0)
 
