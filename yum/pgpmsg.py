@@ -774,7 +774,7 @@ class pgp_certificate :
         self.version = None
         self.public_key = None
         self.revocation = None
-        self.user_id = None
+        #self.user_id = None
         self.user_ids = []
         self.rvkd_user_ids = []
 
@@ -788,6 +788,14 @@ class pgp_certificate :
             for sig in uid[1:] :
                 sio.write("   " + str(sig))
         return sio.getvalue()
+    
+    def get_user_id(self):
+        # take the LAST one in the list, not first
+        # they appear to be ordered FIFO from the key and that means if you
+        # added a key later then it won't show the one you expect
+        return self.user_ids[-1][0].id
+        
+    user_id = property(get_user_id)
     
     def expiration(self) :
         if self.version == 3 :
@@ -974,11 +982,11 @@ be scanned to make sure they are valid for a pgp certificate."""
                     raise ValueError('pgp packet %d is not user id or subkey, is %s' % (pkt_idx, map_to_str(ctb_pkt_to_str, pkts[pkt_idx].pkt_typ)))
 
         # did we get all the things we needed?
-        if not self.user_id :
-            # just take the first valid user id we encountered then
-            if len(self.user_ids) == 0 :
-                raise ValueError('no user id packet was present in the cert')
-            self.user_id = self.user_ids[0][0].id
+        #if not self.user_id :
+        # just take the first valid user id we encountered then
+        if len(self.user_ids) == 0 :
+            raise ValueError('no user id packet was present in the cert')
+
 
 
 def get_ctb(msg, idx) :
