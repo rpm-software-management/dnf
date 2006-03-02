@@ -295,7 +295,22 @@ class TransactionData:
         self.add(txmbr)
         return txmbr
 
-class SortableTransactionData(TransactionData):
+class ConditionalTransactionData(TransactionData):
+    """A transaction data implementing conditional package addition"""
+    def __init__(self):
+        # Key: package name to trigger condition
+        # Value: list of package objects to add
+        self.conditionals = {}
+        TransactionData.__init__(self)
+
+    def add(self, txmember):
+        TransactionData.add(self, txmember)
+        if self.conditionals.has_key(txmember.name):
+            for po in self.conditionals[txmember.name]:
+                condtxmbr = self.addInstall(po)
+                condtxmbr.setAsDep(po=txmember.po)
+
+class SortableTransactionData(ConditionalTransactionData):
     """A transaction data implementing topological sort on it's members"""
     def __init__(self):
         # Cache of sort
@@ -306,7 +321,7 @@ class SortableTransactionData(TransactionData):
         self.loops = []
         # Only resort if transaction data changed
         self.changed = True
-        TransactionData.__init__(self)
+        ConditionalTransactionData.__init__(self)
 
     def _visit(self, txmbr):
         self.path.append(txmbr.name)
@@ -328,11 +343,11 @@ class SortableTransactionData(TransactionData):
 
     def add(self, txmember):
         txmember.sortColour = TX_WHITE
-        TransactionData.add(self, txmember)
+        ConditionalTransactionData.add(self, txmember)
         self.changed = True
 
     def remove(self, pkgtup):
-        TransactionData.remove(self, pkgtup)
+        ConditionalTransactionData.remove(self, pkgtup)
         self.changed = True
 
     def sort(self):

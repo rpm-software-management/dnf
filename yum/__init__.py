@@ -70,6 +70,8 @@ class YumBase(depsolve.Depsolve):
 
     def _transactionDataFactory(self):
         """Factory method returning TransactionData object"""
+        if self.conf.enable_group_conditionals:
+            return transactioninfo.ConditionalTransactionData()
         return transactioninfo.TransactionData()
 
     def log(self, value, msg):
@@ -1376,6 +1378,22 @@ class YumBase(depsolve.Depsolve):
                 for txmbr in txmbrs:
                     txmbr.groups.append(thisgroup.groupid)
         
+        if self.conf.enable_group_conditionals:
+            for condreq, cond in thisgroup.conditional_packages.iteritems():
+                if self.rpmdb.installed(name = cond):
+                    txmbrs = self.install(name = condreq)
+                    txmbrs_used.extend(txmbrs)
+                    for txmbr in txmbrs:
+                        txmbr.groups.append(thisgroup.groupid)
+                    continue
+                pkgs = self.pkgSack.searchNevra(name=condreq)
+                if pkgs:
+                    pkgs = self.bestPackagesFromList(pkgs)
+                if self.tsInfo.conditionals.has_key(cond):
+                    self.tsInfo.conditionals[cond].extend(pkgs)
+                else:
+                    self.tsInfo.conditionals[cond] = pkgs
+
         return txmbrs_used
 
     def deselectGroup(self, grpid):
