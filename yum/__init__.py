@@ -1380,12 +1380,13 @@ class YumBase(depsolve.Depsolve):
         
         if self.conf.enable_group_conditionals:
             for condreq, cond in thisgroup.conditional_packages.iteritems():
-                if self.rpmdb.installed(name = cond):
+                if self._isPackageInstalled(cond):
                     txmbrs = self.install(name = condreq)
                     txmbrs_used.extend(txmbrs)
                     for txmbr in txmbrs:
                         txmbr.groups.append(thisgroup.groupid)
                     continue
+                # Otherwise we hook into tsInfo.add
                 pkgs = self.pkgSack.searchNevra(name=condreq)
                 if pkgs:
                     pkgs = self.bestPackagesFromList(pkgs)
@@ -1890,3 +1891,19 @@ class YumBase(depsolve.Depsolve):
         
         return returndict
 
+    def _isPackageInstalled(self, pkgname):
+        # FIXME: Taken from anaconda/pirut 
+        # clean up and make public
+        installed = False
+        if self.rpmdb.installed(name = pkgname):
+            installed = True
+
+        lst = self.tsInfo.matchNaevr(name = pkgname)
+        for txmbr in lst:
+            if txmbr.output_state in TS_INSTALL_STATES:
+                return True
+        if installed and len(lst) > 0:
+            # if we get here, then it was installed, but it's in the tsInfo
+            # for an erase or obsoleted --> not going to be installed at end
+            return False
+        return installed
