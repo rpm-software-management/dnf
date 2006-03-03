@@ -1660,14 +1660,21 @@ class YumBase(depsolve.Depsolve):
             if not kwargs.keys():
                 raise Errors.InstallError, 'Nothing specified to install'
 
-            nevra_dict = self._nevra_kwarg_parse(kwargs)
+            if kwargs.has_key('pattern'):
+                exactmatch, matched, unmatched = \
+                    parsePackages(self.pkgSack.returnPackages(),[kwargs['pattern']] , casematch=1)
+                pkgs.extend(exactmatch)
+                pkgs.extend(matched)
 
-            pkgs = self.pkgSack.searchNevra(name=nevra_dict['name'],
-                 epoch=nevra_dict['epoch'], arch=nevra_dict['arch'],
-                 ver=nevra_dict['version'], rel=nevra_dict['release'])
-            
-            if pkgs:
-                pkgs = self.bestPackagesFromList(pkgs)
+            else:
+                nevra_dict = self._nevra_kwarg_parse(kwargs)
+
+                pkgs = self.pkgSack.searchNevra(name=nevra_dict['name'],
+                     epoch=nevra_dict['epoch'], arch=nevra_dict['arch'],
+                     ver=nevra_dict['version'], rel=nevra_dict['release'])
+                
+                if pkgs:
+                    pkgs = self.bestPackagesFromList(pkgs)
 
         if len(pkgs) == 0:
             #FIXME - this is where we could check to see if it already installed
