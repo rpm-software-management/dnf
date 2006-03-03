@@ -31,6 +31,7 @@ class TransactionData:
         self.root = '/'
         self.pkgdict = {} # key = pkgtup, val = list of TransactionMember obj
         self.debug = 0
+        self.changed = False
 
     def __len__(self):
         return len(self.pkgdict.values())
@@ -44,8 +45,8 @@ class TransactionData:
     def debugprint(self, msg):
         if self.debug:
             print msg
-    
-   
+
+
     def getMembers(self, pkgtup=None):
         """takes an optional package tuple and returns all transaction members 
            matching, no pkgtup means it returns all transaction members"""
@@ -124,6 +125,7 @@ class TransactionData:
                     self.debugprint("Package in same mode, skipping.")
                     return
         self.pkgdict[txmember.pkgtup].append(txmember)
+        self.changed = True
 
     def remove(self, pkgtup):
         """remove a package from the transaction"""
@@ -134,6 +136,7 @@ class TransactionData:
             txmbr.po.state = None
         
         del self.pkgdict[pkgtup]
+        self.changed = True        
     
     def exists(self, pkgtup):
         """tells if the pkg is in the class"""
@@ -319,8 +322,6 @@ class SortableTransactionData(ConditionalTransactionData):
         self.path = []
         # List of loops
         self.loops = []
-        # Only resort if transaction data changed
-        self.changed = True
         ConditionalTransactionData.__init__(self)
 
     def _visit(self, txmbr):
@@ -344,11 +345,6 @@ class SortableTransactionData(ConditionalTransactionData):
     def add(self, txmember):
         txmember.sortColour = TX_WHITE
         ConditionalTransactionData.add(self, txmember)
-        self.changed = True
-
-    def remove(self, pkgtup):
-        ConditionalTransactionData.remove(self, pkgtup)
-        self.changed = True
 
     def sort(self):
         if self._sorted and not self.changed:
