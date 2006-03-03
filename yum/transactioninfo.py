@@ -345,12 +345,16 @@ class SortableTransactionData(ConditionalTransactionData):
     def add(self, txmember):
         txmember.sortColour = TX_WHITE
         ConditionalTransactionData.add(self, txmember)
+        self._sorted = []
+
+    def remove(self, pkgtup):
+        ConditionalTransactionData.remove(self, pkgtup)
+        self._sorted = []
 
     def sort(self):
-        if self._sorted and not self.changed:
+        if self._sorted:
             return self._sorted
         self._sorted = []
-        self.changed = False
         # loop over all members
         for txmbr in self.getMembers():
             if txmbr.sortColour == TX_WHITE:
