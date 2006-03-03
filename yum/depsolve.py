@@ -180,6 +180,7 @@ class Depsolve(object):
 
             
             if not deps:
+                self.tsInfo.changed = False
                 return (2, ['Success - deps resolved'])
 
             deps = unique(deps) # get rid of duplicate deps            
@@ -250,8 +251,8 @@ class Depsolve(object):
                 self.log(4, 'Dependency Process ending')
 
             del deps
-            
 
+        self.tsInfo.changed = False
         if len(errors) > 0:
             return (1, errors)
         if len(self.tsInfo) > 0:

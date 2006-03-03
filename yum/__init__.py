@@ -400,6 +400,10 @@ class YumBase(depsolve.Depsolve):
         self.plugins.run('preresolve')
         (rescode, restring) = self.resolveDeps()
         self.plugins.run('postresolve', rescode=rescode, restring=restring)
+
+        if self.tsInfo.changed:
+            (rescode, restring) = self.resolveDeps()
+            
         return rescode, restring
 
     def runTransaction(self, cb):
