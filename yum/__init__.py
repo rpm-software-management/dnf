@@ -419,6 +419,10 @@ class YumBase(depsolve.Depsolve):
             
             raise Errors.YumBaseError, errstring
 
+        if not self.conf.keepcache:
+            self.cleanHeaders()
+            self.cleanPackages()
+
         self.plugins.run('posttrans')
         
     def excludePackages(self, repo=None):

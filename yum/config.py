@@ -461,7 +461,7 @@ class EarlyConf(BaseConfig):
 
 class YumConf(EarlyConf):
     '''
-    Configuration option definitions for yum.conf's [main] section.
+    Configuration option definitions for yum.conf\'s [main] section.
 
     Note: inherits options from EarlyConf too.
     '''
@@ -472,6 +472,7 @@ class YumConf(EarlyConf):
     recent = IntOption(7)
 
     cachedir = Option('/var/cache/yum')
+    keepcache = BoolOption(True)
     logfile = Option('/var/log/yum.log')
     reposdir = ListOption(['/etc/yum/repos.d', '/etc/yum.repos.d'])
     syslog_ident = Option()

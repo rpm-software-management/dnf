@@ -26,6 +26,12 @@ following options:
 Directory where yum should store its cache and db files. The default is
 `/var/cache/yum'.
 
+.IP \fBkeepcache\fR
+Either `1' or `0'. Determines whether or not yum keeps the cache
+of headers and packages after succesful installation.  Default is '1'
+(keep files)
+.br
+
 .IP \fBreposdir\fR
 A list of directories where yum should look for .repo files which define
 repositories to use. Default is `/etc/yum.repos.d, /etc/yum/repos.d'. Each
