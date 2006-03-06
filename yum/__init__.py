@@ -413,11 +413,7 @@ class YumBase(depsolve.Depsolve):
 
         errors = self.ts.run(cb.callback, '')
         if errors:
-            errstring = 'Error in Transaction: '
-            for descr in errors:
-                errstring += '  %s\n' % str(descr)
-            
-            raise Errors.YumBaseError, errstring
+            raise Errors.YumBaseError, errors
 
         if not self.conf.keepcache:
             self.cleanHeaders()
