@@ -1,6 +1,6 @@
 Summary: RPM installer/updater
 Name: yum
-Version: 2.5.3
+Version: 2.6.0
 Release: 1
 License: GPL
 Group: System Environment/Base
@@ -12,7 +12,7 @@ BuildRoot: %{_tmppath}/%{name}-%{version}root
 BuildArchitectures: noarch
 BuildRequires: python
 BuildRequires: gettext
-Requires: python, rpm-python, rpm >= 0:4.1.1
+Requires: python >= 2.3 , rpm-python, rpm >= 0:4.1.1
 Requires: python-sqlite
 Requires: urlgrabber
 Requires: python-elementtree
@@ -78,6 +78,9 @@ exit 0
 %{_mandir}/man*/*
 
 %changelog
+* Mon Mar  6 2006 Seth Vidal <skvidal at linux.duke.edu>
+- 2.6.0
+
 * Wed Feb 22 2006 Seth Vidal <skvidal@phy.duke.edu>
 - 2.5.3
 
