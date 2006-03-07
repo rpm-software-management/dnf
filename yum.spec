@@ -12,7 +12,7 @@ BuildRoot: %{_tmppath}/%{name}-%{version}root
 BuildArchitectures: noarch
 BuildRequires: python
 BuildRequires: gettext
-Requires: python >= 2.3 , rpm-python, rpm >= 0:4.1.1
+Requires: python, rpm-python, rpm >= 0:4.1.1
 Requires: python-sqlite
 Requires: urlgrabber
 Requires: python-elementtree
