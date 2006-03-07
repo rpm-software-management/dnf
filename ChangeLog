@@ -1,3 +1,93 @@
+2006-03-06 23:38  skvidal
+
+	* yum.spec: 
+	remove silly versioned req
+
+2006-03-06 23:38  skvidal
+
+	* yum.spec, yum/__init__.py: 
+	2.6.0 in spec and init scripts
+
+2006-03-06 17:28  pnasrat
+
+	* yum/__init__.py: Return error list
+
+2006-03-04 11:09  katzj
+
+	* docs/yum.conf.5, etc/yum.conf, yum/__init__.py, yum/config.py:
+	new option 'keepcache' to allow the cache of packages and headers
+	to be automatically purged after successful package installation. 
+	the default behavior remains to keep things (as previously)
+
+2006-03-03 16:59  katzj
+
+	* yum/transactioninfo.py: we also need to invalidate the sort on
+	txmbr add/remove and then _sorted can be used as the overall key of
+	if we need to do the sort
+
+2006-03-03 16:33  pnasrat
+
+	* yum/__init__.py: Add install(pattern=) support
+
+2006-03-02 22:48  katzj
+
+	* yum/: __init__.py, depsolve.py: handle deps changing as a result
+	of a plugin run and re-run depsolve
+
+2006-03-02 22:47  katzj
+
+	* yum/transactioninfo.py: move changed info into main
+	TransactionData class
+
+2006-03-02 16:34  pnasrat
+
+	* yum/__init__.py: Cover case if package selected, then group
+
+2006-03-02 16:20  skvidal
+
+	* yum/pgpmsg.py: 
+	reverse the sort order of the displayed user id from gpg keys. 
+	This is more likely to get us the most recent and hopefully most
+	correct user id.
+
+2006-03-02 10:11  pnasrat
+
+	* yum/: __init__.py, transactioninfo.py: Add conditional group
+	support
+
+2006-03-01 14:23  pnasrat
+
+	* docs/yum.conf.5, yum/config.py: Add option for conditional groups
+
+2006-02-28 01:53  skvidal
+
+	* yum/: __init__.py, sqlitesack.py: 
+	fix for yum provides foocommand not working
+	
+	this, ultimately, means that yum provides *foocommand* will be VERY
+	SLOW for dumb reasons.
+	
+	there needs to be a better solution than this but at least this
+	solution is functionally correct, albeit slow
+
+2006-02-27 19:29  katzj
+
+	* yum/depsolve.py: fix error message for conflicts (rh#168687)
+
+2006-02-24 11:41  skvidal
+
+	* docs/yum.8: 
+	a few doc clarifications for bugs 562 and 563
+
+2006-02-23 11:11  pnasrat
+
+	* output.py: List conditionals in cli/shell
+
+2006-02-22 17:14  skvidal
+
+	* ChangeLog: 
+	update changelog for 2.5.3 *sigh*
+
 2006-02-22 17:07  skvidal
 
 	* yum.spec, yum/__init__.py: 
