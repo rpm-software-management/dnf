@@ -16,6 +16,7 @@
 import os
 import glob
 import imp
+import warnings
 import atexit
 from constants import *
 import ConfigParser
@@ -59,14 +60,6 @@ import Errors
 
 # TODO: More developer docs:  use epydoc as API begins to stablise
 
-# TODO: test the API by implementing some crack from bugzilla
-#         - http://devel.linux.duke.edu/bugzilla/show_bug.cgi?id=181 
-#         - http://devel.linux.duke.edu/bugzilla/show_bug.cgi?id=270
-#         - http://devel.linux.duke.edu/bugzilla/show_bug.cgi?id=310
-#         - http://devel.linux.duke.edu/bugzilla/show_bug.cgi?id=431
-#         - http://devel.linux.duke.edu/bugzilla/show_bug.cgi?id=88 (?)
-#         - http://devel.linux.duke.edu/bugzilla/show_bug.cgi?id=396 (DONE)
-
 
 # The API_VERSION constant defines the current plugin API version. It is used
 # to decided whether or not plugins can be loaded. It is compared against the
@@ -82,12 +75,18 @@ import Errors
 # API, the major version number must be incremented and the minor version number
 # reset to 0. If a change is made that doesn't break backwards compatibility,
 # then the minor number must be incremented.
-API_VERSION = '2.2'
+API_VERSION = '2.3'
+
+class DeprecatedInt(int):
+    '''
+    A simple int subclass that used to check when a deprecated constant is used.
+    '''
 
 # Plugin types
 TYPE_CORE = 0
-TYPE_INTERFACE = 1
-ALL_TYPES = (TYPE_CORE, TYPE_INTERFACE)
+TYPE_INTERACTIVE = 1
+TYPE_INTERFACE = DeprecatedInt(1)
+ALL_TYPES = (TYPE_CORE, TYPE_INTERACTIVE)
 
 # Mapping of slots to conduit classes
 SLOT_TO_CONDUIT = {
@@ -135,6 +134,10 @@ class YumPlugins:
         self.cmdline = (None, None)
         if not types:
             types = ALL_TYPES
+
+        if id(TYPE_INTERFACE) in [id(t) for t in types]:
+            self.base.log(2, 'Deprecated constant TYPE_INTERFACE during plugin '
+                    'initialization.\nPlease use TYPE_INTERACTIVE instead.')
 
         self._importplugins(types)
 
@@ -217,6 +220,11 @@ class YumPlugins:
         if len(plugintypes) < 1:
             return
         for plugintype in plugintypes:
+            if id(plugintype) == id(TYPE_INTERFACE):
+                self.base.log(2, 'Plugin "%s" uses deprecated constant '
+                        'TYPE_INTERFACE.\nPlease use TYPE_INTERACTIVE '
+                        'instead.' % modname)
+
             if plugintype not in types:
                 return
 
@@ -510,6 +518,7 @@ class DepsolvePluginConduit(MainPluginConduit):
         MainPluginConduit.__init__(self, parent, base, conf)
         self.resultcode = rescode
         self.resultstring = restring
+
 
 def parsever(apiver):
     maj, min = apiver.split('.')
