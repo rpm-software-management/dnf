@@ -235,10 +235,12 @@ class YumShell(cmd.Cmd):
         if cmd in ['list', None]:
             if self.base.repos.repos.values():
                 self.base.log(2, '%-20.20s %-40.40s  status' % ('repo id', 'repo name'))
-            for repo in self.base.repos.repos.values():
-                if repo in self.base.repos.listEnabled():
+            repos = self.base.repos.repos.values()
+            repos.sort()
+            for repo in repos:
+                if repo in self.base.repos.listEnabled() and args in ('', 'enabled'):
                     self.base.log(2, '%-20.20s %-40.40s  enabled' % (repo, repo.name))
-                else:
+                elif args in ('', 'disabled'):
                     self.base.log(2, '%-20.20s %-40.40s  disabled' % (repo, repo.name))
         
         elif cmd == 'enable':
