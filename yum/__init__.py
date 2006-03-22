@@ -1385,7 +1385,11 @@ class YumBase(depsolve.Depsolve):
         if self.conf.enable_group_conditionals:
             for condreq, cond in thisgroup.conditional_packages.iteritems():
                 if self._isPackageInstalled(cond):
-                    txmbrs = self.install(name = condreq)
+                    try:
+                        txmbrs = self.install(name = condreq)
+                    except Errors.InstallError:
+                        # we don't care if the package doesn't exist
+                        continue
                     txmbrs_used.extend(txmbrs)
                     for txmbr in txmbrs:
                         txmbr.groups.append(thisgroup.groupid)
