@@ -32,11 +32,11 @@ class OptionData(object):
     '''
     Simple class to track state for a single option instance.
     '''
-    def __init__(self, parser, section, name):
-        self.parser = parser
-        self.section = section
+    def __init__(self, name, initial_value):
         self.name = name
-        self.value = None
+        self.value = initial_value
+        self.parser = None
+        self.section = None
 
 class Option(object):
     '''
@@ -69,10 +69,10 @@ class Option(object):
         if obj is None:
             return self
         optdata = getattr(obj, self._attrname, None)
-        if optdata != None and optdata.value != None:
-            return optdata.value
+        if optdata == None:
+            return None
         else:
-            return self.default
+            return optdata.value
 
     def __set__(self, obj, value):
         '''Called when the option is set (via the descriptor protocol). 
@@ -82,32 +82,43 @@ class Option(object):
         @return: Nothing.
         '''
         optdata = getattr(obj, self._attrname)
-
+       
         # Only try to parse if its a string
         if isinstance(value, basestring):
             try:
                 value = self.parse(value)
             except ValueError, e:
                 # Add the field name onto the error
-                raise ValueError('Error parsing %r: %s' % (optdata.name, str(e)))
-    
+                raise ValueError('Error parsing %r: %s' % (optdata.name,
+                    str(e)))
+
         optdata.value = value
 
-        # Write string value back to parser instance
-        strvalue = self.tostring(value)
-        optdata.parser.set(optdata.section, optdata.name, strvalue)
+        # Write string value back to parser instance if possible
+        if optdata.parser != None:
+            strvalue = self.tostring(value)
+            optdata.parser.set(optdata.section, optdata.name, strvalue)
 
-    def setup(self, obj, parser, section, name):
+    def setup(self, obj, name):
         '''Initialise the option for a config instance. 
         This must be called before the option can be set or retrieved. 
 
         @param obj: BaseConfig (or subclass) instance.
+        @param name: Name of the option.
+        '''
+        setattr(obj, self._attrname, OptionData(name, self.default))
+
+    def setparser(self, obj, parser, section):
+        '''Set the configuration parser for this option. This is required so
+        that options can be written back to a configuration file.
+
+        @param obj: BaseConfig (or subclass) instance.
         @param parser: ConfigParser (or subclass) where the option is read from.
         @param section: config file section where the option is from.
-        @param name: Name of the option.
-        @return: None
         '''
-        setattr(obj, self._attrname, OptionData(parser, section, name))
+        optdata = getattr(obj, self._attrname)
+        optdata.parser = parser
+        optdata.section = section
 
     def clone(self):
         '''Return a safe copy of this Option instance
@@ -359,6 +370,10 @@ class BaseConfig(object):
     def __init__(self):
         self._section = None
 
+        for name in self.iterkeys():
+            option = self.optionobj(name)
+            option.setup(self, name)
+
     def __str__(self):
         out = []
         out.append('[%s]' % self._section)
@@ -387,7 +402,7 @@ class BaseConfig(object):
                 if parent and option.inherit:
                     value = getattr(parent, name)
                
-            option.setup(self, parser, section, name)
+            option.setparser(self, parser, section)
             if value is not None:
                 setattr(self, name, value)
 
