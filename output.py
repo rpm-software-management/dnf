@@ -65,6 +65,8 @@ class YumOutput:
     def infoOutput(self, pkg):
         print _("Name   : %s") % pkg.name
         print _("Arch   : %s") % pkg.arch
+        if pkg.epoch != "0":
+            print _("Epoch  : %s") % pkg.epoch
         print _("Version: %s") % pkg.version
         print _("Release: %s") % pkg.release
         print _("Size   : %s") % self.format_number(float(pkg.size()))
