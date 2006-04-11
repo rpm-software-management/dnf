@@ -111,23 +111,26 @@ class YumAvailablePackage(repomd.packageObject.PackageObject, repomd.packageObje
     """derived class for the repomd packageobject and RpmBase packageobject yum
        uses this for dealing with packages in a repository"""
 
-    def __init__(self, pkgdict, repoid):
+    def __init__(self, repoid, pkgdict = None):
         repomd.packageObject.PackageObject.__init__(self)
         repomd.packageObject.RpmBase.__init__(self)
         
-        self.importFromDict(pkgdict, repoid)
-        # quick, common definitions
-        self.name = self.returnSimple('name')
-        self.epoch = self.returnSimple('epoch')
-        self.version = self.returnSimple('version')
-        self.release = self.returnSimple('release')
-        self.ver = self.returnSimple('version')
-        self.rel = self.returnSimple('release')
-        self.arch = self.returnSimple('arch')
-        self.repoid = self.returnSimple('repoid')
-        self.pkgtup = self._pkgtup()
+        self.simple['repoid'] = repoid
+        self.repoid = repoid
         self.state = None
         
+        if pkgdict != None:
+            self.importFromDict(pkgdict)
+            # quick, common definitions
+            self.name = self.returnSimple('name')
+            self.epoch = self.returnSimple('epoch')
+            self.version = self.returnSimple('version')
+            self.release = self.returnSimple('release')
+            self.ver = self.returnSimple('version')
+            self.rel = self.returnSimple('release')
+            self.arch = self.returnSimple('arch')
+            self.pkgtup = self._pkgtup()
+         
     def size(self):
         return self.returnSimple('packagesize')
 
@@ -223,11 +226,10 @@ class YumAvailablePackage(repomd.packageObject.PackageObject, repomd.packageObje
         
         return reqlist
         
-    def importFromDict(self, pkgdict, repoid):
+    def importFromDict(self, pkgdict):
         """handles an mdCache package dictionary item to populate out 
            the package information"""
         
-        self.simple['repoid'] = repoid
         # translates from the pkgdict, populating out the information for the
         # packageObject
         
@@ -311,10 +313,13 @@ class YumAvailablePackage(repomd.packageObject.PackageObject, repomd.packageObje
             
 
 
-class YumInstalledPackage(YumAvailablePackage):
-    """super class for dealing with packages in the rpmdb"""
-    def __init__(self, hdr):
+class YumHeaderPackage(YumAvailablePackage):
+    """Package object built from an rpm header"""
+    def __init__(self, hdr, repoid):
         """hand in an rpm header, we'll assume it's installed and query from there"""
+       
+        YumAvailablePackage.__init__(self, repoid)
+
         self.hdr = hdr
         self.name = self.tagByName('name')
         self.arch = self.tagByName('arch')
@@ -324,11 +329,9 @@ class YumInstalledPackage(YumAvailablePackage):
         self.ver = self.tagByName('version')
         self.rel = self.tagByName('release')
         self.pkgtup = self._pkgtup()
-        self.repoid = 'installed'
         self.summary = self.tagByName('summary')
         self.description = self.tagByName('description')
         self.pkgid = self.tagByName(rpm.RPMTAG_SHA1HEADER)
-        self.state = None
         
     def __str__(self):
         if self.epoch == '0':
@@ -407,9 +410,14 @@ class YumInstalledPackage(YumAvailablePackage):
     def compactPrint(self):
         ver = self.printVer()
         return "%s.%s %s" % (self.name, self.arch, ver)
-    
 
-class YumLocalPackage(YumInstalledPackage):
+
+class YumInstalledPackage(YumHeaderPackage):
+    """super class for dealing with packages in the rpmdb"""
+    def __init__(self, hdr):
+        YumHeaderPackage.__init__(self, hdr, "installed")
+
+class YumLocalPackage(YumHeaderPackage):
     """Class to handle an arbitrary package from a file path
        this inherits most things from YumInstalledPackage because
        installed packages and an arbitrary package on disk act very
@@ -426,27 +434,15 @@ class YumLocalPackage(YumInstalledPackage):
                  
         self.pkgtype = 'local'
         self.localpath = filename
-        self.repoid = filename
+        
         try:
-            self.hdr = rpmUtils.miscutils.hdrFromPackage(ts, self.localpath)
+            hdr = rpmUtils.miscutils.hdrFromPackage(ts, self.localpath)
         except rpmUtils.RpmUtilsError, e:
             raise Errors.MiscError, \
                 'Could not open local rpm file: %s' % self.localpath
-        self.name = self.tagByName('name')
-        self.arch = self.tagByName('arch')
-        self.epoch = self.doepoch()
-        self.version = self.tagByName('version')
-        self.release = self.tagByName('release')
-        self.ver = self.tagByName('version')
-        self.rel = self.tagByName('release')
-        self.summary = self.tagByName('summary')
-        self.description = self.tagByName('description')
-        self.pkgtup = self._pkgtup()
-        self.state = None
-    
-    def _pkgtup(self):
-        return (self.name, self.arch, self.epoch, self.version, self.release)
-    
+       
+        YumHeaderPackage.__init__(self, hdr, filename)
+        
     def localPkg(self):
         return self.localpath
     
