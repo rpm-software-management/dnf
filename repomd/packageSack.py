@@ -18,7 +18,236 @@ import libxml2
 from mdErrors import PackageSackError
 import mdUtils
 
-class PackageSack:
+class PackageSackBase:
+    """Base class that provides the interface for PackageSacks."""
+    def __init__(self):
+        self.added = {}
+
+    def __len__(self):
+        return len(self.simplePkgList())
+        
+    def __iter__(self):
+        if hasattr(self.returnPackages(), '__iter__'):
+            return self.returnPackages().__iter__()
+        else:
+            return iter(self.returnPackages())
+
+    def setCompatArchs(self, compatArchs):
+        raise NotImplementedError()
+
+    def populate(self, repo, with, callback, cacheOnly):
+        raise NotImplementedError()
+        
+    def packagesByTuple(self, pkgtup):
+        """return a list of package objects by (n,a,e,v,r) tuple"""
+        raise NotImplementedError()
+        
+    def searchNevra(self, name=None, epoch=None, ver=None, rel=None, arch=None):
+        """return list of pkgobjects matching the nevra requested"""
+        raise NotImplementedError()
+           
+    def searchRequires(self, name):
+        """return list of package requiring the name (any evr and flag)"""
+        raise NotImplementedError()
+
+    def searchProvides(self, name):
+        """return list of package providing the name (any evr and flag)"""
+        raise NotImplementedError()
+
+    def searchConflicts(self, name):
+        """return list of package conflicting with the name (any evr and flag)"""
+        raise NotImplementedError()
+
+    def searchObsoletes(self, name):
+        """return list of package obsoleting the name (any evr and flag)"""
+        raise NotImplementedError()
+
+    def returnObsoletes(self):
+        """returns a dict of obsoletes dict[obsoleting pkgtuple] = [list of obs]"""
+        raise NotImplementedError()
+
+    def searchFiles(self, file):
+        """return list of packages by filename"""
+        raise NotImplementedError()
+
+    def addPackage(self, obj):
+        """add a pkgobject to the packageSack"""
+        raise NotImplementedError()
+
+    def buildIndexes(self):
+        """builds the useful indexes for searching/querying the packageSack
+           This should be called after all the necessary packages have been
+           added/deleted"""
+        raise NotImplementedError()
+
+    def delPackage(self, obj):
+        """delete a pkgobject"""
+        raise NotImplementedError()
+
+    def returnPackages(self):
+        """return list of all packages"""
+        raise NotImplementedError()
+
+    def returnNewestByNameArch(self, naTup=None):
+        """return list of newest packages based on name, arch matching
+           this means(in name.arch form): foo.i386 and foo.noarch are not
+           compared to each other for highest version only foo.i386 and
+           foo.i386 will be compared"""
+        raise NotImplementedError()
+
+    def returnNewestByName(self, name=None):
+        """return list of newest packages based on name matching
+           this means(in name.arch form): foo.i386 and foo.noarch will
+           be compared to each other for highest version"""
+        raise NotImplementedError()
+
+    def simplePkgList(self):
+        """returns a list of pkg tuples (n, a, e, v, r)"""
+        raise NotImplementedError()
+
+    def printPackages(self):
+        raise NotImplementedError()
+
+    def excludeArchs(self, archlist):
+        """exclude incompatible arches. archlist is a list of compatible arches"""
+        raise NotImplementedError()
+
+    def searchPackages(self, fields, criteria_re, callback):
+        raise NotImplementedError()
+
+
+class MetaSack(PackageSackBase):
+    """Represents the aggregate of multiple package sacks, such that they can
+       all be treated as one unified sack."""
+
+    def __init__(self):
+        PackageSackBase.__init__(self)
+        self.sacks = {}
+        self.compatarchs = None
+
+    def addSack(self, repoid, sack):
+        """Adds a repository's packageSack to this MetaSack."""
+        self.sacks[repoid] = sack
+
+        # Make sure the new sack follows the same rules we have been given.
+        sack.setCompatArchs(self.compatarchs)
+
+    def populate(self, repo, with, callback, cacheOnly):
+        self.sacks[repo.id].populate(repo, with, callback, cacheOnly)
+
+    def setCompatArchs(self, compatArchs):
+        for sack in self.sacks.values():
+            sack.setCompatArchs(compatArchs)
+
+    def packagesByTuple(self, pkgtup):
+        """return a list of package objects by (n,a,e,v,r) tuple"""
+        return self._computeAggregateListResult("packagesByTuple", pkgtup)
+
+    def searchNevra(self, name=None, epoch=None, ver=None, rel=None, arch=None):
+        """return list of pkgobjects matching the nevra requested"""
+        return self._computeAggregateListResult("searchNevra", name, epoch, ver, rel, arch)
+
+    def searchRequires(self, name):
+        """return list of package requiring the name (any evr and flag)"""
+        return self._computeAggregateListResult("searchRequires", name)
+
+    def searchProvides(self, name):
+        """return list of package providing the name (any evr and flag)"""
+        return self._computeAggregateListResult("searchProvides", name)
+
+    def searchConflicts(self, name):
+        """return list of package conflicting with the name (any evr and flag)"""
+        return self._computeAggregateListResult("searchConflicts", name)
+
+    def searchObsoletes(self, name):
+        """return list of package obsoleting the name (any evr and flag)"""
+        return self._computeAggregateListResult("searchObsoletes", name)
+
+    def returnObsoletes(self):
+        """returns a dict of obsoletes dict[obsoleting pkgtuple] = [list of obs]"""
+        return self._computeAggregateDictResult("returnObsoletes")
+
+    def searchFiles(self, file):
+        """return list of packages by filename"""
+        return self._computeAggregateListResult("searchFiles", file)
+
+    def addPackage(self, obj):
+        """Add a pkgobject to the packageSack.  This is a meaningless operation
+           for the MetaSack."""
+        pass
+
+    def buildIndexes(self):
+        """builds the useful indexes for searching/querying the packageSack
+           This should be called after all the necessary packages have been
+           added/deleted"""
+        for sack in self.sacks.values():
+            sack.buildIndexes()
+
+    def delPackage(self, obj):
+        """Delete a pkgobject.  This is a meaningless operation for MetaSack."""
+        pass
+
+    def returnPackages(self, repoid=None):
+        """return list of all packages, takes optional repoid"""
+        if not repoid:
+            return self._computeAggregateListResult("returnPackages")
+        return self.sacks[repoid].returnPackages()
+
+    def returnNewestByNameArch(self, naTup=None):
+        """return list of newest packages based on name, arch matching
+           this means(in name.arch form): foo.i386 and foo.noarch are not
+           compared to each other for highest version only foo.i386 and
+           foo.i386 will be compared"""
+        return self._computeAggregateListResult("returnNewestByNameArch", naTup)
+
+    def returnNewestByName(self, name=None):
+        """return list of newest packages based on name matching
+           this means(in name.arch form): foo.i386 and foo.noarch will
+           be compared to each other for highest version"""
+        return self._computeAggregateListResult("returnNewestByName", name)
+
+    def simplePkgList(self, repoid=None):
+        """returns a list of pkg tuples (n, a, e, v, r) optionally from a
+           single repoid"""
+        if not repoid:
+            return self._computeAggregateListResult("simplePkgList")
+        return self.sacks[repoid].simplePkgList()
+
+    def printPackages(self):
+        for sack in self.sacks.values():
+            sack.printPackages()
+
+    def excludeArchs(self, archlist):
+        """exclude incompatible arches. archlist is a list of compatible arches"""
+        for sack in self.sacks.values():
+            sack.excludeArchs(archlist)
+
+    def searchPackages(self, fields, criteria_re, callback):
+        return self._computeAggregateDictResult("searchPackages", fields, criteria_re, callback)
+
+    def _computeAggregateListResult(self, methodName, *args):
+        result = []
+        for sack in self.sacks.values():
+            if hasattr(sack, methodName):
+                method = getattr(sack, methodName)
+                sackResult = apply(method, args)
+                if sackResult:
+                    result.extend(sackResult)
+        return result
+
+    def _computeAggregateDictResult(self, methodName, *args):
+        result = {}
+        for sack in self.sacks.values():
+            if hasattr(sack, methodName):
+                method = getattr(sack, methodName)
+                sackResult = apply(method, args)
+                if sackResult:
+                    result.update(sackResult)
+        return result
+
+
+
+class PackageSack(PackageSackBase):
     """represents sets (sacks) of Package Objects"""
     def __init__(self):
         self.nevra = {} #nevra[(Name, Epoch, Version, Release, Arch)] = []
@@ -55,6 +284,9 @@ class PackageSack:
             elif failure == 'build':
                 self.buildIndexes()
 
+    def setCompatArchs(self, compatarchs):
+        self.compatarchs = compatarchs
+
     def packagesByTuple(self, pkgtup):
         """return a list of package objects by (n,a,e,v,r) tuple"""
         (n,a,e,v,r) = pkgtup
@@ -68,15 +300,6 @@ class PackageSack:
         else:
             return []
            
-        
-    def searchID(self, pkgid):
-        """return list of packages based on pkgid"""
-        self._checkIndexes(failure='build')        
-        if self.pkgsByID.has_key(pkgid):
-            return self.pkgsByID[pkgid]
-        else:
-            return []
-            
     def searchRequires(self, name):
         """return list of package requiring the name (any evr and flag)"""
         self._checkIndexes(failure='build')        
@@ -308,6 +531,21 @@ class PackageSack:
             if pkg.arch not in archlist:
                 self.delPackage(pkg)
 
+    def searchPackages(self, fields, criteria_re, callback):
+        matches = {}
+
+        for po in self.returnPackages():
+            tmpvalues = []
+            for field in fields:
+                value = po.returnSimple(field)
+                if value and criteria_re.search(value):
+                    tmpvalues.append(value)
+            if len(tmpvalues) > 0:
+                if callback:
+                    callback(po, tmpvalues)
+                matches[po] = tmpvalues
+ 
+        return matches
 
 
 # packageSack should be a base class
@@ -361,6 +599,14 @@ class XMLPackageSack(PackageSack):
                 return 1
         return 0
             
+    def __searchID(self, pkgid):
+        """return list of packages based on pkgid"""
+        self._checkIndexes(failure='build')        
+        if self.pkgsByID.has_key(pkgid):
+            return self.pkgsByID[pkgid]
+        else:
+            return []
+           
     def loadPrimaryMD(self, reader, repoid, callback=None):
         """load all the data from the primary metadata xml file"""
         
@@ -411,7 +657,7 @@ class XMLPackageSack(PackageSack):
             if reader.NodeType() == 1 and reader.Name() == 'package':
                 if reader.HasAttributes():
                     pkgid = reader.GetAttribute('pkgid')
-                    pkgs = self.searchID(pkgid)
+                    pkgs = self.__searchID(pkgid)
                     pkgmatch = 0
                     mydepth = reader.Depth()
                     current+=1
@@ -471,7 +717,7 @@ class XMLPackageSack(PackageSack):
                 current+=1
                 if reader.HasAttributes():
                     pkgid = reader.GetAttribute('pkgid')
-                    pkgs = self.searchID(pkgid)
+                    pkgs = self.__searchID(pkgid)
                     pkgmatch = 0
                     mydepth = reader.Depth()
                     #current+=1
