@@ -23,6 +23,7 @@ import os
 import os.path
 import types
 import repos
+import yumRepo
 from packages import YumAvailablePackage
 from repomd import mdUtils, mdErrors
 
@@ -30,7 +31,7 @@ from repomd import mdUtils, mdErrors
 # the database when they are requested
 class YumAvailablePackageSqlite(YumAvailablePackage):
     def __init__(self, pkgdict, repoid):
-        YumAvailablePackage.__init__(self,pkgdict,repoid)
+        YumAvailablePackage.__init__(self, repoid, pkgdict)
         self.sack = pkgdict.sack
         self.pkgId = pkgdict.pkgId
         self.simple['id'] = self.pkgId
@@ -74,7 +75,7 @@ class YumAvailablePackageSqlite(YumAvailablePackage):
            self.prco = self.sack.getPrco(self.pkgId, prcotype)
         return self.prco[prcotype]
 
-class YumSqlitePackageSack(repos.YumPackageSack):
+class YumSqlitePackageSack(yumRepo.YumPackageSack):
     """ Implementation of a PackageSack that uses sqlite cache instead of fully
     expanded metadata objects to provide information """
 

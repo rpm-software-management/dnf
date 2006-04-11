@@ -60,8 +60,9 @@ class YumBase(depsolve.Depsolve):
         depsolve.Depsolve.__init__(self)
         self.localdbimported = 0
         self.repos = repos.RepoStorage() # class of repositories
-        if (not self.repos.sqlite):
-            self.log(1,"Warning, could not load sqlite, falling back to pickle")
+        # TODO: PAV Fix this 
+        #if (not self.repos.sqlite):
+        #    self.log(1,"Warning, could not load sqlite, falling back to pickle")
 
         # Start with plugins disabled
         self.disablePlugins()
@@ -236,28 +237,7 @@ class YumBase(depsolve.Depsolve):
 
         num = 1
         for repo in repos:
-            if repo.repoXML is not None and len(repo.urls) > 0:
-                num += 1
-                continue
-            if self.repos.callback:
-                self.repos.callback.log(2, '%-68s [%d/%d]' % 
-                                        (repo.id, num, len(repos)))
-                
-            try:
-                repo.cache = self.conf.cache
-                repo.baseurlSetup()
-                repo.dirSetup()
-                self.log(3, 'Baseurl(s) for repo: %s' % repo.urls)
-            except Errors.RepoError, e:
-                self.errorlog(0, '%s' % e)
-                raise
-                
-            try:
-                repo.getRepoXML(text=repo)
-            except Errors.RepoError, e:
-                self.errorlog(0, 'Cannot open/read repomd.xml file for repository: %s' % repo)
-                self.errorlog(0, str(e))
-                raise
+            repo.setup(self.conf.cache)
             num += 1
             
             
@@ -287,9 +267,9 @@ class YumBase(depsolve.Depsolve):
         for arch in archlist:
             archdict[arch] = 1
 
-        self.repos.pkgSack.compatarchs = archdict
+        self.repos.getPackageSack().setCompatArchs(archdict)
         self.repos.populateSack(which=repos)
-        self.pkgSack = self.repos.pkgSack
+        self.pkgSack = self.repos.getPackageSack()
         self.excludePackages()
         self.pkgSack.excludeArchs(archlist)
 
@@ -343,7 +323,7 @@ class YumBase(depsolve.Depsolve):
                 reposWithGroups.append(repo)
                 continue
                 
-            if repo.repoXML is None:
+            if not repo.ready():
                 raise Errors.RepoError, "Repository '%s' not yet setup" % repo
             try:
                 groupremote = repo.repoXML.groupLocation()
@@ -433,7 +413,7 @@ class YumBase(depsolve.Depsolve):
             excludelist = self.conf.exclude
             repoid = None
         else:
-            excludelist = repo.exclude
+            excludelist = repo.getExcludePkgList()
             repoid = repo.id
 
         if len(excludelist) == 0:
@@ -457,7 +437,7 @@ class YumBase(depsolve.Depsolve):
         """removes packages from packageSacks based on list of packages, to include.
            takes repoid as a mandatory argument."""
         
-        includelist = repo.includepkgs
+        includelist = repo.getIncludePkgList()
         
         if len(includelist) == 0:
             return
@@ -644,7 +624,6 @@ class YumBase(depsolve.Depsolve):
         for po in remote_pkgs:
             i += 1
             repo = self.repos.getRepo(po.repoid)
-            remote = po.returnSimple('relativepath')
             checkfunc = (self.verifyPkg, (po, 1), {})
 
 
@@ -654,10 +633,8 @@ class YumBase(depsolve.Depsolve):
             # os.statvfs(repo's local path)[4]*[2] >= po.size
             try:
                 text = '(%s/%s): %s' % (i, len(remote_pkgs),
-                                        os.path.basename(remote))
-                local = po.localPkg()
-                mylocal = repo.get(relative=remote,
-                                   local=local,
+                                        os.path.basename(po.returnSimple('relativepath')))
+                mylocal = repo.getPackage(po,
                                    checkfunc=checkfunc,
                                    text=text,
                                    cache=repo.http_caching != 'none',
@@ -708,10 +685,7 @@ class YumBase(depsolve.Depsolve):
                 
         errors = {}
         local =  po.localHdr()
-        start = po.returnSimple('hdrstart')
-        end = po.returnSimple('hdrend')
         repo = self.repos.getRepo(po.repoid)
-        remote = po.returnSimple('relativepath')
         if os.path.exists(local):
             try:
                 result = self.verifyHeader(local, po, raiseError=1)
@@ -734,8 +708,7 @@ class YumBase(depsolve.Depsolve):
         
         try:
             checkfunc = (self.verifyHeader, (po, 1), {})
-            hdrpath = repo.get(relative=remote, local=local, start=start,
-                    reget=None, end=end, checkfunc=checkfunc, copy_local=1,
+            hdrpath = repo.getHeader(po, checkfunc=checkfunc,
                     cache=repo.http_caching != 'none',
                     )
         except Errors.RepoError, e:

@@ -127,17 +127,19 @@ class RPMInstallCallback:
 
                 # log stuff
                 pkgtup = self._dopkgtup(hdr)
-                txmbr = self.tsInfo.getMembers(pkgtup=pkgtup)[0] # if we have more than one I'll eat my hat
-                try:
-                    process = self.myprocess[txmbr.output_state]
-                    processed = self.mypostprocess[txmbr.output_state]
-                except KeyError, e:
-                    pass
+                
+                txmbrs = self.tsInfo.getMembers(pkgtup=pkgtup)
+                for txmbr in txmbrs:
+                    try:
+                        process = self.myprocess[txmbr.output_state]
+                        processed = self.mypostprocess[txmbr.output_state]
+                    except KeyError, e:
+                        pass
 
-                if self.filelog:
-                    pkgrep = self._logPkgString(hdr)
-                    msg = '%s: %s' % (processed, pkgrep)
-                    self.filelog(0, msg)
+                    if self.filelog:
+                        pkgrep = self._logPkgString(hdr)
+                        msg = '%s: %s' % (processed, pkgrep)
+                        self.filelog(0, msg)
 
 
         elif what == rpm.RPMCALLBACK_INST_PROGRESS:
@@ -164,20 +166,22 @@ class RPMInstallCallback:
                     else:
                         percent = (bytes*100L)/total
                     pkgtup = self._dopkgtup(hdr)
-                    txmbr = self.tsInfo.getMembers(pkgtup=pkgtup)[0]
-                    try:
-                        process = self.myprocess[txmbr.output_state]
-                    except KeyError, e:
-                        print "Error: invalid output state: %s for %s" % \
-                           (txmbr.output_state, hdr['name'])
-                    else:
-                        if self.output and sys.stdout.isatty():
-                            fmt = self._makefmt(percent)
-                            msg = fmt % (process, hdr['name'])
-                            sys.stdout.write(msg)
-                            sys.stdout.flush()
-                            if bytes == total:
-                                print " "
+                    
+                    txmbrs = self.tsInfo.getMembers(pkgtup=pkgtup)
+                    for txmbr in txmbrs:
+                        try:
+                            process = self.myprocess[txmbr.output_state]
+                        except KeyError, e:
+                            print "Error: invalid output state: %s for %s" % \
+                               (txmbr.output_state, hdr['name'])
+                        else:
+                            if self.output and sys.stdout.isatty():
+                                fmt = self._makefmt(percent)
+                                msg = fmt % (process, hdr['name'])
+                                sys.stdout.write(msg)
+                                sys.stdout.flush()
+                                if bytes == total:
+                                    print " "
 
 
         elif what == rpm.RPMCALLBACK_UNINST_START:

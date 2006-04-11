@@ -26,7 +26,7 @@ from ConfigParser import NoSectionError, NoOptionError
 import rpmUtils.transaction
 import rpmUtils.arch
 import Errors
-from repos import Repository
+from yumRepo import YumRepository
 
 class OptionData(object):
     '''
@@ -630,13 +630,13 @@ def readRepoConfig(parser, section, mainconf):
         print >> sys.stderr, \
             'Repository %r is missing name in configuration, using id' % section
 
-    thisrepo = Repository(section)
+    thisrepo = YumRepository(section)
 
     # Transfer attributes across
     #TODO: merge RepoConf and Repository 
     for k, v in conf.iteritems():
         if v or not hasattr(thisrepo, k):
-            thisrepo.set(k, v)
+            thisrepo.setAttribute(k, v)
 
     # Set attributes not from the config file
     thisrepo.basecachedir = mainconf.cachedir
