@@ -48,7 +48,7 @@ class YumAvailablePackageSqlite(YumAvailablePackage):
             # Make sure we only try once to get the stuff from the database
             self.dbusedsimple = 1
             details = self.sack.getPackageDetails(self.pkgId)
-            self.importFromDict(details,self.simple['repoid'])
+            self.importFromDict(details)
 
         return YumAvailablePackage.returnSimple(self,varname)
 

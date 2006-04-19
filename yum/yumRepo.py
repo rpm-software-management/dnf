@@ -59,7 +59,7 @@ class YumPackageSack(packageSack.PackageSack):
                 pkgdict = dataobj[pkgid]
                 if self.pkgsByID.has_key(pkgid):
                     for po in self.pkgsByID[pkgid]:
-                        po.importFromDict(pkgdict, repoid)
+                        po.importFromDict(pkgdict)
 
             self.added[repoid].append(datatype)
             # indexes will need to be rebuilt
