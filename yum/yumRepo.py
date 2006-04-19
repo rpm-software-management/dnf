@@ -76,7 +76,7 @@ class YumPackageSack(packageSack.PackageSack):
 
         if not hasattr(repo, 'cacheHandler'):
             if (repo.sqlite):
-                repo.cacheHandler = self.sqlitecache.RepodataParserSqlite(
+                repo.cacheHandler = repo.sqlitecache.RepodataParserSqlite(
                         storedir=repo.cachedir,
                         repoid=repo.id,
                         callback=callback,
@@ -173,9 +173,9 @@ class YumRepository(Repository):
         except ImportError:
             self.sqlite = False
         else:
-            #self.sqlite = True
-            #self.sqlitecache = sqlitecache
-            self.sqlite = False
+            self.sqlite = True
+            self.sqlitecache = sqlitecache
+            #self.sqlite = False
 
         # This repository's package sack instance.
         self.sack = self._selectSackType()

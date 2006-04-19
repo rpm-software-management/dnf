@@ -81,7 +81,7 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
 
     def __init__(self, packageClass):
         # Just init as usual and create a dict to hold the databases
-        repos.YumPackageSack.__init__(self,packageClass)
+        yumRepo.YumPackageSack.__init__(self,packageClass)
         self.primarydb = {}
         self.filelistsdb = {}
         self.otherdb = {}
