@@ -148,8 +148,8 @@ class YumRepository(Repository):
         self.yumvar = {} # empty dict of yumvariables for $string replacement
         self.proxy_password = None
         self.proxy_username = None
-        self.proxy = None 
-        self.proxy_dict = {}
+        self.proxy = None
+        self._proxy_dict = {}
         self.metadata_cookie_fn = 'cachecookie'
         self.groups_added = False
         
@@ -180,6 +180,16 @@ class YumRepository(Repository):
         # This repository's package sack instance.
         self.sack = self._selectSackType()
 
+
+    def __getProxyDict(self):
+        self.doProxyDict()
+        if self._proxy_dict:
+            return self._proxy_dict
+        return None
+
+    # consistent access to how proxy information should look (and ensuring
+    # that it's actually determined for the repo)
+    proxy_dict = property(__getProxyDict)
 
     def _selectSackType(self):
 
@@ -279,10 +289,10 @@ class YumRepository(Repository):
              'Cannot find a valid baseurl for repo: %s' % self.id
 
     def doProxyDict(self):
-        if self.proxy_dict:
+        if self._proxy_dict:
             return
 
-        self.proxy_dict = {} # zap it
+        self._proxy_dict = {} # zap it
         proxy_string = None
         if self.proxy not in [None, '_none_']:
             proxy_string = '%s' % self.proxy
@@ -300,9 +310,9 @@ class YumRepository(Repository):
                               proxy_host, proxy_rest)
 
         if proxy_string is not None:
-            self.proxy_dict['http'] = proxy_string
-            self.proxy_dict['https'] = proxy_string
-            self.proxy_dict['ftp'] = proxy_string
+            self._proxy_dict['http'] = proxy_string
+            self._proxy_dict['https'] = proxy_string
+            self._proxy_dict['ftp'] = proxy_string
 
     def setupGrab(self):
         """sets up the grabber functions with the already stocked in urls for
@@ -314,17 +324,12 @@ class YumRepository(Repository):
             mgclass = urlgrabber.mirror.MirrorGroup
 
 
-        self.doProxyDict()
-        prxy = None
-        if self.proxy_dict:
-            prxy = self.proxy_dict
-
         self.grabfunc = URLGrabber(keepalive=self.keepalive,
                                    bandwidth=self.bandwidth,
                                    retry=self.retries,
                                    throttle=self.throttle,
                                    progress_obj=self.callback,
-                                   proxies = prxy,
+                                   proxies = self.proxy_dict,
                                    failure_callback=self.failure_obj,
                                    timeout=self.timeout,
                                    reget='simple')
@@ -365,7 +370,7 @@ class YumRepository(Repository):
 
         goodurls = []
         if self.mirrorlist and not self.mirrorlistparsed:
-            mirrorurls = getMirrorList(self.mirrorlist)
+            mirrorurls = getMirrorList(self.mirrorlist, self.proxy_dict)
             self.mirrorlistparsed = 1
             for url in mirrorurls:
                 url = parser.varReplace(url, self.yumvar)
@@ -418,10 +423,6 @@ class YumRepository(Repository):
                     "Caching enabled but no local cache of %s from %s" % (local,
                            self)
 
-        self.doProxyDict()
-        prxy = None
-        if self.proxy_dict:
-            prxy = self.proxy_dict
         if url is not None:
             ug = URLGrabber(keepalive = self.keepalive,
                             bandwidth = self.bandwidth,
@@ -430,7 +431,7 @@ class YumRepository(Repository):
                             progres_obj = self.callback,
                             copy_local = copy_local,
                             reget = reget,
-                            proxies = prxy,
+                            proxies = self.proxy_dict,
                             failure_callback = self.failure_obj,
                             timeout=self.timeout,
                             checkfunc=checkfunc,
@@ -695,7 +696,7 @@ class YumRepository(Repository):
 
 
 
-def getMirrorList(mirrorlist):
+def getMirrorList(mirrorlist, pdict = None):
     """retrieve an up2date-style mirrorlist file from a url,
        we also s/$ARCH/$BASEARCH/ and move along
        returns a list of the urls from that file"""
@@ -713,7 +714,7 @@ def getMirrorList(mirrorlist):
         url = mirrorlist
 
     try:
-        fo = urlresolver.urlopen(url)
+        fo = urlresolver.urlopen(url, proxies=pdict)
     except urlgrabber.grabber.URLGrabError, e:
         fo = None
 
