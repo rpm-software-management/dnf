@@ -1134,22 +1134,36 @@ For more information contact your distribution or package provider.
                     donothingpkgs.append(po)
                     continue
 
+        # handle excludes for a localinstall
+        toexc = []
+        if len(self.conf.exclude) > 0:
+           exactmatch, matched, unmatched = \
+                   parsePackages(installpkgs + map(lambda x: x[0], updatepkgs),
+                                 self.conf.exclude, casematch=1)
+           toexc = exactmatch + matched
 
         for po in installpkgs:
+            if po in toexc:
+               self.log(3, 'Excluding %s' % po)
+               continue
+            
             self.log(2, 'Marking %s to be installed' % po.localpath)
             self.localPackages.append(po)
             self.install(po=po)
         
         for (po, oldpo) in updatepkgs:
+            if po in toexc:
+               self.log(3, 'Excluding %s' % po)
+               continue
+           
             self.log(2, 'Marking %s as an update to %s' % (po.localpath, oldpo))
             self.localPackages.append(po)
             self.tsInfo.addUpdate(po, oldpo)
         
         for po in donothingpkgs:
             self.log(2, '%s: does not update installed package.' % po.localpath)
-        
+
         if len(self.tsInfo) > oldcount:
-            
             return 2, ['Package(s) to install']
         return 0, ['Nothing to do']
         
