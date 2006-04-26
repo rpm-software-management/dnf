@@ -253,6 +253,16 @@ Eliminate all of the files which yum uses to determine the remote
 availability of packages. Using this option will force yum to download all the 
 metadata the next time it is run.
 
+.IP "\fByum clean cache\fP"
+Eliminate the pickle based cache used for faster access to metadata.
+Using this option will force yum to recreate the cache the next time
+it is run if you don't have sqlite available.
+
+.IP "\fByum clean dbcache\fP"
+Eliminate the sqlite cache used for faster access to metadata.
+Using this option will force yum to recreate the cache the next time
+it is run.
+
 .IP "\fByum clean all\fP"
 Runs \fByum clean packages\fP and \fByum clean headers\fP as above.
 
