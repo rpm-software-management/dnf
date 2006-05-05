@@ -37,6 +37,7 @@ import dbus.glib
 
 import yum
 import yum.Errors
+from yum.logger import Logger, SysLogger, LogContainer
 from yum.config import BaseConfig, Option, IntOption, ListOption, BoolOption, \
                        IncludingConfigParser
 from yum.constants import *
@@ -51,6 +52,7 @@ class YumDbusInterface(dbus.service.Object):
     @dbus.service.signal('edu.duke.linux.Yum')
     def UpdatesAvailableSignal(self, message):
         pass
+
     @dbus.service.signal('edu.duke.linux.Yum')        
     def NoUpdatesAvailableSignal(self, message):
         pass
@@ -146,8 +148,18 @@ class UpdatesDaemon(yum.YumBase):
     
     def emit_syslog(self, num_updates):
         """method to write to syslog for notice of updates"""
-        pass
+        syslog_object = SysLogger(threshold = 10, 
+                                      facility=self.conf.syslog_facility,
+                                      ident='yum-updatesd')
+        syslog = LogContainer([syslog_object])
         
+        if num_updates > 0:
+            msg = "%d update(s) available" % num_updates
+        else:
+            msg = "No Updates Available"
+            
+        
+        syslog(0, msg)
     def emit_dbus(self, num_updates):
         """method to emit a dbus event for notice of updates"""
         # setup the dbus interface
