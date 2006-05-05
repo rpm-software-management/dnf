@@ -30,6 +30,10 @@
 import os
 import sys
 import time
+import dbus
+import dbus.service
+import dbus.glib
+
 
 import yum
 import yum.Errors
@@ -37,6 +41,27 @@ from yum.config import BaseConfig, Option, IntOption, ListOption, BoolOption, \
                        IncludingConfigParser
 from yum.constants import *
 YUM_PID_FILE = '/var/run/yum.pid'
+
+
+
+class YumDbusInterface(dbus.service.Object):
+    def __init__(self, bus_name, object_path='/edu/duke/linux/yum/object'):
+        dbus.service.Object.__init__(self, bus_name, object_path)
+
+    @dbus.service.signal('edu.duke.linux.Yum')
+    def UpdatesAvailableSignal(self, message):
+        pass
+    @dbus.service.signal('edu.duke.linux.Yum')        
+    def NoUpdatesAvailableSignal(self, message):
+        pass
+        
+#    @dbus.service.method('org.designfu.TestService')
+#    def emitHelloSignal(self):
+#        #you emit signals by calling the signal's skeleton method
+#        self.HelloSignal('Hello')
+#        return 'Signal emitted'
+
+
 
 class UDConfig(yum.config.BaseConfig):
     """Config format for the daemon"""
@@ -70,10 +95,9 @@ class UpdatesDaemon(yum.YumBase):
             if not os.path.exists(self.opts.nonroot_workdir):
                 os.makedirs(self.opts.nonroot_workdir)
             self.repos.setCacheDir(self.opts.nonroot_workdir)
-        else:
-            self.doLock(YUM_PID_FILE)
 
         self.doConfigSetup(fn=self.opts.yum_config)
+        self.doLock(YUM_PID_FILE)        
         self.doRepoSetup()
         self.doSackSetup()
         self.doTsSetup()
@@ -81,15 +105,17 @@ class UpdatesDaemon(yum.YumBase):
         self.doUpdateSetup()
     
     def updatesCheck(self):
-        
-        if len(self.up.getUpdatesList()) > 0 or len(self.up.getObsoletesTuples()) > 0:
-            return True
-        else:
-            return False
+        updates = len(self.up.getUpdatesList())
+        obsoletes = len(self.up.getObsoletesTuples())
+
+        # this should check to see if opts.do_update is true or false
+        # right now just notify something/someone
+        num_updates = updates+obsoletes
+        self.emit(num_updates)
+
 
     def doShutdown(self):
-        if os.geteuid() == 0:
-            self.doUnlock(YUM_PID_FILE)
+        self.doUnlock(YUM_PID_FILE)
 
         # close the rpmdb
         self.closeRpmDB()
@@ -102,28 +128,45 @@ class UpdatesDaemon(yum.YumBase):
         if hasattr(self, 'repos'):
             del self.repos
     
-    def emit(self, what):
+    def emit(self, num_updates):
         """method to emit a notice about updates"""
-        print what
-    
-    def emit_email(self, what):
+        if 'dbus' in self.opts.emit_via:
+            self.emit_dbus(num_updates)
+        
+        if 'syslog' in self.opts.emit_via:
+            self.emit_syslog(num_updates)
+        
+        if 'email' in self.opts.emit_via:
+            self.emit_email(num_updates)
+
+
+    def emit_email(self, num_updates):
         """method to send email for notice of updates"""
         pass
     
-    def emit_syslog(self, what):
+    def emit_syslog(self, num_updates):
         """method to write to syslog for notice of updates"""
         pass
         
-    def emit_dbus(self, what):
+    def emit_dbus(self, num_updates):
         """method to emit a dbus event for notice of updates"""
-        pass
-        
-    
+        # setup the dbus interface
+        my_bus = dbus.SystemBus()
+        name = dbus.service.BusName('edu.duke.linux.yum', bus=my_bus)
+        yum_dbus = YumDbusInterface(name)
+        if num_updates > 0:
+            msg = "%d updates available" % num_updates
+            yum_dbus.UpdatesAvailableSignal(msg)
+        else:
+            msg = "No Updates Available"
+            yum_dbus.NoUpdatesAvailableSignal(msg)
+
 def main():
     
     if os.fork():
         sys.exit()
     
+    # do our config file
     config_file = '/etc/yum/yum-updatesd.conf'
     confparser = IncludingConfigParser()
     opts = UDConfig()
@@ -133,20 +176,18 @@ def main():
     
     opts.populate(confparser, 'main')
     
-    
+
     while True:
         try:
             my = UpdatesDaemon(opts)
             my.doSetup()
-            if my.updatesCheck():
-                my.emit('updates exist, time to run the updater')
-            
+            my.updatesCheck()
             my.doShutdown()
             del my
         except yum.Errors.YumBaseError, e:
             print >> sys.stderr, 'Error: %s' % e
         
-        time.sleep(opts.sleeptime)
+        time.sleep(opts.run_interval)
 
     
     
