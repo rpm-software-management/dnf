@@ -13,19 +13,13 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
-# in its own dir download metadata and create updates list
-# sleep for a configured time and do it all again
+# (c)2006 Duke University - written by Seth Vidal
 
 #TODO:
-# read in config from a file
-# make it emit more involved answers than a simple yes or nor on updates
-#  being available
 # add logs and errorlogs below a certain number to send out to syslog
 # maybe provide for configurable emit mechanisms:
-#   - dbus
 #   - email
-#   - syslog
-
+# 
 
 import os
 import sys
@@ -53,15 +47,14 @@ class YumDbusInterface(dbus.service.Object):
     def UpdatesAvailableSignal(self, message):
         pass
 
-    @dbus.service.signal('edu.duke.linux.Yum')        
+    @dbus.service.signal('edu.duke.linux.Yum')
     def NoUpdatesAvailableSignal(self, message):
         pass
         
-#    @dbus.service.method('org.designfu.TestService')
-#    def emitHelloSignal(self):
-#        #you emit signals by calling the signal's skeleton method
-#        self.HelloSignal('Hello')
-#        return 'Signal emitted'
+    @dbus.service.method("edu.duke.linux.Yum")
+    def CheckNow(self):
+    
+        pass
 
 
 
@@ -82,7 +75,9 @@ class UpdatesDaemon(yum.YumBase):
     def __init__(self, opts):
         yum.YumBase.__init__(self)
         self.opts = opts
-        
+        self.doSetup()
+        self.updatesCheck()
+        self.doShutdown()
     def log(self, num, msg):
     #TODO - this should probably syslog
         pass
@@ -158,13 +153,13 @@ class UpdatesDaemon(yum.YumBase):
         else:
             msg = "No Updates Available"
             
-        
         syslog(0, msg)
+
     def emit_dbus(self, num_updates):
         """method to emit a dbus event for notice of updates"""
         # setup the dbus interface
         my_bus = dbus.SystemBus()
-        name = dbus.service.BusName('edu.duke.linux.yum', bus=my_bus)
+        name = dbus.service.BusName('edu.duke.linux.Yum', bus=my_bus)
         yum_dbus = YumDbusInterface(name)
         if num_updates > 0:
             msg = "%d updates available" % num_updates
@@ -172,7 +167,7 @@ class UpdatesDaemon(yum.YumBase):
         else:
             msg = "No Updates Available"
             yum_dbus.NoUpdatesAvailableSignal(msg)
-
+        
 def main():
     
     if os.fork():
@@ -187,18 +182,15 @@ def main():
         confparser.read(config_file)
     
     opts.populate(confparser, 'main')
-    
 
     while True:
         try:
             my = UpdatesDaemon(opts)
-            my.doSetup()
-            my.updatesCheck()
-            my.doShutdown()
-            del my
         except yum.Errors.YumBaseError, e:
             print >> sys.stderr, 'Error: %s' % e
-        
+        else:
+            del my
+
         time.sleep(opts.run_interval)
 
     
