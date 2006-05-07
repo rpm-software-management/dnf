@@ -17,9 +17,8 @@
 
 #TODO:
 # add logs and errorlogs below a certain number to send out to syslog
-# maybe provide for configurable emit mechanisms:
-#   - email
-# 
+# fix email notifications so it does _something_ :)
+
 
 import os
 import sys
@@ -27,7 +26,7 @@ import time
 import dbus
 import dbus.service
 import dbus.glib
-
+import gobject
 
 import yum
 import yum.Errors
@@ -36,6 +35,7 @@ from yum.config import BaseConfig, Option, IntOption, ListOption, BoolOption, \
                        IncludingConfigParser
 from yum.constants import *
 YUM_PID_FILE = '/var/run/yum.pid'
+config_file = '/etc/yum/yum-updatesd.conf'
 
 
 
@@ -51,11 +51,6 @@ class YumDbusInterface(dbus.service.Object):
     def NoUpdatesAvailableSignal(self, message):
         pass
         
-    @dbus.service.method("edu.duke.linux.Yum")
-    def CheckNow(self):
-    
-        pass
-
 
 
 class UDConfig(yum.config.BaseConfig):
@@ -78,6 +73,7 @@ class UpdatesDaemon(yum.YumBase):
         self.doSetup()
         self.updatesCheck()
         self.doShutdown()
+        
     def log(self, num, msg):
     #TODO - this should probably syslog
         pass
@@ -168,13 +164,47 @@ class UpdatesDaemon(yum.YumBase):
             msg = "No Updates Available"
             yum_dbus.NoUpdatesAvailableSignal(msg)
         
+        del yum_dbus
+        del name
+        del my_bus
+        
+class YumDbusListener(dbus.service.Object):
+    def __init__(self, bus_name, object_path='/Updatesd'):
+        dbus.service.Object.__init__(self, bus_name, object_path)
+
+    @dbus.service.method("edu.duke.linux.yum.Updatesd")
+    def CheckNow(self):
+        run_update_check()
+        return "check completed"
+
+
+
+def run_update_check(opts=None):
+
+    if not opts:
+        confparser = IncludingConfigParser()
+        opts = UDConfig()
+        
+        if os.path.exists(config_file):
+            confparser.read(config_file)
+        
+        opts.populate(confparser, 'main')
+
+    try:
+        my = UpdatesDaemon(opts)
+    except yum.Errors.YumBaseError, e:
+        print >> sys.stderr, 'Error: %s' % e
+    else:
+        del my
+    
+    return True # has to be true or gobject will stop running it afaict
+    
+
 def main():
     
     if os.fork():
         sys.exit()
-    
-    # do our config file
-    config_file = '/etc/yum/yum-updatesd.conf'
+
     confparser = IncludingConfigParser()
     opts = UDConfig()
     
@@ -182,18 +212,18 @@ def main():
         confparser.read(config_file)
     
     opts.populate(confparser, 'main')
-
-    while True:
-        try:
-            my = UpdatesDaemon(opts)
-        except yum.Errors.YumBaseError, e:
-            print >> sys.stderr, 'Error: %s' % e
-        else:
-            del my
-
-        time.sleep(opts.run_interval)
-
     
+    bus = dbus.SystemBus()
+    name = dbus.service.BusName("edu.duke.linux.yum.Updatesd", bus=bus)
+    object = YumDbusListener(name)
     
+    run_interval_ms = opts.run_interval * 1000 # get it into milliseconds for gobject
+    
+    gobject.timeout_add(run_interval_ms, run_update_check)
+
+    mainloop = gobject.MainLoop()
+    mainloop.run()
+
+
 if __name__ == "__main__":
     main()
