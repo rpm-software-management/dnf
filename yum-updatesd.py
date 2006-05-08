@@ -158,7 +158,7 @@ class UpdatesDaemon(yum.YumBase):
             msg['To'] = self.opts.email_to
             s = smtplib.SMTP()
             s.connect()
-            s.sendmail(mail_from, [mail_to], msg.as_string())
+            s.sendmail(self.opts.email_from, [self.opts.email_to], msg.as_string())
             s.close()        
         
     
