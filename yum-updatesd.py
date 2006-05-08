@@ -27,6 +27,10 @@ import dbus
 import dbus.service
 import dbus.glib
 import gobject
+import smtplib
+from email.MIMEText import MIMEText
+
+
 
 import yum
 import yum.Errors
@@ -135,7 +139,28 @@ class UpdatesDaemon(yum.YumBase):
 
     def emit_email(self, num_updates):
         """method to send email for notice of updates"""
-        pass
+        
+        if num_updates > 0:
+            output = """
+               Hi,
+                There are %d package updates available. Please run the system
+                updater.
+                
+                Thank You,
+                Your Computer
+                
+                """ % num_updates
+                
+            msg = MIMEText(output)
+            subject = 'Updates Available'
+            msg['Subject'] = subject
+            msg['From'] = self.opts.email_from
+            msg['To'] = self.opts.email_to
+            s = smtplib.SMTP()
+            s.connect()
+            s.sendmail(mail_from, [mail_to], msg.as_string())
+            s.close()        
+        
     
     def emit_syslog(self, num_updates):
         """method to write to syslog for notice of updates"""
