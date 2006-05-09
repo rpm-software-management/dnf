@@ -97,6 +97,7 @@ SLOT_TO_CONDUIT = {
     'prereposetup': 'PreRepoSetupPluginConduit',
     'postreposetup': 'PostRepoSetupPluginConduit',
     'close': 'PluginConduit',
+    'clean': 'PluginConduit',
     'pretrans': 'MainPluginConduit',
     'posttrans': 'MainPluginConduit',
     'exclude': 'MainPluginConduit',

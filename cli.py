@@ -404,9 +404,9 @@ For more information contact your distribution or package provider.
         elif self.basecmd == 'clean':
             if len(self.extcmds) == 0:
                 self.errorlog(0,
-                    _('Error: clean requires an option: headers, packages, cache, metadata, all'))
+                    _('Error: clean requires an option: headers, packages, cache, metadata, plugins, all'))
             for cmd in self.extcmds:
-                if cmd not in ['headers', 'packages', 'metadata', 'cache', 'dbcache', 'all']:
+                if cmd not in ['headers', 'packages', 'metadata', 'cache', 'dbcache', 'plugins', 'all']:
                     self.usage()
                     raise CliError
                     
@@ -1296,6 +1296,7 @@ For more information contact your distribution or package provider.
             xmlcode, xmlresults = self.cleanMetadata()
             dbcode, dbresults = self.cleanSqlite()
             piklcode, piklresults = self.cleanPickles()
+            self.plugins.run('clean')
             
             code = hdrcode + pkgcode + xmlcode + piklcode + dbcode
             results = hdrresults + pkgresults + xmlresults + piklresults + dbresults
@@ -1318,6 +1319,10 @@ For more information contact your distribution or package provider.
         if 'dbcache' in self.extcmds:
             self.log(2, 'Cleaning up database cache')
             dbcode, dbresults =  self.cleanSqlite()
+        if 'plugins' in self.extcmds:
+            self.log(2, 'Cleaning up plugins')
+            self.plugins.run('clean')
+
             
         code = hdrcode + pkgcode + xmlcode + piklcode + dbcode
         results = hdrresults + pkgresults + xmlresults + piklresults + dbresults
