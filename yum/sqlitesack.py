@@ -400,7 +400,7 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
         # returnNewestByNameArch
         if (not naTup):
             # TODO process excludes here
-            return repos.YumPackageSack.returnNewestByNameArch(self, naTup)
+            return yumRepo.YumPackageSack.returnNewestByNameArch(self, naTup)
 
         # First find all packages that fulfill naTup
         allpkg = []
@@ -421,7 +421,7 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
         # If name is set do it from the database otherwise use our parent's
         # returnNewestByName
         if (not name):
-            return repos.YumPackageSack.returnNewestByName(self, name)
+            return yumRepo.YumPackageSack.returnNewestByName(self, name)
 
         # First find all packages that fulfill name
         allpkg = []
