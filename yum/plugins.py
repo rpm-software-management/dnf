@@ -308,7 +308,7 @@ class YumPlugins:
                 if where in (PLUG_OPT_WHERE_REPO, PLUG_OPT_WHERE_ALL):
                     val = config.getOption(conf.cfg, repo.id, name, default,
                             type2opt[vtype])
-                    repo.set(name, val)
+                    repo.setAttribute(name, val)
 
     def setCmdLine(self, opts, commands):
         '''Set the parsed command line options so that plugins can access them
