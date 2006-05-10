@@ -175,7 +175,7 @@ class RPMInstallCallback:
                             print "Error: invalid output state: %s for %s" % \
                                (txmbr.output_state, hdr['name'])
                         else:
-                            if self.output and sys.stdout.isatty():
+                            if self.output and (sys.stdout.isatty() or bytes == total):
                                 fmt = self._makefmt(percent)
                                 msg = fmt % (process, hdr['name'])
                                 sys.stdout.write(msg)
