@@ -307,7 +307,7 @@ class YumPlugins:
         for repo in repos:
             for name, (vtype, where, default) in self.opts.iteritems(): 
                 if where in (PLUG_OPT_WHERE_REPO, PLUG_OPT_WHERE_ALL):
-                    val = config.getOption(conf.cfg, repo.id, name, default,
+                    val = config.getOption(repo.cfg, repo.id, name, default,
                             type2opt[vtype])
                     repo.setAttribute(name, val)
 
