@@ -28,6 +28,7 @@ import dbus.service
 import dbus.glib
 import gobject
 import smtplib
+from optparse import OptionParser
 from email.MIMEText import MIMEText
 
 
@@ -42,16 +43,15 @@ YUM_PID_FILE = '/var/run/yum.pid'
 config_file = '/etc/yum/yum-updatesd.conf'
 
 
-
 class YumDbusInterface(dbus.service.Object):
-    def __init__(self, bus_name, object_path='/edu/duke/linux/yum/object'):
+    def __init__(self, bus_name, object_path='/UpdatesAvail'):
         dbus.service.Object.__init__(self, bus_name, object_path)
 
-    @dbus.service.signal('edu.duke.linux.Yum')
+    @dbus.service.signal('edu.duke.linux.yum')
     def UpdatesAvailableSignal(self, message):
         pass
 
-    @dbus.service.signal('edu.duke.linux.Yum')
+    @dbus.service.signal('edu.duke.linux.yum')
     def NoUpdatesAvailableSignal(self, message):
         pass
         
@@ -59,7 +59,7 @@ class YumDbusInterface(dbus.service.Object):
 
 class UDConfig(yum.config.BaseConfig):
     """Config format for the daemon"""
-    run_interval = IntOption(3600)
+    run_interval = IntOption(10)
     nonroot_workdir = Option("/var/tmp/yum-updatesd")
     emit_via = ListOption(['dbus', 'email', 'syslog'])
     email_to = Option("root@localhost")
@@ -71,12 +71,12 @@ class UDConfig(yum.config.BaseConfig):
     
 
 class UpdatesDaemon(yum.YumBase):
-    def __init__(self, opts):
+    def __init__(self, opts, dbusintf):
         yum.YumBase.__init__(self)
         self.opts = opts
         self.doSetup()
-        self.updatesCheck()
-        self.doShutdown()
+
+        self.dbusintf = dbusintf
         
     def log(self, num, msg):
     #TODO - this should probably syslog
@@ -94,38 +94,54 @@ class UpdatesDaemon(yum.YumBase):
             self.repos.setCacheDir(self.opts.nonroot_workdir)
 
         self.doConfigSetup(fn=self.opts.yum_config)
-        self.doLock(YUM_PID_FILE)        
+
+    def refreshUpdates(self):
+        self.doLock(YUM_PID_FILE)
         self.doRepoSetup()
         self.doSackSetup()
         self.doTsSetup()
         self.doRpmDBSetup()
         self.doUpdateSetup()
-    
+        
     def updatesCheck(self):
+        try:
+            self.refreshUpdates()
+        except yum.Errors.LockError:
+            return True # just pass for now
+
         updates = len(self.up.getUpdatesList())
         obsoletes = len(self.up.getObsoletesTuples())
 
         # this should check to see if opts.do_update is true or false
         # right now just notify something/someone
-        num_updates = updates+obsoletes
-        self.emit(num_updates)
+        if not self.opts.do_update:
+            num_updates = updates+obsoletes
+            self.emitAvailable(num_updates)
 
-
-    def doShutdown(self):
+        self.closeRpmDB()
         self.doUnlock(YUM_PID_FILE)
 
-        # close the rpmdb
-        self.closeRpmDB()
-        # delete the updates object
-        if hasattr(self, 'up'):
-            del self.up
-        # delete the package sacks/repos
-        if hasattr(self, 'pkgSack'):
-            del self.pkgSack
-        if hasattr(self, 'repos'):
-            del self.repos
-    
-    def emit(self, num_updates):
+        return True
+
+    def getUpdateInfo(self):
+        # try to get the lock up to 10 times to get the explicitly
+        # asked for info
+        tries = 0
+        while tries < 10:
+            try:
+                self.doLock(YUM_PID_FILE)
+                break
+            except yum.Errors.LockError:
+                pass
+            time.sleep(1)
+        
+        self.doTsSetup()
+        self.doRpmDBSetup()
+        self.doUpdateSetup()
+        self.doUnlock(YUM_PID_FILE)        
+        return self.up.getUpdatesTuples()
+
+    def emitAvailable(self, num_updates):
         """method to emit a notice about updates"""
         if 'dbus' in self.opts.emit_via:
             self.emit_dbus(num_updates)
@@ -178,57 +194,65 @@ class UpdatesDaemon(yum.YumBase):
 
     def emit_dbus(self, num_updates):
         """method to emit a dbus event for notice of updates"""
-        # setup the dbus interface
-        my_bus = dbus.SystemBus()
-        name = dbus.service.BusName('edu.duke.linux.Yum', bus=my_bus)
-        yum_dbus = YumDbusInterface(name)
+        if not self.dbusintf:
+            # FIXME: assert here ?
+            return
         if num_updates > 0:
             msg = "%d updates available" % num_updates
-            yum_dbus.UpdatesAvailableSignal(msg)
+            self.dbusintf.UpdatesAvailableSignal(msg)
         else:
             msg = "No Updates Available"
-            yum_dbus.NoUpdatesAvailableSignal(msg)
-        
-        del yum_dbus
-        del name
-        del my_bus
-        
+            self.dbusintf.NoUpdatesAvailableSignal(msg)
+
 class YumDbusListener(dbus.service.Object):
-    def __init__(self, bus_name, object_path='/Updatesd'):
+    def __init__(self, updd, bus_name, object_path='/Updatesd'):
         dbus.service.Object.__init__(self, bus_name, object_path)
+        self.updd = updd
+        self.allowshutdown = False
 
-    @dbus.service.method("edu.duke.linux.yum.Updatesd")
+    def doCheck(self):
+        self.updd.updatesCheck()
+        return False
+
+    @dbus.service.method("edu.duke.linux.yum")
     def CheckNow(self):
-        run_update_check()
-        return "check completed"
+        # make updating checking asynchronous since we discover whether
+        # or not there are updates via a callback signal anyway
+        gobject.idle_add(self.doCheck)
+        return "check queued"
 
-
-
-def run_update_check(opts=None):
-
-    if not opts:
-        confparser = IncludingConfigParser()
-        opts = UDConfig()
+    @dbus.service.method("edu.duke.linux.yum")
+    def ShutDown(self):
+        if not self.allowshutdown:
+            return False
         
-        if os.path.exists(config_file):
-            confparser.read(config_file)
-        
-        opts.populate(confparser, 'main')
+        # we have to do this in a callback so that it doesn't get
+        # sent back to the caller
+        gobject.idle_add(quit)
+        return True
 
-    try:
-        my = UpdatesDaemon(opts)
-    except yum.Errors.YumBaseError, e:
-        print >> sys.stderr, 'Error: %s' % e
-    else:
-        del my
-    
-    return True # has to be true or gobject will stop running it afaict
-    
+    @dbus.service.method("edu.duke.linux.yum")
+    def GetUpdateInfo(self):
+        # FIXME: should this be async?
+        upds = self.updd.getUpdateInfo()
+        return upds
+
+def quit(*args):
+    sys.exit(0)
 
 def main():
-    
-    if os.fork():
-        sys.exit()
+    parser = OptionParser()
+    parser.add_option("-f", "--no-fork", action="store_true", default=False, dest="nofork")
+    (options, args) = parser.parse_args()
+
+    if not options.nofork:
+        if os.fork():
+            sys.exit()
+        fd = os.open("/dev/null", os.O_RDONLY)
+        os.dup2(fd, 0)
+        os.dup2(fd, 1)
+        os.dup2(fd, 2)
+        os.close(fd)
 
     confparser = IncludingConfigParser()
     opts = UDConfig()
@@ -237,14 +261,24 @@ def main():
         confparser.read(config_file)
     
     opts.populate(confparser, 'main')
+
+    if "dbus" in opts.emit_via:
+        # setup the dbus interfaces
+        bus = dbus.SystemBus()
+
+        name = dbus.service.BusName('edu.duke.linux.yum', bus=bus)
+        yum_dbus = YumDbusInterface(name)
+
+        updd = UpdatesDaemon(opts, yum_dbus)
+        
+        name = dbus.service.BusName("edu.duke.linux.yum", bus=bus)
+        object = YumDbusListener(updd, name)
+    else:
+        updd = UpdatesDaemon(opts, None)
     
-    bus = dbus.SystemBus()
-    name = dbus.service.BusName("edu.duke.linux.yum.Updatesd", bus=bus)
-    object = YumDbusListener(name)
+    run_interval_ms = opts.run_interval * 1000 # needs to be in ms
     
-    run_interval_ms = opts.run_interval * 1000 # get it into milliseconds for gobject
-    
-    gobject.timeout_add(run_interval_ms, run_update_check)
+    gobject.timeout_add(run_interval_ms, updd.updatesCheck)
 
     mainloop = gobject.MainLoop()
     mainloop.run()
