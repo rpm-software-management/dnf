@@ -59,7 +59,7 @@ class YumDbusInterface(dbus.service.Object):
 
 class UDConfig(yum.config.BaseConfig):
     """Config format for the daemon"""
-    run_interval = IntOption(10)
+    run_interval = IntOption(3600)
     nonroot_workdir = Option("/var/tmp/yum-updatesd")
     emit_via = ListOption(['dbus', 'email', 'syslog'])
     email_to = Option("root@localhost")
