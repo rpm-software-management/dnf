@@ -31,8 +31,6 @@ from repomd import mdErrors
 from repomd import packageSack
 from repomd.packageSack import MetaSack
 from packages import YumAvailablePackage
-import mdcache
-import parser
 
 _is_fnmatch_pattern = re.compile(r"[*?[]").search
 
