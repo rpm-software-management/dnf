@@ -329,7 +329,7 @@ class YumBase(depsolve.Depsolve):
             if not repo.ready():
                 raise Errors.RepoError, "Repository '%s' not yet setup" % repo
             try:
-                groupremote = repo.repoXML.groupLocation()
+                groupremote = repo.getGroupLocation()
             except mdErrors.RepoMDError, e:
                 pass
             else:
