@@ -28,7 +28,7 @@ class RepoData:
     """represents anything beneath a <data> tag"""
     def __init__(self, elem):
         self.type = elem.attrib.get('type')
-        self.location = ""
+        self.location = (None, None)
         self.checksums = [] # type,value
         self.openchecksums = [] # type,value
         self.timestamp = None
@@ -40,7 +40,9 @@ class RepoData:
         for child in elem:
             child_name = ns_cleanup(child.tag)
             if child_name == 'location':
-                self.location = child.attrib.get('href')
+                relative = child.attrib.get('href')
+                base = child.attrib.get('base')
+                self.location = (base, relative)
             
             elif child_name == 'checksum':
                 csum_value = child.text
@@ -85,13 +87,19 @@ class RepoMD:
         """return list of metadata file types available"""
         return self.repoData.keys()
     
+    def getData(self, type):
+        if self.repoData.has_key(type):
+            return self.repoData[type]
+        else:
+            raise RepoMDError, "Error: requested datatype %s not available"
+            
     def dump(self):
         """dump fun output"""
         
         for ft in self.fileTypes():
             thisdata = self.repoData[ft]
             print 'datatype: %s' % thisdata.type
-            print 'location: %s' % thisdata.location
+            print 'location: %s %s' % thisdata.location
             print 'timestamp: %s' % thisdata.timestamp
             print 'checksums:'
             for (type, value) in thisdata.checksums:
