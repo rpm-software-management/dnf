@@ -140,8 +140,6 @@ class YumRepository(Repository):
         self.repoMDFile = 'repodata/repomd.xml'
         self.repoXML = None
         self.cache = 0
-        self.callback = None # callback for the grabber
-        self.failure_obj = None
         self.mirrorlist = None # filename/url of mirrorlist file
         self.mirrorlistparsed = 0
         self.baseurl = [] # baseurls from the config file 
@@ -165,6 +163,7 @@ class YumRepository(Repository):
         # callbacks
         self.callback = None  # for the grabber
         self.failure_obj = None
+        self.mirror_failure_obj = None
 
         # Check to see if we can import sqlite stuff
         try:
@@ -334,7 +333,8 @@ class YumRepository(Repository):
                                    timeout=self.timeout,
                                    reget='simple')
 
-        self.grab = mgclass(self.grabfunc, self.urls)
+        self.grab = mgclass(self.grabfunc, self.urls,
+                            failure_callback=self.mirror_failure_obj)
 
     def dirSetup(self):
         """make the necessary dirs, if possible, raise on failure"""
@@ -693,6 +693,9 @@ class YumRepository(Repository):
 
     def setFailureObj(self, failure_obj):
         self.failure_obj = failure_obj
+
+    def setMirrorFailureObj(self, failure_obj):
+        self.mirror_failure_obj = failure_obj
 
 
 

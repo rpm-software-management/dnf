@@ -154,16 +154,22 @@ class RepoStorage:
             repo.basecachedir = cachedir
 
     def setProgressBar(self, obj):
-        """set's the progress bar for downloading files from repos"""
+        """sets the progress bar for downloading files from repos"""
         
         for repo in self.repos.values():
             repo.setCallback(obj)
 
     def setFailureCallback(self, obj):
-        """set's the failure callback for all repos"""
+        """sets the failure callback for all repos"""
         
         for repo in self.repos.values():
             repo.setFailureObj(obj)
+
+    def setMirrorFailureCallback(self, obj):
+        """sets the failure callback for all mirrors"""
+        
+        for repo in self.repos.values():
+            repo.setMirrorFailureObj(obj)
 
     def getPackageSack(self):
         return self.pkgSack
@@ -277,6 +283,9 @@ class Repository:
         raise NotImplementedError()
 
     def setFailureObj(self, obj):
+        raise NotImplementedError()
+
+    def setMirrorFailureObj(self, obj):
         raise NotImplementedError()
 
     def getPackage(self, package, checkfunc = None, text = None, cache = True):
