@@ -1597,21 +1597,46 @@ class YumBase(depsolve.Depsolve):
         compatArchList = rpmUtils.arch.getArchList(arch)
         multiLib = []
         singleLib = []
+        noarch = []
         for po in pkglist:
             if po.arch not in compatArchList:
                 continue
+            elif po.arch in ("noarch"):
+                noarch.append(po)
             elif rpmUtils.arch.isMultiLibArch(arch=po.arch):
                 multiLib.append(po)
             else:
                 singleLib.append(po)
                 
-        # we should have two lists now - one of singleLib packages
-        # one of multilib packages
-        # go through each one and find the best package(s)
-        for pkglist in [multiLib, singleLib]:
-            best = self._bestPackageFromList(pkglist)
-            if best is not None:
-                returnlist.append(best)
+        # we now have three lists.  find the best package(s) of each
+        multi = self._bestPackageFromList(multiLib)
+        single = self._bestPackageFromList(singleLib)
+        no = self._bestPackageFromList(noarch)
+
+        # now, to figure out which arches we actually want
+        # if there aren't noarch packages, it's easy. multi + single
+        if no is None:
+            if multi: returnlist.append(multi)
+            if single: returnlist.append(single)
+        # if there's a noarch and it's newer than the multilib, we want
+        # just the noarch.  otherwise, we want multi + single
+        elif multi:
+            best = self._bestPackageFromList([multi,no])
+            if best.arch == "noarch":
+                returnlist.append(no)
+            else:
+                if multi: returnlist.append(multi)
+                if single: returnlist.append(single)
+        # similar for the non-multilib case
+        elif single:
+            best = self._bestPackageFromList([single,no])
+            if best.arch == "noarch":
+                returnlist.append(no)
+            else:
+                returnlist.append(single)
+        # if there's not a multi or single lib, then we want the noarch
+        else:
+            returnlist.append(no)
         
         return returnlist
 
