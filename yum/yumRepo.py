@@ -211,7 +211,8 @@ class YumRepository(Repository):
 
     def getGroupLocation(self):
         """Returns the location of the group."""
-        return self.repoXML.groupLocation()
+        thisdata = self.getData('group')
+        return thisdata.location
 
 
     def __cmp__(self, other):
@@ -577,17 +578,12 @@ class YumRepository(Repository):
             raise URLGrabError(-1, 'Error importing repomd.xml for %s: %s' % (self, e))
 
 
-    def _checkMD(self, fn, mdtype):
+    def checkMD(self, fn, mdtype):
         """check the metadata type against its checksum"""
-
-        csumDict = { 'primary' : self.repoXML.primaryChecksum,
-                     'filelists' : self.repoXML.filelistsChecksum,
-                     'other' : self.repoXML.otherChecksum,
-                     'group' : self.repoXML.groupChecksum }
-
-        csumMethod = csumDict[mdtype]
-
-        (r_ctype, r_csum) = csumMethod() # get the remote checksum
+        
+        thisdata = self.repoXML.getData(mdtype)
+        
+        (r_ctype, r_csum) = thisdata.checksums[0] # get the remote checksum
 
         if type(fn) == types.InstanceType: # this is an urlgrabber check
             file = fn.filename
@@ -606,18 +602,14 @@ class YumRepository(Repository):
 
 
 
-    def _retrieveMD(self, mdtype):
+    def retrieveMD(self, mdtype):
         """base function to retrieve metadata files from the remote url
            returns the path to the local metadata file of a 'mdtype'
            mdtype can be 'primary', 'filelists', 'other' or 'group'."""
-        locDict = { 'primary' : self.repoXML.primaryLocation,
-                    'filelists' : self.repoXML.filelistsLocation,
-                    'other' : self.repoXML.otherLocation,
-                    'group' : self.repoXML.groupLocation }
-
-        locMethod = locDict[mdtype]
-    
-        (r_base, remote) = locMethod()
+        
+        thisdata = self.repoXML.getData(mdtype)
+        
+        (r_base, remote) = thisdata.location
         fname = os.path.basename(remote)
         local = self.cachedir + '/' + fname
 
@@ -628,7 +620,7 @@ class YumRepository(Repository):
         if self.cache == 1:
             if os.path.exists(local):
                 try:
-                    self._checkMD(local, mdtype)
+                    self.checkMD(local, mdtype)
                 except URLGrabError, e:
                     raise Errors.RepoError, \
                         "Caching enabled and local cache: %s does not match checksum" % local
@@ -642,7 +634,7 @@ class YumRepository(Repository):
 
         if os.path.exists(local):
             try:
-                self._checkMD(local, mdtype)
+                self.checkMD(local, mdtype)
             except URLGrabError, e:
                 pass
             else:
@@ -650,7 +642,7 @@ class YumRepository(Repository):
                 return local # it's the same return the local one
 
         try:
-            checkfunc = (self._checkMD, (mdtype,), {})
+            checkfunc = (self.checkMD, (mdtype,), {})
             local = self.__get(relative=remote, local=local, copy_local=1,
                              checkfunc=checkfunc, reget=None,
                              cache=self.http_caching == 'all')
@@ -666,23 +658,23 @@ class YumRepository(Repository):
         """this gets you the path to the primary.xml file, retrieving it if we
            need a new one"""
 
-        return self._retrieveMD('primary')
+        return self.retrieveMD('primary')
 
 
     def getFileListsXML(self):
         """this gets you the path to the filelists.xml file, retrieving it if we 
            need a new one"""
 
-        return self._retrieveMD('filelists')
+        return self.retrieveMD('filelists')
 
     def getOtherXML(self):
-        return self._retrieveMD('other')
+        return self.retrieveMD('other')
 
     def getGroups(self):
         """gets groups and returns group file path for the repository, if there
            is none it returns None"""
         try:
-            file = self._retrieveMD('group')
+            file = self.retrieveMD('group')
         except URLGrabError:
             file = None
 
