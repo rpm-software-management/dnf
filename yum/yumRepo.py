@@ -93,7 +93,8 @@ class YumPackageSack(packageSack.PackageSack):
 
             if item == 'metadata':
                 xml = repo.getPrimaryXML()
-                (ctype, csum) = repo.repoXML.primaryChecksum()
+                xmldata = repo.repoXML.getData('primary')
+                (ctype, csum) = xmldata.checksum
                 dobj = repo.cacheHandler.getPrimary(xml, csum)
                 if not pickleonly:
                     self.addDict(repo.id, item, dobj, callback)
@@ -101,7 +102,8 @@ class YumPackageSack(packageSack.PackageSack):
 
             elif item == 'filelists':
                 xml = repo.getFileListsXML()
-                (ctype, csum) = repo.repoXML.filelistsChecksum()
+                xmldata = repo.repoXML.getData('filelists')
+                (ctype, csum) = xmldata.checksum
                 dobj = repo.cacheHandler.getFilelists(xml, csum)
                 if not pickleonly:
                     self.addDict(repo.id, item, dobj, callback)
@@ -110,7 +112,8 @@ class YumPackageSack(packageSack.PackageSack):
 
             elif item == 'otherdata':
                 xml = repo.getOtherXML()
-                (ctype, csum) = repo.repoXML.otherChecksum()
+                xmldata = repo.repoXML.getData('other')
+                (ctype, csum) = xmldata.checksum
                 dobj = repo.cacheHandler.getOtherdata(xml, csum)
                 if not pickleonly:
                     self.addDict(repo.id, item, dobj, callback)
@@ -583,7 +586,7 @@ class YumRepository(Repository):
         
         thisdata = self.repoXML.getData(mdtype)
         
-        (r_ctype, r_csum) = thisdata.checksums[0] # get the remote checksum
+        (r_ctype, r_csum) = thisdata.checksum # get the remote checksum
 
         if type(fn) == types.InstanceType: # this is an urlgrabber check
             file = fn.filename
