@@ -29,8 +29,8 @@ class RepoData:
     def __init__(self, elem):
         self.type = elem.attrib.get('type')
         self.location = (None, None)
-        self.checksums = [] # type,value
-        self.openchecksums = [] # type,value
+        self.checksum = (None,None) # type,value
+        self.openchecksum = (None,None) # type,value
         self.timestamp = None
     
         self.parse(elem)
@@ -47,12 +47,12 @@ class RepoData:
             elif child_name == 'checksum':
                 csum_value = child.text
                 csum_type = child.attrib.get('type')
-                self.checksums.append((csum_type,csum_value))
+                self.checksum = (csum_type,csum_value)
 
             elif child_name == 'open-checksum':
                 csum_value = child.text
                 csum_type = child.attrib.get('type')
-                self.openchecksums.append((csum_type, csum_value))
+                self.openchecksum = (csum_type, csum_value)
             
             elif child_name == 'timestamp':
                 self.timestamp = child.text
@@ -101,13 +101,8 @@ class RepoMD:
             print 'datatype: %s' % thisdata.type
             print 'location: %s %s' % thisdata.location
             print 'timestamp: %s' % thisdata.timestamp
-            print 'checksums:'
-            for (type, value) in thisdata.checksums:
-                print '  %s - %s' % (type, value)
-            print 'open checksums:'
-            for (type, value) in thisdata.openchecksums:
-                print '  %s - %s' % (type, value)
-            
+            print 'checksum: %s -%s' % thisdata.checksum
+            print 'open checksum: %s - %s' %  thisdata.openchecksum
 
 def main():
 
