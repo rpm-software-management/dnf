@@ -22,6 +22,7 @@
 import os
 import os.path
 import types
+import re
 import repos
 import yumRepo
 from packages import YumAvailablePackage
@@ -301,7 +302,7 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
 
 
         # If it's not a provides or a filename, we are done
-        if (prcotype != "provides" or name.find('/') != 0):
+        if prcotype != "provides" or name[0] != '/':
             return results
 
         # If it is a filename, search the primary.xml file info
@@ -319,28 +320,56 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
                     pkg.files = {name: res['type']}
                     results.append(self.pc(pkg,rep))
 
+        matched = 0
+        globs = ['.*bin\/.*', '^\/etc\/.*', '^\/usr\/lib\/sendmail$']
+        for glob in globs:
+            globc = re.compile(glob)
+            if globc.match(name):
+                matched = 1
+
+        if matched: # if its in the primary.xml files then skip the other check
+            return results
+        
         # If it is a filename, search the files.xml file info
         for (rep,cache) in self.filelistsdb.items():
             cur = cache.cursor()
             (dirname,filename) = os.path.split(name)
-            cur.execute("select packages.pkgId as pkgId,\
-                filelist.dirname as dirname,\
-                filelist.filetypes as filetypes,\
-                filelist.filenames as filenames \
-                from filelist,packages where dirname = %s AND filelist.pkgKey = packages.pkgKey" , (dirname))
+            if name.find('%') == -1: # no %'s in the thing safe to LIKE
+                cur.execute("select packages.pkgId as pkgId,\
+                    filelist.dirname as dirname,\
+                    filelist.filetypes as filetypes,\
+                    filelist.filenames as filenames \
+                    from packages,filelist where \
+                    (filelist.dirname LIKE '%%%s%%' \
+                    OR (filelist.dirname LIKE '%%%s%%' AND\
+                    filelist.filenames LIKE '%%%s%%'))\
+                    AND (filelist.pkgKey = packages.pkgKey)" % (name,dir,filename))
+            else: 
+                cur.execute("select packages.pkgId as pkgId,\
+                    filelist.dirname as dirname,\
+                    filelist.filetypes as filetypes,\
+                    filelist.filenames as filenames \
+                    from filelist,packages where dirname = %s AND filelist.pkgKey = packages.pkgKey" , (dirname))
+
             files = cur.fetchall()
+            
             for res in files:
                 if (self.excludes[rep].has_key(res['pkgId'])):
                     continue
-                                        
+                
+                quicklookup = {}
+                for fn in decodefilenamelist(res['filenames']):
+                    quicklookup[fn] = 1
+                    
                 # If it matches the dirname, that doesnt mean it matches
                 # the filename, check if it does
-                if filename and \
-                  not filename in res['filenames'].split('/'):
+                if filename and not quicklookup.has_key(filename):
                     continue
+                
                 # If it matches we only know the packageId
                 pkg = self.getPackageDetails(res['pkgId'])
                 results.append(self.pc(pkg,rep))
+        
         return results
 
     def searchProvides(self, name):

@@ -73,10 +73,10 @@ class Depsolve(object):
                 self.doSackFilelistPopulate()
             
         pkgs = self.pkgSack.searchProvides(name)
+        
+        
         if flags == 0:
             flags = None
-        
-
         if type(version) in (types.StringType, types.NoneType):
             (r_e, r_v, r_r) = rpmUtils.miscutils.stringToVersion(version)
         elif type(version) in (types.TupleType, types.ListType): # would this ever be a ListType?
