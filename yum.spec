@@ -72,7 +72,6 @@ exit 0
 %{_bindir}/yum
 %{_bindir}/yum-arch
 /usr/lib/python?.?/site-packages/yum
-/usr/lib/python?.?/site-packages/repomd
 /usr/lib/python?.?/site-packages/rpmUtils
 %dir /var/cache/yum
 %{_mandir}/man*/*
