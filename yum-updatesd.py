@@ -16,8 +16,10 @@
 # (c)2006 Duke University - written by Seth Vidal
 
 #TODO:
-# add logs and errorlogs below a certain number to send out to syslog
-# fix email notifications so it does _something_ :)
+# - add logs and errorlogs below a certain number to send out to syslog
+# - thread it so it can download the updated packages while still answering 
+#     dbus calls
+# - clean up config and work on man page for docs
 
 
 import os
