@@ -8,9 +8,8 @@ import Errors
 from urlgrabber.grabber import URLGrabber
 import urlgrabber.mirror
 from urlgrabber.grabber import URLGrabError
-from repomd import repoMDObject
-from repomd import mdErrors
-from repomd import packageSack
+import repoMDObject
+import packageSack
 from repos import Repository
 from packages import YumAvailablePackage
 import parser
@@ -566,7 +565,7 @@ class YumRepository(Repository):
 
         try:
             self.repoXML = repoMDObject.RepoMD(self.id, result)
-        except mdErrors.RepoMDError, e:
+        except Errors.RepoMDError, e:
             raise Errors.RepoError, 'Error importing repomd.xml from %s: %s' % (self, e)
 
     def _checkRepoXML(self, fo):
@@ -577,7 +576,7 @@ class YumRepository(Repository):
 
         try:
             foo = repoMDObject.RepoMD(self.id, filepath)
-        except mdErrors.RepoMDError, e:
+        except Errors.RepoMDError, e:
             raise URLGrabError(-1, 'Error importing repomd.xml for %s: %s' % (self, e))
 
 

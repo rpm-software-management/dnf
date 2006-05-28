@@ -27,8 +27,6 @@ import rpmUtils.arch
 import rpmUtils.miscutils
 import Errors
 
-import repomd.packageObject
-
 base=None
 
 def buildPkgRefDict(pkgs):
@@ -107,13 +105,172 @@ def parsePackages(pkgs, usercommands, casematch=0):
 
 # goal for the below is to have a packageobject that can be used by generic
 # functions independent of the type of package - ie: installed or available
-class YumAvailablePackage(repomd.packageObject.PackageObject, repomd.packageObject.RpmBase):
-    """derived class for the repomd packageobject and RpmBase packageobject yum
+class PackageObject:
+    """Base Package Object - sets up the default storage dicts and the
+       most common returns"""
+       
+    def __init__(self):
+        self.simple = {} # simple things, name, arch, e,v,r, size, etc
+        self.checksums = [] # (type, checksum, id(0,1)
+
+    def __str__(self):
+        return self.returnNevraPrintable()
+
+    def returnSimple(self, varname):
+        return self.simple[varname]
+
+    def simpleItems(self):
+        return self.simple.keys()            
+
+    def returnID(self):
+        return self.returnSimple('id')
+
+    def returnPackageTuple(self):
+        return (self.returnSimple('name'), self.returnSimple('arch'), 
+                self.returnSimple('epoch'),self.returnSimple('version'), 
+                self.returnSimple('release'))
+        
+    def returnNevraTuple(self):
+        return (self.returnSimple('name'), self.returnSimple('epoch'), 
+                self.returnSimple('version'),self.returnSimple('release'), 
+                self.returnSimple('arch'))
+    
+    def returnNevraPrintable(self):
+        """return printable string for the pkgname/object
+           name - epoch:ver-rel.arch"""
+        if self.returnSimple('epoch') == '0':
+            string = '%s - %s-%s.%s' % (self.returnSimple('name'), 
+                                        self.returnSimple('version'),
+                                        self.returnSimple('release'), 
+                                        self.returnSimple('arch'))
+        else:
+            string = '%s - %s:%s-%s.%s' % (self.returnSimple('name'), 
+                                           self.returnSimple('epoch'), 
+                                           self.returnSimple('version'), 
+                                           self.returnSimple('release'), 
+                                           self.returnSimple('arch'))
+        return string                                           
+
+    def returnEVR(self):
+        """returns a tuple of epoch, ver, rel"""
+        return (self.returnSimple('epoch'), self.returnSimple('version'), self.returnSimple('release'))
+        
+        return                            
+
+    def returnChangelog(self):
+        """return changelog entries"""
+        return self.changelog
+
+
+class RpmBase:
+    """return functions and storage for rpm-specific data"""
+
+    def __init__(self):
+        self.prco = {}
+        self.prco['obsoletes'] = [] # (name, flag, (e,v,r))
+        self.prco['conflicts'] = [] # (name, flag, (e,v,r))
+        self.prco['requires'] = [] # (name, flag, (e,v,r))
+        self.prco['provides'] = [] # (name, flag, (e,v,r))
+        self.files = {}
+        self.files['file'] = []
+        self.files['dir'] = []
+        self.files['ghost'] = []
+        self.changelog = [] # (ctime, cname, ctext)
+        self.licenses = []
+    
+    def returnPrco(self, prcotype):
+        """return list of provides, requires, conflicts or obsoletes"""
+        if self.prco.has_key(prcotype):
+            return self.prco[prcotype]
+        else:
+            return []
+
+    def checkPrco(self, prcotype, prcotuple):
+        """returns 1 or 0 if the pkg contains the requested tuple/tuple range"""
+        # get rid of simple cases - nothing
+        if not self.prco.has_key(prcotype):
+            return 0
+        # exact match    
+        if prcotuple in self.prco[prcotype]:
+            return 1
+        else:
+            # make us look it up and compare
+            (reqn, reqf, (reqe, reqv ,reqr)) = prcotuple
+            if reqf is not None:
+                if self.inPrcoRange(prcotype, prcotuple):
+                    return 1
+                else:
+                    return 0
+            else:
+                for (n, f, (e, v, r)) in self.returnPrco(prcotype):
+                    if reqn == n:
+                        return 1
+
+        return 0
+                
+    def inPrcoRange(self, prcotype, reqtuple):
+        """returns true if the package has a the prco that satisfies 
+           the reqtuple range, assume false.
+           Takes: prcotype, requested prco tuple"""
+        # we only ever get here if we have a versioned prco
+        # nameonly shouldn't ever raise it
+        (reqn, reqf, (reqe, reqv, reqr)) = reqtuple
+        # find the named entry in pkgobj, do the comparsion
+        for (n, f, (e, v, r)) in self.returnPrco(prcotype):
+            if reqn == n:
+                # found it
+                if f != 'EQ':
+                    # isn't this odd, it's not 'EQ' - it really should be
+                    # use the pkgobj's evr for the comparison
+                    (e, v, r) = self.returnEVR()
+                # and you thought we were done having fun
+                # if the requested release is left out then we have
+                # to remove release from the package prco to make sure the match
+                # is a success - ie: if the request is EQ foo 1:3.0.0 and we have 
+                # foo 1:3.0.0-15 then we have to drop the 15 so we can match
+                if reqr is None:
+                    r = None
+                if reqe is None:
+                    e = None
+                if reqv is None: # just for the record if ver is None then we're going to segfault
+                    v = None
+                rc = mdUtils.compareEVR((e, v, r), (reqe, reqv, reqr))
+                
+                if rc >= 1:
+                    if reqf in ['GT', 'GE', 4, 12]:
+                        return 1
+                if rc == 0:
+                    if reqf in ['GE', 'LE', 'EQ', 8, 10, 12]:
+                        return 1
+                if rc <= -1:
+                    if reqf in ['LT', 'LE', 2, 10]:
+                        return 1
+        return 0
+        
+    def returnChangelog(self):
+        """return changelog entries"""
+        return self.changelog
+        
+    def returnFileEntries(self, ftype='file'):
+        """return list of files based on type"""
+        if self.files.has_key(ftype):
+            return self.files[ftype]
+        else:
+            return []
+            
+    def returnFileTypes(self):
+        """return list of types of files in the package"""
+        return self.files.keys()
+    
+
+
+class YumAvailablePackage(PackageObject, RpmBase):
+    """derived class for the  packageobject and RpmBase packageobject yum
        uses this for dealing with packages in a repository"""
 
     def __init__(self, repoid, pkgdict = None):
-        repomd.packageObject.PackageObject.__init__(self)
-        repomd.packageObject.RpmBase.__init__(self)
+        PackageObject.__init__(self)
+        RpmBase.__init__(self)
         
         self.simple['repoid'] = repoid
         self.repoid = repoid
@@ -445,11 +602,4 @@ class YumLocalPackage(YumHeaderPackage):
         
     def localPkg(self):
         return self.localpath
-    
-        
-
-
-            
-        
-    
     

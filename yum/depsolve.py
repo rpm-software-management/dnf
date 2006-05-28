@@ -25,9 +25,8 @@ import rpmUtils.arch
 from misc import unique
 import rpm
 
-from repomd.packageSack import ListPackageSack
-from repomd.mdErrors import PackageSackError
-from Errors import DepError, RepoError
+from packageSack import ListPackageSack
+from Errors import DepError, RepoError, PackageSackError
 from constants import *
 import packages
 

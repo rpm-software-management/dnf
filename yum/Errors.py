@@ -69,3 +69,13 @@ class RemoveError(YumBaseError):
     def __init__(self, args=None):
         YumBaseError.__init__(self)
         self.args = args
+
+class RepoMDError(YumBaseError):
+    def __init__(self, args=None):
+        YumBaseError.__init__(self)
+        self.args = args
+
+class PackageSackError(YumBaseError):
+    def __init__(self, args=None):
+        YumBaseError.__init__(self)
+        self.args = args

@@ -26,7 +26,8 @@ import re
 import repos
 import yumRepo
 from packages import YumAvailablePackage
-from repomd import mdUtils, mdErrors
+import Errors
+import misc
 
 # Simple subclass of YumAvailablePackage that can load 'simple headers' from
 # the database when they are requested
@@ -443,8 +444,8 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
         
         # if we've got zilch then raise
         if not allpkg:
-            raise mdErrors.PackageSackError, 'No Package Matching %s.%s' % naTup
-        return mdUtils.newestInList(allpkg)
+            raise Errors.PackageSackError, 'No Package Matching %s.%s' % naTup
+        return misc.newestInList(allpkg)
 
     def returnNewestByName(self, name=None):
         # If name is set do it from the database otherwise use our parent's
@@ -464,8 +465,8 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
         
         # if we've got zilch then raise
         if not allpkg:
-            raise mdErrors.PackageSackError, 'No Package Matching %s' % name
-        return mdUtils.newestInList(allpkg)
+            raise Errors.PackageSackError, 'No Package Matching %s' % name
+        return misc.newestInList(allpkg)
 
     def returnPackages(self, repoid=None):
         """Returns a list of packages, only containing nevra information """

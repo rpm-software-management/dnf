@@ -44,9 +44,8 @@ import plugins
 
 
 from packages import parsePackages, YumAvailablePackage, YumLocalPackage, YumInstalledPackage
-from repomd import mdErrors
 from constants import *
-from repomd.packageSack import ListPackageSack
+from packageSack import ListPackageSack
 
 __version__ = '2.9.0'
 
@@ -330,7 +329,7 @@ class YumBase(depsolve.Depsolve):
                 raise Errors.RepoError, "Repository '%s' not yet setup" % repo
             try:
                 groupremote = repo.getGroupLocation()
-            except mdErrors.RepoMDError, e:
+            except Errors.RepoMDError, e:
                 pass
             else:
                 reposWithGroups.append(repo)

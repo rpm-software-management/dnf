@@ -26,10 +26,7 @@ import Errors
 from urlgrabber.grabber import URLGrabber
 import urlgrabber.mirror
 from urlgrabber.grabber import URLGrabError
-from repomd import repoMDObject
-from repomd import mdErrors
-from repomd import packageSack
-from repomd.packageSack import MetaSack
+from packageSack import MetaSack
 from packages import YumAvailablePackage
 
 _is_fnmatch_pattern = re.compile(r"[*?[]").search

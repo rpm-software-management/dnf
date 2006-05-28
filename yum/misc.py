@@ -297,3 +297,15 @@ def sortPkgObj(pkg1 ,pkg2):
     else:
         return -1
         
+def newestInList(pkgs):
+    # return the newest in the list of packages
+    ret = [ pkgs.pop() ]
+    newest = ret[0].returnEVR()
+    for pkg in pkgs:
+        rc = compareEVR(pkg.returnEVR(), newest)
+        if rc > 0:
+            ret = [ pkg ]
+            newest = pkg.returnEVR()
+        elif rc == 0:
+            ret.append(pkg)
+    return ret
