@@ -234,7 +234,7 @@ class RpmBase:
                     e = None
                 if reqv is None: # just for the record if ver is None then we're going to segfault
                     v = None
-                rc = mdUtils.compareEVR((e, v, r), (reqe, reqv, reqr))
+                rc = rpmUtils.miscutils.compareEVR((e, v, r), (reqe, reqv, reqr))
                 
                 if rc >= 1:
                     if reqf in ['GT', 'GE', 4, 12]:

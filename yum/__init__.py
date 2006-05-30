@@ -59,9 +59,8 @@ class YumBase(depsolve.Depsolve):
         depsolve.Depsolve.__init__(self)
         self.localdbimported = 0
         self.repos = repos.RepoStorage() # class of repositories
-        # TODO: PAV Fix this 
-        #if (not self.repos.sqlite):
-        #    self.log(1,"Warning, could not load sqlite, falling back to pickle")
+        # TODO: PAV Fix this
+        # self.log(1, "Using %s storage" % self.repos.storage.Name())
 
         # Start with plugins disabled
         self.disablePlugins()

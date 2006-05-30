@@ -14,6 +14,7 @@ from repos import Repository
 from packages import YumAvailablePackage
 import parser
 import mdcache
+import storagefactory
 
 
 class YumPackageSack(packageSack.PackageSack):
@@ -74,17 +75,11 @@ class YumPackageSack(packageSack.PackageSack):
             data = [ with ]
 
         if not hasattr(repo, 'cacheHandler'):
-            if (repo.sqlite):
-                repo.cacheHandler = repo.sqlitecache.RepodataParserSqlite(
-                        storedir=repo.cachedir,
-                        repoid=repo.id,
-                        callback=callback,
-                        )
-            else:
-                repo.cacheHandler = mdcache.RepodataParser(
-                        storedir=repo.cachedir,
-                        callback=callback
-                        )
+            repo.cacheHandler = repo.storage.GetCacheHandler(
+                storedir=repo.cachedir,
+                repoid=repo.id,
+                callback=callback,
+                )
         for item in data:
             if self.added.has_key(repo.id):
                 if item in self.added[repo.id]:
@@ -167,19 +162,8 @@ class YumRepository(Repository):
         self.failure_obj = None
         self.mirror_failure_obj = None
 
-        # Check to see if we can import sqlite stuff
-        try:
-            import sqlitecache
-            import sqlitesack
-        except ImportError:
-            self.sqlite = False
-        else:
-            self.sqlite = True
-            self.sqlitecache = sqlitecache
-            #self.sqlite = False
-
-        # This repository's package sack instance.
-        self.sack = self._selectSackType()
+        self.storage = storagefactory.GetStorage()
+        self.sack = self.storage.GetPackageSack()
 
 
     def __getProxyDict(self):
@@ -191,15 +175,6 @@ class YumRepository(Repository):
     # consistent access to how proxy information should look (and ensuring
     # that it's actually determined for the repo)
     proxy_dict = property(__getProxyDict)
-
-    def _selectSackType(self):
-
-        if (self.sqlite):
-            import sqlitecache
-            import sqlitesack
-            return sqlitesack.YumSqlitePackageSack(sqlitesack.YumAvailablePackageSqlite)
-        else:
-            return YumPackageSack(YumAvailablePackage)
 
     def getPackageSack(self):
         """Returns the instance of this repository's package sack."""
