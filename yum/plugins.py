@@ -370,7 +370,7 @@ class ConfigPluginConduit(PluginConduit):
         @param default: Default value for the option if not set by the user.
         '''
         warnings.warn('registerOpt() will go away in a future version of Yum.\n'
-                'Please manipulate config.YumConf and config.RepoConf directly.'
+                'Please manipulate config.YumConf and config.RepoConf directly.',
                 DeprecationWarning)
 
         type2opt =  {
