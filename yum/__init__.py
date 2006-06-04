@@ -88,6 +88,7 @@ class YumBase(depsolve.Depsolve):
         """do a default setup for all the normal/necessary yum components,
            really just a shorthand for testing"""
         
+        self.doStartupConfig()
         self.doConfigSetup()
         self.conf.cache = cache
         self.doTsSetup()
@@ -95,10 +96,15 @@ class YumBase(depsolve.Depsolve):
         self.doRepoSetup()
         self.doSackSetup()
         
-    def doConfigSetup(self, fn='/etc/yum.conf', root='/'):
+    def doStartupConfig(self, fn='/etc/yum.conf', root='/'):
+        '''Read up configuration options required early during startup.
+        '''
+        self.startupconf = config.readStartupConfig(fn, root)
+        
+    def doConfigSetup(self):
         """basic stub function for doing configuration setup"""
-       
-        self.conf = config.readMainConfig(fn, root)
+      
+        self.conf = config.readMainConfig(self.startupconf)
         self.yumvar = self.conf.yumvar
         self.getReposFromConfig()
 
@@ -161,8 +167,9 @@ class YumBase(depsolve.Depsolve):
     def doPluginSetup(self, optparser=None, types=None):
         '''Initialise and enable yum plugins. 
 
-        If plugins are going to be used, this should be called soon after
-        doConfigSetup() has been called.
+        This should be called after doStartupConfig() has been called but
+        before doConfigSetup() so that plugins can modify Yum's configuration
+        option definitions.
 
         @param optparser: The OptionParser instance for this run (optional)
         @param types: A sequence specifying the types of plugins to load.
@@ -170,12 +177,8 @@ class YumBase(depsolve.Depsolve):
             yum.plugins.TYPE_...  constants. If None (the default), all plugins
             will be loaded.
         '''
-        # Load plugins first as they make affect available config options
-        self.plugins = plugins.YumPlugins(self, self.conf.pluginpath,
+        self.plugins = plugins.YumPlugins(self, self.startupconf.pluginpath,
                 optparser, types)
-
-        # Process options registered by plugins
-        self.plugins.parseopts(self.conf, self.repos.findRepos('*'))
 
         # Initialise plugins
         self.plugins.run('init')

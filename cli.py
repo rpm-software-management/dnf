@@ -162,45 +162,54 @@ yum [options] < update | install | info | remove | list |
             sys.exit(1)
         opts = self.optparser.parse_args(args=args)[0]
 
-        try: 
-            # If the conf file is inside the  installroot - use that.
-            # otherwise look for it in the normal root
-            if opts.installroot:
-                if os.access(opts.installroot+'/'+opts.conffile, os.R_OK):
-                    opts.conffile = opts.installroot+'/'+opts.conffile
-                root=opts.installroot
-            else:
-                root = '/'
-                    
-            # Parse the configuration file
-            try:
-                self.doConfigSetup(fn=opts.conffile, root=root)
-            except yum.Errors.ConfigError, e:
-                self.errorlog(0, _('Config Error: %s') % e)
-                sys.exit(1)
-                
-            # Initialise logger object
-            self.log=Logger(threshold=self.conf.debuglevel,
-                    file_object=sys.stdout)
-
-            # Setup debug and error levels
-            if opts.debuglevel is not None:
-                self.log.threshold=opts.debuglevel
-                self.conf.debuglevel = opts.debuglevel
-
-            if opts.errorlevel is not None:
-                self.errorlog.threshold=opts.errorlevel
-                self.conf.errorlevel = opts.errorlevel
-
+        # If the conf file is inside the  installroot - use that.
+        # otherwise look for it in the normal root
+        if opts.installroot:
+            if os.access(opts.installroot+'/'+opts.conffile, os.R_OK):
+                opts.conffile = opts.installroot+'/'+opts.conffile
+            root=opts.installroot
+        else:
+            root = '/'
+       
+        # Do read of config options required during initialisation
+        try:
+            self.doStartupConfig(opts.conffile, root)
+        except yum.Errors.ConfigError, e:
+            self.errorlog(0, _('Config Error: %s') % e)
+            sys.exit(1)
         except ValueError, e:
             self.errorlog(0, _('Options Error: %s') % e)
             self.usage()
             sys.exit(1)
 
-        # Initialise plugins if cmd line and config file say these should be in
-        # use (this may add extra command line options)
-        if not opts.noplugins and self.conf.plugins:
+        # Initialise logger object
+        self.log = Logger(threshold=self.startupconf.debuglevel,
+                file_object=sys.stdout)
+
+        # Setup debug and error levels
+        if opts.debuglevel is not None:
+            self.log.threshold = opts.debuglevel
+            self.startupconf.debuglevel = opts.debuglevel
+        if opts.errorlevel is not None:
+            self.errorlog.threshold = opts.errorlevel
+            self.startupconf.errorlevel = opts.errorlevel
+    
+        # Initialise plugins if cmd line and config file say they should be in
+        # use. In this step plugins may add extra command line options or
+        # configuration file options.
+        if not opts.noplugins and self.startupconf.plugins:
             self.doPluginSetup(self.optparser)
+            
+        # Parse the configuration file
+        try: 
+            self.doConfigSetup()
+        except yum.Errors.ConfigError, e:
+            self.errorlog(0, _('Config Error: %s') % e)
+            sys.exit(1)
+        except ValueError, e:
+            self.errorlog(0, _('Options Error: %s') % e)
+            self.usage()
+            sys.exit(1)
 
         # Now parse the command line for real
         (opts, self.cmds) = self.optparser.parse_args()

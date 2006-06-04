@@ -23,20 +23,7 @@ import ConfigParser
 import config 
 import Errors
 
-# XXX: break the API for how plugins define config file options
-#   - they should just be able to manipulate the YumConf and RepoConf classes
-#     directly, adding Option instances as required
-#   - cleaner, more flexible and 
-#   - update PLUGINS document
-#   - will take care of the following existing TODOs:
-# TODO: detect conflicts between builtin yum options and registered plugin
-# options (will require refactoring of config.py)
-# TODO: plugins should be able to specify convertor functions for config vars
-
-# TODO: should plugin searchpath be affected by installroot option?
-
-# TODO: cleaner method to query installed packages rather than exposing RpmDB
-# (Panu?)
+# TODO: expose rpm package sack objects to plugins (once finished)
 
 # TODO: consistent case of YumPlugins methods
 
@@ -50,9 +37,6 @@ import Errors
 # SQL db)
 
 # TODO: multiversion plugin support
-
-# TODO: config vars marked as PLUG_OPT_WHERE_ALL should inherit defaults from
-#   the [main] setting if the user doesn't specify them
 
 # TODO: allow plugins to extend shell commands
 
@@ -75,7 +59,7 @@ import Errors
 # API, the major version number must be incremented and the minor version number
 # reset to 0. If a change is made that doesn't break backwards compatibility,
 # then the minor number must be incremented.
-API_VERSION = '2.3'
+API_VERSION = '2.4'
 
 class DeprecatedInt(int):
     '''
@@ -142,7 +126,6 @@ class YumPlugins:
 
         self._importplugins(types)
 
-        self.opts = {}
         self.cmdlines = {}
 
         # Call close handlers when yum exit's
@@ -192,8 +175,8 @@ class YumPlugins:
         modname = modname.split('.py')[0]
 
         conf = self._getpluginconf(modname)
-        if not conf or not config.getOption(conf, 'main', 'enabled', False,
-                config.BoolOption()):
+        if not conf or not config.getOption(conf, 'main', 'enabled', 
+                config.BoolOption(False)):
             self.base.log(3, '"%s" plugin is disabled' % modname)
             return
 
@@ -250,8 +233,18 @@ class YumPlugins:
         IncludingConfigParser instance representing it. Returns None if there
         was an error reading or parsing the configuration file.
         '''
-        #XXX: should this use installroot?
-        conffilename = os.path.join('/etc/yum/pluginconf.d', modname+'.conf')
+        for dir in self.base.startupconf.pluginconfpath:
+            conffilename = os.path.join(dir, modname + ".conf")
+            if os.access(conffilename, os.R_OK):
+                # Found configuration file
+                break
+            self.base.log(3, "Configuration file %s not found" % conffilename)
+        else: # for
+            # Configuration files for the plugin not found
+            self.base.log(2, "Unable to find configuration file for plugin %s"
+                % modname)
+            return None
+
 
         try:
             parser = config.IncludingConfigParser()
@@ -264,52 +257,6 @@ class YumPlugins:
             return None
 
         return parser
-
-    def registeropt(self, name, valuetype, where, default):
-        '''Called from plugins to register a new config file option.
-
-        @param name: Name of the new option.
-        @param valuetype: Option type (PLUG_OPT_BOOL, PLUG_OPT_STRING ...)
-        @param where: Where the option should be available in the config file.
-            (PLUG_OPT_WHERE_MAIN, PLUG_OPT_WHERE_REPO, ...)
-        @param default: Default value for the option if not set by the user.
-        '''
-        if self.opts.has_key(name):
-            raise Errors.ConfigError('Plugin option conflict: ' \
-                    'an option named "%s" has already been registered' % name
-                    )
-        self.opts[name] = (valuetype, where, default)
-
-    def parseopts(self, conf, repos):
-        '''Parse any configuration options registered by plugins
-
-        @param conf: the yumconf instance holding Yum's global options
-        @param repos: a list of all repository objects
-        '''
-        #XXX: with the new config stuff this is an ugly hack!
-        # See first TODO at top of this file
-
-        type2opt =  {
-            PLUG_OPT_STRING: config.Option(),
-            PLUG_OPT_INT: config.IntOption(),
-            PLUG_OPT_BOOL: config.BoolOption(),
-            PLUG_OPT_FLOAT: config.FloatOption(),
-            }
-
-        # Process [main] options first
-        for name, (vtype, where, default) in self.opts.iteritems(): 
-            if where in (PLUG_OPT_WHERE_MAIN, PLUG_OPT_WHERE_ALL):
-                val = config.getOption(conf.cfg, 'main', name, default,
-                        type2opt[vtype])
-                setattr(conf, name, val)
-
-        # Process repository level options
-        for repo in repos:
-            for name, (vtype, where, default) in self.opts.iteritems(): 
-                if where in (PLUG_OPT_WHERE_REPO, PLUG_OPT_WHERE_ALL):
-                    val = config.getOption(repo.cfg, repo.id, name, default,
-                            type2opt[vtype])
-                    repo.setAttribute(name, val)
 
     def setCmdLine(self, opts, commands):
         '''Set the parsed command line options so that plugins can access them
@@ -376,8 +323,7 @@ class PluginConduit:
         @param default: Value to read if option is missing.
         @return: String option value read, or default if option was missing.
         '''
-        return config.getOption(self._conf, section, opt, default,
-                config.Option())
+        return config.getOption(self._conf, section, opt, config.Option(default))
 
     def confInt(self, section, opt, default=None):
         '''Read an integer value from the plugin's own configuration file
@@ -388,8 +334,7 @@ class PluginConduit:
         @return: Integer option value read, or default if option was missing or
             could not be parsed.
         '''
-        return config.getOption(self._conf, section, opt, default,
-                config.IntOption())
+        return config.getOption(self._conf, section, opt, config.IntOption(default))
 
     def confFloat(self, section, opt, default=None):
         '''Read a float value from the plugin's own configuration file
@@ -400,8 +345,7 @@ class PluginConduit:
         @return: Float option value read, or default if option was missing or
             could not be parsed.
         '''
-        return config.getOption(self._conf, section, opt, default,
-                config.FloatOption())
+        return config.getOption(self._conf, section, opt, config.FloatOption(default))
 
     def confBool(self, section, opt, default=None):
         '''Read a boolean value from the plugin's own configuration file
@@ -412,18 +356,40 @@ class PluginConduit:
         @return: Boolean option value read, or default if option was missing or
             could not be parsed.
         '''
-        return config.getOption(self._conf, section, opt, default,
-                config.BoolOption())
+        return config.getOption(self._conf, section, opt, config.BoolOption(default))
 
 class ConfigPluginConduit(PluginConduit):
 
-    def registerOpt(self, *args, **kwargs):
+    def registerOpt(self, name, valuetype, where, default):
         '''Register a yum configuration file option.
 
-        Arguments are as for YumPlugins.registeropt().
+        @param name: Name of the new option.
+        @param valuetype: Option type (PLUG_OPT_BOOL, PLUG_OPT_STRING ...)
+        @param where: Where the option should be available in the config file.
+            (PLUG_OPT_WHERE_MAIN, PLUG_OPT_WHERE_REPO, ...)
+        @param default: Default value for the option if not set by the user.
         '''
-        self._parent.registeropt(*args, **kwargs)
+        warnings.warn('registerOpt() will go away in a future version of Yum.\n'
+                'Please manipulate config.YumConf and config.RepoConf directly.'
+                DeprecationWarning)
 
+        type2opt =  {
+            PLUG_OPT_STRING: config.Option,
+            PLUG_OPT_INT: config.IntOption,
+            PLUG_OPT_BOOL: config.BoolOption,
+            PLUG_OPT_FLOAT: config.FloatOption,
+            }
+
+        if where == PLUG_OPT_WHERE_MAIN:
+            setattr(config.YumConf, name, type2opt[valuetype](default))
+
+        elif where == PLUG_OPT_WHERE_REPO:
+            setattr(config.RepoConf, name, type2opt[valuetype](default))
+
+        elif where == PLUG_OPT_WHERE_ALL:
+            option = type2opt[valuetype](default)
+            setattr(config.YumConf, name, option)
+            setattr(config.RepoConf, name, config.inhert(option))
 
 class InitPluginConduit(PluginConduit):
 

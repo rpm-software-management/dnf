@@ -465,24 +465,29 @@ class BaseConfig(object):
         else:
             raise Errors.ConfigError, 'No such option %s' % option
 
-class EarlyConf(BaseConfig):
+class StartupConf(BaseConfig):
     '''
     Configuration option definitions for yum.conf's [main] section that are
-    required before the other [main] options can be parsed (mainly due to
-    variable substitution).
+    required early in the initialisation process or before the other [main]
+    options can be parsed. 
     '''
+    debuglevel = IntOption(2)
+    errorlevel = IntOption(2)
+
     distroverpkg = Option('fedora-release')
     installroot = Option('/')
 
-class YumConf(EarlyConf):
+    plugins = BoolOption(False)
+    pluginpath = ListOption(['/usr/lib/yum-plugins'])
+    pluginconfpath = ListOption(['/etc/yum/pluginconf.d'])
+
+class YumConf(StartupConf):
     '''
     Configuration option definitions for yum.conf\'s [main] section.
 
-    Note: inherits options from EarlyConf too.
+    Note: see also options inherited from StartupConf
     '''
 
-    debuglevel = IntOption(2)
-    errorlevel = IntOption(2)
     retries = IntOption(10)
     recent = IntOption(7)
 
@@ -500,7 +505,6 @@ class YumConf(EarlyConf):
     proxy = UrlOption(schemes=('http', 'ftp', 'https'), allow_none=True)
     proxy_username = Option()
     proxy_password = Option()
-    pluginpath = ListOption(['/usr/lib/yum-plugins'])
     installonlypkgs = ListOption(['kernel', 'kernel-bigmem',
             'kernel-enterprise','kernel-smp', 'kernel-modules', 'kernel-debug',
             'kernel-unsupported', 'kernel-source', 'kernel-devel'])
@@ -522,7 +526,6 @@ class YumConf(EarlyConf):
     obsoletes = BoolOption(False)
     showdupesfromrepos = BoolOption(False)
     enabled = BoolOption(True)
-    plugins = BoolOption(False)
     enablegroups = BoolOption(True)
     enable_group_conditionals = BoolOption(True)
 
@@ -562,48 +565,62 @@ class RepoConf(BaseConfig):
     http_caching = Inherit(YumConf.http_caching)
     metadata_expire = Inherit(YumConf.metadata_expire)
 
-def readMainConfig(configfile, root):
-    '''Parse Yum's main configuration file
-
-    @param configfile: Path to the configuration file to parse (typically
-        '/etc/yum.conf').
-    @param root: The base path to use for installation (typically '/')
-    @return: Populated YumConf instance.
+def readStartupConfig(configfile, root):
     '''
+    Parse Yum's main configuration file and return a StartupConf instance.
+    
+    This is required in order to access configuration settings required as Yum
+    starts up.
 
-    # Read up config variables that are needed early to calculate substitution
-    # variables
-    EarlyConf.installroot.default = root
-    earlyconf = EarlyConf()
-    confparser = IncludingConfigParser()
+    @param configfile: The path to yum.conf.
+    @param root: The base path to use for installation (typically '/')
+    @return: A StartupConf instance.
+
+    May raise Errors.ConfigError if a problem is detected with while parsing.
+    '''
     if not os.path.exists(configfile):
         raise Errors.ConfigError, 'No such config file %s' % configfile
 
-    confparser.read(configfile)
-    earlyconf.populate(confparser, 'main')
+    StartupConf.installroot.default = root
+    startupconf = StartupConf()
 
+    parser = IncludingConfigParser()
+    parser.read(configfile)
+    startupconf.populate(parser, 'main')
+
+    # Check that plugin paths are all absolute
+    for path in startupconf.pluginpath:
+        if not path.startswith('/'):
+            raise Errors.ConfigError("All plugin search paths must be absolute")
+
+    # Stuff this here to avoid later re-parsing
+    startupconf._parser = parser
+
+    return startupconf
+
+def readMainConfig(startupconf):
+    '''
+    Parse Yum's main configuration file
+
+    @param startupconf: StartupConf instance as returned by readStartupConfig()
+    @return: Populated YumConf instance.
+    '''
+    
     # Set up substitution vars
     vars = _getEnvVar()
     vars['basearch'] = rpmUtils.arch.getBaseArch()          # FIXME make this configurable??
     vars['arch'] = rpmUtils.arch.getCanonArch()             # FIXME make this configurable??
-    vars['releasever'] = _getsysver(earlyconf.installroot, earlyconf.distroverpkg)
+    vars['releasever'] = _getsysver(startupconf.installroot, startupconf.distroverpkg)
 
     # Read [main] section
     yumconf = YumConf()
-    confparser = IncludingConfigParser(vars=vars)
-    confparser.read(configfile)
-    yumconf.populate(confparser, 'main')
+    yumconf.populate(startupconf._parser, 'main')
 
     # Apply the installroot to directory options
     for option in ('cachedir', 'logfile'):
         path = getattr(yumconf, option)
         setattr(yumconf, option, yumconf.installroot + path)
     
-    # Check that plugin paths are all absolute
-    for path in yumconf.pluginpath:
-        if not path.startswith('/'):
-            raise Errors.ConfigError("All plugin search paths must be absolute")
-
     # Add in some extra attributes which aren't actually configuration values 
     yumconf.yumvar = vars
     yumconf.uid = 0
@@ -645,14 +662,13 @@ def readRepoConfig(parser, section, mainconf):
 
     return thisrepo
 
-def getOption(conf, section, name, default, option):
+def getOption(conf, section, name, option):
     '''Convenience function to retrieve a parsed and converted value from a
     ConfigParser.
 
     @param conf: ConfigParser instance or similar
     @param section: Section name
     @param name: Option name
-    @param default: Value to use if option is missing
     @param option: Option instance to use for conversion.
     @return: The parsed value or default if value was not present.
 
@@ -661,7 +677,7 @@ def getOption(conf, section, name, default, option):
     try: 
         val = conf.get(section, name)
     except (NoSectionError, NoOptionError):
-        return default
+        return option.default
     return option.parse(val)
 
 def _getEnvVar():
@@ -698,7 +714,6 @@ def _getsysver(installroot, distroverpkg):
     del idx
     del ts
     return releasever
-
 
 #def main():
 #    mainconf = readMainConfig('/etc/yum.conf', '/') 
