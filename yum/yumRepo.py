@@ -188,7 +188,7 @@ class YumRepository(Repository):
 
     def getGroupLocation(self):
         """Returns the location of the group."""
-        thisdata = self.getData('group')
+        thisdata = self.repoXML.getData('group')
         return thisdata.location
 
 
