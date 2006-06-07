@@ -1924,3 +1924,74 @@ class YumBase(depsolve.Depsolve):
             # for an erase or obsoleted --> not going to be installed at end
             return False
         return installed
+
+    def getKeyForPackage(self, po, askcb = None):
+        """Retrieve a key for a package.  If needed, prompt for if the
+        key should be imported using askcb.
+        @po: Package object to retrieve the key of.
+        @askcb: Callback function to use for asking for verification.  Takes
+                arguments of the po, the userid for the key, and the keyid."""
+        
+        repo = self.repos.getRepo(po.repoid)
+        keyurls = repo.gpgkey
+        key_installed = False
+
+        for keyurl in keyurls:
+            self.log(1, 'Retrieving GPG key from %s' % keyurl)
+
+            # Go get the GPG key from the given URL
+            try:
+                rawkey = urlgrabber.urlread(keyurl, limit=9999)
+            except urlgrabber.grabber.URLGrabError, e:
+                raise yum.Errors.YumBaseError('GPG key retrieval failed: ' +
+                                              str(e))
+
+            # Parse the key
+            try:
+                keyinfo = misc.getgpgkeyinfo(rawkey)
+                keyid = keyinfo['keyid']
+                hexkeyid = misc.keyIdToRPMVer(keyid).upper()
+                timestamp = keyinfo['timestamp']
+                userid = keyinfo['userid']
+            except ValueError, e:
+                raise yum.Errors.YumBaseError, \
+                      'GPG key parsing failed: ' + str(e)
+
+            # Check if key is already installed
+            if misc.keyInstalled(self.read_ts, keyid, timestamp) >= 0:
+                self.errorlog(1, 'GPG key at %s (0x%s) is already installed' % (
+                    keyurl, hexkeyid))
+                continue
+
+            # Try installing/updating GPG key
+            self.log(1, 'Importing GPG key 0x%s "%s"' % (hexkeyid, userid))
+            rc = False
+            if self.conf.assumeyes:
+                rc = True
+            elif askcb:
+                rc = askcb(po, userid, hexkeyid)
+
+            if rc != True:
+                return yum.Errors.YumBaseError, "Not installing key"
+            
+            # Import the key
+            result = self.ts.pgpImportPubkey(misc.procgpgkey(rawkey))
+            if result != 0:
+                raise yum.Errors.YumBaseError, \
+                      'Key import failed (code %d)' % result
+            self.log(1, 'Key imported successfully')
+            key_installed = True
+
+            if not key_installed:
+                raise yum.Errors.YumBaseError, \
+                      'The GPG keys listed for the "%s" repository are ' \
+                      'already installed but they are not correct for this ' \
+                      'package.\n' \
+                      'Check that the correct key URLs are configured for ' \
+                      'this repository.' % (repo.name)
+
+            # Check if the newly installed keys helped
+            result, errmsg = self.sigCheckPkg(po)
+            if result != 0:
+                self.log(0, "Import of key(s) didn't help, wrong key(s)?")
+                raise yum.Errors.YumBaseError, errmsg
