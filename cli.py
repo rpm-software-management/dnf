@@ -746,78 +746,12 @@ For more information contact your distribution or package provider.
                 continue            
 
             elif result == 1:
-                # Key needs to be installed
-                self.log(0, errmsg)
-    
-                # Bail if not -y and stdin isn't a tty as key import will
-                # require user confirmation
-                if not sys.stdin.isatty() and not \
-                            self.conf.assumeyes:
-                    raise yum.Errors.YumBaseError, \
+               if sys.stdin.isatty() and not self.conf.assumeyes:
+                  raise yum.Errors.YumBaseError, \
                         'Refusing to automatically import keys when running ' \
                         'unattended.\nUse "-y" to override.'
 
-                repo = self.repos.getRepo(po.repoid)
-                keyurls = repo.gpgkey
-                key_installed = False
-
-                for keyurl in keyurls:
-                    self.log(0, 'Retrieving GPG key from %s' % keyurl)
-
-                    # Go get the GPG key from the given URL
-                    try:
-                        rawkey = urlgrabber.urlread(keyurl, limit=9999)
-                    except urlgrabber.grabber.URLGrabError, e:
-                        raise yum.Errors.YumBaseError(
-                                'GPG key retrieval failed: ' + str(e))
-
-                    # Parse the key
-                    try:
-                        keyinfo = yum.misc.getgpgkeyinfo(rawkey)
-                        keyid = keyinfo['keyid']
-                        hexkeyid = yum.misc.keyIdToRPMVer(keyid).upper()
-                        timestamp = keyinfo['timestamp']
-                        userid = keyinfo['userid']
-                    except ValueError, e:
-                        raise yum.Errors.YumBaseError, \
-                                'GPG key parsing failed: ' + str(e)
-
-                    # Check if key is already installed
-                    if yum.misc.keyInstalled(self.read_ts, keyid, timestamp) >= 0:
-                        self.log(0, 'GPG key at %s (0x%s) is already installed' % (
-                                keyurl,
-                                hexkeyid
-                                ))
-                        continue
-
-                    # Try installing/updating GPG key
-                    self.log(0, 'Importing GPG key 0x%s "%s"' % (hexkeyid, userid))
-                    if not self.conf.assumeyes:
-                        if not self.userconfirm():
-                            self.log(0, 'Exiting on user command')
-                            return 1
-            
-                    # Import the key
-                    result = self.ts.pgpImportPubkey(yum.misc.procgpgkey(rawkey))
-                    if result != 0:
-                        raise yum.Errors.YumBaseError, \
-                                'Key import failed (code %d)' % result
-                    self.log(1, 'Key imported successfully')
-                    key_installed = True
-
-                if not key_installed:
-                    raise yum.Errors.YumBaseError, \
-                        'The GPG keys listed for the "%s" repository are ' \
-                        'already installed but they are not correct for this ' \
-                        'package.\n' \
-                        'Check that the correct key URLs are configured for ' \
-                        'this repository.' % (repo.name)
-
-                # Check if the newly installed keys helped
-                result, errmsg = self.sigCheckPkg(po)
-                if result != 0:
-                    self.log(0, "Import of key(s) didn't help, wrong key(s)?")
-                    raise yum.Errors.YumBaseError, errmsg
+               self.getKeyForPackage(po, lambda(x, y, z: self.userconfirm()))
 
             else:
                 # Fatal error
