@@ -74,13 +74,16 @@ class RepoMD:
             infile = srcfile
         
         parser = iterparse(infile)
-
-        for event, elem in parser:
-            elem_name = ns_cleanup(elem.tag)
-            
-            if elem_name == "data":
-                thisdata = RepoData(elem=elem)
-                self.repoData[thisdata.type] = thisdata
+        
+        try:
+            for event, elem in parser:
+                elem_name = ns_cleanup(elem.tag)
+                
+                if elem_name == "data":
+                    thisdata = RepoData(elem=elem)
+                    self.repoData[thisdata.type] = thisdata
+        except SyntaxError, e:
+            raise RepoMDError, "Damaged repomd.xml file"
             
     def fileTypes(self):
         """return list of metadata file types available"""

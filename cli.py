@@ -753,7 +753,7 @@ For more information contact your distribution or package provider.
 
                # the callback here expects to be able to take options which
                # userconfirm really doesn't... so fake it
-               self.getKeyForPackage(po, lambda(x, y, z: self.userconfirm()))
+               self.getKeyForPackage(po, lambda x, y, z: self.userconfirm())
 
             else:
                 # Fatal error
