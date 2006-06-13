@@ -183,8 +183,10 @@ class MetaSack(PackageSackBase):
             sack.buildIndexes()
 
     def delPackage(self, obj):
-        """Delete a pkgobject.  This is a meaningless operation for MetaSack."""
-        pass
+        """Delete a pkgobject if it exists in every sub-sack."""
+        sack = self.sacks[obj.repoid]
+        sack.delPackage(obj)
+
 
     def returnPackages(self, repoid=None):
         """return list of all packages, takes optional repoid"""
