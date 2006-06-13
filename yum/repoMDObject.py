@@ -93,7 +93,7 @@ class RepoMD:
         if self.repoData.has_key(type):
             return self.repoData[type]
         else:
-            raise RepoMDError, "Error: requested datatype %s not available"
+            raise RepoMDError, "Error: requested datatype %s not available" % type
             
     def dump(self):
         """dump fun output"""
