@@ -537,7 +537,7 @@ def encodefilenamelist(filenamelist):
 
 # Return a list representing filestring (filenames can not contain /)
 def decodefilenamelist(filenamestring):
-    return filenamestring.split('/')
+    return misc.unique(filenamestring.split('/'))
 
 # Return a string representing filetypeslist
 # filetypes should be file, dir or ghost
