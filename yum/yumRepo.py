@@ -505,7 +505,7 @@ class YumRepository(Repository):
         try:
             self._loadRepoXML(text=self)
         except Errors.RepoError, e:
-            raise Errors.RepoError, ('Cannot open/read repomd.xml file for repository: %s' % self, e)
+            raise Errors.RepoError, ('Cannot open/read repomd.xml file for repository: %s' % self)
 
 
     def _loadRepoXML(self, text=None):
