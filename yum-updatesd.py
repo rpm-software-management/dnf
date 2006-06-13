@@ -29,6 +29,7 @@
 import os
 import sys
 import time
+import gzip
 import dbus
 import dbus.service
 import dbus.glib
@@ -49,6 +50,7 @@ from yum.config import BaseConfig, Option, IntOption, ListOption, BoolOption, \
                        IncludingConfigParser
 from yum.constants import *
 from yum.packages import YumInstalledPackage
+from yum.update_md import UpdateMetadata
 
 # FIXME: is it really sane to use this from here?
 import callback
@@ -293,22 +295,55 @@ class UpdatesDaemon(yum.YumBase):
         self.doRpmDBSetup()
         self.doUpdateSetup()
 
+    def populateUpdateMetadata(self):
+        self.updateMetadata = UpdateMetadata()
+        repos = []
+
+        for (new, old) in self.up.getUpdatesTuples():
+            pkg = self.getPackageObject(new)
+            if pkg.repoid not in repos:
+                repo = self.repos.getRepo(pkg.repoid)
+                repos.append(repo.id)
+                try:
+                    md = repo.retrieveMD('updateinfo')
+                except:
+                    continue
+                md = gzip.open(md)
+                self.updateMetadata.add(md)
+                md.close()
+
     def populateUpdates(self):
         def getDbusPackageDict(pkg):
             """Returns a dictionary corresponding to the package object
             in the form that we can send over the wire for dbus."""
-            return { "name": pkg.returnSimple("name"),
-                     "version": pkg.returnSimple("version"),
-                     "release": pkg.returnSimple("release"),
-                     "epoch": pkg.returnSimple("epoch"),
-                     "arch": pkg.returnSimple("arch"),
-                     "sourcerpm": pkg.returnSimple("sourcerpm"),
-                     "summary": pkg.returnSimple("summary") or "",
-                     }            
-        
+            pkgDict = {
+                    "name": pkg.returnSimple("name"),
+                    "version": pkg.returnSimple("version"),
+                    "release": pkg.returnSimple("release"),
+                    "epoch": pkg.returnSimple("epoch"),
+                    "arch": pkg.returnSimple("arch"),
+                    "sourcerpm": pkg.returnSimple("sourcerpm"),
+                    "summary": pkg.returnSimple("summary") or "",
+            }
+
+            md = self.updateMetadata.get_notice((pkg.name, pkg.ver, pkg.rel))
+            if md:
+                pkgDict['update_id'] = md.update_id or ''
+                pkgDict['release_date'] = md.release_date or ''
+                pkgDict['title'] = md.title or ''
+                pkgDict['status'] = md.status or ''
+                pkgDict['description'] = md.description or ''
+                pkgDict['distribution'] = md.distribution or ''
+                pkgDict['cves'] = string.join(md.cves) or ''
+                pkgDict['urls'] = string.join(md.urls) or ''
+
+            return pkgDict
+
         if not hasattr(self, 'up'):
             # we're _only_ called after updates are setup
             return
+
+        self.populateUpdateMetadata()
 
         self.updateInfo = []
         for (new, old) in self.up.getUpdatesTuples():

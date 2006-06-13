@@ -36,9 +36,9 @@ class UpdateNotice(object):
         self.distribution = None
         self.release_date = None
         self.status = None
-        self.classification = None
+        self.type = None
         self.title = ''
-        
+
         if elem:
             self.parse(elem)
     
@@ -46,14 +46,14 @@ class UpdateNotice(object):
         cveinfo = pkglist = related = ''
         
         head = """
-Class: %s
+Type: %s
 Status: %s
 Distribution: %s
 ID: %s
 Release date: %s
 Description: 
 %s
-        """ % (self.classification, self.status, self.distribution, 
+        """ % (self.type, self.status, self.distribution, 
                self.update_id, self.release_date, self.description)
 
         if self.urls:
@@ -87,11 +87,11 @@ Description:
             
             self.release_date = elem.attrib.get('release_date')
             self.status = elem.attrib.get('status')
-            c = elem.attrib.get('class')
+            c = elem.attrib.get('type')
             if not c:
-                self.classification = 'update'
+                self.type = 'update'
             else:
-                self.classification = c
+                self.type = c
 
         for child in elem:
 
@@ -129,7 +129,6 @@ Description:
 
 
 
-
 class UpdateMetadata(object):
     def __init__(self):
         self._notices = {}
@@ -138,7 +137,17 @@ class UpdateMetadata(object):
         return self._notices.values()
 
     notices = property(get_notices)
-    
+
+    def get_notice(self, nvr):
+        """ Retrieve an update notice for a given (name, version, release). """
+        for notice in self._notices.values():
+            for pkg in notice.packages:
+                if pkg['name'] == nvr[0] and \
+                   pkg['ver'] == nvr[1] and \
+                   pkg['rel'] == nvr[2]:
+                       return notice
+        return None
+
     def add(self, srcfile):
         if not srcfile:
             raise UpdateNoticeException
@@ -155,10 +164,10 @@ class UpdateMetadata(object):
                 un = UpdateNotice(elem)
                 if not self._notices.has_key(un.update_id):
                     self._notices[un.update_id] = un
-                
-            
+
+
         del parser
-    
+
     def dump(self):
         for notice in self.notices:
             print notice
