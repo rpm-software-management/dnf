@@ -14,6 +14,7 @@ import pwd
 from stat import *
 
 import rpmUtils
+from rpmUtils.miscutils import compareEVR
 from Errors import MiscError
 
 ###########
