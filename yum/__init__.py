@@ -38,6 +38,7 @@ import parser
 import repos
 import misc
 import transactioninfo
+import urlgrabber
 from urlgrabber.grabber import URLGrabError
 import depsolve
 import plugins
