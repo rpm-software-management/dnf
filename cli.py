@@ -746,7 +746,7 @@ For more information contact your distribution or package provider.
                 continue            
 
             elif result == 1:
-               if sys.stdin.isatty() and not self.conf.assumeyes:
+               if not sys.stdin.isatty() and not self.conf.assumeyes:
                   raise yum.Errors.YumBaseError, \
                         'Refusing to automatically import keys when running ' \
                         'unattended.\nUse "-y" to override.'
