@@ -231,9 +231,14 @@ class MetaSack(PackageSackBase):
         for sack in self.sacks.values():
             if hasattr(sack, methodName):
                 method = getattr(sack, methodName)
-                sackResult = apply(method, args)
+                try:
+                    sackResult = apply(method, args)
+                except PackageSackError:
+                    continue
+
                 if sackResult:
                     result.extend(sackResult)
+
         return result
 
     def _computeAggregateDictResult(self, methodName, *args):
@@ -241,7 +246,11 @@ class MetaSack(PackageSackBase):
         for sack in self.sacks.values():
             if hasattr(sack, methodName):
                 method = getattr(sack, methodName)
-                sackResult = apply(method, args)
+                try:
+                    sackResult = apply(method, args)
+                except PackageSackError:
+                    continue
+
                 if sackResult:
                     result.update(sackResult)
         return result
