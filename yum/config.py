@@ -487,7 +487,6 @@ class YumConf(StartupConf):
 
     Note: see also options inherited from StartupConf
     '''
-
     retries = IntOption(10)
     recent = IntOption(7)
 

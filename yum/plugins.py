@@ -101,7 +101,8 @@ class YumPlugins:
     Manager class for Yum plugins.
     '''
 
-    def __init__(self, base, searchpath, optparser=None, types=None):
+    def __init__(self, base, searchpath, optparser=None, types=None, 
+            pluginconfpath=None):
         '''Initialise the instance.
 
         @param base: The
@@ -111,9 +112,14 @@ class YumPlugins:
         @param types: A sequence specifying the types of plugins to load.
             This should be sequnce containing one or more of the TYPE_...
             constants. If None (the default), all plugins will be loaded.
+        @param pluginconfpath: A list of paths to look for plugin configuration
+            files. Defaults to "/etc/yum/pluginconf.d".
         '''
+        if not pluginconfpath:
+            pluginconfpath = ['/etc/yum/pluginconf.d']
 
         self.searchpath = searchpath
+        self.pluginconfpath = pluginconfpath
         self.base = base
         self.optparser = optparser
         self.cmdline = (None, None)
@@ -233,7 +239,7 @@ class YumPlugins:
         IncludingConfigParser instance representing it. Returns None if there
         was an error reading or parsing the configuration file.
         '''
-        for dir in self.base.startupconf.pluginconfpath:
+        for dir in self.pluginconfpath:
             conffilename = os.path.join(dir, modname + ".conf")
             if os.access(conffilename, os.R_OK):
                 # Found configuration file

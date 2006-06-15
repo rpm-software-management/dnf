@@ -171,38 +171,13 @@ yum [options] < update | install | info | remove | list |
         else:
             root = '/'
        
-        # Do read of config options required during initialisation
+        # Read up configuration options and initialise plugins
         try:
-            self.doStartupConfig(opts.conffile, root)
-        except yum.Errors.ConfigError, e:
-            self.errorlog(0, _('Config Error: %s') % e)
-            sys.exit(1)
-        except ValueError, e:
-            self.errorlog(0, _('Options Error: %s') % e)
-            self.usage()
-            sys.exit(1)
-
-        # Initialise logger object
-        self.log = Logger(threshold=self.startupconf.debuglevel,
-                file_object=sys.stdout)
-
-        # Setup debug and error levels
-        if opts.debuglevel is not None:
-            self.log.threshold = opts.debuglevel
-            self.startupconf.debuglevel = opts.debuglevel
-        if opts.errorlevel is not None:
-            self.errorlog.threshold = opts.errorlevel
-            self.startupconf.errorlevel = opts.errorlevel
-    
-        # Initialise plugins if cmd line and config file say they should be in
-        # use. In this step plugins may add extra command line options or
-        # configuration file options.
-        if not opts.noplugins and self.startupconf.plugins:
-            self.doPluginSetup(self.optparser)
-            
-        # Parse the configuration file
-        try: 
-            self.doConfigSetup()
+            self.doConfigSetup(opts.conffile, root, 
+                    init_plugins=not opts.noplugins, 
+                    optparser=self.optparser,
+                    debuglevel=opts.debuglevel,
+                    errorlevel=opts.errorlevel)
         except yum.Errors.ConfigError, e:
             self.errorlog(0, _('Config Error: %s') % e)
             sys.exit(1)
@@ -331,6 +306,9 @@ yum [options] < update | install | info | remove | list |
         # run the sleep - if it's unchanged then it won't matter
         time.sleep(sleeptime)
 
+    def doLoggingSetup(self, debuglevel, errorlevel):
+        self.log = Logger(threshold=debuglevel, file_object=sys.stdout)
+        self.errorlog.threshold = errorlevel
 
     def parseCommands(self, mycommands=[]):
         """reads self.cmds and parses them out to make sure that the requested 

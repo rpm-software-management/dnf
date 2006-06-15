@@ -89,25 +89,60 @@ class YumBase(depsolve.Depsolve):
         """do a default setup for all the normal/necessary yum components,
            really just a shorthand for testing"""
         
-        self.doStartupConfig()
-        self.doConfigSetup()
+        self.doConfigSetup(init_plugins=False)
         self.conf.cache = cache
         self.doTsSetup()
         self.doRpmDBSetup()
         self.doRepoSetup()
         self.doSackSetup()
-        
-    def doStartupConfig(self, fn='/etc/yum.conf', root='/'):
-        '''Read up configuration options required early during startup.
+       
+    def doConfigSetup(self, fn='/etc/yum.conf', root='/', init_plugins=True,
+            plugin_types=None, optparser=None, debuglevel=None,
+            errorlevel=None):
         '''
-        self.startupconf = config.readStartupConfig(fn, root)
-        
-    def doConfigSetup(self):
-        """basic stub function for doing configuration setup"""
-      
-        self.conf = config.readMainConfig(self.startupconf)
+        Parse and load Yum's configuration files and call hooks initialise
+        plugins and logging.
+
+        @param fn: Path to main configuration file to parse (yum.conf).
+        @param root: Filesystem root to use.
+        @param init_plugins: If False, plugins will not be loaded here. If
+            True, plugins will be loaded if the "plugins" option is enabled in
+            the configuration file.
+        @param plugin_types: As per doPluginSetup()
+        @param optparser: As per doPluginSetup()
+        @param debuglevel: Debug level to use for logging. If None, the debug
+            level will be read from the configuration file.
+        @param errorlevel: Error level to use for logging. If None, the debug
+            level will be read from the configuration file.
+        '''
+        startupconf = config.readStartupConfig(fn, root)
+     
+        if debuglevel != None:
+            startupconf.debuglevel = debuglevel
+        if errorlevel != None:
+            startupconf.errorlevel = errorlevel
+    
+        self.doLoggingSetup(startupconf.debuglevel, startupconf.errorlevel)
+
+        if init_plugins and startupconf.plugins:
+            self.doPluginSetup(optparser, plugin_types, startupconf.pluginpath,
+                    startupconf.pluginconfpath)
+
+        self.conf = config.readMainConfig(startupconf)
         self.yumvar = self.conf.yumvar
         self.getReposFromConfig()
+
+    def doLoggingSetup(self, debuglevel, errorlevel):
+        '''
+        Perform logging related setup.
+
+        Subclasses should override this to initialise logging functionality as
+        required.
+
+        @param debuglevel: Debug logging level to use.
+        @param errorlevel: Error logging level to use.
+        '''
+        pass
 
     def getReposFromConfig(self):
         """read in repositories from config main and .repo files"""
@@ -165,23 +200,30 @@ class YumBase(depsolve.Depsolve):
         '''
         self.plugins = plugins.DummyYumPlugins()
     
-    def doPluginSetup(self, optparser=None, types=None):
+    def doPluginSetup(self, optparser=None, plugin_types=None, searchpath=None,
+            confpath=None):
         '''Initialise and enable yum plugins. 
 
-        This should be called after doStartupConfig() has been called but
-        before doConfigSetup() so that plugins can modify Yum's configuration
-        option definitions.
+        Note: doConfigSetup() will initialise plugins if instructed to. Only
+        call this method directly if not calling doConfigSetup() or calling
+        doConfigSetup(init_plugins=False).
 
         @param optparser: The OptionParser instance for this run (optional)
-        @param types: A sequence specifying the types of plugins to load.
+        @param plugin_types: A sequence specifying the types of plugins to load.
             This should be sequnce containing one or more of the
             yum.plugins.TYPE_...  constants. If None (the default), all plugins
             will be loaded.
+        @param searchpath: A list of directories to look in for plugins. A
+            default will be used if no value is specified.
+        @param confpath: A list of directories to look in for plugin
+            configuration files. A default will be used if no value is
+            specified.
         '''
-        self.plugins = plugins.YumPlugins(self, self.startupconf.pluginpath,
-                optparser, types)
+        if isinstance(plugins, plugins.YumPlugins):
+            raise RuntimeError("plugins already initialised")
 
-        # Initialise plugins
+        self.plugins = plugins.YumPlugins(self, searchpath, optparser,
+                plugin_types, confpath)
         self.plugins.run('init')
 
     def doTsSetup(self):
