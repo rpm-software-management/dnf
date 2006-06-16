@@ -132,6 +132,8 @@ class YumBase(depsolve.Depsolve):
         self.yumvar = self.conf.yumvar
         self.getReposFromConfig()
 
+        self.plugins.run('init')
+
     def doLoggingSetup(self, debuglevel, errorlevel):
         '''
         Perform logging related setup.
@@ -224,7 +226,6 @@ class YumBase(depsolve.Depsolve):
 
         self.plugins = plugins.YumPlugins(self, searchpath, optparser,
                 plugin_types, confpath)
-        self.plugins.run('init')
 
     def doTsSetup(self):
         """setup all the transaction set storage items we'll need
