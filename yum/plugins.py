@@ -24,24 +24,15 @@ import config
 import Errors
 
 # TODO: expose rpm package sack objects to plugins (once finished)
-
-# TODO: consistent case of YumPlugins methods
-
+# TODO: allow plugins to use the existing config stuff to define options for
+# their own configuration files (would replace confString() etc).
 # TODO: expose progress bar interface
-
-# TODO: allow plugins to define new repository types
-
-# TODO: check for *_hook methods that aren't supported
-
 # TODO "log" slot? To allow plugins to do customised logging/history (say to a
 # SQL db)
-
-# TODO: multiversion plugin support
-
+# TODO: consistent case of YumPlugins methods
 # TODO: allow plugins to extend shell commands
-
 # TODO: allow plugins to extend commands (on the command line)
-
+# TODO: allow plugins to define new repository types
 # TODO: More developer docs:  use epydoc as API begins to stablise
 
 
