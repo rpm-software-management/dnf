@@ -395,7 +395,7 @@ class ConfigPluginConduit(PluginConduit):
         elif where == PLUG_OPT_WHERE_ALL:
             option = type2opt[valuetype](default)
             setattr(config.YumConf, name, option)
-            setattr(config.RepoConf, name, config.inhert(option))
+            setattr(config.RepoConf, name, config.Inherit(option))
 
 class InitPluginConduit(PluginConduit):
 
