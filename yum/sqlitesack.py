@@ -205,7 +205,7 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
 
         for (rep,cache) in self.filelistsdb.items():
             cur = cache.cursor()
-            (dir,filename) = os.path.split(quotename)
+            (dirname,filename) = os.path.split(quotename)
             # This query means:
             # Either name is a substring of dirname or the directory part
             # in name is a substring of dirname and the file part is part
@@ -218,7 +218,7 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
                 (filelist.dirname LIKE '%%%s%%' \
                 OR (filelist.dirname LIKE '%%%s%%' AND\
                 filelist.filenames LIKE '%%%s%%'))\
-                AND (filelist.pkgKey = packages.pkgKey)" % (quotename,dir,filename))
+                AND (filelist.pkgKey = packages.pkgKey)" % (quotename,dirname,filename))
                     
         # cull the results for false positives
         for ob in cur.fetchall():
