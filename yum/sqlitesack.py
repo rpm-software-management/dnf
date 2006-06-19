@@ -344,7 +344,7 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
                     (filelist.dirname LIKE '%%%s%%' \
                     OR (filelist.dirname LIKE '%%%s%%' AND\
                     filelist.filenames LIKE '%%%s%%'))\
-                    AND (filelist.pkgKey = packages.pkgKey)" % (name,dir,filename))
+                    AND (filelist.pkgKey = packages.pkgKey)" % (name,dirname,filename))
             else: 
                 cur.execute("select packages.pkgId as pkgId,\
                     filelist.dirname as dirname,\
