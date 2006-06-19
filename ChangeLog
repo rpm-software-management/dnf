@@ -1,3 +1,112 @@
+2006-06-18 23:15  skvidal
+
+	* yum.spec: 
+	spec file version bump - 2.9.1
+
+2006-06-18 23:14  skvidal
+
+	* yum/__init__.py: 
+	mark as 2.9.1 - forward port patch from 2.6 for installing
+	obsoletes
+
+2006-06-18 23:13  skvidal
+
+	* rpmUtils/updates.py: forward port obsolete install patch from
+	2.6.X
+
+2006-06-18 21:22  katzj
+
+	* yum-updatesd.py: * ensure path for cli.py is present * if there's
+	an exception at any point in getting update info, be sure we  
+	release the lock (rh#195797)
+
+2006-06-16 11:10  mjs
+
+	* yum/plugins.py: updated TODO entries
+
+2006-06-16 10:56  mjs
+
+	* docs/yum.conf.5: Document the pluginconfpath option.
+
+2006-06-16 09:52  mjs
+
+	* yum/__init__.py: Run the "init" plugin slot a little later so
+	that the conf object and repository configuration is available when
+	"init" is reached.
+
+2006-06-16 03:40  mjs
+
+	* yum/plugins.py: Fixed "inhert" typo.
+
+2006-06-15 05:59  mjs
+
+	* cli.py, yum/__init__.py, yum/config.py, yum/plugins.py: Clean up
+	recent changes to config setup API: - removed doStartupConfig() -
+	doConfigSetup() now sets up plugins and logging at the right time
+	via   external (overridable) methods - don't keep startupconf
+	hanging around in base object (removed all references)
+
+2006-06-14 14:18  pnasrat
+
+	* yum/packageSack.py: Fix composite for individual sack exception
+	handling
+
+2006-06-14 14:07  pnasrat
+
+	* cli.py: fix for prompting in interactive mode
+
+2006-06-14 14:04  pnasrat
+
+	* yum/__init__.py: Fix import for key grab
+
+2006-06-13 23:19  katzj
+
+	* etc/yum-updatesd.init: add init script
+
+2006-06-13 14:57  lmacken
+
+	* yum-updatesd.py, yum/update_md.py: Add support for reading
+	'updateinfo' metadata from repos, if it exists, and sending it
+	through dbus to the puplet.  For testing purposes, arbitrary
+	metadata may be inserted into repository using the following tool: 
+	   http://people.redhat.com/lmacken/insertmd.py
+
+2006-06-13 14:00  katzj
+
+	* yum/misc.py: fix syntax error
+
+2006-06-13 12:03  katzj
+
+	* yum/sqlitesack.py: uniqify the file list.  this avoids the fact
+	that with the C-parser and the filesystem package, the list of
+	files ends up with / at the end and so we end up with double
+	entries.  since we can't have duplicate filenames in a directory
+	anyway, unique fixes
+
+2006-06-12 23:46  skvidal
+
+	* yum/packageSack.py: 
+	make global excludes work again - packgeSack.MetaSack.delPackage
+	needs to be able to delete the pkg object asked for in each/every
+	sack or global excludes fail to do anything
+	
+	jeremy told me I had to mention that this is all jbowes' fault when
+	I fixed it. :)
+
+2006-06-12 23:03  lmacken
+
+	* yum/repoMDObject.py: fix unexpanded error message
+
+2006-06-12 21:26  skvidal
+
+	* yum/yumRepo.py: fix for bug 615 - dont crash when out of mirrors
+	to try
+
+2006-06-12 00:22  skvidal
+
+	* ChangeLog: 
+	check in changelog
+
 2006-06-11 23:54  skvidal
 
 	* yum.spec: 
