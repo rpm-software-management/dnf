@@ -53,6 +53,7 @@ from yum.packages import YumInstalledPackage
 from yum.update_md import UpdateMetadata
 
 # FIXME: is it really sane to use this from here?
+sys.path.append('/usr/share/yum-cli')
 import callback
 
 YUM_PID_FILE = '/var/run/yum.pid'
@@ -289,11 +290,15 @@ class UpdatesDaemon(yum.YumBase):
 
     def refreshUpdates(self):
         self.doLock(YUM_PID_FILE)
-        self.doRepoSetup()
-        self.doSackSetup()
-        self.doTsSetup()
-        self.doRpmDBSetup()
-        self.doUpdateSetup()
+        try:
+            self.doRepoSetup()
+            self.doSackSetup()
+            self.doTsSetup()
+            self.doRpmDBSetup()
+            self.doUpdateSetup()
+        except Exception, e:
+            self.errorlog(0, "error getting update info: %s" %(e,))
+            self.doUnlock(YUM_PID_FILE)
 
     def populateUpdateMetadata(self):
         self.updateMetadata = UpdateMetadata()
