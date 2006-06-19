@@ -48,7 +48,7 @@ from packages import parsePackages, YumAvailablePackage, YumLocalPackage, YumIns
 from constants import *
 from packageSack import ListPackageSack
 
-__version__ = '2.9.0'
+__version__ = '2.9.1'
 
 class YumBase(depsolve.Depsolve):
     """This is a primary structure and base class. It houses the objects and
@@ -1754,6 +1754,16 @@ class YumBase(depsolve.Depsolve):
                 self.errorlog(2, 'Package %s already installed and latest version' % po)
                 continue
 
+            
+            # make sure we're not installing a package which is obsoleted by something
+            # else in the repo
+            thispkgobsdict = self.up.checkForObsolete([po.pkgtup])
+            if thispkgobsdict.has_key(po.pkgtup):
+                obsoleting = thispkgobsdict[po.pkgtup][0]
+                obsoleting_pkg = self.getPackageObject(obsoleting)
+                self.install(po=obsoleting_pkg)
+                continue
+                
             txmbr = self.tsInfo.addInstall(po)
             tx_return.append(txmbr)
         
