@@ -285,8 +285,8 @@ class UpdatesDaemon(yum.YumBase):
                 os.makedirs(self.opts.nonroot_workdir)
             self.repos.setCacheDir(self.opts.nonroot_workdir)
 
-        self.doStartupConfig(fn=self.opts.yum_config)
-        self.doConfigSetup()
+        self.doConfigSetup(fn=self.opts.yum_config,
+                           init_plugins = False)
 
     def refreshUpdates(self):
         self.doLock(YUM_PID_FILE)
