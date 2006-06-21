@@ -31,24 +31,6 @@ class Storage:
     def GetPackageSack(self):
         pass
 
-class StoragePickle(Storage):
-
-    def __init__(self):
-        import packages
-        import mdcache
-
-        self.packages = packages
-        self.mdcache = mdcache
-
-    def Name(self):
-        return "pickle"
-
-    def GetCacheHandler(self, storedir, repoid, callback):
-        return self.mdcache.RepodataParser(storedir, callback)
-
-    def GetPackageSack(self):
-        return repos.YumPackageSack(self.packages.YumAvailablePackage)
-
 class StorageSqlite(Storage):
 
     def __init__(self):
@@ -99,12 +81,6 @@ def GetStorage():
 
     try:
         storage = StorageSqlite()
-        return storage
-    except:
-        pass
-
-    try:
-        storage = StoragePickle()
         return storage
     except:
         pass

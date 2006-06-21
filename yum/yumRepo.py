@@ -13,7 +13,6 @@ import packageSack
 from repos import Repository
 from packages import YumAvailablePackage
 import parser
-import mdcache
 import storagefactory
 
 
@@ -68,7 +67,7 @@ class YumPackageSack(packageSack.PackageSack):
             # umm, wtf?
             pass
 
-    def populate(self, repo, with='metadata', callback=None, pickleonly=0):
+    def populate(self, repo, with='metadata', callback=None, cacheonly=0):
         if with == 'all':
             data = ['metadata', 'filelists', 'otherdata']
         else:
@@ -90,7 +89,7 @@ class YumPackageSack(packageSack.PackageSack):
                 xmldata = repo.repoXML.getData('primary')
                 (ctype, csum) = xmldata.checksum
                 dobj = repo.cacheHandler.getPrimary(xml, csum)
-                if not pickleonly:
+                if not cacheonly:
                     self.addDict(repo.id, item, dobj, callback)
                 del dobj
 
@@ -99,7 +98,7 @@ class YumPackageSack(packageSack.PackageSack):
                 xmldata = repo.repoXML.getData('filelists')
                 (ctype, csum) = xmldata.checksum
                 dobj = repo.cacheHandler.getFilelists(xml, csum)
-                if not pickleonly:
+                if not cacheonly:
                     self.addDict(repo.id, item, dobj, callback)
                 del dobj
 
@@ -109,7 +108,7 @@ class YumPackageSack(packageSack.PackageSack):
                 xmldata = repo.repoXML.getData('other')
                 (ctype, csum) = xmldata.checksum
                 dobj = repo.cacheHandler.getOtherdata(xml, csum)
-                if not pickleonly:
+                if not cacheonly:
                     self.addDict(repo.id, item, dobj, callback)
                 del dobj
 

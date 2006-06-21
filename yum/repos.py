@@ -170,7 +170,7 @@ class RepoStorage:
         return self.pkgSack
 
 
-    def populateSack(self, which='enabled', with='metadata', callback=None, pickleonly=0):
+    def populateSack(self, which='enabled', with='metadata', callback=None, cacheonly=0):
         """This populates the package sack from the repositories, two optional 
            arguments: which='repoid, enabled, all'
                       with='metadata, filelists, otherdata, all'"""
@@ -201,7 +201,7 @@ class RepoStorage:
          
         for repo in myrepos:
             sack = repo.getPackageSack()
-            sack.populate(repo, with, callback, pickleonly)
+            sack.populate(repo, with, callback, cacheonly)
             self.pkgSack.addSack(repo.id, sack)
 
 

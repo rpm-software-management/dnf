@@ -391,9 +391,9 @@ For more information contact your distribution or package provider.
         elif self.basecmd == 'clean':
             if len(self.extcmds) == 0:
                 self.errorlog(0,
-                    _('Error: clean requires an option: headers, packages, cache, metadata, plugins, all'))
+                    _('Error: clean requires an option: headers, packages, dbcache, metadata, plugins, all'))
             for cmd in self.extcmds:
-                if cmd not in ['headers', 'packages', 'metadata', 'cache', 'dbcache', 'plugins', 'all']:
+                if cmd not in ['headers', 'packages', 'metadata', 'dbcache', 'plugins', 'all']:
                     self.usage()
                     raise CliError
                     
@@ -599,14 +599,13 @@ For more information contact your distribution or package provider.
         elif self.basecmd in ['makecache']:
             self.log(2, "Making cache files for all metadata files.")
             self.log(2, "This may take a while depending on the speed of this computer")
-            self.log(3, '%s' % self.pickleRecipe())
             try:
                 for repo in self.repos.findRepos('*'):
                     repo.metadata_expire = 0
                 self.doRepoSetup(dosack=0)
-                self.repos.populateSack(with='metadata', pickleonly=1)
-                self.repos.populateSack(with='filelists', pickleonly=1)
-                self.repos.populateSack(with='otherdata', pickleonly=1)
+                self.repos.populateSack(with='metadata', cacheonly=1)
+                self.repos.populateSack(with='filelists', cacheonly=1)
+                self.repos.populateSack(with='otherdata', cacheonly=1)
                 
             except yum.Errors.YumBaseError, e:
                 return 1, [str(e)]
@@ -1209,8 +1208,8 @@ For more information contact your distribution or package provider.
     def cleanCli(self, userlist=None):
         if userlist is None:
             userlist = self.extcmds
-        hdrcode = pkgcode = xmlcode = piklcode = dbcode = 0
-        pkgresults = hdrresults = xmlresults = piklresults = dbresults = []
+        hdrcode = pkgcode = xmlcode = dbcode = 0
+        pkgresults = hdrresults = xmlresults = dbresults = []
 
         if 'all' in self.extcmds:
             self.log(2, 'Cleaning up Everything')
@@ -1218,11 +1217,10 @@ For more information contact your distribution or package provider.
             hdrcode, hdrresults = self.cleanHeaders()
             xmlcode, xmlresults = self.cleanMetadata()
             dbcode, dbresults = self.cleanSqlite()
-            piklcode, piklresults = self.cleanPickles()
             self.plugins.run('clean')
             
-            code = hdrcode + pkgcode + xmlcode + piklcode + dbcode
-            results = hdrresults + pkgresults + xmlresults + piklresults + dbresults
+            code = hdrcode + pkgcode + xmlcode + dbcode
+            results = hdrresults + pkgresults + xmlresults + dbresults
             for msg in results:
                 self.log(2, msg)
             return code, []
@@ -1236,9 +1234,6 @@ For more information contact your distribution or package provider.
         if 'metadata' in self.extcmds:
             self.log(2, 'Cleaning up xml metadata')
             xmlcode, xmlresults = self.cleanMetadata()
-        if 'cache' in self.extcmds:
-            self.log(2, 'Cleaning up pickled cache')
-            piklcode, piklresults =  self.cleanPickles()
         if 'dbcache' in self.extcmds:
             self.log(2, 'Cleaning up database cache')
             dbcode, dbresults =  self.cleanSqlite()
@@ -1247,8 +1242,8 @@ For more information contact your distribution or package provider.
             self.plugins.run('clean')
 
             
-        code = hdrcode + pkgcode + xmlcode + piklcode + dbcode
-        results = hdrresults + pkgresults + xmlresults + piklresults + dbresults
+        code = hdrcode + pkgcode + xmlcode + dbcode
+        results = hdrresults + pkgresults + xmlresults + dbresults
         for msg in results:
             self.log(2, msg)
         return code, []

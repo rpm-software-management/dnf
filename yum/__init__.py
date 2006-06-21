@@ -868,27 +868,6 @@ class YumBase(depsolve.Depsolve):
         msg = '%d packages removed' % removed
         return 0, [msg]
 
-    def cleanPickles(self):
-        filelist = []
-        ext = 'pickle'
-        removed = 0
-        for repo in self.repos.listEnabled():
-            repo.dirSetup()
-            path = repo.cachedir
-            filelist = misc.getFileList(path, ext, filelist)
-            
-        for item in filelist:
-            try:
-                os.unlink(item)
-            except OSError, e:
-                self.errorlog(0, 'Cannot remove cache file %s' % item)
-                continue
-            else:
-                self.log(7, 'Cache file %s removed' % item)
-                removed+=1
-        msg = '%d cache files removed' % removed
-        return 0, [msg]
-    
     def cleanSqlite(self):
         filelist = []
         ext = 'sqlite'

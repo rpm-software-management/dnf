@@ -332,42 +332,6 @@ Remove   %5.5s Package(s)
         self.dsCallback = dscb
             
     
-    def pickleRecipe(self):
-        """ don't ask """
-        
-        recipe = """
-        
-                        7 Day Sweet Pickle Recipe
-
-Recipe By     : Simply Good Cooking Pennsylvanis Dutch Style
-Serving Size  : 1    Preparation Time :0:00
-Categories    : Canned                           Pickles
-
-  Amount  Measure       Ingredient -- Preparation Method
---------  ------------  --------------------------------
-   7      pounds        cucumber
-                        water to cover
-   1      quart         vinegar
-   8      cups          sugar
-   2      tablespoons   salt
-   2      tablespoons   mixed pickle spices
-
-Wash cucumbers & cover with boiling water.  Let stand 24 hours and repeat
-process daily using fresh hot water until the 5th day.  On the 5th morning,
-cut cucumbers into 1/4 inch rings.  Prepare vinegar brine: bring vinegar,
-sugar, salt & spices to a boil.  Pour over cucmbers.  let stand 24 hours.
-The next morning, drain off brine; reheat, add cucmbers & bring to a boil.
-Pack in jars & seal while hot.
-
-                   - - - - - - - - - - - - - - - - - -
-
-NOTES : This should be processed in a boiling water bath to avoid risk of
-contamination.        
-
-
-"""
-        return recipe
-    
 
 class DepSolveProgressCallBack:
     """provides text output callback functions for Dependency Solver callback"""
