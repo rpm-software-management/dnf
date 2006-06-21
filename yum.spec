@@ -16,7 +16,6 @@ Requires: python, rpm-python, rpm >= 0:4.1.1
 Requires: python-sqlite
 Requires: urlgrabber
 Requires: python-elementtree
-Requires: libxml2-python
 Prereq: /sbin/chkconfig, /sbin/service, coreutils
 
 
@@ -76,6 +75,9 @@ exit 0
 %{_mandir}/man*/*
 
 %changelog
+* Wed Jun 21 2006 Seth Vidal <skvidal at linux.duke.edu>
+- remove libxml2 dep
+
 * Sun Jun 18 2006 Seth Vidal <skvidal at linux.duke.edu>
 - 2.9.1
 
