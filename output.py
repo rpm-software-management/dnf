@@ -21,6 +21,7 @@ import os
 import os.path
 import sys
 import time
+import logging
 from i18n import _
 
 from urlgrabber.progress import TextMeter
@@ -32,9 +33,14 @@ except:
     pass
 
 import yum.Errors
+from yum import logginglevels
 
 class YumOutput:
 
+    def __init__(self):
+        self.logger = logging.getLogger("yum.cli")
+        self.verbose_logger = logging.getLogger("yum.verbose.cli")
+    
     def printtime(self):
         months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
                   'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
@@ -46,8 +52,8 @@ class YumOutput:
     def failureReport(self, errobj):
         """failure output for failovers from urlgrabber"""
         
-        self.errorlog(1, '%s: %s' % (errobj.url, str(errobj.exception)))
-        self.errorlog(1, 'Trying other mirror.')
+        self.logger.error('%s: %s', errobj.url, str(errobj.exception))
+        self.logger.error('Trying other mirror.')
         raise errobj.exception
     
         
@@ -211,11 +217,11 @@ class YumOutput:
         return(format % (number, space, symbols[depth]))
 
     def matchcallback(self, po, values):
-        self.log(2, '\n\n')
+        self.verbose_logger.log(logginglevels.INFO_2, '\n\n')
         self.simpleList(po)
-        self.log(2, 'Matched from:')
+        self.verbose_logger.log(logginglevels.INFO_2, 'Matched from:')
         for item in values:
-            self.log(2, '%s' % item)
+            self.verbose_logger.log(logginglevels.INFO_2, '%s', item)
 
     def reportDownloadSize(self, packages):
         """Report the total download size for a set of packages"""
@@ -230,11 +236,12 @@ class YumOutput:
                 totsize += size
             except:
                  error = True
-                 self.errorlog(1, 'There was an error calculating total download size')
+                 self.logger.error('There was an error calculating total download size')
                  break
 
         if (not error):
-            self.log(1, "Total download size: %s" % (self.format_number(totsize)))
+            self.verbose_logger.log(logginglevels.INFO_1, "Total download size: %s", 
+                self.format_number(totsize))
             
     def listTransaction(self):
         """returns a string rep of the  transaction in an easy-to-read way."""
@@ -321,14 +328,13 @@ Remove   %5.5s Package(s)
             self.repos.callback = None
         else:
             self.repos.setProgressBar(TextMeter(fo=sys.stdout))
-            self.repos.callback = CacheProgressCallback(self.log, self.errorlog,
-                                                        self.filelog)
+            self.repos.callback = CacheProgressCallback()
         # setup our failure report for failover
         freport = (self.failureReport,(),{})
         self.repos.setFailureCallback(freport)
         
         # setup our depsolve progress callback
-        dscb = DepSolveProgressCallBack(self.log, self.errorlog)
+        dscb = DepSolveProgressCallBack()
         self.dsCallback = dscb
             
     
@@ -336,10 +342,9 @@ Remove   %5.5s Package(s)
 class DepSolveProgressCallBack:
     """provides text output callback functions for Dependency Solver callback"""
     
-    def __init__(self, log, errorlog):
+    def __init__(self):
         """requires yum-cli log and errorlog functions as arguments"""
-        self.log = log
-        self.errorlog = errorlog
+        self.verbose_logger = logging.getLogger("yum.verbose.cli")
         self.loops = 0
     
     def pkgAdded(self, pkgtup, mode):
@@ -349,39 +354,49 @@ class DepSolveProgressCallBack:
                      'e': 'erased'}
         (n, a, e, v, r) = pkgtup
         modeterm = modedict[mode]
-        self.log(2, '---> Package %s.%s %s:%s-%s set to be %s' % (n, a, e, v, r, modeterm))
+        self.verbose_logger.log(logginglevels.INFO_2,
+            '---> Package %s.%s %s:%s-%s set to be %s', n, a, e, v, r,
+            modeterm)
         
     def start(self):
         self.loops += 1
         
     def tscheck(self):
-        self.log(2, '--> Running transaction check')
+        self.verbose_logger.log(logginglevels.INFO_2, '--> Running transaction check')
         
     def restartLoop(self):
         self.loops += 1
-        self.log(2, '--> Restarting Dependency Resolution with new changes.')
-        self.log(3, '---> Loop Number: %d' % self.loops)
+        self.verbose_logger.log(logginglevels.INFO_2,
+            '--> Restarting Dependency Resolution with new changes.')
+        self.verbose_logger.debug('---> Loop Number: %d', self.loops)
     
     def end(self):
-        self.log(2, '--> Finished Dependency Resolution')
+        self.verbose_logger.log(logginglevels.INFO_2,
+            '--> Finished Dependency Resolution')
 
     
     def procReq(self, name, formatted_req):
-        self.log(2, '--> Processing Dependency: %s for package: %s' % (formatted_req, name))
+        self.verbose_logger.log(logginglevels.INFO_2,
+            '--> Processing Dependency: %s for package: %s', formatted_req,
+            name)
         
     
     def unresolved(self, msg):
-        self.log(2, '--> Unresolved Dependency: %s' % msg)
+        self.verbose_logger.log(logginglevels.INFO_2, '--> Unresolved Dependency: %s',
+            msg)
 
     
     def procConflict(self, name, confname):
-        self.log(2, '--> Processing Conflict: %s conflicts %s' % (name, confname))
+        self.verbose_logger.log(logginglevels.INFO_2,
+            '--> Processing Conflict: %s conflicts %s', name, confname)
 
     def transactionPopulation(self):
-        self.log(2, '--> Populating transaction set with selected packages. Please wait.')
+        self.verbose_logger.log(logginglevels.INFO_2, '--> Populating transaction set '
+            'with selected packages. Please wait.')
     
     def downloadHeader(self, name):
-        self.log(2, '---> Downloading header for %s to pack into transaction set.' % name)
+        self.verbose_logger.log(logginglevels.INFO_2, '---> Downloading header for %s '
+            'to pack into transaction set.', name)
        
 
 class CacheProgressCallback:
@@ -390,21 +405,19 @@ class CacheProgressCallback:
     The class handles text output callbacks during metadata cache updates.
     '''
     
-    def __init__(self, log, errorlog, filelog=None):
-        self.log = log
-        self.errorlog = errorlog
-        self.filelog = filelog
+    def __init__(self):
+        self.logger = logging.getLogger("yum.cli")
+        self.verbose_logger = logging.getLogger("yum.verbose.cli")
+        self.file_logger = logging.getLogger("yum.filelogging.cli")
 
     def log(self, level, message):
-        self.log(level, message)
+        self.verbose_logger.log(level, message)
 
     def errorlog(self, level, message):
-        if self.errorlog:
-            self.errorlog(level, message)
+        self.logger.log(level, message)
 
     def filelog(self, level, message):
-        if self.filelog:
-            self.filelog(level, message)
+        self.file_logger.log(level, message)
 
     def progressbar(self, current, total, name=None):
         progressbar(current, total, name)

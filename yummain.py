@@ -17,10 +17,12 @@
 
 import sys
 import locale
+import logging
 import time # test purposes only
 
 from yum import Errors
 from yum import plugins
+from yum import logginglevels
 import cli
 
 from i18n import _
@@ -31,13 +33,13 @@ def main(args):
     """This does all the real work"""
 
     def exUserCancel():
-        base.errorlog(0, '\n\nExiting on user cancel')
+        logger.critical('\n\nExiting on user cancel')
         unlock()
         sys.exit(1)
 
     def exIOError(e):
         if e.errno == 32:
-            base.errorlog(0, '\n\nExiting on Broken Pipe')
+            logger.critical('\n\nExiting on Broken Pipe')
         unlock()
         sys.exit(1)
 
@@ -48,12 +50,12 @@ def main(args):
         '''
         exitmsg = str(e)
         if exitmsg:
-            base.errorlog(2, '\n\n%s' % exitmsg)
+            logger.warn('\n\n%s', exitmsg)
         unlock()
         sys.exit(1)
 
     def exFatal(e):
-        base.errorlog(0, '\n\n%s' % str(e))
+        logger.critical('\n\n%s', str(e))
         unlock()
         sys.exit(1)
 
@@ -63,6 +65,9 @@ def main(args):
             base.doUnlock(YUM_PID_FILE)
         except Errors.LockError, e:
             sys.exit(200)
+
+    logger = logging.getLogger("yum.main")
+    verbose_logger = logging.getLogger("yum.verbose.main")
 
     try:
         locale.setlocale(locale.LC_ALL, '')
@@ -85,7 +90,7 @@ def main(args):
     try:
         base.doLock(YUM_PID_FILE)
     except Errors.LockError, e:
-        base.errorlog(0,'%s' % e.msg)
+        logger.critical('%s', e.msg)
         sys.exit(200)
 
     # build up an idea of what we're supposed to do
@@ -109,13 +114,13 @@ def main(args):
     if result == 0:
         # Normal exit 
         for msg in resultmsgs:
-            base.log(2, '%s' % msg)
+            verbose_logger.log(logginglevels.INFO_2, '%s', msg)
         unlock()
         sys.exit(0)
     elif result == 1:
         # Fatal error
         for msg in resultmsgs:
-            base.errorlog(0, 'Error: %s' % msg)
+            logger.critical('Error: %s', msg)
         unlock()
         sys.exit(1)
     elif result == 2:
@@ -125,15 +130,15 @@ def main(args):
         unlock()
         sys.exit(100)
     else:
-        base.errorlog(0, 'Unknown Error(s): Exit Code: %d:' % result)
+        logger.critical('Unknown Error(s): Exit Code: %d:', result)
         for msg in resultmsgs:
-            base.errorlog(0, msg)
+            logger.critical(msg)
         unlock()
         sys.exit(3)
             
     # Depsolve stage
-    base.log(2, 'Resolving Dependencies')
-    base.log(3, time.time())
+    verbose_logger.log(logginglevels.INFO_2, 'Resolving Dependencies')
+    verbose_logger.debug(time.time())
     try:
         (result, resultmsgs) = base.buildTransaction() 
     except plugins.PluginYumExit, e:
@@ -154,21 +159,21 @@ def main(args):
     elif result == 1:
         # Fatal error
         for msg in resultmsgs:
-            base.errorlog(0, 'Error: %s' % msg)
+            logger.critical('Error: %s', msg)
         unlock()
         sys.exit(1)
     elif result == 2:
         # Continue on
         pass
     else:
-        base.errorlog(0, 'Unknown Error(s): Exit Code: %d:' % result)
+        logger.critical('Unknown Error(s): Exit Code: %d:', result)
         for msg in resultmsgs:
-            base.errorlog(0, msg)
+            logger.critical(msg)
         unlock()
         sys.exit(3)
 
-    base.log(2, '\nDependencies Resolved')
-    base.log(3, time.time())
+    verbose_logger.log(logginglevels.INFO_2, '\nDependencies Resolved')
+    verbose_logger.debug(time.time())
 
     # Run the transaction
     try:
@@ -182,7 +187,7 @@ def main(args):
     except IOError, e:
         exIOError(e)
 
-    base.log(2, 'Complete!')
+    verbose_logger.log(logginglevels.INFO_2, 'Complete!')
     unlock()
     sys.exit(0)
 

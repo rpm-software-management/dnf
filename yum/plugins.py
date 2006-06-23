@@ -18,6 +18,8 @@ import glob
 import imp
 import warnings
 import atexit
+import logging
+import logginglevels
 from constants import *
 import ConfigParser
 import config 
@@ -114,11 +116,13 @@ class YumPlugins:
         self.base = base
         self.optparser = optparser
         self.cmdline = (None, None)
+        self.verbose_logger = logging.getLogger("yum.verbose.YumPlugins")
         if not types:
             types = ALL_TYPES
 
         if id(TYPE_INTERFACE) in [id(t) for t in types]:
-            self.base.log(2, 'Deprecated constant TYPE_INTERFACE during plugin '
+            self.verbose_logger.log(logginglevels.INFO_2,
+                    'Deprecated constant TYPE_INTERFACE during plugin '
                     'initialization.\nPlease use TYPE_INTERACTIVE instead.')
 
         self._importplugins(types)
@@ -141,8 +145,8 @@ class YumPlugins:
         conduitcls = eval(conduitcls)       # Convert name to class object
 
         for modname, func in self._pluginfuncs[slotname]:
-            self.base.log(3, 'Running "%s" handler for "%s" plugin' % (
-                slotname, modname))
+            self.verbose_logger.debug('Running "%s" handler for "%s" plugin', slotname,
+                modname)
     
             _, conf = self._plugins[modname]
             func(conduitcls(self, self.base, conf, **kwargs))
@@ -174,7 +178,7 @@ class YumPlugins:
         conf = self._getpluginconf(modname)
         if not conf or not config.getOption(conf, 'main', 'enabled', 
                 config.BoolOption(False)):
-            self.base.log(3, '"%s" plugin is disabled' % modname)
+            self.verbose_logger.debug('"%s" plugin is disabled', modname)
             return
 
         fp, pathname, description = imp.find_module(modname, [dir])
@@ -202,14 +206,15 @@ class YumPlugins:
             return
         for plugintype in plugintypes:
             if id(plugintype) == id(TYPE_INTERFACE):
-                self.base.log(2, 'Plugin "%s" uses deprecated constant '
+                self.verbose_logger.log(logginglevels.INFO_2,
+                        'Plugin "%s" uses deprecated constant '
                         'TYPE_INTERFACE.\nPlease use TYPE_INTERACTIVE '
-                        'instead.' % modname)
+                        'instead.', modname)
 
             if plugintype not in types:
                 return
 
-        self.base.log(2, 'Loading "%s" plugin' % modname)
+        self.verbose_logger.log(logginglevels.INFO_2, 'Loading "%s" plugin', modname)
 
         # Store the plugin module and its configuration file
         if not self._plugins.has_key(modname):
@@ -250,7 +255,7 @@ class YumPlugins:
             raise Errors.ConfigError("Couldn't parse %s: %s" % (conffilename,
                 str(e)))
         except IOError, e:
-            self.base.log(2, str(e))
+            self.verbose_logger.log(logginglevels.INFO_2, str(e))
             return None
 
         return parser
@@ -278,11 +283,16 @@ class PluginConduit:
         self._base = base
         self._conf = conf
 
+        self.logger = logging.getLogger("yum.plugin")
+        self.verbose_logger = logging.getLogger("yum.verbose.plugin")
+
     def info(self, level, msg):
-        self._base.log(level, msg)
+        converted_level = logginglevels.logLevelFromDebugLevel(level)
+        self.verbose_logger.log(converted_level, msg)
 
     def error(self, level, msg):
-        self._base.errorlog(level, msg)
+        converted_level = logginglevels.logLevelFromErrorLevel(level)
+        self.logger.log(converted_level, msg)
 
     def promptYN(self, msg):
         self.info(2, msg)

@@ -24,6 +24,7 @@ import random
 import fcntl
 import fnmatch
 import re
+import logging
 from optparse import OptionParser
 
 import output
@@ -35,8 +36,8 @@ import yum.misc
 import rpmUtils.arch
 from rpmUtils.miscutils import compareEVR
 from yum.packages import parsePackages, YumInstalledPackage, YumLocalPackage
-from yum.logger import Logger, SysLogger, LogContainer
 from yum import pgpmsg
+from yum import logginglevels
 from i18n import _
 import callback
 import urlgrabber
@@ -54,6 +55,8 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
     def __init__(self):
         yum.YumBase.__init__(self)
         self.in_shell = False
+        self.logger = logging.getLogger("yum.cli")
+        self.verbose_logger = logging.getLogger("yum.verbose.cli")
         self.yum_cli_commands = ['update', 'install','info', 'list', 'erase',
                                 'grouplist', 'groupupdate', 'groupinstall',
                                 'groupremove', 'groupinfo', 'makecache',
@@ -68,17 +71,19 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
            and sets up the basics of the repository"""
         
         if hasattr(self, 'pkgSack') and thisrepo is None:
-            self.log(7, 'skipping reposetup, pkgsack exists')
+            self.verbose_logger.log(logginglevels.DEBUG_4,
+                'skipping reposetup, pkgsack exists')
             return
-            
-        self.log(2, 'Setting up repositories')
+      
+        self.verbose_logger.log(logginglevels.INFO_2, 'Setting up repositories')
 
         # Call parent class to do the bulk of work 
         # (this also ensures that reposetup plugin hook is called)
         yum.YumBase.doRepoSetup(self, thisrepo=thisrepo)
 
         if dosack: # so we can make the dirs and grab the repomd.xml but not import the md
-            self.log(2, 'Reading repository metadata in from local files')
+            self.verbose_logger.log(logginglevels.INFO_2,
+                'Reading repository metadata in from local files')
             self.doSackSetup(thisrepo=thisrepo)
     
         
@@ -87,9 +92,6 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         sets up self.conf and self.cmds as well as logger objects 
         in base instance"""
         
-        # setup our errorlog object 
-        self.errorlog = Logger(threshold=2, file_object=sys.stderr)
-    
         def repo_optcb(optobj, opt, value, parser):
             '''Callback for the enablerepo and disablerepo option. 
             
@@ -179,12 +181,24 @@ yum [options] < update | install | info | remove | list |
                     debuglevel=opts.debuglevel,
                     errorlevel=opts.errorlevel)
         except yum.Errors.ConfigError, e:
-            self.errorlog(0, _('Config Error: %s') % e)
+            self.logger.critical(_('Config Error: %s'), e)
             sys.exit(1)
         except ValueError, e:
-            self.errorlog(0, _('Options Error: %s') % e)
+            self.logger.critical(_('Options Error: %s'), e)
             self.usage()
             sys.exit(1)
+
+        # who are we:
+        self.conf.uid = os.geteuid()
+
+        # Setup debug and error levels
+        if opts.debuglevel is not None:
+            self.startupconf.debuglevel = opts.debuglevel
+        if opts.errorlevel is not None:
+            self.startupconf.errorlevel = opts.errorlevel
+             
+        logginglevels.doLoggingSetup(self.conf.uid, self.conf.logfile,
+            self.conf.errorlevel, self.conf.debuglevel)
 
         # Now parse the command line for real
         (opts, self.cmds) = self.optparser.parse_args()
@@ -201,44 +215,9 @@ yum [options] < update | install | info | remove | list |
             # config file is parsed and moving us forward
             # set some things in it.
                 
-            # who are we:
-            self.conf.uid = os.geteuid()
-
             # version of yum
             self.conf.yumversion = yum.__version__
             
-            # syslog-style log
-            if self.conf.uid == 0:
-                logpath = os.path.dirname(self.conf.logfile)
-                if not os.path.exists(logpath):
-                    try:
-                        os.makedirs(logpath, mode=0755)
-                    except OSError, e:
-                        self.errorlog(0, _('Cannot make directory for logfile %s' % logpath))
-                        sys.exit(1)
-                try:
-                    logfd = os.open(self.conf.logfile, os.O_WRONLY |
-                                    os.O_APPEND | os.O_CREAT, 0644)
-                except OSError, e:
-                    self.errorlog(0, _('Cannot open logfile %s' % self.conf.logfile))
-                    sys.exit(1)
-
-                logfile =  os.fdopen(logfd, 'a')
-                fcntl.fcntl(logfd, fcntl.F_SETFD)
-            
-                                      
-                filelog_object = Logger(threshold = 10, file_object = logfile, 
-                                preprefix = self.printtime)
-            else:
-                filelog_object = Logger(threshold = 10, file_object = None, 
-                                preprefix = self.printtime)
-
-            syslog_object = SysLogger(threshold = 10, 
-                                      facility=self.conf.syslog_facility,
-                                      ident='yum')
-            
-            self.filelog = LogContainer([syslog_object, filelog_object])
-
             # Handle remaining options
             if opts.assumeyes:
                 self.conf.assumeyes =1
@@ -263,7 +242,7 @@ yum [options] < update | install | info | remove | list |
                     excludelist.append(exclude)
                     self.conf.exclude = excludelist
                 except yum.Errors.ConfigError, e:
-                    self.errorlog(0, _(e))
+                    self.logger.critical(e)
                     self.usage()
                     sys.exit(1)
                
@@ -275,12 +254,12 @@ yum [options] < update | install | info | remove | list |
                     elif opt == '--disablerepo':
                         self.repos.disableRepo(repoexp)
                 except yum.Errors.ConfigError, e:
-                    self.errorlog(0, _(e))
+                    self.logger.critical(e)
                     self.usage()
                     sys.exit(1)
                             
         except ValueError, e:
-            self.errorlog(0, _('Options Error: %s') % e)
+            self.logger.critical(_('Options Error: %s'), e)
             self.usage()
             sys.exit(1)
          
@@ -306,23 +285,19 @@ yum [options] < update | install | info | remove | list |
         # run the sleep - if it's unchanged then it won't matter
         time.sleep(sleeptime)
 
-    def doLoggingSetup(self, debuglevel, errorlevel):
-        self.log = Logger(threshold=debuglevel, file_object=sys.stdout)
-        self.errorlog.threshold = errorlevel
-
     def parseCommands(self, mycommands=[]):
         """reads self.cmds and parses them out to make sure that the requested 
         base command + argument makes any sense at all""" 
 
-        self.log(3, 'Yum Version: %s' % self.conf.yumversion)
-        self.log(3, 'COMMAND: %s' % self.cmdstring)
-        self.log(3, 'Installroot: %s' % self.conf.installroot)
+        self.verbose_logger.debug('Yum Version: %s', self.conf.yumversion)
+        self.verbose_logger.debug('COMMAND: %s', self.cmdstring)
+        self.verbose_logger.debug('Installroot: %s', self.conf.installroot)
         if len(self.conf.commands) == 0 and len(self.cmds) < 1:
             self.cmds = self.conf.commands
         else:
             self.conf.commands = self.cmds
         if len(self.cmds) < 1:
-            self.errorlog(0, _('You need to give some command'))
+            self.logger.critical(_('You need to give some command'))
             self.usage()
             raise CliError
             
@@ -330,9 +305,9 @@ yum [options] < update | install | info | remove | list |
         self.extcmds = self.cmds[1:] # out extended arguments/commands
         
         if len(self.extcmds) > 0:
-            self.log(3, 'Ext Commands:\n')
+            self.verbose_logger.debug('Ext Commands:\n')
             for arg in self.extcmds:
-                self.log(3, '   %s' % arg)
+                self.verbose_logger.debug('   %s', arg)
         
         if self.basecmd not in self.yum_cli_commands:
             self.usage()
@@ -343,7 +318,7 @@ yum [options] < update | install | info | remove | list |
                                 'groupupdate', 'groupinstall', 'remove',
                                 'groupremove', 'importkey', 'makecache', 
                                 'localinstall', 'localupdate']:
-                self.errorlog(0, _('You need to be root to perform this command.'))
+                self.logger.critical(_('You need to be root to perform this command.'))
                 raise CliError
 
         if self.basecmd in ['install', 'update', 'upgrade', 'groupinstall',
@@ -366,32 +341,31 @@ will install it for you.
 
 For more information contact your distribution or package provider.
 """)
-                        self.errorlog(0, msg)
+                        self.logger.critical(msg)
                         raise CliError
 
                 
         if self.basecmd in ['install', 'erase', 'remove', 'localinstall', 'localupdate', 'deplist']:
             if len(self.extcmds) == 0:
-                self.errorlog(0, _('Error: Need to pass a list of pkgs to %s') % self.basecmd)
+                self.logger.critical(_('Error: Need to pass a list of pkgs to %s') % self.basecmd)
                 self.usage()
                 raise CliError
     
         elif self.basecmd in ['provides', 'search', 'whatprovides']:
             if len(self.extcmds) == 0:
-                self.errorlog(0, _('Error: Need an item to match'))
+                self.logger.critical(_('Error: Need an item to match'))
                 self.usage()
                 raise CliError
                 
         elif self.basecmd in ['groupupdate', 'groupinstall', 'groupremove', 'groupinfo']:
             if len(self.extcmds) == 0:
-                self.errorlog(0, _('Error: Need a group or list of groups'))
+                self.logger.critical(_('Error: Need a group or list of groups'))
                 self.usage()
                 raise CliError
                 
         elif self.basecmd == 'clean':
             if len(self.extcmds) == 0:
-                self.errorlog(0,
-                    _('Error: clean requires an option: headers, packages, dbcache, metadata, plugins, all'))
+                self.logger.critical(_('Error: clean requires an option: headers, packages, dbcache, metadata, plugins, all'))
             for cmd in self.extcmds:
                 if cmd not in ['headers', 'packages', 'metadata', 'dbcache', 'plugins', 'all']:
                     self.usage()
@@ -399,17 +373,18 @@ For more information contact your distribution or package provider.
                     
         elif self.basecmd == 'shell':
             if len(self.extcmds) == 0:
-                self.log(3, "No argument to shell")
+                self.verbose_logger.debug("No argument to shell")
                 pass
             elif len(self.extcmds) == 1:
-                self.log(3, "Filename passed to shell: %s" % self.extcmds[0])              
+                self.verbose_logger.debug("Filename passed to shell: %s", 
+                    self.extcmds[0])              
                 if not os.path.isfile(self.extcmds[0]):
-                    self.errorlog(
-                        0, _("File: %s given has argument to shell does not exists." % self.extcmds))
+                    self.logger.critical(
+                        _("File: %s given has argument to shell does not exists."), self.extcmds)
                     self.usage()
                     raise CliError
             else:
-                self.errorlog(0,_("Error: more than one file given as argument to shell."))
+                self.logger.critical(_("Error: more than one file given as argument to shell."))
                 self.usage()
                 raise CliError
               
@@ -425,7 +400,7 @@ For more information contact your distribution or package provider.
     def doShell(self):
         """do a shell-like interface for yum commands"""
 
-        self.log(2, 'Setting up Yum Shell')
+        self.verbose_logger.log(logginglevels.INFO_2, 'Setting up Yum Shell')
         self.in_shell = True
         self.doTsSetup()
         self.doRpmDBSetup()
@@ -456,14 +431,14 @@ For more information contact your distribution or package provider.
             return 1, [str(e)]
         
         if self.basecmd == 'install':
-            self.log(2, "Setting up Install Process")
+            self.verbose_logger.log(logginglevels.INFO_2, "Setting up Install Process")
             try:
                 return self.installPkgs()
             except yum.Errors.YumBaseError, e:
                 return 1, [str(e)]
         
         elif self.basecmd == 'update':
-            self.log(2, "Setting up Update Process")
+            self.verbose_logger.log(logginglevels.INFO_2, "Setting up Update Process")
             try:
                 return self.updatePkgs()
             except yum.Errors.YumBaseError, e:
@@ -472,7 +447,7 @@ For more information contact your distribution or package provider.
             
         elif self.basecmd == 'upgrade':
             self.conf.obsoletes = 1
-            self.log(2, "Setting up Upgrade Process")
+            self.verbose_logger.log(logginglevels.INFO_2, "Setting up Upgrade Process")
             try:
                 return self.updatePkgs()
             except yum.Errors.YumBaseError, e:
@@ -480,7 +455,7 @@ For more information contact your distribution or package provider.
             
             
         elif self.basecmd in ['erase', 'remove']:
-            self.log(2, "Setting up Remove Process")
+            self.verbose_logger.log(logginglevels.INFO_2, "Setting up Remove Process")
             try:
                 return self.erasePkgs()
             except yum.Errors.YumBaseError, e:
@@ -488,7 +463,8 @@ For more information contact your distribution or package provider.
             
 
         elif self.basecmd in ['localinstall', 'localupdate']:
-            self.log(2, "Setting up Local Package Process")
+            self.verbose_logger.log(logginglevels.INFO_2,
+                "Setting up Local Package Process")
             updateonly=0
             if self.basecmd == 'localupdate': updateonly=1
                 
@@ -532,7 +508,7 @@ For more information contact your distribution or package provider.
                 return result, []
             
         elif self.basecmd in ['deplist']:
-           self.log(2, "Finding dependencies: ")
+           self.verbose_logger.log(logginglevels.INFO_2, "Finding dependencies: ")
            try:
               return self.deplist()
            except yum.Errors.YumBaseError, e:
@@ -545,7 +521,7 @@ For more information contact your distribution or package provider.
         elif self.basecmd in ['groupupdate', 'groupinstall', 'groupremove', 
                               'grouplist', 'groupinfo']:
 
-            self.log(2, "Setting up Group Process")
+            self.verbose_logger.log(logginglevels.INFO_2, "Setting up Group Process")
 
             self.doRepoSetup(dosack=0)
             try:
@@ -576,29 +552,29 @@ For more information contact your distribution or package provider.
                     return 1, [str(e)]
             
         elif self.basecmd in ['search']:
-            self.log(2, "Searching Packages: ")
+            self.logger.debug("Searching Packages: ")
             try:
                 return self.search()
             except yum.Errors.YumBaseError, e:
                 return 1, [str(e)]
         
         elif self.basecmd in ['provides', 'whatprovides']:
-            self.log(2, "Searching Packages: ")
+            self.logger.debug("Searching Packages: ")
             try:
                 return self.provides()
             except yum.Errors.YumBaseError, e:
                 return 1, [str(e)]
 
         elif self.basecmd in ['resolvedep']:
-            self.log(2, "Searching Packages for Dependency:")
+            self.logger.debug("Searching Packages for Dependency:")
             try:
                 return self.resolveDepCli()
             except yum.Errors.YumBaseError, e:
                 return 1, [str(e)]
         
         elif self.basecmd in ['makecache']:
-            self.log(2, "Making cache files for all metadata files.")
-            self.log(2, "This may take a while depending on the speed of this computer")
+            self.logger.debug("Making cache files for all metadata files.")
+            self.logger.debug("This may take a while depending on the speed of this computer")
             try:
                 for repo in self.repos.findRepos('*'):
                     repo.metadata_expire = 0
@@ -619,7 +595,7 @@ For more information contact your distribution or package provider.
            RUNNING the transaction"""
 
         # output what will be done:
-        self.log(1, self.listTransaction())
+        self.verbose_logger.log(logginglevels.INFO_1, self.listTransaction())
         
         # Check which packages have to be downloaded
         downloadpkgs = []
@@ -639,10 +615,10 @@ For more information contact your distribution or package provider.
         # confirm with user
         if self._promptWanted():
             if not self.userconfirm():
-                self.log(0, 'Exiting on user Command')
+                self.verbose_logger.info('Exiting on user Command')
                 return 1
 
-        self.log(2, 'Downloading Packages:')
+        self.verbose_logger.log(logginglevels.INFO_2, 'Downloading Packages:')
         problems = self.downloadPkgs(downloadpkgs) 
 
         if len(problems.keys()) > 0:
@@ -658,7 +634,7 @@ For more information contact your distribution or package provider.
         if self.gpgsigcheck(downloadpkgs) != 0:
             return 1
         
-        self.log(2, 'Running Transaction Test')
+        self.verbose_logger.log(logginglevels.INFO_2, 'Running Transaction Test')
         tsConf = {}
         for feature in ['diskspacecheck']: # more to come, I'm sure
             tsConf[feature] = getattr(self.conf, feature)
@@ -676,14 +652,14 @@ For more information contact your distribution or package provider.
         tserrors = self.ts.test(testcb, conf=tsConf)
         del testcb
         
-        self.log(2, 'Finished Transaction Test')
+        self.verbose_logger.log(logginglevels.INFO_2, 'Finished Transaction Test')
         if len(tserrors) > 0:
             errstring = 'Transaction Check Error: '
             for descr in tserrors:
                 errstring += '  %s\n' % descr 
             
             raise yum.Errors.YumBaseError, errstring
-        self.log(2, 'Transaction Test Succeeded')
+        self.verbose_logger.log(logginglevels.INFO_2, 'Transaction Test Succeeded')
         del self.ts
         
         self.initActionTs() # make a new, blank ts to populate
@@ -698,14 +674,14 @@ For more information contact your distribution or package provider.
         if self.conf.debuglevel < 2:
             output = 0
         cb = callback.RPMInstallCallback(output=output)
-        cb.filelog = self.filelog # needed for log file output
+        cb.filelog = logging.getLogger("yum.filelogging") # needed for log file output
         cb.tsInfo = self.tsInfo
 
-        self.log(2, 'Running Transaction')
+        self.verbose_logger.log(logginglevels.INFO_2, 'Running Transaction')
         self.runTransaction(cb=cb)
 
         # close things
-        self.log(1, self.postTransactionOutput())
+        self.verbose_logger.log(logginglevels.INFO_1, self.postTransactionOutput())
         return 0
         
     def gpgsigcheck(self, pkgs):
@@ -763,7 +739,8 @@ For more information contact your distribution or package provider.
         toBeInstalled = {} # keyed on name
         passToUpdate = [] # list of pkgtups to pass along to updatecheck
 
-        self.log(2, _('Parsing package install arguments'))
+        self.verbose_logger.log(logginglevels.INFO_2,
+            _('Parsing package install arguments'))
         for arg in userlist:
             if os.path.exists(arg) and arg.endswith('.rpm'): # this is hurky, deal w/it
                 val, msglist = self.localInstall(filelist=[arg])
@@ -775,11 +752,12 @@ For more information contact your distribution or package provider.
                                                                casematch=1)
             if len(unmatched) > 0: # if we get back anything in unmatched, check it for a virtual-provide
                 arg = unmatched[0] #only one in there
-                self.log(3, 'Checking for virtual provide or file-provide for %s' % arg)
+                self.verbose_logger.debug('Checking for virtual provide or file-provide for %s', 
+                    arg)
                 try:
                     mypkg = self.returnPackageByDep(arg)
                 except yum.Errors.YumBaseError, e:
-                    self.errorlog(0, _('No Match for argument: %s') % arg)
+                    self.logger.critical(_('No Match for argument: %s') % arg)
                 else:
                     arg = '%s:%s-%s-%s.%s' % (mypkg.epoch, mypkg.name,
                                               mypkg.version, mypkg.release,
@@ -795,7 +773,8 @@ For more information contact your distribution or package provider.
             # ones that we obviously can't use
             for pkg in installable:
                 if pkg.pkgtup in installed:
-                    self.log(6, 'Package %s is already installed, skipping' % pkg)
+                    self.verbose_logger.log(logginglevels.DEBUG_3,
+                        'Package %s is already installed, skipping', pkg)
                     continue
                 
                 # everything installed that matches the name
@@ -806,7 +785,8 @@ For more information contact your distribution or package provider.
                     if rpmUtils.arch.isMultiLibArch(a2) == rpmUtils.arch.isMultiLibArch(pkg.arch):
                         comparable.append(instTup)
                     else:
-                        self.log(6, 'Discarding non-comparable pkg %s.%s' % (n2, a2))
+                        self.verbose_logger.log(logginglevels.DEBUG_6,
+                            'Discarding non-comparable pkg %s.%s', n2, a2)
                         continue
                         
                 # go through each package 
@@ -831,7 +811,7 @@ For more information contact your distribution or package provider.
                                 if not toBeInstalled.has_key(pkg.name): toBeInstalled[pkg.name] = []
                                 toBeInstalled[pkg.name].append(pkg)
                 else: # we've not got any installed that match n or n+a
-                    self.log(4, 'No other %s installed, adding to list for potential install' % pkg.name)
+                    self.verbose_logger.log(logginglevels.DEBUG_1, 'No other %s installed, adding to list for potential install', pkg.name)
                     if not toBeInstalled.has_key(pkg.name): toBeInstalled[pkg.name] = []
                     toBeInstalled[pkg.name].append(pkg)
         
@@ -846,16 +826,16 @@ For more information contact your distribution or package provider.
         # is also an obsolete. if so then we need to mark it as such in the
         # tsInfo.
         if len(pkglist) > 0:
-            self.log(3, 'reduced installs :')
+            self.verbose_logger.debug('reduced installs :')
         for po in pkglist:
-            self.log(3,'   %s.%s %s:%s-%s' % po.pkgtup)
+            self.verbose_logger.debug('   %s.%s %s:%s-%s', po.pkgtup)
             self.install(po)
 
         if len(passToUpdate) > 0:
-            self.log(3, 'potential updates :')
+            self.verbose_logger.debug('potential updates :')
             updatelist = []
             for (n,a,e,v,r) in passToUpdate:
-                self.log(3, '   %s.%s %s:%s-%s' % (n, a, e, v, r))
+                self.verbose_logger.debug('   %s.%s %s:%s-%s', n, a, e, v, r)
                 pkgstring = '%s:%s-%s-%s.%s' % (e,n,v,r,a)
                 updatelist.append(pkgstring)
             self.updatePkgs(userlist=updatelist, quiet=1)
@@ -898,7 +878,7 @@ For more information contact your distribution or package provider.
                 txmbrs = self.tsInfo.getMembers(pkgtup=old)
 
                 if txmbrs and txmbrs[0].output_state == TS_OBSOLETED: 
-                    self.log(5, 'Not Updating Package that is already obsoleted: %s.%s %s:%s-%s' % old)
+                    self.verbose_logger.log(logginglevels.DEBUG_2, 'Not Updating Package that is already obsoleted: %s.%s %s:%s-%s', old)
                 else:
                     updating_pkg = self.getPackageObject(new)
                     updated_pkg = YumInstalledPackage(self.rpmdb.returnHeaderByTuple(old)[0])
@@ -930,7 +910,7 @@ For more information contact your distribution or package provider.
                                                 updatesPo, userlist, casematch=1)
             for userarg in unmatched:
                 if not quiet:
-                    self.errorlog(1, 'Could not find update match for %s' % userarg)
+                    self.logger.error('Could not find update match for %s' % userarg)
 
             updateMatches = yum.misc.unique(matched + exactmatch)
             for po in updateMatches:
@@ -975,11 +955,11 @@ For more information contact your distribution or package provider.
                 try:
                     depmatches = self.returnInstalledPackagesByDep(arg)
                 except yum.Errors.YumBaseError, e:
-                    self.errorlog(0, _('%s') % e)
+                    self.logger.critical(_('%s') % e)
                     continue
                     
                 if not depmatches:
-                    self.errorlog(0, _('No Match for argument: %s') % arg)
+                    self.logger.critical(_('No Match for argument: %s') % arg)
                 else:
                     erases.extend(depmatches)
             
@@ -1019,16 +999,17 @@ For more information contact your distribution or package provider.
             try:
                 po = YumLocalPackage(ts=self.read_ts, filename=pkg)
             except yum.Errors.MiscError, e:
-                self.errorlog(0, 'Cannot open file: %s. Skipping.' % pkg)
+                self.logger.critical('Cannot open file: %s. Skipping.', pkg)
                 continue
-            self.log(2, 'Examining %s: %s' % (po.localpath, po))
+            self.verbose_logger.log(logginglevels.INFO_2, 'Examining %s: %s', 
+                po.localpath, po)
 
             # everything installed that matches the name
             installedByKey = self.rpmdb.returnTupleByKeyword(name=po.name)
             # go through each package 
             if len(installedByKey) == 0: # nothing installed by that name
                 if updateonly:
-                    self.errorlog(2, 'Package %s not installed, cannot update it. Run yum install to install it instead.' % po.name)
+                    self.logger.warning('Package %s not installed, cannot update it. Run yum install to install it instead.', po.name)
                 else:
                     installpkgs.append(po)
                 continue
@@ -1066,24 +1047,27 @@ For more information contact your distribution or package provider.
 
         for po in installpkgs:
             if po in toexc:
-               self.log(3, 'Excluding %s' % po)
+               self.verbose_logger.debug('Excluding %s', po)
                continue
             
-            self.log(2, 'Marking %s to be installed' % po.localpath)
+            self.verbose_logger.log(logginglevels.INFO_2, 'Marking %s to be installed',
+                po.localpath)
             self.localPackages.append(po)
             self.install(po=po)
         
         for (po, oldpo) in updatepkgs:
             if po in toexc:
-               self.log(3, 'Excluding %s' % po)
+               self.verbose_logger.debug('Excluding %s', po)
                continue
            
-            self.log(2, 'Marking %s as an update to %s' % (po.localpath, oldpo))
+            self.verbose_logger.log(logginglevels.INFO_2,
+                'Marking %s as an update to %s', po.localpath, oldpo)
             self.localPackages.append(po)
             self.tsInfo.addUpdate(po, oldpo)
         
         for po in donothingpkgs:
-            self.log(2, '%s: does not update installed package.' % po.localpath)
+            self.verbose_logger.log(logginglevels.INFO_2,
+                '%s: does not update installed package.', po.localpath)
 
         if len(self.tsInfo) > oldcount:
             return 2, ['Package(s) to install']
@@ -1119,7 +1103,8 @@ For more information contact your distribution or package provider.
 
         def _shrinklist(lst, args):
             if len(lst) > 0 and len(args) > 0:
-                self.log(4, 'Matching packages for package list to user args')
+                self.verbose_logger.log(logginglevels.DEBUG_1,
+                    'Matching packages for package list to user args')
                 exactmatch, matched, unmatched = yum.packages.parsePackages(lst, args)
                 return yum.misc.unique(matched + exactmatch)
             else:
@@ -1134,7 +1119,7 @@ For more information contact your distribution or package provider.
         
 #        for lst in [ypl.obsoletes, ypl.updates]:
 #            if len(lst) > 0 and len(self.extcmds) > 0:
-#                self.log(4, 'Matching packages for tupled package list to user args')
+#                self.logger.log(4, 'Matching packages for tupled package list to user args')
 #                for (pkg, instpkg) in lst:
 #                    exactmatch, matched, unmatched = yum.packages.parsePackages(lst, self.extcmds)
                     
@@ -1198,10 +1183,10 @@ For more information contact your distribution or package provider.
             try:
                 pkg = self.returnPackageByDep(arg)
             except yum.Errors.YumBaseError, e:
-                self.errorlog(0, _('No Package Found for %s') % arg)
+                self.logger.critical(_('No Package Found for %s'), arg)
             else:
                 msg = '%s:%s-%s-%s.%s' % (pkg.epoch, pkg.name, pkg.version, pkg.release, pkg.arch)
-                self.log(0, msg)
+                self.verbose_logger.info(msg)
 
         return 0, []
     
@@ -1212,7 +1197,7 @@ For more information contact your distribution or package provider.
         pkgresults = hdrresults = xmlresults = dbresults = []
 
         if 'all' in self.extcmds:
-            self.log(2, 'Cleaning up Everything')
+            self.verbose_logger.log(logginglevels.INFO_2, 'Cleaning up Everything')
             pkgcode, pkgresults = self.cleanPackages()
             hdrcode, hdrresults = self.cleanHeaders()
             xmlcode, xmlresults = self.cleanMetadata()
@@ -1222,30 +1207,30 @@ For more information contact your distribution or package provider.
             code = hdrcode + pkgcode + xmlcode + dbcode
             results = hdrresults + pkgresults + xmlresults + dbresults
             for msg in results:
-                self.log(2, msg)
+                self.logger.debug(msg)
             return code, []
             
         if 'headers' in self.extcmds:
-            self.log(2, 'Cleaning up Headers')
+            self.logger.debug('Cleaning up Headers')
             hdrcode, hdrresults = self.cleanHeaders()
         if 'packages' in self.extcmds:
-            self.log(2, 'Cleaning up Packages')
+            self.logger.debug('Cleaning up Packages')
             pkgcode, pkgresults = self.cleanPackages()
         if 'metadata' in self.extcmds:
-            self.log(2, 'Cleaning up xml metadata')
+            self.logger.debug('Cleaning up xml metadata')
             xmlcode, xmlresults = self.cleanMetadata()
         if 'dbcache' in self.extcmds:
-            self.log(2, 'Cleaning up database cache')
+            self.logger.debug('Cleaning up database cache')
             dbcode, dbresults =  self.cleanSqlite()
         if 'plugins' in self.extcmds:
-            self.log(2, 'Cleaning up plugins')
+            self.logger.debug('Cleaning up plugins')
             self.plugins.run('clean')
 
             
         code = hdrcode + pkgcode + xmlcode + dbcode
         results = hdrresults + pkgresults + xmlresults + dbresults
         for msg in results:
-            self.log(2, msg)
+            self.verbose_logger.log(logginglevels.INFO_2, msg)
         return code, []
 
     def returnGroupLists(self, userlist=None):
@@ -1261,14 +1246,16 @@ For more information contact your distribution or package provider.
         installed, available = self.doGroupLists(uservisible=uservisible)
 
         if len(installed) > 0:
-            self.log(2, 'Installed Groups:')
+            self.verbose_logger.log(logginglevels.INFO_2, 'Installed Groups:')
             for group in installed:
-                self.log(2, '   %s' % group.name)
+                self.verbose_logger.log(logginglevels.INFO_2, '   %s',
+                    group.name)
         
         if len(available) > 0:
-            self.log(2, 'Available Groups:')
+            self.verbose_logger.log(logginglevels.INFO_2, 'Available Groups:')
             for group in available:
-                self.log(2, '   %s' % group.name)
+                self.verbose_logger.log(logginglevels.INFO_2, '   %s',
+                    group.name)
 
             
         return 0, ['Done']
@@ -1283,7 +1270,7 @@ For more information contact your distribution or package provider.
             if group:
                 self.displayPkgsInGroups(group)
             else:
-                self.errorlog(1, 'Warning: Group %s does not exist.' % strng)
+                self.logger.error('Warning: Group %s does not exist.', strng)
         
         return 0, []
         
@@ -1299,13 +1286,13 @@ For more information contact your distribution or package provider.
         for group_string in grouplist:
             group = self.comps.return_group(group_string)
             if not group:
-                self.errorlog(0, _('Warning: Group %s does not exist.') % group)
+                self.logger.critical(_('Warning: Group %s does not exist.'), group)
                 continue
             
             try:
                 txmbrs = self.selectGroup(group.groupid)
             except yum.Errors.GroupsError, e:
-                self.errorlog(0, _('Warning: Group %s does not exist.') % group)
+                self.logger.critical(_('Warning: Group %s does not exist.'), group)
                 continue
             else:
                 pkgs_used.extend(txmbrs)
@@ -1328,7 +1315,7 @@ For more information contact your distribution or package provider.
             try:
                 txmbrs = self.groupRemove(group_string)
             except yum.Errors.GroupsError, e:
-                self.errorlog(0, 'No group named %s exists' % group_string)
+                self.logger.critical('No group named %s exists', group_string)
                 continue
             else:
                 pkgs_used.extend(txmbrs)
@@ -1380,13 +1367,12 @@ class YumOptionParser(OptionParser):
 
     def __init__(self, base, **kwargs):
         OptionParser.__init__(self, **kwargs)
-        self.base = base
+        self.logger = logging.getLogger("yum.cli")
 
     def error(self, msg):
-        '''This method is overridden so that error output goes to errorlog
-        '''
+        '''This method is overridden so that error output goes to logger. '''
         self.print_usage()
-        self.base.errorlog(0, "Command line error: "+msg)
+        self.logger.critical("Command line error: %s", msg)
         sys.exit(1)
 
 

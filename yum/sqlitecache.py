@@ -22,6 +22,8 @@ import os
 import sqlite
 import time
 import mdparser
+import logging
+import logginglevels
 from sqlitesack import encodefiletypelist,encodefilenamelist
 
 # This version refers to the internal structure of the sqlite cache files
@@ -40,6 +42,9 @@ class RepodataParserSqlite:
         }
         self.repoid = repoid
         self.debug = 0
+        self.logger = logging.getLogger("yum.RepodataParserSqlite")
+        self.verbose_logger = \
+            logging.getLogger("yum.verbose.RepodataParserSqlite")
 
     def loadCache(self,filename):
         """Load cache from filename, check if it is valid and that dbversion 
@@ -56,8 +61,7 @@ class RepodataParserSqlite:
 
         # Now check the database version
         if (info['dbversion'] != dbversion):
-            self.log(2, "Warning: cache file is version %s, we need %s, will regenerate" % (
-                info['dbversion'], dbversion))
+            self.verbose_logger.log(logginglevels.INFO_2, "Warning: cache file is version %s, we need %s, will regenerate", info['dbversion'], dbversion)
             raise sqlite.DatabaseError, "Older version of yum sqlite"
 
         # This appears to be a valid database, return checksum value and 
@@ -84,7 +88,8 @@ class RepodataParserSqlite:
         # db should now contain a valid database object, check if it is
         # up to date
         if (checksum != dbchecksum):
-            self.log(3, "%s sqlite cache needs updating, reading in metadata" % (metadatatype))
+            self.verbose_logger.debug("%s sqlite cache needs updating, reading in metadata", 
+                metadatatype)
             parser = mdparser.MDParser(location)
             self.updateSqliteCache(db, parser, checksum, metadatatype)
         db.commit()
@@ -219,7 +224,7 @@ class RepodataParserSqlite:
 
         # If it exists, remove it as we were asked to create a new one
         if (os.path.exists(filename)):
-            self.log(3, "Warning: cache already exists, removing old version")
+            self.verbose_logger.debug("Warning: cache already exists, removing old version")
             try:
                 os.unlink(filename)
             except OSError:
@@ -231,7 +236,7 @@ class RepodataParserSqlite:
             f = open(filename,'w')
             db = sqlite.connect(filename) 
         except IOError:
-            self.log(1, "Warning could not create sqlite cache file, using in memory cache instead")
+            self.verbose_logger.log(logginglevels.INFO_1, "Warning could not create sqlite cache file, using in memory cache instead")
             db = sqlite.connect(":memory:")
 
         # The file has been created, now create the tables and indexes
@@ -375,8 +380,8 @@ class RepodataParserSqlite:
         cur.execute("INSERT into db_info (dbversion,checksum) VALUES (%s,%s)",
                 (dbversion,checksum))
         db.commit()
-        self.log(2, "Added %s new packages, deleted %s old in %.2f seconds" % (
-                newcount, delcount, time.time()-t))
+        self.verbose_logger.log(logginglevels.INFO_2, "Added %s new packages, deleted %s old in %.2f seconds",
+            newcount, delcount, time.time()-t)
         return db
 
     def log(self, level, msg):

@@ -18,6 +18,7 @@
 import rpm
 import os
 import sys
+import logging
 from yum.constants import *
 
 from i18n import _
@@ -32,7 +33,7 @@ class RPMInstallCallback:
         self.total_removed = 0
         self.mark = "#"
         self.marks = 27
-        self.filelog = None
+        self.logger = logging.getLogger('yum.filelogging.RPMInstallCallback')
 
         self.myprocess = { TS_UPDATE : 'Updating', 
                            TS_ERASE: 'Erasing',
@@ -136,10 +137,9 @@ class RPMInstallCallback:
                     except KeyError, e:
                         pass
 
-                    if self.filelog:
-                        pkgrep = self._logPkgString(hdr)
-                        msg = '%s: %s' % (processed, pkgrep)
-                        self.filelog(0, msg)
+                    pkgrep = self._logPkgString(hdr)
+                    msg = '%s: %s' % (processed, pkgrep)
+                    self.logger.info(msg)
 
 
         elif what == rpm.RPMCALLBACK_INST_PROGRESS:
@@ -194,7 +194,7 @@ class RPMInstallCallback:
             self.total_removed += 1
             if h not in self.installed_pkg_names:
                 logmsg = _('Erased: %s' % (h))
-                if self.filelog: self.filelog(0, logmsg)
+                self.logger.info(logmsg)
             
             if self.output and sys.stdout.isatty():
                 if h not in self.installed_pkg_names:
