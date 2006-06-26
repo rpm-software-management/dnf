@@ -15,7 +15,8 @@
 # Copyright 2006 Duke University
 
 from Errors import PackageSackError
-import rpmUtils.miscutils
+from rpmUtils import miscutils
+from packages import YumInstalledPackage
 
 class PackageSackBase:
     """Base class that provides the interface for PackageSacks."""
@@ -484,7 +485,7 @@ class PackageSack(PackageSackBase):
             else:
                 pkg2 = highdict[(n, a)]
                 (e2, v2, r2) = pkg2.returnEVR()
-                rc = rpmUtils.miscutils.compareEVR((e,v,r), (e2, v2, r2))
+                rc = miscutils.compareEVR((e,v,r), (e2, v2, r2))
                 if rc > 0:
                     highdict[(n, a)] = pkg
         
@@ -509,7 +510,7 @@ class PackageSack(PackageSackBase):
             else:
                 pkg2 = highdict[n][0]
                 (e2, v2, r2) = pkg2.returnEVR()
-                rc = rpmUtils.miscutils.compareEVR((e,v,r), (e2, v2, r2))
+                rc = miscutils.compareEVR((e,v,r), (e2, v2, r2))
                 if rc > 0:
                     highdict[n] = [pkg]
                 elif rc == 0:
