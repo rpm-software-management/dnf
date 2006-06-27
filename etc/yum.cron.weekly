@@ -1,5 +1,0 @@
-#!/bin/sh
-
-if [ -f /var/lock/subsys/yum ]; then
-	/usr/bin/yum -e 0 -d 0 clean packages
-fi
