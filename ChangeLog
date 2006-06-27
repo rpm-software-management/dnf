@@ -1,3 +1,82 @@
+2006-06-27 00:40  skvidal
+
+	* yum.spec: mark as 2.9.2 in spec
+
+2006-06-27 00:40  skvidal
+
+	* yum/__init__.py: label as 2.9.2
+
+2006-06-27 00:40  skvidal
+
+	* yum/rpmsack.py: 
+	remove odd methods
+
+2006-06-27 00:40  skvidal
+
+	* yum/packages.py: 
+	minor addendum
+
+2006-06-26 16:17  katzj
+
+	* docs/: yum-updatesd.8, yum-updatesd.conf.5: add docs for
+	yum-updatesd
+
+2006-06-25 21:31  skvidal
+
+	* yum/rpmsack.py: 
+	check in tambet's rpmsack.py modify mi2list to return
+	YumInstalledPackage objects instead of tuples rename main class to
+	RPMDBPackageSack to hopefully decrease confusion
+
+2006-06-25 21:30  skvidal
+
+	* yum/packageSack.py: 
+	a few changes to make it a little more like things in rpmsack.py
+
+2006-06-23 10:26  katzj
+
+	* callback.py, cli.py, output.py, shell.py, yummain.py,
+	yum/__init__.py, yum/depsolve.py, yum/logginglevels.py,
+	yum/plugins.py, yum/sqlitecache.py: From James Bowes
+	<jbowes@redhat.com> and modified by me to bring it up to current
+	HEAD
+	
+	Move yum from using a custom logging implementation to python's
+	logging module.  Full details about the changes at
+	https://lists.dulug.duke.edu/pipermail/yum-devel/2006-May/002235.html
+
+2006-06-21 13:09  skvidal
+
+	* yum.spec: 
+	remove libxml2 dep
+
+2006-06-21 13:07  skvidal
+
+	* yum/mdcache.py: 
+	removed mdcache.py
+
+2006-06-21 13:07  skvidal
+
+	* cli.py, output.py, docs/yum.8, yum/__init__.py, yum/repos.py,
+	yum/storagefactory.py, yum/yumRepo.py: 
+	all pickle references and mdcache references removed, I think. :)
+
+2006-06-21 11:56  katzj
+
+	* yum-updatesd.py: fix for api change
+
+2006-06-19 17:46  pnasrat
+
+	* yum/sqlitesack.py: Nuke a pychecker warning for shadowing dir
+
+2006-06-19 17:18  pnasrat
+
+	* yum/sqlitesack.py: fix resolvedeps
+
+2006-06-18 23:18  skvidal
+
+	* ChangeLog: merge changelog
+
 2006-06-18 23:15  skvidal
 
 	* yum.spec: 
