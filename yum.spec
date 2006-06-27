@@ -27,7 +27,7 @@ automatically prompting the user as necessary.
 %package updatesd
 Summary: Update notification daemon
 Group: Applications/System
-Requires: yum
+Requires: yum = %{version}-%{release}
 Requires: dbus-python
 Requires: pygobject2
 Prereq: /sbin/chkconfig 
