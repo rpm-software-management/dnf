@@ -1,6 +1,6 @@
 Summary: RPM installer/updater
 Name: yum
-Version: 2.9.1
+Version: 2.9.2
 Release: 1
 License: GPL
 Group: System Environment/Base
@@ -75,6 +75,9 @@ exit 0
 %{_mandir}/man*/*
 
 %changelog
+* Tue Jun 27 2006 Seth Vidal <skvidal at linux.duke.edu>
+- 2.9.2
+
 * Wed Jun 21 2006 Seth Vidal <skvidal at linux.duke.edu>
 - remove libxml2 dep
 
