@@ -51,7 +51,7 @@ from packages import parsePackages, YumAvailablePackage, YumLocalPackage, YumIns
 from constants import *
 from packageSack import ListPackageSack
 
-__version__ = '2.9.1'
+__version__ = '2.9.2'
 
 class YumBase(depsolve.Depsolve):
     """This is a primary structure and base class. It houses the objects and
