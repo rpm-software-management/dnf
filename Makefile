@@ -21,16 +21,18 @@ install:
 	for p in $(PYFILES) ; do \
 		install -m 644 $$p $(DESTDIR)/usr/share/yum-cli/$$p; \
 	done
+	mv $(DESTDIR)/usr/share/yum-cli/yum-updatesd.py $(DESTDIR)/usr/share/yum-cli/yumupd.py
 	$(PYTHON) -c "import compileall; compileall.compile_dir('$(DESTDIR)/usr/share/yum-cli', 1, '$(PYDIR)', 1)"
 
-	mkdir -p $(DESTDIR)/usr/bin $(DESTDIR)/usr/bin
+	mkdir -p $(DESTDIR)/usr/bin $(DESTDIR)/usr/sbin
 	install -m 755 bin/yum.py $(DESTDIR)/usr/bin/yum
+	install -m 755 bin/yum-updatesd.py $(DESTDIR)/usr/sbin/yum-updatesd
 
 	mkdir -p $(DESTDIR)/var/cache/yum
 
 	for d in $(SUBDIRS); do make PYTHON=$(PYTHON) DESTDIR=`cd $(DESTDIR); pwd` -C $$d install; [ $$? = 0 ] || exit 1; done
 
-archive: remove_spec = ${PKGNAME}-daily.spec
+	archive: remove_spec = ${PKGNAME}-daily.spec
 archive: _archive
 
 daily: remove_spec = ${PKGNAME}.spec
