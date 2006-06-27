@@ -1,3 +1,12 @@
+2006-06-27 00:49  skvidal
+
+	* yum/packages.py: undue stupid things
+
+2006-06-27 00:42  skvidal
+
+	* ChangeLog: 
+	merge changelog
+
 2006-06-27 00:40  skvidal
 
 	* yum.spec: mark as 2.9.2 in spec
