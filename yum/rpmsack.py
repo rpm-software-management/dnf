@@ -39,44 +39,6 @@ class RPMDBPackageSack:
     def delPackageById(self, pkgId):
         self.excludes[pkgId] = 1
 
-    def getChangelog(self, pkgId):
-        mi = self.ts.dbMatch(rpm.RPMTAG_SHA1HEADER, pkgId)
-        hdr = mi.next()
-
-        times = hdr[rpm.RPMTAG_CHANGELOGTIME]
-        names = hdr[rpm.RPMTAG_CHANGELOGNAME]
-        texts = hdr[rpm.RPMTAG_CHANGELOGTEXT]
-
-        result = []
-        for i in range(0, len(times)):
-            result.append((times[i], names[i], texts[i]))
-        return result
-
-    def getPrco(self, pkgId, prcotype=None):
-        mi = self.ts.dbMatch(rpm.RPMTAG_SHA1HEADER, pkgId)
-        hdr = mi.next()
-
-        if prcotype:
-            types = (prcotype,)
-        else:
-            types = self.dep_table.keys()
-
-        result = {}
-        for t in types:
-            result[t] = self._getDependencies(hdr, self.dep_table[t])
-
-        return lst
-
-    def getFiles(self, pkgId):
-        mi = self.ts.dbMatch(rpm.RPMTAG_SHA1HEADER, pkgId)
-        hdr = mi.next()
-
-        dirs = hdr[rpm.RPMTAG_DIRNAMES]
-        filenames = hdr[rpm.RPMTAG_BASENAMES]
-
-        for i in range(0, len(dirs)):
-            print "%s%s" % (dirs[i], filenames[i])
-
     def searchAll(self, name, query_type='like'):
         result = {}
 
@@ -113,9 +75,6 @@ class RPMDBPackageSack:
 
         return obsoletes
 
-    def getPackageDetails(self, pkgId):
-        mi = self.ts.dbMatch(rpm.RPMTAG_SHA1HEADER, pkgId)
-        return self.hdr2class(mi.next())
 
     def searchPrco(self, name, prcotype):
         result = []
@@ -157,7 +116,7 @@ class RPMDBPackageSack:
     def searchRequires(self, name):
         return self.searchPrco(name, 'requires')
 
-    def seatchObsoletes(self, name):
+    def searchObsoletes(self, name):
         return self.searchPrco(name, 'obsoletes')
 
     def searchConflicts(self, name):
