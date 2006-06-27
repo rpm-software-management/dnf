@@ -56,13 +56,13 @@ make DESTDIR=$RPM_BUILD_ROOT install
 
 %post updatesd
 /sbin/chkconfig --add yum-updatesd
-/sbin/service yum-updatesd condrestart 2>/dev/null
+/sbin/service yum-updatesd condrestart >/dev/null 2>&1
 exit 0
 
 %preun updatesd
 if [ $1 = 0 ]; then
  /sbin/chkconfig --del yum-updatesd
- /sbin/service yum-updatesd stop 2>/dev/null
+ /sbin/service yum-updatesd stop >/dev/null 2>&1
 fi
 exit 0
 
