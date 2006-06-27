@@ -112,7 +112,6 @@ class PackageObject:
     def __init__(self):
         self.simple = {} # simple things, name, arch, e,v,r, size, etc
         self.checksums = [] # (type, checksum, id(0,1)
-        self.pkgid = self.returnID()
         
     def __str__(self):
         return self.returnNevraPrintable()
