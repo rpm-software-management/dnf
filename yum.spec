@@ -24,6 +24,19 @@ Yum is a utility that can check for and automatically download and
 install updated RPM packages. Dependencies are obtained and downloaded 
 automatically prompting the user as necessary.
 
+%package updatesd
+Summary: Update notification daemon
+Group: Applications/System
+Requires: yum
+Requires: dbus-python
+Requires: pygobject2
+Prereq: /sbin/chkconfig 
+Prereq: /sbin/service
+
+%description updatesd
+yum-updatesd provides a daemon which checks for available updates and 
+can notify you when they are available via email, syslog or dbus. 
+
 %prep
 %setup -q
 
@@ -41,20 +54,17 @@ make DESTDIR=$RPM_BUILD_ROOT install
 [ "$RPM_BUILD_ROOT" != "/" ] && rm -rf $RPM_BUILD_ROOT
 
 
-%post
-/sbin/chkconfig --add yum
-#/sbin/chkconfig yum on
-#/sbin/service yum condrestart >> /dev/null
-#exit 0
-
-
-%preun
-if [ $1 = 0 ]; then
- /sbin/chkconfig --del yum
- /sbin/service yum stop >> /dev/null
-fi
+%post updatesd
+/sbin/chkconfig --add yum-updatesd
+/sbin/service yum-updatesd condrestart 2>/dev/null
 exit 0
 
+%preun updatesd
+if [ $1 = 0 ]; then
+ /sbin/chkconfig --del yum-updatesd
+ /sbin/service yum-updatesd stop 2>/dev/null
+fi
+exit 0
 
 %files
 %defattr(-, root, root)
@@ -72,9 +82,21 @@ exit 0
 /usr/lib/python?.?/site-packages/yum
 /usr/lib/python?.?/site-packages/rpmUtils
 %dir /var/cache/yum
-%{_mandir}/man*/*
+%{_mandir}/man*/yum.*
+%{_mandir}/man*/yum-shell*
+
+%files updatesd
+%defattr(-, root, root)
+%config(noreplace) %{_sysconfdir}/yum/yum-updatesd.conf
+%config %{_sysconfdir}/rc.d/init.d/yum-updatesd
+%config %{_sysconfdir}/dbus-1/system.d/yum-updatesd.conf
+%{_sbindir}/yum-updatesd
+%{_mandir}/man*/yum-updatesd*
 
 %changelog
+* Tue Jun 27 2006 Jeremy Katz <katzj@redhat.com> 
+- add bits for yum-updatesd subpackage
+
 * Tue Jun 27 2006 Seth Vidal <skvidal at linux.duke.edu>
 - 2.9.2
 
