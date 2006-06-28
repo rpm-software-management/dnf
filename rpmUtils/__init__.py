@@ -14,43 +14,6 @@ class RpmUtilsError(exceptions.Exception):
     
 
 # useful functions
-def getHeadersByKeyword(ts, **kwargs):
-    """return list of headers from the rpmdb matching a keyword
-        ex: getHeadersByKeyword(name='foo', version='1', release='1')
-    """
-    lst = []
-    # lifted from up2date - way to easy and useful NOT to steal - thanks adrian
-    mi = ts.dbMatch()
-    if kwargs.has_key('epoch'):
-        del(kwargs['epoch']) # epochs don't work here for None/0/'0' reasons
-        
-    keywords = len(kwargs.keys())
-    for hdr in mi:
-        match = 0
-        for keyword in kwargs.keys():
-            if hdr[keyword] == kwargs[keyword]:
-                match += 1
-        if match == keywords:
-            lst.append(hdr)
-    del mi
-    return lst
-        
-def getIndexesByKeyword(ts, **kwargs):
-    """return list of headers Indexes from the rpmdb matching a keyword
-        ex: getHeadersByKeyword(name='foo', version='1', release='1')
-    """
-    # THIS IS EXCRUCIATINGLY SLOW
-    lst = []
-    mi = ts.dbMatch()
-    for keyword in kwargs.keys():
-        mi.pattern(keyword, rpm.RPMMIRE_GLOB, kwargs[keyword])
-
-    # we really shouldnt be getting multiples here, but what the heck
-    for h in mi:
-        instance = mi.instance()
-        lst.append(instance)
-    del mi
-    return lst
 
 class RpmDBHolder:
     def __init__(self):
@@ -208,12 +171,34 @@ class RpmDBHolder:
         
         return returnlist
 
+    def getHeadersByKeyword(self, **kwargs):
+        """return list of headers from the rpmdb matching a keyword
+            ex: getHeadersByKeyword(name='foo', version='1', release='1')
+        """
+        lst = []
+        # lifted from up2date - way to easy and useful NOT to steal - thanks adrian
+        mi = self.ts.dbMatch()
+        if kwargs.has_key('epoch'):
+            del(kwargs['epoch']) # epochs don't work here for None/0/'0' reasons
+            
+        keywords = len(kwargs.keys())
+        for hdr in mi:
+            match = 0
+            for keyword in kwargs.keys():
+                if hdr[keyword] == kwargs[keyword]:
+                    match += 1
+            if match == keywords:
+                lst.append(hdr)
+        del mi
+        return lst
+            
+
     def returnHeaderByTuple(self, pkgtuple):
         """returns a list of header(s) based on the pkgtuple provided"""
         (n, a, e, v, r) = pkgtuple
         
         if not self.match_on_index:
-            lst = getHeadersByKeyword(self.ts, name=n, arch=a, epoch=e, version=v, 
+            lst = self.getHeadersByKeyword(name=n, arch=a, epoch=e, version=v, 
                                   release=r)
             return lst
         else:
