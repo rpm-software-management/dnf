@@ -202,19 +202,37 @@ class RPMDBPackageSack:
             indexes = self.header_indexes[(n,a,e,v,r)]
             return self.indexes2list(indexes)
         
-        mi = self.ts.dbMatch()
-        if name:
-            mi.pattern(rpm.RPMTAG_NAME, rpm.RPMMIRE_STRCMP, name)
-        if epoch:
-            mi.pattern(rpm.RPMTAG_EPOCH, rpm.RPMMIRE_STRCMP, epoch)
-        if ver:
-            mi.pattern(rpm.RPMTAG_VERSION, rpm.RPMMIRE_STRCMP, ver)
-        if rel:
-            mi.pattern(rpm.RPMTAG_RELEASE, rpm.RPMMIRE_STRCMP, rel)
-        if arch:
-            mi.pattern(rpm.RPMTAG_ARCH, rpm.RPMMIRE_STRCMP, arch)
-
-        return self.mi2list(mi)
+        removedict = {}
+        indexes = []
+        
+        for pkgtup in self.simplePkgList():
+            (n, a, e, v, r) = pkgtup
+            if name is not None:
+                if name != n:
+                    removedict[pkgtup] = 1
+                    continue
+            if arch is not None:
+                if arch != a:
+                    removedict[pkgtup] = 1
+                    continue
+            if epoch is not None:
+                if epoch != e:
+                    removedict[pkgtup] = 1
+                    continue
+            if ver is not None:
+                if ver != v:
+                    removedict[pkgtup] = 1
+                    continue
+            if rel is not None:
+                if rel != r:
+                    removedict[pkgtup] = 1
+                    continue
+                    
+        for pkgtup in self.simplePkgList():
+            if not removedict.has_key(pkgtup):
+                indexes.extend(self.header_indexes[pkgtup])
+        
+        return self.indexes2list(indexes)
 
     def packagesByTuple(self, pkgtup):
         """return a list of package objects by (n,a,e,v,r) tuple"""
@@ -223,11 +241,11 @@ class RPMDBPackageSack:
 
     def excludeArchs(self, archlist):
         pass
-#        for arch in archlist:
-#            mi = self.ts.dbMatch()
-#            mi.pattern(rpm.RPMTAG_ARCH, rpm.RPMMIRE_STRCMP, arch)
-#            for hdr in mi:
-#                self.delPackageById(hdr[rpm.RPMTAG_SHA1HEADER])
+        #for arch in archlist:
+        #    mi = self.ts.dbMatch()
+        #    mi.pattern(rpm.RPMTAG_ARCH, rpm.RPMMIRE_STRCMP, arch)
+        #    for hdr in mi:
+        #        self.delPackageById(hdr[rpm.RPMTAG_SHA1HEADER])
 
 
 
