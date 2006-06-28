@@ -505,7 +505,7 @@ class Depsolve(object):
                     if po.pkgtup == new:
                         txmbr = self.tsInfo.addUpdate(po, requiringPo)
                         txmbr.setAsDep(po=needpo)
-                        self.verbose_logger.log(logginglevels.DEBUG_25, 'TSINFO: Updating %s to resolve dep.', po)
+                        self.verbose_logger.log(logginglevels.DEBUG_2, 'TSINFO: Updating %s to resolve dep.', po)
                 checkdeps = 1
                 
             else: # if there's no update then pass this over to requringFromTransaction()
