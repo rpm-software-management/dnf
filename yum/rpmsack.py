@@ -1,17 +1,34 @@
 #!/usr/bin/python -tt
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Library General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+
+# represent rpmdb as a packagesack
+# starts up
+# buildIndexes() populates the lookup lists
+# pkglist and tuples point to match iterator indexes for quick access
 
 import rpm
+from Errors import PackageSackError
 from rpmUtils import miscutils
 import misc
 from packages import YumInstalledPackage
 
 class RPMDBPackageSack:
 
-    def __init__(self, rootdir='/'):
+    def __init__(self, ts):
         self.excludes = {}
-        self.ts = rpm.TransactionSet(rootdir)
-        self.ts.setVSFlags((rpm._RPMVSF_NOSIGNATURES | rpm._RPMVSF_NODIGESTS))
-
+        self.ts = ts
         self.dep_table = { 'requires'  : (rpm.RPMTAG_REQUIRENAME,
                                           rpm.RPMTAG_REQUIREVERSION,
                                           rpm.RPMTAG_REQUIREFLAGS),
@@ -27,17 +44,37 @@ class RPMDBPackageSack:
                            }
 
     def buildIndexes(self):
-        # We don't need these
-        return
+        self.match_on_index = 1
+        self.header_indexes = {}
+        
+        try:
+            # we need the find a known index so we can test if
+            # rpm/rpm-python allows us to grab packages by db index.
+            mi = self.ts.dbMatch()
+            hdr = mi.next()
+            known_index = mi.instance()
+            mi = self.ts.dbMatch(0, known_index)
+            hdr = mi.next()
+        except (TypeError, StopIteration), e:
+            raise PackageSackError, "Match Iterators not supported, upgrade rpmlib"
+            
+        mi = self.ts.dbMatch()
+        for hdr in mi:
+            pkgtuple = self._hdr2pkgTuple(hdr)
+            if not self.header_indexes.has_key(pkgtuple):
+                self.header_indexes[pkgtuple] = []
+            else:
+                continue
+            self.header_indexes[pkgtuple].append(mi.instance())
+        
+        self.pkglist = self.header_indexes.keys()
+        del mi
 
     def _checkIndexes(self, failure='error'):
         return
 
     def delPackage(self, obj):
         self.excludes[obj.pkgId] = 1
-
-    def delPackageById(self, pkgId):
-        self.excludes[pkgId] = 1
 
     def searchAll(self, name, query_type='like'):
         result = {}
@@ -102,7 +139,7 @@ class RPMDBPackageSack:
                             }
                 result.append(pkg)
 
-            # If it's not a porvides or filename, we are done
+            # If it's not a provides or filename, we are done
             if prcotype != 'provides' or name[0] != '/':
                 return result
 
@@ -123,7 +160,7 @@ class RPMDBPackageSack:
         return self.searchPrco(name, 'conflicts')
 
     def simplePkgList(self, repoid=None):
-        return self.returnPackages()
+        return self.pkglist
 
     def returnNewestByNameArch(self, naTup=None):
         if not naTup:
@@ -153,9 +190,18 @@ class RPMDBPackageSack:
         return misc.newestInList(allpkg)
 
     def returnPackages(self, repoid=None):
-        return self.mi2list(self.ts.dbMatch())
+        all = []
+        for pkg in self.header_indexes.keys():
+            some = self.indexes2list(self.header_indexes[pkg])
+            all.extend(some)
+        return all
 
     def searchNevra(self, name=None, epoch=None, ver=None, rel=None, arch=None):
+    
+        if name and epoch and ver and rel and arch:
+            indexes = self.header_indexes[(n,a,e,v,r)]
+            return self.indexes2list(indexes)
+        
         mi = self.ts.dbMatch()
         if name:
             mi.pattern(rpm.RPMTAG_NAME, rpm.RPMMIRE_STRCMP, name)
@@ -170,12 +216,18 @@ class RPMDBPackageSack:
 
         return self.mi2list(mi)
 
+    def packagesByTuple(self, pkgtup):
+        """return a list of package objects by (n,a,e,v,r) tuple"""
+        (n,a,e,v,r) = pkgtup
+        return self.searchNevra(name=n, arch=a, epoch=e, ver=v, rel=r)
+
     def excludeArchs(self, archlist):
-        for arch in archlist:
-            mi = self.ts.dbMatch()
-            mi.pattern(rpm.RPMTAG_ARCH, rpm.RPMMIRE_STRCMP, arch)
-            for hdr in mi:
-                self.delPackageById(hdr[rpm.RPMTAG_SHA1HEADER])
+        pass
+#        for arch in archlist:
+#            mi = self.ts.dbMatch()
+#            mi.pattern(rpm.RPMTAG_ARCH, rpm.RPMMIRE_STRCMP, arch)
+#            for hdr in mi:
+#                self.delPackageById(hdr[rpm.RPMTAG_SHA1HEADER])
 
 
 
@@ -208,47 +260,6 @@ class RPMDBPackageSack:
 
         return deps
 
-    def hdr2class(self, hdr, nevra_only=False):
-        class tmpObject:
-            pass
-        y = tmpObject()
-        y.nevra = (hdr[rpm.RPMTAG_NAME],
-                   hdr[rpm.RPMTAG_EPOCH],
-                   hdr[rpm.RPMTAG_VERSION],
-                   hdr[rpm.RPMTAG_RELEASE],
-                   hdr[rpm.RPMTAG_ARCH])
-        y.sack = self
-        y.pkgId = hdr[rpm.RPMTAG_SHA1HEADER]
-
-        if nevra_only:
-            return y
-
-        y.hdrange = {'start'    : hdr[rpm.RPMTAG_],
-                     'end'      : hdr[rpm.RPMTAG_]}
-        y.location = {'href'    : hdr[rpm.RPMTAG_],
-                      'value'   : '',
-                      'base'    : hdr[rpm.RPMTAG_]}
-        y.checksum = {'pkgid'   : 'YES',
-                      'type'    : hdr[rpm.RPMTAG_],
-                      'value'   : hdr[rpm.RPMTAG_]}
-        y.time = {'build'       : hdr[rpm.RPMTAG_BUILDTIME],
-                  'file'        : hdr[rpm.RPMTAG_]}
-        y.size = {'package'     : hdr[rpm.RPMTAG_SIZE],
-                  'archive'     : hdr[rpm.RPMTAG_ARCHIVESIZE],
-                  'installed'   : hdr[rpm.RPMTAG_]}
-        y.info = {'summary'     : hdr[rpm.RPMTAG_SUMMARY],
-                  'description' : hdr[rpm.RPMTAG_DESCRIPTION],
-                  'packager'    : hdr[rpm.RPMTAG_PACKAGER],
-                  'group'       : hdr[rpm.RPMTAG_GROUP],
-                  'buildhost'   : hdr[rpm.RPMTAG_BUILDHOST],
-                  'sourcerpm'   : hdr[rpm.RPMTAG_SOURCERPM],
-                  'url'         : hdr[rpm.RPMTAG_URL],
-                  'vendor'      : hdr[rpm.RPMTAG_VENDOR],
-                  'license'     : hdr[rpm.RPMTAG_LICENSE]}
-
-        return y
-
-
     def mi2list(self, mi):
         returnList = []
         for hdr in mi:
@@ -263,22 +274,44 @@ class RPMDBPackageSack:
                 hdr[rpm.RPMTAG_RELEASE],
                 hdr[rpm.RPMTAG_ARCH])
 
+    def hdrByindex(self, index):
+        mi = self.ts.dbMatch(0, index)
+        hdr = mi.next()
+        return hdr
+    
+    def indexes2list(self, indexlist):
+    
+        """return YumInstalledPackage objects in a list for each index in the list"""
+        all = []
+        for idx in indexlist:
+            hdr  = self.hdrByindex(idx)
+            all.append(YumInstalledPackage(hdr))
+        
+        return all
+
+    def _hdr2pkgTuple(self, hdr):
+        name = hdr['name']
+        arch = hdr['arch']
+        ver = str(hdr['version']) # convert these to strings to be sure
+        rel = str(hdr['release'])
+        epoch = hdr['epoch']
+        if epoch is None:
+            epoch = '0'
+        else:
+            epoch = str(epoch)
+    
+        return (name, arch, epoch, ver, rel)
+
+
 def main():
-    sack = RPMDBPackageSack()
-    #pkgs = sack.returnPackages()
-    pkgs = sack.searchNevra(name="kernel-default", rel='6')
-    #pkgs = sack.returnNewestByNameArch(("kernel-default", "i586"))
-    #pkgs = sack.returnNewestByName(("yum"))
+    ts = rpm.TransactionSet('/')
+    ts.setVSFlags((rpm._RPMVSF_NOSIGNATURES | rpm._RPMVSF_NODIGESTS))
 
-    ## ret = sack.searchProvides("zmd")
-    ## print ret
-    ## ret = sack.searchRequires("zmd")
-    ## print ret
+    sack = RPMDBPackageSack(ts)
+    sack.buildIndexes()
 
-    for p in pkgs:
+    for p in sack.returnPackages():
         print p
-        #sack.getFiles(p[0])
-        #print sack.getChangelog(p[0])
 
 if __name__ == '__main__':
     main()
