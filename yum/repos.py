@@ -18,14 +18,10 @@ import os
 import os.path
 import re
 import fnmatch
-import urlparse
 import types
 import time
 
 import Errors
-from urlgrabber.grabber import URLGrabber
-import urlgrabber.mirror
-from urlgrabber.grabber import URLGrabError
 from packageSack import MetaSack
 from packages import YumAvailablePackage
 
