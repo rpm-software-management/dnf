@@ -56,7 +56,7 @@ class RPMDBPackageSack:
             mi = self.ts.dbMatch(0, known_index)
             hdr = mi.next()
         except (TypeError, StopIteration), e:
-            raise PackageSackError, "Match Iterators not supported, upgrade rpmlib"
+            raise PackageSackError, "Match Iterators not supported in rpm. Please upgrade rpm-python"
             
         mi = self.ts.dbMatch()
         for hdr in mi:
