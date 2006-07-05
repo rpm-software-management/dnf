@@ -193,9 +193,9 @@ yum [options] < update | install | info | remove | list |
 
         # Setup debug and error levels
         if opts.debuglevel is not None:
-            self.startupconf.debuglevel = opts.debuglevel
+            self.conf.debuglevel = opts.debuglevel
         if opts.errorlevel is not None:
-            self.startupconf.errorlevel = opts.errorlevel
+            self.conf.errorlevel = opts.errorlevel
              
         logginglevels.doLoggingSetup(self.conf.uid, self.conf.logfile,
             self.conf.errorlevel, self.conf.debuglevel)
