@@ -489,6 +489,8 @@ class YumHeaderPackage(YumAvailablePackage):
         self.summary = self.tagByName('summary')
         self.description = self.tagByName('description')
         self.pkgid = self.tagByName(rpm.RPMTAG_SHA1HEADER)
+
+        self._populatePrco()
         
     def __str__(self):
         if self.epoch == '0':
@@ -499,6 +501,22 @@ class YumHeaderPackage(YumAvailablePackage):
                                            self.release, self.arch)
         return val
 
+    def _populatePrco(self):
+        "Populate the package object with the needed PRCO interface."
+
+        for tag in ['OBSOLETE', 'CONFLICT', 'REQUIRE', 'PROVIDE']:
+            name = self.hdr[getattr(rpm, 'RPMTAG_%sNAME' % tag)]
+
+            list = self.hdr[getattr(rpm, 'RPMTAG_%sFLAGS' % tag)]
+            flag = [ rpmUtils.miscutils.flagToString(i) for i in list ]
+
+            list = self.hdr[getattr(rpm, 'RPMTAG_%sVERSION' % tag)]
+            vers = [ rpmUtils.miscutils.stringToVersion(i) for i in list ]
+
+            prcotype = tag.lower() + 's'
+            if name is not None:
+                self.prco[prcotype] = zip(name, flag, vers)
+    
     def tagByName(self, tag):
         data = self.hdr[tag]
         return data

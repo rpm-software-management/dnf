@@ -299,6 +299,21 @@ def formatRequire (name, version, flags):
                 s = "%s %s" %(s, version)
     return s
     
+def flagToString(flags):
+    if flags & rpm.RPMSENSE_EQUAL & rpm.RPMSENSE_GREATER:
+        return 'GE'
+    if flags & rpm.RPMSENSE_EQUAL & rpm.RPMSENSE_LESS:
+        return 'LE'
+    if flags & rpm.RPMSENSE_EQUAL:
+        return 'EQ'
+    if flags & rpm.RPMSENSE_GREATER:
+        return 'GT'
+    if flags & rpm.RPMSENSE_LESS:
+        return 'LT'
+
+    # Umm...now I'm screwed
+    return flags
+
 def stringToVersion(verstring):
     if verstring is None:
         return (None, None, None)
