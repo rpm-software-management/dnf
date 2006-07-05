@@ -785,7 +785,7 @@ For more information contact your distribution or package provider.
                     if rpmUtils.arch.isMultiLibArch(a2) == rpmUtils.arch.isMultiLibArch(pkg.arch):
                         comparable.append(instTup)
                     else:
-                        self.verbose_logger.log(logginglevels.DEBUG_6,
+                        self.verbose_logger.log(logginglevels.DEBUG_3,
                             'Discarding non-comparable pkg %s.%s', n2, a2)
                         continue
                         
