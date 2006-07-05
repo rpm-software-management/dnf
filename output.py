@@ -78,7 +78,7 @@ class YumOutput:
         print _("Size   : %s") % self.format_number(float(pkg.size()))
         print _("Repo   : %s") % pkg.returnSimple('repoid')
         print _("Summary: %s") % pkg.returnSimple('summary')
-        print _("Description:\n %s") % pkg.returnSimple('description')
+        print _("Description:\n%s") % pkg.returnSimple('description')
         print ""
     
     def updatesObsoletesList(self, uotup, changetype):
