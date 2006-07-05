@@ -131,11 +131,11 @@ class IncludingConfigParser(ConfigParser):
         self._readincludes()
 
     def _add_include(self, section, filename):
-        print '_add_include', section, filename
         c = IncludingConfigParser(self._defaults)
 
         # Be aware of URL style includes
-        scheme, loc, path, params, qry, frag = urlparse.urlparse(filename, 'file')
+        scheme, loc, path, params, qry, frag = urlparse.urlparse(filename,
+                'file')
 
         # Normalise file URLs
         if scheme == 'file':
@@ -197,14 +197,16 @@ class IncludingConfigParser(ConfigParser):
 
         # Write out any included files
         for fn in self._fns.keys():
-            # Only bother for files since we can't easily write back to much else.
+            # Only bother for files since we can't easily write back to much
+            # else.
             scheme = urlparse.urlparse(fn, 'file')[0]
             if scheme == 'file':
                 inc = open(fn, 'w')
                 self._fns[fn].write(inc)
 
     def _interpolate(self, section, option, rawval, vars):
-        '''Perform $var subsitution (this overides the default %(..)s subsitution)
+        '''Perform $var subsitution (this overides the default %(..)s
+        subsitution)
 
         Only the rawval and vars arguments are used. The rest are present for
         compatibility with the parent class.
@@ -215,7 +217,8 @@ class IncludingConfigParser(ConfigParser):
 class IncludedDirConfigParser(IncludingConfigParser):
     """A conf.d recursive parser - supporting one level of included dirs"""
 
-    def __init__(self, vars=None, includedir=None, includeglob="*.conf", include="include"):
+    def __init__(self, vars=None, includedir=None, includeglob="*.conf",
+            include="include"):
         self.includeglob = includeglob
         self.includedir = includedir
         IncludingConfigParser.__init__(self, vars=vars, include=include)
@@ -228,7 +231,8 @@ class IncludedDirConfigParser(IncludingConfigParser):
     def _includedir(self):
         for section in ConfigParser.sections(self):
             if self.includedir:
-                matches = glob.glob("%s/%s" % (self.includedir, self.includeglob))
+                matches = glob.glob("%s/%s" % (self.includedir,
+                    self.includeglob))
                 # glob dir, open files, include
                 for match in matches:
                     if os.path.exists(match):
@@ -260,7 +264,8 @@ def varReplace(raw, vars):
             done.append(raw)
             break
 
-        # Determine replacement value (if unknown variable then preserve original)
+        # Determine replacement value (if unknown variable then preserve
+        # original)
         varname = m.group(1).lower()
         replacement = vars.get(varname, m.group())
 
