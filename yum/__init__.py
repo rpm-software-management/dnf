@@ -168,7 +168,7 @@ class YumBase(depsolve.Depsolve):
                 files = ' '.join(glob.glob('%s/*.repo' % reposdir))
                 try:
                     parser.read(files)
-                except ConfigParser.ParsingError, e:
+                except ParsingError, e:
                     msg = str(e)
                     raise Errors.ConfigError, msg
 
