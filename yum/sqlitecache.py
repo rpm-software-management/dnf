@@ -29,7 +29,7 @@ from sqlitesack import encodefiletypelist,encodefilenamelist
 # This version refers to the internal structure of the sqlite cache files
 # increasing this number forces all caches of a lower version number
 # to be re-generated
-dbversion = '7'
+dbversion = '9'
 
 class RepodataParserSqlite:
     def __init__(self, storedir, repoid, callback=None):
@@ -168,14 +168,17 @@ class RepodataParserSqlite:
         # Create requires, provides, conflicts and obsoletes tables
         # to store prco data
         for t in ('requires','provides','conflicts','obsoletes'):
+            extraCol = ""
+            if t == 'requires':
+                extraCol= ", pre BOOL DEFAULT FALSE"
             cur.execute("""CREATE TABLE %s (
               name TEXT,
               flags TEXT,
               epoch TEXT,
               version TEXT,
               release TEXT,
-              pkgKey TEXT)
-            """ % (t))
+              pkgKey TEXT %s)
+            """ % (t, extraCol))
         # Create the files table to hold all the file information
         cur.execute("""CREATE TABLE files (
             name TEXT,
@@ -266,6 +269,9 @@ class RepodataParserSqlite:
                     'version': entry.get('ver'),
                     'release': entry.get('rel'),
                 }
+                if ptype == 'requires' and entry.has_key('pre'):
+                    if entry.get('pre'):
+                        data['pre'] = True
                 self.insertHash(ptype,data,cur)
         
         # Now store all file information
