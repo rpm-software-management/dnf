@@ -146,6 +146,7 @@ class YumRepository(Repository):
         self._proxy_dict = {}
         self.metadata_cookie_fn = 'cachecookie'
         self.groups_added = False
+        self.http_headers = {}
         
         # throw in some stubs for things that will be set by the config class
         self.basecachedir = ""
@@ -290,6 +291,16 @@ class YumRepository(Repository):
             self._proxy_dict['https'] = proxy_string
             self._proxy_dict['ftp'] = proxy_string
 
+    def ___headersListFromDict(self):
+        """Convert our dict of headers to a list of 2-tuples for urlgrabber."""
+        headers = []
+
+        keys = self.http_headers.keys()
+        for key in keys:
+            headers.append((key, self.http_headers[key]))
+
+        return headers
+
     def setupGrab(self):
         """sets up the grabber functions with the already stocked in urls for
            the mirror groups"""
@@ -299,6 +310,7 @@ class YumRepository(Repository):
         else:
             mgclass = urlgrabber.mirror.MirrorGroup
 
+        headers = tuple(self.__headersListFromDict())
 
         self.grabfunc = URLGrabber(keepalive=self.keepalive,
                                    bandwidth=self.bandwidth,
@@ -308,7 +320,9 @@ class YumRepository(Repository):
                                    proxies = self.proxy_dict,
                                    failure_callback=self.failure_obj,
                                    timeout=self.timeout,
+                                   http_headers=headers,
                                    reget='simple')
+
 
         self.grab = mgclass(self.grabfunc, self.urls,
                             failure_callback=self.mirror_failure_obj)
@@ -378,10 +392,14 @@ class YumRepository(Repository):
         # if url is None do a grab via the mirror group/grab for the repo
         # return the path to the local file
 
-        if cache:
-            headers = None
-        else:
-            headers = (('Pragma', 'no-cache'),)
+        # Turn our dict into a list of 2-tuples
+        headers = self.__headersListFromDict()
+
+        # We will always prefer to send no-cache.
+        if not (cache or self.http_headers.has_key('Pragma')):
+            headers.append(('Pragma', 'no-cache'))
+
+        headers = tuple(headers)
 
         if local is None or relative is None:
             raise Errors.RepoError, \
