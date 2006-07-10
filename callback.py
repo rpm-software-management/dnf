@@ -137,9 +137,10 @@ class RPMInstallCallback:
                     except KeyError, e:
                         pass
 
-                    pkgrep = self._logPkgString(hdr)
-                    msg = '%s: %s' % (processed, pkgrep)
-                    self.logger.info(msg)
+                    if self.output:
+                        pkgrep = self._logPkgString(hdr)
+                        msg = '%s: %s' % (processed, pkgrep)
+                        self.logger.info(msg)
 
 
         elif what == rpm.RPMCALLBACK_INST_PROGRESS:
@@ -192,7 +193,7 @@ class RPMInstallCallback:
 
         elif what == rpm.RPMCALLBACK_UNINST_STOP:
             self.total_removed += 1
-            if h not in self.installed_pkg_names:
+            if self.output and h not in self.installed_pkg_names:
                 logmsg = _('Erased: %s' % (h))
                 self.logger.info(logmsg)
             

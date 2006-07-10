@@ -107,11 +107,10 @@ def doLoggingSetup(uid, logfile, errorlevel=None, debuglevel=None):
     logger.propagate = False
     logger.addHandler(console_stderr)
     
-    syslog = logging.handlers.SysLogHandler(('localhost',
-        logging.handlers.SYSLOG_UDP_PORT),
-        logging.handlers.SysLogHandler.LOG_USER)
+    syslog = logging.handlers.SysLogHandler('/dev/log')
     syslog.setFormatter(plainformatter)
     filelogger = logging.getLogger("yum.filelogging")
+    filelogger.setLevel(logging.INFO)
     filelogger.propagate = False
     filelogger.addHandler(syslog)
 

@@ -674,7 +674,6 @@ For more information contact your distribution or package provider.
         if self.conf.debuglevel < 2:
             output = 0
         cb = callback.RPMInstallCallback(output=output)
-        cb.filelog = logging.getLogger("yum.filelogging") # needed for log file output
         cb.tsInfo = self.tsInfo
 
         self.verbose_logger.log(logginglevels.INFO_2, 'Running Transaction')
