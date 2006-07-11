@@ -55,6 +55,7 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
     def __init__(self):
         yum.YumBase.__init__(self)
         self.in_shell = False
+        logging.basicConfig()
         self.logger = logging.getLogger("yum.cli")
         self.verbose_logger = logging.getLogger("yum.verbose.cli")
         self.yum_cli_commands = ['update', 'install','info', 'list', 'erase',
@@ -185,7 +186,6 @@ yum [options] < update | install | info | remove | list |
             sys.exit(1)
         except ValueError, e:
             self.logger.critical(_('Options Error: %s'), e)
-            self.usage()
             sys.exit(1)
 
         # who are we:
