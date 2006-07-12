@@ -1,3 +1,135 @@
+2006-07-12 01:11  skvidal
+
+	* yum.spec: 
+	fix up spec for yum-updatesd and cron job removal
+
+2006-07-12 01:09  skvidal
+
+	* etc/: Makefile, yum-updatesd-dbus.conf, yum-updatesd.conf: 
+	fix up makefile make yum-updatesd.conf be the actual conf file move
+	old yum-updatesd.conf to yum-updatesd-dbus.conf
+
+2006-07-12 00:31  skvidal
+
+	* Makefile: 
+	fix archive make
+
+2006-07-12 00:04  skvidal
+
+	* yum.spec, yum/__init__.py: 
+	bump version - 2.9.3
+
+2006-07-11 14:35  pnasrat
+
+	* cli.py: Enable logging to work correctly for config breakages
+
+2006-07-10 14:02  skvidal
+
+	* callback.py, cli.py, yum/logginglevels.py: 
+	checking in changes from jbowes for rh bug 197872: fixes file log
+	output
+
+2006-07-10 13:05  katzj
+
+	* yum/yumRepo.py: From James Bowes <jbowes@redhat.com> Attached is
+	a patch that adds an http_headers field to YumRepository objects.
+	http_headers is a dict (for easy manipulation) that is converted to
+	a tuple of 2-tuples before it is passed down into urlgrabber.
+
+2006-07-10 12:54  pnasrat
+
+	* yum/sqlitecache.py: Move to dbversion 9 - add pre for requires
+
+2006-07-05 16:21  skvidal
+
+	* output.py: fix for
+	https://bugzilla.redhat.com/bugzilla/show_bug.cgi?id=197720
+
+2006-07-05 14:58  slack
+
+	* yum/packages.py: Make seth's eyes not bleed and replace the list
+	comps.	Oh the temptation to use map() was strong.
+
+2006-07-05 14:43  slack
+
+	* yum/packages.py, rpmUtils/miscutils.py: Populate the PRCO
+	information for YumHeaderPackage and subclasses.  This makes
+	examining installed packages a little saner.
+
+2006-07-05 12:18  katzj
+
+	* cli.py: fixup debug level (rh#197607)
+
+2006-07-05 12:17  katzj
+
+	* cli.py: fix-up for api skew (rh#197603)
+
+2006-07-05 10:33  mjs
+
+	* yum/__init__.py: fixed ParsingError reference
+
+2006-07-05 10:32  mjs
+
+	* yum/parser.py: removed debugging output and fixed line wrapping
+
+2006-07-05 09:31  skvidal
+
+	* yum/rpmsack.py: 
+	minor string change
+
+2006-07-01 12:31  skvidal
+
+	* yum/repos.py: remove unused modules
+
+2006-06-28 12:37  katzj
+
+	* yum/depsolve.py: fix tyop (jbowes)
+
+2006-06-28 01:19  skvidal
+
+	* rpmUtils/__init__.py: 
+	make the code, you know, work.	remove old cruft
+
+2006-06-28 01:19  skvidal
+
+	* yum/rpmsack.py: 
+	make the code, you know, work.
+
+2006-06-28 01:07  skvidal
+
+	* yum/rpmsack.py: 
+	make it a bit more packagesack-y and track some data we don't need
+	to re-opening the rpmdb for.
+
+2006-06-27 17:16  katzj
+
+	* yum.spec: i can do shell... relaly...
+
+2006-06-27 17:10  katzj
+
+	* yum.spec: Strongly couple version
+
+2006-06-27 17:07  katzj
+
+	* yum.spec: add yum-updatesd subpackage
+
+2006-06-27 16:54  katzj
+
+	* docs/Makefile, etc/Makefile, etc/yum-daily.yum, etc/yum.cron,
+	etc/yum.cron.weekly, etc/yum.init: * install yum-updatesd man pages
+	and initscript * don't install yum cron job stuff anymore
+	(yum-updatesd can do all of this)
+
+2006-06-27 16:53  katzj
+
+	* Makefile, bin/yum-updatesd.py: * install yum-updatesd wrapper
+	binary in /usr/sbin * rename /usr/share/yum-cli/yum-updatesd.py to
+	something that can be	imported
+
+2006-06-27 00:56  skvidal
+
+	* ChangeLog: merge changelog, again
+
 2006-06-27 00:49  skvidal
 
 	* yum/packages.py: undue stupid things
