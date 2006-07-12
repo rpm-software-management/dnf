@@ -524,6 +524,8 @@ class YumBase(depsolve.Depsolve):
                 # bogus data in the pid file. Throw away.
                 self._unlock(lockfile)
             else:
+                if oldpid == os.getpid(): # if we own the lock, we're fine
+                    return
                 try: os.kill(oldpid, 0)
                 except OSError, e:
                     if e[0] == errno.ESRCH:
