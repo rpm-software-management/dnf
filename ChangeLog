@@ -1,3 +1,13 @@
+2006-07-12 01:24  skvidal
+
+	* yum/yumRepo.py: 
+	fix http headers __headersListFromDict so that it will actually run
+
+2006-07-12 01:11  skvidal
+
+	* ChangeLog: 
+	Changelog update
+
 2006-07-12 01:11  skvidal
 
 	* yum.spec: 
