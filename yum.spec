@@ -5,8 +5,6 @@ Release: 1
 License: GPL
 Group: System Environment/Base
 Source: %{name}-%{version}.tar.gz
-#Source1: yum.conf
-#Source2: yum.cron
 URL: http://linux.duke.edu/yum/
 BuildRoot: %{_tmppath}/%{name}-%{version}root
 BuildArchitectures: noarch
@@ -72,10 +70,6 @@ exit 0
 %config(noreplace) %{_sysconfdir}/yum.conf
 %dir %{_sysconfdir}/yum.repos.d
 %dir %{_sysconfdir}/%{name}
-%config(noreplace) %{_sysconfdir}/%{name}/*.yum
-%config(noreplace) %{_sysconfdir}/cron.daily/yum.cron
-%config(noreplace) %{_sysconfdir}/cron.weekly/yum.cron
-%config %{_sysconfdir}/rc.d/init.d/%{name}
 %config %{_sysconfdir}/logrotate.d/%{name}
 %{_datadir}/yum-cli/*
 %{_bindir}/yum
