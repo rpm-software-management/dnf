@@ -521,7 +521,7 @@ class Depsolve(object):
                 return self._requiringFromTransaction(reqpkg, requirement, errorlist)
             else:
                 self.verbose_logger.log(logginglevels.DEBUG_2, 'Unresolveable requirement %s for %s',
-                    niceformatneed, reqpkg_print)
+                    niceformatneed, reqpkg[0])
                 checkdeps = 0
                 missingdep = 1
 
