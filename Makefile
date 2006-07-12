@@ -32,7 +32,7 @@ install:
 
 	for d in $(SUBDIRS); do make PYTHON=$(PYTHON) DESTDIR=`cd $(DESTDIR); pwd` -C $$d install; [ $$? = 0 ] || exit 1; done
 
-	archive: remove_spec = ${PKGNAME}-daily.spec
+archive: remove_spec = ${PKGNAME}-daily.spec
 archive: _archive
 
 daily: remove_spec = ${PKGNAME}.spec
