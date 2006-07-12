@@ -291,7 +291,7 @@ class YumRepository(Repository):
             self._proxy_dict['https'] = proxy_string
             self._proxy_dict['ftp'] = proxy_string
 
-    def ___headersListFromDict(self):
+    def __headersListFromDict(self):
         """Convert our dict of headers to a list of 2-tuples for urlgrabber."""
         headers = []
 
