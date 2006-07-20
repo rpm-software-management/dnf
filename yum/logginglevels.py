@@ -106,13 +106,16 @@ def doLoggingSetup(uid, logfile, errorlevel=None, debuglevel=None):
     logger = logging.getLogger("yum")
     logger.propagate = False
     logger.addHandler(console_stderr)
-    
-    syslog = logging.handlers.SysLogHandler('/dev/log')
-    syslog.setFormatter(plainformatter)
+   
     filelogger = logging.getLogger("yum.filelogging")
     filelogger.setLevel(logging.INFO)
     filelogger.propagate = False
-    filelogger.addHandler(syslog)
+
+    log_dev = '/dev/log'
+    if os.path.exists(log_dev):
+        syslog = logging.handlers.SysLogHandler(log_dev)
+        syslog.setFormatter(plainformatter)
+        filelogger.addHandler(syslog)
 
     # TODO: When python's logging config parser doesn't blow up
     # when the user is non-root, put this in the config file.
