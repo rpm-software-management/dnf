@@ -437,8 +437,7 @@ class YumBase(depsolve.Depsolve):
             raise Errors.YumBaseError, errors
 
         if not self.conf.keepcache:
-            self.cleanHeaders()
-            self.cleanPackages()
+            self.cleanUsedHeadersPackages()
 
         self.plugins.run('posttrans')
         
@@ -820,6 +819,40 @@ class YumBase(depsolve.Depsolve):
             msg = ''
 
         return result, msg
+
+    def cleanUsedHeadersPackages(self):
+        filelist = []
+        for txmbr in self.tsInfo:
+            if txmbr.po.state not in TS_INSTALL_STATES:
+                continue
+            if txmbr.po.repoid == "installed":
+                continue
+            if not self.repos.repos.has_key(txmbr.po.repoid):
+                continue
+            
+            # make sure it's not a local file
+            repo = self.repos.repos[txmbr.po.repoid]
+            local = False
+            for u in repo.baseurl:
+                if u.startswith("file:"):
+                    local = True
+                    break
+                
+            if local:
+                filelist.extend([txmbr.po.localHdr()])
+            else:
+                filelist.extend([txmbr.po.localPkg(), txmbr.po.localHdr()])
+
+        # now remove them
+        for fn in filelist:
+            try:
+                os.unlink(fn)
+            except OSError, e:
+                self.logger.warning('Cannot remove %s', fn)
+                continue
+            else:
+                self.verbose_logger.log(logginglevels.DEBUG_4,
+                    '%s removed', fn)
         
     def cleanHeaders(self):
         filelist = []
