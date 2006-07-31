@@ -1712,7 +1712,7 @@ class YumBase(depsolve.Depsolve):
         # if there's not a multi or single lib, then we want the noarch
         else:
             returnlist.append(no)
-        
+
         return returnlist
 
 
@@ -1753,8 +1753,8 @@ class YumBase(depsolve.Depsolve):
                      epoch=nevra_dict['epoch'], arch=nevra_dict['arch'],
                      ver=nevra_dict['version'], rel=nevra_dict['release'])
                 
-                if pkgs:
-                    pkgs = self.bestPackagesFromList(pkgs)
+            if pkgs:
+                pkgs = self.bestPackagesFromList(pkgs)
 
         if len(pkgs) == 0:
             #FIXME - this is where we could check to see if it already installed
