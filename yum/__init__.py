@@ -2031,8 +2031,8 @@ class YumBase(depsolve.Depsolve):
             try:
                 rawkey = urlgrabber.urlread(keyurl, limit=9999)
             except urlgrabber.grabber.URLGrabError, e:
-                raise yum.Errors.YumBaseError('GPG key retrieval failed: ' +
-                                              str(e))
+                raise Errors.YumBaseError('GPG key retrieval failed: ' +
+                                          str(e))
 
             # Parse the key
             try:
