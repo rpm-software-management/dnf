@@ -188,18 +188,6 @@ yum [options] < update | install | info | remove | list |
             self.logger.critical(_('Options Error: %s'), e)
             sys.exit(1)
 
-        # who are we:
-        self.conf.uid = os.geteuid()
-
-        # Setup debug and error levels
-        if opts.debuglevel is not None:
-            self.conf.debuglevel = opts.debuglevel
-        if opts.errorlevel is not None:
-            self.conf.errorlevel = opts.errorlevel
-             
-        logginglevels.doLoggingSetup(self.conf.uid, self.conf.logfile,
-            self.conf.errorlevel, self.conf.debuglevel)
-
         # Now parse the command line for real
         (opts, self.cmds) = self.optparser.parse_args()
 

@@ -38,7 +38,6 @@ logging.addLevelName(DEBUG_2, "DEBUG_2")
 logging.addLevelName(DEBUG_3, "DEBUG_3")
 logging.addLevelName(DEBUG_4, "DEBUG_4")
 
-
 # High level to effectively turn off logging.
 # For compatability with the old logging system.
 __NO_LOGGING = 100
@@ -82,7 +81,7 @@ def setErrorLevel(level):
     converted_level = logLevelFromErrorLevel(level)
     logging.getLogger("yum").setLevel(converted_level)
 
-def doLoggingSetup(uid, logfile, errorlevel=None, debuglevel=None):
+def doLoggingSetup(debuglevel, errorlevel):
     """
     Configure the python logger.
     
@@ -91,6 +90,7 @@ def doLoggingSetup(uid, logfile, errorlevel=None, debuglevel=None):
     debuglevel is optional. If provided, it will override the logging level
     provided in the logging config file for debug messages.
     """
+
     logging.basicConfig()
 
     plainformatter = logging.Formatter("%(message)s")
@@ -117,22 +117,22 @@ def doLoggingSetup(uid, logfile, errorlevel=None, debuglevel=None):
         syslog.setFormatter(plainformatter)
         filelogger.addHandler(syslog)
 
+    if debuglevel is not None:
+        setDebugLevel(debuglevel)
+    if errorlevel is not None:  
+        setErrorLevel(errorlevel)
+
+def setFileLog(uid, logfile):
     # TODO: When python's logging config parser doesn't blow up
     # when the user is non-root, put this in the config file.
     # syslog-style log
     if uid == 0:
-        logpath = os.path.dirname(logfile)
         try:
+            filelogger = logging.getLogger("yum.filelogging")
             filehandler = logging.FileHandler(logfile)
             formatter = logging.Formatter("%(asctime)s %(message)s",
                 "%b %d %H:%M:%S")
             filehandler.setFormatter(formatter)
             filelogger.addHandler(filehandler)
         except Exception, e:
-            logging.getLogger("yum").critical(_('Cannot open logfile %s'), logfile)
-
-    if debuglevel is not None:
-        setDebugLevel(debuglevel)
-    if errorlevel is not None:  
-        setErrorLevel(errorlevel)
-
+            logging.getLogger("yum").critical('Cannot open logfile %s', logfile)

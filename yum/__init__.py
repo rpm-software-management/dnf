@@ -124,19 +124,24 @@ class YumBase(depsolve.Depsolve):
         self.yumvar = self.conf.yumvar
         self.getReposFromConfig()
 
+        # who are we:
+        self.conf.uid = os.geteuid()
+
+        self.doFileLogSetup(self.conf.uid, self.conf.logfile)
+
         self.plugins.run('init')
 
     def doLoggingSetup(self, debuglevel, errorlevel):
         '''
         Perform logging related setup.
 
-        Subclasses should override this to initialise logging functionality as
-        required.
-
         @param debuglevel: Debug logging level to use.
         @param errorlevel: Error logging level to use.
         '''
-        pass
+        logginglevels.doLoggingSetup(errorlevel, debuglevel)
+
+    def doFileLogSetup(self, uid, logfile):
+        logginglevels.setFileLog(uid, logfile)
 
     def getReposFromConfig(self):
         """read in repositories from config main and .repo files"""
