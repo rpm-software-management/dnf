@@ -2086,5 +2086,5 @@ class YumBase(depsolve.Depsolve):
             # Check if the newly installed keys helped
             result, errmsg = self.sigCheckPkg(po)
             if result != 0:
-                self.log(0, "Import of key(s) didn't help, wrong key(s)?")
+                self.logger.info("Import of key(s) didn't help, wrong key(s)?")
                 raise yum.Errors.YumBaseError, errmsg
