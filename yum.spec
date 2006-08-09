@@ -1,6 +1,6 @@
 Summary: RPM installer/updater
 Name: yum
-Version: 2.9.3
+Version: 2.9.4
 Release: 1
 License: GPL
 Group: System Environment/Base
@@ -88,6 +88,9 @@ exit 0
 %{_mandir}/man*/yum-updatesd*
 
 %changelog
+* Wed Aug  9 2006 Seth Vidal <skvidal at linux.duke.edu>
+- 2.9.4
+
 * Wed Jul 12 2006 Seth Vidal <skvidal at linux.duke.edu>
 - 2.9.3
 
