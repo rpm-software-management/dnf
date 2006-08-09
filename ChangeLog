@@ -1,3 +1,59 @@
+2006-08-09 00:14  skvidal
+
+	* yum.spec, yum/__init__.py: mark as 2.9.4
+
+2006-08-08 20:19  katzj
+
+	* yum/__init__.py: Jeremy broke gpg key checking in yum 2.9x*.
+	Attached is a patch to fix it, as well as clean up exceptions (from
+	yum.Error* to Error*). The problem was just a matter of
+	indentation.  (patch + commentary from jbowes :)
+
+2006-08-08 10:07  katzj
+
+	* yum/__init__.py: There was still a call to self.log in
+	yum/__init__.py. This patch fixes it.  (jbowes)
+
+2006-08-08 10:06  katzj
+
+	* cli.py, yum/__init__.py, yum/logginglevels.py: set up logging by
+	default, ensure we have basic logging initialized before plugins
+	(jbowes@redhat.com)
+
+2006-08-02 13:31  katzj
+
+	* yum/__init__.py: namespace error (rh#200901)
+
+2006-07-31 16:27  katzj
+
+	* yum/__init__.py: ensure that we do the arch reduction on
+	yum.install(pattern=) also (rh#200346)
+
+2006-07-25 10:40  katzj
+
+	* yum/__init__.py: only clean the installed headers/packages as
+	opposed to all (rh#189483 and others)
+
+2006-07-20 14:40  skvidal
+
+	* yum/logginglevels.py: checking in patch to bug 199558 from
+	jbowes.
+
+2006-07-12 14:30  katzj
+
+	* yum/__init__.py: if we already have the lock file, trying to get
+	it again is fine
+
+2006-07-12 13:53  skvidal
+
+	* yum/depsolve.py: 
+	fix missing variable as pointed out by Chris Lumens
+
+2006-07-12 01:32  skvidal
+
+	* ChangeLog: 
+	update changelog
+
 2006-07-12 01:24  skvidal
 
 	* yum/yumRepo.py: 
