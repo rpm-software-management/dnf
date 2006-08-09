@@ -1,5 +1,4 @@
 #!/usr/bin/python -t
-
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation; either version 2 of the License, or
@@ -14,178 +13,261 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 # Copyright 2005 Duke University 
-
+#
+# Seth Vidal <skvidal@linux.duke.edu>
+# Luke Macken <lmacken@redhat.com>
 
 import sys
-from cElementTree import iterparse
+import gzip
+import string
 import exceptions
 
+from yum.yumRepo import YumRepository
+
+from cElementTree import iterparse
 
 
 class UpdateNoticeException(exceptions.Exception):
     pass
-    
-    
+
+
 class UpdateNotice(object):
     def __init__(self, elem=None):
-        self.cves = []
-        self.urls = []
-        self.packages = []
-        self.description = ''
-        self.update_id = None
-        self.distribution = None
-        self.release_date = None
-        self.status = None
-        self.type = None
-        self.title = ''
+        self._md = {
+            'from'             : '',
+            'type'             : '',
+            'status'           : '',
+            'version'          : '',
+            'pushcount'        : '',
+            'update_id'        : '',
+            'issued'           : '',
+            'updated'          : '',
+            'description'      : '',
+            'references'       : [],
+            'pkglist'          : [],
+            'reboot_suggested' : False
+        }
 
         if elem:
-            self.parse(elem)
-    
-    def __str__(self):
-        cveinfo = pkglist = related = ''
-        
-        head = """
-Type: %s
-Status: %s
-Distribution: %s
-ID: %s
-Release date: %s
-Description: 
-%s
-        """ % (self.type, self.status, self.distribution, 
-               self.update_id, self.release_date, self.description)
+            self._parse(elem)
 
-        if self.urls:
-            related = '\nRelated URLS:\n'
-            for url in self.urls:
-                related = related + '  %s\n' % url
-        
-        if self.cves:
-            cveinfo = '\nResolves CVES:\n'
-            for cve in self.cves:
-                cveinfo = cveinfo + '  %s\n' % cve
-        
-        if self.packages:
-            pkglist = '\nPackages: \n'
-            for pkg in self.packages:
-                pkgstring = '%s-%s-%s.%s\t\t%s\n' % (pkg['name'], pkg['ver'],
-                                                    pkg['rel'], pkg['arch'],
-                                                    pkg['pkgid'])
-                pkglist = pkglist + pkgstring
-        
-        msg = head + related + cveinfo + pkglist
-        
+    def __getitem__(self, item):
+        """ Allows scriptable metadata access (ie: un['update_id']). """
+        return self._md.has_key(item) and self._md[item] or None
+
+    def __str__(self):
+        head = """
+Id          : %s
+Type        : %s
+Status      : %s
+Issued      : %s
+Updated     : %s
+Description :
+%s
+        """ % (self._md['update_id'], self._md['type'], self._md['status'],
+               self._md['issued'], self._md['updated'], self._md['description'])
+
+        refs = '\n== References ==\n'
+        for ref in self._md['references']:
+            type = ref['type']
+            if type == 'cve':
+                refs += '\n%s : %s\n%s\n' % (ref['id'], ref['href'],
+                                             ref.has_key('summary') and 
+                                             ref['summary'] or '')
+            elif type == 'bugzilla':
+                refs += '\nBug #%s : %s\n%s\n' % (ref['id'], ref['href'],
+                                                  ref.has_key('summary') and
+                                                  ref['summary'] or '')
+
+        pkglist = '\n== Updated Packages ==\n'
+        for pkg in self._md['pkglist']:
+            pkglist += '\n%s\n' % pkg['name']
+            for file in pkg['packages']:
+                pkglist += '  %s  %s\n' % (file['sum'][1], file['filename'])
+
+        msg = head + refs + pkglist
+
         return msg
 
-    def parse(self, elem):
+    def get_metadata(self):
+        """ Return the metadata dict. """
+        return self._md
+
+    def _parse(self, elem):
+        """ Parse an update element.
+
+            <!ELEMENT update (id, pushcount, synopsis?, issued, updated,
+                              references, description, pkglist)>
+                <!ATTLIST update type (errata|security) "errata">
+                <!ATTLIST update status (final|testing) "final">
+                <!ATTLIST update version CDATA #REQUIRED>
+                <!ATTLIST update from CDATA #REQUIRED>
+        """
         if elem.tag == 'update':
-            id = elem.attrib.get('id')
-            if not id:
-                raise UpdateNoticeException
-            self.update_id = id
-            
-            self.release_date = elem.attrib.get('release_date')
-            self.status = elem.attrib.get('status')
-            c = elem.attrib.get('type')
-            if not c:
-                self.type = 'update'
+            for attrib in ('from', 'type', 'status', 'version'):
+                self._md[attrib] = elem.attrib.get(attrib)
+            for child in elem:
+                if child.tag == 'id':
+                    if not child.text:
+                        raise UpdateNoticeException
+                    self._md['update_id'] = child.text
+                elif child.tag == 'pushcount':
+                    self._md['pushcount'] = child.text
+                elif child.tag == 'issued':
+                    self._md['issued'] = child.attrib.get('date')
+                elif child.tag == 'updated':
+                    self._md['updated'] = child.attrib.get('date')
+                elif child.tag == 'references':
+                    self._parse_references(child)
+                elif child.tag == 'description':
+                    self._md['description'] = child.text
+                elif child.tag == 'pkglist':
+                    self._parse_pkglist(child)
+        else:
+            raise UpdateNoticeException('No update element found')
+
+    def _parse_references(self, elem):
+        """ Parse the update references.
+
+            <!ELEMENT references (reference*)>
+            <!ELEMENT reference (summary*)>
+                <!ATTLIST reference href CDATA #REQUIRED>
+                <!ATTLIST reference type (self|cve|bugzilla) "self">
+                <!ATTLIST reference id CDATA #IMPLIED>
+            <!ELEMENT cve (#PCDATA)>
+            <!ELEMENT bugzilla (#PCDATA)>
+            <!ELEMENT summary (#PCDATA)>
+            <!ELEMENT description (#PCDATA)>
+        """
+        for reference in elem:
+            if reference.tag == 'reference':
+                data = {}
+                for refattrib in ('id', 'href', 'type'):
+                    data[refattrib] = reference.attrib.get(refattrib)
+                for child in reference:
+                    if child.tag == 'summary':
+                        data['summary'] = child.text
+                self._md['references'].append(data)
             else:
-                self.type = c
+                raise UpdateNoticeException('No reference element found')
 
+    def _parse_pkglist(self, elem):
+        """ Parse the package list.
+
+            <!ELEMENT pkglist (collection+)>
+            <!ELEMENT collection (name?, package+)>
+                <!ATTLIST collection short CDATA #IMPLIED>
+                <!ATTLIST collection name CDATA #IMPLIED>
+            <!ELEMENT name (#PCDATA)>
+        """
+        for collection in elem:
+            data = { 'packages' : [] }
+            if collection.attrib.has_key('short'):
+                data['short'] = collection.attrib.get('short')
+            for item in collection:
+                if item.tag == 'name':
+                    data['name'] = item.text
+                elif item.tag == 'package':
+                    data['packages'].append(self._parse_package(item))
+            self._md['pkglist'].append(data)
+
+    def _parse_package(self, elem):
+        """ Parse an individual package.
+
+            <!ELEMENT package (filename, sum, reboot_suggested)>
+                <!ATTLIST package name CDATA #REQUIRED>
+                <!ATTLIST package version CDATA #REQUIRED>
+                <!ATTLIST package release CDATA #REQUIRED>
+                <!ATTLIST package arch CDATA #REQUIRED>
+                <!ATTLIST package epoch CDATA #REQUIRED>
+                <!ATTLIST package src CDATA #REQUIRED>
+            <!ELEMENT reboot_suggested (#PCDATA)>
+            <!ELEMENT filename (#PCDATA)>
+            <!ELEMENT sum (#PCDATA)>
+                <!ATTLIST sum type (md5|sha1) "sha1">
+        """
+        package = {}
+        for pkgfield in ('arch', 'epoch', 'name', 'version', 'release', 'src'):
+            package[pkgfield] = elem.attrib.get(pkgfield)
         for child in elem:
-
-            if child.tag == 'cve':
-                self.cves.append(child.text)
-
-            elif child.tag == 'url':
-                self.urls.append(child.text)
-            
-            elif child.tag == 'description':
-                self.description = child.text
-            
-            elif child.tag == 'distribution':
-                self.distribution = child.text
-            
-            elif child.tag == 'title':
-                self.title = child.text
-
-            elif child.tag == 'package':
-                self.parse_package(child)
-        
-    def parse_package(self, elem):
-        
-        pkg = {}
-        pkg['pkgid'] = elem.attrib.get('pkgid')
-        pkg['name']  = elem.attrib.get('name')
-        pkg['arch'] = elem.attrib.get('arch')
-        for child in elem:
-            if child.tag == 'version':
-                pkg['ver'] = child.attrib.get('ver')
-                pkg['rel'] = child.attrib.get('rel')
-                pkg['epoch'] = child.attrib.get('epoch')
-        
-        self.packages.append(pkg)
-
+            if child.tag == 'filename':
+                package['filename'] = child.text
+            elif child.tag == 'sum':
+                package['sum'] = (child.attrib.get('type'), child.text)
+            elif child.tag == 'reboot_suggested':
+                self._md['reboot_suggested'] = True
+        return package
 
 
 class UpdateMetadata(object):
     def __init__(self):
         self._notices = {}
-        
+        self._cache = {}    # a pkg name => notice cache for quick lookups
+        self._repos = []    # list of repo ids that we've parsed
+
     def get_notices(self):
+        """ Return all notices. """
         return self._notices.values()
 
     notices = property(get_notices)
 
     def get_notice(self, nvr):
         """ Retrieve an update notice for a given (name, version, release). """
-        for notice in self._notices.values():
-            for pkg in notice.packages:
-                if pkg['name'] == nvr[0] and \
-                   pkg['ver'] == nvr[1] and \
-                   pkg['rel'] == nvr[2]:
-                       return notice
-        return None
+        nvr = string.join(nvr, '-')
+        return self._cache.has_key(nvr) and self._cache[nvr] or None
 
-    def add(self, srcfile):
-        if not srcfile:
+    def add(self, obj, mdtype='updateinfo'):
+        """ Parse a metadata from a given YumRepository, file, or filename. """
+        if not obj:
             raise UpdateNoticeException
-            
-        if type(srcfile) == type('str'):
-            infile = open(srcfile, 'rt')
-        else:   # srcfile is a file object
-            infile = srcfile
-        
-        parser = iterparse(infile)
+        if type(obj) == type('str'):
+            infile = obj.endswith('.gz') and gzip.open(obj) or open(obj, 'rt')
+        elif isinstance(obj, YumRepository):
+            if obj.id not in self._repos:
+                self._repos.append(obj.id)
+                md = obj.retrieveMD(mdtype)
+                if not md:
+                    raise UpdateNoticeException()
+                infile = gzip.open(md)
+        else:   # obj is a file object
+            infile = obj
 
-        for event, elem in parser:
+        for event, elem in iterparse(infile):
             if elem.tag == 'update':
                 un = UpdateNotice(elem)
-                if not self._notices.has_key(un.update_id):
-                    self._notices[un.update_id] = un
+                if not self._notices.has_key(un['update_id']):
+                    self._notices[un['update_id']] = un
+                    for pkg in un['pkglist']:
+                        for file in pkg['packages']:
+                            self._cache['%s-%s-%s' % (file['name'],
+                                                      file['version'],
+                                                      file['release'])] = un
 
-
-        del parser
-
-    def dump(self):
+    def __str__(self):
+        ret = ''
         for notice in self.notices:
-            print notice
+            ret += str(notice)
+        return ret
 
 
 def main():
+    def usage():
+        print >> sys.stderr, "Usage: %s <update metadata> ..." % sys.argv[0]
+        sys.exit(1)
+
+    if len(sys.argv) < 2:
+        usage()
 
     try:
         print sys.argv[1]
         um = UpdateMetadata()
         for srcfile in sys.argv[1:]:
             um.add(srcfile)
-
-        um.dump()
-        
+        print um
     except IOError:
-        print >> sys.stderr, "update_md.py: No such file:\'%s\'" % sys.argv[1:]
-        sys.exit(1)
-        
+        print >> sys.stderr, "%s: No such file:\'%s\'" % (sys.argv[0],
+                                                          sys.argv[1:])
+        usage()
+
 if __name__ == '__main__':
     main()

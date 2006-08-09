@@ -309,9 +309,9 @@ class UpdatesDaemon(yum.YumBase):
             if pkg.repoid not in repos:
                 repo = self.repos.getRepo(pkg.repoid)
                 repos.append(repo.id)
-                try:
+                try: # grab the updateinfo.xml.gz from the repodata
                     md = repo.retrieveMD('updateinfo')
-                except:
+                except Exception, e: # can't find any; silently move on
                     continue
                 md = gzip.open(md)
                 self.updateMetadata.add(md)
@@ -331,16 +331,11 @@ class UpdatesDaemon(yum.YumBase):
                     "summary": pkg.returnSimple("summary") or "",
             }
 
+            # check if any updateinfo is available
             md = self.updateMetadata.get_notice((pkg.name, pkg.ver, pkg.rel))
             if md:
-                pkgDict['update_id'] = md.update_id or ''
-                pkgDict['release_date'] = md.release_date or ''
-                pkgDict['title'] = md.title or ''
-                pkgDict['status'] = md.status or ''
-                pkgDict['description'] = md.description or ''
-                pkgDict['distribution'] = md.distribution or ''
-                pkgDict['cves'] = string.join(md.cves) or ''
-                pkgDict['urls'] = string.join(md.urls) or ''
+                # right now we only want to know if it is a security update
+                pkgDict['type'] = md['type']
 
             return pkgDict
 
