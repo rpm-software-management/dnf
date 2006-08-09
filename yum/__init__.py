@@ -2047,7 +2047,7 @@ class YumBase(depsolve.Depsolve):
                 timestamp = keyinfo['timestamp']
                 userid = keyinfo['userid']
             except ValueError, e:
-                raise yum.Errors.YumBaseError, \
+                raise Errors.YumBaseError, \
                       'GPG key parsing failed: ' + str(e)
 
             # Check if key is already installed
@@ -2065,26 +2065,26 @@ class YumBase(depsolve.Depsolve):
                 rc = askcb(po, userid, hexkeyid)
 
             if rc != True:
-                return yum.Errors.YumBaseError, "Not installing key"
+                return Errors.YumBaseError, "Not installing key"
             
             # Import the key
             result = self.ts.pgpImportPubkey(misc.procgpgkey(rawkey))
             if result != 0:
-                raise yum.Errors.YumBaseError, \
+                raise Errors.YumBaseError, \
                       'Key import failed (code %d)' % result
             self.logger.info('Key imported successfully')
             key_installed = True
 
             if not key_installed:
-                raise yum.Errors.YumBaseError, \
+                raise Errors.YumBaseError, \
                       'The GPG keys listed for the "%s" repository are ' \
                       'already installed but they are not correct for this ' \
                       'package.\n' \
                       'Check that the correct key URLs are configured for ' \
                       'this repository.' % (repo.name)
 
-            # Check if the newly installed keys helped
-            result, errmsg = self.sigCheckPkg(po)
-            if result != 0:
-                self.logger.info("Import of key(s) didn't help, wrong key(s)?")
-                raise yum.Errors.YumBaseError, errmsg
+        # Check if the newly installed keys helped
+        result, errmsg = self.sigCheckPkg(po)
+        if result != 0:
+            self.logger.info("Import of key(s) didn't help, wrong key(s)?")
+            raise Errors.YumBaseError, errmsg
