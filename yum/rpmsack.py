@@ -19,16 +19,21 @@
 # pkglist and tuples point to match iterator indexes for quick access
 
 import rpm
+import types
+
 from Errors import PackageSackError
 from rpmUtils import miscutils
 import misc
 from packages import YumInstalledPackage
+from packageSack import ListPackageSack
+
 
 class RPMDBPackageSack:
 
     def __init__(self, ts):
         self.excludes = {}
         self.ts = ts
+        self.pkglist = []
         self.dep_table = { 'requires'  : (rpm.RPMTAG_REQUIRENAME,
                                           rpm.RPMTAG_REQUIREVERSION,
                                           rpm.RPMTAG_REQUIREFLAGS),
@@ -68,6 +73,9 @@ class RPMDBPackageSack:
             self.header_indexes[pkgtuple].append(mi.instance())
         
         self.pkglist = self.header_indexes.keys()
+        #FIXME compatibility only - remove once all of rpmUtils/__init__ is no longer used
+        self.pkglists = self.pkglist
+        
         del mi
 
     def _checkIndexes(self, failure='error'):
@@ -84,68 +92,36 @@ class RPMDBPackageSack:
         mi = self.ts.dbMatch()
         mi.pattern(table[0], rpm.RPMMIRE_GLOB, name)
         for hdr in mi:
-            pkg = hdr2class(hdr)
-            if not result.has_key(pkg.pkgId):
-                result[pkg.pkgId] = pkg
+            pkg = YumInstalledPackage(hdr)
+            if not result.has_key(pkg.pkgid):
+                result[pkg.pkgid] = pkg
 
         # FIXME
         # check filelists/dirlists
         
         return result.values()
 
-    def returnObsoletes(self):
-        obsoletes = {}
-
-        tags = self.dep_table['obsoletes']
-        mi = self.ts.dbMatch()
-        for hdr in mi:
-            if not len(hdr[rpm.RPMTAG_OBSOLETENAMES]):
-                continue
-
-            key = (hdr[rpm.RPMTAG_NAME],
-                   hdr[rpm.RPMTAG_ARCH],
-                   hdr[rpm.RPMTAG_EPOCH],
-                   hdr[rpm.RPMTAG_VERSION],
-                   hdr[rpm.RPMTAG_RELEASE])
-
-            obsoletes[key] = self._getDependencies(hdr, tags)
-
-        return obsoletes
-
 
     def searchPrco(self, name, prcotype):
-        result = []
+        result = {}
         table = self.dep_table[prcotype]
-        mi = self.ts.dbMatch()
-        mi.pattern(table[0], rpm.RPMMIRE_STRCMP, name)
+        mi = self.ts.dbMatch(table[0], name)
+        #mi.pattern(table[0], rpm.RPMMIRE_STRCMP, name)
         for hdr in mi:
-            pkg = self.hdr2class(hdr, True)
-            names = hdr[table[0]]
-            vers = hdr[table[1]]
-            flags = hdr[table[2]]
-
-            for i in range(0, len(names)):
-                n = names[i]
-                if n != name:
-                    continue
-
-                (e, v, r) = miscutils.stringToVersion(vers[i])
-                pkg.prco = {prcotype: [{'name' : name,
-                                        'flags' : self._parseFlags (flags[i]),
-                                        'epoch' : e,
-                                        'ver' : v,
-                                        'rel' : r}
-                                       ]
-                            }
-                result.append(pkg)
-
+            po = YumInstalledPackage(hdr)
+            prcotup = (name, None, (None, None, None))
+            if po.checkPrco(prcotype, prcotup):
+                if not result.has_key(po.pkgid):
+                    result[po.pkgid] = po
+            
             # If it's not a provides or filename, we are done
             if prcotype != 'provides' or name[0] != '/':
-                return result
+                if not result.has_key(po.pkgid):
+                    result[po.pkgid] = po
 
             # FIXME: Search package files
 
-        return result
+        return result.values()
 
     def searchProvides(self, name):
         return self.searchPrco(name, 'provides')
@@ -161,7 +137,8 @@ class RPMDBPackageSack:
 
     def simplePkgList(self, repoid=None):
         return self.pkglist
-
+    
+        
     def returnNewestByNameArch(self, naTup=None):
         if not naTup:
             return
@@ -172,7 +149,7 @@ class RPMDBPackageSack:
         arch = naTup[1]
         for hdr in mi:
             if hdr[rpm.RPMTAG_ARCH] == arch:
-                allpkg.append(self.hdr2tuple (hdr))
+                allpkg.append(self._hdr2pkgTuple(hdr))
 
         if not allpkg:
             # FIXME: raise  ...
@@ -251,46 +228,11 @@ class RPMDBPackageSack:
 
     # Helper functions
 
-    def _parseFlags(self, flags):
-        flagstr = ''
-        if flags & rpm.RPMSENSE_LESS:
-            flagstr += '<'
-        if flags & rpm.RPMSENSE_GREATER:
-            flagstr += '>'
-        if flags & rpm.RPMSENSE_EQUAL:
-            flagstr += '='
-        return flagstr
-
-    def _getDependencies(self, hdr, tags):
-        # tags is a tuple containing 3 rpm tags:
-        # first one to get dep names, the 2nd to get dep versions,
-        # and the 3rd to get dep flags
-        deps = []
-
-        names = hdr[tags[0]]
-        vers  = hdr[tags[1]]
-        flags = hdr[tags[2]]
-
-        for i in range(0, len(names)):
-            deps.append(names[i],
-                        self._parseFlags(flags[i]),
-                        miscutils.stringToVersion(vers[i]))
-
-        return deps
-
     def mi2list(self, mi):
         returnList = []
         for hdr in mi:
             returnList.append(YumInstalledPackage(hdr))
         return returnList
-
-    def hdr2tuple(self, hdr):
-        return (hdr[rpm.RPMTAG_SHA1HEADER],
-                hdr[rpm.RPMTAG_NAME],
-                hdr[rpm.RPMTAG_EPOCH],
-                hdr[rpm.RPMTAG_VERSION],
-                hdr[rpm.RPMTAG_RELEASE],
-                hdr[rpm.RPMTAG_ARCH])
 
     def hdrByindex(self, index):
         mi = self.ts.dbMatch(0, index)
@@ -320,6 +262,107 @@ class RPMDBPackageSack:
     
         return (name, arch, epoch, ver, rel)
 
+    # deprecated options for compat only - remove once rpmdb is converted:
+    def getPkgList(self):
+        #FIXME - emit deprecation notice
+        return self.pkglist
+
+    def getHdrList(self):
+        #FIXME - emit deprecation notice
+        hdrlist = []
+        for pkg in self.header_indexes.keys():
+            for idx in self.header_indexes[pkg]:
+                hdr = self.hdrByindex(idx)
+                hdrlist.append(hdr)
+        return hdrlist
+
+    def getNameArchPkgList(self):
+        #FIXME - emit deprecation notice    
+        lst = []
+        for (name, arch, epoch, ver, rel) in self.pkglists:
+            lst.append((name, arch))
+        
+        return miscutils.unique(lst)
+        
+        
+    def getNamePkgList(self):
+        #FIXME - emit deprecation notice
+        lst = []
+        for (name, arch, epoch, ver, rel) in self.pkglists:
+            lst.append(name)
+            
+        return miscutils.unique(lst)
+
+    def installed(self, name=None, arch=None, epoch=None, ver=None, rel=None):
+        #FIXME - emit deprecation notice    
+        if len(self.searchNevra(name=name, arch=arch, epoch=epoch, ver=ver, rel=rel)) > 0:
+            return 1
+        return 0
+    
+    def returnTupleByKeyword(self, name=None, arch=None, epoch=None, ver=None, rel=None):
+        #FIXME - emit deprecation notice        
+        lst = self.searchNevra(name=name, arch=arch, epoch=epoch, ver=ver, rel=rel)
+        returnlist = []
+        for po in lst:
+            returnlist.append(po.pkgtup)
+        
+        return returnlist
+
+    def returnHeaderByTuple(self, pkgtuple):
+        #FIXME - emit deprecation notice        
+        """returns a list of header(s) based on the pkgtuple provided"""
+        
+        (n, a, e, v, r) = pkgtuple
+        
+        lst = self.searchNevra(name=n, arch=a, epoch=e, ver=v, rel=r)
+        if len(lst) > 0:
+            item = lst[0]
+            return [item.hdr]
+            
+        else:
+            return []
+
+    
+    def addDB(self, ts):
+        self.ts = ts
+        self.buildIndexes()
+
+    def whatProvides(self, name, flags, version):
+        """searches the rpmdb for what provides the arguments
+           returns a list of pkgtuples of providing packages, possibly empty"""
+
+        # we need to check the name - if it doesn't match:
+        # /etc/* bin/* or /usr/lib/sendmail then we should fetch the 
+        # filelists.xml for all repos to make the searchProvides more complete.
+        pkgs = self.searchProvides(name)
+        
+        
+        if flags == 0:
+            flags = None
+        if type(version) is types.StringType:
+            (r_e, r_v, r_r) = miscutils.stringToVersion(version)
+        elif type(version) in (types.TupleType, types.ListType): # would this ever be a ListType?
+            (r_e, r_v, r_r) = version
+        elif type(version) is types.NoneType:
+            r_e = r_v = r_r = None
+        
+        defSack = ListPackageSack() # holder for items definitely providing this dep
+        
+        for po in pkgs:
+            if name[0] == '/' and r_v is None:
+                # file dep add all matches to the defSack
+                defSack.addPackage(po)
+                continue
+
+            if po.checkPrco('provides', (name, flags, (r_e, r_v, r_r))):
+                defSack.addPackage(po)
+        
+        returnlist = []
+        for pkg in defSack.returnPackages():
+            returnlist.append(pkg.pkgtup)
+        
+        return returnlist
+            
 
 def main():
     ts = rpm.TransactionSet('/')
