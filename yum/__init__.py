@@ -31,9 +31,10 @@ import logging.config
 from ConfigParser import ParsingError
 
 import Errors
-import rpmUtils
+import rpmsack
 import rpmUtils.updates
 import rpmUtils.arch
+import rpmUtils.transaction
 import comps
 import config
 import parser
@@ -238,7 +239,7 @@ class YumBase(depsolve.Depsolve):
         installroot = self.conf.installroot
         self.read_ts = rpmUtils.transaction.initReadOnlyTransaction(root=installroot)
         self.tsInfo = self._transactionDataFactory()
-        self.rpmdb = rpmUtils.RpmDBHolder()
+        self.rpmdb = rpmsack.RPMDBPackageSack()
         self.initActionTs()
         
     def doRpmDBSetup(self):
@@ -751,7 +752,7 @@ class YumBase(depsolve.Depsolve):
         else:
             if self.conf.cache:
                 raise Errors.RepoError, \
-                'Header not in local cache and caching-only mode enabled. Cannot download %s' % remote
+                'Header not in local cache and caching-only mode enabled. Cannot download %s' po.hdrpath
         
         if self.dsCallback: self.dsCallback.downloadHeader(po.name)
         
@@ -2064,7 +2065,7 @@ class YumBase(depsolve.Depsolve):
             elif askcb:
                 rc = askcb(po, userid, hexkeyid)
 
-            if rc != True:
+            if not rc:
                 return Errors.YumBaseError, "Not installing key"
             
             # Import the key
