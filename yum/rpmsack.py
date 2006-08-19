@@ -48,7 +48,9 @@ class RPMDBPackageSack:
                                           rpm.RPMTAG_OBSOLETEVERSION,
                                           rpm.RPMTAG_OBSOLETEFLAGS)
                            }
-
+        if self.ts:
+            self.buildIndexes()
+            
     def buildIndexes(self):
         self.match_on_index = 1
         self.header_indexes = {}
@@ -74,10 +76,14 @@ class RPMDBPackageSack:
             self.header_indexes[pkgtuple].append(mi.instance())
         
         self.pkglist = self.header_indexes.keys()
+        
+        del mi
+        
+        
         #FIXME compatibility only - remove once all of rpmUtils/__init__ is no longer used
         self.pkglists = self.pkglist
         
-        del mi
+
 
     def _checkIndexes(self, failure='error'):
         return
@@ -97,6 +103,7 @@ class RPMDBPackageSack:
             if not result.has_key(pkg.pkgid):
                 result[pkg.pkgid] = pkg
 
+        del mi
         
         fileresults = self.searchFiles(name)
         for pkg in fileresults:
@@ -115,6 +122,7 @@ class RPMDBPackageSack:
             pkg = YumInstalledPackage(hdr)
             if not result.has_key(pkg.pkgid):
                 result[pkg.pkgid] = pkg
+        del mi
         
         return result.values()
         
@@ -138,7 +146,9 @@ class RPMDBPackageSack:
                 for pkg in fileresults:
                     if not result.has_key(pkg.pkgid):
                         result[pkg.pkgid] = pkg
-                
+        
+        del mi
+        
         return result.values()
 
     def searchProvides(self, name):
@@ -174,7 +184,9 @@ class RPMDBPackageSack:
         for hdr in mi:
             if hdr[rpm.RPMTAG_ARCH] == arch:
                 allpkg.append(self._hdr2pkgTuple(hdr))
-
+        
+        del mi
+        
         if not allpkg:
             # FIXME: raise  ...
             print 'No Package Matching %s' % name

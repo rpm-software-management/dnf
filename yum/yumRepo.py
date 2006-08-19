@@ -361,9 +361,7 @@ class YumRepository(Repository):
 
         goodurls = []
         if self.mirrorlist and not self.mirrorlistparsed:
-            try:
-                mirrorurls = getMirrorList(self.mirrorlist, self.proxy_dict)
-            except 
+            mirrorurls = getMirrorList(self.mirrorlist, self.proxy_dict)
             self.mirrorlistparsed = 1
             for url in mirrorurls:
                 url = parser.varReplace(url, self.yumvar)

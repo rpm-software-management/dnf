@@ -753,7 +753,7 @@ class YumBase(depsolve.Depsolve):
         else:
             if self.conf.cache:
                 raise Errors.RepoError, \
-                'Header not in local cache and caching-only mode enabled. Cannot download %s' po.hdrpath
+                'Header not in local cache and caching-only mode enabled. Cannot download %s' % po.hdrpath
         
         if self.dsCallback: self.dsCallback.downloadHeader(po.name)
         
