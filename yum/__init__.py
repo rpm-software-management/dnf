@@ -971,8 +971,7 @@ class YumBase(depsolve.Depsolve):
             self.doRepoSetup()
             self.doRpmDBSetup()
             inst = self.rpmdb.getPkgList()
-            for hdr in self.rpmdb.getHdrList():
-                po = YumInstalledPackage(hdr)
+            for po in self.rpmdb:
                 installed.append(po)
 
             if self.conf.showdupesfromrepos:
@@ -1007,8 +1006,7 @@ class YumBase(depsolve.Depsolve):
         # installed only
         elif pkgnarrow == 'installed':
             self.doRpmDBSetup()
-            for hdr in self.rpmdb.getHdrList():
-                po = YumInstalledPackage(hdr)
+            for po in self.rpmdb:
                 installed.append(po)
         
         # available in a repository
@@ -1033,8 +1031,7 @@ class YumBase(depsolve.Depsolve):
             self.doRepoSetup()
             self.doRpmDBSetup()
             avail = self.pkgSack.simplePkgList()
-            for hdr in self.rpmdb.getHdrList():
-                po = YumInstalledPackage(hdr)
+            for po in self.rpmdb:
                 if po.pkgtup not in avail:
                     extras.append(po)
 
@@ -1166,8 +1163,7 @@ class YumBase(depsolve.Depsolve):
         # do the same for installed pkgs
         
         self.doRpmDBSetup()        
-        for hdr in self.rpmdb.getHdrList(): # this is more expensive so this is the  top op
-            po = YumInstalledPackage(hdr)
+        for po in self.rpmdb: # this is more expensive so this is the  top op
             tmpvalues = []
             for string in criteria:
                 restring = self._refineSearchPattern(string)
@@ -1301,8 +1297,7 @@ class YumBase(depsolve.Depsolve):
             
             arg_re.append(reg)
 
-        for hdr in self.rpmdb.getHdrList():
-            po = YumInstalledPackage(hdr)
+        for po in self.rpmdb:
             tmpvalues = []
             searchlist = []
             for tag in taglist:

@@ -186,7 +186,6 @@ class RPMDBPackageSack:
                 allpkg.append(self._hdr2pkgTuple(hdr))
         
         del mi
-        
         if not allpkg:
             # FIXME: raise  ...
             print 'No Package Matching %s' % name

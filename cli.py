@@ -928,8 +928,7 @@ For more information contact your distribution or package provider.
         
         self.doRpmDBSetup()
         installed = []
-        for hdr in self.rpmdb.getHdrList():
-            po = YumInstalledPackage(hdr)
+        for po in self.rpmdb:
             installed.append(po)
         
         if len(userlist) > 0: # if it ain't well, that'd be real _bad_ :)
