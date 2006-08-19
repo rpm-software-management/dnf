@@ -361,7 +361,9 @@ class YumRepository(Repository):
 
         goodurls = []
         if self.mirrorlist and not self.mirrorlistparsed:
-            mirrorurls = getMirrorList(self.mirrorlist, self.proxy_dict)
+            try:
+                mirrorurls = getMirrorList(self.mirrorlist, self.proxy_dict)
+            except 
             self.mirrorlistparsed = 1
             for url in mirrorurls:
                 url = parser.varReplace(url, self.yumvar)
@@ -705,6 +707,7 @@ def getMirrorList(mirrorlist, pdict = None):
     try:
         fo = urlresolver.urlopen(url, proxies=pdict)
     except urlgrabber.grabber.URLGrabError, e:
+        print "Could not retrieve mirrorlist %s error was\n%s" % (url, e)
         fo = None
 
     if fo is not None:
