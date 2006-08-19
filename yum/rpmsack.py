@@ -20,6 +20,7 @@
 
 import rpm
 import types
+import warnings
 
 from Errors import PackageSackError
 from rpmUtils import miscutils
@@ -155,6 +156,10 @@ class RPMDBPackageSack:
     def simplePkgList(self, repoid=None):
         return self.pkglist
     
+    def installed(self, name=None, arch=None, epoch=None, ver=None, rel=None):
+        if len(self.searchNevra(name=name, arch=arch, epoch=epoch, ver=ver, rel=rel)) > 0:
+            return 1
+        return 0
         
     def returnNewestByNameArch(self, naTup=None):
 
@@ -249,7 +254,6 @@ class RPMDBPackageSack:
         #        self.delPackageById(hdr[rpm.RPMTAG_SHA1HEADER])
 
 
-
     # Helper functions
 
     def mi2list(self, mi):
@@ -288,11 +292,16 @@ class RPMDBPackageSack:
 
     # deprecated options for compat only - remove once rpmdb is converted:
     def getPkgList(self):
-        #FIXME - emit deprecation notice
+        warnings.warn('getPkgList() will go away in a future version of Yum.\n'
+                'Please access this via the pkglist attribute.',
+                DeprecationWarning)
+    
         return self.pkglist
 
     def getHdrList(self):
-        #FIXME - emit deprecation notice
+        warnings.warn('getHdrList() will go away in a future version of Yum.\n',
+                DeprecationWarning)
+    
         hdrlist = []
         for pkg in self.header_indexes.keys():
             for idx in self.header_indexes[pkg]:
@@ -301,6 +310,7 @@ class RPMDBPackageSack:
         return hdrlist
 
     def getNameArchPkgList(self):
+    
         #FIXME - emit deprecation notice    
         lst = []
         for (name, arch, epoch, ver, rel) in self.pkglists:
@@ -317,14 +327,11 @@ class RPMDBPackageSack:
             
         return miscutils.unique(lst)
 
-    def installed(self, name=None, arch=None, epoch=None, ver=None, rel=None):
-        #FIXME - emit deprecation notice    
-        if len(self.searchNevra(name=name, arch=arch, epoch=epoch, ver=ver, rel=rel)) > 0:
-            return 1
-        return 0
     
     def returnTupleByKeyword(self, name=None, arch=None, epoch=None, ver=None, rel=None):
-        #FIXME - emit deprecation notice        
+        warnings.warn('returnTuplebyKeyword() will go away in a future version of Yum.\n',
+                DeprecationWarning)
+    
         lst = self.searchNevra(name=name, arch=arch, epoch=epoch, ver=ver, rel=rel)
         returnlist = []
         for po in lst:
@@ -333,7 +340,8 @@ class RPMDBPackageSack:
         return returnlist
 
     def returnHeaderByTuple(self, pkgtuple):
-        #FIXME - emit deprecation notice        
+        warnings.warn('returnHeaderByTuple() will go away in a future version of Yum.\n',
+                DeprecationWarning)
         """returns a list of header(s) based on the pkgtuple provided"""
         
         (n, a, e, v, r) = pkgtuple
@@ -347,7 +355,8 @@ class RPMDBPackageSack:
             return []
 
     def returnIndexByTuple(self, pkgtuple):
-        #FIXME - emit deprecation notice        
+        warnings.warn('returnIndexbyTuple() will go away in a future version of Yum.\n',
+                DeprecationWarning)
         """returns a list of header indexes based on the pkgtuple provided"""
         
         if self.header_indexes.has_key(pkgtuple):
