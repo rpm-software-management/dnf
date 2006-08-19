@@ -497,7 +497,9 @@ class YumRepository(Repository):
             cookie_info = os.stat(self.metadata_cookie)
             if cookie_info[8] + self.metadata_expire > time.time():
                 val = True
-
+            # WE ARE FROM THE FUTURE!!!!
+            elif cookie_info[8] > time.time():
+                val = False
         return val
 
     def setMetadataCookie(self):
