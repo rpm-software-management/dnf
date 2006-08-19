@@ -43,6 +43,7 @@ import misc
 import transactioninfo
 import urlgrabber
 from urlgrabber.grabber import URLGrabError
+from packageSack import ListPackageSack
 import depsolve
 import plugins
 import logginglevels
@@ -1760,7 +1761,15 @@ class YumBase(depsolve.Depsolve):
                      ver=nevra_dict['version'], rel=nevra_dict['release'])
                 
             if pkgs:
-                pkgs = self.bestPackagesFromList(pkgs)
+                pkgSack = ListPackageSack(pkgs)
+                pkgs = pkgSack.returnNewestByName()
+                del(pkgSack)
+
+                lst = []
+                for pkg in pkgs:
+                    lst.extend(self.bestPackagesFromList(pkg))
+
+                pkgs = lst
 
         if len(pkgs) == 0:
             #FIXME - this is where we could check to see if it already installed
