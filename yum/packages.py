@@ -22,7 +22,7 @@ import misc
 import re
 import types
 import fnmatch
-import rpmUtils
+from rpmUtils import RpmUtilsError
 import rpmUtils.arch
 import rpmUtils.miscutils
 import Errors
@@ -618,7 +618,7 @@ class YumLocalPackage(YumHeaderPackage):
         
         try:
             hdr = rpmUtils.miscutils.hdrFromPackage(ts, self.localpath)
-        except rpmUtils.RpmUtilsError, e:
+        except RpmUtilsError, e:
             raise Errors.MiscError, \
                 'Could not open local rpm file: %s' % self.localpath
        

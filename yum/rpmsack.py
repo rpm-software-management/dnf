@@ -30,7 +30,7 @@ from packageSack import ListPackageSack
 
 class RPMDBPackageSack:
 
-    def __init__(self, ts):
+    def __init__(self, ts=None):
         self.excludes = {}
         self.ts = ts
         self.pkglist = []
@@ -96,17 +96,31 @@ class RPMDBPackageSack:
             if not result.has_key(pkg.pkgid):
                 result[pkg.pkgid] = pkg
 
-        # FIXME
-        # check filelists/dirlists
+        
+        fileresults = self.searchFiles(name)
+        for pkg in fileresults:
+            if not result.has_key(pkg.pkgid):
+                result[pkg.pkgid] = pkg
         
         return result.values()
 
-
+    def searchFiles(self, name):
+        """search the filelists in the rpms for anything matching name"""
+        
+        result = {}
+        
+        mi = self.ts.dbMatch('basenames', name)
+        for hdr in mi:
+            pkg = YumInstalledPackage(hdr)
+            if not result.has_key(pkg.pkgid):
+                result[pkg.pkgid] = pkg
+        
+        return result.values()
+        
     def searchPrco(self, name, prcotype):
         result = {}
         table = self.dep_table[prcotype]
         mi = self.ts.dbMatch(table[0], name)
-        #mi.pattern(table[0], rpm.RPMMIRE_STRCMP, name)
         for hdr in mi:
             po = YumInstalledPackage(hdr)
             prcotup = (name, None, (None, None, None))
@@ -118,9 +132,12 @@ class RPMDBPackageSack:
             if prcotype != 'provides' or name[0] != '/':
                 if not result.has_key(po.pkgid):
                     result[po.pkgid] = po
-
-            # FIXME: Search package files
-
+            else:
+                fileresults = self.searchFiles(name)
+                for pkg in fileresults:
+                    if not result.has_key(pkg.pkgid):
+                        result[pkg.pkgid] = pkg
+                
         return result.values()
 
     def searchProvides(self, name):
@@ -140,9 +157,11 @@ class RPMDBPackageSack:
     
         
     def returnNewestByNameArch(self, naTup=None):
+
         if not naTup:
             return
-
+        
+        (name, arch) = naTup
         allpkg = []
 
         mi = self.ts.dbMatch(rpm.RPMTAG_NAME, naTup[0])
@@ -175,9 +194,14 @@ class RPMDBPackageSack:
 
     def searchNevra(self, name=None, epoch=None, ver=None, rel=None, arch=None):
     
+        
         if name and epoch and ver and rel and arch:
-            indexes = self.header_indexes[(n,a,e,v,r)]
-            return self.indexes2list(indexes)
+            if self.header_indexes.has_key((name,arch,epoch,ver,rel)):
+                indexes = self.header_indexes[(name,arch,epoch,ver,rel)]
+                return self.indexes2list(indexes)
+            else:
+                return []
+
         
         removedict = {}
         indexes = []
@@ -322,7 +346,15 @@ class RPMDBPackageSack:
         else:
             return []
 
-    
+    def returnIndexByTuple(self, pkgtuple):
+        #FIXME - emit deprecation notice        
+        """returns a list of header indexes based on the pkgtuple provided"""
+        
+        if self.header_indexes.has_key(pkgtuple):
+            return self.header_indexes[pkgtuple]
+        
+        return []
+        
     def addDB(self, ts):
         self.ts = ts
         self.buildIndexes()
@@ -331,11 +363,11 @@ class RPMDBPackageSack:
         """searches the rpmdb for what provides the arguments
            returns a list of pkgtuples of providing packages, possibly empty"""
 
-        # we need to check the name - if it doesn't match:
-        # /etc/* bin/* or /usr/lib/sendmail then we should fetch the 
-        # filelists.xml for all repos to make the searchProvides more complete.
         pkgs = self.searchProvides(name)
         
+        if name[0] =='/':
+            morepkgs = self.searchFiles(name)
+            pkgs.extend(morepkgs)
         
         if flags == 0:
             flags = None
