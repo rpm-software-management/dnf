@@ -26,8 +26,8 @@ from yum import logginglevels
 import cli
 
 from i18n import _
+from yum.constants import *
 
-YUM_PID_FILE = '/var/run/yum.pid'
 
 def main(args):
     """This does all the real work"""

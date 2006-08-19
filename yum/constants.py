@@ -14,6 +14,8 @@
 
 
 #Constants
+YUM_PID_FILE = '/var/run/yum.pid'
+
 #transaction set states
 TS_UPDATE = 10
 TS_INSTALL = 20
