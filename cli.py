@@ -143,7 +143,7 @@ yum [options] < update | install | info | remove | list |
                 type='string', callback=repo_optcb, dest='repos', default=[],
                 help="disable one or more repositories (wildcards allowed)",
                 metavar='[repo]')
-        self.optparser.add_option("", "--exclude", dest="exclude", default=[], 
+        self.optparser.add_option("-x", "--exclude", dest="exclude", default=[], 
                 action="append", help="exclude package(s) by name or glob",
                 metavar='[package]')
         self.optparser.add_option("", "--obsoletes", dest="obsoletes",
