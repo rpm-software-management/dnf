@@ -1521,9 +1521,7 @@ class YumBase(depsolve.Depsolve):
     def getInstalledPackageObject(self, pkgtup):
         """returns a YumInstallPackage object for the pkgtup specified"""
         
-        hdrs = self.rpmdb.returnHeaderByTuple(pkgtup)
-        hdr = hdrs[0]
-        po = YumInstalledPackage(hdr)
+        po = self.rpmdb.packagesByTuple(pkgtup)[0] # take the first one
         return po
         
     def gpgKeyCheck(self):

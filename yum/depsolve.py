@@ -291,10 +291,9 @@ class Depsolve(object):
         dumbmatchpkgs = self.rpmdb.returnTupleByKeyword(name=name, ver=version, rel=release)
         for pkgtuple in dumbmatchpkgs:
             self.verbose_logger.log(logginglevels.DEBUG_3,
-                'Calling rpmdb.returnHeaderByTuple on %s.%s %s:%s-%s', pkgtuple)
-            hdrs = self.rpmdb.returnHeaderByTuple(pkgtuple)
-            for hdr in hdrs:
-                po = packages.YumInstalledPackage(hdr)
+                'Calling rpmdb.packagesByTuple on %s.%s %s:%s-%s', pkgtuple)
+            installed_pkgs = self.rpmdb.packagesByTuple(pkgtuple)
+            for po in installed_pkgs:
                 if self.tsInfo.exists(po.pkgtup):
                     self.verbose_logger.log(logginglevels.DEBUG_4,
                         'Skipping package already in Transaction Set: %s', po)
@@ -435,10 +434,12 @@ class Depsolve(object):
             
             if thismode is not None:
                 needmode = thismode
-                try:
-                    needpo = self.getInstalledPackageObject(insttuple)
-                except KeyError:
+                if self.rpmdb.installed(name=i_n, arch=i_a, ver=i_v, 
+                                        epoch=i_e, rel=i_r):
+                    needpo = self.rpmdb.packagesByTuple(insttuple)[0]
+                else:
                     needpo = self.getPackageObject(insttuple)
+
                 self.cheaterlookup[(needname, needflags, needversion)] = insttuple
                 self.verbose_logger.log(logginglevels.DEBUG_2, 'Mode is %s for provider of %s: %s',
                     needmode, niceformatneed, inst_str)
