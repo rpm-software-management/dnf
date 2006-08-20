@@ -563,7 +563,7 @@ class Depsolve(object):
         # get rid of things that are already in the rpmdb - b/c it's pointless to use them here
 
         for pkg in provSack.returnPackages():
-            if pkg.pkgtup in self.rpmdb.getPkgList(): # is it already installed?
+            if pkg.pkgtup in self.rpmdb.simplePkgList(): # is it already installed?
                 self.verbose_logger.log(logginglevels.DEBUG_2, '%s is in providing packages but it is already installed, removing.', pkg)
                 provSack.delPackage(pkg)
                 continue
@@ -635,7 +635,7 @@ class Depsolve(object):
         elif len(newest) == 1:
             best = newest[0]
         
-        if best.pkgtup in self.rpmdb.getPkgList(): # is it already installed?
+        if self.rpmdb.installed(po=best): # is it already installed?
             missingdep = 1
             checkdeps = 0
             msg = 'Missing Dependency: %s is needed by package %s' % (needname, name)

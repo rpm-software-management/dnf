@@ -60,12 +60,6 @@ YUM_PID_FILE = '/var/run/yum.pid'
 config_file = '/etc/yum/yum-updatesd.conf'
 
 
-# FIXME: this is kind of gross -- hopefully the rpmdb as a sack stuff will
-# make this not really be needed
-def pkgFromInstalledTuple(pkgtup, rpmdb):
-    return YumInstalledPackage(rpmdb.returnHeaderByTuple(pkgtup)[0])
-
-
 class UpdateEmitter(object):
     """Abstract object for implementing different types of emitters."""
     def __init__(self):
@@ -348,13 +342,13 @@ class UpdatesDaemon(yum.YumBase):
         self.updateInfo = []
         for (new, old) in self.up.getUpdatesTuples():
             n = getDbusPackageDict(self.getPackageObject(new))
-            o = getDbusPackageDict(pkgFromInstalledTuple(old, self.rpmdb))
+            o = getDbusPackageDict(self.rpmdb.packagesByTuple(old)[0])
             self.updateInfo.append((n, o))
 
         if self.conf.obsoletes:
             for (obs, inst) in self.up.getObsoletesTuples():
                 n = getDbusPackageDict(self.getPackageObject(obs))
-                o = getDbusPackageDict(pkgFromInstalledTuple(inst, self.rpmdb))
+                o = getDbusPackageDict(self.rpmdb.packagesByTuple(inst)[0])
                 self.updateInfo.append((n, o))
 
         self.updateInfoTime = time.time()
@@ -363,7 +357,7 @@ class UpdatesDaemon(yum.YumBase):
         # figure out the updates
         for (new, old) in self.up.getUpdatesTuples():
             updating = self.getPackageObject(new)
-            updated = pkgFromInstalledTuple(old, self.rpmdb)
+            updated = self.rpmdb.packagesByTuple(old)[0]
                 
             self.tsInfo.addUpdate(updating, updated)
 
@@ -371,7 +365,7 @@ class UpdatesDaemon(yum.YumBase):
         if self.conf.obsoletes:
             for (obs, inst) in self.up.getObsoletesTuples():
                 obsoleting = self.getPackageObject(obs)
-                installed = pkgFromInstalledTuple(inst, self.rpmdb)
+                installed = self.rpmdb.packagesByTuple(inst)[0]
                 
                 self.tsInfo.addObsoleting(obsoleting, installed)
                 self.tsInfo.addObsoleted(installed, obsoleting)

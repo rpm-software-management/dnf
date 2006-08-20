@@ -721,7 +721,6 @@ For more information contact your distribution or package provider.
 
         self.doRepoSetup()
         self.doRpmDBSetup()
-        installed = self.rpmdb.getPkgList()
         avail = self.pkgSack.returnPackages()
         toBeInstalled = {} # keyed on name
         passToUpdate = [] # list of pkgtups to pass along to updatecheck
@@ -759,18 +758,18 @@ For more information contact your distribution or package provider.
             # we look through each returned possibility and rule out the
             # ones that we obviously can't use
             for pkg in installable:
-                if pkg.pkgtup in installed:
+                if self.rpmdb.installed(pkg):
                     self.verbose_logger.log(logginglevels.DEBUG_3,
                         'Package %s is already installed, skipping', pkg)
                     continue
                 
                 # everything installed that matches the name
-                installedByKey = self.rpmdb.returnTupleByKeyword(name=pkg.name)
+                installedByKey = self.rpmdb.searchNevra(name=pkg.name)
                 comparable = []
-                for instTup in installedByKey:
-                    (n2, a2, e2, v2, r2) = instTup
+                for instpo in installedByKey:
+                    (n2, a2, e2, v2, r2) = instpo.pkgtup
                     if rpmUtils.arch.isMultiLibArch(a2) == rpmUtils.arch.isMultiLibArch(pkg.arch):
-                        comparable.append(instTup)
+                        comparable.append(instpo.pkgtup)
                     else:
                         self.verbose_logger.log(logginglevels.DEBUG_3,
                             'Discarding non-comparable pkg %s.%s', n2, a2)
@@ -846,7 +845,7 @@ For more information contact your distribution or package provider.
         self.doRepoSetup()
         avail = self.pkgSack.simplePkgList()
         self.doRpmDBSetup()
-        installed = self.rpmdb.getPkgList()
+        installed = self.rpmdb.simplePkgList()
         self.doUpdateSetup()
         updates = self.up.getUpdatesTuples()
         if self.conf.obsoletes:
@@ -857,7 +856,7 @@ For more information contact your distribution or package provider.
         if len(userlist) == 0: # simple case - do them all
             for (obsoleting, installed) in obsoletes:
                 obsoleting_pkg = self.getPackageObject(obsoleting)
-                installed_pkg =  YumInstalledPackage(self.rpmdb.returnHeaderByTuple(installed)[0])
+                installed_pkg =  self.rpmdb.packagesByTuple(installed)[0]
                 self.tsInfo.addObsoleting(obsoleting_pkg, installed_pkg)
                 self.tsInfo.addObsoleted(installed_pkg, obsoleting_pkg)
                                 
@@ -868,7 +867,7 @@ For more information contact your distribution or package provider.
                     self.verbose_logger.log(logginglevels.DEBUG_2, 'Not Updating Package that is already obsoleted: %s.%s %s:%s-%s', old)
                 else:
                     updating_pkg = self.getPackageObject(new)
-                    updated_pkg = YumInstalledPackage(self.rpmdb.returnHeaderByTuple(old)[0])
+                    updated_pkg = self.rpmdb.packagesByTuple(old)[0]
                     self.tsInfo.addUpdate(updating_pkg, updated_pkg)
 
 
@@ -903,7 +902,7 @@ For more information contact your distribution or package provider.
             for po in updateMatches:
                 for (new, old) in updates:
                     if po.pkgtup == new:
-                        updated_pkg = YumInstalledPackage(self.rpmdb.returnHeaderByTuple(old)[0])
+                        updated_pkg = self.rpmdb.packagesByTuple(old)[0]
                         self.tsInfo.addUpdate(po, updated_pkg)
 
 
@@ -927,9 +926,7 @@ For more information contact your distribution or package provider.
             userlist = self.extcmds
         
         self.doRpmDBSetup()
-        installed = []
-        for po in self.rpmdb:
-            installed.append(po)
+        installed = self.rpmdb.returnPackages()
         
         if len(userlist) > 0: # if it ain't well, that'd be real _bad_ :)
             exactmatch, matched, unmatched = yum.packages.parsePackages(
@@ -991,7 +988,7 @@ For more information contact your distribution or package provider.
                 po.localpath, po)
 
             # everything installed that matches the name
-            installedByKey = self.rpmdb.returnTupleByKeyword(name=po.name)
+            installedByKey = self.rpmdb.searchNevra(name=po.name)
             # go through each package 
             if len(installedByKey) == 0: # nothing installed by that name
                 if updateonly:
@@ -1000,8 +997,7 @@ For more information contact your distribution or package provider.
                     installpkgs.append(po)
                 continue
 
-            for instTup in installedByKey:
-                installed_pkg = YumInstalledPackage(self.rpmdb.returnHeaderByTuple(instTup)[0])
+            for installed_pkg in installedByKey:
                 (n, a, e, v, r) = po.pkgtup
                 (n2, a2, e2, v2, r2) = installed_pkg.pkgtup
                 rc = compareEVR((e2, v2, r2), (e, v, r))

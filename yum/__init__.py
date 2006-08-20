@@ -115,7 +115,7 @@ class YumBase(depsolve.Depsolve):
             startupconf.debuglevel = debuglevel
         if errorlevel != None:
             startupconf.errorlevel = errorlevel
-    
+        
         self.doLoggingSetup(startupconf.debuglevel, startupconf.errorlevel)
 
         if init_plugins and startupconf.plugins:
@@ -341,7 +341,7 @@ class YumBase(depsolve.Depsolve):
             self.doRepoSetup()
             self.doSackSetup()
         
-        self.up = rpmUtils.updates.Updates(self.rpmdb.getPkgList(),
+        self.up = rpmUtils.updates.Updates(self.rpmdb.simplePkgList(),
                                            self.pkgSack.simplePkgList())
         if self.conf.debuglevel >= 6:
             self.up.debug = 1
@@ -403,7 +403,7 @@ class YumBase(depsolve.Depsolve):
             raise Errors.GroupsError, 'No Groups Available in any repository'
         
         self.doRpmDBSetup()
-        pkglist = self.rpmdb.getPkgList()
+        pkglist = self.rpmdb.simplePkgList()
         self.comps.compile(pkglist)
             
     def doSackFilelistPopulate(self):
@@ -970,7 +970,7 @@ class YumBase(depsolve.Depsolve):
         if pkgnarrow == 'all': 
             self.doRepoSetup()
             self.doRpmDBSetup()
-            inst = self.rpmdb.getPkgList()
+            inst = self.rpmdb.simplePkgList()
             for po in self.rpmdb:
                 installed.append(po)
 
@@ -1013,7 +1013,7 @@ class YumBase(depsolve.Depsolve):
         elif pkgnarrow == 'available':
             self.doRepoSetup()
             self.doRpmDBSetup()
-            inst = self.rpmdb.getPkgList()
+            inst = self.rpmdb.simplePkgList()
             if self.conf.showdupesfromrepos:
                 avail = self.pkgSack.returnPackages()
             else:

@@ -172,11 +172,19 @@ class RPMDBPackageSack:
     def simplePkgList(self, repoid=None):
         return self.pkglist
     
-    def installed(self, name=None, arch=None, epoch=None, ver=None, rel=None):
+    def installed(self, name=None, arch=None, epoch=None, ver=None, rel=None, po=None):
+        if po:
+            name = po.name
+            arch = po.arch
+            epoch = po.epoch
+            ver = po.ver
+            rel = po.rel
+            
         if len(self.searchNevra(name=name, arch=arch, epoch=epoch, ver=ver, rel=rel)) > 0:
             return 1
         return 0
-        
+    
+
     def returnNewestByNameArch(self, naTup=None):
 
         if not naTup:
