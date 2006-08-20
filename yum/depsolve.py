@@ -288,18 +288,14 @@ class Depsolve(object):
         
         # is the requiring tuple (name, version, release) from an installed package?
         pkgs = []
-        dumbmatchpkgs = self.rpmdb.returnTupleByKeyword(name=name, ver=version, rel=release)
-        for pkgtuple in dumbmatchpkgs:
-            self.verbose_logger.log(logginglevels.DEBUG_3,
-                'Calling rpmdb.packagesByTuple on %s.%s %s:%s-%s', pkgtuple)
-            installed_pkgs = self.rpmdb.packagesByTuple(pkgtuple)
-            for po in installed_pkgs:
-                if self.tsInfo.exists(po.pkgtup):
-                    self.verbose_logger.log(logginglevels.DEBUG_4,
-                        'Skipping package already in Transaction Set: %s', po)
-                    continue
-                if niceformatneed in po.requiresList():
-                    pkgs.append(po)
+        dumbmatchpkgs = self.rpmdb.searchNevra(name=name, ver=version, rel=release)
+        for po in dumbmatchpkgs:
+            if self.tsInfo.exists(po.pkgtup):
+                self.verbose_logger.log(logginglevels.DEBUG_4,
+                    'Skipping package already in Transaction Set: %s', po)
+                continue
+            if niceformatneed in po.requiresList():
+                pkgs.append(po)
 
         if len(pkgs) < 1: # requiring tuple is not in the rpmdb
             txmbrs = self.tsInfo.matchNaevr(name=name, ver=version, rel=release)
@@ -590,9 +586,9 @@ class Depsolve(object):
                         continue
                 
                 # from rpmdb
-                dbpkgs = self.rpmdb.returnTupleByKeyword(name=pkg.name, arch=pkg.arch)
-                for dbpkgtup in dbpkgs:
-                    (dn, da, de, dv, dr) = dbpkgtup
+                dbpkgs = self.rpmdb.searchNevra(name=pkg.name, arch=pkg.arch)
+                for dbpkg in dbpkgs:
+                    (dn, da, de, dv, dr) = dbpkg.pkgtup
                     rc = rpmUtils.miscutils.compareEVR((e, v, r), (de, dv, dr))
                     if rc < 0:
                         msg = 'Potential resolving package %s has newer instance installed.' % pkg
@@ -692,9 +688,9 @@ class Depsolve(object):
         self.doUpdateSetup()
         uplist = self.up.getUpdatesList(name=confname)
         
-        conftuple = self.rpmdb.returnTupleByKeyword(name=confname)
-        if conftuple:
-            (confname, confarch, confepoch, confver, confrel) = conftuple[0] # take the first one, probably the only one
+        conflict_packages = self.rpmdb.searchNevra(name=confname)
+        if conflict_packages:
+            (confname, confarch, confepoch, confver, confrel) = conflict_packages[0] # take the first one, probably the only one
                 
 
             # if there's an update for the reqpkg, then update it
