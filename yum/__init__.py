@@ -248,7 +248,8 @@ class YumBase(depsolve.Depsolve):
         
         if not self.localdbimported:
             self.verbose_logger.debug('Reading Local RPMDB')
-            self.rpmdb.addDB(self.read_ts)
+            self.rpmdb.ts = self.read_ts
+            self.rpmdb.buildIndexes()
             self.localdbimported = 1
 
     def closeRpmDB(self):

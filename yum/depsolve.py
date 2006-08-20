@@ -393,7 +393,6 @@ class Depsolve(object):
         # we must find out what provides/provided it from the rpmdb (if anything)
         # then check to see if that thing is being acted upon by the transaction set
         # if it is then we need to find out what is being done to it and act accordingly
-        rpmdbNames = self.rpmdb.getNamePkgList()
         needmode = None # mode in the transaction of the needed pkg (if any)
         needpo = None
         providers = []
@@ -403,7 +402,7 @@ class Depsolve(object):
             cheater_tup = self.cheaterlookup[(needname, needflags, needversion)]
             providers = [cheater_tup]
         
-        elif needname in rpmdbNames:
+        elif self.rpmdb.installed(name=needname):
             txmbrs = self.tsInfo.matchNaevr(name=needname)
             for txmbr in txmbrs:
                 providers.append(txmbr.pkgtup)
@@ -643,7 +642,7 @@ class Depsolve(object):
             
         # FIXME - why can't we look up in the transaction set for the requiringPkg
         # and know what needs it that way and provide a more sensible dep structure in the txmbr
-        if (best.name, best.arch) in self.rpmdb.getNameArchPkgList():
+        if self.rpmdb.installed(name=best.name, arch=best.arch):
             self.verbose_logger.debug('TSINFO: Marking %s as update for %s', best,
                 name)
             txmbr = self.tsInfo.addUpdate(best)

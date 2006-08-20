@@ -187,6 +187,7 @@ class RPMDBPackageSack:
 
     def returnNewestByNameArch(self, naTup=None):
 
+        #FIXME - should this (or any packagesack) be returning tuples?
         if not naTup:
             return
         
@@ -335,8 +336,9 @@ class RPMDBPackageSack:
         return hdrlist
 
     def getNameArchPkgList(self):
+        warnings.warn('getNameArchPkgList() will go away in a future version of Yum.\n',
+                DeprecationWarning)
     
-        #FIXME - emit deprecation notice    
         lst = []
         for (name, arch, epoch, ver, rel) in self.pkglists:
             lst.append((name, arch))
@@ -345,7 +347,9 @@ class RPMDBPackageSack:
         
         
     def getNamePkgList(self):
-        #FIXME - emit deprecation notice
+        warnings.warn('getNamePkgList() will go away in a future version of Yum.\n',
+                DeprecationWarning)
+    
         lst = []
         for (name, arch, epoch, ver, rel) in self.pkglists:
             lst.append(name)
@@ -390,6 +394,9 @@ class RPMDBPackageSack:
         return []
         
     def addDB(self, ts):
+        warnings.warn('addDB()() will go away in a future version of Yum.\n',
+                DeprecationWarning)
+    
         self.ts = ts
         self.buildIndexes()
 
