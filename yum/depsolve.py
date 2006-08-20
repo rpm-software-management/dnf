@@ -381,8 +381,8 @@ class Depsolve(object):
         
         # FIXME - should we think about dealing exclusively in package objects?
            
-        (name, arch, epoch, ver, rel) = requiringPkg
-        requiringPo = self.getInstalledPackageObject(requiringPkg)
+        requiringPo = self.rpmdb.searchNevra(requiringPkg)[0]
+        (name, arch, epoch, ver, rel) = requiringPo.pkgtup
         
         (needname, needflags, needversion) = requirement
         niceformatneed = rpmUtils.miscutils.formatRequire(needname, needversion, needflags)
