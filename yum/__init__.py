@@ -1045,8 +1045,7 @@ class YumBase(depsolve.Depsolve):
             for (pkgtup, instTup) in self.up.getObsoletesTuples():
                 (n,a,e,v,r) = pkgtup
                 pkgs = self.pkgSack.searchNevra(name=n, arch=a, ver=v, rel=r, epoch=e)
-                hdr = self.rpmdb.returnHeaderByTuple(instTup)[0] # the first one
-                instpo = YumInstalledPackage(hdr)
+                instpo = self.rpmdb.packagesByTuple(instTup)[0] # the first one
                 for po in pkgs:
                     obsoletes.append(po)
                     obsoletesTuples.append((po, instpo))
@@ -1521,6 +1520,9 @@ class YumBase(depsolve.Depsolve):
     def getInstalledPackageObject(self, pkgtup):
         """returns a YumInstallPackage object for the pkgtup specified"""
         
+        #FIXME - this should probably emit a deprecation warning telling
+        # people to just use the command below
+        
         po = self.rpmdb.packagesByTuple(pkgtup)[0] # take the first one
         return po
         
@@ -1842,8 +1844,7 @@ class YumBase(depsolve.Depsolve):
             self.verbose_logger.log(logginglevels.DEBUG_2, 'Updating Everything')
             for (obsoleting, installed) in obsoletes:
                 obsoleting_pkg = self.getPackageObject(obsoleting)
-                hdr = self.rpmdb.returnHeaderByTuple(installed)[0]
-                installed_pkg =  YumInstalledPackage(hdr)
+                installed_pkg =  self.rpmdb.packagesByTuple(installed)[0]
                 txmbr = self.tsInfo.addObsoleting(obsoleting_pkg, installed_pkg)
                 self.tsInfo.addObsoleted(installed_pkg, obsoleting_pkg)
                 tx_return.append(txmbr)
@@ -1854,8 +1855,7 @@ class YumBase(depsolve.Depsolve):
                         old)
                 else:
                     updating_pkg = self.getPackageObject(new)
-                    hdr = self.rpmdb.returnHeaderByTuple(old)[0]
-                    updated_pkg = YumInstalledPackage(hdr)
+                    updated_pkg = self.rpmdb.packagesByTuple(old)[0]
                     txmbr = self.tsInfo.addUpdate(updating_pkg, updated_pkg)
                     tx_return.append(txmbr)
             
@@ -1877,15 +1877,9 @@ class YumBase(depsolve.Depsolve):
                           epoch=nevra_dict['epoch'], arch=nevra_dict['arch'],
                         ver=nevra_dict['version'], rel=nevra_dict['release'])
                 
-                installed_tuples = self.rpmdb.returnTupleByKeyword(
-                                name=nevra_dict['name'], epoch=nevra_dict['epoch'],
-                                arch=nevra_dict['arch'], ver=nevra_dict['version'],
-                                rel=nevra_dict['release'])
-            
-                for tup in installed_tuples:
-                    hdr = self.rpmdb.returnHeaderByTuple(tup)[0]
-                    installed_pkg =  YumInstalledPackage(hdr)
-                    instpkgs.append(installed_pkg)
+                instpkgs = self.rpmdb.searchNevra(name=nevra_dict['name'], 
+                            epoch=nevra_dict['epoch'], arch=nevra_dict['arch'], 
+                            ver=nevra_dict['version'], rel=nevra_dict['release'])
             
             # for any thing specified
             # get the list of available pkgs matching it (or take the po)
@@ -1918,8 +1912,7 @@ class YumBase(depsolve.Depsolve):
                         self.verbose_logger.log(logginglevels.DEBUG_2, 'Not Updating Package that is already obsoleted: %s.%s %s:%s-%s', 
                             updated)
                     else:
-                        hdr = self.rpmdb.returnHeaderByTuple(updated)[0]
-                        updated_pkg =  YumInstalledPackage(hdr)
+                        updated_pkg =  self.rpmdb.packagesByTuple(updated)[0]
                         txmbr = self.tsInfo.addUpdate(available_pkg, updated_pkg)
                         tx_return.append(txmbr)
                     
@@ -1955,17 +1948,10 @@ class YumBase(depsolve.Depsolve):
         else:
             nevra_dict = self._nevra_kwarg_parse(kwargs)
 
-            installed_tuples = self.rpmdb.returnTupleByKeyword(
-                            name=nevra_dict['name'], epoch=nevra_dict['epoch'],
-                            arch=nevra_dict['arch'], ver=nevra_dict['version'],
-                            rel=nevra_dict['release'])
+            pkgs = self.rpmdb.searchNevra(name=nevra_dict['name'], 
+                        epoch=nevra_dict['epoch'], arch=nevra_dict['arch'], 
+                        ver=nevra_dict['version'], rel=nevra_dict['release'])
 
-            for tup in installed_tuples:
-                hdr = self.rpmdb.returnHeaderByTuple(tup)[0]
-                installed_pkg =  YumInstalledPackage(hdr)
-                pkgs.append(installed_pkg)
-
-        
         if len(pkgs) == 0: # should this even be happening?
             self.logger.warning("No package matched to remove")
 
