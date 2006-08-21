@@ -320,13 +320,13 @@ class RPMDBPackageSack:
     def getPkgList(self):
         warnings.warn('getPkgList() will go away in a future version of Yum.\n'
                 'Please access this via the pkglist attribute.',
-                DeprecationWarning)
+                DeprecationWarning, stacklevel=2)
     
         return self.pkglist
 
     def getHdrList(self):
         warnings.warn('getHdrList() will go away in a future version of Yum.\n',
-                DeprecationWarning)
+                DeprecationWarning, stacklevel=2)
     
         hdrlist = []
         for pkg in self.header_indexes.keys():
@@ -337,7 +337,7 @@ class RPMDBPackageSack:
 
     def getNameArchPkgList(self):
         warnings.warn('getNameArchPkgList() will go away in a future version of Yum.\n',
-                DeprecationWarning)
+                DeprecationWarning, stacklevel=2)
     
         lst = []
         for (name, arch, epoch, ver, rel) in self.pkglists:
@@ -348,7 +348,7 @@ class RPMDBPackageSack:
         
     def getNamePkgList(self):
         warnings.warn('getNamePkgList() will go away in a future version of Yum.\n',
-                DeprecationWarning)
+                DeprecationWarning, stacklevel=2)
     
         lst = []
         for (name, arch, epoch, ver, rel) in self.pkglists:
@@ -359,7 +359,7 @@ class RPMDBPackageSack:
     
     def returnTupleByKeyword(self, name=None, arch=None, epoch=None, ver=None, rel=None):
         warnings.warn('returnTuplebyKeyword() will go away in a future version of Yum.\n',
-                DeprecationWarning)
+                DeprecationWarning, stacklevel=2)
     
         lst = self.searchNevra(name=name, arch=arch, epoch=epoch, ver=ver, rel=rel)
         returnlist = []
@@ -370,7 +370,7 @@ class RPMDBPackageSack:
 
     def returnHeaderByTuple(self, pkgtuple):
         warnings.warn('returnHeaderByTuple() will go away in a future version of Yum.\n',
-                DeprecationWarning)
+                DeprecationWarning, stacklevel=2)
         """returns a list of header(s) based on the pkgtuple provided"""
         
         (n, a, e, v, r) = pkgtuple
@@ -385,7 +385,7 @@ class RPMDBPackageSack:
 
     def returnIndexByTuple(self, pkgtuple):
         warnings.warn('returnIndexbyTuple() will go away in a future version of Yum.\n',
-                DeprecationWarning)
+                DeprecationWarning, stacklevel=2)
         """returns a list of header indexes based on the pkgtuple provided"""
         
         if self.header_indexes.has_key(pkgtuple):
@@ -395,7 +395,7 @@ class RPMDBPackageSack:
         
     def addDB(self, ts):
         warnings.warn('addDB()() will go away in a future version of Yum.\n',
-                DeprecationWarning)
+                DeprecationWarning, stacklevel=2)
     
         self.ts = ts
         self.buildIndexes()
