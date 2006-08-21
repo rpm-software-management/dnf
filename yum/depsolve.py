@@ -367,8 +367,8 @@ class Depsolve(object):
                 rpmUtils.miscutils.formatRequire(needname, needversion, flags))
             
             requirementTuple = (needname, flags, needversion)
-            
-            CheckDeps, missingdep = self._requiringFromInstalled(requiringPkg.pkgtup,
+
+            CheckDeps, missingdep = self._requiringFromInstalled(requiringPkg.returnNevraTuple(),
                                                     requirementTuple, errormsgs)
 
 
@@ -378,10 +378,9 @@ class Depsolve(object):
     def _requiringFromInstalled(self, requiringPkg, requirement, errorlist):
         """processes the dependency resolution for a dep where the requiring 
            package is installed"""
-        
+
         # FIXME - should we think about dealing exclusively in package objects?
-           
-        requiringPo = self.rpmdb.searchNevra(requiringPkg)[0]
+        requiringPo = apply(self.rpmdb.searchNevra, requiringPkg)[0]
         (name, arch, epoch, ver, rel) = requiringPo.pkgtup
         
         (needname, needflags, needversion) = requirement
