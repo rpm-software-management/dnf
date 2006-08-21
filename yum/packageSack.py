@@ -27,10 +27,11 @@ class PackageSackBase:
         return len(self.simplePkgList())
         
     def __iter__(self):
-        if hasattr(self.returnPackages(), '__iter__'):
-            return self.returnPackages().__iter__()
+        ret = self.returnPackages()
+        if hasattr(ret, '__iter__'):
+            return ret.__iter__()
         else:
-            return iter(self.returnPackages())
+            return iter(ret)
 
     def setCompatArchs(self, compatArchs):
         raise NotImplementedError()
@@ -279,12 +280,6 @@ class PackageSack(PackageSackBase):
     def __len__(self):
         return len(self.simplePkgList())
     
-    def __iter__(self):
-        if hasattr(self.returnPackages(), '__iter__'):
-            return self.returnPackages().__iter__()
-        else:
-            return iter(self.returnPackages())
-
     def _checkIndexes(self, failure='error'):
         """check to see if the indexes are built, if not do what failure demands
            either error out or build the indexes, default is to error out"""

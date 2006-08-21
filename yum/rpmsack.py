@@ -51,12 +51,6 @@ class RPMDBPackageSack:
         if self.ts:
             self.buildIndexes()
 
-    def __iter__(self):
-        if hasattr(self.returnPackages(), '__iter__'):
-            return self.returnPackages().__iter__()
-        else:
-            return iter(self.returnPackages())
-
     def buildIndexes(self):
         self.header_indexes = {}
         
