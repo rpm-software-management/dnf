@@ -58,7 +58,6 @@ class RPMDBPackageSack:
             return iter(self.returnPackages())
 
     def buildIndexes(self):
-        self.match_on_index = 1
         self.header_indexes = {}
         
         try:
@@ -84,12 +83,6 @@ class RPMDBPackageSack:
         self.pkglist = self.header_indexes.keys()
         
         del mi
-        
-        
-        #FIXME compatibility only - remove once all of rpmUtils/__init__ is no longer used
-        self.pkglists = self.pkglist
-        
-
 
     def _checkIndexes(self, failure='error'):
         return
@@ -340,7 +333,7 @@ class RPMDBPackageSack:
                 DeprecationWarning, stacklevel=2)
     
         lst = []
-        for (name, arch, epoch, ver, rel) in self.pkglists:
+        for (name, arch, epoch, ver, rel) in self.pkglist:
             lst.append((name, arch))
         
         return miscutils.unique(lst)
@@ -351,7 +344,7 @@ class RPMDBPackageSack:
                 DeprecationWarning, stacklevel=2)
     
         lst = []
-        for (name, arch, epoch, ver, rel) in self.pkglists:
+        for (name, arch, epoch, ver, rel) in self.pkglist:
             lst.append(name)
             
         return miscutils.unique(lst)
