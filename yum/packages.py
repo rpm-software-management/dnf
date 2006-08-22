@@ -184,55 +184,37 @@ class RpmBase:
         self.licenses = []
 
     def __lt__(self, other):
-        val = False
-        rc = comparePoEVR(self, other)
-        if rc < 0:
-            val = True
-        
-        return val
+        if comparePoEVR(self, other) < 0:
+            return True
+        return False
+
         
     def __gt__(self, other):
-        val = False
-        rc = comparePoEVR(self, other)
-        if rc > 0:
-            val = True
-        
-        return val
+        if comparePoEVR(self, other) > 0:
+            return True
+        return False
 
     def __le__(self, other):
-        val = False
-        rc = comparePoEVR(self, other)
-        if rc <= 0:
-            val = True
-        
-        return val
-    
+        if comparePoEVR(self, other) <= 0:
+            return True
+        return False
 
     def __ge__(self, other):
-        val = False
-        rc = comparePoEVR(self, other)
-        if rc >= 0:
-            val = True
-        
-        return val
+        if comparePoEVR(self, other) >= 0:
+            return True
+        return False
     
 
     def __eq__(self, other):
-        val = False
-        rc = comparePoEVR(self, other)
-        if rc == 0:
-            val = True
-        
-        return val
+        if comparePoEVR(self, other) == 0:
+            return True
+        return False
     
-
     def __ne__(self, other):
-        val = False
-        rc = comparePoEVR(self, other)
-        if rc != 0:
-            val = True
-        
-        return val
+        if comparePoEVR(self, other) != 0:
+            return True
+        return False
+       
     
     def __hash__(self):
         mystr = '%s - %s:%s-%s-%s.%s' % (self.repoid, self.epoch, self.name,
