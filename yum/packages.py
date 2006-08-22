@@ -29,6 +29,11 @@ import Errors
 
 base=None
 
+def comparePoEVR(po1, po2):
+    (e1, v1, r1) = (po1.epoch, po1.ver, po1.rel)
+    (e2, v2, r2) = (po2.epoch, po2.ver, po2.rel)
+    return rpmUtils.miscutils.compareEVR((e1, v1, r1), (e2, v2, r2))
+
 def buildPkgRefDict(pkgs):
     """take a list of pkg objects and return a dict the contains all the possible
        naming conventions for them eg: for (name,i386,0,1,1)
@@ -177,7 +182,63 @@ class RpmBase:
         self.files['ghost'] = []
         self.changelog = [] # (ctime, cname, ctext)
         self.licenses = []
+
+    def __lt__(self, other):
+        val = False
+        rc = comparePoEVR(self, other)
+        if rc < 0:
+            val = True
+        
+        return val
+        
+    def __gt__(self, other):
+        val = False
+        rc = comparePoEVR(self, other)
+        if rc > 0:
+            val = True
+        
+        return val
+
+    def __le__(self, other):
+        val = False
+        rc = comparePoEVR(self, other)
+        if rc <= 0:
+            val = True
+        
+        return val
     
+
+    def __ge__(self, other):
+        val = False
+        rc = comparePoEVR(self, other)
+        if rc >= 0:
+            val = True
+        
+        return val
+    
+
+    def __eq__(self, other):
+        val = False
+        rc = comparePoEVR(self, other)
+        if rc == 0:
+            val = True
+        
+        return val
+    
+
+    def __ne__(self, other):
+        val = False
+        rc = comparePoEVR(self, other)
+        if rc != 0:
+            val = True
+        
+        return val
+    
+    def __hash__(self):
+        mystr = '%s - %s:%s-%s-%s.%s' % (self.repoid, self.epoch, self.name,
+                                         self.ver, self.rel, self.arch)
+        return hash(mystr)
+        
     def returnPrco(self, prcotype):
         """return list of provides, requires, conflicts or obsoletes"""
         if self.prco.has_key(prcotype):

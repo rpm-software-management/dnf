@@ -291,6 +291,7 @@ class PackageSack(PackageSackBase):
     def __len__(self):
         return len(self.simplePkgList())
     
+
     def _checkIndexes(self, failure='error'):
         """check to see if the indexes are built, if not do what failure demands
            either error out or build the indexes, default is to error out"""
