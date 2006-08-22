@@ -570,14 +570,10 @@ class Depsolve(object):
         
             tspkgs = []
             if not self.allowedMultipleInstalls(pkg):
-                (n, a, e, v, r) = pkg.pkgtup
-                
                 # from ts
                 tspkgs = self.tsInfo.matchNaevr(name=pkg.name, arch=pkg.arch)
                 for tspkg in tspkgs:
-                    (tn, ta, te, tv, tr) = tspkg.pkgtup
-                    rc = rpmUtils.miscutils.compareEVR((e, v, r), (te, tv, tr))
-                    if rc < 0:
+                    if tspkg > pkg:
                         msg = 'Potential resolving package %s has newer instance in ts.' % pkg
                         self.verbose_logger.log(logginglevels.DEBUG_2, msg)
                         provSack.delPackage(pkg)
@@ -586,9 +582,7 @@ class Depsolve(object):
                 # from rpmdb
                 dbpkgs = self.rpmdb.searchNevra(name=pkg.name, arch=pkg.arch)
                 for dbpkg in dbpkgs:
-                    (dn, da, de, dv, dr) = dbpkg.pkgtup
-                    rc = rpmUtils.miscutils.compareEVR((e, v, r), (de, dv, dr))
-                    if rc < 0:
+                    if dbpkg > pkg:
                         msg = 'Potential resolving package %s has newer instance installed.' % pkg
                         self.verbose_logger.log(logginglevels.DEBUG_2, msg)
                         provSack.delPackage(pkg)

@@ -13,8 +13,6 @@ import rpm
 import pwd
 from stat import *
 
-import rpmUtils
-from rpmUtils.miscutils import compareEVR
 from Errors import MiscError
 
 ###########
@@ -301,12 +299,11 @@ def sortPkgObj(pkg1 ,pkg2):
 def newestInList(pkgs):
     # return the newest in the list of packages
     ret = [ pkgs.pop() ]
-    newest = ret[0].returnEVR()
+    newest = ret[0]
     for pkg in pkgs:
-        rc = compareEVR(pkg.returnEVR(), newest)
-        if rc > 0:
+        if pkg > newest:
             ret = [ pkg ]
-            newest = pkg.returnEVR()
-        elif rc == 0:
+            newest = pkg
+        elif pkg == newest:
             ret.append(pkg)
     return ret
