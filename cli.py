@@ -34,7 +34,6 @@ from yum.constants import *
 import yum.Errors
 import yum.misc
 import rpmUtils.arch
-from rpmUtils.miscutils import compareEVR
 from yum.packages import parsePackages, YumInstalledPackage, YumLocalPackage
 from yum import pgpmsg
 from yum import logginglevels
@@ -777,7 +776,6 @@ For more information contact your distribution or package provider.
                 # go through each package 
                 if len(comparable) > 0:
                     for instpo in comparable:
-                        rc = compareEVR((e2, v2, r2), (pkg.epoch, pkg.version, pkg.release))
                         if pkg > instpo: # we're newer - this is an update, pass to them
                             if instpo.name in exactarchlist:
                                 if pkg.arch == instpo.arch:
