@@ -26,10 +26,9 @@ from Errors import PackageSackError
 from rpmUtils import miscutils
 import misc
 from packages import YumInstalledPackage
-from packageSack import ListPackageSack
+from packageSack import ListPackageSack, PackageSackBase
 
-
-class RPMDBPackageSack:
+class RPMDBPackageSack(PackageSackBase):
 
     def __init__(self, ts=None):
         self.excludes = {}
