@@ -252,25 +252,6 @@ class RPMDBPackageSack(PackageSackBase):
         
         return self.indexes2list(indexes)
 
-    def packagesByTuple(self, pkgtup):
-        """return a list of package objects by (n,a,e,v,r) tuple"""
-        warnings.warn('packagesByTuple() will go away in a future version of Yum.\n',
-                DeprecationWarning, stacklevel=2)
-        
-        return self.searchPkgTuple(pkgtup)
-        
-    def searchPO(self, po):
-        """return list of package objects matching the name, epoch, ver, rel,
-           arch of the package object passed in"""
-           
-        return self.searchNevra(name=po.name, epoch=po.epoch, ver=po.ver, 
-                                rel=po.rel, arch=po.arch)
-    
-    def searchPkgTuple(self, pkgtup):
-        """return list of pkgobject matching the (n,a,e,v,r) tuple"""
-        (n,a,e,v,r) = pkgtup
-        return self.searchNevra(name=n, arch=a, epoch=e, ver=v, rel=r)
-
     def excludeArchs(self, archlist):
         pass
         #for arch in archlist:
