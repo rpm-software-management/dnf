@@ -758,7 +758,7 @@ For more information contact your distribution or package provider.
             # we look through each returned possibility and rule out the
             # ones that we obviously can't use
             for pkg in installable:
-                if self.rpmdb.installed(pkg):
+                if self.rpmdb.installed(po=pkg):
                     self.verbose_logger.log(logginglevels.DEBUG_3,
                         'Package %s is already installed, skipping', pkg)
                     continue
@@ -767,32 +767,30 @@ For more information contact your distribution or package provider.
                 installedByKey = self.rpmdb.searchNevra(name=pkg.name)
                 comparable = []
                 for instpo in installedByKey:
-                    (n2, a2, e2, v2, r2) = instpo.pkgtup
-                    if rpmUtils.arch.isMultiLibArch(a2) == rpmUtils.arch.isMultiLibArch(pkg.arch):
+                    if rpmUtils.arch.isMultiLibArch(instpo.arch) == rpmUtils.arch.isMultiLibArch(pkg.arch):
                         comparable.append(instpo.pkgtup)
                     else:
                         self.verbose_logger.log(logginglevels.DEBUG_3,
-                            'Discarding non-comparable pkg %s.%s', n2, a2)
+                            'Discarding non-comparable pkg %s.%s', instpo.name, instpo.arch)
                         continue
                         
                 # go through each package 
                 if len(comparable) > 0:
-                    for instTup in comparable:
-                        (n2, a2, e2, v2, r2) = instTup
+                    for instpo in comparable:
                         rc = compareEVR((e2, v2, r2), (pkg.epoch, pkg.version, pkg.release))
-                        if rc < 0: # we're newer - this is an update, pass to them
-                            if n2 in exactarchlist:
-                                if pkg.arch == a2:
+                        if pkg > instpo: # we're newer - this is an update, pass to them
+                            if instpo.name in exactarchlist:
+                                if pkg.arch == instpo.arch:
                                     passToUpdate.append(pkg.pkgtup)
                             else:
                                 passToUpdate.append(pkg.pkgtup)
-                        elif rc == 0: # same, ignore
+                        elif pkg == instpo: # same, ignore
                             continue
-                        elif rc > 0: # lesser, check if the pkgtup is an exactmatch
-                                        # if so then add it to be installed,
-                                        # the user explicitly wants this version
-                                        # FIXME this is untrue if the exactmatch
-                                        # does not include a version-rel section
+                        elif pkg < instpo: # lesser, check if the pkgtup is an exactmatch
+                                           # if so then add it to be installed,
+                                           # the user explicitly wants this version
+                                           # FIXME this is untrue if the exactmatch
+                                           # does not include a version-rel section
                             if pkg.pkgtup in exactmatch:
                                 if not toBeInstalled.has_key(pkg.name): toBeInstalled[pkg.name] = []
                                 toBeInstalled[pkg.name].append(pkg)
@@ -998,12 +996,9 @@ For more information contact your distribution or package provider.
                 continue
 
             for installed_pkg in installedByKey:
-                (n, a, e, v, r) = po.pkgtup
-                (n2, a2, e2, v2, r2) = installed_pkg.pkgtup
-                rc = compareEVR((e2, v2, r2), (e, v, r))
-                if rc < 0: # we're newer - this is an update, pass to them
-                    if n2 in self.conf.exactarchlist:
-                        if a == a2:
+                if po > installed_pkg: # we're newer - this is an update, pass to them
+                    if installed_pkg.name in self.conf.exactarchlist:
+                        if po.arch == installed_pkg.arch:
                             updatepkgs.append((po, installed_pkg))
                             continue
                         else:
@@ -1012,10 +1007,7 @@ For more information contact your distribution or package provider.
                     else:
                         updatepkgs.append((po, installed_pkg))
                         continue
-                elif rc == 0: # same, ignore
-                    donothingpkgs.append(po)
-                    continue
-                elif rc > 0: 
+                else:
                     donothingpkgs.append(po)
                     continue
 
