@@ -17,6 +17,8 @@
 from Errors import PackageSackError
 from rpmUtils import miscutils
 from packages import YumInstalledPackage
+import warnings
+
 
 class PackageSackBase:
     """Base class that provides the interface for PackageSacks."""
@@ -46,7 +48,16 @@ class PackageSackBase:
     def searchNevra(self, name=None, epoch=None, ver=None, rel=None, arch=None):
         """return list of pkgobjects matching the nevra requested"""
         raise NotImplementedError()
-           
+    
+    def searchPO(self, po):
+        """return list of package objects matching the name, epoch, ver, rel,
+           arch of the package object passed in"""
+        raise NotImplementedError()
+    
+    def searchPkgTuple(self, pkgtup):
+        """return list of pkgobject matching the (n,a,e,v,r) tuple"""
+        raise NotImplementedError()
+        
     def searchRequires(self, name):
         """return list of package requiring the name (any evr and flag)"""
         raise NotImplementedError()
@@ -295,8 +306,10 @@ class PackageSack(PackageSackBase):
 
     def packagesByTuple(self, pkgtup):
         """return a list of package objects by (n,a,e,v,r) tuple"""
-        (n,a,e,v,r) = pkgtup
-        return self.searchNevra(name=n, arch=a, epoch=e, ver=v, rel=r)
+        warnings.warn('packagesByTuple() will go away in a future version of Yum.\n',
+                DeprecationWarning, stacklevel=2)
+        
+        return self.searchPkgTuple(pkgtup)
         
     def searchNevra(self, name=None, epoch=None, ver=None, rel=None, arch=None):
         """return list of pkgobjects matching the nevra requested"""
@@ -305,7 +318,19 @@ class PackageSack(PackageSackBase):
             return self.nevra[(name, epoch, ver, rel, arch)]
         else:
             return []
+
+    def searchPO(self, po):
+        """return list of package objects matching the name, epoch, ver, rel,
+           arch of the package object passed in"""
            
+        return self.searchNevra(name=po.name, epoch=po.epoch, ver=po.ver, 
+                                rel=po.rel, arch=po.arch)
+    
+    def searchPkgTuple(self, pkgtup):
+        """return list of pkgobject matching the (n,a,e,v,r) tuple"""
+        (n,a,e,v,r) = pkgtup
+        return self.searchNevra(name=n, arch=a, epoch=e, ver=v, rel=r)
+        
     def searchRequires(self, name):
         """return list of package requiring the name (any evr and flag)"""
         self._checkIndexes(failure='build')        
