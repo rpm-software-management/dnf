@@ -1,3 +1,14 @@
+2006-08-21 20:09  skvidal
+
+	* yum/rpmsack.py: 
+	make RPMDBPackageSack must inherit from PackageSackBase to use the
+	iterator method
+
+2006-08-21 20:01  skvidal
+
+	* ChangeLog: 
+	changelog update
+
 2006-08-21 19:54  skvidal
 
 	* yum.spec, yum/__init__.py: 2.9.5
