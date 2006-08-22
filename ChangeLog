@@ -1,15 +1,152 @@
-2006-08-09 10:40  lmacken
+2006-08-21 19:54  skvidal
 
-	* yum/update_md.py:
-	Rewrite to handle new metadata schema.
-	Allow scripted metadata access.
-	Accept YumRepository objects in add().
-	Cache notices for quick searching
+	* yum.spec, yum/__init__.py: 2.9.5
 
-	* yum-updatesd.py:
-	Remove (most of) the old metadata retrieval code.
-	Try and grab the update 'type' from the metadata so we can check if we
-	are dealing with any security updates.
+2006-08-21 16:16  katzj
+
+	* yum/: packageSack.py, rpmsack.py: just define __iter__ once in
+	the parent packageSack class and use the inheritance.  also, only
+	call returnPackages() once on __iter__
+
+2006-08-21 16:13  katzj
+
+	* yum/rpmsack.py: remove no longer used compat code
+
+2006-08-21 12:55  katzj
+
+	* yum/rpmsack.py: make the warnings give the useful stackframe
+
+2006-08-21 12:48  katzj
+
+	* yum/depsolve.py: fix a traceback due to the API changes
+
+2006-08-20 17:37  skvidal
+
+	* yum/depsolve.py: 
+	minor change
+
+2006-08-20 10:43  skvidal
+
+	* yum/: __init__.py, depsolve.py, rpmsack.py: 
+	more deprecation warnings added more deprecation warnings fixed
+
+2006-08-20 10:23  skvidal
+
+	* yum/depsolve.py: 
+	still more cleanups for deprecation warnings
+
+2006-08-20 10:15  skvidal
+
+	* yum/__init__.py: 
+	unnecessary code removal
+
+2006-08-20 10:02  skvidal
+
+	* yum/: __init__.py, depsolve.py: 
+	a few more fixes getInstalledPackageObject should probably be
+	deprecated, too
+
+2006-08-20 09:52  skvidal
+
+	* cli.py, yum-updatesd.py, yum/__init__.py, yum/depsolve.py,
+	yum/rpmsack.py: 
+	checking in lots of minor changes to get rid of deprecation
+	warnings add 'po' keyword to rpmsack.searchNevra so a package
+	object can be passed in instead of just nevras. Maybe should be a
+	new method to just take the package object or a more generic search
+	method.
+
+2006-08-19 16:20  skvidal
+
+	* yum/rpmsack.py: 
+	helps to have the iterator
+
+2006-08-19 16:19  skvidal
+
+	* cli.py, yum/__init__.py, yum/rpmsack.py: 
+	purge out getHdrList()
+
+2006-08-19 16:14  skvidal
+
+	* yum/: __init__.py, rpmsack.py, yumRepo.py: 
+	fixup a couple of problems
+
+2006-08-19 16:10  skvidal
+
+	* yum/rpmsack.py: 
+	emit deprecation warnings for annoying functions in
+	rpmsack/rpmdbholder
+
+2006-08-19 16:03  skvidal
+
+	* yummain.py, yum/constants.py: 
+	make YUM_PID_FILE a constant
+
+2006-08-19 15:59  skvidal
+
+	* yum/yumRepo.py: 
+	fix for metadata_cookie not expiring when people have broken clocks
+	and don't know how to use ntp :)
+
+2006-08-19 15:49  skvidal
+
+	* yum/yumRepo.py: fix for rh bug: 200693
+
+2006-08-19 15:42  skvidal
+
+	* cli.py: include nicolas mailhot's patch for -x == --exclude
+
+2006-08-19 15:41  skvidal
+
+	* yum/__init__.py: 
+	added chris lumens patch to fix pattern install() operations
+
+2006-08-19 15:22  skvidal
+
+	* rpmUtils/__init__.py: 
+	clean out all of old rpmdb code
+
+2006-08-19 15:22  skvidal
+
+	* yum/: packages.py, rpmsack.py: 
+	make rpmsack the default rpmdb interface minor cleanups
+
+2006-08-19 15:22  skvidal
+
+	* yum/__init__.py: 
+	- make rpmsack the default rpmdb interface - some minor pychecker
+	cleanups
+
+2006-08-17 01:51  skvidal
+
+	* yum/rpmsack.py: 
+	- fix up rpmsack to be able to be have more like RpmDBHolder.  -
+	make rpmsack.whatProvides() mostly work.
+	
+	a little more and we should be able to swap out then start cleaning
+	up.
+
+2006-08-09 10:44  lmacken
+
+	* ChangeLog, yum-updatesd.py, yum/update_md.py: 2006-08-09 10:40 
+	lmacken
+	
+	    * yum/update_md.py:
+	    Rewrite to handle new metadata schema.
+	    Allow scripted metadata access.
+	    Accept YumRepository objects in add().
+	    Cache notices for quick searching
+	
+	    * yum-updatesd.py:
+	     Remove (most of) the old metadata retrieval code.
+	     Try and grab the update 'type' from the metadata so we can
+	check if we
+	     are dealing with any security updates.
+
+2006-08-09 00:19  skvidal
+
+	* ChangeLog: 
+	changelog check in
 
 2006-08-09 00:14  skvidal
 
