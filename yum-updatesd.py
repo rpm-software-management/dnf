@@ -342,13 +342,13 @@ class UpdatesDaemon(yum.YumBase):
         self.updateInfo = []
         for (new, old) in self.up.getUpdatesTuples():
             n = getDbusPackageDict(self.getPackageObject(new))
-            o = getDbusPackageDict(self.rpmdb.packagesByTuple(old)[0])
+            o = getDbusPackageDict(self.rpmdb.searchPkgTuple(old)[0])
             self.updateInfo.append((n, o))
 
         if self.conf.obsoletes:
             for (obs, inst) in self.up.getObsoletesTuples():
                 n = getDbusPackageDict(self.getPackageObject(obs))
-                o = getDbusPackageDict(self.rpmdb.packagesByTuple(inst)[0])
+                o = getDbusPackageDict(self.rpmdb.searchPkgTuple(inst)[0])
                 self.updateInfo.append((n, o))
 
         self.updateInfoTime = time.time()
@@ -357,7 +357,7 @@ class UpdatesDaemon(yum.YumBase):
         # figure out the updates
         for (new, old) in self.up.getUpdatesTuples():
             updating = self.getPackageObject(new)
-            updated = self.rpmdb.packagesByTuple(old)[0]
+            updated = self.rpmdb.searchPkgTuple(old)[0]
                 
             self.tsInfo.addUpdate(updating, updated)
 
@@ -365,7 +365,7 @@ class UpdatesDaemon(yum.YumBase):
         if self.conf.obsoletes:
             for (obs, inst) in self.up.getObsoletesTuples():
                 obsoleting = self.getPackageObject(obs)
-                installed = self.rpmdb.packagesByTuple(inst)[0]
+                installed = self.rpmdb.searchPkgTuple(inst)[0]
                 
                 self.tsInfo.addObsoleting(obsoleting, installed)
                 self.tsInfo.addObsoleted(installed, obsoleting)

@@ -203,13 +203,12 @@ class RpmBase:
         if comparePoEVR(self, other) >= 0:
             return True
         return False
-    
 
     def __eq__(self, other):
         if comparePoEVR(self, other) == 0:
             return True
         return False
-    
+
     def __ne__(self, other):
         if comparePoEVR(self, other) != 0:
             return True

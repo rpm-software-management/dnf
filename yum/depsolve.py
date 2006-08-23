@@ -430,7 +430,7 @@ class Depsolve(object):
                 needmode = thismode
                 if self.rpmdb.installed(name=i_n, arch=i_a, ver=i_v, 
                                         epoch=i_e, rel=i_r):
-                    needpo = self.rpmdb.packagesByTuple(insttuple)[0]
+                    needpo = self.rpmdb.searchPkgTuple(insttuple)[0]
                 else:
                     needpo = self.getPackageObject(insttuple)
 

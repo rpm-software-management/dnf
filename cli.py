@@ -852,7 +852,7 @@ For more information contact your distribution or package provider.
         if len(userlist) == 0: # simple case - do them all
             for (obsoleting, installed) in obsoletes:
                 obsoleting_pkg = self.getPackageObject(obsoleting)
-                installed_pkg =  self.rpmdb.packagesByTuple(installed)[0]
+                installed_pkg =  self.rpmdb.searchPkgTuple(installed)[0]
                 self.tsInfo.addObsoleting(obsoleting_pkg, installed_pkg)
                 self.tsInfo.addObsoleted(installed_pkg, obsoleting_pkg)
                                 
@@ -863,7 +863,7 @@ For more information contact your distribution or package provider.
                     self.verbose_logger.log(logginglevels.DEBUG_2, 'Not Updating Package that is already obsoleted: %s.%s %s:%s-%s', old)
                 else:
                     updating_pkg = self.getPackageObject(new)
-                    updated_pkg = self.rpmdb.packagesByTuple(old)[0]
+                    updated_pkg = self.rpmdb.searchPkgTuple(old)[0]
                     self.tsInfo.addUpdate(updating_pkg, updated_pkg)
 
 
@@ -898,7 +898,7 @@ For more information contact your distribution or package provider.
             for po in updateMatches:
                 for (new, old) in updates:
                     if po.pkgtup == new:
-                        updated_pkg = self.rpmdb.packagesByTuple(old)[0]
+                        updated_pkg = self.rpmdb.searchPkgTuple(old)[0]
                         self.tsInfo.addUpdate(po, updated_pkg)
 
 

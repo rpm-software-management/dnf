@@ -1046,7 +1046,7 @@ class YumBase(depsolve.Depsolve):
             for (pkgtup, instTup) in self.up.getObsoletesTuples():
                 (n,a,e,v,r) = pkgtup
                 pkgs = self.pkgSack.searchNevra(name=n, arch=a, ver=v, rel=r, epoch=e)
-                instpo = self.rpmdb.packagesByTuple(instTup)[0] # the first one
+                instpo = self.rpmdb.searchPkgTuple(instTup)[0] # the first one
                 for po in pkgs:
                     obsoletes.append(po)
                     obsoletesTuples.append((po, instpo))
@@ -1524,7 +1524,7 @@ class YumBase(depsolve.Depsolve):
         #FIXME - this should probably emit a deprecation warning telling
         # people to just use the command below
         
-        po = self.rpmdb.packagesByTuple(pkgtup)[0] # take the first one
+        po = self.rpmdb.searchPkgTuple(pkgtup)[0] # take the first one
         return po
         
     def gpgKeyCheck(self):
@@ -1845,7 +1845,7 @@ class YumBase(depsolve.Depsolve):
             self.verbose_logger.log(logginglevels.DEBUG_2, 'Updating Everything')
             for (obsoleting, installed) in obsoletes:
                 obsoleting_pkg = self.getPackageObject(obsoleting)
-                installed_pkg =  self.rpmdb.packagesByTuple(installed)[0]
+                installed_pkg =  self.rpmdb.searchPkgTuple(installed)[0]
                 txmbr = self.tsInfo.addObsoleting(obsoleting_pkg, installed_pkg)
                 self.tsInfo.addObsoleted(installed_pkg, obsoleting_pkg)
                 tx_return.append(txmbr)
@@ -1856,7 +1856,7 @@ class YumBase(depsolve.Depsolve):
                         old)
                 else:
                     updating_pkg = self.getPackageObject(new)
-                    updated_pkg = self.rpmdb.packagesByTuple(old)[0]
+                    updated_pkg = self.rpmdb.searchPkgTuple(old)[0]
                     txmbr = self.tsInfo.addUpdate(updating_pkg, updated_pkg)
                     tx_return.append(txmbr)
             
@@ -1913,7 +1913,7 @@ class YumBase(depsolve.Depsolve):
                         self.verbose_logger.log(logginglevels.DEBUG_2, 'Not Updating Package that is already obsoleted: %s.%s %s:%s-%s', 
                             updated)
                     else:
-                        updated_pkg =  self.rpmdb.packagesByTuple(updated)[0]
+                        updated_pkg =  self.rpmdb.searchPkgTuple(updated)[0]
                         txmbr = self.tsInfo.addUpdate(available_pkg, updated_pkg)
                         tx_return.append(txmbr)
                     
