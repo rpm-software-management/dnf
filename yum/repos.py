@@ -45,7 +45,7 @@ class RepoStorage:
 
     def add(self, repoobj):
         if self.repos.has_key(repoobj.id):
-            raise Errors.RepoError, 'Repository %s is listed more than once in the configuration' % (repoobj.id)
+            raise Errors.DuplicateRepoError, 'Repository %s is listed more than once in the configuration' % (repoobj.id)
         self.repos[repoobj.id] = repoobj
         
 

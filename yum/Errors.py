@@ -40,6 +40,11 @@ class RepoError(YumBaseError):
         YumBaseError.__init__(self)
         self.args = args
 
+class DuplicateRepoError(RepoError):
+    def __init__(self, args=None):
+        RepoError.__init__(self)
+        self.args = args
+
 class ConfigError(YumBaseError):
     def __init__(self, args=None):
         YumBaseError.__init__(self)
