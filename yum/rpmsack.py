@@ -53,17 +53,6 @@ class RPMDBPackageSack(PackageSackBase):
     def buildIndexes(self):
         self.header_indexes = {}
         
-        try:
-            # we need the find a known index so we can test if
-            # rpm/rpm-python allows us to grab packages by db index.
-            mi = self.ts.dbMatch()
-            hdr = mi.next()
-            known_index = mi.instance()
-            mi = self.ts.dbMatch(0, known_index)
-            hdr = mi.next()
-        except (TypeError, StopIteration), e:
-            raise PackageSackError, "Match Iterators not supported in rpm. Please upgrade rpm-python"
-            
         mi = self.ts.dbMatch()
         for hdr in mi:
             pkgtuple = self._hdr2pkgTuple(hdr)
@@ -157,7 +146,7 @@ class RPMDBPackageSack(PackageSackBase):
 
     def simplePkgList(self, repoid=None):
         return self.pkglist
-    
+   
     def installed(self, name=None, arch=None, epoch=None, ver=None, rel=None, po=None):
         if po:
             name = po.name
@@ -425,7 +414,7 @@ def main():
     sack = RPMDBPackageSack(ts)
     sack.buildIndexes()
 
-    for p in sack.returnPackages():
+    for p in sack.simplePkgList():
         print p
 
 if __name__ == '__main__':
