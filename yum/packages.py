@@ -156,12 +156,6 @@ class PackageObject:
                                            self.returnSimple('arch'))
         return string                                           
 
-    def returnEVR(self):
-        """returns a tuple of epoch, ver, rel"""
-        return (self.returnSimple('epoch'), self.returnSimple('version'), self.returnSimple('release'))
-        
-        return                            
-
     def returnChangelog(self):
         """return changelog entries"""
         return self.changelog
@@ -264,7 +258,7 @@ class RpmBase:
                 if f != 'EQ':
                     # isn't this odd, it's not 'EQ' - it really should be
                     # use the pkgobj's evr for the comparison
-                    (e, v, r) = self.returnEVR()
+                    (e, v, r) = (self.epoch, self.ver, self.rel)
                 # and you thought we were done having fun
                 # if the requested release is left out then we have
                 # to remove release from the package prco to make sure the match
@@ -329,7 +323,8 @@ class YumAvailablePackage(PackageObject, RpmBase):
             self.rel = self.returnSimple('release')
             self.arch = self.returnSimple('arch')
             self.pkgtup = self._pkgtup()
-         
+            self.remote_path = self.returnSimple('relativepath')
+            
     def size(self):
         return self.returnSimple('packagesize')
 
@@ -349,6 +344,24 @@ class YumAvailablePackage(PackageObject, RpmBase):
         ver = self.printVer()
         return "%s.%s %s" % (self.name, self.arch, ver)
 
+    def _requires(self):
+        return self.returnPrco('requires')
+    
+    def _provides(self):
+        return self.returnPrco('provides')
+    
+    def _obsoletes(self):
+        return self.returnPrco('obsoletes')
+        
+    def _conflicts(self):
+        return self.returnPrco('conflicts')
+
+    requires = property(_requires)
+    provides = property(_provides)
+    obsoletes = property(_obsoletes)
+    conflicts = property(_conflicts)
+    
+    
     def returnLocalHeader(self):
         """returns an rpm header object from the package object's local
            header cache"""
@@ -424,7 +437,9 @@ class YumAvailablePackage(PackageObject, RpmBase):
             reqlist.append(prcostr)
         
         return reqlist
-        
+    
+    
+    
     def importFromDict(self, pkgdict):
         """handles an mdCache package dictionary item to populate out 
            the package information"""

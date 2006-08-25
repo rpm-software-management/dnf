@@ -489,14 +489,11 @@ class PackageSack(PackageSackBase):
             where = self.returnPackages()
 
         for pkg in where:
-            (n, e, v ,r, a) = pkg.returnNevraTuple()
-            if not highdict.has_key((n, a)):
-                highdict[(n, a)] = pkg
+            if not highdict.has_key((pkg.name, pkg.arch)):
+                highdict[(pkg.name, pkg.arch)] = pkg
             else:
-                pkg2 = highdict[(n, a)]
-                (e2, v2, r2) = pkg2.returnEVR()
-                rc = miscutils.compareEVR((e,v,r), (e2, v2, r2))
-                if rc > 0:
+                pkg2 = highdict[(pkg.name, pkg.arch)]
+                if pkg > pkg2:
                     highdict[(n, a)] = pkg
         
         if naTup:
@@ -513,18 +510,15 @@ class PackageSack(PackageSackBase):
            be compared to each other for highest version"""
         highdict = {}
         for pkg in self.returnPackages():
-            (n, e, v ,r, a) = pkg.returnNevraTuple()
-            if not highdict.has_key(n):
-                highdict[n] = []
-                highdict[n].append(pkg)
+            if not highdict.has_key(pkg.name):
+                highdict[pkg.name] = []
+                highdict[pkg.name].append(pkg)
             else:
-                pkg2 = highdict[n][0]
-                (e2, v2, r2) = pkg2.returnEVR()
-                rc = miscutils.compareEVR((e,v,r), (e2, v2, r2))
-                if rc > 0:
-                    highdict[n] = [pkg]
-                elif rc == 0:
-                    highdict[n].append(pkg)
+                pkg2 = highdict[pkg.name][0]
+                if pkg > pkg2:
+                    highdict[pkg.name] = [pkg]
+                if pkg == pkg2:
+                    highdict[pkg.name].append(pkg)
                 
         if name:
             if highdict.has_key(name):
