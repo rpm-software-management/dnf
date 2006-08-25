@@ -75,7 +75,7 @@ class YumOutput:
             print _("Epoch  : %s") % pkg.epoch
         print _("Version: %s") % pkg.version
         print _("Release: %s") % pkg.release
-        print _("Size   : %s") % self.format_number(float(pkg.size()))
+        print _("Size   : %s") % self.format_number(float(pkg.size))
         print _("Repo   : %s") % pkg.returnSimple('repoid')
         print _("Summary: %s") % pkg.returnSimple('summary')
         print _("Description:\n%s") % pkg.returnSimple('description')
@@ -232,7 +232,7 @@ class YumOutput:
             # the package size fails, log the error and don't report download
             # size
             try:
-                size = int(pkg.size())
+                size = int(pkg.size)
                 totsize += size
             except:
                  error = True
@@ -268,7 +268,7 @@ class YumOutput:
                 (n,a,e,v,r) = txmbr.pkgtup
                 evr = txmbr.po.printVer()
                 repoid = txmbr.repoid
-                pkgsize = float(txmbr.po.size())
+                pkgsize = float(txmbr.po.size)
                 size = self.format_number(pkgsize)
                 msg = " %-22s  %-9s  %-15s  %-16s  %5s\n" % (n, a,
                               evr, repoid, size)

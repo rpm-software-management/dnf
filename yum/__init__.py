@@ -642,7 +642,7 @@ class YumBase(depsolve.Depsolve):
             local = po.localPkg()
             if os.path.exists(local):
                 cursize = os.stat(local)[6]
-                totsize = int(po.size())
+                totsize = int(po.size)
                 try:
                     result = self.verifyPkg(local, po, raiseError=1)
                 except URLGrabError, e: # fails the check

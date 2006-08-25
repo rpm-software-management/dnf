@@ -265,10 +265,12 @@ class RpmBase:
         
     def returnChangelog(self):
         """return changelog entries"""
+        # fixme - maybe should die - make 'changelog' just a property/attribute
         return self.changelog
         
     def returnFileEntries(self, ftype='file'):
         """return list of files based on type"""
+        # fixme - maybe should die - use direct access to attribute
         if self.files.has_key(ftype):
             return self.files[ftype]
         else:
@@ -276,9 +278,9 @@ class RpmBase:
             
     def returnFileTypes(self):
         """return list of types of files in the package"""
+        # maybe should die - use direct access to attribute
         return self.files.keys()
     
-
 
 class YumAvailablePackage(PackageObject, RpmBase):
     """derived class for the  packageobject and RpmBase packageobject yum
@@ -304,9 +306,7 @@ class YumAvailablePackage(PackageObject, RpmBase):
             self.arch = self.returnSimple('arch')
             self.pkgtup = self._pkgtup()
             self.remote_path = self.returnSimple('relativepath')
-            
-    def size(self):
-        return self.returnSimple('packagesize')
+            self.size =  self.returnSimple('packagesize')
 
 
     def printVer(self):
@@ -611,9 +611,11 @@ class YumHeaderPackage(YumAvailablePackage):
     def _pkgtup(self):
         return (self.name, self.arch, self.epoch, self.version, self.release)
     
-    def size(self):
+    def _size(self):
         return self.tagByName('size')
-
+    
+    size = property(_size)
+    
     def printVer(self):
         """returns a printable version string - including epoch, if it's set"""
         if self.epoch != '0':
