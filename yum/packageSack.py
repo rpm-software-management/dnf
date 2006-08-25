@@ -494,7 +494,7 @@ class PackageSack(PackageSackBase):
             else:
                 pkg2 = highdict[(pkg.name, pkg.arch)]
                 if pkg > pkg2:
-                    highdict[(n, a)] = pkg
+                    highdict[(pkg.name, pkg.arch)] = pkg
         
         if naTup:
             if highdict.has_key(naTup):

@@ -305,8 +305,6 @@ class YumAvailablePackage(PackageObject, RpmBase):
             self.rel = self.returnSimple('release')
             self.arch = self.returnSimple('arch')
             self.pkgtup = self._pkgtup()
-            self.remote_path = self.returnSimple('relativepath')
-            self.size =  self.returnSimple('packagesize')
 
 
     def printVer(self):
@@ -338,6 +336,16 @@ class YumAvailablePackage(PackageObject, RpmBase):
     provides = property(_provides)
     obsoletes = property(_obsoletes)
     conflicts = property(_conflicts)
+    
+    def _size(self):
+        return self.returnSimple('packagesize')
+    
+    def _remote_path(self):
+        return self.returnSimple('relativepath')
+    
+    size = property(_size)
+    remote_path = property(_remote_path)
+    
     
     
     def returnLocalHeader(self):
