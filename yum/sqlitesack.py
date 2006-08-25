@@ -38,43 +38,81 @@ class YumAvailablePackageSqlite(YumAvailablePackage):
         self.pkgId = pkgdict.pkgId
         self.simple['id'] = self.pkgId
         self.changelog = None
+        self.files = None
     
-    def loadChangelog(self):
-        if hasattr(self, 'dbusedother'):
-            return
-        self.dbusedother = 1
-        self.changelog = self.sack.getChangelog(self.pkgId)
-
     def returnSimple(self, varname):
-        if (not self.simple.has_key(varname) and not hasattr(self,'dbusedsimple')):
-            # Make sure we only try once to get the stuff from the database
-            self.dbusedsimple = 1
-            details = self.sack.getPackageDetails(self.pkgId)
-            self.importFromDict(details)
+        if not self.simple.has_key(varname):
+            cache = self.sack.primarydb[self.repoid]
+            c = cache.cursor()
+            c.execute("select %s from packages where pkgId = %s",
+                      varname, self.pkgId)
+            r = c.fetchone()
+            self.simple[varname] = r[0]
 
         return YumAvailablePackage.returnSimple(self,varname)
 
-    def loadFiles(self):
-        if (hasattr(self,'dbusedfiles')):
+    def _loadFiles(self):
+        if self.files is not None:
             return
-        self.dbusedfiles = 1
-        self.files = self.sack.getFiles(self.pkgId)
+        result = {}
+        cache = self.sack.filelistsdb[self.repoid]
+        cur = cache.cursor()
+        cur.execute("select filelist.dirname as dirname, "
+                    "filelist.filetypes as filetypes, " 
+                    "filelist.filenames as filenames from packages,filelist "
+                    "where packages.pkgId = %s and "
+                    "packages.pkgKey = filelist.pkgKey", self.pkgId)
+        for ob in cur.fetchall():
+            dirname = ob['dirname']
+            filetypes = decodefiletypelist(ob['filetypes'])
+            filenames = decodefilenamelist(ob['filenames'])
+            while(filenames):
+                if dirname:
+                    filename = dirname+'/'+filenames.pop()
+                else:
+                    filename = filenames.pop()
+                filetype = filetypes.pop()
+                result.setdefault(filetype,[]).append(filename)
+        self.files = result
 
     def returnChangelog(self):
-        self.loadChangelog()
-        return YumAvailablePackage.returnChangelog(self)
+        if not self.changelog:
+            cache = self.sack.otherdb[self.repoid]
+            cur = cache.cursor()
+            cur.execute("select changelog.date as date, "
+                        "changelog.author as author, "
+                        "changelog.changelog as changelog "
+                        "from packages,changelog where packages.pkgId = %s "
+                        "and packages.pkgKey = changelog.pkgKey", self.pkgId)
+            for ob in cur.fetchall():
+                result.append( (ob['date'], ob['author'], ob['changelog']) )
+            self.changelog = result
+        return self.changelog
             
     def returnFileEntries(self, ftype='file'):
-        self.loadFiles()
+        self._loadFiles()
         return YumAvailablePackage.returnFileEntries(self,ftype)
     
     def returnFileTypes(self):
-        self.loadFiles()
+        self._loadFiles()
         return YumAvailablePackage.returnFileTypes(self)
 
     def returnPrco(self, prcotype):
         if not self.prco[prcotype]:
-           self.prco = self.sack.getPrco(self.pkgId, prcotype)
+            cache = self.sack.primarydb[self.repoid]
+            cur = cache.cursor()
+            cur.execute("select %s.name as name, %s.version as version, "
+                        "%s.release as release, %s.epoch as epoch, "
+                        "%s.flags as flags from packages,%s "
+                        "where packages.pkgId = %s and "
+                        "packages.pkgKey = %s.pkgKey",
+                        prcotype, prcotype, prcotype, prcotype,
+                        prcotype, prcotype, self.pkgId, prcotype)
+            for ob in cur.fetchall():
+                self.prco[prcotype].append((ob['name'],
+                                            ob['flags'],
+                                            (ob['epoch'], ob['version'], ob['release'])))
+
         return self.prco[prcotype]
 
 class YumSqlitePackageSack(yumRepo.YumPackageSack):
@@ -125,67 +163,7 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
             # We can not handle this yet...
             raise "Sorry sqlite does not support %s" % (datatype)
     
-    def getChangelog(self,pkgId):
-        result = []
-        for (rep,cache) in self.otherdb.items():
-            cur = cache.cursor()
-            cur.execute("select changelog.date as date,\
-                changelog.author as author,\
-                changelog.changelog as changelog from packages,changelog where packages.pkgId = %s and packages.pkgKey = changelog.pkgKey",pkgId)
-            for ob in cur.fetchall():
-                result.append(( ob['date'],
-                                ob['author'],
-                                ob['changelog']
-                              ))
-        return result
-
-    def getPrco(self,pkgId, prcotype=None):
-        if prcotype is not None:
-            result = {'requires': [], 'provides': [], 'obsoletes': [], 'conflicts': []}
-        else:
-            result = { prcotype: [] }
-        for (rep, cache) in self.primarydb.items():
-            cur = cache.cursor()
-            for prco in result.keys():
-                cur.execute("select %s.name as name, %s.version as version,\
-                    %s.release as release, %s.epoch as epoch, %s.flags as flags\
-                    from packages,%s\
-                    where packages.pkgId = %s and packages.pkgKey = %s.pkgKey", prco, prco, prco, prco, prco, prco, pkgId, prco)
-                for ob in cur.fetchall():
-                    name = ob['name']
-                    version = ob['version']
-                    release = ob['release']
-                    epoch = ob['epoch']
-                    flags = ob['flags']
-                    result[prco].append((name, flags, (epoch, version, release)))
-        return result
-
     # Get all files for a certain pkgId from the filelists.xml metadata
-    def getFiles(self,pkgId):
-        for (rep,cache) in self.filelistsdb.items():
-            found = False
-            result = {}
-            cur = cache.cursor()
-            cur.execute("select filelist.dirname as dirname,\
-                filelist.filetypes as filetypes,\
-                filelist.filenames as filenames from packages,filelist\
-                where packages.pkgId = %s and packages.pkgKey = filelist.pkgKey", pkgId)
-            for ob in cur.fetchall():
-                found = True
-                dirname = ob['dirname']
-                filetypes = decodefiletypelist(ob['filetypes'])
-                filenames = decodefilenamelist(ob['filenames'])
-                while(filenames):
-                    if dirname:
-                        filename = dirname+'/'+filenames.pop()
-                    else:
-                        filename = filenames.pop()
-                    filetype = filetypes.pop()
-                    result.setdefault(filetype,[]).append(filename)
-            if (found):
-                return result    
-        return {}
-            
     # Search packages that either provide something containing name
     # or provide a file containing name 
     def searchAll(self,name, query_type='like'):
