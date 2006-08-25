@@ -767,7 +767,7 @@ For more information contact your distribution or package provider.
                 comparable = []
                 for instpo in installedByKey:
                     if rpmUtils.arch.isMultiLibArch(instpo.arch) == rpmUtils.arch.isMultiLibArch(pkg.arch):
-                        comparable.append(instpo.pkgtup)
+                        comparable.append(instpo)
                     else:
                         self.verbose_logger.log(logginglevels.DEBUG_3,
                             'Discarding non-comparable pkg %s.%s', instpo.name, instpo.arch)
@@ -789,7 +789,7 @@ For more information contact your distribution or package provider.
                                            # the user explicitly wants this version
                                            # FIXME this is untrue if the exactmatch
                                            # does not include a version-rel section
-                            if pkg.pkgtup in exactmatch:
+                            if pkg in exactmatch:
                                 if not toBeInstalled.has_key(pkg.name): toBeInstalled[pkg.name] = []
                                 toBeInstalled[pkg.name].append(pkg)
                 else: # we've not got any installed that match n or n+a
