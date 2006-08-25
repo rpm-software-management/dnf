@@ -300,18 +300,14 @@ def formatRequire (name, version, flags):
     return s
     
 def flagToString(flags):
-    if flags & rpm.RPMSENSE_EQUAL & rpm.RPMSENSE_GREATER:
-        return 'GE'
-    if flags & rpm.RPMSENSE_EQUAL & rpm.RPMSENSE_LESS:
-        return 'LE'
-    if flags & rpm.RPMSENSE_EQUAL:
-        return 'EQ'
-    if flags & rpm.RPMSENSE_GREATER:
-        return 'GT'
-    if flags & rpm.RPMSENSE_LESS:
-        return 'LT'
+    flags = flags & 0xf
+    if flags == 0: return None
+    if flags == 2: return 'LT'
+    if flags == 4: return 'GT'
+    if flags == 8: return 'EQ'
+    if flags == 10: return 'LE'
+    if flags == 12: return 'GE'
 
-    # Umm...now I'm screwed
     return flags
 
 def stringToVersion(verstring):
