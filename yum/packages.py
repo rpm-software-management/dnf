@@ -524,6 +524,7 @@ class YumHeaderPackage(YumAvailablePackage):
         self.summary = self.tagByName('summary')
         self.description = self.tagByName('description')
         self.pkgid = self.tagByName(rpm.RPMTAG_SHA1HEADER)
+        self.size = self.tagByName('size')
 
         self._populatePrco()
         
@@ -580,54 +581,6 @@ class YumHeaderPackage(YumAvailablePackage):
     def returnLocalHeader(self):
         return self.hdr
 
-
-    def getProvidesNames(self):
-        """returns a list of providesNames"""
-        
-        provnames = self.tagByName('providename')
-        if type(provnames) is not types.ListType():
-            if type(provnames) is types.StringType():
-                provnames = [provnames]
-            else:
-                provnames = []
-
-        return provnames
-
-    def requiresList(self):
-        """return a list of all of the strings of the package requirements"""
-        reqlist = []
-        names = self.hdr[rpm.RPMTAG_REQUIRENAME]
-        flags = self.hdr[rpm.RPMTAG_REQUIREFLAGS]
-        ver = self.hdr[rpm.RPMTAG_REQUIREVERSION]
-        if names is not None:
-            tmplst = zip(names, flags, ver)
-        
-        for (n, f, v) in tmplst:
-            req = rpmUtils.miscutils.formatRequire(n, v, f)
-            reqlist.append(req)
-        
-        return reqlist
-
-    def _pkgtup(self):
-        return (self.name, self.arch, self.epoch, self.version, self.release)
-    
-    def _size(self):
-        return self.tagByName('size')
-    
-    size = property(_size)
-    
-    def printVer(self):
-        """returns a printable version string - including epoch, if it's set"""
-        if self.epoch != '0':
-            ver = '%s:%s-%s' % (self.epoch, self.version, self.release)
-        else:
-            ver = '%s-%s' % (self.version, self.release)
-        
-        return ver
-    
-    def compactPrint(self):
-        ver = self.printVer()
-        return "%s.%s %s" % (self.name, self.arch, ver)
 
 
 class YumInstalledPackage(YumHeaderPackage):
