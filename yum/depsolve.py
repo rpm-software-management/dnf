@@ -368,19 +368,17 @@ class Depsolve(object):
             
             requirementTuple = (needname, flags, needversion)
 
-            CheckDeps, missingdep = self._requiringFromInstalled(requiringPkg.returnNevraTuple(),
+            CheckDeps, missingdep = self._requiringFromInstalled(requiringPkg,
                                                     requirementTuple, errormsgs)
 
 
         return (CheckDeps, missingdep, conflicts, errormsgs)
 
 
-    def _requiringFromInstalled(self, requiringPkg, requirement, errorlist):
+    def _requiringFromInstalled(self, requiringPo, requirement, errorlist):
         """processes the dependency resolution for a dep where the requiring 
            package is installed"""
 
-        # FIXME - should we think about dealing exclusively in package objects?
-        requiringPo = apply(self.rpmdb.searchNevra, requiringPkg)[0]
         (name, arch, epoch, ver, rel) = requiringPo.pkgtup
         
         (needname, needflags, needversion) = requirement

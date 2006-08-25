@@ -405,7 +405,7 @@ class PackageSack(PackageSackBase):
         """add a pkgobject to the packageSack"""
 
         repoid = obj.returnSimple('repoid')
-        (name, epoch, ver, rel, arch) = obj.returnNevraTuple()
+        (name, arch, epoch, ver, rel) = obj.pkgtup
         
         if self.compatarchs:
             if self.compatarchs.has_key(arch):
@@ -444,7 +444,7 @@ class PackageSack(PackageSackBase):
                     for file in obj.returnFileEntries(ftype):
                         self._addToDictAsList(self.filenames, file, obj)
                 self._addToDictAsList(self.pkgsByID, obj.returnSimple('id'), obj)
-                (name, epoch, ver, rel, arch) = obj.returnNevraTuple()
+                (name, arch, epoch, ver, rel) = obj.pkgtup
                 self._addToDictAsList(self.nevra, (name, epoch, ver, rel, arch), obj)
                 self._addToDictAsList(self.nevra, (name, None, None, None, None), obj)
         
@@ -537,7 +537,7 @@ class PackageSack(PackageSackBase):
                        
     def printPackages(self):
         for pkg in self.returnPackages():
-            print pkg.returnNevraPrintable()
+            print pkg
 
     def excludeArchs(self, archlist):
         """exclude incompatible arches. archlist is a list of compatible arches"""

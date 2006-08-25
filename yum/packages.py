@@ -119,47 +119,27 @@ class PackageObject:
         self.checksums = [] # (type, checksum, id(0,1)
         
     def __str__(self):
-        return self.returnNevraPrintable()
+        if self.returnSimple('epoch') == '0':
+            out = '%s - %s-%s.%s' % (self.returnSimple('name'), 
+                                     self.returnSimple('version'),
+                                     self.returnSimple('release'), 
+                                     self.returnSimple('arch'))
+        else:
+            out = '%s - %s:%s-%s.%s' % (self.returnSimple('name'), 
+                                        self.returnSimple('epoch'), 
+                                        self.returnSimple('version'), 
+                                        self.returnSimple('release'), 
+                                        self.returnSimple('arch'))
+        return out
 
     def returnSimple(self, varname):
         return self.simple[varname]
 
-    def simpleItems(self):
-        return self.simple.keys()            
-
-    def returnID(self):
-        return self.returnSimple('id')
-
-    def returnPackageTuple(self):
+    def _pkgtup(self):
         return (self.returnSimple('name'), self.returnSimple('arch'), 
                 self.returnSimple('epoch'),self.returnSimple('version'), 
                 self.returnSimple('release'))
         
-    def returnNevraTuple(self):
-        return (self.returnSimple('name'), self.returnSimple('epoch'), 
-                self.returnSimple('version'),self.returnSimple('release'), 
-                self.returnSimple('arch'))
-    
-    def returnNevraPrintable(self):
-        """return printable string for the pkgname/object
-           name - epoch:ver-rel.arch"""
-        if self.returnSimple('epoch') == '0':
-            string = '%s - %s-%s.%s' % (self.returnSimple('name'), 
-                                        self.returnSimple('version'),
-                                        self.returnSimple('release'), 
-                                        self.returnSimple('arch'))
-        else:
-            string = '%s - %s:%s-%s.%s' % (self.returnSimple('name'), 
-                                           self.returnSimple('epoch'), 
-                                           self.returnSimple('version'), 
-                                           self.returnSimple('release'), 
-                                           self.returnSimple('arch'))
-        return string                                           
-
-    def returnChangelog(self):
-        """return changelog entries"""
-        return self.changelog
-
 
 class RpmBase:
     """return functions and storage for rpm-specific data"""
@@ -328,8 +308,6 @@ class YumAvailablePackage(PackageObject, RpmBase):
     def size(self):
         return self.returnSimple('packagesize')
 
-    def _pkgtup(self):
-        return self.returnPackageTuple()
 
     def printVer(self):
         """returns a printable version string - including epoch, if it's set"""
