@@ -389,18 +389,23 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
                 'url': db.url, 'vendor': db.rpm_vendor, 'license': db.rpm_license }
       return y
 
-    def simplePkgList(self, repoid=None):
-        """returns a list of pkg tuples (n, a, e, v, r) optionally from a single repoid"""
+    def simplePkgList(self):
+        """returns a list of pkg tuples (n, a, e, v, r) from the sack"""
+        
+        if hasattr(self, 'pkglist'):
+            if self.pkglist:
+                return self.pkglist
+            
         simplelist = []
         for (rep,cache) in self.primarydb.items():
-            if (repoid == None or repoid == rep):
-                cur = cache.cursor()
-                cur.execute("select pkgId,name,epoch,version,release,arch from packages")
-                for pkg in cur.fetchall():
-                    if (self.excludes[rep].has_key(pkg.pkgId)):
-                        continue                        
-                    simplelist.append((pkg.name, pkg.arch, pkg.epoch, pkg.version, pkg.release)) 
-                    
+            cur = cache.cursor()
+            cur.execute("select pkgId,name,epoch,version,release,arch from packages")
+            for pkg in cur.fetchall():
+                if (self.excludes[rep].has_key(pkg.pkgId)):
+                    continue                        
+                simplelist.append((pkg.name, pkg.arch, pkg.epoch, pkg.version, pkg.release)) 
+        
+        self.pkglist = simplelist
         return simplelist
 
     def returnNewestByNameArch(self, naTup=None):

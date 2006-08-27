@@ -18,7 +18,9 @@ from Errors import PackageSackError
 from rpmUtils import miscutils
 from packages import YumInstalledPackage
 import warnings
-
+import misc
+import re
+import fnmatch
 
 class PackageSackBase:
     """Base class that provides the interface for PackageSacks."""
@@ -133,6 +135,87 @@ class PackageSackBase:
 
     def searchPackages(self, fields, criteria_re, callback):
         raise NotImplementedError()
+    
+    def matchPackages(self, matchlist, casematch=False):
+        """take a list of user strings and match the packages in the sack against it
+           this will match against:
+           name
+           name.arch
+           name-ver-rel.arch
+           name-ver
+           name-ver-rel
+           epoch:name-ver-rel.arch
+           name-epoch:ver-rel.arch
+           
+           it returns 3 lists exactmatch, matched, unmatched
+           exactmatch = package objects matching exactly to the specified input (using no globs)
+           matched = package objects matching via globs
+           unmatched = user input that matched nothing
+           
+           Arguments:
+             matchlist: list
+               list of things to match
+             
+             casematch: Boolean
+                if true then match case sensitively
+                if false then match case insensitively
+                default False
+           """
+        pkgdict = {}
+        # get everything together
+        for pkgtup in self.simplePkgList():
+            (n,a,e,v,r) = pkgtup
+            name = n
+            nameArch = '%s.%s' % (n, a)
+            nameVerRelArch = '%s-%s-%s.%s' % (n, v, r, a)
+            nameVer = '%s-%s' % (n, v)
+            nameVerRel = '%s-%s-%s' % (n, v, r)
+            envra = '%s:%s-%s-%s.%s' % (e, n, v, r, a)
+            nevra = '%s-%s:%s-%s.%s' % (n, e, v, r, a)
+            for item in [name, nameArch, nameVerRelArch, nameVer, nameVerRel, envra, nevra]:
+                if not pkgdict.has_key(item):
+                    pkgdict[item] = []
+                pkgdict[item].append(pkgtup)
+        
+        # match it up
+        exactmatch = []
+        matched = []
+        unmatched = []
+        for input in matchlist:
+            if pkgdict.has_key(input):
+                for matchtup in pkgdict[input]:
+                    exactmatch.extend(self.searchPkgTuple(matchtup))
+                del pkgdict[input]
+            else:
+                # anything we couldn't find a match for
+                # could mean it's not there, could mean it's a wildcard
+                if re.match('.*[\*,\[,\],\{,\},\?].*', input):
+                    trylist = pkgdict.keys()
+                    restring = fnmatch.translate(input)
+                    if casematch:
+                        regex = re.compile(restring) # case sensitive
+                    else:
+                        regex = re.compile(restring, flags=re.I) # case insensitive
+                    foundit = 0
+                    for item in trylist:
+                        if regex.match(item):
+                            for matchtup in pkgdict[item]:
+                                matched.extend(self.searchPkgTuple(matchtup))
+                            del pkgdict[item]
+                            foundit = 1
+     
+                    if not foundit:    
+                        unmatched.append(input)
+                        
+                else:
+                    # we got nada
+                    unmatched.append(input)
+    
+        matched = misc.unique(matched)
+        unmatched = misc.unique(unmatched)
+        exactmatch = misc.unique(exactmatch)
+
+        return exactmatch, matched, unmatched
 
 
 class MetaSack(PackageSackBase):
@@ -227,12 +310,9 @@ class MetaSack(PackageSackBase):
            be compared to each other for highest version"""
         return self._computeAggregateListResult("returnNewestByName", name)
 
-    def simplePkgList(self, repoid=None):
-        """returns a list of pkg tuples (n, a, e, v, r) optionally from a
-           single repoid"""
-        if not repoid:
-            return self._computeAggregateListResult("simplePkgList")
-        return self.sacks[repoid].simplePkgList()
+    def simplePkgList(self):
+        """returns a list of pkg tuples (n, a, e, v, r)"""
+        return self._computeAggregateListResult("simplePkgList")
 
     def printPackages(self):
         for sack in self.sacks.values():
@@ -528,11 +608,17 @@ class PackageSack(PackageSackBase):
                 
         return highdict.values()
            
-    def simplePkgList(self, repoid=None):
+    def simplePkgList(self):
         """returns a list of pkg tuples (n, a, e, v, r) optionally from a single repoid"""
+        if hasattr(self, 'pkglist'):
+            if self.pkglist:
+                return self.pkglist
+        
         simplelist = []
-        for pkg in self.returnPackages(repoid):
+        for pkg in self.returnPackages():
             simplelist.append(pkg.returnPackageTuple())
+        
+        self.pkglist = simplelist
         return simplelist
                        
     def printPackages(self):

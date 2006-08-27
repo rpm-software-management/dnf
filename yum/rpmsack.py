@@ -144,7 +144,7 @@ class RPMDBPackageSack(PackageSackBase):
     def searchConflicts(self, name):
         return self.searchPrco(name, 'conflicts')
 
-    def simplePkgList(self, repoid=None):
+    def simplePkgList(self):
         return self.pkglist
    
     def installed(self, name=None, arch=None, epoch=None, ver=None, rel=None, po=None):
