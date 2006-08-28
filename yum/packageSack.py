@@ -215,6 +215,13 @@ class PackageSackBase:
         unmatched = misc.unique(unmatched)
         exactmatch = misc.unique(exactmatch)
 
+        # fixme - maybe return a minor object that has:
+        #   foo = holderclass
+        #   foo.pkg
+        #   foo.matchedwith
+        #   foo.exactmatch
+        # then let the user create the unmatched list themselves.
+        
         return exactmatch, matched, unmatched
 
 
