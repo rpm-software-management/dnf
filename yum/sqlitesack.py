@@ -55,7 +55,7 @@ class YumAvailablePackageSqlite(YumAvailablePackage):
                          'buildhost' : 'rpm_buildhost',
                          'sourcerpm' : 'rpm_sourcerpm',
                          'vendor' : 'rpm_vendor',
-                         'license', : 'rpm_license'
+                         'license' : 'rpm_license'
                         }
         if not self.simple.has_key(varname):
             dbname = varname
