@@ -427,14 +427,13 @@ class PackageSack(PackageSackBase):
         """returns a dict of obsoletes dict[obsoleting pkgtuple] = [list of obs]"""
         obs = {}
         for po in self.returnPackages():
-            pkgtuple = po.returnPackageTuple()
             if len(po.returnPrco('obsoletes')) == 0:
                 continue
 
-            if not obs.has_key(pkgtuple):
-                obs[pkgtuple] = po.returnPrco('obsoletes')
+            if not obs.has_key(po.pkgtup):
+                obs[po.pkgtup] = po.returnPrco('obsoletes')
             else:
-                obs[pkgtuple].extend(po.returnPrco('obsoletes'))
+                obs[po.pkgtup].extend(po.returnPrco('obsoletes'))
         
         return obs
         
@@ -602,7 +601,7 @@ class PackageSack(PackageSackBase):
         
         simplelist = []
         for pkg in self.returnPackages():
-            simplelist.append(pkg.returnPackageTuple())
+            simplelist.append(pkg.pkgtup)
         
         self.pkglist = simplelist
         return simplelist
