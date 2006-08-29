@@ -332,10 +332,22 @@ class YumAvailablePackage(PackageObject, RpmBase):
     def _conflicts(self):
         return self.returnPrco('conflicts')
 
+    def getProvidesNames(self):
+        """returns a list of providesNames"""
+        
+        provnames = []
+        prov = self.returnPrco('provides')
+        
+        for (name, flag, vertup) in prov:
+            provnames.append(name)
+
+        return provnames
+
     requires = property(_requires)
     provides = property(_provides)
     obsoletes = property(_obsoletes)
     conflicts = property(_conflicts)
+    providesnames = property(getProvidesNames)
     
     def _size(self):
         return self.returnSimple('packagesize')
@@ -363,16 +375,6 @@ class YumAvailablePackage(PackageObject, RpmBase):
 
         return hdr
 
-    def getProvidesNames(self):
-        """returns a list of providesNames"""
-        
-        provnames = []
-        prov = self.returnPrco('provides')
-        
-        for (name, flag, vertup) in prov:
-            provnames.append(name)
-
-        return provnames
        
     def localPkg(self):
         """return path to local package (whether it is present there, or not)"""

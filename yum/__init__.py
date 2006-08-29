@@ -1273,7 +1273,7 @@ class YumBase(depsolve.Depsolve):
                 
                 self.verbose_logger.log(logginglevels.DEBUG_2,
                     'searching in provides entries')
-                for (p_name, p_flag, (p_e, p_v, p_r)) in po.returnPrco('provides'):
+                for (p_name, p_flag, (p_e, p_v, p_r)) in po.provides:
                     if arg_re.search(p_name):
                         prov = po.prcoPrintable((p_name, p_flag, (p_e, p_v, p_r)))
                         tmpvalues.append(prov)
@@ -1285,7 +1285,7 @@ class YumBase(depsolve.Depsolve):
         
         self.doRpmDBSetup()
         # installed rpms, too
-        taglist = ['filenames', 'dirnames', 'provides']
+        taglist = ['filenames', 'dirnames', 'providesnames']
         arg_re = []
         for arg in args:
             restring = self._refineSearchPattern(arg)
@@ -1295,31 +1295,29 @@ class YumBase(depsolve.Depsolve):
                 raise Errors.MiscError, \
                  'Search Expression: %s is an invalid Regular Expression.\n' % arg
             
-            arg_re.append(reg)
 
-        for po in self.rpmdb:
-            tmpvalues = []
-            searchlist = []
-            for tag in taglist:
-                tagdata = po.returnSimple(tag)
-                if tagdata is None:
-                    continue
-                if type(tagdata) is types.ListType:
-                    searchlist.extend(tagdata)
-                else:
-                    searchlist.append(tagdata)
-            
-            for reg in arg_re:
+            for po in self.rpmdb:
+                tmpvalues = []
+                searchlist = []
+                for tag in taglist:
+                    tagdata = po.returnSimple(tag)
+                    if tagdata is None:
+                        continue
+                    if type(tagdata) is types.ListType:
+                        searchlist.extend(tagdata)
+                    else:
+                        searchlist.append(tagdata)
+                
                 for item in searchlist:
                     if reg.search(item):
                         tmpvalues.append(item)
-
-            del searchlist
-
-            if len(tmpvalues) > 0:
-                if callback:
-                    callback(po, tmpvalues)
-                matches[po] = tmpvalues
+    
+                del searchlist
+    
+                if len(tmpvalues) > 0:
+                    if callback:
+                        callback(po, tmpvalues)
+                    matches[po] = tmpvalues
             
             
         return matches
