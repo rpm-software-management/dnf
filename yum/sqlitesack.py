@@ -41,14 +41,35 @@ class YumAvailablePackageSqlite(YumAvailablePackage):
         self.files = None
     
     def returnSimple(self, varname):
+        db2simplemap = { 'packagesize' : 'size_package',
+                         'archivesize' : 'size_archive',
+                         'installedsize' : 'size_installed',
+                         'buildtime' : 'time_build',
+                         'hdrstart' : 'rpm_header_start',
+                         'hdrend' : 'rpm_header_end',
+                         'basepath' : 'location_base',
+                         'relativepath': 'location_href',
+                         'filetime' : 'time_file',
+                         'packager' : 'rpm_packager',
+                         'group' : 'rpm_group',
+                         'buildhost' : 'rpm_buildhost',
+                         'sourcerpm' : 'rpm_sourcerpm',
+                         'vendor' : 'rpm_vendor',
+                         'license', : 'rpm_license'
+                        }
         if not self.simple.has_key(varname):
+            dbname = varname
+            if db2simplemap.has_key(varname):
+                dbname = db2simplemap[varname]
             cache = self.sack.primarydb[self.repoid]
             c = cache.cursor()
-            c.execute("select %s from packages where pkgId = %s",
-                      varname, self.pkgId)
+            query = "select %s from packages where pkgId = '%s'" % (dbname, self.pkgId)
+            #c.execute("select %s from packages where pkgId = %s",
+            #          dbname, self.pkgId)
+            c.execute(query)
             r = c.fetchone()
             self.simple[varname] = r[0]
-
+            
         return YumAvailablePackage.returnSimple(self,varname)
 
     def _loadFiles(self):
