@@ -680,13 +680,13 @@ class Depsolve(object):
         
         conflict_packages = self.rpmdb.searchNevra(name=confname)
         if conflict_packages:
-            (confname, confarch, confepoch, confver, confrel) = conflict_packages[0] # take the first one, probably the only one
+            confpkg = conflict_packages[0] # take the first one, probably the only one
                 
 
             # if there's an update for the reqpkg, then update it
             if len(uplist) > 0:
-                if confname not in self.conf.exactarchlist:
-                    pkgs = self.pkgSack.returnNewestByName(confname)
+                if confpkg.name not in self.conf.exactarchlist:
+                    pkgs = self.pkgSack.returnNewestByName(confpkg.name)
                     archs = {}
                     for pkg in pkgs:
                         (n,a,e,v,r) = pkg.pkgtup
@@ -694,7 +694,7 @@ class Depsolve(object):
                     a = rpmUtils.arch.getBestArchFromList(archs.keys())
                     po = archs[a]
                 else:
-                    po = self.pkgSack.returnNewestByNameArch((confname,confarch))[0]
+                    po = self.pkgSack.returnNewestByNameArch((confpkg.name,confpkg.arch))[0]
                 if po.pkgtup not in uplist:
                     po = None
 
