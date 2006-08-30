@@ -135,7 +135,7 @@ class PackageSackBase:
 
     def searchPackages(self, fields, criteria_re, callback):
         raise NotImplementedError()
-    
+
     def matchPackageNames(self, input, casematch=False):
         """take a user strings and match the packages in the sack against it
            this will match against:
@@ -158,50 +158,43 @@ class PackageSackBase:
                 if false then match case insensitively
                 default False
            """
-        # get everything together
-        thisdict = {}
-        for pkgtup in self.simplePkgList():
-            (n,a,e,v,r) = pkgtup
-            name = n
-            nameArch = '%s.%s' % (n, a)
-            nameVerRelArch = '%s-%s-%s.%s' % (n, v, r, a)
-            nameVer = '%s-%s' % (n, v)
-            nameVerRel = '%s-%s-%s' % (n, v, r)
-            envra = '%s:%s-%s-%s.%s' % (e, n, v, r, a)
-            nevra = '%s-%s:%s-%s.%s' % (n, e, v, r, a)
-            for item in (name, nameArch, nameVerRelArch, nameVer,
-                         nameVerRel, envra, nevra):
-                if not thisdict.has_key(item):
-                    thisdict[item] = []
-                thisdict[item].append(pkgtup)
-            
-        # match it up
-        if thisdict.has_key(input):
-            for matchtup in thisdict[input]:
-                for po in self.searchPkgTuple(matchtup):
-                    yield po
+        # Setup match() for the search we're doing
+        if re.search('[\*\[\]\{\}\?]', input):
+            restring = fnmatch.translate(input)
+            if casematch:
+                regex = re.compile(restring)             # case sensitive
+            else:
+                regex = re.compile(restring, flags=re.I) # case insensitive
+
+            def match(s):
+                return regex.match(s)
 
         else:
-            # anything we couldn't find a match for
-            # could mean it's not there, could mean it's a wildcard
-            if re.match('.*[\*,\[,\],\{,\},\?].*', input):
-                restring = fnmatch.translate(input)
-                if casematch:
-                    regex = re.compile(restring) # case sensitive
-                else:
-                    regex = re.compile(restring, flags=re.I) # case insensitive
-
-                trylist = thisdict.keys()
-                tmp_matches = {}
-                for item in trylist: # go through each one of the keys
-                    if regex.match(item): # attempt to match the regex to it
-                        for matchtup in thisdict[item]:
-                            tmp_matches[matchtup] = 1
-                
-                #for uniqueness
-                for matchtup in tmp_matches.keys():
-                    for po in self.searchPkgTuple(matchtup):
+            if casematch:
+                def match(s):
+                    return s == input
+            else:
+                input = input.lower()
+                def match(s):
+                    return s.lower() == input
+         
+        for pkgtup in self.simplePkgList():
+            (n,a,e,v,r) = pkgtup
+            names = (
+                n, 
+                '%s.%s' % (n, a),
+                '%s-%s-%s.%s' % (n, v, r, a),
+                '%s-%s' % (n, v),
+                '%s-%s-%s' % (n, v, r),
+                '%s:%s-%s-%s.%s' % (e, n, v, r, a),
+                '%s-%s:%s-%s.%s' % (n, e, v, r, a),
+                )
+            for name in names:
+                if match(name):
+                    for po in self.searchPkgTuple(pkgtup):
                         yield po
+                    break       # Only match once per package
+
 
 
 class MetaSack(PackageSackBase):
