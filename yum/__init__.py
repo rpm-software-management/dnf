@@ -115,7 +115,7 @@ class YumBase(depsolve.Depsolve):
             startupconf.debuglevel = debuglevel
         if errorlevel != None:
             startupconf.errorlevel = errorlevel
-        
+
         self.doLoggingSetup(startupconf.debuglevel, startupconf.errorlevel)
 
         if init_plugins and startupconf.plugins:
@@ -140,7 +140,7 @@ class YumBase(depsolve.Depsolve):
         @param debuglevel: Debug logging level to use.
         @param errorlevel: Error logging level to use.
         '''
-        logginglevels.doLoggingSetup(errorlevel, debuglevel)
+        logginglevels.doLoggingSetup(debuglevel, errorlevel)
 
     def doFileLogSetup(self, uid, logfile):
         logginglevels.setFileLog(uid, logfile)
