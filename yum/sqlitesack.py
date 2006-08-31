@@ -39,7 +39,10 @@ class YumAvailablePackageSqlite(YumAvailablePackage):
         self.simple['id'] = self.pkgId
         self.changelog = None
         self.files = None
-    
+        self._checksums = []
+        # so bizarre
+        del self.checksums
+        
     def returnSimple(self, varname):
         db2simplemap = { 'packagesize' : 'size_package',
                          'archivesize' : 'size_archive',
@@ -71,7 +74,21 @@ class YumAvailablePackageSqlite(YumAvailablePackage):
             self.simple[varname] = r[0]
             
         return YumAvailablePackage.returnSimple(self,varname)
+    
+    def _loadChecksums(self):
+        if not self._checksums:
+            cache = self.sack.primarydb[self.repoid]
+            c = cache.cursor()
+            query = "select checksum_type, checksum_value from packages where pkgId = '%s'" % self.pkgId
+            c.execute(query)
+            for ob in c.fetchall():
+                self._checksums.append((ob['checksum_type'], ob['checksum_value'], True))
 
+        return self._checksums
+        
+    checksums = property(_loadChecksums)
+            
+        
     def _loadFiles(self):
         if self.files is not None:
             return
@@ -122,17 +139,18 @@ class YumAvailablePackageSqlite(YumAvailablePackage):
         if not self.prco[prcotype]:
             cache = self.sack.primarydb[self.repoid]
             cur = cache.cursor()
-            cur.execute("select %s.name as name, %s.version as version, "
-                        "%s.release as release, %s.epoch as epoch, "
-                        "%s.flags as flags from packages,%s "
-                        "where packages.pkgId = %s and "
-                        "packages.pkgKey = %s.pkgKey",
-                        prcotype, prcotype, prcotype, prcotype,
-                        prcotype, prcotype, self.pkgId, prcotype)
+            query = "select %s.name as name, %s.version as version, "\
+                        "%s.release as release, %s.epoch as epoch, "\
+                        "%s.flags as flags from packages,%s "\
+                        "where packages.pkgId = '%s' and "\
+                        "packages.pkgKey = %s.pkgKey" % (prcotype, prcotype, 
+                        prcotype, prcotype, prcotype, prcotype, self.pkgId, 
+                        prcotype)
+            cur.execute(query)
             for ob in cur.fetchall():
-                self.prco[prcotype].append((ob['name'],
-                                            ob['flags'],
-                                            (ob['epoch'], ob['version'], ob['release'])))
+                self.prco[prcotype].append((ob['name'], ob['flags'],
+                                           (ob['epoch'], ob['version'], 
+                                            ob['release'])))
 
         return self.prco[prcotype]
 
