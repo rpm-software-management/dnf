@@ -91,7 +91,7 @@ class YumBase(depsolve.Depsolve):
         self.doSackSetup()
        
     def doConfigSetup(self, fn='/etc/yum.conf', root='/', init_plugins=True,
-            plugin_types=None, optparser=None, debuglevel=None,
+            plugin_types=(plugins.TYPE_CORE,), optparser=None, debuglevel=None,
             errorlevel=None):
         '''
         Parse and load Yum's configuration files and call hooks initialise
