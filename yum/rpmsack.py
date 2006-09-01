@@ -269,7 +269,10 @@ class RPMDBPackageSack(PackageSackBase):
         all = []
         for idx in indexlist:
             hdr  = self.hdrByindex(idx)
-            all.append(YumInstalledPackage(hdr))
+            po = YumInstalledPackage(hdr)
+            # store our index in the po
+            po.idx = idx
+            all.append(po)
         
         return all
 

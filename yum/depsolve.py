@@ -160,12 +160,10 @@ class Depsolve(object):
             elif txmbr.ts_state in ['e']:
                 if ts_elem.has_key((txmbr.pkgtup, txmbr.ts_state)):
                     continue
-                indexes = self.rpmdb.returnIndexByTuple(txmbr.pkgtup)
-                for idx in indexes:
-                    self.ts.addErase(idx)
-                    if self.dsCallback: self.dsCallback.pkgAdded(txmbr.pkgtup, 'e')
-                    self.verbose_logger.log(logginglevels.DEBUG_1,
-                        'Removing Package %s', txmbr.po)
+                self.ts.addErase(txmbr.po.idx)
+                if self.dsCallback: self.dsCallback.pkgAdded(txmbr.pkgtup, 'e')
+                self.verbose_logger.log(logginglevels.DEBUG_1,
+                    'Removing Package %s', txmbr.po)
         
 
     def resolveDeps(self):
@@ -571,7 +569,7 @@ class Depsolve(object):
                 # from ts
                 tspkgs = self.tsInfo.matchNaevr(name=pkg.name, arch=pkg.arch)
                 for tspkg in tspkgs:
-                    if tspkg > pkg:
+                    if tspkg.po > pkg:
                         msg = 'Potential resolving package %s has newer instance in ts.' % pkg
                         self.verbose_logger.log(logginglevels.DEBUG_2, msg)
                         provSack.delPackage(pkg)

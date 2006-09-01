@@ -41,17 +41,25 @@ from i18n import _
 import callback
 import urlgrabber
 import urlgrabber.grabber
+import signal
+
+def sigquit(signum, frame):
+    print >> sys.stderr, "Quit signal sent - exiting immediately"
+    sys.exit(1)
 
 class CliError(yum.Errors.YumBaseError):
    def __init__(self, args=''):
         yum.Errors.YumBaseError.__init__(self)
         self.args = args
 
+
 class YumBaseCli(yum.YumBase, output.YumOutput):
     """This is the base class for yum cli.
        Inherits from yum.YumBase and output.YumOutput """
        
     def __init__(self):
+        # handle sigquit early on
+        signal.signal(signal.SIGQUIT, sigquit)
         yum.YumBase.__init__(self)
         self.in_shell = False
         logging.basicConfig()
@@ -649,6 +657,9 @@ For more information contact your distribution or package provider.
         self.verbose_logger.log(logginglevels.INFO_2, 'Transaction Test Succeeded')
         del self.ts
         
+        # unset the sigquit handler
+        signal.signal(signal.SIGQUIT, signal.SIG_DFL)
+        
         self.initActionTs() # make a new, blank ts to populate
         self.populateTs(keepold=0) # populate the ts
         self.ts.check() #required for ordering
@@ -668,6 +679,10 @@ For more information contact your distribution or package provider.
 
         # close things
         self.verbose_logger.log(logginglevels.INFO_1, self.postTransactionOutput())
+        
+        # put back the sigquit handler
+        signal.signal(signal.SIGQUIT, sigquit)
+        
         return 0
         
     def gpgsigcheck(self, pkgs):
