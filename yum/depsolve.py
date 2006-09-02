@@ -160,7 +160,7 @@ class Depsolve(object):
             elif txmbr.ts_state in ['e']:
                 if ts_elem.has_key((txmbr.pkgtup, txmbr.ts_state)):
                     continue
-                self.ts.addErase(txmbr.po.idx)
+                self.ts.addErase(txmbr.po)
                 if self.dsCallback: self.dsCallback.pkgAdded(txmbr.pkgtup, 'e')
                 self.verbose_logger.log(logginglevels.DEBUG_1,
                     'Removing Package %s', txmbr.po)
