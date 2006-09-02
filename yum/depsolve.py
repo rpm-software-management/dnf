@@ -110,7 +110,7 @@ class Depsolve(object):
         if po.name in self.conf.installonlypkgs:
             return 1
         
-        provides = po.getProvidesNames()
+        provides = po.provides_names
         if filter (lambda prov: prov in self.conf.installonlypkgs, provides):
             return 1
         

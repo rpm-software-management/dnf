@@ -117,7 +117,7 @@ class PackageObject:
        
     def __init__(self):
         self.simple = {} # simple things, name, arch, e,v,r, size, etc
-        self.checksums = [] # (type, checksum, id(0,1)
+        self._checksums = [] # (type, checksum, id(0,1)
         
     def __str__(self):
         if self.returnSimple('epoch') == '0':
@@ -141,7 +141,11 @@ class PackageObject:
                 self.returnSimple('epoch'),self.returnSimple('version'), 
                 self.returnSimple('release'))
         
+    def returnChecksums(self):
+        return self._checksums
 
+    checksums = property(fget=lambda self: self.returnChecksums())
+    
 class RpmBase:
     """return functions and storage for rpm-specific data"""
 
@@ -155,7 +159,7 @@ class RpmBase:
         self.files['file'] = []
         self.files['dir'] = []
         self.files['ghost'] = []
-        self.changelog = [] # (ctime, cname, ctext)
+        self._changelog = [] # (ctime, cname, ctext)
         self.licenses = []
 
     def __lt__(self, other):
@@ -266,8 +270,7 @@ class RpmBase:
         
     def returnChangelog(self):
         """return changelog entries"""
-        # fixme - maybe should die - make 'changelog' just a property/attribute
-        return self.changelog
+        return self._changelog
         
     def returnFileEntries(self, ftype='file'):
         """return list of files based on type"""
@@ -281,16 +284,29 @@ class RpmBase:
         """return list of types of files in the package"""
         # maybe should die - use direct access to attribute
         return self.files.keys()
-    
-    def returnDirEntries(self):
-        return self.returnFileEntries(ftype='dir')
-    
-    def returnGhostEntries(self):
-        return self.returnFileEntries(ftype='ghost')
 
-    filelists = property(returnFileEntries)
-    dirlists = property(returnDirEntries)
-    ghostlists = property(returnGhostEntries)
+    def returnPrcoNames(self, prcotype):
+        names = []
+        lists = self.returnPrco(prcotype)
+        for (name, flag, vertup) in lists:
+            names.append(name)
+        
+        return names
+        
+        
+    filelist = property(fget=lambda self: self.returnFileEntries(ftype='file'))
+    dirlist = property(fget=lambda self: self.returnFileEntries(ftype='dir'))
+    ghostlist = property(fget=lambda self: self.returnFileEntries(ftype='ghost'))
+    requires = property(fget=lambda self: self.returnPrco('requires'))
+    provides = property(fget=lambda self: self.returnPrco('provides'))
+    obsoletes = property(fget=lambda self: self.returnPrco('obsoletes'))
+    conflicts = property(fget=lambda self: self.returnPrco('conflicts'))
+    provides_names = property(fget=lambda self: self.returnPrcoNames('provides'))
+    requires_names = property(fget=lambda self: self.returnPrcoNames('requires'))
+    conflicts_names = property(fget=lambda self: self.returnPrcoNames('conflicts'))
+    obsoletes_names = property(fget=lambda self: self.returnPrcoNames('obsoletes'))
+    changelog = property(fget=lambda self: self.returnChangelog())
+    
     
 
 class YumAvailablePackage(PackageObject, RpmBase):
@@ -304,7 +320,8 @@ class YumAvailablePackage(PackageObject, RpmBase):
         self.simple['repoid'] = repoid
         self.repoid = repoid
         self.state = None
-        
+        self._loadedfiles = False
+
         if pkgdict != None:
             self.importFromDict(pkgdict)
             # quick, common definitions
@@ -331,36 +348,6 @@ class YumAvailablePackage(PackageObject, RpmBase):
         ver = self.printVer()
         return "%s.%s %s" % (self.name, self.arch, ver)
 
-    def _requires(self):
-        return self.returnPrco('requires')
-    
-    def _provides(self):
-        return self.returnPrco('provides')
-    
-    def _obsoletes(self):
-        return self.returnPrco('obsoletes')
-        
-    def _conflicts(self):
-        return self.returnPrco('conflicts')
-
-    def getProvidesNames(self):
-        """returns a list of providesNames"""
-        
-        provnames = []
-        prov = self.returnPrco('provides')
-        
-        for (name, flag, vertup) in prov:
-            provnames.append(name)
-
-        return provnames
-
-    requires = property(_requires)
-    provides = property(_provides)
-    obsoletes = property(_obsoletes)
-    conflicts = property(_conflicts)
-    providesnames = property(getProvidesNames)
-    
-    
     def _size(self):
         return self.returnSimple('packagesize')
     
@@ -511,7 +498,7 @@ class YumAvailablePackage(PackageObject, RpmBase):
                 if cdict.has_key('date'): date = cdict['date']
                 if cdict.has_key('value'): text = cdict['value']
                 if cdict.has_key('author'): author = cdict['author']
-                self.changelog.append((date, author, text))
+                self._changelog.append((date, author, text))
         
         if hasattr(pkgdict, 'checksum'):
             ctype = pkgdict.checksum['type']
@@ -523,7 +510,7 @@ class YumAvailablePackage(PackageObject, RpmBase):
                 csumid = 1
             else:
                 csumid = 0
-            self.checksums.append((ctype, csum, csumid))
+            self._checksums.append((ctype, csum, csumid))
             
 
 
@@ -547,7 +534,6 @@ class YumHeaderPackage(YumAvailablePackage):
         self.description = self.tagByName('description')
         self.pkgid = self.tagByName(rpm.RPMTAG_SHA1HEADER)
         self.size = self.tagByName('size')
-        self.__loadedfiles = False
         self.__mode_cache = {}
         self._populatePrco()
         
@@ -610,7 +596,7 @@ class YumHeaderPackage(YumAvailablePackage):
         fileflags = self.tagByName('fileflags')
         filemodes = self.tagByName('filemodes')
         filetuple = zip(files, filemodes, fileflags)
-        if not self.__loadedfiles:
+        if not self._loadedfiles:
             for (file, mode, flag) in filetuple:
                 #garbage checks
                 if mode is None or mode == '':
@@ -639,14 +625,22 @@ class YumHeaderPackage(YumAvailablePackage):
                         if not self.files.has_key('file'):
                             self.files['file'] = []
                         self.files['file'].append(file)
-            self.__loadedfiles = True
+            self._loadedfiles = True
             
     def returnFileEntries(self, ftype='file'):
         """return list of files based on type"""
         self._loadFiles()
         return YumAvailablePackage.returnFileEntries(self,ftype)
     
-    filelists = property(returnFileEntries)
+    def returnChangelog(self):
+        # note - if we think it is worth keeping changelogs in memory
+        # then create a _loadChangelog() method to put them into the 
+        # self._changelog attr
+        if len(self.tagByName('changelogname')) > 0:
+            return zip(self.tagByName('changelogname'),
+                       self.tagByName('changelogtime'),
+                       self.tagByName('changelogtext'))
+        return []
 
 class YumInstalledPackage(YumHeaderPackage):
     """super class for dealing with packages in the rpmdb"""

@@ -37,11 +37,7 @@ class YumAvailablePackageSqlite(YumAvailablePackage):
         self.sack = pkgdict.sack
         self.pkgId = pkgdict.pkgId
         self.simple['id'] = self.pkgId
-        self.changelog = None
-        self.files = None
-        self._checksums = []
-        # so bizarre
-        del self.checksums
+        self._changelog = None
         
     def returnSimple(self, varname):
         db2simplemap = { 'packagesize' : 'size_package',
@@ -84,13 +80,14 @@ class YumAvailablePackageSqlite(YumAvailablePackage):
             for ob in c.fetchall():
                 self._checksums.append((ob['checksum_type'], ob['checksum_value'], True))
 
+    
+    def returnChecksums(self):
+        self._loadChecksums()
         return self._checksums
-        
-    checksums = property(_loadChecksums)
-            
+
         
     def _loadFiles(self):
-        if self.files is not None:
+        if self._loadedfiles:
             return
         result = {}
         
@@ -118,10 +115,17 @@ class YumAvailablePackageSqlite(YumAvailablePackage):
                     filename = filenames.pop()
                 filetype = filetypes.pop()
                 result.setdefault(filetype,[]).append(filename)
+        self._loadedfiles = True
         self.files = result
 
-    def returnChangelog(self):
-        if not self.changelog:
+    def _loadChangelog(self):
+        result = []
+        if not self._changelog:
+            if not self.sack.otherdb.has_key(self.repoid):
+                #FIXME should this raise an exception or should it try to populate
+                # the otherdb
+                self._changelog = result
+                return
             cache = self.sack.otherdb[self.repoid]
             cur = cache.cursor()
             cur.execute("select changelog.date as date, "
@@ -131,9 +135,12 @@ class YumAvailablePackageSqlite(YumAvailablePackage):
                         "and packages.pkgKey = changelog.pkgKey", self.pkgId)
             for ob in cur.fetchall():
                 result.append( (ob['date'], ob['author'], ob['changelog']) )
-            self.changelog = result
-        return self.changelog
-            
+        self._changelog = result
+    
+    def returnChangelog(self):
+        self._loadChangelog()
+        return self._changelog
+    
     def returnFileEntries(self, ftype='file'):
         self._loadFiles()
         return YumAvailablePackage.returnFileEntries(self,ftype)
