@@ -32,8 +32,8 @@ import misc
 # Simple subclass of YumAvailablePackage that can load 'simple headers' from
 # the database when they are requested
 class YumAvailablePackageSqlite(YumAvailablePackage):
-    def __init__(self, pkgdict, repoid):
-        YumAvailablePackage.__init__(self, repoid, pkgdict)
+    def __init__(self, pkgdict, repo):
+        YumAvailablePackage.__init__(self, repo, pkgdict)
         self.sack = pkgdict.sack
         self.pkgId = pkgdict.pkgId
         self.simple['id'] = self.pkgId
@@ -60,7 +60,7 @@ class YumAvailablePackageSqlite(YumAvailablePackage):
             dbname = varname
             if db2simplemap.has_key(varname):
                 dbname = db2simplemap[varname]
-            cache = self.sack.primarydb[self.repoid]
+            cache = self.sack.primarydb[self.repo]
             c = cache.cursor()
             query = "select %s from packages where pkgId = '%s'" % (dbname, self.pkgId)
             #c.execute("select %s from packages where pkgId = %s",
@@ -73,7 +73,7 @@ class YumAvailablePackageSqlite(YumAvailablePackage):
     
     def _loadChecksums(self):
         if not self._checksums:
-            cache = self.sack.primarydb[self.repoid]
+            cache = self.sack.primarydb[self.repo]
             c = cache.cursor()
             query = "select checksum_type, checksum_value from packages where pkgId = '%s'" % self.pkgId
             c.execute(query)
@@ -90,14 +90,10 @@ class YumAvailablePackageSqlite(YumAvailablePackage):
         if self._loadedfiles:
             return
         result = {}
-        
-        if not self.sack.filelistsdb.has_key(self.repoid):
-            #FIXME should this raise an exception or should it try to download
-            # the filelists.xml and import it?
-            # primarydb import of files should happen, then!
-            self.files = result
-            return
-        cache = self.sack.filelistsdb[self.repoid]
+        self.files = result        
+        #FIXME - this should be try, excepting
+        self.sack.populate(self.repo, with='filelists')
+        cache = self.sack.filelistsdb[self.repo]
         cur = cache.cursor()
         cur.execute("select filelist.dirname as dirname, "
                     "filelist.filetypes as filetypes, " 
@@ -121,12 +117,12 @@ class YumAvailablePackageSqlite(YumAvailablePackage):
     def _loadChangelog(self):
         result = []
         if not self._changelog:
-            if not self.sack.otherdb.has_key(self.repoid):
+            if not self.sack.otherdb.has_key(self.repo):
                 #FIXME should this raise an exception or should it try to populate
                 # the otherdb
                 self._changelog = result
                 return
-            cache = self.sack.otherdb[self.repoid]
+            cache = self.sack.otherdb[self.repo]
             cur = cache.cursor()
             cur.execute("select changelog.date as date, "
                         "changelog.author as author, "
@@ -149,9 +145,9 @@ class YumAvailablePackageSqlite(YumAvailablePackage):
         self._loadFiles()
         return YumAvailablePackage.returnFileTypes(self)
 
-    def returnPrco(self, prcotype):
+    def returnPrco(self, prcotype, printable=False):
         if not self.prco[prcotype]:
-            cache = self.sack.primarydb[self.repoid]
+            cache = self.sack.primarydb[self.repo]
             cur = cache.cursor()
             query = "select %s.name as name, %s.version as version, "\
                         "%s.release as release, %s.epoch as epoch, "\
@@ -166,7 +162,7 @@ class YumAvailablePackageSqlite(YumAvailablePackage):
                                            (ob['epoch'], ob['version'], 
                                             ob['release'])))
 
-        return self.prco[prcotype]
+        return YumAvailablePackage.returnPrco(self, prcotype, printable)
 
 class YumSqlitePackageSack(yumRepo.YumPackageSack):
     """ Implementation of a PackageSack that uses sqlite cache instead of fully
@@ -191,27 +187,27 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
     # Because we don't want to remove a package from the database we just
     # add it to the exclude list
     def delPackage(self, obj):
-        repoid = obj.repoid
-        self.excludes[repoid][obj.pkgId] = 1
+        repo = obj.repo
+        self.excludes[repo][obj.pkgId] = 1
 
-    def addDict(self, repoid, datatype, dataobj, callback=None):
-        if (not self.excludes.has_key(repoid)): 
-            self.excludes[repoid] = {}
+    def addDict(self, repo, datatype, dataobj, callback=None):
+        if (not self.excludes.has_key(repo)): 
+            self.excludes[repo] = {}
         if datatype == 'metadata':
-            if (self.primarydb.has_key(repoid)):
+            if (self.primarydb.has_key(repo)):
               return
-            self.added[repoid] = ['primary']
-            self.primarydb[repoid] = dataobj
+            self.added[repo] = ['primary']
+            self.primarydb[repo] = dataobj
         elif datatype == 'filelists':
-            if (self.filelistsdb.has_key(repoid)):
+            if (self.filelistsdb.has_key(repo)):
               return
-            self.added[repoid] = ['filelists']
-            self.filelistsdb[repoid] = dataobj
+            self.added[repo] = ['filelists']
+            self.filelistsdb[repo] = dataobj
         elif datatype == 'otherdata':
-            if (self.otherdb.has_key(repoid)):
+            if (self.otherdb.has_key(repo)):
               return
-            self.added[repoid] = ['otherdata']
-            self.otherdb[repoid] = dataobj
+            self.added[repo] = ['otherdata']
+            self.otherdb[repo] = dataobj
         else:
             # We can not handle this yet...
             raise "Sorry sqlite does not support %s" % (datatype)
@@ -507,14 +503,14 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
     def returnPackages(self, repoid=None):
         """Returns a list of packages, only containing nevra information """
         returnList = []
-        for (rep,cache) in self.primarydb.items():
-            if (repoid == None or repoid == rep):
+        for (repo,cache) in self.primarydb.items():
+            if (repoid == None or repoid == repo.id):
                 cur = cache.cursor()
                 cur.execute("select pkgId,name,epoch,version,release,arch from packages")
                 for x in cur.fetchall():
-                    if (self.excludes[rep].has_key(x.pkgId)):
+                    if (self.excludes[repo].has_key(x.pkgId)):
                         continue                    
-                    returnList.append(self.pc(self.db2class(x,True),rep))
+                    returnList.append(self.pc(self.db2class(x,True),repo))
         return returnList
 
     def searchNevra(self, name=None, epoch=None, ver=None, rel=None, arch=None):        

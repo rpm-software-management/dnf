@@ -292,14 +292,19 @@ class Depsolve(object):
                 self.verbose_logger.log(logginglevels.DEBUG_4,
                     'Skipping package already in Transaction Set: %s', po)
                 continue
-            if niceformatneed in po.requiresList():
+            
+            # slightly more consistency (most of the time)
+            prco_flags = rpmUtils.miscutils.flagToString(flags)
+            prco_ver = rpmUtils.miscutils.stringToVersion(needversion)
+            prcoformat_need = (needname, prco_flags, prco_ver)
+            if prcoformat_need in po.requires:
                 pkgs.append(po)
 
         if len(pkgs) < 1: # requiring tuple is not in the rpmdb
             txmbrs = self.tsInfo.matchNaevr(name=name, ver=version, rel=release)
             if len(txmbrs) < 1:
-                msg = 'Requiring package %s-%s-%s not in transaction set \
-                                  nor in rpmdb' % (name, version, release)
+                msg = 'Requiring package %s-%s-%s not in transaction set'\
+                                  'nor in rpmdb' % (name, version, release)
                 self.verbose_logger.log(logginglevels.DEBUG_1, msg)
                 errormsgs.append(msg)
                 missingdep = 1

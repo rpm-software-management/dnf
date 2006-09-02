@@ -410,6 +410,7 @@ class RPMDBPackageSack(PackageSackBase):
         return returnlist
             
 
+
 def main():
     ts = rpm.TransactionSet('/')
     ts.setVSFlags((rpm._RPMVSF_NOSIGNATURES | rpm._RPMVSF_NODIGESTS))

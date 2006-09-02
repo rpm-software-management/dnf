@@ -23,9 +23,9 @@ class YumPackageSack(packageSack.PackageSack):
         self.pc = packageClass
         self.added = {}
 
-    def addDict(self, repoid, datatype, dataobj, callback=None):
-        if self.added.has_key(repoid):
-            if datatype in self.added[repoid]:
+    def addDict(self, repo, datatype, dataobj, callback=None):
+        if self.added.has_key(repo):
+            if datatype in self.added[repo]:
                 return
 
         total = len(dataobj.keys())
@@ -33,28 +33,28 @@ class YumPackageSack(packageSack.PackageSack):
             current = 0
             for pkgid in dataobj.keys():
                 current += 1
-                if callback: callback.progressbar(current, total, repoid)
+                if callback: callback.progressbar(current, total, repo)
                 pkgdict = dataobj[pkgid]
-                po = self.pc(repoid, pkgdict)
+                po = self.pc(repo, pkgdict)
                 po.simple['id'] = pkgid
                 self._addToDictAsList(self.pkgsByID, pkgid, po)
                 self.addPackage(po)
 
-            if not self.added.has_key(repoid):
-                self.added[repoid] = []
-            self.added[repoid].append('metadata')
+            if not self.added.has_key(repo):
+                self.added[repo] = []
+            self.added[repo].append('metadata')
             # indexes will need to be rebuilt
             self.indexesBuilt = 0
 
         elif datatype in ['filelists', 'otherdata']:
-            if self.added.has_key(repoid):
-                if 'metadata' not in self.added[repoid]:
+            if self.added.has_key(repo):
+                if 'metadata' not in self.added[repo]:
                     raise Errors.RepoError, '%s md for %s imported before primary' \
-                           % (datatype, repoid)
+                           % (datatype, repo.id)
             current = 0
             for pkgid in dataobj.keys():
                 current += 1
-                if callback: callback.progressbar(current, total, repoid)
+                if callback: callback.progressbar(current, total, repo)
                 pkgdict = dataobj[pkgid]
                 if self.pkgsByID.has_key(pkgid):
                     for po in self.pkgsByID[pkgid]:
@@ -80,8 +80,8 @@ class YumPackageSack(packageSack.PackageSack):
                 callback=callback,
                 )
         for item in data:
-            if self.added.has_key(repo.id):
-                if item in self.added[repo.id]:
+            if self.added.has_key(repo):
+                if item in self.added[repo]:
                     continue
 
             if item == 'metadata':
@@ -90,7 +90,7 @@ class YumPackageSack(packageSack.PackageSack):
                 (ctype, csum) = xmldata.checksum
                 dobj = repo.cacheHandler.getPrimary(xml, csum)
                 if not cacheonly:
-                    self.addDict(repo.id, item, dobj, callback)
+                    self.addDict(repo, item, dobj, callback)
                 del dobj
 
             elif item == 'filelists':
@@ -99,7 +99,7 @@ class YumPackageSack(packageSack.PackageSack):
                 (ctype, csum) = xmldata.checksum
                 dobj = repo.cacheHandler.getFilelists(xml, csum)
                 if not cacheonly:
-                    self.addDict(repo.id, item, dobj, callback)
+                    self.addDict(repo, item, dobj, callback)
                 del dobj
 
 
@@ -109,7 +109,7 @@ class YumPackageSack(packageSack.PackageSack):
                 (ctype, csum) = xmldata.checksum
                 dobj = repo.cacheHandler.getOtherdata(xml, csum)
                 if not cacheonly:
-                    self.addDict(repo.id, item, dobj, callback)
+                    self.addDict(repo, item, dobj, callback)
                 del dobj
 
             else:

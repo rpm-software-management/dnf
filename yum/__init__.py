@@ -413,7 +413,7 @@ class YumBase(depsolve.Depsolve):
         
         necessary = False
         for repo in self.repos.listEnabled():
-            if 'filelists' in repo.sack.added[repo.id]:
+            if 'filelists' in repo.sack.added[repo]:
                 continue
             else:
                 necessary = True

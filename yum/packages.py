@@ -108,6 +108,25 @@ def parsePackages(pkgs, usercommands, casematch=0):
     exactmatch = misc.unique(exactmatch)
     return exactmatch, matched, unmatched
 
+class FakeRepository:
+    """Fake repositorty class for use in rpmsack package objects"""
+    def __init__(self, repoid):
+        self.id = repoid
+        self.setkeys = []
+
+    def __cmp__(self, other):
+        if self.id > other.id:
+            return 1
+        elif self.id < other.id:
+            return -1
+        else:
+            return 0
+    def __hash__(self):
+        return hash(self.id)
+
+    def __str__(self):
+        return self.id
+
 
 # goal for the below is to have a packageobject that can be used by generic
 # functions independent of the type of package - ie: installed or available
@@ -195,16 +214,24 @@ class RpmBase:
        
     
     def __hash__(self):
-        mystr = '%s - %s:%s-%s-%s.%s' % (self.repoid, self.epoch, self.name,
+        mystr = '%s - %s:%s-%s-%s.%s' % (self.repo.id, self.epoch, self.name,
                                          self.ver, self.rel, self.arch)
         return hash(mystr)
         
-    def returnPrco(self, prcotype):
+    def returnPrco(self, prcotype, printable=False):
         """return list of provides, requires, conflicts or obsoletes"""
+        
+        prcos = []
         if self.prco.has_key(prcotype):
-            return self.prco[prcotype]
-        else:
-            return []
+            prcos = self.prco[prcotype]
+
+        if printable:
+            results = []
+            for prco in prcos:
+                results.append(self._prcoTuple2Printable(prco))
+            return results
+
+        return prcos
 
     def checkPrco(self, prcotype, prcotuple):
         """returns 1 or 0 if the pkg contains the requested tuple/tuple range"""
@@ -286,13 +313,31 @@ class RpmBase:
         return self.files.keys()
 
     def returnPrcoNames(self, prcotype):
-        names = []
+        results = []
         lists = self.returnPrco(prcotype)
         for (name, flag, vertup) in lists:
-            names.append(name)
+            results.append(name)
+        return results
+
+    def _prcoTuple2Printable(self, prcoTuple):
+        """convert the prco tuples into a nicer human string"""
+        # maybe move this into yum.misc to clean it out of here
+        # and make it callable from elsewhere
+        (name, flag, (e, v, r)) = prcoTuple
+        flags = {'GT':'>', 'GE':'>=', 'EQ':'=', 'LT':'<', 'LE':'<='}
+        if flag is None:
+            return name
         
-        return names
+        base = '%s %s ' % (name, flags[flag])
+        if e not in [0, '0', None]:
+            base += '%s:' % e
+        if v is not None:
+            base += '%s' % v
+        if r is not None:
+            base += '-%s' % r
         
+        return base
+
         
     filelist = property(fget=lambda self: self.returnFileEntries(ftype='file'))
     dirlist = property(fget=lambda self: self.returnFileEntries(ftype='dir'))
@@ -305,6 +350,10 @@ class RpmBase:
     requires_names = property(fget=lambda self: self.returnPrcoNames('requires'))
     conflicts_names = property(fget=lambda self: self.returnPrcoNames('conflicts'))
     obsoletes_names = property(fget=lambda self: self.returnPrcoNames('obsoletes'))
+    provides_print = property(fget=lambda self: self.returnPrco('provides', True))
+    requires_print = property(fget=lambda self: self.returnPrco('requires', True))
+    conflicts_print = property(fget=lambda self: self.returnPrco('conflicts', True))
+    obsoletes_print = property(fget=lambda self: self.returnPrco('obsoletes', True))
     changelog = property(fget=lambda self: self.returnChangelog())
     
     
@@ -313,12 +362,13 @@ class YumAvailablePackage(PackageObject, RpmBase):
     """derived class for the  packageobject and RpmBase packageobject yum
        uses this for dealing with packages in a repository"""
 
-    def __init__(self, repoid, pkgdict = None):
+    def __init__(self, repo, pkgdict = None):
         PackageObject.__init__(self)
         RpmBase.__init__(self)
         
-        self.simple['repoid'] = repoid
-        self.repoid = repoid
+        self.simple['repoid'] = repo.id
+        self.repoid = repo.id
+        self.repo = repo
         self.state = None
         self._loadedfiles = False
 
@@ -378,10 +428,10 @@ class YumAvailablePackage(PackageObject, RpmBase):
     def localPkg(self):
         """return path to local package (whether it is present there, or not)"""
         if not hasattr(self, 'localpath'):
-            repo = base.repos.getRepo(self.repoid)
+            #repo = base.repos.getRepo(self.repoid)
             remote = self.returnSimple('relativepath')
             rpmfn = os.path.basename(remote)
-            self.localpath = repo.pkgdir + '/' + rpmfn
+            self.localpath = self.repo.pkgdir + '/' + rpmfn
         return self.localpath
 
     def localHdr(self):
@@ -389,42 +439,22 @@ class YumAvailablePackage(PackageObject, RpmBase):
            byte ranges"""
            
         if not hasattr(self, 'hdrpath'):
-            repo = base.repos.getRepo(self.repoid)
+            #repo = base.repos.getRepo(self.repoid)
             pkgpath = self.returnSimple('relativepath')
             pkgname = os.path.basename(pkgpath)
             hdrname = pkgname[:-4] + '.hdr'
-            self.hdrpath = repo.hdrdir + '/' + hdrname
+            self.hdrpath = self.repo.hdrdir + '/' + hdrname
 
         return self.hdrpath
     
     def prcoPrintable(self, prcoTuple):
         """convert the prco tuples into a nicer human string"""
-        (name, flag, (e, v, r)) = prcoTuple
-        flags = {'GT':'>', 'GE':'>=', 'EQ':'=', 'LT':'<', 'LE':'<='}
-        if flag is None:
-            return name
-        
-        base = '%s %s ' % (name, flags[flag])
-        if e not in [0, '0', None]:
-            base += '%s:' % e
-        if v is not None:
-            base += '%s' % v
-        if r is not None:
-            base += '-%s' % r
-        
-        return base
-    
+        #fixme - warning deprecation
+        return self._prcoTuple2Printable(prcoTuple)
+
     def requiresList(self):
         """return a list of requires in normal rpm format"""
-        
-        reqlist = []
-        
-        for prcoTuple in self.returnPrco('requires'):
-            prcostr = self.prcoPrintable(prcoTuple)
-            reqlist.append(prcostr)
-        
-        return reqlist
-    
+        return self.requires_print
 
     
     def importFromDict(self, pkgdict):
@@ -516,10 +546,10 @@ class YumAvailablePackage(PackageObject, RpmBase):
 
 class YumHeaderPackage(YumAvailablePackage):
     """Package object built from an rpm header"""
-    def __init__(self, hdr, repoid):
+    def __init__(self, hdr, repo):
         """hand in an rpm header, we'll assume it's installed and query from there"""
        
-        YumAvailablePackage.__init__(self, repoid)
+        YumAvailablePackage.__init__(self, repo)
 
         self.hdr = hdr
         self.name = self.tagByName('name')
@@ -569,7 +599,11 @@ class YumHeaderPackage(YumAvailablePackage):
                 self.prco[prcotype] = zip(name, flag, vers)
     
     def tagByName(self, tag):
-        data = self.hdr[tag]
+        try:
+            data = self.hdr[tag]
+        except KeyError, e:
+            raise Errors.MiscError, "Unknown header tag %s" % tag
+
         return data
     
     def doepoch(self):
@@ -645,7 +679,8 @@ class YumHeaderPackage(YumAvailablePackage):
 class YumInstalledPackage(YumHeaderPackage):
     """super class for dealing with packages in the rpmdb"""
     def __init__(self, hdr):
-        YumHeaderPackage.__init__(self, hdr, "installed")
+        fakerepo = FakeRepository('installed')
+        YumHeaderPackage.__init__(self, hdr, fakerepo)
 
 class YumLocalPackage(YumHeaderPackage):
     """Class to handle an arbitrary package from a file path
@@ -670,8 +705,9 @@ class YumLocalPackage(YumHeaderPackage):
         except RpmUtilsError, e:
             raise Errors.MiscError, \
                 'Could not open local rpm file: %s' % self.localpath
-       
-        YumHeaderPackage.__init__(self, hdr, filename)
+        
+        fakerepo = FakeRepository(filename)
+        YumHeaderPackage.__init__(self, hdr, fakerepo)
         
     def localPkg(self):
         return self.localpath

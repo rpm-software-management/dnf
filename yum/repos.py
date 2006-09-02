@@ -221,6 +221,9 @@ class Repository:
     def __str__(self):
         return self.id
 
+    def __hash__(self):
+        return hash(self.id)
+        
     def setAttribute(self, key, value):
         """sets a generic attribute of this repository"""
         self.setkeys.append(key)
@@ -284,3 +287,4 @@ class Repository:
 
     def getHeader(self, package, checkfunc = None, reget = 'simple', cache = True):
         raise NotImplementedError()
+
