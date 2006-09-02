@@ -23,6 +23,7 @@ import re
 import types
 import fnmatch
 import stat
+import warnings
 from rpmUtils import RpmUtilsError
 import rpmUtils.arch
 import rpmUtils.miscutils
@@ -319,6 +320,11 @@ class RpmBase:
             results.append(name)
         return results
 
+    def getProvidesNames(self):
+        warnings.warn('getProvidesNames() will go away in a future version of Yum.\n',
+                      DeprecationWarning, stacklevel=2)
+        return self.provides_names
+
     def _prcoTuple2Printable(self, prcoTuple):
         """convert the prco tuples into a nicer human string"""
         # maybe move this into yum.misc to clean it out of here
@@ -449,7 +455,8 @@ class YumAvailablePackage(PackageObject, RpmBase):
     
     def prcoPrintable(self, prcoTuple):
         """convert the prco tuples into a nicer human string"""
-        #fixme - warning deprecation
+        warnings.warn('prcoPrintable() will go away in a future version of Yum.\n',
+                      DeprecationWarning, stacklevel=2)
         return self._prcoTuple2Printable(prcoTuple)
 
     def requiresList(self):
