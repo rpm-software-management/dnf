@@ -93,6 +93,13 @@ class YumAvailablePackageSqlite(YumAvailablePackage):
         if self.files is not None:
             return
         result = {}
+        
+        if not self.sack.filelistsdb.has_key(self.repoid):
+            #FIXME should this raise an exception or should it try to download
+            # the filelists.xml and import it?
+            # primarydb import of files should happen, then!
+            self.files = result
+            return
         cache = self.sack.filelistsdb[self.repoid]
         cur = cache.cursor()
         cur.execute("select filelist.dirname as dirname, "

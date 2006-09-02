@@ -22,6 +22,7 @@ import misc
 import re
 import types
 import fnmatch
+import stat
 from rpmUtils import RpmUtilsError
 import rpmUtils.arch
 import rpmUtils.miscutils
@@ -271,15 +272,25 @@ class RpmBase:
     def returnFileEntries(self, ftype='file'):
         """return list of files based on type"""
         # fixme - maybe should die - use direct access to attribute
-        if self.files.has_key(ftype):
-            return self.files[ftype]
-        else:
-            return []
+        if self.files:
+            if self.files.has_key(ftype):
+                return self.files[ftype]
+        return []
             
     def returnFileTypes(self):
         """return list of types of files in the package"""
         # maybe should die - use direct access to attribute
         return self.files.keys()
+    
+    def returnDirEntries(self):
+        return self.returnFileEntries(ftype='dir')
+    
+    def returnGhostEntries(self):
+        return self.returnFileEntries(ftype='ghost')
+
+    filelists = property(returnFileEntries)
+    dirlists = property(returnDirEntries)
+    ghostlists = property(returnGhostEntries)
     
 
 class YumAvailablePackage(PackageObject, RpmBase):
@@ -348,6 +359,7 @@ class YumAvailablePackage(PackageObject, RpmBase):
     obsoletes = property(_obsoletes)
     conflicts = property(_conflicts)
     providesnames = property(getProvidesNames)
+    
     
     def _size(self):
         return self.returnSimple('packagesize')
@@ -426,7 +438,7 @@ class YumAvailablePackage(PackageObject, RpmBase):
         
         return reqlist
     
-    
+
     
     def importFromDict(self, pkgdict):
         """handles an mdCache package dictionary item to populate out 
@@ -535,7 +547,8 @@ class YumHeaderPackage(YumAvailablePackage):
         self.description = self.tagByName('description')
         self.pkgid = self.tagByName(rpm.RPMTAG_SHA1HEADER)
         self.size = self.tagByName('size')
-
+        self.__loadedfiles = False
+        self.__mode_cache = {}
         self._populatePrco()
         
     def __str__(self):
@@ -590,8 +603,50 @@ class YumHeaderPackage(YumAvailablePackage):
 
     def returnLocalHeader(self):
         return self.hdr
+    
 
-
+    def _loadFiles(self):
+        files = self.tagByName('filenames')
+        fileflags = self.tagByName('fileflags')
+        filemodes = self.tagByName('filemodes')
+        filetuple = zip(files, filemodes, fileflags)
+        if not self.__loadedfiles:
+            for (file, mode, flag) in filetuple:
+                #garbage checks
+                if mode is None or mode == '':
+                    if not self.files.has_key('file'):
+                        self.files['file'] = []
+                    self.files['file'].append(file)
+                    continue
+                if not self.__mode_cache.has_key(mode):
+                    self.__mode_cache[mode] = stat.S_ISDIR(mode)
+          
+                if self.__mode_cache[mode]:
+                    if not self.files.has_key('dir'):
+                        self.files['dir'] = []
+                    self.files['dir'].append(file)
+                else:
+                    if flag is None:
+                        if not self.files.has_key('file'):
+                            self.files['file'] = []
+                        self.files['file'].append(file)
+                    else:
+                        if (flag & 64):
+                            if not self.files.has_key('ghost'):
+                                self.files['ghost'] = []
+                            self.files['ghost'].append(file)
+                            continue
+                        if not self.files.has_key('file'):
+                            self.files['file'] = []
+                        self.files['file'].append(file)
+            self.__loadedfiles = True
+            
+    def returnFileEntries(self, ftype='file'):
+        """return list of files based on type"""
+        self._loadFiles()
+        return YumAvailablePackage.returnFileEntries(self,ftype)
+    
+    filelists = property(returnFileEntries)
 
 class YumInstalledPackage(YumHeaderPackage):
     """super class for dealing with packages in the rpmdb"""
