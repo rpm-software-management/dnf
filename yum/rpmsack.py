@@ -80,7 +80,7 @@ class RPMDBPackageSack(PackageSackBase):
         mi = self.ts.dbMatch()
         mi.pattern(table[0], rpm.RPMMIRE_GLOB, name)
         for hdr in mi:
-            pkg = YumInstalledPackage(hdr)
+            pkg = self.makePackageObject(hdr, mi.instance())
             if not result.has_key(pkg.pkgid):
                 result[pkg.pkgid] = pkg
 
@@ -100,7 +100,7 @@ class RPMDBPackageSack(PackageSackBase):
         
         mi = self.ts.dbMatch('basenames', name)
         for hdr in mi:
-            pkg = YumInstalledPackage(hdr)
+            pkg = self.makePackageObject(hdr, mi.instance())
             if not result.has_key(pkg.pkgid):
                 result[pkg.pkgid] = pkg
         del mi
@@ -112,7 +112,7 @@ class RPMDBPackageSack(PackageSackBase):
         table = self.dep_table[prcotype]
         mi = self.ts.dbMatch(table[0], name)
         for hdr in mi:
-            po = YumInstalledPackage(hdr)
+            po = self.makePackageObject(hdr, mi.instance())
             prcotup = (name, None, (None, None, None))
             if po.checkPrco(prcotype, prcotup):
                 if not result.has_key(po.pkgid):
@@ -252,10 +252,16 @@ class RPMDBPackageSack(PackageSackBase):
 
     # Helper functions
 
+    def makePackageObject(self, hdr, index):
+        
+        po = YumInstalledPackage(hdr)
+        po.idx = index
+        return po
+        
     def mi2list(self, mi):
         returnList = []
         for hdr in mi:
-            returnList.append(YumInstalledPackage(hdr))
+            returnList.append(self.makePackageObject(hdr, mi.instance()))
         return returnList
 
     def hdrByindex(self, index):
@@ -269,10 +275,7 @@ class RPMDBPackageSack(PackageSackBase):
         all = []
         for idx in indexlist:
             hdr  = self.hdrByindex(idx)
-            po = YumInstalledPackage(hdr)
-            # store our index in the po
-            po.idx = idx
-            all.append(po)
+            all.append(self.makePackageObject(hdr, idx))
         
         return all
 
