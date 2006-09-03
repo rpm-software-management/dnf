@@ -161,7 +161,8 @@ class YumRepository(Repository):
         self.callback = None  # for the grabber
         self.failure_obj = None
         self.mirror_failure_obj = None
-
+        self.interrupt_callback = None
+        
         self.storage = storagefactory.GetStorage()
         self.sack = self.storage.GetPackageSack()
 
