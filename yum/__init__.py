@@ -2053,7 +2053,7 @@ class YumBase(depsolve.Depsolve):
                 rc = askcb(po, userid, hexkeyid)
 
             if not rc:
-                return Errors.YumBaseError, "Not installing key"
+                raise Errors.YumBaseError, "Not installing key"
             
             # Import the key
             result = self.ts.pgpImportPubkey(misc.procgpgkey(rawkey))
