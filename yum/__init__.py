@@ -231,43 +231,34 @@ class YumBase(depsolve.Depsolve):
            This can't happen in __init__ b/c we don't know our installroot
            yet"""
         
-        if hasattr(self, 'read_ts'):
+        if hasattr(self, 'tsInfo'):
             return
             
         if not self.conf.installroot:
             raise Errors.YumBaseError, 'Setting up TransactionSets before config class is up'
         
-        installroot = self.conf.installroot
-        self.read_ts = rpmUtils.transaction.initReadOnlyTransaction(root=installroot)
         self.tsInfo = self._transactionDataFactory()
-        self.rpmdb = rpmsack.RPMDBPackageSack()
         self.initActionTs()
         
     def doRpmDBSetup(self):
         """sets up a holder object for important information from the rpmdb"""
-        
+
         if not self.localdbimported:
             self.verbose_logger.debug('Reading Local RPMDB')
-            self.rpmdb.ts = self.read_ts
-            self.rpmdb.buildIndexes()
+            self.rpmdb = rpmsack.RPMDBPackageSack(root=self.conf.installroot)
             self.localdbimported = 1
 
     def closeRpmDB(self):
         """closes down the instances of the rpmdb we have wangling around"""
         if hasattr(self, 'rpmdb'):
-            del self.rpmdb
+            self.rpmdb = None
             self.localdbimported = 0
         if hasattr(self, 'ts'):
-            del self.ts.ts
-            del self.ts
-        if hasattr(self, 'read_ts'):
-            del self.read_ts.ts
-            del self.read_ts
+            self.ts = None
         if hasattr(self, 'up'):
-            del self.up
+            self.up = None
         if hasattr(self, 'comps'):
             self.comps.compiled = False
-            
 
     def doRepoSetup(self, thisrepo=None):
         """grabs the repomd.xml for each enabled repository and sets up 
@@ -602,7 +593,7 @@ class YumBase(depsolve.Depsolve):
             else:
                 return 0
 
-        ylp = YumLocalPackage(self.read_ts, fo)
+        ylp = YumLocalPackage(self.rpmdb.readOnlyTS(), fo)
         if ylp.pkgtup != po.pkgtup:
             if raiseError:
                 raise URLGrabError(-1, 'Package does not match intended download')
@@ -792,7 +783,9 @@ class YumBase(depsolve.Depsolve):
             hasgpgkey = not not repo.gpgkey 
         
         if check:
-            sigresult = rpmUtils.miscutils.checkSig(self.read_ts, po.localPkg())
+            ts = self.rpmdb.readOnlyTS()
+            sigresult = rpmUtils.miscutils.checkSig(ts, po.localPkg())
+            ts.close()
             localfn = os.path.basename(po.localPkg())
             
             if sigresult == 0:
@@ -2017,6 +2010,8 @@ class YumBase(depsolve.Depsolve):
         keyurls = repo.gpgkey
         key_installed = False
 
+        ts = rpmUtils.transaction.TransactionWrapper(self.conf.installroot)
+
         for keyurl in keyurls:
             self.logger.info('Retrieving GPG key from %s' % keyurl)
 
@@ -2039,7 +2034,7 @@ class YumBase(depsolve.Depsolve):
                       'GPG key parsing failed: ' + str(e)
 
             # Check if key is already installed
-            if misc.keyInstalled(self.read_ts, keyid, timestamp) >= 0:
+            if misc.keyInstalled(ts, keyid, timestamp) >= 0:
                 self.logger.info('GPG key at %s (0x%s) is already installed' % (
                     keyurl, hexkeyid))
                 continue
@@ -2056,7 +2051,7 @@ class YumBase(depsolve.Depsolve):
                 raise Errors.YumBaseError, "Not installing key"
             
             # Import the key
-            result = self.ts.pgpImportPubkey(misc.procgpgkey(rawkey))
+            result = ts.pgpImportPubkey(misc.procgpgkey(rawkey))
             if result != 0:
                 raise Errors.YumBaseError, \
                       'Key import failed (code %d)' % result
@@ -2076,3 +2071,4 @@ class YumBase(depsolve.Depsolve):
         if result != 0:
             self.logger.info("Import of key(s) didn't help, wrong key(s)?")
             raise Errors.YumBaseError, errmsg
+

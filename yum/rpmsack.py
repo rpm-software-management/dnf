@@ -22,17 +22,17 @@ import rpm
 import types
 import warnings
 
-from Errors import PackageSackError
 from rpmUtils import miscutils
+from rpmUtils.transaction import initReadOnlyTransaction
 import misc
 from packages import YumInstalledPackage
 from packageSack import ListPackageSack, PackageSackBase
 
 class RPMDBPackageSack(PackageSackBase):
 
-    def __init__(self, ts=None):
+    def __init__(self, root='/'):
         self.excludes = {}
-        self.ts = ts
+        self.root = root
         self.pkglist = []
         self.dep_table = { 'requires'  : (rpm.RPMTAG_REQUIRENAME,
                                           rpm.RPMTAG_REQUIREVERSION,
@@ -47,13 +47,16 @@ class RPMDBPackageSack(PackageSackBase):
                                           rpm.RPMTAG_OBSOLETEVERSION,
                                           rpm.RPMTAG_OBSOLETEFLAGS)
                            }
-        if self.ts:
-            self.buildIndexes()
+        self.buildIndexes()
+
+    def readOnlyTS(self):
+        return initReadOnlyTransaction(root=self.root)
 
     def buildIndexes(self):
+        ts = self.readOnlyTS()
         self.header_indexes = {}
         
-        mi = self.ts.dbMatch()
+        mi = ts.dbMatch()
         for hdr in mi:
             pkgtuple = self._hdr2pkgTuple(hdr)
             if not self.header_indexes.has_key(pkgtuple):
@@ -64,8 +67,6 @@ class RPMDBPackageSack(PackageSackBase):
         
         self.pkglist = self.header_indexes.keys()
         
-        del mi
-
     def _checkIndexes(self, failure='error'):
         return
 
@@ -73,11 +74,12 @@ class RPMDBPackageSack(PackageSackBase):
         self.excludes[obj.pkgId] = 1
 
     def searchAll(self, name, query_type='like'):
+        ts = self.readOnlyTS()
         result = {}
 
         # check provides
         table = self.dep_table['provides']
-        mi = self.ts.dbMatch()
+        mi = ts.dbMatch()
         mi.pattern(table[0], rpm.RPMMIRE_GLOB, name)
         for hdr in mi:
             pkg = self.makePackageObject(hdr, mi.instance())
@@ -85,6 +87,7 @@ class RPMDBPackageSack(PackageSackBase):
                 result[pkg.pkgid] = pkg
 
         del mi
+        ts.close()
         
         fileresults = self.searchFiles(name)
         for pkg in fileresults:
@@ -95,22 +98,25 @@ class RPMDBPackageSack(PackageSackBase):
 
     def searchFiles(self, name):
         """search the filelists in the rpms for anything matching name"""
-        
+        ts = self.readOnlyTS()
         result = {}
         
-        mi = self.ts.dbMatch('basenames', name)
+        mi = ts.dbMatch('basenames', name)
         for hdr in mi:
             pkg = self.makePackageObject(hdr, mi.instance())
             if not result.has_key(pkg.pkgid):
                 result[pkg.pkgid] = pkg
         del mi
+        ts.close()
         
         return result.values()
         
     def searchPrco(self, name, prcotype):
+        
+        ts = self.readOnlyTS()
         result = {}
         table = self.dep_table[prcotype]
-        mi = self.ts.dbMatch(table[0], name)
+        mi = ts.dbMatch(table[0], name)
         for hdr in mi:
             po = self.makePackageObject(hdr, mi.instance())
             prcotup = (name, None, (None, None, None))
@@ -129,6 +135,7 @@ class RPMDBPackageSack(PackageSackBase):
                         result[pkg.pkgid] = pkg
         
         del mi
+        ts.close()
         
         return result.values()
 
@@ -158,7 +165,6 @@ class RPMDBPackageSack(PackageSackBase):
         if len(self.searchNevra(name=name, arch=arch, epoch=epoch, ver=ver, rel=rel)) > 0:
             return 1
         return 0
-    
 
     def returnNewestByNameArch(self, naTup=None):
 
@@ -169,13 +175,16 @@ class RPMDBPackageSack(PackageSackBase):
         (name, arch) = naTup
         allpkg = []
 
-        mi = self.ts.dbMatch(rpm.RPMTAG_NAME, naTup[0])
+        ts = self.readOnlyTS()
+        mi = ts.dbMatch(rpm.RPMTAG_NAME, naTup[0])
         arch = naTup[1]
         for hdr in mi:
             if hdr[rpm.RPMTAG_ARCH] == arch:
                 allpkg.append(self._hdr2pkgTuple(hdr))
         
         del mi
+        ts.close()
+
         if not allpkg:
             # FIXME: raise  ...
             print 'No Package Matching %s' % name
@@ -185,7 +194,9 @@ class RPMDBPackageSack(PackageSackBase):
         if not name:
             return
 
-        allpkg = self.mi2list(self.ts.dbMatch(rpm.RPMTAG_NAME, name))
+        ts = self.readOnlyTS()
+        allpkg = self.mi2list(ts.dbMatch(rpm.RPMTAG_NAME, name))
+        ts.close()
         if not allpkg:
             # FIXME: raise  ...
             print 'No Package Matching %s' % name
@@ -264,8 +275,8 @@ class RPMDBPackageSack(PackageSackBase):
             returnList.append(self.makePackageObject(hdr, mi.instance()))
         return returnList
 
-    def hdrByindex(self, index):
-        mi = self.ts.dbMatch(0, index)
+    def hdrByindex(self, ts, index):
+        mi = ts.dbMatch(0, index)
         hdr = mi.next()
         return hdr
     
@@ -273,10 +284,11 @@ class RPMDBPackageSack(PackageSackBase):
     
         """return YumInstalledPackage objects in a list for each index in the list"""
         all = []
+        ts = self.readOnlyTS()
         for idx in indexlist:
-            hdr  = self.hdrByindex(idx)
+            hdr  = self.hdrByindex(ts, idx)
             all.append(self.makePackageObject(hdr, idx))
-        
+        ts.close()
         return all
 
     def _hdr2pkgTuple(self, hdr):
@@ -304,11 +316,13 @@ class RPMDBPackageSack(PackageSackBase):
         warnings.warn('getHdrList() will go away in a future version of Yum.\n',
                 DeprecationWarning, stacklevel=2)
     
+        ts = self.readOnlyTS()
         hdrlist = []
         for pkg in self.header_indexes.keys():
             for idx in self.header_indexes[pkg]:
-                hdr = self.hdrByindex(idx)
+                hdr = self.hdrByindex(ts, idx)
                 hdrlist.append(hdr)
+        ts.close()
         return hdrlist
 
     def getNameArchPkgList(self):
@@ -370,11 +384,8 @@ class RPMDBPackageSack(PackageSackBase):
         return []
         
     def addDB(self, ts):
-        warnings.warn('addDB()() will go away in a future version of Yum.\n',
-                DeprecationWarning, stacklevel=2)
-    
-        self.ts = ts
-        self.buildIndexes()
+        # Can't support this now
+        raise NotImplementedError
 
     def whatProvides(self, name, flags, version):
         """searches the rpmdb for what provides the arguments

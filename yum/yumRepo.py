@@ -165,6 +165,7 @@ class YumRepository(Repository):
         self.storage = storagefactory.GetStorage()
         self.sack = self.storage.GetPackageSack()
 
+        self.last_interrupt_time = None
 
     def __getProxyDict(self):
         self.doProxyDict()
@@ -319,6 +320,7 @@ class YumRepository(Repository):
                                    progress_obj=self.callback,
                                    proxies = self.proxy_dict,
                                    failure_callback=self.failure_obj,
+                                   interrupt_callback=self.interrupt_callback,
                                    timeout=self.timeout,
                                    http_headers=headers,
                                    reget='simple')
@@ -326,6 +328,26 @@ class YumRepository(Repository):
 
         self.grab = mgclass(self.grabfunc, self.urls,
                             failure_callback=self.mirror_failure_obj)
+
+    def interrupt_callback(self, cb):
+        '''Handle CTRL-C's during downloads
+
+        If a CTRL-C occurs a URLGrabError will be raised to push the download
+        onto the next mirror.  
+        
+        If two CTRL-C's occur in quick succession then yum will exit.
+
+        @param cb: urlgrabber callback obj
+        '''
+        now = time.time()
+        if self.last_interrupt_time:
+            if now - self.last_interrupt_time < 0.2:
+                # Two quick CTRL-C's, quit
+                raise KeyboardInterrupt
+
+        # Go to next mirror
+        self.last_interrupt_time = now
+        raise URLGrabError(15, 'user interrupt')
 
     def dirSetup(self):
         """make the necessary dirs, if possible, raise on failure"""
@@ -428,6 +450,7 @@ class YumRepository(Repository):
                             reget = reget,
                             proxies = self.proxy_dict,
                             failure_callback = self.failure_obj,
+                            interrupt_callback=self.interrupt_callback,
                             timeout=self.timeout,
                             checkfunc=checkfunc,
                             http_headers=headers,

@@ -42,6 +42,17 @@ class TransactionWrapper:
                          'next',
                          'clean']
         self.tsflags = []
+        self.open = True
+
+    def __del__(self):
+        # Automatically close the rpm transaction when the reference is lost
+        self.close()
+
+    def close(self):
+        if self.open:
+            self.ts.closeDB()
+            self.ts = None
+            self.open = False
 
     def __getattr__(self, attr):
         if attr in self._methods:

@@ -602,6 +602,11 @@ For more information contact your distribution or package provider.
                 if po:
                     downloadpkgs.append(po)
 
+        # Close the connection to the rpmdb so that rpm doesn't hold the SIGINT
+        # handler during the downloads. self.ts is reinitialised later in this
+        # function anyway (initActionTs). 
+        self.ts.close()
+
         # Report the total download size to the user, so he/she can base
         # the answer on this info
         if stuff_to_download:
@@ -636,8 +641,6 @@ For more information contact your distribution or package provider.
         
         testcb = callback.RPMInstallCallback(output=0)
         testcb.tsInfo = self.tsInfo
-        # clean out the ts b/c we have to give it new paths to the rpms 
-        del self.ts
         
         self.initActionTs()
         # save our dsCallback out
@@ -991,7 +994,7 @@ For more information contact your distribution or package provider.
         
         for pkg in filelist:
             try:
-                po = YumLocalPackage(ts=self.read_ts, filename=pkg)
+                po = YumLocalPackage(ts=self.rpmdb.readOnlyTS(), filename=pkg)
             except yum.Errors.MiscError, e:
                 self.logger.critical('Cannot open file: %s. Skipping.', pkg)
                 continue
