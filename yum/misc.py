@@ -9,7 +9,6 @@ import re
 import pgpmsg
 import tempfile
 import glob
-import rpm
 import pwd
 from stat import *
 
