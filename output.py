@@ -25,6 +25,7 @@ import logging
 from i18n import _
 
 from urlgrabber.progress import TextMeter
+from urlgrabber.grabber import URLGrabError
 from yum.misc import sortPkgObj
 
 try:
@@ -32,7 +33,6 @@ try:
 except:
     pass
 
-import yum.Errors
 from yum import logginglevels
 
 class YumOutput:
@@ -329,15 +329,36 @@ Remove   %5.5s Package(s)
         else:
             self.repos.setProgressBar(TextMeter(fo=sys.stdout))
             self.repos.callback = CacheProgressCallback()
+
         # setup our failure report for failover
         freport = (self.failureReport,(),{})
         self.repos.setFailureCallback(freport)
+
+        # setup callback for CTRL-C's
+        self.repos.setInterruptCallback(self.interrupt_callback)
         
         # setup our depsolve progress callback
         dscb = DepSolveProgressCallBack()
         self.dsCallback = dscb
             
-    
+    def interrupt_callback(self, cbobj):
+        '''Handle CTRL-C's during downloads
+
+        If a CTRL-C occurs a URLGrabError will be raised to push the download
+        onto the next mirror.  
+        
+        If two CTRL-C's occur in quick succession then yum will exit.
+
+        @param cbobj: urlgrabber callback obj
+        '''
+        now = time.time()
+        if hasattr(self, '_last_interrupt') and now - self._last_interrupt < 0.2:
+            # Two quick CTRL-C's, quit
+            raise KeyboardInterrupt
+
+        # Go to next mirror
+        self._last_interrupt = now
+        raise URLGrabError(15, 'user interrupt')
 
 class DepSolveProgressCallBack:
     """provides text output callback functions for Dependency Solver callback"""

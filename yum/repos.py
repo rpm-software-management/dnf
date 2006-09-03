@@ -162,6 +162,10 @@ class RepoStorage:
         for repo in self.repos.values():
             repo.setMirrorFailureObj(obj)
 
+    def setInterruptCallback(self, callback):
+        for repo in self.repos.values():
+            repo.setInterruptCallback(callback)
+
     def getPackageSack(self):
         return self.pkgSack
 
