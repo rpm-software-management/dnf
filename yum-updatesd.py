@@ -333,7 +333,7 @@ class UpdatesDaemon(yum.YumBase):
 
             return pkgDict
 
-        if not hasattr(self, 'up'):
+        if self.up is None:
             # we're _only_ called after updates are setup
             return
 

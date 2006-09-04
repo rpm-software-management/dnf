@@ -210,8 +210,7 @@ class YumShell(cmd.Cmd):
                 value = BOOLEAN_STATES[value.lower()]
                 setattr(self.base.conf, cmd, value)
                 if cmd == 'obsoletes':
-                    if hasattr(self.base, 'up'): # reset the updates
-                        del self.base.up
+                    self.base.up = None
         
         elif cmd in ['exclude']:
             args = args.replace(',', ' ')
@@ -223,11 +222,10 @@ class YumShell(cmd.Cmd):
                 return False
             else:
                 setattr(self.base.conf, cmd, opts)
-                if hasattr(self.base, 'pkgSack'): # kill the pkgSack
-                    del self.base.pkgSack
+                if self.base.pkgSack:       # kill the pkgSack
+                    self.base.pkgSack = None
                     self.base.repos._selectSackType()
-                if hasattr(self.base, 'up'): # reset the updates
-                    del self.base.up
+                self.base.up = None         # reset the updates
                 # reset the transaction set, we have to or we shall surely die!
                 self.base.closeRpmDB() 
                 self.base.doTsSetup()
@@ -274,8 +272,7 @@ class YumShell(cmd.Cmd):
                             self.base.repos.disableRepo(repo)
                             return False
                             
-                    if hasattr(self.base, 'up'): # reset the updates
-                        del self.base.up
+                    self.base.up = None
             
         elif cmd == 'disable':
             repos = self._shlex_split(args)
@@ -288,11 +285,10 @@ class YumShell(cmd.Cmd):
                     self.logger.critical(e)
 
                 else:
-                    if hasattr(self.base, 'pkgSack'): # kill the pkgSack
-                        del self.base.pkgSack
+                    if self.base.pkgSack:       # kill the pkgSack
+                        self.base.pkgSack = None
                         self.base.repos._selectSackType()
-                    if hasattr(self.base, 'up'): # reset the updates
-                        del self.base.up
+                    self.base.up = None     # reset the updates
                     # reset the transaction set and refresh everything
                     self.base.closeRpmDB() 
                     self.base.doTsSetup()

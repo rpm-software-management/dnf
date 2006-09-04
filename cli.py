@@ -78,7 +78,7 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         """grabs the repomd.xml for each enabled repository 
            and sets up the basics of the repository"""
         
-        if hasattr(self, 'pkgSack') and thisrepo is None:
+        if self.pkgSack and thisrepo is None:
             self.verbose_logger.log(logginglevels.DEBUG_4,
                 'skipping reposetup, pkgsack exists')
             return

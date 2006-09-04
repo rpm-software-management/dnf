@@ -34,6 +34,7 @@ import logginglevels
 
 class Depsolve(object):
     def __init__(self):
+        self.ts = None
         packages.base = self
         self.dsCallback = None
         self.logger = logging.getLogger("yum.Depsolve")
@@ -228,7 +229,7 @@ class Depsolve(object):
                     '\nDep Number: %d/%d\n', depcount, len(deps))
                 if sense == rpm.RPMDEP_SENSE_REQUIRES: # requires
                     # if our packageSacks aren't here, then set them up
-                    if not hasattr(self, 'pkgSack'):
+                    if self.pkgSack is None:
                         self.doRepoSetup()
                         self.doSackSetup()
                     (checkdep, missing, conflict, errormsgs) = self._processReq(dep)
@@ -513,7 +514,7 @@ class Depsolve(object):
 
         if needmode is None:
             reqpkg = (name, ver, rel, None)
-            if hasattr(self, 'pkgSack'):
+            if self.pkgSack is None:
                 return self._requiringFromTransaction(reqpkg, requirement, errorlist)
             else:
                 self.verbose_logger.log(logginglevels.DEBUG_2, 'Unresolveable requirement %s for %s',

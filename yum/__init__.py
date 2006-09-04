@@ -63,7 +63,11 @@ class YumBase(depsolve.Depsolve):
     
     def __init__(self):
         depsolve.Depsolve.__init__(self)
-        self.localdbimported = 0
+        self.tsInfo = None
+        self.rpmdb = None
+        self.up = None
+        self.comps = None
+        self.pkgSack = None
         self.logger = logging.getLogger("yum.YumBase")
         self.verbose_logger = logging.getLogger("yum.verbose.YumBase")
         self.repos = repos.RepoStorage() # class of repositories
@@ -231,7 +235,7 @@ class YumBase(depsolve.Depsolve):
            This can't happen in __init__ b/c we don't know our installroot
            yet"""
         
-        if hasattr(self, 'tsInfo'):
+        if self.tsInfo != None and self.ts != None:
             return
             
         if not self.conf.installroot:
@@ -243,21 +247,16 @@ class YumBase(depsolve.Depsolve):
     def doRpmDBSetup(self):
         """sets up a holder object for important information from the rpmdb"""
 
-        if not self.localdbimported:
+        if self.rpmdb is None:
             self.verbose_logger.debug('Reading Local RPMDB')
             self.rpmdb = rpmsack.RPMDBPackageSack(root=self.conf.installroot)
-            self.localdbimported = 1
 
     def closeRpmDB(self):
         """closes down the instances of the rpmdb we have wangling around"""
-        if hasattr(self, 'rpmdb'):
-            self.rpmdb = None
-            self.localdbimported = 0
-        if hasattr(self, 'ts'):
-            self.ts = None
-        if hasattr(self, 'up'):
-            self.up = None
-        if hasattr(self, 'comps'):
+        self.rpmdb = None
+        self.ts = None
+        self.up = None
+        if self.comps != None:
             self.comps.compiled = False
 
     def doRepoSetup(self, thisrepo=None):
@@ -289,7 +288,7 @@ class YumBase(depsolve.Depsolve):
         """populates the package sacks for information from our repositories,
            takes optional archlist for archs to include"""
            
-        if hasattr(self, 'pkgSack') and thisrepo is None:
+        if self.pkgSack and thisrepo is None:
             self.verbose_logger.log(logginglevels.DEBUG_4,
                 'skipping reposetup, pkgsack exists')
             return
@@ -323,13 +322,13 @@ class YumBase(depsolve.Depsolve):
         """setups up the update object in the base class and fills out the
            updates, obsoletes and others lists"""
         
-        if hasattr(self, 'up'):
+        if self.up != None:
             return
             
         self.verbose_logger.debug('Building updates object')
         #FIXME - add checks for the other pkglists to see if we should
         # raise an error
-        if not hasattr(self, 'pkgSack'):
+        if self.pkgSack is None:
             self.doRepoSetup()
             self.doSackSetup()
         
@@ -374,7 +373,7 @@ class YumBase(depsolve.Depsolve):
                 
         # now we know which repos actually have groups files.
         overwrite = self.conf.overwrite_groups
-        if not hasattr(self, 'comps'):
+        if self.comps is None:
             self.comps = comps.Comps(overwrite_groups = overwrite)
 
         for repo in reposWithGroups:
