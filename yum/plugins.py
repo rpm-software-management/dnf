@@ -240,10 +240,10 @@ class YumPlugins:
             if os.access(conffilename, os.R_OK):
                 # Found configuration file
                 break
-            self.base.log(3, "Configuration file %s not found" % conffilename)
+            self.verbose_logger.log(logginglevels.INFO_2, "Configuration file %s not found" % conffilename)
         else: # for
             # Configuration files for the plugin not found
-            self.base.log(2, "Unable to find configuration file for plugin %s"
+            self.verbose_logger.log(logginglevels.INFO_2, "Unable to find configuration file for plugin %s"
                 % modname)
             return None
 
