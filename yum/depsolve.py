@@ -58,6 +58,11 @@ class Depsolve(object):
             else:
                 self.logger.critical('Invalid tsflag in config file: %s', flag)
 
+        probfilter = 0
+        for flag in self.tsInfo.probFilterFlags:
+            probfilter |= flag
+        self.ts.setProbFilter(probfilter)
+
     def whatProvides(self, name, flags, version):
         """searches the packageSacks for what provides the arguments
            returns a ListPackageSack of providing packages, possibly empty"""
