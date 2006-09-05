@@ -2039,7 +2039,7 @@ class YumBase(depsolve.Depsolve):
                 continue
 
             # Try installing/updating GPG key
-            self.logger.info('Importing GPG key 0x%s "%s"' % (hexkeyid, userid))
+            self.logger.critical('Importing GPG key 0x%s "%s"' % (hexkeyid, userid))
             rc = False
             if self.conf.assumeyes:
                 rc = True
