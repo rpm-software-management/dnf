@@ -222,6 +222,8 @@ class MetaSack(PackageSackBase):
 
     def packagesByTuple(self, pkgtup):
         """return a list of package objects by (n,a,e,v,r) tuple"""
+        warnings.warn('packagesByTuple() will go away in a future version of Yum.\n',
+                DeprecationWarning, stacklevel=2)
         return self._computeAggregateListResult("packagesByTuple", pkgtup)
 
     def searchNevra(self, name=None, epoch=None, ver=None, rel=None, arch=None):
