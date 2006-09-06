@@ -1,3 +1,337 @@
+2006-09-06 00:17  skvidal
+
+	* yum.spec, yum/__init__.py: 
+	mark as 2.9.6
+
+2006-09-05 22:21  katzj
+
+	* cli.py: initialize "interface" plugins for the cli (patch from
+	panu)
+
+2006-09-05 22:19  katzj
+
+	* yum-updatesd.py: fix up logging
+
+2006-09-05 14:42  pmatilai
+
+	* yum/depsolve.py: - set transaction problem filters according to
+	what's specified in   tsInfo.problemFilter list
+
+2006-09-05 13:57  pmatilai
+
+	* yum/plugins.py: - dont traceback trying to call nonexistent log()
+	method if plugin   configuration not found
+
+2006-09-05 13:37  katzj
+
+	* yum/packageSack.py: mo' bettah deprecation warnings
+
+2006-09-05 13:36  katzj
+
+	* yum/__init__.py: fix deprecation warning
+
+2006-09-05 10:03  skvidal
+
+	* yum/__init__.py: 
+	make output about key importing work
+
+2006-09-04 12:33  mjs
+
+	* cli.py, shell.py, yum-updatesd.py, yum/__init__.py,
+	yum/depsolve.py: Clean up the attributes of YumBase so that they
+	are always defined. They are None when not initialised and set if
+	initialised. No more messing around with hasattr and deinitialising
+	in now a matter of "self.foo = None".
+
+2006-09-03 17:56  skvidal
+
+	* yum/yumRepo.py: 
+	set the default interrupt_callback to None for the folks operating
+	in lazy-mode
+
+2006-09-03 17:34  mjs
+
+	* output.py, yum/repos.py, yum/yumRepo.py: Allow the interrupt
+	callback to be set via the API. Push the command line Yum's own
+	interrupt callback function out of the API code.
+
+2006-09-03 17:11  mjs
+
+	* cli.py, yum/__init__.py, yum/rpmsack.py, yum/yumRepo.py,
+	rpmUtils/transaction.py: Fixes so that CTRL-C finally works
+	properly:     - rpmdb transactions are only kept open when strictly
+	necessary so that	SIGINT handler is left alone by rpm during
+	downloads etc	  - added a simple interrupt_callback for package
+	downloads. A single CTRL-C	 will push the download to the next
+	mirror. Two quick CTRL-C's will       terminate Yum. This needs
+	cleaning up to not upset Yum API clients.
+
+2006-09-03 06:21  mjs
+
+	* yum/__init__.py: fix a return that should be a raise
+
+2006-09-03 05:24  mjs
+
+	* yum/misc.py: removed unnecessary import
+
+2006-09-02 22:50  skvidal
+
+	* yum/rpmsack.py: 
+	make sure every package object returned from the rpmsack has an idx
+	attribute
+
+2006-09-02 19:17  skvidal
+
+	* yum/depsolve.py: 
+	that addErase is to the ts, not tsInfo so it needs a header or an
+	header index - not a po.
+
+2006-09-02 18:59  katzj
+
+	* yum/depsolve.py: fix for API change
+
+2006-09-02 18:58  katzj
+
+	* yum/packages.py: add back getProvidesNames() as deprecated, spew
+	a deprecation warning for prcoPrintable() as well
+
+2006-09-02 03:47  skvidal
+
+	* yum/: __init__.py, depsolve.py, packages.py, repos.py,
+	rpmsack.py, sqlitesack.py, yumRepo.py: 
+	- add a repository object to each package object.  - fix a small
+	bug in depsolving when the requires and the provides don't match up
+	with 0-epoch use - add prco's_print properties to all package
+	objects - make it so filelists are autoloaded, if possible, when
+	querying filelists of YumAvailablePackageSqlite
+
+2006-09-02 01:45  skvidal
+
+	* yum/: depsolve.py, packages.py, sqlitesack.py: 
+	clean up some of the dealing with package objects setup:
+	po.provides po.requires po.obsoletes po.conflicts po.provides_names
+	po.requires_names po.obsoletes_names po.conflicts_names
+	po.changelog po.filelist po.dirlist po.ghostlist po.checksums
+	po.changelog
+	
+	all as properties. They call out when needed so we shouldn't need
+	to setup anything to go get them.
+
+2006-09-01 21:16  skvidal
+
+	* yum/: packages.py, sqlitesack.py: 
+	- properties do not behave like other subclassable items - which
+	sucks - add filelists, dirlists and ghostlist property attributes
+	to all package objects
+
+2006-09-01 15:00  skvidal
+
+	* cli.py, yum/depsolve.py, yum/rpmsack.py: 
+	added our rpmdb index into package objects from the rpmdb.
+	
+	po.idx
+	
+	gets rid of last returnIndexesByTuple()
+
+2006-08-31 22:04  katzj
+
+	* yum/__init__.py: only initialize core plugins by default as
+	discussed on yum-devel
+
+2006-08-31 01:11  skvidal
+
+	* yum/sqlitesack.py: 
+	cleaning up the things we're suddenly not importing - this makes
+	checksums work and maybe prcos
+
+2006-08-30 15:48  katzj
+
+	* yum/__init__.py: fix logging setup to pass debug and error in the
+	right order.  fixes yum -d6 and other similar things
+
+2006-08-30 12:49  skvidal
+
+	* yum/depsolve.py: 
+	make conflicts stop tracing back when it gets a pkgobj closes rhbug
+	#204171
+
+2006-08-30 11:17  mjs
+
+	* yum/packageSack.py: Faster and more memory efficient
+	implementation of matchPackageNames()
+
+2006-08-29 11:51  skvidal
+
+	* yum/: __init__.py, packages.py: 
+	make 'yum provides' stop backtracing on provides add providesnames
+	property to package objects
+
+2006-08-29 10:27  slack
+
+	* yum/packageSack.py: Found a few more returnPackageTuple() methods
+	and replaced with po.pkgtup
+
+2006-08-29 02:47  skvidal
+
+	* yum/: packageSack.py, sqlitesack.py: 
+	- typo in sqlitesack that made it all break - change out
+	matchPackages for matchPackageNames() as that's what it is doing  
+	- convert to a generator for memory use   - simplify what it does
+
+2006-08-29 01:17  skvidal
+
+	* yum/sqlitesack.py: 
+	fix up YumAvailablePackageSqlite.returnSimple() - if you select %s
+	and pass it in on the cursor.execute with sqlite you end up with a
+	quoted string. So "select %s from foo", ('somevar')
+	
+	results in this:
+	
+	select 'somevar' from foo
+	
+	which means EVERY answer you get back will be 'somevar' and not the
+	value in the row for that column.
+	
+	If anyone knows how to turn off that quoting per-variable in
+	sqlite, let me know - the docs didn't have it.
+	
+	We also needed an simple-dict to db column-name map so querying for
+	certain things would return the right information.
+
+2006-08-28 08:45  skvidal
+
+	* yum/packageSack.py: 
+	note about how to make this a generator-capable interface
+
+2006-08-27 16:07  skvidal
+
+	* yum/: packageSack.py, rpmsack.py, sqlitesack.py: 
+	
+	implement matchPackages() - the equivalent of
+	packages.parsePackages() inside PackageSack.PackageSack remove
+	repoid optional argument from simplePkgList as it was used nowhere.
+	 store results of anysack.simplePkgList() in anysack.pkglist and
+	return from there if called multiple times.
+
+2006-08-25 13:30  tambet
+
+	* cli.py: 2006-08-25  Tambet Ingo  <tambet@ximian.com>
+	
+		* cli.py (YumBaseCli.installPkgs): Use objects instead of
+	tuples,
+		comparision works only with objects.
+
+2006-08-25 11:57  katzj
+
+	* yum/sqlitesack.py: speed up sqlite querying a bit by only looking
+	things up in the appropriate sqlitedb and also only getting what we
+	want
+
+2006-08-25 02:45  skvidal
+
+	* yum/: packageSack.py, packages.py: 
+	fix up some issues with overlapping methods
+
+2006-08-25 02:22  skvidal
+
+	* yum/packages.py: 
+	clean up and compress some of the duplicate methods in the various
+	package objects
+
+2006-08-25 02:21  skvidal
+
+	* rpmUtils/miscutils.py: 
+	fix problem in flagToString not handling prereq and rpmsense
+	requires correctly
+
+2006-08-25 01:13  skvidal
+
+	* output.py, yum/__init__.py, yum/packages.py: 
+	get rid of packageobject.size() method - replaced with
+	packageobject.size attribute/property
+
+2006-08-25 00:51  skvidal
+
+	* yum/: depsolve.py, packageSack.py, packages.py: 
+	depsolve.py:  - get rid of the last call using nevra tuples
+	
+	packageSack.py:  - kill nevra tuples and dumb print mechanisms
+	
+	packages.py:  - remove unused methods
+
+2006-08-25 00:25  skvidal
+
+	* yum/: packageSack.py, packages.py: 
+	- clean up a few uses of compareEVR - add requires, conflicts,
+	provides, obsoletes properties to package objects - add a
+	remote_path attribute to YumAvailablePackage objects for easier
+	reference
+
+2006-08-24 16:08  katzj
+
+	* yum/rpmsack.py: don't do this check at runtime.  it fails if you
+	have an empty rpmdb.  and since we have no fallback, it doesn't
+	help us much.  we just need to Requires: a new enough version of
+	rpm-python to support this
+
+2006-08-24 11:21  skvidal
+
+	* yum/: Errors.py, repos.py: 
+	added Chris Lumens patch for duplicate-repo detection error
+	generation.
+
+2006-08-23 07:59  skvidal
+
+	* cli.py, yum-updatesd.py, yum/__init__.py, yum/depsolve.py,
+	yum/packages.py: 
+	s/packagesByTuple/searchPkgTuple/ - Thanks to Tim Lauridsen
+
+2006-08-22 13:55  skvidal
+
+	* yum/packages.py: 
+	condense down the rich comparison methods
+
+2006-08-22 13:44  skvidal
+
+	* yum/: packageSack.py, rpmsack.py: 
+	move the searchPO, searchPkgTuples up into PackageSackBase
+
+2006-08-22 00:45  skvidal
+
+	* yum/: depsolve.py, misc.py: 
+	cleaned up some other uses of compareEVR()
+
+2006-08-22 00:34  skvidal
+
+	* cli.py: 
+	actually remove one entry I left in
+
+2006-08-22 00:32  skvidal
+
+	* cli.py: 
+	clean up a few uses of compareEVR()
+
+2006-08-22 00:04  skvidal
+
+	* yum/: packageSack.py, packages.py: rich comparison methods for
+	package objects
+
+2006-08-21 22:54  skvidal
+
+	* yum/: packageSack.py, rpmsack.py: 
+	all sacks should now have: searchNevra searchPO searchPkgTuples
+	
+	it should return a list of package objects in every case
+
+2006-08-21 22:27  skvidal
+
+	* yum/logger.py: remove logger as nothing is using it
+
+2006-08-21 20:25  skvidal
+
+	* ChangeLog: 
+	changelog
+
 2006-08-21 20:09  skvidal
 
 	* yum/rpmsack.py: 
