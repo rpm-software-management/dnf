@@ -45,11 +45,10 @@ from email.MIMEText import MIMEText
 
 import yum
 import yum.Errors
-from yum.logger import Logger, SysLogger, LogContainer
+import syslog
 from yum.config import BaseConfig, Option, IntOption, ListOption, BoolOption, \
                        IncludingConfigParser
 from yum.constants import *
-from yum.packages import YumInstalledPackage
 from yum.update_md import UpdateMetadata
 
 # FIXME: is it really sane to use this from here?
@@ -81,23 +80,64 @@ class UpdateEmitter(object):
         pass
 
 class SyslogUpdateEmitter(UpdateEmitter):
-    def __init__(self, syslog_facility, ident = "yum-updatesd"):
+    def __init__(self, syslog_facility, ident = "yum-updatesd",
+                 level = "WARN"):
         UpdateEmitter.__init__(self)
-        syslog_object = SysLogger(threshold = 10, 
-                                      facility=syslog_facility,
-                                      ident='yum-updatesd')
-        self.syslog = LogContainer([syslog_object])
+        syslog.openlog(ident, 0, self._facilityMap(syslog_facility))
+        self.level = level
         
     def updatesAvailable(self, updateInfo):
         num = len(updateInfo)
+        level = self.level
         if num > 1:
             msg = "%d updates available" %(num,)
         elif num == 1:
             msg = "1 update available"
         else:
             msg = "No updates available"
+            level = syslog.LOG_DEBUG
 
-        self.syslog(0, msg)
+        syslog.syslog(self._levelMap(level), msg)
+
+    def _levelMap(self, lvl):
+        level_map = { "EMERG": syslog.LOG_EMERG,
+                      "ALERT": syslog.LOG_ALERT,
+                      "CRIT": syslog.LOG_CRIT,
+                      "ERR": syslog.LOG_ERR,
+                      "WARN": syslog.LOG_WARNING,
+                      "NOTICE": syslog.LOG_NOTICE,
+                      "INFO": syslog.LOG_INFO,
+                      "DEBUG": syslog.LOG_DEBUG }
+        if type(lvl) == type(int):
+            return lvl
+        if level_map.has_key(lvl.upper()):
+            return level_map[lvl.upper()]
+        return syslog.LOG_INFO
+
+    def _facilityMap(self, facility):
+        facility_map = { "KERN": syslog.LOG_KERN,
+                         "USER": syslog.LOG_USER,
+                         "MAIL": syslog.LOG_MAIL,
+                         "DAEMON": syslog.LOG_DAEMON,
+                         "AUTH": syslog.LOG_AUTH,
+                         "LPR": syslog.LOG_LPR,
+                         "NEWS": syslog.LOG_NEWS,
+                         "UUCP": syslog.LOG_UUCP,
+                         "CRON": syslog.LOG_CRON,
+                         "LOCAL0": syslog.LOG_LOCAL0,
+                         "LOCAL1": syslog.LOG_LOCAL1,
+                         "LOCAL2": syslog.LOG_LOCAL2,
+                         "LOCAL3": syslog.LOG_LOCAL3,
+                         "LOCAL4": syslog.LOG_LOCAL4,
+                         "LOCAL5": syslog.LOG_LOCAL5,
+                         "LOCAL6": syslog.LOG_LOCAL6,
+                         "LOCAL7": syslog.LOG_LOCAL7,}
+        if type(facility) == type(int):
+            return facility
+        elif facility_map.has_key(facility.upper()):
+            return facility_map[facility.upper()]
+        return syslog.LOG_DAEMON
+
 
 class EmailUpdateEmitter(UpdateEmitter):
     def __init__(self, sender, rcpt):
@@ -185,6 +225,7 @@ class UDConfig(yum.config.BaseConfig):
     updaterefresh = IntOption(3600)
     syslog_facility = Option("DAEMON")
     syslog_level = Option("WARN")
+    syslog_ident = Option("yum-updatesd")
     yum_config = Option("/etc/yum.conf")
 
 class UpdateDownloadThread(threading.Thread):
@@ -259,7 +300,9 @@ class UpdatesDaemon(yum.YumBase):
             self.emitters.append(EmailUpdateEmitter(self.opts.email_from,
                                                     self.opts.email_to))
         if 'syslog' in self.opts.emit_via:
-            self.emitters.append(SyslogUpdateEmitter(self.conf.syslog_facility))
+            self.emitters.append(SyslogUpdateEmitter(self.opts.syslog_facility,
+                                                     self.opts.syslog_ident,
+                                                     self.opts.syslog_level))
 
         self.updateInfo = []
         self.updateInfoTime = None
@@ -421,7 +464,6 @@ class UpdatesDaemon(yum.YumBase):
         # if we have a cached copy, use it
         if self.updateInfoTime and (time.time() - self.updateInfoTime <
                                     self.opts.updaterefresh):
-            print "returning cached"
             return self.updateInfo
             
         # try to get the lock so we can update the info.  fall back to
@@ -456,7 +498,6 @@ class UpdatesDaemon(yum.YumBase):
 
     def emitDownloading(self):
         """method to emit a notice about updates downloading"""
-        print "downloading some updates"
         map(lambda x: x.updatesDownloading(self.updateInfo), self.emitters)
 
     def emitUpdateApplied(self):
@@ -497,7 +538,6 @@ class YumDbusListener(dbus.service.Object):
 
     @dbus.service.method("edu.duke.linux.yum")
     def GetUpdateInfo(self):
-        print "GetUpdateInfo"
         # FIXME: should this be async?
         upds = self.updd.getUpdateInfo()
         return upds
