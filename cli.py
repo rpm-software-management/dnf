@@ -21,9 +21,6 @@ import os.path
 import sys
 import time
 import random
-import fcntl
-import fnmatch
-import re
 import logging
 from optparse import OptionParser
 
@@ -34,14 +31,11 @@ from yum.constants import *
 import yum.Errors
 import yum.misc
 import rpmUtils.arch
-from yum.packages import parsePackages, YumInstalledPackage, YumLocalPackage
-from yum import pgpmsg
+from yum.packages import parsePackages, YumLocalPackage
 from yum import logginglevels
 from yum import plugins
 from i18n import _
 import callback
-import urlgrabber
-import urlgrabber.grabber
 import signal
 
 def sigquit(signum, frame):
