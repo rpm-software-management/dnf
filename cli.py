@@ -186,7 +186,7 @@ yum [options] < update | install | info | remove | list |
         try:
             self.doConfigSetup(opts.conffile, root, 
                     init_plugins=not opts.noplugins,
-                    plugin_types=(plugins.TYPE_CORE,plugins.TYPE_INTERFACE,),
+                    plugin_types=(plugins.TYPE_CORE,plugins.TYPE_INTERACTIVE,),
                     optparser=self.optparser,
                     debuglevel=opts.debuglevel,
                     errorlevel=opts.errorlevel)
