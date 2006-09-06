@@ -37,6 +37,7 @@ import rpmUtils.arch
 from yum.packages import parsePackages, YumInstalledPackage, YumLocalPackage
 from yum import pgpmsg
 from yum import logginglevels
+from yum import plugins
 from i18n import _
 import callback
 import urlgrabber
@@ -184,7 +185,8 @@ yum [options] < update | install | info | remove | list |
         # Read up configuration options and initialise plugins
         try:
             self.doConfigSetup(opts.conffile, root, 
-                    init_plugins=not opts.noplugins, 
+                    init_plugins=not opts.noplugins,
+                    plugin_types=(plugins.TYPE_CORE,plugins.TYPE_INTERFACE,),
                     optparser=self.optparser,
                     debuglevel=opts.debuglevel,
                     errorlevel=opts.errorlevel)
