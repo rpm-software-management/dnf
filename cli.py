@@ -1272,13 +1272,13 @@ For more information contact your distribution or package provider.
         for group_string in grouplist:
             group = self.comps.return_group(group_string)
             if not group:
-                self.logger.critical(_('Warning: Group %s does not exist.'), group)
+                self.logger.critical(_('Warning: Group %s does not exist.'), group_string)
                 continue
             
             try:
                 txmbrs = self.selectGroup(group.groupid)
             except yum.Errors.GroupsError, e:
-                self.logger.critical(_('Warning: Group %s does not exist.'), group)
+                self.logger.critical(_('Warning: Group %s does not exist.'), group_string)
                 continue
             else:
                 pkgs_used.extend(txmbrs)
