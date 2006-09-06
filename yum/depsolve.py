@@ -303,6 +303,9 @@ class Depsolve(object):
             prco_flags = rpmUtils.miscutils.flagToString(flags)
             prco_ver = rpmUtils.miscutils.stringToVersion(needversion)
             prcoformat_need = (needname, prco_flags, prco_ver)
+            msg = 'Looking for %s as a requirement of %s' % (str(prcoformat_need), po)
+            self.verbose_logger.log(logginglevels.DEBUG_2, msg)
+                  
             if prcoformat_need in po.requires:
                 pkgs.append(po)
 
@@ -310,7 +313,7 @@ class Depsolve(object):
             txmbrs = self.tsInfo.matchNaevr(name=name, ver=version, rel=release)
             if len(txmbrs) < 1:
                 msg = 'Requiring package %s-%s-%s not in transaction set'\
-                                  'nor in rpmdb' % (name, version, release)
+                                  ' nor in rpmdb' % (name, version, release)
                 self.verbose_logger.log(logginglevels.DEBUG_1, msg)
                 errormsgs.append(msg)
                 missingdep = 1
