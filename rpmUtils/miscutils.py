@@ -312,7 +312,7 @@ def flagToString(flags):
 
 def stringToVersion(verstring):
     if verstring is None:
-        return (None, None, None)
+        return ('0', None, None)
     i = string.find(verstring, ':')
     if i != -1:
         try:
