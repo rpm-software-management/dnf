@@ -30,44 +30,43 @@ from packageSack import ListPackageSack, PackageSackBase
 
 class RPMDBPackageSack(PackageSackBase):
 
+    DEP_TABLE = { 
+            'requires'  : (rpm.RPMTAG_REQUIRENAME,
+                           rpm.RPMTAG_REQUIREVERSION,
+                           rpm.RPMTAG_REQUIREFLAGS),
+            'provides'  : (rpm.RPMTAG_PROVIDENAME,
+                           rpm.RPMTAG_PROVIDEVERSION,
+                           rpm.RPMTAG_PROVIDEFLAGS),
+            'conflicts' : (rpm.RPMTAG_CONFLICTNAME,
+                           rpm.RPMTAG_CONFLICTVERSION,
+                           rpm.RPMTAG_CONFLICTFLAGS),
+            'obsoletes' : (rpm.RPMTAG_OBSOLETENAME,
+                           rpm.RPMTAG_OBSOLETEVERSION,
+                           rpm.RPMTAG_OBSOLETEFLAGS)
+            }
+
     def __init__(self, root='/'):
-        self.excludes = {}
         self.root = root
-        self.pkglist = []
-        self.dep_table = { 'requires'  : (rpm.RPMTAG_REQUIRENAME,
-                                          rpm.RPMTAG_REQUIREVERSION,
-                                          rpm.RPMTAG_REQUIREFLAGS),
-                           'provides'  : (rpm.RPMTAG_PROVIDENAME,
-                                          rpm.RPMTAG_PROVIDEVERSION,
-                                          rpm.RPMTAG_PROVIDEFLAGS),
-                           'conflicts' : (rpm.RPMTAG_CONFLICTNAME,
-                                          rpm.RPMTAG_CONFLICTVERSION,
-                                          rpm.RPMTAG_CONFLICTFLAGS),
-                           'obsoletes' : (rpm.RPMTAG_OBSOLETENAME,
-                                          rpm.RPMTAG_OBSOLETEVERSION,
-                                          rpm.RPMTAG_OBSOLETEFLAGS)
-                           }
-        self.buildIndexes()
+        self.excludes = {}              #XXX: these are ignored. Is this correct?
+
+    def _get_pkglist(self):
+        '''Getter for the pkglist property. 
+        Returns a list of package tuples.
+        '''
+        return [ self._hdr2pkgTuple(hdr)
+            for hdr, idx in self._all_packages() ]
+
+    pkglist = property(_get_pkglist, None)
 
     def readOnlyTS(self):
         return initReadOnlyTransaction(root=self.root)
 
     def buildIndexes(self):
-        ts = self.readOnlyTS()
-        self.header_indexes = {}
-        
-        mi = ts.dbMatch()
-        for hdr in mi:
-            pkgtuple = self._hdr2pkgTuple(hdr)
-            if not self.header_indexes.has_key(pkgtuple):
-                self.header_indexes[pkgtuple] = []
-            else:
-                continue
-            self.header_indexes[pkgtuple].append(mi.instance())
-        
-        self.pkglist = self.header_indexes.keys()
-        
+        #XXX: get rid of completely?
+        return
+
     def _checkIndexes(self, failure='error'):
+        #XXX: get rid of completely?
         return
 
     def delPackage(self, obj):
@@ -78,14 +77,13 @@ class RPMDBPackageSack(PackageSackBase):
         result = {}
 
         # check provides
-        table = self.dep_table['provides']
+        tag = self.DEP_TABLE['provides'][0]
         mi = ts.dbMatch()
-        mi.pattern(table[0], rpm.RPMMIRE_GLOB, name)
+        mi.pattern(tag, rpm.RPMMIRE_GLOB, name)
         for hdr in mi:
             pkg = self.makePackageObject(hdr, mi.instance())
             if not result.has_key(pkg.pkgid):
                 result[pkg.pkgid] = pkg
-
         del mi
         ts.close()
         
@@ -115,8 +113,8 @@ class RPMDBPackageSack(PackageSackBase):
         
         ts = self.readOnlyTS()
         result = {}
-        table = self.dep_table[prcotype]
-        mi = ts.dbMatch(table[0], name)
+        tag = self.DEP_TABLE[prcotype][0]
+        mi = ts.dbMatch(tag, name)
         for hdr in mi:
             po = self.makePackageObject(hdr, mi.instance())
             prcotup = (name, None, (None, None, None))
@@ -162,9 +160,7 @@ class RPMDBPackageSack(PackageSackBase):
             ver = po.ver
             rel = po.rel
             
-        if len(self.searchNevra(name=name, arch=arch, epoch=epoch, ver=ver, rel=rel)) > 0:
-            return 1
-        return 0
+        return len(self.searchNevra(name=name, arch=arch, epoch=epoch, ver=ver, rel=rel)) > 0
 
     def returnNewestByNameArch(self, naTup=None):
 
@@ -173,124 +169,103 @@ class RPMDBPackageSack(PackageSackBase):
             return
         
         (name, arch) = naTup
-        allpkg = []
 
-        ts = self.readOnlyTS()
-        mi = ts.dbMatch(rpm.RPMTAG_NAME, naTup[0])
-        arch = naTup[1]
-        for hdr in mi:
-            if hdr[rpm.RPMTAG_ARCH] == arch:
-                allpkg.append(self._hdr2pkgTuple(hdr))
-        
-        del mi
-        ts.close()
+        allpkg = [ pkgtup 
+            for (hdr, pkgtup, idx) in self._search(name=name, arch=arch) ]
 
         if not allpkg:
             # FIXME: raise  ...
             print 'No Package Matching %s' % name
+
         return misc.newestInList(allpkg)
 
     def returnNewestByName(self, name=None):
         if not name:
             return
 
-        ts = self.readOnlyTS()
-        allpkg = self.mi2list(ts.dbMatch(rpm.RPMTAG_NAME, name))
-        ts.close()
+        allpkg = [ pkgtup
+            for hdr, pkgtup, idx in self._search(name=name) ]
+
         if not allpkg:
             # FIXME: raise  ...
             print 'No Package Matching %s' % name
+
         return misc.newestInList(allpkg)
 
     def returnPackages(self, repoid=None):
-        all = []
-        for pkg in self.header_indexes.keys():
-            some = self.indexes2list(self.header_indexes[pkg])
-            all.extend(some)
-        return all
+        return [ self._makePackageObject(hdr, idx)
+            for hdr, idx in self._all_packages() ]
 
     def searchNevra(self, name=None, epoch=None, ver=None, rel=None, arch=None):
-    
-        
-        if name and epoch and ver and rel and arch:
-            if self.header_indexes.has_key((name,arch,epoch,ver,rel)):
-                indexes = self.header_indexes[(name,arch,epoch,ver,rel)]
-                return self.indexes2list(indexes)
-            else:
-                return []
-
-        
-        removedict = {}
-        indexes = []
-        
-        for pkgtup in self.simplePkgList():
-            (n, a, e, v, r) = pkgtup
-            if name is not None:
-                if name != n:
-                    removedict[pkgtup] = 1
-                    continue
-            if arch is not None:
-                if arch != a:
-                    removedict[pkgtup] = 1
-                    continue
-            if epoch is not None:
-                if epoch != e:
-                    removedict[pkgtup] = 1
-                    continue
-            if ver is not None:
-                if ver != v:
-                    removedict[pkgtup] = 1
-                    continue
-            if rel is not None:
-                if rel != r:
-                    removedict[pkgtup] = 1
-                    continue
-                    
-        for pkgtup in self.simplePkgList():
-            if not removedict.has_key(pkgtup):
-                indexes.extend(self.header_indexes[pkgtup])
-        
-        return self.indexes2list(indexes)
+        return [ self._makePackageObject(hdr, idx)
+            for hdr, pkgtup, idx in self._search(name, epoch, ver, rel, arch) ]
 
     def excludeArchs(self, archlist):
         pass
-        #for arch in archlist:
-        #    mi = self.ts.dbMatch()
-        #    mi.pattern(rpm.RPMTAG_ARCH, rpm.RPMMIRE_STRCMP, arch)
-        #    for hdr in mi:
-        #        self.delPackageById(hdr[rpm.RPMTAG_SHA1HEADER])
-
 
     # Helper functions
+    def _all_packages(self):
+        '''Generator that yield (header, index) for all packages
+        '''
+        ts = self.readOnlyTS()
+        mi = ts.dbMatch()
 
-    def makePackageObject(self, hdr, index):
-        
+        for hdr in mi:
+            if hdr['name'] != 'gpg-pubkey':
+                yield (hdr, mi.instance())
+
+        ts.close()
+
+    def _search(self, name=None, epoch=None, ver=None, rel=None, arch=None):
+        '''Generator that yield (header, index) for matching packages
+        '''
+        # Create a match closure for what is being searched for 
+        lookfor = []        # A list of (package_tuple_idx, search_value)
+        loc = locals()
+        for (i, arg) in enumerate(('name', 'arch', 'epoch', 'ver', 'rel')):
+            val = loc[arg]
+            if val != None:
+                lookfor.append((i, val))
+
+        def match(tup):
+            for idx, val in lookfor:
+                if tup[idx] != val:
+                    return False
+            return True
+
+        # Find and yield matches
+        for hdr, idx in self._all_packages():
+            pkgtup = self._hdr2pkgTuple(hdr)
+            if match(pkgtup):
+                yield hdr, pkgtup, idx
+
+    def _search2(self, name=None, epoch=None, version=None, release=None, arch=None):
+        '''Generator that yield (header, index) for matching packages
+
+        This version uses RPM to do the work but it's significantly slower than _search()
+        Not actually used.
+        '''
+        ts = self.readOnlyTS()
+        mi = ts.dbMatch()
+
+        # Set up the search patterns
+        for arg in ('name', 'epoch', 'version', 'release', 'arch'):
+            val = locals()[arg]
+            if val != None:
+                mi.pattern(arg,  rpm.RPMMIRE_DEFAULT, val)
+
+        # Report matches
+        for hdr in mi:
+            if hdr['name'] != 'gpg-pubkey':
+                yield (hdr, mi.instance())
+
+        ts.close()
+
+    def _makePackageObject(self, hdr, index):
         po = YumInstalledPackage(hdr)
         po.idx = index
         return po
         
-    def mi2list(self, mi):
-        returnList = []
-        for hdr in mi:
-            returnList.append(self.makePackageObject(hdr, mi.instance()))
-        return returnList
-
-    def hdrByindex(self, ts, index):
-        mi = ts.dbMatch(0, index)
-        hdr = mi.next()
-        return hdr
-    
-    def indexes2list(self, indexlist):
-    
-        """return YumInstalledPackage objects in a list for each index in the list"""
-        all = []
-        ts = self.readOnlyTS()
-        for idx in indexlist:
-            hdr  = self.hdrByindex(ts, idx)
-            all.append(self.makePackageObject(hdr, idx))
-        ts.close()
-        return all
-
     def _hdr2pkgTuple(self, hdr):
         name = hdr['name']
         arch = hdr['arch']
@@ -315,26 +290,16 @@ class RPMDBPackageSack(PackageSackBase):
     def getHdrList(self):
         warnings.warn('getHdrList() will go away in a future version of Yum.\n',
                 DeprecationWarning, stacklevel=2)
-    
-        ts = self.readOnlyTS()
-        hdrlist = []
-        for pkg in self.header_indexes.keys():
-            for idx in self.header_indexes[pkg]:
-                hdr = self.hdrByindex(ts, idx)
-                hdrlist.append(hdr)
-        ts.close()
-        return hdrlist
+        return [ hdr for hdr, idx in self._all_packages() ]
 
     def getNameArchPkgList(self):
         warnings.warn('getNameArchPkgList() will go away in a future version of Yum.\n',
                 DeprecationWarning, stacklevel=2)
-    
-        lst = []
+   
         for (name, arch, epoch, ver, rel) in self.pkglist:
             lst.append((name, arch))
         
         return miscutils.unique(lst)
-        
         
     def getNamePkgList(self):
         warnings.warn('getNamePkgList() will go away in a future version of Yum.\n',
@@ -343,20 +308,16 @@ class RPMDBPackageSack(PackageSackBase):
         lst = []
         for (name, arch, epoch, ver, rel) in self.pkglist:
             lst.append(name)
-            
         return miscutils.unique(lst)
-
     
     def returnTupleByKeyword(self, name=None, arch=None, epoch=None, ver=None, rel=None):
         warnings.warn('returnTuplebyKeyword() will go away in a future version of Yum.\n',
                 DeprecationWarning, stacklevel=2)
-    
-        lst = self.searchNevra(name=name, arch=arch, epoch=epoch, ver=ver, rel=rel)
-        returnlist = []
-        for po in lst:
-            returnlist.append(po.pkgtup)
-        
-        return returnlist
+
+        out = []
+        for hdr, tup, idx in self._search(name=name, arch=arch, epoch=epoch, version=ver, release=rel):
+            out.append(tup)
+        return out
 
     def returnHeaderByTuple(self, pkgtuple):
         warnings.warn('returnHeaderByTuple() will go away in a future version of Yum.\n',
@@ -369,19 +330,25 @@ class RPMDBPackageSack(PackageSackBase):
         if len(lst) > 0:
             item = lst[0]
             return [item.hdr]
-            
         else:
             return []
 
     def returnIndexByTuple(self, pkgtuple):
+        """returns a list of header indexes based on the pkgtuple provided"""
+
         warnings.warn('returnIndexbyTuple() will go away in a future version of Yum.\n',
                 DeprecationWarning, stacklevel=2)
-        """returns a list of header indexes based on the pkgtuple provided"""
-        
-        if self.header_indexes.has_key(pkgtuple):
-            return self.header_indexes[pkgtuple]
-        
-        return []
+
+        name, arch, epoch, version, release = pkgtuple
+
+        # Normalise epoch
+        if epoch in (None, 0, '(none)', ''):
+            epoch = '0'
+
+        out = []
+        for hdr, tup, idx in self._search(name, epoch, version, release, arch):
+            out.append(idx)
+        return out
         
     def addDB(self, ts):
         # Can't support this now
@@ -423,15 +390,8 @@ class RPMDBPackageSack(PackageSackBase):
         
         return returnlist
             
-
-
 def main():
-    ts = rpm.TransactionSet('/')
-    ts.setVSFlags((rpm._RPMVSF_NOSIGNATURES | rpm._RPMVSF_NODIGESTS))
-
-    sack = RPMDBPackageSack(ts)
-    sack.buildIndexes()
-
+    sack = RPMDBPackageSack('/')
     for p in sack.simplePkgList():
         print p
 
