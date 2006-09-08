@@ -166,6 +166,11 @@ class PackageObject:
 
     checksums = property(fget=lambda self: self.returnChecksums())
     
+    def returnIdSum(self):
+        for (csumtype, csum, csumid) in self.checksums:
+            if csumid:
+                return (csumtype, csum)
+                
 class RpmBase:
     """return functions and storage for rpm-specific data"""
 

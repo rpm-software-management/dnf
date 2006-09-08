@@ -575,12 +575,7 @@ class YumBase(depsolve.Depsolve):
 
         if type(fo) is types.InstanceType:
             fo = fo.filename
-
-        for (csumtype, csum, csumid) in po.checksums:
-            if csumid:
-                checksum = csum
-                checksumType = csumtype
-                break
+        (csum_type, csum) = po.returnIdSum()
         try:
             self.verifyChecksum(fo, checksumType, checksum)
         except URLGrabError, e:
