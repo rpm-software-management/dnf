@@ -182,7 +182,7 @@ class RPMDBPackageSack(PackageSackBase):
             return
 
         allpkg = [ pkgtup
-            for hdr, pkgtup, idx in self._search(name=name) ]
+            for (hdr, pkgtup, idx) in self._search(name=name) ]
 
         if not allpkg:
             # FIXME: raise  ...
@@ -196,7 +196,7 @@ class RPMDBPackageSack(PackageSackBase):
 
     def searchNevra(self, name=None, epoch=None, ver=None, rel=None, arch=None):
         return [ self._makePackageObject(hdr, idx)
-            for hdr, pkgtup, idx in self._search(name, epoch, ver, rel, arch) ]
+            for (hdr, pkgtup, idx) in self._search(name, epoch, ver, rel, arch) ]
 
     def excludeArchs(self, archlist):
         pass
@@ -215,7 +215,7 @@ class RPMDBPackageSack(PackageSackBase):
         ts.close()
 
     def _search(self, name=None, epoch=None, ver=None, rel=None, arch=None):
-        '''Generator that yield (header, index) for matching packages
+        '''Generator that yield (header, pkgtup, index) for matching packages
         '''
         # Create a match closure for what is being searched for 
         lookfor = []        # A list of (package_tuple_idx, search_value)
