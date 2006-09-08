@@ -1134,16 +1134,25 @@ For more information contact your distribution or package provider.
         return 0, []
 
     def deplist(self, args=None):
-       """cli wrapper method for findDeps method takes a list of packages and 
-       returns a formatted deplist for that package"""
+        """cli wrapper method for findDeps method takes a list of packages and 
+            returns a formatted deplist for that package"""
+        
+        if not args:
+            args = self.extcmds
+        
+        self.doRepoSetup()
+        
+        
+        for arg in args:
+            pkgs = []
+            pogen = self.pkgSack.matchPackageNames(arg)
+            for po in pogen:
+                pkgs.append(po)
+                
+            results = self.findDeps(pkgs)
+            self.depListOutput(results)
 
-       if not args:
-          args = self.extcmds
-
-       results = self.findDeps(args)
-       self.depListOutput(results)
-
-       return 0, []
+        return 0, []
 
     def provides(self, args=None):
         """use the provides methods in the rpmdb and pkgsack to produce a list 

@@ -1090,27 +1090,18 @@ class YumBase(depsolve.Depsolve):
         return restring
         
     def findDeps(self, pkgs):
-        """Return the dependencies for a given package, as well
+        """Return the dependencies for a given package object list, as well
            possible solutions for those dependencies.
            
-           Returns the deps as a dict  of:
+           Returns the deps as a dict of dicts:
              packageobject = [reqs] = [list of satisfying pkgs]"""
         
         results = {}
         self.doRepoSetup()
-        self.doRpmDBSetup()
 
-        avail = self.pkgSack.returnPackages()
-        exactmatch, matched, unmatched = parsePackages(avail, pkgs)
-
-        if len(unmatched) > 0:
-            self.logger.critical('No Match for arguments: %s', unmatched)
-
-        pkgs = misc.unique(exactmatch + matched)
-        
         for pkg in pkgs:
             results[pkg] = {} 
-            reqs = pkg.returnPrco('requires');
+            reqs = pkg.requires
             reqs.sort()
             pkgresults = results[pkg] # shorthand so we don't have to do the
                                       # double bracket thing

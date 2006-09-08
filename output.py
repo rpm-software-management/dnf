@@ -26,7 +26,7 @@ from i18n import _
 
 from urlgrabber.progress import TextMeter
 from urlgrabber.grabber import URLGrabError
-from yum.misc import sortPkgObj
+from yum.misc import sortPkgObj, prco_tuple_to_string
 
 try:
     import readline
@@ -166,7 +166,7 @@ class YumOutput:
 
             for req in results[pkg].keys():
                 reqlist = results[pkg][req] 
-                print "  dependency: %s" % pkg.prcoPrintable(req)
+                print "  dependency: %s" % prco_tuple_to_string(req)
                 if not reqlist:
                     print "   Unsatisfied dependency"
                     continue

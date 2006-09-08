@@ -306,3 +306,21 @@ def newestInList(pkgs):
         elif pkg == newest:
             ret.append(pkg)
     return ret
+
+def prco_tuple_to_string(prcoTuple):
+        """returns a text string of the prco from the tuple format"""
+        
+        (name, flag, (e, v, r)) = prcoTuple
+        flags = {'GT':'>', 'GE':'>=', 'EQ':'=', 'LT':'<', 'LE':'<='}
+        if flag is None:
+            return name
+        
+        base = '%s %s ' % (name, flags[flag])
+        if e not in [0, '0', None]:
+            base += '%s:' % e
+        if v is not None:
+            base += '%s' % v
+        if r is not None:
+            base += '-%s' % r
+        
+        return base

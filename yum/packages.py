@@ -229,7 +229,7 @@ class RpmBase:
         if printable:
             results = []
             for prco in prcos:
-                results.append(self._prcoTuple2Printable(prco))
+                results.append(misc.prco_tuple_to_string(prco))
             return results
 
         return prcos
@@ -325,26 +325,6 @@ class RpmBase:
                       DeprecationWarning, stacklevel=2)
         return self.provides_names
 
-    def _prcoTuple2Printable(self, prcoTuple):
-        """convert the prco tuples into a nicer human string"""
-        # maybe move this into yum.misc to clean it out of here
-        # and make it callable from elsewhere
-        (name, flag, (e, v, r)) = prcoTuple
-        flags = {'GT':'>', 'GE':'>=', 'EQ':'=', 'LT':'<', 'LE':'<='}
-        if flag is None:
-            return name
-        
-        base = '%s %s ' % (name, flags[flag])
-        if e not in [0, '0', None]:
-            base += '%s:' % e
-        if v is not None:
-            base += '%s' % v
-        if r is not None:
-            base += '-%s' % r
-        
-        return base
-
-        
     filelist = property(fget=lambda self: self.returnFileEntries(ftype='file'))
     dirlist = property(fget=lambda self: self.returnFileEntries(ftype='dir'))
     ghostlist = property(fget=lambda self: self.returnFileEntries(ftype='ghost'))
@@ -457,7 +437,7 @@ class YumAvailablePackage(PackageObject, RpmBase):
         """convert the prco tuples into a nicer human string"""
         warnings.warn('prcoPrintable() will go away in a future version of Yum.\n',
                       DeprecationWarning, stacklevel=2)
-        return self._prcoTuple2Printable(prcoTuple)
+        return misc.prco_tuple_to_string(prcoTuple)
 
     def requiresList(self):
         """return a list of requires in normal rpm format"""
