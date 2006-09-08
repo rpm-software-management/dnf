@@ -13,11 +13,6 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
-# represent rpmdb as a packagesack
-# starts up
-# buildIndexes() populates the lookup lists
-# pkglist and tuples point to match iterator indexes for quick access
-
 import rpm
 import types
 import warnings
@@ -29,6 +24,9 @@ from packages import YumInstalledPackage
 from packageSack import ListPackageSack, PackageSackBase
 
 class RPMDBPackageSack(PackageSackBase):
+    '''
+    Represent rpmdb as a packagesack
+    '''
 
     DEP_TABLE = { 
             'requires'  : (rpm.RPMTAG_REQUIRENAME,
