@@ -293,7 +293,8 @@ class RPMDBPackageSack(PackageSackBase):
     def getNameArchPkgList(self):
         warnings.warn('getNameArchPkgList() will go away in a future version of Yum.\n',
                 DeprecationWarning, stacklevel=2)
-   
+        
+        lst = []
         for (name, arch, epoch, ver, rel) in self.pkglist:
             lst.append((name, arch))
         
@@ -306,6 +307,7 @@ class RPMDBPackageSack(PackageSackBase):
         lst = []
         for (name, arch, epoch, ver, rel) in self.pkglist:
             lst.append(name)
+
         return miscutils.unique(lst)
     
     def returnTupleByKeyword(self, name=None, arch=None, epoch=None, ver=None, rel=None):
