@@ -10,6 +10,7 @@ import pgpmsg
 import tempfile
 import glob
 import pwd
+import fnmatch
 from stat import *
 
 from Errors import MiscError
@@ -308,19 +309,31 @@ def newestInList(pkgs):
     return ret
 
 def prco_tuple_to_string(prcoTuple):
-        """returns a text string of the prco from the tuple format"""
+    """returns a text string of the prco from the tuple format"""
+    
+    (name, flag, (e, v, r)) = prcoTuple
+    flags = {'GT':'>', 'GE':'>=', 'EQ':'=', 'LT':'<', 'LE':'<='}
+    if flag is None:
+        return name
+    
+    base = '%s %s ' % (name, flags[flag])
+    if e not in [0, '0', None]:
+        base += '%s:' % e
+    if v is not None:
+        base += '%s' % v
+    if r is not None:
+        base += '-%s' % r
+    
+    return base
+    
+def refineSearchPattern(arg):
+    """Takes a search string from the cli for Search or Provides
+       and cleans it up so it doesn't make us vomit"""
+    
+    if re.match('.*[\*,\[,\],\{,\},\?,\+].*', arg):
+        restring = fnmatch.translate(arg)
+    else:
+        restring = re.escape(arg)
         
-        (name, flag, (e, v, r)) = prcoTuple
-        flags = {'GT':'>', 'GE':'>=', 'EQ':'=', 'LT':'<', 'LE':'<='}
-        if flag is None:
-            return name
-        
-        base = '%s %s ' % (name, flags[flag])
-        if e not in [0, '0', None]:
-            base += '%s:' % e
-        if v is not None:
-            base += '%s' % v
-        if r is not None:
-            base += '-%s' % r
-        
-        return base
+    return restring
+    

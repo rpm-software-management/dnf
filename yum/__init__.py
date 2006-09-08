@@ -16,7 +16,6 @@
 
 
 import os
-import sys
 import os.path
 import rpm
 import re
@@ -37,7 +36,6 @@ import rpmUtils.arch
 import rpmUtils.transaction
 import comps
 import config
-import parser
 import repos
 import misc
 import transactioninfo
@@ -51,7 +49,6 @@ import logginglevels
 
 from packages import parsePackages, YumAvailablePackage, YumLocalPackage, YumInstalledPackage
 from constants import *
-from packageSack import ListPackageSack
 
 __version__ = '2.9.6'
 
@@ -1078,16 +1075,7 @@ class YumBase(depsolve.Depsolve):
         
         return ygh
 
-    def _refineSearchPattern(self, arg):
-        """Takes a search string from the cli for Search or Provides
-           and cleans it up so it doesn't make us vomit"""
-        
-        if re.match('.*[\*,\[,\],\{,\},\?,\+].*', arg):
-            restring = fnmatch.translate(arg)
-        else:
-            restring = re.escape(arg)
-            
-        return restring
+
         
     def findDeps(self, pkgs):
         """Return the dependencies for a given package object list, as well
@@ -1127,7 +1115,7 @@ class YumBase(depsolve.Depsolve):
 
 
         for string in criteria:
-            restring = self._refineSearchPattern(string)
+            restring = misc.refineSearchPattern(string)
             try: crit_re = re.compile(restring, flags=re.I)
             except sre_constants.error, e:
                 raise Errors.MiscError, \
@@ -1149,7 +1137,7 @@ class YumBase(depsolve.Depsolve):
         for po in self.rpmdb: # this is more expensive so this is the  top op
             tmpvalues = []
             for string in criteria:
-                restring = self._refineSearchPattern(string)
+                restring = misc.refineSearchPattern(string)
                 
                 try: crit_re = re.compile(restring, flags=re.I)
                 except sre_constants.error, e:
@@ -1233,7 +1221,7 @@ class YumBase(depsolve.Depsolve):
                 'Searching %d packages', len(where))
             self.verbose_logger.log(logginglevels.DEBUG_1,
                 'refining the search expression of %s', arg) 
-            restring = self._refineSearchPattern(arg)
+            restring = misc.refineSearchPattern(arg)
             self.verbose_logger.log(logginglevels.DEBUG_1,
                 'refined search: %s', restring)
             try: 
@@ -1271,7 +1259,7 @@ class YumBase(depsolve.Depsolve):
         taglist = ['filenames', 'dirnames', 'providesnames']
         arg_re = []
         for arg in args:
-            restring = self._refineSearchPattern(arg)
+            restring = misc.refineSearchPattern(arg)
 
             try: reg = re.compile(restring, flags=re.I)
             except sre_constants.error, e:
@@ -1571,7 +1559,7 @@ class YumBase(depsolve.Depsolve):
         
         try:
             pkglist = self.returnPackagesByDep(depstring)
-        except Errors.YumBaseError, e:
+        except Errors.YumBaseError:
             raise Errors.YumBaseError, 'No Package found for %s' % depstring
         
         result = self._bestPackageFromList(pkglist)
@@ -1599,7 +1587,7 @@ class YumBase(depsolve.Depsolve):
             if re.search('[>=<]', depstring):  # versioned
                 try:
                     depname, flagsymbol, depver = depstring.split()
-                except ValueError, e:
+                except ValueError:
                     raise Errors.YumBaseError, 'Invalid versioned dependency string, try quoting it.'
                 if not SYMBOLFLAGS.has_key(flagsymbol):
                     raise Errors.YumBaseError, 'Invalid version flag'

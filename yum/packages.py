@@ -492,11 +492,11 @@ class YumAvailablePackage(PackageObject, RpmBase):
             self.licenses.append(infodict['license'])
         
         if hasattr(pkgdict, 'files'):
-            for file in pkgdict.files.keys():
-                ftype = pkgdict.files[file]
+            for fn in pkgdict.files.keys():
+                ftype = pkgdict.files[fn]
                 if not self.files.has_key(ftype):
                     self.files[ftype] = []
-                self.files[ftype].append(file)
+                self.files[ftype].append(fn)
         
         if hasattr(pkgdict, 'prco'):
             for rtype in pkgdict.prco.keys():
@@ -569,15 +569,15 @@ class YumHeaderPackage(YumAvailablePackage):
         for tag in ['OBSOLETE', 'CONFLICT', 'REQUIRE', 'PROVIDE']:
             name = self.hdr[getattr(rpm, 'RPMTAG_%sNAME' % tag)]
 
-            list = self.hdr[getattr(rpm, 'RPMTAG_%sFLAGS' % tag)]
+            lst = self.hdr[getattr(rpm, 'RPMTAG_%sFLAGS' % tag)]
             flag = []
-            for i in list:
+            for i in lst:
                 value = rpmUtils.miscutils.flagToString(i)
                 flag.append(value)
 
-            list = self.hdr[getattr(rpm, 'RPMTAG_%sVERSION' % tag)]
+            lst = self.hdr[getattr(rpm, 'RPMTAG_%sVERSION' % tag)]
             vers = []
-            for i in list:
+            for i in lst:
                 value = rpmUtils.miscutils.stringToVersion(i)
                 vers.append(value)
 
@@ -588,7 +588,7 @@ class YumHeaderPackage(YumAvailablePackage):
     def tagByName(self, tag):
         try:
             data = self.hdr[tag]
-        except KeyError, e:
+        except KeyError:
             raise Errors.MiscError, "Unknown header tag %s" % tag
 
         return data
@@ -618,12 +618,12 @@ class YumHeaderPackage(YumAvailablePackage):
         filemodes = self.tagByName('filemodes')
         filetuple = zip(files, filemodes, fileflags)
         if not self._loadedfiles:
-            for (file, mode, flag) in filetuple:
+            for (fn, mode, flag) in filetuple:
                 #garbage checks
                 if mode is None or mode == '':
                     if not self.files.has_key('file'):
                         self.files['file'] = []
-                    self.files['file'].append(file)
+                    self.files['file'].append(fn)
                     continue
                 if not self.__mode_cache.has_key(mode):
                     self.__mode_cache[mode] = stat.S_ISDIR(mode)
@@ -631,21 +631,21 @@ class YumHeaderPackage(YumAvailablePackage):
                 if self.__mode_cache[mode]:
                     if not self.files.has_key('dir'):
                         self.files['dir'] = []
-                    self.files['dir'].append(file)
+                    self.files['dir'].append(fn)
                 else:
                     if flag is None:
                         if not self.files.has_key('file'):
                             self.files['file'] = []
-                        self.files['file'].append(file)
+                        self.files['file'].append(fn)
                     else:
                         if (flag & 64):
                             if not self.files.has_key('ghost'):
                                 self.files['ghost'] = []
-                            self.files['ghost'].append(file)
+                            self.files['ghost'].append(fn)
                             continue
                         if not self.files.has_key('file'):
                             self.files['file'] = []
-                        self.files['file'].append(file)
+                        self.files['file'].append(fn)
             self._loadedfiles = True
             
     def returnFileEntries(self, ftype='file'):
@@ -689,7 +689,7 @@ class YumLocalPackage(YumHeaderPackage):
         
         try:
             hdr = rpmUtils.miscutils.hdrFromPackage(ts, self.localpath)
-        except RpmUtilsError, e:
+        except RpmUtilsError:
             raise Errors.MiscError, \
                 'Could not open local rpm file: %s' % self.localpath
         
