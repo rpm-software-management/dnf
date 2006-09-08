@@ -419,7 +419,6 @@ class YumAvailablePackage(PackageObject, RpmBase):
     def localPkg(self):
         """return path to local package (whether it is present there, or not)"""
         if not hasattr(self, 'localpath'):
-            #repo = base.repos.getRepo(self.repoid)
             remote = self.returnSimple('relativepath')
             rpmfn = os.path.basename(remote)
             self.localpath = self.repo.pkgdir + '/' + rpmfn
@@ -430,7 +429,6 @@ class YumAvailablePackage(PackageObject, RpmBase):
            byte ranges"""
            
         if not hasattr(self, 'hdrpath'):
-            #repo = base.repos.getRepo(self.repoid)
             pkgpath = self.returnSimple('relativepath')
             pkgname = os.path.basename(pkgpath)
             hdrname = pkgname[:-4] + '.hdr'
@@ -438,6 +436,22 @@ class YumAvailablePackage(PackageObject, RpmBase):
 
         return self.hdrpath
     
+    def verifyLocalPkg(self):
+        """check the package checksum vs the localPkg
+           return True if pkg is good, False if not"""
+           
+        (csum_type, csum) = self.returnIdSum()
+        
+        try:
+            filesum = misc.checksum(csum_type, self.localPkg())
+        except Errors.MiscError, e:
+            return False
+        
+        if filesum != csum:
+            return False
+        
+        return True
+        
     def prcoPrintable(self, prcoTuple):
         """convert the prco tuples into a nicer human string"""
         warnings.warn('prcoPrintable() will go away in a future version of Yum.\n',

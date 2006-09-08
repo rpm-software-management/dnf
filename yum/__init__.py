@@ -575,23 +575,21 @@ class YumBase(depsolve.Depsolve):
 
         if type(fo) is types.InstanceType:
             fo = fo.filename
-        (csum_type, csum) = po.returnIdSum()
-        try:
-            self.verifyChecksum(fo, checksumType, checksum)
-        except URLGrabError, e:
+            
+        if not po.verifyLocalPkg():
             if raiseError:
-                raise
+                raise 
             else:
-                return 0
+                return False
 
         ylp = YumLocalPackage(self.rpmdb.readOnlyTS(), fo)
         if ylp.pkgtup != po.pkgtup:
             if raiseError:
                 raise URLGrabError(-1, 'Package does not match intended download')
             else:
-                return 0
+                return False
         
-        return 1
+        return True
         
         
     def verifyChecksum(self, fo, checksumType, csum):
@@ -625,26 +623,16 @@ class YumBase(depsolve.Depsolve):
             if os.path.exists(local):
                 cursize = os.stat(local)[6]
                 totsize = int(po.size)
-                try:
-                    result = self.verifyPkg(local, po, raiseError=1)
-                except URLGrabError, e: # fails the check
-                    
-                    repo = self.repos.getRepo(po.repoid)
-                    if repo.cache:
+                if not po.verifyLocalPkg():
+                    if po.repo.cache:
                         repo_cached = True
-                        msg = 'package fails checksum but caching is enabled for %s' % repo.id
+                        msg = 'package fails checksum but caching is enabled for %s' % po.repo.id
                         if not errors.has_key(po): errors[po] = []
                         errors[po].append(msg)
                         
-                    if cursize >= totsize: # keep it around for regetting
+                    if cursize >= totsize: # otherwise keep it around for regetting
                         os.unlink(local)
                         
-                else:
-                    if result:
-                        continue
-                    else:
-                        if cursize >= totsize: # keep it around for regetting
-                            os.unlink(local)
             remote_pkgs.append(po)
             
             # caching is enabled and the package 
@@ -657,21 +645,20 @@ class YumBase(depsolve.Depsolve):
         i = 0
         for po in remote_pkgs:
             i += 1
-            repo = self.repos.getRepo(po.repoid)
             checkfunc = (self.verifyPkg, (po, 1), {})
-
-
-            # FIXME - add check here to make sure we have the disk space
-            # available to download the package. If we don't then politely
-            # bail out with an informative message.
-            # os.statvfs(repo's local path)[4]*[2] >= po.size
+            stvfs = os.statvfs(po.repo.pkgdir)
+            if stvfs[4] * stvfs[0] <= po.size:
+                msg = "Insufficient space in download directory %s to download" % po.repo.pkgdir
+                errors[po].append(msg)
+                continue
+            
             try:
                 text = '(%s/%s): %s' % (i, len(remote_pkgs),
                                         os.path.basename(po.returnSimple('relativepath')))
-                mylocal = repo.getPackage(po,
+                mylocal = po.repo.getPackage(po,
                                    checkfunc=checkfunc,
                                    text=text,
-                                   cache=repo.http_caching != 'none',
+                                   cache=po.repo.http_caching != 'none',
                                    )
             except Errors.RepoError, e:
                 if not errors.has_key(po):
