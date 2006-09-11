@@ -612,6 +612,9 @@ class YumBase(depsolve.Depsolve):
            callback, raise yum.Errors.YumBaseError on problems"""
 
         errors = {}
+        def adderror(po, msg):
+            errors.setdefault(po, []).append(msg)
+
         self.plugins.run('predownload', pkglist=pkglist)
         repo_cached = False
         remote_pkgs = []
@@ -626,9 +629,8 @@ class YumBase(depsolve.Depsolve):
                 if not po.verifyLocalPkg():
                     if po.repo.cache:
                         repo_cached = True
-                        msg = 'package fails checksum but caching is enabled for %s' % po.repo.id
-                        if not errors.has_key(po): errors[po] = []
-                        errors[po].append(msg)
+                        adderror(po, 'package fails checksum but caching is '
+                            'enabled for %s' % po.repo.id)
                         
                     if cursize >= totsize: # otherwise keep it around for regetting
                         os.unlink(local)
@@ -648,8 +650,8 @@ class YumBase(depsolve.Depsolve):
             checkfunc = (self.verifyPkg, (po, 1), {})
             stvfs = os.statvfs(po.repo.pkgdir)
             if stvfs[4] * stvfs[0] <= po.size:
-                msg = "Insufficient space in download directory %s to download" % po.repo.pkgdir
-                errors[po].append(msg)
+                adderror(po, 'Insufficient space in download directory %s '
+                        'to download' % po.repo.pkgdir)
                 continue
             
             try:
@@ -661,9 +663,7 @@ class YumBase(depsolve.Depsolve):
                                    cache=po.repo.http_caching != 'none',
                                    )
             except Errors.RepoError, e:
-                if not errors.has_key(po):
-                    errors[po] = []
-                errors[po].append(str(e))
+                adderror(po, str(e))
             else:
                 po.localpath = mylocal
                 if errors.has_key(po):
