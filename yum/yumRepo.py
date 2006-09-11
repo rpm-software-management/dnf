@@ -680,15 +680,19 @@ class YumRepository(Repository):
 
     def setCallback(self, callback):
         self.callback = callback
+        self.setupGrab()
 
     def setFailureObj(self, failure_obj):
         self.failure_obj = failure_obj
+        self.setupGrab()
 
     def setMirrorFailureObj(self, failure_obj):
         self.mirror_failure_obj = failure_obj
+        self.setupGrab()
 
     def setInterruptCallback(self, callback):
         self.interrupt_callback = callback
+        self.setupGrab()
 
 def getMirrorList(mirrorlist, pdict = None):
     """retrieve an up2date-style mirrorlist file from a url,
