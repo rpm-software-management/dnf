@@ -625,7 +625,7 @@ class YumBase(depsolve.Depsolve):
             local = po.localPkg()
             if os.path.exists(local):
                 cursize = os.stat(local)[6]
-                totsize = int(po.size)
+                totsize = long(po.size)
                 if not po.verifyLocalPkg():
                     if po.repo.cache:
                         repo_cached = True
@@ -648,8 +648,8 @@ class YumBase(depsolve.Depsolve):
         for po in remote_pkgs:
             i += 1
             checkfunc = (self.verifyPkg, (po, 1), {})
-            stvfs = os.statvfs(po.repo.pkgdir)
-            if stvfs[4] * stvfs[0] <= po.size:
+            dirstat = os.statvfs(po.repo.pkgdir)
+            if (dirstat.f_bavail * dirstat.f_bsize) <= long(po.size):
                 adderror(po, 'Insufficient space in download directory %s '
                         'to download' % po.repo.pkgdir)
                 continue
