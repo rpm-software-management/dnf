@@ -79,7 +79,7 @@ class RPMDBPackageSack(PackageSackBase):
         mi = ts.dbMatch()
         mi.pattern(tag, rpm.RPMMIRE_GLOB, name)
         for hdr in mi:
-            pkg = self.makePackageObject(hdr, mi.instance())
+            pkg = self._makePackageObject(hdr, mi.instance())
             if not result.has_key(pkg.pkgid):
                 result[pkg.pkgid] = pkg
         del mi
@@ -99,7 +99,7 @@ class RPMDBPackageSack(PackageSackBase):
         
         mi = ts.dbMatch('basenames', name)
         for hdr in mi:
-            pkg = self.makePackageObject(hdr, mi.instance())
+            pkg = self._makePackageObject(hdr, mi.instance())
             if not result.has_key(pkg.pkgid):
                 result[pkg.pkgid] = pkg
         del mi
@@ -114,7 +114,7 @@ class RPMDBPackageSack(PackageSackBase):
         tag = self.DEP_TABLE[prcotype][0]
         mi = ts.dbMatch(tag, name)
         for hdr in mi:
-            po = self.makePackageObject(hdr, mi.instance())
+            po = self._makePackageObject(hdr, mi.instance())
             prcotup = (name, None, (None, None, None))
             if po.checkPrco(prcotype, prcotup):
                 if not result.has_key(po.pkgid):
