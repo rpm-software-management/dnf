@@ -1131,7 +1131,7 @@ For more information contact your distribution or package provider.
             
         if total == 0:
             return 0, ['No Matches found']
-        return 0, []
+        return 0, matching
 
     def deplist(self, args=None):
         """cli wrapper method for findDeps method takes a list of packages and 

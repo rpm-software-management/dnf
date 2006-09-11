@@ -1238,7 +1238,7 @@ class YumBase(depsolve.Depsolve):
         
         self.doRpmDBSetup()
         # installed rpms, too
-        taglist = ['filenames', 'dirnames', 'providesnames']
+        taglist = ['filelist', 'dirnames', 'provides_names']
         arg_re = []
         for arg in args:
             restring = misc.refineSearchPattern(arg)
