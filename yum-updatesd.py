@@ -478,17 +478,22 @@ class UpdatesDaemon(yum.YumBase):
             # if we can't get the lock, return what we have if we can
             if self.updateInfo: return self.updateInfo
             time.sleep(1)
+            tries += 1
         if tries == 10:
+            self.doUnlock(YUM_PID_FILE)
             return []
-        
-        self.doTsSetup()
-        self.doRpmDBSetup()
-        self.doUpdateSetup()
 
-        self.populateUpdates()
+        try:
+            self.doTsSetup()
+            self.doRpmDBSetup()
+            self.doUpdateSetup()
 
-        self.closeRpmDB()        
-        self.doUnlock(YUM_PID_FILE)
+            self.populateUpdates()
+
+            self.closeRpmDB()
+            self.doUnlock(YUM_PID_FILE)
+        except:
+            self.doUnlock(YUM_PID_FILE)
 
         return self.updateInfo
 
