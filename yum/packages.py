@@ -552,7 +552,7 @@ class YumAvailablePackage(PackageObject, RpmBase):
 
 class YumHeaderPackage(YumAvailablePackage):
     """Package object built from an rpm header"""
-    def __init__(self, hdr, repo):
+    def __init__(self, repo, hdr):
         """hand in an rpm header, we'll assume it's installed and query from there"""
        
         YumAvailablePackage.__init__(self, repo)
@@ -686,7 +686,7 @@ class YumInstalledPackage(YumHeaderPackage):
     """super class for dealing with packages in the rpmdb"""
     def __init__(self, hdr):
         fakerepo = FakeRepository('installed')
-        YumHeaderPackage.__init__(self, hdr, fakerepo)
+        YumHeaderPackage.__init__(self, fakerepo, hdr)
 
 class YumLocalPackage(YumHeaderPackage):
     """Class to handle an arbitrary package from a file path
@@ -713,7 +713,7 @@ class YumLocalPackage(YumHeaderPackage):
                 'Could not open local rpm file: %s' % self.localpath
         
         fakerepo = FakeRepository(filename)
-        YumHeaderPackage.__init__(self, hdr, fakerepo)
+        YumHeaderPackage.__init__(self, fakerepo, hdr)
         
     def localPkg(self):
         return self.localpath

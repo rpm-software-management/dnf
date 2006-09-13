@@ -32,7 +32,7 @@ import misc
 # Simple subclass of YumAvailablePackage that can load 'simple headers' from
 # the database when they are requested
 class YumAvailablePackageSqlite(YumAvailablePackage):
-    def __init__(self, pkgdict, repo):
+    def __init__(self, repo, pkgdict):
         YumAvailablePackage.__init__(self, repo, pkgdict)
         self.sack = pkgdict.sack
         self.pkgId = pkgdict.pkgId
@@ -228,7 +228,7 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
                 if (self.excludes[rep].has_key(ob['pkgId'])):
                     continue
                 pkg = self.getPackageDetails(ob['pkgId'])
-                result.append((self.pc(pkg,rep)))
+                result.append((self.pc(rep,pkg)))
 
         for (rep,cache) in self.filelistsdb.items():
             cur = cache.cursor()
@@ -261,7 +261,7 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
             if (not real):
                 continue
             pkg = self.getPackageDetails(ob['pkgId'])
-            result.append((self.pc(pkg,rep)))
+            result.append((self.pc(rep,pkg)))
         return result     
     
     def returnObsoletes(self):
@@ -326,7 +326,7 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
                       }
                       ]
                     }
-                    results.append(self.pc(pkg,rep))
+                    results.append(self.pc(rep,pkg))
 
 
         # If it's not a provides or a filename, we are done
@@ -346,7 +346,7 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
                         continue
                                             
                     pkg.files = {name: res['type']}
-                    results.append(self.pc(pkg,rep))
+                    results.append(self.pc(rep,pkg))
 
         matched = 0
         globs = ['.*bin\/.*', '^\/etc\/.*', '^\/usr\/lib\/sendmail$']
@@ -396,7 +396,7 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
                 
                 # If it matches we only know the packageId
                 pkg = self.getPackageDetails(res['pkgId'])
-                results.append(self.pc(pkg,rep))
+                results.append(self.pc(rep,pkg))
         
         return results
 
@@ -472,7 +472,7 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
             for x in cur.fetchall():
                 if (self.excludes[rep].has_key(x.pkgId)):
                     continue                    
-                allpkg.append(self.pc(self.db2class(x,True),rep))
+                allpkg.append(self.pc(rep,self.db2class(x,True)))
         
         # if we've got zilch then raise
         if not allpkg:
@@ -493,7 +493,7 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
             for x in cur.fetchall():
                 if (self.excludes[rep].has_key(x.pkgId)):
                     continue                    
-                allpkg.append(self.pc(self.db2class(x,True),rep))
+                allpkg.append(self.pc(rep,self.db2class(x,True)))
         
         # if we've got zilch then raise
         if not allpkg:
@@ -509,8 +509,8 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
                 cur.execute("select pkgId,name,epoch,version,release,arch from packages")
                 for x in cur.fetchall():
                     if (self.excludes[repo].has_key(x.pkgId)):
-                        continue                    
-                    returnList.append(self.pc(self.db2class(x,True),repo))
+                        continue
+                    returnList.append(self.pc(repo,self.db2class(x,True)))
         return returnList
 
     def searchNevra(self, name=None, epoch=None, ver=None, rel=None, arch=None):        
@@ -543,7 +543,7 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
             for x in cur.fetchall():
                 if (self.excludes[rep].has_key(x.pkgId)):
                     continue
-                returnList.append(self.pc(self.db2class(x),rep))
+                returnList.append(self.pc(rep,self.db2class(x)))
         return returnList
     
     def excludeArchs(self, archlist):
@@ -558,7 +558,7 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
             cur = cache.cursor()
             cur.execute(querystring)
             for x in cur.fetchall():
-                obj = self.pc(self.db2class(x), rep)
+                obj = self.pc(rep,self.db2class(x))
                 self.delPackage(obj)
 
 # Simple helper functions
