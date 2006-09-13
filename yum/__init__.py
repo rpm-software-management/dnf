@@ -1094,7 +1094,7 @@ class YumBase(depsolve.Depsolve):
         """Generator method to lighten memory load for some searches.
            This is the preferred search function to use."""
         self.doRepoSetup()
-
+        self.doRpmDBSetup()
 
         for string in criteria:
             restring = misc.refineSearchPattern(string)
@@ -1102,39 +1102,18 @@ class YumBase(depsolve.Depsolve):
             except sre_constants.error, e:
                 raise Errors.MiscError, \
                  'Search Expression: %s is an invalid Regular Expression.\n' % string
-                  
-            for po in self.pkgSack:
-                tmpvalues = []
-                for field in fields:
-                    value = po.returnSimple(field)
-                    if value and crit_re.search(value):
-                        tmpvalues.append(value)
-                
-                if len(tmpvalues) > 0:
-                    yield (po, tmpvalues)
-        
-        # do the same for installed pkgs
-        
-        self.doRpmDBSetup()        
-        for po in self.rpmdb: # this is more expensive so this is the  top op
-            tmpvalues = []
-            for string in criteria:
-                restring = misc.refineSearchPattern(string)
-                
-                try: crit_re = re.compile(restring, flags=re.I)
-                except sre_constants.error, e:
-                    raise Errors.MiscError, \
-                     'Search Expression: %s is an invalid Regular Expression.\n' % string
 
-                for field in fields:
-                    value = po.returnSimple(field)
-                    if type(value) is types.ListType: # this is annoying
-                        value = str(value)
-                    if value and crit_re.search(value):
-                        tmpvalues.append(value)
-                        
-            if len(tmpvalues) > 0:
-                yield (po, tmpvalues)        
+            for sack in self.pkgSack, self.rpmdb:
+                for po in sack:
+                    tmpvalues = []
+                    for field in fields:
+                        value = po.returnSimple(field)
+                        if value and crit_re.search(value):
+                            tmpvalues.append(value)
+
+                    if len(tmpvalues) > 0:
+                        yield (po, tmpvalues)
+                    
         
     def searchPackages(self, fields, criteria, callback=None):
         """Search specified fields for matches to criteria
