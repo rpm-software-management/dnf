@@ -20,13 +20,11 @@ import warnings
 import rpm
 import copy
 import urlparse
-import sys
 from parser import IncludingConfigParser, IncludedDirConfigParser
 from ConfigParser import NoSectionError, NoOptionError
 import rpmUtils.transaction
 import rpmUtils.arch
 import Errors
-from yumRepo import YumRepository
 
 class OptionData(object):
     '''
@@ -627,39 +625,6 @@ def readMainConfig(startupconf):
     yumconf.progess_obj = None
 
     return yumconf
-
-def readRepoConfig(parser, section, mainconf):
-    '''Parse an INI file section for a repository.
-
-    @param parser: ConfParser or similar to read INI file values from.
-    @param section: INI file section to read.
-    @param mainconf: ConfParser or similar for yum.conf.
-    @return: Repository instance.
-    '''
-
-    conf = RepoConf()
-    conf.populate(parser, section, mainconf)
-
-    # Ensure that the repo name is set
-    if not conf.name:
-        conf.name = section
-        print >> sys.stderr, \
-            'Repository %r is missing name in configuration, using id' % section
-
-    thisrepo = YumRepository(section)
-
-    # Transfer attributes across
-    #TODO: merge RepoConf and Repository 
-    for k, v in conf.iteritems():
-        if v or not hasattr(thisrepo, k):
-            thisrepo.setAttribute(k, v)
-
-    # Set attributes not from the config file
-    thisrepo.basecachedir = mainconf.cachedir
-    thisrepo.yumvar.update(mainconf.yumvar)
-    thisrepo.cfg = parser
-
-    return thisrepo
 
 def getOption(conf, section, name, option):
     '''Convenience function to retrieve a parsed and converted value from a

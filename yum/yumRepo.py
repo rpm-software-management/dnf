@@ -11,10 +11,9 @@ from urlgrabber.grabber import URLGrabError
 import repoMDObject
 import packageSack
 from repos import Repository
-from packages import YumAvailablePackage
 import parser
 import storagefactory
-
+from yum import config
 
 class YumPackageSack(packageSack.PackageSack):
     """imports/handles package objects from an mdcache dict object"""
@@ -60,7 +59,7 @@ class YumPackageSack(packageSack.PackageSack):
                     for po in self.pkgsByID[pkgid]:
                         po.importFromDict(pkgdict)
 
-            self.added[repoid].append(datatype)
+            self.added[repo].append(datatype)
             # indexes will need to be rebuilt
             self.indexesBuilt = 0
         else:
@@ -118,31 +117,26 @@ class YumPackageSack(packageSack.PackageSack):
         # get rid of all this stuff we don't need now
         del repo.cacheHandler
 
-
-class YumRepository(Repository):
-    """this is an actual repository object"""
+class YumRepository(Repository, config.RepoConf):
+    """
+    This is an actual repository object
+   
+    Configuration attributes are pulled in from config.RepoConf.
+    """
                 
     def __init__(self, repoid):
+        config.RepoConf.__init__(self)
         Repository.__init__(self, repoid)
 
-        self.name = repoid # name is repoid until someone sets it to a real name
-        # some default (ish) things
         self.urls = []
-        self.gpgcheck = 0
-        self.enabled = 0
         self.enablegroups = 0 
         self.groupsfilename = 'yumgroups.xml' # something some freaks might
                                               # eventually want
         self.repoMDFile = 'repodata/repomd.xml'
         self.repoXML = None
         self.cache = 0
-        self.mirrorlist = None # filename/url of mirrorlist file
         self.mirrorlistparsed = 0
-        self.baseurl = [] # baseurls from the config file 
         self.yumvar = {} # empty dict of yumvariables for $string replacement
-        self.proxy_password = None
-        self.proxy_username = None
-        self.proxy = None
         self._proxy_dict = {}
         self.metadata_cookie_fn = 'cachecookie'
         self.groups_added = False
@@ -703,6 +697,7 @@ def getMirrorList(mirrorlist, pdict = None):
     if hasattr(urlgrabber.grabber, 'urlopen'):
         urlresolver = urlgrabber.grabber
     else:
+        import urllib
         urlresolver = urllib
 
     scheme = urlparse.urlparse(mirrorlist)[0]

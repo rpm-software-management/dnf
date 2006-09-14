@@ -19,7 +19,6 @@ import os
 import os.path
 import rpm
 import re
-import fnmatch
 import types
 import errno
 import time
@@ -28,7 +27,6 @@ import glob
 import logging
 import logging.config
 from ConfigParser import ParsingError
-
 import Errors
 import rpmsack
 import rpmUtils.updates
@@ -45,7 +43,7 @@ from packageSack import ListPackageSack
 import depsolve
 import plugins
 import logginglevels
-
+import yumRepo
 
 from packages import parsePackages, YumAvailablePackage, YumLocalPackage, YumInstalledPackage
 from constants import *
@@ -149,6 +147,8 @@ class YumBase(depsolve.Depsolve):
     def getReposFromConfig(self):
         """read in repositories from config main and .repo files"""
 
+        #FIXME this method could be a simpler
+
         reposlist = []
 
         # Check yum.conf for repositories
@@ -158,7 +158,7 @@ class YumBase(depsolve.Depsolve):
                 continue
 
             try:
-                thisrepo = config.readRepoConfig(self.conf.cfg, section, self.conf)
+                thisrepo = self.readRepoConfig(self.conf.cfg, section)
             except (Errors.RepoError, Errors.ConfigError), e:
                 self.logger.warning(e)
             else:
@@ -183,7 +183,7 @@ class YumBase(depsolve.Depsolve):
         # Check sections in the .repo files that were just slurped up
         for section in parser.sections():
             try:
-                thisrepo = config.readRepoConfig(parser, section, self.conf)
+                thisrepo = self.readRepoConfig(parser, section)
             except (Errors.RepoError, Errors.ConfigError), e:
                 self.logger.warning(e)
             else:
@@ -196,6 +196,29 @@ class YumBase(depsolve.Depsolve):
             except Errors.RepoError, e: 
                 self.logger.warning(e)
                 continue
+
+    def readRepoConfig(self, parser, section):
+        '''Parse an INI file section for a repository.
+
+        @param parser: ConfParser or similar to read INI file values from.
+        @param section: INI file section to read.
+        @return: YumRepository instance.
+        '''
+        repo = yumRepo.YumRepository(section)
+        repo.populate(parser, section, self.conf)
+
+        # Ensure that the repo name is set
+        if not repo.name:
+            repo.name = section
+            self.logger.error('Repository %r is missing name in configuration, '
+                    'using id' % section)
+
+        # Set attributes not from the config file
+        repo.basecachedir = self.conf.cachedir
+        repo.yumvar.update(self.conf.yumvar)
+        repo.cfg = parser
+
+        return repo
 
     def disablePlugins(self):
         '''Disable yum plugins
