@@ -19,6 +19,7 @@ logging module.
 """
 
 import os
+import socket
 import sys
 import logging
 
@@ -113,9 +114,12 @@ def doLoggingSetup(debuglevel, errorlevel):
 
     log_dev = '/dev/log'
     if os.path.exists(log_dev):
-        syslog = logging.handlers.SysLogHandler(log_dev)
-        syslog.setFormatter(plainformatter)
-        filelogger.addHandler(syslog)
+        try:
+            syslog = logging.handlers.SysLogHandler(log_dev)
+            syslog.setFormatter(plainformatter)
+            filelogger.addHandler(syslog)
+        except socket.error:
+            pass
 
     if debuglevel is not None:
         setDebugLevel(debuglevel)
