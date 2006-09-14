@@ -45,7 +45,6 @@ class RPMDBPackageSack(PackageSackBase):
 
     def __init__(self, root='/'):
         self.root = root
-        self.excludes = {}              #XXX: these are ignored. Is this correct?
 
     def _get_pkglist(self):
         '''Getter for the pkglist property. 
@@ -60,15 +59,16 @@ class RPMDBPackageSack(PackageSackBase):
         return initReadOnlyTransaction(root=self.root)
 
     def buildIndexes(self):
-        #XXX: get rid of completely?
+        # Not used here
         return
 
     def _checkIndexes(self, failure='error'):
-        #XXX: get rid of completely?
+        # Not used here
         return
 
     def delPackage(self, obj):
-        self.excludes[obj.pkgId] = 1
+        # Not supported with this sack type
+        pass
 
     def searchAll(self, name, query_type='like'):
         ts = self.readOnlyTS()
