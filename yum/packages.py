@@ -585,7 +585,11 @@ class YumHeaderPackage(YumAvailablePackage):
     def _populatePrco(self):
         "Populate the package object with the needed PRCO interface."
 
-        for tag in ['OBSOLETE', 'CONFLICT', 'REQUIRE', 'PROVIDE']:
+        tag2prco = { "OBSOLETE": "obsoletes",
+                     "CONFLICT": "conflicts",
+                     "REQUIRE": "requires",
+                     "PROVIDE": "provides" }
+        for tag in tag2prco.keys():
             name = self.hdr[getattr(rpm, 'RPMTAG_%sNAME' % tag)]
 
             lst = self.hdr[getattr(rpm, 'RPMTAG_%sFLAGS' % tag)]
@@ -600,7 +604,7 @@ class YumHeaderPackage(YumAvailablePackage):
                 value = rpmUtils.miscutils.stringToVersion(i)
                 vers.append(value)
 
-            prcotype = tag.lower() + 's'
+            prcotype = tag2prco[tag]
             if name is not None:
                 self.prco[prcotype] = zip(name, flag, vers)
     
