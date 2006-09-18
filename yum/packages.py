@@ -571,7 +571,7 @@ class YumHeaderPackage(YumAvailablePackage):
         self.pkgid = self.tagByName(rpm.RPMTAG_SHA1HEADER)
         self.size = self.tagByName('size')
         self.__mode_cache = {}
-        self._populatePrco()
+        self.__prcoPopulated = False
         
     def __str__(self):
         if self.epoch == '0':
@@ -581,6 +581,12 @@ class YumHeaderPackage(YumAvailablePackage):
             val = '%s - %s:%s-%s.%s' % (self.name, self.epoch, self.version,
                                            self.release, self.arch)
         return val
+
+    def returnPrco(self, prcotype, printable=False):
+        if not self.__prcoPopulated:
+            self._populatePrco()
+            self.__prcoPopulated = True
+        return YumAvailablePackage.returnPrco(self, prcotype, printable)
 
     def _populatePrco(self):
         "Populate the package object with the needed PRCO interface."
