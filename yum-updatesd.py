@@ -18,13 +18,10 @@
 # Jeremy Katz <katzj@redhat.com>
 
 #TODO:
-# - add logs and errorlogs below a certain number to send out to syslog
 # - clean up config and work on man page for docs
 # - need to be able to cancel downloads.  requires some work in urlgrabber
 # - what to do if we're asked to exit while updates are being applied?
 # - what to do with the lock around downloads/updates
-# - need to not hold the rpmdb open.  probably via the changes in yum to
-#   handle the rpmdb lazily
 
 import os
 import sys
@@ -307,14 +304,6 @@ class UpdatesDaemon(yum.YumBase):
         self.updateInfo = []
         self.updateInfoTime = None
 
-    def log(self, num, msg):
-    #TODO - this should probably syslog
-        pass
-    
-    def errorlog(self, num, msg):
-    #TODO - this should probably syslog
-        pass
-
     def doSetup(self):
         # if we are not root do the special subdir thing
         if os.geteuid() != 0:
@@ -334,7 +323,8 @@ class UpdatesDaemon(yum.YumBase):
             self.doRpmDBSetup()
             self.doUpdateSetup()
         except Exception, e:
-            self.errorlog(0, "error getting update info: %s" %(e,))
+            syslog.syslog(syslog.LOG_WARNING,
+                          "error getting update info: %s" %(e,))
             self.doUnlock(YUM_PID_FILE)
 
     def populateUpdateMetadata(self):
@@ -419,38 +409,41 @@ class UpdatesDaemon(yum.YumBase):
         except yum.Errors.LockError:
             return True # just pass for now
 
-        self.populateTsInfo()
-        self.populateUpdates()
+        try:
+            self.populateTsInfo()
+            self.populateUpdates()
 
-        # FIXME: this needs to be done in the download/install threads
-        if self.opts.do_update or self.opts.do_download_deps:
-            self.tsInfo.makelists()
-            try:
-                (result, msgs) = self.buildTransaction()
-            except yum.Errors.RepoError, errmsg: # error downloading hdrs
-                (result, msgs) = (1, ["Error downloading headers"])
+            # FIXME: this needs to be done in the download/install threads
+            if self.opts.do_update or self.opts.do_download_deps:
+                self.tsInfo.makelists()
+                try:
+                    (result, msgs) = self.buildTransaction()
+                except yum.Errors.RepoError, errmsg: # error downloading hdrs
+                    (result, msgs) = (1, ["Error downloading headers"])
 
-        dlpkgs = map(lambda x: x.po, filter(lambda txmbr:
-                                            txmbr.ts_state in ("i", "u"),
-                                            self.tsInfo.getMembers()))
+            dlpkgs = map(lambda x: x.po, filter(lambda txmbr:
+                                                txmbr.ts_state in ("i", "u"),
+                                                self.tsInfo.getMembers()))
 
-        close = True
-        if self.opts.do_update:
-            # we already resolved deps above
-            if result == 1: 
-                self.emitUpdateFailed(msgs)
-            else:
-                uit = UpdateInstallThread(self, dlpkgs)
-                uit.start()
+            close = True
+            if self.opts.do_update:
+                # we already resolved deps above
+                if result == 1: 
+                    self.emitUpdateFailed(msgs)
+                else:
+                    uit = UpdateInstallThread(self, dlpkgs)
+                    uit.start()
+                    close = False
+            elif self.opts.do_download:
+                self.emitDownloading()
+                dl = UpdateDownloadThread(self, dlpkgs)
+                dl.start()
                 close = False
-        elif self.opts.do_download:
-            self.emitDownloading()
-            dl = UpdateDownloadThread(self, dlpkgs)
-            dl.start()
-            close = False
-        else:
-            # just notify about things being available
-            self.emitAvailable()
+            else:
+                # just notify about things being available
+                self.emitAvailable()
+        except Exception, e:
+            self.doUnlock(YUM_PID_FILE)
 
         # FIXME: this is kind of ugly in that I want to do it sometimes
         # and yet not others and it's from threads that it matters.  aiyee!
@@ -575,7 +568,9 @@ def main():
     
     if os.path.exists(config_file):
         confparser.read(config_file)
-    
+
+    syslog.openlog("yum-updatesd", 0, syslog.LOG_DAEMON)
+
     opts.populate(confparser, 'main')
     updd = UpdatesDaemon(opts)
 
