@@ -33,7 +33,6 @@ import Errors
 # SQL db)
 # TODO: consistent case of YumPlugins methods
 # TODO: allow plugins to extend shell commands
-# TODO: allow plugins to extend commands (on the command line)
 # TODO: allow plugins to define new repository types
 # TODO: More developer docs:  use epydoc as API begins to stablise
 
@@ -52,7 +51,7 @@ import Errors
 # API, the major version number must be incremented and the minor version number
 # reset to 0. If a change is made that doesn't break backwards compatibility,
 # then the minor number must be incremented.
-API_VERSION = '2.4'
+API_VERSION = '2.5'
 
 class DeprecatedInt(int):
     '''
@@ -398,6 +397,13 @@ class ConfigPluginConduit(PluginConduit):
             setattr(config.YumConf, name, option)
             setattr(config.RepoConf, name, config.Inherit(option))
 
+    def registerCommand(self, command):
+        if hasattr(self._base, 'registerCommand'):
+            self._base.registerCommand(command)
+        else:
+            raise Errors.ConfigError('registration of commands not supported')
+
+            
 class InitPluginConduit(PluginConduit):
 
     def getConf(self):

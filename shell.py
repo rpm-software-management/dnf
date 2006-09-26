@@ -38,7 +38,7 @@ class YumShell(cmd.Cmd):
         self.shell_specific_commands = ['repo', 'repository', 'exit', 'quit',
                 'run', 'ts', 'transaction', 'config']
                 
-        self.commandlist = self.shell_specific_commands + self.base.yum_cli_commands
+        self.commandlist = self.shell_specific_commands + self.base.yum_cli_commands.keys()
         self.logger = logging.getLogger("yum.cli")
         self.verbose_logger = logging.getLogger("yum.verbose.cli")
 
