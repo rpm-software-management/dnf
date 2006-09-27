@@ -1,3 +1,169 @@
+2006-09-26 23:05  skvidal
+
+	* yum.spec, yum/__init__.py: 
+	bump the rpm requirement to 4.4.X - I think this covered returning
+	headers by index bump version
+
+2006-09-26 09:24  mjs
+
+	* cli.py, shell.py, yumcommands.py, yum/plugins.py: Committed
+	Bastiaan Bakker's command extension patch. I made a few bug fixes
+	to it.
+
+2006-09-25 17:04  katzj
+
+	* yum-updatesd.py: some error logging; avoid leaving a stale lock
+	file (rh#203938)
+
+2006-09-18 16:08  katzj
+
+	* yum/packages.py: lazily populate prco to speed up rpmsack
+	initialization when it's not needed
+
+2006-09-18 16:06  katzj
+
+	* yum/packages.py: fix dep installs for locales like turkish where
+	string.lower("I") != "i" (rh#206853)
+
+2006-09-14 17:16  katzj
+
+	* yum/logginglevels.py: if we can't connect to a syslog, don't die
+	(rh#206474)
+
+2006-09-14 12:12  mjs
+
+	* yum/rpmsack.py: Removed unused excludes attribute and updated
+	comments
+
+2006-09-14 03:05  mjs
+
+	* yum/: __init__.py, config.py, yumRepo.py: As discussed privately
+	with Paul Nasrat, merged YumRepository and RepoConf to help allow
+	config dumping.
+
+2006-09-13 18:39  katzj
+
+	* yum-updatesd.py: * actually time out after a few tries * catch
+	another place we could potentially not unlock the pid file
+
+2006-09-13 18:37  katzj
+
+	* yum/: packages.py, sqlitesack.py: swap arguments on __init__ for
+	a few Package types so that we have consistency
+
+2006-09-13 18:19  katzj
+
+	* yum/__init__.py: clean up some duplicate code to take advantage
+	of the fact that the rpmdb is now a package sack
+
+2006-09-11 17:46  katzj
+
+	* yum/yumRepo.py: we need to redo setupGrab() after changing
+	callbacks so that our grabber has the right info.  this makes it so
+	that we get progress feedback when downloading in pirut again
+
+2006-09-11 17:01  katzj
+
+	* cli.py, yum/__init__.py: fix whatprovides based on a patch from
+	Tim Lauridsen (rh#205924)
+
+2006-09-11 14:09  mjs
+
+	* yum/rpmsack.py: makePackageObject -> _makePackageObject
+
+2006-09-11 06:12  mjs
+
+	* yum/__init__.py: Fixed the disk space check; it was failing
+	because po.size can be a string.  Make the disk space check more
+	readable by using the statvfs attributes.
+
+2006-09-11 05:56  mjs
+
+	* yum/__init__.py: Prevent a KeyError that was occur during the
+	disk space check because errors wasn't always initialised
+	correctly. Added adderror() to avoid initialisation problems like
+	this and minimise clutter.
+
+2006-09-08 17:05  skvidal
+
+	* yum/: __init__.py, packages.py: 
+	partial check in just to get it off my laptop:
+	
+	1. do check for space in cache dir for downloading packages 2.
+	start changing around the way packages are checked
+
+2006-09-08 13:06  skvidal
+
+	* yum/: __init__.py, packages.py: 
+	get rid of silly code in verifyPkg()
+
+2006-09-08 12:52  skvidal
+
+	* yum/rpmsack.py: 
+	as I read through the changes:	- clean up one docstring  - make
+	some of the list constructions using _search look the same
+
+2006-09-08 12:38  skvidal
+
+	* yum/rpmsack.py: 
+	make getNameArchPkgList() and getNamePkgList() consistent - if our
+	pkglist is length zero then they would have traced back.
+
+2006-09-08 12:29  mjs
+
+	* yum/rpmsack.py: update comments
+
+2006-09-08 12:21  skvidal
+
+	* yum/: __init__.py, misc.py, packages.py: 
+	- move refineSearchPattern into  misc from YumBase - clean up some
+	pychecker errors
+
+2006-09-08 12:07  mjs
+
+	* yum/rpmsack.py: Big cleanup of RPMDBPackageSack. Indexes are no
+	longer built (buildIndexes).  This significantly reducing Yum's
+	initialisation time and reduces memory footprint. Despite the lack
+	of indexes almost all operations are faster. Will post stats to
+	yum-devel.
+
+2006-09-08 09:32  skvidal
+
+	* cli.py, output.py, yum/__init__.py, yum/misc.py, yum/packages.py:
+	
+	- fix up findDeps interface - it now takes a list of package
+	objects - clean up a deprecation in deplistoutput - remove
+	RpmBase._prcoTuple2Printable() since it was no longer needed and
+	only introduced in this devel series.
+
+2006-09-06 08:57  katzj
+
+	* cli.py: more obvious error message for group not existing
+	(rh#204878)
+
+2006-09-06 03:58  mjs
+
+	* cli.py: remove a bunch of unused imports
+
+2006-09-06 03:48  mjs
+
+	* cli.py: use TYPE_INTERACTIVE instead of the deprecated
+	TYPE_INTERFACE
+
+2006-09-06 00:45  skvidal
+
+	* rpmUtils/miscutils.py: 
+	make epoch output quasi-consistent for comparisons
+
+2006-09-06 00:45  skvidal
+
+	* yum/depsolve.py: add some debug output to depsolving
+
+2006-09-06 00:18  skvidal
+
+	* ChangeLog: 
+	check in changelog
+
 2006-09-06 00:17  skvidal
 
 	* yum.spec, yum/__init__.py: 
