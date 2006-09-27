@@ -1,6 +1,6 @@
 Summary: RPM installer/updater
 Name: yum
-Version: 2.9.6
+Version: 2.9.7
 Release: 1
 License: GPL
 Group: System Environment/Base
@@ -10,7 +10,7 @@ BuildRoot: %{_tmppath}/%{name}-%{version}root
 BuildArchitectures: noarch
 BuildRequires: python
 BuildRequires: gettext
-Requires: python, rpm-python, rpm >= 0:4.1.1
+Requires: python, rpm-python, rpm >= 0:4.4.2
 Requires: python-sqlite
 Requires: urlgrabber
 Requires: python-elementtree
@@ -88,6 +88,9 @@ exit 0
 %{_mandir}/man*/yum-updatesd*
 
 %changelog
+* Tue Sep 26 2006 Seth Vidal <skvidal at linux.duke.edu>
+- 2.9.7
+
 * Wed Sep  6 2006 Seth Vidal <skvidal at linux.duke.edu>
 - 2.9.6
 
