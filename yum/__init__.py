@@ -657,6 +657,9 @@ class YumBase(depsolve.Depsolve):
                         
                     if cursize >= totsize: # otherwise keep it around for regetting
                         os.unlink(local)
+                else:
+                    self.verbose_logger.debug("using local copy of %s" %(po,))
+                    continue
                         
             remote_pkgs.append(po)
             
