@@ -407,14 +407,8 @@ class BaseConfig(object):
     def optionobj(cls, name):
         '''Return the Option instance for the given name
         '''
-        # Look for Option instances in this class and base classes so that
-        # option inheritance works
-        for klass in (cls,) + cls.__bases__:
-            obj = klass.__dict__.get(name, None)
-            if obj is not None:
-                break
-
-        if obj is not None and isinstance(obj, Option):
+        obj = getattr(cls, name, None)
+        if isinstance(obj, Option):
             return obj
         else:
             raise KeyError
