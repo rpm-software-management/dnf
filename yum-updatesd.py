@@ -75,6 +75,9 @@ class UpdateEmitter(object):
     def updatesFailed(self, errmsgs):
         """Emitted when an update has failed to install."""
         pass
+    def checkFailed(self, error):
+        """Emitted when checking for updates failed."""
+        pass
 
 class SyslogUpdateEmitter(UpdateEmitter):
     def __init__(self, syslog_facility, ident = "yum-updatesd",
@@ -187,6 +190,9 @@ class DbusUpdateEmitter(UpdateEmitter):
     def updatesApplied(self, updinfo):
         self.dbusintf.UpdatesAppliedSignal(updinfo)
 
+    def checkFailed(self, error):
+        self.dbusintf.CheckFailedSignal(error)
+
 class YumDbusInterface(dbus.service.Object):
     def __init__(self, bus_name, object_path='/UpdatesAvail'):
         dbus.service.Object.__init__(self, bus_name, object_path)
@@ -207,6 +213,9 @@ class YumDbusInterface(dbus.service.Object):
     def UpdatesAppliedSignal(self, updinfo):
         pass
 
+    @dbus.service.signal('edu.duke.linux.yum')
+    def CheckFailedSignal(self, message):
+        pass
 
 class UDConfig(yum.config.BaseConfig):
     """Config format for the daemon"""
@@ -325,7 +334,10 @@ class UpdatesDaemon(yum.YumBase):
         except Exception, e:
             syslog.syslog(syslog.LOG_WARNING,
                           "error getting update info: %s" %(e,))
+            self.emitCheckFailed("%s" %(e,))
             self.doUnlock(YUM_PID_FILE)
+            return False
+        return True
 
     def populateUpdateMetadata(self):
         self.updateMetadata = UpdateMetadata()
@@ -405,7 +417,8 @@ class UpdatesDaemon(yum.YumBase):
 
     def updatesCheck(self):
         try:
-            self.refreshUpdates()
+            if not self.refreshUpdates():
+                return
         except yum.Errors.LockError:
             return True # just pass for now
 
@@ -443,6 +456,7 @@ class UpdatesDaemon(yum.YumBase):
                 # just notify about things being available
                 self.emitAvailable()
         except Exception, e:
+            self.emitCheckFailed("%s" %(e,))
             self.doUnlock(YUM_PID_FILE)
 
         # FIXME: this is kind of ugly in that I want to do it sometimes
@@ -469,7 +483,8 @@ class UpdatesDaemon(yum.YumBase):
             except yum.Errors.LockError:
                 pass
             # if we can't get the lock, return what we have if we can
-            if self.updateInfo: return self.updateInfo
+            if self.updateInfo:
+                return self.updateInfo
             time.sleep(1)
             tries += 1
         if tries == 10:
@@ -505,6 +520,11 @@ class UpdatesDaemon(yum.YumBase):
     def emitUpdateFailed(self, errmsgs):
         """method to emit a notice when automatic updates failed"""
         map(lambda x: x.updatesFailed(errmsgs), self.emitters)
+
+    def emitCheckFailed(self, error):
+        """method to emit a notice when checking for updates failed"""
+        map(lambda x: x.checkFailed(error), self.emitters)
+        
 
 class YumDbusListener(dbus.service.Object):
     def __init__(self, updd, bus_name, object_path='/Updatesd',
