@@ -234,7 +234,7 @@ class Repository:
         setattr(self, key, value)
 
     def getAttribute(self, key):
-        if key in self.setkeys and hasattr(self, key):
+        if key in self.setkeys or hasattr(self, key):
             return getattr(self, key)
         return None
 
