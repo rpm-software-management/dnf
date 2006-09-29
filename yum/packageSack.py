@@ -283,14 +283,21 @@ class MetaSack(PackageSackBase):
            this means(in name.arch form): foo.i386 and foo.noarch are not
            compared to each other for highest version only foo.i386 and
            foo.i386 will be compared"""
-        return self._computeAggregateListResult("returnNewestByNameArch", naTup)
-
+        bestofeach = ListPackageSack()
+        bestofeach.addList(self._computeAggregateListResult("returnNewestByNameArch", naTup))
+        
+        return bestofeach.returnNewestByNameArch(naTup)
+        
+        
     def returnNewestByName(self, name=None):
         """return list of newest packages based on name matching
            this means(in name.arch form): foo.i386 and foo.noarch will
            be compared to each other for highest version"""
-        return self._computeAggregateListResult("returnNewestByName", name)
-
+           
+        bestofeach = ListPackageSack()
+        bestofeach.addList(self._computeAggregateListResult("returnNewestByName", name))
+        return bestofeach.returnNewestByName(name)
+        
     def simplePkgList(self):
         """returns a list of pkg tuples (n, a, e, v, r)"""
         return self._computeAggregateListResult("simplePkgList")
@@ -558,7 +565,7 @@ class PackageSack(PackageSackBase):
         
         if naTup:
             if highdict.has_key(naTup):
-                return highdict[naTup]
+                return [highdict[naTup]]
             else:
                 raise PackageSackError, 'No Package Matching %s.%s' % naTup
         
