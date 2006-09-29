@@ -1,3 +1,51 @@
+2006-09-29 10:45  skvidal
+
+	* yum.spec, yum/__init__.py: 
+	mark as 2.9.8
+
+2006-09-29 07:54  timlau
+
+	* yum/rpmsack.py: minor fix to deprecated returnTupleByKeyword
+	method in rpmsack.
+
+2006-09-29 01:41  skvidal
+
+	* cli.py: 
+	make sure we're not accidentally trying to install an old version
+
+2006-09-29 00:56  skvidal
+
+	* yum/repos.py: 
+	make excludes (and who knows how many other things) work again.
+	This, however, may not be the correct fix - willing to roll it back
+	out
+
+2006-09-29 00:40  skvidal
+
+	* yum/packageSack.py: 
+	make sure we're only returning the newest from the metasack
+
+2006-09-28 18:22  katzj
+
+	* yum/__init__.py: if we have a local copy of the package that
+	checksums fine, use it instead of trying to do a range request from
+	the end of the file (rh#208460)208460)208460)208460)
+
+2006-09-28 16:23  katzj
+
+	* yum-updatesd.py: define a checkFailed signal so that watchers can
+	notify users about failures to check for updates
+
+2006-09-28 08:22  mjs
+
+	* yum/config.py: Commited James Bowes' inheritance fix and simplify
+	the logic.
+
+2006-09-26 23:08  skvidal
+
+	* ChangeLog: 
+	check in changelog
+
 2006-09-26 23:05  skvidal
 
 	* yum.spec, yum/__init__.py: 
