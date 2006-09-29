@@ -26,19 +26,8 @@ import rpmUtils.transaction
 import rpmUtils.arch
 import Errors
 
-class OptionData(object):
-    '''
-    Simple class to track state for a single option instance.
-    '''
-    def __init__(self, name, initial_value):
-        self.name = name
-        self.value = initial_value
-        self.parser = None
-        self.section = None
-
 class Option(object):
     '''
-    This class handles a single Yum configuration file option. Create
     subclasses for each type of supported configuration option.
     
     Python descriptor foo (__get__ and __set__) is used to make option
@@ -66,11 +55,8 @@ class Option(object):
         '''
         if obj is None:
             return self
-        optdata = getattr(obj, self._attrname, None)
-        if optdata == None:
-            return None
-        else:
-            return optdata.value
+
+        return getattr(obj, self._attrname, None)
 
     def __set__(self, obj, value):
         '''Called when the option is set (via the descriptor protocol). 
@@ -79,23 +65,15 @@ class Option(object):
         @param value: The value to set the option to.
         @return: Nothing.
         '''
-        optdata = getattr(obj, self._attrname)
-       
         # Only try to parse if its a string
         if isinstance(value, basestring):
             try:
                 value = self.parse(value)
             except ValueError, e:
                 # Add the field name onto the error
-                raise ValueError('Error parsing %r: %s' % (optdata.name,
-                    str(e)))
+                raise ValueError('Error parsing %r: %s' % (value, str(e)))
 
-        optdata.value = value
-
-        # Write string value back to parser instance if possible
-        if optdata.parser != None:
-            strvalue = self.tostring(value)
-            optdata.parser.set(optdata.section, optdata.name, strvalue)
+        setattr(obj, self._attrname, value)
 
     def setup(self, obj, name):
         '''Initialise the option for a config instance. 
@@ -104,19 +82,7 @@ class Option(object):
         @param obj: BaseConfig (or subclass) instance.
         @param name: Name of the option.
         '''
-        setattr(obj, self._attrname, OptionData(name, self.default))
-
-    def setparser(self, obj, parser, section):
-        '''Set the configuration parser for this option. This is required so
-        that options can be written back to a configuration file.
-
-        @param obj: BaseConfig (or subclass) instance.
-        @param parser: ConfigParser (or subclass) where the option is read from.
-        @param section: config file section where the option is from.
-        '''
-        optdata = getattr(obj, self._attrname)
-        optdata.parser = parser
-        optdata.section = section
+        setattr(obj, self._attrname, self.default)
 
     def clone(self):
         '''Return a safe copy of this Option instance
@@ -387,8 +353,8 @@ class BaseConfig(object):
         @param parent: Optional parent BaseConfig (or subclass) instance to use
             when doing option value inheritance.
         '''
+        self.cfg = parser
         self._section = section
-        self.cfg = parser           # Keep a reference to the parser
 
         for name in self.iterkeys():
             option = self.optionobj(name)
@@ -400,7 +366,6 @@ class BaseConfig(object):
                 if parent and option.inherit:
                     value = getattr(parent, name)
                
-            option.setparser(self, parser, section)
             if value is not None:
                 setattr(self, name, value)
 
@@ -439,6 +404,31 @@ class BaseConfig(object):
         for name in dir(self):
             if self.isoption(name):
                 yield (name, getattr(self, name))
+
+    def write(self, fileobj, section=None, always=()):
+        '''Write out the configuration to a file-like object
+
+        @param fileobj: File-like object to write to
+        @param section: Section name to use. If not-specified the section name
+            used during parsing will be used.
+        @param always: A sequence of option names to always write out.
+            Options not listed here will only be written out if they are at
+            non-default values. Set to None to dump out all options.
+        '''
+        # Write section heading
+        if section is None:
+            if self._section is None:
+                raise ValueError("not populated, don't know section")
+            section = self._section
+
+        fileobj.write('[%s]\n' % section)
+
+        # Write options
+        for name, value in self.iteritems():
+            option = self.optionobj(name)
+
+            if always is None or name in always or option.default != value:
+                fileobj.write("%s = %s\n" % (name, option.tostring(value)))
 
     def getConfigOption(self, option, default=None):
         warnings.warn('getConfigOption() will go away in a future version of Yum.\n'
