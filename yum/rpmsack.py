@@ -315,7 +315,7 @@ class RPMDBPackageSack(PackageSackBase):
                 DeprecationWarning, stacklevel=2)
 
         out = []
-        for hdr, tup, idx in self._search(name=name, arch=arch, epoch=epoch, version=ver, release=rel):
+        for hdr, tup, idx in self._search(name=name, arch=arch, epoch=epoch, ver=ver, rel=rel):
             out.append(tup)
         return out
 
