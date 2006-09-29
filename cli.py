@@ -573,11 +573,12 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
                         elif pkg == instpo: # same, ignore
                             continue
                         elif pkg < instpo: # lesser, check if the pkgtup is an exactmatch
-                                           # if so then add it to be installed,
-                                           # the user explicitly wants this version
-                                           # FIXME this is untrue if the exactmatch
-                                           # does not include a version-rel section
-                            if pkg in exactmatch:
+                                           # if so then add it to be installed
+                                           # if it can be multiply installed
+                                           # this is where we could handle setting 
+                                           # it to be an 'oldpackage' revert.
+                                           
+                            if pkg in exactmatch and self.allowedMultipleInstalls(pkg):
                                 if not toBeInstalled.has_key(pkg.name): toBeInstalled[pkg.name] = []
                                 toBeInstalled[pkg.name].append(pkg)
                 else: # we've not got any installed that match n or n+a
