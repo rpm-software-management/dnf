@@ -110,10 +110,9 @@ def parsePackages(pkgs, usercommands, casematch=0):
     return exactmatch, matched, unmatched
 
 class FakeRepository:
-    """Fake repositorty class for use in rpmsack package objects"""
+    """Fake repository class for use in rpmsack package objects"""
     def __init__(self, repoid):
         self.id = repoid
-        self.setkeys = []
 
     def __cmp__(self, other):
         if self.id > other.id:
@@ -122,6 +121,7 @@ class FakeRepository:
             return -1
         else:
             return 0
+        
     def __hash__(self):
         return hash(self.id)
 

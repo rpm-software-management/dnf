@@ -210,8 +210,6 @@ class Repository:
 
     def __init__(self, repoid):
         self.id = repoid
-        self.setkeys = []
-
         self.disable()
 
     def __cmp__(self, other):
@@ -230,22 +228,11 @@ class Repository:
         
     def setAttribute(self, key, value):
         """sets a generic attribute of this repository"""
-        self.setkeys.append(key)
         setattr(self, key, value)
 
     def getAttribute(self, key):
-        if key in self.setkeys or hasattr(self, key):
-            return getattr(self, key)
-        return None
+        return getattr(self, key, None)
 
-    def unsetAttribute(self, key):
-        """delete an attribute of this repository"""
-        self.setkeys.remove(key)
-        delattr(self, key)
-
-    def getAttributeKeys(self):
-        return self.setkeys
-                
     def isEnabled(self):
         enabled = self.getAttribute('enabled')
         return enabled is not None and enabled
