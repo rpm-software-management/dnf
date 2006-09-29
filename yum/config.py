@@ -28,6 +28,7 @@ import Errors
 
 class Option(object):
     '''
+    This class handles a single Yum configuration file option. Create
     subclasses for each type of supported configuration option.
     
     Python descriptor foo (__get__ and __set__) is used to make option
