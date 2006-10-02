@@ -26,7 +26,7 @@ import sre_constants
 import glob
 import logging
 import logging.config
-from ConfigParser import ParsingError
+from ConfigParser import ParsingError, ConfigParser
 import Errors
 import rpmsack
 import rpmUtils.updates
@@ -36,6 +36,7 @@ import comps
 import config
 import repos
 import misc
+from parser import ConfigPreProcessor
 import transactioninfo
 import urlgrabber
 from urlgrabber.grabber import URLGrabError
@@ -166,19 +167,19 @@ class YumBase(depsolve.Depsolve):
 
         # Read .repo files from directories specified by the reposdir option
         # (typically /etc/yum.repos.d and /etc/yum/repos.d)
-        parser = config.IncludedDirConfigParser(vars=self.yumvar)
+        parser = ConfigParser()
         for reposdir in self.conf.reposdir:
             if os.path.exists(self.conf.installroot+'/'+reposdir):
                 reposdir = self.conf.installroot + '/' + reposdir
 
             if os.path.isdir(reposdir):
-                #XXX: why can't we just pass the list of files?
-                files = ' '.join(glob.glob('%s/*.repo' % reposdir))
-                try:
-                    parser.read(files)
-                except ParsingError, e:
-                    msg = str(e)
-                    raise Errors.ConfigError, msg
+                for repofn in glob.glob('%s/*.repo' % reposdir):
+                    confpp_obj = ConfigPreProcessor(repofn, vars=self.yumvar)
+                    try:
+                        parser.readfp(confpp_obj)
+                    except ParsingError, e:
+                        msg = str(e)
+                        raise Errors.ConfigError, msg
 
         # Check sections in the .repo files that were just slurped up
         for section in parser.sections():

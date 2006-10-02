@@ -20,8 +20,8 @@ import warnings
 import rpm
 import copy
 import urlparse
-from parser import IncludingConfigParser, IncludedDirConfigParser
-from ConfigParser import NoSectionError, NoOptionError
+from parser import ConfigPreProcessor
+from ConfigParser import NoSectionError, NoOptionError, ConfigParser, ParsingError
 import rpmUtils.transaction
 import rpmUtils.arch
 import Errors
@@ -560,14 +560,16 @@ def readStartupConfig(configfile, root):
 
     May raise Errors.ConfigError if a problem is detected with while parsing.
     '''
-    if not os.path.exists(configfile):
-        raise Errors.ConfigError, 'No such config file %s' % configfile
 
     StartupConf.installroot.default = root
     startupconf = StartupConf()
 
-    parser = IncludingConfigParser()
-    parser.read(configfile)
+    parser = ConfigParser()
+    confpp_obj = ConfigPreProcessor(configfile)
+    try:
+        parser.readfp(confpp_obj)
+    except ParsingError, e:
+        raise Errors.ConfigError("Parsing file failed: %s" % e)
     startupconf.populate(parser, 'main')
 
     # Check that plugin paths are all absolute
