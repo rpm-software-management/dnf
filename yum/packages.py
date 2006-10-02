@@ -24,6 +24,7 @@ import types
 import fnmatch
 import stat
 import warnings
+from urlparse import urljoin
 from rpmUtils import RpmUtilsError
 import rpmUtils.arch
 import rpmUtils.miscutils
@@ -394,9 +395,19 @@ class YumAvailablePackage(PackageObject, RpmBase):
     
     def _remote_path(self):
         return self.returnSimple('relativepath')
+
+    def _remote_url(self):
+        """returns a URL that can be used for downloading the package.
+        Note that if you're going to download the package in your tool,
+        you should use self.repo.getPackage."""
+        base = self.returnSimple('basepath')
+        if base:
+            return urljoin(base, self.remote_path)
+        return urljoin(self.repo.urls[0], self.remote_path)
     
     size = property(_size)
     remote_path = property(_remote_path)
+    remote_url = property(_remote_url)
     
     
     
@@ -419,8 +430,7 @@ class YumAvailablePackage(PackageObject, RpmBase):
     def localPkg(self):
         """return path to local package (whether it is present there, or not)"""
         if not hasattr(self, 'localpath'):
-            remote = self.returnSimple('relativepath')
-            rpmfn = os.path.basename(remote)
+            rpmfn = os.path.basename(self.remote_path)
             self.localpath = self.repo.pkgdir + '/' + rpmfn
         return self.localpath
 
@@ -429,8 +439,7 @@ class YumAvailablePackage(PackageObject, RpmBase):
            byte ranges"""
            
         if not hasattr(self, 'hdrpath'):
-            pkgpath = self.returnSimple('relativepath')
-            pkgname = os.path.basename(pkgpath)
+            pkgname = os.path.basename(self.remote_path)
             hdrname = pkgname[:-4] + '.hdr'
             self.hdrpath = self.repo.hdrdir + '/' + hdrname
 
