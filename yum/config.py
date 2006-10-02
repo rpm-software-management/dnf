@@ -83,7 +83,7 @@ class Option(object):
         @param obj: BaseConfig (or subclass) instance.
         @param name: Name of the option.
         '''
-        setattr(obj, self._attrname, self.default)
+        setattr(obj, self._attrname, copy.copy(self.default))
 
     def clone(self):
         '''Return a safe copy of this Option instance
