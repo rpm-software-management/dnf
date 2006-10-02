@@ -24,7 +24,8 @@ from constants import *
 import ConfigParser
 import config 
 import Errors
-from parser import IncludingConfigParser
+from parser import ConfigPreProcessor
+
 
 # TODO: expose rpm package sack objects to plugins (once finished)
 # TODO: allow plugins to use the existing config stuff to define options for
@@ -246,18 +247,13 @@ class YumPlugins:
             self.verbose_logger.log(logginglevels.INFO_2, "Unable to find configuration file for plugin %s"
                 % modname)
             return None
-
-
+        parser = ConfigParser.ConfigParser()
+        confpp_obj = ConfigPreProcessor(conffilename)
         try:
-            parser = IncludingConfigParser()
-            parser.read(conffilename)
-        except ConfigParser.Error, e:
+            parser.readfp(confpp_obj)
+        except ParsingError, e:
             raise Errors.ConfigError("Couldn't parse %s: %s" % (conffilename,
                 str(e)))
-        except IOError, e:
-            self.verbose_logger.log(logginglevels.INFO_2, str(e))
-            return None
-
         return parser
 
     def setCmdLine(self, opts, commands):
