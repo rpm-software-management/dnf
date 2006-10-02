@@ -24,6 +24,7 @@ from constants import *
 import ConfigParser
 import config 
 import Errors
+from parser import IncludingConfigParser
 
 # TODO: expose rpm package sack objects to plugins (once finished)
 # TODO: allow plugins to use the existing config stuff to define options for
@@ -248,7 +249,7 @@ class YumPlugins:
 
 
         try:
-            parser = config.IncludingConfigParser()
+            parser = IncludingConfigParser()
             parser.read(conffilename)
         except ConfigParser.Error, e:
             raise Errors.ConfigError("Couldn't parse %s: %s" % (conffilename,
