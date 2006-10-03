@@ -19,6 +19,7 @@ import os.path
 import re
 import types
 import logging
+import time
 
 import rpmUtils.transaction
 import rpmUtils.miscutils
