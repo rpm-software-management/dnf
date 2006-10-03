@@ -329,4 +329,6 @@ class YumShell(cmd.Cmd):
                     self.base.closeRpmDB()
                     self.base.doTsSetup()
                     self.base.doRpmDBSetup()
+            self.base.initActionTs()
+            
 
