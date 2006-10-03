@@ -127,6 +127,10 @@ class Depsolve(object):
 
         if self.dsCallback: self.dsCallback.transactionPopulation()
         ts_elem = {}
+        
+        if self.ts.ts is None:
+            self.initActionTs()
+            
         if keepold:
             for te in self.ts:
                 epoch = te.E()
