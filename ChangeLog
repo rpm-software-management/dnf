@@ -1,3 +1,80 @@
+2006-10-04 21:58  skvidal
+
+	* yum.spec, yum/__init__.py: 
+	- 3.0 mark - make python 2.4 a req in yum.spec
+
+2006-10-03 17:43  skvidal
+
+	* yum/depsolve.py: 
+	messing around with a few tests to figure out where it is slow.
+
+2006-10-03 01:48  skvidal
+
+	* shell.py, yum/depsolve.py: 
+	make the fix for pekka's bug more correct
+
+2006-10-03 01:41  skvidal
+
+	* shell.py: 
+	fix for the traceback Pekka reported - makes sure that our ts is
+	reopened/intialized when the user decides to not run the
+	transaction from the shell.
+
+2006-10-02 12:34  timlau
+
+	* yum/plugins.py: replaced IncludingConfigParser with
+	ConfigPreProcessor/ConfigParser in plugins, so i works like the
+	rest of yum.
+
+2006-10-02 10:42  katzj
+
+	* yum/packages.py: * add a remote_url property for packages to get
+	the remote location as a   string that can be printed * get rid of
+	some explicit uses of relativepath
+
+2006-10-02 09:02  mjs
+
+	* yum/config.py: Copy the default value in case it is mutable and
+	different config instances end up manipulating the same default
+	value.
+
+2006-10-02 04:42  timlau
+
+	* yum/plugins.py: fix for this error : AttributeError: 'module'
+	object has no attribute 'IncludingConfigParser' When running latest
+	yum-cvs with plugins.
+
+2006-10-01 23:46  skvidal
+
+	* yum/: __init__.py, config.py, parser.py: 
+	make the include= and yum -c http://path/to/file behave like I
+	thought they should.
+	
+	This, ultimately, removes the need for parser.IncludingConfigParser
+	and parser.IncludedConfigParser but I haven't removed them yet b/c
+	I wanted to verify that they are not used elsewhere, first.
+
+2006-09-29 11:44  mjs
+
+	* yum/config.py: put accidentally removed line back
+
+2006-09-29 11:42  mjs
+
+	* yum/: packages.py, repos.py: cleaned up Repository.setkeys as
+	discussed on yum-devel
+
+2006-09-29 11:30  mjs
+
+	* yum/config.py: Removed on the fly write-back support from the
+	config classes. Added BaseConfig.write() instead. This is simpler
+	and should use less memory. No-one was using the write support
+	anyway.
+
+2006-09-29 11:12  skvidal
+
+	* ChangeLog: 
+	check in changelog
+
 2006-09-29 10:45  skvidal
 
 	* yum.spec, yum/__init__.py: 
