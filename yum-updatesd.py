@@ -43,8 +43,8 @@ from email.MIMEText import MIMEText
 import yum
 import yum.Errors
 import syslog
-from yum.config import BaseConfig, Option, IntOption, ListOption, BoolOption, \
-                       IncludingConfigParser
+from yum.config import BaseConfig, Option, IntOption, ListOption, BoolOption
+from yum.parser import IncludingConfigParser
 from yum.constants import *
 from yum.update_md import UpdateMetadata
 
