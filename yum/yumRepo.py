@@ -458,8 +458,10 @@ class YumRepository(Repository, config.RepoConf):
     def getPackage(self, package, checkfunc = None, text = None, cache = True):
         remote = package.returnSimple('relativepath')
         local = package.localPkg()
+        basepath = package.returnSimple('basepath')
             
-        return self.__get(relative=remote,
+        return self.__get(url=basepath,
+                        relative=remote,
                         local=local,
                         checkfunc=checkfunc,
                         text=text,
@@ -473,8 +475,9 @@ class YumRepository(Repository, config.RepoConf):
         local =  package.localHdr()
         start = package.returnSimple('hdrstart')
         end = package.returnSimple('hdrend')
-        
-        return self.__get(relative=remote, local=local, start=start,
+        basepath = package.returnSimple('basepath')
+
+        return self.__get(url=basepath, relative=remote, local=local, start=start,
                         reget=None, end=end, checkfunc=checkfunc, copy_local=1,
                         cache=cache,
                         )
