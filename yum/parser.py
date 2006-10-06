@@ -387,7 +387,7 @@ class ConfigPreProcessor:
         
         # at this point we have a line from the topmost file on the stack
         # or EOF if the stack is empty
-        if vars:
+        if self._vars:
             return varReplace(line, self._vars)
         return line
     
