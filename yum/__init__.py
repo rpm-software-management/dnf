@@ -602,7 +602,7 @@ class YumBase(depsolve.Depsolve):
             
         if not po.verifyLocalPkg():
             if raiseError:
-                raise 
+                raise URLGrabError(-1, 'Package does not match intended download')
             else:
                 return False
 
