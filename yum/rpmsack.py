@@ -45,6 +45,7 @@ class RPMDBPackageSack(PackageSackBase):
 
     def __init__(self, root='/'):
         self.root = root
+        self._header_dict = {}
 
     def _get_pkglist(self):
         '''Getter for the pkglist property. 
@@ -211,9 +212,37 @@ class RPMDBPackageSack(PackageSackBase):
         for hdr in mi:
             if hdr['name'] != 'gpg-pubkey':
                 yield (hdr, mi.instance())
-
+        del mi
         ts.close()
+        del ts
 
+    def _header_from_index(self, idx):
+        """returns a package header having been given an index"""
+        
+        ts = self.readOnlyTS()
+        try:
+            mi = ts.dbMatch(0, idx)
+        except (TypeError, StopIteration), e:
+            #FIXME: raise some kind of error here
+            print 'No index matching %s found in rpmdb, this is bad' % idx
+            yield None # it should REALLY not be returning none - this needs to be right
+        else:
+            hdr = mi.next()
+            yield hdr
+            del hdr
+
+        del mi
+        ts.close()
+        del ts
+
+    def _make_header_dict(self):
+        """generate a header indexes dict that is pkgtup = index number"""
+        
+        for (hdr, idx) in self._all_packages():
+            pkgtup = self._hdr2pkgTuple(hdr)
+            self._header_dict[pkgtup] = idx
+        
+        
     def _search(self, name=None, epoch=None, ver=None, rel=None, arch=None):
         '''Generator that yield (header, pkgtup, index) for matching packages
         '''
@@ -232,10 +261,14 @@ class RPMDBPackageSack(PackageSackBase):
             return True
 
         # Find and yield matches
-        for hdr, idx in self._all_packages():
-            pkgtup = self._hdr2pkgTuple(hdr)
+        if not self._header_dict:
+            self._make_header_dict()
+        
+        for pkgtup in self._header_dict.keys():
             if match(pkgtup):
-                yield hdr, pkgtup, idx
+                idx = self._header_dict[pkgtup]
+                for h in self._header_from_index(idx):
+                    yield h, pkgtup, idx
 
     def _search2(self, name=None, epoch=None, version=None, release=None, arch=None):
         '''Generator that yield (header, index) for matching packages
