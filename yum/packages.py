@@ -190,7 +190,7 @@ class RpmBase:
         self.licenses = []
 
     def returnEVR(self):
-        return packageEVR(self.epoch,self.ver,self.rel)
+        return PackageEVR(self.epoch,self.ver,self.rel)
     
     def __hash__(self):
         mystr = '%s - %s:%s-%s-%s.%s' % (self.repo.id, self.epoch, self.name,
@@ -319,14 +319,14 @@ class RpmBase:
     conflicts_print = property(fget=lambda self: self.returnPrco('conflicts', True))
     obsoletes_print = property(fget=lambda self: self.returnPrco('obsoletes', True))
     changelog = property(fget=lambda self: self.returnChangelog())
-    EVR = property(fget=self.returnEVR())
+    EVR = property(fget=lambda self: self.returnEVR())
     
 class PackageEVR:
     
-    def init(self,e,v,r):
+    def __init__(self,e,v,r):
         self.epoch = e
         self.ver = v
-        self.release
+        self.rel = r
         
     def compare(self,other):
         return rpmUtils.miscutils.compareEVR((self.epoch, self.ver, self.rel), (other.epoch, other.ver, other.rel))
