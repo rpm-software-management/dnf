@@ -564,15 +564,15 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
                 # go through each package 
                 if len(comparable) > 0:
                     for instpo in comparable:
-                        if pkg > instpo: # we're newer - this is an update, pass to them
+                        if pkg.EVR > instpo.EVR: # we're newer - this is an update, pass to them
                             if instpo.name in exactarchlist:
                                 if pkg.arch == instpo.arch:
                                     passToUpdate.append(pkg.pkgtup)
                             else:
                                 passToUpdate.append(pkg.pkgtup)
-                        elif pkg == instpo: # same, ignore
+                        elif pkg.EVR == instpo.EVR: # same, ignore
                             continue
-                        elif pkg < instpo: # lesser, check if the pkgtup is an exactmatch
+                        elif pkg.EVR < instpo.EVR: # lesser, check if the pkgtup is an exactmatch
                                            # if so then add it to be installed
                                            # if it can be multiply installed
                                            # this is where we could handle setting 
@@ -775,7 +775,7 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
                 continue
 
             for installed_pkg in installedByKey:
-                if po > installed_pkg: # we're newer - this is an update, pass to them
+                if po.EVR > installed_pkg.EVR: # we're newer - this is an update, pass to them
                     if installed_pkg.name in self.conf.exactarchlist:
                         if po.arch == installed_pkg.arch:
                             updatepkgs.append((po, installed_pkg))

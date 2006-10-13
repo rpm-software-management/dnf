@@ -171,6 +171,7 @@ class PackageObject:
         for (csumtype, csum, csumid) in self.checksums:
             if csumid:
                 return (csumtype, csum)
+
                 
 class RpmBase:
     """return functions and storage for rpm-specific data"""
@@ -188,34 +189,13 @@ class RpmBase:
         self._changelog = [] # (ctime, cname, ctext)
         self.licenses = []
 
-    def __lt__(self, other):
-        if comparePoEVR(self, other) < 0:
-            return True
-        return False
-
-        
-    def __gt__(self, other):
-        if comparePoEVR(self, other) > 0:
-            return True
-        return False
-
-    def __le__(self, other):
-        if comparePoEVR(self, other) <= 0:
-            return True
-        return False
-
-    def __ge__(self, other):
-        if comparePoEVR(self, other) >= 0:
-            return True
-        return False
-
     def __eq__(self, other):
-        if comparePoEVR(self, other) == 0:
+        if comparePoEVR(self, other) == 0 and self.arch == other.arch:
             return True
         return False
 
     def __ne__(self, other):
-        if comparePoEVR(self, other) != 0:
+        if comparePoEVR(self, other) != 0 and self.arch != other.arch:
             return True
         return False
        
@@ -347,8 +327,50 @@ class RpmBase:
     conflicts_print = property(fget=lambda self: self.returnPrco('conflicts', True))
     obsoletes_print = property(fget=lambda self: self.returnPrco('obsoletes', True))
     changelog = property(fget=lambda self: self.returnChangelog())
+    EVR = property(fget=lambda self: self.returnEVR())
     
+class PackageEVR:
     
+    def init(self,e,v,r):
+        self.epoch = e
+        self.ver = v
+        self.release
+        
+    def compare(self,other):
+        return rpmUtils.miscutils.compareEVR((self.epoch, self.ver, self.rel), (other.epoch, other.ver, other.rel))
+    
+    def __lt__(self, other):
+        if self.compare(other) < 0:
+            return True
+        return False
+
+        
+    def __gt__(self, other):
+        if self.compare(other) > 0:
+            return True
+        return False
+
+    def __le__(self, other):
+        if self.compare(other) <= 0:
+            return True
+        return False
+
+    def __ge__(self, other):
+        if self.compare(other) >= 0:
+            return True
+        return False
+
+    def __eq__(self, other):
+        if self.compare(other) == 0:
+            return True
+        return False
+
+    def __ne__(self, other):
+        if self.compare(other) != 0:
+            return True
+        return False
+    
+
 
 class YumAvailablePackage(PackageObject, RpmBase):
     """derived class for the  packageobject and RpmBase packageobject yum

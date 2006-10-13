@@ -560,7 +560,7 @@ class PackageSack(PackageSackBase):
                 highdict[(pkg.name, pkg.arch)] = pkg
             else:
                 pkg2 = highdict[(pkg.name, pkg.arch)]
-                if pkg > pkg2:
+                if pkg.EVR > pkg2.EVR:
                     highdict[(pkg.name, pkg.arch)] = pkg
         
         if naTup:
@@ -582,9 +582,9 @@ class PackageSack(PackageSackBase):
                 highdict[pkg.name].append(pkg)
             else:
                 pkg2 = highdict[pkg.name][0]
-                if pkg > pkg2:
+                if pkg.EVR > pkg2.EVR:
                     highdict[pkg.name] = [pkg]
-                if pkg == pkg2:
+                if pkg.EVR == pkg2.EVR:
                     highdict[pkg.name].append(pkg)
                 
         if name:
