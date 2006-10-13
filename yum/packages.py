@@ -189,16 +189,8 @@ class RpmBase:
         self._changelog = [] # (ctime, cname, ctext)
         self.licenses = []
 
-    def __eq__(self, other):
-        if comparePoEVR(self, other) == 0 and self.arch == other.arch:
-            return True
-        return False
-
-    def __ne__(self, other):
-        if comparePoEVR(self, other) != 0 and self.arch != other.arch:
-            return True
-        return False
-       
+    def returnEVR(self):
+        return packageEVR(self.epoch,self.ver,self.rel)
     
     def __hash__(self):
         mystr = '%s - %s:%s-%s-%s.%s' % (self.repo.id, self.epoch, self.name,
@@ -327,7 +319,7 @@ class RpmBase:
     conflicts_print = property(fget=lambda self: self.returnPrco('conflicts', True))
     obsoletes_print = property(fget=lambda self: self.returnPrco('obsoletes', True))
     changelog = property(fget=lambda self: self.returnChangelog())
-    EVR = property(fget=lambda self: self.returnEVR())
+    EVR = property(fget=self.returnEVR())
     
 class PackageEVR:
     
