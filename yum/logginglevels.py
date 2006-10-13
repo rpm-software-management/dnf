@@ -113,13 +113,15 @@ def doLoggingSetup(debuglevel, errorlevel):
     filelogger.propagate = False
 
     log_dev = '/dev/log'
+    syslog = None
     if os.path.exists(log_dev):
         try:
             syslog = logging.handlers.SysLogHandler(log_dev)
             syslog.setFormatter(plainformatter)
             filelogger.addHandler(syslog)
         except socket.error:
-            pass
+            if syslog is not None:
+                syslog.close()
 
     if debuglevel is not None:
         setDebugLevel(debuglevel)
