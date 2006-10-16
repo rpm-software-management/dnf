@@ -1,3 +1,7 @@
+2006-10-16 09:49  lmacken
+
+	* yum/yumRepo.py: Patch from Mark McLoughlin to fix typo
+
 2006-10-04 21:58  skvidal
 
 	* yum.spec, yum/__init__.py: 

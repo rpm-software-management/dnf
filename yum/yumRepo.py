@@ -418,7 +418,7 @@ class YumRepository(Repository, config.RepoConf):
                             bandwidth = self.bandwidth,
                             retry = self.retries,
                             throttle = self.throttle,
-                            progres_obj = self.callback,
+                            progress_obj = self.callback,
                             copy_local = copy_local,
                             reget = reget,
                             proxies = self.proxy_dict,
