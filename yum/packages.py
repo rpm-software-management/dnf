@@ -189,6 +189,16 @@ class RpmBase:
         self._changelog = [] # (ctime, cname, ctext)
         self.licenses = []
 
+    def __eq__(self, other):
+        if comparePoEVR(self, other) == 0 and self.arch == other.arch and self.name == other.name:
+            return True
+        return False
+
+    def __ne__(self, other):
+        if comparePoEVR(self, other) != 0 or self.arch != other.arch or self.name != other.name:
+            return True
+        return False
+       
     def returnEVR(self):
         return PackageEVR(self.epoch,self.ver,self.rel)
     
