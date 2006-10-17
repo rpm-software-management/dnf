@@ -44,7 +44,8 @@ import yum
 import yum.Errors
 import syslog
 from yum.config import BaseConfig, Option, IntOption, ListOption, BoolOption
-from yum.parser import IncludingConfigParser
+from yum.parser import ConfigPreProcessor
+from ConfigParser import ConfigParser, ParsingError
 from yum.constants import *
 from yum.update_md import UpdateMetadata
 
@@ -583,11 +584,17 @@ def main():
         os.dup2(fd, 2)
         os.close(fd)
 
-    confparser = IncludingConfigParser()
+
+    confparser = ConfigParser()
     opts = UDConfig()
     
     if os.path.exists(config_file):
-        confparser.read(config_file)
+        confpp_obj = ConfigPreProcessor(config_file)
+        try:
+            confparser.readfp(confpp_obj)
+        except ParsingError, e:
+            print >> sys.stderr, "Error reading config file: %s" % e
+            sys.exit(1)
 
     syslog.openlog("yum-updatesd", 0, syslog.LOG_DAEMON)
 
