@@ -103,22 +103,22 @@ def checksum(sumtype, file, CHUNK=2**16):
             
         if sumtype == 'md5':
             import md5
-            sum = md5.new()
+            sumalgo = md5.new()
         elif sumtype == 'sha':
             import sha
-            sum = sha.new()
+            sumalgo = sha.new()
         else:
             raise MiscError, 'Error Checksumming file, bad checksum type %s' % sumtype
         chunk = fo.read
         while chunk: 
             chunk = fo.read(CHUNK)
-            sum.update(chunk)
+            sumalgo.update(chunk)
 
         if type(file) is types.StringType:
             fo.close()
             del fo
             
-        return sum.hexdigest()
+        return sumalgo.hexdigest()
     except (IOError, OSError), e:
         raise MiscError, 'Error opening file for checksum: %s' % file
 

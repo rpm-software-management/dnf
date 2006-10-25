@@ -19,7 +19,6 @@ import os.path
 import re
 import fnmatch
 import types
-import time
 
 import Errors
 from packageSack import MetaSack

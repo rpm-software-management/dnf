@@ -86,10 +86,10 @@ class Group(object):
         for child in elem:
 
             if child.tag == 'id':
-                id = child.text
+                myid = child.text
                 if self.groupid is not None:
                     raise CompsException
-                self.groupid = id
+                self.groupid = myid
             
             elif child.tag == 'name':
                 text = child.text
@@ -135,21 +135,21 @@ class Group(object):
     def parse_package_list(self, packagelist_elem):
         for child in packagelist_elem:
             if child.tag == 'packagereq':
-                type = child.attrib.get('type')
-                if not type:
-                    type = u'mandatory'
+                genre = child.attrib.get('type')
+                if not genre:
+                    genre = u'mandatory'
 
-                if type not in ('mandatory', 'default', 'optional', 'conditional'):
+                if genre not in ('mandatory', 'default', 'optional', 'conditional'):
                     raise CompsException
 
                 package = child.text
-                if type == 'mandatory':
+                if genre == 'mandatory':
                     self.mandatory_packages[package] = 1
-                elif type == 'default':
+                elif genre == 'default':
                     self.default_packages[package] = 1
-                elif type == 'optional':
+                elif genre == 'optional':
                     self.optional_packages[package] = 1
-                elif type == 'conditional':
+                elif genre == 'conditional':
                     self.conditional_packages[package] = child.attrib.get('requires')
 
 
@@ -206,10 +206,10 @@ class Category(object):
     def parse(self, elem):
         for child in elem:
             if child.tag == 'id':
-                id = child.text
+                myid = child.text
                 if self.categoryid is not None:
                     raise CompsException
-                self.categoryid = id
+                self.categoryid = myid
 
             elif child.tag == 'name':
                 text = child.text

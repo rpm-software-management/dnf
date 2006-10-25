@@ -21,9 +21,7 @@
 
 import os
 import os.path
-import types
 import re
-import repos
 import yumRepo
 from packages import YumAvailablePackage
 import Errors

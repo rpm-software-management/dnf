@@ -20,7 +20,6 @@ import os
 import os.path
 import misc
 import re
-import types
 import fnmatch
 import stat
 import warnings
@@ -30,7 +29,6 @@ import rpmUtils.arch
 import rpmUtils.miscutils
 import Errors
 
-base=None
 
 def comparePoEVR(po1, po2):
     (e1, v1, r1) = (po1.epoch, po1.ver, po1.rel)

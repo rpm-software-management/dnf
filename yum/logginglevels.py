@@ -22,6 +22,7 @@ import os
 import socket
 import sys
 import logging
+import logging.handlers
 
 INFO_1 = 19
 INFO_2 = 18
@@ -140,5 +141,6 @@ def setFileLog(uid, logfile):
                 "%b %d %H:%M:%S")
             filehandler.setFormatter(formatter)
             filelogger.addHandler(filehandler)
-        except Exception, e:
+        #FIXME: XXX: A global exception catch? That seems unlikely.
+        except Exception:
             logging.getLogger("yum").critical('Cannot open logfile %s', logfile)

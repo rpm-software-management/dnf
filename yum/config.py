@@ -591,10 +591,10 @@ def readMainConfig(startupconf):
     '''
     
     # Set up substitution vars
-    vars = _getEnvVar()
-    vars['basearch'] = rpmUtils.arch.getBaseArch()          # FIXME make this configurable??
-    vars['arch'] = rpmUtils.arch.getCanonArch()             # FIXME make this configurable??
-    vars['releasever'] = _getsysver(startupconf.installroot, startupconf.distroverpkg)
+    yumvars = _getEnvVar()
+    yumvars['basearch'] = rpmUtils.arch.getBaseArch()          # FIXME make this configurable??
+    yumvars['arch'] = rpmUtils.arch.getCanonArch()             # FIXME make this configurable??
+    yumvars['releasever'] = _getsysver(startupconf.installroot, startupconf.distroverpkg)
 
     # Read [main] section
     yumconf = YumConf()
@@ -606,7 +606,7 @@ def readMainConfig(startupconf):
         setattr(yumconf, option, yumconf.installroot + path)
     
     # Add in some extra attributes which aren't actually configuration values 
-    yumconf.yumvar = vars
+    yumconf.yumvar = yumvars
     yumconf.uid = 0
     yumconf.cache = 0
     yumconf.progess_obj = None

@@ -14,6 +14,7 @@ from repos import Repository
 import parser
 import storagefactory
 from yum import config
+from yum import misc
 
 class YumPackageSack(packageSack.PackageSack):
     """imports/handles package objects from an mdcache dict object"""
@@ -202,35 +203,10 @@ class YumRepository(Repository, config.RepoConf):
            sumtype = md5 or sha
            filename = /path/to/file
            CHUNK=65536 by default"""
-
-        # chunking brazenly lifted from Ryan Tomayko
         try:
-            if type(file) is not types.StringType:
-                fo = file # assume it's a file-like-object
-            else:
-                fo = open(file, 'r', CHUNK)
-
-            if sumtype == 'md5':
-                import md5
-                sum = md5.new()
-            elif sumtype == 'sha':
-                import sha
-                sum = sha.new()
-            else:
-                raise Errors.RepoError, 'Error Checksumming file, wrong \
-                                         checksum type %s' % sumtype
-            chunk = fo.read
-            while chunk:
-                chunk = fo.read(CHUNK)
-                sum.update(chunk)
-
-            if type(file) is types.StringType:
-                fo.close()
-                del fo
-
-            return sum.hexdigest()
-        except (EnvironmentError, IOError, OSError):
-            raise Errors.RepoError, 'Error opening file for checksum'
+            return misc.checksum(sumtype, file, CHUNK)
+        except (Errors.MiscError, EnvironmentError), e:
+            raise Errors.RepoError, 'Error opening file for checksum: %s' % e
 
     def dump(self):
         output = '[%s]\n' % self.id
@@ -568,7 +544,7 @@ class YumRepository(Repository, config.RepoConf):
             filepath = fo
 
         try:
-            foo = repoMDObject.RepoMD(self.id, filepath)
+            repoMDObject.RepoMD(self.id, filepath)
         except Errors.RepoMDError, e:
             raise URLGrabError(-1, 'Error importing repomd.xml for %s: %s' % (self, e))
 
