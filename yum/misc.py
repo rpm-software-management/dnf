@@ -96,7 +96,7 @@ def checksum(sumtype, file, CHUNK=2**16):
        
     # chunking brazenly lifted from Ryan Tomayko
     try:
-        if type(file) is not types.StringType:
+        if type(file) not in types.StringTypes:
             fo = file # assume it's a file-like-object
         else:           
             fo = open(file, 'r', CHUNK)
