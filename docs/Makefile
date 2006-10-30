@@ -3,6 +3,7 @@ all:
 
 clean:
 	rm -f *.pyc *.pyo *~
+	rm -fr epydoc
 
 install:
 	mkdir -p $(DESTDIR)/usr/share/man/man{5,8}
