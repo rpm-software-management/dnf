@@ -171,7 +171,7 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         # Parse only command line options that affect basic yum setup
         try:
             args = _filtercmdline(
-                        ('--noplugins',), 
+                        ('--noplugins','--version'), 
                         ('-c', '-d', '-e', '--installroot'), 
                         args,
                     )
@@ -179,6 +179,11 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
             self.usage()
             sys.exit(1)
         opts = self.optparser.parse_args(args=args)[0]
+
+        # Just print out the version if that's what the user wanted
+        if opts.version:
+            print yum.__version__
+            sys.exit(0)
 
         # If the conf file is inside the  installroot - use that.
         # otherwise look for it in the normal root
@@ -210,11 +215,6 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         
         # Now parse the command line for real
         (opts, self.cmds) = self.optparser.parse_args()
-
-        # Just print out the version if that's what the user wanted
-        if opts.version:
-            print yum.__version__
-            sys.exit(0)
 
         # Let the plugins know what happened on the command line
         self.plugins.setCmdLine(opts, self.cmds)
