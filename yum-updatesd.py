@@ -23,6 +23,11 @@
 # - what to do if we're asked to exit while updates are being applied?
 # - what to do with the lock around downloads/updates
 
+# since it takes me time everytime to figure this out again, here's how to
+# queue a check with dbus-send.  adjust appropriately for other methods
+# $ dbus-send --system --print-reply --type=method_call \
+#   --dest=edu.duke.linux.yum /Updatesd edu.duke.linux.yum.CheckNow
+
 import os
 import sys
 import time
@@ -267,9 +272,9 @@ class UpdateInstallThread(threading.Thread):
         self.updd.updateInfoTime = None        
         
     def run(self):
-        self.updd.downloadPkgs(dlpkgs)
-        for po in dlpkgs:
-            rc, err = self.updd.sigCheckPkg(po)
+        self.updd.downloadPkgs(self.dlpkgs)
+        for po in self.dlpkgs:
+            result, err = self.updd.sigCheckPkg(po)
             if result == 0:
                 continue
             elif result == 1:
@@ -578,7 +583,7 @@ def main():
     if not options.nofork:
         if os.fork():
             sys.exit()
-        fd = os.open("/dev/null", os.O_RDONLY)
+        fd = os.open("/dev/null", os.O_RDWR)
         os.dup2(fd, 0)
         os.dup2(fd, 1)
         os.dup2(fd, 2)
