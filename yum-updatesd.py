@@ -114,7 +114,7 @@ class SyslogUpdateEmitter(UpdateEmitter):
                       "NOTICE": syslog.LOG_NOTICE,
                       "INFO": syslog.LOG_INFO,
                       "DEBUG": syslog.LOG_DEBUG }
-        if type(lvl) == type(int):
+        if type(lvl) == int:
             return lvl
         if level_map.has_key(lvl.upper()):
             return level_map[lvl.upper()]
@@ -138,7 +138,7 @@ class SyslogUpdateEmitter(UpdateEmitter):
                          "LOCAL5": syslog.LOG_LOCAL5,
                          "LOCAL6": syslog.LOG_LOCAL6,
                          "LOCAL7": syslog.LOG_LOCAL7,}
-        if type(facility) == type(int):
+        if type(facility) == int:
             return facility
         elif facility_map.has_key(facility.upper()):
             return facility_map[facility.upper()]
@@ -326,8 +326,7 @@ class UpdatesDaemon(yum.YumBase):
                 os.makedirs(self.opts.nonroot_workdir)
             self.repos.setCacheDir(self.opts.nonroot_workdir)
 
-        self.doConfigSetup(fn=self.opts.yum_config,
-                           init_plugins = False)
+        self.doConfigSetup(fn=self.opts.yum_config)
 
     def refreshUpdates(self):
         self.doLock(YUM_PID_FILE)
