@@ -53,7 +53,7 @@ case "$1" in
 	;;
   status)
 	status yum-updatesd
-	REVAL=$?
+	RETVAL=$?
 	;;
   *)
 	echo $"Usage: $0 {start|stop|status|restart|reload|force-reload|condrestart}"
