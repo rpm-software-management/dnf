@@ -301,10 +301,10 @@ def newestInList(pkgs):
     ret = [ pkgs.pop() ]
     newest = ret[0]
     for pkg in pkgs:
-        if pkg > newest:
+        if pkg.EVR > newest.EVR:
             ret = [ pkg ]
             newest = pkg
-        elif pkg == newest:
+        elif pkg.EVR == newest.EVR:
             ret.append(pkg)
     return ret
 
