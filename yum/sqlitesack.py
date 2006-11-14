@@ -116,10 +116,11 @@ class YumAvailablePackageSqlite(YumAvailablePackage):
         result = []
         if not self._changelog:
             if not self.sack.otherdb.has_key(self.repo):
-                #FIXME should this raise an exception or should it try to populate
-                # the otherdb
-                self._changelog = result
-                return
+                try:
+                    self.sack.populate(self.repo, with='otherdata')
+                except Errors.RepoError:
+                    self._changelog = result
+                    return
             cache = self.sack.otherdb[self.repo]
             cur = cache.cursor()
             cur.execute("select changelog.date as date, "
@@ -129,7 +130,8 @@ class YumAvailablePackageSqlite(YumAvailablePackage):
                         "and packages.pkgKey = changelog.pkgKey", self.pkgId)
             for ob in cur.fetchall():
                 result.append( (ob['date'], ob['author'], ob['changelog']) )
-        self._changelog = result
+            self._changelog = result
+            return
     
     def returnChangelog(self):
         self._loadChangelog()
