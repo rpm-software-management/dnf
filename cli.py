@@ -599,7 +599,7 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         if len(pkglist) > 0:
             self.verbose_logger.debug('reduced installs :')
         for po in pkglist:
-            self.verbose_logger.debug('   %s.%s %s:%s-%s', po.pkgtup)
+            self.verbose_logger.debug('   %s.%s %s:%s-%s', *po.pkgtup)
             self.install(po)
 
         if len(passToUpdate) > 0:
