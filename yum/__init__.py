@@ -1376,7 +1376,14 @@ class YumBase(depsolve.Depsolve):
         
         thisgroup.selected = True
         
-        pkgs = thisgroup.mandatory_packages.keys() + thisgroup.default_packages.keys()
+        pkgs = []
+        if 'mandatory' in self.conf.group_package_types:
+            pkgs.extend(thisgroup.mandatory_packages.keys())
+        if 'default' in self.conf.group_package_types:
+            pkgs.extend(thisgroup.default_packages.keys())
+        if 'optional' in self.conf.group_package_types:
+            pkgs.extend(thisgroup.optional_packages.keys())
+
         for pkg in pkgs:
             self.verbose_logger.log(logginglevels.DEBUG_2,
                 'Adding package %s from group %s', pkg, thisgroup.groupid)

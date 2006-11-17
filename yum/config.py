@@ -510,7 +510,8 @@ class YumConf(StartupConf):
     enabled = BoolOption(True)
     enablegroups = BoolOption(True)
     enable_group_conditionals = BoolOption(True)
-
+    group_package_types = ListOption(['mandatory', 'default'])
+    
     timeout = FloatOption(30.0)
 
     bandwidth = BytesOption(0)

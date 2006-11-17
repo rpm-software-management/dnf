@@ -120,6 +120,11 @@ from all matching repositories will be merged together as one large group.
 Either `0' or `1'. Determines whether yum will allow the use of conditionals
 packages. Default is `1' (package conditionals are allowed).
 
+.IP \fBgroup_package_types\fR
+List of the following: optional, default, mandatory. Tells yum which type
+of packages in groups will be installed when 'groupinstall' is called. 
+Default is: default, mandatory
+
 .IP \fBinstallroot \fR
 Specifies an alternative installroot, relative to which all packages will be
 installed. 
