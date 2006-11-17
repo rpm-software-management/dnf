@@ -23,6 +23,8 @@ class YumBaseError(exceptions.Exception):
     def __init__(self, args=None):
         exceptions.Exception.__init__(self)    
         self.args = args
+    def __str__(self):
+        return self.value
 
 class LockError(YumBaseError):
     def __init__(self, errno, msg):
