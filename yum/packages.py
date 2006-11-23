@@ -130,35 +130,39 @@ class FakeRepository:
 
 # goal for the below is to have a packageobject that can be used by generic
 # functions independent of the type of package - ie: installed or available
-class PackageObject:
+class PackageObject(object):
     """Base Package Object - sets up the default storage dicts and the
        most common returns"""
        
     def __init__(self):
-        self.simple = {} # simple things, name, arch, e,v,r, size, etc
+        self.name = None
+        self.version = None
+        self.release = None
+        self.epoch = None
+        self.arch = None
         self._checksums = [] # (type, checksum, id(0,1)
         
     def __str__(self):
-        if self.returnSimple('epoch') == '0':
-            out = '%s - %s-%s.%s' % (self.returnSimple('name'), 
-                                     self.returnSimple('version'),
-                                     self.returnSimple('release'), 
-                                     self.returnSimple('arch'))
+        if self.epoch == '0':
+            out = '%s - %s-%s.%s' % (self.name, 
+                                     self.version,
+                                     self.release, 
+                                     self.arch)
         else:
-            out = '%s - %s:%s-%s.%s' % (self.returnSimple('name'), 
-                                        self.returnSimple('epoch'), 
-                                        self.returnSimple('version'), 
-                                        self.returnSimple('release'), 
-                                        self.returnSimple('arch'))
+            out = '%s - %s:%s-%s.%s' % (self.name, 
+                                        self.epoch, 
+                                        self.version, 
+                                        self.release, 
+                                        self.arch)
         return out
 
     def returnSimple(self, varname):
-        return self.simple[varname]
+        warnings.warn("returnSimple() will go away in a furture version of Yum.\n",
+            DeprecationWarning, stacklevel=2)
+        return getattr(self, varname)
 
     def _pkgtup(self):
-        return (self.returnSimple('name'), self.returnSimple('arch'), 
-                self.returnSimple('epoch'),self.returnSimple('version'), 
-                self.returnSimple('release'))
+        return (self.name, self.arch, self.epoch, self.version, self.release)
         
     def returnChecksums(self):
         return self._checksums
@@ -198,11 +202,11 @@ class RpmBase:
         return False
        
     def returnEVR(self):
-        return PackageEVR(self.epoch,self.ver,self.rel)
+        return PackageEVR(self.epoch, self.version, self.release)
     
     def __hash__(self):
         mystr = '%s - %s:%s-%s-%s.%s' % (self.repo.id, self.epoch, self.name,
-                                         self.ver, self.rel, self.arch)
+                                         self.version, self.release, self.arch)
         return hash(mystr)
         
     def returnPrco(self, prcotype, printable=False):
@@ -380,7 +384,6 @@ class YumAvailablePackage(PackageObject, RpmBase):
         PackageObject.__init__(self)
         RpmBase.__init__(self)
         
-        self.simple['repoid'] = repo.id
         self.repoid = repo.id
         self.repo = repo
         self.state = None
@@ -388,14 +391,8 @@ class YumAvailablePackage(PackageObject, RpmBase):
 
         if pkgdict != None:
             self.importFromDict(pkgdict)
-            # quick, common definitions
-            self.name = self.returnSimple('name')
-            self.epoch = self.returnSimple('epoch')
-            self.version = self.returnSimple('version')
-            self.release = self.returnSimple('release')
-            self.ver = self.returnSimple('version')
-            self.rel = self.returnSimple('release')
-            self.arch = self.returnSimple('arch')
+            self.ver = self.version
+            self.rel = self.release
             self.pkgtup = self._pkgtup()
 
 
@@ -413,16 +410,16 @@ class YumAvailablePackage(PackageObject, RpmBase):
         return "%s.%s %s" % (self.name, self.arch, ver)
 
     def _size(self):
-        return self.returnSimple('packagesize')
+        return self.packagesize
     
     def _remote_path(self):
-        return self.returnSimple('relativepath')
+        return self.relativepath
 
     def _remote_url(self):
         """returns a URL that can be used for downloading the package.
         Note that if you're going to download the package in your tool,
         you should use self.repo.getPackage."""
-        base = self.returnSimple('basepath')
+        base = self.basepath
         if base:
             return urljoin(base, self.remote_path)
         return urljoin(self.repo.urls[0], self.remote_path)
@@ -503,20 +500,20 @@ class YumAvailablePackage(PackageObject, RpmBase):
         
         if hasattr(pkgdict, 'nevra'):
             (n, e, v, r, a) = pkgdict.nevra
-            self.simple['name'] = n
-            self.simple['epoch'] = e
-            self.simple['version'] = v
-            self.simple['arch'] = a
-            self.simple['release'] = r
+            self.name = n
+            self.epoch = e
+            self.version = v
+            self.arch = a
+            self.release = r
         
         if hasattr(pkgdict, 'time'):
-            self.simple['buildtime'] = pkgdict.time['build']
-            self.simple['filetime'] = pkgdict.time['file']
+            self.buildtime = pkgdict.time['build']
+            self.filetime = pkgdict.time['file']
         
         if hasattr(pkgdict, 'size'):
-            self.simple['packagesize'] = pkgdict.size['package']
-            self.simple['archivesize'] = pkgdict.size['archive']
-            self.simple['installedsize'] = pkgdict.size['installed']
+            self.packagesize = pkgdict.size['package']
+            self.archivesize = pkgdict.size['archive']
+            self.installedsize = pkgdict.size['installed']
         
         if hasattr(pkgdict, 'location'):
             if not pkgdict.location.has_key('base'):
@@ -526,20 +523,19 @@ class YumAvailablePackage(PackageObject, RpmBase):
             else:
                 url = pkgdict.location['base']
 
-            self.simple['basepath'] = url
-            self.simple['relativepath'] = pkgdict.location['href']
+            self.basepath = url
+            self.relativepath = pkgdict.location['href']
         
         if hasattr(pkgdict, 'hdrange'):
-            self.simple['hdrstart'] = pkgdict.hdrange['start']
-            self.simple['hdrend'] = pkgdict.hdrange['end']
+            self.hdrstart = pkgdict.hdrange['start']
+            self.hdrend = pkgdict.hdrange['end']
         
         if hasattr(pkgdict, 'info'):
-            infodict = pkgdict.info
             for item in ['summary', 'description', 'packager', 'group',
                          'buildhost', 'sourcerpm', 'url', 'vendor']:
-                self.simple[item] = infodict[item]
+                setattr(self, item, pkgdict.info[item])
             
-            self.licenses.append(infodict['license'])
+            self.licenses.append(pkgdict.info['license'])
         
         if hasattr(pkgdict, 'files'):
             for fn in pkgdict.files.keys():
@@ -578,7 +574,6 @@ class YumAvailablePackage(PackageObject, RpmBase):
             else:
                 csumid = 0
             self._checksums.append((ctype, csum, csumid))
-            
 
 
 class YumHeaderPackage(YumAvailablePackage):
@@ -589,18 +584,16 @@ class YumHeaderPackage(YumAvailablePackage):
         YumAvailablePackage.__init__(self, repo)
 
         self.hdr = hdr
-        self.name = self.tagByName('name')
-        self.arch = self.tagByName('arch')
+        self.name = self.hdr['name']
+        self.arch = self.hdr['arch']
         self.epoch = self.doepoch()
-        self.version = self.tagByName('version')
-        self.release = self.tagByName('release')
-        self.ver = self.tagByName('version')
-        self.rel = self.tagByName('release')
+        self.version = self.hdr['version']
+        self.release = self.hdr['release']
         self.pkgtup = self._pkgtup()
-        self.summary = self.tagByName('summary')
-        self.description = self.tagByName('description')
-        self.pkgid = self.tagByName(rpm.RPMTAG_SHA1HEADER)
-        self.size = self.tagByName('size')
+        self.summary = self.hdr['summary']
+        self.description = self.hdr['description']
+        self.pkgid = self.hdr[rpm.RPMTAG_SHA1HEADER]
+        self.packagesize = self.hdr['size']
         self.__mode_cache = {}
         self.__prcoPopulated = False
         
@@ -646,6 +639,8 @@ class YumHeaderPackage(YumAvailablePackage):
                 self.prco[prcotype] = zip(name, flag, vers)
     
     def tagByName(self, tag):
+        warnings.warn("tagByName() will go away in a furture version of Yum.\n",
+            DeprecationWarning, stacklevel=2)
         try:
             data = self.hdr[tag]
         except KeyError:
@@ -661,21 +656,15 @@ class YumHeaderPackage(YumAvailablePackage):
             epoch = str(tmpepoch)
         
         return epoch
-    
-    def returnSimple(self, thing):
-        if hasattr(self, thing):
-            return getattr(self, thing)
-        else:
-            return self.tagByName(thing)
-
+ 
     def returnLocalHeader(self):
         return self.hdr
     
 
     def _loadFiles(self):
-        files = self.tagByName('filenames')
-        fileflags = self.tagByName('fileflags')
-        filemodes = self.tagByName('filemodes')
+        files = self.hdr['filenames']
+        fileflags = self.hdr['fileflags']
+        filemodes = self.hdr['filemodes']
         filetuple = zip(files, filemodes, fileflags)
         if not self._loadedfiles:
             for (fn, mode, flag) in filetuple:
@@ -717,10 +706,10 @@ class YumHeaderPackage(YumAvailablePackage):
         # note - if we think it is worth keeping changelogs in memory
         # then create a _loadChangelog() method to put them into the 
         # self._changelog attr
-        if len(self.tagByName('changelogname')) > 0:
-            return zip(self.tagByName('changelogname'),
-                       self.tagByName('changelogtime'),
-                       self.tagByName('changelogtext'))
+        if len(self.hdr['changelogname']) > 0:
+            return zip(self.hrd['changelogname'],
+                       self.hdr['changelogtime'],
+                       self.hdr['changelogtext'])
         return []
 
 class YumInstalledPackage(YumHeaderPackage):

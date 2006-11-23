@@ -36,7 +36,7 @@ class YumPackageSack(packageSack.PackageSack):
                 if callback: callback.progressbar(current, total, repo)
                 pkgdict = dataobj[pkgid]
                 po = self.pc(repo, pkgdict)
-                po.simple['id'] = pkgid
+                po.id = pkgid
                 self._addToDictAsList(self.pkgsByID, pkgid, po)
                 self.addPackage(po)
 
@@ -432,9 +432,9 @@ class YumRepository(Repository, config.RepoConf):
         return result
 
     def getPackage(self, package, checkfunc = None, text = None, cache = True):
-        remote = package.returnSimple('relativepath')
+        remote = package.relativepath
         local = package.localPkg()
-        basepath = package.returnSimple('basepath')
+        basepath = package.basepath
             
         return self.__get(url=basepath,
                         relative=remote,
@@ -447,11 +447,11 @@ class YumRepository(Repository, config.RepoConf):
     def getHeader(self, package, checkfunc = None, reget = 'simple',
             cache = True):
         
-        remote = package.returnSimple('relativepath')
+        remote = package.relativepath
         local =  package.localHdr()
-        start = package.returnSimple('hdrstart')
-        end = package.returnSimple('hdrend')
-        basepath = package.returnSimple('basepath')
+        start = package.hdrstart
+        end = package.hdrend
+        basepath = package.basepath
 
         return self.__get(url=basepath, relative=remote, local=local, start=start,
                         reget=None, end=end, checkfunc=checkfunc, copy_local=1,

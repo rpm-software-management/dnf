@@ -366,13 +366,13 @@ class UpdatesDaemon(yum.YumBase):
             """Returns a dictionary corresponding to the package object
             in the form that we can send over the wire for dbus."""
             pkgDict = {
-                    "name": pkg.returnSimple("name"),
-                    "version": pkg.returnSimple("version"),
-                    "release": pkg.returnSimple("release"),
-                    "epoch": pkg.returnSimple("epoch"),
-                    "arch": pkg.returnSimple("arch"),
-                    "sourcerpm": pkg.returnSimple("sourcerpm"),
-                    "summary": pkg.returnSimple("summary") or "",
+                    "name": pkg.name,
+                    "version": pkg.version,
+                    "release": pkg.release,
+                    "epoch": pkg.epoch,
+                    "arch": pkg.arch,
+                    "sourcerpm": pkg.sourcerpm,
+                    "summary": pkg.summary or "",
             }
 
             # check if any updateinfo is available

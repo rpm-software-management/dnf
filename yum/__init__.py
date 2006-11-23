@@ -683,7 +683,7 @@ class YumBase(depsolve.Depsolve):
             
             try:
                 text = '(%s/%s): %s' % (i, len(remote_pkgs),
-                                        os.path.basename(po.returnSimple('relativepath')))
+                                        os.path.basename(po.relativepath))
                 mylocal = po.repo.getPackage(po,
                                    checkfunc=checkfunc,
                                    text=text,
@@ -1061,7 +1061,7 @@ class YumBase(depsolve.Depsolve):
                 avail = self.pkgSack.returnNewestByNameArch()
             
             for po in avail:
-                ftime = int(po.returnSimple('filetime'))
+                ftime = int(po.filetime)
                 if ftime > recentlimit:
                     if not ftimehash.has_key(ftime):
                         ftimehash[ftime] = [po]
@@ -1134,7 +1134,7 @@ class YumBase(depsolve.Depsolve):
                 for po in sack:
                     tmpvalues = []
                     for field in fields:
-                        value = po.returnSimple(field)
+                        value = getattr(po, field)
                         if value and crit_re.search(value):
                             tmpvalues.append(value)
 
@@ -1259,7 +1259,7 @@ class YumBase(depsolve.Depsolve):
                 tmpvalues = []
                 searchlist = []
                 for tag in taglist:
-                    tagdata = po.returnSimple(tag)
+                    tagdata = getattr(po, tag)
                     if tagdata is None:
                         continue
                     if type(tagdata) is types.ListType:
@@ -1756,7 +1756,7 @@ class YumBase(depsolve.Depsolve):
             
             # make sure it's not already installed
             if self.rpmdb.installed(name=po.name, arch=po.arch, epoch=po.epoch,
-                    rel=po.rel, ver=po.ver):
+                    rel=po.release, ver=po.version):
                 self.logger.warning('Package %s already installed and latest version', po)
                 continue
 

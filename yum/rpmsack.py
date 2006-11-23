@@ -156,8 +156,8 @@ class RPMDBPackageSack(PackageSackBase):
             name = po.name
             arch = po.arch
             epoch = po.epoch
-            ver = po.ver
-            rel = po.rel
+            ver = po.version
+            rel = po.release
             
         return len(self.searchNevra(name=name, arch=arch, epoch=epoch, ver=ver, rel=rel)) > 0
 

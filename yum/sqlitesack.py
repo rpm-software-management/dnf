@@ -34,10 +34,11 @@ class YumAvailablePackageSqlite(YumAvailablePackage):
         YumAvailablePackage.__init__(self, repo, pkgdict)
         self.sack = pkgdict.sack
         self.pkgId = pkgdict.pkgId
-        self.simple['id'] = self.pkgId
+        self.id = self.pkgId
+
         self._changelog = None
         
-    def returnSimple(self, varname):
+    def __getattr__(self, varname):
         db2simplemap = { 'packagesize' : 'size_package',
                          'archivesize' : 'size_archive',
                          'installedsize' : 'size_installed',
@@ -54,21 +55,20 @@ class YumAvailablePackageSqlite(YumAvailablePackage):
                          'vendor' : 'rpm_vendor',
                          'license' : 'rpm_license'
                         }
-        if not self.simple.has_key(varname):
-            dbname = varname
-            if db2simplemap.has_key(varname):
-                dbname = db2simplemap[varname]
-            cache = self.sack.primarydb[self.repo]
-            c = cache.cursor()
-            query = "select %s from packages where pkgId = '%s'" % (dbname, self.pkgId)
-            #c.execute("select %s from packages where pkgId = %s",
-            #          dbname, self.pkgId)
-            c.execute(query)
-            r = c.fetchone()
-            self.simple[varname] = r[0]
+        
+        dbname = varname
+        if db2simplemap.has_key(varname):
+            dbname = db2simplemap[varname]
+        cache = self.sack.primarydb[self.repo]
+        c = cache.cursor()
+        query = "select %s from packages where pkgId = '%s'" % (dbname,
+            self.pkgId)
+        c.execute(query)
+        r = c.fetchone()
+        setattr(self, varname, r[0])
             
-        return YumAvailablePackage.returnSimple(self,varname)
-    
+        return r[0]
+   
     def _loadChecksums(self):
         if not self._checksums:
             cache = self.sack.primarydb[self.repo]

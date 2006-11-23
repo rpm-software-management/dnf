@@ -471,7 +471,7 @@ class PackageSack(PackageSackBase):
     def addPackage(self, obj):
         """add a pkgobject to the packageSack"""
 
-        repoid = obj.returnSimple('repoid')
+        repoid = obj.repoid
         (name, arch, epoch, ver, rel) = obj.pkgtup
         
         if self.compatarchs:
@@ -510,7 +510,7 @@ class PackageSack(PackageSackBase):
                 for ftype in obj.returnFileTypes():
                     for file in obj.returnFileEntries(ftype):
                         self._addToDictAsList(self.filenames, file, obj)
-                self._addToDictAsList(self.pkgsByID, obj.returnSimple('id'), obj)
+                self._addToDictAsList(self.pkgsByID, obj.id, obj)
                 (name, arch, epoch, ver, rel) = obj.pkgtup
                 self._addToDictAsList(self.nevra, (name, epoch, ver, rel, arch), obj)
                 self._addToDictAsList(self.nevra, (name, None, None, None, None), obj)
@@ -521,7 +521,7 @@ class PackageSack(PackageSackBase):
         
     def delPackage(self, obj):
         """delete a pkgobject"""
-        self._delFromListOfDict(self.pkgsByRepo, obj.returnSimple('repoid'), obj)
+        self._delFromListOfDict(self.pkgsByRepo, obj.repoid, obj)
         if self.indexesBuilt: # if we've built indexes, delete it b/c we've just deleted something
             self.indexesBuilt = 0
         
@@ -625,7 +625,7 @@ class PackageSack(PackageSackBase):
         for po in self.returnPackages():
             tmpvalues = []
             for field in fields:
-                value = po.returnSimple(field)
+                value = getattr(po, field)
                 if value and criteria_re.search(value):
                     tmpvalues.append(value)
             if len(tmpvalues) > 0:

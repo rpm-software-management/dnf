@@ -63,7 +63,7 @@ class YumOutput:
     def simpleList(self, pkg):
         ver = pkg.printVer()
         na = '%s.%s' % (pkg.name, pkg.arch)
-        repo = pkg.returnSimple('repoid')
+        repo = pkg.repoid
         
         print "%-40.40s %-22.22s %-16.16s" % (na, ver, repo)
     
@@ -76,9 +76,9 @@ class YumOutput:
         print _("Version: %s") % pkg.version
         print _("Release: %s") % pkg.release
         print _("Size   : %s") % self.format_number(float(pkg.size))
-        print _("Repo   : %s") % pkg.returnSimple('repoid')
-        print _("Summary: %s") % pkg.returnSimple('summary')
-        print _("Description:\n%s") % pkg.returnSimple('description')
+        print _("Repo   : %s") % pkg.repoid
+        print _("Summary: %s") % pkg.summary
+        print _("Description:\n%s") % pkg.description
         print ""
     
     def updatesObsoletesList(self, uotup, changetype):
