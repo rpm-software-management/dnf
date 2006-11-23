@@ -75,13 +75,13 @@ def GetStorage():
     try:
         storage = StorageSqliteC()
         return storage
-    except:
+    except ImportError:
         pass
 
     try:
         storage = StorageSqlite()
         return storage
-    except:
+    except ImportError:
         pass
 
     raise Errors.YumBaseError, 'Could not find any working storages.'
