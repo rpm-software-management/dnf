@@ -58,7 +58,6 @@ from yum.update_md import UpdateMetadata
 sys.path.append('/usr/share/yum-cli')
 import callback
 
-YUM_PID_FILE = '/var/run/yum.pid'
 config_file = '/etc/yum/yum-updatesd.conf'
 
 
@@ -250,7 +249,7 @@ class UpdateDownloadThread(threading.Thread):
         self.updd.downloadPkgs(self.dlpkgs)
         self.updd.emitAvailable()
         self.updd.closeRpmDB()
-        self.updd.doUnlock(YUM_PID_FILE)
+        self.updd.doUnlock()
 
 class UpdateInstallThread(threading.Thread):
     def __init__(self, updd, dlpkgs):
@@ -261,12 +260,12 @@ class UpdateInstallThread(threading.Thread):
     def failed(self, msgs):
         self.updd.emitUpdateFailed(msgs)
         self.updd.closeRpmDB()
-        self.updd.doUnlock(YUM_PID_FILE)
+        self.updd.doUnlock()
 
     def success(self):
         self.updd.emitUpdateApplied()
         self.updd.closeRpmDB()
-        self.updd.doUnlock(YUM_PID_FILE)
+        self.updd.doUnlock()
 
         self.updd.updateInfo = None
         self.updd.updateInfoTime = None        
@@ -329,7 +328,7 @@ class UpdatesDaemon(yum.YumBase):
         self.doConfigSetup(fn=self.opts.yum_config)
 
     def refreshUpdates(self):
-        self.doLock(YUM_PID_FILE)
+        self.doLock()
         try:
             self.doRepoSetup()
             self.doSackSetup()
@@ -340,7 +339,7 @@ class UpdatesDaemon(yum.YumBase):
             syslog.syslog(syslog.LOG_WARNING,
                           "error getting update info: %s" %(e,))
             self.emitCheckFailed("%s" %(e,))
-            self.doUnlock(YUM_PID_FILE)
+            self.doUnlock()
             return False
         return True
 
@@ -462,13 +461,13 @@ class UpdatesDaemon(yum.YumBase):
                 self.emitAvailable()
         except Exception, e:
             self.emitCheckFailed("%s" %(e,))
-            self.doUnlock(YUM_PID_FILE)
+            self.doUnlock()
 
         # FIXME: this is kind of ugly in that I want to do it sometimes
         # and yet not others and it's from threads that it matters.  aiyee!
         if close:
             self.closeRpmDB()
-            self.doUnlock(YUM_PID_FILE)
+            self.doUnlock()
 
         return True
 
@@ -483,7 +482,7 @@ class UpdatesDaemon(yum.YumBase):
         tries = 0
         while tries < 10:
             try:
-                self.doLock(YUM_PID_FILE)
+                self.doLock()
                 break
             except yum.Errors.LockError:
                 pass
@@ -493,7 +492,7 @@ class UpdatesDaemon(yum.YumBase):
             time.sleep(1)
             tries += 1
         if tries == 10:
-            self.doUnlock(YUM_PID_FILE)
+            self.doUnlock()
             return []
 
         try:
@@ -504,9 +503,9 @@ class UpdatesDaemon(yum.YumBase):
             self.populateUpdates()
 
             self.closeRpmDB()
-            self.doUnlock(YUM_PID_FILE)
+            self.doUnlock()
         except:
-            self.doUnlock(YUM_PID_FILE)
+            self.doUnlock()
 
         return self.updateInfo
 

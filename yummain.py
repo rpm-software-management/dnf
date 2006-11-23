@@ -26,7 +26,6 @@ from yum import logginglevels
 import cli
 
 from i18n import _
-from yum.constants import *
 
 
 def main(args):
@@ -62,7 +61,7 @@ def main(args):
     def unlock():
         try:
             base.closeRpmDB()
-            base.doUnlock(YUM_PID_FILE)
+            base.doUnlock()
         except Errors.LockError, e:
             sys.exit(200)
 
@@ -88,7 +87,7 @@ def main(args):
     except Errors.YumBaseError, e:
         exFatal(e)
     try:
-        base.doLock(YUM_PID_FILE)
+        base.doLock()
     except Errors.LockError, e:
         logger.critical('%s', e.msg)
         sys.exit(200)

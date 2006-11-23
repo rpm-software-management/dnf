@@ -523,7 +523,7 @@ class YumBase(depsolve.Depsolve):
             
         self.verbose_logger.log(logginglevels.INFO_2, 'Finished')
         
-    def doLock(self, lockfile):
+    def doLock(self, lockfile = YUM_PID_FILE):
         """perform the yum locking, raise yum-based exceptions, not OSErrors"""
         
         # if we're not root then we don't lock - just return nicely
@@ -558,7 +558,7 @@ class YumBase(depsolve.Depsolve):
                     msg = 'Existing lock %s: another copy is running. Aborting.' % lockfile
                     raise Errors.LockError(0, msg)
     
-    def doUnlock(self, lockfile):
+    def doUnlock(self, lockfile = YUM_PID_FILE):
         """do the unlock for yum"""
         
         # if we're not root then we don't lock - just return nicely
