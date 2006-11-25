@@ -589,6 +589,8 @@ class YumHeaderPackage(YumAvailablePackage):
         self.epoch = self.doepoch()
         self.version = self.hdr['version']
         self.release = self.hdr['release']
+        self.ver = self.version
+        self.rel = self.release
         self.pkgtup = self._pkgtup()
         self.summary = self.hdr['summary']
         self.description = self.hdr['description']
@@ -642,12 +644,13 @@ class YumHeaderPackage(YumAvailablePackage):
         warnings.warn("tagByName() will go away in a furture version of Yum.\n",
             DeprecationWarning, stacklevel=2)
         try:
-            data = self.hdr[tag]
-        except KeyError:
+            return getattr(self, tag)
+        except AttributeError:
             raise Errors.MiscError, "Unknown header tag %s" % tag
 
-        return data
-    
+    def __getattr__(self, thing):
+        return self.hdr[thing]
+
     def doepoch(self):
         tmpepoch = self.hdr['epoch']
         if tmpepoch is None:
