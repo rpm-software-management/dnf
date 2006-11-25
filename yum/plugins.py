@@ -183,7 +183,10 @@ class YumPlugins:
             return
 
         fp, pathname, description = imp.find_module(modname, [dir])
-        module = imp.load_module(modname, fp, pathname, description)
+        try:
+            module = imp.load_module(modname, fp, pathname, description)
+        finally:
+            fp.close()
 
         # Check API version required by the plugin
         if not hasattr(module, 'requires_api_version'):
