@@ -55,7 +55,6 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         # handle sigquit early on
         signal.signal(signal.SIGQUIT, sigquit)
         yum.YumBase.__init__(self)
-        self.in_shell = False
         logging.basicConfig()
         self.logger = logging.getLogger("yum.cli")
         self.verbose_logger = logging.getLogger("yum.verbose.cli")
@@ -326,16 +325,12 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
     def doShell(self):
         """do a shell-like interface for yum commands"""
 
-        self.verbose_logger.log(logginglevels.INFO_2, 'Setting up Yum Shell')
-        self.in_shell = True
-        self.doTsSetup()
         self.doRpmDBSetup()
         
+        yumshell = shell.YumShell(base=self)
         if len(self.extcmds) == 0:
-            yumshell = shell.YumShell(base=self)
             yumshell.cmdloop()
         else:
-            yumshell = shell.YumShell(base=self)
             yumshell.script()
         return yumshell.result, yumshell.resultmsgs
 
@@ -1087,15 +1082,12 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         return False
 
     def usage(self):
-        '''Print out command line usage
-        '''
-        if not self.in_shell:
-            print 
-            self.optparser.print_help()
-        else:
-            print 
-            self.optparser.print_usage()
-            
+        ''' Print out command line usage '''
+        print self.optparser.print_help()
+
+    def shellUsage(self):
+        ''' Print out the shell usage '''
+        print self.optparser.print_usage()
             
             
 

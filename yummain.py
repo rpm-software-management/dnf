@@ -92,13 +92,8 @@ def main(args):
         logger.critical('%s', e.msg)
         sys.exit(200)
 
-    # build up an idea of what we're supposed to do
-    if base.basecmd == 'shell':
-        do = base.doShell
-    else:
-        do = base.doCommands
     try:
-        result, resultmsgs = do()
+        result, resultmsgs = base.doCommands()
     except plugins.PluginYumExit, e:
         exPluginExit(e)
     except Errors.YumBaseError, e:

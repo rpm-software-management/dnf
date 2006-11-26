@@ -77,6 +77,8 @@ class YumShell(cmd.Cmd):
             if cmd not in self.commandlist:
                 self.do_help('')
                 return False
+            if cmd == 'shell':
+                return
             self.base.cmdstring = line
             self.base.cmdstring = self.base.cmdstring.replace('\n', '')
             self.base.cmds = self._shlex_split(self.base.cmdstring)
@@ -126,7 +128,7 @@ class YumShell(cmd.Cmd):
         """ % arg
         
         else:
-            self.base.usage()
+            self.base.shellUsage()
         
         self.verbose_logger.info(msg)
         

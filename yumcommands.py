@@ -391,6 +391,14 @@ class ShellCommand(YumCommand):
     def doCheck(self, base, basecmd, extcmds):
         checkShellArg(base, basecmd, extcmds)
 
+    def doCommand(self, base, basecmd, extcmds):
+        base.verbose_logger.log(logginglevels.INFO_2, 'Setting up Yum Shell')
+        try:
+            return base.doShell()
+        except yum.Errors.YumBaseError, e:
+            return 1, [str(e)]
+
+
 class DepListCommand(YumCommand):
     def getNames(self):
         return ['deplist']
