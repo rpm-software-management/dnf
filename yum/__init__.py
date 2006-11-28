@@ -1234,7 +1234,7 @@ class YumBase(depsolve.Depsolve):
                     'searching in provides entries')
                 for (p_name, p_flag, (p_e, p_v, p_r)) in po.provides:
                     if arg_re.search(p_name):
-                        prov = po.prcoPrintable((p_name, p_flag, (p_e, p_v, p_r)))
+                        prov = misc.prco_tuple_to_string((p_name, p_flag, (p_e, p_v, p_r)))
                         tmpvalues.append(prov)
 
                 if len(tmpvalues) > 0:
@@ -1972,12 +1972,16 @@ class YumBase(depsolve.Depsolve):
             return False
         return installed
 
-    def getKeyForPackage(self, po, askcb = None):
+    def getKeyForPackage(self, po, askcb = None, fullaskcb = None):
         """Retrieve a key for a package.  If needed, prompt for if the
         key should be imported using askcb.
         @po: Package object to retrieve the key of.
         @askcb: Callback function to use for asking for verification.  Takes
-                arguments of the po, the userid for the key, and the keyid."""
+                arguments of the po, the userid for the key, and the keyid.
+        @fullaskcb: Callback function to use for asking for verification
+                of a key.  Differs from askcb in that it gets passed a
+                dictionary so that we can expand the values passed.
+        """
         
         repo = self.repos.getRepo(po.repoid)
         keyurls = repo.gpgkey
@@ -2013,10 +2017,13 @@ class YumBase(depsolve.Depsolve):
                 continue
 
             # Try installing/updating GPG key
-            self.logger.critical('Importing GPG key 0x%s "%s"' % (hexkeyid, userid))
+            self.logger.critical('Importing GPG key 0x%s "%s" from %s' % (hexkeyid, userid, keyurl.replace("file://","")))
             rc = False
             if self.conf.assumeyes:
                 rc = True
+            elif fullaskcb:
+                rc = fullaskcb({"po": po, "userid": userid,
+                                "hexkeyid": hexkeyid, "keyurl": keyurl})
             elif askcb:
                 rc = askcb(po, userid, hexkeyid)
 
