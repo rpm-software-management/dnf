@@ -376,10 +376,6 @@ class YumRepository(Repository, config.RepoConf):
             raise Errors.RepoError, \
                   "get request for Repo %s, gave no source or dest" % self.id
 
-        if self.failure_obj:
-            (f_func, f_args, f_kwargs) = self.failure_obj
-            self.failure_obj = (f_func, f_args, f_kwargs)
-
         if self.cache == 1:
             if os.path.exists(local): # FIXME - we should figure out a way
                 return local          # to run the checkfunc from here
