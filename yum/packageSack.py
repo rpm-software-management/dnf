@@ -136,6 +136,9 @@ class PackageSackBase:
     def searchPackages(self, fields, criteria_re, callback):
         raise NotImplementedError()
 
+    def searchAll(self, arg, query_type):
+        raise NotImplementedError()
+    
     def matchPackageNames(self, input, casematch=False):
         """take a user strings and match the packages in the sack against it
            this will match against:
@@ -313,6 +316,9 @@ class MetaSack(PackageSackBase):
 
     def searchPackages(self, fields, criteria_re, callback):
         return self._computeAggregateDictResult("searchPackages", fields, criteria_re, callback)
+
+    def searchAll(self, arg, query_type):
+        return self._computeAggregateListResult("searchAll", arg, query_type)
 
     def _computeAggregateListResult(self, methodName, *args):
         result = []
