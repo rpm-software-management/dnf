@@ -19,7 +19,10 @@
 # - Add support for multiple checksums per rpm (not required)
 
 import os
-import sqlite
+try:
+    import sqlite3 as sqlite
+except ImportError:
+    import sqlite
 import time
 import mdparser
 import logging
@@ -30,6 +33,9 @@ from sqlitesack import encodefiletypelist,encodefilenamelist
 # increasing this number forces all caches of a lower version number
 # to be re-generated
 dbversion = '9'
+
+from sqlutils import executeSQL
+
 
 class RepodataParserSqlite:
     def __init__(self, storedir, repoid, callback=None):
@@ -50,8 +56,10 @@ class RepodataParserSqlite:
         """Load cache from filename, check if it is valid and that dbversion 
         matches the required dbversion"""
         db = sqlite.connect(filename)
+        if sqlite.version_info[0] > 1:
+            db.row_factory = sqlite.Row
         cur = db.cursor()
-        cur.execute("select * from db_info")
+        executeSQL(cur, "select * from db_info")
         info = cur.fetchone()
         # If info is not in there this is an incompelete cache file
         # (this could happen when the user hits ctrl-c or kills yum
@@ -114,18 +122,18 @@ class RepodataParserSqlite:
         cur = db.cursor()
         self.createDbInfo(cur)
         # This table is needed to match pkgKeys to pkgIds
-        cur.execute("""CREATE TABLE packages(
+        executeSQL(cur, """CREATE TABLE packages(
             pkgKey INTEGER PRIMARY KEY,
             pkgId TEXT)
         """)
-        cur.execute("""CREATE TABLE filelist(
+        executeSQL(cur, """CREATE TABLE filelist(
             pkgKey INTEGER,
             dirname TEXT,
             filenames TEXT,
             filetypes TEXT)
         """)
-        cur.execute("CREATE INDEX keyfile ON filelist (pkgKey)")
-        cur.execute("CREATE INDEX pkgId ON packages (pkgId)")
+        executeSQL(cur, "CREATE INDEX keyfile ON filelist (pkgKey)")
+        executeSQL(cur, "CREATE INDEX pkgId ON packages (pkgId)")
     
     def createTablesOther(self,db):
         """Create the required tables for other.xml.gz metadata in the sqlite 
@@ -133,18 +141,18 @@ class RepodataParserSqlite:
         cur = db.cursor()
         self.createDbInfo(cur)
         # This table is needed to match pkgKeys to pkgIds
-        cur.execute("""CREATE TABLE packages(
+        executeSQL(cur, """CREATE TABLE packages(
             pkgKey INTEGER PRIMARY KEY,
             pkgId TEXT)
         """)
-        cur.execute("""CREATE TABLE changelog(
+        executeSQL(cur, """CREATE TABLE changelog(
             pkgKey INTEGER,
             author TEXT,
             date TEXT,
             changelog TEXT)
         """)
-        cur.execute("CREATE INDEX keychange ON changelog (pkgKey)")
-        cur.execute("CREATE INDEX pkgId ON packages (pkgId)")
+        executeSQL(cur, "CREATE INDEX keychange ON changelog (pkgKey)")
+        executeSQL(cur, "CREATE INDEX pkgId ON packages (pkgId)")
         
     def createTablesPrimary(self,db):
         """Create the required tables for primary metadata in the sqlite 
@@ -162,7 +170,7 @@ class RepodataParserSqlite:
             cols.append('%s TEXT' % col)
         q += ',\n'.join(cols) + ')'
 
-        cur.execute(q)
+        executeSQL(cur, q)
 
         # Create requires, provides, conflicts and obsoletes tables
         # to store prco data
@@ -170,7 +178,7 @@ class RepodataParserSqlite:
             extraCol = ""
             if t == 'requires':
                 extraCol= ", pre BOOL DEFAULT FALSE"
-            cur.execute("""CREATE TABLE %s (
+            executeSQL(cur, """CREATE TABLE %s (
               name TEXT,
               flags TEXT,
               epoch TEXT,
@@ -179,20 +187,20 @@ class RepodataParserSqlite:
               pkgKey TEXT %s)
             """ % (t, extraCol))
         # Create the files table to hold all the file information
-        cur.execute("""CREATE TABLE files (
+        executeSQL(cur, """CREATE TABLE files (
             name TEXT,
             type TEXT,
             pkgKey TEXT)
         """)
         # Create indexes for faster searching
-        cur.execute("CREATE INDEX packagename ON packages (name)")
-        cur.execute("CREATE INDEX providesname ON provides (name)")
-        cur.execute("CREATE INDEX packageId ON packages (pkgId)")
+        executeSQL(cur, "CREATE INDEX packagename ON packages (name)")
+        executeSQL(cur, "CREATE INDEX providesname ON provides (name)")
+        executeSQL(cur, "CREATE INDEX packageId ON packages (pkgId)")
         db.commit()
     
     def createDbInfo(self,cur):
         # Create the db_info table, this contains sqlite cache metadata
-        cur.execute("""CREATE TABLE db_info (
+        executeSQL(cur, """CREATE TABLE db_info (
             dbversion TEXT,
             checksum TEXT)
         """)
@@ -235,10 +243,14 @@ class RepodataParserSqlite:
         # Try to create the databse in filename, or use in memory when
         # this fails
         try:
-            db = sqlite.connect(filename) 
+            db = sqlite.connect(filename)
+            if sqlite.version_info[0] > 1:
+                db.row_factory = sqlite.Row
         except IOError:
             self.verbose_logger.log(logginglevels.INFO_1, "Warning could not create sqlite cache file, using in memory cache instead")
             db = sqlite.connect(":memory:")
+            if sqlite.version_info[0] > 1:            
+                db.row_factory = sqlite.Row
 
         # The file has been created, now create the tables and indexes
         if (cachetype == 'primary'):
@@ -328,10 +340,10 @@ class RepodataParserSqlite:
 
         # We start be removing the old db_info, as it is no longer valid
         cur = db.cursor()
-        cur.execute("DELETE FROM db_info") 
+        executeSQL(cur, "DELETE FROM db_info")
 
         # First create a list of all pkgIds that are in the database now
-        cur.execute("SELECT pkgId, pkgKey from packages")
+        executeSQL(cur, "SELECT pkgId, pkgKey from packages")
         currentpkgs = {}
         for pkg in cur.fetchall():
             currentpkgs[pkg['pkgId']] = pkg['pkgKey']
@@ -377,11 +389,12 @@ class RepodataParserSqlite:
             if not all_pkgIds.has_key(pkgId):
                 delcount += 1
                 delpkgs.append(str(pkgKey))
-        delpkgs = "("+",".join(delpkgs)+")"
-        for table in deltables:
-            cur.execute("DELETE FROM "+table+ " where pkgKey in %s" % delpkgs)
+        if len(delpkgs) > 0:
+            delpkgs = "("+",".join(delpkgs)+")"
+            for table in deltables:
+                executeSQL(cur, "DELETE FROM "+table+ " where pkgKey in %s" %(delpkgs,))
 
-        cur.execute("INSERT into db_info (dbversion,checksum) VALUES (%s,%s)",
+        executeSQL(cur, "INSERT into db_info (dbversion,checksum) VALUES (?,?)",
                 (dbversion,checksum))
         db.commit()
         self.verbose_logger.log(logginglevels.INFO_2, "Added %s new packages, deleted %s old in %.2f seconds",

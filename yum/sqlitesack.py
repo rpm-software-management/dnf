@@ -27,6 +27,8 @@ from packages import YumAvailablePackage
 import Errors
 import misc
 
+from sqlutils import executeSQL
+
 # Simple subclass of YumAvailablePackage that can load 'simple headers' from
 # the database when they are requested
 class YumAvailablePackageSqlite(YumAvailablePackage):
@@ -61,9 +63,8 @@ class YumAvailablePackageSqlite(YumAvailablePackage):
             dbname = db2simplemap[varname]
         cache = self.sack.primarydb[self.repo]
         c = cache.cursor()
-        query = "select %s from packages where pkgId = '%s'" % (dbname,
-            self.pkgId)
-        c.execute(query)
+        executeSQL(c, "select %s from packages where pkgId = ?" %(dbname,),
+                   (self.pkgID,))
         r = c.fetchone()
         setattr(self, varname, r[0])
             
@@ -73,8 +74,7 @@ class YumAvailablePackageSqlite(YumAvailablePackage):
         if not self._checksums:
             cache = self.sack.primarydb[self.repo]
             c = cache.cursor()
-            query = "select checksum_type, checksum_value from packages where pkgId = '%s'" % self.pkgId
-            c.execute(query)
+            executeSQL(c, "select checksum_type, checksum_value from packages where pkgId = ?", (self.pkgId,))
             for ob in c.fetchall():
                 self._checksums.append((ob['checksum_type'], ob['checksum_value'], True))
 
@@ -93,11 +93,11 @@ class YumAvailablePackageSqlite(YumAvailablePackage):
         self.sack.populate(self.repo, with='filelists')
         cache = self.sack.filelistsdb[self.repo]
         cur = cache.cursor()
-        cur.execute("select filelist.dirname as dirname, "
+        executeSQL(cur, "select filelist.dirname as dirname, "
                     "filelist.filetypes as filetypes, " 
                     "filelist.filenames as filenames from packages,filelist "
-                    "where packages.pkgId = %s and "
-                    "packages.pkgKey = filelist.pkgKey", self.pkgId)
+                    "where packages.pkgId = ? and "
+                    "packages.pkgKey = filelist.pkgKey", (self.pkgId,))
         for ob in cur.fetchall():
             dirname = ob['dirname']
             filetypes = decodefiletypelist(ob['filetypes'])
@@ -123,11 +123,11 @@ class YumAvailablePackageSqlite(YumAvailablePackage):
                     return
             cache = self.sack.otherdb[self.repo]
             cur = cache.cursor()
-            cur.execute("select changelog.date as date, "
+            executeSQL(cur, "select changelog.date as date, "
                         "changelog.author as author, "
                         "changelog.changelog as changelog "
-                        "from packages,changelog where packages.pkgId = %s "
-                        "and packages.pkgKey = changelog.pkgKey", self.pkgId)
+                        "from packages,changelog where packages.pkgId = ? "
+                        "and packages.pkgKey = changelog.pkgKey", (self.pkgId,))
             for ob in cur.fetchall():
                 result.append( (ob['date'], ob['author'], ob['changelog']) )
             self._changelog = result
@@ -156,7 +156,7 @@ class YumAvailablePackageSqlite(YumAvailablePackage):
                         "packages.pkgKey = %s.pkgKey" % (prcotype, prcotype, 
                         prcotype, prcotype, prcotype, prcotype, self.pkgId, 
                         prcotype)
-            cur.execute(query)
+            executeSQL(cur, query)
             for ob in cur.fetchall():
                 self.prco[prcotype].append((ob['name'], ob['flags'],
                                            (ob['epoch'], ob['version'], 
@@ -220,10 +220,9 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
         # This should never be called with a name containing a %
         assert(name.find('%') == -1)
         result = []
-        quotename = name.replace("'","''")
         for (rep,cache) in self.primarydb.items():
             cur = cache.cursor()
-            cur.execute("select DISTINCT packages.pkgId as pkgId from provides,packages where provides.name LIKE '%%%s%%' AND provides.pkgKey = packages.pkgKey" % quotename)
+            executeSQL(cur, "select DISTINCT packages.pkgId as pkgId from provides,packages where provides.name LIKE ? AND provides.pkgKey = packages.pkgKey", (quotename,))
             for ob in cur.fetchall():
                 if (self.excludes[rep].has_key(ob['pkgId'])):
                     continue
@@ -237,15 +236,15 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
             # Either name is a substring of dirname or the directory part
             # in name is a substring of dirname and the file part is part
             # of filelist
-            cur.execute("select packages.pkgId as pkgId,\
+            executeSQL(cur, "select packages.pkgId as pkgId,\
                 filelist.dirname as dirname,\
                 filelist.filetypes as filetypes,\
                 filelist.filenames as filenames \
                 from packages,filelist where \
-                (filelist.dirname LIKE '%%%s%%' \
-                OR (filelist.dirname LIKE '%%%s%%' AND\
-                filelist.filenames LIKE '%%%s%%'))\
-                AND (filelist.pkgKey = packages.pkgKey)" % (quotename,dirname,filename))
+                (filelist.dirname LIKE '?' \
+                OR (filelist.dirname LIKE '?' AND\
+                filelist.filenames LIKE '?'))\
+                AND (filelist.pkgKey = packages.pkgKey)", (quotename,dirname,filename))
                     
         # cull the results for false positives
         for ob in cur.fetchall():
@@ -268,7 +267,7 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
         obsoletes = {}
         for (rep,cache) in self.primarydb.items():
             cur = cache.cursor()
-            cur.execute("select packages.name as name,\
+            executeSQL(cur, "select packages.name as name,\
                 packages.pkgId as pkgId,\
                 packages.arch as arch, packages.epoch as epoch,\
                 packages.release as release, packages.version as version,\
@@ -295,7 +294,7 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
     def getPackageDetails(self,pkgId):
         for (rep,cache) in self.primarydb.items():
             cur = cache.cursor()
-            cur.execute("select * from packages where pkgId = %s",pkgId)
+            executeSQL(cur, "select * from packages where pkgId = ?", (pkgId,))
             for ob in cur.fetchall():
                 pkg = self.db2class(ob)
                 return pkg
@@ -305,10 +304,10 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
         results = []
         for (rep,cache) in self.primarydb.items():
             cur = cache.cursor()
-            cur.execute("select * from %s where name = %s" , (prcotype, name))
+            executeSQL(cur, "select * from %s where name=?" %(prcotype,), (name,))
             prcos = cur.fetchall()
             for res in prcos:
-                cur.execute("select * from packages where pkgKey = %s" , (res['pkgKey']))
+                executeSQL(cur, "select * from packages where pkgKey = ?" , (res['pkgKey'],))
                 for x in cur.fetchall():
                     pkg = self.db2class(x)
                     if (self.excludes[rep].has_key(pkg.pkgId)):
@@ -318,11 +317,11 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
                     # that it matches
                     pkg.prco = {prcotype: 
                       [
-                      { 'name': res.name,
-                        'flags': res.flags,
-                        'rel': res.release,
-                        'ver': res.version,
-                        'epoch': res.epoch
+                      { 'name': res['name'],
+                        'flags': res['flags'],
+                        'rel': res['release'],
+                        'ver': res['version'],
+                        'epoch': res['epoch']
                       }
                       ]
                     }
@@ -336,10 +335,10 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
         # If it is a filename, search the primary.xml file info
         for (rep,cache) in self.primarydb.items():
             cur = cache.cursor()
-            cur.execute("select * from files where name = %s" , (name))
+            executeSQL(cur, "select * from files where name = ?" , (name,))
             files = cur.fetchall()
             for res in files:
-                cur.execute("select * from packages where pkgKey = %s" , (res['pkgKey']))
+                executeSQL(cur, "select * from packages where pkgKey = ?" , (res['pkgKey'],))
                 for x in cur.fetchall():
                     pkg = self.db2class(x)
                     if (self.excludes[rep].has_key(pkg.pkgId)):
@@ -363,21 +362,21 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
             cur = cache.cursor()
             (dirname,filename) = os.path.split(name)
             if name.find('%') == -1: # no %'s in the thing safe to LIKE
-                cur.execute("select packages.pkgId as pkgId,\
+                executeSQL(cur, "select packages.pkgId as pkgId,\
                     filelist.dirname as dirname,\
                     filelist.filetypes as filetypes,\
                     filelist.filenames as filenames \
                     from packages,filelist where \
-                    (filelist.dirname LIKE '%%%s%%' \
-                    OR (filelist.dirname LIKE '%%%s%%' AND\
-                    filelist.filenames LIKE '%%%s%%'))\
-                    AND (filelist.pkgKey = packages.pkgKey)" % (name,dirname,filename))
+                    (filelist.dirname LIKE '?' \
+                    OR (filelist.dirname LIKE '?' AND\
+                    filelist.filenames LIKE '?'))\
+                    AND (filelist.pkgKey = packages.pkgKey)", (name,dirname,filename))
             else: 
-                cur.execute("select packages.pkgId as pkgId,\
+                executeSQL(cur, "select packages.pkgId as pkgId,\
                     filelist.dirname as dirname,\
                     filelist.filetypes as filetypes,\
                     filelist.filenames as filenames \
-                    from filelist,packages where dirname = %s AND filelist.pkgKey = packages.pkgKey" , (dirname))
+                    from filelist,packages where dirname = ? AND filelist.pkgKey = packages.pkgKey" , (dirname,))
 
             files = cur.fetchall()
             
@@ -421,21 +420,21 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
       class tmpObject:
         pass
       y = tmpObject()
-      y.nevra = (db.name,db.epoch,db.version,db.release,db.arch)
+      y.nevra = (db['name'],db['epoch'],db['version'],db['release'],db['arch'])
       y.sack = self
-      y.pkgId = db.pkgId
+      y.pkgId = db['pkgId']
       if (nevra_only):
         return y
-      y.hdrange = {'start': db.rpm_header_start,'end': db.rpm_header_end}
-      y.location = {'href': db.location_href,'value': '', 'base': db.location_base}
-      y.checksum = {'pkgid': 'YES','type': db.checksum_type, 
-                    'value': db.checksum_value }
-      y.time = {'build': db.time_build, 'file': db.time_file }
-      y.size = {'package': db.size_package, 'archive': db.size_archive, 'installed': db.size_installed }
-      y.info = {'summary': db.summary, 'description': db['description'],
-                'packager': db.rpm_packager, 'group': db.rpm_group,
-                'buildhost': db.rpm_buildhost, 'sourcerpm': db.rpm_sourcerpm,
-                'url': db.url, 'vendor': db.rpm_vendor, 'license': db.rpm_license }
+      y.hdrange = {'start': db['rpm_header_start'],'end': db['rpm_header_end']}
+      y.location = {'href': db['location_href'],'value': '', 'base': db['location_base']}
+      y.checksum = {'pkgid': 'YES','type': db['checksum_type'], 
+                    'value': db['checksum_value'] }
+      y.time = {'build': db['time_build'], 'file': db['time_file'] }
+      y.size = {'package': db['size_package'], 'archive': db['size_archive'], 'installed': db['size_installed'] }
+      y.info = {'summary': db['summary'], 'description': db['description'],
+                'packager': db['rpm_packager'], 'group': db['rpm_group'],
+                'buildhost': db['rpm_buildhost'], 'sourcerpm': db['rpm_sourcerpm'],
+                'url': db['url'], 'vendor': db['rpm_vendor'], 'license': db['rpm_license'] }
       return y
 
     def simplePkgList(self):
@@ -448,11 +447,11 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
         simplelist = []
         for (rep,cache) in self.primarydb.items():
             cur = cache.cursor()
-            cur.execute("select pkgId,name,epoch,version,release,arch from packages")
+            executeSQL(cur, "select pkgId,name,epoch,version,release,arch from packages")
             for pkg in cur.fetchall():
-                if (self.excludes[rep].has_key(pkg.pkgId)):
+                if (self.excludes[rep].has_key(pkg['pkgId'])):
                     continue                        
-                simplelist.append((pkg.name, pkg.arch, pkg.epoch, pkg.version, pkg.release)) 
+                simplelist.append((pkg['name'], pkg['arch'], pkg['epoch'], pkg['version'], pkg['release'])) 
         
         self.pkglist = simplelist
         return simplelist
@@ -468,9 +467,9 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
         allpkg = []
         for (rep,cache) in self.primarydb.items():
             cur = cache.cursor()
-            cur.execute("select pkgId,name,epoch,version,release,arch from packages where name=%s and arch=%s",naTup)
+            executeSQL(cur, "select pkgId,name,epoch,version,release,arch from packages where name=? and arch=?",naTup)
             for x in cur.fetchall():
-                if (self.excludes[rep].has_key(x.pkgId)):
+                if (self.excludes[rep].has_key(x['pkgId'])):
                     continue                    
                 allpkg.append(self.pc(rep,self.db2class(x,True)))
         
@@ -489,9 +488,9 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
         allpkg = []
         for (rep,cache) in self.primarydb.items():
             cur = cache.cursor()
-            cur.execute("select pkgId,name,epoch,version,release,arch from packages where name=%s", name)
+            executeSQL(cur, "select pkgId,name,epoch,version,release,arch from packages where name=?", (name,))
             for x in cur.fetchall():
-                if (self.excludes[rep].has_key(x.pkgId)):
+                if (self.excludes[rep].has_key(x['pkgId'])):
                     continue                    
                 allpkg.append(self.pc(rep,self.db2class(x,True)))
         
@@ -506,9 +505,9 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
         for (repo,cache) in self.primarydb.items():
             if (repoid == None or repoid == repo.id):
                 cur = cache.cursor()
-                cur.execute("select pkgId,name,epoch,version,release,arch from packages")
+                executeSQL(cur, "select pkgId,name,epoch,version,release,arch from packages")
                 for x in cur.fetchall():
-                    if (self.excludes[repo].has_key(x.pkgId)):
+                    if (self.excludes[repo].has_key(x['pkgId'])):
                         continue
                     returnList.append(self.pc(repo,self.db2class(x,True)))
         return returnList
@@ -538,10 +537,10 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
         # Search all repositories            
         for (rep,cache) in self.primarydb.items():
             cur = cache.cursor()
-            #cur.execute("select * from packages WHERE name = %s AND epoch = %s AND version = %s AND release = %s AND arch = %s" , (name,epoch,ver,rel,arch))
-            cur.execute(q)
+            #executeSQL(cur, "select * from packages WHERE name = %s AND epoch = %s AND version = %s AND release = %s AND arch = %s" , (name,epoch,ver,rel,arch))
+            executeSQL(cur, q)
             for x in cur.fetchall():
-                if (self.excludes[rep].has_key(x.pkgId)):
+                if (self.excludes[rep].has_key(x['pkgId'])):
                     continue
                 returnList.append(self.pc(rep,self.db2class(x)))
         return returnList
@@ -556,7 +555,7 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
         querystring = tmpstring[:last]
         for (rep, cache) in self.primarydb.items():
             cur = cache.cursor()
-            cur.execute(querystring)
+            executeSQL(cur, querystring)
             for x in cur.fetchall():
                 obj = self.pc(rep,self.db2class(x))
                 self.delPackage(obj)
