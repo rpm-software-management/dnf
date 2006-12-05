@@ -52,11 +52,7 @@ class MDParser:
             raise ValueError('Unknown repodata type "%s" in %s' % (
                 elem.tag, filename))
         # Get the total number of packages
-        total = elem.get('packages', None)
-        if total is not None:
-            self.total = int(total)
-        else:
-            self.total = 0
+        self.total = int(elem.get('packages', 0))
 
     def __iter__(self):
         return self
