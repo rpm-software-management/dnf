@@ -20,9 +20,9 @@ import exceptions
 
 
 class YumBaseError(exceptions.Exception):
-    def __init__(self, args=None):
+    def __init__(self, value=None):
         exceptions.Exception.__init__(self)    
-        self.args = args
+        self.value = value
     def __str__(self):
         return self.value
 
@@ -33,56 +33,56 @@ class LockError(YumBaseError):
         self.msg = msg
         
 class DepError(YumBaseError):
-    def __init__(self, args=None):
+    def __init__(self, value=None):
         YumBaseError.__init__(self)
-        self.args = args
+        self.value = value
 
 class RepoError(YumBaseError):
-    def __init__(self, args=None):
+    def __init__(self, value=None):
         YumBaseError.__init__(self)
-        self.args = args
+        self.value = value
 
 class DuplicateRepoError(RepoError):
-    def __init__(self, args=None):
+    def __init__(self, value=None):
         RepoError.__init__(self)
-        self.args = args
+        self.value = value
 
 class ConfigError(YumBaseError):
-    def __init__(self, args=None):
+    def __init__(self, value=None):
         YumBaseError.__init__(self)
-        self.args = args
+        self.value = value
     
 class MiscError(YumBaseError):
-    def __init__(self, args=None):
+    def __init__(self, value=None):
         YumBaseError.__init__(self)
-        self.args = args
+        self.value = value
 
 class GroupsError(YumBaseError):
-    def __init__(self, args=None):
+    def __init__(self, value=None):
         YumBaseError.__init__(self)
-        self.args = args
+        self.value = value
 
 class InstallError(YumBaseError):
-    def __init__(self, args=None):
+    def __init__(self, value=None):
         YumBaseError.__init__(self)
-        self.args = args
+        self.value = value
 
 class UpdateError(YumBaseError):
-    def __init__(self, args=None):
+    def __init__(self, value=None):
         YumBaseError.__init__(self)
-        self.args = args
+        self.value = value
 
 class RemoveError(YumBaseError):
-    def __init__(self, args=None):
+    def __init__(self, value=None):
         YumBaseError.__init__(self)
-        self.args = args
+        self.value = value
 
 class RepoMDError(YumBaseError):
-    def __init__(self, args=None):
+    def __init__(self, value=None):
         YumBaseError.__init__(self)
-        self.args = args
+        self.value = value
 
 class PackageSackError(YumBaseError):
-    def __init__(self, args=None):
+    def __init__(self, value=None):
         YumBaseError.__init__(self)
-        self.args = args
+        self.value = value
