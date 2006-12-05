@@ -15,7 +15,11 @@
 
 import sys
 from constants import *
-from cElementTree import iterparse
+try:
+    from xml.etree import cElementTree
+except ImportError:
+    import cElementTree
+iterparse = cElementTree.iterparse
 import exceptions
 
 
