@@ -15,7 +15,11 @@
 # Copyright 2005 Duke University 
 
 import gzip
-from cElementTree import iterparse
+try:
+    from xml.etree import cElementTree
+except ImportError:
+    import cElementTree
+iterparse = cElementTree.iterparse
 
 from cStringIO import StringIO
 
@@ -47,6 +51,12 @@ class MDParser:
         if not self._handlercls:
             raise ValueError('Unknown repodata type "%s" in %s' % (
                 elem.tag, filename))
+        # Get the total number of packages
+        total = elem.get('packages', None)
+        if total is not None:
+            self.total = int(total)
+        else:
+            self.total = 0
 
     def __iter__(self):
         return self
