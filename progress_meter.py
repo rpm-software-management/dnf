@@ -77,7 +77,7 @@ class text_progress_meter:
         else:
             rtime = self.format_time(self.project(etime, read))
             try: frac = float(read)/self.length
-            except ZeroDivisionError, e: frac = 1.0
+            except ZeroDivisionError: frac = 1.0
             if frac > 1.0: frac = 1.0
             bar = '='*int(25 * frac)
             out = '\r%-25.25s %3i%% |%-25.25s| %5sB %8s ETA ' % \

@@ -76,7 +76,6 @@ class RepodataParserSqlite:
         dbchecksum = ''
         # First try to open an existing database
         try:
-            f = open(filename)
             (dbchecksum,db) = self.loadCache(filename)
         except (IOError,sqlite.DatabaseError,KeyError):
             # If it doesn't exist, create it
@@ -236,7 +235,6 @@ class RepodataParserSqlite:
         # Try to create the databse in filename, or use in memory when
         # this fails
         try:
-            f = open(filename,'w')
             db = sqlite.connect(filename) 
         except IOError:
             self.verbose_logger.log(logginglevels.INFO_1, "Warning could not create sqlite cache file, using in memory cache instead")

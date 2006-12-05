@@ -14,9 +14,7 @@
 # Copyright 2005 Duke University
 
 import sys
-import os.path
 import cmd
-import string
 import shlex
 import logging
 
@@ -59,8 +57,8 @@ class YumShell(cmd.Cmd):
     def script(self):
         try:
             fd = open(self.file, 'r')
-        except IOError, e:
-            sys.exit("Error: Cannot open %s for reading")
+        except IOError:
+            sys.exit("Error: Cannot open %s for reading" % self.file)
         lines = fd.readlines()
         fd.close()
         self.from_file = True
@@ -190,7 +188,7 @@ class YumShell(cmd.Cmd):
                 val = opts[0]
                 try:
                     val = int(val)
-                except ValueError, e:
+                except ValueError:
                     self.logger.critical('Value %s for %s cannot be made to an int', val, cmd)
                     return
                 setattr(self.base.conf, cmd, val)
@@ -219,7 +217,7 @@ class YumShell(cmd.Cmd):
             opts = self._shlex_split(args)
             if not opts:
                 msg = '%s: ' % cmd
-                msg = msg + string.join(getattr(self.base.conf, cmd))
+                msg = msg + ' '.join(getattr(self.base.conf, cmd))
                 self.verbose_logger.log(logginglevels.INFO_2, msg)
                 return False
             else:

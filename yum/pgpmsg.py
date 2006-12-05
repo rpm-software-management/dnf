@@ -13,7 +13,7 @@
 ##You should have received a copy of the GNU General Public License
 ##along with this program; if not, write to the Free Software
 ##Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
-import string, struct, time, cStringIO, base64, types, md5, sha
+import struct, time, cStringIO, base64, types, md5, sha
 
 debug = None
 
@@ -329,7 +329,7 @@ the index of the next element in the message"""
     return (l[1], l[2])
 
 def str_to_hex(s) :
-    return string.join(map(lambda x : string.zfill(hex(ord(x))[2:], 2), list(s)), '')
+    return ''.join(map(lambda x : hex(ord(x))[2:].zfill(2), list(s)))
 
 def duration_to_str(s) :
     if s == 0 :
@@ -353,7 +353,7 @@ def map_to_str(m, vals) :
             slist.append(m[i])
         else :
             slist.append('unknown(' + str(i) + ')')
-    return string.join(slist, ', ')
+    return ', '.join(slist)
 
 class pgp_packet :
     def __init__(self) :
@@ -364,7 +364,7 @@ class pgp_packet :
 
 class public_key(pgp_packet) :
     def __init__(self) :
-        # just initialize the fields
+        pgp_packet.__init__(self)
         self.version = None
         self.pk_algo = None
         self.key_size = 0
@@ -478,8 +478,8 @@ class public_key(pgp_packet) :
 
 class user_id(pgp_packet) :
     def __init__(self) :
-        # just initialize the fields
-        id = None
+        pgp_packet.__init__(self)
+        self.id = None
 
     def deserialize(self, msg, idx, pkt_len) :
         self.id = msg[idx:idx + pkt_len]
@@ -489,7 +489,7 @@ class user_id(pgp_packet) :
 
 class signature(pgp_packet) :
     def __init__(self) :
-        # just initialize the fields
+        pgp_packet.__init__(self)
         self.version = None
         self.sig_type = None
         self.pk_algo = None
@@ -643,7 +643,7 @@ class signature(pgp_packet) :
             return 'preferred symmetric algorithms: ' + map_to_str(algo_sk_to_str, sp[1])
         if sp[0] == SIG_SUB_TYPE_REVOKE_KEY : # revocation key
             s = 'revocation key: '
-            if sp[1] & REVOKE_KEY_CLASS_SEN :
+            if sp[1] & REVOKE_KEY_CLASS_SENS :
                 s = s + '(sensitive) '
             return s + map_to_str(algo_pk_to_str, sp[2]) + ' ' + str_to_hex(sp[3])
         if sp[0] == SIG_SUB_TYPE_ISSUER_KEY_ID : # issuer key ID
@@ -659,7 +659,7 @@ class signature(pgp_packet) :
             prefs = []
             if sp[1][0] & 0x80 :
                 prefs.append('No-modify')
-            return s + string.join(prefs, ', ')
+            return s + ', '.join(prefs)
         if sp[0] == SIG_SUB_TYPE_PREF_KEY_SRVR : # preferred key server
             return 'preferred key server: %s' % sp[1]
         if sp[0] == SIG_SUB_TYPE_PRIM_USER_ID : # primary user id
@@ -686,7 +686,7 @@ class signature(pgp_packet) :
                 flags.append('private component may have been secret-sharing split')
             if flgs1 & KEY_FLAGS1_GROUP :
                 flags.append('group key')
-            return 'key flags: ' + string.join(flags, ', ')
+            return 'key flags: ' + ', '.join(flags)
         if sp[0] == SIG_SUB_TYPE_SGNR_USER_ID : # signer's user id
             return 'signer id: ' + sp[1]
         if sp[0] == SIG_SUB_TYPE_REVOKE_REASON : # reason for revocation
@@ -769,7 +769,7 @@ class signature(pgp_packet) :
 # a series of PGP packets of certain types in certain orders
 #
 
-class pgp_certificate :
+class pgp_certificate(object):
     def __init__(self) :
         self.version = None
         self.public_key = None
@@ -1021,9 +1021,9 @@ in the message"""
             plen, idx = get_whole_int(msg, idx, 4)
             return b & CTB_PKT_MASK, plen, idx
         else :
-            raise 'partial message bodies are not supported by this version (%d)', b
+            raise Exception, 'partial message bodies are not supported by this version (%d)', b
     else :
-        raise "unknown (not \"normal\") cypher type bit %d at byte %d" % (b, idx)
+        raise Exception, "unknown (not \"normal\") cypher type bit %d at byte %d" % (b, idx)
 
 def crc24(msg) :
     crc24_init = 0xb704ce
@@ -1072,7 +1072,7 @@ def decode(msg) :
 def decode_msg(msg) :
     # first we'll break the block up into lines and trim each line of any 
     # carriage return chars
-    pgpkey_lines = map(lambda x : string.rstrip(x), string.split(msg, '\n'))
+    pgpkey_lines = map(lambda x : x.rstrip(), msg.split('\n'))
 
     # check out block
     in_block = 0
@@ -1104,7 +1104,7 @@ def decode_msg(msg) :
 
             # check the checksum
             if csum != crc24(cert_msg) :
-                raise 'bad checksum on pgp message'
+                raise Exception, 'bad checksum on pgp message'
 
             # ok, the sum looks ok so we'll actually decode the thing
             pkt_list = decode(cert_msg)

@@ -1,5 +1,4 @@
 import types
-import string
 import os
 import os.path
 from cStringIO import StringIO
@@ -136,7 +135,7 @@ def getFileList(path, ext, filelist):
         if os.path.isdir(path + '/' + d):
             filelist = getFileList(path + '/' + d, ext, filelist)
         else:
-            if string.lower(d[-extlen:]) == '%s' % (ext):
+            if d[-extlen:].lower() == '%s' % (ext):
                newpath = os.path.normpath(path + '/' + d)
                filelist.append(newpath)
                     

@@ -17,10 +17,7 @@
 import gzip
 from cElementTree import iterparse
 
-try:
-    from cStringIO import StringIO
-except ImportError:
-    from StringIO import StringIO
+from cStringIO import StringIO
 
 #TODO: document everything here
 
@@ -50,9 +47,6 @@ class MDParser:
         if not self._handlercls:
             raise ValueError('Unknown repodata type "%s" in %s' % (
                 elem.tag, filename))
-        # Get the total number of packages
-        total = elem.get('packages', None)
-        self.total = total is None and None or int(total)
 
     def __iter__(self):
         return self
@@ -153,14 +147,13 @@ class PrimaryEntry(BaseEntry):
                 p.update(self._prefixprops(child, 'rpm_header'))
 
             elif name == 'file':
-                type = child.get('type', 'file')
+                file_type = child.get('type', 'file')
                 path = child.text
-                self.files[path] = type
+                self.files[path] = file_type
 
     def getPrco(self, elem):
         members = []
         for child in elem:
-            name = self._bn(child.tag)
             members.append(child.attrib)
         return members
         
@@ -173,9 +166,9 @@ class FilelistsEntry(BaseEntry):
         for child in elem:
             name = self._bn(child.tag)
             if name == 'file':
-                type = child.get('type', 'file')
+                file_type = child.get('type', 'file')
                 path = child.text
-                self.files[path] = type
+                self.files[path] = file_type
         elem.clear()
                 
 class OtherEntry(BaseEntry):

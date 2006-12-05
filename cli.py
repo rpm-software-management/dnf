@@ -27,12 +27,12 @@ import output
 import shell
 import yum
 import yum.Errors
+import yum.logginglevels
 import yum.misc
+import yum.plugins
 from yum.constants import TS_OBSOLETED
 import rpmUtils.arch
 from yum.packages import parsePackages, YumLocalPackage
-from yum import logginglevels
-from yum import plugins
 from i18n import _
 import callback
 import signal
@@ -55,6 +55,7 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         # handle sigquit early on
         signal.signal(signal.SIGQUIT, sigquit)
         yum.YumBase.__init__(self)
+        output.YumOutput.__init__(self)
         logging.basicConfig()
         self.logger = logging.getLogger("yum.cli")
         self.verbose_logger = logging.getLogger("yum.verbose.cli")
@@ -90,18 +91,19 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
            and sets up the basics of the repository"""
         
         if self.pkgSack and thisrepo is None:
-            self.verbose_logger.log(logginglevels.DEBUG_4,
+            self.verbose_logger.log(yum.logginglevels.DEBUG_4,
                 'skipping reposetup, pkgsack exists')
             return
       
-        self.verbose_logger.log(logginglevels.INFO_2, 'Setting up repositories')
+        self.verbose_logger.log(yum.logginglevels.INFO_2,
+            'Setting up repositories')
 
         # Call parent class to do the bulk of work 
         # (this also ensures that reposetup plugin hook is called)
         yum.YumBase.doRepoSetup(self, thisrepo=thisrepo)
 
         if dosack: # so we can make the dirs and grab the repomd.xml but not import the md
-            self.verbose_logger.log(logginglevels.INFO_2,
+            self.verbose_logger.log(yum.logginglevels.INFO_2,
                 'Reading repository metadata in from local files')
             self.doSackSetup(thisrepo=thisrepo)
     
@@ -120,7 +122,7 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
             dest = eval('parser.values.%s' % optobj.dest)
             dest.append((opt, value))
 
-        self.optparser = YumOptionParser(base=self, 
+        self.optparser = YumOptionParser( 
             usage='yum [options] < %s >' % (', '.join(self.yum_cli_commands)))
 
         self.optparser.add_option("-t", "--tolerant", dest="tolerant",
@@ -197,7 +199,7 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         try:
             self.doConfigSetup(opts.conffile, root, 
                     init_plugins=not opts.noplugins,
-                    plugin_types=(plugins.TYPE_CORE,plugins.TYPE_INTERACTIVE,),
+                    plugin_types=(yum.plugins.TYPE_CORE, yum.plugins.TYPE_INTERACTIVE),
                     optparser=self.optparser,
                     debuglevel=opts.debuglevel,
                     errorlevel=opts.errorlevel)
@@ -292,7 +294,7 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         # run the sleep - if it's unchanged then it won't matter
         time.sleep(sleeptime)
         
-    def parseCommands(self, mycommands=[]):
+    def parseCommands(self):
         """reads self.cmds and parses them out to make sure that the requested 
         base command + argument makes any sense at all""" 
 
@@ -358,7 +360,8 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
            RUNNING the transaction"""
 
         # output what will be done:
-        self.verbose_logger.log(logginglevels.INFO_1, self.listTransaction())
+        self.verbose_logger.log(yum.logginglevels.INFO_1,
+            self.listTransaction())
         
         # Check which packages have to be downloaded
         downloadpkgs = []
@@ -386,7 +389,8 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
                 self.verbose_logger.info('Exiting on user Command')
                 return 1
 
-        self.verbose_logger.log(logginglevels.INFO_2, 'Downloading Packages:')
+        self.verbose_logger.log(yum.logginglevels.INFO_2,
+            'Downloading Packages:')
         problems = self.downloadPkgs(downloadpkgs) 
 
         if len(problems.keys()) > 0:
@@ -402,7 +406,8 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         if self.gpgsigcheck(downloadpkgs) != 0:
             return 1
         
-        self.verbose_logger.log(logginglevels.INFO_2, 'Running Transaction Test')
+        self.verbose_logger.log(yum.logginglevels.INFO_2,
+            'Running Transaction Test')
         tsConf = {}
         for feature in ['diskspacecheck']: # more to come, I'm sure
             tsConf[feature] = getattr(self.conf, feature)
@@ -418,14 +423,16 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         tserrors = self.ts.test(testcb, conf=tsConf)
         del testcb
         
-        self.verbose_logger.log(logginglevels.INFO_2, 'Finished Transaction Test')
+        self.verbose_logger.log(yum.logginglevels.INFO_2,
+            'Finished Transaction Test')
         if len(tserrors) > 0:
             errstring = 'Transaction Check Error: '
             for descr in tserrors:
                 errstring += '  %s\n' % descr 
             
             raise yum.Errors.YumBaseError, errstring
-        self.verbose_logger.log(logginglevels.INFO_2, 'Transaction Test Succeeded')
+        self.verbose_logger.log(yum.logginglevels.INFO_2,
+             'Transaction Test Succeeded')
         del self.ts
         
         # unset the sigquit handler
@@ -445,11 +452,12 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         cb = callback.RPMInstallCallback(output=output)
         cb.tsInfo = self.tsInfo
 
-        self.verbose_logger.log(logginglevels.INFO_2, 'Running Transaction')
+        self.verbose_logger.log(yum.logginglevels.INFO_2, 'Running Transaction')
         self.runTransaction(cb=cb)
 
         # close things
-        self.verbose_logger.log(logginglevels.INFO_1, self.postTransactionOutput())
+        self.verbose_logger.log(yum.logginglevels.INFO_1,
+            self.postTransactionOutput())
         
         # put back the sigquit handler
         signal.signal(signal.SIGQUIT, sigquit)
@@ -507,7 +515,7 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         toBeInstalled = {} # keyed on name
         passToUpdate = [] # list of pkgtups to pass along to updatecheck
 
-        self.verbose_logger.log(logginglevels.INFO_2,
+        self.verbose_logger.log(yum.logginglevels.INFO_2,
             _('Parsing package install arguments'))
         for arg in userlist:
             if os.path.exists(arg) and arg.endswith('.rpm'): # this is hurky, deal w/it
@@ -541,7 +549,7 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
             # ones that we obviously can't use
             for pkg in installable:
                 if self.rpmdb.installed(po=pkg):
-                    self.verbose_logger.log(logginglevels.DEBUG_3,
+                    self.verbose_logger.log(yum.logginglevels.DEBUG_3,
                         'Package %s is already installed, skipping', pkg)
                     continue
                 
@@ -552,7 +560,7 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
                     if rpmUtils.arch.isMultiLibArch(instpo.arch) == rpmUtils.arch.isMultiLibArch(pkg.arch):
                         comparable.append(instpo)
                     else:
-                        self.verbose_logger.log(logginglevels.DEBUG_3,
+                        self.verbose_logger.log(yum.logginglevels.DEBUG_3,
                             'Discarding non-comparable pkg %s.%s', instpo.name, instpo.arch)
                         continue
                         
@@ -577,7 +585,7 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
                                 if not toBeInstalled.has_key(pkg.name): toBeInstalled[pkg.name] = []
                                 toBeInstalled[pkg.name].append(pkg)
                 else: # we've not got any installed that match n or n+a
-                    self.verbose_logger.log(logginglevels.DEBUG_1, 'No other %s installed, adding to list for potential install', pkg.name)
+                    self.verbose_logger.log(yum.logginglevels.DEBUG_1, 'No other %s installed, adding to list for potential install', pkg.name)
                     if not toBeInstalled.has_key(pkg.name): toBeInstalled[pkg.name] = []
                     toBeInstalled[pkg.name].append(pkg)
         
@@ -621,7 +629,6 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         
         oldcount = len(self.tsInfo)
         self.doRepoSetup()
-        avail = self.pkgSack.simplePkgList()
         self.doRpmDBSetup()
         installed = self.rpmdb.simplePkgList()
         self.doUpdateSetup()
@@ -642,7 +649,7 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
                 txmbrs = self.tsInfo.getMembers(pkgtup=old)
 
                 if txmbrs and txmbrs[0].output_state == TS_OBSOLETED: 
-                    self.verbose_logger.log(logginglevels.DEBUG_2, 'Not Updating Package that is already obsoleted: %s.%s %s:%s-%s', old)
+                    self.verbose_logger.log(yum.logginglevels.DEBUG_2, 'Not Updating Package that is already obsoleted: %s.%s %s:%s-%s', old)
                 else:
                     updating_pkg = self.getPackageObject(new)
                     updated_pkg = self.rpmdb.searchPkgTuple(old)[0]
@@ -753,11 +760,11 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         for pkg in filelist:
             try:
                 po = YumLocalPackage(ts=self.rpmdb.readOnlyTS(), filename=pkg)
-            except yum.Errors.MiscError, e:
+            except yum.Errors.MiscError:
                 self.logger.critical('Cannot open file: %s. Skipping.', pkg)
                 continue
-            self.verbose_logger.log(logginglevels.INFO_2, 'Examining %s: %s', 
-                po.localpath, po)
+            self.verbose_logger.log(yum.logginglevels.INFO_2,
+                'Examining %s: %s', po.localpath, po)
 
             # everything installed that matches the name
             installedByKey = self.rpmdb.searchNevra(name=po.name)
@@ -798,8 +805,8 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
                self.verbose_logger.debug('Excluding %s', po)
                continue
             
-            self.verbose_logger.log(logginglevels.INFO_2, 'Marking %s to be installed',
-                po.localpath)
+            self.verbose_logger.log(yum.logginglevels.INFO_2,
+                'Marking %s to be installed', po.localpath)
             self.localPackages.append(po)
             self.install(po=po)
         
@@ -808,13 +815,13 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
                self.verbose_logger.debug('Excluding %s', po)
                continue
            
-            self.verbose_logger.log(logginglevels.INFO_2,
+            self.verbose_logger.log(yum.logginglevels.INFO_2,
                 'Marking %s as an update to %s', po.localpath, oldpo)
             self.localPackages.append(po)
             self.tsInfo.addUpdate(po, oldpo)
         
         for po in donothingpkgs:
-            self.verbose_logger.log(logginglevels.INFO_2,
+            self.verbose_logger.log(yum.logginglevels.INFO_2,
                 '%s: does not update installed package.', po.localpath)
 
         if len(self.tsInfo) > oldcount:
@@ -851,7 +858,7 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
 
         def _shrinklist(lst, args):
             if len(lst) > 0 and len(args) > 0:
-                self.verbose_logger.log(logginglevels.DEBUG_1,
+                self.verbose_logger.log(yum.logginglevels.DEBUG_1,
                     'Matching packages for package list to user args')
                 exactmatch, matched, unmatched = yum.packages.parsePackages(lst, args)
                 return yum.misc.unique(matched + exactmatch)
@@ -929,7 +936,7 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         for arg in args:
             try:
                 pkg = self.returnPackageByDep(arg)
-            except yum.Errors.YumBaseError, e:
+            except yum.Errors.YumBaseError:
                 self.logger.critical(_('No Package Found for %s'), arg)
             else:
                 msg = '%s:%s-%s-%s.%s' % (pkg.epoch, pkg.name, pkg.version, pkg.release, pkg.arch)
@@ -942,7 +949,8 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         pkgresults = hdrresults = xmlresults = dbresults = []
 
         if 'all' in userlist:
-            self.verbose_logger.log(logginglevels.INFO_2, 'Cleaning up Everything')
+            self.verbose_logger.log(yum.logginglevels.INFO_2,
+                'Cleaning up Everything')
             pkgcode, pkgresults = self.cleanPackages()
             hdrcode, hdrresults = self.cleanHeaders()
             xmlcode, xmlresults = self.cleanMetadata()
@@ -975,7 +983,7 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         code = hdrcode + pkgcode + xmlcode + dbcode
         results = hdrresults + pkgresults + xmlresults + dbresults
         for msg in results:
-            self.verbose_logger.log(logginglevels.INFO_2, msg)
+            self.verbose_logger.log(yum.logginglevels.INFO_2, msg)
         return code, []
 
     def returnGroupLists(self, userlist):
@@ -989,15 +997,17 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         installed, available = self.doGroupLists(uservisible=uservisible)
 
         if len(installed) > 0:
-            self.verbose_logger.log(logginglevels.INFO_2, 'Installed Groups:')
+            self.verbose_logger.log(yum.logginglevels.INFO_2,
+                'Installed Groups:')
             for group in installed:
-                self.verbose_logger.log(logginglevels.INFO_2, '   %s',
+                self.verbose_logger.log(yum.logginglevels.INFO_2, '   %s',
                     group.name)
         
         if len(available) > 0:
-            self.verbose_logger.log(logginglevels.INFO_2, 'Available Groups:')
+            self.verbose_logger.log(yum.logginglevels.INFO_2,
+                'Available Groups:')
             for group in available:
-                self.verbose_logger.log(logginglevels.INFO_2, '   %s',
+                self.verbose_logger.log(yum.logginglevels.INFO_2, '   %s',
                     group.name)
 
             
@@ -1028,7 +1038,7 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
             
             try:
                 txmbrs = self.selectGroup(group.groupid)
-            except yum.Errors.GroupsError, e:
+            except yum.Errors.GroupsError:
                 self.logger.critical(_('Warning: Group %s does not exist.'), group_string)
                 continue
             else:
@@ -1043,12 +1053,10 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         """Remove only packages of the named group(s). Do not recurse."""
 
         pkgs_used = []
-        
-        erasesbygroup = []
         for group_string in grouplist:
             try:
                 txmbrs = self.groupRemove(group_string)
-            except yum.Errors.GroupsError, e:
+            except yum.Errors.GroupsError:
                 self.logger.critical('No group named %s exists', group_string)
                 continue
             else:
@@ -1096,7 +1104,7 @@ class YumOptionParser(OptionParser):
     "yum way".
     '''
 
-    def __init__(self, base, **kwargs):
+    def __init__(self, **kwargs):
         OptionParser.__init__(self, **kwargs)
         self.logger = logging.getLogger("yum.cli")
 

@@ -1,9 +1,9 @@
 #!/usr/bin/python
 import sys
 try:
-   import yum
+    import yum
 except ImportError:
-   print >> sys.stderr, """\
+    print >> sys.stderr, """\
 There was a problem importing one of the Python modules
 required to run yum. The error leading to this problem was:
 
@@ -21,7 +21,7 @@ the yum faq at:
   http://wiki.linux.duke.edu/YumFaq
   
 """ % (sys.exc_value, sys.version)
-   sys.exit(1)
+    sys.exit(1)
 
 sys.path.insert(0, '/usr/share/yum-cli')
 try:

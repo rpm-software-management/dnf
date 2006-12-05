@@ -175,7 +175,7 @@ class PackageObject(object):
                 return (csumtype, csum)
 
                 
-class RpmBase:
+class RpmBase(object):
     """return functions and storage for rpm-specific data"""
 
     def __init__(self):
@@ -472,7 +472,7 @@ class YumAvailablePackage(PackageObject, RpmBase):
         
         try:
             filesum = misc.checksum(csum_type, self.localPkg())
-        except Errors.MiscError, e:
+        except Errors.MiscError:
             return False
         
         if filesum != csum:
@@ -659,7 +659,7 @@ class YumHeaderPackage(YumAvailablePackage):
             epoch = str(tmpepoch)
         
         return epoch
- 
+
     def returnLocalHeader(self):
         return self.hdr
     
@@ -710,7 +710,7 @@ class YumHeaderPackage(YumAvailablePackage):
         # then create a _loadChangelog() method to put them into the 
         # self._changelog attr
         if len(self.hdr['changelogname']) > 0:
-            return zip(self.hrd['changelogname'],
+            return zip(self.hdr['changelogname'],
                        self.hdr['changelogtime'],
                        self.hdr['changelogtext'])
         return []

@@ -14,9 +14,9 @@
 # Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 # Copyright 2004 Duke University
 
+import rpmUtils
 import rpmUtils.miscutils
 import rpmUtils.arch
-import rpmUtils
 
 class Updates:
     """This class computes and keeps track of updates and obsoletes.

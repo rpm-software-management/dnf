@@ -134,7 +134,7 @@ class RPMInstallCallback:
                     try:
                         process = self.myprocess[txmbr.output_state]
                         processed = self.mypostprocess[txmbr.output_state]
-                    except KeyError, e:
+                    except KeyError:
                         pass
 
                     if self.output:

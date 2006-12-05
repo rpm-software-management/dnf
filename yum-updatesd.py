@@ -37,8 +37,6 @@ import dbus.service
 import dbus.glib
 import gobject
 import smtplib
-import string
-import time
 import threading
 from optparse import OptionParser
 from email.MIMEText import MIMEText
@@ -167,7 +165,7 @@ class EmailUpdateEmitter(UpdateEmitter):
         msg = MIMEText(output)
         msg['Subject'] = "%d Updates Available" %(num,)
         msg['From'] = self.sender
-        msg['To'] = string.join(self.rcpt, ",")
+        msg['To'] = ",".join(self.rcpt)
         s = smtplib.SMTP()
         s.connect()
         s.sendmail(self.sender, self.rcpt, msg.as_string())
@@ -292,7 +290,7 @@ class UpdateInstallThread(threading.Thread):
         # FIXME: need to do filelog
         cb.tsInfo = self.updd.tsInfo
         try:
-            tserrors = self.updd.runTransaction(cb=cb)
+            self.updd.runTransaction(cb=cb)
         except yum.Errors.YumBaseError, err:
             self.failed([err])
 
@@ -354,7 +352,7 @@ class UpdatesDaemon(yum.YumBase):
                 repos.append(repo.id)
                 try: # grab the updateinfo.xml.gz from the repodata
                     md = repo.retrieveMD('updateinfo')
-                except Exception, e: # can't find any; silently move on
+                except Exception: # can't find any; silently move on
                     continue
                 md = gzip.open(md)
                 self.updateMetadata.add(md)
@@ -435,7 +433,7 @@ class UpdatesDaemon(yum.YumBase):
                 self.tsInfo.makelists()
                 try:
                     (result, msgs) = self.buildTransaction()
-                except yum.Errors.RepoError, errmsg: # error downloading hdrs
+                except yum.Errors.RepoError: # error downloading hdrs
                     (result, msgs) = (1, ["Error downloading headers"])
 
             dlpkgs = map(lambda x: x.po, filter(lambda txmbr:
@@ -555,7 +553,7 @@ class YumDbusListener(dbus.service.Object):
         
         # we have to do this in a callback so that it doesn't get
         # sent back to the caller
-        gobject.idle_add(quit)
+        gobject.idle_add(shutDown)
         return True
 
     @dbus.service.method("edu.duke.linux.yum")
@@ -565,7 +563,7 @@ class YumDbusListener(dbus.service.Object):
         return upds
         
 
-def quit(*args):
+def shutDown():
     sys.exit(0)
 
 def main():
@@ -607,8 +605,7 @@ def main():
     if opts.dbus_listener:
         bus = dbus.SystemBus()
         name = dbus.service.BusName("edu.duke.linux.yum", bus=bus)
-        object = YumDbusListener(updd, name,
-                                 allowshutdown = options.remoteshutdown)
+        YumDbusListener(updd, name, allowshutdown = options.remoteshutdown)
     
     run_interval_ms = opts.run_interval * 1000 # needs to be in ms
     gobject.timeout_add(run_interval_ms, updd.updatesCheck)
