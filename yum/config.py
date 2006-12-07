@@ -611,6 +611,10 @@ def readMainConfig(startupconf):
     yumconf.uid = 0
     yumconf.cache = 0
     yumconf.progess_obj = None
+    
+    # propagate the debuglevel and errorlevel values:
+    yumconf.debuglevel = startupconf.debuglevel
+    yumconf.errorlevel = startupconf.errorlevel
 
     return yumconf
 
