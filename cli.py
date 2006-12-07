@@ -229,7 +229,7 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
             
             # Handle remaining options
             if opts.assumeyes:
-                self.conf.assumeyes =1
+                self.conf.assumeyes = 1
 
             if opts.cacheonly:
                 self.conf.cache = 1
