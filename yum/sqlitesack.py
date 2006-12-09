@@ -64,7 +64,7 @@ class YumAvailablePackageSqlite(YumAvailablePackage):
         cache = self.sack.primarydb[self.repo]
         c = cache.cursor()
         executeSQL(c, "select %s from packages where pkgId = ?" %(dbname,),
-                   (self.pkgID,))
+                   (self.pkgId,))
         r = c.fetchone()
         setattr(self, varname, r[0])
             
