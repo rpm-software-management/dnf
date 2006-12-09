@@ -222,7 +222,7 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
         result = []
         for (rep,cache) in self.primarydb.items():
             cur = cache.cursor()
-            executeSQL(cur, "select DISTINCT packages.pkgId as pkgId from provides,packages where provides.name LIKE ? AND provides.pkgKey = packages.pkgKey", (quotename,))
+            executeSQL(cur, "select DISTINCT packages.pkgId as pkgId from provides,packages where provides.name LIKE ? AND provides.pkgKey = packages.pkgKey", (name,))
             for ob in cur.fetchall():
                 if (self.excludes[rep].has_key(ob['pkgId'])):
                     continue
@@ -231,7 +231,7 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
 
         for (rep,cache) in self.filelistsdb.items():
             cur = cache.cursor()
-            (dirname,filename) = os.path.split(quotename)
+            (dirname,filename) = os.path.split(name)
             # This query means:
             # Either name is a substring of dirname or the directory part
             # in name is a substring of dirname and the file part is part
@@ -244,7 +244,7 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
                 (filelist.dirname LIKE '?' \
                 OR (filelist.dirname LIKE '?' AND\
                 filelist.filenames LIKE '?'))\
-                AND (filelist.pkgKey = packages.pkgKey)", (quotename,dirname,filename))
+                AND (filelist.pkgKey = packages.pkgKey)", (name,dirname,filename))
                     
         # cull the results for false positives
         for ob in cur.fetchall():
