@@ -48,8 +48,7 @@ def buildPkgRefDict(pkgs):
        """
     pkgdict = {}
     for pkg in pkgs:
-        pkgtup = (pkg.name, pkg.arch, pkg.epoch, pkg.version, pkg.release)
-        (n, a, e, v, r) = pkgtup
+        (n, a, e, v, r) = pkg.pkgtup
         name = n
         nameArch = '%s.%s' % (n, a)
         nameVerRelArch = '%s-%s-%s.%s' % (n, v, r, a)
@@ -163,7 +162,9 @@ class PackageObject(object):
 
     def _pkgtup(self):
         return (self.name, self.arch, self.epoch, self.version, self.release)
-        
+    
+    pkgtup = property(_pkgtup)
+
     def returnChecksums(self):
         return self._checksums
 
@@ -393,7 +394,6 @@ class YumAvailablePackage(PackageObject, RpmBase):
             self.importFromDict(pkgdict)
             self.ver = self.version
             self.rel = self.release
-            self.pkgtup = self._pkgtup()
 
 
     def printVer(self):
@@ -591,7 +591,6 @@ class YumHeaderPackage(YumAvailablePackage):
         self.release = self.hdr['release']
         self.ver = self.version
         self.rel = self.release
-        self.pkgtup = self._pkgtup()
         self.summary = self.hdr['summary']
         self.description = self.hdr['description']
         self.pkgid = self.hdr[rpm.RPMTAG_SHA1HEADER]
