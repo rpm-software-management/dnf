@@ -168,7 +168,7 @@ class PackageObject(object):
     def returnChecksums(self):
         return self._checksums
 
-    checksums = property(returnChecksums)
+    checksums = property(fget=lambda self: self.returnChecksums())
     
     def returnIdSum(self):
         for (csumtype, csum, csumid) in self.checksums:
@@ -331,8 +331,8 @@ class RpmBase(object):
     requires_print = property(fget=lambda self: self.returnPrco('requires', True))
     conflicts_print = property(fget=lambda self: self.returnPrco('conflicts', True))
     obsoletes_print = property(fget=lambda self: self.returnPrco('obsoletes', True))
-    changelog = property(returnChangelog)
-    EVR = property(returnEVR)
+    changelog = property(fget=lambda self: self.returnChangelog())
+    EVR = property(fget=lambda self: self.returnEVR())
     
 class PackageEVR:
     
