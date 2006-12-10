@@ -36,12 +36,12 @@ def compareEVR((e1, v1, r1), (e2, v2, r2)):
     # return 1: a is newer than b
     # 0: a and b are the same version
     # -1: b is newer than a
-    e1 = rpmOutToStr(e1)
-    v1 = rpmOutToStr(v1)
-    r1 = rpmOutToStr(r1)
-    e2 = rpmOutToStr(e2)
-    v2 = rpmOutToStr(v2)
-    r2 = rpmOutToStr(r2)
+    e1 = str(e1)
+    v1 = str(v1)
+    r1 = str(r1)
+    e2 = str(e2)
+    v2 = str(v2)
+    r2 = str(r2)
     #print '%s, %s, %s vs %s, %s, %s' % (e1, v1, r1, e2, v2, r2)
     rc = rpm.labelCompare((e1, v1, r1), (e2, v2, r2))
     #print '%s, %s, %s vs %s, %s, %s = %s' % (e1, v1, r1, e2, v2, r2, rc)
