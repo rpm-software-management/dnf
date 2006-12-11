@@ -24,7 +24,7 @@ class YumBaseError(exceptions.Exception):
         exceptions.Exception.__init__(self)    
         self.value = value
     def __str__(self):
-        return self.value
+        return "%s" %(self.value,)
 
 class LockError(YumBaseError):
     def __init__(self, errno, msg):
