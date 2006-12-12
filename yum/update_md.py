@@ -23,7 +23,11 @@ import exceptions
 
 from yum.yumRepo import YumRepository
 
-from cElementTree import iterparse
+try:
+    from xml.etree import cElementTree
+except ImportError:
+    import cElementTree
+iterparse = cElementTree.iterparse
 
 
 class UpdateNoticeException(exceptions.Exception):
