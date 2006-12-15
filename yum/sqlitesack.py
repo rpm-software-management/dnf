@@ -241,9 +241,9 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
                 filelist.filetypes as filetypes,\
                 filelist.filenames as filenames \
                 from packages,filelist where \
-                (filelist.dirname LIKE '?' \
-                OR (filelist.dirname LIKE '?' AND\
-                filelist.filenames LIKE '?'))\
+                (filelist.dirname LIKE ? \
+                OR (filelist.dirname LIKE ? AND\
+                filelist.filenames LIKE ?))\
                 AND (filelist.pkgKey = packages.pkgKey)", (name,dirname,filename))
                     
         # cull the results for false positives
@@ -367,9 +367,9 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
                     filelist.filetypes as filetypes,\
                     filelist.filenames as filenames \
                     from packages,filelist where \
-                    (filelist.dirname LIKE '?' \
-                    OR (filelist.dirname LIKE '?' AND\
-                    filelist.filenames LIKE '?'))\
+                    (filelist.dirname LIKE ? \
+                    OR (filelist.dirname LIKE ? AND\
+                    filelist.filenames LIKE ?))\
                     AND (filelist.pkgKey = packages.pkgKey)", (name,dirname,filename))
             else: 
                 executeSQL(cur, "select packages.pkgId as pkgId,\
