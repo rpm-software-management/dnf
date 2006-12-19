@@ -141,6 +141,5 @@ def setFileLog(uid, logfile):
                 "%b %d %H:%M:%S")
             filehandler.setFormatter(formatter)
             filelogger.addHandler(filehandler)
-        #FIXME: XXX: A global exception catch? That seems unlikely.
-        except Exception:
+        except IOError:
             logging.getLogger("yum").critical('Cannot open logfile %s', logfile)
