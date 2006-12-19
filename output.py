@@ -26,11 +26,6 @@ from urlgrabber.progress import TextMeter
 from urlgrabber.grabber import URLGrabError
 from yum.misc import sortPkgObj, prco_tuple_to_string
 
-try:
-    import readline
-except:
-    pass
-
 from yum import logginglevels
 
 class YumOutput:
