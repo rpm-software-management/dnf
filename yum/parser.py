@@ -63,14 +63,6 @@ class ConfigPreProcessor:
         # these just make confpp look more like a real file object.
         self.mode = 'r' 
         
-        # establish whether to use urlgrabber or urllib
-        # we want to use urlgrabber if it supports urlopen
-        if hasattr(urlgrabber.grabber, 'urlopen'):
-            self._urlresolver = urlgrabber.grabber
-        else: 
-            self._urlresolver = urllib
-        
-        
         # first make configfile a url even if it points to 
         # a local file
         scheme = urlparse.urlparse(configfile)[0]
@@ -181,7 +173,7 @@ class ConfigPreProcessor:
         if self._urlalreadyincluded(absurl):
             return None
         try:
-            fo = self._urlresolver.urlopen(absurl)
+            fo = urlgrabber.grabber.urlopen(absurl)
         except urlgrabber.grabber.URLGrabError, e:
             fo = None
         if fo is not None:
