@@ -220,7 +220,7 @@ class YumDbusInterface(dbus.service.Object):
     def CheckFailedSignal(self, message):
         pass
 
-class UDConfig(yum.config.BaseConfig):
+class UDConfig(BaseConfig):
     """Config format for the daemon"""
     run_interval = IntOption(3600)
     nonroot_workdir = Option("/var/tmp/yum-updatesd")

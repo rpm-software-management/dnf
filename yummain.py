@@ -25,8 +25,6 @@ from yum import plugins
 from yum import logginglevels
 import cli
 
-from i18n import _
-
 
 def main(args):
     """This does all the real work"""

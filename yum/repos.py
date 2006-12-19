@@ -14,15 +14,12 @@
 # Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 # Copyright 2004 Duke University 
 
-import os
-import os.path
 import re
 import fnmatch
 import types
 
 import Errors
 from packageSack import MetaSack
-from packages import YumAvailablePackage
 
 _is_fnmatch_pattern = re.compile(r"[*?[]").search
 

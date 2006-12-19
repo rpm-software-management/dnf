@@ -15,10 +15,7 @@
 # Copyright 2006 Duke University
 
 from Errors import PackageSackError
-from rpmUtils import miscutils
-from packages import YumInstalledPackage
 import warnings
-import misc
 import re
 import fnmatch
 

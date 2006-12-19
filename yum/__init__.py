@@ -1459,8 +1459,6 @@ class YumBase(depsolve.Depsolve):
            more than one response - right now it's more rudimentary."""
            
         
-        (n,a,e,v,r) = pkgtup
-        
         # look it up in the self.localPackages first:
         for po in self.localPackages:
             if po.pkgtup == pkgtup:

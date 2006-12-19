@@ -25,7 +25,6 @@ from misc import unique
 import rpm
 
 from packageSack import ListPackageSack
-from Errors import DepError, RepoError, PackageSackError
 from constants import *
 import packages
 import logginglevels
