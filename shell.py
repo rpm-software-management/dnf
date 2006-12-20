@@ -90,7 +90,14 @@ class YumShell(cmd.Cmd):
     
     def emptyline(self):
         pass
-    
+
+    def completenames(self, text, line, begidx, endidx):
+        ret = cmd.Cmd.completenames(self, text, line, begidx, endidx)
+        for command in self.base.yum_cli_commands.keys():
+            if command.startswith(text) and command != "shell":
+                ret.append(command)
+        return ret
+
     def do_help(self, arg):
         msg = """
     Shell specific arguments:
