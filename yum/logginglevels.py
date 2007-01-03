@@ -96,7 +96,8 @@ def doLoggingSetup(debuglevel, errorlevel):
     logging.basicConfig()
 
     plainformatter = logging.Formatter("%(message)s")
-        
+    syslogformatter = logging.Formatter("yum : %(message)s")
+    
     console_stdout = logging.StreamHandler(sys.stdout)
     console_stdout.setFormatter(plainformatter)
     verbose = logging.getLogger("yum.verbose")
@@ -114,11 +115,12 @@ def doLoggingSetup(debuglevel, errorlevel):
     filelogger.propagate = False
 
     log_dev = '/dev/log'
+    global syslog
     syslog = None
     if os.path.exists(log_dev):
         try:
             syslog = logging.handlers.SysLogHandler(log_dev)
-            syslog.setFormatter(plainformatter)
+            syslog.setFormatter(syslogformatter)
             filelogger.addHandler(syslog)
         except socket.error:
             if syslog is not None:
@@ -143,3 +145,10 @@ def setFileLog(uid, logfile):
             filelogger.addHandler(filehandler)
         except IOError:
             logging.getLogger("yum").critical('Cannot open logfile %s', logfile)
+
+def setLoggingApp(app):
+    global syslog
+    if syslog:
+        syslogformatter = logging.Formatter("yum(%s): "% (app,) + "%(message)s")
+        syslog.setFormatter(syslogformatter)
+                    
