@@ -457,7 +457,7 @@ class StartupConf(BaseConfig):
     debuglevel = IntOption(2)
     errorlevel = IntOption(2)
 
-    distroverpkg = Option('fedora-release')
+    distroverpkg = Option('redhat-release')
     installroot = Option('/')
 
     plugins = BoolOption(False)
