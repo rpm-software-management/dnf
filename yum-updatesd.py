@@ -237,40 +237,56 @@ class UDConfig(BaseConfig):
     syslog_ident = Option("yum-updatesd")
     yum_config = Option("/etc/yum.conf")
 
-class UpdateDownloadThread(threading.Thread):
-    def __init__(self, updd, dlpkgs):
+
+class UpdateBuildTransactionThread(threading.Thread):
+    def __init__(self. updd, name):
         self.updd = updd
-        self.dlpkgs = dlpkgs
-        threading.Thread.__init__(self, name="UpdateDownloadThread")
+        threading.Thread.__init__(self, name=name)
 
     def run(self):
-        self.updd.downloadPkgs(self.dlpkgs)
-        self.updd.emitAvailable()
-        self.updd.closeRpmDB()
-        self.updd.doUnlock()
+        self.updd.tsInfo.makelists()
+        try:
+            (result, msgs) = self.updd.buildTransaction()
+        except yum.Errors.RepoError, errmsg: # error downloading hdrs
+            msgs = ["Error downloading headers"]
+            self.updd.emitUpdateFailed(msgs)
+            return
 
-class UpdateInstallThread(threading.Thread):
-    def __init__(self, updd, dlpkgs):
-        self.updd = updd
-        self.dlpkgs = dlpkgs
-        threading.Thread.__init__(self, name="UpdateInstallThread")
+        dlpkgs = map(lambda x: x.po, filter(lambda txmbr:
+                                            txmbr.ts_state in ("i", "u"),
+                                            self.updd.tsInfo.getMembers()))
+        self.updd.downloadPkgs(dlpkgs)
+        self.processPkgs(dlpkgs)
+
+
+class UpdateDownloadThread(UpdateBuildTransactionThread):
+    def __init__(self, updd):
+        UpdateBuildTransactionThread.__init__(self, updd,
+            name="UpdateDownloadThread")
+
+    def processPkgs(self, dlpkgs):
+        self.updd.emitAvailable()
+        self.updd.releaseLocks()
+
+
+class UpdateInstallThread(UpdateBuildTransactionThread):
+    def __init__(self, updd):
+        UpdateBuildTransactionThread.__init__(self, updd,
+            name="UpdateInstallThread")
 
     def failed(self, msgs):
         self.updd.emitUpdateFailed(msgs)
-        self.updd.closeRpmDB()
-        self.updd.doUnlock()
+        self.updd.releaseLocks()
 
     def success(self):
         self.updd.emitUpdateApplied()
-        self.updd.closeRpmDB()
-        self.updd.doUnlock()
+        self.updd.releaseLocks()
 
         self.updd.updateInfo = None
         self.updd.updateInfoTime = None        
         
-    def run(self):
-        self.updd.downloadPkgs(self.dlpkgs)
-        for po in self.dlpkgs:
+    def processPkgs(self, dlpkgs):
+        for po in dlpkgs:
             result, err = self.updd.sigCheckPkg(po)
             if result == 0:
                 continue
@@ -330,9 +346,7 @@ class UpdatesDaemon(yum.YumBase):
         try:
             self.doRepoSetup()
             self.doSackSetup()
-            self.doTsSetup()
-            self.doRpmDBSetup()
-            self.doUpdateSetup()
+            self.updateCheckSetup()
         except Exception, e:
             syslog.syslog(syslog.LOG_WARNING,
                           "error getting update info: %s" %(e,))
@@ -428,43 +442,19 @@ class UpdatesDaemon(yum.YumBase):
             self.populateTsInfo()
             self.populateUpdates()
 
-            # FIXME: this needs to be done in the download/install threads
-            if self.opts.do_update or self.opts.do_download_deps:
-                self.tsInfo.makelists()
-                try:
-                    (result, msgs) = self.buildTransaction()
-                except yum.Errors.RepoError: # error downloading hdrs
-                    (result, msgs) = (1, ["Error downloading headers"])
-
-            dlpkgs = map(lambda x: x.po, filter(lambda txmbr:
-                                                txmbr.ts_state in ("i", "u"),
-                                                self.tsInfo.getMembers()))
-
-            close = True
             if self.opts.do_update:
-                # we already resolved deps above
-                if result == 1: 
-                    self.emitUpdateFailed(msgs)
-                else:
-                    uit = UpdateInstallThread(self, dlpkgs)
-                    uit.start()
-                    close = False
+                uit = UpdateInstallThread(self, dlpkgs)
+                uit.start()
             elif self.opts.do_download:
                 self.emitDownloading()
                 dl = UpdateDownloadThread(self, dlpkgs)
                 dl.start()
-                close = False
             else:
                 # just notify about things being available
                 self.emitAvailable()
+                self.releaseLocks()
         except Exception, e:
             self.emitCheckFailed("%s" %(e,))
-            self.doUnlock()
-
-        # FIXME: this is kind of ugly in that I want to do it sometimes
-        # and yet not others and it's from threads that it matters.  aiyee!
-        if close:
-            self.closeRpmDB()
             self.doUnlock()
 
         return True
@@ -494,18 +484,24 @@ class UpdatesDaemon(yum.YumBase):
             return []
 
         try:
-            self.doTsSetup()
-            self.doRpmDBSetup()
-            self.doUpdateSetup()
+            self.updateCheckSetup()
 
             self.populateUpdates()
 
-            self.closeRpmDB()
-            self.doUnlock()
+            self.releaseLocks()
         except:
             self.doUnlock()
 
         return self.updateInfo
+
+    def updateCheckSetup(self):
+        self.doTsSetup()
+        self.doRpmDBSetup()
+        self.doUpdateSetup()
+
+    def releaseLocks(self):
+        self.closeRpmDB()
+        self.doUnlock()
 
     def emitAvailable(self):
         """method to emit a notice about updates"""
@@ -526,7 +522,7 @@ class UpdatesDaemon(yum.YumBase):
     def emitCheckFailed(self, error):
         """method to emit a notice when checking for updates failed"""
         map(lambda x: x.checkFailed(error), self.emitters)
-        
+
 
 class YumDbusListener(dbus.service.Object):
     def __init__(self, updd, bus_name, object_path='/Updatesd',
