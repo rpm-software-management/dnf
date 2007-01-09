@@ -467,20 +467,16 @@ class UpdatesDaemon(yum.YumBase):
             
         # try to get the lock so we can update the info.  fall back to
         # cached if available or try a few times.
-        tries = 0
-        while tries < 10:
+        for i in range(10):
             try:
                 self.doLock()
                 break
             except yum.Errors.LockError:
-                pass
-            # if we can't get the lock, return what we have if we can
-            if self.updateInfo:
-                return self.updateInfo
-            time.sleep(1)
-            tries += 1
-        if tries == 10:
-            self.doUnlock()
+                # if we can't get the lock, return what we have if we can
+                if self.updateInfo:
+                    return self.updateInfo
+                time.sleep(1)
+        else:
             return []
 
         try:
