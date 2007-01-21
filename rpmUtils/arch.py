@@ -5,7 +5,7 @@ import os
 
 # dict mapping arch -> ( multicompat, best personality, biarch personality )
 multilibArches = { "x86_64":  ( "athlon", "x86_64", "athlon" ),
-		   "sparc64v": ( "sparc", "sparcv9v", "sparc64v" ),
+                   "sparc64v": ( "sparc", "sparcv9v", "sparc64v" ),
                    "sparc64": ( "sparc", "sparcv9", "sparc64" ),
                    "ppc64":   ( "ppc", "ppc", "ppc64" ),
                    "s390x":   ( "s390", "s390x", "s390" ),
@@ -133,7 +133,7 @@ def getArchList(thisarch=None):
     # hack hack hack
     # sparc64v is also sparc64 compat
     if archlist[0] == "sparc64v":
-	archlist.insert(1,"sparc64")
+        archlist.insert(1,"sparc64")
     
     return archlist
     
@@ -185,21 +185,21 @@ def getCanonSPARCArch(arch):
     lines = f.readlines()
     f.close()
     for line in lines:
-	if line.startswith("type"):
-	    SPARCtype = line.split(':')[1]
-	    break
+        if line.startswith("type"):
+            SPARCtype = line.split(':')[1]
+            break
     if SPARCtype.find("sun4v") != -1:
-	if arch.startswith("sparc64"):
-	    return "sparc64v"
-	else:
-	    return "sparcv9v"
+        if arch.startswith("sparc64"):
+            return "sparc64v"
+        else:
+            return "sparcv9v"
     if SPARCtype.find("sun4u") != -1:
-	if arch.startswith("sparc64"):
-	    return "sparc64"
-	else:
-	    return "sparcv9"
+        if arch.startswith("sparc64"):
+            return "sparc64"
+        else:
+            return "sparcv9"
     if SPARCtype.find("sun4m") != -1:
-	return "sparcv8"
+        return "sparcv8"
     return arch
 
 def getCanonX86_64Arch(arch):
@@ -242,7 +242,7 @@ def getCanonArch(skipRpmPlatform = 0):
     if arch.startswith("ppc"):
         return getCanonPPCArch(arch)
     if arch.startswith("sparc"):
-	return getCanonSPARCArch(arch)
+        return getCanonSPARCArch(arch)
     if arch == "x86_64":
         return getCanonX86_64Arch(arch)
 
