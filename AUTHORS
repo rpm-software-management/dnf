@@ -2,29 +2,28 @@
 YUM AUTHORS
 ----------------
 
-Yum is currently maintained by Seth Vidal <skvidal_at_phy.duke.edu>. Yum was
-written to scratch an itch for some folks at duke, specifically seth. It was
-based in huge parts off of code from yup - the yellowdog updater. Yum has used 
-a bunch of code from other gpl'd projects - up2date, anaconda and yup.  Folks below
-are thanked for their help/code/smarts.
-
-    Jeremy Katz <katzj_at_linuxpower.org>
-    Adrian Likins <alikins_at_redhat.com>
-    Matthew Miller <mattdm_at_mattdm.org>
-    Michael Stenner <mstenner_at_phy.duke.edu>
-    Icon Riabitsev <icon_at_phy.duke.edu>
+    Seth Vidal 
+    Jeremy Katz 
+    Adrian Likins 
+    Matthew Miller 
+    Michael Stenner 
+    Icon Riabitsev 
     Ryan Tomayko
     Paul Nasrat
-    Robert G. Brown <rgb_at_phy.duke.edu>
+    Robert G. Brown 
     Hollis Blanchard
-    Grigory Bakunov <black_at_asplinux.ru>
+    Grigory Bakunov 
     Menno Smits 
-    Gijs Hollestelle <gijs_at_gewis.nl>
+    Gijs Hollestelle
     Terje Rosten    
+    Luke Macken
+    James Bowes
+    Tim Lauridsen
+    
     
 Original Yup people:
-    Bryan Stillwell <bstill_at_terraplex.com>. 
+    Bryan Stillwell 
     Stephen Edie
-    Dan Burcaw <dburcaw_at_yellowdoglinux.com>
-    Troy Bengegerdes <troy_at_blacklablinux.com> 
+    Dan Burcaw 
+    Troy Bengegerdes
 

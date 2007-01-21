@@ -56,9 +56,8 @@ class YumOutput:
     def simpleList(self, pkg):
         ver = pkg.printVer()
         na = '%s.%s' % (pkg.name, pkg.arch)
-        repo = pkg.repoid
         
-        print "%-40.40s %-22.22s %-16.16s" % (na, ver, repo)
+        print "%-40.40s %-22.22s %-16.16s" % (na, ver, pkg.repoid)
     
         
     def infoOutput(self, pkg):
