@@ -1,6 +1,376 @@
-2006-10-16 09:49  lmacken
+2007-01-21 15:23  skvidal
 
-	* yum/yumRepo.py: Patch from Mark McLoughlin to fix typo
+	* yum.spec, yum/__init__.py: mark as 3.1.0
+
+2007-01-21 15:22  skvidal
+
+	* AUTHORS, TODO, output.py: 
+	- merge in changes to AUTHORS/TODO - bring output.py up to patch vs
+	3.0.X
+
+2007-01-21 15:18  skvidal
+
+	* yum/__init__.py: bring head up to all patches to 3.0.X
+
+2007-01-21 15:14  skvidal
+
+	* yum/depsolve.py: 
+	dep solving debug timing
+
+2007-01-21 15:13  skvidal
+
+	* yum/packageSack.py: 
+	port forward the obsoletes processing patch
+
+2007-01-21 15:08  skvidal
+
+	* yum/rpmsack.py: 
+	merge forward the remove-rpmdb-close patch
+
+2007-01-21 14:52  skvidal
+
+	* rpmUtils/arch.py: bring tim's patch for tab/whitespace fixes up
+	from 3.0.X
+
+2007-01-08 22:58  jbowes
+
+	* yum-updatesd.py: Reduce code size on the loop attempting to
+	doLock for yum-updatesd.
+
+2007-01-08 22:57  jbowes
+
+	* yum-updatesd.py: Move header downloading into the child threads
+	for yum-updatesd
+
+2007-01-08 14:17  katzj
+
+	* yum/config.py: man page says redhat-release, so we should check
+	that (rh#221770)
+
+2007-01-03 13:13  katzj
+
+	* rpmUtils/arch.py: sparc support from spot (rh#220953)
+
+2007-01-03 09:00  timlau
+
+	* yum/logginglevels.py: Add modified version Terje's syslog patch,
+	to make it possible for a application using yum api to register its
+	application name to be written to the syslog in the following
+	format yum (applicationname) : message.
+
+2006-12-19 19:04  jbowes
+
+	* shell.py: Add tab completion for yum commands to the shell
+
+2006-12-18 22:46  jbowes
+
+	* yum/parser.py: Urlgrabber will always be used here (especially
+	since we don't import urllib)
+
+2006-12-18 22:45  jbowes
+
+	* output.py: Remove unused code
+
+2006-12-18 22:43  jbowes
+
+	* yum-updatesd.py, yummain.py, yum/__init__.py, yum/depsolve.py,
+	yum/packageSack.py, yum/repos.py: Remove a bunch of unused imports
+
+2006-12-18 20:44  jbowes
+
+	* yum/logginglevels.py: Replace catching Exception with IOError,
+	which should catch all cases
+
+2006-12-15 09:40  katzj
+
+	* yum/sqlitesack.py: fix provides matching (rh#219716)
+
+2006-12-12 10:43  katzj
+
+	* yum/update_md.py: further python 2.5 fix (Richard Dawe,
+	rh#219206)
+
+2006-12-11 13:27  katzj
+
+	* yum/Errors.py: ensure we get a string
+
+2006-12-09 20:47  jbowes
+
+	* rpmUtils/miscutils.py: Just use str() it's faster and does the
+	same thing.
+
+2006-12-09 18:38  jbowes
+
+	* yum/sqlitesack.py: Fix typo in some sqlitesack methods
+
+2006-12-09 09:02  jbowes
+
+	* yum/packages.py: Undo my previous property related patch, since
+	it breaks how the sql package overrides returnChecksums
+
+2006-12-08 23:05  jbowes
+
+	* yum/sqlitesack.py: Fix small typo in sql query parameter
+
+2006-12-08 20:35  jbowes
+
+	* yum/packages.py: Remove unneeded use of lambda in some properties
+
+2006-12-08 20:34  jbowes
+
+	* yum/packages.py: Make pkgtup a property, rather than setting it
+	during init
+
+2006-12-07 18:25  skvidal
+
+	* cli.py: 
+	whitespace fix - thanks to terje
+
+2006-12-07 17:17  skvidal
+
+	* yum/config.py: 
+	fix up the debuglevel and errorlevel so they are set appropriately
+	from the cmdline to the conf
+
+2006-12-05 15:57  katzj
+
+	* yum/mdparser.py: jbowes (rightfully) points out that this can be
+	even simpler
+
+2006-12-05 15:54  katzj
+
+	* yum/: sqlitecache.py, sqlitesack.py: support newer versions of
+	pysqlite as included in python 2.5 and standalone
+	
+	the bulk of this is:  a) converting to use qmark instead of
+	pyformat for queries	 (http://www.python.org/dev/peps/pep-0249/
+	for DB-API info)  b) doing on-the-fly conversion to pyformat if
+	we're still using old	  pysqlite.
+	
+	since with this version of yum, I'd expect most people to move to
+	new python or at least new pysqlite, things are done in the
+	direction that's faster for the new stuff.
+	
+	if we decide to require python2.5 or pysqlite 2.x for yum 3.2, then
+	this can be simplified a bit
+
+2006-12-05 15:51  katzj
+
+	* yum/sqlutils.py: utility functions to handle differences in
+	pysqlite versions These are from Wichert Akkerman
+	<wichert@deephackmode.org>'s python-dhm    
+	http://www.wiggy.net/code/python-dhm
+
+2006-12-05 15:45  katzj
+
+	* yum/: comps.py, repoMDObject.py: for python2.5, cElementTree is
+	now xml.etree; use it
+
+2006-12-05 15:42  katzj
+
+	* yum/mdparser.py: removing this chunk breaks things if you're not
+	using yum-metadata-parser, but at least make it more readable
+
+2006-12-05 15:36  katzj
+
+	* yum/Errors.py: Yum errors take a single value and not a tuple of
+	arguments since the value is a string -- change to reflect that so
+	that we don't get "interesting" error messages with python2.5
+
+2006-12-04 19:40  jbowes
+
+	* callback.py, cli.py, output.py, progress_meter.py, shell.py,
+	yum-updatesd.py, bin/yum-updatesd.py, bin/yum.py, yum/comps.py,
+	yum/depsolve.py, yum/failover.py, yum/mdparser.py, yum/misc.py,
+	yum/packageSack.py, yum/packages.py, yum/pgpmsg.py,
+	yum/sqlitecache.py, yum/update_md.py, rpmUtils/miscutils.py,
+	rpmUtils/updates.py: pychecker related fixes, including unused
+	imports, and removal of use of deprecated methods from the string
+	module
+
+2006-12-03 10:55  jbowes
+
+	* yum/packageSack.py: Re-enable using sack.searchAll in the
+	provides command. This really speeds up things, since we'll pull
+	fewer filelists for packages out of the db. Looks like this broke
+	when the metasack was introduced. oops. ;)
+
+2006-11-30 21:46  jbowes
+
+	* yum/yumRepo.py: Remove unused code for manipulating the
+	failure_obj during __get
+
+2006-11-28 17:21  katzj
+
+	* yum/__init__.py: * fix a deprecation warning * give an idea of
+	where gpg keys come from on the import; add a new callback   method
+	that's more extensible
+
+2006-11-26 18:59  jbowes
+
+	* cli.py, shell.py, yumcommands.py, yummain.py: Implement the
+	ShellCommand code
+
+2006-11-25 17:40  jbowes
+
+	* yum/plugins.py: Close the file descriptor used by imp in case an
+	exception is thrown.
+
+2006-11-24 23:37  jbowes
+
+	* yum/packages.py: Add missing getattr to replace tagByName for
+	installed packages
+
+2006-11-22 21:28  jbowes
+
+	* yum-updatesd.py, yummain.py, yum/__init__.py: Provide a default
+	file name for doLock and doUnlock
+
+2006-11-22 21:24  jbowes
+
+	* output.py, yum-updatesd.py, yum/__init__.py, yum/packageSack.py,
+	yum/packages.py, yum/rpmsack.py, yum/sqlitesack.py, yum/yumRepo.py:
+	Deprecate returnSimple and tagByName; use __getattr__ instead.
+
+2006-11-22 21:03  jbowes
+
+	* yum/storagefactory.py: Only catch ImportError in storagefactory
+
+2006-11-17 15:19  skvidal
+
+	* yum/Errors.py: 
+	apply patch for bug 670 to HEAD
+
+2006-11-17 02:13  skvidal
+
+	* docs/yum.conf.5, yum/__init__.py, yum/config.py: 
+	allow setting the type of packages that will be installed by
+	default on a 'groupinstall' command.
+
+2006-11-15 21:22  katzj
+
+	* cli.py: fix format error (rh#212850)
+
+2006-11-14 15:59  skvidal
+
+	* yum/misc.py: 
+	make sure we're actually comparing versions - not packages
+
+2006-11-14 01:10  skvidal
+
+	* yum/sqlitesack.py: 
+	make changelogs return
+
+2006-11-08 10:23  katzj
+
+	* yum-updatesd.py: init plugins, fix log config (jbowes)
+
+2006-11-08 10:00  katzj
+
+	* etc/yum-updatesd.init: fix tyop (rh#214298)
+
+2006-11-06 16:16  katzj
+
+	* yum-updatesd.py: fix excludes (rh#213622, rh#212494) and
+	auto-update (rh#212507)
+
+2006-11-06 16:02  katzj
+
+	* etc/yum-updatesd.conf: add a comment and the dbus_listener option
+	(rh#214242)
+
+2006-11-03 13:11  katzj
+
+	* cli.py: print out version before plugins are loaded (rh#212292)
+
+2006-10-30 15:32  lmacken
+
+	* Makefile, docs/Makefile: Add docs target to Makefile for epydoc
+	generation
+
+2006-10-25 15:13  katzj
+
+	* yum/misc.py: file can be a unicode string also
+
+2006-10-25 02:08  skvidal
+
+	* yum/: comps.py, config.py, logginglevels.py, misc.py,
+	packages.py, repos.py, sqlitesack.py, storagefactory.py,
+	yumRepo.py: 
+	merge pychecker patches from 3.0.X up to head
+
+2006-10-16 23:59  skvidal
+
+	* yum-updatesd.py, yum/parser.py: - remove
+	IncludingConfigParser,IncludedConfigParser - make yum-updatesd.py
+	use ConfigPreProcessor for include= config files
+
+2006-10-16 18:29  katzj
+
+	* yum/packages.py: bring back equality of package objects
+
+2006-10-16 09:47  lmacken
+
+	* ChangeLog, yum/yumRepo.py: Patch from Mark McLoughlin to fix typo
+	in yumRepo.py
+
+2006-10-13 09:12  pnasrat
+
+	* yum/depsolve.py: EVR comparison from Tim Lauridsen
+
+2006-10-13 09:07  pnasrat
+
+	* yum/packages.py: Fix up comparison thinkos Man unit tests would
+	be nice ;)
+
+2006-10-13 09:02  pnasrat
+
+	* yum/packages.py: Update comparison patch from Tim Lauridsen
+
+2006-10-12 21:24  katzj
+
+	* cli.py, yum/packageSack.py, yum/packages.py: fix so that
+	foo-1.1-1.i386 != foo-1.1-1.x86_64.  at the same time, move
+	comparison to be of an EVR object and adjust callers accordingly. 
+	patch for EVR comparison from Tim Lauridsen
+
+2006-10-12 21:16  katzj
+
+	* yum/logginglevels.py: close the syslog handler if we don't
+	successfully set it up (rh#208773)
+
+2006-10-12 13:58  skvidal
+
+	* yum/rpmsack.py: 
+	- speed up searchNevra() by building a pkgtup->headerindex dict -
+	make the header_from_index() method work by deleting match iterator
+	each time explicitly. Thanks to Jay  Soffian for finding this.
+
+2006-10-10 22:32  katzj
+
+	* yum/__init__.py: raise the right error... this ended up
+	manifesting itself by raising the last error (which had been passed
+	on) instead of the intended and an entirely non-obvious traceback. 
+	moral of the story: always raise a specific exception
+	
+	(rh#210135)
+
+2006-10-05 22:24  katzj
+
+	* yum/yumRepo.py: fix basepath handling (from Dennis Gregorivic)
+
+2006-10-05 22:23  katzj
+
+	* yum/parser.py: fix traceback (patch from Dawid Zamirski <dzrudy
+	AT gmail DOT com>)
+
+2006-10-05 09:34  katzj
+
+	* yum-updatesd.py: IncludingConfigParser moved
+
+2006-10-04 22:26  skvidal
+
+	* ChangeLog: check in changelog
 
 2006-10-04 21:58  skvidal
 
