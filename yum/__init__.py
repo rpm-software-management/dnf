@@ -359,7 +359,7 @@ class YumBase(depsolve.Depsolve):
             self.up.debug = 1
             
         if self.conf.obsoletes:
-            self.up.rawobsoletes = self.pkgSack.returnObsoletes()
+            self.up.rawobsoletes = self.pkgSack.returnObsoletes(newest=True)
             
         self.up.exactarch = self.conf.exactarch
         self.up.exactarchlist = self.conf.exactarchlist
@@ -790,7 +790,6 @@ class YumBase(depsolve.Depsolve):
         if check:
             ts = self.rpmdb.readOnlyTS()
             sigresult = rpmUtils.miscutils.checkSig(ts, po.localPkg())
-            ts.close()
             localfn = os.path.basename(po.localPkg())
             
             if sigresult == 0:
@@ -1724,9 +1723,7 @@ class YumBase(depsolve.Depsolve):
                 del(pkgSack)
 
                 lst = []
-                for pkg in pkgs:
-                    lst.extend(self.bestPackagesFromList(pkg))
-
+                lst.extend(self.bestPackagesFromList(pkgs))
                 pkgs = lst
 
         if len(pkgs) == 0:
