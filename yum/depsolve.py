@@ -28,6 +28,7 @@ from packageSack import ListPackageSack
 from constants import *
 import packages
 import logginglevels
+import time 
 
 class Depsolve(object):
     def __init__(self):
@@ -229,6 +230,7 @@ class Depsolve(object):
             self.verbose_logger.debug('# of Deps = %d', len(deps))
             depcount = 0
             for dep in deps:
+                dep_start_time = time.time()
                 ((name, version, release), (needname, needversion), flags, suggest, sense) = dep
                 depcount += 1
                 self.verbose_logger.log(logginglevels.DEBUG_2,
@@ -246,7 +248,11 @@ class Depsolve(object):
                 else: # wtf?
                     self.logger.critical('Unknown Sense: %d', sense)
                     continue
-
+                
+                dep_end_time = time.time()
+                dep_proc_time = dep_end_time - dep_start_time
+                self.verbose_logger.log(logginglevels.DEBUG_2, 'processing dep took: %f' % dep_proc_time)
+                
                 missingdep += missing
                 conflicts += conflict
                 CheckDeps += checkdep
