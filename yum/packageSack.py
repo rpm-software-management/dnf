@@ -246,10 +246,28 @@ class MetaSack(PackageSackBase):
         """return list of package obsoleting the name (any evr and flag)"""
         return self._computeAggregateListResult("searchObsoletes", name)
 
-    def returnObsoletes(self):
+    def returnObsoletes(self, newest=False):
         """returns a dict of obsoletes dict[obsoleting pkgtuple] = [list of obs]"""
-        return self._computeAggregateDictResult("returnObsoletes")
-
+        if not newest:
+            return self._computeAggregateDictResult("returnObsoletes")
+        
+        # get the dict back
+        obsdict = self._computeAggregateDictResult("returnObsoletes")
+        # get a sack of the newest pkgs
+        obstups = obsdict.keys()
+        newest_tup_dict = {}
+        for pkg in self.returnNewestByName():
+            if not newest_tup_dict.has_key(pkg.pkgtup):
+                newest_tup_dict[pkg.pkgtup] = 1
+        
+        # go through each of the keys of the obs dict and see if it is in the
+        # sack of newest pkgs - if it is not - remove the entry
+        for obstup in obstups:
+            if not newest_tup_dict.has_key(obstup):
+                del obsdict[obstup]
+        
+        return obsdict
+        
     def searchFiles(self, file):
         """return list of packages by filename"""
         return self._computeAggregateListResult("searchFiles", file)
@@ -432,14 +450,14 @@ class PackageSack(PackageSackBase):
         """returns a dict of obsoletes dict[obsoleting pkgtuple] = [list of obs]"""
         obs = {}
         for po in self.returnPackages():
-            if len(po.returnPrco('obsoletes')) == 0:
+            if len(po.obsoletes) == 0:
                 continue
 
             if not obs.has_key(po.pkgtup):
-                obs[po.pkgtup] = po.returnPrco('obsoletes')
+                obs[po.pkgtup] = po.obsoletes
             else:
-                obs[po.pkgtup].extend(po.returnPrco('obsoletes'))
-        
+                obs[po.pkgtup].extend(po.obsoletes)
+            
         return obs
         
     def searchFiles(self, file):
@@ -595,8 +613,14 @@ class PackageSack(PackageSackBase):
                 return highdict[name]
             else:
                 raise PackageSackError, 'No Package Matching  %s' % name
-                
-        return highdict.values()
+        
+        #this is a list of lists - break it back out into a single list
+        returnlist = []
+        for polst in highdict.values():
+            for po in polst:
+                returnlist.append(po)
+
+        return returnlist
            
     def simplePkgList(self):
         """returns a list of pkg tuples (n, a, e, v, r) optionally from a single repoid"""
