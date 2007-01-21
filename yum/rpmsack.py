@@ -46,7 +46,8 @@ class RPMDBPackageSack(PackageSackBase):
     def __init__(self, root='/'):
         self.root = root
         self._header_dict = {}
-
+        self.ts = None
+        
     def _get_pkglist(self):
         '''Getter for the pkglist property. 
         Returns a list of package tuples.
@@ -57,7 +58,9 @@ class RPMDBPackageSack(PackageSackBase):
     pkglist = property(_get_pkglist, None)
 
     def readOnlyTS(self):
-        return initReadOnlyTransaction(root=self.root)
+        if not self.ts:
+            self.ts =  initReadOnlyTransaction(root=self.root)
+        return self.ts
 
     def buildIndexes(self):
         # Not used here
@@ -84,7 +87,6 @@ class RPMDBPackageSack(PackageSackBase):
             if not result.has_key(pkg.pkgid):
                 result[pkg.pkgid] = pkg
         del mi
-        ts.close()
         
         fileresults = self.searchFiles(name)
         for pkg in fileresults:
@@ -104,7 +106,7 @@ class RPMDBPackageSack(PackageSackBase):
             if not result.has_key(pkg.pkgid):
                 result[pkg.pkgid] = pkg
         del mi
-        ts.close()
+
         
         return result.values()
         
@@ -132,7 +134,6 @@ class RPMDBPackageSack(PackageSackBase):
                         result[pkg.pkgid] = pkg
         
         del mi
-        ts.close()
         
         return result.values()
 
@@ -213,8 +214,6 @@ class RPMDBPackageSack(PackageSackBase):
             if hdr['name'] != 'gpg-pubkey':
                 yield (hdr, mi.instance())
         del mi
-        ts.close()
-        del ts
 
     def _header_from_index(self, idx):
         """returns a package header having been given an index"""
@@ -232,8 +231,6 @@ class RPMDBPackageSack(PackageSackBase):
             del hdr
 
         del mi
-        ts.close()
-        del ts
 
     def _make_header_dict(self):
         """generate a header indexes dict that is pkgtup = index number"""
@@ -290,7 +287,6 @@ class RPMDBPackageSack(PackageSackBase):
             if hdr['name'] != 'gpg-pubkey':
                 yield (hdr, mi.instance())
 
-        ts.close()
 
     def _makePackageObject(self, hdr, index):
         po = YumInstalledPackage(hdr)
