@@ -432,7 +432,7 @@ class YumBase(depsolve.Depsolve):
         if necessary:
             msg = 'Importing additional filelist information'
             self.verbose_logger.log(logginglevels.INFO_2, msg)
-            self.repos.populateSack(with='filelists')
+            self.repos.populateSack(mdtype='filelists')
            
     def buildTransaction(self):
         """go through the packages in the transaction set, find them in the

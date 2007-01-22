@@ -90,7 +90,7 @@ class YumAvailablePackageSqlite(YumAvailablePackage):
         result = {}
         self.files = result        
         #FIXME - this should be try, excepting
-        self.sack.populate(self.repo, with='filelists')
+        self.sack.populate(self.repo, mdtype='filelists')
         cache = self.sack.filelistsdb[self.repo]
         cur = cache.cursor()
         executeSQL(cur, "select filelist.dirname as dirname, "
@@ -117,7 +117,7 @@ class YumAvailablePackageSqlite(YumAvailablePackage):
         if not self._changelog:
             if not self.sack.otherdb.has_key(self.repo):
                 try:
-                    self.sack.populate(self.repo, with='otherdata')
+                    self.sack.populate(self.repo, mdtype='otherdata')
                 except Errors.RepoError:
                     self._changelog = result
                     return

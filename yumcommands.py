@@ -272,9 +272,9 @@ class MakeCacheCommand(YumCommand):
             for repo in base.repos.findRepos('*'):
                 repo.metadata_expire = 0
             base.doRepoSetup(dosack=0)
-            base.repos.populateSack(with='metadata', cacheonly=1)
-            base.repos.populateSack(with='filelists', cacheonly=1)
-            base.repos.populateSack(with='otherdata', cacheonly=1)
+            base.repos.populateSack(mdtype='metadata', cacheonly=1)
+            base.repos.populateSack(mdtype='filelists', cacheonly=1)
+            base.repos.populateSack(mdtype='otherdata', cacheonly=1)
 
         except yum.Errors.YumBaseError, e:
             return 1, [str(e)]
