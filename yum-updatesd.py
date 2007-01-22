@@ -239,7 +239,7 @@ class UDConfig(BaseConfig):
 
 
 class UpdateBuildTransactionThread(threading.Thread):
-    def __init__(self. updd, name):
+    def __init__(self, updd, name):
         self.updd = updd
         threading.Thread.__init__(self, name=name)
 
