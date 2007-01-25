@@ -144,7 +144,8 @@ class Group(object):
                     genre = u'mandatory'
 
                 if genre not in ('mandatory', 'default', 'optional', 'conditional'):
-                    raise CompsException
+                    # just ignore bad package lines
+                    continue
 
                 package = child.text
                 if genre == 'mandatory':
