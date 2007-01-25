@@ -31,8 +31,8 @@ import Errors
 
 
 def comparePoEVR(po1, po2):
-    (e1, v1, r1) = (po1.epoch, po1.ver, po1.rel)
-    (e2, v2, r2) = (po2.epoch, po2.ver, po2.rel)
+    (e1, v1, r1) = (po1.epoch, po1.version, po1.release)
+    (e2, v2, r2) = (po2.epoch, po2.version, po2.release)
     return rpmUtils.miscutils.compareEVR((e1, v1, r1), (e2, v2, r2))
 
 def buildPkgRefDict(pkgs):
