@@ -20,7 +20,7 @@ try:
 except ImportError:
     import cElementTree
 iterparse = cElementTree.iterparse
-import exceptions
+from Errors import CompsException
 
 
 lang_attr = '{http://www.w3.org/XML/1998/namespace}lang'
@@ -34,9 +34,6 @@ def parse_boolean(strng):
 def parse_number(strng):
     return int(strng)
 
-class CompsException(exceptions.Exception):
-    pass
-        
 class Group(object):
     def __init__(self, elem=None):
         self.user_visible = True

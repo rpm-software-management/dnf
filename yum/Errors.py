@@ -86,3 +86,8 @@ class PackageSackError(YumBaseError):
     def __init__(self, value=None):
         YumBaseError.__init__(self)
         self.value = value
+
+class CompsException(YumBaseError):
+    def __init__(self, value=None):
+        YumBaseError.__init__(self)
+        self.value = value
