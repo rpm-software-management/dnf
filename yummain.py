@@ -183,7 +183,7 @@ def main(args):
     unlock()
     sys.exit(0)
 
-    
+
 if __name__ == "__main__":
     #import hotshot
     #p = hotshot.Profile(os.path.expanduser("~/yum.prof"))

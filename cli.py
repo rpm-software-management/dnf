@@ -128,12 +128,12 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         self.optparser.add_option("-t", "--tolerant", dest="tolerant",
                 action="store_true", default=False, help="be tolerant of errors")
         self.optparser.add_option("-C", "", dest="cacheonly",
-                action="store_true", default=False, 
+                action="store_true", default=False,
                 help="run entirely from cache, don't update cache")
         self.optparser.add_option("-c", "", dest="conffile", action="store", 
-                default='/etc/yum.conf', help="config file location", 
+                default='/etc/yum/yum.conf', help="config file location",
                 metavar=' [config file]')
-        self.optparser.add_option("-R", "", dest="sleeptime", action="store", 
+        self.optparser.add_option("-R", "", dest="sleeptime", action="store",
                 type='int', default=None, help="maximum command wait time",
                 metavar=' [minutes]')
         self.optparser.add_option("-d", "", dest="debuglevel", action="store", 

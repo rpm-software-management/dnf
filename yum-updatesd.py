@@ -235,7 +235,7 @@ class UDConfig(BaseConfig):
     syslog_facility = Option("DAEMON")
     syslog_level = Option("WARN")
     syslog_ident = Option("yum-updatesd")
-    yum_config = Option("/etc/yum.conf")
+    yum_config = Option("/etc/yum/yum.conf")
 
 
 class UpdateBuildTransactionThread(threading.Thread):

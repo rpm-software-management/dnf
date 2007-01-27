@@ -46,7 +46,7 @@ make
 %install
 [ "$RPM_BUILD_ROOT" != "/" ] && rm -rf $RPM_BUILD_ROOT
 make DESTDIR=$RPM_BUILD_ROOT install
-# install -m 644 %{SOURCE1} $RPM_BUILD_ROOT/etc/yum.conf
+# install -m 644 %{SOURCE1} $RPM_BUILD_ROOT/etc/yum/yum.conf
 # install -m 755 %{SOURCE2} $RPM_BUILD_ROOT/etc/cron.daily/yum.cron
 
 %clean
@@ -68,9 +68,9 @@ exit 0
 %files
 %defattr(-, root, root)
 %doc README AUTHORS COPYING TODO INSTALL ChangeLog PLUGINS
-%config(noreplace) %{_sysconfdir}/yum.conf
-%dir %{_sysconfdir}/yum.repos.d
+%config(noreplace) %{_sysconfdir}/yum/yum.conf
 %dir %{_sysconfdir}/%{name}
+%dir %{_sysconfdir}/yum/repos.d
 %config %{_sysconfdir}/logrotate.d/%{name}
 %{_datadir}/yum-cli/*
 %{_bindir}/yum

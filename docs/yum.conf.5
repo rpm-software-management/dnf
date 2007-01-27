@@ -3,11 +3,11 @@
 .LP 
 \fByum.conf\fR \- Configuration file for \fByum(8)\fR.
 .SH "DESCRIPTION"
-.LP 
-Yum uses a configuration file at \fB/etc/yum.conf\fR. 
+.LP
+Yum uses a configuration file at \fB/etc/yum/yum.conf\fR.
 .LP
 Additional configuration files are also read from the directories set by the
-\fBreposdir\fR option (default is `/etc/yum.repos.d' and `/etc/yum/repos.d'). 
+\fBreposdir\fR option (default is `/etc/yum/repos.d').
 See the \fBreposdir\fR option below for further details.
 
 .SH "PARAMETERS"
@@ -34,11 +34,11 @@ of headers and packages after succesful installation.  Default is '1'
 
 .IP \fBreposdir\fR
 A list of directories where yum should look for .repo files which define
-repositories to use. Default is `/etc/yum.repos.d, /etc/yum/repos.d'. Each
+repositories to use. Default is /etc/yum/repos.d'. Each
 file in this directory should contain one or more repository sections as
 documented in \fB[repository] options\fR below. These will be merged with the
-repositories defined in /etc/yum.conf to form the complete set of repositories
-that yum will use.
+repositories defined in /etc/yum/yum.conf to form the complete set of
+repositories that yum will use.
 
 .IP \fBdebuglevel\fR
 Debug message output level. Practical range is 0\-10. Default is `2'.
@@ -366,9 +366,9 @@ password for this proxy.
 If this is unset it inherits it from the global setting
 
 .SH "URL INCLUDE SYNTAX"
-.LP 
-The inclusion of external configuration files is supported for /etc/yum.conf
-and the .repo files in the /etc/yum.repos.d directory. To include a URL, use a
+.LP
+The inclusion of external configuration files is supported for /etc/yum/yum.conf
+and the .repo files in the /etc/yum/repos.d directory. To include a URL, use a
 line of the following format:
 
 include=url://to/some/location
@@ -404,9 +404,9 @@ configuration file variable will not be replaced.
 
 
 .SH "FILES"
-.nf 
-/etc/yum.conf
-/etc/yum.repos.d/
+.nf
+/etc/yum/yum.conf
+/etc/yum/repos.d/
 /etc/yum/pluginconf.d/
 
 .SH "SEE ALSO"

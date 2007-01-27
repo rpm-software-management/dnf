@@ -476,7 +476,7 @@ class YumConf(StartupConf):
     cachedir = Option('/var/cache/yum')
     keepcache = BoolOption(True)
     logfile = Option('/var/log/yum.log')
-    reposdir = ListOption(['/etc/yum/repos.d', '/etc/yum.repos.d'])
+    reposdir = ListOption(['/etc/yum/repos.d'])
     syslog_ident = Option()
     syslog_facility = Option('LOG_DAEMON')
 
@@ -672,7 +672,7 @@ def _getsysver(installroot, distroverpkg):
     return releasever
 
 #def main():
-#    mainconf = readMainConfig('/etc/yum.conf', '/') 
+#    mainconf = readMainConfig('/etc/yum/yum.conf', '/')
 #    repoconf = readRepoConfig(mainconf.cfg, 'core', mainconf)
 #
 #    print `repoconf.name`

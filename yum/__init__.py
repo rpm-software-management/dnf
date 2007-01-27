@@ -89,8 +89,8 @@ class YumBase(depsolve.Depsolve):
         self.doRpmDBSetup()
         self.doRepoSetup()
         self.doSackSetup()
-       
-    def doConfigSetup(self, fn='/etc/yum.conf', root='/', init_plugins=True,
+
+    def doConfigSetup(self, fn='/etc/yum/yum.conf', root='/', init_plugins=True,
             plugin_types=(plugins.TYPE_CORE,), optparser=None, debuglevel=None,
             errorlevel=None):
         '''
@@ -110,7 +110,7 @@ class YumBase(depsolve.Depsolve):
             level will be read from the configuration file.
         '''
         startupconf = config.readStartupConfig(fn, root)
-     
+
         if debuglevel != None:
             startupconf.debuglevel = debuglevel
         if errorlevel != None:
@@ -166,7 +166,7 @@ class YumBase(depsolve.Depsolve):
                 reposlist.append(thisrepo)
 
         # Read .repo files from directories specified by the reposdir option
-        # (typically /etc/yum.repos.d and /etc/yum/repos.d)
+        # (typically /etc/yum/repos.d)
         parser = ConfigParser()
         for reposdir in self.conf.reposdir:
             if os.path.exists(self.conf.installroot+'/'+reposdir):
