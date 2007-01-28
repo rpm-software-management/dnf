@@ -37,7 +37,7 @@ class PackageSackBase(object):
     def setCompatArchs(self, compatArchs):
         raise NotImplementedError()
 
-    def populate(self, repo, with, callback, cacheOnly):
+    def populate(self, repo, mdtype, callback, cacheOnly):
         raise NotImplementedError()
 
     def packagesByTuple(self, pkgtup):
@@ -213,8 +213,8 @@ class MetaSack(PackageSackBase):
         # Make sure the new sack follows the same rules we have been given.
         sack.setCompatArchs(self.compatarchs)
 
-    def populate(self, repo, with, callback, cacheOnly):
-        self.sacks[repo.id].populate(repo, with, callback, cacheOnly)
+    def populate(self, repo, mdtype, callback, cacheOnly):
+        self.sacks[repo.id].populate(repo, mdtype, callback, cacheOnly)
 
     def setCompatArchs(self, compatArchs):
         for sack in self.sacks.values():
