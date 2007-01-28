@@ -191,27 +191,27 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
         self.excludes[repo][obj.pkgId] = 1
 
     def addDict(self, repo, datatype, dataobj, callback=None):
+        if self.added.has_key(repo):
+            if datatype in self.added[repo]:
+                return
+        else:
+            self.added[repo] = []
+
         if (not self.excludes.has_key(repo)): 
             self.excludes[repo] = {}
+
         if datatype == 'metadata':
-            if (self.primarydb.has_key(repo)):
-              return
-            self.added[repo] = ['primary']
             self.primarydb[repo] = dataobj
         elif datatype == 'filelists':
-            if (self.filelistsdb.has_key(repo)):
-              return
-            self.added[repo] = ['filelists']
             self.filelistsdb[repo] = dataobj
         elif datatype == 'otherdata':
-            if (self.otherdb.has_key(repo)):
-              return
-            self.added[repo] = ['otherdata']
             self.otherdb[repo] = dataobj
         else:
             # We can not handle this yet...
             raise "Sorry sqlite does not support %s" % (datatype)
     
+        self.added[repo].append(datatype)
+
     # Get all files for a certain pkgId from the filelists.xml metadata
     # Search packages that either provide something containing name
     # or provide a file containing name 
