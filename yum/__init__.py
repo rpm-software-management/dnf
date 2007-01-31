@@ -109,6 +109,13 @@ class YumBase(depsolve.Depsolve):
         @param errorlevel: Error level to use for logging. If None, the debug
             level will be read from the configuration file.
         '''
+
+        # TODO: Remove this block when we no longer support configs outside
+        # of /etc/yum/
+        if fn == '/etc/yum/yum.conf' and not os.path.exists(fn):
+            # Try the old default
+            fn = '/etc/yum.conf'
+
         startupconf = config.readStartupConfig(fn, root)
 
         if debuglevel != None:
