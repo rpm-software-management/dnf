@@ -33,6 +33,7 @@ class RPMInstallCallback:
         self.total_removed = 0
         self.mark = "#"
         self.marks = 27
+        self.lastmsg = None
         self.logger = logging.getLogger('yum.filelogging.RPMInstallCallback')
 
         self.myprocess = { TS_UPDATE : 'Updating', 
@@ -106,6 +107,7 @@ class RPMInstallCallback:
             pass
 
         elif what == rpm.RPMCALLBACK_INST_OPEN_FILE:
+            self.lastmsg = None
             hdr = None
             if h is not None:
                 hdr, rpmloc = h
@@ -157,9 +159,11 @@ class RPMInstallCallback:
                         msg = fmt % ('Repackage', h)
                         if bytes == total:
                             msg = msg + "\n"
-                            
-                        sys.stdout.write(msg)
-                        sys.stdout.flush()
+
+                        if msg != self.lastmsg:
+                            sys.stdout.write(msg)
+                            sys.stdout.flush()
+                            self.lastmsg = msg
                 else:
                     hdr, rpmloc = h
                     if total == 0:
@@ -179,8 +183,10 @@ class RPMInstallCallback:
                             if self.output and (sys.stdout.isatty() or bytes == total):
                                 fmt = self._makefmt(percent)
                                 msg = fmt % (process, hdr['name'])
-                                sys.stdout.write(msg)
-                                sys.stdout.flush()
+                                if msg != self.lastmsg:
+                                    sys.stdout.write(msg)
+                                    sys.stdout.flush()
+                                    self.lastmsg = msg
                                 if bytes == total:
                                     print " "
 
