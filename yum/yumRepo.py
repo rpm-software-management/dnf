@@ -30,6 +30,11 @@ import storagefactory
 from yum import config
 from yum import misc
 
+import logging
+
+logger = logging.getLogger("yum.Repos")
+verbose_logger = logging.getLogger("yum.verbose.Repos")
+
 class YumPackageSack(packageSack.PackageSack):
     """imports/handles package objects from an mdcache dict object"""
     def __init__(self, packageClass):
@@ -171,6 +176,9 @@ class YumRepository(Repository, config.RepoConf):
         self.failure_obj = None
         self.mirror_failure_obj = None
         self.interrupt_callback = None
+
+        # callback function for handling media
+        self.mediafunc = None
         
         self.storage = storagefactory.GetStorage()
         self.sack = self.storage.GetPackageSack()
@@ -245,7 +253,7 @@ class YumRepository(Repository, config.RepoConf):
     def check(self):
         """self-check the repo information  - if we don't have enough to move
            on then raise a repo error"""
-        if len(self.urls) < 1:
+        if len(self.urls) < 1 and (not self.mediaid or not self.mediafunc):
             raise Errors.RepoError, \
              'Cannot find a valid baseurl for repo: %s' % self.id
 
@@ -397,8 +405,17 @@ class YumRepository(Repository, config.RepoConf):
             else: # ain't there - raise
                 raise Errors.RepoError, \
                     "Caching enabled but no local cache of %s from %s" % (local,
+
                            self)
 
+        if self.mediaid and self.mediafunc:
+            try:
+                result = self.mediafunc(local = local, checkfunc = checkfunc, relative = relative, text = text, copy_local = copy_local)
+            except MediaError, e:
+                verbose_logger(logginglevels.DEBUG_2, "Error getting package from media; falling back to url %s" %(e,))
+            else:
+                return result
+        
         if url is not None:
             ug = URLGrabber(keepalive = self.keepalive,
                             bandwidth = self.bandwidth,
@@ -498,9 +515,10 @@ class YumRepository(Repository, config.RepoConf):
             del fo
 
 
-    def setup(self, cache):
+    def setup(self, cache, mediafunc = None):
         try:
             self.cache = cache
+            self.mediafunc = mediafunc
             self.baseurlSetup()
             self.dirSetup()
         except Errors.RepoError, e:

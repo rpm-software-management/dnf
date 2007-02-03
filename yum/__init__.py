@@ -74,7 +74,17 @@ class YumBase(depsolve.Depsolve):
         # Start with plugins disabled
         self.disablePlugins()
 
-        self.localPackages = [] # for local package handling 
+        self.localPackages = [] # for local package handling
+
+        self.mediagrabber = None
+
+    def _mediaPlaceholder(self, *args, **kwargs):
+        # FIXME: this should be removed once the media bits are fully
+        # working, but this way we can do a little bit more easy testing
+        print "calling media placeholder"
+        print "args:",  args
+        print "kwargs:", kwargs
+        import pdb; pdb.set_trace()
 
     def _transactionDataFactory(self):
         """Factory method returning TransactionData object"""
@@ -304,7 +314,7 @@ class YumBase(depsolve.Depsolve):
 
         num = 1
         for repo in repos:
-            repo.setup(self.conf.cache)
+            repo.setup(self.conf.cache, self.mediagrabber)
             num += 1
             
             

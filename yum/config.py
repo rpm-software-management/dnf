@@ -528,6 +528,7 @@ class RepoConf(BaseConfig):
     enabled = Inherit(YumConf.enabled)
     baseurl = UrlListOption()
     mirrorlist = UrlOption()
+    mediaid = Option()
     gpgkey = UrlListOption()
     exclude = ListOption() 
     includepkgs = ListOption() 

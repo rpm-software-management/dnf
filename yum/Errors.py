@@ -93,6 +93,10 @@ class CompsException(YumBaseError):
         YumBaseError.__init__(self)
         self.value = value
 
+class MediaError(YumBaseError):
+    def __init__(self, value=None):
+        YumBaseError.__init__(self, value)
+
 class YumDeprecationWarning(DeprecationWarning):
     def __init__(self, value=None):
         DeprecationWarning.__init__(self, value)
