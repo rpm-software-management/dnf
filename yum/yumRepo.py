@@ -104,29 +104,54 @@ class YumPackageSack(packageSack.PackageSack):
                     continue
 
             if item == 'metadata':
-                xml = repo.getPrimaryXML()
-                xmldata = repo.repoXML.getData('primary')
-                (ctype, csum) = xmldata.checksum
-                dobj = repo.cacheHandler.getPrimary(xml, csum)
+                # retrieve _db first, if it exists, and bunzip2 it
+                db_fn = repo.retrieveMD('primary_db')
+                if db_fn:
+                    db_un_fn = db_fn.replace('.bz2', '')
+                    misc.bunzipFile(db_fn, db_un_fn)
+                    dobj = repo.cacheHandler.open_database(db_un_fn)
+
+                else:
+                    xml = repo.getPrimaryXML()
+                    xmldata = repo.repoXML.getData('primary')
+                    (ctype, csum) = xmldata.checksum
+                    dobj = repo.cacheHandler.getPrimary(xml, csum)
+
                 if not cacheonly:
                     self.addDict(repo, item, dobj, callback)
                 del dobj
 
             elif item == 'filelists':
-                xml = repo.getFileListsXML()
-                xmldata = repo.repoXML.getData('filelists')
-                (ctype, csum) = xmldata.checksum
-                dobj = repo.cacheHandler.getFilelists(xml, csum)
+                db_fn = repo.retrieveMD('filelists_db')
+                if db_fn:
+                    db_un_fn = db_fn.replace('.bz2', '')
+                    misc.bunzipFile(db_fn, db_un_fn)
+                    dobj = repo.cacheHandler.open_database(db_un_fn)
+
+                else:
+                    xml = repo.getFileListsXML()
+                    xmldata = repo.repoXML.getData('filelists')
+                    (ctype, csum) = xmldata.checksum
+                    dobj = repo.cacheHandler.getFilelists(xml, csum)
+
                 if not cacheonly:
                     self.addDict(repo, item, dobj, callback)
                 del dobj
 
 
             elif item == 'otherdata':
-                xml = repo.getOtherXML()
-                xmldata = repo.repoXML.getData('other')
-                (ctype, csum) = xmldata.checksum
-                dobj = repo.cacheHandler.getOtherdata(xml, csum)
+                db_fn = repo.retrieveMD('other_db')
+                if db_fn:
+                    db_un_fn = db_fn.replace('.bz2', '')
+                    misc.bunzipFile(db_fn, db_un_fn)
+                    dobj = repo.cacheHandler.open_database(db_un_fn)
+
+                else:
+                    xml = repo.getOtherXML()
+                    xmldata = repo.repoXML.getData('other')
+                    (ctype, csum) = xmldata.checksum
+                    dobj = repo.cacheHandler.getOtherdata(xml, csum)
+                    
                 if not cacheonly:
                     self.addDict(repo, item, dobj, callback)
                 del dobj
