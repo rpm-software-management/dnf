@@ -21,6 +21,8 @@
 # with the given txmbr. 
 
 from constants import *
+import Errors
+import warnings
 
 class TransactionData:
     """Data Structure designed to hold information on a yum Transaction Set"""
@@ -32,6 +34,8 @@ class TransactionData:
         self.pkgdict = {} # key = pkgtup, val = list of TransactionMember obj
         self.debug = 0
         self.changed = False
+        
+        self.conditionals = {} # key = pkgname, val = list of pos to add
 
     def __len__(self):
         return len(self.pkgdict.values())
@@ -126,6 +130,12 @@ class TransactionData:
                     return
         self.pkgdict[txmember.pkgtup].append(txmember)
         self.changed = True
+
+        if self.conditionals.has_key(txmember.name):
+            for po in self.conditionals[txmember.name]:
+                condtxmbr = self.addInstall(po)
+                condtxmbr.setAsDep(po=txmember.po)
+        
 
     def remove(self, pkgtup):
         """remove a package from the transaction"""
@@ -301,19 +311,11 @@ class TransactionData:
 class ConditionalTransactionData(TransactionData):
     """A transaction data implementing conditional package addition"""
     def __init__(self):
-        # Key: package name to trigger condition
-        # Value: list of package objects to add
-        self.conditionals = {}
+        warnings.warn("ConditionalTransactionData will go away in a future "
+                      "version of Yum.", Errors.YumFutureDeprecationWarning)
         TransactionData.__init__(self)
 
-    def add(self, txmember):
-        TransactionData.add(self, txmember)
-        if self.conditionals.has_key(txmember.name):
-            for po in self.conditionals[txmember.name]:
-                condtxmbr = self.addInstall(po)
-                condtxmbr.setAsDep(po=txmember.po)
-
-class SortableTransactionData(ConditionalTransactionData):
+class SortableTransactionData(TransactionData):
     """A transaction data implementing topological sort on it's members"""
     def __init__(self):
         # Cache of sort
@@ -322,7 +324,7 @@ class SortableTransactionData(ConditionalTransactionData):
         self.path = []
         # List of loops
         self.loops = []
-        ConditionalTransactionData.__init__(self)
+        TransactionData.__init__(self)
 
     def _visit(self, txmbr):
         self.path.append(txmbr.name)
@@ -344,11 +346,11 @@ class SortableTransactionData(ConditionalTransactionData):
 
     def add(self, txmember):
         txmember.sortColour = TX_WHITE
-        ConditionalTransactionData.add(self, txmember)
+        TransactionData.add(self, txmember)
         self._sorted = []
 
     def remove(self, pkgtup):
-        ConditionalTransactionData.remove(self, pkgtup)
+        TransactionData.remove(self, pkgtup)
         self._sorted = []
 
     def sort(self):

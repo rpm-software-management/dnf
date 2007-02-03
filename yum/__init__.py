@@ -78,8 +78,6 @@ class YumBase(depsolve.Depsolve):
 
     def _transactionDataFactory(self):
         """Factory method returning TransactionData object"""
-        if self.conf.enable_group_conditionals:
-            return transactioninfo.ConditionalTransactionData()
         return transactioninfo.TransactionData()
 
     def doGenericSetup(self, cache=0):
