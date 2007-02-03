@@ -17,6 +17,7 @@
 
 
 import exceptions
+import warnings
 
 
 class YumBaseError(exceptions.Exception):
@@ -91,3 +92,11 @@ class CompsException(YumBaseError):
     def __init__(self, value=None):
         YumBaseError.__init__(self)
         self.value = value
+
+class YumDeprecationWarning(DeprecationWarning):
+    def __init__(self, value=None):
+        DeprecationWarning.__init__(self, value)
+
+class YumFutureDeprecationWarning(YumDeprecationWarning):
+    def __init__(self, value=None):
+        YumDeprecationWarning.__init__(self, value)
