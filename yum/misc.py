@@ -10,6 +10,7 @@ import tempfile
 import glob
 import pwd
 import fnmatch
+import bz2
 from stat import *
 
 from Errors import MiscError
@@ -336,3 +337,17 @@ def refineSearchPattern(arg):
         
     return restring
     
+def bunzipFile(source,dest):
+    s_fn = bz2.BZ2File(source, 'r')
+    destination = (dest, 'w')
+
+    while True:
+        data = s_fn.read(1024000)
+        
+        if not data: break
+        destination.write(data)
+
+    destination.close()
+    s_fn.close()
+
+ 
