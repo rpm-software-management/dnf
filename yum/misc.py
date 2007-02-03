@@ -339,7 +339,7 @@ def refineSearchPattern(arg):
     
 def bunzipFile(source,dest):
     s_fn = bz2.BZ2File(source, 'r')
-    destination = (dest, 'w')
+    destination = open(dest, 'w')
 
     while True:
         data = s_fn.read(1024000)

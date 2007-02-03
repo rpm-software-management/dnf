@@ -102,10 +102,15 @@ class YumPackageSack(packageSack.PackageSack):
             if self.added.has_key(repo):
                 if item in self.added[repo]:
                     continue
-
+            
+            db_fn = None
             if item == 'metadata':
                 # retrieve _db first, if it exists, and bunzip2 it
-                db_fn = repo.retrieveMD('primary_db')
+                try:
+                    db_fn = repo.retrieveMD('primary_db')
+                except Errors.RepoMDError, e:
+                    pass
+                    
                 if db_fn:
                     db_un_fn = db_fn.replace('.bz2', '')
                     misc.bunzipFile(db_fn, db_un_fn)
@@ -122,7 +127,11 @@ class YumPackageSack(packageSack.PackageSack):
                 del dobj
 
             elif item == 'filelists':
-                db_fn = repo.retrieveMD('filelists_db')
+                try:
+                    db_fn = repo.retrieveMD('filelists_db')
+                except Errors.RepoMDError, e:
+                    pass
+                
                 if db_fn:
                     db_un_fn = db_fn.replace('.bz2', '')
                     misc.bunzipFile(db_fn, db_un_fn)
@@ -140,7 +149,11 @@ class YumPackageSack(packageSack.PackageSack):
 
 
             elif item == 'otherdata':
-                db_fn = repo.retrieveMD('other_db')
+                try:
+                    db_fn = repo.retrieveMD('other_db')
+                except Errors.RepoMDError, e:
+                    pass
+                
                 if db_fn:
                     db_un_fn = db_fn.replace('.bz2', '')
                     misc.bunzipFile(db_fn, db_un_fn)
