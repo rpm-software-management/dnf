@@ -17,6 +17,7 @@
 
 
 import os
+import re
 import sys
 import time
 import random
@@ -336,6 +337,30 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
             yumshell.script()
         return yumshell.result, yumshell.resultmsgs
 
+    def errorSummary(self, errstring):
+        """ parse the error string for 'interesting' errors which can
+            be grouped, such as disk space issues """
+        summary = ''
+        # do disk space report first
+        p = re.compile('needs (\d+)MB on the (\S+) filesystem')
+        disk = {}
+        for m in p.finditer(errstring):
+           if not disk.has_key(m.group(2)):
+              disk[m.group(2)]=0
+           disk[m.group(2)] += int(m.group(1))
+        if disk.keys():
+           summary += 'Disk Requirements:\n'
+           for k in disk.keys():
+              summary += '  At least %dMB needed on the %s filesystem.\n' % (disk[k], k)
+
+        # TODO: simplify the dependency errors?
+
+        # Fixup the summary
+        summary = 'Error Summary\n-------------\n' + summary
+              
+        return summary
+
+
     def doCommands(self):
         """calls the base command passes the extended commands/args out to be
         parsed. (most notably package globs). returns a numeric result code and
@@ -426,11 +451,12 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         self.verbose_logger.log(yum.logginglevels.INFO_2,
             'Finished Transaction Test')
         if len(tserrors) > 0:
-            errstring = 'Transaction Check Error: '
+            errstring = 'Transaction Check Error:\n'
             for descr in tserrors:
                 errstring += '  %s\n' % descr 
             
-            raise yum.Errors.YumBaseError, errstring
+            raise yum.Errors.YumBaseError, errstring + '\n' + \
+                 self.errorSummary(errstring)
         self.verbose_logger.log(yum.logginglevels.INFO_2,
              'Transaction Test Succeeded')
         del self.ts
