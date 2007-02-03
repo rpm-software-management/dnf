@@ -46,6 +46,9 @@ import plugins
 import logginglevels
 import yumRepo
 
+import warnings
+warnings.simplefilter("ignore", Errors.YumFutureDeprecationWarning)
+
 from packages import parsePackages, YumAvailablePackage, YumLocalPackage, YumInstalledPackage
 from constants import *
 
@@ -315,7 +318,7 @@ class YumBase(depsolve.Depsolve):
     def doSackSetup(self, archlist=None, thisrepo=None):
         """populates the package sacks for information from our repositories,
            takes optional archlist for archs to include"""
-           
+
         if self.pkgSack and thisrepo is None:
             self.verbose_logger.log(logginglevels.DEBUG_4,
                 'skipping reposetup, pkgsack exists')

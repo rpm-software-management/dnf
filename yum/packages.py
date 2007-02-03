@@ -156,8 +156,8 @@ class PackageObject(object):
         return out
 
     def returnSimple(self, varname):
-        warnings.warn("returnSimple() will go away in a furture version of Yum.\n",
-            DeprecationWarning, stacklevel=2)
+        warnings.warn("returnSimple() will go away in a future version of Yum.\n",
+                      Errors.YumFutureDeprecationWarning, stacklevel=2)
         return getattr(self, varname)
 
     def _pkgtup(self):
@@ -313,7 +313,7 @@ class RpmBase(object):
 
     def getProvidesNames(self):
         warnings.warn('getProvidesNames() will go away in a future version of Yum.\n',
-                      DeprecationWarning, stacklevel=2)
+                      Errors.YumDeprecationWarning, stacklevel=2)
         return self.provides_names
 
     filelist = property(fget=lambda self: self.returnFileEntries(ftype='file'))
@@ -483,7 +483,7 @@ class YumAvailablePackage(PackageObject, RpmBase):
     def prcoPrintable(self, prcoTuple):
         """convert the prco tuples into a nicer human string"""
         warnings.warn('prcoPrintable() will go away in a future version of Yum.\n',
-                      DeprecationWarning, stacklevel=2)
+                      Errors.YumDeprecationWarning, stacklevel=2)
         return misc.prco_tuple_to_string(prcoTuple)
 
     def requiresList(self):
@@ -641,7 +641,7 @@ class YumHeaderPackage(YumAvailablePackage):
     
     def tagByName(self, tag):
         warnings.warn("tagByName() will go away in a furture version of Yum.\n",
-            DeprecationWarning, stacklevel=2)
+                      Errors.YumFutureDeprecationWarning, stacklevel=2)
         try:
             return getattr(self, tag)
         except AttributeError:
