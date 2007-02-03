@@ -499,6 +499,33 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
             raise Errors.PackageSackError, 'No Package Matching %s' % name
         return misc.newestInList(allpkg)
 
+    # Do what packages.matchPackageNames does, but query the DB directly
+    def matchPackageNames(self, pkgspecs):
+        matched = []
+        exactmatch = []
+        unmatched = list(pkgspecs)
+        for p in pkgspecs:
+            if re.match('[\*\?\[\]]', p):
+                query = PARSE_QUERY % ({ "op": "glob", "q": p })
+                matchres = matched
+            else:
+                query = PARSE_QUERY % ({ "op": "=", "q": p })
+                matchres = exactmatch
+
+            for (rep, db) in self.primarydb.items():
+                cur = db.cursor()
+                executeSQL(cur, query)
+                res = cur.fetchall()
+                if len(res) > 0:
+                    unmatched.remove(p)
+                    pos = map(lambda x: self.pc(rep,self.db2class(x,True)), res)
+                    matchres.extend(pos)
+
+        exactmatch = misc.unique(exactmatch)
+        matched = misc.unique(matched)
+        unmatched = misc.unique(unmatched)
+        return exactmatch, matched, unmatched
+
     def returnPackages(self, repoid=None):
         """Returns a list of packages, only containing nevra information """
         returnList = []
@@ -506,7 +533,7 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
             if (repoid == None or repoid == repo.id):
                 cur = cache.cursor()
                 executeSQL(cur, "select pkgId,name,epoch,version,release,arch from packages")
-                for x in cur.fetchall():
+                for x in cur:
                     if (self.excludes[repo].has_key(x['pkgId'])):
                         continue
                     returnList.append(self.pc(repo,self.db2class(x,True)))
@@ -585,3 +612,18 @@ def decodefiletypelist(filetypestring):
     string2ft = {'f':'file','d': 'dir','g': 'ghost'}
     return [string2ft[x] for x in filetypestring]
 
+
+# Query used by matchPackageNames
+# op is either '=' or 'like', q is the search term
+# Check against name, nameArch, nameVerRelArch, nameVer, nameVerRel,
+# envra, nevra
+PARSE_QUERY = """
+select pkgId, name, arch, epoch, version, release from packages
+where name %(op)s '%(q)s'
+   or name || '.' || arch %(op)s '%(q)s'
+   or name || '-' || version %(op)s '%(q)s'
+   or name || '-' || version || '-' || release %(op)s '%(q)s'
+   or name || '-' || version || '-' || release || '.' || arch %(op)s '%(q)s'
+   or epoch || ':' || name || '-' || version || '-' || release || '.' || arch %(op)s '%(q)s'
+   or name || '-' || epoch || ':' || version || '-' || release || '.' || arch %(op)s '%(q)s'
+"""

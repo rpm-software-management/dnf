@@ -538,7 +538,6 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         
         self.doRepoSetup()
         self.doRpmDBSetup()
-        avail = self.pkgSack.returnPackages()
         toBeInstalled = {} # keyed on name
         passToUpdate = [] # list of pkgtups to pass along to updatecheck
 
@@ -551,8 +550,8 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
                          # no matter what we don't go looking at repos
 
             arglist = [arg]
-            exactmatch, matched, unmatched = parsePackages(avail, arglist, 
-                                                               casematch=1)
+            exactmatch, matched, unmatched = \
+                    self.pkgSack.matchPackageNames(arglist)
             if len(unmatched) > 0: # if we get back anything in unmatched, check it for a virtual-provide
                 arg = unmatched[0] #only one in there
                 self.verbose_logger.debug('Checking for virtual provide or file-provide for %s', 
@@ -565,7 +564,7 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
                     arg = '%s:%s-%s-%s.%s' % (mypkg.epoch, mypkg.name,
                                               mypkg.version, mypkg.release,
                                               mypkg.arch)
-                    emtch, mtch, unmtch = parsePackages(avail, [arg])
+                    emtch, mtch, unmtch = self.pkgSack.matchPackageNames([arg])
                     exactmatch.extend(emtch)
                     matched.extend(mtch)
             

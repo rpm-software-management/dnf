@@ -18,6 +18,7 @@ from Errors import PackageSackError
 import warnings
 import re
 import fnmatch
+import misc
 
 class PackageSackBase(object):
     """Base class that provides the interface for PackageSacks."""
@@ -334,6 +335,30 @@ class MetaSack(PackageSackBase):
 
     def searchAll(self, arg, query_type):
         return self._computeAggregateListResult("searchAll", arg, query_type)
+
+    def matchPackageNames(self, pkgspecs):
+        matched = []
+        exactmatch = []
+        unmatched = None
+        for sack in self.sacks.values():
+            if hasattr(sack, "matchPackageNames"):
+                e, m, u = [], [], []
+                try:
+                    e, m, u = sack.matchPackageNames(pkgspecs)
+                except PackageSackError:
+                    continue
+
+                exactmatch.extend(e)
+                matched.extend(m)
+                if unmatched is None:
+                    unmatched = set(u)
+                else:
+                    unmatched = unmatched.intersection(set(u))
+
+        matched = misc.unique(matched)
+        exactmatch = misc.unique(exactmatch)
+        unmatched = list(unmatched)
+        return exactmatch, matched, unmatched
 
     def _computeAggregateListResult(self, methodName, *args):
         result = []
