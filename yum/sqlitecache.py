@@ -78,6 +78,12 @@ class RepodataParserSqlite:
         
     def getFilename(self,location):
         return location + '.sqlite'
+    
+    def open_database(self, filename):
+        if not filename:
+            return None
+        (csum,db) = self.loadCache(filename)
+        return db
             
     def getDatabase(self, location, cachetype):
         filename = self.getFilename(location)
