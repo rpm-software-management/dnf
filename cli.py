@@ -450,6 +450,7 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         if self.conf.debuglevel < 2:
             output = 0
         cb = callback.RPMInstallCallback(output=output)
+        cb.filelog = True
         cb.tsInfo = self.tsInfo
 
         self.verbose_logger.log(yum.logginglevels.INFO_2, 'Running Transaction')

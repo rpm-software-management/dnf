@@ -302,8 +302,8 @@ class UpdateInstallThread(UpdateBuildTransactionThread):
         self.updd.ts.check() #required for ordering
         self.updd.ts.order() # order
         cb = callback.RPMInstallCallback(output = 0)
+        cb.filelog = True
             
-        # FIXME: need to do filelog
         cb.tsInfo = self.updd.tsInfo
         try:
             self.updd.runTransaction(cb=cb)
