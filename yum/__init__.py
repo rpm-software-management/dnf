@@ -925,12 +925,14 @@ class YumBase(depsolve.Depsolve):
 
     def cleanSqlite(self):
         filelist = []
-        ext = 'sqlite'
+        exts = ['sqlite', 'sqlite.bz2']
+
         removed = 0
-        for repo in self.repos.listEnabled():
-            repo.dirSetup()
-            path = repo.cachedir
-            filelist = misc.getFileList(path, ext, filelist)
+        for ext in exts:
+            for repo in self.repos.listEnabled():
+                repo.dirSetup()
+                path = repo.cachedir
+                filelist = misc.getFileList(path, ext, filelist)
             
         for item in filelist:
             try:
