@@ -17,6 +17,7 @@ import re
 import time
 import types
 import urlparse
+urlparse.uses_fragment.append("media")
 
 import Errors
 from urlgrabber.grabber import URLGrabber
@@ -31,6 +32,7 @@ from yum import config
 from yum import misc
 
 import logging
+import logginglevels
 
 logger = logging.getLogger("yum.Repos")
 verbose_logger = logging.getLogger("yum.verbose.Repos")
@@ -291,7 +293,7 @@ class YumRepository(Repository, config.RepoConf):
     def check(self):
         """self-check the repo information  - if we don't have enough to move
            on then raise a repo error"""
-        if len(self.urls) < 1 and (not self.mediaid or not self.mediafunc):
+        if len(self.urls) < 1 and not self.mediaid:
             raise Errors.RepoError, \
              'Cannot find a valid baseurl for repo: %s' % self.id
 
@@ -446,15 +448,23 @@ class YumRepository(Repository, config.RepoConf):
 
                            self)
 
+        if url:
+            (scheme, netloc, path, query, fragid) = urlparse.urlsplit(url)
+
         if self.mediaid and self.mediafunc:
+            discnum = None
+            if url:
+                if scheme == "media" and fragid:
+                    discnum = int(fragid)
             try:
-                result = self.mediafunc(local = local, checkfunc = checkfunc, relative = relative, text = text, copy_local = copy_local)
-            except MediaError, e:
-                verbose_logger(logginglevels.DEBUG_2, "Error getting package from media; falling back to url %s" %(e,))
-            else:
+                # FIXME: we need to figure out what really matters to
+                # pass to the media grabber function here
+                result = self.mediafunc(local = local, checkfunc = checkfunc, relative = relative, text = text, copy_local = copy_local, url = url, mediaid = self.mediaid, name = self.name, discnum = discnum, range = (start, end))
                 return result
+            except Errors.MediaError, e:
+                verbose_logger.log(logginglevels.DEBUG_2, "Error getting package from media; falling back to url %s" %(e,))
         
-        if url is not None:
+        if url is not None and scheme != "media":
             ug = URLGrabber(keepalive = self.keepalive,
                             bandwidth = self.bandwidth,
                             retry = self.retries,
