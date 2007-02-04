@@ -54,14 +54,14 @@ from constants import *
 
 __version__ = '3.1.0'
 
-class YumBase(depsolve.Depsolve):
+class YumBase(depsolve.AnacondaDepsolver):
     """This is a primary structure and base class. It houses the objects and
        methods needed to perform most things in yum. It is almost an abstract
        class in that you will need to add your own class above it for most
        real use."""
     
     def __init__(self):
-        depsolve.Depsolve.__init__(self)
+        depsolve.AnacondaDepsolver.__init__(self)
         self.tsInfo = None
         self.rpmdb = None
         self.up = None
