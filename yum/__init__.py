@@ -878,97 +878,41 @@ class YumBase(depsolve.Depsolve):
                     '%s removed', fn)
         
     def cleanHeaders(self):
-        filelist = []
-        ext = 'hdr'
-        removed = 0
-        for repo in self.repos.listEnabled():
-            repo.dirSetup()
-            path = repo.hdrdir
-            filelist = misc.getFileList(path, ext, filelist)
-            
-        for hdr in filelist:
-            try:
-                os.unlink(hdr)
-            except OSError, e:
-                self.logger.critical('Cannot remove header %s', hdr)
-                continue
-            else:
-                self.verbose_logger.log(logginglevels.DEBUG_4,
-                    'Header %s removed', hdr)
-                removed+=1
-        msg = '%d headers removed' % removed
-        return 0, [msg]
+        exts = ['hdr']
+        return self._cleanFiles(exts, 'hdrdir', 'header')
 
-            
     def cleanPackages(self):
-        filelist = []
-        ext = 'rpm'
-        removed = 0
-        for repo in self.repos.listEnabled():
-            repo.dirSetup()
-            path = repo.pkgdir
-            filelist = misc.getFileList(path, ext, filelist)
-            
-        for pkg in filelist:
-            try:
-                os.unlink(pkg)
-            except OSError, e:
-                self.logger.critical('Cannot remove package %s', pkg)
-                continue
-            else:
-                self.verbose_logger.log(logginglevels.DEBUG_4,
-                    'Package %s removed', pkg)
-                removed+=1
-        
-        msg = '%d packages removed' % removed
-        return 0, [msg]
+        exts = ['rpm']
+        return self._cleanFiles(exts, 'pkgdir', 'package')
 
     def cleanSqlite(self):
-        filelist = []
         exts = ['sqlite', 'sqlite.bz2']
-
-        removed = 0
-        for ext in exts:
-            for repo in self.repos.listEnabled():
-                repo.dirSetup()
-                path = repo.cachedir
-                filelist = misc.getFileList(path, ext, filelist)
-            
-        for item in filelist:
-            try:
-                os.unlink(item)
-            except OSError, e:
-                self.logger.critical('Cannot remove sqlite cache file %s', item)
-                continue
-            else:
-                self.verbose_logger.log(logginglevels.DEBUG_4,
-                    'Cache file %s removed', item)
-                removed+=1
-        msg = '%d cache files removed' % removed
-        return 0, [msg]
+        return self._cleanFiles(exts, 'cachedir', 'sqlite')
 
     def cleanMetadata(self):
-        filelist = []
         exts = ['xml.gz', 'xml', 'cachecookie']
-        
+        return self._cleanFiles(exts, 'cachedir', 'metadata') 
+
+    def _cleanFiles(self, exts, pathattr, filetype):
+        filelist = []
         removed = 0
         for ext in exts:
             for repo in self.repos.listEnabled():
                 repo.dirSetup()
-                path = repo.cachedir
+                path = getattr(repo, pathattr)
                 filelist = misc.getFileList(path, ext, filelist)
-            
+
         for item in filelist:
             try:
                 os.unlink(item)
             except OSError, e:
-                self.logger.critical('Cannot remove metadata file %s', item)
+                self.logger.critical('Cannot remove %s file %s', filetype, item)
                 continue
             else:
                 self.verbose_logger.log(logginglevels.DEBUG_4,
-                    'metadata file %s removed', item)
+                    '%s file %s removed', filetype, item)
                 removed+=1
-        msg = '%d metadata files removed' % removed
+        msg = '%d %s files removed' % (removed, filetype)
         return 0, [msg]
 
     def doPackageLists(self, pkgnarrow='all'):
