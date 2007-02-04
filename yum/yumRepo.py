@@ -115,7 +115,8 @@ class YumPackageSack(packageSack.PackageSack):
                     
                 if db_fn:
                     db_un_fn = db_fn.replace('.bz2', '')
-                    misc.bunzipFile(db_fn, db_un_fn)
+                    if not repo.cache:
+                        misc.bunzipFile(db_fn, db_un_fn)
                     dobj = repo.cacheHandler.open_database(db_un_fn)
 
                 else:
@@ -135,10 +136,11 @@ class YumPackageSack(packageSack.PackageSack):
                     pass
                 
                 if db_fn:
-                    db_un_fn = db_fn.replace('.bz2', '')
-                    misc.bunzipFile(db_fn, db_un_fn)
+                    db_un_fn = db_fn.replace('.bz2', '')                    
+                    if not repo.cache:
+                        misc.bunzipFile(db_fn, db_un_fn)
                     dobj = repo.cacheHandler.open_database(db_un_fn)
-
+                    
                 else:
                     xml = repo.getFileListsXML()
                     xmldata = repo.repoXML.getData('filelists')
@@ -158,9 +160,10 @@ class YumPackageSack(packageSack.PackageSack):
                 
                 if db_fn:
                     db_un_fn = db_fn.replace('.bz2', '')
-                    misc.bunzipFile(db_fn, db_un_fn)
+                    if not repo.cache:
+                        misc.bunzipFile(db_fn, db_un_fn)
                     dobj = repo.cacheHandler.open_database(db_un_fn)
-
+                    
                 else:
                     xml = repo.getOtherXML()
                     xmldata = repo.repoXML.getData('other')
