@@ -114,87 +114,21 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         sets up self.conf and self.cmds as well as logger objects 
         in base instance"""
         
-        def repo_optcb(optobj, opt, value, parser):
-            '''Callback for the enablerepo and disablerepo option. 
-            
-            Combines the values given for these options while preserving order
-            from command line.
-            '''
-            dest = eval('parser.values.%s' % optobj.dest)
-            dest.append((opt, value))
 
-        self.optparser = YumOptionParser( 
+        self.optparser = YumOptionParser(base=self, 
             usage='yum [options] < %s >' % (', '.join(self.yum_cli_commands)))
 
-        self.optparser.add_option("-t", "--tolerant", dest="tolerant",
-                action="store_true", default=False, help="be tolerant of errors")
-        self.optparser.add_option("-C", "", dest="cacheonly",
-                action="store_true", default=False,
-                help="run entirely from cache, don't update cache")
-        self.optparser.add_option("-c", "", dest="conffile", action="store", 
-                default='/etc/yum/yum.conf', help="config file location",
-                metavar=' [config file]')
-        self.optparser.add_option("-R", "", dest="sleeptime", action="store",
-                type='int', default=None, help="maximum command wait time",
-                metavar=' [minutes]')
-        self.optparser.add_option("-d", "", dest="debuglevel", action="store", 
-                default=None, help="debugging output level", type='int',
-                metavar=' [debug level]')
-        self.optparser.add_option("-e", "", dest="errorlevel", action="store", 
-                default=None, help="error output level", type='int',
-                metavar=' [error level]')
-        self.optparser.add_option("-y", "", dest="assumeyes",
-                action="store_true", default=False, 
-                help="answer yes for all questions")
-        self.optparser.add_option("", "--version", dest="version",
-                default=False, action="store_true", 
-                help="show Yum version and exit")
-        self.optparser.add_option("", "--installroot", dest="installroot",
-                action="store", default=None, help="set install root", 
-                metavar='[path]')
-        self.optparser.add_option("", "--enablerepo", action='callback',
-                type='string', callback=repo_optcb, dest='repos', default=[],
-                help="enable one or more repositories (wildcards allowed)",
-                metavar='[repo]')
-        self.optparser.add_option("", "--disablerepo", action='callback',
-                type='string', callback=repo_optcb, dest='repos', default=[],
-                help="disable one or more repositories (wildcards allowed)",
-                metavar='[repo]')
-        self.optparser.add_option("-x", "--exclude", dest="exclude", default=[], 
-                action="append", help="exclude package(s) by name or glob",
-                metavar='[package]')
-        self.optparser.add_option("", "--obsoletes", dest="obsoletes",
-                default=False, action="store_true", 
-                help="enable obsoletes processing during updates")
-        self.optparser.add_option("", "--noplugins", dest="noplugins",
-                default=False, action="store_true", 
-                help="disable Yum plugins")
         
         # Parse only command line options that affect basic yum setup
-        try:
-            args = _filtercmdline(
-                        ('--noplugins','--version'), 
-                        ('-c', '-d', '-e', '--installroot'), 
-                        args,
-                    )
-        except ValueError:
-            self.usage()
-            sys.exit(1)
-        opts = self.optparser.parse_args(args=args)[0]
+        opts = self.optparser.firstParse(args)
 
         # Just print out the version if that's what the user wanted
         if opts.version:
             print yum.__version__
             sys.exit(0)
 
-        # If the conf file is inside the  installroot - use that.
-        # otherwise look for it in the normal root
-        if opts.installroot:
-            if os.access(opts.installroot+'/'+opts.conffile, os.R_OK):
-                opts.conffile = opts.installroot+'/'+opts.conffile
-            root=opts.installroot
-        else:
-            root = '/'
+        # get the install root to use
+        root = self.optparser.getRoot(opts)
        
         # Read up configuration options and initialise plugins
         try:
@@ -215,66 +149,14 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         self.optparser.set_usage('yum [options] < %s >''' % (
             ', '.join(self.yum_cli_commands)))
         
-        # Now parse the command line for real
-        (opts, self.cmds) = self.optparser.parse_args()
+        # Now parse the command line for real and 
+        # apply some of the options to self.conf
+        (opts, self.cmds) = self.optparser.setupYumConfig()
 
-        # Let the plugins know what happened on the command line
-        self.plugins.setCmdLine(opts, self.cmds)
-
-        try:
-            # config file is parsed and moving us forward
-            # set some things in it.
-                
-            # version of yum
-            self.conf.yumversion = yum.__version__
-            
-            # Handle remaining options
-            if opts.assumeyes:
-                self.conf.assumeyes = 1
-
-            if opts.cacheonly:
-                self.conf.cache = 1
-
-            if opts.sleeptime is not None:
-                sleeptime = random.randrange(opts.sleeptime*60)
-            else:
-                sleeptime = 0
-
-            if opts.obsoletes:
-                self.conf.obsoletes = 1
-
-            if opts.installroot:
-                self.conf.installroot = opts.installroot
-
-            for exclude in opts.exclude:
-                try:
-                    excludelist = self.conf.exclude
-                    excludelist.append(exclude)
-                    self.conf.exclude = excludelist
-                except yum.Errors.ConfigError, e:
-                    self.logger.critical(e)
-                    self.usage()
-                    sys.exit(1)
-               
-            # Process repo enables and disables in order
-            for opt, repoexp in opts.repos:
-                try:
-                    if opt == '--enablerepo':
-                        self.repos.enableRepo(repoexp)
-                    elif opt == '--disablerepo':
-                        self.repos.disableRepo(repoexp)
-                except yum.Errors.ConfigError, e:
-                    self.logger.critical(e)
-                    self.usage()
-                    sys.exit(1)
-                            
-        except ValueError, e:
-            self.logger.critical(_('Options Error: %s'), e)
-            self.usage()
-            sys.exit(1)
-         
-        # setup the progress bars/callbacks
-        self.setupProgessCallbacks()
+        if opts.sleeptime is not None:
+            sleeptime = random.randrange(opts.sleeptime*60)
+        else:
+            sleeptime = 0
         
         # save our original args out
         self.args = args
@@ -1130,9 +1012,11 @@ class YumOptionParser(OptionParser):
     "yum way".
     '''
 
-    def __init__(self, **kwargs):
+    def __init__(self,base, **kwargs):
         OptionParser.__init__(self, **kwargs)
         self.logger = logging.getLogger("yum.cli")
+        self.base = base
+        self._addYumBasicOptions()
 
     def error(self, msg):
         '''This method is overridden so that error output goes to logger. '''
@@ -1140,6 +1024,142 @@ class YumOptionParser(OptionParser):
         self.logger.critical("Command line error: %s", msg)
         sys.exit(1)
 
+        
+    def firstParse(self,args):
+        # Parse only command line options that affect basic yum setup
+        try:
+            args = _filtercmdline(
+                        ('--noplugins','--version'), 
+                        ('-c', '-d', '-e', '--installroot'), 
+                        args)
+        except ValueError:
+            self.base.usage()
+            sys.exit(1)
+        return self.parse_args(args=args)[0]
+        
+    def setupYumConfig(self):
+        # Now parse the command line for real
+        (opts, cmds) = self.parse_args()
+
+        try:
+            # config file is parsed and moving us forward
+            # set some things in it.
+                
+            # version of yum
+            self.base.conf.yumversion = yum.__version__
+            
+            # Handle remaining options
+            if opts.assumeyes:
+                self.base.conf.assumeyes =1
+
+            if opts.cacheonly:
+                self.base.conf.cache = 1
+
+            if opts.obsoletes:
+                self.base.conf.obsoletes = 1
+
+            if opts.installroot:
+                self.base.conf.installroot = opts.installroot
+ 
+            for exclude in opts.exclude:
+                try:
+                    excludelist = self.base.conf.exclude
+                    excludelist.append(exclude)
+                    self.base.conf.exclude = excludelist
+                except yum.Errors.ConfigError, e:
+                    self.logger.critical(e)
+                    self.base.usage()
+                    sys.exit(1)
+               
+            # Process repo enables and disables in order
+            for opt, repoexp in opts.repos:
+                try:
+                    if opt == '--enablerepo':
+                        self.base.repos.enableRepo(repoexp)
+                    elif opt == '--disablerepo':
+                        self.base.repos.disableRepo(repoexp)
+                except yum.Errors.ConfigError, e:
+                    self.logger.critical(e)
+                    self.base.usage()
+                    sys.exit(1)
+                            
+        except ValueError, e:
+            self.logger.critical(_('Options Error: %s'), e)
+            self.base.usage()
+            sys.exit(1)
+         
+        # setup the progress bars/callbacks
+        self.base.setupProgessCallbacks()
+        
+        return opts, cmds
+
+    def getRoot(self,opts):
+        # If the conf file is inside the  installroot - use that.
+        # otherwise look for it in the normal root
+        if opts.installroot:
+            if os.access(opts.installroot+'/'+opts.conffile, os.R_OK):
+                opts.conffile = opts.installroot+'/'+opts.conffile
+            root=opts.installroot
+        else:
+            root = '/'
+        return root
+
+    def _addYumBasicOptions(self):
+        def repo_optcb(optobj, opt, value, parser):
+            '''Callback for the enablerepo and disablerepo option. 
+            
+            Combines the values given for these options while preserving order
+            from command line.
+            '''
+            dest = eval('parser.values.%s' % optobj.dest)
+            dest.append((opt, value))
+
+        
+        self.add_option("-t", "--tolerant", dest="tolerant",
+                action="store_true", default=False, help="be tolerant of errors")
+        self.add_option("-C", "", dest="cacheonly",
+                action="store_true", default=False,
+                help="run entirely from cache, don't update cache")
+        self.add_option("-c", "", dest="conffile", action="store", 
+                default='/etc/yum/yum.conf', help="config file location",
+                metavar=' [config file]')
+        self.add_option("-R", "", dest="sleeptime", action="store",
+                type='int', default=None, help="maximum command wait time",
+                metavar=' [minutes]')
+        self.add_option("-d", "", dest="debuglevel", action="store", 
+                default=None, help="debugging output level", type='int',
+                metavar=' [debug level]')
+        self.add_option("-e", "", dest="errorlevel", action="store", 
+                default=None, help="error output level", type='int',
+                metavar=' [error level]')
+        self.add_option("-y", "", dest="assumeyes",
+                action="store_true", default=False, 
+                help="answer yes for all questions")
+        self.add_option("", "--version", dest="version",
+                default=False, action="store_true", 
+                help="show Yum version and exit")
+        self.add_option("", "--installroot", dest="installroot",
+                action="store", default=None, help="set install root", 
+                metavar='[path]')
+        self.add_option("", "--enablerepo", action='callback',
+                type='string', callback=repo_optcb, dest='repos', default=[],
+                help="enable one or more repositories (wildcards allowed)",
+                metavar='[repo]')
+        self.add_option("", "--disablerepo", action='callback',
+                type='string', callback=repo_optcb, dest='repos', default=[],
+                help="disable one or more repositories (wildcards allowed)",
+                metavar='[repo]')
+        self.add_option("-x", "--exclude", dest="exclude", default=[], 
+                action="append", help="exclude package(s) by name or glob",
+                metavar='[package]')
+        self.add_option("", "--obsoletes", dest="obsoletes",
+                default=False, action="store_true", 
+                help="enable obsoletes processing during updates")
+        self.add_option("", "--noplugins", dest="noplugins",
+                default=False, action="store_true", 
+                help="disable Yum plugins")
+        
+        
 
         
 def _filtercmdline(novalopts, valopts, args):
