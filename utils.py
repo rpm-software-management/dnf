@@ -17,6 +17,7 @@ import sys
 
 import yum
 from cli import *
+import yum.plugins as plugins
 
 class YumUtilBase(YumBaseCli):
     def __init__(self,name,ver,usage):
