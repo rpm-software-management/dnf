@@ -1,3 +1,179 @@
+2007-02-06 10:13  timlau
+
+	* utils.py: Added missing yum.plugins import
+
+2007-02-06 10:08  timlau
+
+	* cli.py, utils.py: - Changes to yum's getOptionConfig and
+	YumOption parser to make them	    reuseable in future yum-util
+	tools.	- Added utils.py with baseclass for future yum-utils.
+
+2007-02-06 01:10  skvidal
+
+	* yum.spec, yum/__init__.py: 
+	3.1.1 labels in source and spec
+
+2007-02-05 09:38  jbowes
+
+	* yum/__init__.py: use the old depsolver for now, since the new one
+	will like, not work.
+
+2007-02-04 13:25  skvidal
+
+	* yum/yumRepo.py: 
+	make user execution from db-based-cache work
+
+2007-02-04 13:23  katzj
+
+	* yum/yumRepo.py: further support for media installs.  determine
+	the discid, don't do the url bits for scheme == media (this may
+	also work for yum 3.0.x to handle the dvd being mounted for your
+	core baseurl), and pass a few more bits
+	
+	NOTE: the arguments for the media grabber function are not at all
+	set in stone right now and will change as pirut/anaconda actually
+	use this.
+
+2007-02-04 12:32  jbowes
+
+	* yum/: __init__.py, depsolve.py: Add anaconda's no-headers
+	depsolver
+
+2007-02-04 12:30  jbowes
+
+	* yum/__init__.py: Reduce code duplication for cache cleaning
+
+2007-02-03 17:50  jbowes
+
+	* yum/__init__.py: remove the sqlite.bz2 files on clean
+
+2007-02-03 17:04  skvidal
+
+	* yum/: misc.py, repoMDObject.py, yumRepo.py: 
+	clean up the silliness to make the db on repos work
+
+2007-02-03 16:48  skvidal
+
+	* yum/yumRepo.py: check for the db file before getting the xml file
+	from the repo
+
+2007-02-03 16:47  skvidal
+
+	* yum/sqlitecache.py: 
+	add open_database function to match sqlitecachec.py in
+	metadata_parser
+
+2007-02-03 16:47  skvidal
+
+	* yum/misc.py: 
+	bunzip files
+
+2007-02-03 16:30  katzj
+
+	* yum/: Errors.py, __init__.py, config.py, yumRepo.py: start of
+	pushing media handling into yum.  define mediaid= in a repo config
+	file to say that a specific repo is tied to a specific media set. 
+	yum api users need to set self.mediagrabber in their YumBase object
+	to a function that actually does the getting of the file.
+
+2007-02-03 16:23  jbowes
+
+	* cli.py, yum/packageSack.py, yum/sqlitesack.py: Apply patch from
+	David Lutterkort for speedup of yum install
+
+2007-02-03 12:09  jbowes
+
+	* cli.py: Patch from Brian Wheeler for a nicer error summary of
+	required disk space
+
+2007-02-03 11:05  jbowes
+
+	* callback.py, cli.py, yum-updatesd.py: Fix for rhbz 222835 - Yet
+	another patch for logging
+
+2007-02-03 10:44  katzj
+
+	* yum/: __init__.py, transactioninfo.py: make conditionals not a
+	subclass since we really don't want to have to deal with that in
+	the inheritance chain.	also, it doesn't really make any difference
+	since we only add to conditionals if the config option is set
+
+2007-02-03 10:37  katzj
+
+	* yum/: __init__.py, packages.py: * filter FutureWarnings * mark
+	some things as deprecation warnings
+
+2007-02-03 10:36  katzj
+
+	* yum/Errors.py: add deprecation warnings
+
+2007-01-31 23:21  skvidal
+
+	* callback.py: 
+	merge Ed Swierk's lovely patch to keep the rpm callback from
+	updating uselessly.
+
+2007-01-30 20:26  jbowes
+
+	* docs/yum.conf.5, yum/__init__.py, yum/config.py: Add a fallback
+	to the old default locations for config stuff
+
+2007-01-28 17:57  jbowes
+
+	* yum/sqlitesack.py: Make addDict on SqlitePackageSack behave more
+	like the one on YumPackageSack
+	
+	SqlitePackageSack used to store 'metadata' in added as 'primary',
+	and only kept the last type in added. Now it stores 'metadata' as
+	'metadata', and appends to added.
+
+2007-01-28 15:05  jbowes
+
+	* yum/packageSack.py: Replace another use of 'with' with mdtype
+
+2007-01-27 10:00  skvidal
+
+	* docs/yum.8: fix unclosed parens typo in man page - closes rh bug:
+	224879
+
+2007-01-26 22:04  jbowes
+
+	* cli.py, yum-updatesd.py, yum.spec, yummain.py, docs/yum.8,
+	docs/yum.conf.5, etc/Makefile, etc/yum.conf, yum/__init__.py,
+	yum/config.py: Store all config files under /etc/yum, with no
+	fallback.
+
+2007-01-25 14:42  skvidal
+
+	* yum/: Errors.py, comps.py: 
+	make compsexception a subclass of YumBaseError
+
+2007-01-25 13:46  katzj
+
+	* yum/comps.py: ignore bad package lines to avoid barrages like
+	#224292
+
+2007-01-25 13:39  timlau
+
+	* yum/packages.py: fixed po.ver -> po.version & po.rel ->
+	po.release, because TransactionMember dont have .rel and .ver
+	properties.
+
+2007-01-22 14:22  katzj
+
+	* yum-updatesd.py: fix tyop
+
+2007-01-21 23:33  skvidal
+
+	* yumcommands.py, yum/__init__.py, yum/repos.py, yum/sqlitesack.py,
+	yum/yumRepo.py: 
+	- change out 'with' option to populate() closing rh bug 223650 -
+	add gpl headed to yumRepo.py
+
+2007-01-21 15:25  skvidal
+
+	* ChangeLog: merge in changelogs
+
 2007-01-21 15:23  skvidal
 
 	* yum.spec, yum/__init__.py: mark as 3.1.0
