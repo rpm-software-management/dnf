@@ -28,11 +28,8 @@ import mdparser
 import logging
 import logginglevels
 from sqlitesack import encodefiletypelist,encodefilenamelist
+from constants import *
 
-# This version refers to the internal structure of the sqlite cache files
-# increasing this number forces all caches of a lower version number
-# to be re-generated
-dbversion = '9'
 
 from sqlutils import executeSQL
 
@@ -68,8 +65,8 @@ class RepodataParserSqlite:
             raise sqlite.DatabaseError, "Incomplete database cache file"
 
         # Now check the database version
-        if (info['dbversion'] != dbversion):
-            self.verbose_logger.log(logginglevels.INFO_2, "Warning: cache file is version %s, we need %s, will regenerate", info['dbversion'], dbversion)
+        if (info['dbversion'] != DBVERSION):
+            self.verbose_logger.log(logginglevels.INFO_2, "Warning: cache file is version %s, we need %s, will regenerate", info['dbversion'], DBVERSION)
             raise sqlite.DatabaseError, "Older version of yum sqlite"
 
         # This appears to be a valid database, return checksum value and 
@@ -401,7 +398,7 @@ class RepodataParserSqlite:
                 executeSQL(cur, "DELETE FROM "+table+ " where pkgKey in %s" %(delpkgs,))
 
         executeSQL(cur, "INSERT into db_info (dbversion,checksum) VALUES (?,?)",
-                (dbversion,checksum))
+                (DBVERSION,checksum))
         db.commit()
         self.verbose_logger.log(logginglevels.INFO_2, "Added %s new packages, deleted %s old in %.2f seconds",
             newcount, delcount, time.time()-t)

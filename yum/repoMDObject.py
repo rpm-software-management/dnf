@@ -35,6 +35,7 @@ class RepoData:
         self.checksum = (None,None) # type,value
         self.openchecksum = (None,None) # type,value
         self.timestamp = None
+        self.dbversion = None
     
         self.parse(elem)
 
@@ -59,7 +60,8 @@ class RepoData:
             
             elif child_name == 'timestamp':
                 self.timestamp = child.text
-    
+            elif child_name == 'database_version':
+                self.dbversion = child.text
         
 class RepoMD:
     """represents the repomd xml file"""
@@ -109,6 +111,7 @@ class RepoMD:
             print 'timestamp: %s' % thisdata.timestamp
             print 'checksum: %s -%s' % thisdata.checksum
             print 'open checksum: %s - %s' %  thisdata.openchecksum
+            print 'dbversion: %s' % thisdata.dbversion
 
 def main():
 

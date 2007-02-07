@@ -30,6 +30,7 @@ import parser
 import storagefactory
 from yum import config
 from yum import misc
+from constants import *
 
 import logging
 import logginglevels
@@ -106,12 +107,15 @@ class YumPackageSack(packageSack.PackageSack):
                     continue
             
             db_fn = None
+            
             if item == 'metadata':
-                # retrieve _db first, if it exists, and bunzip2 it
-                try:
-                    db_fn = repo.retrieveMD('primary_db')
-                except Errors.RepoMDError, e:
-                    pass
+                
+                if self._check_db_version(repo, 'primary_db'):
+                    # retrieve _db first, if it exists, and bunzip2 it
+                    try:
+                        db_fn = repo.retrieveMD('primary_db')
+                    except Errors.RepoMDError, e:
+                        pass
                     
                 if db_fn:
                     db_un_fn = db_fn.replace('.bz2', '')
@@ -130,13 +134,14 @@ class YumPackageSack(packageSack.PackageSack):
                 del dobj
 
             elif item == 'filelists':
-                try:
-                    db_fn = repo.retrieveMD('filelists_db')
-                except Errors.RepoMDError, e:
-                    pass
+                if self._check_db_version(repo, 'filelists_db'):
+                    try:
+                        db_fn = repo.retrieveMD('filelists_db')
+                    except Errors.RepoMDError, e:
+                        pass
                 
                 if db_fn:
-                    db_un_fn = db_fn.replace('.bz2', '')                    
+                    db_un_fn = db_fn.replace('.bz2', '')
                     if not repo.cache:
                         misc.bunzipFile(db_fn, db_un_fn)
                     dobj = repo.cacheHandler.open_database(db_un_fn)
@@ -153,10 +158,11 @@ class YumPackageSack(packageSack.PackageSack):
 
 
             elif item == 'otherdata':
-                try:
-                    db_fn = repo.retrieveMD('other_db')
-                except Errors.RepoMDError, e:
-                    pass
+                if self._check_db_version(repo, 'other_db'):
+                    try:
+                        db_fn = repo.retrieveMD('other_db')
+                    except Errors.RepoMDError, e:
+                        pass
                 
                 if db_fn:
                     db_un_fn = db_fn.replace('.bz2', '')
@@ -180,6 +186,12 @@ class YumPackageSack(packageSack.PackageSack):
         # get rid of all this stuff we don't need now
         del repo.cacheHandler
 
+    def _check_db_version(self, repo, mdtype):
+        if repo.repoXML.repoData.has_key(mdtype):
+            if DBVERSION == repo.repoXML.repoData[mdtype].dbversion:
+                return True
+        return False
+        
 class YumRepository(Repository, config.RepoConf):
     """
     This is an actual repository object
