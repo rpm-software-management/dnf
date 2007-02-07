@@ -1,3 +1,12 @@
+2007-02-07 01:05  skvidal
+
+	* cli.py: 
+	fix yum deplist to work with new matchPackageNames method
+
+2007-02-07 00:20  skvidal
+
+	* ChangeLog: check in changelog
+
 2007-02-06 10:13  timlau
 
 	* utils.py: Added missing yum.plugins import
