@@ -54,14 +54,14 @@ from constants import *
 
 __version__ = '3.1.1'
 
-class YumBase(depsolve.Depsolve):
+class YumBase(depsolve.AnacondaDepsolver):
     """This is a primary structure and base class. It houses the objects and
        methods needed to perform most things in yum. It is almost an abstract
        class in that you will need to add your own class above it for most
        real use."""
     
     def __init__(self):
-        depsolve.Depsolve.__init__(self)
+        depsolve.AnacondaDepsolver.__init__(self)
         self.tsInfo = None
         self.rpmdb = None
         self.up = None
@@ -77,14 +77,6 @@ class YumBase(depsolve.Depsolve):
         self.localPackages = [] # for local package handling
 
         self.mediagrabber = None
-
-    def _mediaPlaceholder(self, *args, **kwargs):
-        # FIXME: this should be removed once the media bits are fully
-        # working, but this way we can do a little bit more easy testing
-        print "calling media placeholder"
-        print "args:",  args
-        print "kwargs:", kwargs
-        import pdb; pdb.set_trace()
 
     def _transactionDataFactory(self):
         """Factory method returning TransactionData object"""
@@ -650,6 +642,21 @@ class YumBase(depsolve.Depsolve):
             
            
     def downloadPkgs(self, pkglist, callback=None):
+        def mediasort(a, b):
+            # FIXME: we should probably also use the mediaid; else we
+            # could conceivably ping-pong between different disc1's
+            a = a.getDiscNum()
+            b = b.getDiscNum()
+            if a is None:
+                return -1
+            if b is None:
+                return 1
+            if a < b:
+                return -1
+            elif a > b:
+                return 1
+            return 0
+        
         """download list of package objects handed to you, output based on
            callback, raise yum.Errors.YumBaseError on problems"""
 
@@ -689,6 +696,7 @@ class YumBase(depsolve.Depsolve):
                 return errors
                 
 
+        remote_pkgs.sort(mediasort)
         i = 0
         for po in remote_pkgs:
             i += 1

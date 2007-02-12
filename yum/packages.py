@@ -23,11 +23,13 @@ import re
 import fnmatch
 import stat
 import warnings
-from urlparse import urljoin
 from rpmUtils import RpmUtilsError
 import rpmUtils.arch
 import rpmUtils.miscutils
 import Errors
+
+import urlparse
+urlparse.uses_fragment.append("media")
 
 
 def comparePoEVR(po1, po2):
@@ -421,14 +423,19 @@ class YumAvailablePackage(PackageObject, RpmBase):
         you should use self.repo.getPackage."""
         base = self.basepath
         if base:
-            return urljoin(base, self.remote_path)
-        return urljoin(self.repo.urls[0], self.remote_path)
+            return urlparse.urljoin(base, self.remote_path)
+        return urlparse.urljoin(self.repo.urls[0], self.remote_path)
     
     size = property(_size)
     remote_path = property(_remote_path)
     remote_url = property(_remote_url)
-    
-    
+
+
+    def getDiscNum(self):
+        (scheme, netloc, path, query, fragid) = urlparse.urlsplit(self.basepath)
+        if scheme == "media":
+            return int(fragid)
+        return None
     
     def returnLocalHeader(self):
         """returns an rpm header object from the package object's local
@@ -525,7 +532,7 @@ class YumAvailablePackage(PackageObject, RpmBase):
 
             self.basepath = url
             self.relativepath = pkgdict.location['href']
-        
+
         if hasattr(pkgdict, 'hdrange'):
             self.hdrstart = pkgdict.hdrange['start']
             self.hdrend = pkgdict.hdrange['end']
@@ -593,7 +600,7 @@ class YumHeaderPackage(YumAvailablePackage):
         self.rel = self.release
         self.summary = self.hdr['summary']
         self.description = self.hdr['description']
-        self.pkgid = self.hdr[rpm.RPMTAG_SHA1HEADER]
+        self.pkgid = self.hdr[rpm.RPMTAG_SHA1HEADER] or self.hdr[rpm.RPMTAG_SIGMD5]
         self.packagesize = self.hdr['size']
         self.__mode_cache = {}
         self.__prcoPopulated = False

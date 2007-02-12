@@ -467,7 +467,7 @@ class YumRepository(Repository, config.RepoConf):
             (scheme, netloc, path, query, fragid) = urlparse.urlsplit(url)
 
         if self.mediaid and self.mediafunc:
-            discnum = None
+            discnum = 1
             if url:
                 if scheme == "media" and fragid:
                     discnum = int(fragid)
