@@ -902,11 +902,29 @@ class AnacondaDepsolver(Depsolve):
         for prov in provs:
             if prov[0].startswith('rpmlib('): # ignore rpmlib() provides
                 continue
-            if prov[0].startswith("/usr/share/doc"): # ignore doc files
+            if prov[0].startswith("/usr/share/doc"): # XXX: ignore doc files
                 continue
             self.verbose_logger.log(logginglevels.DEBUG_4, "looking to see what requires %s of %s" %(prov, txmbr.po))
             (r, f, v) = prov
 
+            removeList = []
+            # we don't care if they require exactly our version
+            for pkgtup in self.rpmdb.whatRequires(r, None, v):
+                if pkgtup in removeList:
+                    continue
+                # check the rpmdb first for something still installed
+                txmbrs = self.tsInfo.getMembers(pkgtup)
+                toRemove = False
+                for tx in txmbrs:
+                    if tx.output_state in TS_REMOVE_STATES:
+                        toRemove = True
+                        break
+                if not toRemove:
+                    removeList.append(pkgtup)
+
+            if len(removeList) == 0:
+                continue
+            
             # if something else provides this name and it's not being
             # removed, then we don't need to worry about it
             stillavail = False
@@ -915,32 +933,21 @@ class AnacondaDepsolver(Depsolve):
                 if len(txmbrs) == 0: # not in tsinfo, so must still be avail
                     stillavail = True
                     break
-                for txmbr in txmbrs:
-                    if txmbr.output_state not in TS_REMOVE_STATES:
+                for tx in txmbrs:
+                    if tx.output_state not in TS_REMOVE_STATES:
                         stillavail = True # it's being installed
                         break
             if stillavail:
                 self.verbose_logger.log(logginglevels.DEBUG_1, "more than one package provides %s" %(r,))                    
                 continue
 
-            # we don't care if they require exactly our version
-            f = None
-            for pkgtup in self.rpmdb.whatRequires(r, f, v):
-                # check the rpmdb first for something still installed
-                txmbrs = self.tsInfo.getMembers(pkgtup)
-                toRemove = False
-                for txmbr in txmbrs:
-                    if txmbr.output_state in TS_REMOVE_STATES:
-                        toRemove = True
-                        break
-                if not toRemove:
-                    po = self.getInstalledPackageObject(pkgtup)
-                    self.verbose_logger.info("removing %s for %s, was provided by %s" %(po, r, txmbr.po))
-                    tx = self.tsInfo.addErase(po)
-                    tx.setAsDep(po = txmbr.po)
-                    ret.append(tx)
-
-                
+            for pkgtup in removeList:
+                po = self.getInstalledPackageObject(pkgtup)
+                self.verbose_logger.info("removing %s for %s, was provided by %s" %(po, r, txmbr.po))
+                tx = self.tsInfo.addErase(po)
+                tx.setAsDep(po = txmbr.po)
+                ret.append(tx)
+            
         return ret
 
     def tsCheck(self, tocheck):
