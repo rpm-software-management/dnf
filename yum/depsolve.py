@@ -777,12 +777,26 @@ class AnacondaDepsolver(Depsolve):
         best = None
         (r, f, v) = req
 
+        for pkgtup in self.rpmdb.whatProvides(r, f, v):
+            # check the rpmdb first for something providing it that's not
+            # set to be removed
+            txmbrs = self.tsInfo.getMembers(pkgtup)
+            if not txmbrs:
+                po = self.getInstalledPackageObject(pkgtup)            
+                self.deps[req] = po                
+                return po
+            for txmbr in txmbrs:
+                if txmbr.output_state not in TS_REMOVE_STATES:
+                    po = self.getInstalledPackageObject(pkgtup)
+                    self.deps[req] = po                
+                    return po
+
         satisfiers = []
         for po in self.whatProvides(r, f, v):
-            # if we already have something installed which does the provide
-            # then that's obviously the one we want to use.  this takes
-            # care of the case that we select, eg, kernel-smp and then
-            # have something which requires kernel
+            # if we already have something to be installed which
+            # does the provide then that's obviously the one we want to use.
+            # this takes care of the case that we select, eg, kernel-smp
+            # and then have something which requires kernel
             if self.tsInfo.getMembers(po.pkgtup):
                 self.deps[req] = po
                 return po
@@ -820,11 +834,114 @@ class AnacondaDepsolver(Depsolve):
         while len(unresolved) > 0:
             if self.dsCallback: self.dsCallback.tscheck()
             unresolved = self.tsCheck(unresolved)
-            if self.dsCallback: self.dsCallback.restartLoop()
+            if len(unresolved) > 0:
+                if self.dsCallback: self.dsCallback.restartLoop()
         self.deps = {}
         self.loops = []
         self.path = []
+        self.tsInfo.changed = False        
         return (2, ['Success - deps resolved'])
+
+    def _checkInstall(self, txmbr):
+        reqs = txmbr.po.returnPrco('requires')
+        provs = txmbr.po.returnPrco('provides')
+
+        ret = []
+        for req in reqs:
+            if req[0].startswith('rpmlib(') or req[0].startswith('config('):
+                continue
+            if req in provs:
+                continue
+            self.verbose_logger.log(logginglevels.DEBUG_2, "looking for %s as a requirement of %s" %(req, txmbr))
+            dep = self.deps.get(req, None)
+            if dep is None:
+                dep = self._provideToPkg(req)
+                if dep is None:
+                    self.verbose_logger.warning("Unresolvable dependency %s in %s"
+                                                %(req[0], txmbr.name))
+                    continue
+
+            # Skip filebased requires on self, etc
+            if txmbr.name == dep.name:
+                continue
+            # FIXME: Yum doesn't need this, right?
+            #if (dep.name, txmbr.name) in whiteout.whitetup:
+            #   log.debug("ignoring %s>%s in whiteout" %(dep.name, txmbr.name))
+            #   continue
+            if self.isPackageInstalled(dep.name):
+                continue
+            if self.tsInfo.exists(dep.pkgtup):
+                pkgs = self.tsInfo.getMembers(pkgtup=dep.pkgtup)
+                member = self.bestPackagesFromList(pkgs)[0]
+            else:
+                if dep.name != req[0]:
+                    self.verbose_logger.info("adding %s for %s, required by %s" %(dep.name, req[0], txmbr.name))
+
+                member = self.tsInfo.addInstall(dep)
+                ret.append(member)
+
+            #Add relationship
+            found = False
+            for dependspo in txmbr.depends_on:
+                if member.po == dependspo:
+                    found = True
+                    break
+            if not found:
+                member.setAsDep(txmbr.po)
+        return ret
+
+    def _checkRemove(self, txmbr):
+        provs = txmbr.po.returnPrco('provides')
+
+        # get the files in the package and express them as "provides"
+        files = txmbr.po.filelist
+        filesasprovs = map(lambda f: (f, None, None), files)
+        provs.extend(filesasprovs)
+
+        ret = []
+        for prov in provs:
+            if prov[0].startswith('rpmlib('): # ignore rpmlib() provides
+                continue
+            if prov[0].startswith("/usr/share/doc"): # ignore doc files
+                continue
+            self.verbose_logger.log(logginglevels.DEBUG_4, "looking to see what requires %s of %s" %(prov, txmbr.po))
+            (r, f, v) = prov
+
+            # if something else provides this name and it's not being
+            # removed, then we don't need to worry about it
+            stillavail = False
+            for pkgtup in self.rpmdb.whatProvides(r, None, None):
+                txmbrs = self.tsInfo.getMembers(pkgtup)
+                if len(txmbrs) == 0: # not in tsinfo, so must still be avail
+                    stillavail = True
+                    break
+                for txmbr in txmbrs:
+                    if txmbr.output_state not in TS_REMOVE_STATES:
+                        stillavail = True # it's being installed
+                        break
+            if stillavail:
+                self.verbose_logger.log(logginglevels.DEBUG_1, "more than one package provides %s" %(r,))                    
+                continue
+
+            # we don't care if they require exactly our version
+            f = None
+            for pkgtup in self.rpmdb.whatRequires(r, f, v):
+                # check the rpmdb first for something still installed
+                txmbrs = self.tsInfo.getMembers(pkgtup)
+                toRemove = False
+                for txmbr in txmbrs:
+                    if txmbr.output_state in TS_REMOVE_STATES:
+                        toRemove = True
+                        break
+                if not toRemove:
+                    po = self.getInstalledPackageObject(pkgtup)
+                    self.verbose_logger.info("removing %s for %s, was provided by %s" %(po, r, txmbr.po))
+                    tx = self.tsInfo.addErase(po)
+                    tx.setAsDep(po = txmbr.po)
+                    ret.append(tx)
+
+                
+        return ret
 
     def tsCheck(self, tocheck):
         unresolved = []
@@ -835,51 +952,10 @@ class AnacondaDepsolver(Depsolve):
                 continue
             # FIXME: Not enough args
             #if self.dsCallback: self.dsCallback.pkgAdded()
-            if txmbr.output_state not in TS_INSTALL_STATES:
-                continue
-            reqs = txmbr.po.returnPrco('requires')
-            provs = txmbr.po.returnPrco('provides')
-
-            for req in reqs:
-                if req[0].startswith('rpmlib(') or req[0].startswith('config('):
-                    continue
-                if req in provs:
-                    continue
-                dep = self.deps.get(req, None)
-                if dep is None:
-                    dep = self._provideToPkg(req)
-                    if dep is None:
-                        self.verbose_logger.warning("Unresolvable dependency %s in %s"
-                                    %(req[0], txmbr.name))
-                        continue
-
-                # Skip filebased requires on self, etc
-                if txmbr.name == dep.name:
-                    continue
-# FIXME: Yum doesn't need this, right?
-#                if (dep.name, txmbr.name) in whiteout.whitetup:
-#                    log.debug("ignoring %s>%s in whiteout" %(dep.name, txmbr.name))
-#                    continue
-                if self.isPackageInstalled(dep.name):
-                    continue
-                if self.tsInfo.exists(dep.pkgtup):
-                    pkgs = self.tsInfo.getMembers(pkgtup=dep.pkgtup)
-                    member = self.bestPackagesFromList(pkgs)[0]
-                else:
-                    if dep.name != req[0]:
-                        self.verbose_logger.info("adding %s for %s, required by %s" %(dep.name, req[0], txmbr.name))
-
-                    member = self.tsInfo.addInstall(dep)
-                    unresolved.append(member)
-
-                #Add relationship
-                found = False
-                for dependspo in txmbr.depends_on:
-                    if member.po == dependspo:
-                        found = True
-                        break
-                if not found:
-                    member.setAsDep(txmbr.po)
+            if txmbr.output_state in TS_INSTALL_STATES:
+                unresolved.extend(self._checkInstall(txmbr))
+            elif txmbr.output_state in TS_REMOVE_STATES:
+                unresolved.extend(self._checkRemove(txmbr))
 
         return unresolved
 

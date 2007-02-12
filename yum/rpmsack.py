@@ -412,12 +412,44 @@ class RPMDBPackageSack(PackageSackBase):
 
             if po.checkPrco('provides', (name, flags, (r_e, r_v, r_r))):
                 defSack.addPackage(po)
-        
+
         returnlist = []
         for pkg in defSack.returnPackages():
             returnlist.append(pkg.pkgtup)
         
         return returnlist
+
+    def whatRequires(self, name, flags, version):
+        """searches the rpmdb for what provides the arguments
+           returns a list of pkgtuples of providing packages, possibly empty"""
+
+        pkgs = self.searchRequires(name)
+        
+        if flags == 0:
+            flags = None
+        if type(version) is types.StringType:
+            (r_e, r_v, r_r) = miscutils.stringToVersion(version)
+        elif type(version) in (types.TupleType, types.ListType): # would this ever be a ListType?
+            (r_e, r_v, r_r) = version
+        elif type(version) is types.NoneType:
+            r_e = r_v = r_r = None
+        
+        defSack = ListPackageSack() # holder for items definitely providing this dep
+        
+        for po in pkgs:
+            if name[0] == '/' and r_v is None:
+                # file dep add all matches to the defSack
+                defSack.addPackage(po)
+                continue
+
+            if po.checkPrco('requires', (name, flags, (r_e, r_v, r_r))):
+                defSack.addPackage(po)
+
+        returnlist = []
+        for pkg in defSack.returnPackages():
+            returnlist.append(pkg.pkgtup)
+        
+        return returnlist    
             
 def main():
     sack = RPMDBPackageSack('/')
