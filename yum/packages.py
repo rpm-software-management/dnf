@@ -717,8 +717,8 @@ class YumHeaderPackage(YumAvailablePackage):
         # then create a _loadChangelog() method to put them into the 
         # self._changelog attr
         if len(self.hdr['changelogname']) > 0:
-            return zip(self.hdr['changelogname'],
-                       self.hdr['changelogtime'],
+            return zip(self.hdr['changelogtime'],
+                       self.hdr['changelogname'],
                        self.hdr['changelogtext'])
         return []
 
