@@ -857,6 +857,7 @@ class AnacondaDepsolver(Depsolve):
             if dep is None:
                 dep = self._provideToPkg(req)
                 if dep is None:
+                    # FIXME: We need to fail here.
                     self.verbose_logger.warning("Unresolvable dependency %s in %s"
                                                 %(req[0], txmbr.name))
                     continue
