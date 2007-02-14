@@ -298,7 +298,7 @@ class UpdateInstallThread(UpdateBuildTransactionThread):
 
         del self.updd.ts
         self.updd.initActionTs() # make a new, blank ts to populate
-        self.updd.populateTs(keepold=0)
+        self.updd.populateTs(keepold=0, noheaders=True)
         self.updd.ts.check() #required for ordering
         self.updd.ts.order() # order
         cb = callback.RPMInstallCallback(output = 0)

@@ -120,7 +120,7 @@ class Depsolve(object):
         
         return 0
 
-    def populateTs(self, test=0, keepold=1):
+    def populateTs(self, test=0, keepold=1, noheaders=False):
         """take transactionData class and populate transaction set"""
 
         if self.dsCallback: self.dsCallback.transactionPopulation()
@@ -147,9 +147,15 @@ class Depsolve(object):
             if txmbr.ts_state in ['u', 'i']:
                 if ts_elem.has_key((txmbr.pkgtup, 'i')):
                     continue
-                self.downloadHeader(txmbr.po)
-                hdr = txmbr.po.returnLocalHeader()
                 rpmfile = txmbr.po.localPkg()
+                if not noheaders:
+                    self.downloadHeader(txmbr.po)
+                    hdr = txmbr.po.returnLocalHeader()
+                else:
+                    # get header from the rpm itself
+                    # maybe we should check to see if the file exists, first?
+
+                    hdr = txmbr.po.returnHeaderFromPackage(self.ts)
                 
                 if txmbr.ts_state == 'u':
                     if self.allowedMultipleInstalls(txmbr.po):

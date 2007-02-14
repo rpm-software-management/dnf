@@ -439,6 +439,11 @@ class YumAvailablePackage(PackageObject, RpmBase):
             return int(fragid)
         return None
     
+    def returnHeaderFromPackage(self, read_ts):
+        rpmfile = self.localPkg()
+        hdr = rpmUtils.miscutils.hdrFromPackage(read_ts, rpmfile)
+        return hdr
+        
     def returnLocalHeader(self):
         """returns an rpm header object from the package object's local
            header cache"""
