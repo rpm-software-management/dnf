@@ -315,7 +315,7 @@ def stringToVersion(verstring):
     i = verstring.find(':')
     if i != -1:
         try:
-            epoch = long(verstring[:i])
+            epoch = str(long(verstring[:i]))
         except ValueError:
             # look, garbage in the epoch field, how fun, kill it
             epoch = '0' # this is our fallback, deal
