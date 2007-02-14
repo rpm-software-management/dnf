@@ -1056,7 +1056,7 @@ class YumDepsolver(Depsolve):
         return ret
 
     def resolveDeps(self):
-        CheckDeps = 1
+        CheckDeps = True
         conflicts = 0
         missingdep = 0
         depscopy = []
@@ -1065,7 +1065,7 @@ class YumDepsolver(Depsolve):
         errors = []
         if self.dsCallback: self.dsCallback.start()
 
-        while CheckDeps > 0:
+        while CheckDeps:
             self.cheaterlookup = {} # short cache for some information we'd resolve
                                     # (needname, needversion) = pkgtup
             if self.dsCallback: self.dsCallback.tscheck()
@@ -1096,13 +1096,13 @@ class YumDepsolver(Depsolve):
                                                                           needversion, flags))
 
                         errors.append(msg)
-                    CheckDeps = 0
+                    CheckDeps = False
                     break
             else:
                 unresolveableloop = 0
 
             depscopy = deps
-            CheckDeps = 0
+            CheckDeps = False
 
 
             # things to resolve
@@ -1134,7 +1134,7 @@ class YumDepsolver(Depsolve):
                 
                 missingdep += missing
                 conflicts += conflict
-                CheckDeps += checkdep
+                CheckDeps |= checkdep
                 for error in errormsgs:
                     if error not in errors:
                         errors.append(error)
@@ -1143,7 +1143,7 @@ class YumDepsolver(Depsolve):
             self.verbose_logger.log(logginglevels.DEBUG_1, 'conf = %d', conflicts)
             self.verbose_logger.log(logginglevels.DEBUG_1, 'CheckDeps = %d', CheckDeps)
 
-            if CheckDeps > 0:
+            if CheckDeps:
                 if self.dsCallback: self.dsCallback.restartLoop()
                 self.verbose_logger.log(logginglevels.DEBUG_1, 'Restarting Loop')
             else:
