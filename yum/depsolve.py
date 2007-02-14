@@ -21,7 +21,7 @@ import logging
 import rpmUtils.transaction
 import rpmUtils.miscutils
 import rpmUtils.arch
-from misc import unique
+from misc import unique, version_tuple_to_string
 import rpm
 
 from packageSack import ListPackageSack
@@ -85,7 +85,7 @@ class Depsolve(object):
         
         if flags == 0:
             flags = None
-        if type(version) in (types.StringType, types.NoneType):
+        if type(version) in (types.StringType, types.NoneType, types.UnicodeType):
             (r_e, r_v, r_r) = rpmUtils.miscutils.stringToVersion(version)
         elif type(version) in (types.TupleType, types.ListType): # would this ever be a ListType?
             (r_e, r_v, r_r) = version
@@ -969,3 +969,364 @@ class AnacondaDepsolver(Depsolve):
 
     def _transactionDataFactory(self):
         return SplitMediaTransactionData()
+
+class YumDepsolver(Depsolve):
+    def __init__(self):
+        Depsolve.__init__(self)
+        self.deps = {}
+        self.path = []
+        self.loops = []
+
+    def isPackageInstalled(self, pkgname):
+        # FIXME: this sucks.  we should probably suck it into yum proper
+        # but it'll need a bit of cleanup first.
+        if not self.rpmdb.installed(name = pkgname):
+            return False
+
+        lst = self.tsInfo.matchNaevr(name = pkgname)
+        for txmbr in lst:
+            if txmbr.output_state in TS_INSTALL_STATES:
+                return True
+        if len(lst) > 0:
+            # if we get here, then it was installed, but it's in the tsInfo
+            # for an erase or obsoleted --> not going to be installed at end
+            return False
+        return True
+
+    def _provideToPkg(self, req):
+        best = None
+        (r, f, v) = req
+
+        for pkgtup in self.rpmdb.whatProvides(r, f, v):
+            # check the rpmdb first for something providing it that's not
+            # set to be removed
+            txmbrs = self.tsInfo.getMembers(pkgtup)
+            if not txmbrs:
+                po = self.getInstalledPackageObject(pkgtup)            
+                self.deps[req] = po                
+                return po
+            for txmbr in txmbrs:
+                if txmbr.output_state not in TS_REMOVE_STATES:
+                    po = self.getInstalledPackageObject(pkgtup)
+                    self.deps[req] = po                
+                    return po
+
+        for po in self.whatProvides(r, f, v):
+            # if we already have something to be installed which
+            # does the provide then that's obviously the one we want to use.
+            # this takes care of the case that we select, eg, kernel-smp
+            # and then have something which requires kernel
+            if self.tsInfo.getMembers(po.pkgtup):
+                self.deps[req] = po
+                return po
+
+        return None # for new ts check attempt
+
+    def _undoDepInstalls(self):
+        # clean up after ourselves in the case of failures
+        for txmbr in self.tsInfo:
+            if txmbr.isDep:
+                self.tsInfo.remove(txmbr.pkgtup)
+
+    def prof_resolveDeps(self):
+        fn = "anaconda.prof.0"
+        import hotshot, hotshot.stats
+        prof = hotshot.Profile(fn)
+        rc = prof.runcall(self._resolveDeps)
+        prof.close()
+        print "done running depcheck"
+        stats = hotshot.stats.load(fn)
+        stats.strip_dirs()
+        stats.sort_stats('time', 'calls')
+        stats.print_stats(20)
+        return rc
+
+    def _mytsCheck(self):
+        # returns a list of tuples
+        # ((name, version, release), (needname, needversion), flags, suggest, sense)
+        ret = []
+        for txmbr in self.tsInfo.getMembers():
+            if txmbr.output_state in (TS_INSTALL, TS_TRUEINSTALL, TS_OBSOLETING):
+                ret.extend(self._checkInstall(txmbr))
+            elif txmbr.output_state in (TS_UPDATE,):
+                ret.extend(self._checkUpdate(txmbr))
+            elif txmbr.output_state in TS_REMOVE_STATES:
+                ret.extend(self._checkRemove(txmbr))
+
+        return ret
+
+    def resolveDeps(self):
+        CheckDeps = 1
+        conflicts = 0
+        missingdep = 0
+        depscopy = []
+        unresolveableloop = 0
+
+        errors = []
+        if self.dsCallback: self.dsCallback.start()
+
+        while CheckDeps > 0:
+            self.cheaterlookup = {} # short cache for some information we'd resolve
+                                    # (needname, needversion) = pkgtup
+            if self.dsCallback: self.dsCallback.tscheck()
+            deps = self._mytsCheck()
+
+            
+            if not deps:
+                self.tsInfo.changed = False
+                return (2, ['Success - deps resolved'])
+
+            deps = unique(deps) # get rid of duplicate deps            
+            if deps == depscopy:
+                unresolveableloop += 1
+                self.verbose_logger.log(logginglevels.DEBUG_2,
+                    'Identical Loop count = %d', unresolveableloop)
+                if unresolveableloop >= 2:
+                    errors.append('Unable to satisfy dependencies')
+                    for deptuple in deps:
+                        ((name, version, release), (needname, needversion), flags, 
+                          suggest, sense) = deptuple
+                        if sense == rpm.RPMDEP_SENSE_REQUIRES:
+                            msg = 'Package %s-%s-%s needs %s, this is not available.' % \
+                                  (name, version, release, rpmUtils.miscutils.formatRequire(needname, 
+                                                                          needversion, flags))
+                        elif sense == rpm.RPMDEP_SENSE_CONFLICTS:
+                            msg = 'Package %s conflicts with %s.' % \
+                                  (name, rpmUtils.miscutils.formatRequire(needname, 
+                                                                          needversion, flags))
+
+                        errors.append(msg)
+                    CheckDeps = 0
+                    break
+            else:
+                unresolveableloop = 0
+
+            depscopy = deps
+            CheckDeps = 0
+
+
+            # things to resolve
+            self.verbose_logger.debug('# of Deps = %d', len(deps))
+            depcount = 0
+            for dep in deps:
+                dep_start_time = time.time()
+                ((name, version, release), (needname, needversion), flags, suggest, sense) = dep
+                depcount += 1
+                self.verbose_logger.log(logginglevels.DEBUG_2,
+                    '\nDep Number: %d/%d\n', depcount, len(deps))
+                if sense == rpm.RPMDEP_SENSE_REQUIRES: # requires
+                    # if our packageSacks aren't here, then set them up
+                    if self.pkgSack is None:
+                        self.doRepoSetup()
+                        self.doSackSetup()
+                    (checkdep, missing, conflict, errormsgs) = self._processReq(dep)
+                    
+                elif sense == rpm.RPMDEP_SENSE_CONFLICTS: # conflicts - this is gonna be short :)
+                    (checkdep, missing, conflict, errormsgs) = self._processConflict(dep)
+                    
+                else: # wtf?
+                    self.logger.critical('Unknown Sense: %d', sense)
+                    continue
+                
+                dep_end_time = time.time()
+                dep_proc_time = dep_end_time - dep_start_time
+                self.verbose_logger.log(logginglevels.DEBUG_2, 'processing dep took: %f' % dep_proc_time)
+                
+                missingdep += missing
+                conflicts += conflict
+                CheckDeps += checkdep
+                for error in errormsgs:
+                    if error not in errors:
+                        errors.append(error)
+
+            self.verbose_logger.log(logginglevels.DEBUG_1, 'miss = %d', missingdep)
+            self.verbose_logger.log(logginglevels.DEBUG_1, 'conf = %d', conflicts)
+            self.verbose_logger.log(logginglevels.DEBUG_1, 'CheckDeps = %d', CheckDeps)
+
+            if CheckDeps > 0:
+                if self.dsCallback: self.dsCallback.restartLoop()
+                self.verbose_logger.log(logginglevels.DEBUG_1, 'Restarting Loop')
+            else:
+                if self.dsCallback: self.dsCallback.end()
+                self.verbose_logger.log(logginglevels.DEBUG_1, 'Dependency Process ending')
+
+            del deps
+
+        self.tsInfo.changed = False
+        if len(errors) > 0:
+            return (1, errors)
+        if len(self.tsInfo) > 0:
+            return (2, ['Run Callback'])    
+
+    def _checkInstall(self, txmbr):
+        reqs = txmbr.po.returnPrco('requires')
+        provs = txmbr.po.returnPrco('provides')
+
+        flags = {"GT": rpm.RPMSENSE_GREATER,
+                 "GE": rpm.RPMSENSE_EQUAL | rpm.RPMSENSE_GREATER,
+                 "LT": rpm.RPMSENSE_LESS,
+                 "LE": rpm.RPMSENSE_LESS | rpm.RPMSENSE_EQUAL,
+                 "EQ": rpm.RPMSENSE_EQUAL,
+                 None: 0 }
+
+        ret = []
+        for req in reqs:
+            if req[0].startswith('rpmlib(') or req[0].startswith('config('):
+                continue
+            if req in provs:
+                continue
+            self.verbose_logger.log(logginglevels.DEBUG_2, "looking for %s as a requirement of %s" %(req, txmbr))
+            dep = self.deps.get(req, None)
+            if dep is None:
+                dep = self._provideToPkg(req)
+                if dep is None:
+                    ret.append( ((txmbr.name, txmbr.version, txmbr.release),
+                                 (req[0], version_tuple_to_string(req[2])), flags[req[1]], None,
+                                 rpm.RPMDEP_SENSE_REQUIRES) )
+                    continue
+
+            # Skip filebased requires on self, etc
+            if txmbr.name == dep.name:
+                continue
+            # FIXME: Yum doesn't need this, right?
+            #if (dep.name, txmbr.name) in whiteout.whitetup:
+            #   log.debug("ignoring %s>%s in whiteout" %(dep.name, txmbr.name))
+            #   continue
+            if self.isPackageInstalled(dep.name):
+                continue
+            if self.tsInfo.exists(dep.pkgtup):
+                pkgs = self.tsInfo.getMembers(pkgtup=dep.pkgtup)
+                member = self.bestPackagesFromList(pkgs)[0]
+
+            #Add relationship
+            found = False
+            for dependspo in txmbr.depends_on:
+                if member.po == dependspo:
+                    found = True
+                    break
+            if not found:
+                member.setAsDep(txmbr.po)
+        return ret
+
+    def _checkUpdate(self, txmbr):
+        ret = self._checkInstall(txmbr)
+
+
+        flags = {"GT": rpm.RPMSENSE_GREATER,
+                 "GE": rpm.RPMSENSE_EQUAL | rpm.RPMSENSE_GREATER,
+                 "LT": rpm.RPMSENSE_LESS,
+                 "LE": rpm.RPMSENSE_LESS | rpm.RPMSENSE_EQUAL,
+                 "EQ": rpm.RPMSENSE_EQUAL,
+                 None: 0 }
+
+        newprovs = txmbr.po.returnPrco('provides')
+
+        for up in txmbr.updates:
+            provs = up.returnPrco('provides')
+            for prov in provs:
+                (r, f, v) = prov
+                found = False
+                for (nr, nf, nv) in newprovs:
+                    if nr == r and f == None:
+                        found = True
+                        break
+                    elif nr == r and f == "EQ" and nv == v:
+                        found = True
+                        break
+                if found:
+                    continue
+                for pkgtup in self.rpmdb.whatRequires(r, f, v):
+                    inst = self.getInstalledPackageObject(pkgtup)
+                    if inst in txmbr.updates:
+                        continue
+                    updated = False
+                    for tx in self.tsInfo.matchNaevr(name=inst.name):
+                        if tx.output_state == TS_UPDATE and inst in tx.updates:
+                            updated = True
+                            break
+                        # XXX: check for erasure and obsoletes
+                    if updated:
+                        continue
+                    ret.append( ((inst.name, inst.version, inst.release),
+                                 (r, version_tuple_to_string(v)),
+                                 flags[f], None,
+                                 rpm.RPMDEP_SENSE_REQUIRES))
+
+        return ret
+
+    def _checkRemove(self, txmbr):
+        po = txmbr.po
+        provs = po.returnPrco('provides')
+
+        # get the files in the package and express them as "provides"
+        files = po.filelist
+        filesasprovs = map(lambda f: (f, None, None), files)
+        provs.extend(filesasprovs)
+
+        ret = []
+        removing = []
+        for prov in provs:
+            if prov[0].startswith('rpmlib('): # ignore rpmlib() provides
+                continue
+            if prov[0].startswith("/usr/share/doc"): # XXX: ignore doc files
+                continue
+            self.verbose_logger.log(logginglevels.DEBUG_4, "looking to see what requires %s of %s" %(prov, po))
+            (r, f, v) = prov
+
+            removeList = []
+            for pkgtup in self.rpmdb.whatRequires(r, None, None):
+                if pkgtup in removeList or pkgtup in removing:
+                    continue
+                # check the rpmdb first for something still installed
+                txmbrs = self.tsInfo.getMembers(pkgtup)
+                toRemove = False
+                for tx in txmbrs:
+                    if tx.output_state in TS_REMOVE_STATES:
+                        toRemove = True
+                        break
+
+                if not toRemove:
+                    removeList.append(pkgtup)
+
+            if len(removeList) == 0:
+                continue
+            
+            # if something else provides this name and it's not being
+            # removed, then we don't need to worry about it
+            stillavail = False
+            for pkgtup in self.rpmdb.whatProvides(r, None, None):
+                if pkgtup in removing:
+                    continue
+                txmbrs = self.tsInfo.getMembers(pkgtup)
+                if len(txmbrs) == 0: # not in tsinfo, so must still be avail
+                    stillavail = True
+                    break
+                for tx in txmbrs:
+                    if tx.output_state not in TS_REMOVE_STATES:
+                        stillavail = True # it's being installed
+                        break
+            if stillavail:
+                self.verbose_logger.log(logginglevels.DEBUG_1, "more than one package provides %s" %(r,))                    
+                continue
+
+            for pkgtup in removeList:
+                po = self.getInstalledPackageObject(pkgtup)
+                flags = {"GT": rpm.RPMSENSE_GREATER,
+                         "GE": rpm.RPMSENSE_EQUAL | rpm.RPMSENSE_GREATER,
+                         "LT": rpm.RPMSENSE_LESS,
+                         "LE": rpm.RPMSENSE_LESS | rpm.RPMSENSE_EQUAL,
+                         "EQ": rpm.RPMSENSE_EQUAL,
+                         None: 0 }
+                f = v = None
+                for (rr, rf, rv) in po.requires:
+                    if rr == r:
+                        f = rf
+                        v = rv
+                        break
+                
+                removing.append(pkgtup)
+                ret.append( ((po.name, po.version, po.release),
+                             (r, version_tuple_to_string(v)),
+                             flags[f], None, rpm.RPMDEP_SENSE_REQUIRES) )
+            
+        return ret
