@@ -326,7 +326,7 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         # save our dsCallback out
         dscb = self.dsCallback
         self.dsCallback = None # dumb, dumb dumb dumb!
-        self.populateTs(keepold=0, noheaders=True) # sigh
+        self.populateTs(keepold=0) # sigh
         tserrors = self.ts.test(testcb, conf=tsConf)
         del testcb
         
@@ -347,7 +347,7 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         signal.signal(signal.SIGQUIT, signal.SIG_DFL)
         
         self.initActionTs() # make a new, blank ts to populate
-        self.populateTs(keepold=0, noheaders=True) # populate the ts
+        self.populateTs(keepold=0) # populate the ts
         self.ts.check() #required for ordering
         self.ts.order() # order
 
