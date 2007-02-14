@@ -308,23 +308,27 @@ def newestInList(pkgs):
             ret.append(pkg)
     return ret
 
+def version_tuple_to_string(evrTuple):
+    (e, v, r) = evrTuple
+    s = ""
+    
+    if e not in [0, '0', None]:
+        s += '%s:' % e
+    if v is not None:
+        s += '%s' % v
+    if r is not None:
+        s += '-%s' % r
+    return s
+
 def prco_tuple_to_string(prcoTuple):
     """returns a text string of the prco from the tuple format"""
     
-    (name, flag, (e, v, r)) = prcoTuple
+    (name, flag, evr) = prcoTuple
     flags = {'GT':'>', 'GE':'>=', 'EQ':'=', 'LT':'<', 'LE':'<='}
     if flag is None:
         return name
     
-    base = '%s %s ' % (name, flags[flag])
-    if e not in [0, '0', None]:
-        base += '%s:' % e
-    if v is not None:
-        base += '%s' % v
-    if r is not None:
-        base += '-%s' % r
-    
-    return base
+    return '%s %s %s' % (name, flags[flag], version_tuple_to_string(evr))
     
 def refineSearchPattern(arg):
     """Takes a search string from the cli for Search or Provides
