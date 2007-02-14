@@ -432,6 +432,8 @@ class YumAvailablePackage(PackageObject, RpmBase):
 
 
     def getDiscNum(self):
+        if self.basepath is None:
+            return None
         (scheme, netloc, path, query, fragid) = urlparse.urlsplit(self.basepath)
         if scheme == "media":
             return int(fragid)
