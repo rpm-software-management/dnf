@@ -1261,7 +1261,8 @@ class YumDepsolver(Depsolve):
     def _checkRemove(self, txmbr):
         po = txmbr.po
         provs = po.returnPrco('provides')
-
+        #provs.append((po.name, None, (None, None, None)))
+        
         # get the files in the package and express them as "provides"
         files = po.filelist
         filesasprovs = map(lambda f: (f, None, None), files)
@@ -1274,11 +1275,13 @@ class YumDepsolver(Depsolve):
                 continue
             if prov[0].startswith("/usr/share/doc"): # XXX: ignore doc files
                 continue
+            
             self.verbose_logger.log(logginglevels.DEBUG_4, "looking to see what requires %s of %s" %(prov, po))
+            
             (r, f, v) = prov
 
             removeList = []
-            for pkgtup in self.rpmdb.whatRequires(r, None, None):
+            for pkgtup in self.rpmdb.whatRequires(r, f, v):
                 if pkgtup in removeList or pkgtup in removing:
                     continue
                 # check the rpmdb first for something still installed
@@ -1298,7 +1301,7 @@ class YumDepsolver(Depsolve):
             # if something else provides this name and it's not being
             # removed, then we don't need to worry about it
             stillavail = False
-            for pkgtup in self.rpmdb.whatProvides(r, None, None):
+            for pkgtup in self.rpmdb.whatProvides(r, f, v):
                 if pkgtup in removing:
                     continue
                 txmbrs = self.tsInfo.getMembers(pkgtup)
@@ -1310,9 +1313,11 @@ class YumDepsolver(Depsolve):
                         stillavail = True # it's being installed
                         break
             if stillavail:
-                self.verbose_logger.log(logginglevels.DEBUG_1, "more than one package provides %s" %(r,))                    
+                self.verbose_logger.log(logginglevels.DEBUG_1, "more than one package provides %s" %(r,))
                 continue
-
+            
+            # we have a list of all the items impacted and left w/unresolved deps
+            # by this remove. stick them in the ret list with their
             for pkgtup in removeList:
                 po = self.getInstalledPackageObject(pkgtup)
                 flags = {"GT": rpm.RPMSENSE_GREATER,
