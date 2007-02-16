@@ -60,6 +60,36 @@ class InPrcoRangePackageTests(unittest.TestCase):
         po.prco['provides'].append(("seth", "EQ", (1, 2, 2)))
         self.assertFalse(po.inPrcoRange('provides', ("seth", "EQ", (1, 2, 3))))
 
+    def testProvidesLePassEq(self):
+        po = packages.RpmBase()
+        po.prco['provides'].append(("seth", "EQ", (1, 2, 2)))
+        self.assertTrue(po.inPrcoRange('provides', ("seth", "LE", (1, 2, 2))))
+
+    def testProvidesLePassGt(self):
+        po = packages.RpmBase()
+        po.prco['provides'].append(("seth", "EQ", (1, 2, 2)))
+        self.assertTrue(po.inPrcoRange('provides', ("seth", "LE", (1, 5, 2))))
+
+    def testProvidesLeFail(self):
+        po = packages.RpmBase()
+        po.prco['provides'].append(("seth", "EQ", (1, 2, 2)))
+        self.assertFalse(po.inPrcoRange('provides', ("seth", "LE", (0, 2, 2))))
+
+    def testProvidesLtPass(self):
+        po = packages.RpmBase()
+        po.prco['provides'].append(("seth", "EQ", (1, 2, 2)))
+        self.assertTrue(po.inPrcoRange('provides', ("seth", "LT", (1, 2, 6))))
+
+    def testProvidesLtFailEq(self):
+        po = packages.RpmBase()
+        po.prco['provides'].append(("seth", "EQ", (1, 2, 2)))
+        self.assertFalse(po.inPrcoRange('provides', ("seth", "LT", (1, 2, 2))))
+
+    def testProvidesLtFailGt(self):
+        po = packages.RpmBase()
+        po.prco['provides'].append(("seth", "EQ", (1, 2, 2)))
+        self.assertFalse(po.inPrcoRange('provides', ("seth", "LT", (1, 0, 2))))
+
 def suite():
     suite = unittest.TestSuite()
     suite.addTest(unittest.makeSuite(InPrcoRangePackageTests))
