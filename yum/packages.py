@@ -294,7 +294,7 @@ class RpmBase(object):
                     if reqf in ['GT', 'GE', 4, 12]:
                         return 1
                     if reqf in ['EQ', 8]:
-                        if f in ['EQ', 'LE', 'GE', 8, 10, 12]:
+                        if f in ['LE', 10]:
                             return 1
                 if rc == 0:
                     if reqf in ['GT', 4]:
