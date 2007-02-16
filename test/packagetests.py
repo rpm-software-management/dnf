@@ -78,9 +78,75 @@ class InPrcoRangePackageTests(unittest.TestCase):
         self.assertFalse(self.po.inPrcoRange('provides', dep))
 
 
+class PackageEvrTests(unittest.TestCase):
+
+    def setUp(self):
+        self.evr = packages.PackageEVR(0, 1, 2)
+
+    def testLtPass(self):
+        other_evr = packages.PackageEVR(0, 1, 5)
+        self.assertTrue(self.evr < other_evr)
+
+    def testLtFailEq(self):
+        other_evr = packages.PackageEVR(0, 1, 2)
+        self.assertFalse(self.evr < other_evr)
+
+    def testLtFailGt(self):
+        other_evr = packages.PackageEVR(0, 0, 2)
+        self.assertFalse(self.evr < other_evr)
+
+    def testLePassLt(self):
+        other_evr = packages.PackageEVR(0, 1, 5)
+        self.assertTrue(self.evr <= other_evr)
+
+    def testLePassEq(self):
+        other_evr = packages.PackageEVR(0, 1, 2)
+        self.assertTrue(self.evr <= other_evr)
+
+    def testLeFailGt(self):
+        other_evr = packages.PackageEVR(0, 0, 2)
+        self.assertFalse(self.evr <= other_evr)
+
+    def testGtPass(self):
+        other_evr = packages.PackageEVR(0, 1, 0)
+        self.assertTrue(self.evr > other_evr)
+
+    def testGtFailEq(self):
+        other_evr = packages.PackageEVR(0, 1, 2)
+        self.assertFalse(self.evr > other_evr)
+
+    def testGtFailLt(self):
+        other_evr = packages.PackageEVR(0, 2, 2)
+        self.assertFalse(self.evr > other_evr)
+
+    def testGePassGt(self):
+        other_evr = packages.PackageEVR(0, 1, 0)
+        self.assertTrue(self.evr >= other_evr)
+
+    def testGePassEq(self):
+        other_evr = packages.PackageEVR(0, 1, 2)
+        self.assertTrue(self.evr >= other_evr)
+
+    def testGeFailLt(self):
+        other_evr = packages.PackageEVR(2, 1, 2)
+        self.assertFalse(self.evr >= other_evr)
+
+    def testEqPass(self):
+        other_evr = packages.PackageEVR(0, 1, 2)
+        self.assertTrue(self.evr == other_evr)
+
+    def testEqFailGt(self):
+        other_evr = packages.PackageEVR(0, 1, 0)
+        self.assertFalse(self.evr == other_evr)
+
+    def testEqFailLt(self):
+        other_evr = packages.PackageEVR(0, 4, 2)
+        self.assertFalse(self.evr == other_evr)
+
 def suite():
     suite = unittest.TestSuite()
     suite.addTest(unittest.makeSuite(InPrcoRangePackageTests))
+    suite.addTest(unittest.makeSuite(PackageEvrTests))
     return suite
                 
 if __name__ == "__main__":
