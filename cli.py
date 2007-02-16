@@ -1041,6 +1041,9 @@ class YumOptionParser(OptionParser):
         # Now parse the command line for real
         (opts, cmds) = self.parse_args()
 
+        # Let the plugins know what happened on the command line
+        self.base.plugins.setCmdLine(opts, cmds)
+
         try:
             # config file is parsed and moving us forward
             # set some things in it.
