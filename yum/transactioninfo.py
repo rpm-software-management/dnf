@@ -277,6 +277,21 @@ class TransactionData:
         if oldpo:
             txmbr.relatedto.append((oldpo.pkgtup, 'updates'))
             txmbr.updates.append(oldpo)
+            self.addUpdated(oldpo, po)
+        self.add(txmbr)
+        return txmbr
+
+    def addUpdated(self, po, updating_po):
+        """adds a package as being updated by another pkg
+           takes a packages object and returns a TransactionMember Object"""
+    
+        txmbr = TransactionMember(po)
+        txmbr.current_state = TS_INSTALL
+        txmbr.output_state =  TS_UPDATED
+        txmbr.po.state = TS_UPDATED
+        txmbr.ts_state = None
+        txmbr.relatedto.append((updating_po, 'updatedby'))
+        txmbr.updated_by.append(updating_po)
         self.add(txmbr)
         return txmbr
 
@@ -307,6 +322,7 @@ class TransactionData:
         txmbr.obsoleted_by.append(obsoleting_po)
         self.add(txmbr)
         return txmbr
+
 
 class ConditionalTransactionData(TransactionData):
     """A transaction data implementing conditional package addition"""

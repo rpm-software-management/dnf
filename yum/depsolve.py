@@ -1214,49 +1214,55 @@ class YumDepsolver(Depsolve):
 
     def _checkUpdate(self, txmbr):
         ret = self._checkInstall(txmbr)
-
-
-        flags = {"GT": rpm.RPMSENSE_GREATER,
-                 "GE": rpm.RPMSENSE_EQUAL | rpm.RPMSENSE_GREATER,
-                 "LT": rpm.RPMSENSE_LESS,
-                 "LE": rpm.RPMSENSE_LESS | rpm.RPMSENSE_EQUAL,
-                 "EQ": rpm.RPMSENSE_EQUAL,
-                 None: 0 }
-
-        newprovs = txmbr.po.returnPrco('provides')
-
-        for up in txmbr.updates:
-            provs = up.returnPrco('provides')
-            for prov in provs:
-                (r, f, v) = prov
-                found = False
-                for (nr, nf, nv) in newprovs:
-                    if nr == r and f == None:
-                        found = True
-                        break
-                    elif nr == r and f == "EQ" and nv == v:
-                        found = True
-                        break
-                if found:
-                    continue
-                for pkgtup in self.rpmdb.whatRequires(r, f, v):
-                    inst = self.getInstalledPackageObject(pkgtup)
-                    if inst in txmbr.updates:
-                        continue
-                    updated = False
-                    for tx in self.tsInfo.matchNaevr(name=inst.name):
-                        if tx.output_state == TS_UPDATE and inst in tx.updates:
-                            updated = True
-                            break
-                        # XXX: check for erasure and obsoletes
-                    if updated:
-                        continue
-                    ret.append( ((inst.name, inst.version, inst.release),
-                                 (r, version_tuple_to_string(v)),
-                                 flags[f], None,
-                                 rpm.RPMDEP_SENSE_REQUIRES))
-
+        for oldpo in txmbr.updates:
+            for this_txmbr in self.tsInfo.getMembers(oldpo.pkgtup):
+                ret.extend(self._checkRemove(this_txmbr))
+        # this is probably incomplete, but it does create curious results
         return ret
+
+# FIXME - commenting the below temporarily
+        #~ flags = {"GT": rpm.RPMSENSE_GREATER,
+                 #~ "GE": rpm.RPMSENSE_EQUAL | rpm.RPMSENSE_GREATER,
+                 #~ "LT": rpm.RPMSENSE_LESS,
+                 #~ "LE": rpm.RPMSENSE_LESS | rpm.RPMSENSE_EQUAL,
+                 #~ "EQ": rpm.RPMSENSE_EQUAL,
+                 #~ None: 0 }
+
+        #~ newprovs = txmbr.po.returnPrco('provides')
+
+        #~ for up in txmbr.updates:
+            #~ provs = up.returnPrco('provides')
+            #~ for prov in provs:
+                #~ (r, f, v) = prov
+                #~ found = False
+                #~ for (nr, nf, nv) in newprovs:
+                    #~ if nr == r and f == None:
+                        #~ found = True
+                        #~ break
+                    #~ elif nr == r and f == "EQ" and nv == v:
+                        #~ found = True
+                        #~ break
+                #~ if found:
+                    #~ continue
+                #~ for pkgtup in self.rpmdb.whatRequires(r, f, v):
+                    #~ inst = self.getInstalledPackageObject(pkgtup)
+                    #~ if inst in txmbr.updates:
+                        #~ continue
+                    #~ updated = False
+                    #~ for tx in self.tsInfo.matchNaevr(name=inst.name):
+                        #~ if tx.output_state == TS_UPDATE and inst in tx.updates:
+                            #~ updated = True
+                            #~ break
+                        #~ # XXX: check for erasure and obsoletes
+                    #~ if updated:
+                        #~ continue
+                    
+                    #~ ret.append( ((inst.name, inst.version, inst.release),
+                                 #~ (r, version_tuple_to_string(v)),
+                                 #~ flags[f], None,
+                                 #~ rpm.RPMDEP_SENSE_REQUIRES))
+
+#        return ret
 
     def _checkRemove(self, txmbr):
         po = txmbr.po
