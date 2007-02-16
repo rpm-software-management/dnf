@@ -5,90 +5,78 @@ from yum import packages
 
 class InPrcoRangePackageTests(unittest.TestCase):
 
+    def setUp(self):
+        self.po = packages.RpmBase()
+        self.po.prco['provides'].append(("seth", "EQ", (1, 2, 3)))
+
     def testProvidesGePass(self):
-        po = packages.RpmBase()
-        po.prco['provides'].append(("seth", "EQ", (1, 2, 3)))
-        self.assertTrue(po.inPrcoRange('provides', ("seth", "GE", (1, 0, 0))))
+        dep = ("seth", "GE", (1, 0, 0))
+        self.assertTrue(self.po.inPrcoRange('provides', dep)) 
 
     def testProvidesGePassWithEqual(self):
-        po = packages.RpmBase()
-        po.prco['provides'].append(("seth", "EQ", (1, 2, 3)))
-        self.assertTrue(po.inPrcoRange('provides', ("seth", "GE", (1, 2, 3))))
+        dep = ("seth", "GE", (1, 2, 3))
+        self.assertTrue(self.po.inPrcoRange('provides', dep)) 
 
     def testProvidesGeFailOnEpoch(self):
-        po = packages.RpmBase()
-        po.prco['provides'].append(("seth", "EQ", (1, 2, 3)))
-        self.assertFalse(po.inPrcoRange('provides', ("seth", "GE", (2, 0, 0))))
+        dep = ("seth", "GE", (2, 0, 0))
+        self.assertFalse(self.po.inPrcoRange('provides', dep)) 
 
     def testProvidesGeFailOnVersion(self):
-        po = packages.RpmBase()
-        po.prco['provides'].append(("seth", "EQ", (1, 2, 3)))
-        self.assertFalse(po.inPrcoRange('provides', ("seth", "GE", (1, 3, 0))))
+        dep = ("seth", "GE", (1, 3, 0))
+        self.assertFalse(self.po.inPrcoRange('provides', dep))
 
     def testProvidesGeFailOnRelease(self):
-        po = packages.RpmBase()
-        po.prco['provides'].append(("seth", "EQ", (1, 2, 3)))
-        self.assertFalse(po.inPrcoRange('provides', ("seth", "GE", (1, 2, 4))))
+        dep = ("seth", "GE", (1, 2, 4))
+        self.assertFalse(self.po.inPrcoRange('provides', dep))
 
     def testProvidesGtPass(self):
-        po = packages.RpmBase()
-        po.prco['provides'].append(("seth", "EQ", (1, 2, 3)))
-        self.assertTrue(po.inPrcoRange('provides', ("seth", "GT", (1, 0, 0))))
+        dep = ("seth", "GT", (1, 0, 0))
+        self.assertTrue(self.po.inPrcoRange('provides', dep))
 
     def testProvidesGtFail(self):
-        po = packages.RpmBase()
-        po.prco['provides'].append(("seth", "EQ", (1, 2, 3)))
-        self.assertFalse(po.inPrcoRange('provides', ("seth", "GT", (1, 2, 4))))
+        dep = ("seth", "GT", (1, 2, 4))
+        self.assertFalse(self.po.inPrcoRange('provides', dep))
 
     def testProvidesGtFailOnEqual(self):
-        po = packages.RpmBase()
-        po.prco['provides'].append(("seth", "EQ", (1, 2, 3)))
-        self.assertFalse(po.inPrcoRange('provides', ("seth", "GT", (1, 2, 3))))
+        dep = ("seth", "GT", (1, 2, 3))
+        self.assertFalse(self.po.inPrcoRange('provides', dep))
 
     def testProvidesEqPass(self):
-        po = packages.RpmBase()
-        po.prco['provides'].append(("seth", "EQ", (1, 2, 3)))
-        self.assertTrue(po.inPrcoRange('provides', ("seth", "EQ", (1, 2, 3))))
+        dep = ("seth", "EQ", (1, 2, 3))
+        self.assertTrue(self.po.inPrcoRange('provides', dep))
 
     def testProvidesEqFailGt(self):
-        po = packages.RpmBase()
-        po.prco['provides'].append(("seth", "EQ", (1, 2, 8)))
-        self.assertFalse(po.inPrcoRange('provides', ("seth", "EQ", (1, 2, 3))))
+        dep = ("seth", "EQ", (1, 2, 0))
+        self.assertFalse(self.po.inPrcoRange('provides', dep))
 
     def testProvidesEqFailLt(self):
-        po = packages.RpmBase()
-        po.prco['provides'].append(("seth", "EQ", (1, 2, 2)))
-        self.assertFalse(po.inPrcoRange('provides', ("seth", "EQ", (1, 2, 3))))
+        dep = ("seth", "EQ", (1, 2, 4))
+        self.assertFalse(self.po.inPrcoRange('provides', dep))
 
     def testProvidesLePassEq(self):
-        po = packages.RpmBase()
-        po.prco['provides'].append(("seth", "EQ", (1, 2, 2)))
-        self.assertTrue(po.inPrcoRange('provides', ("seth", "LE", (1, 2, 2))))
+        dep = ("seth", "LE", (1, 2, 3))
+        self.assertTrue(self.po.inPrcoRange('provides', dep))
 
     def testProvidesLePassGt(self):
-        po = packages.RpmBase()
-        po.prco['provides'].append(("seth", "EQ", (1, 2, 2)))
-        self.assertTrue(po.inPrcoRange('provides', ("seth", "LE", (1, 5, 2))))
+        dep = ("seth", "LE", (1, 5, 2))
+        self.assertTrue(self.po.inPrcoRange('provides', dep))
 
     def testProvidesLeFail(self):
-        po = packages.RpmBase()
-        po.prco['provides'].append(("seth", "EQ", (1, 2, 2)))
-        self.assertFalse(po.inPrcoRange('provides', ("seth", "LE", (0, 2, 2))))
+        dep = ("seth", "LE", (0, 2, 2))
+        self.assertFalse(self.po.inPrcoRange('provides', dep))
 
     def testProvidesLtPass(self):
-        po = packages.RpmBase()
-        po.prco['provides'].append(("seth", "EQ", (1, 2, 2)))
-        self.assertTrue(po.inPrcoRange('provides', ("seth", "LT", (1, 2, 6))))
+        dep = ("seth", "LT", (1, 2, 6))
+        self.assertTrue(self.po.inPrcoRange('provides', dep))
 
     def testProvidesLtFailEq(self):
-        po = packages.RpmBase()
-        po.prco['provides'].append(("seth", "EQ", (1, 2, 2)))
-        self.assertFalse(po.inPrcoRange('provides', ("seth", "LT", (1, 2, 2))))
+        dep = ("seth", "LT", (1, 2, 3))
+        self.assertFalse(self.po.inPrcoRange('provides', dep))
 
     def testProvidesLtFailGt(self):
-        po = packages.RpmBase()
-        po.prco['provides'].append(("seth", "EQ", (1, 2, 2)))
-        self.assertFalse(po.inPrcoRange('provides', ("seth", "LT", (1, 0, 2))))
+        dep = ("seth", "LT", (1, 0, 2))
+        self.assertFalse(self.po.inPrcoRange('provides', dep))
+
 
 def suite():
     suite = unittest.TestSuite()
