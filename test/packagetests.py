@@ -143,10 +143,42 @@ class PackageEvrTests(unittest.TestCase):
         other_evr = packages.PackageEVR(0, 4, 2)
         self.assertFalse(self.evr == other_evr)
 
+
+class StubPkg(object):
+
+    def __init__(self, n, a, e, v, r):
+        self.pkgtup = (n, a, e, v, r)
+
+
+class BuildPackageDictRefTests(unittest.TestCase):
+
+    def testNoPkg(self):
+        pkgs = []
+        self.assertEquals({}, packages.buildPkgRefDict(pkgs))
+
+    def testOnePkg(self):
+        pkg = StubPkg("yum", "noarch", 0, "3.1.1", 2)
+        pkgs = [pkg]
+        pkg_dict = packages.buildPkgRefDict(pkgs)
+
+        self.assertEquals(7, len(pkg_dict))
+
+        unseen_keys = ['yum', 'yum.noarch', 'yum-3.1.1-2.noarch', 'yum-3.1.1',
+                'yum-3.1.1-2', '0:yum-3.1.1-2.noarch', 'yum-0:3.1.1-2.noarch']
+        for key in pkg_dict.keys():
+            self.assertTrue(key in unseen_keys)
+            unseen_keys.remove(key)
+            self.assertEquals(1, len(pkg_dict[key]))
+            self.assertEquals(pkg, pkg_dict[key][0])
+
+        self.assertEquals(0, len(unseen_keys))
+
+
 def suite():
     suite = unittest.TestSuite()
     suite.addTest(unittest.makeSuite(InPrcoRangePackageTests))
     suite.addTest(unittest.makeSuite(PackageEvrTests))
+    suite.addTest(unittest.makeSuite(BuildPackageDictRefTests))
     return suite
                 
 if __name__ == "__main__":
