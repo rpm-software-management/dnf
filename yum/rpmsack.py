@@ -20,6 +20,7 @@ import warnings
 from rpmUtils import miscutils
 from rpmUtils.transaction import initReadOnlyTransaction
 import misc
+import Errors
 from packages import YumInstalledPackage
 from packageSack import ListPackageSack, PackageSackBase
 
@@ -52,8 +53,11 @@ class RPMDBPackageSack(PackageSackBase):
         '''Getter for the pkglist property. 
         Returns a list of package tuples.
         '''
-        return [ self._hdr2pkgTuple(hdr)
-            for hdr, idx in self._all_packages() ]
+        if not self._header_dict:
+            self._make_header_dict()
+
+        for pkgtup in self._header_dict.keys():
+            yield pkgtup
 
     pkglist = property(_get_pkglist, None)
 
@@ -217,7 +221,9 @@ class RPMDBPackageSack(PackageSackBase):
 
     def _header_from_index(self, idx):
         """returns a package header having been given an index"""
-        
+        warnings.warn('_header_from_index() will go away in a future version of Yum.\n',
+                Errors.FutureDeprecationWarning, stacklevel=2)
+
         ts = self.readOnlyTS()
         try:
             mi = ts.dbMatch(0, idx)
@@ -237,7 +243,7 @@ class RPMDBPackageSack(PackageSackBase):
         
         for (hdr, idx) in self._all_packages():
             pkgtup = self._hdr2pkgTuple(hdr)
-            self._header_dict[pkgtup] = idx
+            self._header_dict[pkgtup] = (hdr, idx)
         
         
     def _search(self, name=None, epoch=None, ver=None, rel=None, arch=None):
@@ -263,9 +269,8 @@ class RPMDBPackageSack(PackageSackBase):
         
         for pkgtup in self._header_dict.keys():
             if match(pkgtup):
-                idx = self._header_dict[pkgtup]
-                for h in self._header_from_index(idx):
-                    yield h, pkgtup, idx
+                (hdr, idx) = self._header_dict[pkgtup]
+                yield hdr, pkgtup, idx
 
     def _search2(self, name=None, epoch=None, version=None, release=None, arch=None):
         '''Generator that yield (header, index) for matching packages
