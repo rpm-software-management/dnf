@@ -461,7 +461,7 @@ class StartupConf(BaseConfig):
     installroot = Option('/')
 
     plugins = BoolOption(False)
-    pluginpath = ListOption(['/usr/lib/yum-plugins'])
+    pluginpath = ListOption(['/usr/share/yum-plugins', '/usr/lib/yum-plugins'])
     pluginconfpath = ListOption(['/etc/yum/pluginconf.d'])
 
 class YumConf(StartupConf):
