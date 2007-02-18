@@ -343,6 +343,8 @@ def hdrFromPackage(ts, package):
     except OSError, e:
         raise rpmUtils.RpmUtilsError, 'Unable to open file'
     
+    # XXX: We should start a readonly ts here, so we don't get the options
+    # from the other one (sig checking, etc)
     try:
         hdr = ts.hdrFromFdno(fdno)
     except rpm.error, e:

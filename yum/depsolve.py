@@ -150,7 +150,7 @@ class Depsolve(object):
                     continue
                 rpmfile = txmbr.po.localPkg()
                 if os.path.exists(rpmfile):
-                    hdr = txmbr.po.returnHeaderFromPackage(self.ts)
+                    hdr = txmbr.po.returnHeaderFromPackage()
                 else:
                     self.downloadHeader(txmbr.po)
                     hdr = txmbr.po.returnLocalHeader()
