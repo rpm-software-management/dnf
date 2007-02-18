@@ -38,7 +38,8 @@ class Depsolve(object):
         self.dsCallback = None
         self.logger = logging.getLogger("yum.Depsolve")
         self.verbose_logger = logging.getLogger("yum.verbose.Depsolve")
-    
+        self.tsInfoDelta = []
+
     def initActionTs(self):
         """sets up the ts we'll use for all the work"""
         
@@ -468,6 +469,7 @@ class Depsolve(object):
                 requiringPo, needname)
             txmbr = self.tsInfo.addErase(requiringPo)
             txmbr.setAsDep(po=needpo)
+            self.tsInfoDelta.append(txmbr)
             checkdeps = 1
         
         if needmode in ['i', 'u']:
@@ -490,6 +492,7 @@ class Depsolve(object):
                             txmbr = self.tsInfo.addObsoleting(po, requiringPo)
                             self.tsInfo.addObsoleted(requiringPo, po)
                             txmbr.setAsDep(po=needpo)
+                            self.tsInfoDelta.append(txmbr)
                             self.verbose_logger.log(logginglevels.DEBUG_2, 'TSINFO: Obsoleting %s with %s to resolve dep.', 
                                 requiringPo, po)
                             checkdeps = 1
@@ -521,6 +524,7 @@ class Depsolve(object):
                     if po.pkgtup == new:
                         txmbr = self.tsInfo.addUpdate(po, requiringPo)
                         txmbr.setAsDep(po=needpo)
+                        self.tsInfoDelta.append(txmbr)
                         self.verbose_logger.log(logginglevels.DEBUG_2, 'TSINFO: Updating %s to resolve dep.', po)
                 checkdeps = 1
                 
@@ -661,11 +665,13 @@ class Depsolve(object):
                 name)
             txmbr = self.tsInfo.addUpdate(best)
             txmbr.setAsDep()
+            self.tsInfoDelta.append(txmbr)
         else:
             self.verbose_logger.debug('TSINFO: Marking %s as install for %s', best,
                 name)
             txmbr = self.tsInfo.addInstall(best)
             txmbr.setAsDep()
+            self.tsInfoDelta.append(txmbr)
 
         checkdeps = 1
         
@@ -726,6 +732,7 @@ class Depsolve(object):
                 'TSINFO: Updating %s to resolve conflict.', po)
             txmbr = self.tsInfo.addUpdate(po)
             txmbr.setAsDep()
+            self.tsInfoDelta.append(txmbr)
             CheckDeps = 1
             
         else:
@@ -1049,7 +1056,7 @@ class YumDepsolver(Depsolve):
         # returns a list of tuples
         # ((name, version, release), (needname, needversion), flags, suggest, sense)
         ret = []
-        for txmbr in self.tsInfo.getMembers():
+        for txmbr in self.tsInfoDelta:
             if txmbr.output_state in (TS_INSTALL, TS_TRUEINSTALL, TS_OBSOLETING):
                 ret.extend(self._checkInstall(txmbr))
             elif txmbr.output_state in (TS_UPDATE,):
@@ -1057,6 +1064,7 @@ class YumDepsolver(Depsolve):
             elif txmbr.output_state in TS_REMOVE_STATES:
                 ret.extend(self._checkRemove(txmbr))
 
+        self.tsInfoDelta = []
         return ret
 
     def resolveDeps(self):
@@ -1069,6 +1077,7 @@ class YumDepsolver(Depsolve):
         errors = []
         if self.dsCallback: self.dsCallback.start()
 
+        self.tsInfoDelta = self.tsInfo.getMembers()
         while CheckDeps:
             self.cheaterlookup = {} # short cache for some information we'd resolve
                                     # (needname, needversion) = pkgtup
