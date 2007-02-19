@@ -239,10 +239,7 @@ class RpmBase(object):
             # make us look it up and compare
             (reqn, reqf, (reqe, reqv ,reqr)) = prcotuple
             if reqf is not None:
-                if self.inPrcoRange(prcotype, prcotuple):
-                    return 1
-                else:
-                    return 0
+                return self.inPrcoRange(prcotype, prcotuple)
             else:
                 for (n, f, (e, v, r)) in self.returnPrco(prcotype):
                     if reqn == n:
@@ -481,9 +478,10 @@ class YumAvailablePackage(PackageObject, RpmBase):
             return int(fragid)
         return None
     
-    def returnHeaderFromPackage(self):
+    def returnHeaderFromPackage(self, ts = None):
         rpmfile = self.localPkg()
-        ts = rpmUtils.transaction.initReadOnlyTransaction()
+        if ts is None:
+            ts = rpmUtils.transaction.initReadOnlyTransaction()
         hdr = rpmUtils.miscutils.hdrFromPackage(ts, rpmfile)
         return hdr
         
