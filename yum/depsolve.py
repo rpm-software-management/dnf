@@ -256,7 +256,7 @@ class Depsolve(object):
                 
                 dep_end_time = time.time()
                 dep_proc_time = dep_end_time - dep_start_time
-                self.verbose_logger.log(logginglevels.DEBUG_2, 'processing dep took: %f' % dep_proc_time)
+                self.verbose_logger.log(logginglevels.DEBUG_2, 'processing dep took: %f', dep_proc_time)
                 
                 missingdep += missing
                 conflicts += conflict
@@ -315,8 +315,9 @@ class Depsolve(object):
             prco_flags = rpmUtils.miscutils.flagToString(flags)
             prco_ver = rpmUtils.miscutils.stringToVersion(needversion)
             prcoformat_need = (needname, prco_flags, prco_ver)
-            msg = 'Looking for %s as a requirement of %s' % (str(prcoformat_need), po)
-            self.verbose_logger.log(logginglevels.DEBUG_2, msg)
+            self.verbose_logger.log(logginglevels.DEBUG_2,
+                    'Looking for %s as a requirement of %s',
+                    str(prcoformat_need), po)
                   
             if prcoformat_need in po.requires:
                 pkgs.append(po)
@@ -324,9 +325,9 @@ class Depsolve(object):
         if len(pkgs) < 1: # requiring tuple is not in the rpmdb
             txmbrs = self.tsInfo.matchNaevr(name=name, ver=version, rel=release)
             if len(txmbrs) < 1:
-                msg = 'Requiring package %s-%s-%s not in transaction set'\
-                                  ' nor in rpmdb' % (name, version, release)
-                self.verbose_logger.log(logginglevels.DEBUG_1, msg)
+                self.verbose_logger.log(logginglevels.DEBUG_1,
+                        'Requiring package %s-%s-%s not in transaction set'\
+                        ' nor in rpmdb', name, version, release)
                 errormsgs.append(msg)
                 missingdep = 1
                 CheckDeps = 0
@@ -336,9 +337,10 @@ class Depsolve(object):
                 self.verbose_logger.log(logginglevels.DEBUG_1,
                     'Requiring package is from transaction set')
                 if txmbr.ts_state == 'e':
-                    msg = 'Requiring package %s is set to be erased,' % txmbr.name +\
-                           'probably processing an old dep, restarting loop early.'
-                    self.verbose_logger.log(logginglevels.DEBUG_2, msg)
+                    self.verbose_logger.log(logginglevels.DEBUG_2,
+                            'Requiring package %s is set to be erased, ' \
+                            'probably processing an old dep, restarting ' \
+                            'loop early.', txmbr.name)
                     CheckDeps=1
                     missingdep=0
                     return (CheckDeps, missingdep, conflicts, errormsgs)
@@ -1143,7 +1145,7 @@ class YumDepsolver(Depsolve):
                 
                 dep_end_time = time.time()
                 dep_proc_time = dep_end_time - dep_start_time
-                self.verbose_logger.log(logginglevels.DEBUG_2, 'processing dep took: %f' % dep_proc_time)
+                self.verbose_logger.log(logginglevels.DEBUG_2, 'processing dep took: %f', dep_proc_time)
                 
                 missingdep += missing
                 conflicts += conflict
@@ -1188,7 +1190,7 @@ class YumDepsolver(Depsolve):
                 continue
             if req in provs:
                 continue
-            self.verbose_logger.log(logginglevels.DEBUG_2, "looking for %s as a requirement of %s" %(req, txmbr))
+            self.verbose_logger.log(logginglevels.DEBUG_2, "looking for %s as a requirement of %s", req, txmbr)
             dep = self.deps.get(req, None)
             if dep is None:
                 dep = self._provideToPkg(req)
@@ -1291,7 +1293,7 @@ class YumDepsolver(Depsolve):
             if prov[0].startswith("/usr/share/doc"): # XXX: ignore doc files
                 continue
             
-            self.verbose_logger.log(logginglevels.DEBUG_4, "looking to see what requires %s of %s" %(prov, po))
+            self.verbose_logger.log(logginglevels.DEBUG_4, "looking to see what requires %s of %s", prov, po)
             
             (r, f, v) = prov
 
@@ -1328,7 +1330,7 @@ class YumDepsolver(Depsolve):
                         stillavail = True # it's being installed
                         break
             if stillavail:
-                self.verbose_logger.log(logginglevels.DEBUG_1, "more than one package provides %s" %(r,))
+                self.verbose_logger.log(logginglevels.DEBUG_1, "more than one package provides %s", r)
                 continue
             
             # we have a list of all the items impacted and left w/unresolved deps
