@@ -911,7 +911,7 @@ class AnacondaDepsolver(Depsolve):
 
         # get the files in the package and express them as "provides"
         files = txmbr.po.filelist
-        filesasprovs = map(lambda f: (f, None, None)), files)
+        filesasprovs = map(lambda f: (f, None, None), files)
         provs.extend(filesasprovs)
 
         ret = []
