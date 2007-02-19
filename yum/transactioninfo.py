@@ -51,19 +51,24 @@ class TransactionData:
             print msg
 
 
-    def getMembers(self, pkgtup=None):
+    def getMembers(self, pkgtup=None, output_states=None):
         """takes an optional package tuple and returns all transaction members 
            matching, no pkgtup means it returns all transaction members"""
         
         if pkgtup is None:
             returnlist = []
             for key in self.pkgdict.keys():
-                returnlist.extend(self.pkgdict[key])
-                
+                for p in self.pkgdict[key]:
+                    if not output_states or p.output_state in output_states:
+                        returnlist.append(p)
             return returnlist
 
         if self.pkgdict.has_key(pkgtup):
-            return self.pkgdict[pkgtup]
+            ret = []
+            for p in self.pkgdict[pkgtup]:
+                if not output_states or p.output_state in output_states:
+                    ret.append(p)
+            return ret
         else:
             return []
             
