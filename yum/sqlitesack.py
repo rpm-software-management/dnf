@@ -312,19 +312,6 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
                     pkg = self.db2class(x)
                     if (self.excludes[rep].has_key(pkg.pkgId)):
                         continue
-                                            
-                    # Add this provides to prco otherwise yum doesn't understand
-                    # that it matches
-                    pkg.prco = {prcotype: 
-                      [
-                      { 'name': res['name'],
-                        'flags': res['flags'],
-                        'rel': res['release'],
-                        'ver': res['version'],
-                        'epoch': res['epoch']
-                      }
-                      ]
-                    }
                     results.append(self.pc(rep,pkg))
 
 
@@ -361,7 +348,8 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
         for (rep,cache) in self.filelistsdb.items():
             cur = cache.cursor()
             (dirname,filename) = os.path.split(name)
-            if name.find('%') == -1: # no %'s in the thing safe to LIKE
+            # FIXME: why doesn't this work???
+            if 0: # name.find('%') == -1: # no %'s in the thing safe to LIKE
                 executeSQL(cur, "select packages.pkgId as pkgId,\
                     filelist.dirname as dirname,\
                     filelist.filetypes as filetypes,\
