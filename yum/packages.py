@@ -682,16 +682,10 @@ class YumHeaderPackage(YumAvailablePackage):
             name = self.hdr[getattr(rpm, 'RPMTAG_%sNAME' % tag)]
 
             lst = self.hdr[getattr(rpm, 'RPMTAG_%sFLAGS' % tag)]
-            flag = []
-            for i in lst:
-                value = rpmUtils.miscutils.flagToString(i)
-                flag.append(value)
+            flag = map(rpmUtils.miscutils.flagToString, lst)
 
             lst = self.hdr[getattr(rpm, 'RPMTAG_%sVERSION' % tag)]
-            vers = []
-            for i in lst:
-                value = rpmUtils.miscutils.stringToVersion(i)
-                vers.append(value)
+            vers = map(rpmUtils.miscutils.stringToVersion, lst)
 
             prcotype = tag2prco[tag]
             if name is not None:
