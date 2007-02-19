@@ -155,7 +155,7 @@ class Depsolve(object):
                 else:
                     self.downloadHeader(txmbr.po)
                     hdr = txmbr.po.returnLocalHeader()
-                
+
                 if txmbr.ts_state == 'u':
                     if self.allowedMultipleInstalls(txmbr.po):
                         self.verbose_logger.log(logginglevels.DEBUG_2,
@@ -318,8 +318,8 @@ class Depsolve(object):
             self.verbose_logger.log(logginglevels.DEBUG_2,
                     'Looking for %s as a requirement of %s',
                     str(prcoformat_need), po)
-                  
-            if prcoformat_need in po.requires:
+
+            if po.checkPrco('requires', (needname, prco_flags, prco_ver)):
                 pkgs.append(po)
 
         if len(pkgs) < 1: # requiring tuple is not in the rpmdb
@@ -662,10 +662,12 @@ class Depsolve(object):
             
         # FIXME - why can't we look up in the transaction set for the requiringPkg
         # and know what needs it that way and provide a more sensible dep structure in the txmbr
-        if self.rpmdb.installed(name=best.name, arch=best.arch):
-            self.verbose_logger.debug('TSINFO: Marking %s as update for %s', best,
-                name)
-            txmbr = self.tsInfo.addUpdate(best)
+        inst = self.rpmdb.searchNevra(name=best.name, arch=best.arch)
+        if len(inst) > 0: 
+            self.verbose_logger.debug('TSINFO: Marking %s as update for %s' %(best,
+                name))
+            # FIXME: we should probably handle updating multiple packages...
+            txmbr = self.tsInfo.addUpdate(best, inst[0])
             txmbr.setAsDep()
             self.tsInfoDelta.append(txmbr)
         else:
@@ -732,7 +734,7 @@ class Depsolve(object):
         if po:
             self.verbose_logger.log(logginglevels.DEBUG_2,
                 'TSINFO: Updating %s to resolve conflict.', po)
-            txmbr = self.tsInfo.addUpdate(po)
+            txmbr = self.tsInfo.addUpdate(po, confpkg)
             txmbr.setAsDep()
             self.tsInfoDelta.append(txmbr)
             CheckDeps = 1
@@ -909,7 +911,7 @@ class AnacondaDepsolver(Depsolve):
 
         # get the files in the package and express them as "provides"
         files = txmbr.po.filelist
-        filesasprovs = map(lambda f: (f, None, None), files)
+        filesasprovs = map(lambda f: (f, None, None)), files)
         provs.extend(filesasprovs)
 
         ret = []
@@ -1167,6 +1169,7 @@ class YumDepsolver(Depsolve):
 
             del deps
 
+
         self.tsInfo.changed = False
         if len(errors) > 0:
             return (1, errors)
@@ -1190,6 +1193,7 @@ class YumDepsolver(Depsolve):
                 continue
             if req in provs:
                 continue
+            
             self.verbose_logger.log(logginglevels.DEBUG_2, "looking for %s as a requirement of %s", req, txmbr)
             dep = self.deps.get(req, None)
             if dep is None:
@@ -1282,11 +1286,12 @@ class YumDepsolver(Depsolve):
         
         # get the files in the package and express them as "provides"
         files = po.filelist
-        filesasprovs = map(lambda f: (f, None, None), files)
+        filesasprovs = map(lambda f: (f, None, (None,None,None)), files)
         provs.extend(filesasprovs)
 
         ret = []
         removing = []
+        # iterate over the provides of the package being removed
         for prov in provs:
             if prov[0].startswith('rpmlib('): # ignore rpmlib() provides
                 continue
@@ -1294,49 +1299,80 @@ class YumDepsolver(Depsolve):
                 continue
             
             self.verbose_logger.log(logginglevels.DEBUG_4, "looking to see what requires %s of %s", prov, po)
-            
+
             (r, f, v) = prov
 
             removeList = []
-            for pkgtup in self.rpmdb.whatRequires(r, f, v):
-                if pkgtup in removeList or pkgtup in removing:
+            # see what requires this provide name
+            for pkgtup in self.rpmdb.whatRequires(r, None, None):
+                isok = False
+                # ignore stuff already being removed
+                if self.tsInfo.getMembers(pkgtup, TS_REMOVE_STATES):
                     continue
-                # check the rpmdb first for something still installed
-                txmbrs = self.tsInfo.getMembers(pkgtup)
-                toRemove = False
-                for tx in txmbrs:
-                    if tx.output_state in TS_REMOVE_STATES:
-                        toRemove = True
-                        break
-
-                if not toRemove:
-                    removeList.append(pkgtup)
-
-            if len(removeList) == 0:
-                continue
-            
-            # if something else provides this name and it's not being
-            # removed, then we don't need to worry about it
-            stillavail = False
-            for pkgtup in self.rpmdb.whatProvides(r, f, v):
                 if pkgtup in removing:
                     continue
-                txmbrs = self.tsInfo.getMembers(pkgtup)
-                if len(txmbrs) == 0: # not in tsinfo, so must still be avail
-                    stillavail = True
-                    break
-                for tx in txmbrs:
-                    if tx.output_state not in TS_REMOVE_STATES:
-                        stillavail = True # it's being installed
+                instpo = self.getInstalledPackageObject(pkgtup)
+
+                # check to ensure that we really fulfill instpo's need for r
+                if not instpo.checkPrco('requires', (r,f,v)): 
+                    continue
+
+                # now see if anything else is providing what we need
+                for provtup in self.rpmdb.whatProvides(r, None, None):
+                    # check if this provider is being removed
+                    if provtup in removing:
+                        continue
+                    if self.tsInfo.getMembers(provtup, TS_REMOVE_STATES):
+                        continue
+
+                    provpo = self.getInstalledPackageObject(provtup)
+                    if provpo in removeList:
+                        continue
+                    # check if provpo actually satisfies instpo's need for r
+                    # if so, we're golden
+                    ok = True
+                    for (rr, rf, rv) in instpo.requires:
+                        if rr != r:
+                            continue
+                        if not provpo.checkPrco('provides', (rr, rf, rv)):
+                            ok = False
+                    if ok:
+                        isok = True
                         break
-            if stillavail:
-                self.verbose_logger.log(logginglevels.DEBUG_1, "more than one package provides %s", r)
-                continue
-            
-            # we have a list of all the items impacted and left w/unresolved deps
+                if isok:
+                    continue
+
+                # now do the same set of checks with packages that are
+                # set to be installed.  
+                for txmbr in self.tsInfo.getMembers(None, TS_INSTALL_STATES):
+                    # FIXME: it's ugly to have to check files separately here
+                    if r.startswith("/") and r in txmbr.po.filelist:
+                        isok = True
+                        break
+                    if not txmbr.po.checkPrco('provides',
+                                              (r, None, (None,None,None))):
+                        continue
+                    # check if provpo satisfies instpo's need for r
+                    # if so, we're golden
+                    ok = True
+                    for (rr, rf, rv) in instpo.requires:
+                        if rr != r:
+                            continue
+                        if not txmbr.po.checkPrco('provides', (rr, rf, rv)):
+                            ok = False
+                    if ok:
+                        isok = True
+                        break
+                if isok:
+                    continue
+                    
+                if not isok:
+                    removeList.append(instpo)
+
+            # we have a list of all the items impacted and
+            # left w/unresolved deps
             # by this remove. stick them in the ret list with their
-            for pkgtup in removeList:
-                po = self.getInstalledPackageObject(pkgtup)
+            for po in removeList:
                 flags = {"GT": rpm.RPMSENSE_GREATER,
                          "GE": rpm.RPMSENSE_EQUAL | rpm.RPMSENSE_GREATER,
                          "LT": rpm.RPMSENSE_LESS,
@@ -1349,7 +1385,7 @@ class YumDepsolver(Depsolve):
                         f = rf
                         v = rv
                         break
-                
+
                 removing.append(pkgtup)
                 ret.append( ((po.name, po.version, po.release),
                              (r, version_tuple_to_string(v)),
