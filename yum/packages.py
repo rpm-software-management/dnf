@@ -478,10 +478,9 @@ class YumAvailablePackage(PackageObject, RpmBase):
             return int(fragid)
         return None
     
-    def returnHeaderFromPackage(self, ts = None):
+    def returnHeaderFromPackage(self):
         rpmfile = self.localPkg()
-        if ts is None:
-            ts = rpmUtils.transaction.initReadOnlyTransaction()
+        ts = rpmUtils.transaction.initReadOnlyTransaction()
         hdr = rpmUtils.miscutils.hdrFromPackage(ts, rpmfile)
         return hdr
         
