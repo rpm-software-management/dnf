@@ -1090,6 +1090,16 @@ class YumDepsolver(Depsolve):
 
             
             if not deps:
+                # FIXME: this doesn't belong here at all...
+                for txmbr in self.tsInfo.getMembers():
+                    if self.allowedMultipleInstalls(txmbr.po) and \
+                           txmbr.ts_state == 'u':
+                        self.verbose_logger.log(logginglevels.DEBUG_2,
+                                                '%s converted to install',
+                                                txmbr.po)
+                        txmbr.ts_state = 'i'
+                        txmbr.output_state = TS_INSTALL
+                
                 self.tsInfo.changed = False
                 return (2, ['Success - deps resolved'])
 
