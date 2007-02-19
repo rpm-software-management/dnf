@@ -284,6 +284,10 @@ class RpmBase(object):
                 if reqv is None: # just for the record if ver is None then we're going to segfault
                     v = None
 
+                # if we just require foo-version, then foo-version-* will match
+                if r is None:
+                    reqr = None
+
                 rc = rpmUtils.miscutils.compareEVR((e, v, r), (reqe, reqv, reqr))
                 
                 # does not match unless
