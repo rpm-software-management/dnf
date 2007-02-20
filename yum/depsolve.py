@@ -1074,6 +1074,8 @@ class YumDepsolver(Depsolve):
         # ((name, version, release), (needname, needversion), flags, suggest, sense)
         ret = []
         for txmbr in self.tsInfoDelta:
+            self.verbose_logger.log(logginglevels.INFO_2,
+                                    "Checking deps for %s" %(txmbr,))
             if txmbr.output_state in (TS_INSTALL, TS_TRUEINSTALL, TS_OBSOLETING):
                 ret.extend(self._checkInstall(txmbr))
             elif txmbr.output_state in (TS_UPDATE,):
@@ -1100,7 +1102,6 @@ class YumDepsolver(Depsolve):
                                     # (needname, needversion) = pkgtup
             if self.dsCallback: self.dsCallback.tscheck()
             deps = self._mytsCheck()
-
             
             if not deps:
                 # FIXME: this doesn't belong here at all...
@@ -1301,6 +1302,7 @@ class YumDepsolver(Depsolve):
             removeList = []
             # see what requires this provide name
             for pkgtup in self.rpmdb.whatRequires(r, None, None):
+                self.verbose_logger.log(logginglevels.DEBUG_2, "looking at %s as a requirement of %s", r, pkgtup)                
                 isok = False
                 # ignore stuff already being removed
                 if self.tsInfo.getMembers(pkgtup, TS_REMOVE_STATES):
