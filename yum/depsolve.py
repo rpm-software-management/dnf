@@ -1071,7 +1071,7 @@ class YumDepsolver(Depsolve):
         self.tsInfoDelta = []
         return ret
 
-    def resolveDeps(self):
+    def _resolveDeps(self):
         CheckDeps = True
         conflicts = 0
         missingdep = 0
@@ -1184,7 +1184,9 @@ class YumDepsolver(Depsolve):
         if len(errors) > 0:
             return (1, errors)
         if len(self.tsInfo) > 0:
-            return (2, ['Run Callback'])    
+            return (2, ['Run Callback'])
+
+    resolveDeps = _resolveDeps
 
     def _checkInstall(self, txmbr):
         reqs = txmbr.po.returnPrco('requires')
@@ -1197,11 +1199,19 @@ class YumDepsolver(Depsolve):
                  "EQ": rpm.RPMSENSE_EQUAL,
                  None: 0 }
 
+        # if this is an update, we should check what the old
+        # requires were to make things faster
+        oldreqs = []
+        for oldpo in txmbr.updates:
+            oldreqs.extend(oldpo.returnPrco('requires'))
+
         ret = []
         for req in reqs:
             if req[0].startswith('rpmlib(') or req[0].startswith('config('):
                 continue
             if req in provs:
+                continue
+            if req in oldreqs:
                 continue
             
             self.verbose_logger.log(logginglevels.DEBUG_2, "looking for %s as a requirement of %s", req, txmbr)
@@ -1245,59 +1255,22 @@ class YumDepsolver(Depsolve):
         # this is probably incomplete, but it does create curious results
         return ret
 
-# FIXME - commenting the below temporarily
-        #~ flags = {"GT": rpm.RPMSENSE_GREATER,
-                 #~ "GE": rpm.RPMSENSE_EQUAL | rpm.RPMSENSE_GREATER,
-                 #~ "LT": rpm.RPMSENSE_LESS,
-                 #~ "LE": rpm.RPMSENSE_LESS | rpm.RPMSENSE_EQUAL,
-                 #~ "EQ": rpm.RPMSENSE_EQUAL,
-                 #~ None: 0 }
-
-        #~ newprovs = txmbr.po.returnPrco('provides')
-
-        #~ for up in txmbr.updates:
-            #~ provs = up.returnPrco('provides')
-            #~ for prov in provs:
-                #~ (r, f, v) = prov
-                #~ found = False
-                #~ for (nr, nf, nv) in newprovs:
-                    #~ if nr == r and f == None:
-                        #~ found = True
-                        #~ break
-                    #~ elif nr == r and f == "EQ" and nv == v:
-                        #~ found = True
-                        #~ break
-                #~ if found:
-                    #~ continue
-                #~ for pkgtup in self.rpmdb.whatRequires(r, f, v):
-                    #~ inst = self.getInstalledPackageObject(pkgtup)
-                    #~ if inst in txmbr.updates:
-                        #~ continue
-                    #~ updated = False
-                    #~ for tx in self.tsInfo.matchNaevr(name=inst.name):
-                        #~ if tx.output_state == TS_UPDATE and inst in tx.updates:
-                            #~ updated = True
-                            #~ break
-                        #~ # XXX: check for erasure and obsoletes
-                    #~ if updated:
-                        #~ continue
-                    
-                    #~ ret.append( ((inst.name, inst.version, inst.release),
-                                 #~ (r, version_tuple_to_string(v)),
-                                 #~ flags[f], None,
-                                 #~ rpm.RPMDEP_SENSE_REQUIRES))
-
-#        return ret
-
     def _checkRemove(self, txmbr):
         po = txmbr.po
         provs = po.returnPrco('provides')
-        #provs.append((po.name, None, (None, None, None)))
-        
+
         # get the files in the package and express them as "provides"
         files = po.filelist
         filesasprovs = map(lambda f: (f, None, (None,None,None)), files)
         provs.extend(filesasprovs)
+
+        # if this is an update, we should check what the new package
+        # provides to make things faster
+        newpoprovs = []
+        newpofiles = []
+        for newpo in txmbr.updated_by:
+            newpoprovs.extend(newpo.returnPrco('provides'))
+            newpofiles.extend(newpo.filelist)
 
         ret = []
         removing = []
@@ -1306,6 +1279,10 @@ class YumDepsolver(Depsolve):
             if prov[0].startswith('rpmlib('): # ignore rpmlib() provides
                 continue
             if prov[0].startswith("/usr/share/doc"): # XXX: ignore doc files
+                continue
+            if prov in newpoprovs:
+                continue
+            if prov[0].startswith("/") and prov[0] in newpofiles:
                 continue
             
             self.verbose_logger.log(logginglevels.DEBUG_4, "looking to see what requires %s of %s", prov, po)
@@ -1355,27 +1332,26 @@ class YumDepsolver(Depsolve):
                 # now do the same set of checks with packages that are
                 # set to be installed.  
                 for txmbr in self.tsInfo.getMembers(None, TS_INSTALL_STATES):
+                    if txmbr.po.checkPrco('provides',
+                                          (r, None, (None,None,None))):
+                        ok = True
+                        for (rr, rf, rv) in instpo.requires:
+                            if rr != r:
+                                continue
+                            if not txmbr.po.checkPrco('provides', (rr, rf, rv)):
+                                ok = False
+                        if ok:
+                            isok = True
+                            break
+
                     # FIXME: it's ugly to have to check files separately here
-                    if r.startswith("/") and r in txmbr.po.filelist:
+                    elif r.startswith("/") and r in txmbr.po.filelist:
                         isok = True
                         break
-                    if not txmbr.po.checkPrco('provides',
-                                              (r, None, (None,None,None))):
-                        continue
-                    # check if provpo satisfies instpo's need for r
-                    # if so, we're golden
-                    ok = True
-                    for (rr, rf, rv) in instpo.requires:
-                        if rr != r:
-                            continue
-                        if not txmbr.po.checkPrco('provides', (rr, rf, rv)):
-                            ok = False
-                    if ok:
-                        isok = True
-                        break
+                        
                 if isok:
                     continue
-                    
+
                 if not isok:
                     removeList.append(instpo)
 
