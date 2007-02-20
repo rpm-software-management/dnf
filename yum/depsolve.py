@@ -1056,6 +1056,19 @@ class YumDepsolver(Depsolve):
         stats.print_stats(20)
         return rc
 
+    def cprof_resolveDeps(self):
+        import cProfile, pstats
+        prof = cProfile.Profile()
+        rc = prof.runcall(self._resolveDeps)
+        prof.dump_stats("yumprof")
+        print "done running depcheck"
+
+        p = pstats.Stats('yumprof')
+        p.strip_dirs()
+        p.sort_stats('time', 'calls')
+        p.print_stats(20)
+        return rc
+
     def _mytsCheck(self):
         # returns a list of tuples
         # ((name, version, release), (needname, needversion), flags, suggest, sense)
@@ -1267,10 +1280,8 @@ class YumDepsolver(Depsolve):
         # if this is an update, we should check what the new package
         # provides to make things faster
         newpoprovs = []
-        newpofiles = []
         for newpo in txmbr.updated_by:
             newpoprovs.extend(newpo.returnPrco('provides'))
-            newpofiles.extend(newpo.filelist)
 
         ret = []
         removing = []
@@ -1282,9 +1293,7 @@ class YumDepsolver(Depsolve):
                 continue
             if prov in newpoprovs:
                 continue
-            if prov[0].startswith("/") and prov[0] in newpofiles:
-                continue
-            
+
             self.verbose_logger.log(logginglevels.DEBUG_4, "looking to see what requires %s of %s", prov, po)
 
             (r, f, v) = prov
@@ -1326,6 +1335,19 @@ class YumDepsolver(Depsolve):
                     if ok:
                         isok = True
                         break
+
+                if isok:
+                    continue
+
+                # for files, we need to do a searchProvides() to take
+                # advantage of the shortcut of the files globbed into
+                # primary.xml.gz.  this is a bit of a hack, but saves us
+                # from having to download the filelists for a lot of cases
+                if r.startswith("/"):
+                    for po in self.pkgSack.searchProvides(r):
+                        if self.tsInfo.getMembers(po.pkgtup, TS_INSTALL_STATES):
+                            isok = True
+                            break
                 if isok:
                     continue
 
@@ -1348,12 +1370,13 @@ class YumDepsolver(Depsolve):
                     elif r.startswith("/") and r in txmbr.po.filelist:
                         isok = True
                         break
-                        
+
                 if isok:
                     continue
 
                 if not isok:
                     removeList.append(instpo)
+
 
             # we have a list of all the items impacted and
             # left w/unresolved deps
@@ -1376,5 +1399,5 @@ class YumDepsolver(Depsolve):
                 ret.append( ((po.name, po.version, po.release),
                              (r, version_tuple_to_string(v)),
                              flags[f], None, rpm.RPMDEP_SENSE_REQUIRES) )
-            
+
         return ret
