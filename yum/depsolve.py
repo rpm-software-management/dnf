@@ -1344,6 +1344,9 @@ class YumDepsolver(Depsolve):
                 # primary.xml.gz.  this is a bit of a hack, but saves us
                 # from having to download the filelists for a lot of cases
                 if r.startswith("/"):
+                    if self.pkgSack is None: # FIXME: this is fugly
+                        self.doRepoSetup()
+                        self.doSackSetup()
                     for po in self.pkgSack.searchProvides(r):
                         if self.tsInfo.getMembers(po.pkgtup, TS_INSTALL_STATES):
                             isok = True
