@@ -876,6 +876,8 @@ class YumBase(depsolve.YumDepsolver):
 
         # now remove them
         for fn in filelist:
+            if not os.path.exists(fn):
+                continue
             try:
                 os.unlink(fn)
             except OSError, e:
