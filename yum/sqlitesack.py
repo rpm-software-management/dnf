@@ -503,11 +503,11 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
             for (rep, db) in self.primarydb.items():
                 cur = db.cursor()
                 executeSQL(cur, query)
-                res = cur.fetchall()
-                if len(res) > 0:
+                for pkg in cur.fetchall():
+                    if self.excludes[rep].has_key(pkg['pkgId']):
+                        continue
                     unmatched.remove(p)
-                    pos = map(lambda x: self.pc(rep,self.db2class(x,True)), res)
-                    matchres.extend(pos)
+                    matchres.append(self.pc(rep,self.db2class(pkg,True)))
 
         exactmatch = misc.unique(exactmatch)
         matched = misc.unique(matched)
