@@ -47,7 +47,7 @@ class Depsolve(object):
     
     def doTsSetup(self):
         warnings.warn('doTsSetup() will go away in a future version of Yum.\n',
-                DeprecationWarning, stacklevel=2)
+                Errors.YumFutureDeprecationWarning, stacklevel=2)
         return self._getTs()
         
     def _getTs(self):

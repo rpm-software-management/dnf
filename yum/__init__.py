@@ -99,7 +99,7 @@ class YumBase(depsolve.YumDepsolver):
             plugin_types=(plugins.TYPE_CORE,), optparser=None, debuglevel=None,
             errorlevel=None):
         warnings.warn('doConfigSetup() will go away in a future version of Yum.\n',
-                DeprecationWarning, stacklevel=2)
+                Errors.YumFutureDeprecationWarning, stacklevel=2)
                 
         return self._getConfig(fn=fn, root=root, init_plugins=init_plugins,
              plugin_types=plugin_types, optparser=optparser, debuglevel=debuglevel,
@@ -276,7 +276,7 @@ class YumBase(depsolve.YumDepsolver):
     
     def doRpmDBSetup(self):
         warnings.warn('doRpmDBSetup() will go away in a future version of Yum.\n',
-                DeprecationWarning, stacklevel=2)
+                Errors.YumFutureDeprecationWarning, stacklevel=2)
 
         return self._getRpmDB()
     
@@ -303,7 +303,7 @@ class YumBase(depsolve.YumDepsolver):
     
     def doRepoSetup(self, **kwargs):
         warnings.warn('doRepoSetup() will go away in a future version of Yum.\n',
-                DeprecationWarning, stacklevel=2)
+                Errors.YumFutureDeprecationWarning, stacklevel=2)
 
         return self._getRepos(**kwargs)
         
@@ -350,7 +350,7 @@ class YumBase(depsolve.YumDepsolver):
     
     def doSackSetup(self, **kwargs):
         warnings.warn('doSackSetup() will go away in a future version of Yum.\n',
-                DeprecationWarning, stacklevel=2)
+                Errors.YumFutureDeprecationWarning, stacklevel=2)
 
         return self._getSacks(**kwargs)
         
@@ -397,7 +397,7 @@ class YumBase(depsolve.YumDepsolver):
         
     def doUpdateSetup(self):
         warnings.warn('doUpdateSetup() will go away in a future version of Yum.\n',
-                DeprecationWarning, stacklevel=2)
+                Errors.YumFutureDeprecationWarning, stacklevel=2)
 
         return self._getUpdates()
         
@@ -430,7 +430,7 @@ class YumBase(depsolve.YumDepsolver):
     
     def doGroupSetup(self):
         warnings.warn('doGroupSetup() will go away in a future version of Yum.\n',
-                DeprecationWarning, stacklevel=2)
+                Errors.YumFutureDeprecationWarning, stacklevel=2)
 
         return self._getGroups()
     
