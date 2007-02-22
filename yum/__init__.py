@@ -65,8 +65,8 @@ class YumBase(depsolve.YumDepsolver):
         self._conf = None
         self._tsInfo = None
         self._rpmdb = None
-        self.up = None
-        self.comps = None
+        self._up = None
+        self._comps = None
         self._pkgSack = None
         self.logger = logging.getLogger("yum.YumBase")
         self.verbose_logger = logging.getLogger("yum.verbose.YumBase")
@@ -96,6 +96,16 @@ class YumBase(depsolve.YumDepsolver):
         self.doSackSetup()
 
     def doConfigSetup(self, fn='/etc/yum/yum.conf', root='/', init_plugins=True,
+            plugin_types=(plugins.TYPE_CORE,), optparser=None, debuglevel=None,
+            errorlevel=None):
+        warnings.warn('doConfigSetup() will go away in a future version of Yum.\n',
+                DeprecationWarning, stacklevel=2)
+                
+        return self._getConfig(fn=fn, root=root, init_plugins=init_plugins,
+             plugin_types=plugin_types, optparser=optparser, debuglevel=debuglevel,
+             errorlevel=errorlevel)
+        
+    def _getConfig(self, fn='/etc/yum/yum.conf', root='/', init_plugins=True,
             plugin_types=(plugins.TYPE_CORE,), optparser=None, debuglevel=None,
             errorlevel=None):
         '''
@@ -263,32 +273,14 @@ class YumBase(depsolve.YumDepsolver):
         self.plugins = plugins.YumPlugins(self, searchpath, optparser,
                 plugin_types, confpath)
 
-    def doTsSetup(self):
-        """setup all the transaction set storage items we'll need
-           This can't happen in __init__ b/c we don't know our installroot
-           yet"""
-        
-        if self._tsInfo != None and self._ts != None:
-            return
-            
-        if not self.conf.installroot:
-            raise Errors.YumBaseError, 'Setting up TransactionSets before config class is up'
-        
-        self._tsInfo = self._transactionDataFactory()
-        self.initActionTs()
     
-    def doTsInfoSetup(self):
-        if not self._tsInfo:
-            self._tsInfo = self._transactionDataFactory()
-
-        return self._tsInfo
-
-    def doActionTsSetup(self):
-        if not self._ts:
-            self.initActionTs()
-        return self._ts
-        
     def doRpmDBSetup(self):
+        warnings.warn('doRpmDBSetup() will go away in a future version of Yum.\n',
+                DeprecationWarning, stacklevel=2)
+
+        return self._getRpmDB()
+    
+    def _getRpmDB(self):
         """sets up a holder object for important information from the rpmdb"""
 
         if self._rpmdb is None:
@@ -302,15 +294,21 @@ class YumBase(depsolve.YumDepsolver):
         self._rpmdb = None
         self._ts = None
         self._tsInfo = None
-        self.up = None
-        if self.comps != None:
-            self.comps.compiled = False
+        self._up = None
+        self._comps = None
     
     def _deleteTs(self):
         del self._ts
         self._ts = None
+    
+    def doRepoSetup(self, **kwargs):
+        warnings.warn('doRepoSetup() will go away in a future version of Yum.\n',
+                DeprecationWarning, stacklevel=2)
+
+        return self._getRepos(**kwargs)
         
-    def doRepoSetup(self, thisrepo=None):
+    
+    def _getRepos(self, thisrepo=None):
         """grabs the repomd.xml for each enabled repository and sets up 
            the basics of the repository"""
         
@@ -349,7 +347,14 @@ class YumBase(depsolve.YumDepsolver):
         self.plugins.run('postreposetup')
         return self._repos
 
-    def doSackSetup(self, archlist=None, thisrepo=None):
+    
+    def doSackSetup(self, **kwargs):
+        warnings.warn('doSackSetup() will go away in a future version of Yum.\n',
+                DeprecationWarning, stacklevel=2)
+
+        return self._getSacks(**kwargs)
+        
+    def _getSacks(self, archlist=None, thisrepo=None):
         """populates the package sacks for information from our repositories,
            takes optional archlist for archs to include"""
         
@@ -359,7 +364,7 @@ class YumBase(depsolve.YumDepsolver):
         if self._pkgSack and thisrepo is None:
             self.verbose_logger.log(logginglevels.DEBUG_4,
                 'skipping reposetup, pkgsack exists')
-            return
+            return self._pkgSack
             
         if thisrepo is None:
             repos = self.repos.listEnabled()
@@ -387,45 +392,56 @@ class YumBase(depsolve.YumDepsolver):
         self.plugins.run('exclude')
         self.pkgSack.buildIndexes()
     
+        return self._pkgSack
         
         
     def doUpdateSetup(self):
+        warnings.warn('doUpdateSetup() will go away in a future version of Yum.\n',
+                DeprecationWarning, stacklevel=2)
+
+        return self._getUpdates()
+        
+    def _getUpdates(self):
         """setups up the update object in the base class and fills out the
            updates, obsoletes and others lists"""
         
-        if self.up != None:
-            return
+        if self._up:
+            return self._up
             
         self.verbose_logger.debug('Building updates object')
-        #FIXME - add checks for the other pkglists to see if we should
-        # raise an error
-        if self.pkgSack is None:
-            self.doRepoSetup()
-            self.doSackSetup()
-        
-        self.up = rpmUtils.updates.Updates(self.rpmdb.simplePkgList(),
+        self._up = rpmUtils.updates.Updates(self.rpmdb.simplePkgList(),
                                            self.pkgSack.simplePkgList())
         if self.conf.debuglevel >= 6:
-            self.up.debug = 1
+            self._up.debug = 1
             
         if self.conf.obsoletes:
-            self.up.rawobsoletes = self.pkgSack.returnObsoletes(newest=True)
+            self._up.rawobsoletes = self.pkgSack.returnObsoletes(newest=True)
             
-        self.up.exactarch = self.conf.exactarch
-        self.up.exactarchlist = self.conf.exactarchlist
-        self.up.doUpdates()
+        self._up.exactarch = self.conf.exactarch
+        self._up.exactarchlist = self.conf.exactarchlist
+        self._up.doUpdates()
 
         if self.conf.obsoletes:
-            self.up.doObsoletes()
+            self._up.doObsoletes()
 
-        self.up.condenseUpdates()
+        self._up.condenseUpdates()
         
+        return self._up
     
     def doGroupSetup(self):
+        warnings.warn('doGroupSetup() will go away in a future version of Yum.\n',
+                DeprecationWarning, stacklevel=2)
+
+        return self._getGroups()
+    
+    def _getGroups(self):
         """create the groups object that will store the comps metadata
            finds the repos with groups, gets their comps data and merge it
            into the group object"""
         
+        if self._comps:
+            return self._comps
+            
         self.verbose_logger.debug('Getting group metadata')
         reposWithGroups = []
         for repo in self.repos.listGroupsEnabled():
@@ -444,8 +460,7 @@ class YumBase(depsolve.YumDepsolver):
                 
         # now we know which repos actually have groups files.
         overwrite = self.conf.overwrite_groups
-        if self.comps is None:
-            self.comps = comps.Comps(overwrite_groups = overwrite)
+        self._comps = comps.Comps(overwrite_groups = overwrite)
 
         for repo in reposWithGroups:
             if repo.groups_added: # already added the groups from this repo
@@ -455,7 +470,7 @@ class YumBase(depsolve.YumDepsolver):
                 'Adding group file from repository: %s', repo)
             groupfile = repo.getGroups()
             try:
-                self.comps.add(groupfile)
+                self._comps.add(groupfile)
             except Errors.GroupsError, e:
                 self.logger.critical('Failed to add groups file for repository: %s' % repo)
             else:
@@ -464,19 +479,22 @@ class YumBase(depsolve.YumDepsolver):
         if self.comps.compscount == 0:
             raise Errors.GroupsError, 'No Groups Available in any repository'
         
-        self.doRpmDBSetup()
         pkglist = self.rpmdb.simplePkgList()
-        self.comps.compile(pkglist)
-    
+        self._comps.compile(pkglist)
+        
+        return self._comps
     
     # properties so they auto-create themselves with defaults
-    repos = property(fget=lambda self: self.doRepoSetup())
-    pkgSack = property(fget=lambda self: self.doSackSetup())
-    conf = property(fget=lambda self: self.doConfigSetup())
-    rpmdb = property(fget=lambda self: self.doRpmDBSetup())
-    tsInfo = property(fget=lambda self: self.doTsInfoSetup())
-    ts = property(fget=lambda self: self.doActionTsSetup(), fdel=lambda self: self._deleteTs())
-        
+    repos = property(fget=lambda self: self._getRepos())
+    pkgSack = property(fget=lambda self: self._getSacks())
+    conf = property(fget=lambda self: self._getConfig())
+    rpmdb = property(fget=lambda self: self._getRpmDB())
+    tsInfo = property(fget=lambda self: self._getTsInfo())
+    ts = property(fget=lambda self: self._getActionTs(), fdel=lambda self: self._deleteTs())
+    up = property(fget=lambda self: self._getUpdates())
+    comps = property(fget=lambda self: self._getGroups())
+    
+    
     def doSackFilelistPopulate(self):
         """convenience function to populate the repos with the filelist metadata
            it also is simply to only emit a log if anything actually gets populated"""

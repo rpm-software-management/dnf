@@ -30,15 +30,51 @@ from constants import *
 import packages
 import logginglevels
 import time 
+import Errors
+
+import warnings
+warnings.simplefilter("ignore", Errors.YumFutureDeprecationWarning)
 
 class Depsolve(object):
     def __init__(self):
         packages.base = self
         self._ts = None
+        self._tsInfo = None
         self.dsCallback = None
         self.logger = logging.getLogger("yum.Depsolve")
         self.verbose_logger = logging.getLogger("yum.verbose.Depsolve")
         self.tsInfoDelta = []
+    
+    def doTsSetup(self):
+        warnings.warn('doTsSetup() will go away in a future version of Yum.\n',
+                DeprecationWarning, stacklevel=2)
+        return self._getTs()
+        
+    def _getTs(self):
+        """setup all the transaction set storage items we'll need
+           This can't happen in __init__ b/c we don't know our installroot
+           yet"""
+        
+        if self._tsInfo != None and self._ts != None:
+            return
+            
+        if not self.conf.installroot:
+            raise Errors.YumBaseError, 'Setting up TransactionSets before config class is up'
+        
+        self._tsInfo = self._transactionDataFactory()
+        self.initActionTs()
+    
+    def _getTsInfo(self):
+        if not self._tsInfo:
+            self._tsInfo = self._transactionDataFactory()
+
+        return self._tsInfo
+
+    def _getActionTs(self):
+        if not self._ts:
+            self.initActionTs()
+        return self._ts
+        
 
     def initActionTs(self):
         """sets up the ts we'll use for all the work"""
