@@ -34,7 +34,7 @@ import rpmUtils.arch
 import rpmUtils.transaction
 import comps
 import config
-import repos
+from repos import RepoStorage
 import misc
 from parser import ConfigPreProcessor
 import transactioninfo
@@ -62,14 +62,15 @@ class YumBase(depsolve.YumDepsolver):
     
     def __init__(self):
         depsolve.YumDepsolver.__init__(self)
-        self.tsInfo = None
-        self.rpmdb = None
+        self._conf = None
+        self._tsInfo = None
+        self._rpmdb = None
         self.up = None
         self.comps = None
-        self.pkgSack = None
+        self._pkgSack = None
         self.logger = logging.getLogger("yum.YumBase")
         self.verbose_logger = logging.getLogger("yum.verbose.YumBase")
-        self.repos = repos.RepoStorage() # class of repositories
+        self._repos = None
 
         # Start with plugins disabled
         self.disablePlugins()
@@ -77,6 +78,7 @@ class YumBase(depsolve.YumDepsolver):
         self.localPackages = [] # for local package handling
 
         self.mediagrabber = None
+    
 
     def _transactionDataFactory(self):
         """Factory method returning TransactionData object"""
@@ -113,6 +115,9 @@ class YumBase(depsolve.YumDepsolver):
             level will be read from the configuration file.
         '''
 
+        if self._conf:
+            return self._conf
+            
         # TODO: Remove this block when we no longer support configs outside
         # of /etc/yum/
         if fn == '/etc/yum/yum.conf' and not os.path.exists(fn):
@@ -132,16 +137,20 @@ class YumBase(depsolve.YumDepsolver):
             self.doPluginSetup(optparser, plugin_types, startupconf.pluginpath,
                     startupconf.pluginconfpath)
 
-        self.conf = config.readMainConfig(startupconf)
+        self._conf = config.readMainConfig(startupconf)
         self.yumvar = self.conf.yumvar
         self.getReposFromConfig()
 
         # who are we:
         self.conf.uid = os.geteuid()
-
+        if self.conf.uid != 0:
+            self.conf.cache = 1
+            
         self.doFileLogSetup(self.conf.uid, self.conf.logfile)
 
         self.plugins.run('init')
+        return self._conf
+        
 
     def doLoggingSetup(self, debuglevel, errorlevel):
         '''
@@ -160,7 +169,7 @@ class YumBase(depsolve.YumDepsolver):
 
         #FIXME this method could be a simpler
 
-        reposlist = []
+        self.conf._reposlist = []
 
         # Check yum.conf for repositories
         for section in self.conf.cfg.sections():
@@ -173,7 +182,7 @@ class YumBase(depsolve.YumDepsolver):
             except (Errors.RepoError, Errors.ConfigError), e:
                 self.logger.warning(e)
             else:
-                reposlist.append(thisrepo)
+                self.conf._reposlist.append(thisrepo)
 
         # Read .repo files from directories specified by the reposdir option
         # (typically /etc/yum/repos.d)
@@ -198,15 +207,8 @@ class YumBase(depsolve.YumDepsolver):
             except (Errors.RepoError, Errors.ConfigError), e:
                 self.logger.warning(e)
             else:
-                reposlist.append(thisrepo)
+                self.conf._reposlist.append(thisrepo)
 
-        # Got our list of repo objects, add them to the repos collection
-        for thisrepo in reposlist:
-            try:
-                self.repos.add(thisrepo)
-            except Errors.RepoError, e: 
-                self.logger.warning(e)
-                continue
 
     def readRepoConfig(self, parser, section):
         '''Parse an INI file section for a repository.
@@ -266,40 +268,71 @@ class YumBase(depsolve.YumDepsolver):
            This can't happen in __init__ b/c we don't know our installroot
            yet"""
         
-        if self.tsInfo != None and self.ts != None:
+        if self._tsInfo != None and self._ts != None:
             return
             
         if not self.conf.installroot:
             raise Errors.YumBaseError, 'Setting up TransactionSets before config class is up'
         
-        self.tsInfo = self._transactionDataFactory()
+        self._tsInfo = self._transactionDataFactory()
         self.initActionTs()
+    
+    def doTsInfoSetup(self):
+        if not self._tsInfo:
+            self._tsInfo = self._transactionDataFactory()
+
+        return self._tsInfo
+
+    def doActionTsSetup(self):
+        if not self._ts:
+            self.initActionTs()
+        return self._ts
         
     def doRpmDBSetup(self):
         """sets up a holder object for important information from the rpmdb"""
 
-        if self.rpmdb is None:
+        if self._rpmdb is None:
             self.verbose_logger.debug('Reading Local RPMDB')
-            self.rpmdb = rpmsack.RPMDBPackageSack(root=self.conf.installroot)
+            self._rpmdb = rpmsack.RPMDBPackageSack(root=self.conf.installroot)
+        
+        return self._rpmdb
 
     def closeRpmDB(self):
         """closes down the instances of the rpmdb we have wangling around"""
-        self.rpmdb = None
-        self.ts = None
+        self._rpmdb = None
+        self._ts = None
+        self._tsInfo = None
         self.up = None
         if self.comps != None:
             self.comps.compiled = False
-
+    
+    def _deleteTs(self):
+        del self._ts
+        self._ts = None
+        
     def doRepoSetup(self, thisrepo=None):
         """grabs the repomd.xml for each enabled repository and sets up 
            the basics of the repository"""
+        
+        if not self._repos:
+            self._repos = RepoStorage()
+        else:
+            return self._repos
+        
+        # Get our list of repo objects from conf, add them to the repos collection        
+        for r in self.conf._reposlist:
+            try:
+                self.repos.add(r)
+            except Errors.RepoError, e: 
+                self.logger.warning(e)
+                continue
 
         self.plugins.run('prereposetup')
         
         if thisrepo is None:
-            repos = self.repos.listEnabled()
+            repos = self._repos.listEnabled()
         else:
-            repos = self.repos.findRepos(thisrepo)
+            repos = self._repos.findRepos(thisrepo)
 
         if len(repos) < 1:
             self.logger.critical('No Repositories Available to Set Up')
@@ -310,16 +343,20 @@ class YumBase(depsolve.YumDepsolver):
             num += 1
             
             
-        if self.repos.callback and len(repos) > 0:
-            self.repos.callback.progressbar(num, len(repos), repo.id)
+        if self._repos.callback and len(repos) > 0:
+            self._repos.callback.progressbar(num, len(repos), repo.id)
             
         self.plugins.run('postreposetup')
+        return self._repos
 
     def doSackSetup(self, archlist=None, thisrepo=None):
         """populates the package sacks for information from our repositories,
            takes optional archlist for archs to include"""
-
-        if self.pkgSack and thisrepo is None:
+        
+        if self._pkgSack:
+            return self._pkgSack
+            
+        if self._pkgSack and thisrepo is None:
             self.verbose_logger.log(logginglevels.DEBUG_4,
                 'skipping reposetup, pkgsack exists')
             return
@@ -339,7 +376,8 @@ class YumBase(depsolve.YumDepsolver):
 
         self.repos.getPackageSack().setCompatArchs(archdict)
         self.repos.populateSack(which=repos)
-        self.pkgSack = self.repos.getPackageSack()
+        self._pkgSack = self.repos.getPackageSack()
+        
         self.excludePackages()
         self.pkgSack.excludeArchs(archlist)
 
@@ -348,6 +386,8 @@ class YumBase(depsolve.YumDepsolver):
             self.includePackages(repo)
         self.plugins.run('exclude')
         self.pkgSack.buildIndexes()
+    
+        
         
     def doUpdateSetup(self):
         """setups up the update object in the base class and fills out the
@@ -427,7 +467,16 @@ class YumBase(depsolve.YumDepsolver):
         self.doRpmDBSetup()
         pkglist = self.rpmdb.simplePkgList()
         self.comps.compile(pkglist)
-            
+    
+    
+    # properties so they auto-create themselves with defaults
+    repos = property(fget=lambda self: self.doRepoSetup())
+    pkgSack = property(fget=lambda self: self.doSackSetup())
+    conf = property(fget=lambda self: self.doConfigSetup())
+    rpmdb = property(fget=lambda self: self.doRpmDBSetup())
+    tsInfo = property(fget=lambda self: self.doTsInfoSetup())
+    ts = property(fget=lambda self: self.doActionTsSetup(), fdel=lambda self: self._deleteTs())
+        
     def doSackFilelistPopulate(self):
         """convenience function to populate the repos with the filelist metadata
            it also is simply to only emit a log if anything actually gets populated"""

@@ -37,6 +37,17 @@ class TransactionData:
         
         self.conditionals = {} # key = pkgname, val = list of pos to add
 
+        # lists of txmbrs in their states - just placeholders
+        self.instgroups = []
+        self.removedgroups = []
+        self.removed = []
+        self.installed = []
+        self.updated = []
+        self.obsoleted = []
+        self.depremoved = []
+        self.depinstalled = []
+        self.depupdated = []
+        
     def __len__(self):
         return len(self.pkgdict.values())
         

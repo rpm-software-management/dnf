@@ -33,8 +33,8 @@ import time
 
 class Depsolve(object):
     def __init__(self):
-        self.ts = None
         packages.base = self
+        self._ts = None
         self.dsCallback = None
         self.logger = logging.getLogger("yum.Depsolve")
         self.verbose_logger = logging.getLogger("yum.verbose.Depsolve")
@@ -43,25 +43,25 @@ class Depsolve(object):
     def initActionTs(self):
         """sets up the ts we'll use for all the work"""
         
-        self.ts = rpmUtils.transaction.TransactionWrapper(self.conf.installroot)
+        self._ts = rpmUtils.transaction.TransactionWrapper(self.conf.installroot)
         ts_flags_to_rpm = { 'noscripts': rpm.RPMTRANS_FLAG_NOSCRIPTS,
                             'notriggers': rpm.RPMTRANS_FLAG_NOTRIGGERS,
                             'nodocs': rpm.RPMTRANS_FLAG_NODOCS,
                             'test': rpm.RPMTRANS_FLAG_TEST,
                             'repackage': rpm.RPMTRANS_FLAG_REPACKAGE}
         
-        self.ts.setFlags(0) # reset everything.
+        self._ts.setFlags(0) # reset everything.
         
         for flag in self.conf.tsflags:
             if ts_flags_to_rpm.has_key(flag):
-                self.ts.addTsFlag(ts_flags_to_rpm[flag])
+                self._ts.addTsFlag(ts_flags_to_rpm[flag])
             else:
                 self.logger.critical('Invalid tsflag in config file: %s', flag)
 
         probfilter = 0
         for flag in self.tsInfo.probFilterFlags:
             probfilter |= flag
-        self.ts.setProbFilter(probfilter)
+        self._ts.setProbFilter(probfilter)
 
     def whatProvides(self, name, flags, version):
         """searches the packageSacks for what provides the arguments

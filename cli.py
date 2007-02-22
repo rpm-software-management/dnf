@@ -91,10 +91,11 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         """grabs the repomd.xml for each enabled repository 
            and sets up the basics of the repository"""
         
-        if self.pkgSack and thisrepo is None:
+        if self._repos and thisrepo is None:
             self.verbose_logger.log(yum.logginglevels.DEBUG_4,
                 'skipping reposetup, pkgsack exists')
-            return
+            return self._repos
+            
       
         self.verbose_logger.log(yum.logginglevels.INFO_2,
             'Setting up repositories')
@@ -107,7 +108,8 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
             self.verbose_logger.log(yum.logginglevels.INFO_2,
                 'Reading repository metadata in from local files')
             self.doSackSetup(thisrepo=thisrepo)
-    
+        
+        return self._repos
         
     def getOptionsConfig(self, args):
         """parses command line arguments, takes cli args:
