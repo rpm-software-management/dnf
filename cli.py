@@ -102,12 +102,12 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
 
         # Call parent class to do the bulk of work 
         # (this also ensures that reposetup plugin hook is called)
-        yum.YumBase.doRepoSetup(self, thisrepo=thisrepo)
+        yum.YumBase._getRepos(self, thisrepo=thisrepo)
 
         if dosack: # so we can make the dirs and grab the repomd.xml but not import the md
             self.verbose_logger.log(yum.logginglevels.INFO_2,
                 'Reading repository metadata in from local files')
-            self.doSackSetup(thisrepo=thisrepo)
+            self._getSacks(thisrepo=thisrepo)
         
         return self._repos
         
@@ -134,7 +134,7 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
        
         # Read up configuration options and initialise plugins
         try:
-            self.doConfigSetup(opts.conffile, root, 
+            self._getConfig(opts.conffile, root, 
                     init_plugins=not opts.noplugins,
                     plugin_types=(yum.plugins.TYPE_CORE, yum.plugins.TYPE_INTERACTIVE),
                     optparser=self.optparser,
@@ -212,8 +212,6 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
     def doShell(self):
         """do a shell-like interface for yum commands"""
 
-        self.doRpmDBSetup()
-        
         yumshell = shell.YumShell(base=self)
         if len(self.extcmds) == 0:
             yumshell.cmdloop()
@@ -258,7 +256,7 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         
         # setup our transaction sets (needed globally, here's a good a place as any)
         try:
-            self.doTsSetup()
+            self._getTs()
         except yum.Errors.YumBaseError, e:
             return 1, [str(e)]
 
@@ -420,8 +418,6 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         
         oldcount = len(self.tsInfo)
         
-        self.doRepoSetup()
-        self.doRpmDBSetup()
         toBeInstalled = {} # keyed on name
         passToUpdate = [] # list of pkgtups to pass along to updatecheck
 
@@ -538,10 +534,7 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         # if there is a userlist then it's for updating pkgs, not obsoleting
         
         oldcount = len(self.tsInfo)
-        self.doRepoSetup()
-        self.doRpmDBSetup()
         installed = self.rpmdb.simplePkgList()
-        self.doUpdateSetup()
         updates = self.up.getUpdatesTuples()
         if self.conf.obsoletes:
             obsoletes = self.up.getObsoletesTuples(newest=1)
@@ -617,7 +610,6 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         
         oldcount = len(self.tsInfo)
         
-        self.doRpmDBSetup()
         installed = self.rpmdb.returnPackages()
         
         if len(userlist) > 0: # if it ain't well, that'd be real _bad_ :)
@@ -662,7 +654,6 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         if len(filelist) == 0:
             return 0, ['No Packages Provided']
         
-        self.doRpmDBSetup()
         installpkgs = []
         updatepkgs = []
         donothingpkgs = []
@@ -814,9 +805,6 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         """cli wrapper method for findDeps method takes a list of packages and 
             returns a formatted deplist for that package"""
         
-        self.doRepoSetup()
-        
-        
         for arg in args:
             pkgs = []
             ematch, match, unmatch = self.pkgSack.matchPackageNames([arg])
@@ -937,7 +925,6 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
     def installGroups(self, grouplist):
         """for each group requested do 'selectGroup' on them."""
         
-        self.doRepoSetup()
         pkgs_used = []
         
         for group_string in grouplist:

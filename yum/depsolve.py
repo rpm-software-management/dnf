@@ -278,9 +278,6 @@ class Depsolve(object):
                     '\nDep Number: %d/%d\n', depcount, len(deps))
                 if sense == rpm.RPMDEP_SENSE_REQUIRES: # requires
                     # if our packageSacks aren't here, then set them up
-                    if self.pkgSack is None:
-                        self.doRepoSetup()
-                        self.doSackSetup()
                     (checkdep, missing, conflict, errormsgs) = self._processReq(dep)
                     
                 elif sense == rpm.RPMDEP_SENSE_CONFLICTS: # conflicts - this is gonna be short :)
@@ -511,7 +508,6 @@ class Depsolve(object):
             checkdeps = 1
         
         if needmode in ['i', 'u']:
-            self.doUpdateSetup()
             obslist = []
             # check obsoletes first
             if self.conf.obsoletes:
@@ -665,7 +661,6 @@ class Depsolve(object):
             (n,a,e,v,r) = pkg.pkgtup
             pkgmode = self.tsInfo.getMode(name=n, arch=a, epoch=e, ver=v, rel=r)
             if pkgmode in ['i', 'u']:
-                self.doUpdateSetup()
                 self.verbose_logger.log(logginglevels.DEBUG_2,
                     '%s already in ts, skipping this one', n)
                 checkdeps = 1
@@ -744,7 +739,7 @@ class Depsolve(object):
             confname = name
             
         po = None        
-        self.doUpdateSetup()
+
         uplist = self.up.getUpdatesList(name=confname)
         
         conflict_packages = self.rpmdb.searchNevra(name=confname)
@@ -1192,10 +1187,6 @@ class YumDepsolver(Depsolve):
                 self.verbose_logger.log(logginglevels.DEBUG_2,
                     '\nDep Number: %d/%d\n', depcount, len(deps))
                 if sense == rpm.RPMDEP_SENSE_REQUIRES: # requires
-                    # if our packageSacks aren't here, then set them up
-                    if self.pkgSack is None:
-                        self.doRepoSetup()
-                        self.doSackSetup()
                     (checkdep, missing, conflict, errormsgs) = self._processReq(dep)
                     
                 elif sense == rpm.RPMDEP_SENSE_CONFLICTS: # conflicts - this is gonna be short :)
@@ -1382,9 +1373,6 @@ class YumDepsolver(Depsolve):
                 # primary.xml.gz.  this is a bit of a hack, but saves us
                 # from having to download the filelists for a lot of cases
                 if r.startswith("/"):
-                    if self.pkgSack is None: # FIXME: this is fugly
-                        self.doRepoSetup()
-                        self.doSackSetup()
                     for po in self.pkgSack.searchProvides(r):
                         if self.tsInfo.getMembers(po.pkgtup, TS_INSTALL_STATES):
                             isok = True
