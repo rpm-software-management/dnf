@@ -88,12 +88,8 @@ class YumBase(depsolve.YumDepsolver):
         """do a default setup for all the normal/necessary yum components,
            really just a shorthand for testing"""
         
-        self.doConfigSetup(init_plugins=False)
+        self._getConfig(init_plugins=False)
         self.conf.cache = cache
-        self.doTsSetup()
-        self.doRpmDBSetup()
-        self.doRepoSetup()
-        self.doSackSetup()
 
     def doConfigSetup(self, fn='/etc/yum/yum.conf', root='/', init_plugins=True,
             plugin_types=(plugins.TYPE_CORE,), optparser=None, debuglevel=None,
@@ -252,8 +248,8 @@ class YumBase(depsolve.YumDepsolver):
             confpath=None):
         '''Initialise and enable yum plugins. 
 
-        Note: doConfigSetup() will initialise plugins if instructed to. Only
-        call this method directly if not calling doConfigSetup() or calling
+        Note: _getConfig() will initialise plugins if instructed to. Only
+        call this method directly if not calling _getConfig() or calling
         doConfigSetup(init_plugins=False).
 
         @param optparser: The OptionParser instance for this run (optional)
@@ -1007,8 +1003,6 @@ class YumBase(depsolve.YumDepsolver):
 
         # list all packages - those installed and available, don't 'think about it'
         if pkgnarrow == 'all': 
-            self.doRepoSetup()
-            self.doRpmDBSetup()
             inst = self.rpmdb.simplePkgList()
             for po in self.rpmdb:
                 installed.append(po)
@@ -1025,9 +1019,6 @@ class YumBase(depsolve.YumDepsolver):
 
         # produce the updates list of tuples
         elif pkgnarrow == 'updates':
-            self.doRepoSetup()
-            self.doRpmDBSetup()
-            self.doUpdateSetup()
             for (n,a,e,v,r) in self.up.getUpdatesList():
                 matches = self.pkgSack.searchNevra(name=n, arch=a, epoch=e, 
                                                    ver=v, rel=r)
@@ -1044,14 +1035,11 @@ class YumBase(depsolve.YumDepsolver):
 
         # installed only
         elif pkgnarrow == 'installed':
-            self.doRpmDBSetup()
             for po in self.rpmdb:
                 installed.append(po)
         
         # available in a repository
         elif pkgnarrow == 'available':
-            self.doRepoSetup()
-            self.doRpmDBSetup()
             inst = self.rpmdb.simplePkgList()
             if self.conf.showdupesfromrepos:
                 avail = self.pkgSack.returnPackages()
@@ -1067,8 +1055,6 @@ class YumBase(depsolve.YumDepsolver):
         elif pkgnarrow == 'extras':
             # we must compare the installed set versus the repo set
             # anything installed but not in a repo is an extra
-            self.doRepoSetup()
-            self.doRpmDBSetup()
             avail = self.pkgSack.simplePkgList()
             for po in self.rpmdb:
                 if po.pkgtup not in avail:
@@ -1076,10 +1062,7 @@ class YumBase(depsolve.YumDepsolver):
 
         # obsoleting packages (and what they obsolete)
         elif pkgnarrow == 'obsoletes':
-            self.doRepoSetup()
-            self.doRpmDBSetup()
             self.conf.obsoletes = 1
-            self.doUpdateSetup()
 
             for (pkgtup, instTup) in self.up.getObsoletesTuples():
                 (n,a,e,v,r) = pkgtup
@@ -1094,7 +1077,6 @@ class YumBase(depsolve.YumDepsolver):
             now = time.time()
             recentlimit = now-(self.conf.recent*86400)
             ftimehash = {}
-            self.doRepoSetup()
             if self.conf.showdupesfromrepos:
                 avail = self.pkgSack.returnPackages()
             else:
@@ -1134,7 +1116,6 @@ class YumBase(depsolve.YumDepsolver):
              packageobject = [reqs] = [list of satisfying pkgs]"""
         
         results = {}
-        self.doRepoSetup()
 
         for pkg in pkgs:
             results[pkg] = {} 
@@ -1160,8 +1141,6 @@ class YumBase(depsolve.YumDepsolver):
     def searchGenerator(self, fields, criteria):
         """Generator method to lighten memory load for some searches.
            This is the preferred search function to use."""
-        self.doRepoSetup()
-        self.doRpmDBSetup()
 
         for string in criteria:
             restring = misc.refineSearchPattern(string)
@@ -1204,7 +1183,6 @@ class YumBase(depsolve.YumDepsolver):
     
     def searchPackageProvides(self, args, callback=None):
         
-        self.doRepoSetup()
         matches = {}
         
         # search deps the simple way first
@@ -1282,7 +1260,6 @@ class YumBase(depsolve.YumDepsolver):
                         callback(po, tmpvalues)
                     matches[po] = tmpvalues
         
-        self.doRpmDBSetup()
         # installed rpms, too
         taglist = ['filelist', 'dirnames', 'provides_names']
         arg_re = []
@@ -1351,7 +1328,6 @@ class YumBase(depsolve.YumDepsolver):
         """mark all the packages in this group to be removed"""
         
         txmbrs_used = []
-        self.doGroupSetup()
         
         thisgroup = self.comps.return_group(grpid)
         if not thisgroup:
@@ -1370,7 +1346,6 @@ class YumBase(depsolve.YumDepsolver):
     def groupUnremove(self, grpid):
         """unmark any packages in the group from being removed"""
         
-        self.doGroupSetup()
 
         thisgroup = self.comps.return_group(grpid)
         if not thisgroup:
@@ -1400,8 +1375,6 @@ class YumBase(depsolve.YumDepsolver):
            set"""
         
         txmbrs_used = []
-        if not self.comps:
-            self.doGroupSetup()
         
         if not self.comps.has_group(grpid):
             raise Errors.GroupsError, "No Group named %s exists" % grpid
@@ -1462,8 +1435,6 @@ class YumBase(depsolve.YumDepsolver):
 
     def deselectGroup(self, grpid):
         """de-mark all the packages in the group for install"""
-        if not self.comps:
-            self.doGroupSetup()
         
         if not self.comps.has_group(grpid):
             raise Errors.GroupsError, "No Group named %s exists" % grpid
@@ -1561,7 +1532,6 @@ class YumBase(depsolve.YumDepsolver):
            pass back the packages it finds providing that dep."""
         
         results = []
-        self.doRepoSetup()
         # parse the string out
         #  either it is 'dep (some operator) e:v-r'
         #  or /file/dep
@@ -1606,7 +1576,6 @@ class YumBase(depsolve.YumDepsolver):
            pass back the installed packages it finds providing that dep."""
         
         results = []
-        self.doRpmDBSetup()
         # parse the string out
         #  either it is 'dep (some operator) e:v-r'
         #  or /file/dep
@@ -1729,11 +1698,6 @@ class YumBase(depsolve.YumDepsolver):
            
            """
         
-        self.doRepoSetup()
-        self.doSackSetup()
-        self.doRpmDBSetup()
-        self.doUpdateSetup()
-        
         pkgs = []
         if po:
             if isinstance(po, YumAvailablePackage) or isinstance(po, YumLocalPackage):
@@ -1821,18 +1785,11 @@ class YumBase(depsolve.YumDepsolver):
             
             returns the list of txmbr of the items it marked for update"""
         
-        # do updates list
-        # do obsoletes list
-        
         # check for args - if no po nor kwargs, do them all
         # if po, do it, ignore all else
         # if no po do kwargs
         # uninstalled pkgs called for update get returned with errors in a list, maybe?
 
-        self.doRepoSetup()
-        self.doSackSetup()
-        self.doRpmDBSetup()
-        self.doUpdateSetup()
         updates = self.up.getUpdatesTuples()
         if self.conf.obsoletes:
             obsoletes = self.up.getObsoletesTuples(newest=1)
@@ -1940,7 +1897,6 @@ class YumBase(depsolve.YumDepsolver):
         if not po and not kwargs.keys():
             raise Errors.RemoveError, 'Nothing specified to remove'
         
-        self.doRpmDBSetup()
         tx_return = []
         pkgs = []
         
