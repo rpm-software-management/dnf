@@ -431,8 +431,6 @@ class PreRepoSetupPluginConduit(InitPluginConduit):
 
         @return: rpmUtils.RpmDBHolder instance
         '''
-        self._base.doTsSetup()
-        self._base.doRpmDBSetup()
         return self._base.rpmdb
 
 class PostRepoSetupPluginConduit(PreRepoSetupPluginConduit):
@@ -442,7 +440,6 @@ class PostRepoSetupPluginConduit(PreRepoSetupPluginConduit):
 
         @return: yum.comps.Comps instance
         '''
-        self._base.doGroupSetup()
         return self._base.comps
 
 class DownloadPluginConduit(PostRepoSetupPluginConduit):

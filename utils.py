@@ -44,7 +44,7 @@ class YumUtilBase(YumBaseCli):
         root = self._parser.getRoot(opts)
         # Read up configuration options and initialise plugins
         try:
-            self.doConfigSetup(opts.conffile, root, 
+            self._getConfig(opts.conffile, root, 
                     init_plugins=not opts.noplugins,
                     plugin_types= pluginsTypes,
                     optparser=self._parser,
@@ -69,11 +69,12 @@ class YumUtilBase(YumBaseCli):
     def doUtilYumSetup(self):
         """do a default setup for all the normal/necessary yum components,
            really just a shorthand for testing"""
+        # FIXME - we need another way to do this, I think.
         try:
-            self.doTsSetup()
-            self.doRpmDBSetup()
-            self.doRepoSetup()
-            self.doSackSetup()
+            self._getTs()
+            self._getRpmDB()
+            self._getRepos()
+            self._getSacks()
         except yum.Errors.YumBaseError, msg:
             self.logger.critical(str(msg))
             sys.exit(1)

@@ -160,8 +160,6 @@ class YumShell(cmd.Cmd):
         
         elif cmd == 'reset':
             self.base.closeRpmDB()
-            self.base.doTsSetup()
-            self.base.doRpmDBSetup()
         
         elif cmd == 'solve':
             try:
@@ -235,8 +233,6 @@ class YumShell(cmd.Cmd):
                 self.base.up = None         # reset the updates
                 # reset the transaction set, we have to or we shall surely die!
                 self.base.closeRpmDB() 
-                self.base.doTsSetup()
-                self.base.doRpmDBSetup()
         else:
             self.do_help('config')
 
@@ -273,7 +269,7 @@ class YumShell(cmd.Cmd):
                 else:
                     for repo in changed:
                         try:
-                            self.base.doRepoSetup(thisrepo=repo)
+                            self.base._getRepos(thisrepo=repo)
                         except Errors.RepoError, e:
                             self.logger.critical('Disabling Repository')
                             self.base.repos.disableRepo(repo)
@@ -298,8 +294,6 @@ class YumShell(cmd.Cmd):
                     self.base.up = None     # reset the updates
                     # reset the transaction set and refresh everything
                     self.base.closeRpmDB() 
-                    self.base.doTsSetup()
-                    self.base.doRpmDBSetup()
         
         else:
             self.do_help('repo')
@@ -334,7 +328,5 @@ class YumShell(cmd.Cmd):
                     self.verbose_logger.log(logginglevels.INFO_2,
                         'Finished Transaction')
                     self.base.closeRpmDB()
-                    self.base.doTsSetup()
-                    self.base.doRpmDBSetup()
 
 
