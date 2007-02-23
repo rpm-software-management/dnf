@@ -1141,7 +1141,7 @@ class YumBase(depsolve.YumDepsolver):
     def searchGenerator(self, fields, criteria):
         """Generator method to lighten memory load for some searches.
            This is the preferred search function to use."""
-
+        # FIXME - regex or globs - pick one
         # convert the fields
         # check the criteria for %
             # maybe convert globs to sql?
