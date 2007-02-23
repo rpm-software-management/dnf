@@ -263,6 +263,28 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
             result.append((self.pc(rep,pkg)))
         return result     
     
+    def searchPrimaryFields(self, fields, searchstring):
+        """search arbitrary fields from the primarydb for a string"""
+        result = []
+        if len(fields) < 1:
+            return result
+        
+        basestring="select DISTINCT pkgid from packages where %s like '%%%s%%' " % (fields[0], searchstring)
+        
+        for f in fields[1:]:
+            basestring = "%s or %s like '%%%s%%' " % (basestring, f, searchstring)
+        
+        for (rep,cache) in self.primarydb.items():
+            cur = cache.cursor()
+            executeSQL(cur, basestring)
+            for ob in cur.fetchall():
+                if (self.excludes[rep].has_key(ob['pkgId'])):
+                    continue
+                pkg = self.getPackageDetails(ob['pkgId'])
+                result.append((self.pc(rep,pkg)))
+         
+        return result
+        
     def returnObsoletes(self):
         obsoletes = {}
         for (rep,cache) in self.primarydb.items():

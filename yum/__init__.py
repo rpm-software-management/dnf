@@ -1142,25 +1142,46 @@ class YumBase(depsolve.YumDepsolver):
         """Generator method to lighten memory load for some searches.
            This is the preferred search function to use."""
 
-        for string in criteria:
-            restring = misc.refineSearchPattern(string)
-            try: crit_re = re.compile(restring, flags=re.I)
-            except sre_constants.error, e:
-                raise Errors.MiscError, \
-                 'Search Expression: %s is an invalid Regular Expression.\n' % string
+        # convert the fields
+        # check the criteria for %
+            # maybe convert globs to sql?
+        # get back results, for each of the results run the old query and 
+        # render results
+        sql_fields = []
+        for f in fields:
+            if RPM_TO_SQLITE.has_key(f):
+                sql_fields.append(RPM_TO_SQLITE[f])
+            else:
+                sql_fields.append(f)
 
-            for sack in self.pkgSack, self.rpmdb:
-                for po in sack:
+        for s in criteria:
+            narrowed_list = []
+            if s.find('%') != -1:
+                continue
+            
+            for sack in self.pkgSack.sacks.values():
+                narrowed_list.extend(sack.searchPrimaryFields(sql_fields, s))
+                
+            for po in narrowed_list:
+                for field in fields:
                     tmpvalues = []
-                    for field in fields:
-                        value = getattr(po, field)
-                        if value and crit_re.search(value):
-                            tmpvalues.append(value)
+                    value = getattr(po, field)
+                    if value and value.find(s) != -1:
+                        tmpvalues.append(value)
 
                     if len(tmpvalues) > 0:
                         yield (po, tmpvalues)
-                    
         
+            for po in self.rpmdb:
+                for field in fields:
+                    tmpvalues = []
+                    value = getattr(po, field)
+                    if value and value.find(s) != -1:
+                        tmpvalues.append(value)
+
+                    if len(tmpvalues) > 0:
+                        yield (po, tmpvalues)
+
     def searchPackages(self, fields, criteria, callback=None):
         """Search specified fields for matches to criteria
            optional callback specified to print out results

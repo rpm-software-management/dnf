@@ -77,3 +77,20 @@ DBVERSION = '9'
 # boolean dict:
 BOOLEAN_STATES = {'1': True, 'yes': True, 'true': True, 'on': True,
                   '0': False, 'no': False, 'false': False, 'off': False}
+
+RPM_TO_SQLITE = { 'packagesize' : 'size_package',
+                 'archivesize' : 'size_archive',
+                 'installedsize' : 'size_installed',
+                 'buildtime' : 'time_build',
+                 'hdrstart' : 'rpm_header_start',
+                 'hdrend' : 'rpm_header_end',
+                 'basepath' : 'location_base',
+                 'relativepath': 'location_href',
+                 'filetime' : 'time_file',
+                 'packager' : 'rpm_packager',
+                 'group' : 'rpm_group',
+                 'buildhost' : 'rpm_buildhost',
+                 'sourcerpm' : 'rpm_sourcerpm',
+                 'vendor' : 'rpm_vendor',
+                 'license' : 'rpm_license'
+                        }
