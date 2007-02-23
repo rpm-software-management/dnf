@@ -323,20 +323,17 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
 
     def searchPrco(self, name, prcotype):
         """return list of packages having prcotype name (any evr and flag)"""
+        
         results = []
         for (rep,cache) in self.primarydb.items():
             cur = cache.cursor()
-            executeSQL(cur, "select * from %s where name=?" %(prcotype,), (name,))
-            prcos = cur.fetchall()
-            for res in prcos:
-                executeSQL(cur, "select * from packages where pkgKey = ?" , (res['pkgKey'],))
-                for x in cur.fetchall():
-                    pkg = self.db2class(x)
-                    if (self.excludes[rep].has_key(pkg.pkgId)):
-                        continue
-                    results.append(self.pc(rep,pkg))
-
-
+            executeSQL(cur, "select packages.* from packages,%s where %s.name =? and %s.pkgKey=packages.pkgKey" % (prcotype,prcotype,prcotype), (name,))
+            for x in cur.fetchall():
+                pkg = self.db2class(x)
+                if (self.excludes[rep].has_key(pkg.pkgId)):
+                    continue
+                results.append(self.pc(rep,pkg))
+        
         # If it's not a provides or a filename, we are done
         if prcotype != "provides" or name[0] != '/':
             return results
