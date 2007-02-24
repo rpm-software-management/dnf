@@ -338,6 +338,8 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
         if prcotype != "provides" or name[0] != '/':
             return results
 
+
+        # FIXME - combine these two lookups
         # If it is a filename, search the primary.xml file info
         for (rep,cache) in self.primarydb.items():
             cur = cache.cursor()
@@ -363,6 +365,7 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
         if matched: # if its in the primary.xml files then skip the other check
             return results
         
+        #FIXME - sort this all out.
         # If it is a filename, search the files.xml file info
         for (rep,cache) in self.filelistsdb.items():
             cur = cache.cursor()
@@ -513,7 +516,7 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
         unmatched = list(pkgspecs)
 
         for p in pkgspecs:
-            if re.match('[\*\?\[\]]', p):
+            if re.match('.*[\*\?\[\]].*', p):
                 query = PARSE_QUERY % ({ "op": "glob", "q": p })
                 matchres = matched
             else:
