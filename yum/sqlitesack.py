@@ -188,6 +188,9 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
     # add it to the exclude list
     def delPackage(self, obj):
         repo = obj.repo
+        if not self.excludes.has_key(repo):
+            self.excludes[repo] = {}
+            
         self.excludes[repo][obj.pkgId] = 1
 
     def addDict(self, repo, datatype, dataobj, callback=None):
@@ -197,7 +200,7 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
         else:
             self.added[repo] = []
 
-        if (not self.excludes.has_key(repo)): 
+        if not self.excludes.has_key(repo): 
             self.excludes[repo] = {}
 
         if datatype == 'metadata':
@@ -212,6 +215,7 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
     
         self.added[repo].append(datatype)
 
+        
     # Get all files for a certain pkgId from the filelists.xml metadata
     # Search packages that either provide something containing name
     # or provide a file containing name 
@@ -320,7 +324,23 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
             for ob in cur.fetchall():
                 pkg = self.db2class(ob)
                 return pkg
-
+    
+    def _getListofPackageDetails(self, pkgId_list):
+        pkgs = []
+        if len(pkgId_list) == 0:
+            return pkgs
+        pkgid_query = str(tuple(pkgId_list))
+        print pkgid_query
+        for (rep,cache) in self.primarydb.items():
+            cur = cache.cursor()
+            executeSQL(cur, "select * from packages where pkgId in ?", (pkgid_query,))
+            for ob in cur.fetchall():
+                pkg = self.db2class(ob)
+                pkgs.append(pkg)
+        
+        return pkgs
+        
+    
     def searchPrco(self, name, prcotype):
         """return list of packages having prcotype name (any evr and flag)"""
         
@@ -347,8 +367,6 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
                 pkg = self.db2class(x)
                 if (self.excludes[rep].has_key(pkg.pkgId)):
                     continue
-                                        
-                #pkg.files = {name: res['type']}
                 results.append(self.pc(rep,pkg))
 
         matched = 0
@@ -386,21 +404,26 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
 
             files = cur.fetchall()
             
+            matching_ids = []
             for res in files:
                 if (self.excludes[rep].has_key(res['pkgId'])):
                     continue
                 
+                #FIXME - optimize the look up here by checking for single-entry filenames
                 quicklookup = {}
                 for fn in decodefilenamelist(res['filenames']):
                     quicklookup[fn] = 1
-                    
+                
                 # If it matches the dirname, that doesnt mean it matches
                 # the filename, check if it does
                 if filename and not quicklookup.has_key(filename):
                     continue
                 
-                # If it matches we only know the packageId
-                pkg = self.getPackageDetails(res['pkgId'])
+                matching_ids.append(res['pkgId'])
+                
+            
+            pkgs = self._getListofPackageDetails(matching_ids)
+            for pkg in pkgs:
                 results.append(self.pc(rep,pkg))
         
         return results
