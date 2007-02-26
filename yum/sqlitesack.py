@@ -339,21 +339,17 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
             return results
 
 
-        # FIXME - combine these two lookups
         # If it is a filename, search the primary.xml file info
         for (rep,cache) in self.primarydb.items():
             cur = cache.cursor()
-            executeSQL(cur, "select * from files where name = ?" , (name,))
-            files = cur.fetchall()
-            for res in files:
-                executeSQL(cur, "select * from packages where pkgKey = ?" , (res['pkgKey'],))
-                for x in cur.fetchall():
-                    pkg = self.db2class(x)
-                    if (self.excludes[rep].has_key(pkg.pkgId)):
-                        continue
-                                            
-                    pkg.files = {name: res['type']}
-                    results.append(self.pc(rep,pkg))
+            executeSQL(cur, "select packages.* from files,packages where files.name = ? and files.pkgKey = packages.pkgKey" , (name,))
+            for x in cur.fetchall():
+                pkg = self.db2class(x)
+                if (self.excludes[rep].has_key(pkg.pkgId)):
+                    continue
+                                        
+                #pkg.files = {name: res['type']}
+                results.append(self.pc(rep,pkg))
 
         matched = 0
         globs = ['.*bin\/.*', '^\/etc\/.*', '^\/usr\/lib\/sendmail$']
