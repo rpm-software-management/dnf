@@ -109,80 +109,55 @@ class YumPackageSack(packageSack.PackageSack):
             db_fn = None
             
             if item == 'metadata':
-                
-                if self._check_db_version(repo, 'primary_db'):
-                    # retrieve _db first, if it exists, and bunzip2 it
-                    try:
-                        db_fn = repo.retrieveMD('primary_db')
-                    except Errors.RepoMDError, e:
-                        pass
-                    
-                if db_fn:
-                    db_un_fn = db_fn.replace('.bz2', '')
-                    if not repo.cache:
-                        misc.bunzipFile(db_fn, db_un_fn)
-                    dobj = repo.cacheHandler.open_database(db_un_fn)
-
-                else:
-                    xml = repo.getPrimaryXML()
-                    xmldata = repo.repoXML.getData('primary')
-                    (ctype, csum) = xmldata.checksum
-                    dobj = repo.cacheHandler.getPrimary(xml, csum)
-
-                if not cacheonly:
-                    self.addDict(repo, item, dobj, callback)
-                del dobj
+                mydbtype = 'primary_db'
+                mymdtype = 'primary'
+                repo_get_function = repo.getPrimaryXML
+                repo_cache_function = repo.cacheHandler.getPrimary
 
             elif item == 'filelists':
-                if self._check_db_version(repo, 'filelists_db'):
-                    try:
-                        db_fn = repo.retrieveMD('filelists_db')
-                    except Errors.RepoMDError, e:
-                        pass
+                mydbtype = 'filelists_db'
+                mymdtype = 'filelists'
+                repo_get_function = repo.getFileListsXML
+                repo_cache_function = repo.cacheHandler.getFilelists
                 
-                if db_fn:
-                    db_un_fn = db_fn.replace('.bz2', '')
-                    if not repo.cache:
-                        misc.bunzipFile(db_fn, db_un_fn)
-                    dobj = repo.cacheHandler.open_database(db_un_fn)
-                    
-                else:
-                    xml = repo.getFileListsXML()
-                    xmldata = repo.repoXML.getData('filelists')
-                    (ctype, csum) = xmldata.checksum
-                    dobj = repo.cacheHandler.getFilelists(xml, csum)
-
-                if not cacheonly:
-                    self.addDict(repo, item, dobj, callback)
-                del dobj
-
-
             elif item == 'otherdata':
-                if self._check_db_version(repo, 'other_db'):
-                    try:
-                        db_fn = repo.retrieveMD('other_db')
-                    except Errors.RepoMDError, e:
-                        pass
+                mydbtype = 'other_db'
+                mymdtype = 'other'
+                repo_get_function = repo.getOtherXML
+                repo_cache_function = repo.cacheHandler.getOtherdata
                 
+            else:
+                continue
+                
+            if self._check_db_version(repo, mydbtype):
+                # retrieve _db first, if it exists, and bunzip2 it
+                try:
+                    db_fn = repo.retrieveMD(mydbtype)
+                except Errors.RepoMDError, e:
+                    pass
+
                 if db_fn:
                     db_un_fn = db_fn.replace('.bz2', '')
                     if not repo.cache:
-                        misc.bunzipFile(db_fn, db_un_fn)
+                        if os.path.exists(db_un_fn):
+                            try:
+                                repo.checkMD(db_un_fn, mydbtype, openchecksum=True)
+                            except URLGrabError:
+                                os.unlink(db_un_fn)
+                                misc.bunzipFile(db_fn, db_un_fn)
                     dobj = repo.cacheHandler.open_database(db_un_fn)
-                    
+
                 else:
-                    xml = repo.getOtherXML()
-                    xmldata = repo.repoXML.getData('other')
+                    xml = repo_get_function()
+                    xmldata = repo.repoXML.getData(mymdtype)
                     (ctype, csum) = xmldata.checksum
-                    dobj = repo.cacheHandler.getOtherdata(xml, csum)
-                    
+                    dobj = repo_cache_function(xml, csum)
+
                 if not cacheonly:
                     self.addDict(repo, item, dobj, callback)
                 del dobj
 
-            else:
-                # how odd, just move along
-                continue
+
         # get rid of all this stuff we don't need now
         del repo.cacheHandler
 
@@ -640,12 +615,15 @@ class YumRepository(Repository, config.RepoConf):
             raise URLGrabError(-1, 'Error importing repomd.xml for %s: %s' % (self, e))
 
 
-    def checkMD(self, fn, mdtype):
+    def checkMD(self, fn, mdtype, openchecksum=False):
         """check the metadata type against its checksum"""
         
         thisdata = self.repoXML.getData(mdtype)
         
-        (r_ctype, r_csum) = thisdata.checksum # get the remote checksum
+        if openchecksum:
+            (r_ctype, r_csum) = thisdata.openchecksum # get the remote checksum
+        else:
+            (r_ctype, r_csum) = thisdata.checksum # get the remote checksum
 
         if type(fn) == types.InstanceType: # this is an urlgrabber check
             file = fn.filename
