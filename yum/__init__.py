@@ -356,38 +356,40 @@ class YumBase(depsolve.YumDepsolver):
         
         if self._pkgSack:
             return self._pkgSack
-            
+        
         if self._pkgSack and thisrepo is None:
             self.verbose_logger.log(logginglevels.DEBUG_4,
                 'skipping reposetup, pkgsack exists')
             return self._pkgSack
-            
+        
         if thisrepo is None:
             repos = self.repos.listEnabled()
         else:
             repos = self.repos.findRepos(thisrepo)
-            
+        
         self.verbose_logger.debug('Setting up Package Sacks')
         if not archlist:
             archlist = rpmUtils.arch.getArchList()
-
+        
         archdict = {}
         for arch in archlist:
             archdict[arch] = 1
-
+        
         self.repos.getPackageSack().setCompatArchs(archdict)
         self.repos.populateSack(which=repos)
         self._pkgSack = self.repos.getPackageSack()
         
+        #FIXME - this is not very fast
         self.excludePackages()
-        self.pkgSack.excludeArchs(archlist)
-
+        self._pkgSack.excludeArchs(archlist)
+        
+        #FIXME - this could be faster, too.
         for repo in repos:
             self.excludePackages(repo)
             self.includePackages(repo)
         self.plugins.run('exclude')
-        self.pkgSack.buildIndexes()
-    
+        self._pkgSack.buildIndexes()
+
         return self._pkgSack
         
         
@@ -1003,7 +1005,6 @@ class YumBase(depsolve.YumDepsolver):
 
         # list all packages - those installed and available, don't 'think about it'
         if pkgnarrow == 'all': 
-            inst = self.rpmdb.simplePkgList()
             for po in self.rpmdb:
                 installed.append(po)
 
@@ -1011,10 +1012,10 @@ class YumBase(depsolve.YumDepsolver):
                 avail = self.pkgSack.returnPackages()
             else:
                 avail = self.pkgSack.returnNewestByNameArch()
-
+            
+            self.rpmdb._make_header_dict()
             for pkg in avail:
-                pkgtup = (pkg.name, pkg.arch, pkg.epoch, pkg.version, pkg.release)
-                if pkgtup not in inst:
+                if not self.rpmdb._header_dict.has_key(pkg.pkgtup):
                     available.append(pkg)
 
         # produce the updates list of tuples
@@ -1035,21 +1036,21 @@ class YumBase(depsolve.YumDepsolver):
 
         # installed only
         elif pkgnarrow == 'installed':
-            for po in self.rpmdb:
-                installed.append(po)
+            installed = self.rpmdb.returnPackages()
         
         # available in a repository
         elif pkgnarrow == 'available':
-            inst = self.rpmdb.simplePkgList()
+
             if self.conf.showdupesfromrepos:
                 avail = self.pkgSack.returnPackages()
             else:
                 avail = self.pkgSack.returnNewestByNameArch()
-
+            
+            self.rpmdb._make_header_dict()
             for pkg in avail:
-                pkgtup = (pkg.name, pkg.arch, pkg.epoch, pkg.version, pkg.release)
-                if pkgtup not in inst:
+                if not self.rpmdb._header_dict.has_key(pkg.pkgtup):
                     available.append(pkg)
+
 
         # not in a repo but installed
         elif pkgnarrow == 'extras':
