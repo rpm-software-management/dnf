@@ -53,7 +53,7 @@ class RPMDBPackageSack(PackageSackBase):
         '''Getter for the pkglist property. 
         Returns a list of package tuples.
         '''
-        if not self._header_dict:
+        if len(self._header_dict.keys()) == 0 :
             self._make_header_dict()
 
         for pkgtup in self._header_dict.keys():
