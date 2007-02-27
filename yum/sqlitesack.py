@@ -22,22 +22,44 @@
 import os
 import os.path
 import re
+import rpm
 import yumRepo
-from packages import YumAvailablePackage
+from packages import PackageObject, RpmBase
 import Errors
 import misc
+import stat
+import warnings
+from rpmUtils import RpmUtilsError
+import rpmUtils.arch
+import rpmUtils.miscutils
+
+import urlparse
+urlparse.uses_fragment.append("media")
 
 from sqlutils import executeSQL
 
-# Simple subclass of YumAvailablePackage that can load 'simple headers' from
-# the database when they are requested
-class YumAvailablePackageSqlite(YumAvailablePackage):
+class YumAvailablePackageSqlite(PackageObject, RpmBase):
     def __init__(self, repo, pkgdict):
-        YumAvailablePackage.__init__(self, repo, pkgdict)
+        PackageObject.__init__(self)
+        RpmBase.__init__(self)
+        
         self.sack = pkgdict.sack
         self.pkgId = pkgdict.pkgId
         self.id = self.pkgId
-
+        self.repoid = repo.id
+        self.repo = repo
+        self.state = None
+        self._loadedfiles = False
+        
+        if pkgdict:
+            if hasattr(pkgdict, 'nevra'):
+                (n, e, v, r, a) = pkgdict.nevra
+                self.name = n
+                self.epoch = e
+                self.ver = self.version = v
+                self.arch = a
+                self.rel = self.release = r
+            
         self._changelog = None
         
     def __getattr__(self, varname):
@@ -70,6 +92,113 @@ class YumAvailablePackageSqlite(YumAvailablePackage):
             
         return r[0]
    
+    def printVer(self):
+        """returns a printable version string - including epoch, if it's set"""
+        if self.epoch != '0':
+            ver = '%s:%s-%s' % (self.epoch, self.version, self.release)
+        else:
+            ver = '%s-%s' % (self.version, self.release)
+        
+        return ver
+    
+    def compactPrint(self):
+        ver = self.printVer()
+        return "%s.%s %s" % (self.name, self.arch, ver)
+
+    def _size(self):
+        return self.packagesize
+    
+    def _remote_path(self):
+        return self.relativepath
+
+    def _remote_url(self):
+        """returns a URL that can be used for downloading the package.
+        Note that if you're going to download the package in your tool,
+        you should use self.repo.getPackage."""
+        base = self.basepath
+        if base:
+            return urlparse.urljoin(base, self.remote_path)
+        return urlparse.urljoin(self.repo.urls[0], self.remote_path)
+    
+    size = property(_size)
+    remote_path = property(_remote_path)
+    remote_url = property(_remote_url)
+
+
+    def getDiscNum(self):
+        if self.basepath is None:
+            return None
+        (scheme, netloc, path, query, fragid) = urlparse.urlsplit(self.basepath)
+        if scheme == "media":
+            return int(fragid)
+        return None
+    
+    def returnHeaderFromPackage(self):
+        rpmfile = self.localPkg()
+        ts = rpmUtils.transaction.initReadOnlyTransaction()
+        hdr = rpmUtils.miscutils.hdrFromPackage(ts, rpmfile)
+        return hdr
+        
+    def returnLocalHeader(self):
+        """returns an rpm header object from the package object's local
+           header cache"""
+        
+        if os.path.exists(self.localHdr()):
+            try: 
+                hlist = rpm.readHeaderListFromFile(self.localHdr())
+                hdr = hlist[0]
+            except (rpm.error, IndexError):
+                raise Errors.RepoError, 'Cannot open package header'
+        else:
+            raise Errors.RepoError, 'Package Header Not Available'
+
+        return hdr
+
+       
+    def localPkg(self):
+        """return path to local package (whether it is present there, or not)"""
+        if not hasattr(self, 'localpath'):
+            rpmfn = os.path.basename(self.remote_path)
+            self.localpath = self.repo.pkgdir + '/' + rpmfn
+        return self.localpath
+
+    def localHdr(self):
+        """return path to local cached Header file downloaded from package 
+           byte ranges"""
+           
+        if not hasattr(self, 'hdrpath'):
+            pkgname = os.path.basename(self.remote_path)
+            hdrname = pkgname[:-4] + '.hdr'
+            self.hdrpath = self.repo.hdrdir + '/' + hdrname
+
+        return self.hdrpath
+    
+    def verifyLocalPkg(self):
+        """check the package checksum vs the localPkg
+           return True if pkg is good, False if not"""
+           
+        (csum_type, csum) = self.returnIdSum()
+        
+        try:
+            filesum = misc.checksum(csum_type, self.localPkg())
+        except Errors.MiscError:
+            return False
+        
+        if filesum != csum:
+            return False
+        
+        return True
+        
+    def prcoPrintable(self, prcoTuple):
+        """convert the prco tuples into a nicer human string"""
+        warnings.warn('prcoPrintable() will go away in a future version of Yum.\n',
+                      Errors.YumDeprecationWarning, stacklevel=2)
+        return misc.prco_tuple_to_string(prcoTuple)
+
+    def requiresList(self):
+        """return a list of requires in normal rpm format"""
+        return self.requires_print
+        
     def _loadChecksums(self):
         if not self._checksums:
             cache = self.sack.primarydb[self.repo]
@@ -88,7 +217,8 @@ class YumAvailablePackageSqlite(YumAvailablePackage):
         if self._loadedfiles:
             return
         result = {}
-        self.files = result        
+        self.files = result
+        
         #FIXME - this should be try, excepting
         self.sack.populate(self.repo, mdtype='filelists')
         cache = self.sack.filelistsdb[self.repo]
@@ -139,11 +269,11 @@ class YumAvailablePackageSqlite(YumAvailablePackage):
     
     def returnFileEntries(self, ftype='file'):
         self._loadFiles()
-        return YumAvailablePackage.returnFileEntries(self,ftype)
+        return RpmBase.returnFileEntries(self,ftype)
     
     def returnFileTypes(self):
         self._loadFiles()
-        return YumAvailablePackage.returnFileTypes(self)
+        return RpmBase.returnFileTypes(self)
 
     def returnPrco(self, prcotype, printable=False):
         if not self.prco[prcotype]:
@@ -162,7 +292,7 @@ class YumAvailablePackageSqlite(YumAvailablePackage):
                                            (ob['epoch'], ob['version'], 
                                             ob['release'])))
 
-        return YumAvailablePackage.returnPrco(self, prcotype, printable)
+        return RpmBase.returnPrco(self, prcotype, printable)
 
 class YumSqlitePackageSack(yumRepo.YumPackageSack):
     """ Implementation of a PackageSack that uses sqlite cache instead of fully
@@ -176,6 +306,12 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
         self.otherdb = {}
         self.excludes = {}
         
+    def __len__(self):
+        for (rep,cache) in self.primarydb.items():
+            cur = cache.cursor()
+            executeSQL(cur, "select count(pkgId) from packages")
+            return cur.fetchone()[0]
+
     def buildIndexes(self):
         # We don't need these
         return
@@ -445,30 +581,32 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
         return self.searchPrco(name, "conflicts")
 
     # TODO this seems a bit ugly and hackish
-    def db2class(self,db,nevra_only=False):
-      class tmpObject:
-        pass
-      y = tmpObject()
-      y.nevra = (db['name'],db['epoch'],db['version'],db['release'],db['arch'])
-      y.sack = self
-      y.pkgId = db['pkgId']
-      if (nevra_only):
-        return y
-      y.hdrange = {'start': db['rpm_header_start'],'end': db['rpm_header_end']}
-      y.location = {'href': db['location_href'],'value': '', 'base': db['location_base']}
-      y.checksum = {'pkgid': 'YES','type': db['checksum_type'], 
+    def db2class(self, db, nevra_only=False):
+        class tmpObject:
+            pass
+        y = tmpObject()
+        
+        y.nevra = (db['name'],db['epoch'],db['version'],db['release'],db['arch'])
+        y.sack = self
+        y.pkgId = db['pkgId']
+        if nevra_only:
+            return y
+        
+        y.hdrange = {'start': db['rpm_header_start'],'end': db['rpm_header_end']}
+        y.location = {'href': db['location_href'],'value': '', 'base': db['location_base']}
+        y.checksum = {'pkgid': 'YES','type': db['checksum_type'], 
                     'value': db['checksum_value'] }
-      y.time = {'build': db['time_build'], 'file': db['time_file'] }
-      y.size = {'package': db['size_package'], 'archive': db['size_archive'], 'installed': db['size_installed'] }
-      y.info = {'summary': db['summary'], 'description': db['description'],
+        y.time = {'build': db['time_build'], 'file': db['time_file'] }
+        y.size = {'package': db['size_package'], 'archive': db['size_archive'], 'installed': db['size_installed'] }
+        y.info = {'summary': db['summary'], 'description': db['description'],
                 'packager': db['rpm_packager'], 'group': db['rpm_group'],
                 'buildhost': db['rpm_buildhost'], 'sourcerpm': db['rpm_sourcerpm'],
                 'url': db['url'], 'vendor': db['rpm_vendor'], 'license': db['rpm_license'] }
-      return y
+        return y
 
     def simplePkgList(self):
         """returns a list of pkg tuples (n, a, e, v, r) from the sack"""
-        
+
         if hasattr(self, 'pkglist'):
             if self.pkglist:
                 return self.pkglist
@@ -483,9 +621,11 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
                 simplelist.append((pkg['name'], pkg['arch'], pkg['epoch'], pkg['version'], pkg['release'])) 
         
         self.pkglist = simplelist
+
         return simplelist
 
     def returnNewestByNameArch(self, naTup=None):
+
         # If naTup is set do it from the database otherwise use our parent's
         # returnNewestByNameArch
         if (not naTup):
@@ -559,15 +699,25 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
 
     def returnPackages(self, repoid=None):
         """Returns a list of packages, only containing nevra information """
+        
+        if hasattr(self, 'pkgobjlist'):
+            if self.pkgobjlist:
+                return self.pkgobjlist
+                
         returnList = []
         for (repo,cache) in self.primarydb.items():
             if (repoid == None or repoid == repo.id):
                 cur = cache.cursor()
+                
                 executeSQL(cur, "select pkgId,name,epoch,version,release,arch from packages")
                 for x in cur:
                     if (self.excludes[repo].has_key(x['pkgId'])):
                         continue
+
                     returnList.append(self.pc(repo,self.db2class(x,True)))
+                
+        self.pkgobjlist = returnList
+        
         return returnList
 
     def searchNevra(self, name=None, epoch=None, ver=None, rel=None, arch=None):        
@@ -615,7 +765,7 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
             cur = cache.cursor()
             executeSQL(cur, querystring)
             for x in cur.fetchall():
-                obj = self.pc(rep,self.db2class(x))
+                obj = self.pc(rep,self.db2class(x,True))
                 self.delPackage(obj)
 
 # Simple helper functions
