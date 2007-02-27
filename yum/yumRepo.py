@@ -147,15 +147,15 @@ class YumPackageSack(packageSack.PackageSack):
                                 misc.bunzipFile(db_fn, db_un_fn)
                     dobj = repo.cacheHandler.open_database(db_un_fn)
 
-                else:
-                    xml = repo_get_function()
-                    xmldata = repo.repoXML.getData(mymdtype)
-                    (ctype, csum) = xmldata.checksum
-                    dobj = repo_cache_function(xml, csum)
+            else:
+                xml = repo_get_function()
+                xmldata = repo.repoXML.getData(mymdtype)
+                (ctype, csum) = xmldata.checksum
+                dobj = repo_cache_function(xml, csum)
 
-                if not cacheonly:
-                    self.addDict(repo, item, dobj, callback)
-                del dobj
+            if not cacheonly:
+                self.addDict(repo, item, dobj, callback)
+            del dobj
 
 
         # get rid of all this stuff we don't need now
