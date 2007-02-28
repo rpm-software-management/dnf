@@ -146,6 +146,7 @@ class YumPackageSack(packageSack.PackageSack):
                         if not repo.cache:
                             misc.bunzipFile(db_fn, db_un_fn)
                             os.unlink(db_fn)
+                            db_un_fn = self._check_uncompressed_db(repo, mydbtype)
 
                 dobj = repo.cacheHandler.open_database(db_un_fn)
 
