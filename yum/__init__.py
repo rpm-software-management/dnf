@@ -1164,24 +1164,24 @@ class YumBase(depsolve.YumDepsolver):
                 narrowed_list.extend(sack.searchPrimaryFields(sql_fields, s))
                 
             for po in narrowed_list:
+                tmpvalues = []
                 for field in fields:
-                    tmpvalues = []
                     value = getattr(po, field)
                     if value and value.find(s) != -1:
                         tmpvalues.append(value)
 
-                    if len(tmpvalues) > 0:
-                        yield (po, tmpvalues)
+                if len(tmpvalues) > 0:
+                    yield (po, tmpvalues)
         
             for po in self.rpmdb:
+                tmpvalues = []
                 for field in fields:
-                    tmpvalues = []
                     value = getattr(po, field)
                     if value and value.find(s) != -1:
                         tmpvalues.append(value)
 
-                    if len(tmpvalues) > 0:
-                        yield (po, tmpvalues)
+                if len(tmpvalues) > 0:
+                    yield (po, tmpvalues)
 
     def searchPackages(self, fields, criteria, callback=None):
         """Search specified fields for matches to criteria
