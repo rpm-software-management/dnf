@@ -33,28 +33,46 @@ import warnings
 from sqlutils import executeSQL
 
 class YumAvailablePackageSqlite(YumAvailablePackage, PackageObject, RpmBase):
-    def __init__(self, repo, pkgdict):
-        RpmBase.__init__(self)
+    def __init__(self, repo, db_obj):
         
-        self.sack = pkgdict.sack
-        self.pkgId = pkgdict.pkgId
-        self.id = self.pkgId
+        self._checksums = []
+        self.prco = { 'obsoletes': [],
+                      'conflicts': [],
+                      'requires': [],
+                      'provides': [] }
+        self.files = {'file':[],
+                      'dir':[],
+                      'ghost': [] }
+
+        self.sack = repo.sack
         self.repoid = repo.id
         self.repo = repo
         self.state = None
         self._loadedfiles = False
-        
-        if pkgdict:
-            if hasattr(pkgdict, 'nevra'):
-                (n, e, v, r, a) = pkgdict.nevra
-                self.name = n
-                self.epoch = e
-                self.ver = self.version = v
-                self.arch = a
-                self.rel = self.release = r
+        self._read_db_obj(db_obj)
+        self.id = self.pkgId
+        self.ver = self.version 
+        self.rel = self.release 
             
         self._changelog = None
-        
+
+
+    def _read_db_obj(self, db_obj, item=None):
+        """read the db obj. If asked for a specific item, return it.
+           otherwise populate out into the object what exists"""
+        if item:
+            if db_obj.has_key(item):
+                return db_obj[item]
+            else:
+                return None
+
+        for item in ['name', 'arch', 'epoch', 'version', 'release', 'pkgId']:
+            if db_obj.has_key(item):
+                setattr(self, item, db_obj[item])
+
+        if db_obj.has_key('checksum_value'):
+            self._checksums.append((db_obj['checksum_type'], db_obj['checksum_value'], True))
+
     def __getattr__(self, varname):
         db2simplemap = { 'packagesize' : 'size_package',
                          'archivesize' : 'size_archive',
@@ -134,6 +152,10 @@ class YumAvailablePackageSqlite(YumAvailablePackage, PackageObject, RpmBase):
                 result.append( (ob['date'], ob['author'], ob['changelog']) )
             self._changelog = result
             return
+    
+        
+    def returnIdSum(self):
+            return (self.checksum_type, self.checksum_value)
     
     def returnChangelog(self):
         self._loadChangelog()
@@ -281,7 +303,7 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
         if len(fields) < 1:
             return result
         
-        basestring="select DISTINCT pkgid from packages where %s like '%%%s%%' " % (fields[0], searchstring)
+        basestring="select DISTINCT pkgId from packages where %s like '%%%s%%' " % (fields[0], searchstring)
         
         for f in fields[1:]:
             basestring = "%s or %s like '%%%s%%' " % (basestring, f, searchstring)
@@ -330,8 +352,7 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
             cur = cache.cursor()
             executeSQL(cur, "select * from packages where pkgId = ?", (pkgId,))
             for ob in cur.fetchall():
-                pkg = self.db2class(ob)
-                return pkg
+                return ob
     
     def _getListofPackageDetails(self, pkgId_list):
         pkgs = []
@@ -343,8 +364,7 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
             cur = cache.cursor()
             executeSQL(cur, "select * from packages where pkgId in ?", (pkgid_query,))
             for ob in cur.fetchall():
-                pkg = self.db2class(ob)
-                pkgs.append(pkg)
+                pkgs.append(ob)
         
         return pkgs
         
@@ -357,10 +377,9 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
             cur = cache.cursor()
             executeSQL(cur, "select packages.* from packages,%s where %s.name =? and %s.pkgKey=packages.pkgKey" % (prcotype,prcotype,prcotype), (name,))
             for x in cur.fetchall():
-                pkg = self.db2class(x)
-                if (self.excludes[rep].has_key(pkg.pkgId)):
+                if (self.excludes[rep].has_key(x['pkgId'])):
                     continue
-                results.append(self.pc(rep,pkg))
+                results.append(self.pc(rep, x))
         
         # If it's not a provides or a filename, we are done
         if prcotype != "provides" or name[0] != '/':
@@ -512,7 +531,7 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
             for x in cur.fetchall():
                 if (self.excludes[rep].has_key(x['pkgId'])):
                     continue                    
-                allpkg.append(self.pc(rep,self.db2class(x,True)))
+                allpkg.append(self.pc(rep,x))
         
         # if we've got zilch then raise
         if not allpkg:
@@ -533,7 +552,7 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
             for x in cur.fetchall():
                 if (self.excludes[rep].has_key(x['pkgId'])):
                     continue                    
-                allpkg.append(self.pc(rep,self.db2class(x,True)))
+                allpkg.append(self.pc(rep,x))
         
         # if we've got zilch then raise
         if not allpkg:
@@ -562,7 +581,7 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
                         continue
                     if p in unmatched:
                         unmatched.remove(p)
-                    matchres.append(self.pc(rep,self.db2class(pkg,True)))
+                    matchres.append(self.pc(rep, pkg))
 
         exactmatch = misc.unique(exactmatch)
         matched = misc.unique(matched)
@@ -586,7 +605,7 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
                     if (self.excludes[repo].has_key(x['pkgId'])):
                         continue
 
-                    returnList.append(self.pc(repo,self.db2class(x,True)))
+                    returnList.append(self.pc(repo,x))
                 
         self.pkgobjlist = returnList
         
@@ -622,7 +641,7 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
             for x in cur.fetchall():
                 if (self.excludes[rep].has_key(x['pkgId'])):
                     continue
-                returnList.append(self.pc(rep,self.db2class(x)))
+                returnList.append(self.pc(rep,x))
         return returnList
     
     def excludeArchs(self, archlist):
@@ -636,8 +655,8 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
         for (rep, cache) in self.primarydb.items():
             cur = cache.cursor()
             executeSQL(cur, querystring)
-            for x in cur.fetchall():
-                obj = self.pc(rep,self.db2class(x,True))
+            for row in cur.fetchall():
+                obj = self.pc(rep,row)
                 self.delPackage(obj)
 
 # Simple helper functions
