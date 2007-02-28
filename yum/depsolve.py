@@ -1278,14 +1278,14 @@ class YumDepsolver(Depsolve):
                 pkgs = self.tsInfo.getMembers(pkgtup=dep.pkgtup)
                 member = self.bestPackagesFromList(pkgs)[0]
 
-            #Add relationship
-            found = False
-            for dependspo in txmbr.depends_on:
-                if member.po == dependspo:
-                    found = True
-                    break
-            if not found:
-                member.setAsDep(txmbr.po)
+                #Add relationship
+                found = False
+                for dependspo in txmbr.depends_on:
+                    if member.po == dependspo:
+                        found = True
+                        break
+                if not found:
+                    member.setAsDep(txmbr.po)
         return ret
 
     def _checkUpdate(self, txmbr):
