@@ -399,10 +399,9 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
             cur = cache.cursor()
             executeSQL(cur, "select packages.* from files,packages where files.name = ? and files.pkgKey = packages.pkgKey" , (name,))
             for x in cur.fetchall():
-                pkg = self.db2class(x)
-                if self._excluded(rep,pkg.pkgId):
+                if self._excluded(rep,x['pkgId']):
                     continue
-                results.append(self.pc(rep,pkg))
+                results.append(self.pc(rep,x))
 
         matched = 0
         globs = ['.*bin\/.*', '^\/etc\/.*', '^\/usr\/lib\/sendmail$']
