@@ -22,25 +22,18 @@
 import os
 import os.path
 import re
-import rpm
+
 import yumRepo
 from packages import PackageObject, RpmBase, YumAvailablePackage
 import Errors
 import misc
-import stat
-import warnings
-from rpmUtils import RpmUtilsError
-import rpmUtils.arch
-import rpmUtils.miscutils
 
-import urlparse
-urlparse.uses_fragment.append("media")
+import warnings
 
 from sqlutils import executeSQL
 
 class YumAvailablePackageSqlite(YumAvailablePackage, PackageObject, RpmBase):
     def __init__(self, repo, pkgdict):
-        #PackageObject.__init__(self)
         RpmBase.__init__(self)
         
         self.sack = pkgdict.sack
