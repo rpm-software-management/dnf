@@ -374,7 +374,7 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
 
         for (rep,cache) in self.primarydb.items():
             cur = cache.cursor()
-            executeSQL(cur, "select * from packages where pkgId in ?", (pkgid_query,))
+            executeSQL(cur, "select * from packages where pkgId in (?)", (pkgid_query,))
             for ob in cur.fetchall():
                 pkgs.append(ob)
         
