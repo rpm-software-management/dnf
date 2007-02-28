@@ -1377,6 +1377,10 @@ class YumDepsolver(Depsolve):
                         if self.tsInfo.getMembers(po.pkgtup, TS_INSTALL_STATES):
                             isok = True
                             break
+                    for po in self.rpmdb.searchFiles(r):
+                        if not self.tsInfo.getMembers(po.pkgtup, TS_REMOVE_STATES):
+                            isok = True
+                            break
                 if isok:
                     continue
 
