@@ -326,17 +326,34 @@ class ThrottleOption(BytesOption):
             return BytesOption.parse(self, s)
 
 
+class autoopt(type):
+
+    def __init__(cls, name, bases, dict):
+        super(autoopt, cls).__init__(name, bases, dict)
+
+        cls.options = []
+        for base in bases:
+            options = getattr(base, 'options', [])
+            cls.options.extend(options)
+
+        for key in dict.keys():
+            option = getattr(cls, key)
+            if isinstance(option, Option):
+                cls.options.append((key, option))
+
 class BaseConfig(object):
     '''
     Base class for storing configuration definitions. Subclass when creating
     your own definitons.
     '''
 
+    __metaclass__ = autoopt
+    options = []
+
     def __init__(self):
         self._section = None
 
-        for name in self.iterkeys():
-            option = self.optionobj(name)
+        for (name, option) in self.options:
             option.setup(self, name)
 
     def __str__(self):
@@ -357,8 +374,7 @@ class BaseConfig(object):
         self.cfg = parser
         self._section = section
 
-        for name in self.iterkeys():
-            option = self.optionobj(name)
+        for (name, option) in self.options:
             value = None
             try:
                 value = parser.get(section, name)
@@ -393,7 +409,7 @@ class BaseConfig(object):
     def iterkeys(self):
         '''Yield the names of all defined options in the instance.
         '''
-        for name, item in self.iteritems():
+        for name, item in self.options:
             yield name
 
     def iteritems(self):
@@ -401,10 +417,7 @@ class BaseConfig(object):
 
         The value returned is the parsed, validated option value.
         '''
-        # Use dir() so that we see inherited options too
-        for name in dir(self):
-            if self.isoption(name):
-                yield (name, getattr(self, name))
+        return self.options
 
     def write(self, fileobj, section=None, always=()):
         '''Write out the configuration to a file-like object
@@ -425,7 +438,7 @@ class BaseConfig(object):
         fileobj.write('[%s]\n' % section)
 
         # Write options
-        for name, value in self.iteritems():
+        for name, value in self.options:
             option = self.optionobj(name)
 
             if always is None or name in always or option.default != value:
