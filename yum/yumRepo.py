@@ -145,6 +145,8 @@ class YumPackageSack(packageSack.PackageSack):
                             except URLGrabError:
                                 os.unlink(db_un_fn)
                                 misc.bunzipFile(db_fn, db_un_fn)
+                        else:
+                            misc.bunzipFile(db_fn, db_un_fn)
                     dobj = repo.cacheHandler.open_database(db_un_fn)
 
             else:
