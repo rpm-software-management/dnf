@@ -359,7 +359,7 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
         if len(pkgId_list) == 0:
             return pkgs
         pkgid_query = str(tuple(pkgId_list))
-        print pkgid_query
+
         for (rep,cache) in self.primarydb.items():
             cur = cache.cursor()
             executeSQL(cur, "select * from packages where pkgId in ?", (pkgid_query,))
@@ -646,15 +646,13 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
     
     def excludeArchs(self, archlist):
         """excludes incompatible arches - archlist is a list of compat arches"""
-        tmpstring = "select * from packages WHERE "
-        for arch in archlist:
-            tmpstring = tmpstring + 'arch != "%s" AND ' % arch
-        
-        last = tmpstring.rfind('AND') # clip that last AND
-        querystring = tmpstring[:last]
+        arch_query = str(tuple(archlist))
+
         for (rep, cache) in self.primarydb.items():
             cur = cache.cursor()
-            executeSQL(cur, querystring)
+            myq = "select pkgId from packages where arch not in %s" % arch_query
+            executeSQL(cur, myq)
+            #executeSQL(cur, "select pkgId from packages where arch not in ?", (arch_query,))
             for row in cur.fetchall():
                 obj = self.pc(rep,row)
                 self.delPackage(obj)
