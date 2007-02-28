@@ -24,7 +24,7 @@ import os.path
 import re
 import rpm
 import yumRepo
-from packages import PackageObject, RpmBase
+from packages import PackageObject, RpmBase, YumAvailablePackage
 import Errors
 import misc
 import stat
@@ -38,9 +38,9 @@ urlparse.uses_fragment.append("media")
 
 from sqlutils import executeSQL
 
-class YumAvailablePackageSqlite(PackageObject, RpmBase):
+class YumAvailablePackageSqlite(YumAvailablePackage, PackageObject, RpmBase):
     def __init__(self, repo, pkgdict):
-        PackageObject.__init__(self)
+        #PackageObject.__init__(self)
         RpmBase.__init__(self)
         
         self.sack = pkgdict.sack
@@ -91,127 +91,6 @@ class YumAvailablePackageSqlite(PackageObject, RpmBase):
         setattr(self, varname, r[0])
             
         return r[0]
-   
-    def printVer(self):
-        """returns a printable version string - including epoch, if it's set"""
-        if self.epoch != '0':
-            ver = '%s:%s-%s' % (self.epoch, self.version, self.release)
-        else:
-            ver = '%s-%s' % (self.version, self.release)
-        
-        return ver
-    
-    def compactPrint(self):
-        ver = self.printVer()
-        return "%s.%s %s" % (self.name, self.arch, ver)
-
-    def _size(self):
-        return self.packagesize
-    
-    def _remote_path(self):
-        return self.relativepath
-
-    def _remote_url(self):
-        """returns a URL that can be used for downloading the package.
-        Note that if you're going to download the package in your tool,
-        you should use self.repo.getPackage."""
-        base = self.basepath
-        if base:
-            return urlparse.urljoin(base, self.remote_path)
-        return urlparse.urljoin(self.repo.urls[0], self.remote_path)
-    
-    size = property(_size)
-    remote_path = property(_remote_path)
-    remote_url = property(_remote_url)
-
-
-    def getDiscNum(self):
-        if self.basepath is None:
-            return None
-        (scheme, netloc, path, query, fragid) = urlparse.urlsplit(self.basepath)
-        if scheme == "media":
-            return int(fragid)
-        return None
-    
-    def returnHeaderFromPackage(self):
-        rpmfile = self.localPkg()
-        ts = rpmUtils.transaction.initReadOnlyTransaction()
-        hdr = rpmUtils.miscutils.hdrFromPackage(ts, rpmfile)
-        return hdr
-        
-    def returnLocalHeader(self):
-        """returns an rpm header object from the package object's local
-           header cache"""
-        
-        if os.path.exists(self.localHdr()):
-            try: 
-                hlist = rpm.readHeaderListFromFile(self.localHdr())
-                hdr = hlist[0]
-            except (rpm.error, IndexError):
-                raise Errors.RepoError, 'Cannot open package header'
-        else:
-            raise Errors.RepoError, 'Package Header Not Available'
-
-        return hdr
-
-       
-    def localPkg(self):
-        """return path to local package (whether it is present there, or not)"""
-        if not hasattr(self, 'localpath'):
-            rpmfn = os.path.basename(self.remote_path)
-            self.localpath = self.repo.pkgdir + '/' + rpmfn
-        return self.localpath
-
-    def localHdr(self):
-        """return path to local cached Header file downloaded from package 
-           byte ranges"""
-           
-        if not hasattr(self, 'hdrpath'):
-            pkgname = os.path.basename(self.remote_path)
-            hdrname = pkgname[:-4] + '.hdr'
-            self.hdrpath = self.repo.hdrdir + '/' + hdrname
-
-        return self.hdrpath
-    
-    def verifyLocalPkg(self):
-        """check the package checksum vs the localPkg
-           return True if pkg is good, False if not"""
-           
-        (csum_type, csum) = self.returnIdSum()
-        
-        try:
-            filesum = misc.checksum(csum_type, self.localPkg())
-        except Errors.MiscError:
-            return False
-        
-        if filesum != csum:
-            return False
-        
-        return True
-        
-    def prcoPrintable(self, prcoTuple):
-        """convert the prco tuples into a nicer human string"""
-        warnings.warn('prcoPrintable() will go away in a future version of Yum.\n',
-                      Errors.YumDeprecationWarning, stacklevel=2)
-        return misc.prco_tuple_to_string(prcoTuple)
-
-    def requiresList(self):
-        """return a list of requires in normal rpm format"""
-        return self.requires_print
-        
-    def _loadChecksums(self):
-        if not self._checksums:
-            cache = self.sack.primarydb[self.repo]
-            c = cache.cursor()
-            executeSQL(c, "select checksum_type, checksum_value from packages where pkgId = ?", (self.pkgId,))
-            for ob in c.fetchall():
-                self._checksums.append((ob['checksum_type'], ob['checksum_value'], True))
-
-    
-    def returnChecksums(self):
-        self._loadChecksums()
-        return self._checksums
-
         
     def _loadFiles(self):
         if self._loadedfiles:
