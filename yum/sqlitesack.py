@@ -220,9 +220,16 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
         repo = obj.repo
         if not self.excludes.has_key(repo):
             self.excludes[repo] = {}
-            
+
         self.excludes[repo][obj.pkgId] = 1
 
+    def _excluded(self, repo, pkgId):
+        if self.excludes.has_key(repo):
+            if self.excludes[repo].has_key(pkgId):
+                return True
+                
+        return False
+        
     def addDict(self, repo, datatype, dataobj, callback=None):
         if self.added.has_key(repo):
             if datatype in self.added[repo]:
@@ -258,7 +265,7 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
             cur = cache.cursor()
             executeSQL(cur, "select DISTINCT packages.pkgId as pkgId from provides,packages where provides.name LIKE ? AND provides.pkgKey = packages.pkgKey", (name,))
             for ob in cur.fetchall():
-                if (self.excludes[rep].has_key(ob['pkgId'])):
+                if self._excluded(rep, ob['pkgId']):
                     continue
                 pkg = self.getPackageDetails(ob['pkgId'])
                 result.append((self.pc(rep,pkg)))
@@ -285,7 +292,7 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
             # Check if it is an actual match
             # The query above can give false positives, when
             # a package provides /foo/aaabar it will also match /foo/bar
-            if (self.excludes[rep].has_key(ob['pkgId'])):
+            if self._excluded(rep, ob['pkgId']):
                 continue
             real = False
             for filename in decodefilenamelist(ob['filenames']):
@@ -312,7 +319,7 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
             cur = cache.cursor()
             executeSQL(cur, basestring)
             for ob in cur.fetchall():
-                if (self.excludes[rep].has_key(ob['pkgId'])):
+                if self._excluded(rep, ob['pkgId']):
                     continue
                 pkg = self.getPackageDetails(ob['pkgId'])
                 result.append((self.pc(rep,pkg)))
@@ -334,8 +341,9 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
             for ob in cur.fetchall():
                 # If the package that is causing the obsoletes is excluded
                 # continue without processing the obsoletes
-                if (self.excludes[rep].has_key(ob['pkgId'])):
+                if self._excluded(rep, ob['pkgId']):
                     continue
+                    
                 key = ( ob['name'],ob['arch'],
                         ob['epoch'],ob['version'],
                         ob['release'])
@@ -377,7 +385,7 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
             cur = cache.cursor()
             executeSQL(cur, "select packages.* from packages,%s where %s.name =? and %s.pkgKey=packages.pkgKey" % (prcotype,prcotype,prcotype), (name,))
             for x in cur.fetchall():
-                if (self.excludes[rep].has_key(x['pkgId'])):
+                if self._excluded(rep, x['pkgId']):
                     continue
                 results.append(self.pc(rep, x))
         
@@ -392,7 +400,7 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
             executeSQL(cur, "select packages.* from files,packages where files.name = ? and files.pkgKey = packages.pkgKey" , (name,))
             for x in cur.fetchall():
                 pkg = self.db2class(x)
-                if (self.excludes[rep].has_key(pkg.pkgId)):
+                if self._excluded(rep,pkg.pkgId):
                     continue
                 results.append(self.pc(rep,pkg))
 
@@ -433,7 +441,7 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
             
             matching_ids = []
             for res in files:
-                if (self.excludes[rep].has_key(res['pkgId'])):
+                if self._excluded(rep, res['pkgId']):
                     continue
                 
                 #FIXME - optimize the look up here by checking for single-entry filenames
@@ -471,8 +479,10 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
         """return list of packages conflicting with name (any evr and flag)"""
         return self.searchPrco(name, "conflicts")
 
-    # TODO this seems a bit ugly and hackish
+
     def db2class(self, db, nevra_only=False):
+        print 'die die die die die db2class'
+        pass
         class tmpObject:
             pass
         y = tmpObject()
@@ -507,7 +517,7 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
             cur = cache.cursor()
             executeSQL(cur, "select pkgId,name,epoch,version,release,arch from packages")
             for pkg in cur.fetchall():
-                if (self.excludes[rep].has_key(pkg['pkgId'])):
+                if self._excluded(rep, pkg['pkgId']):
                     continue                        
                 simplelist.append((pkg['name'], pkg['arch'], pkg['epoch'], pkg['version'], pkg['release'])) 
         
@@ -529,7 +539,7 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
             cur = cache.cursor()
             executeSQL(cur, "select pkgId,name,epoch,version,release,arch from packages where name=? and arch=?",naTup)
             for x in cur.fetchall():
-                if (self.excludes[rep].has_key(x['pkgId'])):
+                if self._excluded(rep, x['pkgId']):
                     continue                    
                 allpkg.append(self.pc(rep,x))
         
@@ -550,7 +560,7 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
             cur = cache.cursor()
             executeSQL(cur, "select pkgId,name,epoch,version,release,arch from packages where name=?", (name,))
             for x in cur.fetchall():
-                if (self.excludes[rep].has_key(x['pkgId'])):
+                if self._excluded(rep, x['pkgId']):
                     continue                    
                 allpkg.append(self.pc(rep,x))
         
@@ -577,7 +587,7 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
                 cur = db.cursor()
                 executeSQL(cur, query)
                 for pkg in cur.fetchall():
-                    if self.excludes[rep].has_key(pkg['pkgId']):
+                    if self._excluded(rep, pkg['pkgId']):
                         continue
                     if p in unmatched:
                         unmatched.remove(p)
@@ -591,18 +601,22 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
     def returnPackages(self, repoid=None):
         """Returns a list of packages, only containing nevra information """
         
+        returnList = []        
         if hasattr(self, 'pkgobjlist'):
             if self.pkgobjlist:
-                return self.pkgobjlist
-                
-        returnList = []
+                for po in self.pkgobjlist:
+                    if self._excluded(po.repo, po.pkgId):
+                        continue
+                    returnList.append(po)
+            return returnList
+
         for (repo,cache) in self.primarydb.items():
             if (repoid == None or repoid == repo.id):
                 cur = cache.cursor()
                 
                 executeSQL(cur, "select pkgId,name,epoch,version,release,arch from packages")
                 for x in cur:
-                    if (self.excludes[repo].has_key(x['pkgId'])):
+                    if self._excluded(repo,x['pkgId']):
                         continue
 
                     returnList.append(self.pc(repo,x))
@@ -639,7 +653,7 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
             #executeSQL(cur, "select * from packages WHERE name = %s AND epoch = %s AND version = %s AND release = %s AND arch = %s" , (name,epoch,ver,rel,arch))
             executeSQL(cur, q)
             for x in cur.fetchall():
-                if (self.excludes[rep].has_key(x['pkgId'])):
+                if self._excluded(rep, x['pkgId']):
                     continue
                 returnList.append(self.pc(rep,x))
         return returnList
@@ -652,7 +666,6 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
             cur = cache.cursor()
             myq = "select pkgId from packages where arch not in %s" % arch_query
             executeSQL(cur, myq)
-            #executeSQL(cur, "select pkgId from packages where arch not in ?", (arch_query,))
             for row in cur.fetchall():
                 obj = self.pc(rep,row)
                 self.delPackage(obj)
