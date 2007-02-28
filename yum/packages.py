@@ -195,6 +195,8 @@ class RpmBase(object):
         self.licenses = []
 
     def __eq__(self, other):
+        if other == None: 
+            return False
         if comparePoEVR(self, other) == 0 and self.arch == other.arch and self.name == other.name:
             return True
         return False
