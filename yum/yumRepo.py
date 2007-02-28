@@ -130,24 +130,24 @@ class YumPackageSack(packageSack.PackageSack):
                 continue
                 
             if self._check_db_version(repo, mydbtype):
-                # retrieve _db first, if it exists, and bunzip2 it
-                try:
-                    db_fn = repo.retrieveMD(mydbtype)
-                except Errors.RepoMDError, e:
-                    pass
-
-                if db_fn:
-                    db_un_fn = db_fn.replace('.bz2', '')
-                    if not repo.cache:
-                        if os.path.exists(db_un_fn):
-                            try:
-                                repo.checkMD(db_un_fn, mydbtype, openchecksum=True)
-                            except URLGrabError:
-                                os.unlink(db_un_fn)
-                                misc.bunzipFile(db_fn, db_un_fn)
-                        else:
+                # see if we have the uncompressed db and check it's checksum vs the openchecksum
+                # if not download the bz2 file
+                # decompress it
+                # unlink it
+                
+                db_un_fn = self._check_uncompressed_db(repo, mydbtype)
+                if not db_un_fn:
+                    try:
+                        db_fn = repo.retrieveMD(mydbtype)
+                    except Errors.RepoMDError, e:
+                        pass
+                    if db_fn:
+                        db_un_fn = db_fn.replace('.bz2', '')
+                        if not repo.cache:
                             misc.bunzipFile(db_fn, db_un_fn)
-                    dobj = repo.cacheHandler.open_database(db_un_fn)
+                            os.unlink(db_fn)
+
+                dobj = repo.cacheHandler.open_database(db_un_fn)
 
             else:
                 xml = repo_get_function()
@@ -163,6 +163,27 @@ class YumPackageSack(packageSack.PackageSack):
         # get rid of all this stuff we don't need now
         del repo.cacheHandler
 
+    def _check_uncompressed_db(self, repo, mdtype):
+        """return file name of uncompressed db is good, None if not"""
+        mydbdata = repo.repoXML.getData(mdtype)
+        (r_base, remote) = mydbdata.location
+        fname = os.path.basename(remote)
+        bz2_fn = repo.cachedir + '/' + fname
+        db_un_fn = bz2_fn.replace('.bz2', '')
+        
+        result = None
+        
+        if os.path.exists(db_un_fn):
+            try:
+                repo.checkMD(db_un_fn, mdtype, openchecksum=True)
+            except URLGrabError:
+                if not repo.cache:
+                    os.unlink(db_un_fn)
+            else:
+                result = db_un_fn
+
+        return result
+        
     def _check_db_version(self, repo, mdtype):
         if repo.repoXML.repoData.has_key(mdtype):
             if DBVERSION == repo.repoXML.repoData[mdtype].dbversion:
