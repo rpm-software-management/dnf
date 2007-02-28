@@ -61,17 +61,21 @@ class YumAvailablePackageSqlite(YumAvailablePackage, PackageObject, RpmBase):
         """read the db obj. If asked for a specific item, return it.
            otherwise populate out into the object what exists"""
         if item:
-            if db_obj.has_key(item):
+            try:
                 return db_obj[item]
-            else:
+            except (IndexError, KeyError):
                 return None
 
         for item in ['name', 'arch', 'epoch', 'version', 'release', 'pkgId']:
-            if db_obj.has_key(item):
+            try:
                 setattr(self, item, db_obj[item])
+            except (IndexError, KeyError):
+                pass
 
-        if db_obj.has_key('checksum_value'):
+        try:
             self._checksums.append((db_obj['checksum_type'], db_obj['checksum_value'], True))
+        except (IndexError, KeyError):
+            pass
 
     def __getattr__(self, varname):
         db2simplemap = { 'packagesize' : 'size_package',
