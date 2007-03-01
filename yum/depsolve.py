@@ -1110,7 +1110,7 @@ class YumDepsolver(Depsolve):
         # returns a list of tuples
         # ((name, version, release), (needname, needversion), flags, suggest, sense)
         ret = []
-        for txmbr in self.tsInfoDelta:
+        for txmbr in self.tsInfo.getMembers():
             self.verbose_logger.log(logginglevels.INFO_2,
                                     "Checking deps for %s" %(txmbr,))
             if txmbr.output_state in (TS_INSTALL, TS_TRUEINSTALL, TS_OBSOLETING):
