@@ -498,11 +498,13 @@ class YumBase(depsolve.YumDepsolver):
            it also is simply to only emit a log if anything actually gets populated"""
         
         necessary = False
+
         for repo in self.repos.listEnabled():
-            if 'filelists' in repo.sack.added[repo]:
-                continue
-            else:
-                necessary = True
+            if repo in repo.sack.added.keys():
+                if 'filelists' in repo.sack.added[repo]:
+                    continue
+                else:
+                    necessary = True
         
         if necessary:
             msg = 'Importing additional filelist information'
