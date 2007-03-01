@@ -1,3 +1,231 @@
+2007-03-01 14:16  skvidal
+
+	* yum.spec, yum/__init__.py: 
+	mark as 3.1.3
+
+2007-03-01 11:59  skvidal
+
+	* yum/: __init__.py, depsolve.py: 
+	allow setting/delete tsInfo cleanly
+
+2007-03-01 00:54  skvidal
+
+	* yum/packageSack.py: 
+	note about a fixme
+
+2007-02-28 21:53  skvidal
+
+	* yum/__init__.py: 
+	make sure anything about the repo has been setup before we see if
+	the filelists are imported
+
+2007-02-28 18:01  katzj
+
+	* yum/depsolve.py: make sure we actually have something to set as a
+	dep.  fixes traceback found by jon corbet
+
+2007-02-28 17:49  jbowes
+
+	* yum/sqlitesack.py: Fixing a sql query for python 2.5. I'll just
+	assume it still works on older pythons
+
+2007-02-28 14:06  katzj
+
+	* yum/depsolve.py: check to ensure that things being removed aren't
+	still satisfied by the rpmdb (rh#230392)
+
+2007-02-28 14:03  skvidal
+
+	* yum/yumRepo.py: 
+	grudgingly check the just-unzipped sqlite file.
+
+2007-02-28 11:22  skvidal
+
+	* yum/yumRepo.py: 
+	delete the bz2 file after we uncompress it.
+
+2007-02-28 10:46  skvidal
+
+	* yum/yumRepo.py: 
+	with clean cache, make sure you bunzip the sqlite file :)
+
+2007-02-28 10:26  katzj
+
+	* yum/sqlitesack.py: fix to work with either sqlite API
+
+2007-02-28 10:13  jbowes
+
+	* yum/__init__.py: During yum search, only output the package name,
+	ver, etc once per match
+
+2007-02-28 08:00  skvidal
+
+	* yum/sqlitesack.py: 
+	- fix traceback found by Tim - kill of the last of the db2class
+	calls
+
+2007-02-28 07:53  timlau
+
+	* yum/packages.py: Added patch by Jack Neely to fix traceback when
+	the following is used.
+	
+	if po == None:
+	
+	(rhbz #229917)
+
+2007-02-28 02:19  skvidal
+
+	* yum/sqlitesack.py: 
+	- make excludes work again - add _excluded() method to check if a
+	package in a repo is excluded
+
+2007-02-28 01:49  skvidal
+
+	* yum/sqlitesack.py: 
+	check excludeArch query to use not in (range)
+
+2007-02-28 00:46  skvidal
+
+	* yum/sqlitesack.py: 
+	- condense down some more code - get rid of the need for db2class()
+
+2007-02-27 22:53  skvidal
+
+	* yum/sqlitesack.py: 
+	get rid of some unused imports
+
+2007-02-27 21:26  skvidal
+
+	* yum/sqlitesack.py: 
+	looks like we get the same benefit of not calling __init__() on
+	each of the objects as we do by flattening the class. So don't
+	flatten them.
+
+2007-02-27 20:50  jbowes
+
+	* yum/config.py: Use dark metaclass magic to reduce the number of
+	times we have to examine the attributes of config stuff. Before we
+	did it per instance, now it is per class.
+
+2007-02-27 17:18  skvidal
+
+	* yum/rpmsack.py: 
+	minor change as to how to check for header_dict being empty
+
+2007-02-27 17:17  skvidal
+
+	* yum/sqlitesack.py: 
+	- flatten down the YumAvailablePackageSqlite object by porting
+	methods from YumAvailablePackage.  - misc code clean ups - more to
+	go
+
+2007-02-27 14:18  skvidal
+
+	* yum/yumRepo.py: 
+	make sure xml-based repos work, too.
+
+2007-02-27 00:32  skvidal
+
+	* yum/__init__.py: 
+	- small speed improvements to doPackageLists() - some minor changes
+	to _getSacks()
+
+2007-02-27 00:27  skvidal
+
+	* yum/yumRepo.py: 
+	- get rid of a bunch of duplicated code - make it so we don't
+	bunzip the sqlite.bz file everytime for no good reason - add an
+	openchecksum optional argument to repo.checkMD()
+
+2007-02-26 13:07  skvidal
+
+	* yum/sqlitesack.py: 
+	- condense a couple of select statements - add statement to return
+	multiple pkgs from pkgid's at once.  - add some checks in to keep
+	from tracing back when people reset the package sacks in odd ways
+	(thanks to Jesse for showing me this)
+
+2007-02-26 01:35  skvidal
+
+	* yum/sqlitesack.py: 
+	combine the selects into a single statement.
+
+2007-02-24 03:05  skvidal
+
+	* yum/sqlitesack.py: 
+	make install/remove/update globs work again :)
+
+2007-02-23 11:10  skvidal
+
+	* yum/sqlitesack.py: 
+	collapse the searchPrco select into a single select combining
+	packages and the prco table. Speeds up returns of big items.
+
+2007-02-23 02:30  skvidal
+
+	* yum/__init__.py: 
+	fixme to remember
+
+2007-02-23 02:26  skvidal
+
+	* yum/sqlitesack.py: 
+	keep from tripping over an empty list
+
+2007-02-23 00:52  skvidal
+
+	* yum/: __init__.py, constants.py, sqlitesack.py: 
+	Take a hammer to the search function based on suggestions by
+	Patrick Reynolds.
+
+2007-02-22 17:43  skvidal
+
+	* shell.py, utils.py, yum/plugins.py: 
+	more deprecation clean ups.
+
+2007-02-22 15:46  skvidal
+
+	* yum/__init__.py: 
+	more deprecation warning clean ups
+
+2007-02-22 15:36  skvidal
+
+	* cli.py, yum/depsolve.py: 
+	clean up some deprecated methods
+
+2007-02-22 15:03  skvidal
+
+	* yum/: __init__.py, depsolve.py: fix all the deprecation warnings
+	to be future warnings
+
+2007-02-22 14:57  skvidal
+
+	* yum/: __init__.py, depsolve.py: 
+	implement the rest of the properties, rename all the methods, add
+	deprecation warnings to the old method names.
+
+2007-02-21 22:47  skvidal
+
+	* cli.py, yum/__init__.py, yum/depsolve.py, yum/transactioninfo.py:
+	
+	yum-with-properties patch. This makes yum use properties for most
+	of the base attributes of YumBase so that setup is less necessary
+	for default operation. This is half way through the changes.
+
+2007-02-21 13:21  katzj
+
+	* yum/__init__.py: don't complain about being unable to remove
+	headers that may not exist
+
+2007-02-21 11:36  katzj
+
+	* yum/sqlitesack.py: we need to take excludes into account with
+	matchPackageNames()
+
+2007-02-20 23:38  skvidal
+
+	* ChangeLog: 
+	checkin changelog
+
 2007-02-20 12:04  katzj
 
 	* yum/depsolve.py: add a teensy bit more logging so that things
@@ -2132,35 +2360,11 @@
 	- move files from repomd into yum - modify lots of things to make
 	this work
 
-2006-05-28 01:30  skvidal
-
-	* repomd/: Makefile, __init__.py, mdErrors.py, mdUtils.py,
-	packageObject.py, packageSack.py, repoMDObject.py: 
-	getting rid of repomd
-
-2006-05-28 00:42  skvidal
-
-	* repomd/test.py: 
-	remove not-so-useful test.py
-
-2006-05-28 00:41  skvidal
-
-	* repomd/packageSack.py: 
-	remove XMLPackageSack class b/c: 1. it removes our libxml2 dep 2.
-	nothing uses this class b/c it is slow
-
 2006-05-25 18:06  skvidal
 
 	* yum/: depsolve.py, sqlitesack.py: 
 	collection of changes to speed up whatProvides() using the sqlite
 	db's
-
-2006-05-25 10:34  skvidal
-
-	* repomd/repoMDObject.py: 
-	- make the checksum storage more obvious - there's no need for them
-	to be a list, there's no way to have more than one checksum for any
-	specific data in repomd.xml
 
 2006-05-25 10:33  skvidal
 
@@ -2178,24 +2382,10 @@
 	* yum/__init__.py: 
 	fix minor call into repos
 
-2006-05-24 19:21  skvidal
-
-	* repomd/repoMDObject.py: 
-	- make arbitrary metadata retrieval more trivial - renames methods
-	from _retrieveMD to retrieveMD -	    and  _checkMD to
-	checkMD - simplify both functions fix for base and href
-
 2006-05-24 17:42  skvidal
 
 	* yum/repos.py: 
 	remove some unused imports
-
-2006-05-24 17:24  skvidal
-
-	* repomd/repoMDObject.py: 
-	- make repomd.xml parsing use celementTree - vastly simplify adding
-	data types - need to clean up yumRepo.py and friends for this
-	change
 
 2006-05-24 14:41  pnasrat
 
@@ -2382,10 +2572,6 @@
 2006-04-11 17:34  skvidal
 
 	* yum/repos.py: merge in jbowes repository patch - 2/4
-
-2006-04-11 17:33  skvidal
-
-	* repomd/packageSack.py: merge in Jbowes@redhat's first patch
 
 2006-03-29 14:11  skvidal
 
@@ -3061,10 +3247,6 @@
 	non-root users - remove several duplicate functions from
 	packages.py - make install() handle multilib correctly
 
-2005-11-09 14:48  pnasrat
-
-	* repomd/test.py: name arguement for callback
-
 2005-11-08 05:39  mjs
 
 	* yum/sqlitesack.py: Use correct db column names in new
@@ -3172,8 +3354,8 @@
 
 2005-10-24 12:01  katzj
 
-	* repomd/mdUtils.py, yum/sqlitesack.py: returnNewest* needs to
-	return all arches of equal "newness"
+	* yum/sqlitesack.py: returnNewest* needs to return all arches of
+	equal "newness"
 
 2005-10-23 12:03  pnasrat
 
@@ -3236,9 +3418,9 @@
 
 2005-10-04 14:43  pnasrat
 
-	* callback.py, cli.py, repomd/packageObject.py, yum/config.py,
-	yum/constants.py, yum/depsolve.py, yum/transactioninfo.py: Move to
-	use constants for transaction states
+	* callback.py, cli.py, yum/config.py, yum/constants.py,
+	yum/depsolve.py, yum/transactioninfo.py: Move to use constants for
+	transaction states
 
 2005-09-22 11:08  katzj
 
@@ -3260,11 +3442,6 @@
 	* yum/sqlitesack.py: implement returnNewestByName for the sqlite
 	backend.  speeds up group selection in anaconda by about 2 minutes
 	:-)
-
-2005-09-16 18:02  katzj
-
-	* repomd/mdUtils.py: add utility function to find the newest
-	package in a list since I've seen this code a few times...
 
 2005-09-15 11:52  pnasrat
 
@@ -4019,12 +4196,6 @@
 	* cli.py, yum/__init__.py: 
 	move the plugins call outside of cli.py and into the yum module.
 
-2005-03-24 02:59  skvidal
-
-	* posts/: bootloadercfg.py, checkbootloader.py, grubcfg.py,
-	iutil.py, lilo.py, lilocfg.py, up2datetheft.py: 
-	remove all this old code
-
 2005-03-24 02:29  skvidal
 
 	* yum/sqlitesack.py: 
@@ -4112,7 +4283,7 @@
 
 2005-03-11 04:08  skvidal
 
-	* repomd/packageSack.py, rpmUtils/updates.py: 
+	* rpmUtils/updates.py: 
 	packageSack - packagesByTuple(pkgtup) updates - getObsoletedList()
 
 2005-03-11 04:00  skvidal
@@ -4162,11 +4333,6 @@
 
 	* yum/config.py: 
 	variableReplace() over gpgkey option
-
-2005-03-08 06:02  gijs
-
-	* repomd/packageSack.py: Fixed a typo in excludeArch(e)s that
-	caused yum to fail when sqlite was not available.
 
 2005-03-08 05:41  gijs
 
@@ -4238,17 +4404,10 @@
 
 2005-03-04 13:29  skvidal
 
-	* yummain.py, repomd/packageSack.py, yum/__init__.py,
-	yum/sqlitesack.py: 
+	* yummain.py, yum/__init__.py, yum/sqlitesack.py: 
 	- made excludeArches in repomd pkgsack and sqlite pkgsack.  - makes
 	more sense to be in that class - sql select is a bit faster than
 	iterating all the packages and comparing
-
-2005-03-04 06:36  gijs
-
-	* repomd/packageObject.py: Applying a patch by Panu Matilainen to
-	make the way to return Changelog information uniform for sqlite and
-	non sqlite packages.
 
 2005-03-04 03:39  skvidal
 
@@ -4316,8 +4475,8 @@
 
 2005-03-02 07:03  gijs
 
-	* output.py, repomd/packageObject.py, yum/sqlitesack.py: Fixes in
-	Changelog handling code, mostly contributed by Panu Matilainen.
+	* output.py, yum/sqlitesack.py: Fixes in Changelog handling code,
+	mostly contributed by Panu Matilainen.
 
 2005-03-02 05:43  mjs
 
@@ -4410,7 +4569,7 @@
 
 2005-02-25 02:46  skvidal
 
-	* Makefile, repomd/Makefile, yum/Makefile, rpmUtils/Makefile: 
+	* Makefile, yum/Makefile, rpmUtils/Makefile: 
 	PYTHON override in makefiles - make it complete fixes:
 	http://devel.linux.duke.edu/bugzilla/show_bug.cgi?id=403 thanks to
 	bill nottingham
@@ -4438,10 +4597,7 @@
 
 2005-02-24 02:14  skvidal
 
-	* Makefile, urlgrabber/LICENSE, urlgrabber/Makefile,
-	urlgrabber/README, urlgrabber/__init__.py, urlgrabber/byterange.py,
-	urlgrabber/grabber.py, urlgrabber/keepalive.py,
-	urlgrabber/mirror.py, urlgrabber/progress.py: 
+	* Makefile: 
 	removed urlgrabber modified Makefile to remove urlgrabber
 
 2005-02-23 13:22  skvidal
@@ -4475,13 +4631,6 @@
 
 	* yum-daily.spec, yum.spec: 
 	updated spec file for versin changes - 2.3.0
-
-2005-02-21 00:08  skvidal
-
-	* urlgrabber/: LICENSE, README, __init__.py, byterange.py,
-	grabber.py, keepalive.py, mirror.py: 
-	check new urlgrabber into yum-HEAD. Once urlgrabber package is made
-	this will be removed from this source tree
 
 2005-02-19 17:28  skvidal
 
@@ -4540,11 +4689,6 @@
 
 	* callback.py: 
 	checked in Terje's callback progress changes to HEAD
-
-2005-02-09 17:33  skvidal
-
-	* urlgrabber/byterange.py: 
-	HEAD check in of byterange, for now.
 
 2005-02-05 15:42  skvidal
 
@@ -4679,8 +4823,7 @@
 
 2005-01-20 01:59  skvidal
 
-	* urlgrabber/grabber.py, yum/__init__.py, yum/packages.py,
-	yum/repos.py: 
+	* yum/: __init__.py, packages.py, repos.py: 
 	regets are enabled now. It looks like it should be handling
 	everything nicely, we'll see how well it works :) regets are
 	disabled for header downloads, though, due to the byte-range gets.
@@ -4709,7 +4852,7 @@
 
 2005-01-18 01:07  skvidal
 
-	* cli.py, repomd/packageSack.py: 
+	* cli.py: 
 	cli.py - correct some typos and change a log level for some debug
 	output packageSack.py - apply Gijs' patch to reduce search size.
 
@@ -4762,12 +4905,6 @@
 	* cli.py, output.py, yum/__init__.py, yum/repos.py: 
 	merge terje's yum-ui patch to add a package download counter and
 	add a text information to repomd grabbing.
-
-2005-01-14 13:25  skvidal
-
-	* urlgrabber/: __init__.py, byterange.py, grabber.py, keepalive.py,
-	mirror.py, progress.py: 
-	terje's patches and new-merge of urlgrabber - include REST fixes
 
 2005-01-14 11:31  skvidal
 
@@ -5068,11 +5205,6 @@
 	* etc/Makefile: 
 	Fix cron job perms
 
-2004-10-27 02:52  skvidal
-
-	* repomd/packageSack.py: 
-	fix for list objects not offering an __iter__ method in python 2.2
-
 2004-10-25 12:27  skvidal
 
 	* yum/depsolve.py: 
@@ -5225,11 +5357,6 @@
 	implemented post-transaction report output - just a short format of
 	what happened
 
-2004-10-17 10:32  skvidal
-
-	* urlgrabber/grabber.py: 
-	checked in fix to yum-urlgrabber for bug 335
-
 2004-10-17 05:02  skvidal
 
 	* cli.py, yum/__init__.py: 
@@ -5261,13 +5388,6 @@
 
 	* callback.py, cli.py, output.py, rpmUtils/transaction.py: 
 	filelog functional
-
-2004-10-17 02:05  skvidal
-
-	* urlgrabber/: __init__.py, byterange.py, grabber.py, keepalive.py,
-	mirror.py, progress.py: 
-	update urlgrabber to fix up a couple of problems, Thanks to Ryan
-	for making these happen so quickly
 
 2004-10-16 20:16  skvidal
 
@@ -5379,10 +5499,7 @@
 
 2004-10-13 01:16  skvidal
 
-	* urlgrabber/__init__.py, urlgrabber/byterange.py,
-	urlgrabber/grabber.py, urlgrabber/keepalive.py,
-	urlgrabber/mirror.py, urlgrabber/progress.py, yum/__init__.py,
-	yum/config.py, yum/repos.py: 
+	* yum/: __init__.py, config.py, repos.py: 
 	added in new urlgrabber implemented timeout and fixed up changes
 	for new urlgrabber checkfunc api
 
@@ -5461,8 +5578,7 @@
 
 2004-10-06 02:40  skvidal
 
-	* cli.py, repomd/packageObject.py, yum/mdcache.py, yum/packages.py,
-	yum/repos.py: 
+	* cli.py, yum/mdcache.py, yum/packages.py, yum/repos.py: 
 	mdcache implemented.  Need to write yum clean mdcache
 
 2004-10-05 10:43  skvidal
@@ -5472,8 +5588,7 @@
 
 2004-10-05 03:49  skvidal
 
-	* repomd/packageObject.py, yum/__init__.py, yum/mdcache.py,
-	yum/packages.py, yum/repos.py: 
+	* yum/: __init__.py, mdcache.py, packages.py, repos.py: 
 	incomplete modifications to incorporate icon's pickle handler for
 	metadata caching
 
@@ -5592,7 +5707,7 @@
 
 2004-09-26 17:12  skvidal
 
-	* cli.py, repomd/packageSack.py, yum/__init__.py: 
+	* cli.py, yum/__init__.py: 
 	check in search function
 
 2004-09-26 11:34  skvidal
@@ -5660,11 +5775,6 @@
 	
 	make rss generation include a link
 
-2004-09-19 16:46  skvidal
-
-	* repomd/packageSack.py: 
-	iterator method - untested
-
 2004-09-19 15:33  skvidal
 
 	* yum.sh: 
@@ -5686,7 +5796,7 @@
 
 2004-09-08 02:10  skvidal
 
-	* repomd/packageSack.py, yum/depsolve.py: 
+	* yum/depsolve.py: 
 	make filelists.xml be imported from all repos if a file dep exists
 	that does not match /etc/*, *bin/* or /usr/lib/sendmail.
 
@@ -5711,7 +5821,7 @@
 
 2004-09-07 02:02  skvidal
 
-	* cli.py, repomd/packageSack.py, yum/__init__.py: 
+	* cli.py, yum/__init__.py: 
 	make indexes be built after the package exclusions have occurred
 	speeds up excludes tremendously.
 
@@ -5723,8 +5833,8 @@
 
 2004-09-03 05:06  skvidal
 
-	* ChangeLog, cli.py, repomd/packageSack.py, yum/__init__.py,
-	yum/depsolve.py, yum/packages.py: 
+	* ChangeLog, cli.py, yum/__init__.py, yum/depsolve.py,
+	yum/packages.py: 
 	Large number of depsolver changes and fixes. Should be much more
 	correct.
 
@@ -5821,8 +5931,8 @@
 
 2004-08-31 00:20  skvidal
 
-	* Makefile, docs/Makefile, etc/Makefile, repomd/Makefile,
-	rpmUtils/Makefile, urlgrabber/Makefile, yum/Makefile: 
+	* Makefile, docs/Makefile, etc/Makefile, rpmUtils/Makefile,
+	yum/Makefile: 
 	Add Makefiles
 
 2004-08-31 00:16  skvidal
@@ -5892,8 +6002,7 @@
 
 2004-08-29 04:05  skvidal
 
-	* cli.py, repomd/packageObject.py, repomd/packageSack.py,
-	yum/__init__.py, rpmUtils/updates.py: 
+	* cli.py, yum/__init__.py, rpmUtils/updates.py: 
 	--obsoletes working fixed extras
 
 2004-08-28 13:24  skvidal
@@ -5916,12 +6025,6 @@
 
 	* cli.py, yum/depsolve.py, yum/repos.py: 
 	fix file:// urls for installs
-
-2004-08-23 03:00  skvidal
-
-	* repomd/packageSack.py: 
-	fix up progress callback counter for other and filemd importing
-	when packages have been deleted from packagesack.
 
 2004-08-23 02:59  skvidal
 
@@ -5963,12 +6066,6 @@
 	(this is kinda icky b/c we end up doing lots of    checks
 	throughout all of yum)	- delete the objects from the pkgsack and
 	add them to an excluded sack so we    can query on them later.
-
-2004-08-23 01:04  skvidal
-
-	* repomd/packageSack.py: 
-	- fixed exception in returnPackages() for calls to it with an
-	empty/non-existent repoid - removed redundant method call
 
 2004-08-23 01:01  skvidal
 
@@ -6068,16 +6165,15 @@
 
 2004-08-13 05:07  skvidal
 
-	* cli.py, output.py, yummain.py, repomd/packageSack.py,
-	yum/__init__.py, yum/depsolve.py, yum/repos.py: 
+	* cli.py, output.py, yummain.py, yum/__init__.py, yum/depsolve.py,
+	yum/repos.py: 
 	- cleaned up the failover on download - added intelligence to the
 	depsolver for multiple equal deps - much more needed, though.  -
 	added an addPkg() method to ListPackageSack Class
 
 2004-08-12 03:35  skvidal
 
-	* cli.py, urlgrabber/grabber.py, urlgrabber/mirror.py,
-	yum/repos.py: 
+	* cli.py, yum/repos.py: 
 	fix up the failure callback merge in newest urlgrabber + a fix
 
 2004-08-12 03:07  skvidal
@@ -6088,8 +6184,7 @@
 
 2004-08-11 03:46  skvidal
 
-	* cli.py, output.py, repomd/packageSack.py, yum/config.py,
-	yum/repos.py: 
+	* cli.py, output.py, yum/config.py, yum/repos.py: 
 	move around the cache and callback setup fix a typo in
 	packageSack.py - thanks to first, not so functioning, try at the
 	failover callback
@@ -6106,30 +6201,25 @@
 
 2004-08-09 03:39  skvidal
 
-	* cli.py, urlgrabber/__init__.py, urlgrabber/grabber.py,
-	urlgrabber/progress.py, yum/__init__.py, yum/misc.py, yum/repos.py:
-	
+	* cli.py, yum/__init__.py, yum/misc.py, yum/repos.py: 
 	merge in latest urlgrabber fix up checksum routine (hahhah) make
 	downloads work at all
 
 2004-08-06 02:15  skvidal
 
-	* repomd/packageSack.py, yum/Errors.py, yum/__init__.py,
-	yum/misc.py, yum/repos.py: 
+	* yum/: Errors.py, __init__.py, misc.py, repos.py: 
 	downloader work
 
 2004-07-30 02:30  skvidal
 
-	* cli.py, output.py, repomd/packageObject.py,
-	repomd/packageSack.py, yum/__init__.py, yum/repos.py: 
+	* cli.py, output.py, yum/__init__.py, yum/repos.py: 
 	clean up rss generation, clear up some sillyness with callback
 	setup for repository, fix code for importing non-primary metadata,
 	fix double line output for metadata import callback
 
 2004-07-27 05:32  skvidal
 
-	* cli.py, output.py, repomd/packageObject.py, yum/__init__.py,
-	yum/repos.py: 
+	* cli.py, output.py, yum/__init__.py, yum/repos.py: 
 	found bug in the import packageObject parseSimple() method - empty
 	objects, not pretty printed were erroring on importing.
 
@@ -6154,9 +6244,7 @@
 
 	* bootloadercfg.py, checkbootloader.py, clientStuff.py, grubcfg.py,
 	iutil.py, lilo.py, lilocfg.py, nevral.py, pkgaction.py,
-	up2datetheft.py, posts/bootloadercfg.py, posts/checkbootloader.py,
-	posts/grubcfg.py, posts/iutil.py, posts/lilo.py, posts/lilocfg.py,
-	posts/up2datetheft.py: 
+	up2datetheft.py: 
 	remove old and move things into better locations
 
 2004-07-22 11:58  skvidal
@@ -6177,12 +6265,12 @@
 
 2004-07-12 02:51  skvidal
 
-	* repomd/packageSack.py, yum/depsolve.py, yum/packages.py: 
+	* yum/: depsolve.py, packages.py: 
 	more depsolving goodness
 
 2004-07-11 14:22  skvidal
 
-	* repomd/packageSack.py, yum/depsolve.py, rpmUtils/transaction.py: 
+	* yum/depsolve.py, rpmUtils/transaction.py: 
 	more working-ness in depsolve, onto erase and update actions
 
 2004-07-11 02:54  skvidal
@@ -6203,7 +6291,7 @@
 
 2004-07-08 03:55  skvidal
 
-	* yummain.py, repomd/packageObject.py, yum/depsolve.py: 
+	* yummain.py, yum/depsolve.py: 
 	clean it up and dump out some results.
 
 2004-07-08 03:27  skvidal
@@ -6299,11 +6387,6 @@
 	* cli.py, yum/repos.py: 
 	make dirs when setting up repos
 
-2004-06-07 03:21  skvidal
-
-	* repomd/: packageObject.py, packageSack.py: 
-	xmlReader based package import - should be about 25% faster
-
 2004-06-01 02:33  skvidal
 
 	* cli.py: 
@@ -6335,7 +6418,7 @@
 
 2004-05-29 17:39  skvidal
 
-	* cli.py, repomd/repoMDObject.py, yum/__init__.py, yum/repos.py: 
+	* cli.py, yum/__init__.py, yum/repos.py: 
 	downloads of repomd.xml works again - fix the local file use for
 	caches.
 
@@ -6346,9 +6429,8 @@
 
 2004-05-26 03:30  skvidal
 
-	* cli.py, yummain.py, repomd/packageObject.py, yum/__init__.py,
-	yum/config.py, yum/packages.py, yum/repos.py, rpmUtils/__init__.py:
-	
+	* cli.py, yummain.py, yum/__init__.py, yum/config.py,
+	yum/packages.py, yum/repos.py, rpmUtils/__init__.py: 
 	- much of yum list - test out the new classes - lots of places to
 	work on
 
@@ -6416,9 +6498,7 @@
 
 2004-04-22 03:36  skvidal
 
-	* yummain.py, urlgrabber/__init__.py, urlgrabber/byterange.py,
-	urlgrabber/grabber.py, urlgrabber/keepalive.py,
-	urlgrabber/mirror.py, urlgrabber/progress.py, yum/repos.py: 
+	* yummain.py, yum/repos.py: 
 	imported new urlgrabber fleshed out the metadata retrieval and
 	checksumming routines.
 
@@ -6484,7 +6564,7 @@
 
 2004-04-01 03:28  skvidal
 
-	* yummain.py, repomd/packageSack.py: 
+	* yummain.py: 
 	packageSack.py - added __len__ method to PackageSack Class	   
 	      - added delPackage() method, too
 	
@@ -6527,8 +6607,8 @@
 
 2004-03-22 01:23  skvidal
 
-	* yummain.py, repomd/packageSack.py, yum/Errors.py,
-	yum/__init__.py, yum/config.py, yum/repos.py, rpmUtils/updates.py: 
+	* yummain.py, yum/Errors.py, yum/__init__.py, yum/config.py,
+	yum/repos.py, rpmUtils/updates.py: 
 	this is a temporary place with lots of debug output, deal. :)
 	
 	yummain.py - imports local cached xml metadata, prints out some
@@ -6541,17 +6621,6 @@
 	prettier needs to be done yum/repos.py - made it deal with
 	packageSacks and repositories - needs to take progress objects,
 	optionally at instantiation.
-
-2004-03-22 00:15  skvidal
-
-	* urlgrabber/mirror.py: 
-	add mirror.py
-
-2004-03-22 00:15  skvidal
-
-	* urlgrabber/: __init__.py, byterange.py, byterangetests.py,
-	grabber.py, grabbertests.py, keepalive.py, setup.py: 
-	update to newest urlgrabber
 
 2004-03-20 17:12  skvidal
 
@@ -6677,21 +6746,14 @@
 
 2004-02-17 00:28  skvidal
 
-	* urlgrabber/LICENSE, urlgrabber/README, urlgrabber/__init__.py,
-	urlgrabber/byterange.py, urlgrabber/byterangetests.py,
-	urlgrabber/grabber.py, urlgrabber/grabbertests.py,
-	urlgrabber/keepalive.py, urlgrabber/progress.py,
-	urlgrabber/setup.py, yum/rpmUtils.py: 
+	* yum/rpmUtils.py: 
 	added urlgrabber in the right place removed old rpmUtils
 
 2004-02-17 00:22  skvidal
 
-	* yummain.py, repomd/__init__.py, repomd/mdErrors.py,
-	repomd/mdUtils.py, repomd/packageObject.py, repomd/packageSack.py,
-	repomd/repoMDObject.py, repomd/test.py, rpmUtils/__init__.py,
-	rpmUtils/arch.py, rpmUtils/miscutils.py, yum/repos.py,
-	rpmUtils/oldUtils.py, rpmUtils/transaction.py, rpmUtils/updates.py:
-	
+	* yummain.py, rpmUtils/__init__.py, rpmUtils/arch.py,
+	rpmUtils/miscutils.py, yum/repos.py, rpmUtils/oldUtils.py,
+	rpmUtils/transaction.py, rpmUtils/updates.py: 
 	create most of the rpmUtils new updates class import the metadata
 	stuff for now cleanups to yummain and repos much more to go
 
