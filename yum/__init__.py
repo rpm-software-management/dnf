@@ -405,7 +405,7 @@ class YumBase(depsolve.YumDepsolver):
         
         if self._up:
             return self._up
-            
+        
         self.verbose_logger.debug('Building updates object')
         self._up = rpmUtils.updates.Updates(self.rpmdb.simplePkgList(),
                                            self.pkgSack.simplePkgList())
@@ -487,7 +487,9 @@ class YumBase(depsolve.YumDepsolver):
     pkgSack = property(fget=lambda self: self._getSacks())
     conf = property(fget=lambda self: self._getConfig())
     rpmdb = property(fget=lambda self: self._getRpmDB())
-    tsInfo = property(fget=lambda self: self._getTsInfo())
+    tsInfo = property(fget=lambda self: self._getTsInfo(), 
+                      fset=lambda self,value: self._setTsInfo(value), 
+                      fdel=lambda self: self._delTsInfo())
     ts = property(fget=lambda self: self._getActionTs(), fdel=lambda self: self._deleteTs())
     up = property(fget=lambda self: self._getUpdates())
     comps = property(fget=lambda self: self._getGroups())

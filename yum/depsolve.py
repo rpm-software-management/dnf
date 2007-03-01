@@ -70,6 +70,12 @@ class Depsolve(object):
 
         return self._tsInfo
 
+    def _setTsInfo(self, value):
+        self._tsInfo = value
+
+    def _delTsInfo(self):
+        self._tsInfo = None
+        
     def _getActionTs(self):
         if not self._ts:
             self.initActionTs()
