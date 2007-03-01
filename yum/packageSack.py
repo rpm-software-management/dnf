@@ -252,6 +252,7 @@ class MetaSack(PackageSackBase):
         if not newest:
             return self._computeAggregateDictResult("returnObsoletes")
         
+        # FIXME - this is slooooooooooooooooooooooooooooooow
         # get the dict back
         obsdict = self._computeAggregateDictResult("returnObsoletes")
         # get a sack of the newest pkgs
