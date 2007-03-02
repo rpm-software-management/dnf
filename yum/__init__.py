@@ -484,26 +484,26 @@ class YumBase(depsolve.YumDepsolver):
     # properties so they auto-create themselves with defaults
     repos = property(fget=lambda self: self._getRepos(),
                      fset=lambda self, value: setattr(self, "_repos", value),
-                     fset=lambda self: delattr(self, "_repos"))
+                     fdel=lambda self: setattr(self, "_repos", None))
     pkgSack = property(fget=lambda self: self._getSacks(),
                        fset=lambda self, value: setattr(self, "_pkgSack", value),
-                       fdel=lambda self: delattr(self, "_pkgSack"))
+                       fdel=lambda self: setattr(self, "_pkgSack", None))
     conf = property(fget=lambda self: self._getConfig(),
                     fset=lambda self, value: setattr(self, "_conf", value),
-                    fdel=lambda self: delattr(self, "_conf"))
+                    fdel=lambda self: setattr(self, "_conf", None))
     rpmdb = property(fget=lambda self: self._getRpmDB(),
                      fset=lambda self, value: setattr(self, "_rpmdb", value),
-                     fdel=lambda self: delattr(self, "_rpmdb"))
+                     fdel=lambda self: setattr(self, "_rpmdb", None))
     tsInfo = property(fget=lambda self: self._getTsInfo(), 
                       fset=lambda self,value: self._setTsInfo(value), 
                       fdel=lambda self: self._delTsInfo())
     ts = property(fget=lambda self: self._getActionTs(), fdel=lambda self: self._deleteTs())
     up = property(fget=lambda self: self._getUpdates(),
                   fset=lambda self, value: setattr(self, "_up", value),
-                  fdel=lambda self: delattr(self, "_up"))
+                  fdel=lambda self: setattr(self, "_up", None))
     comps = property(fget=lambda self: self._getGroups(),
                      fset=lambda self, value: setattr(self, "_comps", value),
-                     fdel=lambda self: delattr(self, "_comps"))
+                     fdel=lambda self: setattr(self, "_comps", None))
     
     
     def doSackFilelistPopulate(self):
