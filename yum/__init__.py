@@ -297,11 +297,11 @@ class YumBase(depsolve.YumDepsolver):
         del self._ts
         self._ts = None
     
-    def doRepoSetup(self, **kwargs):
+    def doRepoSetup(self, thisrepo=None):
         warnings.warn('doRepoSetup() will go away in a future version of Yum.\n',
                 Errors.YumFutureDeprecationWarning, stacklevel=2)
 
-        return self._getRepos(**kwargs)
+        return self._getRepos(thisrepo)
         
     
     def _getRepos(self, thisrepo=None):
