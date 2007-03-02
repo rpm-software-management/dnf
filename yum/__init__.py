@@ -392,9 +392,6 @@ class YumBase(depsolve.YumDepsolver):
 
         return self._pkgSack
 
-    def _setSacks(self, value):
-        self._pkgSack = value
-        
     def doUpdateSetup(self):
         warnings.warn('doUpdateSetup() will go away in a future version of Yum.\n',
                 Errors.YumFutureDeprecationWarning, stacklevel=2)
@@ -485,17 +482,28 @@ class YumBase(depsolve.YumDepsolver):
         return self._comps
     
     # properties so they auto-create themselves with defaults
-    repos = property(fget=lambda self: self._getRepos())
+    repos = property(fget=lambda self: self._getRepos(),
+                     fset=lambda self, value: setattr(self, "_repos", value),
+                     fset=lambda self: delattr(self, "_repos"))
     pkgSack = property(fget=lambda self: self._getSacks(),
-                       fset=lambda self, value: self._setSacks(value))
-    conf = property(fget=lambda self: self._getConfig())
-    rpmdb = property(fget=lambda self: self._getRpmDB())
+                       fset=lambda self, value: setattr(self, "_pkgSack", value),
+                       fdel=lambda self: delattr(self, "_pkgSack"))
+    conf = property(fget=lambda self: self._getConfig(),
+                    fset=lambda self, value: setattr(self, "_conf", value),
+                    fdel=lambda self: delattr(self, "_conf"))
+    rpmdb = property(fget=lambda self: self._getRpmDB(),
+                     fset=lambda self, value: setattr(self, "_rpmdb", value),
+                     fdel=lambda self: delattr(self, "_rpmdb"))
     tsInfo = property(fget=lambda self: self._getTsInfo(), 
                       fset=lambda self,value: self._setTsInfo(value), 
                       fdel=lambda self: self._delTsInfo())
     ts = property(fget=lambda self: self._getActionTs(), fdel=lambda self: self._deleteTs())
-    up = property(fget=lambda self: self._getUpdates())
-    comps = property(fget=lambda self: self._getGroups())
+    up = property(fget=lambda self: self._getUpdates(),
+                  fset=lambda self, value: setattr(self, "_up", value),
+                  fdel=lambda self: delattr(self, "_up"))
+    comps = property(fget=lambda self: self._getGroups(),
+                     fset=lambda self, value: setattr(self, "_comps", value),
+                     fdel=lambda self: delattr(self, "_comps"))
     
     
     def doSackFilelistPopulate(self):
