@@ -374,7 +374,8 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
 
         for (rep,cache) in self.primarydb.items():
             cur = cache.cursor()
-            executeSQL(cur, "select * from packages where pkgId in (?)", (pkgid_query,))
+            executeSQL(cur, "select * from packages where pkgId in %s" %(pkgid_query,))
+            #executeSQL(cur, "select * from packages where pkgId in %s" %(pkgid_query,))            
             for ob in cur.fetchall():
                 pkgs.append(ob)
         
@@ -416,7 +417,7 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
 
         if matched: # if its in the primary.xml files then skip the other check
             return results
-        
+
         #FIXME - sort this all out.
         # If it is a filename, search the files.xml file info
         for (rep,cache) in self.filelistsdb.items():
@@ -457,7 +458,7 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
                 if filename and not quicklookup.has_key(filename):
                     continue
                 
-                matching_ids.append(res['pkgId'])
+                matching_ids.append(str(res['pkgId']))
                 
             
             pkgs = self._getListofPackageDetails(matching_ids)
