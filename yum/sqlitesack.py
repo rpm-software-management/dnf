@@ -226,6 +226,7 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
             self.excludes[repo] = {}
 
         self.excludes[repo][obj.pkgId] = 1
+        self.pkglist = None
 
     def _excluded(self, repo, pkgId):
         if self.excludes.has_key(repo):
@@ -522,7 +523,7 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
             executeSQL(cur, "select pkgId,name,epoch,version,release,arch from packages")
             for pkg in cur.fetchall():
                 if self._excluded(rep, pkg['pkgId']):
-                    continue                        
+                    continue
                 simplelist.append((pkg['name'], pkg['arch'], pkg['epoch'], pkg['version'], pkg['release'])) 
         
         self.pkglist = simplelist
