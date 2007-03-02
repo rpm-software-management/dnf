@@ -417,7 +417,7 @@ class BaseConfig(object):
 
         The value returned is the parsed, validated option value.
         '''
-        return self.options
+        return map (lambda (x, y) : (x, getattr(self, x)), self.options)
 
     def write(self, fileobj, section=None, always=()):
         '''Write out the configuration to a file-like object
