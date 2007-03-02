@@ -344,11 +344,11 @@ class YumBase(depsolve.YumDepsolver):
         return self._repos
 
     
-    def doSackSetup(self, **kwargs):
+    def doSackSetup(self, archlist=None, thisrepo=None):
         warnings.warn('doSackSetup() will go away in a future version of Yum.\n',
                 Errors.YumFutureDeprecationWarning, stacklevel=2)
 
-        return self._getSacks(**kwargs)
+        return self._getSacks(archlist=archlist, thisrepo=thisrepo)
         
     def _getSacks(self, archlist=None, thisrepo=None):
         """populates the package sacks for information from our repositories,
