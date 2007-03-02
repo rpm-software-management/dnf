@@ -301,16 +301,16 @@ class YumBase(depsolve.YumDepsolver):
         warnings.warn('doRepoSetup() will go away in a future version of Yum.\n',
                 Errors.YumFutureDeprecationWarning, stacklevel=2)
 
-        return self._getRepos(thisrepo)
+        return self._getRepos(thisrepo, True)
         
     
-    def _getRepos(self, thisrepo=None):
+    def _getRepos(self, thisrepo=None, doSetup = False):
         """grabs the repomd.xml for each enabled repository and sets up 
            the basics of the repository"""
         
         if not self._repos:
             self._repos = RepoStorage()
-        else:
+        elif not doSetup:
             return self._repos
         
         # Get our list of repo objects from conf, add them to the repos collection        
