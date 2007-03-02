@@ -391,7 +391,9 @@ class YumBase(depsolve.YumDepsolver):
         self._pkgSack.buildIndexes()
 
         return self._pkgSack
-        
+
+    def _setSacks(self, value):
+        self._pkgSack = value
         
     def doUpdateSetup(self):
         warnings.warn('doUpdateSetup() will go away in a future version of Yum.\n',
@@ -405,7 +407,7 @@ class YumBase(depsolve.YumDepsolver):
         
         if self._up:
             return self._up
-        
+
         self.verbose_logger.debug('Building updates object')
         self._up = rpmUtils.updates.Updates(self.rpmdb.simplePkgList(),
                                            self.pkgSack.simplePkgList())
@@ -484,7 +486,8 @@ class YumBase(depsolve.YumDepsolver):
     
     # properties so they auto-create themselves with defaults
     repos = property(fget=lambda self: self._getRepos())
-    pkgSack = property(fget=lambda self: self._getSacks())
+    pkgSack = property(fget=lambda self: self._getSacks(),
+                       fset=lambda self, value: self._setSacks(value))
     conf = property(fget=lambda self: self._getConfig())
     rpmdb = property(fget=lambda self: self._getRpmDB())
     tsInfo = property(fget=lambda self: self._getTsInfo(), 
@@ -556,7 +559,7 @@ class YumBase(depsolve.YumDepsolver):
 
         if len(excludelist) == 0:
             return
-        
+
         if not repo:
             self.verbose_logger.log(logginglevels.INFO_2, 'Excluding Packages in global exclude list')
         else:
