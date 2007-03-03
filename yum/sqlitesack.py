@@ -291,22 +291,23 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
                 OR (filelist.dirname LIKE ? AND\
                 filelist.filenames LIKE ?))\
                 AND (filelist.pkgKey = packages.pkgKey)", (name,dirname,filename))
-                    
-        # cull the results for false positives
-        for ob in cur.fetchall():
-            # Check if it is an actual match
-            # The query above can give false positives, when
-            # a package provides /foo/aaabar it will also match /foo/bar
-            if self._excluded(rep, ob['pkgId']):
-                continue
-            real = False
-            for filename in decodefilenamelist(ob['filenames']):
-                if (ob['dirname']+'/'+filename).find(name) != -1:
-                    real = True
-            if (not real):
-                continue
-            pkg = self.getPackageDetails(ob['pkgId'])
-            result.append((self.pc(rep,pkg)))
+
+            # cull the results for false positives
+            for ob in cur.fetchall():
+                # Check if it is an actual match
+                # The query above can give false positives, when
+                # a package provides /foo/aaabar it will also match /foo/bar
+                if self._excluded(rep, ob['pkgId']):
+                    continue
+                real = False
+                for filename in decodefilenamelist(ob['filenames']):
+                    if (ob['dirname']+'/'+filename).find(name) != -1:
+                        real = True
+                if (not real):
+                    continue
+                pkg = self.getPackageDetails(ob['pkgId'])
+                result.append((self.pc(rep,pkg)))
+
         return result     
     
     def searchPrimaryFields(self, fields, searchstring):
