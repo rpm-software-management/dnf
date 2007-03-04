@@ -268,7 +268,7 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
         result = []
         for (rep,cache) in self.primarydb.items():
             cur = cache.cursor()
-            executeSQL(cur, "select DISTINCT packages.pkgId as pkgId from provides,packages where provides.name LIKE ? AND provides.pkgKey = packages.pkgKey", (name,))
+            executeSQL(cur, "select DISTINCT packages.pkgId as pkgId from provides,packages where provides.name LIKE ? AND provides.pkgKey = packages.pkgKey", ("%%%s%%" % name,))
             for ob in cur.fetchall():
                 if self._excluded(rep, ob['pkgId']):
                     continue
@@ -290,7 +290,8 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
                 (filelist.dirname LIKE ? \
                 OR (filelist.dirname LIKE ? AND\
                 filelist.filenames LIKE ?))\
-                AND (filelist.pkgKey = packages.pkgKey)", (name,dirname,filename))
+                AND (filelist.pkgKey = packages.pkgKey)",
+                ("%%%s%%" % name, "%%%s%%" % dirname, "%%%s%%" % filename))
 
             # cull the results for false positives
             for ob in cur.fetchall():
