@@ -348,7 +348,7 @@ class RepodataParserSqlite:
         # First create a list of all pkgIds that are in the database now
         executeSQL(cur, "SELECT pkgId, pkgKey from packages")
         currentpkgs = {}
-        for pkg in cur.fetchall():
+        for pkg in cur:
             currentpkgs[pkg['pkgId']] = pkg['pkgKey']
 
         if (cachetype == 'primary'):
