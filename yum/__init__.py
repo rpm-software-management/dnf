@@ -615,7 +615,7 @@ class YumBase(depsolve.YumDepsolver):
         
         for po in rmlist:
             self.verbose_logger.debug('Removing unmatched package %s', po)
-            self.pkgSack.delPackage(po)
+            po.repo.sack.delPackage(po)
             
         self.verbose_logger.log(logginglevels.INFO_2, 'Finished')
         
