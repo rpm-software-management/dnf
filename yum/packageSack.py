@@ -288,8 +288,7 @@ class MetaSack(PackageSackBase):
 
     def delPackage(self, obj):
         """Delete a pkgobject if it exists in every sub-sack."""
-        sack = self.sacks[obj.repo.id]
-        sack.delPackage(obj)
+        obj.repo.sack.delPackage(obj)
 
 
     def returnPackages(self, repoid=None):
