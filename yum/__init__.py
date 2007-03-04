@@ -1226,27 +1226,18 @@ class YumBase(depsolve.YumDepsolver):
     def searchPackageProvides(self, args, callback=None):
         
         matches = {}
-        
-        # search deps the simple way first
-        for arg in args:
-            self.verbose_logger.log(logginglevels.DEBUG_1, 'searching the simple way')
-            pkgs = self.returnPackagesByDep(arg)
-            for po in pkgs:
-                if callback:
-                    callback(po, [arg])
-                matches[po] = [arg]
 
         # search pkgSack - fully populate the worthwhile metadata to search
         # if it even vaguely matches
         self.verbose_logger.log(logginglevels.DEBUG_1,
             'fully populating the necessary data')
         for arg in args:
-            matched = 0
+            matched = False
             globs = ['.*bin\/.*', '.*\/etc\/.*', '^\/usr\/lib\/sendmail$']
             for glob in globs:
                 globc = re.compile(glob)
                 if globc.match(arg):
-                    matched = 1
+                    matched = True
             if not matched:
                 self.doSackFilelistPopulate()
 

@@ -276,6 +276,14 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
                 pkg = self.getPackageDetails(ob['pkgId'])
                 result.append((self.pc(rep,pkg)))
 
+            cur = cache.cursor()
+            executeSQL(cur, "select DISTINCT packages.pkgId as pkgId from files,packages where files.name LIKE ? and files.pkgKey = packages.pkgKey", ("%%%s%%" % name,))
+            for ob in cur.fetchall():
+                if self._excluded(rep,ob['pkgId']):
+                    continue
+                pkg = self.getPackageDetails(ob['pkgId'])
+                result.append(self.pc(rep,pkg))
+
         for (rep,cache) in self.filelistsdb.items():
             cur = cache.cursor()
             (dirname,filename) = os.path.split(name)
@@ -310,8 +318,9 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
                 pkg = self.getPackageDetails(ob['pkgId'])
                 result.append((self.pc(rep,pkg)))
 
+        result = misc.unique(result)
         return result
-    
+
     def searchFiles(self, name):
         """search primary if file will be in there, if not, search filelists, use globs, if possible"""
         
