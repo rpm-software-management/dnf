@@ -511,14 +511,17 @@ class YumBase(depsolve.YumDepsolver):
            it also is simply to only emit a log if anything actually gets populated"""
         
         necessary = False
-
-        for repo in self.repos.listEnabled():
-            if repo in repo.sack.added.keys():
-                if 'filelists' in repo.sack.added[repo]:
-                    continue
-            else:
-                necessary = True
         
+        # I can't think of a nice way of doing this, we have to have the sack here
+        # first or the below does nothing so...
+        if self.pkgSack:
+            for repo in self.repos.listEnabled():
+                if repo in repo.sack.added.keys():
+                    if 'filelists' in repo.sack.added[repo]:
+                        continue
+                else:
+                    necessary = True
+
         if necessary:
             msg = 'Importing additional filelist information'
             self.verbose_logger.log(logginglevels.INFO_2, msg)
