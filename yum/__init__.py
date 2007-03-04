@@ -519,6 +519,8 @@ class YumBase(depsolve.YumDepsolver):
                 if repo in repo.sack.added.keys():
                     if 'filelists' in repo.sack.added[repo]:
                         continue
+                    else:
+                        necessary = True
                 else:
                     necessary = True
 
