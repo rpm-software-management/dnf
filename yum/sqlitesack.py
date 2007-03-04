@@ -222,12 +222,11 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
     # Because we don't want to remove a package from the database we just
     # add it to the exclude list
     def delPackage(self, obj):
-        repo = obj.repo
-        if not self.excludes.has_key(repo):
-            self.excludes[repo] = {}
-
-        self.excludes[repo][obj.pkgId] = 1
+        if not self.excludes.has_key(obj.repo):
+            self.excludes[obj.repo] = {}
+        self.excludes[obj.repo][obj.pkgId] = 1
         self.pkglist = None
+        
 
     def _excluded(self, repo, pkgId):
         if self.excludes.has_key(repo):
