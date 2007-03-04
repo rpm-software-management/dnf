@@ -133,6 +133,7 @@ def QmarkToPyformat(query, params):
 
 
 def executeSQLPyFormat(cursor, query, params=None):
+    #print query
     if params is None:
         return cursor.execute(query)
     
@@ -140,6 +141,7 @@ def executeSQLPyFormat(cursor, query, params=None):
     return cursor.execute(q, p)
 
 def executeSQLQmark(cursor, query, params=None):
+    #print query
     if params is None:
         return cursor.execute(query)
     

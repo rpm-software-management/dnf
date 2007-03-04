@@ -22,6 +22,7 @@
 import os
 import os.path
 import re
+import fnmatch
 
 import yumRepo
 from packages import PackageObject, RpmBase, YumAvailablePackage
@@ -40,10 +41,7 @@ class YumAvailablePackageSqlite(YumAvailablePackage, PackageObject, RpmBase):
                       'conflicts': [],
                       'requires': [],
                       'provides': [] }
-        self.files = {'file':[],
-                      'dir':[],
-                      'ghost': [] }
-
+        self._files = {}
         self.sack = repo.sack
         self.repoid = repo.id
         self.repo = repo
@@ -53,10 +51,11 @@ class YumAvailablePackageSqlite(YumAvailablePackage, PackageObject, RpmBase):
         self.id = self.pkgId
         self.ver = self.version 
         self.rel = self.release 
-            
+        
         self._changelog = None
 
-
+    files = property(fget=lambda self: self._loadFiles())
+        
     def _read_db_obj(self, db_obj, item=None):
         """read the db obj. If asked for a specific item, return it.
            otherwise populate out into the object what exists"""
@@ -109,9 +108,9 @@ class YumAvailablePackageSqlite(YumAvailablePackage, PackageObject, RpmBase):
         
     def _loadFiles(self):
         if self._loadedfiles:
-            return
+            return self._files
+        
         result = {}
-        self.files = result
         
         #FIXME - this should be try, excepting
         self.sack.populate(self.repo, mdtype='filelists')
@@ -134,7 +133,9 @@ class YumAvailablePackageSqlite(YumAvailablePackage, PackageObject, RpmBase):
                 filetype = filetypes.pop()
                 result.setdefault(filetype,[]).append(filename)
         self._loadedfiles = True
-        self.files = result
+        self._files = result
+        
+        return self._files
 
     def _loadChangelog(self):
         result = []
@@ -309,8 +310,67 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
                 pkg = self.getPackageDetails(ob['pkgId'])
                 result.append((self.pc(rep,pkg)))
 
-        return result     
+        return result
     
+    def searchFiles(self, name):
+        """search primary if file will be in there, if not, search filelists, use globs, if possible"""
+        
+        glob = True
+        if not re.match('.*[\*\?\[\]].*', name):
+            glob = False
+        
+        pkgs = {}
+        for (rep,cache) in self.filelistsdb.items():
+            cur = cache.cursor()
+
+            # grab the entries that are a single file in the 
+            # filenames section, use sqlites globbing if it is a glob
+            if glob:
+                executeSQL(cur, "select packages.pkgId as pkgId from filelist, \
+                        packages where packages.pkgKey = filelist.pkgKey and \
+                        length(filelist.filetypes) = 1 and \
+                        filelist.dirname || ? || filelist.filenames \
+                        glob ?", ('/', name))
+            else:
+                executeSQL(cur, "select packages.pkgId as pkgId from filelist, \
+                        packages where packages.pkgKey = filelist.pkgKey and \
+                        length(filelist.filetypes) = 1 and \
+                        filelist.dirname || ? || filelist.filenames \
+                        = ?", ('/', name))
+
+            for ob in cur.fetchall():
+                if self._excluded(rep, ob['pkgId']):
+                    continue
+                pkg = self.getPackageDetails(ob['pkgId'])
+                po = self.pc(rep, pkg)
+                pkgs[po.pkgId] = po
+
+            # for all the ones where filenames is multiple files, 
+            # make the files up whole and use python's globbing method
+            executeSQL(cur, "select packages.pkgID as pkgID, \
+                             filelist.dirname as dirname, \
+                             filelist.filenames as filenames \
+                             from filelist,packages where \
+                             packages.pkgKey = filelist.pkgKey \
+                             and length(filelist.filetypes) > 1")
+
+            for (pkgId,d,fs) in cur.fetchall():
+                files = fs.split('/')
+                fns = map(lambda f: '%s/%s' % (d, f), files)
+                if glob:
+                    matches = fnmatch.filter(fns, name)
+                else:
+                    matches = filter(lambda x: name==x, fns)
+
+                if len(matches) > 0:
+                    if self._excluded(rep, pkgId):
+                        continue
+                    pkg = self.getPackageDetails(pkgId)
+                    po = self.pc(rep, pkg)
+                    pkgs[po.pkgId] = po
+        
+        return pkgs.values()
+        
     def searchPrimaryFields(self, fields, searchstring):
         """search arbitrary fields from the primarydb for a string"""
         result = []
