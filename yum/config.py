@@ -533,6 +533,8 @@ class YumConf(StartupConf):
     http_caching = SelectionOption('all', ('none', 'packages', 'all'))
     metadata_expire = IntOption(1800)   # time in seconds
 
+    _reposlist = []
+
 class RepoConf(BaseConfig):
     '''
     Option definitions for repository INI file sections.
