@@ -118,7 +118,7 @@ class YumAvailablePackageSqlite(YumAvailablePackage, PackageObject, RpmBase):
         cur = cache.cursor()
         executeSQL(cur, "select filelist.dirname as dirname, "
                     "filelist.filetypes as filetypes, " 
-                    "filelist.filenames as filenames from packages,filelist "
+                    "filelist.filenames as filenames from filelist,packages "
                     "where packages.pkgId = ? and "
                     "packages.pkgKey = filelist.pkgKey", (self.pkgId,))
         for ob in cur:
@@ -151,7 +151,7 @@ class YumAvailablePackageSqlite(YumAvailablePackage, PackageObject, RpmBase):
             executeSQL(cur, "select changelog.date as date, "
                         "changelog.author as author, "
                         "changelog.changelog as changelog "
-                        "from packages,changelog where packages.pkgId = ? "
+                        "from changelog,packages where packages.pkgId = ? "
                         "and packages.pkgKey = changelog.pkgKey", (self.pkgId,))
             for ob in cur:
                 result.append( (ob['date'], ob['author'], ob['changelog']) )
@@ -180,7 +180,7 @@ class YumAvailablePackageSqlite(YumAvailablePackage, PackageObject, RpmBase):
             cur = cache.cursor()
             query = "select %s.name as name, %s.version as version, "\
                         "%s.release as release, %s.epoch as epoch, "\
-                        "%s.flags as flags from packages,%s "\
+                        "%s.flags as flags from %s,packages "\
                         "where packages.pkgId = '%s' and "\
                         "packages.pkgKey = %s.pkgKey" % (prcotype, prcotype, 
                         prcotype, prcotype, prcotype, prcotype, self.pkgId, 
