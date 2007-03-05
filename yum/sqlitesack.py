@@ -262,72 +262,28 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
     # Search packages that either provide something containing name
     # or provide a file containing name 
     def searchAll(self,name, query_type='like'):
-    
-        # This should never be called with a name containing a %
-        assert(name.find('%') == -1)
-        result = []
-        for (rep,cache) in self.primarydb.items():
-            cur = cache.cursor()
-            executeSQL(cur, "select DISTINCT packages.pkgId as pkgId from provides,packages where provides.name LIKE ? AND provides.pkgKey = packages.pkgKey", ("%%%s%%" % name,))
-            for ob in cur:
-                if self._excluded(rep, ob['pkgId']):
-                    continue
-                pkg = self.getPackageDetails(ob['pkgId'])
-                result.append((self.pc(rep,pkg)))
+        # this function is just silly and it reduces down to just this
+        return self.searchPrco(name, 'provides')
 
-            cur = cache.cursor()
-            executeSQL(cur, "select DISTINCT packages.pkgId as pkgId from files,packages where files.name LIKE ? and files.pkgKey = packages.pkgKey", ("%%%s%%" % name,))
-            for ob in cur.fetchall():
-                if self._excluded(rep,ob['pkgId']):
-                    continue
-                pkg = self.getPackageDetails(ob['pkgId'])
-                result.append(self.pc(rep,pkg))
-
-        for (rep,cache) in self.filelistsdb.items():
-            cur = cache.cursor()
-            (dirname,filename) = os.path.split(name)
-            # This query means:
-            # Either name is a substring of dirname or the directory part
-            # in name is a substring of dirname and the file part is part
-            # of filelist
-            executeSQL(cur, "select packages.pkgId as pkgId,\
-                filelist.dirname as dirname,\
-                filelist.filetypes as filetypes,\
-                filelist.filenames as filenames \
-                from packages,filelist where \
-                (filelist.dirname LIKE ? \
-                OR (filelist.dirname LIKE ? AND\
-                filelist.filenames LIKE ?))\
-                AND (filelist.pkgKey = packages.pkgKey)",
-                ("%%%s%%" % name, "%%%s%%" % dirname, "%%%s%%" % filename))
-
-            # cull the results for false positives
-            for ob in cur:
-                # Check if it is an actual match
-                # The query above can give false positives, when
-                # a package provides /foo/aaabar it will also match /foo/bar
-                if self._excluded(rep, ob['pkgId']):
-                    continue
-                real = False
-                for filename in decodefilenamelist(ob['filenames']):
-                    if (ob['dirname']+'/'+filename).find(name) != -1:
-                        real = True
-                if (not real):
-                    continue
-                pkg = self.getPackageDetails(ob['pkgId'])
-                result.append((self.pc(rep,pkg)))
-
-        result = misc.unique(result)
-        return result
 
     def searchFiles(self, name):
         """search primary if file will be in there, if not, search filelists, use globs, if possible"""
+        
+        # optimizations:
+        # if it is not  glob, then see if it is in the primary.xml filelists, 
+        # if so, just use those for the lookup
         
         glob = True
         if not re.match('.*[\*\?\[\]].*', name):
             glob = False
         
         pkgs = {}
+        if len(self.filelistsdb.keys()) == 0:
+            # grab repo object from primarydb and force filelists population in this sack using repo
+            # sack.populate(repo, mdtype, callback, cacheonly)
+            for (repo,cache) in self.primarydb.items():
+                self.populate(repo, mdtype='filelists')
+
         for (rep,cache) in self.filelistsdb.items():
             cur = cache.cursor()
 
@@ -455,11 +411,18 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
     
     def searchPrco(self, name, prcotype):
         """return list of packages having prcotype name (any evr and flag)"""
-        
+        glob = True
+        if not re.match('.*[\*\?\[\]].*', name):
+            glob = False
+
         results = []
         for (rep,cache) in self.primarydb.items():
             cur = cache.cursor()
-            executeSQL(cur, "select packages.* from packages,%s where %s.name =? and %s.pkgKey=packages.pkgKey" % (prcotype,prcotype,prcotype), (name,))
+            if glob:
+                executeSQL(cur, "select packages.* from %s,packages where %s.name  glob ? and %s.pkgKey=packages.pkgKey" % (prcotype,prcotype,prcotype), (name,))
+            else:
+                executeSQL(cur, "select packages.* from %s,packages where %s.name =? and %s.pkgKey=packages.pkgKey" % (prcotype,prcotype,prcotype), (name,))
+        
             for x in cur:
                 if self._excluded(rep, x['pkgId']):
                     continue
@@ -467,74 +430,82 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
         
         # If it's not a provides or a filename, we are done
         if prcotype != "provides" or name[0] != '/':
-            return results
-
+            if not glob:
+                return results
 
         # If it is a filename, search the primary.xml file info
         for (rep,cache) in self.primarydb.items():
             cur = cache.cursor()
-            executeSQL(cur, "select packages.* from files,packages where files.name = ? and files.pkgKey = packages.pkgKey" , (name,))
+            if glob:
+                executeSQL(cur, "select packages.* from files,packages where files.name glob ? and files.pkgKey = packages.pkgKey" , (name,))
+            else:
+                executeSQL(cur, "select packages.* from files,packages where files.name = ? and files.pkgKey = packages.pkgKey" , (name,))    
+                
             for x in cur:
                 if self._excluded(rep,x['pkgId']):
                     continue
                 results.append(self.pc(rep,x))
-
+        
         matched = 0
         globs = ['.*bin\/.*', '^\/etc\/.*', '^\/usr\/lib\/sendmail$']
-        for glob in globs:
-            globc = re.compile(glob)
+        for thisglob in globs:
+            globc = re.compile(thisglob)
             if globc.match(name):
                 matched = 1
 
-        if matched: # if its in the primary.xml files then skip the other check
+        if matched and not glob: # if its in the primary.xml files then skip the other check
             return results
 
-        #FIXME - sort this all out.
         # If it is a filename, search the files.xml file info
-        for (rep,cache) in self.filelistsdb.items():
-            cur = cache.cursor()
-            (dirname,filename) = os.path.split(name)
-            # FIXME: why doesn't this work???
-            if 0: # name.find('%') == -1: # no %'s in the thing safe to LIKE
-                executeSQL(cur, "select packages.pkgId as pkgId,\
-                    filelist.dirname as dirname,\
-                    filelist.filetypes as filetypes,\
-                    filelist.filenames as filenames \
-                    from packages,filelist where \
-                    (filelist.dirname LIKE ? \
-                    OR (filelist.dirname LIKE ? AND\
-                    filelist.filenames LIKE ?))\
-                    AND (filelist.pkgKey = packages.pkgKey)", (name,dirname,filename))
-            else: 
-                executeSQL(cur, "select packages.pkgId as pkgId,\
-                    filelist.dirname as dirname,\
-                    filelist.filetypes as filetypes,\
-                    filelist.filenames as filenames \
-                    from filelist,packages where dirname = ? AND filelist.pkgKey = packages.pkgKey" , (dirname,))
+        results.extend(self.searchFiles(name))
+        return results
+        
+        
+        #~ #FIXME - comment this all out below here
+        #~ for (rep,cache) in self.filelistsdb.items():
+            #~ cur = cache.cursor()
+            #~ (dirname,filename) = os.path.split(name)
+            #~ # FIXME: why doesn't this work???
+            #~ if 0: # name.find('%') == -1: # no %'s in the thing safe to LIKE
+                #~ executeSQL(cur, "select packages.pkgId as pkgId,\
+                    #~ filelist.dirname as dirname,\
+                    #~ filelist.filetypes as filetypes,\
+                    #~ filelist.filenames as filenames \
+                    #~ from packages,filelist where \
+                    #~ (filelist.dirname LIKE ? \
+                    #~ OR (filelist.dirname LIKE ? AND\
+                    #~ filelist.filenames LIKE ?))\
+                    #~ AND (filelist.pkgKey = packages.pkgKey)", (name,dirname,filename))
+            #~ else: 
+                #~ executeSQL(cur, "select packages.pkgId as pkgId,\
+                    #~ filelist.dirname as dirname,\
+                    #~ filelist.filetypes as filetypes,\
+                    #~ filelist.filenames as filenames \
+                    #~ from filelist,packages where dirname = ? AND filelist.pkgKey = packages.pkgKey" , (dirname,))
 
-            matching_ids = []
-            for res in cur:
-                if self._excluded(rep, res['pkgId']):
-                    continue
+            #~ matching_ids = []
+            #~ for res in cur:
+                #~ if self._excluded(rep, res['pkgId']):
+                    #~ continue
                 
-                #FIXME - optimize the look up here by checking for single-entry filenames
-                quicklookup = {}
-                for fn in decodefilenamelist(res['filenames']):
-                    quicklookup[fn] = 1
+                #~ #FIXME - optimize the look up here by checking for single-entry filenames
+                #~ quicklookup = {}
+                #~ for fn in decodefilenamelist(res['filenames']):
+                    #~ quicklookup[fn] = 1
                 
-                # If it matches the dirname, that doesnt mean it matches
-                # the filename, check if it does
-                if filename and not quicklookup.has_key(filename):
-                    continue
+                #~ # If it matches the dirname, that doesnt mean it matches
+                #~ # the filename, check if it does
+                #~ if filename and not quicklookup.has_key(filename):
+                    #~ continue
                 
-                matching_ids.append(str(res['pkgId']))
+                #~ matching_ids.append(str(res['pkgId']))
                 
             
-            pkgs = self._getListofPackageDetails(matching_ids)
-            for pkg in pkgs:
-                results.append(self.pc(rep,pkg))
+            #~ pkgs = self._getListofPackageDetails(matching_ids)
+            #~ for pkg in pkgs:
+                #~ results.append(self.pc(rep,pkg))
         
-        return results
+        #~ return results
 
     def searchProvides(self, name):
         """return list of packages providing name (any evr and flag)"""

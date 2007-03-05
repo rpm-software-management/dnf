@@ -24,6 +24,7 @@ import errno
 import time
 import sre_constants
 import glob
+import fnmatch
 import logging
 import logging.config
 from ConfigParser import ParsingError, ConfigParser
@@ -1227,67 +1228,51 @@ class YumBase(depsolve.YumDepsolver):
     def searchPackageProvides(self, args, callback=None):
         
         matches = {}
-
-        # search pkgSack - fully populate the worthwhile metadata to search
-        # if it even vaguely matches
-        self.verbose_logger.log(logginglevels.DEBUG_1,
-            'fully populating the necessary data')
         for arg in args:
-            matched = False
-            globs = ['.*bin\/.*', '.*\/etc\/.*', '^\/usr\/lib\/sendmail$']
-            for glob in globs:
-                globc = re.compile(glob)
-                if globc.match(arg):
-                    matched = True
-            if not matched:
-                self.doSackFilelistPopulate()
-
-        for arg in args:
-            # assume we have to search every package, unless we can refine the search set
-            where = self.pkgSack
-            
-            # this is annoying. If the user doesn't use any glob or regex-like
-            # or regexes then we can use the where 'like' search in sqlite
-            # if they do use globs or regexes then we can't b/c the string
-            # will no longer have much meaning to use it for matches
-            
-            if hasattr(self.pkgSack, 'searchAll'):
-                if not re.match('.*[\*,\[,\],\{,\},\?,\+,\%].*', arg):
-                    self.verbose_logger.log(logginglevels.DEBUG_1,
-                        'Using the like search')
-                    where = self.pkgSack.searchAll(arg, query_type='like')
-            
+            if not re.match('.*[\*\?\[\]].*', arg):
+                isglob = False
+                if arg[0] != '/':
+                    canBeFile = False
+                else:
+                    canBeFile = True
+            else:
+                isglob = True
+                canBeFile = True
+                
+            if not isglob:
+                usedDepString = True
+                where = self.returnPackagesByDep(arg)
+            else:
+                usedDepString = False
+                print time.time()
+                where = self.pkgSack.searchAll(arg, False)
+                print time.time()
             self.verbose_logger.log(logginglevels.DEBUG_1,
                 'Searching %d packages', len(where))
-            self.verbose_logger.log(logginglevels.DEBUG_1,
-                'refining the search expression of %s', arg) 
-            restring = misc.refineSearchPattern(arg)
-            self.verbose_logger.log(logginglevels.DEBUG_1,
-                'refined search: %s', restring)
-            try: 
-                arg_re = re.compile(restring, flags=re.I)
-            except sre_constants.error, e:
-                raise Errors.MiscError, \
-                  'Search Expression: %s is an invalid Regular Expression.\n' % arg
-
+            
             for po in where:
                 self.verbose_logger.log(logginglevels.DEBUG_2,
                     'searching package %s', po)
                 tmpvalues = []
                 
-                self.verbose_logger.log(logginglevels.DEBUG_2,
-                    'searching in file entries')
-                for filetype in po.returnFileTypes():
-                    for fn in po.returnFileEntries(ftype=filetype):
-                        if arg_re.search(fn):
-                            tmpvalues.append(fn)
+                
+                if usedDepString:
+                    tmpvalues.append(arg)
+
+                if isglob or canBeFile:
+                    self.verbose_logger.log(logginglevels.DEBUG_2,
+                        'searching in file entries')
+                    for thisfile in po.dirlist + po.filelist + po.ghostlist:
+                        if fnmatch.fnmatch(thisfile, arg):
+                            tmpvalues.append(thisfile)
                 
                 self.verbose_logger.log(logginglevels.DEBUG_2,
                     'searching in provides entries')
                 for (p_name, p_flag, (p_e, p_v, p_r)) in po.provides:
-                    if arg_re.search(p_name):
-                        prov = misc.prco_tuple_to_string((p_name, p_flag, (p_e, p_v, p_r)))
-                        tmpvalues.append(prov)
+                    prov = misc.prco_tuple_to_string((p_name, p_flag, (p_e, p_v, p_r)))
+                    if not usedDepString:
+                        if fnmatch.fnmatch(p_name, arg) or fnmatch.fnmatch(prov, arg):
+                            tmpvalues.append(prov)
 
                 if len(tmpvalues) > 0:
                     if callback:
@@ -1296,38 +1281,54 @@ class YumBase(depsolve.YumDepsolver):
         
         # installed rpms, too
         taglist = ['filelist', 'dirnames', 'provides_names']
-        arg_re = []
         for arg in args:
-            restring = misc.refineSearchPattern(arg)
-
-            try: reg = re.compile(restring, flags=re.I)
-            except sre_constants.error, e:
-                raise Errors.MiscError, \
-                 'Search Expression: %s is an invalid Regular Expression.\n' % arg
+            if not re.match('.*[\*\?\[\]].*', arg):
+                isglob = False
+                if arg[0] != '/':
+                    canBeFile = False
+                else:
+                    canBeFile = True
+            else:
+                isglob = True
+                canBeFile = True
             
+            if not isglob:
+                where = self.returnInstalledPackagesByDep(arg)
+                usedDepString = True
+                for po in where:
+                    tmpvalues = []
+                    msg = 'Provides-match: %s' % arg
+                    tmpvalues.append(msg)
 
-            for po in self.rpmdb:
-                tmpvalues = []
-                searchlist = []
-                for tag in taglist:
-                    tagdata = getattr(po, tag)
-                    if tagdata is None:
-                        continue
-                    if type(tagdata) is types.ListType:
-                        searchlist.extend(tagdata)
-                    else:
-                        searchlist.append(tagdata)
+                    if len(tmpvalues) > 0:
+                        if callback:
+                            callback(po, tmpvalues)
+                        matches[po] = tmpvalues
+
+            else:
+                usedDepString = False
+                where = self.rpmdb
                 
-                for item in searchlist:
-                    if reg.search(item):
-                        tmpvalues.append(item)
-    
-                del searchlist
-    
-                if len(tmpvalues) > 0:
-                    if callback:
-                        callback(po, tmpvalues)
-                    matches[po] = tmpvalues
+                for po in where:
+                    searchlist = []
+                    tmpvalues = []
+                    for tag in taglist:
+                        tagdata = getattr(po, tag)
+                        if tagdata is None:
+                            continue
+                        if type(tagdata) is types.ListType:
+                            searchlist.extend(tagdata)
+                        else:
+                            searchlist.append(tagdata)
+                    
+                    for item in searchlist:
+                        if fnmatch.fnmatch(item, arg):
+                            tmpvalues.append(item)
+                
+                    if len(tmpvalues) > 0:
+                        if callback:
+                            callback(po, tmpvalues)
+                        matches[po] = tmpvalues
             
             
         return matches
