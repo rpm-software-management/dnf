@@ -318,7 +318,11 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
                              packages.pkgKey = filelist.pkgKey \
                              and length(filelist.filetypes) > 1")
 
-            for (pkgId,d,fs) in cur:
+            for ob in cur:
+                pkgId = ob['pkgId']
+                d = ob['dirname']
+                fs = ob['filenames']
+
                 files = fs.split('/')
                 fns = map(lambda f: '%s/%s' % (d, f), files)
                 if glob:
