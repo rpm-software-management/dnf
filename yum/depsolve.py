@@ -1071,7 +1071,12 @@ class YumDepsolver(Depsolve):
             if self.tsInfo.getMembers(po.pkgtup):
                 self.deps[req] = po
                 return po
-
+        
+        for txmbr in self.tsInfo.getMembers(None, TS_INSTALL_STATES):
+            if txmbr.po.checkPrco('provides', (r, f, v)):
+                self.deps[req] = txmbr.po
+                return txmbr.po
+                
         return None # for new ts check attempt
 
     def _undoDepInstalls(self):
