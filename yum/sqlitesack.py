@@ -274,10 +274,12 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
         # if so, just use those for the lookup
         
         glob = True
+        querytype = 'glob'
         if not re.match('.*[\*\?\[\]].*', name):
             glob = False
+            querytype = '='
         
-        pkgs = {}
+        pkgs = []
         if len(self.filelistsdb.keys()) == 0:
             # grab repo object from primarydb and force filelists population in this sack using repo
             # sack.populate(repo, mdtype, callback, cacheonly)
@@ -289,25 +291,17 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
 
             # grab the entries that are a single file in the 
             # filenames section, use sqlites globbing if it is a glob
-            if glob:
-                executeSQL(cur, "select packages.pkgId as pkgId from filelist, \
-                        packages where packages.pkgKey = filelist.pkgKey and \
-                        length(filelist.filetypes) = 1 and \
-                        filelist.dirname || ? || filelist.filenames \
-                        glob ?", ('/', name))
-            else:
-                executeSQL(cur, "select packages.pkgId as pkgId from filelist, \
-                        packages where packages.pkgKey = filelist.pkgKey and \
-                        length(filelist.filetypes) = 1 and \
-                        filelist.dirname || ? || filelist.filenames \
-                        = ?", ('/', name))
-
+            executeSQL(cur, "select packages.pkgId as pkgId from filelist, \
+                    packages where packages.pkgKey = filelist.pkgKey and \
+                    length(filelist.filetypes) = 1 and \
+                    filelist.dirname || ? || filelist.filenames \
+                    %s ?" % querytype, ('/', name))
             for ob in cur:
                 if self._excluded(rep, ob['pkgId']):
                     continue
                 pkg = self.getPackageDetails(ob['pkgId'])
                 po = self.pc(rep, pkg)
-                pkgs[po.pkgId] = po
+                pkgs.append(po)
 
             # for all the ones where filenames is multiple files, 
             # make the files up whole and use python's globbing method
@@ -335,9 +329,10 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
                         continue
                     pkg = self.getPackageDetails(pkgId)
                     po = self.pc(rep, pkg)
-                    pkgs[po.pkgId] = po
-        
-        return pkgs.values()
+                    pkgs.append(po)
+
+        pkgs = misc.unique(pkgs)
+        return pkgs
         
     def searchPrimaryFields(self, fields, searchstring):
         """search arbitrary fields from the primarydb for a string"""
@@ -416,17 +411,15 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
     def searchPrco(self, name, prcotype):
         """return list of packages having prcotype name (any evr and flag)"""
         glob = True
+        querytype = 'glob'
         if not re.match('.*[\*\?\[\]].*', name):
             glob = False
+            querytype = '='
 
         results = []
         for (rep,cache) in self.primarydb.items():
             cur = cache.cursor()
-            if glob:
-                executeSQL(cur, "select packages.* from %s,packages where %s.name  glob ? and %s.pkgKey=packages.pkgKey" % (prcotype,prcotype,prcotype), (name,))
-            else:
-                executeSQL(cur, "select packages.* from %s,packages where %s.name =? and %s.pkgKey=packages.pkgKey" % (prcotype,prcotype,prcotype), (name,))
-        
+            executeSQL(cur, "select DISTINCT packages.* from %s,packages where %s.name %s ? and %s.pkgKey=packages.pkgKey" % (prcotype,prcotype,querytype,prcotype), (name,))
             for x in cur:
                 if self._excluded(rep, x['pkgId']):
                     continue
@@ -440,11 +433,7 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
         # If it is a filename, search the primary.xml file info
         for (rep,cache) in self.primarydb.items():
             cur = cache.cursor()
-            if glob:
-                executeSQL(cur, "select packages.* from files,packages where files.name glob ? and files.pkgKey = packages.pkgKey" , (name,))
-            else:
-                executeSQL(cur, "select packages.* from files,packages where files.name = ? and files.pkgKey = packages.pkgKey" , (name,))    
-                
+            executeSQL(cur, "select DISTINCT packages.* from files,packages where files.name %s ? and files.pkgKey = packages.pkgKey" % querytype, (name,))
             for x in cur:
                 if self._excluded(rep,x['pkgId']):
                     continue
@@ -458,11 +447,11 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
                 matched = 1
 
         if matched and not glob: # if its in the primary.xml files then skip the other check
-            return results
+            return misc.unique(results)
 
         # If it is a filename, search the files.xml file info
         results.extend(self.searchFiles(name))
-        return results
+        return misc.unique(results)
         
         
         #~ #FIXME - comment this all out below here
