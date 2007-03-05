@@ -427,7 +427,7 @@ class YumRepository(Repository, config.RepoConf):
         self.check()
         self.setupGrab() # update the grabber for the urls
 
-    def __get(self, url=None, relative=None, local=None, start=None, end=None,
+    def _getFile(self, url=None, relative=None, local=None, start=None, end=None,
             copy_local=0, checkfunc=None, text=None, reget='simple', cache=True):
         """retrieve file from the mirrorgroup for the repo
            relative to local, optionally get range from
@@ -519,13 +519,14 @@ class YumRepository(Repository, config.RepoConf):
                 raise Errors.RepoError, "failure: %s from %s: %s" % (relative, self.id, e)
 
         return result
+    __get = _getFile
 
     def getPackage(self, package, checkfunc = None, text = None, cache = True):
         remote = package.relativepath
         local = package.localPkg()
         basepath = package.basepath
             
-        return self.__get(url=basepath,
+        return self._getFile(url=basepath,
                         relative=remote,
                         local=local,
                         checkfunc=checkfunc,
@@ -542,7 +543,7 @@ class YumRepository(Repository, config.RepoConf):
         end = package.hdrend
         basepath = package.basepath
 
-        return self.__get(url=basepath, relative=remote, local=local, start=start,
+        return self._getFile(url=basepath, relative=remote, local=local, start=start,
                         reget=None, end=end, checkfunc=checkfunc, copy_local=1,
                         cache=cache,
                         )
@@ -608,7 +609,7 @@ class YumRepository(Repository, config.RepoConf):
         else:
             checkfunc = (self._checkRepoXML, (), {})
             try:
-                result = self.__get(relative=remote,
+                result = self._getFile(relative=remote,
                                   local=local,
                                   copy_local=1,
                                   text=text,
@@ -707,7 +708,7 @@ class YumRepository(Repository, config.RepoConf):
 
         try:
             checkfunc = (self.checkMD, (mdtype,), {})
-            local = self.__get(relative=remote, local=local, copy_local=1,
+            local = self._getFile(relative=remote, local=local, copy_local=1,
                              checkfunc=checkfunc, reget=None,
                              cache=self.http_caching == 'all')
         except URLGrabError, e:
