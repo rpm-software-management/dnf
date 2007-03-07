@@ -1,3 +1,166 @@
+2007-03-07 14:08  skvidal
+
+	* yum.spec, yum/__init__.py: 
+	mark as 3.1.4
+
+2007-03-05 17:26  katzj
+
+	* yum/yumRepo.py: YumRepository.__get -> YumRepository._getFile. 
+	and a placeholder compat stub although I don't know how it could be
+	used in reality
+
+2007-03-05 14:39  katzj
+
+	* yum/config.py: define _reposlist in the YumConf object. 
+	otherwise, we break API for callers who override config setup
+
+2007-03-05 09:04  jbowes
+
+	* yum/sqlitesack.py: Uniq the search results, and use a variable
+	for 'glob' or '=' in the sql queries
+
+2007-03-05 08:02  jbowes
+
+	* yum/sqlitesack.py: Fix traceback in filelist search
+
+2007-03-04 23:41  skvidal
+
+	* yum/depsolve.py: 
+	make sure we look at the provides in the txmbr from packages which
+	aren't in any packagesack at all (localinstalls)
+
+2007-03-04 22:54  skvidal
+
+	* yum/sqlitesack.py: 
+	optimize a couple of returns from changelog and filelist dumps
+
+2007-03-04 22:51  skvidal
+
+	* yum/: __init__.py, sqlitesack.py: 
+	clean up the 'yum provides' command by fixing searchALL,
+	implementing searchFiles() properly and by jbowes showing me how
+	sqlite is stupid with the ordering of the tables you're selecting
+	from.
+
+2007-03-04 16:45  skvidal
+
+	* yum/packageSack.py: 
+	optimize delPackage() in MetaSack even though it seems like it is a
+	performance hit in every situation
+
+2007-03-04 16:37  skvidal
+
+	* yum/__init__.py: 
+	remove same issue with includePackages()
+
+2007-03-04 16:34  skvidal
+
+	* yum/: __init__.py, packageSack.py, sqlitesack.py: 
+	kill performance hit on excludePackage() call by not referencing
+	the same information 4 times for no apparent reason.
+
+2007-03-04 13:48  jbowes
+
+	* yum/: __init__.py, sqlitesack.py: For the yum provides command,
+	don't return packages by dep first, as this is covered by searchAll
+	(with the addition of /bin etc file search). Also, unique the
+	results from searchAll.
+
+2007-03-04 11:32  jbowes
+
+	* yum/: sqlitecache.py, sqlitesack.py: Iterate over the cursor
+	instead of using fetchall
+
+2007-03-04 10:43  skvidal
+
+	* yum/__init__.py: 
+	get all the cases where we need to read in the filelist info in
+	doSackFilelistPopulate()
+
+2007-03-04 10:37  skvidal
+
+	* yum/__init__.py: 
+	fix merge conflict
+
+2007-03-04 10:36  skvidal
+
+	* yum/: sqlitesack.py, sqlutils.py: 
+	- implement not-quite-complete searchFiles() method to the
+	sqlitesack - add a couple of commented-out debug statements so I
+	don't have to constantly add and delete them to sqlutils
+
+2007-03-04 09:34  jbowes
+
+	* yum/sqlitesack.py: Partial fix for 'yum provides' results. Still
+	not getting as many hits as 3.0.3 however.
+
+2007-03-03 20:36  jbowes
+
+	* yum/__init__.py: Fix a block's indentation level
+
+2007-03-03 13:58  jbowes
+
+	* yum/sqlitesack.py: Fix an improperly indented block
+
+2007-03-02 16:19  katzj
+
+	* yum/__init__.py: if someone calls doRepoSetup(), then they're
+	expecting to go through the full setup.  perhaps due to specifying
+	a repo or something along those lines.	so make it so that we can
+	do that
+
+2007-03-02 16:08  katzj
+
+	* yum/__init__.py: fix callers of doRepoSetup as well
+
+2007-03-02 16:03  katzj
+
+	* yum/__init__.py: fix a typo.	and switch to fdel setting things
+	to None so that we don't get tracebacks from it
+
+2007-03-02 15:58  katzj
+
+	* yum/__init__.py: actually, do generic setattr and delattr on all
+	of these so we don't have to get a bug filed on each
+
+2007-03-02 15:49  katzj
+
+	* yum/__init__.py: allow setting pkgSack (rh#230734)
+
+2007-03-02 15:39  katzj
+
+	* yum/sqlitesack.py: need to reset the pkglist when excluding
+	packages.  otherwise, we end up with excluded packages in the
+	package list (rh#230771)
+
+2007-03-02 15:27  jbowes
+
+	* yum/config.py: get iteritems to do what its supposed to - return
+	the value, not the option object
+
+2007-03-02 14:18  katzj
+
+	* yum/sqlitesack.py: * convert pkgids to be str type instead of
+	unicode.  * can't do qmark substitution with "where foo in ?"
+	expressions.  at least,   I can't figure out how to make them work.
+
+2007-03-02 09:11  skvidal
+
+	* yum/__init__.py: 
+	correct API break in doSackSetup()
+
+2007-03-01 16:08  katzj
+
+	* yum/depsolve.py: don't do the tsInfoDelta optimization.  with it,
+	if we have a missing dep on the first time through the loop and
+	don't resolve it, we don't ever go back to see if it's resolved. 
+	this breaks updating on a repo with broken deps
+
+2007-03-01 14:17  skvidal
+
+	* ChangeLog: 
+	update changelog
+
 2007-03-01 14:16  skvidal
 
 	* yum.spec, yum/__init__.py: 
