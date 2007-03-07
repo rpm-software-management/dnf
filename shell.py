@@ -229,7 +229,6 @@ class YumShell(cmd.Cmd):
                 setattr(self.base.conf, cmd, opts)
                 if self.base.pkgSack:       # kill the pkgSack
                     self.base.pkgSack = None
-                    self.base.repos._selectSackType()
                 self.base.up = None         # reset the updates
                 # reset the transaction set, we have to or we shall surely die!
                 self.base.closeRpmDB() 
@@ -290,7 +289,6 @@ class YumShell(cmd.Cmd):
                 else:
                     if self.base.pkgSack:       # kill the pkgSack
                         self.base.pkgSack = None
-                        self.base.repos._selectSackType()
                     self.base.up = None     # reset the updates
                     # reset the transaction set and refresh everything
                     self.base.closeRpmDB() 
