@@ -303,33 +303,30 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
                 po = self.pc(rep, pkg)
                 pkgs.append(po)
 
-            # for all the ones where filenames is multiple files, 
-            # make the files up whole and use python's globbing method
-            executeSQL(cur, "select packages.pkgID as pkgID, \
-                             filelist.dirname as dirname, \
-                             filelist.filenames as filenames \
-                             from filelist,packages where \
-                             packages.pkgKey = filelist.pkgKey \
-                             and length(filelist.filetypes) > 1")
-
-            for ob in cur:
-                pkgId = ob['pkgId']
-                d = ob['dirname']
-                fs = ob['filenames']
-
-                files = fs.split('/')
-                fns = map(lambda f: '%s/%s' % (d, f), files)
+            def filelist_globber(dirname, filenames):
+                files = filenames.split('/')
+                fns = map(lambda f: '%s/%s' % (dirname, f), files)
                 if glob:
                     matches = fnmatch.filter(fns, name)
                 else:
                     matches = filter(lambda x: name==x, fns)
+                return len(matches)
 
-                if len(matches) > 0:
-                    if self._excluded(rep, pkgId):
-                        continue
-                    pkg = self.getPackageDetails(pkgId)
-                    po = self.pc(rep, pkg)
-                    pkgs.append(po)
+            cache.create_function("filelist_globber", 2, filelist_globber)
+            # for all the ones where filenames is multiple files, 
+            # make the files up whole and use python's globbing method
+            executeSQL(cur, "select packages.pkgID as pkgID \
+                             from filelist,packages where \
+                             packages.pkgKey = filelist.pkgKey \
+                             and length(filelist.filetypes) > 1 \
+                             and filelist_globber(filelist.dirname,filelist.filenames)")
+
+            for ob in cur:
+                if self._excluded(rep, ob['pkgId']):
+                    continue
+                pkg = self.getPackageDetails(ob['pkgId'])
+                po = self.pc(rep, pkg)
+                pkgs.append(po)
 
         pkgs = misc.unique(pkgs)
         return pkgs
