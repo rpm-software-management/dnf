@@ -1244,9 +1244,7 @@ class YumBase(depsolve.YumDepsolver):
                 where = self.returnPackagesByDep(arg)
             else:
                 usedDepString = False
-                print time.time()
                 where = self.pkgSack.searchAll(arg, False)
-                print time.time()
             self.verbose_logger.log(logginglevels.DEBUG_1,
                 'Searching %d packages', len(where))
             
