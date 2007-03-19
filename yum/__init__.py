@@ -292,19 +292,18 @@ class YumBase(depsolve.YumDepsolver):
         self._ts = None
         self._tsInfo = None
         self._up = None
-        self._comps = None
+        self.comps = None
     
     def _deleteTs(self):
         del self._ts
         self._ts = None
-    
+
     def doRepoSetup(self, thisrepo=None):
         warnings.warn('doRepoSetup() will go away in a future version of Yum.\n',
                 Errors.YumFutureDeprecationWarning, stacklevel=2)
 
         return self._getRepos(thisrepo, True)
-        
-    
+
     def _getRepos(self, thisrepo=None, doSetup = False):
         """grabs the repomd.xml for each enabled repository and sets up 
            the basics of the repository"""
@@ -430,6 +429,14 @@ class YumBase(depsolve.YumDepsolver):
                 Errors.YumFutureDeprecationWarning, stacklevel=2)
 
         return self._getGroups()
+
+    def _setGroups(self, val):
+        if val is None:
+            # if we unset the comps object, we need to undo which repos have
+            # been added to the group file as well
+            for repo in self.repos.listGroupsEnabled():
+                repo.groups_added = False
+        self._comps = val
     
     def _getGroups(self):
         """create the groups object that will store the comps metadata
@@ -502,7 +509,7 @@ class YumBase(depsolve.YumDepsolver):
                   fset=lambda self, value: setattr(self, "_up", value),
                   fdel=lambda self: setattr(self, "_up", None))
     comps = property(fget=lambda self: self._getGroups(),
-                     fset=lambda self, value: setattr(self, "_comps", value),
+                     fset=lambda self, value: self._setGroups(self, value),
                      fdel=lambda self: setattr(self, "_comps", None))
     
     
