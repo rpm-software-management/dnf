@@ -1259,7 +1259,7 @@ class YumDepsolver(Depsolve):
 
         ret = []
         for req in reqs:
-            if req[0].startswith('rpmlib(') or req[0].startswith('config('):
+            if req[0].startswith('rpmlib('):
                 continue
             if req in provs:
                 continue
