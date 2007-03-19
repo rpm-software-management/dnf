@@ -310,17 +310,16 @@ class YumBase(depsolve.YumDepsolver):
            the basics of the repository"""
         
         if not self._repos:
-            self._repos = RepoStorage()
+            self._repos = RepoStorage()       
+            # Get our list of repo objects from conf, add them to the repos collection        
+            for r in self.conf._reposlist:
+                try:
+                    self._repos.add(r)
+                except Errors.RepoError, e: 
+                    self.logger.warning(e)
+                    continue
         elif not doSetup:
             return self._repos
-        
-        # Get our list of repo objects from conf, add them to the repos collection        
-        for r in self.conf._reposlist:
-            try:
-                self.repos.add(r)
-            except Errors.RepoError, e: 
-                self.logger.warning(e)
-                continue
 
         self.plugins.run('prereposetup')
         
