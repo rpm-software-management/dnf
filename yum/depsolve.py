@@ -1029,22 +1029,6 @@ class YumDepsolver(Depsolve):
         self.path = []
         self.loops = []
 
-    def isPackageInstalled(self, pkgname):
-        # FIXME: this sucks.  we should probably suck it into yum proper
-        # but it'll need a bit of cleanup first.
-        if not self.rpmdb.installed(name = pkgname):
-            return False
-
-        lst = self.tsInfo.matchNaevr(name = pkgname)
-        for txmbr in lst:
-            if txmbr.output_state in TS_INSTALL_STATES:
-                return True
-        if len(lst) > 0:
-            # if we get here, then it was installed, but it's in the tsInfo
-            # for an erase or obsoleted --> not going to be installed at end
-            return False
-        return True
-
     def _provideToPkg(self, req):
         best = None
         (r, f, v) = req

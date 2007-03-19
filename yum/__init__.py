@@ -1444,7 +1444,7 @@ class YumBase(depsolve.YumDepsolver):
         
         if self.conf.enable_group_conditionals:
             for condreq, cond in thisgroup.conditional_packages.iteritems():
-                if self._isPackageInstalled(cond):
+                if self.isPackageInstalled(cond):
                     try:
                         txmbrs = self.install(name = condreq)
                     except Errors.InstallError:
@@ -1979,9 +1979,7 @@ class YumBase(depsolve.YumDepsolver):
         
         return returndict
 
-    def _isPackageInstalled(self, pkgname):
-        # FIXME: Taken from anaconda/pirut 
-        # clean up and make public
+    def isPackageInstalled(self, pkgname):
         installed = False
         if self.rpmdb.installed(name = pkgname):
             installed = True
@@ -1995,6 +1993,7 @@ class YumBase(depsolve.YumDepsolver):
             # for an erase or obsoleted --> not going to be installed at end
             return False
         return installed
+    _isPackageInstalled = isPackageInstalled
 
     def getKeyForPackage(self, po, askcb = None, fullaskcb = None):
         """Retrieve a key for a package.  If needed, prompt for if the
