@@ -71,7 +71,7 @@ def score(arch):
 def isMultiLibArch(arch=None):
     """returns true if arch is a multilib arch, false if not"""
     if arch is None:
-        arch = getCanonArch()
+        arch = canonArch
 
     if not arches.has_key(arch): # or we could check if it is noarch
         return 0
@@ -91,7 +91,7 @@ def getBestArchFromList(archlist, myarch=None):
     """
     
     if myarch is None:
-        myarch = getCanonArch()
+        myarch = canonArch
 
     if len(archlist) == 0:
         return None
@@ -123,7 +123,7 @@ def getBestArchFromList(archlist, myarch=None):
 def getArchList(thisarch=None):
     # this returns a list of archs that are compatible with arch given
     if not thisarch:
-        thisarch = getCanonArch()
+        thisarch = canonArch
     
     archlist = [thisarch]
     while arches.has_key(thisarch):
@@ -248,8 +248,10 @@ def getCanonArch(skipRpmPlatform = 0):
 
     return arch
 
+canonArch = getCanonArch()
+
 # this gets you the "compat" arch of a biarch pair
-def getMultiArchInfo(arch = getCanonArch()):
+def getMultiArchInfo(arch = canonArch):
     if multilibArches.has_key(arch):
         return multilibArches[arch]
     if arches.has_key(arch) and arches[arch] != "noarch":
@@ -276,7 +278,7 @@ def getBaseArch(myarch=None):
        a key in the multilibArches."""
 
     if not myarch:
-        myarch = getCanonArch()
+        myarch = canonArch
 
     if not arches.has_key(myarch): # this is dumb, but <shrug>
         return myarch
@@ -301,4 +303,3 @@ def getBaseArch(myarch=None):
     
         return basearch
         
-canonArch = getCanonArch()
