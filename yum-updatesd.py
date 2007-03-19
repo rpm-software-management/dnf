@@ -531,14 +531,14 @@ class YumDbusListener(dbus.service.Object):
         self.updd.updatesCheck()
         return False
 
-    @dbus.service.method("edu.duke.linux.yum")
+    @dbus.service.method("edu.duke.linux.yum", in_signature="")
     def CheckNow(self):
         # make updating checking asynchronous since we discover whether
         # or not there are updates via a callback signal anyway
         gobject.idle_add(self.doCheck)
         return "check queued"
 
-    @dbus.service.method("edu.duke.linux.yum")
+    @dbus.service.method("edu.duke.linux.yum", in_signature="")
     def ShutDown(self):
         if not self.allowshutdown:
             return False
@@ -548,7 +548,7 @@ class YumDbusListener(dbus.service.Object):
         gobject.idle_add(shutDown)
         return True
 
-    @dbus.service.method("edu.duke.linux.yum")
+    @dbus.service.method("edu.duke.linux.yum", in_signature="", out_signature="a(a{ss}a{ss})")
     def GetUpdateInfo(self):
         # FIXME: should this be async?
         upds = self.updd.getUpdateInfo()
