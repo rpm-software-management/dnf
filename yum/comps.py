@@ -171,6 +171,16 @@ class Group(object):
         for pkg in obj.conditional_packages.keys():
             self.conditional_packages[pkg] = obj.conditional_packages[pkg]
         
+        # Handle cases where a comps.xml without name & decription tags
+        # has been setup first, so the name & decription for this object is blank.
+            
+        
+        if self.name == '' and obj.name != '':
+            self.name = obj.name
+
+        if self.description == '' and obj.description != '':
+            self.description = obj.description
+            
         # name and description translations
         for lang in obj.translated_name.keys():
             if not self.translated_name.has_key(lang):
