@@ -509,7 +509,7 @@ class YumBase(depsolve.YumDepsolver):
                   fset=lambda self, value: setattr(self, "_up", value),
                   fdel=lambda self: setattr(self, "_up", None))
     comps = property(fget=lambda self: self._getGroups(),
-                     fset=lambda self, value: self._setGroups(self, value),
+                     fset=lambda self, value: self._setGroups(value),
                      fdel=lambda self: setattr(self, "_comps", None))
     
     
