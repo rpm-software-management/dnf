@@ -310,8 +310,8 @@ def flagToString(flags):
     return flags
 
 def stringToVersion(verstring):
-    if verstring is None:
-        return ('0', None, None)
+    if verstring in [None, '']:
+        return (None, None, None)
     i = verstring.find(':')
     if i != -1:
         try:
