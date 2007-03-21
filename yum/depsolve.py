@@ -874,8 +874,17 @@ class YumDepsolver(Depsolve):
         return rc
 
     def _mytsCheck(self):
+        
+        # holder object for things from the check - to be handled by resolveDeps()
+        if not hasattr(self, 'dcobj'):
+            self.dcobj = DepCheck()
+        self.dcobj.requires = []
+        self.dcobj.conficts = []
+
         # returns a list of tuples
         # ((name, version, release), (needname, needversion), flags, suggest, sense)
+
+
         ret = []
         for txmbr in self.tsInfo.getMembers():
             self.verbose_logger.log(logginglevels.INFO_2,
@@ -906,7 +915,7 @@ class YumDepsolver(Depsolve):
                                     # (needname, needversion) = pkgtup
             if self.dsCallback: self.dsCallback.tscheck()
             deps = self._mytsCheck()
-            
+
             if not deps:
                 # FIXME: this doesn't belong here at all...
                 for txmbr in self.tsInfo.getMembers():
@@ -1033,6 +1042,8 @@ class YumDepsolver(Depsolve):
             if dep is None:
                 dep = self._provideToPkg(req)
                 if dep is None:
+                    reqtuple = (req[0], version_tuple_to_string(req[2]), flags[req[1]])
+                    self.dcobj.addRequires(txmbr.po, [reqtuple])
                     ret.append( ((txmbr.name, txmbr.version, txmbr.release),
                                  (req[0], version_tuple_to_string(req[2])), flags[req[1]], None,
                                  rpm.RPMDEP_SENSE_REQUIRES) )
@@ -1082,7 +1093,10 @@ class YumDepsolver(Depsolve):
         # provides to make things faster
         newpoprovs = []
         for newpo in txmbr.updated_by:
+            print newpo
             newpoprovs.extend(newpo.returnPrco('provides'))
+            newfiles  = newpo.filelist
+            newpoprovs.extend(map(lambda f: (f, None, (None,None,None)), newfiles))
 
         ret = []
         removing = []
@@ -1202,8 +1216,41 @@ class YumDepsolver(Depsolve):
                         break
 
                 removing.append(pkgtup)
+                reqtuple = (r, version_tuple_to_string(v), flags[f])
+                self.dcobj.addRequires(po, [reqtuple])
+                
                 ret.append( ((po.name, po.version, po.release),
                              (r, version_tuple_to_string(v)),
                              flags[f], None, rpm.RPMDEP_SENSE_REQUIRES) )
 
         return ret
+
+
+class DepCheck(object):
+    """object that YumDepsolver uses to see what things are needed to close
+       the transaction set. attributes: requires, conflicts are a list of 
+       requires are conflicts in the current transaction set. Each item in the
+       lists are a requires or conflicts object"""
+    def __init__(self):
+        self.requires = []
+        self.conflicts = []
+    
+    def addRequires(self, po, req_tuple_list):
+        # fixme - do checking for duplicates or additions in here to zip things along
+        reqobj = Requires(po, req_tuple_list)
+        self.requires.append(reqobj)
+    
+    def addConflicts(self, conflict_po_list, conflict_item):
+        confobj = Conflicts(conflict_po_list, conflict_item)
+        self.conflicts.append(confobj)
+
+class Requires(object):
+    def __init__(self, pkg,requires):
+        self.pkg = pkg # po of requiring pkg
+        self.requires = requires # list of things it requires that are un-closed in the ts
+
+
+class Conflicts(object):
+    def __init__(self, pkglist, conflict):
+        self.pkglist = pkglist # list of conflicting package objects
+        self.conflict = conflict # what the conflict was between them
