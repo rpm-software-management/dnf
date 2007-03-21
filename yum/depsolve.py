@@ -1091,12 +1091,12 @@ class YumDepsolver(Depsolve):
 
         # if this is an update, we should check what the new package
         # provides to make things faster
-        newpoprovs = []
+        newpoprovs = {}
         for newpo in txmbr.updated_by:
-            print newpo
-            newpoprovs.extend(newpo.returnPrco('provides'))
-            newfiles  = newpo.filelist
-            newpoprovs.extend(map(lambda f: (f, None, (None,None,None)), newfiles))
+            for p in newpo.provides:
+                newpoprovs[p] = 1
+            for f in newpo.filelist:
+                newpoprovs[(f, None, (None, None, None))] = 1
 
         ret = []
         removing = []
@@ -1106,7 +1106,7 @@ class YumDepsolver(Depsolve):
                 continue
             if prov[0].startswith("/usr/share/doc"): # XXX: ignore doc files
                 continue
-            if prov in newpoprovs:
+            if newpoprovs.has_key(prov):
                 continue
 
             self.verbose_logger.log(logginglevels.DEBUG_4, "looking to see what requires %s of %s", prov, po)
