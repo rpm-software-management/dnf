@@ -1,3 +1,112 @@
+2007-03-21 23:09  skvidal
+
+	* yum.spec, yum/__init__.py: 
+	mark as 3.1.5
+
+2007-03-21 15:02  skvidal
+
+	* yum/depsolve.py: 
+	newpoprovs as a dict, not a list
+
+2007-03-21 02:53  skvidal
+
+	* rpmUtils/miscutils.py: 
+	somehow we trickled in a '0' in the single case where we really do
+	mean ('None') for epoch - the case is when the 'version' string
+	from an rpm header is '' then we should be returning (None, None,
+	None) for the evr tuple not ('0', None, None)
+	
+	We tripped this, I think b/c maybe rpm changed from returning None
+	for empty version fields to returning ''. Unsure but this appears
+	to do what is expected either way.
+
+2007-03-21 02:51  skvidal
+
+	* yum/depsolve.py: 
+	do a filelists check for each of the updated pkgs - this lets us
+	prune out the lists of real problems faster at the expense of
+	downloading the filelists metadata.
+	
+	also do a first cut of the new dep check object. This isn't wired
+	up yet, but if it works it means not looking up data we already
+	know and it should let us implement the delta in it.
+
+2007-03-20 07:46  timlau
+
+	* yum/comps.py: Make comps handle situation where comps.xml for  3.
+	part repos dont contains any name and description tags for groups
+	shared with the base repo, because they what to use the same name
+	and description as set	in the base repo.  If the 3. part repo
+	comps.xml get parsed first, then the group ends up with no name. 
+	This fix solves the problem by merging the names & descriptions.
+
+2007-03-20 06:19  timlau
+
+	* yum/__init__.py: fixed TypeError in comps property (fset)
+
+2007-03-19 17:53  katzj
+
+	* yum/__init__.py: when we close the rpmdb, we need to also ensure
+	that the repos don't think they're represented in the comps object
+	anymore (rh#230877 and others)
+
+2007-03-19 16:29  katzj
+
+	* yum/depsolve.py: remove the busted attempt at depsolving since it
+	keeps throwing off my searches
+
+2007-03-19 16:21  katzj
+
+	* yum/: __init__.py, depsolve.py: export the isPackageInstalled
+	method and just use the one from __init__ instead of copies
+	everywhere.  remove the one from the depsolver which is subtly
+	different (and breaks for the fresh install case)
+
+2007-03-19 15:34  katzj
+
+	* yum-updatesd.py: Fixes GetUpdateInfo() barfing with
+	dbus-python-0.80 or later.
+	
+	From Bill Nottingham
+
+2007-03-19 06:43  timlau
+
+	* yum/__init__.py: make doRepoSetup (__getRepos) only add the repos
+	once.  So dont get 'Repository xxxx is listed more than once in the
+	configuration' in yum api programs like yum-utils, yumex etc,
+	calling doRepoSetup() because self.repos has been accessed before.
+
+2007-03-18 22:37  katzj
+
+	* rpmUtils/arch.py: canonArch of rpmUtils.arch isn't used
+	everywhere it could be, making it less useful.	use it more.  patch
+	from Bill Nottingham
+
+2007-03-18 22:31  katzj
+
+	* yum/depsolve.py: we shouldn't ignore config() deps -- it was
+	reasonable to do so in the closed universe of anaconda, but not so
+	much here.
+
+2007-03-16 13:36  skvidal
+
+	* yum/__init__.py: 
+	don't print time.time() when doing glob'd 'provides' searches
+
+2007-03-09 12:05  jbowes
+
+	* yum/sqlitesack.py: Use a user-defined function for searchfiles
+
+2007-03-07 17:07  katzj
+
+	* shell.py: nuke no-longer existent and dead method call
+	(rh#231202)
+
+2007-03-07 14:09  skvidal
+
+	* ChangeLog: 
+	check in changelog
+
 2007-03-07 14:08  skvidal
 
 	* yum.spec, yum/__init__.py: 
