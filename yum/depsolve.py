@@ -1225,6 +1225,15 @@ class YumDepsolver(Depsolve):
 
         return ret
 
+    def _requiredByPkg(self, prov):
+        """check to see if anything will or does require the provide, return 
+           list of requiring pkg objects if so"""
+           
+        # check if anything installed needs it
+          # make sure installed item is not set to be removed/obsoleted
+          # make sure nothing else provides the same thing just as well
+        # check if anything in the ts set to be installed/updated requires it
+          # make sure nothing else provides the same thing just as well
 
 class DepCheck(object):
     """object that YumDepsolver uses to see what things are needed to close
