@@ -21,6 +21,7 @@
 # with the given txmbr. 
 
 from constants import *
+from packageSack import ListPackageSack
 import Errors
 import warnings
 
@@ -62,7 +63,7 @@ class TransactionData:
             print msg
 
 
-    def getMembers(self, pkgtup=None, output_states=None):
+    def getMembers(self, pkgtup=None, output_states=None, asSack=False):
         """takes an optional package tuple and returns all transaction members 
            matching, no pkgtup means it returns all transaction members"""
         
@@ -72,16 +73,18 @@ class TransactionData:
                 for p in self.pkgdict[key]:
                     if not output_states or p.output_state in output_states:
                         returnlist.append(p)
+            if asSack:
+                return ListPackageSack(map(lambda x: x.po, returnlist))
             return returnlist
 
+        ret = []
         if self.pkgdict.has_key(pkgtup):
-            ret = []
             for p in self.pkgdict[pkgtup]:
                 if not output_states or p.output_state in output_states:
                     ret.append(p)
-            return ret
-        else:
-            return []
+        if asSack:
+            return ListPackageSack(map(lambda x: x.po, returnlist))
+        return ret
             
     def getMode(self, name=None, arch=None, epoch=None, ver=None, rel=None):
         """returns the mode of the first match from the transaction set, 
