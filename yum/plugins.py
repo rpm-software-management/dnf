@@ -18,6 +18,7 @@ import glob
 import imp
 import warnings
 import atexit
+import gettext
 import logging
 import logginglevels
 from constants import *
@@ -89,7 +90,15 @@ SLOTS = SLOT_TO_CONDUIT.keys()
 class PluginYumExit(Exception):
     '''Used by plugins to signal that yum should stop
     '''
-
+    def __init__(self, value="", translation_domain=""):
+        self.value = value
+        self.translation_domain = translation_domain
+    def __str__(self):
+        if self.translation_domain:
+            return gettext.dgettext(self.translation_domain, self.value)
+        else:
+            return self.value
+    
 class YumPlugins:
     '''
     Manager class for Yum plugins.
