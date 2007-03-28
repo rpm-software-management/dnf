@@ -1150,22 +1150,36 @@ class YumDepsolver(Depsolve):
         # if anything else provides this as well and is installed or
         # to be installed, then skip this whole step
         other_provider = False
-        tsSack = self.tsInfo.getMembers(None, TS_INSTALL_STATES, asSack=True)        
-        for provpo in self.rpmdb.searchProvides(r) + tsSack.searchProvides(r):
-            if self.tsInfo.getMembers(provpo.pkgtup, TS_REMOVE_STATES): # if it's being removed in the ts, it doesn't count
-                continue
+
+        #tsSack = self.tsInfo.getMembers(None, TS_INSTALL_STATES, asSack=True)
+        potential_providers = self.rpmdb.searchProvides(r)
+        # FIXME the below is expensive - make it less so
+        for txmbr in self.tsInfo.getMembers(None, TS_INSTALL_STATES):
+            if r in txmbr.po.provides_names or r in txmbr.po.filelist:
+                potential_providers.append(txmbr.po)
+        
+        for provpo in potential_providers:
             if provpo.pkgtup in self._removing: # if we're going to be removed in the ts, it doesn't count
                 continue
+
+            if self.tsInfo.getMembers(provpo.pkgtup, TS_REMOVE_STATES): # if it's being removed in the ts, it doesn't count
+                continue
+
             if not provpo.checkPrco('provides', (r, f, v)): # if it doesn't actually provide the req, it doesn't count
                 continue
             other_provider = True
-        
+
         if other_provider:
             return []
-
+        
         # see what requires this provide name
-        tsSack = self.tsInfo.getMembers(None, TS_INSTALL_STATES, asSack=True)
-        for reqpo in self.rpmdb.searchRequires(r) + tsSack.searchRequires(r):
+        potential_remove = self.rpmdb.searchRequires(r)
+        # FIXME the below is expensive - make it less so
+        for txmbr in self.tsInfo.getMembers(None, TS_INSTALL_STATES):
+            if r in txmbr.po.requires_names:
+                potential_remove.append(txmbr.po)
+
+        for reqpo in potential_remove:
             self.verbose_logger.log(logginglevels.DEBUG_2, "looking at %s as a requirement of %s", r, reqpo)
             isok = False
             # ignore stuff already being removed
