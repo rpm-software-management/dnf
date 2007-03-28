@@ -28,6 +28,7 @@
 # $ dbus-send --system --print-reply --type=method_call \
 #   --dest=edu.duke.linux.yum /Updatesd edu.duke.linux.yum.CheckNow
 
+import gettext
 import os
 import sys
 import time
@@ -57,7 +58,7 @@ sys.path.append('/usr/share/yum-cli')
 import callback
 
 config_file = '/etc/yum/yum-updatesd.conf'
-
+initial_directory = os.getcwd()
 
 class UpdateEmitter(object):
     """Abstract object for implementing different types of emitters."""
@@ -81,6 +82,11 @@ class UpdateEmitter(object):
     def checkFailed(self, error):
         """Emitted when checking for updates failed."""
         pass
+
+    def setupFailed(self, error, translation_domain):
+       """Emitted when plugin initialization failed."""
+       pass
+ 
 
 class SyslogUpdateEmitter(UpdateEmitter):
     def __init__(self, syslog_facility, ident = "yum-updatesd",
@@ -196,6 +202,10 @@ class DbusUpdateEmitter(UpdateEmitter):
     def checkFailed(self, error):
         self.dbusintf.CheckFailedSignal(error)
 
+    def setupFailed(self, error, translation_domain):
+        self.dbusintf.SetupFailedSignal(error, translation_domain)
+
+
 class YumDbusInterface(dbus.service.Object):
     def __init__(self, bus_name, object_path='/UpdatesAvail'):
         dbus.service.Object.__init__(self, bus_name, object_path)
@@ -219,6 +229,11 @@ class YumDbusInterface(dbus.service.Object):
     @dbus.service.signal('edu.duke.linux.yum')
     def CheckFailedSignal(self, message):
         pass
+
+    @dbus.service.signal('edu.duke.linux.yum')
+    def SetupFailedSignal(self, message, translation_domain=""):
+        pass
+
 
 class UDConfig(BaseConfig):
     """Config format for the daemon"""
@@ -316,7 +331,7 @@ class UpdatesDaemon(yum.YumBase):
     def __init__(self, opts):
         yum.YumBase.__init__(self)
         self.opts = opts
-        self.doSetup()
+        self.didSetup = False
 
         self.emitters = []
         if 'dbus' in self.opts.emit_via:
@@ -432,6 +447,27 @@ class UpdatesDaemon(yum.YumBase):
                 self.tsInfo.addObsoleted(installed, obsoleting)
 
     def updatesCheck(self):
+        if not self.didSetup:
+            try:
+                self.doSetup()
+            except Exception, e:
+                syslog.syslog(syslog.LOG_WARNING,
+                              "error initializing: %s" % e)
+
+                if isinstance(e, yum.plugins.PluginYumExit):
+                    self.emitSetupFailed(e.value, e.translation_domain)
+                else:
+                    # if we don't know where the string is from, then assume
+                    # it's not marked for translation (versus sending 
+                    # gettext.textdomain() and assuming it's from the default
+                    # domain for this app)
+                    self.emitSetupFailed(str(e))
+                # Setup failed, let's restart and try again after the update
+                # interval
+                restart()
+            else:
+                self.didSetup = True
+
         try:
             if not self.refreshUpdates():
                 return
@@ -519,6 +555,10 @@ class UpdatesDaemon(yum.YumBase):
         """method to emit a notice when checking for updates failed"""
         map(lambda x: x.checkFailed(error), self.emitters)
 
+    def emitSetupFailed(self, error, translation_domain=""):
+        """method to emit a notice when checking for updates failed"""
+        map(lambda x: x.setupFailed(error, translation_domain), self.emitters)
+
 
 class YumDbusListener(dbus.service.Object):
     def __init__(self, updd, bus_name, object_path='/Updatesd',
@@ -557,6 +597,10 @@ class YumDbusListener(dbus.service.Object):
 
 def shutDown():
     sys.exit(0)
+
+def restart():
+    os.chdir(initial_directory)
+    os.execve(sys.argv[0], sys.argv, os.environ)  
 
 def main():
     # we'll be threading for downloads/updates
