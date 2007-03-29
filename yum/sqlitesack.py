@@ -35,7 +35,6 @@ from sqlutils import executeSQL
 
 class YumAvailablePackageSqlite(YumAvailablePackage, PackageObject, RpmBase):
     def __init__(self, repo, db_obj):
-        
         self._checksums = []
         self.prco = { 'obsoletes': [],
                       'conflicts': [],
@@ -109,7 +108,7 @@ class YumAvailablePackageSqlite(YumAvailablePackage, PackageObject, RpmBase):
     def _loadFiles(self):
         if self._loadedfiles:
             return self._files
-        
+
         result = {}
         
         #FIXME - this should be try, excepting
@@ -134,7 +133,7 @@ class YumAvailablePackageSqlite(YumAvailablePackage, PackageObject, RpmBase):
                 result.setdefault(filetype,[]).append(filename)
         self._loadedfiles = True
         self._files = result
-        
+
         return self._files
 
     def _loadChangelog(self):
@@ -204,7 +203,7 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
         self.filelistsdb = {}
         self.otherdb = {}
         self.excludes = {}
-        
+
     def __len__(self):
         for (rep,cache) in self.primarydb.items():
             cur = cache.cursor()
@@ -712,7 +711,7 @@ def encodefilenamelist(filenamelist):
 
 # Return a list representing filestring (filenames can not contain /)
 def decodefilenamelist(filenamestring):
-    return misc.unique(filenamestring.split('/'))
+    return filenamestring.split('/')
 
 # Return a string representing filetypeslist
 # filetypes should be file, dir or ghost
