@@ -56,8 +56,7 @@ class RPMDBPackageSack(PackageSackBase):
         if len(self._header_dict.keys()) == 0 :
             self._make_header_dict()
 
-        for pkgtup in self._header_dict.keys():
-            yield pkgtup
+        return self._header_dict.keys()
 
     pkglist = property(_get_pkglist, None)
 
@@ -257,40 +256,20 @@ class RPMDBPackageSack(PackageSackBase):
             if val != None:
                 lookfor.append((i, val))
 
-        def match(tup):
-            for idx, val in lookfor:
-                if tup[idx] != val:
-                    return False
-            return True
-
         # Find and yield matches
         if not self._header_dict:
             self._make_header_dict()
-        
-        for pkgtup in self._header_dict.keys():
-            if match(pkgtup):
-                (hdr, idx) = self._header_dict[pkgtup]
-                yield hdr, pkgtup, idx
 
-    def _search2(self, name=None, epoch=None, version=None, release=None, arch=None):
-        '''Generator that yield (header, index) for matching packages
-
-        This version uses RPM to do the work but it's significantly slower than _search()
-        Not actually used.
-        '''
-        ts = self.readOnlyTS()
-        mi = ts.dbMatch()
-
-        # Set up the search patterns
-        for arg in ('name', 'epoch', 'version', 'release', 'arch'):
-            val = locals()[arg]
-            if val != None:
-                mi.pattern(arg,  rpm.RPMMIRE_DEFAULT, val)
-
-        # Report matches
-        for hdr in mi:
-            if hdr['name'] != 'gpg-pubkey':
-                yield (hdr, mi.instance())
+        ret = []
+        for (pkgtup, (hdr, idx)) in self._header_dict.items():
+            ok = True
+            for idx, val in lookfor:
+                if pkgtup[idx] != val:
+                    ok = False
+                    break
+            if ok:
+                ret.append( (hdr, pkgtup, idx) )
+        return ret
 
 
     def _makePackageObject(self, hdr, index):
@@ -429,7 +408,7 @@ class RPMDBPackageSack(PackageSackBase):
            returns a list of pkgtuples of providing packages, possibly empty"""
 
         pkgs = self.searchRequires(name)
-        
+
         if flags == 0:
             flags = None
         if type(version) is types.StringType:
