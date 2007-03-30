@@ -124,7 +124,7 @@ class YumAvailablePackageSqlite(YumAvailablePackage, PackageObject, RpmBase):
             dirname = ob['dirname']
             filetypes = decodefiletypelist(ob['filetypes'])
             filenames = decodefilenamelist(ob['filenames'])
-            while(filenames):
+            while(filetypes):
                 if dirname:
                     filename = dirname+'/'+filenames.pop()
                 else:
