@@ -862,7 +862,7 @@ class YumDepsolver(Depsolve):
 
         p = pstats.Stats('yumprof')
         p.strip_dirs()
-        p.sort_stats('time', 'calls')
+        p.sort_stats('time')
         p.print_stats(20)
         return rc
 
@@ -1101,6 +1101,8 @@ class YumDepsolver(Depsolve):
                 continue
             if prov[0].startswith("/usr/share/doc"): # XXX: ignore doc files
                 continue
+#            if prov[0].startswith("/lib/modules") or prov[0].startswith("/usr/src/kernels"):
+                continue
             if newpoprovs.has_key(prov):
                 continue
             
@@ -1138,69 +1140,110 @@ class YumDepsolver(Depsolve):
     def _requiredByPkg(self, prov):
         """check to see if anything will or does require the provide, return 
            list of requiring pkg objects if so"""
-        
-        # check if anything installed needs it
-          # make sure installed item is not set to be removed/obsoleted
-          # make sure nothing else provides the same thing just as well
-        # check if anything in the ts set to be installed/updated requires it
-          # make sure nothing else provides the same thing just as well
+
         (r, f, v) = prov
+
         removeList = []
-
-        # if anything else provides this as well and is installed or
-        # to be installed, then skip this whole step
-        other_provider = False
-
-        #tsSack = self.tsInfo.getMembers(None, TS_INSTALL_STATES, asSack=True)
-        potential_providers = self.rpmdb.searchProvides(r)
-        # FIXME the below is expensive - make it less so
-        for txmbr in self.tsInfo.getMembers(None, TS_INSTALL_STATES):
-            if r in txmbr.po.provides_names or r in txmbr.po.filelist:
-                potential_providers.append(txmbr.po)
-        
-        for provpo in potential_providers:
-            if provpo.pkgtup in self._removing: # if we're going to be removed in the ts, it doesn't count
-                continue
-
-            if self.tsInfo.getMembers(provpo.pkgtup, TS_REMOVE_STATES): # if it's being removed in the ts, it doesn't count
-                continue
-
-            if not provpo.checkPrco('provides', (r, f, v)): # if it doesn't actually provide the req, it doesn't count
-                continue
-            other_provider = True
-
-        if other_provider:
-            return []
-        
         # see what requires this provide name
-        potential_remove = self.rpmdb.searchRequires(r)
-        # FIXME the below is expensive - make it less so
-        for txmbr in self.tsInfo.getMembers(None, TS_INSTALL_STATES):
-            if r in txmbr.po.requires_names:
-                potential_remove.append(txmbr.po)
 
-        for reqpo in potential_remove:
-            self.verbose_logger.log(logginglevels.DEBUG_2, "looking at %s as a requirement of %s", r, reqpo)
+        potential_remove = []
+        for pkgtup in self.rpmdb.whatRequires(r, None, None):
+            # ignore stuff already being removed
+            if self.tsInfo.getMembers(pkgtup, TS_REMOVE_STATES):
+                continue
+            if pkgtup in self._removing:
+                continue
+            instpo = self.getInstalledPackageObject(pkgtup)
+            potential_remove.append(instpo)
+
+        for txmbr in self.tsInfo.getMembers(None, TS_INSTALL_STATES):
+            if r in txmbr.po.requires_names and txmbr.pkgtup not in self._removing:
+                potential_remove.append(txmbr.po)
+                
+        for instpo in potential_remove: #self.rpmdb.whatRequires(r, None, None):
+            pkgtup = instpo.pkgtup
+            self.verbose_logger.log(logginglevels.DEBUG_2, "looking at %s as a requirement of %s", r, pkgtup)                
             isok = False
             # ignore stuff already being removed
-            if self.tsInfo.getMembers(reqpo.pkgtup, TS_REMOVE_STATES):
-                continue
-            # ignore stuff soon to be removed
-            if reqpo.pkgtup in self._removing:
-                continue
+#             if self.tsInfo.getMembers(pkgtup, TS_REMOVE_STATES):
+#                 continue
+#             if pkgtup in self._removing:
+#                 continue
+#             instpo = self.getInstalledPackageObject(pkgtup)
 
             # check to ensure that we really fulfill instpo's need for r
-            if not reqpo.checkPrco('requires', (r,f,v)): 
+            if not instpo.checkPrco('requires', (r,f,v)): 
                 continue
 
-            if provpo in removeList: # if we already found it
+            # now see if anything else is providing what we need
+            for provtup in self.rpmdb.whatProvides(r, None, None):
+                # check if this provider is being removed
+                if provtup in self._removing:
+                    continue
+                if self.tsInfo.getMembers(provtup, TS_REMOVE_STATES):
+                    continue
+
+                provpo = self.getInstalledPackageObject(provtup)
+                if provpo in removeList:
+                    continue
+                # check if provpo actually satisfies instpo's need for r
+                # if so, we're golden
+                ok = True
+                for (rr, rf, rv) in instpo.requires:
+                    if rr != r:
+                        continue
+                    if not provpo.checkPrco('provides', (rr, rf, rv)):
+                        ok = False
+                if ok:
+                    isok = True
+                    break
+
+            if isok:
                 continue
-            
-            # otherwise, add it to the removeList
-            removeList.append(reqpo)
-            
+
+            # for files, we need to do a searchProvides() to take
+            # advantage of the shortcut of the files globbed into
+            # primary.xml.gz.  this is a bit of a hack, but saves us
+            # from having to download the filelists for a lot of cases
+            if r.startswith("/"):
+                for po in self.pkgSack.searchProvides(r):
+                    if self.tsInfo.getMembers(po.pkgtup, TS_INSTALL_STATES):
+                        isok = True
+                        break
+                for po in self.rpmdb.searchFiles(r):
+                    if not self.tsInfo.getMembers(po.pkgtup, TS_REMOVE_STATES):
+                        isok = True
+                        break
+            if isok:
+                continue
+
+            # now do the same set of checks with packages that are
+            # set to be installed.  
+            for txmbr in self.tsInfo.getMembers(None, TS_INSTALL_STATES):
+                if txmbr.po.checkPrco('provides',
+                                      (r, None, (None,None,None))):
+                    ok = True
+                    for (rr, rf, rv) in instpo.requires:
+                        if rr != r:
+                            continue
+                        if not txmbr.po.checkPrco('provides', (rr, rf, rv)):
+                            ok = False
+                    if ok:
+                        isok = True
+                        break
+
+                # FIXME: it's ugly to have to check files separately here
+                elif r.startswith("/") and r in txmbr.po.filelist:
+                    isok = True
+                    break
+
+            if isok:
+                continue
+
+            if not isok:
+                removeList.append(instpo)
         return removeList
-        
+    
 class DepCheck(object):
     """object that YumDepsolver uses to see what things are needed to close
        the transaction set. attributes: requires, conflicts are a list of 
