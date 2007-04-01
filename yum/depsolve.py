@@ -879,7 +879,7 @@ class YumDepsolver(Depsolve):
             if self.dcobj.already_seen.has_key(txmbr):
                 continue
 
-            if self.dsCallback: 
+            if self.dsCallback and txmbr.ts_state:
                 self.dsCallback.pkgAdded(txmbr.pkgtup, txmbr.ts_state)
 
             self.verbose_logger.log(logginglevels.INFO_2,
