@@ -807,16 +807,11 @@ class YumDepsolver(Depsolve):
         for pkgtup in self.rpmdb.whatProvides(r, f, v):
             # check the rpmdb first for something providing it that's not
             # set to be removed
-            txmbrs = self.tsInfo.getMembers(pkgtup)
+            txmbrs = self.tsInfo.getMembers(pkgtup, TS_REMOVE_STATES)
             if not txmbrs:
                 po = self.getInstalledPackageObject(pkgtup)            
                 self.deps[req] = po                
                 return po
-            for txmbr in txmbrs:
-                if txmbr.output_state not in TS_REMOVE_STATES:
-                    po = self.getInstalledPackageObject(pkgtup)
-                    self.deps[req] = po                
-                    return po
 
         for po in self.whatProvides(r, f, v):
             # if we already have something to be installed which
