@@ -1095,24 +1095,53 @@ class YumDepsolver(Depsolve):
 
         ret = []
         self._removing = []
+        goneprovs = {}
+        gonefiles = {}
+        removes = {}
+        
         # iterate over the provides of the package being removed
+        # and see what's actually going away
         for prov in provs:
             if prov[0].startswith('rpmlib('): # ignore rpmlib() provides
                 continue
             if prov[0].startswith("/usr/share/doc"): # XXX: ignore doc files
                 continue
-#            if prov[0].startswith("/lib/modules") or prov[0].startswith("/usr/src/kernels"):
-                continue
             if newpoprovs.has_key(prov):
                 continue
+            if not prov[0].startswith("/"):
+                goneprovs[prov[0]] = prov
+            else:
+                gonefiles[prov[0]] = prov
+
+        # now see what from the rpmdb really requires these
+        for (provname, prov) in goneprovs.items() + gonefiles.items():
+            instrequirers = []
+            for pkgtup in self.rpmdb.whatRequires(provname, None, None):
+                instpo = self.getInstalledPackageObject(pkgtup)
+                instrequirers.append(instpo)
             
-            (r, f, v) = prov
             self.verbose_logger.log(logginglevels.DEBUG_4, "looking to see what requires %s of %s", prov, po)
-            removeList = self._requiredByPkg(prov)
-            
-            # we have a list of all the items impacted and
-            # left w/unresolved deps
-            # by this remove. stick them in the ret list with their
+            removes[prov] = self._requiredByPkg(prov, instrequirers)
+
+        # now, let's see if anything that we're installing requires anything
+        # that this provides
+        for txmbr in self.tsInfo.getMembers(None, TS_INSTALL_STATES):
+            for r in txmbr.po.requires_names:
+                prov = None
+                if r in goneprovs.keys():
+                    prov = goneprovs[r]
+                elif r.startswith("/") and r in gonefiles:
+                    prov = gonefiles[r]
+
+                if prov and not removes.has_key(prov):
+                    removes[prov] = self._requiredByPkg(prov, [txmbr.po])
+                elif prov:
+                    removes[prov].extend(self._requiredByPkg(prov, [txmbr.po]))                        
+
+        # now we know what needs to be removed and the provide causing it
+        # to be removed.  let's stick them in the ret list
+        for (prov, removeList) in removes.items():
+            (r, f, v) = prov
             for po in removeList:
                 flags = {"GT": rpm.RPMSENSE_GREATER,
                          "GE": rpm.RPMSENSE_EQUAL | rpm.RPMSENSE_GREATER,
@@ -1137,7 +1166,7 @@ class YumDepsolver(Depsolve):
 
         return ret
 
-    def _requiredByPkg(self, prov):
+    def _requiredByPkg(self, prov, pos = []):
         """check to see if anything will or does require the provide, return 
            list of requiring pkg objects if so"""
 
@@ -1146,35 +1175,19 @@ class YumDepsolver(Depsolve):
         removeList = []
         # see what requires this provide name
 
-        potential_remove = []
-        for pkgtup in self.rpmdb.whatRequires(r, None, None):
+        for instpo in pos:
+            pkgtup = instpo.pkgtup
             # ignore stuff already being removed
             if self.tsInfo.getMembers(pkgtup, TS_REMOVE_STATES):
                 continue
             if pkgtup in self._removing:
                 continue
-            instpo = self.getInstalledPackageObject(pkgtup)
-            potential_remove.append(instpo)
-
-        for txmbr in self.tsInfo.getMembers(None, TS_INSTALL_STATES):
-            if r in txmbr.po.requires_names and txmbr.pkgtup not in self._removing:
-                potential_remove.append(txmbr.po)
-                
-        for instpo in potential_remove: #self.rpmdb.whatRequires(r, None, None):
-            pkgtup = instpo.pkgtup
-            self.verbose_logger.log(logginglevels.DEBUG_2, "looking at %s as a requirement of %s", r, pkgtup)                
-            isok = False
-            # ignore stuff already being removed
-#             if self.tsInfo.getMembers(pkgtup, TS_REMOVE_STATES):
-#                 continue
-#             if pkgtup in self._removing:
-#                 continue
-#             instpo = self.getInstalledPackageObject(pkgtup)
-
             # check to ensure that we really fulfill instpo's need for r
             if not instpo.checkPrco('requires', (r,f,v)): 
                 continue
 
+            self.verbose_logger.log(logginglevels.DEBUG_2, "looking at %s as a requirement of %s", r, pkgtup)                
+            isok = False
             # now see if anything else is providing what we need
             for provtup in self.rpmdb.whatProvides(r, None, None):
                 # check if this provider is being removed
@@ -1242,6 +1255,7 @@ class YumDepsolver(Depsolve):
 
             if not isok:
                 removeList.append(instpo)
+                self._removing.append(instpo.pkgtup)
         return removeList
     
 class DepCheck(object):
