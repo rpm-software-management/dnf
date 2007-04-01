@@ -261,14 +261,21 @@ class RPMDBPackageSack(PackageSackBase):
             self._make_header_dict()
 
         ret = []
-        for (pkgtup, (hdr, idx)) in self._header_dict.items():
-            ok = True
-            for idx, val in lookfor:
-                if pkgtup[idx] != val:
-                    ok = False
-                    break
-            if ok:
+        # We have the full pkgtup, just grab it from the header dict
+        if len(lookfor) == 5:
+            pkgtup = (name, arch, epoch, ver, rel)
+            if self._header_dict.has_key(pkgtup):
+                hdr, idx = self._header_dict[pkgtup]
                 ret.append( (hdr, pkgtup, idx) )
+        else:
+            for (pkgtup, (hdr, idx)) in self._header_dict.items():
+                ok = True
+                for idx, val in lookfor:
+                    if pkgtup[idx] != val:
+                        ok = False
+                        break
+                if ok:
+                    ret.append( (hdr, pkgtup, idx) )
         return ret
 
 
