@@ -883,6 +883,10 @@ class YumDepsolver(Depsolve):
             
             if self.dcobj.already_seen.has_key(txmbr):
                 continue
+
+            if self.dsCallback: 
+                self.dsCallback.pkgAdded(txmbr.pkgtup, txmbr.ts_state)
+
             self.verbose_logger.log(logginglevels.INFO_2,
                                     "Checking deps for %s" %(txmbr,))
             if txmbr.output_state in (TS_INSTALL, TS_TRUEINSTALL, TS_OBSOLETING):
@@ -908,7 +912,7 @@ class YumDepsolver(Depsolve):
         while CheckDeps:
             self.cheaterlookup = {} # short cache for some information we'd resolve
                                     # (needname, needversion) = pkgtup
-            if self.dsCallback: self.dsCallback.tscheck()
+            if self.dsCallback: self.dsCallback.tscheck(len(self.tsInfo.getMembers()))
             deps = self._mytsCheck()
 
             if not deps:
