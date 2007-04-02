@@ -270,8 +270,8 @@ class RPMDBPackageSack(PackageSackBase):
         else:
             for (pkgtup, (hdr, idx)) in self._header_dict.items():
                 ok = True
-                for idx, val in lookfor:
-                    if pkgtup[idx] != val:
+                for thisindex, val in lookfor:
+                    if pkgtup[thisindex] != val:
                         ok = False
                         break
                 if ok:
