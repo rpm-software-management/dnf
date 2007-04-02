@@ -884,10 +884,8 @@ class YumDepsolver(Depsolve):
 
             self.verbose_logger.log(logginglevels.INFO_2,
                                     "Checking deps for %s" %(txmbr,))
-            if txmbr.output_state in (TS_INSTALL, TS_TRUEINSTALL, TS_OBSOLETING):
+            if txmbr.output_state in TS_INSTALL_STATES:
                 ret.extend(self._checkInstall(txmbr))
-            elif txmbr.output_state in (TS_UPDATE,):
-                ret.extend(self._checkUpdate(txmbr))
             elif txmbr.output_state in TS_REMOVE_STATES:
                 ret.extend(self._checkRemove(txmbr))
             self.dcobj.already_seen[txmbr] = 1
@@ -1070,14 +1068,6 @@ class YumDepsolver(Depsolve):
                         break
                 if not found:
                     member.setAsDep(txmbr.po)
-        return ret
-
-    def _checkUpdate(self, txmbr):
-        ret = self._checkInstall(txmbr)
-        for oldpo in txmbr.updates:
-            for this_txmbr in self.tsInfo.getMembers(oldpo.pkgtup):
-                ret.extend(self._checkRemove(this_txmbr))
-        # this is probably incomplete, but it does create curious results
         return ret
 
     def _checkRemove(self, txmbr):
