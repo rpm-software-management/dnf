@@ -366,6 +366,7 @@ class YumBase(depsolve.YumDepsolver):
         else:
             repos = self.repos.findRepos(thisrepo)
         
+        
         self.verbose_logger.debug('Setting up Package Sacks')
         if not archlist:
             archlist = rpmUtils.arch.getArchList()
@@ -587,7 +588,7 @@ class YumBase(depsolve.YumDepsolver):
                 repo.name)
         
         exactmatch, matched, unmatched = \
-           parsePackages(self.pkgSack.returnPackages(repoid), excludelist, casematch=1)
+           parsePackages(self._pkgSack.returnPackages(repoid), excludelist, casematch=1)
 
         for po in exactmatch + matched:
             self.verbose_logger.debug('Excluding %s', po)
