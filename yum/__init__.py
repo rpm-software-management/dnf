@@ -1196,7 +1196,7 @@ class YumBase(depsolve.YumDepsolver):
                 tmpvalues = []
                 for field in fields:
                     value = getattr(po, field)
-                    if value and value.find(s) != -1:
+                    if value and value.lower().find(s.lower()) != -1:
                         tmpvalues.append(value)
 
                 if len(tmpvalues) > 0:
@@ -1206,7 +1206,7 @@ class YumBase(depsolve.YumDepsolver):
                 tmpvalues = []
                 for field in fields:
                     value = getattr(po, field)
-                    if value and value.find(s) != -1:
+                    if value and value.lower().find(s.lower()) != -1:
                         tmpvalues.append(value)
 
                 if len(tmpvalues) > 0:
