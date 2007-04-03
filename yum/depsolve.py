@@ -64,7 +64,7 @@ class Depsolve(object):
         self.initActionTs()
     
     def _getTsInfo(self):
-        if not self._tsInfo:
+        if self._tsInfo is None:
             self._tsInfo = self._transactionDataFactory()
 
         return self._tsInfo
