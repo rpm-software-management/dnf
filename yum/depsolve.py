@@ -905,13 +905,7 @@ class YumDepsolver(Depsolve):
         while CheckDeps:
             self.cheaterlookup = {} # short cache for some information we'd resolve
                                     # (needname, needversion) = pkgtup
-            if self.dsCallback:
-                # FIXME: come up with a better way to support anaconda's
-                # callback along with everyone else's.
-                if self.dsCallback.tscheck.func_code.co_argcount == 2:
-                    self.dsCallback.tscheck(len(self.tsInfo.getMembers()))
-                else:
-                    self.dsCallback.tscheck()
+            if self.dsCallback: self.dsCallback.tscheck()
             deps = self._mytsCheck()
 
             if not deps:
