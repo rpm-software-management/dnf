@@ -189,6 +189,8 @@ class RepodataParserSqlite:
               release TEXT,
               pkgKey TEXT %s)
             """ % (t, extraCol))
+            executeSQL(cur, "CREATE INDEX IF NOT EXISTS pkg%s on %s (pkgKey)"
+                    % (t, t))
         # Create the files table to hold all the file information
         executeSQL(cur, """CREATE TABLE files (
             name TEXT,
