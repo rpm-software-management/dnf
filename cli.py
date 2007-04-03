@@ -436,18 +436,33 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
                 arg = unmatched[0] #only one in there
                 self.verbose_logger.debug('Checking for virtual provide or file-provide for %s', 
                     arg)
+                # let's make sure we don't have this dep installed already
                 try:
-                    mypkg = self.returnPackageByDep(arg)
+                    my_inst_pkgs = self.returnInstalledPackagesByDep(arg)
+                except yum.Errors.YumBaseError, e:
+                    my_inst_pkgs = []
+
+                if my_inst_pkgs:
+                    self.verbose_logger.log(yum.logginglevels.DEBUG_3,
+                        'Requested dep: %s is provided by installed package', str(arg))
+                    
+                    continue # we don't need to look, we have it
+                try:
+                    mypkgs = self.returnPackagesByDep(arg)
                 except yum.Errors.YumBaseError, e:
                     self.logger.critical(_('No Match for argument: %s') % arg)
                 else:
-                    arg = '%s:%s-%s-%s.%s' % (mypkg.epoch, mypkg.name,
-                                              mypkg.version, mypkg.release,
-                                              mypkg.arch)
-                    emtch, mtch, unmtch = self.pkgSack.matchPackageNames([arg])
-                    exactmatch.extend(emtch)
-                    matched.extend(mtch)
-            
+                    for mypkg in mypkgs:
+                        if self._installable(mypkg, True):
+                            self.verbose_logger.log(yum.logginglevels.DEBUG_3,
+                                    'Solving package %s is installable, not going through the rest', mypkg)
+                            exactmatch.append(mypkg)
+                            break
+                        else:
+                            self.verbose_logger.log(yum.logginglevels.DEBUG_3,
+                                    'Solving package %s is not installable, skipping', mypkg)
+                            
+                        
             installable = yum.misc.unique(exactmatch + matched)
             exactarchlist = self.conf.exactarchlist
             
@@ -993,8 +1008,58 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
     def shellUsage(self):
         ''' Print out the shell usage '''
         print self.optparser.print_usage()
-            
-            
+    
+    def _installable(self, pkg, ematch=False):
+
+        """check if the package is reasonably installable, true/false"""
+        
+        exactarchlist = self.conf.exactarchlist        
+        # we look through each returned possibility and rule out the
+        # ones that we obviously can't use
+        
+        if self.rpmdb.installed(po=pkg):
+            self.verbose_logger.log(yum.logginglevels.DEBUG_3,
+                'Package %s is already installed, skipping', pkg)
+            return False
+        
+        # everything installed that matches the name
+        installedByKey = self.rpmdb.searchNevra(name=pkg.name)
+        comparable = []
+        for instpo in installedByKey:
+            if rpmUtils.arch.isMultiLibArch(instpo.arch) == rpmUtils.arch.isMultiLibArch(pkg.arch):
+                comparable.append(instpo)
+            else:
+                self.verbose_logger.log(yum.logginglevels.DEBUG_3,
+                    'Discarding non-comparable pkg %s.%s', instpo.name, instpo.arch)
+                continue
+                
+        # go through each package 
+        if len(comparable) > 0:
+            for instpo in comparable:
+                if pkg.EVR > instpo.EVR: # we're newer - this is an update, pass to them
+                    if instpo.name in exactarchlist:
+                        if pkg.arch == instpo.arch:
+                            return True
+                    else:
+                        return True
+                        
+                elif pkg.EVR == instpo.EVR: # same, ignore
+                    return False
+                    
+                elif pkg.EVR < instpo.EVR: # lesser, check if the pkgtup is an exactmatch
+                                   # if so then add it to be installed
+                                   # if it can be multiply installed
+                                   # this is where we could handle setting 
+                                   # it to be an 'oldpackage' revert.
+                                   
+                    if ematch and self.allowedMultipleInstalls(pkg):
+                        return True
+                        
+        else: # we've not got any installed that match n or n+a
+            self.verbose_logger.log(yum.logginglevels.DEBUG_1, 'No other %s installed, adding to list for potential install', pkg.name)
+            return True
+        
+        return False
 
 class YumOptionParser(OptionParser):
     '''Subclass that makes some minor tweaks to make OptionParser do things the
