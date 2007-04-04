@@ -1250,7 +1250,7 @@ def _filtercmdline(novalopts, valopts, args):
             if len(args) < 1:
                 raise ValueError
             next = args.pop(0)
-            if next.startswith('-'):
+            if next[0] == '-':
                 raise ValueError
 
             out.extend([a, next])

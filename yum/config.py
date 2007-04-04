@@ -591,7 +591,7 @@ def readStartupConfig(configfile, root):
 
     # Check that plugin paths are all absolute
     for path in startupconf.pluginpath:
-        if not path.startswith('/'):
+        if not path[0] == '/':
             raise Errors.ConfigError("All plugin search paths must be absolute")
 
     # Stuff this here to avoid later re-parsing

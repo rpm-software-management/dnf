@@ -1097,7 +1097,7 @@ class YumDepsolver(Depsolve):
                 continue
             if newpoprovs.has_key(prov):
                 continue
-            if not prov[0].startswith("/"):
+            if not prov[0][0] == "/":
                 goneprovs[prov[0]] = prov
             else:
                 gonefiles[prov[0]] = prov
@@ -1119,7 +1119,7 @@ class YumDepsolver(Depsolve):
                 prov = None
                 if r in goneprovs.keys():
                     prov = goneprovs[r]
-                elif r.startswith("/") and r in gonefiles:
+                elif r[0] == "/" and r in gonefiles:
                     prov = gonefiles[r]
 
                 if prov and not removes.has_key(prov):
@@ -1207,7 +1207,7 @@ class YumDepsolver(Depsolve):
             # advantage of the shortcut of the files globbed into
             # primary.xml.gz.  this is a bit of a hack, but saves us
             # from having to download the filelists for a lot of cases
-            if r.startswith("/"):
+            if r[0] == "/":
                 for po in self.pkgSack.searchProvides(r):
                     if self.tsInfo.getMembers(po.pkgtup, TS_INSTALL_STATES):
                         isok = True
@@ -1235,7 +1235,7 @@ class YumDepsolver(Depsolve):
                         break
 
                 # FIXME: it's ugly to have to check files separately here
-                elif r.startswith("/") and r in txmbr.po.filelist:
+                elif r[0] == "/" and r in txmbr.po.filelist:
                     isok = True
                     break
 
