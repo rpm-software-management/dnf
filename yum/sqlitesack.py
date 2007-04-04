@@ -180,10 +180,10 @@ class YumAvailablePackageSqlite(YumAvailablePackage, PackageObject, RpmBase):
             query = "select %s.name as name, %s.version as version, "\
                         "%s.release as release, %s.epoch as epoch, "\
                         "%s.flags as flags from %s,packages "\
-                        "where packages.pkgId = '%s' and "\
-                        "packages.pkgKey = %s.pkgKey" % (prcotype, prcotype, 
-                        prcotype, prcotype, prcotype, prcotype, self.pkgId, 
-                        prcotype)
+                        "where packages.pkgKey = %s.pkgKey and "\
+                        "packages.pkgId = '%s'" % (prcotype, prcotype,
+                        prcotype, prcotype, prcotype, prcotype, prcotype,
+                        self.pkgId)
             executeSQL(cur, query)
             for ob in cur:
                 self.prco[prcotype].append((ob['name'], ob['flags'],
