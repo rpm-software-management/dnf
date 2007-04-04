@@ -1,3 +1,172 @@
+2007-04-04 00:03  skvidal
+
+	* yum.spec, yum/__init__.py: mark as 3.1.6
+
+2007-04-03 17:24  katzj
+
+	* yum/depsolve.py: I made anaconda's tscheck callback less crappy.
+
+2007-04-03 16:07  skvidal
+
+	* cli.py: 
+	merge up perl/perl-devel case and a bunch of other similar ones. 
+	fixes rh bug: 231549 thanks to Robin Norwood for the easy
+	replicator.
+
+2007-04-03 15:53  skvidal
+
+	* yum/__init__.py: make 'search' case insensitive
+
+2007-04-03 13:57  skvidal
+
+	* yum/depsolve.py: 
+	don't constantly reset the tsInfo if there's nothing in it.
+
+2007-04-03 11:18  jbowes
+
+	* yum/sqlitecache.py: Create pkgKey index on PRCO data, as
+	suggested by Florian Festi
+
+2007-04-03 01:16  skvidal
+
+	* yum/__init__.py: don't refer to self.pkgSack until we're positive
+	it's setup, otherwise we get good and recursive in the wrong place
+	- should make --enablerepo/--disablrepo work properly when combined
+	with excludes
+
+2007-04-02 12:06  skvidal
+
+	* yum/rpmsack.py: 
+	fix breakage in lookup of rpmsack - idx was being used nested in a
+	for loop and overwriting itself.  fixes issue with installonlyn and
+	all lookups by name
+
+2007-04-01 21:30  jbowes
+
+	* yum/depsolve.py: Remove _checkUpdate
+	
+	If a transaction member was marked as 'update', we'd run
+	_checkInstall on it, then run _checkRemove on all of the packages
+	that it was updating. After this, we'd then run _checkRemove on all
+	transaction members marked as 'updated'. So we were running
+	_checkRemove on every 'updated' package twice. Get rid of this.
+
+2007-04-01 14:07  jbowes
+
+	* yum/depsolve.py: Only call pkgAdded if the transaction member has
+	a state
+
+2007-04-01 13:48  jbowes
+
+	* yum/rpmsack.py: Rpmsack _search optimization
+	
+	If we have the full pkgtup, then just look it up in the header
+	dict.  Takes 'yum remove glibc' from 1m2s to 0m41s on my machine.
+
+2007-04-01 10:56  jbowes
+
+	* yum/depsolve.py: Simplify provideToPkg code
+
+2007-04-01 10:04  jbowes
+
+	* yum/depsolve.py: fix recent tscheck breakage
+
+2007-03-31 20:37  katzj
+
+	* yum/depsolve.py: From Chris Lumens (clumens AT redhat DOT com)
+	
+	Looking at why the anaconda dependency progress bar never moves, I
+	found two small things.  First, we're never calling pkgAdded in
+	_resolveDeps so the progress bar is never getting updated.  Second,
+	we're never initializing the progress bar with the number of things
+	to check so we don't know how big to make the increments.
+
+2007-03-31 20:35  katzj
+
+	* yum/depsolve.py: split up checking on package erasure into things
+	from the rpmdb and things in the tsinfo.  given the lack of
+	searchability with the tsinfo, we're better off just going through
+	it once with the set of provides rather than looping over it for
+	each provide.
+
+2007-03-31 20:11  jbowes
+
+	* yum/transactioninfo.py: Fix a misnamed variable in getMembers,
+	and rearrange the code a bit
+
+2007-03-30 15:47  katzj
+
+	* yum/depsolve.py: switch back to logic we were previously using on
+	removal as it handled some of the corner cases better.	but add
+	checking to ensure that nothing in the tsinfo requires the provide.
+	 this should fix the problem where   quux requires bar, bar is
+	currently installed   remove bar, install quux in same transaction
+
+2007-03-30 13:03  katzj
+
+	* yum/sqlitesack.py: and re-fix handling of the filesystem package.
+	 the split of the filenames gets confused with / being in
+	filesystem which is what the uniq got added for originally
+
+2007-03-30 11:32  katzj
+
+	* yum/rpmsack.py: some speedups * don't use yield with
+	_get_pkglist; we've already generated the list and   just returning
+	it is faster * remove inner match() function of _search() so that
+	we don't have	the overhead of a bazillion function calls.  yes,
+	this is noticable.
+
+2007-03-29 17:57  katzj
+
+	* yum/sqlitesack.py: fix filelist/dirlist population to be correct!
+	
+	we've been doing sort/uniq on the filenames which makes
+	(illustrative example..)  /lib
+	dff|dbus-1.0/lidbus-1.so.3.2.0/libdbus-1.so.3 end up giving 
+	/lib/libdbus-1.so.3 (dir)  /lib/libdbus-1.so.3.2.0 (file) 
+	/lib/dbus-1.0 (file)
+	
+	This is clearly *not* what it's supposed to be :)
+
+2007-03-28 12:00  katzj
+
+	* yum-updatesd.py: make it so that we can pass back initialization
+	errors to callers over the bus.  Patch from Ray Strode (halfline AT
+	gmail DOT com)
+
+2007-03-28 11:59  katzj
+
+	* yum/plugins.py: allow YumPluginExit to have a translation domain
+	set so that we can get a localized error message
+
+2007-03-28 04:48  skvidal
+
+	* yum/depsolve.py: 
+	make it a small amount faster. searching the transaction set
+	members is slow - it needs to be faster
+
+2007-03-28 04:09  skvidal
+
+	* yum/depsolve.py: 
+	- catch the case where we remove something needed in the
+	transaction - partial limited delta case
+
+2007-03-26 00:37  skvidal
+
+	* yum/transactioninfo.py: 
+	allow getMembers() to return a package sack, optionally.
+
+2007-03-23 03:41  skvidal
+
+	* yum/depsolve.py: 
+	just a stub - need to fill it out tomorrow to act as a simplifier
+	for _checkRemove()
+
+2007-03-21 23:11  skvidal
+
+	* ChangeLog: 
+	changelog merge
+
 2007-03-21 23:09  skvidal
 
 	* yum.spec, yum/__init__.py: 
