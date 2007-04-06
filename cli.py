@@ -1139,6 +1139,10 @@ class YumOptionParser(OptionParser):
                     self.logger.critical(e)
                     self.base.usage()
                     sys.exit(1)
+                    
+            # make sure the added repos are setup.        
+            if len(opts.repos) > 0:
+                self.base._getRepos(doSetup=True)
                             
         except ValueError, e:
             self.logger.critical(_('Options Error: %s'), e)
