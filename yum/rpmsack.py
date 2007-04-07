@@ -47,7 +47,7 @@ class RPMDBPackageSack(PackageSackBase):
     def __init__(self, root='/'):
         self.root = root
         self._header_dict = {}
-        self.ts = None
+        self.ts = initReadOnlyTransaction(root=self.root)
         
     def _get_pkglist(self):
         '''Getter for the pkglist property. 
@@ -61,8 +61,6 @@ class RPMDBPackageSack(PackageSackBase):
     pkglist = property(_get_pkglist, None)
 
     def readOnlyTS(self):
-        if not self.ts:
-            self.ts =  initReadOnlyTransaction(root=self.root)
         return self.ts
 
     def buildIndexes(self):
@@ -78,7 +76,7 @@ class RPMDBPackageSack(PackageSackBase):
         pass
 
     def searchAll(self, name, query_type='like'):
-        ts = self.readOnlyTS()
+        ts = self.ts
         result = {}
 
         # check provides
@@ -100,7 +98,7 @@ class RPMDBPackageSack(PackageSackBase):
 
     def searchFiles(self, name):
         """search the filelists in the rpms for anything matching name"""
-        ts = self.readOnlyTS()
+        ts = self.ts
         result = {}
         
         mi = ts.dbMatch('basenames', name)
@@ -115,7 +113,7 @@ class RPMDBPackageSack(PackageSackBase):
         
     def searchPrco(self, name, prcotype):
         
-        ts = self.readOnlyTS()
+        ts = self.ts
         result = {}
         tag = self.DEP_TABLE[prcotype][0]
         mi = ts.dbMatch(tag, name)
@@ -210,7 +208,7 @@ class RPMDBPackageSack(PackageSackBase):
     def _all_packages(self):
         '''Generator that yield (header, index) for all packages
         '''
-        ts = self.readOnlyTS()
+        ts = self.ts
         mi = ts.dbMatch()
 
         for hdr in mi:
@@ -223,7 +221,7 @@ class RPMDBPackageSack(PackageSackBase):
         warnings.warn('_header_from_index() will go away in a future version of Yum.\n',
                 Errors.FutureDeprecationWarning, stacklevel=2)
 
-        ts = self.readOnlyTS()
+        ts = self.ts
         try:
             mi = ts.dbMatch(0, idx)
         except (TypeError, StopIteration), e:
