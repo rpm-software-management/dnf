@@ -300,12 +300,13 @@ def formatRequire (name, version, flags):
     
 def flagToString(flags):
     flags = flags & 0xf
+
     if flags == 0: return None
-    if flags == 2: return 'LT'
-    if flags == 4: return 'GT'
-    if flags == 8: return 'EQ'
-    if flags == 10: return 'LE'
-    if flags == 12: return 'GE'
+    elif flags == 2: return 'LT'
+    elif flags == 4: return 'GT'
+    elif flags == 8: return 'EQ'
+    elif flags == 10: return 'LE'
+    elif flags == 12: return 'GE'
 
     return flags
 
