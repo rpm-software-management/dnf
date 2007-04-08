@@ -43,7 +43,11 @@ class Depsolve(object):
         self.dsCallback = None
         self.logger = logging.getLogger("yum.Depsolve")
         self.verbose_logger = logging.getLogger("yum.verbose.Depsolve")
-    
+
+        self.deps = {}
+        self.path = []
+        self.loops = []
+
     def doTsSetup(self):
         warnings.warn('doTsSetup() will go away in a future version of Yum.\n',
                 Errors.YumFutureDeprecationWarning, stacklevel=2)
@@ -218,109 +222,6 @@ class Depsolve(object):
                 if self.dsCallback: self.dsCallback.pkgAdded(txmbr.pkgtup, 'e')
                 self.verbose_logger.log(logginglevels.DEBUG_1,
                     'Removing Package %s', txmbr.po)
-        
-
-    def resolveDeps(self):
-
-        CheckDeps = 1
-        conflicts = 0
-        missingdep = 0
-        depscopy = []
-        unresolveableloop = 0
-
-        errors = []
-        if self.dsCallback: self.dsCallback.start()
-
-        while CheckDeps > 0:
-            self.cheaterlookup = {} # short cache for some information we'd resolve
-                                    # (needname, needversion) = pkgtup
-            self.populateTs(test=1)
-            if self.dsCallback: self.dsCallback.tscheck()
-            deps = self.ts.check()
-
-            
-            if not deps:
-                self.tsInfo.changed = False
-                return (2, ['Success - deps resolved'])
-
-            deps = unique(deps) # get rid of duplicate deps            
-            if deps == depscopy:
-                unresolveableloop += 1
-                self.verbose_logger.log(logginglevels.DEBUG_2,
-                    'Identical Loop count = %d', unresolveableloop)
-                if unresolveableloop >= 2:
-                    errors.append('Unable to satisfy dependencies')
-                    for deptuple in deps:
-                        ((name, version, release), (needname, needversion), flags, 
-                          suggest, sense) = deptuple
-                        if sense == rpm.RPMDEP_SENSE_REQUIRES:
-                            msg = 'Package %s needs %s, this is not available.' % \
-                                  (name, rpmUtils.miscutils.formatRequire(needname, 
-                                                                          needversion, flags))
-                        elif sense == rpm.RPMDEP_SENSE_CONFLICTS:
-                            msg = 'Package %s conflicts with %s.' % \
-                                  (name, rpmUtils.miscutils.formatRequire(needname, 
-                                                                          needversion, flags))
-
-                        errors.append(msg)
-                    CheckDeps = 0
-                    break
-            else:
-                unresolveableloop = 0
-
-            depscopy = deps
-            CheckDeps = 0
-
-
-            # things to resolve
-            self.verbose_logger.debug('# of Deps = %d', len(deps))
-            depcount = 0
-            for dep in deps:
-                dep_start_time = time.time()
-                ((name, version, release), (needname, needversion), flags, suggest, sense) = dep
-                depcount += 1
-                self.verbose_logger.log(logginglevels.DEBUG_2,
-                    '\nDep Number: %d/%d\n', depcount, len(deps))
-                if sense == rpm.RPMDEP_SENSE_REQUIRES: # requires
-                    # if our packageSacks aren't here, then set them up
-                    (checkdep, missing, conflict, errormsgs) = self._processReq(dep)
-                    
-                elif sense == rpm.RPMDEP_SENSE_CONFLICTS: # conflicts - this is gonna be short :)
-                    (checkdep, missing, conflict, errormsgs) = self._processConflict(dep)
-                    
-                else: # wtf?
-                    self.logger.critical('Unknown Sense: %d', sense)
-                    continue
-                
-                dep_end_time = time.time()
-                dep_proc_time = dep_end_time - dep_start_time
-                self.verbose_logger.log(logginglevels.DEBUG_2, 'processing dep took: %f', dep_proc_time)
-                
-                missingdep += missing
-                conflicts += conflict
-                CheckDeps += checkdep
-                for error in errormsgs:
-                    if error not in errors:
-                        errors.append(error)
-
-            self.verbose_logger.log(logginglevels.DEBUG_1, 'miss = %d', missingdep)
-            self.verbose_logger.log(logginglevels.DEBUG_1, 'conf = %d', conflicts)
-            self.verbose_logger.log(logginglevels.DEBUG_1, 'CheckDeps = %d', CheckDeps)
-
-            if CheckDeps > 0:
-                if self.dsCallback: self.dsCallback.restartLoop()
-                self.verbose_logger.log(logginglevels.DEBUG_1, 'Restarting Loop')
-            else:
-                if self.dsCallback: self.dsCallback.end()
-                self.verbose_logger.log(logginglevels.DEBUG_1, 'Dependency Process ending')
-
-            del deps
-
-        self.tsInfo.changed = False
-        if len(errors) > 0:
-            return (1, errors)
-        if len(self.tsInfo) > 0:
-            return (2, ['Run Callback'])
 
     def _processReq(self, dep):
         """processes a Requires dep from the resolveDeps functions, returns a tuple
@@ -777,28 +678,12 @@ class Depsolve(object):
         
         return (CheckDeps, missingdep, conflicts, errormsgs)
 
-    def _unresolveableReq(self, req, name, namestate, errors):
-        CheckDeps = 0
-        missingdep = 1
-        msg = 'Missing Dependency: %s needed for package %s (%s)' % (req, name, namestate)
-        errors.append(msg)
-        if self.dsCallback: self.dsCallback.unresolved(msg)
-        return CheckDeps, missingdep
-
     def _unresolveableConflict(self, conf, name, errors):
         CheckDeps = 0
         conflicts = 1
         msg = '%s conflicts with %s' % (name, conf)
         errors.append(msg)
         return CheckDeps, conflicts
-
-
-class YumDepsolver(Depsolve):
-    def __init__(self):
-        Depsolve.__init__(self)
-        self.deps = {}
-        self.path = []
-        self.loops = []
 
     def _provideToPkg(self, req):
         best = None
@@ -839,7 +724,7 @@ class YumDepsolver(Depsolve):
         fn = "anaconda.prof.0"
         import hotshot, hotshot.stats
         prof = hotshot.Profile(fn)
-        rc = prof.runcall(self._resolveDeps)
+        rc = prof.runcall(self.resolveDeps)
         prof.close()
         print "done running depcheck"
         stats = hotshot.stats.load(fn)
@@ -851,7 +736,7 @@ class YumDepsolver(Depsolve):
     def cprof_resolveDeps(self):
         import cProfile, pstats
         prof = cProfile.Profile()
-        rc = prof.runcall(self._resolveDeps)
+        rc = prof.runcall(self.resolveDeps)
         prof.dump_stats("yumprof")
         print "done running depcheck"
 
@@ -892,7 +777,7 @@ class YumDepsolver(Depsolve):
             
         return ret
 
-    def _resolveDeps(self):
+    def resolveDeps(self):
         CheckDeps = True
         conflicts = 0
         missingdep = 0
@@ -1000,8 +885,6 @@ class YumDepsolver(Depsolve):
             return (1, errors)
         if len(self.tsInfo) > 0:
             return (2, ['Run Callback'])
-
-    resolveDeps = _resolveDeps
 
     def _checkInstall(self, txmbr):
         reqs = txmbr.po.returnPrco('requires')

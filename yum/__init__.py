@@ -55,14 +55,14 @@ from constants import *
 
 __version__ = '3.1.6'
 
-class YumBase(depsolve.YumDepsolver):
+class YumBase(depsolve.Depsolve):
     """This is a primary structure and base class. It houses the objects and
        methods needed to perform most things in yum. It is almost an abstract
        class in that you will need to add your own class above it for most
        real use."""
     
     def __init__(self):
-        depsolve.YumDepsolver.__init__(self)
+        depsolve.Depsolve.__init__(self)
         self._conf = None
         self._tsInfo = None
         self._rpmdb = None
