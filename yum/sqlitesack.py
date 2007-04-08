@@ -314,6 +314,10 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
             if glob:
                 dirname_check = ""
             else:
+                if name[-1] == '/':
+                    tosplit = name[:-1]
+                else:
+                    tosplit = name
                 dirname = os.path.dirname(name)
                 dirname_check = "filelist.dirname = '%s' and " % dirname
 
