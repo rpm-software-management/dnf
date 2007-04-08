@@ -389,10 +389,12 @@ class Updates:
         # one for the multiarch itself and one for the compat arch
         # ie: x86_64 and athlon(i686-i386) - we don't want to descend
         # x86_64->i686 
+        # however, we do want to descend x86_64->noarch, sadly.
+        
         archlists = []
         if rpmUtils.arch.isMultiLibArch(arch=self.myarch):
             if rpmUtils.arch.multilibArches.has_key(self.myarch):
-                biarches = [self.myarch]
+                biarches = [self.myarch, 'noarch']
             else:
                 biarches = [self.myarch, rpmUtils.arch.arches[self.myarch]]
 
@@ -417,7 +419,6 @@ class Updates:
                 tmplist = []
                 for (a, e, v, r) in newpkgs[(n, None)]:
                     tmplist.append((n, a, e, v, r))                        
-                
                 highestavailablepkgs = self.returnHighestVerFromAllArchsByName(n,
                                          thisarchlist, tmplist)
 
@@ -451,7 +452,7 @@ class Updates:
                     
                     rpm_a = rpmUtils.arch.getBestArchFromList(instarchs, myarch=self.myarch)
                     a = rpmUtils.arch.getBestArchFromList(availarchs, myarch=self.myarch)
-
+                    
                     if rpm_a is None or a is None:
                         continue
                         
