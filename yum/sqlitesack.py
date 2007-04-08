@@ -277,7 +277,11 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
         if not re.match('.*[\*\?\[\]].*', name):
             glob = False
             querytype = '='
-        
+
+        # Take off the trailing slash to act like rpm
+        if name[-1] == '/':
+            name = name[:-1]
+       
         pkgs = []
         if len(self.filelistsdb.keys()) == 0:
             # grab repo object from primarydb and force filelists population in this sack using repo
@@ -314,10 +318,6 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
             if glob:
                 dirname_check = ""
             else:
-                if name[-1] == '/':
-                    tosplit = name[:-1]
-                else:
-                    tosplit = name
                 dirname = os.path.dirname(name)
                 dirname_check = "filelist.dirname = '%s' and " % dirname
 
