@@ -452,7 +452,8 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
                 except yum.Errors.YumBaseError, e:
                     self.logger.critical(_('No Match for argument: %s') % arg)
                 else:
-                    for mypkg in mypkgs:
+                    mybestpkgs = self.bestPackagesFromList(mypkgs)
+                    for mypkg in mybestpkgs:
                         if self._installable(mypkg, True):
                             self.verbose_logger.log(yum.logginglevels.DEBUG_3,
                                     'Solving package %s is installable, not going through the rest', mypkg)
