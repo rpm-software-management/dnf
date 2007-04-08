@@ -219,7 +219,7 @@ class RPMDBPackageSack(PackageSackBase):
     def _header_from_index(self, idx):
         """returns a package header having been given an index"""
         warnings.warn('_header_from_index() will go away in a future version of Yum.\n',
-                Errors.FutureDeprecationWarning, stacklevel=2)
+                Errors.YumFutureDeprecationWarning, stacklevel=2)
 
         ts = self.ts
         try:
