@@ -311,14 +311,20 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
                     matches = filter(lambda x: name==x, fns)
                 return len(matches)
 
+            if glob:
+                dirname_check = ""
+            else:
+                dirname = os.path.dirname(name)
+                dirname_check = "filelist.dirname = '%s' and " % dirname
+
             cache.create_function("filelist_globber", 2, filelist_globber)
             # for all the ones where filenames is multiple files, 
             # make the files up whole and use python's globbing method
-            executeSQL(cur, "select packages.pkgID as pkgID \
-                             from filelist,packages where \
-                             packages.pkgKey = filelist.pkgKey \
-                             and length(filelist.filetypes) > 1 \
-                             and filelist_globber(filelist.dirname,filelist.filenames)")
+            executeSQL(cur, "select packages.pkgId as pkgId \
+                             from filelist, packages where \
+                             %s length(filelist.filetypes) > 1 \
+                             and filelist_globber(filelist.dirname,filelist.filenames) \
+                             and packages.pkgKey = filelist.pkgKey " % dirname_check)
 
             for ob in cur:
                 if self._excluded(rep, ob['pkgId']):
