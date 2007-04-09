@@ -767,7 +767,7 @@ class Depsolve(object):
             if self.dsCallback and txmbr.ts_state:
                 self.dsCallback.pkgAdded(txmbr.pkgtup, txmbr.ts_state)
 
-            self.verbose_logger.log(logginglevels.INFO_2,
+            self.verbose_logger.log(logginglevels.DEBUG_2,
                                     "Checking deps for %s" %(txmbr,))
             if txmbr.output_state in TS_INSTALL_STATES:
                 ret.extend(self._checkInstall(txmbr))
