@@ -394,10 +394,11 @@ class Updates:
         archlists = []
         if rpmUtils.arch.isMultiLibArch(arch=self.myarch):
             if rpmUtils.arch.multilibArches.has_key(self.myarch):
-                biarches = [self.myarch, 'noarch']
+                biarches = [self.myarch]
             else:
                 biarches = [self.myarch, rpmUtils.arch.arches[self.myarch]]
-
+            biarches.append('noarch')
+            
             multicompat = rpmUtils.arch.getMultiArchInfo(self.myarch)[0]
             multiarchlist = rpmUtils.arch.getArchList(multicompat)
             archlists = [ biarches, multiarchlist ]
