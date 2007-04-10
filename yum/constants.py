@@ -72,7 +72,7 @@ PLUG_OPT_WHERE_REPO = 1
 PLUG_OPT_WHERE_ALL = 2
 
 # version of sqlite database schemas
-DBVERSION = '9'
+DBVERSION = '10'
 
 # boolean dict:
 BOOLEAN_STATES = {'1': True, 'yes': True, 'true': True, 'on': True,

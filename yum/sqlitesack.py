@@ -71,7 +71,7 @@ class YumAvailablePackageSqlite(YumAvailablePackage, PackageObject, RpmBase):
                 pass
 
         try:
-            self._checksums.append((db_obj['checksum_type'], db_obj['checksum_value'], True))
+            self._checksums.append((db_obj['checksum_type'], db_obj['pkgId'], True))
         except (IndexError, KeyError):
             pass
 
@@ -159,7 +159,7 @@ class YumAvailablePackageSqlite(YumAvailablePackage, PackageObject, RpmBase):
     
         
     def returnIdSum(self):
-            return (self.checksum_type, self.checksum_value)
+            return (self.checksum_type, self.pkgId)
     
     def returnChangelog(self):
         self._loadChangelog()
@@ -539,7 +539,7 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
         y.hdrange = {'start': db['rpm_header_start'],'end': db['rpm_header_end']}
         y.location = {'href': db['location_href'],'value': '', 'base': db['location_base']}
         y.checksum = {'pkgid': 'YES','type': db['checksum_type'], 
-                    'value': db['checksum_value'] }
+                    'value': db['pkgId'] }
         y.time = {'build': db['time_build'], 'file': db['time_file'] }
         y.size = {'package': db['size_package'], 'archive': db['size_archive'], 'installed': db['size_installed'] }
         y.info = {'summary': db['summary'], 'description': db['description'],
