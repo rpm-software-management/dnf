@@ -90,7 +90,8 @@ class YumAvailablePackageSqlite(YumAvailablePackage, PackageObject, RpmBase):
                          'buildhost' : 'rpm_buildhost',
                          'sourcerpm' : 'rpm_sourcerpm',
                          'vendor' : 'rpm_vendor',
-                         'license' : 'rpm_license'
+                         'license' : 'rpm_license',
+                         'checksum_value' : 'pkgId',
                         }
         
         dbname = varname
