@@ -195,7 +195,7 @@ class RpmBase(object):
         self.licenses = []
 
     def __eq__(self, other):
-        if other == None: 
+        if not other: # check if other not is a package object. 
             return False
         if comparePoEVR(self, other) == 0 and self.arch == other.arch and self.name == other.name:
             return True
