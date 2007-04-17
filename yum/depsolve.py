@@ -692,7 +692,7 @@ class Depsolve(object):
         for pkgtup in self.rpmdb.whatProvides(r, f, v):
             # check the rpmdb first for something providing it that's not
             # set to be removed
-            txmbrs = self.tsInfo.getMembers(pkgtup, TS_REMOVE_STATES)
+            txmbrs = self.tsInfo.getMembersWithState(pkgtup, TS_REMOVE_STATES)
             if not txmbrs:
                 po = self.getInstalledPackageObject(pkgtup)            
                 self.deps[req] = po                
@@ -707,7 +707,7 @@ class Depsolve(object):
                 self.deps[req] = po
                 return po
         
-        for txmbr in self.tsInfo.getMembers(None, TS_INSTALL_STATES):
+        for txmbr in self.tsInfo.getMembersWithState(None, TS_INSTALL_STATES):
             if txmbr.po.checkPrco('provides', (r, f, v)):
                 self.deps[req] = txmbr.po
                 return txmbr.po
@@ -997,7 +997,7 @@ class Depsolve(object):
 
         # now, let's see if anything that we're installing requires anything
         # that this provides
-        for txmbr in self.tsInfo.getMembers(None, TS_INSTALL_STATES):
+        for txmbr in self.tsInfo.getMembersWithState(None, TS_INSTALL_STATES):
             for r in txmbr.po.requires_names:
                 prov = None
                 if r in goneprovs.keys():
@@ -1050,7 +1050,7 @@ class Depsolve(object):
         for instpo in pos:
             pkgtup = instpo.pkgtup
             # ignore stuff already being removed
-            if self.tsInfo.getMembers(pkgtup, TS_REMOVE_STATES):
+            if self.tsInfo.getMembersWithState(pkgtup, TS_REMOVE_STATES):
                 continue
             if pkgtup in self._removing:
                 continue
@@ -1065,7 +1065,7 @@ class Depsolve(object):
                 # check if this provider is being removed
                 if provtup in self._removing:
                     continue
-                if self.tsInfo.getMembers(provtup, TS_REMOVE_STATES):
+                if self.tsInfo.getMembersWithState(provtup, TS_REMOVE_STATES):
                     continue
 
                 provpo = self.getInstalledPackageObject(provtup)
@@ -1092,11 +1092,11 @@ class Depsolve(object):
             # from having to download the filelists for a lot of cases
             if r[0] == "/":
                 for po in self.pkgSack.searchProvides(r):
-                    if self.tsInfo.getMembers(po.pkgtup, TS_INSTALL_STATES):
+                    if self.tsInfo.getMembersWithState(po.pkgtup, TS_INSTALL_STATES):
                         isok = True
                         break
                 for po in self.rpmdb.searchFiles(r):
-                    if not self.tsInfo.getMembers(po.pkgtup, TS_REMOVE_STATES):
+                    if not self.tsInfo.getMembersWithState(po.pkgtup, TS_REMOVE_STATES):
                         isok = True
                         break
             if isok:
@@ -1104,7 +1104,7 @@ class Depsolve(object):
 
             # now do the same set of checks with packages that are
             # set to be installed.  
-            for txmbr in self.tsInfo.getMembers(None, TS_INSTALL_STATES):
+            for txmbr in self.tsInfo.getMembersWithState(None, TS_INSTALL_STATES):
                 if txmbr.po.checkPrco('provides',
                                       (r, None, (None,None,None))):
                     ok = True

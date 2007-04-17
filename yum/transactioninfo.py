@@ -62,8 +62,11 @@ class TransactionData:
         if self.debug:
             print msg
 
+    def getMembersWithState(self, pkgtup=None, output_states=None):
+        return filter(lambda p: p.output_state in output_states,
+                      self.getMembers(pkgtup))
 
-    def getMembers(self, pkgtup=None, output_states=None, asSack=False):
+    def getMembers(self, pkgtup=None):
         """takes an optional package tuple and returns all transaction members 
            matching, no pkgtup means it returns all transaction members"""
         
@@ -72,16 +75,12 @@ class TransactionData:
         if pkgtup is None:
             for key in self.pkgdict.keys():
                 for p in self.pkgdict[key]:
-                    if not output_states or p.output_state in output_states:
-                        returnlist.append(p)
+                    returnlist.append(p)
 
         elif self.pkgdict.has_key(pkgtup):
             for p in self.pkgdict[pkgtup]:
-                if not output_states or p.output_state in output_states:
-                    returnlist.append(p)
+                returnlist.append(p)
 
-        if asSack:
-            return ListPackageSack(map(lambda x: x.po, returnlist))
         return returnlist
             
     def getMode(self, name=None, arch=None, epoch=None, ver=None, rel=None):
