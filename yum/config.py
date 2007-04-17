@@ -223,9 +223,9 @@ class BoolOption(Option):
 
     def tostring(self, value):
         if value:
-            return "yes"
+            return "1"
         else:
-            return "no"
+            return "0"
 
 class FloatOption(Option):
     def parse(self, s):
@@ -436,13 +436,13 @@ class BaseConfig(object):
             section = self._section
 
         fileobj.write('[%s]\n' % section)
-
+        # get options in ConfigParser object
+        cfgOptions = self.cfg.options(section)
         # Write options
-        for name, value in self.options:
+        for name, value in self.iteritems():
             option = self.optionobj(name)
-
-            if always is None or name in always or option.default != value:
-                fileobj.write("%s = %s\n" % (name, option.tostring(value)))
+            if always is None or name in always or option.default != value or name in cfgOptions :
+                fileobj.write("%s=%s\n" % (name, option.tostring(value)))
 
     def getConfigOption(self, option, default=None):
         warnings.warn('getConfigOption() will go away in a future version of Yum.\n'
