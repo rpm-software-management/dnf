@@ -177,8 +177,7 @@ class RPMDBPackageSack(PackageSackBase):
             for (hdr, pkgtup, idx) in self._search(name=name, arch=arch) ]
 
         if not allpkg:
-            # FIXME: raise  ...
-            print 'No Package Matching %s' % name
+            raise Errors.PackageSackError, 'No Package Matching %s' % name
 
         return misc.newestInList(allpkg)
 
@@ -190,8 +189,7 @@ class RPMDBPackageSack(PackageSackBase):
             for (hdr, pkgtup, idx) in self._search(name=name) ]
 
         if not allpkg:
-            # FIXME: raise  ...
-            print 'No Package Matching %s' % name
+            raise Errors.PackageSackError, 'No Package Matching %s' % name
 
         return misc.newestInList(allpkg)
 
