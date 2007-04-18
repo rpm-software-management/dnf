@@ -1767,8 +1767,16 @@ class YumBase(depsolve.Depsolve):
                 pkgs = pkgSack.returnNewestByName()
                 del(pkgSack)
 
+                pkgbyname = {}
+                for pkg in pkgs:
+                    if not pkgbyname.has_key(pkg.name):
+                        pkgbyname[pkg.name] = [ pkg ]
+                    else:
+                        pkgbyname[pkg.name].append(pkg)
+
                 lst = []
-                lst.extend(self.bestPackagesFromList(pkgs))
+                for pkgs in pkgbyname.values():
+                    lst.extend(self.bestPackagesFromList(pkgs))
                 pkgs = lst
 
         if len(pkgs) == 0:
@@ -1779,7 +1787,7 @@ class YumBase(depsolve.Depsolve):
         # FIXME - lots more checking here
         #  - install instead of erase
         #  - better error handling/reporting
-        
+
         tx_return = []
         for po in pkgs:
             if self.tsInfo.exists(pkgtup=po.pkgtup):
