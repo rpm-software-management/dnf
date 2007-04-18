@@ -307,7 +307,7 @@ class YumBase(depsolve.Depsolve):
     def _getRepos(self, thisrepo=None, doSetup = False):
         """grabs the repomd.xml for each enabled repository and sets up 
            the basics of the repository"""
-        
+
         if not self._repos:
             self._repos = RepoStorage()       
             # Get our list of repo objects from conf, add them to the repos collection        
@@ -352,9 +352,6 @@ class YumBase(depsolve.Depsolve):
     def _getSacks(self, archlist=None, thisrepo=None):
         """populates the package sacks for information from our repositories,
            takes optional archlist for archs to include"""
-        
-        if self._pkgSack:
-            return self._pkgSack
         
         if self._pkgSack and thisrepo is None:
             self.verbose_logger.log(logginglevels.DEBUG_4,
