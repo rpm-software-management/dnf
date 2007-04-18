@@ -426,6 +426,7 @@ class YumBase(depsolve.Depsolve):
         warnings.warn('doGroupSetup() will go away in a future version of Yum.\n',
                 Errors.YumFutureDeprecationWarning, stacklevel=2)
 
+        self.comps = None
         return self._getGroups()
 
     def _setGroups(self, val):
