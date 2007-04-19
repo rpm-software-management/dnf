@@ -794,6 +794,10 @@ class Depsolve(object):
             deps = self._mytsCheck()
 
             if not deps:
+                # Handle the case where self.tsInfo has been 
+                # cleared by a plugin.
+                if not len(self.tsInfo):
+                    return (0, ['Success - empty transaction'])                
                 # FIXME: this doesn't belong here at all...
                 for txmbr in self.tsInfo.getMembers():
                     if self.allowedMultipleInstalls(txmbr.po) and \
