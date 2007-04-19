@@ -202,7 +202,7 @@ class YumRepository(Repository, config.RepoConf):
         config.RepoConf.__init__(self)
         Repository.__init__(self, repoid)
 
-        self.urls = []
+        self._urls = []
         self.enablegroups = 0 
         self.groupsfilename = 'yumgroups.xml' # something some freaks might
                                               # eventually want
@@ -230,12 +230,16 @@ class YumRepository(Repository, config.RepoConf):
         self.failure_obj = None
         self.mirror_failure_obj = None
         self.interrupt_callback = None
+        self._callbacks_changed = False
 
         # callback function for handling media
         self.mediafunc = None
         
         self.storage = storagefactory.GetStorage()
         self.sack = self.storage.GetPackageSack()
+
+        self._grabfunc = None
+        self._grab = None
 
     def __getProxyDict(self):
         self.doProxyDict()
@@ -301,13 +305,12 @@ class YumRepository(Repository, config.RepoConf):
         return output
 
     def enable(self):
-        self.baseurlSetup()
         Repository.enable(self)
 
     def check(self):
         """self-check the repo information  - if we don't have enough to move
            on then raise a repo error"""
-        if len(self.urls) < 1 and not self.mediaid:
+        if len(self._urls) < 1 and not self.mediaid:
             raise Errors.RepoError, \
              'Cannot find a valid baseurl for repo: %s' % self.id
 
@@ -348,6 +351,11 @@ class YumRepository(Repository, config.RepoConf):
         return headers
 
     def setupGrab(self):
+        warnings.warn('setupGrab() will go away in a future version of Yum.\n',
+                Errors.YumFutureDeprecationWarning, stacklevel=2)
+        self._setupGrab()
+
+    def _setupGrab(self):
         """sets up the grabber functions with the already stocked in urls for
            the mirror groups"""
 
@@ -358,21 +366,36 @@ class YumRepository(Repository, config.RepoConf):
 
         headers = tuple(self.__headersListFromDict())
 
-        self.grabfunc = URLGrabber(keepalive=self.keepalive,
-                                   bandwidth=self.bandwidth,
-                                   retry=self.retries,
-                                   throttle=self.throttle,
-                                   progress_obj=self.callback,
-                                   proxies = self.proxy_dict,
-                                   failure_callback=self.failure_obj,
-                                   interrupt_callback=self.interrupt_callback,
-                                   timeout=self.timeout,
-                                   http_headers=headers,
-                                   reget='simple')
+        self._grabfunc = URLGrabber(keepalive=self.keepalive,
+                                    bandwidth=self.bandwidth,
+                                    retry=self.retries,
+                                    throttle=self.throttle,
+                                    progress_obj=self.callback,
+                                    proxies = self.proxy_dict,
+                                    failure_callback=self.failure_obj,
+                                    interrupt_callback=self.interrupt_callback,
+                                    timeout=self.timeout,
+                                    http_headers=headers,
+                                    reget='simple')
 
 
-        self.grab = mgclass(self.grabfunc, self.urls,
-                            failure_callback=self.mirror_failure_obj)
+        self._grab = mgclass(self._grabfunc, self.urls,
+                             failure_callback=self.mirror_failure_obj)
+
+    def _getgrabfunc(self):
+        if not self._grabfunc or self._callbacks_changed:
+            self._setupGrab()
+            self._callbacks_changed = False
+        return self._grabfunc
+
+    def _getgrab(self):
+        if not self._grab or self._callbacks_changed:
+            self._setupGrab()
+            self._callbacks_changed = False
+        return self._grab
+
+    grabfunc = property(lambda self: self._getgrabfunc())
+    grab = property(lambda self: self._getgrab())
 
     def dirSetup(self):
         """make the necessary dirs, if possible, raise on failure"""
@@ -403,9 +426,13 @@ class YumRepository(Repository, config.RepoConf):
                         "Cannot access repository dir %s" % dir
 
     def baseurlSetup(self):
+        warnings.warn('baseurlSetup() will go away in a future version of Yum.\n',
+                Errors.YumFutureDeprecationWarning, stacklevel=2)
+        self._baseurlSetup()
+
+    def _baseurlSetup(self):
         """go through the baseurls and mirrorlists and populate self.urls
            with valid ones, run  self.check() at the end to make sure it worked"""
-
         goodurls = []
         if self.mirrorlist and not self.mirrorlistparsed:
             mirrorurls = getMirrorList(self.mirrorlist, self.proxy_dict)
@@ -423,9 +450,15 @@ class YumRepository(Repository, config.RepoConf):
             else:
                 goodurls.append(url)
     
-        self.setAttribute('urls', goodurls)
+        self._urls = goodurls
         self.check()
-        self.setupGrab() # update the grabber for the urls
+
+    def _geturls(self):
+        if not self._urls:
+            self._baseurlSetup()
+        return self._urls
+
+    urls = property(lambda self: self._geturls())
 
     def _getFile(self, url=None, relative=None, local=None, start=None, end=None,
             copy_local=0, checkfunc=None, text=None, reget='simple', cache=True):
@@ -582,7 +615,6 @@ class YumRepository(Repository, config.RepoConf):
         try:
             self.cache = cache
             self.mediafunc = mediafunc
-            self.baseurlSetup()
             self.dirSetup()
         except Errors.RepoError, e:
             raise
@@ -747,19 +779,19 @@ class YumRepository(Repository, config.RepoConf):
 
     def setCallback(self, callback):
         self.callback = callback
-        self.setupGrab()
+        self._callbacks_changed = True
 
     def setFailureObj(self, failure_obj):
         self.failure_obj = failure_obj
-        self.setupGrab()
+        self._callbacks_changed = True
 
     def setMirrorFailureObj(self, failure_obj):
         self.mirror_failure_obj = failure_obj
-        self.setupGrab()
+        self._callbacks_changed = True
 
     def setInterruptCallback(self, callback):
         self.interrupt_callback = callback
-        self.setupGrab()
+        self._callbacks_changed = True
 
 def getMirrorList(mirrorlist, pdict = None):
     """retrieve an up2date-style mirrorlist file from a url,
