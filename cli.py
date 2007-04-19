@@ -1161,6 +1161,10 @@ class YumOptionParser(OptionParser):
         if opts.installroot:
             if os.access(opts.installroot+'/'+opts.conffile, os.R_OK):
                 opts.conffile = opts.installroot+'/'+opts.conffile
+            elif opts.conffile == '/etc/yum/yum.conf':
+                # check if /installroot/etc/yum.conf exists.
+                if os.access(opts.installroot+'/etc/yum.conf', os.R_OK):
+                    opts.conffile = opts.installroot+'/etc/yum.conf'         
             root=opts.installroot
         else:
             root = '/'
