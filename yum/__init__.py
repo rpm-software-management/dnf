@@ -150,8 +150,6 @@ class YumBase(depsolve.Depsolve):
 
         # who are we:
         self.conf.uid = os.geteuid()
-        if self.conf.uid != 0:
-            self.conf.cache = 1
             
         self.doFileLogSetup(self.conf.uid, self.conf.logfile)
 
