@@ -145,6 +145,8 @@ class YumBase(depsolve.Depsolve):
                     startupconf.pluginconfpath)
 
         self._conf = config.readMainConfig(startupconf)
+        # run the postconfig plugin hook
+        self.plugins.run('postconfig')
         self.yumvar = self.conf.yumvar
         self.getReposFromConfig()
 

@@ -70,6 +70,7 @@ ALL_TYPES = (TYPE_CORE, TYPE_INTERACTIVE)
 # Mapping of slots to conduit classes
 SLOT_TO_CONDUIT = {
     'config': 'ConfigPluginConduit',
+    'postconfig': 'PostConfigPluginConduit',
     'init': 'InitPluginConduit',
     'predownload': 'DownloadPluginConduit',
     'postdownload': 'DownloadPluginConduit',
@@ -412,7 +413,11 @@ class ConfigPluginConduit(PluginConduit):
         else:
             raise Errors.ConfigError('registration of commands not supported')
 
-            
+class PostConfigPluginConduit(ConfigPluginConduit):
+
+    def getConf(self):
+        return self._base.conf
+
 class InitPluginConduit(PluginConduit):
 
     def getConf(self):
