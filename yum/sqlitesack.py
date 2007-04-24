@@ -64,7 +64,8 @@ class YumAvailablePackageSqlite(YumAvailablePackage, PackageObject, RpmBase):
             except (IndexError, KeyError):
                 return None
 
-        for item in ['name', 'arch', 'epoch', 'version', 'release', 'pkgId']:
+        for item in ['name', 'arch', 'epoch', 'version', 'release', 'pkgId',
+                     'pkgKey']:
             try:
                 setattr(self, item, db_obj[item])
             except (IndexError, KeyError):
@@ -180,11 +181,10 @@ class YumAvailablePackageSqlite(YumAvailablePackage, PackageObject, RpmBase):
             cur = cache.cursor()
             query = "select %s.name as name, %s.version as version, "\
                         "%s.release as release, %s.epoch as epoch, "\
-                        "%s.flags as flags from %s,packages "\
-                        "where packages.pkgKey = %s.pkgKey and "\
-                        "packages.pkgId = '%s'" % (prcotype, prcotype,
+                        "%s.flags as flags from %s "\
+                        "where %s.pkgKey = '%s'" % (prcotype, prcotype,
                         prcotype, prcotype, prcotype, prcotype, prcotype,
-                        self.pkgId)
+                        self.pkgKey)
             executeSQL(cur, query)
             for ob in cur:
                 self.prco[prcotype].append((ob['name'], ob['flags'],
