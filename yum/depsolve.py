@@ -863,6 +863,17 @@ class Depsolve(object):
                 dep_proc_time = dep_end_time - dep_start_time
                 self.verbose_logger.log(logginglevels.DEBUG_2, 'processing dep took: %f', dep_proc_time)
                 
+                if missing:
+                    # If we have missing requires make sure we process
+                    # packages that need them again by removing them
+                    # from the already_seen cache instead of blindly 
+                    # assuming that we already completely resolved their
+                    # problems
+                    for curpkg in self.dcobj.already_seen.keys():
+                        if curpkg.name == needname:
+                            del(self.dcobj.already_seen[curpkg])
+
+
                 missingdep += missing
                 conflicts += conflict
                 CheckDeps |= checkdep
