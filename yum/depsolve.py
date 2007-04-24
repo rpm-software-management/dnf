@@ -949,6 +949,29 @@ class Depsolve(object):
                         break
                 if not found:
                     member.setAsDep(txmbr.po)
+
+        for conflict in txmbr.po.returnPrco('conflicts'):
+            (r, f, v) = conflict
+            txmbrs = self.tsInfo.matchNaevr(name=r)
+            for tx in self.tsInfo.getMembersWithState(output_states = TS_INSTALL_STATES):
+                if tx.name != r and r not in tx.po.provides_names:
+                    continue
+                if tx.po.checkPrco('provides', (r, f, v)):
+                    ret.append( ((txmbr.name, txmbr.version, txmbr.release),
+                                 (r, version_tuple_to_string(v)), flags[f],
+                                 None, rpm.RPMDEP_SENSE_CONFLICTS) )
+
+            inst = self.rpmdb.whatProvides(r, None, None)
+            for pkgtup in inst:
+                txmbrs = self.tsInfo.getMembersWithState(pkgtup,
+                                                         TS_REMOVE_STATES)
+                if not txmbrs:
+                    po = self.getInstalledPackageObject(pkgtup)
+                    if po.checkPrco('provides', (r, f, v)):
+                        ret.append( ((txmbr.name, txmbr.version, txmbr.release),
+                                     (r, version_tuple_to_string(v)), flags[f],
+                                     None, rpm.RPMDEP_SENSE_CONFLICTS) )
+                    
         return ret
 
     def _checkRemove(self, txmbr):
