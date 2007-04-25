@@ -7,7 +7,17 @@ class InPrcoRangePackageTests(unittest.TestCase):
 
     def setUp(self):
         self.po = packages.RpmBase()
+        self.po.rel = 10
         self.po.prco['provides'].append(("seth", "EQ", (1, 2, 3)))
+        self.po.prco['requires'].append(("foo", "GE", (4, 5, None)))
+
+    def testRequiresEqPass(self):
+        dep = ("foo", "EQ", (4, 5, 0))
+        self.assertTrue(self.po.inPrcoRange('requires', dep))
+
+    def testRequiresEqFailGt(self):
+        dep = ("foo", "EQ", (4, 4, 0))
+        self.assertFalse(self.po.inPrcoRange('requires', dep))
 
     def testProvidesGePass(self):
         dep = ("seth", "GE", (1, 0, 0))
