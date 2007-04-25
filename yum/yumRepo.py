@@ -213,7 +213,7 @@ class YumRepository(Repository, config.RepoConf):
         self.groupsfilename = 'yumgroups.xml' # something some freaks might
                                               # eventually want
         self.repoMDFile = 'repodata/repomd.xml'
-        self.repoXML = None
+        self._repoXML = None
         self.cache = 0
         self.mirrorlistparsed = 0
         self.yumvar = {} # empty dict of yumvariables for $string replacement
@@ -446,6 +446,7 @@ class YumRepository(Repository, config.RepoConf):
         goodurls = []
         if self.mirrorlist and not self.mirrorlistparsed:
             mirrorurls = getMirrorList(self.mirrorlist, self.proxy_dict)
+            print mirrorurls
             self.mirrorlistparsed = 1
             for url in mirrorurls:
                 url = parser.varReplace(url, self.yumvar)
@@ -629,18 +630,13 @@ class YumRepository(Repository, config.RepoConf):
         except Errors.RepoError, e:
             raise
 
-        try:
-            self._loadRepoXML(text=self)
-        except Errors.RepoError, e:
-            raise Errors.RepoError, ('Cannot open/read repomd.xml file for repository: %s' % self)
-
 
     def _loadRepoXML(self, text=None):
         """retrieve/check/read in repomd.xml from the repository"""
 
         remote = self.repoMDFile
         local = self.cachedir + '/repomd.xml'
-        if self.repoXML is not None:
+        if self._repoXML is not None:
             return
     
         if self.cache or self.metadataCurrent():
@@ -666,9 +662,23 @@ class YumRepository(Repository, config.RepoConf):
             self.setMetadataCookie()
 
         try:
-            self.repoXML = repoMDObject.RepoMD(self.id, result)
+            self._repoXML = repoMDObject.RepoMD(self.id, result)
         except Errors.RepoMDError, e:
             raise Errors.RepoError, 'Error importing repomd.xml from %s: %s' % (self, e)
+
+    def _getRepoXML(self):
+        if self._repoXML:
+            return self._repoXML
+        try:
+            self._loadRepoXML(text=self)
+        except Errors.RepoError, e:
+            raise Errors.RepoError, ('Cannot open/read repomd.xml file for repository: %s' % self)
+        return self._repoXML
+        
+
+    repoXML = property(fget=lambda self: self._getRepoXML(),
+                       fset=lambda self, val: setattr(self, "_repoXML", val),
+                       fdel=lambda self: setattr(self, "_repoXML", None))
 
     def _checkRepoXML(self, fo):
         if type(fo) is types.InstanceType:
