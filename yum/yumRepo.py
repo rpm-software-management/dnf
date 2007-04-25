@@ -446,7 +446,6 @@ class YumRepository(Repository, config.RepoConf):
         goodurls = []
         if self.mirrorlist and not self.mirrorlistparsed:
             mirrorurls = getMirrorList(self.mirrorlist, self.proxy_dict)
-            print mirrorurls
             self.mirrorlistparsed = 1
             for url in mirrorurls:
                 url = parser.varReplace(url, self.yumvar)
