@@ -60,15 +60,14 @@ class UpdateNotice(object):
 
     def __str__(self):
         head = """
-Id          : %s
-Type        : %s
-Status      : %s
-Issued      : %s
-Updated     : %s
+ID          : %(update_id)s
+Type        : %(type)s
+Status      : %(status)s
+Issued      : %(issued)s
+Updated     : %(updated)s
 Description :
-%s
-        """ % (self._md['update_id'], self._md['type'], self._md['status'],
-               self._md['issued'], self._md['updated'], self._md['description'])
+%(description)s
+        """ % self._md
 
         refs = '\n== References ==\n'
         for ref in self._md['references']:
@@ -112,7 +111,7 @@ Description :
             for child in elem:
                 if child.tag == 'id':
                     if not child.text:
-                        raise UpdateNoticeException
+                        raise UpdateNoticeException("No id element found")
                     self._md['update_id'] = child.text
                 elif child.tag == 'pushcount':
                     self._md['pushcount'] = child.text
@@ -215,15 +214,19 @@ class UpdateMetadata(object):
     notices = property(get_notices)
 
     def get_notice(self, nvr):
-        """ Retrieve an update notice for a given (name, version, release). """
-        nvr = '-'.join(nvr)
+        """
+        Retrieve an update notice for a given (name, version, release) string
+        or tuple.
+        """
+        if type(nvr) in (type([]), type(())):
+            nvr = '-'.join(nvr)
         return self._cache.has_key(nvr) and self._cache[nvr] or None
 
     def add(self, obj, mdtype='updateinfo'):
         """ Parse a metadata from a given YumRepository, file, or filename. """
         if not obj:
             raise UpdateNoticeException
-        if type(obj) == type('str'):
+        if type(obj) in (type(''), type(u'')):
             infile = obj.endswith('.gz') and gzip.open(obj) or open(obj, 'rt')
         elif isinstance(obj, YumRepository):
             if obj.id not in self._repos:
