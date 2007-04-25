@@ -173,9 +173,6 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         except CliError:
             sys.exit(1)
     
-        # set our caching mode correctly
-        if self.conf.uid != 0:
-            self.conf.cache = 1
         # run the sleep - if it's unchanged then it won't matter
         time.sleep(sleeptime)
         
@@ -1109,8 +1106,9 @@ class YumOptionParser(OptionParser):
             # Handle remaining options
             if opts.assumeyes:
                 self.base.conf.assumeyes =1
-
-            if opts.cacheonly:
+            # seems a good place for it - to go back to yum 3.0.X behavior
+            # if not root then caching is enabled
+            if opts.cacheonly or self.base.conf.uid != 0:
                 self.base.conf.cache = 1
 
             if opts.obsoletes:
