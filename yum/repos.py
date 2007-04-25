@@ -37,7 +37,13 @@ class RepoStorage:
         
     def __str__(self):
         return str(self.repos.keys())
-    
+
+    def __del__(self):
+        self.close()
+
+    def close(self):
+        for repo in self.repos.values():
+            repo.close()
 
     def add(self, repoobj):
         if self.repos.has_key(repoobj.id):
@@ -222,6 +228,12 @@ class Repository:
     def __hash__(self):
         return hash(self.id)
         
+    def __del__(self):
+        self.close()
+
+    def close(self):
+        pass
+
     def setAttribute(self, key, value):
         """sets a generic attribute of this repository"""
         setattr(self, key, value)

@@ -45,6 +45,12 @@ class YumPackageSack(packageSack.PackageSack):
         self.pc = packageClass
         self.added = {}
 
+    def __del__(self):
+        self.close()
+
+    def close(self):
+        pass
+
     def addDict(self, repo, datatype, dataobj, callback=None):
         if self.added.has_key(repo):
             if datatype in self.added[repo]:
@@ -240,6 +246,10 @@ class YumRepository(Repository, config.RepoConf):
 
         self._grabfunc = None
         self._grab = None
+
+    def close(self):
+        self.sack.close()
+        Repository.close(self)
 
     def __getProxyDict(self):
         self.doProxyDict()

@@ -79,7 +79,13 @@ class YumBase(depsolve.Depsolve):
         self.localPackages = [] # for local package handling
 
         self.mediagrabber = None
-    
+
+    def __del__(self):
+        self.close()
+
+    def close(self):
+        if self._repos:
+            self._repos.close()
 
     def _transactionDataFactory(self):
         """Factory method returning TransactionData object"""

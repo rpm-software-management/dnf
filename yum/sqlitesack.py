@@ -211,6 +211,13 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
             executeSQL(cur, "select count(pkgId) from packages")
             return cur.fetchone()[0]
 
+    def close(self):
+        for dataobj in self.primarydb.values() + \
+                       self.filelistsdb.values() + \
+                       self.otherdb.values():
+            dataobj.close()
+        yumRepo.YumPackageSack.close(self)
+
     def buildIndexes(self):
         # We don't need these
         return
