@@ -263,8 +263,9 @@ class RpmBase(object):
                 # found it
                 if f is None:
                     return 1
-                if f != 'EQ':
-                    # isn't this odd, it's not 'EQ' - it really should be
+                if f != 'EQ' and prcotype == 'provides':                
+                    # isn't this odd, it's not 'EQ' and it is a provides
+                    # - it really should be EQ
                     # use the pkgobj's evr for the comparison
                     if e is None:
                         e = self.epoch
