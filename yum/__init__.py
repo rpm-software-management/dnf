@@ -53,7 +53,7 @@ warnings.simplefilter("ignore", Errors.YumFutureDeprecationWarning)
 from packages import parsePackages, YumAvailablePackage, YumLocalPackage, YumInstalledPackage
 from constants import *
 
-__version__ = '3.1.6'
+__version__ = '3.1.7'
 
 class YumBase(depsolve.Depsolve):
     """This is a primary structure and base class. It houses the objects and
