@@ -96,13 +96,16 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
                 'skipping reposetup, pkgsack exists')
             return self._repos
             
-      
-        self.verbose_logger.log(yum.logginglevels.INFO_2,
-            'Setting up repositories')
+        if not thisrepo:
+            self.verbose_logger.log(yum.logginglevels.INFO_2,
+                'Setting up repositories')
 
         # Call parent class to do the bulk of work 
         # (this also ensures that reposetup plugin hook is called)
-        yum.YumBase._getRepos(self, thisrepo=thisrepo)
+        if thisrepo:
+            yum.YumBase._getRepos(self, thisrepo=thisrepo, doSetup=True)
+        else:
+            yum.YumBase._getRepos(self, thisrepo=thisrepo)
 
         if dosack: # so we can make the dirs and grab the repomd.xml but not import the md
             self.verbose_logger.log(yum.logginglevels.INFO_2,
