@@ -1148,6 +1148,12 @@ class YumOptionParser(OptionParser):
             # make sure the added repos are setup.        
             if len(opts.repos) > 0:
                 self.base._getRepos(doSetup=True)
+
+            # Disable all gpg key checking, if requested.
+            if opts.nogpgcheck:
+                self.base.conf.gpgcheck = False
+                for repo in self.base.repos.listEnabled():
+                    repo.gpgcheck = False
                             
         except ValueError, e:
             self.logger.critical(_('Options Error: %s'), e)
@@ -1225,6 +1231,9 @@ class YumOptionParser(OptionParser):
         self.add_option("", "--noplugins", dest="noplugins",
                 default=False, action="store_true", 
                 help="disable Yum plugins")
+        self.add_option("", "--nogpgcheck", dest="nogpgcheck",
+                default=False, action="store_true",
+                help="disable gpg signature checking")
         
         
 
