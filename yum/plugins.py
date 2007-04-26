@@ -54,7 +54,7 @@ from parser import ConfigPreProcessor
 # API, the major version number must be incremented and the minor version number
 # reset to 0. If a change is made that doesn't break backwards compatibility,
 # then the minor number must be incremented.
-API_VERSION = '2.5'
+API_VERSION = '2.6'
 
 class DeprecatedInt(int):
     '''
