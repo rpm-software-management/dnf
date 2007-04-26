@@ -47,6 +47,7 @@ class RPMDBPackageSack(PackageSackBase):
     def __init__(self, root='/'):
         self.root = root
         self._header_dict = {}
+        self._header_by_name = {}
         self.ts = None
         
     def _get_pkglist(self):
@@ -241,7 +242,8 @@ class RPMDBPackageSack(PackageSackBase):
         for (hdr, idx) in self._all_packages():
             pkgtup = self._hdr2pkgTuple(hdr)
             self._header_dict[pkgtup] = (hdr, idx)
-        
+            self._header_by_name.setdefault(pkgtup[0], []).append(
+                (pkgtup, (hdr, idx)))
         
     def _search(self, name=None, epoch=None, ver=None, rel=None, arch=None):
         '''Generator that yield (header, pkgtup, index) for matching packages
@@ -266,7 +268,12 @@ class RPMDBPackageSack(PackageSackBase):
                 hdr, idx = self._header_dict[pkgtup]
                 ret.append( (hdr, pkgtup, idx) )
         else:
-            for (pkgtup, (hdr, idx)) in self._header_dict.items():
+            if name is not None:
+                pkg_list = self._header_by_name.get(name, [ ])
+            else:
+                pkg_list = self._header_dict.items()
+                
+            for (pkgtup, (hdr, idx)) in pkg_list:
                 ok = True
                 for thisindex, val in lookfor:
                     if pkgtup[thisindex] != val:
