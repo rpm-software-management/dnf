@@ -1126,7 +1126,10 @@ class YumOptionParser(OptionParser):
                     self.logger.critical(e)
                     self.base.usage()
                     sys.exit(1)
-               
+
+            # setup the progress bars/callbacks
+            self.base.setupProgessCallbacks()
+                    
             # Process repo enables and disables in order
             for opt, repoexp in opts.repos:
                 try:
@@ -1138,7 +1141,7 @@ class YumOptionParser(OptionParser):
                     self.logger.critical(e)
                     self.base.usage()
                     sys.exit(1)
-                    
+
             # make sure the added repos are setup.        
             if len(opts.repos) > 0:
                 self.base._getRepos(doSetup=True)
@@ -1148,9 +1151,6 @@ class YumOptionParser(OptionParser):
             self.base.usage()
             sys.exit(1)
          
-        # setup the progress bars/callbacks
-        self.base.setupProgessCallbacks()
-        
         return opts, cmds
 
     def getRoot(self,opts):
