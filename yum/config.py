@@ -326,34 +326,17 @@ class ThrottleOption(BytesOption):
             return BytesOption.parse(self, s)
 
 
-class autoopt(type):
-
-    def __init__(cls, name, bases, dict):
-        super(autoopt, cls).__init__(name, bases, dict)
-
-        cls.options = []
-        for base in bases:
-            options = getattr(base, 'options', [])
-            cls.options.extend(options)
-
-        for key in dict.keys():
-            option = getattr(cls, key)
-            if isinstance(option, Option):
-                cls.options.append((key, option))
-
 class BaseConfig(object):
     '''
     Base class for storing configuration definitions. Subclass when creating
     your own definitons.
     '''
 
-    __metaclass__ = autoopt
-    options = []
-
     def __init__(self):
         self._section = None
 
-        for (name, option) in self.options:
+        for name in self.iterkeys():
+            option = self.optionobj(name)
             option.setup(self, name)
 
     def __str__(self):
@@ -374,7 +357,8 @@ class BaseConfig(object):
         self.cfg = parser
         self._section = section
 
-        for (name, option) in self.options:
+        for name in self.iterkeys():
+            option = self.optionobj(name)
             value = None
             try:
                 value = parser.get(section, name)
@@ -409,7 +393,7 @@ class BaseConfig(object):
     def iterkeys(self):
         '''Yield the names of all defined options in the instance.
         '''
-        for name, item in self.options:
+        for name, item in self.iteritems():
             yield name
 
     def iteritems(self):
@@ -417,7 +401,10 @@ class BaseConfig(object):
 
         The value returned is the parsed, validated option value.
         '''
-        return map (lambda (x, y) : (x, getattr(self, x)), self.options)
+        # Use dir() so that we see inherited options too
+        for name in dir(self):
+            if self.isoption(name):
+                yield (name, getattr(self, name))
 
     def write(self, fileobj, section=None, always=()):
         '''Write out the configuration to a file-like object
