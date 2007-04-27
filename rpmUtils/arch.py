@@ -92,10 +92,17 @@ def getBestArchFromList(archlist, myarch=None):
     
     if myarch is None:
         myarch = canonArch
-
+    
+    mybestarch = getBestArch(myarch)
+    
     if len(archlist) == 0:
         return None
-    
+    bestarch = getBestArch(myarch)
+    if bestarch != myarch:
+        bestarchchoice = getBestArchFromList(archlist, bestarch)
+        if bestarchchoice != None and bestarchchoice != "noarch":
+            return bestarchchoice
+            
     thisarch = archlist[0]
     for arch in archlist[1:]:
         val1 = archDifference(myarch, thisarch)
@@ -261,14 +268,17 @@ def getMultiArchInfo(arch = canonArch):
 # get the best usual userspace arch for the arch we're on.  this is
 # our arch unless we're on an arch that uses the secondary as its
 # userspace (eg ppc64, sparc64)
-def getBestArch():
-    arch = canonArch
+def getBestArch(myarch=None):
+    if myarch:
+        arch = myarch
+    else:
+        arch = canonArch
 
     if arch.startswith("sparc64"):
-        arch = "sparc"
+        arch = multilibArches[arch][1]
 
     if arch.startswith("ppc64"):
-        arch = "ppc"
+        arch = 'ppc'
 
     return arch
 
