@@ -1,3 +1,315 @@
+2007-04-27 09:29  skvidal
+
+	* yum.spec: 
+	add dep on yum-metadata-parser for dbversion 10
+
+2007-04-27 08:59  skvidal
+
+	* rpmUtils/arch.py: 
+	closes some obscure arch sorting issues with ppc and sparc rh bug:
+	233427
+
+2007-04-26 19:22  jbowes
+
+	* cli.py, docs/yum.8: add --nogpgcheck command line option
+
+2007-04-26 11:30  katzj
+
+	* yum/rpmsack.py: reduce overhead of rpmack._search (Florian Festi)
+
+2007-04-26 10:10  skvidal
+
+	* yum.spec, yum/__init__.py: mark as 3.1.7
+
+2007-04-26 10:04  jbowes
+
+	* yum/config.py: Actually revert the metaclass config changes
+
+2007-04-26 09:24  jbowes
+
+	* yum/config.py: Revert config changes to use a metaclass.
+	
+	We need to let plugins add new class attributes to the config
+	classes, and to have these new class attributes be accessable from
+	subclasses.  Rather than wrangle the metaclass code to do this (if
+	possible), let's just revert it.
+
+2007-04-26 03:00  skvidal
+
+	* cli.py: 
+	clean up some cases where we output 'Setting up Repositories' when
+	we really don't need to.
+
+2007-04-26 00:00  skvidal
+
+	* yum/plugins.py: 
+	iterate plugin minor version number
+
+2007-04-25 21:10  katzj
+
+	* cli.py: set up progress callbacks before we od the repo setup;
+	we've removed the explicit calls to doRepoSetup() and therefore
+	need to ensure that we do the callback setup before we implicitly
+	use doRepoSetup (and thus, call the postreposetup hook) 
+	(rh#236152)
+
+2007-04-25 18:51  skvidal
+
+	* cli.py: setup caching at the right place in yum-cli. If the conf
+	object is already done and the repos have been touched then we
+	won't be able to set caching mode later. This prevents a silent
+	exit if we're running as user
+
+2007-04-25 18:23  skvidal
+
+	* yum/yumRepo.py: debug cleanup
+
+2007-04-25 18:12  katzj
+
+	* yum/yumRepo.py: make repoXML a property so that we don't get it
+	until we need it.  this fixes --disablerepo (rh#230851) and -C
+	working offline (rh#223607)
+
+2007-04-25 16:19  gijs
+
+	* yum/packages.py: Fix problem with inPrcoRange which incorrectly
+	takes the release of the providing package for requirements with
+	flag != 'EQ' that do not specify an exact release.
+
+2007-04-25 16:17  gijs
+
+	* test/packagetests.py: Added two unit-tests for inPrcoRange with
+	prcotype=requires This shows that for requires with flag != EQ yum
+	incorrectly takes the version of the package itself for
+	requirements that do not require a specific release (i.e.
+	release==None)
+
+2007-04-25 15:26  katzj
+
+	* etc/yum-updatesd.init: nice yum-updatesd (rh#232202)
+
+2007-04-25 15:07  katzj
+
+	* yum-updatesd.py: default to sending email to/from just root
+	(rh#221940)
+
+2007-04-25 14:43  lmacken
+
+	* yum/update_md.py: - Handle unicode metadata filenames - Accept
+	'n-v-r' as well as ('n', 'v', 'r') in get_notice() - A couple of
+	other cleanups too
+
+2007-04-25 14:28  katzj
+
+	* yum/: __init__.py, repos.py, sqlitesack.py, yumRepo.py: add close
+	methods so that sqlite dbs get closed (Mark McLoughlin, rh#236409)
+
+2007-04-25 14:18  katzj
+
+	* yum/__init__.py: report what the other pid is (rh#201393)
+
+2007-04-24 17:13  katzj
+
+	* yum/sqlitesack.py: From Gijs Hollestelle --
+	
+	Now for every package we get it's requirements, provides, etc by
+	performing a query like this: select provides.* from
+	provides,packages where provides.pkgKey = packages.pkgKey and
+	package.pkgId = 'foo'
+	
+	This uses two tables in a join. Because yum is already smart enough
+	to know which sqlite database to query and because pkgKey's are
+	unique per database we can do this without the join by doing it
+	directly on the pkgKey: select provides.* from provides where
+	provides.pkgKey = 'bar'
+
+2007-04-24 17:02  katzj
+
+	* yum/depsolve.py: From Gijs Hollestelle --
+	
+	I managed to trace it to the already_seen cache in depsolver.py it
+	turns out that	when resolveDeps has missing requirements and
+	restarts the depsolving loop the packages that caused that missing
+	requirements are marked as already seen in the cache and their
+	dependencies not always resolved again, this causes problems at
+	least in the case of an upgrade but I can imagine that it could
+	cause other problems as well.
+	
+	I've included a small patch to fix this, it removes all packages
+	resulting in missing dependencies from the already seen cache
+	before starting the next round of depsolving.
+
+2007-04-24 16:06  skvidal
+
+	* yum/: __init__.py, plugins.py: add a postconfig hook to the
+	plugin architecture
+
+2007-04-24 15:45  katzj
+
+	* yum/depsolve.py: checking conflicts is good for us (rh#237599)
+
+2007-04-20 05:58  timlau
+
+	* yum/__init__.py: Patch to make API applications like
+	yumdownloader work as non root, without beeing forced to use the
+	cache.
+
+2007-04-19 19:10  jbowes
+
+	* yum/yumRepo.py: Lazy mirrorlist initialization via properties
+
+2007-04-19 04:37  timlau
+
+	* cli.py: fixed using an installroot dont work if yum.conf was
+	located in /my/install/root/etc/yum.conf', only if it was located
+	in /my/install/root/etc/yum/yum.conf.
+
+2007-04-19 03:43  timlau
+
+	* yum/depsolve.py: Add patch by James Antill, to handle the case
+	where all packages has been removed by a plugin.
+
+2007-04-18 19:38  katzj
+
+	* yum/__init__.py: unset comps before we do the setup.	this
+	ensures that we go back through and set everything back up (related
+	to rh#231543)
+
+2007-04-18 19:16  katzj
+
+	* yum/__init__.py: fix explicit sack setup (rh#231543)
+
+2007-04-18 17:41  katzj
+
+	* yum/__init__.py: fix pattern installs (rh#236950)
+
+2007-04-18 03:13  timlau
+
+	* utils.py: Added missing import
+
+2007-04-17 16:54  katzj
+
+	* yum/: depsolve.py, transactioninfo.py: fix broken api
+	
+	if you have your own TransactionData class, then the signature of
+	getMembers() changing breaks thing substantially.  instead, just
+	add a new method for the new functionality that we want in the
+	depsolver that can work with subclasses too
+
+2007-04-17 16:32  katzj
+
+	* yum/rpmsack.py: raise error instead of printing when there's not
+	a package in the rpmdb.  this makes the API the same as that of all
+	the other package sacks
+
+2007-04-17 05:25  timlau
+
+	* yum/config.py: Fixed the baseconf write method so it: * dont
+	causes a Traceback.  * booleans are saved as "0" & "1", insted of
+	"yes" & "no" * Save all options read by the ConfigParser also if
+	the values are default values.	* saves "option=value", insted of
+	'option = value'
+
+2007-04-13 05:43  timlau
+
+	* yum/packages.py: fix Traceback, if other is a transaction member
+	
+	rhbz #232183 and others.
+
+2007-04-11 10:13  jbowes
+
+	* yum/sqlitesack.py: Commit Jeremy's map checksum_value to pkgId
+	for completeness patch
+
+2007-04-10 18:29  jbowes
+
+	* yum/: constants.py, sqlitesack.py: Go up to database version 10
+
+2007-04-09 17:35  katzj
+
+	* yum/depsolve.py: quiet things back down now that we're more
+	comfortable
+
+2007-04-08 23:06  skvidal
+
+	* rpmUtils/updates.py: 
+	make sure the pseudo arches get it too.
+
+2007-04-08 17:43  skvidal
+
+	* etc/yum.conf: 
+	remove the unused and the not-sensible from the default config
+	file.
+
+2007-04-08 17:40  jbowes
+
+	* yum/sqlitesack.py: Ok, let's always rip off the trailing slash
+
+2007-04-08 17:29  jbowes
+
+	* yum/sqlitesack.py: Just in case someone has an odd Requires:
+	/foo/bar/ cover that too
+
+2007-04-08 17:15  jbowes
+
+	* yum/sqlitesack.py: Speed up searchFiles by searching for dirname
+	when name is not a glob.  This takes yum install eclipse-cdt from
+	33s to 13s on my machine.
+
+2007-04-08 16:46  skvidal
+
+	* rpmUtils/updates.py: closes rh bug:235632 make sure we consider
+	noarch pkgs  when looking at things that can update noarch->x86_64
+	and x86_64->noarch
+
+2007-04-08 16:40  jbowes
+
+	* yum/rpmsack.py: Revert my previous read-only ts patch
+
+2007-04-08 12:32  jbowes
+
+	* yum/rpmsack.py: Replace FutureDeprecationWarning with
+	YumFutureDeprecationWarning
+
+2007-04-08 11:59  jbowes
+
+	* yum/: __init__.py, depsolve.py: Collapse Depsolve and
+	Yumdepsolver into a single class
+
+2007-04-07 23:55  skvidal
+
+	* cli.py: 
+	fix for rh bug: 235572 - merged up from 3.0.X
+
+2007-04-07 14:23  jbowes
+
+	* rpmUtils/miscutils.py: Micro optimization: use elif for
+	flagToString
+
+2007-04-07 14:22  jbowes
+
+	* yum/rpmsack.py: Micro optimization: initialize the read-only
+	transaction at object creation
+
+2007-04-06 09:06  timlau
+
+	* cli.py: Make sure that repo added with --enablerepo is setup. 
+	rhbz #230870,#233573.
+
+2007-04-04 08:18  jbowes
+
+	* yum/sqlitesack.py: Micro optimization: speed up the query in
+	returnPrco
+
+2007-04-04 08:17  jbowes
+
+	* cli.py, yum/config.py, yum/depsolve.py: Micro optimization:
+	replace string.startswith(<single char>) with comparison.
+
+2007-04-04 00:03  skvidal
+
+	* ChangeLog: check in changelog
+
 2007-04-04 00:03  skvidal
 
 	* yum.spec, yum/__init__.py: mark as 3.1.6
