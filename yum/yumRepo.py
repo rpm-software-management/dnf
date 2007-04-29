@@ -35,6 +35,9 @@ from constants import *
 import logging
 import logginglevels
 
+import warnings
+warnings.simplefilter("ignore", Errors.YumFutureDeprecationWarning)
+
 logger = logging.getLogger("yum.Repos")
 verbose_logger = logging.getLogger("yum.verbose.Repos")
 
@@ -468,7 +471,10 @@ class YumRepository(Repository, config.RepoConf):
             self._baseurlSetup()
         return self._urls
 
-    urls = property(lambda self: self._geturls())
+    urls = property(fget=lambda self: self._geturls(),
+                    fset=lambda self, value: setattr(self, "_urls", value),
+                    fdel=lambda self: setattr(self, "_urls", None))
+                    
 
     def _getFile(self, url=None, relative=None, local=None, start=None, end=None,
             copy_local=0, checkfunc=None, text=None, reget='simple', cache=True):
