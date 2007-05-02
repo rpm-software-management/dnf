@@ -479,11 +479,11 @@ class UpdatesDaemon(yum.YumBase):
             self.populateUpdates()
 
             if self.opts.do_update:
-                uit = UpdateInstallThread(self, dlpkgs)
+                uit = UpdateInstallThread(self)
                 uit.start()
             elif self.opts.do_download:
                 self.emitDownloading()
-                dl = UpdateDownloadThread(self, dlpkgs)
+                dl = UpdateDownloadThread(self)
                 dl.start()
             else:
                 # just notify about things being available
