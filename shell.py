@@ -241,20 +241,20 @@ class YumShell(cmd.Cmd):
     def do_repo(self, line):
         (cmd, args, line) = self.parseline(line)
         if cmd in ['list', None]:
-            format_string = "%-20.20s %-40.40s  %s"
-            if self.base.repos.repos.values():
-                self.verbose_logger.log(logginglevels.INFO_2, format_string,
-                    'repo id', 'repo name', 'status')
-            repos = self.base.repos.repos.values()
-            repos.sort()
-            for repo in repos:
-                if repo in self.base.repos.listEnabled() and args in ('', 'enabled'):
-                    self.verbose_logger.log(logginglevels.INFO_2, format_string,
-                        repo, repo.name, 'enabled')
-                elif args in ('', 'disabled'):
-                    self.verbose_logger.log(logginglevels.INFO_2, format_string,
-                        repo, repo.name, 'disabled')
-        
+            # Munge things to run the repolist command
+            cmds = self._shlex_split(args)
+            if not cmds:
+                cmds = ['all']
+            cmds.insert(0, 'repolist')
+            self.base.cmds = cmds
+
+            try:
+                self.base.parseCommands()
+            except Errors.YumBaseError:
+                pass
+            else:
+                self.base.doCommands()
+
         elif cmd == 'enable':
             repos = self._shlex_split(args)
             for repo in repos:

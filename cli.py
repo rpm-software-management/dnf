@@ -80,6 +80,7 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         self.registerCommand(yumcommands.ResolveDepCommand())
         self.registerCommand(yumcommands.ShellCommand())
         self.registerCommand(yumcommands.DepListCommand())
+        self.registerCommand(yumcommands.RepoListCommand())
 
     def registerCommand(self, command):
         for name in command.getNames():

@@ -50,8 +50,9 @@ yum \- Yellowdog Updater Modified
 .br
 .I \fR * localupdate rpmfile1 [rpmfile2] [\&.\&.\&.] 
 .br
-.br
 .I \fR * deplist package1 [package2] [\&.\&.\&.] 
+.br
+.I \fR * repolist [all|enabled|disabled] 
 .br
 .PP 
 Unless the \-\-help or \-h option is given, one of the above commands
@@ -139,6 +140,10 @@ If required the enabled repositories will be used to resolve dependencies.
 .IP "\fBdeplist\fP"
 Produces a list of all dependencies and what packages provide those
 dependencies for the given packages.
+.IP
+.IP "\fBrepolist\fP"
+Produces a list of configured repositories. The default is to list all
+enabled repositories.
 .IP
 .PP
 .SH "GENERAL OPTIONS"

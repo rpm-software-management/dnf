@@ -414,3 +414,40 @@ class DepListCommand(YumCommand):
           return 1, [str(e)]
 
 
+class RepoListCommand:
+    usage = 'repolist [all|enabled|disabled]'
+
+    def getNames(self):
+        return ('repolist',)
+
+    def getUsage(self):
+        return usage
+
+    def doCheck(self, base, basecmd, extcmds):
+        if len(extcmds) == 0:
+            return
+        elif len(extcmds) > 1 or extcmds[0] not in ('all', 'disabled',
+                'enabled'):
+            raise cli.CliError
+
+    def doCommand(self, base, basecmd, extcmds):
+        if len(extcmds) == 1:
+            arg = extcmds[0]
+        else:
+            arg = 'enabled'
+
+        format_string = "%-20.20s %-40.40s  %s"
+        if base.repos.repos.values():
+            base.verbose_logger.log(logginglevels.INFO_2, format_string,
+                'repo id', 'repo name', 'status')
+        repos = base.repos.repos.values()
+        repos.sort()
+        for repo in repos:
+            if repo in base.repos.listEnabled() and arg in ('all', 'enabled'):
+                base.verbose_logger.log(logginglevels.INFO_2, format_string,
+                    repo, repo.name, 'enabled')
+            elif arg in ('all', 'disabled'):
+                base.verbose_logger.log(logginglevels.INFO_2, format_string,
+                    repo, repo.name, 'disabled')
+
+        return 0, []
