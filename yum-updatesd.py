@@ -602,25 +602,25 @@ def restart():
     os.chdir(initial_directory)
     os.execve(sys.argv[0], sys.argv, os.environ)  
 
-def main():
+def main(options = None):
     # we'll be threading for downloads/updates
     gobject.threads_init()
     dbus.glib.threads_init()
-    
-    parser = OptionParser()
-    parser.add_option("-f", "--no-fork", action="store_true", default=False, dest="nofork")
-    parser.add_option("-r", "--remote-shutdown", action="store_true", default=False, dest="remoteshutdown")    
-    (options, args) = parser.parse_args()
 
-    if not options.nofork:
-        if os.fork():
-            sys.exit()
-        fd = os.open("/dev/null", os.O_RDWR)
-        os.dup2(fd, 0)
-        os.dup2(fd, 1)
-        os.dup2(fd, 2)
-        os.close(fd)
+    if options is None:
+        parser = OptionParser()
+        parser.add_option("-f", "--no-fork", action="store_true", default=False, dest="nofork")
+        parser.add_option("-r", "--remote-shutdown", action="store_true", default=False, dest="remoteshutdown")    
+        (options, args) = parser.parse_args()
 
+        if not options.nofork:
+            if os.fork():
+                sys.exit()
+            fd = os.open("/dev/null", os.O_RDWR)
+            os.dup2(fd, 0)
+            os.dup2(fd, 1)
+            os.dup2(fd, 2)
+            os.close(fd)
 
     confparser = ConfigParser()
     opts = UDConfig()
