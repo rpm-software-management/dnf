@@ -21,6 +21,7 @@ import sys
 import gzip
 import exceptions
 
+from textwrap import wrap
 from yum.yumRepo import YumRepository
 
 try:
@@ -39,6 +40,8 @@ class UpdateNotice(object):
         self._md = {
             'from'             : '',
             'type'             : '',
+            'title'            : '',
+            'release'          : '',
             'status'           : '',
             'version'          : '',
             'pushcount'        : '',
@@ -60,36 +63,47 @@ class UpdateNotice(object):
 
     def __str__(self):
         head = """
-ID          : %(update_id)s
-Type        : %(type)s
-Status      : %(status)s
-Issued      : %(issued)s
-Updated     : %(updated)s
-Description :
-%(description)s
-        """ % self._md
+===============================================================================
+  %(title)s
+===============================================================================
+  Update ID : %(update_id)s
+    Release : %(release)s
+       Type : %(type)s
+     Status : %(status)s
+     Issued : %(issued)s
+""" % self._md
 
-        refs = '\n== References ==\n'
-        for ref in self._md['references']:
-            type = ref['type']
-            if type == 'cve':
-                refs += '\n%s : %s\n%s\n' % (ref['id'], ref['href'],
-                                             ref.has_key('summary') and 
-                                             ref['summary'] or '')
-            elif type == 'bugzilla':
-                refs += '\nBug #%s : %s\n%s\n' % (ref['id'], ref['href'],
-                                                  ref.has_key('summary') and
-                                                  ref['summary'] or '')
+        if self._md['updated'] and self._md['updated'] != self._md['issued']:
+            head += "    Updated : %(updated)s" % self_md
 
-        pkglist = '\n== Updated Packages ==\n'
+        # Add our bugzilla references
+        bzs = filter(lambda r: r['type'] == 'bugzilla', self._md['references'])
+        if len(bzs):
+            buglist = "       Bugs :"
+            for bz in bzs:
+                buglist += " %s%s\n\t    :" % (bz['id'], bz.has_key('title')
+                                               and ' - %s' % bz['title'] or '')
+            head += buglist[:-1].rstrip() + '\n'
+
+        # Add our CVE references
+        cves = filter(lambda r: r['type'] == 'cve', self._md['references'])
+        if len(cves):
+            cvelist = "       CVEs :"
+            for cve in cves:
+                cvelist += " %s\n\t    :" % cve['id']
+            head += cvelist[:-1].rstrip() + '\n'
+
+        desc = wrap(self._md['description'], width=64,
+                    subsequent_indent=' ' * 12 + ': ')
+        head += "Description : %s\n" % '\n'.join(desc)
+
+        filelist = "      Files :"
         for pkg in self._md['pkglist']:
-            pkglist += '\n%s\n' % pkg['name']
             for file in pkg['packages']:
-                pkglist += '  %s  %s\n' % (file['sum'][1], file['filename'])
+                filelist += " %s\n\t    :" % file['filename']
+        head += filelist[:-1].rstrip()
 
-        msg = head + refs + pkglist
-
-        return msg
+        return head
 
     def get_metadata(self):
         """ Return the metadata dict. """
@@ -98,7 +112,7 @@ Description :
     def _parse(self, elem):
         """ Parse an update element.
 
-            <!ELEMENT update (id, pushcount, synopsis?, issued, updated,
+            <!ELEMENT update (id, synopsis?, issued, updated,
                               references, description, pkglist)>
                 <!ATTLIST update type (errata|security) "errata">
                 <!ATTLIST update status (final|testing) "final">
@@ -125,6 +139,10 @@ Description :
                     self._md['description'] = child.text
                 elif child.tag == 'pkglist':
                     self._parse_pkglist(child)
+                elif child.tag == 'title':
+                    self._md['title'] = child.text
+                elif child.tag == 'release':
+                    self._md['release'] = child.text
         else:
             raise UpdateNoticeException('No update element found')
 
@@ -132,23 +150,17 @@ Description :
         """ Parse the update references.
 
             <!ELEMENT references (reference*)>
-            <!ELEMENT reference (summary*)>
+            <!ELEMENT reference>
                 <!ATTLIST reference href CDATA #REQUIRED>
                 <!ATTLIST reference type (self|cve|bugzilla) "self">
                 <!ATTLIST reference id CDATA #IMPLIED>
-            <!ELEMENT cve (#PCDATA)>
-            <!ELEMENT bugzilla (#PCDATA)>
-            <!ELEMENT summary (#PCDATA)>
-            <!ELEMENT description (#PCDATA)>
+                <!ATTLIST reference title CDATA #IMPLIED>
         """
         for reference in elem:
             if reference.tag == 'reference':
                 data = {}
-                for refattrib in ('id', 'href', 'type'):
+                for refattrib in ('id', 'href', 'type', 'title'):
                     data[refattrib] = reference.attrib.get(refattrib)
-                for child in reference:
-                    if child.tag == 'summary':
-                        data['summary'] = child.text
                 self._md['references'].append(data)
             else:
                 raise UpdateNoticeException('No reference element found')
