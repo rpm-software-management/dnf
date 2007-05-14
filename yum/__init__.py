@@ -439,8 +439,9 @@ class YumBase(depsolve.Depsolve):
         if val is None:
             # if we unset the comps object, we need to undo which repos have
             # been added to the group file as well
-            for repo in self.repos.listGroupsEnabled():
-                repo.groups_added = False
+            if self._repos:
+                for repo in self._repos.listGroupsEnabled():
+                    repo.groups_added = False
         self._comps = val
     
     def _getGroups(self):
