@@ -17,4 +17,4 @@ install:
 	for p in $(PYFILES) ; do \
 		install -m 644 $$p $(DESTDIR)/$(PKGDIR)/$$p; \
 	done
-	$(PYTHON) -c "import compileall; compileall.compile_dir('$(DESTDIR)/$(PKGDIR)', 1, '$(PYDIR)', 1)"
+	$(PYTHON) -c "import compileall; compileall.compile_dir('$(DESTDIR)/$(PKGDIR)', 1, '$(PKGDIR)', 1)"
