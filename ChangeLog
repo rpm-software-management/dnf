@@ -1,3 +1,57 @@
+2007-05-16 17:02  skvidal
+
+	* yum.spec, yum/__init__.py: mark as 3.2.0
+
+2007-05-16 09:21  skvidal
+
+	* yum/Makefile, rpmUtils/Makefile: fix from Christoph Thiel and Jan
+	Matejek "The problem is that when precompiling python files, the
+	compiler needs to know their "base path" which will be used in
+	debug outputs (such as the backtrace). Without this patch, makefile
+	sets $(PYDIR) as the base path, but $(PYDIR) isn't defined and the
+	base path stays empty.	(some of our python builds apparently can't
+	deal with it and use PIL's base path instead) The patch replaces
+	$(PYDIR) with correct value, $(PKGDIR)."
+
+2007-05-14 14:39  katzj
+
+	* yum/__init__.py: don't cause repos to be set up unnecessarily
+	(rh#238940)
+
+2007-05-06 00:12  lmacken
+
+	* yum/update_md.py: - Add title and release to metadata - Clean up
+	UpdateNotice.__str__ - Remove pushcount, as it does not seem very
+	useful at the moment - inline DTD updates - s/summary/title/ for
+	Bugzilla and CVE's
+
+2007-05-02 21:24  katzj
+
+	* yum-updatesd.py, bin/yum-updatesd.py: move option parsing around
+	a little so that yum-updatesd will start faster (rh#220614)
+
+2007-05-02 19:19  jbowes
+
+	* cli.py, shell.py, yumcommands.py, docs/yum.8: Add repolist
+	command.
+	
+	This is just the 'repo list' yum shell command. 'repo list' now
+	calls the repolist command instead.
+
+2007-05-02 17:58  katzj
+
+	* yum-updatesd.py: fix name error (#238685)
+
+2007-04-29 09:51  skvidal
+
+	* yum/yumRepo.py: 
+	make sure we can set and del repoobj.urls for fastestmirrors, etc
+	rh bugs: 238305 and 238276
+
+2007-04-27 09:37  skvidal
+
+	* ChangeLog: changelog merge - 3.1.7
+
 2007-04-27 09:29  skvidal
 
 	* yum.spec: 
