@@ -1189,54 +1189,42 @@ class YumOptionParser(OptionParser):
             dest.append((opt, value))
 
         
-        self.add_option("-t", "--tolerant", dest="tolerant",
-                action="store_true", default=False, help="be tolerant of errors")
-        self.add_option("-C", "", dest="cacheonly",
-                action="store_true", default=False,
+        self.add_option("-t", "--tolerant", action="store_true",
+                help="be tolerant of errors")
+        self.add_option("-C", dest="cacheonly", action="store_true",
                 help="run entirely from cache, don't update cache")
-        self.add_option("-c", "", dest="conffile", action="store", 
-                default='/etc/yum/yum.conf', help="config file location",
-                metavar=' [config file]')
-        self.add_option("-R", "", dest="sleeptime", action="store",
-                type='int', default=None, help="maximum command wait time",
-                metavar=' [minutes]')
-        self.add_option("-d", "", dest="debuglevel", action="store", 
-                default=None, help="debugging output level", type='int',
+        self.add_option("-c", dest="conffile", default='/etc/yum/yum.conf',
+                help="config file location", metavar=' [config file]')
+        self.add_option("-R", dest="sleeptime", type='int', default=None,
+                help="maximum command wait time", metavar=' [minutes]')
+        self.add_option("-d", dest="debuglevel", default=None,
+                help="debugging output level", type='int',
                 metavar=' [debug level]')
-        self.add_option("-e", "", dest="errorlevel", action="store", 
-                default=None, help="error output level", type='int',
+        self.add_option("-e", dest="errorlevel", default=None,
+                help="error output level", type='int',
                 metavar=' [error level]')
-        self.add_option("-y", "", dest="assumeyes",
-                action="store_true", default=False, 
+        self.add_option("-y", dest="assumeyes", action="store_true",
                 help="answer yes for all questions")
-        self.add_option("", "--version", dest="version",
-                default=False, action="store_true", 
+        self.add_option("--version", action="store_true", 
                 help="show Yum version and exit")
-        self.add_option("", "--installroot", dest="installroot",
-                action="store", default=None, help="set install root", 
+        self.add_option("--installroot", help="set install root", 
                 metavar='[path]')
-        self.add_option("", "--enablerepo", action='callback',
+        self.add_option("--enablerepo", action='callback',
                 type='string', callback=repo_optcb, dest='repos', default=[],
                 help="enable one or more repositories (wildcards allowed)",
                 metavar='[repo]')
-        self.add_option("", "--disablerepo", action='callback',
+        self.add_option("--disablerepo", action='callback',
                 type='string', callback=repo_optcb, dest='repos', default=[],
                 help="disable one or more repositories (wildcards allowed)",
                 metavar='[repo]')
-        self.add_option("-x", "--exclude", dest="exclude", default=[], 
-                action="append", help="exclude package(s) by name or glob",
-                metavar='[package]')
-        self.add_option("", "--obsoletes", dest="obsoletes",
-                default=False, action="store_true", 
+        self.add_option("-x", "--exclude", default=[], action="append",
+                help="exclude package(s) by name or glob", metavar='[package]')
+        self.add_option("--obsoletes", action="store_true", 
                 help="enable obsoletes processing during updates")
-        self.add_option("", "--noplugins", dest="noplugins",
-                default=False, action="store_true", 
+        self.add_option("--noplugins", action="store_true", 
                 help="disable Yum plugins")
-        self.add_option("", "--nogpgcheck", dest="nogpgcheck",
-                default=False, action="store_true",
+        self.add_option("--nogpgcheck", action="store_true",
                 help="disable gpg signature checking")
-        
-        
 
         
 def _filtercmdline(novalopts, valopts, args):
