@@ -175,6 +175,12 @@ class YumAvailablePackageSqlite(YumAvailablePackage, PackageObject, RpmBase):
         self._loadFiles()
         return RpmBase.returnFileTypes(self)
 
+    def simpleFiles(self, ftype='file'):
+        cache = self.sack.primarydb[self.repo]
+        cur = cache.cursor()
+        executeSQL(cur, "select files.name as fname from files where files.pkgKey = ? and files.type= ?", (self.pkgKey, ftype))
+        return map(lambda x: x['fname'], cur)
+
     def returnPrco(self, prcotype, printable=False):
         if not self.prco[prcotype]:
             cache = self.sack.primarydb[self.repo]

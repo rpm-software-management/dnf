@@ -177,7 +177,6 @@ class PackageObject(object):
             if csumid:
                 return (csumtype, csum)
 
-                
 class RpmBase(object):
     """return functions and storage for rpm-specific data"""
 
@@ -364,6 +363,11 @@ class RpmBase(object):
                       Errors.YumDeprecationWarning, stacklevel=2)
         return self.provides_names
 
+    def simpleFiles(self, ftype='files'):
+        if self.files and self.files.has_key(ftype):
+            return self.files[ftype]
+        return []
+    
     filelist = property(fget=lambda self: self.returnFileEntries(ftype='file'))
     dirlist = property(fget=lambda self: self.returnFileEntries(ftype='dir'))
     ghostlist = property(fget=lambda self: self.returnFileEntries(ftype='ghost'))
@@ -551,7 +555,6 @@ class YumAvailablePackage(PackageObject, RpmBase):
         """return a list of requires in normal rpm format"""
         return self.requires_print
 
-    
     def importFromDict(self, pkgdict):
         """handles an mdCache package dictionary item to populate out 
            the package information"""

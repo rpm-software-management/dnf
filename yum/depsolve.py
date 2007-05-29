@@ -1000,7 +1000,7 @@ class Depsolve(object):
         for newpo in txmbr.updated_by:
             for p in newpo.provides:
                 newpoprovs[p] = 1
-            for f in newpo.filelist:
+            for f in newpo.simpleFiles(): # newpo.filelist:
                 newpoprovs[(f, None, (None, None, None))] = 1
 
         ret = []
