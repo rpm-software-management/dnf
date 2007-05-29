@@ -27,13 +27,39 @@ class RepoStorage:
     """This class contains multiple repositories and core configuration data
        about them."""
        
-    def __init__(self):
+    def __init__(self, ayum):
         self.repos = {} # list of repos by repoid pointing a repo object 
                         # of repo options/misc data
         self.callback = None # progress callback used for populateSack() for importing the xml files
         self.cache = 0
         self.pkgSack = MetaSack()
 
+        self._setup = False
+
+        self.ayum = ayum
+
+    def doSetup(self, thisrepo = None):
+        self.ayum.plugins.run('prereposetup')
+        
+        if thisrepo is None:
+            repos = self.listEnabled()
+        else:
+            repos = self.findRepos(thisrepo)
+
+        if len(repos) < 1:
+            self.logger.critical('No Repositories Available to Set Up')
+
+        num = 1
+        for repo in repos:
+            repo.setup(self.ayum.conf.cache, self.ayum.mediagrabber)
+            num += 1
+            
+            
+        if self.callback and len(repos) > 0:
+            self.callback.progressbar(num, len(repos), repo.id)
+
+        self._setup = True
+        self.ayum.plugins.run('postreposetup')
         
     def __str__(self):
         return str(self.repos.keys())
@@ -176,6 +202,9 @@ class RepoStorage:
         """This populates the package sack from the repositories, two optional 
            arguments: which='repoid, enabled, all'
                       mdtype='metadata, filelists, otherdata, all'"""
+
+        if not self._setup:
+            self.doSetup()
 
         if not callback:
             callback = self.callback

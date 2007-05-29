@@ -71,7 +71,7 @@ class YumBase(depsolve.Depsolve):
         self._pkgSack = None
         self.logger = logging.getLogger("yum.YumBase")
         self.verbose_logger = logging.getLogger("yum.verbose.YumBase")
-        self._repos = None
+        self._repos = RepoStorage(self)
 
         # Start with plugins disabled
         self.disablePlugins()
@@ -182,8 +182,7 @@ class YumBase(depsolve.Depsolve):
 
         #FIXME this method could be a simpler
 
-        self.conf._reposlist = []
-
+        reposlist = []
         # Check yum.conf for repositories
         for section in self.conf.cfg.sections():
             # All sections except [main] are repositories
@@ -195,7 +194,7 @@ class YumBase(depsolve.Depsolve):
             except (Errors.RepoError, Errors.ConfigError), e:
                 self.logger.warning(e)
             else:
-                self.conf._reposlist.append(thisrepo)
+                reposlist.append(thisrepo)
 
         # Read .repo files from directories specified by the reposdir option
         # (typically /etc/yum/repos.d)
@@ -220,8 +219,15 @@ class YumBase(depsolve.Depsolve):
             except (Errors.RepoError, Errors.ConfigError), e:
                 self.logger.warning(e)
             else:
-                self.conf._reposlist.append(thisrepo)
+                reposlist.append(thisrepo)
 
+        # Got our list of repo objects, add them to the repos collection
+        for thisrepo in reposlist:
+            try:
+                self._repos.add(thisrepo)
+            except Errors.RepoError, e: 
+                self.logger.warning(e)
+                continue
 
     def readRepoConfig(self, parser, section):
         '''Parse an INI file section for a repository.
@@ -314,40 +320,9 @@ class YumBase(depsolve.Depsolve):
         """grabs the repomd.xml for each enabled repository and sets up 
            the basics of the repository"""
 
-        if not self._repos:
-            self._repos = RepoStorage()       
-            # Get our list of repo objects from conf, add them to the repos collection        
-            for r in self.conf._reposlist:
-                try:
-                    self._repos.add(r)
-                except Errors.RepoError, e: 
-                    self.logger.warning(e)
-                    continue
-        elif not doSetup:
-            return self._repos
-
-        self.plugins.run('prereposetup')
-        
-        if thisrepo is None:
-            repos = self._repos.listEnabled()
-        else:
-            repos = self._repos.findRepos(thisrepo)
-
-        if len(repos) < 1:
-            self.logger.critical('No Repositories Available to Set Up')
-
-        num = 1
-        for repo in repos:
-            repo.setup(self.conf.cache, self.mediagrabber)
-            num += 1
-            
-            
-        if self._repos.callback and len(repos) > 0:
-            self._repos.callback.progressbar(num, len(repos), repo.id)
-            
-        self.plugins.run('postreposetup')
+        if doSetup:
+            self._repos.doSetup(thisrepo)
         return self._repos
-
     
     def doSackSetup(self, archlist=None, thisrepo=None):
         warnings.warn('doSackSetup() will go away in a future version of Yum.\n',
