@@ -96,7 +96,7 @@ def doLoggingSetup(debuglevel, errorlevel):
     logging.basicConfig()
 
     plainformatter = logging.Formatter("%(message)s")
-    syslogformatter = logging.Formatter("yum : %(message)s")
+    syslogformatter = logging.Formatter("yum: %(message)s")
     
     console_stdout = logging.StreamHandler(sys.stdout)
     console_stdout.setFormatter(plainformatter)
