@@ -566,7 +566,7 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
         """returns a list of pkg tuples (n, a, e, v, r) from the sack"""
 
         if hasattr(self, 'pkglist'):
-            if self.pkglist:
+            if not self.pkglist == None:
                 return self.pkglist
             
         simplelist = []
