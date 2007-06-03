@@ -486,6 +486,8 @@ class YumAvailablePackage(PackageObject, RpmBase):
             return None
         (scheme, netloc, path, query, fragid) = urlparse.urlsplit(self.basepath)
         if scheme == "media":
+           if len(fragid) == 0:
+               return 0
             return int(fragid)
         return None
     
