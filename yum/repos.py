@@ -17,6 +17,7 @@
 import re
 import fnmatch
 import types
+import logging
 
 import Errors
 from packageSack import MetaSack
@@ -33,6 +34,7 @@ class RepoStorage:
         self.callback = None # progress callback used for populateSack() for importing the xml files
         self.cache = 0
         self.pkgSack = MetaSack()
+        self.logger = logging.getLogger("yum.RepoStorage")
 
         self._setup = False
 
