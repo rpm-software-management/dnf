@@ -223,7 +223,7 @@ class Depsolve(object):
                 self.verbose_logger.log(logginglevels.DEBUG_1,
                     'Removing Package %s', txmbr.po)
 
-    def _processReq(self, dep):
+    def _processReq(self, dep, prcoformat_need):
         """processes a Requires dep from the resolveDeps functions, returns a tuple
            of (CheckDeps, missingdep, conflicts, errors) the last item is an array
            of error messages"""
@@ -250,15 +250,11 @@ class Depsolve(object):
                     'Skipping package already in Transaction Set: %s', po)
                 continue
             
-            # slightly more consistency (most of the time)
-            prco_flags = rpmUtils.miscutils.flagToString(flags)
-            prco_ver = rpmUtils.miscutils.stringToVersion(needversion)
-            prcoformat_need = (needname, prco_flags, prco_ver)
             self.verbose_logger.log(logginglevels.DEBUG_2,
                     'Looking for %s as a requirement of %s',
                     str(prcoformat_need), po)
 
-            if po.checkPrco('requires', (needname, prco_flags, prco_ver)):
+            if po.checkPrco('requires', prcoformat_need):
                 pkgs.append(po)
 
         if len(pkgs) < 1: # requiring tuple is not in the rpmdb
@@ -849,8 +845,13 @@ class Depsolve(object):
                 depcount += 1
                 self.verbose_logger.log(logginglevels.DEBUG_2,
                     '\nDep Number: %d/%d\n', depcount, len(deps))
+
+                prco_flags = rpmUtils.miscutils.flagToString(flags)
+                prco_ver = rpmUtils.miscutils.stringToVersion(needversion)
+                prcoformat_need = (needname, prco_flags, prco_ver)
+                
                 if sense == rpm.RPMDEP_SENSE_REQUIRES: # requires
-                    (checkdep, missing, conflict, errormsgs) = self._processReq(dep)
+                    (checkdep, missing, conflict, errormsgs) = self._processReq(dep, prcoformat_need)
                     
                 elif sense == rpm.RPMDEP_SENSE_CONFLICTS: # conflicts - this is gonna be short :)
                     (checkdep, missing, conflict, errormsgs) = self._processConflict(dep)
@@ -870,9 +871,9 @@ class Depsolve(object):
                     # assuming that we already completely resolved their
                     # problems
                     for curpkg in self.dcobj.already_seen.keys():
-                        if curpkg.name == needname:
+                        if curpkg.name == needname or \
+                               curpkg.po.checkPrco('provides', prcoformat_need):
                             del(self.dcobj.already_seen[curpkg])
-
 
                 missingdep += missing
                 conflicts += conflict
