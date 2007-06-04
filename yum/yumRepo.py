@@ -423,7 +423,7 @@ class YumRepository(Repository, config.RepoConf):
         cookie = self.cachedir + '/' + self.metadata_cookie_fn
         self.setAttribute('metadata_cookie', cookie)
 
-        for dir in [self.cachedir, self.hdrdir, self.pkgdir]:
+        for dir in [self.cachedir, self.pkgdir]:
             if self.cache == 0:
                 if os.path.exists(dir) and os.path.isdir(dir):
                     continue
