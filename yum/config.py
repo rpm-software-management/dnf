@@ -426,7 +426,7 @@ class BaseConfig(object):
         # get options in ConfigParser object
         cfgOptions = self.cfg.options(section)
         # Write options
-        for name, value in self.options:
+        for name,value in self.iteritems():
             option = self.optionobj(name)
             if always is None or name in always or option.default != value or name in cfgOptions :
                 fileobj.write("%s=%s\n" % (name, option.tostring(value)))
