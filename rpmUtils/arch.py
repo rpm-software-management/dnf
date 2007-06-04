@@ -52,6 +52,11 @@ arches = {
     "alphaev56": "alphaev5",
     "alphaev5": "alpha",
     "alpha": "noarch",
+
+    # arm
+    "armv61": "armv5tejl",
+    "arm5tejl": "armv5tel",
+    "armv5tel": "noarch",
     }
 
 # this computes the difference between myarch and targetarch
