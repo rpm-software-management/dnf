@@ -743,12 +743,8 @@ class Depsolve(object):
         return rc
 
     def _mytsCheck(self):
-        
-        # holder object for things from the check - to be handled by resolveDeps()
-        if not hasattr(self, 'dcobj'):
-            self.dcobj = DepCheck()
-        self.dcobj.requires = []
-        self.dcobj.conficts = []
+        self._dcobj.requires = []
+        self._dcobj.conficts = []
 
         # returns a list of tuples
         # ((name, version, release), (needname, needversion), flags, suggest, sense)
@@ -757,7 +753,7 @@ class Depsolve(object):
         ret = []
         for txmbr in self.tsInfo.getMembers():
             
-            if self.dcobj.already_seen.has_key(txmbr):
+            if self._dcobj.already_seen.has_key(txmbr):
                 continue
 
             if self.dsCallback and txmbr.ts_state:
@@ -769,7 +765,7 @@ class Depsolve(object):
                 ret.extend(self._checkInstall(txmbr))
             elif txmbr.output_state in TS_REMOVE_STATES:
                 ret.extend(self._checkRemove(txmbr))
-            self.dcobj.already_seen[txmbr] = 1
+            self._dcobj.already_seen[txmbr] = 1
             
         return ret
 
@@ -779,6 +775,13 @@ class Depsolve(object):
         missingdep = 0
         depscopy = []
         unresolveableloop = 0
+
+        # holder object for things from the check
+        if not hasattr(self, '_dcobj'):
+            self._dcobj = DepCheck()
+        # reset what we've seen as things may have changed between
+        # calls to resolveDeps (rh#242368)
+        self._dcobj.already_seen = {}
 
         errors = []
         if self.dsCallback: self.dsCallback.start()
@@ -870,10 +873,10 @@ class Depsolve(object):
                     # from the already_seen cache instead of blindly 
                     # assuming that we already completely resolved their
                     # problems
-                    for curpkg in self.dcobj.already_seen.keys():
+                    for curpkg in self._dcobj.already_seen.keys():
                         if curpkg.name == needname or \
                                curpkg.po.checkPrco('provides', prcoformat_need):
-                            del(self.dcobj.already_seen[curpkg])
+                            del(self._dcobj.already_seen[curpkg])
 
                 missingdep += missing
                 conflicts += conflict
@@ -934,7 +937,7 @@ class Depsolve(object):
                 dep = self._provideToPkg(req)
                 if dep is None:
                     reqtuple = (req[0], version_tuple_to_string(req[2]), flags[req[1]])
-                    self.dcobj.addRequires(txmbr.po, [reqtuple])
+                    self._dcobj.addRequires(txmbr.po, [reqtuple])
                     ret.append( ((txmbr.name, txmbr.version, txmbr.release),
                                  (req[0], version_tuple_to_string(req[2])), flags[req[1]], None,
                                  rpm.RPMDEP_SENSE_REQUIRES) )
@@ -1069,7 +1072,7 @@ class Depsolve(object):
 
                 self._removing.append(po.pkgtup)
                 reqtuple = (r, version_tuple_to_string(v), flags[f])
-                self.dcobj.addRequires(po, [reqtuple])
+                self._dcobj.addRequires(po, [reqtuple])
                 
                 ret.append( ((po.name, po.version, po.release),
                              (r, version_tuple_to_string(v)),
