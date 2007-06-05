@@ -1153,12 +1153,6 @@ class YumBase(depsolve.Depsolve):
     def searchGenerator(self, fields, criteria):
         """Generator method to lighten memory load for some searches.
            This is the preferred search function to use."""
-        # FIXME - regex or globs - pick one
-        # convert the fields
-        # check the criteria for %
-            # maybe convert globs to sql?
-        # get back results, for each of the results run the old query and 
-        # render results
         sql_fields = []
         for f in fields:
             if RPM_TO_SQLITE.has_key(f):
@@ -1166,14 +1160,34 @@ class YumBase(depsolve.Depsolve):
             else:
                 sql_fields.append(f)
 
+        scores = {}
+        my_sets = {}
+        matched_values = {}
+
+        def __sortbyVal(x, y):
+            (k, v) = x
+            (k2, v2) = y
+            if v > v2:
+                return 1
+            if v < v2:
+                return -1
+            if v == v2:
+                return 0
+        
+        # go through each item in the criteria list
+        # figure out if it matches and what it matches
+        # tally up the scores for the pkgs
+        # yield the results in order of most terms matched first
+        
         for s in criteria:
             narrowed_list = []
+            my_sets[s] = []
             if s.find('%') != -1:
                 continue
             
             for sack in self.pkgSack.sacks.values():
                 narrowed_list.extend(sack.searchPrimaryFields(sql_fields, s))
-                
+        
             for po in narrowed_list:
                 tmpvalues = []
                 for field in fields:
@@ -1182,8 +1196,9 @@ class YumBase(depsolve.Depsolve):
                         tmpvalues.append(value)
 
                 if len(tmpvalues) > 0:
-                    yield (po, tmpvalues)
-        
+                    matched_values[po] = tmpvalues
+                    my_sets[s].append(po)
+                    
             for po in self.rpmdb:
                 tmpvalues = []
                 for field in fields:
@@ -1192,7 +1207,31 @@ class YumBase(depsolve.Depsolve):
                         tmpvalues.append(value)
 
                 if len(tmpvalues) > 0:
-                    yield (po, tmpvalues)
+                    matched_values[po] = tmpvalues
+                    my_sets[s].append(po)
+        
+        for pkg in matched_values.keys():
+            if scores.has_key(pkg):
+                continue
+            count = 0
+            
+            for this_set in my_sets.values():
+                if pkg in this_set:
+                    count+=1
+            
+            scores[pkg] = count
+
+        i = scores.items()
+        i.sort(__sortbyVal)
+        i.reverse()
+        
+        for (pkg,count) in i:
+            if matched_values.has_key(pkg):
+                yield (pkg, matched_values[pkg])
+            else:
+                print pkg
+            
+
 
     def searchPackages(self, fields, criteria, callback=None):
         """Search specified fields for matches to criteria
@@ -1200,7 +1239,9 @@ class YumBase(depsolve.Depsolve):
            as you go. Callback is a simple function of:
            callback(po, matched values list). It will 
            just return a dict of dict[po]=matched values list"""
-        
+        warnings.warn('searchPackages() will go away in a future version of Yum.\
+                      Use searchGenerator() instead. \n',
+                Errors.YumFutureDeprecationWarning, stacklevel=2)           
         matches = {}
         match_gen = self.searchGenerator(fields, criteria)
         
