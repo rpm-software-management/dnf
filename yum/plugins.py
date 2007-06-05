@@ -106,7 +106,7 @@ class YumPlugins:
     '''
 
     def __init__(self, base, searchpath, optparser=None, types=None, 
-            pluginconfpath=None):
+            pluginconfpath=None,disabled=None):
         '''Initialise the instance.
 
         @param base: The
@@ -128,6 +128,7 @@ class YumPlugins:
         self.optparser = optparser
         self.cmdline = (None, None)
         self.verbose_logger = logging.getLogger("yum.verbose.YumPlugins")
+        self.disabledPlugins = disabled
         if not types:
             types = ALL_TYPES
 
@@ -226,6 +227,10 @@ class YumPlugins:
                         'instead.', modname)
 
             if plugintype not in types:
+                return
+        # Check if this plugin has been temporary disabled
+        if self.disabledPlugins:
+            if modname in self.disabledPlugins:
                 return
 
         self.verbose_logger.log(logginglevels.INFO_2, 'Loading "%s" plugin', modname)

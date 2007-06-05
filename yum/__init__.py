@@ -110,7 +110,7 @@ class YumBase(depsolve.Depsolve):
         
     def _getConfig(self, fn='/etc/yum/yum.conf', root='/', init_plugins=True,
             plugin_types=(plugins.TYPE_CORE,), optparser=None, debuglevel=None,
-            errorlevel=None):
+            errorlevel=None,disabled_plugins=None):
         '''
         Parse and load Yum's configuration files and call hooks initialise
         plugins and logging.
@@ -126,6 +126,7 @@ class YumBase(depsolve.Depsolve):
             level will be read from the configuration file.
         @param errorlevel: Error level to use for logging. If None, the debug
             level will be read from the configuration file.
+        @param disabled_plugins: Plugins to be disabled    
         '''
 
         if self._conf:
@@ -148,7 +149,7 @@ class YumBase(depsolve.Depsolve):
 
         if init_plugins and startupconf.plugins:
             self.doPluginSetup(optparser, plugin_types, startupconf.pluginpath,
-                    startupconf.pluginconfpath)
+                    startupconf.pluginconfpath,disabled_plugins)
 
         self._conf = config.readMainConfig(startupconf)
         # run the postconfig plugin hook
@@ -258,7 +259,7 @@ class YumBase(depsolve.Depsolve):
         self.plugins = plugins.DummyYumPlugins()
     
     def doPluginSetup(self, optparser=None, plugin_types=None, searchpath=None,
-            confpath=None):
+            confpath=None,disabled_plugins=None):
         '''Initialise and enable yum plugins. 
 
         Note: _getConfig() will initialise plugins if instructed to. Only
@@ -275,12 +276,13 @@ class YumBase(depsolve.Depsolve):
         @param confpath: A list of directories to look in for plugin
             configuration files. A default will be used if no value is
             specified.
+        @param disabled_plugins: Plugins to be disabled    
         '''
         if isinstance(plugins, plugins.YumPlugins):
             raise RuntimeError("plugins already initialised")
 
         self.plugins = plugins.YumPlugins(self, searchpath, optparser,
-                plugin_types, confpath)
+                plugin_types, confpath, disabled_plugins)
 
     
     def doRpmDBSetup(self):

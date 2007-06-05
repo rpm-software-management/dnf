@@ -143,7 +143,9 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
                     plugin_types=(yum.plugins.TYPE_CORE, yum.plugins.TYPE_INTERACTIVE),
                     optparser=self.optparser,
                     debuglevel=opts.debuglevel,
-                    errorlevel=opts.errorlevel)
+                    errorlevel=opts.errorlevel,
+                    disabled_plugins=opts.disableplugins)
+                    
         except yum.Errors.ConfigError, e:
             self.logger.critical(_('Config Error: %s'), e)
             sys.exit(1)
@@ -1086,7 +1088,7 @@ class YumOptionParser(OptionParser):
         try:
             args = _filtercmdline(
                         ('--noplugins','--version'), 
-                        ('-c', '-d', '-e', '--installroot'), 
+                        ('-c', '-d', '-e', '--installroot','--disableplugin'), 
                         args)
         except ValueError:
             self.base.usage()
@@ -1225,7 +1227,9 @@ class YumOptionParser(OptionParser):
                 help="disable Yum plugins")
         self.add_option("--nogpgcheck", action="store_true",
                 help="disable gpg signature checking")
-
+        self.add_option("", "--disableplugin", dest="disableplugins", default=[], 
+                action="append", help="disable plugins by name",
+                metavar='[plugin]')
         
 def _filtercmdline(novalopts, valopts, args):
     '''Keep only specific options from the command line argument list
