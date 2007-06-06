@@ -73,13 +73,10 @@ class TransactionData:
         returnlist = []
 
         if pkgtup is None:
-            for key in self.pkgdict.keys():
-                for p in self.pkgdict[key]:
-                    returnlist.append(p)
-
+            for members in self.pkgdict.itervalues():
+                returnlist.extend(members)            
         elif self.pkgdict.has_key(pkgtup):
-            for p in self.pkgdict[pkgtup]:
-                returnlist.append(p)
+            returnlist.extend(self.pkgdict[pkgtup])            
 
         return returnlist
             
