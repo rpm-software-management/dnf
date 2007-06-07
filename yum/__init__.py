@@ -2018,22 +2018,6 @@ class YumBase(depsolve.Depsolve):
         
         return returndict
 
-    def isPackageInstalled(self, pkgname):
-        installed = False
-        if self.rpmdb.installed(name = pkgname):
-            installed = True
-
-        lst = self.tsInfo.matchNaevr(name = pkgname)
-        for txmbr in lst:
-            if txmbr.output_state in TS_INSTALL_STATES:
-                return True
-        if installed and len(lst) > 0:
-            # if we get here, then it was installed, but it's in the tsInfo
-            # for an erase or obsoleted --> not going to be installed at end
-            return False
-        return installed
-    _isPackageInstalled = isPackageInstalled
-
     def getKeyForPackage(self, po, askcb = None, fullaskcb = None):
         """Retrieve a key for a package.  If needed, prompt for if the
         key should be imported using askcb.

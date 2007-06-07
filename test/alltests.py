@@ -1,12 +1,14 @@
 import unittest
 import settestpath
 
+import depsolvetests
 import packagetests
 
 
 def suite():
     # Append all test suites here:
     return unittest.TestSuite((
+        depsolvetests.suite(),
         packagetests.suite(),
     ))
 
