@@ -1016,17 +1016,18 @@ class YumBase(depsolve.Depsolve):
 
         # list all packages - those installed and available, don't 'think about it'
         if pkgnarrow == 'all': 
+            dinst = {}
             for po in self.rpmdb:
-                installed.append(po)
+                dinst[po.pkgtup] = po;
+            installed = dinst.values()
 
             if self.conf.showdupesfromrepos:
                 avail = self.pkgSack.returnPackages()
             else:
                 avail = self.pkgSack.returnNewestByNameArch()
             
-            self.rpmdb._make_header_dict()
             for pkg in avail:
-                if not self.rpmdb._header_dict.has_key(pkg.pkgtup):
+                if not dinst.has_key(pkg.pkgtup):
                     available.append(pkg)
 
         # produce the updates list of tuples
