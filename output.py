@@ -69,8 +69,8 @@ class YumOutput:
         print _("Release: %s") % pkg.release
         print _("Size   : %s") % self.format_number(float(pkg.size))
         print _("Repo   : %s") % pkg.repoid
-        print _("Summary: %s") % pkg.summary
-        print _("Description:\n%s") % pkg.description
+        print _("Summary: %s") % pkg.summary.encode("UTF-8")
+        print _("Description:\n%s") % pkg.description.encode("UTF-8")
         print ""
     
     def updatesObsoletesList(self, uotup, changetype):
@@ -126,7 +126,7 @@ class YumOutput:
     def displayPkgsInGroups(self, group):
         print '\nGroup: %s' % group.name
         if group.description != "":
-            print ' Description: %s' % group.description
+            print ' Description: %s' % group.description.encode("UTF-8")
         if len(group.mandatory_packages.keys()) > 0:
             print ' Mandatory Packages:'
             for item in group.mandatory_packages.keys():
