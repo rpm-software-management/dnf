@@ -762,10 +762,12 @@ class Depsolve(object):
             self.verbose_logger.log(logginglevels.DEBUG_2,
                                     "Checking deps for %s" %(txmbr,))
             if txmbr.output_state in TS_INSTALL_STATES:
-                ret.extend(self._checkInstall(txmbr))
+                thisneeds = self._checkInstall(txmbr)
             elif txmbr.output_state in TS_REMOVE_STATES:
-                ret.extend(self._checkRemove(txmbr))
-            self._dcobj.already_seen[txmbr] = 1
+                thisneeds = self._checkRemove(txmbr)
+            if len(thisneeds) == 0:
+                self._dcobj.already_seen[txmbr] = 1
+            ret.extend(thisneeds)
             
         return ret
 
