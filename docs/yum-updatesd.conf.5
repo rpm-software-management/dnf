@@ -19,7 +19,7 @@ which defines all of the global configuration options.
 The [main] section must exist for yum-updatesd to do anything. It
 consists of the following options:
 
-.IP \fBruninterval\fR
+.IP \fBrun_interval\fR
 Number of seconds to wait between checks for available updates.
 
 .IP \fBupdaterefresh\fR
@@ -37,6 +37,10 @@ automatically applied.  Defaults to False.
 .IP \fBdo_download\fR
 Boolean option to decide whether or not updates should be
 automatically downloaded.  Defaults to False.
+
+.IP \fBdo_download\fR
+Boolean option to automatically download dependencies of packages which need
+updating as well.  Defaults to False.
 
 .SH "MAIL OPTIONS"
 .IP \fBemail_to\fR
