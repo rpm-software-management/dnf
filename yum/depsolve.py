@@ -647,7 +647,11 @@ class Depsolve(object):
             # if there's an update for the reqpkg, then update it
             if len(uplist) > 0:
                 if confpkg.name not in self.conf.exactarchlist:
-                    pkgs = self.pkgSack.returnNewestByName(confpkg.name)
+                    try:
+                        pkgs = self.pkgSack.returnNewestByName(confpkg.name)
+                    except PackageSackError:
+                        self.verbose_logger.log(logginglevels.DEBUG_4, "unable to find newer package for %s" %(confpkg.name,))
+                        pkgs = []
                     archs = {}
                     for pkg in pkgs:
                         (n,a,e,v,r) = pkg.pkgtup
@@ -655,8 +659,12 @@ class Depsolve(object):
                     a = rpmUtils.arch.getBestArchFromList(archs.keys())
                     po = archs[a]
                 else:
-                    po = self.pkgSack.returnNewestByNameArch((confpkg.name,confpkg.arch))[0]
-                if po.pkgtup not in uplist:
+                    try:
+                        po = self.pkgSack.returnNewestByNameArch((confpkg.name,confpkg.arch))[0]
+                    except PackageSackError:
+                        self.verbose_logger.log(logginglevels.DEBUG_4, "unable to find newer package for %s.%s" %(confpkg.name,confpkg.arch))
+                        po = None
+                if po and po.pkgtup not in uplist:
                     po = None
 
         if po:
