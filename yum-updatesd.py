@@ -309,7 +309,7 @@ class UpdateInstallThread(UpdateBuildTransactionThread):
                 try:
                     self.updd.getKeyForPackage(po)
                 except yum.Errors.YumBaseError, errmsg:
-                    self.failed([errmsg])
+                    self.failed([str(errmsg)])
 
         del self.updd.ts
         self.updd.initActionTs() # make a new, blank ts to populate
@@ -323,7 +323,7 @@ class UpdateInstallThread(UpdateBuildTransactionThread):
         try:
             self.updd.runTransaction(cb=cb)
         except yum.Errors.YumBaseError, err:
-            self.failed([err])
+            self.failed([str(err)])
 
         self.success()
 
