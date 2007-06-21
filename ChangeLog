@@ -1,3 +1,18 @@
+2007-06-21 14:36  skvidal
+
+	* shell.py: make sure we don't pass shlex.split() None or it will
+	spin, forever.
+
+2007-06-21 14:01  skvidal
+
+	* yum/: __init__.py, yumRepo.py: closes bug: 241557 about
+	repo.ready() make yum grouplist work again, too
+
+2007-06-21 10:46  skvidal
+
+	* ChangeLog: 
+	merge in changelog
+
 2007-06-21 09:42  skvidal
 
 	* yum.spec, yum/__init__.py: update spec/ver for 3.2.1
