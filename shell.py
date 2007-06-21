@@ -45,6 +45,9 @@ class YumShell(cmd.Cmd):
         """split the input using shlex rules, and error or exit accordingly"""
         
         inputs = []
+        if input_string is None: # apparently shlex.split() doesn't like None as its input :)
+            return inputs
+            
         try:
             inputs = shlex.split(input_string)
         except ValueError, e:
@@ -243,6 +246,7 @@ class YumShell(cmd.Cmd):
         if cmd in ['list', None]:
             # Munge things to run the repolist command
             cmds = self._shlex_split(args)
+
             if not cmds:
                 cmds = ['all']
             cmds.insert(0, 'repolist')
