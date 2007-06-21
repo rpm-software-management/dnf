@@ -271,7 +271,9 @@ class YumRepository(Repository, config.RepoConf):
 
     def ready(self):
         """Returns true if this repository is setup and ready for use."""
-        return self.repoXML is not None
+        if hasattr(self, 'metadata_cookie'):
+            return self.repoXML is not None
+        return False
 
 
     def getGroupLocation(self):

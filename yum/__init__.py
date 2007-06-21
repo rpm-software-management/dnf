@@ -431,6 +431,7 @@ class YumBase(depsolve.Depsolve):
             
         self.verbose_logger.debug('Getting group metadata')
         reposWithGroups = []
+        self.repos.doSetup()
         for repo in self.repos.listGroupsEnabled():
             if repo.groups_added: # already added the groups from this repo
                 reposWithGroups.append(repo)
