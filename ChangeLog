@@ -1,3 +1,159 @@
+2007-06-21 09:42  skvidal
+
+	* yum.spec, yum/__init__.py: update spec/ver for 3.2.1
+
+2007-06-20 10:36  katzj
+
+	* yum-updatesd.py: fix failure cases (from ffesti)
+
+2007-06-19 17:54  katzj
+
+	* yum/depsolve.py: fix another case where we would do an update and
+	break deps
+
+2007-06-18 17:27  katzj
+
+	* yum/depsolve.py: fix a case where we could traceback on not
+	finding anything to update to get us out of a conflicts situation
+	(rh#244488)
+
+2007-06-18 17:09  katzj
+
+	* docs/yum-updatesd.conf.5: fix to be correct
+
+2007-06-15 16:35  katzj
+
+	* docs/yum-updatesd.conf.5: updated (rh#244401)
+
+2007-06-13 13:56  katzj
+
+	* output.py: encode output to work around python silliness
+	(rh#244080)
+
+2007-06-13 13:52  katzj
+
+	* yum/depsolve.py: only set a package as being "seen" if we've
+	successfully managed to resolve its deps.  otherwise, the missing
+	deps just get lost.  fixes at least rh#244077, and there are a
+	number of other potential candidates as dupes...
+
+2007-06-10 12:33  jbowes
+
+	* yum/__init__.py: Save 15% on "list all" commands.
+	
+	Have "list all" only loop through the rpmdb once. Patch by James
+	Antill.
+
+2007-06-07 18:53  jbowes
+
+	* test/alltests.py, yum/__init__.py, yum/depsolve.py: Add unit
+	tests for the depsolver
+
+2007-06-06 11:18  katzj
+
+	* yum/transactioninfo.py: minor optimization from Florian Festi
+
+2007-06-05 15:49  skvidal
+
+	* yum/__init__.py: - modify searchGenerator() to rank and sort the
+	results so the best results for ALL of the terms are returned first
+	- mark searchPackages() as deprecated since it is kind of a crappy
+	method anyway.
+
+2007-06-05 11:27  katzj
+
+	* yum/depsolve.py: * make depcheck object a bit more private; we
+	don't really want to expose   this * reset dcobj.already_seen on
+	each call to resolveDeps().  otherwise, there	could have been
+	changes that we don't know about
+
+2007-06-05 03:52  timlau
+
+	* cli.py, yum/__init__.py, yum/plugins.py: added a
+	'--disableplugin=pluginname' option to temporary disable one or
+	more plugins
+
+2007-06-04 16:03  katzj
+
+	* yum/depsolve.py: * fix case where we ignore a missing dep on a
+	provide as opposed to a package   name.  * only do the
+	transformation to prco format once for the dep
+
+2007-06-04 14:50  katzj
+
+	* rpmUtils/arch.py: add support for arm arches (Lennert Buytenhek
+	<buytenh@wantstofly.org>)
+
+2007-06-04 03:43  timlau
+
+	* yum/repos.py: Added logger to RepoStorage, it is needed because
+	the repo setup code is moved here now.
+
+2007-06-04 03:05  timlau
+
+	* yum/config.py: Fix a Traceback in the config write method, that
+	make yumex fail to save its perferences.  The issue was introduced
+	in config.py 1.120.
+
+2007-06-03 21:17  skvidal
+
+	* yum/yumRepo.py: don't create the headers dir anymore. Leave the
+	variable stub in place so things like 'yum clean headers' will
+	clean out old leftover headers for people.  closes rh bug: 242396
+
+2007-06-03 11:29  jbowes
+
+	* yum/packages.py: Apply patch from Terje Røsten to fix
+	indentation issues.
+
+2007-06-03 07:18  jbowes
+
+	* yum/packages.py: Fix installing more than one package from a DVD
+	repo.
+	
+	Patch from rhbz #241604
+
+2007-05-30 17:37  skvidal
+
+	* yum/sqlitesack.py: add patch from Charlie Brej to improve
+	performance with empty repositories.
+
+2007-05-29 11:52  katzj
+
+	* yum/: __init__.py, repos.py: Basic idea is that we move the repo
+	setup into the RepoStorage object instead of the YumBase object.
+	
+	And we end up kicking off the real repo setup when either a)
+	someone explicitly calls YumBase.doRepoSetup() b) we go to populate
+	package sacks based on the repos.
+	
+	This fixes things so that the presto callbacks continue to work
+	without requiring API changes in presto (rh#236512)
+
+2007-05-29 11:39  katzj
+
+	* yum/: depsolve.py, packages.py, sqlitesack.py: Much of the file
+	information that we ever need is stored in the primary info in
+	addition to filelists; add a simple way to get at that information
+	and use that instead of the full filelists to see if something has
+	gone away; this avoids having to download the (large) filelists
+	file.  If we end up having a requirement on something outside of
+	this step, we then later get the filelists
+
+2007-05-29 11:16  skvidal
+
+	* yum/logginglevels.py: 
+	merge trivial log formatting patch from terje.
+
+2007-05-23 20:48  jbowes
+
+	* cli.py: Remove unneeded arguments for adding arguments to the
+	option parser
+
+2007-05-16 17:11  skvidal
+
+	* ChangeLog: check in changelog
+
 2007-05-16 17:02  skvidal
 
 	* yum.spec, yum/__init__.py: mark as 3.2.0
