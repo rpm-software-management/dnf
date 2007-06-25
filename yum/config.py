@@ -489,7 +489,8 @@ class YumConf(StartupConf):
     proxy_password = Option()
     installonlypkgs = ListOption(['kernel', 'kernel-bigmem',
             'kernel-enterprise','kernel-smp', 'kernel-modules', 'kernel-debug',
-            'kernel-unsupported', 'kernel-source', 'kernel-devel'])
+            'kernel-unsupported', 'kernel-source', 'kernel-devel'])            
+    installonly_limit = IntOption(0)
     kernelpkgnames = ListOption(['kernel','kernel-smp', 'kernel-enterprise',
             'kernel-bigmem', 'kernel-BOOT'])
     exactarchlist = ListOption(['kernel', 'kernel-smp', 'glibc',

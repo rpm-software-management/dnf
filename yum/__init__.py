@@ -526,7 +526,8 @@ class YumBase(depsolve.Depsolve):
         self.plugins.run('preresolve')
         (rescode, restring) = self.resolveDeps()
         self.plugins.run('postresolve', rescode=rescode, restring=restring)
-
+        self._limit_installonly_pkgs()
+        
         if self.tsInfo.changed:
             (rescode, restring) = self.resolveDeps()
             
@@ -2099,4 +2100,28 @@ class YumBase(depsolve.Depsolve):
         if result != 0:
             self.logger.info("Import of key(s) didn't help, wrong key(s)?")
             raise Errors.YumBaseError, errmsg
-
+    def _limit_installonly_pkgs(self):
+        if self.conf.installonly_limit < 1 :
+            return 
+            
+        toremove = []
+        for instpkg in self.conf.installonlypkgs:
+            for m in self.tsInfo.getMembers():
+                if (m.name == instpkg or instpkg in m.po.provides_names) \
+                       and m.ts_state in ('i', 'u'):
+                    installed = self.rpmdb.searchNevra(name=m.name)
+                    if len(installed) >= self.conf.installonly_limit - 1: # since we're adding one
+                        numleft = len(installed) - self.conf.installonly_limit + 1
+                        (curv, curr) = misc.get_running_kernel_version_release()
+                        
+                        installed.sort(packages.comparePoEVR)
+                        for po in installed:
+                            if (po.version, po.release) == (curv, curr): 
+                                # don't remove running
+                                continue
+                            if numleft == 0:
+                                break
+                            toremove.append(po)
+                            numleft -= 1
+                        
+        map(lambda x: self.tsInfo.addErase(x), toremove)

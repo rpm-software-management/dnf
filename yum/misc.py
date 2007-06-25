@@ -354,4 +354,18 @@ def bunzipFile(source,dest):
     destination.close()
     s_fn.close()
 
+def get_running_kernel_version_release():
+    """This takes the output of uname and figures out the (version, release)
+    tuple for the running kernel."""
+    ver = os.uname()[2]
+    # FIXME this should probably get passed this list from somewhere in config
+    # possibly from the kernelpkgnames option
+    for s in ("bigmem", "enterprise", "smp", "hugemem", "PAE", "rt",
+              "guest", "hypervisor", "xen0", "xenU", "xen", "debug"):
+        if ver.endswith(s):
+            ver = ver.replace(s, "")
+    if ver.find("-") != -1:
+        (v, r) = ver.split("-", 1)
+        return (v, r)
+    return (None, None)
  
