@@ -997,7 +997,18 @@ class Depsolve(object):
                         ret.append( ((txmbr.name, txmbr.version, txmbr.release),
                                      (r, version_tuple_to_string(v)), flags[f],
                                      None, rpm.RPMDEP_SENSE_CONFLICTS) )
-                    
+        
+        for instpkg in self.rpmdb.searchConflicts(txmbr.name):
+            prcotuple = (txmbr.name, 'EQ', (txmbr.epoch, txmbr.version, txmbr.release))
+            if instpkg.checkPrco('conflicts', prcotuple):
+                # if the conflict-having-version is being removed then well, it doesn't matter
+                if self.tsInfo.getMembersWithState(instpkg.pkgtup, output_states=TS_REMOVE_STATES):
+                    continue
+                instevr = (instpkg.epoch, instpkg.ver, instpkg.rel)
+                ret.append( ((txmbr.name, txmbr.version, txmbr.release),
+                             (instpkg.name, version_tuple_to_string(instevr)), rpm.RPMSENSE_EQUAL,
+                                     None, rpm.RPMDEP_SENSE_CONFLICTS) )
+                
         return ret
 
     def _checkRemove(self, txmbr):
