@@ -101,8 +101,20 @@ def parsePackages(pkgs, usercommands, casematch=0):
                     unmatched.append(command)
                     
             else:
-                # we got nada
-                unmatched.append(command)
+                if casematch:
+                    unmatched.append(command)
+                else:
+                    # look for case insensitively
+                    foundit = 0
+                    for item in pkgdict.keys():
+                        if command.lower() == item.lower():
+                            matched.extend(pkgdict[item])
+                            foundit = 1
+                            continue
+
+                    # we got nada
+                    if not foundit:
+                        unmatched.append(command)
 
     matched = misc.unique(matched)
     unmatched = misc.unique(unmatched)
