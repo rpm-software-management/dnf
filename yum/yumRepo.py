@@ -553,8 +553,12 @@ class YumRepository(Repository, config.RepoConf):
                                     range=(start, end),
                                     )
             except URLGrabError, e:
-                raise Errors.RepoError, \
-                    "failed to retrieve %s from %s\nerror was %s" % (relative, self.id, e)
+                errstr = "failed to retrieve %s from %s\nerror was %s" % (relative, self.id, e)
+                if e.errno == 256:
+                    raise Errors.NoMoreMirrorsRepoError, errstr
+                else:
+                    raise Errors.RepoError, errstr
+                    
 
         else:
             try:
@@ -567,7 +571,11 @@ class YumRepository(Repository, config.RepoConf):
                                            http_headers=headers,
                                            )
             except URLGrabError, e:
-                raise Errors.RepoError, "failure: %s from %s: %s" % (relative, self.id, e)
+                errstr = "failure: %s from %s: %s" % (relative, self.id, e)
+                if e.errno == 256:
+                    raise Errors.NoMoreMirrorsRepoError, errstr
+                else:
+                    raise Errors.RepoError, errstr
 
         return result
     __get = _getFile
@@ -587,7 +595,7 @@ class YumRepository(Repository, config.RepoConf):
         
     def getHeader(self, package, checkfunc = None, reget = 'simple',
             cache = True):
-        
+
         remote = package.relativepath
         local =  package.localHdr()
         start = package.hdrstart

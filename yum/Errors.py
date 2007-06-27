@@ -48,6 +48,11 @@ class DuplicateRepoError(RepoError):
         RepoError.__init__(self)
         self.value = value
 
+class NoMoreMirrorsRepoError(RepoError):
+    def __init__(self, value=None):
+        RepoError.__init__(self)
+        self.value = value
+
 class ConfigError(YumBaseError):
     def __init__(self, value=None):
         YumBaseError.__init__(self)
