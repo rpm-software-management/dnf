@@ -61,6 +61,13 @@ class YumOutput:
     
         
     def infoOutput(self, pkg):
+        def enc(s):
+            # this sucks.  what we get back from the rpmdb
+            # are strings, but they may actually have unicode so we
+            # can't encode them
+            if type(s) == unicode:
+                return s.encode("UTF-8")
+            return s
         print _("Name   : %s") % pkg.name
         print _("Arch   : %s") % pkg.arch
         if pkg.epoch != "0":
@@ -69,8 +76,8 @@ class YumOutput:
         print _("Release: %s") % pkg.release
         print _("Size   : %s") % self.format_number(float(pkg.size))
         print _("Repo   : %s") % pkg.repoid
-        print _("Summary: %s") % pkg.summary.encode("UTF-8")
-        print _("Description:\n%s") % pkg.description.encode("UTF-8")
+        print _("Summary: %s") % enc(pkg.summary)
+        print _("Description:\n%s") % enc(pkg.description)
         print ""
     
     def updatesObsoletesList(self, uotup, changetype):
