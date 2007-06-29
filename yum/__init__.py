@@ -988,7 +988,8 @@ class YumBase(depsolve.Depsolve):
             for repo in self.repos.listEnabled():
                 repo.dirSetup()
                 path = getattr(repo, pathattr)
-                filelist = misc.getFileList(path, ext, filelist)
+                if os.path.exists(path) and os.path.isdir(path):
+                    filelist = misc.getFileList(path, ext, filelist)
 
         for item in filelist:
             try:
