@@ -241,6 +241,13 @@ not update the metadata against the repository.  If you find that
 yum is not downloading information on updates as often as you would like
 lower the value of this option.
 
+.IP \fBmirrorlist_expire \fR
+Time (in seconds) after which the mirrorlist locally cached will expire. 
+If the current mirrorlist is less than this many seconds old then yum
+will not download another copy of the mirrorlist
+If you find that yum is not downloading the mirrorlists as 
+often as you would like lower the value of this option.
+
 .SH "[repository] OPTIONS"
 .LP 
 The repository section(s) take the following form:
@@ -354,6 +361,10 @@ repository.
 
 .IP \fBmetadata_expire \fR
 Overrides the \fBmetadata_expire\fR option from the [main] section for this
+repository.
+
+.IP \fBmirrorlist_expire \fR
+Overrides the \fBmirrorlist_expire\fR option from the [main] section for this
 repository.
 
 .IP \fBproxy \fR

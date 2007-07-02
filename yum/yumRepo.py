@@ -448,25 +448,29 @@ class YumRepository(Repository, config.RepoConf):
     def _baseurlSetup(self):
         """go through the baseurls and mirrorlists and populate self.urls
            with valid ones, run  self.check() at the end to make sure it worked"""
-        goodurls = []
-        if self.mirrorlist and not self.mirrorlistparsed:
-            mirrorurls = getMirrorList(self.mirrorlist, self.proxy_dict)
-            self.mirrorlistparsed = 1
-            for url in mirrorurls:
-                url = parser.varReplace(url, self.yumvar)
-                self.baseurl.append(url)
 
-        for url in self.baseurl:
+        mirrorurls = []
+        if self.mirrorlist and not self.mirrorlistparsed:
+            mirrorurls.extend(self._getMirrorList())
+            self.mirrorlistparsed = True
+
+        self.baseurl = self._replace_and_check_url(self.baseurl)
+        self.mirrorurls = self._replace_and_check_url(mirrorurls)
+        self._urls = self.baseurl + self.mirrorurls
+        self.check()
+        
+    def _replace_and_check_url(self, url_list):
+        goodurls = []
+        for url in url_list:
             url = parser.varReplace(url, self.yumvar)
             (s,b,p,q,f,o) = urlparse.urlparse(url)
             if s not in ['http', 'ftp', 'file', 'https']:
-                print 'not using ftp, http[s], or file for repos, skipping - %s' % (url)
+                print 'YumRepo Warning: not using ftp, http[s], or file for repos, skipping - %s' % (url)
                 continue
             else:
                 goodurls.append(url)
-    
-        self._urls = goodurls
-        self.check()
+
+        return goodurls
 
     def _geturls(self):
         if not self._urls:
@@ -613,17 +617,29 @@ class YumRepository(Repository, config.RepoConf):
         """Check if there is a metadata_cookie and check its age. If the
         age of the cookie is less than metadata_expire time then return true
         else return False"""
+        warnings.warn('metadataCurrent() will go away in a future version of Yum.\n \
+                       please use withinCacheAge() instead.',
+                Errors.YumFutureDeprecationWarning, stacklevel=2)
+
+        return self.withinCacheAge(self.metadata_cookie, self.metadata_expire)
+
+    def withinCacheAge(self, myfile, expiration_time):
+        """check if any file is older than a certain amount of time. Used for 
+           the cachecookie and the mirrorlist
+           return True if w/i the expiration time limit
+           false if the time limit has expired
+           """
 
         val = False
-        if os.path.exists(self.metadata_cookie):
-            cookie_info = os.stat(self.metadata_cookie)
-            if cookie_info[8] + self.metadata_expire > time.time():
+        if os.path.exists(myfile):
+            cookie_info = os.stat(myfile)
+            if cookie_info[8] + expiration_time > time.time():
                 val = True
             # WE ARE FROM THE FUTURE!!!!
             elif cookie_info[8] > time.time():
                 val = False
         return val
-
+           
     def setMetadataCookie(self):
         """if possible, set touch the metadata_cookie file"""
 
@@ -654,7 +670,7 @@ class YumRepository(Repository, config.RepoConf):
         if self._repoXML is not None:
             return
     
-        if self.cache or self.metadataCurrent():
+        if self.cache or self.withinCacheAge(self.metadata_cookie, self.metadata_expire):
             if not os.path.exists(local):
                 raise Errors.RepoError, 'Cannot find repomd.xml file for %s' % (self)
             else:
@@ -827,8 +843,55 @@ class YumRepository(Repository, config.RepoConf):
     def setInterruptCallback(self, callback):
         self.interrupt_callback = callback
         self._callbacks_changed = True
+    def _getMirrorList(self):
+        """retrieve an up2date-style mirrorlist file from our mirrorlist url,
+           also save the file to the local repo dir and use that if cache expiry
+           not expired
+
+           we also s/$ARCH/$BASEARCH/ and move along
+           return the baseurls from the mirrorlist file
+           """
+        returnlist = []
+        
+        self.mirrorlist_file = self.cachedir + '/' + 'mirrorlist.txt'
+        fo = None
+        
+        cacheok = False
+        if self.withinCacheAge(self.mirrorlist_file, self.mirrorlist_expire):
+            cacheok = True
+            fo = open(self.mirrorlist_file, 'r')
+        else:
+            url = self.mirrorlist
+            scheme = urlparse.urlparse(url)[0]
+            if scheme == '':
+                url = 'file://' + url
+            try:
+                fo = urlgrabber.grabber.urlopen(url, proxies=self.proxy_dict)
+            except urlgrabber.grabber.URLGrabError, e:
+                print "Could not retrieve mirrorlist %s error was\n%s" % (url, e)
+                fo = None
+        
+        if fo is not None:
+            content = fo.readlines()
+            for line in content:
+                if re.match('^\s*\#.*', line) or re.match('^\s*$', line):
+                    continue
+                mirror = re.sub('\n$', '', line) # no more trailing \n's
+                (mirror, count) = re.subn('\$ARCH', '$BASEARCH', mirror)
+                returnlist.append(mirror)
+
+            if not self.cache and not cacheok:
+                output = open(self.mirrorlist_file, 'w')
+                for line in content:
+                    output.write(line)
+                output.close()
+
+        return returnlist
+
 
 def getMirrorList(mirrorlist, pdict = None):
+    warnings.warn('getMirrorList() will go away in a future version of Yum.\n',
+            Errors.YumFutureDeprecationWarning, stacklevel=2)    
     """retrieve an up2date-style mirrorlist file from a url,
        we also s/$ARCH/$BASEARCH/ and move along
        returns a list of the urls from that file"""

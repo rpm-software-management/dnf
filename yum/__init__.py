@@ -978,7 +978,7 @@ class YumBase(depsolve.Depsolve):
         return self._cleanFiles(exts, 'cachedir', 'sqlite')
 
     def cleanMetadata(self):
-        exts = ['xml.gz', 'xml', 'cachecookie']
+        exts = ['xml.gz', 'xml', 'cachecookie', 'mirrorlist.txt']
         return self._cleanFiles(exts, 'cachedir', 'metadata') 
 
     def _cleanFiles(self, exts, pathattr, filetype):

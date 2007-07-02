@@ -520,7 +520,8 @@ class YumConf(StartupConf):
 
     http_caching = SelectionOption('all', ('none', 'packages', 'all'))
     metadata_expire = IntOption(1800)   # time in seconds
-
+    mirrorlist_expire = IntOption(86400) # time in seconds (1 day)
+    
     _reposlist = []
 
 class RepoConf(BaseConfig):
@@ -551,7 +552,8 @@ class RepoConf(BaseConfig):
     timeout = Inherit(YumConf.timeout)
     http_caching = Inherit(YumConf.http_caching)
     metadata_expire = Inherit(YumConf.metadata_expire)
-
+    mirrorlist_expire = Inherit(YumConf.mirrorlist_expire)
+    
 def readStartupConfig(configfile, root):
     '''
     Parse Yum's main configuration file and return a StartupConf instance.
