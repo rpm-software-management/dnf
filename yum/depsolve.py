@@ -22,6 +22,7 @@ import logging
 import rpmUtils.transaction
 import rpmUtils.miscutils
 import rpmUtils.arch
+from rpmUtils.arch import archDifference
 from misc import unique, version_tuple_to_string
 import rpm
 
@@ -568,11 +569,27 @@ class Depsolve(object):
         
 
         # find the best one 
+        # first, find out which arch of the ones we can choose from is closest
+        # to the arch of the requesting pkg
+        reqpkg = self.tsInfo.matchNaevr(name=name, ver=version, rel=release)[0]
+        thisarch = reqpkg.arch
         newest = provSack.returnNewestByNameArch()
+                    
         if len(newest) > 1: # there's no way this can be zero
             best = newest[0]
             for po in newest[1:]:
-                if len(po.name) < len(best.name):
+                if thisarch != 'noarch':
+                    best_dist = archDifference(thisarch, best.arch)
+                    po_dist = archDifference(thisarch, po.arch)
+                    if po_dist > 0 and best_dist > po_dist:
+                        best = po
+                        continue
+                    if best_dist == po_dist:
+                        if len(po.name) < len(best.name):
+                            best=po
+                            continue
+                            
+                elif len(po.name) < len(best.name):
                     best = po
                 elif len(po.name) == len(best.name):
                     # compare arch
