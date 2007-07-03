@@ -397,10 +397,11 @@ class YumBase(depsolve.Depsolve):
             return self._up
 
         self.verbose_logger.debug('Building updates object')
-        rpmdb_pkglist = self.rpmdb.simplePkgList()
-        self.rpmdb = None
         sack_pkglist = self.pkgSack.simplePkgList()
+        rpmdb_pkglist = self.rpmdb.simplePkgList()        
         self._up = rpmUtils.updates.Updates(rpmdb_pkglist, sack_pkglist)
+        del rpmdb_pkglist
+        del sack_pkglist
         if self.conf.debuglevel >= 6:
             self._up.debug = 1
             
