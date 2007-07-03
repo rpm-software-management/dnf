@@ -140,6 +140,7 @@ class YumBase(depsolve.Depsolve):
 
         startupconf = config.readStartupConfig(fn, root)
 
+        
         if debuglevel != None:
             startupconf.debuglevel = debuglevel
         if errorlevel != None:
@@ -155,11 +156,13 @@ class YumBase(depsolve.Depsolve):
         # run the postconfig plugin hook
         self.plugins.run('postconfig')
         self.yumvar = self.conf.yumvar
+        self.conf.config_file_age = os.stat(fn)[8]
         self.getReposFromConfig()
 
         # who are we:
         self.conf.uid = os.geteuid()
-            
+        
+        
         self.doFileLogSetup(self.conf.uid, self.conf.logfile)
 
         self.plugins.run('init')
@@ -195,10 +198,13 @@ class YumBase(depsolve.Depsolve):
             except (Errors.RepoError, Errors.ConfigError), e:
                 self.logger.warning(e)
             else:
+                thisrepo.repo_config_age = self.conf.config_file_age
                 reposlist.append(thisrepo)
 
         # Read .repo files from directories specified by the reposdir option
         # (typically /etc/yum/repos.d)
+        repo_config_age = self.conf.config_file_age
+        
         parser = ConfigParser()
         for reposdir in self.conf.reposdir:
             if os.path.exists(self.conf.installroot+'/'+reposdir):
@@ -206,6 +212,10 @@ class YumBase(depsolve.Depsolve):
 
             if os.path.isdir(reposdir):
                 for repofn in glob.glob('%s/*.repo' % reposdir):
+                    thisrepo_age = os.stat(repofn)[8]
+                    if thisrepo_age > repo_config_age:
+                        repo_config_age = thisrepo_age
+                        
                     confpp_obj = ConfigPreProcessor(repofn, vars=self.yumvar)
                     try:
                         parser.readfp(confpp_obj)
@@ -220,6 +230,7 @@ class YumBase(depsolve.Depsolve):
             except (Errors.RepoError, Errors.ConfigError), e:
                 self.logger.warning(e)
             else:
+                thisrepo.repo_config_age = repo_config_age
                 reposlist.append(thisrepo)
 
         # Got our list of repo objects, add them to the repos collection
@@ -386,8 +397,10 @@ class YumBase(depsolve.Depsolve):
             return self._up
 
         self.verbose_logger.debug('Building updates object')
-        self._up = rpmUtils.updates.Updates(self.rpmdb.simplePkgList(),
-                                           self.pkgSack.simplePkgList())
+        rpmdb_pkglist = self.rpmdb.simplePkgList()
+        self.rpmdb = None
+        sack_pkglist = self.pkgSack.simplePkgList()
+        self._up = rpmUtils.updates.Updates(rpmdb_pkglist, sack_pkglist)
         if self.conf.debuglevel >= 6:
             self._up.debug = 1
             
@@ -402,7 +415,7 @@ class YumBase(depsolve.Depsolve):
             self._up.doObsoletes()
 
         self._up.condenseUpdates()
-        
+        self.closeRpmDB()
         return self._up
     
     def doGroupSetup(self):
@@ -1023,7 +1036,8 @@ class YumBase(depsolve.Depsolve):
             for po in self.rpmdb:
                 dinst[po.pkgtup] = po;
             installed = dinst.values()
-
+            self.closeRpmDB()
+            
             if self.conf.showdupesfromrepos:
                 avail = self.pkgSack.returnPackages()
             else:

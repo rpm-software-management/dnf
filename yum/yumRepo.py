@@ -224,7 +224,8 @@ class YumRepository(Repository, config.RepoConf):
         self.metadata_cookie_fn = 'cachecookie'
         self.groups_added = False
         self.http_headers = {}
-        
+        self.repo_config_age = 0 # if we're a repo not from a file then the 
+                                 # config is very, very old
         # throw in some stubs for things that will be set by the config class
         self.basecachedir = ""
         self.cachedir = ""
@@ -628,6 +629,9 @@ class YumRepository(Repository, config.RepoConf):
            the cachecookie and the mirrorlist
            return True if w/i the expiration time limit
            false if the time limit has expired
+           
+           Additionally compare the file to age of the newest .repo or yum.conf 
+           file. If any of them are newer then invalidate the cache
            """
 
         val = False
@@ -638,8 +642,14 @@ class YumRepository(Repository, config.RepoConf):
             # WE ARE FROM THE FUTURE!!!!
             elif cookie_info[8] > time.time():
                 val = False
+            
+            # make sure none of our config files for this repo are newer than
+            # us
+            if cookie_info[8] < int(self.repo_config_age):
+                val = False
+
         return val
-           
+    
     def setMetadataCookie(self):
         """if possible, set touch the metadata_cookie file"""
 
