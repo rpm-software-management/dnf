@@ -459,7 +459,7 @@ class StartupConf(BaseConfig):
 
     distroverpkg = Option('redhat-release')
     installroot = Option('/')
-
+    config_file_path = Option('/etc/yum/yum.conf')
     plugins = BoolOption(False)
     pluginpath = ListOption(['/usr/share/yum-plugins', '/usr/lib/yum-plugins'])
     pluginconfpath = ListOption(['/etc/yum/pluginconf.d'])
@@ -570,7 +570,7 @@ def readStartupConfig(configfile, root):
 
     StartupConf.installroot.default = root
     startupconf = StartupConf()
-
+    startupconf.config_file_path = configfile
     parser = ConfigParser()
     confpp_obj = ConfigPreProcessor(configfile)
     try:
@@ -617,6 +617,10 @@ def readMainConfig(startupconf):
     yumconf.uid = 0
     yumconf.cache = 0
     yumconf.progess_obj = None
+    
+    # items related to the originating config file
+    yumconf.config_file_path = startupconf.config_file_path
+    yumconf.config_file_age = os.stat(startupconf.config_file_path)[8]
     
     # propagate the debuglevel and errorlevel values:
     yumconf.debuglevel = startupconf.debuglevel

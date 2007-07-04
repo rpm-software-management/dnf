@@ -156,7 +156,7 @@ class YumBase(depsolve.Depsolve):
         # run the postconfig plugin hook
         self.plugins.run('postconfig')
         self.yumvar = self.conf.yumvar
-        self.conf.config_file_age = os.stat(fn)[8]
+
         self.getReposFromConfig()
 
         # who are we:
