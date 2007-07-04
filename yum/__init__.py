@@ -416,7 +416,6 @@ class YumBase(depsolve.Depsolve):
             self._up.doObsoletes()
 
         self._up.condenseUpdates()
-        self.closeRpmDB()
         return self._up
     
     def doGroupSetup(self):
@@ -1037,8 +1036,7 @@ class YumBase(depsolve.Depsolve):
             for po in self.rpmdb:
                 dinst[po.pkgtup] = po;
             installed = dinst.values()
-            self.closeRpmDB()
-            
+                        
             if self.conf.showdupesfromrepos:
                 avail = self.pkgSack.returnPackages()
             else:
