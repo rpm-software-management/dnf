@@ -33,6 +33,7 @@ import yum.misc
 import yum.plugins
 from yum.constants import TS_OBSOLETED
 import rpmUtils.arch
+import rpmUtils.miscutils
 from yum.packages import parsePackages, YumLocalPackage
 from i18n import _
 import callback
@@ -316,6 +317,18 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         if self.gpgsigcheck(downloadpkgs) != 0:
             return 1
         
+        if self.conf.rpm_check_debug:
+            self.verbose_logger.log(yum.logginglevels.INFO_2, 
+                 'Running rpm_check_debug')
+            msgs = self._run_rpm_check_debug()
+            if msgs:
+                print 'ERROR with rpm_check_debug vs depsolve:'
+                for msg in msgs:
+                    print msg
+    
+                return 0, ['Please report this error in bugzilla']
+                
+            
         self.verbose_logger.log(yum.logginglevels.INFO_2,
             'Running Transaction Test')
         tsConf = {}
@@ -1064,6 +1077,26 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
             return True
         
         return False
+    def _run_rpm_check_debug(self):
+        import rpm
+        results = []
+        self.populateTs(test=1)
+        deps = self.ts.check()
+        for deptuple in deps:
+            ((name, version, release), (needname, needversion), flags,
+              suggest, sense) = deptuple
+            if sense == rpm.RPMDEP_SENSE_REQUIRES:
+                msg = 'Package %s needs %s, this is not available.' % \
+                      (name, rpmUtils.miscutils.formatRequire(needname, 
+                                                              needversion, flags))
+                results.append(msg)
+            elif sense == rpm.RPMDEP_SENSE_CONFLICTS:
+                msg = 'Package %s conflicts with %s.' % \
+                      (name, rpmUtils.miscutils.formatRequire(needname, 
+                                                              needversion, flags))
+                results.append(msg)
+
+        return results
 
 class YumOptionParser(OptionParser):
     '''Subclass that makes some minor tweaks to make OptionParser do things the
@@ -1230,6 +1263,8 @@ class YumOptionParser(OptionParser):
         self.add_option("", "--disableplugin", dest="disableplugins", default=[], 
                 action="append", help="disable plugins by name",
                 metavar='[plugin]')
+
+
         
 def _filtercmdline(novalopts, valopts, args):
     '''Keep only specific options from the command line argument list
@@ -1275,3 +1310,4 @@ def _filtercmdline(novalopts, valopts, args):
                     out.append(a)
 
     return out
+
