@@ -805,6 +805,8 @@ class Depsolve(object):
             if len(thisneeds) == 0:
                 self._dcobj.already_seen[txmbr] = 1
             ret.extend(thisneeds)
+
+        ret.extend(self._checkConflicts())
             
         return ret
 
@@ -982,40 +984,6 @@ class Depsolve(object):
                     pkgtup=po.pkgtup, output_states=TS_INSTALL_STATES):
                     member.setAsDep(txmbr.po)
 
-
-        for conflict in txmbr.po.returnPrco('conflicts'):
-            (r, f, v) = conflict
-            txmbrs = self.tsInfo.matchNaevr(name=r)
-            for tx in self.tsInfo.getMembersWithState(output_states = TS_INSTALL_STATES):
-                if tx.name != r and r not in tx.po.provides_names:
-                    continue
-                if tx.po.checkPrco('provides', (r, f, v)):
-                    ret.append( ((txmbr.name, txmbr.version, txmbr.release),
-                                 (r, version_tuple_to_string(v)), flags[f],
-                                 None, rpm.RPMDEP_SENSE_CONFLICTS) )
-
-            inst = self.rpmdb.whatProvides(r, None, None)
-            for pkgtup in inst:
-                txmbrs = self.tsInfo.getMembersWithState(pkgtup,
-                                                         TS_REMOVE_STATES)
-                if not txmbrs:
-                    po = self.getInstalledPackageObject(pkgtup)
-                    if po.checkPrco('provides', (r, f, v)):
-                        ret.append( ((txmbr.name, txmbr.version, txmbr.release),
-                                     (r, version_tuple_to_string(v)), flags[f],
-                                     None, rpm.RPMDEP_SENSE_CONFLICTS) )
-        
-        for instpkg in self.rpmdb.searchConflicts(txmbr.name):
-            prcotuple = (txmbr.name, 'EQ', (txmbr.epoch, txmbr.version, txmbr.release))
-            if instpkg.checkPrco('conflicts', prcotuple):
-                # if the conflict-having-version is being removed then well, it doesn't matter
-                if self.tsInfo.getMembersWithState(instpkg.pkgtup, output_states=TS_REMOVE_STATES):
-                    continue
-                instevr = (instpkg.epoch, instpkg.ver, instpkg.rel)
-                ret.append( ((txmbr.name, txmbr.version, txmbr.release),
-                             (instpkg.name, version_tuple_to_string(instevr)), rpm.RPMSENSE_EQUAL,
-                                     None, rpm.RPMDEP_SENSE_CONFLICTS) )
-                
         return ret
 
     def _checkRemove(self, txmbr):
@@ -1107,6 +1075,32 @@ class Depsolve(object):
                              (r, version_tuple_to_string(v)),
                              flags[f], None, rpm.RPMDEP_SENSE_REQUIRES) )
 
+        return ret
+
+    def _checkConflicts(self):
+        ret = [ ]
+        for po in self.rpmdb.returnPackages():
+            if self.tsInfo.getMembersWithState(po.pkgtup, output_states=TS_REMOVE_STATES):
+                continue
+            for conflict in po.returnPrco('conflicts') + \
+                    po.returnPrco('obsoletes'):
+                (r, f, v) = conflict
+                for conflicting_po in self.tsInfo.getNewProvides(r, f, v):
+                    if conflicting_po.pkgtup[0] == po.pkgtup[0] and conflicting_po.pkgtup[2:] == po.pkgtup[2:]:
+                        continue
+                    ret.append( ((po.name, po.version, po.release),
+                                 (r, version_tuple_to_string(v)), flags[f],
+                                 None, rpm.RPMDEP_SENSE_CONFLICTS) )
+        for txmbr in self.tsInfo.getMembersWithState(output_states=TS_INSTALL_STATES):
+            po = txmbr.po
+            for conflict in txmbr.po.returnPrco('conflicts'):
+                (r, f, v) = conflict
+                for conflicting_po in self.tsInfo.getNewProvides(r, f, v):
+                    if conflicting_po.pkgtup[0] == po.pkgtup[0] and conflicting_po.pkgtup[2:] == po.pkgtup[2:]:
+                        continue
+                    ret.append( ((po.name, po.version, po.release),
+                                 (r, version_tuple_to_string(v)), flags[f],
+                                 None, rpm.RPMDEP_SENSE_CONFLICTS) )
         return ret
 
     def _requiredByPkg(self, prov, pos = []):
