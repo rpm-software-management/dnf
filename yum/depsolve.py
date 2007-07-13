@@ -946,20 +946,14 @@ class Depsolve(object):
 
     def _checkInstall(self, txmbr):
         reqs = txmbr.po.returnPrco('requires')
-        provs = txmbr.po.returnPrco('provides')
-
-        flags = {"GT": rpm.RPMSENSE_GREATER,
-                 "GE": rpm.RPMSENSE_EQUAL | rpm.RPMSENSE_GREATER,
-                 "LT": rpm.RPMSENSE_LESS,
-                 "LE": rpm.RPMSENSE_LESS | rpm.RPMSENSE_EQUAL,
-                 "EQ": rpm.RPMSENSE_EQUAL,
-                 None: 0 }
+        provs = set(txmbr.po.returnPrco('provides'))
 
         # if this is an update, we should check what the old
         # requires were to make things faster
         oldreqs = []
         for oldpo in txmbr.updates:
             oldreqs.extend(oldpo.returnPrco('requires'))
+        oldreqs = set(oldreqs)
 
         ret = []
         for req in reqs:
@@ -971,38 +965,23 @@ class Depsolve(object):
                 continue
             
             self.verbose_logger.log(logginglevels.DEBUG_2, "looking for %s as a requirement of %s", req, txmbr)
-            dep = self.deps.get(req, None)
-            if dep is None:
-                dep = self._provideToPkg(req)
-                if dep is None:
-                    reqtuple = (req[0], version_tuple_to_string(req[2]), flags[req[1]])
-                    self._dcobj.addRequires(txmbr.po, [reqtuple])
-                    ret.append( ((txmbr.name, txmbr.version, txmbr.release),
-                                 (req[0], version_tuple_to_string(req[2])), flags[req[1]], None,
-                                 rpm.RPMDEP_SENSE_REQUIRES) )
+            provs = self.tsInfo.getProvides(*req)
+            if not provs:
+                reqtuple = (req[0], version_tuple_to_string(req[2]), flags[req[1]])
+                self._dcobj.addRequires(txmbr.po, [reqtuple])
+                ret.append( ((txmbr.name, txmbr.version, txmbr.release),
+                             (req[0], version_tuple_to_string(req[2])), flags[req[1]], None,
+                             rpm.RPMDEP_SENSE_REQUIRES) )
+                continue
+
+            #Add relationship
+            for po in provs:
+                if txmbr.name == po.name:
                     continue
-
-            # Skip filebased requires on self, etc
-            if txmbr.name == dep.name:
-                continue
-            # FIXME: Yum doesn't need this, right?
-            #if (dep.name, txmbr.name) in whiteout.whitetup:
-            #   log.debug("ignoring %s>%s in whiteout" %(dep.name, txmbr.name))
-            #   continue
-            if self.isPackageInstalled(dep.name):
-                continue
-            if self.tsInfo.exists(dep.pkgtup):
-                pkgs = self.tsInfo.getMembers(pkgtup=dep.pkgtup)
-                member = self.bestPackagesFromList(pkgs)[0]
-
-                #Add relationship
-                found = False
-                for dependspo in txmbr.depends_on:
-                    if member.po == dependspo:
-                        found = True
-                        break
-                if not found:
+                for member in self.tsInfo.getMembersWithState(
+                    pkgtup=po.pkgtup, output_states=TS_INSTALL_STATES):
                     member.setAsDep(txmbr.po)
+
 
         for conflict in txmbr.po.returnPrco('conflicts'):
             (r, f, v) = conflict
