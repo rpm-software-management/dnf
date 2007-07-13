@@ -65,6 +65,14 @@ class PackageSackBase(object):
         (n,a,e,v,r) = pkgtup
         return self.searchNevra(name=n, arch=a, epoch=e, ver=v, rel=r)
         
+    def getProvides(self, name, flags=None, version=None):
+        """return dict { packages -> list of matching provides }"""
+        raise NotImplementedError()
+
+    def getRequires(self, name, flags=None, version=None):
+        """return dict { packages -> list of matching requires }"""
+        raise NotImplementedError()
+
     def searchRequires(self, name):
         """return list of package requiring the name (any evr and flag)"""
         raise NotImplementedError()
@@ -230,6 +238,14 @@ class MetaSack(PackageSackBase):
     def searchNevra(self, name=None, epoch=None, ver=None, rel=None, arch=None):
         """return list of pkgobjects matching the nevra requested"""
         return self._computeAggregateListResult("searchNevra", name, epoch, ver, rel, arch)
+
+    def getProvides(self, name, flags=None, version=None):
+        """return dict { packages -> list of matching provides }"""
+        return self._computeAggregateDictResult("getProvides", name, flags, version)
+
+    def getRequires(self, name, flags=None, version=None):
+        """return dict { packages -> list of matching requires }"""
+        return self._computeAggregateDictResult("getRequires", name, flags, version)
 
     def searchRequires(self, name):
         """return list of package requiring the name (any evr and flag)"""
@@ -435,6 +451,26 @@ class PackageSack(PackageSackBase):
         else:
             return []
         
+    def getProvides(self, name, flags=None, version=None):
+        """return dict { packages -> list of matching provides }"""
+        self._checkIndexes(failure='build')
+        result = { }
+        for po in self.provides.get(name, []):
+            hits = po.matchingPrcos('provides', (name, flags, version))
+            if hits:
+                result[po] = hits
+        return result
+
+    def getRequires(self, name, flags=None, version=None):
+        """return dict { packages -> list of matching requires }"""
+        self._checkIndexes(failure='build')
+        result = { }
+        for po in self.requires.get(name, []):
+            hits = po.matchingPrcos('requires', (name, flags, version))
+            if hits:
+                result[po] = hits
+        return result
+
     def searchRequires(self, name):
         """return list of package requiring the name (any evr and flag)"""
         self._checkIndexes(failure='build')        
