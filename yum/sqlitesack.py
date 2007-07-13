@@ -37,10 +37,10 @@ import rpmUtils.miscutils
 class YumAvailablePackageSqlite(YumAvailablePackage, PackageObject, RpmBase):
     def __init__(self, repo, db_obj):
         self._checksums = []
-        self.prco = { 'obsoletes': [],
-                      'conflicts': [],
-                      'requires': [],
-                      'provides': [] }
+        self.prco = { 'obsoletes': (),
+                      'conflicts': (),
+                      'requires': (),
+                      'provides': () }
         self._files = {}
         self.sack = repo.sack
         self.repoid = repo.id
@@ -183,16 +183,13 @@ class YumAvailablePackageSqlite(YumAvailablePackage, PackageObject, RpmBase):
         return map(lambda x: x['fname'], cur)
 
     def returnPrco(self, prcotype, printable=False):
-        if not self.prco[prcotype]:
+        if isinstance(self.prco[prcotype], tuple):
             cache = self.sack.primarydb[self.repo]
             cur = cache.cursor()
-            query = "select %s.name as name, %s.version as version, "\
-                        "%s.release as release, %s.epoch as epoch, "\
-                        "%s.flags as flags from %s "\
-                        "where %s.pkgKey = '%s'" % (prcotype, prcotype,
-                        prcotype, prcotype, prcotype, prcotype, prcotype,
-                        self.pkgKey)
+            query = "select name, version, release, epoch, flags from %s "\
+                        "where pkgKey = '%s'" % (prcotype, self.pkgKey)
             executeSQL(cur, query)
+            self.prco[prcotype] = [ ]
             for ob in cur:
                 self.prco[prcotype].append((ob['name'], ob['flags'],
                                            (ob['epoch'], ob['version'], 
