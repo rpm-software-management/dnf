@@ -127,10 +127,20 @@ def rangeCheck(reqtuple, pkgtuple):
        ex: foo >= 2.1-1"""
     # we only ever get here if we have a versioned prco
     # nameonly shouldn't ever raise it
-    (reqn, reqf, (reqe, reqv, reqr)) = reqtuple
+    #(reqn, reqf, (reqe, reqv, reqr)) = reqtuple
     (n, a, e, v, r) = pkgtuple
-    #simple failures
-    if reqn != n: return 0
+    return rangeCompare(reqtuple, (n, 'EQ', (e, v, r)))
+
+def rangeCompare(reqtuple, provtuple):
+    """returns true if provtuple satisfies reqtuple"""
+    (reqn, reqf, (reqe, reqv, reqr)) = reqtuple
+    (n, f, (e, v, r)) = provtuple
+    if reqn != n:
+        return 0
+
+    if f is None or reqf is None:
+        return 1
+
     # and you thought we were done having fun
     # if the requested release is left out then we have
     # to remove release from the package prco to make sure the match
@@ -142,19 +152,54 @@ def rangeCheck(reqtuple, pkgtuple):
         e = None
     if reqv is None: # just for the record if ver is None then we're going to segfault
         v = None
-        
-    rc = compareEVR((e, v, r), (reqe, reqv, reqr))
-            
+
+    # if we just require foo-version, then foo-version-* will match
+    if r is None:
+        reqr = None
+
+    rc = rpmUtils.miscutils.compareEVR((e, v, r), (reqe, reqv, reqr))
+
+    # does not match unless
     if rc >= 1:
         if reqf in ['GT', 'GE', 4, 12]:
             return 1
+        if reqf in ['EQ', 8]:
+            if f in ['LE', 10]:
+                return 1
     if rc == 0:
-        if reqf in ['GE', 'LE', 'EQ', 8, 10, 12]:
-            return 1
+        if reqf in ['GT', 4]:
+            if f in ['GT', 'GE', 4, 12]:
+                return 1
+        if reqf in ['GE', 12]:
+            if f in ['GT', 'GE', 'EQ', 'LE', 4, 12, 8, 10]:
+                return 1
+        if reqf in ['EQ', 8]:
+            if f in ['EQ', 'GE', 'LE', 8, 12, 10]:
+                return 1
+        if reqf in ['LE', 10]:
+            if f in ['EQ', 'LE', 'LT', 'GE', 8, 10, 2, 12]:
+                return 1
+        if reqf in ['LT', 2]:
+            if f in ['LE', 'LT', 10, 2]:
+                return 1
     if rc <= -1:
-        if reqf in ['LT', 'LE', 2, 10]:
+        if reqf in ['GT', 'GE', 'EQ', 4, 12, 8]:
+            if f in ['GT', 'GE', 4, 12]:
+                return 1
+        if reqf in ['LE', 'LT', 10, 2]:
             return 1
+#                if rc >= 1:
+#                    if reqf in ['GT', 'GE', 4, 12]:
+#                        return 1
+#                if rc == 0:
+#                    if reqf in ['GE', 'LE', 'EQ', 8, 10, 12]:
+#                        return 1
+#                if rc <= -1:
+#                    if reqf in ['LT', 'LE', 2, 10]:
+#                        return 1
+
     return 0
+
 
 ###########
 # Title: Remove duplicates from a sequence
