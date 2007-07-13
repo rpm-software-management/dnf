@@ -379,7 +379,7 @@ class RPMDBPackageSack(PackageSackBase):
         # Can't support this now
         raise NotImplementedError
 
-    def whatProvides(self, name, flags, version):
+    def getProvides(self, name, flags=None, version=None):
         """searches the rpmdb for what provides the arguments
            returns a list of pkgtuples of providing packages, possibly empty"""
 
@@ -398,24 +398,23 @@ class RPMDBPackageSack(PackageSackBase):
         elif type(version) is types.NoneType:
             r_e = r_v = r_r = None
         
-        defSack = ListPackageSack() # holder for items definitely providing this dep
+        result = { }
         
         for po in pkgs:
             if name[0] == '/' and r_v is None:
-                # file dep add all matches to the defSack
-                defSack.addPackage(po)
+                result[po] = [(name, None, (None, None, None))]
                 continue
+            hits = po.matchingPrcos(
+                'provides', (name, flags, (r_e, r_v, r_r)))
+            if hits:
+                result[po] = hits
+        return result
 
-            if po.checkPrco('provides', (name, flags, (r_e, r_v, r_r))):
-                defSack.addPackage(po)
+    def whatProvides(self, name, flags, version):
+        # XXX deprecate?
+        return [po.pkgtup for po in self.getProvides(name, flags, version)]
 
-        returnlist = []
-        for pkg in defSack.returnPackages():
-            returnlist.append(pkg.pkgtup)
-        
-        return returnlist
-
-    def whatRequires(self, name, flags, version):
+    def getRequires(self, name, flags=None, version=None):
         """searches the rpmdb for what provides the arguments
            returns a list of pkgtuples of providing packages, possibly empty"""
 
@@ -429,23 +428,23 @@ class RPMDBPackageSack(PackageSackBase):
             (r_e, r_v, r_r) = version
         elif type(version) is types.NoneType:
             r_e = r_v = r_r = None
-        
-        defSack = ListPackageSack() # holder for items definitely providing this dep
-        
+
+        result = { }
+
         for po in pkgs:
             if name[0] == '/' and r_v is None:
                 # file dep add all matches to the defSack
-                defSack.addPackage(po)
+                result[po] = [(name, None, (None, None, None))]
                 continue
+            hits = po.matchingPrcos(
+                'requires', (name, flags, (r_e, r_v, r_r)))
+            if hits:
+                result[po] = hits
+        return result
 
-            if po.checkPrco('requires', (name, flags, (r_e, r_v, r_r))):
-                defSack.addPackage(po)
-
-        returnlist = []
-        for pkg in defSack.returnPackages():
-            returnlist.append(pkg.pkgtup)
-        
-        return returnlist    
+    def whatRequires(self, name, flags, version):
+        # XXX deprecate?
+        return [po.pkgtup for po in self.getProvides(name, flags, version)]
             
 def main():
     sack = RPMDBPackageSack('/')
