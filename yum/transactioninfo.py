@@ -35,6 +35,7 @@ class TransactionData:
         self.probFilterFlags = []
         self.root = '/'
         self.pkgdict = {} # key = pkgtup, val = list of TransactionMember obj
+        self.removedmembers = {}
         self.debug = 0
         self.changed = False
         
@@ -86,6 +87,21 @@ class TransactionData:
 
         return returnlist
             
+    def getRemovedMembers(self, pkgtup=None):
+        """takes an optional package tuple and returns all transaction members
+           matching, no pkgtup means it returns all transaction members"""
+
+        returnlist = []
+
+        if pkgtup is None:
+            for members in self.removedmembers.itervalues():
+                returnlist.extend(members)
+        elif self.removedmembers.has_key(pkgtup):
+            returnlist.extend(self.pkgdict[pkgtup])
+
+        return returnlist
+
+
     def getMode(self, name=None, arch=None, epoch=None, ver=None, rel=None):
         """returns the mode of the first match from the transaction set, 
            otherwise, returns None"""
@@ -171,6 +187,7 @@ class TransactionData:
             if not isinstance(txmbr.po, (YumInstalledPackage, YumAvailablePackageSqlite)):
                 self.localSack.delPackage(txmbr.po)
         
+        self.removedmembers.setdefault(pkgtup, []).extend(self.pkgdict[pkgtup])
         del self.pkgdict[pkgtup]
         self.changed = True        
     

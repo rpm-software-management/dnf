@@ -812,6 +812,26 @@ class Depsolve(object):
             ret.extend(thisneeds)
             self._dcobj.already_seen[txmbr] = 1
 
+        # check transaction members that got removed from the transaction again
+        for txmbr in self.tsInfo.getRemovedMembers():
+            if self.dcobj.already_seen_removed.has_key(txmbr):
+                continue
+            if self.dsCallback and txmbr.ts_state:
+                if txmbr.ts_state == 'i':
+                    self.dsCallback.pkgAdded(txmbr.pkgtup, 'e')
+                else:
+                    self.dsCallback.pkgAdded(txmbr.pkgtup, 'i')
+
+            self.verbose_logger.log(logginglevels.DEBUG_2,
+                                    "Checking deps for %s" %(txmbr,))
+            if txmbr.output_state in TS_INSTALL_STATES:
+                thisneeds = self._checkRemove(txmbr)
+            elif txmbr.output_state in TS_REMOVE_STATES:
+                thisneeds = self._checkInstall(txmbr)
+            if len(thisneeds) == 0:
+                self.dcobj.already_seen_removed[txmbr] = 1
+            ret.extend(thisneeds)
+
         if check_removes:
             ret.extend(self._checkFileRequires())
         ret.extend(self._checkConflicts())
@@ -1225,7 +1245,8 @@ class DepCheck(object):
         self.requires = []
         self.conflicts = []
         self.already_seen = {}
-        
+        self.already_seen_removed = {}
+
     def addRequires(self, po, req_tuple_list):
         # fixme - do checking for duplicates or additions in here to zip things along
         reqobj = Requires(po, req_tuple_list)
