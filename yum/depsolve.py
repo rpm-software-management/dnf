@@ -36,6 +36,13 @@ import Errors
 import warnings
 warnings.simplefilter("ignore", Errors.YumFutureDeprecationWarning)
 
+flags = {"GT": rpm.RPMSENSE_GREATER,
+         "GE": rpm.RPMSENSE_EQUAL | rpm.RPMSENSE_GREATER,
+         "LT": rpm.RPMSENSE_LESS,
+         "LE": rpm.RPMSENSE_LESS | rpm.RPMSENSE_EQUAL,
+         "EQ": rpm.RPMSENSE_EQUAL,
+         None: 0 }
+
 class Depsolve(object):
     def __init__(self):
         packages.base = self
@@ -66,12 +73,13 @@ class Depsolve(object):
             raise Errors.YumBaseError, 'Setting up TransactionSets before config class is up'
         
         self._tsInfo = self._transactionDataFactory()
+        self._tsInfo.setDatabases(self.rpmdb, self.pkgSack)
         self.initActionTs()
     
     def _getTsInfo(self):
         if self._tsInfo is None:
             self._tsInfo = self._transactionDataFactory()
-
+            self._tsInfo.setDatabases(self.rpmdb, self.pkgSack)
         return self._tsInfo
 
     def _setTsInfo(self, value):
