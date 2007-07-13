@@ -21,7 +21,9 @@
 # with the given txmbr. 
 
 from constants import *
-from packageSack import ListPackageSack
+from packageSack import ListPackageSack, PackageSack
+from packages import YumInstalledPackage
+from sqlitesack import YumAvailablePackageSqlite
 import Errors
 import warnings
 
@@ -37,6 +39,10 @@ class TransactionData:
         self.changed = False
         
         self.conditionals = {} # key = pkgname, val = list of pos to add
+
+        self.rpmdb = None
+        self.pkgSack = None
+        self.localSack = PackageSack()
 
         # lists of txmbrs in their states - just placeholders
         self.instgroups = []
@@ -144,6 +150,10 @@ class TransactionData:
         self.pkgdict[txmember.pkgtup].append(txmember)
         self.changed = True
 
+        # Is this the right criteria?
+        if not isinstance(txmember.po, (YumInstalledPackage, YumAvailablePackageSqlite)):
+            self.localSack.addPackage(txmember.po)
+
         if self.conditionals.has_key(txmember.name):
             for po in self.conditionals[txmember.name]:
                 condtxmbr = self.addInstall(po)
@@ -157,6 +167,9 @@ class TransactionData:
             return
         for txmbr in self.pkgdict[pkgtup]:
             txmbr.po.state = None
+            # Is this the right criteria?
+            if not isinstance(txmbr.po, (YumInstalledPackage, YumAvailablePackageSqlite)):
+                self.localSack.delPackage(txmbr.po)
         
         del self.pkgdict[pkgtup]
         self.changed = True        
@@ -336,6 +349,61 @@ class TransactionData:
         self.add(txmbr)
         return txmbr
 
+
+    def setDatabases(self, rpmdb, pkgSack):
+        self.rpmdb = rpmdb
+        self.pkgSack = pkgSack
+
+    def getNewProvides(self, name, flag=None, version=None):
+        """return dict { packages -> list of matching provides }
+        searches in packages to be installed"""
+        result = { }
+        for pkg, hits in self.pkgSack.getProvides(name, flag, version).iteritems():
+            if self.getMembersWithState(pkg.pkgtup, TS_INSTALL_STATES):
+                result[pkg] = hits
+        result.update(self.localSack.getProvides(name, flag, version))
+        return result
+
+    def getOldProvides(self, name, flag=None, version=None):
+        """return dict { packages -> list of matching provides }
+        searches in packages already installed and not going to be removed"""
+        result = { }
+        for pkg, hits in self.rpmdb.getProvides(name, flag, version).iteritems():
+            if not self.getMembersWithState(pkg.pkgtup, TS_REMOVE_STATES):
+                result[pkg] = hits
+        return result
+
+    def getProvides(self, name, flag=None, version=None):
+        """return dict { packages -> list of matching provides }"""
+        result = self.getOldProvides(name, flag, version)
+        result.update(self.getNewProvides(name, flag, version))
+        return result
+
+    def getNewRequires(self, name, flag=None, version=None):
+        """return dict { packages -> list of matching provides }
+        searches in packages to be installed"""
+        result = { }
+        for pkg, hits in self.pkgSack.getRequires(name, flag, version).iteritems():
+            if self.getMembersWithState(pkg.pkgtup, TS_INSTALL_STATES):
+                result[pkg] = hits
+        result.update(self.localSack.getRequires(name, flag, version))
+        return result
+
+
+    def getOldRequires(self, name, flag=None, version=None):
+        """return dict { packages -> list of matching provides }
+        searches in packages already installed and not going to be removed"""
+        result = { }
+        for pkg, hits in self.rpmdb.getRequires(name, flag, version).iteritems():
+            if not self.getMembersWithState(pkg.pkgtup, TS_REMOVE_STATES):
+                result[pkg] = hits
+        return result
+
+    def getRequires(self, name, flag=None, version=None):
+        """return dict { packages -> list of matching provides }"""
+        result = self.getOldRequires(name, flag, version)
+        result.update(self.getNewRequires(name, flag, version))
+        return result
 
 class ConditionalTransactionData(TransactionData):
     """A transaction data implementing conditional package addition"""
