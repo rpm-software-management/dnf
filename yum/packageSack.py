@@ -540,7 +540,7 @@ class PackageSack(PackageSackBase):
 
     def _delFromListOfDict(self, dict, key, data):
         if not dict.has_key(key):
-            dict[key] = []
+            return
         try:
             dict[key].remove(data)
         except ValueError:
@@ -561,13 +561,23 @@ class PackageSack(PackageSackBase):
                 self._addToDictAsList(self.pkgsByRepo, repoid, obj)
         else:
             self._addToDictAsList(self.pkgsByRepo, repoid, obj)
-
+        if self.indexesBuilt:
+            self._addPackageToIndex(obj)
 
     def buildIndexes(self):
         """builds the useful indexes for searching/querying the packageSack
            This should be called after all the necessary packages have been 
            added/deleted"""
+
+        self.clearIndexes()
         
+        for repoid in self.pkgsByRepo.keys():
+            for obj in self.pkgsByRepo[repoid]:
+                self._addPackageToIndex(obj)
+        self.indexesBuilt = 1
+
+
+    def clearIndexes(self):
         # blank out the indexes
         self.obsoletes = {}
         self.requires = {}
@@ -576,36 +586,50 @@ class PackageSack(PackageSackBase):
         self.filenames = {}
         self.nevra = {}
         self.pkgsByID = {}
-        
-        for repoid in self.pkgsByRepo.keys():
-            for obj in self.pkgsByRepo[repoid]:
-            # store the things provided just on name, not the whole require+version
-            # this lets us reduce the set of pkgs to search when we're trying to depSolve
-                for (n, fl, (e,v,r)) in obj.returnPrco('obsoletes'):
-                    self._addToDictAsList(self.obsoletes, n, obj)
-                for (n, fl, (e,v,r)) in obj.returnPrco('requires'):
-                    self._addToDictAsList(self.requires, n, obj)
-                for (n, fl, (e,v,r)) in obj.returnPrco('provides'):
-                    self._addToDictAsList(self.provides, n, obj)
-                for (n, fl, (e,v,r)) in obj.returnPrco('conflicts'):
-                    self._addToDictAsList(self.conflicts, n, obj)
-                for ftype in obj.returnFileTypes():
-                    for file in obj.returnFileEntries(ftype):
-                        self._addToDictAsList(self.filenames, file, obj)
-                self._addToDictAsList(self.pkgsByID, obj.id, obj)
-                (name, arch, epoch, ver, rel) = obj.pkgtup
-                self._addToDictAsList(self.nevra, (name, epoch, ver, rel, arch), obj)
-                self._addToDictAsList(self.nevra, (name, None, None, None, None), obj)
-        
-        self.indexesBuilt = 1
-        
 
+        self.indexesBuilt = 0
+        
+    def _addPackageToIndex(self, obj):
+        # store the things provided just on name, not the whole require+version
+        # this lets us reduce the set of pkgs to search when we're trying to depSolve
+        for (n, fl, (e,v,r)) in obj.returnPrco('obsoletes'):
+            self._addToDictAsList(self.obsoletes, n, obj)
+        for (n, fl, (e,v,r)) in obj.returnPrco('requires'):
+            self._addToDictAsList(self.requires, n, obj)
+        for (n, fl, (e,v,r)) in obj.returnPrco('provides'):
+            self._addToDictAsList(self.provides, n, obj)
+        for (n, fl, (e,v,r)) in obj.returnPrco('conflicts'):
+            self._addToDictAsList(self.conflicts, n, obj)
+        for ftype in obj.returnFileTypes():
+            for file in obj.returnFileEntries(ftype):
+                self._addToDictAsList(self.filenames, file, obj)
+        self._addToDictAsList(self.pkgsByID, obj.id, obj)
+        (name, arch, epoch, ver, rel) = obj.pkgtup
+        self._addToDictAsList(self.nevra, (name, epoch, ver, rel, arch), obj)
+        self._addToDictAsList(self.nevra, (name, None, None, None, None), obj)
+
+    def _delPackageFromIndex(self, obj):
+        for (n, fl, (e,v,r)) in obj.returnPrco('obsoletes'):
+            self._delFromListOfDict(self.obsoletes, n, obj)
+        for (n, fl, (e,v,r)) in obj.returnPrco('requires'):
+            self._delFromListOfDict(self.requires, n, obj)
+        for (n, fl, (e,v,r)) in obj.returnPrco('provides'):
+            self._delFromListOfDict(self.provides, n, obj)
+        for (n, fl, (e,v,r)) in obj.returnPrco('conflicts'):
+            self._delFromListOfDict(self.conflicts, n, obj)
+        for ftype in obj.returnFileTypes():
+            for file in obj.returnFileEntries(ftype):
+                self._delFromListOfDict(self.filenames, file, obj)
+        self._delFromListOfDict(self.pkgsByID, obj.id, obj)
+        (name, arch, epoch, ver, rel) = obj.pkgtup
+        self._delFromListOfDict(self.nevra, (name, epoch, ver, rel, arch), obj)
+        self._delFromListOfDict(self.nevra, (name, None, None, None, None), obj)
         
     def delPackage(self, obj):
         """delete a pkgobject"""
         self._delFromListOfDict(self.pkgsByRepo, obj.repoid, obj)
-        if self.indexesBuilt: # if we've built indexes, delete it b/c we've just deleted something
-            self.indexesBuilt = 0
+        if self.indexesBuilt: 
+            self._delPackageFromIndex(obj)
         
     def returnPackages(self, repoid=None):
         """return list of all packages, takes optional repoid"""
