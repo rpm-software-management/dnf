@@ -56,6 +56,9 @@ class Depsolve(object):
         self.path = []
         self.loops = []
 
+        self.installedFileRequires = None
+        self.installedUnresolvedFileRequires = None
+
     def doTsSetup(self):
         warnings.warn('doTsSetup() will go away in a future version of Yum.\n',
                 Errors.YumFutureDeprecationWarning, stacklevel=2)
@@ -788,6 +791,7 @@ class Depsolve(object):
 
 
         ret = []
+        check_removes = False
         for txmbr in self.tsInfo.getMembers():
             
             if self._dcobj.already_seen.has_key(txmbr):
@@ -802,10 +806,14 @@ class Depsolve(object):
                 thisneeds = self._checkInstall(txmbr)
             elif txmbr.output_state in TS_REMOVE_STATES:
                 thisneeds = self._checkRemove(txmbr)
+                check_removes = True
             if len(thisneeds) == 0:
                 self._dcobj.already_seen[txmbr] = 1
             ret.extend(thisneeds)
+            self._dcobj.already_seen[txmbr] = 1
 
+        if check_removes:
+            ret.extend(self._checkFileRequires())
         ret.extend(self._checkConflicts())
             
         return ret
@@ -990,92 +998,88 @@ class Depsolve(object):
         po = txmbr.po
         provs = po.returnPrco('provides')
 
-        # get the files in the package and express them as "provides"
-        files = po.filelist
-        filesasprovs = map(lambda f: (f, None, (None,None,None)), files)
-        provs.extend(filesasprovs)
-
         # if this is an update, we should check what the new package
         # provides to make things faster
         newpoprovs = {}
         for newpo in txmbr.updated_by:
             for p in newpo.provides:
                 newpoprovs[p] = 1
-            for f in newpo.simpleFiles(): # newpo.filelist:
-                newpoprovs[(f, None, (None, None, None))] = 1
-
         ret = []
-        self._removing = []
-        goneprovs = {}
-        gonefiles = {}
-        removes = {}
         
         # iterate over the provides of the package being removed
         # and see what's actually going away
         for prov in provs:
             if prov[0].startswith('rpmlib('): # ignore rpmlib() provides
                 continue
-            if prov[0].startswith("/usr/share/doc"): # XXX: ignore doc files
-                continue
             if newpoprovs.has_key(prov):
                 continue
-            if not prov[0][0] == "/":
-                goneprovs[prov[0]] = prov
-            else:
-                gonefiles[prov[0]] = prov
+            for pkg, hits in self.tsInfo.getRequires(*prov).iteritems():
+                for rn, rf, rv in hits:
+                    if not self.tsInfo.getProvides(rn, rf, rv):
+                        reqtuple = (rn, version_tuple_to_string(rv), flags[rf])
+                        self._dcobj.addRequires(pkg, [reqtuple])
+                        ret.append(
+                            ((pkg.name, pkg.version, pkg.release),
+                             (rn, version_tuple_to_string(rv)),
+                             flags[rf], None, rpm.RPMDEP_SENSE_REQUIRES) )
+        return ret
 
-        # now see what from the rpmdb really requires these
-        for (provname, prov) in goneprovs.items() + gonefiles.items():
-            instrequirers = []
-            for pkgtup in self.rpmdb.whatRequires(provname, None, None):
-                instpo = self.getInstalledPackageObject(pkgtup)
-                instrequirers.append(instpo)
-            
-            self.verbose_logger.log(logginglevels.DEBUG_4, "looking to see what requires %s of %s", prov, po)
-            removes[prov] = self._requiredByPkg(prov, instrequirers)
+    def _checkFileRequires(self):
+        fileRequires = set()
+        reverselookup = {}
+        ret = []
 
-        # now, let's see if anything that we're installing requires anything
-        # that this provides
-        for txmbr in self.tsInfo.getMembersWithState(None, TS_INSTALL_STATES):
-            for r in txmbr.po.requires_names:
-                prov = None
-                if r in goneprovs.keys():
-                    prov = goneprovs[r]
-                elif r[0] == "/" and r in gonefiles:
-                    prov = gonefiles[r]
+        # generate list of file requirement in rpmdb
+        if self.installedFileRequires is None:
+            self.installedFileRequires = {}
+            self.installedUnresolvedFileRequires = set()
+            resolved = set()
+            for pkg in self.rpmdb.returnPackages():
+                for name, flag, evr in pkg.requires:
+                    if not name.startswith('/'):
+                        continue
+                    self.installedFileRequires.setdefault(pkg, []).append(name)
+                    if name not in resolved:
+                        dep = self.rpmdb.getProvides(name, flag, evr)
+                        resolved.add(name)
+                        if not dep:
+                            self.installedUnresolvedFileRequires.add(name)
 
-                if prov and not removes.has_key(prov):
-                    removes[prov] = self._requiredByPkg(prov, [txmbr.po])
-                elif prov:
-                    removes[prov].extend(self._requiredByPkg(prov, [txmbr.po]))                        
+        # get file requirements from packages not deleted
+        for po, files in self.installedFileRequires.iteritems():
+            if not self._tsInfo.getMembersWithState(po.pkgtup, output_states=TS_REMOVE_STATES):
+                fileRequires.update(files)
+                for filename in files:
+                    reverselookup.setdefault(filename, []).append(po)
 
-        # now we know what needs to be removed and the provide causing it
-        # to be removed.  let's stick them in the ret list
-        for (prov, removeList) in removes.items():
-            (r, f, v) = prov
-            for po in removeList:
-                flags = {"GT": rpm.RPMSENSE_GREATER,
-                         "GE": rpm.RPMSENSE_EQUAL | rpm.RPMSENSE_GREATER,
-                         "LT": rpm.RPMSENSE_LESS,
-                         "LE": rpm.RPMSENSE_LESS | rpm.RPMSENSE_EQUAL,
-                         "EQ": rpm.RPMSENSE_EQUAL,
-                         None: 0 }
-                f = v = None
-                for (rr, rf, rv) in po.requires:
-                    if rr == r:
-                        f = rf
-                        v = rv
-                        break
+        fileRequires -= self.installedUnresolvedFileRequires
 
-                self._removing.append(po.pkgtup)
-                reqtuple = (r, version_tuple_to_string(v), flags[f])
-                self._dcobj.addRequires(po, [reqtuple])
-                
-                ret.append( ((po.name, po.version, po.release),
-                             (r, version_tuple_to_string(v)),
-                             flags[f], None, rpm.RPMDEP_SENSE_REQUIRES) )
+        # get file requirements from new packages
+        for txmbr in self._tsInfo.getMembersWithState(output_states=TS_INSTALL_STATES):
+            for name, flag, evr in txmbr.po.requires:
+                if name.startswith('/'):
+                    # check if file requires was already unresolved in update
+                    if name in self.installedUnresolvedFileRequires:
+                        already_broken = False
+                        for oldpo in txmbr.updates:
+                            if oldpo.checkPrco('requires', (name, None, (None, None, None))):
+                                already_broken = True
+                                break
+                        if already_broken:
+                            continue
+                    fileRequires.add(name)
+                    reverselookup.setdefault(name, []).append(txmbr.po)
+
+        # check the file requires
+        for filename in fileRequires:
+            if not self.tsInfo.getOldProvides(filename) and not self.tsInfo.getNewProvides(filename):
+                for po in reverselookup[filename]:
+                    ret.append( ((po.name, po.version, po.release),
+                                 (filename, ''), 0, None,
+                                 rpm.RPMDEP_SENSE_REQUIRES) )
 
         return ret
+
 
     def _checkConflicts(self):
         ret = [ ]
