@@ -145,8 +145,8 @@ class PackageSackBase(object):
     def searchAll(self, arg, query_type):
         raise NotImplementedError()
     
-    def matchPackageNames(self, input, casematch=False):
-        """take a user strings and match the packages in the sack against it
+    def matchPackageNames(self, pkgspecs):
+        """take a list strings and match the packages in the sack against it
            this will match against:
            name
            name.arch
@@ -156,40 +156,24 @@ class PackageSackBase(object):
            epoch:name-ver-rel.arch
            name-epoch:ver-rel.arch
            
-           it yields a package object for each match
-
-            Arguments:
-             input: string
-               string to match
-             
-             casematch: Boolean
-                if true then match case sensitively
-                if false then match case insensitively
-                default False
+           return [exact matches], [glob matches], [unmatch search terms]
            """
         # Setup match() for the search we're doing
-        if re.search('[\*\[\]\{\}\?]', input):
-            restring = fnmatch.translate(input)
-            if casematch:
-                regex = re.compile(restring)             # case sensitive
-            else:
-                regex = re.compile(restring, flags=re.I) # case insensitive
+        matched = []
+        exactmatch = []
+        unmatched = set(pkgspecs)
 
-            def match(s):
-                return regex.match(s)
-
-        else:
-            if casematch:
-                def match(s):
-                    return s == input
+        specs = {}
+        for p in pkgspecs:
+            if re.search('[\*\[\]\{\}\?]', p):
+                restring = fnmatch.translate(p)
+                specs[p] = re.compile(restring)
             else:
-                input = input.lower()
-                def match(s):
-                    return s.lower() == input
+                specs[p] = p
          
         for pkgtup in self.simplePkgList():
             (n,a,e,v,r) = pkgtup
-            names = (
+            names = set((
                 n, 
                 '%s.%s' % (n, a),
                 '%s-%s-%s.%s' % (n, v, r, a),
@@ -197,13 +181,18 @@ class PackageSackBase(object):
                 '%s-%s-%s' % (n, v, r),
                 '%s:%s-%s-%s.%s' % (e, n, v, r, a),
                 '%s-%s:%s-%s.%s' % (n, e, v, r, a),
-                )
-            for name in names:
-                if match(name):
-                    for po in self.searchPkgTuple(pkgtup):
-                        yield po
-                    break       # Only match once per package
-
+                ))
+            for term, query in specs:
+                if term == query:
+                    if query in names:
+                        exactmatch.append(self.searchPkgTuple(pkgtup)[0])
+                        unmatched.discard(term)
+                else:
+                    for n in names:
+                        if query.match(n):
+                            matched.append(self.searchPkgTuple(pkgtup)[0])
+                            unmatched.discard(term)
+        return misc.unique(exactmatch), misc.unique(matched), list(unmatched)
 
 
 class MetaSack(PackageSackBase):
