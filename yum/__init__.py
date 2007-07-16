@@ -872,6 +872,8 @@ class YumBase(depsolve.Depsolve):
         if self.dsCallback: self.dsCallback.downloadHeader(po.name)
         
         try:
+            if not os.path.exists(repo.hdrdir):
+                os.makedirs(repo.hdrdir)
             checkfunc = (self.verifyHeader, (po, 1), {})
             hdrpath = repo.getHeader(po, checkfunc=checkfunc,
                     cache=repo.http_caching != 'none',
