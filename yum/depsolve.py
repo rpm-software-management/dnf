@@ -1077,8 +1077,7 @@ class Depsolve(object):
         for po in self.rpmdb.returnPackages():
             if self.tsInfo.getMembersWithState(po.pkgtup, output_states=TS_REMOVE_STATES):
                 continue
-            for conflict in po.returnPrco('conflicts') + \
-                    po.returnPrco('obsoletes'):
+            for conflict in po.returnPrco('conflicts'):
                 (r, f, v) = conflict
                 for conflicting_po in self.tsInfo.getNewProvides(r, f, v):
                     if conflicting_po.pkgtup[0] == po.pkgtup[0] and conflicting_po.pkgtup[2:] == po.pkgtup[2:]:
