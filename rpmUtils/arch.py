@@ -55,7 +55,7 @@ arches = {
 
     # arm
     "armv61": "armv5tejl",
-    "arm5tejl": "armv5tel",
+    "armv5tejl": "armv5tel",
     "armv5tel": "noarch",
     }
 
