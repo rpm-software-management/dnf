@@ -43,6 +43,7 @@ logging.addLevelName(DEBUG_4, "DEBUG_4")
 # High level to effectively turn off logging.
 # For compatability with the old logging system.
 __NO_LOGGING = 100
+logging.raiseExceptions = False
 
 def logLevelFromErrorLevel(error_level):
     """ Convert an old-style error logging level to the new style. """
