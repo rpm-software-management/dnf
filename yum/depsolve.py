@@ -1089,7 +1089,7 @@ class Depsolve(object):
             po = txmbr.po
             for conflict in txmbr.po.returnPrco('conflicts'):
                 (r, f, v) = conflict
-                for conflicting_po in self.tsInfo.getNewProvides(r, f, v):
+                for conflicting_po in self.tsInfo.getProvides(r, f, v):
                     if conflicting_po.pkgtup[0] == po.pkgtup[0] and conflicting_po.pkgtup[2:] == po.pkgtup[2:]:
                         continue
                     ret.append( ((po.name, po.version, po.release),
