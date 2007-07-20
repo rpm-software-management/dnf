@@ -521,7 +521,7 @@ class YumConf(StartupConf):
     http_caching = SelectionOption('all', ('none', 'packages', 'all'))
     metadata_expire = IntOption(1800)   # time in seconds
     mirrorlist_expire = IntOption(86400) # time in seconds (1 day)
-    rpm_check_debug = BoolOption(False)
+    rpm_check_debug = BoolOption(True)
     
     _reposlist = []
 
