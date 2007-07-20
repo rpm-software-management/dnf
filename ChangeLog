@@ -1,3 +1,130 @@
+2007-07-20 12:17  skvidal
+
+	* yum/logginglevels.py: 
+	set logging.raiseExceptions to false so that piping to less from
+	normal calls won't result in spewed tracebacks that we can't catch.
+
+2007-07-20 11:20  skvidal
+
+	* yum.spec, yum/__init__.py, yum/config.py: make rpm_debug_check
+	the default mark as 3.2.2 in init and spec for release tests
+
+2007-07-19 17:25  skvidal
+
+	* docs/yum.conf.5: fix typo
+
+2007-07-17 09:07  katzj
+
+	* rpmUtils/arch.py: fix tyop
+
+2007-07-16 11:46  skvidal
+
+	* yum/__init__.py: 
+	if you are downloadHeader()ing make sure we make the headers dir -
+	only useful for other callers of the yum modules - and they all
+	should be stopped eventually.
+
+2007-07-06 15:33  katzj
+
+	* yum/packages.py: better fix for bad pkgid (rh#242604)
+
+2007-07-05 10:05  skvidal
+
+	* cli.py, yum/config.py: as a result of the depsolving bugs we've
+	been seeing I added in a temporary ts.check() debug option. If
+	you're running yum from the cli and you set rpm_check_debug=True in
+	your yum.conf then it will run an rpm ts.check() before it runs the
+	transaction test. If it finds any problems it will bail out. This
+	might help us find bogus depsolving.
+
+2007-07-04 17:39  skvidal
+
+	* yum/: __init__.py, config.py: 
+	- move around where we get the config file age out of __init__ and
+	into config - add the path to the config file into the config data
+	for walking back from it for writing out our configs
+
+2007-07-04 09:44  skvidal
+
+	* yum/__init__.py: note to self, always revert changes before
+	committing unrelated patches Thanks again to terje.
+
+2007-07-03 18:08  skvidal
+
+	* yum/__init__.py: 
+	revert updates item I broke. :( Thanks to terje for noticing it!
+
+2007-07-03 15:24  skvidal
+
+	* yum/: __init__.py, yumRepo.py: 
+	check if the .repo file or config files are newer than our
+	mirrorlist or cachecookie files. If so, then invalidate these
+	files.	idea from florian laroche.
+
+2007-07-02 15:40  skvidal
+
+	* docs/yum.conf.5, yum/__init__.py, yum/config.py, yum/yumRepo.py: 
+	download and save mirrorlists locally when using them expire
+	mirrorlist data based on mirrorlist_expire config variable in
+	[main] and each repo config deprecate metadataCurrent() and
+	getMirrorList from yumRepo.py
+
+2007-07-01 20:00  skvidal
+
+	* yum/depsolve.py: 
+	fix for rh bug 246078 - when multiple packages provide the dep,
+	choose the one with the closest arch to the requesting arch as
+	possible. Helps ENDLESS multilib situations.
+
+2007-06-29 06:19  timlau
+
+	* yum/__init__.py: make 'yum clean all'  work again, it fails
+	trying to get the files in the headers directory there is not used
+	anymore.
+
+2007-06-28 11:37  katzj
+
+	* output.py: more hackery around python encoding disasters.  the
+	strings we get back from the rpmdb are just string objects (as
+	opposed to unicode) but may have utf8 content.	so if we try to
+	encode them, we get errors.  so only encode the unicode objects
+	(rh#245445)
+
+2007-06-27 15:39  katzj
+
+	* yum/: Errors.py, yumRepo.py: When downloading, it can be useful
+	to distinguish between an error due to no more mirrors being
+	available and other errors.  Attached patch adds a new error type
+	so that if you care, you can catch it instead and then uses it in
+	yumRepo._getFile().
+
+2007-06-26 18:31  katzj
+
+	* output.py: if we get a traceback reading the input, just take it
+	as a no (rh#245736)
+
+2007-06-26 12:01  skvidal
+
+	* yum/depsolve.py: check installed pkgs for conflicts against
+	installing pkgs closes bug: 245707
+
+2007-06-26 02:05  skvidal
+
+	* yum/packages.py: 
+	make sure that parsePackges(casematch=0) returns correctly for
+	non-globbed search strings
+
+2007-06-25 14:46  skvidal
+
+	* docs/yum.conf.5, yum/__init__.py, yum/config.py, yum/misc.py: 
+	merge functionality of 'installonlyn' plugin into yum core. 
+	options installonly_limit in yum.conf. Setting to 0 disables it.
+	Defaults to 0.
+
+2007-06-21 14:55  skvidal
+
+	* ChangeLog: merge changelog
+
 2007-06-21 14:36  skvidal
 
 	* shell.py: make sure we don't pass shlex.split() None or it will
