@@ -43,6 +43,7 @@ class TransactionData:
 
         self.rpmdb = None
         self.pkgSack = None
+        self.pkgSackPackages = 0
         self.localSack = PackageSack()
 
         # lists of txmbrs in their states - just placeholders
@@ -169,6 +170,8 @@ class TransactionData:
         # Is this the right criteria?
         if not isinstance(txmember.po, (YumInstalledPackage, YumAvailablePackageSqlite)):
             self.localSack.addPackage(txmember.po)
+        elif isinstance(txmember.po, YumAvailablePackageSqlite):
+            self.pkgSackPackages += 1
 
         if self.conditionals.has_key(txmember.name):
             for po in self.conditionals[txmember.name]:
@@ -186,6 +189,8 @@ class TransactionData:
             # Is this the right criteria?
             if not isinstance(txmbr.po, (YumInstalledPackage, YumAvailablePackageSqlite)):
                 self.localSack.delPackage(txmbr.po)
+            elif isinstance(txmbr.po, YumAvailablePackageSqlite):
+                self.pkgSackPackages -= 1
         
         self.removedmembers.setdefault(pkgtup, []).extend(self.pkgdict[pkgtup])
         del self.pkgdict[pkgtup]
@@ -375,9 +380,10 @@ class TransactionData:
         """return dict { packages -> list of matching provides }
         searches in packages to be installed"""
         result = { }
-        for pkg, hits in self.pkgSack.getProvides(name, flag, version).iteritems():
-            if self.getMembersWithState(pkg.pkgtup, TS_INSTALL_STATES):
-                result[pkg] = hits
+        if self.pkgSackPackages:
+            for pkg, hits in self.pkgSack.getProvides(name, flag, version).iteritems():
+                if self.getMembersWithState(pkg.pkgtup, TS_INSTALL_STATES):
+                    result[pkg] = hits
         result.update(self.localSack.getProvides(name, flag, version))
         return result
 
@@ -400,9 +406,10 @@ class TransactionData:
         """return dict { packages -> list of matching provides }
         searches in packages to be installed"""
         result = { }
-        for pkg, hits in self.pkgSack.getRequires(name, flag, version).iteritems():
-            if self.getMembersWithState(pkg.pkgtup, TS_INSTALL_STATES):
-                result[pkg] = hits
+        if self.pkgSackPackages:
+            for pkg, hits in self.pkgSack.getRequires(name, flag, version).iteritems():
+                if self.getMembersWithState(pkg.pkgtup, TS_INSTALL_STATES):
+                    result[pkg] = hits
         result.update(self.localSack.getRequires(name, flag, version))
         return result
 
