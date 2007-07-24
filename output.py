@@ -122,7 +122,7 @@ class YumOutput:
             try:
                 choice = raw_input('Is this ok [y/N]: ')
             except:
-                choice = []
+                choice = ''
             choice = choice.lower()
             if len(choice) == 0 or choice[0] in ['y', 'n']:
                 break
