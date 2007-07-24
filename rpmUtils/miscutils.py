@@ -21,6 +21,7 @@ import gzip
 import os
 import sys
 import locale
+import signal
 
 import rpmUtils.transaction
 
@@ -357,3 +358,13 @@ def hdrFromPackage(ts, package):
     
     os.close(fdno)
     return hdr
+
+def checkSignals():
+    if hasattr(rpm, "checkSignals"):
+        if rpm.signalsCaught([signal.SIGINT, 
+                              signal.SIGTERM,
+                              signal.SIGPIPE,
+                              signal.SIGQUIT,
+                              signal.SIGHUP]):
+            exit(1)
+    

@@ -25,8 +25,14 @@ from i18n import _
 from urlgrabber.progress import TextMeter
 from urlgrabber.grabber import URLGrabError
 from yum.misc import sortPkgObj, prco_tuple_to_string
+from rpmUtils.miscutils import checkSignals
 
 from yum import logginglevels
+
+class YumTextMeter(TextMeter):
+    def update(self, amount_read, now=None):
+        checkSignals()
+        TextMeter.update(self, amount_read, now)
 
 class YumOutput:
 
@@ -329,7 +335,7 @@ Remove   %5.5s Package(s)
             self.repos.setProgressBar(None)
             self.repos.callback = None
         else:
-            self.repos.setProgressBar(TextMeter(fo=sys.stdout))
+            self.repos.setProgressBar(YumTextMeter(fo=sys.stdout))
             self.repos.callback = CacheProgressCallback()
 
         # setup our failure report for failover
