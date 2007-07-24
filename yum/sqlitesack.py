@@ -262,8 +262,19 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
 
         if datatype == 'metadata':
             self.primarydb[repo] = dataobj
+            # temporary hack to create indexes that are not (yet)
+            # created by the metadata parser
+            cur = dataobj.cursor()
+            cur.execute("CREATE INDEX IF NOT EXISTS pkgprovides ON provides (pkgKey)")
+            cur.execute("CREATE INDEX IF NOT EXISTS requiresname ON requires (name)")
+            cur.execute("CREATE INDEX IF NOT EXISTS pkgrequires ON requires (pkgKey)")
+            cur.execute("CREATE INDEX IF NOT EXISTS pkgconflicts ON conflicts (pkgKey)")
+            cur.execute("CREATE INDEX IF NOT EXISTS pkgobsoletes ON obsoletes (pkgKey)")
+            cur.execute("CREATE INDEX IF NOT EXISTS filenames ON files (name)")
         elif datatype == 'filelists':
             self.filelistsdb[repo] = dataobj
+            cur = dataobj.cursor()
+            cur.execute("CREATE INDEX IF NOT EXISTS dirnames ON filelist (dirname)")
         elif datatype == 'otherdata':
             self.otherdb[repo] = dataobj
         else:
