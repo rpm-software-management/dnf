@@ -826,6 +826,7 @@ class Depsolve(object):
                                     "Checking deps for %s" %(txmbr,))
             if txmbr.output_state in TS_INSTALL_STATES:
                 thisneeds = self._checkRemove(txmbr)
+                check_removes = True
             elif txmbr.output_state in TS_REMOVE_STATES:
                 thisneeds = self._checkInstall(txmbr)
             if len(thisneeds) == 0:
