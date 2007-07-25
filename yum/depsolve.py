@@ -780,7 +780,6 @@ class Depsolve(object):
             if len(thisneeds) == 0:
                 self._dcobj.already_seen[txmbr] = 1
             ret.extend(thisneeds)
-            self._dcobj.already_seen[txmbr] = 1
 
         # check transaction members that got removed from the transaction again
         for txmbr in self.tsInfo.getRemovedMembers():
