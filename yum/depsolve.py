@@ -667,7 +667,7 @@ class Depsolve(object):
                 if confpkg.name not in self.conf.exactarchlist:
                     try:
                         pkgs = self.pkgSack.returnNewestByName(confpkg.name)
-                    except PackageSackError:
+                    except Errors.PackageSackError:
                         self.verbose_logger.log(logginglevels.DEBUG_4, "unable to find newer package for %s" %(confpkg.name,))
                         pkgs = []
                     archs = {}
@@ -679,7 +679,7 @@ class Depsolve(object):
                 else:
                     try:
                         po = self.pkgSack.returnNewestByNameArch((confpkg.name,confpkg.arch))[0]
-                    except PackageSackError:
+                    except Errors.PackageSackError:
                         self.verbose_logger.log(logginglevels.DEBUG_4, "unable to find newer package for %s.%s" %(confpkg.name,confpkg.arch))
                         po = None
                 if po and po.pkgtup not in uplist:
