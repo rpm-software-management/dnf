@@ -580,6 +580,9 @@ class Depsolve(object):
             for po in newest[1:]:
                 if thisarch != 'noarch':
                     best_dist = archDifference(thisarch, best.arch)
+                    if best_dist == 0: # can't really use best's arch anyway...
+                        best = po # just try the next one - can't be much worse
+                        continue
                     po_dist = archDifference(thisarch, po.arch)
                     if po_dist > 0 and best_dist > po_dist:
                         best = po
