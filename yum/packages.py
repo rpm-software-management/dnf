@@ -459,7 +459,10 @@ class YumAvailablePackage(PackageObject, RpmBase):
             self.ver = self.version
             self.rel = self.release
 
-
+    def exclude(self):
+        """remove self from package sack"""
+        self.repo.sack.delPackage(self)
+        
     def printVer(self):
         """returns a printable version string - including epoch, if it's set"""
         if self.epoch != '0':

@@ -504,7 +504,7 @@ class MainPluginConduit(PostRepoSetupPluginConduit):
         return self._base.getPackageObject(nevra)
 
     def delPackage(self, po):
-        self._base.pkgSack.delPackage(po)
+        po.repo.sack.delPackage(po)
 
     def getTsInfo(self):
         return self._base.tsInfo

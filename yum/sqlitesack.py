@@ -717,7 +717,10 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
     
     def excludeArchs(self, archlist):
         """excludes incompatible arches - archlist is a list of compat arches"""
-        arch_query = str(tuple(archlist))
+        
+        archlist = map(lambda x: "'%s'" % x , archlist)
+        arch_query = ",".join(archlist)
+        arch_query = '(%s)' % arch_query
 
         for (rep, cache) in self.primarydb.items():
             cur = cache.cursor()
