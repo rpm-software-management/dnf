@@ -458,6 +458,8 @@ class YumRepository(Repository, config.RepoConf):
         self.baseurl = self._replace_and_check_url(self.baseurl)
         self.mirrorurls = self._replace_and_check_url(mirrorurls)
         self._urls = self.baseurl + self.mirrorurls
+        # store them all back in baseurl for compat purposes
+        self.baseurl = self._urls
         self.check()
         
     def _replace_and_check_url(self, url_list):
