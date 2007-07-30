@@ -357,7 +357,10 @@ class MetaSack(PackageSackBase):
 
         matched = misc.unique(matched)
         exactmatch = misc.unique(exactmatch)
-        unmatched = list(unmatched)
+        if unmatched is None:
+            unmatched = []
+        else:
+            unmatched = list(unmatched)
         return exactmatch, matched, unmatched
 
     def _computeAggregateListResult(self, methodName, *args):
