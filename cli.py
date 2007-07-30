@@ -628,10 +628,10 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
 
         if len(self.tsInfo) > oldcount:
             change = len(self.tsInfo) - oldcount
-            msg = '%d packages marked for Update/Obsoletion' % change
+            msg = '%d packages marked for Update' % change
             return 2, [msg]
         else:
-            return 0, ['No Packages marked for Update/Obsoletion']
+            return 0, ['No Packages marked for Update']
 
 
         
