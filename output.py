@@ -105,6 +105,7 @@ class YumOutput:
     
             if thingslisted == 0:
                 return 1, ['No Packages to list']
+            return 0, []
         
     
         

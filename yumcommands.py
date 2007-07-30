@@ -161,18 +161,25 @@ class InfoCommand(YumCommand):
         except yum.Errors.YumBaseError, e:
             return 1, [str(e)]
         else:
-            base.listPkgs(ypl.installed, 'Installed Packages', basecmd)
-            base.listPkgs(ypl.available, 'Available Packages', basecmd)
-            base.listPkgs(ypl.extras, 'Extra Packages', basecmd)
-            base.listPkgs(ypl.updates, 'Updated Packages', basecmd)
+            rip = base.listPkgs(ypl.installed, 'Installed Packages', basecmd)
+            rap = base.listPkgs(ypl.available, 'Available Packages', basecmd)
+            rep = base.listPkgs(ypl.extras, 'Extra Packages', basecmd)
+            rup = base.listPkgs(ypl.updates, 'Updated Packages', basecmd)
             if len(ypl.obsoletes) > 0 and basecmd == 'list': 
             # if we've looked up obsolete lists and it's a list request
+                rop = [0, '']
                 print 'Obsoleting Packages'
                 for obtup in ypl.obsoletesTuples:
                     base.updatesObsoletesList(obtup, 'obsoletes')
             else:
-                base.listPkgs(ypl.obsoletes, 'Obsoleting Packages', basecmd)
-            base.listPkgs(ypl.recent, 'Recently Added Packages', basecmd)
+                rop = base.listPkgs(ypl.obsoletes, 'Obsoleting Packages', basecmd)
+            rrap = base.listPkgs(ypl.recent, 'Recently Added Packages', basecmd)
+            # extcmds is pop(0)'d if they pass a "special" param like "updates"
+            # in returnPkgLists(). This allows us to always return "ok" for
+            # things like "yum list updates".
+            if len(extcmds) and \
+               rrap[0] and rop[0] and rup[0] and rep[0] and rap[0] and rip[0]:
+                return 1, ['No matching Packages to list']
             return 0, []
 
 class EraseCommand(YumCommand):
