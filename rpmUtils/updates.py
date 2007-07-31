@@ -151,6 +151,10 @@ class Updates:
                 if flag in [None, 0]: # unversioned obsolete
                     if pkgdict.has_key((obs_n, None)):
                         for (rpm_a, rpm_e, rpm_v, rpm_r) in pkgdict[(obs_n, None)]:
+                            # broken package obsoleting itself, rpm allows
+                            # this so just silently ignore it...
+                            if obs_n == name:
+                                continue
                             if not obsdict.has_key(pkgtup):
                                 obsdict[pkgtup] = []
                             obsdict[pkgtup].append((obs_n, rpm_a, rpm_e, rpm_v, rpm_r))
