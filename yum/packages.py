@@ -259,92 +259,44 @@ class RpmBase(object):
                         return 1
 
         return 0
-                
+
     def inPrcoRange(self, prcotype, reqtuple):
         """returns true if the package has a the prco that satisfies 
            the reqtuple range, assume false.
            Takes: prcotype, requested prco tuple"""
+        return bool(self.matchingPrcos(prcotype, reqtuple))
+
+    def matchingPrcos(self, prcotype, reqtuple):
         # we only ever get here if we have a versioned prco
         # nameonly shouldn't ever raise it
         (reqn, reqf, (reqe, reqv, reqr)) = reqtuple
         # however, just in case
         # find the named entry in pkgobj, do the comparsion
+        result = []
         for (n, f, (e, v, r)) in self.returnPrco(prcotype):
-            if reqn == n:
-                # found it
-                if f is None:
-                    return 1
-                if f != 'EQ' and prcotype == 'provides':                
-                    # isn't this odd, it's not 'EQ' and it is a provides
-                    # - it really should be EQ
-                    # use the pkgobj's evr for the comparison
-                    if e is None:
-                        e = self.epoch
-                    if v is None:
-                        v = self.ver
-                    if r is None:
-                        r = self.rel
-                    
-                    #(e, v, r) = (self.epoch, self.ver, self.rel)
-                # and you thought we were done having fun
-                # if the requested release is left out then we have
-                # to remove release from the package prco to make sure the match
-                # is a success - ie: if the request is EQ foo 1:3.0.0 and we have 
-                # foo 1:3.0.0-15 then we have to drop the 15 so we can match
-                if reqr is None:
-                    r = None
-                if reqe is None:
-                    e = None
-                if reqv is None: # just for the record if ver is None then we're going to segfault
-                    v = None
+            if reqn != n:
+                continue
 
-                # if we just require foo-version, then foo-version-* will match
+            if f != 'EQ' and prcotype == 'provides':
+                # isn't this odd, it's not 'EQ' and it is a provides
+                # - it really should be EQ
+                # use the pkgobj's evr for the comparison
+                if e is None:
+                    e = self.epoch
+                if v is None:
+                    v = self.ver
                 if r is None:
-                    reqr = None
+                    r = self.rel
+                #(e, v, r) = (self.epoch, self.ver, self.rel)
 
-                rc = rpmUtils.miscutils.compareEVR((e, v, r), (reqe, reqv, reqr))
-                
-                # does not match unless
-                if rc >= 1:
-                    if reqf in ['GT', 'GE', 4, 12]:
-                        return 1
-                    if reqf in ['EQ', 8]:
-                        if f in ['LE', 10]:
-                            return 1
-                if rc == 0:
-                    if reqf in ['GT', 4]:
-                        if f in ['GT', 'GE', 4, 12]:
-                            return 1
-                    if reqf in ['GE', 12]:
-                        if f in ['GT', 'GE', 'EQ', 'LE', 4, 12, 8, 10]:
-                            return 1
-                    if reqf in ['EQ', 8]:
-                        if f in ['EQ', 'GE', 'LE', 8, 12, 10]:
-                            return 1
-                    if reqf in ['LE', 10]:
-                        if f in ['EQ', 'LE', 'LT', 'GE', 8, 10, 2, 12]:
-                            return 1
-                    if reqf in ['LT', 2]:
-                        if f in ['LE', 'LT', 10, 2]:
-                            return 1
-                if rc <= -1:
-                    if reqf in ['GT', 'GE', 'EQ', 4, 12, 8]:
-                        if f in ['GT', 'GE', 4, 12]:
-                            return 1
-                    if reqf in ['LE', 'LT', 10, 2]:
-                        return 1
-                
-                
-#                if rc >= 1:
-#                    if reqf in ['GT', 'GE', 4, 12]:
-#                        return 1
-#                if rc == 0:
-#                    if reqf in ['GE', 'LE', 'EQ', 8, 10, 12]:
-#                        return 1
-#                if rc <= -1:
-#                    if reqf in ['LT', 'LE', 2, 10]:
-#                        return 1
-        return 0
+            matched = rpmUtils.miscutils.rangeCompare(
+                reqtuple, (n, f, (e, v, r)))
+            if matched:
+                result.append((n, f, (e, v, r)))
+
+        return result
+
+
         
     def returnChangelog(self):
         """return changelog entries"""

@@ -65,6 +65,14 @@ class PackageSackBase(object):
         (n,a,e,v,r) = pkgtup
         return self.searchNevra(name=n, arch=a, epoch=e, ver=v, rel=r)
         
+    def getProvides(self, name, flags=None, version=None):
+        """return dict { packages -> list of matching provides }"""
+        raise NotImplementedError()
+
+    def getRequires(self, name, flags=None, version=None):
+        """return dict { packages -> list of matching requires }"""
+        raise NotImplementedError()
+
     def searchRequires(self, name):
         """return list of package requiring the name (any evr and flag)"""
         raise NotImplementedError()
@@ -137,8 +145,8 @@ class PackageSackBase(object):
     def searchAll(self, arg, query_type):
         raise NotImplementedError()
     
-    def matchPackageNames(self, input, casematch=False):
-        """take a user strings and match the packages in the sack against it
+    def matchPackageNames(self, pkgspecs):
+        """take a list strings and match the packages in the sack against it
            this will match against:
            name
            name.arch
@@ -148,40 +156,24 @@ class PackageSackBase(object):
            epoch:name-ver-rel.arch
            name-epoch:ver-rel.arch
            
-           it yields a package object for each match
-
-            Arguments:
-             input: string
-               string to match
-             
-             casematch: Boolean
-                if true then match case sensitively
-                if false then match case insensitively
-                default False
+           return [exact matches], [glob matches], [unmatch search terms]
            """
         # Setup match() for the search we're doing
-        if re.search('[\*\[\]\{\}\?]', input):
-            restring = fnmatch.translate(input)
-            if casematch:
-                regex = re.compile(restring)             # case sensitive
-            else:
-                regex = re.compile(restring, flags=re.I) # case insensitive
+        matched = []
+        exactmatch = []
+        unmatched = set(pkgspecs)
 
-            def match(s):
-                return regex.match(s)
-
-        else:
-            if casematch:
-                def match(s):
-                    return s == input
+        specs = {}
+        for p in pkgspecs:
+            if re.search('[\*\[\]\{\}\?]', p):
+                restring = fnmatch.translate(p)
+                specs[p] = re.compile(restring)
             else:
-                input = input.lower()
-                def match(s):
-                    return s.lower() == input
+                specs[p] = p
          
         for pkgtup in self.simplePkgList():
             (n,a,e,v,r) = pkgtup
-            names = (
+            names = set((
                 n, 
                 '%s.%s' % (n, a),
                 '%s-%s-%s.%s' % (n, v, r, a),
@@ -189,13 +181,18 @@ class PackageSackBase(object):
                 '%s-%s-%s' % (n, v, r),
                 '%s:%s-%s-%s.%s' % (e, n, v, r, a),
                 '%s-%s:%s-%s.%s' % (n, e, v, r, a),
-                )
-            for name in names:
-                if match(name):
-                    for po in self.searchPkgTuple(pkgtup):
-                        yield po
-                    break       # Only match once per package
-
+                ))
+            for term, query in specs:
+                if term == query:
+                    if query in names:
+                        exactmatch.append(self.searchPkgTuple(pkgtup)[0])
+                        unmatched.discard(term)
+                else:
+                    for n in names:
+                        if query.match(n):
+                            matched.append(self.searchPkgTuple(pkgtup)[0])
+                            unmatched.discard(term)
+        return misc.unique(exactmatch), misc.unique(matched), list(unmatched)
 
 
 class MetaSack(PackageSackBase):
@@ -230,6 +227,14 @@ class MetaSack(PackageSackBase):
     def searchNevra(self, name=None, epoch=None, ver=None, rel=None, arch=None):
         """return list of pkgobjects matching the nevra requested"""
         return self._computeAggregateListResult("searchNevra", name, epoch, ver, rel, arch)
+
+    def getProvides(self, name, flags=None, version=None):
+        """return dict { packages -> list of matching provides }"""
+        return self._computeAggregateDictResult("getProvides", name, flags, version)
+
+    def getRequires(self, name, flags=None, version=None):
+        """return dict { packages -> list of matching requires }"""
+        return self._computeAggregateDictResult("getRequires", name, flags, version)
 
     def searchRequires(self, name):
         """return list of package requiring the name (any evr and flag)"""
@@ -438,6 +443,26 @@ class PackageSack(PackageSackBase):
         else:
             return []
         
+    def getProvides(self, name, flags=None, version=None):
+        """return dict { packages -> list of matching provides }"""
+        self._checkIndexes(failure='build')
+        result = { }
+        for po in self.provides.get(name, []):
+            hits = po.matchingPrcos('provides', (name, flags, version))
+            if hits:
+                result[po] = hits
+        return result
+
+    def getRequires(self, name, flags=None, version=None):
+        """return dict { packages -> list of matching requires }"""
+        self._checkIndexes(failure='build')
+        result = { }
+        for po in self.requires.get(name, []):
+            hits = po.matchingPrcos('requires', (name, flags, version))
+            if hits:
+                result[po] = hits
+        return result
+
     def searchRequires(self, name):
         """return list of package requiring the name (any evr and flag)"""
         self._checkIndexes(failure='build')        
@@ -507,7 +532,7 @@ class PackageSack(PackageSackBase):
 
     def _delFromListOfDict(self, dict, key, data):
         if not dict.has_key(key):
-            dict[key] = []
+            return
         try:
             dict[key].remove(data)
         except ValueError:
@@ -528,13 +553,23 @@ class PackageSack(PackageSackBase):
                 self._addToDictAsList(self.pkgsByRepo, repoid, obj)
         else:
             self._addToDictAsList(self.pkgsByRepo, repoid, obj)
-
+        if self.indexesBuilt:
+            self._addPackageToIndex(obj)
 
     def buildIndexes(self):
         """builds the useful indexes for searching/querying the packageSack
            This should be called after all the necessary packages have been 
            added/deleted"""
+
+        self.clearIndexes()
         
+        for repoid in self.pkgsByRepo.keys():
+            for obj in self.pkgsByRepo[repoid]:
+                self._addPackageToIndex(obj)
+        self.indexesBuilt = 1
+
+
+    def clearIndexes(self):
         # blank out the indexes
         self.obsoletes = {}
         self.requires = {}
@@ -543,36 +578,50 @@ class PackageSack(PackageSackBase):
         self.filenames = {}
         self.nevra = {}
         self.pkgsByID = {}
-        
-        for repoid in self.pkgsByRepo.keys():
-            for obj in self.pkgsByRepo[repoid]:
-            # store the things provided just on name, not the whole require+version
-            # this lets us reduce the set of pkgs to search when we're trying to depSolve
-                for (n, fl, (e,v,r)) in obj.returnPrco('obsoletes'):
-                    self._addToDictAsList(self.obsoletes, n, obj)
-                for (n, fl, (e,v,r)) in obj.returnPrco('requires'):
-                    self._addToDictAsList(self.requires, n, obj)
-                for (n, fl, (e,v,r)) in obj.returnPrco('provides'):
-                    self._addToDictAsList(self.provides, n, obj)
-                for (n, fl, (e,v,r)) in obj.returnPrco('conflicts'):
-                    self._addToDictAsList(self.conflicts, n, obj)
-                for ftype in obj.returnFileTypes():
-                    for file in obj.returnFileEntries(ftype):
-                        self._addToDictAsList(self.filenames, file, obj)
-                self._addToDictAsList(self.pkgsByID, obj.id, obj)
-                (name, arch, epoch, ver, rel) = obj.pkgtup
-                self._addToDictAsList(self.nevra, (name, epoch, ver, rel, arch), obj)
-                self._addToDictAsList(self.nevra, (name, None, None, None, None), obj)
-        
-        self.indexesBuilt = 1
-        
 
+        self.indexesBuilt = 0
+        
+    def _addPackageToIndex(self, obj):
+        # store the things provided just on name, not the whole require+version
+        # this lets us reduce the set of pkgs to search when we're trying to depSolve
+        for (n, fl, (e,v,r)) in obj.returnPrco('obsoletes'):
+            self._addToDictAsList(self.obsoletes, n, obj)
+        for (n, fl, (e,v,r)) in obj.returnPrco('requires'):
+            self._addToDictAsList(self.requires, n, obj)
+        for (n, fl, (e,v,r)) in obj.returnPrco('provides'):
+            self._addToDictAsList(self.provides, n, obj)
+        for (n, fl, (e,v,r)) in obj.returnPrco('conflicts'):
+            self._addToDictAsList(self.conflicts, n, obj)
+        for ftype in obj.returnFileTypes():
+            for file in obj.returnFileEntries(ftype):
+                self._addToDictAsList(self.filenames, file, obj)
+        self._addToDictAsList(self.pkgsByID, obj.id, obj)
+        (name, arch, epoch, ver, rel) = obj.pkgtup
+        self._addToDictAsList(self.nevra, (name, epoch, ver, rel, arch), obj)
+        self._addToDictAsList(self.nevra, (name, None, None, None, None), obj)
+
+    def _delPackageFromIndex(self, obj):
+        for (n, fl, (e,v,r)) in obj.returnPrco('obsoletes'):
+            self._delFromListOfDict(self.obsoletes, n, obj)
+        for (n, fl, (e,v,r)) in obj.returnPrco('requires'):
+            self._delFromListOfDict(self.requires, n, obj)
+        for (n, fl, (e,v,r)) in obj.returnPrco('provides'):
+            self._delFromListOfDict(self.provides, n, obj)
+        for (n, fl, (e,v,r)) in obj.returnPrco('conflicts'):
+            self._delFromListOfDict(self.conflicts, n, obj)
+        for ftype in obj.returnFileTypes():
+            for file in obj.returnFileEntries(ftype):
+                self._delFromListOfDict(self.filenames, file, obj)
+        self._delFromListOfDict(self.pkgsByID, obj.id, obj)
+        (name, arch, epoch, ver, rel) = obj.pkgtup
+        self._delFromListOfDict(self.nevra, (name, epoch, ver, rel, arch), obj)
+        self._delFromListOfDict(self.nevra, (name, None, None, None, None), obj)
         
     def delPackage(self, obj):
         """delete a pkgobject"""
         self._delFromListOfDict(self.pkgsByRepo, obj.repoid, obj)
-        if self.indexesBuilt: # if we've built indexes, delete it b/c we've just deleted something
-            self.indexesBuilt = 0
+        if self.indexesBuilt: 
+            self._delPackageFromIndex(obj)
         
     def returnPackages(self, repoid=None):
         """return list of all packages, takes optional repoid"""

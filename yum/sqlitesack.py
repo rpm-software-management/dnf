@@ -32,14 +32,15 @@ import misc
 import warnings
 
 from sqlutils import executeSQL
+import rpmUtils.miscutils
 
 class YumAvailablePackageSqlite(YumAvailablePackage, PackageObject, RpmBase):
     def __init__(self, repo, db_obj):
         self._checksums = []
-        self.prco = { 'obsoletes': [],
-                      'conflicts': [],
-                      'requires': [],
-                      'provides': [] }
+        self.prco = { 'obsoletes': (),
+                      'conflicts': (),
+                      'requires': (),
+                      'provides': () }
         self._files = {}
         self.sack = repo.sack
         self.repoid = repo.id
@@ -182,16 +183,13 @@ class YumAvailablePackageSqlite(YumAvailablePackage, PackageObject, RpmBase):
         return map(lambda x: x['fname'], cur)
 
     def returnPrco(self, prcotype, printable=False):
-        if not self.prco[prcotype]:
+        if isinstance(self.prco[prcotype], tuple):
             cache = self.sack.primarydb[self.repo]
             cur = cache.cursor()
-            query = "select %s.name as name, %s.version as version, "\
-                        "%s.release as release, %s.epoch as epoch, "\
-                        "%s.flags as flags from %s "\
-                        "where %s.pkgKey = '%s'" % (prcotype, prcotype,
-                        prcotype, prcotype, prcotype, prcotype, prcotype,
-                        self.pkgKey)
+            query = "select name, version, release, epoch, flags from %s "\
+                        "where pkgKey = '%s'" % (prcotype, self.pkgKey)
             executeSQL(cur, query)
+            self.prco[prcotype] = [ ]
             for ob in cur:
                 self.prco[prcotype].append((ob['name'], ob['flags'],
                                            (ob['epoch'], ob['version'], 
@@ -210,6 +208,10 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
         self.filelistsdb = {}
         self.otherdb = {}
         self.excludes = {}
+        self._search_cache = {
+            'provides' : { },
+            'requires' : { },
+            }
 
     def __len__(self):
         for (rep,cache) in self.primarydb.items():
@@ -260,8 +262,19 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
 
         if datatype == 'metadata':
             self.primarydb[repo] = dataobj
+            # temporary hack to create indexes that are not (yet)
+            # created by the metadata parser
+            cur = dataobj.cursor()
+            cur.execute("CREATE INDEX IF NOT EXISTS pkgprovides ON provides (pkgKey)")
+            cur.execute("CREATE INDEX IF NOT EXISTS requiresname ON requires (name)")
+            cur.execute("CREATE INDEX IF NOT EXISTS pkgrequires ON requires (pkgKey)")
+            cur.execute("CREATE INDEX IF NOT EXISTS pkgconflicts ON conflicts (pkgKey)")
+            cur.execute("CREATE INDEX IF NOT EXISTS pkgobsoletes ON obsoletes (pkgKey)")
+            cur.execute("CREATE INDEX IF NOT EXISTS filenames ON files (name)")
         elif datatype == 'filelists':
             self.filelistsdb[repo] = dataobj
+            cur = dataobj.cursor()
+            cur.execute("CREATE INDEX IF NOT EXISTS dirnames ON filelist (dirname)")
         elif datatype == 'otherdata':
             self.otherdb[repo] = dataobj
         else:
@@ -427,6 +440,74 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
         
         return pkgs
         
+
+    def _search(self, prcotype, name, flags, version):
+        if flags == 0:
+            flags = None
+        if type(version) in (str, type(None), unicode):
+            req = (name, flags, rpmUtils.miscutils.stringToVersion(
+                version))
+        elif type(version) in (tuple, list): # would this ever be a list?
+            req = (name, flags, version)
+
+        if self._search_cache[prcotype].has_key(req):
+            return self._search_cache[prcotype][req]
+
+        result = { }
+
+        for (rep,cache) in self.primarydb.items():
+            cur = cache.cursor()
+            executeSQL(cur, "select * from %s where name=?" % prcotype,
+                       (name,))
+            tmp = { }
+            for x in cur:
+                val = (x['name'], x['flags'],
+                       (x['epoch'], x['version'], x['release']))
+                if rpmUtils.miscutils.rangeCompare(req, val):
+                    tmp.setdefault(x['pkgKey'], []).append(val)
+            for pkgKey, hits in tmp.iteritems():
+                executeSQL(cur, "select * from packages where pkgKey=?",
+                           (pkgKey,))
+                x = cur.fetchone()
+                if self._excluded(rep,x['pkgId']):
+                    continue
+                result[self.pc(rep,x)] = hits
+
+        if prcotype != 'provides' or name[0] != '/':
+            self._search_cache[prcotype][req] = result
+            return result
+
+        matched = 0
+        globs = ['.*bin\/.*', '^\/etc\/.*', '^\/usr\/lib\/sendmail$']
+        for thisglob in globs:
+            globc = re.compile(thisglob)
+            if globc.match(name):
+                matched = 1
+
+        if not matched: # if its not in the primary.xml files
+            # search the files.xml file info
+            for pkg in self.searchFiles(name):
+                result[pkg] = [(name, None, None)]
+            self._search_cache[prcotype][req] = result
+            return result
+
+        # If it is a filename, search the primary.xml file info
+        for (rep,cache) in self.primarydb.items():
+            cur = cache.cursor()
+            executeSQL(cur, "select DISTINCT packages.* from files,packages where files.name = ? and files.pkgKey = packages.pkgKey", (name,))
+            for x in cur:
+                if self._excluded(rep,x['pkgId']):
+                    continue
+                result[self.pc(rep,x)] = [(name, None, None)]
+        self._search_cache[prcotype][req] = result
+        return result
+
+    def getProvides(self, name, flags=None, version=None):
+        return self._search("provides", name, flags, version)
+
+    def getRequires(self, name, flags=None, version=None):
+        return self._search("requires", name, flags, version)
+
     
     def searchPrco(self, name, prcotype):
         """return list of packages having prcotype name (any evr and flag)"""

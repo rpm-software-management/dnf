@@ -2,6 +2,7 @@ import unittest
 import settestpath
 
 from yum import packages
+from rpmUtils import miscutils
 
 class InPrcoRangePackageTests(unittest.TestCase):
 
@@ -183,12 +184,26 @@ class BuildPackageDictRefTests(unittest.TestCase):
 
         self.assertEquals(0, len(unseen_keys))
 
+class RangeCompareTests(unittest.TestCase):
+
+    def testRangeCompare(self):
+        for requires, provides, result in (
+            (('foo', 'EQ', ('0', '1.4.4', '0')),   ('foo', 'EQ', ('0', '1.4.4', '0')),  1),
+            (('foo', 'EQ', ('0', '1.4.4', '0')),   ('foo', 'EQ', ('0', '1.4.4', None)), 1),
+            (('foo', 'EQ', ('0', '1.4.4', None)),  ('foo', 'EQ', ('0', '1.4.4', '8')),  1),
+            (('foo', 'LT', ('0', '1.5.4', None)),  ('foo', 'EQ', ('0', '1.4.4', '7')),  1),
+            (('foo', 'GE', ('0', '1.4.4', '7.1')), ('foo', 'EQ', ('0', '1.4.4', '7')),  0),
+            (('foo', 'EQ', ('0', '1.4', None)),    ('foo', 'EQ', ('0', '1.4.4', '7')),  0),
+            (('foo', 'GT', ('1', '1.4.4', None)),  ('foo', 'EQ', ('3', '1.2.4', '7')),  1),
+            ):
+            self.assertEquals(miscutils.rangeCompare(requires, provides), result)
 
 def suite():
     suite = unittest.TestSuite()
     suite.addTest(unittest.makeSuite(InPrcoRangePackageTests))
     suite.addTest(unittest.makeSuite(PackageEvrTests))
     suite.addTest(unittest.makeSuite(BuildPackageDictRefTests))
+    suite.addTest(unittest.makeSuite(RangeCompareTests))
     return suite
                 
 if __name__ == "__main__":

@@ -36,6 +36,13 @@ import Errors
 import warnings
 warnings.simplefilter("ignore", Errors.YumFutureDeprecationWarning)
 
+flags = {"GT": rpm.RPMSENSE_GREATER,
+         "GE": rpm.RPMSENSE_EQUAL | rpm.RPMSENSE_GREATER,
+         "LT": rpm.RPMSENSE_LESS,
+         "LE": rpm.RPMSENSE_LESS | rpm.RPMSENSE_EQUAL,
+         "EQ": rpm.RPMSENSE_EQUAL,
+         None: 0 }
+
 class Depsolve(object):
     def __init__(self):
         packages.base = self
@@ -45,9 +52,11 @@ class Depsolve(object):
         self.logger = logging.getLogger("yum.Depsolve")
         self.verbose_logger = logging.getLogger("yum.verbose.Depsolve")
 
-        self.deps = {}
         self.path = []
         self.loops = []
+
+        self.installedFileRequires = None
+        self.installedUnresolvedFileRequires = None
 
     def doTsSetup(self):
         warnings.warn('doTsSetup() will go away in a future version of Yum.\n',
@@ -66,12 +75,13 @@ class Depsolve(object):
             raise Errors.YumBaseError, 'Setting up TransactionSets before config class is up'
         
         self._tsInfo = self._transactionDataFactory()
+        self._tsInfo.setDatabases(self.rpmdb, self.pkgSack)
         self.initActionTs()
     
     def _getTsInfo(self):
         if self._tsInfo is None:
             self._tsInfo = self._transactionDataFactory()
-
+            self._tsInfo.setDatabases(self.rpmdb, self.pkgSack)
         return self._tsInfo
 
     def _setTsInfo(self, value):
@@ -710,35 +720,6 @@ class Depsolve(object):
         errors.append(msg)
         return CheckDeps, conflicts
 
-    def _provideToPkg(self, req):
-        best = None
-        (r, f, v) = req
-
-        for pkgtup in self.rpmdb.whatProvides(r, f, v):
-            # check the rpmdb first for something providing it that's not
-            # set to be removed
-            txmbrs = self.tsInfo.getMembersWithState(pkgtup, TS_REMOVE_STATES)
-            if not txmbrs:
-                po = self.getInstalledPackageObject(pkgtup)            
-                self.deps[req] = po                
-                return po
-
-        for po in self.whatProvides(r, f, v):
-            # if we already have something to be installed which
-            # does the provide then that's obviously the one we want to use.
-            # this takes care of the case that we select, eg, kernel-smp
-            # and then have something which requires kernel
-            if self.tsInfo.getMembers(po.pkgtup):
-                self.deps[req] = po
-                return po
-        
-        for txmbr in self.tsInfo.getMembersWithState(None, TS_INSTALL_STATES):
-            if txmbr.po.checkPrco('provides', (r, f, v)):
-                self.deps[req] = txmbr.po
-                return txmbr.po
-                
-        return None # for new ts check attempt
-
     def _undoDepInstalls(self):
         # clean up after ourselves in the case of failures
         for txmbr in self.tsInfo:
@@ -780,6 +761,7 @@ class Depsolve(object):
 
 
         ret = []
+        check_removes = False
         for txmbr in self.tsInfo.getMembers():
             
             if self._dcobj.already_seen.has_key(txmbr):
@@ -794,9 +776,35 @@ class Depsolve(object):
                 thisneeds = self._checkInstall(txmbr)
             elif txmbr.output_state in TS_REMOVE_STATES:
                 thisneeds = self._checkRemove(txmbr)
+                check_removes = True
             if len(thisneeds) == 0:
                 self._dcobj.already_seen[txmbr] = 1
             ret.extend(thisneeds)
+
+        # check transaction members that got removed from the transaction again
+        for txmbr in self.tsInfo.getRemovedMembers():
+            if self.dcobj.already_seen_removed.has_key(txmbr):
+                continue
+            if self.dsCallback and txmbr.ts_state:
+                if txmbr.ts_state == 'i':
+                    self.dsCallback.pkgAdded(txmbr.pkgtup, 'e')
+                else:
+                    self.dsCallback.pkgAdded(txmbr.pkgtup, 'i')
+
+            self.verbose_logger.log(logginglevels.DEBUG_2,
+                                    "Checking deps for %s" %(txmbr,))
+            if txmbr.output_state in TS_INSTALL_STATES:
+                thisneeds = self._checkRemove(txmbr)
+                check_removes = True
+            elif txmbr.output_state in TS_REMOVE_STATES:
+                thisneeds = self._checkInstall(txmbr)
+            if len(thisneeds) == 0:
+                self.dcobj.already_seen_removed[txmbr] = 1
+            ret.extend(thisneeds)
+
+        if check_removes:
+            ret.extend(self._checkFileRequires())
+        ret.extend(self._checkConflicts())
             
         return ret
 
@@ -938,20 +946,14 @@ class Depsolve(object):
 
     def _checkInstall(self, txmbr):
         reqs = txmbr.po.returnPrco('requires')
-        provs = txmbr.po.returnPrco('provides')
-
-        flags = {"GT": rpm.RPMSENSE_GREATER,
-                 "GE": rpm.RPMSENSE_EQUAL | rpm.RPMSENSE_GREATER,
-                 "LT": rpm.RPMSENSE_LESS,
-                 "LE": rpm.RPMSENSE_LESS | rpm.RPMSENSE_EQUAL,
-                 "EQ": rpm.RPMSENSE_EQUAL,
-                 None: 0 }
+        provs = set(txmbr.po.returnPrco('provides'))
 
         # if this is an update, we should check what the old
         # requires were to make things faster
         oldreqs = []
         for oldpo in txmbr.updates:
             oldreqs.extend(oldpo.returnPrco('requires'))
+        oldreqs = set(oldreqs)
 
         ret = []
         for req in reqs:
@@ -963,82 +965,28 @@ class Depsolve(object):
                 continue
             
             self.verbose_logger.log(logginglevels.DEBUG_2, "looking for %s as a requirement of %s", req, txmbr)
-            dep = self.deps.get(req, None)
-            if dep is None:
-                dep = self._provideToPkg(req)
-                if dep is None:
-                    reqtuple = (req[0], version_tuple_to_string(req[2]), flags[req[1]])
-                    self._dcobj.addRequires(txmbr.po, [reqtuple])
-                    ret.append( ((txmbr.name, txmbr.version, txmbr.release),
-                                 (req[0], version_tuple_to_string(req[2])), flags[req[1]], None,
-                                 rpm.RPMDEP_SENSE_REQUIRES) )
+            provs = self.tsInfo.getProvides(*req)
+            if not provs:
+                reqtuple = (req[0], version_tuple_to_string(req[2]), flags[req[1]])
+                self._dcobj.addRequires(txmbr.po, [reqtuple])
+                ret.append( ((txmbr.name, txmbr.version, txmbr.release),
+                             (req[0], version_tuple_to_string(req[2])), flags[req[1]], None,
+                             rpm.RPMDEP_SENSE_REQUIRES) )
+                continue
+
+            #Add relationship
+            for po in provs:
+                if txmbr.name == po.name:
                     continue
-
-            # Skip filebased requires on self, etc
-            if txmbr.name == dep.name:
-                continue
-            # FIXME: Yum doesn't need this, right?
-            #if (dep.name, txmbr.name) in whiteout.whitetup:
-            #   log.debug("ignoring %s>%s in whiteout" %(dep.name, txmbr.name))
-            #   continue
-            if self.isPackageInstalled(dep.name):
-                continue
-            if self.tsInfo.exists(dep.pkgtup):
-                pkgs = self.tsInfo.getMembers(pkgtup=dep.pkgtup)
-                member = self.bestPackagesFromList(pkgs)[0]
-
-                #Add relationship
-                found = False
-                for dependspo in txmbr.depends_on:
-                    if member.po == dependspo:
-                        found = True
-                        break
-                if not found:
+                for member in self.tsInfo.getMembersWithState(
+                    pkgtup=po.pkgtup, output_states=TS_INSTALL_STATES):
                     member.setAsDep(txmbr.po)
 
-        for conflict in txmbr.po.returnPrco('conflicts'):
-            (r, f, v) = conflict
-            txmbrs = self.tsInfo.matchNaevr(name=r)
-            for tx in self.tsInfo.getMembersWithState(output_states = TS_INSTALL_STATES):
-                if tx.name != r and r not in tx.po.provides_names:
-                    continue
-                if tx.po.checkPrco('provides', (r, f, v)):
-                    ret.append( ((txmbr.name, txmbr.version, txmbr.release),
-                                 (r, version_tuple_to_string(v)), flags[f],
-                                 None, rpm.RPMDEP_SENSE_CONFLICTS) )
-
-            inst = self.rpmdb.whatProvides(r, None, None)
-            for pkgtup in inst:
-                txmbrs = self.tsInfo.getMembersWithState(pkgtup,
-                                                         TS_REMOVE_STATES)
-                if not txmbrs:
-                    po = self.getInstalledPackageObject(pkgtup)
-                    if po.checkPrco('provides', (r, f, v)):
-                        ret.append( ((txmbr.name, txmbr.version, txmbr.release),
-                                     (r, version_tuple_to_string(v)), flags[f],
-                                     None, rpm.RPMDEP_SENSE_CONFLICTS) )
-        
-        for instpkg in self.rpmdb.searchConflicts(txmbr.name):
-            prcotuple = (txmbr.name, 'EQ', (txmbr.epoch, txmbr.version, txmbr.release))
-            if instpkg.checkPrco('conflicts', prcotuple):
-                # if the conflict-having-version is being removed then well, it doesn't matter
-                if self.tsInfo.getMembersWithState(instpkg.pkgtup, output_states=TS_REMOVE_STATES):
-                    continue
-                instevr = (instpkg.epoch, instpkg.ver, instpkg.rel)
-                ret.append( ((txmbr.name, txmbr.version, txmbr.release),
-                             (instpkg.name, version_tuple_to_string(instevr)), rpm.RPMSENSE_EQUAL,
-                                     None, rpm.RPMDEP_SENSE_CONFLICTS) )
-                
         return ret
 
     def _checkRemove(self, txmbr):
         po = txmbr.po
         provs = po.returnPrco('provides')
-
-        # get the files in the package and express them as "provides"
-        files = po.filelist
-        filesasprovs = map(lambda f: (f, None, (None,None,None)), files)
-        provs.extend(filesasprovs)
 
         # if this is an update, we should check what the new package
         # provides to make things faster
@@ -1046,173 +994,108 @@ class Depsolve(object):
         for newpo in txmbr.updated_by:
             for p in newpo.provides:
                 newpoprovs[p] = 1
-            for f in newpo.simpleFiles(): # newpo.filelist:
-                newpoprovs[(f, None, (None, None, None))] = 1
-
         ret = []
-        self._removing = []
-        goneprovs = {}
-        gonefiles = {}
-        removes = {}
         
         # iterate over the provides of the package being removed
         # and see what's actually going away
         for prov in provs:
             if prov[0].startswith('rpmlib('): # ignore rpmlib() provides
                 continue
-            if prov[0].startswith("/usr/share/doc"): # XXX: ignore doc files
-                continue
             if newpoprovs.has_key(prov):
                 continue
-            if not prov[0][0] == "/":
-                goneprovs[prov[0]] = prov
-            else:
-                gonefiles[prov[0]] = prov
+            for pkg, hits in self.tsInfo.getRequires(*prov).iteritems():
+                for rn, rf, rv in hits:
+                    if not self.tsInfo.getProvides(rn, rf, rv):
+                        reqtuple = (rn, version_tuple_to_string(rv), flags[rf])
+                        self._dcobj.addRequires(pkg, [reqtuple])
+                        ret.append(
+                            ((pkg.name, pkg.version, pkg.release),
+                             (rn, version_tuple_to_string(rv)),
+                             flags[rf], None, rpm.RPMDEP_SENSE_REQUIRES) )
+        return ret
 
-        # now see what from the rpmdb really requires these
-        for (provname, prov) in goneprovs.items() + gonefiles.items():
-            instrequirers = []
-            for pkgtup in self.rpmdb.whatRequires(provname, None, None):
-                instpo = self.getInstalledPackageObject(pkgtup)
-                instrequirers.append(instpo)
-            
-            self.verbose_logger.log(logginglevels.DEBUG_4, "looking to see what requires %s of %s", prov, po)
-            removes[prov] = self._requiredByPkg(prov, instrequirers)
+    def _checkFileRequires(self):
+        fileRequires = set()
+        reverselookup = {}
+        ret = []
 
-        # now, let's see if anything that we're installing requires anything
-        # that this provides
-        for txmbr in self.tsInfo.getMembersWithState(None, TS_INSTALL_STATES):
-            for r in txmbr.po.requires_names:
-                prov = None
-                if r in goneprovs.keys():
-                    prov = goneprovs[r]
-                elif r[0] == "/" and r in gonefiles:
-                    prov = gonefiles[r]
+        # generate list of file requirement in rpmdb
+        if self.installedFileRequires is None:
+            self.installedFileRequires = {}
+            self.installedUnresolvedFileRequires = set()
+            resolved = set()
+            for pkg in self.rpmdb.returnPackages():
+                for name, flag, evr in pkg.requires:
+                    if not name.startswith('/'):
+                        continue
+                    self.installedFileRequires.setdefault(pkg, []).append(name)
+                    if name not in resolved:
+                        dep = self.rpmdb.getProvides(name, flag, evr)
+                        resolved.add(name)
+                        if not dep:
+                            self.installedUnresolvedFileRequires.add(name)
 
-                if prov and not removes.has_key(prov):
-                    removes[prov] = self._requiredByPkg(prov, [txmbr.po])
-                elif prov:
-                    removes[prov].extend(self._requiredByPkg(prov, [txmbr.po]))                        
+        # get file requirements from packages not deleted
+        for po, files in self.installedFileRequires.iteritems():
+            if not self._tsInfo.getMembersWithState(po.pkgtup, output_states=TS_REMOVE_STATES):
+                fileRequires.update(files)
+                for filename in files:
+                    reverselookup.setdefault(filename, []).append(po)
 
-        # now we know what needs to be removed and the provide causing it
-        # to be removed.  let's stick them in the ret list
-        for (prov, removeList) in removes.items():
-            (r, f, v) = prov
-            for po in removeList:
-                flags = {"GT": rpm.RPMSENSE_GREATER,
-                         "GE": rpm.RPMSENSE_EQUAL | rpm.RPMSENSE_GREATER,
-                         "LT": rpm.RPMSENSE_LESS,
-                         "LE": rpm.RPMSENSE_LESS | rpm.RPMSENSE_EQUAL,
-                         "EQ": rpm.RPMSENSE_EQUAL,
-                         None: 0 }
-                f = v = None
-                for (rr, rf, rv) in po.requires:
-                    if rr == r:
-                        f = rf
-                        v = rv
-                        break
+        fileRequires -= self.installedUnresolvedFileRequires
 
-                self._removing.append(po.pkgtup)
-                reqtuple = (r, version_tuple_to_string(v), flags[f])
-                self._dcobj.addRequires(po, [reqtuple])
-                
-                ret.append( ((po.name, po.version, po.release),
-                             (r, version_tuple_to_string(v)),
-                             flags[f], None, rpm.RPMDEP_SENSE_REQUIRES) )
+        # get file requirements from new packages
+        for txmbr in self._tsInfo.getMembersWithState(output_states=TS_INSTALL_STATES):
+            for name, flag, evr in txmbr.po.requires:
+                if name.startswith('/'):
+                    # check if file requires was already unresolved in update
+                    if name in self.installedUnresolvedFileRequires:
+                        already_broken = False
+                        for oldpo in txmbr.updates:
+                            if oldpo.checkPrco('requires', (name, None, (None, None, None))):
+                                already_broken = True
+                                break
+                        if already_broken:
+                            continue
+                    fileRequires.add(name)
+                    reverselookup.setdefault(name, []).append(txmbr.po)
+
+        # check the file requires
+        for filename in fileRequires:
+            if not self.tsInfo.getOldProvides(filename) and not self.tsInfo.getNewProvides(filename):
+                for po in reverselookup[filename]:
+                    ret.append( ((po.name, po.version, po.release),
+                                 (filename, ''), 0, None,
+                                 rpm.RPMDEP_SENSE_REQUIRES) )
 
         return ret
 
-    def _requiredByPkg(self, prov, pos = []):
-        """check to see if anything will or does require the provide, return 
-           list of requiring pkg objects if so"""
 
-        (r, f, v) = prov
-
-        removeList = []
-        # see what requires this provide name
-
-        for instpo in pos:
-            pkgtup = instpo.pkgtup
-            # ignore stuff already being removed
-            if self.tsInfo.getMembersWithState(pkgtup, TS_REMOVE_STATES):
+    def _checkConflicts(self):
+        ret = [ ]
+        for po in self.rpmdb.returnPackages():
+            if self.tsInfo.getMembersWithState(po.pkgtup, output_states=TS_REMOVE_STATES):
                 continue
-            if pkgtup in self._removing:
-                continue
-            # check to ensure that we really fulfill instpo's need for r
-            if not instpo.checkPrco('requires', (r,f,v)): 
-                continue
-
-            self.verbose_logger.log(logginglevels.DEBUG_2, "looking at %s as a requirement of %s", r, pkgtup)                
-            isok = False
-            # now see if anything else is providing what we need
-            for provtup in self.rpmdb.whatProvides(r, None, None):
-                # check if this provider is being removed
-                if provtup in self._removing:
-                    continue
-                if self.tsInfo.getMembersWithState(provtup, TS_REMOVE_STATES):
-                    continue
-
-                provpo = self.getInstalledPackageObject(provtup)
-                if provpo in removeList:
-                    continue
-                # check if provpo actually satisfies instpo's need for r
-                # if so, we're golden
-                ok = True
-                for (rr, rf, rv) in instpo.requires:
-                    if rr != r:
+            for conflict in po.returnPrco('conflicts'):
+                (r, f, v) = conflict
+                for conflicting_po in self.tsInfo.getNewProvides(r, f, v):
+                    if conflicting_po.pkgtup[0] == po.pkgtup[0] and conflicting_po.pkgtup[2:] == po.pkgtup[2:]:
                         continue
-                    if not provpo.checkPrco('provides', (rr, rf, rv)):
-                        ok = False
-                if ok:
-                    isok = True
-                    break
+                    ret.append( ((po.name, po.version, po.release),
+                                 (r, version_tuple_to_string(v)), flags[f],
+                                 None, rpm.RPMDEP_SENSE_CONFLICTS) )
+        for txmbr in self.tsInfo.getMembersWithState(output_states=TS_INSTALL_STATES):
+            po = txmbr.po
+            for conflict in txmbr.po.returnPrco('conflicts'):
+                (r, f, v) = conflict
+                for conflicting_po in self.tsInfo.getProvides(r, f, v):
+                    if conflicting_po.pkgtup[0] == po.pkgtup[0] and conflicting_po.pkgtup[2:] == po.pkgtup[2:]:
+                        continue
+                    ret.append( ((po.name, po.version, po.release),
+                                 (r, version_tuple_to_string(v)), flags[f],
+                                 None, rpm.RPMDEP_SENSE_CONFLICTS) )
+        return ret
 
-            if isok:
-                continue
-
-            # for files, we need to do a searchProvides() to take
-            # advantage of the shortcut of the files globbed into
-            # primary.xml.gz.  this is a bit of a hack, but saves us
-            # from having to download the filelists for a lot of cases
-            if r[0] == "/":
-                for po in self.pkgSack.searchProvides(r):
-                    if self.tsInfo.getMembersWithState(po.pkgtup, TS_INSTALL_STATES):
-                        isok = True
-                        break
-                for po in self.rpmdb.searchFiles(r):
-                    if not self.tsInfo.getMembersWithState(po.pkgtup, TS_REMOVE_STATES):
-                        isok = True
-                        break
-            if isok:
-                continue
-
-            # now do the same set of checks with packages that are
-            # set to be installed.  
-            for txmbr in self.tsInfo.getMembersWithState(None, TS_INSTALL_STATES):
-                if txmbr.po.checkPrco('provides',
-                                      (r, None, (None,None,None))):
-                    ok = True
-                    for (rr, rf, rv) in instpo.requires:
-                        if rr != r:
-                            continue
-                        if not txmbr.po.checkPrco('provides', (rr, rf, rv)):
-                            ok = False
-                    if ok:
-                        isok = True
-                        break
-
-                # FIXME: it's ugly to have to check files separately here
-                elif r[0] == "/" and r in txmbr.po.filelist:
-                    isok = True
-                    break
-
-            if isok:
-                continue
-
-            if not isok:
-                removeList.append(instpo)
-                self._removing.append(instpo.pkgtup)
-        return removeList
 
     def isPackageInstalled(self, pkgname):
         installed = False
@@ -1240,7 +1123,8 @@ class DepCheck(object):
         self.requires = []
         self.conflicts = []
         self.already_seen = {}
-        
+        self.already_seen_removed = {}
+
     def addRequires(self, po, req_tuple_list):
         # fixme - do checking for duplicates or additions in here to zip things along
         reqobj = Requires(po, req_tuple_list)
