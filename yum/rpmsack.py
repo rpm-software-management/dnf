@@ -22,7 +22,7 @@ from rpmUtils.transaction import initReadOnlyTransaction
 import misc
 import Errors
 from packages import YumInstalledPackage
-from packageSack import ListPackageSack, PackageSackBase
+from packageSack import PackageSackBase
 
 class RPMDBPackageSack(PackageSackBase):
     '''

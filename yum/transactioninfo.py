@@ -21,7 +21,7 @@
 # with the given txmbr. 
 
 from constants import *
-from packageSack import ListPackageSack, PackageSack
+from packageSack import PackageSack
 from packages import YumInstalledPackage
 from sqlitesack import YumAvailablePackageSqlite
 import Errors

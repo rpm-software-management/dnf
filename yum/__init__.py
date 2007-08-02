@@ -22,7 +22,6 @@ import re
 import types
 import errno
 import time
-import sre_constants
 import glob
 import fnmatch
 import logging

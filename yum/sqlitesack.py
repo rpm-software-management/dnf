@@ -29,8 +29,6 @@ from packages import PackageObject, RpmBase, YumAvailablePackage
 import Errors
 import misc
 
-import warnings
-
 from sqlutils import executeSQL
 import rpmUtils.miscutils
 

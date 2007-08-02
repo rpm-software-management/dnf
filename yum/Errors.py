@@ -17,7 +17,6 @@
 
 
 import exceptions
-import warnings
 
 
 class YumBaseError(exceptions.Exception):
