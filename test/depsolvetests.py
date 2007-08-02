@@ -52,6 +52,7 @@ class TestingDepsolve(depsolve.Depsolve):
 
         self.conf = FakeConf()
         self.tsInfo = tsInfo
+        self._tsInfo = tsInfo
         self.rpmdb = rpmdb
         self.pkgSack = pkgSack
 
