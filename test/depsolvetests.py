@@ -38,54 +38,12 @@ class FakePackage(packages.PackageObject, packages.RpmBase):
         self.repo = FakeRepo()
         self.repoid = None
 
+        # Just a unique integer
+        self.id = self.__hash__()
+
     def addRequires(self, name, flag, evr):
         self.prco['requires'].append((name, flag, evr))
 
-
-class FakeRpmDb(object):
-
-    def __init__(self):
-        self.packages = []
-
-    def addPackage(self, po):
-        self.packages.append(po)
-
-    def whatProvides(self, name, flag, evr):
-        results = []
-        for package in self.packages:
-            if package.checkPrco('provides', (name, flag, evr)):
-                results.append(package.pkgtup)
-        return results
-
-    def searchNevra(self, name=None, epoch=None, ver=None, rel=None, arch=None):
-        # Create a match closure for what is being searched for
-        lookfor = []        # A list of (search_name, search_value)
-        loc = locals()
-        for arg in ('name', 'arch', 'epoch', 'ver', 'rel'):
-            val = loc[arg]
-            if val != None:
-                lookfor.append((arg, val))
-
-        ret = []
-        for package in self.packages:
-            ok = True
-            for name, val in lookfor:
-                if getattr(package, name) != val:
-                    ok = False
-                    break
-            if ok:
-                ret.append(package)
-        return ret
-
-    def searchConflicts(self, name):
-        # XXX no conflicts support for now
-        return []
-
-    def installed(self, name):
-        for package in self.packages:
-            if package.name == name:
-                return True
-        return False
 
 class TestingDepsolve(depsolve.Depsolve):
 
@@ -94,8 +52,11 @@ class TestingDepsolve(depsolve.Depsolve):
                 pkgtup[4], pkgtup[1])[0]
 
 
-def build_depsolver(tsInfo, rpmdb=FakeRpmDb(),
+def build_depsolver(tsInfo, rpmdb=packageSack.PackageSack(),
         pkgSack=packageSack.PackageSack()):
+    # XXX this side-affect is hacky:
+    tsInfo.setDatabases(rpmdb, pkgSack)
+
     solver = TestingDepsolve()
     solver.conf = FakeConf()
     solver.tsInfo = tsInfo
@@ -137,7 +98,7 @@ class DepsolveTests(unittest.TestCase):
         tsInfo.addInstall(po)
 
         installedpo = FakePackage('zip', '1', '1', None, 'i386')
-        rpmdb = FakeRpmDb()
+        rpmdb = packageSack.PackageSack()
         rpmdb.addPackage(installedpo)
 
         solver = build_depsolver(tsInfo, rpmdb)
