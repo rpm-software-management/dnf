@@ -47,6 +47,14 @@ class FakePackage(packages.PackageObject, packages.RpmBase):
 
 class TestingDepsolve(depsolve.Depsolve):
 
+    def __init__(self, tsInfo, rpmdb, pkgSack):
+        depsolve.Depsolve.__init__(self)
+
+        self.conf = FakeConf()
+        self.tsInfo = tsInfo
+        self.rpmdb = rpmdb
+        self.pkgSack = pkgSack
+
     def getInstalledPackageObject(self, pkgtup):
         return self.rpmdb.searchNevra(pkgtup[0], pkgtup[2], pkgtup[3],
                 pkgtup[4], pkgtup[1])[0]
@@ -57,11 +65,7 @@ def build_depsolver(tsInfo, rpmdb=packageSack.PackageSack(),
     # XXX this side-affect is hacky:
     tsInfo.setDatabases(rpmdb, pkgSack)
 
-    solver = TestingDepsolve()
-    solver.conf = FakeConf()
-    solver.tsInfo = tsInfo
-    solver.rpmdb = rpmdb
-    solver.pkgSack = pkgSack
+    solver = TestingDepsolve(tsInfo, rpmdb, pkgSack)
     return solver
 
 
