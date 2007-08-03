@@ -331,6 +331,7 @@ class YumBase(depsolve.Depsolve):
     def _getRepos(self, thisrepo=None, doSetup = False):
         """grabs the repomd.xml for each enabled repository and sets up 
            the basics of the repository"""
+        self._getConfig() # touch the config class first
 
         if doSetup:
             self._repos.doSetup(thisrepo)
@@ -345,7 +346,7 @@ class YumBase(depsolve.Depsolve):
     def _getSacks(self, archlist=None, thisrepo=None):
         """populates the package sacks for information from our repositories,
            takes optional archlist for archs to include"""
-        
+
         if self._pkgSack and thisrepo is None:
             self.verbose_logger.log(logginglevels.DEBUG_4,
                 'skipping reposetup, pkgsack exists')
@@ -355,7 +356,6 @@ class YumBase(depsolve.Depsolve):
             repos = self.repos.listEnabled()
         else:
             repos = self.repos.findRepos(thisrepo)
-        
         
         self.verbose_logger.debug('Setting up Package Sacks')
         if not archlist:
