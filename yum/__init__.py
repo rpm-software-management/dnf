@@ -381,7 +381,24 @@ class YumBase(depsolve.Depsolve):
         self._pkgSack.buildIndexes()
 
         return self._pkgSack
-
+    
+    def _delSacks(self):
+        """reset the package sacks back to zero - making sure to nuke the ones
+           in the repo objects, too - where it matters"""
+           
+        # nuke the top layer
+        
+        self._pkgSack = None
+           
+        for repo in self.repos.repos.values():
+            if hasattr(repo, '_resetSack'):
+                repo._resetSack()
+            else:
+                warnings.warn('repo object for repo %s lacks a _resetSack method\n' +
+                        'therefore this repo cannot be reset.\n',
+                        Errors.YumFutureDeprecationWarning, stacklevel=2)
+            
+           
     def doUpdateSetup(self):
         warnings.warn('doUpdateSetup() will go away in a future version of Yum.\n',
                 Errors.YumFutureDeprecationWarning, stacklevel=2)
@@ -490,7 +507,7 @@ class YumBase(depsolve.Depsolve):
                      fdel=lambda self: setattr(self, "_repos", None))
     pkgSack = property(fget=lambda self: self._getSacks(),
                        fset=lambda self, value: setattr(self, "_pkgSack", value),
-                       fdel=lambda self: setattr(self, "_pkgSack", None))
+                       fdel=lambda self: self._delSacks())
     conf = property(fget=lambda self: self._getConfig(),
                     fset=lambda self, value: setattr(self, "_conf", value),
                     fdel=lambda self: setattr(self, "_conf", None))

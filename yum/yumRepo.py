@@ -254,7 +254,10 @@ class YumRepository(Repository, config.RepoConf):
     def close(self):
         self.sack.close()
         Repository.close(self)
-
+    
+    def _resetSack(self):
+        self.sack = self.storage.GetPackageSack()
+        
     def __getProxyDict(self):
         self.doProxyDict()
         if self._proxy_dict:
