@@ -41,6 +41,8 @@ class RepoStorage:
         self.ayum = ayum
 
     def doSetup(self, thisrepo = None):
+        
+        self.ayum._getConfig() # touch the config - first thing we do
         self.ayum.plugins.run('prereposetup')
         
         if thisrepo is None:
