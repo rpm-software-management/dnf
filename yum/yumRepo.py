@@ -27,7 +27,8 @@ import repoMDObject
 import packageSack
 from repos import Repository
 import parser
-import storagefactory
+import sqlitecachec
+import sqlitesack
 from yum import config
 from yum import misc
 from constants import *
@@ -105,7 +106,7 @@ class YumPackageSack(packageSack.PackageSack):
             data = [ mdtype ]
 
         if not hasattr(repo, 'cacheHandler'):
-            repo.cacheHandler = repo.storage.GetCacheHandler(
+            repo.cacheHandler = sqlitecachec.RepodataParserSqlite(
                 storedir=repo.cachedir,
                 repoid=repo.id,
                 callback=callback,
@@ -245,8 +246,8 @@ class YumRepository(Repository, config.RepoConf):
         # callback function for handling media
         self.mediafunc = None
         
-        self.storage = storagefactory.GetStorage()
-        self.sack = self.storage.GetPackageSack()
+        self.sack = sqlitesack.YumSqlitePackageSack(
+                sqlitesack.YumAvailablePackageSqlite)
 
         self._grabfunc = None
         self._grab = None
@@ -256,8 +257,9 @@ class YumRepository(Repository, config.RepoConf):
         Repository.close(self)
     
     def _resetSack(self):
-        self.sack = self.storage.GetPackageSack()
-        
+        self.sack = sqlitesack.YumSqlitePackageSack(
+                sqlitesack.YumAvailablePackageSqlite)
+
     def __getProxyDict(self):
         self.doProxyDict()
         if self._proxy_dict:
