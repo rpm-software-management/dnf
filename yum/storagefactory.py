@@ -30,24 +30,6 @@ class Storage:
     def GetPackageSack(self):
         pass
 
-class StorageSqlite(Storage):
-
-    def __init__(self):
-        import sqlitecache
-        import sqlitesack
-
-        self.sqlitecache = sqlitecache
-        self.sqlitesack = sqlitesack
-
-    def Name(self):
-        return "sqlite"
-
-    def GetCacheHandler(self, storedir, repoid, callback):
-        return self.sqlitecache.RepodataParserSqlite(storedir, repoid, callback)
-
-    def GetPackageSack(self):
-        return self.sqlitesack.YumSqlitePackageSack(self.sqlitesack.YumAvailablePackageSqlite)
-
 
 class StorageSqliteC(Storage):
     def __init__(self):
@@ -70,19 +52,10 @@ class StorageSqliteC(Storage):
 def GetStorage():
     storage = None
 
-    # Try to load storages, prefering the fastest one.
-
     try:
         storage = StorageSqliteC()
         return storage
     except ImportError:
         pass
 
-    try:
-        storage = StorageSqlite()
-        return storage
-    except ImportError:
-        pass
-
     raise Errors.YumBaseError, 'Could not find any working storages.'
-
