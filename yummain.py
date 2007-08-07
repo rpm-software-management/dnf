@@ -84,11 +84,19 @@ def main(args):
         exPluginExit(e)
     except Errors.YumBaseError, e:
         exFatal(e)
-    try:
-        base.doLock()
-    except Errors.LockError, e:
-        logger.critical('%s', e.msg)
-        sys.exit(200)
+
+    lockerr = ""
+    while True:
+        try:
+            base.doLock()
+        except Errors.LockError, e:
+            if "%s" %(e.msg,) != lockerr:
+                lockerr = "%s" %(e.msg,)
+                logger.critical(lockerr)
+            logger.critical("Another app is currently holding the yum lock; waiting for it to exit...")
+            time.sleep(2)
+        else:
+            break
 
     try:
         result, resultmsgs = base.doCommands()
