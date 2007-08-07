@@ -672,7 +672,7 @@ class YumBase(depsolve.Depsolve):
                         raise Errors.LockError(1, msg)
                 else:
                     # Another copy seems to be running.
-                    msg = 'Existing lock %s: another copy is running as pid %s. Aborting.' % (lockfile, oldpid)
+                    msg = 'Existing lock %s: another copy is running as pid %s.' % (lockfile, oldpid)
                     raise Errors.LockError(0, msg)
     
     def doUnlock(self, lockfile = YUM_PID_FILE):
