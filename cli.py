@@ -136,6 +136,11 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
 
         # get the install root to use
         root = self.optparser.getRoot(opts)
+
+        if opts.quiet:
+            opts.debuglevel = 0
+        if opts.verbose:
+            opts.debuglevel = opts.errorlevel = 6
        
         # Read up configuration options and initialise plugins
         try:
@@ -1115,12 +1120,11 @@ class YumOptionParser(OptionParser):
         self.logger.critical("Command line error: %s", msg)
         sys.exit(1)
 
-        
     def firstParse(self,args):
         # Parse only command line options that affect basic yum setup
         try:
             args = _filtercmdline(
-                        ('--noplugins','--version'), 
+                        ('--noplugins','--version','-q', '-v', "--quiet", "--verbose"), 
                         ('-c', '-d', '-e', '--installroot','--disableplugin'), 
                         args)
         except ValueError:
@@ -1238,6 +1242,10 @@ class YumOptionParser(OptionParser):
         self.add_option("-e", dest="errorlevel", default=None,
                 help="error output level", type='int',
                 metavar=' [error level]')
+        self.add_option("-q", "--quiet", dest="quiet", action="store_true",
+                        help="quiet operation")
+        self.add_option("-v", "--verbose", dest="verbose", action="store_true",
+                        help="verbose operation")
         self.add_option("-y", dest="assumeyes", action="store_true",
                 help="answer yes for all questions")
         self.add_option("--version", action="store_true", 
