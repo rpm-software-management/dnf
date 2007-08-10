@@ -452,6 +452,67 @@ class CacheProgressCallback:
     def progressbar(self, current, total, name=None):
         progressbar(current, total, name)
 
+class YumCliRPMCallBack:
+    def __init__(self):
+        self.action = { TS_UPDATE : 'Updating', 
+                        TS_ERASE: 'Erasing',
+                        TS_INSTALL: 'Installing', 
+                        TS_TRUEINSTALL : 'Installing',
+                        TS_OBSOLETED: 'Obsoleted',
+                        TS_OBSOLETING: 'Installing',
+                        TS_UPDATED: 'Cleanup',
+                        'repackaging': 'Repackaging'}
+        self.fileaction = { TS_UPDATE: 'Updated', 
+                            TS_ERASE: 'Erased',
+                            TS_INSTALL: 'Installed', 
+                            TS_TRUEINSTALL: 'Installed', 
+                            TS_OBSOLETED: 'Obsoleted',
+                            TS_OBSOLETING: 'Installed',
+                            TS_UPDATED: 'Cleanup'}   
+        self.lastmsg = None
+        self.logger = logging.getLogger('yum.filelogging.RPMInstallCallback')        
+        self.lastpackage = None # name of last package we looked at
+        
+        # for a progress bar
+        self.mark = "#"
+        self.marks = 27
+        
+        
+    def event(self, package, action, te_current, te_total, ts_current, ts_total):
+        # this is where a progress bar would be called
+        msg = '%s: %s %s/%s [%s/%s]' % (self.action[action], package, 
+                                   te_current, te_total, ts_current, ts_total)
+        if msg != self.lastmsg:
+            print msg
+        self.lastmsg = msg
+        self.lastpackage = package
+        #if sys.stdout.isatty(): # need this for the nice progress bar output
+        
+    def errorlog(self, msg):
+        print >> sys.stderr, msg
+
+    def filelog(self, package, action):
+        # check package object type - if it is a string - just output it
+        msg = '%s: %s' % (self.fileaction[action], package)
+        self.logger.info(msg)
+
+    #def _makefmt(self, percent, progress = True):
+        #l = len(str(self.total_actions))
+        #size = "%s.%s" % (l, l)
+        #fmt_done = "[%" + size + "s/%" + size + "s]"
+        #done = fmt_done % (self.total_installed + self.total_removed,
+                           #self.total_actions)
+        #marks = self.marks - (2 * l)
+        #width = "%s.%s" % (marks, marks)
+        #fmt_bar = "%-" + width + "s"
+        #if progress:
+            #bar = fmt_bar % (self.mark * int(marks * (percent / 100.0)), )
+            #fmt = "\r  %-10.10s: %-28.28s " + bar + " " + done
+        #else:
+            #bar = fmt_bar % (self.mark * marks, )
+            #fmt = "  %-10.10s: %-28.28s "  + bar + " " + done
+        #return fmt
+
 
 def progressbar(current, total, name=None):
     """simple progress bar 50 # marks"""
