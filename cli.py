@@ -1085,6 +1085,9 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
     def _run_rpm_check_debug(self):
         import rpm
         results = []
+        # save our dsCallback out
+        dscb = self.dsCallback
+        self.dsCallback = None # dumb, dumb dumb dumb!
         self.populateTs(test=1)
         deps = self.ts.check()
         for deptuple in deps:
@@ -1100,7 +1103,7 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
                       (name, rpmUtils.miscutils.formatRequire(needname, 
                                                               needversion, flags))
                 results.append(msg)
-
+        self.dsCallback = dscb
         return results
 
 class YumOptionParser(OptionParser):
