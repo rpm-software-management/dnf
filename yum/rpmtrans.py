@@ -74,11 +74,6 @@ class SimpleCliCallBack:
         self.logger = logging.getLogger('yum.filelogging.RPMInstallCallback')        
         self.lastpackage = None # name of last package we looked at
         
-        # for a progress bar
-        self.mark = "#"
-        self.marks = 27
-        
-        
     def event(self, package, action, te_current, te_total, ts_current, ts_total):
         # this is where a progress bar would be called
         msg = '%s: %s %s/%s [%s/%s]' % (self.action[action], package, 
@@ -87,7 +82,7 @@ class SimpleCliCallBack:
             print msg
         self.lastmsg = msg
         self.lastpackage = package
-        #if sys.stdout.isatty(): # need this for the nice progress bar output
+        
         
     def errorlog(self, msg):
         print >> sys.stderr, msg
