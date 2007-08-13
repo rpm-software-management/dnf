@@ -806,6 +806,7 @@ def encodefilenamelist(filenamelist):
 
 # Return a list representing filestring (filenames can not contain /)
 def decodefilenamelist(filenamestring):
+    filenamestring = filenamestring.replace('//', '/')
     return filenamestring.split('/')
 
 # Return a string representing filetypeslist
