@@ -20,12 +20,14 @@
 import sys
 import time
 import logging
+import types
 from i18n import _
 
 from urlgrabber.progress import TextMeter
 from urlgrabber.grabber import URLGrabError
 from yum.misc import sortPkgObj, prco_tuple_to_string
 from rpmUtils.miscutils import checkSignals
+from yum.constants import *
 
 from yum import logginglevels
 
@@ -462,6 +464,7 @@ class YumCliRPMCallBack:
                         TS_OBSOLETING: 'Installing',
                         TS_UPDATED: 'Cleanup',
                         'repackaging': 'Repackaging'}
+                        
         self.fileaction = { TS_UPDATE: 'Updated', 
                             TS_ERASE: 'Erased',
                             TS_INSTALL: 'Installed', 
@@ -472,6 +475,7 @@ class YumCliRPMCallBack:
         self.lastmsg = None
         self.logger = logging.getLogger('yum.filelogging.RPMInstallCallback')        
         self.lastpackage = None # name of last package we looked at
+        self.output = True
         
         # for a progress bar
         self.mark = "#"
@@ -480,13 +484,28 @@ class YumCliRPMCallBack:
         
     def event(self, package, action, te_current, te_total, ts_current, ts_total):
         # this is where a progress bar would be called
-        msg = '%s: %s %s/%s [%s/%s]' % (self.action[action], package, 
-                                   te_current, te_total, ts_current, ts_total)
-        if msg != self.lastmsg:
-            print msg
-        self.lastmsg = msg
+        process = self.action[action]
+        
+        if type(package) not in types.StringTypes:
+            pkgname = package.name
+        else:
+            pkgname = package
+            
         self.lastpackage = package
-        #if sys.stdout.isatty(): # need this for the nice progress bar output
+        if te_total == 0:
+            percent = 0
+        else:
+            percent = (te_current*100L)/te_total
+        
+        if self.output and (sys.stdout.isatty() or bytes == total):
+            fmt = self._makefmt(percent, ts_current, ts_total)
+            msg = fmt % (process, pkgname)
+            if msg != self.lastmsg:
+                sys.stdout.write(msg)
+                sys.stdout.flush()
+                self.lastmsg = msg
+            if te_current == te_total:
+                print " "
         
     def errorlog(self, msg):
         print >> sys.stderr, msg
@@ -496,22 +515,21 @@ class YumCliRPMCallBack:
         msg = '%s: %s' % (self.fileaction[action], package)
         self.logger.info(msg)
 
-    #def _makefmt(self, percent, progress = True):
-        #l = len(str(self.total_actions))
-        #size = "%s.%s" % (l, l)
-        #fmt_done = "[%" + size + "s/%" + size + "s]"
-        #done = fmt_done % (self.total_installed + self.total_removed,
-                           #self.total_actions)
-        #marks = self.marks - (2 * l)
-        #width = "%s.%s" % (marks, marks)
-        #fmt_bar = "%-" + width + "s"
-        #if progress:
-            #bar = fmt_bar % (self.mark * int(marks * (percent / 100.0)), )
-            #fmt = "\r  %-10.10s: %-28.28s " + bar + " " + done
-        #else:
-            #bar = fmt_bar % (self.mark * marks, )
-            #fmt = "  %-10.10s: %-28.28s "  + bar + " " + done
-        #return fmt
+    def _makefmt(self, percent, ts_current, ts_total, progress = True):
+        l = len(str(ts_total))
+        size = "%s.%s" % (l, l)
+        fmt_done = "[%" + size + "s/%" + size + "s]"
+        done = fmt_done % (ts_current, ts_total)
+        marks = self.marks - (2 * l)
+        width = "%s.%s" % (marks, marks)
+        fmt_bar = "%-" + width + "s"
+        if progress:
+            bar = fmt_bar % (self.mark * int(marks * (percent / 100.0)), )
+            fmt = "\r  %-10.10s: %-28.28s " + bar + " " + done
+        else:
+            bar = fmt_bar % (self.mark * marks, )
+            fmt = "  %-10.10s: %-28.28s "  + bar + " " + done
+        return fmt
 
 
 def progressbar(current, total, name=None):

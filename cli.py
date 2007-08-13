@@ -36,7 +36,7 @@ import rpmUtils.arch
 import rpmUtils.miscutils
 from yum.packages import parsePackages, YumLocalPackage
 from i18n import _
-import callback
+from yum.rpmtrans import RPMTransaction
 import signal
 import yumcommands
 
@@ -340,8 +340,7 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         for feature in ['diskspacecheck']: # more to come, I'm sure
             tsConf[feature] = getattr(self.conf, feature)
         
-        testcb = callback.RPMInstallCallback(output=0)
-        testcb.tsInfo = self.tsInfo
+        testcb = RPMTransaction(self.tsInfo)
         
         self.initActionTs()
         # save our dsCallback out
@@ -374,13 +373,10 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
 
         # put back our depcheck callback
         self.dsCallback = dscb
-
-        output = 1
+        # setup our rpm ts callback
+        cb = RPMTransaction(self.tsInfo, display=output.YumCliRPMCallBack)
         if self.conf.debuglevel < 2:
-            output = 0
-        cb = callback.RPMInstallCallback(output=output)
-        cb.filelog = True
-        cb.tsInfo = self.tsInfo
+            cb.display.output = False
 
         self.verbose_logger.log(yum.logginglevels.INFO_2, 'Running Transaction')
         self.runTransaction(cb=cb)
