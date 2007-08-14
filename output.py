@@ -30,6 +30,7 @@ from rpmUtils.miscutils import checkSignals
 from yum.constants import *
 
 from yum import logginglevels
+from yum.rpmtrans import RPMBaseCallback
 
 class YumTextMeter(TextMeter):
     def update(self, amount_read, now=None):
@@ -454,26 +455,10 @@ class CacheProgressCallback:
     def progressbar(self, current, total, name=None):
         progressbar(current, total, name)
 
-class YumCliRPMCallBack:
+class YumCliRPMCallBack(RPMBaseCallback):
     def __init__(self):
-        self.action = { TS_UPDATE : 'Updating', 
-                        TS_ERASE: 'Erasing',
-                        TS_INSTALL: 'Installing', 
-                        TS_TRUEINSTALL : 'Installing',
-                        TS_OBSOLETED: 'Obsoleted',
-                        TS_OBSOLETING: 'Installing',
-                        TS_UPDATED: 'Cleanup',
-                        'repackaging': 'Repackaging'}
-                        
-        self.fileaction = { TS_UPDATE: 'Updated', 
-                            TS_ERASE: 'Erased',
-                            TS_INSTALL: 'Installed', 
-                            TS_TRUEINSTALL: 'Installed', 
-                            TS_OBSOLETED: 'Obsoleted',
-                            TS_OBSOLETING: 'Installed',
-                            TS_UPDATED: 'Cleanup'}   
+        RPMBaseCallback.__init__(self)
         self.lastmsg = None
-        self.logger = logging.getLogger('yum.filelogging.RPMInstallCallback')        
         self.lastpackage = None # name of last package we looked at
         self.output = True
         
@@ -507,14 +492,6 @@ class YumCliRPMCallBack:
             if te_current == te_total:
                 print " "
         
-    def errorlog(self, msg):
-        print >> sys.stderr, msg
-
-    def filelog(self, package, action):
-        # check package object type - if it is a string - just output it
-        msg = '%s: %s' % (self.fileaction[action], package)
-        self.logger.info(msg)
-
     def _makefmt(self, percent, ts_current, ts_total, progress = True):
         l = len(str(ts_total))
         size = "%s.%s" % (l, l)

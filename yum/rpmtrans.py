@@ -52,8 +52,10 @@ class NoOutputCallBack:
            action is also the same as in event()"""
         pass
         
-
-class SimpleCliCallBack:
+class RPMBaseCallback:
+    '''
+    Base class for a RPMTransaction display callback class
+    '''
     def __init__(self):
         self.action = { TS_UPDATE : 'Updating', 
                         TS_ERASE: 'Erasing',
@@ -70,8 +72,34 @@ class SimpleCliCallBack:
                             TS_OBSOLETED: 'Obsoleted',
                             TS_OBSOLETING: 'Installed',
                             TS_UPDATED: 'Cleanup'}   
-        self.lastmsg = None
         self.logger = logging.getLogger('yum.filelogging.RPMInstallCallback')        
+        
+    def event(self, package, action, te_current, te_total, ts_current, ts_total):
+        """package is a yum package object or simple string of a package name
+           action is a yum.constant transaction set state or in the obscure 
+              rpm repackage case it could be the string 'repackaging'
+           te_current: current number of bytes processed in the transaction
+                       element being processed
+           te_total: total number of bytes in the transaction element being processed
+           ts_current: number of processes completed in whole transaction
+           ts_total: total number of processes in the transaction.
+        """
+        raise NotImplementedError()
+
+        
+    def errorlog(self, msg):
+        print >> sys.stderr, msg
+
+    def filelog(self, package, action):
+        # check package object type - if it is a string - just output it
+        msg = '%s: %s' % (self.fileaction[action], package)
+        self.logger.info(msg)
+            
+
+class SimpleCliCallBack(RPMBaseCallback):
+    def __init__(self):
+        RPMBaseCallback.__init__(self)
+        self.lastmsg = None
         self.lastpackage = None # name of last package we looked at
         
     def event(self, package, action, te_current, te_total, ts_current, ts_total):
@@ -82,15 +110,6 @@ class SimpleCliCallBack:
             print msg
         self.lastmsg = msg
         self.lastpackage = package
-        
-        
-    def errorlog(self, msg):
-        print >> sys.stderr, msg
-
-    def filelog(self, package, action):
-        # check package object type - if it is a string - just output it
-        msg = '%s: %s' % (self.fileaction[action], package)
-        self.logger.info(msg)
 
 class RPMTransaction:
     def __init__(self, tsInfo, display=NoOutputCallBack):
