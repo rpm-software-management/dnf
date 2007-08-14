@@ -22,7 +22,6 @@ import sys
 import logging
 from yum.constants import *
 
-from i18n import _
 
 class NoOutputCallBack:
     def __init__(self):
@@ -190,7 +189,7 @@ class RPMTransaction:
             self.installed_pkg_names.append(hdr['name'])
             return fd
         else:
-            self.display.errorlog(_("Error: No Header to INST_OPEN_FILE"))
+            self.display.errorlog("Error: No Header to INST_OPEN_FILE")
     def _instCloseFile(self, bytes, total, h):
         hdr = None
         if h is not None:
