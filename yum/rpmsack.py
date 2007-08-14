@@ -46,6 +46,7 @@ class RPMDBPackageSack(PackageSackBase):
 
     def __init__(self, root='/'):
         self.root = root
+        self._idx2pkg = {}
         self._header_dict = {}
         self._header_by_name = {}
         self.ts = None
@@ -285,8 +286,11 @@ class RPMDBPackageSack(PackageSackBase):
 
 
     def _makePackageObject(self, hdr, index):
+        if self._idx2pkg.has_key(index):
+            return self._idx2pkg[index]
         po = YumInstalledPackage(hdr)
         po.idx = index
+        self._idx2pkg[index] = po
         return po
         
     def _hdr2pkgTuple(self, hdr):
