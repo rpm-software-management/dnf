@@ -422,14 +422,14 @@ class BaseConfig(object):
                 raise ValueError("not populated, don't know section")
             section = self._section
 
-        fileobj.write('[%s]\n' % section)
-        # get options in ConfigParser object
+        # Updated the ConfigParser with the changed values    
         cfgOptions = self.cfg.options(section)
-        # Write options
         for name,value in self.iteritems():
             option = self.optionobj(name)
             if always is None or name in always or option.default != value or name in cfgOptions :
-                fileobj.write("%s=%s\n" % (name, option.tostring(value)))
+                self.cfg.set(section,name, option.tostring(value))
+        # write the updated ConfigParser to the fileobj.
+        self.cfg.write(fileobj)
 
     def getConfigOption(self, option, default=None):
         warnings.warn('getConfigOption() will go away in a future version of Yum.\n'
