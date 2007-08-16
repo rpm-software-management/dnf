@@ -340,7 +340,7 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         for feature in ['diskspacecheck']: # more to come, I'm sure
             tsConf[feature] = getattr(self.conf, feature)
         
-        testcb = RPMTransaction(self.tsInfo)
+        testcb = RPMTransaction(self, test=True)
         
         self.initActionTs()
         # save our dsCallback out
@@ -374,7 +374,7 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         # put back our depcheck callback
         self.dsCallback = dscb
         # setup our rpm ts callback
-        cb = RPMTransaction(self.tsInfo, display=output.YumCliRPMCallBack)
+        cb = RPMTransaction(self, display=output.YumCliRPMCallBack)
         if self.conf.debuglevel < 2:
             cb.display.output = False
 

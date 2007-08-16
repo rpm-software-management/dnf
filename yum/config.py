@@ -474,6 +474,7 @@ class YumConf(StartupConf):
     recent = IntOption(7)
 
     cachedir = Option('/var/cache/yum')
+    persistdir = Option('/var/lib/yum')
     keepcache = BoolOption(True)
     logfile = Option('/var/log/yum.log')
     reposdir = ListOption(['/etc/yum/repos.d', '/etc/yum.repos.d'])
@@ -609,7 +610,7 @@ def readMainConfig(startupconf):
     yumconf.populate(startupconf._parser, 'main')
 
     # Apply the installroot to directory options
-    for option in ('cachedir', 'logfile'):
+    for option in ('cachedir', 'logfile', 'persistdir'):
         path = getattr(yumconf, option)
         setattr(yumconf, option, yumconf.installroot + path)
     

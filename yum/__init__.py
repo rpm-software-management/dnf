@@ -573,6 +573,15 @@ class YumBase(depsolve.Depsolve):
 
         if not self.conf.keepcache:
             self.cleanUsedHeadersPackages()
+        
+        for i in ('ts_all_fn', 'ts_done_fn'):
+            if hasattr(cb, i):
+                fn = getattr(cb, i)
+                if os.path.exists(fn):
+                    try:
+                        os.unlink(fn)
+                    except (IOError, OSError), e:
+                        self.logger.critical('Failed to remove transaction file %s' % fn)
 
         self.plugins.run('posttrans')
         

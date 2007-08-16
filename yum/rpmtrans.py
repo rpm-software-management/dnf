@@ -18,8 +18,10 @@
 
 import rpm
 import os
-import sys
+import time
 import logging
+import types
+import sys
 from yum.constants import *
 
 
@@ -87,6 +89,7 @@ class RPMBaseCallback:
 
         
     def errorlog(self, msg):
+        # FIXME this should probably dump to the filelog, too
         print >> sys.stderr, msg
 
     def filelog(self, package, action):
@@ -111,10 +114,11 @@ class SimpleCliCallBack(RPMBaseCallback):
         self.lastpackage = package
 
 class RPMTransaction:
-    def __init__(self, tsInfo, display=NoOutputCallBack):
-        self.display = display()
-        self.tsInfo = tsInfo
-
+    def __init__(self, base, test=False, display=NoOutputCallBack):
+        self.display = display() # display callback
+        self.base = base # base yum object b/c we need so much
+        self.test = test # are we a test?
+        
         self.filehandles = {}
         self.total_actions = 0
         self.total_installed = 0
@@ -123,7 +127,8 @@ class RPMTransaction:
         self.total_removed = 0
         self.logger = logging.getLogger('yum.filelogging.RPMInstallCallback')
         self.filelog = False
-
+    
+        
     def _dopkgtup(self, hdr):
         tmpepoch = hdr['epoch']
         if tmpepoch is None: epoch = '0'
@@ -136,7 +141,101 @@ class RPMTransaction:
           hdr['release'], hdr['arch'])
 
         return handle
+    
+    def ts_done(self, package, action):
+        """writes out the portions of the transaction which have completed"""
         
+        if self.test: return
+    
+        if not hasattr(self, '_ts_done'):
+            # need config variable to put this in a better path/name
+            te_fn = '%s/transaction-done.%s' % (self.base.conf.persistdir, self._ts_time)
+            self.ts_done_fn = te_fn
+            try:
+                self._ts_done = open(te_fn, 'w')
+            except (IOError, OSError), e:
+                self.display.errorlog('could not open ts_done file: %s' % e)
+                return
+        
+        # walk back through self._te_tuples
+        # make sure the package and the action make some kind of sense
+        # write it out and pop(0) from the list
+        
+        (t,e,n,v,r,a) = self._te_tuples[0] # what we should be on
+
+        # make sure we're in the right action state
+        msg = 'ts_done state is %s %s should be %s %s' % (package, action, t, n)
+        if action in TS_REMOVE_STATES:
+            if t != 'erase':
+                self.display.errorlog(msg)
+        if action in TS_INSTALL_STATES:
+            if t != 'install':
+                self.display.errorlog(msg)
+                
+        # check the pkg name out to make sure it matches
+        if type(package) in types.StringTypes:
+            name = package
+        else:
+            name = package.name
+        
+        if n != name:
+            msg = 'ts_done name in te is %s should be %s' % (n, package)
+            self.display.errorlog(msg)
+
+        # hope springs eternal that this isn't wrong
+        msg = '%s %s:%s-%s-%s.%s\n' % (t,e,n,v,r,a)
+
+        self._ts_done.write(msg)
+        self._ts_done.flush()
+        self._te_tuples.pop(0)
+    
+    def ts_all(self):
+        """write out what our transaction will do"""
+        
+        # save the transaction elements into a list so we can run across them
+        if not hasattr(self, '_te_tuples'):
+            self._te_tuples = []
+
+        for te in self.base.ts:
+            n = te.N()
+            a = te.A()
+            v = te.V()
+            r = te.R()
+            e = te.E()
+            if e is None:
+                e = '0'
+            if te.Type() == 1:
+                t = 'install'
+            elif te.Type() == 2:
+                t = 'erase'
+            else:
+                t = te.Type()
+            
+            # save this in a list            
+            self._te_tuples.append((t,e,n,v,r,a))
+
+        # write to a file
+        self._ts_time = time.strftime('%Y-%m-%d.%H:%M.%S')
+        tsfn = '%s/transaction-all.%s' % (self.base.conf.persistdir, self._ts_time)
+        self.ts_all_fn = tsfn
+        try:
+            # fixme - we should probably be making this elsewhere but I'd
+            # rather that the transaction not fail so we do it here, anyway
+            if not os.path.exists(self.base.conf.persistdir):
+                os.makedirs(self.base.conf.persistdir) # make the dir, just in case
+            
+            fo = open(tsfn, 'w')
+        except (IOError, OSError), e:
+            self.display.errorlog('could not open ts_all file: %s' % e)
+            return
+        
+
+        for (t,e,n,v,r,a) in self._te_tuples:
+            msg = "%s %s:%s-%s-%s.%s\n" % (t,e,n,v,r,a)
+            fo.write(msg)
+        fo.flush()
+        fo.close()
+    
     def callback( self, what, bytes, total, h, user ):
         if what == rpm.RPMCALLBACK_TRANS_START:
             self._transStart( bytes, total, h )
@@ -165,17 +264,22 @@ class RPMTransaction:
         elif what == rpm.RPMCALLBACK_CPIO_ERROR:
             self._cpioError(bytes, total, h)
         elif what == rpm.RPMCALLBACK_UNPACK_ERROR:
-            self.unpackError(bytes, total, h)
+            self._unpackError(bytes, total, h)
     
     
     def _transStart(self, bytes, total, h):
         if bytes == 6:
             self.total_actions = total
-    
+            if self.test: return
+
+            self.ts_all() # write out what transaction will do
+
     def _transProgress(self, bytes, total, h):
         pass
+        
     def _transStop(self, bytes, total, h):
         pass
+
     def _instOpenFile(self, bytes, total, h):
         self.lastmsg = None
         hdr = None
@@ -190,6 +294,7 @@ class RPMTransaction:
             return fd
         else:
             self.display.errorlog("Error: No Header to INST_OPEN_FILE")
+            
     def _instCloseFile(self, bytes, total, h):
         hdr = None
         if h is not None:
@@ -197,11 +302,15 @@ class RPMTransaction:
             handle = self._makeHandle(hdr)
             os.close(self.filehandles[handle])
             fd = 0
-
+            if self.test: return
+            
             pkgtup = self._dopkgtup(hdr)
-            txmbrs = self.tsInfo.getMembers(pkgtup=pkgtup)
+            txmbrs = self.base.tsInfo.getMembers(pkgtup=pkgtup)
             for txmbr in txmbrs:
                 self.display.filelog(txmbr.po, txmbr.output_state)
+                self.ts_done(txmbr.po, txmbr.output_state)
+                
+                
     
     def _instProgress(self, bytes, total, h):
         if h is not None:
@@ -214,14 +323,14 @@ class RPMTransaction:
             else:
                 hdr, rpmloc = h
                 pkgtup = self._dopkgtup(hdr)
-                txmbrs = self.tsInfo.getMembers(pkgtup=pkgtup)
+                txmbrs = self.base.tsInfo.getMembers(pkgtup=pkgtup)
                 for txmbr in txmbrs:
                     action = txmbr.output_state
                     self.display.event(txmbr.po, action, bytes, total,
                                 self.complete_actions, self.total_actions)
     def _unInstStart(self, bytes, total, h):
         pass
-
+        
     def _unInstProgress(self, bytes, total, h):
         pass
     
@@ -233,10 +342,14 @@ class RPMTransaction:
             action = TS_ERASE
         else:
             action = TS_UPDATED                    
-            
+        
         self.display.event(h, action, 100, 100, self.complete_actions,
                             self.total_actions)
-
+        
+        if self.test: return # and we're done
+        self.ts_done(h, action)
+        
+        
     def _rePackageStart(self, bytes, total, h):
         pass
         
@@ -249,17 +362,19 @@ class RPMTransaction:
     def _cpioError(self, bytes, total, h):
         (hdr, rpmloc) = h
         pkgtup = self._dopkgtup(hdr)
-        txmbrs = self.tsInfo.getMembers(pkgtup=pkgtup)
+        txmbrs = self.base.tsInfo.getMembers(pkgtup=pkgtup)
         for txmbr in txmbrs:
-            self.display.errorlog("Error in cpio payload of rpm package %s" % txmbr.po)
+            msg = "Error in cpio payload of rpm package %s" % txmbr.po
+            self.display.errorlog(msg)
             # FIXME - what else should we do here? raise a failure and abort?
     
     def _unpackError(self, bytes, total, h):
         (hdr, rpmloc) = h
         pkgtup = self._dopkgtup(hdr)
-        txmbrs = self.tsInfo.getMembers(pkgtup=pkgtup)
+        txmbrs = self.base.tsInfo.getMembers(pkgtup=pkgtup)
         for txmbr in txmbrs:
-            self.display.errorlog("Error unpacking rpm package %s" % txmbr.po)
+            msg = "Error unpacking rpm package %s" % txmbr.po
+            self.display.errorlog(msg)
             # FIXME - should we raise? I need a test case pkg to see what the
             # right behavior should be
                 
