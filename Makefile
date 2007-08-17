@@ -55,6 +55,7 @@ _archive:
 	lynx -dump 'http://wiki.linux.duke.edu/WritingYumPlugins?action=print' > /tmp/${PKGNAME}/PLUGINS
 	lynx -dump 'http://wiki.linux.duke.edu/YumFaq?action=print' > /tmp/${PKGNAME}/FAQ
 	@rm -f /tmp/${PKGNAME}/$(remove_spec)
+	@rm -rf /tmp/${PKGNAME}/.git
 	@mv /tmp/${PKGNAME} /tmp/${PKGNAME}-$(VERSION)
 	@dir=$$PWD; cd /tmp; tar cvzf $$dir/${PKGNAME}-$(VERSION).tar.gz ${PKGNAME}-$(VERSION)
 	@rm -rf /tmp/${PKGNAME}-$(VERSION)	
