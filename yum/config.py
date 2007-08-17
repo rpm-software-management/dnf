@@ -674,7 +674,7 @@ def _getsysver(installroot, distroverpkg):
     # we're going to take the first one - if there is more than one of these
     # then the user needs a beating
     if idx.count() == 0:
-        releasever = 'Null'
+        releasever = '$releasever'
     else:
         hdr = idx.next()
         releasever = hdr['version']
