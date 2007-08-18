@@ -51,6 +51,7 @@ warnings.simplefilter("ignore", Errors.YumFutureDeprecationWarning)
 
 from packages import parsePackages, YumAvailablePackage, YumLocalPackage, YumInstalledPackage
 from constants import *
+from yum.rpmtrans import RPMTransaction,SimpleCliCallBack
 
 __version__ = '3.2.2'
 
@@ -2166,3 +2167,137 @@ class YumBase(depsolve.Depsolve):
                             numleft -= 1
                         
         map(lambda x: self.tsInfo.addErase(x), toremove)
+
+    def processTransaction(self, callback=None,rpmTestDisplay=None, rpmDisplay=None):
+        '''
+        Process the current Transaction
+        - Download Packages
+        - Check GPG Signatures.
+        - Run Test RPM Transaction
+        - Run RPM Transaction
+        
+        callback.event method is called at start/end of each process.
+        
+        @param callback: callback object (must have an event method)
+        @param rpmTestDisplay: Name of display class to use in RPM Test Transaction 
+        @param rpmDisplay: Name of display class to use in RPM Transaction 
+        '''
+        
+        action = "Download Packages"
+        if callback: callback.event(action=action, state="Start")
+        pkgs = self._downloadPackages()
+        if callback: callback.event(action=action, state="End")
+        action = "Checking Signatures"
+        if callback: callback.event(action=action, state="Start")
+        self._checkSignatures(pkgs)
+        if callback: callback.event(action=action, state="End")
+        action = "Test Transaction"
+        if callback: callback.event(action=action, state="Start")
+        self._doTestTransaction(display=rpmTestDisplay)
+        if callback: callback.event(action=action, state="End")
+        action = "Run Transaction"
+        if callback: callback.event(action=action, state="Start")
+        self._doTransaction(display=rpmDisplay)
+        if callback: callback.event(action=action, state="End")
+    
+    def _downloadPackages(self):
+        ''' Download the need packages in the Transaction '''
+        # This can be overloaded by a subclass.    
+        dlpkgs = map(lambda x: x.po, filter(lambda txmbr:
+                                            txmbr.ts_state in ("i", "u"),
+                                            self.tsInfo.getMembers()))
+           
+        try:
+            probs = self.downloadPkgs(dlpkgs)
+
+        except IndexError:
+            raise yum.Errors.YumBaseError, ["Unable to find a suitable mirror."]
+        if len(probs.keys()) > 0:
+            errstr = ["Errors were encountered while downloading packages."]
+            for key in probs.keys():
+                errors = yum.misc.unique(probs[key])
+                for error in errors:
+                    errstr.append("%s: %s" %(key, error))
+
+            raise yum.Errors.YumBaseError, errstr
+        return dlpkgs
+
+    def _checkSignatures(self,pkgs):
+        ''' The the signatures of the downloaded packages '''
+        # This can be overloaded by a subclass.    
+        for po in pkgs:
+            result, errmsg = self.sigCheckPkg(po)
+            if result == 0:
+                # Verified ok, or verify not req'd
+                continue            
+            elif result == 1:
+               self.getKeyForPackage(po, self._askForGPGKeyImport)
+            else:
+                raise yum.Errors.YumBaseError, errmsg
+
+        return 0
+        
+    def _askForGPGKeyImport(self, po, userid, hexkeyid):
+        ''' 
+        Ask for GPGKeyImport 
+        This need to be overloaded in a subclass to make GPG Key import work
+        '''
+        return False
+
+    def _doTestTransaction(self,display=None):
+        ''' Do the RPM test transaction '''
+        # This can be overloaded by a subclass.    
+        if self.conf.rpm_check_debug:
+            self.verbose_logger.log(logginglevels.INFO_2, 
+                 'Running rpm_check_debug')
+            msgs = self._run_rpm_check_debug()
+            if msgs:
+                retmsgs = ['ERROR with rpm_check_debug vs depsolve:']
+                retmsgs.extend(msgs) 
+                retmsgs.append('Please report this error in bugzilla')
+                raise yum.Errors.YumBaseError,retmsgs
+        
+        tsConf = {}
+        for feature in ['diskspacecheck']: # more to come, I'm sure
+            tsConf[feature] = getattr( self.conf, feature )
+        #
+        testcb = RPMTransaction(self, test=True)
+        # overwrite the default display class
+        if display:
+            testcb.display = display
+        # clean out the ts b/c we have to give it new paths to the rpms 
+        del self.ts
+  
+        self.initActionTs()
+        # save our dsCallback out
+        dscb = self.dsCallback
+        self.dsCallback = None # dumb, dumb dumb dumb!
+        self.populateTs( keepold=0 ) # sigh
+        tserrors = self.ts.test( testcb, conf=tsConf )
+        del testcb
+  
+        if len( tserrors ) > 0:
+            errstring =  'Test Transaction Errors: '
+            for descr in tserrors:
+                 errstring += '  %s\n' % descr 
+            raise yum.Errors.YumBaseError, errstring 
+
+        del self.ts
+        # put back our depcheck callback
+        self.dsCallback = dscb
+
+
+    def _doTransaction(self,display=None):
+        ''' do the RPM Transaction '''
+        # This can be overloaded by a subclass.    
+        self.initActionTs() # make a new, blank ts to populate
+        self.populateTs( keepold=0 ) # populate the ts
+        self.ts.check() # required for ordering
+        self.ts.order() # order
+        cb = RPMTransaction(self,display=SimpleCliCallBack)
+        # overwrite the default display class
+        if display:
+            cb.display = display
+        self.runTransaction( cb=cb )
+
+        
