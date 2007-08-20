@@ -27,24 +27,16 @@ class YumBaseError(exceptions.Exception):
         return "%s" %(self.value,)
 
 class YumGPGCheckError(YumBaseError):
-    def __init__(self, value=None):
-        YumBaseError.__init__(self)
-        self.value = value
+    pass
 
 class YumDownloadError(YumBaseError):
-    def __init__(self, value=None):
-        YumBaseError.__init__(self)
-        self.value = value
+    pass
 
 class YumTestTransactionError(YumBaseError):
-    def __init__(self, value=None):
-        YumBaseError.__init__(self)
-        self.value = value
+    pass
 
 class YumRPMCheckError(YumBaseError):
-    def __init__(self, value=None):
-        YumBaseError.__init__(self)
-        self.value = value
+    pass
         
 class LockError(YumBaseError):
     def __init__(self, errno, msg):
