@@ -2219,7 +2219,7 @@ class YumBase(depsolve.Depsolve):
                 for error in errors:
                     errstr.append("%s: %s" %(key, error))
 
-            raise yum.Errors.YumBaseError, errstr
+            raise yum.Errors.YumDownloadError, errstr
         return dlpkgs
 
     def _checkSignatures(self,pkgs):
@@ -2233,7 +2233,7 @@ class YumBase(depsolve.Depsolve):
             elif result == 1:
                self.getKeyForPackage(po, self._askForGPGKeyImport)
             else:
-                raise yum.Errors.YumBaseError, errmsg
+                raise yum.Errors.YumGPGCheckError, errmsg
 
         return 0
         
@@ -2255,7 +2255,7 @@ class YumBase(depsolve.Depsolve):
                 retmsgs = ['ERROR with rpm_check_debug vs depsolve:']
                 retmsgs.extend(msgs) 
                 retmsgs.append('Please report this error in bugzilla')
-                raise yum.Errors.YumBaseError,retmsgs
+                raise yum.Errors.YumRPMCheckError,retmsgs
         
         tsConf = {}
         for feature in ['diskspacecheck']: # more to come, I'm sure
@@ -2280,7 +2280,7 @@ class YumBase(depsolve.Depsolve):
             errstring =  'Test Transaction Errors: '
             for descr in tserrors:
                  errstring += '  %s\n' % descr 
-            raise yum.Errors.YumBaseError, errstring 
+            raise yum.Errors.YumTestTransactionError, errstring 
 
         del self.ts
         # put back our depcheck callback
