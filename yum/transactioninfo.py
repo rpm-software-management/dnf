@@ -35,6 +35,7 @@ class TransactionData:
         self.probFilterFlags = []
         self.root = '/'
         self.pkgdict = {} # key = pkgtup, val = list of TransactionMember obj
+        self._namedict = {} # name -> list of TransactionMember obj
         self.removedmembers = {}
         self.debug = 0
         self.changed = False
@@ -58,7 +59,7 @@ class TransactionData:
         self.depupdated = []
         
     def __len__(self):
-        return len(self.pkgdict.values())
+        return len(self.pkgdict)
         
     def __iter__(self):
         if hasattr(self.getMembers(), '__iter__'):
@@ -84,8 +85,7 @@ class TransactionData:
             for members in self.pkgdict.itervalues():
                 returnlist.extend(members)            
         elif self.pkgdict.has_key(pkgtup):
-            returnlist.extend(self.pkgdict[pkgtup])            
-
+            returnlist.extend(self.pkgdict[pkgtup])
         return returnlist
             
     def getRemovedMembers(self, pkgtup=None):
@@ -98,7 +98,7 @@ class TransactionData:
             for members in self.removedmembers.itervalues():
                 returnlist.extend(members)
         elif self.removedmembers.has_key(pkgtup):
-            returnlist.extend(self.pkgdict[pkgtup])
+            returnlist.extend(self.removedmembers[pkgtup])
 
         return returnlist
 
@@ -108,50 +108,45 @@ class TransactionData:
            otherwise, returns None"""
 
         txmbrs = self.matchNaevr(name=name, arch=arch, epoch=epoch, ver=ver, rel=rel)
-        if len(txmbrs):
-            return txmbrs[0].ts_state
-        else:
+        if not len(txmbrs):
             return None
+        states = []
+        for txmbr in txmbrs:
+            states.append(txmbr.ts_state)
+        
+        if 'u' in states:
+            return 'u'
+        elif 'i' in states:
+            return 'i'
+        else:
+            return states[0]
+            
 
     
     def matchNaevr(self, name=None, arch=None, epoch=None, ver=None, rel=None):
         """returns the list of packages matching the args above"""
-        completelist = self.pkgdict.keys()
-        removedict = {}
-        returnlist = []
-        returnmembers = []
-        
-        for pkgtup in completelist:
-            (n, a, e, v, r) = pkgtup
-            if name is not None:
-                if name != n:
-                    removedict[pkgtup] = 1
-                    continue
-            if arch is not None:
-                if arch != a:
-                    removedict[pkgtup] = 1
-                    continue
-            if epoch is not None:
-                if epoch != e:
-                    removedict[pkgtup] = 1
-                    continue
-            if ver is not None:
-                if ver != v:
-                    removedict[pkgtup] = 1
-                    continue
-            if rel is not None:
-                if rel != r:
-                    removedict[pkgtup] = 1
-                    continue
-        
-        for pkgtup in completelist:
-            if not removedict.has_key(pkgtup):
-                returnlist.append(pkgtup)
-        
-        for matched in returnlist:
-            returnmembers.extend(self.pkgdict[matched])
+        if name is None:
+            txmbrs = self.getMembers()
+        else:
+            txmbrs = self._namedict.get(name, [])
 
-        return returnmembers
+        result = []
+
+        for txmbr in txmbrs:
+            (n, a, e, v, r) = txmbr.pkgtup
+            if name is not None and name != n:
+                continue
+            if arch is not None and arch != a:
+                continue
+            if epoch is not None and epoch != e:
+                continue
+            if ver is not None and ver != v:
+                continue
+            if rel is not None and rel != r:
+                continue
+            result.append(txmbr)
+
+        return result
 
     def add(self, txmember):
         """add a package to the transaction"""
@@ -165,6 +160,7 @@ class TransactionData:
                     self.debugprint("Package in same mode, skipping.")
                     return
         self.pkgdict[txmember.pkgtup].append(txmember)
+        self._namedict.setdefault(txmember.name, []).append(txmember)
         self.changed = True
 
         # Is this the right criteria?
@@ -191,9 +187,12 @@ class TransactionData:
                 self.localSack.delPackage(txmbr.po)
             elif isinstance(txmbr.po, YumAvailablePackageSqlite):
                 self.pkgSackPackages -= 1
+            self._namedict[txmbr.name].remove(txmbr)
         
         self.removedmembers.setdefault(pkgtup, []).extend(self.pkgdict[pkgtup])
         del self.pkgdict[pkgtup]
+        if not self._namedict[pkgtup[0]]:
+            del self._namedict[pkgtup[0]]
         self.changed = True        
     
     def exists(self, pkgtup):

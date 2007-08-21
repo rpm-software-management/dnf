@@ -22,7 +22,7 @@ import logging
 import rpmUtils.transaction
 import rpmUtils.miscutils
 import rpmUtils.arch
-from rpmUtils.arch import archDifference
+from rpmUtils.arch import archDifference, isMultiLibArch
 from misc import unique, version_tuple_to_string
 import rpm
 
@@ -234,118 +234,23 @@ class Depsolve(object):
                 self.verbose_logger.log(logginglevels.DEBUG_1,
                     'Removing Package %s', txmbr.po)
 
-    def _processReq(self, dep, prcoformat_need):
+    def _processReq(self, po, requirement):
         """processes a Requires dep from the resolveDeps functions, returns a tuple
            of (CheckDeps, missingdep, conflicts, errors) the last item is an array
            of error messages"""
         
-        CheckDeps = 0
-        missingdep = 0
-        conflicts = 0
         errormsgs = []
-        
-        ((name, version, release), (needname, needversion), flags, suggest, sense) = dep
-        
+
+        needname, flags, needversion = requirement
         niceformatneed = rpmUtils.miscutils.formatRequire(needname, needversion, flags)
-        self.verbose_logger.log(logginglevels.DEBUG_1, '%s requires: %s', name,
-            niceformatneed)
-        
-        if self.dsCallback: self.dsCallback.procReq(name, niceformatneed)
-        
-        # is the requiring tuple (name, version, release) from an installed package?
-        pkgs = []
-        dumbmatchpkgs = self.rpmdb.searchNevra(name=name, ver=version, rel=release)
-        for po in dumbmatchpkgs:
-            if self.tsInfo.exists(po.pkgtup):
-                self.verbose_logger.log(logginglevels.DEBUG_4,
-                    'Skipping package already in Transaction Set: %s', po)
-                continue
-            
-            self.verbose_logger.log(logginglevels.DEBUG_2,
-                    'Looking for %s as a requirement of %s',
-                    str(prcoformat_need), po)
+        self.verbose_logger.log(logginglevels.DEBUG_1, '%s requires: %s', po.name, niceformatneed)
+        if self.dsCallback: self.dsCallback.procReq(po.name, niceformatneed)
 
-            if po.checkPrco('requires', prcoformat_need):
-                pkgs.append(po)
-
-        if len(pkgs) < 1: # requiring tuple is not in the rpmdb
-            txmbrs = self.tsInfo.matchNaevr(name=name, ver=version, rel=release)
-            if len(txmbrs) < 1:
-                self.verbose_logger.log(logginglevels.DEBUG_1,
-                        'Requiring package %s-%s-%s not in transaction set'\
-                        ' nor in rpmdb', name, version, release)
-                errormsgs.append(msg)
-                missingdep = 1
-                CheckDeps = 0
-
-            else:
-                txmbr = txmbrs[0]
-                self.verbose_logger.log(logginglevels.DEBUG_1,
-                    'Requiring package is from transaction set')
-                if txmbr.ts_state == 'e':
-                    self.verbose_logger.log(logginglevels.DEBUG_2,
-                            'Requiring package %s is set to be erased, ' \
-                            'probably processing an old dep, restarting ' \
-                            'loop early.', txmbr.name)
-                    CheckDeps=1
-                    missingdep=0
-                    return (CheckDeps, missingdep, conflicts, errormsgs)
-                    
-                else:
-                    self.verbose_logger.log(logginglevels.DEBUG_1, 'Resolving for requiring package: %s-%s-%s in state %s',
-                        name, version, release, txmbr.ts_state)
-                    self.verbose_logger.log(logginglevels.DEBUG_1, 'Resolving for requirement: %s',
-                        rpmUtils.miscutils.formatRequire(needname, needversion, flags))
-                    requirementTuple = (needname, flags, needversion)
-                    # should we figure out which is pkg it is from the tsInfo?
-                    requiringPkg = (name, version, release, txmbr.ts_state) 
-                    CheckDeps, missingdep = self._requiringFromTransaction(requiringPkg, requirementTuple, errormsgs)
-            
-        if len(pkgs) > 0:  # requring tuple is in the rpmdb
-            if len(pkgs) > 1:
-                self.verbose_logger.log(logginglevels.DEBUG_2,
-                    'Multiple Packages match. %s-%s-%s', name, version, release)
-                for po in pkgs:
-                    # if one of them is (name, arch) already in the tsInfo somewhere, 
-                    # pop it out of the list
-                    (n,a,e,v,r) = po.pkgtup
-                    thismode = self.tsInfo.getMode(name=n, arch=a)
-                    if thismode is not None:
-                        self.verbose_logger.log(logginglevels.DEBUG_2,
-                            '   %s already in ts %s, skipping', po, thismode)
-                        pkgs.remove(po)
-                        continue
-                    else:
-                        self.verbose_logger.log(logginglevels.DEBUG_2, '   %s',
-                                po)
-                    
-            if len(pkgs) == 1:
-                po = pkgs[0]
-                self.verbose_logger.log(logginglevels.DEBUG_2,
-                    'Requiring package is installed: %s', po)
-            
-            if len(pkgs) > 0:
-                requiringPkg = pkgs[0] # take the first one, deal with the others (if there is one)
-                                   # on another dep.
-            else:
-                self.logger.error('All pkgs in depset are also in tsInfo, this is wrong and bad')
-                CheckDeps = 1
-                return (CheckDeps, missingdep, conflicts, errormsgs)
-            
-            self.verbose_logger.log(logginglevels.DEBUG_1,
-                'Resolving for installed requiring package: %s', requiringPkg)
-            self.verbose_logger.log(logginglevels.DEBUG_1,
-                'Resolving for requirement: %s', 
-                rpmUtils.miscutils.formatRequire(needname, needversion, flags))
-            
-            requirementTuple = (needname, flags, needversion)
-
-            CheckDeps, missingdep = self._requiringFromInstalled(requiringPkg,
-                                                    requirementTuple, errormsgs)
-
-
-        return (CheckDeps, missingdep, conflicts, errormsgs)
-
+        if po.repo.id != "installed":
+            CheckDeps, missingdep = self._requiringFromTransaction(po, requirement, errormsgs)
+        else:
+            CheckDeps, missingdep = self._requiringFromInstalled(po, requirement, errormsgs)
+        return (CheckDeps, missingdep, errormsgs)
 
     def _requiringFromInstalled(self, requiringPo, requirement, errorlist):
         """processes the dependency resolution for a dep where the requiring 
@@ -387,7 +292,7 @@ class Depsolve(object):
                 'Potential Provider: %s', inst_str)
             thismode = self.tsInfo.getMode(name=i_n, arch=i_a, 
                             epoch=i_e, ver=i_v, rel=i_r)
-                        
+
             if thismode is None and i_n in self.conf.exactarchlist:
                 # check for mode by the same name+arch
                 thismode = self.tsInfo.getMode(name=i_n, arch=i_a)
@@ -395,7 +300,7 @@ class Depsolve(object):
             if thismode is None and i_n not in self.conf.exactarchlist:
                 # check for mode by just the name
                 thismode = self.tsInfo.getMode(name=i_n)
-            
+                            
             if thismode is not None:
                 needmode = thismode
                 if self.rpmdb.installed(name=i_n, arch=i_a, ver=i_v, 
@@ -411,7 +316,7 @@ class Depsolve(object):
                     
         self.verbose_logger.log(logginglevels.DEBUG_2, 'Mode for pkg providing %s: %s', 
             niceformatneed, needmode)
-        
+
         if needmode in ['e']:
             self.verbose_logger.log(logginglevels.DEBUG_2, 'TSINFO: %s package requiring %s marked as erase',
                 requiringPo, needname)
@@ -476,13 +381,13 @@ class Depsolve(object):
                 self.verbose_logger.log(logginglevels.DEBUG_2, 'Cannot find an update path for dep for: %s', niceformatneed)
                 
                 reqpkg = (name, ver, rel, None)
-                return self._requiringFromTransaction(reqpkg, requirement, errorlist)
+                return self._requiringFromTransaction(requiringPo, requirement, errorlist)
             
 
         if needmode is None:
             reqpkg = (name, ver, rel, None)
             if self.pkgSack is None:
-                return self._requiringFromTransaction(reqpkg, requirement, errorlist)
+                return self._requiringFromTransaction(requiringPo, requirement, errorlist)
             else:
                 msg = 'Unresolveable requirement %s for %s' % (niceformatneed,
                                                                reqpkg[0])
@@ -494,11 +399,11 @@ class Depsolve(object):
         return checkdeps, missingdep
         
 
-    def _requiringFromTransaction(self, requiringPkg, requirement, errorlist):
+    def _requiringFromTransaction(self, requiringPo, requirement, errorlist):
         """processes the dependency resolution for a dep where requiring 
            package is in the transaction set"""
         
-        (name, version, release, tsState) = requiringPkg
+        (name, arch, epoch, version, release) = requiringPo.pkgtup
         (needname, needflags, needversion) = requirement
         checkdeps = 0
         missingdep = 0
@@ -581,22 +486,32 @@ class Depsolve(object):
         # find the best one 
         # first, find out which arch of the ones we can choose from is closest
         # to the arch of the requesting pkg
-        reqpkg = self.tsInfo.matchNaevr(name=name, ver=version, rel=release)[0]
+
+        # we could be here from _requiringFromInstalled() - check to see if we have
+        # an entry in the ts first, if not - look in the rpmdb for the requiring arch
+        ts_reqs =  self.tsInfo.matchNaevr(name=name, ver=version, rel=release)
+        if len(ts_reqs):
+            reqpkg = ts_reqs[0]
+        else:
+            reqpkg = self.rpmdb.searchNevra(name=name, ver=version, rel=release)[0]
+            
         thisarch = reqpkg.arch
         newest = provSack.returnNewestByNameArch()
-                    
         if len(newest) > 1: # there's no way this can be zero
             best = newest[0]
             for po in newest[1:]:
                 if thisarch != 'noarch':
                     best_dist = archDifference(thisarch, best.arch)
-                    if best_dist == 0: # can't really use best's arch anyway...
-                        best = po # just try the next one - can't be much worse
-                        continue
+                    if isMultiLibArch(): # only go to the next one if we're multilib - i686 can satisfy i386 deps
+                        if best_dist == 0: # can't really use best's arch anyway...
+                            best = po # just try the next one - can't be much worse
+                            continue
+                
                     po_dist = archDifference(thisarch, po.arch)
                     if po_dist > 0 and best_dist > po_dist:
                         best = po
                         continue
+                        
                     if best_dist == po_dist:
                         if len(po.name) < len(best.name):
                             best=po
@@ -611,6 +526,7 @@ class Depsolve(object):
                         best = po
         elif len(newest) == 1:
             best = newest[0]
+        
         
         if self.rpmdb.installed(po=best): # is it already installed?
             missingdep = 1
@@ -641,24 +557,24 @@ class Depsolve(object):
         return checkdeps, missingdep
 
 
-    def _processConflict(self, dep):
+    def _processConflict(self, po, conflict):
         """processes a Conflict dep from the resolveDeps() method"""
                 
         CheckDeps = 0
-        missingdep = 0
         conflicts = 0
         errormsgs = []
         
 
-        ((name, version, release), (needname, needversion), flags, suggest, sense) = dep
-        
+        needname, flags, needversion = conflict
+        (name, arch, epoch, ver, rel) = po.pkgtup
+
         niceformatneed = rpmUtils.miscutils.formatRequire(needname, needversion, flags)
         if self.dsCallback: self.dsCallback.procConflict(name, niceformatneed)
         
         # we should try to update out of the dep, if possible        
         # see which side of the conflict is installed and which is in the transaction Set
         needmode = self.tsInfo.getMode(name=needname)
-        confmode = self.tsInfo.getMode(name=name, ver=version, rel=release)
+        confmode = self.tsInfo.getMode(name=name, ver=ver, rel=rel)
         if confmode is None:
             confname = name
         elif needmode is None:
@@ -711,7 +627,7 @@ class Depsolve(object):
             self.verbose_logger.log(logginglevels.DEBUG_1, '%s conflicts: %s',
                 name, conf)
         
-        return (CheckDeps, missingdep, conflicts, errormsgs)
+        return (CheckDeps, conflicts, errormsgs)
 
     def _unresolveableConflict(self, conf, name, errors):
         CheckDeps = 0
@@ -752,197 +668,131 @@ class Depsolve(object):
         p.print_stats(20)
         return rc
 
-    def _mytsCheck(self):
-        self._dcobj.requires = []
-        self._dcobj.conficts = []
-
-        # returns a list of tuples
-        # ((name, version, release), (needname, needversion), flags, suggest, sense)
-
-
-        ret = []
-        check_removes = False
-        for txmbr in self.tsInfo.getMembers():
-            
-            if self._dcobj.already_seen.has_key(txmbr):
-                continue
-
-            if self.dsCallback and txmbr.ts_state:
-                self.dsCallback.pkgAdded(txmbr.pkgtup, txmbr.ts_state)
-
-            self.verbose_logger.log(logginglevels.DEBUG_2,
-                                    "Checking deps for %s" %(txmbr,))
-            if txmbr.output_state in TS_INSTALL_STATES:
-                thisneeds = self._checkInstall(txmbr)
-            elif txmbr.output_state in TS_REMOVE_STATES:
-                thisneeds = self._checkRemove(txmbr)
-                check_removes = True
-            if len(thisneeds) == 0:
-                self._dcobj.already_seen[txmbr] = 1
-            ret.extend(thisneeds)
-
-        # check transaction members that got removed from the transaction again
-        for txmbr in self.tsInfo.getRemovedMembers():
-            if self.dcobj.already_seen_removed.has_key(txmbr):
-                continue
-            if self.dsCallback and txmbr.ts_state:
-                if txmbr.ts_state == 'i':
-                    self.dsCallback.pkgAdded(txmbr.pkgtup, 'e')
-                else:
-                    self.dsCallback.pkgAdded(txmbr.pkgtup, 'i')
-
-            self.verbose_logger.log(logginglevels.DEBUG_2,
-                                    "Checking deps for %s" %(txmbr,))
-            if txmbr.output_state in TS_INSTALL_STATES:
-                thisneeds = self._checkRemove(txmbr)
-                check_removes = True
-            elif txmbr.output_state in TS_REMOVE_STATES:
-                thisneeds = self._checkInstall(txmbr)
-            if len(thisneeds) == 0:
-                self.dcobj.already_seen_removed[txmbr] = 1
-            ret.extend(thisneeds)
-
-        if check_removes:
-            ret.extend(self._checkFileRequires())
-        ret.extend(self._checkConflicts())
-            
-        return ret
-
     def resolveDeps(self):
-        CheckDeps = True
-        conflicts = 0
-        missingdep = 0
-        depscopy = []
-        unresolveableloop = 0
 
         # holder object for things from the check
         if not hasattr(self, '_dcobj'):
             self._dcobj = DepCheck()
-        # reset what we've seen as things may have changed between
-        # calls to resolveDeps (rh#242368)
-        self._dcobj.already_seen = {}
 
+        if not len(self.tsInfo):
+            return (0, ['Success - empty transaction'])
+
+        # holder object for things from the check
+        if not hasattr(self, '_dcobj'):
+            self._dcobj = DepCheck()
+
+        CheckDeps = True
+        CheckRemoves = False
+        CheckInstalls = False
+
+        missingdep = 0
         errors = []
+
         if self.dsCallback: self.dsCallback.start()
 
-        while CheckDeps:
-            self.cheaterlookup = {} # short cache for some information we'd resolve
-                                    # (needname, needversion) = pkgtup
-            if self.dsCallback: self.dsCallback.tscheck()
-            deps = self._mytsCheck()
+        while True:
 
-            if not deps:
-                # Handle the case where self.tsInfo has been 
-                # cleared by a plugin.
-                if not len(self.tsInfo):
-                    return (0, ['Success - empty transaction'])                
-                # FIXME: this doesn't belong here at all...
-                for txmbr in self.tsInfo.getMembers():
-                    if self.allowedMultipleInstalls(txmbr.po) and \
-                           txmbr.ts_state == 'u':
-                        self.verbose_logger.log(logginglevels.DEBUG_2,
-                                                '%s converted to install',
-                                                txmbr.po)
-                        txmbr.ts_state = 'i'
-                        txmbr.output_state = TS_INSTALL
-                
-                self.tsInfo.changed = False
-                return (2, ['Success - deps resolved'])
+            CheckDeps = True
 
-            deps = unique(deps) # get rid of duplicate deps            
-            if deps == depscopy:
-                unresolveableloop += 1
-                self.verbose_logger.log(logginglevels.DEBUG_2,
-                    'Identical Loop count = %d', unresolveableloop)
-                if unresolveableloop >= 2:
-                    errors.append('Unable to satisfy dependencies')
-                    for deptuple in deps:
-                        ((name, version, release), (needname, needversion), flags, 
-                          suggest, sense) = deptuple
-                        if sense == rpm.RPMDEP_SENSE_REQUIRES:
-                            msg = 'Package %s-%s-%s needs %s, this is not available.' % \
-                                  (name, version, release, rpmUtils.miscutils.formatRequire(needname, 
-                                                                          needversion, flags))
-                        elif sense == rpm.RPMDEP_SENSE_CONFLICTS:
-                            msg = 'Package %s conflicts with %s.' % \
-                                  (name, rpmUtils.miscutils.formatRequire(needname, 
-                                                                          needversion, flags))
-
-                        errors.append(msg)
-                    CheckDeps = False
-                    break
-            else:
-                unresolveableloop = 0
-
-            depscopy = deps
-            CheckDeps = False
+            # check Requires
+            while CheckDeps:
+                self.cheaterlookup = {}
+                if self.dsCallback: self.dsCallback.tscheck()
+                CheckDeps, checkremoves, checkinstalls, missing = self._resolveRequires(errors)
+                CheckInstalls |= checkinstalls
+                CheckRemoves |= checkremoves
 
 
-            # things to resolve
-            self.verbose_logger.debug('# of Deps = %d', len(deps))
-            depcount = 0
-            for dep in deps:
-                dep_start_time = time.time()
-                ((name, version, release), (needname, needversion), flags, suggest, sense) = dep
-                depcount += 1
-                self.verbose_logger.log(logginglevels.DEBUG_2,
-                    '\nDep Number: %d/%d\n', depcount, len(deps))
+            # check global FileRequires
+            if CheckRemoves:
+                CheckRemoves = False
+                for po, dep in self._checkFileRequires():
+                    (checkdep, missing, errormsgs) = self._processReq(po, dep)
+                    CheckDeps |= checkdep
+                    errors += errormsgs
 
-                prco_flags = rpmUtils.miscutils.flagToString(flags)
-                prco_ver = rpmUtils.miscutils.stringToVersion(needversion)
-                prcoformat_need = (needname, prco_flags, prco_ver)
-                
-                if sense == rpm.RPMDEP_SENSE_REQUIRES: # requires
-                    (checkdep, missing, conflict, errormsgs) = self._processReq(dep, prcoformat_need)
-                    
-                elif sense == rpm.RPMDEP_SENSE_CONFLICTS: # conflicts - this is gonna be short :)
-                    (checkdep, missing, conflict, errormsgs) = self._processConflict(dep)
-                    
-                else: # wtf?
-                    self.logger.critical('Unknown Sense: %d', sense)
+                if CheckDeps:
+                    if self.dsCallback: self.dsCallback.restartLoop()
+                    self.verbose_logger.log(logginglevels.DEBUG_1, 'Restarting Loop')
                     continue
-                
-                dep_end_time = time.time()
-                dep_proc_time = dep_end_time - dep_start_time
-                self.verbose_logger.log(logginglevels.DEBUG_2, 'processing dep took: %f', dep_proc_time)
-                
-                if missing:
-                    # If we have missing requires make sure we process
-                    # packages that need them again by removing them
-                    # from the already_seen cache instead of blindly 
-                    # assuming that we already completely resolved their
-                    # problems
-                    for curpkg in self._dcobj.already_seen.keys():
-                        if curpkg.name == needname or \
-                               curpkg.po.checkPrco('provides', prcoformat_need):
-                            del(self._dcobj.already_seen[curpkg])
 
-                missingdep += missing
-                conflicts += conflict
-                CheckDeps |= checkdep
-                for error in errormsgs:
-                    if error not in errors:
-                        errors.append(error)
+            # check Conflicts
+            if CheckInstalls:
+                CheckInstalls = False
+                for conflict in self._checkConflicts():
+                    (checkdep, conflict, errormsgs) = self._processConflict(*conflict)
+                    CheckDeps |= checkdep
+                    errors += errormsgs
 
-            self.verbose_logger.log(logginglevels.DEBUG_1, 'miss = %d', missingdep)
-            self.verbose_logger.log(logginglevels.DEBUG_1, 'conf = %d', conflicts)
-            self.verbose_logger.log(logginglevels.DEBUG_1, 'CheckDeps = %d', CheckDeps)
+                if CheckDeps:
+                    if self.dsCallback: self.dsCallback.restartLoop()
+                    self.verbose_logger.log(logginglevels.DEBUG_1, 'Restarting Loop')
+                    continue
 
-            if CheckDeps:
-                if self.dsCallback: self.dsCallback.restartLoop()
-                self.verbose_logger.log(logginglevels.DEBUG_1, 'Restarting Loop')
-            else:
-                if self.dsCallback: self.dsCallback.end()
-                self.verbose_logger.log(logginglevels.DEBUG_1, 'Dependency Process ending')
+            break
 
-            del deps
+        # FIXME: this doesn't belong here at all...
+        for txmbr in self.tsInfo.getMembers():
+            if self.allowedMultipleInstalls(txmbr.po) and \
+                   txmbr.ts_state == 'u':
+                self.verbose_logger.log(logginglevels.DEBUG_2,
+                                        '%s converted to install',
+                                        txmbr.po)
+                txmbr.ts_state = 'i'
+                txmbr.output_state = TS_INSTALL
 
+        if self.dsCallback: self.dsCallback.end()
+        self.verbose_logger.log(logginglevels.DEBUG_1, 'Dependency Process ending')
 
         self.tsInfo.changed = False
         if len(errors) > 0:
+            errors = unique(errors)
             return (1, errors)
+
         if len(self.tsInfo) > 0:
-            return (2, ['Run Callback'])
+            if not len(self.tsInfo):
+                return (0, ['Success - empty transaction'])
+            return (2, ['Success - deps resolved'])
+
+    def _resolveRequires(self, errors):
+        any_missing = False
+        CheckDeps = False
+        CheckInstalls = False
+        CheckRemoves = False
+        for txmbr in self.tsInfo.getMembers() + self.tsInfo.getRemovedMembers():
+            if (self._dcobj.already_seen_removed.has_key(txmbr) or
+                (txmbr.ts_state is not None and self._dcobj.already_seen.has_key(txmbr))):
+                continue
+
+            if self.dsCallback and txmbr.ts_state:
+                self.dsCallback.pkgAdded(txmbr.pkgtup, txmbr.ts_state)
+            self.verbose_logger.log(logginglevels.DEBUG_2,
+                                    "Checking deps for %s" %(txmbr,))
+
+            if txmbr.output_state in TS_INSTALL_STATES:
+                thisneeds = self._checkInstall(txmbr)
+                CheckInstalls = True
+            elif txmbr.output_state in TS_REMOVE_STATES:
+                thisneeds = self._checkRemove(txmbr)
+                CheckRemoves = True
+
+            missing_in_pkg = False
+            for po, dep in thisneeds:
+                (checkdep, missing, errormsgs) = self._processReq(po, dep)
+                CheckDeps |= checkdep
+                errors += errormsgs
+                missing_in_pkg |= missing
+
+            if not missing_in_pkg:
+                if txmbr.ts_state is None:
+                    self._dcobj.already_seen_removed[txmbr] = 1
+                else:
+                    self._dcobj.already_seen[txmbr] = 1
+
+            any_missing |= missing_in_pkg
+
+        return CheckDeps, CheckInstalls, CheckRemoves, any_missing
+
 
     def _checkInstall(self, txmbr):
         reqs = txmbr.po.returnPrco('requires')
@@ -969,9 +819,7 @@ class Depsolve(object):
             if not provs:
                 reqtuple = (req[0], version_tuple_to_string(req[2]), flags[req[1]])
                 self._dcobj.addRequires(txmbr.po, [reqtuple])
-                ret.append( ((txmbr.name, txmbr.version, txmbr.release),
-                             (req[0], version_tuple_to_string(req[2])), flags[req[1]], None,
-                             rpm.RPMDEP_SENSE_REQUIRES) )
+                ret.append( (txmbr.po, (req[0], flags[req[1]], version_tuple_to_string(req[2]))) )
                 continue
 
             #Add relationship
@@ -1008,10 +856,7 @@ class Depsolve(object):
                     if not self.tsInfo.getProvides(rn, rf, rv):
                         reqtuple = (rn, version_tuple_to_string(rv), flags[rf])
                         self._dcobj.addRequires(pkg, [reqtuple])
-                        ret.append(
-                            ((pkg.name, pkg.version, pkg.release),
-                             (rn, version_tuple_to_string(rv)),
-                             flags[rf], None, rpm.RPMDEP_SENSE_REQUIRES) )
+                        ret.append( (pkg, (rn, flags[rf], version_tuple_to_string(rv))) )
         return ret
 
     def _checkFileRequires(self):
@@ -1064,9 +909,7 @@ class Depsolve(object):
         for filename in fileRequires:
             if not self.tsInfo.getOldProvides(filename) and not self.tsInfo.getNewProvides(filename):
                 for po in reverselookup[filename]:
-                    ret.append( ((po.name, po.version, po.release),
-                                 (filename, ''), 0, None,
-                                 rpm.RPMDEP_SENSE_REQUIRES) )
+                    ret.append( (po, (filename, 0, '')) )
 
         return ret
 
@@ -1081,9 +924,7 @@ class Depsolve(object):
                 for conflicting_po in self.tsInfo.getNewProvides(r, f, v):
                     if conflicting_po.pkgtup[0] == po.pkgtup[0] and conflicting_po.pkgtup[2:] == po.pkgtup[2:]:
                         continue
-                    ret.append( ((po.name, po.version, po.release),
-                                 (r, version_tuple_to_string(v)), flags[f],
-                                 None, rpm.RPMDEP_SENSE_CONFLICTS) )
+                    ret.append( (po, (r, flags[f], version_tuple_to_string(v))) )
         for txmbr in self.tsInfo.getMembersWithState(output_states=TS_INSTALL_STATES):
             po = txmbr.po
             for conflict in txmbr.po.returnPrco('conflicts'):
@@ -1091,9 +932,7 @@ class Depsolve(object):
                 for conflicting_po in self.tsInfo.getProvides(r, f, v):
                     if conflicting_po.pkgtup[0] == po.pkgtup[0] and conflicting_po.pkgtup[2:] == po.pkgtup[2:]:
                         continue
-                    ret.append( ((po.name, po.version, po.release),
-                                 (r, version_tuple_to_string(v)), flags[f],
-                                 None, rpm.RPMDEP_SENSE_CONFLICTS) )
+                    ret.append( (po, (r, flags[f], version_tuple_to_string(v))) )
         return ret
 
 
