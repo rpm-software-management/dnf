@@ -26,6 +26,18 @@ class YumBaseError(exceptions.Exception):
     def __str__(self):
         return "%s" %(self.value,)
 
+class YumGPGCheckError(YumBaseError):
+    pass
+
+class YumDownloadError(YumBaseError):
+    pass
+
+class YumTestTransactionError(YumBaseError):
+    pass
+
+class YumRPMCheckError(YumBaseError):
+    pass
+        
 class LockError(YumBaseError):
     def __init__(self, errno, msg):
         YumBaseError.__init__(self)
@@ -33,74 +45,47 @@ class LockError(YumBaseError):
         self.msg = msg
         
 class DepError(YumBaseError):
-    def __init__(self, value=None):
-        YumBaseError.__init__(self)
-        self.value = value
-
+    pass
+    
 class RepoError(YumBaseError):
-    def __init__(self, value=None):
-        YumBaseError.__init__(self)
-        self.value = value
+    pass
 
 class DuplicateRepoError(RepoError):
-    def __init__(self, value=None):
-        RepoError.__init__(self)
-        self.value = value
+    pass
 
 class NoMoreMirrorsRepoError(RepoError):
-    def __init__(self, value=None):
-        RepoError.__init__(self)
-        self.value = value
-
+    pass
+    
 class ConfigError(YumBaseError):
-    def __init__(self, value=None):
-        YumBaseError.__init__(self)
-        self.value = value
+    pass
     
 class MiscError(YumBaseError):
-    def __init__(self, value=None):
-        YumBaseError.__init__(self)
-        self.value = value
+    pass
 
 class GroupsError(YumBaseError):
-    def __init__(self, value=None):
-        YumBaseError.__init__(self)
-        self.value = value
+    pass
 
 class InstallError(YumBaseError):
-    def __init__(self, value=None):
-        YumBaseError.__init__(self)
-        self.value = value
+    pass
 
 class UpdateError(YumBaseError):
-    def __init__(self, value=None):
-        YumBaseError.__init__(self)
-        self.value = value
-
+    pass
+    
 class RemoveError(YumBaseError):
-    def __init__(self, value=None):
-        YumBaseError.__init__(self)
-        self.value = value
+    pass
 
 class RepoMDError(YumBaseError):
-    def __init__(self, value=None):
-        YumBaseError.__init__(self)
-        self.value = value
+    pass
 
 class PackageSackError(YumBaseError):
-    def __init__(self, value=None):
-        YumBaseError.__init__(self)
-        self.value = value
+    pass
 
 class CompsException(YumBaseError):
-    def __init__(self, value=None):
-        YumBaseError.__init__(self)
-        self.value = value
+    pass
 
 class MediaError(YumBaseError):
-    def __init__(self, value=None):
-        YumBaseError.__init__(self, value)
-
+    pass
+    
 class YumDeprecationWarning(DeprecationWarning):
     def __init__(self, value=None):
         DeprecationWarning.__init__(self, value)
