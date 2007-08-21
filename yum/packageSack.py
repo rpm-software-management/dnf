@@ -647,6 +647,7 @@ class PackageSack(PackageSackBase):
         # If naTup is set, only iterate through packages that match that
         # name
         if (naTup):
+            self._checkIndexes(failure='build')
             where = self.nevra.get((naTup[0],None,None,None,None))
             if (not where):
                 raise PackageSackError, 'No Package Matching %s.%s' % naTup
