@@ -775,6 +775,7 @@ class YumLocalPackage(YumHeaderPackage):
         
         fakerepo = FakeRepository(filename)
         YumHeaderPackage.__init__(self, fakerepo, hdr)
+        self.id = self.pkgid
         
     def localPkg(self):
         return self.localpath
