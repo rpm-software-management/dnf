@@ -14,7 +14,6 @@ Requires: python >= 2.4
 Requires: rpm-python, rpm >= 0:4.4.2
 Requires: python-sqlite
 Requires: urlgrabber
-Requires: python-elementtree
 Requires: yum-metadata-parser >= 1.1.0
 
 Prereq: /sbin/chkconfig, /sbin/service, coreutils
