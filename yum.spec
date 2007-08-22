@@ -1,6 +1,6 @@
 Summary: RPM installer/updater
 Name: yum
-Version: 3.2.2
+Version: 3.2.3
 Release: 1
 License: GPL
 Group: System Environment/Base
@@ -79,6 +79,7 @@ exit 0
 /usr/lib/python?.?/site-packages/yum
 /usr/lib/python?.?/site-packages/rpmUtils
 %dir /var/cache/yum
+%dir /var/lib/yum
 %{_mandir}/man*/yum.*
 %{_mandir}/man*/yum-shell*
 
