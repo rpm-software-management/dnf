@@ -45,6 +45,7 @@ import depsolve
 import plugins
 import logginglevels
 import yumRepo
+import callbacks
 
 import warnings
 warnings.simplefilter("ignore", Errors.YumFutureDeprecationWarning)
@@ -2183,22 +2184,21 @@ class YumBase(depsolve.Depsolve):
         @param rpmDisplay: Name of display class to use in RPM Transaction 
         '''
         
-        action = "Download Packages"
-        if callback: callback.event(action=action, state="Start")
+        if not callback:
+            callback = callbacks.ProcessTransNoOutputCallback()
+        
+        # Download Packages
+        callback.event(callbacks.PT_DOWNLOAD)
         pkgs = self._downloadPackages()
-        if callback: callback.event(action=action, state="End")
-        action = "Checking Signatures"
-        if callback: callback.event(action=action, state="Start")
+        # Check Package Signatures
+        callback.event(callbacks.PT_GPGCHECK)
         self._checkSignatures(pkgs)
-        if callback: callback.event(action=action, state="End")
-        action = "Test Transaction"
-        if callback: callback.event(action=action, state="Start")
+        # Run Test Transaction
+        callback.event(callbacks.PT_TEST_TRANS)
         self._doTestTransaction(display=rpmTestDisplay)
-        if callback: callback.event(action=action, state="End")
-        action = "Run Transaction"
-        if callback: callback.event(action=action, state="Start")
+        # Run Transaction
+        callback.event(callbacks.PT_TRANSACTION)
         self._doTransaction(display=rpmDisplay)
-        if callback: callback.event(action=action, state="End")
     
     def _downloadPackages(self):
         ''' Download the need packages in the Transaction '''
