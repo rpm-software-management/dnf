@@ -482,7 +482,7 @@ class YumCliRPMCallBack(RPMBaseCallback):
         else:
             percent = (te_current*100L)/te_total
         
-        if self.output and (sys.stdout.isatty() or bytes == total):
+        if self.output and (sys.stdout.isatty() or te_current == te_total):
             fmt = self._makefmt(percent, ts_current, ts_total)
             msg = fmt % (process, pkgname)
             if msg != self.lastmsg:
