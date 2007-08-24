@@ -113,7 +113,8 @@ class Group(object):
                 if lang:
                     self.translated_description[lang] = text
                 else:
-                    self.description = text
+                    if text:
+                        self.description = text
     
             elif child.tag == 'uservisible':
                 self.user_visible = parse_boolean(child.text)
