@@ -490,8 +490,9 @@ class YumBase(depsolve.Depsolve):
             groupfile = repo.getGroups()
             try:
                 self._comps.add(groupfile)
-            except Errors.GroupsError, e:
-                self.logger.critical('Failed to add groups file for repository: %s' % repo)
+            except (Errors.GroupsError,Errors.CompsException), e:
+                msg = 'Failed to add groups file for repository: %s - %s' % (repo, str(e))
+                self.logger.critical(msg)
             else:
                 repo.groups_added = True
 

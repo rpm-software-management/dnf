@@ -21,7 +21,8 @@ except ImportError:
     import cElementTree
 iterparse = cElementTree.iterparse
 from Errors import CompsException
-
+#FIXME - compsexception isn't caught ANYWHERE so it's pointless to raise it
+# switch all compsexceptions to grouperrors after api break
 
 lang_attr = '{http://www.w3.org/XML/1998/namespace}lang'
 
@@ -346,24 +347,27 @@ class Comps(object):
         self.compiled = False
         
         parser = iterparse(infile)
+        try:
+            for event, elem in parser:
+                if elem.tag == "group":
+                    group = Group(elem)
+                    if self._groups.has_key(group.groupid):
+                        thatgroup = self._groups[group.groupid]
+                        thatgroup.add(group)
+                    else:
+                        self._groups[group.groupid] = group
 
-        for event, elem in parser:
-            if elem.tag == "group":
-                group = Group(elem)
-                if self._groups.has_key(group.groupid):
-                    thatgroup = self._groups[group.groupid]
-                    thatgroup.add(group)
-                else:
-                    self._groups[group.groupid] = group
-
-            if elem.tag == "category":
-                category = Category(elem)
-                if self._categories.has_key(category.categoryid):
-                    thatcat = self._categories[category.categoryid]
-                    thatcat.add(category)
-                else:
-                    self._categories[category.categoryid] = category
-        
+                if elem.tag == "category":
+                    category = Category(elem)
+                    if self._categories.has_key(category.categoryid):
+                        thatcat = self._categories[category.categoryid]
+                        thatcat.add(category)
+                    else:
+                        self._categories[category.categoryid] = category
+        except SyntaxError, e:
+            raise CompsException, "comps file is empty/damaged"
+            del parser
+            
         del parser
         
     def compile(self, pkgtuplist):
