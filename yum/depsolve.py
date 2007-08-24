@@ -759,7 +759,9 @@ class Depsolve(object):
         CheckDeps = False
         CheckInstalls = False
         CheckRemoves = False
-        for txmbr in self.tsInfo.getMembers() + self.tsInfo.getRemovedMembers():
+        # we need to check the opposite of install and remove for regular
+        # tsInfo members vs removed members
+        for (txmbr, inst, rem) in map(lambda x: (x, TS_INSTALL_STATES, TS_REMOVE_STATES), self.tsInfo.getMembers()) + map(lambda x: (x, TS_REMOVE_STATES, TS_INSTALL_STATES), self.tsInfo.getRemovedMembers()):
             if (self._dcobj.already_seen_removed.has_key(txmbr) or
                 (txmbr.ts_state is not None and self._dcobj.already_seen.has_key(txmbr))):
                 continue
@@ -769,10 +771,10 @@ class Depsolve(object):
             self.verbose_logger.log(logginglevels.DEBUG_2,
                                     "Checking deps for %s" %(txmbr,))
 
-            if txmbr.output_state in TS_INSTALL_STATES:
+            if txmbr.output_state in inst:
                 thisneeds = self._checkInstall(txmbr)
                 CheckInstalls = True
-            elif txmbr.output_state in TS_REMOVE_STATES:
+            elif txmbr.output_state in rem:
                 thisneeds = self._checkRemove(txmbr)
                 CheckRemoves = True
 
