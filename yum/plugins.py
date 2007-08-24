@@ -129,8 +129,10 @@ class YumPlugins:
         self.cmdline = (None, None)
         self.verbose_logger = logging.getLogger("yum.verbose.YumPlugins")
         self.disabledPlugins = disabled
-        if not types:
+        if types is None:
             types = ALL_TYPES
+        if not isinstance(types, (list, tuple)):
+            types = (types,)
 
         if id(TYPE_INTERFACE) in [id(t) for t in types]:
             self.verbose_logger.log(logginglevels.INFO_2,
