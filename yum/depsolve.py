@@ -407,7 +407,8 @@ class Depsolve(object):
         (needname, needflags, needversion) = requirement
         checkdeps = 0
         missingdep = 0
-        
+        upgraded = {}
+
         #~ - if it's not available from some repository:
         #~     - mark as unresolveable.
         #
@@ -442,7 +443,7 @@ class Depsolve(object):
             # installed or in the ts, and this isn't a package that allows multiple installs
             # then if it's newer, fine - continue on, if not, then we're unresolveable
             # cite it and exit
-        
+
             tspkgs = []
             if not self.allowedMultipleInstalls(pkg):
                 # from ts
@@ -453,6 +454,8 @@ class Depsolve(object):
                         self.verbose_logger.log(logginglevels.DEBUG_2, msg)
                         provSack.delPackage(pkg)
                         continue
+                    elif tspkg.po.EVR < pkg.EVR:
+                        upgraded.setdefault(pkg.pkgtup, []).append(tspkg.pkgtup)
                 
                 # from rpmdb
                 dbpkgs = self.rpmdb.searchNevra(name=pkg.name, arch=pkg.arch)
@@ -551,6 +554,12 @@ class Depsolve(object):
                 name)
             txmbr = self.tsInfo.addInstall(best)
             txmbr.setAsDep()
+
+            # if we had other packages with this name.arch that we found
+            # before, they're not going to be installed anymore, so we
+            # should mark them to be re-checked
+            if upgraded.has_key(best.pkgtup):
+                map(lambda x: self.tsInfo.remove(x), upgraded[best.pkgtup])
 
         checkdeps = 1
         
