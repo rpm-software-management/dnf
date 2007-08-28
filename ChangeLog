@@ -1,3 +1,70 @@
+2007-08-28  Seth Vidal <skvidal@fedoraproject.org>
+
+	* yum.spec, yum/__init__.py: mark as 3.2.4
+
+2007-08-28  Seth Vidal <skvidal@fedoraproject.org>
+
+	* yum/__init__.py, yum/config.py, yum/plugins.py, yum/yumRepo.py: 
+	merge patch to use iniparser and allow better interaction to .repo
+	files from Debarishi Ray
+
+2007-08-24  Jeremy Katz <katzj@redhat.com>
+
+	* yum/depsolve.py: if we have two versions of a package and a compat
+	package available in our repo, we can set the old version to be
+	installed first, then the new one replaces the old one.  but we
+	never go back and check for what required the provides of the old
+	one and get something else (like the compat package)
+
+2007-08-24  Jeremy Katz <katzj@redhat.com>
+
+	* yum/depsolve.py: fix depchecking on members removed from the ts
+
+2007-08-24  Seth Vidal <skvidal@fedoraproject.org>
+
+	* yum/plugins.py: This patch should fix the case of people calling
+	doPluginSetup() etc. with a non-list argument - From James Antill
+
+2007-08-24  Seth Vidal <skvidal@fedoraproject.org>
+
+	* yum/__init__.py, yum/comps.py: if group file is empty or damaged
+	in a repository, treat it like a missing groups file and skip it.
+	Push out an error about it, though.
+
+2007-08-24  Seth Vidal <skvidal@fedoraproject.org>
+
+	* yum/comps.py: make groupinfo work when the description is empty
+
+2007-08-24  Tim Lauridsen <tla@rasmil.dk>
+
+	* yum/__init__.py: Moved _run_rpm_check_debug into YumBase, so that
+	processTransaction can do the rpm check
+
+2007-08-23  Seth Vidal <skvidal@fedoraproject.org>
+
+	Merge branch 'master' of
+	ssh://login.linux.duke.edu/home/groups/yum/git/yum  * 'master' of
+	ssh://login.linux.duke.edu/home/groups/yum/git/yum:   Reworked the
+	processTransaction callback a little.
+
+2007-08-23  Seth Vidal <skvidal@fedoraproject.org>
+
+	* output.py: bug in cli output transacation callback. closes rh bug
+	#253955
+
+2007-08-23  Tim Lauridsen <tla@rasmil.dk>
+
+	* yum/__init__.py, yum/callbacks.py: Reworked the processTransaction
+	callback a little. * Added yum/callbacks.py with callback classes to
+	use with processTransaction * Dont parse strings to callback, use
+	some flags insted * Dont call the callbacks at both start/end of
+	each step, only at start
+
+2007-08-22  Seth Vidal <skvidal@fedoraproject.org>
+
+	* ChangeLog: merge Changelog for 3.2.3 - new git2cl-format -please
+	forgive the massive changeset
+
 2007-08-22  Seth Vidal <skvidal@fedoraproject.org>
 
 	* yum/packages.py: make sure yum local packages have an 'id'
