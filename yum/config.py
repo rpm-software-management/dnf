@@ -21,7 +21,12 @@ import rpm
 import copy
 import urlparse
 from parser import ConfigPreProcessor
-from ConfigParser import NoSectionError, NoOptionError, ConfigParser, ParsingError
+try:
+    from iniparse.compat import NoSectionError, NoOptionError, ConfigParser
+    from iniparse.compat import ParsingError
+except ImportError:
+    from ConfigParser import NoSectionError, NoOptionError, ConfigParser
+    from ConfigParser import ParsingError
 import rpmUtils.transaction
 import rpmUtils.arch
 import Errors

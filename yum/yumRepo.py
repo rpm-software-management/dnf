@@ -212,6 +212,7 @@ class YumRepository(Repository, config.RepoConf):
         config.RepoConf.__init__(self)
         Repository.__init__(self, repoid)
 
+        self.repofile = None
         self._urls = []
         self.enablegroups = 0 
         self.groupsfilename = 'yumgroups.xml' # something some freaks might
@@ -325,8 +326,31 @@ class YumRepository(Repository, config.RepoConf):
 
         return output
 
-    def enable(self):
-        Repository.enable(self)
+    def enablePersistent(self):
+        """Persistently enables this repository."""
+        self.enable()
+        self.cfg.set(self.id, 'enabled', '1')
+
+        try:
+            self.cfg.write(file(self.repofile, 'w'))
+        except IOError, e:
+            if e.errno == 13:
+                self.logger.warning(e)
+            else:
+                raise IOError, str(e)
+
+    def disablePersistent(self):
+        """Persistently disables this repository."""
+        self.disable()
+        self.cfg.set(self.id, 'enabled', '0')
+
+        try:
+            self.cfg.write(file(self.repofile, 'w'))
+        except IOError, e:
+            if e.errno == 13:
+                self.logger.warning(e)
+            else:
+                raise IOError, str(e)
 
     def check(self):
         """self-check the repo information  - if we don't have enough to move

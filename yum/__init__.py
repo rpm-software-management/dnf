@@ -26,7 +26,10 @@ import glob
 import fnmatch
 import logging
 import logging.config
-from ConfigParser import ParsingError, ConfigParser
+try:
+    from iniparse.compat import ParsingError, ConfigParser
+except ImportError:
+    from ConfigParser import ParsingError, ConfigParser
 import Errors
 import rpmsack
 import rpmUtils.updates
@@ -187,7 +190,6 @@ class YumBase(depsolve.Depsolve):
 
         #FIXME this method could be a simpler
 
-        reposlist = []
         # Check yum.conf for repositories
         for section in self.conf.cfg.sections():
             # All sections except [main] are repositories
@@ -200,13 +202,17 @@ class YumBase(depsolve.Depsolve):
                 self.logger.warning(e)
             else:
                 thisrepo.repo_config_age = self.conf.config_file_age
-                reposlist.append(thisrepo)
+                thisrepo.repofile = self.conf.config_file_path
+
+            try:
+                self._repos.add(thisrepo)
+            except Errors.RepoError, e:
+                self.logger.warning(e)
 
         # Read .repo files from directories specified by the reposdir option
         # (typically /etc/yum/repos.d)
         repo_config_age = self.conf.config_file_age
         
-        parser = ConfigParser()
         for reposdir in self.conf.reposdir:
             if os.path.exists(self.conf.installroot+'/'+reposdir):
                 reposdir = self.conf.installroot + '/' + reposdir
@@ -214,33 +220,33 @@ class YumBase(depsolve.Depsolve):
             if os.path.isdir(reposdir):
                 for repofn in glob.glob('%s/*.repo' % reposdir):
                     thisrepo_age = os.stat(repofn)[8]
-                    if thisrepo_age > repo_config_age:
-                        repo_config_age = thisrepo_age
+                    if thisrepo_age < repo_config_age:
+                        thisrepo_age = repo_config_age
                         
                     confpp_obj = ConfigPreProcessor(repofn, vars=self.yumvar)
+                    parser = ConfigParser()
                     try:
                         parser.readfp(confpp_obj)
                     except ParsingError, e:
                         msg = str(e)
                         raise Errors.ConfigError, msg
+                    
+                    # Check sections in the .repo file that was just slurped up
+                    for section in parser.sections():
+                        try:
+                            thisrepo = self.readRepoConfig(parser, section)
+                        except (Errors.RepoError, Errors.ConfigError), e:
+                            self.logger.warning(e)
+                        else:
+                            thisrepo.repo_config_age = thisrepo_age
+                            thisrepo.repofile = repofn
 
-        # Check sections in the .repo files that were just slurped up
-        for section in parser.sections():
-            try:
-                thisrepo = self.readRepoConfig(parser, section)
-            except (Errors.RepoError, Errors.ConfigError), e:
-                self.logger.warning(e)
-            else:
-                thisrepo.repo_config_age = repo_config_age
-                reposlist.append(thisrepo)
-
-        # Got our list of repo objects, add them to the repos collection
-        for thisrepo in reposlist:
-            try:
-                self._repos.add(thisrepo)
-            except Errors.RepoError, e: 
-                self.logger.warning(e)
-                continue
+                        # Got our list of repo objects, add them to the repos
+                        # collection
+                        try:
+                            self._repos.add(thisrepo)
+                        except Errors.RepoError, e:
+                            self.logger.warning(e)
 
     def readRepoConfig(self, parser, section):
         '''Parse an INI file section for a repository.

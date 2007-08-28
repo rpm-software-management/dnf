@@ -22,7 +22,10 @@ import gettext
 import logging
 import logginglevels
 from constants import *
-import ConfigParser
+try:
+    import iniparse.compat as ConfigParser
+except ImportError:
+    import ConfigParser
 import config 
 import Errors
 from parser import ConfigPreProcessor
