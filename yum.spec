@@ -1,6 +1,6 @@
 Summary: RPM installer/updater
 Name: yum
-Version: 3.2.3
+Version: 3.2.4
 Release: 1
 License: GPL
 Group: System Environment/Base
@@ -15,6 +15,7 @@ Requires: rpm-python, rpm >= 0:4.4.2
 Requires: python-sqlite
 Requires: urlgrabber
 Requires: yum-metadata-parser >= 1.1.0
+Requires: python-iniparse
 
 Prereq: /sbin/chkconfig, /sbin/service, coreutils
 
@@ -91,6 +92,10 @@ exit 0
 %{_mandir}/man*/yum-updatesd*
 
 %changelog
+* Tue Aug 28 2007 Seth Vidal <skvidal at fedoraproject.org>
+- 3.2.4
+- add python-iniparse - it's a dep here but yum will run w/o it
+
 * Fri Jul 20 2007 Seth Vidal <skvidal at fedoraproject.org>
 - 3.2.2
 
