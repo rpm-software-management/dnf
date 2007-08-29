@@ -822,7 +822,7 @@ class Depsolve(object):
                 continue
             if req in provs:
                 continue
-            if req in oldreqs:
+            if req in oldreqs and self.rpmdb.getProvides(*req):
                 continue
             
             self.verbose_logger.log(logginglevels.DEBUG_2, "looking for %s as a requirement of %s", req, txmbr)
