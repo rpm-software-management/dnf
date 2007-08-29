@@ -489,10 +489,10 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
         self._search_cache[prcotype][req] = result
         return result
 
-    def getProvides(self, name, flags=None, version=None):
+    def getProvides(self, name, flags=None, version=(None, None, None)):
         return self._search("provides", name, flags, version)
 
-    def getRequires(self, name, flags=None, version=None):
+    def getRequires(self, name, flags=None, version=(None, None, None)):
         return self._search("requires", name, flags, version)
 
     

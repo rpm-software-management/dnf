@@ -65,11 +65,11 @@ class PackageSackBase(object):
         (n,a,e,v,r) = pkgtup
         return self.searchNevra(name=n, arch=a, epoch=e, ver=v, rel=r)
         
-    def getProvides(self, name, flags=None, version=None):
+    def getProvides(self, name, flags=None, version=(None, None, None)):
         """return dict { packages -> list of matching provides }"""
         raise NotImplementedError()
 
-    def getRequires(self, name, flags=None, version=None):
+    def getRequires(self, name, flags=None, version=(None, None, None)):
         """return dict { packages -> list of matching requires }"""
         raise NotImplementedError()
 
@@ -228,11 +228,11 @@ class MetaSack(PackageSackBase):
         """return list of pkgobjects matching the nevra requested"""
         return self._computeAggregateListResult("searchNevra", name, epoch, ver, rel, arch)
 
-    def getProvides(self, name, flags=None, version=None):
+    def getProvides(self, name, flags=None, version=(None, None, None)):
         """return dict { packages -> list of matching provides }"""
         return self._computeAggregateDictResult("getProvides", name, flags, version)
 
-    def getRequires(self, name, flags=None, version=None):
+    def getRequires(self, name, flags=None, version=(None, None, None)):
         """return dict { packages -> list of matching requires }"""
         return self._computeAggregateDictResult("getRequires", name, flags, version)
 
@@ -443,7 +443,7 @@ class PackageSack(PackageSackBase):
         else:
             return []
         
-    def getProvides(self, name, flags=None, version=None):
+    def getProvides(self, name, flags=None, version=(None, None, None)):
         """return dict { packages -> list of matching provides }"""
         self._checkIndexes(failure='build')
         result = { }
@@ -453,7 +453,7 @@ class PackageSack(PackageSackBase):
                 result[po] = hits
         return result
 
-    def getRequires(self, name, flags=None, version=None):
+    def getRequires(self, name, flags=None, version=(None, None, None)):
         """return dict { packages -> list of matching requires }"""
         self._checkIndexes(failure='build')
         result = { }

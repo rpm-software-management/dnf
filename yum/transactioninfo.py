@@ -375,7 +375,7 @@ class TransactionData:
         self.rpmdb = rpmdb
         self.pkgSack = pkgSack
 
-    def getNewProvides(self, name, flag=None, version=None):
+    def getNewProvides(self, name, flag=None, version=(None, None, None)):
         """return dict { packages -> list of matching provides }
         searches in packages to be installed"""
         result = { }
@@ -386,7 +386,7 @@ class TransactionData:
         result.update(self.localSack.getProvides(name, flag, version))
         return result
 
-    def getOldProvides(self, name, flag=None, version=None):
+    def getOldProvides(self, name, flag=None, version=(None, None, None)):
         """return dict { packages -> list of matching provides }
         searches in packages already installed and not going to be removed"""
         result = { }
@@ -395,13 +395,13 @@ class TransactionData:
                 result[pkg] = hits
         return result
 
-    def getProvides(self, name, flag=None, version=None):
+    def getProvides(self, name, flag=None, version=(None, None, None)):
         """return dict { packages -> list of matching provides }"""
         result = self.getOldProvides(name, flag, version)
         result.update(self.getNewProvides(name, flag, version))
         return result
 
-    def getNewRequires(self, name, flag=None, version=None):
+    def getNewRequires(self, name, flag=None, version=(None, None, None)):
         """return dict { packages -> list of matching provides }
         searches in packages to be installed"""
         result = { }
@@ -413,7 +413,7 @@ class TransactionData:
         return result
 
 
-    def getOldRequires(self, name, flag=None, version=None):
+    def getOldRequires(self, name, flag=None, version=(None, None, None)):
         """return dict { packages -> list of matching provides }
         searches in packages already installed and not going to be removed"""
         result = { }
@@ -422,7 +422,7 @@ class TransactionData:
                 result[pkg] = hits
         return result
 
-    def getRequires(self, name, flag=None, version=None):
+    def getRequires(self, name, flag=None, version=(None, None, None)):
         """return dict { packages -> list of matching provides }"""
         result = self.getOldRequires(name, flag, version)
         result.update(self.getNewRequires(name, flag, version))

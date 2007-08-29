@@ -383,7 +383,7 @@ class RPMDBPackageSack(PackageSackBase):
         # Can't support this now
         raise NotImplementedError
 
-    def getProvides(self, name, flags=None, version=None):
+    def getProvides(self, name, flags=None, version=(None, None, None)):
         """searches the rpmdb for what provides the arguments
            returns a list of pkgtuples of providing packages, possibly empty"""
 
@@ -418,7 +418,7 @@ class RPMDBPackageSack(PackageSackBase):
         # XXX deprecate?
         return [po.pkgtup for po in self.getProvides(name, flags, version)]
 
-    def getRequires(self, name, flags=None, version=None):
+    def getRequires(self, name, flags=None, version=(None, None, None)):
         """searches the rpmdb for what provides the arguments
            returns a list of pkgtuples of providing packages, possibly empty"""
 
