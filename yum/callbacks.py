@@ -19,10 +19,11 @@ import logging
 
 # ProcessTransaction States
 
-PT_DOWNLOAD        = 0
-PT_GPGCHECK        = 1
-PT_TEST_TRANS      = 2
-PT_TRANSACTION     = 3
+PT_DOWNLOAD        = 10    # Start Download
+PT_DOWNLOAD_PKGS   = 11    # Packages to download
+PT_GPGCHECK        = 20    # Start Checkin Package Signatures
+PT_TEST_TRANS      = 30    # Start Test Transaction
+PT_TRANSACTION     = 40    # Start Transaction
 
 PT_MESSAGES = { PT_DOWNLOAD    : "Downloading Packages",
                 PT_GPGCHECK    : "Check Package Signatures",
