@@ -744,8 +744,8 @@ class YumRepository(Repository, config.RepoConf):
         try:
             self._loadRepoXML(text=self)
         except Errors.RepoError, e:
-            msg = "Cannot retrieve repository metadata (repomd.xml) for repository: %s. " + \
-                  "Please verify its path and try again" % self 
+            msg = ("Cannot retrieve repository metadata (repomd.xml) for repository: %s. " 
+                  "Please verify its path and try again" % self )
             raise Errors.RepoError, (msg)
         return self._repoXML
         
