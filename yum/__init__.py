@@ -2196,24 +2196,29 @@ class YumBase(depsolve.Depsolve):
         
         # Download Packages
         callback.event(callbacks.PT_DOWNLOAD)
-        pkgs = self._downloadPackages()
+        pkgs = self._downloadPackages(callback)
         # Check Package Signatures
-        callback.event(callbacks.PT_GPGCHECK)
-        self._checkSignatures(pkgs)
+        if pkgs != None:
+            callback.event(callbacks.PT_GPGCHECK)
+            self._checkSignatures(pkgs,callback)
         # Run Test Transaction
         callback.event(callbacks.PT_TEST_TRANS)
-        self._doTestTransaction(display=rpmTestDisplay)
+        self._doTestTransaction(callback,display=rpmTestDisplay)
         # Run Transaction
         callback.event(callbacks.PT_TRANSACTION)
-        self._doTransaction(display=rpmDisplay)
+        self._doTransaction(callback,display=rpmDisplay)
     
-    def _downloadPackages(self):
+    def _downloadPackages(self,callback):
         ''' Download the need packages in the Transaction '''
         # This can be overloaded by a subclass.    
         dlpkgs = map(lambda x: x.po, filter(lambda txmbr:
                                             txmbr.ts_state in ("i", "u"),
                                             self.tsInfo.getMembers()))
-           
+        # Check if there is something to do
+        if len(dlpkgs) == 0:
+            return None
+        # make callback with packages to download                                    
+        callback.event(callbacks.PT_DOWNLOAD_PKGS,dlpkgs)    
         try:
             probs = self.downloadPkgs(dlpkgs)
 
@@ -2229,7 +2234,7 @@ class YumBase(depsolve.Depsolve):
             raise yum.Errors.YumDownloadError, errstr
         return dlpkgs
 
-    def _checkSignatures(self,pkgs):
+    def _checkSignatures(self,pkgs,callback):
         ''' The the signatures of the downloaded packages '''
         # This can be overloaded by a subclass.    
         for po in pkgs:
@@ -2251,7 +2256,7 @@ class YumBase(depsolve.Depsolve):
         '''
         return False
 
-    def _doTestTransaction(self,display=None):
+    def _doTestTransaction(self,callback,display=None):
         ''' Do the RPM test transaction '''
         # This can be overloaded by a subclass.    
         if self.conf.rpm_check_debug:
@@ -2294,7 +2299,7 @@ class YumBase(depsolve.Depsolve):
         self.dsCallback = dscb
 
 
-    def _doTransaction(self,display=None):
+    def _doTransaction(self,callback,display=None):
         ''' do the RPM Transaction '''
         # This can be overloaded by a subclass.    
         self.initActionTs() # make a new, blank ts to populate
