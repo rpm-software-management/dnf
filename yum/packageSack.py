@@ -182,7 +182,8 @@ class PackageSackBase(object):
                 '%s:%s-%s-%s.%s' % (e, n, v, r, a),
                 '%s-%s:%s-%s.%s' % (n, e, v, r, a),
                 ))
-            for term, query in specs:
+                
+            for (term,query) in specs.items():
                 if term == query:
                     if query in names:
                         exactmatch.append(self.searchPkgTuple(pkgtup)[0])
