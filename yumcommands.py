@@ -100,6 +100,7 @@ def checkShellArg(base, basecmd, extcmds):
         raise cli.CliError
 
 class YumCommand:
+        
     def getNames(self):
         return []
 
@@ -117,7 +118,10 @@ class YumCommand:
            2 = we've got work yet to do, onto the next stage
         """
         return 0, ['Nothing to do']
-
+    
+    def needTs(self, base, basecmd, extcmds):
+        return True
+        
 class InstallCommand(YumCommand):
     def getNames(self):
         return ['install']
@@ -182,7 +186,14 @@ class InfoCommand(YumCommand):
                 return 1, ['No matching Packages to list']
             return 0, []
 
+    def needTs(self, base, basecmd, extcmds):
+        if len(extcmds) and extcmds == ['installed']:
+            return False
+        
+        return True
+
 class EraseCommand(YumCommand):
+        
     def getNames(self):
         return ['erase', 'remove']
 
@@ -197,6 +208,9 @@ class EraseCommand(YumCommand):
             return base.erasePkgs(extcmds)
         except yum.Errors.YumBaseError, e:
             return 1, [str(e)]
+
+    def needTs(self, base, basecmd, extcmds):
+        return False
 
 class GroupCommand(YumCommand):
     def doCommand(self, base, basecmd, extcmds):
@@ -219,6 +233,9 @@ class GroupListCommand(GroupCommand):
     def doCommand(self, base, basecmd, extcmds):
         GroupCommand.doCommand(self, base, basecmd, extcmds)
         return base.returnGroupLists(extcmds)
+
+    def needTs(self, base, basecmd, extcmds):
+        return False
 
 class GroupInstallCommand(GroupCommand):
     def getNames(self):
@@ -251,6 +268,9 @@ class GroupRemoveCommand(GroupCommand):
         except yum.Errors.YumBaseError, e:
             return 1, [str(e)]
 
+    def needTs(self, base, basecmd, extcmds):
+        return False
+
 class GroupInfoCommand(GroupCommand):
     def getNames(self):
         return ['groupinfo']
@@ -265,7 +285,11 @@ class GroupInfoCommand(GroupCommand):
         except yum.Errors.YumBaseError, e:
             return 1, [str(e)]
 
+    def needTs(self, base, basecmd, extcmds):
+        return False
+
 class MakeCacheCommand(YumCommand):
+
     def getNames(self):
         return ['makecache']
 
@@ -287,7 +311,11 @@ class MakeCacheCommand(YumCommand):
             return 1, [str(e)]
         return 0, ['Metadata Cache Created']
 
+    def needTs(self, base, basecmd, extcmds):
+        return False
+
 class CleanCommand(YumCommand):
+    
     def getNames(self):
         return ['clean']
 
@@ -298,6 +326,9 @@ class CleanCommand(YumCommand):
     def doCommand(self, base, basecmd, extcmds):
         base.conf.cache = 1
         return base.cleanCli(extcmds)
+
+    def needTs(self, base, basecmd, extcmds):
+        return False
 
 class ProvidesCommand(YumCommand):
     def getNames(self):
@@ -344,6 +375,9 @@ class SearchCommand(YumCommand):
         except yum.Errors.YumBaseError, e:
             return 1, [str(e)]
 
+    def needTs(self, base, basecmd, extcmds):
+        return False
+
 class UpgradeCommand(YumCommand):
     def getNames(self):
         return ['upgrade']
@@ -380,6 +414,9 @@ class LocalInstallCommand(YumCommand):
         except yum.Errors.YumBaseError, e:
             return 1, [str(e)]
 
+    def needTs(self, base, basecmd, extcmds):
+        return False
+
 class ResolveDepCommand(YumCommand):
     def getNames(self):
         return ['resolvedep']
@@ -405,6 +442,9 @@ class ShellCommand(YumCommand):
         except yum.Errors.YumBaseError, e:
             return 1, [str(e)]
 
+    def needTs(self, base, basecmd, extcmds):
+        return False
+
 
 class DepListCommand(YumCommand):
     def getNames(self):
@@ -423,7 +463,6 @@ class DepListCommand(YumCommand):
 
 class RepoListCommand:
     usage = 'repolist [all|enabled|disabled]'
-
     def getNames(self):
         return ('repolist',)
 
@@ -458,3 +497,7 @@ class RepoListCommand:
                     repo, repo.name, 'disabled')
 
         return 0, []
+
+    def needTs(self, base, basecmd, extcmds):
+        return False
+    

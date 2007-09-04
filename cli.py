@@ -263,11 +263,17 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         # at this point we know the args are valid - we don't know their meaning
         # but we know we're not being sent garbage
         
-        # setup our transaction sets (needed globally, here's a good a place as any)
-        try:
-            self._getTs()
-        except yum.Errors.YumBaseError, e:
-            return 1, [str(e)]
+        # setup our transaction set if the command we're using needs it
+        # compat with odd modules not subclassing YumCommand
+        needTs = True
+        if hasattr(self.yum_cli_commands[self.basecmd], 'needTs'):
+            needTs = self.yum_cli_commands[self.basecmd].needTs(self, self.basecmd, self.extcmds)
+        
+        if needTs:
+            try:
+                self._getTs()
+            except yum.Errors.YumBaseError, e:
+                return 1, [str(e)]
 
         return self.yum_cli_commands[self.basecmd].doCommand(self, self.basecmd, self.extcmds)
 
@@ -878,7 +884,6 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
     def cleanCli(self, userlist):
         hdrcode = pkgcode = xmlcode = dbcode = 0
         pkgresults = hdrresults = xmlresults = dbresults = []
-
         if 'all' in userlist:
             self.verbose_logger.log(yum.logginglevels.INFO_2,
                 'Cleaning up Everything')
