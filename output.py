@@ -328,7 +328,7 @@ Remove   %5.5s Package(s)
         
         return out
 
-    def setupProgessCallbacks(self):
+    def setupProgressCallbacks(self):
         """sets up the progress callbacks and various 
            output bars based on debug level"""
 
