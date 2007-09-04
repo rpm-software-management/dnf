@@ -1170,7 +1170,7 @@ class YumOptionParser(OptionParser):
                     sys.exit(1)
 
             # setup the progress bars/callbacks
-            self.base.setupProgessCallbacks()
+            self.base.setupProgressCallbacks()
                     
             # Process repo enables and disables in order
             for opt, repoexp in opts.repos:

@@ -352,7 +352,11 @@ Remove   %5.5s Package(s)
         # setup our depsolve progress callback
         dscb = DepSolveProgressCallBack()
         self.dsCallback = dscb
-            
+    
+    def setupProgessCallbacks(self):
+        # api purposes only to protect the typo
+        self.setupProgressCallbacks()
+        
     def interrupt_callback(self, cbobj):
         '''Handle CTRL-C's during downloads
 
