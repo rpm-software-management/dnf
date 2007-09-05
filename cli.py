@@ -494,8 +494,8 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
             # ones that we obviously can't use
             for pkg in installable:
                 if self.rpmdb.installed(po=pkg):
-                    self.verbose_logger.log(yum.logginglevels.DEBUG_3,
-                        'Package %s is already installed, skipping', pkg)
+                    self.verbose_logger.log(yum.logginglevels.INFO_2,
+                        'Package %s is already installed.', pkg)
                     continue
                 
                 # everything installed that matches the name
