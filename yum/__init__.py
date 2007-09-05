@@ -296,7 +296,7 @@ class YumBase(depsolve.Depsolve):
             specified.
         @param disabled_plugins: Plugins to be disabled    
         '''
-        if isinstance(plugins, plugins.YumPlugins):
+        if isinstance(self.plugins, plugins.YumPlugins):
             raise RuntimeError("plugins already initialised")
 
         self.plugins = plugins.YumPlugins(self, searchpath, optparser,
