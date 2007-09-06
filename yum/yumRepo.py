@@ -53,7 +53,7 @@ class YumPackageSack(packageSack.PackageSack):
         self.close()
 
     def close(self):
-        pass
+        self.added = {}
 
     def addDict(self, repo, datatype, dataobj, callback=None):
         if self.added.has_key(repo):

@@ -222,11 +222,27 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
                        self.filelistsdb.values() + \
                        self.otherdb.values():
             dataobj.close()
+            self.primarydb = {}
+            self.filelistsdb = {}
+            self.otherdb = {}
+            self.excludes = {}
+            self._search_cache = {
+                'provides' : { },
+                'requires' : { },
+                }
+            del self.pkgobjlist
+            del self.pkglist
+
         yumRepo.YumPackageSack.close(self)
 
     def buildIndexes(self):
-        # We don't need these
-        return
+        # we just need to nuke the indexes first
+        if hasattr(self, 'pkgobjlist'):
+            del self.pkgobjlist
+        if hasattr(self, 'pkglist'):
+            del self.pkglist
+        self.simplePkgList()
+        self.returnPackages()
 
     def _checkIndexes(self, failure='error'):
         return

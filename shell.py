@@ -284,19 +284,20 @@ class YumShell(cmd.Cmd):
             repos = self._shlex_split(args)
             for repo in repos:
                 try:
-                    self.base.repos.disableRepo(repo)
+                    offrepos = self.base.repos.disableRepo(repo)
                 except Errors.ConfigError, e:
                     self.logger.critical(e)
                 except Errors.RepoError, e:
                     self.logger.critical(e)
 
                 else:
-                    if self.base.pkgSack:       # kill the pkgSack
-                        self.base.pkgSack = None
-                    self.base.up = None     # reset the updates
-                    # reset the transaction set and refresh everything
-                    self.base.closeRpmDB() 
-        
+                    # close the repos, too
+                    for repoid in offrepos:
+                        thisrepo = self.base.repos.repos[repoid]
+                        thisrepo.close()       # kill the pkgSack
+            # rebuild the indexes to be sure we cleaned up
+            self.base.pkgSack.buildIndexes()
+            
         else:
             self.do_help('repo')
                 
