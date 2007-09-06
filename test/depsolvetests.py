@@ -82,8 +82,14 @@ class DepsolveTests(unittest.TestCase):
     def resolveCode(self, *args):
         solver = build_depsolver(*args)
         result = solver.resolveDeps()
-        res = {2 : 'ok', 1 : 'err'}
+        res = {0 : 'empty', 2 : 'ok', 1 : 'err'}
         return (res[result[0]])
+
+    def testEmpty(self):
+        po = FakePackage('zsh', '1', '1', None, 'i386')
+        self.tsInfo.addInstall(po)
+        self.tsInfo.remove(po.pkgtup)
+        self.assertEquals('empty', self.resolveCode(self.tsInfo))
 
     def testInstallSinglePackageNoRequires(self):
         po = FakePackage('zsh', '1', '1', None, 'i386')
