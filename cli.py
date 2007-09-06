@@ -33,6 +33,7 @@ import yum.misc
 import yum.plugins
 from yum.constants import TS_OBSOLETED
 import rpmUtils.arch
+from rpmUtils.arch import isMultiLibArch
 import rpmUtils.miscutils
 from yum.packages import parsePackages, YumLocalPackage
 from i18n import _
@@ -727,6 +728,14 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
                             continue
                     else:
                         updatepkgs.append((po, installed_pkg))
+                        continue
+                elif po.EVR == installed_pkg.EVR:
+                    if po.arch != installed_pkg.arch and (isMultiLibArch(po.arch) or
+                              isMultiLibArch(installed_pkg.arch)):
+                        installpkgs.append(po)
+                        continue
+                    else:
+                        donothingpkgs.append(po)
                         continue
                 else:
                     donothingpkgs.append(po)
