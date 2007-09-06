@@ -19,6 +19,11 @@ class FakeRepo(object):
         self.id = None
 
 
+class FakeRpmSack(packageSack.PackageSack):
+    def installed(self, po):
+        """ Hack. Hack. Hack. """
+        return False
+
 class FakePackage(packages.PackageObject, packages.RpmBase):
 
     def __init__(self, name, version, release, epoch, arch):
@@ -61,14 +66,16 @@ class TestingDepsolve(depsolve.Depsolve):
                 pkgtup[4], pkgtup[1])[0]
 
 
-def build_depsolver(tsInfo, rpmdb=packageSack.PackageSack(),
-        pkgSack=packageSack.PackageSack()):
+def build_depsolver(tsInfo, rpmdb=None, pkgSack=None):
+    if rpmdb is None:
+        rpmdb = packageSack.PackageSack()
+    if pkgSack is None:
+        pkgSack = packageSack.PackageSack()
     # XXX this side-affect is hacky:
     tsInfo.setDatabases(rpmdb, pkgSack)
 
     solver = TestingDepsolve(tsInfo, rpmdb, pkgSack)
     return solver
-
 
 class DepsolveTests(unittest.TestCase):
 
@@ -77,7 +84,8 @@ class DepsolveTests(unittest.TestCase):
     def setUp(self):
         """ Called at the start of each test. """
         self.tsInfo = transactioninfo.TransactionData()
-        self.rpmdb  = packageSack.PackageSack()
+        self.rpmdb  = FakeRpmSack()
+        self.xs     = packageSack.PackageSack()
 
     def resolveCode(self, *args):
         solver = build_depsolver(*args)
@@ -254,6 +262,36 @@ class DepsolveTests(unittest.TestCase):
         self.rpmdb.addPackage(ipo)
 
         self.assertEquals('ok', self.resolveCode(self.tsInfo, self.rpmdb))
+
+    def testInstallSinglePackageRequireXtraBadVer(self):
+        po = FakePackage('zsh', '1', '1', None, 'i386')
+        po.addRequires('zip', 'EQ', ('2', '1.3', '4'))
+        po.addRequires('zap', 'EQ', ('2', '1.3', '4'))
+        self.tsInfo.addInstall(po)
+
+        ipo = FakePackage('zip', '1.3', '4', '2', 'i386')
+        self.rpmdb.addPackage(ipo)
+
+        xpo = FakePackage('zap', '1.3', '4', '0', 'i386')
+        self.xs.addPackage(xpo)
+
+        self.assertEquals('err', self.resolveCode(self.tsInfo, self.rpmdb,
+                                                  self.xs))
+
+    def testInstallSinglePackageRequireXtra(self):
+        po = FakePackage('zsh', '1', '1', None, 'i386')
+        po.addRequires('zip', 'EQ', ('2', '1.3', '4'))
+        po.addRequires('zap', 'EQ', ('2', '1.3', '4'))
+        self.tsInfo.addInstall(po)
+
+        ipo = FakePackage('zip', '1.3', '4', '2', 'i386')
+        self.rpmdb.addPackage(ipo)
+        
+        xpo = FakePackage('zap', '1.3', '4', '2', 'i386')
+        self.xs.addPackage(xpo)
+
+        self.assertEquals('ok', self.resolveCode(self.tsInfo, self.rpmdb,
+                                                 self.xs))
 
     def testInstallSinglePackageRequireNotProvidedMultiLib(self):
         po = FakePackage('zsh', '1', '1', None, 'x86_64')
