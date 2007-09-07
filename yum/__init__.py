@@ -344,6 +344,10 @@ class YumBase(depsolve.Depsolve):
         if doSetup:
             self._repos.doSetup(thisrepo)
         return self._repos
+
+    def _delRepos(self):
+        del self._repos
+        self._repos = RepoStorage(self)
     
     def doSackSetup(self, archlist=None, thisrepo=None):
         warnings.warn('doSackSetup() will go away in a future version of Yum.\n',
@@ -513,7 +517,7 @@ class YumBase(depsolve.Depsolve):
     # properties so they auto-create themselves with defaults
     repos = property(fget=lambda self: self._getRepos(),
                      fset=lambda self, value: setattr(self, "_repos", value),
-                     fdel=lambda self: setattr(self, "_repos", None))
+                     fdel=lambda self: self._delRepos())
     pkgSack = property(fget=lambda self: self._getSacks(),
                        fset=lambda self, value: setattr(self, "_pkgSack", value),
                        fdel=lambda self: self._delSacks())
