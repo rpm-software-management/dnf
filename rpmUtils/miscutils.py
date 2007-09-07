@@ -405,7 +405,7 @@ def hdrFromPackage(ts, package):
     return hdr
 
 def checkSignals():
-    if hasattr(rpm, "checkSignals"):
+    if hasattr(rpm, "checkSignals") and hasattr(rpm, 'signalsCaught'):
         if rpm.signalsCaught([signal.SIGINT, 
                               signal.SIGTERM,
                               signal.SIGPIPE,
