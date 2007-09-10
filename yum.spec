@@ -1,6 +1,6 @@
 Summary: RPM installer/updater
 Name: yum
-Version: 3.2.4
+Version: 3.2.5
 Release: 1
 License: GPL
 Group: System Environment/Base
@@ -92,6 +92,9 @@ exit 0
 %{_mandir}/man*/yum-updatesd*
 
 %changelog
+* Mon Sep 10 2007 Seth Vidal <skvidal at fedoraproject.org>
+- 3.2.5
+
 * Tue Aug 28 2007 Seth Vidal <skvidal at fedoraproject.org>
 - 3.2.4
 - add python-iniparse - it's a dep here but yum will run w/o it

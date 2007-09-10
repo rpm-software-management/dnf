@@ -57,7 +57,7 @@ from packages import parsePackages, YumAvailablePackage, YumLocalPackage, YumIns
 from constants import *
 from yum.rpmtrans import RPMTransaction,SimpleCliCallBack
 
-__version__ = '3.2.4'
+__version__ = '3.2.5'
 
 class YumBase(depsolve.Depsolve):
     """This is a primary structure and base class. It houses the objects and
