@@ -1,3 +1,115 @@
+2007-09-10  Seth Vidal <skvidal@fedoraproject.org>
+
+	* yum.spec, yum/__init__.py: mark as 3.2.5
+
+2007-09-07  Seth Vidal <skvidal@fedoraproject.org>
+
+	* rpmUtils/miscutils.py: check for signalsCaught method to rpm, too.
+	If not then things go boom on  various versions of rpm.
+
+2007-09-07  Jeremy Katz <katzj@redhat.com>
+
+	* yum/__init__.py: properly delete repos
+
+2007-09-06  Seth Vidal <skvidal@fedoraproject.org>
+
+	* cli.py: if we're trying to localinstall a different arch and
+	either the pkg we're installing or the one we have installed is a
+	multilib pkg then it's okay to pass this package to be installed.
+	Closed rh bug# 280491
+
+2007-09-06  Seth Vidal <skvidal@fedoraproject.org>
+
+	* yum/rpmtrans.py: work around for obscure problem occuring with
+	some obsoletes occasionally rpm sends along an extra callback event
+	that wasn't in the transaction set to begin with. This ensures that
+	if we receive those we don't explode. Thanks to Fajar A. Nugraha for
+	providing with the replicating case and a system to test it on.
+
+2007-09-05  Seth Vidal <skvidal@fedoraproject.org>
+
+	* shell.py: - fix a problem when enabling new repos, too that the sack would
+	never   get setup for that repo
+
+2007-09-05  Seth Vidal <skvidal@fedoraproject.org>
+
+	* shell.py, yum/sqlitesack.py, yum/yumRepo.py: - clean up how we do repo disabling in yum shell - more completely
+	destroy repository objects when we're done with them
+
+2007-09-05  Seth Vidal <skvidal@fedoraproject.org>
+
+	* cli.py: change the output to log in info2 instead of debug3 - see
+	if that helps people understanding why yum outputs 'Nothing to do'
+
+2007-09-05  Seth Vidal <skvidal@fedoraproject.org>
+
+	* yum/__init__.py: merge typo patch from Mark McLoughlin
+
+2007-09-04  Seth Vidal <skvidal@fedoraproject.org>
+
+	* cli.py, yumcommands.py: add needTs() method to
+	yumcommands.YumCommand defaults to returning True return False for
+	conditions where it is not necessary to setup the Ts to run the
+	command closes rh bug #276151
+
+2007-09-04  Seth Vidal <skvidal@fedoraproject.org>
+
+	* cli.py, output.py: fix up the rest of the places the typo impacts
+	and maintain api
+
+2007-09-04  Seth Vidal <skvidal@fedoraproject.org>
+
+	* output.py: random typo that's not been touched since 2005 - found
+	by Bill Nottingham
+
+2007-09-02  Seth Vidal <skvidal@fedoraproject.org>
+
+	* yum/packageSack.py: fix PackageSackBase.matchPackageNames
+	iterating over the specs dict requires use of .items() I'm not sure
+	how that code worked, ever, actually. I think it's just extremely
+	rarely used. closes rh bug: 274281
+
+2007-08-31  Tim Lauridsen <tla@rasmil.dk>
+
+	* yum/callbacks.py: Make ProcessTransBaseCallback work with states
+	without messages.
+
+2007-08-31  Seth Vidal <skvidal@fedoraproject.org>
+
+	Merge branch 'master' of
+	ssh://login.linux.duke.edu/home/groups/yum/git/yum  * 'master' of
+	ssh://login.linux.duke.edu/home/groups/yum/git/yum:   * Added extra
+	processTransaction callback event PT_DOWNLOAD_PKGS called with
+	packages to download.
+
+2007-08-31  Seth Vidal <skvidal@fedoraproject.org>
+
+	* yum/yumRepo.py: apply patch to fix output msg when the repomd.xml
+	can't be found closes rh bug: 258081
+
+2007-08-30  Tim Lauridsen <tla@rasmil.dk>
+
+	* yum/__init__.py, yum/callbacks.py: * Added extra processTransaction callback event PT_DOWNLOAD_PKGS
+	called with packages to download. * Make the processTransaction
+	Download & GPG check a little smarter, no need to call the download
+	& GPG check code, if there is nothing to download.
+
+2007-08-29  Jeremy Katz <katzj@redhat.com>
+
+	* yum/depsolve.py: make sure that we ensure that the oldreq was
+	satisfied; otherwise we could  have had broken deps before leading
+	to things breaking
+
+2007-08-29  Seth Vidal <skvidal@fedoraproject.org>
+
+	* yum/packageSack.py, yum/rpmsack.py, yum/sqlitesack.py,
+	yum/transactioninfo.py: merge patch from Florian. Fixes the changes
+	made about 2 weeks ago to transactioninfo and packageSack
+
+2007-08-28  Seth Vidal <skvidal@fedoraproject.org>
+
+	* ChangeLog: merge Changelog
+
 2007-08-28  Seth Vidal <skvidal@fedoraproject.org>
 
 	* yum.spec, yum/__init__.py: mark as 3.2.4
