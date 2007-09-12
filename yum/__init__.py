@@ -2222,7 +2222,7 @@ class YumBase(depsolve.Depsolve):
         if len(dlpkgs) == 0:
             return None
         # make callback with packages to download                                    
-        callback.event(callbacks.PT_DOWNLOAD_PKGS,dlpkgs)    
+        callback.event(callbacks.PT_DOWNLOAD_PKGS)
         try:
             probs = self.downloadPkgs(dlpkgs)
 
