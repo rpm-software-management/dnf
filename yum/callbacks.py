@@ -37,7 +37,7 @@ class ProcessTransBaseCallback:
     def __init__(self):
         self.logger = logging.getLogger('yum.verbose.ProcessTrasactionBaseCallback')
         
-    def event(self,state):
+    def event(self,state,data=None):
         if state in PT_MESSAGES.keys():
             self.logger.info(PT_MESSAGES[state])
 
@@ -45,6 +45,6 @@ class ProcessTransNoOutputCallback:
     def __init__(self):
         pass
          
-    def event(self,state):
+    def event(self,state,data=None):
         pass
         
