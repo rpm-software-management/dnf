@@ -115,7 +115,10 @@ class SimpleCliCallBack(RPMBaseCallback):
 
 class RPMTransaction:
     def __init__(self, base, test=False, display=NoOutputCallBack):
-        self.display = display() # display callback
+        if not callable(display):
+            self.display = display
+        else:
+            self.display = display() # display callback
         self.base = base # base yum object b/c we need so much
         self.test = test # are we a test?
         
