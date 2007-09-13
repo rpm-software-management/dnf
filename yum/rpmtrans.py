@@ -18,6 +18,7 @@
 
 import rpm
 import os
+import fcntl
 import time
 import logging
 import types
@@ -42,6 +43,12 @@ class NoOutputCallBack:
         # this is where a progress bar would be called
         
         pass
+
+    def scriptout(self, package, msgs):
+        """package is the package.  msgs is the messages that were
+        output (if any)."""
+        pass
+
     def errorlog(self, msg):
         """takes a simple error msg string"""
         
@@ -87,7 +94,11 @@ class RPMBaseCallback:
         """
         raise NotImplementedError()
 
-        
+    def scriptout(self, package, msgs):
+        """package is the package.  msgs is the messages that were
+        output (if any)."""
+        pass
+
     def errorlog(self, msg):
         # FIXME this should probably dump to the filelog, too
         print >> sys.stderr, msg
@@ -113,6 +124,10 @@ class SimpleCliCallBack(RPMBaseCallback):
         self.lastmsg = msg
         self.lastpackage = package
 
+    def scriptout(self, package, msgs):
+        if msgs:
+            print msgs,
+
 class RPMTransaction:
     def __init__(self, base, test=False, display=NoOutputCallBack):
         if not callable(display):
@@ -130,7 +145,40 @@ class RPMTransaction:
         self.total_removed = 0
         self.logger = logging.getLogger('yum.filelogging.RPMInstallCallback')
         self.filelog = False
-    
+
+        self._setupOutputLogging()
+
+    def _setupOutputLogging(self):
+        # UGLY... set up the transaction to record output from scriptlets
+        (r, w) = os.pipe()
+        # need fd objects, and read should be non-blocking
+        self._readpipe = os.fdopen(r, 'r')
+        fcntl.fcntl(self._readpipe.fileno(), fcntl.F_SETFL,
+                    fcntl.fcntl(self._readpipe.fileno(),
+                                fcntl.F_GETFL) | os.O_NONBLOCK)
+        self._writepipe = os.fdopen(w, 'w')
+        self.base.ts.ts.scriptFd = self._writepipe.fileno()
+        rpm.setVerbosity(rpm.RPMLOG_INFO)
+        rpm.setLogFile(self._writepipe)
+
+    def _shutdownOutputLogging(self):
+        # reset rpm bits from reording output
+        rpm.setVerbosity(rpm.RPMLOG_NOTICE)
+        rpm.setLogFile(sys.stderr)
+        try:
+            self._writepipe.close()
+        except:
+            pass
+
+    def _scriptOutput(self):
+        try:
+            out = self._readpipe.read()
+            return out
+        except IOError:
+            pass
+
+    def __del__(self):
+        self._shutdownOutputLogging()
         
     def _dopkgtup(self, hdr):
         tmpepoch = hdr['epoch']
@@ -318,6 +366,7 @@ class RPMTransaction:
             txmbrs = self.base.tsInfo.getMembers(pkgtup=pkgtup)
             for txmbr in txmbrs:
                 self.display.filelog(txmbr.po, txmbr.output_state)
+                self.display.scriptout(txmbr.po, self._scriptOutput())
                 self.ts_done(txmbr.po, txmbr.output_state)
                 
                 
@@ -355,6 +404,7 @@ class RPMTransaction:
         
         self.display.event(h, action, 100, 100, self.complete_actions,
                             self.total_actions)
+        self.display.scriptout(h, self._scriptOutput())
         
         if self.test: return # and we're done
         self.ts_done(h, action)
