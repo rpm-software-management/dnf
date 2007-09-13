@@ -21,6 +21,8 @@ import sys
 import time
 import logging
 import types
+import gettext
+import rpm
 from i18n import _
 
 from urlgrabber.progress import TextMeter
@@ -42,6 +44,10 @@ class YumOutput:
     def __init__(self):
         self.logger = logging.getLogger("yum.cli")
         self.verbose_logger = logging.getLogger("yum.verbose.cli")
+        if hasattr(rpm, "expandMacro"):
+            self.i18ndomains = rpm.expandMacro("%_i18ndomains").split(":")
+        else:
+            self.i18ndomains = ["redhat-dist"]
     
     def printtime(self):
         months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
@@ -71,11 +77,16 @@ class YumOutput:
         
     def infoOutput(self, pkg):
         def enc(s):
-            # this sucks.  what we get back from the rpmdb
-            # are strings, but they may actually have unicode so we
-            # can't encode them
+            """Get the translated version from specspo and ensure that
+            it's actually encoded in UTF-8."""
             if type(s) == unicode:
-                return s.encode("UTF-8")
+                s = s.encode("UTF-8")
+            if len(s) > 0:
+                for d in self.i18ndomains:
+                    t = gettext.dgettext(d, s)
+                    if t != s:
+                        s = t
+                        break
             return s
         print _("Name   : %s") % pkg.name
         print _("Arch   : %s") % pkg.arch
@@ -495,7 +506,7 @@ class YumCliRPMCallBack(RPMBaseCallback):
                 self.lastmsg = msg
             if te_current == te_total:
                 print " "
-        
+
     def _makefmt(self, percent, ts_current, ts_total, progress = True):
         l = len(str(ts_total))
         size = "%s.%s" % (l, l)
