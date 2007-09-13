@@ -467,7 +467,7 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
                     my_inst_pkgs = []
 
                 if my_inst_pkgs:
-                    self.verbose_logger.log(yum.logginglevels.DEBUG_3,
+                    self.verbose_logger.log(yum.logginglevels.INFO_2,
                         'Requested dep: %s is provided by installed package', str(arg))
                     
                     continue # we don't need to look, we have it
@@ -490,6 +490,10 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
                         
             installable = yum.misc.unique(exactmatch + matched)
             exactarchlist = self.conf.exactarchlist
+
+            if len(installable) == 0:
+                self.verbose_logger.log(yum.logginglevels.INFO_2,
+                                        'No package %s available.', arg)
             
             # we look through each returned possibility and rule out the
             # ones that we obviously can't use
