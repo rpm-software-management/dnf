@@ -222,16 +222,16 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
                        self.filelistsdb.values() + \
                        self.otherdb.values():
             dataobj.close()
-            self.primarydb = {}
-            self.filelistsdb = {}
-            self.otherdb = {}
-            self.excludes = {}
-            self._search_cache = {
-                'provides' : { },
-                'requires' : { },
-                }
-            del self.pkgobjlist
-            del self.pkglist
+        self.primarydb = {}
+        self.filelistsdb = {}
+        self.otherdb = {}
+        self.excludes = {}
+        self._search_cache = {
+            'provides' : { },
+            'requires' : { },
+            }
+        del self.pkgobjlist
+        del self.pkglist
 
         yumRepo.YumPackageSack.close(self)
 
