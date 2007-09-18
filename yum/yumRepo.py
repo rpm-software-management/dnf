@@ -666,6 +666,9 @@ class YumRepository(Repository, config.RepoConf):
            file. If any of them are newer then invalidate the cache
            """
 
+        # -1 is special and should never get refreshed
+        if expiration_time == -1 and os.path.exists(myfile):
+            return True
         val = False
         if os.path.exists(myfile):
             cookie_info = os.stat(myfile)
