@@ -702,7 +702,9 @@ class YumRepository(Repository, config.RepoConf):
             self.dirSetup()
         except Errors.RepoError, e:
             raise
-
+        if not self.mediafunc and self.mediaid and not self.mirrorlist and not self.baseurl:
+            verbose_logger.log(logginglevels.DEBUG_2, "Disabling media repo for non-media-aware frontend")
+            self.enabled = False
 
     def _loadRepoXML(self, text=None):
         """retrieve/check/read in repomd.xml from the repository"""

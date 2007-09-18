@@ -365,7 +365,7 @@ class YumBase(depsolve.Depsolve):
             return self._pkgSack
         
         if thisrepo is None:
-            repos = self.repos.listEnabled()
+            repos = 'enabled'
         else:
             repos = self.repos.findRepos(thisrepo)
         
@@ -384,6 +384,9 @@ class YumBase(depsolve.Depsolve):
         self.excludePackages()
         self._pkgSack.excludeArchs(archlist)
         
+        #FIXME - this could be faster, too.
+        if repos == 'enabled':
+            repos = self.repos.listEnabled()
         for repo in repos:
             self.excludePackages(repo)
             self.includePackages(repo)
