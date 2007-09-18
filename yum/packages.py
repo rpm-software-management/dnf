@@ -747,6 +747,7 @@ class YumInstalledPackage(YumHeaderPackage):
     """super class for dealing with packages in the rpmdb"""
     def __init__(self, hdr):
         fakerepo = FakeRepository('installed')
+        fakerepo.cost = 0
         YumHeaderPackage.__init__(self, fakerepo, hdr)
 
 class YumLocalPackage(YumHeaderPackage):
@@ -774,6 +775,7 @@ class YumLocalPackage(YumHeaderPackage):
                 'Could not open local rpm file: %s' % self.localpath
         
         fakerepo = FakeRepository(filename)
+        fakerepo.cost = 0
         YumHeaderPackage.__init__(self, fakerepo, hdr)
         self.id = self.pkgid
         

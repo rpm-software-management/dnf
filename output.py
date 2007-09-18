@@ -240,12 +240,13 @@ class YumOutput:
         return(format % (number, space, symbols[depth]))
 
     def matchcallback(self, po, values):
-        self.verbose_logger.log(logginglevels.INFO_2, '\n\n')
-        self.simpleList(po)
-        self.verbose_logger.log(logginglevels.INFO_2, 'Matched from:')
+        msg = '%s.%s : %s' % (po.name, po.arch, po.summary)
+        self.verbose_logger.log(logginglevels.INFO_2, msg)
+        self.verbose_logger.debug('Matched from:')
         for item in values:
-            self.verbose_logger.log(logginglevels.INFO_2, '%s', item)
-
+            self.verbose_logger.debug('%s', item)
+        self.verbose_logger.debug('\n\n')
+        
     def reportDownloadSize(self, packages):
         """Report the total download size for a set of packages"""
         totsize = 0

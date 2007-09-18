@@ -381,18 +381,20 @@ class YumBase(depsolve.Depsolve):
         self.repos.populateSack(which=repos)
         self._pkgSack = self.repos.getPackageSack()
         
-        #FIXME - this is not very fast
         self.excludePackages()
         self._pkgSack.excludeArchs(archlist)
         
-        #FIXME - this could be faster, too.
         for repo in repos:
             self.excludePackages(repo)
             self.includePackages(repo)
         self.plugins.run('exclude')
         self._pkgSack.buildIndexes()
 
+        # now go through and kill pkgs based on pkg.repo.cost()
+        self.costExcludePackages()
+        
         return self._pkgSack
+    
     
     def _delSacks(self):
         """reset the package sacks back to zero - making sure to nuke the ones
@@ -597,6 +599,51 @@ class YumBase(depsolve.Depsolve):
                         self.logger.critical('Failed to remove transaction file %s' % fn)
 
         self.plugins.run('posttrans')
+    
+    def costExcludePackages(self):
+        """exclude packages if they have an identical package in another repo
+        and their repo.cost value is the greater one"""
+        
+        # check to see if the cost per repo is anything other than equal
+        # if all the repo.costs are equal then don't bother running things
+        costs = {}
+        for r in self.repos.listEnabled():
+            costs[r.cost] = 1
+        
+        if len(costs.keys()) == 1: # if all of our costs are the same then return
+            return
+            
+        def _sort_by_cost(a, b):
+            if a.repo.cost < b.repo.cost:
+                return -1
+            if a.repo.cost == b.repo.cost:
+                return 0
+            if a.repo.cost > b.repo.cost:
+                return 1
+                
+        pkgdict = {}
+        for po in self.pkgSack:
+            if not pkgdict.has_key(po.pkgtup):
+                pkgdict[po.pkgtup] = []
+            pkgdict[po.pkgtup].append(po)
+        
+        for pkgs in pkgdict.values():
+            if len(pkgs) == 1:
+                continue
+                
+            pkgs.sort(_sort_by_cost)
+            lowcost = pkgs[0].repo.cost
+            #print '%s : %s : %s' % (pkgs[0], pkgs[0].repo, pkgs[0].repo.cost)
+            for pkg in pkgs[1:]:
+                if pkg.repo.cost > lowcost:
+                    pkg.repo.sack.delPackage(pkg)
+            
+        # for each pkg in all pkgs - if there are more than one matching a single
+        # nevra then sort by repo.cost and trim out the ones with the higher
+        # repo.cost
+        # if all the repo.costs are the same then leave them all alone
+        
+        pass
         
     def excludePackages(self, repo=None):
         """removes packages from packageSacks based on global exclude lists,

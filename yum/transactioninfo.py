@@ -174,6 +174,8 @@ class TransactionData:
                 condtxmbr = self.addInstall(po)
                 condtxmbr.setAsDep(po=txmember.po)
         
+        for oldpo in txmember.updates:
+            self.addUpdated(oldpo, txmember.po)
 
     def remove(self, pkgtup):
         """remove a package from the transaction"""
@@ -324,7 +326,7 @@ class TransactionData:
         if oldpo:
             txmbr.relatedto.append((oldpo.pkgtup, 'updates'))
             txmbr.updates.append(oldpo)
-            self.addUpdated(oldpo, po)
+            
         self.add(txmbr)
         return txmbr
 

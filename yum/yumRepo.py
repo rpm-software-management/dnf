@@ -233,6 +233,7 @@ class YumRepository(Repository, config.RepoConf):
         self.cachedir = ""
         self.pkgdir = ""
         self.hdrdir = ""
+        self.cost = 1000
         
         # holder for stuff we've grabbed
         self.retrieved = { 'primary':0, 'filelists':0, 'other':0, 'groups':0 }

@@ -560,7 +560,8 @@ class RepoConf(BaseConfig):
     http_caching = Inherit(YumConf.http_caching)
     metadata_expire = Inherit(YumConf.metadata_expire)
     mirrorlist_expire = Inherit(YumConf.mirrorlist_expire)
-
+    cost = IntOption(1000)
+    
 def readStartupConfig(configfile, root):
     '''
     Parse Yum's main configuration file and return a StartupConf instance.
