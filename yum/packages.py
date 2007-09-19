@@ -628,7 +628,7 @@ class YumHeaderPackage(YumAvailablePackage):
         self.description = self.hdr['description']
         self.pkgid = self.hdr[rpm.RPMTAG_SHA1HEADER]
         if not self.pkgid:
-            self.pkgid = self.hdr[rpm.RPMTAG_SIGMD5]
+            self.pkgid = "%s.%s" %(self.hdr['name'], self.hdr['buildtime'])
         self.packagesize = self.hdr['size']
         self.__mode_cache = {}
         self.__prcoPopulated = False

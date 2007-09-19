@@ -508,6 +508,11 @@ class YumCliRPMCallBack(RPMBaseCallback):
             if te_current == te_total:
                 print " "
 
+    def scriptout(self, package, msgs):
+        if msgs:
+            sys.stdout.write(msgs)
+            sys.stdout.flush()
+
     def _makefmt(self, percent, ts_current, ts_total, progress = True):
         l = len(str(ts_total))
         size = "%s.%s" % (l, l)
