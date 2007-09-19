@@ -636,15 +636,11 @@ class YumBase(depsolve.Depsolve):
             #print '%s : %s : %s' % (pkgs[0], pkgs[0].repo, pkgs[0].repo.cost)
             for pkg in pkgs[1:]:
                 if pkg.repo.cost > lowcost:
+                    msg = 'excluding for cost: %s from %s' % (pkg, pkg.repo.id)
+                    self.verbose_logger.log(logginglevels.DEBUG_3, msg)
                     pkg.repo.sack.delPackage(pkg)
             
-        # for each pkg in all pkgs - if there are more than one matching a single
-        # nevra then sort by repo.cost and trim out the ones with the higher
-        # repo.cost
-        # if all the repo.costs are the same then leave them all alone
-        
-        pass
-        
+
     def excludePackages(self, repo=None):
         """removes packages from packageSacks based on global exclude lists,
            command line excludes and per-repository excludes, takes optional 
