@@ -43,6 +43,8 @@ docs:
 test:
 	python test/alltests.py
 
+check: test
+
 archive: remove_spec = ${PKGNAME}-daily.spec
 archive: _archive
 

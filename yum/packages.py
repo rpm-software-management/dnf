@@ -277,6 +277,8 @@ class RpmBase(object):
             if reqn != n:
                 continue
 
+            if f == '=':
+                f = 'EQ'
             if f != 'EQ' and prcotype == 'provides':
                 # isn't this odd, it's not 'EQ' and it is a provides
                 # - it really should be EQ
