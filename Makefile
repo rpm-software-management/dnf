@@ -21,12 +21,10 @@ install:
 	for p in $(PYFILES) ; do \
 		install -m 644 $$p $(DESTDIR)/usr/share/yum-cli/$$p; \
 	done
-	mv $(DESTDIR)/usr/share/yum-cli/yum-updatesd.py $(DESTDIR)/usr/share/yum-cli/yumupd.py
 	$(PYTHON) -c "import compileall; compileall.compile_dir('$(DESTDIR)/usr/share/yum-cli', 1, '$(PYDIR)', 1)"
 
 	mkdir -p $(DESTDIR)/usr/bin $(DESTDIR)/usr/sbin
 	install -m 755 bin/yum.py $(DESTDIR)/usr/bin/yum
-	install -m 755 bin/yum-updatesd.py $(DESTDIR)/usr/sbin/yum-updatesd
 
 	mkdir -p $(DESTDIR)/var/cache/yum
 	mkdir -p $(DESTDIR)/var/lib/yum	
@@ -36,9 +34,8 @@ install:
 .PHONY: docs test
 docs:
 	epydoc -n yum -o docs/epydoc -u http://linux.duke.edu/projects/yum \
-			yum yum-updatesd.py rpmUtils callback.py progress_meter.py \
-			yumcommands.py shell.py translate.py output.py i18n.py cli.py \
-			yummain.py
+			yum rpmUtils callback.py progress_meter.py yumcommands.py \
+			shell.py translate.py output.py i18n.py cli.py yummain.py
 
 test:
 	python test/alltests.py
