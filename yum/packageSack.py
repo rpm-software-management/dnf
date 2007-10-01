@@ -93,7 +93,7 @@ class PackageSackBase(object):
         """returns a dict of obsoletes dict[obsoleting pkgtuple] = [list of obs]"""
         raise NotImplementedError()
 
-    def searchFiles(self, file):
+    def searchFiles(self, name):
         """return list of packages by filename"""
         raise NotImplementedError()
 
@@ -276,9 +276,9 @@ class MetaSack(PackageSackBase):
         
         return obsdict
         
-    def searchFiles(self, file):
+    def searchFiles(self, name):
         """return list of packages by filename"""
-        return self._computeAggregateListResult("searchFiles", file)
+        return self._computeAggregateListResult("searchFiles", name)
 
     def addPackage(self, obj):
         """Add a pkgobject to the packageSack.  This is a meaningless operation
@@ -514,13 +514,13 @@ class PackageSack(PackageSackBase):
             
         return obs
         
-    def searchFiles(self, file):
+    def searchFiles(self, name):
         """return list of packages by filename
            FIXME - need to add regex match against keys in file list
         """
         self._checkIndexes(failure='build')
-        if self.filenames.has_key(file):
-            return self.filenames[file]
+        if self.filenames.has_key(name):
+            return self.filenames[name]
         else:
             return []
 
