@@ -975,12 +975,14 @@ class YumBase(depsolve.Depsolve):
             return
 
     def sigCheckPkg(self, po):
-        '''Take a package object and attempt to verify GPG signature if required
+        '''
+        Take a package object and attempt to verify GPG signature if required
 
-        Returns (result, error_string) where result is
-            0 - GPG signature verifies ok or verification is not required
-            1 - GPG verification failed but installation of the right GPG key might help
-            2 - Fatal GPG verifcation error, give up
+        Returns (result, error_string) where result is:
+            - 0 - GPG signature verifies ok or verification is not required.
+            - 1 - GPG verification failed but installation of the right GPG key
+                  might help.
+            - 2 - Fatal GPG verifcation error, give up.
         '''
         if hasattr(po, 'pkgtype') and po.pkgtype == 'local':
             check = self.conf.gpgcheck
@@ -1224,11 +1226,13 @@ class YumBase(depsolve.Depsolve):
 
         
     def findDeps(self, pkgs):
-        """Return the dependencies for a given package object list, as well
-           possible solutions for those dependencies.
+        """
+        Return the dependencies for a given package object list, as well
+        possible solutions for those dependencies.
            
-           Returns the deps as a dict of dicts:
-             packageobject = [reqs] = [list of satisfying pkgs]"""
+        Returns the deps as a dict of dicts::
+            packageobject = [reqs] = [list of satisfying pkgs]
+        """
         
         results = {}
 
@@ -2122,14 +2126,17 @@ class YumBase(depsolve.Depsolve):
         return returndict
 
     def getKeyForPackage(self, po, askcb = None, fullaskcb = None):
-        """Retrieve a key for a package.  If needed, prompt for if the
-        key should be imported using askcb.
-        @po: Package object to retrieve the key of.
-        @askcb: Callback function to use for asking for verification.  Takes
-                arguments of the po, the userid for the key, and the keyid.
-        @fullaskcb: Callback function to use for asking for verification
-                of a key.  Differs from askcb in that it gets passed a
-                dictionary so that we can expand the values passed.
+        """
+        Retrieve a key for a package. If needed, prompt for if the key should
+        be imported using askcb.
+        
+        @param po: Package object to retrieve the key of.
+        @param askcb: Callback function to use for asking for verification.
+                      Takes arguments of the po, the userid for the key, and
+                      the keyid.
+        @param fullaskcb: Callback function to use for asking for verification
+                          of a key. Differs from askcb in that it gets passed
+                          a dictionary so that we can expand the values passed.
         """
         
         repo = self.repos.getRepo(po.repoid)

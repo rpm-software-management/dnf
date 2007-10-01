@@ -254,12 +254,15 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
 
 
     def doCommands(self):
-        """calls the base command passes the extended commands/args out to be
-        parsed. (most notably package globs). returns a numeric result code and
-        an optional string
-           0 = we're done, exit
-           1 = we've errored, exit with error string
-           2 = we've got work yet to do, onto the next stage"""
+        """
+        Calls the base command passes the extended commands/args out to be
+        parsed (most notably package globs).
+        
+        Returns a numeric result code and an optional string
+           - 0 = we're done, exit
+           - 1 = we've errored, exit with error string
+           - 2 = we've got work yet to do, onto the next stage
+        """
         
         # at this point we know the args are valid - we don't know their meaning
         # but we know we're not being sent garbage
