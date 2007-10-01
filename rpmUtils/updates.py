@@ -19,11 +19,13 @@ import rpmUtils.miscutils
 import rpmUtils.arch
 
 class Updates:
-    """This class computes and keeps track of updates and obsoletes.
-       initialize, add installed packages, add available packages (both as
-       unique lists of name, epoch, ver, rel, arch tuples), add an optional dict
-       of obsoleting packages with obsoletes and what they obsolete ie:
-        foo, i386, 0, 1.1, 1: bar >= 1.1."""
+    """
+    This class computes and keeps track of updates and obsoletes.
+    initialize, add installed packages, add available packages (both as
+    unique lists of name, epoch, ver, rel, arch tuples), add an optional dict
+    of obsoleting packages with obsoletes and what they obsolete ie::
+        foo, i386, 0, 1.1, 1: bar >= 1.1.
+    """
 
     def __init__(self, instlist, availlist):
         self.changeTup = [] # storage list tuple of updates or obsoletes
