@@ -43,7 +43,7 @@ class FakePackage(packages.PackageObject, packages.RpmBase):
         self.epoch = epoch
         self.arch = arch
 
-        self.prco['provides'].append((name, '=', (epoch, version, release)))
+        self.prco['provides'].append((name, 'EQ', (epoch, version, release)))
 
         if repo is None:
             repo = FakeRepo()
@@ -53,14 +53,16 @@ class FakePackage(packages.PackageObject, packages.RpmBase):
         # Just a unique integer
         self.id = self.__hash__()
 
-    def addProvides(self, name, evr):
-        self.prco['provides'].append((name, '=', evr))
-    def addRequires(self, name, flag, evr):
+    def addProvides(self, name, flag=None, evr=(None, None, None)):
+        self.prco['provides'].append((name, flag, evr))
+    def addRequires(self, name, flag=None, evr=(None, None, None)):
         self.prco['requires'].append((name, flag, evr))
-    def addConflict(self, name, flag, evr):
+    def addConflicts(self, name, flag=None, evr=(None, None, None)):
         self.prco['conflicts'].append((name, flag, evr))
-    def addObsolete(self, name, flag, evr):
+    def addObsoletes(self, name, flag=None, evr=(None, None, None)):
         self.prco['obsoletes'].append((name, flag, evr))
+    def addFile(self, name, ftype='file'):
+        self.files[ftype].append(name)
 
 
 class TestingDepsolve(depsolve.Depsolve):
