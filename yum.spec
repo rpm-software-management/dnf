@@ -1,7 +1,7 @@
 Summary: RPM installer/updater
 Name: yum
 Version: 3.2.5
-Release: 2
+Release: 1
 License: GPL
 Group: System Environment/Base
 Source: %{name}-%{version}.tar.gz
@@ -25,6 +25,19 @@ Yum is a utility that can check for and automatically download and
 install updated RPM packages. Dependencies are obtained and downloaded 
 automatically prompting the user as necessary.
 
+%package updatesd
+Summary: Update notification daemon
+Group: Applications/System
+Requires: yum = %{version}-%{release}
+Requires: dbus-python
+Requires: pygobject2
+Prereq: /sbin/chkconfig 
+Prereq: /sbin/service
+
+%description updatesd
+yum-updatesd provides a daemon which checks for available updates and 
+can notify you when they are available via email, syslog or dbus. 
+
 %prep
 %setup -q
 
@@ -42,6 +55,18 @@ make DESTDIR=$RPM_BUILD_ROOT install
 [ "$RPM_BUILD_ROOT" != "/" ] && rm -rf $RPM_BUILD_ROOT
 
 
+%post updatesd
+/sbin/chkconfig --add yum-updatesd
+/sbin/service yum-updatesd condrestart >/dev/null 2>&1
+exit 0
+
+%preun updatesd
+if [ $1 = 0 ]; then
+ /sbin/chkconfig --del yum-updatesd
+ /sbin/service yum-updatesd stop >/dev/null 2>&1
+fi
+exit 0
+
 %files
 %defattr(-, root, root)
 %doc README AUTHORS COPYING TODO INSTALL ChangeLog PLUGINS
@@ -58,11 +83,15 @@ make DESTDIR=$RPM_BUILD_ROOT install
 %{_mandir}/man*/yum.*
 %{_mandir}/man*/yum-shell*
 
+%files updatesd
+%defattr(-, root, root)
+%config(noreplace) %{_sysconfdir}/yum/yum-updatesd.conf
+%config %{_sysconfdir}/rc.d/init.d/yum-updatesd
+%config %{_sysconfdir}/dbus-1/system.d/yum-updatesd.conf
+%{_sbindir}/yum-updatesd
+%{_mandir}/man*/yum-updatesd*
 
 %changelog
-* Sun Sep 30 2007 James Bowes <jbowes@redhat.com> 3.2.5-2
-- remove yum-updatesd (it's external now)
-
 * Mon Sep 10 2007 Seth Vidal <skvidal at fedoraproject.org>
 - 3.2.5
 

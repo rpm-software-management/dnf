@@ -1,0 +1,63 @@
+#!/bin/bash
+#
+# yum           This shell script enables the yum-updates daemon
+#
+# Author:       Jeremy Katz <katzj@redhat.com>
+#
+# chkconfig:	345 97 03
+#
+# description:  This is a daemon which periodically checks for updates \
+#               and can send notifications via mail, dbus or syslog.
+# processname:  yum-updatesd
+# config: /etc/yum/yum-updatesd.conf
+# pidfile: /var/run/yum-updatesd.pid
+#
+
+# source function library
+. /etc/rc.d/init.d/functions
+
+RETVAL=0
+
+start() {
+	echo -n $"Starting yum-updatesd: "
+	daemon +19 yum-updatesd
+	RETVAL=$?
+	echo
+	[ $RETVAL -eq 0 ] && touch /var/lock/subsys/yum-updatesd
+}
+
+stop() {
+	echo -n $"Stopping yum-updatesd: "
+	killproc yum-updatesd
+	echo
+	[ $RETVAL -eq 0 ] && rm -f /var/lock/subsys/yum-updatesd
+}
+
+restart() {
+	stop
+	start
+}
+
+case "$1" in
+  start)
+	start
+	;;
+  stop) 
+	stop
+	;;
+  restart|force-reload|reload)
+	restart
+	;;
+  condrestart)
+	[ -f /var/lock/subsys/yum-updatesd ] && restart
+	;;
+  status)
+	status yum-updatesd
+	RETVAL=$?
+	;;
+  *)
+	echo $"Usage: $0 {start|stop|status|restart|reload|force-reload|condrestart}"
+	exit 1
+esac
+
+exit $RETVAL

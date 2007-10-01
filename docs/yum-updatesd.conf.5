@@ -1,0 +1,70 @@
+.TH "yum-updatesd.conf" "5" "" "Jeremy Katz" "yum-updatesd configuration file"
+.SH "NAME"
+.LP 
+\fByum-updatesd.conf\fR \- Configuration file for \fByum-updatesd(8)\fR.
+.SH "DESCRIPTION"
+.LP 
+yum-updatesd uses a configuration file at \fB/etc/yum/yum-updatesd.conf\fR. 
+.LP
+Additional configuration information is read from the main \fByum.conf
+(5)\fR configuration file.
+
+.SH "PARAMETERS"
+.LP
+There is one section in the yum-updatesd configuration file, main,
+which defines all of the global configuration options.
+
+.SH "[main] OPTIONS"
+.LP 
+The [main] section must exist for yum-updatesd to do anything. It
+consists of the following options:
+
+.IP \fBrun_interval\fR
+Number of seconds to wait between checks for available updates.
+
+.IP \fBupdaterefresh\fR
+Minimum number of seconds between update information refreshes to
+avoid hitting the server too often.
+
+.IP \fBemit_via\fR
+List of ways to emit update notification.  Valid values are `email',
+`dbus' and `syslog'.
+
+.IP \fBdo_update\fR
+Boolean option to decide whether or not updates should be
+automatically applied.  Defaults to False.
+
+.IP \fBdo_download_deps\fR
+Boolean option to decide whether or not updates should be
+automatically downloaded.  Defaults to False.
+
+.IP \fBdo_download_deps\fR
+Boolean option to automatically download dependencies of packages which need
+updating as well.  Defaults to False.
+
+.SH "MAIL OPTIONS"
+.IP \fBemail_to\fR
+List of email addresses to send update notification to.  Defaults to 
+`root@localhost'.
+
+.IP \fBemail_from\fR
+Email address for update notifications to be from.  Defaults to 
+`yum-updatesd@localhost'.
+
+.SH "SYSLOG OPTIONS"
+.IP \fBsyslog_facility\fR
+What syslog facility should be used.  Defaults to `DAEMON'.
+
+.IP \fBsyslog_level\fR
+Level of syslog messages.  Defaults to `WARN'.
+
+
+.SH "FILES"
+.nf 
+/etc/yum/yum-updatesd.conf
+
+.SH "SEE ALSO"
+.LP 
+yum-updatesd(8)
+yum.conf(5)
+
