@@ -110,7 +110,8 @@ class UpdateNotice(object):
         return self._md
 
     def _parse(self, elem):
-        """ Parse an update element.
+        """
+        Parse an update element::
 
             <!ELEMENT update (id, synopsis?, issued, updated,
                               references, description, pkglist)>
@@ -147,7 +148,8 @@ class UpdateNotice(object):
             raise UpdateNoticeException('No update element found')
 
     def _parse_references(self, elem):
-        """ Parse the update references.
+        """
+        Parse the update references::
 
             <!ELEMENT references (reference*)>
             <!ELEMENT reference>
@@ -166,7 +168,8 @@ class UpdateNotice(object):
                 raise UpdateNoticeException('No reference element found')
 
     def _parse_pkglist(self, elem):
-        """ Parse the package list.
+        """
+        Parse the package list::
 
             <!ELEMENT pkglist (collection+)>
             <!ELEMENT collection (name?, package+)>
@@ -186,7 +189,8 @@ class UpdateNotice(object):
             self._md['pkglist'].append(data)
 
     def _parse_package(self, elem):
-        """ Parse an individual package.
+        """
+        Parse an individual package::
 
             <!ELEMENT package (filename, sum, reboot_suggested)>
                 <!ATTLIST package name CDATA #REQUIRED>

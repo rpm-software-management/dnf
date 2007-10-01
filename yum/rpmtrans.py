@@ -31,14 +31,16 @@ class NoOutputCallBack:
         pass
         
     def event(self, package, action, te_current, te_total, ts_current, ts_total):
-        """package is a yum package object or simple string of a package name
-           action is a yum.constant transaction set state or in the obscure 
-              rpm repackage case it could be the string 'repackaging'
-           te_current: current number of bytes processed in the transaction
-                       element being processed
-           te_total: total number of bytes in the transaction element being processed
-           ts_current: number of processes completed in whole transaction
-           ts_total: total number of processes in the transaction.
+        """
+        @param package: A yum package object or simple string of a package name
+        @param action: A yum.constant transaction set state or in the obscure 
+                       rpm repackage case it could be the string 'repackaging'
+        @param te_current: current number of bytes processed in the transaction
+                           element being processed
+        @param te_total: total number of bytes in the transaction element being
+                         processed
+        @param ts_current: number of processes completed in whole transaction
+        @param ts_total: total number of processes in the transaction.
         """
         # this is where a progress bar would be called
         
@@ -83,14 +85,16 @@ class RPMBaseCallback:
         self.logger = logging.getLogger('yum.filelogging.RPMInstallCallback')        
         
     def event(self, package, action, te_current, te_total, ts_current, ts_total):
-        """package is a yum package object or simple string of a package name
-           action is a yum.constant transaction set state or in the obscure 
-              rpm repackage case it could be the string 'repackaging'
-           te_current: current number of bytes processed in the transaction
-                       element being processed
-           te_total: total number of bytes in the transaction element being processed
-           ts_current: number of processes completed in whole transaction
-           ts_total: total number of processes in the transaction.
+        """
+        @param package: A yum package object or simple string of a package name
+        @param action: A yum.constant transaction set state or in the obscure 
+                       rpm repackage case it could be the string 'repackaging'
+        @param te_current: Current number of bytes processed in the transaction
+                           element being processed
+        @param te_total: Total number of bytes in the transaction element being
+                         processed
+        @param ts_current: number of processes completed in whole transaction
+        @param ts_total: total number of processes in the transaction.
         """
         raise NotImplementedError()
 

@@ -40,18 +40,18 @@ def varReplace(raw, vars):
 class ConfigPreProcessor:
     """
     ConfigParser Include Pre-Processor
-    
-        File-like Object capable of pre-processing include= lines for
-        a ConfigParser. 
-        
-        The readline function expands lines matching include=(url)
-        into lines from the url specified. Includes may occur in
-        included files as well. 
-        
-        Suggested Usage:
-            cfg = ConfigParser.ConfigParser()
-            fileobj = confpp( fileorurl )
-            cfg.readfp(fileobj)
+
+    File-like Object capable of pre-processing include= lines for
+    a ConfigParser. 
+
+    The readline function expands lines matching include=(url)
+    into lines from the url specified. Includes may occur in
+    included files as well. 
+
+    Suggested Usage::
+        cfg = ConfigParser.ConfigParser()
+        fileobj = confpp( fileorurl )
+        cfg.readfp(fileobj)
     """
     
     
@@ -95,21 +95,21 @@ class ConfigPreProcessor:
         of the stack. Finally, we return EOF when the bottom-most (configfile
         arg to __init__) FLO returns EOF.
         
-        Very Technical Pseudo Code:
+        Very Technical Pseudo Code::
         
-        def confpp.readline() [this is called by ConfigParser]
-            open configfile, push on stack
-            while stack has some stuff on it
-                line = readline from file on top of stack
-                pop and continue if line is EOF
-                if line starts with 'include=' then
-                    error if file is recursive or duplicate
-                    otherwise open file, push on stack
-                    continue
-                else
-                    return line
-            
-            return EOF
+            def confpp.readline() [this is called by ConfigParser]
+                open configfile, push on stack
+                while stack has some stuff on it
+                    line = readline from file on top of stack
+                    pop and continue if line is EOF
+                    if line starts with 'include=' then
+                        error if file is recursive or duplicate
+                        otherwise open file, push on stack
+                        continue
+                    else
+                        return line
+                
+                return EOF
         """
         
         # set line to EOF initially. 

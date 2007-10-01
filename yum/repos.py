@@ -203,9 +203,12 @@ class RepoStorage:
 
 
     def populateSack(self, which='enabled', mdtype='metadata', callback=None, cacheonly=0):
-        """This populates the package sack from the repositories, two optional 
-           arguments: which='repoid, enabled, all'
-                      mdtype='metadata, filelists, otherdata, all'"""
+        """
+        This populates the package sack from the repositories, two optional 
+        arguments:
+            - which='repoid, enabled, all'
+            - mdtype='metadata, filelists, otherdata, all'
+        """
 
         if not self._setup:
             self.doSetup()
