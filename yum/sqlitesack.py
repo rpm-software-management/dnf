@@ -230,8 +230,10 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
             'provides' : { },
             'requires' : { },
             }
-        del self.pkgobjlist
-        del self.pkglist
+        if hasattr(self, 'pkgobjlist'):
+            del self.pkgobjlist
+        if hasattr(self, 'pkglist'):
+            del self.pkglist
 
         yumRepo.YumPackageSack.close(self)
 
