@@ -679,16 +679,15 @@ class Depsolve(object):
 
     def resolveDeps(self):
 
-        # holder object for things from the check
-        if not hasattr(self, '_dcobj'):
-            self._dcobj = DepCheck()
-
         if not len(self.tsInfo):
             return (0, ['Success - empty transaction'])
 
         # holder object for things from the check
         if not hasattr(self, '_dcobj'):
             self._dcobj = DepCheck()
+        # reset what we've seen as things may have changed between calls
+        # to resolveDeps (rh#242368, rh#308321)
+        self._dcobj.already_seen = {}
 
         CheckDeps = True
         CheckRemoves = False
