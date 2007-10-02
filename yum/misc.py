@@ -355,18 +355,28 @@ def bunzipFile(source,dest):
     destination.close()
     s_fn.close()
 
-def get_running_kernel_version_release():
+def get_running_kernel_version_release(ts):
     """This takes the output of uname and figures out the (version, release)
     tuple for the running kernel."""
     ver = os.uname()[2]
     # FIXME this should probably get passed this list from somewhere in config
     # possibly from the kernelpkgnames option
     for s in ("bigmem", "enterprise", "smp", "hugemem", "PAE", "rt",
-              "guest", "hypervisor", "xen0", "xenU", "xen", "debug"):
+              "guest", "hypervisor", "xen0", "xenU", "xen", "debug",
+              "PAE-debug"):
         if ver.endswith(s):
-            ver = ver.replace(s, "")
-    if ver.find("-") != -1:
-        (v, r) = ver.split("-", 1)
+            reduced = ver.replace(s, "")
+    if reduced.find("-") != -1:
+        (v, r) = reduced.split("-", 1)
         return (v, r)
+    
+    # we've got nothing so far, so... we glob for the file that MIGHT have
+    # this kernels and then look up the file in our rpmdb
+    fns = glob.glob('/boot/vmlinuz*%s*' % ver)
+    for fn in fns:
+        mi = ts.dbMatch('basenames', fn)
+        for h in mi:
+            return (h['version'], h['release'])
+    
     return (None, None)
  

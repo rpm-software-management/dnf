@@ -2212,6 +2212,7 @@ class YumBase(depsolve.Depsolve):
             return 
             
         toremove = []
+        (cur_kernel_v, cur_kernel_r) = misc.get_running_kernel_version_release(self.ts)
         for instpkg in self.conf.installonlypkgs:
             for m in self.tsInfo.getMembers():
                 if (m.name == instpkg or instpkg in m.po.provides_names) \
@@ -2219,11 +2220,9 @@ class YumBase(depsolve.Depsolve):
                     installed = self.rpmdb.searchNevra(name=m.name)
                     if len(installed) >= self.conf.installonly_limit - 1: # since we're adding one
                         numleft = len(installed) - self.conf.installonly_limit + 1
-                        (curv, curr) = misc.get_running_kernel_version_release()
-                        
                         installed.sort(packages.comparePoEVR)
                         for po in installed:
-                            if (po.version, po.release) == (curv, curr): 
+                            if (po.version, po.release) == (cur_kernel_v, cur_kernel_r): 
                                 # don't remove running
                                 continue
                             if numleft == 0:
