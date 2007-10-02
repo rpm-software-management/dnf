@@ -488,6 +488,16 @@ class YumRepository(Repository, config.RepoConf):
         self.baseurl = self._replace_and_check_url(self.baseurl)
         self.mirrorurls = self._replace_and_check_url(mirrorurls)
         self._urls = self.baseurl + self.mirrorurls
+        # if our mirrorlist is just screwed then make sure we unlink a mirrorlist cache
+        if len(self._urls) < 1:
+            if hasattr(self, 'mirrorlist_file') and os.path.exists(self.mirrorlist_file):
+                if not self.cache:
+                    try:
+                        os.unlink(self.mirrorlist_file)
+                    except (IOError, OSError), e:
+                        print 'Could not delete bad mirrorlist file: %s - %s' % (self.mirrorlist_file, e)
+                    else:
+                        print 'removing mirrorlist with no valid mirrors: %s' % self.mirrorlist_file
         # store them all back in baseurl for compat purposes
         self.baseurl = self._urls
         self.check()
