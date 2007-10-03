@@ -220,7 +220,7 @@ class RPMTransaction:
         # some curveballs
         if len(self._te_tuples) == 0:
             msg = 'extra callback for package %s in state %d' % (package, action)
-            self.display.errorlog(msg)
+            self.display.filelog(msg)
             return
 
         (t,e,n,v,r,a) = self._te_tuples[0] # what we should be on
@@ -229,10 +229,10 @@ class RPMTransaction:
         msg = 'ts_done state is %s %s should be %s %s' % (package, action, t, n)
         if action in TS_REMOVE_STATES:
             if t != 'erase':
-                self.display.errorlog(msg)
+                self.display.filelog(msg)
         if action in TS_INSTALL_STATES:
             if t != 'install':
-                self.display.errorlog(msg)
+                self.display.filelog(msg)
                 
         # check the pkg name out to make sure it matches
         if type(package) in types.StringTypes:
@@ -242,7 +242,7 @@ class RPMTransaction:
         
         if n != name:
             msg = 'ts_done name in te is %s should be %s' % (n, package)
-            self.display.errorlog(msg)
+            self.display.filelog(msg)
 
         # hope springs eternal that this isn't wrong
         msg = '%s %s:%s-%s-%s.%s\n' % (t,e,n,v,r,a)
