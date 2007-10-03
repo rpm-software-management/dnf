@@ -359,6 +359,7 @@ def get_running_kernel_version_release(ts):
     """This takes the output of uname and figures out the (version, release)
     tuple for the running kernel."""
     ver = os.uname()[2]
+    reduced = ver
     # FIXME this should probably get passed this list from somewhere in config
     # possibly from the kernelpkgnames option
     for s in ("bigmem", "enterprise", "smp", "hugemem", "PAE", "rt",
@@ -366,6 +367,7 @@ def get_running_kernel_version_release(ts):
               "PAE-debug"):
         if ver.endswith(s):
             reduced = ver.replace(s, "")
+            
     if reduced.find("-") != -1:
         (v, r) = reduced.split("-", 1)
         return (v, r)
