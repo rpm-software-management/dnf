@@ -392,7 +392,6 @@ class RPMDBPackageSack(PackageSackBase):
         if name[0] =='/':
             morepkgs = self.searchFiles(name)
             pkgs.extend(morepkgs)
-        
         if flags == 0:
             flags = None
         if type(version) is types.StringType:

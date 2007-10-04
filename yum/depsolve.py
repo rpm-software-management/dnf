@@ -273,21 +273,21 @@ class Depsolve(object):
         
         if self.cheaterlookup.has_key((needname, needflags, needversion)):
             self.verbose_logger.log(logginglevels.DEBUG_2, 'Needed Require has already been looked up, cheating')
-            cheater_tup = self.cheaterlookup[(needname, needflags, needversion)]
-            providers = [cheater_tup]
+            cheater_po = self.cheaterlookup[(needname, needflags, needversion)]
+            providers = [cheater_po]
         
         elif self.rpmdb.installed(name=needname):
             txmbrs = self.tsInfo.matchNaevr(name=needname)
             for txmbr in txmbrs:
-                providers.append(txmbr.pkgtup)
+                providers.append(txmbr.po)
 
         else:
             self.verbose_logger.log(logginglevels.DEBUG_2, 'Needed Require is not a package name. Looking up: %s', niceformatneed)
-            providers = self.rpmdb.whatProvides(needname, needflags, needversion)
+            providers = self.rpmdb.getProvides(needname, needflags, needversion)
             
-        for insttuple in providers:
-            inst_str = '%s.%s %s:%s-%s' % insttuple
-            (i_n, i_a, i_e, i_v, i_r) = insttuple
+        for inst_po in providers:
+            inst_str = '%s.%s %s:%s-%s' % inst_po.pkgtup
+            (i_n, i_a, i_e, i_v, i_r) = inst_po.pkgtup
             self.verbose_logger.log(logginglevels.DEBUG_2,
                 'Potential Provider: %s', inst_str)
             thismode = self.tsInfo.getMode(name=i_n, arch=i_a, 
@@ -303,13 +303,8 @@ class Depsolve(object):
                             
             if thismode is not None:
                 needmode = thismode
-                if self.rpmdb.installed(name=i_n, arch=i_a, ver=i_v, 
-                                        epoch=i_e, rel=i_r):
-                    needpo = self.rpmdb.searchPkgTuple(insttuple)[0]
-                else:
-                    needpo = self.getPackageObject(insttuple)
 
-                self.cheaterlookup[(needname, needflags, needversion)] = insttuple
+                self.cheaterlookup[(needname, needflags, needversion)] = inst_po
                 self.verbose_logger.log(logginglevels.DEBUG_2, 'Mode is %s for provider of %s: %s',
                     needmode, niceformatneed, inst_str)
                 break
@@ -321,7 +316,7 @@ class Depsolve(object):
             self.verbose_logger.log(logginglevels.DEBUG_2, 'TSINFO: %s package requiring %s marked as erase',
                 requiringPo, needname)
             txmbr = self.tsInfo.addErase(requiringPo)
-            txmbr.setAsDep(po=needpo)
+            txmbr.setAsDep(po=inst_po)
             checkdeps = 1
         
         if needmode in ['i', 'u']:

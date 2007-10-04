@@ -1745,7 +1745,6 @@ class YumBase(depsolve.Depsolve):
         """Pass in a generic [build]require string and this function will 
            pass back the installed packages it finds providing that dep."""
         
-        results = []
         # parse the string out
         #  either it is 'dep (some operator) e:v-r'
         #  or /file/dep
@@ -1764,14 +1763,8 @@ class YumBase(depsolve.Depsolve):
                 if not SYMBOLFLAGS.has_key(flagsymbol):
                     raise Errors.YumBaseError, 'Invalid version flag'
                 depflags = SYMBOLFLAGS[flagsymbol]
-                
-        pkglist = self.rpmdb.whatProvides(depname, depflags, depver)
         
-        for pkgtup in pkglist:
-            results.append(self.getInstalledPackageObject(pkgtup))
-        
-        return results
-
+        return self.rpmdb.getProvides(depname, depflags, depver).keys()
 
     def _bestPackageFromList(self, pkglist):
         """take list of package objects and return the best package object.
