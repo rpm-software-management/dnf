@@ -441,8 +441,23 @@ class PackageSack(PackageSackBase):
         self._checkIndexes(failure='build')
         if self.nevra.has_key((name, epoch, ver, rel, arch)):
             return self.nevra[(name, epoch, ver, rel, arch)]
-        else:
-            return []
+        elif name is not None:
+            pkgs = self.nevra.get((name, None, None, None, None), [])
+        else: 
+            pkgs = []
+            for pkgsbyRepo in self.pkgsByRepo.itervalues():
+                pkgs.extend(pkgsbyRepo)
+
+        result = [ ]
+        for po in pkgs:
+            if ((name and name!=po.name) or
+                (epoch and epoch!=po.epoch) or
+                (ver and ver!=po.ver) or
+                (rel and re!=po.rel) or
+                (arch and arch!=po.arch)):
+                continue
+            result.append(po)
+        return result
         
     def getProvides(self, name, flags=None, version=(None, None, None)):
         """return dict { packages -> list of matching provides }"""
