@@ -374,15 +374,18 @@ class DepsolveTests(unittest.TestCase):
         self.assertEquals('ok', self.resolveCode())
 
         txmbrs = self.tsInfo.matchNaevr()
-        self.assertEquals(3, len(txmbrs))
+        self.assertEquals(4, len(txmbrs))
         
         txmbrs = self.tsInfo.matchNaevr('zap')
         self.assertEquals(1, len(txmbrs))
         self.assertEquals(('zap', 'i386', '2', '1.3', '4'), txmbrs[0].pkgtup)
         
         txmbrs = self.tsInfo.matchNaevr('zip')
-        self.assertEquals(1, len(txmbrs))
+        self.assertEquals(2, len(txmbrs))
         self.assertEquals(('zip', 'i386', '4', '2.6', '8'), txmbrs[0].pkgtup)
+        self.assertEquals(txmbrs[0].ts_state, 'u')
+        self.assertEquals(('zip', 'i386', '2', '1.3', '4'), txmbrs[1].pkgtup)
+        self.assertEquals(txmbrs[1].ts_state, None)
         
         txmbrs = self.tsInfo.matchNaevr('zsh')
         self.assertEquals(1, len(txmbrs))
