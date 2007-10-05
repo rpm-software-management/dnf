@@ -1,7 +1,7 @@
 import unittest
 import settestpath
 
-from yum import depsolve
+from yum import YumBase
 from yum import transactioninfo
 from yum import packages
 from yum import packageSack
@@ -11,6 +11,11 @@ class FakeConf(object):
 
     def __init__(self):
         self.installonlypkgs = []
+        self.exclude = []
+        self.debuglevel = 0
+        self.obsoletes = True
+        self.exactarch = False
+        self.exactarchlist = []
 
 
 class FakeRepo(object):
@@ -65,10 +70,10 @@ class FakePackage(packages.PackageObject, packages.RpmBase):
         self.files[ftype].append(name)
 
 
-class TestingDepsolve(depsolve.Depsolve):
+class TestingDepsolve(YumBase):
 
     def __init__(self, tsInfo, rpmdb, pkgSack):
-        depsolve.Depsolve.__init__(self)
+        YumBase.__init__(self)
 
         self.conf = FakeConf()
         self.tsInfo = tsInfo
@@ -501,6 +506,39 @@ class DepsolveTests(unittest.TestCase):
         txmbrs = self.tsInfo.matchNaevr('zsh')
         self.assertEquals(2, len(txmbrs))
 
+    def testUpdateForDependency(self):
+        po = FakePackage('zsh', '1', '1', '0', 'i386')
+        po.addRequires('zip', 'EQ', ('0', '2', '1'))
+        self.tsInfo.addInstall(po)
+
+        installedpo = FakePackage('zip', '1', '1', '0', 'i386')
+        self.rpmdb.addPackage(installedpo)
+
+        updatepo = FakePackage('zip', '2', '1', '0', 'i386')
+        self.xsack.addPackage(updatepo)
+
+        self.assertEquals('ok', self.resolveCode())
+        self.assert_(self.tsInfo.getMembers(updatepo.pkgtup))
+
+    def testUpdateSplitPackage(self):
+        po = FakePackage('zsh', '1', '1', '0', 'i386')
+        po.addRequires('libzip', 'EQ', ('0', '2', '1'))
+        self.tsInfo.addInstall(po)
+
+        installedpo = FakePackage('zip', '1', '1', '0', 'i386')
+        installedpo.addProvides('libzip', 'EQ', ('0', '1', '1'))
+        self.rpmdb.addPackage(installedpo)
+
+        updatepo = FakePackage('zip', '2', '1', '0', 'i386')
+        updatepo.addRequires('zip-libs', 'EQ', ('0', '2', '1'))
+        self.xsack.addPackage(updatepo)
+        updatepo = FakePackage('zip-libs', '2', '1', '0', 'i386')
+        updatepo.addProvides('libzip', 'EQ', ('0', '2', '1'))
+        self.xsack.addPackage(updatepo)
+
+        self.assertEquals('ok', self.resolveCode())
+        self.assert_(self.tsInfo.getMembers(po.pkgtup), "Package not installed")
+
     def testUpdateSinglePackageNewRequires(self):
         ipo = self.FakeInstPkg('zsh', '1', '1', None, 'i386')
         self.rpmdb.addPackage(ipo)
@@ -577,6 +615,66 @@ class DepsolveTests(unittest.TestCase):
         self.assertEquals(1, len(txmbrs))
         self.assertTrue('e', txmbrs[0].ts_state)
 
+    def _XXX_testUpdateForConflict(self):
+        po = FakePackage('zsh', '1', '1', '0', 'i386')
+        po.addConflicts('zip', 'LE', ('0', '1', '1'))
+        self.tsInfo.addInstall(po)
+
+        installedpo = FakePackage('zip', '1', '1', '0', 'i386')
+        self.rpmdb.addPackage(installedpo)
+
+        updatepo = FakePackage('zip', '2', '1', '0', 'i386')
+        self.xsack.addPackage(updatepo)
+
+        self.assertEquals('ok', self.resolveCode())
+        self.assert_(self.tsInfo.getMembers(updatepo.pkgtup), "Not updated")
+
+    def testUpdateForConflict2(self):
+        po = FakePackage('zsh', '1', '1', '0', 'i386')
+        self.tsInfo.addInstall(po)
+
+        installedpo = FakePackage('zip', '1', '1', '0', 'i386')
+        installedpo.addConflicts('zsh', 'LE', ('0', '1', '1'))
+        self.rpmdb.addPackage(installedpo)
+
+        updatepo = FakePackage('zip', '2', '1', '0', 'i386')
+        self.xsack.addPackage(updatepo)
+
+        self.assertEquals('ok', self.resolveCode())
+        self.assert_(self.tsInfo.getMembers(updatepo.pkgtup), "Not updated")
+
+    def _XXX_testUpdateForConflictProvide(self):
+        po = FakePackage('zsh', '1', '1', '0', 'i386')
+        po.addConflicts('zippy', 'LE', ('0', '1', '1'))
+        self.tsInfo.addInstall(po)
+
+        installedpo = FakePackage('zip', '1', '1', '0', 'i386')
+        installedpo.addProvides('zippy', 'EQ', ('0', '1', '1'))
+        self.rpmdb.addPackage(installedpo)
+
+        updatepo = FakePackage('zip', '2', '1', '0', 'i386')
+        self.xsack.addPackage(updatepo)
+
+        self.assertEquals('ok', self.resolveCode())
+        self.assert_(self.tsInfo.getMembers(updatepo.pkgtup), "Not updated")
+
+    def testUpdateForConflictProvide2(self):
+        po = FakePackage('zsh', '1', '1', '0', 'i386')
+        po.addProvides('zippy', 'EQ', ('0', '2', '1'))
+        self.tsInfo.addInstall(po)
+
+        installedpo = FakePackage('zip', '1', '1', '0', 'i386')
+        installedpo.addConflicts('zippy', 'GT', ('0', '1', '1'))
+        installedpo.addConflicts('zippy', 'LT', ('0', '1', '1'))
+        self.rpmdb.addPackage(installedpo)
+
+        updatepo = FakePackage('zip', '2', '1', '0', 'i386')
+        updatepo.addConflicts('zippy', 'GT', ('0', '2', '1'))
+        updatepo.addConflicts('zippy', 'LT', ('0', '2', '1'))
+        self.xsack.addPackage(updatepo)
+
+        self.assertEquals('ok', self.resolveCode())
+        self.assert_(self.tsInfo.getMembers(updatepo.pkgtup), "Not updated")
 
 def suite():
     suite = unittest.TestSuite()
