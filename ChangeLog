@@ -1,6 +1,194 @@
+2007-10-05  Seth Vidal <skvidal@fedoraproject.org>
+
+	* yum.spec, yum/__init__.py: mark as 3.2.6
+
+2007-10-04  Tim Lauridsen <tla@rasmil.dk>
+
+	* yum/__init__.py, yum/depsolve.py, yum/rpmsack.py: patches by
+	ffesti * use package objects in the cheaterlookup instead of pkgtups
+	* move from whatProvides to getProvides in
+	returnInstalledPackagesByDep
+
+2007-10-03  Seth Vidal <skvidal@fedoraproject.org>
+
+	* yum/rpmtrans.py: make the quasi-warning messages just go to the
+	log and not bitch on the console
+
+2007-10-03  Seth Vidal <skvidal@fedoraproject.org>
+
+	Merge branch 'master' of
+	ssh://login.linux.duke.edu/home/groups/yum/git/yum  * 'master' of
+	ssh://login.linux.duke.edu/home/groups/yum/git/yum:   remove
+	duplicate code; ensure that we reset what we've seen between
+	depsolves   don't delete non-existent attrs
+
+2007-10-03  Seth Vidal <skvidal@fedoraproject.org>
+
+	* yum/misc.py: don't traceback on running kernel check
+
+2007-10-02  Jeremy Katz <katzj@redhat.com>
+
+	* yum/depsolve.py: remove duplicate code; ensure that we reset what
+	we've seen between depsolves
+
+2007-10-02  Jeremy Katz <katzj@redhat.com>
+
+	* yum/sqlitesack.py: don't delete non-existent attrs
+
+2007-10-02  Seth Vidal <skvidal@fedoraproject.org>
+
+	* yum/yumRepo.py: closes rhbug #312781 - if we encounter a
+	mirrorlist which ends up having no valid urls in it - then make sure
+	we unlink the cached mirrorlist so we don't break the user
+
+2007-10-02  Seth Vidal <skvidal@fedoraproject.org>
+
+	* yum/__init__.py, yum/config.py, yum/misc.py: close bug: 296771 -
+	handle case where running kernel is in a package we don't expect
+
+2007-10-01  James Bowes <jbowes@redhat.com>
+
+	* Makefile, docs/Makefile, docs/yum-updatesd.8,
+	docs/yum-updatesd.conf.5, etc/Makefile, etc/yum-updatesd.init,
+	yum-updatesd.py, yum.spec: Revert "Remove yum-updatesd, as it's a
+	distinct project now."  yum-updatesd is still needed for F7.  This
+	reverts commit bab47e934196b94a8afdca6d306806e46e73f4e3.
+
+2007-09-30  James Bowes <jbowes@redhat.com>
+
+	* yum/packageSack.py: Don't override built-in 'file' in the
+	packagesack searchFiles method.
+
+2007-09-30  James Bowes <jbowes@redhat.com>
+
+	* docs/.gitignore: Add gitignore for epydoc
+
+2007-09-30  James Bowes <jbowes@redhat.com>
+
+	* yum/misc.py, yum/parser.py, yum/repos.py, yum/rpmtrans.py,
+	yum/update_md.py: Fix some epydoc syntax errors in yum
+
+2007-09-30  James Bowes <jbowes@redhat.com>
+
+	* .gitignore: Ignore vim swap files
+
+2007-09-30  James Bowes <jbowes@redhat.com>
+
+	* rpmUtils/miscutils.py, rpmUtils/updates.py: Fix some epydoc syntax
+	errors in rpmUtils
+
+2007-09-30  James Bowes <jbowes@redhat.com>
+
+	* cli.py, yum/__init__.py: Fix some epydoc syntax errors in cli.py
+	and yum/__init__.py
+
+2007-09-30  James Bowes <jbowes@redhat.com>
+
+	* Makefile, docs/Makefile, docs/yum-updatesd.8,
+	docs/yum-updatesd.conf.5, etc/Makefile, etc/yum-updatesd.init,
+	yum-updatesd.py, yum.spec: Remove yum-updatesd, as it's a distinct
+	project now.
+
+2007-09-28  Tim Lauridsen <tla@rasmil.dk>
+
+	Merge branch 'check' of
+	http://people.redhat.com/jantill/gits/yum
+
+2007-09-24  Seth Vidal <skvidal@fedoraproject.org>
+
+	* yum/depsolve.py: merge patch for proper return order of results
+	from _resolveRequires patch from Florian Festi
+
+2007-09-18  Jeremy Katz <katzj@redhat.com>
+
+	* yum/yumRepo.py: make metadata_expire=-1 to imply "never expire"
+
+2007-09-18  Jeremy Katz <katzj@redhat.com>
+
+	* yum/__init__.py, yum/yumRepo.py: for frontends which aren't
+	media-aware (ie, don't provide a mediafunc for grabbing packages
+	from media), disable any media-only repositories
+
+2007-09-18  Seth Vidal <skvidal@fedoraproject.org>
+
+	* docs/yum.conf.5, yum/__init__.py: add debug output to costExclude
+	add cost man page entry
+
+2007-09-18  Seth Vidal <skvidal@fedoraproject.org>
+
+	Merge branch 'master' of
+	ssh://login.linux.duke.edu/home/groups/yum/git/yum  * 'master' of
+	ssh://login.linux.duke.edu/home/groups/yum/git/yum:   sigmd5 isn't
+	guaranteed to be there either.  this should be fine, though and
+	capture scriptlet output via a pipe and pass it via a callback
+	method on a
+
+2007-09-18  Seth Vidal <skvidal@fedoraproject.org>
+
+	* output.py, yum/__init__.py, yum/config.py, yum/packages.py,
+	yum/transactioninfo.py, yum/yumRepo.py: - yum search output a little nicer for users - suggestions from
+	tech-list and james antill - implement cost feature per repo - fix
+	up cases where callers don't properly call addUpdated() for pkgs
+	being updated by a txmbr - problem comes out in skip-broken   thanks
+	to bill nottingham for the replicated bug
+
+2007-09-18  Jeremy Katz <katzj@redhat.com>
+
+	* yum/packages.py: sigmd5 isn't guaranteed to be there either.  this
+	should be fine, though and should be unique enough (#291471)
+
+2007-09-13  Jeremy Katz <katzj@redhat.com>
+
+	* output.py, yum/rpmtrans.py: capture scriptlet output via a pipe
+	and pass it via a callback method on a per-package basis
+
+2007-09-17  Jeremy Katz <katzj@redhat.com>
+
+	* yum/sqlitesack.py: don't delete objects multiple times
+
+2007-09-13  Jeremy Katz <katzj@redhat.com>
+
+	* cli.py: more making things obvious to people when they request
+	things which are already installed or which aren't available
+	(rh#261001)
+
+2007-09-13  Jeremy Katz <katzj@redhat.com>
+
+	* output.py: add support for fetching strings out of specspo
+	(rh#251891)
+
+2007-09-12  Tim Lauridsen <tla@rasmil.dk>
+
+	* yum/__init__.py, yum/callbacks.py: Make the processTransaction and
+	extra optional parameteres, to make it posible to work with the list
+	of packages to download in the callback.
+
+2007-09-12  Seth Vidal <skvidal@fedoraproject.org>
+
+	* yum/yumRepo.py: not really a fix but having the message from the
+	exception in parens is just a leftover
+
+2007-09-12  Jeremy Katz <katzj@redhat.com>
+
+	* yum/__init__.py: event() only takes one argument
+
+2007-09-12  Jeremy Katz <katzj@redhat.com>
+
+	* yum/rpmtrans.py: allow passing in an already created display
+	object
+
+2007-09-10  Seth Vidal <skvidal@fedoraproject.org>
+
+	* ChangeLog: merge Changelog
+
 2007-09-10  Seth Vidal <skvidal@fedoraproject.org>
 
 	* yum.spec, yum/__init__.py: mark as 3.2.5
+
+2007-09-07  James Antill <james@code.and.org>
+
+	* test/depsolvetests.py:   Add installed repo id, FakeInstPackage()   Added methods for
+	  FakePackage prco: provides, requires, conflicts, obsoletes
 
 2007-09-07  Seth Vidal <skvidal@fedoraproject.org>
 
@@ -10,6 +198,23 @@
 2007-09-07  Jeremy Katz <katzj@redhat.com>
 
 	* yum/__init__.py: properly delete repos
+
+2007-09-06  James Antill <james@code.and.org>
+
+	* test/depsolvetests.py: Multiple sacks
+
+2007-09-06  James Antill <james@code.and.org>
+
+	* test/depsolvetests.py: Add check for empty
+
+2007-09-06  James Antill <james@code.and.org>
+
+	* test/depsolvetests.py, yum/packages.py: Add lots of tests, and fix
+	matchingPrcos to pass GE
+
+2007-09-06  James Antill <james@code.and.org>
+
+	* Makefile: Make check an alias for test
 
 2007-09-06  Seth Vidal <skvidal@fedoraproject.org>
 
