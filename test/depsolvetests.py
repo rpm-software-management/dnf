@@ -20,9 +20,14 @@ class FakeRepo(object):
 
 
 class FakeRpmSack(packageSack.PackageSack):
-    def installed(self, po):
-        """ Hack. Hack. Hack. """
-        return False
+    def installed(self, name=None, arch=None, epoch=None, ver=None, rel=None, po=None):
+        if po:
+            name = po.name
+            arch = po.arch
+            epoch = po.epoch
+            ver = po.version
+            rel = po.release
+        return len(self.searchNevra(name=name, arch=arch, epoch=epoch, ver=ver, rel=rel)) > 0
 
 class FakePackage(packages.PackageObject, packages.RpmBase):
 
