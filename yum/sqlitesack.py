@@ -394,7 +394,10 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
          
         return result
         
-    def returnObsoletes(self):
+    def returnObsoletes(self, newest=False):
+        if newest:
+            raise NotImplementedError()
+
         obsoletes = {}
         for (rep,cache) in self.primarydb.items():
             cur = cache.cursor()

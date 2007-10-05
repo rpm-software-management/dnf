@@ -89,7 +89,7 @@ class PackageSackBase(object):
         """return list of package obsoleting the name (any evr and flag)"""
         raise NotImplementedError()
 
-    def returnObsoletes(self):
+    def returnObsoletes(self, newest=False):
         """returns a dict of obsoletes dict[obsoleting pkgtuple] = [list of obs]"""
         raise NotImplementedError()
 
@@ -500,7 +500,7 @@ class PackageSack(PackageSackBase):
         else:
             return []
 
-    def returnObsoletes(self):
+    def returnObsoletes(self, newest=False):
         """returns a dict of obsoletes dict[obsoleting pkgtuple] = [list of obs]"""
         obs = {}
         for po in self.returnPackages():
@@ -511,6 +511,19 @@ class PackageSack(PackageSackBase):
                 obs[po.pkgtup] = po.obsoletes
             else:
                 obs[po.pkgtup].extend(po.obsoletes)
+
+        if not newest:
+            return obs
+
+        # FIXME - this is slooooooooooooooooooooooooooooooow
+        # get the dict back
+        newest_tups = set((pkg.pkgtup for pkg in self.returnNewestByName()))
+
+        # go through each of the keys of the obs dict and see if it is in the
+        # sack of newest pkgs - if it is not - remove the entry
+        for obstup in obs.iterkeys():
+            if obstup not in  newest_tups:
+                del obs[obstup]
             
         return obs
         
