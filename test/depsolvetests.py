@@ -16,7 +16,9 @@ class FakeConf(object):
         self.obsoletes = True
         self.exactarch = False
         self.exactarchlist = []
-
+        self.installroot = '/'
+        self.tsflags = []
+        self.installonly_limit = 0
 
 class FakeRepo(object):
 
@@ -34,7 +36,7 @@ class FakeRpmSack(packageSack.PackageSack):
             rel = po.release
         return len(self.searchNevra(name=name, arch=arch, epoch=epoch, ver=ver, rel=rel)) > 0
 
-class FakePackage(packages.PackageObject, packages.RpmBase):
+class FakePackage(packages.YumAvailablePackage):
 
     def __init__(self, name, version, release, epoch, arch, repo=None):
         packages.PackageObject.__init__(self)
