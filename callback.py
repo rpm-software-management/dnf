@@ -14,6 +14,9 @@
 # Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 # Copyright 2005 Duke University
 
+"""
+Progress display callback classes for the yum command line.
+"""
 
 import rpm
 import os
@@ -24,6 +27,11 @@ from yum.constants import *
 from i18n import _
 
 class RPMInstallCallback:
+
+    """
+    Yum command line callback class for callbacks from the RPM library.
+    """
+
     def __init__(self, output=1):
         self.output = output
         self.callbackfilehandles = {}
