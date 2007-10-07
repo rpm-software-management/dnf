@@ -14,6 +14,9 @@
 # Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 # Copyright 2005 Duke University 
 
+"""
+Entrance point for the yum command line interface.
+"""
 
 import sys
 import locale
