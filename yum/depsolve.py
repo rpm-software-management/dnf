@@ -30,7 +30,6 @@ from packageSack import ListPackageSack
 from constants import *
 import packages
 import logginglevels
-import time 
 import Errors
 
 import warnings
