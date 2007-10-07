@@ -34,11 +34,14 @@ install:
 	for d in $(SUBDIRS); do make PYTHON=$(PYTHON) DESTDIR=`cd $(DESTDIR); pwd` -C $$d install; [ $$? = 0 ] || exit 1; done
 
 .PHONY: docs test
+
+DOCS = yum rpmUtils callback.py progress_meter.py yumcommands.py shell.py \
+	   translate.py output.py i18n.py cli.py yummain.py
 docs:
-	epydoc -n yum -o docs/epydoc -u http://linux.duke.edu/projects/yum \
-			yum yum-updatesd.py rpmUtils callback.py progress_meter.py \
-			yumcommands.py shell.py translate.py output.py i18n.py cli.py \
-			yummain.py
+	epydoc -n yum -o docs/epydoc -u http://linux.duke.edu/projects/yum $(DOCS)
+
+doccheck:
+	epydoc --check $(DOCS)
 
 test:
 	python test/alltests.py
