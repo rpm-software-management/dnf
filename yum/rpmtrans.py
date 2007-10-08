@@ -108,8 +108,12 @@ class RPMBaseCallback:
         print >> sys.stderr, msg
 
     def filelog(self, package, action):
-        # check package object type - if it is a string - just output it
-        msg = '%s: %s' % (self.fileaction[action], package)
+        # If the action is not in the fileaction list then dump it as a string
+        # hurky but, sadly, not much else 
+        if self.fileaction.has_key(action):
+            msg = '%s: %s' % (self.fileaction[action], package)
+        else:
+            msg = '%s: %s' % (package, action)
         self.logger.info(msg)
             
 
