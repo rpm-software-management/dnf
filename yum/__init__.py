@@ -612,8 +612,8 @@ class YumBase(depsolve.Depsolve):
         costs = {}
         for r in self.repos.listEnabled():
             costs[r.cost] = 1
-        
-        if len(costs.keys()) == 1: # if all of our costs are the same then return
+
+        if len(costs.keys()) <= 1: # if all of our costs are the same then return
             return
             
         def _sort_by_cost(a, b):
