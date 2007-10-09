@@ -51,7 +51,7 @@ class RepoStorage:
             repos = self.findRepos(thisrepo)
 
         if len(repos) < 1:
-            self.logger.critical('No Repositories Available to Set Up')
+            self.logger.debug('No Repositories Available to Set Up')
 
         num = 1
         for repo in repos:
