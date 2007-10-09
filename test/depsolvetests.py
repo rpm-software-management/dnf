@@ -479,6 +479,95 @@ class DepsolveTests(unittest.TestCase):
         self.assertEquals(1, len(txmbrs))
         self.assertEquals(('zip', 'i386', None, '1', '3'), txmbrs[0].pkgtup)
 
+    def testUpdateSinglePackage(self):
+        ipo = self.FakeInstPkg('zsh', '1', '1', None, 'i386')
+        self.rpmdb.addPackage(ipo)
+
+        po = FakePackage('zsh', '1', '3', None, 'i386')
+        self.tsInfo.addUpdate(po, oldpo=ipo)
+
+        self.assertEquals('ok', self.resolveCode())
+
+        txmbrs = self.tsInfo.matchNaevr('zsh')
+        self.assertEquals(2, len(txmbrs))
+
+    def testUpdateSinglePackageNewRequires(self):
+        ipo = self.FakeInstPkg('zsh', '1', '1', None, 'i386')
+        self.rpmdb.addPackage(ipo)
+
+        po = FakePackage('zsh', '1', '3', None, 'i386')
+        po.addRequires('zip', None, (None, None, None))
+        self.tsInfo.addUpdate(po, oldpo=ipo)
+
+        xpo = FakePackage('zip', '1', '3', None, 'x86_64')
+        self.xsack.addPackage(xpo)
+
+        self.assertEquals('ok', self.resolveCode())
+
+        txmbrs = self.tsInfo.matchNaevr('zip')
+        self.assertEquals(1, len(txmbrs))
+        self.assertEquals(('zip', 'x86_64', None, '1', '3'), txmbrs[0].pkgtup)
+
+    def testUpdateSinglePackageOldRequires(self):
+        ipo = self.FakeInstPkg('zsh', '1', '1', None, 'i386')
+        ipo.addRequires('zip', None, (None, None, None))
+        self.rpmdb.addPackage(ipo)
+
+        xpo = FakePackage('zip', '1', '3', None, 'x86_64')
+        self.rpmdb.addPackage(xpo)
+
+        po = FakePackage('zsh', '1', '3', None, 'i386')
+        po.addRequires('zip', None, (None, None, None))
+        self.tsInfo.addUpdate(po, oldpo=ipo)
+
+        self.assertEquals('ok', self.resolveCode())
+
+        txmbrs = self.tsInfo.matchNaevr('zip')
+        self.assertEquals(0, len(txmbrs))
+
+    def testUpdateSinglePackageOldRequiresGone(self):
+        ipo = self.FakeInstPkg('zsh', '1', '1', None, 'i386')
+        ipo.addRequires('zip', None, (None, None, None))
+        self.rpmdb.addPackage(ipo)
+
+        xpo = FakePackage('zip', '1', '3', None, 'x86_64')
+        self.rpmdb.addPackage(xpo)
+
+        po = FakePackage('zsh', '1', '3', None, 'i386')
+        self.tsInfo.addUpdate(po, oldpo=ipo)
+
+        self.assertEquals('ok', self.resolveCode())
+
+    def testUpdateSinglePackageObsoletesOldRequirement(self):
+        ipo = self.FakeInstPkg('zsh', '1', '1', None, 'i386')
+        ipo.addRequires('zip', None, (None, None, None))
+        self.rpmdb.addPackage(ipo)
+
+        opo = FakePackage('zip', '1', '1', None, 'i386')
+        self.rpmdb.addPackage(opo)
+
+        po = FakePackage('zsh', '1', '3', None, 'i386')
+        ipo.addObsolete('zip', None, (None, None, None))
+
+        self.tsInfo.addObsoleting(po, opo)
+        self.tsInfo.addObsoleted(opo, po)
+
+        self.tsInfo.addUpdate(po, oldpo=ipo)
+
+        self.assertEquals('ok', self.resolveCode())
+
+        txmbrs = self.tsInfo.matchNaevr('zip')
+        self.assertEquals(1, len(txmbrs))
+
+        txmbrs = self.tsInfo.matchNaevr(name='zsh', rel='3')
+        self.assertEquals(1, len(txmbrs))
+        self.assertTrue('i', txmbrs[0].ts_state)
+
+        txmbrs = self.tsInfo.matchNaevr(name='zsh', rel='1')
+        self.assertEquals(1, len(txmbrs))
+        self.assertTrue('e', txmbrs[0].ts_state)
+
+
 def suite():
     suite = unittest.TestSuite()
     suite.addTest(unittest.makeSuite(DepsolveTests))
