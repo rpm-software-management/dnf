@@ -2155,6 +2155,7 @@ class YumBase(depsolve.Depsolve):
                 hexkeyid = misc.keyIdToRPMVer(keyid).upper()
                 timestamp = keyinfo['timestamp']
                 userid = keyinfo['userid']
+                fingerprint = keyinfo['fingerprint']
             except ValueError, e:
                 raise Errors.YumBaseError, \
                       'GPG key parsing failed: ' + str(e)
@@ -2172,7 +2173,8 @@ class YumBase(depsolve.Depsolve):
                 rc = True
             elif fullaskcb:
                 rc = fullaskcb({"po": po, "userid": userid,
-                                "hexkeyid": hexkeyid, "keyurl": keyurl})
+                                "hexkeyid": hexkeyid, "keyurl": keyurl,
+                                "fingerprint": fingerprint, "timestamp": timestamp})
             elif askcb:
                 rc = askcb(po, userid, hexkeyid)
 

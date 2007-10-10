@@ -204,6 +204,7 @@ def getgpgkeyinfo(rawkey):
         'userid': key.user_id,
         'keyid': struct.unpack('>Q', keyid_blob)[0],
         'timestamp': key.public_key.timestamp,
+        'fingerprint' : key.public_key.fingerprint,
     }
 
     # Retrieve the timestamp from the matching signature packet 
