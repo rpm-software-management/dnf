@@ -199,6 +199,12 @@ class Updates:
         # look through all the obsoleting packages look for multiple archs per name
         # if you find it look for the packages they obsolete
         # 
+        obs_arches = {}
+        for (n, a, e, v, r) in self.rawobsoletes.keys():
+            if not obs_arches.has_key(n):
+                obs_arches[n] = []
+            obs_arches[n].append(a)
+
         for pkgtup in self.rawobsoletes.keys():
             (name, arch, epoch, ver, rel) = pkgtup
             for (obs_n, flag, (obs_e, obs_v, obs_r)) in self.rawobsoletes[(pkgtup)]:
@@ -214,6 +220,8 @@ class Updates:
                                     if self.returnNewest((pkgver, installedver)) == installedver:
                                         willInstall = 0
                                         break
+                            if rpm_a != arch and rpm_a in obs_arches[n]:
+                                willInstall = 0
                             if willInstall:
                                 if not obsdict.has_key(pkgtup):
                                     obsdict[pkgtup] = []
