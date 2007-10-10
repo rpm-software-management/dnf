@@ -1042,11 +1042,11 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
 
     def usage(self):
         ''' Print out command line usage '''
-        print self.optparser.print_help()
+        self.optparser.print_help()
 
     def shellUsage(self):
         ''' Print out the shell usage '''
-        print self.optparser.print_usage()
+        self.optparser.print_usage()
     
     def _installable(self, pkg, ematch=False):
 
