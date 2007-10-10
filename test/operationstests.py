@@ -27,10 +27,16 @@ class OperationsTests(unittest.TestCase):
         # obsoletes
         self.pkgs.oi386 = FakePackage('zsh-ng', '0.3', '1', '0', 'i386')
         self.pkgs.oi386.addObsoletes('zsh', None, (None, None, None))
+        self.pkgs.oi386.addProvides('zzz')
         self.pkgs.ox86_64 = FakePackage('zsh-ng', '0.3', '1', '0', 'x86_64')
         self.pkgs.ox86_64.addObsoletes('zsh', None, (None, None, None))
+        self.pkgs.ox86_64.addProvides('zzz')
         self.pkgs.onoarch = FakePackage('zsh-ng', '0.3', '1', '0', 'noarch')
         self.pkgs.onoarch.addObsoletes('zsh', None, (None, None, None))
+        self.pkgs.onoarch.addProvides('zzz')
+        # requires obsoletes
+        self.pkgs.ro = FakePackage('superzippy', '3.5', '3', '0', 'noarch')
+        self.pkgs.ro.addRequires('zzz')
         # conflicts
         self.pkgs.conflict = FakePackage('super-zippy', '0.3', '1', '0', 'i386')
         self.pkgs.conflict.addConflicts('zsh', 'EQ', ('0', '1', '1'))
@@ -181,6 +187,14 @@ class OperationsTests(unittest.TestCase):
         #self.assertNotInstalled(p.oi386)
         self.assertInstalled(p.ox86_64)
         self.assertNotInstalled(p.inoarch)
+    def testObsoletenoarchToMultiarchForDependency(self):
+        p = self.pkgs
+        res, msg = self.runOperation(['install', 'superzippy'], [p.inoarch], [p.oi386, p.ox86_64, p.ro])
+        self.assert_(res==2, msg)
+        self.assertNotInstalled(p.oi386)
+        self.assertInstalled(p.ox86_64)
+        #self.assertNotInstalled(p.inoarch) # XXX
+        self.assertInstalled(p.ro)
 
     def testObsoletei386ToMultiarch(self):
         p = self.pkgs
@@ -189,6 +203,30 @@ class OperationsTests(unittest.TestCase):
         self.assertInstalled(p.oi386)
         #self.assertNotInstalled(p.ox86_64)
         self.assertNotInstalled(p.ii386)
+    def testObsoletei386ToMultiarchForDependency(self):
+        p = self.pkgs
+        res, msg = self.runOperation(['install', 'superzippy'], [p.ii386], [p.oi386, p.ox86_64, p.ro])
+        self.assert_(res==2, msg)
+        #self.assertInstalled(p.oi386)
+        #self.assertInstalled(p.ox86_64) # XXX
+        #self.assertNotInstalled(p.ii386)
+        self.assertInstalled(p.ro)
+
+    def testObsoletex86_64ToMultiarch(self):
+        p = self.pkgs
+        res, msg = self.runOperation(['update'], [p.ix86_64], [p.oi386, p.ox86_64])
+        self.assert_(res==2, msg)
+        self.assertInstalled(p.ox86_64)
+        #self.assertNotInstalled(p.oi386)
+        self.assertNotInstalled(p.ix86_64)
+    def testObsoletex86_64ToMultiarchForDependency(self):
+        p = self.pkgs
+        res, msg = self.runOperation(['install', 'superzippy'], [p.ix86_64], [p.oi386, p.ox86_64, p.ro])
+        self.assert_(res==2, msg)
+        #self.assertInstalled(p.oi386)
+        self.assertInstalled(p.ox86_64)
+        #self.assertNotInstalled(p.ii386)
+        self.assertInstalled(p.ro)
 
     def testObsoleteMultiarchToMultiarch(self):
         p = self.pkgs
@@ -198,6 +236,15 @@ class OperationsTests(unittest.TestCase):
         self.assertInstalled(p.ox86_64)
         self.assertNotInstalled(p.ii386)
         self.assertNotInstalled(p.ix86_64)
+    def testObsoleteMultiarchToMultiarchForDependency(self):
+        p = self.pkgs
+        res, msg = self.runOperation(['install', 'superzippy'], [p.ii386, p.ix86_64], [p.oi386, p.ox86_64, p.ro])
+        self.assert_(res==2, msg)
+        #self.assertInstalled(p.oi386)
+        self.assertInstalled(p.ox86_64)
+        #self.assertNotInstalled(p.ii386)
+        #self.assertNotInstalled(p.ix86_64) # XXX
+        self.assertInstalled(p.ro)
 
     def testObsoleteMultiarchTonoarch(self):
         p = self.pkgs
@@ -206,6 +253,14 @@ class OperationsTests(unittest.TestCase):
         self.assertInstalled(p.onoarch)
         self.assertNotInstalled(p.ii386)
         self.assertNotInstalled(p.ix86_64)
+    def testObsoleteMultiarchTonoarchForDependency(self):
+        p = self.pkgs
+        res, msg = self.runOperation(['install', 'superzippy'], [p.ii386, p.ix86_64], [p.onoarch, p.ro])
+        self.assert_(res==2, msg)
+        self.assertInstalled(p.onoarch)
+        #self.assertNotInstalled(p.ii386) # XXX
+        #self.assertNotInstalled(p.ix86_64) # XXX
+        self.assertInstalled(p.ro)
 
     # Obsolete for conflict
 
