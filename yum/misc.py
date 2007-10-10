@@ -348,7 +348,10 @@ def bunzipFile(source,dest):
     destination = open(dest, 'w')
 
     while True:
-        data = s_fn.read(1024000)
+        try:
+            data = s_fn.read(1024000)
+        except IOError:
+            break
         
         if not data: break
         destination.write(data)
