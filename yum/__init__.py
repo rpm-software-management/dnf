@@ -1933,8 +1933,7 @@ class YumBase(depsolve.Depsolve):
                 continue
             
             # make sure it's not already installed
-            if self.rpmdb.installed(name=po.name, arch=po.arch, epoch=po.epoch,
-                    rel=po.release, ver=po.version):
+            if self.rpmdb.contains(po=po):
                 self.logger.warning('Package %s already installed and latest version', po)
                 continue
 

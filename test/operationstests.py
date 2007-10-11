@@ -1,6 +1,6 @@
 import unittest
 
-from depsolvetests import FakePackage, FakeRpmSack, FakeRepo, FakeConf
+from depsolvetests import FakePackage, FakeRepo, FakeConf
 from yum.constants import TS_INSTALL_STATES, TS_REMOVE_STATES
 from cli import YumBaseCli
 from yum import packageSack
@@ -44,7 +44,7 @@ class OperationsTests(unittest.TestCase):
 
     def runOperation(self, args, installed=[], available=[]):
         depsolver = YumBaseCli()
-        depsolver.rpmdb  = FakeRpmSack()
+        depsolver.rpmdb  = packageSack.PackageSack()
         depsolver._pkgSack  = packageSack.PackageSack()
         depsolver.repo = FakeRepo("installed")
         depsolver.conf = FakeConf()

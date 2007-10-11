@@ -156,16 +156,8 @@ class RPMDBPackageSack(PackageSackBase):
 
     def simplePkgList(self):
         return self.pkglist
-   
-    def installed(self, name=None, arch=None, epoch=None, ver=None, rel=None, po=None):
-        if po:
-            name = po.name
-            arch = po.arch
-            epoch = po.epoch
-            ver = po.version
-            rel = po.release
-            
-        return len(self.searchNevra(name=name, arch=arch, epoch=epoch, ver=ver, rel=rel)) > 0
+
+    installed = PackageSackBase.contains
 
     def returnNewestByNameArch(self, naTup=None):
 

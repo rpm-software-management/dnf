@@ -65,6 +65,17 @@ class PackageSackBase(object):
         (n,a,e,v,r) = pkgtup
         return self.searchNevra(name=n, arch=a, epoch=e, ver=v, rel=r)
         
+    def contains(self, name=None, arch=None, epoch=None, ver=None, rel=None, po=None):
+        """return if there are any packages in the sack that match the given NAEVR 
+           or the NAEVR of the given po"""
+        if po:
+            name = po.name
+            arch = po.arch
+            epoch = po.epoch
+            ver = po.version
+            rel = po.release
+        return bool(self.searchNevra(name=name, arch=arch, epoch=epoch, ver=ver, rel=rel))
+
     def getProvides(self, name, flags=None, version=(None, None, None)):
         """return dict { packages -> list of matching provides }"""
         raise NotImplementedError()

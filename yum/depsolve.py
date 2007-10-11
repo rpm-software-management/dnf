@@ -275,7 +275,7 @@ class Depsolve(object):
             cheater_po = self.cheaterlookup[(needname, needflags, needversion)]
             providers = [cheater_po]
         
-        elif self.rpmdb.installed(name=needname):
+        elif self.rpmdb.contains(name=needname):
             txmbrs = self.tsInfo.matchNaevr(name=needname)
             for txmbr in txmbrs:
                 providers.append(txmbr.po)
@@ -532,7 +532,7 @@ class Depsolve(object):
             best = newest[0]
         
         
-        if self.rpmdb.installed(po=best): # is it already installed?
+        if self.rpmdb.contains(po=best): # is it already installed?
             missingdep = 1
             checkdeps = 0
             msg = 'Missing Dependency: %s is needed by package %s' % (needname, name)
@@ -951,7 +951,7 @@ class Depsolve(object):
 
     def isPackageInstalled(self, pkgname):
         installed = False
-        if self.rpmdb.installed(name = pkgname):
+        if self.rpmdb.contains(name=pkgname):
             installed = True
 
         lst = self.tsInfo.matchNaevr(name = pkgname)

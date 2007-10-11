@@ -25,17 +25,6 @@ class FakeRepo(object):
     def __init__(self, id=None):
         self.id = id
 
-
-class FakeRpmSack(packageSack.PackageSack):
-    def installed(self, name=None, arch=None, epoch=None, ver=None, rel=None, po=None):
-        if po:
-            name = po.name
-            arch = po.arch
-            epoch = po.epoch
-            ver = po.version
-            rel = po.release
-        return len(self.searchNevra(name=name, arch=arch, epoch=epoch, ver=ver, rel=rel)) > 0
-
 class FakePackage(packages.YumAvailablePackage):
 
     def __init__(self, name, version, release, epoch, arch, repo=None):
@@ -106,7 +95,7 @@ class DepsolveTests(unittest.TestCase):
     def setUp(self):
         """ Called at the start of each test. """
         self.tsInfo = transactioninfo.TransactionData()
-        self.rpmdb  = FakeRpmSack()
+        self.rpmdb  = packageSack.PackageSack()
         self.xsack  = packageSack.PackageSack()
         self.repo   = FakeRepo("installed")
 
