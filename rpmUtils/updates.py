@@ -220,7 +220,7 @@ class Updates:
                                     if self.returnNewest((pkgver, installedver)) == installedver:
                                         willInstall = 0
                                         break
-                            if rpm_a != arch and rpm_a in obs_arches[n]:
+                            if rpm_a != arch and rpm_a in obs_arches[name]:
                                 willInstall = 0
                             if willInstall:
                                 if not obsdict.has_key(pkgtup):
