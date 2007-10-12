@@ -1,3 +1,98 @@
+2007-10-12  Seth Vidal <skvidal@fedoraproject.org>
+
+	* yum.spec, yum/__init__.py: ver kick to 3.2.7
+
+2007-10-12  Jeremy Katz <katzj@redhat.com>
+
+	* yum/depsolve.py, yum/transactioninfo.py: fix transaction listing
+	to properly display only deps as deps as opposed to some things
+	which are manually done and also deps (rh#283961)
+
+2007-10-12  Jeremy Katz <katzj@redhat.com>
+
+	* yum/depsolve.py: fix requirements moving to new packages when a
+	package is obsoleted
+
+2007-10-11  Jeremy Katz <katzj@redhat.com>
+
+	* rpmUtils/updates.py: use the right variable
+
+2007-10-09  Jeremy Katz <katzj@redhat.com>
+
+	* yum/misc.py: catch exception when uncompressing (#325771)
+
+2007-10-10  Jeremy Katz <katzj@redhat.com>
+
+	* rpmUtils/updates.py: when an obsolete is available for a package,
+	only install most matching arch rather than all available arches
+	(rh#301661)
+
+2007-10-10  Seth Vidal <skvidal@fedoraproject.org>
+
+	* yum/__init__.py, yum/misc.py: apply patch from Robin Norwood to
+	expose more information from the gpg keys we read in - timestamp and
+	fingerprint
+
+2007-10-09  James Bowes <jbowes@redhat.com>
+
+	* cli.py: Remove extra 'None' from output when showing help/usage.
+
+2007-10-09  Jeremy Katz <katzj@redhat.com>
+
+	* yum/repos.py: make this a debug message -- it's confusing to most
+	users as with the initialization ordering changes, we can get here a
+	lot more ways now
+
+2007-10-07  James Bowes <jbowes@redhat.com>
+
+	* yummain.py: Add docstring for yummain.py
+
+2007-10-07  James Bowes <jbowes@redhat.com>
+
+	* callback.py: Add some docstrings to callback.py
+
+2007-10-07  James Bowes <jbowes@redhat.com>
+
+	* Makefile: Add a doccheck Makefile target for epydoc completeness.
+
+
+2007-10-08  James Bowes <jbowes@redhat.com>
+
+	* test/depsolvetests.py: Add unit tests for package updates.  This
+	includes a failing test for the following case: A, B on system A
+	requires B A' updates A A' obsoletes B Expected results: A, B
+	removed A' on system Actual results: A not marked for removal
+	Originally seen on rawhide, running yum update moving from
+	NetworkManager 0.6.5 to 0.7.0
+
+2007-10-07  James Bowes <jbowes@redhat.com>
+
+	* yum/depsolve.py: Remove unused import from depsolve.py
+
+2007-10-08  Seth Vidal <skvidal@fedoraproject.org>
+
+	* yum/rpmtrans.py: fix up the filelog fix
+
+2007-10-08  Seth Vidal <skvidal@fedoraproject.org>
+
+	Merge branch 'master' of
+	ssh://login.linux.duke.edu/home/groups/yum/git/yum  * 'master' of
+	ssh://login.linux.duke.edu/home/groups/yum/git/yum:   fix infinite
+	loop with no repos enabled
+
+2007-10-08  Seth Vidal <skvidal@fedoraproject.org>
+
+	* yum/rpmtrans.py: proper call to filelog to emit transaction
+	logging errors
+
+2007-10-07  Jeremy Katz <katzj@redhat.com>
+
+	* yum/__init__.py: fix infinite loop with no repos enabled
+
+2007-10-05  Seth Vidal <skvidal@fedoraproject.org>
+
+	* ChangeLog: merge changelog for 3.2.6
+
 2007-10-05  Seth Vidal <skvidal@fedoraproject.org>
 
 	* yum.spec, yum/__init__.py: mark as 3.2.6
