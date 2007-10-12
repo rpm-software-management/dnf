@@ -283,7 +283,7 @@ class Depsolve(object):
         else:
             self.verbose_logger.log(logginglevels.DEBUG_2, 'Needed Require is not a package name. Looking up: %s', niceformatneed)
             providers = self.rpmdb.getProvides(needname, needflags, needversion)
-            
+
         for inst_po in providers:
             inst_str = '%s.%s %s:%s-%s' % inst_po.pkgtup
             (i_n, i_a, i_e, i_v, i_r) = inst_po.pkgtup
@@ -299,7 +299,14 @@ class Depsolve(object):
             if thismode is None and i_n not in self.conf.exactarchlist:
                 # check for mode by just the name
                 thismode = self.tsInfo.getMode(name=i_n)
-                            
+
+            # if this package is being obsoleted, it's just like if it's
+            # being upgraded as far as checking for other providers
+            if thismode is None:
+                if filter(lambda x: x.obsoleted_by,
+                          self.tsInfo.matchNaevr(i_n, i_a, i_e, i_v, i_r)):
+                    thismode = 'u'
+
             if thismode is not None:
                 needmode = thismode
 
