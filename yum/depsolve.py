@@ -375,6 +375,7 @@ class Depsolve(object):
                     if po.pkgtup == new:
                         txmbr = self.tsInfo.addUpdate(po, requiringPo)
                         txmbr.setAsDep(po=needpo)
+                        txmbr.reason = "dep"
                         self.verbose_logger.log(logginglevels.DEBUG_2, 'TSINFO: Updating %s to resolve dep.', po)
                 checkdeps = 1
                 
@@ -550,6 +551,7 @@ class Depsolve(object):
             # FIXME: we should probably handle updating multiple packages...
             txmbr = self.tsInfo.addUpdate(best, inst[0])
             txmbr.setAsDep()
+            txmbr.reason = "dep"
         else:
             self.verbose_logger.debug('TSINFO: Marking %s as install for %s', best,
                 name)
@@ -629,6 +631,7 @@ class Depsolve(object):
                 'TSINFO: Updating %s to resolve conflict.', po)
             txmbr = self.tsInfo.addUpdate(po, confpkg)
             txmbr.setAsDep()
+            txmbr.reason = "dep"
             CheckDeps = 1
             
         else:

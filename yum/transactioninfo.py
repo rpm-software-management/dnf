@@ -228,10 +228,10 @@ class TransactionData:
         self.depremoved = []
         self.depinstalled = []
         self.depupdated = []
-        
+
         for txmbr in self.getMembers():
             if txmbr.output_state == TS_UPDATE:
-                if txmbr.isDep:
+                if txmbr.isDep and txmbr.reason == "dep":
                     self.depupdated.append(txmbr)
                 else:
                     self.updated.append(txmbr)
