@@ -64,18 +64,31 @@ class OperationsTests(unittest.TestCase):
             return res, msg
         return self.depsolver.buildTransaction()
 
-    def assertInstalled(self, po, msg=None):
-        if (not self.depsolver.tsInfo.getMembersWithState(po.pkgtup, TS_INSTALL_STATES) and # not getting installed
-            (not self.depsolver.rpmdb.searchNevra(po.name, po.epoch, po.version, po.release, po.arch) or # not is installed
-             self.depsolver.tsInfo.getMembersWithState(po.pkgtup, TS_REMOVE_STATES))): # getting removed
-            self.fail("Package %(pkg)s is not installed!" % {'pkg' : str(po)})
+    def assertResult(self, pkgs, optional_pkgs=[], check_multilib_versions=True):
+        errors = ["assertResult:\n"]
+        pkgs = set(pkgs)
+        optional_pkgs = set(optional_pkgs)
+        installed = set()
 
+        for pkg in self.depsolver.rpmdb:
+            # got removed
+            if self.depsolver.tsInfo.getMembersWithState(pkg.pkgtup, TS_REMOVE_STATES):
+                if pkg in pkgs:
+                    errors.append("Package %s got removed!\n" % pkg)
+            else: # still installed
+                installed.add(pkg)
+                if pkg not in pkgs and pkg not in optional_pkgs:
+                    errors.append("Package %s didn't got removed!\n" % pkg)
 
-    def assertNotInstalled(self, po, msg=None):
-        if (self.depsolver.tsInfo.getMembersWithState(po.pkgtup, TS_INSTALL_STATES) or # getting installed
-            (self.depsolver.rpmdb.searchNevra(po.name, po.epoch, po.version, po.release, po.arch) and # is installed
-             not self.depsolver.tsInfo.getMembersWithState(po.pkgtup, TS_REMOVE_STATES))): # not getting removed
-            self.fail((msg or "Package %(pkg)s is installed!") % {'pkg' : str(po)})
+        for txmbr in self.depsolver.tsInfo.getMembersWithState(output_states=TS_INSTALL_STATES):
+            installed.add(txmbr.po)
+            if txmbr.po not in pkgs and txmbr.po not in optional_pkgs:
+                errors.append("Package %s got installed!\n" % txmbr.po)
+        for pkg in pkgs - installed:
+            errors.append("Package %s didn't got installed!\n" % pkg)
+
+        if len(errors) > 1:
+            self.fail("".join(errors))
 
     #######################################################################
     ### Tests #############################################################
@@ -85,98 +98,76 @@ class OperationsTests(unittest.TestCase):
         p = self.pkgs
         res, msg = self.runOperation(['update'], [p.ii386], [p.ui386, p.ux86_64])
         self.assert_(res==2, msg)
-        self.assertInstalled(p.ui386)
-        self.assertNotInstalled(p.ux86_64)
-
+        self.assertResult((p.ui386,))
     def testUpdatei386ToMultilibForDependency(self):
         p = self.pkgs
         res, msg = self.runOperation(['install', 'zsh-utils'], [p.ii386], [p.ui386, p.ux86_64, p.ru])
         self.assert_(res==2, msg)
-        #self.assertInstalled(p.ui386)
-        #self.assertNotInstalled(p.ux86_64)
-        self.assertInstalled(p.ux86_64) # XXX
-        self.assertInstalled(p.ru)
+        self.assertResult((p.ii386, p.ux86_64, p.ru))
+        #self.assertResult((p.ui386, p.ru))
 
     def testUpdatex86_64ToMultilib(self):
         p = self.pkgs
         res, msg = self.runOperation(['update'], [p.ix86_64], [p.ui386, p.ux86_64])
         self.assert_(res==2, msg)
-        self.assertInstalled(p.ux86_64)
-        self.assertNotInstalled(p.ui386)
-
+        self.assertResult((p.ux86_64,))
     def testUpdatex86_64ToMultilibForDependency(self):
         p = self.pkgs
-        res, msg = self.runOperation(['install', 'zsh-utils'], [p.ix86_64], [p.ui386, p.ux86_64, p.ru])
+        res, msg = self.runOperation(['install', 'zsh-utils'], [p.ix86_64], 
+                                     [p.ui386, p.ux86_64, p.ru])
         self.assert_(res==2, msg)
-        self.assertInstalled(p.ux86_64)
-        self.assertNotInstalled(p.ui386)
-        self.assertInstalled(p.ru)
+        self.assertResult((p.ux86_64, p.ru))
 
     def testUpdateMultilibToMultilib(self):
         p = self.pkgs
         res, msg = self.runOperation(['update'], [p.ii386, p.ix86_64], [p.ui386, p.ux86_64])
         self.assert_(res==2, msg)
-        self.assertInstalled(p.ui386)
-        self.assertInstalled(p.ux86_64)
-
+        self.assertResult((p.ui386, p.ux86_64))
     def testUpdateMultilibToMultilibForDependency(self):
         p = self.pkgs
         res, msg = self.runOperation(['install', 'zsh-utils'], [p.ii386, p.ix86_64], [p.ui386, p.ux86_64, p.ru])
         self.assert_(res==2, msg)
-        self.assertInstalled(p.ii386)
-        self.assertNotInstalled(p.ix86_64)
-        self.assertNotInstalled(p.ui386)
-        self.assertInstalled(p.ux86_64)
-        self.assertInstalled(p.ru)
+        #self.assertResult((p.ui386, p.ux86_64,  p.ru))
+        self.assertResult((p.ii386, p.ux86_64,  p.ru))
 
     def testUpdatei386Tonoarch(self):
         p = self.pkgs
         res, msg = self.runOperation(['update'], [p.ii386], [p.unoarch])
         self.assert_(res==2, msg)
-        self.assertInstalled(p.unoarch)
-        self.assertNotInstalled(p.ii386)
-
+        self.assertResult((p.unoarch,))
     def testUpdatei386TonoarchForDependency(self):
         p = self.pkgs
         res, msg = self.runOperation(['install', 'zsh-utils'], [p.ii386], [p.unoarch, p.ru])
         self.assert_(res==2, msg)
-        self.assertInstalled(p.unoarch)
-        #self.assertNotInstalled(p.ii386) # XXX
-        self.assertInstalled(p.ru)
+        #self.assertResult((p.unoarch, p.ru))
+        self.assertResult((p.ii386, p.unoarch, p.ru))
 
     def testUpdateMultilibTonoarch(self):
         p = self.pkgs
         res, msg = self.runOperation(['update'], [p.ii386, p.ix86_64], [p.unoarch])
         self.assert_(res==2, msg)
-        self.assertInstalled(p.unoarch)
-        self.assertNotInstalled(p.ii386)
-        # self.assertNotInstalled(p.ix86_64) # XXX
-
+        #self.assertResult((p.unoarch,))
+        self.assertResult((p.unoarch, p.ix86_64))
     def testUpdateMultilibTonoarchForDependency(self):
         p = self.pkgs
         res, msg = self.runOperation(['install', 'zsh-utils'], [p.ii386, p.ix86_64], [p.unoarch, p.ru])
         self.assert_(res==2, msg)
-        self.assertInstalled(p.unoarch)
-        #self.assertNotInstalled(p.ii386)
-        #self.assertNotInstalled(p.ix86_64)
-        self.assertInstalled(p.ru)
+        #self.assertResult((p.unoarch, p.ru))
+        self.assertResult((p.ii386, p.ix86_64, p.unoarch, p.ru))
 
     def testUpdatenoarchToMultilib(self):
         p = self.pkgs
         res, msg = self.runOperation(['update'], [p.inoarch], [p.ui386, p.ux86_64])
         self.assert_(res==2, msg)
-        self.assertInstalled(p.ui386) # ???
-        self.assertInstalled(p.ux86_64)
-        self.assertNotInstalled(p.inoarch)
-
+        self.assertResult((p.ui386, p.ux86_64))
+        # self.assertResult((p.ux86_64)) # ???
     def testUpdatenoarchToMultilibForDependency(self):
         p = self.pkgs
         res, msg = self.runOperation(['install', 'zsh-utils'], [p.inoarch], [p.ui386, p.ux86_64, p.ru])
         self.assert_(res==2, msg)
-        self.assertNotInstalled(p.ui386) # ???
-        self.assertInstalled(p.ux86_64)
-        # self.assertNotInstalled(p.inoarch)
-        self.assertInstalled(p.ru)
+        # self.assertResult((p.ui386, p.ux86_64, p.ru))
+        # self.assertResult((p.ux86_64, p.ru))
+        self.assertResult((p.inoarch, p.ux86_64, p.ru))
 
     # obsoletes
 
@@ -184,83 +175,65 @@ class OperationsTests(unittest.TestCase):
         p = self.pkgs
         res, msg = self.runOperation(['update'], [p.inoarch], [p.oi386, p.ox86_64])
         self.assert_(res==2, msg)
-        #self.assertNotInstalled(p.oi386)
-        self.assertInstalled(p.ox86_64)
-        self.assertNotInstalled(p.inoarch)
+        #self.assertResult((p.ox86_64,))
+        self.assertResult((p.oi386, p.ox86_64))
     def testObsoletenoarchToMultiarchForDependency(self):
         p = self.pkgs
-        res, msg = self.runOperation(['install', 'superzippy'], [p.inoarch], [p.oi386, p.ox86_64, p.ro])
+        res, msg = self.runOperation(['install', 'superzippy'], [p.inoarch], 
+                                     [p.oi386, p.ox86_64, p.ro])
         self.assert_(res==2, msg)
-        self.assertNotInstalled(p.oi386)
-        self.assertInstalled(p.ox86_64)
-        #self.assertNotInstalled(p.inoarch) # XXX
-        self.assertInstalled(p.ro)
+        #self.assertResult((p.ox86_64, p.ro))
+        self.assertResult((p.inoarch, p.ox86_64, p.ro))
 
     def testObsoletei386ToMultiarch(self):
         p = self.pkgs
         res, msg = self.runOperation(['update'], [p.ii386], [p.oi386, p.ox86_64])
         self.assert_(res==2, msg)
-        self.assertInstalled(p.oi386)
-        #self.assertNotInstalled(p.ox86_64)
-        self.assertNotInstalled(p.ii386)
+        self.assertResult((p.oi386,))
     def testObsoletei386ToMultiarchForDependency(self):
         p = self.pkgs
         res, msg = self.runOperation(['install', 'superzippy'], [p.ii386], [p.oi386, p.ox86_64, p.ro])
         self.assert_(res==2, msg)
-        #self.assertInstalled(p.oi386)
-        #self.assertInstalled(p.ox86_64) # XXX
-        #self.assertNotInstalled(p.ii386)
-        self.assertInstalled(p.ro)
+        #self.assertResult((p.ox86_64, p.ro))
+        self.assertResult((p.ii386, p.ox86_64, p.ro))
 
     def testObsoletex86_64ToMultiarch(self):
         p = self.pkgs
         res, msg = self.runOperation(['update'], [p.ix86_64], [p.oi386, p.ox86_64])
         self.assert_(res==2, msg)
-        self.assertInstalled(p.ox86_64)
-        #self.assertNotInstalled(p.oi386)
-        self.assertNotInstalled(p.ix86_64)
+        self.assertResult((p.ox86_64,))
     def testObsoletex86_64ToMultiarchForDependency(self):
         p = self.pkgs
-        res, msg = self.runOperation(['install', 'superzippy'], [p.ix86_64], [p.oi386, p.ox86_64, p.ro])
+        res, msg = self.runOperation(['install', 'superzippy'], 
+                                     [p.ix86_64], [p.oi386, p.ox86_64, p.ro])
         self.assert_(res==2, msg)
-        #self.assertInstalled(p.oi386)
-        self.assertInstalled(p.ox86_64)
-        #self.assertNotInstalled(p.ii386)
-        self.assertInstalled(p.ro)
+        #self.assertResult((p.ox86_64, p.ro))
+        self.assertResult((p.ix86_64, p.ox86_64, p.ro))
 
     def testObsoleteMultiarchToMultiarch(self):
         p = self.pkgs
         res, msg = self.runOperation(['update'], [p.ii386, p.ix86_64], [p.oi386, p.ox86_64])
         self.assert_(res==2, msg)
-        self.assertInstalled(p.oi386)
-        self.assertInstalled(p.ox86_64)
-        self.assertNotInstalled(p.ii386)
-        self.assertNotInstalled(p.ix86_64)
+        self.assertResult((p.oi386, p.ox86_64))
     def testObsoleteMultiarchToMultiarchForDependency(self):
         p = self.pkgs
-        res, msg = self.runOperation(['install', 'superzippy'], [p.ii386, p.ix86_64], [p.oi386, p.ox86_64, p.ro])
+        res, msg = self.runOperation(['install', 'superzippy'], 
+                                     [p.ii386, p.ix86_64], [p.oi386, p.ox86_64, p.ro])
         self.assert_(res==2, msg)
-        #self.assertInstalled(p.oi386)
-        self.assertInstalled(p.ox86_64)
-        #self.assertNotInstalled(p.ii386)
-        #self.assertNotInstalled(p.ix86_64) # XXX
-        self.assertInstalled(p.ro)
+        #self.assertResult((p.oi386, p.ox86_64, p.ro))
+        self.assertResult((p.ii386, p.ix86_64, p.ox86_64, p.ro))
 
     def testObsoleteMultiarchTonoarch(self):
         p = self.pkgs
         res, msg = self.runOperation(['update'], [p.ii386, p.ix86_64], [p.onoarch])
         self.assert_(res==2, msg)
-        self.assertInstalled(p.onoarch)
-        self.assertNotInstalled(p.ii386)
-        self.assertNotInstalled(p.ix86_64)
+        self.assertResult((p.onoarch,))
     def testObsoleteMultiarchTonoarchForDependency(self):
         p = self.pkgs
         res, msg = self.runOperation(['install', 'superzippy'], [p.ii386, p.ix86_64], [p.onoarch, p.ro])
         self.assert_(res==2, msg)
-        self.assertInstalled(p.onoarch)
-        #self.assertNotInstalled(p.ii386) # XXX
-        #self.assertNotInstalled(p.ix86_64) # XXX
-        self.assertInstalled(p.ro)
+        #self.assertResult((p.onoarch, p.ro))
+        self.assertResult((p.ii386, p.ix86_64, p.onoarch, p.ro))
 
     # Obsolete for conflict
 
@@ -268,12 +241,7 @@ class OperationsTests(unittest.TestCase):
         p = self.pkgs
         res, msg = self.runOperation(['install', 'super-zippy'], [p.ii386], [p.oi386, p.ox86_64, p.conflict])
         self.assert_(res==2, msg)
-        self.assertInstalled(p.conflict)
-        self.assertInstalled(p.oi386) # XXX ???
-        self.assertNotInstalled(p.oi386) # XXX ???
-        self.assertInstalled(p.ox86_64)
-        self.assertNotInstalled(p.ii386)
-
+        self.assertResult((p.oi386, p.conflict))
 
 def suite():
     suite = unittest.TestSuite()
