@@ -6,7 +6,6 @@ from yum import transactioninfo
 from yum import packages
 from yum import packageSack
 
-
 class FakeConf(object):
 
     def __init__(self):
@@ -586,12 +585,12 @@ class DepsolveTests(unittest.TestCase):
         self.rpmdb.addPackage(opo)
 
         po = FakePackage('zsh', '1', '3', None, 'i386')
-        ipo.addObsolete('zip', None, (None, None, None))
+        ipo.addObsoletes('zip', None, (None, None, None))
+
+        self.tsInfo.addUpdate(po, oldpo=ipo)
 
         self.tsInfo.addObsoleting(po, opo)
         self.tsInfo.addObsoleted(opo, po)
-
-        self.tsInfo.addUpdate(po, oldpo=ipo)
 
         self.assertEquals('ok', self.resolveCode())
 
