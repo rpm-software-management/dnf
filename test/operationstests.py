@@ -105,6 +105,11 @@ class OperationsTests(unittest.TestCase):
         self.assert_(res==2, msg)
         self.assertResult((p.ii386, p.ux86_64, p.ru))
         #self.assertResult((p.ui386, p.ru))
+    def testUpdatei386ToMultilibForDependencyFix(self):
+        p = self.pkgs
+        res, msg = self.runOperation(['update'], [p.ii386, p.ux86_64, p.ru], [p.ui386, p.ux86_64])
+        self.assert_(res==2, msg)
+        self.assertResult((p.ui386, p.ux86_64, p.ru))
 
     def testUpdatex86_64ToMultilib(self):
         p = self.pkgs
@@ -160,7 +165,7 @@ class OperationsTests(unittest.TestCase):
         res, msg = self.runOperation(['update'], [p.inoarch], [p.ui386, p.ux86_64])
         self.assert_(res==2, msg)
         self.assertResult((p.ui386, p.ux86_64))
-        # self.assertResult((p.ux86_64)) # ???
+        # self.assertResult((p.ux86_64)) # ?
     def testUpdatenoarchToMultilibForDependency(self):
         p = self.pkgs
         res, msg = self.runOperation(['install', 'zsh-utils'], [p.inoarch], [p.ui386, p.ux86_64, p.ru])
@@ -168,6 +173,12 @@ class OperationsTests(unittest.TestCase):
         # self.assertResult((p.ui386, p.ux86_64, p.ru))
         # self.assertResult((p.ux86_64, p.ru))
         self.assertResult((p.inoarch, p.ux86_64, p.ru))
+    def testUpdatenoarchToMultilibForDependencyFix(self):
+        p = self.pkgs
+        res, msg = self.runOperation(['update'], [p.inoarch, p.ux86_64, p.ru], [p.ui386, p.ux86_64])
+        self.assert_(res==2, msg)
+        self.assertResult((p.ui386, p.ux86_64, p.ru))
+        # self.assertResult((p.ux86_64, p.ru)) # ?
 
     # obsoletes
 
@@ -184,6 +195,12 @@ class OperationsTests(unittest.TestCase):
         self.assert_(res==2, msg)
         #self.assertResult((p.ox86_64, p.ro))
         self.assertResult((p.inoarch, p.ox86_64, p.ro))
+    def testObsoletenoarchToMultiarchForDependencyFix(self):
+        p = self.pkgs
+        res, msg = self.runOperation(['update'], [p.inoarch, p.ox86_64, p.ro], [p.oi386, p.ox86_64])
+        #self.assert_(res==2, msg)
+        #self.assertResult((p.ox86_64,)) # yes, this would be nice - but also wrong
+        self.assertResult((p.inoarch, p.ox86_64, p.ro))
 
     def testObsoletei386ToMultiarch(self):
         p = self.pkgs
@@ -195,6 +212,12 @@ class OperationsTests(unittest.TestCase):
         res, msg = self.runOperation(['install', 'superzippy'], [p.ii386], [p.oi386, p.ox86_64, p.ro])
         self.assert_(res==2, msg)
         #self.assertResult((p.ox86_64, p.ro))
+        self.assertResult((p.ii386, p.ox86_64, p.ro))
+    def testObsoletei386ToMultiarchForDependencyFix(self):
+        p = self.pkgs
+        res, msg = self.runOperation(['update'], [p.ii386, p.ox86_64, p.ro], [p.oi386, p.ox86_64])
+        #self.assert_(res==2, msg)
+        #self.assertResult((p.oi386, p.ox86_64, p.ro))
         self.assertResult((p.ii386, p.ox86_64, p.ro))
 
     def testObsoletex86_64ToMultiarch(self):
