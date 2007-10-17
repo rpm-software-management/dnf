@@ -48,6 +48,9 @@ test:
 
 check: test
 
+testnewbehavior:
+	python test/alltests.py --new_behavior
+
 archive: remove_spec = ${PKGNAME}-daily.spec
 archive: _archive
 

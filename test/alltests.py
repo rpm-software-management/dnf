@@ -1,5 +1,5 @@
 import unittest
-import settestpath
+import testbase
 
 import depsolvetests
 import packagetests

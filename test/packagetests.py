@@ -1,5 +1,5 @@
 import unittest
-import settestpath
+import testbase
 
 from yum import packages
 from rpmUtils import miscutils

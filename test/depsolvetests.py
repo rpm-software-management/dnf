@@ -1,5 +1,5 @@
 import unittest
-import settestpath
+import testbase
 
 from yum import YumBase
 from yum import transactioninfo
