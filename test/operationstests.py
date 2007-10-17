@@ -14,32 +14,32 @@ class OperationsTests(unittest.TestCase):
         unittest.TestCase.__init__(self, methodName)
         self.pkgs = Container()
         # installed
-        self.pkgs.ii386 = FakePackage('zsh', '1', '1', '0', 'i386')
-        self.pkgs.ix86_64 = FakePackage('zsh', '1', '1', '0', 'x86_64')
-        self.pkgs.inoarch = FakePackage('zsh', '1', '1', '0', 'noarch')
+        self.pkgs.installed_i386 = FakePackage('zsh', '1', '1', '0', 'i386')
+        self.pkgs.installed_x86_64 = FakePackage('zsh', '1', '1', '0', 'x86_64')
+        self.pkgs.installed_noarch = FakePackage('zsh', '1', '1', '0', 'noarch')
         # updates
-        self.pkgs.ui386 = FakePackage('zsh', '2', '1', '0', 'i386')
-        self.pkgs.ux86_64 = FakePackage('zsh', '2', '1', '0', 'x86_64')
-        self.pkgs.unoarch = FakePackage('zsh', '2', '1', '0', 'noarch')
+        self.pkgs.update_i386 = FakePackage('zsh', '2', '1', '0', 'i386')
+        self.pkgs.update_x86_64 = FakePackage('zsh', '2', '1', '0', 'x86_64')
+        self.pkgs.update_noarch = FakePackage('zsh', '2', '1', '0', 'noarch')
         # requires update
-        self.pkgs.ru = FakePackage('zsh-utils', '2', '1', '0', 'noarch')
-        self.pkgs.ru.addRequires('zsh', 'EQ', ('0', '2', '1'))
+        self.pkgs.requires_update = FakePackage('zsh-utils', '2', '1', '0', 'noarch')
+        self.pkgs.requires_update.addRequires('zsh', 'EQ', ('0', '2', '1'))
         # obsoletes
-        self.pkgs.oi386 = FakePackage('zsh-ng', '0.3', '1', '0', 'i386')
-        self.pkgs.oi386.addObsoletes('zsh', None, (None, None, None))
-        self.pkgs.oi386.addProvides('zzz')
-        self.pkgs.ox86_64 = FakePackage('zsh-ng', '0.3', '1', '0', 'x86_64')
-        self.pkgs.ox86_64.addObsoletes('zsh', None, (None, None, None))
-        self.pkgs.ox86_64.addProvides('zzz')
-        self.pkgs.onoarch = FakePackage('zsh-ng', '0.3', '1', '0', 'noarch')
-        self.pkgs.onoarch.addObsoletes('zsh', None, (None, None, None))
-        self.pkgs.onoarch.addProvides('zzz')
+        self.pkgs.obsoletes_i386 = FakePackage('zsh-ng', '0.3', '1', '0', 'i386')
+        self.pkgs.obsoletes_i386.addObsoletes('zsh', None, (None, None, None))
+        self.pkgs.obsoletes_i386.addProvides('zzz')
+        self.pkgs.obsoletes_x86_64 = FakePackage('zsh-ng', '0.3', '1', '0', 'x86_64')
+        self.pkgs.obsoletes_x86_64.addObsoletes('zsh', None, (None, None, None))
+        self.pkgs.obsoletes_x86_64.addProvides('zzz')
+        self.pkgs.obsoletes_noarch = FakePackage('zsh-ng', '0.3', '1', '0', 'noarch')
+        self.pkgs.obsoletes_noarch.addObsoletes('zsh', None, (None, None, None))
+        self.pkgs.obsoletes_noarch.addProvides('zzz')
         # requires obsoletes
-        self.pkgs.ro = FakePackage('superzippy', '3.5', '3', '0', 'noarch')
-        self.pkgs.ro.addRequires('zzz')
+        self.pkgs.requires_obsoletes = FakePackage('superzippy', '3.5', '3', '0', 'noarch')
+        self.pkgs.requires_obsoletes.addRequires('zzz')
         # conflicts
-        self.pkgs.conflict = FakePackage('super-zippy', '0.3', '1', '0', 'i386')
-        self.pkgs.conflict.addConflicts('zsh', 'EQ', ('0', '1', '1'))
+        self.pkgs.conflicts = FakePackage('super-zippy', '0.3', '1', '0', 'i386')
+        self.pkgs.conflicts.addConflicts('zsh', 'EQ', ('0', '1', '1'))
 
 
     def runOperation(self, args, installed=[], available=[]):
@@ -96,175 +96,175 @@ class OperationsTests(unittest.TestCase):
 
     def testUpdatei386ToMultilib(self):
         p = self.pkgs
-        res, msg = self.runOperation(['update'], [p.ii386], [p.ui386, p.ux86_64])
+        res, msg = self.runOperation(['update'], [p.installed_i386], [p.update_i386, p.update_x86_64])
         self.assert_(res==2, msg)
-        self.assertResult((p.ui386,))
+        self.assertResult((p.update_i386,))
     def testUpdatei386ToMultilibForDependency(self):
         p = self.pkgs
-        res, msg = self.runOperation(['install', 'zsh-utils'], [p.ii386], [p.ui386, p.ux86_64, p.ru])
+        res, msg = self.runOperation(['install', 'zsh-utils'], [p.installed_i386], [p.update_i386, p.update_x86_64, p.requires_update])
         self.assert_(res==2, msg)
-        self.assertResult((p.ii386, p.ux86_64, p.ru))
-        #self.assertResult((p.ui386, p.ru))
+        self.assertResult((p.installed_i386, p.update_x86_64, p.requires_update))
+        #self.assertResult((p.update_i386, p.requires_update))
     def testUpdatei386ToMultilibForDependencyFix(self):
         p = self.pkgs
-        res, msg = self.runOperation(['update'], [p.ii386, p.ux86_64, p.ru], [p.ui386, p.ux86_64])
+        res, msg = self.runOperation(['update'], [p.installed_i386, p.update_x86_64, p.requires_update], [p.update_i386, p.update_x86_64])
         self.assert_(res==2, msg)
-        self.assertResult((p.ui386, p.ux86_64, p.ru))
+        self.assertResult((p.update_i386, p.update_x86_64, p.requires_update))
 
     def testUpdatex86_64ToMultilib(self):
         p = self.pkgs
-        res, msg = self.runOperation(['update'], [p.ix86_64], [p.ui386, p.ux86_64])
+        res, msg = self.runOperation(['update'], [p.installed_x86_64], [p.update_i386, p.update_x86_64])
         self.assert_(res==2, msg)
-        self.assertResult((p.ux86_64,))
+        self.assertResult((p.update_x86_64,))
     def testUpdatex86_64ToMultilibForDependency(self):
         p = self.pkgs
-        res, msg = self.runOperation(['install', 'zsh-utils'], [p.ix86_64], 
-                                     [p.ui386, p.ux86_64, p.ru])
+        res, msg = self.runOperation(['install', 'zsh-utils'], [p.installed_x86_64], 
+                                     [p.update_i386, p.update_x86_64, p.requires_update])
         self.assert_(res==2, msg)
-        self.assertResult((p.ux86_64, p.ru))
+        self.assertResult((p.update_x86_64, p.requires_update))
 
     def testUpdateMultilibToMultilib(self):
         p = self.pkgs
-        res, msg = self.runOperation(['update'], [p.ii386, p.ix86_64], [p.ui386, p.ux86_64])
+        res, msg = self.runOperation(['update'], [p.installed_i386, p.installed_x86_64], [p.update_i386, p.update_x86_64])
         self.assert_(res==2, msg)
-        self.assertResult((p.ui386, p.ux86_64))
+        self.assertResult((p.update_i386, p.update_x86_64))
     def testUpdateMultilibToMultilibForDependency(self):
         p = self.pkgs
-        res, msg = self.runOperation(['install', 'zsh-utils'], [p.ii386, p.ix86_64], [p.ui386, p.ux86_64, p.ru])
+        res, msg = self.runOperation(['install', 'zsh-utils'], [p.installed_i386, p.installed_x86_64], [p.update_i386, p.update_x86_64, p.requires_update])
         self.assert_(res==2, msg)
-        #self.assertResult((p.ui386, p.ux86_64,  p.ru))
-        self.assertResult((p.ii386, p.ux86_64,  p.ru))
+        #self.assertResult((p.update_i386, p.update_x86_64,  p.requires_update))
+        self.assertResult((p.installed_i386, p.update_x86_64,  p.requires_update))
 
-    def testUpdatei386Tonoarch(self):
+    def testUpdatei386Tobsoletes_noarch(self):
         p = self.pkgs
-        res, msg = self.runOperation(['update'], [p.ii386], [p.unoarch])
+        res, msg = self.runOperation(['update'], [p.installed_i386], [p.update_noarch])
         self.assert_(res==2, msg)
-        self.assertResult((p.unoarch,))
-    def testUpdatei386TonoarchForDependency(self):
+        self.assertResult((p.update_noarch,))
+    def testUpdatei386Tobsoletes_noarchForDependency(self):
         p = self.pkgs
-        res, msg = self.runOperation(['install', 'zsh-utils'], [p.ii386], [p.unoarch, p.ru])
+        res, msg = self.runOperation(['install', 'zsh-utils'], [p.installed_i386], [p.update_noarch, p.requires_update])
         self.assert_(res==2, msg)
-        #self.assertResult((p.unoarch, p.ru))
-        self.assertResult((p.ii386, p.unoarch, p.ru))
+        #self.assertResult((p.update_noarch, p.requires_update))
+        self.assertResult((p.installed_i386, p.update_noarch, p.requires_update))
 
-    def testUpdateMultilibTonoarch(self):
+    def testUpdateMultilibTobsoletes_noarch(self):
         p = self.pkgs
-        res, msg = self.runOperation(['update'], [p.ii386, p.ix86_64], [p.unoarch])
+        res, msg = self.runOperation(['update'], [p.installed_i386, p.installed_x86_64], [p.update_noarch])
         self.assert_(res==2, msg)
-        #self.assertResult((p.unoarch,))
-        self.assertResult((p.unoarch, p.ix86_64))
-    def testUpdateMultilibTonoarchForDependency(self):
+        #self.assertResult((p.update_noarch,))
+        self.assertResult((p.update_noarch, p.installed_x86_64))
+    def testUpdateMultilibTobsoletes_noarchForDependency(self):
         p = self.pkgs
-        res, msg = self.runOperation(['install', 'zsh-utils'], [p.ii386, p.ix86_64], [p.unoarch, p.ru])
+        res, msg = self.runOperation(['install', 'zsh-utils'], [p.installed_i386, p.installed_x86_64], [p.update_noarch, p.requires_update])
         self.assert_(res==2, msg)
-        #self.assertResult((p.unoarch, p.ru))
-        self.assertResult((p.ii386, p.ix86_64, p.unoarch, p.ru))
+        #self.assertResult((p.update_noarch, p.requires_update))
+        self.assertResult((p.installed_i386, p.installed_x86_64, p.update_noarch, p.requires_update))
 
     def testUpdatenoarchToMultilib(self):
         p = self.pkgs
-        res, msg = self.runOperation(['update'], [p.inoarch], [p.ui386, p.ux86_64])
+        res, msg = self.runOperation(['update'], [p.installed_noarch], [p.update_i386, p.update_x86_64])
         self.assert_(res==2, msg)
-        self.assertResult((p.ui386, p.ux86_64))
-        # self.assertResult((p.ux86_64)) # ?
+        self.assertResult((p.update_i386, p.update_x86_64))
+        # self.assertResult((p.update_x86_64)) # ?
     def testUpdatenoarchToMultilibForDependency(self):
         p = self.pkgs
-        res, msg = self.runOperation(['install', 'zsh-utils'], [p.inoarch], [p.ui386, p.ux86_64, p.ru])
+        res, msg = self.runOperation(['install', 'zsh-utils'], [p.installed_noarch], [p.update_i386, p.update_x86_64, p.requires_update])
         self.assert_(res==2, msg)
-        # self.assertResult((p.ui386, p.ux86_64, p.ru))
-        # self.assertResult((p.ux86_64, p.ru))
-        self.assertResult((p.inoarch, p.ux86_64, p.ru))
+        # self.assertResult((p.update_i386, p.update_x86_64, p.requires_update))
+        # self.assertResult((p.update_x86_64, p.requires_update))
+        self.assertResult((p.installed_noarch, p.update_x86_64, p.requires_update))
     def testUpdatenoarchToMultilibForDependencyFix(self):
         p = self.pkgs
-        res, msg = self.runOperation(['update'], [p.inoarch, p.ux86_64, p.ru], [p.ui386, p.ux86_64])
+        res, msg = self.runOperation(['update'], [p.installed_noarch, p.update_x86_64, p.requires_update], [p.update_i386, p.update_x86_64])
         self.assert_(res==2, msg)
-        self.assertResult((p.ui386, p.ux86_64, p.ru))
-        # self.assertResult((p.ux86_64, p.ru)) # ?
+        self.assertResult((p.update_i386, p.update_x86_64, p.requires_update))
+        # self.assertResult((p.update_x86_64, p.requires_update)) # ?
 
     # obsoletes
 
     def testObsoletenoarchToMultiarch(self):
         p = self.pkgs
-        res, msg = self.runOperation(['update'], [p.inoarch], [p.oi386, p.ox86_64])
+        res, msg = self.runOperation(['update'], [p.installed_noarch], [p.obsoletes_i386, p.obsoletes_x86_64])
         self.assert_(res==2, msg)
-        #self.assertResult((p.ox86_64,))
-        self.assertResult((p.oi386, p.ox86_64))
+        #self.assertResult((p.obsoletes_x86_64,))
+        self.assertResult((p.obsoletes_i386, p.obsoletes_x86_64))
     def testObsoletenoarchToMultiarchForDependency(self):
         p = self.pkgs
-        res, msg = self.runOperation(['install', 'superzippy'], [p.inoarch], 
-                                     [p.oi386, p.ox86_64, p.ro])
+        res, msg = self.runOperation(['install', 'superzippy'], [p.installed_noarch], 
+                                     [p.obsoletes_i386, p.obsoletes_x86_64, p.requires_obsoletes])
         self.assert_(res==2, msg)
-        #self.assertResult((p.ox86_64, p.ro))
-        self.assertResult((p.inoarch, p.ox86_64, p.ro))
+        #self.assertResult((p.obsoletes_x86_64, p.requires_obsoletes))
+        self.assertResult((p.installed_noarch, p.obsoletes_x86_64, p.requires_obsoletes))
     def testObsoletenoarchToMultiarchForDependencyFix(self):
         p = self.pkgs
-        res, msg = self.runOperation(['update'], [p.inoarch, p.ox86_64, p.ro], [p.oi386, p.ox86_64])
+        res, msg = self.runOperation(['update'], [p.installed_noarch, p.obsoletes_x86_64, p.requires_obsoletes], [p.obsoletes_i386, p.obsoletes_x86_64])
         #self.assert_(res==2, msg)
-        #self.assertResult((p.ox86_64,)) # yes, this would be nice - but also wrong
-        self.assertResult((p.inoarch, p.ox86_64, p.ro))
+        #self.assertResult((p.obsoletes_x86_64,)) # yes, this would be nice - but also wrong
+        self.assertResult((p.installed_noarch, p.obsoletes_x86_64, p.requires_obsoletes))
 
     def testObsoletei386ToMultiarch(self):
         p = self.pkgs
-        res, msg = self.runOperation(['update'], [p.ii386], [p.oi386, p.ox86_64])
+        res, msg = self.runOperation(['update'], [p.installed_i386], [p.obsoletes_i386, p.obsoletes_x86_64])
         self.assert_(res==2, msg)
-        self.assertResult((p.oi386,))
+        self.assertResult((p.obsoletes_i386,))
     def testObsoletei386ToMultiarchForDependency(self):
         p = self.pkgs
-        res, msg = self.runOperation(['install', 'superzippy'], [p.ii386], [p.oi386, p.ox86_64, p.ro])
+        res, msg = self.runOperation(['install', 'superzippy'], [p.installed_i386], [p.obsoletes_i386, p.obsoletes_x86_64, p.requires_obsoletes])
         self.assert_(res==2, msg)
-        #self.assertResult((p.ox86_64, p.ro))
-        self.assertResult((p.ii386, p.ox86_64, p.ro))
+        #self.assertResult((p.obsoletes_x86_64, p.requires_obsoletes))
+        self.assertResult((p.installed_i386, p.obsoletes_x86_64, p.requires_obsoletes))
     def testObsoletei386ToMultiarchForDependencyFix(self):
         p = self.pkgs
-        res, msg = self.runOperation(['update'], [p.ii386, p.ox86_64, p.ro], [p.oi386, p.ox86_64])
+        res, msg = self.runOperation(['update'], [p.installed_i386, p.obsoletes_x86_64, p.requires_obsoletes], [p.obsoletes_i386, p.obsoletes_x86_64])
         #self.assert_(res==2, msg)
-        #self.assertResult((p.oi386, p.ox86_64, p.ro))
-        self.assertResult((p.ii386, p.ox86_64, p.ro))
+        #self.assertResult((p.obsoletes_i386, p.obsoletes_x86_64, p.requires_obsoletes))
+        self.assertResult((p.installed_i386, p.obsoletes_x86_64, p.requires_obsoletes))
 
     def testObsoletex86_64ToMultiarch(self):
         p = self.pkgs
-        res, msg = self.runOperation(['update'], [p.ix86_64], [p.oi386, p.ox86_64])
+        res, msg = self.runOperation(['update'], [p.installed_x86_64], [p.obsoletes_i386, p.obsoletes_x86_64])
         self.assert_(res==2, msg)
-        self.assertResult((p.ox86_64,))
+        self.assertResult((p.obsoletes_x86_64,))
     def testObsoletex86_64ToMultiarchForDependency(self):
         p = self.pkgs
         res, msg = self.runOperation(['install', 'superzippy'], 
-                                     [p.ix86_64], [p.oi386, p.ox86_64, p.ro])
+                                     [p.installed_x86_64], [p.obsoletes_i386, p.obsoletes_x86_64, p.requires_obsoletes])
         self.assert_(res==2, msg)
-        #self.assertResult((p.ox86_64, p.ro))
-        self.assertResult((p.ix86_64, p.ox86_64, p.ro))
+        #self.assertResult((p.obsoletes_x86_64, p.requires_obsoletes))
+        self.assertResult((p.installed_x86_64, p.obsoletes_x86_64, p.requires_obsoletes))
 
     def testObsoleteMultiarchToMultiarch(self):
         p = self.pkgs
-        res, msg = self.runOperation(['update'], [p.ii386, p.ix86_64], [p.oi386, p.ox86_64])
+        res, msg = self.runOperation(['update'], [p.installed_i386, p.installed_x86_64], [p.obsoletes_i386, p.obsoletes_x86_64])
         self.assert_(res==2, msg)
-        self.assertResult((p.oi386, p.ox86_64))
+        self.assertResult((p.obsoletes_i386, p.obsoletes_x86_64))
     def testObsoleteMultiarchToMultiarchForDependency(self):
         p = self.pkgs
         res, msg = self.runOperation(['install', 'superzippy'], 
-                                     [p.ii386, p.ix86_64], [p.oi386, p.ox86_64, p.ro])
+                                     [p.installed_i386, p.installed_x86_64], [p.obsoletes_i386, p.obsoletes_x86_64, p.requires_obsoletes])
         self.assert_(res==2, msg)
-        #self.assertResult((p.oi386, p.ox86_64, p.ro))
-        self.assertResult((p.ii386, p.ix86_64, p.ox86_64, p.ro))
+        #self.assertResult((p.obsoletes_i386, p.obsoletes_x86_64, p.requires_obsoletes))
+        self.assertResult((p.installed_i386, p.installed_x86_64, p.obsoletes_x86_64, p.requires_obsoletes))
 
-    def testObsoleteMultiarchTonoarch(self):
+    def testObsoleteMultiarchTobsoletes_noarch(self):
         p = self.pkgs
-        res, msg = self.runOperation(['update'], [p.ii386, p.ix86_64], [p.onoarch])
+        res, msg = self.runOperation(['update'], [p.installed_i386, p.installed_x86_64], [p.obsoletes_noarch])
         self.assert_(res==2, msg)
-        self.assertResult((p.onoarch,))
-    def testObsoleteMultiarchTonoarchForDependency(self):
+        self.assertResult((p.obsoletes_noarch,))
+    def testObsoleteMultiarchTobsoletes_noarchForDependency(self):
         p = self.pkgs
-        res, msg = self.runOperation(['install', 'superzippy'], [p.ii386, p.ix86_64], [p.onoarch, p.ro])
+        res, msg = self.runOperation(['install', 'superzippy'], [p.installed_i386, p.installed_x86_64], [p.obsoletes_noarch, p.requires_obsoletes])
         self.assert_(res==2, msg)
-        #self.assertResult((p.onoarch, p.ro))
-        self.assertResult((p.ii386, p.ix86_64, p.onoarch, p.ro))
+        #self.assertResult((p.obsoletes_noarch, p.requires_obsoletes))
+        self.assertResult((p.installed_i386, p.installed_x86_64, p.obsoletes_noarch, p.requires_obsoletes))
 
     # Obsolete for conflict
 
     def _XXX_testObsoleteForConflict(self):
         p = self.pkgs
-        res, msg = self.runOperation(['install', 'super-zippy'], [p.ii386], [p.oi386, p.ox86_64, p.conflict])
+        res, msg = self.runOperation(['install', 'super-zippy'], [p.installed_i386], [p.obsoletes_i386, p.obsoletes_x86_64, p.conflicts])
         self.assert_(res==2, msg)
-        self.assertResult((p.oi386, p.conflict))
+        self.assertResult((p.obsoletes_i386, p.conflicts))
 
 def suite():
     suite = unittest.TestSuite()
