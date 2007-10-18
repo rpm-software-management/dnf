@@ -165,7 +165,7 @@ class RPMTransaction:
                     fcntl.fcntl(self._readpipe.fileno(),
                                 fcntl.F_GETFL) | os.O_NONBLOCK)
         self._writepipe = os.fdopen(w, 'w')
-        self.base.ts.ts.scriptFd = self._writepipe.fileno()
+        self.base.ts.scriptFd = self._writepipe.fileno()
         rpm.setVerbosity(rpm.RPMLOG_INFO)
         rpm.setLogFile(self._writepipe)
 
