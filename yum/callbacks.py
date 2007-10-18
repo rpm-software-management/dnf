@@ -16,6 +16,8 @@
 # imports
 
 import logging 
+from urlgrabber.progress import BaseMeter,format_time,format_number
+
 
 # ProcessTransaction States
 
@@ -46,5 +48,94 @@ class ProcessTransNoOutputCallback:
         pass
          
     def event(self,state,data=None):
+        pass
+    
+class DownloadBaseCallback( BaseMeter ):
+    """ 
+    This is class is a base class to use by implement a download progress
+    handler to be used with YumBase.repos.setProgressBar.
+    
+    Example:
+    
+    from yum.callbacks import DownloadBaseCallback
+    
+    class MyDownloadCallback(  DownloadBaseCallback ):
+    
+        def updateProgress(self,name,frac,fread,ftime):
+            '''
+             Update the progressbar
+            @param name: filename
+            @param frac: Progress fracment (0 -> 1)
+            @param fread: formated string containing BytesRead
+            @param ftime : formated string containing remaining or elapsed time
+            '''
+            pct = int( frac*100 )
+            print " %s : %s " % (name,pct)
+            
+            
+    if __name__ == '__main__':
+        my = YumBase()
+        my.doConfigSetup()
+        dnlcb = MyDownloadCallback()
+        my.repos.repos.setProgressBar( dnlcb )
+        for pkg in my.pkgSack:
+            print pkg.name
+    
+    """
+    
+    def __init__(self):
+        BaseMeter.__init__( self )
+        self.totSize = ""   # Total size to download in a formatted string (Kb, MB etc)
+        
+    def update( self, amount_read, now=None ):
+        BaseMeter.update( self, amount_read, now )
+
+    def _do_start( self, now=None ):
+        name = self._getName()
+        self.updateProgress(name,0.0,"","")
+        if not self.size is None:
+            self.totSize = format_number( self.size )
+
+    def _do_update( self, amount_read, now=None ):
+        fread = format_number( amount_read )
+        name = self._getName()
+        if self.size is None:
+            # Elapsed time
+            etime = self.re.elapsed_time()
+            fetime = format_time( etime )
+            frac = 0.0
+            self.updateProgress(name,frac,fread,fetime)
+        else:
+            # Remaining time
+            rtime = self.re.remaining_time()
+            frtime = format_time( rtime )
+            frac = self.re.fraction_read()
+            self.updateProgress(name,frac,fread,frtime)
+
+
+    def _do_end( self, amount_read, now=None ):
+        total_time = format_time( self.re.elapsed_time() )
+        total_size = format_number( amount_read )
+        name = self._getName()
+        self.updateProgress(name,1.0,total_size,total_time)
+
+    def _getName(self):
+        '''
+        Get the name of the package being downloaded
+        '''
+        if self.text and type( self.text ) == type( "" ):
+            name = self.text
+        else:
+            name = self.basename
+        return name
+
+    def updateProgress(self,name,frac,fread,ftime):
+        '''
+         Update the progressbar (Overload in child class)
+        @param name: filename
+        @param frac: Progress fracment (0 -> 1)
+        @param fread: formated string containing BytesRead
+        @param ftime : formated string containing remaining or elapsed time
+        '''
         pass
         
