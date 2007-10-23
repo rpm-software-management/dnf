@@ -439,7 +439,7 @@ class RPMDBPackageSack(PackageSackBase):
 
     def whatRequires(self, name, flags, version):
         # XXX deprecate?
-        return [po.pkgtup for po in self.getProvides(name, flags, version)]
+        return [po.pkgtup for po in self.getRequires(name, flags, version)]
             
 def main():
     sack = RPMDBPackageSack('/')
