@@ -1,139 +1,7 @@
 import unittest
-import testbase
+from testbase import *
 
-from yum import YumBase
-from yum import transactioninfo
-from yum import packages
-from yum import packageSack
-from yum.constants import TS_INSTALL_STATES, TS_REMOVE_STATES
-
-class FakeConf(object):
-
-    def __init__(self):
-        self.installonlypkgs = []
-        self.exclude = []
-        self.debuglevel = 0
-        self.obsoletes = True
-        self.exactarch = False
-        self.exactarchlist = []
-        self.installroot = '/'
-        self.tsflags = []
-        self.installonly_limit = 0
-
-class FakeRepo(object):
-
-    def __init__(self, id=None):
-        self.id = id
-
-class FakePackage(packages.YumAvailablePackage):
-
-    def __init__(self, name, version, release, epoch, arch, repo=None):
-        packages.PackageObject.__init__(self)
-        packages.RpmBase.__init__(self)
-
-        self.name = name
-        self.version = version
-        self.ver = version
-        self.release = release
-        self.rel = release
-        self.epoch = epoch
-        self.arch = arch
-
-        self.prco['provides'].append((name, 'EQ', (epoch, version, release)))
-
-        if repo is None:
-            repo = FakeRepo()
-        self.repo = repo
-        self.repoid = repo.id
-
-        # Just a unique integer
-        self.id = self.__hash__()
-
-    def addProvides(self, name, flag=None, evr=(None, None, None)):
-        self.prco['provides'].append((name, flag, evr))
-    def addRequires(self, name, flag=None, evr=(None, None, None)):
-        self.prco['requires'].append((name, flag, evr))
-    def addConflicts(self, name, flag=None, evr=(None, None, None)):
-        self.prco['conflicts'].append((name, flag, evr))
-    def addObsoletes(self, name, flag=None, evr=(None, None, None)):
-        self.prco['obsoletes'].append((name, flag, evr))
-    def addFile(self, name, ftype='file'):
-        self.files[ftype].append(name)
-
-
-class TestingDepsolve(YumBase):
-
-    def __init__(self, tsInfo, rpmdb, pkgSack):
-        YumBase.__init__(self)
-
-        self.conf = FakeConf()
-        self.tsInfo = tsInfo
-        self._tsInfo = tsInfo
-        self.rpmdb = rpmdb
-        self.pkgSack = pkgSack
-
-    def getInstalledPackageObject(self, pkgtup):
-        return self.rpmdb.searchNevra(pkgtup[0], pkgtup[2], pkgtup[3],
-                pkgtup[4], pkgtup[1])[0]
-
-
-def build_depsolver(tsInfo, rpmdb=None, pkgSack=None):
-    if rpmdb is None:
-        rpmdb   = packageSack.PackageSack()
-    if pkgSack is None:
-        pkgSack = packageSack.PackageSack()
-    # XXX this side-affect is hacky:
-    tsInfo.setDatabases(rpmdb, pkgSack)
-
-    solver = TestingDepsolve(tsInfo, rpmdb, pkgSack)
-    return solver
-
-class DepsolveTests(unittest.TestCase):
-
-    tsInfo = None
-    rpmdb  = None
-    def setUp(self):
-        """ Called at the start of each test. """
-        self.tsInfo = transactioninfo.TransactionData()
-        self.rpmdb  = packageSack.PackageSack()
-        self.xsack  = packageSack.PackageSack()
-        self.repo   = FakeRepo("installed")
-
-    def FakeInstPkg(self, name, version, release, epoch, arch):
-        return FakePackage(name, version, release, epoch, arch, self.repo)
-
-    def resolveCode(self):
-        solver = build_depsolver(self.tsInfo, self.rpmdb, self.xsack)
-        result = solver.resolveDeps()
-        res = {0 : 'empty', 2 : 'ok', 1 : 'err'}
-        return (res[result[0]], result[1])
-
-    def assertResult(self, pkgs, optional_pkgs=[], check_multilib_versions=True):
-        errors = ["assertResult:\n"]
-        pkgs = set(pkgs)
-        optional_pkgs = set(optional_pkgs)
-        installed = set()
-
-        for pkg in self.rpmdb:
-            # got removed
-            if self.tsInfo.getMembersWithState(pkg.pkgtup, TS_REMOVE_STATES):
-                if pkg in pkgs:
-                    errors.append("Package %s got removed!\n" % pkg)
-            else: # still installed
-                installed.add(pkg)
-                if pkg not in pkgs and pkg not in optional_pkgs:
-                    errors.append("Package %s didn't got removed!\n" % pkg)
-
-        for txmbr in self.tsInfo.getMembersWithState(output_states=TS_INSTALL_STATES):
-            installed.add(txmbr.po)
-            if txmbr.po not in pkgs and txmbr.po not in optional_pkgs:
-                errors.append("Package %s got installed!\n" % txmbr.po)
-        for pkg in pkgs - installed:
-            errors.append("Package %s didn't got installed!\n" % pkg)
-
-        if len(errors) > 1:
-            self.fail("".join(errors))
-
+class DepsolveTests(DepsolveTests):
     def testEmpty(self):
         po = FakePackage('zsh', '1', '1', None, 'i386')
         self.tsInfo.addInstall(po)
@@ -577,7 +445,7 @@ class DepsolveTests(unittest.TestCase):
         updatepo = FakePackage('zip', '2', '1', '0', 'i386')
         self.xsack.addPackage(updatepo)
 
-        if testbase.new_behavior:
+        if new_behavior:
             self.assertEquals('ok', *self.resolveCode())
             self.assertResult((po, updatepo))
         else:
@@ -609,7 +477,7 @@ class DepsolveTests(unittest.TestCase):
         updatepo = FakePackage('zip', '2', '1', '0', 'i386')
         self.xsack.addPackage(updatepo)
 
-        if testbase.new_behavior:
+        if new_behavior:
             self.assertEquals('ok', *self.resolveCode())
             self.assertResult((po, updatepo))
         else:
