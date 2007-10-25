@@ -16,6 +16,7 @@ from yum import packages
 from yum import packageSack
 from yum.constants import TS_INSTALL_STATES, TS_REMOVE_STATES
 from cli import YumBaseCli
+import inspect
 
 #############################################################
 ### Helper classes ##########################################
@@ -131,7 +132,7 @@ class _DepsolveTestsBase(unittest.TestCase):
         present if they are in the rpmdb and are not REMOVEd or they
         are INSTALLed.
         """
-        errors = ["assertResult:\n"]
+        errors = ["Unexpected result after depsolving: \n\n"]
         pkgs = set(pkgs)
         optional_pkgs = set(optional_pkgs)
         installed = set()
@@ -140,21 +141,25 @@ class _DepsolveTestsBase(unittest.TestCase):
             # got removed
             if self.tsInfo.getMembersWithState(pkg.pkgtup, TS_REMOVE_STATES):
                 if pkg in pkgs:
-                    errors.append("Package %s got removed!\n" % pkg)
+                    errors.append("Package %s was removed!\n" % pkg)
             else: # still installed
-                installed.add(pkg)
                 if pkg not in pkgs and pkg not in optional_pkgs:
-                    errors.append("Package %s didn't got removed!\n" % pkg)
+                    errors.append("Package %s was not removed!\n" % pkg)
+            installed.add(pkg)
 
         for txmbr in self.tsInfo.getMembersWithState(output_states=TS_INSTALL_STATES):
             installed.add(txmbr.po)
             if txmbr.po not in pkgs and txmbr.po not in optional_pkgs:
-                errors.append("Package %s got installed!\n" % txmbr.po)
+                errors.append("Package %s was installed!\n" % txmbr.po)
         for pkg in pkgs - installed:
-            errors.append("Package %s didn't got installed!\n" % pkg)
+            errors.append("Package %s was not installed!\n" % pkg)
 
         if len(errors) > 1:
+            errors.append("\nTest case was:\n\n")
+            errors.extend(inspect.getsource(inspect.stack()[1][0].f_code))
+            errors.append("\n")
             self.fail("".join(errors))
+
 
 #######################################################################
 ### Derive Tests from these classes or unittest.TestCase ##############
