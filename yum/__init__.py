@@ -648,14 +648,21 @@ class YumBase(depsolve.Depsolve):
         """removes packages from packageSacks based on global exclude lists,
            command line excludes and per-repository excludes, takes optional 
            repo object to use."""
+
+        if "all" in self.conf.disable_excludes:
+            return
         
         # if not repo: then assume global excludes, only
         # if repo: then do only that repos' packages and excludes
         
         if not repo: # global only
+            if "main" in self.conf.disable_excludes:
+                return
             excludelist = self.conf.exclude
             repoid = None
         else:
+            if repo.id in self.conf.disable_excludes:
+                return
             excludelist = repo.getExcludePkgList()
             repoid = repo.id
 

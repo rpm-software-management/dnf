@@ -1179,7 +1179,12 @@ class YumOptionParser(OptionParser):
 
             if opts.installroot:
                 self.base.conf.installroot = opts.installroot
- 
+
+            if opts.disableexcludes:
+                self.base.conf.disable_excludes = opts.disableexcludes
+            else:
+                self.base.conf.disable_excludes = []
+                
             for exclude in opts.exclude:
                 try:
                     excludelist = self.base.conf.exclude
@@ -1282,6 +1287,9 @@ class YumOptionParser(OptionParser):
                 metavar='[repo]')
         self.add_option("-x", "--exclude", default=[], action="append",
                 help="exclude package(s) by name or glob", metavar='[package]')
+        self.add_option("", "--disableexcludes", default=[], action="append",
+                help="disable exclude from main, for a repo or for everything",
+                        metavar='[repo]')
         self.add_option("--obsoletes", action="store_true", 
                 help="enable obsoletes processing during updates")
         self.add_option("--noplugins", action="store_true", 
