@@ -204,8 +204,17 @@ processing logic. For more information see the \fBupdate\fP command above.
 Configuration Option: \fBobsoletes\fP
 .IP "\fB\-\-exclude=package\fP"
 Exclude a specific package by name or glob from updates on all repositories.
-.br
 Configuration Option: \fBexclude\fP
+.br
+.IP "\fB\-\-disableexcludes=[all|main|repoid]\fP"
+Disable the excludes defined in your config files. Takes one of three options:
+.br
+all == disable all excludes
+.br
+main == disable excludes defined in [main] in yum.conf
+.br
+repoid == disable excludes defined for that repo
+.br
 .IP "\fB\-\-noplugins\fP"
 Run with all plugins disabled.
 .br
