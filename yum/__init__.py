@@ -2274,15 +2274,15 @@ class YumBase(depsolve.Depsolve):
             probs = self.downloadPkgs(dlpkgs)
 
         except IndexError:
-            raise yum.Errors.YumBaseError, ["Unable to find a suitable mirror."]
+            raise Errors.YumBaseError, ["Unable to find a suitable mirror."]
         if len(probs.keys()) > 0:
             errstr = ["Errors were encountered while downloading packages."]
             for key in probs.keys():
-                errors = yum.misc.unique(probs[key])
+                errors = misc.unique(probs[key])
                 for error in errors:
                     errstr.append("%s: %s" %(key, error))
 
-            raise yum.Errors.YumDownloadError, errstr
+            raise Errors.YumDownloadError, errstr
         return dlpkgs
 
     def _checkSignatures(self,pkgs,callback):
@@ -2296,7 +2296,7 @@ class YumBase(depsolve.Depsolve):
             elif result == 1:
                self.getKeyForPackage(po, self._askForGPGKeyImport)
             else:
-                raise yum.Errors.YumGPGCheckError, errmsg
+                raise Errors.YumGPGCheckError, errmsg
 
         return 0
         
@@ -2318,7 +2318,7 @@ class YumBase(depsolve.Depsolve):
                 retmsgs = ['ERROR with rpm_check_debug vs depsolve:']
                 retmsgs.extend(msgs) 
                 retmsgs.append('Please report this error in bugzilla')
-                raise yum.Errors.YumRPMCheckError,retmsgs
+                raise Errors.YumRPMCheckError,retmsgs
         
         tsConf = {}
         for feature in ['diskspacecheck']: # more to come, I'm sure
@@ -2343,7 +2343,7 @@ class YumBase(depsolve.Depsolve):
             errstring =  'Test Transaction Errors: '
             for descr in tserrors:
                  errstring += '  %s\n' % descr 
-            raise yum.Errors.YumTestTransactionError, errstring 
+            raise Errors.YumTestTransactionError, errstring
 
         del self.ts
         # put back our depcheck callback
