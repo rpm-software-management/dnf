@@ -25,6 +25,8 @@ import gettext
 import rpm
 from i18n import _
 
+import re # For YumTerm
+
 from urlgrabber.progress import TextMeter
 from urlgrabber.grabber import URLGrabError
 from yum.misc import sortPkgObj, prco_tuple_to_string
@@ -39,6 +41,167 @@ class YumTextMeter(TextMeter):
         checkSignals()
         TextMeter.update(self, amount_read, now)
 
+class YumTerm:
+    """some terminal "UI" helpers based on curses"""
+
+    # From initial search for "terminfo and python" got:
+    # http://aspn.activestate.com/ASPN/Cookbook/Python/Recipe/475116
+    # ...it's probably not copyrightable, but if so ASPN says:
+    #
+    #  Except where otherwise noted, recipes in the Python Cookbook are
+    # published under the Python license.
+
+    __enabled = True
+
+    columns = 80
+    lines   = 24
+    # Output modes:
+    MODE = {
+        'bold' : '',
+        'blink' : '',
+        'dim' : '',
+        'reverse' : '',
+        'underline' : '',
+        'normal' : ''
+        }
+
+    # Colours
+    FG_COLOR = {
+        'black' : '',
+        'blue' : '',
+        'green' : '',
+        'cyan' : '',
+        'red' : '',
+        'magenta' : '',
+        'yellow' : '',
+        'white' : ''
+        }
+
+    BG_COLOR = {
+        'black' : '',
+        'blue' : '',
+        'green' : '',
+        'cyan' : '',
+        'red' : '',
+        'magenta' : '',
+        'yellow' : '',
+        'white' : ''
+        }
+
+    __cap_names = {
+        'underline' : 'smul',
+        'reverse' : 'rev',
+        'normal' : 'sgr0',
+        }
+    
+    __colors = {
+        'black' : 0,
+        'blue' : 1,
+        'green' : 2,
+        'cyan' : 3,
+        'red' : 4,
+        'magenta' : 5,
+        'yellow' : 6,
+        'white' : 7
+        }
+    __ansi_colors = {
+        'black' : 0,
+        'red' : 1,
+        'green' : 2,
+        'yellow' : 3,
+        'blue' : 4,
+        'magenta' : 5,
+        'cyan' : 6,
+        'white' : 7
+        }
+
+    def __init__(self, term_stream=None):
+        # Curses isn't available on all platforms
+        try:
+            import curses
+        except:
+            self.__enabled = False
+            return
+
+        # If the stream isn't a tty, then assume it has no capabilities.
+        if not term_stream:
+            term_stream = sys.stdout
+        if not term_stream.isatty():
+            self.__enabled = False
+            return
+        
+        # Check the terminal type.  If we fail, then assume that the
+        # terminal has no capabilities.
+        try:
+            curses.setupterm(fd=term_stream.fileno())
+        except:
+            self.__enabled = False
+            return
+        self._ctigetstr = curses.tigetstr
+
+        self.columns = curses.tigetnum('cols')
+        self.lines   = curses.tigetnum('lines')
+        
+        # Look up string capabilities.
+        for cap_name in self.MODE.keys():
+            mode = cap_name
+            if cap_name in self.__cap_names:
+                cap_name = self.__cap_names[cap_name]
+            self.MODE[mode] = self._tigetstr(cap_name) or ''
+
+        # Colors
+        set_fg = self._tigetstr('setf')
+        if set_fg:
+            for (color, val) in self.__colors.items():
+                self.FG_COLOR[color] = curses.tparm(set_fg, val) or ''
+        set_fg_ansi = self._tigetstr('setaf')
+        if set_fg_ansi:
+            for (color, val) in self.__ansi_colors.items():
+                self.FG_COLOR[color] = curses.tparm(set_fg_ansi, val) or ''
+        set_bg = self._tigetstr('setb')
+        if set_bg:
+            for (color, val) in self.__colors.items():
+                self.BG_COLOR[color] = curses.tparm(set_bg, val) or ''
+        set_bg_ansi = self._tigetstr('setab')
+        if set_bg_ansi:
+            for (color, val) in self.__ansi_colors.items():
+                self.BG_COLOR[color] = curses.tparm(set_bg_ansi, val) or ''
+
+    def _tigetstr(self, cap_name):
+        # String capabilities can include "delays" of the form "$<2>".
+        # For any modern terminal, we should be able to just ignore
+        # these, so strip them out.
+        cap = self._ctigetstr(cap_name) or ''
+        return re.sub(r'\$<\d+>[/*]?', '', cap)
+
+    def sub(self, haystack, beg, end, needles, escape=None):
+        if not self.__enabled:
+            return haystack
+
+        if not escape:
+            escape = re.escape
+
+        render = lambda match: beg + match.group() + end
+        for needle in needles:
+            haystack = re.sub(escape(needle), render, haystack)
+        return haystack
+    def sub_norm(self, haystack, beg, needles, **kwds):
+        return self.sub(haystack, beg, self.MODE['normal'], needles, **kwds)
+
+    def sub_mode(self, haystack, mode, needles, **kwds):
+        return self.sub_norm(haystack, self.MODE[mode], needles, **kwds)
+
+    def sub_bold(self, haystack, needles, **kwds):
+        return self.sub_mode(haystack, 'bold', needles)
+    
+    def sub_fg(self, haystack, color, needles, **kwds):
+        return self.sub_norm(haystack, self.FG_COLOR[color], needles, **kwds)
+
+    def sub_bg(self, haystack, color, needles, **kwds):
+        return self.sub_norm(haystack, self.BG_COLOR[color], needles, **kwds)
+
+
+
 class YumOutput:
 
     def __init__(self):
@@ -48,6 +211,8 @@ class YumOutput:
             self.i18ndomains = rpm.expandMacro("%_i18ndomains").split(":")
         else:
             self.i18ndomains = ["redhat-dist"]
+
+        self.term = YumTerm()
     
     def printtime(self):
         months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
@@ -239,11 +404,16 @@ class YumOutput:
     
         return(format % (number, space, symbols[depth]))
 
-    def matchcallback(self, po, values):
+    def matchcallback(self, po, values, matchfor=None):
         msg = '%s.%s : %s' % (po.name, po.arch, po.summary)
+        if matchfor:
+            msg = self.term.sub_bold(msg, matchfor)
+        
         self.verbose_logger.log(logginglevels.INFO_2, msg)
         self.verbose_logger.debug('Matched from:')
         for item in values:
+            if matchfor:
+                item = self.term.sub_bold(item, matchfor)
             self.verbose_logger.debug('%s', item)
         self.verbose_logger.debug('\n\n')
         

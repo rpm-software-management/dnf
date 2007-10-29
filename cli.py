@@ -849,7 +849,7 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         
         total = 0
         for (po, matched_value) in matching:
-            self.matchcallback(po, matched_value)
+            self.matchcallback(po, matched_value, args)
             total += 1
             
         if total == 0:

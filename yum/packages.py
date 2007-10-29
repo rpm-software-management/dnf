@@ -569,6 +569,7 @@ class YumAvailablePackage(PackageObject, RpmBase):
             for item in ['summary', 'description', 'packager', 'group',
                          'buildhost', 'sourcerpm', 'url', 'vendor']:
                 setattr(self, item, pkgdict.info[item])
+            self.summary = self.summary.replace('\n', '')
             
             self.licenses.append(pkgdict.info['license'])
         
@@ -626,7 +627,7 @@ class YumHeaderPackage(YumAvailablePackage):
         self.release = self.hdr['release']
         self.ver = self.version
         self.rel = self.release
-        self.summary = self.hdr['summary']
+        self.summary = self.hdr['summary'].replace('\n', '')
         self.description = self.hdr['description']
         self.pkgid = self.hdr[rpm.RPMTAG_SHA1HEADER]
         if not self.pkgid:
