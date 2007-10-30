@@ -529,6 +529,8 @@ class YumConf(StartupConf):
     metadata_expire = IntOption(1800)   # time in seconds
     mirrorlist_expire = IntOption(86400) # time in seconds (1 day)
     rpm_check_debug = BoolOption(True)
+    disable_excludes = ListOption()    
+
     
     _reposlist = []
 
@@ -634,7 +636,7 @@ def readMainConfig(startupconf):
     # propagate the debuglevel and errorlevel values:
     yumconf.debuglevel = startupconf.debuglevel
     yumconf.errorlevel = startupconf.errorlevel
-
+    
     return yumconf
 
 def getOption(conf, section, name, option):
