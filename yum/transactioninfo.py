@@ -151,6 +151,9 @@ class TransactionData:
     def add(self, txmember):
         """add a package to the transaction"""
         
+        for oldpo in txmember.updates:
+            self.addUpdated(oldpo, txmember.po)
+
         if not self.pkgdict.has_key(txmember.pkgtup):
             self.pkgdict[txmember.pkgtup] = []
         else:
@@ -174,8 +177,6 @@ class TransactionData:
                 condtxmbr = self.addInstall(po)
                 condtxmbr.setAsDep(po=txmember.po)
         
-        for oldpo in txmember.updates:
-            self.addUpdated(oldpo, txmember.po)
 
     def remove(self, pkgtup):
         """remove a package from the transaction"""
