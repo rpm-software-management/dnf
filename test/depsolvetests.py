@@ -157,7 +157,7 @@ class DepsolveTests(DepsolveTests):
         po.addRequires('zip', 'LT', ('2', '1.3', '4'))
         self.tsInfo.addInstall(po)
 
-        ipo = self.FakeInstPkg('zip', '1.3', '4', None, 'i386')
+        ipo = FakePackage('zip', '1.3', '4', None, 'i386')
         self.rpmdb.addPackage(ipo)
 
         self.assertEquals('ok', *self.resolveCode())
@@ -329,7 +329,7 @@ class DepsolveTests(DepsolveTests):
         self.assertResult((po, xpo))
 
     def testUpdateSinglePackage(self):
-        ipo = self.FakeInstPkg('zsh', '1', '1', None, 'i386')
+        ipo = FakePackage('zsh', '1', '1', None, 'i386')
         self.rpmdb.addPackage(ipo)
 
         po = FakePackage('zsh', '1', '3', None, 'i386')
@@ -373,7 +373,7 @@ class DepsolveTests(DepsolveTests):
         self.assertResult((po, installedpo, updatepo2))
 
     def testUpdateSinglePackageNewRequires(self):
-        ipo = self.FakeInstPkg('zsh', '1', '1', None, 'i386')
+        ipo = FakePackage('zsh', '1', '1', None, 'i386')
         self.rpmdb.addPackage(ipo)
 
         po = FakePackage('zsh', '1', '3', None, 'i386')
@@ -387,7 +387,7 @@ class DepsolveTests(DepsolveTests):
         self.assertResult((po, xpo))
 
     def testUpdateSinglePackageOldRequires(self):
-        ipo = self.FakeInstPkg('zsh', '1', '1', None, 'i386')
+        ipo = FakePackage('zsh', '1', '1', None, 'i386')
         ipo.addRequires('zip', None, (None, None, None))
         self.rpmdb.addPackage(ipo)
 
@@ -402,7 +402,7 @@ class DepsolveTests(DepsolveTests):
         self.assertResult((po, xpo))
 
     def testUpdateSinglePackageOldRequiresGone(self):
-        ipo = self.FakeInstPkg('zsh', '1', '1', None, 'i386')
+        ipo = FakePackage('zsh', '1', '1', None, 'i386')
         ipo.addRequires('zip', None, (None, None, None))
         self.rpmdb.addPackage(ipo)
 
@@ -416,7 +416,7 @@ class DepsolveTests(DepsolveTests):
         self.assertResult((po, xpo))
 
     def testUpdateSinglePackageObsoletesOldRequirement(self):
-        ipo = self.FakeInstPkg('zsh', '1', '1', None, 'i386')
+        ipo = FakePackage('zsh', '1', '1', None, 'i386')
         ipo.addRequires('zip', None, (None, None, None))
         self.rpmdb.addPackage(ipo)
 

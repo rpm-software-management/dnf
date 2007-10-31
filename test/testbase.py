@@ -71,34 +71,6 @@ class FakePackage(packages.YumAvailablePackage):
     def addFile(self, name, ftype='file'):
         self.files[ftype].append(name)
 
-
-class TestingDepsolve(YumBase):
-
-    def __init__(self, tsInfo, rpmdb, pkgSack):
-        YumBase.__init__(self)
-
-        self.conf = FakeConf()
-        self.tsInfo = tsInfo
-        self._tsInfo = tsInfo
-        self.rpmdb = rpmdb
-        self.pkgSack = pkgSack
-
-    def getInstalledPackageObject(self, pkgtup):
-        return self.rpmdb.searchNevra(pkgtup[0], pkgtup[2], pkgtup[3],
-                pkgtup[4], pkgtup[1])[0]
-
-
-def build_depsolver(tsInfo, rpmdb=None, pkgSack=None):
-    if rpmdb is None:
-        rpmdb   = packageSack.PackageSack()
-    if pkgSack is None:
-        pkgSack = packageSack.PackageSack()
-    # XXX this side-affect is hacky:
-    tsInfo.setDatabases(rpmdb, pkgSack)
-
-    solver = TestingDepsolve(tsInfo, rpmdb, pkgSack)
-    return solver
-
 class _Container(object):
     pass
 
@@ -190,12 +162,26 @@ class DepsolveTests(_DepsolveTestsBase):
         self.rpmdb  = packageSack.PackageSack()
         self.xsack  = packageSack.PackageSack()
         self.repo   = FakeRepo("installed")
-
-    def FakeInstPkg(self, name, version, release, epoch, arch):
-        return FakePackage(name, version, release, epoch, arch, self.repo)
+        # XXX this side-affect is hacky:
+        self.tsInfo.setDatabases(self.rpmdb, self.xsack)
 
     def resolveCode(self):
-        solver = build_depsolver(self.tsInfo, self.rpmdb, self.xsack)
+        solver = YumBase()
+        solver.conf = FakeConf()
+        solver.tsInfo = solver._tsInfo = self.tsInfo
+        solver.rpmdb = self.rpmdb
+        solver.pkgSack = self.xsack
+
+        for po in self.rpmdb:
+            po.repoid = po.repo.id = "installed"
+        for po in self.xsack:
+            po.repoid = po.repo.id = "TestRepository"
+        for txmbr in self.tsInfo:
+            if txmbr.ts_state in ('u', 'i'):
+                txmbr.po.repoid = txmbr.po.repo.id = "TestRepository"
+            else:
+                txmbr.po.repoid = txmbr.po.repo.id = "installed"
+
         result, msg = solver.resolveDeps()
         return (self.res[result], msg)
 
@@ -234,6 +220,7 @@ class OperationsTests(_DepsolveTestsBase):
             po.repoid = po.repo.id = "installed"
             self.depsolver.rpmdb.addPackage(po)
         for po in available:
+            po.repoid = po.repo.id = "TestRepository"
             self.depsolver._pkgSack.addPackage(po)
 
         self.depsolver.basecmd = args[0]
