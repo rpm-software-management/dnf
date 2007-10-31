@@ -489,18 +489,17 @@ class Depsolve(object):
         
 
         # find the best one 
-        # first, find out which arch of the ones we can choose from is closest
-        # to the arch of the requesting pkg
 
-        # we could be here from _requiringFromInstalled() - check to see if we have
-        # an entry in the ts first, if not - look in the rpmdb for the requiring arch
-        ts_reqs =  self.tsInfo.matchNaevr(name=name, ver=version, rel=release)
-        if len(ts_reqs):
-            reqpkg = ts_reqs[0]
-        else:
-            reqpkg = self.rpmdb.searchNevra(name=name, ver=version, rel=release)[0]
-            
-        thisarch = reqpkg.arch
+        # try updating the already install pkgs
+        for pkg in provSack.returnNewestByName():
+            txmbrs = self.update(name=pkg.name, epoch=pkg.epoch, version=pkg.version, rel=pkg.rel)
+            if txmbrs:
+                checkdeps = True
+                return checkdeps, missingdep
+
+        # find out which arch of the ones we can choose from is closest
+        # to the arch of the requesting pkg
+        thisarch = requiringPo.arch
         newest = provSack.returnNewestByNameArch()
         if len(newest) > 1: # there's no way this can be zero
             best = newest[0]
