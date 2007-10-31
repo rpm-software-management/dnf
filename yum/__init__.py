@@ -1974,7 +1974,6 @@ class YumBase(depsolve.Depsolve):
         else:
             obsoletes = []
 
-
         tx_return = []
         if not po and not kwargs.keys(): # update everything (the easy case)
             self.verbose_logger.log(logginglevels.DEBUG_2, 'Updating Everything')
@@ -2032,33 +2031,39 @@ class YumBase(depsolve.Depsolve):
             # mark the package being updated or obsoleted away appropriately
             # and the package relationship in the tsInfo
             
-            for installed_pkg in instpkgs:
-                if self.up.obsoleted_dict.has_key(installed_pkg.pkgtup) and self.conf.obsoletes:
-                    obsoleting = self.up.obsoleted_dict[installed_pkg.pkgtup][0]
-                    obsoleting_pkg = self.getPackageObject(obsoleting)
-                    # FIXME check for what might be in there here
-                    txmbr = self.tsInfo.addObsoleting(obsoleting_pkg, installed_pkg)
-                    self.tsInfo.addObsoleted(installed_pkg, obsoleting_pkg)
-                    tx_return.append(txmbr)
-            
+            if self.conf.obsoletes:
+                for installed_pkg in instpkgs:
+                    for obsoleting in self.up.obsoleted_dict.get(installed_pkg.pkgtup, []):
+                        obsoleting_pkg = self.getPackageObject(obsoleting)
+                        # FIXME check for what might be in there here
+                        txmbr = self.tsInfo.addObsoleting(obsoleting_pkg, installed_pkg)
+                        self.tsInfo.addObsoleted(installed_pkg, obsoleting_pkg)
+                        tx_return.append(txmbr)
+                for available_pkg in availpkgs:
+                    for obsoleted in self.up.obsoleting_dict.get(available_pkg.pkgtup, []):
+                        obsoleted_pkg = self.getInstalledPackageObject(obsoleted)
+                        txmbr = self.tsInfo.addObsoleting(available_pkg, obsoleted_pkg)
+                        tx_return.append(txmbr)
+                        if self.tsInfo.isObsoleted(obsoleted):
+                            self.verbose_logger.log(logginglevels.DEBUG_2, 'Package is already obsoleted: %s.%s %s:%s-%s', obsoleted)
+                        else:
+                            txmbr = self.tsInfo.addObsoleted(obsoleted_pkg, available_pkg)
+                            tx_return.append(txmbr)
             for available_pkg in availpkgs:
-                if self.up.updating_dict.has_key(available_pkg.pkgtup):
-                    updated = self.up.updating_dict[available_pkg.pkgtup][0]
+                for updated in self.up.updating_dict.get(available_pkg.pkgtup, []):
                     if self.tsInfo.isObsoleted(updated):
                         self.verbose_logger.log(logginglevels.DEBUG_2, 'Not Updating Package that is already obsoleted: %s.%s %s:%s-%s', 
-                            updated)
+                                                updated)
                     else:
                         updated_pkg =  self.rpmdb.searchPkgTuple(updated)[0]
                         txmbr = self.tsInfo.addUpdate(available_pkg, updated_pkg)
                         tx_return.append(txmbr)
-                    
             for installed_pkg in instpkgs:
-                if self.up.updatesdict.has_key(installed_pkg.pkgtup):
-                    updating = self.up.updatesdict[installed_pkg.pkgtup][0]
+                for updating in self.up.updatesdict.get(installed_pkg.pkgtup, []):
                     updating_pkg = self.getPackageObject(updating)
                     if self.tsInfo.isObsoleted(installed_pkg.pkgtup):
                         self.verbose_logger.log(logginglevels.DEBUG_2, 'Not Updating Package that is already obsoleted: %s.%s %s:%s-%s', 
-                            installed_pkg.pkgtup)
+                                                installed_pkg.pkgtup)
                     else:
                         txmbr = self.tsInfo.addUpdate(updating_pkg, installed_pkg)
                         tx_return.append(txmbr)

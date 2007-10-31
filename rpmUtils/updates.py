@@ -260,6 +260,10 @@ class Updates:
                 if not self.obsoleted_dict.has_key(old):
                     self.obsoleted_dict[old] = []
                 self.obsoleted_dict[old].append(new)
+        self.obsoleting_dict = {}
+        for obsoleted, obsoletings in self.obsoleted_dict.iteritems():
+            for obsoleting in obsoletings:
+                self.obsoleting_dict.setdefault(obsoleting, []).append(obsoleted)
     
     def doUpdates(self):
         """check for key lists as populated then commit acts of evil to
@@ -473,15 +477,12 @@ class Updates:
                         
                     (rpm_e, rpm_v, rpm_r) = hipdict[(n, rpm_a)][0] # there can be just one
                     (e, v, r) = hapdict[(n, a)][0] # just one, I'm sure, I swear!
-
                     rc = rpmUtils.miscutils.compareEVR((e, v, r), (rpm_e, rpm_v, rpm_r))
-
                     if rc > 0:
                         # this is definitely an update - put it in the dict
                         if not updatedict.has_key((n, rpm_a, rpm_e, rpm_v, rpm_r)):
                             updatedict[(n, rpm_a, rpm_e, rpm_v, rpm_r)] = []
                         updatedict[(n, rpm_a, rpm_e, rpm_v, rpm_r)].append((n, a, e, v, r))
-                   
                    
         self.updatesdict = updatedict                    
         self.makeUpdatingDict()
