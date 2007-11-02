@@ -24,7 +24,7 @@ class SimpleUpdateTests(OperationsTests):
         res, msg = self.runOperation(['update'], [p.installed_noarch], [p.update_noarch,])
         self.assert_(res=='ok', msg)
         self.assertResult((p.update_noarch,))
-    def testUpdatenoarchToMultilibForDependency(self):
+    def testUpdatenoarchTonoarchForDependency(self):
         p = self.pkgs
         res, msg = self.runOperation(['install', 'zsh-utils'], [p.installed_noarch], [p.update_noarch, p.requires_update])
         self.assert_(res=='ok', msg)
@@ -35,7 +35,7 @@ class SimpleUpdateTests(OperationsTests):
         res, msg = self.runOperation(['update'], [p.installed_noarch], [p.update_i386,])
         self.assert_(res=='ok', msg)
         self.assertResult((p.update_i386,))
-    def testUpdatenoarchToMultilibForDependency(self):
+    def testUpdatenoarchToi386ForDependency(self):
         p = self.pkgs
         res, msg = self.runOperation(['install', 'zsh-utils'], [p.installed_noarch], [p.update_i386, p.requires_update])
         self.assert_(res=='ok', msg)
@@ -46,7 +46,7 @@ class SimpleUpdateTests(OperationsTests):
         res, msg = self.runOperation(['update'], [p.installed_noarch], [p.update_x86_64,])
         self.assert_(res=='ok', msg)
         self.assertResult((p.update_x86_64,))
-    def testUpdatenoarchToMultilibForDependency(self):
+    def testUpdatenoarchTox86_64ForDependency(self):
         p = self.pkgs
         res, msg = self.runOperation(['install', 'zsh-utils'], [p.installed_noarch], [p.update_x86_64, p.requires_update])
         self.assert_(res=='ok', msg)
@@ -84,7 +84,7 @@ class SimpleUpdateTests(OperationsTests):
         res, msg = self.runOperation(['update'], [p.installed_i386], [p.update_i386])
         self.assert_(res=='ok', msg)
         self.assertResult((p.update_i386,))
-    def testUpdatei386TonoarchForDependency(self):
+    def testUpdatei386Toi386ForDependency(self):
         p = self.pkgs
         res, msg = self.runOperation(['install', 'zsh-utils'], [p.installed_i386], [p.update_i386, p.requires_update])
         self.assert_(res=='ok', msg)
@@ -208,6 +208,7 @@ class SimpleUpdateTests(OperationsTests):
             self.assertResult((p.update_x86_64, p.requires_update)) # XXX is this right?
         else:
             self.assertResult((p.update_x86_64, p.installed_i386, p.requires_update))
+
     def testUpdateMultilibToMultilib(self):
         p = self.pkgs
         res, msg = self.runOperation(['update'], [p.installed_i386, p.installed_x86_64], [p.update_i386, p.update_x86_64])
