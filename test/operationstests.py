@@ -26,10 +26,7 @@ class SimpleUpdateTests(OperationsTests):
         p = self.pkgs
         res, msg = self.runOperation(['install', 'zsh-utils'], [p.installed_i386], [p.update_i386, p.update_x86_64, p.requires_update])
         self.assert_(res=='ok', msg)
-        if new_behavior:
-            self.assertResult((p.update_i386, p.requires_update))
-        else:
-            self.assertResult((p.installed_i386, p.update_x86_64, p.requires_update))
+        self.assertResult((p.update_i386, p.requires_update))
     def testUpdatei386ToMultilibForDependencyFix(self):
         p = self.pkgs
         res, msg = self.runOperation(['update'], [p.installed_i386, p.update_x86_64, p.requires_update], [p.update_i386, p.update_x86_64])
@@ -57,10 +54,7 @@ class SimpleUpdateTests(OperationsTests):
         p = self.pkgs
         res, msg = self.runOperation(['install', 'zsh-utils'], [p.installed_i386, p.installed_x86_64], [p.update_i386, p.update_x86_64, p.requires_update])
         self.assert_(res=='ok', msg)
-        if new_behavior:
-            self.assertResult((p.update_i386, p.update_x86_64,  p.requires_update))
-        else:
-            self.assertResult((p.installed_i386, p.update_x86_64,  p.requires_update))
+        self.assertResult((p.update_i386, p.update_x86_64,  p.requires_update))
 
     def testUpdatei386Tonoarch(self):
         p = self.pkgs
@@ -71,27 +65,18 @@ class SimpleUpdateTests(OperationsTests):
         p = self.pkgs
         res, msg = self.runOperation(['install', 'zsh-utils'], [p.installed_i386], [p.update_noarch, p.requires_update])
         self.assert_(res=='ok', msg)
-        if new_behavior:
-            self.assertResult((p.update_noarch, p.requires_update))
-        else:
-            self.assertResult((p.installed_i386, p.update_noarch, p.requires_update))
+        self.assertResult((p.update_noarch, p.requires_update))
 
     def testUpdateMultilibTonoarch(self):
         p = self.pkgs
         res, msg = self.runOperation(['update'], [p.installed_i386, p.installed_x86_64], [p.update_noarch])
         self.assert_(res=='ok', msg)
-        if new_behavior:
-            self.assertResult((p.update_noarch,))
-        else:
-            self.assertResult((p.update_noarch, p.installed_x86_64))
+        self.assertResult((p.update_noarch,))
     def testUpdateMultilibTonoarchForDependency(self):
         p = self.pkgs
         res, msg = self.runOperation(['install', 'zsh-utils'], [p.installed_i386, p.installed_x86_64], [p.update_noarch, p.requires_update])
         self.assert_(res=='ok', msg)
-        if new_behavior:
-            self.assertResult((p.update_noarch, p.requires_update))
-        else:
-            self.assertResult((p.installed_i386, p.installed_x86_64, p.update_noarch, p.requires_update))
+        self.assertResult((p.update_noarch, p.requires_update))
 
     def testUpdatenoarchToMultilib(self):
         p = self.pkgs
@@ -105,10 +90,7 @@ class SimpleUpdateTests(OperationsTests):
         p = self.pkgs
         res, msg = self.runOperation(['install', 'zsh-utils'], [p.installed_noarch], [p.update_i386, p.update_x86_64, p.requires_update])
         self.assert_(res=='ok', msg)
-        if new_behavior:
-            self.assertResult((p.update_x86_64, p.requires_update), (p.update_i386,))
-        else:
-            self.assertResult((p.installed_noarch, p.update_x86_64, p.requires_update))
+        self.assertResult((p.update_x86_64, p.requires_update), (p.update_i386,))
     def testUpdatenoarchToMultilibForDependencyFix(self):
         p = self.pkgs
         res, msg = self.runOperation(['update'], [p.installed_noarch, p.update_x86_64, p.requires_update], [p.update_i386, p.update_x86_64])
@@ -154,10 +136,7 @@ class SimpleObsoleteTests(OperationsTests):
         res, msg = self.runOperation(['install', 'superzippy'], [p.installed_noarch], 
                                      [p.obsoletes_i386, p.obsoletes_x86_64, p.requires_obsoletes])
         self.assert_(res=='ok', msg)
-        if new_behavior:
-            self.assertResult((p.obsoletes_x86_64, p.requires_obsoletes), (p.obsoletes_i386,))
-        else:
-            self.assertResult((p.installed_noarch, p.obsoletes_x86_64, p.requires_obsoletes))
+        self.assertResult((p.obsoletes_x86_64, p.requires_obsoletes), (p.obsoletes_i386,))
     def testObsoletenoarchToMultiarchForDependencyFix(self):
         p = self.pkgs
         res, msg = self.runOperation(['update'], [p.installed_noarch, p.obsoletes_x86_64, p.requires_obsoletes], [p.obsoletes_i386, p.obsoletes_x86_64])
@@ -174,10 +153,7 @@ class SimpleObsoleteTests(OperationsTests):
         p = self.pkgs
         res, msg = self.runOperation(['install', 'superzippy'], [p.installed_i386], [p.obsoletes_i386, p.obsoletes_x86_64, p.requires_obsoletes])
         self.assert_(res=='ok', msg)
-        if new_behavior:
-            self.assertResult((p.obsoletes_i386, p.requires_obsoletes))
-        else:
-            self.assertResult((p.installed_i386, p.obsoletes_x86_64, p.requires_obsoletes))
+        self.assertResult((p.obsoletes_i386, p.requires_obsoletes))
     def testObsoletei386ToMultiarchForDependencyFix(self):
         p = self.pkgs
         res, msg = self.runOperation(['update'], [p.installed_i386, p.obsoletes_x86_64, p.requires_obsoletes], [p.obsoletes_i386, p.obsoletes_x86_64])
@@ -195,10 +171,7 @@ class SimpleObsoleteTests(OperationsTests):
         res, msg = self.runOperation(['install', 'superzippy'], 
                                      [p.installed_x86_64], [p.obsoletes_i386, p.obsoletes_x86_64, p.requires_obsoletes])
         self.assert_(res=='ok', msg)
-        if new_behavior:
-            self.assertResult((p.obsoletes_x86_64, p.requires_obsoletes))
-        else:
-            self.assertResult((p.installed_x86_64, p.obsoletes_x86_64, p.requires_obsoletes))
+        self.assertResult((p.obsoletes_x86_64, p.requires_obsoletes))
 
     def testObsoleteMultiarchToMultiarch(self):
         p = self.pkgs
@@ -210,10 +183,7 @@ class SimpleObsoleteTests(OperationsTests):
         res, msg = self.runOperation(['install', 'superzippy'], 
                                      [p.installed_i386, p.installed_x86_64], [p.obsoletes_i386, p.obsoletes_x86_64, p.requires_obsoletes])
         self.assert_(res=='ok', msg)
-        if new_behavior:
-            self.assertResult((p.obsoletes_i386, p.obsoletes_x86_64, p.requires_obsoletes))
-        else:
-            self.assertResult((p.installed_i386, p.installed_x86_64, p.obsoletes_x86_64, p.requires_obsoletes))
+        self.assertResult((p.obsoletes_i386, p.obsoletes_x86_64, p.requires_obsoletes))
 
     def testObsoleteMultiarchTonoarch(self):
         p = self.pkgs
@@ -224,10 +194,7 @@ class SimpleObsoleteTests(OperationsTests):
         p = self.pkgs
         res, msg = self.runOperation(['install', 'superzippy'], [p.installed_i386, p.installed_x86_64], [p.obsoletes_noarch, p.requires_obsoletes])
         self.assert_(res=='ok', msg)
-        if new_behavior:
-            self.assertResult((p.obsoletes_noarch, p.requires_obsoletes))
-        else:
-            self.assertResult((p.installed_i386, p.installed_x86_64, p.obsoletes_noarch, p.requires_obsoletes))
+        self.assertResult((p.obsoletes_noarch, p.requires_obsoletes))
 
 # Obsolete for conflict
 class ComplicatedTests(OperationsTests):
