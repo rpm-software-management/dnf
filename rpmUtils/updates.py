@@ -38,10 +38,9 @@ class Updates:
         self.exactarchlist = ['kernel', 'kernel-smp', 'glibc', 'kernel-hugemem',
                               'kernel-enterprise', 'kernel-bigmem', 'kernel-BOOT']
                               
-        self.myarch = rpmUtils.arch.getCanonArch() # this is for debugging only 
-                                                   # set this if you want to 
-                                                   # test on some other arch
-                                                   # otherwise leave it alone
+        self.myarch = rpmUtils.arch.canonArch # set this if you want to
+                                              # test on some other arch
+                                              # otherwise leave it alone
         
         # make some dicts from installed and available
         self.installdict = self.makeNADict(self.installed, 1)
