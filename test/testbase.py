@@ -17,6 +17,7 @@ from yum import packageSack
 from yum.constants import TS_INSTALL_STATES, TS_REMOVE_STATES
 from cli import YumBaseCli
 import inspect
+from rpmUtils import arch
 
 #############################################################
 ### Helper classes ##########################################
@@ -82,11 +83,18 @@ class _Container(object):
 class _DepsolveTestsBase(unittest.TestCase):
 
     res = {0 : 'empty', 2 : 'ok', 1 : 'err'}
+    canonArch = "x86_64"
 
     def __init__(self, methodName='runTest'):
         unittest.TestCase.__init__(self, methodName)
         self.pkgs = _Container()
         self.buildPkgs(self.pkgs)
+
+    def setUp(self):
+        self._canonArch = arch.canonArch
+        arch.canonArch = self.canonArch
+    def tearDown(self):
+        arch.canonArch = self._canonArch
 
     @staticmethod
     def buildPkgs(pkgs, *args):
@@ -158,6 +166,7 @@ class DepsolveTests(_DepsolveTestsBase):
 
     def setUp(self):
         """ Called at the start of each test. """
+        _DepsolveTestsBase.setUp(self)
         self.tsInfo = transactioninfo.TransactionData()
         self.rpmdb  = packageSack.PackageSack()
         self.xsack  = packageSack.PackageSack()
