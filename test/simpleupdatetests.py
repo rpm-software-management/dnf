@@ -179,7 +179,8 @@ class SimpleUpdateTests(OperationsTests):
         res, msg = self.runOperation(['update'], [p.installed_i386, p.installed_x86_64], [p.update_i386])
         self.assert_(res=='ok', msg)
         if new_behavior:
-            self.assertResult((p.update_i386,)) # XXX is this right?
+            self.assertResult((p.update_i386, p.installed_x86_64))
+            # self.assertResult((p.update_i386,)) # XXX is this right?
         else:
             self.assertResult((p.update_i386, p.installed_x86_64))
     def testUpdateMultilibToi386ForDependency(self):
@@ -187,7 +188,8 @@ class SimpleUpdateTests(OperationsTests):
         res, msg = self.runOperation(['install', 'zsh-utils'], [p.installed_i386, p.installed_x86_64], [p.update_i386, p.requires_update])
         self.assert_(res=='ok', msg)
         if new_behavior:
-            self.assertResult((p.update_i386, p.requires_update)) # XXX is this right?
+            self.assertResult((p.update_i386, p.installed_x86_64, p.requires_update))
+            # self.assertResult((p.update_i386, p.requires_update)) # XXX is this right?
         else:
             self.assertResult((p.update_i386, p.installed_x86_64, p.requires_update))
 
@@ -196,7 +198,8 @@ class SimpleUpdateTests(OperationsTests):
         res, msg = self.runOperation(['update'], [p.installed_i386, p.installed_x86_64], [p.update_x86_64])
         self.assert_(res=='ok', msg)
         if new_behavior:
-            self.assertResult((p.update_x86_64,)) # XXX is this right?
+            self.assertResult((p.update_x86_64, p.installed_i386))
+            # self.assertResult((p.update_x86_64,)) # XXX is this right?
         else:
             self.assertResult((p.update_x86_64, p.installed_i386))
     def testUpdateMultilibTox86_64ForDependency(self):
@@ -204,7 +207,8 @@ class SimpleUpdateTests(OperationsTests):
         res, msg = self.runOperation(['install', 'zsh-utils'], [p.installed_i386, p.installed_x86_64], [p.update_x86_64, p.requires_update])
         self.assert_(res=='ok', msg)
         if new_behavior:
-            self.assertResult((p.update_x86_64, p.requires_update)) # XXX is this right?
+            self.assertResult((p.update_x86_64, p.installed_i386, p.requires_update))
+            # self.assertResult((p.update_x86_64, p.requires_update)) # XXX is this right?
         else:
             self.assertResult((p.update_x86_64, p.installed_i386, p.requires_update))
 
