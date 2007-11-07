@@ -484,7 +484,8 @@ class Depsolve(object):
             if pkgmode in ['i', 'u']:
                 self.verbose_logger.log(logginglevels.DEBUG_2,
                     '%s already in ts, skipping this one', n)
-                checkdeps = 1
+                # FIXME: Remove this line, if it is not needed ?
+                # checkdeps = 1
                 return checkdeps, missingdep
         
 
