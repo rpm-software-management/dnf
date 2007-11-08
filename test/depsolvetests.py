@@ -445,11 +445,8 @@ class DepsolveTests(DepsolveTests):
         updatepo = FakePackage('zip', '2', '1', '0', 'i386')
         self.xsack.addPackage(updatepo)
 
-        if new_behavior:
-            self.assertEquals('ok', *self.resolveCode())
-            self.assertResult((po, updatepo))
-        else:
-            self.assertEquals('err', *self.resolveCode())
+        self.assertEquals('ok', *self.resolveCode())
+        self.assertResult((po, updatepo))
 
     def testUpdateForConflict2(self):
         po = FakePackage('zsh', '1', '1', '0', 'i386')
