@@ -1,3 +1,7 @@
+"""
+Assorted utility functions for yum.
+"""
+
 import types
 import os
 import os.path
@@ -299,7 +303,7 @@ def sortPkgObj(pkg1 ,pkg2):
         return -1
         
 def newestInList(pkgs):
-    # return the newest in the list of packages
+    """ Return the newest in the list of packages. """
     ret = [ pkgs.pop() ]
     newest = ret[0]
     for pkg in pkgs:
@@ -311,6 +315,13 @@ def newestInList(pkgs):
     return ret
 
 def version_tuple_to_string(evrTuple):
+    """
+    Convert a tuple representing a package version to a string.
+
+    @param evrTuple: A 3-tuple of epoch, version, and release.
+
+    Return the string representation of evrTuple.
+    """
     (e, v, r) = evrTuple
     s = ""
     
@@ -344,6 +355,7 @@ def refineSearchPattern(arg):
     return restring
     
 def bunzipFile(source,dest):
+    """ Extract the bzipped contents of source to dest. """
     s_fn = bz2.BZ2File(source, 'r')
     destination = open(dest, 'w')
 

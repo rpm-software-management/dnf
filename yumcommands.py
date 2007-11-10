@@ -29,7 +29,7 @@ def checkRootUID(base):
     """
     Verify that the program is being run by the root user.
 
-    @base: a YumBase object.
+    @param base: a YumBase object.
     """
     if base.conf.uid != 0:
         base.logger.critical(_('You need to be root to perform this command.'))
