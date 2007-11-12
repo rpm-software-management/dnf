@@ -37,6 +37,11 @@ from yum import logginglevels
 from yum.rpmtrans import RPMBaseCallback
 
 class YumTextMeter(TextMeter):
+
+    """
+    Text progress bar output.
+    """
+
     def update(self, amount_read, now=None):
         checkSignals()
         TextMeter.update(self, amount_read, now)
@@ -203,6 +208,10 @@ class YumTerm:
 
 
 class YumOutput:
+
+    """
+    Main output class for the yum command line.
+    """
 
     def __init__(self):
         self.logger = logging.getLogger("yum.cli")
@@ -642,6 +651,11 @@ class CacheProgressCallback:
         progressbar(current, total, name)
 
 class YumCliRPMCallBack(RPMBaseCallback):
+
+    """
+    Yum specific callback class for RPM operations.
+    """
+
     def __init__(self):
         RPMBaseCallback.__init__(self)
         self.lastmsg = None

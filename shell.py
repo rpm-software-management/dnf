@@ -13,6 +13,10 @@
 # Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 # Copyright 2005 Duke University
 
+"""
+A shell implementation for the yum command line interface.
+"""
+
 import sys
 import cmd
 import shlex
@@ -24,6 +28,11 @@ import yum.logginglevels as logginglevels
 
 
 class YumShell(cmd.Cmd):
+
+    """
+    Interactive yum shell.
+    """
+
     def __init__(self, base):
         cmd.Cmd.__init__(self)
         self.base = base

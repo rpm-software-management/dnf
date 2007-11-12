@@ -15,6 +15,9 @@
 # Copyright 2005 Duke University 
 # Written by Seth Vidal
 
+"""
+Command line interface yum class and related.
+"""
 
 import os
 import re
@@ -42,11 +45,17 @@ import signal
 import yumcommands
 
 def sigquit(signum, frame):
+    """ SIGQUIT handler for the yum cli. """
     print >> sys.stderr, "Quit signal sent - exiting immediately"
     sys.exit(1)
 
 class CliError(yum.Errors.YumBaseError):
-   def __init__(self, args=''):
+
+    """
+    Command line interface related Exception.
+    """
+
+    def __init__(self, args=''):
         yum.Errors.YumBaseError.__init__(self)
         self.args = args
 

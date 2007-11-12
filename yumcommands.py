@@ -15,6 +15,10 @@
 # Copyright 2006 Duke University 
 # Written by Seth Vidal
 
+"""
+Classes for subcommands of the yum command line interface.
+"""
+
 import os
 import cli
 from yum import logginglevels
@@ -22,6 +26,11 @@ import yum.Errors
 from i18n import _
 
 def checkRootUID(base):
+    """
+    Verify that the program is being run by the root user.
+
+    @param base: a YumBase object.
+    """
     if base.conf.uid != 0:
         base.logger.critical(_('You need to be root to perform this command.'))
         raise cli.CliError
