@@ -18,6 +18,40 @@ class ComplicatedTests(OperationsTests):
             self.assert_(res=='ok', msg)
             self.assertResult((p.obsoletes_i386, p.conflicts))
 
+class CombinedUpdateObsoletesTest(OperationsTests):
+
+    @staticmethod
+    def buildPkgs(pkgs, *args):
+        pkgs.k_1 = FakePackage('k', '3.5')
+        pkgs.kdevel_1 = FakePackage('k-devel', '3.5')
+        pkgs.kdevel_1.addRequires('k')
+        pkgs.klibs_1_i386 = FakePackage('klibs', '3.5', arch='i386')
+        pkgs.klibs_1_x86_64 = FakePackage('klibs', '3.5', arch='x86_64')
+        pkgs.k_2 = FakePackage('k', '3.5', '2')
+        pkgs.kdevel_2 = FakePackage('k-devel', '3.5', '2')
+        pkgs.kdevel_2.addRequires('k')
+        pkgs.klibs_2_i386 = FakePackage('klibs', '3.5', '2', arch='i386')
+        pkgs.klibs_2_i386.addObsoletes('klibs', 'LT', (None, '3.5', '2'))
+        pkgs.klibs_2_i386.addObsoletes('k', 'LT', (None, '3.5', '2'))
+        pkgs.klibs_2_x86_64 = FakePackage('klibs', '3.5', '2', arch='x86_64')
+        pkgs.klibs_2_x86_64.addObsoletes('klibs', 'LT', (None, '3.5', '2'))
+        pkgs.klibs_2_x86_64.addObsoletes('k', 'LT', (None, '3.5', '2'))
+
+    def testSelfObsolete(self):
+        p = self.pkgs
+        res, msg = self.runOperation(['update'], [p.klibs_1_x86_64], [p.klibs_2_i386, p.klibs_2_x86_64])
+        self.assert_(res=='ok', msg)
+        self.assertResult((p.klibs_2_x86_64,))
+
+    def testPackageSplitWithObsoleteAndRequiresForUpdate(self):
+        p = self.pkgs
+        res, msg = self.runOperation(['update'], [p.k_1, p.kdevel_1, p.klibs_1_x86_64],
+                                     [p.k_2, p.kdevel_2, p.klibs_2_x86_64])
+        self.assert_(res=='ok', msg)
+        self.assertResult((p.k_2, p.kdevel_2, p.klibs_2_x86_64,))
+
+
+
 class ComplicatedObsoletesTests(OperationsTests):
 
     @staticmethod
@@ -81,6 +115,7 @@ class ComplicatedObsoletesTests(OperationsTests):
 def suite():
     suite = unittest.TestSuite()
     suite.addTest(unittest.makeSuite(ComplicatedObsoletesTests))
+    suite.addTest(unittest.makeSuite(CombinedUpdateObsoletesTest))
     suite.addTest(unittest.makeSuite(ComplicatedTests))
     return suite
 
