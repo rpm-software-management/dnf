@@ -511,7 +511,7 @@ class YumBase(depsolve.Depsolve):
             else:
                 repo.groups_added = True
 
-        if self.comps.compscount == 0:
+        if self._comps.compscount == 0:
             raise Errors.GroupsError, 'No Groups Available in any repository'
         
         pkglist = self.rpmdb.simplePkgList()
