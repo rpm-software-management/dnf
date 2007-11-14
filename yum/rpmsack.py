@@ -179,7 +179,7 @@ class RPMDBPackageSack(PackageSackBase):
         if not name:
             return
 
-        allpkg = [ pkgtup
+        allpkg = [ self._makePackageObject(hdr, idx)
             for (hdr, pkgtup, idx) in self._search(name=name) ]
 
         if not allpkg:
