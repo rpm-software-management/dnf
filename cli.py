@@ -350,7 +350,7 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
                 for msg in msgs:
                     print msg
     
-                return 0, ['Please report this error in bugzilla']
+                return 1, ['Please report this error in bugzilla']
                 
             
         self.verbose_logger.log(yum.logginglevels.INFO_2,
