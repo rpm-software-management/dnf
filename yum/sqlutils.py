@@ -1,9 +1,4 @@
 #!/usr/bin/python -tt
-#
-# utility functions to handle differences in pysqlite versions
-# These are from Wichert Akkerman <wichert@deephackmode.org>'s python-dhm
-#     http://www.wiggy.net/code/python-dhm
-#
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of version 2 of the GNU General Public License
 # as published by the Free Software Foundation
@@ -17,6 +12,12 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 # Copyright 2005 Duke University
+
+"""
+utility functions to handle differences in pysqlite versions
+These are from Wichert Akkerman <wichert@deephackmode.org>'s python-dhm
+http://www.wiggy.net/code/python-dhm
+"""
 
 try:
     import sqlite3 as sqlite
@@ -133,7 +134,13 @@ def QmarkToPyformat(query, params):
 
 
 def executeSQLPyFormat(cursor, query, params=None):
-    #print query
+    """
+    Execute a python < 2.5 (external sqlite module) style query.
+
+    @param cursor: A sqlite cursor
+    @param query: The query to execute
+    @param params: An optional list of parameters to the query
+    """
     if params is None:
         return cursor.execute(query)
     
@@ -141,7 +148,13 @@ def executeSQLPyFormat(cursor, query, params=None):
     return cursor.execute(q, p)
 
 def executeSQLQmark(cursor, query, params=None):
-    #print query
+    """
+    Execute a python 2.5 (sqlite3) style query.
+
+    @param cursor: A sqlite cursor
+    @param query: The query to execute
+    @param params: An optional list of parameters to the query
+    """
     if params is None:
         return cursor.execute(query)
     
