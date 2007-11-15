@@ -15,6 +15,10 @@
 # Copyright 2004 Duke University 
 # Written by Seth Vidal <skvidal at phy.duke.edu>
 
+"""
+Classes and functions dealing with rpm package representations.
+"""
+
 import rpm
 import os
 import os.path
@@ -33,6 +37,9 @@ urlparse.uses_fragment.append("media")
 
 
 def comparePoEVR(po1, po2):
+    """
+    Compare two PackageEVR objects.
+    """
     (e1, v1, r1) = (po1.epoch, po1.version, po1.release)
     (e2, v2, r2) = (po2.epoch, po2.version, po2.release)
     return rpmUtils.miscutils.compareEVR((e1, v1, r1), (e2, v2, r2))
@@ -353,6 +360,10 @@ class RpmBase(object):
     EVR = property(fget=lambda self: self.returnEVR())
     
 class PackageEVR:
+
+    """
+    A comparable epoch, version, and release representation.
+    """
     
     def __init__(self,e,v,r):
         self.epoch = e
