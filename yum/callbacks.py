@@ -60,10 +60,10 @@ class DownloadBaseCallback( BaseMeter ):
     from yum.callbacks import DownloadBaseCallback
     
     class MyDownloadCallback(  DownloadBaseCallback ):
-    
+
         def updateProgress(self,name,frac,fread,ftime):
             '''
-             Update the progressbar
+            Update the progressbar
             @param name: filename
             @param frac: Progress fracment (0 -> 1)
             @param fread: formated string containing BytesRead
@@ -71,8 +71,8 @@ class DownloadBaseCallback( BaseMeter ):
             '''
             pct = int( frac*100 )
             print " %s : %s " % (name,pct)
-            
-            
+
+
     if __name__ == '__main__':
         my = YumBase()
         my.doConfigSetup()
@@ -80,7 +80,7 @@ class DownloadBaseCallback( BaseMeter ):
         my.repos.repos.setProgressBar( dnlcb )
         for pkg in my.pkgSack:
             print pkg.name
-    
+
     """
     
     def __init__(self):
