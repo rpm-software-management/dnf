@@ -15,6 +15,10 @@
 # Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 # Copyright 2002 Duke University 
 
+"""
+Configuration parser and default values for yum.
+"""
+
 import os
 import warnings
 import rpm
@@ -134,6 +138,10 @@ def Inherit(option_obj):
 
 class ListOption(Option):
 
+    """
+    An option containing a list of strings.
+    """
+
     def __init__(self, default=None):
         if default is None:
             default = []
@@ -210,6 +218,11 @@ class UrlListOption(ListOption):
 
 
 class IntOption(Option):
+
+    """
+    An option representing an integer value.
+    """
+
     def parse(self, s):
         try:
             return int(s)
@@ -217,6 +230,13 @@ class IntOption(Option):
             raise ValueError('invalid integer value')
 
 class BoolOption(Option):
+
+    """
+    An option representing a boolean value.
+
+    The value can be one of 0, 1, yes, no, true, or false.
+    """
+
     def parse(self, s):
         s = s.lower()
         if s in ('0', 'no', 'false'):
@@ -253,6 +273,11 @@ class SelectionOption(Option):
 
 class BytesOption(Option):
 
+    """
+    An option representing a value in bytes.
+
+    The value may be given in bytes, kilobytes, megabytes, or gigabytes.
+    """
     # Multipliers for unit symbols
     MULTS = {
         'k': 1024,
