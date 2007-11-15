@@ -14,6 +14,10 @@
 # Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 # Copyright 2005 Duke University 
 
+"""
+Depedancy resolution module for yum.
+"""
+
 import os.path
 import re
 import types
@@ -43,6 +47,11 @@ flags = {"GT": rpm.RPMSENSE_GREATER,
          None: 0 }
 
 class Depsolve(object):
+
+    """
+    Dependency resolving class.
+    """
+
     def __init__(self):
         packages.base = self
         self._ts = None
@@ -988,12 +997,24 @@ class DepCheck(object):
         self.conflicts.append(confobj)
 
 class Requires(object):
+
+    """
+    A pure data class for holding a package and the list of things it
+    requires.
+    """
+
     def __init__(self, pkg,requires):
         self.pkg = pkg # po of requiring pkg
         self.requires = requires # list of things it requires that are un-closed in the ts
 
 
 class Conflicts(object):
+
+    """
+    A pure data class for holding a package and the list of things it
+    conflicts.
+    """
+
     def __init__(self, pkglist, conflict):
         self.pkglist = pkglist # list of conflicting package objects
         self.conflict = conflict # what the conflict was between them
