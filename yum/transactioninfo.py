@@ -20,6 +20,11 @@
 # remove the given txmbr and iterate to remove all those in depedent relationships
 # with the given txmbr. 
 
+"""
+Classes and functions for manipulating a transaction to be passed
+to rpm.
+"""
+
 from constants import *
 from packageSack import PackageSack
 from packages import YumInstalledPackage
