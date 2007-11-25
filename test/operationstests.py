@@ -332,14 +332,3 @@ class ComplicatedTests(OperationsTests):
         if new_behavior:
             self.assert_(res=='ok', msg)
             self.assertResult((p.obsoletes_i386, p.conflicts))
-
-def suite():
-    suite = unittest.TestSuite()
-    suite.addTest(unittest.makeSuite(SimpleUpdateTests))
-    suite.addTest(unittest.makeSuite(SimpleObsoleteTests))
-    suite.addTest(unittest.makeSuite(ComplicatedTests))
-    return suite
-
-if __name__ == "__main__":
-    unittest.main(defaultTest="suite")
-

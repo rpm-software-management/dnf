@@ -500,11 +500,3 @@ class DepsolveTests(DepsolveTests):
 
         self.assertEquals('ok', *self.resolveCode())
         self.assertResult((po, updatepo))
-
-def suite():
-    suite = unittest.TestSuite()
-    suite.addTest(unittest.makeSuite(DepsolveTests))
-    return suite
-
-if __name__ == "__main__":
-    unittest.main(defaultTest="suite")
