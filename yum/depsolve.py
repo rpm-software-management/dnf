@@ -698,9 +698,10 @@ class Depsolve(object):
         # holder object for things from the check
         if not hasattr(self, '_dcobj'):
             self._dcobj = DepCheck()
-        # reset what we've seen as things may have changed between calls
-        # to resolveDeps (rh#242368, rh#308321)
-        self._dcobj.already_seen = {}
+        else:
+            # reset what we've seen as things may have changed between calls
+            # to resolveDeps (rh#242368, rh#308321)
+            self._dcobj.reset()
 
         CheckDeps = True
         CheckRemoves = False
@@ -984,6 +985,9 @@ class DepCheck(object):
     def __init__(self):
         self.requires = []
         self.conflicts = []
+        self.reset()
+
+    def reset(self):
         self.already_seen = {}
         self.already_seen_removed = {}
 
