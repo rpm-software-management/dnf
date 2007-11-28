@@ -41,7 +41,7 @@ class TransactionData:
         self.root = '/'
         self.pkgdict = {} # key = pkgtup, val = list of TransactionMember obj
         self._namedict = {} # name -> list of TransactionMember obj
-        self.removedmembers = {}
+        self._unresolvedMembers = set()
         self.debug = 0
         self.changed = False
         self.installonlypkgs = []
@@ -94,20 +94,18 @@ class TransactionData:
             returnlist.extend(self.pkgdict[pkgtup])
         return returnlist
             
-    def getRemovedMembers(self, pkgtup=None):
-        """takes an optional package tuple and returns all transaction members
-           matching, no pkgtup means it returns all transaction members"""
+    def getUnresolvedMembers(self):
+        return list(self._unresolvedMembers)
 
-        returnlist = []
+    def markAsResolved(self, txmbr):
+        self._unresolvedMembers.discard(txmbr)
 
-        if pkgtup is None:
-            for members in self.removedmembers.itervalues():
-                returnlist.extend(members)
-        elif self.removedmembers.has_key(pkgtup):
-            returnlist.extend(self.removedmembers[pkgtup])
-
-        return returnlist
-
+    def resetResolved(self, hard=False):
+        if hard or len(self) < len(self._unresolvedMembers):
+            self._unresolvedMembers.clear()
+            self._unresolvedMembers.update(self.getMembers())
+            return True
+        return False
 
     def getMode(self, name=None, arch=None, epoch=None, ver=None, rel=None):
         """returns the mode of the first match from the transaction set, 
@@ -198,7 +196,7 @@ class TransactionData:
             for po in self.conditionals[txmember.name]:
                 condtxmbr = self.addInstall(po)
                 condtxmbr.setAsDep(po=txmember.po)
-        
+        self._unresolvedMembers.add(txmember)
 
     def remove(self, pkgtup):
         """remove a package from the transaction"""
@@ -212,8 +210,8 @@ class TransactionData:
             elif isinstance(txmbr.po, YumAvailablePackageSqlite):
                 self.pkgSackPackages -= 1
             self._namedict[txmbr.name].remove(txmbr)
+            self._unresolvedMembers.add(txmbr)
         
-        self.removedmembers.setdefault(pkgtup, []).extend(self.pkgdict[pkgtup])
         del self.pkgdict[pkgtup]
         if not self._namedict[pkgtup[0]]:
             del self._namedict[pkgtup[0]]
@@ -552,15 +550,17 @@ class TransactionMember:
             self.depends_on.append(po)
 
     def __cmp__(self, other):
-        if self.name > other.name:
-            return 1
-        if self.name < other.name:
-            return -1
-        if self.name == other.name:
-            return 0
+        result = cmp(self.name, other.name)
+        if result == 0:
+            result = cmp(hash(self), hash(other))
+            if self is other:
+                return 0
+            if result == 0:
+                return 1
+        return result
 
     def __hash__(self):
-        return hash(self.po.pkgtup)
+        return object.__hash__(self)
             
     def __str__(self):
         return "%s.%s %s-%s-%s - %s" % (self.name, self.arch, self.epoch,
@@ -579,4 +579,3 @@ class TransactionMember:
     # current and output states are defined in constants
     # relationships are defined in constants
     # ts states are: u, i, e
-    

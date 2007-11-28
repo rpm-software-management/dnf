@@ -639,13 +639,9 @@ class Depsolve(object):
         # holder object for things from the check
         if not hasattr(self, '_dcobj'):
             self._dcobj = DepCheck()
-        else:
-            # reset what we've seen as things may have changed between calls
-            # to resolveDeps (rh#242368, rh#308321)
-            self._dcobj.reset()
         self.po_with_problems = set()
         self._working_po = None
-        self.tsInfo.removedmembers.clear()
+        self.tsInfo.resetResolved(hard=False)
 
         CheckDeps = True
         CheckRemoves = False
@@ -730,10 +726,7 @@ class Depsolve(object):
         CheckRemoves = False
         # we need to check the opposite of install and remove for regular
         # tsInfo members vs removed members
-        for (txmbr, inst, rem) in map(lambda x: (x, TS_INSTALL_STATES, TS_REMOVE_STATES), self.tsInfo.getMembers()) + map(lambda x: (x, TS_REMOVE_STATES, TS_INSTALL_STATES), self.tsInfo.getRemovedMembers()):
-            if (self._dcobj.already_seen_removed.has_key(txmbr) or
-                (txmbr.ts_state is not None and self._dcobj.already_seen.has_key(txmbr))):
-                continue
+        for txmbr in self.tsInfo.getUnresolvedMembers():
 
             if self.dsCallback and txmbr.ts_state:
                 self.dsCallback.pkgAdded(txmbr.pkgtup, txmbr.ts_state)
@@ -749,10 +742,10 @@ class Depsolve(object):
             else:
                 self._working_po = txmbr.po
            
-            if txmbr.output_state in inst:
+            if (txmbr.output_state in TS_INSTALL_STATES) == (txmbr.po.state != None):
                 thisneeds = self._checkInstall(txmbr)
                 CheckInstalls = True
-            elif txmbr.output_state in rem:
+            else:
                 thisneeds = self._checkRemove(txmbr)
                 CheckRemoves = True
 
@@ -764,10 +757,7 @@ class Depsolve(object):
                 missing_in_pkg |= missing
 
             if not missing_in_pkg:
-                if txmbr.ts_state is None:
-                    self._dcobj.already_seen_removed[txmbr] = 1
-                else:
-                    self._dcobj.already_seen[txmbr] = 1
+                self.tsInfo.markAsResolved(txmbr)
 
             any_missing |= missing_in_pkg
 
@@ -941,11 +931,6 @@ class DepCheck(object):
     def __init__(self):
         self.requires = []
         self.conflicts = []
-        self.reset()
-
-    def reset(self):
-        self.already_seen = {}
-        self.already_seen_removed = {}
 
     def addRequires(self, po, req_tuple_list):
         # fixme - do checking for duplicates or additions in here to zip things along
