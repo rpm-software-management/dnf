@@ -559,7 +559,7 @@ Remove   %5.5s Package(s)
         @param cbobj: urlgrabber callback obj
         '''
         now = time.time()
-        if hasattr(self, '_last_interrupt') and now - self._last_interrupt < 0.2:
+        if hasattr(self, '_last_interrupt') and now - self._last_interrupt < 2:
             # Two quick CTRL-C's, quit
             raise KeyboardInterrupt
 
