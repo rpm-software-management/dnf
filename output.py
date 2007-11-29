@@ -558,8 +558,19 @@ Remove   %5.5s Package(s)
 
         @param cbobj: urlgrabber callback obj
         '''
+        delta_exit_chk = 2.0   # Delta between C-c's so we treat as exit
+        delta_exit_str = "two" # Human readable version of above
+
         now = time.time()
-        if hasattr(self, '_last_interrupt') and now - self._last_interrupt < 2:
+
+        if not hasattr(self, '_last_interrupt'):
+            hibeg = self.term.MODE['bold']
+            hiend = self.term.MODE['normal']
+            msg = """
+ Current download cancelled, %sinterupt again%s within %s%s%s seconds to exit.
+""" % (hibeg, hiend, hibeg, delta_exit_str, hiend)
+            self.verbose_logger.log(logginglevels.INFO_2, msg)
+        elif now - self._last_interrupt < delta_exit_chk:
             # Two quick CTRL-C's, quit
             raise KeyboardInterrupt
 
