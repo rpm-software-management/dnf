@@ -234,7 +234,7 @@ class YumRepository(Repository, config.RepoConf):
         self.pkgdir = ""
         self.hdrdir = ""
         self.cost = 1000
-        
+        self.copy_local = 0        
         # holder for stuff we've grabbed
         self.retrieved = { 'primary':0, 'filelists':0, 'other':0, 'groups':0 }
 
@@ -421,6 +421,7 @@ class YumRepository(Repository, config.RepoConf):
                                     failure_callback=self.failure_obj,
                                     interrupt_callback=self.interrupt_callback,
                                     timeout=self.timeout,
+                                    copy_local=self.copy_local,
                                     http_headers=headers,
                                     reget='simple')
 
@@ -526,7 +527,7 @@ class YumRepository(Repository, config.RepoConf):
                     
 
     def _getFile(self, url=None, relative=None, local=None, start=None, end=None,
-            copy_local=0, checkfunc=None, text=None, reget='simple', cache=True):
+            copy_local=None, checkfunc=None, text=None, reget='simple', cache=True):
         """retrieve file from the mirrorgroup for the repo
            relative to local, optionally get range from
            start to end, also optionally retrieve from a specific baseurl"""
@@ -539,13 +540,17 @@ class YumRepository(Repository, config.RepoConf):
 
         # Turn our dict into a list of 2-tuples
         headers = self.__headersListFromDict()
-
+        
         # We will always prefer to send no-cache.
         if not (cache or self.http_headers.has_key('Pragma')):
             headers.append(('Pragma', 'no-cache'))
 
         headers = tuple(headers)
-
+        
+        # if copylocal isn't specified pickup the repo-defined attr
+        if copy_local is None:
+            copy_local = self.copy_local
+            
         if local is None or relative is None:
             raise Errors.RepoError, \
                   "get request for Repo %s, gave no source or dest" % self.id
