@@ -82,14 +82,14 @@ class Depsolve(object):
         if not self.conf.installroot:
             raise Errors.YumBaseError, 'Setting up TransactionSets before config class is up'
         
-        self._tsInfo = self._transactionDataFactory()
-        self._tsInfo.setDatabases(self.rpmdb, self.pkgSack)
+        self._getTsInfo()
         self.initActionTs()
     
     def _getTsInfo(self):
         if self._tsInfo is None:
             self._tsInfo = self._transactionDataFactory()
             self._tsInfo.setDatabases(self.rpmdb, self.pkgSack)
+            self._tsInfo.installonlypkgs = self.conf.installonlypkgs # this kinda sucks
         return self._tsInfo
 
     def _setTsInfo(self, value):
@@ -178,13 +178,13 @@ class Depsolve(object):
            like kernels and kernel modules, for example"""
            
         if po.name in self.conf.installonlypkgs:
-            return 1
+            return True
         
         provides = po.provides_names
         if filter (lambda prov: prov in self.conf.installonlypkgs, provides):
-            return 1
+            return True
         
-        return 0
+        return False
 
     def populateTs(self, test=0, keepold=1):
         """take transactionData class and populate transaction set"""

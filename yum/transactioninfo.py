@@ -44,6 +44,7 @@ class TransactionData:
         self.removedmembers = {}
         self.debug = 0
         self.changed = False
+        self.installonlypkgs = []
         
         self.conditionals = {} # key = pkgname, val = list of pos to add
 
@@ -157,6 +158,20 @@ class TransactionData:
         # Is this the right criteria?
         return txmember.ts_state in ('u', 'i') and not isinstance(txmember.po, (YumInstalledPackage, YumAvailablePackageSqlite))
 
+    def _allowedMultipleInstalls(self, po):
+        """takes a packageObject, returns 1 or 0 depending on if the package 
+           should/can be installed multiple times with different vers
+           like kernels and kernel modules, for example"""
+           
+        if po.name in self.installonlypkgs:
+            return True
+        
+        provides = po.provides_names
+        if filter (lambda prov: prov in self.installonlypkgs, provides):
+            return True
+        
+        return False
+        
     def add(self, txmember):
         """add a package to the transaction"""
         
@@ -285,6 +300,9 @@ class TransactionData:
     def addInstall(self, po):
         """adds a package as an install but in mode 'u' to the ts
            takes a packages object and returns a TransactionMember Object"""
+
+        if self._allowedMultipleInstalls(po):
+           return self.addTrueInstall(po)
     
         txmbr = TransactionMember(po)
         txmbr.current_state = TS_AVAILABLE
@@ -324,7 +342,10 @@ class TransactionData:
     def addUpdate(self, po, oldpo=None):
         """adds a package as an update
            takes a packages object and returns a TransactionMember Object"""
-    
+        
+        if self._allowedMultipleInstalls(po):
+           return self.addTrueInstall(po)
+            
         txmbr = TransactionMember(po)
         txmbr.current_state = TS_AVAILABLE
         txmbr.output_state = TS_UPDATE
