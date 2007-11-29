@@ -153,6 +153,10 @@ class TransactionData:
 
         return result
 
+    def _isLocalPackage(self, txmember):
+        # Is this the right criteria?
+        return txmember.ts_state in ('u', 'i') and not isinstance(txmember.po, (YumInstalledPackage, YumAvailablePackageSqlite))
+
     def add(self, txmember):
         """add a package to the transaction"""
         
@@ -170,9 +174,7 @@ class TransactionData:
         self.pkgdict[txmember.pkgtup].append(txmember)
         self._namedict.setdefault(txmember.name, []).append(txmember)
         self.changed = True
-
-        # Is this the right criteria?
-        if not isinstance(txmember.po, (YumInstalledPackage, YumAvailablePackageSqlite)):
+        if self._isLocalPackage(txmember):
             self.localSack.addPackage(txmember.po)
         elif isinstance(txmember.po, YumAvailablePackageSqlite):
             self.pkgSackPackages += 1
@@ -190,8 +192,7 @@ class TransactionData:
             return
         for txmbr in self.pkgdict[pkgtup]:
             txmbr.po.state = None
-            # Is this the right criteria?
-            if not isinstance(txmbr.po, (YumInstalledPackage, YumAvailablePackageSqlite)):
+            if self._isLocalPackage(txmbr):
                 self.localSack.delPackage(txmbr.po)
             elif isinstance(txmbr.po, YumAvailablePackageSqlite):
                 self.pkgSackPackages -= 1

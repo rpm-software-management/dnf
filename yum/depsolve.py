@@ -501,9 +501,10 @@ class Depsolve(object):
         # find the best one 
 
         # try updating the already install pkgs
+        length = len(self.tsInfo)
         for pkg in provSack.returnNewestByName():
-            txmbrs = self.update(name=pkg.name, epoch=pkg.epoch, version=pkg.version, rel=pkg.rel)
-            if txmbrs:
+            self.update(name=pkg.name, epoch=pkg.epoch, version=pkg.version, rel=pkg.rel)
+            if len(self.tsInfo) != length:
                 checkdeps = True
                 return checkdeps, missingdep
 

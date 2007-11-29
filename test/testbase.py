@@ -43,7 +43,7 @@ class FakeRepo(object):
 
 class FakePackage(packages.YumAvailablePackage):
 
-    def __init__(self, name, version, release, epoch, arch, repo=None):
+    def __init__(self, name, version='1.0', release='1', epoch='0', arch='noarch', repo=None):
         if repo is None:
             repo = FakeRepo()
         packages.YumAvailablePackage.__init__(self, repo)

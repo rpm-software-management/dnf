@@ -482,6 +482,10 @@ class PackageSack(PackageSackBase):
             hits = po.matchingPrcos('provides', (name, flags, version))
             if hits:
                 result[po] = hits
+        if name[0] == '/':
+            hit = (name, None, (None, None, None))
+            for po in self.searchFiles(name):
+                result.setdefault(po, []).append(hit)
         return result
 
     def getRequires(self, name, flags=None, version=(None, None, None)):
