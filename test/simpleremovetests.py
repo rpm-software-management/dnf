@@ -60,13 +60,3 @@ class SimpleRemoveTests(OperationsTests):
         res, msg = self.runOperation(['remove', 'foo'], [p.leaf, p.requires_file], [])
         self.assert_(res=='ok', msg)
         self.assertResult( () )
-
-def suite():
-    suite = unittest.TestSuite()
-    suite.addTest(unittest.makeSuite(SimpleRemoveTests))
-    return suite
-
-if __name__ == "__main__":
-    unittest.main(defaultTest="suite")
-
-

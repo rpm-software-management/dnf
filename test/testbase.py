@@ -1,10 +1,10 @@
+import os
 import sys
 import unittest
 
 import settestpath
 
-new_behavior = "--new_behavior" in sys.argv
-sys.argv = filter("--new_behavior".__ne__, sys.argv)
+new_behavior = "NEW_BEHAVIOR" in os.environ.keys()
 
 from yum import YumBase
 from yum import transactioninfo

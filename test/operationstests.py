@@ -1,12 +1,12 @@
 from testbase import *
-from simpleobsoletestests import SimpleObsoletesTests
+import simpleobsoletestests
 
 # Obsolete for conflict
 class ComplicatedTests(OperationsTests):
 
     @staticmethod
     def buildPkgs(pkgs, *args):
-        SimpleObsoletesTests.buildPkgs(pkgs)
+        simpleobsoletestests.SimpleObsoletesTests.buildPkgs(pkgs)
         # conflicts
         pkgs.conflicts = FakePackage('super-zippy', '0.3', '1', '0', 'i386')
         pkgs.conflicts.addConflicts('zsh', 'EQ', ('0', '1', '1'))
@@ -111,14 +111,3 @@ class ComplicatedObsoletesTests(OperationsTests):
         else:
             self.assertResult((p.obsoletes,))
     # continue endlessly
-
-def suite():
-    suite = unittest.TestSuite()
-    suite.addTest(unittest.makeSuite(ComplicatedObsoletesTests))
-    suite.addTest(unittest.makeSuite(CombinedUpdateObsoletesTest))
-    suite.addTest(unittest.makeSuite(ComplicatedTests))
-    return suite
-
-if __name__ == "__main__":
-    unittest.main(defaultTest="suite")
-

@@ -44,12 +44,12 @@ doccheck:
 	epydoc --check $(DOCS)
 
 test:
-	python test/alltests.py
+	@nosetests -i ".*test" test
 
 check: test
 
 testnewbehavior:
-	python test/alltests.py --new_behavior
+	@NEW_BEHAVIOR=1 nosetests -i ".*test" test
 
 archive: remove_spec = ${PKGNAME}-daily.spec
 archive: _archive

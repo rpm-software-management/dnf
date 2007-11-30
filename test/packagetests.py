@@ -197,14 +197,3 @@ class RangeCompareTests(unittest.TestCase):
             (('foo', 'GT', ('1', '1.4.4', None)),  ('foo', 'EQ', ('3', '1.2.4', '7')),  1),
             ):
             self.assertEquals(miscutils.rangeCompare(requires, provides), result)
-
-def suite():
-    suite = unittest.TestSuite()
-    suite.addTest(unittest.makeSuite(InPrcoRangePackageTests))
-    suite.addTest(unittest.makeSuite(PackageEvrTests))
-    suite.addTest(unittest.makeSuite(BuildPackageDictRefTests))
-    suite.addTest(unittest.makeSuite(RangeCompareTests))
-    return suite
-                
-if __name__ == "__main__":
-    unittest.main(defaultTest="suite")

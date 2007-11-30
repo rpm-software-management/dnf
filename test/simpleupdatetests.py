@@ -222,11 +222,3 @@ class SimpleUpdateTests(OperationsTests):
         res, msg = self.runOperation(['install', 'zsh-utils'], [p.installed_i386, p.installed_x86_64], [p.update_i386, p.update_x86_64, p.requires_update])
         self.assert_(res=='ok', msg)
         self.assertResult((p.update_i386, p.update_x86_64,  p.requires_update))
-
-def suite():
-    suite = unittest.TestSuite()
-    suite.addTest(unittest.makeSuite(SimpleUpdateTests))
-    return suite
-
-if __name__ == "__main__":
-    unittest.main(defaultTest="suite")

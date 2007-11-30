@@ -215,12 +215,3 @@ class SimpleObsoletesTests(OperationsTests):
                                      [p.installed_i386, p.installed_x86_64], [p.obsoletes_i386, p.obsoletes_x86_64, p.requires_obsoletes])
         self.assert_(res=='ok', msg)
         self.assertResult((p.obsoletes_i386, p.obsoletes_x86_64, p.requires_obsoletes))
-
-def suite():
-    suite = unittest.TestSuite()
-    suite.addTest(unittest.makeSuite(SimpleObsoletesTests))
-    return suite
-
-if __name__ == "__main__":
-    unittest.main(defaultTest="suite")
-
