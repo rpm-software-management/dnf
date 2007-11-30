@@ -154,7 +154,7 @@ def getArchList(thisarch=None):
 
 def getCanonX86Arch(arch):
     # 
-    if arch = "i586":
+    if arch == "i586":
         f = open("/proc/cpuinfo", "r")
         lines = f.readlines()
         f.close()
