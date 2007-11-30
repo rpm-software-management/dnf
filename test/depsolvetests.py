@@ -498,6 +498,27 @@ class DepsolveTests(DepsolveTests):
         self.assertEquals('ok', *self.resolveCode())
         self.assertResult((po, updatepo))
 
+    def testEraseSinglePackage(self):
+        po = FakePackage('zsh', '1', '1', '0', 'i386')
+        self.rpmdb.addPackage(po)
+        self.tsInfo.addErase(po)
+
+        self.assertEquals('ok', *self.resolveCode())
+        self.assertResult(())
+
+    def testEraseSinglePackageRequiredByOneInstalled(self):
+        po = FakePackage('zippy', '1', '1', '0', 'i386')
+        po.addRequires('zsh', None, (None, None, None))
+        self.rpmdb.addPackage(po)
+
+        po = FakePackage('zsh', '1', '1', '0', 'i386')
+        self.rpmdb.addPackage(po)
+        self.tsInfo.addErase(po)
+
+        self.assertEquals('ok', *self.resolveCode())
+        self.assertResult(())
+
+
 def suite():
     suite = unittest.TestSuite()
     suite.addTest(unittest.makeSuite(DepsolveTests))
