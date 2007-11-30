@@ -141,45 +141,6 @@ class Depsolve(object):
         for flag in self.tsInfo.probFilterFlags:
             probfilter |= flag
         self._ts.setProbFilter(probfilter)
-
-    def whatProvides(self, name, flags, version):
-        """searches the packageSacks for what provides the arguments
-           returns a ListPackageSack of providing packages, possibly empty"""
-
-        self.verbose_logger.log(logginglevels.DEBUG_1, _('Searching pkgSack for dep: %s'),
-            name)
-        # we need to check the name - if it doesn't match:
-        # /etc/* bin/* or /usr/lib/sendmail then we should fetch the 
-        # filelists.xml for all repos to make the searchProvides more complete.
-        if name[0] == '/':
-            if not misc.re_primary_filename(name):
-                self.doSackFilelistPopulate()
-            
-        pkgs = self.pkgSack.searchProvides(name)
-        
-        
-        if flags == 0:
-            flags = None
-        if type(version) in (types.StringType, types.NoneType, types.UnicodeType):
-            (r_e, r_v, r_r) = rpmUtils.miscutils.stringToVersion(version)
-        elif type(version) in (types.TupleType, types.ListType): # would this ever be a ListType?
-            (r_e, r_v, r_r) = version
-        
-        defSack = ListPackageSack() # holder for items definitely providing this dep
-        
-        for po in pkgs:
-            self.verbose_logger.log(logginglevels.DEBUG_2,
-                _('Potential match for %s from %s'), name, po)
-            if name[0] == '/' and r_v is None:
-                # file dep add all matches to the defSack
-                defSack.addPackage(po)
-                continue
-
-            if po.checkPrco('provides', (name, flags, (r_e, r_v, r_r))):
-                defSack.addPackage(po)
-                self.verbose_logger.debug(_('Matched %s to require for %s'), po, name)
-        
-        return defSack
         
     def allowedMultipleInstalls(self, po):
         """takes a packageObject, returns 1 or 0 depending on if the package 
@@ -427,7 +388,8 @@ class Depsolve(object):
         #                   - if they are the same
         #                       - be confused but continue
 
-        provSack = self.whatProvides(needname, needflags, needversion)
+        provSack = ListPackageSack(self.pkgSack.getProvides(
+                needname, needflags or None, rpmUtils.miscutils.stringToVersion(needversion)))
 
         # get rid of things that are already in the rpmdb - b/c it's pointless to use them here
 
