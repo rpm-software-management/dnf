@@ -16,6 +16,7 @@ arches = {
     # ia32
     "athlon": "i686",
     "i686": "i586",
+    "geode": "i586",
     "i586": "i486",
     "i486": "i386",
     "i386": "noarch",
@@ -152,6 +153,15 @@ def getArchList(thisarch=None):
         
 
 def getCanonX86Arch(arch):
+    # 
+    if arch = "i586":
+        f = open("/proc/cpuinfo", "r")
+        lines = f.readlines()
+        f.close()
+        for line in lines:
+            if line.startswith("model name") and line.find("Geode(TM)") != -1:
+                return "geode"
+        return arch
     # only athlon vs i686 isn't handled with uname currently
     if arch != "i686":
         return arch
