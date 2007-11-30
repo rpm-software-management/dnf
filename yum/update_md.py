@@ -17,6 +17,10 @@
 # Seth Vidal <skvidal@linux.duke.edu>
 # Luke Macken <lmacken@redhat.com>
 
+"""
+Update metadata (updateinfo.xml) parsing.
+"""
+
 import sys
 import gzip
 import exceptions
@@ -32,10 +36,16 @@ iterparse = cElementTree.iterparse
 
 
 class UpdateNoticeException(exceptions.Exception):
+    """ An exception thrown for bad UpdateNotice data. """
     pass
 
 
 class UpdateNotice(object):
+
+    """
+    A single update notice (for instance, a security fix).
+    """
+
     def __init__(self, elem=None):
         self._md = {
             'from'             : '',
@@ -218,6 +228,11 @@ class UpdateNotice(object):
 
 
 class UpdateMetadata(object):
+
+    """
+    The root update metadata object.
+    """
+
     def __init__(self):
         self._notices = {}
         self._cache = {}    # a pkg name => notice cache for quick lookups
@@ -273,6 +288,7 @@ class UpdateMetadata(object):
 
 
 def main():
+    """ update_md test function. """
     def usage():
         print >> sys.stderr, "Usage: %s <update metadata> ..." % sys.argv[0]
         sys.exit(1)
