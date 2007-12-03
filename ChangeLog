@@ -1,3 +1,488 @@
+2007-12-03  Seth Vidal <skvidal@fedoraproject.org>
+
+	* yum.spec, yum/__init__.py: mark as 3.2.8
+
+2007-12-03  Tim Lauridsen <timlau@fedoraproject.org>
+
+	* Makefile: make clean will clean the test dir too
+
+2007-11-30  James Bowes <jbowes@redhat.com>
+
+	Merge branch 'epydoc'
+
+2007-11-30  James Bowes <jbowes@redhat.com>
+
+	* yum/update_md.py: Docstring additions for yum.update_md
+
+2007-11-30  Luke Macken <lmacken@redhat.com>
+
+	* rpmUtils/arch.py: s/=/==/ with comparison in getCanonX86Arch
+
+2007-11-30  Seth Vidal <skvidal@fedoraproject.org>
+
+	* rpmUtils/arch.py: apply Dennis Gilmore's patch for geode arch
+	support
+
+2007-11-29  James Bowes <jbowes@redhat.com>
+
+	Merge branch 'nose'  Conflicts:  	test/alltests.py
+	test/depsolvetests.py 	test/operationstests.py
+
+2007-11-29  James Bowes <jbowes@redhat.com>
+
+	* test/depsolvetests.py: Add some erase depsolve tests
+
+2007-11-25  James Bowes <jbowes@redhat.com>
+
+	* test/packagetests.py, test/testbase.py: Remove duplication of
+	settestpath contents
+
+2007-11-29  Seth Vidal <skvidal@fedoraproject.org>
+
+	* yum/depsolve.py, yum/transactioninfo.py: make sure pkgs are added
+	to the tsInfo for depsolving in the proper mode if they are an
+	installonlypkg then treat them as such. Appears to fix rh bug 330711
+
+
+2007-11-29  Seth Vidal <skvidal@fedoraproject.org>
+
+	* yum/yumRepo.py: expose copy_local sensibly to callers
+
+2007-11-29  James Antill <james@and.org>
+
+	Merge branch 'master' of
+	ssh://login.linux.duke.edu/home/groups/yum/git/yum  * 'master' of
+	ssh://login.linux.duke.edu/home/groups/yum/git/yum:   Fix copy/paste
+	error   Packages that are to be removed can't be local packages.
+	Work around unreliable result of .update()   Add some remove test
+	cases   Fix PackageSack.getProvides to also return files   Add
+	ObsoletesChain and ObsoletesCircle test cases   Make the Update
+	i386,x86_64 -> i386/x86_64 tests stop complaining   set default
+	values for the FakePackage constructor   Move SimpleUpdateTests into
+	an own module   Move SimpleObsoletesTests into an own module   Read
+	test modules from file systeRead test modules from file systemm   Do
+	arch checks for versioned obsoletes, too
+
+2007-11-29  James Antill <james@and.org>
+
+	* output.py: Give message on first C-c, so new user knows what is
+	happening
+
+2007-11-29  James Antill <james@and.org>
+
+	* output.py: Alter C-c urlgrabber mirror timeout to 2 seconds
+
+2007-10-23  Florian Festi <ffesti@redhat.com>
+
+	* yum/rpmsack.py: Fix copy/paste error
+
+2007-11-08  Florian Festi <ffesti@redhat.com>
+
+	* test/depsolvetests.py, yum/transactioninfo.py: Packages that are
+	to be removed can't be local packages. This fixes remove test cases
+	for now - better criteria still needed.
+
+2007-11-12  Florian Festi <ffesti@redhat.com>
+
+	* test/operationstests.py, yum/depsolve.py: Work around unreliable
+	result of .update() Add test cases
+
+2007-11-08  Florian Festi <ffesti@redhat.com>
+
+	* test/simpleremovetests.py: Add some remove test cases
+
+2007-11-08  Florian Festi <ffesti@redhat.com>
+
+	* yum/packageSack.py: Fix PackageSack.getProvides to also return
+	files
+
+2007-11-06  Florian Festi <ffesti@redhat.com>
+
+	* test/operationstests.py: Add ObsoletesChain and ObsoletesCircle
+	test cases
+
+2007-11-06  Florian Festi <ffesti@redhat.com>
+
+	* test/simpleupdatetests.py: Make the Update i386,x86_64 ->
+	i386/x86_64 tests stop complaining
+
+2007-11-06  Florian Festi <ffesti@redhat.com>
+
+	* test/testbase.py: set default values for the FakePackage
+	constructor
+
+2007-11-06  Florian Festi <ffesti@redhat.com>
+
+	* test/operationstests.py, test/simpleupdatetests.py: Move
+	SimpleUpdateTests into an own module
+
+2007-11-05  Florian Festi <ffesti@redhat.com>
+
+	* test/operationstests.py, test/simpleobsoletestests.py: Move
+	SimpleObsoletesTests into an own module Complete the coverage to all
+	noarch, i386, x86_64, i386+x86_64 combinations
+
+2007-11-05  Florian Festi <ffesti@redhat.com>
+
+	* test/alltests.py: Read test modules from file systeRead test
+	modules from file systemm
+
+2007-11-12  Florian Festi <ffesti@redhat.com>
+
+	* rpmUtils/updates.py: Do arch checks for versioned obsoletes, too
+	Reduce duplicated code in doObsoletes
+
+2007-11-26  Jeremy Katz <katzj@redhat.com>
+
+	* yum/depsolve.py: Avoid missing deps  We need to reset
+	already_seen_removed as well as already_seen to avoid missing broken
+	deps on a second run through resolveDeps().  (rh#397161)
+
+2007-11-25  James Bowes <jbowes@redhat.com>
+
+	* test/alltests.py, test/depsolvetests.py, test/operationstests.py,
+	test/packagetests.py: Remove unit test suite creation (nose does it
+	for us).
+
+2007-11-25  James Bowes <jbowes@redhat.com>
+
+	* Makefile: Use nosetests for running unit tests
+
+2007-11-25  James Bowes <jbowes@redhat.com>
+
+	* Makefile, test/testbase.py: Get new_behaviour test option from env
+	variables.
+
+2007-11-15  James Bowes <jbowes@redhat.com>
+
+	* yum/config.py: Docstring additions for yum.config
+
+2007-11-15  James Bowes <jbowes@redhat.com>
+
+	* yum/__init__.py: Docstring additions for yum.__init__
+
+2007-11-15  James Bowes <jbowes@redhat.com>
+
+	* yum/packages.py: Docstring additions for yum.packages
+
+2007-11-15  James Bowes <jbowes@redhat.com>
+
+	* yum/packageSack.py: Docstring additions for yum.packageSack
+
+2007-11-15  James Bowes <jbowes@redhat.com>
+
+	* yum/depsolve.py: Docstring additions for yum.depsolve
+
+2007-11-15  James Bowes <jbowes@redhat.com>
+
+	* yum/constants.py: Docstring additions for yum.constants
+
+2007-11-15  James Bowes <jbowes@redhat.com>
+
+	* yum/transactioninfo.py: Docstring additions for
+	yum.transactioninfo
+
+2007-11-15  James Bowes <jbowes@redhat.com>
+
+	* yum/sqlutils.py: Docstring additions for yum.sqlutils
+
+2007-11-15  James Bowes <jbowes@redhat.com>
+
+	* yum/callbacks.py: Indentation fixes for yum.callbacks epydoc
+
+2007-11-14  Seth Vidal <skvidal@fedoraproject.org>
+
+	* yum/rpmsack.py: make sure we're passing the right kind of objects
+	to newestInList() closes rh bug #381551
+
+2007-11-14  Seth Vidal <skvidal@fedoraproject.org>
+
+	* cli.py: make sure errors frpm the rpm_check_debug() exit with an
+	error code thanks to matt miller for pointing it out.
+
+2007-11-12  Jeremy Katz <katzj@redhat.com>
+
+	* yum/__init__.py: look at the actual object (rh#376121)
+
+2007-11-12  James Bowes <jbowes@redhat.com>
+
+	Merge branch 'epydoc'
+
+2007-11-11  James Bowes <jbowes@redhat.com>
+
+	* shell.py: Docstring additions for the shell module.
+
+2007-11-11  James Bowes <jbowes@redhat.com>
+
+	* output.py: Docstring updates for the output module.
+
+2007-11-10  James Bowes <jbowes@redhat.com>
+
+	* yum/misc.py, yumcommands.py: More doc changes
+
+2007-11-10  James Bowes <jbowes@redhat.com>
+
+	* yumcommands.py: Add some docstrings for the yumcommands module.
+
+2007-11-10  James Bowes <jbowes@redhat.com>
+
+	* cli.py: Add docstrings for the cli module.
+
+2007-11-07  Tim Lauridsen <tla@rasmil.dk>
+
+	* yum/depsolve.py: Fix for the depsolver going into endless loop, in
+	rare situations big transaction with lot of local packages (rhbz
+	#360291)
+
+2007-11-06  Florian Festi <ffesti@redhat.com>
+
+	* test/testbase.py: Set arch for the depsolving/operation test cases
+
+
+2007-11-06  Florian Festi <ffesti@redhat.com>
+
+	* rpmUtils/updates.py: Make rpmUtils.update use
+	rpmUtils.arch.canonArch to avoid problems with test cases
+
+2007-11-02  Florian Festi <ffesti@redhat.com>
+
+	* test/operationstests.py: fix copy/paste errors
+
+2007-11-02  Florian Festi <ffesti@redhat.com>
+
+	* test/operationstests.py: Make update tests complete
+
+2007-11-02  Florian Festi <ffesti@redhat.com>
+
+	* test/operationstests.py: Change test cases to check for the new -
+	now fixed - behavior of yum
+
+2007-10-31  Florian Festi <ffesti@redhat.com>
+
+	* test/depsolvetests.py, test/testbase.py: Further depsolving test
+	cleanups:  * remove TestingDepsolve class - do initialization in
+	resolveCode  * remove build_depsolver() - do initialization in
+	resolveCode  * set po.repoid po.repo.id in resolveCode   * remove
+	FakeInstPkg - directly use FakePackage() Set po.repoid and
+	po.repo.id = "TestRepository" for available pkgs for operations
+	tests
+
+2007-10-25  Florian Festi <ffesti@redhat.com>
+
+	* test/testbase.py: Fix double complaints in assertResult  Also
+	output the source code of the failed test case
+
+2007-10-25  Florian Festi <ffesti@redhat.com>
+
+	* test/depsolvetests.py, test/operationstests.py, test/testbase.py: 
+	Refactor depsolving test infrastructure and move it to
+	test/testbase.py
+
+2007-10-23  Florian Festi <ffesti@redhat.com>
+
+	* test/operationstests.py: Fix test names that got broken by
+	query/replace  Make some test cases a bit more tolerant
+
+2007-10-23  Florian Festi <ffesti@redhat.com>
+
+	* test/depsolvetests.py: Print depsolve message if test fails
+
+2007-10-17  Florian Festi <ffesti@redhat.com>
+
+	* test/depsolvetests.py: Remove tsInfo checks in depsolve test cases
+	as we have assertResult() now  Enable testUpdateForConflictProvide
+
+2007-10-17  Florian Festi <ffesti@redhat.com>
+
+	* Makefile, test/alltests.py, test/depsolvetests.py,
+	test/operationstests.py, test/packagetests.py, test/testbase.py: Add
+	--new_behavior param to test suite  Rename settestpath to testbase
+	Support --new_behavior in all operationstests cases where current
+	behavior is questionable
+
+2007-10-17  Florian Festi <ffesti@redhat.com>
+
+	* test/operationstests.py: Use more verbose pkg names
+
+2007-10-17  Florian Festi <ffesti@redhat.com>
+
+	* test/operationstests.py: Add test cases to see what happens when
+	running "yum update" afterwards
+
+2007-10-16  Florian Festi <ffesti@redhat.com>
+
+	* test/depsolvetests.py: Add assertResult() to all test cases that
+	don't fail
+
+2007-10-16  Florian Festi <ffesti@redhat.com>
+
+	* test/depsolvetests.py: fix Obsoletes test case
+
+2007-10-16  Florian Festi <ffesti@redhat.com>
+
+	* test/operationstests.py: Move tests from
+	assertInstalled/assertNotInstalled to assertResult for better
+	readability
+
+2007-10-11  Florian Festi <ffesti@redhat.com>
+
+	* cli.py, test/depsolvetests.py, test/operationstests.py,
+	yum/__init__.py, yum/depsolve.py, yum/packageSack.py,
+	yum/rpmsack.py: Move RpmSack.installed() to
+	PackageSackBase.contains()  Keep now unused RpmSack.installed() for
+	backward compatibility
+
+2007-10-10  Florian Festi <ffesti@redhat.com>
+
+	* test/operationstests.py: More obsolete related test cases: *
+	testObsoletenoarchToMultiarchForDependency *
+	testObsoletei386ToMultiarchForDependency *
+	testObsoletex86_64ToMultiarch *
+	testObsoletex86_64ToMultiarchForDependency *
+	testObsoleteMultiarchToMultiarchForDependency *
+	testObsoleteMultiarchTonoarchForDependency
+
+2007-10-05  Florian Festi <ffesti@redhat.com>
+
+	* test/alltests.py, test/depsolvetests.py, test/operationstests.py: 
+	Add operations test suite (some sub tests are still commented out) *
+	testUpdatei386ToMultilib * testUpdatei386ToMultilibForDependency *
+	testUpdatex86_64ToMultilib * testUpdatex86_64ToMultilibForDependency
+	* testUpdateMultilibToMultilib *
+	testUpdateMultilibToMultilibForDependency * testUpdatei386Tonoarch *
+	testUpdatei386TonoarchForDependency * testUpdateMultilibTonoarch *
+	testUpdateMultilibTonoarchForDependency * testUpdatenoarchToMultilib
+	* testUpdatenoarchToMultilibForDependency *
+	testObsoletenoarchToMultiarch * testObsoletei386ToMultiarch *
+	testObsoleteMultiarchToMultiarch * testObsoleteMultiarchTonoarch *
+	_XXX_testObsoleteForConflict - disabled  Make FakePackge a
+	YumAvailablePackage Add needed attributes to FakeConf
+
+2007-10-05  Florian Festi <ffesti@redhat.com>
+
+	* test/depsolvetests.py, yum/__init__.py: Switch depsolving tests to
+	YumBase instead of Depsolver  Add the needed attributes to FakeConf
+	Add new test cases  * testUpdateForDependency  *
+	testUpdateSplitPackage  * _XXX_testUpdateForConflict - disabled  *
+	testUpdateForConflict2  * _XXX_testUpdateForConflictProvide  *
+	testUpdateForConflictProvide2 - disabled Minor fix for empty pkgSack
+	(False != None)
+
+2007-10-01  Florian Festi <ffesti@redhat.com>
+
+	* test/settestpath.py: Use a more defensive path order
+
+2007-10-01  Florian Festi <ffesti@redhat.com>
+
+	* test/depsolvetests.py: Add defaults to FakePackage.add*  Use "EQ"
+	instead of "=" FakePackage.addFile()
+
+2007-10-05  Florian Festi <ffesti@redhat.com>
+
+	* test/depsolvetests.py: Really implement FakeRpmSack.installed()
+
+2007-10-04  Florian Festi <ffesti@redhat.com>
+
+	* test/depsolvetests.py: Adjust test case to the now fixed
+	PackageSack: There now is one "remove" transaction member as the
+	"zip" package now is updated instead of just installed
+
+2007-10-04  Florian Festi <ffesti@redhat.com>
+
+	* yum/packageSack.py: Add support searching only for some parts of
+	the pkgtup in PackageSack.searchNevra
+
+2007-10-05  Florian Festi <ffesti@redhat.com>
+
+	* yum/packageSack.py, yum/sqlitesack.py: Add newest parameter to all
+	.returnObsoletes() methods - either by supporting it or by raising a
+	NotImplementedError if set to True
+
+2007-10-31  Seth Vidal <skvidal@fedoraproject.org>
+
+	* rpmUtils/updates.py, yum/__init__.py: Applied patches from Florian
+	Festi:  "The attached patches improve YumBase.update to handle
+	multilib updates and  obsoletes better. This improves several
+	situations:   Updating noarch to multilib (32 + 64 bit) and vice
+	versa.   Check obsoletes not only for the updating pkg but also for
+	pkgs obsoleted by  the updating pkgs. Also handle noarch <->
+	multilib transitions in obsoletes  better."
+
+2007-10-31  Seth Vidal <skvidal@fedoraproject.org>
+
+	* yum/depsolve.py: applied patch from florian festi:  "The following
+	patch tries to update already installed pkgs instead of just
+	installing the "best" arch and think about updates later on. This
+	makes updates for dependencies more like regular updates and avoids
+	ending up with pkgs of different version and different arches
+	installed at once - which will most likely result in multilib file
+	conflicts."
+
+2007-10-31  Seth Vidal <skvidal@fedoraproject.org>
+
+	* yum/transactioninfo.py: commit patch from Florian Festi:  "The
+	attached patch makes sure that an updated pkg is removed even if the
+	updating pkg already got added to the transaction. This fixes
+	updates from multilib (32 and 64 bit installed) to noarch. Currently
+	the first update operation (e.g. 32bit -> noarch) works but the
+	second (64bit -> noarch) is ignored. As result there are two pkg in
+	different arches and versions which will most likely result in an
+	multilib file conflict. The current patch makes sure that the
+	updated pkg is only rejected if itself is already in the transaction
+	(as a REMOVE)."
+
+2007-10-30  Seth Vidal <skvidal@fedoraproject.org>
+
+	* yum/config.py: fix disable_excludes for non-cli callers of yum
+
+2007-10-29  Seth Vidal <skvidal@fedoraproject.org>
+
+	* docs/yum.8: docs for --disableexcludes
+
+2007-10-29  Seth Vidal <skvidal@fedoraproject.org>
+
+	* cli.py, output.py, yum/packages.py: apply patches from jantill:  -
+	make search terms bold in cli output  - remove \n's from summary
+	lines in packages
+
+2007-10-29  Seth Vidal <skvidal@fedoraproject.org>
+
+	* cli.py, yum/__init__.py: apply --disableexcludes option patch from
+	jantill
+
+2007-10-28  James Bowes <jbowes@redhat.com>
+
+	* yum/__init__.py: Fix some namespacing issues in __init__.py
+	yum.misc and yum.Errors should be just misc and Errors (yum isn't
+	imported).
+
+2007-10-18  Seth Vidal <skvidal@fedoraproject.org>
+
+	Merge branch 'master' of
+	ssh://login.linux.duke.edu/home/groups/yum/git/yum  * 'master' of
+	ssh://login.linux.duke.edu/home/groups/yum/git/yum:   Added missing
+	imports   Added a cleanup edition of a DownloadBaseCallback to make
+	it simple to create custom download progress handlers.
+
+2007-10-18  Seth Vidal <skvidal@fedoraproject.org>
+
+	* yum/rpmtrans.py: apply patch from Christoph Thiel for suse's rpm
+	handling scriptFd setting
+
+2007-10-18  Tim Lauridsen <timlau@fedoraproject.org>
+
+	* yum/callbacks.py: Added missing imports
+
+2007-10-17  Tim Lauridsen <tim@localhost.localdomain>
+
+	* yum/callbacks.py: Added a cleanup edition of a
+	DownloadBaseCallback to make it simple to create custom download
+	progress handlers.
+
+2007-10-12  Seth Vidal <skvidal@fedoraproject.org>
+
+	* ChangeLog: 3.2.7 changelog merge
+
 2007-10-12  Seth Vidal <skvidal@fedoraproject.org>
 
 	* yum.spec, yum/__init__.py: ver kick to 3.2.7
