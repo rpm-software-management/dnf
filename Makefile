@@ -12,6 +12,7 @@ all: subdirs
 clean:
 	rm -f *.pyc *.pyo *~ *.bak
 	for d in $(SUBDIRS); do make -C $$d clean ; done
+	cd test; rm -f *.pyc *.pyo *~ *.bak
 
 subdirs:
 	for d in $(SUBDIRS); do make PYTHON=$(PYTHON) -C $$d; [ $$? = 0 ] || exit 1 ; done
