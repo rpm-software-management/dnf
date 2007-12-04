@@ -950,8 +950,6 @@ be scanned to make sure they are valid for a pgp certificate."""
                     if is_revoked :
                         self.rvkd_user_ids.append(user_id)
                     else :
-                        if is_primary_user_id :
-                            self.user_id = user_id[0].id
                         self.user_ids.append(user_id)
 
                 elif pkts[pkt_idx].pkt_typ == CTB_PKT_PK_SUB :
