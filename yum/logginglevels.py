@@ -45,6 +45,8 @@ logging.addLevelName(DEBUG_4, "DEBUG_4")
 __NO_LOGGING = 100
 logging.raiseExceptions = False
 
+syslog = None
+
 def logLevelFromErrorLevel(error_level):
     """ Convert an old-style error logging level to the new style. """
     error_table = { -1 : __NO_LOGGING, 0 : logging.CRITICAL, 1 : logging.ERROR,
@@ -117,7 +119,6 @@ def doLoggingSetup(debuglevel, errorlevel):
 
     log_dev = '/dev/log'
     global syslog
-    syslog = None
     if os.path.exists(log_dev):
         try:
             syslog = logging.handlers.SysLogHandler(log_dev)
@@ -148,8 +149,6 @@ def setFileLog(uid, logfile):
             logging.getLogger("yum").critical('Cannot open logfile %s', logfile)
 
 def setLoggingApp(app):
-    global syslog
     if syslog:
         syslogformatter = logging.Formatter("yum(%s): "% (app,) + "%(message)s")
         syslog.setFormatter(syslogformatter)
-                    
