@@ -15,13 +15,9 @@
 # Copyright 2004 Duke University
 
 
-
-import exceptions
-
-
-class YumBaseError(exceptions.Exception):
+class YumBaseError(Exception):
     def __init__(self, value=None):
-        exceptions.Exception.__init__(self)    
+        Exception.__init__(self)
         self.value = value
     def __str__(self):
         return "%s" %(self.value,)

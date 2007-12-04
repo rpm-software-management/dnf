@@ -1,9 +1,10 @@
 #!/usr/bin/python -tt
 
-import exceptions
 
+class RpmUtilsError(Exception):
 
-class RpmUtilsError(exceptions.Exception):
+    """ Exception thrown for anything rpmUtils related. """
+
     def __init__(self, args=None):
-        exceptions.Exception.__init__(self)
+        Exception.__init__(self)
         self.args = args

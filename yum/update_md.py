@@ -23,7 +23,6 @@ Update metadata (updateinfo.xml) parsing.
 
 import sys
 import gzip
-import exceptions
 
 from textwrap import wrap
 from yum.yumRepo import YumRepository
@@ -35,7 +34,7 @@ except ImportError:
 iterparse = cElementTree.iterparse
 
 
-class UpdateNoticeException(exceptions.Exception):
+class UpdateNoticeException(Exception):
     """ An exception thrown for bad UpdateNotice data. """
     pass
 
