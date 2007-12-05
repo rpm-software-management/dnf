@@ -32,6 +32,19 @@ import misc
 from sqlutils import executeSQL
 import rpmUtils.miscutils
 
+def catchSqliteException(func):
+    """This decorator converts sqlite exceptions into RepoError"""
+    def newFunc(*args, **kwargs):
+        try:
+            return func(*args, **kwargs)
+        except sqlutils.sqlite.Error:
+            raise Errors.RepoError
+
+    newFunc.__name__ = func.__name__
+    newFunc.__doc__ = func.__doc__
+    newFunc.__dict__.update(func.__dict__)
+    return newFunc
+
 class YumAvailablePackageSqlite(YumAvailablePackage, PackageObject, RpmBase):
     def __init__(self, repo, db_obj):
         self._checksums = []
@@ -75,6 +88,7 @@ class YumAvailablePackageSqlite(YumAvailablePackage, PackageObject, RpmBase):
         except (IndexError, KeyError):
             pass
 
+    @catchSqliteException
     def __getattr__(self, varname):
         db2simplemap = { 'packagesize' : 'size_package',
                          'archivesize' : 'size_archive',
@@ -106,6 +120,7 @@ class YumAvailablePackageSqlite(YumAvailablePackage, PackageObject, RpmBase):
             
         return r[0]
         
+    @catchSqliteException
     def _loadFiles(self):
         if self._loadedfiles:
             return self._files
@@ -137,6 +152,7 @@ class YumAvailablePackageSqlite(YumAvailablePackage, PackageObject, RpmBase):
 
         return self._files
 
+    @catchSqliteException
     def _loadChangelog(self):
         result = []
         if not self._changelog:
@@ -174,12 +190,14 @@ class YumAvailablePackageSqlite(YumAvailablePackage, PackageObject, RpmBase):
         self._loadFiles()
         return RpmBase.returnFileTypes(self)
 
+    @catchSqliteException
     def simpleFiles(self, ftype='file'):
         cache = self.sack.primarydb[self.repo]
         cur = cache.cursor()
         executeSQL(cur, "select files.name as fname from files where files.pkgKey = ? and files.type= ?", (self.pkgKey, ftype))
         return map(lambda x: x['fname'], cur)
 
+    @catchSqliteException
     def returnPrco(self, prcotype, printable=False):
         if isinstance(self.prco[prcotype], tuple):
             cache = self.sack.primarydb[self.repo]
@@ -211,12 +229,14 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
             'requires' : { },
             }
 
+    @catchSqliteException
     def __len__(self):
         for (rep,cache) in self.primarydb.items():
             cur = cache.cursor()
             executeSQL(cur, "select count(pkgId) from packages")
             return cur.fetchone()[0]
 
+    @catchSqliteException
     def close(self):
         for dataobj in self.primarydb.values() + \
                        self.filelistsdb.values() + \
@@ -297,6 +317,7 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
         return self.searchPrco(name, 'provides')
 
 
+    @catchSqliteException
     def searchFiles(self, name):
         """search primary if file will be in there, if not, search filelists, use globs, if possible"""
         
@@ -372,6 +393,7 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
         pkgs = misc.unique(pkgs)
         return pkgs
         
+    @catchSqliteException
     def searchPrimaryFields(self, fields, searchstring):
         """search arbitrary fields from the primarydb for a string"""
         result = []
@@ -394,6 +416,7 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
          
         return result
         
+    @catchSqliteException
     def returnObsoletes(self, newest=False):
         if newest:
             raise NotImplementedError()
@@ -426,6 +449,7 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
 
         return obsoletes
 
+    @catchSqliteException
     def getPackageDetails(self,pkgId):
         for (rep,cache) in self.primarydb.items():
             cur = cache.cursor()
@@ -433,6 +457,7 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
             for ob in cur:
                 return ob
     
+    @catchSqliteException
     def _getListofPackageDetails(self, pkgId_list):
         pkgs = []
         if len(pkgId_list) == 0:
@@ -449,6 +474,7 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
         return pkgs
         
 
+    @catchSqliteException
     def _search(self, prcotype, name, flags, version):
         if flags == 0:
             flags = None
@@ -517,6 +543,7 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
         return self._search("requires", name, flags, version)
 
     
+    @catchSqliteException
     def searchPrco(self, name, prcotype):
         """return list of packages having prcotype name (any evr and flag)"""
         glob = True
@@ -651,6 +678,7 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
                 'url': db['url'], 'vendor': db['rpm_vendor'], 'license': db['rpm_license'] }
         return y
 
+    @catchSqliteException
     def simplePkgList(self):
         """returns a list of pkg tuples (n, a, e, v, r) from the sack"""
 
@@ -671,6 +699,7 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
 
         return simplelist
 
+    @catchSqliteException
     def returnNewestByNameArch(self, naTup=None):
 
         # If naTup is set do it from the database otherwise use our parent's
@@ -694,6 +723,7 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
             raise Errors.PackageSackError, 'No Package Matching %s.%s' % naTup
         return misc.newestInList(allpkg)
 
+    @catchSqliteException
     def returnNewestByName(self, name=None):
         # If name is set do it from the database otherwise use our parent's
         # returnNewestByName
@@ -716,6 +746,7 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
         return misc.newestInList(allpkg)
 
     # Do what packages.matchPackageNames does, but query the DB directly
+    @catchSqliteException
     def matchPackageNames(self, pkgspecs):
         matched = []
         exactmatch = []
@@ -744,6 +775,7 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
         unmatched = misc.unique(unmatched)
         return exactmatch, matched, unmatched
 
+    @catchSqliteException
     def returnPackages(self, repoid=None):
         """Returns a list of packages, only containing nevra information """
         
@@ -771,6 +803,7 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
         
         return returnList
 
+    @catchSqliteException
     def searchNevra(self, name=None, epoch=None, ver=None, rel=None, arch=None):        
         """return list of pkgobjects matching the nevra requested"""
         returnList = []
@@ -804,6 +837,7 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
                 returnList.append(self.pc(rep,x))
         return returnList
     
+    @catchSqliteException
     def excludeArchs(self, archlist):
         """excludes incompatible arches - archlist is a list of compat arches"""
         
