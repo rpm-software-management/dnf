@@ -247,9 +247,9 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         disk = {}
         for m in p.finditer(errstring):
             if not disk.has_key(m.group(2)):
-                disk[m.group(2)]= int(m.group(1))
+                disk[m.group(2)] = int(m.group(1))
             if disk[m.group(2)] < int(m.group(1)):
-                disk[m.group(2)] == int(m.group(1))
+                disk[m.group(2)] = int(m.group(1))
                 
         if disk.keys():
            summary += 'Disk Requirements:\n'
