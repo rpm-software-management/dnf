@@ -398,3 +398,56 @@ def get_running_kernel_version_release(ts):
     
     return (None, None)
  
+def find_ts_remaining(yumlibpath='/var/lib/yum'):
+    """this function takes the path to the yum lib dir (defaults to /var/lib/yum)
+       returns a list of tuples(action, pkgspec) for the unfinished transaction
+       elements. Returns an empty list if none. If there is more than one unfinished
+       transaction it operates only on the most recent one. In  general there shouldn't
+       be more than one but weird things happen.
+
+    """
+    to_complete_items = []
+    
+    tsallg = '%s/%s' % (yumlibpath, 'transaction-all*')
+    tsdoneg = '%s/%s' % (yumlibpath, 'transaction-done*')
+    tsalls = glob.glob(tsallg)
+    tsdones = glob.glob(tsdoneg)
+    if len(tsalls) == 0 or len(tsdones) == 0:
+        #print 'no transactions found to fix'
+        return to_complete_items
+        
+    if len(tsalls) > 1 or len(tsdones) > 1:
+         #print "More than one failed transaction, operating on only the most recent"
+         tsalls.sort()
+
+    tsallpath = tsalls[-1]
+    trans = os.path.basename(tsallpath)
+    timestamp = trans.replace('transaction-all.','')
+    tsdonepath = '%s/%s.%s' % (yumlibpath,'transaction-done', timestamp)
+    tsdone_items = []
+    
+    if os.path.exists(tsdonepath):
+        tsdone_fo = open(tsdonepath, 'r')
+        tsdone_items = tsdone_fo.readlines()
+        tsdone_fo.close()     
+    
+    tsall_fo = open(tsallpath, 'r')
+    tsall_items = tsall_fo.readlines()
+    tsall_fo.close()
+    
+    for item in tsdone_items:
+        #print 'cleaning out already run:  %s' % item
+        tsall_items.remove(item)
+        
+      
+    for item in tsall_items:
+        item = item.replace('\n', '')
+        if item == '':
+            continue
+        (action, pkgspec) = item.split()
+        #print '%s :: %s' % (action, pkgspec)
+        to_complete_items.append((action, pkgspec))
+    
+    return to_complete_items
+    
+        
