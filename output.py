@@ -567,7 +567,7 @@ Remove   %5.5s Package(s)
             hibeg = self.term.MODE['bold']
             hiend = self.term.MODE['normal']
             msg = """
- Current download cancelled, %sinterupt again%s within %s%s%s seconds to exit.
+ Current download cancelled, %sinterrupt (ctrl-c) again%s within %s%s%s seconds to exit.
 """ % (hibeg, hiend, hibeg, delta_exit_str, hiend)
             self.verbose_logger.log(logginglevels.INFO_2, msg)
         elif now - self._last_interrupt < delta_exit_chk:
