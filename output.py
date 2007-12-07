@@ -319,10 +319,10 @@ class YumOutput:
             except:
                 choice = ''
             choice = choice.lower()
-            if len(choice) == 0 or choice[0] in ['y', 'n']:
+            if len(choice) == 0 or choice in ['y', 'n', 'yes', 'no']:
                 break
 
-        if len(choice) == 0 or choice[0] != 'y':
+        if len(choice) == 0 or choice not in ['y', 'yes']:
             return False
         else:            
             return True
