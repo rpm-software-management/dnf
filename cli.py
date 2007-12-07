@@ -295,6 +295,11 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
     def doTransaction(self):
         """takes care of package downloading, checking, user confirmation and actually
            RUNNING the transaction"""
+    
+        # just make sure there's not, well, nothing to do
+        if len(self.tsInfo) == 0:
+                self.verbose_logger.info('Trying to run the transaction but nothing to do. Exiting.')
+                return 1
 
         # output what will be done:
         self.verbose_logger.log(yum.logginglevels.INFO_1,
