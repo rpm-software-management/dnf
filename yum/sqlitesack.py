@@ -31,6 +31,7 @@ import misc
 
 from sqlutils import executeSQL
 import rpmUtils.miscutils
+import sqlutils
 
 def catchSqliteException(func):
     """This decorator converts sqlite exceptions into RepoError"""
