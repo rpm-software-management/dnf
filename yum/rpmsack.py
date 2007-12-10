@@ -50,6 +50,13 @@ class RPMDBPackageSack(PackageSackBase):
         self._header_dict = {}
         self._header_by_name = {}
         self.ts = None
+        self._cache = {
+            'files' : { },
+            'provides' : { },
+            'requires' : { },
+            'conflicts' : { },
+            'obsoletes' : { },
+            }
         
     def _get_pkglist(self):
         '''Getter for the pkglist property. 
@@ -102,6 +109,11 @@ class RPMDBPackageSack(PackageSackBase):
 
     def searchFiles(self, name):
         """search the filelists in the rpms for anything matching name"""
+
+        result = self._cache['files'].get(name)
+        if result is not None:
+            return result
+
         ts = self.readOnlyTS()
         result = {}
         
@@ -112,11 +124,16 @@ class RPMDBPackageSack(PackageSackBase):
                 result[pkg.pkgid] = pkg
         del mi
 
-        
-        return result.values()
+        result = result.values()
+        self._cache['files'][name] = result
+        return result
         
     def searchPrco(self, name, prcotype):
         
+        result = self._cache[prcotype].get(name)
+        if result is not None:
+            return result
+
         ts = self.readOnlyTS()
         result = {}
         tag = self.DEP_TABLE[prcotype][0]
@@ -140,7 +157,9 @@ class RPMDBPackageSack(PackageSackBase):
         
         del mi
         
-        return result.values()
+        result = result.values()
+        self._cache[prcotype][name] = result
+        return result
 
     def searchProvides(self, name):
         return self.searchPrco(name, 'provides')
