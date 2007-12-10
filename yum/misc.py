@@ -417,7 +417,7 @@ def find_unfinished_transactions(yumlibpath='/var/lib/yum'):
     timestamps.sort()
     return timestamps
     
-def find_ts_remaining(timestamp, yumlibpath='/var/lib/yum',):
+def find_ts_remaining(timestamp, yumlibpath='/var/lib/yum'):
     """this function takes the timestamp of the transaction to look at and 
        the path to the yum lib dir (defaults to /var/lib/yum)
        returns a list of tuples(action, pkgspec) for the unfinished transaction
