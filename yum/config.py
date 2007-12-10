@@ -583,13 +583,16 @@ class YumConf(StartupConf):
     enable_group_conditionals = BoolOption(True)
     group_package_types = ListOption(['mandatory', 'default'])
     
-    timeout = FloatOption(30.0)
+    timeout = FloatOption(30.0) # FIXME: Should use variation of SecondsOption
 
     bandwidth = BytesOption(0)
     throttle = ThrottleOption(0)
 
     http_caching = SelectionOption('all', ('none', 'packages', 'all'))
-    metadata_expire = SecondsOption(1800)   # time in seconds
+    #  Time in seconds (1.5h), yum-updatesd runs once per. hour by default
+    # this time means we don't do interactive network checks/updates if
+    # yum-updatesd is running.
+    metadata_expire = SecondsOption(60 * 90)
     mirrorlist_expire = SecondsOption(86400) # time in seconds (1 day)
     rpm_check_debug = BoolOption(True)
     disable_excludes = ListOption()    
