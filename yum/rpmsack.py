@@ -47,9 +47,11 @@ class RPMDBPackageSack(PackageSackBase):
     def __init__(self, root='/'):
         self.root = root
         self._idx2pkg = {}
-        self._header_dict = {}
-        self._header_by_name = {}
+        self._name2pkg = {}
+        self._tup2pkg = {}
+        self._completely_loaded = False
         self.ts = None
+
         self._cache = {
             'files' : { },
             'provides' : { },
@@ -62,10 +64,7 @@ class RPMDBPackageSack(PackageSackBase):
         '''Getter for the pkglist property. 
         Returns a list of package tuples.
         '''
-        if len(self._header_dict) == 0 :
-            self._make_header_dict()
-
-        return self._header_dict.keys()
+        return [po.pkgtup for po in self.returnPackages()]
 
     pkglist = property(_get_pkglist, None)
 
@@ -99,7 +98,7 @@ class RPMDBPackageSack(PackageSackBase):
             if not result.has_key(pkg.pkgid):
                 result[pkg.pkgid] = pkg
         del mi
-        
+
         fileresults = self.searchFiles(name)
         for pkg in fileresults:
             if not result.has_key(pkg.pkgid):
@@ -129,7 +128,7 @@ class RPMDBPackageSack(PackageSackBase):
         return result
         
     def searchPrco(self, name, prcotype):
-        
+
         result = self._cache[prcotype].get(name)
         if result is not None:
             return result
@@ -140,22 +139,14 @@ class RPMDBPackageSack(PackageSackBase):
         mi = ts.dbMatch(tag, name)
         for hdr in mi:
             po = self._makePackageObject(hdr, mi.instance())
-            prcotup = (name, None, (None, None, None))
-            if po.checkPrco(prcotype, prcotup):
-                if not result.has_key(po.pkgid):
-                    result[po.pkgid] = po
-            
-            # If it's not a provides or filename, we are done
-            if prcotype != 'provides' or name[0] != '/':
-                if not result.has_key(po.pkgid):
-                    result[po.pkgid] = po
-            else:
-                fileresults = self.searchFiles(name)
-                for pkg in fileresults:
-                    if not result.has_key(pkg.pkgid):
-                        result[pkg.pkgid] = pkg
-        
+            result[po.pkgid] = po
         del mi
+
+        # If it's not a provides or filename, we are done
+        if prcotype == 'provides' and name[0] == '/':
+            fileresults = self.searchFiles(name)
+            for pkg in fileresults:
+                result[pkg.pkgid] = pkg
         
         result = result.values()
         self._cache[prcotype][name] = result
@@ -186,8 +177,7 @@ class RPMDBPackageSack(PackageSackBase):
         
         (name, arch) = naTup
 
-        allpkg = [ pkgtup 
-            for (hdr, pkgtup, idx) in self._search(name=name, arch=arch) ]
+        allpkg = [ po.pkgtup for po in self._search(name=name, arch=arch) ]
 
         if not allpkg:
             raise Errors.PackageSackError, 'No Package Matching %s' % name
@@ -198,21 +188,22 @@ class RPMDBPackageSack(PackageSackBase):
         if not name:
             return
 
-        allpkg = [ self._makePackageObject(hdr, idx)
-            for (hdr, pkgtup, idx) in self._search(name=name) ]
+        allpkgs = self._search(name=name)
 
-        if not allpkg:
+        if not allpkgs:
             raise Errors.PackageSackError, 'No Package Matching %s' % name
 
-        return misc.newestInList(allpkg)
+        return misc.newestInList(allpkgs)
 
     def returnPackages(self, repoid=None, patterns=None):
-        return [ self._makePackageObject(hdr, idx)
-            for hdr, idx in self._all_packages() ]
+        if not self._completely_loaded:
+            for hdr, idx in self._all_packages():
+                self._makePackageObject(hdr, idx)
+            self._completely_loaded = True
+        return self._idx2pkg.values()
 
     def searchNevra(self, name=None, epoch=None, ver=None, rel=None, arch=None):
-        return [ self._makePackageObject(hdr, idx)
-            for (hdr, pkgtup, idx) in self._search(name, epoch, ver, rel, arch) ]
+        return self._search(name, epoch, ver, rel, arch)
 
     def excludeArchs(self, archlist):
         pass
@@ -248,60 +239,56 @@ class RPMDBPackageSack(PackageSackBase):
 
         del mi
 
-    def _make_header_dict(self):
-        """generate a header indexes dict that is pkgtup = index number"""
-        
-        for (hdr, idx) in self._all_packages():
-            pkgtup = self._hdr2pkgTuple(hdr)
-            self._header_dict[pkgtup] = (hdr, idx)
-            self._header_by_name.setdefault(pkgtup[0], []).append(
-                (pkgtup, (hdr, idx)))
-        
     def _search(self, name=None, epoch=None, ver=None, rel=None, arch=None):
-        '''Generator that yield (header, pkgtup, index) for matching packages
+        '''Generator that yields matching packages
         '''
-        # Create a match closure for what is being searched for 
-        lookfor = []        # A list of (package_tuple_idx, search_value)
+        pkgtup = (name, arch, epoch, ver, rel)
+        if self._tup2pkg.has_key(pkgtup):
+            return [self._tup2pkg[pkgtup]]
+
         loc = locals()
-        for (i, arg) in enumerate(('name', 'arch', 'epoch', 'ver', 'rel')):
-            val = loc[arg]
-            if val != None:
-                lookfor.append((i, val))
-
-        # Find and yield matches
-        if not self._header_dict:
-            self._make_header_dict()
-
         ret = []
-        # We have the full pkgtup, just grab it from the header dict
-        if len(lookfor) == 5:
-            pkgtup = (name, arch, epoch, ver, rel)
-            if self._header_dict.has_key(pkgtup):
-                hdr, idx = self._header_dict[pkgtup]
-                ret.append( (hdr, pkgtup, idx) )
-        else:
-            if name is not None:
-                pkg_list = self._header_by_name.get(name, [ ])
-            else:
-                pkg_list = self._header_dict.items()
-                
-            for (pkgtup, (hdr, idx)) in pkg_list:
-                ok = True
-                for thisindex, val in lookfor:
-                    if pkgtup[thisindex] != val:
-                        ok = False
-                        break
-                if ok:
-                    ret.append( (hdr, pkgtup, idx) )
-        return ret
 
+        if self._completely_loaded:
+            if name is not None:
+                pkgs = self._name2pkg.get(name, [])
+            else:
+                pkgs = self.returnPkgs()
+            for po in pkgs:
+                for tag in ('name', 'epoch', 'ver', 'rel', 'arch'):
+                    if loc[tag] is not None and loc[tag] != getattr(po, tag):
+                        break
+                else:
+                    ret.append(po)
+            return ret
+
+        ts = self.readOnlyTS()
+        if name is not None:
+            mi = ts.dbMatch('name', name)
+        elif arch is not None:
+            mi = ts.dbMatch('arch', arch)
+        else:
+            mi = ts.dbMatch()
+            self._completely_loaded = True
+
+        for hdr in mi:
+            po = self._makePackageObject(hdr, mi.instance())
+            for tag in ('name', 'epoch', 'ver', 'rel', 'arch'):
+                if loc[tag] is not None and loc[tag] != getattr(po, tag):
+                    break
+            else:
+                ret.append(po)
+        return ret
 
     def _makePackageObject(self, hdr, index):
         if self._idx2pkg.has_key(index):
             return self._idx2pkg[index]
         po = YumInstalledPackage(hdr)
         po.idx = index
+        po.rpmdb = self
         self._idx2pkg[index] = po
+        self._name2pkg.setdefault(po.name, []).append(po)
+        self._tup2pkg[po.pkgtup] = po
         return po
         
     def _hdr2pkgTuple(self, hdr):
@@ -353,11 +340,7 @@ class RPMDBPackageSack(PackageSackBase):
     def returnTupleByKeyword(self, name=None, arch=None, epoch=None, ver=None, rel=None):
         warnings.warn('returnTuplebyKeyword() will go away in a future version of Yum.\n',
                 DeprecationWarning, stacklevel=2)
-
-        out = []
-        for hdr, tup, idx in self._search(name=name, arch=arch, epoch=epoch, ver=ver, rel=rel):
-            out.append(tup)
-        return out
+        return [po.pkgtup for po in self._search(name=name, arch=arch, epoch=epoch, ver=ver, rel=rel)]
 
     def returnHeaderByTuple(self, pkgtuple):
         warnings.warn('returnHeaderByTuple() will go away in a future version of Yum.\n',
@@ -385,10 +368,7 @@ class RPMDBPackageSack(PackageSackBase):
         if epoch in (None, 0, '(none)', ''):
             epoch = '0'
 
-        out = []
-        for hdr, tup, idx in self._search(name, epoch, version, release, arch):
-            out.append(idx)
-        return out
+        return [po.idx for po in self._search(name, epoch, version, release, arch)]
         
     def addDB(self, ts):
         # Can't support this now
