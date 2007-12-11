@@ -44,7 +44,7 @@ def comparePoEVR(po1, po2):
     (e2, v2, r2) = (po2.epoch, po2.version, po2.release)
     return rpmUtils.miscutils.compareEVR((e1, v1, r1), (e2, v2, r2))
 
-def buildPkgRefDict(pkgs):
+def buildPkgRefDict(pkgs, casematch=True):
     """take a list of pkg objects and return a dict the contains all the possible
        naming conventions for them eg: for (name,i386,0,1,1)
        dict[name] = (name, i386, 0, 1, 1)
@@ -58,6 +58,8 @@ def buildPkgRefDict(pkgs):
     pkgdict = {}
     for pkg in pkgs:
         (n, a, e, v, r) = pkg.pkgtup
+        if not casematch:
+            n = n.lower()
         name = n
         nameArch = '%s.%s' % (n, a)
         nameVerRelArch = '%s-%s-%s.%s' % (n, v, r, a)
@@ -79,11 +81,13 @@ def parsePackages(pkgs, usercommands, casematch=0):
        takes an optional casematch option to determine if case should be matched
        exactly. Defaults to not matching."""
 
-    pkgdict = buildPkgRefDict(pkgs)
+    pkgdict = buildPkgRefDict(pkgs, bool(casematch))
     exactmatch = []
     matched = []
     unmatched = []
     for command in usercommands:
+        if not casematch:
+            command = command.lower()
         if pkgdict.has_key(command):
             exactmatch.extend(pkgdict[command])
             del pkgdict[command]
@@ -92,11 +96,10 @@ def parsePackages(pkgs, usercommands, casematch=0):
             # could mean it's not there, could mean it's a wildcard
             if re.match('.*[\*,\[,\],\{,\},\?].*', command):
                 trylist = pkgdict.keys()
+                # command and pkgdict are already lowered if not casematch
+                # so case sensitive is always fine
                 restring = fnmatch.translate(command)
-                if casematch:
-                    regex = re.compile(restring) # case sensitive
-                else:
-                    regex = re.compile(restring, flags=re.I) # case insensitive
+                regex = re.compile(restring)
                 foundit = 0
                 for item in trylist:
                     if regex.match(item):
@@ -108,20 +111,7 @@ def parsePackages(pkgs, usercommands, casematch=0):
                     unmatched.append(command)
                     
             else:
-                if casematch:
-                    unmatched.append(command)
-                else:
-                    # look for case insensitively
-                    foundit = 0
-                    for item in pkgdict.keys():
-                        if command.lower() == item.lower():
-                            matched.extend(pkgdict[item])
-                            foundit = 1
-                            continue
-
-                    # we got nada
-                    if not foundit:
-                        unmatched.append(command)
+                unmatched.append(command)
 
     matched = misc.unique(matched)
     unmatched = misc.unique(unmatched)
