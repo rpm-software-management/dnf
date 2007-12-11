@@ -229,6 +229,48 @@ class IntOption(Option):
         except (ValueError, TypeError), e:
             raise ValueError('invalid integer value')
 
+class SecondsOption(Option):
+
+    """
+    An option representing an integer value of seconds, or a human readable
+    variation specifying days, hours, minutes or seconds until something
+    happens. Works like BytesOption.
+    Note that due to historical president -1 means "never", so this accepts
+    that and allows the word never too.
+
+    Valid inputs: 100, 1.5m, 90s, 1.2d, 1d, 0xF, 0.1, -1, never
+    Invalid inputs: -10, -0.1, 45.6Z, 1d6h, 1day, 1y
+
+    Return value will always be an integer
+    """
+    MULTS = {'d': 60 * 60 * 24, 'h' : 60 * 60, 'm' : 60, 's': 1}
+
+    def parse(self, s):
+        if len(s) < 1:
+            raise ValueError("no value specified")
+
+        if s == "-1" or s == "never": # Special cache timeout, meaning never
+            return -1
+        if s[-1].isalpha():
+            n = s[:-1]
+            unit = s[-1].lower()
+            mult = self.MULTS.get(unit, None)
+            if not mult:
+                raise ValueError("unknown unit '%s'" % unit)
+        else:
+            n = s
+            mult = 1
+
+        try:
+            n = float(n)
+        except (ValueError, TypeError), e:
+            raise ValueError('invalid value')
+
+        if n < 0:
+            raise ValueError("seconds value may not be negative")
+
+        return int(n * mult)
+
 class BoolOption(Option):
 
     """
@@ -545,14 +587,17 @@ class YumConf(StartupConf):
     enable_group_conditionals = BoolOption(True)
     group_package_types = ListOption(['mandatory', 'default'])
     
-    timeout = FloatOption(30.0)
+    timeout = FloatOption(30.0) # FIXME: Should use variation of SecondsOption
 
     bandwidth = BytesOption(0)
     throttle = ThrottleOption(0)
 
     http_caching = SelectionOption('all', ('none', 'packages', 'all'))
-    metadata_expire = IntOption(1800)   # time in seconds
-    mirrorlist_expire = IntOption(86400) # time in seconds (1 day)
+    #  Time in seconds (1.5h), yum-updatesd runs once per. hour by default
+    # this time means we don't do interactive network checks/updates if
+    # yum-updatesd is running.
+    metadata_expire = SecondsOption(60 * 90)
+    mirrorlist_expire = SecondsOption(86400) # time in seconds (1 day)
     rpm_check_debug = BoolOption(True)
     disable_excludes = ListOption()    
 
