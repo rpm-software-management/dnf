@@ -6,7 +6,8 @@ from testbase import *
 class SkipBrokenTests(DepsolveTests):
     ''' Test cases to test skip-broken'''
     
-    def setup_func(self):
+    def setUp(self):
+        DepsolveTests.setUp(self)
         setup_logging()
 
     def testMissingReqNoSkip(self):
