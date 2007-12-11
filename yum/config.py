@@ -233,10 +233,12 @@ class SecondsOption(Option):
 
     """
     An option representing an integer value of seconds, or a human readable
-    variation specifying days, hours, minutes or seconds.
-    Works like BytesOption.
+    variation specifying days, hours, minutes or seconds until something
+    happens. Works like BytesOption.
+    Note that due to historical president -1 means "never", so this accepts
+    that and allows the word never too.
 
-    Valid inputs: 100, 1.5m, 90s, 1.2d, 1d, 0xF, 0.1
+    Valid inputs: 100, 1.5m, 90s, 1.2d, 1d, 0xF, 0.1, -1, never
     Invalid inputs: -10, -0.1, 45.6Z, 1d6h, 1day, 1y
 
     Return value will always be an integer
@@ -247,6 +249,8 @@ class SecondsOption(Option):
         if len(s) < 1:
             raise ValueError("no value specified")
 
+        if s == "-1" or s == "never": # Special cache timeout, meaning never
+            return -1
         if s[-1].isalpha():
             n = s[:-1]
             unit = s[-1].lower()
