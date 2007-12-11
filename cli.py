@@ -1195,6 +1195,9 @@ class YumOptionParser(OptionParser):
 
             if opts.installroot:
                 self.base.conf.installroot = opts.installroot
+                
+            if opts.skipbroken:
+                self.base.conf.skip_broken = True
 
             if opts.disableexcludes:
                 self.base.conf.disable_excludes = opts.disableexcludes
@@ -1315,6 +1318,8 @@ class YumOptionParser(OptionParser):
         self.add_option("", "--disableplugin", dest="disableplugins", default=[], 
                 action="append", help="disable plugins by name",
                 metavar='[plugin]')
+        self.add_option("--skip-broken", action="store_true", dest="skipbroken",
+                help="skip packages with depsolving problems")
 
 
         
