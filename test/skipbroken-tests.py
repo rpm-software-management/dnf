@@ -237,6 +237,34 @@ class SkipBrokenTests(DepsolveTests):
         self.assertEquals('empty', *self.resolveCode(skip=True))
         self.assertResult([po1,ipo])
 
+    def testAlternativePackageAvailable(self):
+        ipo = FakePackage('foo')
+        ipo.addRequires('bar')
+        provides1 = FakePackage('bar')
+        provides1.addRequires('baz')
+        provides2 = FakePackage('bar-ng')
+        provides2.addProvides('bar')
+        #provides2.addRequires('baz')
+
+        self.xsack.addPackage(provides1)
+        self.xsack.addPackage(provides2)
+        self.tsInfo.addInstall(ipo)
+
+        self.assertEquals('ok', *self.resolveCode(skip=True))
+        self.assertResult([ipo, provides2])
+
+    def testOnlyOneRequirementAvailable(self):
+        ipo = FakePackage('foo')
+        ipo.addRequires('bar')
+        ipo.addRequires('baz')
+
+        ppo = FakePackage('baz')
+
+        self.xsack.addPackage(ppo)
+        self.tsInfo.addInstall(ipo)
+
+        self.assertEquals('empty', *self.resolveCode(skip=True))
+        self.assertResult([])
 
     def resolveCode(self,skip = False):
         solver = YumBase()
