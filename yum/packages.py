@@ -60,6 +60,10 @@ def buildPkgRefDict(pkgs, casematch=True):
         (n, a, e, v, r) = pkg.pkgtup
         if not casematch:
             n = n.lower()
+            a = a.lower()
+            e = e.lower()
+            v = v.lower()
+            r = r.lower()
         name = n
         nameArch = '%s.%s' % (n, a)
         nameVerRelArch = '%s-%s-%s.%s' % (n, v, r, a)
