@@ -220,15 +220,17 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
 
     def __init__(self, packageClass):
         # Just init as usual and create a dict to hold the databases
-        yumRepo.YumPackageSack.__init__(self,packageClass)
+        yumRepo.YumPackageSack.__init__(self, packageClass)
         self.primarydb = {}
         self.filelistsdb = {}
         self.otherdb = {}
         self.excludes = {}
+        self._excludes = set() # of (repo, pkgKey)
         self._search_cache = {
             'provides' : { },
             'requires' : { },
             }
+        self._key2pkg = {}
 
     @catchSqliteException
     def __len__(self):
@@ -276,7 +278,7 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
         if not self.excludes.has_key(obj.repo):
             self.excludes[obj.repo] = {}
         self.excludes[obj.repo][obj.pkgId] = 1
-        
+        self._excludes.add( (obj.repo, obj.pkgKey) )
 
     def _excluded(self, repo, pkgId):
         if self.excludes.has_key(repo):
@@ -284,6 +286,22 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
                 return True
                 
         return False
+
+    def _pkgKeyExcluded(self, repo, pkgKey):
+        return (repo, pkgKey) in self._excludes
+
+    def _pkgExcluded(self, po):
+        return (po.repo, po.pkgKey) in self._excludes
+
+    def _packageByKey(self, repo, pkgKey):
+        if not self._key2pkg.has_key(repo):
+            self._key2pkg[repo] = {}
+        if not self._key2pkg[repo].has_key(pkgKey):
+            cur = self.primarydb[repo].cursor()
+            executeSQL(cur, "select pkgKey, pkgId, name, epoch, version, release from packages where pkgKey = ?", (pkgKey,))
+            po = self.pc(repo, cur.fetchone())
+            self._key2pkg[repo][pkgKey] = po
+        return self._key2pkg[repo][pkgKey]
         
     def addDict(self, repo, datatype, dataobj, callback=None):
         if self.added.has_key(repo):
@@ -344,19 +362,22 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
         for (rep,cache) in self.filelistsdb.items():
             cur = cache.cursor()
 
+            if glob:
+                dirname_check = ""
+            else:
+                dirname = os.path.dirname(name)
+                dirname_check = "dirname = '%s' and " % dirname
+
             # grab the entries that are a single file in the 
             # filenames section, use sqlites globbing if it is a glob
-            executeSQL(cur, "select packages.pkgId as pkgId from filelist, \
-                    packages where packages.pkgKey = filelist.pkgKey and \
-                    length(filelist.filetypes) = 1 and \
-                    filelist.dirname || ? || filelist.filenames \
-                    %s ?" % querytype, ('/', name))
+            executeSQL(cur, "select pkgKey from filelist where \
+                    %s length(filetypes) = 1 and \
+                    dirname || ? || filenames \
+                    %s ?" % (dirname_check, querytype), ('/', name))
             for ob in cur:
-                if self._excluded(rep, ob['pkgId']):
+                if self._pkgKeyExcluded(rep, ob['pkgKey']):
                     continue
-                pkg = self.getPackageDetails(ob['pkgId'])
-                po = self.pc(rep, pkg)
-                pkgs.append(po)
+                pkgs.append(self._packageByKey(rep, ob['pkgKey']))
 
             def filelist_globber(dirname, filenames):
                 files = filenames.split('/')
@@ -367,27 +388,17 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
                     matches = filter(lambda x: name==x, fns)
                 return len(matches)
 
-            if glob:
-                dirname_check = ""
-            else:
-                dirname = os.path.dirname(name)
-                dirname_check = "filelist.dirname = '%s' and " % dirname
-
             cache.create_function("filelist_globber", 2, filelist_globber)
             # for all the ones where filenames is multiple files, 
             # make the files up whole and use python's globbing method
-            executeSQL(cur, "select packages.pkgId as pkgId \
-                             from filelist, packages where \
-                             %s length(filelist.filetypes) > 1 \
-                             and filelist_globber(filelist.dirname,filelist.filenames) \
-                             and packages.pkgKey = filelist.pkgKey " % dirname_check)
+            executeSQL(cur, "select pkgKey from filelist where \
+                             %s length(filetypes) > 1 \
+                             and filelist_globber(dirname,filenames)" % dirname_check)
 
             for ob in cur:
-                if self._excluded(rep, ob['pkgId']):
+                if self._pkgKeyExcluded(rep, ob['pkgKey']):
                     continue
-                pkg = self.getPackageDetails(ob['pkgId'])
-                po = self.pc(rep, pkg)
-                pkgs.append(po)
+                pkgs.append(self._packageByKey(rep, ob['pkgKey']))
 
         pkgs = misc.unique(pkgs)
         return pkgs
@@ -399,7 +410,7 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
         if len(fields) < 1:
             return result
         
-        basestring="select DISTINCT pkgId from packages where %s like '%%%s%%' " % (fields[0], searchstring)
+        basestring="select DISTINCT pkgKey from packages where %s like '%%%s%%' " % (fields[0], searchstring)
         
         for f in fields[1:]:
             basestring = "%s or %s like '%%%s%%' " % (basestring, f, searchstring)
@@ -408,11 +419,9 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
             cur = cache.cursor()
             executeSQL(cur, basestring)
             for ob in cur:
-                if self._excluded(rep, ob['pkgId']):
+                if self._pkgKeyExcluded(rep, ob['pkgKey']):
                     continue
-                pkg = self.getPackageDetails(ob['pkgId'])
-                result.append((self.pc(rep,pkg)))
-         
+                result.append(self._packageByKey(rep, ob['pkgKey']))
         return result
         
     @catchSqliteException
@@ -424,7 +433,7 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
         for (rep,cache) in self.primarydb.items():
             cur = cache.cursor()
             executeSQL(cur, "select packages.name as name,\
-                packages.pkgId as pkgId,\
+                packages.pkgKey as pkgKey,\
                 packages.arch as arch, packages.epoch as epoch,\
                 packages.release as release, packages.version as version,\
                 obsoletes.name as oname, obsoletes.epoch as oepoch,\
@@ -434,7 +443,7 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
             for ob in cur:
                 # If the package that is causing the obsoletes is excluded
                 # continue without processing the obsoletes
-                if self._excluded(rep, ob['pkgId']):
+                if self._pkgKeyExcluded(rep, ob['pkgKey']):
                     continue
                     
                 key = ( ob['name'],ob['arch'],
@@ -499,12 +508,9 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
                 if rpmUtils.miscutils.rangeCompare(req, val):
                     tmp.setdefault(x['pkgKey'], []).append(val)
             for pkgKey, hits in tmp.iteritems():
-                executeSQL(cur, "select * from packages where pkgKey=?",
-                           (pkgKey,))
-                x = cur.fetchone()
-                if self._excluded(rep,x['pkgId']):
+                if self._pkgKeyExcluded(rep, pkgKey):
                     continue
-                result[self.pc(rep,x)] = hits
+                result[self._packageByKey(rep, pkgKey)] = hits
 
         if prcotype != 'provides' or name[0] != '/':
             self._search_cache[prcotype][req] = result
@@ -527,11 +533,11 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
         # If it is a filename, search the primary.xml file info
         for (rep,cache) in self.primarydb.items():
             cur = cache.cursor()
-            executeSQL(cur, "select DISTINCT packages.* from files,packages where files.name = ? and files.pkgKey = packages.pkgKey", (name,))
-            for x in cur:
-                if self._excluded(rep,x['pkgId']):
+            executeSQL(cur, "select DISTINCT pkgKey from files where name = ?", (name,))
+            for ob in cur:
+                if self._pkgKeyExcluded(rep, ob['pkgKey']):
                     continue
-                result[self.pc(rep,x)] = [(name, None, None)]
+                result[self._packageByKey(rep, ob['pkgKey'])] = [(name, None, None)]
         self._search_cache[prcotype][req] = result
         return result
 
@@ -554,11 +560,11 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
         results = []
         for (rep,cache) in self.primarydb.items():
             cur = cache.cursor()
-            executeSQL(cur, "select DISTINCT packages.* from %s,packages where %s.name %s ? and %s.pkgKey=packages.pkgKey" % (prcotype,prcotype,querytype,prcotype), (name,))
-            for x in cur:
-                if self._excluded(rep, x['pkgId']):
+            executeSQL(cur, "select DISTINCT pkgKey from %s where name %s ?" % (prcotype,querytype), (name,))
+            for ob in cur:
+                if self._pkgKeyExcluded(rep, ob['pkgKey']):
                     continue
-                results.append(self.pc(rep, x))
+                results.append(self._packageByKey(rep, ob['pkgKey']))
         
         # If it's not a provides or a filename, we are done
         if prcotype != "provides" or name[0] != '/':
@@ -568,11 +574,11 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
         # If it is a filename, search the primary.xml file info
         for (rep,cache) in self.primarydb.items():
             cur = cache.cursor()
-            executeSQL(cur, "select DISTINCT packages.* from files,packages where files.name %s ? and files.pkgKey = packages.pkgKey" % querytype, (name,))
-            for x in cur:
-                if self._excluded(rep,x['pkgId']):
+            executeSQL(cur, "select DISTINCT pkgKey from files where name %s ?" % querytype, (name,))
+            for ob in cur:
+                if self._pkgKeyExcluded(rep, ob['pkgKey']):
                     continue
-                results.append(self.pc(rep,x))
+                results.append(self._packageByKey(rep, ob['pkgKey']))
         
         matched = 0
         globs = ['.*bin\/.*', '^\/etc\/.*', '^\/usr\/lib\/sendmail$']
@@ -689,11 +695,11 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
         allpkg = []
         for (rep,cache) in self.primarydb.items():
             cur = cache.cursor()
-            executeSQL(cur, "select pkgId,name,epoch,version,release,arch from packages where name=? and arch=?",naTup)
-            for x in cur:
-                if self._excluded(rep, x['pkgId']):
-                    continue                    
-                allpkg.append(self.pc(rep,x))
+            executeSQL(cur, "select pkgKey from packages where name=? and arch=?",naTup)
+            for ob in cur:
+                if self._pkgKeyExcluded(rep, ob['pkgKey']):
+                    continue
+                allpkg.append(self._packageByKey(rep, ob['pkgKey']))
         
         # if we've got zilch then raise
         if not allpkg:
@@ -711,11 +717,11 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
         allpkg = []
         for (rep,cache) in self.primarydb.items():
             cur = cache.cursor()
-            executeSQL(cur, "select pkgId,name,epoch,version,release,arch from packages where name=?", (name,))
-            for x in cur:
-                if self._excluded(rep, x['pkgId']):
-                    continue                    
-                allpkg.append(self.pc(rep,x))
+            executeSQL(cur, "select pkgKey from packages where name=?", (name,))
+            for ob in cur:
+                if self._pkgKeyExcluded(rep, ob['pkgKey']):
+                    continue
+                allpkg.append(self._packageByKey(rep, ob['pkgKey']))
         
         # if we've got zilch then raise
         if not allpkg:
@@ -741,11 +747,11 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
                 cur = db.cursor()
                 executeSQL(cur, query)
                 for pkg in cur:
-                    if self._excluded(rep, pkg['pkgId']):
+                    if self._pkgKeyExcluded(rep, pkg['pkgKey']):
                         continue
                     if p in unmatched:
                         unmatched.remove(p)
-                    matchres.append(self.pc(rep, pkg))
+                    matchres.append(self._packageByKey(rep, pkg['pkgKey']))
 
         exactmatch = misc.unique(exactmatch)
         matched = misc.unique(matched)
@@ -762,9 +768,14 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
             if (repoid == None or repoid == repo.id):
                 cur = cache.cursor()
                 
-                executeSQL(cur, "select pkgId,name,epoch,version,release,arch from packages")
+                executeSQL(cur, "select pkgId, pkgKey, name,epoch,version,release,arch from packages")
                 for x in cur:
-                    returnList.append(self.pc(repo,x))
+                    if self._key2pkg.get(repo, {}).has_key(x['pkgKey']):
+                        po = self._key2pkg[repo][x['pkgKey']]
+                    else:
+                        po = self.pc(repo,x)
+                        self._key2pkg.setdefault(repo, {})[po.pkgKey] = po
+                    returnList.append(po)
         self.pkgobjlist = returnList
                 
     def returnPackages(self, repoid=None):
@@ -776,7 +787,7 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
             self._buildPkgObjList(repoid)
 
         for po in self.pkgobjlist:
-            if self._excluded(po.repo, po.pkgId):
+            if self._pkgExcluded(po):
                 continue
             returnList.append(po)
 
@@ -796,7 +807,7 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
             return returnList
         
         # make up our execute string
-        q = "select * from packages WHERE"
+        q = "select pkgKey from packages WHERE"
         for (col, var) in [('name', name), ('epoch', epoch), ('version', ver),
                            ('arch', arch), ('release', rel)]:
             if var:
@@ -808,12 +819,11 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
         # Search all repositories            
         for (rep,cache) in self.primarydb.items():
             cur = cache.cursor()
-            #executeSQL(cur, "select * from packages WHERE name = %s AND epoch = %s AND version = %s AND release = %s AND arch = %s" , (name,epoch,ver,rel,arch))
             executeSQL(cur, q)
-            for x in cur:
-                if self._excluded(rep, x['pkgId']):
+            for ob in cur:
+                if self._pkgKeyExcluded(rep, ob['pkgKey']):
                     continue
-                returnList.append(self.pc(rep,x))
+                returnList.append(self._packageByKey(rep, ob['pkgKey']))
         return returnList
     
     @catchSqliteException
@@ -826,7 +836,7 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
 
         for (rep, cache) in self.primarydb.items():
             cur = cache.cursor()
-            myq = "select pkgId from packages where arch not in %s" % arch_query
+            myq = "select pkgId, pkgKey from packages where arch not in %s" % arch_query
             executeSQL(cur, myq)
             for row in cur:
                 obj = self.pc(rep,row)
@@ -864,7 +874,7 @@ def decodefiletypelist(filetypestring):
 # Check against name, nameArch, nameVerRelArch, nameVer, nameVerRel,
 # envra, nevra
 PARSE_QUERY = """
-select pkgId, name, arch, epoch, version, release from packages
+select pkgKey from packages
 where name %(op)s '%(q)s'
    or name || '.' || arch %(op)s '%(q)s'
    or name || '-' || version %(op)s '%(q)s'
