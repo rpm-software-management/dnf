@@ -257,10 +257,9 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
         yumRepo.YumPackageSack.close(self)
 
     def buildIndexes(self):
-        # we just need to nuke the indexes first
-        if hasattr(self, 'pkgobjlist'):
-            del self.pkgobjlist
-        self.returnPackages()
+        # We don't need to play with returnPackages() caching as it handles
+        # additions to excludes after the cache is built.
+        pass
 
     def _checkIndexes(self, failure='error'):
         return
@@ -750,31 +749,33 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
         return exactmatch, matched, unmatched
 
     @catchSqliteException
-    def returnPackages(self, repoid=None):
-        """Returns a list of packages, only containing nevra information """
+    def _buildPkgObjList(self, repoid=None):
+        """Builds a list of packages, only containing nevra information. No
+           excludes are done at this stage. """
         
         returnList = []        
-        if hasattr(self, 'pkgobjlist'):
-            if self.pkgobjlist:
-                for po in self.pkgobjlist:
-                    if self._excluded(po.repo, po.pkgId):
-                        continue
-                    returnList.append(po)
-            return returnList
-
         for (repo,cache) in self.primarydb.items():
             if (repoid == None or repoid == repo.id):
                 cur = cache.cursor()
                 
                 executeSQL(cur, "select pkgId,name,epoch,version,release,arch from packages")
                 for x in cur:
-                    if self._excluded(repo,x['pkgId']):
-                        continue
-
                     returnList.append(self.pc(repo,x))
-                
         self.pkgobjlist = returnList
+                
+    def returnPackages(self, repoid=None):
+        """Returns a list of packages, only containing nevra information. The
+           packages are processed for excludes. """
         
+        returnList = []        
+        if not hasattr(self, 'pkgobjlist'):
+            self._buildPkgObjList(repoid)
+
+        for po in self.pkgobjlist:
+            if self._excluded(po.repo, po.pkgId):
+                continue
+            returnList.append(po)
+
         return returnList
 
     @catchSqliteException
