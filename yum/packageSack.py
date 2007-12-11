@@ -750,16 +750,9 @@ class PackageSack(PackageSackBase):
            
     def simplePkgList(self):
         """returns a list of pkg tuples (n, a, e, v, r) optionally from a single repoid"""
-        if hasattr(self, 'pkglist'):
-            if self.pkglist:
-                return self.pkglist
         
-        simplelist = []
-        for pkg in self.returnPackages():
-            simplelist.append(pkg.pkgtup)
-        
-        self.pkglist = simplelist
-        return simplelist
+        # Don't cache due to excludes
+        return [pkg.pkgtup for pkg in self.returnPackages()]
                        
     def printPackages(self):
         for pkg in self.returnPackages():

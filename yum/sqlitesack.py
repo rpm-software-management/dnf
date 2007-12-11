@@ -253,8 +253,6 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
             }
         if hasattr(self, 'pkgobjlist'):
             del self.pkgobjlist
-        if hasattr(self, 'pkglist'):
-            del self.pkglist
 
         yumRepo.YumPackageSack.close(self)
 
@@ -262,8 +260,6 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
         # we just need to nuke the indexes first
         if hasattr(self, 'pkgobjlist'):
             del self.pkgobjlist
-        if hasattr(self, 'pkglist'):
-            del self.pkglist
         self.returnPackages()
 
     def _checkIndexes(self, failure='error'):
@@ -276,7 +272,6 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
         if not self.excludes.has_key(obj.repo):
             self.excludes[obj.repo] = {}
         self.excludes[obj.repo][obj.pkgId] = 1
-        self.pkglist = None
         
 
     def _excluded(self, repo, pkgId):
@@ -677,12 +672,6 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
                 'buildhost': db['rpm_buildhost'], 'sourcerpm': db['rpm_sourcerpm'],
                 'url': db['url'], 'vendor': db['rpm_vendor'], 'license': db['rpm_license'] }
         return y
-
-    @catchSqliteException
-    def simplePkgList(self):
-        """returns a list of pkg tuples (n, a, e, v, r) from the sack"""
-
-        return [pkg.pkgtup for pkg in self.returnPackages()]
 
     @catchSqliteException
     def returnNewestByNameArch(self, naTup=None):
