@@ -264,7 +264,6 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
             del self.pkgobjlist
         if hasattr(self, 'pkglist'):
             del self.pkglist
-        self.simplePkgList()
         self.returnPackages()
 
     def _checkIndexes(self, failure='error'):
@@ -683,22 +682,7 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
     def simplePkgList(self):
         """returns a list of pkg tuples (n, a, e, v, r) from the sack"""
 
-        if hasattr(self, 'pkglist'):
-            if not self.pkglist == None:
-                return self.pkglist
-            
-        simplelist = []
-        for (rep,cache) in self.primarydb.items():
-            cur = cache.cursor()
-            executeSQL(cur, "select pkgId,name,epoch,version,release,arch from packages")
-            for pkg in cur:
-                if self._excluded(rep, pkg['pkgId']):
-                    continue
-                simplelist.append((pkg['name'], pkg['arch'], pkg['epoch'], pkg['version'], pkg['release'])) 
-        
-        self.pkglist = simplelist
-
-        return simplelist
+        return [pkg.pkgtup for pkg in self.returnPackages()]
 
     @catchSqliteException
     def returnNewestByNameArch(self, naTup=None):
