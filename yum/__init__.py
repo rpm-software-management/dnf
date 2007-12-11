@@ -2086,13 +2086,18 @@ class YumBase(depsolve.Depsolve):
         pkgs = []
         
         if po:
-            pkgs = [po]
+            pkgs = [po]  
         else:
-            nevra_dict = self._nevra_kwarg_parse(kwargs)
+            if kwargs.has_key('pattern'):
+                (e,m,u) = self.rpmdb.matchPackageNames([kwargs['pattern']])
+                pkgs.extend(e)
+                pkgs.extend(m)
+            else:    
+                nevra_dict = self._nevra_kwarg_parse(kwargs)
 
-            pkgs = self.rpmdb.searchNevra(name=nevra_dict['name'], 
-                        epoch=nevra_dict['epoch'], arch=nevra_dict['arch'], 
-                        ver=nevra_dict['version'], rel=nevra_dict['release'])
+                pkgs = self.rpmdb.searchNevra(name=nevra_dict['name'], 
+                            epoch=nevra_dict['epoch'], arch=nevra_dict['arch'], 
+                            ver=nevra_dict['version'], rel=nevra_dict['release'])
 
         if len(pkgs) == 0: # should this even be happening?
             self.logger.warning("No package matched to remove")
