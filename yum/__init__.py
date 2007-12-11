@@ -2061,6 +2061,13 @@ class YumBase(depsolve.Depsolve):
                     instpkgs.append(po)
                 else:
                     availpkgs.append(po)
+            elif kwargs.has_key('pattern'):
+                (e, m, u) = self.pkgSack.matchPackageNames([kwargs['pattern']])
+                availpkgs.extend(e)
+                availpkgs.extend(m)
+                (e, m, u) = self.rpmdb.matchPackageNames([kwargs['pattern']])
+                instpkgs.extend(e)
+                instpkgs.extend(m)
                 
             else: # we have kwargs, sort them out.
                 nevra_dict = self._nevra_kwarg_parse(kwargs)
