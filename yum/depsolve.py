@@ -258,6 +258,11 @@ class Depsolve(object):
             CheckDeps, missingdep = self._requiringFromTransaction(po, requirement, errormsgs)
         else:
             CheckDeps, missingdep = self._requiringFromInstalled(po, requirement, errormsgs)
+
+        # Check packages with problems
+        if missingdep:
+            self.po_with_problems.add((po,self._working_po))
+
         return (CheckDeps, missingdep, errormsgs)
 
     def _requiringFromInstalled(self, requiringPo, requirement, errorlist):
@@ -560,13 +565,13 @@ class Depsolve(object):
                 name))
             # FIXME: we should probably handle updating multiple packages...
             txmbr = self.tsInfo.addUpdate(best, inst[0])
-            txmbr.setAsDep()
+            txmbr.setAsDep(po=requiringPo)
             txmbr.reason = "dep"
         else:
             self.verbose_logger.debug('TSINFO: Marking %s as install for %s', best,
                 name)
             txmbr = self.tsInfo.addInstall(best)
-            txmbr.setAsDep()
+            txmbr.setAsDep(po=requiringPo)
 
             # if we had other packages with this name.arch that we found
             # before, they're not going to be installed anymore, so we
@@ -589,6 +594,7 @@ class Depsolve(object):
 
         needname, flags, needversion = conflict
         (name, arch, epoch, ver, rel) = po.pkgtup
+        requiringPo = po
 
         niceformatneed = rpmUtils.miscutils.formatRequire(needname, needversion, flags)
         if self.dsCallback: self.dsCallback.procConflict(name, niceformatneed)
@@ -640,7 +646,7 @@ class Depsolve(object):
             self.verbose_logger.log(logginglevels.DEBUG_2,
                 'TSINFO: Updating %s to resolve conflict.', po)
             txmbr = self.tsInfo.addUpdate(po, confpkg)
-            txmbr.setAsDep()
+            txmbr.setAsDep(po=requiringPo)
             txmbr.reason = "dep"
             CheckDeps = 1
             
@@ -649,7 +655,9 @@ class Depsolve(object):
             CheckDeps, conflicts = self._unresolveableConflict(conf, name, errormsgs)
             self.verbose_logger.log(logginglevels.DEBUG_1, '%s conflicts: %s',
                 name, conf)
-        
+            if conflicts:
+                self.po_with_problems.add((requiringPo,None))
+
         return (CheckDeps, conflicts, errormsgs)
 
     def _unresolveableConflict(self, conf, name, errors):
@@ -703,6 +711,8 @@ class Depsolve(object):
             # reset what we've seen as things may have changed between calls
             # to resolveDeps (rh#242368, rh#308321)
             self._dcobj.reset()
+        self.po_with_problems = set()
+        self._working_po = None
 
         CheckDeps = True
         CheckRemoves = False
@@ -770,6 +780,8 @@ class Depsolve(object):
         self.tsInfo.changed = False
         if len(errors) > 0:
             errors = unique(errors)
+            for po,wpo in self.po_with_problems:
+                self.verbose_logger.debug("%s has depsolving problems" % po)
             return (1, errors)
 
         if len(self.tsInfo) > 0:
@@ -794,6 +806,15 @@ class Depsolve(object):
             self.verbose_logger.log(logginglevels.DEBUG_2,
                                     "Checking deps for %s" %(txmbr,))
 
+            # store the primary po we currently are working on 
+            # so we can store it in self.po_with_problems.
+            # it is useful when an update is breaking an require of an installed package
+            # then we want to know who is causing the problem, not just who is having the problem. 
+            if not txmbr.updates and txmbr.relatedto:
+                self._working_po = txmbr.relatedto[0][0]
+            else:
+                self._working_po = txmbr.po
+           
             if txmbr.output_state in inst:
                 thisneeds = self._checkInstall(txmbr)
                 CheckInstalls = True

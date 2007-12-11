@@ -31,6 +31,7 @@ class FakeConf(object):
         self.installroot = '/'
         self.tsflags = []
         self.installonly_limit = 0
+        self.skip_broken = False
         self.disable_excludes = []
 
 class FakeRepo(object):

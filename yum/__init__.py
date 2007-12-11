@@ -580,8 +580,63 @@ class YumBase(depsolve.Depsolve):
         
         if self.tsInfo.changed:
             (rescode, restring) = self.resolveDeps()
+
+        # if depsolve failed and skipbroken is enabled
+        # The remove the broken packages from the transactions and
+        # Try another depsolve
+        if self.conf.skip_broken and rescode==1:
+            rescode, restring = self._skipPackagesWithProblems(rescode, restring)
             
         return rescode, restring
+
+    def _skipPackagesWithProblems(self, rescode, restring):
+        ''' Remove the packages with depsolve errors and depsolve again '''
+        # Keep removing packages & Depsolve until all errors is gone
+        # or the transaction is empty
+        depTree = self._buildDepTree()
+        while len(self.po_with_problems) > 0 and rescode == 1:
+            startTs = set(self.tsInfo)
+            toRemove = []
+            for po,wpo in self.po_with_problems:
+                # check if the problem is caused by a package in the transaction
+                if not self.tsInfo.exists(po.pkgtup):
+                    if wpo:
+                        toRemove = self._getPackagesToRemove(wpo, depTree, toRemove)
+                    else:
+                        continue
+                else:
+                    toRemove = self._getPackagesToRemove(po, depTree, toRemove)
+            if toRemove:
+                for po in toRemove:
+                    if self.tsInfo.exists(po.pkgtup):
+                        self.verbose_logger.debug("skipping %s because of depsolving problems" % str(po))
+                        self.tsInfo.remove(po.pkgtup)
+            else: # Nothing was removed, so we still got a problem
+                break # Bail out
+            rescode, restring = self.resolveDeps()
+            endTs = set(self.tsInfo)
+             # Check if tsInfo has changes since we started to skip packages
+             # if there is no changes then we got a loop.
+            if startTs-endTs == set():
+                break    # bail out
+        return rescode, restring
+
+    def _buildDepTree(self):
+        depTree = {}
+        for txmbr in self.tsInfo:
+            if not txmbr.po in depTree.keys():
+                depTree[txmbr.po] = []
+            for po in (txmbr.updates + txmbr.obsoletes+txmbr.depends_on):
+                depTree[txmbr.po].append(po)
+        return depTree
+    
+    def _getPackagesToRemove(self,po,deptree,toRemove):
+        if po not in toRemove:
+            toRemove.append(po)       
+        for child in deptree[po]:
+            if child not in toRemove:
+                toRemove = self._getPackagesToRemove(child, deptree, toRemove)
+        return toRemove
 
     def runTransaction(self, cb):
         """takes an rpm callback object, performs the transaction"""

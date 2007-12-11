@@ -600,6 +600,7 @@ class YumConf(StartupConf):
     mirrorlist_expire = SecondsOption(86400) # time in seconds (1 day)
     rpm_check_debug = BoolOption(True)
     disable_excludes = ListOption()    
+    skip_broken = BoolOption(False)
 
     
     _reposlist = []
