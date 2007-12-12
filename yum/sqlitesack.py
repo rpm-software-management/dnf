@@ -232,12 +232,13 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
 
     @catchSqliteException
     def __len__(self):
+        exclude_num = len(self.excludes[repo.obj].values())
         if hasattr(self, 'pkgobjlist'):
-            return len(self.pkgobjlist)
+            return len(self.pkgobjlist) - exclude_num
         for (rep,cache) in self.primarydb.items():
             cur = cache.cursor()
             executeSQL(cur, "select count(pkgId) from packages")
-            return cur.fetchone()[0]
+            return cur.fetchone()[0] - exclude_num
 
     @catchSqliteException
     def close(self):
