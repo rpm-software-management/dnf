@@ -34,6 +34,7 @@ class Updates:
         self.installed = instlist # list of installed pkgs (n, a, e, v, r)
         self.available = availlist # list of available pkgs (n, a, e, v, r)
         self.rawobsoletes = {} # dict of obsoleting package->[what it obsoletes]
+        self._obsoletes_by_name = None
         self.exactarch = 1 # don't change archs by default
         self.exactarchlist = ['kernel', 'kernel-smp', 'glibc', 'kernel-hugemem',
                               'kernel-enterprise', 'kernel-bigmem', 'kernel-BOOT']
@@ -133,44 +134,23 @@ class Updates:
     def checkForObsolete(self, pkglist, newest=1):
         """accept a list of packages to check to see if anything obsoletes them
            return an obsoleted_dict in the format of makeObsoletedDict"""
-           
+        if self._obsoletes_by_name is None:
+            self._obsoletes_by_name = {}
+            for pkgtup, obsoletes in self.rawobsoletes.iteritems():
+                for name, flag, version in obsoletes:
+                    self._obsoletes_by_name.setdefault(name, []).append(
+                        (flag, version, pkgtup) )
+
         obsdict = {} # obseleting package -> [obsoleted package]
         pkgdict = self.makeNADict(pkglist, 1)
-        
-        # this needs to keep arch in mind
-        # if foo.i386 obsoletes bar
-        # it needs to obsoletes bar.i386 preferentially, not bar.x86_64
-        # if there is only one bar and only one foo then obsolete it, but try to
-        # match the arch.
-        
-        # look through all the obsoleting packages look for multiple archs per name
-        # if you find it look for the packages they obsolete
-        # 
-        for pkgtup in self.rawobsoletes.keys():
-            (name, arch, epoch, ver, rel) = pkgtup
-            for (obs_n, flag, (obs_e, obs_v, obs_r)) in self.rawobsoletes[(pkgtup)]:
-                if flag in [None, 0]: # unversioned obsolete
-                    if pkgdict.has_key((obs_n, None)):
-                        for (rpm_a, rpm_e, rpm_v, rpm_r) in pkgdict[(obs_n, None)]:
-                            # broken package obsoleting itself, rpm allows
-                            # this so just silently ignore it...
-                            if obs_n == name:
-                                continue
-                            if not obsdict.has_key(pkgtup):
-                                obsdict[pkgtup] = []
-                            obsdict[pkgtup].append((obs_n, rpm_a, rpm_e, rpm_v, rpm_r))
 
-                else: # versioned obsolete
-                    if pkgdict.has_key((obs_n, None)):
-                        for (rpm_a, rpm_e, rpm_v, rpm_r) in pkgdict[(obs_n, None)]:
-                            if rpmUtils.miscutils.rangeCheck((obs_n, flag, (obs_e, \
-                                                        obs_v, obs_r)), (obs_n,\
-                                                        rpm_a, rpm_e, rpm_v, rpm_r)):
-                                # make sure the obsoleting pkg is not already installed
-                                if not obsdict.has_key(pkgtup):
-                                    obsdict[pkgtup] = []
-                                obsdict[pkgtup].append((obs_n, rpm_a, rpm_e, rpm_v, rpm_r))
-        
+        for pkgtup in pkglist:
+            (name, arch, epoch, ver, rel) = pkgtup
+            for obs_flag, obs_version, obsoleting in self._obsoletes_by_name.get(name, []):
+                if obs_flag in [None, 0] and name == obsoleting[0]: continue
+                if rpmUtils.miscutils.rangeCheck( (name, obs_flag, obs_version), pkgtup):
+                    obsdict.setdefault(obsoleting, []).append(pkgtup)
+
         obslist = obsdict.keys()
         if newest:
             obslist = self._reduceListNewestByNameArch(obslist)
@@ -183,7 +163,7 @@ class Updates:
                 returndict[old].append(new)
         
         return returndict
-        
+
     def doObsoletes(self):
         """figures out what things available obsolete things installed, returns
            them in a dict attribute of the class."""
