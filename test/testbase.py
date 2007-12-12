@@ -22,7 +22,7 @@ from rpmUtils import arch
 class FakeConf(object):
 
     def __init__(self):
-        self.installonlypkgs = []
+        self.installonlypkgs = ['kernel']
         self.exclude = []
         self.debuglevel = 0
         self.obsoletes = True
@@ -220,7 +220,9 @@ class OperationsTests(_DepsolveTestsBase):
         self.xsack = depsolver._pkgSack  = packageSack.PackageSack()
         self.repo = depsolver.repo = FakeRepo("installed")
         depsolver.conf = FakeConf()
-        depsolver.doLoggingSetup(-1, -1)
+        # We are running nosetest, so we want to see some yum output
+        # if a testcase if failing
+        depsolver.doLoggingSetup(9,9)
         self.depsolver = depsolver
 
         for po in installed:

@@ -111,3 +111,23 @@ class ComplicatedObsoletesTests(OperationsTests):
         else:
             self.assertResult((p.obsoletes,))
     # continue endlessly
+    
+class KernelTests(OperationsTests):
+
+    @staticmethod
+    def buildPkgs(pkgs, *args):
+        pkgs.inst = []
+        pkgs.inst.append(FakePackage('kernel', '2.6.23.8', '63',arch='i686'))
+        pkgs.inst.append(FakePackage('kernel', '2.6.23.1', '49',arch='i686'))
+        pkgs.avail = []
+        pkgs.avail.append(FakePackage('kernel', '2.6.23.8', '63',arch='i686'))
+        pkgs.avail.append(FakePackage('kernel', '2.6.23.8', '63',arch='i586'))
+        pkgs.avail.append(FakePackage('kernel', '2.6.23.1', '49',arch='i686'))
+        pkgs.avail.append(FakePackage('kernel', '2.6.23.1', '49',arch='i586'))
+        pkgs.avail.append(FakePackage('kernel', '2.6.23.1', '42',arch='i686'))
+        pkgs.avail.append(FakePackage('kernel', '2.6.23.1', '42',arch='i586'))
+    
+    def testKernelInstall(self):
+        p = self.pkgs
+        res, msg = self.runOperation(['install','kernel'], p.inst, p.avail)
+        self.assertResult(p.inst)
