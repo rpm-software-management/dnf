@@ -30,7 +30,7 @@ class PackageSackBase(object):
         self.added = {}
 
     def __len__(self):
-        return len(self.simplePkgList())
+        return len(self.returnPackages())
         
     def __iter__(self):
         ret = self.returnPackages()
@@ -219,6 +219,12 @@ class MetaSack(PackageSackBase):
         PackageSackBase.__init__(self)
         self.sacks = {}
         self.compatarchs = None
+
+    def __len__(self):
+        ret = 0
+        for sack in self.sacks.values():
+            ret += len(sack)
+        return ret
 
     def addSack(self, repoid, sack):
         """Adds a repository's packageSack to this MetaSack."""
@@ -434,7 +440,10 @@ class PackageSack(PackageSackBase):
         
         
     def __len__(self):
-        return len(self.simplePkgList())
+        ret = 0
+        for repo in self.pkgsByRepo.keys():
+            ret += len(self.pkgsByRepo[repo])
+        return ret
     
 
     def _checkIndexes(self, failure='error'):
