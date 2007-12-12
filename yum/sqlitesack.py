@@ -232,6 +232,8 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
 
     @catchSqliteException
     def __len__(self):
+        if hasattr(self, 'pkgobjlist'):
+            return len(self.pkgobjlist)
         for (rep,cache) in self.primarydb.items():
             cur = cache.cursor()
             executeSQL(cur, "select count(pkgId) from packages")
