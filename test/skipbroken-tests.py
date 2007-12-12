@@ -251,8 +251,8 @@ class SkipBrokenTests(DepsolveTests):
         self.xsack.addPackage(provides2)
         self.tsInfo.addInstall(ipo)
 
-        self.assertEquals('ok', *self.resolveCode(skip=True))
-        self.assertResult([ipo, provides2])
+        self.assertEquals('empty', *self.resolveCode(skip=True))
+        self.assertResult([])
 
     def testOnlyOneRequirementAvailable(self):
         ipo = FakePackage('foo')
