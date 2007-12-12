@@ -16,7 +16,7 @@ Requires: python-sqlite
 Requires: urlgrabber
 Requires: yum-metadata-parser >= 1.1.0
 Requires: python-iniparse
-
+Requires: pygpgme
 Prereq: /sbin/chkconfig, /sbin/service, coreutils
 
 
@@ -92,6 +92,9 @@ exit 0
 %{_mandir}/man*/yum-updatesd*
 
 %changelog
+* Wed Dec 12 2007 Seth Vidal <skvidal at fedoraproject.org>
+- add pygpgme dep for new gpg key handling
+
 * Mon Dec  3 2007 Seth Vidal <skvidal at fedoraproject.org>
 - 3.2.8
 

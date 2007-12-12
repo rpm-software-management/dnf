@@ -16,6 +16,7 @@ import pwd
 import fnmatch
 import bz2
 from stat import *
+import gpgme
 
 from Errors import MiscError
 
@@ -268,6 +269,34 @@ def keyInstalled(ts, keyid, timestamp):
 
     return -1
 
+def import_key_to_pubring(rawkey, repo_cachedir):
+    gpgdir = '%s/gpgdir' % repo_cachedir
+    if not os.path.exists(gpgdir):
+        os.makedirs(gpgdir)
+    
+    key_fo = StringIO(rawkey) 
+    ctx = gpgme.Context()
+    os.environ['GNUPGHOME'] = gpgdir
+    fp = open(os.path.join(gpgdir, 'gpg.conf'), 'wb')
+    fp.write('')
+    fp.close()
+    ctx.import_(key_fo)
+    key_fo.close()
+    
+def return_keyids_from_pubring(gpgdir):
+    ctx = gpgme.Context()
+    if not os.path.exists(gpgdir):
+        return []
+        
+    os.environ['GNUPGHOME'] = gpgdir
+    keyids = []
+    for k in ctx.keylist():
+        for subkey in k.subkeys:
+            if subkey.can_sign:
+                keyids.append(subkey.keyid)
+
+    return keyids
+        
 def getCacheDir(tmpdir='/var/tmp'):
     """return a path to a valid and safe cachedir - only used when not running
        as root or when --tempcache is set"""

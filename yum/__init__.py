@@ -2278,6 +2278,8 @@ class YumBase(depsolve.Depsolve):
             if result != 0:
                 raise Errors.YumBaseError, \
                       'Key import failed (code %d)' % result
+            misc.import_key_to_pubring(rawkey, po.repo.cachedir)
+            
             self.logger.info('Key imported successfully')
             key_installed = True
 
