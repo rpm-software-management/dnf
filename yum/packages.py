@@ -92,26 +92,7 @@ def parsePackages(pkgs, usercommands, casematch=0):
                 return True
         return False
 
-    # If we can match on only the name, do so as it uses much less CPU/RAM
-    # for the pkgdict. And most of the time poepl use: foo or foo*
-    name_only_match = True
-    for command in usercommands:
-        if command[-1] == '*': # Can still match on name only, for prefix
-            command = command[:-1]
-        if contains(command, "*,[]{}?.-"):
-            name_only_match = False
-            break
-
-    if not name_only_match:
-        pkgdict = buildPkgRefDict(pkgs, bool(casematch))
-    else:
-        pkgdict = {}
-        for pkg in pkgs:
-            n = pkg.name
-            if not casematch:
-                n = n.lower()
-            pkgdict.setdefault(n, []).append(pkg)
-
+    pkgdict = buildPkgRefDict(pkgs, bool(casematch))
     exactmatch = []
     matched = []
     unmatched = []
