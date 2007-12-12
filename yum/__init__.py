@@ -596,7 +596,7 @@ class YumBase(depsolve.Depsolve):
         depTree = self._buildDepTree()
         while len(self.po_with_problems) > 0 and rescode == 1:
             startTs = set(self.tsInfo)
-            toRemove = []
+            toRemove = set()
             for po,wpo in self.po_with_problems:
                 # check if the problem is caused by a package in the transaction
                 if not self.tsInfo.exists(po.pkgtup):
@@ -622,17 +622,28 @@ class YumBase(depsolve.Depsolve):
         return rescode, restring
 
     def _buildDepTree(self):
+        ''' create a dictionary with po -> deps and dep -> pos references '''
         depTree = {}
         for txmbr in self.tsInfo:
             if not txmbr.po in depTree.keys():
-                depTree[txmbr.po] = []
+                depTree[txmbr.po] = set()
             for po in (txmbr.updates + txmbr.obsoletes+txmbr.depends_on):
-                depTree[txmbr.po].append(po)
+                # Add po -> dep reference
+                depTree[txmbr.po].add(po)
+                if not po in depTree.keys():
+                    depTree[po] = set()
+                # Add dep -> reference
+                depTree[po].add(txmbr.po)
+                                 
         return depTree
     
     def _getPackagesToRemove(self,po,deptree,toRemove):
+        '''
+        walk trough the po->deps, dep->po's reference tree too get
+        the related po to remove.
+        '''
         if po not in toRemove:
-            toRemove.append(po)       
+            toRemove.add(po)       
         for child in deptree[po]:
             if child not in toRemove:
                 toRemove = self._getPackagesToRemove(child, deptree, toRemove)
