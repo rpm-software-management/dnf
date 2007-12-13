@@ -34,14 +34,14 @@ def main(args):
 
     def exUserCancel():
         logger.critical('\n\nExiting on user cancel')
-        unlock()
-        sys.exit(1)
+        if unlock(): return 200
+        return 1
 
     def exIOError(e):
         if e.errno == 32:
             logger.critical('\n\nExiting on Broken Pipe')
-        unlock()
-        sys.exit(1)
+        if unlock(): return 200
+        return 1
 
     def exPluginExit(e):
         '''Called when a plugin raises PluginYumExit.
@@ -51,20 +51,21 @@ def main(args):
         exitmsg = str(e)
         if exitmsg:
             logger.warn('\n\n%s', exitmsg)
-        unlock()
-        sys.exit(1)
+        if unlock(): return 200
+        return 1
 
     def exFatal(e):
         logger.critical('\n\n%s', str(e))
-        unlock()
-        sys.exit(1)
+        if unlock(): return 200
+        return 1
 
     def unlock():
         try:
             base.closeRpmDB()
             base.doUnlock()
         except Errors.LockError, e:
-            sys.exit(200)
+            return 200
+        return 0
 
     logger = logging.getLogger("yum.main")
     verbose_logger = logging.getLogger("yum.verbose.main")
@@ -84,9 +85,9 @@ def main(args):
     try:
         base.getOptionsConfig(args)
     except plugins.PluginYumExit, e:
-        exPluginExit(e)
+        return exPluginExit(e)
     except Errors.YumBaseError, e:
-        exFatal(e)
+        return exFatal(e)
 
     lockerr = ""
     while True:
@@ -104,40 +105,40 @@ def main(args):
     try:
         result, resultmsgs = base.doCommands()
     except plugins.PluginYumExit, e:
-        exPluginExit(e)
+        return exPluginExit(e)
     except Errors.YumBaseError, e:
         result = 1
         resultmsgs = [str(e)]
     except KeyboardInterrupt:
-        exUserCancel()
+        return exUserCancel()
     except IOError, e:
-        exIOError(e)
+        return exIOError(e)
 
     # Act on the command/shell result
     if result == 0:
         # Normal exit 
         for msg in resultmsgs:
             verbose_logger.log(logginglevels.INFO_2, '%s', msg)
-        unlock()
-        sys.exit(0)
+        if unlock(): return 200
+        return 0
     elif result == 1:
         # Fatal error
         for msg in resultmsgs:
             logger.critical('Error: %s', msg)
-        unlock()
-        sys.exit(1)
+        if unlock(): return 200
+        return 1
     elif result == 2:
         # Continue on
         pass
     elif result == 100:
-        unlock()
-        sys.exit(100)
+        if unlock(): return 200
+        return 100
     else:
         logger.critical('Unknown Error(s): Exit Code: %d:', result)
         for msg in resultmsgs:
             logger.critical(msg)
-        unlock()
-        sys.exit(3)
+        if unlock(): return 200
+        return 3
             
     # Depsolve stage
     verbose_logger.log(logginglevels.INFO_2, 'Resolving Dependencies')
@@ -145,26 +146,26 @@ def main(args):
     try:
         (result, resultmsgs) = base.buildTransaction() 
     except plugins.PluginYumExit, e:
-        exPluginExit(e)
+        return exPluginExit(e)
     except Errors.YumBaseError, e:
         result = 1
         resultmsgs = [str(e)]
     except KeyboardInterrupt:
-        exUserCancel()
+        return exUserCancel()
     except IOError, e:
-        exIOError(e)
+        return exIOError(e)
    
     # Act on the depsolve result
     if result == 0:
         # Normal exit
-        unlock()
-        sys.exit(0)
+        if unlock(): return 200
+        return 0
     elif result == 1:
         # Fatal error
         for msg in resultmsgs:
             logger.critical('Error: %s', msg)
-        unlock()
-        sys.exit(1)
+        if unlock(): return 200
+        return 1
     elif result == 2:
         # Continue on
         pass
@@ -172,8 +173,8 @@ def main(args):
         logger.critical('Unknown Error(s): Exit Code: %d:', result)
         for msg in resultmsgs:
             logger.critical(msg)
-        unlock()
-        sys.exit(3)
+        if unlock(): return 200
+        return 3
 
     verbose_logger.log(logginglevels.INFO_2, '\nDependencies Resolved')
     verbose_logger.debug(time.time())
@@ -182,26 +183,49 @@ def main(args):
     try:
         base.doTransaction()
     except plugins.PluginYumExit, e:
-        exPluginExit(e)
+        return exPluginExit(e)
     except Errors.YumBaseError, e:
-        exFatal(e)
+        return exFatal(e)
     except KeyboardInterrupt:
-        exUserCancel()
+        return exUserCancel()
     except IOError, e:
-        exIOError(e)
+        return exIOError(e)
 
     verbose_logger.log(logginglevels.INFO_2, 'Complete!')
-    unlock()
-    sys.exit(0)
+    if unlock(): return 200
+    return 0
 
+def hotshot(func, *args, **kwargs):
+    import hotshot.stats, os.path
+    fn = os.path.expanduser("~/yum.prof")
+    prof = hotshot.Profile(fn)
+    rc = prof.runcall(func, *args, **kwargs)
+    prof.close()
+    print_stats(hotshot.stats.load(fn))
+    return rc
+
+def cprof(func, *args, **kwargs):
+    import cProfile, pstats, os.path
+    fn = os.path.expanduser("~/yum.prof")
+    prof = cProfile.Profile()
+    rc = prof.runcall(func, *args, **kwargs)
+    prof.dump_stats(fn)
+    print_stats(pstats.Stats(fn))
+    return rc
+
+def print_stats(stats):
+    stats.strip_dirs()
+    stats.sort_stats('time', 'calls')
+    stats.print_stats(20)
+    stats.sort_stats('cumulative')
+    stats.print_stats(40)
 
 if __name__ == "__main__":
-    #import hotshot
-    #p = hotshot.Profile(os.path.expanduser("~/yum.prof"))
-    #p.run('main(sys.argv[1:])')
-    #p.close()    
     try:
-        main(sys.argv[1:])
+        errcode = main(sys.argv[1:])
+        #errcode = cprof(main, sys.argv[1:])
+        #errcode = hotshot(main, sys.argv[1:])
+        sys.exit(errcode)
     except KeyboardInterrupt, e:
         print >> sys.stderr, "\n\nExiting on user cancel."
         sys.exit(1)
