@@ -65,6 +65,7 @@ class YumAvailablePackageSqlite(YumAvailablePackage, PackageObject, RpmBase):
         self.rel = self.release 
         
         self._changelog = None
+        self._hash = None
 
     files = property(fget=lambda self: self._loadFiles())
         

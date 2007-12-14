@@ -212,6 +212,7 @@ class RpmBase(object):
         self.files['ghost'] = []
         self._changelog = [] # (ctime, cname, ctext)
         self.licenses = []
+        self._hash = None
 
     def __eq__(self, other):
         if not other: # check if other not is a package object. 
@@ -229,9 +230,11 @@ class RpmBase(object):
         return PackageEVR(self.epoch, self.version, self.release)
     
     def __hash__(self):
-        mystr = '%s - %s:%s-%s-%s.%s' % (self.repo.id, self.epoch, self.name,
+        if self._hash is None:
+            mystr = '%s - %s:%s-%s-%s.%s' % (self.repo.id, self.epoch, self.name,
                                          self.version, self.release, self.arch)
-        return hash(mystr)
+            self._hash = hash(mystr)
+        return self._hash
         
     def returnPrco(self, prcotype, printable=False):
         """return list of provides, requires, conflicts or obsoletes"""
