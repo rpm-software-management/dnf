@@ -609,7 +609,7 @@ class YumBase(depsolve.Depsolve):
             if toRemove:
                 for po in toRemove:
                     if self.tsInfo.exists(po.pkgtup):
-                        self.verbose_logger.debug("skipping %s because of depsolving problems" % str(po))
+                        self.verbose_logger.info("skipping %s because of depsolving problems" % str(po))
                         self.tsInfo.remove(po.pkgtup)
             else: # Nothing was removed, so we still got a problem
                 break # Bail out
