@@ -781,7 +781,7 @@ class Depsolve(object):
         if len(errors) > 0:
             errors = unique(errors)
             for po,wpo in self.po_with_problems:
-                self.verbose_logger.debug("%s has depsolving problems" % po)
+                self.verbose_logger.info("%s from %s has depsolving problems" % (po,po.repoid))
             return (1, errors)
 
         if len(self.tsInfo) > 0:
