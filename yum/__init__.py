@@ -1953,7 +1953,22 @@ class YumBase(depsolve.Depsolve):
                     parsePackages(self.pkgSack.returnPackages(),[kwargs['pattern']] , casematch=1)
                 pkgs.extend(exactmatch)
                 pkgs.extend(matched)
+                # if we have anything left unmatched, let's take a look for it
+                # being a dep like glibc.so.2 or /foo/bar/baz
+                
+                if len(unmatched) > 0:
+                    arg = unmatched[0] #only one in there
+                    self.verbose_logger.debug('Checking for virtual provide or file-provide for %s', 
+                        arg)
 
+                    try:
+                        mypkgs = self.returnPackagesByDep(arg)
+                    except yum.Errors.YumBaseError, e:
+                        self.logger.critical(_('No Match for argument: %s') % arg)
+                    else:
+                        if mypkgs:
+                            pkgs.extend(self.bestPackagesFromList(mypkgs))
+                        
             else:
                 nevra_dict = self._nevra_kwarg_parse(kwargs)
 
@@ -1990,10 +2005,11 @@ class YumBase(depsolve.Depsolve):
         tx_return = []
         for po in pkgs:
             if self.tsInfo.exists(pkgtup=po.pkgtup):
-                self.verbose_logger.log(logginglevels.DEBUG_1,
-                    'Package: %s  - already in transaction set', po)
-                tx_return.extend(self.tsInfo.getMembers(pkgtup=po.pkgtup))
-                continue
+                if self.tsInfo.getMembersWithState(po.pkgtup, TS_INSTALL_STATES):
+                    self.verbose_logger.log(logginglevels.DEBUG_1,
+                        'Package: %s  - already in transaction set', po)
+                    tx_return.extend(self.tsInfo.getMembers(pkgtup=po.pkgtup))
+                    continue
             
             # make sure this shouldn't be passed to update:
             if self.up.updating_dict.has_key(po.pkgtup):
@@ -2003,8 +2019,9 @@ class YumBase(depsolve.Depsolve):
             
             # make sure it's not already installed
             if self.rpmdb.contains(po=po):
-                self.logger.warning('Package %s already installed and latest version', po)
-                continue
+                if not self.tsInfo.getMembersWithState(po.pkgtup, TS_REMOVE_STATES):
+                    self.logger.warning('Package %s already installed and latest version', po)
+                    continue
 
             
             # make sure we're not installing a package which is obsoleted by something
@@ -2165,6 +2182,19 @@ class YumBase(depsolve.Depsolve):
                 (e,m,u) = self.rpmdb.matchPackageNames([kwargs['pattern']])
                 pkgs.extend(e)
                 pkgs.extend(m)
+                if u:
+                    arg = u[0]
+                    try:
+                        depmatches = self.returnInstalledPackagesByDep(arg)
+                    except yum.Errors.YumBaseError, e:
+                        self.logger.critical(_('%s') % e)
+                        continue
+                    
+                    if not depmatches:
+                        self.logger.critical(_('No Match for argument: %s') % arg)
+                    else:
+                        pkgs.extend(depmatches)
+                
             else:    
                 nevra_dict = self._nevra_kwarg_parse(kwargs)
 
