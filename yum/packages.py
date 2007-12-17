@@ -782,6 +782,11 @@ class YumLocalPackage(YumHeaderPackage):
                  
         self.pkgtype = 'local'
         self.localpath = filename
+        self._checksum = None
+        self._stat = os.stat(self.localpath)
+        self.filetime = str(self._stat[-1])
+        self.packagesize = str(self._stat[6])
+
         
         try:
             hdr = rpmUtils.miscutils.hdrFromPackage(ts, self.localpath)
@@ -797,3 +802,12 @@ class YumLocalPackage(YumHeaderPackage):
     def localPkg(self):
         return self.localpath
     
+    def _do_checksum(self, checksum_type='sha'):
+        if not self._checksum:
+            self._checksum = misc.checksum(checksum_type, self.localpath)
+            
+        return self._checksum    
+
+    checksum = property(fget=lambda self: self._do_checksum())    
+    
+

@@ -418,7 +418,7 @@ class YumOutput:
         if matchfor:
             msg = self.term.sub_bold(msg, matchfor)
         
-        self.verbose_logger.log(logginglevels.INFO_2, msg)
+        print msg
         self.verbose_logger.debug('Matched from:')
         for item in values:
             if matchfor:
