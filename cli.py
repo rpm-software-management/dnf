@@ -160,7 +160,7 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
                     optparser=self.optparser,
                     debuglevel=opts.debuglevel,
                     errorlevel=opts.errorlevel,
-                    disabled_plugins=opts.disableplugins)
+                    disabled_plugins=self.optparser._splitArg(opts.disableplugins))
                     
         except yum.Errors.ConfigError, e:
             self.logger.critical(_('Config Error: %s'), e)
@@ -1167,6 +1167,15 @@ class YumOptionParser(OptionParser):
             self.base.usage()
             sys.exit(1)
         return self.parse_args(args=args)[0]
+
+    @staticmethod
+    def _splitArg(seq):
+        """ Split all strings in seq, at "," and whitespace.
+            Returns a new list. """
+        ret = []
+        for arg in seq:
+            ret.extend(arg.replace(",", " ").split())
+        return ret
         
     def setupYumConfig(self):
         # Now parse the command line for real
@@ -1200,11 +1209,12 @@ class YumOptionParser(OptionParser):
                 self.base.conf.skip_broken = True
 
             if opts.disableexcludes:
-                self.base.conf.disable_excludes = opts.disableexcludes
+                disable_excludes = self._splitArg(opts.disableexcludes)
             else:
-                self.base.conf.disable_excludes = []
-                
-            for exclude in opts.exclude:
+                disable_excludes = []
+            self.base.conf.disable_excludes = disable_excludes
+
+            for exclude in self._splitArg(opts.exclude):
                 try:
                     excludelist = self.base.conf.exclude
                     excludelist.append(exclude)
