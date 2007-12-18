@@ -2188,7 +2188,6 @@ class YumBase(depsolve.Depsolve):
                         depmatches = self.returnInstalledPackagesByDep(arg)
                     except yum.Errors.YumBaseError, e:
                         self.logger.critical(_('%s') % e)
-                        continue
                     
                     if not depmatches:
                         self.logger.critical(_('No Match for argument: %s') % arg)
