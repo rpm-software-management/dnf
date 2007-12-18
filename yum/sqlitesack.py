@@ -61,7 +61,8 @@ class YumAvailablePackageSqlite(YumAvailablePackage, PackageObject, RpmBase):
         self.id = self.pkgId
         self.ver = self.version 
         self.rel = self.release 
-        
+        self.pkgtup = (self.name, self.arch, self.epoch, self.version, self.release)
+
         self._changelog = None
         self._hash = None
 

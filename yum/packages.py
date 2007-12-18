@@ -161,6 +161,7 @@ class PackageObject(object):
         self.release = None
         self.epoch = None
         self.arch = None
+        # self.pkgtup = (self.name, self.arch, self.epoch, self.version, self.release)
         self._checksums = [] # (type, checksum, id(0,1)
         
     def __str__(self):
@@ -181,11 +182,6 @@ class PackageObject(object):
         warnings.warn("returnSimple() will go away in a future version of Yum.\n",
                       Errors.YumFutureDeprecationWarning, stacklevel=2)
         return getattr(self, varname)
-
-    def _pkgtup(self):
-        return (self.name, self.arch, self.epoch, self.version, self.release)
-    
-    pkgtup = property(_pkgtup)
 
     def returnChecksums(self):
         return self._checksums
@@ -427,6 +423,7 @@ class YumAvailablePackage(PackageObject, RpmBase):
             self.importFromDict(pkgdict)
             self.ver = self.version
             self.rel = self.release
+        self.pkgtup = (self.name, self.arch, self.epoch, self.version, self.release)
 
     def exclude(self):
         """remove self from package sack"""
@@ -642,6 +639,7 @@ class YumHeaderPackage(YumAvailablePackage):
         self.release = self.hdr['release']
         self.ver = self.version
         self.rel = self.release
+        self.pkgtup = (self.name, self.arch, self.epoch, self.version, self.release)
         self.summary = self.hdr['summary'].replace('\n', '')
         self.description = self.hdr['description']
         self.pkgid = self.hdr[rpm.RPMTAG_SHA1HEADER]
