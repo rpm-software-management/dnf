@@ -2212,6 +2212,96 @@ class YumBase(depsolve.Depsolve):
         
         return tx_return
 
+    def installLocal(self, pkg, po=None, updateonly=False):
+        """
+        handles installs/updates of rpms provided on the filesystem in a
+        local dir (ie: not from a repo)
+
+        Return the added transaction members.
+
+        @param pkg: a path to an rpm file on disk.
+        @param po: A YumLocalPackage
+        @param updateonly: Whether or not true installs are valid.
+        """
+
+        # read in the package into a YumLocalPackage Object
+        # append it to self.localPackages
+        # check if it can be installed or updated based on nevra versus rpmdb
+        # don't import the repos until we absolutely need them for depsolving
+
+        tx_return = []
+        installpkgs = []
+        updatepkgs = []
+        donothingpkgs = []
+
+        if not po:
+            try:
+                po = YumLocalPackage(ts=self.rpmdb.readOnlyTS(), filename=pkg)
+            except yum.Errors.MiscError:
+                self.logger.critical('Cannot open file: %s. Skipping.', pkg)
+                return tx_return
+            self.verbose_logger.log(logginglevels.INFO_2,
+                'Examining %s: %s', po.localpath, po)
+
+        # everything installed that matches the name
+        installedByKey = self.rpmdb.searchNevra(name=po.name)
+        # go through each package
+        if len(installedByKey) == 0: # nothing installed by that name
+            if updateonly:
+                self.logger.warning('Package %s not installed, cannot update it. Run yum install to install it instead.', po.name)
+                return tx_return
+            else:
+                installpkgs.append(po)
+
+        for installed_pkg in installedByKey:
+            if po.EVR > installed_pkg.EVR: # we're newer - this is an update, pass to them
+                if installed_pkg.name in self.conf.exactarchlist:
+                    if po.arch == installed_pkg.arch:
+                        updatepkgs.append((po, installed_pkg))
+                    else:
+                        donothingpkgs.append(po)
+                else:
+                    updatepkgs.append((po, installed_pkg))
+            elif po.EVR == installed_pkg.EVR:
+                if po.arch != installed_pkg.arch and (isMultiLibArch(po.arch) or
+                          isMultiLibArch(installed_pkg.arch)):
+                    installpkgs.append(po)
+                else:
+                    donothingpkgs.append(po)
+            else:
+                donothingpkgs.append(po)
+
+        # handle excludes for a localinstall
+        toexc = []
+        if len(self.conf.exclude) > 0:
+           exactmatch, matched, unmatched = \
+                   parsePackages(installpkgs + map(lambda x: x[0], updatepkgs),
+                                 self.conf.exclude, casematch=1)
+           toexc = exactmatch + matched
+
+        if po in toexc:
+           self.verbose_logger.debug('Excluding %s', po)
+           return tx_return
+
+        for po in installpkgs:
+            self.verbose_logger.log(logginglevels.INFO_2,
+                'Marking %s to be installed', po.localpath)
+            self.localPackages.append(po)
+            tx_return.extend(self.install(po=po))
+
+        for (po, oldpo) in updatepkgs:
+            self.verbose_logger.log(logginglevels.INFO_2,
+                'Marking %s as an update to %s', po.localpath, oldpo)
+            self.localPackages.append(po)
+            self.tsInfo.addUpdate(po, oldpo)
+            tx_return.append(txmbr)
+
+        for po in donothingpkgs:
+            self.verbose_logger.log(logginglevels.INFO_2,
+                '%s: does not update installed package.', po.localpath)
+
+        return tx_return
+
     def _nevra_kwarg_parse(self, kwargs):
             
         returndict = {}
