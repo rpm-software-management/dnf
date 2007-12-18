@@ -12,6 +12,7 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 # Copyright 2005 Duke University 
+# Copyright 2007 Red Hat
 import os
 import re
 import time
@@ -37,6 +38,10 @@ import logging
 import logginglevels
 
 import warnings
+
+import glob
+import shutil
+
 warnings.simplefilter("ignore", Errors.YumFutureDeprecationWarning)
 
 logger = logging.getLogger("yum.Repos")
@@ -213,7 +218,7 @@ class YumRepository(Repository, config.RepoConf):
                                               # eventually want
         self.repoMDFile = 'repodata/repomd.xml'
         self._repoXML = None
-        self._oldRepoMDFile = None
+        self._oldRepoMDData = {}
         self.cache = 0
         self.mirrorlistparsed = 0
         self.yumvar = {} # empty dict of yumvariables for $string replacement
@@ -744,7 +749,7 @@ class YumRepository(Repository, config.RepoConf):
 
         except URLGrabError, e:
             if grab_can_fail is None:
-                grab_can_fail = self._oldRepoMDFile
+                grab_can_fail = len(self._oldRepoMDData)
             if grab_can_fail:
                 return None
             raise Errors.RepoError, 'Error downloading file %s: %s' % (local, e)
@@ -756,28 +761,137 @@ class YumRepository(Repository, config.RepoConf):
             return repoMDObject.RepoMD(self.id, local)
         except Errors.RepoMDError, e:
             if parse_can_fail is None:
-                parse_can_fail = self._oldRepoMDFile
+                parse_can_fail = len(self._oldRepoMDData)
             if parse_can_fail:
                 return None
             raise Errors.RepoError, 'Error importing repomd.xml from %s: %s' % (self, e)
         
-    def _loadRepoXML(self, text=None):
-        """ Retrieve the new repomd.xml from the repository, then check it
-            and parse it. If it fails at any point everything fails.
-            Traditional behaviour. """
+    def _saveOldRepoXML(self, local):
+        """ If we have an older repomd.xml file available, save it out. """
+        # Cleanup old trash...
+        for fname in glob.glob(self.cachedir + "/*.old.tmp"):
+            os.unlink(fname)
 
+        if os.path.exists(local):
+            old_local = local + '.old.tmp' # locked, so this is ok
+            shutil.copy2(local, old_local)
+            xml = self._parseRepoXML(old_local, True)
+            self._oldRepoMDData = {'old_repo_XML' : xml, 'local' : local,
+                                   'old_local' : old_local}
+            return True
+        return False
+            
+
+    def _revertOldRepoXML(self):
+        """ If we have older data available, revert to it. """
+        if not len(self._oldRepoMDData):
+            return
+
+        old_data = self._oldRepoMDData
+        self._oldRepoMDData = {}
+        
+        os.rename(old_data['old_local'], old_data['local'])
+        self._repoXML = old_data['old_repo_XML']
+
+        if 'old_MD_files' not in old_data:
+            return
+        for revert in old_data['old_MD_files']:
+            os.rename(revert + '.old.tmp', revert)
+
+    def _doneOldRepoXML(self):
+        """ Done with old data, delete it. """
+        if not len(self._oldRepoMDData):
+            return
+        
+        old_data = self._oldRepoMDData
+        self._oldRepoMDData = {}
+        
+        os.unlink(old_data['old_local'])
+
+        if 'old_MD_files' not in old_data:
+            return
+        for revert in old_data['old_MD_files']:
+            os.unlink(revert + '.old.tmp')
+        
+    def _get_mdtype_data(self, mdtype, repoXML=None):
+        if repoXML is None:
+            repoXML = self.repoXML
+
+        if (mdtype in ['other', 'filelists', 'primary'] and
+            self._check_db_version(mdtype + '_db', repoXML=repoXML)):
+            mdtype += '_db'
+
+        if repoXML.repoData.has_key(mdtype):
+            return (mdtype, repoXML.getData(mdtype))
+        return (mdtype, None)
+
+    def _get_mdtype_fname(self, data, compressed=False):
+        (r_base, remote) = data.location
+        local = self.cachedir + '/' + os.path.basename(remote)
+
+        if compressed: # DB file, we need the uncompressed version
+            local = local.replace('.bz2', '')
+        return local
+
+    def _groupCheckDataMDNewer(self):
+        """ We check the timestamps, if any of the timestamps for the
+            "new" data is older than what we have ... we revert. """
+        
+        if not len(self._oldRepoMDData):
+            return True
+        old_repo_XML = self._oldRepoMDData['old_repo_XML']
+        
+        mdtypes = self.retrieved.keys()
+
+        for mdtype in mdtypes:
+            (nmdtype, newdata) = self._get_mdtype_data(mdtype)
+            (omdtype, olddata) = self._get_mdtype_data(mdtype,
+                                                       repoXML=old_repo_XML)
+            if olddata is None or newdata is None:
+                continue
+            if omdtype == nmdtype and olddata.checksum == newdata.checksum:
+                continue
+            if olddata.timestamp > newdata.timestamp:
+                return False
+        return True
+
+    def _commonLoadRepoXML(self, text, mdtypes=None):
+        """ Common LoadRepoXML for instant and group, returns False if you
+            should just return. """
         local  = self.cachedir + '/repomd.xml'
         if self._repoXML is not None:
-            return
+            return False
     
         if self._cachingRepoXML(local):
             result = local
         else:
+            self._saveOldRepoXML(local)
+                
             result = self._getFileRepoXML(local, text)
+            if result is None:
+                # Ignore this as we have a copy
+                self._revertOldRepoXML()
+                return False
+            
             # if we have a 'fresh' repomd.xml then update the cookie
             self.setMetadataCookie()
 
         self._repoXML = self._parseRepoXML(result)
+        if self._repoXML is None:
+            self._revertOldRepoXML()
+            return False
+
+        if not self._groupCheckDataMDNewer():
+            self._revertOldRepoXML()
+            return False
+        return True
+        
+    def _instantLoadRepoXML(self, text=None):
+        """ Retrieve the new repomd.xml from the repository, then check it
+            and parse it. If it fails revert.
+            Mostly traditional behaviour. """
+        if self._commonLoadRepoXML(text):
+            self._doneOldRepoXML()
 
     def _check_db_version(self, mdtype, repoXML=None):
         if repoXML is None:
@@ -787,6 +901,88 @@ class YumRepository(Repository, config.RepoConf):
                 return True
         return False
 
+    def _groupCheckOldDataMDValid(self, olddata, omdtype, mdtype):
+        """ Check that we already have this data, and that it's valid. """
+
+        if olddata is None:
+            return None
+        
+        uncompressed = (omdtype != mdtype)
+        local = self._get_mdtype_fname(olddata, uncompressed)
+        if not self._checkMD(local, omdtype, openchecksum=uncompressed,
+                             data=olddata, check_can_fail=True):
+            return None
+
+        return local
+
+    def _groupLoadDataMD(self, mdtypes=None):
+        """ Check all the possible "files" in the new repomd.xml
+            and make sure they are here/valid (via. downloading checking).
+            If they aren't, we revert to the old repomd.xml data. """
+        if mdtypes is None:
+            mdtypes = self.retrieved.keys()
+            
+        reverts = []
+        if 'old_repo_XML' not in self._oldRepoMDData:
+            old_repo_XML = None
+        else:
+            old_repo_XML = self._oldRepoMDData['old_repo_XML']
+            self._oldRepoMDData['old_MD_files'] = reverts
+            
+        for mdtype in mdtypes:
+            (nmdtype, ndata) = self._get_mdtype_data(mdtype)
+            if ndata is None: # Doesn't exist in this repo
+                continue
+
+            if old_repo_XML:
+                (omdtype, odata) = self._get_mdtype_data(mdtype,
+                                                           repoXML=old_repo_XML)
+                local = self._groupCheckOldDataMDValid(odata, omdtype, mdtype)
+                if local:
+                    if omdtype == nmdtype and odata.checksum == ndata.checksum:
+                        continue # If they are the same do nothing
+            
+                    # Move this version, and get new one. We don't copy because
+                    # we know we need a new version due to above checksum test.
+                    os.rename(local, local + '.old.tmp')
+                    reverts.append(local)
+                
+            if not self._retrieveMD(nmdtype, retrieve_can_fail=True):
+                self._revertOldRepoXML()
+                return False
+        self._doneOldRepoXML()
+        return True
+
+    def _groupLoadRepoXML(self, text=None, mdtypes=None):
+        """ Retrieve the new repomd.xml from the repository, then check it
+            and parse it. If it fails we revert to the old version and pretend
+            that is fine. If the new repomd.xml requires new version of files
+            that we have, like updateinfo.xml, we download those too and if any
+            of those fail, we again revert everything and pretend old data is
+            good. """
+
+        if self._commonLoadRepoXML(text):
+            self._groupLoadDataMD(mdtypes)
+
+    def _loadRepoXML(self, text=None):
+        """retrieve/check/read in repomd.xml from the repository"""
+        try:
+            if self.mdpolicy in ["instant"]:
+                return self._instantLoadRepoXML(text)
+            if self.mdpolicy in ["group:all"]:
+                return self._groupLoadRepoXML(text)
+            if self.mdpolicy in ["group:main"]:
+                return self._groupLoadRepoXML(text, ["primary", "group",
+                                                     "filelists", "updateinfo"])
+            if self.mdpolicy in ["group:small"]:
+                return self._groupLoadRepoXML(text, ["primary", "updateinfo"])
+            if self.mdpolicy in ["group:primary"]:
+                return self._groupLoadRepoXML(text, ["primary"])
+        except KeyboardInterrupt:
+            self._revertOldRepoXML() # Undo metadata cookie?
+            raise
+        raise Errors.RepoError, 'Bad loadRepoXML policy: %s' % (self.mdpolicy)
+        
     def _getRepoXML(self):
         if self._repoXML:
             return self._repoXML
@@ -820,9 +1016,10 @@ class YumRepository(Repository, config.RepoConf):
         return self._checkMD(fn, mdtype, openchecksum)
     
     def _checkMD(self, fn, mdtype, openchecksum=False,
-                 thisdata=None, check_can_fail=False):
+                 data=None, check_can_fail=False):
         """ Internal function, use .checkMD() from outside yum. """
 
+        thisdata = data # So the argument name is nicer
         if thisdata is None:
             thisdata = self.repoXML.getData(mdtype)
 
