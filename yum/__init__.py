@@ -2175,6 +2175,7 @@ class YumBase(depsolve.Depsolve):
         tx_return = []
         pkgs = []
         
+        
         if po:
             pkgs = [po]  
         else:
@@ -2183,6 +2184,7 @@ class YumBase(depsolve.Depsolve):
                 pkgs.extend(e)
                 pkgs.extend(m)
                 if u:
+                    depmatches = []
                     arg = u[0]
                     try:
                         depmatches = self.returnInstalledPackagesByDep(arg)
