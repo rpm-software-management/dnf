@@ -48,12 +48,10 @@ def catchSqliteException(func):
 
 class YumAvailablePackageSqlite(YumAvailablePackage, PackageObject, RpmBase):
     def __init__(self, repo, db_obj):
-        self._checksums = []
         self.prco = { 'obsoletes': (),
                       'conflicts': (),
                       'requires': (),
                       'provides': () }
-        self._files = {}
         self.sack = repo.sack
         self.repoid = repo.id
         self.repo = repo
@@ -86,7 +84,8 @@ class YumAvailablePackageSqlite(YumAvailablePackage, PackageObject, RpmBase):
                 pass
 
         try:
-            self._checksums.append((db_obj['checksum_type'], db_obj['pkgId'], True))
+            check_sum = (db_obj['checksum_type'], db_obj['pkgId'], True)
+            self._checksums = [ check_sum ]
         except (IndexError, KeyError):
             pass
 
