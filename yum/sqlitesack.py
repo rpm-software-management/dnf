@@ -32,6 +32,7 @@ import misc
 from sqlutils import executeSQL
 import rpmUtils.miscutils
 import sqlutils
+from weakref import WeakValueDictionary
 
 def catchSqliteException(func):
     """This decorator converts sqlite exceptions into RepoError"""
@@ -46,6 +47,7 @@ def catchSqliteException(func):
     newFunc.__dict__.update(func.__dict__)
     return newFunc
 
+_reverse_prco = WeakValueDictionary() # So pacakges can share prco data
 class YumAvailablePackageSqlite(YumAvailablePackage, PackageObject, RpmBase):
     def __init__(self, repo, db_obj):
         self.prco = { 'obsoletes': (),
@@ -209,9 +211,15 @@ class YumAvailablePackageSqlite(YumAvailablePackage, PackageObject, RpmBase):
             executeSQL(cur, query)
             self.prco[prcotype] = [ ]
             for ob in cur:
-                self.prco[prcotype].append((ob['name'], ob['flags'],
-                                           (ob['epoch'], ob['version'], 
-                                            ob['release'])))
+                prco_set = (ob['name'], ob['flags'], 
+                            (ob['epoch'], ob['version'], ob['release']))
+                # This saves memory by merging the prco data from multiple
+                # packages. Note that flags etc. need to be the same too.
+                if prco_set in _reverse_prco:
+                    prco_set = _reverse_prco[prco_set]
+                else:
+                    _reverse_prco[prco_set] = prco_set
+                self.prco[prcotype].append(prco_set)
 
         return RpmBase.returnPrco(self, prcotype, printable)
 
