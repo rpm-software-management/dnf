@@ -711,98 +711,20 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         # append it to self.localPackages
         # check if it can be installed or updated based on nevra versus rpmdb
         # don't import the repos until we absolutely need them for depsolving
-        
-        oldcount = len(self.tsInfo)
-        
+
         if len(filelist) == 0:
             return 0, ['No Packages Provided']
-        
-        installpkgs = []
-        updatepkgs = []
-        donothingpkgs = []
-        
+
+        installing = False
         for pkg in filelist:
-            try:
-                po = YumLocalPackage(ts=self.rpmdb.readOnlyTS(), filename=pkg)
-            except yum.Errors.MiscError:
-                self.logger.critical('Cannot open file: %s. Skipping.', pkg)
-                continue
-            self.verbose_logger.log(yum.logginglevels.INFO_2,
-                'Examining %s: %s', po.localpath, po)
+            txmbrs = self.installLocal(pkg, updateonly)
+            if txmbrs:
+                installing = True
 
-            # everything installed that matches the name
-            installedByKey = self.rpmdb.searchNevra(name=po.name)
-            # go through each package 
-            if len(installedByKey) == 0: # nothing installed by that name
-                if updateonly:
-                    self.logger.warning('Package %s not installed, cannot update it. Run yum install to install it instead.', po.name)
-                else:
-                    installpkgs.append(po)
-                continue
-
-            for installed_pkg in installedByKey:
-                if po.EVR > installed_pkg.EVR: # we're newer - this is an update, pass to them
-                    if installed_pkg.name in self.conf.exactarchlist:
-                        if po.arch == installed_pkg.arch:
-                            updatepkgs.append((po, installed_pkg))
-                            continue
-                        else:
-                            donothingpkgs.append(po)
-                            continue
-                    else:
-                        updatepkgs.append((po, installed_pkg))
-                        continue
-                elif po.EVR == installed_pkg.EVR:
-                    if po.arch != installed_pkg.arch and (isMultiLibArch(po.arch) or
-                              isMultiLibArch(installed_pkg.arch)):
-                        installpkgs.append(po)
-                        continue
-                    else:
-                        donothingpkgs.append(po)
-                        continue
-                else:
-                    donothingpkgs.append(po)
-                    continue
-
-        # handle excludes for a localinstall
-        toexc = []
-        if len(self.conf.exclude) > 0:
-           exactmatch, matched, unmatched = \
-                   parsePackages(installpkgs + map(lambda x: x[0], updatepkgs),
-                                 self.conf.exclude, casematch=1)
-           toexc = exactmatch + matched
-
-        for po in installpkgs:
-            if po in toexc:
-               self.verbose_logger.debug('Excluding %s', po)
-               continue
-            
-            self.verbose_logger.log(yum.logginglevels.INFO_2,
-                'Marking %s to be installed', po.localpath)
-            self.localPackages.append(po)
-            self.install(po=po)
-        
-        for (po, oldpo) in updatepkgs:
-            if po in toexc:
-               self.verbose_logger.debug('Excluding %s', po)
-               continue
-           
-            self.verbose_logger.log(yum.logginglevels.INFO_2,
-                'Marking %s as an update to %s', po.localpath, oldpo)
-            self.localPackages.append(po)
-            self.tsInfo.addUpdate(po, oldpo)
-        
-        for po in donothingpkgs:
-            self.verbose_logger.log(yum.logginglevels.INFO_2,
-                '%s: does not update installed package.', po.localpath)
-
-        if len(self.tsInfo) > oldcount:
+        if installing:
             return 2, ['Package(s) to install']
         return 0, ['Nothing to do']
-        
-            
-        
-        
+
     def returnPkgLists(self, extcmds):
         """Returns packages lists based on arguments on the cli.returns a 
            GenericHolder instance with the following lists defined:
