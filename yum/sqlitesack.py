@@ -336,7 +336,7 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
 
 
     @catchSqliteException
-    def searchFiles(self, name):
+    def searchFiles(self, name, strict=False):
         """search primary if file will be in there, if not, search filelists, use globs, if possible"""
         
         # optimizations:
@@ -345,7 +345,7 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
         
         glob = True
         querytype = 'glob'
-        if not re.match('.*[\*\?\[\]].*', name):
+        if strict or not re.match('.*[\*\?\[\]].*', name):
             glob = False
             querytype = '='
 
@@ -526,7 +526,7 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
 
         if not matched: # if its not in the primary.xml files
             # search the files.xml file info
-            for pkg in self.searchFiles(name):
+            for pkg in self.searchFiles(name, strict=True):
                 result[pkg] = [(name, None, None)]
             self._search_cache[prcotype][req] = result
             return result
