@@ -105,7 +105,7 @@ class YumShell(cmd.Cmd):
 
     def completenames(self, text, line, begidx, endidx):
         ret = cmd.Cmd.completenames(self, text, line, begidx, endidx)
-        for command in self.base.yum_cli_commands.keys():
+        for command in self.base.yum_cli_commands:
             if command.startswith(text) and command != "shell":
                 ret.append(command)
         return ret

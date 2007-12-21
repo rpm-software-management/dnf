@@ -251,9 +251,9 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
             if disk[m.group(2)] < int(m.group(1)):
                 disk[m.group(2)] = int(m.group(1))
                 
-        if disk.keys():
+        if disk:
            summary += 'Disk Requirements:\n'
-           for k in disk.keys():
+           for k in disk:
               summary += '  At least %dMB needed on the %s filesystem.\n' % (disk[k], k)
 
         # TODO: simplify the dependency errors?
@@ -335,10 +335,10 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
             'Downloading Packages:')
         problems = self.downloadPkgs(downloadpkgs) 
 
-        if len(problems.keys()) > 0:
+        if len(problems) > 0:
             errstring = ''
             errstring += 'Error Downloading Packages:\n'
-            for key in problems.keys():
+            for key in problems:
                 errors = yum.misc.unique(problems[key])
                 for error in errors:
                     errstring += '  %s: %s\n' % (key, error)
@@ -562,7 +562,7 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         # this is where I could catch the installs of compat and multilib 
         # arches on a single yum install command. 
         pkglist = []
-        for name in toBeInstalled.keys():
+        for name in toBeInstalled:
             pkglist.extend(self.bestPackagesFromList(toBeInstalled[name]))
             
         # This is where we need to do a lookup to find out if this install
@@ -816,7 +816,7 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         
         matching = self.searchPackageProvides(args, callback=self.matchcallback)
         
-        if len(matching.keys()) == 0:
+        if len(matching) == 0:
             return 0, ['No Matches found']
         
         return 0, []

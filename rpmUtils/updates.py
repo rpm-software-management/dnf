@@ -125,7 +125,7 @@ class Updates:
     def condenseUpdates(self):
         """remove any accidental duplicates in updates"""
         
-        for tup in self.updatesdict.keys():
+        for tup in self.updatesdict:
             if len(self.updatesdict[tup]) > 1:
                 mylist = self.updatesdict[tup]
                 self.updatesdict[tup] = rpmUtils.miscutils.unique(mylist)
@@ -179,12 +179,12 @@ class Updates:
         # if you find it look for the packages they obsolete
         # 
         obs_arches = {}
-        for (n, a, e, v, r) in self.rawobsoletes.keys():
+        for (n, a, e, v, r) in self.rawobsoletes:
             if not obs_arches.has_key(n):
                 obs_arches[n] = []
             obs_arches[n].append(a)
 
-        for pkgtup in self.rawobsoletes.keys():
+        for pkgtup in self.rawobsoletes:
             (name, arch, epoch, ver, rel) = pkgtup
             for (obs_n, flag, (obs_e, obs_v, obs_r)) in self.rawobsoletes[(pkgtup)]:
                 if self.installdict.has_key((obs_n, None)):
@@ -215,7 +215,7 @@ class Updates:
            is to make it easier to look up what package obsoletes what item in 
            the rpmdb"""
         self.obsoleted_dict = {}
-        for new in self.obsoletes.keys():
+        for new in self.obsoletes:
             for old in self.obsoletes[new]:
                 if not self.obsoleted_dict.has_key(old):
                     self.obsoleted_dict[old] = []
@@ -270,7 +270,7 @@ class Updates:
 
         # remove the older stuff - if we're doing an update we only want the
         # newest evrs                
-        for (n, a) in newpkgs.keys():
+        for (n, a) in newpkgs:
             if a is None:
                 continue
 
@@ -280,7 +280,7 @@ class Updates:
                     newpkgs[(n, a)].remove((e, v, r))
 
                 
-        for (n, a) in newpkgs.keys():
+        for (n, a) in newpkgs:
             if a is None: # the None archs are only for lookups
                 continue
            
@@ -307,7 +307,7 @@ class Updates:
 
         # ok at this point our newpkgs list should be thinned, we should have only
         # the newest e,v,r's and only archs we can actually use
-        for (n, a) in newpkgs.keys():
+        for (n, a) in newpkgs:
             if a is None: # the None archs are only for lookups
                 continue
     
@@ -424,9 +424,9 @@ class Updates:
                     # is more than one arch updating with the highest ver
                     instarchs = []
                     availarchs = []
-                    for (n,a) in hipdict.keys():
+                    for (n,a) in hipdict:
                         instarchs.append(a)
-                    for (n,a) in hapdict.keys():
+                    for (n,a) in hapdict:
                         availarchs.append(a)
                     
                     rpm_a = rpmUtils.arch.getBestArchFromList(instarchs, myarch=self.myarch)
@@ -452,7 +452,7 @@ class Updates:
            is to make it easier to look up what package  will be updating what
            in the rpmdb"""
         self.updating_dict = {}
-        for old in self.updatesdict.keys():
+        for old in self.updatesdict:
             for new in self.updatesdict[old]:
                 if not self.updating_dict.has_key(new):
                     self.updating_dict[new] = []
@@ -482,8 +482,7 @@ class Updates:
         """returns updates for packages in a list of tuples of:
           (updating naevr, installed naevr)"""
         returnlist = []
-        for oldtup in self.updatesdict.keys():
-            (old_n, old_a, old_e, old_v, old_r) = oldtup
+        for oldtup in self.updatesdict:
             for newtup in self.updatesdict[oldtup]:
                 returnlist.append((newtup, oldtup))
         
@@ -509,7 +508,7 @@ class Updates:
         """returns updating packages in a list of (naevr) tuples"""
         returnlist = []
 
-        for oldtup in self.updatesdict.keys():
+        for oldtup in self.updatesdict:
             for newtup in self.updatesdict[oldtup]:
                 returnlist.append(newtup)
         
@@ -569,7 +568,7 @@ class Updates:
     def getObsoletedList(self, newest=0, name=None):
         """returns a list of pkgtuples obsoleting the package in name"""
         returnlist = []
-        for new in self.obsoletes.keys():
+        for new in self.obsoletes:
             for obstup in self.obsoletes[new]:
                 (n, a, e, v, r) = obstup
                 if n == name:

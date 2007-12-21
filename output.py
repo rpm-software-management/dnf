@@ -148,7 +148,7 @@ class YumTerm:
         self.lines   = curses.tigetnum('lines')
         
         # Look up string capabilities.
-        for cap_name in self.MODE.keys():
+        for cap_name in self.MODE:
             mode = cap_name
             if cap_name in self.__cap_names:
                 cap_name = self.__cap_names[cap_name]
@@ -332,22 +332,22 @@ class YumOutput:
         print '\nGroup: %s' % group.name
         if group.description != "":
             print ' Description: %s' % group.description.encode("UTF-8")
-        if len(group.mandatory_packages.keys()) > 0:
+        if len(group.mandatory_packages) > 0:
             print ' Mandatory Packages:'
-            for item in group.mandatory_packages.keys():
+            for item in group.mandatory_packages:
                 print '   %s' % item
 
-        if len(group.default_packages.keys()) > 0:
+        if len(group.default_packages) > 0:
             print ' Default Packages:'
-            for item in group.default_packages.keys():
+            for item in group.default_packages:
                 print '   %s' % item
         
-        if len(group.optional_packages.keys()) > 0:
+        if len(group.optional_packages) > 0:
             print ' Optional Packages:'
-            for item in group.optional_packages.keys():
+            for item in group.optional_packages:
                 print '   %s' % item
 
-        if len(group.conditional_packages.keys()) > 0:
+        if len(group.conditional_packages) > 0:
             print ' Conditional Packages:'
             for item, cond in group.conditional_packages.iteritems():
                 print '   %s' % (item,)
@@ -355,13 +355,13 @@ class YumOutput:
     def depListOutput(self, results):
         """take a list of findDeps results and 'pretty print' the output"""
         
-        for pkg in results.keys():
+        for pkg in results:
             print "package: %s" % pkg.compactPrint()
-            if len(results[pkg].keys()) == 0:
+            if len(results[pkg]) == 0:
                 print "  No dependencies for this package"
                 continue
 
-            for req in results[pkg].keys():
+            for req in results[pkg]:
                 reqlist = results[pkg][req] 
                 print "  dependency: %s" % prco_tuple_to_string(req)
                 if not reqlist:

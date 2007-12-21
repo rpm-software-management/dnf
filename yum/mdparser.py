@@ -96,7 +96,7 @@ class BaseEntry:
         
     def _prefixprops(self, elem, prefix):
         ret = {}
-        for key in elem.attrib.keys():
+        for key in elem.attrib:
             ret[prefix + '_' + self._bn(key)] = elem.attrib[key]
         return ret
 

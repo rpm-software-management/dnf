@@ -441,7 +441,7 @@ class PackageSack(PackageSackBase):
         
     def __len__(self):
         ret = 0
-        for repo in self.pkgsByRepo.keys():
+        for repo in self.pkgsByRepo:
             ret += len(self.pkgsByRepo[repo])
         return ret
     
@@ -620,7 +620,7 @@ class PackageSack(PackageSackBase):
 
         self.clearIndexes()
         
-        for repoid in self.pkgsByRepo.keys():
+        for repoid in self.pkgsByRepo:
             for obj in self.pkgsByRepo[repoid]:
                 self._addPackageToIndex(obj)
         self.indexesBuilt = 1
@@ -684,7 +684,7 @@ class PackageSack(PackageSackBase):
         """return list of all packages, takes optional repoid"""
         returnList = []
         if repoid is None:
-            for repo in self.pkgsByRepo.keys():
+            for repo in self.pkgsByRepo:
                 returnList.extend(self.pkgsByRepo[repo])
         else:
             try:

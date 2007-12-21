@@ -354,7 +354,7 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
             name = name[:-1]
        
         pkgs = []
-        if len(self.filelistsdb.keys()) == 0:
+        if len(self.filelistsdb) == 0:
             # grab repo object from primarydb and force filelists population in this sack using repo
             # sack.populate(repo, mdtype, callback, cacheonly)
             for (repo,cache) in self.primarydb.items():

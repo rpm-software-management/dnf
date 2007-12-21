@@ -60,10 +60,10 @@ class YumPackageSack(packageSack.PackageSack):
             if datatype in self.added[repo]:
                 return
 
-        total = len(dataobj.keys())
+        total = len(dataobj)
         if datatype == 'metadata':
             current = 0
-            for pkgid in dataobj.keys():
+            for pkgid in dataobj:
                 current += 1
                 if callback: callback.progressbar(current, total, repo)
                 pkgdict = dataobj[pkgid]
@@ -84,7 +84,7 @@ class YumPackageSack(packageSack.PackageSack):
                     raise Errors.RepoError, '%s md for %s imported before primary' \
                            % (datatype, repo.id)
             current = 0
-            for pkgid in dataobj.keys():
+            for pkgid in dataobj:
                 current += 1
                 if callback: callback.progressbar(current, total, repo)
                 pkgdict = dataobj[pkgid]
@@ -390,8 +390,7 @@ class YumRepository(Repository, config.RepoConf):
         """Convert our dict of headers to a list of 2-tuples for urlgrabber."""
         headers = []
 
-        keys = self.http_headers.keys()
-        for key in keys:
+        for key in self.http_headers:
             headers.append((key, self.http_headers[key]))
 
         return headers

@@ -586,14 +586,14 @@ class YumAvailablePackage(PackageObject, RpmBase):
             self.licenses.append(pkgdict.info['license'])
         
         if hasattr(pkgdict, 'files'):
-            for fn in pkgdict.files.keys():
+            for fn in pkgdict.files:
                 ftype = pkgdict.files[fn]
                 if not self.files.has_key(ftype):
                     self.files[ftype] = []
                 self.files[ftype].append(fn)
         
         if hasattr(pkgdict, 'prco'):
-            for rtype in pkgdict.prco.keys():
+            for rtype in pkgdict.prco:
                 for rdict in pkgdict.prco[rtype]:
                     name = rdict['name']
                     f = e = v = r  = None
@@ -671,7 +671,7 @@ class YumHeaderPackage(YumAvailablePackage):
                      "CONFLICT": "conflicts",
                      "REQUIRE": "requires",
                      "PROVIDE": "provides" }
-        for tag in tag2prco.keys():
+        for tag in tag2prco:
             name = self.hdr[getattr(rpm, 'RPMTAG_%sNAME' % tag)]
 
             lst = self.hdr[getattr(rpm, 'RPMTAG_%sFLAGS' % tag)]

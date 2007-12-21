@@ -62,6 +62,7 @@ class Group(object):
         return self.name
     
     def _packageiter(self):
+        # Gah, FIXME: real iterator/class
         lst = self.mandatory_packages.keys() + \
               self.optional_packages.keys() + \
               self.default_packages.keys() + \
@@ -164,13 +165,13 @@ class Group(object):
         # we only need package lists and any translation that we don't already
         # have
         
-        for pkg in obj.mandatory_packages.keys():
+        for pkg in obj.mandatory_packages:
             self.mandatory_packages[pkg] = 1
-        for pkg in obj.default_packages.keys():
+        for pkg in obj.default_packages:
             self.default_packages[pkg] = 1
-        for pkg in obj.optional_packages.keys():
+        for pkg in obj.optional_packages:
             self.optional_packages[pkg] = 1
-        for pkg in obj.conditional_packages.keys():
+        for pkg in obj.conditional_packages:
             self.conditional_packages[pkg] = obj.conditional_packages[pkg]
         
         # Handle cases where a comps.xml without name & decription tags
@@ -184,11 +185,11 @@ class Group(object):
             self.description = obj.description
             
         # name and description translations
-        for lang in obj.translated_name.keys():
+        for lang in obj.translated_name:
             if not self.translated_name.has_key(lang):
                 self.translated_name[lang] = obj.translated_name[lang]
         
-        for lang in obj.translated_description.keys():
+        for lang in obj.translated_description:
             if not self.translated_description.has_key(lang):
                 self.translated_description[lang] = obj.translated_description[lang]
         
@@ -266,11 +267,11 @@ class Category(object):
             self._groups[grp] = 1
         
         # name and description translations
-        for lang in obj.translated_name.keys():
+        for lang in obj.translated_name:
             if not self.translated_name.has_key(lang):
                 self.translated_name[lang] = obj.translated_name[lang]
         
-        for lang in obj.translated_description.keys():
+        for lang in obj.translated_description:
             if not self.translated_description.has_key(lang):
                 self.translated_description[lang] = obj.translated_description[lang]
 
@@ -383,10 +384,9 @@ class Comps(object):
             # if there are mandatory packages in the group, then make sure
             # they're all installed.  if any are missing, then the group
             # isn't installed.
-            if len(group.mandatory_packages.keys()) > 0:
-                check_pkgs = group.mandatory_packages.keys()
+            if len(group.mandatory_packages) > 0:
                 group.installed = True
-                for pkgname in check_pkgs:
+                for pkgname in group.mandatory_packages:
                     if not inst_pkg_names.has_key(pkgname):
                         group.installed = False
                         break

@@ -557,7 +557,7 @@ class YumBase(depsolve.Depsolve):
         # first or the below does nothing so...
         if self.pkgSack:
             for repo in self.repos.listEnabled():
-                if repo in repo.sack.added.keys():
+                if repo in repo.sack.added:
                     if 'filelists' in repo.sack.added[repo]:
                         continue
                     else:
@@ -625,12 +625,12 @@ class YumBase(depsolve.Depsolve):
         ''' create a dictionary with po -> deps and dep -> pos references '''
         depTree = {}
         for txmbr in self.tsInfo:
-            if not txmbr.po in depTree.keys():
+            if not txmbr.po in depTree:
                 depTree[txmbr.po] = set()
-            for po in (txmbr.updates + txmbr.obsoletes+txmbr.depends_on):
+            for po in (txmbr.updates + txmbr.obsoletes + txmbr.depends_on):
                 # Add po -> dep reference
                 depTree[txmbr.po].add(po)
-                if not po in depTree.keys():
+                if not po in depTree:
                     depTree[po] = set()
                 # Add dep -> reference
                 depTree[po].add(txmbr.po)
@@ -682,7 +682,7 @@ class YumBase(depsolve.Depsolve):
         for r in self.repos.listEnabled():
             costs[r.cost] = 1
 
-        if len(costs.keys()) <= 1: # if all of our costs are the same then return
+        if len(costs) <= 1: # if all of our costs are the same then return
             return
             
         def _sort_by_cost(a, b):
@@ -1283,7 +1283,7 @@ class YumBase(depsolve.Depsolve):
                     else:
                         ftimehash[ftime].append(po)
 
-            for sometime in ftimehash.keys():
+            for sometime in ftimehash:
                 for po in ftimehash[sometime]:
                     recent.append(po)
         
@@ -1393,14 +1393,14 @@ class YumBase(depsolve.Depsolve):
                     matched_values[po] = tmpvalues
                     my_sets[s].append(po)
         
-        for pkg in matched_values.keys():
+        for pkg in matched_values:
             if scores.has_key(pkg):
                 continue
             count = 0
             
-            for this_set in my_sets.values():
+            for this_set in my_sets.itervalues():
                 if pkg in this_set:
-                    count+=1
+                    count += 1
             
             scores[pkg] = count
 
@@ -1637,11 +1637,11 @@ class YumBase(depsolve.Depsolve):
         
         pkgs = []
         if 'mandatory' in self.conf.group_package_types:
-            pkgs.extend(thisgroup.mandatory_packages.keys())
+            pkgs.extend(thisgroup.mandatory_packages)
         if 'default' in self.conf.group_package_types:
-            pkgs.extend(thisgroup.default_packages.keys())
+            pkgs.extend(thisgroup.default_packages)
         if 'optional' in self.conf.group_package_types:
-            pkgs.extend(thisgroup.optional_packages.keys())
+            pkgs.extend(thisgroup.optional_packages)
 
         for pkg in pkgs:
             self.verbose_logger.log(logginglevels.DEBUG_2,
@@ -1945,7 +1945,7 @@ class YumBase(depsolve.Depsolve):
                 raise Errors.InstallError, 'Package Object was not a package object instance'
             
         else:
-            if not kwargs.keys():
+            if not kwargs:
                 raise Errors.InstallError, 'Nothing specified to install'
 
             if kwargs.has_key('pattern'):
@@ -2060,7 +2060,7 @@ class YumBase(depsolve.Depsolve):
             obsoletes = []
 
         tx_return = []
-        if not po and not kwargs.keys(): # update everything (the easy case)
+        if not po and not kwargs: # update everything (the easy case)
             self.verbose_logger.log(logginglevels.DEBUG_2, 'Updating Everything')
             for (obsoleting, installed) in obsoletes:
                 obsoleting_pkg = self.getPackageObject(obsoleting)
@@ -2169,7 +2169,7 @@ class YumBase(depsolve.Depsolve):
             will be marked for removal.
             if no po then look at kwargs, if neither then raise an exception"""
 
-        if not po and not kwargs.keys():
+        if not po and not kwargs:
             raise Errors.RemoveError, 'Nothing specified to remove'
         
         tx_return = []
@@ -2490,9 +2490,9 @@ class YumBase(depsolve.Depsolve):
 
         except IndexError:
             raise Errors.YumBaseError, ["Unable to find a suitable mirror."]
-        if len(probs.keys()) > 0:
+        if len(probs) > 0:
             errstr = ["Errors were encountered while downloading packages."]
-            for key in probs.keys():
+            for key in probs:
                 errors = misc.unique(probs[key])
                 for error in errors:
                     errstr.append("%s: %s" %(key, error))
