@@ -594,7 +594,9 @@ class YumBase(depsolve.Depsolve):
         # Keep removing packages & Depsolve until all errors is gone
         # or the transaction is empty
         depTree = self._buildDepTree()
+        count = 0
         while len(self.po_with_problems) > 0 and rescode == 1:
+            count += 1
             startTs = set(self.tsInfo)
             toRemove = set()
             for po,wpo in self.po_with_problems:
@@ -611,6 +613,7 @@ class YumBase(depsolve.Depsolve):
                     if self.tsInfo.exists(po.pkgtup):
                         self.verbose_logger.info("skipping %s because of depsolving problems" % str(po))
                         self.tsInfo.remove(po.pkgtup)
+                        self.pkgSack.delPackage(po)
             else: # Nothing was removed, so we still got a problem
                 break # Bail out
             rescode, restring = self.resolveDeps()
@@ -619,6 +622,7 @@ class YumBase(depsolve.Depsolve):
              # if there is no changes then we got a loop.
             if startTs-endTs == set():
                 break    # bail out
+        self.verbose_logger.debug("Skip-broken took %i rounds ", count)
         return rescode, restring
 
     def _buildDepTree(self):
@@ -627,7 +631,7 @@ class YumBase(depsolve.Depsolve):
         for txmbr in self.tsInfo:
             if not txmbr.po in depTree:
                 depTree[txmbr.po] = set()
-            for po in (txmbr.updates + txmbr.obsoletes + txmbr.depends_on):
+            for po in (txmbr.updates + txmbr.obsoletes): # + txmbr.depends_on):
                 # Add po -> dep reference
                 depTree[txmbr.po].add(po)
                 if not po in depTree:
@@ -642,11 +646,12 @@ class YumBase(depsolve.Depsolve):
         walk trough the po->deps, dep->po's reference tree too get
         the related po to remove.
         '''
-        if po not in toRemove:
-            toRemove.add(po)       
-        for child in deptree[po]:
-            if child not in toRemove:
-                toRemove = self._getPackagesToRemove(child, deptree, toRemove)
+        stack = [ po ]
+        while stack:
+            po  = stack.pop()
+            if po not in toRemove:
+                toRemove.add(po)
+                stack.extend(deptree.get(po, []))
         return toRemove
 
     def runTransaction(self, cb):

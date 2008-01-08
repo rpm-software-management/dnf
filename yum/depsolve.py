@@ -713,6 +713,7 @@ class Depsolve(object):
             self._dcobj.reset()
         self.po_with_problems = set()
         self._working_po = None
+        self.tsInfo.removedmembers.clear()
 
         CheckDeps = True
         CheckRemoves = False
