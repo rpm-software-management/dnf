@@ -286,15 +286,15 @@ class TransactionData:
             else:
                 pass
     
-            self.updated.sort()
-            self.installed.sort()
-            self.removed.sort()
-            self.obsoleted.sort()
-            self.depupdated.sort()
-            self.depinstalled.sort()
-            self.depremoved.sort()
-            self.instgroups.sort()
-            self.removedgroups.sort()
+        self.updated.sort()
+        self.installed.sort()
+        self.removed.sort()
+        self.obsoleted.sort()
+        self.depupdated.sort()
+        self.depinstalled.sort()
+        self.depremoved.sort()
+        self.instgroups.sort()
+        self.removedgroups.sort()
 
     
     def addInstall(self, po):
