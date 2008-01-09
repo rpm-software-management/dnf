@@ -613,7 +613,8 @@ class YumBase(depsolve.Depsolve):
                     if self.tsInfo.exists(po.pkgtup):
                         self.verbose_logger.info("skipping %s because of depsolving problems" % str(po))
                         self.tsInfo.remove(po.pkgtup)
-                        self.pkgSack.delPackage(po)
+                        if not po.repoid == 'installed': # Only remove non installed packages from pkgSack
+                            self.pkgSack.delPackage(po)
             else: # Nothing was removed, so we still got a problem
                 break # Bail out
             rescode, restring = self.resolveDeps()

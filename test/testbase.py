@@ -36,14 +36,16 @@ class FakeConf(object):
 
 class FakeRepo(object):
 
-    def __init__(self, id=None):
+    def __init__(self, id=None,sack=None):
         self.id = id
+        self.sack = sack
 
 class FakePackage(packages.YumAvailablePackage):
 
     def __init__(self, name, version='1.0', release='1', epoch='0', arch='noarch', repo=None):
         if repo is None:
             repo = FakeRepo()
+            print "creating empty repo for %s " % name
         packages.YumAvailablePackage.__init__(self, repo)
 
         self.name = name

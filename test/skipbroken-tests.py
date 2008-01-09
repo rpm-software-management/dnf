@@ -8,31 +8,42 @@ class SkipBrokenTests(DepsolveTests):
     
     def setUp(self):
         DepsolveTests.setUp(self)
+        self.xrepo   = FakeRepo("TestRepository",self.xsack)
         setup_logging()
 
+    def _createRepoPackage(self, name, version='1', release='0', epoch='0', arch='noarch'):
+        po = FakePackage(name, version, release, epoch, arch, repo=self.xrepo)
+        self.xsack.addPackage(po)
+        return po
+    
+    def _createInstPackage(self, name, version='1', release='0', epoch='0', arch='noarch'):
+        po = FakePackage(name, version, release, epoch, arch, repo=self.repo)
+        self.rpmdb.addPackage(po)
+        return po
+           
     def testMissingReqNoSkip(self):
         ''' install fails,  because of missing req.
         bar fails because foobar is not provided '''
-        po = FakePackage('foo', '1', '0', '0', 'noarch')
+        po = self._createRepoPackage('foo', '1')
         po.addRequires('bar', None, (None,None,None))
         self.tsInfo.addInstall(po)
 
-        xpo = FakePackage('bar', '1', '0', '0', 'noarch')
+        xpo = self._createRepoPackage('bar', '1')
         xpo.addRequires('foobar', None, (None,None,None))
-        self.xsack.addPackage(xpo)
+        
         self.assertEquals('err', *self.resolveCode(skip=False))
         self.assertResult((po,xpo))
 
     def testMissingReqSkip(self):
         ''' install is skipped, because of missing req.
         foo + bar is skipped, because foobar is not provided '''
-        po = FakePackage('foo', '1', '0', '0', 'noarch')
+        po = self._createRepoPackage('foo', '1')
         po.addRequires('bar', None, (None,None,None))
         self.tsInfo.addInstall(po)
 
-        xpo = FakePackage('bar', '1', '0', '0', 'noarch')
+        xpo = self._createRepoPackage('bar', '1')
         xpo.addRequires('foobar', None, (None,None,None))
-        self.xsack.addPackage(xpo)
+
         self.assertEquals('empty', *self.resolveCode(skip=True))
         self.assertResult([])
 
@@ -41,16 +52,16 @@ class SkipBrokenTests(DepsolveTests):
         foo + foobar is skipped because barfoo is not provided
         bar stays in the transaction
         '''
-        po1 = FakePackage('foo', '1', '0', '0', 'noarch')
+        po1 = self._createRepoPackage('foo', '1')
         po1.addRequires('foobar', None, (None,None,None))
         self.tsInfo.addInstall(po1)
 
-        po2 = FakePackage('bar', '1', '0', '0', 'noarch')
+        po2 = self._createRepoPackage('bar', '1')
         self.tsInfo.addInstall(po2)
 
-        xpo1 = FakePackage('foobar', '1', '0', '0', 'noarch')
+        xpo1 = self._createRepoPackage('foobar', '1')
         xpo1.addRequires('barfoo', None, (None,None,None))
-        self.xsack.addPackage(xpo1)
+
         self.assertEquals('ok', *self.resolveCode(skip=True))
         self.assertResult([po2])
 
@@ -61,15 +72,13 @@ class SkipBrokenTests(DepsolveTests):
         '''
         # FIXME: The right solution is to skip the update from the transaction 
         
-        po1 = FakePackage('foo', '1', '0', '0', 'noarch')
-        po2 = FakePackage('foo', '2', '0', '0', 'noarch')
+        po1 = self._createInstPackage('foo', '1')
+        po2 = self._createRepoPackage('foo', '2')
 
-        ipo = FakePackage('foo-tools', '2.5', '0', '0', 'noarch')
+        ipo = self._createInstPackage('foo-tools', '2.5')
         ipo.addRequires('foo', 'EQ', ('0', '1', '0'))
 
-        self.rpmdb.addPackage(po1)
         self.tsInfo.addUpdate(po2, oldpo=po1)
-        self.rpmdb.addPackage(ipo)
         
         self.assertEquals('empty', *self.resolveCode(skip=True))
         self.assertResult([ipo, po1])
@@ -79,16 +88,15 @@ class SkipBrokenTests(DepsolveTests):
         The foo-1.0 -> foo-2.0 update fails, because foo-tools-2.0 need by foo-2.0
         is not provided, the update should be skipped and result in a empty transaction
         '''
-        po1 = FakePackage('foo', '1', '0', '0', 'noarch')
+        po1 = self._createInstPackage('foo', '1')
         po1.addRequires('foo-tools', 'EQ', ('0', '1', '0'))
-        po2 = FakePackage('foo', '2', '0', '0', 'noarch')
+        po2 = self._createRepoPackage('foo', '2')
         po2.addRequires('foo-tools', 'EQ', ('0', '2', '0'))
 
-        ipo = FakePackage('foo-tools', '1', '0', '0', 'noarch')
+        ipo = self._createInstPackage('foo-tools', '1')
 
-        self.rpmdb.addPackage(po1)
         self.tsInfo.addUpdate(po2, oldpo=po1)
-        self.rpmdb.addPackage(ipo)
+
         
         self.assertEquals('empty', *self.resolveCode(skip=True))
         self.assertResult([ipo, po1])
@@ -99,18 +107,16 @@ class SkipBrokenTests(DepsolveTests):
         foo-2.0 update get skip, and the foo-gui install will get skipped too, because it need foo-2.0
         there is not longer provided.
         '''
-        po1 = FakePackage('foo', '1', '0', '0', 'noarch')
+        po1 = self._createInstPackage('foo', '1')
         po1.addRequires('foo-tools', 'EQ', ('0', '1', '0'))
-        po2 = FakePackage('foo', '2', '0', '0', 'noarch')
+        po2 = self._createRepoPackage('foo', '2')
         po2.addRequires('foo-tools', 'EQ', ('0', '2', '0'))
 
-        ipo = FakePackage('foo-tools', '1', '0', '0', 'noarch')
-        por =  FakePackage('foo-gui', '1', '0', '0', 'noarch')
+        ipo = self._createInstPackage('foo-tools', '1')
+        por =  self._createRepoPackage('foo-gui', '1')
         por.addRequires('foo', 'EQ', ('0', '2', '0'))
 
-        self.rpmdb.addPackage(po1)
         self.tsInfo.addUpdate(po2, oldpo=po1)
-        self.rpmdb.addPackage(ipo)
         self.tsInfo.addInstall(por)
 
         self.assertEquals('empty', *self.resolveCode(skip=True))
@@ -121,12 +127,9 @@ class SkipBrokenTests(DepsolveTests):
         foo is removed, and foo-tools get removed too, because it 
         depends on foo  
         '''
-        ipo = FakePackage('foo', '1', '0', '0', 'noarch')
-        ipo2 = FakePackage('foo-tools', '1', '0', '0', 'noarch')
+        ipo = self._createInstPackage('foo', '1')
+        ipo2 = self._createInstPackage('foo-tools', '1')
         ipo2.addRequires('foo', 'EQ', ('0', '1', '0'))
-
-        self.rpmdb.addPackage(ipo)
-        self.rpmdb.addPackage(ipo2)
 
         self.tsInfo.addErase(ipo)
         self.assertEquals('ok', *self.resolveCode(skip=True))
@@ -136,15 +139,13 @@ class SkipBrokenTests(DepsolveTests):
         ''' update fails, because a req is erased.
         Update foo-tools-1.0 -> foo-tools-2.0, should fail because the require foo is removed
         '''
-        ipo = FakePackage('foo', '1', '0', '0', 'noarch')
-        ipo2 = FakePackage('foo-tools', '1', '0', '0', 'noarch')
+        ipo = self._createInstPackage('foo', '1')
+        ipo2 = self._createInstPackage('foo-tools', '1')
         ipo2.addRequires('foo', 'EQ', ('0', '1', '0'))
 
-        upo2 = FakePackage('foo-tools', '2', '0', '0', 'noarch')
+        upo2 = self._createRepoPackage('foo-tools', '2')
         upo2.addRequires('foo', 'EQ', ('0', '1', '0'))
 
-        self.rpmdb.addPackage(ipo)
-        self.rpmdb.addPackage(ipo2)   
         self.tsInfo.addErase(ipo)
         self.tsInfo.addUpdate(upo2, oldpo=ipo2)
         
@@ -155,15 +156,13 @@ class SkipBrokenTests(DepsolveTests):
         Update foo-tools-1.0 -> foo-tools-2.0, should fail because the require foo is removed
         the update is skipped and foo-tools-1.0 is removed too, because it requires foo. 
         '''
-        ipo = FakePackage('foo', '1', '0', '0', 'noarch')
-        ipo2 = FakePackage('foo-tools', '1', '0', '0', 'noarch')
+        ipo = self._createInstPackage('foo', '1')
+        ipo2 = self._createInstPackage('foo-tools', '1')
         ipo2.addRequires('foo', 'EQ', ('0', '1', '0'))
 
-        upo2 = FakePackage('foo-tools', '2', '0', '0', 'noarch')
+        upo2 = self._createRepoPackage('foo-tools', '2')
         upo2.addRequires('foo', 'EQ', ('0', '1', '0'))
 
-        self.rpmdb.addPackage(ipo)
-        self.rpmdb.addPackage(ipo2)   
         self.tsInfo.addUpdate(upo2, oldpo=ipo2)
         self.tsInfo.addErase(ipo)
         
@@ -175,14 +174,11 @@ class SkipBrokenTests(DepsolveTests):
         foo 1.0 -> 2.0 update fails, because foo-2.0 conflict with bar-1.0
         the update get skipped and the transaction is now empty
         '''
-        po1 = FakePackage('foo', '1', '0', '0', 'noarch')
-        po2 = FakePackage('foo', '2', '0', '0', 'noarch')
+        po1 = self._createInstPackage('foo', '1')
+        po2 = self._createRepoPackage('foo', '2')
         po2.addConflicts('bar', 'EQ', ('0', '1', '0'))
 
-        ipo = FakePackage('bar', '1', '0', '0', 'noarch')
-
-        self.rpmdb.addPackage(po1)
-        self.rpmdb.addPackage(ipo)
+        ipo = self._createInstPackage('bar', '1')
 
         self.tsInfo.addUpdate(po2, oldpo=po1)
         
@@ -195,43 +191,37 @@ class SkipBrokenTests(DepsolveTests):
         bar-1.0 is update to bar-2.0, to solve the conflict but bar-2.0 need foo-1.0
         so the foo & bar updates get skipped and the transaction is empty
         '''
-        po1 = FakePackage('foo', '1', '0', '0', 'noarch')
-        po2 = FakePackage('foo', '2', '0', '0', 'noarch')
+        po1 = self._createInstPackage('foo', '1')
+        po2 = self._createRepoPackage('foo', '2')
         po2.addConflicts('bar', 'EQ', ('0', '1', '0'))
 
-        ipo = FakePackage('bar', '1', '0', '0', 'noarch')
+        ipo = self._createInstPackage('bar', '1')
 
-        self.rpmdb.addPackage(po1)
-        self.rpmdb.addPackage(ipo)
 
-        xpo = FakePackage('bar', '2', '0', '0', 'noarch')
+        xpo = self._createRepoPackage('bar', '2')
         xpo.addRequires('foo', 'EQ', ('0', '1', '0'))
-        self.xsack.addPackage(xpo)
 
         self.tsInfo.addUpdate(po2, oldpo=po1)
         
         self.assertEquals('empty', *self.resolveCode(skip=True))
         self.assertResult([po1,ipo])
 
-    def testConflictWithInstalledButUpdateExist(self):
+    def testConflictWithInstalledButUpdateExist2(self):
         '''update fails, because conflict cant be fixed. (missing req.)
         foo 1.0 -> 2.0 update fails, because foo-2.0 conflict with bar-1.0
         bar-1.0 is update to bar-2.0, to solve the conflict but bar-2.0 need poo-1.0
         there is not provided
         So the foo & bar updates get skipped and the transaction is empty
         '''
-        po1 = FakePackage('foo', '1', '0', '0', 'noarch')
-        po2 = FakePackage('foo', '2', '0', '0', 'noarch')
+        po1 = self._createInstPackage('foo', '1')
+        po2 = self._createRepoPackage('foo', '2')
         po2.addConflicts('bar', 'EQ', ('0', '1', '0'))
 
-        ipo = FakePackage('bar', '1', '0', '0', 'noarch')
+        ipo = self._createInstPackage('bar', '1')
 
-        self.rpmdb.addPackage(po1)
-        self.rpmdb.addPackage(ipo)
 
-        xpo = FakePackage('bar', '2', '0', '0', 'noarch')
+        xpo = self._createRepoPackage('bar', '2')
         xpo.addRequires('poo', 'EQ', ('0', '1', '0'))
-        self.xsack.addPackage(xpo)
 
         self.tsInfo.addUpdate(po2, oldpo=po1)
         
@@ -239,29 +229,26 @@ class SkipBrokenTests(DepsolveTests):
         self.assertResult([po1,ipo])
 
     def testAlternativePackageAvailable(self):
-        ipo = FakePackage('foo')
+        ipo = self._createRepoPackage('foo')
         ipo.addRequires('bar')
-        provides1 = FakePackage('bar')
+        provides1 = self._createRepoPackage('bar')
         provides1.addRequires('baz')
-        provides2 = FakePackage('bar-ng')
+        provides2 = self._createRepoPackage('bar-ng')
         provides2.addProvides('bar')
         #provides2.addRequires('baz')
 
-        self.xsack.addPackage(provides1)
-        self.xsack.addPackage(provides2)
         self.tsInfo.addInstall(ipo)
 
         self.assertEquals('empty', *self.resolveCode(skip=True))
         self.assertResult([])
 
     def testOnlyOneRequirementAvailable(self):
-        ipo = FakePackage('foo')
+        ipo = self._createRepoPackage('foo')
         ipo.addRequires('bar')
         ipo.addRequires('baz')
 
-        ppo = FakePackage('baz')
+        ppo = self._createRepoPackage('baz')
 
-        self.xsack.addPackage(ppo)
         self.tsInfo.addInstall(ipo)
 
         self.assertEquals('empty', *self.resolveCode(skip=True))
