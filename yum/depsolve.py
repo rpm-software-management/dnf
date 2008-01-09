@@ -626,7 +626,7 @@ class Depsolve(object):
                         pkgs = self.pkgSack.returnNewestByName(confpkg.name)
                         archs = {}
                         for pkg in pkgs:
-                            archs[a] = pkg.arch
+                            archs[pkg.arch] = pkg
                         a = rpmUtils.arch.getBestArchFromList(archs.keys())
                         po = archs[a]                        
                     except Errors.PackageSackError:
