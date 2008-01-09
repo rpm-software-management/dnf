@@ -375,8 +375,7 @@ class Depsolve(object):
                     pkgs = self.pkgSack.returnNewestByName(name)
                     archs = {}
                     for pkg in pkgs:
-                        (n,a,e,v,r) = pkg.pkgtup
-                        archs[a] = pkg
+                        archs[pkg.arch] = pkg
                     a = rpmUtils.arch.getBestArchFromList(archs.keys())
                     po = archs[a]
                 else:
