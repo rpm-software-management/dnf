@@ -254,6 +254,22 @@ class SkipBrokenTests(DepsolveTests):
         self.assertEquals('empty', *self.resolveCode(skip=True))
         self.assertResult([])
 
+    def test2PkgReqSameDep(self):
+        po1 = self._createRepoPackage('foo')
+        po1.addRequires('bar')
+        po1.addRequires('foobar')
+        po2 = self._createRepoPackage('bar')
+        po2.addRequires('zzzz')
+        po3 = self._createRepoPackage('barfoo')
+        po3.addRequires('foobar')
+        po4 = self._createRepoPackage('foobar')
+        self.tsInfo.addInstall(po1)
+        self.tsInfo.addInstall(po3)
+
+        self.assertEquals('ok', *self.resolveCode(skip=True))
+        self.assertResult([po3,po4])
+
+
     def resolveCode(self,skip = False):
         solver = YumBase()
         solver.conf = FakeConf()
