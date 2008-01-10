@@ -234,7 +234,8 @@ class YumRepository(Repository, config.RepoConf):
         self.cost = 1000
         self.copy_local = 0        
         # holder for stuff we've grabbed
-        self.retrieved = { 'primary':0, 'filelists':0, 'other':0, 'group':0 }
+        self.retrieved = { 'primary':0, 'filelists':0, 'other':0, 'group':0,
+                           'updateinfo':0}
 
         # callbacks
         self.callback = None  # for the grabber
