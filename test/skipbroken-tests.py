@@ -269,6 +269,18 @@ class SkipBrokenTests(DepsolveTests):
         self.assertEquals('ok', *self.resolveCode(skip=True))
         self.assertResult([po3,po4])
 
+    def testProvidesAndDepsGetRemoved(self):
+        po1 = self.repoPackage('Spaceman')
+        po1.addProvides('money')
+        po2 = self.repoPackage('GutlessGibbon')
+        po2.addRequires('money')
+        po2.addRequires('nice')
+        po2.addRequires('features')
+        self.tsInfo.addInstall(po2)
+        self.assertEquals('empty', *self.resolveCode(skip=True))
+
+
+
 
     def resolveCode(self,skip = False):
         solver = YumBase()
