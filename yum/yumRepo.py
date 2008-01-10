@@ -723,40 +723,63 @@ class YumRepository(Repository, config.RepoConf):
             verbose_logger.log(logginglevels.DEBUG_2, "Disabling media repo for non-media-aware frontend")
             self.enabled = False
 
-    def _loadRepoXML(self, text=None):
-        """retrieve/check/read in repomd.xml from the repository"""
+    def _cachingRepoXML(self, local):
+        """ Should we cache the current repomd.xml """
+        if self.cache and not os.path.exists(local):
+            raise Errors.RepoError, 'Cannot find repomd.xml file for %s' % self
+        if self.cache or self.withinCacheAge(self.metadata_cookie,
+                                             self.metadata_expire):
+            return True
+        return False
+    
+    def _getFileRepoXML(self, local, text=None, grab_can_fail=None):
+        """ Call _getFile() for the repomd.xml file. """
+        checkfunc = (self._checkRepoXML, (), {})
+        try:
+            result = self._getFile(relative=self.repoMDFile,
+                                   local=local,
+                                   copy_local=1,
+                                   text=text,
+                                   reget=None,
+                                   checkfunc=checkfunc,
+                                   cache=self.http_caching == 'all')
 
-        remote = self.repoMDFile
-        local = self.cachedir + '/repomd.xml'
+        except URLGrabError, e:
+            if grab_can_fail is None:
+                grab_can_fail = self._oldRepoMDFile
+            if grab_can_fail:
+                return None
+            raise Errors.RepoError, 'Error downloading file %s: %s' % (local, e)
+        return result
+        
+    def _parseRepoXML(self, local, parse_can_fail=None):
+        """ Parse the repomd.xml file. """
+        try:
+            return repoMDObject.RepoMD(self.id, local)
+        except Errors.RepoMDError, e:
+            if parse_can_fail is None:
+                parse_can_fail = self._oldRepoMDFile
+            if parse_can_fail:
+                return None
+            raise Errors.RepoError, 'Error importing repomd.xml from %s: %s' % (self, e)
+        
+    def _loadRepoXML(self, text=None):
+        """ Retrieve the new repomd.xml from the repository, then check it
+            and parse it. If it fails at any point everything fails.
+            Traditional behaviour. """
+
+        local  = self.cachedir + '/repomd.xml'
         if self._repoXML is not None:
             return
     
-        if self.cache or self.withinCacheAge(self.metadata_cookie, self.metadata_expire):
-            if not os.path.exists(local):
-                raise Errors.RepoError, 'Cannot find repomd.xml file for %s' % (self)
-            else:
-                result = local
+        if self._cachingRepoXML(local):
+            result = local
         else:
-            checkfunc = (self._checkRepoXML, (), {})
-            try:
-                result = self._getFile(relative=remote,
-                                  local=local,
-                                  copy_local=1,
-                                  text=text,
-                                  reget=None,
-                                  checkfunc=checkfunc,
-                                  cache=self.http_caching == 'all')
-
-
-            except URLGrabError, e:
-                raise Errors.RepoError, 'Error downloading file %s: %s' % (local, e)
+            result = self._getFileRepoXML(local, text)
             # if we have a 'fresh' repomd.xml then update the cookie
             self.setMetadataCookie()
 
-        try:
-            self._repoXML = repoMDObject.RepoMD(self.id, result)
-        except Errors.RepoMDError, e:
-            raise Errors.RepoError, 'Error importing repomd.xml from %s: %s' % (self, e)
+        self._repoXML = self._parseRepoXML(result)
 
     def _getRepoXML(self):
         if self._repoXML:
