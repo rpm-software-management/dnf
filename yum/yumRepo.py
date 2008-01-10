@@ -147,10 +147,7 @@ class YumPackageSack(packageSack.PackageSack):
                 
                 db_un_fn = self._check_uncompressed_db(repo, mydbtype)
                 if not db_un_fn:
-                    try:
-                        db_fn = repo.retrieveMD(mydbtype)
-                    except Errors.RepoMDError, e:
-                        pass
+                    db_fn = repo._retrieveMD(mydbtype, retrieve_can_fail=True)
                     if db_fn:
                         db_un_fn = db_fn.replace('.bz2', '')
                         if not repo.cache:
@@ -219,6 +216,7 @@ class YumRepository(Repository, config.RepoConf):
                                               # eventually want
         self.repoMDFile = 'repodata/repomd.xml'
         self._repoXML = None
+        self._oldRepoMDFile = None
         self.cache = 0
         self.mirrorlistparsed = 0
         self.yumvar = {} # empty dict of yumvariables for $string replacement
@@ -301,7 +299,7 @@ class YumRepository(Repository, config.RepoConf):
     def __str__(self):
         return self.id
 
-    def _checksum(self, sumtype, file, CHUNK=2**16):
+    def _checksum(self, sumtype, file, CHUNK=2**16, checksum_can_fail=False):
         """takes filename, hand back Checksum of it
            sumtype = md5 or sha
            filename = /path/to/file
@@ -309,6 +307,8 @@ class YumRepository(Repository, config.RepoConf):
         try:
             return misc.checksum(sumtype, file, CHUNK)
         except (Errors.MiscError, EnvironmentError), e:
+            if checksum_can_fail:
+                return None
             raise Errors.RepoError, 'Error opening file for checksum: %s' % e
 
     def dump(self):
@@ -811,9 +811,16 @@ class YumRepository(Repository, config.RepoConf):
 
     def checkMD(self, fn, mdtype, openchecksum=False):
         """check the metadata type against its checksum"""
-        
-        thisdata = self.repoXML.getData(mdtype)
-        
+        return self._checkMD(fn, mdtype, openchecksum)
+    
+    def _checkMD(self, fn, mdtype, openchecksum=False,
+                 thisdata=None, check_can_fail=False):
+        """ Internal function, use .checkMD() from outside yum. """
+
+        if thisdata is None:
+            thisdata = self.repoXML.getData(mdtype)
+
+        # Note openchecksum means do it after you've uncompressed the data.
         if openchecksum:
             (r_ctype, r_csum) = thisdata.openchecksum # get the remote checksum
         else:
@@ -827,11 +834,15 @@ class YumRepository(Repository, config.RepoConf):
         try:
             l_csum = self._checksum(r_ctype, file) # get the local checksum
         except Errors.RepoError, e:
+            if check_can_fail:
+                return None
             raise URLGrabError(-3, 'Error performing checksum')
 
         if l_csum == r_csum:
             return 1
         else:
+            if check_can_fail:
+                return None
             raise URLGrabError(-1, 'Metadata file does not match checksum')
 
 
@@ -840,7 +851,10 @@ class YumRepository(Repository, config.RepoConf):
         """base function to retrieve metadata files from the remote url
            returns the path to the local metadata file of a 'mdtype'
            mdtype can be 'primary', 'filelists', 'other' or 'group'."""
-        
+        return self._retrieveMD(mdtype)
+
+    def _retrieveMD(self, mdtype, retrieve_can_fail=False):        
+        """ Internal function, use .retrieveMD() from outside yum. """
         thisdata = self.repoXML.getData(mdtype)
         
         (r_base, remote) = thisdata.location
@@ -867,11 +881,7 @@ class YumRepository(Repository, config.RepoConf):
                            self)
 
         if os.path.exists(local):
-            try:
-                self.checkMD(local, mdtype)
-            except URLGrabError, e:
-                pass
-            else:
+            if self._checkMD(local, mdtype, check_can_fail=True):
                 self.retrieved[mdtype] = 1
                 return local # it's the same return the local one
 
@@ -880,7 +890,13 @@ class YumRepository(Repository, config.RepoConf):
             local = self._getFile(relative=remote, local=local, copy_local=1,
                              checkfunc=checkfunc, reget=None,
                              cache=self.http_caching == 'all')
+        except (Errors.NoMoreMirrorsRepoError, Errors.RepoError):
+            if retrieve_can_fail:
+                return None
+            raise
         except URLGrabError, e:
+            if retrieve_can_fail:
+                return None
             raise Errors.RepoError, \
                 "Could not retrieve %s matching remote checksum from %s" % (local, self)
         else:
@@ -907,12 +923,7 @@ class YumRepository(Repository, config.RepoConf):
     def getGroups(self):
         """gets groups and returns group file path for the repository, if there
            is none it returns None"""
-        try:
-            file = self.retrieveMD('group')
-        except URLGrabError:
-            file = None
-
-        return file
+        return self._retrieveMD('group', retrieve_can_fail=True)
 
     def setCallback(self, callback):
         self.callback = callback
