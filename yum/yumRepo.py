@@ -193,10 +193,7 @@ class YumPackageSack(packageSack.PackageSack):
         return result
         
     def _check_db_version(self, repo, mdtype):
-        if repo.repoXML.repoData.has_key(mdtype):
-            if DBVERSION == repo.repoXML.repoData[mdtype].dbversion:
-                return True
-        return False
+        return repo._check_db_version(mdtype)
         
 class YumRepository(Repository, config.RepoConf):
     """
@@ -781,6 +778,14 @@ class YumRepository(Repository, config.RepoConf):
             self.setMetadataCookie()
 
         self._repoXML = self._parseRepoXML(result)
+
+    def _check_db_version(self, mdtype, repoXML=None):
+        if repoXML is None:
+            repoXML = self.repoXML
+        if repoXML.repoData.has_key(mdtype):
+            if DBVERSION == repoXML.repoData[mdtype].dbversion:
+                return True
+        return False
 
     def _getRepoXML(self):
         if self._repoXML:
