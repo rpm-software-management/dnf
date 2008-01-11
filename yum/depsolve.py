@@ -404,8 +404,9 @@ class Depsolve(object):
             if self.pkgSack is None:
                 return self._requiringFromTransaction(requiringPo, requirement, errorlist)
             else:
+                prob_pkg = "%s (%s)" % (requiringPo,requiringPo.repoid)
                 msg = 'Unresolvable requirement %s for %s' % (niceformatneed,
-                                                               reqpkg[0])
+                                                               prob_pkg)
                 self.verbose_logger.log(logginglevels.DEBUG_2, msg)
                 checkdeps = 0
                 missingdep = 1
@@ -483,9 +484,10 @@ class Depsolve(object):
 
         if len(provSack) == 0: # unresolveable
             missingdep = 1
+            prob_pkg = "%s (%s)" % (requiringPo,requiringPo.repoid)
             msg = 'Missing Dependency: %s is needed by package %s' % \
             (rpmUtils.miscutils.formatRequire(needname, needversion, needflags),
-                                                                   name)
+                                                                   prob_pkg)
             errorlist.append(msg)
             return checkdeps, missingdep
         
@@ -550,7 +552,8 @@ class Depsolve(object):
         if self.rpmdb.contains(po=best): # is it already installed?
             missingdep = 1
             checkdeps = 0
-            msg = 'Missing Dependency: %s is needed by package %s' % (needname, name)
+            prob_pkg = "%s (%s)" % (requiringPo,requiringPo.repoid)
+            msg = 'Missing Dependency: %s is needed by package %s' % (needname, prob_pkg)
             errorlist.append(msg)
             return checkdeps, missingdep
         
@@ -651,7 +654,8 @@ class Depsolve(object):
             
         else:
             conf = rpmUtils.miscutils.formatRequire(needname, needversion, flags)
-            CheckDeps, conflicts = self._unresolveableConflict(conf, name, errormsgs)
+            prob_pkg = "%s (%s)" % (requiringPo,requiringPo.repoid)
+            CheckDeps, conflicts = self._unresolveableConflict(conf, prob_pkg, errormsgs)
             self.verbose_logger.log(logginglevels.DEBUG_1, '%s conflicts: %s',
                 name, conf)
             if conflicts:
