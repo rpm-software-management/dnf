@@ -363,8 +363,6 @@ class YumBase(depsolve.Depsolve):
            takes optional archlist for archs to include"""
 
         if self._pkgSack and thisrepo is None:
-            self.verbose_logger.log(logginglevels.DEBUG_4,
-                'skipping reposetup, pkgsack exists')
             return self._pkgSack
         
         if thisrepo is None:

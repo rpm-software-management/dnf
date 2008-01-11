@@ -104,8 +104,6 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
            and sets up the basics of the repository"""
         
         if self._repos and thisrepo is None:
-            self.verbose_logger.log(yum.logginglevels.DEBUG_4,
-                'skipping reposetup, pkgsack exists')
             return self._repos
             
         if not thisrepo:
