@@ -599,7 +599,7 @@ class YumBase(depsolve.Depsolve):
             depTree = self._buildDepTree()
             startTs = set(self.tsInfo)
             toRemove = set()
-            for po,wpo in self.po_with_problems:
+            for po,wpo,err in self.po_with_problems:
                 # check if the problem is caused by a package in the transaction
                 if not self.tsInfo.exists(po.pkgtup):
                     if wpo:

@@ -261,7 +261,7 @@ class Depsolve(object):
 
         # Check packages with problems
         if missingdep:
-            self.po_with_problems.add((po,self._working_po))
+            self.po_with_problems.add((po,self._working_po,errormsgs[-1]))
 
         return (CheckDeps, missingdep, errormsgs)
 
@@ -655,7 +655,7 @@ class Depsolve(object):
             self.verbose_logger.log(logginglevels.DEBUG_1, '%s conflicts: %s',
                 name, conf)
             if conflicts:
-                self.po_with_problems.add((requiringPo,None))
+                self.po_with_problems.add((requiringPo,None,errormsgs[-1]))
 
         return (CheckDeps, conflicts, errormsgs)
 
@@ -780,8 +780,9 @@ class Depsolve(object):
         self.tsInfo.changed = False
         if len(errors) > 0:
             errors = unique(errors)
-            for po,wpo in self.po_with_problems:
+            for po,wpo,err in self.po_with_problems:
                 self.verbose_logger.info("%s from %s has depsolving problems" % (po,po.repoid))
+                self.verbose_logger.info("  --> %s" % (err))
             return (1, errors)
 
         if len(self.tsInfo) > 0:
