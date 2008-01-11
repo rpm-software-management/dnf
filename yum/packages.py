@@ -166,16 +166,16 @@ class PackageObject(object):
         
     def __str__(self):
         if self.epoch == '0':
-            out = '%s - %s-%s.%s' % (self.name, 
-                                     self.version,
-                                     self.release, 
-                                     self.arch)
+            out = '%s-%s-%s.%s' % (self.name, 
+                                   self.version,
+                                   self.release, 
+                                   self.arch)
         else:
-            out = '%s - %s:%s-%s.%s' % (self.name, 
-                                        self.epoch, 
-                                        self.version, 
-                                        self.release, 
-                                        self.arch)
+            out = '%s-%s:%s-%s.%s' % (self.name, 
+                                      self.epoch, 
+                                      self.version, 
+                                      self.release, 
+                                      self.arch)
         return out
 
     def returnSimple(self, varname):
