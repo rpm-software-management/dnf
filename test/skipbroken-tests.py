@@ -239,8 +239,8 @@ class SkipBrokenTests(DepsolveTests):
 
         self.tsInfo.addInstall(ipo)
 
-        self.assertEquals('empty', *self.resolveCode(skip=True))
-        self.assertResult([])
+        self.assertEquals('ok', *self.resolveCode(skip=True))
+        self.assertResult([ipo, provides2])
 
     def testOnlyOneRequirementAvailable(self):
         ipo = self.repoPackage('foo')

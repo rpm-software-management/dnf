@@ -593,29 +593,30 @@ class YumBase(depsolve.Depsolve):
         ''' Remove the packages with depsolve errors and depsolve again '''
         # Keep removing packages & Depsolve until all errors is gone
         # or the transaction is empty
-        depTree = self._buildDepTree()
         count = 0
         while len(self.po_with_problems) > 0 and rescode == 1:
             count += 1
+            self.verbose_logger.debug("Skip-broken round %i", count)
+            depTree = self._buildDepTree()
             startTs = set(self.tsInfo)
             toRemove = set()
             for po,wpo in self.po_with_problems:
                 # check if the problem is caused by a package in the transaction
                 if not self.tsInfo.exists(po.pkgtup):
                     if wpo:
-                        toRemove = self._getPackagesToRemove(wpo, depTree, toRemove)
-                    else:
-                        continue
+                        self._getPackagesToRemove(wpo, depTree, toRemove)
+                        if not wpo.repoid == 'installed': # Only remove non installed packages from pkgSack
+                            self.pkgSack.delPackage(wpo)
                 else:
-                    toRemove = self._getPackagesToRemove(po, depTree, toRemove)
-            if toRemove:
-                for po in toRemove:
-                    if self.tsInfo.exists(po.pkgtup):
-                        self.tsInfo.remove(po.pkgtup)
-                        if not po.repoid == 'installed': # Only remove non installed packages from pkgSack
-                            self.verbose_logger.info("skipping %s from %s because of depsolving problems" % (str(po),po.repoid))
-                            self.pkgSack.delPackage(po)
-            else: # Nothing was removed, so we still got a problem
+                    self._getPackagesToRemove(po, depTree, toRemove)
+                    if not po.repoid == 'installed': # Only remove non installed packages from pkgSack
+                        self.pkgSack.delPackage(po)
+            for po in toRemove:
+                if self.tsInfo.exists(po.pkgtup):
+                    self.tsInfo.remove(po.pkgtup)
+                    self.verbose_logger.info("skipping %s from %s because of depsolving problems" % (str(po),po.repoid))
+
+            if not toRemove: # Nothing was removed, so we still got a problem
                 break # Bail out
             rescode, restring = self.resolveDeps()
             endTs = set(self.tsInfo)
@@ -627,33 +628,35 @@ class YumBase(depsolve.Depsolve):
         return rescode, restring
 
     def _buildDepTree(self):
-        ''' create a dictionary with po -> deps and dep -> pos references '''
-        depTree = {}
+        ''' create a dictionary with po and deps '''
+        depTree = { }
         for txmbr in self.tsInfo:
-            if not txmbr.po in depTree:
-                depTree[txmbr.po] = set()
-            for po in (txmbr.updates + txmbr.obsoletes): # + txmbr.depends_on):
-                # Add po -> dep reference
-                depTree[txmbr.po].add(po)
-                if not po in depTree:
-                    depTree[po] = set()
-                # Add dep -> reference
-                depTree[po].add(txmbr.po)
-                                 
+            for dep in txmbr.depends_on:
+                depTree.setdefault(dep, []).append(txmbr.po)
+        # self._printDepTree(depTree)
         return depTree
-    
+
+    def _printDepTree(self, tree):
+        for pkg, l in tree.iteritems():
+            print pkg
+            for p in l:
+                print "\t", p
+
     def _getPackagesToRemove(self,po,deptree,toRemove):
         '''
-        walk trough the po->deps, dep->po's reference tree too get
-        the related po to remove.
+        get the (related) pos to remove.
         '''
-        stack = [ po ]
-        while stack:
-            po  = stack.pop()
-            if po not in toRemove:
-                toRemove.add(po)
-                stack.extend(deptree.get(po, []))
-        return toRemove
+        toRemove.add(po)
+        for txmbr in self.tsInfo.getMembers(po.pkgtup):
+            for pkg in (txmbr.updates + txmbr.obsoletes):
+                toRemove.add(pkg)
+                self._getDepsToRemove(pkg, deptree, toRemove)
+        self._getDepsToRemove(po, deptree, toRemove)
+
+    def _getDepsToRemove(self,po, deptree, toRemove):
+        for dep in deptree.get(po, []): # Loop trough all deps of po
+            toRemove.add(dep)
+            self._getDepsToRemove(dep, deptree, toRemove)
 
     def runTransaction(self, cb):
         """takes an rpm callback object, performs the transaction"""
