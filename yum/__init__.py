@@ -592,6 +592,7 @@ class YumBase(depsolve.Depsolve):
         # Keep removing packages & Depsolve until all errors is gone
         # or the transaction is empty
         count = 0
+        skip_messages = []
         while len(self.po_with_problems) > 0 and rescode == 1:
             count += 1
             self.verbose_logger.debug("Skip-broken round %i", count)
@@ -612,7 +613,8 @@ class YumBase(depsolve.Depsolve):
             for po in toRemove:
                 if self.tsInfo.exists(po.pkgtup):
                     self.tsInfo.remove(po.pkgtup)
-                    self.verbose_logger.info("skipping %s from %s because of depsolving problems" % (str(po),po.repoid))
+                    if not po.repoid == 'installed':
+                        skip_messages.append("    %s from %s" % (str(po),po.repoid))
 
             if not toRemove: # Nothing was removed, so we still got a problem
                 break # Bail out
@@ -623,6 +625,10 @@ class YumBase(depsolve.Depsolve):
             if startTs-endTs == set():
                 break    # bail out
         self.verbose_logger.debug("Skip-broken took %i rounds ", count)
+        self.verbose_logger.info('\nPackages skipped because for dependency problems:')
+        for msg in skip_messages:
+            self.verbose_logger.info(msg)
+        
         return rescode, restring
 
     def _buildDepTree(self):
