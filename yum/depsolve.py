@@ -251,7 +251,7 @@ class Depsolve(object):
 
         needname, flags, needversion = requirement
         niceformatneed = rpmUtils.miscutils.formatRequire(needname, needversion, flags)
-        self.verbose_logger.log(logginglevels.DEBUG_1, '%s requires: %s', po.name, niceformatneed)
+        self.verbose_logger.log(logginglevels.DEBUG_1, '%s requires: %s', po, niceformatneed)
         if self.dsCallback: self.dsCallback.procReq(po.name, niceformatneed)
 
         if po.repo.id != "installed":
@@ -498,7 +498,7 @@ class Depsolve(object):
             pkgmode = self.tsInfo.getMode(name=n, arch=a, epoch=e, ver=v, rel=r)
             if pkgmode in ['i', 'u']:
                 self.verbose_logger.log(logginglevels.DEBUG_2,
-                    '%s already in ts, skipping this one', n)
+                    '%s already in ts, skipping this one', pkg)
                 # FIXME: Remove this line, if it is not needed ?
                 # checkdeps = 1
                 return checkdeps, missingdep
@@ -564,14 +564,14 @@ class Depsolve(object):
         inst = self.rpmdb.searchNevra(name=best.name, arch=best.arch)
         if len(inst) > 0: 
             self.verbose_logger.debug('TSINFO: Marking %s as update for %s' %(best,
-                name))
+                requiringPo))
             # FIXME: we should probably handle updating multiple packages...
             txmbr = self.tsInfo.addUpdate(best, inst[0])
             txmbr.setAsDep(po=requiringPo)
             txmbr.reason = "dep"
         else:
             self.verbose_logger.debug('TSINFO: Marking %s as install for %s', best,
-                name)
+                requiringPo)
             txmbr = self.tsInfo.addInstall(best)
             txmbr.setAsDep(po=requiringPo)
 
@@ -632,14 +632,14 @@ class Depsolve(object):
                         a = rpmUtils.arch.getBestArchFromList(archs.keys())
                         po = archs[a]                        
                     except Errors.PackageSackError:
-                        self.verbose_logger.log(logginglevels.DEBUG_4, "unable to find newer package for %s" %(confpkg.name,))
+                        self.verbose_logger.log(logginglevels.DEBUG_4, "unable to find newer package for %s" %(confpkg,))
                         pkgs = []
                         po = None
                 else:
                     try:
                         po = self.pkgSack.returnNewestByNameArch((confpkg.name,confpkg.arch))[0]
                     except Errors.PackageSackError:
-                        self.verbose_logger.log(logginglevels.DEBUG_4, "unable to find newer package for %s.%s" %(confpkg.name,confpkg.arch))
+                        self.verbose_logger.log(logginglevels.DEBUG_4, "unable to find newer package for %s" %(confpkg))
                         po = None
                 if po and po.pkgtup not in uplist:
                     po = None
@@ -657,7 +657,7 @@ class Depsolve(object):
             prob_pkg = "%s (%s)" % (requiringPo,requiringPo.repoid)
             CheckDeps, conflicts = self._unresolveableConflict(conf, prob_pkg, errormsgs)
             self.verbose_logger.log(logginglevels.DEBUG_1, '%s conflicts: %s',
-                name, conf)
+                prob_pkg, conf)
             if conflicts:
                 self.po_with_problems.add((requiringPo,None,errormsgs[-1]))
 
