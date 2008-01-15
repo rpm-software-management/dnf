@@ -8,7 +8,7 @@ class SkipBrokenTests(DepsolveTests):
     
     def setUp(self):
         DepsolveTests.setUp(self)
-        self.xrepo   = FakeRepo("TestRepository",self.xsack)
+        self.xrepo = FakeRepo("TestRepository", self.xsack)
         setup_logging()
 
     def repoPackage(self, name, version='1', release='0', epoch='0', arch='noarch'):
@@ -279,7 +279,69 @@ class SkipBrokenTests(DepsolveTests):
         self.tsInfo.addInstall(po2)
         self.assertEquals('empty', *self.resolveCode(skip=True))
 
+    def testSecondStepRequiresUpdate(self):
+        po1 = self.repoPackage('foo')
+        po1.addRequires('xxx')
+        po1.addRequires('bar')
+        self.tsInfo.addInstall(po1)
 
+        po2 = self.repoPackage('bar')
+        po2.addRequires('baz', 'EQ', (None, '2', '1'))
+
+        ipo = self.instPackage('baz')
+        upo = self.repoPackage('baz', '2', '1')
+
+        self.assertEquals('empty', *self.resolveCode(skip=True))
+        self.assertResult([ipo])
+
+
+    def testDepCycle1(self):
+        po0 = self.repoPackage('leaf')
+
+        po1 = self.repoPackage('foo')
+        po1.addRequires('bar')
+        po1.addRequires('xxx')
+        po2 = self.repoPackage('bar')
+        po2.addRequires('baz')
+        po3 = self.repoPackage('baz')
+        po3.addRequires('foo')
+        po3.addRequires('leaf')
+
+        self.tsInfo.addInstall(po1)
+
+        self.assertEquals('empty', *self.resolveCode(skip=True))
+
+    def testDepCycle2(self):
+        po0 = self.repoPackage('leaf')
+
+        po1 = self.repoPackage('foo')
+        po1.addRequires('bar')
+        po2 = self.repoPackage('bar')
+        po2.addRequires('baz')
+        po2.addRequires('xxx')
+        po3 = self.repoPackage('baz')
+        po3.addRequires('foo')
+        po3.addRequires('leaf')
+
+        self.tsInfo.addInstall(po1)
+
+        self.assertEquals('empty', *self.resolveCode(skip=True))
+
+    def testDepCycle3(self):
+        po0 = self.repoPackage('leaf')
+
+        po1 = self.repoPackage('foo')
+        po1.addRequires('bar')
+        po2 = self.repoPackage('bar')
+        po2.addRequires('baz')
+        po3 = self.repoPackage('baz')
+        po3.addRequires('foo')
+        po3.addRequires('leaf')
+        po3.addRequires('xxx')
+
+        self.tsInfo.addInstall(po1)
+
+        self.assertEquals('empty', *self.resolveCode(skip=True))
 
 
     def resolveCode(self,skip = False):
