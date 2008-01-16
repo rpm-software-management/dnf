@@ -937,7 +937,7 @@ class YumRepository(Repository, config.RepoConf):
 
             if old_repo_XML:
                 (omdtype, odata) = self._get_mdtype_data(mdtype,
-                                                           repoXML=old_repo_XML)
+                                                         repoXML=old_repo_XML)
                 local = self._groupCheckDataMDValid(odata, omdtype, mdtype)
                 if local:
                     if omdtype == nmdtype and odata.checksum == ndata.checksum:
