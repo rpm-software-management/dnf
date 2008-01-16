@@ -908,9 +908,9 @@ class YumRepository(Repository, config.RepoConf):
         if data is None:
             return None
         
-        uncompressed = (dbmdtype != mmdtype)
-        local = self._get_mdtype_fname(data, uncompressed)
-        if not self._checkMD(local, dbmdtype, openchecksum=uncompressed,
+        compressed = (dbmdtype != mmdtype)
+        local = self._get_mdtype_fname(data, compressed)
+        if not self._checkMD(local, dbmdtype, openchecksum=compressed,
                              data=data, check_can_fail=True):
             return None
 
