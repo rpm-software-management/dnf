@@ -2052,7 +2052,7 @@ class YumBase(depsolve.Depsolve):
         return tx_return
 
     
-    def update(self, po=None, **kwargs):
+    def update(self, po=None, requiringPo=None, **kwargs):
         """try to mark for update the item(s) specified. 
             po is a package object - if that is there, mark it for update,
             if possible
@@ -2080,6 +2080,8 @@ class YumBase(depsolve.Depsolve):
                 installed_pkg =  self.rpmdb.searchPkgTuple(installed)[0]
                 txmbr = self.tsInfo.addObsoleting(obsoleting_pkg, installed_pkg)
                 self.tsInfo.addObsoleted(installed_pkg, obsoleting_pkg)
+                if requiringPo:
+                    txmbr.setAsDep(requiringPo)
                 tx_return.append(txmbr)
                 
             for (new, old) in updates:
@@ -2090,6 +2092,8 @@ class YumBase(depsolve.Depsolve):
                     updating_pkg = self.getPackageObject(new)
                     updated_pkg = self.rpmdb.searchPkgTuple(old)[0]
                     txmbr = self.tsInfo.addUpdate(updating_pkg, updated_pkg)
+                    if requiringPo:
+                        txmbr.setAsDep(requiringPo)
                     tx_return.append(txmbr)
             
             return tx_return
@@ -2143,11 +2147,15 @@ class YumBase(depsolve.Depsolve):
                         # FIXME check for what might be in there here
                         txmbr = self.tsInfo.addObsoleting(obsoleting_pkg, installed_pkg)
                         self.tsInfo.addObsoleted(installed_pkg, obsoleting_pkg)
+                        if requiringPo:
+                            txmbr.setAsDep(requiringPo)
                         tx_return.append(txmbr)
                 for available_pkg in availpkgs:
                     for obsoleted in self.up.obsoleting_dict.get(available_pkg.pkgtup, []):
                         obsoleted_pkg = self.getInstalledPackageObject(obsoleted)
                         txmbr = self.tsInfo.addObsoleting(available_pkg, obsoleted_pkg)
+                        if requiringPo:
+                            txmbr.setAsDep(requiringPo)
                         tx_return.append(txmbr)
                         if self.tsInfo.isObsoleted(obsoleted):
                             self.verbose_logger.log(logginglevels.DEBUG_2, 'Package is already obsoleted: %s.%s %s:%s-%s', obsoleted)
@@ -2162,6 +2170,8 @@ class YumBase(depsolve.Depsolve):
                     else:
                         updated_pkg =  self.rpmdb.searchPkgTuple(updated)[0]
                         txmbr = self.tsInfo.addUpdate(available_pkg, updated_pkg)
+                        if requiringPo:
+                            txmbr.setAsDep(requiringPo)
                         tx_return.append(txmbr)
             for installed_pkg in instpkgs:
                 for updating in self.up.updatesdict.get(installed_pkg.pkgtup, []):
@@ -2171,6 +2181,8 @@ class YumBase(depsolve.Depsolve):
                                                 installed_pkg.pkgtup)
                     else:
                         txmbr = self.tsInfo.addUpdate(updating_pkg, installed_pkg)
+                        if requiringPo:
+                            txmbr.setAsDep(requiringPo)
                         tx_return.append(txmbr)
 
         return tx_return
