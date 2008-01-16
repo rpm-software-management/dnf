@@ -947,6 +947,10 @@ class YumRepository(Repository, config.RepoConf):
                     os.rename(local, local + '.old.tmp')
                     reverts.append(local)
                 
+            # No old repomd data, but we might still have uncompressed MD
+            if self._groupCheckOldDataMDValid(ndata, nmdtype, mdtype):
+                continue
+            
             if not self._retrieveMD(nmdtype, retrieve_can_fail=True):
                 self._revertOldRepoXML()
                 return False
