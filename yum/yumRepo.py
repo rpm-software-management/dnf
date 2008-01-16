@@ -901,16 +901,17 @@ class YumRepository(Repository, config.RepoConf):
                 return True
         return False
 
-    def _groupCheckOldDataMDValid(self, olddata, omdtype, mdtype):
-        """ Check that we already have this data, and that it's valid. """
+    def _groupCheckDataMDValid(self, data, dbmdtype, mmdtype):
+        """ Check that we already have this data, and that it's valid. Given
+            the DB mdtype and the main mdtype (no _db suffix). """
 
-        if olddata is None:
+        if data is None:
             return None
         
-        uncompressed = (omdtype != mdtype)
-        local = self._get_mdtype_fname(olddata, uncompressed)
-        if not self._checkMD(local, omdtype, openchecksum=uncompressed,
-                             data=olddata, check_can_fail=True):
+        uncompressed = (dbmdtype != mmdtype)
+        local = self._get_mdtype_fname(data, uncompressed)
+        if not self._checkMD(local, dbmdtype, openchecksum=uncompressed,
+                             data=data, check_can_fail=True):
             return None
 
         return local
@@ -937,7 +938,7 @@ class YumRepository(Repository, config.RepoConf):
             if old_repo_XML:
                 (omdtype, odata) = self._get_mdtype_data(mdtype,
                                                            repoXML=old_repo_XML)
-                local = self._groupCheckOldDataMDValid(odata, omdtype, mdtype)
+                local = self._groupCheckDataMDValid(odata, omdtype, mdtype)
                 if local:
                     if omdtype == nmdtype and odata.checksum == ndata.checksum:
                         continue # If they are the same do nothing
@@ -948,7 +949,7 @@ class YumRepository(Repository, config.RepoConf):
                     reverts.append(local)
                 
             # No old repomd data, but we might still have uncompressed MD
-            if self._groupCheckOldDataMDValid(ndata, nmdtype, mdtype):
+            if self._groupCheckDataMDValid(ndata, nmdtype, mdtype):
                 continue
             
             if not self._retrieveMD(nmdtype, retrieve_can_fail=True):
