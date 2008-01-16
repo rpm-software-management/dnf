@@ -659,6 +659,9 @@ class YumBase(depsolve.Depsolve):
 
     def _getDepsToRemove(self,po, deptree, toRemove):
         for dep in deptree.get(po, []): # Loop trough all deps of po
+            for txmbr in self.tsInfo.getMembers(dep.pkgtup):
+                for pkg in (txmbr.updates + txmbr.obsoletes):
+                    toRemove.add(pkg)
             toRemove.add(dep)
             self._getDepsToRemove(dep, deptree, toRemove)
 
