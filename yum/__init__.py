@@ -340,8 +340,7 @@ class YumBase(depsolve.Depsolve):
         return self._getRepos(thisrepo, True)
 
     def _getRepos(self, thisrepo=None, doSetup = False):
-        """grabs the repomd.xml for each enabled repository and sets up 
-           the basics of the repository"""
+        """ For each enabled repository set up the basics of the repository. """
         self._getConfig() # touch the config class first
 
         if doSetup:
