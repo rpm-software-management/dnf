@@ -244,6 +244,7 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
             cur = cache.cursor() # Does all repos, just using a cache
             executeSQL(cur, "select count(pkgId) from packages")
             return cur.fetchone()[0] - exclude_num
+        return 0
 
     @catchSqliteException
     def close(self):
