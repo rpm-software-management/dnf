@@ -223,11 +223,36 @@ class IntOption(Option):
     An option representing an integer value.
     """
 
+    def __init__(self, default=None, range_min=None, range_max=None):
+        super(IntOption, self).__init__(default)
+        self._range_min = range_min
+        self._range_max = range_max
+        
     def parse(self, s):
         try:
-            return int(s)
+            val = int(s)
         except (ValueError, TypeError), e:
             raise ValueError('invalid integer value')
+        if val > range_max or val < range_min:
+            raise ValueError('out of range integer value')
+        return val
+
+class PositiveIntOption(IntOption):
+
+    """
+    An option representing a positive integer value, where 0 can have a special
+    represention.
+    """
+
+    def __init__(self, default=None, range_min=0, range_max=None,
+                 names_of_0=None):
+        super(PositiveIntOption, self).__init__(default, range_min, range_max)
+        self._names0 = names_of_0
+
+    def parse(self, s):
+        if s in self._names0:
+            return 0
+        return super(PositiveIntOption, self).parse(s)
 
 class SecondsOption(Option):
 
@@ -526,8 +551,8 @@ class StartupConf(BaseConfig):
     required early in the initialisation process or before the other [main]
     options can be parsed. 
     '''
-    debuglevel = IntOption(2)
-    errorlevel = IntOption(2)
+    debuglevel = IntOption(2, 0, 10)
+    errorlevel = IntOption(2, 0, 10)
 
     distroverpkg = Option('redhat-release')
     installroot = Option('/')
@@ -542,8 +567,8 @@ class YumConf(StartupConf):
 
     Note: see also options inherited from StartupConf
     '''
-    retries = IntOption(10)
-    recent = IntOption(7)
+    retries = PositiveIntOption(10, names_of_0=["<forever>"])
+    recent = IntOption(7, range_min=0)
 
     cachedir = Option('/var/cache/yum')
     persistdir = Option('/var/lib/yum')
@@ -564,7 +589,11 @@ class YumConf(StartupConf):
             'kernel-enterprise','kernel-smp', 'kernel-modules', 'kernel-debug',
             'kernel-unsupported', 'kernel-source', 'kernel-devel', 'kernel-PAE',
             'kernel-PAE-debug'])
-    installonly_limit = IntOption(0)
+    # NOTE: If you set this to 2, then because it keeps the current kernel it
+    # means if you ever install an "old" kernel it'll get rid of the newest one
+    # so you probably want to use 3 as a minimum ... if you turn it on.
+    installonly_limit = PositiveIntOption(0, range_min=2,
+                                          names_of_0=[0, "<off>"])
     kernelpkgnames = ListOption(['kernel','kernel-smp', 'kernel-enterprise',
             'kernel-bigmem', 'kernel-BOOT', 'kernel-PAE', 'kernel-PAE-debug'])
     exactarchlist = ListOption(['kernel', 'kernel-smp', 'glibc',
