@@ -171,8 +171,8 @@ class PackageObject(object):
                                    self.release, 
                                    self.arch)
         else:
-            out = '%s-%s:%s-%s.%s' % (self.name, 
-                                      self.epoch, 
+            out = '%s:%s-%s-%s.%s' % (self.epoch,
+                                      self.name,  
                                       self.version, 
                                       self.release, 
                                       self.arch)
