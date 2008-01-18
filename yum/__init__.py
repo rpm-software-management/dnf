@@ -2035,7 +2035,7 @@ class YumBase(depsolve.Depsolve):
             # make sure it's not already installed
             if self.rpmdb.contains(po=po):
                 if not self.tsInfo.getMembersWithState(po.pkgtup, TS_REMOVE_STATES):
-                    self.logger.warning('Package %s already installed and latest version', po)
+                    self.verbose_logger.warning('Package %s already installed and latest version', po)
                     continue
 
             

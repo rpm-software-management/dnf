@@ -469,117 +469,12 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
                 val, msglist = self.localInstall(filelist=[arg])
                 continue # it was something on disk and it ended in rpm 
                          # no matter what we don't go looking at repos
-
-            arglist = [arg]
-            exactmatch, matched, unmatched = \
-                    self.pkgSack.matchPackageNames(arglist)
-            if len(unmatched) > 0: # if we get back anything in unmatched, check it for a virtual-provide
-                arg = unmatched[0] #only one in there
-                self.verbose_logger.debug('Checking for virtual provide or file-provide for %s', 
-                    arg)
-                # let's make sure we don't have this dep installed already
-                try:
-                    my_inst_pkgs = self.returnInstalledPackagesByDep(arg)
-                except yum.Errors.YumBaseError, e:
-                    my_inst_pkgs = []
-
-                if my_inst_pkgs:
-                    self.verbose_logger.log(yum.logginglevels.INFO_2,
-                        'Requested dep: %s is provided by installed package', str(arg))
-                    
-                    continue # we don't need to look, we have it
-                try:
-                    mypkgs = self.returnPackagesByDep(arg)
-                except yum.Errors.YumBaseError, e:
-                    self.logger.critical(_('No Match for argument: %s') % arg)
-                else:
-                    mybestpkgs = self.bestPackagesFromList(mypkgs)
-                    for mypkg in mybestpkgs:
-                        if self._installable(mypkg, True):
-                            self.verbose_logger.log(yum.logginglevels.DEBUG_3,
-                                    'Solving package %s is installable, not going through the rest', mypkg)
-                            exactmatch.append(mypkg)
-                            break
-                        else:
-                            self.verbose_logger.log(yum.logginglevels.DEBUG_3,
-                                    'Solving package %s is not installable, skipping', mypkg)
-                            
-                        
-            installable = yum.misc.unique(exactmatch + matched)
-            exactarchlist = self.conf.exactarchlist
-
-            if len(installable) == 0:
+            try:
+                self.install(pattern=arg)
+            except yum.Errors.InstallError:
                 self.verbose_logger.log(yum.logginglevels.INFO_2,
                                         'No package %s available.', arg)
-            
-            # we look through each returned possibility and rule out the
-            # ones that we obviously can't use
-            for pkg in installable:
-                if self.rpmdb.contains(po=pkg):
-                    self.verbose_logger.log(yum.logginglevels.INFO_2,
-                        'Package %s is already installed.', pkg)
-                    continue
-                
-                # everything installed that matches the name
-                installedByKey = self.rpmdb.searchNevra(name=pkg.name)
-                comparable = []
-                for instpo in installedByKey:
-                    if rpmUtils.arch.isMultiLibArch(instpo.arch) == rpmUtils.arch.isMultiLibArch(pkg.arch):
-                        comparable.append(instpo)
-                    else:
-                        self.verbose_logger.log(yum.logginglevels.DEBUG_3,
-                            'Discarding non-comparable pkg %s.%s', instpo.name, instpo.arch)
-                        continue
-                        
-                # go through each package 
-                if len(comparable) > 0:
-                    for instpo in comparable:
-                        if pkg.EVR > instpo.EVR: # we're newer - this is an update, pass to them
-                            if instpo.name in exactarchlist:
-                                if pkg.arch == instpo.arch:
-                                    passToUpdate.append(pkg.pkgtup)
-                            else:
-                                passToUpdate.append(pkg.pkgtup)
-                        elif pkg.EVR == instpo.EVR: # same, ignore
-                            continue
-                        elif pkg.EVR < instpo.EVR: # lesser, check if the pkgtup is an exactmatch
-                                           # if so then add it to be installed
-                                           # if it can be multiply installed
-                                           # this is where we could handle setting 
-                                           # it to be an 'oldpackage' revert.
-                                           
-                            if pkg in exactmatch and self.allowedMultipleInstalls(pkg):
-                                if not toBeInstalled.has_key(pkg.name): toBeInstalled[pkg.name] = []
-                                toBeInstalled[pkg.name].append(pkg)
-                else: # we've not got any installed that match n or n+a
-                    self.verbose_logger.log(yum.logginglevels.DEBUG_1, 'No other %s installed, adding to list for potential install', pkg.name)
-                    if not toBeInstalled.has_key(pkg.name): toBeInstalled[pkg.name] = []
-                    toBeInstalled[pkg.name].append(pkg)
-        
-        
-        # this is where I could catch the installs of compat and multilib 
-        # arches on a single yum install command. 
-        pkglist = []
-        for name in toBeInstalled:
-            pkglist.extend(self.bestPackagesFromList(toBeInstalled[name]))
-            
-        # This is where we need to do a lookup to find out if this install
-        # is also an obsolete. if so then we need to mark it as such in the
-        # tsInfo.
-        if len(pkglist) > 0:
-            self.verbose_logger.debug('reduced installs :')
-        for po in pkglist:
-            self.verbose_logger.debug('   %s.%s %s:%s-%s', *po.pkgtup)
-            self.install(po)
 
-        if len(passToUpdate) > 0:
-            self.verbose_logger.debug('potential updates :')
-            updatelist = []
-            for (n,a,e,v,r) in passToUpdate:
-                self.verbose_logger.debug('   %s.%s %s:%s-%s', n, a, e, v, r)
-                pkgstring = '%s:%s-%s-%s.%s' % (e,n,v,r,a)
-                updatelist.append(pkgstring)
-            self.updatePkgs(userlist=updatelist, quiet=1)
 
         if len(self.tsInfo) > oldcount:
             return 2, ['Package(s) to install']
