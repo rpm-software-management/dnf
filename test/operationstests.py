@@ -131,3 +131,13 @@ class KernelTests(OperationsTests):
         p = self.pkgs
         res, msg = self.runOperation(['install','kernel'], p.inst, p.avail)
         self.assertResult(p.inst)
+
+    def testKernelInstall(self):
+        p = self.pkgs
+        res, msg = self.runOperation(['install','kernel-2.6.23.1-42'], p.inst, p.avail)
+        self.assertResult(p.inst + [ p.avail[4] ] )
+
+    def testKernelInstall(self):
+        p = self.pkgs
+        res, msg = self.runOperation(['install','kernel-2.6.23.8'], p.inst, p.avail)
+        self.assertResult(p.inst)
