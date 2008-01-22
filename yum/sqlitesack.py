@@ -32,7 +32,6 @@ import misc
 from sqlutils import executeSQL
 import rpmUtils.miscutils
 import sqlutils
-from weakref import WeakValueDictionary
 
 def catchSqliteException(func):
     """This decorator converts sqlite exceptions into RepoError"""
@@ -47,7 +46,7 @@ def catchSqliteException(func):
     newFunc.__dict__.update(func.__dict__)
     return newFunc
 
-_reverse_prco = WeakValueDictionary() # So pacakges can share prco data
+_reverse_prco = {} # So pacakges can share prco data
 class YumAvailablePackageSqlite(YumAvailablePackage, PackageObject, RpmBase):
     def __init__(self, repo, db_obj):
         self.prco = { 'obsoletes': (),
