@@ -251,7 +251,7 @@ class Depsolve(object):
 
         needname, flags, needversion = requirement
         niceformatneed = rpmUtils.miscutils.formatRequire(needname, needversion, flags)
-        self.verbose_logger.log(logginglevels.DEBUG_1, '%s requires: %s', po.name, niceformatneed)
+        self.verbose_logger.log(logginglevels.DEBUG_1, '%s requires: %s', po, niceformatneed)
         if self.dsCallback: self.dsCallback.procReq(po.name, niceformatneed)
 
         if po.repo.id != "installed":
@@ -261,7 +261,7 @@ class Depsolve(object):
 
         # Check packages with problems
         if missingdep:
-            self.po_with_problems.add((po,self._working_po))
+            self.po_with_problems.add((po,self._working_po,errormsgs[-1]))
 
         return (CheckDeps, missingdep, errormsgs)
 
@@ -404,8 +404,9 @@ class Depsolve(object):
             if self.pkgSack is None:
                 return self._requiringFromTransaction(requiringPo, requirement, errorlist)
             else:
+                prob_pkg = "%s (%s)" % (requiringPo,requiringPo.repoid)
                 msg = 'Unresolvable requirement %s for %s' % (niceformatneed,
-                                                               reqpkg[0])
+                                                               prob_pkg)
                 self.verbose_logger.log(logginglevels.DEBUG_2, msg)
                 checkdeps = 0
                 missingdep = 1
@@ -483,9 +484,10 @@ class Depsolve(object):
 
         if len(provSack) == 0: # unresolveable
             missingdep = 1
+            prob_pkg = "%s (%s)" % (requiringPo,requiringPo.repoid)
             msg = 'Missing Dependency: %s is needed by package %s' % \
             (rpmUtils.miscutils.formatRequire(needname, needversion, needflags),
-                                                                   name)
+                                                                   prob_pkg)
             errorlist.append(msg)
             return checkdeps, missingdep
         
@@ -496,7 +498,7 @@ class Depsolve(object):
             pkgmode = self.tsInfo.getMode(name=n, arch=a, epoch=e, ver=v, rel=r)
             if pkgmode in ['i', 'u']:
                 self.verbose_logger.log(logginglevels.DEBUG_2,
-                    '%s already in ts, skipping this one', n)
+                    '%s already in ts, skipping this one', pkg)
                 # FIXME: Remove this line, if it is not needed ?
                 # checkdeps = 1
                 return checkdeps, missingdep
@@ -507,7 +509,7 @@ class Depsolve(object):
         # try updating the already install pkgs
         length = len(self.tsInfo)
         for pkg in provSack.returnNewestByName():
-            self.update(name=pkg.name, epoch=pkg.epoch, version=pkg.version, rel=pkg.rel)
+            self.update(requiringPo=requiringPo, name=pkg.name, epoch=pkg.epoch, version=pkg.version, rel=pkg.rel)
             if len(self.tsInfo) != length:
                 checkdeps = True
                 return checkdeps, missingdep
@@ -550,7 +552,8 @@ class Depsolve(object):
         if self.rpmdb.contains(po=best): # is it already installed?
             missingdep = 1
             checkdeps = 0
-            msg = 'Missing Dependency: %s is needed by package %s' % (needname, name)
+            prob_pkg = "%s (%s)" % (requiringPo,requiringPo.repoid)
+            msg = 'Missing Dependency: %s is needed by package %s' % (needname, prob_pkg)
             errorlist.append(msg)
             return checkdeps, missingdep
         
@@ -561,14 +564,14 @@ class Depsolve(object):
         inst = self.rpmdb.searchNevra(name=best.name, arch=best.arch)
         if len(inst) > 0: 
             self.verbose_logger.debug('TSINFO: Marking %s as update for %s' %(best,
-                name))
+                requiringPo))
             # FIXME: we should probably handle updating multiple packages...
             txmbr = self.tsInfo.addUpdate(best, inst[0])
             txmbr.setAsDep(po=requiringPo)
             txmbr.reason = "dep"
         else:
             self.verbose_logger.debug('TSINFO: Marking %s as install for %s', best,
-                name)
+                requiringPo)
             txmbr = self.tsInfo.addInstall(best)
             txmbr.setAsDep(po=requiringPo)
 
@@ -629,14 +632,14 @@ class Depsolve(object):
                         a = rpmUtils.arch.getBestArchFromList(archs.keys())
                         po = archs[a]                        
                     except Errors.PackageSackError:
-                        self.verbose_logger.log(logginglevels.DEBUG_4, "unable to find newer package for %s" %(confpkg.name,))
+                        self.verbose_logger.log(logginglevels.DEBUG_4, "unable to find newer package for %s" %(confpkg,))
                         pkgs = []
                         po = None
                 else:
                     try:
                         po = self.pkgSack.returnNewestByNameArch((confpkg.name,confpkg.arch))[0]
                     except Errors.PackageSackError:
-                        self.verbose_logger.log(logginglevels.DEBUG_4, "unable to find newer package for %s.%s" %(confpkg.name,confpkg.arch))
+                        self.verbose_logger.log(logginglevels.DEBUG_4, "unable to find newer package for %s" %(confpkg))
                         po = None
                 if po and po.pkgtup not in uplist:
                     po = None
@@ -651,11 +654,12 @@ class Depsolve(object):
             
         else:
             conf = rpmUtils.miscutils.formatRequire(needname, needversion, flags)
-            CheckDeps, conflicts = self._unresolveableConflict(conf, name, errormsgs)
+            prob_pkg = "%s (%s)" % (requiringPo,requiringPo.repoid)
+            CheckDeps, conflicts = self._unresolveableConflict(conf, prob_pkg, errormsgs)
             self.verbose_logger.log(logginglevels.DEBUG_1, '%s conflicts: %s',
-                name, conf)
+                prob_pkg, conf)
             if conflicts:
-                self.po_with_problems.add((requiringPo,None))
+                self.po_with_problems.add((requiringPo,None,errormsgs[-1]))
 
         return (CheckDeps, conflicts, errormsgs)
 
@@ -780,8 +784,9 @@ class Depsolve(object):
         self.tsInfo.changed = False
         if len(errors) > 0:
             errors = unique(errors)
-            for po,wpo in self.po_with_problems:
+            for po,wpo,err in self.po_with_problems:
                 self.verbose_logger.info("%s from %s has depsolving problems" % (po,po.repoid))
+                self.verbose_logger.info("  --> %s" % (err))
             return (1, errors)
 
         if len(self.tsInfo) > 0:
@@ -874,7 +879,7 @@ class Depsolve(object):
                     continue
                 for member in self.tsInfo.getMembersWithState(
                     pkgtup=po.pkgtup, output_states=TS_INSTALL_STATES):
-                    member.setAsDep(txmbr.po)
+                    member.relatedto.append((txmbr.po.pkgtup, 'dependson'))
 
         return ret
 

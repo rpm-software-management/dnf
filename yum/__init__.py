@@ -342,8 +342,7 @@ class YumBase(depsolve.Depsolve):
         return self._getRepos(thisrepo, True)
 
     def _getRepos(self, thisrepo=None, doSetup = False):
-        """grabs the repomd.xml for each enabled repository and sets up 
-           the basics of the repository"""
+        """ For each enabled repository set up the basics of the repository. """
         self._getConfig() # touch the config class first
 
         if doSetup:
@@ -365,8 +364,6 @@ class YumBase(depsolve.Depsolve):
            takes optional archlist for archs to include"""
 
         if self._pkgSack and thisrepo is None:
-            self.verbose_logger.log(logginglevels.DEBUG_4,
-                'skipping reposetup, pkgsack exists')
             return self._pkgSack
         
         if thisrepo is None:
@@ -595,29 +592,32 @@ class YumBase(depsolve.Depsolve):
         ''' Remove the packages with depsolve errors and depsolve again '''
         # Keep removing packages & Depsolve until all errors is gone
         # or the transaction is empty
-        depTree = self._buildDepTree()
         count = 0
+        skip_messages = []
         while len(self.po_with_problems) > 0 and rescode == 1:
             count += 1
+            self.verbose_logger.debug("Skip-broken round %i", count)
+            depTree = self._buildDepTree()
             startTs = set(self.tsInfo)
             toRemove = set()
-            for po,wpo in self.po_with_problems:
+            for po,wpo,err in self.po_with_problems:
                 # check if the problem is caused by a package in the transaction
                 if not self.tsInfo.exists(po.pkgtup):
                     if wpo:
-                        toRemove = self._getPackagesToRemove(wpo, depTree, toRemove)
-                    else:
-                        continue
+                        self._getPackagesToRemove(wpo, depTree, toRemove)
+                        if not wpo.repoid == 'installed': # Only remove non installed packages from pkgSack
+                            self.pkgSack.delPackage(wpo)
                 else:
-                    toRemove = self._getPackagesToRemove(po, depTree, toRemove)
-            if toRemove:
-                for po in toRemove:
-                    if self.tsInfo.exists(po.pkgtup):
-                        self.tsInfo.remove(po.pkgtup)
-                        if not po.repoid == 'installed': # Only remove non installed packages from pkgSack
-                            self.verbose_logger.info("skipping %s from %s because of depsolving problems" % (str(po),po.repoid))
-                            self.pkgSack.delPackage(po)
-            else: # Nothing was removed, so we still got a problem
+                    self._getPackagesToRemove(po, depTree, toRemove)
+                    if not po.repoid == 'installed': # Only remove non installed packages from pkgSack
+                        self.pkgSack.delPackage(po)
+            for po in toRemove:
+                if self.tsInfo.exists(po.pkgtup):
+                    self.tsInfo.remove(po.pkgtup)
+                    if not po.repoid == 'installed':
+                        skip_messages.append("    %s from %s" % (str(po),po.repoid))
+
+            if not toRemove: # Nothing was removed, so we still got a problem
                 break # Bail out
             rescode, restring = self.resolveDeps()
             endTs = set(self.tsInfo)
@@ -626,36 +626,45 @@ class YumBase(depsolve.Depsolve):
             if startTs-endTs == set():
                 break    # bail out
         self.verbose_logger.debug("Skip-broken took %i rounds ", count)
+        self.verbose_logger.info('\nPackages skipped because for dependency problems:')
+        for msg in skip_messages:
+            self.verbose_logger.info(msg)
+        
         return rescode, restring
 
     def _buildDepTree(self):
-        ''' create a dictionary with po -> deps and dep -> pos references '''
-        depTree = {}
+        ''' create a dictionary with po and deps '''
+        depTree = { }
         for txmbr in self.tsInfo:
-            if not txmbr.po in depTree:
-                depTree[txmbr.po] = set()
-            for po in (txmbr.updates + txmbr.obsoletes): # + txmbr.depends_on):
-                # Add po -> dep reference
-                depTree[txmbr.po].add(po)
-                if not po in depTree:
-                    depTree[po] = set()
-                # Add dep -> reference
-                depTree[po].add(txmbr.po)
-                                 
+            for dep in txmbr.depends_on:
+                depTree.setdefault(dep, []).append(txmbr.po)
+        # self._printDepTree(depTree)
         return depTree
-    
+
+    def _printDepTree(self, tree):
+        for pkg, l in tree.iteritems():
+            print pkg
+            for p in l:
+                print "\t", p
+
     def _getPackagesToRemove(self,po,deptree,toRemove):
         '''
-        walk trough the po->deps, dep->po's reference tree too get
-        the related po to remove.
+        get the (related) pos to remove.
         '''
-        stack = [ po ]
-        while stack:
-            po  = stack.pop()
-            if po not in toRemove:
-                toRemove.add(po)
-                stack.extend(deptree.get(po, []))
-        return toRemove
+        toRemove.add(po)
+        for txmbr in self.tsInfo.getMembers(po.pkgtup):
+            for pkg in (txmbr.updates + txmbr.obsoletes):
+                toRemove.add(pkg)
+                self._getDepsToRemove(pkg, deptree, toRemove)
+        self._getDepsToRemove(po, deptree, toRemove)
+
+    def _getDepsToRemove(self,po, deptree, toRemove):
+        for dep in deptree.get(po, []): # Loop trough all deps of po
+            for txmbr in self.tsInfo.getMembers(dep.pkgtup):
+                for pkg in (txmbr.updates + txmbr.obsoletes):
+                    toRemove.add(pkg)
+            toRemove.add(dep)
+            self._getDepsToRemove(dep, deptree, toRemove)
 
     def runTransaction(self, cb):
         """takes an rpm callback object, performs the transaction"""
@@ -2015,7 +2024,7 @@ class YumBase(depsolve.Depsolve):
             # make sure it's not already installed
             if self.rpmdb.contains(po=po):
                 if not self.tsInfo.getMembersWithState(po.pkgtup, TS_REMOVE_STATES):
-                    self.logger.warning('Package %s already installed and latest version', po)
+                    self.verbose_logger.warning('Package %s already installed and latest version', po)
                     continue
 
             
@@ -2034,7 +2043,7 @@ class YumBase(depsolve.Depsolve):
         return tx_return
 
     
-    def update(self, po=None, **kwargs):
+    def update(self, po=None, requiringPo=None, **kwargs):
         """try to mark for update the item(s) specified. 
             po is a package object - if that is there, mark it for update,
             if possible
@@ -2062,6 +2071,8 @@ class YumBase(depsolve.Depsolve):
                 installed_pkg =  self.rpmdb.searchPkgTuple(installed)[0]
                 txmbr = self.tsInfo.addObsoleting(obsoleting_pkg, installed_pkg)
                 self.tsInfo.addObsoleted(installed_pkg, obsoleting_pkg)
+                if requiringPo:
+                    txmbr.setAsDep(requiringPo)
                 tx_return.append(txmbr)
                 
             for (new, old) in updates:
@@ -2072,6 +2083,8 @@ class YumBase(depsolve.Depsolve):
                     updating_pkg = self.getPackageObject(new)
                     updated_pkg = self.rpmdb.searchPkgTuple(old)[0]
                     txmbr = self.tsInfo.addUpdate(updating_pkg, updated_pkg)
+                    if requiringPo:
+                        txmbr.setAsDep(requiringPo)
                     tx_return.append(txmbr)
             
             return tx_return
@@ -2125,11 +2138,15 @@ class YumBase(depsolve.Depsolve):
                         # FIXME check for what might be in there here
                         txmbr = self.tsInfo.addObsoleting(obsoleting_pkg, installed_pkg)
                         self.tsInfo.addObsoleted(installed_pkg, obsoleting_pkg)
+                        if requiringPo:
+                            txmbr.setAsDep(requiringPo)
                         tx_return.append(txmbr)
                 for available_pkg in availpkgs:
                     for obsoleted in self.up.obsoleting_dict.get(available_pkg.pkgtup, []):
                         obsoleted_pkg = self.getInstalledPackageObject(obsoleted)
                         txmbr = self.tsInfo.addObsoleting(available_pkg, obsoleted_pkg)
+                        if requiringPo:
+                            txmbr.setAsDep(requiringPo)
                         tx_return.append(txmbr)
                         if self.tsInfo.isObsoleted(obsoleted):
                             self.verbose_logger.log(logginglevels.DEBUG_2, 'Package is already obsoleted: %s.%s %s:%s-%s', obsoleted)
@@ -2144,6 +2161,8 @@ class YumBase(depsolve.Depsolve):
                     else:
                         updated_pkg =  self.rpmdb.searchPkgTuple(updated)[0]
                         txmbr = self.tsInfo.addUpdate(available_pkg, updated_pkg)
+                        if requiringPo:
+                            txmbr.setAsDep(requiringPo)
                         tx_return.append(txmbr)
             for installed_pkg in instpkgs:
                 for updating in self.up.updatesdict.get(installed_pkg.pkgtup, []):
@@ -2153,6 +2172,8 @@ class YumBase(depsolve.Depsolve):
                                                 installed_pkg.pkgtup)
                     else:
                         txmbr = self.tsInfo.addUpdate(updating_pkg, installed_pkg)
+                        if requiringPo:
+                            txmbr.setAsDep(requiringPo)
                         tx_return.append(txmbr)
 
         return tx_return

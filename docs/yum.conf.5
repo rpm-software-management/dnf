@@ -257,6 +257,36 @@ as metadata_expire.
 If you find that yum is not downloading the mirrorlists as 
 often as you would like lower the value of this option.
 
+.IP \fBmdpolicy \fR
+You can select from different metadata download policies depending on how much
+data you want to download with the main repository metadata index. The
+advantages of downloading more metadata with the index is that you can't get
+into situations where you need to use that metadata later and the versions
+available aren't compatible (or the user lacks privilages) and that if the
+metadata is corrupt in any way yum will revert to the previous metadata.
+
+`instant' - Just download the new metadata index, this is roughly what yum
+always did, however it now does some checking on the index and reverts if
+it classifies it as bad.
+
+`group:primary' - Download the primary metadata with the index. This contains
+most of the package information and so is almost always required anyway. This
+is the default.
+
+`group:small' - With the primary also download the updateinfo metadata, this is
+required for yum-security operations and it also used in the graphical clients.
+This file also tends to be significantly smaller than most others.
+
+`group:main' - With the primary and updateinfo download the filelists metadata
+and the group metadata. The filelists data is required for operations like
+"yum install /bin/bash", and also some dependancy resolutions require it. The
+group data is used in some graphical clients and for group operations like
+"yum grouplist Base".
+
+`group:all' - Download all metadata listed in the index, currently the only one
+not listed above is the other metadata, which contains the changelog information
+which is used by yum-changelog. This is what "yum makecache" uses.
+
 .SH "[repository] OPTIONS"
 .LP 
 The repository section(s) take the following form:

@@ -86,6 +86,7 @@ def setErrorLevel(level):
     converted_level = logLevelFromErrorLevel(level)
     logging.getLogger("yum").setLevel(converted_level)
 
+_added_handlers = False
 def doLoggingSetup(debuglevel, errorlevel):
     """
     Configure the python logger.
@@ -95,8 +96,16 @@ def doLoggingSetup(debuglevel, errorlevel):
     debuglevel is optional. If provided, it will override the logging level
     provided in the logging config file for debug messages.
     """
+    global _added_handlers
 
     logging.basicConfig()
+
+    if _added_handlers:
+        if debuglevel is not None:
+            setDebugLevel(debuglevel)
+        if errorlevel is not None:  
+            setErrorLevel(errorlevel)
+        return
 
     plainformatter = logging.Formatter("%(message)s")
     syslogformatter = logging.Formatter("yum: %(message)s")
@@ -127,6 +136,7 @@ def doLoggingSetup(debuglevel, errorlevel):
         except socket.error:
             if syslog is not None:
                 syslog.close()
+    _added_handlers = True
 
     if debuglevel is not None:
         setDebugLevel(debuglevel)

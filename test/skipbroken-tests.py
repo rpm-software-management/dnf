@@ -8,15 +8,15 @@ class SkipBrokenTests(DepsolveTests):
     
     def setUp(self):
         DepsolveTests.setUp(self)
-        self.xrepo   = FakeRepo("TestRepository",self.xsack)
+        self.xrepo = FakeRepo("TestRepository", self.xsack)
         setup_logging()
 
-    def _createRepoPackage(self, name, version='1', release='0', epoch='0', arch='noarch'):
+    def repoPackage(self, name, version='1', release='0', epoch='0', arch='noarch'):
         po = FakePackage(name, version, release, epoch, arch, repo=self.xrepo)
         self.xsack.addPackage(po)
         return po
     
-    def _createInstPackage(self, name, version='1', release='0', epoch='0', arch='noarch'):
+    def instPackage(self, name, version='1', release='0', epoch='0', arch='noarch'):
         po = FakePackage(name, version, release, epoch, arch, repo=self.repo)
         self.rpmdb.addPackage(po)
         return po
@@ -24,11 +24,11 @@ class SkipBrokenTests(DepsolveTests):
     def testMissingReqNoSkip(self):
         ''' install fails,  because of missing req.
         bar fails because foobar is not provided '''
-        po = self._createRepoPackage('foo', '1')
+        po = self.repoPackage('foo', '1')
         po.addRequires('bar', None, (None,None,None))
         self.tsInfo.addInstall(po)
 
-        xpo = self._createRepoPackage('bar', '1')
+        xpo = self.repoPackage('bar', '1')
         xpo.addRequires('foobar', None, (None,None,None))
         
         self.assertEquals('err', *self.resolveCode(skip=False))
@@ -37,11 +37,11 @@ class SkipBrokenTests(DepsolveTests):
     def testMissingReqSkip(self):
         ''' install is skipped, because of missing req.
         foo + bar is skipped, because foobar is not provided '''
-        po = self._createRepoPackage('foo', '1')
+        po = self.repoPackage('foo', '1')
         po.addRequires('bar', None, (None,None,None))
         self.tsInfo.addInstall(po)
 
-        xpo = self._createRepoPackage('bar', '1')
+        xpo = self.repoPackage('bar', '1')
         xpo.addRequires('foobar', None, (None,None,None))
 
         self.assertEquals('empty', *self.resolveCode(skip=True))
@@ -52,14 +52,14 @@ class SkipBrokenTests(DepsolveTests):
         foo + foobar is skipped because barfoo is not provided
         bar stays in the transaction
         '''
-        po1 = self._createRepoPackage('foo', '1')
+        po1 = self.repoPackage('foo', '1')
         po1.addRequires('foobar', None, (None,None,None))
         self.tsInfo.addInstall(po1)
 
-        po2 = self._createRepoPackage('bar', '1')
+        po2 = self.repoPackage('bar', '1')
         self.tsInfo.addInstall(po2)
 
-        xpo1 = self._createRepoPackage('foobar', '1')
+        xpo1 = self.repoPackage('foobar', '1')
         xpo1.addRequires('barfoo', None, (None,None,None))
 
         self.assertEquals('ok', *self.resolveCode(skip=True))
@@ -72,10 +72,10 @@ class SkipBrokenTests(DepsolveTests):
         '''
         # FIXME: The right solution is to skip the update from the transaction 
         
-        po1 = self._createInstPackage('foo', '1')
-        po2 = self._createRepoPackage('foo', '2')
+        po1 = self.instPackage('foo', '1')
+        po2 = self.repoPackage('foo', '2')
 
-        ipo = self._createInstPackage('foo-tools', '2.5')
+        ipo = self.instPackage('foo-tools', '2.5')
         ipo.addRequires('foo', 'EQ', ('0', '1', '0'))
 
         self.tsInfo.addUpdate(po2, oldpo=po1)
@@ -88,12 +88,12 @@ class SkipBrokenTests(DepsolveTests):
         The foo-1.0 -> foo-2.0 update fails, because foo-tools-2.0 need by foo-2.0
         is not provided, the update should be skipped and result in a empty transaction
         '''
-        po1 = self._createInstPackage('foo', '1')
+        po1 = self.instPackage('foo', '1')
         po1.addRequires('foo-tools', 'EQ', ('0', '1', '0'))
-        po2 = self._createRepoPackage('foo', '2')
+        po2 = self.repoPackage('foo', '2')
         po2.addRequires('foo-tools', 'EQ', ('0', '2', '0'))
 
-        ipo = self._createInstPackage('foo-tools', '1')
+        ipo = self.instPackage('foo-tools', '1')
 
         self.tsInfo.addUpdate(po2, oldpo=po1)
 
@@ -107,13 +107,13 @@ class SkipBrokenTests(DepsolveTests):
         foo-2.0 update get skip, and the foo-gui install will get skipped too, because it need foo-2.0
         there is not longer provided.
         '''
-        po1 = self._createInstPackage('foo', '1')
+        po1 = self.instPackage('foo', '1')
         po1.addRequires('foo-tools', 'EQ', ('0', '1', '0'))
-        po2 = self._createRepoPackage('foo', '2')
+        po2 = self.repoPackage('foo', '2')
         po2.addRequires('foo-tools', 'EQ', ('0', '2', '0'))
 
-        ipo = self._createInstPackage('foo-tools', '1')
-        por =  self._createRepoPackage('foo-gui', '1')
+        ipo = self.instPackage('foo-tools', '1')
+        por =  self.repoPackage('foo-gui', '1')
         por.addRequires('foo', 'EQ', ('0', '2', '0'))
 
         self.tsInfo.addUpdate(po2, oldpo=po1)
@@ -127,8 +127,8 @@ class SkipBrokenTests(DepsolveTests):
         foo is removed, and foo-tools get removed too, because it 
         depends on foo  
         '''
-        ipo = self._createInstPackage('foo', '1')
-        ipo2 = self._createInstPackage('foo-tools', '1')
+        ipo = self.instPackage('foo', '1')
+        ipo2 = self.instPackage('foo-tools', '1')
         ipo2.addRequires('foo', 'EQ', ('0', '1', '0'))
 
         self.tsInfo.addErase(ipo)
@@ -139,11 +139,11 @@ class SkipBrokenTests(DepsolveTests):
         ''' update fails, because a req is erased.
         Update foo-tools-1.0 -> foo-tools-2.0, should fail because the require foo is removed
         '''
-        ipo = self._createInstPackage('foo', '1')
-        ipo2 = self._createInstPackage('foo-tools', '1')
+        ipo = self.instPackage('foo', '1')
+        ipo2 = self.instPackage('foo-tools', '1')
         ipo2.addRequires('foo', 'EQ', ('0', '1', '0'))
 
-        upo2 = self._createRepoPackage('foo-tools', '2')
+        upo2 = self.repoPackage('foo-tools', '2')
         upo2.addRequires('foo', 'EQ', ('0', '1', '0'))
 
         self.tsInfo.addErase(ipo)
@@ -156,11 +156,11 @@ class SkipBrokenTests(DepsolveTests):
         Update foo-tools-1.0 -> foo-tools-2.0, should fail because the require foo is removed
         the update is skipped and foo-tools-1.0 is removed too, because it requires foo. 
         '''
-        ipo = self._createInstPackage('foo', '1')
-        ipo2 = self._createInstPackage('foo-tools', '1')
+        ipo = self.instPackage('foo', '1')
+        ipo2 = self.instPackage('foo-tools', '1')
         ipo2.addRequires('foo', 'EQ', ('0', '1', '0'))
 
-        upo2 = self._createRepoPackage('foo-tools', '2')
+        upo2 = self.repoPackage('foo-tools', '2')
         upo2.addRequires('foo', 'EQ', ('0', '1', '0'))
 
         self.tsInfo.addUpdate(upo2, oldpo=ipo2)
@@ -174,11 +174,11 @@ class SkipBrokenTests(DepsolveTests):
         foo 1.0 -> 2.0 update fails, because foo-2.0 conflict with bar-1.0
         the update get skipped and the transaction is now empty
         '''
-        po1 = self._createInstPackage('foo', '1')
-        po2 = self._createRepoPackage('foo', '2')
+        po1 = self.instPackage('foo', '1')
+        po2 = self.repoPackage('foo', '2')
         po2.addConflicts('bar', 'EQ', ('0', '1', '0'))
 
-        ipo = self._createInstPackage('bar', '1')
+        ipo = self.instPackage('bar', '1')
 
         self.tsInfo.addUpdate(po2, oldpo=po1)
         
@@ -191,14 +191,14 @@ class SkipBrokenTests(DepsolveTests):
         bar-1.0 is update to bar-2.0, to solve the conflict but bar-2.0 need foo-1.0
         so the foo & bar updates get skipped and the transaction is empty
         '''
-        po1 = self._createInstPackage('foo', '1')
-        po2 = self._createRepoPackage('foo', '2')
+        po1 = self.instPackage('foo', '1')
+        po2 = self.repoPackage('foo', '2')
         po2.addConflicts('bar', 'EQ', ('0', '1', '0'))
 
-        ipo = self._createInstPackage('bar', '1')
+        ipo = self.instPackage('bar', '1')
 
 
-        xpo = self._createRepoPackage('bar', '2')
+        xpo = self.repoPackage('bar', '2')
         xpo.addRequires('foo', 'EQ', ('0', '1', '0'))
 
         self.tsInfo.addUpdate(po2, oldpo=po1)
@@ -213,14 +213,14 @@ class SkipBrokenTests(DepsolveTests):
         there is not provided
         So the foo & bar updates get skipped and the transaction is empty
         '''
-        po1 = self._createInstPackage('foo', '1')
-        po2 = self._createRepoPackage('foo', '2')
+        po1 = self.instPackage('foo', '1')
+        po2 = self.repoPackage('foo', '2')
         po2.addConflicts('bar', 'EQ', ('0', '1', '0'))
 
-        ipo = self._createInstPackage('bar', '1')
+        ipo = self.instPackage('bar', '1')
 
 
-        xpo = self._createRepoPackage('bar', '2')
+        xpo = self.repoPackage('bar', '2')
         xpo.addRequires('poo', 'EQ', ('0', '1', '0'))
 
         self.tsInfo.addUpdate(po2, oldpo=po1)
@@ -229,25 +229,25 @@ class SkipBrokenTests(DepsolveTests):
         self.assertResult([po1,ipo])
 
     def testAlternativePackageAvailable(self):
-        ipo = self._createRepoPackage('foo')
+        ipo = self.repoPackage('foo')
         ipo.addRequires('bar')
-        provides1 = self._createRepoPackage('bar')
+        provides1 = self.repoPackage('bar')
         provides1.addRequires('baz')
-        provides2 = self._createRepoPackage('bar-ng')
+        provides2 = self.repoPackage('bar-ng')
         provides2.addProvides('bar')
         #provides2.addRequires('baz')
 
         self.tsInfo.addInstall(ipo)
 
-        self.assertEquals('empty', *self.resolveCode(skip=True))
-        self.assertResult([])
+        self.assertEquals('ok', *self.resolveCode(skip=True))
+        self.assertResult([ipo, provides2])
 
     def testOnlyOneRequirementAvailable(self):
-        ipo = self._createRepoPackage('foo')
+        ipo = self.repoPackage('foo')
         ipo.addRequires('bar')
         ipo.addRequires('baz')
 
-        ppo = self._createRepoPackage('baz')
+        ppo = self.repoPackage('baz')
 
         self.tsInfo.addInstall(ipo)
 
@@ -255,19 +255,93 @@ class SkipBrokenTests(DepsolveTests):
         self.assertResult([])
 
     def test2PkgReqSameDep(self):
-        po1 = self._createRepoPackage('foo')
+        po1 = self.repoPackage('foo')
         po1.addRequires('bar')
         po1.addRequires('foobar')
-        po2 = self._createRepoPackage('bar')
+        po2 = self.repoPackage('bar')
         po2.addRequires('zzzz')
-        po3 = self._createRepoPackage('barfoo')
+        po3 = self.repoPackage('barfoo')
         po3.addRequires('foobar')
-        po4 = self._createRepoPackage('foobar')
+        po4 = self.repoPackage('foobar')
         self.tsInfo.addInstall(po1)
         self.tsInfo.addInstall(po3)
 
         self.assertEquals('ok', *self.resolveCode(skip=True))
         self.assertResult([po3,po4])
+
+    def testProvidesAndDepsGetRemoved(self):
+        po1 = self.repoPackage('Spaceman')
+        po1.addProvides('money')
+        po2 = self.repoPackage('GutlessGibbon')
+        po2.addRequires('money')
+        po2.addRequires('nice')
+        po2.addRequires('features')
+        self.tsInfo.addInstall(po2)
+        self.assertEquals('empty', *self.resolveCode(skip=True))
+
+    def testSecondStepRequiresUpdate(self):
+        po1 = self.repoPackage('foo')
+        po1.addRequires('xxx')
+        po1.addRequires('bar')
+        self.tsInfo.addInstall(po1)
+
+        po2 = self.repoPackage('bar')
+        po2.addRequires('baz', 'EQ', (None, '2', '1'))
+
+        ipo = self.instPackage('baz')
+        upo = self.repoPackage('baz', '2', '1')
+
+        self.assertEquals('empty', *self.resolveCode(skip=True))
+        self.assertResult([ipo])
+
+
+    def testDepCycle1(self):
+        po0 = self.repoPackage('leaf')
+
+        po1 = self.repoPackage('foo')
+        po1.addRequires('bar')
+        po1.addRequires('xxx')
+        po2 = self.repoPackage('bar')
+        po2.addRequires('baz')
+        po3 = self.repoPackage('baz')
+        po3.addRequires('foo')
+        po3.addRequires('leaf')
+
+        self.tsInfo.addInstall(po1)
+
+        self.assertEquals('empty', *self.resolveCode(skip=True))
+
+    def testDepCycle2(self):
+        po0 = self.repoPackage('leaf')
+
+        po1 = self.repoPackage('foo')
+        po1.addRequires('bar')
+        po2 = self.repoPackage('bar')
+        po2.addRequires('baz')
+        po2.addRequires('xxx')
+        po3 = self.repoPackage('baz')
+        po3.addRequires('foo')
+        po3.addRequires('leaf')
+
+        self.tsInfo.addInstall(po1)
+
+        self.assertEquals('empty', *self.resolveCode(skip=True))
+
+    def testDepCycle3(self):
+        po0 = self.repoPackage('leaf')
+
+        po1 = self.repoPackage('foo')
+        po1.addRequires('bar')
+        po2 = self.repoPackage('bar')
+        po2.addRequires('baz')
+        po3 = self.repoPackage('baz')
+        po3.addRequires('foo')
+        po3.addRequires('leaf')
+        po3.addRequires('xxx')
+
+        self.tsInfo.addInstall(po1)
+
+        self.assertEquals('empty', *self.resolveCode(skip=True))
 
 
     def resolveCode(self,skip = False):
