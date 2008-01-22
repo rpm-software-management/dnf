@@ -178,6 +178,19 @@ class PackageObject(object):
                                       self.arch)
         return out
 
+    def __cmp__(self, other):
+        """ Compare packages. """
+        ret = cmp(self.name, other.name)
+        if ret == 0:
+            ret = cmp(self.epoch, other.epoch)
+        if ret == 0:
+            ret = cmp(self.version, other.version)
+        if ret == 0:
+            ret = cmp(self.release, other.release)
+        if ret == 0:
+            ret = cmp(self.arch, other.arch)
+        return ret
+
     def returnSimple(self, varname):
         warnings.warn("returnSimple() will go away in a future version of Yum.\n",
                       Errors.YumFutureDeprecationWarning, stacklevel=2)
