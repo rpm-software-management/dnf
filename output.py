@@ -36,6 +36,8 @@ from yum.constants import *
 from yum import logginglevels
 from yum.rpmtrans import RPMBaseCallback
 
+from textwrap import fill
+
 class YumTextMeter(TextMeter):
 
     """
@@ -414,7 +416,10 @@ class YumOutput:
         return(format % (number, space, symbols[depth]))
 
     def matchcallback(self, po, values, matchfor=None):
-        msg = '%s.%s : %s' % (po.name, po.arch, po.summary)
+        msg = '%s.%s : ' % (po.name, po.arch)
+        msg_nxt = ' ' * (len(msg) - 2) + ': '
+        msg = fill(po.summary, width=self.term.columns,
+                   initial_indent=msg, subsequent_indent=msg_nxt)
         if matchfor:
             msg = self.term.sub_bold(msg, matchfor)
         
