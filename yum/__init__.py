@@ -29,6 +29,8 @@ import glob
 import fnmatch
 import logging
 import logging.config
+import operator
+
 try:
     from iniparse.compat import ParsingError, ConfigParser
 except ImportError:
@@ -1349,77 +1351,64 @@ class YumBase(depsolve.Depsolve):
             else:
                 sql_fields.append(f)
 
-        scores = {}
-        my_sets = {}
         matched_values = {}
 
-        def __sortbyVal(x, y):
-            (k, v) = x
-            (k2, v2) = y
-            if v > v2:
-                return 1
-            if v < v2:
-                return -1
-            if v == v2:
-                return 0
-        
-        # go through each item in the criteria list
-        # figure out if it matches and what it matches
-        # tally up the scores for the pkgs
         # yield the results in order of most terms matched first
-        
+        sorted_lists = {}
+        tmpres = []
+        real_crit = []
         for s in criteria:
-            narrowed_list = []
-            my_sets[s] = []
-            if s.find('%') != -1:
-                continue
-            
-            for sack in self.pkgSack.sacks.values():
-                narrowed_list.extend(sack.searchPrimaryFields(sql_fields, s))
-        
-            for po in narrowed_list:
-                tmpvalues = []
+            if s.find('%') == -1:
+                real_crit.append(s)
+
+        for sack in self.pkgSack.sacks.values():
+            tmpres.extend(sack.searchPrimaryFieldsMultipleStrings(sql_fields, real_crit))
+
+        for (po, count) in tmpres:
+            # check the pkg for sanity
+            # pop it into the sorted lists
+            tmpvalues = []
+            if count not in sorted_lists: sorted_lists[count] = []
+            for s in real_crit:
                 for field in fields:
                     value = getattr(po, field)
                     if value and value.lower().find(s.lower()) != -1:
                         tmpvalues.append(value)
 
-                if len(tmpvalues) > 0:
-                    matched_values[po] = tmpvalues
-                    my_sets[s].append(po)
-                    
-            for po in self.rpmdb:
-                tmpvalues = []
+            if len(tmpvalues) > 0:
+                sorted_lists[count].append((po, tmpvalues))
+
+            
+        
+        for po in self.rpmdb:
+            tmpvalues = []
+            criteria_matched = 0
+            for s in real_crit:
+                matched_s = False
                 for field in fields:
                     value = getattr(po, field)
                     if value and value.lower().find(s.lower()) != -1:
+                        if not matched_s:
+                            criteria_matched += 1
+                            matched_s = True
+                        
                         tmpvalues.append(value)
 
-                if len(tmpvalues) > 0:
-                    matched_values[po] = tmpvalues
-                    my_sets[s].append(po)
-        
-        for pkg in matched_values:
-            if scores.has_key(pkg):
-                continue
-            count = 0
-            
-            for this_set in my_sets.itervalues():
-                if pkg in this_set:
-                    count += 1
-            
-            scores[pkg] = count
 
-        i = scores.items()
-        i.sort(__sortbyVal)
-        i.reverse()
+            if len(tmpvalues) > 0:
+                if criteria_matched not in sorted_lists: sorted_lists[criteria_matched] = []
+                sorted_lists[criteria_matched].append((po, tmpvalues))
+                
+
+        # close our rpmdb connection so we can ctrl-c, kthxbai                    
+        self.closeRpmDB()
         
-        for (pkg,count) in i:
-            if matched_values.has_key(pkg):
-                yield (pkg, matched_values[pkg])
-            else:
-                print pkg
-            
+        yielded = {}
+        for val in reversed(sorted(sorted_lists)):
+            for (po, matched) in sorted(sorted_lists[val], key=operator.itemgetter(0)):
+                if (po.name, po.arch) not in yielded:
+                    yield (po, matched)
+                    yielded[(po.name, po.arch)] = 1
 
 
     def searchPackages(self, fields, criteria, callback=None):

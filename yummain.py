@@ -31,6 +31,9 @@ import cli
 
 def main(args):
     """This does all the real work"""
+    if not sys.stdout.isatty():
+        import codecs
+        sys.stdout = codecs.getwriter(locale.getpreferredencoding())(sys.stdout)
 
     def exUserCancel():
         logger.critical('\n\nExiting on user cancel')

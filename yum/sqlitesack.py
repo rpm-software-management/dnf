@@ -423,6 +423,50 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
                 if self._pkgKeyExcluded(rep, ob['pkgKey']):
                     continue
                 result.append(self._packageByKey(rep, ob['pkgKey']))
+        return result    
+
+    @catchSqliteException
+    def searchPrimaryFieldsMultipleStrings(self, fields, searchstrings):
+        """search arbitrary fields from the primarydb for a multiple strings
+           return packages, number of items it matched as a list of tuples"""
+           
+        result = [] # (pkg, num matches)
+        if len(fields) < 1:
+            return result
+        
+       
+        unionstring = "select pkgKey, SUM(cumul) AS total from ( "
+        endunionstring = ")GROUP BY pkgKey ORDER BY total DESC"
+                
+        #SELECT pkgkey, SUM(cumul) AS total FROM (SELECT pkgkey, 1 
+        #AS cumul FROM packages WHERE description LIKE '%foo%' UNION ... ) 
+        #GROUP BY pkgkey ORDER BY total DESC;
+        selects = []
+        
+        # select pkgKey, 1 AS cumul from packages where description 
+        # like '%devel%' or description like '%python%' or description like '%ssh%'
+#        for f in fields:
+#            basestring = "select pkgKey, 1 AS cumul from packages where %s like '%%%s%%' " % (f,searchstrings[0]) 
+#            for s in searchstrings[1:]:
+#                basestring = "%s or %s like '%%%s%%' " % (basestring, f, s)
+#            selects.append(basestring)
+            
+        for s in searchstrings:         
+            basestring="select pkgKey,1 AS cumul from packages where %s like '%%%s%%' " % (fields[0], s)
+            for f in fields[1:]:
+                basestring = "%s or %s like '%%%s%%' " % (basestring, f, s)
+            selects.append(basestring)
+        
+        totalstring = unionstring + " UNION ALL ".join(selects) + endunionstring
+#        print totalstring
+        
+        for (rep,cache) in self.primarydb.items():
+            cur = cache.cursor()
+            executeSQL(cur, totalstring)
+            for ob in cur:
+                if self._pkgKeyExcluded(rep, ob['pkgKey']):
+                    continue
+                result.append((self._packageByKey(rep, ob['pkgKey']), ob['total']))
         return result
         
     @catchSqliteException
