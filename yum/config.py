@@ -233,7 +233,9 @@ class IntOption(Option):
             val = int(s)
         except (ValueError, TypeError), e:
             raise ValueError('invalid integer value')
-        if val > range_max or val < range_min:
+        if self._range_max is not None and val > self._range_max:
+            raise ValueError('out of range integer value')
+        if self._range_min is not None and val < self._range_min:
             raise ValueError('out of range integer value')
         return val
 
