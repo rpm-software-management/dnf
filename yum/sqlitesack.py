@@ -227,6 +227,7 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
         self.otherdb = {}
         self.excludes = {}
         self._excludes = set() # of (repo, pkgKey)
+        self._all_excludes = {}
         self._search_cache = {
             'provides' : { },
             'requires' : { },
@@ -235,6 +236,15 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
 
     @catchSqliteException
     def __len__(self):
+        # First check if everything is excluded
+        all_excluded = True
+        for (repo, cache) in self.primarydb.items():
+            if repo not in self._all_excludes:
+                all_excluded = False
+                break
+        if all_excluded:
+            return 0
+            
         exclude_num = 0
         for repo in self.excludes:
             exclude_num += len(self.excludes[repo])
@@ -256,6 +266,8 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
         self.filelistsdb = {}
         self.otherdb = {}
         self.excludes = {}
+        self._excludes = set()
+        self._all_excludes = {}
         self._search_cache = {
             'provides' : { },
             'requires' : { },
@@ -282,18 +294,27 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
         self.excludes[obj.repo][obj.pkgId] = 1
         self._excludes.add( (obj.repo, obj.pkgKey) )
 
+    def _delAllPackages(self, repo):
+        """ Exclude all packages from the repo. """
+        self._all_excludes[repo] = True
+
     def _excluded(self, repo, pkgId):
-        if self.excludes.has_key(repo):
-            if self.excludes[repo].has_key(pkgId):
-                return True
+        if repo in self._all_excludes:
+            return True
+        
+        if repo in self.excludes and pkgId in self.excludes[repo]:
+            return True
                 
         return False
 
     def _pkgKeyExcluded(self, repo, pkgKey):
+        if repo in self._all_excludes:
+            return True
+
         return (repo, pkgKey) in self._excludes
 
     def _pkgExcluded(self, po):
-        return (po.repo, po.pkgKey) in self._excludes
+        return self._pkgKeyExcluded(po.repo, po.pkgKey)
 
     def _packageByKey(self, repo, pkgKey):
         if not self._key2pkg.has_key(repo):
@@ -876,16 +897,28 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
     def excludeArchs(self, archlist):
         """excludes incompatible arches - archlist is a list of compat arches"""
         
-        archlist = map(lambda x: "'%s'" % x , archlist)
-        arch_query = ",".join(archlist)
-        arch_query = '(%s)' % arch_query
+        sarchlist = map(lambda x: "'%s'" % x , archlist)
+        arch_query = ",".join(sarchlist)
 
         for (rep, cache) in self.primarydb.items():
             cur = cache.cursor()
-            myq = "select pkgId, pkgKey from packages where arch not in %s" % arch_query
+
+            # First of all, make sure this isn't a *-source repo or something
+            # where we'll be excluding everything.
+            has_arch = False
+            executeSQL(cur, "SELECT DISTINCT arch FROM packages")
+            for row in cur:
+                if row[0] in archlist:
+                    has_arch = True
+                    break
+            if not has_arch:
+                self._delAllPackages(rep)
+                return
+            
+            myq = "select pkgId, pkgKey from packages where arch not in (%s)" % arch_query
             executeSQL(cur, myq)
             for row in cur:
-                obj = self.pc(rep,row)
+                obj = self.pc(rep, row)
                 self.delPackage(obj)
 
 # Simple helper functions
