@@ -434,6 +434,7 @@ class YumOutput:
     def reportDownloadSize(self, packages):
         """Report the total download size for a set of packages"""
         totsize = 0
+        locsize = 0
         error = False
         for pkg in packages:
             # Just to be on the safe side, if for some reason getting
@@ -442,14 +443,23 @@ class YumOutput:
             try:
                 size = int(pkg.size)
                 totsize += size
+                try:
+                   if pkg.verifyLocalPkg():
+                       locsize += size
+                except:
+                   pass
             except:
                  error = True
                  self.logger.error('There was an error calculating total download size')
                  break
 
         if (not error):
-            self.verbose_logger.log(logginglevels.INFO_1, "Total download size: %s", 
-                self.format_number(totsize))
+            if locsize:
+                self.verbose_logger.log(logginglevels.INFO_1, "Total size: %s", 
+                                        self.format_number(totsize))
+            if locsize != totsize:
+                self.verbose_logger.log(logginglevels.INFO_1, "Total download size: %s", 
+                                        self.format_number(totsize - locsize))
             
     def listTransaction(self):
         """returns a string rep of the  transaction in an easy-to-read way."""
