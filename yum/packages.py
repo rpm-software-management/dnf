@@ -461,6 +461,48 @@ class YumAvailablePackage(PackageObject, RpmBase):
     remote_path = property(_remote_path)
     remote_url = property(_remote_url)
 
+    def _committer(self):
+        "Returns the name of the last person to do a commit to the changelog."
+
+        if hasattr(self, '_committer_ret'):
+            return self._committer_ret
+
+        def _nf2ascii(x):
+            """ does .encode("ascii", "replace") but it never fails. """
+            ret = []
+            for val in x:
+                if ord(val) >= 128:
+                    val = '?'
+                ret.append(val)
+            return "".join(ret)
+
+        if not len(self.changelog): # Empty changelog is _possible_ I guess
+            self._committer_ret = self.packager
+            return self._committer_ret
+        val = self.changelog[0][1]
+        # Chagnelog data is in multiple locale's, so we convert to ascii
+        # ignoring "bad" chars.
+        val = _nf2ascii(val)
+        # Hacky way to get rid of version numbers...
+        self._committer_ret = re.sub("""> .*""", '>', val)
+        return self._committer_ret
+
+    committer  = property(_committer)
+    
+    def _committime(self):
+        "Returns the time of the last commit to the changelog."
+
+        if hasattr(self, '_committime_ret'):
+            return self._committime_ret
+
+        if not len(self.changelog): # Empty changelog is _possible_ I guess
+            self._committime_ret = self.buildtime
+            return self._committime_ret
+        
+        self._committime_ret = self.changelog[0][0]
+        return self._committime_ret
+
+    committime = property(_committime)
 
     def getDiscNum(self):
         if self.basepath is None:
