@@ -856,6 +856,15 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
         """Returns a list of packages, only containing nevra information. The
            packages are processed for excludes. """
         
+        # Skip unused repos completely, Eg. *-source
+        skip_all = True
+        for repo in self.added:
+            if repo not in self._all_excludes:
+                skip_all = False
+
+        if skip_all:
+            return []
+
         returnList = []        
         if not hasattr(self, 'pkgobjlist'):
             self._buildPkgObjList(repoid)
