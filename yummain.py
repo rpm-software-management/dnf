@@ -18,6 +18,7 @@
 Entrance point for the yum command line interface.
 """
 
+import os
 import sys
 import locale
 import logging
@@ -225,10 +226,12 @@ def print_stats(stats):
 
 if __name__ == "__main__":
     try:
-        errcode = main(sys.argv[1:])
-        #errcode = cprof(main, sys.argv[1:])
-        #errcode = hotshot(main, sys.argv[1:])
-        sys.exit(errcode)
+        if 'YUM_PROF' in os.environ:
+            if os.environ['YUM_PROF'] == 'cprof':
+                sys.exit(cprof(main, sys.argv[1:]))
+            if os.environ['YUM_PROF'] == 'hotshot':
+                sys.exit(hotshot(main, sys.argv[1:]))
+        sys.exit(main(sys.argv[1:]))
     except KeyboardInterrupt, e:
         print >> sys.stderr, "\n\nExiting on user cancel."
         sys.exit(1)
