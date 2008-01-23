@@ -1245,15 +1245,15 @@ class YumBase(depsolve.Depsolve):
 
         # installed only
         elif pkgnarrow == 'installed':
-            installed = self.rpmdb.returnPackages()
+            installed = self.rpmdb.returnPackages(patterns=patterns)
         
         # available in a repository
         elif pkgnarrow == 'available':
 
             if self.conf.showdupesfromrepos:
-                avail = self.pkgSack.returnPackages()
+                avail = self.pkgSack.returnPackages(patterns=patterns)
             else:
-                avail = self.pkgSack.returnNewestByNameArch()
+                avail = self.pkgSack.returnNewestByNameArch(patterns=patterns)
             
             self.rpmdb._make_header_dict()
             for pkg in avail:
@@ -1265,7 +1265,7 @@ class YumBase(depsolve.Depsolve):
         elif pkgnarrow == 'extras':
             # we must compare the installed set versus the repo set
             # anything installed but not in a repo is an extra
-            avail = self.pkgSack.simplePkgList()
+            avail = self.pkgSack.simplePkgList(patterns=patterns)
             for po in self.rpmdb:
                 if po.pkgtup not in avail:
                     extras.append(po)
@@ -1288,9 +1288,9 @@ class YumBase(depsolve.Depsolve):
             recentlimit = now-(self.conf.recent*86400)
             ftimehash = {}
             if self.conf.showdupesfromrepos:
-                avail = self.pkgSack.returnPackages()
+                avail = self.pkgSack.returnPackages(patterns=patterns)
             else:
-                avail = self.pkgSack.returnNewestByNameArch()
+                avail = self.pkgSack.returnNewestByNameArch(patterns=patterns)
             
             for po in avail:
                 ftime = int(po.filetime)

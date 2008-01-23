@@ -143,7 +143,7 @@ class PackageSackBase(object):
            be compared to each other for highest version"""
         raise NotImplementedError()
 
-    def simplePkgList(self):
+    def simplePkgList(self, patterns=None):
         """returns a list of pkg tuples (n, a, e, v, r)"""
         raise NotImplementedError()
 
@@ -346,9 +346,9 @@ class MetaSack(PackageSackBase):
         bestofeach.addList(self._computeAggregateListResult("returnNewestByName", name))
         return bestofeach.returnNewestByName(name)
         
-    def simplePkgList(self):
+    def simplePkgList(self, patterns=None):
         """returns a list of pkg tuples (n, a, e, v, r)"""
-        return self._computeAggregateListResult("simplePkgList")
+        return self._computeAggregateListResult("simplePkgList", patterns)
 
     def printPackages(self):
         for sack in self.sacks.values():
