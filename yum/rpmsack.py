@@ -178,7 +178,7 @@ class RPMDBPackageSack(PackageSackBase):
 
     installed = PackageSackBase.contains
 
-    def returnNewestByNameArch(self, naTup=None):
+    def returnNewestByNameArch(self, naTup=None, patterns=None):
 
         #FIXME - should this (or any packagesack) be returning tuples?
         if not naTup:
@@ -206,7 +206,7 @@ class RPMDBPackageSack(PackageSackBase):
 
         return misc.newestInList(allpkg)
 
-    def returnPackages(self, repoid=None):
+    def returnPackages(self, repoid=None, patterns=None):
         return [ self._makePackageObject(hdr, idx)
             for hdr, idx in self._all_packages() ]
 

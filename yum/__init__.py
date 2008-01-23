@@ -1198,7 +1198,7 @@ class YumBase(depsolve.Depsolve):
         msg = '%d %s files removed' % (removed, filetype)
         return 0, [msg]
 
-    def doPackageLists(self, pkgnarrow='all'):
+    def doPackageLists(self, pkgnarrow='all', patterns=None):
         """generates lists of packages, un-reduced, based on pkgnarrow option"""
         
         ygh = misc.GenericHolder()
@@ -1219,9 +1219,9 @@ class YumBase(depsolve.Depsolve):
             installed = dinst.values()
                         
             if self.conf.showdupesfromrepos:
-                avail = self.pkgSack.returnPackages()
+                avail = self.pkgSack.returnPackages(patterns=patterns)
             else:
-                avail = self.pkgSack.returnNewestByNameArch()
+                avail = self.pkgSack.returnNewestByNameArch(patterns=patterns)
             
             for pkg in avail:
                 if not dinst.has_key(pkg.pkgtup):

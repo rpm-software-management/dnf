@@ -758,12 +758,13 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
         return y
 
     @catchSqliteException
-    def returnNewestByNameArch(self, naTup=None):
+    def returnNewestByNameArch(self, naTup=None, patterns=None):
 
         # If naTup is set do it from the database otherwise use our parent's
         # returnNewestByNameArch
         if (not naTup):
-            return yumRepo.YumPackageSack.returnNewestByNameArch(self, naTup)
+            return yumRepo.YumPackageSack.returnNewestByNameArch(self, naTup,
+                                                                 patterns)
 
         # First find all packages that fulfill naTup
         allpkg = []
@@ -833,16 +834,32 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
         return exactmatch, matched, unmatched
 
     @catchSqliteException
-    def _buildPkgObjList(self, repoid=None):
+    def _buildPkgObjList(self, repoid=None, patterns=None):
         """Builds a list of packages, only containing nevra information. No
            excludes are done at this stage. """
+
+        if patterns is None:
+            patterns = []
         
         returnList = []        
         for (repo,cache) in self.primarydb.items():
             if (repoid == None or repoid == repo.id):
                 cur = cache.cursor()
-                
-                executeSQL(cur, "select pkgId, pkgKey, name,epoch,version,release,arch from packages")
+
+                qsql = """select pkgId, pkgKey, name,epoch,version,release,arch 
+                          from packages"""
+
+                pat_sqls = []
+                pat_data = []
+                for pattern in patterns:
+                    for field in ['name', 'sql_nameArch', 'sql_nameVerRelArch',
+                                  'sql_nameVer', 'sql_nameVerRel',
+                                  'sql_envra', 'sql_nevra']:
+                        pat_sqls.append("%s GLOB ?" % field)
+                        pat_data.append(pattern)
+                if pat_sqls:
+                    qsql = _FULL_PARSE_QUERY_BEG + " OR ".join(pat_sqls)
+                executeSQL(cur, qsql, pat_data)
                 for x in cur:
                     if self._key2pkg.get(repo, {}).has_key(x['pkgKey']):
                         po = self._key2pkg[repo][x['pkgKey']]
@@ -850,12 +867,15 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
                         po = self.pc(repo,x)
                         self._key2pkg.setdefault(repo, {})[po.pkgKey] = po
                     returnList.append(po)
-        self.pkgobjlist = returnList
+        if not patterns:
+            self.pkgobjlist = returnList
+        return returnList
                 
-    def returnPackages(self, repoid=None):
+    def returnPackages(self, repoid=None, patterns=None):
         """Returns a list of packages, only containing nevra information. The
-           packages are processed for excludes. """
-        
+           packages are processed for excludes. Note that patterns is just
+           a hint, we are free it ignore it. """
+
         # Skip unused repos completely, Eg. *-source
         skip_all = True
         for repo in self.added:
@@ -865,11 +885,13 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
         if skip_all:
             return []
 
-        returnList = []        
-        if not hasattr(self, 'pkgobjlist'):
-            self._buildPkgObjList(repoid)
+        if hasattr(self, 'pkgobjlist'):
+            pkgobjlist = self.pkgobjlist
+        else:
+            pkgobjlist = self._buildPkgObjList(repoid, patterns)
 
-        for po in self.pkgobjlist:
+        returnList = []
+        for po in pkgobjlist:
             if self._pkgExcluded(po):
                 continue
             returnList.append(po)
@@ -977,4 +999,17 @@ where name %(op)s '%(q)s'
    or name || '-' || version || '-' || release || '.' || arch %(op)s '%(q)s'
    or epoch || ':' || name || '-' || version || '-' || release || '.' || arch %(op)s '%(q)s'
    or name || '-' || epoch || ':' || version || '-' || release || '.' || arch %(op)s '%(q)s'
+"""
+
+# This is roughly the same as above, and used by _buildPkgObjList()
+_FULL_PARSE_QUERY_BEG = """
+SELECT pkgId,pkgKey,name,epoch,version,release,arch,
+  name || '.' || arch AS sql_nameArch,
+  name || '-' || version || '-' || release || '.' || arch AS sql_nameVerRelArch,
+  name || '-' || version AS sql_nameVer,
+  name || '-' || version || '-' || release AS sql_nameVerRel,
+  epoch || ':' || name || '-' || version || '-' || release || '.' || arch AS sql_envra,
+  name || '-' || epoch || ':' || version || '-' || release || '.' || arch AS sql_nevra
+  FROM packages
+  WHERE
 """

@@ -637,7 +637,7 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
             if extcmds[0] in special:
                 pkgnarrow = extcmds.pop(0)
             
-        ypl = self.doPackageLists(pkgnarrow=pkgnarrow)
+        ypl = self.doPackageLists(pkgnarrow=pkgnarrow, patterns=extcmds)
         
         # rework the list output code to know about:
         # obsoletes output

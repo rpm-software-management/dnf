@@ -126,11 +126,11 @@ class PackageSackBase(object):
         """delete a pkgobject"""
         raise NotImplementedError()
 
-    def returnPackages(self):
+    def returnPackages(self, patterns=None):
         """return list of all packages"""
         raise NotImplementedError()
 
-    def returnNewestByNameArch(self, naTup=None):
+    def returnNewestByNameArch(self, naTup=None, patterns=None):
         """return list of newest packages based on name, arch matching
            this means(in name.arch form): foo.i386 and foo.noarch are not
            compared to each other for highest version only foo.i386 and
@@ -318,21 +318,23 @@ class MetaSack(PackageSackBase):
         obj.repo.sack.delPackage(obj)
 
 
-    def returnPackages(self, repoid=None):
+    def returnPackages(self, repoid=None, patterns=None):
         """return list of all packages, takes optional repoid"""
         if not repoid:
-            return self._computeAggregateListResult("returnPackages")
-        return self.sacks[repoid].returnPackages()
+            return self._computeAggregateListResult("returnPackages",
+                                                    None, patterns)
+        return self.sacks[repoid].returnPackages(patterns=patterns)
 
-    def returnNewestByNameArch(self, naTup=None):
+    def returnNewestByNameArch(self, naTup=None, patterns=None):
         """return list of newest packages based on name, arch matching
            this means(in name.arch form): foo.i386 and foo.noarch are not
            compared to each other for highest version only foo.i386 and
            foo.i386 will be compared"""
         bestofeach = ListPackageSack()
-        bestofeach.addList(self._computeAggregateListResult("returnNewestByNameArch", naTup))
+        calr = self._computeAggregateListResult
+        bestofeach.addList(calr("returnNewestByNameArch", naTup, patterns))
         
-        return bestofeach.returnNewestByNameArch(naTup)
+        return bestofeach.returnNewestByNameArch(naTup, patterns)
         
         
     def returnNewestByName(self, name=None):
@@ -680,7 +682,7 @@ class PackageSack(PackageSackBase):
         if self.indexesBuilt: 
             self._delPackageFromIndex(obj)
         
-    def returnPackages(self, repoid=None):
+    def returnPackages(self, repoid=None, patterns=None):
         """return list of all packages, takes optional repoid"""
         returnList = []
         if repoid is None:
@@ -695,7 +697,7 @@ class PackageSack(PackageSackBase):
         
         return returnList
 
-    def returnNewestByNameArch(self, naTup=None):
+    def returnNewestByNameArch(self, naTup=None, patterns=None):
         """return list of newest packages based on name, arch matching
            this means(in name.arch form): foo.i386 and foo.noarch are not 
            compared to each other for highest version only foo.i386 and 
@@ -709,7 +711,7 @@ class PackageSack(PackageSackBase):
             if (not where):
                 raise PackageSackError, 'No Package Matching %s.%s' % naTup
         else:
-            where = self.returnPackages()
+            where = self.returnPackages(patterns=patterns)
 
         for pkg in where:
             if not highdict.has_key((pkg.name, pkg.arch)):
@@ -727,12 +729,12 @@ class PackageSack(PackageSackBase):
         
         return highdict.values()
         
-    def returnNewestByName(self, name=None):
+    def returnNewestByName(self, name=None, patterns=None):
         """return list of newest packages based on name matching
            this means(in name.arch form): foo.i386 and foo.noarch will
            be compared to each other for highest version"""
         highdict = {}
-        for pkg in self.returnPackages():
+        for pkg in self.returnPackages(patterns=patterns):
             if not highdict.has_key(pkg.name):
                 highdict[pkg.name] = []
                 highdict[pkg.name].append(pkg)
@@ -757,11 +759,11 @@ class PackageSack(PackageSackBase):
 
         return returnlist
            
-    def simplePkgList(self):
+    def simplePkgList(self, patterns=None):
         """returns a list of pkg tuples (n, a, e, v, r) optionally from a single repoid"""
         
         # Don't cache due to excludes
-        return [pkg.pkgtup for pkg in self.returnPackages()]
+        return [pkg.pkgtup for pkg in self.returnPackages(patterns=patterns)]
                        
     def printPackages(self):
         for pkg in self.returnPackages():
