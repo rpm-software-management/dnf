@@ -1369,6 +1369,10 @@ class YumBase(depsolve.Depsolve):
         for s in criteria:
             if s.find('%') == -1:
                 real_crit.append(s)
+        real_crit_lower = [] # Take the s.lower()'s out of the loop
+        for s in criteria:
+            if s.find('%') == -1:
+                real_crit.append(s.lower())
 
         for sack in self.pkgSack.sacks.values():
             tmpres.extend(sack.searchPrimaryFieldsMultipleStrings(sql_fields, real_crit))
@@ -1378,10 +1382,10 @@ class YumBase(depsolve.Depsolve):
             # pop it into the sorted lists
             tmpvalues = []
             if count not in sorted_lists: sorted_lists[count] = []
-            for s in real_crit:
+            for s in real_crit_lower:
                 for field in fields:
                     value = getattr(po, field)
-                    if value and value.lower().find(s.lower()) != -1:
+                    if value and value.lower().find(s) != -1:
                         tmpvalues.append(value)
 
             if len(tmpvalues) > 0:
@@ -1392,11 +1396,11 @@ class YumBase(depsolve.Depsolve):
         for po in self.rpmdb:
             tmpvalues = []
             criteria_matched = 0
-            for s in real_crit:
+            for s in real_crit_lower:
                 matched_s = False
                 for field in fields:
                     value = getattr(po, field)
-                    if value and value.lower().find(s.lower()) != -1:
+                    if value and value.lower().find(s) != -1:
                         if not matched_s:
                             criteria_matched += 1
                             matched_s = True
