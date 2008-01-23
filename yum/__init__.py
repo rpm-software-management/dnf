@@ -1372,7 +1372,7 @@ class YumBase(depsolve.Depsolve):
         real_crit_lower = [] # Take the s.lower()'s out of the loop
         for s in criteria:
             if s.find('%') == -1:
-                real_crit.append(s.lower())
+                real_crit_lower.append(s.lower())
 
         for sack in self.pkgSack.sacks.values():
             tmpres.extend(sack.searchPrimaryFieldsMultipleStrings(sql_fields, real_crit))
