@@ -675,7 +675,7 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         # and what to search for
         # display the list of matches
             
-        searchlist = ['name', 'summary', 'description', 'packager', 'group', 'url']
+        searchlist = ['name', 'summary', 'description', 'url']
         matching = self.searchGenerator(searchlist, args)
         
         total = 0
