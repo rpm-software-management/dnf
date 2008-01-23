@@ -90,6 +90,13 @@ def checkCleanArg(base, basecmd, extcmds):
             raise cli.CliError
 
 def checkShellArg(base, basecmd, extcmds):
+    """
+    Verify that the arguments given to 'yum shell' are valid.
+
+    yum shell can be given either no args, or exactly one argument,
+    which is the name of a file. If these are not met,
+    raise cli.CliError.
+    """
     if len(extcmds) == 0:
         base.verbose_logger.debug("No argument to shell")
         pass
