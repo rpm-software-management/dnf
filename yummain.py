@@ -224,14 +224,23 @@ def print_stats(stats):
     stats.sort_stats('cumulative')
     stats.print_stats(40)
 
+def user_main(args, exit_code=False):
+    """ This calls one of the multiple main() functions based on env. vars """
+    errcode = None
+    if 'YUM_PROF' in os.environ:
+        if os.environ['YUM_PROF'] == 'cprof':
+            errcode = cprof(main, args)
+        if os.environ['YUM_PROF'] == 'hotshot':
+            errcode = hotshot(main, args)
+    if errcode is None:
+        errcode = main(args)
+    if exit_code:
+        sys.exit(errcode)
+    return exit_code
+
 if __name__ == "__main__":
     try:
-        if 'YUM_PROF' in os.environ:
-            if os.environ['YUM_PROF'] == 'cprof':
-                sys.exit(cprof(main, sys.argv[1:]))
-            if os.environ['YUM_PROF'] == 'hotshot':
-                sys.exit(hotshot(main, sys.argv[1:]))
-        sys.exit(main(sys.argv[1:]))
+        user_main(sys.argv[1:], exit_code=True)
     except KeyboardInterrupt, e:
         print >> sys.stderr, "\n\nExiting on user cancel."
         sys.exit(1)
