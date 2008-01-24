@@ -1,6 +1,6 @@
 Summary: RPM installer/updater
 Name: yum
-Version: 3.2.8
+Version: 3.2.9
 Release: 1
 License: GPL
 Group: System Environment/Base
@@ -92,6 +92,9 @@ exit 0
 %{_mandir}/man*/yum-updatesd*
 
 %changelog
+* Thu Jan 24 2008 Seth Vidal <skvidal at fedoraproject.org>
+- wee 3.2.9
+
 * Wed Dec 12 2007 Seth Vidal <skvidal at fedoraproject.org>
 - add pygpgme dep for new gpg key handling
 
