@@ -909,9 +909,11 @@ class YumRepository(Repository, config.RepoConf):
             compressed = (dbmdtype != mmdtype)
             local = self._get_mdtype_fname(data, compressed)
         else:
+            compressed = False
             local = self._get_mdtype_fname(data, False)
             if not os.path.exists(local):
                 local = local.replace('.bz2', '')
+                compressed = True
         if not self._checkMD(local, dbmdtype, openchecksum=compressed,
                              data=data, check_can_fail=True):
             return None
@@ -947,7 +949,7 @@ class YumRepository(Repository, config.RepoConf):
             if old_repo_XML:
                 (omdtype, odata) = self._get_mdtype_data(mdtype,
                                                          repoXML=old_repo_XML)
-                local = self._groupCheckDataMDValid(odata, omdtype,mdtype,False)
+                local = self._groupCheckDataMDValid(odata, omdtype,mdtype,True)
                 if local:
                     if _mdtype_eq(omdtype, odata, nmdtype, ndata):
                         continue # If they are the same do nothing
