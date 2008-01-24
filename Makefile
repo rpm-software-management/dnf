@@ -49,6 +49,9 @@ test:
 
 check: test
 
+changelog:
+	git log --pretty --numstat --summary | git2cl  > ChangeLog
+
 testnewbehavior:
 	@NEW_BEHAVIOR=1 nosetests -i ".*test" test
 
