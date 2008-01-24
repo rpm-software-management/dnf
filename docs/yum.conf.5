@@ -141,7 +141,8 @@ Commmand-line option: \fB\-\-installroot\fP
 
 .IP \fBdistroverpkg\fR
 The package used by yum to determine the "version" of the distribution. This
-can be any installed package. Default is `redhat-release'.
+can be any installed package. Default is `redhat-release'. You can see what
+provides this manually by using: "yum whatprovides redhat-release".
 
 .IP \fBdiskspacecheck\fR
 Either `0' or `1'. Set this to `0' to disable the checking for sufficient
