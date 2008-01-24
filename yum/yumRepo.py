@@ -886,13 +886,6 @@ class YumRepository(Repository, config.RepoConf):
             return False
         return True
         
-    def _instantLoadRepoXML(self, text=None):
-        """ Retrieve the new repomd.xml from the repository, then check it
-            and parse it. If it fails revert.
-            Mostly traditional behaviour. """
-        if self._commonLoadRepoXML(text):
-            self._doneOldRepoXML()
-
     def _check_db_version(self, mdtype, repoXML=None):
         if repoXML is None:
             repoXML = self.repoXML
@@ -916,13 +909,22 @@ class YumRepository(Repository, config.RepoConf):
 
         return local
 
-    def _groupLoadDataMD(self, mdtypes=None):
-        """ Check all the possible "files" in the new repomd.xml
-            and make sure they are here/valid (via. downloading checking).
-            If they aren't, we revert to the old repomd.xml data. """
+    def _commonRetrieveDataMD(self, mdtypes=None):
+        """ Retrieve any listed mdtypes, and revert if there was a failure.
+            Also put any of the non-valid mdtype files from the old_repo_XML
+            into the delete list, this means metadata can change filename
+            without us leaking it. """
+
+        def _mdtype_eq(omdtype, odata, nmdtype, ndata):
+            """ Check if two returns from _get_mdtype_data() are equal. """
+            if ndata is None:
+                return False
+            return omdtype == nmdtype and odata.checksum == ndata.checksum
+
+        all_mdtypes = self.retrieved.keys()
         if mdtypes is None:
-            mdtypes = self.retrieved.keys()
-            
+            mdtypes = all_mdtypes
+
         reverts = []
         if 'old_repo_XML' not in self._oldRepoMDData:
             old_repo_XML = None
@@ -930,24 +932,29 @@ class YumRepository(Repository, config.RepoConf):
             old_repo_XML = self._oldRepoMDData['old_repo_XML']
             self._oldRepoMDData['old_MD_files'] = reverts
             
-        for mdtype in mdtypes:
+        for mdtype in all_mdtypes:
             (nmdtype, ndata) = self._get_mdtype_data(mdtype)
-            if ndata is None: # Doesn't exist in this repo
-                continue
 
             if old_repo_XML:
                 (omdtype, odata) = self._get_mdtype_data(mdtype,
                                                          repoXML=old_repo_XML)
                 local = self._groupCheckDataMDValid(odata, omdtype, mdtype)
                 if local:
-                    if omdtype == nmdtype and odata.checksum == ndata.checksum:
+                    if _mdtype_eq(omdtype, odata, nmdtype, ndata):
                         continue # If they are the same do nothing
             
-                    # Move this version, and get new one. We don't copy because
-                    # we know we need a new version due to above checksum test.
+                    # Move this version, we _may_ get a new one.
+                    # We delete it on success, revert it back on failure.
+                    # We don't copy as we know it's bad due to above test.
                     os.rename(local, local + '.old.tmp')
                     reverts.append(local)
-                
+
+            if ndata is None: # Doesn't exist in this repo
+                continue
+
+            if mdtype not in mdtypes:
+                continue
+
             # No old repomd data, but we might still have uncompressed MD
             if self._groupCheckDataMDValid(ndata, nmdtype, mdtype):
                 continue
@@ -955,8 +962,16 @@ class YumRepository(Repository, config.RepoConf):
             if not self._retrieveMD(nmdtype, retrieve_can_fail=True):
                 self._revertOldRepoXML()
                 return False
+
         self._doneOldRepoXML()
         return True
+
+    def _instantLoadRepoXML(self, text=None):
+        """ Retrieve the new repomd.xml from the repository, then check it
+            and parse it. If it fails revert.
+            Mostly traditional behaviour. """
+        if self._commonLoadRepoXML(text):
+            self._commonRetrieveDataMD([])
 
     def _groupLoadRepoXML(self, text=None, mdtypes=None):
         """ Retrieve the new repomd.xml from the repository, then check it
@@ -967,7 +982,7 @@ class YumRepository(Repository, config.RepoConf):
             good. """
 
         if self._commonLoadRepoXML(text):
-            self._groupLoadDataMD(mdtypes)
+            self._commonRetrieveDataMD(mdtypes)
 
     def _loadRepoXML(self, text=None):
         """retrieve/check/read in repomd.xml from the repository"""
