@@ -320,6 +320,7 @@ class MakeCacheCommand(YumCommand):
                 repo.metadata_expire = 0
                 repo.mdpolicy = "group:all"
             base.doRepoSetup(dosack=0)
+            base.repos.doSetup()
             for repo in base.repos.listEnabled():
                 repo.repoXML
 
