@@ -121,7 +121,16 @@ class YumCommand:
         return []
 
     def getUsage(self):
-        return ''
+        """
+        @return: A usage string for the command, including arguments.
+        """
+        return "No usage for command"
+
+    def getSummary(self):
+        """
+        @return: A one line summary of what the command does.
+        """
+        return "No summary for command"
     
     def doCheck(self, base, basecmd, extcmds):
         pass
@@ -142,6 +151,12 @@ class InstallCommand(YumCommand):
     def getNames(self):
         return ['install']
 
+    def getUsage(self):
+        return "PACKAGE..."
+
+    def getSummary(self):
+        return "Install a package or packages on your system"
+    
     def doCheck(self, base, basecmd, extcmds):
         checkRootUID(base)
         checkGPGKey(base)
@@ -159,6 +174,12 @@ class UpdateCommand(YumCommand):
     def getNames(self):
         return ['update']
 
+    def getUsage(self):
+        return "PACKAGE..."
+
+    def getSummary(self):
+        return "Update a package or packages on your system"
+
     def doCheck(self, base, basecmd, extcmds):
         checkRootUID(base)
         checkGPGKey(base)
@@ -174,6 +195,12 @@ class UpdateCommand(YumCommand):
 class InfoCommand(YumCommand):
     def getNames(self):
         return ['info', 'list']
+
+    def getUsage(self):
+        return "[PACKAGE|all|installed|updates|extras|obsoletes|recent]"
+
+    def getSummary(self):
+        return "Display details about a package or group of packages"
 
     def doCommand(self, base, basecmd, extcmds):
         try:
@@ -213,6 +240,12 @@ class EraseCommand(YumCommand):
     def getNames(self):
         return ['erase', 'remove']
 
+    def getUsage(self):
+        return "PACKAGE..."
+
+    def getSummary(self):
+        return "Remove a package or packages from your system"
+
     def doCheck(self, base, basecmd, extcmds):
         checkRootUID(base)
         checkPackageArg(base, basecmd, extcmds)
@@ -246,6 +279,12 @@ class GroupListCommand(GroupCommand):
     def getNames(self):
         return ['grouplist']
 
+    def getUsage(self):
+        return ""
+
+    def getSummary(self):
+        return "List available package groups"
+    
     def doCommand(self, base, basecmd, extcmds):
         GroupCommand.doCommand(self, base, basecmd, extcmds)
         return base.returnGroupLists(extcmds)
@@ -257,6 +296,12 @@ class GroupInstallCommand(GroupCommand):
     def getNames(self):
         return ['groupinstall', 'groupupdate']
 
+    def getUsage(self):
+        return "GROUP..."
+
+    def getSummary(self):
+        return "Install the packages in a group on your system"
+    
     def doCheck(self, base, basecmd, extcmds):
         checkRootUID(base)
         checkGPGKey(base)
@@ -272,6 +317,12 @@ class GroupInstallCommand(GroupCommand):
 class GroupRemoveCommand(GroupCommand):
     def getNames(self):
         return ['groupremove', 'grouperase']
+
+    def getUsage(self):
+        return "GROUP..."
+
+    def getSummary(self):
+        return "Remove the packages in a group from your system"
 
     def doCheck(self, base, basecmd, extcmds):
         checkRootUID(base)
@@ -291,6 +342,12 @@ class GroupInfoCommand(GroupCommand):
     def getNames(self):
         return ['groupinfo']
 
+    def getUsage(self):
+        return "GROUP..."
+
+    def getSummary(self):
+        return "Display details about a package group"
+
     def doCheck(self, base, basecmd, extcmds):
         checkGroupArg(base, basecmd, extcmds)
 
@@ -308,6 +365,12 @@ class MakeCacheCommand(YumCommand):
 
     def getNames(self):
         return ['makecache']
+
+    def getUsage(self):
+        return ""
+
+    def getSummary(self):
+        return "Generate the metadata cache"
 
     def doCheck(self, base, basecmd, extcmds):
         checkRootUID(base)
@@ -336,6 +399,12 @@ class CleanCommand(YumCommand):
     def getNames(self):
         return ['clean']
 
+    def getUsage(self):
+        return "[headers|packages|metadata|dbcache|plugins|all]"
+
+    def getSummary(self):
+        return "Remove cached data"
+
     def doCheck(self, base, basecmd, extcmds):
         checkRootUID(base)
         checkCleanArg(base, basecmd, extcmds)
@@ -351,6 +420,12 @@ class ProvidesCommand(YumCommand):
     def getNames(self):
         return ['provides', 'whatprovides']
 
+    def getUsage(self):
+        return "SOME_STRING"
+    
+    def getSummary(self):
+        return "Find what package provides the given value"
+
     def doCheck(self, base, basecmd, extcmds):
         checkItemArg(base, basecmd, extcmds)
 
@@ -364,6 +439,12 @@ class ProvidesCommand(YumCommand):
 class CheckUpdateCommand(YumCommand):
     def getNames(self):
         return ['check-update']
+
+    def getUsage(self):
+        return "[PACKAGE...]"
+
+    def getSummary(self):
+        return "Check for available package updates"
 
     def doCommand(self, base, basecmd, extcmds):
         base.extcmds.insert(0, 'updates')
@@ -382,6 +463,12 @@ class SearchCommand(YumCommand):
     def getNames(self):
         return ['search']
 
+    def getUsage(self):
+        return "SOME_STRING"
+
+    def getSummary(self):
+        return "Search package details for the given string"
+
     def doCheck(self, base, basecmd, extcmds):
         checkItemArg(base, basecmd, extcmds)
 
@@ -399,6 +486,12 @@ class UpgradeCommand(YumCommand):
     def getNames(self):
         return ['upgrade']
 
+    def getUsage(self):
+        return 'PACKAGE...'
+
+    def getSummary(self):
+        return "Update packages taking obsoletes into account"
+
     def doCheck(self, base, basecmd, extcmds):
         checkRootUID(base)
         checkGPGKey(base)
@@ -415,6 +508,12 @@ class UpgradeCommand(YumCommand):
 class LocalInstallCommand(YumCommand):
     def getNames(self):
         return ['localinstall', 'localupdate']
+
+    def getUsage(self):
+        return "FILE"
+
+    def getSummary(self):
+        return "Install a local RPM"
 
     def doCheck(self, base, basecmd, extcmds):
         checkRootUID(base)
@@ -438,6 +537,12 @@ class ResolveDepCommand(YumCommand):
     def getNames(self):
         return ['resolvedep']
 
+    def getUsage(self):
+        return "DEPENDENCY"
+
+    def getSummary(self):
+        return "Determine which package provides the given dependency"
+
     def doCommand(self, base, basecmd, extcmds):
         base.logger.debug("Searching Packages for Dependency:")
         try:
@@ -448,6 +553,12 @@ class ResolveDepCommand(YumCommand):
 class ShellCommand(YumCommand):
     def getNames(self):
         return ['shell']
+
+    def getUsage(self):
+        return "[FILENAME]"
+
+    def getSummary(self):
+        return "Run an interactive yum shell"
 
     def doCheck(self, base, basecmd, extcmds):
         checkShellArg(base, basecmd, extcmds)
@@ -467,6 +578,12 @@ class DepListCommand(YumCommand):
     def getNames(self):
         return ['deplist']
 
+    def getUsage(self):
+        return 'PACKAGE...'
+
+    def getSummary(self):
+        return "List a package's dependencies"
+
     def doCheck(self, base, basecmd, extcmds):
         checkPackageArg(base, basecmd, extcmds)
 
@@ -478,13 +595,16 @@ class DepListCommand(YumCommand):
           return 1, [str(e)]
 
 
-class RepoListCommand:
-    usage = 'repolist [all|enabled|disabled]'
+class RepoListCommand(YumCommand):
+    
     def getNames(self):
         return ('repolist',)
 
     def getUsage(self):
-        return usage
+        return '[all|enabled|disabled]'
+
+    def getSummary(self):
+        return 'Display the configured software repositories'
 
     def doCheck(self, base, basecmd, extcmds):
         if len(extcmds) == 0:
@@ -517,4 +637,36 @@ class RepoListCommand:
 
     def needTs(self, base, basecmd, extcmds):
         return False
-    
+
+
+class HelpCommand(YumCommand):
+
+    def getNames(self):
+        return ['help']
+
+    def getUsage(self):
+        return "COMMAND"
+
+    def getSummary(self):
+        return "Display a helpful usage message"
+
+    def doCheck(self, base, basecmd, extcmds):
+        if len(extcmds) == 0:
+            base.usage()
+            raise cli.CliError
+        elif len(extcmds) > 1 or extcmds[0] not in base.yum_cli_commands:
+            base.usage()
+            raise cli.CliError
+
+    def doCommand(self, base, basecmd, extcmds):
+        if base.yum_cli_commands.has_key(extcmds[0]):
+            command = base.yum_cli_commands[extcmds[0]]
+            canonical_name = command.getNames()[0]
+            # XXX need detailed help here, too
+            usagestr = "%s %s\n\n%s" % (canonical_name, command.getUsage(),
+                    command.getSummary())
+            base.verbose_logger.log(logginglevels.INFO_2, usagestr)
+        return 0, []
+
+    def needTs(self, base, basecmd, extcmds):
+        return False
