@@ -777,7 +777,7 @@ class YumRepository(Repository, config.RepoConf):
             shutil.copy2(local, old_local)
             xml = self._parseRepoXML(old_local, True)
             self._oldRepoMDData = {'old_repo_XML' : xml, 'local' : local,
-                                   'old_local' : old_local}
+                                   'old_local' : old_local, 'new_MD_files' : []}
             return True
         return False
             
@@ -786,6 +786,10 @@ class YumRepository(Repository, config.RepoConf):
         """ If we have older data available, revert to it. """
         if not len(self._oldRepoMDData):
             return
+
+        # Unique names mean the rename doesn't work anymore.
+        for fname in self._oldRepoMDData['new_MD_files']:
+            os.unlink(fname)
 
         old_data = self._oldRepoMDData
         self._oldRepoMDData = {}
@@ -894,15 +898,20 @@ class YumRepository(Repository, config.RepoConf):
                 return True
         return False
 
-    def _groupCheckDataMDValid(self, data, dbmdtype, mmdtype):
+    def _groupCheckDataMDValid(self, data, dbmdtype, mmdtype, file_check=False):
         """ Check that we already have this data, and that it's valid. Given
             the DB mdtype and the main mdtype (no _db suffix). """
 
         if data is None:
             return None
-        
-        compressed = (dbmdtype != mmdtype)
-        local = self._get_mdtype_fname(data, compressed)
+
+        if not file_check:
+            compressed = (dbmdtype != mmdtype)
+            local = self._get_mdtype_fname(data, compressed)
+        else:
+            local = self._get_mdtype_fname(data, False)
+            if not os.path.exists(local):
+                local = local.replace('.bz2', '')
         if not self._checkMD(local, dbmdtype, openchecksum=compressed,
                              data=data, check_can_fail=True):
             return None
@@ -938,7 +947,7 @@ class YumRepository(Repository, config.RepoConf):
             if old_repo_XML:
                 (omdtype, odata) = self._get_mdtype_data(mdtype,
                                                          repoXML=old_repo_XML)
-                local = self._groupCheckDataMDValid(odata, omdtype, mdtype)
+                local = self._groupCheckDataMDValid(odata, omdtype,mdtype,False)
                 if local:
                     if _mdtype_eq(omdtype, odata, nmdtype, ndata):
                         continue # If they are the same do nothing
@@ -962,6 +971,14 @@ class YumRepository(Repository, config.RepoConf):
             if not self._retrieveMD(nmdtype, retrieve_can_fail=True):
                 self._revertOldRepoXML()
                 return False
+
+            local = self._get_mdtype_fname(ndata, False)
+            if nmdtype != mdtype: # Uncompress any .sqlite.bz2 files
+                dl_local = local
+                local = local.replace('.bz2', '')
+                misc.bunzipFile(dl_local, local)
+                os.unlink(dl_local)
+            self._oldRepoMDData['new_MD_files'].append(local)
 
         self._doneOldRepoXML()
         return True
