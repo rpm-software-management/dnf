@@ -930,29 +930,6 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
             return True
         
         return False
-    def _run_rpm_check_debug(self):
-        import rpm
-        results = []
-        # save our dsCallback out
-        dscb = self.dsCallback
-        self.dsCallback = None # dumb, dumb dumb dumb!
-        self.populateTs(test=1)
-        deps = self.ts.check()
-        for deptuple in deps:
-            ((name, version, release), (needname, needversion), flags,
-              suggest, sense) = deptuple
-            if sense == rpm.RPMDEP_SENSE_REQUIRES:
-                msg = 'Package %s needs %s, this is not available.' % \
-                      (name, rpmUtils.miscutils.formatRequire(needname, 
-                                                              needversion, flags))
-                results.append(msg)
-            elif sense == rpm.RPMDEP_SENSE_CONFLICTS:
-                msg = 'Package %s conflicts with %s.' % \
-                      (name, rpmUtils.miscutils.formatRequire(needname, 
-                                                              needversion, flags))
-                results.append(msg)
-        self.dsCallback = dscb
-        return results
 
 class YumOptionParser(OptionParser):
     '''Subclass that makes some minor tweaks to make OptionParser do things the
