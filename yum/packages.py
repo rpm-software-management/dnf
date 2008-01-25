@@ -814,11 +814,12 @@ class YumHeaderPackage(YumAvailablePackage):
                        self.hdr['changelogtext'])
         return []
 
+_installed_repo = FakeRepository('installed')
+_installed_repo.cost = 0
 class YumInstalledPackage(YumHeaderPackage):
     """super class for dealing with packages in the rpmdb"""
     def __init__(self, hdr):
-        fakerepo = FakeRepository('installed')
-        fakerepo.cost = 0
+        fakerepo = _installed_repo
         YumHeaderPackage.__init__(self, fakerepo, hdr)
 
 class YumLocalPackage(YumHeaderPackage):
