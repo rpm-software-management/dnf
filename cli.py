@@ -124,16 +124,27 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
             self._getSacks(thisrepo=thisrepo)
         
         return self._repos
-        
+
+    def _makeUsage(self):
+        """
+        Format an attractive usage string for yum, listing subcommand
+        names and summary usages.
+        """
+        usage = 'yum [options] COMMAND\n\nList of Commands:\n\n'
+        commands = yum.misc.unique(self.yum_cli_commands.values())
+        commands.sort(cmp=lambda x,y : cmp(x.getNames()[0], y.getNames()[0]))
+        for command in commands:
+            usage += "%-15s%s\n" % (command.getNames()[0],
+                    command.getSummary())
+
+        return usage
+
     def getOptionsConfig(self, args):
         """parses command line arguments, takes cli args:
         sets up self.conf and self.cmds as well as logger objects 
         in base instance"""
-        
-
-        self.optparser = YumOptionParser(base=self, 
-            usage='yum [options] < %s >' % (', '.join(self.yum_cli_commands)))
-
+       
+        self.optparser = YumOptionParser(base=self, usage=self._makeUsage())
         
         # Parse only command line options that affect basic yum setup
         opts = self.optparser.firstParse(args)
@@ -169,8 +180,7 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
             sys.exit(1)
 
         # update usage in case plugins have added commands
-        self.optparser.set_usage('yum [options] < %s >''' % (
-            ', '.join(self.yum_cli_commands)))
+        self.optparser.set_usage(self._makeUsage())
         
         # Now parse the command line for real and 
         # apply some of the options to self.conf
