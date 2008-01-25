@@ -706,6 +706,14 @@ class HelpCommand(YumCommand):
         if usage is None and summary is None:
             help_output = "No help available for %s" % canonical_name
 
+        command_names = command.getNames()
+        if len(command_names) > 1:
+            if len(command_names) > 2:
+                help_output += "\n\naliases: "
+            else:
+                help_output += "\n\nalias: "
+            help_output += ', '.join(command.getNames()[1:])
+
         return help_output
 
     def doCommand(self, base, basecmd, extcmds):
