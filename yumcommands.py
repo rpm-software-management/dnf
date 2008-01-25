@@ -194,7 +194,7 @@ class UpdateCommand(YumCommand):
 
 class InfoCommand(YumCommand):
     def getNames(self):
-        return ['info', 'list']
+        return ['info']
 
     def getUsage(self):
         return "[PACKAGE|all|installed|updates|extras|obsoletes|recent]"
@@ -212,6 +212,8 @@ class InfoCommand(YumCommand):
             rap = base.listPkgs(ypl.available, 'Available Packages', basecmd)
             rep = base.listPkgs(ypl.extras, 'Extra Packages', basecmd)
             rup = base.listPkgs(ypl.updates, 'Updated Packages', basecmd)
+
+            # XXX put this into the ListCommand at some point
             if len(ypl.obsoletes) > 0 and basecmd == 'list': 
             # if we've looked up obsolete lists and it's a list request
                 rop = [0, '']
@@ -234,6 +236,17 @@ class InfoCommand(YumCommand):
             return False
         
         return True
+
+class ListCommand(InfoCommand):
+    def getNames(self):
+        return ['list']
+
+    def getUsage(self):
+        return "[PACKAGE|all|installed|updates|extras|obsoletes|recent]"
+
+    def getSummary(self):
+        return "List a package or groups of packages"
+
 
 class EraseCommand(YumCommand):
         

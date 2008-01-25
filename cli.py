@@ -75,6 +75,7 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         self.registerCommand(yumcommands.InstallCommand())
         self.registerCommand(yumcommands.UpdateCommand())
         self.registerCommand(yumcommands.InfoCommand())
+        self.registerCommand(yumcommands.ListCommand())
         self.registerCommand(yumcommands.EraseCommand())
         self.registerCommand(yumcommands.GroupCommand())
         self.registerCommand(yumcommands.GroupListCommand())
