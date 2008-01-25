@@ -134,8 +134,12 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         commands = yum.misc.unique(self.yum_cli_commands.values())
         commands.sort(cmp=lambda x,y : cmp(x.getNames()[0], y.getNames()[0]))
         for command in commands:
-            usage += "%-15s%s\n" % (command.getNames()[0],
-                    command.getSummary())
+            # XXX Remove this when getSummary is common in plugins
+            try:
+                summary = command.getSummary()
+                usage += "%-15s%s\n" % (command.getNames()[0], summary)
+            except (AttributeError, NotImplementedError):
+                usage += "%s\n" % command.getNames()[0]
 
         return usage
 

@@ -124,13 +124,13 @@ class YumCommand:
         """
         @return: A usage string for the command, including arguments.
         """
-        return "No usage for command"
+        raise NotImplementedError
 
     def getSummary(self):
         """
         @return: A one line summary of what the command does.
         """
-        return "No summary for command"
+        raise NotImplementedError
     
     def doCheck(self, base, basecmd, extcmds):
         pass
@@ -667,14 +667,39 @@ class HelpCommand(YumCommand):
             base.usage()
             raise cli.CliError
 
+    @staticmethod
+    def _makeOutput(command):
+        canonical_name = command.getNames()[0]
+
+        # Check for the methods in case we have plugins that don't
+        # implement these.
+        # XXX Remove this once usage/summary are common enough
+        try:
+            usage = command.getUsage()
+        except (AttributeError, NotImplementedError):
+            usage = None
+        try:
+            summary = command.getSummary()
+        except (AttributeError, NotImplementedError):
+            summary = None
+
+        # XXX need detailed help here, too
+        help_output = ""
+        if usage is not None:
+            help_output += "%s %s" % (canonical_name, usage)
+        if summary is not None:
+            help_output += "\n\n%s" % summary
+
+        if usage is None and summary is None:
+            help_output = "No help available for %s" % canonical_name
+
+        return help_output
+
     def doCommand(self, base, basecmd, extcmds):
         if base.yum_cli_commands.has_key(extcmds[0]):
             command = base.yum_cli_commands[extcmds[0]]
-            canonical_name = command.getNames()[0]
-            # XXX need detailed help here, too
-            usagestr = "%s %s\n\n%s" % (canonical_name, command.getUsage(),
-                    command.getSummary())
-            base.verbose_logger.log(logginglevels.INFO_2, usagestr)
+            base.verbose_logger.log(logginglevels.INFO_2,
+                    self._makeOutput(command))
         return 0, []
 
     def needTs(self, base, basecmd, extcmds):
