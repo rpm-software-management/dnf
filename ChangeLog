@@ -1,3 +1,30 @@
+2008-01-24  Seth Vidal <skvidal@fedoraproject.org>
+
+	* yum.spec, yum/__init__.py: 3.2.10 numbering b/c of the paperbag
+	issues in 3.2.9
+
+2008-01-24  James Antill <james@and.org>
+
+	* yumcommands.py: Add back in the populateSack() calls to makecache,
+	needs more work to remove
+
+2008-01-24  James Antill <james@and.org>
+
+	* yum/yumRepo.py: Work after: yum clean all
+
+2008-01-24  James Antill <james@and.org>
+
+	* yum/yumRepo.py: Wrong way around
+
+2008-01-24  James Antill <james@and.org>
+
+	* yum/yumRepo.py:  Fix the downloading compressed MD files problem.  Save DL'ing
+	 filenames so they can be unlinked() on revert.
+
+2008-01-24  Seth Vidal <skvidal@fedoraproject.org>
+
+	* ChangeLog: changelog-merge
+
 2008-01-24  James Antill <james@and.org>
 
 	* yumcommands.py: Fix broken makecache
