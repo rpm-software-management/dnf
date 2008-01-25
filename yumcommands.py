@@ -175,7 +175,7 @@ class UpdateCommand(YumCommand):
         return ['update']
 
     def getUsage(self):
-        return "PACKAGE..."
+        return "[PACKAGE...]"
 
     def getSummary(self):
         return "Update a package or packages on your system"
