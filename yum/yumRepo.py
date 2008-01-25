@@ -804,13 +804,11 @@ class YumRepository(Repository, config.RepoConf):
 
     def _doneOldRepoXML(self):
         """ Done with old data, delete it. """
-        if not len(self._oldRepoMDData):
-            return
-        
         old_data = self._oldRepoMDData
         self._oldRepoMDData = {}
-        
-        os.unlink(old_data['old_local'])
+
+        if 'old_local' in old_data:
+            os.unlink(old_data['old_local'])
 
         if 'old_MD_files' not in old_data:
             return
@@ -943,6 +941,8 @@ class YumRepository(Repository, config.RepoConf):
             old_repo_XML = self._oldRepoMDData['old_repo_XML']
             self._oldRepoMDData['old_MD_files'] = reverts
             
+        # Inited twice atm. ... sue me
+        self._oldRepoMDData['new_MD_files'] = []
         for mdtype in all_mdtypes:
             (nmdtype, ndata) = self._get_mdtype_data(mdtype)
 
