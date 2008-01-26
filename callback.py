@@ -24,7 +24,7 @@ import sys
 import logging
 from yum.constants import *
 
-from i18n import _
+from yum.i18n import _
 
 class RPMInstallCallback:
 

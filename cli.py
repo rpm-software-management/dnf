@@ -39,7 +39,7 @@ import rpmUtils.arch
 from rpmUtils.arch import isMultiLibArch
 import rpmUtils.miscutils
 from yum.packages import parsePackages, YumLocalPackage
-from i18n import _
+from yum.i18n import _
 from yum.rpmtrans import RPMTransaction
 import signal
 import yumcommands

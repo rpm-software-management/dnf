@@ -17,7 +17,7 @@ import sys
 
 import yum
 from cli import *
-from i18n import _
+from yum.i18n import _
 
 
 import yum.plugins as plugins

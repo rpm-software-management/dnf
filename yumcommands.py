@@ -23,7 +23,7 @@ import os
 import cli
 from yum import logginglevels
 import yum.Errors
-from i18n import _
+from yum.i18n import _
 
 def checkRootUID(base):
     """
