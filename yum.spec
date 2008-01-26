@@ -10,6 +10,8 @@ BuildRoot: %{_tmppath}/%{name}-%{version}root
 BuildArchitectures: noarch
 BuildRequires: python
 BuildRequires: gettext
+BuildRequires: intltool
+
 Requires: python >= 2.4
 Requires: rpm-python, rpm >= 0:4.4.2
 Requires: python-sqlite
