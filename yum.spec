@@ -53,6 +53,8 @@ make DESTDIR=$RPM_BUILD_ROOT install
 # install -m 644 %{SOURCE1} $RPM_BUILD_ROOT/etc/yum/yum.conf
 # install -m 755 %{SOURCE2} $RPM_BUILD_ROOT/etc/cron.daily/yum.cron
 
+%find_lang %name
+
 %clean
 [ "$RPM_BUILD_ROOT" != "/" ] && rm -rf $RPM_BUILD_ROOT
 
@@ -94,6 +96,10 @@ exit 0
 %{_mandir}/man*/yum-updatesd*
 
 %changelog
+* Sat Jan 26 2008 Tim Lauridsen <timlau at fedoraproject.org>
+- Added BuildRequires: intltool
+- Added -f %%{name}.lang to %%files
+- Added %%find_lang %%name to %%install
 * Thu Jan 24 2008 Seth Vidal <skvidal at fedoraproject.org>
 - 3.2.10
 
