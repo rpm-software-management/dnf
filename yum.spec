@@ -69,7 +69,7 @@ if [ $1 = 0 ]; then
 fi
 exit 0
 
-%files
+%files -f %{name}.lang
 %defattr(-, root, root)
 %doc README AUTHORS COPYING TODO INSTALL ChangeLog PLUGINS
 %config(noreplace) %{_sysconfdir}/yum/yum.conf
