@@ -79,6 +79,7 @@ exit 0
 %dir %{_sysconfdir}/yum/repos.d
 %config %{_sysconfdir}/logrotate.d/%{name}
 %{_datadir}/yum-cli/*
+%exclude %{_datadir}/yum-cli/yumupd.py*
 %{_bindir}/yum
 /usr/lib/python?.?/site-packages/yum
 /usr/lib/python?.?/site-packages/rpmUtils
@@ -92,10 +93,14 @@ exit 0
 %config(noreplace) %{_sysconfdir}/yum/yum-updatesd.conf
 %config %{_sysconfdir}/rc.d/init.d/yum-updatesd
 %config %{_sysconfdir}/dbus-1/system.d/yum-updatesd.conf
+%{_datadir}/yum-cli/yumupd.py*
 %{_sbindir}/yum-updatesd
 %{_mandir}/man*/yum-updatesd*
 
 %changelog
+* Sun Jan 27 2008 James Bowes <jbowes@redhat.com>
+- Move the yumupd module to yum-updatesd
+
 * Sat Jan 26 2008 Tim Lauridsen <timlau at fedoraproject.org>
 - Added BuildRequires: intltool
 - Added -f %%{name}.lang to %%files
