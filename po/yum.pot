@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-01-26 15:54+0100\n"
+"POT-Creation-Date: 2008-01-27 19:52+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -163,6 +163,201 @@ msgstr ""
 
 #: ../yumcommands.py:114
 msgid "Error: more than one file given as argument to shell."
+msgstr ""
+
+#: ../yum/depsolve.py:70
+msgid "doTsSetup() will go away in a future version of Yum.\n"
+msgstr ""
+
+#: ../yum/depsolve.py:83
+msgid "Setting up TransactionSets before config class is up"
+msgstr ""
+
+#: ../yum/depsolve.py:123
+#, python-format
+msgid "Invalid tsflag in config file: %s"
+msgstr ""
+
+#: ../yum/depsolve.py:134
+#, python-format
+msgid "Searching pkgSack for dep: %s"
+msgstr ""
+
+#: ../yum/depsolve.py:163
+#, python-format
+msgid "Potential match for %s from %s"
+msgstr ""
+
+#: ../yum/depsolve.py:171
+#, python-format
+msgid "Matched %s to require for %s"
+msgstr ""
+
+#: ../yum/depsolve.py:212
+#, python-format
+msgid "Member: %s"
+msgstr ""
+
+#: ../yum/depsolve.py:226 ../yum/depsolve.py:776
+#, python-format
+msgid "%s converted to install"
+msgstr ""
+
+#: ../yum/depsolve.py:233
+#, python-format
+msgid "Adding Package %s in mode %s"
+msgstr ""
+
+#: ../yum/depsolve.py:243
+#, python-format
+msgid "Removing Package %s"
+msgstr ""
+
+#: ../yum/depsolve.py:254
+#, python-format
+msgid "%s requires: %s"
+msgstr ""
+
+#: ../yum/depsolve.py:288
+msgid "Needed Require has already been looked up, cheating"
+msgstr ""
+
+#: ../yum/depsolve.py:298
+#, python-format
+msgid "Needed Require is not a package name. Looking up: %s"
+msgstr ""
+
+#: ../yum/depsolve.py:305
+#, python-format
+msgid "Potential Provider: %s"
+msgstr ""
+
+#: ../yum/depsolve.py:328
+#, python-format
+msgid "Mode is %s for provider of %s: %s"
+msgstr ""
+
+#: ../yum/depsolve.py:332
+#, python-format
+msgid "Mode for pkg providing %s: %s"
+msgstr ""
+
+#: ../yum/depsolve.py:336
+#, python-format
+msgid "TSINFO: %s package requiring %s marked as erase"
+msgstr ""
+
+#: ../yum/depsolve.py:349
+#, python-format
+msgid "Looking for Obsoletes for %s"
+msgstr ""
+
+#: ../yum/depsolve.py:361
+#, python-format
+msgid "TSINFO: Obsoleting %s with %s to resolve dep."
+msgstr ""
+
+#: ../yum/depsolve.py:392
+#, python-format
+msgid "TSINFO: Updating %s to resolve dep."
+msgstr ""
+
+#. if there's no update then pass this over to requringFromTransaction()
+#: ../yum/depsolve.py:396
+#, python-format
+msgid "Cannot find an update path for dep for: %s"
+msgstr ""
+
+#: ../yum/depsolve.py:408
+#, python-format
+msgid "Unresolvable requirement %s for %s"
+msgstr ""
+
+#. is it already installed?
+#: ../yum/depsolve.py:454
+#, python-format
+msgid "%s is in providing packages but it is already installed, removing."
+msgstr ""
+
+#: ../yum/depsolve.py:469
+#, python-format
+msgid "Potential resolving package %s has newer instance in ts."
+msgstr ""
+
+#: ../yum/depsolve.py:480
+#, python-format
+msgid "Potential resolving package %s has newer instance installed."
+msgstr ""
+
+#: ../yum/depsolve.py:488 ../yum/depsolve.py:556
+#, python-format
+msgid "Missing Dependency: %s is needed by package %s"
+msgstr ""
+
+#: ../yum/depsolve.py:501
+#, python-format
+msgid "%s already in ts, skipping this one"
+msgstr ""
+
+#: ../yum/depsolve.py:566
+#, python-format
+msgid "TSINFO: Marking %s as update for %s"
+msgstr ""
+
+#: ../yum/depsolve.py:573
+#, python-format
+msgid "TSINFO: Marking %s as install for %s"
+msgstr ""
+
+#: ../yum/depsolve.py:635 ../yum/depsolve.py:642
+#, python-format
+msgid "unable to find newer package for %s"
+msgstr ""
+
+#: ../yum/depsolve.py:649
+#, python-format
+msgid "TSINFO: Updating %s to resolve conflict."
+msgstr ""
+
+#: ../yum/depsolve.py:659
+#, python-format
+msgid "%s conflicts: %s"
+msgstr ""
+
+#: ../yum/depsolve.py:669
+#, python-format
+msgid "%s conflicts with %s"
+msgstr ""
+
+#: ../yum/depsolve.py:708 ../yum/depsolve.py:794
+msgid "Success - empty transaction"
+msgstr ""
+
+#: ../yum/depsolve.py:753 ../yum/depsolve.py:766
+msgid "Restarting Loop"
+msgstr ""
+
+#: ../yum/depsolve.py:782
+msgid "Dependency Process ending"
+msgstr ""
+
+#: ../yum/depsolve.py:788
+#, python-format
+msgid "%s from %s has depsolving problems"
+msgstr ""
+
+#: ../yum/depsolve.py:795
+msgid "Success - deps resolved"
+msgstr ""
+
+#: ../yum/depsolve.py:812
+#, python-format
+msgid "Checking deps for %s"
+msgstr ""
+
+#: ../yum/depsolve.py:868
+#, python-format
+msgid "looking for %s as a requirement of %s"
 msgstr ""
 
 #: ../yum/__init__.py:114
