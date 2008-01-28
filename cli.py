@@ -44,9 +44,6 @@ from yum.rpmtrans import RPMTransaction
 import signal
 import yumcommands
 
-import urlgrabber.grabber
-import tempfile
-
 def sigquit(signum, frame):
     """ SIGQUIT handler for the yum cli. """
     print >> sys.stderr, "Quit signal sent - exiting immediately"
@@ -1035,19 +1032,6 @@ class YumOptionParser(OptionParser):
                     self.base.usage()
                     sys.exit(1)
 
-            # Don't use self._splitArg()? ... or require URLs without commas?
-            for trepo in self._splitArg(opts.tmp_repos):
-                tfo   = tempfile.NamedTemporaryFile()
-                fname = tfo.name
-                grab = urlgrabber.grabber.URLGrabber()
-                try:
-                    grab.urlgrab(trepo, fname)
-                except urlgrabber.grabber.URLGrabError, e:
-                    self.logger.warn("Failed to retrieve " + trepo)
-                    continue
-
-                self.base.getReposFromConfigFile(fname, gpgcheck=True)
-
             # setup the progress bars/callbacks
             self.base.setupProgressCallbacks()
                     
@@ -1154,10 +1138,6 @@ class YumOptionParser(OptionParser):
                 metavar='[plugin]')
         self.add_option("--skip-broken", action="store_true", dest="skipbroken",
                 help=_("skip packages with depsolving problems"))
-        self.add_option("--tmprepo", action='append',
-                type='string', dest='tmp_repos', default=[],
-                help=_("enable one or more repositories from URLs"),
-                metavar='[url]')
 
 
         
