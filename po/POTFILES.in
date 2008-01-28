@@ -2,9 +2,7 @@
 callback.py
 cli.py
 output.py
-progress_meter.py
 shell.py
-translate.py
 utils.py
 yumcommands.py
 yummain.py

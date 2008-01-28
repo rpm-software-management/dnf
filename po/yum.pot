@@ -3,13 +3,12 @@
 # This file is distributed under the same license as the PACKAGE package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 #
-#: ../translate.py:221
 #, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-01-28 07:59+0100\n"
+"POT-Creation-Date: 2008-01-28 08:17+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -358,6 +357,10 @@ msgstr ""
 msgid "skip packages with depsolving problems"
 msgstr ""
 
+#: ../output.py:240
+msgid "Trying other mirror."
+msgstr ""
+
 #: ../output.py:267
 #, python-format
 msgid "Name   : %s"
@@ -403,6 +406,229 @@ msgstr ""
 msgid ""
 "Description:\n"
 "%s"
+msgstr ""
+
+#: ../output.py:320
+msgid "Is this ok [y/N]: "
+msgstr ""
+
+#: ../output.py:334
+#, python-format
+msgid ""
+"\n"
+"Group: %s"
+msgstr ""
+
+#: ../output.py:336
+#, python-format
+msgid " Description: %s"
+msgstr ""
+
+#: ../output.py:338
+msgid " Mandatory Packages:"
+msgstr ""
+
+#: ../output.py:343
+msgid " Default Packages:"
+msgstr ""
+
+#: ../output.py:348
+msgid " Optional Packages:"
+msgstr ""
+
+#: ../output.py:353
+msgid " Conditional Packages:"
+msgstr ""
+
+#: ../output.py:361
+#, python-format
+msgid "package: %s"
+msgstr ""
+
+#: ../output.py:363
+msgid "  No dependencies for this package"
+msgstr ""
+
+#: ../output.py:368
+#, python-format
+msgid "  dependency: %s"
+msgstr ""
+
+#: ../output.py:370
+msgid "   Unsatisfied dependency"
+msgstr ""
+
+#: ../output.py:453
+msgid "There was an error calculating total download size"
+msgstr ""
+
+#: ../output.py:458
+#, python-format
+msgid "Total size: %s"
+msgstr ""
+
+#: ../output.py:461
+#, python-format
+msgid "Total download size: %s"
+msgstr ""
+
+#: ../output.py:473
+msgid "Package"
+msgstr ""
+
+#: ../output.py:473
+msgid "Arch"
+msgstr ""
+
+#: ../output.py:473
+msgid "Version"
+msgstr ""
+
+#: ../output.py:473
+msgid "Repository"
+msgstr ""
+
+#: ../output.py:473
+msgid "Size"
+msgstr ""
+
+#: ../output.py:477
+msgid "Installing"
+msgstr ""
+
+#: ../output.py:478
+msgid "Updating"
+msgstr ""
+
+#: ../output.py:479
+msgid "Removing"
+msgstr ""
+
+#: ../output.py:480
+msgid "Installing for dependencies"
+msgstr ""
+
+#: ../output.py:481
+msgid "Updating for dependencies"
+msgstr ""
+
+#: ../output.py:482
+msgid "Removing for dependencies"
+msgstr ""
+
+#: ../output.py:494
+#, python-format
+msgid ""
+"     replacing  %s.%s %s\n"
+"\n"
+msgstr ""
+
+#: ../output.py:502
+#, python-format
+msgid ""
+"\n"
+"Transaction Summary\n"
+"=============================================================================\n"
+"Install  %5.5s Package(s)         \n"
+"Update   %5.5s Package(s)         \n"
+"Remove   %5.5s Package(s)         \n"
+msgstr ""
+
+#: ../output.py:520
+msgid "Removed"
+msgstr ""
+
+#: ../output.py:521
+msgid "Dependency Removed"
+msgstr ""
+
+#: ../output.py:522
+msgid "Installed"
+msgstr ""
+
+#: ../output.py:523
+msgid "Dependency Installed"
+msgstr ""
+
+#: ../output.py:524
+msgid "Updated"
+msgstr ""
+
+#: ../output.py:525
+msgid "Dependency Updated"
+msgstr ""
+
+#: ../output.py:526
+msgid "Replaced"
+msgstr ""
+
+#: ../output.py:584
+#, python-format
+msgid ""
+"\n"
+" Current download cancelled, %sinterrupt (ctrl-c) again%s within %s%s%s "
+"seconds to exit.\n"
+msgstr ""
+
+#: ../output.py:594
+msgid "user interrupt"
+msgstr ""
+
+#: ../output.py:605
+msgid "installed"
+msgstr ""
+
+#: ../output.py:606
+msgid "updated"
+msgstr ""
+
+#: ../output.py:607
+msgid "obsoleted"
+msgstr ""
+
+#: ../output.py:608
+msgid "erased"
+msgstr ""
+
+#: ../output.py:612
+#, python-format
+msgid "---> Package %s.%s %s:%s-%s set to be %s"
+msgstr ""
+
+#: ../output.py:619
+msgid "--> Running transaction check"
+msgstr ""
+
+#: ../output.py:624
+msgid "--> Restarting Dependency Resolution with new changes."
+msgstr ""
+
+#: ../output.py:629
+msgid "--> Finished Dependency Resolution"
+msgstr ""
+
+#: ../output.py:634
+#, python-format
+msgid "--> Processing Dependency: %s for package: %s"
+msgstr ""
+
+#: ../output.py:639
+#, python-format
+msgid "--> Unresolved Dependency: %s"
+msgstr ""
+
+#: ../output.py:645
+#, python-format
+msgid "--> Processing Conflict: %s conflicts %s"
+msgstr ""
+
+#: ../output.py:648
+msgid "--> Populating transaction set with selected packages. Please wait."
+msgstr ""
+
+#: ../output.py:652
+#, python-format
+msgid "---> Downloading header for %s to pack into transaction set."
 msgstr ""
 
 #: ../yumcommands.py:35

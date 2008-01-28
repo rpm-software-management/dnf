@@ -3,12 +3,11 @@
 # Grigory Bakunov <black@asplinux.ru>, 2002,2003.
 # Vladimir Bormotov <bor@insight.donbass.com>, 2002.
 #
-#: ../translate.py:221
 msgid ""
 msgstr ""
 "Project-Id-Version: yum\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-01-28 07:59+0100\n"
+"POT-Creation-Date: 2008-01-28 08:17+0100\n"
 "PO-Revision-Date: 2003-10-14 15:36+0400\n"
 "Last-Translator: Grigory Bakunov <black@asplinux.ru>\n"
 "Language-Team: Russian <ru@li.org>\n"
@@ -376,6 +375,10 @@ msgstr ""
 msgid "skip packages with depsolving problems"
 msgstr ""
 
+#: ../output.py:240
+msgid "Trying other mirror."
+msgstr ""
+
 #: ../output.py:267
 #, python-format
 msgid "Name   : %s"
@@ -424,6 +427,249 @@ msgid ""
 msgstr ""
 "Описание:\n"
 " %s"
+
+#: ../output.py:320
+msgid "Is this ok [y/N]: "
+msgstr "Выполнить [y/N]: "
+
+#: ../output.py:334
+#, fuzzy, python-format
+msgid ""
+"\n"
+"Group: %s"
+msgstr "Группа: %s"
+
+#: ../output.py:336
+#, fuzzy, python-format
+msgid " Description: %s"
+msgstr ""
+"Описание:\n"
+" %s"
+
+#: ../output.py:338
+msgid " Mandatory Packages:"
+msgstr ""
+
+#: ../output.py:343
+#, fuzzy
+msgid " Default Packages:"
+msgstr "Удаление пакетов"
+
+#: ../output.py:348
+#, fuzzy
+msgid " Optional Packages:"
+msgstr "Поиск обновленных пакетов"
+
+#: ../output.py:353
+#, fuzzy
+msgid " Conditional Packages:"
+msgstr "Поиск обновленных пакетов"
+
+#: ../output.py:361
+#, fuzzy, python-format
+msgid "package: %s"
+msgstr "Удаление пакетов"
+
+#: ../output.py:363
+msgid "  No dependencies for this package"
+msgstr ""
+
+#: ../output.py:368
+#, python-format
+msgid "  dependency: %s"
+msgstr ""
+
+#: ../output.py:370
+msgid "   Unsatisfied dependency"
+msgstr ""
+
+#: ../output.py:453
+msgid "There was an error calculating total download size"
+msgstr ""
+
+#: ../output.py:458
+#, fuzzy, python-format
+msgid "Total size: %s"
+msgstr "Не обычный файл: %s"
+
+#: ../output.py:461
+#, fuzzy, python-format
+msgid "Total download size: %s"
+msgstr "Не обычный файл: %s"
+
+#: ../output.py:473
+msgid "Package"
+msgstr ""
+
+#: ../output.py:473
+msgid "Arch"
+msgstr "Арх."
+
+#: ../output.py:473
+msgid "Version"
+msgstr "Версия"
+
+#: ../output.py:473
+msgid "Repository"
+msgstr ""
+
+#: ../output.py:473
+msgid "Size"
+msgstr ""
+
+#: ../output.py:477
+#, fuzzy
+msgid "Installing"
+msgstr "Ошибки установки:"
+
+#: ../output.py:478
+msgid "Updating"
+msgstr ""
+
+#: ../output.py:479
+msgid "Removing"
+msgstr ""
+
+#: ../output.py:480
+#, fuzzy
+msgid "Installing for dependencies"
+msgstr "Разрешение зависимостей"
+
+#: ../output.py:481
+#, fuzzy
+msgid "Updating for dependencies"
+msgstr "Разрешение зависимостей"
+
+#: ../output.py:482
+#, fuzzy
+msgid "Removing for dependencies"
+msgstr "Разрешение зависимостей"
+
+#: ../output.py:494
+#, python-format
+msgid ""
+"     replacing  %s.%s %s\n"
+"\n"
+msgstr ""
+
+#: ../output.py:502
+#, python-format
+msgid ""
+"\n"
+"Transaction Summary\n"
+"=============================================================================\n"
+"Install  %5.5s Package(s)         \n"
+"Update   %5.5s Package(s)         \n"
+"Remove   %5.5s Package(s)         \n"
+msgstr ""
+
+#: ../output.py:520
+msgid "Removed"
+msgstr ""
+
+#: ../output.py:521
+#, fuzzy
+msgid "Dependency Removed"
+msgstr "Зависимости разрешены"
+
+#: ../output.py:522
+#, fuzzy
+msgid "Installed"
+msgstr "Установлено по зависимостям: "
+
+#: ../output.py:523
+#, fuzzy
+msgid "Dependency Installed"
+msgstr "Установлено по зависимостям: "
+
+#: ../output.py:524
+#, fuzzy
+msgid "Updated"
+msgstr "Обновлено: "
+
+#: ../output.py:525
+#, fuzzy
+msgid "Dependency Updated"
+msgstr "Зависимости разрешены"
+
+#: ../output.py:526
+msgid "Replaced"
+msgstr ""
+
+#: ../output.py:584
+#, python-format
+msgid ""
+"\n"
+" Current download cancelled, %sinterrupt (ctrl-c) again%s within %s%s%s "
+"seconds to exit.\n"
+msgstr ""
+
+#: ../output.py:594
+msgid "user interrupt"
+msgstr ""
+
+#: ../output.py:605
+#, fuzzy
+msgid "installed"
+msgstr "Установлено по зависимостям: "
+
+#: ../output.py:606
+#, fuzzy
+msgid "updated"
+msgstr "Обновлено: "
+
+#: ../output.py:607
+msgid "obsoleted"
+msgstr ""
+
+#: ../output.py:608
+#, fuzzy
+msgid "erased"
+msgstr "Удалено: "
+
+#: ../output.py:612
+#, fuzzy, python-format
+msgid "---> Package %s.%s %s:%s-%s set to be %s"
+msgstr ""
+"Установленный пакет: %s.%s %s:%s-%s предоставляет\n"
+" %s"
+
+#: ../output.py:619
+#, fuzzy
+msgid "--> Running transaction check"
+msgstr "Неизвестная ошибка в тестой транзакции:"
+
+#: ../output.py:624
+msgid "--> Restarting Dependency Resolution with new changes."
+msgstr ""
+
+#: ../output.py:629
+msgid "--> Finished Dependency Resolution"
+msgstr ""
+
+#: ../output.py:634
+#, python-format
+msgid "--> Processing Dependency: %s for package: %s"
+msgstr ""
+
+#: ../output.py:639
+#, python-format
+msgid "--> Unresolved Dependency: %s"
+msgstr ""
+
+#: ../output.py:645
+#, python-format
+msgid "--> Processing Conflict: %s conflicts %s"
+msgstr ""
+
+#: ../output.py:648
+msgid "--> Populating transaction set with selected packages. Please wait."
+msgstr ""
+
+#: ../output.py:652
+#, python-format
+msgid "---> Downloading header for %s to pack into transaction set."
+msgstr ""
 
 #: ../yumcommands.py:35
 #, fuzzy
@@ -1232,9 +1478,6 @@ msgstr "Невозможно открыть пакет %s - ошибка %s"
 #~ "Уже найден кортеж: %s %s:\n"
 #~ "%s "
 
-#~ msgid "Dep Installed: "
-#~ msgstr "Установлено по зависимостям: "
-
 #~ msgid "errors found"
 #~ msgstr "найдены ошибки"
 
@@ -1313,9 +1556,6 @@ msgstr "Невозможно открыть пакет %s - ошибка %s"
 #~ msgid "[deps: %s]"
 #~ msgstr "[зависимость: %s]"
 
-#~ msgid "Version"
-#~ msgstr "Версия"
-
 #~ msgid "Looking in Available Packages:"
 #~ msgstr "Просмотр доступных пакетов"
 
@@ -1328,13 +1568,6 @@ msgstr "Невозможно открыть пакет %s - ошибка %s"
 
 #~ msgid "Checking deps %d/%d complete"
 #~ msgstr "Проверка зависимостей %d/d"
-
-#~ msgid ""
-#~ "Installed package: %s.%s %s:%s-%s matches with\n"
-#~ " %s"
-#~ msgstr ""
-#~ "Установленный пакет: %s.%s %s:%s-%s предоставляет\n"
-#~ " %s"
 
 #~ msgid ""
 #~ "Errors within the dir(s):\n"
@@ -1383,9 +1616,6 @@ msgstr "Невозможно открыть пакет %s - ошибка %s"
 #~ msgid "NonMatching RPM version, %s, removing."
 #~ msgstr "Несовпадающая версия RPM, %s, удаляется."
 
-#~ msgid "Is this ok [y/N]: "
-#~ msgstr "Выполнить [y/N]: "
-
 #~ msgid "I will erase these to satisfy the dependencies:"
 #~ msgstr "Необходимо удалить эти пакеты для разрешения зависимостей:"
 
@@ -1417,9 +1647,6 @@ msgstr "Невозможно открыть пакет %s - ошибка %s"
 #~ msgid "Unable to run grubby correctly: the message was:\n"
 #~ msgstr "Hевозможно запустить grubby:\n"
 
-#~ msgid "Not a normal file: %s"
-#~ msgstr "Не обычный файл: %s"
-
 #~ msgid "IOError - # %s - %s"
 #~ msgstr "Ошибка ввода-вывода - # %s - %s"
 
@@ -1431,9 +1658,6 @@ msgstr "Невозможно открыть пакет %s - ошибка %s"
 
 #~ msgid "Error: Disk space Error"
 #~ msgstr "Ошибка: Недостаточно места на диске"
-
-#~ msgid "Updated: "
-#~ msgstr "Обновлено: "
 
 #~ msgid "Need to pass a list of pkgs to install"
 #~ msgstr "Необходимо указать список пакетов для установки"
@@ -1452,9 +1676,6 @@ msgstr "Невозможно открыть пакет %s - ошибка %s"
 #~ msgid "Insufficient server config - no servers found. Aborting."
 #~ msgstr ""
 #~ "Не найден файл настроек сервера - репозиторий не найден. Завершение."
-
-#~ msgid "Resolving dependencies"
-#~ msgstr "Разрешение зависимостей"
 
 #~ msgid ""
 #~ "\n"
@@ -1520,9 +1741,6 @@ msgstr "Невозможно открыть пакет %s - ошибка %s"
 #~ msgstr ""
 #~ "\n"
 #~ "Получение файла header.info"
-
-#~ msgid "Arch"
-#~ msgstr "Арх."
 
 #~ msgid "Gathering header information file(s) from server(s)"
 #~ msgstr "Получение файлов заголовков с серверов"
@@ -1641,9 +1859,6 @@ msgstr "Невозможно открыть пакет %s - ошибка %s"
 
 #~ msgid "Repo"
 #~ msgstr "Репозиторий"
-
-#~ msgid "Group  : %s"
-#~ msgstr "Группа: %s"
 
 #~ msgid "No bootloader found, Cannot configure kernel."
 #~ msgstr "Загрузчик не найден, загрузка нового ядра не настроена."

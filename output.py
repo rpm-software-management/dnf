@@ -237,7 +237,7 @@ class YumOutput:
         """failure output for failovers from urlgrabber"""
         
         self.logger.error('%s: %s', errobj.url, str(errobj.exception))
-        self.logger.error('Trying other mirror.')
+        self.logger.error(_('Trying other mirror.'))
         raise errobj.exception
     
         
@@ -317,7 +317,7 @@ class YumOutput:
 
         while True:
             try:
-                choice = raw_input('Is this ok [y/N]: ')
+                choice = raw_input(_('Is this ok [y/N]: '))
             except:
                 choice = ''
             choice = choice.lower()
@@ -331,26 +331,26 @@ class YumOutput:
                 
     
     def displayPkgsInGroups(self, group):
-        print '\nGroup: %s' % group.name
+        print _('\nGroup: %s') % group.name
         if group.description != "":
-            print ' Description: %s' % group.description.encode("UTF-8")
+            print _(' Description: %s') % group.description.encode("UTF-8")
         if len(group.mandatory_packages) > 0:
-            print ' Mandatory Packages:'
+            print _(' Mandatory Packages:')
             for item in group.mandatory_packages:
                 print '   %s' % item
 
         if len(group.default_packages) > 0:
-            print ' Default Packages:'
+            print _(' Default Packages:')
             for item in group.default_packages:
                 print '   %s' % item
         
         if len(group.optional_packages) > 0:
-            print ' Optional Packages:'
+            print _(' Optional Packages:')
             for item in group.optional_packages:
                 print '   %s' % item
 
         if len(group.conditional_packages) > 0:
-            print ' Conditional Packages:'
+            print _(' Conditional Packages:')
             for item, cond in group.conditional_packages.iteritems():
                 print '   %s' % (item,)
 
@@ -358,16 +358,16 @@ class YumOutput:
         """take a list of findDeps results and 'pretty print' the output"""
         
         for pkg in results:
-            print "package: %s" % pkg.compactPrint()
+            print _("package: %s") % pkg.compactPrint()
             if len(results[pkg]) == 0:
-                print "  No dependencies for this package"
+                print _("  No dependencies for this package")
                 continue
 
             for req in results[pkg]:
                 reqlist = results[pkg][req] 
-                print "  dependency: %s" % prco_tuple_to_string(req)
+                print _("  dependency: %s") % prco_tuple_to_string(req)
                 if not reqlist:
-                    print "   Unsatisfied dependency"
+                    print _("   Unsatisfied dependency")
                     continue
                 
                 for po in reqlist:
@@ -450,15 +450,15 @@ class YumOutput:
                    pass
             except:
                  error = True
-                 self.logger.error('There was an error calculating total download size')
+                 self.logger.error(_('There was an error calculating total download size'))
                  break
 
         if (not error):
             if locsize:
-                self.verbose_logger.log(logginglevels.INFO_1, "Total size: %s", 
+                self.verbose_logger.log(logginglevels.INFO_1, _("Total size: %s"), 
                                         self.format_number(totsize))
             if locsize != totsize:
-                self.verbose_logger.log(logginglevels.INFO_1, "Total download size: %s", 
+                self.verbose_logger.log(logginglevels.INFO_1, _("Total download size: %s"), 
                                         self.format_number(totsize - locsize))
             
     def listTransaction(self):
@@ -470,16 +470,16 @@ class YumOutput:
 =============================================================================
  %-22s  %-9s  %-15s  %-16s  %-5s
 =============================================================================
-""" % ('Package', 'Arch', 'Version', 'Repository', 'Size')
+""" % (_('Package'), _('Arch'), _('Version'), _('Repository'), _('Size'))
         else:
             out = ""
 
-        for (action, pkglist) in [('Installing', self.tsInfo.installed),
-                            ('Updating', self.tsInfo.updated),
-                            ('Removing', self.tsInfo.removed),
-                            ('Installing for dependencies', self.tsInfo.depinstalled),
-                            ('Updating for dependencies', self.tsInfo.depupdated),
-                            ('Removing for dependencies', self.tsInfo.depremoved)]:
+        for (action, pkglist) in [(_('Installing'), self.tsInfo.installed),
+                            (_('Updating'), self.tsInfo.updated),
+                            (_('Removing'), self.tsInfo.removed),
+                            (_('Installing for dependencies'), self.tsInfo.depinstalled),
+                            (_('Updating for dependencies'), self.tsInfo.depupdated),
+                            (_('Removing for dependencies'), self.tsInfo.depremoved)]:
             if pkglist:
                 totalmsg = "%s:\n" % action
             for txmbr in pkglist:
@@ -491,7 +491,7 @@ class YumOutput:
                 msg = " %-22s  %-9s  %-15s  %-16s  %5s\n" % (n, a,
                               evr, repoid, size)
                 for obspo in txmbr.obsoletes:
-                    appended = '     replacing  %s.%s %s\n\n' % (obspo.name,
+                    appended = _('     replacing  %s.%s %s\n\n') % (obspo.name,
                         obspo.arch, obspo.printVer())
                     msg = msg+appended
                 totalmsg = totalmsg + msg
@@ -499,13 +499,13 @@ class YumOutput:
             if pkglist:
                 out = out + totalmsg
 
-        summary = """
+        summary = _("""
 Transaction Summary
 =============================================================================
 Install  %5.5s Package(s)         
 Update   %5.5s Package(s)         
 Remove   %5.5s Package(s)         
-""" % (len(self.tsInfo.installed + self.tsInfo.depinstalled),
+""") % (len(self.tsInfo.installed + self.tsInfo.depinstalled),
        len(self.tsInfo.updated + self.tsInfo.depupdated),
        len(self.tsInfo.removed + self.tsInfo.depremoved))
         out = out + summary
@@ -517,13 +517,13 @@ Remove   %5.5s Package(s)
         
         self.tsInfo.makelists()
 
-        for (action, pkglist) in [('Removed', self.tsInfo.removed), 
-                                  ('Dependency Removed', self.tsInfo.depremoved),
-                                  ('Installed', self.tsInfo.installed), 
-                                  ('Dependency Installed', self.tsInfo.depinstalled),
-                                  ('Updated', self.tsInfo.updated),
-                                  ('Dependency Updated', self.tsInfo.depupdated),
-                                  ('Replaced', self.tsInfo.obsoleted)]:
+        for (action, pkglist) in [(_('Removed'), self.tsInfo.removed), 
+                                  (_('Dependency Removed'), self.tsInfo.depremoved),
+                                  (_('Installed'), self.tsInfo.installed), 
+                                  (_('Dependency Installed'), self.tsInfo.depinstalled),
+                                  (_('Updated'), self.tsInfo.updated),
+                                  (_('Dependency Updated'), self.tsInfo.depupdated),
+                                  (_('Replaced'), self.tsInfo.obsoleted)]:
             
             if len(pkglist) > 0:
                 out += '\n%s:' % action
@@ -581,9 +581,9 @@ Remove   %5.5s Package(s)
         if not hasattr(self, '_last_interrupt'):
             hibeg = self.term.MODE['bold']
             hiend = self.term.MODE['normal']
-            msg = """
+            msg = _("""
  Current download cancelled, %sinterrupt (ctrl-c) again%s within %s%s%s seconds to exit.
-""" % (hibeg, hiend, hibeg, delta_exit_str, hiend)
+""") % (hibeg, hiend, hibeg, delta_exit_str, hiend)
             self.verbose_logger.log(logginglevels.INFO_2, msg)
         elif now - self._last_interrupt < delta_exit_chk:
             # Two quick CTRL-C's, quit
@@ -591,7 +591,7 @@ Remove   %5.5s Package(s)
 
         # Go to next mirror
         self._last_interrupt = now
-        raise URLGrabError(15, 'user interrupt')
+        raise URLGrabError(15, _('user interrupt'))
 
 class DepSolveProgressCallBack:
     """provides text output callback functions for Dependency Solver callback"""
@@ -602,55 +602,55 @@ class DepSolveProgressCallBack:
         self.loops = 0
     
     def pkgAdded(self, pkgtup, mode):
-        modedict = { 'i': 'installed',
-                     'u': 'updated',
-                     'o': 'obsoleted',
-                     'e': 'erased'}
+        modedict = { 'i': _('installed'),
+                     'u': _('updated'),
+                     'o': _('obsoleted'),
+                     'e': _('erased')}
         (n, a, e, v, r) = pkgtup
         modeterm = modedict[mode]
         self.verbose_logger.log(logginglevels.INFO_2,
-            '---> Package %s.%s %s:%s-%s set to be %s', n, a, e, v, r,
+            _('---> Package %s.%s %s:%s-%s set to be %s'), n, a, e, v, r,
             modeterm)
         
     def start(self):
         self.loops += 1
         
     def tscheck(self):
-        self.verbose_logger.log(logginglevels.INFO_2, '--> Running transaction check')
+        self.verbose_logger.log(logginglevels.INFO_2, _('--> Running transaction check'))
         
     def restartLoop(self):
         self.loops += 1
         self.verbose_logger.log(logginglevels.INFO_2,
-            '--> Restarting Dependency Resolution with new changes.')
+            _('--> Restarting Dependency Resolution with new changes.'))
         self.verbose_logger.debug('---> Loop Number: %d', self.loops)
     
     def end(self):
         self.verbose_logger.log(logginglevels.INFO_2,
-            '--> Finished Dependency Resolution')
+            _('--> Finished Dependency Resolution'))
 
     
     def procReq(self, name, formatted_req):
         self.verbose_logger.log(logginglevels.INFO_2,
-            '--> Processing Dependency: %s for package: %s', formatted_req,
+            _('--> Processing Dependency: %s for package: %s'), formatted_req,
             name)
         
     
     def unresolved(self, msg):
-        self.verbose_logger.log(logginglevels.INFO_2, '--> Unresolved Dependency: %s',
+        self.verbose_logger.log(logginglevels.INFO_2, _('--> Unresolved Dependency: %s'),
             msg)
 
     
     def procConflict(self, name, confname):
         self.verbose_logger.log(logginglevels.INFO_2,
-            '--> Processing Conflict: %s conflicts %s', name, confname)
+            _('--> Processing Conflict: %s conflicts %s'), name, confname)
 
     def transactionPopulation(self):
-        self.verbose_logger.log(logginglevels.INFO_2, '--> Populating transaction set '
-            'with selected packages. Please wait.')
+        self.verbose_logger.log(logginglevels.INFO_2, _('--> Populating transaction set '
+            'with selected packages. Please wait.'))
     
     def downloadHeader(self, name):
-        self.verbose_logger.log(logginglevels.INFO_2, '---> Downloading header for %s '
-            'to pack into transaction set.', name)
+        self.verbose_logger.log(logginglevels.INFO_2, _('---> Downloading header for %s '
+            'to pack into transaction set.'), name)
        
 
 class CacheProgressCallback:
