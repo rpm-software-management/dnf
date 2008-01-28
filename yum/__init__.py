@@ -63,6 +63,8 @@ from constants import *
 from yum.rpmtrans import RPMTransaction,SimpleCliCallBack
 from yum.i18n import _
 
+import string
+
 __version__ = '3.2.10'
 
 class YumBase(depsolve.Depsolve):
@@ -191,6 +193,63 @@ class YumBase(depsolve.Depsolve):
     def doFileLogSetup(self, uid, logfile):
         logginglevels.setFileLog(uid, logfile)
 
+    def getReposFromConfigFile(self, repofn, gpgcheck=False, repo_age=None):
+        """read in repositories from a config .repo file"""
+
+        if repo_age is None:
+            repo_age = os.stat(repofn)[8]
+        
+        confpp_obj = ConfigPreProcessor(repofn, vars=self.yumvar)
+        parser = ConfigParser()
+        try:
+            parser.readfp(confpp_obj)
+        except ParsingError, e:
+            msg = str(e)
+            raise Errors.ConfigError, msg
+
+        # Check sections in the .repo file that was just slurped up
+        for section in parser.sections():
+
+            # Check the repo.id against the valid chars
+            bad = None
+            for byte in section:
+                if byte in string.ascii_letters:
+                    continue
+                if byte in string.digits:
+                    continue
+                if byte in "-_.":
+                    continue
+                
+                bad = byte
+                break
+
+            if bad:
+                self.logger.warning("Bad name for repo: %s, byte = %s %d" %
+                                    (section, bad, section.find(byte)))
+                continue
+
+            try:
+                thisrepo = self.readRepoConfig(parser, section)
+            except (Errors.RepoError, Errors.ConfigError), e:
+                self.logger.warning(e)
+                continue
+            else:
+                thisrepo.repo_config_age = repo_age
+                thisrepo.repofile = repofn
+
+            if gpgcheck and not thisrepo.gpgcheck:
+                # Don't allow them to set gpgcheck=False
+                self.logger.warning("Repo %s tries to set gpgcheck=false" %
+                                    (thisrepo))
+                continue
+                    
+            # Got our list of repo objects, add them to the repos
+            # collection
+            try:
+                self._repos.add(thisrepo)
+            except Errors.RepoError, e:
+                self.logger.warning(e)
+        
     def getReposFromConfig(self):
         """read in repositories from config main and .repo files"""
 
@@ -228,31 +287,7 @@ class YumBase(depsolve.Depsolve):
                     thisrepo_age = os.stat(repofn)[8]
                     if thisrepo_age < repo_config_age:
                         thisrepo_age = repo_config_age
-                        
-                    confpp_obj = ConfigPreProcessor(repofn, vars=self.yumvar)
-                    parser = ConfigParser()
-                    try:
-                        parser.readfp(confpp_obj)
-                    except ParsingError, e:
-                        msg = str(e)
-                        raise Errors.ConfigError, msg
-                    
-                    # Check sections in the .repo file that was just slurped up
-                    for section in parser.sections():
-                        try:
-                            thisrepo = self.readRepoConfig(parser, section)
-                        except (Errors.RepoError, Errors.ConfigError), e:
-                            self.logger.warning(e)
-                        else:
-                            thisrepo.repo_config_age = thisrepo_age
-                            thisrepo.repofile = repofn
-
-                        # Got our list of repo objects, add them to the repos
-                        # collection
-                        try:
-                            self._repos.add(thisrepo)
-                        except Errors.RepoError, e:
-                            self.logger.warning(e)
+                    self.getReposFromConfigFile(repofn, repo_age=thisrepo_age)
 
     def readRepoConfig(self, parser, section):
         '''Parse an INI file section for a repository.
