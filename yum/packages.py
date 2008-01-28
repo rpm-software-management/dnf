@@ -822,6 +822,83 @@ class YumInstalledPackage(YumHeaderPackage):
         fakerepo = _installed_repo
         YumHeaderPackage.__init__(self, fakerepo, hdr)
 
+    def verify(self, patterns=[]):
+        """verify that the installed files match the packaged checksum
+           optionally verify they match only if they are in the 'pattern' list
+           returns a tuple """
+        fi = self.hdr.fiFromHeader()
+        results = {} # fn = problem_obj?
+        import pwd
+        import grp
+        for filetuple in fi:
+            #tuple is: (filename, fsize, mode, mtime, flags, frdev?, inode, link,
+            #           state, vflags?, user, group, md5sum(or none for dirs) 
+            (fn, size, mode, mtime, flags, dev, inode, link, state, vflags, 
+                       user, group, csum) = filetuple
+            if patterns:
+                matched = False
+                for p in patterns:
+                    if fnmatch.fnmatch(fn, p):
+                        matched = True
+                        break
+                if not matched: 
+                    continue
+            # do check of file status on system
+            problems = []
+            if os.path.exists(fn):
+                # stat
+                my_st = os.stat(fn)
+                my_user = pwd.getpwuid(my_st[stat.ST_UID])[0]
+                my_group = grp.getgrgid(my_st[stat.ST_GID])[0]
+
+                if my_st[stat.ST_MTIME] != mtime:
+                    thisproblem = misc.GenericHolder()
+                    thisproblem.type = 'mtime' # maybe replace with a constants type
+                    thisproblem.message = 'mtime does not match'
+                    thisproblem.database_value = mtime
+                    thisproblem.disk_value = my_st[stat.ST_MTIME]
+                    problems.append(thisproblem)
+
+                if my_group != group:
+                    thisproblem = misc.GenericHolder()
+                    thisproblem.type = 'group' # maybe replace with a constants type
+                    thisproblem.message = 'group does not match'
+                    thisproblem.database_value = group
+                    thisproblem.disk_value = my_group
+                    problems.append(thisproblem)
+                if my_user != user:
+                    thisproblem = misc.GenericHolder()
+                    thisproblem.type = 'user' # maybe replace with a constants type
+                    thisproblem.message = 'user does not match'
+                    thisproblem.database_value = user
+                    thisproblem.disk_value = my_user
+                    problems.append(thisproblem)
+                    
+                # checksum
+                if csum: # don't checksum files that don't have a csum in the rpmdb :)
+                    my_csum = misc.checksum('md5', fn)
+                    if my_csum != csum:
+                        thisproblem = misc.GenericHolder()
+                        thisproblem.type = 'checksum' # maybe replace with a constants type
+                        thisproblem.message = 'checksum does not match'
+                        thisproblem.database_value = csum
+                        thisproblem.disk_value = my_csum
+                        problems.append(thisproblem)
+                    
+            else:
+                thisproblem = misc.GenericHolder()
+                thisproblem.type = 'missing' # maybe replace with a constants type
+                thisproblem.message = 'file is missing'
+                thisproblem.disk_value = None
+                thisproblem.database_value = None
+                problems.append(thisproblem)
+                
+            if problems:
+                results[fn] = problems
+                
+        return results
+        
+                             
 class YumLocalPackage(YumHeaderPackage):
     """Class to handle an arbitrary package from a file path
        this inherits most things from YumInstalledPackage because
