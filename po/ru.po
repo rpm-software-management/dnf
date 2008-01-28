@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: yum\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-01-27 19:52+0100\n"
+"POT-Creation-Date: 2008-01-28 07:59+0100\n"
 "PO-Revision-Date: 2003-10-14 15:36+0400\n"
 "Last-Translator: Grigory Bakunov <black@asplinux.ru>\n"
 "Language-Team: Russian <ru@li.org>\n"
@@ -26,6 +26,19 @@ msgstr "Нет заголовка - блин?"
 msgid "Erased: %s"
 msgstr "Удалено: "
 
+#: ../cli.py:101
+#, python-format
+msgid "Command \"%s\" already defined"
+msgstr ""
+
+#: ../cli.py:113
+msgid "Setting up repositories"
+msgstr ""
+
+#: ../cli.py:124
+msgid "Reading repository metadata in from local files"
+msgstr ""
+
 #: ../cli.py:181 ../utils.py:57
 #, fuzzy, python-format
 msgid "Config Error: %s"
@@ -41,10 +54,121 @@ msgstr "Ошибка опции: %s"
 msgid "You need to give some command"
 msgstr "Hеобходимы привилегии суперпользователя для выполнения этой команды"
 
+#: ../cli.py:269
+msgid "Disk Requirements:\n"
+msgstr ""
+
+#: ../cli.py:271
+#, python-format
+msgid "  At least %dMB needed on the %s filesystem.\n"
+msgstr ""
+
+#. TODO: simplify the dependency errors?
+#. Fixup the summary
+#: ../cli.py:276
+msgid ""
+"Error Summary\n"
+"-------------\n"
+msgstr ""
+
+#: ../cli.py:315
+msgid "Trying to run the transaction but nothing to do. Exiting."
+msgstr ""
+
+#: ../cli.py:345
+#, fuzzy
+msgid "Exiting on user Command"
+msgstr "Выход по требованию пользователя"
+
+#: ../cli.py:349
+#, fuzzy
+msgid "Downloading Packages:"
+msgstr "Поиск обновленных пакетов"
+
+#: ../cli.py:354
+#, fuzzy
+msgid "Error Downloading Packages:\n"
+msgstr "Ошибка: Не подписанный пакет %s"
+
+#: ../cli.py:367 ../yum/__init__.py:2551
+msgid "Running rpm_check_debug"
+msgstr ""
+
+#: ../cli.py:370 ../yum/__init__.py:2554
+msgid "ERROR with rpm_check_debug vs depsolve:"
+msgstr ""
+
+#: ../cli.py:374 ../yum/__init__.py:2556
+msgid "Please report this error in bugzilla"
+msgstr ""
+
+#: ../cli.py:378
+#, fuzzy
+msgid "Running Transaction Test"
+msgstr "Неизвестная ошибка в тестой транзакции:"
+
+#: ../cli.py:394
+msgid "Finished Transaction Test"
+msgstr ""
+
+#: ../cli.py:396
+msgid "Transaction Check Error:\n"
+msgstr ""
+
+#: ../cli.py:403
+#, fuzzy
+msgid "Transaction Test Succeeded"
+msgstr "Транзакция Завершена"
+
+#: ../cli.py:421
+msgid "Running Transaction"
+msgstr ""
+
+#: ../cli.py:450
+msgid ""
+"Refusing to automatically import keys when running unattended.\n"
+"Use \"-y\" to override."
+msgstr ""
+
 #: ../cli.py:482
 #, fuzzy
 msgid "Parsing package install arguments"
 msgstr "Ошибка при разборе параметров командной строки: %s"
+
+#: ../cli.py:492
+#, fuzzy, python-format
+msgid "No package %s available."
+msgstr "Нет доступных для просмотра пакетов"
+
+#: ../cli.py:496 ../cli.py:634
+#, fuzzy
+msgid "Package(s) to install"
+msgstr "Нет доступных для просмотра пакетов"
+
+#: ../cli.py:497 ../cli.py:635
+msgid "Nothing to do"
+msgstr ""
+
+#: ../cli.py:527 ../yum/__init__.py:2085 ../yum/__init__.py:2164
+#: ../yum/__init__.py:2176
+#, python-format
+msgid "Not Updating Package that is already obsoleted: %s.%s %s:%s-%s"
+msgstr ""
+
+#: ../cli.py:559
+#, fuzzy, python-format
+msgid "Could not find update match for %s"
+msgstr "Hе удается найти пакет совпадающий с %s"
+
+#: ../cli.py:571
+#, fuzzy, python-format
+msgid "%d packages marked for Update"
+msgstr "Нет пакетов доступных для обновления"
+
+#: ../cli.py:574
+#, fuzzy
+msgid "No Packages marked for Update"
+msgstr "Нет пакетов доступных для обновления"
 
 #: ../cli.py:597 ../yum/__init__.py:2213
 #, python-format
@@ -56,15 +180,201 @@ msgstr ""
 msgid "No Match for argument: %s"
 msgstr ""
 
+#: ../cli.py:610
+#, python-format
+msgid "%d packages marked for removal"
+msgstr ""
+
+#: ../cli.py:613
+#, fuzzy
+msgid "No Packages marked for removal"
+msgstr "Нет пакетов доступных для обновления"
+
+#: ../cli.py:625
+#, fuzzy
+msgid "No Packages Provided"
+msgstr "Пакеты не найдены"
+
+#: ../cli.py:665
+msgid "Matching packages for package list to user args"
+msgstr ""
+
+#: ../cli.py:703
+#, fuzzy
+msgid "No Matches found"
+msgstr "Пакеты не найдены"
+
 #: ../cli.py:740
 #, fuzzy, python-format
 msgid "No Package Found for %s"
 msgstr "Пакет %s не найден"
 
-#: ../cli.py:834 ../cli.py:840
+#: ../cli.py:752
+msgid "Cleaning up Everything"
+msgstr ""
+
+#: ../cli.py:766
+#, fuzzy
+msgid "Cleaning up Headers"
+msgstr "Удаление старых заголовков"
+
+#: ../cli.py:769
+#, fuzzy
+msgid "Cleaning up Packages"
+msgstr "Удаление пакетов"
+
+#: ../cli.py:772
+#, fuzzy
+msgid "Cleaning up xml metadata"
+msgstr "Получение групп с серверов"
+
+#: ../cli.py:775
+msgid "Cleaning up database cache"
+msgstr ""
+
+#: ../cli.py:778
+msgid "Cleaning up plugins"
+msgstr ""
+
+#: ../cli.py:800
+#, fuzzy
+msgid "Installed Groups:"
+msgstr "Установлено: "
+
+#: ../cli.py:807
+msgid "Available Groups:"
+msgstr ""
+
+#: ../cli.py:813
+msgid "Done"
+msgstr ""
+
+#: ../cli.py:822 ../cli.py:834 ../cli.py:840
 #, fuzzy, python-format
 msgid "Warning: Group %s does not exist."
 msgstr "Группа %s не существует"
+
+#: ../cli.py:846
+#, fuzzy
+msgid "No packages in any requested group available to install or update"
+msgstr "Нет доступных для просмотра пакетов"
+
+#: ../cli.py:848
+#, fuzzy, python-format
+msgid "%d Package(s) to Install"
+msgstr "Нет доступных для просмотра пакетов"
+
+#: ../cli.py:858
+#, python-format
+msgid "No group named %s exists"
+msgstr ""
+
+#: ../cli.py:864
+#, fuzzy
+msgid "No packages to remove from groups"
+msgstr "Пакеты не найдены"
+
+#: ../cli.py:866
+#, python-format
+msgid "%d Package(s) to remove"
+msgstr ""
+
+#: ../cli.py:908
+#, fuzzy, python-format
+msgid "Package %s is already installed, skipping"
+msgstr "%s уже установлен и это последняя версия."
+
+#: ../cli.py:919
+#, python-format
+msgid "Discarding non-comparable pkg %s.%s"
+msgstr ""
+
+#. we've not got any installed that match n or n+a
+#: ../cli.py:945
+#, python-format
+msgid "No other %s installed, adding to list for potential install"
+msgstr ""
+
+#: ../cli.py:964
+#, fuzzy, python-format
+msgid "Command line error: %s"
+msgstr "Ошибка опции: %s"
+
+#: ../cli.py:1094
+msgid "be tolerant of errors"
+msgstr ""
+
+#: ../cli.py:1096
+msgid "run entirely from cache, don't update cache"
+msgstr ""
+
+#: ../cli.py:1098
+msgid "config file location"
+msgstr ""
+
+#: ../cli.py:1100
+msgid "maximum command wait time"
+msgstr ""
+
+#: ../cli.py:1102
+msgid "debugging output level"
+msgstr ""
+
+#: ../cli.py:1105
+msgid "error output level"
+msgstr ""
+
+#: ../cli.py:1108
+msgid "quiet operation"
+msgstr ""
+
+#: ../cli.py:1112
+msgid "answer yes for all questions"
+msgstr ""
+
+#: ../cli.py:1114
+msgid "show Yum version and exit"
+msgstr ""
+
+#: ../cli.py:1115
+msgid "set install root"
+msgstr ""
+
+#: ../cli.py:1119
+msgid "enable one or more repositories (wildcards allowed)"
+msgstr ""
+
+#: ../cli.py:1123
+msgid "disable one or more repositories (wildcards allowed)"
+msgstr ""
+
+#: ../cli.py:1126
+msgid "exclude package(s) by name or glob"
+msgstr ""
+
+#: ../cli.py:1128
+msgid "disable exclude from main, for a repo or for everything"
+msgstr ""
+
+#: ../cli.py:1131
+msgid "enable obsoletes processing during updates"
+msgstr ""
+
+#: ../cli.py:1133
+msgid "disable Yum plugins"
+msgstr ""
+
+#: ../cli.py:1135
+msgid "disable gpg signature checking"
+msgstr ""
+
+#: ../cli.py:1137
+msgid "disable plugins by name"
+msgstr ""
+
+#: ../cli.py:1140
+msgid "skip packages with depsolving problems"
+msgstr ""
 
 #: ../output.py:267
 #, python-format
@@ -712,11 +1022,6 @@ msgstr "%s уже установлен и это последняя версия
 msgid "Updating Everything"
 msgstr ""
 
-#: ../yum/__init__.py:2085 ../yum/__init__.py:2164 ../yum/__init__.py:2176
-#, python-format
-msgid "Not Updating Package that is already obsoleted: %s.%s %s:%s-%s"
-msgstr ""
-
 #: ../yum/__init__.py:2157
 #, python-format
 msgid "Package is already obsoleted: %s.%s %s:%s-%s"
@@ -822,18 +1127,6 @@ msgstr ""
 msgid "Errors were encountered while downloading packages."
 msgstr ""
 
-#: ../yum/__init__.py:2551
-msgid "Running rpm_check_debug"
-msgstr ""
-
-#: ../yum/__init__.py:2554
-msgid "ERROR with rpm_check_debug vs depsolve:"
-msgstr ""
-
-#: ../yum/__init__.py:2556
-msgid "Please report this error in bugzilla"
-msgstr ""
-
 #: ../yum/__init__.py:2579
 msgid "Test Transaction Errors: "
 msgstr ""
@@ -924,9 +1217,6 @@ msgstr "Невозможно открыть пакет %s - ошибка %s"
 #~ "параметры lilo не поддерживаются yum. Будет использованы параметры из "
 #~ "lilo.conf. Файл lilo.conf останется неизмеренным.  Параметры включают:\n"
 
-#~ msgid "Installed: "
-#~ msgstr "Установлено: "
-
 #~ msgid "Error getting file %s"
 #~ msgstr "Ошибка получения файла: %s"
 
@@ -974,9 +1264,6 @@ msgstr "Невозможно открыть пакет %s - ошибка %s"
 
 #~ msgid "Found %s."
 #~ msgstr "Найден %s."
-
-#~ msgid "Transaction(s) Complete"
-#~ msgstr "Транзакция Завершена"
 
 #~ msgid "IOError: %s"
 #~ msgstr "ВВОшибка: %s"
@@ -1114,9 +1401,6 @@ msgstr "Невозможно открыть пакет %s - ошибка %s"
 #~ msgid "Putting back old headers"
 #~ msgstr "Возврат старых заголовков"
 
-#~ msgid "Exiting on user command."
-#~ msgstr "Выход по требованию пользователя"
-
 #~ msgid ""
 #~ "Error: You may need to disable gpg checking to install this package\n"
 #~ msgstr ""
@@ -1224,9 +1508,6 @@ msgstr "Невозможно открыть пакет %s - ошибка %s"
 #~ msgid "Attempt to delete a missing file %s - ignoring."
 #~ msgstr "Попытка удалить несуществующий файл %s - игнорируется."
 
-#~ msgid "Unknown error testing transaction set:"
-#~ msgstr "Неизвестная ошибка в тестой транзакции:"
-
 #~ msgid "Exiting on User Cancel"
 #~ msgstr "Выход по требованию пользователя"
 
@@ -1248,9 +1529,6 @@ msgstr "Невозможно открыть пакет %s - ошибка %s"
 
 #~ msgid "Using cached header.info file"
 #~ msgstr "Используется кэшированный header.info"
-
-#~ msgid "Error: Unsigned Package %s"
-#~ msgstr "Ошибка: Не подписанный пакет %s"
 
 #~ msgid "localrpmdb not defined"
 #~ msgstr "localrpmdb не задана"
@@ -1293,9 +1571,6 @@ msgstr "Невозможно открыть пакет %s - ошибка %s"
 #~ msgid "No rpms to work with and no header dir. Exiting."
 #~ msgstr "Не найдено пакетов и каталога заголовков. Завершение."
 
-#~ msgid "Cleaning old headers"
-#~ msgstr "Удаление старых заголовков"
-
 #~ msgid "using cached groups from server: %s"
 #~ msgstr "использование кэшированных групп с сервера: %s"
 
@@ -1304,9 +1579,6 @@ msgstr "Невозможно открыть пакет %s - ошибка %s"
 
 #~ msgid "Removing dumb arch for install only pkg: %s"
 #~ msgstr "Удаление пустой архитектуры для установки пакета: %s"
-
-#~ msgid "No packages found"
-#~ msgstr "Пакеты не найдены"
 
 #~ msgid "Exiting."
 #~ msgstr "Завершение."
@@ -1399,9 +1671,6 @@ msgstr "Невозможно открыть пакет %s - ошибка %s"
 
 #~ msgid "Nothing in any group to update or install"
 #~ msgstr "Нечего обновлять или устанавливать"
-
-#~ msgid "No Packages Available for Update"
-#~ msgstr "Нет пакетов доступных для обновления"
 
 #~ msgid "Grub found - making this kernel the default"
 #~ msgstr "Обнаружен Grub - ядро устанавливается выбранным по умолчанию"

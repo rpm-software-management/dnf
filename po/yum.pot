@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-01-27 19:52+0100\n"
+"POT-Creation-Date: 2008-01-28 07:59+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -26,6 +26,19 @@ msgstr ""
 msgid "Erased: %s"
 msgstr ""
 
+#: ../cli.py:101
+#, python-format
+msgid "Command \"%s\" already defined"
+msgstr ""
+
+#: ../cli.py:113
+msgid "Setting up repositories"
+msgstr ""
+
+#: ../cli.py:124
+msgid "Reading repository metadata in from local files"
+msgstr ""
+
 #: ../cli.py:181 ../utils.py:57
 #, python-format
 msgid "Config Error: %s"
@@ -40,8 +53,112 @@ msgstr ""
 msgid "You need to give some command"
 msgstr ""
 
+#: ../cli.py:269
+msgid "Disk Requirements:\n"
+msgstr ""
+
+#: ../cli.py:271
+#, python-format
+msgid "  At least %dMB needed on the %s filesystem.\n"
+msgstr ""
+
+#. TODO: simplify the dependency errors?
+#. Fixup the summary
+#: ../cli.py:276
+msgid ""
+"Error Summary\n"
+"-------------\n"
+msgstr ""
+
+#: ../cli.py:315
+msgid "Trying to run the transaction but nothing to do. Exiting."
+msgstr ""
+
+#: ../cli.py:345
+msgid "Exiting on user Command"
+msgstr ""
+
+#: ../cli.py:349
+msgid "Downloading Packages:"
+msgstr ""
+
+#: ../cli.py:354
+msgid "Error Downloading Packages:\n"
+msgstr ""
+
+#: ../cli.py:367 ../yum/__init__.py:2551
+msgid "Running rpm_check_debug"
+msgstr ""
+
+#: ../cli.py:370 ../yum/__init__.py:2554
+msgid "ERROR with rpm_check_debug vs depsolve:"
+msgstr ""
+
+#: ../cli.py:374 ../yum/__init__.py:2556
+msgid "Please report this error in bugzilla"
+msgstr ""
+
+#: ../cli.py:378
+msgid "Running Transaction Test"
+msgstr ""
+
+#: ../cli.py:394
+msgid "Finished Transaction Test"
+msgstr ""
+
+#: ../cli.py:396
+msgid "Transaction Check Error:\n"
+msgstr ""
+
+#: ../cli.py:403
+msgid "Transaction Test Succeeded"
+msgstr ""
+
+#: ../cli.py:421
+msgid "Running Transaction"
+msgstr ""
+
+#: ../cli.py:450
+msgid ""
+"Refusing to automatically import keys when running unattended.\n"
+"Use \"-y\" to override."
+msgstr ""
+
 #: ../cli.py:482
 msgid "Parsing package install arguments"
+msgstr ""
+
+#: ../cli.py:492
+#, python-format
+msgid "No package %s available."
+msgstr ""
+
+#: ../cli.py:496 ../cli.py:634
+msgid "Package(s) to install"
+msgstr ""
+
+#: ../cli.py:497 ../cli.py:635
+msgid "Nothing to do"
+msgstr ""
+
+#: ../cli.py:527 ../yum/__init__.py:2085 ../yum/__init__.py:2164
+#: ../yum/__init__.py:2176
+#, python-format
+msgid "Not Updating Package that is already obsoleted: %s.%s %s:%s-%s"
+msgstr ""
+
+#: ../cli.py:559
+#, python-format
+msgid "Could not find update match for %s"
+msgstr ""
+
+#: ../cli.py:571
+#, python-format
+msgid "%d packages marked for Update"
+msgstr ""
+
+#: ../cli.py:574
+msgid "No Packages marked for Update"
 msgstr ""
 
 #: ../cli.py:597 ../yum/__init__.py:2213
@@ -54,14 +171,191 @@ msgstr ""
 msgid "No Match for argument: %s"
 msgstr ""
 
+#: ../cli.py:610
+#, python-format
+msgid "%d packages marked for removal"
+msgstr ""
+
+#: ../cli.py:613
+msgid "No Packages marked for removal"
+msgstr ""
+
+#: ../cli.py:625
+msgid "No Packages Provided"
+msgstr ""
+
+#: ../cli.py:665
+msgid "Matching packages for package list to user args"
+msgstr ""
+
+#: ../cli.py:703
+msgid "No Matches found"
+msgstr ""
+
 #: ../cli.py:740
 #, python-format
 msgid "No Package Found for %s"
 msgstr ""
 
-#: ../cli.py:834 ../cli.py:840
+#: ../cli.py:752
+msgid "Cleaning up Everything"
+msgstr ""
+
+#: ../cli.py:766
+msgid "Cleaning up Headers"
+msgstr ""
+
+#: ../cli.py:769
+msgid "Cleaning up Packages"
+msgstr ""
+
+#: ../cli.py:772
+msgid "Cleaning up xml metadata"
+msgstr ""
+
+#: ../cli.py:775
+msgid "Cleaning up database cache"
+msgstr ""
+
+#: ../cli.py:778
+msgid "Cleaning up plugins"
+msgstr ""
+
+#: ../cli.py:800
+msgid "Installed Groups:"
+msgstr ""
+
+#: ../cli.py:807
+msgid "Available Groups:"
+msgstr ""
+
+#: ../cli.py:813
+msgid "Done"
+msgstr ""
+
+#: ../cli.py:822 ../cli.py:834 ../cli.py:840
 #, python-format
 msgid "Warning: Group %s does not exist."
+msgstr ""
+
+#: ../cli.py:846
+msgid "No packages in any requested group available to install or update"
+msgstr ""
+
+#: ../cli.py:848
+#, python-format
+msgid "%d Package(s) to Install"
+msgstr ""
+
+#: ../cli.py:858
+#, python-format
+msgid "No group named %s exists"
+msgstr ""
+
+#: ../cli.py:864
+msgid "No packages to remove from groups"
+msgstr ""
+
+#: ../cli.py:866
+#, python-format
+msgid "%d Package(s) to remove"
+msgstr ""
+
+#: ../cli.py:908
+#, python-format
+msgid "Package %s is already installed, skipping"
+msgstr ""
+
+#: ../cli.py:919
+#, python-format
+msgid "Discarding non-comparable pkg %s.%s"
+msgstr ""
+
+#. we've not got any installed that match n or n+a
+#: ../cli.py:945
+#, python-format
+msgid "No other %s installed, adding to list for potential install"
+msgstr ""
+
+#: ../cli.py:964
+#, python-format
+msgid "Command line error: %s"
+msgstr ""
+
+#: ../cli.py:1094
+msgid "be tolerant of errors"
+msgstr ""
+
+#: ../cli.py:1096
+msgid "run entirely from cache, don't update cache"
+msgstr ""
+
+#: ../cli.py:1098
+msgid "config file location"
+msgstr ""
+
+#: ../cli.py:1100
+msgid "maximum command wait time"
+msgstr ""
+
+#: ../cli.py:1102
+msgid "debugging output level"
+msgstr ""
+
+#: ../cli.py:1105
+msgid "error output level"
+msgstr ""
+
+#: ../cli.py:1108
+msgid "quiet operation"
+msgstr ""
+
+#: ../cli.py:1112
+msgid "answer yes for all questions"
+msgstr ""
+
+#: ../cli.py:1114
+msgid "show Yum version and exit"
+msgstr ""
+
+#: ../cli.py:1115
+msgid "set install root"
+msgstr ""
+
+#: ../cli.py:1119
+msgid "enable one or more repositories (wildcards allowed)"
+msgstr ""
+
+#: ../cli.py:1123
+msgid "disable one or more repositories (wildcards allowed)"
+msgstr ""
+
+#: ../cli.py:1126
+msgid "exclude package(s) by name or glob"
+msgstr ""
+
+#: ../cli.py:1128
+msgid "disable exclude from main, for a repo or for everything"
+msgstr ""
+
+#: ../cli.py:1131
+msgid "enable obsoletes processing during updates"
+msgstr ""
+
+#: ../cli.py:1133
+msgid "disable Yum plugins"
+msgstr ""
+
+#: ../cli.py:1135
+msgid "disable gpg signature checking"
+msgstr ""
+
+#: ../cli.py:1137
+msgid "disable plugins by name"
+msgstr ""
+
+#: ../cli.py:1140
+msgid "skip packages with depsolving problems"
 msgstr ""
 
 #: ../output.py:267
@@ -698,11 +992,6 @@ msgstr ""
 msgid "Updating Everything"
 msgstr ""
 
-#: ../yum/__init__.py:2085 ../yum/__init__.py:2164 ../yum/__init__.py:2176
-#, python-format
-msgid "Not Updating Package that is already obsoleted: %s.%s %s:%s-%s"
-msgstr ""
-
 #: ../yum/__init__.py:2157
 #, python-format
 msgid "Package is already obsoleted: %s.%s %s:%s-%s"
@@ -805,18 +1094,6 @@ msgstr ""
 
 #: ../yum/__init__.py:2515
 msgid "Errors were encountered while downloading packages."
-msgstr ""
-
-#: ../yum/__init__.py:2551
-msgid "Running rpm_check_debug"
-msgstr ""
-
-#: ../yum/__init__.py:2554
-msgid "ERROR with rpm_check_debug vs depsolve:"
-msgstr ""
-
-#: ../yum/__init__.py:2556
-msgid "Please report this error in bugzilla"
 msgstr ""
 
 #: ../yum/__init__.py:2579
