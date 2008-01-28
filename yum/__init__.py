@@ -193,7 +193,7 @@ class YumBase(depsolve.Depsolve):
     def doFileLogSetup(self, uid, logfile):
         logginglevels.setFileLog(uid, logfile)
 
-    def getReposFromConfigFile(self, repofn, gpgcheck=False, repo_age=None):
+    def getReposFromConfigFile(self, repofn, repo_age=None, validate=None):
         """read in repositories from a config .repo file"""
 
         if repo_age is None:
@@ -237,10 +237,7 @@ class YumBase(depsolve.Depsolve):
                 thisrepo.repo_config_age = repo_age
                 thisrepo.repofile = repofn
 
-            if gpgcheck and not thisrepo.gpgcheck:
-                # Don't allow them to set gpgcheck=False
-                self.logger.warning("Repo %s tries to set gpgcheck=false" %
-                                    (thisrepo))
+            if validate and not validate(thisrepo):
                 continue
                     
             # Got our list of repo objects, add them to the repos
