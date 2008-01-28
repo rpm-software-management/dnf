@@ -138,7 +138,7 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
             # XXX Remove this when getSummary is common in plugins
             try:
                 summary = command.getSummary()
-                usage += "%-15s%s\n" % (command.getNames()[0], summary)
+                usage += "%-14s %s\n" % (command.getNames()[0], summary)
             except (AttributeError, NotImplementedError):
                 usage += "%s\n" % command.getNames()[0]
 
