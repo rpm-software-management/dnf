@@ -278,7 +278,8 @@ class YumOutput:
         print _("Release    : %s") % pkg.release
         print _("Size       : %s") % self.format_number(float(pkg.size))
         print _("Repo       : %s") % pkg.repoid
-        print _("Committer  : %s") % pkg.committer
+        if self.verbose_logger.isEnabledFor(logginglevels.DEBUG_3):
+            print _("Committer  : %s") % pkg.committer
         print self._outKeyValFill(_("Summary    : "), enc(pkg.summary))
         print _("URL        : %s") % pkg.url
         print _("License    : %s") % pkg.license
