@@ -9,7 +9,6 @@ multilibArches = { "x86_64":  ( "athlon", "x86_64", "athlon" ),
                    "sparc64": ( "sparc", "sparcv9", "sparc64" ),
                    "ppc64":   ( "ppc", "ppc", "ppc64" ),
                    "s390x":   ( "s390", "s390x", "s390" ),
-                   "ia64":    ( "i686", "ia64", "i686" )
                    }
 
 arches = {
@@ -25,9 +24,6 @@ arches = {
     "x86_64": "athlon",
     "amd64": "x86_64",
     "ia32e": "x86_64",
-    
-    # itanium
-    "ia64": "i686",
     
     # ppc
     "ppc64pseries": "ppc64",
@@ -59,6 +55,25 @@ arches = {
     "armv5tejl": "armv5tel",
     "armv5tel": "noarch",
     }
+
+def legitMultiArchesInSameLib(arch=None):
+    # this is completely crackrock - if anyone has a better way I
+    # am all ears
+    
+    arch = getBestArch(arch)
+    if isMultiLibArch(arch):
+        arch = getBaseArch(myarch=arch)
+         
+    results = [arch]
+   
+    if arch == 'x86_64' or arch.startswith('sparcv9'):
+        for (k, v) in arches.items():
+            if v == arch:
+                results.append(k)
+    return results        
+
+
+
 
 # this computes the difference between myarch and targetarch
 def archDifference(myarch, targetarch):

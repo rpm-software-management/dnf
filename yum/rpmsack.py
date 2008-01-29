@@ -205,6 +205,22 @@ class RPMDBPackageSack(PackageSackBase):
     def searchNevra(self, name=None, epoch=None, ver=None, rel=None, arch=None):
         return self._search(name, epoch, ver, rel, arch)
 
+    def contains(self, name=None, arch=None, epoch=None, ver=None, rel=None, po=None):
+        """return if there are any packages in the sack that match the given NAEVR 
+           or the NAEVR of the given po"""
+        if po:
+            name = po.name
+            arch = po.arch
+            epoch = po.epoch
+            ver = po.version
+            rel = po.release
+
+        if name and arch and epoch and ver and rel: # cheater lookup
+            if (name, arch, epoch, ver, rel) in self._tup2pkg:
+                return True
+            
+        return bool(self.searchNevra(name=name, arch=arch, epoch=epoch, ver=ver, rel=rel))
+
     def excludeArchs(self, archlist):
         pass
 

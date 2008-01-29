@@ -1288,9 +1288,8 @@ class YumBase(depsolve.Depsolve):
             else:
                 avail = self.pkgSack.returnNewestByNameArch(patterns=patterns)
             
-            self.rpmdb._make_header_dict()
             for pkg in avail:
-                if not self.rpmdb._header_dict.has_key(pkg.pkgtup):
+                if not self.rpmdb.contains(po=pkg):
                     available.append(pkg)
 
 
@@ -1979,6 +1978,7 @@ class YumBase(depsolve.Depsolve):
            """
         
         pkgs = []
+        was_pattern = False
         if po:
             if isinstance(po, YumAvailablePackage) or isinstance(po, YumLocalPackage):
                 pkgs.append(po)
@@ -1990,6 +1990,7 @@ class YumBase(depsolve.Depsolve):
                 raise Errors.InstallError, _('Nothing specified to install')
 
             if kwargs.has_key('pattern'):
+                was_pattern = True
                 exactmatch, matched, unmatched = \
                     parsePackages(self.pkgSack.returnPackages(),[kwargs['pattern']] , casematch=1)
                 pkgs.extend(exactmatch)
@@ -2018,6 +2019,31 @@ class YumBase(depsolve.Depsolve):
                      ver=nevra_dict['version'], rel=nevra_dict['release'])
                 
             if pkgs:
+                # if was_pattern or nevra-dict['arch'] is none, take the list
+                # of arches based on our multilib_compat config and 
+                # toss out any pkgs of any arch NOT in that arch list
+
+                
+                # only do these things if we're multilib
+                if rpmUtils.arch.isMultiLibArch():
+                    if was_pattern or not nevra_dict['arch']: # and only if they
+                                                              # they didn't specify an arch
+                       if self.conf.multilib_policy == 'best':
+                           pkgs_by_name = {}
+                           use = []
+                           not_added = []
+                           for pkg in pkgs:
+                               if pkg.arch in rpmUtils.arch.legitMultiArchesInSameLib():
+                                   pkgs_by_name[pkg.name] = 1    
+                                   use.append(pkg)  
+                               else:
+                                   not_added.append(pkg)
+                           for pkg in not_added:
+                               if not pkg.name in pkgs_by_name:
+                                   use.append(pkg)
+                           
+                           pkgs = use
+                           
                 pkgSack = ListPackageSack(pkgs)
                 pkgs = pkgSack.returnNewestByName()
                 del(pkgSack)
@@ -2042,6 +2068,7 @@ class YumBase(depsolve.Depsolve):
         # FIXME - lots more checking here
         #  - install instead of erase
         #  - better error handling/reporting
+
 
         tx_return = []
         for po in pkgs:

@@ -288,6 +288,11 @@ group data is used in some graphical clients and for group operations like
 not listed above is the other metadata, which contains the changelog information
 which is used by yum-changelog. This is what "yum makecache" uses.
 
+.IP \fBmultilib_policy \fR
+Can be set to 'all' or 'best'. All means install all possible arches for any package you 
+want to install. Therefore yum install foo will install foo.i386 and foo.x86_64 on x86_64, 
+if it is available. Best means install the best arch for this platform, only.
+
 .SH "[repository] OPTIONS"
 .LP 
 The repository section(s) take the following form:
