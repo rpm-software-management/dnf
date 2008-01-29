@@ -794,7 +794,9 @@ class YumRepository(Repository, config.RepoConf):
         old_data = self._oldRepoMDData
         self._oldRepoMDData = {}
         
-        os.rename(old_data['old_local'], old_data['local'])
+        if 'old_local' in old_data:
+            os.rename(old_data['old_local'], old_data['local'])
+
         self._repoXML = old_data['old_repo_XML']
 
         if 'old_MD_files' not in old_data:
