@@ -595,7 +595,7 @@ class YumConf(StartupConf):
     # means if you ever install an "old" kernel it'll get rid of the newest one
     # so you probably want to use 3 as a minimum ... if you turn it on.
     installonly_limit = PositiveIntOption(0, range_min=2,
-                                          names_of_0=[0, "<off>"])
+                                          names_of_0=["0", "<off>"])
     kernelpkgnames = ListOption(['kernel','kernel-smp', 'kernel-enterprise',
             'kernel-bigmem', 'kernel-BOOT', 'kernel-PAE', 'kernel-PAE-debug'])
     exactarchlist = ListOption(['kernel', 'kernel-smp', 'glibc',
