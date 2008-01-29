@@ -251,7 +251,7 @@ class YumOutput:
         print "%-40.40s %-22.22s %-16.16s" % (na, ver, pkg.repoid)
 
 
-    def _outKeyValFill(key, val):
+    def _outKeyValFill(self, key, val):
         """ Return a key value pair in the common two column output format. """
         nxt = ' ' * (len(key) - 2) + ': '
         return fill(val, width=self.term.columns,
