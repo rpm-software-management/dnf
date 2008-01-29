@@ -249,8 +249,14 @@ class YumOutput:
         na = '%s.%s' % (pkg.name, pkg.arch)
         
         print "%-40.40s %-22.22s %-16.16s" % (na, ver, pkg.repoid)
+
+
+    def _outKeyValFill(key, val):
+        """ Return a key value pair in the common two column output format. """
+        nxt = ' ' * (len(key) - 2) + ': '
+        return fill(val, width=self.term.columns,
+                    initial_indent=key, subsequent_indent=nxt)
     
-        
     def infoOutput(self, pkg):
         def enc(s):
             """Get the translated version from specspo and ensure that
@@ -264,16 +270,19 @@ class YumOutput:
                         s = t
                         break
             return s
-        print _("Name   : %s") % pkg.name
-        print _("Arch   : %s") % pkg.arch
+        print _("Name       : %s") % pkg.name
+        print _("Arch       : %s") % pkg.arch
         if pkg.epoch != "0":
-            print _("Epoch  : %s") % pkg.epoch
-        print _("Version: %s") % pkg.version
-        print _("Release: %s") % pkg.release
-        print _("Size   : %s") % self.format_number(float(pkg.size))
-        print _("Repo   : %s") % pkg.repoid
-        print _("Summary: %s") % enc(pkg.summary)
-        print _("Description:\n%s") % enc(pkg.description)
+            print _("Epoch      : %s") % pkg.epoch
+        print _("Version    : %s") % pkg.version
+        print _("Release    : %s") % pkg.release
+        print _("Size       : %s") % self.format_number(float(pkg.size))
+        print _("Repo       : %s") % pkg.repoid
+        print _("Committer  : %s") % pkg.committer
+        print self._outKeyValFill(_("Summary    : "), enc(pkg.summary))
+        print _("URL        : %s") % pkg.url
+        print _("License    : %s") % pkg.license
+        print self._outKeyValFill(_("Description: "), enc(pkg.description))
         print ""
     
     def updatesObsoletesList(self, uotup, changetype):
@@ -417,9 +426,7 @@ class YumOutput:
 
     def matchcallback(self, po, values, matchfor=None):
         msg = '%s.%s : ' % (po.name, po.arch)
-        msg_nxt = ' ' * (len(msg) - 2) + ': '
-        msg = fill(po.summary, width=self.term.columns,
-                   initial_indent=msg, subsequent_indent=msg_nxt)
+        msg = self._outKeyValFill(msg, po.summary)
         if matchfor:
             msg = self.term.sub_bold(msg, matchfor)
         
