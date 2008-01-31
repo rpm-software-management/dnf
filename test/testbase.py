@@ -33,6 +33,7 @@ class FakeConf(object):
         self.installonly_limit = 0
         self.skip_broken = False
         self.disable_excludes = []
+        self.multilib_policy = 'best'
 
 class FakeRepo(object):
 
