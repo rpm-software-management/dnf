@@ -45,10 +45,16 @@ arches = {
     "sparc": "noarch",
 
     # alpha
-    "alphaev6": "alphaev56",
-    "alphaev56": "alphaev5",
-    "alphaev5": "alpha",
-    "alpha": "noarch",
+    "alphaev7":   "alphaev68",
+    "alphaev68":  "alphaev67",
+    "alphaev67":  "alphaev6",
+    "alphaev6":   "alphapca56",
+    "alphapca56": "alphaev56",
+    "alphaev56":  "alphaev5",
+    "alphaev5":   "alphaev45",
+    "alphaev45":  "alphaev4",
+    "alphaev4":   "alpha",
+    "alpha":      "noarch",
 
     # arm
     "armv61": "armv5tejl",
