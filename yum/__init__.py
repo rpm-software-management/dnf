@@ -2283,8 +2283,8 @@ class YumBase(depsolve.Depsolve):
                             epoch=nevra_dict['epoch'], arch=nevra_dict['arch'], 
                             ver=nevra_dict['version'], rel=nevra_dict['release'])
 
-        if len(pkgs) == 0: # should this even be happening?
-            self.logger.warning(_("No package matched to remove"))
+                if len(pkgs) == 0:
+                    self.logger.warning(_("No package matched to remove"))
 
         for po in pkgs:
             txmbr = self.tsInfo.addErase(po)

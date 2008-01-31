@@ -582,28 +582,8 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         
         oldcount = len(self.tsInfo)
         
-        installed = self.rpmdb.returnPackages()
-        
-        if len(userlist) > 0: # if it ain't well, that'd be real _bad_ :)
-            exactmatch, matched, unmatched = yum.packages.parsePackages(
-                                             installed, userlist, casematch=1)
-            erases = yum.misc.unique(matched + exactmatch)
-
-        if unmatched:
-            for arg in unmatched:
-                try:
-                    depmatches = self.returnInstalledPackagesByDep(arg)
-                except yum.Errors.YumBaseError, e:
-                    self.logger.critical(_('%s') % e)
-                    continue
-                    
-                if not depmatches:
-                    self.logger.critical(_('No Match for argument: %s') % arg)
-                else:
-                    erases.extend(depmatches)
-            
-        for pkg in erases:
-            self.remove(po=pkg)
+        for arg in userlist:
+            self.remove(pattern=arg)
         
         if len(self.tsInfo) > oldcount:
             change = len(self.tsInfo) - oldcount
