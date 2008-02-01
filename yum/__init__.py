@@ -627,6 +627,7 @@ class YumBase(depsolve.Depsolve):
         # or the transaction is empty
         count = 0
         skip_messages = []
+        orig_restring = restring    # Keep the old error messages
         while len(self.po_with_problems) > 0 and rescode == 1:
             count += 1
             self.verbose_logger.debug(_("Skip-broken round %i"), count)
@@ -645,11 +646,8 @@ class YumBase(depsolve.Depsolve):
                     if not po.repoid == 'installed': # Only remove non installed packages from pkgSack
                         self.pkgSack.delPackage(po)
             for po in toRemove:
-                if self.tsInfo.exists(po.pkgtup):
-                    self.tsInfo.remove(po.pkgtup)
-                    if not po.repoid == 'installed':
-                        skip_messages.append("    %s from %s" % (str(po),po.repoid))
-
+                msgs = self._skipFromTransaction(po)
+                skip_messages.extend(msgs)
             if not toRemove: # Nothing was removed, so we still got a problem
                 break # Bail out
             rescode, restring = self.resolveDeps()
@@ -658,13 +656,46 @@ class YumBase(depsolve.Depsolve):
              # if there is no changes then we got a loop.
             if startTs-endTs == set():
                 break    # bail out
-        self.verbose_logger.debug(_("Skip-broken took %i rounds "), count)
-        self.verbose_logger.info(_('\nPackages skipped because for dependency problems:'))
-        for msg in skip_messages:
-            self.verbose_logger.info(msg)
+        if rescode != 1:
+            self.verbose_logger.debug(_("Skip-broken took %i rounds "), count)
+            self.verbose_logger.info(_('\nPackages skipped because of dependency problems:'))
+            skip_messages.sort()
+            for msg in skip_messages:
+                self.verbose_logger.info(msg)
+        else:
+            # If we cant solve the problems the show the original error messages.
+            self.verbose_logger.info("Skip-broken could not solve problems")
+            return 1, orig_restring
         
         return rescode, restring
 
+    def _skipFromTransaction(self,po):
+        messages =  []
+        if rpmUtils.arch.isMultiLibArch():
+            archs = rpmUtils.arch.getArchList() 
+            n,a,e,v,r = po.pkgtup
+            # skip for all combat archs
+            for a in archs:
+                pkgtup = (n,a,e,v,r)
+                if self.tsInfo.exists(pkgtup):
+                    for txmbr in self.tsInfo.getMembers(pkgtup):
+                        pkg = txmbr.po
+                        msgs = self._removePoFromTransaction(pkg)
+                        messages.extend(msgs)
+        else:
+            msgs = self._removePoFromTransaction(po)
+            messages.extend(msgs)
+        return messages
+
+    def _removePoFromTransaction(self,po):
+        messages =  []
+        if self.tsInfo.exists(po.pkgtup):
+            self.tsInfo.remove(po.pkgtup)
+            if not po.repoid == 'installed':
+                self.skipped_po.add(po)
+                messages.append("    %s from %s" % (str(po),po.repoid))
+        return messages  
+              
     def _buildDepTree(self):
         ''' create a dictionary with po and deps '''
         depTree = { }
