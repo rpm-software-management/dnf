@@ -254,17 +254,29 @@ class Depsolve(object):
         self.verbose_logger.log(logginglevels.DEBUG_1, _('%s requires: %s'), po, niceformatneed)
         if self.dsCallback: self.dsCallback.procReq(po.name, niceformatneed)
 
-        if po.repo.id != "installed":
-            CheckDeps, missingdep = self._requiringFromTransaction(po, requirement, errormsgs)
-        else:
-            CheckDeps, missingdep = self._requiringFromInstalled(po, requirement, errormsgs)
-
-        # Check packages with problems
-        if missingdep:
-            self.po_with_problems.add((po,self._working_po,errormsgs[-1]))
+        try:    
+            if po.repo.id != "installed":
+                CheckDeps, missingdep = self._requiringFromTransaction(po, requirement, errormsgs)
+            else:
+                CheckDeps, missingdep = self._requiringFromInstalled(po, requirement, errormsgs)
+    
+            # Check packages with problems
+            if missingdep:
+                self.po_with_problems.add((po,self._working_po,errormsgs[-1]))
+            
+    
+        except Errors.DepError,e:
+            # FIXME: This is a hack, it don't solve the problem
+            # of tries to update to a package the have been removed from the
+            # pkgSack because of dep problems.
+            # The real solution is to remove the package from the updates, when
+            # it is remove from the pkgSack
+            self.po_with_problems.add((po,self._working_po,str(e)))
+            CheckDeps = 1
+            missingdep = 0
 
         return (CheckDeps, missingdep, errormsgs)
-
+            
     def _requiringFromInstalled(self, requiringPo, requirement, errorlist):
         """processes the dependency resolution for a dep where the requiring 
            package is installed"""
