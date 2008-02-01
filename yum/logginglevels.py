@@ -150,7 +150,7 @@ def setFileLog(uid, logfile):
     if uid == 0:
         try:
             # For installroot etc.
-            logdir = os.path.dirname(filename)
+            logdir = os.path.dirname(logfile)
             if not os.path.exists(logdir):
                 os.makedirs(logdir, mode=0755)
 
