@@ -22,6 +22,7 @@ urlparse.uses_fragment.append("media")
 
 import Errors
 from urlgrabber.grabber import URLGrabber
+from urlgrabber.grabber import default_grabber
 import urlgrabber.mirror
 from urlgrabber.grabber import URLGrabError
 import repoMDObject
@@ -427,6 +428,7 @@ class YumRepository(Repository, config.RepoConf):
                                     http_headers=headers,
                                     reget='simple')
 
+        self._grabfunc.opts.user_agent = default_grabber.opts.user_agent
 
         self._grab = mgclass(self._grabfunc, self.urls,
                              failure_callback=self.mirror_failure_obj)
@@ -598,6 +600,8 @@ class YumRepository(Repository, config.RepoConf):
                             checkfunc=checkfunc,
                             http_headers=headers,
                             )
+
+            ug.opts.user_agent = default_grabber.opts.user_agent
 
             remote = url + '/' + relative
 

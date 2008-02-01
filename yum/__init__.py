@@ -65,6 +65,8 @@ from yum.i18n import _
 
 import string
 
+from urlgrabber.grabber import default_grabber as urlgrab
+
 __version__ = '3.2.10'
 
 class YumBase(depsolve.Depsolve):
@@ -165,6 +167,12 @@ class YumBase(depsolve.Depsolve):
                     startupconf.pluginconfpath,disabled_plugins)
 
         self._conf = config.readMainConfig(startupconf)
+
+        #  Setup a default_grabber UA here that says we are yum, done this way
+        # so that other API users can add to it if they want.
+        add_ua = " yum/" + __version__
+        urlgrab.opts.user_agent += add_ua
+
         # run the postconfig plugin hook
         self.plugins.run('postconfig')
         self.yumvar = self.conf.yumvar
