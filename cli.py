@@ -606,7 +606,7 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
 
         installing = False
         for pkg in filelist:
-            txmbrs = self.installLocal(pkg, updateonly)
+            txmbrs = self.installLocal(pkg, updateonly=updateonly)
             if txmbrs:
                 installing = True
 
