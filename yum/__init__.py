@@ -695,7 +695,7 @@ class YumBase(depsolve.Depsolve):
                         skipped.extend(skip)
         else:
             msgs = self._removePoFromTransaction(po)
-            messages.extend(msgs)
+            skipped.extend(msgs)
         return skipped
 
     def _removePoFromTransaction(self,po):
