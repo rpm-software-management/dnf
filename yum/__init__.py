@@ -2358,7 +2358,7 @@ class YumBase(depsolve.Depsolve):
         if not po:
             try:
                 po = YumLocalPackage(ts=self.rpmdb.readOnlyTS(), filename=pkg)
-            except yum.Errors.MiscError:
+            except Errors.MiscError:
                 self.logger.critical(_('Cannot open file: %s. Skipping.'), pkg)
                 return tx_return
             self.verbose_logger.log(logginglevels.INFO_2,
