@@ -706,10 +706,10 @@ class YumHeaderPackage(YumAvailablePackage):
         
     def __str__(self):
         if self.epoch == '0':
-            val = '%s - %s-%s.%s' % (self.name, self.version, self.release, 
+            val = '%s-%s-%s.%s' % (self.name, self.version, self.release,
                                         self.arch)
         else:
-            val = '%s - %s:%s-%s.%s' % (self.name, self.epoch, self.version,
+            val = '%s:%s-%s-%s.%s' % (self.epoch,self.name, self.version,
                                            self.release, self.arch)
         return val
 
@@ -821,6 +821,9 @@ class YumInstalledPackage(YumHeaderPackage):
     def __init__(self, hdr):
         fakerepo = _installed_repo
         YumHeaderPackage.__init__(self, fakerepo, hdr)
+
+    def __repr__(self):
+        return "<Installed Package : %s >" % (str(self))
 
     def verify(self, patterns=[]):
         """verify that the installed files match the packaged checksum
