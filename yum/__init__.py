@@ -2428,6 +2428,30 @@ class YumBase(depsolve.Depsolve):
 
         return tx_return
 
+    def reinstall(self, po=None, **kwargs):
+        """Setup the problem filters to allow a reinstall to work, then
+           pass everything off to install"""
+           
+        if rpm.RPMPROB_FILTER_REPLACEPKG not in self.tsInfo.probFilterFlags:
+            self.tsInfo.probFilterFlags.append(rpm.RPMPROB_FILTER_REPLACEPKG)
+        if rpm.RPMPROB_FILTER_REPLACENEWFILES not in self.tsInfo.probFilterFlags:
+            self.tsInfo.probFilterFlags.append(rpm.RPMPROB_FILTER_REPLACENEWFILES)
+        if rpm.RPMPROB_FILTER_REPLACEOLDFILES not in self.tsInfo.probFilterFlags:
+            self.tsInfo.probFilterFlags.append(rpm.RPMPROB_FILTER_REPLACEOLDFILES)
+
+        tx_mbrs = []
+        tx_mbrs.extend(self.remove(po, **kwargs))
+        if not tx_mbrs:
+            raise Errors.RemoveError, _("Problem in reinstall: no package matched to remove")
+        templen = len(tx_mbrs)
+        tx_mbrs.extend(self.install(po, **kwargs))
+        if len(tx_mbrs) == templen:
+            raise Errors.RemoveError, _("Problem in reinstall: no package matched to install")
+
+        return tx_mbrs
+        
+
+        
     def _nevra_kwarg_parse(self, kwargs):
             
         returndict = {}

@@ -741,13 +741,9 @@ class ReInstallCommand(YumCommand):
         base.verbose_logger.log(logginglevels.INFO_2, 
                 "Setting up Reinstall Process")
         oldcount = len(base.tsInfo)
-        base.tsInfo.probFilterFlags.append(rpm.RPMPROB_FILTER_REPLACEPKG)
-        base.tsInfo.probFilterFlags.append(rpm.RPMPROB_FILTER_REPLACENEWFILES)
-        base.tsInfo.probFilterFlags.append(rpm.RPMPROB_FILTER_REPLACEOLDFILES) 
         try:
             for item in extcmds:
-                base.remove(pattern=item)
-                base.install(pattern=item)
+                base.reinstall(pattern=item)
 
             if len(base.tsInfo) > oldcount:
                 return 2, [_('Package(s) to install')]

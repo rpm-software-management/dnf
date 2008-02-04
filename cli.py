@@ -389,7 +389,7 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         dscb = self.dsCallback
         self.dsCallback = None # dumb, dumb dumb dumb!
         self.populateTs(keepold=0) # sigh
-        tserrors = self.ts.test(testcb, conf=tsConf)
+        tserrors = self.ts.test(testcb)
         del testcb
         
         self.verbose_logger.log(yum.logginglevels.INFO_2,
