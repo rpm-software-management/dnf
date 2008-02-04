@@ -191,6 +191,9 @@ class PackageObject(object):
             ret = cmp(self.arch, other.arch)
         return ret
 
+    def __repr__(self):
+        return "<%s : %s>" % (self.__class__.__name__, str(self)) 
+
     def returnSimple(self, varname):
         warnings.warn("returnSimple() will go away in a future version of Yum.\n",
                       Errors.YumFutureDeprecationWarning, stacklevel=2)
@@ -821,10 +824,7 @@ class YumInstalledPackage(YumHeaderPackage):
     def __init__(self, hdr):
         fakerepo = _installed_repo
         YumHeaderPackage.__init__(self, fakerepo, hdr)
-
-    def __repr__(self):
-        return "<Installed Package : %s >" % (str(self))
-
+        
     def verify(self, patterns=[]):
         """verify that the installed files match the packaged checksum
            optionally verify they match only if they are in the 'pattern' list
