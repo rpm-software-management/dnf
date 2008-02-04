@@ -828,6 +828,8 @@ class YumRepository(Repository, config.RepoConf):
         if repoXML is None:
             repoXML = self.repoXML
 
+        if mdtype == 'group' and 'group_gz' in repoXML.fileTypes():
+            mdtype = 'group_gz'
         if (mdtype in ['other', 'filelists', 'primary'] and
             self._check_db_version(mdtype + '_db', repoXML=repoXML)):
             mdtype += '_db'
@@ -913,7 +915,7 @@ class YumRepository(Repository, config.RepoConf):
             return None
 
         if not file_check:
-            compressed = (dbmdtype != mmdtype)
+            compressed = dbmdtype.endswith("_db")
             local = self._get_mdtype_fname(data, compressed)
         else:
             compressed = False
@@ -984,7 +986,7 @@ class YumRepository(Repository, config.RepoConf):
                 return False
 
             local = self._get_mdtype_fname(ndata, False)
-            if nmdtype != mdtype: # Uncompress any .sqlite.bz2 files
+            if nmdtype.endswith("_db"): # Uncompress any .sqlite.bz2 files
                 dl_local = local
                 local = local.replace('.bz2', '')
                 misc.bunzipFile(dl_local, local)
