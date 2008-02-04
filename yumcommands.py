@@ -24,6 +24,8 @@ import cli
 from yum import logginglevels
 import yum.Errors
 from yum.i18n import _
+import rpm
+
 
 def checkRootUID(base):
     """
@@ -722,3 +724,42 @@ class HelpCommand(YumCommand):
 
     def needTs(self, base, basecmd, extcmds):
         return False
+
+class ReInstallCommand(YumCommand):
+    def getNames(self):
+        return ['reinstall']
+
+    def getUsage(self):
+        return "PACKAGE..."
+
+    def doCheck(self, base, basecmd, extcmds):
+        checkRootUID(base)
+        checkGPGKey(base)
+        checkPackageArg(base, basecmd, extcmds)
+
+    def doCommand(self, base, basecmd, extcmds):
+        base.verbose_logger.log(logginglevels.INFO_2, 
+                "Setting up Reinstall Process")
+        oldcount = len(base.tsInfo)
+        base.tsInfo.probFilterFlags.append(rpm.RPMPROB_FILTER_REPLACEPKG)
+        base.tsInfo.probFilterFlags.append(rpm.RPMPROB_FILTER_REPLACENEWFILES)
+        base.tsInfo.probFilterFlags.append(rpm.RPMPROB_FILTER_REPLACEOLDFILES) 
+        try:
+            for item in extcmds:
+                base.remove(pattern=item)
+                base.install(pattern=item)
+
+            if len(base.tsInfo) > oldcount:
+                return 2, [_('Package(s) to install')]
+            return 0, [_('Nothing to do')]            
+            
+        except yum.Errors.YumBaseError, e:
+            return 1, [str(e)]
+
+    def getSummary(self):
+        return "reinstall a package"
+
+
+    def needTs(self, base, basecmd, extcmds):
+        return False
+        

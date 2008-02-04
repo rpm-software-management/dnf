@@ -82,19 +82,21 @@ class TransactionWrapper:
     def addTsFlag(self, flag):
         curflags = self.ts.setFlags(0)
         self.ts.setFlags(curflags | flag)
+
+#    def addProblemFilter(self, filt):
+#        curfilter = self.ts.setProbFilter(0)
+#        self.ts.setProbFilter(cutfilter | filt)    
         
     def test(self, cb, conf={}):
         """tests the ts we've setup, takes a callback function and a conf dict 
            for flags and what not"""
-        #FIXME
-        # I don't like this function - it should test, sure - but not
-        # with this conf dict, we should be doing that beforehand and
-        # we should be packing this information away elsewhere.
+    
         self.addTsFlag(rpm.RPMTRANS_FLAG_TEST)
+        # FIXME GARBAGE - remove once this is reimplemented elsehwere
+        # KEEPING FOR API COMPLIANCE ONLY
         if conf.has_key('diskspacecheck'):
             if conf['diskspacecheck'] == 0:
                 self.ts.setProbFilter(rpm.RPMPROB_FILTER_DISKSPACE)
-    
         tserrors = self.ts.run(cb.callback, '')
     
         reserrors = []

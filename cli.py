@@ -26,6 +26,7 @@ import time
 import random
 import logging
 from optparse import OptionParser
+import rpm
 
 import output
 import shell
@@ -94,6 +95,7 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         self.registerCommand(yumcommands.DepListCommand())
         self.registerCommand(yumcommands.RepoListCommand())
         self.registerCommand(yumcommands.HelpCommand())
+        self.registerCommand(yumcommands.ReInstallCommand())        
 
     def registerCommand(self, command):
         for name in command.getNames():
@@ -376,9 +378,9 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
             
         self.verbose_logger.log(yum.logginglevels.INFO_2,
             _('Running Transaction Test'))
-        tsConf = {}
-        for feature in ['diskspacecheck']: # more to come, I'm sure
-            tsConf[feature] = getattr(self.conf, feature)
+        if self.conf.diskspacecheck == False:
+            self.tsInfo.problemFilterFlags.append(rpm.RPMPROB_FILTER_DISKSPACE)
+            
         
         testcb = RPMTransaction(self, test=True)
         
