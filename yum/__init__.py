@@ -30,6 +30,7 @@ import fnmatch
 import logging
 import logging.config
 import operator
+import gzip
 
 try:
     from iniparse.compat import ParsingError, ConfigParser
@@ -538,6 +539,10 @@ class YumBase(depsolve.Depsolve):
             self.verbose_logger.log(logginglevels.DEBUG_1,
                 _('Adding group file from repository: %s'), repo)
             groupfile = repo.getGroups()
+            # open it up as a file object so iterparse can cope with our gz file
+            if groupfile.endswith('.gz'):
+                groupfile = gzip.open(groupfile)
+                
             try:
                 self._comps.add(groupfile)
             except (Errors.GroupsError,Errors.CompsException), e:

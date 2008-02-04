@@ -287,7 +287,10 @@ class YumRepository(Repository, config.RepoConf):
 
     def getGroupLocation(self):
         """Returns the location of the group."""
-        thisdata = self.repoXML.getData('group')
+        if 'group_gz' in self.repoXML.fileTypes():
+            thisdata = self.repoXML.getData('group_gz')
+        else:
+            thisdata = self.repoXML.getData('group')
         return thisdata.location
 
 
@@ -1167,6 +1170,8 @@ class YumRepository(Repository, config.RepoConf):
     def getGroups(self):
         """gets groups and returns group file path for the repository, if there
            is none it returns None"""
+        if 'group_gz' in self.repoXML.fileTypes():
+            return self._retrieveMD('group_gz', retrieve_can_fail=True)
         return self._retrieveMD('group', retrieve_can_fail=True)
 
     def setCallback(self, callback):
