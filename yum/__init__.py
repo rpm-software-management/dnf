@@ -66,6 +66,8 @@ from yum.i18n import _
 
 import string
 
+from urlgrabber.grabber import default_grabber as urlgrab
+
 __version__ = '3.2.10'
 
 class YumBase(depsolve.Depsolve):
@@ -166,6 +168,12 @@ class YumBase(depsolve.Depsolve):
                     startupconf.pluginconfpath,disabled_plugins)
 
         self._conf = config.readMainConfig(startupconf)
+
+        #  Setup a default_grabber UA here that says we are yum, done this way
+        # so that other API users can add to it if they want.
+        add_ua = " yum/" + __version__
+        urlgrab.opts.user_agent += add_ua
+
         # run the postconfig plugin hook
         self.plugins.run('postconfig')
         self.yumvar = self.conf.yumvar
@@ -631,7 +639,8 @@ class YumBase(depsolve.Depsolve):
         # Keep removing packages & Depsolve until all errors is gone
         # or the transaction is empty
         count = 0
-        skip_messages = []
+        skipped_po = set()
+        orig_restring = restring    # Keep the old error messages
         while len(self.po_with_problems) > 0 and rescode == 1:
             count += 1
             self.verbose_logger.debug(_("Skip-broken round %i"), count)
@@ -650,11 +659,9 @@ class YumBase(depsolve.Depsolve):
                     if not po.repoid == 'installed': # Only remove non installed packages from pkgSack
                         self.pkgSack.delPackage(po)
             for po in toRemove:
-                if self.tsInfo.exists(po.pkgtup):
-                    self.tsInfo.remove(po.pkgtup)
-                    if not po.repoid == 'installed':
-                        skip_messages.append("    %s from %s" % (str(po),po.repoid))
-
+                skipped = self._skipFromTransaction(po)
+                for skip in skipped:
+                    skipped_po.add(skip)
             if not toRemove: # Nothing was removed, so we still got a problem
                 break # Bail out
             rescode, restring = self.resolveDeps()
@@ -663,13 +670,47 @@ class YumBase(depsolve.Depsolve):
              # if there is no changes then we got a loop.
             if startTs-endTs == set():
                 break    # bail out
-        self.verbose_logger.debug(_("Skip-broken took %i rounds "), count)
-        self.verbose_logger.info(_('\nPackages skipped because for dependency problems:'))
-        for msg in skip_messages:
-            self.verbose_logger.info(msg)
+        if rescode != 1:
+            self.verbose_logger.debug(_("Skip-broken took %i rounds "), count)
+            self.verbose_logger.info(_('\nPackages skipped because of dependency problems:'))
+            skipped_list = [p for p in skipped_po]
+            skipped_list.sort()
+            for po in skipped_list:
+                msg = _("    %s from %s") % (str(po),po.repo.id)
+                self.verbose_logger.info(msg)
+        else:
+            # If we cant solve the problems the show the original error messages.
+            self.verbose_logger.info("Skip-broken could not solve problems")
+            return 1, orig_restring
         
         return rescode, restring
 
+    def _skipFromTransaction(self,po):
+        skipped =  []
+        if rpmUtils.arch.isMultiLibArch():
+            archs = rpmUtils.arch.getArchList() 
+            n,a,e,v,r = po.pkgtup
+            # skip for all combat archs
+            for a in archs:
+                pkgtup = (n,a,e,v,r)
+                if self.tsInfo.exists(pkgtup):
+                    for txmbr in self.tsInfo.getMembers(pkgtup):
+                        pkg = txmbr.po
+                        skip = self._removePoFromTransaction(pkg)
+                        skipped.extend(skip)
+        else:
+            msgs = self._removePoFromTransaction(po)
+            skipped.extend(msgs)
+        return skipped
+
+    def _removePoFromTransaction(self,po):
+        skip =  []
+        if self.tsInfo.exists(po.pkgtup):
+            self.tsInfo.remove(po.pkgtup)
+            if not po.repoid == 'installed':
+                skip.append(po)
+        return skip 
+              
     def _buildDepTree(self):
         ''' create a dictionary with po and deps '''
         depTree = { }
@@ -2322,7 +2363,7 @@ class YumBase(depsolve.Depsolve):
         if not po:
             try:
                 po = YumLocalPackage(ts=self.rpmdb.readOnlyTS(), filename=pkg)
-            except yum.Errors.MiscError:
+            except Errors.MiscError:
                 self.logger.critical(_('Cannot open file: %s. Skipping.'), pkg)
                 return tx_return
             self.verbose_logger.log(logginglevels.INFO_2,
@@ -2378,7 +2419,7 @@ class YumBase(depsolve.Depsolve):
             self.verbose_logger.log(logginglevels.INFO_2,
                 _('Marking %s as an update to %s'), po.localpath, oldpo)
             self.localPackages.append(po)
-            self.tsInfo.addUpdate(po, oldpo)
+            txmbr = self.tsInfo.addUpdate(po, oldpo)
             tx_return.append(txmbr)
 
         for po in donothingpkgs:

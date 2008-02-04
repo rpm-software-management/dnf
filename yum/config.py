@@ -583,7 +583,6 @@ class YumConf(StartupConf):
     commands = ListOption()
     exclude = ListOption()
     failovermethod = Option('roundrobin')
-    yumversion = Option('unversioned')
     proxy = UrlOption(schemes=('http', 'ftp', 'https'), allow_none=True)
     proxy_username = Option()
     proxy_password = Option()

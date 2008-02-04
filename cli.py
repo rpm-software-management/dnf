@@ -216,7 +216,7 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         """reads self.cmds and parses them out to make sure that the requested 
         base command + argument makes any sense at all""" 
 
-        self.verbose_logger.debug('Yum Version: %s', self.conf.yumversion)
+        self.verbose_logger.debug('Yum Version: %s', yum.__version__)
         self.verbose_logger.debug('COMMAND: %s', self.cmdstring)
         self.verbose_logger.debug('Installroot: %s', self.conf.installroot)
         if len(self.conf.commands) == 0 and len(self.cmds) < 1:
@@ -606,7 +606,7 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
 
         installing = False
         for pkg in filelist:
-            txmbrs = self.installLocal(pkg, updateonly)
+            txmbrs = self.installLocal(pkg, updateonly=updateonly)
             if txmbrs:
                 installing = True
 
@@ -976,9 +976,6 @@ class YumOptionParser(OptionParser):
             # config file is parsed and moving us forward
             # set some things in it.
                 
-            # version of yum
-            self.base.conf.yumversion = yum.__version__
-            
             # Handle remaining options
             if opts.assumeyes:
                 self.base.conf.assumeyes =1

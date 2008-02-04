@@ -343,6 +343,23 @@ class SkipBrokenTests(DepsolveTests):
 
         self.assertEquals('empty', *self.resolveCode(skip=True))
 
+    def testMultiLibUpdate(self):
+        '''
+        foo-1.i386 & foo-1.xf86_64 is updated by foo-2.i386 & foo-2.xf86_64
+        foo-2.xf86_64 has a missing req, and get skipped, foo-2.i386 has to be skipped to
+        or it will fail in the rpm test transaction
+        '''
+        ipo1 = self.instPackage('foo', '1',arch='i386')
+        ipo2 = self.instPackage('foo', '1',arch='x86_64')
+        po1 = self.repoPackage('foo', '2',arch='i386')
+        po2 = self.repoPackage('foo', '2',arch='x86_64')
+        po2.addRequires('notfound', 'EQ', ('0', '1', '0'))
+        self.tsInfo.addUpdate(po1, oldpo=ipo1)
+        self.tsInfo.addUpdate(po2, oldpo=ipo2)
+        self.assertEquals('empty', *self.resolveCode(skip=True))
+        self.assertResult([ipo1,ipo2])
+        
+
 
     def resolveCode(self,skip = False):
         solver = YumBase()

@@ -30,6 +30,8 @@ import config
 import Errors
 from parser import ConfigPreProcessor
 
+from textwrap import fill
+
 
 # TODO: expose rpm package sack objects to plugins (once finished)
 # TODO: allow plugins to use the existing config stuff to define options for
@@ -184,6 +186,15 @@ class YumPlugins:
                 continue
             for modulefile in glob.glob('%s/*.py' % dir):
                 self._loadplugin(modulefile, types)
+            plugins = sorted(self._plugins)
+
+            # Mostly copied from YumOutput._outKeyValFill()
+            key = "Loaded plugins: "
+            val = ", ".join(plugins)
+            nxt = ' ' * (len(key) - 2) + ': '
+            self.verbose_logger.log(logginglevels.INFO_2,
+                                    fill(val, width=80, initial_indent=key,
+                                         subsequent_indent=nxt))
 
     def _loadplugin(self, modulefile, types):
         '''Attempt to import a plugin module and register the hook methods it
@@ -238,7 +249,8 @@ class YumPlugins:
             if modname in self.disabledPlugins:
                 return
 
-        self.verbose_logger.log(logginglevels.INFO_2, 'Loading "%s" plugin', modname)
+        self.verbose_logger.log(logginglevels.DEBUG_3, 'Loading "%s" plugin',
+                                modname)
 
         # Store the plugin module and its configuration file
         if not self._plugins.has_key(modname):
