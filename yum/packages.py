@@ -192,7 +192,7 @@ class PackageObject(object):
         return ret
 
     def __repr__(self):
-        return "<%s : %s>" % (self.__class__.__name__, str(self)) 
+        return "<%s : %s (%s)>" % (self.__class__.__name__, str(self),hex(id(self))) 
 
     def returnSimple(self, varname):
         warnings.warn("returnSimple() will go away in a future version of Yum.\n",

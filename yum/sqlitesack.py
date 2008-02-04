@@ -69,10 +69,6 @@ class YumAvailablePackageSqlite(YumAvailablePackage, PackageObject, RpmBase):
 
     files = property(fget=lambda self: self._loadFiles())
 
-    def __repr__(self):
-        h = hex(hash(self.pkgid + self.repo.id + str(self)))
-        return "<%s : %s (%s) %s>" % (self.__class__.__name__,str(self),self.repo.id,h)
-        
     def _read_db_obj(self, db_obj, item=None):
         """read the db obj. If asked for a specific item, return it.
            otherwise populate out into the object what exists"""
