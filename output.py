@@ -281,7 +281,8 @@ class YumOutput:
         if self.verbose_logger.isEnabledFor(logginglevels.DEBUG_3):
             print _("Committer  : %s") % pkg.committer
         print self._outKeyValFill(_("Summary    : "), enc(pkg.summary))
-        print _("URL        : %s") % pkg.url
+        if pkg.url:
+            print _("URL        : %s") % pkg.url
         print _("License    : %s") % pkg.license
         print self._outKeyValFill(_("Description: "), enc(pkg.description))
         print ""
