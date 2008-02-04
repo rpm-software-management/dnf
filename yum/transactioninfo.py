@@ -565,6 +565,9 @@ class TransactionMember:
     def __str__(self):
         return "%s.%s %s-%s-%s - %s" % (self.name, self.arch, self.epoch,
                                         self.version, self.release, self.ts_state)
+
+    def __repr__(self):
+        return "<%s : %s (%s)>" % (self.__class__.__name__, str(self),hex(id(self))) 
         
     # This is the tricky part - how do we nicely setup all this data w/o going insane
     # we could make the txmember object be created from a YumPackage base object
