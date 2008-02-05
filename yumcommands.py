@@ -24,7 +24,6 @@ import cli
 from yum import logginglevels
 import yum.Errors
 from yum.i18n import _
-import rpm
 
 
 def checkRootUID(base):
