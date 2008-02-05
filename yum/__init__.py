@@ -1428,7 +1428,8 @@ class YumBase(depsolve.Depsolve):
         
         return results
     
-    def searchGenerator(self, fields, criteria):
+    # pre 3.2.10 API used to always showdups, so that's the default atm.
+    def searchGenerator(self, fields, criteria, showdups=True):
         """Generator method to lighten memory load for some searches.
            This is the preferred search function to use."""
         sql_fields = []
@@ -1499,7 +1500,8 @@ class YumBase(depsolve.Depsolve):
             for (po, matched) in sorted(sorted_lists[val], key=operator.itemgetter(0)):
                 if (po.name, po.arch) not in yielded:
                     yield (po, matched)
-                    yielded[(po.name, po.arch)] = 1
+                    if not showdups:
+                        yielded[(po.name, po.arch)] = 1
 
 
     def searchPackages(self, fields, criteria, callback=None):
