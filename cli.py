@@ -753,7 +753,7 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         if 'metadata' in userlist:
             self.logger.debug(_('Cleaning up xml metadata'))
             xmlcode, xmlresults = self.cleanMetadata()
-        if 'dbcache' in userlist:
+        if 'dbcache' in userlist or 'metadata' in userlist:
             self.logger.debug(_('Cleaning up database cache'))
             dbcode, dbresults =  self.cleanSqlite()
         if 'plugins' in userlist:
