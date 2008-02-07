@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: yum\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-02-07 14:00+0100\n"
+"POT-Creation-Date: 2008-02-07 14:11+0100\n"
 "PO-Revision-Date: 2003-10-14 15:36+0400\n"
 "Last-Translator: Grigory Bakunov <black@asplinux.ru>\n"
 "Language-Team: Russian <ru@li.org>\n"
@@ -16,14 +16,64 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: pygettext.py 1.1\n"
 
+#: ../callback.py:48 ../output.py:487
+msgid "Updating"
+msgstr ""
+
+#: ../callback.py:49
+msgid "Erasing"
+msgstr ""
+
+#: ../callback.py:50 ../callback.py:51 ../callback.py:53 ../output.py:486
+#, fuzzy
+msgid "Installing"
+msgstr "Ошибки установки:"
+
+#: ../callback.py:52 ../callback.py:58
+msgid "Obsoleted"
+msgstr ""
+
+#: ../callback.py:54 ../output.py:533
+#, fuzzy
+msgid "Updated"
+msgstr "Обновлено: "
+
+#: ../callback.py:55
+#, fuzzy
+msgid "Erased"
+msgstr "Удалено: "
+
+#: ../callback.py:56 ../callback.py:57 ../callback.py:59 ../output.py:531
+#, fuzzy
+msgid "Installed"
+msgstr "Установлено по зависимостям: "
+
 #: ../callback.py:130
 msgid "No header - huh?"
 msgstr "Нет заголовка - блин?"
+
+#: ../callback.py:168
+#, fuzzy
+msgid "Repackage"
+msgstr "Удаление пакетов"
+
+#: ../callback.py:189
+#, fuzzy, python-format
+msgid "Error: invalid output state: %s for %s"
+msgstr "Ошибка при разборе параметров командной строки: %s"
 
 #: ../callback.py:212
 #, fuzzy, python-format
 msgid "Erased: %s"
 msgstr "Удалено: "
+
+#: ../callback.py:217 ../output.py:488
+msgid "Removing"
+msgstr ""
+
+#: ../callback.py:219
+msgid "Cleanup"
+msgstr ""
 
 #: ../cli.py:103
 #, python-format
@@ -573,19 +623,6 @@ msgstr ""
 msgid "Size"
 msgstr ""
 
-#: ../output.py:486
-#, fuzzy
-msgid "Installing"
-msgstr "Ошибки установки:"
-
-#: ../output.py:487
-msgid "Updating"
-msgstr ""
-
-#: ../output.py:488
-msgid "Removing"
-msgstr ""
-
 #: ../output.py:489
 #, fuzzy
 msgid "Installing for dependencies"
@@ -628,20 +665,10 @@ msgstr ""
 msgid "Dependency Removed"
 msgstr "Зависимости разрешены"
 
-#: ../output.py:531
-#, fuzzy
-msgid "Installed"
-msgstr "Установлено по зависимостям: "
-
 #: ../output.py:532
 #, fuzzy
 msgid "Dependency Installed"
 msgstr "Установлено по зависимостям: "
-
-#: ../output.py:533
-#, fuzzy
-msgid "Updated"
-msgstr "Обновлено: "
 
 #: ../output.py:534
 #, fuzzy

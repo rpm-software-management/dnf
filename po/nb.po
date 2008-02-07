@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: yum 3.2.10\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-02-07 14:00+0100\n"
+"POT-Creation-Date: 2008-02-07 14:11+0100\n"
 "PO-Revision-Date: 2008-02-06 19:17+0100\n"
 "Last-Translator: Terje Røsten <terje.rosten@ntnu.no>\n"
 "Language-Team: Norwegian (bokmål) <i18n-no@lister.ping.uio.no>\n"
@@ -16,14 +16,62 @@ msgstr ""
 "Content-Type: text/plain; charset=ISO-8859-1\n"
 "Content-Transfer-Encoding: 8bit\n"
 
+#: ../callback.py:48 ../output.py:487
+msgid "Updating"
+msgstr "Oppdaterer"
+
+#: ../callback.py:49
+msgid "Erasing"
+msgstr ""
+
+#: ../callback.py:50 ../callback.py:51 ../callback.py:53 ../output.py:486
+msgid "Installing"
+msgstr "Legger inn"
+
+#: ../callback.py:52 ../callback.py:58
+#, fuzzy
+msgid "Obsoleted"
+msgstr "foreldet"
+
+#: ../callback.py:54 ../output.py:533
+msgid "Updated"
+msgstr "Oppdatert"
+
+#: ../callback.py:55
+#, fuzzy
+msgid "Erased"
+msgstr "fjernet"
+
+#: ../callback.py:56 ../callback.py:57 ../callback.py:59 ../output.py:531
+msgid "Installed"
+msgstr "Lagt inn"
+
 #: ../callback.py:130
 msgid "No header - huh?"
 msgstr "Intet hode - merksnodig?!"
+
+#: ../callback.py:168
+#, fuzzy
+msgid "Repackage"
+msgstr "Pakke"
+
+#: ../callback.py:189
+#, fuzzy, python-format
+msgid "Error: invalid output state: %s for %s"
+msgstr "Feil: ugyldig argument gitt til kommandoen clean: %r"
 
 #: ../callback.py:212
 #, python-format
 msgid "Erased: %s"
 msgstr "Fjernet: %s"
+
+#: ../callback.py:217 ../output.py:488
+msgid "Removing"
+msgstr "Fjerner"
+
+#: ../callback.py:219
+msgid "Cleanup"
+msgstr ""
 
 #: ../cli.py:103
 #, python-format
@@ -554,18 +602,6 @@ msgstr "Pakkeoversikt"
 msgid "Size"
 msgstr "Størrelse"
 
-#: ../output.py:486
-msgid "Installing"
-msgstr "Legger inn"
-
-#: ../output.py:487
-msgid "Updating"
-msgstr "Oppdaterer"
-
-#: ../output.py:488
-msgid "Removing"
-msgstr "Fjerner"
-
 #: ../output.py:489
 msgid "Installing for dependencies"
 msgstr "Legges inn på grunn avhengigheter"
@@ -612,17 +648,9 @@ msgstr "Fjernet"
 msgid "Dependency Removed"
 msgstr "Fjernet på grunn avhengighet"
 
-#: ../output.py:531
-msgid "Installed"
-msgstr "Lagt inn"
-
 #: ../output.py:532
 msgid "Dependency Installed"
 msgstr "Lagt inn på grunn av avhengighet"
-
-#: ../output.py:533
-msgid "Updated"
-msgstr "Oppdatert"
 
 #: ../output.py:534
 msgid "Dependency Updated"

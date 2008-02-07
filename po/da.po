@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: yum 3.2.10\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-02-07 14:00+0100\n"
+"POT-Creation-Date: 2008-02-07 14:11+0100\n"
 "PO-Revision-Date: 2008-01-30 13:32+0100\n"
 "Last-Translator: Tim Lauridsen <timlau@fedoraproject.org>\n"
 "Language-Team: Danish <dansk@klid.dk>\n"
@@ -18,14 +18,62 @@ msgstr ""
 "Content-Type: text/plain; charset=iso-8859-1\n"
 "Content-Transfer-Encoding: 8bit\n"
 
+#: ../callback.py:48 ../output.py:487
+msgid "Updating"
+msgstr "Opdatere"
+
+#: ../callback.py:49
+msgid "Erasing"
+msgstr ""
+
+#: ../callback.py:50 ../callback.py:51 ../callback.py:53 ../output.py:486
+msgid "Installing"
+msgstr "Installer"
+
+#: ../callback.py:52 ../callback.py:58
+#, fuzzy
+msgid "Obsoleted"
+msgstr "overflødiggjort"
+
+#: ../callback.py:54 ../output.py:533
+msgid "Updated"
+msgstr "Opdateret"
+
+#: ../callback.py:55
+#, fuzzy
+msgid "Erased"
+msgstr "slettet"
+
+#: ../callback.py:56 ../callback.py:57 ../callback.py:59 ../output.py:531
+msgid "Installed"
+msgstr "Installeret"
+
 #: ../callback.py:130
 msgid "No header - huh?"
 msgstr "Ingen Header - Meget mystisk"
+
+#: ../callback.py:168
+#, fuzzy
+msgid "Repackage"
+msgstr "Pakke"
+
+#: ../callback.py:189
+#, fuzzy, python-format
+msgid "Error: invalid output state: %s for %s"
+msgstr "Fejl: invalid clean argument: %r"
 
 #: ../callback.py:212
 #, python-format
 msgid "Erased: %s"
 msgstr "Slettet : %s"
+
+#: ../callback.py:217 ../output.py:488
+msgid "Removing"
+msgstr "Sletning"
+
+#: ../callback.py:219
+msgid "Cleanup"
+msgstr ""
 
 #: ../cli.py:103
 #, python-format
@@ -559,18 +607,6 @@ msgstr "Filkilde"
 msgid "Size"
 msgstr "Størrelse"
 
-#: ../output.py:486
-msgid "Installing"
-msgstr "Installer"
-
-#: ../output.py:487
-msgid "Updating"
-msgstr "Opdatere"
-
-#: ../output.py:488
-msgid "Removing"
-msgstr "Sletning"
-
 #: ../output.py:489
 msgid "Installing for dependencies"
 msgstr "Installer som afhægighed"
@@ -617,17 +653,9 @@ msgstr "Slettet"
 msgid "Dependency Removed"
 msgstr "Afhængighed Slettet"
 
-#: ../output.py:531
-msgid "Installed"
-msgstr "Installeret"
-
 #: ../output.py:532
 msgid "Dependency Installed"
 msgstr "Afhængig Installeret"
-
-#: ../output.py:533
-msgid "Updated"
-msgstr "Opdateret"
 
 #: ../output.py:534
 msgid "Dependency Updated"

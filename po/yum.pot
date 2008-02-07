@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-02-07 14:00+0100\n"
+"POT-Creation-Date: 2008-02-07 14:11+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -16,13 +16,58 @@ msgstr ""
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
 
+#: ../callback.py:48 ../output.py:487
+msgid "Updating"
+msgstr ""
+
+#: ../callback.py:49
+msgid "Erasing"
+msgstr ""
+
+#: ../callback.py:50 ../callback.py:51 ../callback.py:53 ../output.py:486
+msgid "Installing"
+msgstr ""
+
+#: ../callback.py:52 ../callback.py:58
+msgid "Obsoleted"
+msgstr ""
+
+#: ../callback.py:54 ../output.py:533
+msgid "Updated"
+msgstr ""
+
+#: ../callback.py:55
+msgid "Erased"
+msgstr ""
+
+#: ../callback.py:56 ../callback.py:57 ../callback.py:59 ../output.py:531
+msgid "Installed"
+msgstr ""
+
 #: ../callback.py:130
 msgid "No header - huh?"
+msgstr ""
+
+#: ../callback.py:168
+msgid "Repackage"
+msgstr ""
+
+#: ../callback.py:189
+#, python-format
+msgid "Error: invalid output state: %s for %s"
 msgstr ""
 
 #: ../callback.py:212
 #, python-format
 msgid "Erased: %s"
+msgstr ""
+
+#: ../callback.py:217 ../output.py:488
+msgid "Removing"
+msgstr ""
+
+#: ../callback.py:219
+msgid "Cleanup"
 msgstr ""
 
 #: ../cli.py:103
@@ -545,18 +590,6 @@ msgstr ""
 msgid "Size"
 msgstr ""
 
-#: ../output.py:486
-msgid "Installing"
-msgstr ""
-
-#: ../output.py:487
-msgid "Updating"
-msgstr ""
-
-#: ../output.py:488
-msgid "Removing"
-msgstr ""
-
 #: ../output.py:489
 msgid "Installing for dependencies"
 msgstr ""
@@ -595,16 +628,8 @@ msgstr ""
 msgid "Dependency Removed"
 msgstr ""
 
-#: ../output.py:531
-msgid "Installed"
-msgstr ""
-
 #: ../output.py:532
 msgid "Dependency Installed"
-msgstr ""
-
-#: ../output.py:533
-msgid "Updated"
 msgstr ""
 
 #: ../output.py:534
