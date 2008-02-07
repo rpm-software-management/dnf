@@ -475,13 +475,13 @@ class YumOutput:
         
         self.tsInfo.makelists()
         if len(self.tsInfo) > 0:
-            out = """
+            out = u"""
 =============================================================================
  %-22s  %-9s  %-15s  %-16s  %-5s
 =============================================================================
 """ % (_('Package'), _('Arch'), _('Version'), _('Repository'), _('Size'))
         else:
-            out = ""
+            out = u""
 
         for (action, pkglist) in [(_('Installing'), self.tsInfo.installed),
                             (_('Updating'), self.tsInfo.updated),
@@ -490,14 +490,14 @@ class YumOutput:
                             (_('Updating for dependencies'), self.tsInfo.depupdated),
                             (_('Removing for dependencies'), self.tsInfo.depremoved)]:
             if pkglist:
-                totalmsg = "%s:\n" % action
+                totalmsg = u"%s:\n" % action
             for txmbr in pkglist:
                 (n,a,e,v,r) = txmbr.pkgtup
                 evr = txmbr.po.printVer()
                 repoid = txmbr.repoid
                 pkgsize = float(txmbr.po.size)
                 size = self.format_number(pkgsize)
-                msg = " %-22s  %-9s  %-15s  %-16s  %5s\n" % (n, a,
+                msg = u" %-22s  %-9s  %-15s  %-16s  %5s\n" % (n, a,
                               evr, repoid, size)
                 for obspo in txmbr.obsoletes:
                     appended = _('     replacing  %s.%s %s\n\n') % (obspo.name,
