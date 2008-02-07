@@ -11,12 +11,12 @@ msgstr ""
 "Project-Id-Version: yum 3.2.10\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2008-02-07 14:11+0100\n"
-"PO-Revision-Date: 2008-01-30 13:32+0100\n"
+"PO-Revision-Date: 2008-02-07 15:11+0100\n"
 "Last-Translator: Tim Lauridsen <timlau@fedoraproject.org>\n"
 "Language-Team: Danish <dansk@klid.dk>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=iso-8859-1\n"
-"Content-Transfer-Encoding: 8bit\n"
+"Content-Transfer-Encoding: 8bit"
 
 #: ../callback.py:48 ../output.py:487
 msgid "Updating"
@@ -31,7 +31,6 @@ msgid "Installing"
 msgstr "Installer"
 
 #: ../callback.py:52 ../callback.py:58
-#, fuzzy
 msgid "Obsoleted"
 msgstr "overflødiggjort"
 
@@ -40,9 +39,8 @@ msgid "Updated"
 msgstr "Opdateret"
 
 #: ../callback.py:55
-#, fuzzy
 msgid "Erased"
-msgstr "slettet"
+msgstr "Slettet"
 
 #: ../callback.py:56 ../callback.py:57 ../callback.py:59 ../output.py:531
 msgid "Installed"
@@ -53,14 +51,13 @@ msgid "No header - huh?"
 msgstr "Ingen Header - Meget mystisk"
 
 #: ../callback.py:168
-#, fuzzy
 msgid "Repackage"
-msgstr "Pakke"
+msgstr "genpakning"
 
 #: ../callback.py:189
-#, fuzzy, python-format
+#, python-format
 msgid "Error: invalid output state: %s for %s"
-msgstr "Fejl: invalid clean argument: %r"
+msgstr "Error: invalid output status: %s for %s"
 
 #: ../callback.py:212
 #, python-format
@@ -458,37 +455,37 @@ msgid "Trying other mirror."
 msgstr "Prøver et andet filspejl (mirror)"
 
 #: ../output.py:273
-#, fuzzy, python-format
+#, python-format
 msgid "Name       : %s"
 msgstr "Navn       : %s"
 
 #: ../output.py:274
-#, fuzzy, python-format
+#, python-format
 msgid "Arch       : %s"
 msgstr "Arkt       : %s"
 
 #: ../output.py:276
-#, fuzzy, python-format
+#, python-format
 msgid "Epoch      : %s"
 msgstr "Epoch      : %s"
 
 #: ../output.py:277
-#, fuzzy, python-format
+#, python-format
 msgid "Version    : %s"
 msgstr "Version    : %s"
 
 #: ../output.py:278
-#, fuzzy, python-format
+#, python-format
 msgid "Release    : %s"
 msgstr "Release    : %s"
 
 #: ../output.py:279
-#, fuzzy, python-format
+#, python-format
 msgid "Size       : %s"
 msgstr "Strl       : %s"
 
 #: ../output.py:280
-#, fuzzy, python-format
+#, python-format
 msgid "Repo       : %s"
 msgstr "Kilde      : %s"
 
@@ -498,7 +495,6 @@ msgid "Committer  : %s"
 msgstr "Committer  : %s"
 
 #: ../output.py:283
-#, fuzzy
 msgid "Summary    : "
 msgstr "Sammendrag  : "
 
@@ -569,9 +565,8 @@ msgid "   Unsatisfied dependency"
 msgstr "   Ufuldendt afhængighed"
 
 #: ../output.py:436
-#, fuzzy
 msgid "Matched from:"
-msgstr "Ingen match fundet"
+msgstr "Matchet af:"
 
 #: ../output.py:462
 msgid "There was an error calculating total download size"
@@ -819,94 +814,80 @@ msgid "PACKAGE..."
 msgstr ""
 
 #: ../yumcommands.py:159
-#, fuzzy
 msgid "Install a package or packages on your system"
-msgstr "Matcher pakker for pakke liste baseret på brugeren argumenter"
+msgstr "Installerer en/flere pakker på systemmet"
 
 #: ../yumcommands.py:168
-#, fuzzy
 msgid "Setting up Install Process"
-msgstr "Opsætning af filkilder"
+msgstr "Opsætning af Installations Processen"
 
 #: ../yumcommands.py:179
 msgid "[PACKAGE...]"
 msgstr ""
 
 #: ../yumcommands.py:182
-#, fuzzy
 msgid "Update a package or packages on your system"
-msgstr "Matcher pakker for pakke liste baseret på brugeren argumenter"
+msgstr "Opdaterer en eller flere pakker på systemmet"
 
 #: ../yumcommands.py:190
-#, fuzzy
 msgid "Setting up Update Process"
-msgstr "Opsætning af filkilder"
+msgstr "Opsætning af opdaterings processen"
 
 #: ../yumcommands.py:204
 msgid "Display details about a package or group of packages"
 msgstr ""
 
 #: ../yumcommands.py:212
-#, fuzzy
 msgid "Installed Packages"
-msgstr "Installeret"
+msgstr "Installerede pakker"
 
 #: ../yumcommands.py:213
-#, fuzzy
 msgid "Available Packages"
-msgstr "-Valgfrie Pakker:"
+msgstr "Tilgængelige pakker"
 
 #: ../yumcommands.py:214
-#, fuzzy
 msgid "Extra Packages"
-msgstr "-Valgfrie Pakker:"
+msgstr "Extra Pakker"
 
 #: ../yumcommands.py:215
-#, fuzzy
 msgid "Updated Packages"
-msgstr " Tvungne pakker:"
+msgstr "Opdaterede Pakker"
 
 #: ../yumcommands.py:221 ../yumcommands.py:225
-#, fuzzy
 msgid "Obsoleting Packages"
-msgstr "Oprydning af pakker"
+msgstr "Overflødigør Pakker"
 
 #: ../yumcommands.py:226
 msgid "Recently Added Packages"
 msgstr ""
 
 #: ../yumcommands.py:232
-#, fuzzy
 msgid "No matching Packages to list"
-msgstr "Pakke(r) til installation"
+msgstr "Der blev ikke fundet nogle pakker som matchede"
 
 #: ../yumcommands.py:246
 msgid "List a package or groups of packages"
 msgstr ""
 
 #: ../yumcommands.py:258
-#, fuzzy
 msgid "Remove a package or packages from your system"
-msgstr "Matcher pakker for pakke liste baseret på brugeren argumenter"
+msgstr "Sletter en/flere pakker fra systemmet"
 
 #: ../yumcommands.py:266
-#, fuzzy
 msgid "Setting up Remove Process"
-msgstr "Opsætning af filkilder"
+msgstr "Opsætning af sletnings processen"
 
 #: ../yumcommands.py:278
-#, fuzzy
 msgid "Setting up Group Process"
-msgstr "Opsætning af filkilder"
+msgstr "Opsætning af Gruppe Processen"
 
 #: ../yumcommands.py:284
 msgid "No Groups on which to run command"
 msgstr ""
 
 #: ../yumcommands.py:297
-#, fuzzy
 msgid "List available package groups"
-msgstr "Tilgænglige grupper:"
+msgstr "List tilgænglige grupper"
 
 #: ../yumcommands.py:314
 msgid "Install the packages in a group on your system"
@@ -953,36 +934,32 @@ msgid "Search package details for the given string"
 msgstr ""
 
 #: ../yumcommands.py:496
-#, fuzzy
 msgid "Searching Packages: "
-msgstr "Oprydning af pakker"
+msgstr "Søger i pakkerne: "
 
 #: ../yumcommands.py:513
 msgid "Update packages taking obsoletes into account"
 msgstr ""
 
 #: ../yumcommands.py:522
-#, fuzzy
 msgid "Setting up Upgrade Process"
-msgstr "Opsætning af filkilder"
+msgstr "Opsætning af opgradingsprocessen"
 
 #: ../yumcommands.py:536
 msgid "Install a local RPM"
 msgstr ""
 
 #: ../yumcommands.py:545
-#, fuzzy
 msgid "Setting up Local Package Process"
-msgstr "Opsætning af Pakke lister"
+msgstr "Opsætning af Lokal pakke processen"
 
 #: ../yumcommands.py:564
 msgid "Determine which package provides the given dependency"
 msgstr ""
 
 #: ../yumcommands.py:567
-#, fuzzy
 msgid "Searching Packages for Dependency:"
-msgstr "Søger i pkgSack for afhægingen: %s"
+msgstr "Søger efter afhængighed i pakkerne:"
 
 #: ../yumcommands.py:581
 msgid "Run an interactive yum shell"
@@ -993,14 +970,12 @@ msgid "Setting up Yum Shell"
 msgstr ""
 
 #: ../yumcommands.py:605
-#, fuzzy
 msgid "List a package's dependencies"
-msgstr "Installer som afhægighed"
+msgstr "Viser en pakke's afhængigheder"
 
 #: ../yumcommands.py:611
-#, fuzzy
 msgid "Finding dependencies: "
-msgstr "Opdatere som afhægighed"
+msgstr "Finder afhængigheder: "
 
 #: ../yumcommands.py:627
 msgid "Display the configured software repositories"
@@ -1019,14 +994,12 @@ msgid "status"
 msgstr ""
 
 #: ../yumcommands.py:651
-#, fuzzy
 msgid "enabled"
-msgstr "Installeret"
+msgstr "aktiveret"
 
 #: ../yumcommands.py:654
-#, fuzzy
 msgid "disabled"
-msgstr "installeret"
+msgstr "deaktiveret"
 
 #: ../yumcommands.py:671
 msgid "Display a helpful usage message"
@@ -1052,21 +1025,22 @@ msgid ""
 msgstr ""
 
 #: ../yumcommands.py:741
-#, fuzzy
 msgid "Setting up Reinstall Process"
-msgstr "Opsætning af filkilder"
+msgstr "Opsætning af reinstallations processen"
 
 #: ../yumcommands.py:755
 msgid "reinstall a package"
 msgstr ""
 
 #: ../yummain.py:41
-#, fuzzy
 msgid ""
 "\n"
 "\n"
 "Exiting on user cancel"
-msgstr "Afstutter after brugeren ønske"
+msgstr ""
+"\n"
+"\n"
+"Afstutter efter brugerens ønske"
 
 #: ../yummain.py:47
 msgid ""
@@ -1081,9 +1055,9 @@ msgid ""
 msgstr ""
 
 #: ../yummain.py:132 ../yummain.py:171
-#, fuzzy, python-format
+#, python-format
 msgid "Error: %s"
-msgstr "Konfiguration Fejl: %s"
+msgstr "Fejl: %s"
 
 #: ../yummain.py:142 ../yummain.py:178
 #, python-format
@@ -1092,28 +1066,30 @@ msgstr ""
 
 #. Depsolve stage
 #: ../yummain.py:149
-#, fuzzy
 msgid "Resolving Dependencies"
-msgstr "Sletter som afhængighed"
+msgstr "Finder afhængigheder"
 
 #: ../yummain.py:184
-#, fuzzy
 msgid ""
 "\n"
 "Dependencies Resolved"
-msgstr "Afhængighed Slettet"
+msgstr ""
+"\n"
+"Afhængigheder fundet"
 
 #: ../yummain.py:199
 msgid "Complete!"
 msgstr ""
 
 #: ../yummain.py:246
-#, fuzzy
 msgid ""
 "\n"
 "\n"
 "Exiting on user cancel."
-msgstr "Afstutter after brugeren ønske"
+msgstr ""
+"\n"
+"\n"
+"Afslutter efter brugerens ønske"
 
 #: ../yum/depsolve.py:70
 msgid "doTsSetup() will go away in a future version of Yum.\n"
@@ -1398,7 +1374,6 @@ msgid "Skip-broken took %i rounds "
 msgstr ""
 
 #: ../yum/__init__.py:675
-#, fuzzy
 msgid ""
 "\n"
 "Packages skipped because of dependency problems:"
