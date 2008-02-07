@@ -27,6 +27,7 @@ import time # test purposes only
 from yum import Errors
 from yum import plugins
 from yum import logginglevels
+from yum.i18n import _ 
 import cli
 
 
@@ -37,13 +38,13 @@ def main(args):
         sys.stdout = codecs.getwriter(locale.getpreferredencoding())(sys.stdout)
 
     def exUserCancel():
-        logger.critical('\n\nExiting on user cancel')
+        logger.critical(_('\n\nExiting on user cancel'))
         if unlock(): return 200
         return 1
 
     def exIOError(e):
         if e.errno == 32:
-            logger.critical('\n\nExiting on Broken Pipe')
+            logger.critical(_('\n\nExiting on Broken Pipe'))
         if unlock(): return 200
         return 1
 
@@ -101,7 +102,7 @@ def main(args):
             if "%s" %(e.msg,) != lockerr:
                 lockerr = "%s" %(e.msg,)
                 logger.critical(lockerr)
-            logger.critical("Another app is currently holding the yum lock; waiting for it to exit...")
+            logger.critical(_("Another app is currently holding the yum lock; waiting for it to exit..."))
             time.sleep(2)
         else:
             break
@@ -128,7 +129,7 @@ def main(args):
     elif result == 1:
         # Fatal error
         for msg in resultmsgs:
-            logger.critical('Error: %s', msg)
+            logger.critical(_('Error: %s'), msg)
         if unlock(): return 200
         return 1
     elif result == 2:
@@ -138,14 +139,14 @@ def main(args):
         if unlock(): return 200
         return 100
     else:
-        logger.critical('Unknown Error(s): Exit Code: %d:', result)
+        logger.critical(_('Unknown Error(s): Exit Code: %d:'), result)
         for msg in resultmsgs:
             logger.critical(msg)
         if unlock(): return 200
         return 3
             
     # Depsolve stage
-    verbose_logger.log(logginglevels.INFO_2, 'Resolving Dependencies')
+    verbose_logger.log(logginglevels.INFO_2, _('Resolving Dependencies'))
     verbose_logger.debug(time.time())
     try:
         (result, resultmsgs) = base.buildTransaction() 
@@ -167,20 +168,20 @@ def main(args):
     elif result == 1:
         # Fatal error
         for msg in resultmsgs:
-            logger.critical('Error: %s', msg)
+            logger.critical(_('Error: %s'), msg)
         if unlock(): return 200
         return 1
     elif result == 2:
         # Continue on
         pass
     else:
-        logger.critical('Unknown Error(s): Exit Code: %d:', result)
+        logger.critical(_('Unknown Error(s): Exit Code: %d:'), result)
         for msg in resultmsgs:
             logger.critical(msg)
         if unlock(): return 200
         return 3
 
-    verbose_logger.log(logginglevels.INFO_2, '\nDependencies Resolved')
+    verbose_logger.log(logginglevels.INFO_2, _('\nDependencies Resolved'))
     verbose_logger.debug(time.time())
 
     # Run the transaction
@@ -195,7 +196,7 @@ def main(args):
     except IOError, e:
         return exIOError(e)
 
-    verbose_logger.log(logginglevels.INFO_2, 'Complete!')
+    verbose_logger.log(logginglevels.INFO_2, _('Complete!'))
     if unlock(): return 200
     return 0
 
@@ -242,5 +243,5 @@ if __name__ == "__main__":
     try:
         user_main(sys.argv[1:], exit_code=True)
     except KeyboardInterrupt, e:
-        print >> sys.stderr, "\n\nExiting on user cancel."
+        print >> sys.stderr, _("\n\nExiting on user cancel.")
         sys.exit(1)
