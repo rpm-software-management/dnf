@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: yum 3.2.10\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 1970-01-01 00:00+0000\n"
+"POT-Creation-Date: 2008-02-07 09:31+0100\n"
 "PO-Revision-Date: 2008-02-06 19:17+0100\n"
 "Last-Translator: Terje Røsten <terje.rosten@ntnu.no>\n"
 "Language-Team: Norwegian (bokmål) <i18n-no@lister.ping.uio.no>\n"
@@ -268,7 +268,9 @@ msgstr "Vraker pakke som ikke sammenlignes %s.%s"
 #: ../cli.py:927
 #, python-format
 msgid "No other %s installed, adding to list for potential install"
-msgstr "Ingen annen pakke %s er lagt inn, legger til pakke til liste over potensielle pakker"
+msgstr ""
+"Ingen annen pakke %s er lagt inn, legger til pakke til liste over "
+"potensielle pakker"
 
 #: ../cli.py:946
 #, python-format
@@ -422,7 +424,9 @@ msgstr "Er dette greit [y/N]:"
 msgid ""
 "\n"
 "Group: %s"
-msgstr "\nGruppe:%s"
+msgstr ""
+"\n"
+"Gruppe:%s"
 
 #: ../output.py:347
 #, python-format
@@ -526,7 +530,9 @@ msgstr "Fjernes på grunn avhengigheter"
 msgid ""
 "     replacing  %s.%s %s\n"
 "\n"
-msgstr "     erstatter   %s.%s %s\"\n\n"
+msgstr ""
+"     erstatter   %s.%s %s\"\n"
+"\n"
 
 #: ../output.py:511
 #, python-format
@@ -579,7 +585,10 @@ msgid ""
 "\n"
 " Current download cancelled, %sinterrupt (ctrl-c) again%s within %s%s%s "
 "seconds to exit.\n"
-msgstr "\n Pågående nedlastning er avbrutt, %s avbryt (ved å trykke Ctrl-C) %s ganger til innen %s%s%s sekunder for å avslutte helt.\n"
+msgstr ""
+"\n"
+" Pågående nedlastning er avbrutt, %s avbryt (ved å trykke Ctrl-C) %s ganger "
+"til innen %s%s%s sekunder for å avslutte helt.\n"
 
 #: ../output.py:603
 msgid "user interrupt"
@@ -701,11 +710,67 @@ msgstr "Feil: ugyldig argument gitt til kommandoen clean: %r"
 #: ../yumcommands.py:109
 #, python-format
 msgid "File %s given as argument to shell does not exist."
-msgstr "Filen %s som ble gitt som argument til kommandoen shell eksisterer ikke."
+msgstr ""
+"Filen %s som ble gitt som argument til kommandoen shell eksisterer ikke."
 
 #: ../yumcommands.py:115
 msgid "Error: more than one file given as argument to shell."
 msgstr "Feil: mer enn ei fil ble gitt som argument til kommandoen shell."
+
+#: ../yummain.py:41
+#, fuzzy
+msgid ""
+"\n"
+"\n"
+"Exiting on user cancel"
+msgstr "Avslutter på grunn av kommando fra bruker"
+
+#: ../yummain.py:47
+msgid ""
+"\n"
+"\n"
+"Exiting on Broken Pipe"
+msgstr ""
+
+#: ../yummain.py:105
+msgid ""
+"Another app is currently holding the yum lock; waiting for it to exit..."
+msgstr ""
+
+#: ../yummain.py:132 ../yummain.py:171
+#, fuzzy, python-format
+msgid "Error: %s"
+msgstr "Feil ved konfigurasjon: %s"
+
+#: ../yummain.py:142 ../yummain.py:178
+#, python-format
+msgid "Unknown Error(s): Exit Code: %d:"
+msgstr ""
+
+#. Depsolve stage
+#: ../yummain.py:149
+#, fuzzy
+msgid "Resolving Dependencies"
+msgstr "Fjernes på grunn avhengigheter"
+
+#: ../yummain.py:184
+#, fuzzy
+msgid ""
+"\n"
+"Dependencies Resolved"
+msgstr "Fjernet på grunn avhengighet"
+
+#: ../yummain.py:199
+msgid "Complete!"
+msgstr ""
+
+#: ../yummain.py:246
+#, fuzzy
+msgid ""
+"\n"
+"\n"
+"Exiting on user cancel."
+msgstr "Avslutter på grunn av kommando fra bruker"
 
 #: ../yum/depsolve.py:70
 msgid "doTsSetup() will go away in a future version of Yum.\n"
@@ -824,7 +889,8 @@ msgstr "%s tilbyr pakker, men er allerede installert, fjerner denne."
 #: ../yum/depsolve.py:481
 #, python-format
 msgid "Potential resolving package %s has newer instance in ts."
-msgstr "Pakke %s som potensielt tilbyder løsning har allerede nyere instans in ts."
+msgstr ""
+"Pakke %s som potensielt tilbyder løsning har allerede nyere instans in ts."
 
 #: ../yum/depsolve.py:492
 #, python-format
@@ -992,7 +1058,9 @@ msgstr "På grunn ødelagte avhengigheter ble det gjennomført %i runder "
 msgid ""
 "\n"
 "Packages skipped because of dependency problems:"
-msgstr "\nPakker som ble oversett på grunn av problemer med avhengigheter:"
+msgstr ""
+"\n"
+"Pakker som ble oversett på grunn av problemer med avhengigheter:"
 
 #: ../yum/__init__.py:679
 #, python-format
@@ -1047,7 +1115,8 @@ msgstr "Kunne ikke sjekke om PID %s er aktiv"
 #: ../yum/__init__.py:915
 #, python-format
 msgid "Existing lock %s: another copy is running as pid %s."
-msgstr "Det fins allerede en låsefil: %s, en annen Yum kjører med PID %s allerede."
+msgstr ""
+"Det fins allerede en låsefil: %s, en annen Yum kjører med PID %s allerede."
 
 #: ../yum/__init__.py:962 ../yum/__init__.py:969
 msgid "Package does not match intended download"
@@ -1084,7 +1153,9 @@ msgstr "Filhode er ikke komplett."
 #, python-format
 msgid ""
 "Header not in local cache and caching-only mode enabled. Cannot download %s"
-msgstr "Filhode er ikke tilgjengelig lokalt og i vi er mellomlager-modes. Kan ikke hente ned %s"
+msgstr ""
+"Filhode er ikke tilgjengelig lokalt og i vi er mellomlager-modes. Kan ikke "
+"hente ned %s"
 
 #: ../yum/__init__.py:1181
 #, python-format
@@ -1200,7 +1271,9 @@ msgstr "Pakke tuppel %s ble ikke funnet i sekken med pakker"
 
 #: ../yum/__init__.py:1883 ../yum/__init__.py:1926
 msgid "Invalid versioned dependency string, try quoting it."
-msgstr "Den versjonerte strengen med avhengigheter er ugyldig, prøv og sette den i anførelsestegn."
+msgstr ""
+"Den versjonerte strengen med avhengigheter er ugyldig, prøv og sette den i "
+"anførelsestegn."
 
 #: ../yum/__init__.py:1885 ../yum/__init__.py:1928
 msgid "Invalid version flag"
@@ -1280,7 +1353,9 @@ msgstr "Gransker: %s: %s"
 msgid ""
 "Package %s not installed, cannot update it. Run yum install to install it "
 "instead."
-msgstr "Pakka %s er ikke installert, så den kan ikke oppdateres. Bruk kommandoen yum install for å legge den inn."
+msgstr ""
+"Pakka %s er ikke installert, så den kan ikke oppdateres. Bruk kommandoen yum "
+"install for å legge den inn."
 
 #: ../yum/__init__.py:2411
 #, python-format
@@ -1348,7 +1423,7 @@ msgid "Key imported successfully"
 msgstr "Nøkler ble lagt inn med suksess"
 
 #: ../yum/__init__.py:2568
-#, python-format, fuzzy
+#, fuzzy, python-format
 msgid ""
 "The GPG keys listed for the \"%s\" repository are already installed but they "
 "are not correct for this package.\n"
