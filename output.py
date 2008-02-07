@@ -226,8 +226,8 @@ class YumOutput:
         self.term = YumTerm()
     
     def printtime(self):
-        months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-                  'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+        months = [_('Jan'), _('Feb'), _('Mar'), _('Apr'), _('May'), _('Jun'),
+                  _('Jul'), _('Aug'), _('Sep'), _('Oct'), _('Nov'), _('Dec')]
         now = time.localtime(time.time())
         ret = months[int(time.strftime('%m', now)) - 1] + \
               time.strftime(' %d %T ', now)
@@ -433,7 +433,7 @@ class YumOutput:
             msg = self.term.sub_bold(msg, matchfor)
         
         print msg
-        self.verbose_logger.debug('Matched from:')
+        self.verbose_logger.debug(_('Matched from:'))
         for item in values:
             if matchfor:
                 item = self.term.sub_bold(item, matchfor)

@@ -99,10 +99,10 @@ def checkShellArg(base, basecmd, extcmds):
     raise cli.CliError.
     """
     if len(extcmds) == 0:
-        base.verbose_logger.debug("No argument to shell")
+        base.verbose_logger.debug(_("No argument to shell"))
         pass
     elif len(extcmds) == 1:
-        base.verbose_logger.debug("Filename passed to shell: %s", 
+        base.verbose_logger.debug(_("Filename passed to shell: %s"), 
             extcmds[0])              
         if not os.path.isfile(extcmds[0]):
             base.logger.critical(
@@ -143,7 +143,7 @@ class YumCommand:
            1 = we've errored, exit with error string
            2 = we've got work yet to do, onto the next stage
         """
-        return 0, ['Nothing to do']
+        return 0, [_('Nothing to do')]
     
     def needTs(self, base, basecmd, extcmds):
         return True
@@ -153,10 +153,10 @@ class InstallCommand(YumCommand):
         return ['install']
 
     def getUsage(self):
-        return "PACKAGE..."
+        return _("PACKAGE...")
 
     def getSummary(self):
-        return "Install a package or packages on your system"
+        return _("Install a package or packages on your system")
     
     def doCheck(self, base, basecmd, extcmds):
         checkRootUID(base)
@@ -165,7 +165,7 @@ class InstallCommand(YumCommand):
 
     def doCommand(self, base, basecmd, extcmds):
         base.verbose_logger.log(logginglevels.INFO_2, 
-                "Setting up Install Process")
+                _("Setting up Install Process"))
         try:
             return base.installPkgs(extcmds)
         except yum.Errors.YumBaseError, e:
@@ -176,10 +176,10 @@ class UpdateCommand(YumCommand):
         return ['update']
 
     def getUsage(self):
-        return "[PACKAGE...]"
+        return _("[PACKAGE...]")
 
     def getSummary(self):
-        return "Update a package or packages on your system"
+        return _("Update a package or packages on your system")
 
     def doCheck(self, base, basecmd, extcmds):
         checkRootUID(base)
@@ -187,7 +187,7 @@ class UpdateCommand(YumCommand):
 
     def doCommand(self, base, basecmd, extcmds):
         base.verbose_logger.log(logginglevels.INFO_2, 
-                "Setting up Update Process")
+                _("Setting up Update Process"))
         try:
             return base.updatePkgs(extcmds)
         except yum.Errors.YumBaseError, e:
@@ -201,7 +201,7 @@ class InfoCommand(YumCommand):
         return "[PACKAGE|all|installed|updates|extras|obsoletes|recent]"
 
     def getSummary(self):
-        return "Display details about a package or group of packages"
+        return _("Display details about a package or group of packages")
 
     def doCommand(self, base, basecmd, extcmds):
         try:
@@ -209,27 +209,27 @@ class InfoCommand(YumCommand):
         except yum.Errors.YumBaseError, e:
             return 1, [str(e)]
         else:
-            rip = base.listPkgs(ypl.installed, 'Installed Packages', basecmd)
-            rap = base.listPkgs(ypl.available, 'Available Packages', basecmd)
-            rep = base.listPkgs(ypl.extras, 'Extra Packages', basecmd)
-            rup = base.listPkgs(ypl.updates, 'Updated Packages', basecmd)
+            rip = base.listPkgs(ypl.installed, _('Installed Packages'), basecmd)
+            rap = base.listPkgs(ypl.available, _('Available Packages'), basecmd)
+            rep = base.listPkgs(ypl.extras, _('Extra Packages'), basecmd)
+            rup = base.listPkgs(ypl.updates, _('Updated Packages'), basecmd)
 
             # XXX put this into the ListCommand at some point
             if len(ypl.obsoletes) > 0 and basecmd == 'list': 
             # if we've looked up obsolete lists and it's a list request
                 rop = [0, '']
-                print 'Obsoleting Packages'
+                print _('Obsoleting Packages')
                 for obtup in ypl.obsoletesTuples:
                     base.updatesObsoletesList(obtup, 'obsoletes')
             else:
-                rop = base.listPkgs(ypl.obsoletes, 'Obsoleting Packages', basecmd)
-            rrap = base.listPkgs(ypl.recent, 'Recently Added Packages', basecmd)
+                rop = base.listPkgs(ypl.obsoletes, _('Obsoleting Packages'), basecmd)
+            rrap = base.listPkgs(ypl.recent, _('Recently Added Packages'), basecmd)
             # extcmds is pop(0)'d if they pass a "special" param like "updates"
             # in returnPkgLists(). This allows us to always return "ok" for
             # things like "yum list updates".
             if len(extcmds) and \
                rrap[0] and rop[0] and rup[0] and rep[0] and rap[0] and rip[0]:
-                return 1, ['No matching Packages to list']
+                return 1, [_('No matching Packages to list')]
             return 0, []
 
     def needTs(self, base, basecmd, extcmds):
@@ -243,7 +243,7 @@ class ListCommand(InfoCommand):
         return ['list']
 
     def getSummary(self):
-        return "List a package or groups of packages"
+        return _("List a package or groups of packages")
 
 
 class EraseCommand(YumCommand):
@@ -255,7 +255,7 @@ class EraseCommand(YumCommand):
         return "PACKAGE..."
 
     def getSummary(self):
-        return "Remove a package or packages from your system"
+        return _("Remove a package or packages from your system")
 
     def doCheck(self, base, basecmd, extcmds):
         checkRootUID(base)
@@ -263,7 +263,7 @@ class EraseCommand(YumCommand):
 
     def doCommand(self, base, basecmd, extcmds):
         base.verbose_logger.log(logginglevels.INFO_2, 
-                "Setting up Remove Process")
+                _("Setting up Remove Process"))
         try:
             return base.erasePkgs(extcmds)
         except yum.Errors.YumBaseError, e:
@@ -275,13 +275,13 @@ class EraseCommand(YumCommand):
 class GroupCommand(YumCommand):
     def doCommand(self, base, basecmd, extcmds):
         base.verbose_logger.log(logginglevels.INFO_2, 
-                "Setting up Group Process")
+                _("Setting up Group Process"))
 
         base.doRepoSetup(dosack=0)
         try:
             base.doGroupSetup()
         except yum.Errors.GroupsError:
-            return 1, ['No Groups on which to run command']
+            return 1, [_('No Groups on which to run command')]
         except yum.Errors.YumBaseError, e:
             return 1, [str(e)]
 
@@ -294,7 +294,7 @@ class GroupListCommand(GroupCommand):
         return ""
 
     def getSummary(self):
-        return "List available package groups"
+        return _("List available package groups")
     
     def doCommand(self, base, basecmd, extcmds):
         GroupCommand.doCommand(self, base, basecmd, extcmds)
@@ -311,7 +311,7 @@ class GroupInstallCommand(GroupCommand):
         return "GROUP..."
 
     def getSummary(self):
-        return "Install the packages in a group on your system"
+        return _("Install the packages in a group on your system")
     
     def doCheck(self, base, basecmd, extcmds):
         checkRootUID(base)
@@ -333,7 +333,7 @@ class GroupRemoveCommand(GroupCommand):
         return "GROUP..."
 
     def getSummary(self):
-        return "Remove the packages in a group from your system"
+        return _("Remove the packages in a group from your system")
 
     def doCheck(self, base, basecmd, extcmds):
         checkRootUID(base)
@@ -357,7 +357,7 @@ class GroupInfoCommand(GroupCommand):
         return "GROUP..."
 
     def getSummary(self):
-        return "Display details about a package group"
+        return _("Display details about a package group")
 
     def doCheck(self, base, basecmd, extcmds):
         checkGroupArg(base, basecmd, extcmds)
@@ -381,14 +381,14 @@ class MakeCacheCommand(YumCommand):
         return ""
 
     def getSummary(self):
-        return "Generate the metadata cache"
+        return _("Generate the metadata cache")
 
     def doCheck(self, base, basecmd, extcmds):
         checkRootUID(base)
 
     def doCommand(self, base, basecmd, extcmds):
-        base.logger.debug("Making cache files for all metadata files.")
-        base.logger.debug("This may take a while depending on the speed of this computer")
+        base.logger.debug(_("Making cache files for all metadata files."))
+        base.logger.debug(_("This may take a while depending on the speed of this computer"))
         try:
             for repo in base.repos.findRepos('*'):
                 repo.metadata_expire = 0
@@ -409,7 +409,7 @@ class MakeCacheCommand(YumCommand):
 
         except yum.Errors.YumBaseError, e:
             return 1, [str(e)]
-        return 0, ['Metadata Cache Created']
+        return 0, [_('Metadata Cache Created')]
 
     def needTs(self, base, basecmd, extcmds):
         return False
@@ -423,7 +423,7 @@ class CleanCommand(YumCommand):
         return "[headers|packages|metadata|dbcache|plugins|all]"
 
     def getSummary(self):
-        return "Remove cached data"
+        return _("Remove cached data")
 
     def doCheck(self, base, basecmd, extcmds):
         checkRootUID(base)
@@ -444,7 +444,7 @@ class ProvidesCommand(YumCommand):
         return "SOME_STRING"
     
     def getSummary(self):
-        return "Find what package provides the given value"
+        return _("Find what package provides the given value")
 
     def doCheck(self, base, basecmd, extcmds):
         checkItemArg(base, basecmd, extcmds)
@@ -464,7 +464,7 @@ class CheckUpdateCommand(YumCommand):
         return "[PACKAGE...]"
 
     def getSummary(self):
-        return "Check for available package updates"
+        return _("Check for available package updates")
 
     def doCommand(self, base, basecmd, extcmds):
         base.extcmds.insert(0, 'updates')
@@ -487,13 +487,13 @@ class SearchCommand(YumCommand):
         return "SOME_STRING"
 
     def getSummary(self):
-        return "Search package details for the given string"
+        return _("Search package details for the given string")
 
     def doCheck(self, base, basecmd, extcmds):
         checkItemArg(base, basecmd, extcmds)
 
     def doCommand(self, base, basecmd, extcmds):
-        base.logger.debug("Searching Packages: ")
+        base.logger.debug(_("Searching Packages: "))
         try:
             return base.search(extcmds)
         except yum.Errors.YumBaseError, e:
@@ -510,7 +510,7 @@ class UpgradeCommand(YumCommand):
         return 'PACKAGE...'
 
     def getSummary(self):
-        return "Update packages taking obsoletes into account"
+        return _("Update packages taking obsoletes into account")
 
     def doCheck(self, base, basecmd, extcmds):
         checkRootUID(base)
@@ -519,7 +519,7 @@ class UpgradeCommand(YumCommand):
     def doCommand(self, base, basecmd, extcmds):
         base.conf.obsoletes = 1
         base.verbose_logger.log(logginglevels.INFO_2, 
-                "Setting up Upgrade Process")
+                _("Setting up Upgrade Process"))
         try:
             return base.updatePkgs(extcmds)
         except yum.Errors.YumBaseError, e:
@@ -533,7 +533,7 @@ class LocalInstallCommand(YumCommand):
         return "FILE"
 
     def getSummary(self):
-        return "Install a local RPM"
+        return _("Install a local RPM")
 
     def doCheck(self, base, basecmd, extcmds):
         checkRootUID(base)
@@ -542,7 +542,7 @@ class LocalInstallCommand(YumCommand):
         
     def doCommand(self, base, basecmd, extcmds):
         base.verbose_logger.log(logginglevels.INFO_2,
-                                "Setting up Local Package Process")
+                                _("Setting up Local Package Process"))
 
         updateonly = basecmd == 'localupdate'
         try:
@@ -561,10 +561,10 @@ class ResolveDepCommand(YumCommand):
         return "DEPENDENCY"
 
     def getSummary(self):
-        return "Determine which package provides the given dependency"
+        return _("Determine which package provides the given dependency")
 
     def doCommand(self, base, basecmd, extcmds):
-        base.logger.debug("Searching Packages for Dependency:")
+        base.logger.debug(_("Searching Packages for Dependency:"))
         try:
             return base.resolveDepCli(extcmds)
         except yum.Errors.YumBaseError, e:
@@ -578,13 +578,13 @@ class ShellCommand(YumCommand):
         return "[FILENAME]"
 
     def getSummary(self):
-        return "Run an interactive yum shell"
+        return _("Run an interactive yum shell")
 
     def doCheck(self, base, basecmd, extcmds):
         checkShellArg(base, basecmd, extcmds)
 
     def doCommand(self, base, basecmd, extcmds):
-        base.verbose_logger.log(logginglevels.INFO_2, 'Setting up Yum Shell')
+        base.verbose_logger.log(logginglevels.INFO_2, _('Setting up Yum Shell'))
         try:
             return base.doShell()
         except yum.Errors.YumBaseError, e:
@@ -602,13 +602,13 @@ class DepListCommand(YumCommand):
         return 'PACKAGE...'
 
     def getSummary(self):
-        return "List a package's dependencies"
+        return _("List a package's dependencies")
 
     def doCheck(self, base, basecmd, extcmds):
         checkPackageArg(base, basecmd, extcmds)
 
     def doCommand(self, base, basecmd, extcmds):
-       base.verbose_logger.log(logginglevels.INFO_2, "Finding dependencies: ")
+       base.verbose_logger.log(logginglevels.INFO_2, _("Finding dependencies: "))
        try:
           return base.deplist(extcmds)
        except yum.Errors.YumBaseError, e:
@@ -624,7 +624,7 @@ class RepoListCommand(YumCommand):
         return '[all|enabled|disabled]'
 
     def getSummary(self):
-        return 'Display the configured software repositories'
+        return _('Display the configured software repositories')
 
     def doCheck(self, base, basecmd, extcmds):
         if len(extcmds) == 0:
@@ -642,16 +642,16 @@ class RepoListCommand(YumCommand):
         format_string = "%-20.20s %-40.40s  %s"
         if base.repos.repos.values():
             base.verbose_logger.log(logginglevels.INFO_2, format_string,
-                'repo id', 'repo name', 'status')
+                _('repo id'), _('repo name'), _('status'))
         repos = base.repos.repos.values()
         repos.sort()
         for repo in repos:
             if repo in base.repos.listEnabled() and arg in ('all', 'enabled'):
                 base.verbose_logger.log(logginglevels.INFO_2, format_string,
-                    repo, repo.name, 'enabled')
+                    repo, repo.name, _('enabled'))
             elif arg in ('all', 'disabled'):
                 base.verbose_logger.log(logginglevels.INFO_2, format_string,
-                    repo, repo.name, 'disabled')
+                    repo, repo.name, _('disabled'))
 
         return 0, []
 
@@ -668,7 +668,7 @@ class HelpCommand(YumCommand):
         return "COMMAND"
 
     def getSummary(self):
-        return "Display a helpful usage message"
+        return _("Display a helpful usage message")
 
     def doCheck(self, base, basecmd, extcmds):
         if len(extcmds) == 0:
@@ -702,14 +702,14 @@ class HelpCommand(YumCommand):
             help_output += "\n\n%s" % summary
 
         if usage is None and summary is None:
-            help_output = "No help available for %s" % canonical_name
+            help_output = _("No help available for %s") % canonical_name
 
         command_names = command.getNames()
         if len(command_names) > 1:
             if len(command_names) > 2:
-                help_output += "\n\naliases: "
+                help_output += _("\n\naliases: ")
             else:
-                help_output += "\n\nalias: "
+                help_output += _("\n\nalias: ")
             help_output += ', '.join(command.getNames()[1:])
 
         return help_output
@@ -738,7 +738,7 @@ class ReInstallCommand(YumCommand):
 
     def doCommand(self, base, basecmd, extcmds):
         base.verbose_logger.log(logginglevels.INFO_2, 
-                "Setting up Reinstall Process")
+                _("Setting up Reinstall Process"))
         oldcount = len(base.tsInfo)
         try:
             for item in extcmds:
@@ -752,7 +752,7 @@ class ReInstallCommand(YumCommand):
             return 1, [str(e)]
 
     def getSummary(self):
-        return "reinstall a package"
+        return _("reinstall a package")
 
 
     def needTs(self, base, basecmd, extcmds):
