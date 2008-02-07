@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: yum\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-02-07 09:31+0100\n"
+"POT-Creation-Date: 2008-02-07 14:00+0100\n"
 "PO-Revision-Date: 2003-10-14 15:36+0400\n"
 "Last-Translator: Grigory Bakunov <black@asplinux.ru>\n"
 "Language-Team: Russian <ru@li.org>\n"
@@ -144,7 +144,7 @@ msgstr "Нет доступных для просмотра пакетов"
 msgid "Package(s) to install"
 msgstr "Нет доступных для просмотра пакетов"
 
-#: ../cli.py:499 ../cli.py:617 ../yumcommands.py:749
+#: ../cli.py:499 ../cli.py:617 ../yumcommands.py:146 ../yumcommands.py:749
 msgid "Nothing to do"
 msgstr ""
 
@@ -365,6 +365,54 @@ msgstr ""
 msgid "skip packages with depsolving problems"
 msgstr ""
 
+#: ../output.py:229
+msgid "Jan"
+msgstr ""
+
+#: ../output.py:229
+msgid "Feb"
+msgstr ""
+
+#: ../output.py:229
+msgid "Mar"
+msgstr ""
+
+#: ../output.py:229
+msgid "Apr"
+msgstr ""
+
+#: ../output.py:229
+msgid "May"
+msgstr ""
+
+#: ../output.py:229
+msgid "Jun"
+msgstr ""
+
+#: ../output.py:230
+msgid "Jul"
+msgstr ""
+
+#: ../output.py:230
+msgid "Aug"
+msgstr ""
+
+#: ../output.py:230
+msgid "Sep"
+msgstr ""
+
+#: ../output.py:230
+msgid "Oct"
+msgstr ""
+
+#: ../output.py:230
+msgid "Nov"
+msgstr ""
+
+#: ../output.py:230
+msgid "Dec"
+msgstr ""
+
 #: ../output.py:240
 msgid "Trying other mirror."
 msgstr ""
@@ -485,6 +533,11 @@ msgstr ""
 #: ../output.py:381
 msgid "   Unsatisfied dependency"
 msgstr ""
+
+#: ../output.py:436
+#, fuzzy
+msgid "Matched from:"
+msgstr "Пакеты не найдены"
 
 #: ../output.py:462
 msgid "There was an error calculating total download size"
@@ -722,6 +775,15 @@ msgstr "Ошибка создания каталога %s: %s"
 msgid "Error: invalid clean argument: %r"
 msgstr "Ошибка при разборе параметров командной строки: %s"
 
+#: ../yumcommands.py:102
+msgid "No argument to shell"
+msgstr ""
+
+#: ../yumcommands.py:105
+#, python-format
+msgid "Filename passed to shell: %s"
+msgstr ""
+
 #: ../yumcommands.py:109
 #, python-format
 msgid "File %s given as argument to shell does not exist."
@@ -730,6 +792,252 @@ msgstr ""
 #: ../yumcommands.py:115
 msgid "Error: more than one file given as argument to shell."
 msgstr ""
+
+#: ../yumcommands.py:156
+msgid "PACKAGE..."
+msgstr ""
+
+#: ../yumcommands.py:159
+msgid "Install a package or packages on your system"
+msgstr ""
+
+#: ../yumcommands.py:168
+#, fuzzy
+msgid "Setting up Install Process"
+msgstr "Просмотр установленных пакетов:"
+
+#: ../yumcommands.py:179
+msgid "[PACKAGE...]"
+msgstr ""
+
+#: ../yumcommands.py:182
+msgid "Update a package or packages on your system"
+msgstr ""
+
+#: ../yumcommands.py:190
+#, fuzzy
+msgid "Setting up Update Process"
+msgstr "Удаление пакетов"
+
+#: ../yumcommands.py:204
+msgid "Display details about a package or group of packages"
+msgstr ""
+
+#: ../yumcommands.py:212
+#, fuzzy
+msgid "Installed Packages"
+msgstr "Просмотр установленных пакетов:"
+
+#: ../yumcommands.py:213
+#, fuzzy
+msgid "Available Packages"
+msgstr "Просмотр доступных пакетов"
+
+#: ../yumcommands.py:214
+#, fuzzy
+msgid "Extra Packages"
+msgstr "Поиск обновленных пакетов"
+
+#: ../yumcommands.py:215
+#, fuzzy
+msgid "Updated Packages"
+msgstr "Удаление пакетов"
+
+#: ../yumcommands.py:221 ../yumcommands.py:225
+#, fuzzy
+msgid "Obsoleting Packages"
+msgstr "Удаление пакетов"
+
+#: ../yumcommands.py:226
+#, fuzzy
+msgid "Recently Added Packages"
+msgstr "Поиск обновленных пакетов"
+
+#: ../yumcommands.py:232
+#, fuzzy
+msgid "No matching Packages to list"
+msgstr "Удаление пакетов"
+
+#: ../yumcommands.py:246
+#, fuzzy
+msgid "List a package or groups of packages"
+msgstr "Поиск пакета среди установленных пакетов"
+
+#: ../yumcommands.py:258
+msgid "Remove a package or packages from your system"
+msgstr ""
+
+#: ../yumcommands.py:266
+#, fuzzy
+msgid "Setting up Remove Process"
+msgstr "Удаление пакетов"
+
+#: ../yumcommands.py:278
+#, fuzzy
+msgid "Setting up Group Process"
+msgstr "Удаление пакетов"
+
+#: ../yumcommands.py:284
+msgid "No Groups on which to run command"
+msgstr ""
+
+#: ../yumcommands.py:297
+#, fuzzy
+msgid "List available package groups"
+msgstr "Просмотр доступных пакетов"
+
+#: ../yumcommands.py:314
+msgid "Install the packages in a group on your system"
+msgstr ""
+
+#: ../yumcommands.py:336
+msgid "Remove the packages in a group from your system"
+msgstr ""
+
+#: ../yumcommands.py:360
+msgid "Display details about a package group"
+msgstr ""
+
+#: ../yumcommands.py:384
+msgid "Generate the metadata cache"
+msgstr ""
+
+#: ../yumcommands.py:390
+msgid "Making cache files for all metadata files."
+msgstr ""
+
+#: ../yumcommands.py:391
+msgid "This may take a while depending on the speed of this computer"
+msgstr ""
+
+#: ../yumcommands.py:412
+msgid "Metadata Cache Created"
+msgstr ""
+
+#: ../yumcommands.py:426
+msgid "Remove cached data"
+msgstr ""
+
+#: ../yumcommands.py:447
+msgid "Find what package provides the given value"
+msgstr ""
+
+#: ../yumcommands.py:467
+#, fuzzy
+msgid "Check for available package updates"
+msgstr "Удаление записи из списка доступных пакетов"
+
+#: ../yumcommands.py:490
+msgid "Search package details for the given string"
+msgstr ""
+
+#: ../yumcommands.py:496
+#, fuzzy
+msgid "Searching Packages: "
+msgstr "Удаление пакетов"
+
+#: ../yumcommands.py:513
+msgid "Update packages taking obsoletes into account"
+msgstr ""
+
+#: ../yumcommands.py:522
+#, fuzzy
+msgid "Setting up Upgrade Process"
+msgstr "Удаление пакетов"
+
+#: ../yumcommands.py:536
+msgid "Install a local RPM"
+msgstr ""
+
+#: ../yumcommands.py:545
+#, fuzzy
+msgid "Setting up Local Package Process"
+msgstr "Удаление пакетов"
+
+#: ../yumcommands.py:564
+msgid "Determine which package provides the given dependency"
+msgstr ""
+
+#: ../yumcommands.py:567
+#, fuzzy
+msgid "Searching Packages for Dependency:"
+msgstr "Удаление пакетов"
+
+#: ../yumcommands.py:581
+msgid "Run an interactive yum shell"
+msgstr ""
+
+#: ../yumcommands.py:587
+msgid "Setting up Yum Shell"
+msgstr ""
+
+#: ../yumcommands.py:605
+#, fuzzy
+msgid "List a package's dependencies"
+msgstr "Разрешение зависимостей"
+
+#: ../yumcommands.py:611
+#, fuzzy
+msgid "Finding dependencies: "
+msgstr "Разрешение зависимостей"
+
+#: ../yumcommands.py:627
+msgid "Display the configured software repositories"
+msgstr ""
+
+#: ../yumcommands.py:645
+msgid "repo id"
+msgstr ""
+
+#: ../yumcommands.py:645
+msgid "repo name"
+msgstr ""
+
+#: ../yumcommands.py:645
+msgid "status"
+msgstr ""
+
+#: ../yumcommands.py:651
+#, fuzzy
+msgid "enabled"
+msgstr "Установлено по зависимостям: "
+
+#: ../yumcommands.py:654
+#, fuzzy
+msgid "disabled"
+msgstr "Установлено по зависимостям: "
+
+#: ../yumcommands.py:671
+msgid "Display a helpful usage message"
+msgstr ""
+
+#: ../yumcommands.py:705
+#, fuzzy, python-format
+msgid "No help available for %s"
+msgstr "Нет доступных для просмотра пакетов"
+
+#: ../yumcommands.py:710
+msgid ""
+"\n"
+"\n"
+"aliases: "
+msgstr ""
+
+#: ../yumcommands.py:712
+msgid ""
+"\n"
+"\n"
+"alias: "
+msgstr ""
+
+#: ../yumcommands.py:741
+msgid "Setting up Reinstall Process"
+msgstr ""
+
+#: ../yumcommands.py:755
+#, fuzzy
+msgid "reinstall a package"
+msgstr "Удаление пакетов"
 
 #: ../yummain.py:41
 #, fuzzy
@@ -1641,9 +1949,6 @@ msgstr "Невозможно открыть пакет %s - ошибка %s"
 #~ msgid "[deps: %s]"
 #~ msgstr "[зависимость: %s]"
 
-#~ msgid "Looking in Available Packages:"
-#~ msgstr "Просмотр доступных пакетов"
-
 #~ msgid ""
 #~ "\n"
 #~ "ignoring srpm: %s"
@@ -1670,9 +1975,6 @@ msgstr "Невозможно открыть пакет %s - ошибка %s"
 #~ msgid "Error: Untrusted GPG key on %s"
 #~ msgstr "Ошибка: Неверный GPG ключ в %s"
 
-#~ msgid "Looking in Installed Packages:"
-#~ msgstr "Просмотр установленных пакетов:"
-
 #~ msgid ""
 #~ "\n"
 #~ "\n"
@@ -1688,9 +1990,6 @@ msgstr "Невозможно открыть пакет %s - ошибка %s"
 
 #~ msgid "Found best arch for install only pkg %s"
 #~ msgstr "Лучшая архитектура для установки пакета %s"
-
-#~ msgid "Looking in installed packages for a providing package"
-#~ msgstr "Поиск пакета среди установленных пакетов"
 
 #~ msgid "I will do the following:"
 #~ msgstr "Необходимо выполнить следующее:"
@@ -1749,9 +2048,6 @@ msgstr "Невозможно открыть пакет %s - ошибка %s"
 
 #~ msgid "Mount error: %s"
 #~ msgstr "Ошибка присоединения: %s"
-
-#~ msgid "Deleting entry from Available packages"
-#~ msgstr "Удаление записи из списка доступных пакетов"
 
 #~ msgid "using ftp, http[s], removable or file for servers, Aborting - %s"
 #~ msgstr ""
