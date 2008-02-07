@@ -1,55 +1,35 @@
-#!/usr/bin/env python
-"""i18n abstraction
-
-License: GPL
-Author: Vladimir Bormotov <bor@vb.dn.ua>
-
-$Id$
-"""
-# $RCSfile$
-__version__ = "$Revision$"[11:-2]
-__date__ = "$Date$"[7:-2]
-
-import types
-
-def _toUTF( txt ):
-    """ this function convert a string to unicode"""
-    rc=""
-    if isinstance(txt,types.UnicodeType):
-        return txt
-    else:
-        try:
-            rc = unicode( txt, 'utf-8' )
-        except UnicodeDecodeError, e:
-            rc = unicode( txt, 'iso-8859-1' )
-        return rc
-
-_transfn = None
-
-def _translate(txt):
-    txt = _transfn(txt)
-    return _toUTF(txt)
-    
-    
+#!/usr/bin/python -tt
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Library General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 try: 
+    '''
+    Setup the yum translation domain and make _() translation wrapper
+    available.
+    using ugettext to make sure translated strings are in Unicode.
+    '''
     import gettext
-    import sys
-    if sys.version_info[0] == 2:
-        t = gettext.translation('yum')
-        _transfn = t.gettext
-    else:
-        gettext.bindtextdomain('yum', '/usr/share/locale')
-        gettext.textdomain('yum')
-        _transfn = gettext.gettext
-    _ = _translate
-    
+    t = gettext.translation('yum')
+    _ =  t.ugettext
 except:
+    '''
+    Something went wrong so we make a dummy _() wrapper there is just
+    returning the same text
+    '''
     def _(str):
-        """pass given string as-is"""
+        '''
+        Dummy Translation wrapper, just returning the same string.
+        '''
         return str
 
-if __name__ == '__main__':
-    pass
-
-# vim: set ts=4 et :
