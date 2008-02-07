@@ -45,18 +45,18 @@ class RPMInstallCallback:
         self.logger = logging.getLogger('yum.filelogging.RPMInstallCallback')
         self.filelog = False
 
-        self.myprocess = { TS_UPDATE : 'Updating', 
-                           TS_ERASE: 'Erasing',
-                           TS_INSTALL: 'Installing', 
-                           TS_TRUEINSTALL : 'Installing',
-                           TS_OBSOLETED: 'Obsoleted',
-                           TS_OBSOLETING: 'Installing'}
-        self.mypostprocess = { TS_UPDATE: 'Updated', 
-                               TS_ERASE: 'Erased',
-                               TS_INSTALL: 'Installed', 
-                               TS_TRUEINSTALL: 'Installed', 
-                               TS_OBSOLETED: 'Obsoleted',
-                               TS_OBSOLETING: 'Installed'}
+        self.myprocess = { TS_UPDATE : _('Updating'), 
+                           TS_ERASE: _('Erasing'),
+                           TS_INSTALL: _('Installing'), 
+                           TS_TRUEINSTALL : _('Installing'),
+                           TS_OBSOLETED: _('Obsoleted'),
+                           TS_OBSOLETING: _('Installing')}
+        self.mypostprocess = { TS_UPDATE: _('Updated'), 
+                               TS_ERASE: _('Erased'),
+                               TS_INSTALL: _('Installed'), 
+                               TS_TRUEINSTALL: _('Installed'), 
+                               TS_OBSOLETED: _('Obsoleted'),
+                               TS_OBSOLETING: _('Installed')}
 
         self.tsInfo = None # this needs to be set for anything else to work
 
@@ -165,7 +165,7 @@ class RPMInstallCallback:
                         percent = (bytes*100L)/total
                     if self.output and sys.stdout.isatty():
                         fmt = self._makefmt(percent)
-                        msg = fmt % ('Repackage', h)
+                        msg = fmt % (_('Repackage'), h)
                         if bytes == total:
                             msg = msg + "\n"
 
@@ -186,7 +186,7 @@ class RPMInstallCallback:
                         try:
                             process = self.myprocess[txmbr.output_state]
                         except KeyError, e:
-                            print "Error: invalid output state: %s for %s" % \
+                            print _("Error: invalid output state: %s for %s") % \
                                (txmbr.output_state, hdr['name'])
                         else:
                             if self.output and (sys.stdout.isatty() or bytes == total):
@@ -214,9 +214,9 @@ class RPMInstallCallback:
             
             if self.output and sys.stdout.isatty():
                 if h not in self.installed_pkg_names:
-                    process = "Removing"
+                    process = _("Removing")
                 else:
-                    process = "Cleanup"
+                    process = _("Cleanup")
                 percent = 100
                 fmt = self._makefmt(percent, False)
                 msg = fmt % (process, h)
