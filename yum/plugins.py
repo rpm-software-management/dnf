@@ -165,7 +165,7 @@ class YumPlugins:
         conduitcls = eval(conduitcls)       # Convert name to class object
 
         for modname, func in self._pluginfuncs[slotname]:
-            self.verbose_logger.debug(_('Running "%s" handler for "%s" plugin'), slotname,
+            self.verbose_logger.debug('Running "%s" handler for "%s" plugin', slotname,
                 modname)
     
             _, conf = self._plugins[modname]
