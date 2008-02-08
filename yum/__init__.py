@@ -839,9 +839,10 @@ class YumBase(depsolve.Depsolve):
         else:
             self.verbose_logger.log(logginglevels.INFO_2, _('Excluding Packages from %s'),
                 repo.name)
-        
+
+        pkgs = self._pkgSack.returnPackages(repoid, patterns=excludelist)
         exactmatch, matched, unmatched = \
-           parsePackages(self._pkgSack.returnPackages(repoid), excludelist, casematch=1)
+           parsePackages(pkgs, excludelist, casematch=1)
 
         for po in exactmatch + matched:
             self.verbose_logger.debug('Excluding %s', po)
