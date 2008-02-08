@@ -26,7 +26,7 @@ the yum faq at:
 sys.path.insert(0, '/usr/share/yum-cli')
 try:
     import yummain
-    yummain.user_main(sys.argv[1:])
+    yummain.user_main(sys.argv[1:], exit_code=True)
 except KeyboardInterrupt, e:
     print >> sys.stderr, "\n\nExiting on user cancel."
     sys.exit(1)
