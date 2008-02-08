@@ -31,6 +31,7 @@ import Errors
 from parser import ConfigPreProcessor
 
 from textwrap import fill
+from i18n import _
 
 
 # TODO: expose rpm package sack objects to plugins (once finished)
@@ -164,7 +165,7 @@ class YumPlugins:
         conduitcls = eval(conduitcls)       # Convert name to class object
 
         for modname, func in self._pluginfuncs[slotname]:
-            self.verbose_logger.debug('Running "%s" handler for "%s" plugin', slotname,
+            self.verbose_logger.debug(_('Running "%s" handler for "%s" plugin'), slotname,
                 modname)
     
             _, conf = self._plugins[modname]
@@ -189,7 +190,7 @@ class YumPlugins:
             plugins = sorted(self._plugins)
 
             # Mostly copied from YumOutput._outKeyValFill()
-            key = "Loaded plugins: "
+            key = _("Loaded plugins: ")
             val = ", ".join(plugins)
             nxt = ' ' * (len(key) - 2) + ': '
             self.verbose_logger.log(logginglevels.INFO_2,
@@ -206,7 +207,7 @@ class YumPlugins:
         conf = self._getpluginconf(modname)
         if not conf or not config.getOption(conf, 'main', 'enabled', 
                 config.BoolOption(False)):
-            self.verbose_logger.debug('"%s" plugin is disabled', modname)
+            self.verbose_logger.debug(_('"%s" plugin is disabled'), modname)
             return
 
         fp, pathname, description = imp.find_module(modname, [dir])
@@ -218,11 +219,11 @@ class YumPlugins:
         # Check API version required by the plugin
         if not hasattr(module, 'requires_api_version'):
              raise Errors.ConfigError(
-                'Plugin "%s" doesn\'t specify required API version' % modname
+                _('Plugin "%s" doesn\'t specify required API version') % modname
                 )
         if not apiverok(API_VERSION, module.requires_api_version):
             raise Errors.ConfigError(
-                'Plugin "%s" requires API %s. Supported API is %s.' % (
+                _('Plugin "%s" requires API %s. Supported API is %s.') % (
                     modname,
                     module.requires_api_version,
                     API_VERSION,
@@ -249,15 +250,15 @@ class YumPlugins:
             if modname in self.disabledPlugins:
                 return
 
-        self.verbose_logger.log(logginglevels.DEBUG_3, 'Loading "%s" plugin',
+        self.verbose_logger.log(logginglevels.DEBUG_3, _('Loading "%s" plugin'),
                                 modname)
 
         # Store the plugin module and its configuration file
         if not self._plugins.has_key(modname):
             self._plugins[modname] = (module, conf)
         else:
-            raise Errors.ConfigError('Two or more plugins with the name "%s" ' \
-                    'exist in the plugin search path' % modname)
+            raise Errors.ConfigError(_('Two or more plugins with the name "%s" ' \
+                    'exist in the plugin search path') % modname)
         
         for slot in SLOTS:
             funcname = slot+'_hook'
@@ -276,10 +277,10 @@ class YumPlugins:
             if os.access(conffilename, os.R_OK):
                 # Found configuration file
                 break
-            self.verbose_logger.log(logginglevels.INFO_2, "Configuration file %s not found" % conffilename)
+            self.verbose_logger.log(logginglevels.INFO_2, _("Configuration file %s not found") % conffilename)
         else: # for
             # Configuration files for the plugin not found
-            self.verbose_logger.log(logginglevels.INFO_2, "Unable to find configuration file for plugin %s"
+            self.verbose_logger.log(logginglevels.INFO_2, _("Unable to find configuration file for plugin %s")
                 % modname)
             return None
         parser = ConfigParser.ConfigParser()
@@ -433,7 +434,7 @@ class ConfigPluginConduit(PluginConduit):
         if hasattr(self._base, 'registerCommand'):
             self._base.registerCommand(command)
         else:
-            raise Errors.ConfigError('registration of commands not supported')
+            raise Errors.ConfigError(_('registration of commands not supported'))
 
 class PostConfigPluginConduit(ConfigPluginConduit):
 
