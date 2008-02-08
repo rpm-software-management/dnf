@@ -1,3 +1,418 @@
+2008-02-08  James Antill <james@and.org>
+
+	* bin/yum.py: Have user_mina() just call exit
+
+2008-02-08  James Antill <james@and.org>
+
+	* yummain.py: Return actual exit code, if anyone cares
+
+2008-02-08  Seth Vidal <skvidal@fedoraproject.org>
+
+	* yum.spec, yum/__init__.py: bump ver for 3.2.11
+
+2008-02-08  Tim Lauridsen <tla@rasmil.dk>
+
+	* yum/plugins.py: removed a single plugin translation wrapper,
+	because it gives a weird Traceback
+
+2008-02-08  Tim Lauridsen <tla@rasmil.dk>
+
+	* po/da.po, po/nb.po, po/ru.po, po/yum.pot: updates pot & po files,
+	updating danish translation
+
+2008-02-08  Tim Lauridsen <tla@rasmil.dk>
+
+	* po/yum.pot, yum/plugins.py: Tilføjede _() translation wrapper til
+	plugin.py
+
+2008-02-08  Tim Lauridsen <tla@rasmil.dk>
+
+	* po/da.po: completed the danish translation and converted it to
+	UTF-8
+
+2008-02-07  Tim Lauridsen <tim@naboo.local>
+
+	* po/da.po: revert the da utf-8 convertion
+
+2008-02-07  Tim Lauridsen <tim@naboo.local>
+
+	* po/nb.po: added update norwegien translation (urf-8)
+
+2008-02-07  Tim Lauridsen <tim@naboo.local>
+
+	* po/da.po: converted da.po to utf-8
+
+2008-02-07  Tim Lauridsen <timlau@fedoraproject.org>
+
+	* po/da.po: opdaterede dansk (danish) translation
+
+2008-02-07  Tim Lauridsen <timlau@fedoraproject.org>
+
+	* po/da.po, po/nb.po, po/ru.po, po/yum.pot: Refreshed yum.pot & po
+	files again
+
+2008-02-07  Tim Lauridsen <timlau@fedoraproject.org>
+
+	* callback.py: Added some _() translation wrappers
+
+2008-02-07  Tim Lauridsen <timlau@fedoraproject.org>
+
+	* po/da.po, po/nb.po, po/ru.po, po/yum.pot: Refreshed yum.pot & po
+	files
+
+2008-02-07  Tim Lauridsen <timlau@fedoraproject.org>
+
+	* output.py, yumcommands.py: Added a lot of more _() translation
+	wrappers
+
+2008-02-07  Tim Lauridsen <timlau@fedoraproject.org>
+
+	* yum/i18n.py: Added a much more simple translation setup module
+
+2008-02-07  Tim Lauridsen <timlau@fedoraproject.org>
+
+	* yum/i18n.py: Make the _() translation wrapper make sure that the
+	translated string is Unicode, to solve problem with ISO-8859-1
+	translation files
+
+2008-02-07  Tim Lauridsen <timlau@fedoraproject.org>
+
+	* output.py: Make sure all strings are unicode in listTransaction,
+	to avoid UnicodeDecodeError on non US locales
+
+2008-02-07  Tim Lauridsen <tim@localhost.localdomain>
+
+	* po/da.po, po/nb.po, po/ru.po, po/yum.pot: refreshed yum.pot and po
+	files
+
+2008-02-07  Tim Lauridsen <timlau@fedoraproject.org>
+
+	* yummain.py: added translation wrappers to yummain.py
+
+2008-02-06  James Antill <james@and.org>
+
+	* cli.py: Clean dbcache (aka. compiled metadata) when the user asks
+	to clean metadata
+
+2008-02-06  Tim Lauridsen <tim@naboo.local>
+
+	* po/nb.po: Added a norsk (norwegien) translation file by Terje
+	Røsten
+
+2008-02-05  Seth Vidal <skvidal@fedoraproject.org>
+
+	* yum/__init__.py, yumcommands.py: make sure we're installing
+	exactly what we're removing on a reinstall if we can't then bail.
+	remove unneeded rpm import
+
+2008-02-04  James Antill <james@and.org>
+
+	* cli.py, yum/__init__.py: Fix pirut search box problem, due to
+	minor API breakage
+
+2008-02-04  Seth Vidal <skvidal@fedoraproject.org>
+
+	* cli.py, yum/__init__.py, yumcommands.py: make reinstall a base
+	method and clean up its error handling.
+
+2008-02-04  Seth Vidal <skvidal@fedoraproject.org>
+
+	Merge branch 'master' of
+	ssh://login.linux.duke.edu/home/groups/yum/git/yum  * 'master' of
+	ssh://login.linux.duke.edu/home/groups/yum/git/yum:   Only show URL
+	if it has one, Ie. glibc
+
+2008-02-04  Seth Vidal <skvidal@fedoraproject.org>
+
+	* cli.py, rpmUtils/transaction.py, yumcommands.py: implement a
+	'reinstall'. It does not work automatically and it clearly
+	shouldn't. reinstall is a weird and special case and should be
+	treated as such.
+
+2008-02-04  James Antill <james@and.org>
+
+	* output.py: Only show URL if it has one, Ie. glibc
+
+2008-02-04  James Antill <james@and.org>
+
+	* yum/yumRepo.py: Initial code at integrating group_gz with mdpolicy
+
+
+2008-02-04  Tim Lauridsen <tla@rasmil.dk>
+
+	* yum/transactioninfo.py: added __repr__ to TransactionMember
+
+2008-02-04  Tim Lauridsen <tla@rasmil.dk>
+
+	* yum/packages.py, yum/sqlitesack.py: added memory address to
+	package object __repr__, so we can see if a object is unigue,
+	removed the __repr__ for YumAvailablePackageSqlite and use the
+	default one
+
+2008-02-04  Tim Lauridsen <tla@rasmil.dk>
+
+	* yum/packages.py, yum/sqlitesack.py: Use the real Classname for
+	package object information, moved the __repr__ to PackageObject so
+	child classes has some useful object info
+
+2008-02-04  Tim Lauridsen <timlau@fedoraproject.org>
+
+	* yum/sqlitesack.py: Added a hash to make the object unigue
+
+2008-02-03  Tim Lauridsen <tim@naboo.local>
+
+	* yum/packages.py, yum/sqlitesack.py: * make package object show some useful info when printed. * make
+	print str(po) look the same for installed and available packages.
+
+2008-02-04  Seth Vidal <skvidal@fedoraproject.org>
+
+	Merge branch 'master' of
+	ssh://login.linux.duke.edu/home/groups/yum/git/yum  * 'master' of
+	ssh://login.linux.duke.edu/home/groups/yum/git/yum:   Get the txmbr
+	so we can use it   Another cli to __init__ move fix   Fix
+	installupdate command, from move to __init__, rhbz#431207   fixed
+	typo   Fix misnamed variable   Make it obvious that
+	showdupesfromrepos affects list/info   Make the dirs. we need for
+	the log file    Remove the undocumented config. var yumversion.
+	Have a single loaded plugins line   * fix problem with skip-broken
+	(rhbz #430936)   * Added multilib skip-broken test case.
+
+2008-02-04  Seth Vidal <skvidal@fedoraproject.org>
+
+	* yum/__init__.py, yum/yumRepo.py: make sure we can happily handle
+	group_gz types in repomd.xml and make sure comps has something it
+	can cope with, too.
+
+2008-02-02  James Antill <james@and.org>
+
+	* yum/__init__.py: Get the txmbr so we can use it
+
+2008-02-02  James Antill <james@and.org>
+
+	* yum/__init__.py: Another cli to __init__ move fix
+
+2008-02-02  James Antill <james@and.org>
+
+	* cli.py: Fix installupdate command, from move to __init__,
+	rhbz#431207
+
+2008-02-02  Tim Lauridsen <tim@naboo.local>
+
+	* yum/__init__.py: fixed typo
+
+2008-02-01  James Bowes <jbowes@redhat.com>
+
+	* yum/logginglevels.py: Fix misnamed variable
+
+2008-02-01  James Antill <james@and.org>
+
+	* docs/yum.conf.5: Make it obvious that showdupesfromrepos affects
+	list/info
+
+2008-02-01  James Antill <james@and.org>
+
+	* yum/logginglevels.py: Make the dirs. we need for the log file
+
+2008-02-01  James Antill <james@and.org>
+
+	* cli.py, yum/__init__.py, yum/config.py, yum/yumRepo.py:  Remove the undocumented config. var yumversion.  Add the yum
+	 name/version into the default_grabber user_agent, and use that in
+	 all our URLGrabber() instances.
+
+2008-02-01  James Antill <james@and.org>
+
+	* yum/plugins.py: Have a single loaded plugins line
+
+2008-02-01  Tim Lauridsen <tla@rasmil.dk>
+
+	* yum/__init__.py, yum/depsolve.py: * fix problem with skip-broken (rhbz #430936) * Make the skipped
+	packages show only once and sorted. * cleanup some leftovers
+
+2008-02-01  Tim Lauridsen <tla@rasmil.dk>
+
+	* test/skipbroken-tests.py, yum/__init__.py: * Added multilib skip-broken test case. * Make skip-broken remove
+	packages with same nevr and combatible arch, to avoid error in the
+	transaction test where foo-1.x86_64->foo-2.x86_64, get skipped, but
+	foo-1.i386->foo.2.i386 is not. * If skip-broken cant fix the
+	problems the tell it to the user and show the orignal problems
+
+2008-01-31  James Bowes <jbowes@redhat.com>
+
+	* cli.py, yum/__init__.py: Use remove's pattern kwarg for cli's
+	erasePkgs
+
+2008-01-31  Tim Lauridsen <tla@rasmil.dk>
+
+	* test/testbase.py: fixed errors in unittest because of new
+	multilib_policy conf parameter
+
+2008-01-31  Tim Lauridsen <tim@naboo.local>
+
+	* docs/yum.8: add --skip-broken to man file
+
+2008-01-31  Seth Vidal <skvidal@fedoraproject.org>
+
+	* rpmUtils/arch.py: alpha* arch  patch  from Oliver Falk
+
+2008-01-30  Tim Lauridsen <tla@rasmil.dk>
+
+	* po/da.po: Added semi complete danish translation
+
+2008-01-29  Seth Vidal <skvidal@fedoraproject.org>
+
+	* docs/yum.conf.5, rpmUtils/arch.py, yum/__init__.py,
+	yum/config.py, yum/rpmsack.py: multlib_policy patch to handle
+	installs by wildcard or package name. see yum.conf man page for
+	details
+
+2007-12-10  Florian Festi <ffesti@redhat.com>
+
+	* yum/rpmsack.py: Optimize RpmSack  - Create each package only once
+	- fix wrongly nested file search in .searchProco()  - make _search
+	return pkg objects  - avoid loading all headers if not neccessary
+
+2008-01-29  James Antill <james@and.org>
+
+	* output.py: Only output committer when in verbose mode, as it
+	requires other MD
+
+2008-01-29  James Antill <james@and.org>
+
+	* output.py: ...and the it's a 1am commit bug, fixed
+
+2008-01-29  James Antill <james@and.org>
+
+	* output.py:  Add committer and URL to info output.  Make two column display into
+	 a function and use from info output for summary/description.
+
+2008-01-28  James Antill <james@and.org>
+
+	* yum/config.py: Fix installonly_limit set to "0"
+
+2008-01-28  James Antill <james@and.org>
+
+	* yum/yumRepo.py: Make revert work for repos. without old repomd.xml
+	files
+
+2008-01-28  James Antill <james@and.org>
+
+	* yum/__init__.py: Change API to more generic validate() param.
+
+2008-01-28  James Antill <james@and.org>
+
+	* cli.py: Always have space between name and summary
+
+2008-01-28  James Antill <james@and.org>
+
+	* cli.py:  Move this to a plugin instead.  Revert " Add --tmprepo option, to
+	 download .repo files and use them."  This reverts commit
+	 598c1fad3a60dae0e23a524e9159354fd0bca93e.
+
+2008-01-28  James Antill <james@and.org>
+
+	* cli.py:  Add --tmprepo option, to download .repo files and use them.
+
+2008-01-28  James Antill <james@and.org>
+
+	* yum/__init__.py:  Move .repo file loading into it's own function.  Add gpgcheck
+	 argument, so it fails if .repo doesn't have gpgcheck=true  Add
+	 repo/section name handling.
+
+2008-01-28  Seth Vidal <skvidal@fedoraproject.org>
+
+	* yum/packages.py: verify() method to YumInstalledPackageObjects
+
+2008-01-28  Tim Lauridsen <tim@naboo.local>
+
+	* output.py, po/POTFILES.in, po/ru.po, po/yum.pot: added _()
+	translation wrappers to output.py
+
+2008-01-28  Tim Lauridsen <tim@naboo.local>
+
+	* cli.py, po/ru.po, po/yum.pot: Added _() translation wrappers to
+	cli.py and updated yum.pot & po files
+
+2008-01-27  James Bowes <jbowes@redhat.com>
+
+	* output.py: Fix up import path for i18n in output module
+
+2008-01-27  James Bowes <jbowes@redhat.com>
+
+	* yum.spec: remove yumupd from main package
+
+2008-01-27  James Bowes <jbowes@redhat.com>
+
+	* progress_meter.py, translate.py: Remove old and unused
+	progress_meter and translate modules
+
+2008-01-27  Tim Lauridsen <tim@naboo.local>
+
+	* po/ru.po, po/yum.pot, yum/depsolve.py: add _() translation
+	wrappers to depsolve.py and refreshed yum.pot & po files
+
+2008-01-26  Tim Lauridsen <tim@naboo.local>
+
+	* yum.spec: changelog entry and %find_lang %name to spec file
+
+2008-01-26  Tim Lauridsen <tim@naboo.local>
+
+	* yum.spec: added  -f %{name}.lang to %files section
+
+2008-01-26  Tim Lauridsen <tim@naboo.local>
+
+	* yum.spec: added BuildRequires: intltool to support po/mo/pot file
+	generation
+
+2008-01-26  Tim Lauridsen <tim@naboo.local>
+
+	* Makefile, callback.py, cli.py, i18n.py, po/Makefile,
+	po/POTFILES.in, po/ru.po, po/yum.pot, utils.py, yum/__init__.py,
+	yum/i18n.py, yumcommands.py: * moved i18n.py to yum/i18n.py * created po/Makefile to handle
+	generation/updating/installing of translation files * make main
+	Makefile call po/Makefile * added _() translation wrappers to
+	strings in yum/__init__.py
+
+2008-01-25  James Antill <james@and.org>
+
+	* yum/packages.py:  Move from unique repos. to a single repo. for installed packages.
+
+2008-01-25  Florian Festi <ffesti@redhat.com>
+
+	* test/yum-release-test.sh: Added release test script
+
+2008-01-25  James Bowes <jbowes@redhat.com>
+
+	* yumcommands.py: Remove copy/paste artifact from info/list split
+
+2008-01-25  James Bowes <jbowes@redhat.com>
+
+	* yumcommands.py: Display command aliases in help
+
+2008-01-25  James Bowes <jbowes@redhat.com>
+
+	* cli.py, yumcommands.py: Split out info and list into two commands
+
+
+2008-01-25  James Bowes <jbowes@redhat.com>
+
+	* yumcommands.py: package names are optional arguments to 'update'
+
+2008-01-25  James Bowes <jbowes@redhat.com>
+
+	* cli.py, yumcommands.py: Be watchful of plugin commands that
+	mightn't have the help methods  Catch exceptions that might be
+	thrown by missing getUsage and getSummary methods on YumCommands
+	implemented by plugins. We should remove this after a while, once
+	enough plugins implement these methods.
+
+2008-01-25  James Bowes <jbowes@redhat.com>
+
+	Merge commit 'origin/master'
+
+2008-01-24  Seth Vidal <skvidal@fedoraproject.org>
+
+	* ChangeLog: changelog merge
+
 2008-01-24  Seth Vidal <skvidal@fedoraproject.org>
 
 	* yum.spec, yum/__init__.py: 3.2.10 numbering b/c of the paperbag
@@ -11,6 +426,21 @@
 2008-01-24  James Antill <james@and.org>
 
 	* yum/yumRepo.py: Work after: yum clean all
+
+2008-01-24  James Bowes <jbowes@redhat.com>
+
+	Merge commit 'origin/master'
+
+2008-01-24  James Bowes <jbowes@redhat.com>
+
+	* cli.py: Display subcommand summaries on --help  --help used to
+	output subcommand names on the same line. Instead format them one
+	per line, along with their summary string.
+
+2008-01-24  James Bowes <jbowes@redhat.com>
+
+	* cli.py, yumcommands.py: Add a help command, to display command
+	usage
 
 2008-01-24  James Antill <james@and.org>
 
