@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: yum 3.2.10\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-02-07 14:11+0100\n"
+"POT-Creation-Date: 2008-02-08 10:16+0100\n"
 "PO-Revision-Date: 2008-02-07 20:02+0100\n"
 "Last-Translator: Terje Røsten <terje.rosten@ntnu.no>\n"
 "Language-Team: Norwegian (bokmål) <i18n-no@lister.ping.uio.no>\n"
@@ -1009,14 +1009,20 @@ msgid ""
 "\n"
 "\n"
 "aliases: "
-msgstr "\n\naliaser:"
+msgstr ""
+"\n"
+"\n"
+"aliaser:"
 
 #: ../yumcommands.py:712
 msgid ""
 "\n"
 "\n"
 "alias: "
-msgstr "\n\nalias:"
+msgstr ""
+"\n"
+"\n"
+"alias:"
 
 #: ../yumcommands.py:741
 msgid "Setting up Reinstall Process"
@@ -1031,19 +1037,26 @@ msgid ""
 "\n"
 "\n"
 "Exiting on user cancel"
-msgstr "\n\nAvslutter etter ønske"
+msgstr ""
+"\n"
+"\n"
+"Avslutter etter ønske"
 
 #: ../yummain.py:47
 msgid ""
 "\n"
 "\n"
 "Exiting on Broken Pipe"
-msgstr "\n\nAvslutter på grunn ødelagt programrør"
+msgstr ""
+"\n"
+"\n"
+"Avslutter på grunn ødelagt programrør"
 
 #: ../yummain.py:105
 msgid ""
 "Another app is currently holding the yum lock; waiting for it to exit..."
-msgstr "Et annet program holder en fillås for Yum, venter til fillåsen frigjøres..."
+msgstr ""
+"Et annet program holder en fillås for Yum, venter til fillåsen frigjøres..."
 
 #: ../yummain.py:132 ../yummain.py:171
 #, python-format
@@ -1064,7 +1077,9 @@ msgstr "Løser opp i avhengigheter"
 msgid ""
 "\n"
 "Dependencies Resolved"
-msgstr "\nAlle avhengigheter er oppløst"
+msgstr ""
+"\n"
+"Alle avhengigheter er oppløst"
 
 #: ../yummain.py:199
 msgid "Complete!"
@@ -1075,7 +1090,10 @@ msgid ""
 "\n"
 "\n"
 "Exiting on user cancel."
-msgstr "\n\nAvslutter etter ønske"
+msgstr ""
+"\n"
+"\n"
+"Avslutter etter ønske"
 
 #: ../yum/depsolve.py:70
 msgid "doTsSetup() will go away in a future version of Yum.\n"
@@ -1764,6 +1782,58 @@ msgstr "Pakke %s trnger %s, dessverre er denne ikke tilgjengelig."
 #, python-format
 msgid "Package %s conflicts with %s."
 msgstr "Pakke %s er i konflikt med %s."
+
+#: ../yum/plugins.py:168
+#, python-format
+msgid "Running \"%s\" handler for \"%s\" plugin"
+msgstr ""
+
+#. Mostly copied from YumOutput._outKeyValFill()
+#: ../yum/plugins.py:193
+msgid "Loaded plugins: "
+msgstr ""
+
+#: ../yum/plugins.py:210
+#, python-format
+msgid "\"%s\" plugin is disabled"
+msgstr ""
+
+#: ../yum/plugins.py:222
+#, python-format
+msgid "Plugin \"%s\" doesn't specify required API version"
+msgstr ""
+
+#: ../yum/plugins.py:226
+#, python-format
+msgid "Plugin \"%s\" requires API %s. Supported API is %s."
+msgstr ""
+
+#: ../yum/plugins.py:253
+#, fuzzy, python-format
+msgid "Loading \"%s\" plugin"
+msgstr "Rydder opp i tillegg"
+
+#: ../yum/plugins.py:260
+#, python-format
+msgid ""
+"Two or more plugins with the name \"%s\" exist in the plugin search path"
+msgstr ""
+
+#: ../yum/plugins.py:280
+#, python-format
+msgid "Configuration file %s not found"
+msgstr ""
+
+#. for
+#. Configuration files for the plugin not found
+#: ../yum/plugins.py:283
+#, fuzzy, python-format
+msgid "Unable to find configuration file for plugin %s"
+msgstr "kunne ikke finne nyere pakke for %s"
+
+#: ../yum/plugins.py:437
+msgid "registration of commands not supported"
+msgstr ""
 
 #: ../rpmUtils/oldUtils.py:26
 #, python-format

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: yum\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-02-07 14:11+0100\n"
+"POT-Creation-Date: 2008-02-08 10:16+0100\n"
 "PO-Revision-Date: 2003-10-14 15:36+0400\n"
 "Last-Translator: Grigory Bakunov <black@asplinux.ru>\n"
 "Language-Team: Russian <ru@li.org>\n"
@@ -1801,6 +1801,58 @@ msgstr ""
 #, fuzzy, python-format
 msgid "Package %s conflicts with %s."
 msgstr "зависимости: пакет %s конфликтует с %s"
+
+#: ../yum/plugins.py:168
+#, python-format
+msgid "Running \"%s\" handler for \"%s\" plugin"
+msgstr ""
+
+#. Mostly copied from YumOutput._outKeyValFill()
+#: ../yum/plugins.py:193
+msgid "Loaded plugins: "
+msgstr ""
+
+#: ../yum/plugins.py:210
+#, python-format
+msgid "\"%s\" plugin is disabled"
+msgstr ""
+
+#: ../yum/plugins.py:222
+#, python-format
+msgid "Plugin \"%s\" doesn't specify required API version"
+msgstr ""
+
+#: ../yum/plugins.py:226
+#, python-format
+msgid "Plugin \"%s\" requires API %s. Supported API is %s."
+msgstr ""
+
+#: ../yum/plugins.py:253
+#, python-format
+msgid "Loading \"%s\" plugin"
+msgstr ""
+
+#: ../yum/plugins.py:260
+#, python-format
+msgid ""
+"Two or more plugins with the name \"%s\" exist in the plugin search path"
+msgstr ""
+
+#: ../yum/plugins.py:280
+#, python-format
+msgid "Configuration file %s not found"
+msgstr ""
+
+#. for
+#. Configuration files for the plugin not found
+#: ../yum/plugins.py:283
+#, python-format
+msgid "Unable to find configuration file for plugin %s"
+msgstr ""
+
+#: ../yum/plugins.py:437
+msgid "registration of commands not supported"
+msgstr ""
 
 #: ../rpmUtils/oldUtils.py:26
 #, python-format
