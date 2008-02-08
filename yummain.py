@@ -237,7 +237,7 @@ def user_main(args, exit_code=False):
         errcode = main(args)
     if exit_code:
         sys.exit(errcode)
-    return exit_code
+    return errcode
 
 if __name__ == "__main__":
     try:
