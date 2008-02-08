@@ -180,13 +180,11 @@ class PackageObject(object):
 
     def __cmp__(self, other):
         """ Compare packages. """
+        if not other:
+            return 1
         ret = cmp(self.name, other.name)
         if ret == 0:
-            ret = cmp(self.epoch, other.epoch)
-        if ret == 0:
-            ret = cmp(self.version, other.version)
-        if ret == 0:
-            ret = cmp(self.release, other.release)
+            ret = comparePoEVR(self, other)
         if ret == 0:
             ret = cmp(self.arch, other.arch)
         return ret
@@ -226,6 +224,8 @@ class RpmBase(object):
         self.licenses = []
         self._hash = None
 
+    #  Do we still need __eq__ and __ne__ given that
+    # PackageObject has a working __cmp__?
     def __eq__(self, other):
         if not other: # check if other not is a package object. 
             return False
