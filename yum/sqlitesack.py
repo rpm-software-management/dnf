@@ -363,8 +363,7 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
         # this function is just silly and it reduces down to just this
         return self.searchPrco(name, 'provides')
 
-    @staticmethod
-    def _sql_pkgKey2po(repo, cur, pkgs=None):
+    def _sql_pkgKey2po(self, repo, cur, pkgs=None):
         """ Takes a cursor and maps the pkgKey rows into a list of packages. """
         if pkgs is None: pkgs = []
         for ob in cur:
