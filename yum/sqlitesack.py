@@ -809,12 +809,10 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
             for (rep, db) in self.primarydb.items():
                 cur = db.cursor()
                 executeSQL(cur, query)
-                for pkg in cur:
-                    if self._pkgKeyExcluded(rep, pkg['pkgKey']):
-                        continue
-                    if p in unmatched:
-                        unmatched.remove(p)
-                    matchres.append(self._packageByKey(rep, pkg['pkgKey']))
+                pmatches = self._sql_pkgKey2po(rep, cur)
+                if len(pmatches):
+                    unmatched.remove(p)
+                matches.extend(pmatches)
 
         exactmatch = misc.unique(exactmatch)
         matched = misc.unique(matched)
