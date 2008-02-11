@@ -2471,8 +2471,14 @@ class YumBase(depsolve.Depsolve):
         returndict['arch'] = kwargs.get('arch')
         # get them as ver, version and rel, release - if someone
         # specifies one of each then that's kinda silly.
-        returndict['version'] = kwargs.get('version') or kwargs.get('ver')
-        returndict['release'] = kwargs.get('release') or kwargs.get('rel')
+        returndict['version'] = kwargs.get('version')
+        if returndict['version'] is None:
+            returndict['version'] = kwargs.get('ver')
+
+        returndict['release'] = kwargs.get('release')
+        if returndict['release'] is None:
+            returndict['release'] = kwargs.get('rel')
+
         return returndict
 
     def getKeyForPackage(self, po, askcb = None, fullaskcb = None):
