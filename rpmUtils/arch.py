@@ -60,6 +60,11 @@ arches = {
     "armv61": "armv5tejl",
     "armv5tejl": "armv5tel",
     "armv5tel": "noarch",
+
+    # super-h 
+    "sh4a": "sh4",
+    "sh4": "noarch",
+    "sh3": "noarch",
     }
 
 def legitMultiArchesInSameLib(arch=None):
