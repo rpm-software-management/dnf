@@ -2466,29 +2466,13 @@ class YumBase(depsolve.Depsolve):
             
         returndict = {}
         
-        try: returndict['name'] = kwargs['name']
-        except KeyError:  returndict['name'] = None
-
-        try: returndict['epoch'] = kwargs['epoch']
-        except KeyError: returndict['epoch'] = None
-
-        try: returndict['arch'] = kwargs['arch']
-        except KeyError: returndict['arch'] = None
-        
+        returndict['name'] = kwargs.get('name')
+        returndict['epoch'] = kwargs.get('epoch')
+        returndict['arch'] = kwargs.get('arch')
         # get them as ver, version and rel, release - if someone
         # specifies one of each then that's kinda silly.
-        try: returndict['version'] = kwargs['version']
-        except KeyError: returndict['version'] = None
-        if returndict['version'] is None:
-            try: returndict['version'] = kwargs['ver']
-            except KeyError: returndict['version'] = None
-
-        try: returndict['release'] = kwargs['release']
-        except KeyError: returndict['release'] = None
-        if returndict['release'] is None:
-            try: release = kwargs['rel']
-            except KeyError: returndict['release'] = None
-        
+        returndict['version'] = kwargs.get('version') or kwargs.get('ver')
+        returndict['release'] = kwargs.get('release') or kwargs.get('rel')
         return returndict
 
     def getKeyForPackage(self, po, askcb = None, fullaskcb = None):
