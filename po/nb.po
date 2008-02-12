@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: yum 3.2.10\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2008-02-08 10:16+0100\n"
-"PO-Revision-Date: 2008-02-07 20:02+0100\n"
+"PO-Revision-Date: 2008-02-12 11:16+0100\n"
 "Last-Translator: Terje Røsten <terje.rosten@ntnu.no>\n"
 "Language-Team: Norwegian (bokmål) <i18n-no@lister.ping.uio.no>\n"
 "MIME-Version: 1.0\n"
@@ -1776,7 +1776,7 @@ msgstr "Feil ved testtransaksjon: "
 #: ../yum/__init__.py:2752
 #, python-format
 msgid "Package %s needs %s, this is not available."
-msgstr "Pakke %s trnger %s, dessverre er denne ikke tilgjengelig."
+msgstr "Pakke %s trenger %s, dessverre er denne ikke tilgjengelig."
 
 #: ../yum/__init__.py:2757
 #, python-format
@@ -1786,54 +1786,54 @@ msgstr "Pakke %s er i konflikt med %s."
 #: ../yum/plugins.py:168
 #, python-format
 msgid "Running \"%s\" handler for \"%s\" plugin"
-msgstr ""
+msgstr "Utfører \"%s\" for tillegget \"%s\""
 
 #. Mostly copied from YumOutput._outKeyValFill()
 #: ../yum/plugins.py:193
 msgid "Loaded plugins: "
-msgstr ""
+msgstr "Tillegg som er i bruk:"
 
 #: ../yum/plugins.py:210
 #, python-format
 msgid "\"%s\" plugin is disabled"
-msgstr ""
+msgstr "Tillegg: %s er ikke aktiv."
 
 #: ../yum/plugins.py:222
 #, python-format
 msgid "Plugin \"%s\" doesn't specify required API version"
-msgstr ""
+msgstr "Tillegg \"%s\" tilfredstiller ikke versjonskravene fra Yum."
 
 #: ../yum/plugins.py:226
 #, python-format
 msgid "Plugin \"%s\" requires API %s. Supported API is %s."
-msgstr ""
+msgstr "Tillegg \"%s\" krever API versjon: %s. Men støttet API versjon er %s."
 
 #: ../yum/plugins.py:253
-#, fuzzy, python-format
+#, python-format
 msgid "Loading \"%s\" plugin"
-msgstr "Rydder opp i tillegg"
+msgstr "Laster tillegg \"%s\""
 
 #: ../yum/plugins.py:260
 #, python-format
 msgid ""
 "Two or more plugins with the name \"%s\" exist in the plugin search path"
-msgstr ""
+msgstr "To eller flere tillegg har samme navn."
 
 #: ../yum/plugins.py:280
 #, python-format
 msgid "Configuration file %s not found"
-msgstr ""
+msgstr "Konfigurasjonsfila %s ble ikke funnet"
 
 #. for
 #. Configuration files for the plugin not found
 #: ../yum/plugins.py:283
-#, fuzzy, python-format
+#, python-format
 msgid "Unable to find configuration file for plugin %s"
-msgstr "kunne ikke finne nyere pakke for %s"
+msgstr "Kunne ikke finne konfigurasjon for tillegg %s"
 
 #: ../yum/plugins.py:437
 msgid "registration of commands not supported"
-msgstr ""
+msgstr "registering av kommandoer er ikke støttet"
 
 #: ../rpmUtils/oldUtils.py:26
 #, python-format
