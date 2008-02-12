@@ -78,7 +78,8 @@ def buildPkgRefDict(pkgs, casematch=True):
             
     return pkgdict
        
-def parsePackages(pkgs, usercommands, casematch=0):
+def parsePackages(pkgs, usercommands, casematch=0,
+                  unique='repo-epoch-name-version-release-arch'):
     """matches up the user request versus a pkg list:
        for installs/updates available pkgs should be the 'others list' 
        for removes it should be the installed list of pkgs
@@ -124,9 +125,21 @@ def parsePackages(pkgs, usercommands, casematch=0):
             else:
                 unmatched.append(command)
 
-    matched = misc.unique(matched)
     unmatched = misc.unique(unmatched)
-    exactmatch = misc.unique(exactmatch)
+    if unique == 'repo-epoch-name-version-release-arch': # pkg.__hash__
+        matched    = misc.unique(matched)
+        exactmatch = misc.unique(exactmatch)
+    elif unique == 'repo-pkgkey': # So we get all pkg entries from a repo
+        def pkgunique(pkgs):
+            u = {}
+            for pkg in pkgs:
+                mark = "%s%s" % (pkg.repo.id, pkg.pkgKey)
+                u[mark] = pkg
+            return u.values()
+        matched    = pkgunique(matched)
+        exactmatch = pkgunique(exactmatch)
+    else:
+        raise ValueError, "Bad value for unique: %s" % unique
     return exactmatch, matched, unmatched
 
 class FakeRepository:

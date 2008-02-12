@@ -842,7 +842,7 @@ class YumBase(depsolve.Depsolve):
 
         pkgs = self._pkgSack.returnPackages(repoid, patterns=excludelist)
         exactmatch, matched, unmatched = \
-           parsePackages(pkgs, excludelist, casematch=1)
+           parsePackages(pkgs, excludelist, casematch=1, unique='repo-pkgkey')
 
         for po in exactmatch + matched:
             self.verbose_logger.debug('Excluding %s', po)
