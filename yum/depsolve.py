@@ -281,13 +281,18 @@ class Depsolve(object):
         """processes the dependency resolution for a dep where the requiring 
            package is installed"""
 
-        (name, arch, epoch, ver, rel) = requiringPo.pkgtup
-        
-        (needname, needflags, needversion) = requirement
-        niceformatneed = rpmUtils.miscutils.formatRequire(needname, needversion, needflags)
         checkdeps = 0
         missingdep = 0
         
+        if self.tsInfo.getMembersWithState(requiringPo.pkgtup, TS_REMOVE_STATES):
+            return checkdeps, missingdep
+
+        name, arch, epoch, ver, rel = requiringPo.pkgtup
+
+        needname, needflags, needversion = requirement
+        niceformatneed = rpmUtils.miscutils.formatRequire(needname, needversion, needflags)
+
+
         # we must first find out why the requirement is no longer there
         # we must find out what provides/provided it from the rpmdb (if anything)
         # then check to see if that thing is being acted upon by the transaction set
@@ -352,63 +357,19 @@ class Depsolve(object):
             checkdeps = 1
         
         if needmode in ['i', 'u']:
-            obslist = []
-            # check obsoletes first
-            if self.conf.obsoletes:
-                if self.up.obsoleted_dict.has_key(requiringPo.pkgtup):
-                    obslist = self.up.obsoleted_dict[requiringPo.pkgtup]
-                    self.verbose_logger.log(logginglevels.DEBUG_1,
-                        _('Looking for Obsoletes for %s'), requiringPo)
-                
-            if len(obslist) > 0:
-                po = None
-                for pkgtup in obslist:
-                    po = self.getPackageObject(pkgtup)
-                if po:
-                    for (new, old) in self.up.getObsoletesTuples(): # FIXME query the obsoleting_list now?
-                        if po.pkgtup == new:
-                            txmbr = self.tsInfo.addObsoleting(po, requiringPo)
-                            self.tsInfo.addObsoleted(requiringPo, po)
-                            txmbr.setAsDep(po=needpo)
-                            self.verbose_logger.log(logginglevels.DEBUG_2, _('TSINFO: Obsoleting %s with %s to resolve dep.'), 
-                                requiringPo, po)
-                            checkdeps = 1
-                            return checkdeps, missingdep 
-                
-            
-            # check updates second
-            uplist = []                
-            uplist = self.up.getUpdatesList(name=name)
-            # if there's an update for the reqpkg, then update it
-            
-            po = None
-            if len(uplist) > 0:
-                if name not in self.conf.exactarchlist:
-                    pkgs = self.pkgSack.returnNewestByName(name)
-                    archs = {}
-                    for pkg in pkgs:
-                        archs[pkg.arch] = pkg
-                    a = rpmUtils.arch.getBestArchFromList(archs.keys())
-                    po = archs[a]
+            length = len(self.tsInfo)
+            self.update(name=name, epoch=epoch, version=ver, release=rel)
+            txmbrs = self.tsInfo.getMembersWithState(requiringPo.pkgtup, TS_REMOVE_STATES)
+            if len(self.tsInfo) != length and txmbrs:
+                if txmbrs[0].output_state == TS_OBSOLETED:
+                    self.verbose_logger.log(logginglevels.DEBUG_2, _('TSINFO: Obsoleting %s with %s to resolve dep.'),
+                                            requiringPo, txmbr.obsoleted_by[0])
                 else:
-                    po = self.pkgSack.returnNewestByNameArch((name,arch))[0]
-                if po.pkgtup not in uplist:
-                    po = None
-
-            if po:
-                for (new, old) in self.up.getUpdatesTuples():
-                    if po.pkgtup == new:
-                        txmbr = self.tsInfo.addUpdate(po, requiringPo)
-                        txmbr.setAsDep(po=needpo)
-                        txmbr.reason = "dep"
-                        self.verbose_logger.log(logginglevels.DEBUG_2, _('TSINFO: Updating %s to resolve dep.'), po)
-                checkdeps = 1
-                
-            else: # if there's no update then pass this over to requringFromTransaction()
-                self.verbose_logger.log(logginglevels.DEBUG_2, _('Cannot find an update path for dep for: %s'), niceformatneed)
-                
-                reqpkg = (name, ver, rel, None)
-                return self._requiringFromTransaction(requiringPo, requirement, errorlist)
+                    self.verbose_logger.log(logginglevels.DEBUG_2, _('TSINFO: Updating %s to resolve dep.'), requiringPo)
+                checkdeps = True
+                return checkdeps, missingdep
+            self.verbose_logger.log(logginglevels.DEBUG_2, _('Cannot find an update path for dep for: %s'), niceformatneed)
+            return self._requiringFromTransaction(requiringPo, requirement, errorlist)
             
 
         if needmode is None:
