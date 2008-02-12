@@ -479,7 +479,7 @@ class PackageSack(PackageSackBase):
             if ((name and name!=po.name) or
                 (epoch and epoch!=po.epoch) or
                 (ver and ver!=po.ver) or
-                (rel and re!=po.rel) or
+                (rel and rel!=po.rel) or
                 (arch and arch!=po.arch)):
                 continue
             result.append(po)
