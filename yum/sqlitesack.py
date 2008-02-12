@@ -122,16 +122,13 @@ class YumAvailablePackageSqlite(YumAvailablePackage, PackageObject, RpmBase):
         dbname = varname
         if db2simplemap.has_key(varname):
             dbname = db2simplemap[varname]
-        cache = self.sack.primarydb[self.repo]
-        c = cache.cursor()
-        executeSQL(c, "select %s from packages where pkgId = ?" %(dbname,),
-                   (self.pkgId,))
-        r = c.fetchone()
+        r = self._sql_MD('primary',
+                         "SELECT %s FROM packages WHERE pkgId = ?" % dbname,
+                         (self.pkgId,)).fetchone()
         setattr(self, varname, r[0])
             
         return r[0]
         
-    @catchSqliteException
     def _loadFiles(self):
         if self._loadedfiles:
             return self._files
@@ -140,13 +137,10 @@ class YumAvailablePackageSqlite(YumAvailablePackage, PackageObject, RpmBase):
         
         #FIXME - this should be try, excepting
         self.sack.populate(self.repo, mdtype='filelists')
-        cache = self.sack.filelistsdb[self.repo]
-        cur = cache.cursor()
-        executeSQL(cur, "select filelist.dirname as dirname, "
-                    "filelist.filetypes as filetypes, " 
-                    "filelist.filenames as filenames from filelist,packages "
-                    "where packages.pkgId = ? and "
-                    "packages.pkgKey = filelist.pkgKey", (self.pkgId,))
+        cur = self._sql_MD('filelists',
+                           "SELECT dirname, filetypes, filenames " \
+                           "FROM   filelist JOIN packages USING(pkgKey) " \
+                           "WHERE  packages.pkgId = ?", (self.pkgId,))
         for ob in cur:
             dirname = ob['dirname']
             filetypes = decodefiletypelist(ob['filetypes'])
@@ -163,7 +157,6 @@ class YumAvailablePackageSqlite(YumAvailablePackage, PackageObject, RpmBase):
 
         return self._files
 
-    @catchSqliteException
     def _loadChangelog(self):
         result = []
         if not self._changelog:
@@ -173,13 +166,10 @@ class YumAvailablePackageSqlite(YumAvailablePackage, PackageObject, RpmBase):
                 except Errors.RepoError:
                     self._changelog = result
                     return
-            cache = self.sack.otherdb[self.repo]
-            cur = cache.cursor()
-            executeSQL(cur, "select changelog.date as date, "
-                        "changelog.author as author, "
-                        "changelog.changelog as changelog "
-                        "from changelog,packages where packages.pkgId = ? "
-                        "and packages.pkgKey = changelog.pkgKey", (self.pkgId,))
+            cur = self._sql_MD('other',
+                               "SELECT date, author, changelog " \
+                               "FROM   changelog JOIN packages USING(pkgKey) " \
+                               "WHERE  pkgId = ?", (self.pkgId,))
             for ob in cur:
                 result.append( (ob['date'], ob['author'], ob['changelog']) )
             self._changelog = result
@@ -201,21 +191,16 @@ class YumAvailablePackageSqlite(YumAvailablePackage, PackageObject, RpmBase):
         self._loadFiles()
         return RpmBase.returnFileTypes(self)
 
-    @catchSqliteException
     def simpleFiles(self, ftype='file'):
-        cache = self.sack.primarydb[self.repo]
-        cur = cache.cursor()
-        executeSQL(cur, "select files.name as fname from files where files.pkgKey = ? and files.type= ?", (self.pkgKey, ftype))
+        sql = "SELECT name as fname FROM files WHERE pkgKey = ? and type = ?"
+        cur = self._sql_MD('primary', sql, (self.pkgKey, ftype))
         return map(lambda x: x['fname'], cur)
 
-    @catchSqliteException
     def returnPrco(self, prcotype, printable=False):
         if isinstance(self.prco[prcotype], tuple):
-            cache = self.sack.primarydb[self.repo]
-            cur = cache.cursor()
-            query = "select name, version, release, epoch, flags from %s "\
-                        "where pkgKey = '%s'" % (prcotype, self.pkgKey)
-            executeSQL(cur, query)
+            sql = "SELECT name, version, release, epoch, flags " \
+                  "FROM %s WHERE pkgKey = ?" % prcotype
+            cur = self._sql_MD('primary', sql, (self.pkgKey,)))
             self.prco[prcotype] = [ ]
             for ob in cur:
                 prco_set = (ob['name'], ob['flags'], 
