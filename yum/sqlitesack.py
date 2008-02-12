@@ -92,6 +92,14 @@ class YumAvailablePackageSqlite(YumAvailablePackage, PackageObject, RpmBase):
             pass
 
     @catchSqliteException
+    def _sql_MD(self, MD, sql, *args):
+        """ Exec SQL against an MD of the repo, return a cursor. """
+
+        cache = getattr(self.sack, MD + 'db')[self.repo]
+        cur = cache.cursor()
+        executeSQL(cur, sql, *args)
+        return cur
+
     def __getattr__(self, varname):
         db2simplemap = { 'packagesize' : 'size_package',
                          'archivesize' : 'size_archive',
