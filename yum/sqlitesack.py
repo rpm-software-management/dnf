@@ -170,6 +170,8 @@ class YumAvailablePackageSqlite(YumAvailablePackage, PackageObject, RpmBase):
                                "SELECT date, author, changelog " \
                                "FROM   changelog JOIN packages USING(pkgKey) " \
                                "WHERE  pkgId = ?", (self.pkgId,))
+            # Check count(pkgId) here, the same way we do in searchFiles()?
+            # Failure mode is much less of a problem.
             for ob in cur:
                 result.append( (ob['date'], ob['author'], ob['changelog']) )
             self._changelog = result
@@ -404,6 +406,14 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
             # sack.populate(repo, mdtype, callback, cacheonly)
             for (repo,cache) in self.primarydb.items():
                 self.populate(repo, mdtype='filelists')
+
+        # Check to make sure the DB data matches, this should always pass but
+        # we've had weird errors. So check it for a bit.
+        for repo in self.filelistsdb:
+            pri_pkgs = self._sql_MD_pkg_num('primary',   repo)
+            fil_pkgs = self._sql_MD_pkg_num('filelists', repo)
+            if pri_pkgs != fil_pkgs:
+                raise Errors.RepoError
 
         for (rep,cache) in self.filelistsdb.items():
             cur = cache.cursor()
