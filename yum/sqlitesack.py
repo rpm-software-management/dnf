@@ -243,7 +243,11 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
         executeSQL(cur, sql, *args)
         return cur
 
-    @catchSqliteException
+    def _sql_MD_pkg_num(self, MD, repo):
+        """ Give a count of pkgIds in the given repo DB """
+        sql = "SELECT count(pkgId) FROM packages"
+        return self._sql_MD('primary', repo, sql).fetchone()[0]
+        
     def __len__(self):
         # First check if everything is excluded
         all_excluded = True
@@ -259,11 +263,12 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
             exclude_num += len(self.excludes[repo])
         if hasattr(self, 'pkgobjlist'):
             return len(self.pkgobjlist) - exclude_num
-        for (rep,cache) in self.primarydb.items():
-            cur = cache.cursor() # Does all repos, just using a cache
-            executeSQL(cur, "select count(pkgId) from packages")
-            return cur.fetchone()[0] - exclude_num
-        return 0
+        
+        pkg_num = 0
+        sql = "SELECT count(pkgId) FROM packages"
+        for repo in self.primarydb:
+            pkg_num += self._sql_MD_pkg_num('primary', repo)
+        return pkg_num - exclude_num
 
     @catchSqliteException
     def close(self):
