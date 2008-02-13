@@ -329,8 +329,9 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
         if not self._key2pkg.has_key(repo):
             self._key2pkg[repo] = {}
         if not self._key2pkg[repo].has_key(pkgKey):
-            cur = self.primarydb[repo].cursor()
-            executeSQL(cur, "select pkgKey, pkgId, name, epoch, version, release from packages where pkgKey = ?", (pkgKey,))
+            sql = "SELECT pkgKey, pkgId, name, epoch, version, release " \
+                  "FROM packages WHERE pkgKey = ?"
+            cur = self._sql_MD('primary', repo, sql, (pkgKey,))
             po = self.pc(repo, cur.fetchone())
             self._key2pkg[repo][pkgKey] = po
         return self._key2pkg[repo][pkgKey]
