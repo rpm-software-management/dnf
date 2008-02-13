@@ -235,6 +235,15 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
         self._key2pkg = {}
 
     @catchSqliteException
+    def _sql_MD(self, MD, repo, sql, *args):
+        """ Exec SQL against an MD of the repo, return a cursor. """
+
+        cache = getattr(self, MD + 'db')[repo]
+        cur = cache.cursor()
+        executeSQL(cur, sql, *args)
+        return cur
+
+    @catchSqliteException
     def __len__(self):
         # First check if everything is excluded
         all_excluded = True
