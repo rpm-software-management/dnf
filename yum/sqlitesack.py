@@ -202,7 +202,7 @@ class YumAvailablePackageSqlite(YumAvailablePackage, PackageObject, RpmBase):
         if isinstance(self.prco[prcotype], tuple):
             sql = "SELECT name, version, release, epoch, flags " \
                   "FROM %s WHERE pkgKey = ?" % prcotype
-            cur = self._sql_MD('primary', sql, (self.pkgKey,)))
+            cur = self._sql_MD('primary', sql, (self.pkgKey,))
             self.prco[prcotype] = [ ]
             for ob in cur:
                 prco_set = (ob['name'], ob['flags'], 
