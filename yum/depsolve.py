@@ -206,7 +206,7 @@ class Depsolve(object):
                 self.verbose_logger.log(logginglevels.DEBUG_1,
                     _('Removing Package %s'), txmbr.po)
 
-    def _processReq(self, po, requirement):
+    def _processReq(self, po, requirement, remove_txmbr=None):
         """processes a Requires dep from the resolveDeps functions, returns a tuple
            of (CheckDeps, missingdep, conflicts, errors) the last item is an array
            of error messages"""
@@ -222,7 +222,7 @@ class Depsolve(object):
             if po.repo.id != "installed":
                 CheckDeps, missingdep = self._requiringFromTransaction(po, requirement, errormsgs)
             else:
-                CheckDeps, missingdep = self._requiringFromInstalled(po, requirement, errormsgs)
+                CheckDeps, missingdep = self._requiringFromInstalled(po, requirement, remove_txmbr, errormsgs)
     
             # Check packages with problems
             if missingdep:
@@ -241,7 +241,7 @@ class Depsolve(object):
 
         return (CheckDeps, missingdep, errormsgs)
             
-    def _requiringFromInstalled(self, requiringPo, requirement, errorlist):
+    def _requiringFromInstalled(self, requiringPo, requirement, remove_txmbr, errorlist):
         """processes the dependency resolution for a dep where the requiring 
            package is installed"""
 
@@ -256,71 +256,15 @@ class Depsolve(object):
         needname, needflags, needversion = requirement
         niceformatneed = rpmUtils.miscutils.formatRequire(needname, needversion, needflags)
 
-
-        # we must first find out why the requirement is no longer there
-        # we must find out what provides/provided it from the rpmdb (if anything)
-        # then check to see if that thing is being acted upon by the transaction set
-        # if it is then we need to find out what is being done to it and act accordingly
-        needmode = None # mode in the transaction of the needed pkg (if any)
-        needpo = None
-        providers = []
+        if not remove_txmbr:
+            for po in self.rpmdb.getProvides(*requirement):
+                for txmbr in self.tsInfo.getMembersWithState(po.pkgtup, TS_REMOVE_STATES):
+                    if (remove_txmbr is None or
+                        (not txmbr.obsoleted_by and not txmbr.updated_by)):
+                        # prefer true deletes
+                        remove_txmbr = txmbr
         
-        if self.cheaterlookup.has_key((needname, needflags, needversion)):
-            self.verbose_logger.log(logginglevels.DEBUG_2, _('Needed Require has already been looked up, cheating'))
-            cheater_po = self.cheaterlookup[(needname, needflags, needversion)]
-            providers = [cheater_po]
-        
-        elif self.rpmdb.contains(name=needname):
-            txmbrs = self.tsInfo.matchNaevr(name=needname)
-            for txmbr in txmbrs:
-                providers.append(txmbr.po)
-
-        else:
-            self.verbose_logger.log(logginglevels.DEBUG_2, _('Needed Require is not a package name. Looking up: %s'), niceformatneed)
-            providers = self.rpmdb.getProvides(needname, needflags, needversion)
-
-        for inst_po in providers:
-            inst_str = '%s.%s %s:%s-%s' % inst_po.pkgtup
-            (i_n, i_a, i_e, i_v, i_r) = inst_po.pkgtup
-            self.verbose_logger.log(logginglevels.DEBUG_2,
-                _('Potential Provider: %s'), inst_str)
-            thismode = self.tsInfo.getMode(name=i_n, arch=i_a, 
-                            epoch=i_e, ver=i_v, rel=i_r)
-
-            if thismode is None and i_n in self.conf.exactarchlist:
-                # check for mode by the same name+arch
-                thismode = self.tsInfo.getMode(name=i_n, arch=i_a)
-            
-            if thismode is None and i_n not in self.conf.exactarchlist:
-                # check for mode by just the name
-                thismode = self.tsInfo.getMode(name=i_n)
-
-            # if this package is being obsoleted, it's just like if it's
-            # being upgraded as far as checking for other providers
-            if thismode is None:
-                if filter(lambda x: x.obsoleted_by,
-                          self.tsInfo.matchNaevr(i_n, i_a, i_e, i_v, i_r)):
-                    thismode = 'u'
-
-            if thismode is not None:
-                needmode = thismode
-
-                self.cheaterlookup[(needname, needflags, needversion)] = inst_po
-                self.verbose_logger.log(logginglevels.DEBUG_2, _('Mode is %s for provider of %s: %s'),
-                    needmode, niceformatneed, inst_str)
-                break
-                    
-        self.verbose_logger.log(logginglevels.DEBUG_2, _('Mode for pkg providing %s: %s'), 
-            niceformatneed, needmode)
-
-        if needmode in ['e']:
-            self.verbose_logger.log(logginglevels.DEBUG_2, _('TSINFO: %s package requiring %s marked as erase'),
-                requiringPo, needname)
-            txmbr = self.tsInfo.addErase(requiringPo)
-            txmbr.setAsDep(po=inst_po)
-            checkdeps = 1
-        
-        if needmode in ['i', 'u']:
+        if remove_txmbr and (remove_txmbr.obsoleted_by or remove_txmbr.updated_by):
             length = len(self.tsInfo)
             self.update(name=name, epoch=epoch, version=ver, release=rel)
             txmbrs = self.tsInfo.getMembersWithState(requiringPo.pkgtup, TS_REMOVE_STATES)
@@ -334,23 +278,16 @@ class Depsolve(object):
                 return checkdeps, missingdep
             self.verbose_logger.log(logginglevels.DEBUG_2, _('Cannot find an update path for dep for: %s'), niceformatneed)
             return self._requiringFromTransaction(requiringPo, requirement, errorlist)
-            
 
-        if needmode is None:
-            reqpkg = (name, ver, rel, None)
-            if self.pkgSack is None:
-                return self._requiringFromTransaction(requiringPo, requirement, errorlist)
-            else:
-                prob_pkg = "%s (%s)" % (requiringPo,requiringPo.repoid)
-                msg = _('Unresolvable requirement %s for %s') % (niceformatneed,
-                                                               prob_pkg)
-                self.verbose_logger.log(logginglevels.DEBUG_2, msg)
-                checkdeps = 0
-                missingdep = 1
-                errorlist.append(msg)
+        if remove_txmbr and remove_txmbr.ts_state=='e' and not (remove_txmbr.obsoleted_by or remove_txmbr.updated_by):
+            self.verbose_logger.log(logginglevels.DEBUG_2, _('TSINFO: %s package requiring %s marked as erase'),
+                requiringPo, needname)
+            txmbr = self.tsInfo.addErase(requiringPo)
+            txmbr.setAsDep(po=remove_txmbr.po)
+            checkdeps = 1
+            return checkdeps, missingdep
 
-        return checkdeps, missingdep
-        
+        return self._requiringFromTransaction(requiringPo, requirement, errorlist)
 
     def _requiringFromTransaction(self, requiringPo, requirement, errorlist):
         """processes the dependency resolution for a dep where requiring 
@@ -709,8 +646,8 @@ class Depsolve(object):
             missing_in_pkg = False
 
             while True:
-                for po, dep in thisneeds:
-                    (checkdep, missing, errormsgs) = self._processReq(po, dep)
+                for po, dep, removed_txmbr in thisneeds:
+                    (checkdep, missing, errormsgs) = self._processReq(po, dep, removed_txmbr)
                     CheckDeps |= checkdep
                     errors += errormsgs
                     missing_in_pkg |= missing
@@ -753,7 +690,7 @@ class Depsolve(object):
             self.verbose_logger.log(logginglevels.DEBUG_2, _("looking for %s as a requirement of %s"), req, txmbr)
             provs = self.tsInfo.getProvides(*req)
             if not provs:
-                yield (txmbr.po, (req[0], req[1], version_tuple_to_string(req[2])))
+                yield (txmbr.po, (req[0], req[1], version_tuple_to_string(req[2])), None)
 
             #Add relationship
             for po in provs:
@@ -784,7 +721,7 @@ class Depsolve(object):
             for pkg, hits in self.tsInfo.getRequires(*prov).iteritems():
                 for rn, rf, rv in hits:
                     if not self.tsInfo.getProvides(rn, rf, rv):
-                        yield (pkg, (rn, rf, version_tuple_to_string(rv)))
+                        yield (pkg, (rn, rf, version_tuple_to_string(rv)), txmbr)
 
     def _checkFileRequires(self):
         fileRequires = set()
