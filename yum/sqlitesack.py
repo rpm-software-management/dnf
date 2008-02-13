@@ -404,7 +404,7 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
                 dirname_check = ""
             else:
                 dirname = os.path.dirname(name)
-                dirname_check = "dirname = '%s' and " % dirname
+                dirname_check = "dirname = \"%s\" and " % dirname
 
             # grab the entries that are a single file in the 
             # filenames section, use sqlites globbing if it is a glob
