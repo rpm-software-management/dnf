@@ -559,89 +559,45 @@ class Depsolve(object):
         return checkdeps, missingdep
 
 
-    def _processConflict(self, po, conflict):
+    def _processConflict(self, po, conflict, conflicting_po):
         """processes a Conflict dep from the resolveDeps() method"""
-                
-        CheckDeps = 0
-        conflicts = 0
+
+        CheckDeps = True
         errormsgs = []
-        
 
         needname, flags, needversion = conflict
         (name, arch, epoch, ver, rel) = po.pkgtup
-        requiringPo = po
 
         niceformatneed = rpmUtils.miscutils.formatRequire(needname, needversion, flags)
         if self.dsCallback: self.dsCallback.procConflict(name, niceformatneed)
-        
-        # we should try to update out of the dep, if possible        
-        # see which side of the conflict is installed and which is in the transaction Set
-        needmode = self.tsInfo.getMode(name=needname)
-        confmode = self.tsInfo.getMode(name=name, ver=ver, rel=rel)
-        if confmode is None:
-            confname = name
-        elif needmode is None:
-            confname = needname
-        else:
-            confname = name
-            
-        po = None        
 
-        uplist = self.up.getUpdatesList(name=confname)
-        
-        conflict_packages = self.rpmdb.searchNevra(name=confname)
-        if conflict_packages:
-            confpkg = conflict_packages[0] # take the first one, probably the only one
-                
+        length = len(self.tsInfo)
+        if flags & rpm.RPMSENSE_LESS:
+            self.update(name=conflicting_po.name)
+            txmbrs = self.tsInfo.getMembersWithState(conflicting_po.pkgtup, TS_REMOVE_STATES)
+            if len(self.tsInfo) != length and txmbrs:
+                return CheckDeps, errormsgs
+        elif flags & rpm.RPMSENSE_GREATER:
+            self.update(name=name)
+            txmbrs = self.tsInfo.getMembersWithState(po.pkgtup, TS_REMOVE_STATES)
+            if len(self.tsInfo) != length and txmbrs:
+                return CheckDeps, errormsgs
 
-            # if there's an update for the reqpkg, then update it
-            if len(uplist) > 0:
-                if confpkg.name not in self.conf.exactarchlist:
-                    try:
-                        pkgs = self.pkgSack.returnNewestByName(confpkg.name)
-                        archs = {}
-                        for pkg in pkgs:
-                            archs[pkg.arch] = pkg
-                        a = rpmUtils.arch.getBestArchFromList(archs.keys())
-                        po = archs[a]                        
-                    except Errors.PackageSackError:
-                        self.verbose_logger.log(logginglevels.DEBUG_4, _("unable to find newer package for %s") %(confpkg,))
-                        pkgs = []
-                        po = None
-                else:
-                    try:
-                        po = self.pkgSack.returnNewestByNameArch((confpkg.name,confpkg.arch))[0]
-                    except Errors.PackageSackError:
-                        self.verbose_logger.log(logginglevels.DEBUG_4, _("unable to find newer package for %s") %(confpkg))
-                        po = None
-                if po and po.pkgtup not in uplist:
-                    po = None
+        self.update(name=conflicting_po.name)
+        txmbrs = self.tsInfo.getMembersWithState(conflicting_po.pkgtup, TS_REMOVE_STATES)
+        if len(self.tsInfo) != length and txmbrs:
+            return CheckDeps, errormsgs
+        self.update(name=name)
+        txmbrs = self.tsInfo.getMembersWithState(po.pkgtup, TS_REMOVE_STATES)
+        if len(self.tsInfo) != length and txmbrs:
+            return CheckDeps, errormsgs
 
-        if po:
-            self.verbose_logger.log(logginglevels.DEBUG_2,
-                _('TSINFO: Updating %s to resolve conflict.'), po)
-            txmbr = self.tsInfo.addUpdate(po, confpkg)
-            txmbr.setAsDep(po=requiringPo)
-            txmbr.reason = "dep"
-            CheckDeps = 1
-            
-        else:
-            conf = rpmUtils.miscutils.formatRequire(needname, needversion, flags)
-            prob_pkg = "%s (%s)" % (requiringPo,requiringPo.repoid)
-            CheckDeps, conflicts = self._unresolveableConflict(conf, prob_pkg, errormsgs)
-            self.verbose_logger.log(logginglevels.DEBUG_1, _('%s conflicts: %s'),
-                prob_pkg, conf)
-            if conflicts:
-                self.po_with_problems.add((requiringPo,None,errormsgs[-1]))
-
-        return (CheckDeps, conflicts, errormsgs)
-
-    def _unresolveableConflict(self, conf, name, errors):
-        CheckDeps = 0
-        conflicts = 1
-        msg = _('%s conflicts with %s') % (name, conf)
-        errors.append(msg)
-        return CheckDeps, conflicts
+        msg = '%s conflicts with %s' % (name, conflicting_po.name)
+        errormsgs.append(msg)
+        self.verbose_logger.log(logginglevels.DEBUG_1, msg)
+        CheckDeps = False
+        self.po_with_problems.add((po,None,errormsgs[-1]))
+        return CheckDeps, errormsgs
 
     def _undoDepInstalls(self):
         # clean up after ourselves in the case of failures
@@ -730,7 +686,7 @@ class Depsolve(object):
             if CheckInstalls:
                 CheckInstalls = False
                 for conflict in self._checkConflicts():
-                    (checkdep, conflict, errormsgs) = self._processConflict(*conflict)
+                    (checkdep, errormsgs) = self._processConflict(*conflict)
                     CheckDeps |= checkdep
                     errors += errormsgs
 
@@ -948,7 +904,7 @@ class Depsolve(object):
                 for conflicting_po in self.tsInfo.getNewProvides(r, f, v):
                     if conflicting_po.pkgtup[0] == po.pkgtup[0] and conflicting_po.pkgtup[2:] == po.pkgtup[2:]:
                         continue
-                    ret.append( (po, (r, flags[f], version_tuple_to_string(v))) )
+                    ret.append( (po, (r, flags[f], version_tuple_to_string(v)), conflicting_po) )
         for txmbr in self.tsInfo.getMembersWithState(output_states=TS_INSTALL_STATES):
             po = txmbr.po
             for conflict in txmbr.po.returnPrco('conflicts'):
@@ -956,7 +912,7 @@ class Depsolve(object):
                 for conflicting_po in self.tsInfo.getProvides(r, f, v):
                     if conflicting_po.pkgtup[0] == po.pkgtup[0] and conflicting_po.pkgtup[2:] == po.pkgtup[2:]:
                         continue
-                    ret.append( (po, (r, flags[f], version_tuple_to_string(v))) )
+                    ret.append( (po, (r, flags[f], version_tuple_to_string(v)), conflicting_po) )
         return ret
 
 
