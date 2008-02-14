@@ -551,12 +551,8 @@ class TransactionMember:
 
     def __cmp__(self, other):
         result = cmp(self.name, other.name)
-        if result == 0:
-            result = cmp(hash(self), hash(other))
-            if self is other:
-                return 0
-            if result == 0:
-                return 1
+        if not result:
+            return cmp(id(self), id(other))
         return result
 
     def __hash__(self):
