@@ -23,6 +23,7 @@ import warnings
 import re
 import fnmatch
 import misc
+from sets import Set
 
 class PackageSackBase(object):
     """Base class that provides the interface for PackageSacks."""
@@ -210,6 +211,40 @@ class PackageSackBase(object):
                             unmatched.discard(term)
         return misc.unique(exactmatch), misc.unique(matched), list(unmatched)
 
+    def returnLeafNodes(self, repoid=None):
+        """returns a list of package objects that are not required by
+           any other package in this repository"""
+           
+        # fixme - maybe cache this list?
+        
+        req = {}
+        orphans = []
+
+        # prebuild the req dict    
+        for po in self.returnPackages(repoid=repoid):
+            if not po.requires_names:
+                continue
+            for r in po.requires_names:
+                if not req.has_key(r):
+                    req[r] = Set()
+                req[r].add(po)
+     
+     
+     
+        for po in self.returnPackages(repoid=repoid):
+            preq = 0
+            for p in po.provides_names + po.filelist + po.dirlist + po.ghostlist:
+                if req.has_key(p):
+                    # Don't count a package that provides its require
+                    s = req[p]
+                    if len(s) > 1 or po not in s:
+                        preq += 1
+                        break
+        
+            if preq == 0:
+                orphans.append(po)
+        
+        return orphans
 
 class MetaSack(PackageSackBase):
     """Represents the aggregate of multiple package sacks, such that they can
