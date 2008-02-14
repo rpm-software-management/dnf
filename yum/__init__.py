@@ -654,10 +654,12 @@ class YumBase(depsolve.Depsolve):
                         self._getPackagesToRemove(wpo, depTree, toRemove)
                         if not wpo.repoid == 'installed': # Only remove non installed packages from pkgSack
                             self.pkgSack.delPackage(wpo)
+                            self.up.delPackage(wpo.pkgtup)
                 else:
                     self._getPackagesToRemove(po, depTree, toRemove)
                     if not po.repoid == 'installed': # Only remove non installed packages from pkgSack
                         self.pkgSack.delPackage(po)
+                        self.up.delPackage(po.pkgtup)
             for po in toRemove:
                 skipped = self._skipFromTransaction(po)
                 for skip in skipped:

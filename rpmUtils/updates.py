@@ -28,13 +28,15 @@ class Updates:
     """
 
     def __init__(self, instlist, availlist):
-        self.changeTup = [] # storage list tuple of updates or obsoletes
-                            # (oldpkg, newpkg, ['update'|'obsolete'])
 
         self.installed = instlist # list of installed pkgs (n, a, e, v, r)
         self.available = availlist # list of available pkgs (n, a, e, v, r)
+
         self.rawobsoletes = {} # dict of obsoleting package->[what it obsoletes]
         self._obsoletes_by_name = None
+        self.obsoleted_dict = {}  # obsoleted pkgtup -> [ obsoleting pkgtups ]
+        self.obsoleting_dict = {} # obsoleting pkgtup -> [ obsoleted pkgtups ]
+
         self.exactarch = 1 # don't change archs by default
         self.exactarchlist = ['kernel', 'kernel-smp', 'glibc', 'kernel-hugemem',
                               'kernel-enterprise', 'kernel-bigmem', 'kernel-BOOT']
@@ -49,8 +51,47 @@ class Updates:
 
         # holder for our updates dict
         self.updatesdict = {}
+        self.updating_dict = {}
         #debug, ignore me
         self.debug = 0
+
+    def _delFromDict(self, dict_, keys, value):
+        for key in keys:
+            if not dict_.has_key(key):
+                continue
+            dict_[key] = filter(value.__ne__, dict_[key])
+            if not dict_[key]:
+                del dict_[key]
+
+    def _delFromNADict(self, dict_, pkgtup):
+        (n, a, e, v, r) = pkgtup
+        if dict_.has_key((n, a)):
+            dict_[(n, a)] = filter((e,v,r).__ne__, dict_[(n, a)])
+            if not dict_[(n, a)]:
+                del dict_[(n, a)]
+        if dict_.has_key((n, None)):
+            dict_[(n, None)] = filter((e,v,r).__ne__, dict_[(n, None)])
+            if not dict_[(n, None)]:
+                del dict_[(n, None)]
+
+    def delPackage(self, pkgtup):
+        """remove available pkgtup that is no longer available"""
+        if pkgtup not in self.available:
+            return
+        self.available.remove(pkgtup)
+        self._delFromNADict(self.availdict, pkgtup)
+
+        self._delFromDict(self.updating_dict, self.updatesdict.get(pkgtup, []), pkgtup)
+        self._delFromDict(self.updatesdict, self.updating_dict.get(pkgtup, []), pkgtup)
+
+        if self.rawobsoletes.has_key(pkgtup):
+            if self._obsoletes_by_name:
+                for name, flag, version in self.rawobsoletes[pkgtup]:
+                    self._delFromDict(self._obsoletes_by_name, [name], (flag, version, pkgtup))
+                del self.rawobsoletes[pkgtup]
+
+        self._delFromDict(self.obsoleted_dict, self.obsoleting_dict.get(pkgtup, []), pkgtup)
+        self._delFromDict(self.obsoleting_dict, self.obsoleted_dict.get(pkgtup, []), pkgtup)
 
     def debugprint(self, msg):
         if self.debug:
