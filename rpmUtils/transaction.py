@@ -13,7 +13,6 @@
 
 import rpm
 import miscutils
-from sets import Set
 
 read_ts = None
 ts = None
@@ -124,7 +123,7 @@ class TransactionWrapper:
                 continue
             for r in h[rpm.RPMTAG_REQUIRENAME]:
                 if not req.has_key(r):
-                    req[r] = Set()
+                    req[r] = set()
                 req[r].add(tup)
      
      
