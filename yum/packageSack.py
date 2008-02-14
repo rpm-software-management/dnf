@@ -23,7 +23,7 @@ import warnings
 import re
 import fnmatch
 import misc
-from sets import Set
+
 
 class PackageSackBase(object):
     """Base class that provides the interface for PackageSacks."""
@@ -226,7 +226,7 @@ class PackageSackBase(object):
                 continue
             for r in po.requires_names:
                 if not req.has_key(r):
-                    req[r] = Set()
+                    req[r] = set()
                 req[r].add(po)
      
      
