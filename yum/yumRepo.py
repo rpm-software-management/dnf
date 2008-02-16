@@ -42,6 +42,7 @@ import warnings
 
 import glob
 import shutil
+import stat
 
 warnings.simplefilter("ignore", Errors.YumFutureDeprecationWarning)
 
@@ -478,7 +479,13 @@ class YumRepository(Repository, config.RepoConf):
                 if not os.path.exists(dir):
                     raise Errors.RepoError, \
                         "Cannot access repository dir %s" % dir
-
+        # if we're using a cachedir that's not the system one, copy over these 
+        # basic items from the system one
+        self._preload_md_from_system_cache('repomd.xml')
+        self._preload_md_from_system_cache('cachecookie')
+        self._preload_md_from_system_cache('mirrorlist.txt')        
+        
+        
     def baseurlSetup(self):
         warnings.warn('baseurlSetup() will go away in a future version of Yum.\n',
                 Errors.YumFutureDeprecationWarning, stacklevel=2)
@@ -923,6 +930,8 @@ class YumRepository(Repository, config.RepoConf):
             if not os.path.exists(local):
                 local = local.replace('.bz2', '')
                 compressed = True
+        # if we can, make a copy of the system-wide-cache version of this file
+        self._preload_md_from_system_cache(os.path.basename(local))
         if not self._checkMD(local, dbmdtype, openchecksum=compressed,
                              data=data, check_can_fail=True):
             return None
@@ -1239,6 +1248,31 @@ class YumRepository(Repository, config.RepoConf):
                 output.close()
 
         return returnlist
+
+    def _preload_md_from_system_cache(self, filename):
+        """attempts to download the file from the system-wide cache, if possible"""
+        if not hasattr(self, 'old_base_cache_dir'):
+            return
+        if self.old_base_cache_dir == "":
+            return
+            
+        glob_repo_cache_dir=os.path.join(self.old_base_cache_dir, self.id)
+        if not os.path.exists(glob_repo_cache_dir):
+            return
+        if os.path.normpath(glob_repo_cache_dir) == os.path.normpath(self.cachedir):
+            return
+            
+        # copy repomd.xml, cachecookie and mirrorlist.txt
+        fn = glob_repo_cache_dir + '/' + filename
+        destfn = self.cachedir + '/' + os.path.basename(filename)
+        # don't copy it if the copy in our users dir is newer or equal
+        if not os.path.exists(fn): 
+            return
+        if os.path.exists(destfn):
+            if os.stat(fn)[stat.ST_CTIME] <= os.stat(destfn)[stat.ST_CTIME]:
+                return
+        #print 'copying %s to %s' % (fn, destfn)
+        shutil.copy2(fn, destfn)
 
 
 def getMirrorList(mirrorlist, pdict = None):

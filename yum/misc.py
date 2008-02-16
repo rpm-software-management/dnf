@@ -321,7 +321,7 @@ def getCacheDir(tmpdir='/var/tmp'):
     # make the dir (tempfile.mkdtemp())
     cachedir = tempfile.mkdtemp(prefix=prefix, dir=tmpdir)
     return cachedir
-
+        
 def sortPkgObj(pkg1 ,pkg2):
     """sorts a list of yum package objects by name"""
     if pkg1.name > pkg2.name:
