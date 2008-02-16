@@ -738,7 +738,8 @@ class Depsolve(object):
             # it is useful when an update is breaking an require of an installed package
             # then we want to know who is causing the problem, not just who is having the problem. 
             if not txmbr.updates and txmbr.relatedto:
-                self._working_po = txmbr.relatedto[0][0]
+                tpos = self.tsInfo.getMembers(txmbr.relatedto[0][0])
+                self._working_po = tpos[0]
             else:
                 self._working_po = txmbr.po
            
