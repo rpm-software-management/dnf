@@ -636,6 +636,16 @@ class YumBase(depsolve.Depsolve):
 
     def _skipPackagesWithProblems(self, rescode, restring):
         ''' Remove the packages with depsolve errors and depsolve again '''
+
+        def _remove(po, depTree, toRemove):
+            if not po:
+                return
+            self._getPackagesToRemove(po, depTree, toRemove)
+            # Only remove non installed packages from pkgSack
+            if not po.repoid == 'installed':
+                self.pkgSack.delPackage(po)
+                self.up.delPackage(po.pkgtup)
+
         # Keep removing packages & Depsolve until all errors is gone
         # or the transaction is empty
         count = 0
@@ -650,16 +660,9 @@ class YumBase(depsolve.Depsolve):
             for po,wpo,err in self.po_with_problems:
                 # check if the problem is caused by a package in the transaction
                 if not self.tsInfo.exists(po.pkgtup):
-                    if wpo:
-                        self._getPackagesToRemove(wpo, depTree, toRemove)
-                        if not wpo.repoid == 'installed': # Only remove non installed packages from pkgSack
-                            self.pkgSack.delPackage(wpo)
-                            self.up.delPackage(wpo.pkgtup)
+                    _remove(wpo, depTree, toRemove)
                 else:
-                    self._getPackagesToRemove(po, depTree, toRemove)
-                    if not po.repoid == 'installed': # Only remove non installed packages from pkgSack
-                        self.pkgSack.delPackage(po)
-                        self.up.delPackage(po.pkgtup)
+                    _remove(po,  depTree, toRemove)
             for po in toRemove:
                 skipped = self._skipFromTransaction(po)
                 for skip in skipped:
