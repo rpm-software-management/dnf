@@ -739,7 +739,10 @@ class Depsolve(object):
             # then we want to know who is causing the problem, not just who is having the problem. 
             if not txmbr.updates and txmbr.relatedto:
                 tpos = self.tsInfo.getMembers(txmbr.relatedto[0][0])
-                self._working_po = tpos[0]
+                if not tpos: # Find the po from somewhere else / fix relatedto?
+                    self._working_po = txmbr.relatedto[0][0]
+                else:
+                    self._working_po = tpos[0].po
             else:
                 self._working_po = txmbr.po
            
