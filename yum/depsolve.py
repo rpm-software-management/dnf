@@ -738,11 +738,7 @@ class Depsolve(object):
             # it is useful when an update is breaking an require of an installed package
             # then we want to know who is causing the problem, not just who is having the problem. 
             if not txmbr.updates and txmbr.relatedto:
-                tpos = self.tsInfo.getMembers(txmbr.relatedto[0][0])
-                if not tpos: # Find the po from somewhere else / fix relatedto?
-                    self._working_po = txmbr.relatedto[0][0]
-                else:
-                    self._working_po = tpos[0].po
+                self._working_po = txmbr.relatedto[0][0]
             else:
                 self._working_po = txmbr.po
            
@@ -802,7 +798,7 @@ class Depsolve(object):
                     continue
                 for member in self.tsInfo.getMembersWithState(
                     pkgtup=po.pkgtup, output_states=TS_INSTALL_STATES):
-                    member.relatedto.append((txmbr.po.pkgtup, 'dependson'))
+                    member.relatedto.append((txmbr.po, 'dependson'))
 
         return ret
 

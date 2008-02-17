@@ -99,7 +99,7 @@ class TransactionDataTests(unittest.TestCase):
         self.assertEqual(txmbr.output_state, TS_UPDATE)
         self.assertEqual(txmbr.po.state, TS_UPDATE)
         self.assertEqual(txmbr.ts_state, 'u')
-        self.assertEqual(txmbr.relatedto, [(self.foogui1.pkgtup, 'updates')])
+        self.assertEqual(txmbr.relatedto, [(self.foogui1, 'updates')])
         self.assertEqual(txmbr.updates, [self.foogui1])
         
 

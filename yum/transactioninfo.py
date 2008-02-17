@@ -350,7 +350,7 @@ class TransactionData:
         txmbr.po.state = TS_UPDATE        
         txmbr.ts_state = 'u'
         if oldpo:
-            txmbr.relatedto.append((oldpo.pkgtup, 'updates'))
+            txmbr.relatedto.append((oldpo, 'updates'))
             txmbr.updates.append(oldpo)
             
         self.add(txmbr)
@@ -526,7 +526,7 @@ class TransactionMember:
         self.isDep = 0
         self.reason = 'user' # reason for it to be in the transaction set
         self.process = None # 
-        self.relatedto = [] # ([relatedpkgtup, relationship)]
+        self.relatedto = [] # ([relatedpkg, relationship)]
         self.depends_on = []
         self.obsoletes = []
         self.obsoleted_by = []
@@ -546,7 +546,7 @@ class TransactionMember:
         
         self.isDep = 1
         if po:
-            self.relatedto.append((po.pkgtup, 'dependson'))
+            self.relatedto.append((po, 'dependson'))
             self.depends_on.append(po)
 
     def __cmp__(self, other):
