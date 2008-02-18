@@ -172,9 +172,11 @@ class TransactionData:
         
     def add(self, txmember):
         """add a package to the transaction"""
+        result = AdditionResult()
         
         for oldpo in txmember.updates:
-            self.addUpdated(oldpo, txmember.po)
+            res = self.addUpdated(oldpo, txmember.po)
+            result.add(res)
 
         if not self.pkgdict.has_key(txmember.pkgtup):
             self.pkgdict[txmember.pkgtup] = []
@@ -183,7 +185,11 @@ class TransactionData:
             for member in self.pkgdict[txmember.pkgtup]:
                 if member.ts_state == txmember.ts_state:
                     self.debugprint("Package in same mode, skipping.")
-                    return
+                    result.setPrimaryMember(member, new=False)
+                    return result
+
+        result.setPrimaryMember(txmember)
+
         self.pkgdict[txmember.pkgtup].append(txmember)
         self._namedict.setdefault(txmember.name, []).append(txmember)
         self.changed = True
@@ -196,15 +202,18 @@ class TransactionData:
             for po in self.conditionals[txmember.name]:
                 if self.rpmdb.contains(po=po):
                     continue
-                condtxmbr = self.addInstall(po)
-                condtxmbr.setAsDep(po=txmember.po)
+                res = self.addInstall(po, True)
+                result.addConditionals(res)
+                res.primary.setAsDep(po=txmember.po)
+
         self._unresolvedMembers.add(txmember)
+        return result
 
     def remove(self, pkgtup):
         """remove a package from the transaction"""
         if not self.pkgdict.has_key(pkgtup):
             self.debugprint("Package: %s not in ts" %(pkgtup,))
-            return
+            return []
         for txmbr in self.pkgdict[pkgtup]:
             txmbr.po.state = None
             if self._isLocalPackage(txmbr):
@@ -214,10 +223,12 @@ class TransactionData:
             self._namedict[txmbr.name].remove(txmbr)
             self._unresolvedMembers.add(txmbr)
         
+        result = self.pkgdict[pkgtup]
         del self.pkgdict[pkgtup]
         if not self._namedict[pkgtup[0]]:
             del self._namedict[pkgtup[0]]
-        self.changed = True        
+        self.changed = True
+        return result
     
     def exists(self, pkgtup):
         """tells if the pkg is in the class"""
@@ -310,8 +321,7 @@ class TransactionData:
         txmbr.po.state = TS_INSTALL        
         txmbr.ts_state = 'u'
         txmbr.reason = 'user'
-        self.add(txmbr)
-        return txmbr
+        return self.add(txmbr)
 
     def addTrueInstall(self, po):
         """adds a package as an install
@@ -323,9 +333,7 @@ class TransactionData:
         txmbr.po.state = TS_INSTALL        
         txmbr.ts_state = 'i'
         txmbr.reason = 'user'
-        self.add(txmbr)
-        return txmbr
-    
+        return self.add(txmbr)
 
     def addErase(self, po):
         """adds a package as an erasure
@@ -336,8 +344,7 @@ class TransactionData:
         txmbr.output_state = TS_ERASE
         txmbr.po.state = TS_INSTALL
         txmbr.ts_state = 'e'
-        self.add(txmbr)
-        return txmbr
+        return self.add(txmbr)
 
     def addUpdate(self, po, oldpo=None):
         """adds a package as an update
@@ -355,8 +362,7 @@ class TransactionData:
             txmbr.relatedto.append((oldpo, 'updates'))
             txmbr.updates.append(oldpo)
             
-        self.add(txmbr)
-        return txmbr
+        return self.add(txmbr)
 
     def addUpdated(self, po, updating_po):
         """adds a package as being updated by another pkg
@@ -369,8 +375,7 @@ class TransactionData:
         txmbr.ts_state = None
         txmbr.relatedto.append((updating_po, 'updatedby'))
         txmbr.updated_by.append(updating_po)
-        self.add(txmbr)
-        return txmbr
+        return self.add(txmbr)
 
     def addObsoleting(self, po, oldpo):
         """adds a package as an obsolete over another pkg
@@ -383,8 +388,7 @@ class TransactionData:
         txmbr.ts_state = 'u'
         txmbr.relatedto.append((oldpo, 'obsoletes'))
         txmbr.obsoletes.append(oldpo)
-        self.add(txmbr)
-        return txmbr
+        return self.add(txmbr)
 
     def addObsoleted(self, po, obsoleting_po):
         """adds a package as being obsoleted by another pkg
@@ -397,8 +401,7 @@ class TransactionData:
         txmbr.ts_state = None
         txmbr.relatedto.append((obsoleting_po, 'obsoletedby'))
         txmbr.obsoleted_by.append(obsoleting_po)
-        self.add(txmbr)
-        return txmbr
+        return self.add(txmbr)
 
 
     def setDatabases(self, rpmdb, pkgSack):
@@ -514,6 +517,52 @@ class SortableTransactionData(TransactionData):
                 self._visit(txmbr)
         self._sorted.reverse()
         return self._sorted
+
+class AdditionResult:
+    def __init__(self, txmbr=None):
+        self.primary = txmbr
+        self.new = set()
+        self.all = set()
+        self.new_conditionals = set()
+        self.all_conditionals = set()
+
+    def setPrimaryMember(self, txmbr, new=True):
+        if self.primary:
+            raise ValueError, "Primary already set"
+        self.primary = txmbr
+        self.all.add(txmbr)
+        if new:
+            self.new.add(txmbr)
+
+    def addNewMember(self, txmbr):
+        self.all.add(txmbr)
+        self.new.add(txmbr)
+
+    def addMember(self, txmbr):
+        self.all.add(txmbr)
+
+    def addNewConditional(self, txmbr):
+        self.new_conditionals.add(txmbr)
+        self.all_conditionals.add(txmbr)
+
+    def addConditional(self, txmbr):
+        self.all_conditionals.add(txmbr)
+
+    def removeMember(self, txmbr):
+        self.new.discard(txmbr)
+        self.all.discard(txmbr)
+        self.new_conditionals.discard(txmbr)
+        self.all_conditionals.discard(txmbr)
+        if self.primary is txmbr:
+            self.primary = None
+
+    def add(self, other):
+        for attr in ('new', 'all', 'new_conditionals', 'all_conditionals'):
+            getattr(self, attr).update(getattr(other, attr))
+
+    def transactionChanged(self):
+        return bool(self.new) | bool(self.new_conditionals)
+
 
 class TransactionMember:
     """Class to describe a Transaction Member (a pkg to be installed/

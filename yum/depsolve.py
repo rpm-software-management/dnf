@@ -282,8 +282,8 @@ class Depsolve(object):
         if remove_txmbr and remove_txmbr.ts_state=='e' and not (remove_txmbr.obsoleted_by or remove_txmbr.updated_by):
             self.verbose_logger.log(logginglevels.DEBUG_2, _('TSINFO: %s package requiring %s marked as erase'),
                 requiringPo, needname)
-            txmbr = self.tsInfo.addErase(requiringPo)
-            txmbr.setAsDep(po=remove_txmbr.po)
+            res = self.tsInfo.addErase(requiringPo)
+            res.primary.setAsDep(po=remove_txmbr.po)
             checkdeps = 1
             return checkdeps, missingdep
 
@@ -383,13 +383,12 @@ class Depsolve(object):
 
         # try updating the already install pkgs
         for pkg in provSack.returnNewestByName():
-            results = self.update(requiringPo=requiringPo, name=pkg.name,
-                                  epoch=pkg.epoch, version=pkg.version,
-                                  rel=pkg.rel)
-            for txmbr in results:
-                if pkg == txmbr.po:
-                    checkdeps = True
-                    return checkdeps, missingdep
+            result = self.update(requiringPo=requiringPo, name=pkg.name,
+                                 epoch=pkg.epoch, version=pkg.version,
+                                 rel=pkg.rel)
+            if result.transactionChanged():
+                checkdeps = True
+                return checkdeps, missingdep
 
         # find out which arch of the ones we can choose from is closest
         # to the arch of the requesting pkg
@@ -421,14 +420,14 @@ class Depsolve(object):
             self.verbose_logger.debug(_('TSINFO: Marking %s as update for %s') %(best,
                 requiringPo))
             # FIXME: we should probably handle updating multiple packages...
-            txmbr = self.tsInfo.addUpdate(best, inst[0])
-            txmbr.setAsDep(po=requiringPo)
-            txmbr.reason = "dep"
+            res = self.tsInfo.addUpdate(best, inst[0])
+            res.primary.setAsDep(po=requiringPo)
+            res.primary.reason = "dep"
         else:
             self.verbose_logger.debug(_('TSINFO: Marking %s as install for %s'), best,
                 requiringPo)
-            txmbr = self.tsInfo.addInstall(best)
-            txmbr.setAsDep(po=requiringPo)
+            res = self.tsInfo.addInstall(best)
+            res.primary.setAsDep(po=requiringPo)
 
             # if we had other packages with this name.arch that we found
             # before, they're not going to be installed anymore, so we

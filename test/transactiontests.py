@@ -48,7 +48,7 @@ class TransactionDataTests(unittest.TestCase):
         
     def testRemove(self):
         ''' test remove from transaction '''
-        txmbr = self.tsInfo.addInstall(self.foo1)
+        txmbr = self.tsInfo.addInstall(self.foo1).primary
         self.tsInfo.addInstall(self.bar2)
         self.tsInfo.remove(self.bar2.pkgtup)
         self.dumpTsInfo()
@@ -60,7 +60,7 @@ class TransactionDataTests(unittest.TestCase):
         txmbr2 = self.tsInfo.addUpdate(self.foogui2,self.foogui1)
         txmbr3 = self.tsInfo.getMembers(self.foogui1.pkgtup)[0]
         self.dumpTsInfo()
-        self.assertResult([txmbr1,txmbr2,txmbr3])
+        self.assertResult([txmbr1.primary,txmbr2.primary,txmbr3])
 
     def testGetFromTransaction(self):
         ''' test getting from Transaction '''
@@ -105,8 +105,8 @@ class TransactionDataTests(unittest.TestCase):
 
     def testAddUpdatesAndObsoletes(self):
         ''' test addUpdated,addObsoleted'''
-        txmbr1 = self.tsInfo.addUpdated(self.foo1,self.foo2)
-        txmbr2 = self.tsInfo.addObsoleted(self.bar1,self.bar2)
+        txmbr1 = self.tsInfo.addUpdated(self.foo1,self.foo2).primary
+        txmbr2 = self.tsInfo.addObsoleted(self.bar1,self.bar2).primary
         self.dumpTsInfo()
         self.assertResult([txmbr1,txmbr2])
         txmbr = self.tsInfo.getMembersWithState(output_states=[TS_UPDATED])[0]
