@@ -718,7 +718,6 @@ class Depsolve(object):
             oldreqs.extend(oldpo.returnPrco('requires'))
         oldreqs = set(oldreqs)
 
-        ret = []
         for req in txmbr_reqs:
             if req[0].startswith('rpmlib('):
                 continue
@@ -730,8 +729,7 @@ class Depsolve(object):
             self.verbose_logger.log(logginglevels.DEBUG_2, _("looking for %s as a requirement of %s"), req, txmbr)
             provs = self.tsInfo.getProvides(*req)
             if not provs:
-                ret.append( (txmbr.po, (req[0], req[1], version_tuple_to_string(req[2]))) )
-                continue
+                yield (txmbr.po, (req[0], req[1], version_tuple_to_string(req[2])))
 
             #Add relationship
             for po in provs:
@@ -740,8 +738,6 @@ class Depsolve(object):
                 for member in self.tsInfo.getMembersWithState(
                     pkgtup=po.pkgtup, output_states=TS_INSTALL_STATES):
                     member.relatedto.append((txmbr.po, 'dependson'))
-
-        return ret
 
     def _checkRemove(self, txmbr):
         po = txmbr.po
@@ -753,7 +749,6 @@ class Depsolve(object):
         for newpo in txmbr.updated_by:
             for p in newpo.provides:
                 newpoprovs[p] = 1
-        ret = []
         
         # iterate over the provides of the package being removed
         # and see what's actually going away
@@ -765,13 +760,11 @@ class Depsolve(object):
             for pkg, hits in self.tsInfo.getRequires(*prov).iteritems():
                 for rn, rf, rv in hits:
                     if not self.tsInfo.getProvides(rn, rf, rv):
-                        ret.append( (pkg, (rn, rf, version_tuple_to_string(rv))) )
-        return ret
+                        yield (pkg, (rn, rf, version_tuple_to_string(rv)))
 
     def _checkFileRequires(self):
         fileRequires = set()
         reverselookup = {}
-        ret = []
 
         # generate list of file requirement in rpmdb
         if self.installedFileRequires is None:
@@ -818,13 +811,9 @@ class Depsolve(object):
         for filename in fileRequires:
             if not self.tsInfo.getOldProvides(filename) and not self.tsInfo.getNewProvides(filename):
                 for po in reverselookup[filename]:
-                    ret.append( (po, (filename, 0, '')) )
-
-        return ret
-
+                    yield (po, (filename, 0, ''))
 
     def _checkConflicts(self):
-        ret = [ ]
         for po in self.rpmdb.returnPackages():
             if self.tsInfo.getMembersWithState(po.pkgtup, output_states=TS_REMOVE_STATES):
                 continue
@@ -833,7 +822,7 @@ class Depsolve(object):
                 for conflicting_po in self.tsInfo.getNewProvides(r, f, v):
                     if conflicting_po.pkgtup[0] == po.pkgtup[0] and conflicting_po.pkgtup[2:] == po.pkgtup[2:]:
                         continue
-                    ret.append( (po, (r, f, version_tuple_to_string(v)), conflicting_po) )
+                    yield (po, (r, f, version_tuple_to_string(v)), conflicting_po)
         for txmbr in self.tsInfo.getMembersWithState(output_states=TS_INSTALL_STATES):
             po = txmbr.po
             for conflict in txmbr.po.returnPrco('conflicts'):
@@ -841,8 +830,7 @@ class Depsolve(object):
                 for conflicting_po in self.tsInfo.getProvides(r, f, v):
                     if conflicting_po.pkgtup[0] == po.pkgtup[0] and conflicting_po.pkgtup[2:] == po.pkgtup[2:]:
                         continue
-                    ret.append( (po, (r, f, version_tuple_to_string(v)), conflicting_po) )
-        return ret
+                    yield (po, (r, f, version_tuple_to_string(v)), conflicting_po)
 
 
     def isPackageInstalled(self, pkgname):
