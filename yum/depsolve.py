@@ -611,10 +611,17 @@ class Depsolve(object):
             # check global FileRequires
             if CheckRemoves:
                 CheckRemoves = False
-                for po, dep in self._checkFileRequires():
-                    (checkdep, missing, errormsgs) = self._processReq(po, dep)
-                    CheckDeps |= checkdep
-                    errors += errormsgs
+                filerequires = self._checkFileRequires()
+                while True:
+                    for po, dep in filerequires:
+                        (checkdep, missing, errormsgs) = self._processReq(po, dep)
+                        CheckDeps |= checkdep
+                        errors += errormsgs
+                        if CheckDeps:
+                            filerequires = self._checkFileRequires()
+                            break
+                    else:
+                        break # end while loop if for loop ran through
 
                 if CheckDeps:
                     if self.dsCallback: self.dsCallback.restartLoop()
@@ -624,10 +631,17 @@ class Depsolve(object):
             # check Conflicts
             if CheckInstalls:
                 CheckInstalls = False
-                for conflict in self._checkConflicts():
-                    (checkdep, errormsgs) = self._processConflict(*conflict)
-                    CheckDeps |= checkdep
-                    errors += errormsgs
+                conflicts = self._checkConflicts()
+                while True:
+                    for conflict in conflicts:
+                        (checkdep, errormsgs) = self._processConflict(*conflict)
+                        CheckDeps |= checkdep
+                        errors += errormsgs
+                        if checkdep:
+                            conflicts = self._checkConflicts()
+                            break
+                    else:
+                        break # end while loop if for loop ran through
 
                 if CheckDeps:
                     if self.dsCallback: self.dsCallback.restartLoop()
@@ -693,11 +707,21 @@ class Depsolve(object):
                 CheckRemoves = True
 
             missing_in_pkg = False
-            for po, dep in thisneeds:
-                (checkdep, missing, errormsgs) = self._processReq(po, dep)
-                CheckDeps |= checkdep
-                errors += errormsgs
-                missing_in_pkg |= missing
+
+            while True:
+                for po, dep in thisneeds:
+                    (checkdep, missing, errormsgs) = self._processReq(po, dep)
+                    CheckDeps |= checkdep
+                    errors += errormsgs
+                    missing_in_pkg |= missing
+                    if checkdep:
+                        if (txmbr.output_state in TS_INSTALL_STATES) == (txmbr.po.state != None):
+                            thisneeds = self._checkInstall(txmbr)
+                        else:
+                            thisneeds = self._checkRemove(txmbr)
+                        break
+                else:
+                    break
 
             if not missing_in_pkg:
                 self.tsInfo.markAsResolved(txmbr)
