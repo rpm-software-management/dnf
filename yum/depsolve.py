@@ -363,7 +363,7 @@ class Depsolve(object):
             if len(self.tsInfo) != length and txmbrs:
                 if txmbrs[0].output_state == TS_OBSOLETED:
                     self.verbose_logger.log(logginglevels.DEBUG_2, _('TSINFO: Obsoleting %s with %s to resolve dep.'),
-                                            requiringPo, txmbr.obsoleted_by[0])
+                                            requiringPo, txmbrs[0].obsoleted_by[0])
                 else:
                     self.verbose_logger.log(logginglevels.DEBUG_2, _('TSINFO: Updating %s to resolve dep.'), requiringPo)
                 checkdeps = True
