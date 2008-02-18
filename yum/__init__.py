@@ -548,7 +548,7 @@ class YumBase(depsolve.Depsolve):
                 _('Adding group file from repository: %s'), repo)
             groupfile = repo.getGroups()
             # open it up as a file object so iterparse can cope with our gz file
-            if groupfile.endswith('.gz'):
+            if groupfile is not None and groupfile.endswith('.gz'):
                 groupfile = gzip.open(groupfile)
                 
             try:
