@@ -933,9 +933,6 @@ class YumLocalPackage(YumHeaderPackage):
         self.pkgtype = 'local'
         self.localpath = filename
         self._checksum = None
-        self._stat = os.stat(self.localpath)
-        self.filetime = str(self._stat[-1])
-        self.packagesize = str(self._stat[6])
 
         
         try:
@@ -948,6 +945,9 @@ class YumLocalPackage(YumHeaderPackage):
         fakerepo.cost = 0
         YumHeaderPackage.__init__(self, fakerepo, hdr)
         self.id = self.pkgid
+        self._stat = os.stat(self.localpath)
+        self.filetime = str(self._stat[-1])
+        self.packagesize = str(self._stat[6])
         
     def localPkg(self):
         return self.localpath
