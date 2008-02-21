@@ -144,7 +144,7 @@ class RPMTransaction:
             self.display = display() # display callback
         self.base = base # base yum object b/c we need so much
         self.test = test # are we a test?
-        
+        self.trans_running = False
         self.filehandles = {}
         self.total_actions = 0
         self.total_installed = 0
@@ -337,7 +337,7 @@ class RPMTransaction:
         if bytes == 6:
             self.total_actions = total
             if self.test: return
-
+            self.trans_running = True
             self.ts_all() # write out what transaction will do
 
     def _transProgress(self, bytes, total, h):
@@ -354,9 +354,10 @@ class RPMTransaction:
             handle = self._makeHandle(hdr)
             fd = os.open(rpmloc, os.O_RDONLY)
             self.filehandles[handle]=fd
-            self.total_installed += 1
-            self.complete_actions += 1
-            self.installed_pkg_names.append(hdr['name'])
+            if self.trans_running:
+                self.total_installed += 1
+                self.complete_actions += 1
+                self.installed_pkg_names.append(hdr['name'])
             return fd
         else:
             self.display.errorlog("Error: No Header to INST_OPEN_FILE")
@@ -369,13 +370,13 @@ class RPMTransaction:
             os.close(self.filehandles[handle])
             fd = 0
             if self.test: return
-            
-            pkgtup = self._dopkgtup(hdr)
-            txmbrs = self.base.tsInfo.getMembers(pkgtup=pkgtup)
-            for txmbr in txmbrs:
-                self.display.filelog(txmbr.po, txmbr.output_state)
-                self.display.scriptout(txmbr.po, self._scriptOutput())
-                self.ts_done(txmbr.po, txmbr.output_state)
+            if self.trans_running:
+                pkgtup = self._dopkgtup(hdr)
+                txmbrs = self.base.tsInfo.getMembers(pkgtup=pkgtup)
+                for txmbr in txmbrs:
+                    self.display.filelog(txmbr.po, txmbr.output_state)
+                    self.display.scriptout(txmbr.po, self._scriptOutput())
+                    self.ts_done(txmbr.po, txmbr.output_state)
                 
                 
     
