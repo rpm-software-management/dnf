@@ -14,6 +14,7 @@
 # Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 import sys
+import time
 
 import yum
 from cli import *
@@ -32,6 +33,20 @@ class YumUtilBase(YumBaseCli):
         
     def getOptionParser(self):
         return self._parser        
+    
+    def waitForLock(self):
+        lockerr = ""
+        while True:
+            try:
+                self.doLock()
+            except yum.Errors.LockError, e:
+                if "%s" %(e.msg,) != lockerr:
+                    lockerr = "%s" %(e.msg,)
+                    self.logger.critical(lockerr)
+                self.logger.critical("Another app is currently holding the yum lock; waiting for it to exit...")  
+                time.sleep(2)
+            else:
+                break
         
     def _printUtilVersion(self):
         print "%s - %s (yum - %s)" % (self._utilName,self._utilVer,yum.__version__)
