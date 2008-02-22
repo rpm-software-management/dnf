@@ -953,6 +953,9 @@ class Depsolve(object):
                 if arch == po.arch:
                     return po
 
+        # Nothing else was better, so this is it
+        return bestpkg
+
 
 class DepCheck(object):
     """object that YumDepsolver uses to see what things are needed to close
