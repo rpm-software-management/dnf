@@ -492,32 +492,21 @@ class Depsolve(object):
         thisarch = requiringPo.arch
         newest = provSack.returnNewestByNameArch()
         if len(newest) > 1: # there's no way this can be zero
-            best = newest[0]
-            for po in newest[1:]:
-                if thisarch != 'noarch':
-                    best_dist = archDifference(thisarch, best.arch)
-                    if isMultiLibArch(): # only go to the next one if we're multilib - i686 can satisfy i386 deps
-                        if best_dist == 0: # can't really use best's arch anyway...
-                            best = po # just try the next one - can't be much worse
-                            continue
-                
-                    po_dist = archDifference(thisarch, po.arch)
-                    if po_dist > 0 and best_dist > po_dist:
-                        best = po
-                        continue
-                        
-                    if best_dist == po_dist:
-                        if len(po.name) < len(best.name):
-                            best=po
-                            continue
                             
-                elif len(po.name) < len(best.name):
-                    best = po
-                elif len(po.name) == len(best.name):
-                    # compare arch
-                    arch = rpmUtils.arch.getBestArchFromList([po.arch, best.arch])
-                    if arch == po.arch:
-                        best = po
+            best = newest[0]
+            old_best = None
+            loop_run = 0
+            while best != old_best:
+                if loop_run >= len(newest)*2:
+                    msg = _('Failure finding best provider of %s for %s, exceeded maximum loop length' % (needname, requiringPo))
+                    errorlist.append(msg)
+                    self.verbose_logger.debug(msg)
+                    break
+                loop_run += 1
+                old_best = best
+                best = self._compare_providers(newest, best, thisarch)
+                    
+                
         elif len(newest) == 1:
             best = newest[0]
         
@@ -921,6 +910,48 @@ class Depsolve(object):
             return False
         return installed
     _isPackageInstalled = isPackageInstalled
+
+    def _compare_providers(self, pkgs, bestpkg, requiring_arch):
+
+        for po in pkgs:
+            if po == bestpkg: # if we're comparing the same one, skip it
+                continue
+            # if best is obsoleted by any of the packages, then the obsoleter
+            # is the new best    
+            for obs in po.obsoletes:
+                if bestpkg.inPrcoRange('provides', obs):
+                    return po
+
+            # make sure the best doesn't obsolete this po - if it does we're done
+            # we do this b/c it is possible for two entries to oscillate in this
+            # test - obsolete should trump no matter what
+            # NOTE: mutually obsoleting providers is completely and utterly doom
+            for obs in bestpkg.obsoletes:
+                if po.inPrcoRange('provides', obs):
+                    return bestpkg
+                    
+            if requiring_arch != 'noarch':
+                best_dist = archDifference(requiring_arch, bestpkg.arch)
+                if isMultiLibArch(): # only go to the next one if we're multilib - i686 can satisfy i386 deps
+                    if best_dist == 0: # can't really use best's arch anyway...
+                        return po # just try the next one - can't be much worse
+
+            
+                po_dist = archDifference(requiring_arch, po.arch)
+                if po_dist > 0 and best_dist > po_dist:
+                    return po
+                    
+                if best_dist == po_dist:
+                    if len(po.name) < len(bestpkg.name):
+                        return po
+                        
+            elif len(po.name) < len(bestpkg.name):
+                return po
+            elif len(po.name) == len(bestpkg.name):
+                # compare arch
+                arch = rpmUtils.arch.getBestArchFromList([po.arch, bestpkg.arch])
+                if arch == po.arch:
+                    return po
 
 
 class DepCheck(object):

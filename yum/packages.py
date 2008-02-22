@@ -247,6 +247,8 @@ class RpmBase(object):
         return False
 
     def __ne__(self, other):
+        if not other:
+            return True
         if comparePoEVR(self, other) != 0 or self.arch != other.arch or self.name != other.name:
             return True
         return False
