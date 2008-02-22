@@ -489,7 +489,6 @@ class Depsolve(object):
 
         # find out which arch of the ones we can choose from is closest
         # to the arch of the requesting pkg
-        thisarch = requiringPo.arch
         newest = provSack.returnNewestByNameArch()
         if len(newest) > 1: # there's no way this can be zero
                             
@@ -504,7 +503,7 @@ class Depsolve(object):
                     break
                 loop_run += 1
                 old_best = best
-                best = self._compare_providers(newest, best, thisarch)
+                best = self._compare_providers(newest, best, requiringPo)
                     
                 
         elif len(newest) == 1:
@@ -911,7 +910,20 @@ class Depsolve(object):
         return installed
     _isPackageInstalled = isPackageInstalled
 
-    def _compare_providers(self, pkgs, bestpkg, requiring_arch):
+    def _compare_providers(self, pkgs, bestpkg, reqpo):
+
+        def _common_prefix_len(x, y, minlen=2):
+            num = min(len(x), len(y))
+            for off in range(num):
+                if x[off] != y[off]:
+                    return max(off, minlen)
+            return max(num, minlen)
+        def _common_sourcerpm(x, y):
+            if not hasattr(x, 'sourcerpm'):
+                return False
+            if not hasattr(y, 'sourcerpm'):
+                return False
+            return x.sourcerpm == y.sourcerpm
 
         for po in pkgs:
             if po == bestpkg: # if we're comparing the same one, skip it
@@ -930,21 +942,37 @@ class Depsolve(object):
                 if po.inPrcoRange('provides', obs):
                     return bestpkg
                     
-            if requiring_arch != 'noarch':
-                best_dist = archDifference(requiring_arch, bestpkg.arch)
+            if reqpo.arch != 'noarch':
+                best_dist = archDifference(reqpo.arch, bestpkg.arch)
                 if isMultiLibArch(): # only go to the next one if we're multilib - i686 can satisfy i386 deps
                     if best_dist == 0: # can't really use best's arch anyway...
                         return po # just try the next one - can't be much worse
 
             
-                po_dist = archDifference(requiring_arch, po.arch)
+                po_dist = archDifference(reqpo.arch, po.arch)
                 if po_dist > 0 and best_dist > po_dist:
                     return po
                     
                 if best_dist == po_dist:
-                    if len(po.name) < len(bestpkg.name):
+                    if (not _common_sourcerpm(reqpo, bestpkg) and
+                        _common_sourcerpm(reqpo, po)):
+                        return po
+                    cplp = _common_prefix_len(reqpo.name, po.name)
+                    cplb = _common_prefix_len(reqpo.name, bestpkg.name)
+                    if cplp > cplb:
+                        return po
+                    if cplp == cplb and len(po.name) < len(bestpkg.name):
                         return po
                         
+            elif (not _common_sourcerpm(reqpo, bestpkg) and
+                  _common_sourcerpm(reqpo, po)):
+                return po
+            elif (_common_prefix_len(reqpo.name, po.name) >
+                  _common_prefix_len(reqpo.name, bestpkg.name)):
+                return po
+            elif (_common_prefix_len(reqpo.name, po.name) <
+                  _common_prefix_len(reqpo.name, bestpkg.name)):
+                return bestpkg
             elif len(po.name) < len(bestpkg.name):
                 return po
             elif len(po.name) == len(bestpkg.name):
