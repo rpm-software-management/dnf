@@ -1485,6 +1485,9 @@ class YumBase(depsolve.Depsolve):
                 matched_s = False
                 for field in fields:
                     value = getattr(po, field)
+                    # make sure that string are in unicode
+                    if isinstance(value, str):
+                        value = unicode(value,'unicode-escape')
                     if value and value.lower().find(s) != -1:
                         if not matched_s:
                             criteria_matched += 1
