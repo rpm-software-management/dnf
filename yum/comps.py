@@ -193,6 +193,40 @@ class Group(object):
             if not self.translated_description.has_key(lang):
                 self.translated_description[lang] = obj.translated_description[lang]
         
+    def xml(self):
+        """write out an xml stanza for the group object"""
+        msg ="""        
+  <group>
+   <id>%s</id>
+   <default>%s</default>
+   <uservisible>%s</uservisible>
+   <display_order>%s</display_order>\n""" % (self.groupid, str(self.default), 
+                                  str(self.user_visible), self.display_order)
+   
+        if self.langonly:
+            msg =+ """   <lang_only>%s</lang_only>""" % self.langonly
+            
+        msg +="""   <name>%s</name>\n""" % self.name
+        for (lang, val) in self.translated_name.items():
+            msg += """   <name xml:lang="%s">%s</name>\n""" % (lang, val)
+        
+        msg += """   <description>%s</description>\n""" % self.description
+        for (lang, val) in self.translated_description.items():
+            msg += """   <description xml:lang="%s">%s</description>\n""" % (lang, val)
+
+        msg += """    <packagelist>\n"""
+        for pkg in self.mandatory_packages.keys():
+            msg += """      <packagereq type="mandatory">%s</packagereq>\n""" % pkg
+        for pkg in self.default_packages.keys():
+            msg += """      <packagereq type="default">%s</packagereq>\n""" % pkg
+        for pkg in self.optional_packages.keys():
+            msg += """      <packagereq type="optional">%s</packagereq>\n""" % pkg
+        for (pkg, req) in self.conditional_packages.items():
+            msg += """      <packagereq type="conditional" requires="%s">%s</packagereq>\n""" % (pkg, req)
+        msg += """    </packagelist>\n"""
+        msg += """  </group>"""
+
+        return msg      
         
         
 
@@ -275,6 +309,28 @@ class Category(object):
             if not self.translated_description.has_key(lang):
                 self.translated_description[lang] = obj.translated_description[lang]
 
+    def xml(self):
+        """write out an xml stanza for the group object"""
+        msg ="""        
+  <category>
+   <id>%s</id>
+   <display_order>%s</display_order>\n""" % (self.categoryid, self.display_order)
+   
+        msg +="""   <name>%s</name>\n""" % self.name
+        for (lang, val) in self.translated_name.items():
+            msg += """   <name xml:lang="%s">%s</name>\n""" % (lang, val)
+        
+        msg += """   <description>%s</description>\n""" % self.description
+        for (lang, val) in self.translated_description.items():
+            msg += """    <description xml:lang="%s">%s</description>\n""" % (lang, val)
+
+        msg += """    <grouplist>\n"""
+        for grp in self.groups:
+            msg += """     <groupid>%s</groupid>\n""" % grp
+        msg += """    </grouplist>\n"""
+        msg += """  </category>\n"""
+
+        return msg                
         
 class Comps(object):
     def __init__(self, overwrite_groups=False):
@@ -402,7 +458,29 @@ class Comps(object):
                         break
         
         self.compiled = True
+    
+    def xml(self):
+        """returns the xml of the comps files in this class, merged"""
 
+        if not self._groups and not self._categories:
+            return ""
+            
+        msg = """<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE comps PUBLIC "-//Red Hat, Inc.//DTD Comps info//EN" "comps.dtd">
+<comps>
+""" 
+ 
+        for g in self.get_groups():
+            msg += g.xml()
+        for c in self.get_categories():
+            msg += c.xml()
+
+        msg += """</comps>\n"""
+        
+        return msg
+            
+        
+        
 def main():
 
     try:
