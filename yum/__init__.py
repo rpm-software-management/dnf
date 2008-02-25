@@ -219,6 +219,9 @@ class YumBase(depsolve.Depsolve):
         # Check sections in the .repo file that was just slurped up
         for section in parser.sections():
 
+            if section == 'main':
+                continue
+
             # Check the repo.id against the valid chars
             bad = None
             for byte in section:
@@ -259,31 +262,13 @@ class YumBase(depsolve.Depsolve):
     def getReposFromConfig(self):
         """read in repositories from config main and .repo files"""
 
-        #FIXME this method could be a simpler
-
-        # Check yum.conf for repositories
-        for section in self.conf.cfg.sections():
-            # All sections except [main] are repositories
-            if section == 'main': 
-                continue
-
-            try:
-                thisrepo = self.readRepoConfig(self.conf.cfg, section)
-            except (Errors.RepoError, Errors.ConfigError), e:
-                self.logger.warning(e)
-            else:
-                thisrepo.repo_config_age = self.conf.config_file_age
-                thisrepo.repofile = self.conf.config_file_path
-
-            try:
-                self._repos.add(thisrepo)
-            except Errors.RepoError, e:
-                self.logger.warning(e)
-
         # Read .repo files from directories specified by the reposdir option
         # (typically /etc/yum/repos.d)
         repo_config_age = self.conf.config_file_age
         
+        # Get the repos from the main yum.conf file
+        self.getReposFromConfigFile(self.conf.config_file_path, repo_config_age)
+
         for reposdir in self.conf.reposdir:
             if os.path.exists(self.conf.installroot+'/'+reposdir):
                 reposdir = self.conf.installroot + '/' + reposdir
