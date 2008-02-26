@@ -875,7 +875,14 @@ class YumInstalledPackage(YumHeaderPackage):
                 my_user = pwd.getpwuid(my_st[stat.ST_UID])[0]
                 my_group = grp.getgrgid(my_st[stat.ST_GID])[0]
 
-                if my_st.st_mtime != mtime:
+                if mode < 0:
+                    # Stupid rpm, should be unsigned value but is signed ...
+                    # so we "fix" it via. this hack
+                    mode = (mode & 0xFFFF)
+
+                isdir = stat.S_ISDIR(my_st.st_mode)
+                islnk = stat.S_ISLNK(my_st.st_mode)
+                if my_st.st_mtime != mtime and not isdir and not islnk:
                     thisproblem = misc.GenericHolder()
                     thisproblem.type = 'mtime' # maybe replace with a constants type
                     thisproblem.message = 'mtime does not match'
@@ -883,23 +890,39 @@ class YumInstalledPackage(YumHeaderPackage):
                     thisproblem.disk_value = my_st[stat.ST_MTIME]
                     problems.append(thisproblem)
 
-                if my_group != group:
+                if my_group != group and not islnk:
                     thisproblem = misc.GenericHolder()
                     thisproblem.type = 'group' # maybe replace with a constants type
                     thisproblem.message = 'group does not match'
                     thisproblem.database_value = group
                     thisproblem.disk_value = my_group
                     problems.append(thisproblem)
-                if my_user != user:
+                if my_user != user and not islnk:
                     thisproblem = misc.GenericHolder()
                     thisproblem.type = 'user' # maybe replace with a constants type
                     thisproblem.message = 'user does not match'
                     thisproblem.database_value = user
                     thisproblem.disk_value = my_user
                     problems.append(thisproblem)
+
+                if my_st.st_size != size and not isdir and not islnk:
+                    thisproblem = misc.GenericHolder()
+                    thisproblem.type = 'size'
+                    thisproblem.message = 'size does not match'
+                    thisproblem.database_value = size
+                    thisproblem.disk_value = my_st.st_size
+                    problems.append(thisproblem)
                     
-                # checksum
-                if csum: # don't checksum files that don't have a csum in the rpmdb :)
+                if my_st.st_mode != mode and not islnk:
+                    thisproblem = misc.GenericHolder()
+                    thisproblem.type = 'mode'
+                    thisproblem.message = 'mode does not match'
+                    thisproblem.database_value = mode
+                    thisproblem.disk_value = my_st.st_mode
+                    problems.append(thisproblem)
+
+                # don't checksum files that don't have a csum in the rpmdb :)
+                if csum and not isdir:
                     my_csum = misc.checksum('md5', fn)
                     if my_csum != csum and have_prelink:
                         #  This is how rpm -V works, try and if that fails try
