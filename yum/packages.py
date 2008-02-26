@@ -894,7 +894,16 @@ class YumInstalledPackage(YumHeaderPackage):
                     
                 # checksum
                 if csum: # don't checksum files that don't have a csum in the rpmdb :)
+                    # Use prelink_undo_cmd macro?
+                    have_prelink = os.path.exists("/usr/sbin/prelink")
+
                     my_csum = misc.checksum('md5', fn)
+                    if my_csum != csum and have_prelink:
+                        #  This is how rpm -V works, try and if that fails try
+                        # again with prelink.
+                        (ig, fp) = os.popen2(["/usr/sbin/prelink", "-y", fn])
+                        my_csum = misc.checksum('md5', fp)
+
                     if my_csum != csum:
                         thisproblem = misc.GenericHolder()
                         thisproblem.type = 'checksum' # maybe replace with a constants type
