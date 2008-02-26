@@ -835,6 +835,20 @@ class YumHeaderPackage(YumAvailablePackage):
                        self.hdr['changelogtext'])
         return []
 
+class _CountedReadFile:
+    """ Has just a read() method, and keeps a count so we can find out how much
+        has been read. Implemented so we can get the real size of the file from
+        prelink. """
+    
+    def __init__(self, fp):
+        self.fp = fp
+        self.read_size = 0
+
+    def read(self, size):
+        ret = self.fp.read(size)
+        self.read_size += len(ret)
+        return ret
+
 _installed_repo = FakeRepository('installed')
 _installed_repo.cost = 0
 class YumInstalledPackage(YumHeaderPackage):
@@ -843,7 +857,7 @@ class YumInstalledPackage(YumHeaderPackage):
         fakerepo = _installed_repo
         YumHeaderPackage.__init__(self, fakerepo, hdr)
         
-    def verify(self, patterns=[]):
+    def verify(self, patterns=[], all=False):
         """verify that the installed files match the packaged checksum
            optionally verify they match only if they are in the 'pattern' list
            returns a tuple """
@@ -867,6 +881,31 @@ class YumInstalledPackage(YumHeaderPackage):
                         break
                 if not matched: 
                     continue
+
+            if not all and flags & rpm.RPMFILE_GHOST:
+                continue
+            if not all and flags & rpm.RPMFILE_MISSINGOK:
+                continue # rpm just skips missing ok, so we do too
+
+            ftypes = []
+            if flags & rpm.RPMFILE_CONFIG:
+                ftypes.append('config')
+            if flags & rpm.RPMFILE_DOC:
+                ftypes.append('documentation')
+            if flags & rpm.RPMFILE_GHOST:
+                ftypes.append('ghost')
+            if flags & rpm.RPMFILE_LICENSE:
+                ftypes.append('license')
+            if flags & rpm.RPMFILE_PUBKEY:
+                ftypes.append('public key')
+            if flags & rpm.RPMFILE_README:
+                ftypes.append('README')
+            if flags & rpm.RPMFILE_MISSINGOK:
+                ftypes.append('missing ok')
+            # not in python rpm bindings yet
+            # elif flags & rpm.RPMFILE_POLICY:
+            #    ftypes.append('policy')
+                
             # do check of file status on system
             problems = []
             if os.path.exists(fn):
@@ -882,12 +921,23 @@ class YumInstalledPackage(YumHeaderPackage):
 
                 isdir = stat.S_ISDIR(my_st.st_mode)
                 islnk = stat.S_ISLNK(my_st.st_mode)
-                if my_st.st_mtime != mtime and not isdir and not islnk:
+                check_content = True
+                if (isdir or islnk or stat.S_ISFIFO(my_st.st_mode) or
+                    stat.S_ISCHR(my_st.st_mode) or
+                    stat.S_ISBLK(my_st.st_mode) or 'ghost' in ftypes):
+                    check_content = False
+
+                # FIXME: We don't have rpmfiFLink() so we can't verify
+                # symlinks "correctly", as rpm does. So we check the csum of
+                # what it points to.
+
+                if check_content and my_st.st_mtime != mtime:
                     thisproblem = misc.GenericHolder()
                     thisproblem.type = 'mtime' # maybe replace with a constants type
                     thisproblem.message = 'mtime does not match'
                     thisproblem.database_value = mtime
                     thisproblem.disk_value = my_st[stat.ST_MTIME]
+                    thisproblem.file_types = ftypes
                     problems.append(thisproblem)
 
                 if my_group != group and not islnk:
@@ -896,6 +946,7 @@ class YumInstalledPackage(YumHeaderPackage):
                     thisproblem.message = 'group does not match'
                     thisproblem.database_value = group
                     thisproblem.disk_value = my_group
+                    thisproblem.file_types = ftypes
                     problems.append(thisproblem)
                 if my_user != user and not islnk:
                     thisproblem = misc.GenericHolder()
@@ -903,48 +954,76 @@ class YumInstalledPackage(YumHeaderPackage):
                     thisproblem.message = 'user does not match'
                     thisproblem.database_value = user
                     thisproblem.disk_value = my_user
+                    thisproblem.file_types = ftypes
                     problems.append(thisproblem)
 
-                if my_st.st_size != size and not isdir and not islnk:
-                    thisproblem = misc.GenericHolder()
-                    thisproblem.type = 'size'
-                    thisproblem.message = 'size does not match'
-                    thisproblem.database_value = size
-                    thisproblem.disk_value = my_st.st_size
-                    problems.append(thisproblem)
-                    
-                if my_st.st_mode != mode and not islnk:
+                my_mode = my_st.st_mode
+                if 'ghost' in ftypes: # This is what rpm does
+                    my_mode &= 0777
+                    mode    &= 0777
+                if my_mode != mode and not islnk:
                     thisproblem = misc.GenericHolder()
                     thisproblem.type = 'mode'
                     thisproblem.message = 'mode does not match'
                     thisproblem.database_value = mode
                     thisproblem.disk_value = my_st.st_mode
+                    thisproblem.file_types = ftypes
                     problems.append(thisproblem)
 
+                my_st_size = my_st.st_size
                 # don't checksum files that don't have a csum in the rpmdb :)
-                if csum and not isdir:
-                    my_csum = misc.checksum('md5', fn)
-                    if my_csum != csum and have_prelink:
+                if check_content and csum:
+                    try:
+                        my_csum = misc.checksum('md5', fn)
+                        gen_csum = True
+                    except Errors.MiscError:
+                        # Don't have permission?
+                        gen_csum = False
+
+                    if not gen_csum:
+                        thisproblem = misc.GenericHolder()
+                        thisproblem.type = 'genchecksum'
+                        thisproblem.message = 'checksum not available'
+                        thisproblem.database_value = csum
+                        thisproblem.disk_value = None
+                        thisproblem.file_types = ftypes
+                        problems.append(thisproblem)
+                        
+                    if gen_csum and my_csum != csum and have_prelink:
                         #  This is how rpm -V works, try and if that fails try
                         # again with prelink.
                         (ig, fp,er) = os.popen3([prelink_cmd, "-y", fn])
                         # er.read(1024 * 1024) # Try and get most of the stderr
+                        fp = _CountedReadFile(fp)
                         my_csum = misc.checksum('md5', fp)
+                        my_st_size = fp.read_size
 
-                    if my_csum != csum:
+                    if gen_csum and my_csum != csum:
                         thisproblem = misc.GenericHolder()
                         thisproblem.type = 'checksum' # maybe replace with a constants type
                         thisproblem.message = 'checksum does not match'
                         thisproblem.database_value = csum
                         thisproblem.disk_value = my_csum
+                        thisproblem.file_types = ftypes
                         problems.append(thisproblem)
-                    
+
+                # Size might be got from prelink ... *sigh*
+                if check_content and my_st_size != size:
+                    thisproblem = misc.GenericHolder()
+                    thisproblem.type = 'size'
+                    thisproblem.message = 'size does not match'
+                    thisproblem.database_value = size
+                    thisproblem.disk_value = my_st.st_size
+                    thisproblem.file_types = ftypes
+                    problems.append(thisproblem)
+
             else:
                 thisproblem = misc.GenericHolder()
                 thisproblem.type = 'missing' # maybe replace with a constants type
                 thisproblem.message = 'file is missing'
                 thisproblem.disk_value = None
                 thisproblem.database_value = None
+                thisproblem.file_types = ftypes
                 problems.append(thisproblem)
                 
             if problems:
