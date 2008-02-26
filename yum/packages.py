@@ -928,7 +928,7 @@ class YumInstalledPackage(YumHeaderPackage):
                         #  This is how rpm -V works, try and if that fails try
                         # again with prelink.
                         (ig, fp,er) = os.popen3([prelink_cmd, "-y", fn])
-                        er.read(1024 * 1024) # Try and get most of the stderr
+                        # er.read(1024 * 1024) # Try and get most of the stderr
                         my_csum = misc.checksum('md5', fp)
 
                     if my_csum != csum:
