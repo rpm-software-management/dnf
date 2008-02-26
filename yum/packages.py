@@ -35,6 +35,9 @@ import Errors
 import urlparse
 urlparse.uses_fragment.append("media")
 
+# For verify
+import pwd
+import grp
 
 def comparePoEVR(po1, po2):
     """
@@ -846,8 +849,11 @@ class YumInstalledPackage(YumHeaderPackage):
            returns a tuple """
         fi = self.hdr.fiFromHeader()
         results = {} # fn = problem_obj?
-        import pwd
-        import grp
+
+        # Use prelink_undo_cmd macro?
+        prelink_cmd = "/usr/sbin/prelink"
+        have_prelink = os.path.exists(prelink_cmd)
+
         for filetuple in fi:
             #tuple is: (filename, fsize, mode, mtime, flags, frdev?, inode, link,
             #           state, vflags?, user, group, md5sum(or none for dirs) 
@@ -865,11 +871,11 @@ class YumInstalledPackage(YumHeaderPackage):
             problems = []
             if os.path.exists(fn):
                 # stat
-                my_st = os.stat(fn)
+                my_st = os.lstat(fn)
                 my_user = pwd.getpwuid(my_st[stat.ST_UID])[0]
                 my_group = grp.getgrgid(my_st[stat.ST_GID])[0]
 
-                if my_st[stat.ST_MTIME] != mtime:
+                if my_st.st_mtime != mtime:
                     thisproblem = misc.GenericHolder()
                     thisproblem.type = 'mtime' # maybe replace with a constants type
                     thisproblem.message = 'mtime does not match'
@@ -894,14 +900,12 @@ class YumInstalledPackage(YumHeaderPackage):
                     
                 # checksum
                 if csum: # don't checksum files that don't have a csum in the rpmdb :)
-                    # Use prelink_undo_cmd macro?
-                    have_prelink = os.path.exists("/usr/sbin/prelink")
-
                     my_csum = misc.checksum('md5', fn)
                     if my_csum != csum and have_prelink:
                         #  This is how rpm -V works, try and if that fails try
                         # again with prelink.
-                        (ig, fp) = os.popen2(["/usr/sbin/prelink", "-y", fn])
+                        (ig, fp,er) = os.popen3([prelink_cmd, "-y", fn])
+                        er.read(1024 * 1024) # Try and get most of the stderr
                         my_csum = misc.checksum('md5', fp)
 
                     if my_csum != csum:
