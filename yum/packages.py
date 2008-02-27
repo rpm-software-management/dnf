@@ -31,6 +31,7 @@ from rpmUtils import RpmUtilsError
 import rpmUtils.arch
 import rpmUtils.miscutils
 import Errors
+import errno
 
 import urlparse
 urlparse.uses_fragment.append("media")
@@ -1018,14 +1019,27 @@ class YumInstalledPackage(YumHeaderPackage):
                     problems.append(thisproblem)
 
             else:
+                try:
+                    os.stat(fn)
+                    perms_ok = True # Shouldn't happen
+                except OSError, e:
+                    perms_ok = True
+                    if e.errno == errno.EACCES:
+                        perms_ok = False
+
                 thisproblem = misc.GenericHolder()
-                thisproblem.type = 'missing' # maybe replace with a constants type
-                thisproblem.message = 'file is missing'
+
+                if perms_ok:
+                    thisproblem.type = 'missing'
+                    thisproblem.message = 'file is missing'
+                else:
+                    thisproblem.type = 'permissions-missing'
+                    thisproblem.message = 'file is missing (Permission denied)'
                 thisproblem.disk_value = None
                 thisproblem.database_value = None
                 thisproblem.file_types = ftypes
                 problems.append(thisproblem)
-                
+
             if problems:
                 results[fn] = problems
                 
