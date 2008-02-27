@@ -890,7 +890,7 @@ class YumInstalledPackage(YumHeaderPackage):
 
             ftypes = []
             if flags & rpm.RPMFILE_CONFIG:
-                ftypes.append('config')
+                ftypes.append('configuration')
             if flags & rpm.RPMFILE_DOC:
                 ftypes.append('documentation')
             if flags & rpm.RPMFILE_GHOST:

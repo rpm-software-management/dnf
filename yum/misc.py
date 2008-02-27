@@ -98,7 +98,7 @@ def checksum(sumtype, file, CHUNK=2**16):
        sumtype = md5 or sha
        filename = /path/to/file
        CHUNK=65536 by default"""
-       
+     
     # chunking brazenly lifted from Ryan Tomayko
     try:
         if type(file) not in types.StringTypes:
