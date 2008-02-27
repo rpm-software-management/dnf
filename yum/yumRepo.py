@@ -883,8 +883,10 @@ class YumRepository(Repository, config.RepoConf):
             return False
     
         if self._cachingRepoXML(local):
+            caching = True
             result = local
         else:
+            caching = False
             self._saveOldRepoXML(local)
                 
             result = self._getFileRepoXML(local, text)
@@ -900,6 +902,9 @@ class YumRepository(Repository, config.RepoConf):
         if self._repoXML is None:
             self._revertOldRepoXML()
             return False
+
+        if caching:
+            return False # Skip any work.
 
         if not self._groupCheckDataMDNewer():
             self._revertOldRepoXML()
