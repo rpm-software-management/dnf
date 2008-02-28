@@ -1568,17 +1568,21 @@ class YumBase(depsolve.Depsolve):
                     _('searching package %s'), po)
                 tmpvalues = []
                 
-                
                 if usedDepString:
                     tmpvalues.append(arg)
 
-                if isglob or canBeFile:
+                if not isglob and canBeFile:
+                    # then it is not a globbed file we have matched it precisely
+                    tmpvalues.append(arg)
+                    
+                if isglob:
                     self.verbose_logger.log(logginglevels.DEBUG_2,
                         _('searching in file entries'))
                     for thisfile in po.dirlist + po.filelist + po.ghostlist:
                         if fnmatch.fnmatch(thisfile, arg):
                             tmpvalues.append(thisfile)
                 
+
                 self.verbose_logger.log(logginglevels.DEBUG_2,
                     _('searching in provides entries'))
                 for (p_name, p_flag, (p_e, p_v, p_r)) in po.provides:
