@@ -137,7 +137,8 @@ class YumAvailablePackageSqlite(YumAvailablePackage, PackageObject, RpmBase):
                          "SELECT %s FROM packages WHERE pkgId = ?" % dbname,
                          (self.pkgId,)).fetchone()
         value = r[0]
-        if varname in {'vendor':1, 'packager':1, 'buildhost':1, 'license':1}:
+        if varname in {'vendor' : 1, 'packager' : 1, 'buildhost' : 1,
+                       'license' : 1, 'group' : 1}:
             value  = _share_data(value)
         setattr(self, varname, value)
             
