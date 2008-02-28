@@ -146,7 +146,7 @@ class YumBase(depsolve.Depsolve):
 
         if self._conf:
             return self._conf
-            
+        conf_st = time.time()            
         # TODO: Remove this block when we no longer support configs outside
         # of /etc/yum/
         if fn == '/etc/yum/yum.conf' and not os.path.exists(fn):
@@ -185,7 +185,7 @@ class YumBase(depsolve.Depsolve):
         
         
         self.doFileLogSetup(self.conf.uid, self.conf.logfile)
-
+        self.verbose_logger.debug('Config time: %0.3f' % (time.time() - conf_st))
         self.plugins.run('init')
         return self._conf
         
@@ -345,9 +345,10 @@ class YumBase(depsolve.Depsolve):
         """sets up a holder object for important information from the rpmdb"""
 
         if self._rpmdb is None:
+            rpmdb_st = time.time()
             self.verbose_logger.debug(_('Reading Local RPMDB'))
             self._rpmdb = rpmsack.RPMDBPackageSack(root=self.conf.installroot)
-        
+            self.verbose_logger.debug('rpmdb time: %0.3f' % (time.time() - rpmdb_st))
         return self._rpmdb
 
     def closeRpmDB(self):
@@ -373,7 +374,9 @@ class YumBase(depsolve.Depsolve):
         self._getConfig() # touch the config class first
 
         if doSetup:
+            repo_st = time.time()        
             self._repos.doSetup(thisrepo)
+            self.verbose_logger.debug('repo time: %0.3f' % (time.time() - repo_st))        
         return self._repos
 
     def _delRepos(self):
@@ -399,6 +402,7 @@ class YumBase(depsolve.Depsolve):
             repos = self.repos.findRepos(thisrepo)
         
         self.verbose_logger.debug(_('Setting up Package Sacks'))
+        sack_st = time.time()
         if not archlist:
             archlist = rpmUtils.arch.getArchList()
         
@@ -424,7 +428,7 @@ class YumBase(depsolve.Depsolve):
 
         # now go through and kill pkgs based on pkg.repo.cost()
         self.costExcludePackages()
-        
+        self.verbose_logger.debug('pkgsack time: %0.3f' % (time.time() - sack_st))
         return self._pkgSack
     
     
@@ -457,27 +461,38 @@ class YumBase(depsolve.Depsolve):
         
         if self._up:
             return self._up
-
+        
         self.verbose_logger.debug(_('Building updates object'))
         sack_pkglist = self.pkgSack.simplePkgList()
         rpmdb_pkglist = self.rpmdb.simplePkgList()        
+
+        up_st = time.time()
         self._up = rpmUtils.updates.Updates(rpmdb_pkglist, sack_pkglist)
         del rpmdb_pkglist
         del sack_pkglist
         if self.conf.debuglevel >= 6:
             self._up.debug = 1
-            
+        
         if self.conf.obsoletes:
+            obs_init = time.time()    
             self._up.rawobsoletes = self.pkgSack.returnObsoletes(newest=True)
+            self.verbose_logger.debug('up:Obs Init time: %0.3f' % (time.time() - obs_init))
             
         self._up.exactarch = self.conf.exactarch
         self._up.exactarchlist = self.conf.exactarchlist
+        up_pr_st = time.time()
         self._up.doUpdates()
+        self.verbose_logger.debug('up:simple updates time: %0.3f' % (time.time() - up_pr_st))
 
         if self.conf.obsoletes:
+            obs_st = time.time()
             self._up.doObsoletes()
+            self.verbose_logger.debug('up:obs time: %0.3f' % (time.time() - obs_st))
 
+        cond_up_st = time.time()                    
         self._up.condenseUpdates()
+        self.verbose_logger.debug('up:condense time: %0.3f' % (time.time() - cond_up_st))
+        self.verbose_logger.debug('updates time: %0.3f' % (time.time() - up_st))        
         return self._up
     
     def doGroupSetup(self):
@@ -503,7 +518,8 @@ class YumBase(depsolve.Depsolve):
         
         if self._comps:
             return self._comps
-            
+
+        group_st = time.time()            
         self.verbose_logger.debug(_('Getting group metadata'))
         reposWithGroups = []
         self.repos.doSetup()
@@ -549,7 +565,8 @@ class YumBase(depsolve.Depsolve):
         
         pkglist = self.rpmdb.simplePkgList()
         self._comps.compile(pkglist)
-        
+
+        self.verbose_logger.debug('group time: %0.3f' % (time.time() - group_st))                
         return self._comps
     
     # properties so they auto-create themselves with defaults
@@ -604,6 +621,8 @@ class YumBase(depsolve.Depsolve):
         """go through the packages in the transaction set, find them in the
            packageSack or rpmdb, and pack up the ts accordingly"""
         self.plugins.run('preresolve')
+        ds_st = time.time()
+
         (rescode, restring) = self.resolveDeps()
         self.plugins.run('postresolve', rescode=rescode, restring=restring)
         self._limit_installonly_pkgs()
@@ -616,7 +635,8 @@ class YumBase(depsolve.Depsolve):
         # Try another depsolve
         if self.conf.skip_broken and rescode==1:
             rescode, restring = self._skipPackagesWithProblems(rescode, restring)
-            
+
+        self.verbose_logger.debug('Depsolve time: %0.3f' % (time.time() - ds_st))
         return rescode, restring
 
     def _skipPackagesWithProblems(self, rescode, restring):

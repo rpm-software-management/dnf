@@ -365,6 +365,7 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
             return 1
         
         if self.conf.rpm_check_debug:
+            rcd_st = time.time()
             self.verbose_logger.log(yum.logginglevels.INFO_2, 
                  _('Running rpm_check_debug'))
             msgs = self._run_rpm_check_debug()
@@ -374,8 +375,10 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
                     print msg
     
                 return 1, [_('Please report this error in bugzilla')]
-                
-            
+
+            self.verbose_logger.debug('rpm_check_debug time: %0.3f' % (time.time() - rcd_st))
+
+        tt_st = time.time()            
         self.verbose_logger.log(yum.logginglevels.INFO_2,
             _('Running Transaction Test'))
         if self.conf.diskspacecheck == False:
@@ -405,9 +408,12 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
              _('Transaction Test Succeeded'))
         del self.ts
         
+        self.verbose_logger.debug('Transaction Test time: %0.3f' % (time.time() - tt_st))
+        
         # unset the sigquit handler
         signal.signal(signal.SIGQUIT, signal.SIG_DFL)
         
+        ts_st = time.time()
         self.initActionTs() # make a new, blank ts to populate
         self.populateTs(keepold=0) # populate the ts
         self.ts.check() #required for ordering
@@ -423,6 +429,7 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         self.verbose_logger.log(yum.logginglevels.INFO_2, _('Running Transaction'))
         self.runTransaction(cb=cb)
 
+        self.verbose_logger.debug('Transaction time: %0.3f' % (time.time() - ts_st))
         # close things
         self.verbose_logger.log(yum.logginglevels.INFO_1,
             self.postTransactionOutput())

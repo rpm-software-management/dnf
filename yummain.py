@@ -147,7 +147,7 @@ def main(args):
             
     # Depsolve stage
     verbose_logger.log(logginglevels.INFO_2, _('Resolving Dependencies'))
-    verbose_logger.debug(time.time())
+
     try:
         (result, resultmsgs) = base.buildTransaction() 
     except plugins.PluginYumExit, e:
@@ -182,7 +182,6 @@ def main(args):
         return 3
 
     verbose_logger.log(logginglevels.INFO_2, _('\nDependencies Resolved'))
-    verbose_logger.debug(time.time())
 
     # Run the transaction
     try:
