@@ -2033,8 +2033,10 @@ class YumBase(depsolve.Depsolve):
 
             if kwargs.has_key('pattern'):
                 was_pattern = True
+                pats = [kwargs['pattern']]
                 exactmatch, matched, unmatched = \
-                    parsePackages(self.pkgSack.returnPackages(),[kwargs['pattern']] , casematch=1)
+                    parsePackages(self.pkgSack.returnPackages(patterns=pats),
+                                  pats, casematch=1)
                 pkgs.extend(exactmatch)
                 pkgs.extend(matched)
                 # if we have anything left unmatched, let's take a look for it
