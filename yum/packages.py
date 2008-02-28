@@ -922,6 +922,19 @@ class YumInstalledPackage(YumHeaderPackage):
 
                 isdir = stat.S_ISDIR(my_st.st_mode)
                 islnk = stat.S_ISLNK(my_st.st_mode)
+
+                if islnk:
+                    fnl    = fi.FLink() # fi.foo is magic, don't think about it
+                    my_fnl = os.readlink(fn)
+                    if my_fnl != fnl:
+                        thisproblem = misc.GenericHolder()
+                        thisproblem.type = 'symlink'
+                        thisproblem.message = 'symlink does not match'
+                        thisproblem.database_value = fnl
+                        thisproblem.disk_value = my_fnl
+                        thisproblem.file_types = ftypes
+                        problems.append(thisproblem)
+
                 check_content = True
                 if (isdir or islnk or stat.S_ISFIFO(my_st.st_mode) or
                     stat.S_ISCHR(my_st.st_mode) or

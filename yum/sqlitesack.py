@@ -46,7 +46,12 @@ def catchSqliteException(func):
     newFunc.__dict__.update(func.__dict__)
     return newFunc
 
-_reverse_prco = {} # So pacakges can share prco data
+_store = {}
+def _share_data(value):
+    """ Take a value and use the same value from the store,
+        if the value isn't in the store this one becomes the shared version. """
+    return _store.setdefault(value, value)
+
 class YumAvailablePackageSqlite(YumAvailablePackage, PackageObject, RpmBase):
     def __init__(self, repo, db_obj):
         self.prco = { 'obsoletes': (),
@@ -78,15 +83,21 @@ class YumAvailablePackageSqlite(YumAvailablePackage, PackageObject, RpmBase):
             except (IndexError, KeyError):
                 return None
 
-        for item in ['name', 'arch', 'epoch', 'version', 'release', 'pkgId',
-                     'pkgKey']:
+        for item in ['name', 'arch', 'epoch', 'version', 'release']:
+            try:
+                setattr(self, item, _share_data(db_obj[item]))
+            except (IndexError, KeyError):
+                pass
+
+        for item in ['pkgId', 'pkgKey']:
             try:
                 setattr(self, item, db_obj[item])
             except (IndexError, KeyError):
                 pass
 
         try:
-            check_sum = (db_obj['checksum_type'], db_obj['pkgId'], True)
+            checksum_type = _share_data(db_obj['checksum_type'])
+            check_sum = (checksum_type, db_obj['pkgId'], True)
             self._checksums = [ check_sum ]
         except (IndexError, KeyError):
             pass
@@ -125,9 +136,12 @@ class YumAvailablePackageSqlite(YumAvailablePackage, PackageObject, RpmBase):
         r = self._sql_MD('primary',
                          "SELECT %s FROM packages WHERE pkgId = ?" % dbname,
                          (self.pkgId,)).fetchone()
-        setattr(self, varname, r[0])
+        value = r[0]
+        if varname in {'vendor':1, 'packager':1, 'buildhost':1, 'license':1}:
+            value  = _share_data(value)
+        setattr(self, varname, value)
             
-        return r[0]
+        return value
         
     def _loadFiles(self):
         if self._loadedfiles:
@@ -150,7 +164,7 @@ class YumAvailablePackageSqlite(YumAvailablePackage, PackageObject, RpmBase):
                     filename = dirname+'/'+filenames.pop()
                 else:
                     filename = filenames.pop()
-                filetype = filetypes.pop()
+                filetype = _share_data(filetypes.pop())
                 result.setdefault(filetype,[]).append(filename)
         self._loadedfiles = True
         self._files = result
@@ -173,7 +187,8 @@ class YumAvailablePackageSqlite(YumAvailablePackage, PackageObject, RpmBase):
             # Check count(pkgId) here, the same way we do in searchFiles()?
             # Failure mode is much less of a problem.
             for ob in cur:
-                result.append( (ob['date'], ob['author'], ob['changelog']) )
+                result.append( (ob['date'], _share_data(ob['author']),
+                                ob['changelog']) )
             self._changelog = result
             return
     
@@ -199,21 +214,18 @@ class YumAvailablePackageSqlite(YumAvailablePackage, PackageObject, RpmBase):
         return map(lambda x: x['fname'], cur)
 
     def returnPrco(self, prcotype, printable=False):
+        prcotype = _share_data(prcotype)
         if isinstance(self.prco[prcotype], tuple):
             sql = "SELECT name, version, release, epoch, flags " \
                   "FROM %s WHERE pkgKey = ?" % prcotype
             cur = self._sql_MD('primary', sql, (self.pkgKey,))
             self.prco[prcotype] = [ ]
             for ob in cur:
-                prco_set = (ob['name'], ob['flags'], 
-                            (ob['epoch'], ob['version'], ob['release']))
-                # This saves memory by merging the prco data from multiple
-                # packages. Note that flags etc. need to be the same too.
-                if prco_set in _reverse_prco:
-                    prco_set = _reverse_prco[prco_set]
-                else:
-                    _reverse_prco[prco_set] = prco_set
-                self.prco[prcotype].append(prco_set)
+                prco_set = (_share_data(ob['name']), _share_data(ob['flags']),
+                            (_share_data(ob['epoch']),
+                             _share_data(ob['version']),
+                             _share_data(ob['release'])))
+                self.prco[prcotype].append(_share_data(prco_set))
 
         return RpmBase.returnPrco(self, prcotype, printable)
 
@@ -537,14 +549,18 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
                 if self._pkgKeyExcluded(rep, ob['pkgKey']):
                     continue
                     
-                key = ( ob['name'],ob['arch'],
-                        ob['epoch'],ob['version'],
-                        ob['release'])
-                (n,f,e,v,r) = ( ob['oname'],ob['oflags'],
-                                ob['oepoch'],ob['oversion'],
-                                ob['orelease'])
+                key = ( _share_data(ob['name']), _share_data(ob['arch']),
+                        _share_data(ob['epoch']), _share_data(ob['version']),
+                        _share_data(ob['release']))
+                (n,f,e,v,r) = ( _share_data(ob['oname']),
+                                _share_data(ob['oflags']),
+                                _share_data(ob['oepoch']),
+                                _share_data(ob['oversion']),
+                                _share_data(ob['orelease']))
 
-                obsoletes.setdefault(key,[]).append((n,f,(e,v,r)))
+                key = _share_data(key)
+                val = _share_data((n,f,(e,v,r)))
+                obsoletes.setdefault(key,[]).append(val)
 
         return obsoletes
 
@@ -594,8 +610,10 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
                        (name,))
             tmp = { }
             for x in cur:
-                val = (x['name'], x['flags'],
-                       (x['epoch'], x['version'], x['release']))
+                val = (_share_data(x['name']), _share_data(x['flags']),
+                       (_share_data(x['epoch']), _share_data(x['version']),
+                        _share_data(x['release'])))
+                val = _share_data(val)
                 if rpmUtils.miscutils.rangeCompare(req, val):
                     tmp.setdefault(x['pkgKey'], []).append(val)
             for pkgKey, hits in tmp.iteritems():
