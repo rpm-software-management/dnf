@@ -850,6 +850,35 @@ class _CountedReadFile:
         self.read_size += len(ret)
         return ret
 
+class _PkgVerifyProb:
+    """ Holder for each "problem" we find with a pkg.verify(). """
+    
+    def __init__(self, type, msg, ftypes):
+        self.type           = type
+        self.message        = msg
+        self.database_value = None
+        self.disk_value     = None
+        self.file_types     = ftypes
+
+    def __cmp__(self, other):
+        if other is None:
+            return 1
+        type2sort = {'type' :  1, 'symlink' : 2, 'checksum' : 3, 'size'    :  4,
+                     'user' :  4, 'group'   : 5, 'mode' : 6, 'genchecksum' :  7,
+                     'mtime' : 8, 'missing' : 9, 'permissions-missing'     : 10}
+        ret = cmp(type2sort[self.type], type2sort[other.type])
+        if not ret:
+            for attr in ['disk_value', 'database_value', 'file_types']:
+                x = getattr(self,  attr)
+                y = getattr(other, attr)
+                if x is None:
+                    assert y is None
+                    continue
+                ret = cmp(x, y)
+                if ret:
+                    break
+        return ret
+        
 _installed_repo = FakeRepository('installed')
 _installed_repo.cost = 0
 class YumInstalledPackage(YumHeaderPackage):
@@ -934,25 +963,21 @@ class YumInstalledPackage(YumHeaderPackage):
                 my_ftype = _ftype(my_st.st_mode)
 
                 if ftype != my_ftype:
-                    thisproblem = misc.GenericHolder()
-                    thisproblem.type = 'type'
-                    thisproblem.message = 'file type does not match'
-                    thisproblem.database_value = ftype
-                    thisproblem.disk_value = my_ftype
-                    thisproblem.file_types = ftypes
-                    problems.append(thisproblem)
+                    prob = _PkgVerifyProb('type', 'file type does not match',
+                                          ftypes)
+                    prob.database_value = ftype
+                    prob.disk_value = my_ftype
+                    problems.append(prob)
 
                 if ftype == "symlink" and my_ftype == "symlink":
                     fnl    = fi.FLink() # fi.foo is magic, don't think about it
                     my_fnl = os.readlink(fn)
                     if my_fnl != fnl:
-                        thisproblem = misc.GenericHolder()
-                        thisproblem.type = 'symlink'
-                        thisproblem.message = 'symlink does not match'
-                        thisproblem.database_value = fnl
-                        thisproblem.disk_value = my_fnl
-                        thisproblem.file_types = ftypes
-                        problems.append(thisproblem)
+                        prob = _PkgVerifyProb('symlink',
+                                              'symlink does not match', ftypes)
+                        prob.database_value = fnl
+                        prob.disk_value     = my_fnl
+                        problems.append(prob)
 
                 check_content = True
                 if 'ghost' in ftypes:
@@ -967,43 +992,33 @@ class YumInstalledPackage(YumHeaderPackage):
                     check_perms = False
 
                 if check_content and my_st.st_mtime != mtime:
-                    thisproblem = misc.GenericHolder()
-                    thisproblem.type = 'mtime' # maybe replace with a constants type
-                    thisproblem.message = 'mtime does not match'
-                    thisproblem.database_value = mtime
-                    thisproblem.disk_value = my_st[stat.ST_MTIME]
-                    thisproblem.file_types = ftypes
-                    problems.append(thisproblem)
+                    prob = _PkgVerifyProb('mtime', 'mtime does not match',
+                                          ftypes)
+                    prob.database_value = mtime
+                    prob.disk_value     = my_st.st_mtime
+                    problems.append(prob)
 
-                if check_perms and my_group != group:
-                    thisproblem = misc.GenericHolder()
-                    thisproblem.type = 'group' # maybe replace with a constants type
-                    thisproblem.message = 'group does not match'
-                    thisproblem.database_value = group
-                    thisproblem.disk_value = my_group
-                    thisproblem.file_types = ftypes
-                    problems.append(thisproblem)
                 if check_perms and my_user != user:
-                    thisproblem = misc.GenericHolder()
-                    thisproblem.type = 'user' # maybe replace with a constants type
-                    thisproblem.message = 'user does not match'
-                    thisproblem.database_value = user
-                    thisproblem.disk_value = my_user
-                    thisproblem.file_types = ftypes
-                    problems.append(thisproblem)
+                    prob = _PkgVerifyProb('user', 'user does not match', ftypes)
+                    prob.database_value = user
+                    prob.disk_value = my_user
+                    problems.append(prob)
+                if check_perms and my_group != group:
+                    prob = _PkgVerifyProb('group', 'group does not match',
+                                          ftypes)
+                    prob.database_value = group
+                    prob.disk_value     = my_group
+                    problems.append(prob)
 
                 my_mode = my_st.st_mode
                 if 'ghost' in ftypes: # This is what rpm does
                     my_mode &= 0777
                     mode    &= 0777
                 if check_perms and my_mode != mode:
-                    thisproblem = misc.GenericHolder()
-                    thisproblem.type = 'mode'
-                    thisproblem.message = 'mode does not match'
-                    thisproblem.database_value = mode
-                    thisproblem.disk_value = my_st.st_mode
-                    thisproblem.file_types = ftypes
-                    problems.append(thisproblem)
+                    prob = _PkgVerifyProb('mode', 'mode does not match', ftypes)
+                    prob.database_value = mode
+                    prob.disk_value     = my_st.st_mode
+                    problems.append(prob)
 
                 # don't checksum files that don't have a csum in the rpmdb :)
                 if check_content and csum:
@@ -1015,13 +1030,11 @@ class YumInstalledPackage(YumHeaderPackage):
                         gen_csum = False
 
                     if not gen_csum:
-                        thisproblem = misc.GenericHolder()
-                        thisproblem.type = 'genchecksum'
-                        thisproblem.message = 'checksum not available'
-                        thisproblem.database_value = csum
-                        thisproblem.disk_value = None
-                        thisproblem.file_types = ftypes
-                        problems.append(thisproblem)
+                        prob = _PkgVerifyProb('genchecksum',
+                                              'checksum not available', ftypes)
+                        prob.database_value = csum
+                        prob.disk_value     = None
+                        problems.append(prob)
                         
                     if gen_csum and my_csum != csum and have_prelink:
                         #  This is how rpm -V works, try and if that fails try
@@ -1033,23 +1046,18 @@ class YumInstalledPackage(YumHeaderPackage):
                         my_st_size = fp.read_size
 
                     if gen_csum and my_csum != csum:
-                        thisproblem = misc.GenericHolder()
-                        thisproblem.type = 'checksum' # maybe replace with a constants type
-                        thisproblem.message = 'checksum does not match'
-                        thisproblem.database_value = csum
-                        thisproblem.disk_value = my_csum
-                        thisproblem.file_types = ftypes
-                        problems.append(thisproblem)
+                        prob = _PkgVerifyProb('checksum',
+                                              'checksum does not match', ftypes)
+                        prob.database_value = csum
+                        prob.disk_value     = my_csum
+                        problems.append(prob)
 
                 # Size might be got from prelink ... *sigh*
                 if check_content and my_st_size != size:
-                    thisproblem = misc.GenericHolder()
-                    thisproblem.type = 'size'
-                    thisproblem.message = 'size does not match'
-                    thisproblem.database_value = size
-                    thisproblem.disk_value = my_st.st_size
-                    thisproblem.file_types = ftypes
-                    problems.append(thisproblem)
+                    prob = _PkgVerifyProb('size', 'size does not match', ftypes)
+                    prob.database_value = size
+                    prob.disk_value     = my_st.st_size
+                    problems.append(prob)
 
             else:
                 try:
@@ -1060,18 +1068,13 @@ class YumInstalledPackage(YumHeaderPackage):
                     if e.errno == errno.EACCES:
                         perms_ok = False
 
-                thisproblem = misc.GenericHolder()
-
                 if perms_ok:
-                    thisproblem.type = 'missing'
-                    thisproblem.message = 'file is missing'
+                    prob = _PkgVerifyProb('missing', 'file is missing', ftypes)
                 else:
-                    thisproblem.type = 'permissions-missing'
-                    thisproblem.message = 'file is missing (Permission denied)'
-                thisproblem.disk_value = None
-                thisproblem.database_value = None
-                thisproblem.file_types = ftypes
-                problems.append(thisproblem)
+                    prob = _PkgVerifyProb('permissions-missing',
+                                          'file is missing (Permission denied)',
+                                          ftypes)
+                problems.append(prob)
 
             if problems:
                 results[fn] = problems
