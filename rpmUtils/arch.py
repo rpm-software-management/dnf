@@ -65,6 +65,9 @@ arches = {
     "sh4a": "sh4",
     "sh4": "noarch",
     "sh3": "noarch",
+    
+    #itanium
+    "ia64": "noarch",
     }
 
 def legitMultiArchesInSameLib(arch=None):
