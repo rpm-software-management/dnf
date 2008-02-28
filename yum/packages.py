@@ -862,6 +862,15 @@ class YumInstalledPackage(YumHeaderPackage):
         """verify that the installed files match the packaged checksum
            optionally verify they match only if they are in the 'pattern' list
            returns a tuple """
+        def _ftype(mode):
+            """ Given a "mode" return the name of the type of file. """
+            if stat.S_ISDIR(mode):  return "directory"
+            if stat.S_ISLNK(mode):  return "symlink"
+            if stat.S_ISFIFO(mode): return "fifo"
+            if stat.S_ISCHR(mode):  return "character device"
+            if stat.S_ISBLK(mode):  return "block device"
+            return "file"
+
         fi = self.hdr.fiFromHeader()
         results = {} # fn = problem_obj?
 
@@ -912,7 +921,8 @@ class YumInstalledPackage(YumHeaderPackage):
             if os.path.exists(fn):
                 # stat
                 my_st = os.lstat(fn)
-                my_user = pwd.getpwuid(my_st[stat.ST_UID])[0]
+                my_st_size = my_st.st_size
+                my_user  = pwd.getpwuid(my_st[stat.ST_UID])[0]
                 my_group = grp.getgrgid(my_st[stat.ST_GID])[0]
 
                 if mode < 0:
@@ -920,10 +930,19 @@ class YumInstalledPackage(YumHeaderPackage):
                     # so we "fix" it via. this hack
                     mode = (mode & 0xFFFF)
 
-                isdir = stat.S_ISDIR(my_st.st_mode)
-                islnk = stat.S_ISLNK(my_st.st_mode)
+                ftype    = _ftype(mode)
+                my_ftype = _ftype(my_st.st_mode)
 
-                if islnk:
+                if ftype != my_ftype:
+                    thisproblem = misc.GenericHolder()
+                    thisproblem.type = 'type'
+                    thisproblem.message = 'file type does not match'
+                    thisproblem.database_value = ftype
+                    thisproblem.disk_value = my_ftype
+                    thisproblem.file_types = ftypes
+                    problems.append(thisproblem)
+
+                if ftype == "symlink" and my_ftype == "symlink":
                     fnl    = fi.FLink() # fi.foo is magic, don't think about it
                     my_fnl = os.readlink(fn)
                     if my_fnl != fnl:
@@ -936,14 +955,16 @@ class YumInstalledPackage(YumHeaderPackage):
                         problems.append(thisproblem)
 
                 check_content = True
-                if (isdir or islnk or stat.S_ISFIFO(my_st.st_mode) or
-                    stat.S_ISCHR(my_st.st_mode) or
-                    stat.S_ISBLK(my_st.st_mode) or 'ghost' in ftypes):
+                if 'ghost' in ftypes:
                     check_content = False
-
-                # FIXME: We don't have rpmfiFLink() so we can't verify
-                # symlinks "correctly", as rpm does. So we check the csum of
-                # what it points to.
+                if my_ftype == "symlink" and ftype == "file":
+                    # Don't let things hide behind symlinks
+                    my_st_size = os.stat(fn).st_size
+                elif my_ftype != "file":
+                    check_content = False
+                check_perms = True
+                if my_ftype == "symlink":
+                    check_perms = False
 
                 if check_content and my_st.st_mtime != mtime:
                     thisproblem = misc.GenericHolder()
@@ -954,7 +975,7 @@ class YumInstalledPackage(YumHeaderPackage):
                     thisproblem.file_types = ftypes
                     problems.append(thisproblem)
 
-                if my_group != group and not islnk:
+                if check_perms and my_group != group:
                     thisproblem = misc.GenericHolder()
                     thisproblem.type = 'group' # maybe replace with a constants type
                     thisproblem.message = 'group does not match'
@@ -962,7 +983,7 @@ class YumInstalledPackage(YumHeaderPackage):
                     thisproblem.disk_value = my_group
                     thisproblem.file_types = ftypes
                     problems.append(thisproblem)
-                if my_user != user and not islnk:
+                if check_perms and my_user != user:
                     thisproblem = misc.GenericHolder()
                     thisproblem.type = 'user' # maybe replace with a constants type
                     thisproblem.message = 'user does not match'
@@ -975,7 +996,7 @@ class YumInstalledPackage(YumHeaderPackage):
                 if 'ghost' in ftypes: # This is what rpm does
                     my_mode &= 0777
                     mode    &= 0777
-                if my_mode != mode and not islnk:
+                if check_perms and my_mode != mode:
                     thisproblem = misc.GenericHolder()
                     thisproblem.type = 'mode'
                     thisproblem.message = 'mode does not match'
@@ -984,7 +1005,6 @@ class YumInstalledPackage(YumHeaderPackage):
                     thisproblem.file_types = ftypes
                     problems.append(thisproblem)
 
-                my_st_size = my_st.st_size
                 # don't checksum files that don't have a csum in the rpmdb :)
                 if check_content and csum:
                     try:
