@@ -225,7 +225,7 @@ class YumAvailablePackageSqlite(YumAvailablePackage, PackageObject, RpmBase):
                             (_share_data(ob['epoch']),
                              _share_data(ob['version']),
                              _share_data(ob['release'])))
-                self.prco[prcotype].append(prco_set)
+                self.prco[prcotype].append(_share_data(prco_set))
 
         return RpmBase.returnPrco(self, prcotype, printable)
 
@@ -558,7 +558,9 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
                                 _share_data(ob['oversion']),
                                 _share_data(ob['orelease']))
 
-                obsoletes.setdefault(key,[]).append((n,f,(e,v,r)))
+                key = _share_data(key)
+                val = _share_data((n,f,(e,v,r)))
+                obsoletes.setdefault(key,[]).append(val)
 
         return obsoletes
 
@@ -611,6 +613,7 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
                 val = (_share_data(x['name']), _share_data(x['flags']),
                        (_share_data(x['epoch']), _share_data(x['version']),
                         _share_data(x['release'])))
+                val = _share_data(val)
                 if rpmUtils.miscutils.rangeCompare(req, val):
                     tmp.setdefault(x['pkgKey'], []).append(val)
             for pkgKey, hits in tmp.iteritems():
