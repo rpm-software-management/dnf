@@ -865,7 +865,8 @@ class _PkgVerifyProb:
             return 1
         type2sort = {'type' :  1, 'symlink' : 2, 'checksum' : 3, 'size'    :  4,
                      'user' :  4, 'group'   : 5, 'mode' : 6, 'genchecksum' :  7,
-                     'mtime' : 8, 'missing' : 9, 'permissions-missing'     : 10}
+                     'mtime' : 8, 'missing' : 9, 'permissions-missing'     : 10,
+                     'state' : 11, 'missingok' : 12, 'ghost' : 13}
         ret = cmp(type2sort[self.type], type2sort[other.type])
         if not ret:
             for attr in ['disk_value', 'database_value', 'file_types']:
@@ -911,6 +912,11 @@ class YumInstalledPackage(YumHeaderPackage):
             if stat.S_ISBLK(mode):  return "block device"
             return "<unknown>"
 
+        statemap = {rpm.RPMFILE_STATE_REPLACED : 'replaced',
+                    rpm.RPMFILE_STATE_NOTINSTALLED : 'not installed',
+                    rpm.RPMFILE_STATE_WRONGCOLOR : 'wrong color',
+                    rpm.RPMFILE_STATE_NETSHARED : 'netshared'}
+
         fi = self.hdr.fiFromHeader()
         results = {} # fn = problem_obj?
 
@@ -932,15 +938,6 @@ class YumInstalledPackage(YumHeaderPackage):
                 if not matched: 
                     continue
 
-            if all:
-                vflags = -1
-            else:
-                if flags & rpm.RPMFILE_MISSINGOK:
-                    continue # rpm just skips missing ok, so we do too
-
-                if flags & rpm.RPMFILE_GHOST:
-                    continue
-            
             ftypes = []
             if flags & rpm.RPMFILE_CONFIG:
                 ftypes.append('configuration')
@@ -960,6 +957,28 @@ class YumInstalledPackage(YumHeaderPackage):
             # elif flags & rpm.RPMFILE_POLICY:
             #    ftypes.append('policy')
                 
+            if all:
+                vflags = -1
+
+            if state != rpm.RPMFILE_STATE_NORMAL:
+                if state in statemap:
+                    ftypes.append("state=" + statemap[state])
+                else:
+                    ftypes.append("state=<unknown>")
+                results[fn] = [_PkgVerifyProb('state',
+                                              'state is not normal',
+                                              ftypes)]
+                continue
+
+            if flags & rpm.RPMFILE_MISSINGOK:
+                results[fn] = [_PkgVerifyProb('missingok', 'missing but ok',
+                                              ftypes)]
+                continue # rpm just skips missing ok, so we do too
+
+            if flags & rpm.RPMFILE_GHOST:
+                results[fn] = [_PkgVerifyProb('ghost', 'ghost file',ftypes)]
+                continue
+
             # do check of file status on system
             problems = []
             if os.path.exists(fn):
