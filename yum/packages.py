@@ -898,7 +898,7 @@ class YumInstalledPackage(YumHeaderPackage):
         fakerepo = _installed_repo
         YumHeaderPackage.__init__(self, fakerepo, hdr)
         
-    def verify(self, patterns=[], all=False):
+    def verify(self, patterns=[], fake_problems=True, all=False):
         """verify that the installed files match the packaged checksum
            optionally verify they match only if they are in the 'pattern' list
            returns a tuple """
@@ -965,18 +965,21 @@ class YumInstalledPackage(YumHeaderPackage):
                     ftypes.append("state=" + statemap[state])
                 else:
                     ftypes.append("state=<unknown>")
-                results[fn] = [_PkgVerifyProb('state',
-                                              'state is not normal',
-                                              ftypes)]
+                if fake_problems:
+                    results[fn] = [_PkgVerifyProb('state',
+                                                  'state is not normal',
+                                                  ftypes)]
                 continue
 
-            if flags & rpm.RPMFILE_MISSINGOK:
+            if flags & rpm.RPMFILE_MISSINGOK and fake_problems:
                 results[fn] = [_PkgVerifyProb('missingok', 'missing but ok',
                                               ftypes)]
+            if flags & rpm.RPMFILE_MISSINGOK and not all:
                 continue # rpm just skips missing ok, so we do too
 
-            if flags & rpm.RPMFILE_GHOST:
+            if flags & rpm.RPMFILE_GHOST and fake_problems:
                 results[fn] = [_PkgVerifyProb('ghost', 'ghost file',ftypes)]
+            if flags & rpm.RPMFILE_GHOST and not all:
                 continue
 
             # do check of file status on system
