@@ -878,7 +878,17 @@ class _PkgVerifyProb:
                 if ret:
                     break
         return ret
-        
+
+# From: lib/rpmvf.h ... not in rpm *sigh*
+_RPMVERIFY_MD5      = (1 << 0)
+_RPMVERIFY_FILESIZE = (1 << 1)
+_RPMVERIFY_LINKTO   = (1 << 2)
+_RPMVERIFY_USER     = (1 << 3)
+_RPMVERIFY_GROUP    = (1 << 4)
+_RPMVERIFY_MTIME    = (1 << 5)
+_RPMVERIFY_MODE     = (1 << 6)
+_RPMVERIFY_RDEV     = (1 << 7)
+
 _installed_repo = FakeRepository('installed')
 _installed_repo.cost = 0
 class YumInstalledPackage(YumHeaderPackage):
@@ -893,12 +903,13 @@ class YumInstalledPackage(YumHeaderPackage):
            returns a tuple """
         def _ftype(mode):
             """ Given a "mode" return the name of the type of file. """
+            if stat.S_ISREG(mode):  return "file"
             if stat.S_ISDIR(mode):  return "directory"
             if stat.S_ISLNK(mode):  return "symlink"
             if stat.S_ISFIFO(mode): return "fifo"
             if stat.S_ISCHR(mode):  return "character device"
             if stat.S_ISBLK(mode):  return "block device"
-            return "file"
+            return "<unknown>"
 
         fi = self.hdr.fiFromHeader()
         results = {} # fn = problem_obj?
@@ -921,11 +932,15 @@ class YumInstalledPackage(YumHeaderPackage):
                 if not matched: 
                     continue
 
-            if not all and flags & rpm.RPMFILE_GHOST:
-                continue
-            if not all and flags & rpm.RPMFILE_MISSINGOK:
-                continue # rpm just skips missing ok, so we do too
+            if all:
+                vflags = -1
+            else:
+                if flags & rpm.RPMFILE_MISSINGOK:
+                    continue # rpm just skips missing ok, so we do too
 
+                if flags & rpm.RPMFILE_GHOST:
+                    continue
+            
             ftypes = []
             if flags & rpm.RPMFILE_CONFIG:
                 ftypes.append('configuration')
@@ -962,14 +977,15 @@ class YumInstalledPackage(YumHeaderPackage):
                 ftype    = _ftype(mode)
                 my_ftype = _ftype(my_st.st_mode)
 
-                if ftype != my_ftype:
+                if vflags & _RPMVERIFY_RDEV and ftype != my_ftype:
                     prob = _PkgVerifyProb('type', 'file type does not match',
                                           ftypes)
                     prob.database_value = ftype
                     prob.disk_value = my_ftype
                     problems.append(prob)
 
-                if ftype == "symlink" and my_ftype == "symlink":
+                if (ftype == "symlink" and my_ftype == "symlink" and
+                    vflags & _RPMVERIFY_LINKTO):
                     fnl    = fi.FLink() # fi.foo is magic, don't think about it
                     my_fnl = os.readlink(fn)
                     if my_fnl != fnl:
@@ -991,19 +1007,21 @@ class YumInstalledPackage(YumHeaderPackage):
                 if my_ftype == "symlink":
                     check_perms = False
 
-                if check_content and my_st.st_mtime != mtime:
+                if (check_content and vflags & _RPMVERIFY_MTIME and
+                    my_st.st_mtime != mtime):
                     prob = _PkgVerifyProb('mtime', 'mtime does not match',
                                           ftypes)
                     prob.database_value = mtime
                     prob.disk_value     = my_st.st_mtime
                     problems.append(prob)
 
-                if check_perms and my_user != user:
+                if check_perms and vflags & _RPMVERIFY_USER and my_user != user:
                     prob = _PkgVerifyProb('user', 'user does not match', ftypes)
                     prob.database_value = user
                     prob.disk_value = my_user
                     problems.append(prob)
-                if check_perms and my_group != group:
+                if (check_perms and vflags & _RPMVERIFY_GROUP and
+                    my_group != group):
                     prob = _PkgVerifyProb('group', 'group does not match',
                                           ftypes)
                     prob.database_value = group
@@ -1014,14 +1032,18 @@ class YumInstalledPackage(YumHeaderPackage):
                 if 'ghost' in ftypes: # This is what rpm does
                     my_mode &= 0777
                     mode    &= 0777
-                if check_perms and my_mode != mode:
+                if check_perms and vflags & _RPMVERIFY_MODE and my_mode != mode:
                     prob = _PkgVerifyProb('mode', 'mode does not match', ftypes)
                     prob.database_value = mode
                     prob.disk_value     = my_st.st_mode
                     problems.append(prob)
 
-                # don't checksum files that don't have a csum in the rpmdb :)
-                if check_content and csum:
+                # Note that because we might get the _size_ from prelink,
+                # we need to do the checksum, even if we just throw it away,
+                # just so we get the size correct.
+                if (check_content and
+                    ((have_prelink and vflags & _RPMVERIFY_FILESIZE) or
+                     (csum and vflags & _RPMVERIFY_MD5))):
                     try:
                         my_csum = misc.checksum('md5', fn)
                         gen_csum = True
@@ -1029,7 +1051,7 @@ class YumInstalledPackage(YumHeaderPackage):
                         # Don't have permission?
                         gen_csum = False
 
-                    if not gen_csum:
+                    if csum and vflags & _RPMVERIFY_MD5 and not gen_csum:
                         prob = _PkgVerifyProb('genchecksum',
                                               'checksum not available', ftypes)
                         prob.database_value = csum
@@ -1045,15 +1067,17 @@ class YumInstalledPackage(YumHeaderPackage):
                         my_csum = misc.checksum('md5', fp)
                         my_st_size = fp.read_size
 
-                    if gen_csum and my_csum != csum:
+                    if (csum and vflags & _RPMVERIFY_MD5 and gen_csum and
+                        my_csum != csum):
                         prob = _PkgVerifyProb('checksum',
                                               'checksum does not match', ftypes)
                         prob.database_value = csum
                         prob.disk_value     = my_csum
                         problems.append(prob)
 
-                # Size might be got from prelink ... *sigh*
-                if check_content and my_st_size != size:
+                # Size might be got from prelink ... *sigh*.
+                if (check_content and vflags & _RPMVERIFY_FILESIZE and
+                    my_st_size != size):
                     prob = _PkgVerifyProb('size', 'size does not match', ftypes)
                     prob.database_value = size
                     prob.disk_value     = my_st.st_size
