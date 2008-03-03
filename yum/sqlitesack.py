@@ -848,7 +848,7 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
                 pmatches = self._sql_pkgKey2po(rep, cur)
                 if len(pmatches):
                     unmatched.remove(p)
-                matched.extend(pmatches)
+                matchres.extend(pmatches)
 
         exactmatch = misc.unique(exactmatch)
         matched = misc.unique(matched)
