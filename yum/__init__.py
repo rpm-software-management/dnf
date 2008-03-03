@@ -68,7 +68,7 @@ import string
 
 from urlgrabber.grabber import default_grabber as urlgrab
 
-__version__ = '3.2.11'
+__version__ = '3.2.12'
 
 class YumBase(depsolve.Depsolve):
     """This is a primary structure and base class. It houses the objects and
