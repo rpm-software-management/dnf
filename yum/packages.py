@@ -853,12 +853,13 @@ class _CountedReadFile:
 class _PkgVerifyProb:
     """ Holder for each "problem" we find with a pkg.verify(). """
     
-    def __init__(self, type, msg, ftypes):
+    def __init__(self, type, msg, ftypes, fake=False):
         self.type           = type
         self.message        = msg
         self.database_value = None
         self.disk_value     = None
         self.file_types     = ftypes
+        self.fake           = fake
 
     def __cmp__(self, other):
         if other is None:
@@ -898,7 +899,8 @@ class YumInstalledPackage(YumHeaderPackage):
         fakerepo = _installed_repo
         YumHeaderPackage.__init__(self, fakerepo, hdr)
         
-    def verify(self, patterns=[], fake_problems=True, all=False):
+    def verify(self, patterns=[], deps=False, script=False,
+               fake_problems=True, all=False):
         """verify that the installed files match the packaged checksum
            optionally verify they match only if they are in the 'pattern' list
            returns a tuple """
@@ -968,17 +970,18 @@ class YumInstalledPackage(YumHeaderPackage):
                 if fake_problems:
                     results[fn] = [_PkgVerifyProb('state',
                                                   'state is not normal',
-                                                  ftypes)]
+                                                  ftypes, fake=True)]
                 continue
 
             if flags & rpm.RPMFILE_MISSINGOK and fake_problems:
                 results[fn] = [_PkgVerifyProb('missingok', 'missing but ok',
-                                              ftypes)]
+                                              ftypes, fake=True)]
             if flags & rpm.RPMFILE_MISSINGOK and not all:
                 continue # rpm just skips missing ok, so we do too
 
             if flags & rpm.RPMFILE_GHOST and fake_problems:
-                results[fn] = [_PkgVerifyProb('ghost', 'ghost file',ftypes)]
+                results[fn] = [_PkgVerifyProb('ghost', 'ghost file', ftypes,
+                                              fake=True)]
             if flags & rpm.RPMFILE_GHOST and not all:
                 continue
 
