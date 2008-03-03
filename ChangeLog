@@ -1,3 +1,389 @@
+2008-03-03  James Antill <james@and.org>
+
+	* yum/sqlitesack.py: Fix typo fix
+
+2008-02-25  James Antill <james@and.org>
+
+	* yum/depsolve.py: Work around for python-2.4.x
+
+2008-03-03  Seth Vidal <skvidal@fedoraproject.org>
+
+	* yum.spec, yum/__init__.py, yum/sqlitesack.py: bump version number
+	fix traceback due to one-key-off-typo in matchPackageNames()
+
+2008-03-03  James Antill <james@and.org>
+
+	* yum/packages.py: Add params. for deps/script which we don't do
+	atm.
+
+2008-03-01  James Antill <james@and.org>
+
+	* yum/packages.py: Allow other callers than yum-verify to turn
+	fake-problems off
+
+2008-03-01  James Antill <james@and.org>
+
+	* yum/packages.py: Deal with rpm file states, add "fake problems"
+	for multilib comparisons
+
+2008-03-01  James Antill <james@and.org>
+
+	* yum/packages.py: Obey verify flags, for extra "excludes"
+
+2008-02-28  James Antill <james@and.org>
+
+	* yum/packages.py: Create a real class for verify problems, so we
+	can sort it
+
+2008-02-28  James Antill <james@and.org>
+
+	* yum/sqlitesack.py: Add group to shared data
+
+2008-02-28  James Antill <james@and.org>
+
+	* yum/packages.py: Compare file types, also match content if files
+	move to symlinks
+
+2008-02-28  Seth Vidal <skvidal@fedoraproject.org>
+
+	* yum/__init__.py: when searching provides and the input does not
+	have a glob and looks like a file, we can accept as true the results
+	from returnPackagesByDep()  this helps us avoid unnecessarily
+	downloading the filelists when they aren't needed
+
+2008-02-28  Seth Vidal <skvidal@fedoraproject.org>
+
+	Merge branch 'master' of
+	ssh://login.linux.duke.edu/home/groups/yum/git/yum  * 'master' of
+	ssh://login.linux.duke.edu/home/groups/yum/git/yum:   Add the magic
+	readlink from DB call, thanks Panu   Pass include patterns down to
+	returnPackages   Pass install patterns down to returnPackages   Also
+	share the tuples   Generalize _reverse_prco, saves ~4% RSS
+
+2008-02-28  Seth Vidal <skvidal@fedoraproject.org>
+
+	* cli.py, yum/__init__.py, yummain.py: output some debug timing
+	numbers for various operations
+
+2008-02-28  James Antill <james@and.org>
+
+	* yum/packages.py: Add the magic readlink from DB call, thanks Panu
+
+
+2008-02-28  James Antill <james@and.org>
+
+	* yum/__init__.py: Pass include patterns down to returnPackages
+
+2008-02-28  James Antill <james@and.org>
+
+	* yum/__init__.py: Pass install patterns down to returnPackages
+
+2008-02-28  James Antill <james@and.org>
+
+	* yum/sqlitesack.py: Also share the tuples
+
+2008-02-28  James Antill <james@and.org>
+
+	* yum/sqlitesack.py: Generalize _reverse_prco, saves ~4% RSS
+
+2008-02-27  Seth Vidal <skvidal@fedoraproject.org>
+
+	* rpmUtils/arch.py: allow ia64 to work again. closes rh bug 435226
+
+2008-02-27  James Antill <james@and.org>
+
+	* yum/yumRepo.py: Don't do any repo MD work when in caching mode
+
+2008-02-27  James Antill <james@and.org>
+
+	* yum/misc.py, yum/packages.py: Use non-hacker name :)
+
+2008-02-26  James Antill <james@and.org>
+
+	* yum/packages.py:  Give different info. for permission denied (missing)
+
+2008-02-26  James Antill <james@and.org>
+
+	* yum/packages.py:  Add file_types, add some logic to match rpm verify.  Fix size
+	 calcs. when using prelink.
+
+2008-02-26  James Antill <james@and.org>
+
+	* yum/packages.py:  Don't read stderr, blocking is much easier this way ...    just
+	 hope we don't get too much stderr and block the other way.
+
+2008-02-26  James Antill <james@and.org>
+
+	* yum/packages.py:  Fix mode value.  Check mode and size.  Skip checks that don't make
+	 sense for dirs and links.
+
+2008-02-26  James Antill <james@and.org>
+
+	* yum/packages.py: Minor cleanup, drop prelink stderr
+
+2008-02-26  James Antill <james@and.org>
+
+	* yum/packages.py: Fix very checksum with prelink
+
+2008-02-25  James Antill <james@and.org>
+
+	* yum/__init__.py:  Do _var substitution for repos in the main yum.conf file.  Do repo
+	 name checking for repos in the main yum.conf file.  Don't allow
+	 repos called "main" even in yum.repos.d/*.repo files.
+
+2008-02-22  James Antill <james@and.org>
+
+	* yum/depsolve.py:  Add sourcerpm and common prefix length into deciding best pkg,
+	 solves installing totem-debuginfo giving you xmms-lirc instead of
+	 totem-lirc as a dep.
+
+2008-02-24  Seth Vidal <skvidal@fedoraproject.org>
+
+	* yum/comps.py: implement xml() method to comps, group and category
+	object - to dump back out what we just read in/merged.
+
+2008-02-23  Tim Lauridsen <tim@naboo.local>
+
+	* yum/__init__.py: added some unicode convertion to searchGenerator
+	to make sure that summary,description always are unicode, to avoid
+	to errors using search generator from a DBUS method, with summary
+	and description containing non ascii chars
+
+2008-02-22  James Antill <james@and.org>
+
+	* yum/depsolve.py: Do the right thing in compare_providers() when
+	nothing else is better
+
+2008-02-22  Seth Vidal <skvidal@fedoraproject.org>
+
+	* yum/depsolve.py, yum/packages.py: depsolve: make sure our
+	providers are obsolete-checked against one another packages: if the
+	the compared package is None then it is clear that these packages
+	are NOT EQUAL - return true
+
+2008-02-21  Seth Vidal <skvidal@fedoraproject.org>
+
+	* yum/packages.py: move where we do the stats for YumLocalPackages
+	so it doesn't get overwritten by the init call to YumHeaderPackage
+
+2008-02-21  Seth Vidal <skvidal@fedoraproject.org>
+
+	* yum/rpmtrans.py: this patch makes pretrans inside packages not
+	cause the transaction to explode thanks(?) to Bill Nottingham for
+	pointing it out.
+
+2008-02-20  Seth Vidal <skvidal@fedoraproject.org>
+
+	* utils.py: add a waitForLock to utils.py YumUtilsBase - let's a
+	yum-util easily use the yum timing thing.
+
+2008-02-18  Florian Festi <ffesti@redhat.com>
+
+	* yum/__init__.py: Fix traceback when we did not get a comps file
+
+2008-02-18  Florian Festi <ffesti@redhat.com>
+
+	* yum/depsolve.py: Fix copy/paste error
+
+2008-02-16  James Antill <james@and.org>
+
+	* test/transactiontests.py, yum/depsolve.py, yum/transactioninfo.py: 
+	Change relatedto to be actual packages, hopefully real fix for
+	bug#433047
+
+2008-02-16  James Antill <james@and.org>
+
+	* yum/depsolve.py: Run make check, and fall back to old behaviour
+
+2008-02-16  James Antill <james@and.org>
+
+	* yum/depsolve.py: Convert the pkgtup back into a po, bug#433047
+
+2008-02-16  James Antill <james@and.org>
+
+	* yum/__init__.py: Merge some duplicate code
+
+2008-02-16  Seth Vidal <skvidal@fedoraproject.org>
+
+	* yum/misc.py, yum/repos.py, yum/yumRepo.py: when we're running as a
+	user or using a set cachedir then we should attempt to make a copy
+	of anything we can from the systemwide cache dir. Essentially, we're
+	making an opportunistic grab of the md files which are on disk for
+	the yum-utils that can be run as a user
+
+2008-02-14  James Antill <james@and.org>
+
+	Merge branch 'master' of
+	ssh://login.linux.duke.edu/home/groups/yum/git/yum  * 'master' of
+	ssh://login.linux.duke.edu/home/groups/yum/git/yum:   set() is in
+	2.4 and 2.5 so no need to import sets  Conflicts:
+	yum/packageSack.py
+
+2008-02-14  James Antill <james@and.org>
+
+	* rpmUtils/transaction.py, yum/packageSack.py: set() is in 2.4 and
+	2.5 so no need to import sets
+
+2008-02-14  Seth Vidal <skvidal@fedoraproject.org>
+
+	* yum/packageSack.py: set() is in 2.4 and 2.5 so no need to import
+	sets
+
+2008-02-14  Seth Vidal <skvidal@fedoraproject.org>
+
+	* yum/packageSack.py: add a returnLeafNodes() to the packagesackbase
+	object
+
+2008-02-14  Florian Festi <ffesti@redhat.com>
+
+	* yum/transactioninfo.py: Use id() instead of hash() as it is
+	granted to be unique
+
+2007-11-28  Florian Festi <ffesti@redhat.com>
+
+	* yum/depsolve.py, yum/transactioninfo.py: Add
+	tsInfo.getUnresolvedMembers() and use if for depsolving Drop
+	tsInfo.removedmembers and DepCheck.already_seen*
+
+2008-02-13  Florian Festi <ffesti@redhat.com>
+
+	* test/depsolvetests.py, yum/depsolve.py: New processConflict
+	implementation
+
+2008-02-14  Florian Festi <ffesti@redhat.com>
+
+	* rpmUtils/updates.py, yum/__init__.py: Implement
+	Updates.delPackage() to remove skipped packages from Depsolve.up
+
+2008-02-13  Seth Vidal <skvidal@fedoraproject.org>
+
+	* cli.py: it's named probFilterFlags not problemFilterFlags :(
+
+2008-02-13  James Antill <james@and.org>
+
+	* yum/sqlitesack.py: Fix bracket typo
+
+2008-02-13  James Antill <james@and.org>
+
+	* yum/sqlitesack.py: Add check for filelists/primary pkgId
+	corruption before using filelists
+
+2008-02-13  James Antill <james@and.org>
+
+	* yum/sqlitesack.py: Cleanup __len__, and fix for multi repos per.
+	sack
+
+2008-02-13  James Antill <james@and.org>
+
+	* yum/sqlitesack.py: Minor cleanup using helper
+
+2008-02-13  James Antill <james@and.org>
+
+	* yum/sqlitesack.py: Add an SQL helper function to the
+	YumSqlitePackageSack
+
+2008-02-12  James Antill <james@and.org>
+
+	* yum/sqlitesack.py: Use the YumAvailablePackage SQL helper, minor
+	cleanup.
+
+2008-02-12  James Antill <james@and.org>
+
+	* yum/sqlitesack.py:  Add an SQL helper function to the YumAvailablePackage
+
+2008-02-13  Seth Vidal <skvidal@fedoraproject.org>
+
+	* yum/sqlitesack.py: apply pach from Fajar Nugraha. for rh bug:
+	431144
+
+2008-02-12  Florian Festi <ffesti@redhat.com>
+
+	* yum/depsolve.py: Use update() in _requiringFromInstalled() instead
+	of specialized code Ignore packages that already got removed
+
+2008-02-12  Tim Lauridsen <tim@naboo.local>
+
+	* po/ms.po: Added Malay translation by Sharuzzaman Ahmat Raslan
+
+2008-02-12  James Antill <james@and.org>
+
+	* yum/__init__.py, yum/packages.py: Fix double nevra package in
+	repo. excluding
+
+2008-02-12  Florian Festi <ffesti@redhat.com>
+
+	* test/simpleupdatetests.py: More update test cases:  Update
+	packages because an requirement got updated and does no longer
+	fullfill the requires
+
+2008-02-12  Tim Lauridsen <tla@rasmil.dk>
+
+	* po/nb.po: Updated Norwegian translation by Terje Røsten
+
+2008-02-12  Florian Festi <ffesti@redhat.com>
+
+	* yum/packageSack.py: Fix tiny but fatal typo
+
+2008-02-11  Tim Lauridsen <tim@naboo.local>
+
+	* po/de.po: Added german translation by Fabian Affolter
+
+2008-02-11  Seth Vidal <skvidal@fedoraproject.org>
+
+	* rpmUtils/arch.py: add patch from Masaki Chikama for Super-H
+	architecture support closes rh bug:  432261
+
+2008-02-11  Florian Festi <ffesti@redhat.com>
+
+	* yum/__init__.py: make _nevra_kwarg_parse a bit more forgiving when
+	version or release is 0 (int)
+
+2008-02-11  Florian Festi <ffesti@redhat.com>
+
+	* yum/__init__.py: Simplify _nevra_kwarg_parse()
+
+2008-02-10  Tim Lauridsen <tim@naboo.local>
+
+	* po/pt.po, po/pt_BR.po, pt.po: Added Brazilian Portuguese
+	translation by José Nuno Coelho Sanarra Pires
+
+2008-02-10  Tim Lauridsen <tim@naboo.local>
+
+	* pt.po: Added European Portuguese translation by José Nuno Coelho
+	Sanarra Pires
+
+2008-02-10  Tim Lauridsen <tim@naboo.local>
+
+	* po/pl.po: added polish translation by Piotr Drąg
+
+2008-02-09  Tim Lauridsen <tim@naboo.local>
+
+	* po/da.po: updated danish translation by Rasmus Ory Nielsen
+
+2008-02-09  James Antill <james@and.org>
+
+	* yum/sqlitesack.py: And fix the midnight commit but
+
+2008-02-08  James Antill <james@and.org>
+
+	* yum/sqlitesack.py: Remove more code, minor speed/clean up
+
+2008-02-08  James Antill <james@and.org>
+
+	* yum/sqlitesack.py: Remove code duplication
+
+2008-02-08  James Antill <james@and.org>
+
+	* yum/packages.py: Fix pkg.__cmp__ to use comparePoEVR()
+
+2008-02-08  James Antill <james@and.org>
+
+	* yum/__init__.py: Make exclude processing faster
+
+2008-02-08  Seth Vidal <skvidal@fedoraproject.org>
+
+	* ChangeLog: changelog merge
+
 2008-02-08  James Antill <james@and.org>
 
 	* bin/yum.py: Have user_mina() just call exit
