@@ -954,6 +954,7 @@ class Depsolve(object):
                     # we do this b/c it is possible for two entries to oscillate in this
                     # test - obsolete should trump no matter what
                     # NOTE: mutually obsoleting providers is completely and utterly doom
+                    # but this should 'break the loop'
                     for obs in bestpkg.obsoletes:
                         if po.inPrcoRange('provides', obs):
                             self.verbose_logger.log(logginglevels.DEBUG_4,
@@ -963,6 +964,14 @@ class Depsolve(object):
                        _("po %s obsoletes best: %s") %(po, bestpkg))
                             
                     return po
+
+            # just check if best obsoletes po
+            for obs in bestpkg.obsoletes:
+                if po.inPrcoRange('provides', obs):
+                    self.verbose_logger.log(logginglevels.DEBUG_4,
+                     _("best %s obsoletes po: %s") %(bestpkg, po))
+                    return bestpkg
+
                     
             if reqpo.arch != 'noarch':
                 best_dist = archDifference(reqpo.arch, bestpkg.arch)
