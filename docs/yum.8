@@ -183,6 +183,9 @@ Tells yum to run entirely from cache - does not download or update any
 headers unless it has to to perform the requested action.
 .IP "\fB\-\-version\fP" 
 Reports the \fByum\fP version number and exits.
+.IP "\fB\-\-showduplicates\fP" 
+Doesn't limit packages to their latest versions in the info, list and search
+commands (will also affect plugins which use the doPackageLists() API).
 .IP "\fB\-\-installroot=root\fP" 
 Specifies an alternative installroot, relative to which all packages will be
 installed.
