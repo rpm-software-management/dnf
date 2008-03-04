@@ -681,7 +681,7 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         # display the list of matches
             
         searchlist = ['name', 'summary', 'description', 'url']
-        matching = self.searchGenerator(searchlist, args, showdups=False)
+        matching = self.searchGenerator(searchlist, args, showdups=self.conf.showdupesfromrepos)
         
         total = 0
         for (po, matched_value) in matching:
@@ -1002,6 +1002,9 @@ class YumOptionParser(OptionParser):
             if opts.skipbroken:
                 self.base.conf.skip_broken = True
 
+            if opts.showdupesfromrepos:
+                self.base.conf.showdupesfromrepos = True
+
             if opts.disableexcludes:
                 disable_excludes = self._splitArg(opts.disableexcludes)
             else:
@@ -1087,6 +1090,9 @@ class YumOptionParser(OptionParser):
         self.add_option("-d", dest="debuglevel", default=None,
                 help=_("debugging output level"), type='int',
                 metavar=' [debug level]')
+        self.add_option("--showduplicates", dest="showdupesfromrepos",
+                        action="store_true",
+                help=_("show duplicates, in repos, in list/search commands"))
         self.add_option("-e", dest="errorlevel", default=None,
                 help=_("error output level"), type='int',
                 metavar=' [error level]')
