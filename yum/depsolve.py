@@ -938,59 +938,91 @@ class Depsolve(object):
             return x.sourcerpm == y.sourcerpm
 
         for po in pkgs:
+            self.verbose_logger.log(logginglevels.DEBUG_4,
+                _("Comparing best: %s to po: %s") %(bestpkg, po))
+
             if po == bestpkg: # if we're comparing the same one, skip it
+                self.verbose_logger.log(logginglevels.DEBUG_4,
+                     _("Same: best %s == po: %s") %(bestpkg, po))
+
                 continue
             # if best is obsoleted by any of the packages, then the obsoleter
             # is the new best    
             for obs in po.obsoletes:
                 if bestpkg.inPrcoRange('provides', obs):
+                    # make sure the best doesn't obsolete this po - if it does we're done
+                    # we do this b/c it is possible for two entries to oscillate in this
+                    # test - obsolete should trump no matter what
+                    # NOTE: mutually obsoleting providers is completely and utterly doom
+                    for obs in bestpkg.obsoletes:
+                        if po.inPrcoRange('provides', obs):
+                            self.verbose_logger.log(logginglevels.DEBUG_4,
+                             _("best %s obsoletes po: %s") %(bestpkg, po))
+                            return bestpkg
+                    self.verbose_logger.log(logginglevels.DEBUG_4,
+                       _("po %s obsoletes best: %s") %(po, bestpkg))
+                            
                     return po
-
-            # make sure the best doesn't obsolete this po - if it does we're done
-            # we do this b/c it is possible for two entries to oscillate in this
-            # test - obsolete should trump no matter what
-            # NOTE: mutually obsoleting providers is completely and utterly doom
-            for obs in bestpkg.obsoletes:
-                if po.inPrcoRange('provides', obs):
-                    return bestpkg
                     
             if reqpo.arch != 'noarch':
                 best_dist = archDifference(reqpo.arch, bestpkg.arch)
                 if isMultiLibArch(): # only go to the next one if we're multilib - i686 can satisfy i386 deps
                     if best_dist == 0: # can't really use best's arch anyway...
+                        self.verbose_logger.log(logginglevels.DEBUG_4,
+                            _("better arch in po %s") %(po))
                         return po # just try the next one - can't be much worse
 
             
                 po_dist = archDifference(reqpo.arch, po.arch)
                 if po_dist > 0 and best_dist > po_dist:
+                    self.verbose_logger.log(logginglevels.DEBUG_4,
+                           _("better arch in po %s") %(po))
+                    
                     return po
                     
                 if best_dist == po_dist:
                     if (not _common_sourcerpm(reqpo, bestpkg) and
                         _common_sourcerpm(reqpo, po)):
+                        self.verbose_logger.log(logginglevels.DEBUG_4,
+                            _("po %s shares a sourcerpm with %s") %(po, reqpo))
                         return po
+                        
                     cplp = _common_prefix_len(reqpo.name, po.name)
                     cplb = _common_prefix_len(reqpo.name, bestpkg.name)
                     if cplp > cplb:
+                        self.verbose_logger.log(logginglevels.DEBUG_4,
+                            _("po %s shares more of the name prefix with %s") %(po, reqpo))                    
                         return po
                     if cplp == cplb and len(po.name) < len(bestpkg.name):
+                        self.verbose_logger.log(logginglevels.DEBUG_4,
+                            _("po %s has a shorter name than best %s") %(po, bestpkg))                    
                         return po
                         
             elif (not _common_sourcerpm(reqpo, bestpkg) and
                   _common_sourcerpm(reqpo, po)):
+                self.verbose_logger.log(logginglevels.DEBUG_4,
+                       _("po %s shares a sourcerpm with %s") %(po, reqpo))
                 return po
             elif (_common_prefix_len(reqpo.name, po.name) >
                   _common_prefix_len(reqpo.name, bestpkg.name)):
+                self.verbose_logger.log(logginglevels.DEBUG_4,
+                  _("po %s shares more of the name prefix with %s") %(po, reqpo))                    
                 return po
             elif (_common_prefix_len(reqpo.name, po.name) <
                   _common_prefix_len(reqpo.name, bestpkg.name)):
+                self.verbose_logger.log(logginglevels.DEBUG_4,
+                  _("bestpkg %s shares more of the name prefix with %s") %(bestpkg, reqpo))
                 return bestpkg
             elif len(po.name) < len(bestpkg.name):
+                self.verbose_logger.log(logginglevels.DEBUG_4,
+                    _("po %s has a shorter name than best %s") %(po, bestpkg))                    
                 return po
             elif len(po.name) == len(bestpkg.name):
                 # compare arch
                 arch = rpmUtils.arch.getBestArchFromList([po.arch, bestpkg.arch])
                 if arch == po.arch:
+                    self.verbose_logger.log(logginglevels.DEBUG_4,
+                           _("better arch in po %s") %(po))
                     return po
 
         # Nothing else was better, so this is it
