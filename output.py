@@ -253,9 +253,16 @@ class YumOutput:
 
     def _outKeyValFill(self, key, val):
         """ Return a key value pair in the common two column output format. """
-        nxt = ' ' * (len(key) - 2) + ': '
-        return fill(val, width=self.term.columns,
-                    initial_indent=key, subsequent_indent=nxt)
+        keylen = len(key)
+        cols = self.term.columns
+        nxt = ' ' * (keylen - 2) + ': '
+        ret = fill(val, width=cols,
+                   initial_indent=key, subsequent_indent=nxt)
+        if ret.count("\n") > 1 and keylen > (cols / 3):
+            # If it's big, redo it again with a smaller subsequent off
+            ret = fill(val, width=cols,
+                       initial_indent=key, subsequent_indent='     ...: ')
+        return ret
     
     def infoOutput(self, pkg):
         def enc(s):
@@ -427,7 +434,10 @@ class YumOutput:
         return(format % (number, space, symbols[depth]))
 
     def matchcallback(self, po, values, matchfor=None):
-        msg = '%s.%s : ' % (po.name, po.arch)
+        if self.conf.showdupesfromrepos:
+            msg = '%s : ' % po
+        else:
+            msg = '%s.%s : ' % (po.name, po.arch)
         msg = self._outKeyValFill(msg, po.summary)
         if matchfor:
             msg = self.term.sub_bold(msg, matchfor)
