@@ -276,6 +276,7 @@ class YumOutput:
                     if t != s:
                         s = t
                         break
+            s = unicode(s, "UTF-8")
             return s
         print _("Name       : %s") % pkg.name
         print _("Arch       : %s") % pkg.arch
