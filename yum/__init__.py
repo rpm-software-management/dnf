@@ -870,7 +870,7 @@ class YumBase(depsolve.Depsolve):
         if len(includelist) == 0:
             return
         
-        pkglist = self.pkgSack.returnPackages(repo.id, patterns=includelist)
+        pkglist = self.pkgSack.returnPackages(repo.id)
         exactmatch, matched, unmatched = \
            parsePackages(pkglist, includelist, casematch=1)
         
