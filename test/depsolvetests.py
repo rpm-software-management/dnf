@@ -514,3 +514,75 @@ class DepsolveTests(DepsolveTests):
 
         self.assertEquals('ok', *self.resolveCode())
         self.assertResult(())
+
+    def _setup_FakeMultilibReqs(self):
+        po = FakePackage('abcd', '1', '0', '0', 'x86_64')
+        po.addRequires('libxyz-1.so.0(64bit)', None, (None, None, None))
+        po.addRequires('libxyz-1.so.0', None, (None, None, None))
+        po.addRequires('libxyz-1.so.0(XYZ_1.1)(64bit)', None, (None,None,None))
+        po.addRequires('libxyz-1.so.0(XYZ_1.2)(64bit)', None, (None,None,None))
+        self.tsInfo.addInstall(po)
+
+        xpo1 = FakePackage('libxyz', '1', '1', '0', 'x86_64')
+        xpo1.addProvides('libxyz-1.so.0(64bit)', None,(None,None,None))
+        xpo1.addProvides('libxyz-1.so.0(XYZ_1.1)(64bit)', None,(None,None,None))
+        self.xsack.addPackage(xpo1)
+        ipo1 = FakePackage('libxyz', '1', '1', '0', 'i386')
+        ipo1.addProvides('libxyz-1.so.0', None,(None,None,None))
+        ipo1.addProvides('libxyz-1.so.0(XYZ_1.1)', None,(None,None,None))
+        self.xsack.addPackage(ipo1)
+        xpo2 = FakePackage('libxyz', '1', '2', '0', 'x86_64')
+        xpo2.addProvides('libxyz-1.so.0(64bit)', None,(None,None,None))
+        xpo2.addProvides('libxyz-1.so.0(XYZ_1.1)(64bit)', None,(None,None,None))
+        xpo2.addProvides('libxyz-1.so.0(XYZ_1.2)(64bit)', None,(None,None,None))
+        self.xsack.addPackage(xpo2)
+        ipo2 = FakePackage('libxyz', '1', '2', '0', 'i386')
+        ipo2.addProvides('libxyz-1.so.0', None,(None,None,None))
+        ipo2.addProvides('libxyz-1.so.0(XYZ_1.1)', None,(None,None,None))
+        ipo2.addProvides('libxyz-1.so.0(XYZ_1.2)', None,(None,None,None))
+        self.xsack.addPackage(ipo2)
+
+        return (po, xpo1, xpo2, ipo1, ipo2)
+
+    def testFakeMultilibReqsInstall(self):
+        (po, xpo1, xpo2, ipo1, ipo2) = self._setup_FakeMultilibReqs()
+
+        self.assertEquals('ok', *self.resolveCode())
+        self.assertResult((po, xpo2, ipo2))
+
+    def testFakeMultilibReqsUpdate1a(self):
+        (po, xpo1, xpo2, ipo1, ipo2) = self._setup_FakeMultilibReqs()
+        self.rpmdb.addPackage(xpo1)
+
+        self.assertEquals('ok', *self.resolveCode())
+        # FIXME: This should be:
+        # self.assertResult((po, xpo2, ipo2))
+        # ...but we process the 32bit dep. first, which brings in the 64 variant
+        # which, because something was added, makes us think we worked.
+        self.assertResult((po, xpo2))
+
+    def testFakeMultilibReqsUpdate1b(self):
+        (po, xpo1, xpo2, ipo1, ipo2) = self._setup_FakeMultilibReqs()
+        self.rpmdb.addPackage(xpo1)
+        # This doesn't suffer from the testFakeMultilibReqsUpdate1a()
+        # problem because we have 2 32bit deps. ... and so the second one
+        # wins.
+        po.addRequires('libxyz-1.so.0(XYZ_1.1)', None, (None, None, None))
+
+        self.assertEquals('ok', *self.resolveCode())
+        self.assertResult((po, xpo2, ipo2))
+
+    def testFakeMultilibReqsUpdate2(self):
+        (po, xpo1, xpo2, ipo1, ipo2) = self._setup_FakeMultilibReqs()
+        self.rpmdb.addPackage(ipo1)
+
+        self.assertEquals('ok', *self.resolveCode())
+        self.assertResult((po, xpo2, ipo2))
+
+    def testFakeMultilibReqsUpdate3(self):
+        (po, xpo1, xpo2, ipo1, ipo2) = self._setup_FakeMultilibReqs()
+        self.rpmdb.addPackage(xpo1)
+        self.rpmdb.addPackage(ipo1)
+
+        self.assertEquals('ok', *self.resolveCode())
+        self.assertResult((po, xpo2, ipo2))

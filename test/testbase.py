@@ -46,7 +46,9 @@ class FakePackage(packages.YumAvailablePackage):
     def __init__(self, name, version='1.0', release='1', epoch='0', arch='noarch', repo=None):
         if repo is None:
             repo = FakeRepo()
-            print "creating empty repo for %s " % name
+            print "creating empty repo for %s-%s:%s-%s.%s " % (name, epoch,
+                                                               version, release,
+                                                               arch)
         packages.YumAvailablePackage.__init__(self, repo)
 
         self.name = name
