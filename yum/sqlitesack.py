@@ -1020,15 +1020,17 @@ where name %(op)s '%(q)s'
    or name || '-' || epoch || ':' || version || '-' || release || '.' || arch %(op)s '%(q)s'
 """
 
-# This is roughly the same as above, and used by _buildPkgObjList()
+# This is roughly the same as above, and used by _buildPkgObjList().
+#  Use " to quote because we using ? ... and sqlutils.QmarkToPyformat gets
+# confused.
 _FULL_PARSE_QUERY_BEG = """
 SELECT pkgId,pkgKey,name,epoch,version,release,arch,
-  name || '.' || arch AS sql_nameArch,
-  name || '-' || version || '-' || release || '.' || arch AS sql_nameVerRelArch,
-  name || '-' || version AS sql_nameVer,
-  name || '-' || version || '-' || release AS sql_nameVerRel,
-  epoch || ':' || name || '-' || version || '-' || release || '.' || arch AS sql_envra,
-  name || '-' || epoch || ':' || version || '-' || release || '.' || arch AS sql_nevra
+  name || "." || arch AS sql_nameArch,
+  name || "-" || version || "-" || release || "." || arch AS sql_nameVerRelArch,
+  name || "-" || version AS sql_nameVer,
+  name || "-" || version || "-" || release AS sql_nameVerRel,
+  epoch || ":" || name || "-" || version || "-" || release || "." || arch AS sql_envra,
+  name || "-" || epoch || ":" || version || "-" || release || "." || arch AS sql_nevra
   FROM packages
   WHERE
 """

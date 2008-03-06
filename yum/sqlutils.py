@@ -143,7 +143,9 @@ def executeSQLPyFormat(cursor, query, params=None):
     """
     if params is None:
         return cursor.execute(query)
-    
+
+    # Leading whitespace confuses QmarkToPyformat()
+    query = query.strip()
     (q, p) = QmarkToPyformat(query, params)
     return cursor.execute(q, p)
 
