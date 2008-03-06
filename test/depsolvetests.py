@@ -586,3 +586,135 @@ class DepsolveTests(DepsolveTests):
 
         self.assertEquals('ok', *self.resolveCode())
         self.assertResult((po, xpo2, ipo2))
+
+    def _setup_CompareProviders(self, name="libbar", arch="x86_64"):
+        po = FakePackage('abcd', arch=arch)
+        po.addRequires('libxyz-1.so.0(64bit)', None, (None, None, None))
+        self.tsInfo.addInstall(po)
+
+        po1 = FakePackage('libfoo', arch=arch)
+        po1.addProvides('libxyz-1.so.0(64bit)', None,(None,None,None))
+        self.xsack.addPackage(po1)
+        po2 = FakePackage(name, arch=arch)
+        po2.addProvides('libxyz-1.so.0(64bit)', None,(None,None,None))
+        self.xsack.addPackage(po2)
+        return (po, po1, po2)
+
+    def testCompareProviersSameLen1_64(self):
+        (po, po1, po2) = self._setup_CompareProviders()
+
+        self.assertEquals('ok', *self.resolveCode())
+        self.assertResult((po, po1))
+
+    def testCompareProviersSameLen1_noarch(self):
+        (po, po1, po2) = self._setup_CompareProviders(arch='noarch')
+
+        self.assertEquals('ok', *self.resolveCode())
+        self.assertResult((po, po1))
+
+    def testCompareProviersSameLen2_64(self):
+        # Make sure they are still ok, the other way around
+        po = FakePackage('abcd', arch='x86_64')
+        po.addRequires('libxyz-1.so.0(64bit)', None, (None, None, None))
+        self.tsInfo.addInstall(po)
+
+        po2 = FakePackage('libbar', arch='x86_64')
+        po2.addProvides('libxyz-1.so.0(64bit)', None,(None,None,None))
+        self.xsack.addPackage(po2)
+        po1 = FakePackage('libfoo', arch='x86_64')
+        po1.addProvides('libxyz-1.so.0(64bit)', None,(None,None,None))
+        self.xsack.addPackage(po1)
+
+        self.assertEquals('ok', *self.resolveCode())
+        self.assertResult((po, po1))
+
+    def testCompareProviersSameLen2_noarch(self):
+        # Make sure they are still ok, the other way around
+        po = FakePackage('abcd', arch='noarch')
+        po.addRequires('libxyz-1.so.0', None, (None, None, None))
+        self.tsInfo.addInstall(po)
+
+        po2 = FakePackage('libbar', arch='noarch')
+        po2.addProvides('libxyz-1.so.0', None,(None,None,None))
+        self.xsack.addPackage(po2)
+        po1 = FakePackage('libfoo', arch='noarch')
+        po1.addProvides('libxyz-1.so.0', None,(None,None,None))
+        self.xsack.addPackage(po1)
+
+        self.assertEquals('ok', *self.resolveCode())
+        self.assertResult((po, po1))
+
+    def testCompareProviersSameLen2_noarch_to_64_1(self):
+        # Make sure they are still ok, the other way around
+        po = FakePackage('abcd', arch='noarch')
+        po.addRequires('libxyz-1.so.0', None, (None, None, None))
+        self.tsInfo.addInstall(po)
+
+        po2 = FakePackage('libbar', arch='i386')
+        po2.addProvides('libxyz-1.so.0', None,(None,None,None))
+        self.xsack.addPackage(po2)
+        po1 = FakePackage('libfoo', arch='x86_64')
+        po1.addProvides('libxyz-1.so.0', None,(None,None,None))
+        self.xsack.addPackage(po1)
+
+        self.assertEquals('ok', *self.resolveCode())
+        self.assertResult((po, po1))
+
+    def testCompareProviersSameLen2_noarch_to_64_2(self):
+        # Make sure they are still ok, the other way around
+        po = FakePackage('abcd', arch='noarch')
+        po.addRequires('libxyz-1.so.0', None, (None, None, None))
+        self.tsInfo.addInstall(po)
+
+        po2 = FakePackage('libbar', arch='x86_64')
+        po2.addProvides('libxyz-1.so.0', None,(None,None,None))
+        self.xsack.addPackage(po2)
+        po1 = FakePackage('libfoo', arch='i386')
+        po1.addProvides('libxyz-1.so.0', None,(None,None,None))
+        self.xsack.addPackage(po1)
+
+        self.assertEquals('ok', *self.resolveCode())
+        self.assertResult((po, po2))
+
+    def testCompareProviersDiffLen_64(self):
+        (po, po1, po2) = self._setup_CompareProviders(name='libbarf')
+
+        self.assertEquals('ok', *self.resolveCode())
+        self.assertResult((po, po1))
+
+    def testCompareProviersDiffLen_noarch(self):
+        (po, po1, po2) = self._setup_CompareProviders(name='libbarf',
+                                                      arch='noarch')
+
+        self.assertEquals('ok', *self.resolveCode())
+        self.assertResult((po, po1))
+
+    def testCompareProviersSrcRpm_64(self):
+        (po, po1, po2) = self._setup_CompareProviders(name='libbarf')
+        po.sourcerpm  = "abcd.src.rpm"
+        po2.sourcerpm = "abcd.src.rpm"
+
+        self.assertEquals('ok', *self.resolveCode())
+        self.assertResult((po, po2))
+
+    def testCompareProviersSrcRpm_noarch(self):
+        (po, po1, po2) = self._setup_CompareProviders(name='libbarf',
+                                                      arch='noarch')
+        po.sourcerpm  = "abcd.src.rpm"
+        po2.sourcerpm = "abcd.src.rpm"
+
+        self.assertEquals('ok', *self.resolveCode())
+        self.assertResult((po, po2))
+
+    def testCompareProviersPrefix_64(self):
+        (po, po1, po2) = self._setup_CompareProviders(name='abcd-libbarf')
+
+        self.assertEquals('ok', *self.resolveCode())
+        self.assertResult((po, po2))
+
+    def testCompareProviersPrefix_noarch(self):
+        (po, po1, po2) = self._setup_CompareProviders(name='abcd-libbarf',
+                                                      arch='noarch')
+
+        self.assertEquals('ok', *self.resolveCode())
+        self.assertResult((po, po2))

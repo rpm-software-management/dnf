@@ -990,11 +990,16 @@ class Depsolve(object):
                     return po
                     
                 if best_dist == po_dist:
-                    if (not _common_sourcerpm(reqpo, bestpkg) and
-                        _common_sourcerpm(reqpo, po)):
+                    csp = _common_sourcerpm(reqpo, po)
+                    csb = _common_sourcerpm(reqpo, bestpkg)
+                    if not csb and csp:
                         self.verbose_logger.log(logginglevels.DEBUG_4,
-                            _("po %s shares a sourcerpm with %s") %(po, reqpo))
+                      _("po %s shares a sourcerpm with %s") %(po, reqpo))
                         return po
+                    if csb and not csp:
+                        self.verbose_logger.log(logginglevels.DEBUG_4,
+                      _("best %s shares a sourcerpm with %s") %(bestpkg, reqpo))
+                        return bestpkg
                         
                     cplp = _common_prefix_len(reqpo.name, po.name)
                     cplb = _common_prefix_len(reqpo.name, bestpkg.name)
@@ -1006,12 +1011,18 @@ class Depsolve(object):
                         self.verbose_logger.log(logginglevels.DEBUG_4,
                             _("po %s has a shorter name than best %s") %(po, bestpkg))                    
                         return po
-                        
+
+            # reqpo.arch == "noarch"
             elif (not _common_sourcerpm(reqpo, bestpkg) and
                   _common_sourcerpm(reqpo, po)):
                 self.verbose_logger.log(logginglevels.DEBUG_4,
                        _("po %s shares a sourcerpm with %s") %(po, reqpo))
                 return po
+            elif (_common_sourcerpm(reqpo, bestpkg) and
+                  not _common_sourcerpm(reqpo, po)):
+                self.verbose_logger.log(logginglevels.DEBUG_4,
+                       _("best %s shares a sourcerpm with %s") %(bestpkg,reqpo))
+                return bestpkg
             elif (_common_prefix_len(reqpo.name, po.name) >
                   _common_prefix_len(reqpo.name, bestpkg.name)):
                 self.verbose_logger.log(logginglevels.DEBUG_4,
@@ -1029,7 +1040,7 @@ class Depsolve(object):
             elif len(po.name) == len(bestpkg.name):
                 # compare arch
                 arch = rpmUtils.arch.getBestArchFromList([po.arch, bestpkg.arch])
-                if arch == po.arch:
+                if arch == po.arch and arch != bestpkg.arch:
                     self.verbose_logger.log(logginglevels.DEBUG_4,
                            _("better arch in po %s") %(po))
                     return po
