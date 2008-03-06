@@ -20,7 +20,7 @@ Requires: yum-metadata-parser >= 1.1.0
 Requires: python-iniparse
 Requires: pygpgme
 Prereq: /sbin/chkconfig, /sbin/service, coreutils
-
+Conflicts: yum-skip-broken
 
 %description
 Yum is a utility that can check for and automatically download and
