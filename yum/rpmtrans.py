@@ -155,6 +155,8 @@ class RPMTransaction:
         self.filelog = False
 
         self._setupOutputLogging()
+        if not os.path.exists(self.base.conf.persistdir):
+            os.makedirs(self.base.conf.persistdir) # make the dir, just in case
 
     def _setupOutputLogging(self):
         # UGLY... set up the transaction to record output from scriptlets
@@ -285,11 +287,6 @@ class RPMTransaction:
         tsfn = '%s/transaction-all.%s' % (self.base.conf.persistdir, self._ts_time)
         self.ts_all_fn = tsfn
         try:
-            # fixme - we should probably be making this elsewhere but I'd
-            # rather that the transaction not fail so we do it here, anyway
-            if not os.path.exists(self.base.conf.persistdir):
-                os.makedirs(self.base.conf.persistdir) # make the dir, just in case
-            
             fo = open(tsfn, 'w')
         except (IOError, OSError), e:
             self.display.errorlog('could not open ts_all file: %s' % e)
