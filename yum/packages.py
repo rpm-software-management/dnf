@@ -615,6 +615,9 @@ class YumAvailablePackage(PackageObject, RpmBase):
         """return a list of requires in normal rpm format"""
         return self.requires_print
 
+    def returnChecksums(self):
+        return [(self.checksum_type, self.pkgId, 1)]
+        
     def importFromDict(self, pkgdict):
         """handles an mdCache package dictionary item to populate out 
            the package information"""
@@ -836,6 +839,9 @@ class YumHeaderPackage(YumAvailablePackage):
                        self.hdr['changelogtext'])
         return []
 
+    def returnChecksums(self):
+        raise NotImplementedError()
+        
 class _CountedReadFile:
     """ Has just a read() method, and keeps a count so we can find out how much
         has been read. Implemented so we can get the real size of the file from
