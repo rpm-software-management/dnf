@@ -286,12 +286,13 @@ class RPMTransaction:
         self._ts_time = time.strftime('%Y-%m-%d.%H:%M.%S')
         tsfn = '%s/transaction-all.%s' % (self.base.conf.persistdir, self._ts_time)
         self.ts_all_fn = tsfn
+        if not os.path.exists(self.base.conf.persistdir):
+            os.makedirs(self.base.conf.persistdir) # make the dir,
         try:
             fo = open(tsfn, 'w')
         except (IOError, OSError), e:
             self.display.errorlog('could not open ts_all file: %s' % e)
             return
-        
 
         for (t,e,n,v,r,a) in self._te_tuples:
             msg = "%s %s:%s-%s-%s.%s\n" % (t,e,n,v,r,a)
