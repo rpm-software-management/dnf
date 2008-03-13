@@ -2159,7 +2159,15 @@ class YumBase(depsolve.Depsolve):
                     self.verbose_logger.warning(_('Package %s already installed and latest version'), po)
                     continue
 
-            
+            # make sure we don't have a name.arch of this already installed
+            # if so pass it to update b/c it should be able to figure it out
+            if self.rpmdb.contains(name=po.name, arch=po.arch) and not self.allowedMultipleInstalls(po):
+                if not self.tsInfo.getMembersWithState(po.pkgtup, TS_REMOVE_STATES):
+                    self.verbose_logger.warning(_('Package matching %s already installed. Checking for update.'), po)            
+                    txmbrs = self.update(po=po)
+                    tx_return.extend(txmbrs)
+                    continue
+
             # make sure we're not installing a package which is obsoleted by something
             # else in the repo
             thispkgobsdict = self.up.checkForObsolete([po.pkgtup])
