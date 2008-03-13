@@ -336,7 +336,7 @@ class YumOutput:
 
         while True:
             try:
-                choice = raw_input(_('Is this ok [y/N]: '))
+                choice = raw_input(_('Is this ok [y/N]: ').encode("utf-8"))
             except UnicodeEncodeError:
                 raise
             except:
