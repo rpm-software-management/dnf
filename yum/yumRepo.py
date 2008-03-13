@@ -380,7 +380,12 @@ class YumRepository(Repository, config.RepoConf):
                 proxy_parsed = urlparse.urlsplit(self.proxy, allow_fragments=0)
                 proxy_proto = proxy_parsed[0]
                 proxy_host = proxy_parsed[1]
-                proxy_rest = proxy_parsed[2] + '?' + proxy_parsed[3]
+                # http://foo:123 == ('http', 'foo:123', '', '', '')
+                # don't turn that into: http://foo:123? - bug#328121
+                if proxy_parsed[2] == '':
+                    proxy_rest = ''
+                else:
+                    proxy_rest = proxy_parsed[2] + '?' + proxy_parsed[3]
                 proxy_string = '%s://%s@%s%s' % (proxy_proto,
                         self.proxy_username, proxy_host, proxy_rest)
 
@@ -1238,7 +1243,11 @@ class YumRepository(Repository, config.RepoConf):
                 fo = None
         
         if fo is not None:
-            content = fo.readlines()
+            try:
+                content = fo.readlines()
+            except Exception, e:
+                print "Could not read mirrorlist %s error was \n%s" %(url, e)
+                content = ""
             for line in content:
                 if re.match('^\s*\#.*', line) or re.match('^\s*$', line):
                     continue
