@@ -2304,6 +2304,23 @@ class YumBase(depsolve.Depsolve):
                         if requiringPo:
                             txmbr.setAsDep(requiringPo)
                         tx_return.append(txmbr)
+
+                # check to see if the pkg we want to install is not _quite_ the newest
+                # one but still technically an update over what is installed.
+                #FIXME - potentially do the comparables thing from what used to
+                #        be in cli.installPkgs() to see what we should be comparing
+                #        it to of what is installed. in the meantime name.arch is
+                #        most likely correct
+
+                pot_updated = self.rpmdb.searchNevra(name=available_pkg.name, arch=available_pkg.arch)
+                for ipkg in pot_updated:
+                    if ipkg.EVR < available_pkg.EVR:
+                        txmbr = self.tsInfo.addUpdate(available_pkg, ipkg)
+                        if requiringPo:
+                            txmbr.setAsDep(requiringPo)
+                        tx_return.append(txmbr)
+                                             
+                 
             for installed_pkg in instpkgs:
                 for updating in self.up.updatesdict.get(installed_pkg.pkgtup, []):
                     updating_pkg = self.getPackageObject(updating)
