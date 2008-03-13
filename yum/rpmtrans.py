@@ -222,11 +222,11 @@ class RPMTransaction:
         # make sure the package and the action make some kind of sense
         # write it out and pop(0) from the list
         
-        # make sure we have a list to work from - rpm seems to be throwing us
-        # some curveballs
+        # make sure we have a list to work from
         if len(self._te_tuples) == 0:
-            msg = 'extra callback for package %s in state %d' % (package, action)
-            self.display.filelog(package, msg)
+            # if we don't then this is pretrans or postrans or a trigger
+            # either way we have to respond correctly so just return and don't
+            # emit anything
             return
 
         (t,e,n,v,r,a) = self._te_tuples[0] # what we should be on
