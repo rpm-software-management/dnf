@@ -1243,7 +1243,11 @@ class YumRepository(Repository, config.RepoConf):
                 fo = None
         
         if fo is not None:
-            content = fo.readlines()
+            try:
+                content = fo.readlines()
+            except Exception, e:
+                print "Could not read mirrorlist %s error was \n%s" %(url, e)
+                content = ""
             for line in content:
                 if re.match('^\s*\#.*', line) or re.match('^\s*$', line):
                     continue
