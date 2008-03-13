@@ -555,11 +555,7 @@ class DepsolveTests(DepsolveTests):
         self.rpmdb.addPackage(xpo1)
 
         self.assertEquals('ok', *self.resolveCode())
-        # FIXME: This should be:
-        # self.assertResult((po, xpo2, ipo2))
-        # ...but we process the 32bit dep. first, which brings in the 64 variant
-        # which, because something was added, makes us think we worked.
-        self.assertResult((po, xpo2))
+        self.assertResult((po, xpo2, ipo2))
 
     def testFakeMultilibReqsUpdate1b(self):
         (po, xpo1, xpo2, ipo1, ipo2) = self._setup_FakeMultilibReqs()

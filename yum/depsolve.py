@@ -495,10 +495,13 @@ class Depsolve(object):
         # try updating the already install pkgs
         length = len(self.tsInfo)
         for pkg in provSack.returnNewestByName():
-            self.update(requiringPo=requiringPo, name=pkg.name, epoch=pkg.epoch, version=pkg.version, rel=pkg.rel)
-            if len(self.tsInfo) != length:
-                checkdeps = True
-                return checkdeps, missingdep
+            results = self.update(requiringPo=requiringPo, name=pkg.name,
+                                  epoch=pkg.epoch, version=pkg.version,
+                                  rel=pkg.rel)
+            for txmbr in results:
+                if pkg == txmbr.po:
+                    checkdeps = True
+                    return checkdeps, missingdep
 
         # find out which arch of the ones we can choose from is closest
         # to the arch of the requesting pkg
