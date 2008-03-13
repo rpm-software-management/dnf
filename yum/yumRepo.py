@@ -380,7 +380,12 @@ class YumRepository(Repository, config.RepoConf):
                 proxy_parsed = urlparse.urlsplit(self.proxy, allow_fragments=0)
                 proxy_proto = proxy_parsed[0]
                 proxy_host = proxy_parsed[1]
-                proxy_rest = proxy_parsed[2] + '?' + proxy_parsed[3]
+                # http://foo:123 == ('http', 'foo:123', '', '', '')
+                # don't turn that into: http://foo:123? - bug#328121
+                if proxy_parsed[2] == '':
+                    proxy_rest = ''
+                else:
+                    proxy_rest = proxy_parsed[2] + '?' + proxy_parsed[3]
                 proxy_string = '%s://%s@%s%s' % (proxy_proto,
                         self.proxy_username, proxy_host, proxy_rest)
 
