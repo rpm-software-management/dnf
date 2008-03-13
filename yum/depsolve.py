@@ -124,6 +124,7 @@ class Depsolve(object):
                             'notriggers': rpm.RPMTRANS_FLAG_NOTRIGGERS,
                             'nodocs': rpm.RPMTRANS_FLAG_NODOCS,
                             'test': rpm.RPMTRANS_FLAG_TEST,
+                            'justdb': rpm.RPMTRANS_FLAG_JUSTDB,
                             'repackage': rpm.RPMTRANS_FLAG_REPACKAGE}
         
         self._ts.setFlags(0) # reset everything.
