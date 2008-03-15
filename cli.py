@@ -681,14 +681,26 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         # display the list of matches
             
         searchlist = ['name', 'summary', 'description', 'url']
-        matching = self.searchGenerator(searchlist, args, showdups=self.conf.showdupesfromrepos)
+        dups = self.conf.showdupesfromrepos
+        matching = self.searchGenerator(searchlist, args,
+                                        showdups=dups, keys=True)
         
-        total = 0
-        for (po, matched_value) in matching:
+        okeys = set()
+        akeys = set()
+        for (po, keys, matched_value) in matching:
+            if keys != okeys:
+                if akeys:
+                    print ""
+                print self.fmtSection("Matched: " + ", ".join(sorted(keys)))
+                okeys = keys
+                akeys.update(keys)
             self.matchcallback(po, matched_value, args)
-            total += 1
-            
-        if total == 0:
+
+        for arg in args:
+            if arg not in akeys:
+                self.logger.warning(_('Warning: No matches found for: %s'), arg)
+
+        if not akeys:
             return 0, [_('No Matches found')]
         return 0, matching
 

@@ -1440,9 +1440,11 @@ class YumBase(depsolve.Depsolve):
         return results
     
     # pre 3.2.10 API used to always showdups, so that's the default atm.
-    def searchGenerator(self, fields, criteria, showdups=True):
+    def searchGenerator(self, fields, criteria, showdups=True, keys=False):
         """Generator method to lighten memory load for some searches.
-           This is the preferred search function to use."""
+           This is the preferred search function to use. Setting keys to True
+           will use the search keys that matched in the sorting, and return
+           the search keys in the results. """
         sql_fields = []
         for f in fields:
             if RPM_TO_SQLITE.has_key(f):
@@ -1460,9 +1462,11 @@ class YumBase(depsolve.Depsolve):
             if s.find('%') == -1:
                 real_crit.append(s)
         real_crit_lower = [] # Take the s.lower()'s out of the loop
+        rcl2c = {}
         for s in criteria:
             if s.find('%') == -1:
                 real_crit_lower.append(s.lower())
+                rcl2c[s.lower()] = s
 
         for sack in self.pkgSack.sacks.values():
             tmpres.extend(sack.searchPrimaryFieldsMultipleStrings(sql_fields, real_crit))
@@ -1470,6 +1474,7 @@ class YumBase(depsolve.Depsolve):
         for (po, count) in tmpres:
             # check the pkg for sanity
             # pop it into the sorted lists
+            tmpkeys   = set()
             tmpvalues = []
             if count not in sorted_lists: sorted_lists[count] = []
             for s in real_crit_lower:
@@ -1477,13 +1482,13 @@ class YumBase(depsolve.Depsolve):
                     value = getattr(po, field)
                     if value and value.lower().find(s) != -1:
                         tmpvalues.append(value)
+                        tmpkeys.add(rcl2c[s])
 
             if len(tmpvalues) > 0:
-                sorted_lists[count].append((po, tmpvalues))
-
-            
+                sorted_lists[count].append((po, tmpkeys, tmpvalues))
         
         for po in self.rpmdb:
+            tmpkeys   = set()
             tmpvalues = []
             criteria_matched = 0
             for s in real_crit_lower:
@@ -1499,23 +1504,33 @@ class YumBase(depsolve.Depsolve):
                             matched_s = True
                         
                         tmpvalues.append(value)
-
+                        tmpkeys.add(rcl2c[s])
 
             if len(tmpvalues) > 0:
                 if criteria_matched not in sorted_lists: sorted_lists[criteria_matched] = []
-                sorted_lists[criteria_matched].append((po, tmpvalues))
-                
+                sorted_lists[criteria_matched].append((po, tmpkeys, tmpvalues))
 
-        # close our rpmdb connection so we can ctrl-c, kthxbai                    
+        # close our rpmdb connection so we can ctrl-c, kthxbai
         self.closeRpmDB()
-        
+
+        # By default just sort using package sorting
+        sort_func = operator.itemgetter(0)
+        if keys:
+            # Take into account the keys found, as well
+            sort_func = lambda x: "%s%s" % ("\0".join(sorted(x[1])), str(x[0]))
         yielded = {}
         for val in reversed(sorted(sorted_lists)):
-            for (po, matched) in sorted(sorted_lists[val], key=operator.itemgetter(0)):
-                if (po.name, po.arch) not in yielded:
-                    yield (po, matched)
-                    if not showdups:
-                        yielded[(po.name, po.arch)] = 1
+            for (po, ks, vs) in sorted(sorted_lists[val], key=sort_func):
+                if not showdups and (po.name, po.arch) in yielded:
+                    continue
+
+                if keys:
+                    yield (po, ks, vs)
+                else:
+                    yield (po, vs)
+
+                if not showdups:
+                    yielded[(po.name, po.arch)] = 1
 
 
     def searchPackages(self, fields, criteria, callback=None):

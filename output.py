@@ -251,7 +251,7 @@ class YumOutput:
         print "%-40.40s %-22.22s %-16.16s" % (na, ver, pkg.repoid)
 
 
-    def _outKeyValFill(self, key, val):
+    def fmtKeyValFill(self, key, val):
         """ Return a key value pair in the common two column output format. """
         keylen = len(key)
         cols = self.term.columns
@@ -264,6 +264,18 @@ class YumOutput:
                        initial_indent=key, subsequent_indent='     ...: ')
         return ret
     
+    def fmtSection(self, name, fill='='):
+        name = str(name)
+        cols = self.term.columns - 2
+        name_len = len(name)
+        if name_len >= (cols - 4):
+            beg = end = fill * 2
+        else:
+            beg = fill * ((cols - name_len) / 2)
+            end = fill * (cols - name_len - len(beg))
+
+        return "%s %s %s" % (beg, name, end)
+
     def infoOutput(self, pkg):
         def enc(s):
             """Get the translated version from specspo and ensure that
@@ -288,11 +300,11 @@ class YumOutput:
         print _("Repo       : %s") % pkg.repoid
         if self.verbose_logger.isEnabledFor(logginglevels.DEBUG_3):
             print _("Committer  : %s") % pkg.committer
-        print self._outKeyValFill(_("Summary    : "), enc(pkg.summary))
+        print self.fmtKeyValFill(_("Summary    : "), enc(pkg.summary))
         if pkg.url:
             print _("URL        : %s") % pkg.url
         print _("License    : %s") % pkg.license
-        print self._outKeyValFill(_("Description: "), enc(pkg.description))
+        print self.fmtKeyValFill(_("Description: "), enc(pkg.description))
         print ""
     
     def updatesObsoletesList(self, uotup, changetype):
@@ -441,7 +453,7 @@ class YumOutput:
             msg = '%s : ' % po
         else:
             msg = '%s.%s : ' % (po.name, po.arch)
-        msg = self._outKeyValFill(msg, po.summary)
+        msg = self.fmtKeyValFill(msg, po.summary)
         if matchfor:
             msg = self.term.sub_bold(msg, matchfor)
         
