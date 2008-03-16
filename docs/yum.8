@@ -63,6 +63,8 @@ gnome\-packagekit application\&.
 .br
 .I \fR * repolist [all|enabled|disabled] 
 .br
+.I \fR * help [command] 
+.br
 .PP 
 Unless the \-\-help or \-h option is given, one of the above commands
 must be present\&.
@@ -91,8 +93,8 @@ changes, for example: upgrading from somelinux 8.0 to somelinux 9.
 Implemented so you could know if your machine had any updates that needed to
 be applied without running it interactively. Returns exit value of 100 if
 there are packages available for an update. Also returns a list of the pkgs
-to be updated in list format. Returns 0 and no packages are available for
-update.
+to be updated in list format. Returns 0 if no packages are available for
+update. Returns 1 if an error occured.
 .IP
 .IP "\fBupgrade\fP"
 Is the same as the update command with the \-\-obsoletes flag set. See update 
@@ -189,6 +191,10 @@ dependencies for the given packages.
 .IP "\fBrepolist\fP"
 Produces a list of configured repositories. The default is to list all
 enabled repositories.
+.IP
+.IP "\fBhelp\fP"
+Produces help, either for all commands or if given a command name then the help
+for that particular command\&.
 .IP
 .PP
 .SH "GENERAL OPTIONS"
