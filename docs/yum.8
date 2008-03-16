@@ -6,7 +6,16 @@ yum \- Yellowdog Updater Modified
 \fByum\fP [options] [command] [package ...]
 .SH "DESCRIPTION"
 .PP 
-\fByum\fP is an interactive, automated update program which can be used for maintaining systems using rpm
+\fByum\fP is an interactive, rpm based, package manager. It can automatically
+perform system updates, including dependancy analysis and obsolete processing
+based on "repository" metadata. It can also perform installation of new
+packages, removal of old packages and perform queries on the installed and/or
+available packages among many other commands/services (see below)\&. \fByum\fP
+is similar to other high level package managers like apt\-get and smart\&.
+.PP
+While there are some graphical interfaces directly to the \fByum\fP code, more
+recent graphical interface development is happening with PackageKit and the
+gnome\-packagekit application\&.
 .PP 
 \fIcommand\fP is one of:
 .br 
@@ -387,9 +396,16 @@ configuration options.
 .PP
 .SH "SEE ALSO"
 .nf
+.I pkcon (1)
 .I yum.conf (5)
+.I yum-updatesd (8)
+.I package-cleanup (1)
+.I repoquery (1)
+.I yum-complete-transaction (1)
+.I yumdownloader (1)
 http://linux.duke.edu/yum/
 http://wiki.linux.duke.edu/YumFaq
+yum search yum
 .fi
 
 .PP
