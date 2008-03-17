@@ -364,21 +364,16 @@ class MetaSack(PackageSackBase):
            this means(in name.arch form): foo.i386 and foo.noarch are not
            compared to each other for highest version only foo.i386 and
            foo.i386 will be compared"""
-        bestofeach = ListPackageSack()
         calr = self._computeAggregateListResult
-        bestofeach.addList(calr("returnNewestByNameArch", naTup, patterns))
-        
-        return bestofeach.returnNewestByNameArch(naTup, patterns)
-        
+        pkgs = calr("returnNewestByNameArch", naTup, patterns)
+        return _list_pkg_sack_newest_namearch(pkgs)
         
     def returnNewestByName(self, name=None):
         """return list of newest packages based on name matching
            this means(in name.arch form): foo.i386 and foo.noarch will
            be compared to each other for highest version"""
-           
-        bestofeach = ListPackageSack()
-        bestofeach.addList(self._computeAggregateListResult("returnNewestByName", name))
-        return bestofeach.returnNewestByName(name)
+        pkgs = self._computeAggregateListResult("returnNewestByName", name)
+        return _list_pkg_sack_newest_name(pkgs)
         
     def simplePkgList(self, patterns=None):
         """returns a list of pkg tuples (n, a, e, v, r)"""
@@ -825,6 +820,23 @@ class PackageSack(PackageSackBase):
                 matches[po] = tmpvalues
  
         return matches
+
+def _list_pkg_sack_newest_name(pkgs):
+    newest = {}
+    for pkg in pkgs:
+        key = pkg.name
+        if key in newest and pkg <= newest[key]:
+            continue
+        newest[key] = pkg
+    return newest.values()
+def _list_pkg_sack_newest_namearch(pkgs):
+    newest = {}
+    for pkg in pkgs:
+        key = (pkg.name, pkg.arch)
+        if key in newest and pkg <= newest[key]:
+            continue
+        newest[key] = pkg
+    return newest.values()
 
 class ListPackageSack(PackageSack):
     """Derived class from PackageSack to build new Sack from list of
