@@ -1265,6 +1265,10 @@ class YumBase(depsolve.Depsolve):
         exts = ['xml.gz', 'xml', 'cachecookie', 'mirrorlist.txt']
         return self._cleanFiles(exts, 'cachedir', 'metadata') 
 
+    def cleanExpireCache(self):
+        exts = ['cachecookie', 'mirrorlist.txt']
+        return self._cleanFiles(exts, 'cachedir', 'metadata')
+
     def _cleanFiles(self, exts, pathattr, filetype):
         filelist = []
         removed = 0
