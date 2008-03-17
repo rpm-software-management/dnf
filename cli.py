@@ -746,8 +746,8 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         return 0, []
     
     def cleanCli(self, userlist):
-        hdrcode = pkgcode = xmlcode = dbcode = 0
-        pkgresults = hdrresults = xmlresults = dbresults = []
+        hdrcode = pkgcode = xmlcode = dbcode = expccode = 0
+        pkgresults = hdrresults = xmlresults = dbresults = expcresults = []
         if 'all' in userlist:
             self.verbose_logger.log(yum.logginglevels.INFO_2,
                 _('Cleaning up Everything'))
@@ -783,7 +783,7 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
             self.plugins.run('clean')
 
         code = hdrcode + pkgcode + xmlcode + dbcode + expccode
-        results = hdrresults + pkgresults + xmlresults + dbresults + expccode
+        results = hdrresults + pkgresults + xmlresults + dbresults + expcresults
         for msg in results:
             self.verbose_logger.log(yum.logginglevels.INFO_2, msg)
         return code, []

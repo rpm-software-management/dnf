@@ -78,7 +78,7 @@ def checkGroupArg(base, basecmd, extcmds):
 
 def checkCleanArg(base, basecmd, extcmds):
     VALID_ARGS = ('headers', 'packages', 'metadata', 'dbcache', 'plugins',
-            'all')
+                  'expire-cache', 'all')
 
     if len(extcmds) == 0:
         base.logger.critical(_('Error: clean requires an option: %s') % (
