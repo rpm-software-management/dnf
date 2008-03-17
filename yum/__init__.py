@@ -2508,16 +2508,25 @@ class YumBase(depsolve.Depsolve):
         tx_mbrs = []
         tx_mbrs.extend(self.remove(po, **kwargs))
         if not tx_mbrs:
-            raise Errors.RemoveError, _("Problem in reinstall: no package matched to remove")
+            raise Errors.ReinstallError, _("Problem in reinstall: no package matched to remove")
         templen = len(tx_mbrs)
         # this is a reinstall, so if we can't reinstall exactly what we uninstalled
         # then we really shouldn't go on
         new_members = []
         for item in tx_mbrs:
+            #FIXME future - if things in the rpm transaction handling get
+            # a bit finer-grained, then we should allow reinstalls of kernels
+            # for now, banned and dropped.
+            if self.allowedMultipleInstalls(item.po):
+                self.tsInfo.remove(item.pkgtup)
+                msg = _("Package %s is allowed multiple installs, skipping") % item.po
+                self.verbose_logger.log(logginglevels.INFO_2, msg)
+                continue
+            
             members = self.install(name=item.name, arch=item.arch,
                            ver=item.version, release=item.release, epoch=item.epoch)
             if len(members) == 0:
-                raise Errors.RemoveError, _("Problem in reinstall: no package matched to install")
+                raise Errors.ReinstallError, _("Problem in reinstall: no package matched to install")
             new_members.extend(members)
 
         tx_mbrs.extend(new_members)            

@@ -70,6 +70,9 @@ class UpdateError(YumBaseError):
 class RemoveError(YumBaseError):
     pass
 
+class ReinstallError(YumBaseError):
+    pass
+
 class RepoMDError(YumBaseError):
     pass
 
