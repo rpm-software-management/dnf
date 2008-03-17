@@ -775,13 +775,15 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         if 'dbcache' in userlist or 'metadata' in userlist:
             self.logger.debug(_('Cleaning up database cache'))
             dbcode, dbresults =  self.cleanSqlite()
+        if 'expire-cache' in userlist or 'metadata' in userlist:
+            self.logger.debug(_('Cleaning up expire-cache metadata'))
+            expccode, expcresults = self.cleanExpireCache()
         if 'plugins' in userlist:
             self.logger.debug(_('Cleaning up plugins'))
             self.plugins.run('clean')
 
-            
-        code = hdrcode + pkgcode + xmlcode + dbcode
-        results = hdrresults + pkgresults + xmlresults + dbresults
+        code = hdrcode + pkgcode + xmlcode + dbcode + expccode
+        results = hdrresults + pkgresults + xmlresults + dbresults + expccode
         for msg in results:
             self.verbose_logger.log(yum.logginglevels.INFO_2, msg)
         return code, []
