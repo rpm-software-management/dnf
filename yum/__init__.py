@@ -2794,20 +2794,9 @@ class YumBase(depsolve.Depsolve):
         dscb = self.dsCallback
         self.dsCallback = None # dumb, dumb dumb dumb!
         self.populateTs(test=1)
-        deps = self.ts.check()
-        for deptuple in deps:
-            ((name, version, release), (needname, needversion), flags,
-              suggest, sense) = deptuple
-            if sense == rpm.RPMDEP_SENSE_REQUIRES:
-                msg = _('Package %s needs %s, this is not available.') % \
-                      (name, rpmUtils.miscutils.formatRequire(needname, 
-                                                              needversion, flags))
-                results.append(msg)
-            elif sense == rpm.RPMDEP_SENSE_CONFLICTS:
-                msg = _('Package %s conflicts with %s.') % \
-                      (name, rpmUtils.miscutils.formatRequire(needname, 
-                                                              needversion, flags))
-                results.append(msg)
+        self.ts.check()
+        for prob in self.ts.problems():
+            results.append(prob)
+
         self.dsCallback = dscb
         return results
-       

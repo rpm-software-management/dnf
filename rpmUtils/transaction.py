@@ -34,6 +34,7 @@ class TransactionWrapper:
                          'pgpImportPubkey',
                          'pgpPrtPkts',
                          'Debug',
+                         'problems',
                          'setFlags',
                          'setVSFlags',
                          'setProbFilter',
