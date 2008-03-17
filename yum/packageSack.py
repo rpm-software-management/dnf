@@ -366,14 +366,14 @@ class MetaSack(PackageSackBase):
            foo.i386 will be compared"""
         calr = self._computeAggregateListResult
         pkgs = calr("returnNewestByNameArch", naTup, patterns)
-        return _list_pkg_sack_newest_namearch(pkgs)
+        return packagesNewestByNameArch(pkgs)
         
     def returnNewestByName(self, name=None):
         """return list of newest packages based on name matching
            this means(in name.arch form): foo.i386 and foo.noarch will
            be compared to each other for highest version"""
         pkgs = self._computeAggregateListResult("returnNewestByName", name)
-        return _list_pkg_sack_newest_name(pkgs)
+        return packagesNewestByName(pkgs)
         
     def simplePkgList(self, patterns=None):
         """returns a list of pkg tuples (n, a, e, v, r)"""
@@ -821,7 +821,7 @@ class PackageSack(PackageSackBase):
  
         return matches
 
-def _list_pkg_sack_newest_name(pkgs):
+def packagesNewestByName(pkgs):
     newest = {}
     for pkg in pkgs:
         key = pkg.name
@@ -829,7 +829,7 @@ def _list_pkg_sack_newest_name(pkgs):
             continue
         newest[key] = pkg
     return newest.values()
-def _list_pkg_sack_newest_namearch(pkgs):
+def packagesNewestByNameArch(pkgs):
     newest = {}
     for pkg in pkgs:
         key = (pkg.name, pkg.arch)

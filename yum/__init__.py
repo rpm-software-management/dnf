@@ -49,7 +49,7 @@ from parser import ConfigPreProcessor
 import transactioninfo
 import urlgrabber
 from urlgrabber.grabber import URLGrabError
-from packageSack import ListPackageSack
+from packageSack import packagesNewestByName, packagesNewestByNameArch
 import depsolve
 import plugins
 import logginglevels
@@ -1981,9 +1981,7 @@ class YumBase(depsolve.Depsolve):
         if len(pkglist) == 1:
             return pkglist[0]
         
-        mysack = ListPackageSack()
-        mysack.addList(pkglist)
-        bestlist = mysack.returnNewestByNameArch() # get rid of all lesser vers
+        bestlist = packagesNewestByNameArch(pkglist)
         
         best = bestlist[0]
         for pkg in bestlist[1:]:
@@ -2131,9 +2129,7 @@ class YumBase(depsolve.Depsolve):
                            
                            pkgs = use
                            
-                pkgSack = ListPackageSack(pkgs)
-                pkgs = pkgSack.returnNewestByName()
-                del(pkgSack)
+                pkgs = packagesNewestByName(pkgs)
 
                 pkgbyname = {}
                 for pkg in pkgs:
