@@ -707,12 +707,16 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
     def deplist(self, args):
         """cli wrapper method for findDeps method takes a list of packages and 
             returns a formatted deplist for that package"""
-        
+
+        pkgs = []
         for arg in args:
-            pkgs = []
-            ematch, match, unmatch = self.pkgSack.matchPackageNames([arg])
-            for po in ematch + match:
-                pkgs.append(po)
+            if os.path.exists(arg) and arg.endswith('.rpm'): # this is hurky, deal w/it
+                thispkg = yum.packages.YumLocalPackage(self.ts, arg)
+                pkgs.append(thispkg)
+            else:                
+                ematch, match, unmatch = self.pkgSack.matchPackageNames([arg])
+                for po in ematch + match:
+                    pkgs.append(po)
                 
             results = self.findDeps(pkgs)
             self.depListOutput(results)
