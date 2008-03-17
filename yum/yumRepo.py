@@ -768,7 +768,7 @@ class YumRepository(Repository, config.RepoConf):
 
         except URLGrabError, e:
             if grab_can_fail is None:
-                grab_can_fail = len(self._oldRepoMDData)
+                grab_can_fail = 'old_repo_XML' in self._oldRepoMDData
             if grab_can_fail:
                 return None
             raise Errors.RepoError, 'Error downloading file %s: %s' % (local, e)
@@ -780,7 +780,7 @@ class YumRepository(Repository, config.RepoConf):
             return repoMDObject.RepoMD(self.id, local)
         except Errors.RepoMDError, e:
             if parse_can_fail is None:
-                parse_can_fail = len(self._oldRepoMDData)
+                parse_can_fail = 'old_repo_XML' in self._oldRepoMDData
             if parse_can_fail:
                 return None
             raise Errors.RepoError, 'Error importing repomd.xml from %s: %s' % (self, e)
@@ -803,7 +803,8 @@ class YumRepository(Repository, config.RepoConf):
 
     def _revertOldRepoXML(self):
         """ If we have older data available, revert to it. """
-        if not len(self._oldRepoMDData):
+        if 'old_repo_XML' not in self._oldRepoMDData:
+            self._oldRepoMDData = {}
             return
 
         # Unique names mean the rename doesn't work anymore.
@@ -862,7 +863,7 @@ class YumRepository(Repository, config.RepoConf):
         """ We check the timestamps, if any of the timestamps for the
             "new" data is older than what we have ... we revert. """
         
-        if not len(self._oldRepoMDData):
+        if 'old_repo_XML' not in self._oldRepoMDData:
             return True
         old_repo_XML = self._oldRepoMDData['old_repo_XML']
         
