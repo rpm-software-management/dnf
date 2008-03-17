@@ -316,17 +316,13 @@ class MetaSack(PackageSackBase):
         # FIXME - this is slooooooooooooooooooooooooooooooow
         # get the dict back
         obsdict = self._computeAggregateDictResult("returnObsoletes")
-        # get a sack of the newest pkgs
-        obstups = obsdict.keys()
-        newest_tup_dict = {}
-        for pkg in self.returnNewestByName():
-            if not newest_tup_dict.has_key(pkg.pkgtup):
-                newest_tup_dict[pkg.pkgtup] = 1
+
+        newest_tups = set((pkg.pkgtup for pkg in self.returnNewestByName()))
         
         # go through each of the keys of the obs dict and see if it is in the
         # sack of newest pkgs - if it is not - remove the entry
-        for obstup in obstups:
-            if not newest_tup_dict.has_key(obstup):
+        for obstup in obsdict.keys():
+            if obstup not in newest_tups:
                 del obsdict[obstup]
         
         return obsdict
