@@ -27,6 +27,7 @@ import rpmUtils.transaction
 import rpmUtils.miscutils
 import rpmUtils.arch
 from rpmUtils.arch import archDifference, isMultiLibArch
+import misc
 from misc import unique, version_tuple_to_string
 import rpm
 
@@ -150,13 +151,7 @@ class Depsolve(object):
         # /etc/* bin/* or /usr/lib/sendmail then we should fetch the 
         # filelists.xml for all repos to make the searchProvides more complete.
         if name[0] == '/':
-            matched = 0
-            globs = ['.*bin\/.*', '^\/etc\/.*', '^\/usr\/lib\/sendmail$']
-            for glob in globs:
-                globc = re.compile(glob)
-                if globc.match(name):
-                    matched = 1
-            if not matched:
+            if not misc.re_primary_filename(name):
                 self.doSackFilelistPopulate()
             
         pkgs = self.pkgSack.searchProvides(name)

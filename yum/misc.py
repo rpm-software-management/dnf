@@ -20,11 +20,33 @@ import gpgme
 
 from Errors import MiscError
 
+
+_re_compiled_glob_match = None
+def re_glob(s):
+    """ Tests if a string is a shell wildcard. """
+    # re.match('.*[\*\?\[\]].*', name)
+    global _re_compiled_glob_match
+    if _re_compiled_glob_match is None:
+        _re_compiled_glob_match = re.compile('.*[\*\?\[\]].*')
+    return _re_compiled_glob_match.match(s)
+
+_re_compiled_pri_fnames_match = None
+def re_primary_filename(filename):
+    global _re_compiled_pri_fnames_match
+    if _re_compiled_pri_fnames_match is None:
+        one   = re.compile('.*bin\/.*')
+        two   = re.compile('^\/etc\/.*')
+        three = re.compile('^\/usr\/lib\/sendmail$')
+        _re_compiled_pri_fnames_match = (one, two, three)
+    for rec in _re_compiled_pri_fnames_match:
+        if rec.match(filename):
+            return True
+    return False
+
 ###########
 # Title: Remove duplicates from a sequence
 # Submitter: Tim Peters 
-# From: http://aspn.activestate.com/ASPN/Cookbook/Python/Recipe/52560                      
-    
+# From: http://aspn.activestate.com/ASPN/Cookbook/Python/Recipe/52560
 def unique(s):
     """Return a list of the elements in s, but without duplicates.
 

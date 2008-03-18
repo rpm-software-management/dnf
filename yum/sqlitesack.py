@@ -21,7 +21,6 @@
 
 import os
 import os.path
-import re
 import fnmatch
 
 import yumRepo
@@ -415,7 +414,7 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
         
         glob = True
         querytype = 'glob'
-        if strict or not re.match('.*[\*\?\[\]].*', name):
+        if strict or not misc.re_glob(name):
             glob = False
             querytype = '='
 
@@ -686,14 +685,8 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
             self._search_cache[prcotype][req] = result
             return result
 
-        matched = 0
-        globs = ['.*bin\/.*', '^\/etc\/.*', '^\/usr\/lib\/sendmail$']
-        for thisglob in globs:
-            globc = re.compile(thisglob)
-            if globc.match(name):
-                matched = 1
-
-        if not matched: # if its not in the primary.xml files
+        if not misc.re_primary_filename(name):
+            # if its not in the primary.xml files
             # search the files.xml file info
             for pkg in self.searchFiles(name, strict=True):
                 result[pkg] = [(name, None, None)]
@@ -726,7 +719,7 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
         """return list of packages having prcotype name (any evr and flag)"""
         glob = True
         querytype = 'glob'
-        if not re.match('.*[\*\?\[\]].*', name):
+        if not misc.re_glob(name):
             glob = False
             querytype = '='
 
@@ -746,15 +739,9 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
             cur = cache.cursor()
             executeSQL(cur, "select DISTINCT pkgKey from files where name %s ?" % querytype, (name,))
             self._sql_pkgKey2po(rep, cur, results)
-        
-        matched = 0
-        globs = ['.*bin\/.*', '^\/etc\/.*', '^\/usr\/lib\/sendmail$']
-        for thisglob in globs:
-            globc = re.compile(thisglob)
-            if globc.match(name):
-                matched = 1
 
-        if matched and not glob: # if its in the primary.xml files then skip the other check
+        # if its in the primary.xml files then skip the other check
+        if misc.re_primary_filename(name) and not glob:
             return misc.unique(results)
 
         # If it is a filename, search the files.xml file info
@@ -898,7 +885,7 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
         unmatched = list(pkgspecs)
 
         for p in pkgspecs:
-            if re.match('.*[\*\?\[\]].*', p):
+            if misc.re_glob(p):
                 query = PARSE_QUERY % ({ "op": "glob", "q": p })
                 matchres = matched
             else:

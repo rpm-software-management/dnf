@@ -1564,7 +1564,7 @@ class YumBase(depsolve.Depsolve):
         
         matches = {}
         for arg in args:
-            if not re.match('.*[\*\?\[\]].*', arg):
+            if not misc.re_glob(arg):
                 isglob = False
                 if arg[0] != '/':
                     canBeFile = False
@@ -1619,7 +1619,7 @@ class YumBase(depsolve.Depsolve):
         # installed rpms, too
         taglist = ['filelist', 'dirnames', 'provides_names']
         for arg in args:
-            if not re.match('.*[\*\?\[\]].*', arg):
+            if not misc.re_glob(arg):
                 isglob = False
                 if arg[0] != '/':
                     canBeFile = False
