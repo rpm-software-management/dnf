@@ -818,14 +818,22 @@ class PackageSack(PackageSackBase):
         return matches
 
 def packagesNewestByName(pkgs):
+    """ Does the same as PackageSack.returnNewestByName() """
     newest = {}
     for pkg in pkgs:
         key = pkg.name
-        if key in newest and pkg <= newest[key]:
+        if key not in newest or pkg > newest[key][0]:
+            newest[key] = [pkg]
+        elif pkg < newest[key][0]:
             continue
-        newest[key] = pkg
-    return newest.values()
+        else:
+            newest[key].append(pkg)
+    ret = []
+    for vals in newest.itervalues():
+        ret.extend(vals)
+    return ret
 def packagesNewestByNameArch(pkgs):
+    """ Does the same as PackageSack.returnNewestByNameArch() """
     newest = {}
     for pkg in pkgs:
         key = (pkg.name, pkg.arch)
