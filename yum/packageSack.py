@@ -488,6 +488,10 @@ class PackageSack(PackageSackBase):
             elif failure == 'build':
                 self.buildIndexes()
 
+    def dropCachedData(self):
+        """ Do nothing, mainly for the testing code. """
+        pass
+
     def setCompatArchs(self, compatarchs):
         self.compatarchs = compatarchs
 
