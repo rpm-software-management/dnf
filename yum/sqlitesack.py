@@ -290,6 +290,8 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
             del self._memoize_requires
         if hasattr(self, '_memoize_provides'):
             del self._memoize_provides
+        if hasattr(self, 'pkgobjlist'):
+            del self.pkgobjlist
         self._search_cache = {
             'provides' : { },
             'requires' : { },
@@ -311,8 +313,6 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
         self.excludes = {}
         self._excludes = set()
         self._all_excludes = {}
-        if hasattr(self, 'pkgobjlist'):
-            del self.pkgobjlist
 
         yumRepo.YumPackageSack.close(self)
 
