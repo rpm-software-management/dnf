@@ -629,6 +629,7 @@ class YumBase(depsolve.Depsolve):
         
         if self.tsInfo.changed:
             (rescode, restring) = self.resolveDeps()
+	self.tsInfo.pkgSack.dropCachedData()
 
         # if depsolve failed and skipbroken is enabled
         # The remove the broken packages from the transactions and

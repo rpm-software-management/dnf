@@ -260,6 +260,11 @@ class MetaSack(PackageSackBase):
             ret += len(sack)
         return ret
 
+    def dropCachedData(self):
+        for sack in self.sacks.values():
+            if hasattr(sack, 'dropCachedData'):
+                sack.dropCachedData()
+
     def addSack(self, repoid, sack):
         """Adds a repository's packageSack to this MetaSack."""
         self.sacks[repoid] = sack

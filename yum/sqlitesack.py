@@ -83,13 +83,13 @@ class YumAvailablePackageSqlite(YumAvailablePackage, PackageObject, RpmBase):
             except (IndexError, KeyError):
                 return None
 
-        for item in ['name', 'arch', 'epoch', 'version', 'release']:
+        for item in ['name', 'arch', 'epoch', 'version', 'release', 'pkgKey']:
             try:
                 setattr(self, item, _share_data(db_obj[item]))
             except (IndexError, KeyError):
                 pass
 
-        for item in ['pkgId', 'pkgKey']:
+        for item in ['pkgId']:
             try:
                 setattr(self, item, db_obj[item])
             except (IndexError, KeyError):
@@ -285,8 +285,22 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
             pkg_num += self._sql_MD_pkg_num('primary', repo)
         return pkg_num - exclude_num
 
+    def dropCachedData(self):
+        if hasattr(self, '_memoize_requires'):
+            del self._memoize_requires
+        if hasattr(self, '_memoize_provides'):
+            del self._memoize_provides
+        self._search_cache = {
+            'provides' : { },
+            'requires' : { },
+            }
+        global _store
+        _store = {}
+
     @catchSqliteException
     def close(self):
+        self.dropCachedData()
+
         for dataobj in self.primarydb.values() + \
                        self.filelistsdb.values() + \
                        self.otherdb.values():
@@ -297,10 +311,6 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
         self.excludes = {}
         self._excludes = set()
         self._all_excludes = {}
-        self._search_cache = {
-            'provides' : { },
-            'requires' : { },
-            }
         if hasattr(self, 'pkgobjlist'):
             del self.pkgobjlist
 
@@ -418,6 +428,9 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
             # grab repo object from primarydb and force filelists population in this sack using repo
             # sack.populate(repo, mdtype, callback, cacheonly)
             for (repo,cache) in self.primarydb.items():
+                if repo in self._all_excludes:
+                    continue
+
                 self.populate(repo, mdtype='filelists')
 
         # Check to make sure the DB data matches, this should always pass but
@@ -429,6 +442,9 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
                 raise Errors.RepoError
 
         for (rep,cache) in self.filelistsdb.items():
+            if rep in self._all_excludes:
+                continue
+
             cur = cache.cursor()
 
             if glob:
@@ -589,6 +605,28 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
         
         return pkgs
         
+    @catchSqliteException
+    def _search_get_memoize(self, prcotype):
+        if not hasattr(self, '_memoize_' + prcotype):
+            memoize = {}
+
+            for (rep,cache) in self.primarydb.items():
+                if rep in self._all_excludes:
+                    continue
+
+                cur = cache.cursor()
+                executeSQL(cur, "select * from %s" % prcotype)
+                for x in cur:
+                    val = (_share_data(x['name']), _share_data(x['flags']),
+                           (_share_data(x['epoch']), _share_data(x['version']),
+                            _share_data(x['release'])))
+                    val = _share_data(val)
+                    key = (rep, val[0])
+                    pkgkey = _share_data(x['pkgKey'])
+                    val = (pkgkey, val)
+                    memoize.setdefault(key, []).append(val)
+            setattr(self, '_memoize_' + prcotype, memoize)
+        return getattr(self, '_memoize_' + prcotype)
 
     @catchSqliteException
     def _search(self, prcotype, name, flags, version):
@@ -600,12 +638,34 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
         elif type(version) in (tuple, list): # would this ever be a list?
             req = (name, flags, version)
 
+        prcotype = _share_data(prcotype)
+        req      = _share_data(req)
         if self._search_cache[prcotype].has_key(req):
             return self._search_cache[prcotype][req]
 
         result = { }
 
-        for (rep,cache) in self.primarydb.items():
+        # Requires is the biggest hit, pre-loading provides actually hurts
+        if prcotype != 'requires':
+            primarydb_items = self.primarydb.items()
+        else:
+            primarydb_items = []
+            memoize = self._search_get_memoize(prcotype)
+            for (rep,cache) in self.primarydb.items():
+                if rep in self._all_excludes:
+                    continue
+
+                tmp = {}
+                for x in memoize.get((rep, name), []):
+                    pkgkey, val = x
+                    if rpmUtils.miscutils.rangeCompare(req, val):
+                        tmp.setdefault(pkgkey, []).append(val)
+                for pkgKey, hits in tmp.iteritems():
+                    if self._pkgKeyExcluded(rep, pkgKey):
+                        continue
+                    result[self._packageByKey(rep, pkgKey)] = hits
+
+        for (rep,cache) in primarydb_items:
             cur = cache.cursor()
             executeSQL(cur, "select * from %s where name=?" % prcotype,
                        (name,))
@@ -642,6 +702,9 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
 
         # If it is a filename, search the primary.xml file info
         for (rep,cache) in self.primarydb.items():
+            if rep in self._all_excludes:
+                continue
+
             cur = cache.cursor()
             executeSQL(cur, "select DISTINCT pkgKey from files where name = ?", (name,))
             for ob in cur:
