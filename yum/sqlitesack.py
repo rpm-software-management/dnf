@@ -291,6 +291,7 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
             del self._memoize_provides
         if hasattr(self, 'pkgobjlist'):
             del self.pkgobjlist
+        self._key2pkg = {}
         self._search_cache = {
             'provides' : { },
             'requires' : { },
@@ -335,6 +336,10 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
     def _delAllPackages(self, repo):
         """ Exclude all packages from the repo. """
         self._all_excludes[repo] = True
+        if repo in self.excludes:
+            del self.excludes[repo]
+        if repo in self._key2pkg:
+            del self._key2pkg[repo]
 
     def _excluded(self, repo, pkgId):
         if repo in self._all_excludes:
