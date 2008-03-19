@@ -215,3 +215,41 @@ class SimpleObsoletesTests(OperationsTests):
                                      [p.installed_i386, p.installed_x86_64], [p.obsoletes_i386, p.obsoletes_x86_64, p.requires_obsoletes])
         self.assert_(res=='ok', msg)
         self.assertResult((p.obsoletes_i386, p.obsoletes_x86_64, p.requires_obsoletes))
+
+
+class GitMetapackageObsoletesTests(OperationsTests):
+
+    @staticmethod
+    def buildPkgs(pkgs, *args):
+        # installed
+        pkgs.installed = FakePackage('git-core', '1.5.4.2', '1', '0', 'x86_64')
+        pkgs.metapackage = FakePackage('git', '1.5.4.2', '1', '0', 'x86_64')
+        # obsoletes
+        pkgs.new_git = FakePackage('git', '1.5.4.4', '1', '0', 'x86_64')
+        pkgs.new_git.addObsoletes('git-core', 'LE', ('0', '1.5.4.3', '1'))
+        pkgs.new_git.addProvides('git-core', 'EQ', ('0', '1.5.4', '1'))
+
+        pkgs.git_all = FakePackage('git-all', '1.5.4', '1', '0', 'x86_64')
+        pkgs.git_all.addObsoletes('git', 'LE', ('0', '1.5.4.3', '1'))
+
+
+    def testGitMetapackageOnlyCoreInstalled(self):
+        # Fedora had a package named 'git', which was a metapackage requiring
+        # all other git rpms. Most people wanted 'git-core' when they asked for
+        # git, so we renamed them.
+        # git-core became git, and provided git-core = version while obsoleting
+        # git-core < version
+        # git became git-all, obsoleting git < version
+
+        p = self.pkgs
+        res, msg = self.runOperation(['update'], [p.installed],
+                [p.new_git, p.git_all])
+        self.assert_(res=='ok', msg)
+        self.assertResult((p.new_git,))
+
+    def testGitMetapackageRenameMetapackageAndCoreInstalled(self):
+        p = self.pkgs
+        res, msg = self.runOperation(['update'], [p.installed, p.metapackage],
+                [p.new_git, p.git_all])
+        self.assert_(res=='ok', msg)
+        self.assertResult((p.new_git, p.git_all))
