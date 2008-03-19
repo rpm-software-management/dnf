@@ -635,9 +635,6 @@ class Depsolve(object):
         if not len(self.tsInfo):
             return (0, [_('Success - empty transaction')])
 
-        # holder object for things from the check
-        if not hasattr(self, '_dcobj'):
-            self._dcobj = DepCheck()
         self.po_with_problems = set()
         self._working_po = None
         self.tsInfo.resetResolved(hard=False)
@@ -786,8 +783,6 @@ class Depsolve(object):
             self.verbose_logger.log(logginglevels.DEBUG_2, _("looking for %s as a requirement of %s"), req, txmbr)
             provs = self.tsInfo.getProvides(*req)
             if not provs:
-                reqtuple = (req[0], version_tuple_to_string(req[2]), flags[req[1]])
-                self._dcobj.addRequires(txmbr.po, [reqtuple])
                 ret.append( (txmbr.po, (req[0], flags[req[1]], version_tuple_to_string(req[2]))) )
                 continue
 
@@ -823,8 +818,6 @@ class Depsolve(object):
             for pkg, hits in self.tsInfo.getRequires(*prov).iteritems():
                 for rn, rf, rv in hits:
                     if not self.tsInfo.getProvides(rn, rf, rv):
-                        reqtuple = (rn, version_tuple_to_string(rv), flags[rf])
-                        self._dcobj.addRequires(pkg, [reqtuple])
                         ret.append( (pkg, (rn, flags[rf], version_tuple_to_string(rv))) )
         return ret
 

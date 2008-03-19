@@ -647,8 +647,10 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
         # Requires is the biggest hit, pre-loading provides actually hurts
         if prcotype != 'requires':
             primarydb_items = self.primarydb.items()
+            preload = False
         else:
             primarydb_items = []
+            preload = True
             memoize = self._search_get_memoize(prcotype)
             for (rep,cache) in self.primarydb.items():
                 if rep in self._all_excludes:
@@ -665,6 +667,9 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
                     result[self._packageByKey(rep, pkgKey)] = hits
 
         for (rep,cache) in primarydb_items:
+            if rep in self._all_excludes:
+                continue
+
             cur = cache.cursor()
             executeSQL(cur, "select * from %s where name=?" % prcotype,
                        (name,))
@@ -682,7 +687,8 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
                 result[self._packageByKey(rep, pkgKey)] = hits
 
         if prcotype != 'provides' or name[0] != '/':
-            self._search_cache[prcotype][req] = result
+            if not preload:
+                self._search_cache[prcotype][req] = result
             return result
 
         if not misc.re_primary_filename(name):
@@ -690,7 +696,8 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
             # search the files.xml file info
             for pkg in self.searchFiles(name, strict=True):
                 result[pkg] = [(name, None, None)]
-            self._search_cache[prcotype][req] = result
+            if not preload:
+                self._search_cache[prcotype][req] = result
             return result
 
         # If it is a filename, search the primary.xml file info
