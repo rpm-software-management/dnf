@@ -183,20 +183,28 @@ class YumPlugins:
             self._pluginfuncs[slot] = []
 
         # Import plugins 
+        self._used_disable_plugin = set()
         for dir in self.searchpath:
             if not os.path.isdir(dir):
                 continue
             for modulefile in glob.glob('%s/*.py' % dir):
                 self._loadplugin(modulefile, types)
-            plugins = sorted(self._plugins)
 
+        if self._plugins:
             # Mostly copied from YumOutput._outKeyValFill()
             key = _("Loaded plugins: ")
-            val = ", ".join(plugins)
+            val = ", ".join(sorted(self._plugins))
             nxt = ' ' * (len(key) - 2) + ': '
             self.verbose_logger.log(logginglevels.INFO_2,
                                     fill(val, width=80, initial_indent=key,
                                          subsequent_indent=nxt))
+
+        if self.disabledPlugins:
+            for wc in self.disabledPlugins:
+                if wc not in self._used_disable_plugin:
+                    self.verbose_logger.log(logginglevels.INFO_2,
+                                            _("No plugin match for: %s") % wc)
+        del self._used_disable_plugin
 
     def _loadplugin(self, modulefile, types):
         '''Attempt to import a plugin module and register the hook methods it
@@ -250,6 +258,7 @@ class YumPlugins:
         if self.disabledPlugins:
             for wc in self.disabledPlugins:
                 if fnmatch.fnmatch(modname, wc):
+                    self._used_disable_plugin.add(wc)
                     return
 
         self.verbose_logger.log(logginglevels.DEBUG_3, _('Loading "%s" plugin'),
