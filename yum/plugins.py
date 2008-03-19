@@ -33,6 +33,7 @@ from parser import ConfigPreProcessor
 from textwrap import fill
 from i18n import _
 
+import fnmatch
 
 # TODO: expose rpm package sack objects to plugins (once finished)
 # TODO: allow plugins to use the existing config stuff to define options for
@@ -247,8 +248,9 @@ class YumPlugins:
                 return
         # Check if this plugin has been temporary disabled
         if self.disabledPlugins:
-            if modname in self.disabledPlugins:
-                return
+            for wc in self.disabledPlugins:
+                if fnmatch.fnmatch(modname, wc):
+                    return
 
         self.verbose_logger.log(logginglevels.DEBUG_3, _('Loading "%s" plugin'),
                                 modname)
