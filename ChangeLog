@@ -1,3 +1,323 @@
+2008-03-20  Seth Vidal <skvidal@fedoraproject.org>
+
+	* yum.spec, yum/__init__.py, yum/depsolve.py: - bump ver for 3.2.13 - fix oddball tabs in yum/__init__.py
+
+2008-03-19  James Antill <james@and.org>
+
+	* yum/sqlitesack.py: Drop stuff when we see no arch. Drop key2pkg in
+	dropCachedData/close
+
+2008-03-19  James Antill <james@and.org>
+
+	* yum/depsolve.py, yum/sqlitesack.py:  Remove DepCheck() as it's unused.  Don't double cache data in
+	 _search_cache().  Skip provides from unused repos.
+
+2008-03-19  James Antill <james@and.org>
+
+	* yum/plugins.py:  Merge output for multiple dirs. of plugins.  Don't output empty
+	 line when disabling all plugins.  Output disableplugin args that
+	 don't match anything.
+
+2008-03-19  James Antill <james@and.org>
+
+	* yum/plugins.py: Add wildcard support to disableplugin
+
+2008-03-19  James Bowes <jbowes@redhat.com>
+
+	* test/simpleobsoletestests.py: Add some obsoletes tests for the git
+	metapackage rename  I was all ready to blame yum for my inability to
+	update git in F8 to the new and renamed version in rawhide, so much
+	so that the first thing I did was write these tests, which would
+	surely fail and lead me to some obscure bug in yum. I would fix the
+	bug and everyone would be happy.  Well the version obsoletes I put
+	in git's spec was off by one. So here are the tests, which will
+	serve as a testament to yum's awesomeness, and my carelessness.
+
+2008-03-18  James Antill <james@and.org>
+
+	* yum/packageSack.py: Make the unit tests happy again, and skvidal
+	by proxy :)
+
+2008-03-18  James Antill <james@and.org>
+
+	* yum/__init__.py, yum/depsolve.py, yum/misc.py, yum/sqlitesack.py: 
+	Cleanup RE matching for globs and primary.xml filename matching
+
+2008-03-18  James Antill <james@and.org>
+
+	* yum/sqlitesack.py: Move pkgoblist into droCachedData
+
+2008-03-18  James Antill <james@and.org>
+
+	* yum/__init__.py, yum/packageSack.py, yum/sqlitesack.py:  Pre-load the requires data when we first need it, in depsolving.
+	 Tweak what we _share_data()  Add dropCachedData() call, in
+	 sqlitesack and MetaSack.   Call it after resolveDeps().
+
+2008-03-18  James Antill <james@and.org>
+
+	* yum/packageSack.py: Fix packagesNewestByName() to have multiple
+	pkgs/arches per. name/version
+
+2008-03-17  James Antill <james@and.org>
+
+	* yum/packageSack.py: Merge MetaSack.returnObs and
+	PackageSack.returnObs
+
+2008-03-17  James Antill <james@and.org>
+
+	* yum/__init__.py, yum/packageSack.py: export packagesNewestByName*
+	and use in __init__
+
+2008-03-17  James Antill <james@and.org>
+
+	* yum/packageSack.py: Don't create ListPackageSack() just to do a
+	newest operation
+
+2008-03-17  James Antill <james@and.org>
+
+	* yum/packageSack.py: Fix packagesack.returnObs
+
+2008-03-17  Seth Vidal <skvidal@fedoraproject.org>
+
+	* yum/Errors.py, yum/__init__.py: when doing a reinstall, if the
+	package is one of the ones that can be installed multiple times,
+	just take it out and tell the user about it. It will end in sadness
+	if they do a reinstall on a kernel or a kernel-module so let's just
+	tell them 'no' rather than having the whole thing explode in awkward
+	ways, for now.  also add reinstallError to errors
+
+2008-03-17  Seth Vidal <skvidal@fedoraproject.org>
+
+	Merge branch 'master' of
+	ssh://login.linux.duke.edu/home/groups/yum/git/yum  * 'master' of
+	ssh://login.linux.duke.edu/home/groups/yum/git/yum:   Fix the last
+	commit *grumble*, stupid mondays, *grumble*   Manually clean expire
+	cache, so network manager can run when we move networks   Don't
+	count on len(self._oldRepoMDData) to mean we have old repo MD
+
+2008-03-17  Seth Vidal <skvidal@fedoraproject.org>
+
+	* cli.py: make deplist able to work on localpackages ex: yum deplist
+	/path/to/foobar.rpm
+
+2008-03-17  James Antill <james@and.org>
+
+	* cli.py, yumcommands.py: Fix the last commit *grumble*, stupid
+	mondays, *grumble*
+
+2008-03-17  James Antill <james@and.org>
+
+	* cli.py, yum/__init__.py: Manually clean expire cache, so network
+	manager can run when we move networks
+
+2008-03-17  James Antill <james@and.org>
+
+	* yum/yumRepo.py: Don't count on len(self._oldRepoMDData) to mean we
+	have old repo MD
+
+2008-03-17  Seth Vidal <skvidal@fedoraproject.org>
+
+	* po/it.po: Check in italian translation from Silvio Pierro
+
+2008-03-17  James Bowes <jbowes@redhat.com>
+
+	* rpmUtils/transaction.py, yum/__init__.py: Use rpm's problem set
+	details to give arch information on bad transactions.  Resolves rhbz
+	#349091. Original patch from Panu.
+
+2008-03-15  James Antill <james@and.org>
+
+	* AUTHORS:  I can haz creditz? kthxbai!   Oh, and: Florian, Jack, and Panu
+
+2008-03-15  James Antill <james@and.org>
+
+	* docs/yum.8: Add help on help :)
+
+2008-03-15  James Antill <james@and.org>
+
+	* docs/yum.8: Add keywords people might search for. Give a longer
+	summary, point to PK
+
+2008-03-15  James Antill <james@and.org>
+
+	* cli.py, output.py, yum/__init__.py:  Add section headers to "yum search" which show which arguments
+	 matched.  Show which arguments didn't match anything.  Add
+	 fmtSection() and fmtKeyValFill() to output.py API.
+
+2008-03-13  James Antill <james@and.org>
+
+	* test/depsolvetests.py, yum/depsolve.py:  With lots of discussion/consultation with Seth   Fix multilib. edge
+	 case.  Fixes the testcase.  Also fixes the case we've seen IRL
+	 where    pkgA.32 deps. on libfoo.so.2    pkgB-1.64 provides
+	 libfoo.so.1()(64bit)    pkgB-2.64 provides libfoo.so.2()(64bit)
+	 pkgB-2.32 provides libfoo.so.2 ...and we need to install pkgB-2.32
+	 and update to pkgB-2.64
+
+2008-03-13  Jeremy Katz <katzj@redhat.com>
+
+	* output.py: Set encoding of the string to avoid tracebacks
+	(#436361)
+
+2008-03-13  Seth Vidal <skvidal@fedoraproject.org>
+
+	Merge branch 'master' of
+	ssh://login.linux.duke.edu/home/groups/yum/git/yum  * 'master' of
+	ssh://login.linux.duke.edu/home/groups/yum/git/yum:   Add docs for
+	group* command, and makecache   Don't traceback if we can't read the
+	mirrorlist (#428249)   Fix proxy=http://foo:123 - bug#328121
+	Support justdb as a tsflag (Dmitry Butskoy <dmitry@butskoy.name>,
+	#394141)   Updated German Translation by Fabian Affolter
+
+2008-03-13  Seth Vidal <skvidal@fedoraproject.org>
+
+	* yum/rpmtrans.py: silence the log output when we hit a %pretrans or
+	a %postrans. would be nice if rpm let us know where we were in the
+	transaction, though.
+
+2008-03-13  James Antill <james@and.org>
+
+	* docs/yum.8: Add docs for group* command, and makecache
+
+2008-03-13  Jeremy Katz <katzj@redhat.com>
+
+	* yum/yumRepo.py: Don't traceback if we can't read the mirrorlist
+	(#428249)
+
+2008-03-13  James Antill <james@and.org>
+
+	* yum/yumRepo.py: Fix proxy=http://foo:123 - bug#328121
+
+2008-03-13  Jeremy Katz <katzj@redhat.com>
+
+	* yum/depsolve.py: Support justdb as a tsflag (Dmitry Butskoy
+	<dmitry@butskoy.name>, #394141)
+
+2008-03-13  Tim Lauridsen <timlau@fedoraproject.org>
+
+	* po/de.po: Updated German Translation by Fabian Affolter
+
+2008-03-13  Seth Vidal <skvidal@fedoraproject.org>
+
+	* yum/__init__.py: make sure that intentional yum install
+	somepkg-not-newest works
+
+2008-03-13  Seth Vidal <skvidal@fedoraproject.org>
+
+	* yum/__init__.py: if there is an older ver than they have installed
+	available yum doesn't try to install it when someone types: yum
+	install some-pkg  don't install it.
+
+2008-03-11  Seth Vidal <skvidal@fedoraproject.org>
+
+	* yum/rpmtrans.py: once more, make sure nothing in the transaction
+	can EVER occur w/o our persistent dir being made
+
+2008-03-08  Seth Vidal <skvidal@fedoraproject.org>
+
+	Merge branch 'master' of
+	ssh://login.linux.duke.edu/home/groups/yum/git/yum  * 'master' of
+	ssh://login.linux.duke.edu/home/groups/yum/git/yum:   Fix
+	includepkgs, patterns can't work here as we need 'not matched'
+
+2008-03-08  Seth Vidal <skvidal@fedoraproject.org>
+
+	* yum/packages.py: make po.checksums work again for sqlite packages
+	make sure installedpo.checksum does something quasi-sensible - which
+	in this case is raise NotImplementedError
+
+2008-03-05  James Antill <james@and.org>
+
+	* yum/__init__.py: Fix includepkgs, patterns can't work here as we
+	need 'not matched'
+
+2008-03-06  Jeremy Katz <katzj@redhat.com>
+
+	* output.py: Make the responses translatable too (#436386)
+
+2008-03-06  Seth Vidal <skvidal@fedoraproject.org>
+
+	* yum.spec: conflict skip-broken
+
+2008-03-06  Seth Vidal <skvidal@fedoraproject.org>
+
+	* yum/rpmtrans.py: make sure the persistdir is made when we setup
+	the transaction so it doesn't cause problems in chroots
+
+2008-03-06  James Antill <james@and.org>
+
+	* output.py: Don't hide unicode errors on the prompt
+
+2008-03-06  James Antill <james@and.org>
+
+	* yum/sqlitesack.py, yum/sqlutils.py: python-sqlite-1.x
+	compatability fixes
+
+2008-03-06  Tim Lauridsen <tla@rasmil.dk>
+
+	* po/fr.po: Added french translation by Johan Cwiklinski
+
+2008-03-05  Seth Vidal <skvidal@fedoraproject.org>
+
+	* yum/depsolve.py: make the log indentation easier to follow
+
+2008-03-05  James Antill <james@and.org>
+
+	* test/depsolvetests.py, yum/depsolve.py:  Add unit tests for compare_providers. Fix bugs:  1. Do sourcerpm
+	 compare both directions (reqpo.arch in [noarch, other]). 2. Don't
+	 switch on arch if bestpkg.arch == po.arch (reqpo.arch in [noarch]).
+
+
+2008-03-05  James Antill <james@and.org>
+
+	* test/depsolvetests.py, test/testbase.py: Add tests for
+	"interesting" multilib. cases, one current failure marked as FIXME
+
+2008-03-05  James Antill <james@and.org>
+
+	* test/transactiontests.py: Remove failing AddTheSameTwice() check
+
+2008-03-05  James Antill <james@and.org>
+
+	* output.py: Fix encoding, must go back to unicode even though
+	gettext needs ascii, *sigh*
+
+2008-03-04  Seth Vidal <skvidal@fedoraproject.org>
+
+	* yum/depsolve.py: make sure best doesn't obsolete po before we do
+	the arch tests in _compare_providers()
+
+2008-03-04  Seth Vidal <skvidal@fedoraproject.org>
+
+	Merge branch 'master' of
+	ssh://login.linux.duke.edu/home/groups/yum/git/yum  * 'master' of
+	ssh://login.linux.duke.edu/home/groups/yum/git/yum:   Add
+	documentation for new option   Show versions when showing dups, and
+	fix the large key problem   Add --showduplicates option, and make
+	search obey showdupesfromrepos
+
+2008-03-04  Seth Vidal <skvidal@fedoraproject.org>
+
+	* yum/depsolve.py: - make sure on mutual obsoletes we do _something_ useful so we don't
+	constantly oscillate - better debugging in _compare_providers()
+
+2008-03-04  James Antill <james@and.org>
+
+	* docs/yum.8: Add documentation for new option
+
+2008-03-03  James Antill <james@and.org>
+
+	* output.py: Show versions when showing dups, and fix the large key
+	problem
+
+2008-03-03  James Antill <james@and.org>
+
+	* cli.py: Add --showduplicates option, and make search obey
+	showdupesfromrepos
+
+2008-03-03  Seth Vidal <skvidal@fedoraproject.org>
+
+	* ChangeLog: merge changelog
+
 2008-03-03  James Antill <james@and.org>
 
 	* yum/sqlitesack.py: Fix typo fix
