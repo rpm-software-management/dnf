@@ -41,9 +41,9 @@ import warnings
 warnings.simplefilter("ignore", Errors.YumFutureDeprecationWarning)
 
 try:
-	assert max(2, 4) == 4
+    assert max(2, 4) == 4
 except:
-	# Python-2.4.x doesn't have min/max ... *sigh*
+    # Python-2.4.x doesn't have min/max ... *sigh*
         def min(x, *args): 
             for y in args:
                 if x > y: x = y
