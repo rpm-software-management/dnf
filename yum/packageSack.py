@@ -126,7 +126,7 @@ class PackageSackBase(object):
         """delete a pkgobject"""
         raise NotImplementedError()
 
-    def returnPackages(self, patterns=None):
+    def returnPackages(self, repoid=None, patterns=None):
         """return list of all packages"""
         raise NotImplementedError()
 
