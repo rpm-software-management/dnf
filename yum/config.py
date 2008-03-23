@@ -322,6 +322,9 @@ class BoolOption(Option):
             return "0"
 
 class FloatOption(Option):
+    """
+    An option representing a numeric float value.
+    """
     def parse(self, s):
         try:
             return float(s.strip())
@@ -394,6 +397,11 @@ class BytesOption(Option):
         return int(n * mult)
 
 class ThrottleOption(BytesOption):
+
+    """
+    An option representing a bandwidth throttle value. See
+    ThrottleOption.parse for acceptable input values.
+    """
 
     def parse(self, s):
         """Get a throttle option. 
