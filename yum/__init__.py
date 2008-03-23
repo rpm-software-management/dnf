@@ -2798,7 +2798,6 @@ class YumBase(depsolve.Depsolve):
         self.runTransaction( cb=cb )
 
     def _run_rpm_check_debug(self):
-        import rpm
         results = []
         # save our dsCallback out
         dscb = self.dsCallback

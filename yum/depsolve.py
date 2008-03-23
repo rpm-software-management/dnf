@@ -19,7 +19,6 @@ Depedancy resolution module for yum.
 """
 
 import os.path
-import re
 import types
 import logging
 
