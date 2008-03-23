@@ -14,8 +14,15 @@
 # Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 # Copyright 2004 Duke University
 
+"""
+Exceptions and Errors thrown by yum.
+"""
 
 class YumBaseError(Exception):
+    """
+    Base Yum Error. All other Errors thrown by yum should inherit from
+    this.
+    """
     def __init__(self, value=None):
         Exception.__init__(self)
         self.value = value
@@ -86,9 +93,16 @@ class MediaError(YumBaseError):
     pass
     
 class YumDeprecationWarning(DeprecationWarning):
+    """
+    Used to mark a method as deprecated.
+    """
     def __init__(self, value=None):
         DeprecationWarning.__init__(self, value)
 
 class YumFutureDeprecationWarning(YumDeprecationWarning):
+    """
+    Used to mark a method as deprecated. Unlike YumDeprecationWarning,
+    YumFutureDeprecationWarnings will not be shown on the console.
+    """
     def __init__(self, value=None):
         YumDeprecationWarning.__init__(self, value)
