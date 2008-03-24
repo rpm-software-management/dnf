@@ -744,6 +744,9 @@ class YumHeaderPackage(YumAvailablePackage):
             self.__prcoPopulated = True
         return YumAvailablePackage.returnPrco(self, prcotype, printable)
 
+    def _get_hdr(self):
+        return self.hdr
+
     def _populatePrco(self):
         "Populate the package object with the needed PRCO interface."
 
@@ -751,13 +754,14 @@ class YumHeaderPackage(YumAvailablePackage):
                      "CONFLICT": "conflicts",
                      "REQUIRE": "requires",
                      "PROVIDE": "provides" }
+        hdr = self._get_hdr()
         for tag in tag2prco:
-            name = self.hdr[getattr(rpm, 'RPMTAG_%sNAME' % tag)]
+            name = hdr[getattr(rpm, 'RPMTAG_%sNAME' % tag)]
 
-            lst = self.hdr[getattr(rpm, 'RPMTAG_%sFLAGS' % tag)]
+            lst = hdr[getattr(rpm, 'RPMTAG_%sFLAGS' % tag)]
             flag = map(rpmUtils.miscutils.flagToString, lst)
 
-            lst = self.hdr[getattr(rpm, 'RPMTAG_%sVERSION' % tag)]
+            lst = hdr[getattr(rpm, 'RPMTAG_%sVERSION' % tag)]
             vers = map(rpmUtils.miscutils.stringToVersion, lst)
 
             prcotype = tag2prco[tag]

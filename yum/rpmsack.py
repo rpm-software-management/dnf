@@ -27,13 +27,7 @@ from packageSack import PackageSackBase
 class RPMInstalledPackage(YumInstalledPackage):
 
     def __init__(self, rpmhdr, index, rpmdb):
-        hdr = {}
-        for key in ['name', 'arch', 'epoch', 'version', 'release',
-                    'summary', 'description', 'size',
-                    rpm.RPMTAG_SHA1HEADER]:
-            hdr[key] = rpmhdr[key]
-        YumInstalledPackage.__init__(self, hdr)
-
+        YumInstalledPackage.__init__(self, rpmhdr)
         # NOTE: We keep summary/description/url because it doesn't add much
         # and "yum search" uses them all.
         self.url       = rpmhdr['url']
@@ -46,20 +40,21 @@ class RPMInstalledPackage(YumInstalledPackage):
         self._has_hdr = False
         del self.hdr
 
-    def __getattr__(self, varname):
+    def _get_hdr(self):
         # Note that we can't use hasattr(self, 'hdr') or we'll recurse
         if self._has_hdr:
-            return self.hdr[thing]
+            return self.hdr
 
         ts = self.rpmdb.readOnlyTS()
         mi = ts.dbMatch(0, self.idx)
-        hdr = mi.next()
+        return mi.next()
+        return self.hdr
 
+    def __getattr__(self, varname):
+        self.hdr = val = self._get_hdr()
         self._has_hdr = True
-        self.hdr = val = hdr
-
         if varname != 'hdr':   # This is very unusual, for anything it does
-            val = hdr[varname] # happen for it might be worth adding at __init__
+            val = val[varname] # happen for it might be worth adding at __init_
 
         return val
 
