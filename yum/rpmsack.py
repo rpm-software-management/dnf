@@ -32,6 +32,9 @@ class RPMInstalledPackage(YumInstalledPackage):
                     'summary', 'description', 'size',
                     rpm.RPMTAG_SHA1HEADER]:
             hdr[key] = rpmhdr[key]
+        if not hdr[rpm.RPMTAG_SHA1HEADER]:
+            key = 'buildtime'
+            hdr[key] = rpmhdr[key]
         YumInstalledPackage.__init__(self, hdr)
 
         # NOTE: We keep summary/description/url because it doesn't add much
