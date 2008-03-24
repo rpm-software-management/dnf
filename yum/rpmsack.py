@@ -24,6 +24,46 @@ import Errors
 from packages import YumInstalledPackage
 from packageSack import PackageSackBase
 
+class RPMInstalledPackage(YumInstalledPackage):
+
+    def __init__(self, rpmhdr, index, rpmdb):
+        hdr = {}
+        for key in ['name', 'arch', 'epoch', 'version', 'release',
+                    'summary', 'description', 'size',
+                    rpm.RPMTAG_SHA1HEADER]:
+            hdr[key] = rpmhdr[key]
+        YumInstalledPackage.__init__(self, hdr)
+
+        # NOTE: We keep summary/description/url because it doesn't add much
+        # and "yum search" uses them all.
+        self.url       = rpmhdr['url']
+        # Also keep sourcerpm for pirut/etc.
+        self.sourcerpm = rpmhdr['sourcerpm']
+
+        self.idx   = index
+        self.rpmdb = rpmdb
+
+        self._has_hdr = False
+        del self.hdr
+
+    def __getattr__(self, varname):
+        # Note that we can't use hasattr(self, 'hdr') or we'll recurse
+        if self._has_hdr:
+            return self.hdr[thing]
+
+        ts = self.rpmdb.readOnlyTS()
+        mi = ts.dbMatch(0, self.idx)
+        hdr = mi.next()
+
+        self._has_hdr = True
+        self.hdr = val = hdr
+
+        if varname != 'hdr':   # This is very unusual, for anything it does
+            val = hdr[varname] # happen for it might be worth adding at __init__
+
+        return val
+
+
 class RPMDBPackageSack(PackageSackBase):
     '''
     Represent rpmdb as a packagesack
@@ -299,9 +339,7 @@ class RPMDBPackageSack(PackageSackBase):
     def _makePackageObject(self, hdr, index):
         if self._idx2pkg.has_key(index):
             return self._idx2pkg[index]
-        po = YumInstalledPackage(hdr)
-        po.idx = index
-        po.rpmdb = self
+        po = RPMInstalledPackage(hdr, index, self)
         self._idx2pkg[index] = po
         self._name2pkg.setdefault(po.name, []).append(po)
         self._tup2pkg[po.pkgtup] = po
