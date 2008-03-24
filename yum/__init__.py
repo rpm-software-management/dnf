@@ -536,7 +536,7 @@ class YumBase(depsolve.Depsolve):
                 pass
             else:
                 reposWithGroups.append(repo)
-                
+        
         # now we know which repos actually have groups files.
         overwrite = self.conf.overwrite_groups
         self._comps = comps.Comps(overwrite_groups = overwrite)
@@ -562,10 +562,8 @@ class YumBase(depsolve.Depsolve):
 
         if self._comps.compscount == 0:
             raise Errors.GroupsError, _('No Groups Available in any repository')
-        
-        pkglist = self.rpmdb.simplePkgList()
-        self._comps.compile(pkglist)
 
+        self._comps.compile(self.rpmdb.pkglist)
         self.verbose_logger.debug('group time: %0.3f' % (time.time() - group_st))                
         return self._comps
     

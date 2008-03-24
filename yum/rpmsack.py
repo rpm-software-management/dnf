@@ -90,6 +90,7 @@ class RPMDBPackageSack(PackageSackBase):
         self._name2pkg = {}
         self._tup2pkg = {}
         self._completely_loaded = False
+        self._simple_pkgtup_list = []
         self.ts = None
 
         self._cache = {
@@ -104,7 +105,11 @@ class RPMDBPackageSack(PackageSackBase):
         '''Getter for the pkglist property. 
         Returns a list of package tuples.
         '''
-        return [po.pkgtup for po in self.returnPackages()]
+        if not self._simple_pkgtup_list:
+            for (hdr, mi) in self._all_packages():
+                self._simple_pkgtup_list.append(self._hdr2pkgTuple(hdr))
+            
+        return self._simple_pkgtup_list
 
     pkglist = property(_get_pkglist, None)
 
