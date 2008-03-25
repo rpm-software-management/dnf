@@ -510,4 +510,11 @@ def find_ts_remaining(timestamp, yumlibpath='/var/lib/yum'):
     
     return to_complete_items
     
+def to_unicode(obj, encoding='utf-8'):
+    ''' convert a 'str' to 'unicode' '''
+    if isinstance(obj, basestring):
+        if not isinstance(obj, unicode):
+            obj = unicode(obj, encoding)
+    return obj
+
         

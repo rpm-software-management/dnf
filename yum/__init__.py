@@ -63,6 +63,7 @@ from packages import parsePackages, YumAvailablePackage, YumLocalPackage, YumIns
 from constants import *
 from yum.rpmtrans import RPMTransaction,SimpleCliCallBack
 from yum.i18n import _
+from misc import to_unicode
 
 import string
 
@@ -1497,8 +1498,7 @@ class YumBase(depsolve.Depsolve):
                 for field in fields:
                     value = getattr(po, field)
                     # make sure that string are in unicode
-                    if isinstance(value, str):
-                        value = unicode(value,'unicode-escape')
+                    value = to_unicode(value)
                     if value and value.lower().find(s) != -1:
                         if not matched_s:
                             criteria_matched += 1
