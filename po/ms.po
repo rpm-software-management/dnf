@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: yum\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-02-08 10:16+0100\n"
+"POT-Creation-Date: 2008-03-25 11:29+0100\n"
 "PO-Revision-Date: 2008-02-12 21:06+0800\n"
 "Last-Translator: Sharuzzaman Ahmat Raslan <sharuzzaman@myrealbox.com>\n"
 "Language-Team: Malay <translation-team-ms@lists.sourceforge.net>\n"
@@ -15,7 +15,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: pygettext.py 1.1\n"
 
-#: ../callback.py:48 ../output.py:487
+#: ../callback.py:48 ../output.py:512
 #, fuzzy
 msgid "Updating"
 msgstr "Alat Mengemas Kini Menu"
@@ -24,7 +24,7 @@ msgstr "Alat Mengemas Kini Menu"
 msgid "Erasing"
 msgstr ""
 
-#: ../callback.py:50 ../callback.py:51 ../callback.py:53 ../output.py:486
+#: ../callback.py:50 ../callback.py:51 ../callback.py:53 ../output.py:511
 msgid "Installing"
 msgstr ""
 
@@ -32,7 +32,7 @@ msgstr ""
 msgid "Obsoleted"
 msgstr ""
 
-#: ../callback.py:54 ../output.py:533
+#: ../callback.py:54 ../output.py:558
 #, fuzzy
 msgid "Updated"
 msgstr "dikemaskini pada %(date)s"
@@ -42,7 +42,7 @@ msgstr "dikemaskini pada %(date)s"
 msgid "Erased"
 msgstr "Nota Keluaran Fedora"
 
-#: ../callback.py:56 ../callback.py:57 ../callback.py:59 ../output.py:531
+#: ../callback.py:56 ../callback.py:57 ../callback.py:59 ../output.py:556
 msgid "Installed"
 msgstr ""
 
@@ -65,7 +65,7 @@ msgstr ""
 msgid "Erased: %s"
 msgstr "Nota Keluaran Fedora"
 
-#: ../callback.py:217 ../output.py:488
+#: ../callback.py:217 ../output.py:513
 #, fuzzy
 msgid "Removing"
 msgstr "RPM rosak %s, membuang."
@@ -88,12 +88,12 @@ msgstr "&Tetapan Halaman"
 msgid "Reading repository metadata in from local files"
 msgstr ""
 
-#: ../cli.py:183 ../utils.py:57
+#: ../cli.py:183 ../utils.py:72
 #, fuzzy, python-format
 msgid "Config Error: %s"
 msgstr "Ralat KMail"
 
-#: ../cli.py:186 ../cli.py:1040 ../utils.py:60
+#: ../cli.py:186 ../cli.py:1068 ../utils.py:75
 #, fuzzy, python-format
 msgid "Options Error: %s"
 msgstr "Ralat KMail"
@@ -139,291 +139,305 @@ msgstr "Stat Pakej"
 msgid "Error Downloading Packages:\n"
 msgstr "Ralat mengira nilai!"
 
-#: ../cli.py:369 ../yum/__init__.py:2689
+#: ../cli.py:370 ../yum/__init__.py:2746
 msgid "Running rpm_check_debug"
 msgstr ""
 
-#: ../cli.py:372 ../yum/__init__.py:2692
+#: ../cli.py:373 ../yum/__init__.py:2749
 msgid "ERROR with rpm_check_debug vs depsolve:"
 msgstr ""
 
-#: ../cli.py:376 ../yum/__init__.py:2694
+#: ../cli.py:377 ../yum/__init__.py:2751
 msgid "Please report this error in bugzilla"
 msgstr ""
 
-#: ../cli.py:380
+#: ../cli.py:383
 #, fuzzy
 msgid "Running Transaction Test"
 msgstr "Test Dialog Tanya"
 
-#: ../cli.py:396
+#: ../cli.py:399
 #, fuzzy
 msgid "Finished Transaction Test"
 msgstr "Test Dialog Tanya"
 
-#: ../cli.py:398
+#: ../cli.py:401
 #, fuzzy
 msgid "Transaction Check Error:\n"
 msgstr "Ralat mengira nilai!"
 
-#: ../cli.py:405
+#: ../cli.py:408
 #, fuzzy
 msgid "Transaction Test Succeeded"
 msgstr "Test Dialog Tanya"
 
-#: ../cli.py:423
+#: ../cli.py:429
 #, fuzzy
 msgid "Running Transaction"
 msgstr "Test Dialog Tanya"
 
-#: ../cli.py:452
+#: ../cli.py:459
 msgid ""
 "Refusing to automatically import keys when running unattended.\n"
 "Use \"-y\" to override."
 msgstr ""
 
-#: ../cli.py:484
+#: ../cli.py:491
 msgid "Parsing package install arguments"
 msgstr ""
 
-#: ../cli.py:494
+#: ../cli.py:501
 #, fuzzy, python-format
 msgid "No package %s available."
 msgstr "Fail Pakej RPM"
 
-#: ../cli.py:498 ../cli.py:616 ../yumcommands.py:748
+#: ../cli.py:505 ../cli.py:623 ../yumcommands.py:748
 #, fuzzy
 msgid "Package(s) to install"
 msgstr "Akan Memasang"
 
-#: ../cli.py:499 ../cli.py:617 ../yumcommands.py:146 ../yumcommands.py:749
+#: ../cli.py:506 ../cli.py:624 ../yumcommands.py:146 ../yumcommands.py:749
 #, fuzzy
 msgid "Nothing to do"
 msgstr "-> Hendak buat apa ?"
 
-#: ../cli.py:529 ../yum/__init__.py:2192 ../yum/__init__.py:2271
-#: ../yum/__init__.py:2283
+#: ../cli.py:536 ../yum/__init__.py:2232 ../yum/__init__.py:2311
+#: ../yum/__init__.py:2340
 #, python-format
 msgid "Not Updating Package that is already obsoleted: %s.%s %s:%s-%s"
 msgstr ""
 
-#: ../cli.py:561
+#: ../cli.py:568
 #, python-format
 msgid "Could not find update match for %s"
 msgstr ""
 
-#: ../cli.py:573
+#: ../cli.py:580
 #, python-format
 msgid "%d packages marked for Update"
 msgstr ""
 
-#: ../cli.py:576
+#: ../cli.py:583
 #, fuzzy
 msgid "No Packages marked for Update"
 msgstr "Tiada skrip dijumpai"
 
-#: ../cli.py:592
+#: ../cli.py:599
 #, python-format
 msgid "%d packages marked for removal"
 msgstr ""
 
-#: ../cli.py:595
+#: ../cli.py:602
 msgid "No Packages marked for removal"
 msgstr ""
 
-#: ../cli.py:607
+#: ../cli.py:614
 #, fuzzy
 msgid "No Packages Provided"
 msgstr "(tiada cadangan ejaan)"
 
-#: ../cli.py:647
+#: ../cli.py:654
 msgid "Matching packages for package list to user args"
 msgstr ""
 
-#: ../cli.py:685
+#: ../cli.py:701
+#, fuzzy, python-format
+msgid "Warning: No matches found for: %s"
+msgstr "Tiada Pakej dijumpai untuk %s"
+
+#: ../cli.py:704
 #, fuzzy
 msgid "No Matches found"
 msgstr "Tiada padanan dijumpai. :-("
 
-#: ../cli.py:722
+#: ../cli.py:745
 #, fuzzy, python-format
 msgid "No Package Found for %s"
 msgstr "Tiada Pakej %s"
 
-#: ../cli.py:734
+#: ../cli.py:757
 #, fuzzy
 msgid "Cleaning up Everything"
 msgstr "&Tetapan Halaman"
 
-#: ../cli.py:748
+#: ../cli.py:771
 #, fuzzy
 msgid "Cleaning up Headers"
 msgstr "Pengepala pembangunan VDR"
 
-#: ../cli.py:751
+#: ../cli.py:774
 #, fuzzy
 msgid "Cleaning up Packages"
 msgstr "&Tetapan Halaman"
 
-#: ../cli.py:754
+#: ../cli.py:777
 #, fuzzy
 msgid "Cleaning up xml metadata"
 msgstr "Pengepala pembangunan VDR"
 
-#: ../cli.py:757
+#: ../cli.py:780
 #, fuzzy
 msgid "Cleaning up database cache"
 msgstr "Membersihkan pakej"
 
-#: ../cli.py:760
+#: ../cli.py:783
+#, fuzzy
+msgid "Cleaning up expire-cache metadata"
+msgstr "Pengepala pembangunan VDR"
+
+#: ../cli.py:786
 #, fuzzy
 msgid "Cleaning up plugins"
 msgstr "Nyahaktif semua plugin"
 
-#: ../cli.py:782
+#: ../cli.py:807
 #, fuzzy
 msgid "Installed Groups:"
 msgstr "Pengguna dan Kumpulan"
 
-#: ../cli.py:789
+#: ../cli.py:814
 #, fuzzy
 msgid "Available Groups:"
 msgstr "Form&at yang ada:"
 
-#: ../cli.py:795
+#: ../cli.py:820
 #, fuzzy
 msgid "Done"
 msgstr "Selesai."
 
-#: ../cli.py:804 ../cli.py:816 ../cli.py:822
+#: ../cli.py:829 ../cli.py:841 ../cli.py:847
 #, fuzzy, python-format
 msgid "Warning: Group %s does not exist."
 msgstr "Amaran: tandabuku yang anda berikan [%s] tidak wujud."
 
-#: ../cli.py:828
+#: ../cli.py:853
 msgid "No packages in any requested group available to install or update"
 msgstr ""
 
-#: ../cli.py:830
+#: ../cli.py:855
 #, fuzzy, python-format
 msgid "%d Package(s) to Install"
 msgstr "Akan Memasang"
 
-#: ../cli.py:840
+#: ../cli.py:865
 #, python-format
 msgid "No group named %s exists"
 msgstr ""
 
-#: ../cli.py:846
+#: ../cli.py:871
 #, fuzzy
 msgid "No packages to remove from groups"
 msgstr "Tiada skrip dijumpai"
 
-#: ../cli.py:848
+#: ../cli.py:873
 #, fuzzy, python-format
 msgid "%d Package(s) to remove"
 msgstr "Buang perubahan yang dicadangkan"
 
-#: ../cli.py:890
+#: ../cli.py:915
 #, python-format
 msgid "Package %s is already installed, skipping"
 msgstr ""
 
-#: ../cli.py:901
+#: ../cli.py:926
 #, python-format
 msgid "Discarding non-comparable pkg %s.%s"
 msgstr ""
 
 #. we've not got any installed that match n or n+a
-#: ../cli.py:927
+#: ../cli.py:952
 #, python-format
 msgid "No other %s installed, adding to list for potential install"
 msgstr ""
 
-#: ../cli.py:946
+#: ../cli.py:971
 #, fuzzy, python-format
 msgid "Command line error: %s"
 msgstr "Ralat mengira nilai!"
 
-#: ../cli.py:1073
+#: ../cli.py:1101
 #, fuzzy
 msgid "be tolerant of errors"
 msgstr "Ralat - %s tidak dijumpai"
 
-#: ../cli.py:1075
+#: ../cli.py:1103
 msgid "run entirely from cache, don't update cache"
 msgstr ""
 
-#: ../cli.py:1077
+#: ../cli.py:1105
 #, fuzzy
 msgid "config file location"
 msgstr "Fail Config Ruang Kerja"
 
-#: ../cli.py:1079
+#: ../cli.py:1107
 msgid "maximum command wait time"
 msgstr ""
 
-#: ../cli.py:1081
+#: ../cli.py:1109
 #, fuzzy
 msgid "debugging output level"
 msgstr "Gulung dibawah tahap 1"
 
-#: ../cli.py:1084
+#: ../cli.py:1113
+msgid "show duplicates, in repos, in list/search commands"
+msgstr ""
+
+#: ../cli.py:1115
 #, fuzzy
 msgid "error output level"
 msgstr "Gulung dibawah tahap 1"
 
-#: ../cli.py:1087
+#: ../cli.py:1118
 msgid "quiet operation"
 msgstr ""
 
-#: ../cli.py:1091
+#: ../cli.py:1122
 msgid "answer yes for all questions"
 msgstr ""
 
-#: ../cli.py:1093
+#: ../cli.py:1124
 msgid "show Yum version and exit"
 msgstr ""
 
-#: ../cli.py:1094
+#: ../cli.py:1125
 #, fuzzy
 msgid "set install root"
 msgstr "Pasang plugin baru"
 
-#: ../cli.py:1098
+#: ../cli.py:1129
 msgid "enable one or more repositories (wildcards allowed)"
 msgstr ""
 
-#: ../cli.py:1102
+#: ../cli.py:1133
 msgid "disable one or more repositories (wildcards allowed)"
 msgstr ""
 
-#: ../cli.py:1105
+#: ../cli.py:1136
 msgid "exclude package(s) by name or glob"
 msgstr ""
 
-#: ../cli.py:1107
+#: ../cli.py:1138
 msgid "disable exclude from main, for a repo or for everything"
 msgstr ""
 
-#: ../cli.py:1110
+#: ../cli.py:1141
 msgid "enable obsoletes processing during updates"
 msgstr ""
 
-#: ../cli.py:1112
+#: ../cli.py:1143
 #, fuzzy
 msgid "disable Yum plugins"
 msgstr "Nyahaktif semua plugin"
 
-#: ../cli.py:1114
+#: ../cli.py:1145
 msgid "disable gpg signature checking"
 msgstr ""
 
-#: ../cli.py:1116
+#: ../cli.py:1147
 msgid "disable plugins by name"
 msgstr ""
 
-#: ../cli.py:1119
+#: ../cli.py:1150
 msgid "skip packages with depsolving problems"
 msgstr ""
 
@@ -479,184 +493,200 @@ msgstr ""
 msgid "Trying other mirror."
 msgstr ""
 
-#: ../output.py:273
+#: ../output.py:293
 #, fuzzy, python-format
 msgid "Name       : %s"
 msgstr "&Nama:"
 
-#: ../output.py:274
+#: ../output.py:294
 #, fuzzy, python-format
 msgid "Arch       : %s"
 msgstr "Saat semenjak permulaan zaman"
 
-#: ../output.py:276
+#: ../output.py:296
 #, fuzzy, python-format
 msgid "Epoch      : %s"
 msgstr "Saat semenjak permulaan zaman"
 
-#: ../output.py:277
+#: ../output.py:297
 #, fuzzy, python-format
 msgid "Version    : %s"
 msgstr "Versi"
 
-#: ../output.py:278
+#: ../output.py:298
 #, fuzzy, python-format
 msgid "Release    : %s"
 msgstr "Nota Keluaran Fedora"
 
-#: ../output.py:279
+#: ../output.py:299
 #, fuzzy, python-format
 msgid "Size       : %s"
 msgstr "Saiz:"
 
-#: ../output.py:280
+#: ../output.py:300
 #, fuzzy, python-format
 msgid "Repo       : %s"
 msgstr "&Nama:"
 
-#: ../output.py:282
+#: ../output.py:302
 #, fuzzy, python-format
 msgid "Committer  : %s"
 msgstr "&Nama:"
 
-#: ../output.py:283
+#: ../output.py:303
 #, fuzzy
 msgid "Summary    : "
 msgstr "Ringkasan"
 
-#: ../output.py:285
+#: ../output.py:305
 #, python-format
 msgid "URL        : %s"
 msgstr ""
 
-#: ../output.py:286
+#: ../output.py:306
 #, fuzzy, python-format
 msgid "License    : %s"
 msgstr "Saiz:"
 
-#: ../output.py:287
+#: ../output.py:307
 #, fuzzy
 msgid "Description: "
 msgstr "Huraian"
 
-#: ../output.py:331
+#: ../output.py:351
 #, fuzzy
 msgid "Is this ok [y/N]: "
 msgstr "Format imej ini"
 
-#: ../output.py:345
+#: ../output.py:357 ../output.py:360
+msgid "y"
+msgstr ""
+
+#: ../output.py:357
+msgid "n"
+msgstr ""
+
+#: ../output.py:357 ../output.py:360
+msgid "yes"
+msgstr ""
+
+#: ../output.py:357
+msgid "no"
+msgstr ""
+
+#: ../output.py:367
 #, fuzzy, python-format
 msgid ""
 "\n"
 "Group: %s"
 msgstr "Kumpulan: %s"
 
-#: ../output.py:347
+#: ../output.py:369
 #, fuzzy, python-format
 msgid " Description: %s"
 msgstr "Huraian"
 
-#: ../output.py:349
+#: ../output.py:371
 #, fuzzy
 msgid " Mandatory Packages:"
 msgstr "Stat Pakej"
 
-#: ../output.py:354
+#: ../output.py:376
 #, fuzzy
 msgid " Default Packages:"
 msgstr "Stat Pakej"
 
-#: ../output.py:359
+#: ../output.py:381
 #, fuzzy
 msgid " Optional Packages:"
 msgstr "Stat Pakej"
 
-#: ../output.py:364
+#: ../output.py:386
 #, fuzzy
 msgid " Conditional Packages:"
 msgstr "Stat Pakej"
 
-#: ../output.py:372
+#: ../output.py:394
 #, fuzzy, python-format
 msgid "package: %s"
 msgstr "Pelihat Pakej"
 
-#: ../output.py:374
+#: ../output.py:396
 msgid "  No dependencies for this package"
 msgstr ""
 
-#: ../output.py:379
+#: ../output.py:401
 #, python-format
 msgid "  dependency: %s"
 msgstr ""
 
-#: ../output.py:381
+#: ../output.py:403
 msgid "   Unsatisfied dependency"
 msgstr ""
 
-#: ../output.py:436
+#: ../output.py:461
 #, fuzzy
 msgid "Matched from:"
 msgstr "Tiada padanan dijumpai. :-("
 
-#: ../output.py:462
+#: ../output.py:487
 msgid "There was an error calculating total download size"
 msgstr ""
 
-#: ../output.py:467
+#: ../output.py:492
 #, fuzzy, python-format
 msgid "Total size: %s"
 msgstr "Jumlah saiz: "
 
-#: ../output.py:470
+#: ../output.py:495
 #, fuzzy, python-format
 msgid "Total download size: %s"
 msgstr "Saiz lajur automatik"
 
-#: ../output.py:482
+#: ../output.py:507
 #, fuzzy
 msgid "Package"
 msgstr "Pelihat Pakej"
 
-#: ../output.py:482
+#: ../output.py:507
 msgid "Arch"
 msgstr ""
 
-#: ../output.py:482
+#: ../output.py:507
 msgid "Version"
 msgstr "Versi"
 
-#: ../output.py:482
+#: ../output.py:507
 msgid "Repository"
 msgstr ""
 
-#: ../output.py:482
+#: ../output.py:507
 msgid "Size"
 msgstr "Saiz"
 
-#: ../output.py:489
+#: ../output.py:514
 #, fuzzy
 msgid "Installing for dependencies"
 msgstr "&Cari Bantuan"
 
-#: ../output.py:490
+#: ../output.py:515
 #, fuzzy
 msgid "Updating for dependencies"
 msgstr "&Cari Bantuan"
 
-#: ../output.py:491
+#: ../output.py:516
 #, fuzzy
 msgid "Removing for dependencies"
 msgstr "&Cari Bantuan"
 
-#: ../output.py:503
+#: ../output.py:528
 #, python-format
 msgid ""
 "     replacing  %s.%s %s\n"
 "\n"
 msgstr ""
 
-#: ../output.py:511
+#: ../output.py:536
 #, python-format
 msgid ""
 "\n"
@@ -667,28 +697,28 @@ msgid ""
 "Remove   %5.5s Package(s)         \n"
 msgstr ""
 
-#: ../output.py:529
+#: ../output.py:554
 msgid "Removed"
 msgstr ""
 
-#: ../output.py:530
+#: ../output.py:555
 msgid "Dependency Removed"
 msgstr ""
 
-#: ../output.py:532
+#: ../output.py:557
 msgid "Dependency Installed"
 msgstr ""
 
-#: ../output.py:534
+#: ../output.py:559
 #, fuzzy
 msgid "Dependency Updated"
 msgstr "dikemaskini pada %(date)s"
 
-#: ../output.py:535
+#: ../output.py:560
 msgid "Replaced"
 msgstr ""
 
-#: ../output.py:593
+#: ../output.py:618
 #, python-format
 msgid ""
 "\n"
@@ -696,68 +726,68 @@ msgid ""
 "seconds to exit.\n"
 msgstr ""
 
-#: ../output.py:603
+#: ../output.py:628
 #, fuzzy
 msgid "user interrupt"
 msgstr "Maklumat Sampukan"
 
-#: ../output.py:614
+#: ../output.py:639
 #, fuzzy
 msgid "installed"
 msgstr "[pasang: %s]"
 
-#: ../output.py:615
+#: ../output.py:640
 #, fuzzy
 msgid "updated"
 msgstr "dikemaskini pada %(date)s"
 
-#: ../output.py:616
+#: ../output.py:641
 msgid "obsoleted"
 msgstr ""
 
-#: ../output.py:617
+#: ../output.py:642
 msgid "erased"
 msgstr ""
 
-#: ../output.py:621
+#: ../output.py:646
 #, fuzzy, python-format
 msgid "---> Package %s.%s %s:%s-%s set to be %s"
 msgstr "Tetap imej ini untuk dikedudukan"
 
-#: ../output.py:628
+#: ../output.py:653
 #, fuzzy
 msgid "--> Running transaction check"
 msgstr "Periksa untuk &Kemaskini"
 
-#: ../output.py:633
+#: ../output.py:658
 msgid "--> Restarting Dependency Resolution with new changes."
 msgstr ""
 
-#: ../output.py:638
+#: ../output.py:663
 #, fuzzy
 msgid "--> Finished Dependency Resolution"
 msgstr "Tukar resolusi skrin"
 
-#: ../output.py:643
+#: ../output.py:668
 #, python-format
 msgid "--> Processing Dependency: %s for package: %s"
 msgstr ""
 
-#: ../output.py:648
+#: ../output.py:673
 #, python-format
 msgid "--> Unresolved Dependency: %s"
 msgstr ""
 
-#: ../output.py:654
+#: ../output.py:679
 #, python-format
 msgid "--> Processing Conflict: %s conflicts %s"
 msgstr ""
 
-#: ../output.py:657
+#: ../output.py:682
 msgid "--> Populating transaction set with selected packages. Please wait."
 msgstr ""
 
-#: ../output.py:661
+#: ../output.py:686
 #, python-format
 msgid "---> Downloading header for %s to pack into transaction set."
 msgstr ""
@@ -1112,662 +1142,702 @@ msgid ""
 "Dependencies Resolved"
 msgstr "dikemaskini pada %(date)s"
 
-#: ../yummain.py:199
+#: ../yummain.py:198
 msgid "Complete!"
 msgstr ""
 
-#: ../yummain.py:246
+#: ../yummain.py:245
 msgid ""
 "\n"
 "\n"
 "Exiting on user cancel."
 msgstr ""
 
-#: ../yum/depsolve.py:70
+#: ../yum/depsolve.py:82
 msgid "doTsSetup() will go away in a future version of Yum.\n"
 msgstr ""
 
-#: ../yum/depsolve.py:83
+#: ../yum/depsolve.py:95
 msgid "Setting up TransactionSets before config class is up"
 msgstr ""
 
-#: ../yum/depsolve.py:123
+#: ../yum/depsolve.py:136
 #, fuzzy, python-format
 msgid "Invalid tsflag in config file: %s"
 msgstr "Bersihkan Semua _Yum"
 
-#: ../yum/depsolve.py:134
+#: ../yum/depsolve.py:147
 #, python-format
 msgid "Searching pkgSack for dep: %s"
 msgstr ""
 
-#: ../yum/depsolve.py:163
+#: ../yum/depsolve.py:170
 #, fuzzy, python-format
 msgid "Potential match for %s from %s"
 msgstr "Senarai untuk"
 
-#: ../yum/depsolve.py:171
+#: ../yum/depsolve.py:178
 #, python-format
 msgid "Matched %s to require for %s"
 msgstr ""
 
-#: ../yum/depsolve.py:212
+#: ../yum/depsolve.py:219
 #, fuzzy, python-format
 msgid "Member: %s"
 msgstr "Pelayan: %s"
 
-#: ../yum/depsolve.py:226 ../yum/depsolve.py:788
+#: ../yum/depsolve.py:233 ../yum/depsolve.py:696
 #, fuzzy, python-format
 msgid "%s converted to install"
 msgstr "Akan Memasang"
 
-#: ../yum/depsolve.py:233
+#: ../yum/depsolve.py:240
 #, fuzzy, python-format
 msgid "Adding Package %s in mode %s"
 msgstr "Lihat dokumen dalam mod skrin penuh"
 
-#: ../yum/depsolve.py:243
+#: ../yum/depsolve.py:250
 #, fuzzy, python-format
 msgid "Removing Package %s"
 msgstr "Pelihat Pakej"
 
-#: ../yum/depsolve.py:254
+#: ../yum/depsolve.py:261
 #, python-format
 msgid "%s requires: %s"
 msgstr ""
 
-#: ../yum/depsolve.py:300
+#: ../yum/depsolve.py:312
 msgid "Needed Require has already been looked up, cheating"
 msgstr ""
 
-#: ../yum/depsolve.py:310
+#: ../yum/depsolve.py:322
 #, python-format
 msgid "Needed Require is not a package name. Looking up: %s"
 msgstr ""
 
-#: ../yum/depsolve.py:317
+#: ../yum/depsolve.py:329
 #, python-format
 msgid "Potential Provider: %s"
 msgstr ""
 
-#: ../yum/depsolve.py:340
+#: ../yum/depsolve.py:352
 #, python-format
 msgid "Mode is %s for provider of %s: %s"
 msgstr ""
 
-#: ../yum/depsolve.py:344
+#: ../yum/depsolve.py:356
 #, python-format
 msgid "Mode for pkg providing %s: %s"
 msgstr ""
 
-#: ../yum/depsolve.py:348
+#: ../yum/depsolve.py:360
 #, python-format
 msgid "TSINFO: %s package requiring %s marked as erase"
 msgstr ""
 
-#: ../yum/depsolve.py:361
-#, fuzzy, python-format
-msgid "Looking for Obsoletes for %s"
-msgstr "&Cari Bantuan"
-
-#: ../yum/depsolve.py:373
+#: ../yum/depsolve.py:372
 #, python-format
 msgid "TSINFO: Obsoleting %s with %s to resolve dep."
 msgstr ""
 
-#: ../yum/depsolve.py:404
+#: ../yum/depsolve.py:375
 #, python-format
 msgid "TSINFO: Updating %s to resolve dep."
 msgstr ""
 
-#. if there's no update then pass this over to requringFromTransaction()
-#: ../yum/depsolve.py:408
+#: ../yum/depsolve.py:378
 #, python-format
 msgid "Cannot find an update path for dep for: %s"
 msgstr ""
 
-#: ../yum/depsolve.py:420
+#: ../yum/depsolve.py:388
 #, fuzzy, python-format
 msgid "Unresolvable requirement %s for %s"
 msgstr "&Cari Bantuan"
 
 #. is it already installed?
-#: ../yum/depsolve.py:466
+#: ../yum/depsolve.py:434
 #, python-format
 msgid "%s is in providing packages but it is already installed, removing."
 msgstr ""
 
-#: ../yum/depsolve.py:481
+#: ../yum/depsolve.py:449
 #, python-format
 msgid "Potential resolving package %s has newer instance in ts."
 msgstr ""
 
-#: ../yum/depsolve.py:492
+#: ../yum/depsolve.py:460
 #, python-format
 msgid "Potential resolving package %s has newer instance installed."
 msgstr ""
 
-#: ../yum/depsolve.py:500 ../yum/depsolve.py:568
+#: ../yum/depsolve.py:468 ../yum/depsolve.py:527
 #, python-format
 msgid "Missing Dependency: %s is needed by package %s"
 msgstr ""
 
-#: ../yum/depsolve.py:513
+#: ../yum/depsolve.py:481
 #, python-format
 msgid "%s already in ts, skipping this one"
 msgstr ""
 
-#: ../yum/depsolve.py:578
+#: ../yum/depsolve.py:510
+#, python-format
+msgid ""
+"Failure finding best provider of %s for %s, exceeded maximum loop length"
+msgstr ""
+
+#: ../yum/depsolve.py:537
 #, python-format
 msgid "TSINFO: Marking %s as update for %s"
 msgstr ""
 
-#: ../yum/depsolve.py:585
+#: ../yum/depsolve.py:544
 #, python-format
 msgid "TSINFO: Marking %s as install for %s"
 msgstr ""
 
-#: ../yum/depsolve.py:647 ../yum/depsolve.py:654
-#, python-format
-msgid "unable to find newer package for %s"
-msgstr ""
-
-#: ../yum/depsolve.py:661
-#, python-format
-msgid "TSINFO: Updating %s to resolve conflict."
-msgstr ""
-
-#: ../yum/depsolve.py:671
-#, python-format
-msgid "%s conflicts: %s"
-msgstr ""
-
-#: ../yum/depsolve.py:681
-#, fuzzy, python-format
-msgid "%s conflicts with %s"
-msgstr "Dengan penghujung:"
-
-#: ../yum/depsolve.py:720 ../yum/depsolve.py:806
+#: ../yum/depsolve.py:635 ../yum/depsolve.py:714
 #, fuzzy
 msgid "Success - empty transaction"
 msgstr "Cipta dokumen kosong"
 
-#: ../yum/depsolve.py:765 ../yum/depsolve.py:778
+#: ../yum/depsolve.py:673 ../yum/depsolve.py:686
 msgid "Restarting Loop"
 msgstr ""
 
-#: ../yum/depsolve.py:794
+#: ../yum/depsolve.py:702
 msgid "Dependency Process ending"
 msgstr ""
 
-#: ../yum/depsolve.py:800
+#: ../yum/depsolve.py:708
 #, python-format
 msgid "%s from %s has depsolving problems"
 msgstr ""
 
-#: ../yum/depsolve.py:807
+#: ../yum/depsolve.py:715
 msgid "Success - deps resolved"
 msgstr ""
 
-#: ../yum/depsolve.py:824
+#: ../yum/depsolve.py:729
 #, fuzzy, python-format
 msgid "Checking deps for %s"
 msgstr "&Cari Bantuan"
 
-#: ../yum/depsolve.py:880
+#: ../yum/depsolve.py:782
 #, python-format
 msgid "looking for %s as a requirement of %s"
+msgstr ""
+
+#: ../yum/depsolve.py:933
+#, python-format
+msgid "Comparing best: %s to po: %s"
+msgstr ""
+
+#: ../yum/depsolve.py:937
+#, python-format
+msgid "Same: best %s == po: %s"
+msgstr ""
+
+#: ../yum/depsolve.py:952 ../yum/depsolve.py:963
+#, python-format
+msgid "best %s obsoletes po: %s"
+msgstr ""
+
+#: ../yum/depsolve.py:955
+#, python-format
+msgid "po %s obsoletes best: %s"
+msgstr ""
+
+#: ../yum/depsolve.py:972 ../yum/depsolve.py:979 ../yum/depsolve.py:1036
+#, fuzzy, python-format
+msgid "better arch in po %s"
+msgstr "mencari pakej %s"
+
+#: ../yum/depsolve.py:988 ../yum/depsolve.py:1010
+#, python-format
+msgid "po %s shares a sourcerpm with %s"
+msgstr ""
+
+#: ../yum/depsolve.py:992 ../yum/depsolve.py:1015
+#, python-format
+msgid "best %s shares a sourcerpm with %s"
+msgstr ""
+
+#: ../yum/depsolve.py:999 ../yum/depsolve.py:1020
+#, python-format
+msgid "po %s shares more of the name prefix with %s"
+msgstr ""
+
+#: ../yum/depsolve.py:1003 ../yum/depsolve.py:1029
+#, python-format
+msgid "po %s has a shorter name than best %s"
+msgstr ""
+
+#: ../yum/depsolve.py:1025
+#, python-format
+msgid "bestpkg %s shares more of the name prefix with %s"
 msgstr ""
 
 #: ../yum/__init__.py:119
 msgid "doConfigSetup() will go away in a future version of Yum.\n"
 msgstr ""
 
-#: ../yum/__init__.py:311
+#: ../yum/__init__.py:296
 #, python-format
 msgid "Repository %r is missing name in configuration, using id"
 msgstr ""
 
-#: ../yum/__init__.py:347
+#: ../yum/__init__.py:332
 #, fuzzy
 msgid "plugins already initialised"
 msgstr "Nyahaktif semua plugin"
 
-#: ../yum/__init__.py:354
+#: ../yum/__init__.py:339
 msgid "doRpmDBSetup() will go away in a future version of Yum.\n"
 msgstr ""
 
-#: ../yum/__init__.py:363
+#: ../yum/__init__.py:349
 #, fuzzy
 msgid "Reading Local RPMDB"
 msgstr "Layari Rangkaian Tempatan"
 
-#: ../yum/__init__.py:381
+#: ../yum/__init__.py:367
 msgid "doRepoSetup() will go away in a future version of Yum.\n"
 msgstr ""
 
-#: ../yum/__init__.py:399
+#: ../yum/__init__.py:387
 msgid "doSackSetup() will go away in a future version of Yum.\n"
 msgstr ""
 
-#: ../yum/__init__.py:416
+#: ../yum/__init__.py:404
 #, fuzzy
 msgid "Setting up Package Sacks"
 msgstr "Membersihkan pakej"
 
-#: ../yum/__init__.py:458
+#: ../yum/__init__.py:447
 #, python-format
 msgid "repo object for repo %s lacks a _resetSack method\n"
 msgstr ""
 
-#: ../yum/__init__.py:459
+#: ../yum/__init__.py:448
 msgid "therefore this repo cannot be reset.\n"
 msgstr ""
 
-#: ../yum/__init__.py:464
+#: ../yum/__init__.py:453
 msgid "doUpdateSetup() will go away in a future version of Yum.\n"
 msgstr ""
 
-#: ../yum/__init__.py:476
+#: ../yum/__init__.py:465
 #, fuzzy
 msgid "Building updates object"
 msgstr "Salin Objek Embed"
 
-#: ../yum/__init__.py:499
+#: ../yum/__init__.py:496
 msgid "doGroupSetup() will go away in a future version of Yum.\n"
 msgstr ""
 
-#: ../yum/__init__.py:522
+#: ../yum/__init__.py:520
 #, fuzzy
 msgid "Getting group metadata"
 msgstr "Mendapatkan akaun CVS"
 
-#: ../yum/__init__.py:548
+#: ../yum/__init__.py:546
 #, python-format
 msgid "Adding group file from repository: %s"
 msgstr ""
 
-#: ../yum/__init__.py:557
+#: ../yum/__init__.py:555
 #, python-format
 msgid "Failed to add groups file for repository: %s - %s"
 msgstr ""
 
-#: ../yum/__init__.py:563
+#: ../yum/__init__.py:561
 msgid "No Groups Available in any repository"
 msgstr ""
 
-#: ../yum/__init__.py:614
+#: ../yum/__init__.py:611
 msgid "Importing additional filelist information"
 msgstr ""
 
-#: ../yum/__init__.py:646
+#: ../yum/__init__.py:657
 #, fuzzy, python-format
 msgid "Skip-broken round %i"
 msgstr "Langkau soalselidik pengguna"
 
-#: ../yum/__init__.py:674
+#: ../yum/__init__.py:680
 #, python-format
 msgid "Skip-broken took %i rounds "
 msgstr ""
 
-#: ../yum/__init__.py:675
+#: ../yum/__init__.py:681
 msgid ""
 "\n"
 "Packages skipped because of dependency problems:"
 msgstr ""
 
-#: ../yum/__init__.py:679
+#: ../yum/__init__.py:685
 #, python-format
 msgid "    %s from %s"
 msgstr ""
 
-#: ../yum/__init__.py:767
+#: ../yum/__init__.py:774
 #, fuzzy, python-format
 msgid "Failed to remove transaction file %s"
 msgstr "Gagal untuk mencari seksyen: %s"
 
-#: ../yum/__init__.py:807
+#: ../yum/__init__.py:814
 #, python-format
 msgid "excluding for cost: %s from %s"
 msgstr ""
 
-#: ../yum/__init__.py:838
+#: ../yum/__init__.py:845
 msgid "Excluding Packages in global exclude list"
 msgstr ""
 
-#: ../yum/__init__.py:840
+#: ../yum/__init__.py:847
 #, fuzzy, python-format
 msgid "Excluding Packages from %s"
 msgstr "Selit MathML dari fail"
 
-#: ../yum/__init__.py:867
+#: ../yum/__init__.py:875
 #, fuzzy, python-format
 msgid "Reducing %s to included packages only"
 msgstr "Stat pakej Mandriva Linux"
 
-#: ../yum/__init__.py:872
+#: ../yum/__init__.py:880
 #, fuzzy, python-format
 msgid "Keeping included package %s"
 msgstr "Fail Pakej RPM"
 
-#: ../yum/__init__.py:878
+#: ../yum/__init__.py:886
 #, python-format
 msgid "Removing unmatched package %s"
 msgstr "Membuang pakej tidak sepadan %s"
 
-#: ../yum/__init__.py:881
+#: ../yum/__init__.py:889
 msgid "Finished"
 msgstr ""
 
 #. Whoa. What the heck happened?
-#: ../yum/__init__.py:911
+#: ../yum/__init__.py:919
 #, python-format
 msgid "Unable to check if PID %s is active"
 msgstr ""
 
 #. Another copy seems to be running.
-#: ../yum/__init__.py:915
+#: ../yum/__init__.py:923
 #, python-format
 msgid "Existing lock %s: another copy is running as pid %s."
 msgstr ""
 
-#: ../yum/__init__.py:962 ../yum/__init__.py:969
+#: ../yum/__init__.py:970 ../yum/__init__.py:977
 msgid "Package does not match intended download"
 msgstr ""
 
-#: ../yum/__init__.py:983
+#: ../yum/__init__.py:991
 msgid "Could not perform checksum"
 msgstr "Tidak dapat melaksanakan checksum"
 
-#: ../yum/__init__.py:986
+#: ../yum/__init__.py:994
 msgid "Package does not match checksum"
 msgstr ""
 
-#: ../yum/__init__.py:1028
+#: ../yum/__init__.py:1036
 #, python-format
 msgid "package fails checksum but caching is enabled for %s"
 msgstr ""
 
-#: ../yum/__init__.py:1034
+#: ../yum/__init__.py:1042
 #, python-format
 msgid "using local copy of %s"
 msgstr "menggunakan salinan tempatan bagi %s"
 
-#: ../yum/__init__.py:1053
+#: ../yum/__init__.py:1061
 #, python-format
 msgid "Insufficient space in download directory %s to download"
 msgstr ""
 
-#: ../yum/__init__.py:1086
+#: ../yum/__init__.py:1094
 msgid "Header is not complete."
 msgstr "Pengepala tidak lengkap."
 
-#: ../yum/__init__.py:1126
+#: ../yum/__init__.py:1134
 #, python-format
 msgid ""
 "Header not in local cache and caching-only mode enabled. Cannot download %s"
 msgstr ""
 
-#: ../yum/__init__.py:1181
+#: ../yum/__init__.py:1189
 #, python-format
 msgid "Public key for %s is not installed"
 msgstr ""
 
-#: ../yum/__init__.py:1185
+#: ../yum/__init__.py:1193
 #, python-format
 msgid "Problem opening package %s"
 msgstr "Masalah membuka pakej %s"
 
-#: ../yum/__init__.py:1193
+#: ../yum/__init__.py:1201
 #, python-format
 msgid "Public key for %s is not trusted"
 msgstr ""
 
-#: ../yum/__init__.py:1197
+#: ../yum/__init__.py:1205
 #, python-format
 msgid "Package %s is not signed"
 msgstr "Pakej %s tidak ditandatangan"
 
-#: ../yum/__init__.py:1235
+#: ../yum/__init__.py:1243
 #, python-format
 msgid "Cannot remove %s"
 msgstr "Tidak dapat membuang %s"
 
-#: ../yum/__init__.py:1239
+#: ../yum/__init__.py:1247
 #, python-format
 msgid "%s removed"
 msgstr ""
 
-#: ../yum/__init__.py:1271
+#: ../yum/__init__.py:1283
 #, python-format
 msgid "Cannot remove %s file %s"
 msgstr "Tidak dapat membuang %s fail %s"
 
-#: ../yum/__init__.py:1275
+#: ../yum/__init__.py:1287
 #, python-format
 msgid "%s file %s removed"
 msgstr "%s fail %s dibuang"
 
-#: ../yum/__init__.py:1277
+#: ../yum/__init__.py:1289
 #, python-format
 msgid "%d %s files removed"
 msgstr "%d %s fail dibuang"
 
-#: ../yum/__init__.py:1317
+#: ../yum/__init__.py:1329
 #, python-format
 msgid "More than one identical match in sack for %s"
 msgstr ""
 
-#: ../yum/__init__.py:1323
+#: ../yum/__init__.py:1335
 #, python-format
 msgid "Nothing matches %s.%s %s:%s-%s from update"
 msgstr ""
 
-#: ../yum/__init__.py:1513
+#: ../yum/__init__.py:1543
 msgid ""
 "searchPackages() will go away in a future version of "
 "Yum.                      Use searchGenerator() instead. \n"
 msgstr ""
 
-#: ../yum/__init__.py:1550
+#: ../yum/__init__.py:1580
 #, python-format
 msgid "Searching %d packages"
 msgstr "Mencari %d pakej"
 
-#: ../yum/__init__.py:1554
+#: ../yum/__init__.py:1584
 #, python-format
 msgid "searching package %s"
 msgstr "mencari pakej %s"
 
-#: ../yum/__init__.py:1563
+#: ../yum/__init__.py:1596
 msgid "searching in file entries"
 msgstr ""
 
-#: ../yum/__init__.py:1569
+#: ../yum/__init__.py:1603
 msgid "searching in provides entries"
 msgstr ""
 
-#: ../yum/__init__.py:1599
+#: ../yum/__init__.py:1633
 #, python-format
 msgid "Provides-match: %s"
 msgstr "Padanan Menyediakan: %s"
 
-#: ../yum/__init__.py:1668 ../yum/__init__.py:1686 ../yum/__init__.py:1714
-#: ../yum/__init__.py:1719 ../yum/__init__.py:1774 ../yum/__init__.py:1778
+#: ../yum/__init__.py:1702 ../yum/__init__.py:1720 ../yum/__init__.py:1748
+#: ../yum/__init__.py:1753 ../yum/__init__.py:1808 ../yum/__init__.py:1812
 #, python-format
 msgid "No Group named %s exists"
 msgstr ""
 
-#: ../yum/__init__.py:1697 ../yum/__init__.py:1790
+#: ../yum/__init__.py:1731 ../yum/__init__.py:1824
 #, python-format
 msgid "package %s was not marked in group %s"
 msgstr ""
 
-#: ../yum/__init__.py:1736
+#: ../yum/__init__.py:1770
 #, python-format
 msgid "Adding package %s from group %s"
 msgstr ""
 
-#: ../yum/__init__.py:1740
+#: ../yum/__init__.py:1774
 #, python-format
 msgid "No package named %s available to be installed"
 msgstr ""
 
-#: ../yum/__init__.py:1815
+#: ../yum/__init__.py:1849
 #, python-format
 msgid "Package tuple %s could not be found in packagesack"
 msgstr ""
 
-#: ../yum/__init__.py:1883 ../yum/__init__.py:1926
+#: ../yum/__init__.py:1917 ../yum/__init__.py:1960
 msgid "Invalid versioned dependency string, try quoting it."
 msgstr ""
 
-#: ../yum/__init__.py:1885 ../yum/__init__.py:1928
+#: ../yum/__init__.py:1919 ../yum/__init__.py:1962
 msgid "Invalid version flag"
 msgstr "Bendera versi tidak sah"
 
-#: ../yum/__init__.py:1900 ../yum/__init__.py:1904
+#: ../yum/__init__.py:1934 ../yum/__init__.py:1938
 #, python-format
 msgid "No Package found for %s"
 msgstr "Tiada Pakej dijumpai untuk %s"
 
-#: ../yum/__init__.py:2034
+#: ../yum/__init__.py:2066
 msgid "Package Object was not a package object instance"
 msgstr ""
 
-#: ../yum/__init__.py:2038
+#: ../yum/__init__.py:2070
 msgid "Nothing specified to install"
 msgstr ""
 
 #. only one in there
-#: ../yum/__init__.py:2051
+#: ../yum/__init__.py:2085
 #, python-format
 msgid "Checking for virtual provide or file-provide for %s"
 msgstr ""
 
-#: ../yum/__init__.py:2057 ../yum/__init__.py:2323
+#: ../yum/__init__.py:2091 ../yum/__init__.py:2380
 #, python-format
 msgid "No Match for argument: %s"
 msgstr ""
 
 #. FIXME - this is where we could check to see if it already installed
 #. for returning better errors
-#: ../yum/__init__.py:2114
+#: ../yum/__init__.py:2146
 msgid "No package(s) available to install"
 msgstr ""
 
-#: ../yum/__init__.py:2126
+#: ../yum/__init__.py:2158
 #, python-format
 msgid "Package: %s  - already in transaction set"
 msgstr ""
 
-#: ../yum/__init__.py:2139
+#: ../yum/__init__.py:2171
 #, python-format
 msgid "Package %s already installed and latest version"
 msgstr ""
 
+#: ../yum/__init__.py:2178
+#, python-format
+msgid "Package matching %s already installed. Checking for update."
+msgstr ""
+
 #. update everything (the easy case)
-#: ../yum/__init__.py:2180
+#: ../yum/__init__.py:2220
 msgid "Updating Everything"
 msgstr "Mengemaskini Semuanya"
 
-#: ../yum/__init__.py:2264
+#: ../yum/__init__.py:2304
 #, python-format
 msgid "Package is already obsoleted: %s.%s %s:%s-%s"
 msgstr ""
 
-#: ../yum/__init__.py:2320
+#: ../yum/__init__.py:2377
 #, python-format
 msgid "%s"
 msgstr "%s"
 
-#: ../yum/__init__.py:2335
+#: ../yum/__init__.py:2392
 msgid "No package matched to remove"
 msgstr ""
 
-#: ../yum/__init__.py:2369
+#: ../yum/__init__.py:2426
 #, python-format
 msgid "Cannot open file: %s. Skipping."
 msgstr "Tidak dapat membuka fail: %s. Melangkau."
 
-#: ../yum/__init__.py:2372
+#: ../yum/__init__.py:2429
 #, python-format
 msgid "Examining %s: %s"
 msgstr "Memeriksa %s: %s"
 
-#: ../yum/__init__.py:2379
+#: ../yum/__init__.py:2436
 #, python-format
 msgid ""
 "Package %s not installed, cannot update it. Run yum install to install it "
 "instead."
 msgstr ""
 
-#: ../yum/__init__.py:2411
+#: ../yum/__init__.py:2468
 #, python-format
 msgid "Excluding %s"
 msgstr ""
 
-#: ../yum/__init__.py:2416
+#: ../yum/__init__.py:2473
 #, python-format
 msgid "Marking %s to be installed"
 msgstr "Menanda %s untuk dipasang"
 
-#: ../yum/__init__.py:2422
+#: ../yum/__init__.py:2479
 #, python-format
 msgid "Marking %s as an update to %s"
 msgstr ""
 
-#: ../yum/__init__.py:2429
+#: ../yum/__init__.py:2486
 #, python-format
 msgid "%s: does not update installed package."
 msgstr ""
 
-#: ../yum/__init__.py:2447
+#: ../yum/__init__.py:2504
 msgid "Problem in reinstall: no package matched to remove"
 msgstr ""
 
-#: ../yum/__init__.py:2456
+#: ../yum/__init__.py:2515
+#, python-format
+msgid "Package %s is allowed multiple installs, skipping"
+msgstr ""
+
+#: ../yum/__init__.py:2522
 msgid "Problem in reinstall: no package matched to install"
 msgstr ""
 
-#: ../yum/__init__.py:2514
+#: ../yum/__init__.py:2570
 #, python-format
 msgid "Retrieving GPG key from %s"
 msgstr ""
 
-#: ../yum/__init__.py:2520
+#: ../yum/__init__.py:2576
 msgid "GPG key retrieval failed: "
 msgstr ""
 
-#: ../yum/__init__.py:2533
+#: ../yum/__init__.py:2589
 msgid "GPG key parsing failed: "
 msgstr ""
 
-#: ../yum/__init__.py:2537
+#: ../yum/__init__.py:2593
 #, python-format
 msgid "GPG key at %s (0x%s) is already installed"
 msgstr ""
 
 #. Try installing/updating GPG key
-#: ../yum/__init__.py:2542
+#: ../yum/__init__.py:2598
 #, python-format
 msgid "Importing GPG key 0x%s \"%s\" from %s"
 msgstr ""
 
-#: ../yum/__init__.py:2554
+#: ../yum/__init__.py:2610
 msgid "Not installing key"
 msgstr "Tidak memasang kekunci"
 
-#: ../yum/__init__.py:2560
+#: ../yum/__init__.py:2616
 #, python-format
 msgid "Key import failed (code %d)"
 msgstr ""
 
-#: ../yum/__init__.py:2563
+#: ../yum/__init__.py:2619
 msgid "Key imported successfully"
 msgstr "Kekunci berjaya diimport"
 
-#: ../yum/__init__.py:2568
+#: ../yum/__init__.py:2624
 #, python-format
 msgid ""
 "The GPG keys listed for the \"%s\" repository are already installed but they "
@@ -1775,81 +1845,71 @@ msgid ""
 "Check that the correct key URLs are configured for this repository."
 msgstr ""
 
-#: ../yum/__init__.py:2577
+#: ../yum/__init__.py:2633
 msgid "Import of key(s) didn't help, wrong key(s)?"
 msgstr ""
 
-#: ../yum/__init__.py:2651
+#: ../yum/__init__.py:2707
 msgid "Unable to find a suitable mirror."
 msgstr ""
 
-#: ../yum/__init__.py:2653
+#: ../yum/__init__.py:2709
 msgid "Errors were encountered while downloading packages."
 msgstr ""
 
-#: ../yum/__init__.py:2717
+#: ../yum/__init__.py:2774
 msgid "Test Transaction Errors: "
 msgstr "Ralat Ujian Transaksi:"
 
-#: ../yum/__init__.py:2752
-#, python-format
-msgid "Package %s needs %s, this is not available."
-msgstr ""
-
-#: ../yum/__init__.py:2757
-#, python-format
-msgid "Package %s conflicts with %s."
-msgstr "Pakej %s berkonflik dengan %s."
-
-#: ../yum/plugins.py:168
-#, python-format
-msgid "Running \"%s\" handler for \"%s\" plugin"
-msgstr ""
-
 #. Mostly copied from YumOutput._outKeyValFill()
-#: ../yum/plugins.py:193
+#: ../yum/plugins.py:195
 msgid "Loaded plugins: "
 msgstr ""
 
-#: ../yum/plugins.py:210
+#: ../yum/plugins.py:206
+#, python-format
+msgid "No plugin match for: %s"
+msgstr ""
+
+#: ../yum/plugins.py:219
 #, python-format
 msgid "\"%s\" plugin is disabled"
 msgstr ""
 
-#: ../yum/plugins.py:222
+#: ../yum/plugins.py:231
 #, python-format
 msgid "Plugin \"%s\" doesn't specify required API version"
 msgstr ""
 
-#: ../yum/plugins.py:226
+#: ../yum/plugins.py:235
 #, python-format
 msgid "Plugin \"%s\" requires API %s. Supported API is %s."
 msgstr ""
 
-#: ../yum/plugins.py:253
+#: ../yum/plugins.py:264
 #, fuzzy, python-format
 msgid "Loading \"%s\" plugin"
 msgstr "Nyahaktif semua plugin"
 
-#: ../yum/plugins.py:260
+#: ../yum/plugins.py:271
 #, python-format
 msgid ""
 "Two or more plugins with the name \"%s\" exist in the plugin search path"
 msgstr ""
 
-#: ../yum/plugins.py:280
+#: ../yum/plugins.py:291
 #, python-format
 msgid "Configuration file %s not found"
 msgstr ""
 
 #. for
 #. Configuration files for the plugin not found
-#: ../yum/plugins.py:283
+#: ../yum/plugins.py:294
 #, python-format
 msgid "Unable to find configuration file for plugin %s"
 msgstr ""
 
-#: ../yum/plugins.py:437
+#: ../yum/plugins.py:448
 msgid "registration of commands not supported"
 msgstr ""
 
@@ -1881,6 +1941,17 @@ msgstr "Pengepala Rosak %s"
 #, python-format
 msgid "Error opening rpm %s - error %s"
 msgstr "Ralat membuka rpm %s - ralat %s"
+
+#, fuzzy
+#~ msgid "Looking for Obsoletes for %s"
+#~ msgstr "&Cari Bantuan"
+
+#, fuzzy
+#~ msgid "%s conflicts with %s"
+#~ msgstr "Dengan penghujung:"
+
+#~ msgid "Package %s conflicts with %s."
+#~ msgstr "Pakej %s berkonflik dengan %s."
 
 #, fuzzy
 #~ msgid ""
