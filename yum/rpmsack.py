@@ -276,7 +276,7 @@ class RPMDBPackageSack(PackageSackBase):
             for hdr, idx in self._all_packages():
                 if self._match_repattern(rpats, hdr):
                     self._makePackageObject(hdr, idx)
-            self._completely_loaded = True
+            self._completely_loaded = patterns is None
         return self._idx2pkg.values()
 
     def searchNevra(self, name=None, epoch=None, ver=None, rel=None, arch=None):
