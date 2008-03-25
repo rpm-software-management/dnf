@@ -467,7 +467,7 @@ class YumBase(depsolve.Depsolve):
 
         up_st = time.time()
 
-        self._up = rpmUtils.updates.Updates(self.rpmdb.pkglist, self.pkgSack.simplePkgList())
+        self._up = rpmUtils.updates.Updates(self.rpmdb.simplePkgList(), self.pkgSack.simplePkgList())
         if self.conf.debuglevel >= 6:
             self._up.debug = 1
         
@@ -561,7 +561,7 @@ class YumBase(depsolve.Depsolve):
         if self._comps.compscount == 0:
             raise Errors.GroupsError, _('No Groups Available in any repository')
 
-        self._comps.compile(self.rpmdb.pkglist)
+        self._comps.compile(self.rpmdb.simplePkgList())
         self.verbose_logger.debug('group time: %0.3f' % (time.time() - group_st))                
         return self._comps
     
