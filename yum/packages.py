@@ -1174,6 +1174,14 @@ class YumLocalPackage(YumHeaderPackage):
         self._stat = os.stat(self.localpath)
         self.filetime = str(self._stat[-1])
         self.packagesize = str(self._stat[6])
+        self.arch = self.isSrpm()
+        self.pkgtup = (self.name, self.arch, self.epoch, self.ver, self.rel)
+        
+    def isSrpm(self):
+        if self.tagByName('sourcepackage') == 1 or not self.tagByName('sourcerpm'):
+            return 'src'
+        else:
+            return self.tagByName('arch')
         
     def localPkg(self):
         return self.localpath
