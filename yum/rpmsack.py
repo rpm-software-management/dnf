@@ -24,6 +24,10 @@ import Errors
 from packages import YumInstalledPackage
 from packageSack import PackageSackBase
 
+# For returnPackages(patterns=)
+import fnmatch
+import re
+
 class RPMInstalledPackage(YumInstalledPackage):
 
     def __init__(self, rpmhdr, index, rpmdb):
@@ -235,10 +239,43 @@ class RPMDBPackageSack(PackageSackBase):
 
         return misc.newestInList(allpkgs)
 
+    @staticmethod
+    def _compile_patterns(patterns):
+        if patterns is None:
+            return None
+        ret = []
+        for pat in patterns:
+            ret.append(re.compile(fnmatch.translate(pat)))
+        return ret
+    @staticmethod
+    def _match_repattern(repatterns, hdr):
+        if repatterns is None:
+            return True
+        for repat in repatterns:
+            if repat.match(hdr['name']):
+                return True
+            if repat.match("%(name)s-%(version)s-%(release)s.%(arch)s" % hdr):
+                return True
+            if repat.match("%(name)s.%(arch)s" % hdr):
+                return True
+            if repat.match("%(name)s-%(version)s" % hdr):
+                return True
+            if repat.match("%(name)s-%(version)s-%(release)s" % hdr):
+                return True
+            if repat.match("%(epoch)s:%(name)s-%(version)s-%(release)s.%(arch)s"
+                           % hdr):
+                return True
+            if repat.match("%(name)s-%(epoch)s:%(version)s-%(release)s.%(arch)s"
+                           % hdr):
+                return True
+        return False
+
     def returnPackages(self, repoid=None, patterns=None):
         if not self._completely_loaded:
+            rpats = self._compile_patterns(patterns)
             for hdr, idx in self._all_packages():
-                self._makePackageObject(hdr, idx)
+                if self._match_repattern(rpats, hdr):
+                    self._makePackageObject(hdr, idx)
             self._completely_loaded = True
         return self._idx2pkg.values()
 

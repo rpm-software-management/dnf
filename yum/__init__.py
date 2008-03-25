@@ -1306,7 +1306,7 @@ class YumBase(depsolve.Depsolve):
         # list all packages - those installed and available, don't 'think about it'
         if pkgnarrow == 'all': 
             dinst = {}
-            for po in self.rpmdb:
+            for po in self.rpmdb.returnPackages(patterns=patterns):
                 dinst[po.pkgtup] = po;
             installed = dinst.values()
                         
