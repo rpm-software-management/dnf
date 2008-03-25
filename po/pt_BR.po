@@ -1,1074 +1,2273 @@
 # Brazilian Portuguese translation of Yum
 # This file is distributed under the same license as the Yum package.
-# Igor Pires Soares <igor@projetofedora.org>, 2007.
+# Igor Pires Soares <igor@projetofedora.org>, 2007,2008.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: Yum\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: \n"
-"PO-Revision-Date: 2007-07-16 23:59-0300\n"
+"POT-Creation-Date: 2008-02-08 10:16+0100\n"
+"PO-Revision-Date: 2008-03-22 01:02-0300\n"
 "Last-Translator: Igor Pires Soares <igor@projetofedora.org>\n"
 "Language-Team: Brazilian Portuguese <fedora-trans-pt_br@redhat.com>\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=utf-8\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n > 1);"
-
-#: ../yummain.py:277
-#, c-format
-msgid "Dependencies resolved"
-msgstr "Dependências resolvidas"
-
-#: ../pullheaders.py:86
-#, c-format
-msgid "Directory of rpms must exist"
-msgstr "O diretório de rpms precisa existir"
-
-#: ../config.py:44
-#, c-format
-msgid "Error accessing URL: %s"
-msgstr "Erro ao acessar a URL: %s"
-
-#: ../urlgrabber.py:313
-#: ../urlgrabber.py:346
-#, c-format
-msgid "OSError: %s"
-msgstr "OSError (Erro do SO): %s"
-
-#: ../clientStuff.py:919
-#, c-format
-msgid "No Packages installed not included in a repository"
-msgstr "Nenhum pacote instalado não incluído em um repositório"
-
-#: ../pullheaders.py:293
-#, c-format
-msgid ""
-"\n"
-"   Total: %d\n"
-"   Used: %d\n"
-"   Src: %d"
-msgstr ""
-"\n"
-"   Total: %d\n"
-"   Usado: %d\n"
-"   Src: %d"
-
-#: ../serverStuff.py:82
-#, c-format
-msgid "ignoring srpm: %s"
-msgstr "ignorando srpm: %s"
-
-#: ../lilocfg.py:49
-#, c-format
-msgid "Error restoring the backup of lilo.conf  The backup was:\n"
-msgstr "Erro ao restaurar o backup do lilo.conf. O backup era:\n"
-
-#: ../clientStuff.py:842
-#: ../clientStuff.py:854
-#, c-format
-msgid "Looking in available packages for a providing package"
-msgstr "Procurando pelo pacote fornecido nos pacotes disponíveis"
-
-#: ../yummain.py:315
-#, c-format
-msgid "Errors installing:"
-msgstr "Erros ao instalar:"
-
-#: ../clientStuff.py:1140
-#, c-format
-msgid ""
-"retrygrab() failed for:\n"
-"  %s%s\n"
-"  Executing failover method"
-msgstr ""
-"retrygrab() falhou para:\n"
-"  %s%s\n"
-"  Executando método de recuperação"
-
-#: ../clientStuff.py:498
-#, c-format
-msgid "I will install/upgrade these to satisfy the dependencies:"
-msgstr "Eu irei instalar/atualizar isto para satisfazer as dependências:"
-
-#: ../pullheaders.py:232
-#, c-format
-msgid "Cannot delete %s - check perms"
-msgstr "Não foi possível remover %s - verifique as permissões"
-
-#: ../clientStuff.py:881
-#, c-format
-msgid "Need to pass a list of pkgs to erase"
-msgstr "É necessário passar uma lista de pacotes para remoção"
-
-#: ../clientStuff.py:839
-#, c-format
-msgid "Need a provides to match"
-msgstr "É necessário fornecer uma informação para corresponder"
-
-#: ../lilocfg.py:67
-#, c-format
-msgid "lilo options that are not supported by yum are used in the default lilo.conf. This file will not be modified. The options include:\n"
-msgstr "opções do lilo que não são suportadas pelo yum estão sendo utilizadas no arquivo lilo.conf padrão. Este arquivo não será modificado. Dentre as opções estão:\n"
-
-#: ../clientStuff.py:520
-#: ../clientStuff.py:559
-#, c-format
-msgid "Installed: "
-msgstr "Instalados: "
-
-#: ../clientStuff.py:715
-#: ../clientStuff.py:751
-#: ../clientStuff.py:804
-#: ../clientStuff.py:1017
-#, c-format
-msgid "Error getting file %s"
-msgstr "Erro ao obter arquivo %s"
-
-#: ../yummain.py:51
-#: ../yummain.py:106
-#, c-format
-msgid "Options Error: %s"
-msgstr "Erro nas Opções: %s"
-
-#: ../pullheaders.py:200
-#, c-format
-msgid "%s is not writable"
-msgstr "%s não é gravável"
-
-#: ../pullheaders.py:281
-#, c-format
-msgid ""
-"\n"
-"Already found tuple: %s %s:\n"
-"%s "
-msgstr ""
-"\n"
-"Tupla já encontrada: %s %s:\n"
-"%s "
-
-#: ../rpmUtils.py:132
-#, c-format
-msgid "Could not open RPM database for reading. Perhaps it is already in use?"
-msgstr "Não foi possível abrir o banco de dados RPM para leitura. Talvez por que ele já esteja em uso?"
-
-#: ../serverStuff.py:88
-#, c-format
-msgid "errors found"
-msgstr "erros encontrados"
-
-#: ../pkgaction.py:314
-#, c-format
-msgid "Size   : %s"
-msgstr "Tamanho   : %s"
-
-#: ../clientStuff.py:523
-#: ../clientStuff.py:562
-#, c-format
-msgid "Erased: "
-msgstr "Removidos: "
-
-#: ../checkbootloader.py:167
-#, c-format
-msgid "Unable to determine boot loader."
-msgstr "Não foi possível determinar o gerenciador de inicialização."
-
-#: ../clientStuff.py:799
-#, c-format
-msgid "getting %s"
-msgstr "obtendo %s"
-
-#: ../clientStuff.py:1033
-#, c-format
-msgid "Error Reading Header on %s"
-msgstr "Erro ao Ler Cabeçalho em %s"
-
-#: ../config.py:50
-#, c-format
-msgid "Error accessing File: %s"
-msgstr "Erro ao acessar arquivo: %s"
-
-#: ../yummain.py:330
-#, c-format
-msgid "You're not root, we can't install things"
-msgstr "Você não é root, nós não podemos instalar coisas"
-
-#: ../yummain.py:72
-#, c-format
-msgid "Cannot find any conf file."
-msgstr "Não foi possível encontrar um arquivo de configuração."
-
-#: ../urlgrabber.py:291
-#, c-format
-msgid "Local file does not exist: %s"
-msgstr "O arquivo local não existe: %s"
-
-#: ../config.py:193
-#, c-format
-msgid "using ftp, http[s], or file for servers, Aborting - %s"
-msgstr "usando ftp, http[s] ou arquivos para servidores. Abortando - %s"
-
-#: ../checkbootloader.py:165
-#, c-format
-msgid "Found %s."
-msgstr "%s encontrado."
-
-#: ../yummain.py:203
-#, c-format
-msgid "Finding updated packages"
-msgstr "Localizando pacotes atualizados"
-
-#: ../yummain.py:333
-#, c-format
-msgid "Transaction(s) Complete"
-msgstr "Transação Completa"
-
-#: ../urlgrabber.py:311
-#: ../urlgrabber.py:344
-#, c-format
-msgid "IOError: %s"
-msgstr "IOError (Erro E/S): %s"
-
-#: ../clientStuff.py:958
-#, c-format
-msgid "Cleaning packages and old headers"
-msgstr "Limpando pacotes e cabeçalhos antigos"
-
-#: ../clientStuff.py:809
-#, c-format
-msgid "Cannot download %s in caching only mode or when running as non-root user."
-msgstr "Não é possível baixar %s no modo \"somente cache\" ou quando estiver executando com um usuário não root."
-
-#: ../clientStuff.py:1029
-#: ../clientStuff.py:1034
-#: ../clientStuff.py:1038
-#: ../clientStuff.py:1043
-#, c-format
-msgid ""
-"Error: You may want to run yum clean or remove the file: \n"
-" %s"
-msgstr ""
-"Erro: Você pode querer executar a limpeza do yum ou remover o arquivo: \n"
-" %s"
-
-#: ../bin/yum:49
-#, c-format
-msgid "Unable to check if PID %s is active"
-msgstr "Não foi possível verificar se o PID %s está ativo"
-
-#: ../lilocfg.py:61
-#, c-format
-msgid "Error reading lilo.conf: The messages was:\n"
-msgstr "Erro ao ler o lilo.conf: A mensagem foi:\n"
-
-#: ../yummain.py:232
-#, c-format
-msgid "No groups provided or accessible on any server."
-msgstr "Nenhum grupo fornecido ou acessível em nenhum servidor."
-
-#: ../pkgaction.py:464
-#, c-format
-msgid "%s results returned"
-msgstr "%s resultados retornados"
-
-#: ../pullheaders.py:170
-#: ../pullheaders.py:176
-#, c-format
-msgid "Error moving %s to %s, fatal"
-msgstr "Erro ao mover %s para %s, fatal"
-
-#: ../yummain.py:294
-#, c-format
-msgid "Running test transaction:"
-msgstr "Executando teste de transação:"
-
-#: ../pullheaders.py:262
-#, c-format
-msgid ""
-"\n"
-"ignoring bad rpm: %s"
-msgstr ""
-"\n"
-"ignorando rpm defeituoso: %s"
-
-#: ../clientStuff.py:495
-#, c-format
-msgid "[erase: %s]"
-msgstr "[remover: %s]"
-
-#: ../pullheaders.py:196
-#, c-format
-msgid "%s is not a dir"
-msgstr "%s não é um diretório"
-
-#: ../nevral.py:349
-#, c-format
-msgid "bestarch = %s for %s"
-msgstr "bestarch·=·%s·para·%s"
-
-#: ../clientStuff.py:419
-#: ../nevral.py:237
-#, c-format
-msgid "Best version for %s is %s:%s-%s"
-msgstr "A melhor versão para %s é %s:%s-%s"
-
-#: ../clientStuff.py:506
-#: ../clientStuff.py:517
-#, c-format
-msgid "[deps: %s]"
-msgstr "[deps: %s]"
-
-#: ../pkgaction.py:267
-#, c-format
-msgid "Version"
-msgstr "Versão"
-
-#: ../clientStuff.py:921
-#, c-format
-msgid "Looking in Available Packages:"
-msgstr "Pesquisando nos Pacotes Disponíveis:"
-
-#: ../pullheaders.py:268
-#, c-format
-msgid ""
-"\n"
-"ignoring srpm: %s"
-msgstr ""
-"\n"
-"ignorando srpm: %s"
-
-#: ../serverStuff.py:77
-#, c-format
-msgid "Checking deps %d/%d complete"
-msgstr "Checando dependências, %d/%d completo"
-
-#: ../pkgaction.py:457
-#, c-format
-msgid ""
-"Installed package: %s.%s %s:%s-%s matches with\n"
-" %s"
-msgstr ""
-"O pacote instalado: %s.%s %s:%s-%s coincide com\n"
-" %s"
-
-#: ../pullheaders.py:122
-#, c-format
-msgid ""
-"Errors within the dir(s):\n"
-" %s"
-msgstr ""
-"Erro dentro do(s) diretório(s):\n"
-" %s"
-
-#: ../pkgaction.py:317
-#, c-format
-msgid "Summary: %s"
-msgstr "Resumo: %s"
-
-#: ../rpmUtils.py:260
-#, c-format
-msgid "Error opening rpm %s - error %s"
-msgstr "Erro ao abrir o rpm %s - erro %s"
-
-#: ../clientStuff.py:763
-#: ../clientStuff.py:789
-#, c-format
-msgid "Please run yum in non-caching mode to correct this header."
-msgstr "Por favor, execute o yum no modo sem cache para corrigir este cabeçalho."
-
-#: ../pullheaders.py:222
-#, c-format
-msgid "Cannot delete file %s"
-msgstr "Não foi possível remover o arquivo %s"
-
-#: ../lilocfg.py:43
-#, c-format
-msgid "Error installing lilo.conf  The message was:\n"
-msgstr "Erro ao instalar o lilo.conf. A mensagem foi:\n"
-
-#: ../clientStuff.py:1037
-#, c-format
-msgid "Error: Untrusted GPG key on %s"
-msgstr "Erro: Chave GPG não confiável em %s"
-
-#: ../clientStuff.py:923
-#, c-format
-msgid "Looking in Installed Packages:"
-msgstr "Pesquisando nos Pacotes Instalados:"
-
-#: ../clientStuff.py:971
-#, c-format
-msgid "Invalid clean option %s"
-msgstr "Opção de limpeza inválida %s"
-
-#: ../pullheaders.py:258
-#, c-format
-msgid ""
-"\n"
-"\n"
-"Problem with gpg sig or md5sum on %s\n"
-"\n"
-msgstr ""
-"\n"
-"\n"
-"Problema com a assinatura gpg ou com o md5sum em %s\n"
-"\n"
-
-#: ../pkgaction.py:313
-#, c-format
-msgid "Release: %s"
-msgstr "Versão: %s"
-
-#: ../pkgaction.py:76
-#, c-format
-msgid "No Packages Available for Update or Install"
-msgstr "Nenhum Pacote Disponível para Atualização ou Instalação"
-
-#: ../pkgaction.py:56
-#: ../pkgaction.py:67
-#, c-format
-msgid "%s is installed and is the latest version."
-msgstr "%s está instalado e é a última versão."
-
-#: ../nevral.py:261
-#, c-format
-msgid "Found best arch for install only pkg %s"
-msgstr "Encontre a melhor arquitetura para instalar apenas o pacote %s"
-
-#: ../clientStuff.py:844
-#: ../clientStuff.py:856
-#, c-format
-msgid "Looking in installed packages for a providing package"
-msgstr "Pesquisando por um pacote requerido nos pacotes instalados"
-
-#: ../clientStuff.py:468
-#, c-format
-msgid "I will do the following:"
-msgstr "Eu farei o seguinte:"
-
-#: ../urlgrabber.py:279
-#: ../urlgrabber.py:309
-#, c-format
-msgid "Bad URL: %s"
-msgstr "URL Inválida: %s"
-
-#: ../clientStuff.py:1003
-#, c-format
-msgid "NonMatching RPM version, %s, removing."
-msgstr "Versão do RPM não coincide, %s, removendo."
-
-#: ../clientStuff.py:509
-#, c-format
-msgid "I will erase these to satisfy the dependencies:"
-msgstr "Eu irei apagar isto para satisfazer as dependências:"
-
-#: ../clientStuff.py:522
-#: ../clientStuff.py:561
-#, c-format
-msgid "Updated: "
-msgstr "Atualizados: "
-
-#: ../lilocfg.py:407
-#, c-format
-msgid "Error parsing command line arguments: %s"
-msgstr "Erro ao analisar argumentos da linha de comando: %s"
-
-#: ../yummain.py:214
-#, c-format
-msgid "Finding obsoleted packages"
-msgstr "Localizando pacotes obsoletos"
-
-#: ../urlgrabber.py:315
-#: ../urlgrabber.py:348
-#, c-format
-msgid "HTTP Error (%s): %s"
-msgstr "Erro HTTP (%s): %s"
-
-#: ../serverStuff.py:96
-#, c-format
-msgid "depcheck: package %s conflicts with %s"
-msgstr "Verificação de dependências: o pacote %s conflita com %s"
-
-#: ../clientStuff.py:761
-#: ../clientStuff.py:787
-#, c-format
-msgid "Please ask your sysadmin to update the headers on this system."
-msgstr "Por favor, peça ao administrador do seu sistema para atualizar os cabeçalhos."
-
-#: ../clientStuff.py:851
-#, c-format
-msgid "Need an item to search"
-msgstr "É necessário um ítem para pesquisa"
-
-#: ../pullheaders.py:178
-#, c-format
-msgid "Putting back old headers"
-msgstr "Recolocando cabeçalhos antigos"
-
-#: ../clientStuff.py:735
-#, c-format
-msgid "CacheDir: %s"
-msgstr "CacheDir (diretório de cache): %s"
-
-#: ../callback.py:88
-#, c-format
-msgid "Completing update for %s  - %d/%d"
-msgstr "Completando atualização para %s - %d/%d"
-
-#: ../clientStuff.py:1044
-#, c-format
-msgid "Error: You may need to disable gpg checking to install this package\n"
-msgstr "Erro: Talvez seja necessário desabilitar a verificação gpg para instalar este pacote\n"
-
-#: ../yummain.py:128
-#, c-format
-msgid "Options Error: no commands found"
-msgstr "Erro nas opções: nenhum comando encontrado"
-
-#: ../serverStuff.py:85
-#, c-format
-msgid "adding %s"
-msgstr "adicionando %s"
-
-#: ../grubcfg.py:22
-#, c-format
-msgid "Unable to run grubby correctly: the message was:\n"
-msgstr "Não foi possível executar o grubby corretamente: a mensagem foi:\n"
-
-#: ../urlgrabber.py:293
-#, c-format
-msgid "Not a normal file: %s"
-msgstr "Não é um arquivo normal: %s"
-
-#: ../bin/yum:71
-#, c-format
-msgid "IOError - # %s - %s"
-msgstr "IOError (Erro E/S) - # %s - %s"
-
-#: ../pkgaction.py:510
-#, c-format
-msgid "Kernel Updated/Installed, checking for bootloader"
-msgstr "Kernel atualizado/instalado, verificando gerenciador de inicialização"
-
-#: ../clientStuff.py:828
-#, c-format
-msgid "Need to pass a list of pkgs to install"
-msgstr "É necessário passar uma lista de pacotes para instalar"
-
-#: ../clientStuff.py:790
-#: ../clientStuff.py:810
-#, c-format
-msgid "Deleting entry from Available packages"
-msgstr "Removendo entrada dos pacotes disponíveis"
-
-#: ../pullheaders.py:256
-#, c-format
-msgid ""
-"\n"
-"Checking sig on %s"
-msgstr ""
-"\n"
-"Verificando assinatura em %s"
-
-#: ../config.py:205
-#, c-format
-msgid "Insufficient server config - no servers found. Aborting."
-msgstr "Configuração de servidor insuficiente - nenhum servidor encontrado. Abortando."
-
-#: ../yummain.py:271
-#, c-format
-msgid "Resolving dependencies"
-msgstr "Resolvendo dependências"
-
-#: ../pkgaction.py:312
-#, c-format
-msgid "Version: %s"
-msgstr "Versão: %s"
-
-#: ../yummain.py:338
-#, c-format
-msgid ""
-"\n"
-"    Usage:  yum [options] <update | upgrade | install | info | remove | list |\n"
-"            clean | provides | search | check-update | groupinstall | groupupdate |\n"
-"            grouplist >\n"
-"                \n"
-"         Options:\n"
-"          -c [config file] - specify the config file to use\n"
-"          -e [error level] - set the error logging level\n"
-"          -d [debug level] - set the debugging level\n"
-"          -y answer yes to all questions\n"
-"          -t be tolerant about errors in package commands\n"
-"          -R [time in minutes] - set the max amount of time to randomly run in.\n"
-"          -C run from cache only - do not update the cache\n"
-"          --installroot=[path] - set the install root (default '/')\n"
-"          --version - output the version of yum\n"
-"          -h, --help this screen\n"
-"    "
-msgstr ""
-"\n"
-"   Uso:  yum [opções] <update | upgrade | install | info | remove | list |\n"
-"            clean | provides | search | check-update | groupinstall | groupupdate |\n"
-"            grouplist >\n"
-"                \n"
-"         Opções:\n"
-"          -c [arquivo de configuração] - especifica o arquivo de configuração a ser utilizado\n"
-"          -e [nível de erro] - define o nível de erro para o log\n"
-"          -d [nível de depuração] - define o nível de depuração\n"
-"          -y responde \"yes\" para todas as perguntas\n"
-"          -t ser tolerante com relação aos erros nos comandos dos pacotes\n"
-"          -R [tempo em minutos] - definir o tempo máximo para executar ramdomicamente\n"
-"          -C executar a partir do cache apenas - não atualiza o cache\n"
-"          --installroot=[caminho] - define a raiz da instalação (padrão \"/\")\n"
-"          --version - exibe a versão do yum\n"
-"          -h, --help - exibe esta tela\n"
-"    "
-
-#: ../pkgaction.py:259
-#, c-format
-msgid "From %s installing %s"
-msgstr "A partir de %s, instalando %s"
-
-#: ../pkgaction.py:538
-#, c-format
-msgid "No bootloader found, Cannot configure kernel, continuing."
-msgstr "Nenhum gerenciador de inicialização encontrado. Não é possível configurar o kernel, continuando."
-
-#: ../clientStuff.py:688
-#: ../clientStuff.py:695
-#, c-format
-msgid "Attempt to delete a missing file %s - ignoring."
-msgstr "Tentativa de remover um arquivo faltando %s - ignorando."
-
-#: ../rpmUtils.py:25
-#, c-format
-msgid "Header cannot be opened or does not match %s, %s."
-msgstr "O cabeçalho não pode ser aberto ou não coincide com %s, %s."
-
-#: ../bin/yum:66
-#, c-format
-msgid "Exiting on User Cancel"
-msgstr "Saindo por cancelamento do usuário"
-
-#: ../clientStuff.py:1011
-#, c-format
-msgid "Getting %s"
-msgstr "Obtendo %s"
-
-#: ../pullheaders.py:150
-#, c-format
-msgid ""
-"\n"
-"Writing header.info file"
-msgstr ""
-"\n"
-"Gravando arquivo header.info"
-
-#: ../pullheaders.py:208
-#, c-format
-msgid "Error creating dir %s: %s"
-msgstr "Erro ao criar diretório %s: %s"
-
-#: ../pkgaction.py:267
-#, c-format
-msgid "Arch"
-msgstr "Arquitetura"
-
-#: ../clientStuff.py:729
-#, c-format
-msgid "Gathering header information file(s) from server(s)"
-msgstr "Coletando arquivo(s) de informações de cabeçalhos a partir do(s) servidor(es)"
-
-#: ../clientStuff.py:756
-#, c-format
-msgid "Using cached header.info file"
-msgstr "Utilizando arquivo header.info do cache"
-
-#: ../pkgaction.py:300
-#, c-format
-msgid "No Packages Available to List"
-msgstr "Nenhum Pacote Disponível para Listar"
-
-#: ../clientStuff.py:1042
-#, c-format
-msgid "Error: Unsigned Package %s"
-msgstr "Erro: Pacote Não Assinado %s"
-
-#: ../pkgaction.py:461
-#, c-format
-msgid "localrpmdb not defined"
-msgstr "localrpmdb não definido"
-
-#: ../lilocfg.py:55
-#, c-format
-msgid "Error installing the new bootloader: \n"
-msgstr "Erro ao instalar o novo gerenciador de inicialização: \n"
-
-#: ../clientStuff.py:1028
-#, c-format
-msgid "Error: Could not find the GPG Key necessary to validate pkg %s"
-msgstr "Erro: Não foi possível localizar a Chave GPG necessária para validar o pacote %s"
-
-#: ../yummain.py:259
-#, c-format
-msgid "No actions to take"
-msgstr "Nenhuma ação a ser tomada"
-
-#: ../pkgaction.py:431
-#, c-format
-msgid ""
-"Available package: %s.%s %s:%s-%s from %s matches with\n"
-" %s"
-msgstr ""
-"Pacote disponível: %s.%s %s:%s-%s de %s resultados com\n"
-" %s"
-
-#: ../pkgaction.py:201
-#, c-format
-msgid "Erase: No matches for %s"
-msgstr "Apagar: Nenhum resultado para %s"
-
-#: ../pullheaders.py:124
-#, c-format
-msgid "   "
-msgstr "   "
-
-#: ../config.py:203
-#, c-format
-msgid "Error: Cannot find baseurl or name for server '%s'. Skipping"
-msgstr "Erro: Não foi possível localizar a baseurl ou o nome do servidor \"%s\". Ignorando."
-
-#: ../pullheaders.py:224
-#, c-format
-msgid "Odd header %s suddenly disappeared"
-msgstr "Cabeçalho indefinido %s desapareceu repentinamente"
-
-#: ../pullheaders.py:127
-#, c-format
-msgid "All dependencies resolved and no conflicts detected"
-msgstr "Todas as dependências resolvidas e nenhum conflito detectado"
-
-#: ../pkgaction.py:215
-#, c-format
-msgid "Group %s does not exist"
-msgstr "O grupo %s não existe"
-
-#: ../clientStuff.py:968
-#, c-format
-msgid "Cleaning old headers"
-msgstr "Limpando cabeçalhos antigos"
-
-#: ../pkgaction.py:318
-#, c-format
-msgid ""
-"Description:\n"
-" %s"
-msgstr ""
-"Descrição:\n"
-" %s"
-
-#: ../clientStuff.py:933
-#: ../clientStuff.py:949
-#, c-format
-msgid "Need a list of groups to update"
-msgstr "É necessário uma lista de grupos para atualizar"
-
-#: ../clientStuff.py:719
-#, c-format
-msgid "using cached groups from server: %s"
-msgstr "usando grupos em cache a partir do servidor: %s"
-
-#: ../pkgaction.py:316
-#, c-format
-msgid "Repo   : %s"
-msgstr "Repo   : %s"
-
-#: ../clientStuff.py:711
-#, c-format
-msgid "getting groups from server: %s"
-msgstr "obtendo grupos a patir do servidor: %s"
-
-#: ../clientStuff.py:823
-#, c-format
-msgid "You need to be root to perform these commands"
-msgstr "Você precisa ser root para executar estes comandos"
-
-#: ../pkgaction.py:466
-#, c-format
-msgid "No packages found"
-msgstr "Nenhum pacote encontrado"
-
-#: ../yummain.py:233
-#, c-format
-msgid "Exiting."
-msgstr "Saindo."
-
-#: ../nevral.py:183
-#, c-format
-msgid "asking for package %s.%s - does not exist in nevral - bailing out - check rpmdb for errors"
-msgstr "perguntando pelo pacote %s.%s - não existe no nevral - saindo abruptamente - verifique por erros no rpmdb"
-
-#: ../clientStuff.py:1068
-#, c-format
-msgid "Errors reported doing trial run"
-msgstr "Erros reportados na execução experimental"
-
-#: ../pkgaction.py:518
-#, c-format
-msgid "Lilo found - adding kernel to lilo and making it the default"
-msgstr "Lilo encontrado - adicionando o kernel ao lilo e tornando-o padrão"
-
-#: ../pkgaction.py:310
-#, c-format
-msgid "Name   : %s"
-msgstr "Nome   : %s"
-
-#: ../clientStuff.py:521
-#: ../clientStuff.py:560
-#, c-format
-msgid "Dep Installed: "
-msgstr "Dep. Instalada:"
-
-#: ../clientStuff.py:486
-#, c-format
-msgid "[update: %s]"
-msgstr "[atualizar: %s]"
-
-#: ../pkgaction.py:71
-#, c-format
-msgid "Cannot find a package matching %s"
-msgstr "Não foi possível encontrar um pacote que coincida com %s"
-
-#: ../urlgrabber.py:325
-#, c-format
-msgid "ERROR: Url Return no Content-Length  - something is wrong"
-msgstr "ERRO: A URL retornou conteúdo vazio - algo está errado"
-
-#: ../clientStuff.py:721
-#, c-format
-msgid "Got a file - yay"
-msgstr "Obteve um arquivo - yay"
-
-#: ../pkgaction.py:257
-#, c-format
-msgid "From %s updating %s"
-msgstr "A partir de %s, atualizando %s"
-
-#: ../yummain.py:298
-#, c-format
-msgid "Test transaction complete, Success!"
-msgstr "Teste de transação completo. Sucesso!"
-
-#: ../serverStuff.py:52
-#, c-format
-msgid ""
-"Usage:\n"
-"yum-arch [-v] [-z] [-l] [-c] [-n] [-d] [-q] [-vv] (path of dir where headers/ should/does live)\n"
-"   -d  = check dependencies and conflicts in tree\n"
-"   -v  = more verbose output\n"
-"   -vv = even more verbose output\n"
-"   -n  = don't generate headers\n"
-"   -c  = check pkgs with gpg and md5 checksums - cannot be used with -n\n"
-"   -z  = gzip compress the headers (default, deprecated as an option)\n"
-"   -s  = generate headers for source packages too\n"
-"   -l  = use symlinks as valid rpms when building headers\n"
-"   -q  = make the display more quiet"
-msgstr ""
-"Uso:\n"
-"yum-arch [-v] [-z] [-l] [-c] [-n] [-d] [-q] [-vv] (caminho do dir. onde os cabeçalhos devem estar)\n"
-"   -d  = verificar dependências e conflitos na árvore\n"
-"   -v  = exibição mais detalhada\n"
-"   -vv = exibição ainda mais detalhada\n"
-"   -n  = não gerar cabeçalhos\n"
-"   -c  = verificar pacotes com o gpg e somas md5 - não pode ser usado com -n\n"
-"   -z  = compactar cabeçalhos com o gzip (padrão, obsoleto como uma opção)\n"
-"   -s  = gerar cabeçalhos para pacotes de código-fonte também\n"
-"   -l  = utiliza links simbólicos como rpms válidos ao compilar cabeçalhos\n"
-"   -q  = faz uma exibição mais discreta"
-
-#: ../clientStuff.py:785
-#, c-format
-msgid "The file %s is damaged."
-msgstr "O arquivo %s está danificado."
-
-#: ../pkgaction.py:267
-#, c-format
-msgid "Repo"
-msgstr "Repo"
-
-#: ../bin/yum:53
-#, c-format
-msgid "Existing lock %s: another copy is running. Aborting."
-msgstr "Bloqueio existente em %s: outra cópia está em execução. Abortando."
-
-#: ../clientStuff.py:188
-#: ../clientStuff.py:195
-#: ../rpmUtils.py:232
-#: ../rpmUtils.py:239
-#: ../rpmUtils.py:242
-#: ../rpmUtils.py:245
-#, c-format
-msgid "Damaged Header %s"
-msgstr "Cabeçalho %s Danificado"
-
-#: ../clientStuff.py:962
-#, c-format
-msgid "Cleaning packages"
-msgstr "Limpando pacotes"
-
-#: ../pkgaction.py:315
-#, c-format
-msgid "Group  : %s"
-msgstr "Grupo  : %s"
-
-#: ../clientStuff.py:734
-#, c-format
-msgid "Server: %s"
-msgstr "Servidor: %s"
-
-#: ../pkgaction.py:539
-#, c-format
-msgid "No bootloader found, Cannot configure kernel."
-msgstr "Nenhum gerenciador de inicialização encontrado. Não é possível configurar o kernel."
-
-#: ../pkgaction.py:267
-#, c-format
-msgid "Name"
-msgstr "Nome"
-
-#: ../clientStuff.py:477
-#, c-format
-msgid "[install: %s]"
-msgstr "[instalar: %s]"
-
-#: ../yummain.py:207
-#, c-format
-msgid "Downloading needed headers"
-msgstr "Baixando os cabeçalhos necessários"
-
-#: ../nevral.py:72
-#, c-format
-msgid "Header for pkg %s not found"
-msgstr "O cabeçalho para o pacote %s não foi encontrado"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"X-Poedit-Language: Portuguese\n"
+"X-Poedit-Country: BRAZIL\n"
+
+#: ../callback.py:48
+#: ../output.py:487
+msgid "Updating"
+msgstr "Atualizando"
+
+#: ../callback.py:49
+msgid "Erasing"
+msgstr "Apagando"
+
+#: ../callback.py:50
+#: ../callback.py:51
+#: ../callback.py:53
+#: ../output.py:486
+msgid "Installing"
+msgstr "Instalando"
+
+#: ../callback.py:52
+#: ../callback.py:58
+msgid "Obsoleted"
+msgstr "Obsoletos"
+
+#: ../callback.py:54
+#: ../output.py:533
+msgid "Updated"
+msgstr "Atualizados"
 
 #: ../callback.py:55
-#, c-format
+msgid "Erased"
+msgstr "Removidos"
+
+#: ../callback.py:56
+#: ../callback.py:57
+#: ../callback.py:59
+#: ../output.py:531
+msgid "Installed"
+msgstr "Instalados"
+
+#: ../callback.py:130
 msgid "No header - huh?"
 msgstr "Sem cabeçalho - huh?"
 
-#: ../clientStuff.py:965
-#, c-format
-msgid "Cleaning all headers"
-msgstr "Limpando todos os cabeçalhos"
+#: ../callback.py:168
+msgid "Repackage"
+msgstr "Reempacotados"
 
-#: ../serverStuff.py:93
-#, c-format
-msgid "depcheck: package %s needs %s"
-msgstr "verificação de dependências: o pacote %s precisa do %s"
+#: ../callback.py:189
+#, python-format
+msgid "Error: invalid output state: %s for %s"
+msgstr "Erro: estado de saída inválido: %s de %s"
 
-#: ../clientStuff.py:759
-#, c-format
-msgid "Error - %s cannot be found"
-msgstr "Erro - %s não pôde ser encontrado"
+#: ../callback.py:212
+#, python-format
+msgid "Erased: %s"
+msgstr "Removidos: %s"
 
-#: ../rpmUtils.py:45
-#, c-format
+#: ../callback.py:217
+#: ../output.py:488
+msgid "Removing"
+msgstr "Removendo"
+
+#: ../callback.py:219
+msgid "Cleanup"
+msgstr "Limpeza"
+
+#: ../cli.py:103
+#, python-format
+msgid "Command \"%s\" already defined"
+msgstr "Comando \"%s\" já definido"
+
+#: ../cli.py:115
+msgid "Setting up repositories"
+msgstr "Configurando repositórios"
+
+#: ../cli.py:126
+msgid "Reading repository metadata in from local files"
+msgstr "Lendo metadados do repositório a partir dos arquivos locais"
+
+#: ../cli.py:183
+#: ../utils.py:57
+#, python-format
+msgid "Config Error: %s"
+msgstr "Erro de Configuração: %s"
+
+#: ../cli.py:186
+#: ../cli.py:1040
+#: ../utils.py:60
+#, python-format
+msgid "Options Error: %s"
+msgstr "Erro nas Opções: %s"
+
+#: ../cli.py:229
+msgid "You need to give some command"
+msgstr "Você precisa dar algum comando"
+
+#: ../cli.py:271
+msgid "Disk Requirements:\n"
+msgstr "Requerimentos de Disco:\n"
+
+#: ../cli.py:273
+#, python-format
+msgid "  At least %dMB needed on the %s filesystem.\n"
+msgstr "  Pelo menos %d MB são necessários no sistema de arquivos %s.\n"
+
+#. TODO: simplify the dependency errors?
+#. Fixup the summary
+#: ../cli.py:278
+msgid ""
+"Error Summary\n"
+"-------------\n"
+msgstr ""
+"Sumário de Erros\n"
+"-------------\n"
+
+#: ../cli.py:317
+msgid "Trying to run the transaction but nothing to do. Exiting."
+msgstr "Tentando executar a transação, mas não há nada a ser feito. Saindo."
+
+#: ../cli.py:347
+msgid "Exiting on user Command"
+msgstr "Saindo pelo comando do usuário"
+
+#: ../cli.py:351
+msgid "Downloading Packages:"
+msgstr "Baixando Pacotes:"
+
+#: ../cli.py:356
+msgid "Error Downloading Packages:\n"
+msgstr "Erro ao Baixar Pacotes:\n"
+
+#: ../cli.py:369
+#: ../yum/__init__.py:2689
+msgid "Running rpm_check_debug"
+msgstr "Executando o rpm_check_debug"
+
+#: ../cli.py:372
+#: ../yum/__init__.py:2692
+msgid "ERROR with rpm_check_debug vs depsolve:"
+msgstr "Erro com o rpm_check_debug vs depsolve:"
+
+#: ../cli.py:376
+#: ../yum/__init__.py:2694
+msgid "Please report this error in bugzilla"
+msgstr "Por favor, reporte esse erro ao bugzilla"
+
+#: ../cli.py:380
+msgid "Running Transaction Test"
+msgstr "Executando Teste de Transação"
+
+#: ../cli.py:396
+msgid "Finished Transaction Test"
+msgstr "Teste de Transação Finalizado"
+
+#: ../cli.py:398
+msgid "Transaction Check Error:\n"
+msgstr "Erro na Verificação da Transação:\n"
+
+#: ../cli.py:405
+msgid "Transaction Test Succeeded"
+msgstr "Teste de Transação Completo"
+
+#: ../cli.py:423
+msgid "Running Transaction"
+msgstr "Executando a Transação"
+
+#: ../cli.py:452
+msgid ""
+"Refusing to automatically import keys when running unattended.\n"
+"Use \"-y\" to override."
+msgstr ""
+"Recusa de importação automática das chaves ao executar de forma não assistida.\n"
+"Use \"-y\" para sobrescrever."
+
+#: ../cli.py:484
+msgid "Parsing package install arguments"
+msgstr "Analisando argumentos da instalação de pacotes"
+
+#: ../cli.py:494
+#, python-format
+msgid "No package %s available."
+msgstr "Nenhum pacote %s disponível."
+
+#: ../cli.py:498
+#: ../cli.py:616
+#: ../yumcommands.py:748
+msgid "Package(s) to install"
+msgstr "Pacotes a serem instalados"
+
+#: ../cli.py:499
+#: ../cli.py:617
+#: ../yumcommands.py:146
+#: ../yumcommands.py:749
+msgid "Nothing to do"
+msgstr "Nada a ser feito"
+
+#: ../cli.py:529
+#: ../yum/__init__.py:2192
+#: ../yum/__init__.py:2271
+#: ../yum/__init__.py:2283
+#, python-format
+msgid "Not Updating Package that is already obsoleted: %s.%s %s:%s-%s"
+msgstr "Pacote já obsoleto não será atualizado: %s.%s %s:%s-%s"
+
+#: ../cli.py:561
+#, python-format
+msgid "Could not find update match for %s"
+msgstr "Não foi possível encontrar uma atualização correspondente ao %s"
+
+#: ../cli.py:573
+#, python-format
+msgid "%d packages marked for Update"
+msgstr "%d pacotes marcados para atualização"
+
+#: ../cli.py:576
+msgid "No Packages marked for Update"
+msgstr "Nenhum pacote marcado para atualização"
+
+#: ../cli.py:592
+#, python-format
+msgid "%d packages marked for removal"
+msgstr "%d pacotes marcados para remoção"
+
+#: ../cli.py:595
+msgid "No Packages marked for removal"
+msgstr "Nenhum pacote marcado para remoção"
+
+#: ../cli.py:607
+msgid "No Packages Provided"
+msgstr "Nenhum Pacote Fornecido"
+
+#: ../cli.py:647
+msgid "Matching packages for package list to user args"
+msgstr "Resultado dos pacotes para a lista de pacotes dos argumentos do usuário"
+
+#: ../cli.py:685
+msgid "No Matches found"
+msgstr "Nenhum pacote encontrado"
+
+#: ../cli.py:722
+#, python-format
+msgid "No Package Found for %s"
+msgstr "Nenhum Pacote Encontrado para %s"
+
+#: ../cli.py:734
+msgid "Cleaning up Everything"
+msgstr "Limpando Tudo"
+
+#: ../cli.py:748
+msgid "Cleaning up Headers"
+msgstr "Limpando Cabeçalhos"
+
+#: ../cli.py:751
+msgid "Cleaning up Packages"
+msgstr "Limpando Pacotes"
+
+#: ../cli.py:754
+msgid "Cleaning up xml metadata"
+msgstr "Limpando metadados em xml"
+
+#: ../cli.py:757
+msgid "Cleaning up database cache"
+msgstr "Limpando cache do banco de dados"
+
+#: ../cli.py:760
+msgid "Cleaning up plugins"
+msgstr "Limpando plugins"
+
+#: ../cli.py:782
+msgid "Installed Groups:"
+msgstr "Grupos Instalados:"
+
+#: ../cli.py:789
+msgid "Available Groups:"
+msgstr "Grupos Disponíveis:"
+
+#: ../cli.py:795
+msgid "Done"
+msgstr "Concluído"
+
+#: ../cli.py:804
+#: ../cli.py:816
+#: ../cli.py:822
+#, python-format
+msgid "Warning: Group %s does not exist."
+msgstr "Aviso: O grupo %s não existe."
+
+#: ../cli.py:828
+msgid "No packages in any requested group available to install or update"
+msgstr "Nenhum pacote disponível para instalação ou atualização nos grupos requisitados"
+
+#: ../cli.py:830
+#, python-format
+msgid "%d Package(s) to Install"
+msgstr "%d Pacote(s) a Ser(em) Instalado(s)"
+
+#: ../cli.py:840
+#, python-format
+msgid "No group named %s exists"
+msgstr "Nenhum grupo de nome %s existe"
+
+#: ../cli.py:846
+msgid "No packages to remove from groups"
+msgstr "Nenhum pacote a ser removido a partir dos grupos"
+
+#: ../cli.py:848
+#, python-format
+msgid "%d Package(s) to remove"
+msgstr "%d Pacote(s) a Ser(em) Removido(s)"
+
+#: ../cli.py:890
+#, python-format
+msgid "Package %s is already installed, skipping"
+msgstr "O pacote %s já está instalado, ignorando"
+
+#: ../cli.py:901
+#, python-format
+msgid "Discarding non-comparable pkg %s.%s"
+msgstr "Descartando pacote não comparável %s.%s"
+
+#. we've not got any installed that match n or n+a
+#: ../cli.py:927
+#, python-format
+msgid "No other %s installed, adding to list for potential install"
+msgstr "Nenhum outro %s instalado, adicionado à lista para potencial instalação"
+
+#: ../cli.py:946
+#, python-format
+msgid "Command line error: %s"
+msgstr "Erro na linha de comando: %s"
+
+#: ../cli.py:1073
+msgid "be tolerant of errors"
+msgstr "ser tolerante com os erros"
+
+#: ../cli.py:1075
+msgid "run entirely from cache, don't update cache"
+msgstr "executar por completo a partir do cache, não atualiza o cache"
+
+#: ../cli.py:1077
+msgid "config file location"
+msgstr "configurar localização do arquivo"
+
+#: ../cli.py:1079
+msgid "maximum command wait time"
+msgstr "Tempo máximo de espera do comando"
+
+#: ../cli.py:1081
+msgid "debugging output level"
+msgstr "nível de depuração na saída"
+
+#: ../cli.py:1084
+msgid "error output level"
+msgstr "nível de erro na saída"
+
+#: ../cli.py:1087
+msgid "quiet operation"
+msgstr "operação discreta"
+
+#: ../cli.py:1091
+msgid "answer yes for all questions"
+msgstr "responder sim para todas as perguntas"
+
+#: ../cli.py:1093
+msgid "show Yum version and exit"
+msgstr "mostrar versão do Yum ao sair"
+
+#: ../cli.py:1094
+msgid "set install root"
+msgstr "definir raiz de instalação"
+
+#: ../cli.py:1098
+msgid "enable one or more repositories (wildcards allowed)"
+msgstr "habilitar um ou mais repositórios (curingas são permitidos)"
+
+#: ../cli.py:1102
+msgid "disable one or more repositories (wildcards allowed)"
+msgstr "desabilitar um ou mais repositórios (curingas são permitidos)"
+
+#: ../cli.py:1105
+msgid "exclude package(s) by name or glob"
+msgstr "excluir pacote(s) por nome ou glob"
+
+#: ../cli.py:1107
+msgid "disable exclude from main, for a repo or for everything"
+msgstr "desabilitar a exclusão a partir do principal, para um repositório ou para tudo"
+
+#: ../cli.py:1110
+msgid "enable obsoletes processing during updates"
+msgstr "Habilitar processo de obsolescência durante as atualizações"
+
+#: ../cli.py:1112
+msgid "disable Yum plugins"
+msgstr "desabilitar plugins do Yum"
+
+#: ../cli.py:1114
+msgid "disable gpg signature checking"
+msgstr "desabilitar verificação de assinaturas gpg"
+
+#: ../cli.py:1116
+msgid "disable plugins by name"
+msgstr "desabilitar plugins pelo nome"
+
+#: ../cli.py:1119
+msgid "skip packages with depsolving problems"
+msgstr "ignorar pacotes com problemas de solução de dependências"
+
+#: ../output.py:229
+msgid "Jan"
+msgstr "Jan"
+
+#: ../output.py:229
+msgid "Feb"
+msgstr "Fev"
+
+#: ../output.py:229
+msgid "Mar"
+msgstr "Mar"
+
+#: ../output.py:229
+msgid "Apr"
+msgstr "Abr"
+
+#: ../output.py:229
+msgid "May"
+msgstr "Mai"
+
+#: ../output.py:229
+msgid "Jun"
+msgstr "Jun"
+
+#: ../output.py:230
+msgid "Jul"
+msgstr "Jul"
+
+#: ../output.py:230
+msgid "Aug"
+msgstr "Ago"
+
+#: ../output.py:230
+msgid "Sep"
+msgstr "Set"
+
+#: ../output.py:230
+msgid "Oct"
+msgstr "Out"
+
+#: ../output.py:230
+msgid "Nov"
+msgstr "Nov"
+
+#: ../output.py:230
+msgid "Dec"
+msgstr "Dez"
+
+#: ../output.py:240
+msgid "Trying other mirror."
+msgstr "Tentando outro espelho."
+
+#: ../output.py:273
+#, python-format
+msgid "Name       : %s"
+msgstr "Nome       : %s"
+
+#: ../output.py:274
+#, python-format
+msgid "Arch       : %s"
+msgstr "Arquitetura   : %s"
+
+#: ../output.py:276
+#, python-format
+msgid "Epoch      : %s"
+msgstr "Período      : %s"
+
+#: ../output.py:277
+#, python-format
+msgid "Version    : %s"
+msgstr "Versão    : %s"
+
+#: ../output.py:278
+#, python-format
+msgid "Release    : %s"
+msgstr "Lançamento  : %s"
+
+#: ../output.py:279
+#, python-format
+msgid "Size       : %s"
+msgstr "Tamanho   : %s"
+
+#: ../output.py:280
+#, python-format
+msgid "Repo       : %s"
+msgstr "Repo       : %s"
+
+#: ../output.py:282
+#, python-format
+msgid "Committer  : %s"
+msgstr "Enviado por  : %s"
+
+#: ../output.py:283
+msgid "Summary    : "
+msgstr "Sumário    : "
+
+#: ../output.py:285
+#, python-format
+msgid "URL        : %s"
+msgstr "URL        : %s"
+
+#: ../output.py:286
+#, python-format
+msgid "License    : %s"
+msgstr "Licença   : %s"
+
+#: ../output.py:287
+msgid "Description: "
+msgstr "Descrição: "
+
+#: ../output.py:331
+msgid "Is this ok [y/N]: "
+msgstr "Está ok? [y = Sim / N = Não]:"
+
+#: ../output.py:345
+#, python-format
+msgid ""
+"\n"
+"Group: %s"
+msgstr ""
+"\n"
+"Grupo: %s"
+
+#: ../output.py:347
+#, python-format
+msgid " Description: %s"
+msgstr " Descrição: %s"
+
+#: ../output.py:349
+msgid " Mandatory Packages:"
+msgstr " Pacotes Obrigatórios:"
+
+#: ../output.py:354
+msgid " Default Packages:"
+msgstr " Pacotes Padrão:"
+
+#: ../output.py:359
+msgid " Optional Packages:"
+msgstr " Pacotes Opcionais:"
+
+#: ../output.py:364
+msgid " Conditional Packages:"
+msgstr " Pacotes Condicionais:"
+
+#: ../output.py:372
+#, python-format
+msgid "package: %s"
+msgstr "pacote: %s"
+
+#: ../output.py:374
+msgid "  No dependencies for this package"
+msgstr "  Nenhuma dependência para este pacote"
+
+#: ../output.py:379
+#, python-format
+msgid "  dependency: %s"
+msgstr "  dependência: %s"
+
+#: ../output.py:381
+msgid "   Unsatisfied dependency"
+msgstr "   Dependência não satisfeita"
+
+#: ../output.py:436
+msgid "Matched from:"
+msgstr "Resultado a partir de:"
+
+#: ../output.py:462
+msgid "There was an error calculating total download size"
+msgstr "Houve um erro no cálculo do tamanho total do download"
+
+#: ../output.py:467
+#, python-format
+msgid "Total size: %s"
+msgstr "Tamanho total: %s"
+
+#: ../output.py:470
+#, python-format
+msgid "Total download size: %s"
+msgstr "Tamanho total do download: %s"
+
+#: ../output.py:482
+msgid "Package"
+msgstr "Pacote"
+
+#: ../output.py:482
+msgid "Arch"
+msgstr "Arquitetura"
+
+#: ../output.py:482
+msgid "Version"
+msgstr "Versão"
+
+#: ../output.py:482
+msgid "Repository"
+msgstr "Repositório"
+
+#: ../output.py:482
+msgid "Size"
+msgstr "Tamanho"
+
+#: ../output.py:489
+msgid "Installing for dependencies"
+msgstr "Instalando para as dependências"
+
+#: ../output.py:490
+msgid "Updating for dependencies"
+msgstr "Atualizando para as dependências"
+
+#: ../output.py:491
+msgid "Removing for dependencies"
+msgstr "Removendo para as dependências"
+
+#: ../output.py:503
+#, python-format
+msgid ""
+"     replacing  %s.%s %s\n"
+"\n"
+msgstr ""
+"     substituindo  %s.%s %s\n"
+"\n"
+
+#: ../output.py:511
+#, python-format
+msgid ""
+"\n"
+"Transaction Summary\n"
+"=============================================================================\n"
+"Install  %5.5s Package(s)         \n"
+"Update   %5.5s Package(s)         \n"
+"Remove   %5.5s Package(s)         \n"
+msgstr ""
+"\n"
+"Sumário da Transação\n"
+"=============================================================================\n"
+"Instalar  %5.5s Pacote(s)         \n"
+"Atualizar   %5.5s Pacote(s)         \n"
+"Remover   %5.5s Pacote(s)         \n"
+
+#: ../output.py:529
+msgid "Removed"
+msgstr "Removido(s)"
+
+#: ../output.py:530
+msgid "Dependency Removed"
+msgstr "Dependência Removida"
+
+#: ../output.py:532
+msgid "Dependency Installed"
+msgstr "Dependência Instalada"
+
+#: ../output.py:534
+msgid "Dependency Updated"
+msgstr "Dependência Atualizada"
+
+#: ../output.py:535
+msgid "Replaced"
+msgstr "Substituído(s)"
+
+#: ../output.py:593
+#, python-format
+msgid ""
+"\n"
+" Current download cancelled, %sinterrupt (ctrl-c) again%s within %s%s%s seconds to exit.\n"
+msgstr ""
+"\n"
+" Download atual cancelado, interrupção %s, (ctrl-c) novamente %s com %s%s%s segundos até sair.\n"
+
+#: ../output.py:603
+msgid "user interrupt"
+msgstr "interrupção pelo usuário"
+
+#: ../output.py:614
+msgid "installed"
+msgstr "instalados"
+
+#: ../output.py:615
+msgid "updated"
+msgstr "atualizados"
+
+#: ../output.py:616
+msgid "obsoleted"
+msgstr "obsoleto(s)"
+
+#: ../output.py:617
+msgid "erased"
+msgstr "removidos"
+
+#: ../output.py:621
+#, python-format
+msgid "---> Package %s.%s %s:%s-%s set to be %s"
+msgstr "---> Pacote %s.%s %s:%s-%s definido para ser %s"
+
+#: ../output.py:628
+msgid "--> Running transaction check"
+msgstr "--> Executando verificação de transação"
+
+#: ../output.py:633
+msgid "--> Restarting Dependency Resolution with new changes."
+msgstr "--> Reiniciando Resolução de Dependências com as novas alterações."
+
+#: ../output.py:638
+msgid "--> Finished Dependency Resolution"
+msgstr "--> Resolução de Dependências Finalizada"
+
+#: ../output.py:643
+#, python-format
+msgid "--> Processing Dependency: %s for package: %s"
+msgstr "--> Processando Dependência: %s para o pacote: %s"
+
+#: ../output.py:648
+#, python-format
+msgid "--> Unresolved Dependency: %s"
+msgstr "--> Dependência Não Resolvida: %s"
+
+#: ../output.py:654
+#, python-format
+msgid "--> Processing Conflict: %s conflicts %s"
+msgstr "--> Processando Conflito: %s conflita com %s"
+
+#: ../output.py:657
+msgid "--> Populating transaction set with selected packages. Please wait."
+msgstr "--> Construindo conjunto de transações com os pacotes selecionados. Por favor aguarde."
+
+#: ../output.py:661
+#, python-format
+msgid "---> Downloading header for %s to pack into transaction set."
+msgstr "--> Baixando cabeçalho do %s para inclusão no conjunto de transações."
+
+#: ../yumcommands.py:36
+msgid "You need to be root to perform this command."
+msgstr "Você precisa ser root para executar este comando."
+
+#: ../yumcommands.py:43
+msgid ""
+"\n"
+"You have enabled checking of packages via GPG keys. This is a good thing. \n"
+"However, you do not have any GPG public keys installed. You need to download\n"
+"the keys for packages you wish to install and install them.\n"
+"You can do that by running the command:\n"
+"    rpm --import public.gpg.key\n"
+"\n"
+"\n"
+"Alternatively you can specify the url to the key you would like to use\n"
+"for a repository in the 'gpgkey' option in a repository section and yum \n"
+"will install it for you.\n"
+"\n"
+"For more information contact your distribution or package provider.\n"
+msgstr ""
+"\n"
+"Você habilitou a verificação de pacotes através de chaves GPG. Isso é uma boa coisa.\n"
+"Entretanto, você não tem nenhuma chave GPG pública instalada. Você precisa baixar\n"
+"e instalar essas chaves para os pacotes que deseja instalar.\n"
+"Você pode fazer isso executando o comando:\n"
+"    rpm --import public.gpg.key\n"
+"\n"
+"\n"
+"Alternativamente, você pode especificar, na opção \"gpgkey\" da seção\n"
+" do repositório, a url da chave que você gostaria de usar\n"
+"para ele e o yum irá instalá-la para você.\n"
+"\n"
+"Para mais informações contate o fornecedor da sua distribuição ou do pacote.\n"
+
+#: ../yumcommands.py:63
+#, python-format
+msgid "Error: Need to pass a list of pkgs to %s"
+msgstr "Erro: É necessário passar uma lista de pacotes para %s"
+
+#: ../yumcommands.py:69
+msgid "Error: Need an item to match"
+msgstr "Erro: É necessário um item para corresponder"
+
+#: ../yumcommands.py:75
+msgid "Error: Need a group or list of groups"
+msgstr "Erro: É necessário um grupo ou uma lista de grupos"
+
+#: ../yumcommands.py:84
+#, python-format
+msgid "Error: clean requires an option: %s"
+msgstr "Erro: a limpeza requer uma opção: %s"
+
+#: ../yumcommands.py:89
+#, python-format
+msgid "Error: invalid clean argument: %r"
+msgstr "Erro: argumento de limpeza inválido: %r"
+
+#: ../yumcommands.py:102
+msgid "No argument to shell"
+msgstr "Nenhum argumento para o shell"
+
+#: ../yumcommands.py:105
+#, python-format
+msgid "Filename passed to shell: %s"
+msgstr "Nome de arquivo passado para o shell: %s"
+
+#: ../yumcommands.py:109
+#, python-format
+msgid "File %s given as argument to shell does not exist."
+msgstr "O arquivo %s, passado como um argumento para o shell, não existe."
+
+#: ../yumcommands.py:115
+msgid "Error: more than one file given as argument to shell."
+msgstr "Erro: mais de um arquivo passado como argumento para o shell."
+
+#: ../yumcommands.py:156
+msgid "PACKAGE..."
+msgstr "PACOTE..."
+
+#: ../yumcommands.py:159
+msgid "Install a package or packages on your system"
+msgstr "Instala um ou mais pacotes no seu sistema"
+
+#: ../yumcommands.py:168
+msgid "Setting up Install Process"
+msgstr "Configurando o Processo de Instalação"
+
+#: ../yumcommands.py:179
+msgid "[PACKAGE...]"
+msgstr "[PACOTE...]"
+
+#: ../yumcommands.py:182
+msgid "Update a package or packages on your system"
+msgstr "Atualiza um ou mais pacotes do seu sistema"
+
+#: ../yumcommands.py:190
+msgid "Setting up Update Process"
+msgstr "Configurando o Processo de Atualização"
+
+#: ../yumcommands.py:204
+msgid "Display details about a package or group of packages"
+msgstr "Mostra detalhes sobre um pacote ou grupos de pacotes"
+
+#: ../yumcommands.py:212
+msgid "Installed Packages"
+msgstr "Pacotes Instalados"
+
+#: ../yumcommands.py:213
+msgid "Available Packages"
+msgstr "Pacotes Disponíveis"
+
+#: ../yumcommands.py:214
+msgid "Extra Packages"
+msgstr "Pacotes Extras"
+
+#: ../yumcommands.py:215
+msgid "Updated Packages"
+msgstr "Pacotes Atualizados"
+
+#: ../yumcommands.py:221
+#: ../yumcommands.py:225
+msgid "Obsoleting Packages"
+msgstr "Tornando Pacotes Obsoletos"
+
+#: ../yumcommands.py:226
+msgid "Recently Added Packages"
+msgstr "Pacotes Adicionados Recentemente"
+
+#: ../yumcommands.py:232
+msgid "No matching Packages to list"
+msgstr "Nenhum Pacote Correspondente para Listar"
+
+#: ../yumcommands.py:246
+msgid "List a package or groups of packages"
+msgstr "Lista um pacote ou grupos de pacotes"
+
+#: ../yumcommands.py:258
+msgid "Remove a package or packages from your system"
+msgstr "Remove um ou mais pacotes do seu sistema"
+
+#: ../yumcommands.py:266
+msgid "Setting up Remove Process"
+msgstr "Configurando o Processo de Remoção"
+
+#: ../yumcommands.py:278
+msgid "Setting up Group Process"
+msgstr "Configurando Processo de Grupos"
+
+#: ../yumcommands.py:284
+msgid "No Groups on which to run command"
+msgstr "Não há grupos nos quais executar o comando"
+
+#: ../yumcommands.py:297
+msgid "List available package groups"
+msgstr "Lista os grupos de pacotes disponíveis"
+
+#: ../yumcommands.py:314
+msgid "Install the packages in a group on your system"
+msgstr "Instala pacotes em um grupo ou no seu sistema"
+
+#: ../yumcommands.py:336
+msgid "Remove the packages in a group from your system"
+msgstr "Remove pacotes de um grupo ou do seu sistema"
+
+#: ../yumcommands.py:360
+msgid "Display details about a package group"
+msgstr "Mostra detalhes sobre um grupo de pacotes"
+
+#: ../yumcommands.py:384
+msgid "Generate the metadata cache"
+msgstr "Gera o cache de metadados"
+
+#: ../yumcommands.py:390
+msgid "Making cache files for all metadata files."
+msgstr "Realizando cache de arquivos para todos os metadados."
+
+#: ../yumcommands.py:391
+msgid "This may take a while depending on the speed of this computer"
+msgstr "Isso pode demorar um pouco, dependendo da velocidade deste computador"
+
+#: ../yumcommands.py:412
+msgid "Metadata Cache Created"
+msgstr "Cache de Metadados Criado"
+
+#: ../yumcommands.py:426
+msgid "Remove cached data"
+msgstr "Remove os dados do cache"
+
+#: ../yumcommands.py:447
+msgid "Find what package provides the given value"
+msgstr "Localiza qual pacote fornece o valor dado"
+
+#: ../yumcommands.py:467
+msgid "Check for available package updates"
+msgstr "Verifica por atualizações de pacotes disponíveis"
+
+#: ../yumcommands.py:490
+msgid "Search package details for the given string"
+msgstr "Pesquisa detalhes do pacote para a string fornecida"
+
+#: ../yumcommands.py:496
+msgid "Searching Packages: "
+msgstr "Pesquisando por Pacotes:"
+
+#: ../yumcommands.py:513
+msgid "Update packages taking obsoletes into account"
+msgstr "Atualiza pacotes levando em conta os obsoletos"
+
+#: ../yumcommands.py:522
+msgid "Setting up Upgrade Process"
+msgstr "Configurando o Processo de Atualização"
+
+#: ../yumcommands.py:536
+msgid "Install a local RPM"
+msgstr "Instala um RPM local"
+
+#: ../yumcommands.py:545
+msgid "Setting up Local Package Process"
+msgstr "Configurando o Processo de Pacote Local"
+
+#: ../yumcommands.py:564
+msgid "Determine which package provides the given dependency"
+msgstr "Determina qual pacote fornece a dependência dada"
+
+#: ../yumcommands.py:567
+msgid "Searching Packages for Dependency:"
+msgstr "Pesquisando Pacotes por Dependência:"
+
+#: ../yumcommands.py:581
+msgid "Run an interactive yum shell"
+msgstr "Executa um shell interativo do yum"
+
+#: ../yumcommands.py:587
+msgid "Setting up Yum Shell"
+msgstr "Configurando o Shell do Yum"
+
+#: ../yumcommands.py:605
+msgid "List a package's dependencies"
+msgstr "Lista as dependências de um pacote"
+
+#: ../yumcommands.py:611
+msgid "Finding dependencies: "
+msgstr "Localizando dependências:"
+
+#: ../yumcommands.py:627
+msgid "Display the configured software repositories"
+msgstr "Exibe os repositórios de software configurados"
+
+#: ../yumcommands.py:645
+msgid "repo id"
+msgstr "id do repo"
+
+#: ../yumcommands.py:645
+msgid "repo name"
+msgstr "nome do repo"
+
+#: ../yumcommands.py:645
+msgid "status"
+msgstr "status"
+
+#: ../yumcommands.py:651
+msgid "enabled"
+msgstr "habilitado"
+
+#: ../yumcommands.py:654
+msgid "disabled"
+msgstr "desabilitado"
+
+#: ../yumcommands.py:671
+msgid "Display a helpful usage message"
+msgstr "Exibe uma mensagem de uso para ajuda"
+
+#: ../yumcommands.py:705
+#, python-format
+msgid "No help available for %s"
+msgstr "Nenhuma ajuda disponível para %s"
+
+#: ../yumcommands.py:710
+msgid ""
+"\n"
+"\n"
+"aliases: "
+msgstr ""
+"\n"
+"\n"
+"apelidos: "
+
+#: ../yumcommands.py:712
+msgid ""
+"\n"
+"\n"
+"alias: "
+msgstr ""
+"\n"
+"\n"
+"apelido: "
+
+#: ../yumcommands.py:741
+msgid "Setting up Reinstall Process"
+msgstr "Configurando o Processo de Reinstalação"
+
+#: ../yumcommands.py:755
+msgid "reinstall a package"
+msgstr "reinstala um pacote"
+
+#: ../yummain.py:41
+msgid ""
+"\n"
+"\n"
+"Exiting on user cancel"
+msgstr ""
+"\n"
+"\n"
+"Saindo pelo cancelamento do usuário"
+
+#: ../yummain.py:47
+msgid ""
+"\n"
+"\n"
+"Exiting on Broken Pipe"
+msgstr ""
+"\n"
+"\n"
+"Saindo por um Pipe Defeituoso"
+
+#: ../yummain.py:105
+msgid "Another app is currently holding the yum lock; waiting for it to exit..."
+msgstr "Outra aplicação está retendo o bloqueio do yum; esperando por ele para sair..."
+
+#: ../yummain.py:132
+#: ../yummain.py:171
+#, python-format
+msgid "Error: %s"
+msgstr "Error: %s"
+
+#: ../yummain.py:142
+#: ../yummain.py:178
+#, python-format
+msgid "Unknown Error(s): Exit Code: %d:"
+msgstr "Erro(s) Desconhecido(s): Código de Saída: %d:"
+
+#. Depsolve stage
+#: ../yummain.py:149
+msgid "Resolving Dependencies"
+msgstr "Resolvendo Dependências"
+
+#: ../yummain.py:184
+msgid ""
+"\n"
+"Dependencies Resolved"
+msgstr ""
+"\n"
+"Dependências Resolvidas"
+
+#: ../yummain.py:199
+msgid "Complete!"
+msgstr "Completo!"
+
+#: ../yummain.py:246
+msgid ""
+"\n"
+"\n"
+"Exiting on user cancel."
+msgstr ""
+"\n"
+"\n"
+"Saindo pelo cancelamento do usuário."
+
+#: ../yum/depsolve.py:70
+msgid "doTsSetup() will go away in a future version of Yum.\n"
+msgstr "doTsSetup() será removida em uma futura versão do Yum.\n"
+
+#: ../yum/depsolve.py:83
+msgid "Setting up TransactionSets before config class is up"
+msgstr "Configurando TransactionSets antes da ativação da classe de configuração"
+
+#: ../yum/depsolve.py:123
+#, python-format
+msgid "Invalid tsflag in config file: %s"
+msgstr "tsflag inválido no arquivo de configuração: %s"
+
+#: ../yum/depsolve.py:134
+#, python-format
+msgid "Searching pkgSack for dep: %s"
+msgstr "Pesquisando pkgSack para a dep.: %s"
+
+#: ../yum/depsolve.py:163
+#, python-format
+msgid "Potential match for %s from %s"
+msgstr "Correspondência potencial para o %s a partir de %s"
+
+#: ../yum/depsolve.py:171
+#, python-format
+msgid "Matched %s to require for %s"
+msgstr "%s encontrado para solicitar o %s"
+
+#: ../yum/depsolve.py:212
+#, python-format
+msgid "Member: %s"
+msgstr "Membro: %s"
+
+#: ../yum/depsolve.py:226
+#: ../yum/depsolve.py:788
+#, python-format
+msgid "%s converted to install"
+msgstr "%s convertido para instalar"
+
+#: ../yum/depsolve.py:233
+#, python-format
+msgid "Adding Package %s in mode %s"
+msgstr "Adicionando Pacote %s ao modo %s"
+
+#: ../yum/depsolve.py:243
+#, python-format
+msgid "Removing Package %s"
+msgstr "Removendo Pacote %s"
+
+#: ../yum/depsolve.py:254
+#, python-format
+msgid "%s requires: %s"
+msgstr "%s requer: %s"
+
+#: ../yum/depsolve.py:300
+msgid "Needed Require has already been looked up, cheating"
+msgstr "O requerimento necessário já foi localizado, enganando"
+
+#: ../yum/depsolve.py:310
+#, python-format
+msgid "Needed Require is not a package name. Looking up: %s"
+msgstr "O requerimento necessário não é o nome de um pacote. Localizando: %s"
+
+#: ../yum/depsolve.py:317
+#, python-format
+msgid "Potential Provider: %s"
+msgstr "Fornecedor em potencial: %s"
+
+#: ../yum/depsolve.py:340
+#, python-format
+msgid "Mode is %s for provider of %s: %s"
+msgstr "O modo é %s para o fornecedor do %s: %s"
+
+#: ../yum/depsolve.py:344
+#, python-format
+msgid "Mode for pkg providing %s: %s"
+msgstr "Modo para o pacote que fornece o %s: %s"
+
+#: ../yum/depsolve.py:348
+#, python-format
+msgid "TSINFO: %s package requiring %s marked as erase"
+msgstr "TSINFO: o pacote %s que requer o %s foi marcado para remoção"
+
+#: ../yum/depsolve.py:361
+#, python-format
+msgid "Looking for Obsoletes for %s"
+msgstr "Localizando Obsoletos para %s"
+
+#: ../yum/depsolve.py:373
+#, python-format
+msgid "TSINFO: Obsoleting %s with %s to resolve dep."
+msgstr "TSINFO: Tornando %s obsoleto com o %s para resolver a dependência."
+
+#: ../yum/depsolve.py:404
+#, python-format
+msgid "TSINFO: Updating %s to resolve dep."
+msgstr "TSINFO: Atualizando %s para resolver a dependência."
+
+#. if there's no update then pass this over to requringFromTransaction()
+#: ../yum/depsolve.py:408
+#, python-format
+msgid "Cannot find an update path for dep for: %s"
+msgstr "Não foi possível encontrar um caminho de atualização para a dep. para: %s"
+
+#: ../yum/depsolve.py:420
+#, python-format
+msgid "Unresolvable requirement %s for %s"
+msgstr "Requerimento %s insolúvel para o %s"
+
+#. is it already installed?
+#: ../yum/depsolve.py:466
+#, python-format
+msgid "%s is in providing packages but it is already installed, removing."
+msgstr "%s está nos pacotes fornecedores mas já está instalado, removendo."
+
+#: ../yum/depsolve.py:481
+#, python-format
+msgid "Potential resolving package %s has newer instance in ts."
+msgstr "O pacote de solução em potencial %s tem uma instância mais nova no ct."
+
+#: ../yum/depsolve.py:492
+#, python-format
+msgid "Potential resolving package %s has newer instance installed."
+msgstr "O pacote de solução em potencial %s tem uma instância mais nova instalada."
+
+#: ../yum/depsolve.py:500
+#: ../yum/depsolve.py:568
+#, python-format
+msgid "Missing Dependency: %s is needed by package %s"
+msgstr "Dependência Faltando: %s é requerido pelo pacote %s"
+
+#: ../yum/depsolve.py:513
+#, python-format
+msgid "%s already in ts, skipping this one"
+msgstr "%s já está no ct, pulando esse"
+
+#: ../yum/depsolve.py:578
+#, python-format
+msgid "TSINFO: Marking %s as update for %s"
+msgstr "TSINFO: Marcando %s como uma atualização para o %s"
+
+#: ../yum/depsolve.py:585
+#, python-format
+msgid "TSINFO: Marking %s as install for %s"
+msgstr "TSINFO: Marcando %s como uma instalação para o %s"
+
+#: ../yum/depsolve.py:647
+#: ../yum/depsolve.py:654
+#, python-format
+msgid "unable to find newer package for %s"
+msgstr "não foi possível encontrar um pacote mais recente para o %s"
+
+#: ../yum/depsolve.py:661
+#, python-format
+msgid "TSINFO: Updating %s to resolve conflict."
+msgstr "TSINFO: Atualizando o %s para resolver o conflito."
+
+#: ../yum/depsolve.py:671
+#, python-format
+msgid "%s conflicts: %s"
+msgstr "%s conflita com: %s"
+
+#: ../yum/depsolve.py:681
+#, python-format
+msgid "%s conflicts with %s"
+msgstr "%s conflita com %s"
+
+#: ../yum/depsolve.py:720
+#: ../yum/depsolve.py:806
+msgid "Success - empty transaction"
+msgstr "Sucesso - transação vazia"
+
+#: ../yum/depsolve.py:765
+#: ../yum/depsolve.py:778
+msgid "Restarting Loop"
+msgstr "Reiniciando o Loop"
+
+#: ../yum/depsolve.py:794
+msgid "Dependency Process ending"
+msgstr "Término do Processo de Dependências"
+
+#: ../yum/depsolve.py:800
+#, python-format
+msgid "%s from %s has depsolving problems"
+msgstr "%s a partir de %s tem problemas de resolução de dependências"
+
+#: ../yum/depsolve.py:807
+msgid "Success - deps resolved"
+msgstr "Sucesso - dependências resolvidas"
+
+#: ../yum/depsolve.py:824
+#, python-format
+msgid "Checking deps for %s"
+msgstr "Verificando dependências para %s"
+
+#: ../yum/depsolve.py:880
+#, python-format
+msgid "looking for %s as a requirement of %s"
+msgstr "procurando por %s como um requerimento do %s"
+
+#: ../yum/__init__.py:119
+msgid "doConfigSetup() will go away in a future version of Yum.\n"
+msgstr "doConfigSetup() será removida em uma futura versão do Yum.\n"
+
+#: ../yum/__init__.py:311
+#, python-format
+msgid "Repository %r is missing name in configuration, using id"
+msgstr "O repositório %r não tem nome na configuração, usando o id"
+
+#: ../yum/__init__.py:347
+msgid "plugins already initialised"
+msgstr "plugins já inicializados"
+
+#: ../yum/__init__.py:354
+msgid "doRpmDBSetup() will go away in a future version of Yum.\n"
+msgstr "doRpmDBSetup() será removida em uma futura versão do Yum.\n"
+
+#: ../yum/__init__.py:363
+msgid "Reading Local RPMDB"
+msgstr "Lendo RPMDB Local"
+
+#: ../yum/__init__.py:381
+msgid "doRepoSetup() will go away in a future version of Yum.\n"
+msgstr "doRepoSetup() será removida em uma futura versão do Yum.\n"
+
+#: ../yum/__init__.py:399
+msgid "doSackSetup() will go away in a future version of Yum.\n"
+msgstr "doSackSetup() será removida em uma futura versão do Yum.\n"
+
+#: ../yum/__init__.py:416
+msgid "Setting up Package Sacks"
+msgstr "Configurando Sacos de Pacotes"
+
+#: ../yum/__init__.py:458
+#, python-format
+msgid "repo object for repo %s lacks a _resetSack method\n"
+msgstr "o objeto de repositório para o %s necessita de um método _resetSack\n"
+
+#: ../yum/__init__.py:459
+msgid "therefore this repo cannot be reset.\n"
+msgstr "conseqüentemente este repo não pode ser restaurado.\n"
+
+#: ../yum/__init__.py:464
+msgid "doUpdateSetup() will go away in a future version of Yum.\n"
+msgstr "doUpdateSetup() será removida em uma futura versão do Yum.\n"
+
+#: ../yum/__init__.py:476
+msgid "Building updates object"
+msgstr "Construindo objeto de atualizações"
+
+#: ../yum/__init__.py:499
+msgid "doGroupSetup() will go away in a future version of Yum.\n"
+msgstr "doGroupSetup() será removida em uma futura versão do Yum.\n"
+
+#: ../yum/__init__.py:522
+msgid "Getting group metadata"
+msgstr "Obtendo metadados do grupo"
+
+#: ../yum/__init__.py:548
+#, python-format
+msgid "Adding group file from repository: %s"
+msgstr "Adicionando arquivo de grupo a partir do repositório: %s"
+
+#: ../yum/__init__.py:557
+#, python-format
+msgid "Failed to add groups file for repository: %s - %s"
+msgstr "Falha ao adicionar o arquivo de grupos para o repositório: %s - %s"
+
+#: ../yum/__init__.py:563
+msgid "No Groups Available in any repository"
+msgstr "Nenhum grupo disponível em nenhum repositório"
+
+#: ../yum/__init__.py:614
+msgid "Importing additional filelist information"
+msgstr "Importando informações adicionais da lista de arquivos"
+
+#: ../yum/__init__.py:646
+#, python-format
+msgid "Skip-broken round %i"
+msgstr "Rodada de ignoração de dependências quebradas %i"
+
+#: ../yum/__init__.py:674
+#, python-format
+msgid "Skip-broken took %i rounds "
+msgstr "A ignoração de dependências quebradas levou %i rodadas"
+
+#: ../yum/__init__.py:675
+msgid ""
+"\n"
+"Packages skipped because of dependency problems:"
+msgstr ""
+"\n"
+"Pacotes ignorados devido a problemas de dependências:"
+
+#: ../yum/__init__.py:679
+#, python-format
+msgid "    %s from %s"
+msgstr "    %s a partir de %s"
+
+#: ../yum/__init__.py:767
+#, python-format
+msgid "Failed to remove transaction file %s"
+msgstr "Falha ao remover o arquivo de transação %s"
+
+#: ../yum/__init__.py:807
+#, python-format
+msgid "excluding for cost: %s from %s"
+msgstr "excluindo para custo: %s a partir de %s"
+
+#: ../yum/__init__.py:838
+msgid "Excluding Packages in global exclude list"
+msgstr "Excluindo pacotes na lista global de excluídos"
+
+#: ../yum/__init__.py:840
+#, python-format
+msgid "Excluding Packages from %s"
+msgstr "Excluindo Pacotes de %s"
+
+#: ../yum/__init__.py:867
+#, python-format
+msgid "Reducing %s to included packages only"
+msgstr "Reduzindo %s apenas aos pacotes inclusos"
+
+#: ../yum/__init__.py:872
+#, python-format
+msgid "Keeping included package %s"
+msgstr "Mantendo o pacote incluso %s"
+
+#: ../yum/__init__.py:878
+#, python-format
+msgid "Removing unmatched package %s"
+msgstr "Removendo pacote não encontrado %s"
+
+#: ../yum/__init__.py:881
+msgid "Finished"
+msgstr "Concluído"
+
+#. Whoa. What the heck happened?
+#: ../yum/__init__.py:911
+#, python-format
+msgid "Unable to check if PID %s is active"
+msgstr "Não foi possível verificar se o PID %s está ativo"
+
+#. Another copy seems to be running.
+#: ../yum/__init__.py:915
+#, python-format
+msgid "Existing lock %s: another copy is running as pid %s."
+msgstr "Bloqueio existente em %s: outra cópia está em execução com o pid %s."
+
+#: ../yum/__init__.py:962
+#: ../yum/__init__.py:969
+msgid "Package does not match intended download"
+msgstr "O pacote não corresponde ao download pretendido"
+
+#: ../yum/__init__.py:983
+msgid "Could not perform checksum"
+msgstr "Não foi possível realizar a soma de verificação"
+
+#: ../yum/__init__.py:986
+msgid "Package does not match checksum"
+msgstr "O pacote não corresponde à soma de verificação"
+
+#: ../yum/__init__.py:1028
+#, python-format
+msgid "package fails checksum but caching is enabled for %s"
+msgstr "o pacote falhou na soma de verificação mas o cache está habilitado para o %s"
+
+#: ../yum/__init__.py:1034
+#, python-format
+msgid "using local copy of %s"
+msgstr "usando cópia local do %s"
+
+#: ../yum/__init__.py:1053
+#, python-format
+msgid "Insufficient space in download directory %s to download"
+msgstr "Espaço insuficiente no diretório de download %s para baixar o arquivo"
+
+#: ../yum/__init__.py:1086
+msgid "Header is not complete."
+msgstr "O cabeçalho não está completo."
+
+#: ../yum/__init__.py:1126
+#, python-format
+msgid "Header not in local cache and caching-only mode enabled. Cannot download %s"
+msgstr "O cabeçalho não está no cache local e o modo de somente cache está habilitado. Não foi possível baixar o %s."
+
+#: ../yum/__init__.py:1181
+#, python-format
+msgid "Public key for %s is not installed"
+msgstr "A chave pública para o %s não está instalada"
+
+#: ../yum/__init__.py:1185
+#, python-format
+msgid "Problem opening package %s"
+msgstr "Problema ao abrir o pacote %s"
+
+#: ../yum/__init__.py:1193
+#, python-format
+msgid "Public key for %s is not trusted"
+msgstr "A chave pública para o %s não é confiável"
+
+#: ../yum/__init__.py:1197
+#, python-format
+msgid "Package %s is not signed"
+msgstr "O pacote %s não está assinado"
+
+#: ../yum/__init__.py:1235
+#, python-format
+msgid "Cannot remove %s"
+msgstr "Não foi possível remover %s"
+
+#: ../yum/__init__.py:1239
+#, python-format
+msgid "%s removed"
+msgstr "%s removido"
+
+#: ../yum/__init__.py:1271
+#, python-format
+msgid "Cannot remove %s file %s"
+msgstr "Não foi possível remover %s arquivo %s"
+
+#: ../yum/__init__.py:1275
+#, python-format
+msgid "%s file %s removed"
+msgstr "%s arquivo %s removido"
+
+#: ../yum/__init__.py:1277
+#, python-format
+msgid "%d %s files removed"
+msgstr "%d %s arquivos removidos"
+
+#: ../yum/__init__.py:1317
+#, python-format
+msgid "More than one identical match in sack for %s"
+msgstr "Mais de uma correspondência idêntica no saco para %s"
+
+#: ../yum/__init__.py:1323
+#, python-format
+msgid "Nothing matches %s.%s %s:%s-%s from update"
+msgstr "Nada corresponde ao %s.%s %s:%s-%s a partir da atualização"
+
+#: ../yum/__init__.py:1513
+msgid "searchPackages() will go away in a future version of Yum.                      Use searchGenerator() instead. \n"
+msgstr "searchPackages() será removida em uma futura versão do Yum. Ao invés disso, use a searchGenerator().\n"
+
+#: ../yum/__init__.py:1550
+#, python-format
+msgid "Searching %d packages"
+msgstr "Pesquisando por %d pacotes"
+
+#: ../yum/__init__.py:1554
+#, python-format
+msgid "searching package %s"
+msgstr "pesquisando pelo pacote %s"
+
+#: ../yum/__init__.py:1563
+msgid "searching in file entries"
+msgstr "pesquisando nas entradas do arquivo"
+
+#: ../yum/__init__.py:1569
+msgid "searching in provides entries"
+msgstr "pesquisando nas entradas dos fornecimentos"
+
+#: ../yum/__init__.py:1599
+#, python-format
+msgid "Provides-match: %s"
+msgstr "Fornecimento combina com: %s"
+
+#: ../yum/__init__.py:1668
+#: ../yum/__init__.py:1686
+#: ../yum/__init__.py:1714
+#: ../yum/__init__.py:1719
+#: ../yum/__init__.py:1774
+#: ../yum/__init__.py:1778
+#, python-format
+msgid "No Group named %s exists"
+msgstr "Não existe nenhum grupo de nome %s"
+
+#: ../yum/__init__.py:1697
+#: ../yum/__init__.py:1790
+#, python-format
+msgid "package %s was not marked in group %s"
+msgstr "o pacote %s não foi marcado no grupo %s"
+
+#: ../yum/__init__.py:1736
+#, python-format
+msgid "Adding package %s from group %s"
+msgstr "Adicionando o pacote %s do grupo %s"
+
+#: ../yum/__init__.py:1740
+#, python-format
+msgid "No package named %s available to be installed"
+msgstr "Nenhum pacote de nome %s disponível para ser instalado"
+
+#: ../yum/__init__.py:1815
+#, python-format
+msgid "Package tuple %s could not be found in packagesack"
+msgstr "A tupla %s do pacote não pôde ser encontrada no packagesack"
+
+#: ../yum/__init__.py:1883
+#: ../yum/__init__.py:1926
+msgid "Invalid versioned dependency string, try quoting it."
+msgstr "String de dependência versionada inválida, tente citá-la."
+
+#: ../yum/__init__.py:1885
+#: ../yum/__init__.py:1928
+msgid "Invalid version flag"
+msgstr "Sinalizador de versão inválido"
+
+#: ../yum/__init__.py:1900
+#: ../yum/__init__.py:1904
+#, python-format
+msgid "No Package found for %s"
+msgstr "Nenhum pacote encontrado para %s"
+
+#: ../yum/__init__.py:2034
+msgid "Package Object was not a package object instance"
+msgstr "O Pacote de Objeto não era uma instância de pacote de objeto"
+
+#: ../yum/__init__.py:2038
+msgid "Nothing specified to install"
+msgstr "Nada especificado para instalar"
+
+#. only one in there
+#: ../yum/__init__.py:2051
+#, python-format
+msgid "Checking for virtual provide or file-provide for %s"
+msgstr "Verificando por fornecimento virtual ou de arquivo para %s"
+
+#: ../yum/__init__.py:2057
+#: ../yum/__init__.py:2323
+#, python-format
+msgid "No Match for argument: %s"
+msgstr "Nenhuma correspondência para o argumento: %s"
+
+#. FIXME - this is where we could check to see if it already installed
+#. for returning better errors
+#: ../yum/__init__.py:2114
+msgid "No package(s) available to install"
+msgstr "Nenhum pacote disponível para instalar"
+
+#: ../yum/__init__.py:2126
+#, python-format
+msgid "Package: %s  - already in transaction set"
+msgstr "Pacote: %s - já está no conjunto de transações"
+
+#: ../yum/__init__.py:2139
+#, python-format
+msgid "Package %s already installed and latest version"
+msgstr "O pacote %s já está instalado em sua última versão"
+
+#. update everything (the easy case)
+#: ../yum/__init__.py:2180
+msgid "Updating Everything"
+msgstr "Atualizando Tudo"
+
+#: ../yum/__init__.py:2264
+#, python-format
+msgid "Package is already obsoleted: %s.%s %s:%s-%s"
+msgstr "O pacote já está obsoleto: %s.%s %s:%s-%s"
+
+#: ../yum/__init__.py:2320
+#, python-format
+msgid "%s"
+msgstr "%s"
+
+#: ../yum/__init__.py:2335
+msgid "No package matched to remove"
+msgstr "Nenhum pacote encontrado para remoção"
+
+#: ../yum/__init__.py:2369
+#, python-format
+msgid "Cannot open file: %s. Skipping."
+msgstr "Não foi possível abrir o arquivo: %s. Ignorando."
+
+#: ../yum/__init__.py:2372
+#, python-format
+msgid "Examining %s: %s"
+msgstr "Examinando %s: %s"
+
+#: ../yum/__init__.py:2379
+#, python-format
+msgid "Package %s not installed, cannot update it. Run yum install to install it instead."
+msgstr "O pacote %s não está instalado, não é possível atualizá-lo. Execute o yum install para instalá-lo."
+
+#: ../yum/__init__.py:2411
+#, python-format
+msgid "Excluding %s"
+msgstr "Excluindo %s"
+
+#: ../yum/__init__.py:2416
+#, python-format
+msgid "Marking %s to be installed"
+msgstr "Marcando %s para ser instalado"
+
+#: ../yum/__init__.py:2422
+#, python-format
+msgid "Marking %s as an update to %s"
+msgstr "Marcando %s como uma atualização do %s"
+
+#: ../yum/__init__.py:2429
+#, python-format
+msgid "%s: does not update installed package."
+msgstr "%s: não atualiza o pacote instalado."
+
+#: ../yum/__init__.py:2447
+msgid "Problem in reinstall: no package matched to remove"
+msgstr "Problema na reinstalação: nenhum pacote encontrado para remoção"
+
+#: ../yum/__init__.py:2456
+msgid "Problem in reinstall: no package matched to install"
+msgstr "Problema na reinstalação: nenhum pacote encontrado para instalação"
+
+#: ../yum/__init__.py:2514
+#, python-format
+msgid "Retrieving GPG key from %s"
+msgstr "Obtendo a chave GPG a partir de %s"
+
+#: ../yum/__init__.py:2520
+msgid "GPG key retrieval failed: "
+msgstr "A obtenção da chave GPG falhou:"
+
+#: ../yum/__init__.py:2533
+msgid "GPG key parsing failed: "
+msgstr "A análise da chave GPG falhou:"
+
+#: ../yum/__init__.py:2537
+#, python-format
+msgid "GPG key at %s (0x%s) is already installed"
+msgstr "A chave GPG em %s (0x%s) já está instalada"
+
+#. Try installing/updating GPG key
+#: ../yum/__init__.py:2542
+#, python-format
+msgid "Importing GPG key 0x%s \"%s\" from %s"
+msgstr "Importando chave GPG 0x%s \"%s\" a partir de %s"
+
+#: ../yum/__init__.py:2554
+msgid "Not installing key"
+msgstr "Não está instalando a chave"
+
+#: ../yum/__init__.py:2560
+#, python-format
+msgid "Key import failed (code %d)"
+msgstr "Falha na importação da chave (código %d)"
+
+#: ../yum/__init__.py:2563
+msgid "Key imported successfully"
+msgstr "Chave importada com sucesso"
+
+#: ../yum/__init__.py:2568
+#, python-format
+msgid ""
+"The GPG keys listed for the \"%s\" repository are already installed but they are not correct for this package.\n"
+"Check that the correct key URLs are configured for this repository."
+msgstr ""
+"As chaves GPG listadas para o repositório \"%s\" já estão instaladas, mas não estão corretas para este pacote.\n"
+"Verifique se as URLs corretas das chaves estão configuradas para esse repositório."
+
+#: ../yum/__init__.py:2577
+msgid "Import of key(s) didn't help, wrong key(s)?"
+msgstr "A importação da(s) chave(s) não ajudou, chave(s) errada(s)?"
+
+#: ../yum/__init__.py:2651
+msgid "Unable to find a suitable mirror."
+msgstr "Não foi possível encontrar um espelho apropriado."
+
+#: ../yum/__init__.py:2653
+msgid "Errors were encountered while downloading packages."
+msgstr "Foram encontrados erros ao baixar os pacotes."
+
+#: ../yum/__init__.py:2717
+msgid "Test Transaction Errors: "
+msgstr "Erros do Teste de Transação:"
+
+#: ../yum/__init__.py:2752
+#, python-format
+msgid "Package %s needs %s, this is not available."
+msgstr "O pacote %s necessita do %s, que não está disponível."
+
+#: ../yum/__init__.py:2757
+#, python-format
+msgid "Package %s conflicts with %s."
+msgstr "O pacote %s conflita com %s."
+
+#: ../yum/plugins.py:168
+#, python-format
+msgid "Running \"%s\" handler for \"%s\" plugin"
+msgstr "Executando o manipulador \"%s\" para o plugin \"%s\""
+
+#. Mostly copied from YumOutput._outKeyValFill()
+#: ../yum/plugins.py:193
+msgid "Loaded plugins: "
+msgstr "Plugins carregados:"
+
+#: ../yum/plugins.py:210
+#, python-format
+msgid "\"%s\" plugin is disabled"
+msgstr "O plugin \"%s\" está desabilitado"
+
+#: ../yum/plugins.py:222
+#, python-format
+msgid "Plugin \"%s\" doesn't specify required API version"
+msgstr "O plugin \"%s\" não especifica a versão requerida da API"
+
+#: ../yum/plugins.py:226
+#, python-format
+msgid "Plugin \"%s\" requires API %s. Supported API is %s."
+msgstr "O plugin \"%s\" requer a API %s. A API suportada é a %s."
+
+#: ../yum/plugins.py:253
+#, python-format
+msgid "Loading \"%s\" plugin"
+msgstr "Carregando o plugin \"%s\""
+
+#: ../yum/plugins.py:260
+#, python-format
+msgid "Two or more plugins with the name \"%s\" exist in the plugin search path"
+msgstr "Dois ou mais plugins com o nome \"%s\" existem no caminho de pesquisa plugins"
+
+#: ../yum/plugins.py:280
+#, python-format
+msgid "Configuration file %s not found"
+msgstr "Arquivos de configuração %s não encontrado"
+
+#. for
+#. Configuration files for the plugin not found
+#: ../yum/plugins.py:283
+#, python-format
+msgid "Unable to find configuration file for plugin %s"
+msgstr "Não foi possível encontrar o arquivo de configuração para o plugin %s"
+
+#: ../yum/plugins.py:437
+msgid "registration of commands not supported"
+msgstr "O registro de comandos não é suportado"
+
+#: ../rpmUtils/oldUtils.py:26
+#, python-format
+msgid "Header cannot be opened or does not match %s, %s."
+msgstr "O cabeçalho não pode ser aberto ou não coincide com %s, %s."
+
+#: ../rpmUtils/oldUtils.py:46
+#, python-format
 msgid "RPM %s fails md5 check"
 msgstr "O RPM %s não passou na verificação md5"
 
-#: ../callback.py:85
-#, c-format
-msgid "Erasing: %s %d/%d"
-msgstr "Apagando: %s %d/%d"
+#: ../rpmUtils/oldUtils.py:144
+msgid "Could not open RPM database for reading. Perhaps it is already in use?"
+msgstr "Não foi possível abrir o banco de dados RPM para leitura. Talvez por que ele já esteja em uso?"
 
-#: ../pkgaction.py:261
-#, c-format
-msgid "Nothing in any group to update or install"
-msgstr "Nada em nenhum grupo para atualizar ou instalar"
-
-#: ../pkgaction.py:311
-#, c-format
-msgid "Arch   : %s"
-msgstr "Arquitetura   : %s"
-
-#: ../nevral.py:52
-#, c-format
-msgid "No Package %s, %s"
-msgstr "Sem o Pacote %s, %s"
-
-#: ../pkgaction.py:84
-#, c-format
-msgid "No Packages Available for Update"
-msgstr "Nenhum Pacote Disponível para Atualização"
-
-#: ../pkgaction.py:535
-#, c-format
-msgid "Grub found - making this kernel the default"
-msgstr "Grub encontrado - tornando este kernel o padrão"
-
-#: ../pullheaders.py:250
-#, c-format
-msgid "Digesting rpm - %s - %d/%d"
-msgstr "Preparando rpm - %s - %d/%d"
-
-#: ../clientStuff.py:994
-#, c-format
-msgid "Damaged RPM %s, removing."
-msgstr "RPM %s danificado, removendo."
-
-#: ../nevral.py:86
-#, c-format
-msgid "Bad Header for pkg %s.%s trying to get headers for the nevral - exiting"
-msgstr "Cabeçalho danificado para o pacote %s.%s, tentando obter cabeçalhos para o nevral - saindo"
-
-#: ../clientStuff.py:1030
-#: ../clientStuff.py:1039
-#, c-format
-msgid "Error: You may also check that you have the correct GPG keys installed"
-msgstr "Erro: Você também pode verificar se tem as Chaves GPG corretas instaladas"
-
-#: ../pullheaders.py:115
-#, c-format
-msgid "No rpms to work with and no header dir. Exiting."
-msgstr "Nenhum diretório de cabeçalhos e nenhum rpm para ser utilizado. Saindo."
-
-#: ../yummain.py:288
-#, c-format
-msgid "Exiting on user command."
-msgstr "Saindo pelo comando do usuário."
-
-#: ../config.py:212
-#, c-format
-msgid "Failed to find section: %s"
-msgstr "Falha ao encontrar seção: %s"
-
-#: ../rpmUtils.py:162
-#, c-format
+#: ../rpmUtils/oldUtils.py:174
 msgid "Got an empty Header, something has gone wrong"
 msgstr "Um cabeçalho vazio foi obtido, algo deu errado"
 
-#: ../serverStuff.py:80
-#, c-format
-msgid "ignoring bad rpm: %s"
-msgstr "ignorando rpm danificado: %s"
+#: ../rpmUtils/oldUtils.py:244
+#: ../rpmUtils/oldUtils.py:251
+#: ../rpmUtils/oldUtils.py:254
+#: ../rpmUtils/oldUtils.py:257
+#, python-format
+msgid "Damaged Header %s"
+msgstr "Cabeçalho %s Danificado"
 
-#: ../pullheaders.py:89
-#, c-format
-msgid "Directory of rpms must be a directory."
-msgstr "O diretório de rpms deve ser um diretório."
+#: ../rpmUtils/oldUtils.py:272
+#, python-format
+msgid "Error opening rpm %s - error %s"
+msgstr "Erro ao abrir o rpm %s - erro %s"
 
-#: ../clientStuff.py:1149
-#, c-format
-msgid "failover: out of servers to try"
-msgstr "recuperação: não há mais servidores para tentar"
-
-#: ../clientStuff.py:746
-#, c-format
-msgid "Getting header.info from server"
-msgstr "Obtendo header.info do servidor"
-
-#: ../nevral.py:50
-#, c-format
-msgid "No Package %s"
-msgstr "Não Há o Pacote %s"
+#~ msgid "Directory of rpms must exist"
+#~ msgstr "O diretório de rpms precisa existir"
+#~ msgid "Error accessing URL: %s"
+#~ msgstr "Erro ao acessar a URL: %s"
+#~ msgid "No Packages installed not included in a repository"
+#~ msgstr "Nenhum pacote instalado não incluído em um repositório"
+#~ msgid ""
+#~ "\n"
+#~ "   Total: %d\n"
+#~ "   Used: %d\n"
+#~ "   Src: %d"
+#~ msgstr ""
+#~ "\n"
+#~ "   Total: %d\n"
+#~ "   Usado: %d\n"
+#~ "   Src: %d"
+#~ msgid "Error restoring the backup of lilo.conf  The backup was:\n"
+#~ msgstr "Erro ao restaurar o backup do lilo.conf. O backup era:\n"
+#~ msgid "Looking in available packages for a providing package"
+#~ msgstr "Procurando pelo pacote fornecido nos pacotes disponíveis"
+#~ msgid ""
+#~ "retrygrab() failed for:\n"
+#~ "  %s%s\n"
+#~ "  Executing failover method"
+#~ msgstr ""
+#~ "retrygrab() falhou para:\n"
+#~ "  %s%s\n"
+#~ "  Executando método de recuperação"
+#~ msgid "I will install/upgrade these to satisfy the dependencies:"
+#~ msgstr "Eu irei instalar/atualizar isto para satisfazer as dependências:"
+#~ msgid "Cannot delete %s - check perms"
+#~ msgstr "Não foi possível remover %s - verifique as permissões"
+#~ msgid "Need a provides to match"
+#~ msgstr "É necessário fornecer uma informação para corresponder"
+#~ msgid ""
+#~ "lilo options that are not supported by yum are used in the default lilo."
+#~ "conf. This file will not be modified. The options include:\n"
+#~ msgstr ""
+#~ "opções do lilo que não são suportadas pelo yum estão sendo utilizadas no "
+#~ "arquivo lilo.conf padrão. Este arquivo não será modificado. Dentre as "
+#~ "opções estão:\n"
+#~ msgid "Error getting file %s"
+#~ msgstr "Erro ao obter arquivo %s"
+#~ msgid "%s is not writable"
+#~ msgstr "%s não é gravável"
+#~ msgid ""
+#~ "\n"
+#~ "Already found tuple: %s %s:\n"
+#~ "%s "
+#~ msgstr ""
+#~ "\n"
+#~ "Tupla já encontrada: %s %s:\n"
+#~ "%s "
+#~ msgid "errors found"
+#~ msgstr "erros encontrados"
+#~ msgid "Unable to determine boot loader."
+#~ msgstr "Não foi possível determinar o gerenciador de inicialização."
+#~ msgid "getting %s"
+#~ msgstr "obtendo %s"
+#~ msgid "Error Reading Header on %s"
+#~ msgstr "Erro ao Ler Cabeçalho em %s"
+#~ msgid "Error accessing File: %s"
+#~ msgstr "Erro ao acessar arquivo: %s"
+#~ msgid "You're not root, we can't install things"
+#~ msgstr "Você não é root, nós não podemos instalar coisas"
+#~ msgid "Cannot find any conf file."
+#~ msgstr "Não foi possível encontrar um arquivo de configuração."
+#~ msgid "Local file does not exist: %s"
+#~ msgstr "O arquivo local não existe: %s"
+#~ msgid "using ftp, http[s], or file for servers, Aborting - %s"
+#~ msgstr "usando ftp, http[s] ou arquivos para servidores. Abortando - %s"
+#~ msgid "Found %s."
+#~ msgstr "%s encontrado."
+#~ msgid "Transaction(s) Complete"
+#~ msgstr "Transação Completa"
+#~ msgid "IOError: %s"
+#~ msgstr "IOError (Erro E/S): %s"
+#~ msgid "Cleaning packages and old headers"
+#~ msgstr "Limpando pacotes e cabeçalhos antigos"
+#~ msgid ""
+#~ "Cannot download %s in caching only mode or when running as non-root user."
+#~ msgstr ""
+#~ "Não é possível baixar %s no modo \"somente cache\" ou quando estiver "
+#~ "executando com um usuário não root."
+#~ msgid ""
+#~ "Error: You may want to run yum clean or remove the file: \n"
+#~ " %s"
+#~ msgstr ""
+#~ "Erro: Você pode querer executar a limpeza do yum ou remover o arquivo: \n"
+#~ " %s"
+#~ msgid "Error reading lilo.conf: The messages was:\n"
+#~ msgstr "Erro ao ler o lilo.conf: A mensagem foi:\n"
+#~ msgid "No groups provided or accessible on any server."
+#~ msgstr "Nenhum grupo fornecido ou acessível em nenhum servidor."
+#~ msgid "%s results returned"
+#~ msgstr "%s resultados retornados"
+#~ msgid "Error moving %s to %s, fatal"
+#~ msgstr "Erro ao mover %s para %s, fatal"
+#~ msgid ""
+#~ "\n"
+#~ "ignoring bad rpm: %s"
+#~ msgstr ""
+#~ "\n"
+#~ "ignorando rpm defeituoso: %s"
+#~ msgid "[erase: %s]"
+#~ msgstr "[remover: %s]"
+#~ msgid "%s is not a dir"
+#~ msgstr "%s não é um diretório"
+#~ msgid "Best version for %s is %s:%s-%s"
+#~ msgstr "A melhor versão para %s é %s:%s-%s"
+#~ msgid "[deps: %s]"
+#~ msgstr "[deps: %s]"
+#~ msgid ""
+#~ "\n"
+#~ "ignoring srpm: %s"
+#~ msgstr ""
+#~ "\n"
+#~ "ignorando srpm: %s"
+#~ msgid "Checking deps %d/%d complete"
+#~ msgstr "Checando dependências, %d/%d completo"
+#~ msgid ""
+#~ "Errors within the dir(s):\n"
+#~ " %s"
+#~ msgstr ""
+#~ "Erro dentro do(s) diretório(s):\n"
+#~ " %s"
+#~ msgid "Please run yum in non-caching mode to correct this header."
+#~ msgstr ""
+#~ "Por favor, execute o yum no modo sem cache para corrigir este cabeçalho."
+#~ msgid "Error installing lilo.conf  The message was:\n"
+#~ msgstr "Erro ao instalar o lilo.conf. A mensagem foi:\n"
+#~ msgid "Error: Untrusted GPG key on %s"
+#~ msgstr "Erro: Chave GPG não confiável em %s"
+#~ msgid ""
+#~ "\n"
+#~ "\n"
+#~ "Problem with gpg sig or md5sum on %s\n"
+#~ "\n"
+#~ msgstr ""
+#~ "\n"
+#~ "\n"
+#~ "Problema com a assinatura gpg ou com o md5sum em %s\n"
+#~ "\n"
+#~ msgid "No Packages Available for Update or Install"
+#~ msgstr "Nenhum Pacote Disponível para Atualização ou Instalação"
+#~ msgid "Found best arch for install only pkg %s"
+#~ msgstr "Encontre a melhor arquitetura para instalar apenas o pacote %s"
+#~ msgid "I will do the following:"
+#~ msgstr "Eu farei o seguinte:"
+#~ msgid "Bad URL: %s"
+#~ msgstr "URL Inválida: %s"
+#~ msgid "NonMatching RPM version, %s, removing."
+#~ msgstr "Versão do RPM não coincide, %s, removendo."
+#~ msgid "I will erase these to satisfy the dependencies:"
+#~ msgstr "Eu irei apagar isto para satisfazer as dependências:"
+#~ msgid "HTTP Error (%s): %s"
+#~ msgstr "Erro HTTP (%s): %s"
+#~ msgid "Please ask your sysadmin to update the headers on this system."
+#~ msgstr ""
+#~ "Por favor, peça ao administrador do seu sistema para atualizar os "
+#~ "cabeçalhos."
+#~ msgid "Putting back old headers"
+#~ msgstr "Recolocando cabeçalhos antigos"
+#~ msgid "CacheDir: %s"
+#~ msgstr "CacheDir (diretório de cache): %s"
+#~ msgid "Completing update for %s  - %d/%d"
+#~ msgstr "Completando atualização para %s - %d/%d"
+#~ msgid ""
+#~ "Error: You may need to disable gpg checking to install this package\n"
+#~ msgstr ""
+#~ "Erro: Talvez seja necessário desabilitar a verificação gpg para instalar "
+#~ "este pacote\n"
+#~ msgid "Options Error: no commands found"
+#~ msgstr "Erro nas opções: nenhum comando encontrado"
+#~ msgid "Unable to run grubby correctly: the message was:\n"
+#~ msgstr "Não foi possível executar o grubby corretamente: a mensagem foi:\n"
+#~ msgid "IOError - # %s - %s"
+#~ msgstr "IOError (Erro E/S) - # %s - %s"
+#~ msgid "Kernel Updated/Installed, checking for bootloader"
+#~ msgstr ""
+#~ "Kernel atualizado/instalado, verificando gerenciador de inicialização"
+#~ msgid "Need to pass a list of pkgs to install"
+#~ msgstr "É necessário passar uma lista de pacotes para instalar"
+#~ msgid "Insufficient server config - no servers found. Aborting."
+#~ msgstr ""
+#~ "Configuração de servidor insuficiente - nenhum servidor encontrado. "
+#~ "Abortando."
+#~ msgid ""
+#~ "\n"
+#~ "    Usage:  yum [options] <update | upgrade | install | info | remove | "
+#~ "list |\n"
+#~ "            clean | provides | search | check-update | groupinstall | "
+#~ "groupupdate |\n"
+#~ "            grouplist >\n"
+#~ "                \n"
+#~ "         Options:\n"
+#~ "          -c [config file] - specify the config file to use\n"
+#~ "          -e [error level] - set the error logging level\n"
+#~ "          -d [debug level] - set the debugging level\n"
+#~ "          -y answer yes to all questions\n"
+#~ "          -t be tolerant about errors in package commands\n"
+#~ "          -R [time in minutes] - set the max amount of time to randomly "
+#~ "run in.\n"
+#~ "          -C run from cache only - do not update the cache\n"
+#~ "          --installroot=[path] - set the install root (default '/')\n"
+#~ "          --version - output the version of yum\n"
+#~ "          -h, --help this screen\n"
+#~ "    "
+#~ msgstr ""
+#~ "\n"
+#~ "   Uso:  yum [opções] <update | upgrade | install | info | remove | list "
+#~ "|\n"
+#~ "            clean | provides | search | check-update | groupinstall | "
+#~ "groupupdate |\n"
+#~ "            grouplist >\n"
+#~ "                \n"
+#~ "         Opções:\n"
+#~ "          -c [arquivo de configuração] - especifica o arquivo de "
+#~ "configuração a ser utilizado\n"
+#~ "          -e [nível de erro] - define o nível de erro para o log\n"
+#~ "          -d [nível de depuração] - define o nível de depuração\n"
+#~ "          -y responde \"yes\" para todas as perguntas\n"
+#~ "          -t ser tolerante com relação aos erros nos comandos dos "
+#~ "pacotes\n"
+#~ "          -R [tempo em minutos] - definir o tempo máximo para executar "
+#~ "ramdomicamente\n"
+#~ "          -C executar a partir do cache apenas - não atualiza o cache\n"
+#~ "          --installroot=[caminho] - define a raiz da instalação (padrão "
+#~ "\"/\")\n"
+#~ "          --version - exibe a versão do yum\n"
+#~ "          -h, --help - exibe esta tela\n"
+#~ "    "
+#~ msgid "From %s installing %s"
+#~ msgstr "A partir de %s, instalando %s"
+#~ msgid "No bootloader found, Cannot configure kernel, continuing."
+#~ msgstr ""
+#~ "Nenhum gerenciador de inicialização encontrado. Não é possível configurar "
+#~ "o kernel, continuando."
+#~ msgid "Attempt to delete a missing file %s - ignoring."
+#~ msgstr "Tentativa de remover um arquivo faltando %s - ignorando."
+#~ msgid "Getting %s"
+#~ msgstr "Obtendo %s"
+#~ msgid ""
+#~ "\n"
+#~ "Writing header.info file"
+#~ msgstr ""
+#~ "\n"
+#~ "Gravando arquivo header.info"
+#~ msgid "Gathering header information file(s) from server(s)"
+#~ msgstr ""
+#~ "Coletando arquivo(s) de informações de cabeçalhos a partir do(s) servidor"
+#~ "(es)"
+#~ msgid "Using cached header.info file"
+#~ msgstr "Utilizando arquivo header.info do cache"
+#~ msgid "localrpmdb not defined"
+#~ msgstr "localrpmdb não definido"
+#~ msgid "Error installing the new bootloader: \n"
+#~ msgstr "Erro ao instalar o novo gerenciador de inicialização: \n"
+#~ msgid "Error: Could not find the GPG Key necessary to validate pkg %s"
+#~ msgstr ""
+#~ "Erro: Não foi possível localizar a Chave GPG necessária para validar o "
+#~ "pacote %s"
+#~ msgid "No actions to take"
+#~ msgstr "Nenhuma ação a ser tomada"
+#~ msgid ""
+#~ "Available package: %s.%s %s:%s-%s from %s matches with\n"
+#~ " %s"
+#~ msgstr ""
+#~ "Pacote disponível: %s.%s %s:%s-%s de %s resultados com\n"
+#~ " %s"
+#~ msgid "Erase: No matches for %s"
+#~ msgstr "Apagar: Nenhum resultado para %s"
+#~ msgid "   "
+#~ msgstr "   "
+#~ msgid "Error: Cannot find baseurl or name for server '%s'. Skipping"
+#~ msgstr ""
+#~ "Erro: Não foi possível localizar a baseurl ou o nome do servidor \"%s\". "
+#~ "Ignorando."
+#~ msgid "Odd header %s suddenly disappeared"
+#~ msgstr "Cabeçalho indefinido %s desapareceu repentinamente"
+#~ msgid "All dependencies resolved and no conflicts detected"
+#~ msgstr "Todas as dependências resolvidas e nenhum conflito detectado"
+#~ msgid "using cached groups from server: %s"
+#~ msgstr "usando grupos em cache a partir do servidor: %s"
+#~ msgid "Exiting."
+#~ msgstr "Saindo."
+#~ msgid ""
+#~ "asking for package %s.%s - does not exist in nevral - bailing out - check "
+#~ "rpmdb for errors"
+#~ msgstr ""
+#~ "perguntando pelo pacote %s.%s - não existe no nevral - saindo "
+#~ "abruptamente - verifique por erros no rpmdb"
+#~ msgid "Errors reported doing trial run"
+#~ msgstr "Erros reportados na execução experimental"
+#~ msgid "Lilo found - adding kernel to lilo and making it the default"
+#~ msgstr "Lilo encontrado - adicionando o kernel ao lilo e tornando-o padrão"
+#~ msgid "[update: %s]"
+#~ msgstr "[atualizar: %s]"
+#~ msgid "ERROR: Url Return no Content-Length  - something is wrong"
+#~ msgstr "ERRO: A URL retornou conteúdo vazio - algo está errado"
+#~ msgid "Got a file - yay"
+#~ msgstr "Obteve um arquivo - yay"
+#~ msgid "From %s updating %s"
+#~ msgstr "A partir de %s, atualizando %s"
+#~ msgid ""
+#~ "Usage:\n"
+#~ "yum-arch [-v] [-z] [-l] [-c] [-n] [-d] [-q] [-vv] (path of dir where "
+#~ "headers/ should/does live)\n"
+#~ "   -d  = check dependencies and conflicts in tree\n"
+#~ "   -v  = more verbose output\n"
+#~ "   -vv = even more verbose output\n"
+#~ "   -n  = don't generate headers\n"
+#~ "   -c  = check pkgs with gpg and md5 checksums - cannot be used with -n\n"
+#~ "   -z  = gzip compress the headers (default, deprecated as an option)\n"
+#~ "   -s  = generate headers for source packages too\n"
+#~ "   -l  = use symlinks as valid rpms when building headers\n"
+#~ "   -q  = make the display more quiet"
+#~ msgstr ""
+#~ "Uso:\n"
+#~ "yum-arch [-v] [-z] [-l] [-c] [-n] [-d] [-q] [-vv] (caminho do dir. onde "
+#~ "os cabeçalhos devem estar)\n"
+#~ "   -d  = verificar dependências e conflitos na árvore\n"
+#~ "   -v  = exibição mais detalhada\n"
+#~ "   -vv = exibição ainda mais detalhada\n"
+#~ "   -n  = não gerar cabeçalhos\n"
+#~ "   -c  = verificar pacotes com o gpg e somas md5 - não pode ser usado com "
+#~ "-n\n"
+#~ "   -z  = compactar cabeçalhos com o gzip (padrão, obsoleto como uma "
+#~ "opção)\n"
+#~ "   -s  = gerar cabeçalhos para pacotes de código-fonte também\n"
+#~ "   -l  = utiliza links simbólicos como rpms válidos ao compilar "
+#~ "cabeçalhos\n"
+#~ "   -q  = faz uma exibição mais discreta"
+#~ msgid "The file %s is damaged."
+#~ msgstr "O arquivo %s está danificado."
+#~ msgid "Repo"
+#~ msgstr "Repo"
+#~ msgid "No bootloader found, Cannot configure kernel."
+#~ msgstr ""
+#~ "Nenhum gerenciador de inicialização encontrado. Não é possível configurar "
+#~ "o kernel."
+#~ msgid "Name"
+#~ msgstr "Nome"
+#~ msgid "[install: %s]"
+#~ msgstr "[instalar: %s]"
+#~ msgid "Downloading needed headers"
+#~ msgstr "Baixando os cabeçalhos necessários"
+#~ msgid "Header for pkg %s not found"
+#~ msgstr "O cabeçalho para o pacote %s não foi encontrado"
+#~ msgid "Cleaning all headers"
+#~ msgstr "Limpando todos os cabeçalhos"
+#~ msgid "depcheck: package %s needs %s"
+#~ msgstr "verificação de dependências: o pacote %s precisa do %s"
+#~ msgid "Error - %s cannot be found"
+#~ msgstr "Erro - %s não pôde ser encontrado"
+#~ msgid "Erasing: %s %d/%d"
+#~ msgstr "Apagando: %s %d/%d"
+#~ msgid "Nothing in any group to update or install"
+#~ msgstr "Nada em nenhum grupo para atualizar ou instalar"
+#~ msgid "Grub found - making this kernel the default"
+#~ msgstr "Grub encontrado - tornando este kernel o padrão"
+#~ msgid "Digesting rpm - %s - %d/%d"
+#~ msgstr "Preparando rpm - %s - %d/%d"
+#~ msgid "Damaged RPM %s, removing."
+#~ msgstr "RPM %s danificado, removendo."
+#~ msgid ""
+#~ "Bad Header for pkg %s.%s trying to get headers for the nevral - exiting"
+#~ msgstr ""
+#~ "Cabeçalho danificado para o pacote %s.%s, tentando obter cabeçalhos para "
+#~ "o nevral - saindo"
+#~ msgid ""
+#~ "Error: You may also check that you have the correct GPG keys installed"
+#~ msgstr ""
+#~ "Erro: Você também pode verificar se tem as Chaves GPG corretas instaladas"
+#~ msgid "No rpms to work with and no header dir. Exiting."
+#~ msgstr ""
+#~ "Nenhum diretório de cabeçalhos e nenhum rpm para ser utilizado. Saindo."
+#~ msgid "ignoring bad rpm: %s"
+#~ msgstr "ignorando rpm danificado: %s"
+#~ msgid "Directory of rpms must be a directory."
+#~ msgstr "O diretório de rpms deve ser um diretório."
+#~ msgid "failover: out of servers to try"
+#~ msgstr "recuperação: não há mais servidores para tentar"
+#~ msgid "Getting header.info from server"
+#~ msgstr "Obtendo header.info do servidor"
 
