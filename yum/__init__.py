@@ -758,7 +758,8 @@ class YumBase(depsolve.Depsolve):
 
         errors = self.ts.run(cb.callback, '')
         if errors:
-            raise Errors.YumBaseError, errors
+            errstring = '\n'.join(errors)
+            raise Errors.YumBaseError, errstring
 
         if not self.conf.keepcache:
             self.cleanUsedHeadersPackages()
@@ -2703,13 +2704,14 @@ class YumBase(depsolve.Depsolve):
             probs = self.downloadPkgs(dlpkgs)
 
         except IndexError:
-            raise Errors.YumBaseError, [_("Unable to find a suitable mirror.")]
+            raise Errors.YumBaseError, _("Unable to find a suitable mirror.")
         if len(probs) > 0:
-            errstr = [_("Errors were encountered while downloading packages.")]
+            errstr = _("Errors were encountered while downloading packages.")
             for key in probs:
                 errors = misc.unique(probs[key])
                 for error in errors:
-                    errstr.append("%s: %s" %(key, error))
+                    msg = "%s: %s" % (key, error)
+                    errstr += '\n%s' % msg
 
             raise Errors.YumDownloadError, errstr
         return dlpkgs
