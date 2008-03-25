@@ -11,7 +11,7 @@ msgstr ""
 "Project-Id-Version: yum 3.2.10\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2008-03-25 11:29+0100\n"
-"PO-Revision-Date: 2008-03-25 11:38+0100\n"
+"PO-Revision-Date: 2008-03-25 11:45+0100\n"
 "Last-Translator: Tim Lauridsen <timlau@fedoraproject.org>\n"
 "Language-Team: Danish <dansk@klid.dk>\n"
 "MIME-Version: 1.0\n"
@@ -527,7 +527,7 @@ msgstr "Beskrivelse:"
 
 #: ../output.py:351
 msgid "Is this ok [y/N]: "
-msgstr "Er dette o.k. [y/N]: "
+msgstr "Er dette o.k. [j/N]: "
 
 #: ../output.py:357 ../output.py:360
 msgid "y"

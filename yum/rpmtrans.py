@@ -24,6 +24,7 @@ import logging
 import types
 import sys
 from yum.constants import *
+from i18n import _
 
 
 class NoOutputCallBack:
@@ -67,14 +68,15 @@ class RPMBaseCallback:
     Base class for a RPMTransaction display callback class
     '''
     def __init__(self):
-        self.action = { TS_UPDATE : 'Updating', 
-                        TS_ERASE: 'Erasing',
-                        TS_INSTALL: 'Installing', 
-                        TS_TRUEINSTALL : 'Installing',
-                        TS_OBSOLETED: 'Obsoleted',
-                        TS_OBSOLETING: 'Installing',
-                        TS_UPDATED: 'Cleanup',
-                        'repackaging': 'Repackaging'}
+        self.action = { TS_UPDATE : _('Updating'), 
+                        TS_ERASE: _('Erasing'),
+                        TS_INSTALL: _('Installing'), 
+                        TS_TRUEINSTALL : _('Installing'),
+                        TS_OBSOLETED: _('Obsoleted'),
+                        TS_OBSOLETING: _('Installing'),
+                        TS_UPDATED: _('Cleanup'),
+                        'repackaging': _('Repackaging')}
+        # The fileaction are not translated, most sane IMHO / Tim
         self.fileaction = { TS_UPDATE: 'Updated', 
                             TS_ERASE: 'Erased',
                             TS_INSTALL: 'Installed', 
