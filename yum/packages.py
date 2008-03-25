@@ -90,13 +90,6 @@ def parsePackages(pkgs, usercommands, casematch=0,
        takes an optional casematch option to determine if case should be matched
        exactly. Defaults to not matching."""
 
-    def contains(haystack, needle):
-        """ If anything from needle is in haystack, return True. """
-        for x in needle:
-            if x in haystack:
-                return True
-        return False
-
     pkgdict = buildPkgRefDict(pkgs, bool(casematch))
     exactmatch = []
     matched = []
@@ -110,7 +103,7 @@ def parsePackages(pkgs, usercommands, casematch=0,
         else:
             # anything we couldn't find a match for
             # could mean it's not there, could mean it's a wildcard
-            if contains(command, "*,[]{}?"):
+            if misc.re_glob(command):
                 trylist = pkgdict.keys()
                 # command and pkgdict are already lowered if not casematch
                 # so case sensitive is always fine
