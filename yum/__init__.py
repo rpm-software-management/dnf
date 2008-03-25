@@ -1473,46 +1473,32 @@ class YumBase(depsolve.Depsolve):
         for sack in self.pkgSack.sacks.values():
             tmpres.extend(sack.searchPrimaryFieldsMultipleStrings(sql_fields, real_crit))
 
-        for (po, count) in tmpres:
-            # check the pkg for sanity
-            # pop it into the sorted lists
-            tmpkeys   = set()
-            tmpvalues = []
-            if count not in sorted_lists: sorted_lists[count] = []
-            for s in real_crit_lower:
-                for field in fields:
-                    value = getattr(po, field)
-                    if value and value.lower().find(s) != -1:
-                        tmpvalues.append(value)
-                        tmpkeys.add(rcl2c[s])
+        def results2sorted_lists(tmpres, sorted_lists):
+            for (po, count) in tmpres:
+                # check the pkg for sanity
+                # pop it into the sorted lists
+                tmpkeys   = set()
+                tmpvalues = []
+                if count not in sorted_lists: sorted_lists[count] = []
+                for s in real_crit_lower:
+                    for field in fields:
+                        value = to_unicode(getattr(po, field))
+                        if value and value.lower().find(s) != -1:
+                            tmpvalues.append(value)
+                            tmpkeys.add(rcl2c[s])
 
-            if len(tmpvalues) > 0:
-                sorted_lists[count].append((po, tmpkeys, tmpvalues))
-        
-        for po in self.rpmdb:
-            tmpkeys   = set()
-            tmpvalues = []
-            criteria_matched = 0
-            for s in real_crit_lower:
-                matched_s = False
-                for field in fields:
-                    value = getattr(po, field)
-                    # make sure that string are in unicode
-                    value = to_unicode(value)
-                    if value and value.lower().find(s) != -1:
-                        if not matched_s:
-                            criteria_matched += 1
-                            matched_s = True
-                        
-                        tmpvalues.append(value)
-                        tmpkeys.add(rcl2c[s])
+                if len(tmpvalues) > 0:
+                    sorted_lists[count].append((po, tmpkeys, tmpvalues))
+        results2sorted_lists(tmpres, sorted_lists)
 
-            if len(tmpvalues) > 0:
-                if criteria_matched not in sorted_lists: sorted_lists[criteria_matched] = []
-                sorted_lists[criteria_matched].append((po, tmpkeys, tmpvalues))
-
+        tmpres = self.rpmdb.searchPrimaryFieldsMultipleStrings(fields,
+                                                               real_crit_lower,
+                                                               lowered=True)
         # close our rpmdb connection so we can ctrl-c, kthxbai
         self.closeRpmDB()
+
+        results2sorted_lists(tmpres, sorted_lists)
+        del tmpres
 
         # By default just sort using package sorting
         sort_func = operator.itemgetter(0)

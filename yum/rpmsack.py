@@ -28,6 +28,8 @@ from packageSack import PackageSackBase
 import fnmatch
 import re
 
+from misc import to_unicode
+
 class RPMInstalledPackage(YumInstalledPackage):
 
     def __init__(self, rpmhdr, index, rpmdb):
@@ -278,6 +280,28 @@ class RPMDBPackageSack(PackageSackBase):
                     self._makePackageObject(hdr, idx)
             self._completely_loaded = patterns is None
         return self._idx2pkg.values()
+
+    @staticmethod
+    def _find_search_fields(fields, searchstrings, hdr):
+        count = 0
+        for s in searchstrings:
+            for field in fields:
+                value = to_unicode(hdr[field])
+                if value and value.lower().find(s) != -1:
+                    count += 1
+                    break
+        return count
+
+    def searchPrimaryFieldsMultipleStrings(self, fields, searchstrings,
+                                           lowered=False):
+        if not lowered:
+            searchstrings = map(lambda x: x.lower(), searchstrings)
+        ret = []
+        for hdr, idx in self._all_packages():
+            n = self._find_search_fields(fields, searchstrings, hdr)
+            if n > 0:
+                ret.append((self._makePackageObject(hdr, idx), n))
+        return ret
 
     def searchNevra(self, name=None, epoch=None, ver=None, rel=None, arch=None):
         return self._search(name, epoch, ver, rel, arch)
