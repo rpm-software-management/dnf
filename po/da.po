@@ -11,12 +11,12 @@ msgstr ""
 "Project-Id-Version: yum 3.2.10\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2008-03-25 11:29+0100\n"
-"PO-Revision-Date: 2008-02-08 20:44+0100\n"
+"PO-Revision-Date: 2008-03-25 11:38+0100\n"
 "Last-Translator: Tim Lauridsen <timlau@fedoraproject.org>\n"
 "Language-Team: Danish <dansk@klid.dk>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
-"Content-Transfer-Encoding: 8bit\n"
+"Content-Transfer-Encoding: 8bit"
 
 #: ../callback.py:48 ../output.py:512
 msgid "Updating"
@@ -230,9 +230,9 @@ msgid "Matching packages for package list to user args"
 msgstr "Matcher pakker til pakkeliste baseret på brugerens argumenter"
 
 #: ../cli.py:701
-#, fuzzy, python-format
+#, python-format
 msgid "Warning: No matches found for: %s"
-msgstr "%s pakken blev ikke fundet"
+msgstr "Advarsel :%s blev ikke fundet"
 
 #: ../cli.py:704
 msgid "No Matches found"
@@ -264,9 +264,8 @@ msgid "Cleaning up database cache"
 msgstr "Oprydning af database-cache"
 
 #: ../cli.py:783
-#, fuzzy
 msgid "Cleaning up expire-cache metadata"
-msgstr "Oprydning af xml-metadata"
+msgstr "Oprydning af udløbet cache metadata"
 
 #: ../cli.py:786
 msgid "Cleaning up plugins"
@@ -357,7 +356,7 @@ msgstr "debug-visningsniveau"
 
 #: ../cli.py:1113
 msgid "show duplicates, in repos, in list/search commands"
-msgstr ""
+msgstr "Vis gengangere, i filkilder, i list/search kommandoer"
 
 #: ../cli.py:1115
 msgid "error output level"
@@ -532,19 +531,19 @@ msgstr "Er dette o.k. [y/N]: "
 
 #: ../output.py:357 ../output.py:360
 msgid "y"
-msgstr ""
+msgstr "j"
 
 #: ../output.py:357
 msgid "n"
-msgstr ""
+msgstr "n"
 
 #: ../output.py:357 ../output.py:360
 msgid "yes"
-msgstr ""
+msgstr "ja"
 
 #: ../output.py:357
 msgid "no"
-msgstr ""
+msgstr "nej"
 
 #: ../output.py:367
 #, python-format
@@ -1264,6 +1263,7 @@ msgstr "%s er allerede fundet i transaktion, springer den over"
 msgid ""
 "Failure finding best provider of %s for %s, exceeded maximum loop length"
 msgstr ""
+"Failure finding best provider of %s for %s, exceeded maximum loop length"
 
 #: ../yum/depsolve.py:537
 #, python-format
@@ -1309,52 +1309,52 @@ msgstr "søger efter %s som afhængighed for %s"
 #: ../yum/depsolve.py:933
 #, python-format
 msgid "Comparing best: %s to po: %s"
-msgstr ""
+msgstr "Comparing best: %s to po: %s"
 
 #: ../yum/depsolve.py:937
 #, python-format
 msgid "Same: best %s == po: %s"
-msgstr ""
+msgstr "Same: best %s == po: %s"
 
 #: ../yum/depsolve.py:952 ../yum/depsolve.py:963
 #, python-format
 msgid "best %s obsoletes po: %s"
-msgstr ""
+msgstr "best %s obsoletes po: %s"
 
 #: ../yum/depsolve.py:955
 #, python-format
 msgid "po %s obsoletes best: %s"
-msgstr ""
+msgstr "po %s obsoletes best: %s"
 
 #: ../yum/depsolve.py:972 ../yum/depsolve.py:979 ../yum/depsolve.py:1036
-#, fuzzy, python-format
+#, python-format
 msgid "better arch in po %s"
-msgstr "gennemsøger følgende pakke %s"
+msgstr "better arch in po %s"
 
 #: ../yum/depsolve.py:988 ../yum/depsolve.py:1010
 #, python-format
 msgid "po %s shares a sourcerpm with %s"
-msgstr ""
+msgstr "po %s shares a sourcerpm with %s"
 
 #: ../yum/depsolve.py:992 ../yum/depsolve.py:1015
 #, python-format
 msgid "best %s shares a sourcerpm with %s"
-msgstr ""
+msgstr "best %s shares a sourcerpm with %s"
 
 #: ../yum/depsolve.py:999 ../yum/depsolve.py:1020
 #, python-format
 msgid "po %s shares more of the name prefix with %s"
-msgstr ""
+msgstr "po %s shares more of the name prefix with %s"
 
 #: ../yum/depsolve.py:1003 ../yum/depsolve.py:1029
 #, python-format
 msgid "po %s has a shorter name than best %s"
-msgstr ""
+msgstr "po %s has a shorter name than best %s"
 
 #: ../yum/depsolve.py:1025
 #, python-format
 msgid "bestpkg %s shares more of the name prefix with %s"
-msgstr ""
+msgstr "bestpkg %s shares more of the name prefix with %s"
 
 #: ../yum/__init__.py:119
 msgid "doConfigSetup() will go away in a future version of Yum.\n"
@@ -1704,9 +1704,9 @@ msgid "Package %s already installed and latest version"
 msgstr "%s er allerede installeret i den nyeste version"
 
 #: ../yum/__init__.py:2178
-#, fuzzy, python-format
+#, python-format
 msgid "Package matching %s already installed. Checking for update."
-msgstr "Pakken %s er allerede installeret"
+msgstr "Pakken som levere %s er allerede installeret. Søger efter opdatering"
 
 #. update everything (the easy case)
 #: ../yum/__init__.py:2220
@@ -1771,9 +1771,9 @@ msgid "Problem in reinstall: no package matched to remove"
 msgstr "Problem med geninstallation, ingen pakke fundet til at blive slettet"
 
 #: ../yum/__init__.py:2515
-#, fuzzy, python-format
+#, python-format
 msgid "Package %s is allowed multiple installs, skipping"
-msgstr "Pakken %s er allerede installeret"
+msgstr "Springer pakken %s over, da den er tilladt til installering i flere verisoner"
 
 #: ../yum/__init__.py:2522
 msgid "Problem in reinstall: no package matched to install"
@@ -1849,9 +1849,9 @@ msgid "Loaded plugins: "
 msgstr "Indlæser plugins: "
 
 #: ../yum/plugins.py:206
-#, fuzzy, python-format
+#, python-format
 msgid "No plugin match for: %s"
-msgstr "Ingen match for argumenter: %s"
+msgstr "Ingen plugin som matcher: %s"
 
 #: ../yum/plugins.py:219
 #, python-format
