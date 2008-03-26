@@ -114,6 +114,13 @@ class RPMDBPackageSack(PackageSackBase):
 
     pkglist = property(_get_pkglist, None)
 
+    def dropCachedData(self):
+        self._idx2pkg = {}
+        self._name2pkg = {}
+        self._tup2pkg = {}
+        self._completely_loaded = False
+        self._simple_pkgtup_list = []
+
     def readOnlyTS(self):
         if not self.ts:
             self.ts =  initReadOnlyTransaction(root=self.root)
