@@ -120,6 +120,7 @@ class RPMDBPackageSack(PackageSackBase):
         self._tup2pkg = {}
         self._completely_loaded = False
         self._simple_pkgtup_list = []
+        misc._share_data_store = {}
 
     def readOnlyTS(self):
         if not self.ts:

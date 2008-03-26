@@ -20,6 +20,11 @@ import gpgme
 
 from Errors import MiscError
 
+_share_data_store = {}
+def share_data(value):
+    """ Take a value and use the same value from the store,
+        if the value isn't in the store this one becomes the shared version. """
+    return _share_data_store.setdefault(value, value)
 
 _re_compiled_glob_match = None
 def re_glob(s):

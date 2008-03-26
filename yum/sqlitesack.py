@@ -45,11 +45,8 @@ def catchSqliteException(func):
     newFunc.__dict__.update(func.__dict__)
     return newFunc
 
-_store = {}
 def _share_data(value):
-    """ Take a value and use the same value from the store,
-        if the value isn't in the store this one becomes the shared version. """
-    return _store.setdefault(value, value)
+    return misc.share_data(value)
 
 class YumAvailablePackageSqlite(YumAvailablePackage, PackageObject, RpmBase):
     def __init__(self, repo, db_obj):
@@ -137,7 +134,9 @@ class YumAvailablePackageSqlite(YumAvailablePackage, PackageObject, RpmBase):
                          (self.pkgId,)).fetchone()
         value = r[0]
         if varname in {'vendor' : 1, 'packager' : 1, 'buildhost' : 1,
-                       'license' : 1, 'group' : 1}:
+                       'license' : 1, 'group' : 1,
+                       'summary' : 1, 'description' : 1, 'sourcerpm' : 1,
+                       'url' : 1}:
             value  = _share_data(value)
         setattr(self, varname, value)
             
@@ -296,8 +295,7 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
             'provides' : { },
             'requires' : { },
             }
-        global _store
-        _store = {}
+        misc._share_data_store = {}
 
     @catchSqliteException
     def close(self):

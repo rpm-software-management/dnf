@@ -705,16 +705,16 @@ class YumHeaderPackage(YumAvailablePackage):
         YumAvailablePackage.__init__(self, repo)
 
         self.hdr = hdr
-        self.name = self.hdr['name']
-        self.arch = self.hdr['arch']
-        self.epoch = self.doepoch()
-        self.version = self.hdr['version']
-        self.release = self.hdr['release']
+        self.name = misc.share_data(self.hdr['name'])
+        self.arch = misc.share_data(self.hdr['arch'])
+        self.epoch = misc.share_data(self.doepoch())
+        self.version = misc.share_data(self.hdr['version'])
+        self.release = misc.share_data(self.hdr['release'])
         self.ver = self.version
         self.rel = self.release
         self.pkgtup = (self.name, self.arch, self.epoch, self.version, self.release)
-        self.summary = self.hdr['summary'].replace('\n', '')
-        self.description = self.hdr['description']
+        self.summary = misc.share_data(self.hdr['summary'].replace('\n', ''))
+        self.description = misc.share_data(self.hdr['description'])
         self.pkgid = self.hdr[rpm.RPMTAG_SHA1HEADER]
         if not self.pkgid:
             self.pkgid = "%s.%s" %(self.hdr['name'], self.hdr['buildtime'])
@@ -743,23 +743,28 @@ class YumHeaderPackage(YumAvailablePackage):
     def _populatePrco(self):
         "Populate the package object with the needed PRCO interface."
 
-        tag2prco = { "OBSOLETE": "obsoletes",
-                     "CONFLICT": "conflicts",
-                     "REQUIRE": "requires",
-                     "PROVIDE": "provides" }
+        tag2prco = { "OBSOLETE": misc.share_data("obsoletes"),
+                     "CONFLICT": misc.share_data("conflicts"),
+                     "REQUIRE":  misc.share_data("requires"),
+                     "PROVIDE":  misc.share_data("provides") }
         hdr = self._get_hdr()
         for tag in tag2prco:
             name = hdr[getattr(rpm, 'RPMTAG_%sNAME' % tag)]
+            name = map(misc.share_data, name)
+            if name is None:
+                continue
 
             lst = hdr[getattr(rpm, 'RPMTAG_%sFLAGS' % tag)]
             flag = map(rpmUtils.miscutils.flagToString, lst)
+            flag = map(misc.share_data, flag)
 
             lst = hdr[getattr(rpm, 'RPMTAG_%sVERSION' % tag)]
             vers = map(rpmUtils.miscutils.stringToVersion, lst)
+            vers = map(lambda x: (misc.share_data(x[0]), misc.share_data(x[1]),
+                                  misc.share_data(x[2])), vers)
 
             prcotype = tag2prco[tag]
-            if name is not None:
-                self.prco[prcotype] = zip(name, flag, vers)
+            self.prco[prcotype] = map(misc.share_data, zip(name,flag,vers))
     
     def tagByName(self, tag):
         warnings.warn("tagByName() will go away in a furture version of Yum.\n",
