@@ -878,6 +878,7 @@ class YumRepository(Repository, config.RepoConf):
             if omdtype == nmdtype and olddata.checksum == newdata.checksum:
                 continue
             if olddata.timestamp > newdata.timestamp:
+                logger.warning(_("Not using downloaded repomd.xml because it is older than what we have"))
                 return False
         return True
 
