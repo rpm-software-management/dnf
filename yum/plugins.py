@@ -35,6 +35,8 @@ from i18n import _
 
 import fnmatch
 
+from weakref import proxy as weakref
+
 # TODO: expose rpm package sack objects to plugins (once finished)
 # TODO: allow plugins to use the existing config stuff to define options for
 # their own configuration files (would replace confString() etc).
@@ -131,7 +133,7 @@ class YumPlugins:
 
         self.searchpath = searchpath
         self.pluginconfpath = pluginconfpath
-        self.base = base
+        self.base = weakref(base)
         self.optparser = optparser
         self.cmdline = (None, None)
         self.verbose_logger = logging.getLogger("yum.verbose.YumPlugins")

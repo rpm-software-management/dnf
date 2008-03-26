@@ -23,6 +23,8 @@ import misc
 import Errors
 from packageSack import MetaSack
 
+from weakref import proxy as weakref
+
 class RepoStorage:
     """This class contains multiple repositories and core configuration data
        about them."""
@@ -37,7 +39,7 @@ class RepoStorage:
 
         self._setup = False
 
-        self.ayum = ayum
+        self.ayum = weakref(ayum)
 
     def doSetup(self, thisrepo = None):
         
