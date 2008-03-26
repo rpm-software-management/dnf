@@ -18,11 +18,10 @@ import re
 import fnmatch
 import types
 import logging
+import misc
 
 import Errors
 from packageSack import MetaSack
-
-_is_fnmatch_pattern = re.compile(r"[*?[]").search
 
 class RepoStorage:
     """This class contains multiple repositories and core configuration data
@@ -117,7 +116,7 @@ class RepoStorage:
         returns repoid of disabled repos as list
         """
         repos = []
-        if _is_fnmatch_pattern(repoid) or repoid.find(',') != -1:
+        if misc.re_glob(repoid) or repoid.find(',') != -1:
             for repo in self.findRepos(repoid):
                 repos.append(repo.id)
                 repo.disable()
@@ -135,7 +134,7 @@ class RepoStorage:
         returns repoid of enables repos as list
         """
         repos = []
-        if _is_fnmatch_pattern(repoid) or repoid.find(',') != -1:
+        if misc.re_glob(repoid) or repoid.find(',') != -1:
             for repo in self.findRepos(repoid):
                 repos.append(repo.id)
                 repo.enable()
