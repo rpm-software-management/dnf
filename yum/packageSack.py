@@ -160,6 +160,7 @@ class PackageSackBase(object):
     def searchAll(self, arg, query_type):
         raise NotImplementedError()
     
+    # FIXME: This needs to be merged with how "yum list" works.
     def matchPackageNames(self, pkgspecs):
         """take a list strings and match the packages in the sack against it
            this will match against:
@@ -180,7 +181,7 @@ class PackageSackBase(object):
 
         specs = {}
         for p in pkgspecs:
-            if re.search('[\*\[\]\{\}\?]', p):
+            if misc.re_glob(p):
                 restring = fnmatch.translate(p)
                 specs[p] = re.compile(restring)
             else:
