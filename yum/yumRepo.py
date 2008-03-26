@@ -251,6 +251,11 @@ class YumRepository(Repository, config.RepoConf):
         # callback function for handling media
         self.mediafunc = None
         
+        # FIXME: Note that having the repo hold the sack, which holds "repos"
+        # is not only confusing but creates a circular dep.
+        #  Atm. we don't leak memory because RepoStorage.close() is called,
+        # which calls repo.close() which calls sack.close() which removes the
+        # repos from the sack ... thus. breaking the cycle.
         self.sack = sqlitesack.YumSqlitePackageSack(
                 sqlitesack.YumAvailablePackageSqlite)
 
