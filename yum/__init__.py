@@ -1357,7 +1357,7 @@ class YumBase(depsolve.Depsolve):
             # we must compare the installed set versus the repo set
             # anything installed but not in a repo is an extra
             avail = self.pkgSack.simplePkgList(patterns=patterns)
-            for po in self.rpmdb:
+            for po in self.rpmdb.returnPackages(patterns=patterns):
                 if po.pkgtup not in avail:
                     extras.append(po)
 
