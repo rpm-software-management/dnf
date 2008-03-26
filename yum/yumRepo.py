@@ -251,14 +251,21 @@ class YumRepository(Repository, config.RepoConf):
         # callback function for handling media
         self.mediafunc = None
         
-        self.sack = sqlitesack.YumSqlitePackageSack(
-                sqlitesack.YumAvailablePackageSqlite)
+        self._sack = None
 
         self._grabfunc = None
         self._grab = None
 
+    def _getSack(self):
+        if self._sack is None:
+            self._sack = sqlitesack.YumSqlitePackageSack(
+                sqlitesack.YumAvailablePackageSqlite)
+        return self._sack
+    sack = property(_getSack)
+
     def close(self):
-        self.sack.close()
+        if self._sack is not None:
+            self.sack.close()
         Repository.close(self)
     
     def _resetSack(self):
