@@ -67,9 +67,15 @@ from misc import to_unicode
 
 import string
 
-from urlgrabber.grabber import default_grabber as urlgrab
+from urlgrabber.grabber import default_grabber
 
 __version__ = '3.2.13'
+
+#  Setup a default_grabber UA here that says we are yum, done using the global
+# so that other API users can easily add to it if they want.
+#  Don't do it at init time, or we'll get multiple additions if you create
+# multiple YumBase() objects.
+default_grabber.opts.user_agent += " yum/" + __version__
 
 class YumBase(depsolve.Depsolve):
     """This is a primary structure and base class. It houses the objects and
@@ -169,11 +175,6 @@ class YumBase(depsolve.Depsolve):
                     startupconf.pluginconfpath,disabled_plugins)
 
         self._conf = config.readMainConfig(startupconf)
-
-        #  Setup a default_grabber UA here that says we are yum, done this way
-        # so that other API users can add to it if they want.
-        add_ua = " yum/" + __version__
-        urlgrab.opts.user_agent += add_ua
 
         # run the postconfig plugin hook
         self.plugins.run('postconfig')
