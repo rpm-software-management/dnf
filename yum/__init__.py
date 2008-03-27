@@ -2437,8 +2437,9 @@ class YumBase(depsolve.Depsolve):
                 else:
                     updatepkgs.append((po, installed_pkg))
             elif po.EVR == installed_pkg.EVR:
-                if po.arch != installed_pkg.arch and (isMultiLibArch(po.arch) or
-                          isMultiLibArch(installed_pkg.arch)):
+                if (po.arch != installed_pkg.arch and
+                    (rpmUtils.arch.isMultiLibArch(po.arch) or
+                     rpmUtils.arch.isMultiLibArch(installed_pkg.arch))):
                     installpkgs.append(po)
                 else:
                     donothingpkgs.append(po)
