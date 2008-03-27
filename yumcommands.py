@@ -420,7 +420,7 @@ class CleanCommand(YumCommand):
         return ['clean']
 
     def getUsage(self):
-        return "[headers|packages|metadata|dbcache|plugins|all]"
+        return "[headers|packages|metadata|dbcache|plugins|expire-cache|all]"
 
     def getSummary(self):
         return _("Remove cached data")
