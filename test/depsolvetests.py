@@ -714,3 +714,117 @@ class DepsolveTests(DepsolveTests):
 
         self.assertEquals('ok', *self.resolveCode())
         self.assertResult((po, po2))
+
+    def testSelfObsInstall(self):
+        xpo = FakePackage('abcd', version='2', arch='noarch')
+        xpo.addObsoletes('abcd-Foo', None, (None, None, None))
+        xpo.addProvides('abcd-Foo', None, (None, None, None))
+        self.tsInfo.addInstall(xpo)
+
+        self.assertEquals('ok', *self.resolveCode())
+        self.assertResult((xpo,))
+
+    def testSelfObsUpgrade(self):
+        ipo = FakePackage('abcd', arch='noarch')
+        ipo.addObsoletes('abcd-Foo', None, (None, None, None))
+        ipo.addProvides('abcd-Foo', None, (None, None, None))
+        self.rpmdb.addPackage(ipo)
+        
+        xpo = FakePackage('abcd', version='2', arch='noarch')
+        xpo.addObsoletes('abcd-Foo', None, (None, None, None))
+        xpo.addProvides('abcd-Foo', None, (None, None, None))
+        self.tsInfo.addUpdate(xpo, oldpo=ipo)
+
+        self.assertEquals('ok', *self.resolveCode())
+        self.assertResult((xpo,))
+
+
+    def testMultiPkgVersions1(self):
+        ipo1 = FakePackage('abcd', arch='noarch')
+        ipo1.addRequires('Foo', 'EQ', ('0', '1', '1'))
+        self.rpmdb.addPackage(ipo1)
+        ipo2 = FakePackage('Foo', arch='noarch')
+        self.rpmdb.addPackage(ipo2)
+        
+        xpo = FakePackage('abcd', version='2', arch='noarch')
+        xpo.addRequires('Foo', 'GE', ('0', '2', '1'))
+        self.tsInfo.addUpdate(xpo, oldpo=ipo1)
+
+        po1 = FakePackage('Foo', arch='noarch')
+        self.xsack.addPackage(po1)
+        po2 = FakePackage('Foo', version='2', arch='noarch')
+        self.xsack.addPackage(po2)
+        po3 = FakePackage('Foo', version='3', arch='noarch')
+        self.xsack.addPackage(po3)
+    
+        self.assertEquals('ok', *self.resolveCode())
+        self.assertResult((xpo, po3))
+
+    def testMultiPkgVersions2(self):
+        ipo1 = FakePackage('abcd', arch='i586')
+        ipo1.addRequires('Foo', 'EQ', ('0', '1', '1'))
+        self.rpmdb.addPackage(ipo1)
+        ipo2 = FakePackage('Foo', arch='i586')
+        self.rpmdb.addPackage(ipo2)
+        
+        xpo = FakePackage('abcd', version='2', arch='i586')
+        xpo.addRequires('Foo', 'GE', ('0', '2', '1'))
+        self.tsInfo.addUpdate(xpo, oldpo=ipo1)
+
+        po1 = FakePackage('Foo', arch='i586')
+        self.xsack.addPackage(po1)
+        po2 = FakePackage('Foo', version='2', arch='i586')
+        self.xsack.addPackage(po2)
+        po3 = FakePackage('Foo', version='2', arch='i586')
+        self.xsack.addPackage(po3)
+    
+        self.assertEquals('ok', *self.resolveCode())
+        self.assertResult((xpo, po3))
+
+    def testMultiPkgVersions3(self):
+        ipo1 = FakePackage('abcd', arch='i586')
+        ipo1.addRequires('Foo', 'EQ', ('0', '1', '1'))
+        self.rpmdb.addPackage(ipo1)
+        ipo2 = FakePackage('Foo', arch='i586')
+        self.rpmdb.addPackage(ipo2)
+        
+        xpo = FakePackage('abcd', version='2', arch='i586')
+        xpo.addRequires('Foo', 'GE', ('0', '2', '1'))
+        self.tsInfo.addUpdate(xpo, oldpo=ipo1)
+
+        po1 = FakePackage('Foo', arch='i586')
+        self.xsack.addPackage(po1)
+        po2 = FakePackage('Foo', version='2', arch='i686')
+        self.xsack.addPackage(po2)
+        po3 = FakePackage('Foo', version='2', arch='i586')
+        self.xsack.addPackage(po3)
+
+        self.assertEquals('ok', *self.resolveCode())
+        # FIXME: This is wrong, it should be one of:
+        # self.assertResult((xpo, po3))
+        # self.assertResult((xpo, po2))
+        self.assertResult((xpo, po2, po3))
+
+    def testMultiPkgVersions4(self):
+        ipo1 = FakePackage('abcd', arch='i386')
+        ipo1.addRequires('Foo', 'EQ', ('0', '1', '1'))
+        self.rpmdb.addPackage(ipo1)
+        ipo2 = FakePackage('Foo', arch='i386')
+        self.rpmdb.addPackage(ipo2)
+        
+        xpo = FakePackage('abcd', version='2', arch='i386')
+        xpo.addRequires('Foo', 'GE', ('0', '2', '1'))
+        self.tsInfo.addUpdate(xpo, oldpo=ipo1)
+
+        po1 = FakePackage('Foo', arch='i386')
+        self.xsack.addPackage(po1)
+        po2 = FakePackage('Foo', version='2', arch='i686')
+        self.xsack.addPackage(po2)
+        po3 = FakePackage('Foo', version='2', arch='i386')
+        self.xsack.addPackage(po3)
+
+        self.assertEquals('ok', *self.resolveCode())
+        # FIXME: This is wrong, it should be one of:
+        # self.assertResult((xpo, po3))
+        # self.assertResult((xpo, po2))
+        self.assertResult((xpo, po2, po3))
