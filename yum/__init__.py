@@ -965,22 +965,32 @@ class YumBase(depsolve.Depsolve):
            raiseError  = defaults to 0 - if 1 then will raise
            a URLGrabError if the file does not check out.
            otherwise it returns false for a failure, true for success"""
+        failed = False
 
         if type(fo) is types.InstanceType:
             fo = fo.filename
             
         if not po.verifyLocalPkg():
+            failed = True
+        else:
+            ylp = YumLocalPackage(self.rpmdb.readOnlyTS(), fo)
+            if ylp.pkgtup != po.pkgtup:
+                failed = True
+
+
+        if failed:            
+            # if the file is wrong AND it is >= what we expected then it
+            # can't be redeemed. If we can, kill it and start over fresh
+            cursize = os.stat(fo)[6]
+            totsize = long(po.size)
+            if cursize >= totsize and not po.repo.cache:
+                os.unlink(fo)
+                                                                                             
             if raiseError:
                 raise URLGrabError(-1, _('Package does not match intended download'))
             else:
                 return False
 
-        ylp = YumLocalPackage(self.rpmdb.readOnlyTS(), fo)
-        if ylp.pkgtup != po.pkgtup:
-            if raiseError:
-                raise URLGrabError(-1, _('Package does not match intended download'))
-            else:
-                return False
         
         return True
         
@@ -1032,16 +1042,17 @@ class YumBase(depsolve.Depsolve):
                     
             local = po.localPkg()
             if os.path.exists(local):
-                cursize = os.stat(local)[6]
-                totsize = long(po.size)
                 if not po.verifyLocalPkg():
                     if po.repo.cache:
                         repo_cached = True
                         adderror(po, _('package fails checksum but caching is '
                             'enabled for %s') % po.repo.id)
-                        
-                    if cursize >= totsize: # otherwise keep it around for regetting
-                        os.unlink(local)
+                    else:
+                        cursize = os.stat(local)[6]
+                        totsize = long(po.size)
+                        if cursize >= totsize:
+                            os.unlink(local)
+
                 else:
                     self.verbose_logger.debug(_("using local copy of %s") %(po,))
                     continue
