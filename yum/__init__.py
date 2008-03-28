@@ -1042,17 +1042,11 @@ class YumBase(depsolve.Depsolve):
                     
             local = po.localPkg()
             if os.path.exists(local):
-                if not po.verifyLocalPkg():
+                if not self.verifyPkg(local, po, False):
                     if po.repo.cache:
                         repo_cached = True
                         adderror(po, _('package fails checksum but caching is '
                             'enabled for %s') % po.repo.id)
-                    else:
-                        cursize = os.stat(local)[6]
-                        totsize = long(po.size)
-                        if cursize >= totsize:
-                            os.unlink(local)
-
                 else:
                     self.verbose_logger.debug(_("using local copy of %s") %(po,))
                     continue
