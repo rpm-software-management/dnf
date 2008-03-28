@@ -760,8 +760,8 @@ class Depsolve(object):
 
 
     def _checkInstall(self, txmbr):
-        reqs = txmbr.po.returnPrco('requires')
-        provs = set(txmbr.po.returnPrco('provides'))
+        txmbr_reqs = txmbr.po.returnPrco('requires')
+        txmbr_provs = set(txmbr.po.returnPrco('provides'))
 
         # if this is an update, we should check what the old
         # requires were to make things faster
@@ -771,10 +771,10 @@ class Depsolve(object):
         oldreqs = set(oldreqs)
 
         ret = []
-        for req in reqs:
+        for req in txmbr_reqs:
             if req[0].startswith('rpmlib('):
                 continue
-            if req in provs:
+            if req in txmbr_provs:
                 continue
             if req in oldreqs and self.rpmdb.getProvides(*req):
                 continue
