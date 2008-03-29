@@ -302,10 +302,7 @@ class RpmBase(object):
         return bool(self.matchingPrcos(prcotype, reqtuple))
 
     def matchingPrcos(self, prcotype, reqtuple):
-        # we only ever get here if we have a versioned prco
-        # nameonly shouldn't ever raise it
         (reqn, reqf, (reqe, reqv, reqr)) = reqtuple
-        # however, just in case
         # find the named entry in pkgobj, do the comparsion
         result = []
         for (n, f, (e, v, r)) in self.returnPrco(prcotype):
