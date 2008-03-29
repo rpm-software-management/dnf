@@ -419,17 +419,18 @@ class RPMDBPackageSack(PackageSackBase):
         return po
         
     def _hdr2pkgTuple(self, hdr):
-        name = hdr['name']
-        arch = hdr['arch']
-        ver = str(hdr['version']) # convert these to strings to be sure
-        rel = str(hdr['release'])
+        name = misc.share_data(hdr['name'])
+        arch = misc.share_data(hdr['arch'])
+         # convert these to strings to be sure
+        ver = misc.share_data(str(hdr['version']))
+        rel = misc.share_data(str(hdr['release']))
         epoch = hdr['epoch']
         if epoch is None:
             epoch = '0'
         else:
             epoch = str(epoch)
-    
-        return (name, arch, epoch, ver, rel)
+        epoch = misc.share_data(epoch)
+        return misc.share_data((name, arch, epoch, ver, rel))
 
     # deprecated options for compat only - remove once rpmdb is converted:
     def getPkgList(self):
