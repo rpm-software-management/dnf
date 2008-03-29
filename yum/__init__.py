@@ -40,6 +40,7 @@ import Errors
 import rpmsack
 import rpmUtils.updates
 import rpmUtils.arch
+from rpmUtils.arch import getCanonArch, archDifference
 import rpmUtils.transaction
 import comps
 import config
@@ -2235,109 +2236,134 @@ class YumBase(depsolve.Depsolve):
             
             return tx_return
 
-        else:
-            instpkgs = []
-            availpkgs = []
-            if po: # just a po
-                if po.repoid == 'installed':
-                    instpkgs.append(po)
-                else:
-                    availpkgs.append(po)
-            elif kwargs.has_key('pattern'):
+        # complications
+        # the user has given us something - either a package object to be
+        # added to the transaction as an update or they've given us a pattern 
+        # of some kind
+        
+        instpkgs = []
+        availpkgs = []
+        if po: # just a po
+            if po.repoid == 'installed':
+                instpkgs.append(po)
+            else:
+                availpkgs.append(po)
+                
+                
+        elif kwargs.has_key('pattern'):
+            (e, m, u) = self.rpmdb.matchPackageNames([kwargs['pattern']])
+            instpkgs.extend(e)
+            instpkgs.extend(m)
+
+            # if we can't find an installed package then look at available pkgs
+            if not instpkgs:
                 (e, m, u) = self.pkgSack.matchPackageNames([kwargs['pattern']])
                 availpkgs.extend(e)
                 availpkgs.extend(m)
-                (e, m, u) = self.rpmdb.matchPackageNames([kwargs['pattern']])
-                instpkgs.extend(e)
-                instpkgs.extend(m)
-                
-            else: # we have kwargs, sort them out.
-                nevra_dict = self._nevra_kwarg_parse(kwargs)
+        
+        else: # we have kwargs, sort them out.
+            nevra_dict = self._nevra_kwarg_parse(kwargs)
 
-                availpkgs = self.pkgSack.searchNevra(name=nevra_dict['name'],
-                          epoch=nevra_dict['epoch'], arch=nevra_dict['arch'],
+            instpkgs = self.rpmdb.searchNevra(name=nevra_dict['name'], 
+                        epoch=nevra_dict['epoch'], arch=nevra_dict['arch'], 
                         ver=nevra_dict['version'], rel=nevra_dict['release'])
-                
-                instpkgs = self.rpmdb.searchNevra(name=nevra_dict['name'], 
-                            epoch=nevra_dict['epoch'], arch=nevra_dict['arch'], 
+
+            if not instpkgs:
+                availpkgs = self.pkgSack.searchNevra(name=nevra_dict['name'],
+                            epoch=nevra_dict['epoch'], arch=nevra_dict['arch'],
                             ver=nevra_dict['version'], rel=nevra_dict['release'])
-            
-            # for any thing specified
-            # get the list of available pkgs matching it (or take the po)
-            # get the list of installed pkgs matching it (or take the po)
-            # go through each list and look for:
-               # things obsoleting it if it is an installed pkg
-               # things it updates if it is an available pkg
-               # things updating it if it is an installed pkg
-               # in that order
-               # all along checking to make sure we:
-                # don't update something that's already been obsoleted
-            
-            # TODO: we should search the updates and obsoletes list and
-            # mark the package being updated or obsoleted away appropriately
-            # and the package relationship in the tsInfo
-            
-            if self.conf.obsoletes:
-                for installed_pkg in instpkgs:
-                    for obsoleting in self.up.obsoleted_dict.get(installed_pkg.pkgtup, []):
-                        obsoleting_pkg = self.getPackageObject(obsoleting)
-                        # FIXME check for what might be in there here
-                        txmbr = self.tsInfo.addObsoleting(obsoleting_pkg, installed_pkg)
-                        self.tsInfo.addObsoleted(installed_pkg, obsoleting_pkg)
-                        if requiringPo:
-                            txmbr.setAsDep(requiringPo)
-                        tx_return.append(txmbr)
-                for available_pkg in availpkgs:
-                    for obsoleted in self.up.obsoleting_dict.get(available_pkg.pkgtup, []):
-                        obsoleted_pkg = self.getInstalledPackageObject(obsoleted)
-                        txmbr = self.tsInfo.addObsoleting(available_pkg, obsoleted_pkg)
-                        if requiringPo:
-                            txmbr.setAsDep(requiringPo)
-                        tx_return.append(txmbr)
-                        if self.tsInfo.isObsoleted(obsoleted):
-                            self.verbose_logger.log(logginglevels.DEBUG_2, _('Package is already obsoleted: %s.%s %s:%s-%s'), obsoleted)
-                        else:
-                            txmbr = self.tsInfo.addObsoleted(obsoleted_pkg, available_pkg)
-                            tx_return.append(txmbr)
-            for available_pkg in availpkgs:
-                for updated in self.up.updating_dict.get(available_pkg.pkgtup, []):
-                    if self.tsInfo.isObsoleted(updated):
-                        self.verbose_logger.log(logginglevels.DEBUG_2, _('Not Updating Package that is already obsoleted: %s.%s %s:%s-%s'), 
-                                                updated)
-                    else:
-                        updated_pkg =  self.rpmdb.searchPkgTuple(updated)[0]
-                        txmbr = self.tsInfo.addUpdate(available_pkg, updated_pkg)
-                        if requiringPo:
-                            txmbr.setAsDep(requiringPo)
-                        tx_return.append(txmbr)
 
-                # check to see if the pkg we want to install is not _quite_ the newest
-                # one but still technically an update over what is installed.
-                #FIXME - potentially do the comparables thing from what used to
-                #        be in cli.installPkgs() to see what we should be comparing
-                #        it to of what is installed. in the meantime name.arch is
-                #        most likely correct
 
-                pot_updated = self.rpmdb.searchNevra(name=available_pkg.name, arch=available_pkg.arch)
-                for ipkg in pot_updated:
-                    if ipkg.EVR < available_pkg.EVR:
-                        txmbr = self.tsInfo.addUpdate(available_pkg, ipkg)
-                        if requiringPo:
-                            txmbr.setAsDep(requiringPo)
-                        tx_return.append(txmbr)
-                                             
-                 
+       
+        # for any thing specified
+        # get the list of available pkgs matching it (or take the po)
+        # get the list of installed pkgs matching it (or take the po)
+        # go through each list and look for:
+           # things obsoleting it if it is an installed pkg
+           # things it updates if it is an available pkg
+           # things updating it if it is an installed pkg
+           # in that order
+           # all along checking to make sure we:
+            # don't update something that's already been obsoleted
+            # don't update something that's already been updated
+            
+        # if there are more than one package that matches an update from
+        # a pattern/kwarg then:
+            # if it is a valid update and we'
+        
+        # TODO: we should search the updates and obsoletes list and
+        # mark the package being updated or obsoleted away appropriately
+        # and the package relationship in the tsInfo
+        
+
+        # check for obsoletes first
+        if self.conf.obsoletes:
             for installed_pkg in instpkgs:
-                for updating in self.up.updatesdict.get(installed_pkg.pkgtup, []):
-                    updating_pkg = self.getPackageObject(updating)
-                    if self.tsInfo.isObsoleted(installed_pkg.pkgtup):
-                        self.verbose_logger.log(logginglevels.DEBUG_2, _('Not Updating Package that is already obsoleted: %s.%s %s:%s-%s'), 
-                                                installed_pkg.pkgtup)
+                for obsoleting in self.up.obsoleted_dict.get(installed_pkg.pkgtup, []):
+                    obsoleting_pkg = self.getPackageObject(obsoleting)
+                    # FIXME check for what might be in there here
+                    txmbr = self.tsInfo.addObsoleting(obsoleting_pkg, installed_pkg)
+                    self.tsInfo.addObsoleted(installed_pkg, obsoleting_pkg)
+                    if requiringPo:
+                        txmbr.setAsDep(requiringPo)
+                    tx_return.append(txmbr)
+            for available_pkg in availpkgs:
+                for obsoleted in self.up.obsoleting_dict.get(available_pkg.pkgtup, []):
+                    obsoleted_pkg = self.getInstalledPackageObject(obsoleted)
+                    txmbr = self.tsInfo.addObsoleting(available_pkg, obsoleted_pkg)
+                    if requiringPo:
+                        txmbr.setAsDep(requiringPo)
+                    tx_return.append(txmbr)
+                    if self.tsInfo.isObsoleted(obsoleted):
+                        self.verbose_logger.log(logginglevels.DEBUG_2, _('Package is already obsoleted: %s.%s %s:%s-%s'), obsoleted)
                     else:
-                        txmbr = self.tsInfo.addUpdate(updating_pkg, installed_pkg)
-                        if requiringPo:
-                            txmbr.setAsDep(requiringPo)
+                        txmbr = self.tsInfo.addObsoleted(obsoleted_pkg, available_pkg)
                         tx_return.append(txmbr)
+
+        for installed_pkg in instpkgs:
+            for updating in self.up.updatesdict.get(installed_pkg.pkgtup, []):
+                updating_pkg = self.getPackageObject(updating)
+                if self.tsInfo.isObsoleted(installed_pkg.pkgtup):
+                    self.verbose_logger.log(logginglevels.DEBUG_2, _('Not Updating Package that is already obsoleted: %s.%s %s:%s-%s'), 
+                                            installed_pkg.pkgtup)                                               
+                else:
+                    print 1
+                    txmbr = self.tsInfo.addUpdate(updating_pkg, installed_pkg)
+                    if requiringPo:
+                        txmbr.setAsDep(requiringPo)
+                    tx_return.append(txmbr)
+                        
+                        
+        for available_pkg in availpkgs:
+            for updated in self.up.updating_dict.get(available_pkg.pkgtup, []):
+                if self.tsInfo.isObsoleted(updated):
+                    self.verbose_logger.log(logginglevels.DEBUG_2, _('Not Updating Package that is already obsoleted: %s.%s %s:%s-%s'), 
+                                            updated)
+                elif self.tsInfo.getMembersWithState(updated, [TS_UPDATED]):
+                    self.verbose_logger.log(logginglevels.DEBUG_2, _('Not Updating Package that is already updated: %s.%s %s:%s-%s'), 
+                                            updated)
+                
+                else:
+                    updated_pkg =  self.rpmdb.searchPkgTuple(updated)[0]
+                    txmbr = self.tsInfo.addUpdate(available_pkg, updated_pkg)
+                    if requiringPo:
+                        txmbr.setAsDep(requiringPo)
+                    tx_return.append(txmbr)
+                    
+            # check to see if the pkg we want to install is not _quite_ the newest
+            # one but still technically an update over what is installed.
+            #FIXME - potentially do the comparables thing from what used to
+            #        be in cli.installPkgs() to see what we should be comparing
+            #        it to of what is installed. in the meantime name.arch is
+            #        most likely correct
+            pot_updated = self.rpmdb.searchNevra(name=available_pkg.name, arch=available_pkg.arch)
+            for ipkg in pot_updated:
+                if ipkg.EVR < available_pkg.EVR:
+                    txmbr = self.tsInfo.addUpdate(available_pkg, ipkg)
+                    if requiringPo:
+                        txmbr.setAsDep(requiringPo)
+                    tx_return.append(txmbr)
+                                                     
 
         return tx_return
         
