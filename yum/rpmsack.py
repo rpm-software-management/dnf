@@ -125,6 +125,13 @@ class RPMDBPackageSack(PackageSackBase):
         self._get_pro_cache = {}
         self._get_req_cache = {}
         misc._share_data_store = {}
+        self._cache = {
+            'files' : { },
+            'provides' : { },
+            'requires' : { },
+            'conflicts' : { },
+            'obsoletes' : { },
+            }
 
     def readOnlyTS(self):
         if not self.ts:
