@@ -97,7 +97,6 @@ class RPMDBPackageSack(PackageSackBase):
         self.ts = None
 
         self._cache = {
-            'files' : { },
             'provides' : { },
             'requires' : { },
             'conflicts' : { },
@@ -126,7 +125,6 @@ class RPMDBPackageSack(PackageSackBase):
         self._get_req_cache = {}
         misc._share_data_store = {}
         self._cache = {
-            'files' : { },
             'provides' : { },
             'requires' : { },
             'conflicts' : { },
@@ -174,10 +172,6 @@ class RPMDBPackageSack(PackageSackBase):
     def searchFiles(self, name):
         """search the filelists in the rpms for anything matching name"""
 
-        result = self._cache['files'].get(name)
-        if result is not None:
-            return result
-
         ts = self.readOnlyTS()
         result = {}
         
@@ -189,7 +183,6 @@ class RPMDBPackageSack(PackageSackBase):
         del mi
 
         result = result.values()
-        self._cache['files'][name] = result
         return result
         
     def searchPrco(self, name, prcotype):
@@ -540,10 +533,6 @@ class RPMDBPackageSack(PackageSackBase):
         r_v = deptup[2][1]
         
         pkgs = self.searchProvides(name)
-        
-        if name[0] =='/':
-            morepkgs = self.searchFiles(name)
-            pkgs.extend(morepkgs)
         
         result = { }
         
