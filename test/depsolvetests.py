@@ -715,6 +715,24 @@ class DepsolveTests(DepsolveTests):
         self.assertEquals('ok', *self.resolveCode())
         self.assertResult((po, po2))
 
+    def testCompareProviersArchVSLen(self):
+        po = FakePackage('abcd', arch='i386')
+        po.addRequires('foo', None, (None, None, None))
+        self.tsInfo.addInstall(po)
+
+        po1 = FakePackage('foo-bigger', arch='i686')
+        po1.addProvides('foo', None,(None,None,None))
+        po2 = FakePackage('foo-big', arch='i586')
+        po2.addProvides('foo', None,(None,None,None))
+        po3 = FakePackage('foo-xen', arch='i586')
+        po3.addProvides('foo', None,(None,None,None))
+        self.xsack.addPackage(po1)
+        self.xsack.addPackage(po2)
+        self.xsack.addPackage(po3)
+
+        self.assertEquals('ok', *self.resolveCode())
+        self.assertResult((po, po1))
+
     def testSelfObsInstall(self):
         xpo = FakePackage('abcd', version='2', arch='noarch')
         xpo.addObsoletes('abcd-Foo', None, (None, None, None))
