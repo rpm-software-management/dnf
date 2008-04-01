@@ -253,6 +253,7 @@ class YumOutput:
 
     def fmtKeyValFill(self, key, val):
         """ Return a key value pair in the common two column output format. """
+        val = str(val)
         keylen = len(key)
         cols = self.term.columns
         nxt = ' ' * (keylen - 2) + ': '
