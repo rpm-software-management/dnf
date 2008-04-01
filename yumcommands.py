@@ -643,18 +643,44 @@ class RepoListCommand(YumCommand):
             arg = 'enabled'
 
         format_string = "%-20.20s %-40.40s  %s"
-        if base.repos.repos.values():
-            base.verbose_logger.log(logginglevels.INFO_2, format_string,
-                _('repo id'), _('repo name'), _('status'))
         repos = base.repos.repos.values()
         repos.sort()
+        enabled_repos = base.repos.listEnabled()
+        done = False
+        verbose = base.verbose_logger.isEnabledFor(logginglevels.DEBUG_3)
+        if arg == 'all':
+            ehibeg = base.term.FG_COLOR['green'] + base.term.MODE['bold']
+            dhibeg = base.term.FG_COLOR['red']
+            hiend  = base.term.MODE['normal']
+        else:
+            ehibeg = ''
+            dhibeg = ''
+            hiend  = ''
         for repo in repos:
-            if repo in base.repos.listEnabled() and arg in ('all', 'enabled'):
-                base.verbose_logger.log(logginglevels.INFO_2, format_string,
-                    repo, repo.name, _('enabled'))
-            elif arg in ('all', 'disabled'):
-                base.verbose_logger.log(logginglevels.INFO_2, format_string,
-                    repo, repo.name, _('disabled'))
+            if repo in enabled_repos:
+                enabled = True
+                ui_enabled = ehibeg + _('enabled') + hiend
+            else:
+                enabled = False
+                ui_enabled = dhibeg + _('disabled') + hiend
+                
+            if (arg == 'all' or
+                (arg == 'enabled' and enabled) or
+                (arg == 'disabled' and not enabled)):
+                if not done and not verbose:
+                    base.verbose_logger.log(logginglevels.INFO_2,
+                                            format_string, _('repo id'),
+                                            _('repo name'), _('status'))
+                done = True
+                if verbose:
+                    line1 = base.fmtKeyValFill(_("Repo-id     : "), repo)
+                    line2 = base.fmtKeyValFill(_("Repo-name   : "), repo.name)
+                    line3 = base.fmtKeyValFill(_("Repo-enabled: "), ui_enabled)
+                    base.verbose_logger.log(logginglevels.DEBUG_3,
+                                            "%s\n%s\n%s\n", line1, line2, line3)
+                else:
+                    base.verbose_logger.log(logginglevels.INFO_2, format_string,
+                                            repo, repo.name, ui_enabled)
 
         return 0, []
 
