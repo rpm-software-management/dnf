@@ -204,7 +204,7 @@ class Group(object):
                                   str(self.user_visible), self.display_order)
    
         if self.langonly:
-            msg =+ """   <lang_only>%s</lang_only>""" % self.langonly
+            msg += """   <lang_only>%s</lang_only>""" % self.langonly
             
         msg +="""   <name>%s</name>\n""" % self.name
         for (lang, val) in self.translated_name.items():
