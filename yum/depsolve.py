@@ -25,7 +25,7 @@ import logging
 import rpmUtils.transaction
 import rpmUtils.miscutils
 import rpmUtils.arch
-from rpmUtils.arch import archDifference, isMultiLibArch
+from rpmUtils.arch import archDifference, isMultiLibArch, getCanonArch
 import misc
 from misc import unique, version_tuple_to_string
 import rpm
@@ -38,6 +38,7 @@ import Errors
 from i18n import _
 import warnings
 warnings.simplefilter("ignore", Errors.YumFutureDeprecationWarning)
+from operator import itemgetter
 
 try:
     assert max(2, 4) == 4
@@ -502,19 +503,9 @@ class Depsolve(object):
         newest = provSack.returnNewestByNameArch()
         if len(newest) > 1: # there's no way this can be zero
                             
-            best = newest[0]
-            old_best = None
-            loop_run = 0
-            while best != old_best:
-                if loop_run >= len(newest)*2:
-                    msg = _('Failure finding best provider of %s for %s, exceeded maximum loop length' % (needname, requiringPo))
-                    errorlist.append(msg)
-                    self.verbose_logger.debug(msg)
-                    break
-                loop_run += 1
-                old_best = best
-                best = self._compare_providers(newest, best, requiringPo)
-                    
+            pkgresults = self._compare_providers(newest, requiringPo)
+            # take the first one...
+            best = pkgresults[0][0]                   
                 
         elif len(newest) == 1:
             best = newest[0]
@@ -913,14 +904,20 @@ class Depsolve(object):
         return installed
     _isPackageInstalled = isPackageInstalled
 
-    def _compare_providers(self, pkgs, bestpkg, reqpo):
+    def _compare_providers(self, pkgs, reqpo):
+        """take the list of pkgs and score them based on the requesting package
+           return a dictionary of po=score"""
+        self.verbose_logger.log(logginglevels.DEBUG_4,
+              _("Running compare_providers() for %s") %(str(pkgs)))
 
+        
         def _common_prefix_len(x, y, minlen=2):
             num = min(len(x), len(y))
             for off in range(num):
                 if x[off] != y[off]:
                     return max(off, minlen)
             return max(num, minlen)
+
         def _common_sourcerpm(x, y):
             if not hasattr(x, 'sourcerpm'):
                 return False
@@ -928,116 +925,99 @@ class Depsolve(object):
                 return False
             return x.sourcerpm == y.sourcerpm
 
-        for po in pkgs:
-            self.verbose_logger.log(logginglevels.DEBUG_4,
-                _("Comparing best: %s to po: %s") %(bestpkg, po))
-
-            if po == bestpkg: # if we're comparing the same one, skip it
-                self.verbose_logger.log(logginglevels.DEBUG_4,
-                    _("Same: best %s == po: %s") %(bestpkg, po))
-
-                continue
-            # if best is obsoleted by any of the packages, then the obsoleter
-            # is the new best    
-            for obs in po.obsoletes:
-                if bestpkg.inPrcoRange('provides', obs):
-                    # make sure the best doesn't obsolete this po - if it does we're done
-                    # we do this b/c it is possible for two entries to oscillate in this
-                    # test - obsolete should trump no matter what
-                    # NOTE: mutually obsoleting providers is completely and utterly doom
-                    # but this should 'break the loop'
-                    for obs in bestpkg.obsoletes:
-                        if po.inPrcoRange('provides', obs):
-                            self.verbose_logger.log(logginglevels.DEBUG_4,
-                                _("best %s obsoletes po: %s") %(bestpkg, po))
-                            return bestpkg
-                    self.verbose_logger.log(logginglevels.DEBUG_4,
-                        _("po %s obsoletes best: %s") %(po, bestpkg))
-                           
-                    return po
-
-            # just check if best obsoletes po
-            for obs in bestpkg.obsoletes:
-                if po.inPrcoRange('provides', obs):
-                    self.verbose_logger.log(logginglevels.DEBUG_4,
-                        _("best %s obsoletes po: %s") %(bestpkg, po))
-                    return bestpkg
-
-                    
-            if reqpo.arch != 'noarch':
-                best_dist = archDifference(reqpo.arch, bestpkg.arch)
-                if isMultiLibArch(): # only go to the next one if we're multilib - i686 can satisfy i386 deps
-                    if best_dist == 0: # can't really use best's arch anyway...
-                        self.verbose_logger.log(logginglevels.DEBUG_4,
-                            _("better arch in po %s") %(po))
-                        return po # just try the next one - can't be much worse
-
+        def _compare_arch_distance(x, y, req_compare_arch):
+            # take X and Y package objects
+            # determine which has a closer archdistance to compare_arch
+            # if they are equal to compare_arch, compare which is closer to the 
+            # running arch
+            # return the package which is closer or None for equal, or equally useless
             
-                po_dist = archDifference(reqpo.arch, po.arch)
-                if po_dist > 0 and best_dist > po_dist:
+            x_dist = archDifference(req_compare_arch, x.arch)
+            if isMultiLibArch(): # only go to the next one if we're multilib - 
+                if x_dist == 0: # can't really use best's arch anyway...
                     self.verbose_logger.log(logginglevels.DEBUG_4,
-                        _("better arch in po %s") %(po))
-                    
-                    return po
-                    
-                if best_dist == po_dist:
-                    csp = _common_sourcerpm(reqpo, po)
-                    csb = _common_sourcerpm(reqpo, bestpkg)
-                    if not csb and csp:
-                        self.verbose_logger.log(logginglevels.DEBUG_4,
-                            _("po %s shares a sourcerpm with %s") %(po, reqpo))
-                        return po
-                    if csb and not csp:
-                        self.verbose_logger.log(logginglevels.DEBUG_4,
-                            _("best %s shares a sourcerpm with %s") %(bestpkg, reqpo))
-                        return bestpkg
-                        
-                    cplp = _common_prefix_len(reqpo.name, po.name)
-                    cplb = _common_prefix_len(reqpo.name, bestpkg.name)
-                    if cplp > cplb:
-                        self.verbose_logger.log(logginglevels.DEBUG_4,
-                            _("po %s shares more of the name prefix with %s") %(po, reqpo))                    
-                        return po
-                    if cplp == cplb and len(po.name) < len(bestpkg.name):
-                        self.verbose_logger.log(logginglevels.DEBUG_4,
-                            _("po %s has a shorter name than best %s") %(po, bestpkg))                    
-                        return po
+                        _("better arch in po %s") %(y))
+                    return y # just try the next one - can't be much worse
 
-            # reqpo.arch == "noarch"
-            elif (not _common_sourcerpm(reqpo, bestpkg) and
-                  _common_sourcerpm(reqpo, po)):
+            y_dist = archDifference(req_compare_arch, y.arch)
+            if y_dist > 0 and x_dist > y_dist:
                 self.verbose_logger.log(logginglevels.DEBUG_4,
-                    _("po %s shares a sourcerpm with %s") %(po, reqpo))
-                return po
-            elif (_common_sourcerpm(reqpo, bestpkg) and
-                  not _common_sourcerpm(reqpo, po)):
-                self.verbose_logger.log(logginglevels.DEBUG_4,
-                    _("best %s shares a sourcerpm with %s") %(bestpkg,reqpo))
-                return bestpkg
-            elif (_common_prefix_len(reqpo.name, po.name) >
-                  _common_prefix_len(reqpo.name, bestpkg.name)):
-                self.verbose_logger.log(logginglevels.DEBUG_4,
-                    _("po %s shares more of the name prefix with %s") %(po, reqpo))                    
-                return po
-            elif (_common_prefix_len(reqpo.name, po.name) <
-                  _common_prefix_len(reqpo.name, bestpkg.name)):
-                self.verbose_logger.log(logginglevels.DEBUG_4,
-                    _("bestpkg %s shares more of the name prefix with %s") %(bestpkg, reqpo))
-                return bestpkg
-            elif len(po.name) < len(bestpkg.name):
-                self.verbose_logger.log(logginglevels.DEBUG_4,
-                    _("po %s has a shorter name than best %s") %(po, bestpkg))                    
-                return po
-            elif len(po.name) == len(bestpkg.name):
-                # compare arch
-                arch = rpmUtils.arch.getBestArchFromList([po.arch, bestpkg.arch])
-                if arch == po.arch and arch != bestpkg.arch:
-                    self.verbose_logger.log(logginglevels.DEBUG_4,
-                        _("better arch in po %s") %(po))
-                    return po
+                    _("better arch in po %s") %(y))
 
-        # Nothing else was better, so this is it
-        return bestpkg
+                return y
+            if y_dist == x_dist:
+                return None
+            return x
+            
+        pkgresults = {}
+
+        for pkg in pkgs:
+            pkgresults[pkg] = 0
+            
+        # go through each pkg and compare to others
+        # if it is same skip it
+        # if the pkg is obsoleted by any other of the packages
+        # then add  -1024 to its score
+        # don't need to look for mutual obsoletes b/c each package
+        # is evaluated against all the others, so mutually obsoleting
+        # packages will have their scores diminished equally
+        
+        # compare the arch vs each other pkg
+        #   give each time it returns with a better arch a +5
+
+        # look for common source vs the reqpo - give a +10 if it has it
+
+        # look for common_prefix_len - add the length*2 to the score
+        
+        # add the negative of the length of the name to the score
+        
+        for po in pkgs:
+            for nextpo in pkgs:
+                if po == nextpo:
+                    continue
+                obsoleted = False
+                for obs in nextpo.obsoletes:
+                    if po.inPrcoRange('provides', obs):
+                        obsoleted = True
+                                
+                        self.verbose_logger.log(logginglevels.DEBUG_4,
+                            _("%s obsoletes %s") % (po, nextpo))
+
+                    if obsoleted:
+                        pkgresults[po] -= 1024
+                        break
+
+                for thisarch in (reqpo.arch, getCanonArch()):
+                    res = _compare_arch_distance(po, nextpo, thisarch)
+                    if not res:
+                        continue
+                    self.verbose_logger.log(logginglevels.DEBUG_4,                   
+                       _('archdist compared %s to %s on %s\n  Winner: %s' % (po, nextpo, thisarch, res)))
+
+                    if res == po:
+                        pkgresults[po] += 5
+
+            if _common_sourcerpm(po, reqpo):
+                self.verbose_logger.log(logginglevels.DEBUG_4,
+                    _('common sourcerpm %s and %s' % (po, reqpo)))
+                pkgresults[po] += 20
+            
+            cpl = _common_prefix_len(po.name, reqpo.name)
+            if cpl > 2:
+                self.verbose_logger.log(logginglevels.DEBUG_4,
+                    _('common prefix of %s between %s and %s' % (cpl, po, reqpo)))
+            
+                pkgresults[po] += cpl*2
+            
+            pkgresults[po] += (len(po.name)*-1)
+
+        bestorder = sorted(pkgresults.items(), key=itemgetter(1), reverse=True)
+        self.verbose_logger.log(logginglevels.DEBUG_4,
+                _('Best Order: %s' % str(bestorder)))
+
+        return bestorder
+                                    
+       
 
 
 class DepCheck(object):

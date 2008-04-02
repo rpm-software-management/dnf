@@ -1,5 +1,6 @@
 import unittest
 from testbase import *
+from rpmUtils import arch
 
 class DepsolveTests(DepsolveTests):
     def testEmpty(self):
@@ -606,7 +607,7 @@ class DepsolveTests(DepsolveTests):
         (po, po1, po2) = self._setup_CompareProviders(arch='noarch')
 
         self.assertEquals('ok', *self.resolveCode())
-        self.assertResult((po, po1))
+        self.assertResult((po,), (po1,po2))
 
     def testCompareProvidersSameLen2_64(self):
         # Make sure they are still ok, the other way around
@@ -638,10 +639,16 @@ class DepsolveTests(DepsolveTests):
         self.xsack.addPackage(po1)
 
         self.assertEquals('ok', *self.resolveCode())
-        self.assertResult((po, po1))
+        self.assertResult((po,), (po1,po2))
 
     def testCompareProvidersSameLen2_noarch_to_64_1(self):
         # Make sure they are still ok, the other way around
+        myarch = arch.getBaseArch(arch.getCanonArch())
+
+        if myarch not in ('i386', 'x86_64'):
+            return
+            
+
         po = FakePackage('abcd', arch='noarch')
         po.addRequires('libxyz-1.so.0', None, (None, None, None))
         self.tsInfo.addInstall(po)
@@ -654,10 +661,20 @@ class DepsolveTests(DepsolveTests):
         self.xsack.addPackage(po1)
 
         self.assertEquals('ok', *self.resolveCode())
-        self.assertResult((po, po1))
+        if myarch == 'i386':
+            self.assertResult((po, po2))
+        
+        if myarch == 'x86_64':
+            self.assertResult((po, po1))
+        
 
     def testCompareProvidersSameLen2_noarch_to_64_2(self):
         # Make sure they are still ok, the other way around
+        myarch = arch.getBaseArch(arch.getCanonArch())
+
+        if myarch not in ('i386', 'x86_64'):
+            return
+                    
         po = FakePackage('abcd', arch='noarch')
         po.addRequires('libxyz-1.so.0', None, (None, None, None))
         self.tsInfo.addInstall(po)
@@ -668,9 +685,13 @@ class DepsolveTests(DepsolveTests):
         po1 = FakePackage('libfoo', arch='i386')
         po1.addProvides('libxyz-1.so.0', None,(None,None,None))
         self.xsack.addPackage(po1)
-
+        
         self.assertEquals('ok', *self.resolveCode())
-        self.assertResult((po, po2))
+        if myarch == 'x86_64':
+            self.assertResult((po, po2))
+        if myarch == 'i386':
+            self.assertResult((po, po1))
+            
 
     def testCompareProvidersDiffLen_64(self):
         (po, po1, po2) = self._setup_CompareProviders(name='libbarf')

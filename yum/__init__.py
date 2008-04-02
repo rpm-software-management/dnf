@@ -2327,7 +2327,6 @@ class YumBase(depsolve.Depsolve):
                     self.verbose_logger.log(logginglevels.DEBUG_2, _('Not Updating Package that is already obsoleted: %s.%s %s:%s-%s'), 
                                             installed_pkg.pkgtup)                                               
                 else:
-                    print 1
                     txmbr = self.tsInfo.addUpdate(updating_pkg, installed_pkg)
                     if requiringPo:
                         txmbr.setAsDep(requiringPo)
