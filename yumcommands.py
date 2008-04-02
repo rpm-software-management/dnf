@@ -236,7 +236,7 @@ class InfoCommand(YumCommand):
             return 0, []
 
     def needTs(self, base, basecmd, extcmds):
-        if len(extcmds) and extcmds == ['installed']:
+        if len(extcmds) and extcmds[0] == 'installed':
             return False
         
         return True
