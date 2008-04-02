@@ -978,8 +978,10 @@ class YumOptionParser(OptionParser):
                         ('--noplugins','--version','-q', '-v', "--quiet", "--verbose"), 
                         ('-c', '-d', '-e', '--installroot','--disableplugin'), 
                         args)
-        except ValueError:
+        except ValueError, arg:
             self.base.usage()
+            print >> sys.stderr, (_("\n\n%s: %s option requires an argument") %
+                                  ('Command line error', arg))
             sys.exit(1)
         return self.parse_args(args=args)[0]
 
@@ -1180,10 +1182,10 @@ def _filtercmdline(novalopts, valopts, args):
 
         elif a in valopts:
             if len(args) < 1:
-                raise ValueError
+                raise ValueError, a
             next = args.pop(0)
             if next[0] == '-':
-                raise ValueError
+                raise ValueError, a
 
             out.extend([a, next])
        
