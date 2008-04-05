@@ -1299,9 +1299,11 @@ class YumBase(depsolve.Depsolve):
         msg = _('%d %s files removed') % (removed, filetype)
         return 0, [msg]
 
-    def doPackageLists(self, pkgnarrow='all', patterns=None):
+    def doPackageLists(self, pkgnarrow='all', patterns=None, showdups=None):
         """generates lists of packages, un-reduced, based on pkgnarrow option"""
-        
+
+        if showdups is None:
+            showdups = self.conf.showdupesfromrepos
         ygh = misc.GenericHolder()
         
         installed = []
@@ -1318,21 +1320,21 @@ class YumBase(depsolve.Depsolve):
             ndinst = {} # Newest versions by name.arch
             for po in self.rpmdb.returnPackages(patterns=patterns):
                 dinst[po.pkgtup] = po;
-                if self.conf.showdupesfromrepos:
+                if showdups:
                     continue
                 key = (po.name, po.arch)
                 if key not in ndinst or po > ndinst[key]:
                     ndinst[key] = po
             installed = dinst.values()
                         
-            if self.conf.showdupesfromrepos:
+            if showdups:
                 avail = self.pkgSack.returnPackages(patterns=patterns)
             else:
                 del dinst # Using ndinst instead
                 avail = self.pkgSack.returnNewestByNameArch(patterns=patterns)
             
             for pkg in avail:
-                if self.conf.showdupesfromrepos:
+                if showdups:
                     if pkg.pkgtup not in dinst:
                         available.append(pkg)
                 else:
@@ -1363,13 +1365,13 @@ class YumBase(depsolve.Depsolve):
         # available in a repository
         elif pkgnarrow == 'available':
 
-            if self.conf.showdupesfromrepos:
+            if showdups:
                 avail = self.pkgSack.returnPackages(patterns=patterns)
             else:
                 avail = self.pkgSack.returnNewestByNameArch(patterns=patterns)
             
             for pkg in avail:
-                if self.conf.showdupesfromrepos:
+                if showdups:
                     if not self.rpmdb.contains(po=pkg):
                         available.append(pkg)
                 else:
@@ -1404,7 +1406,7 @@ class YumBase(depsolve.Depsolve):
             now = time.time()
             recentlimit = now-(self.conf.recent*86400)
             ftimehash = {}
-            if self.conf.showdupesfromrepos:
+            if showdups:
                 avail = self.pkgSack.returnPackages(patterns=patterns)
             else:
                 avail = self.pkgSack.returnNewestByNameArch(patterns=patterns)
