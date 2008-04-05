@@ -1315,18 +1315,30 @@ class YumBase(depsolve.Depsolve):
         # list all packages - those installed and available, don't 'think about it'
         if pkgnarrow == 'all': 
             dinst = {}
+            ndinst = {} # Newest versions by name.arch
             for po in self.rpmdb.returnPackages(patterns=patterns):
                 dinst[po.pkgtup] = po;
+                if self.conf.showdupesfromrepos:
+                    continue
+                key = (po.name, po.arch)
+                if key not in ndinst or po > ndinst[key]:
+                    ndinst[key] = po
             installed = dinst.values()
                         
             if self.conf.showdupesfromrepos:
                 avail = self.pkgSack.returnPackages(patterns=patterns)
             else:
+                del dinst # Using ndinst instead
                 avail = self.pkgSack.returnNewestByNameArch(patterns=patterns)
             
             for pkg in avail:
-                if not dinst.has_key(pkg.pkgtup):
-                    available.append(pkg)
+                if self.conf.showdupesfromrepos:
+                    if pkg.pkgtup not in dinst:
+                        available.append(pkg)
+                else:
+                    key = (pkg.name, pkg.arch)
+                    if key not in ndinst or pkg > ndinst[key]:
+                        available.append(pkg)
 
         # produce the updates list of tuples
         elif pkgnarrow == 'updates':
@@ -1357,8 +1369,13 @@ class YumBase(depsolve.Depsolve):
                 avail = self.pkgSack.returnNewestByNameArch(patterns=patterns)
             
             for pkg in avail:
-                if not self.rpmdb.contains(po=pkg):
-                    available.append(pkg)
+                if self.conf.showdupesfromrepos:
+                    if not self.rpmdb.contains(po=pkg):
+                        available.append(pkg)
+                else:
+                    ipkgs = self.rpmdb.searchNevra(pkg.name, arch=pkg.arch)
+                    if not ipkgs or pkg > sorted(ipkgs, reverse=True)[0]:
+                        available.append(pkg)
 
 
         # not in a repo but installed
