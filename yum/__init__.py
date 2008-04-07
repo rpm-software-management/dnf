@@ -1037,6 +1037,9 @@ class YumBase(depsolve.Depsolve):
         self.plugins.run('predownload', pkglist=pkglist)
         repo_cached = False
         remote_pkgs = []
+        remote_size = 0
+        local_size  = 0
+        beg_time    = time.time()
         for po in pkglist:
             if hasattr(po, 'pkgtype') and po.pkgtype == 'local':
                 continue
@@ -1053,6 +1056,7 @@ class YumBase(depsolve.Depsolve):
                     continue
                         
             remote_pkgs.append(po)
+            remote_size += po.size
             
             # caching is enabled and the package 
             # just failed to check out there's no 
@@ -1086,6 +1090,31 @@ class YumBase(depsolve.Depsolve):
                 po.localpath = mylocal
                 if errors.has_key(po):
                     del errors[po]
+
+                local_size += po.size
+                if local_size == remote_size:
+                    secs = (time.time() - beg_time)
+                    if secs > (60 * 60):
+                        hrs = secs / (60 * 60)
+                        secs %= (60 * 60)
+                        ui_secs = '%d:%02d:%02d' % (hrs, secs / 60, secs % 60)
+                    else:
+                        ui_secs = '%02d:%02d' % (secs / 60, secs % 60)
+                    per_sec_size = local_size / secs
+                    self.verbose_logger.log(logginglevels.INFO_1,
+                                            _("Downloaded %s at %s/s in %s"),
+                                            self.format_number(local_size),
+                                            self.format_number(per_sec_size),
+                                            ui_secs)
+                    continue
+
+                beg_len = len("(%s/%s)" % (i, len(remote_pkgs)))
+                width = (50 - beg_len)
+                pc = local_size * 100 / remote_size
+                done_width = ((pc * width) / 100)
+                self.verbose_logger.log(logginglevels.INFO_1,
+                                        "%*s: %2s%% |%-*.*s|", beg_len, "",
+                                        pc, width, width, "=" * done_width)
 
         self.plugins.run('postdownload', pkglist=pkglist, errors=errors)
 
