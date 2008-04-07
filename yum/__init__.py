@@ -1038,7 +1038,6 @@ class YumBase(depsolve.Depsolve):
         repo_cached = False
         remote_pkgs = []
         remote_size = 0
-        local_size  = 0
         for po in pkglist:
             if hasattr(po, 'pkgtype') and po.pkgtype == 'local':
                 continue
@@ -1065,6 +1064,10 @@ class YumBase(depsolve.Depsolve):
                 
 
         remote_pkgs.sort(mediasort)
+        #  This is kind of a hack and does nothing in non-Fedora versions,
+        # we'll fix it one way or anther soon.
+        if hasattr(urlgrabber.progress, 'text_meter_total_size'):
+            urlgrabber.progress.text_meter_total_size(remote_size)
         i = 0
         for po in remote_pkgs:
             i += 1
@@ -1089,18 +1092,6 @@ class YumBase(depsolve.Depsolve):
                 po.localpath = mylocal
                 if errors.has_key(po):
                     del errors[po]
-
-                local_size += po.size
-                if local_size == remote_size:
-                    continue
-
-                beg_len = len("(%s/%s)" % (i, len(remote_pkgs)))
-                width = (50 - beg_len)
-                pc = local_size * 100 / remote_size
-                done_width = ((pc * width) / 100)
-                self.verbose_logger.log(logginglevels.INFO_1,
-                                        "%*s: %2s%% |%-*.*s|", beg_len, "",
-                                        pc, width, width, "=" * done_width)
 
         self.plugins.run('postdownload', pkglist=pkglist, errors=errors)
 
