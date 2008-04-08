@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: yum.master\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2008-04-05 01:43+0000\n"
-"PO-Revision-Date: 2008-04-08 18:36+0200\n"
+"PO-Revision-Date: 2008-04-08 18:49+0200\n"
 "Last-Translator: Johan Cwiklinski <johan@x-tnd.be>\n"
 "Language-Team: fr_FR <fedora-trans-fr@redhat.com>\n"
 "MIME-Version: 1.0\n"
@@ -603,11 +603,11 @@ msgstr "Pas de dépendances pour ce paquetage"
 #: ../output.py:402
 #, python-format
 msgid "  dependency: %s"
-msgstr "  dépendence : %s"
+msgstr "  dépendance : %s"
 
 #: ../output.py:404
 msgid "   Unsatisfied dependency"
-msgstr "   Dépendence non satisfaite"
+msgstr "   Dépendance non satisfaite"
 
 #: ../output.py:462
 msgid "Matched from:"
@@ -701,7 +701,7 @@ msgstr "Dépendance installée"
 
 #: ../output.py:560
 msgid "Dependency Updated"
-msgstr "Dépendence mise à jour"
+msgstr "Dépendance mise à jour"
 
 #: ../output.py:561
 msgid "Replaced"
@@ -1151,7 +1151,7 @@ msgid ""
 "Dependencies Resolved"
 msgstr ""
 "\n"
-"Dépendences résolues"
+"Dépendances résolues"
 
 #: ../yummain.py:198
 msgid "Complete!"
