@@ -123,7 +123,7 @@ class RPMDBPackageSack(PackageSackBase):
         self._simple_pkgtup_list = []
         self._get_pro_cache = {}
         self._get_req_cache = {}
-        misc._share_data_store = {}
+        misc.unshare_data()
         self._cache = {
             'provides' : { },
             'requires' : { },

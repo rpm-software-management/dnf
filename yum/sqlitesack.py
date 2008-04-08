@@ -295,7 +295,7 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
             'provides' : { },
             'requires' : { },
             }
-        misc._share_data_store = {}
+        misc.unshare_data()
 
     @catchSqliteException
     def close(self):

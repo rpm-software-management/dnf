@@ -20,11 +20,22 @@ import gpgme
 
 from Errors import MiscError
 
-_share_data_store = {}
+_share_data_store   = {}
+_share_data_store_u = {}
 def share_data(value):
     """ Take a value and use the same value from the store,
         if the value isn't in the store this one becomes the shared version. """
-    return _share_data_store.setdefault(value, value)
+    #  We don't want to change the types of strings, between str <=> unicode
+    # and hash('a') == hash(u'a') ... so use different stores.
+    #  In theory eventaully we'll have all of one type, but don't hold breath.
+    store = _share_data_store
+    if isinstance(value, unicode):
+        store = _share_data_store_u
+    return store.setdefault(value, value)
+
+def unshare_data():
+    _share_data_store   = {}
+    _share_data_store_u = {}
 
 _re_compiled_glob_match = None
 def re_glob(s):
