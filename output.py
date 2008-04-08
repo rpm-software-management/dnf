@@ -29,7 +29,7 @@ import re # For YumTerm
 
 from urlgrabber.progress import TextMeter
 from urlgrabber.grabber import URLGrabError
-from yum.misc import sortPkgObj, prco_tuple_to_string
+from yum.misc import sortPkgObj, prco_tuple_to_string, to_str
 from rpmUtils.miscutils import checkSignals
 from yum.constants import *
 
@@ -37,8 +37,6 @@ from yum import logginglevels
 from yum.rpmtrans import RPMBaseCallback
 
 from textwrap import fill
-
-import misc
 
 class YumTextMeter(TextMeter):
 
@@ -255,7 +253,7 @@ class YumOutput:
 
     def fmtKeyValFill(self, key, val):
         """ Return a key value pair in the common two column output format. """
-        val = misc.to_str(val)
+        val = to_str(val)
         keylen = len(key)
         cols = self.term.columns
         nxt = ' ' * (keylen - 2) + ': '
