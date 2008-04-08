@@ -38,6 +38,8 @@ from yum.rpmtrans import RPMBaseCallback
 
 from textwrap import fill
 
+import misc
+
 class YumTextMeter(TextMeter):
 
     """
