@@ -522,4 +522,10 @@ def to_unicode(obj, encoding='utf-8'):
             obj = unicode(obj, encoding)
     return obj
 
+def to_str(obj):
+    """ Convert something to a string, if it isn't one. """
+    if not isinstance(obj, basestring):
+        obj = str(obj)
+    return obj
+
         
