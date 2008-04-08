@@ -535,6 +535,8 @@ def to_unicode(obj, encoding='utf-8'):
 
 def to_str(obj):
     """ Convert something to a string, if it isn't one. """
+    # NOTE: unicode counts as a string just fine. We just want objects to call
+    # their __str__ methods.
     if not isinstance(obj, basestring):
         obj = str(obj)
     return obj
