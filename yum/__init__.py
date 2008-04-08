@@ -70,7 +70,7 @@ import string
 
 from urlgrabber.grabber import default_grabber
 
-__version__ = '3.2.13'
+__version__ = '3.2.14'
 
 #  Setup a default_grabber UA here that says we are yum, done using the global
 # so that other API users can easily add to it if they want.

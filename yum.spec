@@ -1,6 +1,6 @@
 Summary: RPM installer/updater
 Name: yum
-Version: 3.2.13
+Version: 3.2.14
 Release: 1
 License: GPL
 Group: System Environment/Base
@@ -21,6 +21,7 @@ Requires: python-iniparse
 Requires: pygpgme
 Prereq: /sbin/chkconfig, /sbin/service, coreutils
 Conflicts: yum-skip-broken
+Obsoletes: yum-basearchonly
 
 %description
 Yum is a utility that can check for and automatically download and
@@ -98,6 +99,9 @@ exit 0
 %{_mandir}/man*/yum-updatesd*
 
 %changelog
+* Mon Apr  7 2008 Seth Vidal <skvidal at fedoraproject.org>
+- 3.2.14
+
 * Thu Mar 20 2008 Seth Vidal <skvidal at fedoraproject.org>
 - 3.2.13
 
