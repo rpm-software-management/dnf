@@ -381,7 +381,7 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         tt_st = time.time()            
         self.verbose_logger.log(yum.logginglevels.INFO_2,
             _('Running Transaction Test'))
-        if self.conf.diskspacecheck == False:
+        if not self.conf.diskspacecheck:
             self.tsInfo.probFilterFlags.append(rpm.RPMPROB_FILTER_DISKSPACE)
             
         
