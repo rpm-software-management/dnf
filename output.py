@@ -29,7 +29,7 @@ import re # For YumTerm
 
 from urlgrabber.progress import TextMeter
 from urlgrabber.grabber import URLGrabError
-from yum.misc import sortPkgObj, prco_tuple_to_string, to_str
+from yum.misc import sortPkgObj, prco_tuple_to_string, to_str, to_unicode
 from rpmUtils.miscutils import checkSignals
 from yum.constants import *
 
@@ -755,7 +755,10 @@ class YumCliRPMCallBack(RPMBaseCallback):
 
     def scriptout(self, package, msgs):
         if msgs:
-            sys.stdout.write(msgs)
+            if not sys.stdout.isatty():
+                sys.stdout.write(to_unicode(msgs))
+            else:
+                sys.stdout.write(msgs)
             sys.stdout.flush()
 
     def _makefmt(self, percent, ts_current, ts_total, progress = True):
