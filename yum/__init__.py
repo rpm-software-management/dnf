@@ -759,11 +759,19 @@ class YumBase(depsolve.Depsolve):
     def runTransaction(self, cb):
         """takes an rpm callback object, performs the transaction"""
 
+        def _tup2str(x):
+            # Convert stuff like:
+            # ('installing package FOO needs XMB on the Y filesystem',
+            #  (9, '/', 131633152L))
+            if type(x) == type(tuple):
+                return x[0]
+            return x
+
         self.plugins.run('pretrans')
 
         errors = self.ts.run(cb.callback, '')
         if errors:
-            errstring = '\n'.join(errors)
+            errstring = '\n'.join(map(_tup2str, errors))
             raise Errors.YumBaseError, errstring
 
         if not self.conf.keepcache:
