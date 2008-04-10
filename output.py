@@ -29,7 +29,7 @@ import re # For YumTerm
 
 from urlgrabber.progress import TextMeter
 from urlgrabber.grabber import URLGrabError
-from yum.misc import sortPkgObj, prco_tuple_to_string, to_str, to_unicode
+from yum.misc import sortPkgObj, prco_tuple_to_string, to_str, to_unicode_maybe
 from rpmUtils.miscutils import checkSignals
 from yum.constants import *
 
@@ -747,7 +747,7 @@ class YumCliRPMCallBack(RPMBaseCallback):
             fmt = self._makefmt(percent, ts_current, ts_total)
             msg = fmt % (process, pkgname)
             if msg != self.lastmsg:
-                sys.stdout.write(msg)
+                sys.stdout.write(to_unicode_maybe(msg))
                 sys.stdout.flush()
                 self.lastmsg = msg
             if te_current == te_total:
@@ -755,10 +755,7 @@ class YumCliRPMCallBack(RPMBaseCallback):
 
     def scriptout(self, package, msgs):
         if msgs:
-            if not sys.stdout.isatty():
-                sys.stdout.write(to_unicode(msgs))
-            else:
-                sys.stdout.write(msgs)
+            sys.stdout.write(to_unicode_maybe(msgs))
             sys.stdout.flush()
 
     def _makefmt(self, percent, ts_current, ts_total, progress = True):

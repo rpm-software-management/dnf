@@ -526,12 +526,19 @@ def find_ts_remaining(timestamp, yumlibpath='/var/lib/yum'):
     
     return to_complete_items
     
-def to_unicode(obj, encoding='utf-8'):
+def to_unicode(obj, encoding='utf-8', errors='strict'):
     ''' convert a 'str' to 'unicode' '''
     if isinstance(obj, basestring):
         if not isinstance(obj, unicode):
-            obj = unicode(obj, encoding)
+            obj = unicode(obj, encoding, errors)
     return obj
+
+def to_unicode_maybe(obj, encoding='utf-8', errors='replace'):
+    ''' Don't ask don't tell, only use when you must '''
+    try:
+        return to_unicode(obj, encoding, errors)
+    except UnicodeEncodeError:
+        return obj
 
 def to_str(obj):
     """ Convert something to a string, if it isn't one. """
