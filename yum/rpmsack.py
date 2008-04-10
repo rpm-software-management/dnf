@@ -514,7 +514,9 @@ class RPMDBPackageSack(PackageSackBase):
         # would this ever be a ListType?
         elif type(version) in (types.TupleType, types.ListType):
             (r_e, r_v, r_r) = version
-        elif type(version) is types.NoneType:
+        else:
+            # FIXME: This isn't always  type(version) is types.NoneType:
+            # ...not sure what it is though, come back to this
             r_e = r_v = r_r = None
 
         deptup = (name, misc.share_data(flags),
