@@ -45,8 +45,6 @@ from yum.rpmtrans import RPMTransaction
 import signal
 import yumcommands
 
-from yum.misc import to_unicode
-
 def sigquit(signum, frame):
     """ SIGQUIT handler for the yum cli. """
     print >> sys.stderr, "Quit signal sent - exiting immediately"
@@ -684,7 +682,6 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
             
         searchlist = ['name', 'summary', 'description', 'url']
         dups = self.conf.showdupesfromrepos
-        args = map(to_unicode, args)
         matching = self.searchGenerator(searchlist, args,
                                         showdups=dups, keys=True)
         

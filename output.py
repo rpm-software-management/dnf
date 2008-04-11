@@ -266,7 +266,7 @@ class YumOutput:
         return ret
     
     def fmtSection(self, name, fill='='):
-        name = to_str(name)
+        name = str(name)
         cols = self.term.columns - 2
         name_len = len(name)
         if name_len >= (cols - 4):
