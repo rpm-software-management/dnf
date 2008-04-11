@@ -27,13 +27,13 @@ import time # test purposes only
 from yum import Errors
 from yum import plugins
 from yum import logginglevels
-from yum.i18n import _ 
+import yum.i18n
 import cli
 
 
 def main(args):
     """This does all the real work"""
-    if not sys.stdout.isatty():
+    if True: # not sys.stdout.isatty():
         import codecs
         sys.stdout = codecs.getwriter(locale.getpreferredencoding())(sys.stdout)
 

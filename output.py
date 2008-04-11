@@ -23,7 +23,7 @@ import logging
 import types
 import gettext
 import rpm
-from yum.i18n import _
+import yum.i18n
 
 import re # For YumTerm
 

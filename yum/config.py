@@ -570,6 +570,7 @@ class StartupConf(BaseConfig):
     plugins = BoolOption(False)
     pluginpath = ListOption(['/usr/share/yum-plugins', '/usr/lib/yum-plugins'])
     pluginconfpath = ListOption(['/etc/yum/pluginconf.d'])
+    gaftonmode = BoolOption(False)
 
 class YumConf(StartupConf):
     '''

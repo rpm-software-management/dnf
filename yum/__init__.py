@@ -63,7 +63,7 @@ warnings.simplefilter("ignore", Errors.YumFutureDeprecationWarning)
 from packages import parsePackages, YumAvailablePackage, YumLocalPackage, YumInstalledPackage
 from constants import *
 from yum.rpmtrans import RPMTransaction,SimpleCliCallBack
-from yum.i18n import _
+import yum.i18n
 from misc import to_unicode
 
 import string
@@ -176,6 +176,9 @@ class YumBase(depsolve.Depsolve):
                     startupconf.pluginconfpath,disabled_plugins)
 
         self._conf = config.readMainConfig(startupconf)
+        if self._conf.gaftonmode:
+            import __builtin__
+            __builtin__.__dict__['_'] = i18n.dummy_wrapper
 
         # run the postconfig plugin hook
         self.plugins.run('postconfig')

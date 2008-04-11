@@ -31,7 +31,7 @@ import Errors
 from parser import ConfigPreProcessor
 
 from textwrap import fill
-from i18n import _
+import i18n
 
 import fnmatch
 

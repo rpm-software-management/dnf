@@ -35,7 +35,7 @@ from constants import *
 import packages
 import logginglevels
 import Errors
-from i18n import _
+import i18n
 import warnings
 warnings.simplefilter("ignore", Errors.YumFutureDeprecationWarning)
 from operator import itemgetter
