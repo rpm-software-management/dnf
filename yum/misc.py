@@ -31,6 +31,11 @@ def share_data(value):
     store = _share_data_store
     if isinstance(value, unicode):
         store = _share_data_store_u
+    # hahahah, of course the above means that:
+    #   hash(('a', 'b')) == hash((u'a', u'b'))
+    # ...which we have in deptuples, so just screw sharing those atm.
+    if type(value) == type(tuple):
+        return value
     return store.setdefault(value, value)
 
 def unshare_data():
