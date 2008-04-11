@@ -39,6 +39,8 @@ def share_data(value):
     return store.setdefault(value, value)
 
 def unshare_data():
+    global _share_data_store
+    global _share_data_store_u
     _share_data_store   = {}
     _share_data_store_u = {}
 
