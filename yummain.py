@@ -113,7 +113,7 @@ def main(args):
         return exPluginExit(e)
     except Errors.YumBaseError, e:
         result = 1
-        resultmsgs = [str(e)]
+        resultmsgs = [unicode(e)]
     except KeyboardInterrupt:
         return exUserCancel()
     except IOError, e:
@@ -154,7 +154,7 @@ def main(args):
         return exPluginExit(e)
     except Errors.YumBaseError, e:
         result = 1
-        resultmsgs = [str(e)]
+        resultmsgs = [unicode(e)]
     except KeyboardInterrupt:
         return exUserCancel()
     except IOError, e:
