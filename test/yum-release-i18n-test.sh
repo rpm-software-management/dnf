@@ -61,17 +61,17 @@ scmd()
 }
 lcmd()
 {
-  $LIVNA echo $beg_hdr
-  $LIVNA echo "Doing: LANG=$lang yum --enablerepo=livna $@"
-  $LIVNA echo $end_hdr
-  $LIVNA LANG=$lang yum --enablerepo=livna $@
+  $LIVNA && echo $beg_hdr
+  $LIVNA && echo "Doing: LANG=$lang yum --enablerepo=livna $@"
+  $LIVNA && echo $end_hdr
+  $LIVNA && LANG=$lang yum --enablerepo=livna $@
 }
 lscmd()
 {
-  $LIVNA echo $beg_hdr
-  $LIVNA echo "Doing: LANG=$lang $SUDO_CMD yum --enablerepo=livna $@"
-  $LIVNA echo $end_hdr
-  $LIVNA LANG=$lang $SUDO_CMD yum --enablerepo=livna $@
+  $LIVNA && echo $beg_hdr
+  $LIVNA && echo "Doing: LANG=$lang $SUDO_CMD yum --enablerepo=livna $@"
+  $LIVNA && echo $end_hdr
+  $LIVNA && LANG=$lang $SUDO_CMD yum --enablerepo=livna $@
 }
 
 tst()
@@ -93,11 +93,11 @@ tst()
   #  This always fails, so we need to "look" if it does so with an encoding
   # problem or the real one
   ($RUN_FAILURES && cmd help) || true
-  $RUN_FAILURES && sleep 5
+  $RUN_FAILURES && sleep 3
   #  This always fails, so we need to "look" if it does so with an encoding
   # problem or the real one
   ($RUN_FAILURES && (cmd help | cat)) || true
-  $RUN_FAILURES && sleep 5
+  $RUN_FAILURES && sleep 3
   for i in install remove check-update update list info provides; do
     cmd help $i
     cmd help $i | cat
@@ -107,11 +107,11 @@ tst()
   #  This always fails, so we need to "look" if it does so with an encoding
   # problem or the real one
   ($RUN_FAILURES && cmd) || true
-  $RUN_FAILURES && sleep 5
+  $RUN_FAILURES && sleep 3
   #  This always fails, so we need to "look" if it does so with an encoding
   # problem or the real one
   ($RUN_FAILURES && (cmd | cat)) || true
-  $RUN_FAILURES && sleep 5
+  $RUN_FAILURES && sleep 3
 
   scmd install bash
   scmd install $PKG_BAD
@@ -122,11 +122,11 @@ tst()
   ($LIVNA && $SUDO_CMD rpm -e gpg-pubkey-a109b1ec-3f6e28d5) || true
   #  This always fails, so we need to "look" if it does so with an encoding
   # problem or the real one
-  ($RUN_FAILURES && lcmd install $PKG_LIVNA) || true
-  $RUN_FAILURES && $LIVNA && sleep 2
+  ($RUN_FAILURES && lscmd install $PKG_LIVNA) || true
+  $RUN_FAILURES && $LIVNA && sleep 1
   $LIVNA && $SUDO_CMD mv RPM-GPG-KEY-livna /etc/pki/rpm-gpg/
-  lcmd install -y $PKG_LIVNA
-  lcmd remove  -y $PKG_LIVNA
+  lscmd install -y $PKG_LIVNA
+  lscmd remove  -y $PKG_LIVNA
 }
 
 
