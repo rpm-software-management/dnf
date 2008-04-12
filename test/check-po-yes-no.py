@@ -8,26 +8,36 @@ import glob
 
 for fname in glob.glob("po/*.po"):
     next = None
-    is_this_ok = None
-    yes = None
-    y   = None
-    no  = None
-    n   = None
+    is_this_ok  = None
+    sis_this_ok = None
+    yes         = None
+    syes        = None
+    y           = None
+    sy          = None
+    no          = None
+    sno         = None
+    n           = None
+    sn          = None
     for line in file(fname):
         if next is not None:
             if next == 'is_this_ok':
+                sis_this_ok = line
                 if line == 'msgstr ""\n' or line.find('[y/N]') != -1:
                     is_this_ok = False
                 else:
                     is_this_ok = True
             if next == 'yes':
-                yes = line != 'msgstr ""\n'
+                syes = line
+                yes  = line != 'msgstr ""\n'
             if next == 'y':
-                y   = line != 'msgstr ""\n'
+                sy   = line
+                y    = line != 'msgstr ""\n'
             if next == 'no':
-                no  = line != 'msgstr ""\n'
+                sno  = line
+                no   = line != 'msgstr ""\n'
             if next == 'n':
-                n   = line != 'msgstr ""\n'
+                sn   = line
+                n    = line != 'msgstr ""\n'
             next = None
             continue
         if line == 'msgid "Is this ok [y/N]: "\n':
@@ -65,10 +75,10 @@ n   %s
         is_this_ok != n):
         print >>sys.stderr, """\
 ERROR: yes/no translations don't match in: %s
-is_this_ok %s
-yes %s
-y   %s
-no  %s
-n   %s
+is_this_ok %5s: %s\
+yes        %5s: %s\
+y          %5s: %s\
+no         %5s: %s\
+n          %5s: %s\
 """ % (fname,
-       is_this_ok, yes, y, no, n)
+       is_this_ok, sis_this_ok, yes, syes, y, sy, no, sno, n, sn)
