@@ -33,6 +33,17 @@ import cli
 
 def main(args):
     """This does all the real work"""
+
+    # This test needs to be before locale.getpreferredencoding() as that
+    # does setlocale(LC_CTYPE, "")
+    try:
+        locale.setlocale(locale.LC_ALL, '')
+    except locale.Error, e:
+        # default to C locale if we get a failure.
+        print >> sys.stderr, 'Failed to set locale, defaulting to C'
+        os.environ['LC_ALL'] = 'C'
+        locale.setlocale(locale.LC_ALL, 'C')
+        
     if True: # not sys.stdout.isatty():
         import codecs
         sys.stdout = codecs.getwriter(locale.getpreferredencoding())(sys.stdout)
@@ -76,13 +87,6 @@ def main(args):
     logger = logging.getLogger("yum.main")
     verbose_logger = logging.getLogger("yum.verbose.main")
 
-    try:
-        locale.setlocale(locale.LC_ALL, '')
-    except locale.Error, e:
-        # default to C locale if we get a failure.
-        print >> sys.stderr, 'Failed to set locale, defaulting to C'
-        locale.setlocale(locale.LC_ALL, 'C')
-        
     # our core object for the cli
     base = cli.YumBaseCli()
 

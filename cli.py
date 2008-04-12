@@ -1091,6 +1091,10 @@ class YumOptionParser(OptionParser):
             root = '/'
         return root
 
+    def _wrapOptParseUsage(self, opt, value, parser, *args, **kwargs):
+        self.base.usage()
+        self.exit()
+
     def _addYumBasicOptions(self):
         def repo_optcb(optobj, opt, value, parser):
             '''Callback for the enablerepo and disablerepo option. 
@@ -1101,7 +1105,16 @@ class YumOptionParser(OptionParser):
             dest = eval('parser.values.%s' % optobj.dest)
             dest.append((opt, value))
 
-        
+
+        # Note that we can't use the default action="help" because of the
+        # fact that print_help() unconditionally does .encode() ... which is
+        # bad on unicode input.
+        self.conflict_handler = "resolve"
+        self.add_option("-h", "--help", action="callback",
+                        callback=self._wrapOptParseUsage, 
+                help=_("show this help message and exit"))
+        self.conflict_handler = "error"
+
         self.add_option("-t", "--tolerant", action="store_true",
                 help=_("be tolerant of errors"))
         self.add_option("-C", dest="cacheonly", action="store_true",
@@ -1122,7 +1135,7 @@ class YumOptionParser(OptionParser):
         self.add_option("-q", "--quiet", dest="quiet", action="store_true",
                         help=_("quiet operation"))
         self.add_option("-v", "--verbose", dest="verbose", action="store_true",
-                        help="verbose operation")
+                        help=_("verbose operation"))
         self.add_option("-y", dest="assumeyes", action="store_true",
                 help=_("answer yes for all questions"))
         self.add_option("--version", action="store_true", 
