@@ -899,11 +899,11 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
 
     def usage(self):
         ''' Print out command line usage '''
-        self.optparser.print_help()
+        sys.stdout.write(self.optparser.format_help())
 
     def shellUsage(self):
         ''' Print out the shell usage '''
-        self.optparser.print_usage()
+        sys.stdout.write(self.optparser.format_usage())
     
     def _installable(self, pkg, ematch=False):
 

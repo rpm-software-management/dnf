@@ -162,7 +162,9 @@ class YumBase(depsolve.Depsolve):
             fn = '/etc/yum.conf'
 
         startupconf = config.readStartupConfig(fn, root)
-
+        if startupconf.gaftonmode:
+            import __builtin__
+            __builtin__.__dict__['_'] = i18n.dummy_wrapper
         
         if debuglevel != None:
             startupconf.debuglevel = debuglevel
@@ -176,9 +178,6 @@ class YumBase(depsolve.Depsolve):
                     startupconf.pluginconfpath,disabled_plugins)
 
         self._conf = config.readMainConfig(startupconf)
-        if self._conf.gaftonmode:
-            import __builtin__
-            __builtin__.__dict__['_'] = i18n.dummy_wrapper
 
         # run the postconfig plugin hook
         self.plugins.run('postconfig')
@@ -2630,7 +2629,7 @@ class YumBase(depsolve.Depsolve):
                 rawkey = urlgrabber.urlread(keyurl, limit=9999)
             except urlgrabber.grabber.URLGrabError, e:
                 raise Errors.YumBaseError(_('GPG key retrieval failed: ') +
-                                          str(e))
+                                          unicode(e))
 
             # Parse the key
             try:

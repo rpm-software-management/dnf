@@ -36,6 +36,7 @@ def main(args):
     if True: # not sys.stdout.isatty():
         import codecs
         sys.stdout = codecs.getwriter(locale.getpreferredencoding())(sys.stdout)
+        sys.stdout.errors = 'replace'
 
     def exUserCancel():
         logger.critical(_('\n\nExiting on user cancel'))
@@ -60,7 +61,7 @@ def main(args):
         return 1
 
     def exFatal(e):
-        logger.critical('\n\n%s', str(e))
+        logger.critical('\n\n%s', unicode(e))
         if unlock(): return 200
         return 1
 
