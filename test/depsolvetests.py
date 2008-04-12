@@ -2,6 +2,8 @@ import unittest
 from testbase import *
 from rpmUtils import arch
 
+import rpmUtils.arch
+
 class DepsolveTests(DepsolveTests):
     def testEmpty(self):
         po = FakePackage('zsh', '1', '1', None, 'i386')
@@ -327,7 +329,10 @@ class DepsolveTests(DepsolveTests):
         self.xsack.addPackage(xpo64)
 
         self.assertEquals('ok', *self.resolveCode())
-        self.assertResult((po, xpo))
+        if rpmUtils.arch.getBestArch() == 'x86_64':
+            self.assertResult((po, xpo64))
+        else:
+            self.assertResult((po, xpo))
 
     def testUpdateSinglePackage(self):
         ipo = FakePackage('zsh', '1', '1', None, 'i386')

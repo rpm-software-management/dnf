@@ -1,5 +1,7 @@
 from testbase import *
 
+import rpmUtils.arch
+
 class SimpleUpdateTests(OperationsTests):
 
     """This test suite runs three different type of tests - for all possible
@@ -94,11 +96,22 @@ class SimpleUpdateTests(OperationsTests):
             self.assertResult((p.update_x86_64,), (p.update_i386,)) # ?
         else:
             self.assertResult((p.update_i386, p.update_x86_64))
+    def testUpdatenoarchToMultilibForDependencyRev(self):
+        p = self.pkgs
+        res, msg = self.runOperation(['install', 'zsh-utils'], [p.installed_noarch], [p.update_x86_64, p.update_i386, p.requires_update])
+        self.assert_(res=='ok', msg)
+        if rpmUtils.arch.getBestArch() == 'x86_64':
+            self.assertResult((p.update_x86_64, p.requires_update))
+        else:
+            self.assertResult((p.update_i386, p.requires_update))
     def testUpdatenoarchToMultilibForDependency(self):
         p = self.pkgs
         res, msg = self.runOperation(['install', 'zsh-utils'], [p.installed_noarch], [p.update_i386, p.update_x86_64, p.requires_update])
         self.assert_(res=='ok', msg)
-        self.assertResult((p.update_x86_64, p.requires_update), (p.update_i386,))
+        if rpmUtils.arch.getBestArch() == 'x86_64':
+            self.assertResult((p.update_x86_64, p.requires_update))
+        else:
+            self.assertResult((p.update_i386, p.requires_update))
     def testUpdatenoarchToMultilibForDependency2(self):
         p = self.pkgs
         res, msg = self.runOperation(['update', 'bar'], [p.required, p.installed_noarch],
