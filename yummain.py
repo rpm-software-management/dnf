@@ -61,7 +61,7 @@ def main(args):
         return 1
 
     def exFatal(e):
-        logger.critical('\n\n%s', str(e))
+        logger.critical('\n\n%s', unicode(e))
         if unlock(): return 200
         return 1
 
@@ -114,7 +114,7 @@ def main(args):
         return exPluginExit(e)
     except Errors.YumBaseError, e:
         result = 1
-        resultmsgs = [str(e)]
+        resultmsgs = [unicode(e)]
     except KeyboardInterrupt:
         return exUserCancel()
     except IOError, e:

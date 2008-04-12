@@ -2630,7 +2630,7 @@ class YumBase(depsolve.Depsolve):
                 rawkey = urlgrabber.urlread(keyurl, limit=9999)
             except urlgrabber.grabber.URLGrabError, e:
                 raise Errors.YumBaseError(_('GPG key retrieval failed: ') +
-                                          str(e))
+                                          unicode(e))
 
             # Parse the key
             try:
