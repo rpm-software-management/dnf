@@ -255,7 +255,7 @@ class RPMDBPackageSack(PackageSackBase):
 
     @staticmethod
     def _compile_patterns(patterns):
-        if patterns is None:
+        if not patterns:
             return None
         ret = []
         for pat in patterns:
