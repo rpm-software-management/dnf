@@ -903,7 +903,7 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
 
     def shellUsage(self):
         ''' Print out the shell usage '''
-        sys.stdout.write(self.optparser.format_usage())
+        sys.stdout.write(self.optparser.get_usage())
     
     def _installable(self, pkg, ematch=False):
 
