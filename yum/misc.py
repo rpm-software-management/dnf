@@ -458,10 +458,6 @@ def get_running_kernel_version_release(ts):
         if ver.endswith(s):
             reduced = ver.replace(s, "")
             
-    if reduced.find("-") != -1:
-        (v, r) = reduced.split("-", 1)
-        return (v, r)
-    
     # we've got nothing so far, so... we glob for the file that MIGHT have
     # this kernels and then look up the file in our rpmdb
     fns = glob.glob('/boot/vmlinuz*%s*' % ver)
