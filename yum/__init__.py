@@ -2216,6 +2216,8 @@ class YumBase(depsolve.Depsolve):
             if thispkgobsdict.has_key(po.pkgtup):
                 obsoleting = thispkgobsdict[po.pkgtup][0]
                 obsoleting_pkg = self.getPackageObject(obsoleting)
+                self.verbose_logger.warning(_('Package %s is obsoleted by %s, trying to install %s instead'),
+                    po.name, obsoleting_pkg.name, obsoleting_pkg)               
                 self.install(po=obsoleting_pkg)
                 continue
                 
