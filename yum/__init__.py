@@ -782,7 +782,7 @@ class YumBase(depsolve.Depsolve):
             raise Errors.YumBaseError, errstring
         else:
             errstring = '\n'.join(map(_tup2str, errors))
-                          raise Errors.YumBaseError, errstring
+            raise Errors.YumBaseError, errstring
                           
             errstring = '\n'.join(map(_tup2str, errors))
             raise Errors.YumBaseError, errstring
