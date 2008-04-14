@@ -34,7 +34,7 @@ def share_data(value):
     # hahahah, of course the above means that:
     #   hash(('a', 'b')) == hash((u'a', u'b'))
     # ...which we have in deptuples, so just screw sharing those atm.
-    if type(value) == type(tuple):
+    if type(value) == types.TupleType:
         return value
     return store.setdefault(value, value)
 
