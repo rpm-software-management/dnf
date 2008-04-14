@@ -772,7 +772,18 @@ class YumBase(depsolve.Depsolve):
         self.plugins.run('pretrans')
 
         errors = self.ts.run(cb.callback, '')
-        if errors:
+        # ts.run() exit codes are, hmm, "creative": None means all ok, empty 
+        # list means some errors happened in the transaction and non-empty 
+        # list that there were errors preventing the ts from starting...
+        if errors is None:
+            pass
+        elif len(errors) == 0:
+            errstring = _('Warning: errors occurred during transaction.')
+            raise Errors.YumBaseError, errstring
+        else:
+            errstring = '\n'.join(map(_tup2str, errors))
+                          raise Errors.YumBaseError, errstring
+                          
             errstring = '\n'.join(map(_tup2str, errors))
             raise Errors.YumBaseError, errstring
 
