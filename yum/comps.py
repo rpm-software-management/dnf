@@ -71,19 +71,36 @@ class Group(object):
         return lst
     
     packages = property(_packageiter)
-    
+
+    def _expand_languages(self, lang):
+        import gettext
+        languages = [lang]
+
+        if 'C' not in languages:
+            languages.append('C')
+         
+        # now normalize and expand the languages
+        nelangs = []
+        for lang in languages:
+            for nelang in gettext._expand_lang(lang):
+                if nelang not in nelangs:
+                    nelangs.append(nelang)
+        return nelangs
+        
     def nameByLang(self, lang):
-        if self.translated_name.has_key[lang]:
-            return self.translated_name[lang]
-        else:
-            return self.name
+
+        for langcode in self._expand_languages(lang):
+            if self.translated_name.has_key(langcode):
+                return self.translated_name[langcode]
+
+        return self.name
 
 
     def descriptionByLang(self, lang):
-        if self.translated_description.has_key[lang]:
-            return self.translated_description[lang]
-        else:
-            return self.description
+        for langcode in self._expand_languages(lang):
+            if self.translated_description.has_key(langcode):
+                return self.translated_description[langcode]
+        return self.description
 
     def parse(self, elem):
         for child in elem:
@@ -367,7 +384,7 @@ class Comps(object):
     
     
     def has_group(self, grpid):
-        exists = self.return_group(grpid)
+        exists = self.return_groups(grpid)
             
         if exists:
             return True
@@ -387,6 +404,22 @@ class Comps(object):
 
         
         return None
+
+    def return_groups(self, grpid):
+        returns = {}
+        if self._groups.has_key(grpid):
+            thisgroup = self._groups[grpid]
+            returns[thisgroup.groupid] = thisgroup
+        
+        # do matches against group names and ids, too
+        for group in self.groups:
+            names = [ group.name, group.groupid ]
+            names.extend(group.translated_name.values())
+            if grpid in names:
+                returns[group.groupid] = group
+
+        return returns.values()
+
 
 
     def add(self, srcfile = None):

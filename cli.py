@@ -804,20 +804,21 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
                 uservisible=0
 
         installed, available = self.doGroupLists(uservisible=uservisible)
-
+        mylang = yum.misc.get_my_lang_code()
+        
         if len(installed) > 0:
             self.verbose_logger.log(yum.logginglevels.INFO_2,
                 _('Installed Groups:'))
             for group in installed:
                 self.verbose_logger.log(yum.logginglevels.INFO_2, '   %s',
-                    group.name)
+                    group.nameByLang(mylang))
         
         if len(available) > 0:
             self.verbose_logger.log(yum.logginglevels.INFO_2,
                 _('Available Groups:'))
             for group in available:
                 self.verbose_logger.log(yum.logginglevels.INFO_2, '   %s',
-                    group.name)
+                    group.nameByLang(mylang))
 
             
         return 0, [_('Done')]
@@ -825,10 +826,12 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
     def returnGroupInfo(self, userlist):
         """returns complete information on a list of groups"""
         for strng in userlist:
-            group = self.comps.return_group(strng)
-            if group:
+            group_matched = False
+            for group in self.comps.return_groups(strng):
                 self.displayPkgsInGroups(group)
-            else:
+                group_matched = True
+
+            if not group_matched:
                 self.logger.error(_('Warning: Group %s does not exist.'), strng)
         
         return 0, []
@@ -839,18 +842,22 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         pkgs_used = []
         
         for group_string in grouplist:
-            group = self.comps.return_group(group_string)
-            if not group:
-                self.logger.critical(_('Warning: Group %s does not exist.'), group_string)
-                continue
+            group_matched = False
+            for group in self.comps.return_groups(group_string):
+                group_matched = True
+
             
-            try:
-                txmbrs = self.selectGroup(group.groupid)
-            except yum.Errors.GroupsError:
-                self.logger.critical(_('Warning: Group %s does not exist.'), group_string)
+                try:
+                    txmbrs = self.selectGroup(group.groupid)
+                except yum.Errors.GroupsError:
+                    self.logger.critical(_('Warning: Group %s does not exist.'), group_string)
+                    continue
+                else:
+                    pkgs_used.extend(txmbrs)
+
+            if not group_matched:
+                self.logger.error(_('Warning: Group %s does not exist.'), group_strng)
                 continue
-            else:
-                pkgs_used.extend(txmbrs)
             
         if not pkgs_used:
             return 0, [_('No packages in any requested group available to install or update')]

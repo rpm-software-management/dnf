@@ -551,4 +551,13 @@ def to_str(obj):
         obj = str(obj)
     return obj
 
-        
+def get_my_lang_code():
+    import locale
+    mylang = locale.getlocale()
+    if mylang == (None, None): # odd :)
+        mylang = 'C'
+    else:
+        mylang = '.'.join(mylang)
+    
+    return mylang
+    

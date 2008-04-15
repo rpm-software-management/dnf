@@ -1726,107 +1726,109 @@ class YumBase(depsolve.Depsolve):
         
         txmbrs_used = []
         
-        thisgroup = self.comps.return_group(grpid)
-        if not thisgroup:
+        thesegroups = self.comps.return_groups(grpid)
+        if not thesegroups:
             raise Errors.GroupsError, _("No Group named %s exists") % grpid
 
-        thisgroup.toremove = True
-        pkgs = thisgroup.packages
-        for pkg in thisgroup.packages:
-            txmbrs = self.remove(name=pkg)
-            txmbrs_used.extend(txmbrs)
-            for txmbr in txmbrs:
-                txmbr.groups.append(thisgroup.groupid)
-        
+        for thisgroup in thesegroups:
+            thisgroup.toremove = True
+            pkgs = thisgroup.packages
+            for pkg in thisgroup.packages:
+                txmbrs = self.remove(name=pkg)
+                txmbrs_used.extend(txmbrs)
+                for txmbr in txmbrs:
+                    txmbr.groups.append(thisgroup.groupid)
+            
         return txmbrs_used
 
     def groupUnremove(self, grpid):
         """unmark any packages in the group from being removed"""
         
 
-        thisgroup = self.comps.return_group(grpid)
-        if not thisgroup:
+        thesegroups = self.comps.return_groups(grpid)
+        if not thesegroups:
             raise Errors.GroupsError, _("No Group named %s exists") % grpid
 
-        thisgroup.toremove = False
-        pkgs = thisgroup.packages
-        for pkg in thisgroup.packages:
-            for txmbr in self.tsInfo:
-                if txmbr.po.name == pkg and txmbr.po.state in TS_INSTALL_STATES:
-                    try:
-                        txmbr.groups.remove(grpid)
-                    except ValueError:
-                        self.verbose_logger.log(logginglevels.DEBUG_1,
-                           _("package %s was not marked in group %s"), txmbr.po,
-                            grpid)
-                        continue
-                    
-                    # if there aren't any other groups mentioned then remove the pkg
-                    if len(txmbr.groups) == 0:
-                        self.tsInfo.remove(txmbr.po.pkgtup)
+        for thisgroup in thesegroups:
+            thisgroup.toremove = False
+            pkgs = thisgroup.packages
+            for pkg in thisgroup.packages:
+                for txmbr in self.tsInfo:
+                    if txmbr.po.name == pkg and txmbr.po.state in TS_INSTALL_STATES:
+                        try:
+                            txmbr.groups.remove(grpid)
+                        except ValueError:
+                            self.verbose_logger.log(logginglevels.DEBUG_1,
+                               _("package %s was not marked in group %s"), txmbr.po,
+                                grpid)
+                            continue
+                        
+                        # if there aren't any other groups mentioned then remove the pkg
+                        if len(txmbr.groups) == 0:
+                            self.tsInfo.remove(txmbr.po.pkgtup)
         
         
     def selectGroup(self, grpid):
         """mark all the packages in the group to be installed
            returns a list of transaction members it added to the transaction 
            set"""
-        
-        txmbrs_used = []
-        
+
         if not self.comps.has_group(grpid):
             raise Errors.GroupsError, _("No Group named %s exists") % grpid
-            
-        thisgroup = self.comps.return_group(grpid)
         
-        if not thisgroup:
+        txmbrs_used = []
+        thesegroups = self.comps.return_groups(grpid)
+     
+        if not thesegroups:
             raise Errors.GroupsError, _("No Group named %s exists") % grpid
-        
-        if thisgroup.selected:
-            return txmbrs_used
-        
-        thisgroup.selected = True
-        
-        pkgs = []
-        if 'mandatory' in self.conf.group_package_types:
-            pkgs.extend(thisgroup.mandatory_packages)
-        if 'default' in self.conf.group_package_types:
-            pkgs.extend(thisgroup.default_packages)
-        if 'optional' in self.conf.group_package_types:
-            pkgs.extend(thisgroup.optional_packages)
 
-        for pkg in pkgs:
-            self.verbose_logger.log(logginglevels.DEBUG_2,
-                _('Adding package %s from group %s'), pkg, thisgroup.groupid)
-            try:
-                txmbrs = self.install(name = pkg)
-            except Errors.InstallError, e:
-                self.verbose_logger.debug(_('No package named %s available to be installed'),
-                    pkg)
-            else:
-                txmbrs_used.extend(txmbrs)
-                for txmbr in txmbrs:
-                    txmbr.groups.append(thisgroup.groupid)
-        
-        if self.conf.enable_group_conditionals:
-            for condreq, cond in thisgroup.conditional_packages.iteritems():
-                if self.isPackageInstalled(cond):
-                    try:
-                        txmbrs = self.install(name = condreq)
-                    except Errors.InstallError:
-                        # we don't care if the package doesn't exist
-                        continue
+        for thisgroup in thesegroups:
+            if thisgroup.selected:
+                continue
+            
+            thisgroup.selected = True
+            
+            pkgs = []
+            if 'mandatory' in self.conf.group_package_types:
+                pkgs.extend(thisgroup.mandatory_packages)
+            if 'default' in self.conf.group_package_types:
+                pkgs.extend(thisgroup.default_packages)
+            if 'optional' in self.conf.group_package_types:
+                pkgs.extend(thisgroup.optional_packages)
+
+            for pkg in pkgs:
+                self.verbose_logger.log(logginglevels.DEBUG_2,
+                    _('Adding package %s from group %s'), pkg, thisgroup.groupid)
+                try:
+                    txmbrs = self.install(name = pkg)
+                except Errors.InstallError, e:
+                    self.verbose_logger.debug(_('No package named %s available to be installed'),
+                        pkg)
+                else:
                     txmbrs_used.extend(txmbrs)
                     for txmbr in txmbrs:
                         txmbr.groups.append(thisgroup.groupid)
-                    continue
-                # Otherwise we hook into tsInfo.add
-                pkgs = self.pkgSack.searchNevra(name=condreq)
-                if pkgs:
-                    pkgs = self.bestPackagesFromList(pkgs)
-                if self.tsInfo.conditionals.has_key(cond):
-                    self.tsInfo.conditionals[cond].extend(pkgs)
-                else:
-                    self.tsInfo.conditionals[cond] = pkgs
+            
+            if self.conf.enable_group_conditionals:
+                for condreq, cond in thisgroup.conditional_packages.iteritems():
+                    if self.isPackageInstalled(cond):
+                        try:
+                            txmbrs = self.install(name = condreq)
+                        except Errors.InstallError:
+                            # we don't care if the package doesn't exist
+                            continue
+                        txmbrs_used.extend(txmbrs)
+                        for txmbr in txmbrs:
+                            txmbr.groups.append(thisgroup.groupid)
+                        continue
+                    # Otherwise we hook into tsInfo.add
+                    pkgs = self.pkgSack.searchNevra(name=condreq)
+                    if pkgs:
+                        pkgs = self.bestPackagesFromList(pkgs)
+                    if self.tsInfo.conditionals.has_key(cond):
+                        self.tsInfo.conditionals[cond].extend(pkgs)
+                    else:
+                        self.tsInfo.conditionals[cond] = pkgs
 
         return txmbrs_used
 
@@ -1836,27 +1838,28 @@ class YumBase(depsolve.Depsolve):
         if not self.comps.has_group(grpid):
             raise Errors.GroupsError, _("No Group named %s exists") % grpid
             
-        thisgroup = self.comps.return_group(grpid)
-        if not thisgroup:
+        thesegroups = self.comps.return_groups(grpid)
+        if not thesegroups:
             raise Errors.GroupsError, _("No Group named %s exists") % grpid
         
-        thisgroup.selected = False
-        
-        for pkgname in thisgroup.packages:
-        
-            for txmbr in self.tsInfo:
-                if txmbr.po.name == pkgname and txmbr.po.state in TS_INSTALL_STATES:
-                    try: 
-                        txmbr.groups.remove(grpid)
-                    except ValueError:
-                        self.verbose_logger.log(logginglevels.DEBUG_1,
-                           _("package %s was not marked in group %s"), txmbr.po,
-                            grpid)
-                        continue
-                    
-                    # if there aren't any other groups mentioned then remove the pkg
-                    if len(txmbr.groups) == 0:
-                        self.tsInfo.remove(txmbr.po.pkgtup)
+        for thisgroup in thesegroups:
+            thisgroup.selected = False
+            
+            for pkgname in thisgroup.packages:
+            
+                for txmbr in self.tsInfo:
+                    if txmbr.po.name == pkgname and txmbr.po.state in TS_INSTALL_STATES:
+                        try: 
+                            txmbr.groups.remove(grpid)
+                        except ValueError:
+                            self.verbose_logger.log(logginglevels.DEBUG_1,
+                               _("package %s was not marked in group %s"), txmbr.po,
+                                grpid)
+                            continue
+                        
+                        # if there aren't any other groups mentioned then remove the pkg
+                        if len(txmbr.groups) == 0:
+                            self.tsInfo.remove(txmbr.po.pkgtup)
 
                     
         
@@ -2444,6 +2447,10 @@ class YumBase(depsolve.Depsolve):
                             ver=nevra_dict['version'], rel=nevra_dict['release'])
 
                 if len(pkgs) == 0:
+                    # FIXME we should give the caller some nice way to hush this warning
+                    # probably just a kwarg of 'silence_warnings' or something
+                    # b/c when this is called from groupRemove() it makes a lot of
+                    # garbage noise
                     self.logger.warning(_("No package matched to remove"))
 
         for po in pkgs:

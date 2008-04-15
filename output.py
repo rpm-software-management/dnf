@@ -29,7 +29,7 @@ import re # For YumTerm
 
 from urlgrabber.progress import TextMeter
 from urlgrabber.grabber import URLGrabError
-from yum.misc import sortPkgObj, prco_tuple_to_string, to_str, to_unicode_maybe
+from yum.misc import sortPkgObj, prco_tuple_to_string, to_str, to_unicode_maybe, get_my_lang_code
 from rpmUtils.miscutils import checkSignals
 from yum.constants import *
 
@@ -367,9 +367,10 @@ class YumOutput:
                 
     
     def displayPkgsInGroups(self, group):
-        print _('\nGroup: %s') % group.name
-        if group.description != "":
-            print _(' Description: %s') % group.description.encode("UTF-8")
+        mylang = get_my_lang_code()
+        print _('\nGroup: %s') % group.nameByLang(mylang)
+        if group.descriptionByLang(mylang) != "":
+            print _(' Description: %s') % to_unicode_maybe(group.descriptionByLang(mylang))
         if len(group.mandatory_packages) > 0:
             print _(' Mandatory Packages:')
             for item in sorted(group.mandatory_packages):
