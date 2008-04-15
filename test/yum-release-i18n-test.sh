@@ -50,28 +50,28 @@ cmd()
   echo $beg_hdr
   echo "Doing: LANG=$lang yum --enablerepo=development $@"
   echo $end_hdr
-  LANG=$lang yum --enablerepo=development $@
+  LANG=$lang yum --enablerepo=development "$@"
 }
 scmd()
 {
   echo $beg_hdr
   echo "Doing: LANG=$lang $SUDO_CMD yum $@"
   echo $end_hdr
-  LANG=$lang $SUDO_CMD yum $@
+  LANG=$lang $SUDO_CMD yum "$@"
 }
 lcmd()
 {
   $LIVNA && echo $beg_hdr
   $LIVNA && echo "Doing: LANG=$lang yum --enablerepo=livna $@"
   $LIVNA && echo $end_hdr
-  $LIVNA && LANG=$lang yum --enablerepo=livna $@
+  $LIVNA && LANG=$lang yum --enablerepo=livna "$@"
 }
 lscmd()
 {
   $LIVNA && echo $beg_hdr
   $LIVNA && echo "Doing: LANG=$lang $SUDO_CMD yum --enablerepo=livna $@"
   $LIVNA && echo $end_hdr
-  $LIVNA && LANG=$lang $SUDO_CMD yum --enablerepo=livna $@
+  $LIVNA && LANG=$lang $SUDO_CMD yum --enablerepo=livna "$@"
 }
 
 tst()
