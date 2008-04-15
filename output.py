@@ -372,21 +372,22 @@ class YumOutput:
             print _(' Description: %s') % group.description.encode("UTF-8")
         if len(group.mandatory_packages) > 0:
             print _(' Mandatory Packages:')
-            for item in group.mandatory_packages:
+            for item in sorted(group.mandatory_packages):
                 print '   %s' % item
 
         if len(group.default_packages) > 0:
             print _(' Default Packages:')
-            for item in group.default_packages:
+            for item in sorted(group.default_packages):
                 print '   %s' % item
         
         if len(group.optional_packages) > 0:
             print _(' Optional Packages:')
-            for item in group.optional_packages:
+            for item in sorted(group.optional_packages):
                 print '   %s' % item
 
         if len(group.conditional_packages) > 0:
             print _(' Conditional Packages:')
+            # FIXME: Why is this different?
             for item, cond in group.conditional_packages.iteritems():
                 print '   %s' % (item,)
 
