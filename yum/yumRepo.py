@@ -965,7 +965,19 @@ class YumRepository(Repository, config.RepoConf):
             """ Check if two returns from _get_mdtype_data() are equal. """
             if ndata is None:
                 return False
-            return omdtype == nmdtype and odata.checksum == ndata.checksum
+            if omdtype != nmdtype:
+                return False
+            if odata.checksum != ndata.checksum:
+                return False
+            #  If we turn --unique-md-filenames on without chaning the data,
+            # then we'll get different filenames, but the same checksum.
+            #  Atm. just say they are different, to make sure we delete the
+            # old files.
+            orname = os.path.basename(odata.location[1])
+            nrname = os.path.basename(ndata.location[1])
+            if orname != nrname:
+                return False
+            return True
 
         all_mdtypes = self.retrieved.keys()
         if mdtypes is None:
