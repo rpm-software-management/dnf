@@ -761,14 +761,6 @@ class YumBase(depsolve.Depsolve):
     def runTransaction(self, cb):
         """takes an rpm callback object, performs the transaction"""
 
-        def _tup2str(x):
-            # Convert stuff like:
-            # ('installing package FOO needs XMB on the Y filesystem',
-            #  (9, '/', 131633152L))
-            if type(x) == type(tuple):
-                return x[0]
-            return x
-
         self.plugins.run('pretrans')
 
         errors = self.ts.run(cb.callback, '')
@@ -778,15 +770,11 @@ class YumBase(depsolve.Depsolve):
         if errors is None:
             pass
         elif len(errors) == 0:
-            errstring = _('Warning: errors occurred during transaction.')
-            raise Errors.YumBaseError, errstring
+            errstring = _('Warning: scriptlet or other non-fatal errors occurred during transaction.')
+            self.verbose_logger.debug(errstring)
         else:
-            errstring = '\n'.join(map(_tup2str, errors))
-            raise Errors.YumBaseError, errstring
+            raise Errors.YumBaseError, errors
                           
-            errstring = '\n'.join(map(_tup2str, errors))
-            raise Errors.YumBaseError, errstring
-
         if not self.conf.keepcache:
             self.cleanUsedHeadersPackages()
         
@@ -2772,14 +2760,13 @@ class YumBase(depsolve.Depsolve):
             probs = self.downloadPkgs(dlpkgs)
 
         except IndexError:
-            raise Errors.YumBaseError, _("Unable to find a suitable mirror.")
+            raise Errors.YumBaseError, [_("Unable to find a suitable mirror.")]
         if len(probs) > 0:
-            errstr = _("Errors were encountered while downloading packages.")
+            errstr = [_("Errors were encountered while downloading packages.")]
             for key in probs:
                 errors = misc.unique(probs[key])
                 for error in errors:
-                    msg = "%s: %s" % (key, error)
-                    errstr += '\n%s' % msg
+                    errstr.append("%s: %s" % (key, error))
 
             raise Errors.YumDownloadError, errstr
         return dlpkgs
