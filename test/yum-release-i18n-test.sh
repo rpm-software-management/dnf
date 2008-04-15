@@ -85,6 +85,22 @@ tst()
   cmd info afflib libselinux linux $PKG_BAD ¶
   cmd info afflib libselinux linux $PKG_BAD ¶ | cat
 
+  cmd grouplist
+  cmd grouplist | cat
+  # Games and Entertainment joy
+  lcmd grouplist
+  lcmd grouplist | cat
+
+  cmd groupinfo 'Games and Entertainment'
+  cmd groupinfo 'Games and Entertainment' | cat
+  cmd groupinfo 'ଖେଳ ଏବଂ ମନୋରଞ୍ଜନ'
+  cmd groupinfo 'ଖେଳ ଏବଂ ମନୋରଞ୍ଜନ' | cat
+  # Games and Entertainment joy
+  lcmd groupinfo 'Games and Entertainment'
+  lcmd groupinfo 'Games and Entertainment' | cat
+  lcmd groupinfo 'ଖେଳ ଏବଂ ମନୋରଞ୍ଜନ'
+  lcmd groupinfo 'ଖେଳ ଏବଂ ମନୋରଞ୍ଜନ' | cat
+
   $FULL_PKG_OUTPUT && cmd list
   $FULL_PKG_OUTPUT && cmd list | cat
   $FULL_PKG_OUTPUT && cmd info
