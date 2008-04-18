@@ -384,6 +384,9 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
         if not self.excludes.has_key(repo): 
             self.excludes[repo] = {}
 
+        if dataobj is None:
+            raise Errors.RepoError, "Tried to add None %s to %s" % (datatype, repo)
+
         if datatype == 'metadata':
             self.primarydb[repo] = dataobj
         elif datatype == 'filelists':
@@ -392,7 +395,7 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
             self.otherdb[repo] = dataobj
         else:
             # We can not handle this yet...
-            raise "Sorry sqlite does not support %s" % (datatype)
+            raise Errors.RepoError, "Sorry sqlite does not support %s in %s" % (datatype, repo)
     
         self.added[repo].append(datatype)
 
