@@ -154,7 +154,7 @@ class YumPackageSack(packageSack.PackageSack):
                 
                 db_un_fn = self._check_uncompressed_db(repo, mydbtype)
                 if not db_un_fn:
-                    db_fn = repo._retrieveMD(mydbtype, retrieve_can_fail=True)
+                    db_fn = repo._retrieveMD(mydbtype)
                     if db_fn:
                         db_un_fn = db_fn.replace('.bz2', '')
                         if not repo.cache:
