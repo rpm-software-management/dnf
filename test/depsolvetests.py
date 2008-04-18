@@ -872,3 +872,38 @@ class DepsolveTests(DepsolveTests):
         # self.assertResult((xpo, po3))
         # self.assertResult((xpo, po2))
         self.assertResult((xpo, po2, po3))
+
+    # Test from "Real Life" because we just can't think like they do
+    def testRL_unison1(self):
+        xpo = FakePackage('abcd', version='2', arch='i386')
+        xpo.addRequires('unison', None, (None, None, None))
+        self.tsInfo.addInstall(xpo)
+
+        po1 = FakePackage('unison213', version='2.13.16', release='9')
+        po1.addProvides('unison', 'EQ', ('0', '2.13.16', '9'))
+        po1.addObsoletes('unison', 'LT', ('0', '2.27.57', '3'))
+        self.xsack.addPackage(po1)
+        po2 = FakePackage('unison227', version='2.27.57', release='7')
+        po2.addProvides('unison', 'EQ', ('0', '2.27.57', '7'))
+        po2.addObsoletes('unison', 'LT', ('0', '2.27.57', '3'))
+        self.xsack.addPackage(po2)
+
+        self.assertEquals('ok', *self.resolveCode())
+        self.assertResult((xpo, po2))
+
+    def testRL_unison2(self):
+        xpo = FakePackage('abcd', version='2', arch='i386')
+        xpo.addRequires('unison', None, (None, None, None))
+        self.tsInfo.addInstall(xpo)
+
+        po1 = FakePackage('unison213', version='2.13.16', release='9')
+        po1.addProvides('unison', 'EQ', ('0', '2.13.16', '9'))
+        po1.addObsoletes('unison', 'LT', ('0', '2.27.57', '3'))
+        po2 = FakePackage('unison227', version='2.27.57', release='7')
+        po2.addProvides('unison', 'EQ', ('0', '2.27.57', '7'))
+        po2.addObsoletes('unison', 'LT', ('0', '2.27.57', '3'))
+        self.xsack.addPackage(po2)
+        self.xsack.addPackage(po1)
+
+        self.assertEquals('ok', *self.resolveCode())
+        self.assertResult((xpo, po2))
