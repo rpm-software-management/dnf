@@ -1075,7 +1075,8 @@ class YumBase(depsolve.Depsolve):
         remote_pkgs.sort(mediasort)
         #  This is kind of a hack and does nothing in non-Fedora versions,
         # we'll fix it one way or anther soon.
-        if hasattr(urlgrabber.progress, 'text_meter_total_size'):
+        if (hasattr(urlgrabber.progress, 'text_meter_total_size') and
+            len(remote_pkgs) > 1):
             urlgrabber.progress.text_meter_total_size(remote_size)
         i = 0
         for po in remote_pkgs:
