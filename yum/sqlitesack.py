@@ -37,8 +37,8 @@ def catchSqliteException(func):
     def newFunc(*args, **kwargs):
         try:
             return func(*args, **kwargs)
-        except sqlutils.sqlite.Error:
-            raise Errors.RepoError
+        except sqlutils.sqlite.Error, e:
+            raise Errors.RepoError, str(e.message)
 
     newFunc.__name__ = func.__name__
     newFunc.__doc__ = func.__doc__
@@ -129,9 +129,15 @@ class YumAvailablePackageSqlite(YumAvailablePackage, PackageObject, RpmBase):
         dbname = varname
         if db2simplemap.has_key(varname):
             dbname = db2simplemap[varname]
-        r = self._sql_MD('primary',
+        try:
+            r = self._sql_MD('primary',
                          "SELECT %s FROM packages WHERE pkgId = ?" % dbname,
                          (self.pkgId,)).fetchone()
+        except Errors.RepoError, e:
+            if str(e).startswith('no such column'):
+                #FIXME - after API break make this an AttributeError Raise
+                raise KeyError, str(e)
+            raise                         
         value = r[0]
         if varname in {'vendor' : 1, 'packager' : 1, 'buildhost' : 1,
                        'license' : 1, 'group' : 1,

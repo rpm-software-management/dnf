@@ -772,6 +772,8 @@ class YumHeaderPackage(YumAvailablePackage):
             raise Errors.MiscError, "Unknown header tag %s" % tag
 
     def __getattr__(self, thing):
+        #FIXME - if an error - return AttributeError, not KeyError 
+        # ONLY FIX THIS AFTER THE API BREAK
         return self.hdr[thing]
 
     def doepoch(self):
