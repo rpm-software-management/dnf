@@ -809,14 +809,14 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         if len(installed) > 0:
             self.verbose_logger.log(yum.logginglevels.INFO_2,
                 _('Installed Groups:'))
-            for group in installed:
+            for group in sorted(installed, key=lambda x: x.nameByLang(mylang)):
                 self.verbose_logger.log(yum.logginglevels.INFO_2, '   %s',
                     group.nameByLang(mylang))
         
         if len(available) > 0:
             self.verbose_logger.log(yum.logginglevels.INFO_2,
                 _('Available Groups:'))
-            for group in available:
+            for group in sorted(available, key=lambda x: x.nameByLang(mylang)):
                 self.verbose_logger.log(yum.logginglevels.INFO_2, '   %s',
                     group.nameByLang(mylang))
 
