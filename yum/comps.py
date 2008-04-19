@@ -24,6 +24,8 @@ from Errors import CompsException
 #FIXME - compsexception isn't caught ANYWHERE so it's pointless to raise it
 # switch all compsexceptions to grouperrors after api break
 
+from yum.misc import to_unicode
+
 lang_attr = '{http://www.w3.org/XML/1998/namespace}lang'
 
 def parse_boolean(strng):
@@ -91,16 +93,16 @@ class Group(object):
 
         for langcode in self._expand_languages(lang):
             if self.translated_name.has_key(langcode):
-                return self.translated_name[langcode]
+                return to_unicode(self.translated_name[langcode])
 
-        return self.name
+        return to_unicode(self.name)
 
 
     def descriptionByLang(self, lang):
         for langcode in self._expand_languages(lang):
             if self.translated_description.has_key(langcode):
-                return self.translated_description[langcode]
-        return self.description
+                return to_unicode(self.translated_description[langcode])
+        return to_unicode(self.description)
 
     def parse(self, elem):
         for child in elem:
