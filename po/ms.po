@@ -554,9 +554,8 @@ msgid "Description: "
 msgstr "Huraian"
 
 #: ../output.py:351
-#, fuzzy
 msgid "Is this ok [y/N]: "
-msgstr "Format imej ini"
+msgstr "Adakah ini ok [y/T]:"
 
 #: ../output.py:357 ../output.py:360
 msgid "y"
@@ -564,15 +563,15 @@ msgstr ""
 
 #: ../output.py:357
 msgid "n"
-msgstr ""
+msgstr "t"
 
 #: ../output.py:357 ../output.py:360
 msgid "yes"
-msgstr ""
+msgstr "ya"
 
 #: ../output.py:357
 msgid "no"
-msgstr ""
+msgstr "tidak"
 
 #: ../output.py:367
 #, fuzzy, python-format
