@@ -28,7 +28,7 @@ from packageSack import PackageSackBase
 import fnmatch
 import re
 
-from misc import to_unicode_maybe
+from misc import to_unicode
 
 class RPMInstalledPackage(YumInstalledPackage):
 
@@ -298,7 +298,7 @@ class RPMDBPackageSack(PackageSackBase):
         count = 0
         for s in searchstrings:
             for field in fields:
-                value = to_unicode_maybe(hdr[field])
+                value = to_unicode(hdr[field])
                 if value and value.lower().find(s) != -1:
                     count += 1
                     break
