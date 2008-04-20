@@ -70,9 +70,7 @@ n   %s
        n   is None)
         sys.exit(1)
     if (is_this_ok != yes or
-        is_this_ok != y or
-        is_this_ok != no or
-        is_this_ok != n):
+        is_this_ok != no):
         print >>sys.stderr, """\
 ERROR: yes/no translations don't match in: %s
 is_this_ok %5s: %s\
