@@ -24,6 +24,11 @@ PKG_BAD=pkg-no-exist-kthx-bai-OMGWTFBBQ
 # FIXME: need a more automated way to see if we are getting Unicode*Error
 RUN_FAILURES=true
 
+_yes=''
+if [ "x$1" = "x-y" ]; then
+  _yes='-y'
+fi
+
 beg_hdr="
 ==============================================================================="
 end_hdr="\
@@ -138,7 +143,7 @@ tst()
   ($LIVNA && $SUDO_CMD rpm -e gpg-pubkey-a109b1ec-3f6e28d5) || true
   #  This always fails, so we need to "look" if it does so with an encoding
   # problem or the real one
-  ($RUN_FAILURES && lscmd install $PKG_LIVNA) || true
+  ($RUN_FAILURES && lscmd install $_yes $PKG_LIVNA) || true
   $RUN_FAILURES && $LIVNA && sleep 1
   $LIVNA && $SUDO_CMD mv RPM-GPG-KEY-livna /etc/pki/rpm-gpg/
   lscmd install -y $PKG_LIVNA
