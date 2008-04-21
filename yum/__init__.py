@@ -1026,6 +1026,9 @@ class YumBase(depsolve.Depsolve):
             # could conceivably ping-pong between different disc1's
             a = a.getDiscNum()
             b = b.getDiscNum()
+            if a is None and b is None:
+                # Download smallest pkgs first
+                return a.size - b.size
             if a is None:
                 return -1
             if b is None:
