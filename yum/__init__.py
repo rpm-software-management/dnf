@@ -1021,14 +1021,14 @@ class YumBase(depsolve.Depsolve):
             
            
     def downloadPkgs(self, pkglist, callback=None):
-        def mediasort(a, b):
+        def mediasort(apo, bpo):
             # FIXME: we should probably also use the mediaid; else we
             # could conceivably ping-pong between different disc1's
-            a = a.getDiscNum()
-            b = b.getDiscNum()
+            a = apo.getDiscNum()
+            b = bpo.getDiscNum()
             if a is None and b is None:
                 # Download smallest pkgs first
-                return a.size - b.size
+                return apo.size - bpo.size
             if a is None:
                 return -1
             if b is None:
