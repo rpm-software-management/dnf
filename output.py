@@ -729,7 +729,7 @@ class YumCliRPMCallBack(RPMBaseCallback):
         
         # for a progress bar
         self.mark = "#"
-        self.marks = 27
+        self.marks = 22
         
         
     def event(self, package, action, te_current, te_total, ts_current, ts_total):
@@ -770,12 +770,18 @@ class YumCliRPMCallBack(RPMBaseCallback):
         marks = self.marks - (2 * l)
         width = "%s.%s" % (marks, marks)
         fmt_bar = "%-" + width + "s"
-        if progress:
+        pnl = str(28 + marks + 1)
+
+        if progress and percent == 100: # Don't chop pkg name on 100%
+            fmt = "\r  %-15.15s: %-" + pnl + '.' + pnl + "s " + done
+        elif progress:
             bar = fmt_bar % (self.mark * int(marks * (percent / 100.0)), )
-            fmt = "\r  %-10.10s: %-28.28s " + bar + " " + done
+            fmt = "\r  %-15.15s: %-28.28s " + bar + " " + done
+        elif percent == 100:
+            fmt = "  %-15.15s: %-" + pnl + '.' + pnl + "s " + done
         else:
             bar = fmt_bar % (self.mark * marks, )
-            fmt = "  %-10.10s: %-28.28s "  + bar + " " + done
+            fmt = "  %-15.15s: %-28.28s "  + bar + " " + done
         return fmt
 
 
@@ -798,6 +804,8 @@ def progressbar(current, total, name=None):
     hashbar = mark * numblocks
     if name is None:
         output = '\r%-50s %d/%d' % (hashbar, current, total)
+    elif current == total: # Don't chop name on 100%
+        output = '\r%-62.62s %d/%d' % (name, current, total)
     else:
         output = '\r%-10.10s: %-50s %d/%d' % (name, hashbar, current, total)
      
@@ -808,4 +816,43 @@ def progressbar(current, total, name=None):
         sys.stdout.write('\n')
 
     sys.stdout.flush()
+        
+
+if __name__ == "__main__":
+    if len(sys.argv) > 1 and sys.argv[1] == "progress":
+        print ""
+        print " Doing progress, small name"
+        print ""
+        for i in xrange(0, 101):
+            progressbar(i, 100, "abcd")
+            time.sleep(0.1)
+        print ""
+        print " Doing progress, big name"
+        print ""
+        for i in xrange(0, 101):
+            progressbar(i, 100, "_%s_" % ("123456789 " * 5))
+            time.sleep(0.1)
+        print ""
+        print " Doing progress, no name"
+        print ""
+        for i in xrange(0, 101):
+            progressbar(i, 100)
+            time.sleep(0.1)
+
+        cb = YumCliRPMCallBack()
+        cb.action["foo"] = "abcd"
+        cb.action["bar"] = "_12345678_.end"
+        print ""
+        print " Doing CB, small proc / small pkg"
+        print ""
+        for i in xrange(0, 101):
+            cb.event("spkg", "foo", i, 100, i, 100)
+            time.sleep(0.1)        
+        print ""
+        print " Doing CB, big proc / big pkg"
+        print ""
+        for i in xrange(0, 101):
+            cb.event("lpkg" + "-=" * 15 + ".end", "bar", i, 100, i, 100)
+            time.sleep(0.1)
+        print ""
         
