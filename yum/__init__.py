@@ -633,6 +633,10 @@ class YumBase(depsolve.Depsolve):
         self.pkgSack.dropCachedData()
         self.rpmdb.dropCachedData()
 
+        #  We _must_ get rid of all the used tses before we go on, so that C-c
+        # works for downloads / mirror failover etc.
+        self.rpmdb.ts = None
+
         # if depsolve failed and skipbroken is enabled
         # The remove the broken packages from the transactions and
         # Try another depsolve
@@ -2704,7 +2708,13 @@ class YumBase(depsolve.Depsolve):
             return 
             
         toremove = []
-        (cur_kernel_v, cur_kernel_r) = misc.get_running_kernel_version_release(self.ts)
+        #  We "probably" want to use either self.ts or self.rpmdb.ts if either
+        # is available. However each ts takes a ref. on signals generally, and
+        # SIGINT specifically, so we _must_ have got rid of all of the used tses
+        # before we try downloading. This is called from buildTransaction()
+        # so self.rpmdb.ts should be valid.
+        ts = self.rpmdb.readOnlyTS()
+        (cur_kernel_v, cur_kernel_r) = misc.get_running_kernel_version_release(ts)
         for instpkg in self.conf.installonlypkgs:
             for m in self.tsInfo.getMembers():
                 if (m.name == instpkg or instpkg in m.po.provides_names) \
