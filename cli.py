@@ -856,7 +856,7 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
                     pkgs_used.extend(txmbrs)
 
             if not group_matched:
-                self.logger.error(_('Warning: Group %s does not exist.'), group_strng)
+                self.logger.error(_('Warning: Group %s does not exist.'), group_string)
                 continue
             
         if not pkgs_used:
