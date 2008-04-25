@@ -300,7 +300,7 @@ class YumPlugins:
         confpp_obj = ConfigPreProcessor(conffilename)
         try:
             parser.readfp(confpp_obj)
-        except ParsingError, e:
+        except ConfigParser.ParsingError, e:
             raise Errors.ConfigError("Couldn't parse %s: %s" % (conffilename,
                 str(e)))
         return parser
