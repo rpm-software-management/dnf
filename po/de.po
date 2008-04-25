@@ -6,13 +6,14 @@ msgstr ""
 "Project-Id-Version: yum\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2008-04-15 04:37+0000\n"
-"PO-Revision-Date: 2008-04-15 12:23+0100\n"
+"PO-Revision-Date: 2008-04-20 12:13+0100\n"
 "Last-Translator: Fabian Affolter <fab@fedoraproject.org>\n"
 "Language-Team: German <fedora-trans-de@redhat.com>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Poedit-Language: German\n"
 
 #: ../callback.py:48
 #: ../output.py:516
@@ -93,7 +94,7 @@ msgstr "Befehl \"%s\" ist bereits definiert"
 
 #: ../cli.py:117
 msgid "Setting up repositories"
-msgstr "Repositories werden errichtet"
+msgstr "Repositories werden eingerichtet"
 
 #: ../cli.py:128
 msgid "Reading repository metadata in from local files"
@@ -176,11 +177,11 @@ msgstr "Verarbeitungstest beendet"
 
 #: ../cli.py:403
 msgid "Transaction Check Error:\n"
-msgstr "Verarbeitungs-Prüffehler:\n"
+msgstr "Prüffehler bei Verarbeitung:\n"
 
 #: ../cli.py:410
 msgid "Transaction Test Succeeded"
-msgstr "Transaktionstest erfolgreich"
+msgstr "Verarbeitungstest erfolgreich"
 
 #: ../cli.py:431
 msgid "Running Transaction"
@@ -236,7 +237,7 @@ msgstr "%d Pakete zur Aktualisierung markiert"
 
 #: ../cli.py:585
 msgid "No Packages marked for Update"
-msgstr "Keine Pakete für die Aktuslisierung angegeben"
+msgstr "Keine Pakete für die Aktualisierung angegeben"
 
 #: ../cli.py:601
 #, python-format
@@ -269,6 +270,7 @@ msgstr "Keine Übereinstimmungen gefunden"
 msgid "No Package Found for %s"
 msgstr "Kein Paket gefunden für %s"
 
+# Räume auf, säubere...weiss jemand eine Übersetzung, welche nicht an den Staubsauger erinnert. Fabian
 #: ../cli.py:760
 msgid "Cleaning up Everything"
 msgstr "Räume alles auf"
@@ -283,7 +285,7 @@ msgstr "Räume Pakete auf"
 
 #: ../cli.py:780
 msgid "Cleaning up xml metadata"
-msgstr "Räume XML Metadaten auf"
+msgstr "Räume XML-Metadaten auf"
 
 #: ../cli.py:783
 msgid "Cleaning up database cache"
@@ -323,7 +325,7 @@ msgstr "Keine Pakete in irgendeiner Gruppe verfügbar zum Installieren oder Aktu
 #: ../cli.py:858
 #, python-format
 msgid "%d Package(s) to Install"
-msgstr "%d Paket(e) zu Installieren"
+msgstr "%d Paket(e) zum Installieren"
 
 #: ../cli.py:868
 #, python-format
@@ -397,7 +399,7 @@ msgstr "Debugging-Ausgabe-Stufe"
 
 #: ../cli.py:1131
 msgid "show duplicates, in repos, in list/search commands"
-msgstr "Zeige Dublikate, in Repos, in Listen/Suchen-Befehlen"
+msgstr "Zeige Duplikate, in Repos, in Listen/Suchen-Befehlen"
 
 #: ../cli.py:1133
 msgid "error output level"
@@ -405,11 +407,11 @@ msgstr "Fehler-Ausgabe-Stufe"
 
 #: ../cli.py:1136
 msgid "quiet operation"
-msgstr "Stiller Arbeitsgang"
+msgstr "Stiller Betrieb"
 
 #: ../cli.py:1138
 msgid "verbose operation"
-msgstr "Stiller Arbeitsvorgang"
+msgstr "Wortreicher Betrieb"
 
 #: ../cli.py:1140
 msgid "answer yes for all questions"
@@ -571,7 +573,7 @@ msgstr "Beschreibung:"
 
 #: ../output.py:352
 msgid "Is this ok [y/N]: "
-msgstr "Ist dies richtig? [j/N] :"
+msgstr "Ist dies in Ordnung? [j/N] :"
 
 #: ../output.py:360
 #: ../output.py:363
@@ -713,7 +715,7 @@ msgstr ""
 "=============================================================================\n"
 "Installieren      %5.5s Pakete(e)         \n"
 "Aktualisieren   %5.5s Pakete(e)         \n"
-"Enfernen         %5.5s Paket(e)         \n"
+"Enfernen           %5.5s Paket(e)         \n"
 
 #: ../output.py:558
 msgid "Removed"
@@ -794,16 +796,16 @@ msgstr "--> Nicht aufgelöste Abhängigkeit: %s"
 #: ../output.py:683
 #, python-format
 msgid "--> Processing Conflict: %s conflicts %s"
-msgstr "--> Verabeite Konflikt: %s kollidiert mit %s"
+msgstr "--> Verarbeite Konflikt: %s kollidiert mit %s"
 
 #: ../output.py:686
 msgid "--> Populating transaction set with selected packages. Please wait."
-msgstr "--> Fülle Transaktionsset mit ausgewählten Paketen. Bitte warten."
+msgstr "--> Fülle Verarbeitungsset mit ausgewählten Paketen. Bitte warten."
 
 #: ../output.py:690
 #, python-format
 msgid "---> Downloading header for %s to pack into transaction set."
-msgstr "---> Lade Header für %s herunter um ins Transaktionsset zu packen."
+msgstr "---> Lade Header für %s herunter, um ins Verarbeitungsset zu packen."
 
 #: ../yumcommands.py:37
 msgid "You need to be root to perform this command."
@@ -834,10 +836,10 @@ msgstr ""
 "\n"
 "\n"
 "Alternativ könnten Sie den URL zum Schlüssel, welcher Sie benutzen wollen\n"
-"für ein Repository, durch die 'gpgkey'-Option in einem Repository-Bereich angeben und yum \n"
-"wird ihn für Sie installieren.\n"
+"für ein Repository, durch die 'gpgkey'-Option in einem Repository-Bereich\n"
+"angeben und yum wird ihn für Sie installieren.\n"
 "\n"
-"Für weitere Informationen kontaktieren Sie Ihren Distribution oder Paket-Bereitsteller.\n"
+"Für weitere Informationen kontaktieren Sie Ihre Distribution oder Ihren Paket-Bereitsteller.\n"
 
 #: ../yumcommands.py:64
 #, python-format
@@ -882,7 +884,7 @@ msgstr "Fehler: mehr als eine Datei als Argument an die Shell übergeben."
 
 #: ../yumcommands.py:157
 msgid "PACKAGE..."
-msgstr "PAKET ..."
+msgstr "PAKET..."
 
 #: ../yumcommands.py:160
 msgid "Install a package or packages on your system"
@@ -894,7 +896,7 @@ msgstr "Einrichten des Installationsprozess"
 
 #: ../yumcommands.py:180
 msgid "[PACKAGE...]"
-msgstr "[PAKET ...]"
+msgstr "[PAKET...]"
 
 #: ../yumcommands.py:183
 msgid "Update a package or packages on your system"
@@ -955,7 +957,7 @@ msgstr "Einrichten des Gruppenprozess"
 
 #: ../yumcommands.py:287
 msgid "No Groups on which to run command"
-msgstr "Keine Gruppe, auf welcher der Befehl augeführt werden kann"
+msgstr "Keine Gruppe, auf welcher der Befehl ausgeführt werden kann"
 
 #: ../yumcommands.py:300
 msgid "List available package groups"
@@ -995,7 +997,7 @@ msgstr "Entferne gespeicherte Daten"
 
 #: ../yumcommands.py:450
 msgid "Find what package provides the given value"
-msgstr "Suche welche Pakete den gegebenen Wert bereitstellen"
+msgstr "Suche welches Paket den gegebenen Wert bereitstellen"
 
 #: ../yumcommands.py:470
 msgid "Check for available package updates"
@@ -1003,7 +1005,7 @@ msgstr "Überprüfe auf verfügbare Paket-Aktualisierungen"
 
 #: ../yumcommands.py:493
 msgid "Search package details for the given string"
-msgstr "Suche nach Paket-Details nach den gegebenen String"
+msgstr "Suche nach Paket-Details nach der gegebenen Zeichenkette"
 
 #: ../yumcommands.py:499
 msgid "Searching Packages: "
@@ -1011,7 +1013,7 @@ msgstr "Suche Pakete:"
 
 #: ../yumcommands.py:516
 msgid "Update packages taking obsoletes into account"
-msgstr "Aktualisierte Pakete berücksichtigen veraltete"
+msgstr "Aktualisiere Pakete, berücksichtige veraltete"
 
 #: ../yumcommands.py:525
 msgid "Setting up Upgrade Process"
@@ -1144,7 +1146,7 @@ msgstr ""
 
 #: ../yummain.py:110
 msgid "Another app is currently holding the yum lock; waiting for it to exit..."
-msgstr "Eine andere Anwendung hält momentan den Yum-Lock. Warte dass sie endet wird ..."
+msgstr "Eine andere Anwendung hält momentan den Yum-Lock. Warte, dass sie endet wird..."
 
 #: ../yummain.py:137
 #: ../yummain.py:176
@@ -1183,11 +1185,11 @@ msgid ""
 msgstr ""
 "\n"
 "\n"
-"Verlasse nach Benutzer-Anforderung"
+"Verlasse nach Benutzer-Anforderung."
 
 #: ../yum/depsolve.py:83
 msgid "doTsSetup() will go away in a future version of Yum.\n"
-msgstr "doTsSetup() wird in zukünfigen Version von Yum verschwinden.\n"
+msgstr "doTsSetup() wird in zukünftigen Version von Yum verschwinden.\n"
 
 #: ../yum/depsolve.py:96
 msgid "Setting up TransactionSets before config class is up"
@@ -1356,7 +1358,7 @@ msgstr "Prüfe Abhängigkeiten für %s"
 #: ../yum/depsolve.py:773
 #, python-format
 msgid "looking for %s as a requirement of %s"
-msgstr "schauen nach %s als eien Anforderung von %s"
+msgstr "schauen nach %s als eine Anforderung von %s"
 
 #: ../yum/depsolve.py:911
 #, python-format
@@ -1401,7 +1403,7 @@ msgstr "Beste Bestellung: %s"
 
 #: ../yum/__init__.py:127
 msgid "doConfigSetup() will go away in a future version of Yum.\n"
-msgstr "doConfigSetup() wird verschwinden in zukünfigen Version von Yum.\n"
+msgstr "doConfigSetup() wird verschwinden in zukünftigen Version von Yum.\n"
 
 #: ../yum/__init__.py:301
 #, python-format
@@ -1414,7 +1416,7 @@ msgstr "Plugins bereits initialisiert"
 
 #: ../yum/__init__.py:344
 msgid "doRpmDBSetup() will go away in a future version of Yum.\n"
-msgstr "doRpmDBSetup() wird verschwinden in zukünfigen Version von Yum.\n"
+msgstr "doRpmDBSetup() wird verschwinden in zukünftigen Version von Yum.\n"
 
 #: ../yum/__init__.py:354
 msgid "Reading Local RPMDB"
@@ -1422,11 +1424,11 @@ msgstr "Lese lokale RPMDB"
 
 #: ../yum/__init__.py:372
 msgid "doRepoSetup() will go away in a future version of Yum.\n"
-msgstr "doRepoSetup() wird verschwinden in zukünfigen Version von Yum.\n"
+msgstr "doRepoSetup() wird verschwinden in zukünftigen Version von Yum.\n"
 
 #: ../yum/__init__.py:392
 msgid "doSackSetup() will go away in a future version of Yum.\n"
-msgstr "doSackSetup() wird verschwinden in zukünfigen Version von Yum.\n"
+msgstr "doSackSetup() wird verschwinden in zukünftigen Version von Yum.\n"
 
 #: ../yum/__init__.py:409
 msgid "Setting up Package Sacks"
@@ -1443,7 +1445,7 @@ msgstr "deshlab dieses Repository kann nicht zurückgesetzt werden.\n"
 
 #: ../yum/__init__.py:458
 msgid "doUpdateSetup() will go away in a future version of Yum.\n"
-msgstr "doUpdateSetup() wird verschwinden in zukünfigen Version von Yum.\n"
+msgstr "doUpdateSetup() wird verschwinden in zukünftigen Version von Yum.\n"
 
 #: ../yum/__init__.py:470
 msgid "Building updates object"
@@ -1451,7 +1453,7 @@ msgstr "Baue Aktualisierungsobjekt"
 
 #: ../yum/__init__.py:501
 msgid "doGroupSetup() will go away in a future version of Yum.\n"
-msgstr "doGroupSetup() wird verschwinden in zukünfigen Version von Yum.\n"
+msgstr "doGroupSetup() wird verschwinden in zukünftigen Version von Yum.\n"
 
 #: ../yum/__init__.py:525
 msgid "Getting group metadata"
@@ -1500,17 +1502,17 @@ msgstr "    %s von %s"
 
 #: ../yum/__init__.py:781
 msgid "Warning: errors occurred during transaction."
-msgstr "Warnung: Es sind Fehler bei der Transaktion aufgetreten."
+msgstr "Warnung: Es sind Fehler bei der Vererbeitung aufgetreten."
 
 #: ../yum/__init__.py:800
 #, python-format
 msgid "Failed to remove transaction file %s"
-msgstr "Entfernen Transaktionsdatei %s fehlgeschlagen"
+msgstr "Entfernen der Verarbeitungsdatei %s fehlgeschlagen"
 
 #: ../yum/__init__.py:840
 #, python-format
 msgid "excluding for cost: %s from %s"
-msgstr "Aussschluss für Kosten: %s from %s"
+msgstr "Ausschluss für Kosten: %s from %s"
 
 #: ../yum/__init__.py:871
 msgid "Excluding Packages in global exclude list"
@@ -1538,7 +1540,7 @@ msgstr "Entferne nicht übereinstimmendes Paket %s"
 
 #: ../yum/__init__.py:915
 msgid "Finished"
-msgstr "Fertig"
+msgstr "Abgeschlossen"
 
 #. Whoa. What the heck happened?
 #: ../yum/__init__.py:945
@@ -1554,11 +1556,11 @@ msgstr "Existierende Blockierung %s: eine andere Kopie läuft mit PID %s."
 
 #: ../yum/__init__.py:1012
 msgid "Package does not match intended download"
-msgstr "Paket stimmt nicht mit dem vorgesehenden Download überein."
+msgstr "Paket stimmt nicht mit dem vorgesehenen Herunterladen überein."
 
 #: ../yum/__init__.py:1027
 msgid "Could not perform checksum"
-msgstr "Konnte Prüfsumme nicht ausgeführen"
+msgstr "Konnte Prüfsumme nicht ausführen"
 
 #: ../yum/__init__.py:1030
 msgid "Package does not match checksum"
@@ -1567,7 +1569,7 @@ msgstr "Paket stimmt nicht mit der Prüfsumme überein"
 #: ../yum/__init__.py:1071
 #, python-format
 msgid "package fails checksum but caching is enabled for %s"
-msgstr "Paket bei Checksumme-Prüfung durgefallen, aber Zwischenspeicherung ist aktiviert für %s"
+msgstr "Paket bei Checksumme-Prüfung durchgefallen, aber Zwischenspeicherung ist aktiviert für %s"
 
 #: ../yum/__init__.py:1074
 #, python-format
@@ -1601,7 +1603,7 @@ msgstr "Problem beim Öffnen des Paketes %s"
 #: ../yum/__init__.py:1238
 #, python-format
 msgid "Public key for %s is not trusted"
-msgstr "Öffentlicher Schlüsse für %s ist nicht vertrauenswürdig"
+msgstr "Öffentlicher Schlüssel für %s ist nicht vertrauenswürdig"
 
 #: ../yum/__init__.py:1242
 #, python-format
@@ -1641,11 +1643,11 @@ msgstr "Mehr als eine identische Übereinstimmung im Behälter für %s"
 #: ../yum/__init__.py:1386
 #, python-format
 msgid "Nothing matches %s.%s %s:%s-%s from update"
-msgstr "Keien Übereinstimmungen  %s.%s %s:%s-%s mit der Aktualisierung"
+msgstr "Keine Übereinstimmungen  %s.%s %s:%s-%s mit der Aktualisierung"
 
 #: ../yum/__init__.py:1584
 msgid "searchPackages() will go away in a future version of Yum.                      Use searchGenerator() instead. \n"
-msgstr "searchPackages() wird verschwinden in zukünfigen Version von Yum.                      Benutze stattdessen searchGenerator(). \n"
+msgstr "searchPackages() wird verschwinden in zukünftigen Version von Yum.                      Benutze stattdessen searchGenerator(). \n"
 
 #: ../yum/__init__.py:1621
 #, python-format
@@ -1663,7 +1665,7 @@ msgstr "Suche in Datei-Einträgen"
 
 #: ../yum/__init__.py:1644
 msgid "searching in provides entries"
-msgstr "suche in bereitgestellen Einträgen"
+msgstr "suche in bereitgestellten Einträgen"
 
 #: ../yum/__init__.py:1674
 #, python-format
@@ -1699,12 +1701,12 @@ msgstr "Kein Paket mit Namen %s verfügbar zum Installieren"
 #: ../yum/__init__.py:1890
 #, python-format
 msgid "Package tuple %s could not be found in packagesack"
-msgstr "Paket-Tubel %s kann nicht gefunden werden im Paket-Behälter"
+msgstr "Paket-Tupel %s kann nicht gefunden werden im Paket-Behälter"
 
 #: ../yum/__init__.py:1958
 #: ../yum/__init__.py:2001
 msgid "Invalid versioned dependency string, try quoting it."
-msgstr "Ungültig versionierter Abhängigkeitsstring, versuche es zu notieren."
+msgstr "Ungültig versionierte Abhängigkeitszeichenkette, versuche es zu notieren."
 
 #: ../yum/__init__.py:1960
 #: ../yum/__init__.py:2003
