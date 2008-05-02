@@ -6,6 +6,14 @@
 import sys
 import glob
 
+def trans(msg, default):
+    if msg == 'msgstr ""\n':
+        return unicode(default, encoding='utf-8')
+    if msg.startswith('msgstr "'):
+        msg = msg[len('msgstr "'):]
+        msg = msg[:-2]
+    return unicode(msg, encoding='utf-8')
+
 for fname in glob.glob("po/*.po"):
     next = None
     is_this_ok  = None
@@ -69,14 +77,32 @@ n   %s
        no  is None,
        n   is None)
         sys.exit(1)
+    syes = trans(syes, "yes")
+    sy   = trans(sy,   "y")
+    sno  = trans(sno,  "no")
+    sn   = trans(sn,   "n")
     if (is_this_ok != yes or
         is_this_ok != no):
         print >>sys.stderr, """\
 ERROR: yes/no translations don't match in: %s
-is_this_ok %5s: %s\
-yes        %5s: %s\
-y          %5s: %s\
-no         %5s: %s\
-n          %5s: %s\
+is_this_ok %5s: %s
+yes        %5s: %s
+y          %5s: %s
+no         %5s: %s
+n          %5s: %s
 """ % (fname,
        is_this_ok, sis_this_ok, yes, syes, y, sy, no, sno, n, sn)
+    if syes[0] != sy:
+        print >>sys.stderr, """\
+ERROR: yes/y translations don't match in: %s
+yes        %5s: %s
+y          %5s: %s
+""" % (fname,
+       yes, syes, y, sy)
+    if sno[0] != sn:
+        print >>sys.stderr, """\
+ERROR: no/n translations don't match in: %s
+no         %5s: %s
+n          %5s: %s
+""" % (fname,
+       no, sno, n, sn)
