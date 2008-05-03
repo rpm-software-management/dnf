@@ -536,6 +536,13 @@ def to_unicode(obj, encoding='utf-8', errors='replace'):
             obj = unicode(obj, encoding, errors)
     return obj
 
+def to_utf8(obj, errors='replace'):
+    '''convert 'unicode' to an encoded utf-8 byte string '''
+    if isinstance(obj, unicode):
+        obj = obj.encode('utf-8', errors)
+    return obj
+
+# Don't use this, to_unicode should just work now
 def to_unicode_maybe(obj, encoding='utf-8', errors='replace'):
     ''' Don't ask don't tell, only use when you must '''
     try:

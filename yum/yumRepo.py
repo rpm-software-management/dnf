@@ -626,8 +626,8 @@ class YumRepository(Repository, config.RepoConf):
             remote = url + '/' + relative
 
             try:
-                result = ug.urlgrab(remote, local,
-                                    text=text,
+                result = ug.urlgrab(misc.to_utf8(remote), local,
+                                    text=misc.to_utf8(text),
                                     range=(start, end),
                                     )
             except URLGrabError, e:
@@ -640,8 +640,8 @@ class YumRepository(Repository, config.RepoConf):
 
         else:
             try:
-                result = self.grab.urlgrab(relative, local,
-                                           text = text,
+                result = self.grab.urlgrab(misc.to_utf8(relative), local,
+                                           text = misc.to_utf8(text),
                                            range = (start, end),
                                            copy_local=copy_local,
                                            reget = reget,
