@@ -23,7 +23,8 @@ iterparse = cElementTree.iterparse
 from Errors import CompsException
 #FIXME - compsexception isn't caught ANYWHERE so it's pointless to raise it
 # switch all compsexceptions to grouperrors after api break
-
+import fnmatch
+import re
 from yum.misc import to_unicode
 
 lang_attr = '{http://www.w3.org/XML/1998/namespace}lang'
@@ -394,31 +395,31 @@ class Comps(object):
         return False
     
     def return_group(self, grpid):
-        if self._groups.has_key(grpid):
-            return self._groups[grpid]
-        
-        # do matches against group names and ids, too
-        for group in self.groups:
-            names = [ group.name, group.groupid ]
-            names.extend(group.translated_name.values())
-            if grpid in names:
-                return group
+        """Return the first group which matches"""
+        grps = self.return_groups(grpid)
+        if grps:
+            return grps[0]
 
-        
         return None
 
-    def return_groups(self, grpid):
+    def return_groups(self, group_pattern):
+        """return all groups which match either by glob or exact match"""
         returns = {}
-        if self._groups.has_key(grpid):
-            thisgroup = self._groups[grpid]
-            returns[thisgroup.groupid] = thisgroup
-        
-        # do matches against group names and ids, too
-        for group in self.groups:
-            names = [ group.name, group.groupid ]
-            names.extend(group.translated_name.values())
-            if grpid in names:
-                returns[group.groupid] = group
+
+        for item in group_pattern.split(','):
+            item = item.strip()
+            if self._groups.has_key(item):
+                thisgroup = self._groups[item]
+                returns[thisgroup.groupid] = thisgroup
+                continue
+                            
+            match = re.compile(fnmatch.translate(item)).match
+            for group in self.groups:
+                names = [ group.name, group.groupid ]
+                names.extend(group.translated_name.values())
+                for name in names:                
+                    if match(name):
+                        returns[group.groupid] = group
 
         return returns.values()
 
