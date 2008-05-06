@@ -32,6 +32,9 @@ import logging.config
 import operator
 import gzip
 
+import yum.i18n
+_ = yum.i18n._
+
 try:
     from iniparse.compat import ParsingError, ConfigParser
 except ImportError:
@@ -63,7 +66,6 @@ warnings.simplefilter("ignore", Errors.YumFutureDeprecationWarning)
 from packages import parsePackages, YumAvailablePackage, YumLocalPackage, YumInstalledPackage
 from constants import *
 from yum.rpmtrans import RPMTransaction,SimpleCliCallBack
-import yum.i18n
 from misc import to_unicode
 
 import string
@@ -163,9 +165,9 @@ class YumBase(depsolve.Depsolve):
 
         startupconf = config.readStartupConfig(fn, root)
         if startupconf.gaftonmode:
-            import __builtin__
-            __builtin__.__dict__['_'] = i18n.dummy_wrapper
-        
+            global _
+            _ = yum.i18n.dummy_wrapper
+
         if debuglevel != None:
             startupconf.debuglevel = debuglevel
         if errorlevel != None:

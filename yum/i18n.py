@@ -26,12 +26,11 @@ try:
     using ugettext to make sure translated strings are in Unicode.
     '''
     import gettext
-    t = gettext.translation('yum')
-    t.install(unicode=True)
+    t = gettext.translation('yum', fallback=True)
+    _ = t.ugettext
 except:
     '''
     Something went wrong so we make a dummy _() wrapper there is just
     returning the same text
     '''
-    import __builtin__
-    __builtin__.__dict__['_'] = dummy_wrapper
+    _ = dummy_wrapper

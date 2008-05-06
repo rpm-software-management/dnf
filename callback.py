@@ -22,9 +22,9 @@ import rpm
 import os
 import sys
 import logging
+from yum import _
 from yum.constants import *
 
-import yum.i18n
 
 class RPMInstallCallback:
 

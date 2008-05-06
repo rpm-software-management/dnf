@@ -35,10 +35,11 @@ from constants import *
 import packages
 import logginglevels
 import Errors
-import i18n
 import warnings
 warnings.simplefilter("ignore", Errors.YumFutureDeprecationWarning)
 from operator import itemgetter
+
+from yum import _
 
 try:
     assert max(2, 4) == 4

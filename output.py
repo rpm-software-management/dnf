@@ -23,7 +23,6 @@ import logging
 import types
 import gettext
 import rpm
-import yum.i18n
 
 import re # For YumTerm
 
@@ -33,7 +32,7 @@ from yum.misc import sortPkgObj, prco_tuple_to_string, to_str, to_unicode_maybe,
 from rpmUtils.miscutils import checkSignals
 from yum.constants import *
 
-from yum import logginglevels
+from yum import logginglevels, _
 from yum.rpmtrans import RPMBaseCallback
 
 from textwrap import fill

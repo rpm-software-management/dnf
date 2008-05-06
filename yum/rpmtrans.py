@@ -24,7 +24,7 @@ import logging
 import types
 import sys
 from yum.constants import *
-import i18n
+from yum import _
 
 
 class NoOutputCallBack:

@@ -40,7 +40,7 @@ import rpmUtils.arch
 from rpmUtils.arch import isMultiLibArch
 import rpmUtils.miscutils
 from yum.packages import parsePackages, YumLocalPackage
-import yum.i18n
+from yum import _
 from yum.rpmtrans import RPMTransaction
 import signal
 import yumcommands

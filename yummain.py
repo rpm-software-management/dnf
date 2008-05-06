@@ -27,7 +27,7 @@ import time # test purposes only
 from yum import Errors
 from yum import plugins
 from yum import logginglevels
-import yum.i18n
+from yum import _
 import cli
 
 

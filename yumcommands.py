@@ -22,9 +22,8 @@ Classes for subcommands of the yum command line interface.
 import os
 import cli
 from yum import logginglevels
+from yum import _
 import yum.Errors
-import yum.i18n
-
 import operator
 
 def checkRootUID(base):

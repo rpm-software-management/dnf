@@ -31,11 +31,11 @@ import Errors
 from parser import ConfigPreProcessor
 
 from textwrap import fill
-import i18n
-
 import fnmatch
 
 from weakref import proxy as weakref
+
+from yum import _
 
 # TODO: expose rpm package sack objects to plugins (once finished)
 # TODO: allow plugins to use the existing config stuff to define options for
