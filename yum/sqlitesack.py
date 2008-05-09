@@ -60,6 +60,10 @@ class YumAvailablePackageSqlite(YumAvailablePackage, PackageObject, RpmBase):
         self.state = None
         self._loadedfiles = False
         self._read_db_obj(db_obj)
+        # for stupid metadata created without epochs listed in the version tag
+        # die die
+        if self.epoch is None:
+            self.epoch = '0'
         self.id = self.pkgId
         self.ver = self.version 
         self.rel = self.release 
@@ -139,6 +143,8 @@ class YumAvailablePackageSqlite(YumAvailablePackage, PackageObject, RpmBase):
                 raise KeyError, str(e)
             raise                         
         value = r[0]
+        if varname == 'epoch' and value is None:
+            value = '0'
         if varname in {'vendor' : 1, 'packager' : 1, 'buildhost' : 1,
                        'license' : 1, 'group' : 1,
                        'summary' : 1, 'description' : 1, 'sourcerpm' : 1,
