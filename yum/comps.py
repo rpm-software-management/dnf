@@ -224,7 +224,7 @@ class Group(object):
                                   str(self.user_visible), self.display_order)
    
         if self.langonly:
-            msg += """   <lang_only>%s</lang_only>""" % self.langonly
+            msg += """   <langonly>%s</langonly>""" % self.langonly
             
         msg +="""   <name>%s</name>\n""" % self.name
         for (lang, val) in self.translated_name.items():
@@ -242,7 +242,7 @@ class Group(object):
         for pkg in self.optional_packages.keys():
             msg += """      <packagereq type="optional">%s</packagereq>\n""" % pkg
         for (pkg, req) in self.conditional_packages.items():
-            msg += """      <packagereq type="conditional" requires="%s">%s</packagereq>\n""" % (pkg, req)
+            msg += """      <packagereq type="conditional" requires="%s">%s</packagereq>\n""" % (req, pkg)
         msg += """    </packagelist>\n"""
         msg += """  </group>"""
 
