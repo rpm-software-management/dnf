@@ -662,8 +662,12 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
 
         result = { }
 
-        # Requires is the biggest hit, pre-loading provides actually hurts
-        if prcotype != 'requires':
+        #  Requires is the biggest hit, pre-loading provides actually hurts
+        #  NOTE: Disabling atm. ... small install/updates get a significant hit.
+        # And even large updates take a hit with the memoize path, maybe we
+        # fixed something with later change? ... maybe I was on crack?
+        #  Speed seems to depend on _search_cache.
+        if True: # prcotype != 'requires':
             primarydb_items = self.primarydb.items()
             preload = False
         else:
