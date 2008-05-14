@@ -1,3 +1,417 @@
+2008-05-14  Seth Vidal <skvidal@fedoraproject.org>
+
+	* yum.spec, yum/__init__.py: mark as 3.2.15
+
+2008-05-14  James Antill <james@and.org>
+
+	* yum/__init__.py: Add : to allowed chars in repo ids ... for SuSE
+
+2008-05-14  James Antill <james@and.org>
+
+	* yum/sqlitesack.py:  Undo memoize/re-load for requires as it seems to only be hurting us
+	 now and in the 20% range for Fed-8 => Fed-9 :(.
+
+2008-05-14  Seth Vidal <skvidal@fedoraproject.org>
+
+	* yum/__init__.py: fix the error message so it talks about the right
+	repo field
+
+2008-05-14  Seth Vidal <skvidal@fedoraproject.org>
+
+	* yum/sqlitesack.py: make sure we're not searching files when it is
+	a globbed requires, obsoletes or conflict.
+
+2008-05-14  James Antill <james@and.org>
+
+	* yum/yumRepo.py:  Kind of fix yum behind password protected AP, aka. bug#446248 etc.
+	 Don't spam screen with html.    Don't die on unicode() (hopefully
+	 :).   No "you might be behind a protected AP" text though ... do we
+	 need it?
+
+2008-05-13  James Antill <james@and.org>
+
+	* yum/comps.py:  Fix comps XML production to match expected input, bug#446186  Patch
+	 by: morioka@at.wakwak.com
+
+2008-05-09  Seth Vidal <skvidal@fedoraproject.org>
+
+	* yum/sqlitesack.py: 'fixes' for invalid metadata made with
+	createrepo -n - this harkens back to rhl 9 and stupidity with epochs
+
+
+2008-05-06  Luke Macken <lmacken@redhat.com>
+
+	* callback.py, cli.py, output.py, utils.py, yum/__init__.py,
+	yum/depsolve.py, yum/i18n.py, yum/plugins.py, yum/rpmtrans.py,
+	yumcommands.py, yummain.py: Make yum.i18n less intrusive.  Instead
+	of altering the global __builtin__ namespace, which can potentially
+	break applications that import yum as a module, make
+	internationalization within yum as easy as doing `from yum import
+	_`.  This change also ensures that the yum.i18n.dummy_wrapper can
+	still be used in 'gaftonmode' to bypass gettext completely.
+
+2008-05-04  Seth Vidal <skvidal@fedoraproject.org>
+
+	* yum/comps.py: make groups returning support wildcards and commas -
+	just like repos do.
+
+2008-05-03  James Antill <james@and.org>
+
+	* yum/misc.py, yum/yumRepo.py:  Fix non-ascii package names to urlgrabber: bug#261961   Patch from:
+	 a.badger@gmail.com  This new patch creates a to_utf8() method like
+	 to_unicode() that only converts if the object passed to it is
+	 unicode.  Using it in _get_file() does the right thing whether we
+	 are handing in a unicode or YumRepository.
+
+2008-05-02  James Antill <james@and.org>
+
+	* test/check-po-yes-no.py: Add checks related to not allowing
+	bug#44941 again
+
+2008-04-25  Seth Vidal <skvidal@fedoraproject.org>
+
+	* yum/plugins.py: fix for rh-bug 444118
+
+2008-04-25  Tim Lauridsen <timlau@fedoraproject.org>
+
+	* po/de.po: Updated de translation by Fabian Affolter
+
+2008-04-24  James Antill <james@and.org>
+
+	* cli.py: Typo, bug#444022
+
+2008-04-24  James Antill <james@and.org>
+
+	* po/fr.po: New fr upload from johan@x-tnd.be / bug#436194 ...
+	mostly comment changes
+
+2008-04-23  James Antill <james@and.org>
+
+	* yum/__init__.py: Fix C-c again, bug#442232 and probably
+	rhbz#240138
+
+2008-04-22  James Antill <james@and.org>
+
+	* yum/__init__.py: Grr ... fix stupido
+
+2008-04-22  James Antill <james@and.org>
+
+	* output.py:  Fix translated process name chopping, for another 5 chars, fixes
+	 bug#442935.  Don't chop pkg names on 100%, ala. downloads.  Don't
+	 chop name in progressbar, ala. downloads.  Add tester "output.py
+	 progress"
+
+2008-04-21  James Antill <james@and.org>
+
+	* yum/__init__.py: Download pkgs smallest to largest, to get full
+	pkg downloads sooner
+
+2008-04-20  James Antill <james@and.org>
+
+	* test/check-po-yes-no.py: Just compare yes/no so we don't fail on
+	ms where y=y for first letter of ya
+
+2008-04-20  James Antill <james@and.org>
+
+	* po/ms.po: Fix i18n yes/no problem in ms
+
+2008-04-19  James Antill <james@and.org>
+
+	* test/yum-release-i18n-test.sh: Add -y arg, for full automation
+
+2008-04-19  James Antill <james@and.org>
+
+	* yum/rpmsack.py: Use just to_unicode(), tested i18n ... it was just
+	errors we need
+
+2008-04-19  James Antill <james@and.org>
+
+	* yum/misc.py: Use replace by default, there is no reason we want
+	more tracebacks
+
+2008-04-19  James Antill <james@and.org>
+
+	* cli.py: Sort grouplist
+
+2008-04-19  James Antill <james@and.org>
+
+	* yum/comps.py: Fix grouplist for fr_FR etc.
+
+2008-04-18  James Antill <james@and.org>
+
+	* yum/yumRepo.py: Die if we fail to download, leads to adding None
+	dobj anyway
+
+2008-04-18  James Antill <james@and.org>
+
+	* yum/sqlitesack.py: Complain loudly if we try and add None,
+	bug#442819 among others
+
+2008-04-18  James Antill <james@and.org>
+
+	* yum/__init__.py: Don't do total size if we only have one thing to
+	download
+
+2008-04-18  James Antill <james@and.org>
+
+	Merge branch 'master' of
+	ssh://login.linux.duke.edu/home/groups/yum/git/yum  * 'master' of
+	ssh://login.linux.duke.edu/home/groups/yum/git/yum:   make errors
+	raised for available and installed packages having incorrect
+	attributes be the same   Updated de translation by Fabian Affolter
+
+2008-04-18  Seth Vidal <skvidal@fedoraproject.org>
+
+	* yum/packages.py, yum/sqlitesack.py: make errors raised for
+	available and installed packages having incorrect attributes be the
+	same mark as a FIXME to make this an attribute error after we break
+	the api in the next major version change
+
+2008-04-17  James Antill <james@and.org>
+
+	* test/depsolvetests.py: Add unison test case
+
+2008-04-17  Tim Lauridsen <timlau@fedoraproject.org>
+
+	* po/de.po: Updated de translation by Fabian Affolter
+
+2008-04-15  James Antill <james@and.org>
+
+	* test/yum-release-i18n-test.sh: See, now this is why I hate sh ...
+	so why do I keep doing this to myself
+
+2008-04-15  James Antill <james@and.org>
+
+	* test/yum-release-i18n-test.sh: Add grouplist/groupinfo to the i18n
+	tests
+
+2008-04-15  James Antill <james@and.org>
+
+	* yum/yumRepo.py:  Edge case ... if the MD files checksums match we assume they are
+	 the same.   The fails if we have --unique-md-filenames in one run,
+	 but not the other.  So if the locations don't match ... just delete
+	 the old name and redownload
+
+2008-04-15  Seth Vidal <skvidal@fedoraproject.org>
+
+	* cli.py, output.py, yum/__init__.py, yum/comps.py, yum/misc.py: - make groups work for groups with different groupids but the same
+	name (dumb!) - make groupinfo and grouplist display properly in
+	other languages - add return_groups() method to comps object -
+	returns all matches not just the first one like return_group() did
+
+2008-04-15  James Antill <james@and.org>
+
+	* yum/__init__.py: fr_FR broke for missing GPG key, this fixes it
+
+2008-04-15  Seth Vidal <skvidal@fedoraproject.org>
+
+	* yum/__init__.py: revert changes which handback a string instead of
+	a list of tuples
+
+2008-04-15  Seth Vidal <skvidal@fedoraproject.org>
+
+	* etc/yum.logrotate: make logrotate cycle the yum.log file yearly to
+	close rh bug 174969
+
+2008-04-14  James Antill <james@and.org>
+
+	* output.py: sort groupinfo output
+
+2008-04-14  Jeremy Katz <katzj@redhat.com>
+
+	* yum/misc.py: Fix finding the running kernel version (#441484)
+	Don't try to guess the way that uname -r matches up with kernel
+	version release and instead go on /boot/vmlinuz-$(uname -r) existing
+	and then mapping that to the package it came from
+
+2008-04-14  James Antill <james@and.org>
+
+	* yum/misc.py: Stupid typing error wasting our time
+
+2008-04-14  Seth Vidal <skvidal@fedoraproject.org>
+
+	* yum/__init__.py: tab snuck in there
+
+2008-04-14  Seth Vidal <skvidal@fedoraproject.org>
+
+	* yum/__init__.py: merged patch from Panu from rh bug: #427866
+
+2008-04-14  Seth Vidal <skvidal@fedoraproject.org>
+
+	* yum/__init__.py: merge patch from Todd Zullinger <tmz at
+	pobox.com> to output more info if we've changed the package we're
+	acting on b/c of obsoletes. Closes rh bug #440159
+
+2008-04-14  Tim Lauridsen <timlau@fedoraproject.org>
+
+	* po/pt_BR.po: Updated pt_BR translation by Igor Pires Soares
+
+2008-04-13  James Antill <james@and.org>
+
+	* yum/rpmsack.py: patterns=[] means match everything, not nothing
+
+2008-04-13  James Antill <james@and.org>
+
+	* cli.py: Stupid optparse
+
+2008-04-12  James Antill <james@and.org>
+
+	* test/yum-release-i18n-test.sh: Drop the "look for error" timeouts
+	a little, and fix livna key tests
+
+2008-04-12  James Antill <james@and.org>
+
+	* test/depsolvetests.py, test/simpleupdatetests.py: Show problems
+	with update for deps. and multi arch Fix other multiarch tests
+
+2008-04-12  James Antill <james@and.org>
+
+	* Makefile, test/check-po-yes-no.py: Add check-po-yes-no.py to make
+	check
+
+2008-04-12  James Antill <james@and.org>
+
+	* test/yum-release-i18n-test.sh: Add auto testing for i18n issues
+
+2008-04-12  James Antill <james@and.org>
+
+	* cli.py, yummain.py:  Move locale, so we don't die on unsupported locale's in
+	 getpreferredencoding   Override optparses print_help() from --help,
+	 as it screws up the encoding.
+
+2008-04-12  James Antill <james@and.org>
+
+	* test/check-po-yes-no.py: Add an automatic checker for the
+	dependant yes/no translations
+
+2008-04-12  James Antill <james@and.org>
+
+	Merge branch 'i18n'  * i18n:   Move gaftonmode to the
+	startupconf   Convert str(e) to unicode(e) for translated exceptions
+	Fix for optparse tries to convert from unicode to ascii
+
+2008-04-12  James Antill <james@and.org>
+
+	* yummain.py: Missed two translated exceptions
+
+2008-04-12  James Antill <james@and.org>
+
+	* yum/__init__.py: Move gaftonmode to the startupconf
+
+2008-04-12  James Antill <james@and.org>
+
+	* yum/__init__.py, yummain.py: Convert str(e) to unicode(e) for
+	translated exceptions
+
+2008-04-12  James Antill <james@and.org>
+
+	* cli.py, output.py, yummain.py:  Fix for optparse tries to convert from unicode to ascii  Re-fix
+	 436361 and fix part of 438580, probably due to the string being
+	 translated now.  Tell stdout's encoder that it should replace bad
+	 chars instead of splatting tracebacks.
+
+2008-04-11  James Antill <james@and.org>
+
+	* cli.py, output.py:  Allow searching for unicode, i.e.: ®  This only didn't work for
+	 "search linux" on pl_PL, it works fine on pl_PL.UTF-8. And pl_PL
+	 doesn't work anyway for "search linux" due to ® not being
+	 displayable in iso8859_2 ... too much crack.
+
+2008-04-11  James Antill <james@and.org>
+
+	* yum/rpmsack.py: Fix bad translation by using replace, bug#440009
+
+2008-04-11  James Antill <james@and.org>
+
+	* cli.py, output.py: Revert "Allow searching for unicode, i.e.: ®"
+	This reverts commit 3ef1cadbdc56950979c8e8034da58f01cb9c2c9d.
+	Obviously this blows up on other languages, so n/m.
+
+2008-04-11  James Antill <james@and.org>
+
+	* cli.py, output.py: Allow searching for unicode, i.e.: ®
+
+2008-04-11  James Antill <james@and.org>
+
+	* yum/misc.py: Stupid python and it's global rules
+
+2008-04-11  James Antill <james@and.org>
+
+	* yum/misc.py: Hacky-ish fix for Jesse and createrepo
+
+2008-04-11  James Antill <james@and.org>
+
+	* callback.py, cli.py, output.py, utils.py, yum/__init__.py,
+	yum/config.py, yum/depsolve.py, yum/i18n.py, yum/plugins.py,
+	yum/rpmtrans.py, yumcommands.py, yummain.py:  Make i18n configurable ... all post to f-d-l that we've added
+	 choice!   Always do the codecs magic thing, because that seems to
+	 help:     sys.stdout.write(_('GPG key retrieval failed: '))  ...in
+	 pl_PL.
+
+2008-04-10  James Antill <james@and.org>
+
+	* output.py, yum/misc.py: Create unicode_maybe ... try and ignore
+	errors ... so at least we don't crash
+
+2008-04-10  James Antill <james@and.org>
+
+	* yum/rpmsack.py: Work around weird version type ... problem was
+	fixed by touch *.py
+
+2008-04-10  James Antill <james@and.org>
+
+	* yum/__init__.py: Magic rpm errors, bug#441860
+
+2008-04-09  James Antill <james@and.org>
+
+	* cli.py: Tiny pychecker fix
+
+2008-04-08  James Antill <james@and.org>
+
+	* yum/misc.py: Add comment
+
+2008-04-10  Seth Vidal <skvidal@fedoraproject.org>
+
+	* output.py: make sure we catch random emissions from rpm :(
+
+2008-04-10  Tim Lauridsen <timlau@fedoraproject.org>
+
+	* po/de.po: updated de translation by Dominik Sandjaja
+
+2008-04-08  Seth Vidal <skvidal@fedoraproject.org>
+
+	* po/fr.po: and more french translation fixes
+
+2008-04-08  Seth Vidal <skvidal@fedoraproject.org>
+
+	* po/fr.po: fix y/n, oui/non message - thanks to Johan Cwiklinski
+
+2008-04-08  James Antill <james@and.org>
+
+	* output.py: Really fix the misc.to_str call
+
+2008-04-08  James Antill <james@and.org>
+
+	* yum/misc.py, yum/rpmsack.py, yum/sqlitesack.py: Don't let the
+	shared_data_store convert between str and unicode
+
+2008-04-08  James Antill <james@and.org>
+
+	* output.py: Make the last patch work
+
+2008-04-08  James Antill <james@and.org>
+
+	* output.py, yum/misc.py: Fix stupid python str() call, add helper
+
+2008-04-08  Seth Vidal <skvidal@fedoraproject.org>
+
+	* po/sr.po, po/sr@latin.po: - check in serbian translation update from Igor Miletic - check in
+	serbian latin translation update from Igor Miletic
+
+2008-04-07  Seth Vidal <skvidal@fedoraproject.org>
+
+	* ChangeLog, po/pl.po: - fix bogus %s in polish translations - merge changelog
+
 2008-04-07  Seth Vidal <skvidal@fedoraproject.org>
 
 	* yum.spec, yum/__init__.py: 3.2.14
