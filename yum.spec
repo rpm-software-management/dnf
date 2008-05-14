@@ -1,7 +1,7 @@
 Summary: RPM installer/updater
 Name: yum
-Version: 3.2.14
-Release: 1
+Version: 3.2.15
+Release: 0
 License: GPL
 Group: System Environment/Base
 Source: %{name}-%{version}.tar.gz
@@ -99,6 +99,9 @@ exit 0
 %{_mandir}/man*/yum-updatesd*
 
 %changelog
+* Wed May 14 2008 Seth Vidal <skvidal at fedoraproject.org>
+- 3.2.15
+
 * Mon Apr  7 2008 Seth Vidal <skvidal at fedoraproject.org>
 - 3.2.14
 
