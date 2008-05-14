@@ -236,7 +236,7 @@ class YumBase(depsolve.Depsolve):
                     continue
                 if byte in string.digits:
                     continue
-                if byte in "-_.":
+                if byte in "-_.:":
                     continue
                 
                 bad = byte
