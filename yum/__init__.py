@@ -243,7 +243,7 @@ class YumBase(depsolve.Depsolve):
                 break
 
             if bad:
-                self.logger.warning("Bad name for repo: %s, byte = %s %d" %
+                self.logger.warning("Bad id for repo: %s, byte = %s %d" %
                                     (section, bad, section.find(byte)))
                 continue
 
