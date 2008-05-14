@@ -529,15 +529,22 @@ class YumRepository(Repository, config.RepoConf):
         
     def _replace_and_check_url(self, url_list):
         goodurls = []
+        skipped = None
         for url in url_list:
             url = parser.varReplace(url, self.yumvar)
             (s,b,p,q,f,o) = urlparse.urlparse(url)
             if s not in ['http', 'ftp', 'file', 'https']:
-                print 'YumRepo Warning: not using ftp, http[s], or file for repos, skipping - %s' % (url)
+                skipped = url
                 continue
             else:
                 goodurls.append(url)
 
+        if skipped is not None:
+            # Caller cleans up for us.
+            if goodurls:
+                print 'YumRepo Warning: Some mirror URLs are not using ftp, http[s] or file.\n Eg. %s' % misc.to_utf8(skipped)
+            else: # And raises in this case
+                print 'YumRepo Error: All mirror URLs are not using ftp, http[s] or file.\n Eg. %s' % misc.to_utf8(skipped)
         return goodurls
 
     def _geturls(self):
