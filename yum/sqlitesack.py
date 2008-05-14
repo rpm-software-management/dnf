@@ -755,9 +755,10 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
             self._sql_pkgKey2po(rep, cur, results)
         
         # If it's not a provides or a filename, we are done
-        if prcotype != "provides" or name[0] != '/':
-            if not glob:
-                return results
+        if prcotype != "provides":
+            return results
+        if not glob or name[0] != '/':
+            return results
 
         # If it is a filename, search the primary.xml file info
         for (rep,cache) in self.primarydb.items():
