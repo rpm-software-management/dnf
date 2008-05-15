@@ -147,7 +147,7 @@ class Group(object):
             elif child.tag == 'default':
                 self.default = parse_boolean(child.text)
     
-            elif child.tag == 'langonly': ## FIXME - what the hell is langonly?
+            elif child.tag in ['langonly', 'lang_only']: 
                 text = child.text
                 if self.langonly is not None:
                     raise CompsException
