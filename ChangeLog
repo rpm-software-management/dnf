@@ -1,5 +1,18 @@
 2008-05-14  Seth Vidal <skvidal@fedoraproject.org>
 
+	* yum.spec, yum/__init__.py: mark as 3.2.16
+
+2008-05-14  James Antill <james@and.org>
+
+	* yum/transactioninfo.py: Don't install things that are already
+	installed ... updates also work
+
+2008-05-14  Seth Vidal <skvidal@fedoraproject.org>
+
+	* ChangeLog: merge changelog
+
+2008-05-14  Seth Vidal <skvidal@fedoraproject.org>
+
 	* yum.spec, yum/__init__.py: mark as 3.2.15
 
 2008-05-14  James Antill <james@and.org>
