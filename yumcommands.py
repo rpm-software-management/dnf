@@ -25,6 +25,7 @@ from yum import logginglevels
 from yum import _
 import yum.Errors
 import operator
+import locale
 
 def checkRootUID(base):
     """
@@ -641,7 +642,10 @@ class RepoListCommand(YumCommand):
         else:
             arg = 'enabled'
 
-        format_string = "%-20.20s %-40.40s  %s"
+        # Setup so len(repo.sack) is correct
+        base.repos.populateSack()
+
+        format_string = "%-20.20s %-40.40s %-8s%s"
         repos = base.repos.repos.values()
         repos.sort()
         enabled_repos = base.repos.listEnabled()
@@ -655,13 +659,20 @@ class RepoListCommand(YumCommand):
             ehibeg = ''
             dhibeg = ''
             hiend  = ''
+        tot_num = 0
         for repo in repos:
             if repo in enabled_repos:
                 enabled = True
                 ui_enabled = ehibeg + _('enabled') + hiend
+                num        = len(repo.sack)
+                tot_num   += num
+                ui_num     = locale.format("%d", num, True)
+                ui_fmt_num = ": %7s"
             else:
                 enabled = False
                 ui_enabled = dhibeg + _('disabled') + hiend
+                ui_num     = ""
+                ui_fmt_num = "%s"
                 
             if (arg == 'all' or
                 (arg == 'enabled' and enabled) or
@@ -675,13 +686,16 @@ class RepoListCommand(YumCommand):
                     line1 = base.fmtKeyValFill(_("Repo-id     : "), repo)
                     line2 = base.fmtKeyValFill(_("Repo-name   : "), repo.name)
                     line3 = base.fmtKeyValFill(_("Repo-enabled: "), ui_enabled)
+                    line4 = base.fmtKeyValFill(_("Repo-size   : "), ui_num)
                     base.verbose_logger.log(logginglevels.DEBUG_3,
-                                            "%s\n%s\n%s\n", line1, line2, line3)
+                                            "%s\n%s\n%s\n%s\n",
+                                            line1, line2, line3, line4)
                 else:
                     base.verbose_logger.log(logginglevels.INFO_2, format_string,
-                                            repo, repo.name, ui_enabled)
+                                            repo, repo.name, ui_enabled,
+                                            ui_fmt_num % ui_num)
 
-        return 0, []
+        return 0, ['repolist: ' + locale.format("%d", tot_num, True)]
 
     def needTs(self, base, basecmd, extcmds):
         return False
