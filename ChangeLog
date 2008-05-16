@@ -1,3 +1,14 @@
+2008-05-15  Seth Vidal <skvidal@fedoraproject.org>
+
+	* yum/comps.py: we screwed up generating some earlier comps which
+	made us have lang_only not langonly in the xml. To help cope with
+	potential outstanding issues this created we're going to honor
+	either in the incoming comps xml.
+
+2008-05-14  Seth Vidal <skvidal@fedoraproject.org>
+
+	* ChangeLog: merge changelog
+
 2008-05-14  Seth Vidal <skvidal@fedoraproject.org>
 
 	* yum.spec, yum/__init__.py: mark as 3.2.16
