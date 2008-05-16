@@ -31,6 +31,7 @@ import misc
 from sqlutils import executeSQL
 import rpmUtils.miscutils
 import sqlutils
+import constants
 
 def catchSqliteException(func):
     """This decorator converts sqlite exceptions into RepoError"""
@@ -940,7 +941,7 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
         """Builds a list of packages, only containing nevra information. No
            excludes are done at this stage. """
 
-        if patterns is None:
+        if patterns is None or len(patterns) > constants.PATTERNS_MAX:
             patterns = []
         
         returnList = []        

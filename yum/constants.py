@@ -97,3 +97,6 @@ RPM_TO_SQLITE = { 'packagesize' : 'size_package',
                  'vendor' : 'rpm_vendor',
                  'license' : 'rpm_license'
                         }
+
+# Cut over for when we should just give up and load everything
+PATTERNS_MAX = 128

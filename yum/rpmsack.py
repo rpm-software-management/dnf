@@ -29,6 +29,7 @@ import fnmatch
 import re
 
 from misc import to_unicode
+import constants
 
 class RPMInstalledPackage(YumInstalledPackage):
 
@@ -255,7 +256,7 @@ class RPMDBPackageSack(PackageSackBase):
 
     @staticmethod
     def _compile_patterns(patterns):
-        if not patterns:
+        if not patterns or len(patterns) > constants.PATTERNS_MAX:
             return None
         ret = []
         for pat in patterns:
