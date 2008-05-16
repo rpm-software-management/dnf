@@ -32,6 +32,8 @@ from sqlutils import executeSQL
 import rpmUtils.miscutils
 import sqlutils
 import constants
+import operator
+import time
 
 def catchSqliteException(func):
     """This decorator converts sqlite exceptions into RepoError"""
@@ -527,6 +529,17 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
         if len(fields) < 1:
             return result
         
+        # NOTE: I can't see any reason not to use this all the time, speed
+        # comparison shows them as baiscally equal.
+        if len(searchstrings) > constants.PATTERNS_MAX:
+            tot = {}
+            for searchstring in searchstrings:
+                matches = self.searchPrimaryFields(fields, searchstring)
+                for po in matches:
+                    tot[po] = tot.get(po, 0) + 1
+            for po in sorted(tot, key=operator.itemgetter, reverse=True):
+                result.append((po, tot[po]))
+            return result
        
         unionstring = "select pkgKey, SUM(cumul) AS total from ( "
         endunionstring = ")GROUP BY pkgKey ORDER BY total DESC"
@@ -536,14 +549,6 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
         #GROUP BY pkgkey ORDER BY total DESC;
         selects = []
         
-        # select pkgKey, 1 AS cumul from packages where description 
-        # like '%devel%' or description like '%python%' or description like '%ssh%'
-#        for f in fields:
-#            basestring = "select pkgKey, 1 AS cumul from packages where %s like '%%%s%%' " % (f,searchstrings[0]) 
-#            for s in searchstrings[1:]:
-#                basestring = "%s or %s like '%%%s%%' " % (basestring, f, s)
-#            selects.append(basestring)
-            
         for s in searchstrings:         
             basestring="select pkgKey,1 AS cumul from packages where %s like '%%%s%%' " % (fields[0], s)
             for f in fields[1:]:
@@ -551,7 +556,6 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
             selects.append(basestring)
         
         totalstring = unionstring + " UNION ALL ".join(selects) + endunionstring
-#        print totalstring
         
         for (rep,cache) in self.primarydb.items():
             cur = cache.cursor()
