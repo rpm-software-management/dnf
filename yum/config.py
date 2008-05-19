@@ -751,7 +751,10 @@ def readMainConfig(startupconf):
     
     # items related to the originating config file
     yumconf.config_file_path = startupconf.config_file_path
-    yumconf.config_file_age = os.stat(startupconf.config_file_path)[8]
+    if os.path.exists(startupconf.config_file_path):
+        yumconf.config_file_age = os.stat(startupconf.config_file_path)[8]
+    else:
+        yumconf.config_file_age = 0
     
     # propagate the debuglevel and errorlevel values:
     yumconf.debuglevel = startupconf.debuglevel
