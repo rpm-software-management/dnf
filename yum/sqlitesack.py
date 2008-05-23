@@ -414,7 +414,7 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
     # or provide a file containing name 
     def searchAll(self,name, query_type='like'):
         # this function is just silly and it reduces down to just this
-        return self.searchPrco(name, 'provides')
+        return self._searchPrco(name, 'provides')
 
     def _sql_pkgKey2po(self, repo, cur, pkgs=None):
         """ Takes a cursor and maps the pkgKey rows into a list of packages. """
@@ -747,9 +747,15 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
     def getRequires(self, name, flags=None, version=(None, None, None)):
         return self._search("requires", name, flags, version)
 
+    def getConflicts(self, name, flags=None, version=(None, None, None)):
+        return self._search("conflicts", name, flags, version)
+
+    def getObsoletes(self, name, flags=None, version=(None, None, None)):
+        return self._search("obsoletes", name, flags, version)
+
     
     @catchSqliteException
-    def searchPrco(self, name, prcotype):
+    def _searchPrco(self, name, prcotype):
         """return list of packages having prcotype name (any evr and flag)"""
         glob = True
         querytype = 'glob'
@@ -829,23 +835,6 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
                 #~ results.append(self.pc(rep,pkg))
         
         #~ return results
-
-    def searchProvides(self, name):
-        """return list of packages providing name (any evr and flag)"""
-        return self.searchPrco(name, "provides")
-                
-    def searchRequires(self, name):
-        """return list of packages requiring name (any evr and flag)"""
-        return self.searchPrco(name, "requires")
-
-    def searchObsoletes(self, name):
-        """return list of packages obsoleting name (any evr and flag)"""
-        return self.searchPrco(name, "obsoletes")
-
-    def searchConflicts(self, name):
-        """return list of packages conflicting with name (any evr and flag)"""
-        return self.searchPrco(name, "conflicts")
-
 
     def db2class(self, db, nevra_only=False):
         print 'die die die die die db2class'
