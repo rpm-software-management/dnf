@@ -27,6 +27,7 @@ import yumRepo
 from packages import PackageObject, RpmBase, YumAvailablePackage
 import Errors
 import misc
+import rpm
 
 from sqlutils import executeSQL
 import rpmUtils.miscutils
@@ -50,6 +51,13 @@ def catchSqliteException(func):
 
 def _share_data(value):
     return misc.share_data(value)
+
+_flags2rpm = {"GT": rpm.RPMSENSE_GREATER,
+              "GE": rpm.RPMSENSE_EQUAL | rpm.RPMSENSE_GREATER,
+              "LT": rpm.RPMSENSE_LESS,
+              "LE": rpm.RPMSENSE_LESS | rpm.RPMSENSE_EQUAL,
+              "EQ": rpm.RPMSENSE_EQUAL,
+              None: 0 }
 
 class YumAvailablePackageSqlite(YumAvailablePackage, PackageObject, RpmBase):
     def __init__(self, repo, db_obj):
@@ -235,7 +243,7 @@ class YumAvailablePackageSqlite(YumAvailablePackage, PackageObject, RpmBase):
             cur = self._sql_MD('primary', sql, (self.pkgKey,))
             self.prco[prcotype] = [ ]
             for ob in cur:
-                prco_set = (_share_data(ob['name']), _share_data(ob['flags']),
+                prco_set = (_share_data(ob['name']), _share_data(_flags2rpm[ob['flags']]),
                             (_share_data(ob['epoch']),
                              _share_data(ob['version']),
                              _share_data(ob['release'])))
@@ -592,7 +600,7 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
                         _share_data(ob['epoch']), _share_data(ob['version']),
                         _share_data(ob['release']))
                 (n,f,e,v,r) = ( _share_data(ob['oname']),
-                                _share_data(ob['oflags']),
+                                _share_data(_flags2rpm[ob['oflags']]),
                                 _share_data(ob['oepoch']),
                                 _share_data(ob['oversion']),
                                 _share_data(ob['orelease']))
@@ -639,7 +647,7 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
                 cur = cache.cursor()
                 executeSQL(cur, "select * from %s" % prcotype)
                 for x in cur:
-                    val = (_share_data(x['name']), _share_data(x['flags']),
+                    val = (_share_data(x['name']), _share_data(_flags2rpm[x['flags']]),
                            (_share_data(x['epoch']), _share_data(x['version']),
                             _share_data(x['release'])))
                     val = _share_data(val)
@@ -702,7 +710,7 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
                        (name,))
             tmp = { }
             for x in cur:
-                val = (_share_data(x['name']), _share_data(x['flags']),
+                val = (_share_data(x['name']), _share_data(_flags2rpm[x['flags']]),
                        (_share_data(x['epoch']), _share_data(x['version']),
                         _share_data(x['release'])))
                 val = _share_data(val)

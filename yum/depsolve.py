@@ -53,12 +53,6 @@ except:
             for y in args:
                 if x < y: x = y
             return x
-flags = {"GT": rpm.RPMSENSE_GREATER,
-         "GE": rpm.RPMSENSE_EQUAL | rpm.RPMSENSE_GREATER,
-         "LT": rpm.RPMSENSE_LESS,
-         "LE": rpm.RPMSENSE_LESS | rpm.RPMSENSE_EQUAL,
-         "EQ": rpm.RPMSENSE_EQUAL,
-         None: 0 }
 
 class Depsolve(object):
 
@@ -736,7 +730,7 @@ class Depsolve(object):
             self.verbose_logger.log(logginglevels.DEBUG_2, _("looking for %s as a requirement of %s"), req, txmbr)
             provs = self.tsInfo.getProvides(*req)
             if not provs:
-                ret.append( (txmbr.po, (req[0], flags[req[1]], version_tuple_to_string(req[2]))) )
+                ret.append( (txmbr.po, (req[0], req[1], version_tuple_to_string(req[2]))) )
                 continue
 
             #Add relationship
@@ -771,7 +765,7 @@ class Depsolve(object):
             for pkg, hits in self.tsInfo.getRequires(*prov).iteritems():
                 for rn, rf, rv in hits:
                     if not self.tsInfo.getProvides(rn, rf, rv):
-                        ret.append( (pkg, (rn, flags[rf], version_tuple_to_string(rv))) )
+                        ret.append( (pkg, (rn, rf, version_tuple_to_string(rv))) )
         return ret
 
     def _checkFileRequires(self):
@@ -839,7 +833,7 @@ class Depsolve(object):
                 for conflicting_po in self.tsInfo.getNewProvides(r, f, v):
                     if conflicting_po.pkgtup[0] == po.pkgtup[0] and conflicting_po.pkgtup[2:] == po.pkgtup[2:]:
                         continue
-                    ret.append( (po, (r, flags[f], version_tuple_to_string(v)), conflicting_po) )
+                    ret.append( (po, (r, f, version_tuple_to_string(v)), conflicting_po) )
         for txmbr in self.tsInfo.getMembersWithState(output_states=TS_INSTALL_STATES):
             po = txmbr.po
             for conflict in txmbr.po.returnPrco('conflicts'):
@@ -847,7 +841,7 @@ class Depsolve(object):
                 for conflicting_po in self.tsInfo.getProvides(r, f, v):
                     if conflicting_po.pkgtup[0] == po.pkgtup[0] and conflicting_po.pkgtup[2:] == po.pkgtup[2:]:
                         continue
-                    ret.append( (po, (r, flags[f], version_tuple_to_string(v)), conflicting_po) )
+                    ret.append( (po, (r, f, version_tuple_to_string(v)), conflicting_po) )
         return ret
 
 

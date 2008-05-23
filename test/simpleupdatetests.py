@@ -18,18 +18,18 @@ class SimpleUpdateTests(OperationsTests):
     def buildPkgs(pkgs, *args):
         # installed
         pkgs.installed_i386 = FakePackage('zsh', '1', '1', '0', 'i386')
-        pkgs.installed_i386.addRequires('bar', 'EQ', ('0', '1', '1'))
+        pkgs.installed_i386.addRequires('bar', EQ, ('0', '1', '1'))
         pkgs.installed_x86_64 = FakePackage('zsh', '1', '1', '0', 'x86_64')
-        pkgs.installed_x86_64.addRequires('bar', 'EQ', ('0', '1', '1'))
+        pkgs.installed_x86_64.addRequires('bar', EQ, ('0', '1', '1'))
         pkgs.installed_noarch = FakePackage('zsh', '1', '1', '0', 'noarch')
-        pkgs.installed_noarch.addRequires('bar', 'EQ', ('0', '1', '1'))
+        pkgs.installed_noarch.addRequires('bar', EQ, ('0', '1', '1'))
         # updates
         pkgs.update_i386 = FakePackage('zsh', '2', '1', '0', 'i386')
         pkgs.update_x86_64 = FakePackage('zsh', '2', '1', '0', 'x86_64')
         pkgs.update_noarch = FakePackage('zsh', '2', '1', '0', 'noarch')
         # requires update (UpdateForDependency tests)
         pkgs.requires_update = FakePackage('zsh-utils', '2', '1', '0', 'noarch')
-        pkgs.requires_update.addRequires('zsh', 'EQ', ('0', '2', '1'))
+        pkgs.requires_update.addRequires('zsh', EQ, ('0', '2', '1'))
         # removed requirement due to update (UpdateForDependency2 tests)
         pkgs.required = FakePackage('bar', '1', '1', '0')
         pkgs.required_updated = FakePackage('bar', version='2')

@@ -310,8 +310,8 @@ class RpmBase(object):
                 continue
 
             if f == '=':
-                f = 'EQ'
-            if f != 'EQ' and prcotype == 'provides':
+                f = rpm.RPMSENSE_EQUAL
+            if f != rpm.RPMSENSE_EQUAL and prcotype == 'provides':
                 # isn't this odd, it's not 'EQ' and it is a provides
                 # - it really should be EQ
                 # use the pkgobj's evr for the comparison
@@ -752,7 +752,7 @@ class YumHeaderPackage(YumAvailablePackage):
                 continue
 
             lst = hdr[getattr(rpm, 'RPMTAG_%sFLAGS' % tag)]
-            flag = map(rpmUtils.miscutils.flagToString, lst)
+            # flag = map(rpmUtils.miscutils.flagToString, lst)
             flag = map(misc.share_data, flag)
 
             lst = hdr[getattr(rpm, 'RPMTAG_%sVERSION' % tag)]
