@@ -489,7 +489,6 @@ class Depsolve(object):
         # find the best one 
 
         # try updating the already install pkgs
-        length = len(self.tsInfo)
         for pkg in provSack.returnNewestByName():
             results = self.update(requiringPo=requiringPo, name=pkg.name,
                                   epoch=pkg.epoch, version=pkg.version,
