@@ -76,7 +76,7 @@ class SkipBrokenTests(DepsolveTests):
         po2 = self.repoPackage('foo', '2')
 
         ipo = self.instPackage('foo-tools', '2.5')
-        ipo.addRequires('foo', 'EQ', ('0', '1', '0'))
+        ipo.addRequires('foo', EQ, ('0', '1', '0'))
 
         self.tsInfo.addUpdate(po2, oldpo=po1)
         
@@ -89,9 +89,9 @@ class SkipBrokenTests(DepsolveTests):
         is not provided, the update should be skipped and result in a empty transaction
         '''
         po1 = self.instPackage('foo', '1')
-        po1.addRequires('foo-tools', 'EQ', ('0', '1', '0'))
+        po1.addRequires('foo-tools', EQ, ('0', '1', '0'))
         po2 = self.repoPackage('foo', '2')
-        po2.addRequires('foo-tools', 'EQ', ('0', '2', '0'))
+        po2.addRequires('foo-tools', EQ, ('0', '2', '0'))
 
         ipo = self.instPackage('foo-tools', '1')
 
@@ -108,13 +108,13 @@ class SkipBrokenTests(DepsolveTests):
         there is not longer provided.
         '''
         po1 = self.instPackage('foo', '1')
-        po1.addRequires('foo-tools', 'EQ', ('0', '1', '0'))
+        po1.addRequires('foo-tools', EQ, ('0', '1', '0'))
         po2 = self.repoPackage('foo', '2')
-        po2.addRequires('foo-tools', 'EQ', ('0', '2', '0'))
+        po2.addRequires('foo-tools', EQ, ('0', '2', '0'))
 
         ipo = self.instPackage('foo-tools', '1')
         por =  self.repoPackage('foo-gui', '1')
-        por.addRequires('foo', 'EQ', ('0', '2', '0'))
+        por.addRequires('foo', EQ, ('0', '2', '0'))
 
         self.tsInfo.addUpdate(po2, oldpo=po1)
         self.tsInfo.addInstall(por)
@@ -129,7 +129,7 @@ class SkipBrokenTests(DepsolveTests):
         '''
         ipo = self.instPackage('foo', '1')
         ipo2 = self.instPackage('foo-tools', '1')
-        ipo2.addRequires('foo', 'EQ', ('0', '1', '0'))
+        ipo2.addRequires('foo', EQ, ('0', '1', '0'))
 
         self.tsInfo.addErase(ipo)
         self.assertEquals('ok', *self.resolveCode(skip=True))
@@ -141,10 +141,10 @@ class SkipBrokenTests(DepsolveTests):
         '''
         ipo = self.instPackage('foo', '1')
         ipo2 = self.instPackage('foo-tools', '1')
-        ipo2.addRequires('foo', 'EQ', ('0', '1', '0'))
+        ipo2.addRequires('foo', EQ, ('0', '1', '0'))
 
         upo2 = self.repoPackage('foo-tools', '2')
-        upo2.addRequires('foo', 'EQ', ('0', '1', '0'))
+        upo2.addRequires('foo', EQ, ('0', '1', '0'))
 
         self.tsInfo.addErase(ipo)
         self.tsInfo.addUpdate(upo2, oldpo=ipo2)
@@ -158,10 +158,10 @@ class SkipBrokenTests(DepsolveTests):
         '''
         ipo = self.instPackage('foo', '1')
         ipo2 = self.instPackage('foo-tools', '1')
-        ipo2.addRequires('foo', 'EQ', ('0', '1', '0'))
+        ipo2.addRequires('foo', EQ, ('0', '1', '0'))
 
         upo2 = self.repoPackage('foo-tools', '2')
-        upo2.addRequires('foo', 'EQ', ('0', '1', '0'))
+        upo2.addRequires('foo', EQ, ('0', '1', '0'))
 
         self.tsInfo.addUpdate(upo2, oldpo=ipo2)
         self.tsInfo.addErase(ipo)
@@ -176,7 +176,7 @@ class SkipBrokenTests(DepsolveTests):
         '''
         po1 = self.instPackage('foo', '1')
         po2 = self.repoPackage('foo', '2')
-        po2.addConflicts('bar', 'EQ', ('0', '1', '0'))
+        po2.addConflicts('bar', EQ, ('0', '1', '0'))
 
         ipo = self.instPackage('bar', '1')
 
@@ -193,13 +193,13 @@ class SkipBrokenTests(DepsolveTests):
         '''
         po1 = self.instPackage('foo', '1')
         po2 = self.repoPackage('foo', '2')
-        po2.addConflicts('bar', 'EQ', ('0', '1', '0'))
+        po2.addConflicts('bar', EQ, ('0', '1', '0'))
 
         ipo = self.instPackage('bar', '1')
 
 
         xpo = self.repoPackage('bar', '2')
-        xpo.addRequires('foo', 'EQ', ('0', '1', '0'))
+        xpo.addRequires('foo', EQ, ('0', '1', '0'))
 
         self.tsInfo.addUpdate(po2, oldpo=po1)
         
@@ -215,13 +215,13 @@ class SkipBrokenTests(DepsolveTests):
         '''
         po1 = self.instPackage('foo', '1')
         po2 = self.repoPackage('foo', '2')
-        po2.addConflicts('bar', 'EQ', ('0', '1', '0'))
+        po2.addConflicts('bar', EQ, ('0', '1', '0'))
 
         ipo = self.instPackage('bar', '1')
 
 
         xpo = self.repoPackage('bar', '2')
-        xpo.addRequires('poo', 'EQ', ('0', '1', '0'))
+        xpo.addRequires('poo', EQ, ('0', '1', '0'))
 
         self.tsInfo.addUpdate(po2, oldpo=po1)
         
@@ -286,7 +286,7 @@ class SkipBrokenTests(DepsolveTests):
         self.tsInfo.addInstall(po1)
 
         po2 = self.repoPackage('bar')
-        po2.addRequires('baz', 'EQ', (None, '2', '1'))
+        po2.addRequires('baz', EQ, (None, '2', '1'))
 
         ipo = self.instPackage('baz')
         upo = self.repoPackage('baz', '2', '1')
@@ -353,7 +353,7 @@ class SkipBrokenTests(DepsolveTests):
         ipo2 = self.instPackage('foo', '1',arch='x86_64')
         po1 = self.repoPackage('foo', '2',arch='i386')
         po2 = self.repoPackage('foo', '2',arch='x86_64')
-        po2.addRequires('notfound', 'EQ', ('0', '1', '0'))
+        po2.addRequires('notfound', EQ, ('0', '1', '0'))
         self.tsInfo.addUpdate(po1, oldpo=ipo1)
         self.tsInfo.addUpdate(po2, oldpo=ipo2)
         self.assertEquals('empty', *self.resolveCode(skip=True))

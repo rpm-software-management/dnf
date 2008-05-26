@@ -1485,12 +1485,7 @@ class YumBase(depsolve.Depsolve):
                 if r.startswith('rpmlib('):
                     continue
                 
-                satisfiers = []
-
-                for po in self.whatProvides(r, f, v):
-                    satisfiers.append(po)
-
-                pkgresults[req] = satisfiers
+                pkgresults[req] = self.pkgs.getProvides(r, f, v).keys()
         
         return results
     
@@ -1961,10 +1956,7 @@ class YumBase(depsolve.Depsolve):
                     raise Errors.YumBaseError, _('Invalid version flag')
                 depflags = SYMBOLFLAGS[flagsymbol]
                 
-        sack = self.whatProvides(depname, depflags, depver)
-        results = sack.returnPackages()
-        return results
-        
+        return self.pkgSack.getProvides(depname, depflags, depver).keys()
 
     def returnPackageByDep(self, depstring):
         """Pass in a generic [build]require string and this function will 

@@ -27,6 +27,7 @@ import yumRepo
 from packages import PackageObject, RpmBase, YumAvailablePackage
 import Errors
 import misc
+import rpm
 
 from sqlutils import executeSQL
 import rpmUtils.miscutils
@@ -50,6 +51,13 @@ def catchSqliteException(func):
 
 def _share_data(value):
     return misc.share_data(value)
+
+_flags2rpm = {"GT": rpm.RPMSENSE_GREATER,
+              "GE": rpm.RPMSENSE_EQUAL | rpm.RPMSENSE_GREATER,
+              "LT": rpm.RPMSENSE_LESS,
+              "LE": rpm.RPMSENSE_LESS | rpm.RPMSENSE_EQUAL,
+              "EQ": rpm.RPMSENSE_EQUAL,
+              None: 0 }
 
 class YumAvailablePackageSqlite(YumAvailablePackage, PackageObject, RpmBase):
     def __init__(self, repo, db_obj):
@@ -235,7 +243,7 @@ class YumAvailablePackageSqlite(YumAvailablePackage, PackageObject, RpmBase):
             cur = self._sql_MD('primary', sql, (self.pkgKey,))
             self.prco[prcotype] = [ ]
             for ob in cur:
-                prco_set = (_share_data(ob['name']), _share_data(ob['flags']),
+                prco_set = (_share_data(ob['name']), _share_data(_flags2rpm[ob['flags']]),
                             (_share_data(ob['epoch']),
                              _share_data(ob['version']),
                              _share_data(ob['release'])))
@@ -414,7 +422,7 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
     # or provide a file containing name 
     def searchAll(self,name, query_type='like'):
         # this function is just silly and it reduces down to just this
-        return self.searchPrco(name, 'provides')
+        return self._searchPrco(name, 'provides')
 
     def _sql_pkgKey2po(self, repo, cur, pkgs=None):
         """ Takes a cursor and maps the pkgKey rows into a list of packages. """
@@ -592,7 +600,7 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
                         _share_data(ob['epoch']), _share_data(ob['version']),
                         _share_data(ob['release']))
                 (n,f,e,v,r) = ( _share_data(ob['oname']),
-                                _share_data(ob['oflags']),
+                                _share_data(_flags2rpm[ob['oflags']]),
                                 _share_data(ob['oepoch']),
                                 _share_data(ob['oversion']),
                                 _share_data(ob['orelease']))
@@ -639,7 +647,7 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
                 cur = cache.cursor()
                 executeSQL(cur, "select * from %s" % prcotype)
                 for x in cur:
-                    val = (_share_data(x['name']), _share_data(x['flags']),
+                    val = (_share_data(x['name']), _share_data(_flags2rpm[x['flags']]),
                            (_share_data(x['epoch']), _share_data(x['version']),
                             _share_data(x['release'])))
                     val = _share_data(val)
@@ -702,7 +710,7 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
                        (name,))
             tmp = { }
             for x in cur:
-                val = (_share_data(x['name']), _share_data(x['flags']),
+                val = (_share_data(x['name']), _share_data(_flags2rpm[x['flags']]),
                        (_share_data(x['epoch']), _share_data(x['version']),
                         _share_data(x['release'])))
                 val = _share_data(val)
@@ -747,9 +755,15 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
     def getRequires(self, name, flags=None, version=(None, None, None)):
         return self._search("requires", name, flags, version)
 
+    def getConflicts(self, name, flags=None, version=(None, None, None)):
+        return self._search("conflicts", name, flags, version)
+
+    def getObsoletes(self, name, flags=None, version=(None, None, None)):
+        return self._search("obsoletes", name, flags, version)
+
     
     @catchSqliteException
-    def searchPrco(self, name, prcotype):
+    def _searchPrco(self, name, prcotype):
         """return list of packages having prcotype name (any evr and flag)"""
         glob = True
         querytype = 'glob'
@@ -829,23 +843,6 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
                 #~ results.append(self.pc(rep,pkg))
         
         #~ return results
-
-    def searchProvides(self, name):
-        """return list of packages providing name (any evr and flag)"""
-        return self.searchPrco(name, "provides")
-                
-    def searchRequires(self, name):
-        """return list of packages requiring name (any evr and flag)"""
-        return self.searchPrco(name, "requires")
-
-    def searchObsoletes(self, name):
-        """return list of packages obsoleting name (any evr and flag)"""
-        return self.searchPrco(name, "obsoletes")
-
-    def searchConflicts(self, name):
-        """return list of packages conflicting with name (any evr and flag)"""
-        return self.searchPrco(name, "conflicts")
-
 
     def db2class(self, db, nevra_only=False):
         print 'die die die die die db2class'

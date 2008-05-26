@@ -226,11 +226,11 @@ class GitMetapackageObsoletesTests(OperationsTests):
         pkgs.metapackage = FakePackage('git', '1.5.4.2', '1', '0', 'x86_64')
         # obsoletes
         pkgs.new_git = FakePackage('git', '1.5.4.4', '1', '0', 'x86_64')
-        pkgs.new_git.addObsoletes('git-core', 'LE', ('0', '1.5.4.3', '1'))
-        pkgs.new_git.addProvides('git-core', 'EQ', ('0', '1.5.4', '1'))
+        pkgs.new_git.addObsoletes('git-core', LE, ('0', '1.5.4.3', '1'))
+        pkgs.new_git.addProvides('git-core', EQ, ('0', '1.5.4', '1'))
 
         pkgs.git_all = FakePackage('git-all', '1.5.4', '1', '0', 'x86_64')
-        pkgs.git_all.addObsoletes('git', 'LE', ('0', '1.5.4.3', '1'))
+        pkgs.git_all.addObsoletes('git', LE, ('0', '1.5.4.3', '1'))
 
 
     def testGitMetapackageOnlyCoreInstalled(self):

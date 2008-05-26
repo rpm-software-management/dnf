@@ -129,7 +129,7 @@ def rangeCheck(reqtuple, pkgtuple):
     # nameonly shouldn't ever raise it
     #(reqn, reqf, (reqe, reqv, reqr)) = reqtuple
     (n, a, e, v, r) = pkgtuple
-    return rangeCompare(reqtuple, (n, 'EQ', (e, v, r)))
+    return rangeCompare(reqtuple, (n, rpm.RPMSENSE_EQUAL, (e, v, r)))
 
 def rangeCompare(reqtuple, provtuple):
     """returns true if provtuple satisfies reqtuple"""
@@ -140,6 +140,9 @@ def rangeCompare(reqtuple, provtuple):
 
     if f is None or reqf is None:
         return 1
+
+    if isinstance(f, str) or isinstance(reqf, str):
+        raise ValueError, "%r %r" % (f, reqf)
 
     # and you thought we were done having fun
     # if the requested release is left out then we have
@@ -161,42 +164,33 @@ def rangeCompare(reqtuple, provtuple):
 
     # does not match unless
     if rc >= 1:
-        if reqf in ['GT', 'GE', 4, 12]:
+        if reqf & rpm.RPMSENSE_GREATER:
             return 1
-        if reqf in ['EQ', 8]:
-            if f in ['LE', 10]:
+        if reqf == rpm.RPMSENSE_EQUAL:
+            if f == (rpm.RPMSENSE_LESS|rpm.RPMSENSE_EQUAL):
                 return 1
     if rc == 0:
-        if reqf in ['GT', 4]:
-            if f in ['GT', 'GE', 4, 12]:
+        if reqf == rpm.RPMSENSE_GREATER:
+            if f & rpm.RPMSENSE_GREATER:
                 return 1
-        if reqf in ['GE', 12]:
-            if f in ['GT', 'GE', 'EQ', 'LE', 4, 12, 8, 10]:
+        if reqf == (rpm.RPMSENSE_GREATER|rpm.RPMSENSE_EQUAL):
+            if f != rpm.RPMSENSE_LESS:
                 return 1
-        if reqf in ['EQ', 8]:
-            if f in ['EQ', 'GE', 'LE', 8, 12, 10]:
+        if reqf == rpm.RPMSENSE_EQUAL:
+            if f & rpm.RPMSENSE_EQUAL:
                 return 1
-        if reqf in ['LE', 10]:
-            if f in ['EQ', 'LE', 'LT', 'GE', 8, 10, 2, 12]:
+        if reqf == (rpm.RPMSENSE_LESS|rpm.RPMSENSE_EQUAL):
+            if f != rpm.RPMSENSE_GREATER:
                 return 1
-        if reqf in ['LT', 2]:
-            if f in ['LE', 'LT', 10, 2]:
+        if reqf == rpm.RPMSENSE_LESS:
+            if f & rpm.RPMSENSE_LESS:
                 return 1
     if rc <= -1:
-        if reqf in ['GT', 'GE', 'EQ', 4, 12, 8]:
-            if f in ['GT', 'GE', 4, 12]:
+        if not (reqf & rpm.RPMSENSE_LESS):
+            if f & rpm.RPMSENSE_GREATER:
                 return 1
-        if reqf in ['LE', 'LT', 10, 2]:
+        if reqf & rpm.RPMSENSE_LESS:
             return 1
-#                if rc >= 1:
-#                    if reqf in ['GT', 'GE', 4, 12]:
-#                        return 1
-#                if rc == 0:
-#                    if reqf in ['GE', 'LE', 'EQ', 8, 10, 12]:
-#                        return 1
-#                if rc <= -1:
-#                    if reqf in ['LT', 'LE', 2, 10]:
-#                        return 1
 
     return 0
 
