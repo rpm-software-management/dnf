@@ -488,24 +488,22 @@ class RPMDBPackageSack(PackageSackBase):
         r_v = deptup[2][1]
 
         ts = self.readOnlyTS()
-        result = {}
-        tag = self.DEP_TABLE[prcotype][0]
+        pkgs = {}
+        tag = self.DEP_TABLE[PRCO][0]
         mi = ts.dbMatch(tag, name)
         for hdr in mi:
             po = self._makePackageObject(hdr, mi.instance())
-            result[po.pkgid] = po
+            pkgs[po.pkgid] = po
         del mi
 
         # If it's not a provides or filename, we are done
         if PRCO == 'provides' and name[0] == '/':
             fileresults = self.searchFiles(name)
             for pkg in fileresults:
-                result[pkg.pkgid] = pkg
+                pkgs[pkg.pkgid] = pkg
         
-        pkgs = result.values()
         result = {}
-
-        for po in pkgs:
+        for po in pkgs.values():
             if name[0] == '/' and r_v is None:
                 # file dep add all matches to the defSack
                 result[po] = [(name, None, (None, None, None))]
