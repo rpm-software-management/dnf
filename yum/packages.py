@@ -751,9 +751,7 @@ class YumHeaderPackage(YumAvailablePackage):
             if name is None:
                 continue
 
-            lst = hdr[getattr(rpm, 'RPMTAG_%sFLAGS' % tag)]
-            # flag = map(rpmUtils.miscutils.flagToString, lst)
-            flag = map(misc.share_data, flag)
+            flag = map(misc.share_data, hdr[getattr(rpm, 'RPMTAG_%sFLAGS' % tag)])
 
             lst = hdr[getattr(rpm, 'RPMTAG_%sVERSION' % tag)]
             vers = map(rpmUtils.miscutils.stringToVersion, lst)
