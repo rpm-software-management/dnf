@@ -28,7 +28,7 @@ import re # For YumTerm
 
 from urlgrabber.progress import TextMeter
 from urlgrabber.grabber import URLGrabError
-from yum.misc import sortPkgObj, prco_tuple_to_string, to_str, to_unicode_maybe, get_my_lang_code
+from yum.misc import sortPkgObj, prco_tuple_to_string, to_str, to_unicode, get_my_lang_code
 from rpmUtils.miscutils import checkSignals
 from yum.constants import *
 
@@ -346,6 +346,9 @@ class YumOutput:
     def userconfirm(self):
         """gets a yes or no from the user, defaults to No"""
 
+        yui = (to_unicode(_('y')), to_unicode(_('yes')))
+        nui = (to_unicode(_('n')), to_unicode(_('no')))
+        aui = (yui[0], yui[1], nui[0], nui[1])
         while True:
             try:
                 choice = raw_input(_('Is this ok [y/N]: '))
@@ -355,11 +358,18 @@ class YumOutput:
                 raise
             except:
                 choice = ''
+            choice = to_unicode(choice)
             choice = choice.lower()
-            if len(choice) == 0 or choice in [_('y'), _('n'), _('yes'), _('no')]:
+            if len(choice) == 0 or choice in aui:
+                break
+            # If the enlish one letter names don't mix, allow them too
+            if u'y' not in aui and u'y' == choice:
+                choice = yui[0]
+                break
+            if u'n' not in aui and u'n' == choice:
                 break
 
-        if len(choice) == 0 or choice not in [_('y'), _('yes')]:
+        if len(choice) == 0 or choice not in yui:
             return False
         else:            
             return True
@@ -369,7 +379,7 @@ class YumOutput:
         mylang = get_my_lang_code()
         print _('\nGroup: %s') % group.nameByLang(mylang)
         if group.descriptionByLang(mylang) != "":
-            print _(' Description: %s') % to_unicode_maybe(group.descriptionByLang(mylang))
+            print _(' Description: %s') % to_unicode(group.descriptionByLang(mylang))
         if len(group.mandatory_packages) > 0:
             print _(' Mandatory Packages:')
             for item in sorted(group.mandatory_packages):
@@ -750,7 +760,7 @@ class YumCliRPMCallBack(RPMBaseCallback):
             fmt = self._makefmt(percent, ts_current, ts_total)
             msg = fmt % (process, pkgname)
             if msg != self.lastmsg:
-                sys.stdout.write(to_unicode_maybe(msg))
+                sys.stdout.write(to_unicode(msg))
                 sys.stdout.flush()
                 self.lastmsg = msg
             if te_current == te_total:
@@ -758,7 +768,7 @@ class YumCliRPMCallBack(RPMBaseCallback):
 
     def scriptout(self, package, msgs):
         if msgs:
-            sys.stdout.write(to_unicode_maybe(msgs))
+            sys.stdout.write(to_unicode(msgs))
             sys.stdout.flush()
 
     def _makefmt(self, percent, ts_current, ts_total, progress = True):
