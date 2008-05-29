@@ -2105,11 +2105,14 @@ class YumBase(depsolve.Depsolve):
             moving one twice as fast as the other. If they are ever == you have
             a loop. If loop we return None, if no loop the last element. """
         slow = node
+        done = False
         while True:
             next = next_func(node)
+            if next is None and not done: return None
             if next is None: return node
             node = next_func(next)
             if node is None: return next
+            done = True
 
             slow = next_func(slow)
             if next == slow:
