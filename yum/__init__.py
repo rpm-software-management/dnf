@@ -2082,7 +2082,34 @@ class YumBase(depsolve.Depsolve):
 
         return returnlist
 
+    def _pkg2obspkg(self, po):
+        """ Given a package return the package it's obsoleted by and so
+            we should install instead. Or None if there isn't one. """
+        thispkgobsdict = self.up.checkForObsolete([po.pkgtup])
+        if thispkgobsdict.has_key(po.pkgtup):
+            obsoleting = thispkgobsdict[po.pkgtup][0]
+            obsoleting_pkg = self.getPackageObject(obsoleting)
+            return obsoleting_pkg
+        return None
 
+    def _test_loop(self, node, next_func):
+        """ Generic comp. sci. test for looping, walk the list with two pointers
+            moving one twice as fast as the other. If they are ever == you have
+            a loop. If loop we return None, if no loop the last element. """
+        slow = node
+        done = False
+        while True:
+            next = next_func(node)
+            if next is None and not done: return None
+            if next is None: return node
+            node = next_func(next)
+            if node is None: return next
+            done = True
+
+            slow = next_func(slow)
+            if next == slow:
+                return None
+        
     def install(self, po=None, **kwargs):
         """try to mark for install the item specified. Uses provided package 
            object, if available. If not it uses the kwargs and gets the best
@@ -2214,12 +2241,11 @@ class YumBase(depsolve.Depsolve):
                     tx_return.extend(txmbrs)
                     continue
 
-            # make sure we're not installing a package which is obsoleted by something
-            # else in the repo
-            thispkgobsdict = self.up.checkForObsolete([po.pkgtup])
-            if thispkgobsdict.has_key(po.pkgtup):
-                obsoleting = thispkgobsdict[po.pkgtup][0]
-                obsoleting_pkg = self.getPackageObject(obsoleting)
+            #  Make sure we're not installing a package which is obsoleted by
+            # something else in the repo. Unless there is a obsoletion loop,
+            # at which point ignore everything.
+            obsoleting_pkg = self._test_loop(po, self._pkg2obspkg)
+            if obsoleting_pkg is not None:
                 self.verbose_logger.warning(_('Package %s is obsoleted by %s, trying to install %s instead'),
                     po.name, obsoleting_pkg.name, obsoleting_pkg)               
                 self.install(po=obsoleting_pkg)
