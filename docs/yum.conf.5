@@ -60,6 +60,10 @@ default for all repositories. This option also determines whether or not an
 install of a package from a local RPM file will be GPG signature checked. The
 default is `0'.
 
+.IP \fBskip_broken\fR
+Either `1' or `0'. Resolve depsolve problems by removing packages that
+are causing problems from the transaction.
+
 .IP \fBassumeyes\fR
 Either `1' or `0'. Determines whether or not yum prompts for confirmation of
 critical actions. Default is `0' (do prompt).
