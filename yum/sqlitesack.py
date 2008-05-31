@@ -512,6 +512,7 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
         if len(fields) < 1:
             return result
         
+        searchstring = searchstring.replace("'", "''")
         basestring="select DISTINCT pkgKey from packages where %s like '%%%s%%' " % (fields[0], searchstring)
         
         for f in fields[1:]:
@@ -537,6 +538,7 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
         if len(searchstrings) > constants.PATTERNS_MAX:
             tot = {}
             for searchstring in searchstrings:
+                searchstring = searchstring.replace("'", "''")
                 matches = self.searchPrimaryFields(fields, searchstring)
                 for po in matches:
                     tot[po] = tot.get(po, 0) + 1
@@ -553,6 +555,7 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
         selects = []
         
         for s in searchstrings:         
+            s = s.replace("'", "''")
             basestring="select pkgKey,1 AS cumul from packages where %s like '%%%s%%' " % (fields[0], s)
             for f in fields[1:]:
                 basestring = "%s or %s like '%%%s%%' " % (basestring, f, s)
