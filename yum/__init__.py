@@ -53,7 +53,7 @@ from parser import ConfigPreProcessor
 import transactioninfo
 import urlgrabber
 from urlgrabber.grabber import URLGrabError
-from packageSack import packagesNewestByName, packagesNewestByNameArch
+from packageSack import packagesNewestByNameArch
 import depsolve
 import plugins
 import logginglevels
@@ -2187,7 +2187,7 @@ class YumBase(depsolve.Depsolve):
                            
                            pkgs = use
                            
-                pkgs = packagesNewestByName(pkgs)
+                pkgs = packagesNewestByNameArch(pkgs)
 
                 pkgbyname = {}
                 for pkg in pkgs:
