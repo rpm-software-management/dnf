@@ -16,18 +16,6 @@ import inspect
 from rpmUtils import arch
 
 #############################################################
-### RPM Flag constants ######################################
-############################################################# 
-import rpm
-
-GT = rpm.RPMSENSE_GREATER
-GE = rpm.RPMSENSE_EQUAL | rpm.RPMSENSE_GREATER
-LT = rpm.RPMSENSE_LESS
-LE = rpm.RPMSENSE_LESS | rpm.RPMSENSE_EQUAL
-EQ = rpm.RPMSENSE_EQUAL
-
-
-#############################################################
 ### Helper classes ##########################################
 #############################################################
 
@@ -72,7 +60,7 @@ class FakePackage(packages.YumAvailablePackage):
         self.arch = arch
         self.pkgtup = (self.name, self.arch, self.epoch, self.version, self.release)
 
-        self.prco['provides'].append((name, EQ, (epoch, version, release)))
+        self.prco['provides'].append((name, 'EQ', (epoch, version, release)))
 
         # Just a unique integer
         self.id = self.__hash__()
@@ -169,7 +157,7 @@ class DepsolveTests(_DepsolveTestsBase):
 
     def testInstallPackageRequireInstalled(self):
         po = FakePackage('zsh', '1', '1', None, 'i386')
-        po.addRequires('zip', EQ, (None, '1.3', '2'))
+        po.addRequires('zip', 'EQ', (None, '1.3', '2'))
         self.tsInfo.addInstall(po)
 
         ipo = FakePackage('zip', '1.3', '2', None, 'i386')

@@ -88,12 +88,20 @@ class PackageSackBase(object):
         """return dict { packages -> list of matching requires }"""
         raise NotImplementedError()
 
-    def getConflicts(self, name, flags=None, version=(None, None, None)):
-        """return dict { packages -> list of matching conflicts }"""
+    def searchRequires(self, name):
+        """return list of package requiring the name (any evr and flag)"""
         raise NotImplementedError()
 
-    def getObsoletes(self, name, flags=None, version=(None, None, None)):
-        """return dict { packages -> list of matching obsoletes }"""
+    def searchProvides(self, name):
+        """return list of package providing the name (any evr and flag)"""
+        raise NotImplementedError()
+
+    def searchConflicts(self, name):
+        """return list of package conflicting with the name (any evr and flag)"""
+        raise NotImplementedError()
+
+    def searchObsoletes(self, name):
+        """return list of package obsoleting the name (any evr and flag)"""
         raise NotImplementedError()
 
     def returnObsoletes(self, newest=False):
@@ -290,13 +298,21 @@ class MetaSack(PackageSackBase):
         """return dict { packages -> list of matching requires }"""
         return self._computeAggregateDictResult("getRequires", name, flags, version)
 
-    def getConflicts(self, name, flags=None, version=(None, None, None)):
-        """return dict { packages -> list of matching provides }"""
-        return self._computeAggregateDictResult("getConflicts", name, flags, version)
+    def searchRequires(self, name):
+        """return list of package requiring the name (any evr and flag)"""
+        return self._computeAggregateListResult("searchRequires", name)
 
-    def getObsoletes(self, name, flags=None, version=(None, None, None)):
-        """return dict { packages -> list of matching requires }"""
-        return self._computeAggregateDictResult("getObsoletes", name, flags, version)
+    def searchProvides(self, name):
+        """return list of package providing the name (any evr and flag)"""
+        return self._computeAggregateListResult("searchProvides", name)
+
+    def searchConflicts(self, name):
+        """return list of package conflicting with the name (any evr and flag)"""
+        return self._computeAggregateListResult("searchConflicts", name)
+
+    def searchObsoletes(self, name):
+        """return list of package obsoleting the name (any evr and flag)"""
+        return self._computeAggregateListResult("searchObsoletes", name)
 
     def returnObsoletes(self, newest=False):
         """returns a dict of obsoletes dict[obsoleting pkgtuple] = [list of obs]"""
@@ -504,20 +520,14 @@ class PackageSack(PackageSackBase):
             result.append(po)
         return result
         
-    def _getPRCO(self, PRCO, name, flags=None, version=(None, None, None)):
-        """return dict { packages -> list of matching RCO }"""
-        self._checkIndexes(failure='build')
-        result = { }
-        for po in getattr(self, PRCO).get(name, []):
-            hits = po.matchingPrcos(PRCO, (name, flags, version))
-            if hits:
-                result[po] = hits
-        return result
-
     def getProvides(self, name, flags=None, version=(None, None, None)):
         """return dict { packages -> list of matching provides }"""
         self._checkIndexes(failure='build')
-        result = self._getPRCO('provides', name, flags, version)
+        result = { }
+        for po in self.provides.get(name, []):
+            hits = po.matchingPrcos('provides', (name, flags, version))
+            if hits:
+                result[po] = hits
         if name[0] == '/':
             hit = (name, None, (None, None, None))
             for po in self.searchFiles(name):
@@ -525,11 +535,50 @@ class PackageSack(PackageSackBase):
         return result
 
     def getRequires(self, name, flags=None, version=(None, None, None)):
-        return self._getPRCO('requires', name, flags, version)
-    def getConflicts(self, name, flags=None, version=(None, None, None)):
-        return self._getPRCO('conflicts', name, flags, version)
-    def getObsoletes(self, name, flags=None, version=(None, None, None)):
-        return self._getPRCO('obsoletes', name, flags, version)
+        """return dict { packages -> list of matching requires }"""
+        self._checkIndexes(failure='build')
+        result = { }
+        for po in self.requires.get(name, []):
+            hits = po.matchingPrcos('requires', (name, flags, version))
+            if hits:
+                result[po] = hits
+        return result
+
+    def searchRequires(self, name):
+        """return list of package requiring the name (any evr and flag)"""
+        self._checkIndexes(failure='build')        
+        if self.requires.has_key(name):
+            return self.requires[name]
+        else:
+            return []
+
+    def searchProvides(self, name):
+        """return list of package providing the name (any evr and flag)"""
+        # FIXME - should this do a pkgobj.checkPrco((name, flag, (e,v,r,))??
+        # has to do a searchFiles and a searchProvides for things starting with /
+        self._checkIndexes(failure='build')        
+        returnList = []
+        if name[0] == '/':
+             returnList.extend(self.searchFiles(name))
+        if self.provides.has_key(name):
+            returnList.extend(self.provides[name])
+        return returnList
+
+    def searchConflicts(self, name):
+        """return list of package conflicting with the name (any evr and flag)"""
+        self._checkIndexes(failure='build')        
+        if self.conflicts.has_key(name):
+            return self.conflicts[name]
+        else:
+            return []
+
+    def searchObsoletes(self, name):
+        """return list of package obsoleting the name (any evr and flag)"""
+        self._checkIndexes(failure='build')        
+        if self.obsoletes.has_key(name):
+            return self.obsoletes[name]
+        else:
+            return []
 
     def returnObsoletes(self, newest=False):
         """returns a dict of obsoletes dict[obsoleting pkgtuple] = [list of obs]"""
