@@ -261,7 +261,8 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
         self.primarydb = {}
         self.filelistsdb = {}
         self.otherdb = {}
-        self._excludes = { } # repo ->set(pkgKeys)
+        self.excludes = {}
+        self._excludes = set() # of (repo, pkgKey)
         self._all_excludes = {}
         self._search_cache = {
             'provides' : { },
@@ -294,16 +295,14 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
             return 0
             
         exclude_num = 0
-        for excludes in self._excludes.values():
-            exclude_num += len(excludes)
-
-        if hasattr(self, 'pkgobjlist') and not self._all_excludes:
+        for repo in self.excludes:
+            exclude_num += len(self.excludes[repo])
+        if hasattr(self, 'pkgobjlist'):
             return len(self.pkgobjlist) - exclude_num
         
         pkg_num = 0
+        sql = "SELECT count(pkgId) FROM packages"
         for repo in self.primarydb:
-            if repo in self._all_excludes:
-                continue
             pkg_num += self._sql_MD_pkg_num('primary', repo)
         return pkg_num - exclude_num
 
@@ -332,14 +331,9 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
         self.primarydb = {}
         self.filelistsdb = {}
         self.otherdb = {}
+        self.excludes = {}
+        self._excludes = set()
         self._all_excludes = {}
-        self._excludes.clear()
-        self._search_cache = {
-            'provides' : { },
-            'requires' : { },
-            }
-        if hasattr(self, 'pkgobjlist'):
-            del self.pkgobjlist
 
         yumRepo.YumPackageSack.close(self)
 
@@ -355,25 +349,33 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
     # Because we don't want to remove a package from the database we just
     # add it to the exclude list
     def delPackage(self, obj):
-        if obj.repo in self._all_excludes:
-            return
-        if not self._excludes.has_key(obj.repo):
-            self._excludes[obj.repo] = set()
-        self._excludes[obj.repo].add(obj.pkgKey)
+        if not self.excludes.has_key(obj.repo):
+            self.excludes[obj.repo] = {}
+        self.excludes[obj.repo][obj.pkgId] = 1
+        self._excludes.add( (obj.repo, obj.pkgKey) )
 
     def _delAllPackages(self, repo):
         """ Exclude all packages from the repo. """
         self._all_excludes[repo] = True
-        if repo in self._excludes:
-            self._excludes[repo].clear()
+        if repo in self.excludes:
+            del self.excludes[repo]
         if repo in self._key2pkg:
             del self._key2pkg[repo]
+
+    def _excluded(self, repo, pkgId):
+        if repo in self._all_excludes:
+            return True
+        
+        if repo in self.excludes and pkgId in self.excludes[repo]:
+            return True
+                
+        return False
 
     def _pkgKeyExcluded(self, repo, pkgKey):
         if repo in self._all_excludes:
             return True
 
-        return self._excludes.has_key(repo) and pkgKey in self._excludes[repo]
+        return (repo, pkgKey) in self._excludes
 
     def _pkgExcluded(self, po):
         return self._pkgKeyExcluded(po.repo, po.pkgKey)
@@ -395,6 +397,9 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
                 return
         else:
             self.added[repo] = []
+
+        if not self.excludes.has_key(repo): 
+            self.excludes[repo] = {}
 
         if dataobj is None:
             raise Errors.RepoError, "Tried to add None %s to %s" % (datatype, repo)
