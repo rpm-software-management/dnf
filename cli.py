@@ -731,7 +731,11 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
            of items matching the provides strings. This is a cli wrapper to the 
            module"""
         
+        old_sdup = self.conf.showdupesfromrepos
+        # For output, as searchPackageProvides() is always in showdups mode
+        self.conf.showdupesfromrepos = True
         matching = self.searchPackageProvides(args, callback=self.matchcallback)
+        self.conf.showdupesfromrepos = old_sdup
         
         if len(matching) == 0:
             return 0, ['No Matches found']
