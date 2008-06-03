@@ -25,12 +25,9 @@ import rpm
 import copy
 import urlparse
 from parser import ConfigPreProcessor
-try:
-    from iniparse.compat import NoSectionError, NoOptionError, ConfigParser
-    from iniparse.compat import ParsingError
-except ImportError:
-    from ConfigParser import NoSectionError, NoOptionError, ConfigParser
-    from ConfigParser import ParsingError
+from iniparse import INIConfig
+from iniparse.compat import NoSectionError, NoOptionError, ConfigParser
+from iniparse.compat import ParsingError
 import rpmUtils.transaction
 import rpmUtils.arch
 import Errors
@@ -814,6 +811,25 @@ def _getsysver(installroot, distroverpkg):
     del idx
     del ts
     return releasever
+
+def writeRawRepoFile(repo,only=None):
+    """
+    Writes changes in a repo object back to a .repo file.
+    @param repo: Repo Object
+    @param only: List of attributes to work on (None = All)
+    It work by reading the repo file, changes the values there shall be changed and write it back to disk.
+    """
+    ini = INIConfig(open(repo.repofile))
+    # Updated the ConfigParser with the changed values    
+    cfgOptions = repo.cfg.options(repo.id)
+    for name,value in repo.iteritems():
+        option = repo.optionobj(name)
+        if option.default != value or name in cfgOptions :
+            if only == None or name in only:
+                ini[repo.id][name] = option.tostring(value)
+    fp =file(repo.repofile,"w")               
+    fp.write(str(ini))
+    fp.close()
 
 #def main():
 #    mainconf = readMainConfig('/etc/yum/yum.conf', '/')
