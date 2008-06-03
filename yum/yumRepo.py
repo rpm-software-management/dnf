@@ -343,10 +343,8 @@ class YumRepository(Repository, config.RepoConf):
     def enablePersistent(self):
         """Persistently enables this repository."""
         self.enable()
-        self.cfg.set(self.id, 'enabled', '1')
-
         try:
-            self.cfg.write(file(self.repofile, 'w'))
+            config.writeRawRepoFile(self,only=['enabled'])
         except IOError, e:
             if e.errno == 13:
                 self.logger.warning(e)
@@ -356,10 +354,8 @@ class YumRepository(Repository, config.RepoConf):
     def disablePersistent(self):
         """Persistently disables this repository."""
         self.disable()
-        self.cfg.set(self.id, 'enabled', '0')
-
         try:
-            self.cfg.write(file(self.repofile, 'w'))
+            config.writeRawRepoFile(self,only=['enabled'])
         except IOError, e:
             if e.errno == 13:
                 self.logger.warning(e)
