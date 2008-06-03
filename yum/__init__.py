@@ -626,8 +626,8 @@ class YumBase(depsolve.Depsolve):
         ds_st = time.time()
 
         (rescode, restring) = self.resolveDeps()
-        self.plugins.run('postresolve', rescode=rescode, restring=restring)
         self._limit_installonly_pkgs()
+        self.plugins.run('postresolve', rescode=rescode, restring=restring)
         
         if self.tsInfo.changed:
             (rescode, restring) = self.resolveDeps()
