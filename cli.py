@@ -734,10 +734,20 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         old_sdup = self.conf.showdupesfromrepos
         # For output, as searchPackageProvides() is always in showdups mode
         self.conf.showdupesfromrepos = True
-        matching = self.searchPackageProvides(args, callback=self.matchcallback)
+        cb = self.matchcallback_verbose
+        matching = self.searchPackageProvides(args, callback=cb,
+                                              callback_has_matchfor=True)
         self.conf.showdupesfromrepos = old_sdup
         
         if len(matching) == 0:
+            for arg in args:
+                if len(arg) and arg[0] == '*':
+                    continue
+                self.logger.warning(_('Warning: 3.0.x versions of yum would erronously match against filenames.\n You can use "%s*/%s%s" and/or "%s*bin/%s%s" to get that behaviour'),
+                                    self.term.MODE['bold'], arg,
+                                    self.term.MODE['normal'],
+                                    self.term.MODE['bold'], arg,
+                                    self.term.MODE['normal'])
             return 0, ['No Matches found']
         
         return 0, []

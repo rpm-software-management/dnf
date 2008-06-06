@@ -1595,7 +1595,8 @@ class YumBase(depsolve.Depsolve):
         
         return matches
     
-    def searchPackageProvides(self, args, callback=None):
+    def searchPackageProvides(self, args, callback=None,
+                              callback_has_matchfor=False):
         
         matches = {}
         for arg in args:
@@ -1647,8 +1648,11 @@ class YumBase(depsolve.Depsolve):
                             tmpvalues.append(prov)
 
                 if len(tmpvalues) > 0:
-                    if callback:
-                        callback(po, tmpvalues)
+                    if callback: # No matchfor, on globs
+                        if not isglob and callback_has_matchfor:
+                            callback(po, tmpvalues, args)
+                        else:
+                            callback(po, tmpvalues)
                     matches[po] = tmpvalues
         
         # installed rpms, too
@@ -1674,7 +1678,10 @@ class YumBase(depsolve.Depsolve):
 
                     if len(tmpvalues) > 0:
                         if callback:
-                            callback(po, tmpvalues)
+                            if callback_has_matchfor:
+                                callback(po, tmpvalues, args)
+                            else:
+                                callback(po, tmpvalues)
                         matches[po] = tmpvalues
 
             else:
@@ -1698,7 +1705,7 @@ class YumBase(depsolve.Depsolve):
                             tmpvalues.append(item)
                 
                     if len(tmpvalues) > 0:
-                        if callback:
+                        if callback: # No matchfor, on globs
                             callback(po, tmpvalues)
                         matches[po] = tmpvalues
             
