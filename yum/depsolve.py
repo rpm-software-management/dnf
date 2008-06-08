@@ -536,7 +536,6 @@ class Depsolve(object):
 
             # check Requires
             while CheckDeps:
-                self.cheaterlookup = {}
                 if self.dsCallback: self.dsCallback.tscheck()
                 CheckDeps, checkinstalls, checkremoves, missing = self._resolveRequires(errors)
                 CheckInstalls |= checkinstalls
