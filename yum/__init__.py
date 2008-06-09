@@ -2658,7 +2658,6 @@ class YumBase(depsolve.Depsolve):
                           of a key. Differs from askcb in that it gets passed
                           a dictionary so that we can expand the values passed.
         """
-        
         repo = self.repos.getRepo(po.repoid)
         keyurls = repo.gpgkey
         key_installed = False
@@ -2676,61 +2675,65 @@ class YumBase(depsolve.Depsolve):
                                           unicode(str(e), 'UTF-8', 'replace'))
 
             # Parse the key
-            try:
-                keyinfo = misc.getgpgkeyinfo(rawkey)
-                keyid = keyinfo['keyid']
-                hexkeyid = misc.keyIdToRPMVer(keyid).upper()
-                timestamp = keyinfo['timestamp']
-                userid = keyinfo['userid']
-                fingerprint = keyinfo['fingerprint']
-            except ValueError, e:
-                raise Errors.YumBaseError, \
-                      _('GPG key parsing failed: ') + str(e)
-
-            # Check if key is already installed
-            if misc.keyInstalled(ts, keyid, timestamp) >= 0:
-                self.logger.info(_('GPG key at %s (0x%s) is already installed') % (
-                    keyurl, hexkeyid))
-                continue
-
-            # Try installing/updating GPG key
-            self.logger.critical(_('Importing GPG key 0x%s "%s" from %s') % (hexkeyid, userid, keyurl.replace("file://","")))
-            rc = False
-            if self.conf.assumeyes:
-                rc = True
-            elif fullaskcb:
-                rc = fullaskcb({"po": po, "userid": userid,
-                                "hexkeyid": hexkeyid, "keyurl": keyurl,
-                                "fingerprint": fingerprint, "timestamp": timestamp})
-            elif askcb:
-                rc = askcb(po, userid, hexkeyid)
-
-            if not rc:
-                raise Errors.YumBaseError, _("Not installing key")
+            keys_info = misc.getgpgkeyinfo(rawkey, multiple=True)
             
-            # Import the key
-            result = ts.pgpImportPubkey(misc.procgpgkey(rawkey))
-            if result != 0:
-                raise Errors.YumBaseError, \
-                      _('Key import failed (code %d)') % result
-            misc.import_key_to_pubring(rawkey, po.repo.cachedir)
-            
-            self.logger.info(_('Key imported successfully'))
-            key_installed = True
+            for keyinfo in keys_info:
+                try: 
+                    keyid = keyinfo['keyid']
+                    hexkeyid = misc.keyIdToRPMVer(keyid).upper()
+                    timestamp = keyinfo['timestamp']
+                    userid = keyinfo['userid']
+                    fingerprint = keyinfo['fingerprint']
+                    raw_key = keyinfo['raw_key']
+                except ValueError, e:
+                    raise Errors.YumBaseError, \
+                          _('GPG key parsing failed: ') + str(e)
 
-            if not key_installed:
-                raise Errors.YumBaseError, \
-                      _('The GPG keys listed for the "%s" repository are ' \
-                      'already installed but they are not correct for this ' \
-                      'package.\n' \
-                      'Check that the correct key URLs are configured for ' \
-                      'this repository.') % (repo.name)
+                # Check if key is already installed
+                if misc.keyInstalled(ts, keyid, timestamp) >= 0:
+                    self.logger.info(_('GPG key at %s (0x%s) is already installed') % (
+                        keyurl, hexkeyid))
+                    continue
+
+                # Try installing/updating GPG key
+                self.logger.critical(_('Importing GPG key 0x%s "%s" from %s') % (hexkeyid, userid, keyurl.replace("file://","")))
+                rc = False
+                if self.conf.assumeyes:
+                    rc = True
+                elif fullaskcb:
+                    rc = fullaskcb({"po": po, "userid": userid,
+                                    "hexkeyid": hexkeyid, "keyurl": keyurl,
+                                    "fingerprint": fingerprint, "timestamp": timestamp})
+                elif askcb:
+                    rc = askcb(po, userid, hexkeyid)
+
+                if not rc:
+                    raise Errors.YumBaseError, _("Not installing key")
+                
+                # Import the key
+                result = ts.pgpImportPubkey(misc.procgpgkey(raw_key))
+                if result != 0:
+                    raise Errors.YumBaseError, \
+                          _('Key import failed (code %d)') % result
+                misc.import_key_to_pubring(rawkey, po.repo.cachedir)
+                
+                self.logger.info(_('Key imported successfully'))
+                key_installed = True
+
+                if not key_installed:
+                    raise Errors.YumBaseError, \
+                          _('The GPG keys listed for the "%s" repository are ' \
+                          'already installed but they are not correct for this ' \
+                          'package.\n' \
+                          'Check that the correct key URLs are configured for ' \
+                          'this repository.') % (repo.name)
 
         # Check if the newly installed keys helped
         result, errmsg = self.sigCheckPkg(po)
         if result != 0:
             self.logger.info(_("Import of key(s) didn't help, wrong key(s)?"))
             raise Errors.YumBaseError, errmsg
+
     def _limit_installonly_pkgs(self):
         if self.conf.installonly_limit < 1 :
             return 
