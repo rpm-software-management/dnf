@@ -1110,9 +1110,36 @@ def decode_msg(msg) :
             # turn it into a real cert
             cert = pgp_certificate()
             cert.load(pkt_list)
+            cert.raw_key = msg
             return cert
         
         # add the data to our buffer then
         block_buf.write(l)
 
     return None
+
+
+def decode_multiple_keys(msg):
+    #ditto of above - but handling multiple certs/keys per file
+    certs = []
+
+    pgpkey_lines = map(lambda x : x.rstrip(), msg.split('\n'))
+    in_block = 0
+    block = ''
+    for l in pgpkey_lines :
+        if not in_block :
+            if l == '-----BEGIN PGP PUBLIC KEY BLOCK-----' :
+                in_block = 1        
+                block += '%s\n' % l
+                continue
+
+        block += '%s\n' % l
+        if l == '-----END PGP PUBLIC KEY BLOCK-----':
+            in_block = 0
+            cert = decode_msg(block)
+            if cert:
+                certs.append(cert)
+            block = ''
+            continue
+
+    return certs

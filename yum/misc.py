@@ -233,7 +233,7 @@ def procgpgkey(rawkey):
     # Decode and return
     return base64.decodestring(block.getvalue())
 
-def getgpgkeyinfo(rawkey):
+def getgpgkeyinfo(rawkey, multiple=False):
     '''Return a dict of info for the given ASCII armoured key text
 
     Returned dict will have the following keys: 'userid', 'keyid', 'timestamp'
@@ -241,38 +241,45 @@ def getgpgkeyinfo(rawkey):
     Will raise ValueError if there was a problem decoding the key.
     '''
     # Catch all exceptions as there can be quite a variety raised by this call
+    key_info_objs = []
     try:
-        key = pgpmsg.decode_msg(rawkey)
+        keys = pgpmsg.decode_multiple_keys(rawkey)
     except Exception, e:
         raise ValueError(str(e))
-    if key is None:
+    if len(keys) == 0:
         raise ValueError('No key found in given key data')
+    
+    for key in keys:    
+        keyid_blob = key.public_key.key_id()
 
-    keyid_blob = key.public_key.key_id()
+        info = {
+            'userid': key.user_id,
+            'keyid': struct.unpack('>Q', keyid_blob)[0],
+            'timestamp': key.public_key.timestamp,
+            'fingerprint' : key.public_key.fingerprint,
+            'raw_key' : key.raw_key,
+        }
 
-    info = {
-        'userid': key.user_id,
-        'keyid': struct.unpack('>Q', keyid_blob)[0],
-        'timestamp': key.public_key.timestamp,
-        'fingerprint' : key.public_key.fingerprint,
-    }
+        # Retrieve the timestamp from the matching signature packet 
+        # (this is what RPM appears to do) 
+        for userid in key.user_ids[0]:
+            if not isinstance(userid, pgpmsg.signature):
+                continue
 
-    # Retrieve the timestamp from the matching signature packet 
-    # (this is what RPM appears to do) 
-    for userid in key.user_ids[0]:
-        if not isinstance(userid, pgpmsg.signature):
-            continue
-
-        if userid.key_id() == keyid_blob:
-            # Get the creation time sub-packet if available
-            if hasattr(userid, 'hashed_subpaks'):
-                tspkt = \
-                    userid.get_hashed_subpak(pgpmsg.SIG_SUB_TYPE_CREATE_TIME)
-                if tspkt != None:
-                    info['timestamp'] = int(tspkt[1])
-                    break
+            if userid.key_id() == keyid_blob:
+                # Get the creation time sub-packet if available
+                if hasattr(userid, 'hashed_subpaks'):
+                    tspkt = \
+                        userid.get_hashed_subpak(pgpmsg.SIG_SUB_TYPE_CREATE_TIME)
+                    if tspkt != None:
+                        info['timestamp'] = int(tspkt[1])
+                        break
+        key_info_objs.append(info)
+    if multiple:      
+        return key_info_objs
+    else:
+        return key_info_objs[0]
         
-    return info
 
 def keyIdToRPMVer(keyid):
     '''Convert an integer representing a GPG key ID to the hex version string
