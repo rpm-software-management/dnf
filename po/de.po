@@ -713,9 +713,9 @@ msgstr ""
 "\n"
 "Transaktionszusammenfassung\n"
 "=============================================================================\n"
-"Installieren      %5.5s Pakete(e)         \n"
-"Aktualisieren   %5.5s Pakete(e)         \n"
-"Enfernen           %5.5s Paket(e)         \n"
+"Installieren      %5.5s Paket(e)         \n"
+"Aktualisieren     %5.5s Paket(e)         \n"
+"Enfernen          %5.5s Paket(e)         \n"
 
 #: ../output.py:558
 msgid "Removed"

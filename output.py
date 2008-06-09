@@ -462,7 +462,13 @@ class YumOutput:
     
         return(format % (number, space, symbols[depth]))
 
-    def matchcallback(self, po, values, matchfor=None):
+    def matchcallback(self, po, values, matchfor=None, verbose=None):
+        """ Output search/provides type callback matches. po is the pkg object,
+            values are the things in the po that we've matched.
+            If matchfor is passed, all the strings in that list will be
+            highlighted within the output.
+            verbose overrides logginglevel, if passed. """
+
         if self.conf.showdupesfromrepos:
             msg = '%s : ' % po
         else:
@@ -472,12 +478,21 @@ class YumOutput:
             msg = self.term.sub_bold(msg, matchfor)
         
         print msg
-        self.verbose_logger.debug(_('Matched from:'))
+
+        if verbose is None:
+            verbose = self.verbose_logger.isEnabledFor(logginglevels.DEBUG_3)
+        if not verbose:
+            return
+
+        print _('Matched from:')
         for item in values:
             if matchfor:
                 item = self.term.sub_bold(item, matchfor)
-            self.verbose_logger.debug('%s', item)
-        self.verbose_logger.debug('\n\n')
+            print item
+        print '\n\n'
+
+    def matchcallback_verbose(self, po, values, matchfor=None):
+        return self.matchcallback(po, values, matchfor, verbose=True)
         
     def reportDownloadSize(self, packages):
         """Report the total download size for a set of packages"""
