@@ -2641,7 +2641,7 @@ class YumBase(depsolve.Depsolve):
                                           unicode(str(e), 'UTF-8', 'replace'))
 
             # Parse the key
-            keys_info = misc.getgpgkeyinfo(rawkey, multiple=True)
+            keys_info = misc.getgpgkeyinfo(rawkey)
             
             for keyinfo in keys_info:
                 try: 

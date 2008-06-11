@@ -233,10 +233,10 @@ def procgpgkey(rawkey):
     # Decode and return
     return base64.decodestring(block.getvalue())
 
-def getgpgkeyinfo(rawkey, multiple=False):
-    '''Return a dict of info for the given ASCII armoured key text
+def getgpgkeyinfo(rawkey):
+    '''Return a list of dicts of info for the given ASCII armoured key text
 
-    Returned dict will have the following keys: 'userid', 'keyid', 'timestamp'
+    Returned dicts will have the following keys: 'userid', 'keyid', 'timestamp'
 
     Will raise ValueError if there was a problem decoding the key.
     '''
@@ -275,10 +275,7 @@ def getgpgkeyinfo(rawkey, multiple=False):
                         info['timestamp'] = int(tspkt[1])
                         break
         key_info_objs.append(info)
-    if multiple:      
         return key_info_objs
-    else:
-        return key_info_objs[0]
         
 
 def keyIdToRPMVer(keyid):
