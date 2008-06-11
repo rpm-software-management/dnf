@@ -45,7 +45,7 @@ from yum.rpmtrans import RPMTransaction
 import signal
 import yumcommands
 
-from yum.misc import to_unicode
+from yum.misc import to_unicode, to_utf8
 
 def sigquit(signum, frame):
     """ SIGQUIT handler for the yum cli. """
@@ -374,7 +374,7 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
             if msgs:
                 print _('ERROR with rpm_check_debug vs depsolve:')
                 for msg in msgs:
-                    print msg
+                    print to_utf8(msg)
     
                 return 1, [_('Please report this error in bugzilla')]
 
