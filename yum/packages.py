@@ -280,10 +280,24 @@ class RpmBase(object):
         # get rid of simple cases - nothing
         if not self.prco.has_key(prcotype):
             return 0
-        # exact match    
-        if prcotuple in self.prco[prcotype]:
-            return 1
+
+        # First try and exact match, then search
+        # Make it faster, if it's "big".
+        if len(self.prco[prcotype]) <= 8:
+            if prcotuple in self.prco[prcotype]:
+                return 1
         else:
+            if not hasattr(self, '_prco_lookup'):
+                self._prco_lookup = {'obsoletes' : None, 'conflicts' : None,
+                                     'requires'  : None, 'provides'  : None}
+
+            if self._prco_lookup[prcotype] is None:
+                self._prco_lookup[prcotype] = set(self.prco[prcotype])
+
+            if prcotuple in self._prco_lookup[prcotype]:
+                return 1
+
+        if True: # Keep indentation for patch smallness...
             # make us look it up and compare
             (reqn, reqf, (reqe, reqv ,reqr)) = prcotuple
             if reqf is not None:
