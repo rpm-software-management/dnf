@@ -832,10 +832,8 @@ def writeRawRepoFile(repo,only=None):
     fp.close()
 
 #def main():
-#    mainconf = readMainConfig('/etc/yum/yum.conf', '/')
-#    repoconf = readRepoConfig(mainconf.cfg, 'core', mainconf)
-#
-#    print `repoconf.name`
+#    mainconf = readMainConfig(readStartupConfig('/etc/yum/yum.conf', '/'))
+#    print mainconf.cachedir
 #
 #if __name__ == '__main__':
 #    main()
