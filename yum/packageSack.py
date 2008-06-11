@@ -370,7 +370,7 @@ class MetaSack(PackageSackBase):
         pkgs = calr("returnNewestByNameArch", naTup, patterns)
         pkgs = packagesNewestByNameArch(pkgs)
         if not pkgs:
-            raise Errors.PackageSackError, 'No Package Matching %s' % name          
+            raise PackageSackError, 'No Package Matching %s' % ", ".join(patterns or [])
         return pkgs
                 
     def returnNewestByName(self, name=None):
@@ -380,7 +380,7 @@ class MetaSack(PackageSackBase):
         pkgs = self._computeAggregateListResult("returnNewestByName", name)
         pkgs = packagesNewestByName(pkgs)
         if not pkgs:
-            raise Errors.PackageSackError, 'No Package Matching %s' % name        
+            raise PackageSackError, 'No Package Matching %s' % name        
         return pkgs
         
     def simplePkgList(self, patterns=None):
