@@ -396,7 +396,24 @@ class Depsolve(object):
 
         return checkdeps, missingdep
         
+    def _quickWhatProvides(self, name, flags, version):
+        if self._last_req is None:
+            return False
 
+        if flags == 0:
+            flags = None
+        if type(version) in (types.StringType, types.NoneType, types.UnicodeType):
+            (r_e, r_v, r_r) = rpmUtils.miscutils.stringToVersion(version)
+        elif type(version) in (types.TupleType, types.ListType): # would this ever be a ListType?
+            (r_e, r_v, r_r) = version
+        
+        # Quick lookup, lots of reqs for one pkg:
+        po = self._last_req
+        if po.checkPrco('provides', (name, flags, (r_e, r_v, r_r))):
+            self.verbose_logger.debug(_('Quick matched %s to require for %s'), po, name)
+            return True
+        return False
+        
     def _requiringFromTransaction(self, requiringPo, requirement, errorlist):
         """processes the dependency resolution for a dep where requiring 
            package is in the transaction set"""
@@ -427,8 +444,10 @@ class Depsolve(object):
         #                   - if they are the same
         #                       - be confused but continue
 
-        provSack = self.whatProvides(needname, needflags, needversion)
+        if self._quickWhatProvides(needname, needflags, needversion):
+            return checkdeps, missingdep
 
+        provSack = self.whatProvides(needname, needflags, needversion)
         # get rid of things that are already in the rpmdb - b/c it's pointless to use them here
 
         for pkg in provSack.returnPackages():
@@ -483,8 +502,8 @@ class Depsolve(object):
                     _('%s already in ts, skipping this one'), pkg)
                 # FIXME: Remove this line, if it is not needed ?
                 # checkdeps = 1
+                self._last_req = pkg
                 return checkdeps, missingdep
-        
 
         # find the best one 
 
@@ -496,6 +515,7 @@ class Depsolve(object):
             for txmbr in results:
                 if pkg == txmbr.po:
                     checkdeps = True
+                    self._last_req = pkg
                     return checkdeps, missingdep
 
         # find out which arch of the ones we can choose from is closest
@@ -531,11 +551,13 @@ class Depsolve(object):
             txmbr = self.tsInfo.addUpdate(best, inst[0])
             txmbr.setAsDep(po=requiringPo)
             txmbr.reason = "dep"
+            self._last_req = best
         else:
             self.verbose_logger.debug(_('TSINFO: Marking %s as install for %s'), best,
                 requiringPo)
             txmbr = self.tsInfo.addInstall(best)
             txmbr.setAsDep(po=requiringPo)
+            self._last_req = best
 
             # if we had other packages with this name.arch that we found
             # before, they're not going to be installed anymore, so we
@@ -627,6 +649,7 @@ class Depsolve(object):
 
         self.po_with_problems = set()
         self._working_po = None
+        self._last_req = None
         self.tsInfo.resetResolved(hard=False)
 
         CheckDeps = True
