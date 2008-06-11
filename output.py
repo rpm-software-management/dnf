@@ -29,6 +29,7 @@ import re # For YumTerm
 from urlgrabber.progress import TextMeter
 from urlgrabber.grabber import URLGrabError
 from yum.misc import sortPkgObj, prco_tuple_to_string, to_str, to_unicode, get_my_lang_code
+import yum.misc
 from rpmUtils.miscutils import checkSignals
 from yum.constants import *
 
@@ -243,12 +244,13 @@ class YumOutput:
     def simpleProgressBar(self, current, total, name=None):
         progressbar(current, total, name)
     
-    def simpleList(self, pkg):
+    def simpleList(self, pkg, ui_overflow=False):
         ver = pkg.printVer()
         na = '%s.%s' % (pkg.name, pkg.arch)
-        
+        if ui_overflow and len(na) > 40:
+            print "%s %s" % (na, "...")
+            na = ""
         print "%-40.40s %-22.22s %-16.16s" % (na, ver, pkg.repoid)
-
 
     def fmtKeyValFill(self, key, val):
         """ Return a key value pair in the common two column output format. """
@@ -276,20 +278,20 @@ class YumOutput:
 
         return "%s %s %s" % (beg, name, end)
 
+    def _enc(self, s):
+        """Get the translated version from specspo and ensure that
+        it's actually encoded in UTF-8."""
+        if type(s) == unicode:
+            s = s.encode("UTF-8")
+        if len(s) > 0:
+            for d in self.i18ndomains:
+                t = gettext.dgettext(d, s)
+                if t != s:
+                    s = t
+                    break
+        return to_unicode(s)
+
     def infoOutput(self, pkg):
-        def enc(s):
-            """Get the translated version from specspo and ensure that
-            it's actually encoded in UTF-8."""
-            if type(s) == unicode:
-                s = s.encode("UTF-8")
-            if len(s) > 0:
-                for d in self.i18ndomains:
-                    t = gettext.dgettext(d, s)
-                    if t != s:
-                        s = t
-                        break
-            s = unicode(s, "UTF-8")
-            return s
         print _("Name       : %s") % pkg.name
         print _("Arch       : %s") % pkg.arch
         if pkg.epoch != "0":
@@ -304,11 +306,11 @@ class YumOutput:
             print _("Buildtime  : %s") % time.ctime(pkg.buildtime)
             if hasattr(pkg, 'installtime'):
                 print _("Installtime: %s") % time.ctime(pkg.installtime)
-        print self.fmtKeyValFill(_("Summary    : "), enc(pkg.summary))
+        print self.fmtKeyValFill(_("Summary    : "), self._enc(pkg.summary))
         if pkg.url:
             print _("URL        : %s") % pkg.url
         print _("License    : %s") % pkg.license
-        print self.fmtKeyValFill(_("Description: "), enc(pkg.description))
+        print self.fmtKeyValFill(_("Description: "), self._enc(pkg.description))
         print ""
     
     def updatesObsoletesList(self, uotup, changetype):
@@ -335,7 +337,7 @@ class YumOutput:
                 lst.sort(sortPkgObj)
                 for pkg in lst:
                     if outputType == 'list':
-                        self.simpleList(pkg)
+                        self.simpleList(pkg, ui_overflow=True)
                     elif outputType == 'info':
                         self.infoOutput(pkg)
                     else:
@@ -477,7 +479,7 @@ class YumOutput:
             msg = '%s : ' % po
         else:
             msg = '%s.%s : ' % (po.name, po.arch)
-        msg = self.fmtKeyValFill(msg, po.summary)
+        msg = self.fmtKeyValFill(msg, self._enc(po.summary))
         if matchfor:
             msg = self.term.sub_bold(msg, matchfor)
         
@@ -489,10 +491,34 @@ class YumOutput:
             return
 
         print _('Matched from:')
-        for item in values:
+        for item in yum.misc.unique(values):
+            if po.name == item or po.summary == item:
+                continue # Skip double name/summary printing
+
+            can_overflow = True
+            if False: pass
+            elif po.description == item:
+                key = _("Description : ")
+                item = self._enc(item)
+            elif po.url == item:
+                key = _("URL         :  %s")
+                can_overflow = False
+            elif po.license == item:
+                key = _("License     :  %s")
+                can_overflow = False
+            elif item.startswith("/"):
+                key = _("Filename    :  %s")
+                item = self._enc(item)
+                can_overflow = False
+            else:
+                key = _("Other       : ")
+
             if matchfor:
                 item = self.term.sub_bold(item, matchfor)
-            print item
+            if can_overflow:
+                print self.fmtKeyValFill(key, item)
+            else:
+                print key % item
         print '\n\n'
 
     def matchcallback_verbose(self, po, values, matchfor=None):
