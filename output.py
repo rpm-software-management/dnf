@@ -300,6 +300,10 @@ class YumOutput:
         print _("Repo       : %s") % pkg.repoid
         if self.verbose_logger.isEnabledFor(logginglevels.DEBUG_3):
             print _("Committer  : %s") % pkg.committer
+            print _("Committime : %s") % time.ctime(pkg.committime)
+            print _("Buildtime  : %s") % time.ctime(pkg.buildtime)
+            if hasattr(pkg, 'installtime'):
+                print _("Installtime: %s") % time.ctime(pkg.installtime)
         print self.fmtKeyValFill(_("Summary    : "), enc(pkg.summary))
         if pkg.url:
             print _("URL        : %s") % pkg.url
