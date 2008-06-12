@@ -1720,6 +1720,9 @@ class YumBase(depsolve.Depsolve):
         
         installed = []
         available = []
+
+        if self.comps.compscount == 0:
+            raise Errors.GroupsError, _('No group data available for configured repositories')
         
         for grp in self.comps.groups:
             if grp.installed:
