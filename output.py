@@ -501,13 +501,13 @@ class YumOutput:
                 key = _("Description : ")
                 item = self._enc(item)
             elif po.url == item:
-                key = _("URL         :  %s")
+                key = _("URL         : %s")
                 can_overflow = False
             elif po.license == item:
-                key = _("License     :  %s")
+                key = _("License     : %s")
                 can_overflow = False
             elif item.startswith("/"):
-                key = _("Filename    :  %s")
+                key = _("Filename    : %s")
                 item = self._enc(item)
                 can_overflow = False
             else:
