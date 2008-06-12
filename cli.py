@@ -167,10 +167,10 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         root = self.optparser.getRoot(opts)
 
         if opts.quiet:
-            opts.debuglevel = logginglevels.DEBUG_QUIET_LEVEL
+            opts.debuglevel = yum.logginglevels.DEBUG_QUIET_LEVEL
         if opts.verbose:
-            opts.debuglevel = logginglevels.DEBUG_VERBOSE_LEVEL
-            opts.errorlevel = logginglevels.ERROR_VERBOSE_LEVEL
+            opts.debuglevel = yum.logginglevels.DEBUG_VERBOSE_LEVEL
+            opts.errorlevel = yum.logginglevels.ERROR_VERBOSE_LEVEL
        
         # Read up configuration options and initialise plugins
         try:

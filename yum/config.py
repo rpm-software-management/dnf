@@ -31,6 +31,7 @@ from iniparse.compat import ParsingError
 import rpmUtils.transaction
 import rpmUtils.arch
 import Errors
+import logginglevels
 
 class Option(object):
     '''
