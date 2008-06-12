@@ -249,7 +249,7 @@ class EasyLogger:
 
         now = time.time()
         out = msg % args
-        self.debug("%s: time=%.4f" (out, now - old_tm))
+        self.debug("%s: time=%.4f" % (out, now - oldtm))
 
     def debug1(self, msg, *args):
         """ Log a message as log.DEBUG_1. """
