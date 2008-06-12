@@ -38,6 +38,8 @@ def main(args):
     # does setlocale(LC_CTYPE, "")
     try:
         locale.setlocale(locale.LC_ALL, '')
+        # set time to C so that we output sane things in the logs (#433091)
+        locale.setlocale(locale.LC_TIME, 'C')
     except locale.Error, e:
         # default to C locale if we get a failure.
         print >> sys.stderr, 'Failed to set locale, defaulting to C'
