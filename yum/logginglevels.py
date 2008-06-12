@@ -23,10 +23,17 @@ import socket
 import sys
 import logging
 import logging.handlers
+import time
 
-INFO_1 = 19
-INFO_2 = 18
+# logging.info() == 20
+INFO    = logging.INFO # Quiet
+assert INFO == 20
+INFO_1  = 19
+INFO_2  = 18 # Normal
+INFO_3  = 17 # Verbose
 
+DEBUG   = logging.DEBUG
+assert DEBUG == 10
 DEBUG_1 = 9
 DEBUG_2 = 8
 DEBUG_3 = 7
@@ -34,6 +41,7 @@ DEBUG_4 = 6
 
 logging.addLevelName(INFO_1, "INFO_1")
 logging.addLevelName(INFO_2, "INFO_2")
+logging.addLevelName(INFO_2, "INFO_3")
 
 logging.addLevelName(DEBUG_1, "DEBUG_1")
 logging.addLevelName(DEBUG_2, "DEBUG_2")
@@ -47,17 +55,37 @@ logging.raiseExceptions = False
 
 syslog = None
 
+DEBUG_QUIET_LEVEL   = 0
+DEBUG_NORMAL_LEVEL  = 2
+DEBUG_VERBOSE_LEVEL = 3
+DEBUG_DEBUG0_LEVEL  = 4
+DEBUG_DEBUG1_LEVEL  = 5
+DEBUG_DEBUG2_LEVEL  = 6
+DEBUG_DEBUG3_LEVEL  = 7
+DEBUG_DEBUG4_LEVEL  = 8
+DEBUG_UPDATES_LEVEL = DEBUG_DEBUG3_LEVEL
+
+DEBUG_MIN_LEVEL     = 0
+DEBUG_MAX_LEVEL     = DEBUG_DEBUG4_LEVEL
+
+ERROR_NORMAL_LEVEL  = 1
+ERROR_VERBOSE_LEVEL = 2
+
+ERROR_MIN_LEVEL     = 0
+ERROR_MAX_LEVEL     = ERROR_VERBOSE_LEVEL
+
 def logLevelFromErrorLevel(error_level):
     """ Convert an old-style error logging level to the new style. """
-    error_table = { -1 : __NO_LOGGING, 0 : logging.CRITICAL, 1 : logging.ERROR,
-        2 : logging.WARNING}
+    error_table = { -1 : __NO_LOGGING,
+                    0 : logging.CRITICAL, 1 : logging.ERROR, 2 :logging.WARNING}
     
     return __convertLevel(error_level, error_table)
 
 def logLevelFromDebugLevel(debug_level):
     """ Convert an old-style debug logging level to the new style. """
-    debug_table = {-1 : __NO_LOGGING, 0 : logging.INFO, 1 : INFO_1, 2 : INFO_2,
-        3 : logging.DEBUG, 4 : DEBUG_1, 5 : DEBUG_2, 6 : DEBUG_3, 7 : DEBUG_4}
+    debug_table = {-1 : __NO_LOGGING,
+                   0 : INFO,  1 : INFO_1,  2 : INFO_2,  3 : INFO_3,
+                   4 : DEBUG, 5 : DEBUG_1, 6 : DEBUG_2, 7 : DEBUG_3, 8 :DEBUG_4}
 
     return __convertLevel(debug_level, debug_table)
 
@@ -123,7 +151,7 @@ def doLoggingSetup(debuglevel, errorlevel):
     logger.addHandler(console_stderr)
    
     filelogger = logging.getLogger("yum.filelogging")
-    filelogger.setLevel(logging.INFO)
+    filelogger.setLevel(INFO)
     filelogger.propagate = False
 
     log_dev = '/dev/log'
@@ -167,3 +195,86 @@ def setLoggingApp(app):
     if syslog:
         syslogformatter = logging.Formatter("yum(%s): "% (app,) + "%(message)s")
         syslog.setFormatter(syslogformatter)
+
+class EasyLogger:
+    """ Smaller to use logger for yum, wraps "logging.getLogger" module. """
+
+    def __init__(self, name="main"):
+        self.name   = name
+        self.logger = logging.getLogger(name)
+
+    def info(self, msg, *args):
+        """ Log a message as info. Output even in quiet mode. """
+
+        self.logger.info(msg % args)
+
+    def info1(self, msg, *args):
+        """ Log a message as log.INFO_1. Output in normal/verbose mode. """
+
+        self.logger.log(INFO_1, msg % args)
+
+    def info2(self, msg, *args):
+        """ Log a message as log.INFO_2. Output in normal/verbose mode. """
+
+        self.logger.log(INFO_2, msg % args)
+
+    def info3(self, msg, *args):
+        """ Log a message as log.INFO_3. Output in verbose mode. """
+
+        self.logger.log(INFO_3, msg % args)
+
+    def warn(self, msg, *args):
+        """ Log a message as warning. """
+
+        self.logger.warning(msg % args)
+
+    # NOTE: Is "error" worthwhile, it's either warning, critical or an exception
+    def error(self, msg, *args):
+        """ Log a message as error. """
+
+        self.logger.error(msg % args)
+
+    def critical(self, msg, *args):
+        """ Log a message as critical. """
+
+        self.logger.critical(msg % args)
+
+    def debug(self, msg, *args):
+        """ Log a message as debug. """
+
+        self.logger.debug(msg % args)
+
+    def debug_tm(self, oldtm, msg, *args):
+        """ Log a message as debug, with a timestamp delta. """
+
+        now = time.time()
+        out = msg % args
+        self.debug("%s: time=%.4f" (out, now - old_tm))
+
+    def debug1(self, msg, *args):
+        """ Log a message as log.DEBUG_1. """
+
+        self.logger.log(DEBUG_1, msg % args)
+
+    def debug2(self, msg, *args):
+        """ Log a message as log.DEBUG_2. """
+
+        self.logger.log(DEBUG_2, msg % args)
+
+    def debug3(self, msg, *args):
+        """ Log a message as log.DEBUG_3. """
+
+        self.logger.log(DEBUG_3, msg % args)
+
+    def debug4(self, msg, *args):
+        """ Log a message as log.DEBUG_4. """
+
+        self.logger.log(DEBUG_4, msg % args)
+
+    def isEnabledFor(self, level):
+        """ Wrap self.logger.isEnabledFor() """
+        return self.logger.isEnabledFor(level)
+
+    def verbose(self):
+        """ Is this logger in "yum verbose" mode. """
+        return self.isEnabledFor(INFO_3)

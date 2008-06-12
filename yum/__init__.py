@@ -27,8 +27,6 @@ import errno
 import time
 import glob
 import fnmatch
-import logging
-import logging.config
 import operator
 import gzip
 
@@ -80,6 +78,25 @@ __version__ = '3.2.16'
 # multiple YumBase() objects.
 default_grabber.opts.user_agent += " yum/" + __version__
 
+# Setup "yum" logging APIs. Can use via. "import yum; yum.log() ... "
+log  = logginglevels.EasyLogger("yum.YumBase")
+vlog = logginglevels.EasyLogger("yum.verbose.YumBase")
+
+# Quick functions ... so everything isn't prefxied with log.
+(info, warn, critical)   = (log.info, log.warn, log.critical)
+(info1, info2, info3)    = (log.info2, log.info1, log.info3)
+(debug, debug_tm)        = (log.debug, log.debug_tm)
+(debug1, debug2)         = (log.debug1, log.debug2)
+(debug3, debug4)         = (log.debug3, log.debug4)
+
+# dito. above, but for "verbose"
+(vinfo, vwarn, vcritical)   = (vlog.info, vlog.warn, vlog.critical)
+(vinfo1, vinfo2, vinfo3)    = (vlog.info2, vlog.info1, vlog.info3)
+(vdebug, vdebug_tm)         = (vlog.debug, vlog.debug_tm)
+(vdebug1, vdebug2)          = (vlog.debug1, vlog.debug2)
+(vdebug3, vdebug4)          = (vlog.debug3, vlog.debug4)
+verbose                     = vlog.verbose
+
 class YumBase(depsolve.Depsolve):
     """This is a primary structure and base class. It houses the objects and
        methods needed to perform most things in yum. It is almost an abstract
@@ -94,8 +111,10 @@ class YumBase(depsolve.Depsolve):
         self._up = None
         self._comps = None
         self._pkgSack = None
-        self.logger = logging.getLogger("yum.YumBase")
-        self.verbose_logger = logging.getLogger("yum.verbose.YumBase")
+        # FIXME: backwards compat. with plugins etc., remove?
+        self.logger         = log.logger
+        self.verbose_logger = vlog.logger
+
         self._repos = RepoStorage(self)
 
         # Start with plugins disabled
@@ -474,7 +493,7 @@ class YumBase(depsolve.Depsolve):
         up_st = time.time()
 
         self._up = rpmUtils.updates.Updates(self.rpmdb.simplePkgList(), self.pkgSack.simplePkgList())
-        if self.conf.debuglevel >= 6:
+        if self.conf.debuglevel >= logginglevels.DEBUG_UPDATES_LEVEL:
             self._up.debug = 1
         
         if self.conf.obsoletes:

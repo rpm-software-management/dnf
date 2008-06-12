@@ -558,8 +558,12 @@ class StartupConf(BaseConfig):
     required early in the initialisation process or before the other [main]
     options can be parsed. 
     '''
-    debuglevel = IntOption(2, 0, 10)
-    errorlevel = IntOption(2, 0, 10)
+    debuglevel = IntOption(logginglevels.DEBUG_NORMAL_LEVEL,
+                           logginglevels.DEBUG_MIN_LEVEL,
+                           logginglevels.DEBUG_MAX_LEVEL)
+    errorlevel = IntOption(logginglevels.ERROR_NORMAL_LEVEL,
+                           logginglevels.ERROR_MIN_LEVEL,
+                           logginglevels.ERROR_MAX_LEVEL)
 
     distroverpkg = Option('redhat-release')
     installroot = Option('/')
