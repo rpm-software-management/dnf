@@ -2540,7 +2540,7 @@ class YumBase(depsolve.Depsolve):
         # FIXME -our archlist should be stored somewhere so we don't have to
         # do this: but it's not a config file sort of thing
         if po.arch not in rpmUtils.arch.getArchList():
-            critical(_('Cannot add package %s to transaction. Not a compatible architecture: %s'), pkg, po.arch)
+            self.logger.critical(_('Cannot add package %s to transaction. Not a compatible architecture: %s'), pkg, po.arch)
             return result
         
         # everything installed that matches the name
