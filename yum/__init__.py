@@ -2536,6 +2536,13 @@ class YumBase(depsolve.Depsolve):
             self.verbose_logger.log(logginglevels.INFO_2,
                 _('Examining %s: %s'), po.localpath, po)
 
+        # if by any chance we're a noncompat arch rpm - bail and throw out an error
+        # FIXME -our archlist should be stored somewhere so we don't have to
+        # do this: but it's not a config file sort of thing
+        if po.arch not in rpmUtils.arch.getArchList():
+            critical(_('Cannot add package %s to transaction. Not a compatible architecture: %s'), pkg, po.arch)
+            return result
+        
         # everything installed that matches the name
         installedByKey = self.rpmdb.searchNevra(name=po.name)
         # go through each package
