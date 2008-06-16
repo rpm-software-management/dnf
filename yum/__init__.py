@@ -1088,6 +1088,7 @@ class YumBase(depsolve.Depsolve):
             len(remote_pkgs) > 1):
             urlgrabber.progress.text_meter_total_size(remote_size)
         i = 0
+        local_size = 0
         for po in remote_pkgs:
             i += 1
             checkfunc = (self.verifyPkg, (po, 1), {})
@@ -1105,6 +1106,10 @@ class YumBase(depsolve.Depsolve):
                                    text=text,
                                    cache=po.repo.http_caching != 'none',
                                    )
+                local_size += po.size
+                if hasattr(urlgrabber.progress, 'text_meter_total_size'):
+                    urlgrabber.progress.text_meter_total_size(remote_size,
+                                                              local_size)
             except Errors.RepoError, e:
                 adderror(po, str(e))
             else:
