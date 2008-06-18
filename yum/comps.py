@@ -25,6 +25,8 @@ from Errors import CompsException
 # switch all compsexceptions to grouperrors after api break
 import fnmatch
 import re
+import gzip
+import bz2
 from yum.misc import to_unicode
 
 lang_attr = '{http://www.w3.org/XML/1998/namespace}lang'
@@ -51,7 +53,7 @@ class Group(object):
         self.optional_packages = {}
         self.default_packages = {}
         self.conditional_packages = {}
-        self.langonly = None ## what the hell is this?
+        self.langonly = None 
         self.groupid = None
         self.display_order = 1024
         self.installed = False
@@ -431,7 +433,12 @@ class Comps(object):
             
         if type(srcfile) == type('str'):
             # srcfile is a filename string
-            infile = open(srcfile, 'rt')
+            if srcfile.endswith('.gz'):
+                infile = gzip.open(srcfile, 'r')
+            elif srcfile.endswith('.bz2'):
+                infile = bz2.BZ2File(srcfile, 'r')
+            else:
+                infile = open(srcfile, 'rt')
         else:
             # srcfile is a file object
             infile = srcfile
