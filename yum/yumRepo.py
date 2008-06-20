@@ -528,6 +528,8 @@ class YumRepository(Repository, config.RepoConf):
         skipped = None
         for url in url_list:
             url = parser.varReplace(url, self.yumvar)
+            if url[-1] != '/':
+                url = url + '/'
             (s,b,p,q,f,o) = urlparse.urlparse(url)
             if s not in ['http', 'ftp', 'file', 'https']:
                 skipped = url
