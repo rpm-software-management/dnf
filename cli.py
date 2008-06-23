@@ -403,7 +403,7 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         if len(tserrors) > 0:
             errstring = _('Transaction Check Error:\n')
             for descr in tserrors:
-                errstring += '  %s\n' % descr 
+                errstring += '  %s\n' % to_unicode(descr)
             
             raise yum.Errors.YumBaseError, errstring + '\n' + \
                  self.errorSummary(errstring)
