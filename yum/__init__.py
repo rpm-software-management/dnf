@@ -53,7 +53,7 @@ from parser import ConfigPreProcessor
 import transactioninfo
 import urlgrabber
 from urlgrabber.grabber import URLGrabError
-from packageSack import packagesNewestByNameArch
+from packageSack import packagesNewestByNameArch, packagesNewestByName
 import depsolve
 import plugins
 import logginglevels
@@ -2034,11 +2034,24 @@ class YumBase(depsolve.Depsolve):
             
         if len(pkglist) == 1:
             return pkglist[0]
-        
-        bestlist = packagesNewestByNameArch(pkglist)
-        
-        best = bestlist[0]
-        for pkg in bestlist[1:]:
+
+        bestlist  = packagesNewestByNameArch(pkglist)
+        #  Here we need the list of the latest version of each package
+        # the problem we are trying to fix is: ABC-1.2.i386 and ABC-1.3.noarch
+        # so in the above we need to "exclude" ABC < 1.3, which is done by
+        # making another list from newest by name and then make sure any pkg is
+        # in nbestlist.
+        nbestlist = packagesNewestByName(bestlist)
+
+        best = nbestlist[0]
+        nbestlist = set(nbestlist)
+        for pkg in bestlist:
+            if pkg == best:
+                continue
+            if pkg not in nbestlist:
+                continue
+
+            # This is basically _compare_providers() ... but without a reqpo
             if len(pkg.name) < len(best.name): # shortest name silliness
                 best = pkg
                 continue
