@@ -2198,8 +2198,10 @@ class YumBase(depsolve.Depsolve):
                            pkgs_by_name = {}
                            use = []
                            not_added = []
+                           best = rpmUtils.arch.legitMultiArchesInSameLib()
+                           best.append('noarch')
                            for pkg in pkgs:
-                               if pkg.arch in rpmUtils.arch.legitMultiArchesInSameLib():
+                               if pkg.arch in best:
                                    pkgs_by_name[pkg.name] = 1    
                                    use.append(pkg)  
                                else:
