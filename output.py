@@ -334,8 +334,7 @@ class YumOutput:
             if len(lst) > 0:
                 thingslisted = 1
                 print '%s' % description
-                lst.sort(sortPkgObj)
-                for pkg in lst:
+                for pkg in sorted(lst):
                     if outputType == 'list':
                         self.simpleList(pkg, ui_overflow=True)
                     elif outputType == 'info':
