@@ -161,7 +161,8 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         # Just print out the version if that's what the user wanted
         if opts.version:
             print yum.__version__
-            sys.exit(0)
+            opts.quiet = True
+            opts.verbose = False
 
         # get the install root to use
         root = self.optparser.getRoot(opts)
@@ -194,6 +195,18 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         # Now parse the command line for real and 
         # apply some of the options to self.conf
         (opts, self.cmds) = self.optparser.setupYumConfig()
+
+        if opts.version:
+            self.conf.cache = 1
+            for pkg in self.rpmdb.returnPackages(patterns=['yum']):
+                # We should only have 1 return...
+                print _("  Installed version: %s") % pkg
+                print _("  Committer        : %s") % pkg.committer
+                print _("  Committime       : %s") % time.ctime(pkg.committime)
+                print _("  Buildtime        : %s") % time.ctime(pkg.buildtime)
+                if hasattr(pkg, 'installtime'):
+                    print _("  Installtime      : %s") % time.ctime(pkg.installtime)
+            sys.exit(0)
 
         if opts.sleeptime is not None:
             sleeptime = random.randrange(opts.sleeptime*60)
