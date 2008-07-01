@@ -255,17 +255,21 @@ class RPMDBPackageSack(PackageSackBase):
         return misc.newestInList(allpkgs)
 
     @staticmethod
-    def _compile_patterns(patterns):
+    def _compile_patterns(patterns, ignore_case=False):
         if not patterns or len(patterns) > constants.PATTERNS_MAX:
             return None
         ret = []
         for pat in patterns:
-            ret.append(re.compile(fnmatch.translate(pat)))
+            if ignore_case:
+                ret.append(re.compile(fnmatch.translate(pat), re.I))
+            else:
+                ret.append(re.compile(fnmatch.translate(pat)))
         return ret
     @staticmethod
     def _match_repattern(repatterns, hdr):
         if repatterns is None:
             return True
+
         for repat in repatterns:
             if repat.match(hdr['name']):
                 return True
@@ -285,9 +289,9 @@ class RPMDBPackageSack(PackageSackBase):
                 return True
         return False
 
-    def returnPackages(self, repoid=None, patterns=None):
+    def returnPackages(self, repoid=None, patterns=None, ignore_case=False):
         if not self._completely_loaded:
-            rpats = self._compile_patterns(patterns)
+            rpats = self._compile_patterns(patterns, ignore_case)
             for hdr, idx in self._all_packages():
                 if self._match_repattern(rpats, hdr):
                     self._makePackageObject(hdr, idx)
