@@ -198,14 +198,28 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
 
         if opts.version:
             self.conf.cache = 1
-            for pkg in self.rpmdb.returnPackages(patterns=['yum']):
-                # We should only have 1 return...
-                print _("  Installed version: %s") % pkg
-                print _("  Committer        : %s") % pkg.committer
-                print _("  Committime       : %s") % time.ctime(pkg.committime)
-                print _("  Buildtime        : %s") % time.ctime(pkg.buildtime)
-                if hasattr(pkg, 'installtime'):
-                    print _("  Installtime      : %s") % time.ctime(pkg.installtime)
+            yum_progs = ['yum', 'yum-metadata-parser', 'rpm',
+                         'yum-rhn-plugin']
+            done = False
+            def sm_ui_time(x):
+                return time.strftime("%Y-%m-%d %H:%M", time.gmtime(x))
+            for pkg in self.rpmdb.returnPackages(patterns=yum_progs):
+                # We should only have 1 version of each...
+                if done: print ""
+                done = True
+                if pkg.epoch == '0':
+                    ver = '%s-%s.%s' % (pkg.version, pkg.release, pkg.arch)
+                else:
+                    ver = '%s:%s-%s.%s' % (pkg.epoch,
+                                           pkg.version, pkg.release, pkg.arch)
+                name = "%s%s%s" % (self.term.MODE['bold'], pkg.name,
+                                   self.term.MODE['normal'])
+                print _("  Installed: %s-%s at %s") %(name, ver,
+                                                   sm_ui_time(pkg.installtime))
+                print _("  Built    : %s at %s") % (pkg.packager,
+                                                    sm_ui_time(pkg.buildtime))
+                print _("  Committed: %s at %s") % (pkg.committer,
+                                                    sm_ui_time(pkg.committime))
             sys.exit(0)
 
         if opts.sleeptime is not None:
