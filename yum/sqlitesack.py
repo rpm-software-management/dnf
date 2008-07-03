@@ -386,10 +386,10 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
         
     def _packageByKeyData(self, repo, pkgKey, data):
         """ Like _packageByKey() but we already have the data for .pc() """
-        if x['pkgKey'] not in self._key2pkg.get(repo, {}):
+        if data['pkgKey'] not in self._key2pkg.get(repo, {}):
             po = self.pc(repo, data)
             self._key2pkg.setdefault(repo, {})[pkgKey] = po
-        return self._key2pkg[repo][x['pkgKey']]
+        return self._key2pkg[repo][data['pkgKey']]
 
     def addDict(self, repo, datatype, dataobj, callback=None):
         if self.added.has_key(repo):
