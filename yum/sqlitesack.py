@@ -436,6 +436,17 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
                 pkgs.append(self._packageByKey(repo, ob['pkgKey']))
         return pkgs
 
+    @staticmethod
+    def _sql_esc(pattern):
+        """ Apply SQLite escaping, if needed. Returns pattern and esc. """
+        esc = ''
+        if "_" in pattern or "%" in pattern:
+            esc = " ESCAPE '!'"
+            pattern = pattern.replace("!", "!!")
+            pattern = pattern.replace("%", "!%")
+            pattern = pattern.replace("_", "!_")
+        return (pattern, esc)
+
     @catchSqliteException
     def searchFiles(self, name, strict=False):
         """search primary if file will be in there, if not, search filelists, use globs, if possible"""
@@ -521,14 +532,15 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
             return result
         
         searchstring = searchstring.replace("'", "''")
-        basestring="select DISTINCT pkgKey from packages where %s like '%%%s%%' " % (fields[0], searchstring)
+        (searchstring, esc) = self._sql_esc(searchstring)
+        sql = "select DISTINCT pkgKey from packages where %s like '%%%s%%'%s " % (fields[0], searchstring, esc)
         
         for f in fields[1:]:
-            basestring = "%s or %s like '%%%s%%' " % (basestring, f, searchstring)
+            sql = "%s or %s like '%%%s%%'%s " % (sql, f, searchstring, esc)
         
         for (rep,cache) in self.primarydb.items():
             cur = cache.cursor()
-            executeSQL(cur, basestring)
+            executeSQL(cur, sql)
             self._sql_pkgKey2po(rep, cur, result)
         return result    
 
@@ -546,7 +558,6 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
         if len(searchstrings) > constants.PATTERNS_MAX:
             tot = {}
             for searchstring in searchstrings:
-                searchstring = searchstring.replace("'", "''")
                 matches = self.searchPrimaryFields(fields, searchstring)
                 for po in matches:
                     tot[po] = tot.get(po, 0) + 1
@@ -564,13 +575,14 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
         
         for s in searchstrings:         
             s = s.replace("'", "''")
-            basestring="select pkgKey,1 AS cumul from packages where %s like '%%%s%%' " % (fields[0], s)
+            (s, esc) = self._sql_esc(s)
+            sql="select pkgKey,1 AS cumul from packages where %s like '%%%s%%'%s " % (fields[0], s, esc)
             for f in fields[1:]:
-                basestring = "%s or %s like '%%%s%%' " % (basestring, f, s)
-            selects.append(basestring)
+                sql = "%s or %s like '%%%s%%'%s " % (sql, f, s, esc)
+            selects.append(sql)
         
         totalstring = unionstring + " UNION ALL ".join(selects) + endunionstring
-        
+
         for (rep,cache) in self.primarydb.items():
             cur = cache.cursor()
             executeSQL(cur, totalstring)
@@ -1000,9 +1012,10 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
                                   'sql_nameVer', 'sql_nameVerRel',
                                   'sql_envra', 'sql_nevra']:
                         if ignore_case:
+                            (pattern, esc) = self._sql_esc(pattern)
                             pattern = pattern.replace("*", "%")
                             pattern = pattern.replace("?", "_")
-                            pat_sqls.append("%s LIKE ?" % field)
+                            pat_sqls.append("%s LIKE ?%s" % (field, esc))
                         else:
                             pat_sqls.append("%s GLOB ?" % field)
                         pat_data.append(pattern)
