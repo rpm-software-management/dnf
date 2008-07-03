@@ -750,7 +750,37 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
     def getRequires(self, name, flags=None, version=(None, None, None)):
         return self._search("requires", name, flags, version)
 
-    
+    @catchSqliteException
+    def searchNames(self, names):
+        """return a list of packages matching any of the given names. This is 
+           only a match on package name, nothing else"""
+        
+        returnList = []
+        for (repo,cache) in self.primarydb.items():
+            cur = cache.cursor()
+            pat_sqls = []
+            qsql = """select pkgId,pkgKey,name,epoch,version,release,arch
+                          from packages where """
+            for name in names:
+                pat_sqls.append("name = ?")
+            qsql = qsql + " OR ".join(pat_sqls)
+            #print qsql
+            executeSQL(cur, qsql, list(names))
+                
+
+            for x in cur:
+                if self._key2pkg.get(repo, {}).has_key(x['pkgKey']):
+                    po = self._key2pkg[repo][x['pkgKey']]
+                else:
+                    po = self.pc(repo,x)
+                    self._key2pkg.setdefault(repo, {})[po.pkgKey] = po
+                
+                if self._pkgExcluded(po):
+                    continue
+                returnList.append(po)
+
+        return returnList
+ 
     @catchSqliteException
     def searchPrco(self, name, prcotype):
         """return list of packages having prcotype name (any evr and flag)"""

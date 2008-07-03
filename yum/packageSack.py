@@ -58,6 +58,9 @@ class PackageSackBase(object):
         """return list of pkgobjects matching the nevra requested"""
         raise NotImplementedError()
 
+    def searchNames(self, names=[]):
+        raise NotImplementedError()
+
     def searchPO(self, po):
         """return list of package objects matching the name, epoch, ver, rel,
            arch of the package object passed in"""
@@ -290,6 +293,9 @@ class MetaSack(PackageSackBase):
     def searchNevra(self, name=None, epoch=None, ver=None, rel=None, arch=None):
         """return list of pkgobjects matching the nevra requested"""
         return self._computeAggregateListResult("searchNevra", name, epoch, ver, rel, arch)
+
+    def searchNames(self, names=[]):
+        return self._computeAggregateListResult("searchNames", names)
 
     def getProvides(self, name, flags=None, version=(None, None, None)):
         """return dict { packages -> list of matching provides }"""

@@ -315,6 +315,11 @@ class RPMDBPackageSack(PackageSackBase):
             if n > 0:
                 ret.append((self._makePackageObject(hdr, idx), n))
         return ret
+    def searchNames(self, names=[]):
+        returnList = []
+        for name in names:
+            returnList.extend(self._search(name=name))
+        return returnList
 
     def searchNevra(self, name=None, epoch=None, ver=None, rel=None, arch=None):
         return self._search(name, epoch, ver, rel, arch)
