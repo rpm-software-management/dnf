@@ -373,6 +373,7 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
         return self._pkgKeyExcluded(po.repo, po.pkgKey)
 
     def _packageByKey(self, repo, pkgKey):
+        """ Lookup a pkg by it's pkgKey, if we don't have it load it """
         if not self._key2pkg.has_key(repo):
             self._key2pkg[repo] = {}
         if not self._key2pkg[repo].has_key(pkgKey):
@@ -383,6 +384,13 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
             self._key2pkg[repo][pkgKey] = po
         return self._key2pkg[repo][pkgKey]
         
+    def _packageByKeyData(self, repo, pkgKey, data):
+        """ Like _packageByKey() but we already have the data for .pc() """
+        if x['pkgKey'] not in self._key2pkg.get(repo, {}):
+            po = self.pc(repo, data)
+            self._key2pkg.setdefault(repo, {})[pkgKey] = po
+        return self._key2pkg[repo][x['pkgKey']]
+
     def addDict(self, repo, datatype, dataobj, callback=None):
         if self.added.has_key(repo):
             if datatype in self.added[repo]:
@@ -767,14 +775,8 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
             #print qsql
             executeSQL(cur, qsql, list(names))
                 
-
             for x in cur:
-                if self._key2pkg.get(repo, {}).has_key(x['pkgKey']):
-                    po = self._key2pkg[repo][x['pkgKey']]
-                else:
-                    po = self.pc(repo,x)
-                    self._key2pkg.setdefault(repo, {})[po.pkgKey] = po
-                
+                po = self._packageByKeyData(repo, x['pkgKey'], x)
                 if self._pkgExcluded(po):
                     continue
                 returnList.append(po)
@@ -1009,11 +1011,7 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
                     qsql = _FULL_PARSE_QUERY_BEG + " OR ".join(pat_sqls)
                 executeSQL(cur, qsql, pat_data)
                 for x in cur:
-                    if self._key2pkg.get(repo, {}).has_key(x['pkgKey']):
-                        po = self._key2pkg[repo][x['pkgKey']]
-                    else:
-                        po = self.pc(repo,x)
-                        self._key2pkg.setdefault(repo, {})[po.pkgKey] = po
+                    po = self._packageByKeyData(repo, x['pkgKey'], x)
                     returnList.append(po)
         if not patterns:
             self.pkgobjlist = returnList
