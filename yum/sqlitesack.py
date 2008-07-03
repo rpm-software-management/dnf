@@ -906,13 +906,14 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
         return y
 
     @catchSqliteException
-    def returnNewestByNameArch(self, naTup=None, patterns=None):
+    def returnNewestByNameArch(self, naTup=None, patterns=None, ignore_case=False):
 
         # If naTup is set do it from the database otherwise use our parent's
         # returnNewestByNameArch
         if (not naTup):
             return yumRepo.YumPackageSack.returnNewestByNameArch(self, naTup,
-                                                                 patterns)
+                                                                 patterns,
+                                                                 ignore_case)
 
         # First find all packages that fulfill naTup
         allpkg = []
@@ -927,11 +928,13 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
         return misc.newestInList(allpkg)
 
     @catchSqliteException
-    def returnNewestByName(self, name=None):
+    def returnNewestByName(self, name=None, patterns=None, ignore_case=False):
         # If name is set do it from the database otherwise use our parent's
         # returnNewestByName
         if (not name):
-            return yumRepo.YumPackageSack.returnNewestByName(self, name)
+            return yumRepo.YumPackageSack.returnNewestByName(self, name,
+                                                             patterns,
+                                                             ignore_case)
 
         # First find all packages that fulfill name
         allpkg = []
@@ -974,7 +977,7 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
         return exactmatch, matched, unmatched
 
     @catchSqliteException
-    def _buildPkgObjList(self, repoid=None, patterns=None):
+    def _buildPkgObjList(self, repoid=None, patterns=None, ignore_case=False):
         """Builds a list of packages, only containing nevra information. No
            excludes are done at this stage. """
 
@@ -995,7 +998,12 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
                     for field in ['name', 'sql_nameArch', 'sql_nameVerRelArch',
                                   'sql_nameVer', 'sql_nameVerRel',
                                   'sql_envra', 'sql_nevra']:
-                        pat_sqls.append("%s GLOB ?" % field)
+                        if ignore_case:
+                            pattern = pattern.replace("*", "%")
+                            pattern = pattern.replace("?", "_")
+                            pat_sqls.append("%s LIKE ?" % field)
+                        else:
+                            pat_sqls.append("%s GLOB ?" % field)
                         pat_data.append(pattern)
                 if pat_sqls:
                     qsql = _FULL_PARSE_QUERY_BEG + " OR ".join(pat_sqls)
@@ -1011,7 +1019,7 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
             self.pkgobjlist = returnList
         return returnList
                 
-    def returnPackages(self, repoid=None, patterns=None):
+    def returnPackages(self, repoid=None, patterns=None, ignore_case=False):
         """Returns a list of packages, only containing nevra information. The
            packages are processed for excludes. Note that patterns is just
            a hint, we are free it ignore it. """
@@ -1028,7 +1036,7 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
         if hasattr(self, 'pkgobjlist'):
             pkgobjlist = self.pkgobjlist
         else:
-            pkgobjlist = self._buildPkgObjList(repoid, patterns)
+            pkgobjlist = self._buildPkgObjList(repoid, patterns, ignore_case)
 
         returnList = []
         for po in pkgobjlist:

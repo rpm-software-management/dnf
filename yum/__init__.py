@@ -1345,12 +1345,13 @@ class YumBase(depsolve.Depsolve):
         recent = []
         extras = []
 
+        ic = ignore_case
         # list all packages - those installed and available, don't 'think about it'
         if pkgnarrow == 'all': 
             dinst = {}
             ndinst = {} # Newest versions by name.arch
             for po in self.rpmdb.returnPackages(patterns=patterns,
-                                                ignore_case=ignore_case):
+                                                ignore_case=ic):
                 dinst[po.pkgtup] = po;
                 if showdups:
                     continue
@@ -1360,10 +1361,12 @@ class YumBase(depsolve.Depsolve):
             installed = dinst.values()
                         
             if showdups:
-                avail = self.pkgSack.returnPackages(patterns=patterns)
+                avail = self.pkgSack.returnPackages(patterns=patterns,
+                                                    ignore_case=ic)
             else:
                 del dinst # Using ndinst instead
-                avail = self.pkgSack.returnNewestByNameArch(patterns=patterns)
+                avail = self.pkgSack.returnNewestByNameArch(patterns=patterns,
+                                                            ignore_case=ic)
             
             for pkg in avail:
                 if showdups:
@@ -1393,15 +1396,17 @@ class YumBase(depsolve.Depsolve):
         # installed only
         elif pkgnarrow == 'installed':
             installed = self.rpmdb.returnPackages(patterns=patterns,
-                                                  ignore_case=ignore_case)
+                                                  ignore_case=ic)
         
         # available in a repository
         elif pkgnarrow == 'available':
 
             if showdups:
-                avail = self.pkgSack.returnPackages(patterns=patterns)
+                avail = self.pkgSack.returnPackages(patterns=patterns,
+                                                    ignore_case=ic)
             else:
-                avail = self.pkgSack.returnNewestByNameArch(patterns=patterns)
+                avail = self.pkgSack.returnNewestByNameArch(patterns=patterns,
+                                                            ignore_case=ic)
             
             for pkg in avail:
                 if showdups:
@@ -1417,9 +1422,10 @@ class YumBase(depsolve.Depsolve):
         elif pkgnarrow == 'extras':
             # we must compare the installed set versus the repo set
             # anything installed but not in a repo is an extra
-            avail = self.pkgSack.simplePkgList(patterns=patterns)
+            avail = self.pkgSack.simplePkgList(patterns=patterns,
+                                               ignore_case=ic)
             for po in self.rpmdb.returnPackages(patterns=patterns,
-                                                ignore_case=ignore_case):
+                                                ignore_case=ic):
                 if po.pkgtup not in avail:
                     extras.append(po)
 
@@ -1441,9 +1447,11 @@ class YumBase(depsolve.Depsolve):
             recentlimit = now-(self.conf.recent*86400)
             ftimehash = {}
             if showdups:
-                avail = self.pkgSack.returnPackages(patterns=patterns)
+                avail = self.pkgSack.returnPackages(patterns=patterns,
+                                                    ignore_case=ic)
             else:
-                avail = self.pkgSack.returnNewestByNameArch(patterns=patterns)
+                avail = self.pkgSack.returnNewestByNameArch(patterns=patterns,
+                                                            ignore_case=ic)
             
             for po in avail:
                 ftime = int(po.filetime)
