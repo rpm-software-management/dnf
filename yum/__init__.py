@@ -1329,7 +1329,8 @@ class YumBase(depsolve.Depsolve):
         msg = _('%d %s files removed') % (removed, filetype)
         return 0, [msg]
 
-    def doPackageLists(self, pkgnarrow='all', patterns=None, showdups=None):
+    def doPackageLists(self, pkgnarrow='all', patterns=None, showdups=None,
+                       ignore_case=False):
         """generates lists of packages, un-reduced, based on pkgnarrow option"""
 
         if showdups is None:
@@ -1348,7 +1349,8 @@ class YumBase(depsolve.Depsolve):
         if pkgnarrow == 'all': 
             dinst = {}
             ndinst = {} # Newest versions by name.arch
-            for po in self.rpmdb.returnPackages(patterns=patterns):
+            for po in self.rpmdb.returnPackages(patterns=patterns,
+                                                ignore_case=ignore_case):
                 dinst[po.pkgtup] = po;
                 if showdups:
                     continue
@@ -1390,7 +1392,8 @@ class YumBase(depsolve.Depsolve):
 
         # installed only
         elif pkgnarrow == 'installed':
-            installed = self.rpmdb.returnPackages(patterns=patterns)
+            installed = self.rpmdb.returnPackages(patterns=patterns,
+                                                  ignore_case=ignore_case)
         
         # available in a repository
         elif pkgnarrow == 'available':
@@ -1415,7 +1418,8 @@ class YumBase(depsolve.Depsolve):
             # we must compare the installed set versus the repo set
             # anything installed but not in a repo is an extra
             avail = self.pkgSack.simplePkgList(patterns=patterns)
-            for po in self.rpmdb.returnPackages(patterns=patterns):
+            for po in self.rpmdb.returnPackages(patterns=patterns,
+                                                ignore_case=ignore_case):
                 if po.pkgtup not in avail:
                     extras.append(po)
 
@@ -1462,7 +1466,6 @@ class YumBase(depsolve.Depsolve):
         ygh.recent = recent
         ygh.extras = extras
 
-        
         return ygh
 
 
