@@ -424,13 +424,16 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
         # this function is just silly and it reduces down to just this
         return self.searchPrco(name, 'provides')
 
-    def _sql_pkgKey2po(self, repo, cur, pkgs=None):
+    def _sql_pkgKey2po(self, repo, cur, pkgs=None, have_data=False):
         """ Takes a cursor and maps the pkgKey rows into a list of packages. """
         if pkgs is None: pkgs = []
         for ob in cur:
             if self._pkgKeyExcluded(repo, ob['pkgKey']):
                 continue
-            pkgs.append(self._packageByKey(repo, ob['pkgKey']))
+            if have_data:
+                pkgs.append(self._packageByKeyData(repo, ob['pkgKey'], ob))
+            else:
+                pkgs.append(self._packageByKey(repo, ob['pkgKey']))
         return pkgs
 
     @catchSqliteException
@@ -763,23 +766,19 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
         """return a list of packages matching any of the given names. This is 
            only a match on package name, nothing else"""
         
+        pat_sqls = []
+        qsql = """select pkgId,pkgKey,name,epoch,version,release,arch
+                      from packages where """
+        for name in names:
+            pat_sqls.append("name = ?")
+        qsql = qsql + " OR ".join(pat_sqls)
+
         returnList = []
-        for (repo,cache) in self.primarydb.items():
+        for (repo, cache) in self.primarydb.items():
             cur = cache.cursor()
-            pat_sqls = []
-            qsql = """select pkgId,pkgKey,name,epoch,version,release,arch
-                          from packages where """
-            for name in names:
-                pat_sqls.append("name = ?")
-            qsql = qsql + " OR ".join(pat_sqls)
-            #print qsql
             executeSQL(cur, qsql, list(names))
-                
-            for x in cur:
-                po = self._packageByKeyData(repo, x['pkgKey'], x)
-                if self._pkgExcluded(po):
-                    continue
-                returnList.append(po)
+
+            self._sql_pkgKey2po(repo, cur, returnList, have_data=True)
 
         return returnList
  
@@ -921,8 +920,8 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
         allpkg = []
         for (rep,cache) in self.primarydb.items():
             cur = cache.cursor()
-            executeSQL(cur, "select pkgKey from packages where name=? and arch=?",naTup)
-            self._sql_pkgKey2po(rep, cur, allpkg)
+            executeSQL(cur, "select pkgId,pkgKey,name,epoch,version,release,arch from packages where name=? and arch=?", naTup)
+            self._sql_pkgKey2po(rep, cur, allpkg, have_data=True)
         
         # if we've got zilch then raise
         if not allpkg:
@@ -942,8 +941,8 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
         allpkg = []
         for (rep,cache) in self.primarydb.items():
             cur = cache.cursor()
-            executeSQL(cur, "select pkgKey from packages where name=?", (name,))
-            self._sql_pkgKey2po(rep, cur, allpkg)
+            executeSQL(cur, "select pkgId,pkgKey,name,epoch,version,release,arch from packages where name=?", (name,))
+            self._sql_pkgKey2po(rep, cur, allpkg, have_data=True)
         
         # if we've got zilch then raise
         if not allpkg:
@@ -1058,7 +1057,7 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
             return returnList
         
         # make up our execute string
-        q = "select pkgKey from packages WHERE"
+        q = "select pkgId,pkgKey,name,epoch,version,release,arch from packages WHERE"
         for (col, var) in [('name', name), ('epoch', epoch), ('version', ver),
                            ('arch', arch), ('release', rel)]:
             if var:
@@ -1071,7 +1070,7 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
         for (rep,cache) in self.primarydb.items():
             cur = cache.cursor()
             executeSQL(cur, q)
-            self._sql_pkgKey2po(rep, cur, returnList)
+            self._sql_pkgKey2po(rep, cur, returnList, have_data=True)
         return returnList
     
     @catchSqliteException
