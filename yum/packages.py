@@ -188,16 +188,39 @@ class PackageObject(object):
                                       self.arch)
         return out
 
-    def __cmp__(self, other):
-        """ Compare packages. """
+    def verCMP(self, other):
+        """ Compare package to another one, only rpm-version ordering. """
         if not other:
             return 1
         ret = cmp(self.name, other.name)
         if ret == 0:
             ret = comparePoEVR(self, other)
+        return ret
+
+    def __cmp__(self, other):
+        """ Compare packages, this is just for UI/consistency. """
+        ret = self.verCMP(other)
         if ret == 0:
             ret = cmp(self.arch, other.arch)
+        if ret == 0 and hasattr(self, 'repoid') and hasattr(other, 'repoid'):
+            ret = cmp(self.repoid, other.repoid)
         return ret
+
+    def verEQ(self, other):
+        """ Uses verCMP, tests if the _rpm-versions_ are the same. """
+        return self.verCMP(other) == 0
+    def verLT(self, other):
+        """ Uses verCMP, tests if the other _rpm-version_ is <  ours. """
+        return self.verCMP(other) <  0
+    def verLE(self, other):
+        """ Uses verCMP, tests if the other _rpm-version_ is <= ours. """
+        return self.verCMP(other) <= 0
+    def verGT(self, other):
+        """ Uses verCMP, tests if the other _rpm-version_ is >  ours. """
+        return self.verCMP(other) >  0
+    def verGE(self, other):
+        """ Uses verCMP, tests if the other _rpm-version_ is >= ours. """
+        return self.verCMP(other) >= 0
 
     def __repr__(self):
         return "<%s : %s (%s)>" % (self.__class__.__name__, str(self),hex(id(self))) 
