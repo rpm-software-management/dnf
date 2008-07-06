@@ -980,17 +980,17 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         # go through each package 
         if len(comparable) > 0:
             for instpo in comparable:
-                if pkg.EVR > instpo.EVR: # we're newer - this is an update, pass to them
+                if pkg.verGT(instpo): # we're newer - this is an update, pass to them
                     if instpo.name in exactarchlist:
                         if pkg.arch == instpo.arch:
                             return True
                     else:
                         return True
                         
-                elif pkg.EVR == instpo.EVR: # same, ignore
+                elif pkg.verEQ(instpo): # same, ignore
                     return False
                     
-                elif pkg.EVR < instpo.EVR: # lesser, check if the pkgtup is an exactmatch
+                elif pkg.verLT(instpo): # lesser, check if the pkgtup is an exactmatch
                                    # if so then add it to be installed
                                    # if it can be multiply installed
                                    # this is where we could handle setting 

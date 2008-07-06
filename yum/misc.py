@@ -388,10 +388,10 @@ def newestInList(pkgs):
     ret = [ pkgs.pop() ]
     newest = ret[0]
     for pkg in pkgs:
-        if pkg.EVR > newest.EVR:
+        if pkg.verGT(newest):
             ret = [ pkg ]
             newest = pkg
-        elif pkg.EVR == newest.EVR:
+        elif pkg.verEQ(newest):
             ret.append(pkg)
     return ret
 

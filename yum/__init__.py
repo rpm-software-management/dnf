@@ -2471,7 +2471,7 @@ class YumBase(depsolve.Depsolve):
             #        most likely correct
             pot_updated = self.rpmdb.searchNevra(name=available_pkg.name, arch=available_pkg.arch)
             for ipkg in pot_updated:
-                if ipkg.EVR < available_pkg.EVR:
+                if ipkg.verLT(available_pkg):
                     txmbr = self.tsInfo.addUpdate(available_pkg, ipkg)
                     if requiringPo:
                         txmbr.setAsDep(requiringPo)
@@ -2583,7 +2583,7 @@ class YumBase(depsolve.Depsolve):
                 installpkgs.append(po)
 
         for installed_pkg in installedByKey:
-            if po.EVR > installed_pkg.EVR: # we're newer - this is an update, pass to them
+            if po.verGT(installed_pkg): # we're newer - this is an update, pass to them
                 if installed_pkg.name in self.conf.exactarchlist:
                     if po.arch == installed_pkg.arch:
                         updatepkgs.append((po, installed_pkg))
@@ -2591,7 +2591,7 @@ class YumBase(depsolve.Depsolve):
                         donothingpkgs.append(po)
                 else:
                     updatepkgs.append((po, installed_pkg))
-            elif po.EVR == installed_pkg.EVR:
+            elif po.verEQ(installed_pkg):
                 if (po.arch != installed_pkg.arch and
                     (rpmUtils.arch.isMultiLibArch(po.arch) or
                      rpmUtils.arch.isMultiLibArch(installed_pkg.arch))):
