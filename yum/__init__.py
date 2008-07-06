@@ -2718,7 +2718,7 @@ class YumBase(depsolve.Depsolve):
                 rawkey = urlgrabber.urlread(keyurl, limit=9999)
             except urlgrabber.grabber.URLGrabError, e:
                 raise Errors.YumBaseError(_('GPG key retrieval failed: ') +
-                                          unicode(str(e), 'UTF-8', 'replace'))
+                                          to_unicode(str(e)))
 
             # Parse the key
             keys_info = misc.getgpgkeyinfo(rawkey, multiple=True)
@@ -2742,7 +2742,9 @@ class YumBase(depsolve.Depsolve):
                     continue
 
                 # Try installing/updating GPG key
-                self.logger.critical(_('Importing GPG key 0x%s "%s" from %s') % (hexkeyid, userid, keyurl.replace("file://","")))
+                self.logger.critical(_('Importing GPG key 0x%s "%s" from %s') %
+                                     (hexkeyid, to_unicode(userid),
+                                      keyurl.replace("file://","")))
                 rc = False
                 if self.conf.assumeyes:
                     rc = True
