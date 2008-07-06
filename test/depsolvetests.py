@@ -329,7 +329,7 @@ class DepsolveTests(DepsolveTests):
         self.xsack.addPackage(xpo64)
 
         self.assertEquals('ok', *self.resolveCode())
-        if rpmUtils.arch.getBestArch() == 'x86_64':
+        if os.uname()[-1] == 'x86_64':
             self.assertResult((po, xpo64))
         else:
             self.assertResult((po, xpo))
@@ -844,10 +844,7 @@ class DepsolveTests(DepsolveTests):
         self.xsack.addPackage(po3)
 
         self.assertEquals('ok', *self.resolveCode())
-        # FIXME: This is wrong, it should be one of:
-        # self.assertResult((xpo, po3))
-        # self.assertResult((xpo, po2))
-        self.assertResult((xpo, po2, po3))
+        self.assertResult((xpo, po3))
 
     def testMultiPkgVersions4(self):
         ipo1 = FakePackage('abcd', arch='i386')

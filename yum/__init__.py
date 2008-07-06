@@ -2386,7 +2386,9 @@ class YumBase(depsolve.Depsolve):
                 availpkgs = self.pkgSack.searchNevra(name=nevra_dict['name'],
                             epoch=nevra_dict['epoch'], arch=nevra_dict['arch'],
                             ver=nevra_dict['version'], rel=nevra_dict['release'])
-
+                if len(availpkgs) > 1:
+                    availpkgs = self._compare_providers(availpkgs, requiringPo)
+                    availpkgs = map(lambda x: x[0], availpkgs)
 
        
         # for any thing specified
