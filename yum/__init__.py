@@ -1414,7 +1414,7 @@ class YumBase(depsolve.Depsolve):
                         available.append(pkg)
                 else:
                     ipkgs = self.rpmdb.searchNevra(pkg.name, arch=pkg.arch)
-                    if not ipkgs or pkg > sorted(ipkgs, reverse=True)[0]:
+                    if not ipkgs or pkg.verGT(sorted(ipkgs, reverse=True)[0]):
                         available.append(pkg)
 
 

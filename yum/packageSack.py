@@ -23,7 +23,6 @@ import warnings
 import re
 import fnmatch
 import misc
-import packages
 
 class PackageSackBase(object):
     """Base class that provides the interface for PackageSacks."""
@@ -861,7 +860,7 @@ def packagesNewestByName(pkgs):
         # Can't use pkg.__cmp__ because it takes .arch into account
         cval = 1
         if key in newest:
-            cval = packages.comparePoEVR(pkg, newest[key][0])
+            cval = pkg.verCMP(newest[key][0])
         if cval > 0:
             newest[key] = [pkg]
         elif cval == 0:
@@ -875,7 +874,7 @@ def packagesNewestByNameArch(pkgs):
     newest = {}
     for pkg in pkgs:
         key = (pkg.name, pkg.arch)
-        if key in newest and pkg <= newest[key]:
+        if key in newest and pkg.verLE(newest[key]):
             continue
         newest[key] = pkg
     return newest.values()
