@@ -1238,6 +1238,26 @@ class YumRepository(Repository, config.RepoConf):
     def setInterruptCallback(self, callback):
         self.interrupt_callback = callback
         self._callbacks_changed = True
+
+    def _readMirrorList(self, fo):
+        """ read the mirror list from the specified file object """
+        returnlist = []
+
+        if fo is not None:
+            try:
+                content = fo.readlines()
+            except Exception, e:
+                print "Could not read mirrorlist %s error was \n%s" %(url, e)
+                content = ""
+            for line in content:
+                if re.match('^\s*\#.*', line) or re.match('^\s*$', line):
+                    continue
+                mirror = re.sub('\n$', '', line) # no more trailing \n's
+                (mirror, count) = re.subn('\$ARCH', '$BASEARCH', mirror)
+                returnlist.append(mirror)
+
+        return returnlist
+
     def _getMirrorList(self):
         """retrieve an up2date-style mirrorlist file from our mirrorlist url,
            also save the file to the local repo dir and use that if cache expiry
@@ -1246,8 +1266,6 @@ class YumRepository(Repository, config.RepoConf):
            we also s/$ARCH/$BASEARCH/ and move along
            return the baseurls from the mirrorlist file
            """
-        returnlist = []
-        
         self.mirrorlist_file = self.cachedir + '/' + 'mirrorlist.txt'
         fo = None
         
@@ -1265,25 +1283,19 @@ class YumRepository(Repository, config.RepoConf):
             except urlgrabber.grabber.URLGrabError, e:
                 print "Could not retrieve mirrorlist %s error was\n%s" % (url, e)
                 fo = None
-        
-        if fo is not None:
-            try:
-                content = fo.readlines()
-            except Exception, e:
-                print "Could not read mirrorlist %s error was \n%s" %(url, e)
-                content = ""
-            for line in content:
-                if re.match('^\s*\#.*', line) or re.match('^\s*$', line):
-                    continue
-                mirror = re.sub('\n$', '', line) # no more trailing \n's
-                (mirror, count) = re.subn('\$ARCH', '$BASEARCH', mirror)
-                returnlist.append(mirror)
 
+        returnlist = self._readMirrorList(fo)
+
+        if returnlist:
             if not self.cache and not cacheok:
                 output = open(self.mirrorlist_file, 'w')
                 for line in content:
                     output.write(line)
                 output.close()
+        elif not cacheok and os.path.exists(self.mirrorlist_file):
+            # New mirror file failed, so use the old one (better than nothing)
+            os.utime(self.mirrorlist_file, None)
+            return self._readMirrorList(open(self.mirrorlist_file, 'r'))
 
         return returnlist
 
