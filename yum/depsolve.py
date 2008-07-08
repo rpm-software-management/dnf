@@ -25,7 +25,7 @@ import logging
 import rpmUtils.transaction
 import rpmUtils.miscutils
 import rpmUtils.arch
-from rpmUtils.arch import archDifference, isMultiLibArch, getCanonArch
+from rpmUtils.arch import archDifference, isMultiLibArch, getBestArch
 import misc
 from misc import unique, version_tuple_to_string
 import rpm
@@ -987,7 +987,7 @@ class Depsolve(object):
                         pkgresults[po] -= 1024
                         break
 
-                for thisarch in (reqpo.arch, getCanonArch()):
+                for thisarch in (reqpo.arch, getBestArch()):
                     res = _compare_arch_distance(po, nextpo, thisarch)
                     if not res:
                         continue
