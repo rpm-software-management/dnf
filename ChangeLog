@@ -1,3 +1,487 @@
+2008-07-08  Seth Vidal <skvidal@fedoraproject.org>
+
+	* yum.spec, yum/__init__.py: mark as 3.2.17
+
+2008-07-08  James Antill <james@and.org>
+
+	* yum/yumRepo.py: And fix the second call to readMirrorList, for the
+	new return
+
+2008-07-08  James Antill <james@and.org>
+
+	* yum/yumRepo.py: Another fix for the simple mirrorlist change, pass
+	full file contents to write
+
+2008-07-08  James Antill <james@and.org>
+
+	* yum/depsolve.py: Use getBestArch instead of getCanonArch, when
+	comnparing providers, helps ppc64
+
+2008-07-07  James Antill <james@and.org>
+
+	* yum/depsolve.py: Fix rpmdb.contains(pkg.pkgtup) typo, *pkg.pkgtup
+	works but po=pkg is nicer
+
+2008-07-07  James Antill <james@and.org>
+
+	* yum/yumRepo.py: Don't die if the mirrorlist download fails, and we
+	have an old one around.
+
+2008-07-06  James Antill <james@and.org>
+
+	* test/depsolvetests.py, test/simpleupdatetests.py, yum/__init__.py:  When we are updating from foo.noarch to foo.i386/foo.x86_64 ...
+	 then sort the available pkgs by ._compare_providers(). This does
+	 the consistently corrct thing.  Also tweak the unittests to use
+	 os.uname()[-1] instead of rpmutils.getBestArch().   make check now
+	 passes on .i386 and .x86_64 ... wooo!
+
+2008-07-06  James Antill <james@and.org>
+
+	* yum/depsolve.py: Do much faster pkgtup lookup, when checking if
+	"req" providers are installed
+
+2008-07-06  James Antill <james@and.org>
+
+	* yum/packageSack.py: Fix the "make check" failures where empty
+	sacks call returnNewestByName()
+
+2008-07-06  James Antill <james@and.org>
+
+	* cli.py, yum/__init__.py, yum/depsolve.py, yum/misc.py,
+	yum/packageSack.py: Convert .EVR usage to .ver* ... stop
+	making/destroying objects all the time.
+
+2008-07-06  James Antill <james@and.org>
+
+	* yum/__init__.py, yum/packageSack.py: Move from comparing version
+	data in pkgs with __cmp__ to using verCMP/etc.
+
+2008-07-06  James Antill <james@and.org>
+
+	* yum/__init__.py: Unicode fix for GPG key imports, bug#454163
+
+2008-07-04  James Antill <james@and.org>
+
+	* yum/packages.py: Add versioned only comparison functions to the
+	base package object
+
+2008-07-03  James Antill <james@and.org>
+
+	* yum/__init__.py, yum/sqlitesack.py: Do real SQLite escaping, if
+	required. Fixes search and list % _ usage
+
+2008-07-03  James Antill <james@and.org>
+
+	* yum/sqlitesack.py: Brown paper bag bug, typo in _packageByKeyData
+	*sighs*
+
+2008-07-03  James Antill <james@and.org>
+
+	* yum/sqlitesack.py: Add an arg. so _sql_pkgKey2po can use Data,
+	convert some callers to use it.
+
+2008-07-03  James Antill <james@and.org>
+
+	* yum/sqlitesack.py: Add helper function to do self._packageByKey
+	without the SQL lookup
+
+2008-07-03  James Antill <james@and.org>
+
+	* yum/__init__.py, yum/packageSack.py, yum/sqlitesack.py: Add
+	ignore_case with patterns argument, to fix commands (eg. list)
+
+2008-07-03  Seth Vidal <skvidal@fedoraproject.org>
+
+	Merge branch 'yum-3_2_X' of
+	ssh://login.linux.duke.edu/home/groups/yum/git/yum into yum-3_2_X  *
+	'yum-3_2_X' of ssh://login.linux.duke.edu/home/groups/yum/git/yum:
+	Fix doPackageLists() and rpmdb.returnPackages() to have ignore_case
+	option.   Tidy up extra --version output, add rpm/etc. packages we
+	dep. on
+
+2008-07-03  Seth Vidal <skvidal@fedoraproject.org>
+
+	* yum/packageSack.py, yum/rpmsack.py, yum/sqlitesack.py: implement
+	searchNames() to let you quickly do exact name matches of multiple
+	names.
+
+2008-07-01  James Antill <james@and.org>
+
+	* cli.py, yum/__init__.py, yum/rpmsack.py: Fix doPackageLists() and
+	rpmdb.returnPackages() to have ignore_case option.
+
+2008-07-01  James Antill <james@and.org>
+
+	* cli.py: Tidy up extra --version output, add rpm/etc. packages we
+	dep. on
+
+2008-06-30  James Antill <james@and.org>
+
+	* cli.py: Add installed yum info. to --version
+
+2008-06-30  James Antill <james@and.org>
+
+	* output.py:  Use normal packaging sorting in simpleList()
+
+2008-06-25  Tim Lauridsen <tla@rasmil.dk>
+
+	* test/misc-tests.py, test/skipbroken-tests.py: Add a testcase for
+	the libBCD case studie, just for the fun of it
+
+2008-06-24  James Antill <james@and.org>
+
+	* yum/__init__.py: Make sure we only consider the newest names,
+	among all the arch varients
+
+2008-06-24  James Antill <james@and.org>
+
+	* yum/packageSack.py:  Fix packagesNewestByName() to use comparePoEVR as pkg.__cmp__ uses
+	 .arch info.    thus we'd only get one pkg from the alph sorted
+	 arch.    kind of a weird interface, not quite the "same" as
+	 packageNewestByNameArch()
+
+2008-06-24  James Antill <james@and.org>
+
+	* yum/__init__.py: Allow noarch packages when in
+	multilib_policy=best
+
+2008-06-23  Florian Festi <ffesti@redhat.com>
+
+	* cli.py: Fix unicode traceback If error message contains non UTF-8
+	characters yum bails out in this line May be this should (also) be
+	fixed in the rpmlib Python bindings.
+
+2008-06-20  Seth Vidal <skvidal@fedoraproject.org>
+
+	* yum/yumRepo.py: make sure url's end in '/' otherwise our
+	urlparse.urljoin() won't be correct
+
+2008-06-16  James Antill <james@and.org>
+
+	* yum/__init__.py: Re-align the total progress after each download,
+	in case of errors+no-size
+
+2008-06-13  Seth Vidal <skvidal@fedoraproject.org>
+
+	* yum/__init__.py: make the logging call correct for 3.2.X
+
+2008-06-13  Seth Vidal <skvidal@fedoraproject.org>
+
+	* yum/__init__.py: make sure we don't accidentally install any
+	incompatible architectures (especially things like local-install src
+	rpms)
+
+2008-06-12  Jeremy Katz <katzj@redhat.com>
+
+	* yum/__init__.py: Give a nicer error message if there are no groups
+	configured (#446613)
+
+2008-06-12  Jeremy Katz <katzj@redhat.com>
+
+	* yummain.py: Log formatters use localized bits, but logs should use
+	C locale (#433091)
+
+2008-06-12  James Antill <james@and.org>
+
+	* output.py: rm extra space
+
+2008-06-11  James Antill <james@and.org>
+
+	* yum/packageSack.py: Fix seth's fix, of my fix, ... :)
+
+2008-06-11  James Antill <james@and.org>
+
+	* output.py:  More merges from the logging branch.    Fix the "yum list
+	 php-pear-Str*" problem.   Do the specspo. lookup/encoding for
+	 verbose matchcallback.   Minor UI tweak for verbose matchcallback.
+
+
+2008-06-11  James Antill <james@and.org>
+
+	* output.py: Add times to verbose info. -- hand merge from logging
+	branch
+
+2008-06-11  Seth Vidal <skvidal@fedoraproject.org>
+
+	* yum/config.py: commit comment correction for config.py from Kulbir
+	Saini
+
+2008-06-11  James Antill <james@and.org>
+
+	* cli.py: Try and fix bug#450826
+
+2008-06-11  James Antill <james@and.org>
+
+	* yum/packages.py: Use sets for lookup on large prco tuples
+
+2008-06-10  Seth Vidal <skvidal@fedoraproject.org>
+
+	* yum/packageSack.py: make sure the exceptions for 'no packages
+	found' continue to be true
+
+2008-06-09  Seth Vidal <skvidal@fedoraproject.org>
+
+	Merge branch 'yum-3_2_X' of
+	ssh://login1.linux.duke.edu/home/groups/yum/git/yum into yum-3_2_X
+	* 'yum-3_2_X' of
+	ssh://login1.linux.duke.edu/home/groups/yum/git/yum:    Fix provides
+	output, to have highlights and make it always "verbose".   updated
+	de translation by Jochen Schmitt   The postresolve hook should run
+	after the installonlyn magic.
+
+2008-06-09  Seth Vidal <skvidal@fedoraproject.org>
+
+	* yum/__init__.py, yum/misc.py, yum/pgpmsg.py: make gpg key
+	importing support muleiple keys per file
+
+2008-06-06  James Antill <james@and.org>
+
+	* cli.py, output.py, yum/__init__.py:  Fix provides output, to have highlights and make it always
+	 "verbose".  Give warning about old behaviour when nothing matches.
+
+
+2008-06-06  Tim Lauridsen <tla@rasmil.dk>
+
+	* po/de.po: updated de translation by Jochen Schmitt
+
+2008-06-03  Jack Neely <jjneely@ncsu.edu>
+
+	* yum/__init__.py: The postresolve hook should run after the
+	installonlyn magic.
+
+2008-06-03  Tim Lauridsen <tla@rasmil.dk>
+
+	* yum/config.py, yum/yumRepo.py: make
+	repo.enable/disablePersistant() dont messup the repo files by
+	replacing  etc. (rhbz# 446098)
+
+2008-06-02  James Antill <james@and.org>
+
+	* cli.py: Give the --showduplicates output for provides, as that's
+	how it's calc'd.
+
+2008-06-02  James Antill <james@and.org>
+
+	* README: Add text for git diff, to make sure we don't have HEAD
+	merges
+
+2008-06-02  James Antill <james@and.org>
+
+	* README.API_CHANGES, rpmUtils/miscutils.py, test/depsolvetests.py,
+	test/operationstests.py, test/packagetests.py,
+	test/simpleobsoletestests.py, test/simpleupdatetests.py,
+	test/skipbroken-tests.py, test/testbase.py, yum/__init__.py,
+	yum/depsolve.py, yum/packageSack.py, yum/packages.py,
+	yum/rpmsack.py, yum/sqlitesack.py: Revert "Merge branch 'master' of
+	ssh://login.linux.duke.edu/home/groups/yum/git/yum"  This reverts
+	commit 7bf7ce04f34b0fa1540b02de70d696675864efc3.   Another stupid
+	HEAD => 3.2.x branch merge. *hates SCMs for a while*
+
+2008-06-02  James Antill <james@and.org>
+
+	* yum/sqlitesack.py: Revert "Remove old excluded mechanism from
+	SqliteSack"  This reverts commit
+	4a7acc768e4b466fe23c09435a2beff963461ecb.   This shouldn't be on the
+	stable branch.
+
+2008-05-31  James Antill <james@and.org>
+
+	* yum/sqlitesack.py: Allow searches with ' in them (need to escape
+	other chars?). bug#240606
+
+2008-05-31  James Antill <james@and.org>
+
+	* yum/__init__.py: We want to keep other arches in the
+	multilib_policy=all case. bug#449056
+
+2008-05-30  Seth Vidal <skvidal@fedoraproject.org>
+
+	Merge branch 'yum-3_2_X' of
+	ssh://login1.linux.duke.edu/home/groups/yum/git/yum into yum-3_2_X
+	* 'yum-3_2_X' of
+	ssh://login1.linux.duke.edu/home/groups/yum/git/yum:   Allow
+	non-obs. looping installs too :)   Work around mutual obs. looping
+	insanity   update sr & sr@latin translation by Igor Miletic   Fix
+	i18n for y/N prompt and sr_RS.utf8 locale, also allow y/N if no
+	overlap   Fix -y config. option in man page: bug#447305   Allow -c
+	URL to work again   commit and/or match from HEAD back to 3.2.X
+	mention the branch name specifically   label as 3.2.X branch
+
+2008-05-30  Seth Vidal <skvidal@fedoraproject.org>
+
+	* docs/yum.8, docs/yum.conf.5: man page patch to close #446587
+
+2008-05-27  James Antill <james@and.org>
+
+	* output.py: Fix i18n for y/N prompt and sr_RS.utf8 locale, also
+	allow y/N if no overlap
+
+2008-05-16  Seth Vidal <skvidal@fedoraproject.org>
+
+	* README: mention the branch name specifically
+
+2008-05-16  Seth Vidal <skvidal@fedoraproject.org>
+
+	* README: label as 3.2.X branch
+
+2008-05-29  James Antill <james@and.org>
+
+	* yum/__init__.py: Allow non-obs. looping installs too :)
+
+2008-05-28  James Antill <james@and.org>
+
+	* yum/__init__.py: Work around mutual obs. looping insanity
+
+2008-05-27  Tim Lauridsen <timlau@fedoraproject.org>
+
+	* po/sr.po, po/sr@latin.po: update sr & sr@latin translation by Igor
+	Miletic
+
+2008-05-27  James Antill <james@and.org>
+
+	* output.py: Fix i18n for y/N prompt and sr_RS.utf8 locale, also
+	allow y/N if no overlap
+
+2008-05-27  James Antill <james@and.org>
+
+	Merge branch 'master' of
+	ssh://login.linux.duke.edu/home/groups/yum/git/yum  * 'master' of
+	ssh://login.linux.duke.edu/home/groups/yum/git/yum:   update sr &
+	sr@latin translation by Igor Miletic   Remove old excluded mechanism
+	from SqliteSack
+
+2008-05-27  Tim Lauridsen <timlau@fedoraproject.org>
+
+	* po/sr.po, po/sr@latin.po: update sr & sr@latin translation by Igor
+	Miletic
+
+2007-12-13  Florian Festi <ffesti@redhat.com>
+
+	* yum/sqlitesack.py: Remove old excluded mechanism from SqliteSack
+
+2008-05-26  James Antill <james@and.org>
+
+	Merge branch 'master' of
+	ssh://login.linux.duke.edu/home/groups/yum/git/yum  * 'master' of
+	ssh://login.linux.duke.edu/home/groups/yum/git/yum:   Fix flag
+	conversion in YumHeaderPackage._populatePrco()   Use already known
+	txmbr when resolving installed pkgs problems   Restart .check* every
+	time the tsInfo got modified to only resolve problems that still
+	exist   Make Depsolve.check* generators instead of returning lists
+	Make sure rpm.RPMSENSE_* int constants are used as flags in PRCOs.
+	Fix code merge error in RpmSack._getPRCO   PackageSack API cleanup
+	Remove Depsolve.whatProvides
+
+2008-05-26  Florian Festi <ffesti@redhat.com>
+
+	* yum/packages.py: Fix flag conversion in
+	YumHeaderPackage._populatePrco() broken in
+	febe35eee130212380e5688bd119f19a032d74fc
+
+2008-02-13  Florian Festi <ffesti@redhat.com>
+
+	* yum/depsolve.py: Use already known txmbr when resolving installed
+	pkgs problems
+
+2008-02-18  Florian Festi <ffesti@redhat.com>
+
+	* yum/depsolve.py: Restart .check* every time the tsInfo got
+	modified to only resolve problems that still exist
+
+2008-02-18  Florian Festi <ffesti@redhat.com>
+
+	* yum/depsolve.py: Make Depsolve.check* generators instead of
+	returning lists
+
+2008-05-23  Florian Festi <ffesti@redhat.com>
+
+	* rpmUtils/miscutils.py, test/depsolvetests.py,
+	test/operationstests.py, test/packagetests.py,
+	test/simpleobsoletestests.py, test/simpleupdatetests.py,
+	test/skipbroken-tests.py, test/testbase.py, yum/depsolve.py,
+	yum/packages.py, yum/sqlitesack.py: Make sure rpm.RPMSENSE_* int
+	constants are used as flags in PRCOs. Added short hand constants to
+	testbase Adjusted the test cases
+
+2008-05-26  Florian Festi <ffesti@redhat.com>
+
+	* yum/rpmsack.py: Fix code merge error in RpmSack._getPRCO  Thanks
+	to Terje Røsten for testing and reporting.
+
+2008-05-23  James Antill <james@and.org>
+
+	* yum/depsolve.py: Minor bit rot, pointed out by Jay Soffian
+
+2008-05-23  Florian Festi <ffesti@redhat.com>
+
+	* README.API_CHANGES, yum/packageSack.py, yum/rpmsack.py,
+	yum/sqlitesack.py: PackageSack API cleanup Removed
+	PackagesSack.search(Provides|Requires|Conflicts|Obsoletes)
+	RpmSack.what(Provides|Requires)  SqliteSack.searchPrco Added
+	PackagesSack.get(Conflicts|Obsoletes)
+
+2007-11-30  Florian Festi <ffesti@redhat.com>
+
+	* yum/__init__.py, yum/depsolve.py: Remove Depsolve.whatProvides
+
+2008-05-19  James Antill <james@and.org>
+
+	* docs/yum.8: Fix -y config. option in man page: bug#447305
+
+2008-05-19  James Antill <james@and.org>
+
+	* yum/config.py: Allow -c URL to work again
+
+2008-05-20  Seth Vidal <skvidal@fedoraproject.org>
+
+	* yum/sqlitesack.py: commit and/or match from HEAD back to 3.2.X
+
+2008-05-19  James Antill <james@and.org>
+
+	* docs/yum.8: Fix -y config. option in man page: bug#447305
+
+2008-05-19  James Antill <james@and.org>
+
+	Merge branch 'master' of
+	ssh://login.linux.duke.edu/home/groups/yum/git/yum  * 'master' of
+	ssh://login.linux.duke.edu/home/groups/yum/git/yum:   gotta check
+	both, not either - otherwise filedeps don't work :(
+
+2008-05-19  James Antill <james@and.org>
+
+	* yum/config.py: Allow -c URL to work again
+
+2008-05-17  Seth Vidal <skvidal@fedoraproject.org>
+
+	* yum/sqlitesack.py: gotta check both, not either - otherwise
+	filedeps don't work :(
+
+2008-05-16  Seth Vidal <skvidal@fedoraproject.org>
+
+	* README: mention the branch name specifically
+
+2008-05-16  Seth Vidal <skvidal@fedoraproject.org>
+
+	* README: label as 3.2.X branch
+
+2008-05-16  James Antill <james@and.org>
+
+	* yum/sqlitesack.py:  Work around SQL limits for searching, still unbearably slow at
+	 1,000s of terms
+
+2008-05-16  James Antill <james@and.org>
+
+	* yum/constants.py, yum/rpmsack.py, yum/sqlitesack.py: Limit
+	excessive pattern usage
+
+2008-05-16  James Antill <james@and.org>
+
+	* yumcommands.py: Add repo size to repolist info.
+
+2008-05-16  Seth Vidal <skvidal@fedoraproject.org>
+
+	* ChangeLog: merge changelog, again
+
 2008-05-15  Seth Vidal <skvidal@fedoraproject.org>
 
 	* yum/comps.py: we screwed up generating some earlier comps which
