@@ -1296,7 +1296,7 @@ class YumRepository(Repository, config.RepoConf):
         elif not cacheok and os.path.exists(self.mirrorlist_file):
             # New mirror file failed, so use the old one (better than nothing)
             os.utime(self.mirrorlist_file, None)
-            return self._readMirrorList(open(self.mirrorlist_file, 'r'))
+            return self._readMirrorList(open(self.mirrorlist_file, 'r'))[0]
 
         return returnlist
 
