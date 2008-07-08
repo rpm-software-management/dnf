@@ -1243,12 +1243,13 @@ class YumRepository(Repository, config.RepoConf):
         """ read the mirror list from the specified file object """
         returnlist = []
 
+        content = []
         if fo is not None:
             try:
                 content = fo.readlines()
             except Exception, e:
                 print "Could not read mirrorlist %s error was \n%s" %(url, e)
-                content = ""
+                content = []
             for line in content:
                 if re.match('^\s*\#.*', line) or re.match('^\s*$', line):
                     continue
@@ -1256,7 +1257,7 @@ class YumRepository(Repository, config.RepoConf):
                 (mirror, count) = re.subn('\$ARCH', '$BASEARCH', mirror)
                 returnlist.append(mirror)
 
-        return returnlist
+        return (returnlist, content)
 
     def _getMirrorList(self):
         """retrieve an up2date-style mirrorlist file from our mirrorlist url,
@@ -1284,7 +1285,7 @@ class YumRepository(Repository, config.RepoConf):
                 print "Could not retrieve mirrorlist %s error was\n%s" % (url, e)
                 fo = None
 
-        returnlist = self._readMirrorList(fo)
+        (returnlist, content) = self._readMirrorList(fo)
 
         if returnlist:
             if not self.cache and not cacheok:
