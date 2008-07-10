@@ -1356,7 +1356,7 @@ class YumBase(depsolve.Depsolve):
                 if showdups:
                     continue
                 key = (po.name, po.arch)
-                if key not in ndinst or po > ndinst[key]:
+                if key not in ndinst or po.verGT(ndinst[key]):
                     ndinst[key] = po
             installed = dinst.values()
                         
@@ -1374,7 +1374,7 @@ class YumBase(depsolve.Depsolve):
                         available.append(pkg)
                 else:
                     key = (pkg.name, pkg.arch)
-                    if key not in ndinst or pkg > ndinst[key]:
+                    if key not in ndinst or pkg.verGT(ndinst[key]):
                         available.append(pkg)
 
         # produce the updates list of tuples
