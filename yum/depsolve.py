@@ -986,8 +986,13 @@ class Depsolve(object):
                     if obsoleted:
                         pkgresults[po] -= 1024
                         break
-
-                for thisarch in (reqpo.arch, getBestArch()):
+                
+                if reqpo:
+                    arches = (reqpo.arch, getBestArch())
+                else:
+                    arches = (getBestArch())
+                
+                for thisarch in arches:
                     res = _compare_arch_distance(po, nextpo, thisarch)
                     if not res:
                         continue
@@ -1001,13 +1006,13 @@ class Depsolve(object):
                 self.verbose_logger.log(logginglevels.DEBUG_4,
                     _('common sourcerpm %s and %s' % (po, reqpo)))
                 pkgresults[po] += 20
-            
-            cpl = _common_prefix_len(po.name, reqpo.name)
-            if cpl > 2:
-                self.verbose_logger.log(logginglevels.DEBUG_4,
-                    _('common prefix of %s between %s and %s' % (cpl, po, reqpo)))
-            
-                pkgresults[po] += cpl*2
+            if reqpo:
+                cpl = _common_prefix_len(po.name, reqpo.name)
+                if cpl > 2:
+                    self.verbose_logger.log(logginglevels.DEBUG_4,
+                        _('common prefix of %s between %s and %s' % (cpl, po, reqpo)))
+                
+                    pkgresults[po] += cpl*2
             
             pkgresults[po] += (len(po.name)*-1)
 
