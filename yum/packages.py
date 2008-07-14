@@ -565,6 +565,12 @@ class YumAvailablePackage(PackageObject, RpmBase):
         return self._committime_ret
 
     committime = property(_committime)
+    
+    # FIXME test this to see if it causes hell elsewhere
+    def _checksum(self):
+        "Returns the 'default' checksum"
+        return self.checksums[0][1]
+    checksum = property(_checksum)
 
     def getDiscNum(self):
         if self.basepath is None:
@@ -730,6 +736,226 @@ class YumAvailablePackage(PackageObject, RpmBase):
                 csumid = 0
             self._checksums.append((ctype, csum, csumid))
 
+# from here down this is for dumping a package object back out to metadata
+    
+    
+    def _return_remote_location(self):
+        # break self.remote_url up into smaller pieces
+        base = os.path.dirname(self.remote_url)
+        href = os.path.basename(self.remote_url)
+        msg = """<location xml:base="%s" href="%s"/>\n""" % (
+                  misc.to_xml(base,attrib=True), misc.to_xml(href, attrib=True))
+        return msg
+        
+    def _dump_base_items(self):
+        
+        packager = url = ''
+        if self.packager:
+            packager = misc.to_xml(self.packager)
+        
+        if self.url:
+            url = misc.to_xml(self.url)
+                    
+        msg = """
+  <name>%s</name>
+  <arch>%s</arch>
+  <version epoch="%s" ver="%s" rel="%s"/>
+  <checksum type="sha" pkgid="YES">%s</checksum>
+  <summary>%s</summary>
+  <description>%s</description>
+  <packager>%s</packager>
+  <url>%s</url>
+  <time file="%s" build="%s"/>
+  <size package="%s" installed="%s" archive="%s"/>\n""" % (self.name, 
+         self.arch, self.epoch, self.ver, self.rel, self.checksum, 
+         misc.to_xml(self.summary), misc.to_xml(self.description), packager, 
+         url, self.filetime, self.buildtime, self.packagesize, self.size, 
+         self.archivesize)
+        
+        msg += self._return_remote_location()
+        return msg
+
+    def _dump_format_items(self):
+        msg = "  <format>\n"
+        if self.license:
+            msg += """    <rpm:license>%s</rpm:license>\n""" % misc.to_xml(self.license)
+        else:
+            msg += """    <rpm:license/>\n"""
+            
+        if self.vendor:
+            msg += """    <rpm:vendor>%s</rpm:vendor>\n""" % misc.to_xml(self.vendor)
+        else:
+            msg += """    <rpm:vendor/>\n"""
+            
+        if self.group:
+            msg += """    <rpm:group>%s</rpm:group>\n""" % misc.to_xml(self.group)
+        else:
+            msg += """    <rpm:group/>\n"""
+            
+        if self.buildhost:
+            msg += """    <rpm:buildhost>%s</rpm:buildhost>\n""" % misc.to_xml(self.buildhost)
+        else:
+            msg += """    <rpm:buildhost/>\n"""
+            
+        if self.sourcerpm:
+            msg += """    <rpm:sourcerpm>%s</rpm:sourcerpm>\n""" % misc.to_xml(self.sourcerpm)
+        msg +="""    <rpm:header-range start="%s" end="%s"/>""" % (self.hdrstart,
+                                                               self.hdrend)
+        msg += self._dump_pco('provides')
+        msg += self._dump_requires()
+        msg += self._dump_pco('conflicts')         
+        msg += self._dump_pco('obsoletes')         
+        msg += self._dump_files(True)
+        msg += """\n  </format>"""
+        return msg
+
+    def _dump_pco(self, pcotype):
+           
+        msg = ""
+        mylist = getattr(self, pcotype)
+        if mylist: msg = "\n    <rpm:%s>\n" % pcotype
+        for (name, flags, (e,v,r)) in mylist:
+            pcostring = '''      <rpm:entry name="%s"''' % name
+            if flags:
+                pcostring += ''' flags="%s"''' % flags
+                if e:
+                    pcostring += ''' epoch="%s"''' % e
+                if v:
+                    pcostring += ''' ver="%s"''' % v
+                if r:
+                    pcostring += ''' rel="%s"''' % r
+                    
+            pcostring += "/>\n"
+            msg += pcostring
+            
+        if mylist: msg += "    </rpm:%s>" % pcotype
+        return msg
+    
+    def _return_primary_files(self, list_of_files=None):
+        fileglobs = ['.*bin\/.*', '^\/etc\/.*', '^\/usr\/lib\/sendmail$']
+        file_re = []
+        for glob in fileglobs:
+            file_re.append(re.compile(glob))        
+
+
+        returns = {}
+        if list_of_files is None:
+            list_of_files = self.returnFileEntries('file')
+        for item in list_of_files:
+            if item is None:
+                continue
+            for glob in file_re:
+                if glob.match(item):
+                    returns[item] = 1
+        return returns.keys()
+
+    def _return_primary_dirs(self):
+        dirglobs = ['.*bin\/.*', '^\/etc\/.*']
+        dir_re = []
+        
+        for glob in dirglobs:
+            dir_re.append(re.compile(glob))
+
+        returns = {}
+        for item in self.returnFileEntries('dir'):
+            if item is None:
+                continue
+            for glob in dir_re:
+                if glob.match(item):
+                    returns[item] = 1
+        return returns.keys()
+        
+        
+    def _dump_files(self, primary=False):
+        msg =""
+        if not primary:
+            files = self.returnFileEntries('file')
+            dirs = self.returnFileEntries('dir')
+            ghosts = self.returnFileEntries('ghost')
+        else:
+            files = self._return_primary_files()
+            ghosts = self._return_primary_files(list_of_files = self.returnFileEntries('ghost'))
+            dirs = self._return_primary_dirs()
+                
+        for fn in files:
+            msg += """    <file>%s</file>\n""" % misc.to_xml(fn)
+        for fn in dirs:
+            msg += """    <file type="dir">%s</file>\n""" % misc.to_xml(fn)
+        for fn in ghosts:
+            msg += """    <file type="ghost">%s</file>\n""" % misc.to_xml(fn)
+        
+        return msg
+
+
+    def _requires_with_pre(self):
+        raise NotImplementedError()
+                    
+    def _dump_requires(self):
+        """returns deps in format"""
+        mylist = self._requires_with_pre()
+
+        msg = ""
+
+        if mylist: msg = "\n    <rpm:requires>\n"
+        for (name, flags, (e,v,r),pre) in mylist:
+            if name.startswith('rpmlib('):
+                continue
+            prcostring = '''      <rpm:entry name="%s"''' % name
+            if flags:
+                prcostring += ''' flags="%s"''' % flags
+                if e:
+                    prcostring += ''' epoch="%s"''' % e
+                if v:
+                    prcostring += ''' ver="%s"''' % v
+                if r:
+                    prcostring += ''' rel="%s"''' % r
+            if pre:
+                prcostring += ''' pre="%s"''' % pre
+                    
+            prcostring += "/>\n"
+            msg += prcostring
+            
+        if mylist: msg += "    </rpm:requires>"
+        return msg
+
+    def _dump_changelog(self, clog_limit):
+        if not self.changelog:
+            return ""
+        msg = "\n"
+        clog_count = 0
+        for (ts, author, content) in reversed(sorted(self.changelog)):
+            if clog_limit and clog_count >= clog_limit:
+                break
+            clog_count += 1
+            msg += '''<changelog author="%s" date="%s">%s</changelog>\n''' % (
+                        misc.to_xml(author, attrib=True), str(ts), misc.to_xml(content))
+        return msg
+
+    def xml_dump_primary_metadata(self):
+        msg = """\n<package type="rpm">"""
+        msg += self._dump_base_items()
+        msg += self._dump_format_items()
+        msg += """\n</package>"""
+        return msg
+
+    def xml_dump_filelists_metadata(self):
+        msg = """\n<package pkgid="%s" name="%s" arch="%s">
+    <version epoch="%s" ver="%s" rel="%s"/>\n""" % (self.checksum, self.name, 
+                                     self.arch, self.epoch, self.ver, self.rel)
+        msg += self._dump_files()
+        msg += "</package>\n"
+        return msg
+
+    def xml_dump_other_metadata(self, clog_limit=0):
+        msg = """\n<package pkgid="%s" name="%s" arch="%s">
+    <version epoch="%s" ver="%s" rel="%s"/>\n""" % (self.checksum, self.name, 
+                                     self.arch, self.epoch, self.ver, self.rel)
+        msg += self._dump_changelog(clog_limit)
+        msg += "\n</package>\n"
+        return msg
+
+
+
 
 class YumHeaderPackage(YumAvailablePackage):
     """Package object built from an rpm header"""
@@ -879,7 +1105,34 @@ class YumHeaderPackage(YumAvailablePackage):
 
     def returnChecksums(self):
         raise NotImplementedError()
-        
+
+    def _is_pre_req(self, flag):
+        """check the flags for a requirement, return 1 or 0 whether or not requires
+           is a pre-requires or a not"""
+        # FIXME this should probably be put in rpmUtils.miscutils since 
+        # - that's what it is
+        newflag = flag
+        if flag is not None:
+            newflag = flag & rpm.RPMSENSE_PREREQ
+            if newflag == rpm.RPMSENSE_PREREQ:
+                return 1
+            else:
+                return 0
+        return 0
+
+    def _requires_with_pre(self):
+        """returns requires with pre-require bit"""
+        name = self.hdr[rpm.RPMTAG_REQUIRENAME]
+        lst = self.hdr[rpm.RPMTAG_REQUIREFLAGS]
+        flag = map(flagToString, lst)
+        pre = map(self._is_pre_req, lst)
+        lst = self.hdr[rpm.RPMTAG_REQUIREVERSION]
+        vers = map(stringToVersion, lst)
+        if name is not None:
+            lst = zip(name, flag, vers, pre)
+        mylist = misc.unique(lst)
+        return mylist
+
 class _CountedReadFile:
     """ Has just a read() method, and keeps a count so we can find out how much
         has been read. Implemented so we can get the real size of the file from

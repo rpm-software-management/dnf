@@ -565,6 +565,16 @@ def to_str(obj):
         obj = str(obj)
     return obj
 
+def to_xml(item, attrib=False):
+    import xml.sax.saxutils
+    item = to_utf8(item) # verify this does enough conversion
+    item = item.rstrip()
+    if attrib:
+        item = xml.sax.saxutils.escape(item, entities={'"':"&quot;"})
+    else:
+        item = xml.sax.saxutils.escape(item)
+    return item
+
 def get_my_lang_code():
     import locale
     mylang = locale.getlocale()

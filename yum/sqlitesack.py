@@ -242,6 +242,23 @@ class YumAvailablePackageSqlite(YumAvailablePackage, PackageObject, RpmBase):
                 self.prco[prcotype].append(_share_data(prco_set))
 
         return RpmBase.returnPrco(self, prcotype, printable)
+    
+    def _requires_with_pre(self):
+        """returns requires with pre-require bit"""
+        sql = "SELECT name, version, release, epoch, flags,pre " \
+              "FROM requires WHERE pkgKey = ?"
+        cur = self._sql_MD('primary', sql, (self.pkgKey,))
+        requires = []
+        for ob in cur:
+            pre = "0"
+            if ob['pre'].lower() in ['TRUE', 1]:
+                pre = "1"
+            prco_set = (_share_data(ob['name']), _share_data(ob['flags']),
+                        (_share_data(ob['epoch']),
+                         _share_data(ob['version']),
+                         _share_data(ob['release'])), pre)
+            requires.append(prco_set)
+        return requires
 
 class YumSqlitePackageSack(yumRepo.YumPackageSack):
     """ Implementation of a PackageSack that uses sqlite cache instead of fully
