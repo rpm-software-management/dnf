@@ -876,20 +876,14 @@ class YumRepository(Repository, config.RepoConf):
         if 'old_repo_XML' not in self._oldRepoMDData:
             return True
         old_repo_XML = self._oldRepoMDData['old_repo_XML']
-        
-        mdtypes = self.retrieved.keys()
 
-        for mdtype in mdtypes:
-            (nmdtype, newdata) = self._get_mdtype_data(mdtype)
-            (omdtype, olddata) = self._get_mdtype_data(mdtype,
-                                                       repoXML=old_repo_XML)
-            if olddata is None or newdata is None:
-                continue
-            if omdtype == nmdtype and olddata.checksum == newdata.checksum:
-                continue
-            if olddata.timestamp > newdata.timestamp:
-                logger.warning("Not using downloaded repomd.xml because it is older than what we have")
-                return False
+        if old_repo_XML.timestamp > self.repoXML.timestamp:
+            logger.warning("Not using downloaded repomd.xml because it is "
+                           "older than what we have:\n"
+                           "  Current   : %s\n  Downloaded: %s" %
+                           (time.ctime(old_repo_XML.timestamp),
+                            time.ctime(self.repoXML.timestamp)))
+            return False
         return True
 
     def _commonLoadRepoXML(self, text, mdtypes=None):
