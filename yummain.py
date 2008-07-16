@@ -192,7 +192,7 @@ def main(args):
 
     # Run the transaction
     try:
-        base.doTransaction()
+        return_code = base.doTransaction()
     except plugins.PluginYumExit, e:
         return exPluginExit(e)
     except Errors.YumBaseError, e:
@@ -204,7 +204,7 @@ def main(args):
 
     verbose_logger.log(logginglevels.INFO_2, _('Complete!'))
     if unlock(): return 200
-    return 0
+    return return_code
 
 def hotshot(func, *args, **kwargs):
     import hotshot.stats, os.path

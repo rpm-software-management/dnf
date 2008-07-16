@@ -773,11 +773,16 @@ class YumBase(depsolve.Depsolve):
         # ts.run() exit codes are, hmm, "creative": None means all ok, empty 
         # list means some errors happened in the transaction and non-empty 
         # list that there were errors preventing the ts from starting...
+        
+        # make resultobject - just a plain yumgenericholder object
+        resultobject = misc.GenericHolder
+        resultobject.return_code = 0
         if errors is None:
             pass
         elif len(errors) == 0:
             errstring = _('Warning: scriptlet or other non-fatal errors occurred during transaction.')
             self.verbose_logger.debug(errstring)
+            resultobject.return_code = 1
         else:
             raise Errors.YumBaseError, errors
                           
@@ -794,7 +799,8 @@ class YumBase(depsolve.Depsolve):
                         self.logger.critical(_('Failed to remove transaction file %s') % fn)
 
         self.plugins.run('posttrans')
-    
+        return resultobject
+
     def costExcludePackages(self):
         """exclude packages if they have an identical package in another repo
         and their repo.cost value is the greater one"""

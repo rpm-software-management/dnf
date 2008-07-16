@@ -456,7 +456,7 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
             cb.display.output = False
 
         self.verbose_logger.log(yum.logginglevels.INFO_2, _('Running Transaction'))
-        self.runTransaction(cb=cb)
+        resultobject = self.runTransaction(cb=cb)
 
         self.verbose_logger.debug('Transaction time: %0.3f' % (time.time() - ts_st))
         # close things
@@ -466,7 +466,7 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         # put back the sigquit handler
         signal.signal(signal.SIGQUIT, sigquit)
         
-        return 0
+        return resultobject.return_code
         
     def gpgsigcheck(self, pkgs):
         '''Perform GPG signature verification on the given packages, installing
