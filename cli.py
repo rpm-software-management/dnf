@@ -544,30 +544,8 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         # if there is a userlist then it's for updating pkgs, not obsoleting
         
         oldcount = len(self.tsInfo)
-        installed = self.rpmdb.simplePkgList()
-        updates = self.up.getUpdatesTuples()
-        if self.conf.obsoletes:
-            obsoletes = self.up.getObsoletesTuples(newest=1)
-        else:
-            obsoletes = []
-
         if len(userlist) == 0: # simple case - do them all
-            for (obsoleting, installed) in obsoletes:
-                obsoleting_pkg = self.getPackageObject(obsoleting)
-                installed_pkg =  self.rpmdb.searchPkgTuple(installed)[0]
-                self.tsInfo.addObsoleting(obsoleting_pkg, installed_pkg)
-                self.tsInfo.addObsoleted(installed_pkg, obsoleting_pkg)
-                                
-            for (new, old) in updates:
-                txmbrs = self.tsInfo.getMembers(pkgtup=old)
-
-                if txmbrs and txmbrs[0].output_state == TS_OBSOLETED: 
-                    self.verbose_logger.log(yum.logginglevels.DEBUG_2, _('Not Updating Package that is already obsoleted: %s.%s %s:%s-%s'), old)
-                else:
-                    updating_pkg = self.getPackageObject(new)
-                    updated_pkg = self.rpmdb.searchPkgTuple(old)[0]
-                    self.tsInfo.addUpdate(updating_pkg, updated_pkg)
-
+            self.update()
 
         else:
             # go through the userlist - look for items that are local rpms. If we find them
@@ -582,27 +560,8 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
                 for item in localupdates:
                     userlist.remove(item)
                 
-            # we've got a userlist, match it against updates tuples and populate
-            # the tsInfo with the matches
-            updatesPo = []
-            for (new, old) in updates:
-                (n,a,e,v,r) = new
-                updatesPo.extend(self.pkgSack.searchNevra(name=n, arch=a, epoch=e, 
-                                 ver=v, rel=r))
-                                 
-            exactmatch, matched, unmatched = yum.packages.parsePackages(
-                                                updatesPo, userlist, casematch=1)
-            for userarg in unmatched:
-                if not quiet:
-                    self.logger.error(_('Could not find update match for %s') % userarg)
-
-            updateMatches = yum.misc.unique(matched + exactmatch)
-            for po in updateMatches:
-                for (new, old) in updates:
-                    if po.pkgtup == new:
-                        updated_pkg = self.rpmdb.searchPkgTuple(old)[0]
-                        self.tsInfo.addUpdate(po, updated_pkg)
-
+            for pattern in userlist:
+                self.update(pattern=pattern)
 
         if len(self.tsInfo) > oldcount:
             change = len(self.tsInfo) - oldcount

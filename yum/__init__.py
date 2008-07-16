@@ -49,7 +49,7 @@ import comps
 import config
 from repos import RepoStorage
 import misc
-from parser import ConfigPreProcessor
+from parser import ConfigPreProcessor, varReplace
 import transactioninfo
 import urlgrabber
 from urlgrabber.grabber import URLGrabError
@@ -2963,3 +2963,52 @@ class YumBase(depsolve.Depsolve):
 
         self.dsCallback = dscb
         return results
+
+    def add_enable_repo(self, repoid, baseurls=[], mirrorlist=None, **kwargs):
+        """add and enable a repo with just a baseurl/mirrorlist and repoid
+           requires repoid and at least one of baseurl and mirrorlist
+           additional optional kwargs are:
+           variable_convert=bool (defaults to true)
+           and any other attribute settable to the normal repo setup
+           ex: metadata_expire, enable_groups, gpgcheck, cachedir, etc
+           returns the repo object it added"""
+        # out of place fixme - maybe we should make this the default repo addition
+        # routine and use it from getReposFromConfigFile(), etc.
+        newrepo = yumRepo.YumRepository(repoid)
+        newrepo.name = repoid
+        newrepo.basecachedir = self.conf.cachedir
+        var_convert = True
+        if kwargs.has_key('variable_convert') and not kwargs['variable_convert']:
+            var_convert = False
+        
+        if baseurls:
+            replaced = []
+            if var_convert:
+                for baseurl in baseurls:
+                    if baseurl:
+                        replaced.append(varReplace(baseurl, self.conf.yumvar))
+            else:
+                replaced = baseurls
+            newrepo.baseurl = replaced
+
+        if mirrorlist:
+            if var_convert:
+                mirrorlist = varReplace(mirrorlist, self.conf.yumvar)
+            newrepo.mirrorlist = mirrorlist
+
+        # some reasonable defaults, (imo)
+        newrepo.enablegroups = True
+        newrepo.metadata_expire = 0
+        newrepo.gpgcheck = self.conf.gpgcheck
+        newrepo.basecachedir = self.conf.cachedir
+
+        for key in kwargs.keys():
+            if not hasattr(newrepo, key): continue # skip the ones which aren't vars
+            setattr(newrepo, key, kwargs[key])
+        
+        # add the new repo
+        self.repos.add(newrepo)
+        # enable the main repo  
+        self.repos.enableRepo(newrepo.id)
+        return newrepo
+
