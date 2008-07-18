@@ -236,7 +236,7 @@ class YumOutput:
     def failureReport(self, errobj):
         """failure output for failovers from urlgrabber"""
         
-        self.logger.error('%s: %s', errobj.url, str(errobj.exception))
+        self.logger.error('%s: %s', errobj.url, errobj.exception)
         self.logger.error(_('Trying other mirror.'))
         raise errobj.exception
     
