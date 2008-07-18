@@ -423,7 +423,19 @@ class Comps(object):
 
         return returns.values()
 
+    def add_group(self, group):
+        if self._groups.has_key(group.groupid):
+            thatgroup = self._groups[group.groupid]
+            thatgroup.add(group)
+        else:
+            self._groups[group.groupid] = group
 
+    def add_category(self, category):
+        if self._categories.has_key(category.categoryid):
+            thatcat = self._categories[category.categoryid]
+            thatcat.add(category)
+        else:
+            self._categories[category.categoryid] = category
 
     def add(self, srcfile = None):
         if not srcfile:
@@ -444,19 +456,10 @@ class Comps(object):
             for event, elem in parser:
                 if elem.tag == "group":
                     group = Group(elem)
-                    if self._groups.has_key(group.groupid):
-                        thatgroup = self._groups[group.groupid]
-                        thatgroup.add(group)
-                    else:
-                        self._groups[group.groupid] = group
-
+                    self.add_group(group)
                 if elem.tag == "category":
                     category = Category(elem)
-                    if self._categories.has_key(category.categoryid):
-                        thatcat = self._categories[category.categoryid]
-                        thatcat.add(category)
-                    else:
-                        self._categories[category.categoryid] = category
+                    self.add_category(category)
         except SyntaxError, e:
             raise CompsException, "comps file is empty/damaged"
             del parser
@@ -511,7 +514,7 @@ class Comps(object):
         for c in self.get_categories():
             msg += c.xml()
 
-        msg += """</comps>\n"""
+        msg += """\n</comps>\n"""
         
         return msg
             
