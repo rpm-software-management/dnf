@@ -1027,13 +1027,16 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
                 pat_sqls = []
                 pat_data = []
                 for pattern in patterns:
+                    done = False
                     for field in ['name', 'sql_nameArch', 'sql_nameVerRelArch',
                                   'sql_nameVer', 'sql_nameVerRel',
                                   'sql_envra', 'sql_nevra']:
                         if ignore_case:
-                            (pattern, esc) = self._sql_esc(pattern)
-                            pattern = pattern.replace("*", "%")
-                            pattern = pattern.replace("?", "_")
+                            if not done:
+                                done = True
+                                (pattern, esc) = self._sql_esc(pattern)
+                                pattern = pattern.replace("*", "%")
+                                pattern = pattern.replace("?", "_")
                             pat_sqls.append("%s LIKE ?%s" % (field, esc))
                         else:
                             pat_sqls.append("%s GLOB ?" % field)
