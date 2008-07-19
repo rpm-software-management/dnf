@@ -41,7 +41,9 @@ def catchSqliteException(func):
         try:
             return func(*args, **kwargs)
         except sqlutils.sqlite.Error, e:
-            raise Errors.RepoError, str(e.message)
+            if hasattr(e, "message"):
+                raise Errors.RepoError, str(e.message)
+            raise Errors.RepoError, str(e)
 
     newFunc.__name__ = func.__name__
     newFunc.__doc__ = func.__doc__
@@ -458,7 +460,7 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
         """ Apply SQLite escaping, if needed. Returns pattern and esc. """
         esc = ''
         if "_" in pattern or "%" in pattern:
-            esc = " ESCAPE '!'"
+            esc = ' ESCAPE "!"'
             pattern = pattern.replace("!", "!!")
             pattern = pattern.replace("%", "!%")
             pattern = pattern.replace("_", "!_")
@@ -1025,15 +1027,16 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
                 pat_sqls = []
                 pat_data = []
                 for pattern in patterns:
-                    if ignore_case:
-                        (pattern, esc) = self._sql_esc(pattern)
-                        pattern = pattern.replace("*", "%")
-                        pattern = pattern.replace("?", "_")
-
+                    done = False
                     for field in ['name', 'sql_nameArch', 'sql_nameVerRelArch',
                                   'sql_nameVer', 'sql_nameVerRel',
                                   'sql_envra', 'sql_nevra']:
                         if ignore_case:
+                            if not done:
+                                done = True
+                                (pattern, esc) = self._sql_esc(pattern)
+                                pattern = pattern.replace("*", "%")
+                                pattern = pattern.replace("?", "_")
                             pat_sqls.append("%s LIKE ?%s" % (field, esc))
                         else:
                             pat_sqls.append("%s GLOB ?" % field)
