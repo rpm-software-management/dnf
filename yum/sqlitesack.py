@@ -41,7 +41,9 @@ def catchSqliteException(func):
         try:
             return func(*args, **kwargs)
         except sqlutils.sqlite.Error, e:
-            raise Errors.RepoError, str(e.message)
+            if hasattr(e, "message"):
+                raise Errors.RepoError, str(e.message)
+            raise Errors.RepoError, str(e)
 
     newFunc.__name__ = func.__name__
     newFunc.__doc__ = func.__doc__
@@ -458,7 +460,7 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
         """ Apply SQLite escaping, if needed. Returns pattern and esc. """
         esc = ''
         if "_" in pattern or "%" in pattern:
-            esc = " ESCAPE '!'"
+            esc = ' ESCAPE "!"'
             pattern = pattern.replace("!", "!!")
             pattern = pattern.replace("%", "!%")
             pattern = pattern.replace("_", "!_")
