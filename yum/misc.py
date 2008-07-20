@@ -16,7 +16,10 @@ import pwd
 import fnmatch
 import bz2
 from stat import *
-import gpgme
+try:
+    import gpgme
+except ImportError:
+    gpgme = None
 
 from Errors import MiscError
 
@@ -322,6 +325,9 @@ def keyInstalled(ts, keyid, timestamp):
     return -1
 
 def import_key_to_pubring(rawkey, repo_cachedir):
+    if gpgme is None:
+        return False
+
     gpgdir = '%s/gpgdir' % repo_cachedir
     if not os.path.exists(gpgdir):
         os.makedirs(gpgdir)
@@ -334,12 +340,13 @@ def import_key_to_pubring(rawkey, repo_cachedir):
     fp.close()
     ctx.import_(key_fo)
     key_fo.close()
+    return True
     
 def return_keyids_from_pubring(gpgdir):
-    ctx = gpgme.Context()
-    if not os.path.exists(gpgdir):
+    if gpgme is None or not os.path.exists(gpgdir):
         return []
         
+    ctx = gpgme.Context()
     os.environ['GNUPGHOME'] = gpgdir
     keyids = []
     for k in ctx.keylist():
