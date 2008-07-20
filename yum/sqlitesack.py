@@ -466,10 +466,22 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
             pattern = pattern.replace("_", "!_")
         return (pattern, esc)
 
+    def _skip_all(self):
+        """ Are we going to skip every package in all our repos? """
+        skip_all = True
+        for repo in self.added:
+            if repo not in self._all_excludes:
+                skip_all = False
+                break
+        return skip_all
+
     @catchSqliteException
     def searchFiles(self, name, strict=False):
         """search primary if file will be in there, if not, search filelists, use globs, if possible"""
         
+        if self._skip_all():
+            return []
+
         # optimizations:
         # if it is not  glob, then see if it is in the primary.xml filelists, 
         # if so, just use those for the lookup
@@ -546,6 +558,9 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
     @catchSqliteException
     def searchPrimaryFields(self, fields, searchstring):
         """search arbitrary fields from the primarydb for a string"""
+        if self._skip_all():
+            return []
+
         result = []
         if len(fields) < 1:
             return result
@@ -568,6 +583,9 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
         """search arbitrary fields from the primarydb for a multiple strings
            return packages, number of items it matched as a list of tuples"""
            
+        if self._skip_all():
+            return []
+
         result = [] # (pkg, num matches)
         if len(fields) < 1:
             return result
@@ -613,6 +631,9 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
         
     @catchSqliteException
     def returnObsoletes(self, newest=False):
+        if self._skip_all():
+            return {}
+
         if newest:
             raise NotImplementedError()
 
@@ -697,6 +718,9 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
 
     @catchSqliteException
     def _search(self, prcotype, name, flags, version):
+        if self._skip_all():
+            return {}
+
         if flags == 0:
             flags = None
         if type(version) in (str, type(None), unicode):
@@ -792,19 +816,14 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
     def getRequires(self, name, flags=None, version=(None, None, None)):
         return self._search("requires", name, flags, version)
 
-    def _skip_all(self):
-        """ Are we going to skip every package in all our repos? """
-        skip_all = True
-        for repo in self.added:
-            if repo not in self._all_excludes:
-                skip_all = False
-        return skip_all
-
     @catchSqliteException
     def searchNames(self, names):
         """return a list of packages matching any of the given names. This is 
            only a match on package name, nothing else"""
         
+        if self._skip_all():
+            return []
+
         returnList = []
         if len(names) > constants.PATTERNS_MAX:
             names = set(names)
@@ -813,9 +832,6 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
                     continue
                 returnList.append(pkg)
             return returnList
-
-        if self._skip_all():
-            return []
 
         pat_sqls = []
         qsql = """select pkgId,pkgKey,name,epoch,version,release,arch
@@ -835,6 +851,9 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
     @catchSqliteException
     def searchPrco(self, name, prcotype):
         """return list of packages having prcotype name (any evr and flag)"""
+        if self._skip_all():
+            return []
+
         glob = True
         querytype = 'glob'
         if not misc.re_glob(name):
@@ -982,6 +1001,9 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
     def returnNewestByName(self, name=None, patterns=None, ignore_case=False):
         # If name is set do it from the database otherwise use our parent's
         # returnNewestByName
+        if self._skip_all():
+            return []
+
         if (not name):
             return yumRepo.YumPackageSack.returnNewestByName(self, name,
                                                              patterns,
@@ -1002,6 +1024,9 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
     # Do what packages.matchPackageNames does, but query the DB directly
     @catchSqliteException
     def matchPackageNames(self, pkgspecs):
+        if self._skip_all():
+            return []
+
         matched = []
         exactmatch = []
         unmatched = list(pkgspecs)
@@ -1094,6 +1119,9 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
     @catchSqliteException
     def searchNevra(self, name=None, epoch=None, ver=None, rel=None, arch=None):        
         """return list of pkgobjects matching the nevra requested"""
+        if self._skip_all():
+            return []
+
         returnList = []
         
         # make sure some dumbass didn't pass us NOTHING to search on
