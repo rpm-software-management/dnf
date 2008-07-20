@@ -35,6 +35,7 @@ from yum.constants import *
 
 from yum import logginglevels, _
 from yum.rpmtrans import RPMBaseCallback
+from yum.packageSack import packagesNewestByNameArch
 
 from textwrap import fill
 
@@ -252,6 +253,13 @@ class YumOutput:
             na = ""
         print "%-40.40s %-22.22s %-16.16s" % (na, ver, pkg.repoid)
 
+    def simpleNevraList(self, pkg, ui_overflow=False, indent=''):
+        nevra = "%s%s" % (indent, str(pkg))
+        if ui_overflow and len(nevra) > 63:
+            print "%s %s" % (nevra, "...")
+            nevra = ""
+        print "%-63.63s %-16.16s" % (nevra, pkg.repoid)
+
     def fmtKeyValFill(self, key, val):
         """ Return a key value pair in the common two column output format. """
         val = to_str(val)
@@ -379,32 +387,69 @@ class YumOutput:
         else:            
             return True
                 
+    def _group_names2pkgs(self, pkg_names):
+        # Convert pkg_names to installed pkgs and available pkgs
+        ipkgs = self.rpmdb.searchNames(pkg_names)
+        apkgs = self.pkgSack.searchNames(pkg_names)
+        apkgs = packagesNewestByNameArch(apkgs)
+
+        # FIXME: Basically doPackageLists('all') behaviour
+        pkgs = {}
+        for pkg in ipkgs:
+            pkgs[(pkg.name, pkg.arch)] = pkg
+        for pkg in apkgs:
+            key = (pkg.name, pkg.arch)
+            if key not in pkgs or pkg.verGT(pkgs[key]):
+                pkgs[(pkg.name, pkg.arch)] = pkg
+
+        # Convert (pkg.name, pkg.arch) to pkg.name dict
+        ret = {}
+        for pkg in pkgs.itervalues():
+            ret.setdefault(pkg.name, []).append(pkg)
+        return ret
+
+    def _displayPkgsFromNames(self, pkg_names, verbose, pkg_names2pkgs,
+                              indent='   '):
+        if not verbose:
+            for item in sorted(pkg_names):
+                print '%s%s' % (indent, item)
+        else:
+            for item in sorted(pkg_names):
+                if item not in pkg_names2pkgs:
+                    print '%s%s' % (indent, item)
+                    continue
+                for pkg in sorted(pkg_names2pkgs[item]):
+                    self.simpleNevraList(pkg, ui_overflow=True, indent=indent)
     
     def displayPkgsInGroups(self, group):
         mylang = get_my_lang_code()
         print _('\nGroup: %s') % group.nameByLang(mylang)
+
+        verb = self.verbose_logger.isEnabledFor(logginglevels.DEBUG_3)
+        pkg_names2pkgs = None
+        if verb:
+            pkg_names2pkgs = self._group_names2pkgs(group.packages)
         if group.descriptionByLang(mylang) != "":
             print _(' Description: %s') % to_unicode(group.descriptionByLang(mylang))
         if len(group.mandatory_packages) > 0:
             print _(' Mandatory Packages:')
-            for item in sorted(group.mandatory_packages):
-                print '   %s' % item
+            self._displayPkgsFromNames(group.mandatory_packages, verb,
+                                       pkg_names2pkgs)
 
         if len(group.default_packages) > 0:
             print _(' Default Packages:')
-            for item in sorted(group.default_packages):
-                print '   %s' % item
+            self._displayPkgsFromNames(group.default_packages, verb,
+                                       pkg_names2pkgs)
         
         if len(group.optional_packages) > 0:
             print _(' Optional Packages:')
-            for item in sorted(group.optional_packages):
-                print '   %s' % item
+            self._displayPkgsFromNames(group.optional_packages, verb,
+                                       pkg_names2pkgs)
 
         if len(group.conditional_packages) > 0:
             print _(' Conditional Packages:')
-            # FIXME: Why is this different?
-            for item, cond in group.conditional_packages.iteritems():
-                print '   %s' % (item,)
+            self._displayPkgsFromNames(group.conditional_packages, verb,
+                                       pkg_names2pkgs)
 
     def depListOutput(self, results):
         """take a list of findDeps results and 'pretty print' the output"""
