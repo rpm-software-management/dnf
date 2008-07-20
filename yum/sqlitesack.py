@@ -574,7 +574,7 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
         
         # NOTE: I can't see any reason not to use this all the time, speed
         # comparison shows them as baiscally equal.
-        if len(searchstrings) > constants.PATTERNS_MAX:
+        if len(searchstrings) > (constants.PATTERNS_MAX / len(fields)):
             tot = {}
             for searchstring in searchstrings:
                 matches = self.searchPrimaryFields(fields, searchstring)
@@ -797,6 +797,15 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
         """return a list of packages matching any of the given names. This is 
            only a match on package name, nothing else"""
         
+        returnList = []
+        if len(names) > constants.PATTERNS_MAX:
+            names = set(names)
+            for pkg in self.returnPackages():
+                if pkg.name not in names:
+                    continue
+                returnList.append(pkg)
+            return returnList
+
         pat_sqls = []
         qsql = """select pkgId,pkgKey,name,epoch,version,release,arch
                       from packages where """
@@ -804,7 +813,6 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
             pat_sqls.append("name = ?")
         qsql = qsql + " OR ".join(pat_sqls)
 
-        returnList = []
         for (repo, cache) in self.primarydb.items():
             cur = cache.cursor()
             executeSQL(cur, qsql, list(names))
@@ -1013,7 +1021,7 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
         """Builds a list of packages, only containing nevra information. No
            excludes are done at this stage. """
 
-        if patterns is None or len(patterns) > constants.PATTERNS_MAX:
+        if patterns is None or len(patterns) > (constants.PATTERNS_MAX / 7):
             patterns = []
         
         returnList = []        

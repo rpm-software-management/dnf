@@ -99,4 +99,4 @@ RPM_TO_SQLITE = { 'packagesize' : 'size_package',
                         }
 
 # Cut over for when we should just give up and load everything
-PATTERNS_MAX = 128
+PATTERNS_MAX = 512
