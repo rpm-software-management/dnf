@@ -792,6 +792,14 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
     def getRequires(self, name, flags=None, version=(None, None, None)):
         return self._search("requires", name, flags, version)
 
+    def _skip_all(self):
+        """ Are we going to skip every package in all our repos? """
+        skip_all = True
+        for repo in self.added:
+            if repo not in self._all_excludes:
+                skip_all = False
+        return skip_all
+
     @catchSqliteException
     def searchNames(self, names):
         """return a list of packages matching any of the given names. This is 
@@ -806,12 +814,7 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
                 returnList.append(pkg)
             return returnList
 
-        skip_all = True
-        for repo in self.added:
-            if repo not in self._all_excludes:
-                skip_all = False
-
-        if skip_all:
+        if self._skip_all():
             return []
 
         pat_sqls = []
@@ -1072,13 +1075,7 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
            packages are processed for excludes. Note that patterns is just
            a hint, we are free it ignore it. """
 
-        # Skip unused repos completely, Eg. *-source
-        skip_all = True
-        for repo in self.added:
-            if repo not in self._all_excludes:
-                skip_all = False
-
-        if skip_all:
+        if self._skip_all():
             return []
 
         if hasattr(self, 'pkgobjlist'):
