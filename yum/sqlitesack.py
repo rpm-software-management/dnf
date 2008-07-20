@@ -806,6 +806,14 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
                 returnList.append(pkg)
             return returnList
 
+        skip_all = True
+        for repo in self.added:
+            if repo not in self._all_excludes:
+                skip_all = False
+
+        if skip_all:
+            return []
+
         pat_sqls = []
         qsql = """select pkgId,pkgKey,name,epoch,version,release,arch
                       from packages where """
