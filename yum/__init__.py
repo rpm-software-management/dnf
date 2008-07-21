@@ -1774,7 +1774,7 @@ class YumBase(depsolve.Depsolve):
             thisgroup.toremove = True
             pkgs = thisgroup.packages
             for pkg in thisgroup.packages:
-                txmbrs = self.remove(name=pkg)
+                txmbrs = self.remove(name=pkg, silence_warnings=True)
                 txmbrs_used.extend(txmbrs)
                 for txmbr in txmbrs:
                     txmbr.groups.append(thisgroup.groupid)
@@ -2530,11 +2530,8 @@ class YumBase(depsolve.Depsolve):
                             ver=nevra_dict['version'], rel=nevra_dict['release'])
 
                 if len(pkgs) == 0:
-                    # FIXME we should give the caller some nice way to hush this warning
-                    # probably just a kwarg of 'silence_warnings' or something
-                    # b/c when this is called from groupRemove() it makes a lot of
-                    # garbage noise
-                    self.logger.warning(_("No package matched to remove"))
+                    if not kwargs.get('silence_warnings', False):
+                        self.logger.warning(_("No package matched to remove"))
 
         for po in pkgs:
             txmbr = self.tsInfo.addErase(po)
