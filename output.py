@@ -253,12 +253,12 @@ class YumOutput:
             na = ""
         print "%-40.40s %-22.22s %-16.16s" % (na, ver, pkg.repoid)
 
-    def simpleNevraList(self, pkg, ui_overflow=False, indent=''):
-        nevra = "%s%s" % (indent, str(pkg))
-        if ui_overflow and len(nevra) > 63:
-            print "%s %s" % (nevra, "...")
-            nevra = ""
-        print "%-63.63s %-16.16s" % (nevra, pkg.repoid)
+    def simpleEnvraList(self, pkg, ui_overflow=False, indent=''):
+        envra = "%s%s" % (indent, str(pkg))
+        if ui_overflow and len(envra) > 63:
+            print "%s %s" % (envra, "...")
+            envra = ""
+        print "%-63.63s %-16.16s" % (envra, pkg.repoid)
 
     def fmtKeyValFill(self, key, val):
         """ Return a key value pair in the common two column output format. """
@@ -419,7 +419,7 @@ class YumOutput:
                     print '%s%s' % (indent, item)
                     continue
                 for pkg in sorted(pkg_names2pkgs[item]):
-                    self.simpleNevraList(pkg, ui_overflow=True, indent=indent)
+                    self.simpleEnvraList(pkg, ui_overflow=True, indent=indent)
     
     def displayPkgsInGroups(self, group):
         mylang = get_my_lang_code()
