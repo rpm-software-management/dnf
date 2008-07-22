@@ -1808,10 +1808,14 @@ class YumBase(depsolve.Depsolve):
                             self.tsInfo.remove(txmbr.po.pkgtup)
         
         
-    def selectGroup(self, grpid):
+    def selectGroup(self, grpid, group_package_types=[], enable_group_conditionals=None):
         """mark all the packages in the group to be installed
            returns a list of transaction members it added to the transaction 
-           set"""
+           set
+           Optionally take:
+           group_package_types=List - overrides self.conf.group_package_types
+           enable_group_conditionals=Bool - overrides self.conf.enable_group_conditionals
+        """
 
         if not self.comps.has_group(grpid):
             raise Errors.GroupsError, _("No Group named %s exists") % grpid
@@ -1822,6 +1826,10 @@ class YumBase(depsolve.Depsolve):
         if not thesegroups:
             raise Errors.GroupsError, _("No Group named %s exists") % grpid
 
+        package_types = self.conf.group_package_types
+        if group_package_types:
+            package_types = group_package_types
+
         for thisgroup in thesegroups:
             if thisgroup.selected:
                 continue
@@ -1829,11 +1837,11 @@ class YumBase(depsolve.Depsolve):
             thisgroup.selected = True
             
             pkgs = []
-            if 'mandatory' in self.conf.group_package_types:
+            if 'mandatory' in package_types:
                 pkgs.extend(thisgroup.mandatory_packages)
-            if 'default' in self.conf.group_package_types:
+            if 'default' in package_types:
                 pkgs.extend(thisgroup.default_packages)
-            if 'optional' in self.conf.group_package_types:
+            if 'optional' in package_types:
                 pkgs.extend(thisgroup.optional_packages)
 
             for pkg in pkgs:
@@ -1849,7 +1857,11 @@ class YumBase(depsolve.Depsolve):
                     for txmbr in txmbrs:
                         txmbr.groups.append(thisgroup.groupid)
             
-            if self.conf.enable_group_conditionals:
+            group_conditionals = self.conf.enable_group_conditionals
+            if enable_group_conditionals is not None: # has to be this way so we can set it to False
+                group_conditionals = enable_group_conditionals
+
+            if group_conditionals:
                 for condreq, cond in thisgroup.conditional_packages.iteritems():
                     if self.isPackageInstalled(cond):
                         try:
