@@ -359,8 +359,7 @@ class SkipBrokenTests(DepsolveTests):
         self.assertEquals('empty', *self.resolveCode(skip=True))
         self.assertResult([ipo1,ipo2])
         
-
-
+    
     def resolveCode(self,skip = False):
         solver = YumBase()
         solver.conf = FakeConf()

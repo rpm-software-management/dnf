@@ -31,11 +31,11 @@ import Errors
 from parser import ConfigPreProcessor
 
 from textwrap import fill
-from i18n import _
-
 import fnmatch
 
 from weakref import proxy as weakref
+
+from yum import _
 
 # TODO: expose rpm package sack objects to plugins (once finished)
 # TODO: allow plugins to use the existing config stuff to define options for
@@ -300,7 +300,7 @@ class YumPlugins:
         confpp_obj = ConfigPreProcessor(conffilename)
         try:
             parser.readfp(confpp_obj)
-        except ParsingError, e:
+        except ConfigParser.ParsingError, e:
             raise Errors.ConfigError("Couldn't parse %s: %s" % (conffilename,
                 str(e)))
         return parser

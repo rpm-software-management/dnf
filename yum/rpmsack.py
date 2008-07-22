@@ -29,6 +29,7 @@ import fnmatch
 import re
 
 from misc import to_unicode
+import constants
 
 class RPMInstalledPackage(YumInstalledPackage):
 
@@ -92,10 +93,11 @@ class RPMDBPackageSack(PackageSackBase):
         self._tup2pkg = {}
         self._completely_loaded = False
         self._simple_pkgtup_list = []
+        self._get_pro_cache = {}
+        self._get_req_cache  = {}
         self.ts = None
 
         self._cache = {
-            'files' : { },
             'provides' : { },
             'requires' : { },
             'conflicts' : { },
@@ -120,7 +122,15 @@ class RPMDBPackageSack(PackageSackBase):
         self._tup2pkg = {}
         self._completely_loaded = False
         self._simple_pkgtup_list = []
-        misc._share_data_store = {}
+        self._get_pro_cache = {}
+        self._get_req_cache = {}
+        misc.unshare_data()
+        self._cache = {
+            'provides' : { },
+            'requires' : { },
+            'conflicts' : { },
+            'obsoletes' : { },
+            }
 
     def readOnlyTS(self):
         if not self.ts:
@@ -163,10 +173,6 @@ class RPMDBPackageSack(PackageSackBase):
     def searchFiles(self, name):
         """search the filelists in the rpms for anything matching name"""
 
-        result = self._cache['files'].get(name)
-        if result is not None:
-            return result
-
         ts = self.readOnlyTS()
         result = {}
         
@@ -178,7 +184,6 @@ class RPMDBPackageSack(PackageSackBase):
         del mi
 
         result = result.values()
-        self._cache['files'][name] = result
         return result
         
     def searchPrco(self, name, prcotype):
@@ -250,17 +255,21 @@ class RPMDBPackageSack(PackageSackBase):
         return misc.newestInList(allpkgs)
 
     @staticmethod
-    def _compile_patterns(patterns):
-        if patterns is None:
+    def _compile_patterns(patterns, ignore_case=False):
+        if not patterns or len(patterns) > constants.PATTERNS_MAX:
             return None
         ret = []
         for pat in patterns:
-            ret.append(re.compile(fnmatch.translate(pat)))
+            if ignore_case:
+                ret.append(re.compile(fnmatch.translate(pat), re.I))
+            else:
+                ret.append(re.compile(fnmatch.translate(pat)))
         return ret
     @staticmethod
     def _match_repattern(repatterns, hdr):
         if repatterns is None:
             return True
+
         for repat in repatterns:
             if repat.match(hdr['name']):
                 return True
@@ -280,9 +289,9 @@ class RPMDBPackageSack(PackageSackBase):
                 return True
         return False
 
-    def returnPackages(self, repoid=None, patterns=None):
+    def returnPackages(self, repoid=None, patterns=None, ignore_case=False):
         if not self._completely_loaded:
-            rpats = self._compile_patterns(patterns)
+            rpats = self._compile_patterns(patterns, ignore_case)
             for hdr, idx in self._all_packages():
                 if self._match_repattern(rpats, hdr):
                     self._makePackageObject(hdr, idx)
@@ -310,6 +319,11 @@ class RPMDBPackageSack(PackageSackBase):
             if n > 0:
                 ret.append((self._makePackageObject(hdr, idx), n))
         return ret
+    def searchNames(self, names=[]):
+        returnList = []
+        for name in names:
+            returnList.extend(self._search(name=name))
+        return returnList
 
     def searchNevra(self, name=None, epoch=None, ver=None, rel=None, arch=None):
         return self._search(name, epoch, ver, rel, arch)
@@ -415,17 +429,18 @@ class RPMDBPackageSack(PackageSackBase):
         return po
         
     def _hdr2pkgTuple(self, hdr):
-        name = hdr['name']
-        arch = hdr['arch']
-        ver = str(hdr['version']) # convert these to strings to be sure
-        rel = str(hdr['release'])
+        name = misc.share_data(hdr['name'])
+        arch = misc.share_data(hdr['arch'])
+         # convert these to strings to be sure
+        ver = misc.share_data(str(hdr['version']))
+        rel = misc.share_data(str(hdr['release']))
         epoch = hdr['epoch']
         if epoch is None:
             epoch = '0'
         else:
             epoch = str(epoch)
-    
-        return (name, arch, epoch, ver, rel)
+        epoch = misc.share_data(epoch)
+        return misc.share_data((name, arch, epoch, ver, rel))
 
     # deprecated options for compat only - remove once rpmdb is converted:
     def getPkgList(self):
@@ -497,23 +512,39 @@ class RPMDBPackageSack(PackageSackBase):
         # Can't support this now
         raise NotImplementedError
 
+    @staticmethod
+    def _genDeptup(name, flags, version):
+        """ Given random stuff, generate a usable dep tuple. """
+
+        if flags == 0:
+            flags = None
+
+        if type(version) is types.StringType:
+            (r_e, r_v, r_r) = miscutils.stringToVersion(version)
+        # would this ever be a ListType?
+        elif type(version) in (types.TupleType, types.ListType):
+            (r_e, r_v, r_r) = version
+        else:
+            # FIXME: This isn't always  type(version) is types.NoneType:
+            # ...not sure what it is though, come back to this
+            r_e = r_v = r_r = None
+
+        deptup = (name, misc.share_data(flags),
+                  (misc.share_data(r_e), misc.share_data(r_v),
+                   misc.share_data(r_r)))
+        return misc.share_data(deptup)
+
     def getProvides(self, name, flags=None, version=(None, None, None)):
         """searches the rpmdb for what provides the arguments
            returns a list of pkgtuples of providing packages, possibly empty"""
 
-        pkgs = self.searchProvides(name)
+        name = misc.share_data(name)
+        deptup = self._genDeptup(name, flags, version)
+        if deptup in self._get_pro_cache:
+            return self._get_pro_cache[deptup]
+        r_v = deptup[2][1]
         
-        if name[0] =='/':
-            morepkgs = self.searchFiles(name)
-            pkgs.extend(morepkgs)
-        if flags == 0:
-            flags = None
-        if type(version) is types.StringType:
-            (r_e, r_v, r_r) = miscutils.stringToVersion(version)
-        elif type(version) in (types.TupleType, types.ListType): # would this ever be a ListType?
-            (r_e, r_v, r_r) = version
-        elif type(version) is types.NoneType:
-            r_e = r_v = r_r = None
+        pkgs = self.searchProvides(name)
         
         result = { }
         
@@ -521,10 +552,10 @@ class RPMDBPackageSack(PackageSackBase):
             if name[0] == '/' and r_v is None:
                 result[po] = [(name, None, (None, None, None))]
                 continue
-            hits = po.matchingPrcos(
-                'provides', (name, flags, (r_e, r_v, r_r)))
+            hits = po.matchingPrcos('provides', deptup)
             if hits:
                 result[po] = hits
+        self._get_pro_cache[deptup] = result
         return result
 
     def whatProvides(self, name, flags, version):
@@ -535,16 +566,13 @@ class RPMDBPackageSack(PackageSackBase):
         """searches the rpmdb for what provides the arguments
            returns a list of pkgtuples of providing packages, possibly empty"""
 
-        pkgs = self.searchRequires(name)
+        name = misc.share_data(name)
+        deptup = self._genDeptup(name, flags, version)
+        if deptup in self._get_req_cache:
+            return self._get_req_cache[deptup]
+        r_v = deptup[2][1]
 
-        if flags == 0:
-            flags = None
-        if type(version) is types.StringType:
-            (r_e, r_v, r_r) = miscutils.stringToVersion(version)
-        elif type(version) in (types.TupleType, types.ListType): # would this ever be a ListType?
-            (r_e, r_v, r_r) = version
-        elif type(version) is types.NoneType:
-            r_e = r_v = r_r = None
+        pkgs = self.searchRequires(name)
 
         result = { }
 
@@ -553,10 +581,10 @@ class RPMDBPackageSack(PackageSackBase):
                 # file dep add all matches to the defSack
                 result[po] = [(name, None, (None, None, None))]
                 continue
-            hits = po.matchingPrcos(
-                'requires', (name, flags, (r_e, r_v, r_r)))
+            hits = po.matchingPrcos('requires', deptup)
             if hits:
                 result[po] = hits
+        self._get_req_cache[deptup] = result
         return result
 
     def whatRequires(self, name, flags, version):

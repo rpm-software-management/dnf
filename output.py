@@ -23,18 +23,19 @@ import logging
 import types
 import gettext
 import rpm
-from yum.i18n import _
 
 import re # For YumTerm
 
 from urlgrabber.progress import TextMeter
 from urlgrabber.grabber import URLGrabError
-from yum.misc import sortPkgObj, prco_tuple_to_string
+from yum.misc import sortPkgObj, prco_tuple_to_string, to_str, to_unicode, get_my_lang_code
+import yum.misc
 from rpmUtils.miscutils import checkSignals
 from yum.constants import *
 
-from yum import logginglevels
+from yum import logginglevels, _
 from yum.rpmtrans import RPMBaseCallback
+from yum.packageSack import packagesNewestByNameArch
 
 from textwrap import fill
 
@@ -236,7 +237,7 @@ class YumOutput:
     def failureReport(self, errobj):
         """failure output for failovers from urlgrabber"""
         
-        self.logger.error('%s: %s', errobj.url, str(errobj.exception))
+        self.logger.error('%s: %s', errobj.url, errobj.exception)
         self.logger.error(_('Trying other mirror.'))
         raise errobj.exception
     
@@ -244,15 +245,24 @@ class YumOutput:
     def simpleProgressBar(self, current, total, name=None):
         progressbar(current, total, name)
     
-    def simpleList(self, pkg):
+    def simpleList(self, pkg, ui_overflow=False):
         ver = pkg.printVer()
         na = '%s.%s' % (pkg.name, pkg.arch)
-        
+        if ui_overflow and len(na) > 40:
+            print "%s %s" % (na, "...")
+            na = ""
         print "%-40.40s %-22.22s %-16.16s" % (na, ver, pkg.repoid)
 
+    def simpleNevraList(self, pkg, ui_overflow=False, indent=''):
+        nevra = "%s%s" % (indent, str(pkg))
+        if ui_overflow and len(nevra) > 63:
+            print "%s %s" % (nevra, "...")
+            nevra = ""
+        print "%-63.63s %-16.16s" % (nevra, pkg.repoid)
 
     def fmtKeyValFill(self, key, val):
         """ Return a key value pair in the common two column output format. """
+        val = to_str(val)
         keylen = len(key)
         cols = self.term.columns
         nxt = ' ' * (keylen - 2) + ': '
@@ -265,7 +275,7 @@ class YumOutput:
         return ret
     
     def fmtSection(self, name, fill='='):
-        name = str(name)
+        name = to_str(name)
         cols = self.term.columns - 2
         name_len = len(name)
         if name_len >= (cols - 4):
@@ -276,20 +286,20 @@ class YumOutput:
 
         return "%s %s %s" % (beg, name, end)
 
+    def _enc(self, s):
+        """Get the translated version from specspo and ensure that
+        it's actually encoded in UTF-8."""
+        if type(s) == unicode:
+            s = s.encode("UTF-8")
+        if len(s) > 0:
+            for d in self.i18ndomains:
+                t = gettext.dgettext(d, s)
+                if t != s:
+                    s = t
+                    break
+        return to_unicode(s)
+
     def infoOutput(self, pkg):
-        def enc(s):
-            """Get the translated version from specspo and ensure that
-            it's actually encoded in UTF-8."""
-            if type(s) == unicode:
-                s = s.encode("UTF-8")
-            if len(s) > 0:
-                for d in self.i18ndomains:
-                    t = gettext.dgettext(d, s)
-                    if t != s:
-                        s = t
-                        break
-            s = unicode(s, "UTF-8")
-            return s
         print _("Name       : %s") % pkg.name
         print _("Arch       : %s") % pkg.arch
         if pkg.epoch != "0":
@@ -300,11 +310,15 @@ class YumOutput:
         print _("Repo       : %s") % pkg.repoid
         if self.verbose_logger.isEnabledFor(logginglevels.DEBUG_3):
             print _("Committer  : %s") % pkg.committer
-        print self.fmtKeyValFill(_("Summary    : "), enc(pkg.summary))
+            print _("Committime : %s") % time.ctime(pkg.committime)
+            print _("Buildtime  : %s") % time.ctime(pkg.buildtime)
+            if hasattr(pkg, 'installtime'):
+                print _("Installtime: %s") % time.ctime(pkg.installtime)
+        print self.fmtKeyValFill(_("Summary    : "), self._enc(pkg.summary))
         if pkg.url:
             print _("URL        : %s") % pkg.url
         print _("License    : %s") % pkg.license
-        print self.fmtKeyValFill(_("Description: "), enc(pkg.description))
+        print self.fmtKeyValFill(_("Description: "), self._enc(pkg.description))
         print ""
     
     def updatesObsoletesList(self, uotup, changetype):
@@ -328,10 +342,9 @@ class YumOutput:
             if len(lst) > 0:
                 thingslisted = 1
                 print '%s' % description
-                lst.sort(sortPkgObj)
-                for pkg in lst:
+                for pkg in sorted(lst):
                     if outputType == 'list':
-                        self.simpleList(pkg)
+                        self.simpleList(pkg, ui_overflow=True)
                     elif outputType == 'info':
                         self.infoOutput(pkg)
                     else:
@@ -346,46 +359,97 @@ class YumOutput:
     def userconfirm(self):
         """gets a yes or no from the user, defaults to No"""
 
+        yui = (to_unicode(_('y')), to_unicode(_('yes')))
+        nui = (to_unicode(_('n')), to_unicode(_('no')))
+        aui = (yui[0], yui[1], nui[0], nui[1])
         while True:
             try:
-                choice = raw_input(_('Is this ok [y/N]: ').encode("utf-8"))
+                choice = raw_input(_('Is this ok [y/N]: '))
             except UnicodeEncodeError:
+                raise
+            except UnicodeDecodeError:
                 raise
             except:
                 choice = ''
+            choice = to_unicode(choice)
             choice = choice.lower()
-            if len(choice) == 0 or choice in [_('y'), _('n'), _('yes'), _('no')]:
+            if len(choice) == 0 or choice in aui:
+                break
+            # If the enlish one letter names don't mix, allow them too
+            if u'y' not in aui and u'y' == choice:
+                choice = yui[0]
+                break
+            if u'n' not in aui and u'n' == choice:
                 break
 
-        if len(choice) == 0 or choice not in [_('y'), _('yes')]:
+        if len(choice) == 0 or choice not in yui:
             return False
         else:            
             return True
                 
+    def _group_names2pkgs(self, pkg_names):
+        # Convert pkg_names to installed pkgs and available pkgs
+        ipkgs = self.rpmdb.searchNames(pkg_names)
+        apkgs = self.pkgSack.searchNames(pkg_names)
+        apkgs = packagesNewestByNameArch(apkgs)
+
+        # FIXME: Basically doPackageLists('all') behaviour
+        pkgs = {}
+        for pkg in ipkgs:
+            pkgs[(pkg.name, pkg.arch)] = pkg
+        for pkg in apkgs:
+            key = (pkg.name, pkg.arch)
+            if key not in pkgs or pkg.verGT(pkgs[key]):
+                pkgs[(pkg.name, pkg.arch)] = pkg
+
+        # Convert (pkg.name, pkg.arch) to pkg.name dict
+        ret = {}
+        for pkg in pkgs.itervalues():
+            ret.setdefault(pkg.name, []).append(pkg)
+        return ret
+
+    def _displayPkgsFromNames(self, pkg_names, verbose, pkg_names2pkgs,
+                              indent='   '):
+        if not verbose:
+            for item in sorted(pkg_names):
+                print '%s%s' % (indent, item)
+        else:
+            for item in sorted(pkg_names):
+                if item not in pkg_names2pkgs:
+                    print '%s%s' % (indent, item)
+                    continue
+                for pkg in sorted(pkg_names2pkgs[item]):
+                    self.simpleNevraList(pkg, ui_overflow=True, indent=indent)
     
     def displayPkgsInGroups(self, group):
-        print _('\nGroup: %s') % group.name
-        if group.description != "":
-            print _(' Description: %s') % group.description.encode("UTF-8")
+        mylang = get_my_lang_code()
+        print _('\nGroup: %s') % group.nameByLang(mylang)
+
+        verb = self.verbose_logger.isEnabledFor(logginglevels.DEBUG_3)
+        pkg_names2pkgs = None
+        if verb:
+            pkg_names2pkgs = self._group_names2pkgs(group.packages)
+        if group.descriptionByLang(mylang) != "":
+            print _(' Description: %s') % to_unicode(group.descriptionByLang(mylang))
         if len(group.mandatory_packages) > 0:
             print _(' Mandatory Packages:')
-            for item in group.mandatory_packages:
-                print '   %s' % item
+            self._displayPkgsFromNames(group.mandatory_packages, verb,
+                                       pkg_names2pkgs)
 
         if len(group.default_packages) > 0:
             print _(' Default Packages:')
-            for item in group.default_packages:
-                print '   %s' % item
+            self._displayPkgsFromNames(group.default_packages, verb,
+                                       pkg_names2pkgs)
         
         if len(group.optional_packages) > 0:
             print _(' Optional Packages:')
-            for item in group.optional_packages:
-                print '   %s' % item
+            self._displayPkgsFromNames(group.optional_packages, verb,
+                                       pkg_names2pkgs)
 
         if len(group.conditional_packages) > 0:
             print _(' Conditional Packages:')
-            for item, cond in group.conditional_packages.iteritems():
-                print '   %s' % (item,)
+            self._displayPkgsFromNames(group.conditional_packages, verb,
+                                       pkg_names2pkgs)
 
     def depListOutput(self, results):
         """take a list of findDeps results and 'pretty print' the output"""
@@ -448,22 +512,61 @@ class YumOutput:
     
         return(format % (number, space, symbols[depth]))
 
-    def matchcallback(self, po, values, matchfor=None):
+    def matchcallback(self, po, values, matchfor=None, verbose=None):
+        """ Output search/provides type callback matches. po is the pkg object,
+            values are the things in the po that we've matched.
+            If matchfor is passed, all the strings in that list will be
+            highlighted within the output.
+            verbose overrides logginglevel, if passed. """
+
         if self.conf.showdupesfromrepos:
             msg = '%s : ' % po
         else:
             msg = '%s.%s : ' % (po.name, po.arch)
-        msg = self.fmtKeyValFill(msg, po.summary)
+        msg = self.fmtKeyValFill(msg, self._enc(po.summary))
         if matchfor:
             msg = self.term.sub_bold(msg, matchfor)
         
         print msg
-        self.verbose_logger.debug(_('Matched from:'))
-        for item in values:
+
+        if verbose is None:
+            verbose = self.verbose_logger.isEnabledFor(logginglevels.DEBUG_3)
+        if not verbose:
+            return
+
+        print _('Matched from:')
+        for item in yum.misc.unique(values):
+            if po.name == item or po.summary == item:
+                continue # Skip double name/summary printing
+
+            can_overflow = True
+            if False: pass
+            elif po.description == item:
+                key = _("Description : ")
+                item = self._enc(item)
+            elif po.url == item:
+                key = _("URL         : %s")
+                can_overflow = False
+            elif po.license == item:
+                key = _("License     : %s")
+                can_overflow = False
+            elif item.startswith("/"):
+                key = _("Filename    : %s")
+                item = self._enc(item)
+                can_overflow = False
+            else:
+                key = _("Other       : ")
+
             if matchfor:
                 item = self.term.sub_bold(item, matchfor)
-            self.verbose_logger.debug('%s', item)
-        self.verbose_logger.debug('\n\n')
+            if can_overflow:
+                print self.fmtKeyValFill(key, item)
+            else:
+                print key % item
+        print '\n\n'
+
+    def matchcallback_verbose(self, po, values, matchfor=None):
+        return self.matchcallback(po, values, matchfor, verbose=True)
         
     def reportDownloadSize(self, packages):
         """Report the total download size for a set of packages"""
@@ -724,7 +827,7 @@ class YumCliRPMCallBack(RPMBaseCallback):
         
         # for a progress bar
         self.mark = "#"
-        self.marks = 27
+        self.marks = 22
         
         
     def event(self, package, action, te_current, te_total, ts_current, ts_total):
@@ -746,7 +849,7 @@ class YumCliRPMCallBack(RPMBaseCallback):
             fmt = self._makefmt(percent, ts_current, ts_total)
             msg = fmt % (process, pkgname)
             if msg != self.lastmsg:
-                sys.stdout.write(msg)
+                sys.stdout.write(to_unicode(msg))
                 sys.stdout.flush()
                 self.lastmsg = msg
             if te_current == te_total:
@@ -754,7 +857,7 @@ class YumCliRPMCallBack(RPMBaseCallback):
 
     def scriptout(self, package, msgs):
         if msgs:
-            sys.stdout.write(msgs)
+            sys.stdout.write(to_unicode(msgs))
             sys.stdout.flush()
 
     def _makefmt(self, percent, ts_current, ts_total, progress = True):
@@ -765,12 +868,18 @@ class YumCliRPMCallBack(RPMBaseCallback):
         marks = self.marks - (2 * l)
         width = "%s.%s" % (marks, marks)
         fmt_bar = "%-" + width + "s"
-        if progress:
+        pnl = str(28 + marks + 1)
+
+        if progress and percent == 100: # Don't chop pkg name on 100%
+            fmt = "\r  %-15.15s: %-" + pnl + '.' + pnl + "s " + done
+        elif progress:
             bar = fmt_bar % (self.mark * int(marks * (percent / 100.0)), )
-            fmt = "\r  %-10.10s: %-28.28s " + bar + " " + done
+            fmt = "\r  %-15.15s: %-28.28s " + bar + " " + done
+        elif percent == 100:
+            fmt = "  %-15.15s: %-" + pnl + '.' + pnl + "s " + done
         else:
             bar = fmt_bar % (self.mark * marks, )
-            fmt = "  %-10.10s: %-28.28s "  + bar + " " + done
+            fmt = "  %-15.15s: %-28.28s "  + bar + " " + done
         return fmt
 
 
@@ -793,6 +902,8 @@ def progressbar(current, total, name=None):
     hashbar = mark * numblocks
     if name is None:
         output = '\r%-50s %d/%d' % (hashbar, current, total)
+    elif current == total: # Don't chop name on 100%
+        output = '\r%-62.62s %d/%d' % (name, current, total)
     else:
         output = '\r%-10.10s: %-50s %d/%d' % (name, hashbar, current, total)
      
@@ -803,4 +914,43 @@ def progressbar(current, total, name=None):
         sys.stdout.write('\n')
 
     sys.stdout.flush()
+        
+
+if __name__ == "__main__":
+    if len(sys.argv) > 1 and sys.argv[1] == "progress":
+        print ""
+        print " Doing progress, small name"
+        print ""
+        for i in xrange(0, 101):
+            progressbar(i, 100, "abcd")
+            time.sleep(0.1)
+        print ""
+        print " Doing progress, big name"
+        print ""
+        for i in xrange(0, 101):
+            progressbar(i, 100, "_%s_" % ("123456789 " * 5))
+            time.sleep(0.1)
+        print ""
+        print " Doing progress, no name"
+        print ""
+        for i in xrange(0, 101):
+            progressbar(i, 100)
+            time.sleep(0.1)
+
+        cb = YumCliRPMCallBack()
+        cb.action["foo"] = "abcd"
+        cb.action["bar"] = "_12345678_.end"
+        print ""
+        print " Doing CB, small proc / small pkg"
+        print ""
+        for i in xrange(0, 101):
+            cb.event("spkg", "foo", i, 100, i, 100)
+            time.sleep(0.1)        
+        print ""
+        print " Doing CB, big proc / big pkg"
+        print ""
+        for i in xrange(0, 101):
+            cb.event("lpkg" + "-=" * 15 + ".end", "bar", i, 100, i, 100)
+            time.sleep(0.1)
+        print ""
         

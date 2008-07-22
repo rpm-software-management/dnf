@@ -28,3 +28,8 @@ See the man page for more information (man yum)
 Also see the webpage and wiki for more information:
 web page: http://linux.duke.edu/yum/
 wiki: http://wiki.linux.duke.edu/Yum
+
+3.2.X Branch - yum-3_2_X
+      Starting commit is roughly: a3c91d7f6a15f31a42d020127b2da2877dfc137d
+         E.g. git diff a3c91d7f6a15f31a42d020127b2da2877dfc137d
+

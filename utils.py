@@ -18,8 +18,7 @@ import time
 
 import yum
 from cli import *
-from yum.i18n import _
-
+from yum import _
 
 import yum.plugins as plugins
 

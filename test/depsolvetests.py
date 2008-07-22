@@ -1,5 +1,8 @@
 import unittest
 from testbase import *
+from rpmUtils import arch
+
+import rpmUtils.arch
 
 class DepsolveTests(DepsolveTests):
     def testEmpty(self):
@@ -326,7 +329,10 @@ class DepsolveTests(DepsolveTests):
         self.xsack.addPackage(xpo64)
 
         self.assertEquals('ok', *self.resolveCode())
-        self.assertResult((po, xpo))
+        if os.uname()[-1] == 'x86_64':
+            self.assertResult((po, xpo64))
+        else:
+            self.assertResult((po, xpo))
 
     def testUpdateSinglePackage(self):
         ipo = FakePackage('zsh', '1', '1', None, 'i386')
@@ -596,19 +602,19 @@ class DepsolveTests(DepsolveTests):
         self.xsack.addPackage(po2)
         return (po, po1, po2)
 
-    def testCompareProviersSameLen1_64(self):
+    def testCompareProvidersSameLen1_64(self):
         (po, po1, po2) = self._setup_CompareProviders()
 
         self.assertEquals('ok', *self.resolveCode())
         self.assertResult((po, po1))
 
-    def testCompareProviersSameLen1_noarch(self):
+    def testCompareProvidersSameLen1_noarch(self):
         (po, po1, po2) = self._setup_CompareProviders(arch='noarch')
 
         self.assertEquals('ok', *self.resolveCode())
-        self.assertResult((po, po1))
+        self.assertResult((po,), (po1,po2))
 
-    def testCompareProviersSameLen2_64(self):
+    def testCompareProvidersSameLen2_64(self):
         # Make sure they are still ok, the other way around
         po = FakePackage('abcd', arch='x86_64')
         po.addRequires('libxyz-1.so.0(64bit)', None, (None, None, None))
@@ -624,7 +630,7 @@ class DepsolveTests(DepsolveTests):
         self.assertEquals('ok', *self.resolveCode())
         self.assertResult((po, po1))
 
-    def testCompareProviersSameLen2_noarch(self):
+    def testCompareProvidersSameLen2_noarch(self):
         # Make sure they are still ok, the other way around
         po = FakePackage('abcd', arch='noarch')
         po.addRequires('libxyz-1.so.0', None, (None, None, None))
@@ -638,10 +644,16 @@ class DepsolveTests(DepsolveTests):
         self.xsack.addPackage(po1)
 
         self.assertEquals('ok', *self.resolveCode())
-        self.assertResult((po, po1))
+        self.assertResult((po,), (po1,po2))
 
-    def testCompareProviersSameLen2_noarch_to_64_1(self):
+    def testCompareProvidersSameLen2_noarch_to_64_1(self):
         # Make sure they are still ok, the other way around
+        myarch = arch.getBaseArch(arch.getCanonArch())
+
+        if myarch not in ('i386', 'x86_64'):
+            return
+            
+
         po = FakePackage('abcd', arch='noarch')
         po.addRequires('libxyz-1.so.0', None, (None, None, None))
         self.tsInfo.addInstall(po)
@@ -654,10 +666,20 @@ class DepsolveTests(DepsolveTests):
         self.xsack.addPackage(po1)
 
         self.assertEquals('ok', *self.resolveCode())
-        self.assertResult((po, po1))
+        if myarch == 'i386':
+            self.assertResult((po, po2))
+        
+        if myarch == 'x86_64':
+            self.assertResult((po, po1))
+        
 
-    def testCompareProviersSameLen2_noarch_to_64_2(self):
+    def testCompareProvidersSameLen2_noarch_to_64_2(self):
         # Make sure they are still ok, the other way around
+        myarch = arch.getBaseArch(arch.getCanonArch())
+
+        if myarch not in ('i386', 'x86_64'):
+            return
+                    
         po = FakePackage('abcd', arch='noarch')
         po.addRequires('libxyz-1.so.0', None, (None, None, None))
         self.tsInfo.addInstall(po)
@@ -668,24 +690,28 @@ class DepsolveTests(DepsolveTests):
         po1 = FakePackage('libfoo', arch='i386')
         po1.addProvides('libxyz-1.so.0', None,(None,None,None))
         self.xsack.addPackage(po1)
-
+        
         self.assertEquals('ok', *self.resolveCode())
-        self.assertResult((po, po2))
+        if myarch == 'x86_64':
+            self.assertResult((po, po2))
+        if myarch == 'i386':
+            self.assertResult((po, po1))
+            
 
-    def testCompareProviersDiffLen_64(self):
+    def testCompareProvidersDiffLen_64(self):
         (po, po1, po2) = self._setup_CompareProviders(name='libbarf')
 
         self.assertEquals('ok', *self.resolveCode())
         self.assertResult((po, po1))
 
-    def testCompareProviersDiffLen_noarch(self):
+    def testCompareProvidersDiffLen_noarch(self):
         (po, po1, po2) = self._setup_CompareProviders(name='libbarf',
                                                       arch='noarch')
 
         self.assertEquals('ok', *self.resolveCode())
         self.assertResult((po, po1))
 
-    def testCompareProviersSrcRpm_64(self):
+    def testCompareProvidersSrcRpm_64(self):
         (po, po1, po2) = self._setup_CompareProviders(name='libbarf')
         po.sourcerpm  = "abcd.src.rpm"
         po2.sourcerpm = "abcd.src.rpm"
@@ -693,7 +719,7 @@ class DepsolveTests(DepsolveTests):
         self.assertEquals('ok', *self.resolveCode())
         self.assertResult((po, po2))
 
-    def testCompareProviersSrcRpm_noarch(self):
+    def testCompareProvidersSrcRpm_noarch(self):
         (po, po1, po2) = self._setup_CompareProviders(name='libbarf',
                                                       arch='noarch')
         po.sourcerpm  = "abcd.src.rpm"
@@ -702,15 +728,179 @@ class DepsolveTests(DepsolveTests):
         self.assertEquals('ok', *self.resolveCode())
         self.assertResult((po, po2))
 
-    def testCompareProviersPrefix_64(self):
+    def testCompareProvidersPrefix_64(self):
         (po, po1, po2) = self._setup_CompareProviders(name='abcd-libbarf')
 
         self.assertEquals('ok', *self.resolveCode())
         self.assertResult((po, po2))
 
-    def testCompareProviersPrefix_noarch(self):
+    def testCompareProvidersPrefix_noarch(self):
         (po, po1, po2) = self._setup_CompareProviders(name='abcd-libbarf',
                                                       arch='noarch')
 
         self.assertEquals('ok', *self.resolveCode())
         self.assertResult((po, po2))
+
+    def testCompareProvidersArchVSLen(self):
+        po = FakePackage('abcd', arch='i386')
+        po.addRequires('foo', None, (None, None, None))
+        self.tsInfo.addInstall(po)
+
+        po1 = FakePackage('foo-bigger', arch='i686')
+        po1.addProvides('foo', None,(None,None,None))
+        po2 = FakePackage('foo-big', arch='i586')
+        po2.addProvides('foo', None,(None,None,None))
+        po3 = FakePackage('foo-xen', arch='i586')
+        po3.addProvides('foo', None,(None,None,None))
+        self.xsack.addPackage(po1)
+        self.xsack.addPackage(po2)
+        self.xsack.addPackage(po3)
+
+        self.assertEquals('ok', *self.resolveCode())
+        self.assertResult((po, po1))
+
+    def testSelfObsInstall(self):
+        xpo = FakePackage('abcd', version='2', arch='noarch')
+        xpo.addObsoletes('abcd-Foo', None, (None, None, None))
+        xpo.addProvides('abcd-Foo', None, (None, None, None))
+        self.tsInfo.addInstall(xpo)
+
+        self.assertEquals('ok', *self.resolveCode())
+        self.assertResult((xpo,))
+
+    def testSelfObsUpgrade(self):
+        ipo = FakePackage('abcd', arch='noarch')
+        ipo.addObsoletes('abcd-Foo', None, (None, None, None))
+        ipo.addProvides('abcd-Foo', None, (None, None, None))
+        self.rpmdb.addPackage(ipo)
+        
+        xpo = FakePackage('abcd', version='2', arch='noarch')
+        xpo.addObsoletes('abcd-Foo', None, (None, None, None))
+        xpo.addProvides('abcd-Foo', None, (None, None, None))
+        self.tsInfo.addUpdate(xpo, oldpo=ipo)
+
+        self.assertEquals('ok', *self.resolveCode())
+        self.assertResult((xpo,))
+
+
+    def testMultiPkgVersions1(self):
+        ipo1 = FakePackage('abcd', arch='noarch')
+        ipo1.addRequires('Foo', 'EQ', ('0', '1', '1'))
+        self.rpmdb.addPackage(ipo1)
+        ipo2 = FakePackage('Foo', arch='noarch')
+        self.rpmdb.addPackage(ipo2)
+        
+        xpo = FakePackage('abcd', version='2', arch='noarch')
+        xpo.addRequires('Foo', 'GE', ('0', '2', '1'))
+        self.tsInfo.addUpdate(xpo, oldpo=ipo1)
+
+        po1 = FakePackage('Foo', arch='noarch')
+        self.xsack.addPackage(po1)
+        po2 = FakePackage('Foo', version='2', arch='noarch')
+        self.xsack.addPackage(po2)
+        po3 = FakePackage('Foo', version='3', arch='noarch')
+        self.xsack.addPackage(po3)
+    
+        self.assertEquals('ok', *self.resolveCode())
+        self.assertResult((xpo, po3))
+
+    def testMultiPkgVersions2(self):
+        ipo1 = FakePackage('abcd', arch='i586')
+        ipo1.addRequires('Foo', 'EQ', ('0', '1', '1'))
+        self.rpmdb.addPackage(ipo1)
+        ipo2 = FakePackage('Foo', arch='i586')
+        self.rpmdb.addPackage(ipo2)
+        
+        xpo = FakePackage('abcd', version='2', arch='i586')
+        xpo.addRequires('Foo', 'GE', ('0', '2', '1'))
+        self.tsInfo.addUpdate(xpo, oldpo=ipo1)
+
+        po1 = FakePackage('Foo', arch='i586')
+        self.xsack.addPackage(po1)
+        po2 = FakePackage('Foo', version='2', arch='i586')
+        self.xsack.addPackage(po2)
+        po3 = FakePackage('Foo', version='2', arch='i586')
+        self.xsack.addPackage(po3)
+    
+        self.assertEquals('ok', *self.resolveCode())
+        self.assertResult((xpo, po3))
+
+    def testMultiPkgVersions3(self):
+        ipo1 = FakePackage('abcd', arch='i586')
+        ipo1.addRequires('Foo', 'EQ', ('0', '1', '1'))
+        self.rpmdb.addPackage(ipo1)
+        ipo2 = FakePackage('Foo', arch='i586')
+        self.rpmdb.addPackage(ipo2)
+        
+        xpo = FakePackage('abcd', version='2', arch='i586')
+        xpo.addRequires('Foo', 'GE', ('0', '2', '1'))
+        self.tsInfo.addUpdate(xpo, oldpo=ipo1)
+
+        po1 = FakePackage('Foo', arch='i586')
+        self.xsack.addPackage(po1)
+        po2 = FakePackage('Foo', version='2', arch='i686')
+        self.xsack.addPackage(po2)
+        po3 = FakePackage('Foo', version='2', arch='i586')
+        self.xsack.addPackage(po3)
+
+        self.assertEquals('ok', *self.resolveCode())
+        self.assertResult((xpo, po3))
+
+    def testMultiPkgVersions4(self):
+        ipo1 = FakePackage('abcd', arch='i386')
+        ipo1.addRequires('Foo', 'EQ', ('0', '1', '1'))
+        self.rpmdb.addPackage(ipo1)
+        ipo2 = FakePackage('Foo', arch='i386')
+        self.rpmdb.addPackage(ipo2)
+        
+        xpo = FakePackage('abcd', version='2', arch='i386')
+        xpo.addRequires('Foo', 'GE', ('0', '2', '1'))
+        self.tsInfo.addUpdate(xpo, oldpo=ipo1)
+
+        po1 = FakePackage('Foo', arch='i386')
+        self.xsack.addPackage(po1)
+        po2 = FakePackage('Foo', version='2', arch='i686')
+        self.xsack.addPackage(po2)
+        po3 = FakePackage('Foo', version='2', arch='i386')
+        self.xsack.addPackage(po3)
+
+        self.assertEquals('ok', *self.resolveCode())
+        # FIXME: This is wrong, it should be one of:
+        # self.assertResult((xpo, po3))
+        # self.assertResult((xpo, po2))
+        self.assertResult((xpo, po2, po3))
+
+    # Test from "Real Life" because we just can't think like they do
+    def testRL_unison1(self):
+        xpo = FakePackage('abcd', version='2', arch='i386')
+        xpo.addRequires('unison', None, (None, None, None))
+        self.tsInfo.addInstall(xpo)
+
+        po1 = FakePackage('unison213', version='2.13.16', release='9')
+        po1.addProvides('unison', 'EQ', ('0', '2.13.16', '9'))
+        po1.addObsoletes('unison', 'LT', ('0', '2.27.57', '3'))
+        self.xsack.addPackage(po1)
+        po2 = FakePackage('unison227', version='2.27.57', release='7')
+        po2.addProvides('unison', 'EQ', ('0', '2.27.57', '7'))
+        po2.addObsoletes('unison', 'LT', ('0', '2.27.57', '3'))
+        self.xsack.addPackage(po2)
+
+        self.assertEquals('ok', *self.resolveCode())
+        self.assertResult((xpo, po2))
+
+    def testRL_unison2(self):
+        xpo = FakePackage('abcd', version='2', arch='i386')
+        xpo.addRequires('unison', None, (None, None, None))
+        self.tsInfo.addInstall(xpo)
+
+        po1 = FakePackage('unison213', version='2.13.16', release='9')
+        po1.addProvides('unison', 'EQ', ('0', '2.13.16', '9'))
+        po1.addObsoletes('unison', 'LT', ('0', '2.27.57', '3'))
+        po2 = FakePackage('unison227', version='2.27.57', release='7')
+        po2.addProvides('unison', 'EQ', ('0', '2.27.57', '7'))
+        po2.addObsoletes('unison', 'LT', ('0', '2.27.57', '3'))
+        self.xsack.addPackage(po2)
+        self.xsack.addPackage(po1)
+
+        self.assertEquals('ok', *self.resolveCode())
+        self.assertResult((xpo, po2))

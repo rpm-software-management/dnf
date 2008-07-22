@@ -27,15 +27,29 @@ import time # test purposes only
 from yum import Errors
 from yum import plugins
 from yum import logginglevels
-from yum.i18n import _ 
+from yum import _
 import cli
 
 
 def main(args):
     """This does all the real work"""
-    if not sys.stdout.isatty():
+
+    # This test needs to be before locale.getpreferredencoding() as that
+    # does setlocale(LC_CTYPE, "")
+    try:
+        locale.setlocale(locale.LC_ALL, '')
+        # set time to C so that we output sane things in the logs (#433091)
+        locale.setlocale(locale.LC_TIME, 'C')
+    except locale.Error, e:
+        # default to C locale if we get a failure.
+        print >> sys.stderr, 'Failed to set locale, defaulting to C'
+        os.environ['LC_ALL'] = 'C'
+        locale.setlocale(locale.LC_ALL, 'C')
+        
+    if True: # not sys.stdout.isatty():
         import codecs
         sys.stdout = codecs.getwriter(locale.getpreferredencoding())(sys.stdout)
+        sys.stdout.errors = 'replace'
 
     def exUserCancel():
         logger.critical(_('\n\nExiting on user cancel'))
@@ -60,7 +74,7 @@ def main(args):
         return 1
 
     def exFatal(e):
-        logger.critical('\n\n%s', str(e))
+        logger.critical('\n\n%s', unicode(e))
         if unlock(): return 200
         return 1
 
@@ -75,13 +89,6 @@ def main(args):
     logger = logging.getLogger("yum.main")
     verbose_logger = logging.getLogger("yum.verbose.main")
 
-    try:
-        locale.setlocale(locale.LC_ALL, '')
-    except locale.Error, e:
-        # default to C locale if we get a failure.
-        print >> sys.stderr, 'Failed to set locale, defaulting to C'
-        locale.setlocale(locale.LC_ALL, 'C')
-        
     # our core object for the cli
     base = cli.YumBaseCli()
 
@@ -113,7 +120,7 @@ def main(args):
         return exPluginExit(e)
     except Errors.YumBaseError, e:
         result = 1
-        resultmsgs = [str(e)]
+        resultmsgs = [unicode(e)]
     except KeyboardInterrupt:
         return exUserCancel()
     except IOError, e:
@@ -154,7 +161,7 @@ def main(args):
         return exPluginExit(e)
     except Errors.YumBaseError, e:
         result = 1
-        resultmsgs = [str(e)]
+        resultmsgs = [unicode(e)]
     except KeyboardInterrupt:
         return exUserCancel()
     except IOError, e:
@@ -185,7 +192,7 @@ def main(args):
 
     # Run the transaction
     try:
-        base.doTransaction()
+        return_code = base.doTransaction()
     except plugins.PluginYumExit, e:
         return exPluginExit(e)
     except Errors.YumBaseError, e:
@@ -197,7 +204,7 @@ def main(args):
 
     verbose_logger.log(logginglevels.INFO_2, _('Complete!'))
     if unlock(): return 200
-    return 0
+    return return_code
 
 def hotshot(func, *args, **kwargs):
     import hotshot.stats, os.path

@@ -208,7 +208,7 @@ Help; display a help message and then quit\&.
 Assume yes; assume that the answer to any question which would be asked 
 is yes\&.
 .br
-Configuration Option: \fBassume\-yes\fP
+Configuration Option: \fBassumeyes\fP
 .IP "\fB\-c [config file]\fP" 
 Specifies the config file location - can take http, ftp urls and local file
 paths\&.
@@ -282,8 +282,8 @@ Run with gpg signature checking disabled.
 .br
 Configuration Option: \fBgpgcheck\fP
 .IP "\fB\-\-skip\-broken\fP"
-Resolve depsolve problems by removing packages there is causing problems
- from the transaction.
+Resolve depsolve problems by removing packages that are causing problems
+from the transaction.
 .br
 Configuration Option: \fBskip_broken\fP
 .PP 
@@ -350,7 +350,7 @@ Using this option will force yum to recreate the cache the next time
 it is run.
 
 .IP "\fByum clean all\fP"
-Runs \fByum clean packages\fP and \fByum clean headers\fP as above.
+Runs \fByum clean packages\fP and \fByum clean headers\fP, \fByum clean metadata\fP and \fByum clean dbcache\fP as above.
 
 .PP
 .SH "MISC"
@@ -416,6 +416,7 @@ configuration options.
 .I repoquery (1)
 .I yum-complete-transaction (1)
 .I yumdownloader (1)
+.I yum-utils (1)
 http://linux.duke.edu/yum/
 http://wiki.linux.duke.edu/YumFaq
 yum search yum

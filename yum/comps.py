@@ -23,6 +23,9 @@ iterparse = cElementTree.iterparse
 from Errors import CompsException
 #FIXME - compsexception isn't caught ANYWHERE so it's pointless to raise it
 # switch all compsexceptions to grouperrors after api break
+import fnmatch
+import re
+from yum.misc import to_unicode
 
 lang_attr = '{http://www.w3.org/XML/1998/namespace}lang'
 
@@ -71,19 +74,36 @@ class Group(object):
         return lst
     
     packages = property(_packageiter)
-    
+
+    def _expand_languages(self, lang):
+        import gettext
+        languages = [lang]
+
+        if 'C' not in languages:
+            languages.append('C')
+         
+        # now normalize and expand the languages
+        nelangs = []
+        for lang in languages:
+            for nelang in gettext._expand_lang(lang):
+                if nelang not in nelangs:
+                    nelangs.append(nelang)
+        return nelangs
+        
     def nameByLang(self, lang):
-        if self.translated_name.has_key[lang]:
-            return self.translated_name[lang]
-        else:
-            return self.name
+
+        for langcode in self._expand_languages(lang):
+            if self.translated_name.has_key(langcode):
+                return to_unicode(self.translated_name[langcode])
+
+        return to_unicode(self.name)
 
 
     def descriptionByLang(self, lang):
-        if self.translated_description.has_key[lang]:
-            return self.translated_description[lang]
-        else:
-            return self.description
+        for langcode in self._expand_languages(lang):
+            if self.translated_description.has_key(langcode):
+                return to_unicode(self.translated_description[langcode])
+        return to_unicode(self.description)
 
     def parse(self, elem):
         for child in elem:
@@ -127,7 +147,7 @@ class Group(object):
             elif child.tag == 'default':
                 self.default = parse_boolean(child.text)
     
-            elif child.tag == 'langonly': ## FIXME - what the hell is langonly?
+            elif child.tag in ['langonly', 'lang_only']: 
                 text = child.text
                 if self.langonly is not None:
                     raise CompsException
@@ -204,7 +224,7 @@ class Group(object):
                                   str(self.user_visible), self.display_order)
    
         if self.langonly:
-            msg =+ """   <lang_only>%s</lang_only>""" % self.langonly
+            msg += """   <langonly>%s</langonly>""" % self.langonly
             
         msg +="""   <name>%s</name>\n""" % self.name
         for (lang, val) in self.translated_name.items():
@@ -222,7 +242,7 @@ class Group(object):
         for pkg in self.optional_packages.keys():
             msg += """      <packagereq type="optional">%s</packagereq>\n""" % pkg
         for (pkg, req) in self.conditional_packages.items():
-            msg += """      <packagereq type="conditional" requires="%s">%s</packagereq>\n""" % (pkg, req)
+            msg += """      <packagereq type="conditional" requires="%s">%s</packagereq>\n""" % (req, pkg)
         msg += """    </packagelist>\n"""
         msg += """  </group>"""
 
@@ -367,7 +387,7 @@ class Comps(object):
     
     
     def has_group(self, grpid):
-        exists = self.return_group(grpid)
+        exists = self.return_groups(grpid)
             
         if exists:
             return True
@@ -375,19 +395,47 @@ class Comps(object):
         return False
     
     def return_group(self, grpid):
-        if self._groups.has_key(grpid):
-            return self._groups[grpid]
-        
-        # do matches against group names and ids, too
-        for group in self.groups:
-            names = [ group.name, group.groupid ]
-            names.extend(group.translated_name.values())
-            if grpid in names:
-                return group
+        """Return the first group which matches"""
+        grps = self.return_groups(grpid)
+        if grps:
+            return grps[0]
 
-        
         return None
 
+    def return_groups(self, group_pattern):
+        """return all groups which match either by glob or exact match"""
+        returns = {}
+
+        for item in group_pattern.split(','):
+            item = item.strip()
+            if self._groups.has_key(item):
+                thisgroup = self._groups[item]
+                returns[thisgroup.groupid] = thisgroup
+                continue
+                            
+            match = re.compile(fnmatch.translate(item)).match
+            for group in self.groups:
+                names = [ group.name, group.groupid ]
+                names.extend(group.translated_name.values())
+                for name in names:                
+                    if match(name):
+                        returns[group.groupid] = group
+
+        return returns.values()
+
+    def add_group(self, group):
+        if self._groups.has_key(group.groupid):
+            thatgroup = self._groups[group.groupid]
+            thatgroup.add(group)
+        else:
+            self._groups[group.groupid] = group
+
+    def add_category(self, category):
+        if self._categories.has_key(category.categoryid):
+            thatcat = self._categories[category.categoryid]
+            thatcat.add(category)
+        else:
+            self._categories[category.categoryid] = category
 
     def add(self, srcfile = None):
         if not srcfile:
@@ -408,19 +456,10 @@ class Comps(object):
             for event, elem in parser:
                 if elem.tag == "group":
                     group = Group(elem)
-                    if self._groups.has_key(group.groupid):
-                        thatgroup = self._groups[group.groupid]
-                        thatgroup.add(group)
-                    else:
-                        self._groups[group.groupid] = group
-
+                    self.add_group(group)
                 if elem.tag == "category":
                     category = Category(elem)
-                    if self._categories.has_key(category.categoryid):
-                        thatcat = self._categories[category.categoryid]
-                        thatcat.add(category)
-                    else:
-                        self._categories[category.categoryid] = category
+                    self.add_category(category)
         except SyntaxError, e:
             raise CompsException, "comps file is empty/damaged"
             del parser
@@ -475,7 +514,7 @@ class Comps(object):
         for c in self.get_categories():
             msg += c.xml()
 
-        msg += """</comps>\n"""
+        msg += """\n</comps>\n"""
         
         return msg
             

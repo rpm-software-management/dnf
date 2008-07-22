@@ -13,6 +13,12 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
+def dummy_wrapper(str):
+    '''
+    Dummy Translation wrapper, just returning the same string.
+    '''
+    return str
+
 try: 
     '''
     Setup the yum translation domain and make _() translation wrapper
@@ -20,16 +26,11 @@ try:
     using ugettext to make sure translated strings are in Unicode.
     '''
     import gettext
-    t = gettext.translation('yum')
-    _ =  t.ugettext
+    t = gettext.translation('yum', fallback=True)
+    _ = t.ugettext
 except:
     '''
     Something went wrong so we make a dummy _() wrapper there is just
     returning the same text
     '''
-    def _(str):
-        '''
-        Dummy Translation wrapper, just returning the same string.
-        '''
-        return str
-
+    _ = dummy_wrapper

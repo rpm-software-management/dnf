@@ -31,14 +31,19 @@ import misc
 from sqlutils import executeSQL
 import rpmUtils.miscutils
 import sqlutils
+import constants
+import operator
+import time
 
 def catchSqliteException(func):
     """This decorator converts sqlite exceptions into RepoError"""
     def newFunc(*args, **kwargs):
         try:
             return func(*args, **kwargs)
-        except sqlutils.sqlite.Error:
-            raise Errors.RepoError
+        except sqlutils.sqlite.Error, e:
+            if hasattr(e, "message"):
+                raise Errors.RepoError, str(e.message)
+            raise Errors.RepoError, str(e)
 
     newFunc.__name__ = func.__name__
     newFunc.__doc__ = func.__doc__
@@ -60,6 +65,10 @@ class YumAvailablePackageSqlite(YumAvailablePackage, PackageObject, RpmBase):
         self.state = None
         self._loadedfiles = False
         self._read_db_obj(db_obj)
+        # for stupid metadata created without epochs listed in the version tag
+        # die die
+        if self.epoch is None:
+            self.epoch = '0'
         self.id = self.pkgId
         self.ver = self.version 
         self.rel = self.release 
@@ -129,10 +138,18 @@ class YumAvailablePackageSqlite(YumAvailablePackage, PackageObject, RpmBase):
         dbname = varname
         if db2simplemap.has_key(varname):
             dbname = db2simplemap[varname]
-        r = self._sql_MD('primary',
+        try:
+            r = self._sql_MD('primary',
                          "SELECT %s FROM packages WHERE pkgId = ?" % dbname,
                          (self.pkgId,)).fetchone()
+        except Errors.RepoError, e:
+            if str(e).startswith('no such column'):
+                #FIXME - after API break make this an AttributeError Raise
+                raise KeyError, str(e)
+            raise                         
         value = r[0]
+        if varname == 'epoch' and value is None:
+            value = '0'
         if varname in {'vendor' : 1, 'packager' : 1, 'buildhost' : 1,
                        'license' : 1, 'group' : 1,
                        'summary' : 1, 'description' : 1, 'sourcerpm' : 1,
@@ -227,6 +244,23 @@ class YumAvailablePackageSqlite(YumAvailablePackage, PackageObject, RpmBase):
                 self.prco[prcotype].append(_share_data(prco_set))
 
         return RpmBase.returnPrco(self, prcotype, printable)
+    
+    def _requires_with_pre(self):
+        """returns requires with pre-require bit"""
+        sql = "SELECT name, version, release, epoch, flags,pre " \
+              "FROM requires WHERE pkgKey = ?"
+        cur = self._sql_MD('primary', sql, (self.pkgKey,))
+        requires = []
+        for ob in cur:
+            pre = "0"
+            if ob['pre'].lower() in ['TRUE', 1]:
+                pre = "1"
+            prco_set = (_share_data(ob['name']), _share_data(ob['flags']),
+                        (_share_data(ob['epoch']),
+                         _share_data(ob['version']),
+                         _share_data(ob['release'])), pre)
+            requires.append(prco_set)
+        return requires
 
 class YumSqlitePackageSack(yumRepo.YumPackageSack):
     """ Implementation of a PackageSack that uses sqlite cache instead of fully
@@ -295,7 +329,7 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
             'provides' : { },
             'requires' : { },
             }
-        misc._share_data_store = {}
+        misc.unshare_data()
 
     @catchSqliteException
     def close(self):
@@ -358,6 +392,7 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
         return self._pkgKeyExcluded(po.repo, po.pkgKey)
 
     def _packageByKey(self, repo, pkgKey):
+        """ Lookup a pkg by it's pkgKey, if we don't have it load it """
         if not self._key2pkg.has_key(repo):
             self._key2pkg[repo] = {}
         if not self._key2pkg[repo].has_key(pkgKey):
@@ -368,6 +403,13 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
             self._key2pkg[repo][pkgKey] = po
         return self._key2pkg[repo][pkgKey]
         
+    def _packageByKeyData(self, repo, pkgKey, data):
+        """ Like _packageByKey() but we already have the data for .pc() """
+        if data['pkgKey'] not in self._key2pkg.get(repo, {}):
+            po = self.pc(repo, data)
+            self._key2pkg.setdefault(repo, {})[pkgKey] = po
+        return self._key2pkg[repo][data['pkgKey']]
+
     def addDict(self, repo, datatype, dataobj, callback=None):
         if self.added.has_key(repo):
             if datatype in self.added[repo]:
@@ -378,6 +420,9 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
         if not self.excludes.has_key(repo): 
             self.excludes[repo] = {}
 
+        if dataobj is None:
+            raise Errors.RepoError, "Tried to add None %s to %s" % (datatype, repo)
+
         if datatype == 'metadata':
             self.primarydb[repo] = dataobj
         elif datatype == 'filelists':
@@ -386,7 +431,7 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
             self.otherdb[repo] = dataobj
         else:
             # We can not handle this yet...
-            raise "Sorry sqlite does not support %s" % (datatype)
+            raise Errors.RepoError, "Sorry sqlite does not support %s in %s" % (datatype, repo)
     
         self.added[repo].append(datatype)
 
@@ -398,19 +443,45 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
         # this function is just silly and it reduces down to just this
         return self.searchPrco(name, 'provides')
 
-    def _sql_pkgKey2po(self, repo, cur, pkgs=None):
+    def _sql_pkgKey2po(self, repo, cur, pkgs=None, have_data=False):
         """ Takes a cursor and maps the pkgKey rows into a list of packages. """
         if pkgs is None: pkgs = []
         for ob in cur:
             if self._pkgKeyExcluded(repo, ob['pkgKey']):
                 continue
-            pkgs.append(self._packageByKey(repo, ob['pkgKey']))
+            if have_data:
+                pkgs.append(self._packageByKeyData(repo, ob['pkgKey'], ob))
+            else:
+                pkgs.append(self._packageByKey(repo, ob['pkgKey']))
         return pkgs
+
+    @staticmethod
+    def _sql_esc(pattern):
+        """ Apply SQLite escaping, if needed. Returns pattern and esc. """
+        esc = ''
+        if "_" in pattern or "%" in pattern:
+            esc = ' ESCAPE "!"'
+            pattern = pattern.replace("!", "!!")
+            pattern = pattern.replace("%", "!%")
+            pattern = pattern.replace("_", "!_")
+        return (pattern, esc)
+
+    def _skip_all(self):
+        """ Are we going to skip every package in all our repos? """
+        skip_all = True
+        for repo in self.added:
+            if repo not in self._all_excludes:
+                skip_all = False
+                break
+        return skip_all
 
     @catchSqliteException
     def searchFiles(self, name, strict=False):
         """search primary if file will be in there, if not, search filelists, use globs, if possible"""
         
+        if self._skip_all():
+            return []
+
         # optimizations:
         # if it is not  glob, then see if it is in the primary.xml filelists, 
         # if so, just use those for the lookup
@@ -487,18 +558,23 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
     @catchSqliteException
     def searchPrimaryFields(self, fields, searchstring):
         """search arbitrary fields from the primarydb for a string"""
+        if self._skip_all():
+            return []
+
         result = []
         if len(fields) < 1:
             return result
         
-        basestring="select DISTINCT pkgKey from packages where %s like '%%%s%%' " % (fields[0], searchstring)
+        searchstring = searchstring.replace("'", "''")
+        (searchstring, esc) = self._sql_esc(searchstring)
+        sql = "select DISTINCT pkgKey from packages where %s like '%%%s%%'%s " % (fields[0], searchstring, esc)
         
         for f in fields[1:]:
-            basestring = "%s or %s like '%%%s%%' " % (basestring, f, searchstring)
+            sql = "%s or %s like '%%%s%%'%s " % (sql, f, searchstring, esc)
         
         for (rep,cache) in self.primarydb.items():
             cur = cache.cursor()
-            executeSQL(cur, basestring)
+            executeSQL(cur, sql)
             self._sql_pkgKey2po(rep, cur, result)
         return result    
 
@@ -507,10 +583,24 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
         """search arbitrary fields from the primarydb for a multiple strings
            return packages, number of items it matched as a list of tuples"""
            
+        if self._skip_all():
+            return []
+
         result = [] # (pkg, num matches)
         if len(fields) < 1:
             return result
         
+        # NOTE: I can't see any reason not to use this all the time, speed
+        # comparison shows them as baiscally equal.
+        if len(searchstrings) > (constants.PATTERNS_MAX / len(fields)):
+            tot = {}
+            for searchstring in searchstrings:
+                matches = self.searchPrimaryFields(fields, searchstring)
+                for po in matches:
+                    tot[po] = tot.get(po, 0) + 1
+            for po in sorted(tot, key=operator.itemgetter, reverse=True):
+                result.append((po, tot[po]))
+            return result
        
         unionstring = "select pkgKey, SUM(cumul) AS total from ( "
         endunionstring = ")GROUP BY pkgKey ORDER BY total DESC"
@@ -520,23 +610,16 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
         #GROUP BY pkgkey ORDER BY total DESC;
         selects = []
         
-        # select pkgKey, 1 AS cumul from packages where description 
-        # like '%devel%' or description like '%python%' or description like '%ssh%'
-#        for f in fields:
-#            basestring = "select pkgKey, 1 AS cumul from packages where %s like '%%%s%%' " % (f,searchstrings[0]) 
-#            for s in searchstrings[1:]:
-#                basestring = "%s or %s like '%%%s%%' " % (basestring, f, s)
-#            selects.append(basestring)
-            
         for s in searchstrings:         
-            basestring="select pkgKey,1 AS cumul from packages where %s like '%%%s%%' " % (fields[0], s)
+            s = s.replace("'", "''")
+            (s, esc) = self._sql_esc(s)
+            sql="select pkgKey,1 AS cumul from packages where %s like '%%%s%%'%s " % (fields[0], s, esc)
             for f in fields[1:]:
-                basestring = "%s or %s like '%%%s%%' " % (basestring, f, s)
-            selects.append(basestring)
+                sql = "%s or %s like '%%%s%%'%s " % (sql, f, s, esc)
+            selects.append(sql)
         
         totalstring = unionstring + " UNION ALL ".join(selects) + endunionstring
-#        print totalstring
-        
+
         for (rep,cache) in self.primarydb.items():
             cur = cache.cursor()
             executeSQL(cur, totalstring)
@@ -548,6 +631,9 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
         
     @catchSqliteException
     def returnObsoletes(self, newest=False):
+        if self._skip_all():
+            return {}
+
         if newest:
             raise NotImplementedError()
 
@@ -632,6 +718,9 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
 
     @catchSqliteException
     def _search(self, prcotype, name, flags, version):
+        if self._skip_all():
+            return {}
+
         if flags == 0:
             flags = None
         if type(version) in (str, type(None), unicode):
@@ -647,8 +736,12 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
 
         result = { }
 
-        # Requires is the biggest hit, pre-loading provides actually hurts
-        if prcotype != 'requires':
+        #  Requires is the biggest hit, pre-loading provides actually hurts
+        #  NOTE: Disabling atm. ... small install/updates get a significant hit.
+        # And even large updates take a hit with the memoize path, maybe we
+        # fixed something with later change? ... maybe I was on crack?
+        #  Speed seems to depend on _search_cache.
+        if True: # prcotype != 'requires':
             primarydb_items = self.primarydb.items()
             preload = False
         else:
@@ -723,10 +816,44 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
     def getRequires(self, name, flags=None, version=(None, None, None)):
         return self._search("requires", name, flags, version)
 
-    
+    @catchSqliteException
+    def searchNames(self, names):
+        """return a list of packages matching any of the given names. This is 
+           only a match on package name, nothing else"""
+        
+        if self._skip_all():
+            return []
+
+        returnList = []
+        if len(names) > constants.PATTERNS_MAX:
+            names = set(names)
+            for pkg in self.returnPackages():
+                if pkg.name not in names:
+                    continue
+                returnList.append(pkg)
+            return returnList
+
+        pat_sqls = []
+        qsql = """select pkgId,pkgKey,name,epoch,version,release,arch
+                      from packages where """
+        for name in names:
+            pat_sqls.append("name = ?")
+        qsql = qsql + " OR ".join(pat_sqls)
+
+        for (repo, cache) in self.primarydb.items():
+            cur = cache.cursor()
+            executeSQL(cur, qsql, list(names))
+
+            self._sql_pkgKey2po(repo, cur, returnList, have_data=True)
+
+        return returnList
+ 
     @catchSqliteException
     def searchPrco(self, name, prcotype):
         """return list of packages having prcotype name (any evr and flag)"""
+        if self._skip_all():
+            return []
+
         glob = True
         querytype = 'glob'
         if not misc.re_glob(name):
@@ -740,9 +867,10 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
             self._sql_pkgKey2po(rep, cur, results)
         
         # If it's not a provides or a filename, we are done
-        if prcotype != "provides" or name[0] != '/':
-            if not glob:
-                return results
+        if prcotype != "provides":
+            return results
+        if not glob and name[0] != '/':
+            return results
 
         # If it is a filename, search the primary.xml file info
         for (rep,cache) in self.primarydb.items():
@@ -848,20 +976,21 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
         return y
 
     @catchSqliteException
-    def returnNewestByNameArch(self, naTup=None, patterns=None):
+    def returnNewestByNameArch(self, naTup=None, patterns=None, ignore_case=False):
 
         # If naTup is set do it from the database otherwise use our parent's
         # returnNewestByNameArch
         if (not naTup):
             return yumRepo.YumPackageSack.returnNewestByNameArch(self, naTup,
-                                                                 patterns)
+                                                                 patterns,
+                                                                 ignore_case)
 
         # First find all packages that fulfill naTup
         allpkg = []
         for (rep,cache) in self.primarydb.items():
             cur = cache.cursor()
-            executeSQL(cur, "select pkgKey from packages where name=? and arch=?",naTup)
-            self._sql_pkgKey2po(rep, cur, allpkg)
+            executeSQL(cur, "select pkgId,pkgKey,name,epoch,version,release,arch from packages where name=? and arch=?", naTup)
+            self._sql_pkgKey2po(rep, cur, allpkg, have_data=True)
         
         # if we've got zilch then raise
         if not allpkg:
@@ -869,18 +998,23 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
         return misc.newestInList(allpkg)
 
     @catchSqliteException
-    def returnNewestByName(self, name=None):
+    def returnNewestByName(self, name=None, patterns=None, ignore_case=False):
         # If name is set do it from the database otherwise use our parent's
         # returnNewestByName
+        if self._skip_all():
+            return []
+
         if (not name):
-            return yumRepo.YumPackageSack.returnNewestByName(self, name)
+            return yumRepo.YumPackageSack.returnNewestByName(self, name,
+                                                             patterns,
+                                                             ignore_case)
 
         # First find all packages that fulfill name
         allpkg = []
         for (rep,cache) in self.primarydb.items():
             cur = cache.cursor()
-            executeSQL(cur, "select pkgKey from packages where name=?", (name,))
-            self._sql_pkgKey2po(rep, cur, allpkg)
+            executeSQL(cur, "select pkgId,pkgKey,name,epoch,version,release,arch from packages where name=?", (name,))
+            self._sql_pkgKey2po(rep, cur, allpkg, have_data=True)
         
         # if we've got zilch then raise
         if not allpkg:
@@ -890,6 +1024,9 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
     # Do what packages.matchPackageNames does, but query the DB directly
     @catchSqliteException
     def matchPackageNames(self, pkgspecs):
+        if self._skip_all():
+            return []
+
         matched = []
         exactmatch = []
         unmatched = list(pkgspecs)
@@ -916,11 +1053,11 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
         return exactmatch, matched, unmatched
 
     @catchSqliteException
-    def _buildPkgObjList(self, repoid=None, patterns=None):
+    def _buildPkgObjList(self, repoid=None, patterns=None, ignore_case=False):
         """Builds a list of packages, only containing nevra information. No
            excludes are done at this stage. """
 
-        if patterns is None:
+        if patterns is None or len(patterns) > (constants.PATTERNS_MAX / 7):
             patterns = []
         
         returnList = []        
@@ -934,43 +1071,42 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
                 pat_sqls = []
                 pat_data = []
                 for pattern in patterns:
+                    done = False
                     for field in ['name', 'sql_nameArch', 'sql_nameVerRelArch',
                                   'sql_nameVer', 'sql_nameVerRel',
                                   'sql_envra', 'sql_nevra']:
-                        pat_sqls.append("%s GLOB ?" % field)
+                        if ignore_case:
+                            if not done:
+                                done = True
+                                (pattern, esc) = self._sql_esc(pattern)
+                                pattern = pattern.replace("*", "%")
+                                pattern = pattern.replace("?", "_")
+                            pat_sqls.append("%s LIKE ?%s" % (field, esc))
+                        else:
+                            pat_sqls.append("%s GLOB ?" % field)
                         pat_data.append(pattern)
                 if pat_sqls:
                     qsql = _FULL_PARSE_QUERY_BEG + " OR ".join(pat_sqls)
                 executeSQL(cur, qsql, pat_data)
                 for x in cur:
-                    if self._key2pkg.get(repo, {}).has_key(x['pkgKey']):
-                        po = self._key2pkg[repo][x['pkgKey']]
-                    else:
-                        po = self.pc(repo,x)
-                        self._key2pkg.setdefault(repo, {})[po.pkgKey] = po
+                    po = self._packageByKeyData(repo, x['pkgKey'], x)
                     returnList.append(po)
         if not patterns:
             self.pkgobjlist = returnList
         return returnList
                 
-    def returnPackages(self, repoid=None, patterns=None):
+    def returnPackages(self, repoid=None, patterns=None, ignore_case=False):
         """Returns a list of packages, only containing nevra information. The
            packages are processed for excludes. Note that patterns is just
            a hint, we are free it ignore it. """
 
-        # Skip unused repos completely, Eg. *-source
-        skip_all = True
-        for repo in self.added:
-            if repo not in self._all_excludes:
-                skip_all = False
-
-        if skip_all:
+        if self._skip_all():
             return []
 
         if hasattr(self, 'pkgobjlist'):
             pkgobjlist = self.pkgobjlist
         else:
-            pkgobjlist = self._buildPkgObjList(repoid, patterns)
+            pkgobjlist = self._buildPkgObjList(repoid, patterns, ignore_case)
 
         returnList = []
         for po in pkgobjlist:
@@ -983,6 +1119,9 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
     @catchSqliteException
     def searchNevra(self, name=None, epoch=None, ver=None, rel=None, arch=None):        
         """return list of pkgobjects matching the nevra requested"""
+        if self._skip_all():
+            return []
+
         returnList = []
         
         # make sure some dumbass didn't pass us NOTHING to search on
@@ -994,7 +1133,7 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
             return returnList
         
         # make up our execute string
-        q = "select pkgKey from packages WHERE"
+        q = "select pkgId,pkgKey,name,epoch,version,release,arch from packages WHERE"
         for (col, var) in [('name', name), ('epoch', epoch), ('version', ver),
                            ('arch', arch), ('release', rel)]:
             if var:
@@ -1007,7 +1146,7 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
         for (rep,cache) in self.primarydb.items():
             cur = cache.cursor()
             executeSQL(cur, q)
-            self._sql_pkgKey2po(rep, cur, returnList)
+            self._sql_pkgKey2po(rep, cur, returnList, have_data=True)
         return returnList
     
     @catchSqliteException

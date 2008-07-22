@@ -6,7 +6,7 @@ msgstr ""
 "Project-Id-Version: pl\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2008-03-25 11:29+0100\n"
-"PO-Revision-Date: 2008-02-08 23:12+0200\n"
+"PO-Revision-Date: 2008-03-26 22:28+0200\n"
 "Last-Translator: Piotr Drąg <piotrdrag@gmail.com>\n"
 "Language-Team: Polish <pl@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -101,7 +101,7 @@ msgstr "Wymagana przestrzeń na dysku:\n"
 #: ../cli.py:273
 #, python-format
 msgid "  At least %dMB needed on the %s filesystem.\n"
-msgstr "  Na systemie plików %s potrzeba co najmniej %d MB.\n"
+msgstr "  Potrzeba co najmniej %d MB w systemie plików %s.\n"
 
 #. TODO: simplify the dependency errors?
 #. Fixup the summary
@@ -131,7 +131,7 @@ msgstr "Błąd podczas pobierania pakietów:\n"
 
 #: ../cli.py:370 ../yum/__init__.py:2746
 msgid "Running rpm_check_debug"
-msgstr "Uruchamianie rpm_check_debug"
+msgstr "Wykonywanie rpm_check_debug"
 
 #: ../cli.py:373 ../yum/__init__.py:2749
 msgid "ERROR with rpm_check_debug vs depsolve:"
@@ -143,7 +143,7 @@ msgstr "Zgłoś ten błąd w Bugzilli"
 
 #: ../cli.py:383
 msgid "Running Transaction Test"
-msgstr "Uruchamianie testu transakcji"
+msgstr "Wykonywanie testu transakcji"
 
 #: ../cli.py:399
 msgid "Finished Transaction Test"
@@ -159,7 +159,7 @@ msgstr "Test transakcji został zakończony powodzeniem"
 
 #: ../cli.py:429
 msgid "Running Transaction"
-msgstr "Uruchamianie transakcji"
+msgstr "Wykonywanie transakcji"
 
 #: ../cli.py:459
 msgid ""
@@ -177,7 +177,7 @@ msgstr "Analizowanie argumentów instalacji pakietów"
 #: ../cli.py:501
 #, python-format
 msgid "No package %s available."
-msgstr "Pakiet %s jest niedostępny."
+msgstr "Nie ma pakietu %s."
 
 #: ../cli.py:505 ../cli.py:623 ../yumcommands.py:748
 msgid "Package(s) to install"
@@ -185,7 +185,7 @@ msgstr "Pakiety do zainstalowania"
 
 #: ../cli.py:506 ../cli.py:624 ../yumcommands.py:146 ../yumcommands.py:749
 msgid "Nothing to do"
-msgstr "Nie ma nic do zrobienia"
+msgstr "Nie ma niczego do zrobienia"
 
 #: ../cli.py:536 ../yum/__init__.py:2232 ../yum/__init__.py:2311
 #: ../yum/__init__.py:2340
@@ -225,9 +225,9 @@ msgid "Matching packages for package list to user args"
 msgstr "Dopasowywanie listy pakietów do argumentów użytkownika"
 
 #: ../cli.py:701
-#, fuzzy, python-format
+#, python-format
 msgid "Warning: No matches found for: %s"
-msgstr "Nie znaleziono pakietu %s"
+msgstr "Ostrzeżenie: nie znaleziono wyników dla: %s"
 
 #: ../cli.py:704
 msgid "No Matches found"
@@ -259,9 +259,8 @@ msgid "Cleaning up database cache"
 msgstr "Czyszczenie pamięci podręcznej bazy danych"
 
 #: ../cli.py:783
-#, fuzzy
 msgid "Cleaning up expire-cache metadata"
-msgstr "Czytanie metadanych XML"
+msgstr "Czytanie metadanych wygasłej pamięci podręcznej"
 
 #: ../cli.py:786
 msgid "Cleaning up plugins"
@@ -317,7 +316,7 @@ msgstr "Pakiet %s jest już zainstalowany, pomijanie"
 #: ../cli.py:926
 #, python-format
 msgid "Discarding non-comparable pkg %s.%s"
-msgstr "Odrzucanie pakietów %s.%s, których nie można porównać"
+msgstr "Odrzucanie pakietu %s.%s, którego nie można porównać"
 
 #. we've not got any installed that match n or n+a
 #: ../cli.py:952
@@ -353,7 +352,7 @@ msgstr "poziom wyjścia debugowania"
 
 #: ../cli.py:1113
 msgid "show duplicates, in repos, in list/search commands"
-msgstr ""
+msgstr "wyświetla duplikaty w repozytoriach w poleceniach list/search"
 
 #: ../cli.py:1115
 msgid "error output level"
@@ -476,7 +475,7 @@ msgstr "Architektura: %s"
 #: ../output.py:296
 #, python-format
 msgid "Epoch      : %s"
-msgstr "Epoch       : %s"
+msgstr "Epoka       : %s"
 
 #: ../output.py:297
 #, python-format
@@ -505,7 +504,7 @@ msgstr "Twórca      : %s"
 
 #: ../output.py:303
 msgid "Summary    : "
-msgstr "Podsumowanie: %s"
+msgstr "Podsumowanie: "
 
 #: ../output.py:305
 #, python-format
@@ -519,27 +518,27 @@ msgstr "Licencja    : %s"
 
 #: ../output.py:307
 msgid "Description: "
-msgstr "Opis        : %s"
+msgstr "Opis        : "
 
 #: ../output.py:351
 msgid "Is this ok [y/N]: "
-msgstr "W porządku? [y/N]: "
+msgstr "W porządku? [t/N]: "
 
 #: ../output.py:357 ../output.py:360
 msgid "y"
-msgstr ""
+msgstr "t"
 
 #: ../output.py:357
 msgid "n"
-msgstr ""
+msgstr "n"
 
 #: ../output.py:357 ../output.py:360
 msgid "yes"
-msgstr ""
+msgstr "tak"
 
 #: ../output.py:357
 msgid "no"
-msgstr ""
+msgstr "nie"
 
 #: ../output.py:367
 #, python-format
@@ -591,7 +590,7 @@ msgstr "   Nierozwiązana zależność"
 
 #: ../output.py:461
 msgid "Matched from:"
-msgstr "Wyniki z:"
+msgstr "Dopasowano z:"
 
 #: ../output.py:487
 msgid "There was an error calculating total download size"
@@ -629,15 +628,15 @@ msgstr "Rozmiar"
 
 #: ../output.py:514
 msgid "Installing for dependencies"
-msgstr "Instalowanie zależności"
+msgstr "Instalowanie, aby rozwiązać zależności"
 
 #: ../output.py:515
 msgid "Updating for dependencies"
-msgstr "Aktualizowanie zależności"
+msgstr "Aktualizowanie, aby rozwiązać zależności"
 
 #: ../output.py:516
 msgid "Removing for dependencies"
-msgstr "Usuwanie zależności"
+msgstr "Usuwanie, aby rozwiązać zależności"
 
 #: ../output.py:528
 #, python-format
@@ -693,8 +692,8 @@ msgid ""
 "seconds to exit.\n"
 msgstr ""
 "\n"
-" Obecne pobieranie zostało anulowane, %sprzerwane (ctrl-c) ponownie%s w %s%s%"
-"s sekund do zakończenia.\n"
+" Obecne pobieranie zostało anulowane, %sprzerwij (Ctrl-C) ponownie%s w ciągu "
+"%s%s%s sekund, aby zakończyć.\n"
 
 #: ../output.py:628
 msgid "user interrupt"
@@ -702,28 +701,28 @@ msgstr "przerwane przez użytkownika"
 
 #: ../output.py:639
 msgid "installed"
-msgstr "zainstalowania"
+msgstr "zainstalowany"
 
 #: ../output.py:640
 msgid "updated"
-msgstr "zaktualizowania"
+msgstr "zaktualizowany"
 
 #: ../output.py:641
 msgid "obsoleted"
-msgstr "zastąpienia"
+msgstr "zastąpiony"
 
 #: ../output.py:642
 msgid "erased"
-msgstr "usunięcia"
+msgstr "usunięty"
 
 #: ../output.py:646
 #, python-format
 msgid "---> Package %s.%s %s:%s-%s set to be %s"
-msgstr "---> Pakiet %s.%s %s:%s-%s ustawiony do %s"
+msgstr "---> Pakiet %s.%s %s:%s-%s zostanie %s"
 
 #: ../output.py:653
 msgid "--> Running transaction check"
-msgstr "--> Uruchamianie sprawdzania transakcji"
+msgstr "--> Wykonywanie sprawdzania transakcji"
 
 #: ../output.py:658
 msgid "--> Restarting Dependency Resolution with new changes."
@@ -1261,6 +1260,8 @@ msgstr "%s jest już w zestawie transakcji, pomijanie"
 msgid ""
 "Failure finding best provider of %s for %s, exceeded maximum loop length"
 msgstr ""
+"Wyszukanie najlepszego dostawcy %s dla %s nie powiodło się, przekroczono "
+"maksymalną długość pętli"
 
 #: ../yum/depsolve.py:537
 #, python-format
@@ -1306,52 +1307,52 @@ msgstr "wyszukiwanie %s jako wymagania %s"
 #: ../yum/depsolve.py:933
 #, python-format
 msgid "Comparing best: %s to po: %s"
-msgstr ""
+msgstr "Porównywanie best: %s do po: %s"
 
 #: ../yum/depsolve.py:937
 #, python-format
 msgid "Same: best %s == po: %s"
-msgstr ""
+msgstr "Takie same: best %s == po: %s"
 
 #: ../yum/depsolve.py:952 ../yum/depsolve.py:963
 #, python-format
 msgid "best %s obsoletes po: %s"
-msgstr ""
+msgstr "best %s zastępuje po: %s"
 
 #: ../yum/depsolve.py:955
 #, python-format
 msgid "po %s obsoletes best: %s"
-msgstr ""
+msgstr "po %s zastępuje best: %s"
 
 #: ../yum/depsolve.py:972 ../yum/depsolve.py:979 ../yum/depsolve.py:1036
-#, fuzzy, python-format
+#, python-format
 msgid "better arch in po %s"
-msgstr "wyszukiwanie pakietu %s"
+msgstr "lepsze arch w po %s"
 
 #: ../yum/depsolve.py:988 ../yum/depsolve.py:1010
 #, python-format
 msgid "po %s shares a sourcerpm with %s"
-msgstr ""
+msgstr "po %s współdzieli źródłowy RPM z %s"
 
 #: ../yum/depsolve.py:992 ../yum/depsolve.py:1015
 #, python-format
 msgid "best %s shares a sourcerpm with %s"
-msgstr ""
+msgstr "best %s współdzieli źródłowy RPM z %s"
 
 #: ../yum/depsolve.py:999 ../yum/depsolve.py:1020
 #, python-format
 msgid "po %s shares more of the name prefix with %s"
-msgstr ""
+msgstr "po %s współdzieli więcej niż przedrostek nazwy z %s"
 
 #: ../yum/depsolve.py:1003 ../yum/depsolve.py:1029
 #, python-format
 msgid "po %s has a shorter name than best %s"
-msgstr ""
+msgstr "po %s ma krótszą nazwę od best %s"
 
 #: ../yum/depsolve.py:1025
 #, python-format
 msgid "bestpkg %s shares more of the name prefix with %s"
-msgstr ""
+msgstr "bestpkg %s współdzieli więcej niż przedrostek nazwy z %s"
 
 #: ../yum/__init__.py:119
 msgid "doConfigSetup() will go away in a future version of Yum.\n"
@@ -1704,9 +1705,10 @@ msgid "Package %s already installed and latest version"
 msgstr "Pakiet %s jest już zainstalowany w najnowszej wersji"
 
 #: ../yum/__init__.py:2178
-#, fuzzy, python-format
+#, python-format
 msgid "Package matching %s already installed. Checking for update."
-msgstr "Pakiet %s jest już zainstalowany, pomijanie"
+msgstr ""
+"Pakiet pasujący do %s jest już zainstalowany. Sprawdzanie aktualizacji."
 
 #. update everything (the easy case)
 #: ../yum/__init__.py:2220
@@ -1744,7 +1746,7 @@ msgid ""
 "instead."
 msgstr ""
 "Pakiet %s nie jest zainstalowany, nie można go zaktualizować. Uruchom yum "
-"install, aby do zainstalować."
+"install, aby go zainstalować."
 
 #: ../yum/__init__.py:2468
 #, python-format
@@ -1773,9 +1775,9 @@ msgstr ""
 "usunięcia"
 
 #: ../yum/__init__.py:2515
-#, fuzzy, python-format
+#, python-format
 msgid "Package %s is allowed multiple installs, skipping"
-msgstr "Pakiet %s jest już zainstalowany, pomijanie"
+msgstr "Pakiet %s może być wielokrotnie instalowany, pomijanie"
 
 #: ../yum/__init__.py:2522
 msgid "Problem in reinstall: no package matched to install"
@@ -1854,9 +1856,9 @@ msgid "Loaded plugins: "
 msgstr "Wczytane wtyczki: "
 
 #: ../yum/plugins.py:206
-#, fuzzy, python-format
+#, python-format
 msgid "No plugin match for: %s"
-msgstr "Brak wyników dla argumentu: %s"
+msgstr "Brak wyników dla wtyczki: %s"
 
 #: ../yum/plugins.py:219
 #, python-format
@@ -1931,27 +1933,3 @@ msgstr "Uszkodzony nagłówek %s"
 #, python-format
 msgid "Error opening rpm %s - error %s"
 msgstr "Błąd podczas otwierania RPM-a %s - błąd %s"
-
-#~ msgid "Looking for Obsoletes for %s"
-#~ msgstr "Wyszukiwanie przestarzałych dla %s"
-
-#~ msgid "unable to find newer package for %s"
-#~ msgstr "nie można znaleźć nowszego pakietu dla %s"
-
-#~ msgid "TSINFO: Updating %s to resolve conflict."
-#~ msgstr "TSINFO: aktualizowanie %s, aby rozwiązać konflikt."
-
-#~ msgid "%s conflicts: %s"
-#~ msgstr "%s jest w konflikcie z: %s"
-
-#~ msgid "%s conflicts with %s"
-#~ msgstr "%s jest w konflikcie z %s"
-
-#~ msgid "Package %s needs %s, this is not available."
-#~ msgstr "Pakiet %s wymaga %s, który nie jest dostępny."
-
-#~ msgid "Package %s conflicts with %s."
-#~ msgstr "Pakiet %s jest w konflikcie z %s."
-
-#~ msgid "Running \"%s\" handler for \"%s\" plugin"
-#~ msgstr "Uruchamianie obsługi \"%s\" dla wtyczki \"%s\""

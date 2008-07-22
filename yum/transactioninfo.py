@@ -194,6 +194,8 @@ class TransactionData:
 
         if self.conditionals.has_key(txmember.name):
             for po in self.conditionals[txmember.name]:
+                if self.rpmdb.contains(po=po):
+                    continue
                 condtxmbr = self.addInstall(po)
                 condtxmbr.setAsDep(po=txmember.po)
         self._unresolvedMembers.add(txmember)

@@ -16,15 +16,36 @@ import pwd
 import fnmatch
 import bz2
 from stat import *
-import gpgme
+try:
+    import gpgme
+except ImportError:
+    gpgme = None
 
 from Errors import MiscError
 
-_share_data_store = {}
+_share_data_store   = {}
+_share_data_store_u = {}
 def share_data(value):
     """ Take a value and use the same value from the store,
         if the value isn't in the store this one becomes the shared version. """
-    return _share_data_store.setdefault(value, value)
+    #  We don't want to change the types of strings, between str <=> unicode
+    # and hash('a') == hash(u'a') ... so use different stores.
+    #  In theory eventaully we'll have all of one type, but don't hold breath.
+    store = _share_data_store
+    if isinstance(value, unicode):
+        store = _share_data_store_u
+    # hahahah, of course the above means that:
+    #   hash(('a', 'b')) == hash((u'a', u'b'))
+    # ...which we have in deptuples, so just screw sharing those atm.
+    if type(value) == types.TupleType:
+        return value
+    return store.setdefault(value, value)
+
+def unshare_data():
+    global _share_data_store
+    global _share_data_store_u
+    _share_data_store   = {}
+    _share_data_store_u = {}
 
 _re_compiled_glob_match = None
 def re_glob(s):
@@ -215,7 +236,7 @@ def procgpgkey(rawkey):
     # Decode and return
     return base64.decodestring(block.getvalue())
 
-def getgpgkeyinfo(rawkey):
+def getgpgkeyinfo(rawkey, multiple=False):
     '''Return a dict of info for the given ASCII armoured key text
 
     Returned dict will have the following keys: 'userid', 'keyid', 'timestamp'
@@ -223,38 +244,45 @@ def getgpgkeyinfo(rawkey):
     Will raise ValueError if there was a problem decoding the key.
     '''
     # Catch all exceptions as there can be quite a variety raised by this call
+    key_info_objs = []
     try:
-        key = pgpmsg.decode_msg(rawkey)
+        keys = pgpmsg.decode_multiple_keys(rawkey)
     except Exception, e:
         raise ValueError(str(e))
-    if key is None:
+    if len(keys) == 0:
         raise ValueError('No key found in given key data')
+    
+    for key in keys:    
+        keyid_blob = key.public_key.key_id()
 
-    keyid_blob = key.public_key.key_id()
+        info = {
+            'userid': key.user_id,
+            'keyid': struct.unpack('>Q', keyid_blob)[0],
+            'timestamp': key.public_key.timestamp,
+            'fingerprint' : key.public_key.fingerprint,
+            'raw_key' : key.raw_key,
+        }
 
-    info = {
-        'userid': key.user_id,
-        'keyid': struct.unpack('>Q', keyid_blob)[0],
-        'timestamp': key.public_key.timestamp,
-        'fingerprint' : key.public_key.fingerprint,
-    }
+        # Retrieve the timestamp from the matching signature packet 
+        # (this is what RPM appears to do) 
+        for userid in key.user_ids[0]:
+            if not isinstance(userid, pgpmsg.signature):
+                continue
 
-    # Retrieve the timestamp from the matching signature packet 
-    # (this is what RPM appears to do) 
-    for userid in key.user_ids[0]:
-        if not isinstance(userid, pgpmsg.signature):
-            continue
-
-        if userid.key_id() == keyid_blob:
-            # Get the creation time sub-packet if available
-            if hasattr(userid, 'hashed_subpaks'):
-                tspkt = \
-                    userid.get_hashed_subpak(pgpmsg.SIG_SUB_TYPE_CREATE_TIME)
-                if tspkt != None:
-                    info['timestamp'] = int(tspkt[1])
-                    break
+            if userid.key_id() == keyid_blob:
+                # Get the creation time sub-packet if available
+                if hasattr(userid, 'hashed_subpaks'):
+                    tspkt = \
+                        userid.get_hashed_subpak(pgpmsg.SIG_SUB_TYPE_CREATE_TIME)
+                    if tspkt != None:
+                        info['timestamp'] = int(tspkt[1])
+                        break
+        key_info_objs.append(info)
+    if multiple:      
+        return key_info_objs
+    else:
+        return key_info_objs[0]
         
-    return info
 
 def keyIdToRPMVer(keyid):
     '''Convert an integer representing a GPG key ID to the hex version string
@@ -297,6 +325,9 @@ def keyInstalled(ts, keyid, timestamp):
     return -1
 
 def import_key_to_pubring(rawkey, repo_cachedir):
+    if gpgme is None:
+        return False
+
     gpgdir = '%s/gpgdir' % repo_cachedir
     if not os.path.exists(gpgdir):
         os.makedirs(gpgdir)
@@ -309,12 +340,13 @@ def import_key_to_pubring(rawkey, repo_cachedir):
     fp.close()
     ctx.import_(key_fo)
     key_fo.close()
+    return True
     
 def return_keyids_from_pubring(gpgdir):
-    ctx = gpgme.Context()
-    if not os.path.exists(gpgdir):
+    if gpgme is None or not os.path.exists(gpgdir):
         return []
         
+    ctx = gpgme.Context()
     os.environ['GNUPGHOME'] = gpgdir
     keyids = []
     for k in ctx.keylist():
@@ -363,10 +395,10 @@ def newestInList(pkgs):
     ret = [ pkgs.pop() ]
     newest = ret[0]
     for pkg in pkgs:
-        if pkg.EVR > newest.EVR:
+        if pkg.verGT(newest):
             ret = [ pkg ]
             newest = pkg
-        elif pkg.EVR == newest.EVR:
+        elif pkg.verEQ(newest):
             ret.append(pkg)
     return ret
 
@@ -440,10 +472,6 @@ def get_running_kernel_version_release(ts):
         if ver.endswith(s):
             reduced = ver.replace(s, "")
             
-    if reduced.find("-") != -1:
-        (v, r) = reduced.split("-", 1)
-        return (v, r)
-    
     # we've got nothing so far, so... we glob for the file that MIGHT have
     # this kernels and then look up the file in our rpmdb
     fns = glob.glob('/boot/vmlinuz*%s*' % ver)
@@ -515,11 +543,52 @@ def find_ts_remaining(timestamp, yumlibpath='/var/lib/yum'):
     
     return to_complete_items
     
-def to_unicode(obj, encoding='utf-8'):
+def to_unicode(obj, encoding='utf-8', errors='replace'):
     ''' convert a 'str' to 'unicode' '''
     if isinstance(obj, basestring):
         if not isinstance(obj, unicode):
-            obj = unicode(obj, encoding)
+            obj = unicode(obj, encoding, errors)
     return obj
 
-        
+def to_utf8(obj, errors='replace'):
+    '''convert 'unicode' to an encoded utf-8 byte string '''
+    if isinstance(obj, unicode):
+        obj = obj.encode('utf-8', errors)
+    return obj
+
+# Don't use this, to_unicode should just work now
+def to_unicode_maybe(obj, encoding='utf-8', errors='replace'):
+    ''' Don't ask don't tell, only use when you must '''
+    try:
+        return to_unicode(obj, encoding, errors)
+    except UnicodeEncodeError:
+        return obj
+
+def to_str(obj):
+    """ Convert something to a string, if it isn't one. """
+    # NOTE: unicode counts as a string just fine. We just want objects to call
+    # their __str__ methods.
+    if not isinstance(obj, basestring):
+        obj = str(obj)
+    return obj
+
+def to_xml(item, attrib=False):
+    import xml.sax.saxutils
+    item = to_utf8(item) # verify this does enough conversion
+    item = item.rstrip()
+    if attrib:
+        item = xml.sax.saxutils.escape(item, entities={'"':"&quot;"})
+    else:
+        item = xml.sax.saxutils.escape(item)
+    return item
+
+def get_my_lang_code():
+    import locale
+    mylang = locale.getlocale()
+    if mylang == (None, None): # odd :)
+        mylang = 'C'
+    else:
+        mylang = '.'.join(mylang)
+    
+    return mylang
+    

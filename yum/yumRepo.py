@@ -154,7 +154,7 @@ class YumPackageSack(packageSack.PackageSack):
                 
                 db_un_fn = self._check_uncompressed_db(repo, mydbtype)
                 if not db_un_fn:
-                    db_fn = repo._retrieveMD(mydbtype, retrieve_can_fail=True)
+                    db_fn = repo._retrieveMD(mydbtype)
                     if db_fn:
                         db_un_fn = db_fn.replace('.bz2', '')
                         if not repo.cache:
@@ -257,6 +257,11 @@ class YumRepository(Repository, config.RepoConf):
         self._grab = None
 
     def _getSack(self):
+        # FIXME: Note that having the repo hold the sack, which holds "repos"
+        # is not only confusing but creates a circular dep.
+        #  Atm. we don't leak memory because RepoStorage.close() is called,
+        # which calls repo.close() which calls sack.close() which removes the
+        # repos from the sack ... thus. breaking the cycle.
         if self._sack is None:
             self._sack = sqlitesack.YumSqlitePackageSack(
                 sqlitesack.YumAvailablePackageSqlite)
@@ -345,10 +350,8 @@ class YumRepository(Repository, config.RepoConf):
     def enablePersistent(self):
         """Persistently enables this repository."""
         self.enable()
-        self.cfg.set(self.id, 'enabled', '1')
-
         try:
-            self.cfg.write(file(self.repofile, 'w'))
+            config.writeRawRepoFile(self,only=['enabled'])
         except IOError, e:
             if e.errno == 13:
                 self.logger.warning(e)
@@ -358,10 +361,8 @@ class YumRepository(Repository, config.RepoConf):
     def disablePersistent(self):
         """Persistently disables this repository."""
         self.disable()
-        self.cfg.set(self.id, 'enabled', '0')
-
         try:
-            self.cfg.write(file(self.repofile, 'w'))
+            config.writeRawRepoFile(self,only=['enabled'])
         except IOError, e:
             if e.errno == 13:
                 self.logger.warning(e)
@@ -531,15 +532,24 @@ class YumRepository(Repository, config.RepoConf):
         
     def _replace_and_check_url(self, url_list):
         goodurls = []
+        skipped = None
         for url in url_list:
             url = parser.varReplace(url, self.yumvar)
+            if url[-1] != '/':
+                url= url + '/'
             (s,b,p,q,f,o) = urlparse.urlparse(url)
             if s not in ['http', 'ftp', 'file', 'https']:
-                print 'YumRepo Warning: not using ftp, http[s], or file for repos, skipping - %s' % (url)
+                skipped = url
                 continue
             else:
                 goodurls.append(url)
 
+        if skipped is not None:
+            # Caller cleans up for us.
+            if goodurls:
+                print 'YumRepo Warning: Some mirror URLs are not using ftp, http[s] or file.\n Eg. %s' % misc.to_utf8(skipped)
+            else: # And raises in this case
+                print 'YumRepo Error: All mirror URLs are not using ftp, http[s] or file.\n Eg. %s' % misc.to_utf8(skipped)
         return goodurls
 
     def _geturls(self):
@@ -628,8 +638,8 @@ class YumRepository(Repository, config.RepoConf):
             remote = url + '/' + relative
 
             try:
-                result = ug.urlgrab(remote, local,
-                                    text=text,
+                result = ug.urlgrab(misc.to_utf8(remote), local,
+                                    text=misc.to_utf8(text),
                                     range=(start, end),
                                     )
             except URLGrabError, e:
@@ -642,8 +652,8 @@ class YumRepository(Repository, config.RepoConf):
 
         else:
             try:
-                result = self.grab.urlgrab(relative, local,
-                                           text = text,
+                result = self.grab.urlgrab(misc.to_utf8(relative), local,
+                                           text = misc.to_utf8(text),
                                            range = (start, end),
                                            copy_local=copy_local,
                                            reget = reget,
@@ -873,20 +883,14 @@ class YumRepository(Repository, config.RepoConf):
         if 'old_repo_XML' not in self._oldRepoMDData:
             return True
         old_repo_XML = self._oldRepoMDData['old_repo_XML']
-        
-        mdtypes = self.retrieved.keys()
 
-        for mdtype in mdtypes:
-            (nmdtype, newdata) = self._get_mdtype_data(mdtype)
-            (omdtype, olddata) = self._get_mdtype_data(mdtype,
-                                                       repoXML=old_repo_XML)
-            if olddata is None or newdata is None:
-                continue
-            if omdtype == nmdtype and olddata.checksum == newdata.checksum:
-                continue
-            if olddata.timestamp > newdata.timestamp:
-                logger.warning("Not using downloaded repomd.xml because it is older than what we have")
-                return False
+        if old_repo_XML.timestamp > self.repoXML.timestamp:
+            logger.warning("Not using downloaded repomd.xml because it is "
+                           "older than what we have:\n"
+                           "  Current   : %s\n  Downloaded: %s" %
+                           (time.ctime(old_repo_XML.timestamp),
+                            time.ctime(self.repoXML.timestamp)))
+            return False
         return True
 
     def _commonLoadRepoXML(self, text, mdtypes=None):
@@ -967,7 +971,19 @@ class YumRepository(Repository, config.RepoConf):
             """ Check if two returns from _get_mdtype_data() are equal. """
             if ndata is None:
                 return False
-            return omdtype == nmdtype and odata.checksum == ndata.checksum
+            if omdtype != nmdtype:
+                return False
+            if odata.checksum != ndata.checksum:
+                return False
+            #  If we turn --unique-md-filenames on without chaning the data,
+            # then we'll get different filenames, but the same checksum.
+            #  Atm. just say they are different, to make sure we delete the
+            # old files.
+            orname = os.path.basename(odata.location[1])
+            nrname = os.path.basename(ndata.location[1])
+            if orname != nrname:
+                return False
+            return True
 
         all_mdtypes = self.retrieved.keys()
         if mdtypes is None:
@@ -1223,6 +1239,27 @@ class YumRepository(Repository, config.RepoConf):
     def setInterruptCallback(self, callback):
         self.interrupt_callback = callback
         self._callbacks_changed = True
+
+    def _readMirrorList(self, fo):
+        """ read the mirror list from the specified file object """
+        returnlist = []
+
+        content = []
+        if fo is not None:
+            try:
+                content = fo.readlines()
+            except Exception, e:
+                print "Could not read mirrorlist %s error was \n%s" %(url, e)
+                content = []
+            for line in content:
+                if re.match('^\s*\#.*', line) or re.match('^\s*$', line):
+                    continue
+                mirror = re.sub('\n$', '', line) # no more trailing \n's
+                (mirror, count) = re.subn('\$ARCH', '$BASEARCH', mirror)
+                returnlist.append(mirror)
+
+        return (returnlist, content)
+
     def _getMirrorList(self):
         """retrieve an up2date-style mirrorlist file from our mirrorlist url,
            also save the file to the local repo dir and use that if cache expiry
@@ -1231,8 +1268,6 @@ class YumRepository(Repository, config.RepoConf):
            we also s/$ARCH/$BASEARCH/ and move along
            return the baseurls from the mirrorlist file
            """
-        returnlist = []
-        
         self.mirrorlist_file = self.cachedir + '/' + 'mirrorlist.txt'
         fo = None
         
@@ -1250,25 +1285,19 @@ class YumRepository(Repository, config.RepoConf):
             except urlgrabber.grabber.URLGrabError, e:
                 print "Could not retrieve mirrorlist %s error was\n%s" % (url, e)
                 fo = None
-        
-        if fo is not None:
-            try:
-                content = fo.readlines()
-            except Exception, e:
-                print "Could not read mirrorlist %s error was \n%s" %(url, e)
-                content = ""
-            for line in content:
-                if re.match('^\s*\#.*', line) or re.match('^\s*$', line):
-                    continue
-                mirror = re.sub('\n$', '', line) # no more trailing \n's
-                (mirror, count) = re.subn('\$ARCH', '$BASEARCH', mirror)
-                returnlist.append(mirror)
 
+        (returnlist, content) = self._readMirrorList(fo)
+
+        if returnlist:
             if not self.cache and not cacheok:
                 output = open(self.mirrorlist_file, 'w')
                 for line in content:
                     output.write(line)
                 output.close()
+        elif not cacheok and os.path.exists(self.mirrorlist_file):
+            # New mirror file failed, so use the old one (better than nothing)
+            os.utime(self.mirrorlist_file, None)
+            return self._readMirrorList(open(self.mirrorlist_file, 'r'))[0]
 
         return returnlist
 

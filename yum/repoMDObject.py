@@ -69,6 +69,7 @@ class RepoMD:
     def __init__(self, repoid, srcfile):
         """takes a repoid and a filename for the repomd.xml"""
         
+        self.timestamp = 0
         self.repoid = repoid
         self.repoData = {}
         
@@ -88,6 +89,12 @@ class RepoMD:
                 if elem_name == "data":
                     thisdata = RepoData(elem=elem)
                     self.repoData[thisdata.type] = thisdata
+                    try:
+                        nts = int(thisdata.timestamp)
+                        if nts > self.timestamp: # max() not in old python
+                            self.timestamp = nts
+                    except:
+                        pass
         except SyntaxError, e:
             raise RepoMDError, "Damaged repomd.xml file"
             
@@ -103,20 +110,22 @@ class RepoMD:
             
     def dump(self):
         """dump fun output"""
-        
-        for ft in self.fileTypes():
+
+        print "file timestamp: %s" % self.timestamp
+        for ft in sorted(self.fileTypes()):
             thisdata = self.repoData[ft]
-            print 'datatype: %s' % thisdata.type
-            print 'location: %s %s' % thisdata.location
-            print 'timestamp: %s' % thisdata.timestamp
-            print 'checksum: %s -%s' % thisdata.checksum
-            print 'open checksum: %s - %s' %  thisdata.openchecksum
-            print 'dbversion: %s' % thisdata.dbversion
+            print '  datatype: %s' % thisdata.type
+            print '    location     : %s %s' % thisdata.location
+            print '    timestamp    : %s' % thisdata.timestamp
+            print '    checksum     : %s - %s' % thisdata.checksum
+            print '    open checksum: %s - %s' %  thisdata.openchecksum
+            print '    dbversion    : %s' % thisdata.dbversion
+            print ''
 
 def main():
 
     try:
-        print sys.argv[1]
+        print "file          : %s" % sys.argv[1]
         p = RepoMD('repoid', sys.argv[1])
         p.dump()
         

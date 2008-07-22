@@ -46,6 +46,7 @@ doccheck:
 
 test:
 	@nosetests -i ".*test" test
+	@test/check-po-yes-no.py
 
 check: test
 
