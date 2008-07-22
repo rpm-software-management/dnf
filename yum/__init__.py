@@ -73,6 +73,7 @@ import string
 from urlgrabber.grabber import default_grabber
 
 __version__ = '3.2.17'
+__version_info__ = tuple([ int(num) for num in __version__.split('.')])
 
 #  Setup a default_grabber UA here that says we are yum, done using the global
 # so that other API users can easily add to it if they want.
@@ -1774,7 +1775,7 @@ class YumBase(depsolve.Depsolve):
             thisgroup.toremove = True
             pkgs = thisgroup.packages
             for pkg in thisgroup.packages:
-                txmbrs = self.remove(name=pkg)
+                txmbrs = self.remove(name=pkg, silence_warnings=True)
                 txmbrs_used.extend(txmbrs)
                 for txmbr in txmbrs:
                     txmbr.groups.append(thisgroup.groupid)
@@ -1808,10 +1809,14 @@ class YumBase(depsolve.Depsolve):
                             self.tsInfo.remove(txmbr.po.pkgtup)
         
         
-    def selectGroup(self, grpid):
+    def selectGroup(self, grpid, group_package_types=[], enable_group_conditionals=None):
         """mark all the packages in the group to be installed
            returns a list of transaction members it added to the transaction 
-           set"""
+           set
+           Optionally take:
+           group_package_types=List - overrides self.conf.group_package_types
+           enable_group_conditionals=Bool - overrides self.conf.enable_group_conditionals
+        """
 
         if not self.comps.has_group(grpid):
             raise Errors.GroupsError, _("No Group named %s exists") % grpid
@@ -1822,6 +1827,10 @@ class YumBase(depsolve.Depsolve):
         if not thesegroups:
             raise Errors.GroupsError, _("No Group named %s exists") % grpid
 
+        package_types = self.conf.group_package_types
+        if group_package_types:
+            package_types = group_package_types
+
         for thisgroup in thesegroups:
             if thisgroup.selected:
                 continue
@@ -1829,11 +1838,11 @@ class YumBase(depsolve.Depsolve):
             thisgroup.selected = True
             
             pkgs = []
-            if 'mandatory' in self.conf.group_package_types:
+            if 'mandatory' in package_types:
                 pkgs.extend(thisgroup.mandatory_packages)
-            if 'default' in self.conf.group_package_types:
+            if 'default' in package_types:
                 pkgs.extend(thisgroup.default_packages)
-            if 'optional' in self.conf.group_package_types:
+            if 'optional' in package_types:
                 pkgs.extend(thisgroup.optional_packages)
 
             for pkg in pkgs:
@@ -1849,7 +1858,11 @@ class YumBase(depsolve.Depsolve):
                     for txmbr in txmbrs:
                         txmbr.groups.append(thisgroup.groupid)
             
-            if self.conf.enable_group_conditionals:
+            group_conditionals = self.conf.enable_group_conditionals
+            if enable_group_conditionals is not None: # has to be this way so we can set it to False
+                group_conditionals = enable_group_conditionals
+
+            if group_conditionals:
                 for condreq, cond in thisgroup.conditional_packages.iteritems():
                     if self.isPackageInstalled(cond):
                         try:
@@ -2530,11 +2543,8 @@ class YumBase(depsolve.Depsolve):
                             ver=nevra_dict['version'], rel=nevra_dict['release'])
 
                 if len(pkgs) == 0:
-                    # FIXME we should give the caller some nice way to hush this warning
-                    # probably just a kwarg of 'silence_warnings' or something
-                    # b/c when this is called from groupRemove() it makes a lot of
-                    # garbage noise
-                    self.logger.warning(_("No package matched to remove"))
+                    if not kwargs.get('silence_warnings', False):
+                        self.logger.warning(_("No package matched to remove"))
 
         for po in pkgs:
             txmbr = self.tsInfo.addErase(po)
