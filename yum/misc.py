@@ -20,7 +20,23 @@ try:
     import gpgme
 except ImportError:
     gpgme = None
-import hashlib
+try:
+    import hashlib
+    _available_checksums = ['md5', 'sha1', 'sha256', 'sha512']
+except ImportError:
+    # Python-2.4.z ... gah!
+    import sha
+    import md5
+    _available_checksums = ['md5', 'sha1']
+    class hashlib:
+
+        @staticmethod
+        def new(algo):
+            if algo == 'md5':
+                return md5.new()
+            if algo == 'sha1':
+                return sha.new()
+            raise ValueError, "Bad checksum type"
 
 from Errors import MiscError
 
@@ -157,7 +173,7 @@ def checksum(sumtype, file, CHUNK=2**16):
 
         if sumtype == 'sha':
             sumtype = 'sha1'
-        if sumtype in ['md5', 'sha1', 'sha256', 'sha512']:
+        if sumtype in _available_checksums:
             sumalgo = hashlib.new(sumtype)
         else:
             raise MiscError, 'Error Checksumming file, bad checksum type %s' % sumtype
