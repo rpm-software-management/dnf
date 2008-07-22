@@ -20,6 +20,7 @@ try:
     import gpgme
 except ImportError:
     gpgme = None
+import hashlib
 
 from Errors import MiscError
 
@@ -143,7 +144,7 @@ def unique(s):
 
 def checksum(sumtype, file, CHUNK=2**16):
     """takes filename, hand back Checksum of it
-       sumtype = md5 or sha
+       sumtype = md5 or sha/sha1/sha256/sha512 (note sha == sha1)
        filename = /path/to/file
        CHUNK=65536 by default"""
      
@@ -153,13 +154,11 @@ def checksum(sumtype, file, CHUNK=2**16):
             fo = file # assume it's a file-like-object
         else:           
             fo = open(file, 'r', CHUNK)
-            
-        if sumtype == 'md5':
-            import md5
-            sumalgo = md5.new()
-        elif sumtype == 'sha':
-            import sha
-            sumalgo = sha.new()
+
+        if sumtype == 'sha':
+            sumtype = 'sha1'
+        if sumtype in ['md5', 'sha1', 'sha256', 'sha512']:
+            sumalgo = hashlib.new(sumtype)
         else:
             raise MiscError, 'Error Checksumming file, bad checksum type %s' % sumtype
         chunk = fo.read
