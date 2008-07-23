@@ -287,8 +287,12 @@ class Depsolve(object):
         return (CheckDeps, missingdep, errormsgs)
 
     @staticmethod
-    def _prco_req2requirment(req):
-        return (req[0], flags[req[1]], version_tuple_to_string(req[2]))
+    def _prco_req_nfv2req(rn, rf, rv):
+        return (rn, flags[rf], version_tuple_to_string(rv))
+
+    @staticmethod
+    def _prco_req2req(req):
+        self._prco_req_nfv2req(req[0], req[1], req[2])
             
     def _requiringFromInstalled(self, requiringPo, requirement, errorlist):
         """processes the dependency resolution for a dep where the requiring 
@@ -382,7 +386,7 @@ class Depsolve(object):
                     # If the requirement is still there, try and solve it again
                     # so we don't lose it
                     for pkg in txmbrs[0].updated_by:
-                        if requirement in map(self._prco_req2requirment, pkg.returnPrco('requires')):
+                        if requirement in map(self._prco_req2req, pkg.returnPrco('requires')):
                             return True, missingdep + self._requiringFromTransaction(pkg, requirement, errorlist)[1]
                 checkdeps = True
                 return checkdeps, missingdep
@@ -805,7 +809,7 @@ class Depsolve(object):
             self.verbose_logger.log(logginglevels.DEBUG_2, _("looking for %s as a requirement of %s"), req, txmbr)
             provs = self.tsInfo.getProvides(*req)
             if not provs:
-                ret.append( (txmbr.po, self._prco_req2requirment(req)) )
+                ret.append( (txmbr.po, self._prco_req2req(req)) )
                 continue
 
             #Add relationship
@@ -840,7 +844,7 @@ class Depsolve(object):
             for pkg, hits in self.tsInfo.getRequires(*prov).iteritems():
                 for rn, rf, rv in hits:
                     if not self.tsInfo.getProvides(rn, rf, rv):
-                        ret.append( (pkg, (rn, flags[rf], version_tuple_to_string(rv))) )
+                        ret.append( (pkg, self._prco_req_nfv2req(rn, rf, rv)) )
         return ret
 
     def _checkFileRequires(self):
@@ -908,7 +912,8 @@ class Depsolve(object):
                 for conflicting_po in self.tsInfo.getNewProvides(r, f, v):
                     if conflicting_po.pkgtup[0] == po.pkgtup[0] and conflicting_po.pkgtup[2:] == po.pkgtup[2:]:
                         continue
-                    ret.append( (po, (r, flags[f], version_tuple_to_string(v)), conflicting_po) )
+                    ret.append( (po, self._prco_req_nfv2req(r, f, v),
+                                 conflicting_po) )
         for txmbr in self.tsInfo.getMembersWithState(output_states=TS_INSTALL_STATES):
             po = txmbr.po
             for conflict in txmbr.po.returnPrco('conflicts'):
@@ -916,7 +921,8 @@ class Depsolve(object):
                 for conflicting_po in self.tsInfo.getProvides(r, f, v):
                     if conflicting_po.pkgtup[0] == po.pkgtup[0] and conflicting_po.pkgtup[2:] == po.pkgtup[2:]:
                         continue
-                    ret.append( (po, (r, flags[f], version_tuple_to_string(v)), conflicting_po) )
+                    ret.append( (po, self._prco_req_nfv2req(r, f, v),
+                                 conflicting_po) )
         return ret
 
 
