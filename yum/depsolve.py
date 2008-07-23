@@ -290,9 +290,8 @@ class Depsolve(object):
     def _prco_req_nfv2req(rn, rf, rv):
         return (rn, flags[rf], version_tuple_to_string(rv))
 
-    @staticmethod
-    def _prco_req2req(req):
-        self._prco_req_nfv2req(req[0], req[1], req[2])
+    def _prco_req2req(self, req):
+        return self._prco_req_nfv2req(req[0], req[1], req[2])
             
     def _requiringFromInstalled(self, requiringPo, requirement, errorlist):
         """processes the dependency resolution for a dep where the requiring 
