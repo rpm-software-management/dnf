@@ -285,6 +285,10 @@ class Depsolve(object):
             missingdep = 0
 
         return (CheckDeps, missingdep, errormsgs)
+
+    @staticmethod
+    def _prco_req2requirment(req):
+        return (req[0], flags[req[1]], version_tuple_to_string(req[2]))
             
     def _requiringFromInstalled(self, requiringPo, requirement, errorlist):
         """processes the dependency resolution for a dep where the requiring 
@@ -375,6 +379,11 @@ class Depsolve(object):
                                             requiringPo, txmbrs[0].obsoleted_by[0])
                 else:
                     self.verbose_logger.log(logginglevels.DEBUG_2, _('TSINFO: Updating %s to resolve dep.'), requiringPo)
+                    # If the requirement is still there, try and solve it again
+                    # so we don't lose it
+                    for pkg in txmbrs[0].updated_by:
+                        if requirement in map(self._prco_req2requirment, pkg.returnPrco('requires')):
+                            return True, missingdep + self._requiringFromTransaction(pkg, requirement, errorlist)[1]
                 checkdeps = True
                 return checkdeps, missingdep
             self.verbose_logger.log(logginglevels.DEBUG_2, _('Cannot find an update path for dep for: %s'), niceformatneed)
@@ -796,7 +805,7 @@ class Depsolve(object):
             self.verbose_logger.log(logginglevels.DEBUG_2, _("looking for %s as a requirement of %s"), req, txmbr)
             provs = self.tsInfo.getProvides(*req)
             if not provs:
-                ret.append( (txmbr.po, (req[0], flags[req[1]], version_tuple_to_string(req[2]))) )
+                ret.append( (txmbr.po, self._prco_req2requirment(req)) )
                 continue
 
             #Add relationship
