@@ -26,6 +26,8 @@ from yum import _
 import yum.Errors
 import operator
 import locale
+import fnmatch
+import time
 
 def checkRootUID(base):
     """
@@ -629,18 +631,29 @@ class RepoListCommand(YumCommand):
     def getSummary(self):
         return _('Display the configured software repositories')
 
-    def doCheck(self, base, basecmd, extcmds):
-        if len(extcmds) == 0:
-            return
-        elif len(extcmds) > 1 or extcmds[0] not in ('all', 'disabled',
-                'enabled'):
-            raise cli.CliError
-
     def doCommand(self, base, basecmd, extcmds):
-        if len(extcmds) == 1:
+        def _repo_size(repo):
+            ret = 0
+            for pkg in repo.sack.returnPackages():
+                ret += pkg.packagesize
+            return base.format_number(ret)
+
+        def _repo_match(repo, patterns):
+            rid = repo.id.lower()
+            rnm = repo.name.lower()
+            for pat in patterns:
+                if fnmatch.fnmatch(rid, pat):
+                    return True
+                if fnmatch.fnmatch(rnm, pat):
+                    return True
+            return False
+
+        if len(extcmds) >= 1 and extcmds[0] in ('all', 'disabled', 'enabled'):
             arg = extcmds[0]
+            extcmds = extcmds[1:]
         else:
             arg = 'enabled'
+        extcmds = map(lambda x: x.lower(), extcmds)
 
         # Setup so len(repo.sack) is correct
         base.repos.populateSack()
@@ -661,6 +674,8 @@ class RepoListCommand(YumCommand):
             hiend  = ''
         tot_num = 0
         for repo in repos:
+            if len(extcmds) and not _repo_match(repo, extcmds):
+                continue
             if repo in enabled_repos:
                 enabled = True
                 ui_enabled = ehibeg + _('enabled') + hiend
@@ -668,6 +683,8 @@ class RepoListCommand(YumCommand):
                 tot_num   += num
                 ui_num     = locale.format("%d", num, True)
                 ui_fmt_num = ": %7s"
+                if verbose:
+                    ui_size = _repo_size(repo)
             else:
                 enabled = False
                 ui_enabled = dhibeg + _('disabled') + hiend
@@ -680,16 +697,37 @@ class RepoListCommand(YumCommand):
                 if not done and not verbose:
                     base.verbose_logger.log(logginglevels.INFO_2,
                                             format_string, _('repo id'),
-                                            _('repo name'), _('status'))
+                                            _('repo name'), _('status'), "")
                 done = True
                 if verbose:
-                    line1 = base.fmtKeyValFill(_("Repo-id     : "), repo)
-                    line2 = base.fmtKeyValFill(_("Repo-name   : "), repo.name)
-                    line3 = base.fmtKeyValFill(_("Repo-enabled: "), ui_enabled)
-                    line4 = base.fmtKeyValFill(_("Repo-size   : "), ui_num)
+                    out = [base.fmtKeyValFill(_("Repo-id     : "), repo),
+                           base.fmtKeyValFill(_("Repo-name   : "), repo.name),
+                           base.fmtKeyValFill(_("Repo-status : "), ui_enabled)]
+                    if enabled:
+                        out += [base.fmtKeyValFill(_("Repo-updated: "),
+                                                   time.ctime(repo.repoXML.timestamp)),
+                                base.fmtKeyValFill(_("Repo-pkgs   : "), ui_num),
+                                base.fmtKeyValFill(_("Repo-size   : "),ui_size)]
+
+                    if repo.baseurl:
+                        out += [base.fmtKeyValFill(_("Repo-baseurl: "),
+                                                   ", ".join(repo.baseurl))]
+
+                    if repo.mirrorlist:
+                        out += [base.fmtKeyValFill(_("Repo-mirrors: "),
+                                                   repo.mirrorlist)]
+
+                    if repo.exclude:
+                        out += [base.fmtKeyValFill(_("Repo-exclude: "),
+                                                   ", ".join(repo.exclude))]
+
+                    if repo.includepkgs:
+                        out += [base.fmtKeyValFill(_("Repo-include: "),
+                                                   ", ".join(repo.includepkgs))]
+
                     base.verbose_logger.log(logginglevels.DEBUG_3,
-                                            "%s\n%s\n%s\n%s\n",
-                                            line1, line2, line3, line4)
+                                            "%s\n",
+                                            "\n".join(out))
                 else:
                     base.verbose_logger.log(logginglevels.INFO_2, format_string,
                                             repo, repo.name, ui_enabled,
