@@ -1219,7 +1219,7 @@ class YumBase(depsolve.Depsolve):
             check = repo.gpgcheck
             hasgpgkey = not not repo.gpgkey 
         
-        if check:
+        if check in ('1', 'yes', 'true', 'packages'):
             ts = self.rpmdb.readOnlyTS()
             sigresult = rpmUtils.miscutils.checkSig(ts, po.localPkg())
             localfn = os.path.basename(po.localPkg())

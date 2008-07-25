@@ -214,7 +214,7 @@ class YumShell(cmd.Cmd):
                 elif cmd == 'errorlevel':
                     logginglevels.setErrorLevel(val)
         # bools
-        elif cmd in ['gpgcheck', 'obsoletes', 'assumeyes']:
+        elif cmd in ['obsoletes', 'assumeyes']:
             opts = self._shlex_split(args)
             if not opts:
                 self.verbose_logger.log(logginglevels.INFO_2, '%s: %s', cmd,
@@ -228,6 +228,20 @@ class YumShell(cmd.Cmd):
                 setattr(self.base.conf, cmd, value)
                 if cmd == 'obsoletes':
                     self.base.up = None
+        
+        elif cmd in ['gpgcheck']:
+            opts = self._shlex_split(args)
+            if not opts:
+                self.verbose_logger.log(logginglevels.INFO_2, '%s: %s', cmd,
+                    getattr(self.base.conf, cmd))
+            else:
+                value = opts[0]
+                if value.lower() not in ('0', 'no', 'false',
+                                         '1', 'yes', 'true',
+                                         'packages', 'repository'):
+                    self.logger.critical('Value %s for %s is not a GPGcheck value', value, cmd)
+                    return False
+                setattr(self.base.conf, cmd, value.lower())
         
         elif cmd in ['exclude']:
             args = args.replace(',', ' ')

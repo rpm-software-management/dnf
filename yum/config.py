@@ -340,6 +340,13 @@ class SelectionOption(Option):
             raise ValueError('"%s" is not an allowed value' % s)
         return s
 
+class CaselessSelectionOption(SelectionOption):
+    ''' Mainly for compat. with BoolOption, works like SelectionOption but
+        lowers input case. '''
+
+    def parse(self, s):
+        return super(SelectionOption, self).parse(default, s.lower())
+
 class BytesOption(Option):
 
     """
@@ -428,7 +435,6 @@ class ThrottleOption(BytesOption):
             return n / 100.0
         else:
             return BytesOption.parse(self, s)
-
 
 class BaseConfig(object):
     '''
@@ -615,7 +621,9 @@ class YumConf(StartupConf):
     diskspacecheck = BoolOption(True)
     overwrite_groups = BoolOption(False)
     keepalive = BoolOption(True)
-    gpgcheck = BoolOption(False)
+    gpgcheck = CaselessSelectionOption('false', ('0', 'no', 'false',
+                                                 '1', 'yes', 'true',
+                                                 'packages', 'repository'))
     obsoletes = BoolOption(False)
     showdupesfromrepos = BoolOption(False)
     enabled = BoolOption(True)
