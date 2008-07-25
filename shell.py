@@ -236,9 +236,15 @@ class YumShell(cmd.Cmd):
                     getattr(self.base.conf, cmd))
             else:
                 value = opts[0]
-                if value.lower() not in ('0', 'no', 'false',
-                                         '1', 'yes', 'true',
-                                         'packages', 'repository'):
+                if value.lower() in ('0', 'no'):
+                    value = 'false'
+                if value.lower() in ('1', 'yes'):
+                    value = 'true'
+                if value.lower() == 'repository':
+                    value = 'repo'
+                if value.lower() == 'pkgs':
+                    value = 'packages'
+                if value.lower() not in ('false', 'true', 'packages', 'repo'):
                     self.logger.critical('Value %s for %s is not a GPGcheck value', value, cmd)
                     return False
                 setattr(self.base.conf, cmd, value.lower())

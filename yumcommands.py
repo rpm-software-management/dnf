@@ -42,7 +42,7 @@ def checkRootUID(base):
 def checkGPGKey(base):
     if not base.gpgKeyCheck():
         for repo in base.repos.listEnabled():
-            if repo.gpgcheck not in ('0', 'no', 'false') and repo.gpgkey == '':
+            if repo.gpgcheck != 'false' and repo.gpgkey == '':
                 msg = _("""
 You have enabled checking of packages via GPG keys. This is a good thing. 
 However, you do not have any GPG public keys installed. You need to download

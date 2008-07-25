@@ -624,10 +624,13 @@ class YumConf(StartupConf):
     diskspacecheck = BoolOption(True)
     overwrite_groups = BoolOption(False)
     keepalive = BoolOption(True)
-    gpgcheck = CaselessSelectionOption('false', ('0', 'no', 'false',
-                                                 '1', 'yes', 'true',
-                                                 'packages', 'repo'),
-                                       {'pkgs'       : 'packages',
+    gpgcheck = CaselessSelectionOption('false',
+                                       ('false', 'true', 'packages', 'repo'),
+                                       {'0'          : 'false',
+                                        'no'         : 'false',
+                                        '1'          : 'true',
+                                        'yes'        : 'true',
+                                        'pkgs'       : 'packages',
                                         'repository' : 'repo'})
     obsoletes = BoolOption(False)
     showdupesfromrepos = BoolOption(False)
