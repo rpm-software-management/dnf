@@ -331,11 +331,14 @@ class FloatOption(Option):
 class SelectionOption(Option):
     '''Handles string values where only specific values are allowed
     '''
-    def __init__(self, default=None, allowed=()):
+    def __init__(self, default=None, allowed=(), mapper={}):
         super(SelectionOption, self).__init__(default)
         self._allowed = allowed
+        self._mapper  = mapper
         
     def parse(self, s):
+        if s in self._mapper:
+            s = self._mapper[s]
         if s not in self._allowed:
             raise ValueError('"%s" is not an allowed value' % s)
         return s
@@ -623,7 +626,9 @@ class YumConf(StartupConf):
     keepalive = BoolOption(True)
     gpgcheck = CaselessSelectionOption('false', ('0', 'no', 'false',
                                                  '1', 'yes', 'true',
-                                                 'packages', 'repository'))
+                                                 'packages', 'repo'),
+                                       {'pkgs'       : 'packages',
+                                        'repository' : 'repo'})
     obsoletes = BoolOption(False)
     showdupesfromrepos = BoolOption(False)
     enabled = BoolOption(True)
