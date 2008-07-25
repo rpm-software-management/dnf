@@ -348,7 +348,7 @@ class CaselessSelectionOption(SelectionOption):
         lowers input case. '''
 
     def parse(self, s):
-        return super(SelectionOption, self).parse(default, s.lower())
+        return super(CaselessSelectionOption, self).parse(s.lower())
 
 class BytesOption(Option):
 
