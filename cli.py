@@ -1080,9 +1080,6 @@ class YumOptionParser(OptionParser):
                 self.base.conf.gpgcheck = 'false'
                 for repo in self.base.repos.listEnabled():
                     repo.gpgcheck = 'false'
-            print "JDBG:", self.base.conf.gpgcheck
-            for repo in self.base.repos.listEnabled():
-                print "JDBG: repo", repo, repo.gpgcheck
                             
         except ValueError, e:
             self.logger.critical(_('Options Error: %s'), e)
