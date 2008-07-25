@@ -1025,7 +1025,7 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
     @catchSqliteException
     def matchPackageNames(self, pkgspecs):
         if self._skip_all():
-            return []
+            return [], [], []
 
         matched = []
         exactmatch = []
