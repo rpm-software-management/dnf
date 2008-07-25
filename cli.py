@@ -528,12 +528,17 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
             except yum.Errors.InstallError:
                 self.verbose_logger.log(yum.logginglevels.INFO_2,
                                         _('No package %s available.'), arg)
-
+                matches = self.doPackageLists('available', patterns=[arg],
+                                              ignore_case=True)
+                matches = set(map(lambda x: x.name, matches.available))
+                if matches:
+                    msg = self.fmtKeyValFill(_('  * Maybe you meant: '),
+                                             ", ".join(matches))
+                    self.verbose_logger.log(yum.logginglevels.INFO_2, msg)
 
         if len(self.tsInfo) > oldcount:
             return 2, [_('Package(s) to install')]
         return 0, [_('Nothing to do')]
-        
         
     def updatePkgs(self, userlist, quiet=0):
         """take user commands and populate transaction wrapper with 
