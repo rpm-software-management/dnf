@@ -332,9 +332,12 @@ class MetaSack(PackageSackBase):
         
         # go through each of the keys of the obs dict and see if it is in the
         # sack of newest pkgs - if it is not - remove the entry
-        for obstup in obsdict.keys():
+        togo = []
+        for obstup in obsdict:
             if obstup not in newest_tups:
-                del obsdict[obstup]
+                togo.append(obstup)
+        for obstup in togo:
+            del obsdict[obstup]
         
         return obsdict
         
@@ -606,11 +609,7 @@ class PackageSack(PackageSackBase):
         for po in self.returnPackages():
             if len(po.obsoletes) == 0:
                 continue
-
-            if not obs.has_key(po.pkgtup):
-                obs[po.pkgtup] = po.obsoletes
-            else:
-                obs[po.pkgtup].extend(po.obsoletes)
+            obs.setdefault(po.pkgtup, []).extend(po.obsoletes)
 
         if not newest:
             return obs
@@ -621,9 +620,12 @@ class PackageSack(PackageSackBase):
 
         # go through each of the keys of the obs dict and see if it is in the
         # sack of newest pkgs - if it is not - remove the entry
-        for obstup in obs.keys():
-            if obstup not in  newest_tups:
-                del obs[obstup]
+        togo = []
+        for obstup in obs:
+            if obstup not in newest_tups:
+                togo.append(obstup)
+        for obstup in togo:
+            del obs[obstup]
             
         return obs
         
