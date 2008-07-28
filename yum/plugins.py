@@ -115,7 +115,7 @@ class YumPlugins:
     '''
 
     def __init__(self, base, searchpath, optparser=None, types=None, 
-            pluginconfpath=None,disabled=None):
+            pluginconfpath=None,disabled=None,enabled=None):
         '''Initialise the instance.
 
         @param base: The
@@ -138,6 +138,7 @@ class YumPlugins:
         self.cmdline = (None, None)
         self.verbose_logger = logging.getLogger("yum.verbose.YumPlugins")
         self.disabledPlugins = disabled
+        self.enabledPlugins  = enabled
         if types is None:
             types = ALL_TYPES
         if not isinstance(types, (list, tuple)):
@@ -186,6 +187,7 @@ class YumPlugins:
 
         # Import plugins 
         self._used_disable_plugin = set()
+        self._used_enable_plugin  = set()
         for dir in self.searchpath:
             if not os.path.isdir(dir):
                 continue
@@ -207,6 +209,26 @@ class YumPlugins:
                     self.verbose_logger.log(logginglevels.INFO_2,
                                             _("No plugin match for: %s") % wc)
         del self._used_disable_plugin
+        if self.enabledPlugins:
+            for wc in self.enabledPlugins:
+                if wc not in self._used_enable_plugin:
+                    self.verbose_logger.log(logginglevels.INFO_2,
+                                            _("No plugin match for: %s") % wc)
+        del self._used_enable_plugin
+
+    @staticmethod
+    def _plugin_cmdline_match(modname, plugins, used):
+        """ Check if this plugin has been temporary enabled/disabled. """
+        if plugins is None:
+            return False
+
+        for wc in plugins:
+            if fnmatch.fnmatch(modname, wc):
+                used.add(wc)
+                return True
+
+        return False
+
 
     def _loadplugin(self, modulefile, types):
         '''Attempt to import a plugin module and register the hook methods it
@@ -216,8 +238,11 @@ class YumPlugins:
         modname = modname.split('.py')[0]
 
         conf = self._getpluginconf(modname)
-        if not conf or not config.getOption(conf, 'main', 'enabled', 
-                config.BoolOption(False)):
+        if (not conf or
+            (not config.getOption(conf, 'main', 'enabled',
+                                  config.BoolOption(False)) and
+             not self._plugin_cmdline_match(modname, self.enabledPlugins,
+                                            self._used_enable_plugin))):
             self.verbose_logger.debug(_('"%s" plugin is disabled'), modname)
             return
 
@@ -256,12 +281,15 @@ class YumPlugins:
 
             if plugintype not in types:
                 return
-        # Check if this plugin has been temporary disabled
-        if self.disabledPlugins:
-            for wc in self.disabledPlugins:
-                if fnmatch.fnmatch(modname, wc):
-                    self._used_disable_plugin.add(wc)
-                    return
+
+        #  This should really work like enable/disable repo. and be based on the
+        # cmd line order ... but the API doesn't really allow that easily.
+        # FIXME: Fix for 4.*
+        if (self._plugin_cmdline_match(modname, self.disabledPlugins,
+                                       self._used_disable_plugin) and
+            not self._plugin_cmdline_match(modname, self.enabledPlugins,
+                                           self._used_enable_plugin)):
+            return
 
         self.verbose_logger.log(logginglevels.DEBUG_3, _('Loading "%s" plugin'),
                                 modname)

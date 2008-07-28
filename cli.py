@@ -180,7 +180,8 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
                     optparser=self.optparser,
                     debuglevel=opts.debuglevel,
                     errorlevel=opts.errorlevel,
-                    disabled_plugins=self.optparser._splitArg(opts.disableplugins))
+                    disabled_plugins=self.optparser._splitArg(opts.disableplugins),
+                    enabled_plugins=self.optparser._splitArg(opts.enableplugins))
                     
         except yum.Errors.ConfigError, e:
             self.logger.critical(_('Config Error: %s'), e)
@@ -991,7 +992,8 @@ class YumOptionParser(OptionParser):
         try:
             args = _filtercmdline(
                         ('--noplugins','--version','-q', '-v', "--quiet", "--verbose"), 
-                        ('-c', '-d', '-e', '--installroot','--disableplugin'), 
+                        ('-c', '-d', '-e', '--installroot',
+                         '--disableplugin', '--enableplugin'), 
                         args)
         except ValueError, arg:
             self.base.usage()
@@ -1175,6 +1177,9 @@ class YumOptionParser(OptionParser):
                 help=_("disable gpg signature checking"))
         self.add_option("", "--disableplugin", dest="disableplugins", default=[], 
                 action="append", help=_("disable plugins by name"),
+                metavar='[plugin]')
+        self.add_option("", "--enableplugin", dest="enableplugins", default=[], 
+                action="append", help=_("enable plugins by name"),
                 metavar='[plugin]')
         self.add_option("--skip-broken", action="store_true", dest="skipbroken",
                 help=_("skip packages with depsolving problems"))
