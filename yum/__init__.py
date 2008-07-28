@@ -53,6 +53,7 @@ from parser import ConfigPreProcessor, varReplace
 import transactioninfo
 import urlgrabber
 from urlgrabber.grabber import URLGrabError
+from urlgrabber.progress import format_number
 from packageSack import packagesNewestByNameArch, packagesNewestByName
 import depsolve
 import plugins
@@ -1103,8 +1104,12 @@ class YumBase(depsolve.Depsolve):
             checkfunc = (self.verifyPkg, (po, 1), {})
             dirstat = os.statvfs(po.repo.pkgdir)
             if (dirstat.f_bavail * dirstat.f_bsize) <= long(po.size):
-                adderror(po, _('Insufficient space in download directory %s '
-                        'to download') % po.repo.pkgdir)
+                adderror(po, _('Insufficient space in download directory %s\n'
+                        "    * free   %s\n"
+                        "    * needed %s") %
+                         (po.repo.pkgdir,
+                          format_number(dirstat.f_bavail * dirstat.f_bsize),
+                          format_number(po.size)))
                 continue
             
             try:
