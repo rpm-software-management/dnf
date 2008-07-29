@@ -628,8 +628,10 @@ class YumConf(StartupConf):
                                        ('none', 'all', 'packages', 'repo'),
                                        {'0'          : 'none',
                                         'no'         : 'none',
+                                        'false'      : 'none',
                                         '1'          : 'all',
                                         'yes'        : 'all',
+                                        'true'       : 'all',
                                         'pkgs'       : 'packages',
                                         'repository' : 'repo'})
     obsoletes = BoolOption(False)
