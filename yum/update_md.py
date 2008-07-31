@@ -102,9 +102,10 @@ class UpdateNotice(object):
                 cvelist += " %s\n\t    :" % cve['id']
             head += cvelist[:-1].rstrip() + '\n'
 
-        desc = wrap(self._md['description'], width=64,
-                    subsequent_indent=' ' * 12 + ': ')
-        head += "Description : %s\n" % '\n'.join(desc)
+        if self._md['description'] is not None:
+            desc = wrap(self._md['description'], width=64,
+                        subsequent_indent=' ' * 12 + ': ')
+            head += "Description : %s\n" % '\n'.join(desc)
 
         filelist = "      Files :"
         for pkg in self._md['pkglist']:
@@ -234,12 +235,15 @@ class UpdateMetadata(object):
 
     def __init__(self):
         self._notices = {}
-        self._cache = {}    # a pkg name => notice cache for quick lookups
+        self._cache = {}    # a pkg nvr => notice cache for quick lookups
+        self._no_cache = {}    # a pkg name only => notice list
         self._repos = []    # list of repo ids that we've parsed
 
-    def get_notices(self):
+    def get_notices(self, name=None):
         """ Return all notices. """
-        return self._notices.values()
+        if name is None:
+            return self._notices.values()
+        return name in self._no_cache and self._no_cache[name] or None
 
     notices = property(get_notices)
 
@@ -278,6 +282,8 @@ class UpdateMetadata(object):
                             self._cache['%s-%s-%s' % (file['name'],
                                                       file['version'],
                                                       file['release'])] = un
+                            no = self._no_cache.setdefault(file['name'], set())
+                            no.add(un)
 
     def __str__(self):
         ret = ''
