@@ -85,7 +85,7 @@ class UpdateNotice(object):
 """ % self._md
 
         if self._md['updated'] and self._md['updated'] != self._md['issued']:
-            head += "    Updated : %(updated)s" % self._md['updated']
+            head += "    Updated : %s" % self._md['updated']
 
         # Add our bugzilla references
         bzs = filter(lambda r: r['type'] == 'bugzilla', self._md['references'])
