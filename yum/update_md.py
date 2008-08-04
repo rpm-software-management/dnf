@@ -109,9 +109,14 @@ class UpdateNotice(object):
                         subsequent_indent=' ' * 12 + ': ')
             head += "Description : %s\n" % '\n'.join(desc)
 
+        #  Get a list of arches we care about:
+        arches = set(rpmUtils.arch.getArchList())
+
         filelist = "      Files :"
         for pkg in self._md['pkglist']:
             for file in pkg['packages']:
+                if file['arch'] not in arches:
+                    continue
                 filelist += " %s\n\t    :" % file['filename']
         head += filelist[:-1].rstrip()
 
