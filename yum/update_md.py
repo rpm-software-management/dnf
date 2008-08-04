@@ -295,7 +295,7 @@ class UpdateMetadata(object):
                     if _rpm_tup_vercmp(pkgtup, oldpkgtup) <= 0:
                         continue
                     ret.append((pkgtup, notice))
-        ret.sort(cmp=_rpm_tup_vercmp, key=lambda x: x[0])
+        ret.sort(cmp=_rpm_tup_vercmp, key=lambda x: x[0], reverse=True)
         return ret
 
     def add(self, obj, mdtype='updateinfo'):
