@@ -255,7 +255,7 @@ class UpdateMetadata(object):
         """ Return all notices. """
         if name is None:
             return self._notices.values()
-        return name in self._no_cache and self._no_cache[name] or None
+        return name in self._no_cache and self._no_cache[name] or []
 
     notices = property(get_notices)
 
