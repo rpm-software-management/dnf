@@ -2344,7 +2344,29 @@ class YumBase(depsolve.Depsolve):
         
         return tx_return
 
-    
+    def _newer_update_in_trans(self, pkgtup, available_pkg):
+        """ We return True if there is a newer package already in the
+            transaction. If there is an older one, we remove it and return
+            False so we'll goto this available one. """
+        found = False
+        for txmbr in self.tsInfo.getMembersWithState(pkgtup, [TS_UPDATED]):
+            if True: # FIXME: This "works" but fails related deps.
+                # Ie. update-minimal glibc pam == works
+                # Ie. update-minimal glibc glibc-common pam == hard fail
+                return True
+            count = 0
+            for po in txmbr.updated_by:
+                if available_pkg.verLE(po):
+                    count += 1
+                else:
+                    for ntxmbr in self.tsInfo.getMembers(po.pkgtup):
+                        self.tsInfo.remove(ntxmbr.po.pkgtup)
+            if count:
+                found = True
+            else:
+                self.tsInfo.remove(txmbr.po.pkgtup)
+        return found
+
     def update(self, po=None, requiringPo=None, **kwargs):
         """try to mark for update the item(s) specified. 
             po is a package object - if that is there, mark it for update,
@@ -2489,13 +2511,12 @@ class YumBase(depsolve.Depsolve):
                         txmbr.setAsDep(requiringPo)
                     tx_return.append(txmbr)
                         
-                        
         for available_pkg in availpkgs:
             for updated in self.up.updating_dict.get(available_pkg.pkgtup, []):
                 if self.tsInfo.isObsoleted(updated):
                     self.verbose_logger.log(logginglevels.DEBUG_2, _('Not Updating Package that is already obsoleted: %s.%s %s:%s-%s'), 
                                             updated)
-                elif self.tsInfo.getMembersWithState(updated, [TS_UPDATED]):
+                elif self._newer_update_in_trans(updated, available_pkg):
                     self.verbose_logger.log(logginglevels.DEBUG_2, _('Not Updating Package that is already updated: %s.%s %s:%s-%s'), 
                                             updated)
                 
@@ -2517,7 +2538,7 @@ class YumBase(depsolve.Depsolve):
                 if self.tsInfo.isObsoleted(ipkg.pkgtup):
                     self.verbose_logger.log(logginglevels.DEBUG_2, _('Not Updating Package that is already obsoleted: %s.%s %s:%s-%s'), 
                                             ipkg.pkgtup)
-                elif self.tsInfo.getMembersWithState(ipkg.pkgtup, [TS_UPDATED]):
+                elif self._newer_update_in_trans(ipkg.pkgtup, available_pkg):
                     self.verbose_logger.log(logginglevels.DEBUG_2, _('Not Updating Package that is already updated: %s.%s %s:%s-%s'), 
                                             ipkg.pkgtup)
                 elif ipkg.verLT(available_pkg):
@@ -2525,10 +2546,8 @@ class YumBase(depsolve.Depsolve):
                     if requiringPo:
                         txmbr.setAsDep(requiringPo)
                     tx_return.append(txmbr)
-                                                     
 
         return tx_return
-        
         
     def remove(self, po=None, **kwargs):
         """try to find and mark for remove the specified package(s) -

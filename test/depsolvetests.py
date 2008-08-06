@@ -943,7 +943,7 @@ class DepsolveTests(DepsolveTests):
         self.assertEquals('ok', *self.resolveCode())
         self.assertResult((ipo2, po4))
 
-    def test_min_up_and_dep(self):
+    def test_min_up_and_dep1(self):
         rpo1 = FakePackage('bar', version='1')
         self.rpmdb.addPackage(rpo1)
 
@@ -962,6 +962,29 @@ class DepsolveTests(DepsolveTests):
         self.xsack.addPackage(po3)
         po4 = FakePackage('bar', version='4')
         self.xsack.addPackage(po4)
+
+        self.assertEquals('ok', *self.resolveCode())
+        self.assertResult((ipo2, po4))
+
+    def test_min_up_and_dep2(self):
+        rpo1 = FakePackage('bar', version='1')
+        self.rpmdb.addPackage(rpo1)
+
+        ipo1 = FakePackage('bar', version='2')
+
+        ipo2 = FakePackage('foo')
+        ipo2.addRequires('bar', 'GE', (None, '3', '0'))
+        self.tsInfo.addInstall(ipo2)
+        self.tsInfo.addUpdate(ipo1, oldpo=rpo1)
+
+        po1 = FakePackage('foo')
+        po2 = FakePackage('bar', version='2')
+        po3 = FakePackage('bar', version='3')
+        po4 = FakePackage('bar', version='4')
+        self.xsack.addPackage(po4)
+        self.xsack.addPackage(po3)
+        self.xsack.addPackage(po2)
+        self.xsack.addPackage(po1)
 
         self.assertEquals('ok', *self.resolveCode())
         self.assertResult((ipo2, po4))
