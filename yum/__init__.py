@@ -1114,8 +1114,11 @@ class YumBase(depsolve.Depsolve):
                 continue
             
             try:
-                text = '(%s/%s): %s' % (i, len(remote_pkgs),
-                                        os.path.basename(po.relativepath))
+                if len(remote_pkgs) == 1:
+                    text = os.path.basename(po.relativepath)
+                else:
+                    text = '(%s/%s): %s' % (i, len(remote_pkgs),
+                                            os.path.basename(po.relativepath))
                 mylocal = po.repo.getPackage(po,
                                    checkfunc=checkfunc,
                                    text=text,
