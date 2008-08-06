@@ -386,7 +386,11 @@ class YumOutput:
             return False
         else:            
             return True
-                
+    
+    def _cli_confirm_gpg_key_import(self, keydict):
+        # FIXME what should we be printing here?
+        return self.userconfirm()
+
     def _group_names2pkgs(self, pkg_names):
         # Convert pkg_names to installed pkgs and available pkgs
         ipkgs = self.rpmdb.searchNames(pkg_names)
@@ -699,7 +703,11 @@ Remove   %5.5s Package(s)
     def setupProgessCallbacks(self):
         # api purposes only to protect the typo
         self.setupProgressCallbacks()
-        
+    
+    def setupKeyImportCallbacks(self):
+        self.repos.confirm_func = self._cli_confirm_gpg_key_import
+        self.repos.gpg_import_func = self.getKeyForRepo
+
     def interrupt_callback(self, cbobj):
         '''Handle CTRL-C's during downloads
 

@@ -1060,6 +1060,8 @@ class YumOptionParser(OptionParser):
 
             # setup the progress bars/callbacks
             self.base.setupProgressCallbacks()
+            # setup the callbacks to import gpg pubkeys and confirm them
+            self.base.setupKeyImportCallbacks()
                     
             # Process repo enables and disables in order
             for opt, repoexp in opts.repos:

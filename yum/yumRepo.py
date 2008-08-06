@@ -251,6 +251,10 @@ class YumRepository(Repository, config.RepoConf):
         # callback function for handling media
         self.mediafunc = None
         
+        # callbacks for gpg key importing and confirmation
+        self.gpg_import_func = None
+        self.confirm_func = None
+
         self._sack = None
 
         self._grabfunc = None
@@ -474,6 +478,7 @@ class YumRepository(Repository, config.RepoConf):
         self.setAttribute('cachedir', cachedir)
         self.setAttribute('pkgdir', pkgdir)
         self.setAttribute('hdrdir', hdrdir)
+        self.setAttribute('gpgdir', self.cachedir + '/gpgdir')
 
         cookie = self.cachedir + '/' + self.metadata_cookie_fn
         self.setAttribute('metadata_cookie', cookie)
@@ -751,10 +756,12 @@ class YumRepository(Repository, config.RepoConf):
             del fo
 
 
-    def setup(self, cache, mediafunc = None):
+    def setup(self, cache, mediafunc = None, gpg_import_func=None, confirm_func=None):
         try:
             self.cache = cache
             self.mediafunc = mediafunc
+            self.gpg_import_func = gpg_import_func
+            self.confirm_func = confirm_func
             self.dirSetup()
         except Errors.RepoError, e:
             raise
@@ -789,6 +796,8 @@ class YumRepository(Repository, config.RepoConf):
             if grab_can_fail:
                 return None
             raise Errors.RepoError, 'Error downloading file %s: %s' % (local, e)
+        
+            
         return result
         
     def _parseRepoXML(self, local, parse_can_fail=None):
@@ -1098,7 +1107,33 @@ class YumRepository(Repository, config.RepoConf):
             filepath = fo.filename
         else:
             filepath = fo
+        
+        if self.gpgcheck in ('repo'): # or whatever FIXME
 
+            sigfile = self.cachedir + '/repomd.xml.asc'
+            try:
+                result = self._getFile(relative='repodata/repomd.xml.asc',
+                                       copy_local=1,
+                                       local = sigfile,
+                                       text='%s repo signature' % self.id,
+                                       reget=None,
+                                       checkfunc=None,
+                                       cache=self.http_caching == 'all')
+            except URLGrabError, e:
+                raise URLGrabError(-1, 'Error finding signature for repomd.xml for %s: %s' % (self, e))
+            
+            if not os.path.exists(self.gpgdir):
+                if self.gpg_import_func: 
+                    #FIXME probably should have an else off of this to 
+                    # complain if there is no import function
+                    self.gpg_import_func(self, self.confirm_func)
+                    # FIXME if we get the okay here to import the key then
+                    # we should set an option so that future key imports for this
+                    # repo will be allowed w/o question
+
+            if not misc.valid_detached_sig(result, filepath, self.gpgdir):
+                raise URLGrabError(-1, 'repomd.xml signature could not be verified for %s' % (self))
+        
         try:
             repoMDObject.RepoMD(self.id, filepath)
         except Errors.RepoMDError, e:

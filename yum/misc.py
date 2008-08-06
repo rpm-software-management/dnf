@@ -18,6 +18,7 @@ import bz2
 from stat import *
 try:
     import gpgme
+    import gpgme.editutil
 except ImportError:
     gpgme = None
 try:
@@ -339,30 +340,37 @@ def keyInstalled(ts, keyid, timestamp):
 
     return -1
 
-def import_key_to_pubring(rawkey, repo_cachedir):
+def import_key_to_pubring(rawkey, keyid, cachedir=None, gpgdir=None):
+    # FIXME - cachedir can be removed from this method when we break api
     if gpgme is None:
         return False
-
-    gpgdir = '%s/gpgdir' % repo_cachedir
+    
+    if not gpgdir:
+        gpgdir = '%s/gpgdir' % cachedir
+    
     if not os.path.exists(gpgdir):
         os.makedirs(gpgdir)
     
     key_fo = StringIO(rawkey) 
-    ctx = gpgme.Context()
     os.environ['GNUPGHOME'] = gpgdir
+    # import the key
+    ctx = gpgme.Context()
     fp = open(os.path.join(gpgdir, 'gpg.conf'), 'wb')
     fp.write('')
     fp.close()
     ctx.import_(key_fo)
     key_fo.close()
+    # ultimately trust the key or pygpgme is definitionally stupid
+    k = ctx.get_key(keyid)
+    gpgme.editutil.edit_trust(ctx, k, gpgme.VALIDITY_ULTIMATE)
     return True
     
 def return_keyids_from_pubring(gpgdir):
     if gpgme is None or not os.path.exists(gpgdir):
         return []
-        
-    ctx = gpgme.Context()
+
     os.environ['GNUPGHOME'] = gpgdir
+    ctx = gpgme.Context()
     keyids = []
     for k in ctx.keylist():
         for subkey in k.subkeys:
@@ -370,7 +378,34 @@ def return_keyids_from_pubring(gpgdir):
                 keyids.append(subkey.keyid)
 
     return keyids
-        
+
+def valid_detached_sig(sig_file, signed_file, gpghome=None):
+    """takes signature , file that was signed and an optional gpghomedir"""
+
+    if gpghome and os.path.exists(gpghome):
+        os.environ['GNUPGHOME'] = gpghome
+
+    sig = open(sig_file, 'r')
+    signed_text = open(signed_file, 'r')
+    plaintext = None
+    ctx = gpgme.Context()
+
+    try:
+        sigs = ctx.verify(sig, signed_text, plaintext)
+    except gpgme.GpgmeError, e:
+        return False
+    else:
+        thissig = sigs[0] # is there ever a case where we care about a sig beyond the first one?
+        if thissig:
+            if thissig.validity in (gpgme.VALIDITY_FULL,
+                                gpgme.VALIDITY_MARGINAL,
+                                gpgme.VALIDITY_ULTIMATE):
+                return True
+            else:
+                return False
+
+    return False
+
 def getCacheDir(tmpdir='/var/tmp'):
     """return a path to a valid and safe cachedir - only used when not running
        as root or when --tempcache is set"""

@@ -2711,6 +2711,38 @@ class YumBase(depsolve.Depsolve):
 
         return returndict
 
+    def _retrievePublicKey(self, keyurl):
+        """
+        Retrieve a key file
+        @param keyurl: url to the key to retrieve
+        Returns a list of dicts with all the keyinfo
+        """
+        key_installed = False
+
+        self.logger.info(_('Retrieving GPG key from %s') % keyurl)
+
+        # Go get the GPG key from the given URL
+        try:
+            rawkey = urlgrabber.urlread(keyurl, limit=9999)
+        except urlgrabber.grabber.URLGrabError, e:
+            raise Errors.YumBaseError(_('GPG key retrieval failed: ') +
+                                      to_unicode(str(e)))
+        # Parse the key
+        keys_info = misc.getgpgkeyinfo(rawkey, multiple=True)
+        keys = []
+        for keyinfo in keys_info:
+            thiskey = {}
+            for info in ('keyid', 'timestamp', 'userid', 
+                         'fingerprint', 'raw_key'):
+                if not keyinfo.has_key(info):
+                    raise Errors.YumBaseError, \
+                      _('GPG key parsing failed: key does not have value %s') + info
+                thiskey[info] = keyinfo[info]
+            thiskey['hexkeyid'] = misc.keyIdToRPMVer(keyinfo['keyid']).upper()
+            keys.append(thiskey)
+        
+        return keys
+
     def getKeyForPackage(self, po, askcb = None, fullaskcb = None):
         """
         Retrieve a key for a package. If needed, prompt for if the key should
@@ -2731,60 +2763,40 @@ class YumBase(depsolve.Depsolve):
         ts = rpmUtils.transaction.TransactionWrapper(self.conf.installroot)
 
         for keyurl in keyurls:
-            self.logger.info(_('Retrieving GPG key from %s') % keyurl)
+            keys = self._retrievePublicKey(keyurl)
 
-            # Go get the GPG key from the given URL
-            try:
-                rawkey = urlgrabber.urlread(keyurl, limit=9999)
-            except urlgrabber.grabber.URLGrabError, e:
-                raise Errors.YumBaseError(_('GPG key retrieval failed: ') +
-                                          to_unicode(str(e)))
-
-            # Parse the key
-            keys_info = misc.getgpgkeyinfo(rawkey, multiple=True)
-            
-            for keyinfo in keys_info:
-                try: 
-                    keyid = keyinfo['keyid']
-                    hexkeyid = misc.keyIdToRPMVer(keyid).upper()
-                    timestamp = keyinfo['timestamp']
-                    userid = keyinfo['userid']
-                    fingerprint = keyinfo['fingerprint']
-                    raw_key = keyinfo['raw_key']
-                except ValueError, e:
-                    raise Errors.YumBaseError, \
-                          _('GPG key parsing failed: ') + str(e)
-
+            for info in keys:
                 # Check if key is already installed
-                if misc.keyInstalled(ts, keyid, timestamp) >= 0:
+                if misc.keyInstalled(ts, info['keyid'], info['timestamp']) >= 0:
                     self.logger.info(_('GPG key at %s (0x%s) is already installed') % (
-                        keyurl, hexkeyid))
+                        keyurl, info['hexkeyid']))
                     continue
 
                 # Try installing/updating GPG key
                 self.logger.critical(_('Importing GPG key 0x%s "%s" from %s') %
-                                     (hexkeyid, to_unicode(userid),
+                                     (info['hexkeyid'], 
+                                      to_unicode(info['userid']),
                                       keyurl.replace("file://","")))
                 rc = False
                 if self.conf.assumeyes:
                     rc = True
                 elif fullaskcb:
-                    rc = fullaskcb({"po": po, "userid": userid,
-                                    "hexkeyid": hexkeyid, "keyurl": keyurl,
-                                    "fingerprint": fingerprint, "timestamp": timestamp})
+                    rc = fullaskcb({"po": po, "userid": info['userid'],
+                                    "hexkeyid": info['hexkeyid'], 
+                                    "keyurl": keyurl,
+                                    "fingerprint": info['fingerprint'],
+                                    "timestamp": info['timestamp']})
                 elif askcb:
-                    rc = askcb(po, userid, hexkeyid)
+                    rc = askcb(po, info['userid'], info['hexkeyid'])
 
                 if not rc:
                     raise Errors.YumBaseError, _("Not installing key")
                 
                 # Import the key
-                result = ts.pgpImportPubkey(misc.procgpgkey(raw_key))
+                result = ts.pgpImportPubkey(misc.procgpgkey(info['raw_key']))
                 if result != 0:
                     raise Errors.YumBaseError, \
                           _('Key import failed (code %d)') % result
-                misc.import_key_to_pubring(rawkey, po.repo.cachedir)
-                
                 self.logger.info(_('Key imported successfully'))
                 key_installed = True
 
@@ -2801,6 +2813,63 @@ class YumBase(depsolve.Depsolve):
         if result != 0:
             self.logger.info(_("Import of key(s) didn't help, wrong key(s)?"))
             raise Errors.YumBaseError, errmsg
+    
+    def getKeyForRepo(self, repo, callback=None):
+        """
+        Retrieve a key for a repository If needed, prompt for if the key should
+        be imported using callback
+        
+        @param repo: Repository object to retrieve the key of.
+        @param callback: Callback function to use for asking for verification
+                          of a key. Takes a dictionary of key info.
+        """
+        keyurls = repo.gpgkey
+        key_installed = False
+        if not callback:
+            callback = self._confirmGpgKeyImport
+
+        for keyurl in keyurls:
+            keys = self._retrievePublicKey(keyurl)
+            for info in keys:
+                # Check if key is already installed
+                if info['keyid'] in misc.return_keyids_from_pubring(repo.gpgdir):
+                    self.logger.info(_('GPG key at %s (0x%s) is already imported') % (
+                        keyurl, info['hexkeyid']))
+                    continue
+
+                # Try installing/updating GPG key
+                self.logger.critical(_('Importing GPG key 0x%s "%s" from %s') %
+                                     (info['hexkeyid'], 
+                                     to_unicode(info['userid']),
+                                     keyurl.replace("file://","")))
+                rc = False
+                if self.conf.assumeyes:
+                    rc = True
+                elif callback:
+                    rc = callback({"repo": repo, "userid": info['userid'],
+                                    "hexkeyid": info['hexkeyid'], "keyurl": keyurl,
+                                    "fingerprint": info['fingerprint'],
+                                    "timestamp": info['timestamp']})
+
+
+                if not rc:
+                    raise Errors.YumBaseError, _("Not installing key for repo %s") % repo
+                
+                # Import the key
+                result = misc.import_key_to_pubring(info['raw_key'], info['hexkeyid'], gpgdir=repo.gpgdir)
+                if not result:
+                    raise Errors.YumBaseError, _('Key import failed')
+                self.logger.info(_('Key imported successfully'))
+                key_installed = True
+
+                if not key_installed:
+                    raise Errors.YumBaseError, \
+                          _('The GPG keys listed for the "%s" repository are ' \
+                          'already installed but they are not correct for this ' \
+                          'package.\n' \
+                          'Check that the correct key URLs are configured for ' \
+                          'this repository.') % (repo.name)
+
 
     def _limit_installonly_pkgs(self):
         if self.conf.installonly_limit < 1 :
@@ -2912,7 +2981,7 @@ class YumBase(depsolve.Depsolve):
         This need to be overloaded in a subclass to make GPG Key import work
         '''
         return False
-
+    
     def _doTestTransaction(self,callback,display=None):
         ''' Do the RPM test transaction '''
         # This can be overloaded by a subclass.    
