@@ -2845,8 +2845,6 @@ class YumBase(depsolve.Depsolve):
         """
         keyurls = repo.gpgkey
         key_installed = False
-        if not callback:
-            callback = self._confirmGpgKeyImport
 
         for keyurl in keyurls:
             keys = self._retrievePublicKey(keyurl)
