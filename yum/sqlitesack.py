@@ -34,6 +34,7 @@ import sqlutils
 import constants
 import operator
 import time
+from yum.misc import seq_max_split
 
 def catchSqliteException(func):
     """This decorator converts sqlite exceptions into RepoError"""
@@ -825,12 +826,10 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
             return []
 
         returnList = []
-        if len(names) > constants.PATTERNS_MAX:
-            names = set(names)
-            for pkg in self.returnPackages():
-                if pkg.name not in names:
-                    continue
-                returnList.append(pkg)
+        max_entries = constants.PATTERNS_MAX
+        if len(names) > max_entries:
+            for names in seq_max_split(names, max_entries):
+                returnList.extend(self.searchNames(names))
             return returnList
 
         pat_sqls = []
@@ -1057,10 +1056,17 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
         """Builds a list of packages, only containing nevra information. No
            excludes are done at this stage. """
 
-        if patterns is None or len(patterns) > (constants.PATTERNS_MAX / 7):
+        if patterns is None:
             patterns = []
+
+        returnList = []
+        max_entries = constants.PATTERNS_MAX / 7
+        if len(patterns) > max_entries:
+            for patterns in seq_max_split(patterns, max_entries):
+                returnList.extend(self._buildPkgObjList(repoid, patterns,
+                                                        ignore_case))
+            return returnList
         
-        returnList = []        
         for (repo,cache) in self.primarydb.items():
             if (repoid == None or repoid == repo.id):
                 cur = cache.cursor()

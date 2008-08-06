@@ -592,7 +592,31 @@ def find_ts_remaining(timestamp, yumlibpath='/var/lib/yum'):
         to_complete_items.append((action, pkgspec))
     
     return to_complete_items
+
+def seq_max_split(seq, max_entries):
+    """ Given a seq, split into a list of lists of length max_entries each. """
+    ret = []
+    num = len(seq)
+    beg = 0
+    while num > max_entries:
+        end = beg + max_entries
+        ret.append(seq[beg:end])
+        beg += max_entries
+        num -= max_entries
+    ret.append(seq[beg:])
+    return ret
     
+def to_xml(item, attrib=False):
+    import xml.sax.saxutils
+    item = to_utf8(item) # verify this does enough conversion
+    item = item.rstrip()
+    if attrib:
+        item = xml.sax.saxutils.escape(item, entities={'"':"&quot;"})
+    else:
+        item = xml.sax.saxutils.escape(item)
+    return item
+
+# ---------- i18n ----------
 def to_unicode(obj, encoding='utf-8', errors='replace'):
     ''' convert a 'str' to 'unicode' '''
     if isinstance(obj, basestring):
@@ -621,16 +645,6 @@ def to_str(obj):
     if not isinstance(obj, basestring):
         obj = str(obj)
     return obj
-
-def to_xml(item, attrib=False):
-    import xml.sax.saxutils
-    item = to_utf8(item) # verify this does enough conversion
-    item = item.rstrip()
-    if attrib:
-        item = xml.sax.saxutils.escape(item, entities={'"':"&quot;"})
-    else:
-        item = xml.sax.saxutils.escape(item)
-    return item
 
 def get_my_lang_code():
     import locale

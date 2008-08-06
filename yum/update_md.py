@@ -27,6 +27,8 @@ import gzip
 from textwrap import wrap
 from yum.yumRepo import YumRepository
 
+import rpmUtils.miscutils
+
 try:
     from xml.etree import cElementTree
 except ImportError:
@@ -83,7 +85,7 @@ class UpdateNotice(object):
 """ % self._md
 
         if self._md['updated'] and self._md['updated'] != self._md['issued']:
-            head += "    Updated : %(updated)s" % self._md['updated']
+            head += "    Updated : %s" % self._md['updated']
 
         # Add our bugzilla references
         bzs = filter(lambda r: r['type'] == 'bugzilla', self._md['references'])
@@ -102,13 +104,19 @@ class UpdateNotice(object):
                 cvelist += " %s\n\t    :" % cve['id']
             head += cvelist[:-1].rstrip() + '\n'
 
-        desc = wrap(self._md['description'], width=64,
-                    subsequent_indent=' ' * 12 + ': ')
-        head += "Description : %s\n" % '\n'.join(desc)
+        if self._md['description'] is not None:
+            desc = wrap(self._md['description'], width=64,
+                        subsequent_indent=' ' * 12 + ': ')
+            head += "Description : %s\n" % '\n'.join(desc)
+
+        #  Get a list of arches we care about:
+        arches = set(rpmUtils.arch.getArchList())
 
         filelist = "      Files :"
         for pkg in self._md['pkglist']:
             for file in pkg['packages']:
+                if file['arch'] not in arches:
+                    continue
                 filelist += " %s\n\t    :" % file['filename']
         head += filelist[:-1].rstrip()
 
@@ -226,6 +234,11 @@ class UpdateNotice(object):
         return package
 
 
+def _rpm_tup_vercmp(tup1, tup2):
+    """ Compare two "std." tuples, (n, a, e, v, r). """
+    return rpmUtils.miscutils.compareEVR((tup1[2], tup1[3], tup1[4]),
+                                         (tup2[2], tup2[3], tup2[4]))
+
 class UpdateMetadata(object):
 
     """
@@ -234,12 +247,15 @@ class UpdateMetadata(object):
 
     def __init__(self):
         self._notices = {}
-        self._cache = {}    # a pkg name => notice cache for quick lookups
+        self._cache = {}    # a pkg nvr => notice cache for quick lookups
+        self._no_cache = {}    # a pkg name only => notice list
         self._repos = []    # list of repo ids that we've parsed
 
-    def get_notices(self):
+    def get_notices(self, name=None):
         """ Return all notices. """
-        return self._notices.values()
+        if name is None:
+            return self._notices.values()
+        return name in self._no_cache and self._no_cache[name] or []
 
     notices = property(get_notices)
 
@@ -251,6 +267,36 @@ class UpdateMetadata(object):
         if type(nvr) in (type([]), type(())):
             nvr = '-'.join(nvr)
         return self._cache.has_key(nvr) and self._cache[nvr] or None
+
+    #  The problem with the above "get_notice" is that not everyone updates
+    # daily. So if you are at pkg-1, pkg-2 has a security notice, and pkg-3
+    # has a BZ fix notice. All you can see is the BZ notice for the new "pkg-3"
+    # with the above.
+    #  So now instead you lookup based on the _installed_ pkg.pkgtup, and get
+    # two notices, in order: [(pkg-3, notice), (pkg-2, notice)]
+    # the reason for the sorting order is that the first match will give you
+    # the minimum pkg you need to move to.
+    def get_applicable_notices(self, pkgtup):
+        """
+        Retrieve any update notices which are newer than a
+        given std. pkgtup (name, arch, epoch, version, release) tuple.
+        """
+        oldpkgtup = pkgtup
+        name = oldpkgtup[0]
+        arch = oldpkgtup[1]
+        ret = []
+        for notice in self.get_notices(name):
+            for upkg in notice['pkglist']:
+                for pkg in upkg['packages']:
+                    if pkg['name'] != name or pkg['arch'] != arch:
+                        continue
+                    pkgtup = (pkg['name'], pkg['arch'], pkg['epoch'] or '0',
+                              pkg['version'], pkg['release'])
+                    if _rpm_tup_vercmp(pkgtup, oldpkgtup) <= 0:
+                        continue
+                    ret.append((pkgtup, notice))
+        ret.sort(cmp=_rpm_tup_vercmp, key=lambda x: x[0], reverse=True)
+        return ret
 
     def add(self, obj, mdtype='updateinfo'):
         """ Parse a metadata from a given YumRepository, file, or filename. """
@@ -278,6 +324,8 @@ class UpdateMetadata(object):
                             self._cache['%s-%s-%s' % (file['name'],
                                                       file['version'],
                                                       file['release'])] = un
+                            no = self._no_cache.setdefault(file['name'], set())
+                            no.add(un)
 
     def __str__(self):
         ret = ''

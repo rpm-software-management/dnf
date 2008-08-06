@@ -53,6 +53,7 @@ from parser import ConfigPreProcessor, varReplace
 import transactioninfo
 import urlgrabber
 from urlgrabber.grabber import URLGrabError
+from urlgrabber.progress import format_number, format_time
 from packageSack import packagesNewestByNameArch, packagesNewestByName
 import depsolve
 import plugins
@@ -1096,6 +1097,7 @@ class YumBase(depsolve.Depsolve):
         if (hasattr(urlgrabber.progress, 'text_meter_total_size') and
             len(remote_pkgs) > 1):
             urlgrabber.progress.text_meter_total_size(remote_size)
+        beg_download = time.time()
         i = 0
         local_size = 0
         for po in remote_pkgs:
@@ -1103,13 +1105,20 @@ class YumBase(depsolve.Depsolve):
             checkfunc = (self.verifyPkg, (po, 1), {})
             dirstat = os.statvfs(po.repo.pkgdir)
             if (dirstat.f_bavail * dirstat.f_bsize) <= long(po.size):
-                adderror(po, _('Insufficient space in download directory %s '
-                        'to download') % po.repo.pkgdir)
+                adderror(po, _('Insufficient space in download directory %s\n'
+                        "    * free   %s\n"
+                        "    * needed %s") %
+                         (po.repo.pkgdir,
+                          format_number(dirstat.f_bavail * dirstat.f_bsize),
+                          format_number(po.size)))
                 continue
             
             try:
-                text = '(%s/%s): %s' % (i, len(remote_pkgs),
-                                        os.path.basename(po.relativepath))
+                if len(remote_pkgs) == 1:
+                    text = os.path.basename(po.relativepath)
+                else:
+                    text = '(%s/%s): %s' % (i, len(remote_pkgs),
+                                            os.path.basename(po.relativepath))
                 mylocal = po.repo.getPackage(po,
                                    checkfunc=checkfunc,
                                    text=text,
@@ -1125,6 +1134,17 @@ class YumBase(depsolve.Depsolve):
                 po.localpath = mylocal
                 if errors.has_key(po):
                     del errors[po]
+
+        if len(remote_pkgs) > 1 and hasattr(urlgrabber.progress,'TerminalLine'):
+            tl = urlgrabber.progress.TerminalLine(8)
+            print "-" * tl.rest()
+            dl_time = time.time() - beg_download
+            ui_size = tl.add(' | %5sB' % format_number(remote_size))
+            ui_time = tl.add(' %9s' % format_time(dl_time))
+            ui_end  = tl.add(' ' * 5)
+            ui_bs   = tl.add(' %5sB/s' % format_number(remote_size / dl_time))
+            print "%-*.*s%s%s%s%s" % (tl.rest(), tl.rest(), _("Total"),
+                                      ui_bs, ui_size, ui_time, ui_end)
 
         self.plugins.run('postdownload', pkglist=pkglist, errors=errors)
 
@@ -1221,7 +1241,7 @@ class YumBase(depsolve.Depsolve):
             check = repo.gpgcheck
             hasgpgkey = not not repo.gpgkey 
         
-        if check in ('true', 'packages'):
+        if check in ('all', 'packages'):
             ts = self.rpmdb.readOnlyTS()
             sigresult = rpmUtils.miscutils.checkSig(ts, po.localPkg())
             localfn = os.path.basename(po.localPkg())
