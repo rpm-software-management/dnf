@@ -305,6 +305,7 @@ class YumBase(depsolve.Depsolve):
             repo.name = section
             self.logger.error(_('Repository %r is missing name in configuration, '
                     'using id') % section)
+        repo.name = to_unicode(repo.name)
 
         # Set attributes not from the config file
         repo.basecachedir = self.conf.cachedir
