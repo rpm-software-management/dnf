@@ -865,10 +865,28 @@ class DepsolveTests(DepsolveTests):
         self.xsack.addPackage(po3)
 
         self.assertEquals('ok', *self.resolveCode())
-        # FIXME: This is wrong, it should be one of:
-        # self.assertResult((xpo, po3))
-        # self.assertResult((xpo, po2))
-        self.assertResult((xpo, po2, po3))
+        self.assertResult((xpo, po2))
+
+    def testMultiPkgVersions5(self):
+        ipo1 = FakePackage('abcd', arch='i386')
+        ipo1.addRequires('Foo', 'EQ', ('0', '1', '1'))
+        self.rpmdb.addPackage(ipo1)
+        ipo2 = FakePackage('Foo', arch='i386')
+        self.rpmdb.addPackage(ipo2)
+
+        xpo = FakePackage('abcd', version='2', arch='i386')
+        xpo.addRequires('Foo', 'GE', ('0', '2', '1'))
+        self.tsInfo.addUpdate(xpo, oldpo=ipo1)
+
+        po1 = FakePackage('Foo', arch='i386')
+        self.xsack.addPackage(po1)
+        po2 = FakePackage('Foo', version='2', arch='i686')
+        po3 = FakePackage('Foo', version='2', arch='i386')
+        self.xsack.addPackage(po3)
+        self.xsack.addPackage(po2)
+
+        self.assertEquals('ok', *self.resolveCode())
+        self.assertResult((xpo, po2))
 
     # Test from "Real Life" because we just can't think like they do
     def testRL_unison1(self):

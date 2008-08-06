@@ -2514,7 +2514,13 @@ class YumBase(depsolve.Depsolve):
             #        most likely correct
             pot_updated = self.rpmdb.searchNevra(name=available_pkg.name, arch=available_pkg.arch)
             for ipkg in pot_updated:
-                if ipkg.verLT(available_pkg):
+                if self.tsInfo.isObsoleted(ipkg.pkgtup):
+                    self.verbose_logger.log(logginglevels.DEBUG_2, _('Not Updating Package that is already obsoleted: %s.%s %s:%s-%s'), 
+                                            ipkg.pkgtup)
+                elif self.tsInfo.getMembersWithState(ipkg.pkgtup, [TS_UPDATED]):
+                    self.verbose_logger.log(logginglevels.DEBUG_2, _('Not Updating Package that is already updated: %s.%s %s:%s-%s'), 
+                                            ipkg.pkgtup)
+                elif ipkg.verLT(available_pkg):
                     txmbr = self.tsInfo.addUpdate(available_pkg, ipkg)
                     if requiringPo:
                         txmbr.setAsDep(requiringPo)
