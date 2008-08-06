@@ -1232,7 +1232,7 @@ class YumBase(depsolve.Depsolve):
             check = repo.gpgcheck
             hasgpgkey = not not repo.gpgkey 
         
-        if check in ('all', 'packages'):
+        if check:
             ts = self.rpmdb.readOnlyTS()
             sigresult = rpmUtils.miscutils.checkSig(ts, po.localPkg())
             localfn = os.path.basename(po.localPkg())
@@ -3121,6 +3121,7 @@ class YumBase(depsolve.Depsolve):
         newrepo.enablegroups = True
         newrepo.metadata_expire = 0
         newrepo.gpgcheck = self.conf.gpgcheck
+        newrepo.repo_gpgcheck = self.conf.repo_gpgcheck
         newrepo.basecachedir = self.conf.cachedir
 
         for key in kwargs.keys():

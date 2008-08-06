@@ -32,6 +32,10 @@ import rpmUtils.transaction
 import rpmUtils.arch
 import Errors
 
+# Alter/patch these to change the default checking...
+__pkgs_gpgcheck_default__ = False
+__repo_gpgcheck_default__ = False
+
 class Option(object):
     '''
     This class handles a single Yum configuration file option. Create
@@ -624,16 +628,9 @@ class YumConf(StartupConf):
     diskspacecheck = BoolOption(True)
     overwrite_groups = BoolOption(False)
     keepalive = BoolOption(True)
-    gpgcheck = CaselessSelectionOption('none',
-                                       ('none', 'all', 'packages', 'repo'),
-                                       {'0'          : 'none',
-                                        'no'         : 'none',
-                                        'false'      : 'none',
-                                        '1'          : 'all',
-                                        'yes'        : 'all',
-                                        'true'       : 'all',
-                                        'pkgs'       : 'packages',
-                                        'repository' : 'repo'})
+    # FIXME: rename gpgcheck to pkgs_gpgcheck
+    gpgcheck = BoolOption(__pkgs_gpgcheck_default__)
+    repo_gpgcheck = BoolOption(__repo_gpgcheck_default__)
     obsoletes = BoolOption(False)
     showdupesfromrepos = BoolOption(False)
     enabled = BoolOption(True)
@@ -687,7 +684,9 @@ class RepoConf(BaseConfig):
     retries = Inherit(YumConf.retries)
     failovermethod = Inherit(YumConf.failovermethod)
 
+    # FIXME: rename gpgcheck to pkgs_gpgcheck
     gpgcheck = Inherit(YumConf.gpgcheck)
+    repo_gpgcheck = Inherit(YumConf.repo_gpgcheck)
     keepalive = Inherit(YumConf.keepalive)
     enablegroups = Inherit(YumConf.enablegroups)
 

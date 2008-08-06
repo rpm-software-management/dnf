@@ -338,7 +338,8 @@ class YumRepository(Repository, config.RepoConf):
     def dump(self):
         output = '[%s]\n' % self.id
         vars = ['name', 'bandwidth', 'enabled', 'enablegroups',
-                 'gpgcheck', 'includepkgs', 'keepalive', 'proxy',
+                'gpgcheck', 'repo_gpgcheck', # FIXME: gpgcheck => pkgs_gpgcheck
+                'includepkgs', 'keepalive', 'proxy',
                  'proxy_password', 'proxy_username', 'exclude',
                  'retries', 'throttle', 'timeout', 'mirrorlist',
                  'cachedir', 'gpgkey', 'pkgdir', 'hdrdir']
@@ -1108,7 +1109,7 @@ class YumRepository(Repository, config.RepoConf):
         else:
             filepath = fo
         
-        if self.gpgcheck in ('all', 'repo'): # or whatever FIXME
+        if self.repo_gpgcheck:
 
             sigfile = self.cachedir + '/repomd.xml.asc'
             try:
