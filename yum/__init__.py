@@ -53,7 +53,7 @@ from parser import ConfigPreProcessor, varReplace
 import transactioninfo
 import urlgrabber
 from urlgrabber.grabber import URLGrabError
-from urlgrabber.progress import format_number, format_time
+from urlgrabber.progress import format_number
 from packageSack import packagesNewestByNameArch, packagesNewestByName
 import depsolve
 import plugins
@@ -1034,9 +1034,8 @@ class YumBase(depsolve.Depsolve):
             raise URLGrabError(-1, _('Package does not match checksum'))
         
         return 0
-            
-           
-    def downloadPkgs(self, pkglist, callback=None):
+
+    def downloadPkgs(self, pkglist, callback=None, callback_total=None):
         def mediasort(apo, bpo):
             # FIXME: we should probably also use the mediaid; else we
             # could conceivably ping-pong between different disc1's
@@ -1135,16 +1134,8 @@ class YumBase(depsolve.Depsolve):
                 if errors.has_key(po):
                     del errors[po]
 
-        if len(remote_pkgs) > 1 and hasattr(urlgrabber.progress,'TerminalLine'):
-            tl = urlgrabber.progress.TerminalLine(8)
-            print "-" * tl.rest()
-            dl_time = time.time() - beg_download
-            ui_size = tl.add(' | %5sB' % format_number(remote_size))
-            ui_time = tl.add(' %9s' % format_time(dl_time))
-            ui_end  = tl.add(' ' * 5)
-            ui_bs   = tl.add(' %5sB/s' % format_number(remote_size / dl_time))
-            print "%-*.*s%s%s%s%s" % (tl.rest(), tl.rest(), _("Total"),
-                                      ui_bs, ui_size, ui_time, ui_end)
+        if callback_total is not None:
+            callback_total(remote_pkgs, remote_size, beg_download)
 
         self.plugins.run('postdownload', pkglist=pkglist, errors=errors)
 

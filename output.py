@@ -27,6 +27,7 @@ import rpm
 import re # For YumTerm
 
 from urlgrabber.progress import TextMeter
+import urlgrabber.progress
 from urlgrabber.grabber import URLGrabError
 from yum.misc import sortPkgObj, prco_tuple_to_string, to_str, to_unicode, get_my_lang_code
 import yum.misc
@@ -474,8 +475,6 @@ class YumOutput:
                 for po in reqlist:
                     print "   provider: %s" % po.compactPrint()
 
-
-        
     def format_number(self, number, SI=0, space=' '):
         """Turn numbers into human-readable metric-like numbers"""
         symbols = ['',  # (none)
@@ -515,6 +514,10 @@ class YumOutput:
             format = '%.0f%s%s'
     
         return(format % (number, space, symbols[depth]))
+
+    @staticmethod
+    def format_time(seconds, use_hours=0):
+        return urlgrabber.progress.format_time(seconds, use_hours)
 
     def matchcallback(self, po, values, matchfor=None, verbose=None):
         """ Output search/provides type callback matches. po is the pkg object,
@@ -737,6 +740,24 @@ Remove   %5.5s Package(s)
         # Go to next mirror
         self._last_interrupt = now
         raise URLGrabError(15, _('user interrupt'))
+
+    def download_callback_total_cb(self, remote_pkgs, remote_size,
+                                   download_start_timestamp):
+        if len(remote_pkgs) <= 1:
+            return
+        if not hasattr(urlgrabber.progress, 'TerminalLine'):
+            return
+
+        tl = urlgrabber.progress.TerminalLine(8)
+        print "-" * tl.rest()
+        dl_time = time.time() - download_start_timestamp
+        ui_size = tl.add(' | %5sB' % self.format_number(remote_size))
+        ui_time = tl.add(' %9s' % self.format_time(dl_time))
+        ui_end  = tl.add(' ' * 5)
+        ui_bs   = tl.add(' %5sB/s' % self.format_number(remote_size / dl_time))
+        print "%-*.*s%s%s%s%s" % (tl.rest(), tl.rest(), _("Total"),
+                                  ui_bs, ui_size, ui_time, ui_end)
+
 
 class DepSolveProgressCallBack:
     """provides text output callback functions for Dependency Solver callback"""
