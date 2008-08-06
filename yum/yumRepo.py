@@ -1108,7 +1108,7 @@ class YumRepository(Repository, config.RepoConf):
         else:
             filepath = fo
         
-        if self.gpgcheck in ('repo'): # or whatever FIXME
+        if self.gpgcheck in ('all', 'repo'): # or whatever FIXME
 
             sigfile = self.cachedir + '/repomd.xml.asc'
             try:
