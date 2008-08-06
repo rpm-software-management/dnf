@@ -104,6 +104,10 @@ class Depsolve(object):
             self._tsInfo = self._transactionDataFactory()
             self._tsInfo.setDatabases(self.rpmdb, self.pkgSack)
             self._tsInfo.installonlypkgs = self.conf.installonlypkgs # this kinda sucks
+            # this REALLY sucks, sadly
+            self._tsInfo.install_method = self.install
+            self._tsInfo.update_method = self.update
+            self._tsInfo.remove_method = self.remove
         return self._tsInfo
 
     def _setTsInfo(self, value):

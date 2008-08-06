@@ -1890,12 +1890,13 @@ class YumBase(depsolve.Depsolve):
                         continue
                     # Otherwise we hook into tsInfo.add
                     pkgs = self.pkgSack.searchNevra(name=condreq)
-                    if pkgs:
-                        pkgs = self.bestPackagesFromList(pkgs)
-                    if self.tsInfo.conditionals.has_key(cond):
-                        self.tsInfo.conditionals[cond].extend(pkgs)
-                    else:
-                        self.tsInfo.conditionals[cond] = pkgs
+                    if pkgs:# if there's anything as a result then we push 
+                            # the name into tsInfo so that when we call install 
+                            # on it it passes through the normal install() call
+                        if self.tsInfo.conditionals.has_key(cond):
+                            self.tsInfo.conditionals[cond].append(condreq)
+                        else:
+                            self.tsInfo.conditionals[cond] = [condreq]
 
         return txmbrs_used
 

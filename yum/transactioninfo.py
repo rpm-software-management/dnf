@@ -193,11 +193,12 @@ class TransactionData:
             self.pkgSackPackages += 1
 
         if self.conditionals.has_key(txmember.name):
-            for po in self.conditionals[txmember.name]:
-                if self.rpmdb.contains(po=po):
+            for pkg_name in self.conditionals[txmember.name]:
+                if self.rpmdb.contains(name=pkg_name):
                     continue
-                condtxmbr = self.addInstall(po)
-                condtxmbr.setAsDep(po=txmember.po)
+                for condtxmbr in self.install_method(name=pkg_name):
+                    condtxmbr.setAsDep(po=txmember.po)
+
         self._unresolvedMembers.add(txmember)
 
     def remove(self, pkgtup):
