@@ -2187,7 +2187,34 @@ class YumBase(depsolve.Depsolve):
             slow = next_func(slow)
             if next == slow:
                 return None
+
+    def _at_groupinstall(self, pattern):
+        " Do groupinstall via. leading @ on the cmd line, for install/update."
+        assert pattern[0] == '@'
+        group_string = pattern[1:]
+        tx_return = []
+        for group in self.comps.return_groups(group_string):
+            try:
+                txmbrs = self.selectGroup(group.groupid)
+                tx_return.extend(txmbrs)
+            except yum.Errors.GroupsError:
+                self.logger.critical(_('Warning: Group %s does not exist.'), group_string)
+                continue
+        return tx_return
         
+    def _at_groupremove(self, pattern):
+        " Do groupremove via. leading @ on the cmd line, for remove."
+        assert pattern[0] == '@'
+        group_string = pattern[1:]
+        tx_return = []
+        try:
+            txmbrs = self.groupRemove(group_string)
+        except yum.Errors.GroupsError:
+            self.logger.critical(_('No group named %s exists'), group_string)
+        else:
+            tx_return.extend(txmbrs)
+        return tx_return
+
     def install(self, po=None, **kwargs):
         """try to mark for install the item specified. Uses provided package 
            object, if available. If not it uses the kwargs and gets the best
@@ -2209,6 +2236,9 @@ class YumBase(depsolve.Depsolve):
                 raise Errors.InstallError, _('Nothing specified to install')
 
             if kwargs.has_key('pattern'):
+                if kwargs['pattern'][0] == '@':
+                    return self._at_groupinstall(kwargs['pattern'])
+
                 was_pattern = True
                 pats = [kwargs['pattern']]
                 exactmatch, matched, unmatched = \
@@ -2420,6 +2450,9 @@ class YumBase(depsolve.Depsolve):
                 
                 
         elif kwargs.has_key('pattern'):
+            if kwargs['pattern'][0] == '@':
+                return self._at_groupinstall(kwargs['pattern'])
+
             (e, m, u) = self.rpmdb.matchPackageNames([kwargs['pattern']])
             instpkgs.extend(e)
             instpkgs.extend(m)
@@ -2558,6 +2591,9 @@ class YumBase(depsolve.Depsolve):
             pkgs = [po]  
         else:
             if kwargs.has_key('pattern'):
+                if kwargs['pattern'][0] == '@':
+                    return self._at_groupremove(kwargs['pattern'])
+
                 (e,m,u) = self.rpmdb.matchPackageNames([kwargs['pattern']])
                 pkgs.extend(e)
                 pkgs.extend(m)
