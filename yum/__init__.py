@@ -1132,7 +1132,7 @@ class YumBase(depsolve.Depsolve):
                 if errors.has_key(po):
                     del errors[po]
 
-        if hasattr(urlgrabber.progress, 'TerminalLine'):
+        if len(remote_pkgs) > 1 and hasattr(urlgrabber.progress,'TerminalLine'):
             tl = urlgrabber.progress.TerminalLine(8)
             print "-" * tl.rest()
             dl_time = time.time() - beg_download
