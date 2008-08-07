@@ -157,6 +157,8 @@ class YumBase(depsolve.Depsolve):
         @param enabled_plugins: Plugins to be enabled
         '''
 
+        # ' xemacs syntax hack
+
         if self._conf:
             return self._conf
         conf_st = time.time()            
@@ -176,7 +178,8 @@ class YumBase(depsolve.Depsolve):
         if errorlevel != None:
             startupconf.errorlevel = errorlevel
 
-        self.doLoggingSetup(startupconf.debuglevel, startupconf.errorlevel)
+        self.doLoggingSetup(startupconf.debuglevel, startupconf.errorlevel,
+                            startupconf.syslog_ident, startupconf.syslog_facility)
 
         if init_plugins and startupconf.plugins:
             self.doPluginSetup(optparser, plugin_types, startupconf.pluginpath,
