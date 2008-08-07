@@ -1386,8 +1386,11 @@ class YumBase(depsolve.Depsolve):
                                                     ignore_case=ic)
             else:
                 del dinst # Using ndinst instead
-                avail = self.pkgSack.returnNewestByNameArch(patterns=patterns,
-                                                            ignore_case=ic)
+                try:
+                  avail = self.pkgSack.returnNewestByNameArch(patterns=patterns,
+                                                              ignore_case=ic)
+                except Errors.PackageSackError:
+                  avail = []
             
             for pkg in avail:
                 if showdups:
