@@ -1,3 +1,402 @@
+2008-08-07  Seth Vidal <skvidal@fedoraproject.org>
+
+	* yum.spec, yum/__init__.py: mark as 3.2.18
+
+2008-08-06  Seth Vidal <skvidal@fedoraproject.org>
+
+	* yum/__init__.py, yum/depsolve.py, yum/transactioninfo.py: make
+	sure conditional pkg installs pass through install() just like
+	anything else should
+
+2008-08-06  James Antill <james@and.org>
+
+	* yum/__init__.py: Add @group cmd line support to
+	install/update/remove
+
+2008-08-06  Seth Vidal <skvidal@fedoraproject.org>
+
+	* docs/yum.conf.5: check in docs for repo_gpgcheck
+
+2008-08-06  James Antill <james@and.org>
+
+	* yum/__init__.py: Work well with unicode in repo names, repolist
+	etc.
+
+2008-08-06  James Antill <james@and.org>
+
+	* cli.py, shell.py, yum/__init__.py, yum/config.py, yum/yumRepo.py,
+	yumcommands.py: Change gpgcheck again, back to two Bool options --
+	repo_gpgcheck is the new one
+
+2008-08-06  James Antill <james@and.org>
+
+	* cli.py, output.py, yum/__init__.py: Remove the prints out of
+	__init__ and into. output.py
+
+2008-08-06  James Antill <james@and.org>
+
+	* test/depsolvetests.py, yum/__init__.py: Add almost working
+	test_min_up_and_dep fix, but turn it off
+
+2008-08-06  James Antill <james@and.org>
+
+	* yum/yumRepo.py: Make repo. gpgcheck test work again until we
+	change it back to two bools
+
+2008-08-06  James Antill <james@and.org>
+
+	* test/depsolvetests.py, yum/__init__.py: Fix
+	testMultiPkgVersions[45] and don't break anything else
+
+2008-08-06  Seth Vidal <skvidal@fedoraproject.org>
+
+	* yum/__init__.py, yum/yumRepo.py: clean up output garbage and
+	behavior when user will not allow gpg key import to repo-local
+	pubrin
+
+2008-08-06  Seth Vidal <skvidal@fedoraproject.org>
+
+	Merge branch 'yum-3_2_X' of
+	ssh://login.linux.duke.edu/home/groups/yum/git/yum into yum-3_2_X  *
+	'yum-3_2_X' of ssh://login.linux.duke.edu/home/groups/yum/git/yum:
+	Add failing test case for non-latest update/install with dep. --
+	update fails   Don't display download count if 1 pkg to download
+	Don't display download total if <= 1 pkgs downloaded   Return []
+	instead of None in named get_notices, to match non-named path
+	Return the get_applicable_notices() result in the right order
+	(descending)   Don't show ppc packages on .i386 in
+	UpdateNotice.__str__   Fix bad format string in UpdateNotice.__str__
+	Add get_applicable_notices() call to UpdateMetadata class   Fix
+	UpdateNotice.__str__ when it's None, add name only lookups for
+	notices   Add total download stats. line   Don't give up if
+	PATTERNS_MAX reached, just do the operation multiple times   Make
+	gpgcheck true/false work again   Remove the assoc. of
+	gpgcheck=1/true meaning gpgcheck=all   Give more info. when we fail
+	the disk space checks
+
+2008-08-06  Seth Vidal <skvidal@fedoraproject.org>
+
+	* cli.py, output.py, yum/__init__.py, yum/misc.py, yum/repos.py,
+	yum/yumRepo.py: merge changes for repomd.xml signature checking and
+	key import
+
+2008-08-05  James Antill <james@and.org>
+
+	* test/depsolvetests.py: Add failing test case for non-latest
+	update/install with dep. -- update fails
+
+2008-08-05  James Antill <james@and.org>
+
+	* yum/__init__.py: Don't display download count if 1 pkg to download
+
+
+2008-08-05  James Antill <james@and.org>
+
+	* yum/__init__.py: Don't display download total if <= 1 pkgs
+	downloaded
+
+2008-08-05  James Antill <james@and.org>
+
+	* yum/update_md.py: Return [] instead of None in named get_notices,
+	to match non-named path
+
+2008-08-04  James Antill <james@and.org>
+
+	* yum/update_md.py: Return the get_applicable_notices() result in
+	the right order (descending)
+
+2008-08-04  James Antill <james@and.org>
+
+	* yum/update_md.py:  Don't show ppc packages on .i386 in UpdateNotice.__str__
+
+2008-08-01  James Antill <james@and.org>
+
+	* yum/update_md.py: Fix bad format string in UpdateNotice.__str__
+
+2008-08-01  James Antill <james@and.org>
+
+	* yum/update_md.py: Add get_applicable_notices() call to
+	UpdateMetadata class
+
+2008-07-31  James Antill <james@and.org>
+
+	* yum/update_md.py: Fix UpdateNotice.__str__ when it's None, add
+	name only lookups for notices
+
+2008-07-31  James Antill <james@and.org>
+
+	* yum/__init__.py: Add total download stats. line
+
+2008-07-29  James Antill <james@and.org>
+
+	* yum/misc.py, yum/sqlitesack.py: Don't give up if PATTERNS_MAX
+	reached, just do the operation multiple times
+
+2008-07-29  James Antill <james@and.org>
+
+	* yum/config.py: Make gpgcheck true/false work again
+
+2008-07-28  James Antill <james@and.org>
+
+	* cli.py, yum/__init__.py, yum/config.py: Remove the assoc. of
+	gpgcheck=1/true meaning gpgcheck=all
+
+2008-07-28  James Antill <james@and.org>
+
+	* yum/__init__.py: Give more info. when we fail the disk space
+	checks
+
+2008-07-27  James Antill <james@and.org>
+
+	* cli.py, yum/__init__.py, yum/plugins.py: Add --enableplugin option
+
+
+2008-07-27  James Antill <james@and.org>
+
+	* yum/packageSack.py: Minor cleanup for obsoletes processing
+
+2008-07-25  James Antill <james@and.org>
+
+	* cli.py: Remove debugging code, I accidentally committed *sighs*
+
+2008-07-25  James Antill <james@and.org>
+
+	* cli.py, yum/config.py: Fix typo in CaselessSelectionOption.parse()
+
+
+2008-07-25  James Antill <james@and.org>
+
+	* shell.py, yum/__init__.py, yum/config.py, yumcommands.py:  Use the mapper for gpgcheck false/true, and tidy up the using code.
+
+
+2008-07-25  James Antill <james@and.org>
+
+	* yum/config.py: Use repo instead of repository as the canonical
+	option name for gpgcheck
+
+2008-07-25  James Antill <james@and.org>
+
+	* cli.py, shell.py, yum/__init__.py, yum/config.py, yumcommands.py: 
+	Convert the gpgcheck option to have all the options for repomd.xml
+	signing
+
+2008-07-24  James Antill <james@and.org>
+
+	* cli.py: Give nicer messages when we can't find things due to case
+	sensitivity
+
+2008-07-24  James Antill <james@and.org>
+
+	* yum/sqlitesack.py: Return the correct thing for skipped
+	matchPackageNames, eg. 'yum update blah'
+
+2008-07-24  James Antill <james@and.org>
+
+	* yumcommands.py:  Output header again in repolist (logger's output nothing on errors,
+	 is weird).  Allow extra patterns to match sub-sets of repos.  Add
+	 more stats. to repolist -v, updated/size/etc.
+
+2008-07-23  James Antill <james@and.org>
+
+	* yum/depsolve.py: And fix _prco_req2req after the cleanup, testing
+	is good
+
+2008-07-23  James Antill <james@and.org>
+
+	* yum/depsolve.py: Minor reuse of code for prco requirement to
+	internal requirements conversion
+
+2008-07-23  James Antill <james@and.org>
+
+	* yum/depsolve.py: If we still have the requirement we are upgrading
+	out of, try again
+
+2008-07-22  James Antill <james@and.org>
+
+	* yum/misc.py: Fix for python-2.4.z, as it has no hashlib
+
+2008-07-22  James Antill <james@and.org>
+
+	* output.py: Change function name from simpleNevraList to Envra, as
+	that's what it outputs
+
+2008-07-22  James Antill <james@and.org>
+
+	* yum/misc.py: Move to using hashlib directly in checksum, also add
+	sha256/sha512 options
+
+2008-07-22  James Antill <james@and.org>
+
+	Merge branch 'yum-3_2_X' of
+	ssh://login.linux.duke.edu/home/groups/yum/git/yum into yum-3_2_X  *
+	'yum-3_2_X' of ssh://login.linux.duke.edu/home/groups/yum/git/yum:
+	add a __version_info__ tuple of ints derived from __version__   Add
+	parameters to selectGroup()   new german translation updates from
+	Fabian Affolter   silence the "No package matched to remove" lines
+	during groupremove operations.
+
+2008-07-22  James Antill <james@and.org>
+
+	Merge branch 'repo-sacks' into yum-3_2_X  * repo-sacks:   Don't
+	create sacks for repos that we don't care about
+
+2008-06-11  James Antill <james@and.org>
+
+	* yum/depsolve.py:  Try and solve the 666 requires on a single package problem, the
+	 kernel people want to try this for ABI stuff (each symbol is a
+	 provides).
+
+2008-07-22  James Antill <james@and.org>
+
+	Merge conflict
+
+2008-07-22  Seth Vidal <skvidal@fedoraproject.org>
+
+	* yum/__init__.py: add a __version_info__ tuple of ints derived from
+	__version__
+
+2008-07-22  Seth Vidal <skvidal@fedoraproject.org>
+
+	* yum/__init__.py: Add parameters to selectGroup()
+	group_package_types=List - overrides self.conf.group_package_types
+	enable_group_conditionals=Bool - overrides
+	self.conf.enable_group_conditionals
+
+2008-07-22  Seth Vidal <skvidal@fedoraproject.org>
+
+	* po/de.po: new german translation updates from Fabian Affolter
+
+2008-07-21  Seth Vidal <skvidal@fedoraproject.org>
+
+	* yum/__init__.py: silence the "No package matched to remove" lines
+	during groupremove operations.
+
+2008-07-20  James Antill <james@and.org>
+
+	* yum/misc.py: Make 'import gpgme' less fatal ... it isn't required,
+	yet
+
+2008-07-20  James Antill <james@and.org>
+
+	* yum/sqlitesack.py:  Add _skip_all paths to a bunch more functions, some of them do
+	 _all_excludes processing anyway ... but make sure.
+
+2008-07-20  James Antill <james@and.org>
+
+	* yum/sqlitesack.py: Merge skip_all code paths into a helper
+	function
+
+2008-07-20  James Antill <james@and.org>
+
+	* yum/sqlitesack.py: Add skip_all path to searchNames(), minor speed
+	up
+
+2008-07-20  James Antill <james@and.org>
+
+	* yum/constants.py, yum/sqlitesack.py:  Add PATTERNS_MAX path to searchNames(), so large groups work.  Bump
+	 PATTERNS_MAX to be larger.  Divide usage of PATTERNS_AMX by the
+	 number of fields per. pattern.
+
+2008-07-20  James Antill <james@and.org>
+
+	* output.py:  Add simpleNevraList() which is like simpleList() but uses nevra
+	 instead of na and evr  Add _group_names2pkgs as a template for
+	 usage of .searchNames() (for PK, etc.)  Add verbose mode to
+	 groupinfo, to output pkgs in simpleNevraList() format which uses
+	 the above.
+
+2008-07-19  Seth Vidal <skvidal@fedoraproject.org>
+
+	Merge branch 'yum-3_2_X' of
+	ssh://login.linux.duke.edu/home/groups/yum/git/yum into yum-3_2_X  *
+	'yum-3_2_X' of ssh://login.linux.duke.edu/home/groups/yum/git/yum:
+	Don't do SQL escaping combined on each SQL field   Make error
+	reporting work with python-2.4.z, dito. SQL escaping.   Tweak
+	provides warning message to be quiet on anything with a * in it
+	Conflicts:  	yum/sqlitesack.py
+
+2008-07-19  Seth Vidal <skvidal@fedoraproject.org>
+
+	* yum/sqlitesack.py: make yum list \*.noarch work again for repos.
+	Pattern was being escaped multipled times due to for loop for the
+	'field' option. moved the escaping around to avoid that problem.
+
+2008-07-18  James Antill <james@and.org>
+
+	* yum/sqlitesack.py: Don't do SQL escaping combined on each SQL
+	field
+
+2008-07-18  James Antill <james@and.org>
+
+	* yum/sqlitesack.py: Make error reporting work with python-2.4.z,
+	dito. SQL escaping.
+
+2008-07-17  James Antill <james@and.org>
+
+	* cli.py: Tweak provides warning message to be quiet on anything
+	with a * in it
+
+2008-07-18  Seth Vidal <skvidal@fedoraproject.org>
+
+	* yum/comps.py: - add add_group and add_category methods to comps object - add a \n
+	to make xml() output look better
+
+2008-07-18  Seth Vidal <skvidal@fedoraproject.org>
+
+	* output.py: fix unicode traceback due to str() call on exception
+	which was already unicode :(
+
+2008-07-16  Seth Vidal <skvidal@fedoraproject.org>
+
+	* cli.py, yum/__init__.py, yummain.py: return non-zero exit code if
+	the rpm transaction has semi-fatal scriptlet failures. adds a fake
+	resultobject returned from runTransaction() so that any future
+	extensions we add can be bolted onto the object.
+	resultobject.return_code is the important attribute
+
+2008-07-16  Seth Vidal <skvidal@fedoraproject.org>
+
+	* cli.py, yum/__init__.py: - make cli.updatePkgs() call YumBase.update() for most everything
+	<-- watch this for interaction regressions - closes rh bug #455301 -
+	add add_enable_repo method to YumBase to facilitate adding repos by
+	baseurl/mirrorlist easily
+
+2008-07-16  tla@dk.ibm.com <tla@naboo.local>
+
+	* po/ca.po: Added Catalan translation by Xavier Conde
+
+2008-07-15  James Antill <james@and.org>
+
+	* yum/repoMDObject.py, yum/yumRepo.py:  Add RepoMD.timestamp attribute, for mirrormanager etc.  Defined as
+	 the biggest/newest timestamp within a data section.    Use this as
+	 the canonical timestamp in the repomd checking, and tweak the error
+	 message.
+
+2008-07-14  Seth Vidal <skvidal@fedoraproject.org>
+
+	Merge branch 'yum-3_2_X' of
+	ssh://login.linux.duke.edu/home/groups/yum/git/yum into yum-3_2_X  *
+	'yum-3_2_X' of ssh://login.linux.duke.edu/home/groups/yum/git/yum:
+	Fix available comparison in "all" mode, use new .ver*() methods
+
+2008-07-14  Seth Vidal <skvidal@fedoraproject.org>
+
+	* yum/misc.py, yum/packages.py, yum/sqlitesack.py: move the
+	xml-generating-bits into yum proper - out of createrepo
+
+2008-07-10  James Antill <james@and.org>
+
+	* yum/__init__.py: Fix available comparison in "all" mode, use new
+	.ver*() methods
+
+2008-07-10  Seth Vidal <skvidal@fedoraproject.org>
+
+	* yum/depsolve.py: make sure the reqpo exists before we compare it
+
+2008-07-08  Seth Vidal <skvidal@fedoraproject.org>
+
+	* ChangeLog: changelog merge
+
 2008-07-08  Seth Vidal <skvidal@fedoraproject.org>
 
 	* yum.spec, yum/__init__.py: mark as 3.2.17
@@ -1090,6 +1489,10 @@
 
 	* yum/yumRepo.py: Add developer comment, and stab seth/RHN people
 	who did this
+
+2008-03-26  James Antill <james@and.org>
+
+	* yum/yumRepo.py:  Don't create sacks for repos that we don't care about
 
 2008-03-26  James Antill <james@and.org>
 
