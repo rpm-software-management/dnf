@@ -203,14 +203,16 @@ class YumBase(depsolve.Depsolve):
         return self._conf
         
 
-    def doLoggingSetup(self, debuglevel, errorlevel):
+    def doLoggingSetup(self, debuglevel, errorlevel,
+                       syslog_ident=None, syslog_facility=None):
         '''
         Perform logging related setup.
 
         @param debuglevel: Debug logging level to use.
         @param errorlevel: Error logging level to use.
         '''
-        logginglevels.doLoggingSetup(debuglevel, errorlevel)
+        logginglevels.doLoggingSetup(debuglevel, errorlevel,
+                                     syslog_ident, syslog_facility)
 
     def doFileLogSetup(self, uid, logfile):
         logginglevels.setFileLog(uid, logfile)

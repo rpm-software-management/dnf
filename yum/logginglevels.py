@@ -67,7 +67,7 @@ _syslog_facility_map = { "KERN"   : syslog_module.LOG_KERN,
                          "LOCAL5" : syslog_module.LOG_LOCAL5,
                          "LOCAL6" : syslog_module.LOG_LOCAL6,
                          "LOCAL7" : syslog_module.LOG_LOCAL7,}
-def syslogFacilityMap(self, facility):
+def syslogFacilityMap(facility):
     if type(facility) == int:
         return facility
     elif facility.upper() in _syslog_facility_map:
