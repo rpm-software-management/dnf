@@ -1,6 +1,6 @@
 Summary: RPM installer/updater
 Name: yum
-Version: 3.2.17
+Version: 3.2.18
 Release: 0
 License: GPL
 Group: System Environment/Base
@@ -99,6 +99,9 @@ exit 0
 %{_mandir}/man*/yum-updatesd*
 
 %changelog
+* Thu Aug  7 2008 Seth Vidal <skvidal at fedoraproject.org>
+- 3.2.18
+
 * Wed Jul  8 2008 Seth Vidal <skvidal at fedoraproject.org>
 - 3.2.17 
 

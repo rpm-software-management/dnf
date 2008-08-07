@@ -73,7 +73,7 @@ import string
 
 from urlgrabber.grabber import default_grabber
 
-__version__ = '3.2.17'
+__version__ = '3.2.18'
 __version_info__ = tuple([ int(num) for num in __version__.split('.')])
 
 #  Setup a default_grabber UA here that says we are yum, done using the global
