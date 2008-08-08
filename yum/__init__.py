@@ -2842,7 +2842,7 @@ class YumBase(depsolve.Depsolve):
         keyurls = repo.gpgkey
         key_installed = False
 
-        ts = rpmUtils.transaction.TransactionWrapper(self.conf.installroot)
+        ts = self.rpmdb.readOnlyTS()
 
         for keyurl in keyurls:
             keys = self._retrievePublicKey(keyurl)
