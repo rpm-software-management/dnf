@@ -382,6 +382,9 @@ def return_keyids_from_pubring(gpgdir):
 def valid_detached_sig(sig_file, signed_file, gpghome=None):
     """takes signature , file that was signed and an optional gpghomedir"""
 
+    if gpgme is None:
+        return False
+
     if gpghome and os.path.exists(gpghome):
         os.environ['GNUPGHOME'] = gpghome
 
@@ -395,14 +398,14 @@ def valid_detached_sig(sig_file, signed_file, gpghome=None):
     except gpgme.GpgmeError, e:
         return False
     else:
-        thissig = sigs[0] # is there ever a case where we care about a sig beyond the first one?
-        if thissig:
-            if thissig.validity in (gpgme.VALIDITY_FULL,
-                                gpgme.VALIDITY_MARGINAL,
+        # is there ever a case where we care about a sig beyond the first one?
+        thissig = sigs[0]
+        if not thissig:
+            return False
+
+        if thissig.validity in (gpgme.VALIDITY_FULL, gpgme.VALIDITY_MARGINAL,
                                 gpgme.VALIDITY_ULTIMATE):
-                return True
-            else:
-                return False
+            return True
 
     return False
 

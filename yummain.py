@@ -28,6 +28,7 @@ from yum import Errors
 from yum import plugins
 from yum import logginglevels
 from yum import _
+from yum.misc import to_unicode
 import cli
 
 
@@ -74,7 +75,7 @@ def main(args):
         return 1
 
     def exFatal(e):
-        logger.critical('\n\n%s', unicode(e))
+        logger.critical('\n\n%s', to_unicode(e))
         if unlock(): return 200
         return 1
 

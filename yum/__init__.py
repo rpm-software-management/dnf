@@ -157,6 +157,8 @@ class YumBase(depsolve.Depsolve):
         @param enabled_plugins: Plugins to be enabled
         '''
 
+        # ' xemacs syntax hack
+
         if self._conf:
             return self._conf
         conf_st = time.time()            
@@ -176,7 +178,8 @@ class YumBase(depsolve.Depsolve):
         if errorlevel != None:
             startupconf.errorlevel = errorlevel
 
-        self.doLoggingSetup(startupconf.debuglevel, startupconf.errorlevel)
+        self.doLoggingSetup(startupconf.debuglevel, startupconf.errorlevel,
+                            startupconf.syslog_ident, startupconf.syslog_facility)
 
         if init_plugins and startupconf.plugins:
             self.doPluginSetup(optparser, plugin_types, startupconf.pluginpath,
@@ -200,14 +203,16 @@ class YumBase(depsolve.Depsolve):
         return self._conf
         
 
-    def doLoggingSetup(self, debuglevel, errorlevel):
+    def doLoggingSetup(self, debuglevel, errorlevel,
+                       syslog_ident=None, syslog_facility=None):
         '''
         Perform logging related setup.
 
         @param debuglevel: Debug logging level to use.
         @param errorlevel: Error logging level to use.
         '''
-        logginglevels.doLoggingSetup(debuglevel, errorlevel)
+        logginglevels.doLoggingSetup(debuglevel, errorlevel,
+                                     syslog_ident, syslog_facility)
 
     def doFileLogSetup(self, uid, logfile):
         logginglevels.setFileLog(uid, logfile)
@@ -2837,7 +2842,7 @@ class YumBase(depsolve.Depsolve):
         keyurls = repo.gpgkey
         key_installed = False
 
-        ts = rpmUtils.transaction.TransactionWrapper(self.conf.installroot)
+        ts = self.rpmdb.readOnlyTS()
 
         for keyurl in keyurls:
             keys = self._retrievePublicKey(keyurl)

@@ -581,6 +581,8 @@ class StartupConf(BaseConfig):
     pluginpath = ListOption(['/usr/share/yum-plugins', '/usr/lib/yum-plugins'])
     pluginconfpath = ListOption(['/etc/yum/pluginconf.d'])
     gaftonmode = BoolOption(False)
+    syslog_ident = Option()
+    syslog_facility = Option('LOG_DAEMON')
 
 class YumConf(StartupConf):
     '''
@@ -596,8 +598,6 @@ class YumConf(StartupConf):
     keepcache = BoolOption(True)
     logfile = Option('/var/log/yum.log')
     reposdir = ListOption(['/etc/yum/repos.d', '/etc/yum.repos.d'])
-    syslog_ident = Option()
-    syslog_facility = Option('LOG_DAEMON')
 
     commands = ListOption()
     exclude = ListOption()
