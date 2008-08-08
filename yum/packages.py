@@ -516,6 +516,9 @@ class YumAvailablePackage(PackageObject, RpmBase):
         you should use self.repo.getPackage."""
         base = self.basepath
         if base:
+            # urljoin sucks in the reverse way that os.path.join sucks :)
+            if base[-1] != '/':
+                base = base + '/'
             return urlparse.urljoin(base, self.remote_path)
         return urlparse.urljoin(self.repo.urls[0], self.remote_path)
     
