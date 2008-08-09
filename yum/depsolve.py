@@ -802,7 +802,7 @@ class Depsolve(object):
         if ret:
             return ret
 
-        # This is pretty magic, basically we want and explicit:
+        # This is pretty magic, basically we want an explicit:
         #
         #  Requires: foo
         #
@@ -810,7 +810,8 @@ class Depsolve(object):
         #
         #  Requires: libfoo.so.0()
         #
-        # ...need more magic for other implicit deps. here?
+        # ...because sometimes the libfoo.so.0() is provided by multiple
+        # packages. Do we need more magic for other implicit deps. here?
         def _req_name2val(name):
             if (name.startswith("lib") and
                 (name.endswith("()") or name.endswith("()(64bit)"))):
