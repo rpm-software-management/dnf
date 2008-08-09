@@ -788,6 +788,17 @@ class Depsolve(object):
 
         return CheckDeps, CheckInstalls, CheckRemoves, any_missing
 
+    @staticmethod
+    def _sort_reqs(pkgtup1, pkgtup2):
+        """ Sort the requires for a package from most "narrow" to least,
+            this tries to ensure that if we have two reqs like
+            "libfoo = 1.2.3-4" and "foo-api" (which is also provided by
+            libxyz-foo) that we'll get just libfoo.
+            There are other similar cases this "handles"."""
+
+        mapper = {'EQ' : 1, 'LT' : 2, 'LE' : 3, 'GT' : 4, 'GE' : 5,
+                  None : 99}
+        return mapper.get(pkgtup1[1], 10) - mapper.get(pkgtup2[1], 10)
 
     def _checkInstall(self, txmbr):
         txmbr_reqs = txmbr.po.returnPrco('requires')
@@ -801,7 +812,7 @@ class Depsolve(object):
         oldreqs = set(oldreqs)
 
         ret = []
-        for req in txmbr_reqs:
+        for req in sorted(txmbr_reqs, cmp=self._sort_reqs):
             if req[0].startswith('rpmlib('):
                 continue
             if req in txmbr_provs:
