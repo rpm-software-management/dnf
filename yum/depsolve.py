@@ -798,7 +798,25 @@ class Depsolve(object):
 
         mapper = {'EQ' : 1, 'LT' : 2, 'LE' : 3, 'GT' : 4, 'GE' : 5,
                   None : 99}
-        return mapper.get(pkgtup1[1], 10) - mapper.get(pkgtup2[1], 10)
+        ret = mapper.get(pkgtup1[1], 10) - mapper.get(pkgtup2[1], 10)
+        if ret:
+            return ret
+
+        # This is pretty magic, basically we want and explicit:
+        #
+        #  Requires: foo
+        #
+        # ...to happen before the implicit:
+        #
+        #  Requires: libfoo.so.0()
+        #
+        # ...need more magic for other implicit deps. here?
+        def _req_name2val(name):
+            if (name.startswith("lib") and
+                (name.endswith("()") or name.endswith("()(64bit)"))):
+                return 99 # Processes these last
+            return 0
+        return _req_name2val(pkgtup1[0]) - _req_name2val(pkgtup2[0])
 
     def _checkInstall(self, txmbr):
         txmbr_reqs = txmbr.po.returnPrco('requires')

@@ -1024,3 +1024,20 @@ class DepsolveTests(DepsolveTests):
 
         self.assertEquals('ok', *self.resolveCode())
         self.assertResult((ipo1, po1))
+
+    def test_multi_inst_dep3(self):
+        ipo1 = FakePackage('foo')
+        ipo1.addRequires('libbar-prov1.so.0()', None, (None, None, None))
+        ipo1.addRequires('bar-prov2', None, (None, None, None))
+        self.tsInfo.addInstall(ipo1)
+
+        po1 = FakePackage('bar')
+        po1.addProvides('libbar-prov1.so.0()', None, (None, None, None))
+        po1.addProvides('bar-prov2', None, (None, None, None))
+        self.xsack.addPackage(po1)
+        po2 = FakePackage('bar', version='2')
+        po2.addProvides('libbar-prov1.so.0()', None, (None, None, None))
+        self.xsack.addPackage(po2)
+
+        self.assertEquals('ok', *self.resolveCode())
+        self.assertResult((ipo1, po1))
