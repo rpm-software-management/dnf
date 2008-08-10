@@ -620,6 +620,27 @@ def to_xml(item, attrib=False):
     return item
 
 # ---------- i18n ----------
+import locale
+import sys
+def setup_locale(override_codecs=True, override_time=False):
+    # This test needs to be before locale.getpreferredencoding() as that
+    # does setlocale(LC_CTYPE, "")
+    try:
+        locale.setlocale(locale.LC_ALL, '')
+        # set time to C so that we output sane things in the logs (#433091)
+        if override_time:
+            locale.setlocale(locale.LC_TIME, 'C')
+    except locale.Error, e:
+        # default to C locale if we get a failure.
+        print >> sys.stderr, 'Failed to set locale, defaulting to C'
+        os.environ['LC_ALL'] = 'C'
+        locale.setlocale(locale.LC_ALL, 'C')
+        
+    if override_codecs:
+        import codecs
+        sys.stdout = codecs.getwriter(locale.getpreferredencoding())(sys.stdout)
+        sys.stdout.errors = 'replace'
+
 def to_unicode(obj, encoding='utf-8', errors='replace'):
     ''' convert a 'str' to 'unicode' '''
     if isinstance(obj, basestring):
