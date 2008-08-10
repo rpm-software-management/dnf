@@ -2672,7 +2672,7 @@ class YumBase(depsolve.Depsolve):
         # do this: but it's not a config file sort of thing
         if po.arch not in rpmUtils.arch.getArchList():
             self.logger.critical(_('Cannot add package %s to transaction. Not a compatible architecture: %s'), pkg, po.arch)
-            return result
+            return tx_return
         
         # everything installed that matches the name
         installedByKey = self.rpmdb.searchNevra(name=po.name)
