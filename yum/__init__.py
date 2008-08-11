@@ -2386,16 +2386,29 @@ class YumBase(depsolve.Depsolve):
         
         return tx_return
 
+    def _check_new_update_provides(self, opkg, npkg):
+        """ Check for any difference in the provides of the old and new update
+            that is needed by the transaction. If so we "update" those pkgs
+            too, to the latest version. """
+        oprovs = set(opkg.returnPrco('provides'))
+        nprovs = set(npkg.returnPrco('provides'))
+        for prov in oprovs.difference(nprovs):
+            reqs = self.tsInfo.getRequires(*prov)
+            for pkg in reqs:
+                for req in reqs[pkg]:
+                    if not npkg.inPrcoRange('provides', req):
+                        naTup = (pkg.name, pkg.arch)
+                        for pkg in self.pkgSack.returnNewestByNameArch(naTup):
+                            self.update(po=pkg)
+                        break
+
     def _newer_update_in_trans(self, pkgtup, available_pkg):
         """ We return True if there is a newer package already in the
-            transaction. If there is an older one, we remove it and return
-            False so we'll goto this available one. """
+            transaction. If there is an older one, we remove it (and update any
+            deps. that aren't satisfied by the newer pkg) and return False so
+            we'll update to this newer pkg. """
         found = False
         for txmbr in self.tsInfo.getMembersWithState(pkgtup, [TS_UPDATED]):
-            if True: # FIXME: This "works" but fails related deps.
-                # Ie. update-minimal glibc pam == works
-                # Ie. update-minimal glibc glibc-common pam == hard fail
-                return True
             count = 0
             for po in txmbr.updated_by:
                 if available_pkg.verLE(po):
@@ -2403,6 +2416,8 @@ class YumBase(depsolve.Depsolve):
                 else:
                     for ntxmbr in self.tsInfo.getMembers(po.pkgtup):
                         self.tsInfo.remove(ntxmbr.po.pkgtup)
+                        self._check_new_update_provides(ntxmbr.po,
+                                                        available_pkg)
             if count:
                 found = True
             else:

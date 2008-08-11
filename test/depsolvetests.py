@@ -989,6 +989,45 @@ class DepsolveTests(DepsolveTests):
         self.assertEquals('ok', *self.resolveCode())
         self.assertResult((ipo2, po4))
 
+    def test_min_up_and_dep3(self):
+        rpo1 = FakePackage('bar', version='1')
+        self.rpmdb.addPackage(rpo1)
+        rpo2 = FakePackage('bar-blah', version='1')
+        rpo2.addRequires('bar', 'EQ', ('0', '1', '1'))
+        self.rpmdb.addPackage(rpo2)
+
+        ipo1 = FakePackage('bar', version='2')
+        self.tsInfo.addUpdate(ipo1, oldpo=rpo1)
+        ipo2 = FakePackage('bar-blah', version='2')
+        ipo2.addRequires('bar', 'EQ', ('0', '2', '1'))
+        self.tsInfo.addUpdate(ipo2, oldpo=rpo2)
+
+        ipo3 = FakePackage('foo')
+        ipo3.addRequires('bar', 'GE', (None, '3', '0'))
+        self.tsInfo.addInstall(ipo3)
+
+        po1 = FakePackage('foo')
+        po1.addRequires('bar', 'GE', (None, '3', '0'))
+        self.xsack.addPackage(po1)
+        po2 = FakePackage('bar', version='2')
+        self.xsack.addPackage(po2)
+        po3 = FakePackage('bar', version='3')
+        self.xsack.addPackage(po3)
+        po4 = FakePackage('bar', version='4')
+        self.xsack.addPackage(po4)
+        po5 = FakePackage('bar-blah', version='2')
+        po5.addRequires('bar', 'EQ', ('0', '2', '1'))
+        self.xsack.addPackage(po5)
+        po6 = FakePackage('bar-blah', version='3')
+        po6.addRequires('bar', 'EQ', ('0', '3', '1'))
+        self.xsack.addPackage(po6)
+        po7 = FakePackage('bar-blah', version='4')
+        po7.addRequires('bar', 'EQ', ('0', '4', '1'))
+        self.xsack.addPackage(po7)
+
+        self.assertEquals('ok', *self.resolveCode())
+        self.assertResult((ipo3, po4, po7))
+
     def test_multi_inst_dep1(self):
         ipo1 = FakePackage('foo')
         ipo1.addRequires('bar-prov1', None, (None, None, None))
