@@ -632,8 +632,18 @@ class YumOutput:
                 repoid = txmbr.repoid
                 pkgsize = float(txmbr.po.size)
                 size = self.format_number(pkgsize)
-                msg = u" %-22s  %-9s  %-15s  %-16s  %5s\n" % (n, a,
-                              evr, repoid, size)
+
+                total_width = 1
+                msg = u' '
+                for (val, width) in ((n, 23), (a, 10), (evr, 16), (repoid, 17)):
+                    if len(val) <= width:
+                        msg += u"%%-%ds " % width
+                    else:
+                        msg += u"%s\n" + " " * (total_width + width + 1)
+                    total_width += width
+                    total_width += 1
+                msg += u"%5s\n"
+                msg %= (n, a, evr, repoid, size)
                 for obspo in txmbr.obsoletes:
                     appended = _('     replacing  %s.%s %s\n\n') % (obspo.name,
                         obspo.arch, obspo.printVer())
