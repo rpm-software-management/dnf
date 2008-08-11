@@ -1969,9 +1969,8 @@ class YumBase(depsolve.Depsolve):
 
     def getInstalledPackageObject(self, pkgtup):
         """returns a YumInstallPackage object for the pkgtup specified"""
-        
-        #FIXME - this should probably emit a deprecation warning telling
-        # people to just use the command below
+        warnings.warn(_('getInstalledPackageObject() will go away, use self.rpmdb.searchPkgTuple().\n'),
+                Errors.YumFutureDeprecationWarning, stacklevel=2)
         
         po = self.rpmdb.searchPkgTuple(pkgtup)[0] # take the first one
         return po
@@ -2320,9 +2319,21 @@ class YumBase(depsolve.Depsolve):
                     lst.extend(self.bestPackagesFromList(pkgs))
                 pkgs = lst
 
-        if len(pkgs) == 0:
-            #FIXME - this is where we could check to see if it already installed
-            # for returning better errors
+        if not pkgs:
+            # Do we still want to return errors here?
+            # We don't in the cases below, so I didn't here...
+            if 'pattern' in kwargs:
+                pats = [kwargs['pattern']]
+                pkgs = self.rpmdb.returnPackages(patterns=pats)
+                exactmatch, matched, unmatched = parsePackages(pkgs, pats,
+                                                               casematch=1)
+                pkgs = exactmatch + matched
+            if 'name' in kwargs:
+                pkgs = self.rpmdb.searchNevra(name=kwargs['name'])
+            for pkg in pkgs:
+                self.verbose_logger.warning(_('Package %s installed and not available'), pkg)
+            if pkgs:
+                return []
             raise Errors.InstallError, _('No package(s) available to install')
         
         # FIXME - lots more checking here
@@ -2670,6 +2681,8 @@ class YumBase(depsolve.Depsolve):
         # if by any chance we're a noncompat arch rpm - bail and throw out an error
         # FIXME -our archlist should be stored somewhere so we don't have to
         # do this: but it's not a config file sort of thing
+        # FIXME: Should add noarch, yum localinstall works ...
+        # just rm this method?
         if po.arch not in rpmUtils.arch.getArchList():
             self.logger.critical(_('Cannot add package %s to transaction. Not a compatible architecture: %s'), pkg, po.arch)
             return tx_return
