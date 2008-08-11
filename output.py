@@ -609,11 +609,13 @@ class YumOutput:
         """returns a string rep of the  transaction in an easy-to-read way."""
         
         self.tsInfo.makelists()
+        # Tweak the lengths below using:
+        # http://fedorapeople.org/~james/yum/commands/length_distributions.py
         if len(self.tsInfo) > 0:
             out = u"""
-=============================================================================
- %-22s  %-9s  %-15s  %-16s  %-5s
-=============================================================================
+================================================================================
+ %-22s %-6s %-20s %-21s %-5s
+================================================================================
 """ % (_('Package'), _('Arch'), _('Version'), _('Repository'), _('Size'))
         else:
             out = u""
@@ -635,7 +637,7 @@ class YumOutput:
 
                 total_width = 1
                 msg = u' '
-                for (val, width) in ((n, 23), (a, 10), (evr, 16), (repoid, 17)):
+                for (val, width) in ((n, 22), (a, 6), (evr, 20), (repoid, 21)):
                     if len(val) <= width:
                         msg += u"%%-%ds " % width
                     else:
@@ -655,7 +657,7 @@ class YumOutput:
 
         summary = _("""
 Transaction Summary
-=============================================================================
+================================================================================
 Install  %5.5s Package(s)         
 Update   %5.5s Package(s)         
 Remove   %5.5s Package(s)         
