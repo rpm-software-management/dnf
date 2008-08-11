@@ -278,8 +278,7 @@ class YumRepository(Repository, config.RepoConf):
         Repository.close(self)
     
     def _resetSack(self):
-        self.sack = sqlitesack.YumSqlitePackageSack(
-                sqlitesack.YumAvailablePackageSqlite)
+        self._sack = None
 
     def __getProxyDict(self):
         self.doProxyDict()

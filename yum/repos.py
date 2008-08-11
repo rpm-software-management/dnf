@@ -88,6 +88,8 @@ class RepoStorage:
 
     def delete(self, repoid):
         if self.repos.has_key(repoid):
+            thisrepo = self.repos[repoid]
+            thisrepo.close()
             del self.repos[repoid]
             
     def sort(self):

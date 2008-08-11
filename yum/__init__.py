@@ -3191,6 +3191,9 @@ class YumBase(depsolve.Depsolve):
                 mirrorlist = varReplace(mirrorlist, self.conf.yumvar)
             newrepo.mirrorlist = mirrorlist
 
+        # setup the repo
+        newrepo.setup(cache=self.conf.cache)
+
         # some reasonable defaults, (imo)
         newrepo.enablegroups = True
         newrepo.metadata_expire = 0
