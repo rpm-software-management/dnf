@@ -609,23 +609,66 @@ class YumOutput:
         """returns a string rep of the  transaction in an easy-to-read way."""
         
         self.tsInfo.makelists()
-        if len(self.tsInfo) > 0:
-            out = u"""
-=============================================================================
- %-22s  %-9s  %-15s  %-16s  %-5s
-=============================================================================
-""" % (_('Package'), _('Arch'), _('Version'), _('Repository'), _('Size'))
-        else:
-            out = u""
+        out = u""
+        pkglist_lines = []
+        #  Tried to do this statically using:
+        #   http://fedorapeople.org/~james/yum/commands/length_distributions.py
+        # but it sucked for corner cases, so this is dynamic...
 
+        def _spaces_helps(current, data_tups, left):
+            """ Spaces left on the current field will help how many pkgs? """
+            ret = 0
+            for tup in data_tups:
+                if left < (tup[0] - current):
+                    break
+                ret += tup[1]
+            return ret
+        def _calc_widths(data, a_wid):
+            """ Dynamically calc. the width of the four fields. """
+            # Convert the dict to ascending list of tuples, (field_length, pkgs)
+            for d in ("n", "v", "r"):
+                data[d] = sorted(data[d].items())
+
+            wid  = {'n' : 1, 'v' : 1, 'r' : 1}
+            left = 69 - (a_wid + wid['n'] + wid['v'] + wid['r'])
+            while left > 0:
+                # Find which field all the spaces left will help best
+                helps = 0
+                val   = 'n'
+                for d in ("n", "v", "r"):
+                    thelps = _spaces_helps(wid[d], data[d], left)
+                    if not thelps:
+                        continue
+                    if thelps < helps:
+                        continue
+                    helps = thelps
+                    val   = d
+
+                # If we found one, move up to the next level with that field
+                if helps:
+                    diff = data[val].pop(0)[0] - wid[val]
+                    wid[val] += diff
+                    left     -= diff
+                    continue
+
+                # Split the remaining spaces among each field
+                wid['n'] += left / 4
+                a_wid    += left / 4
+                wid['v'] += left / 4
+                wid['r'] += left - (3 * (left / 4))
+                left = 0
+
+            return (wid['n'], a_wid, wid['v'], wid['r'])
+
+        data  = {'n' : {}, 'v' : {}, 'r' : {}}
+        a_wid = 0 # Arch can't get "that big" ... so always use the max.
         for (action, pkglist) in [(_('Installing'), self.tsInfo.installed),
                             (_('Updating'), self.tsInfo.updated),
                             (_('Removing'), self.tsInfo.removed),
                             (_('Installing for dependencies'), self.tsInfo.depinstalled),
                             (_('Updating for dependencies'), self.tsInfo.depupdated),
                             (_('Removing for dependencies'), self.tsInfo.depremoved)]:
-            if pkglist:
-                totalmsg = u"%s:\n" % action
+            lines = []
             for txmbr in pkglist:
                 (n,a,e,v,r) = txmbr.pkgtup
                 evr = txmbr.po.printVer()
@@ -633,9 +676,34 @@ class YumOutput:
                 pkgsize = float(txmbr.po.size)
                 size = self.format_number(pkgsize)
 
+                lines.append((n, a, evr, repoid, size, txmbr.obsoletes))
+                #  Create a dict of field_length => number of packages, for
+                # each field.
+                for (d, v) in (("n",len(n)), ("v",len(evr)), ("r",len(repoid))):
+                    data[d].setdefault(v, 0)
+                    data[d][v] += 1
+                if a_wid < len(a): # max() is only in 2.5.z
+                    a_wid = len(a)
+
+            pkglist_lines.append((action, lines))
+
+        if data['n']:
+            (n_wid, a_wid, v_wid, r_wid) = _calc_widths(data, a_wid)
+            out = u"""
+================================================================================
+ %-*s %-*s %-*s %-*s %-5s
+================================================================================
+""" % (n_wid, _('Package'), a_wid, _('Arch'),
+       v_wid, _('Version'), r_wid, _('Repository'), _('Size'))
+
+        for (action, lines) in pkglist_lines:
+            if lines:
+                totalmsg = u"%s:\n" % action
+            for (n, a, evr, repoid, size, obsoletes) in lines:
                 total_width = 1
                 msg = u' '
-                for (val, width) in ((n, 23), (a, 10), (evr, 16), (repoid, 17)):
+                for (val, width) in ((n,   n_wid), (a,      a_wid),
+                                     (evr, v_wid), (repoid, r_wid)):
                     if len(val) <= width:
                         msg += u"%%-%ds " % width
                     else:
@@ -644,18 +712,18 @@ class YumOutput:
                     total_width += 1
                 msg += u"%5s\n"
                 msg %= (n, a, evr, repoid, size)
-                for obspo in txmbr.obsoletes:
+                for obspo in obsoletes:
                     appended = _('     replacing  %s.%s %s\n\n') % (obspo.name,
                         obspo.arch, obspo.printVer())
                     msg = msg+appended
                 totalmsg = totalmsg + msg
         
-            if pkglist:
+            if lines:
                 out = out + totalmsg
 
         summary = _("""
 Transaction Summary
-=============================================================================
+================================================================================
 Install  %5.5s Package(s)         
 Update   %5.5s Package(s)         
 Remove   %5.5s Package(s)         
