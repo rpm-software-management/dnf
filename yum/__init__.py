@@ -1434,8 +1434,11 @@ class YumBase(depsolve.Depsolve):
                 avail = self.pkgSack.returnPackages(patterns=patterns,
                                                     ignore_case=ic)
             else:
-                avail = self.pkgSack.returnNewestByNameArch(patterns=patterns,
-                                                            ignore_case=ic)
+                try:
+                  avail = self.pkgSack.returnNewestByNameArch(patterns=patterns,
+                                                              ignore_case=ic)
+                except Errors.PackageSackError:
+                  avail = []
             
             for pkg in avail:
                 if showdups:
@@ -1445,7 +1448,6 @@ class YumBase(depsolve.Depsolve):
                     ipkgs = self.rpmdb.searchNevra(pkg.name, arch=pkg.arch)
                     if not ipkgs or pkg.verGT(sorted(ipkgs, reverse=True)[0]):
                         available.append(pkg)
-
 
         # not in a repo but installed
         elif pkgnarrow == 'extras':
@@ -1479,8 +1481,11 @@ class YumBase(depsolve.Depsolve):
                 avail = self.pkgSack.returnPackages(patterns=patterns,
                                                     ignore_case=ic)
             else:
-                avail = self.pkgSack.returnNewestByNameArch(patterns=patterns,
-                                                            ignore_case=ic)
+                try:
+                  avail = self.pkgSack.returnNewestByNameArch(patterns=patterns,
+                                                              ignore_case=ic)
+                except Errors.PackageSackError:
+                  avail = []
             
             for po in avail:
                 ftime = int(po.filetime)
