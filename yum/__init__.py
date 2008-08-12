@@ -1898,14 +1898,22 @@ class YumBase(depsolve.Depsolve):
                         continue
                     # Otherwise we hook into tsInfo.add
                     pkgs = self.pkgSack.searchNevra(name=condreq)
-                    if pkgs:# if there's anything as a result then we push 
-                            # the name into tsInfo so that when we call install 
-                            # on it it passes through the normal install() call
-                        if self.tsInfo.conditionals.has_key(cond):
-                            self.tsInfo.conditionals[cond].append(condreq)
-                        else:
-                            self.tsInfo.conditionals[cond] = [condreq]
+                    if pkgs:
+                        if rpmUtils.arch.isMultiLibArch():
+                            if self.conf.multilib_policy == 'best':
+                                use = []
+                                best = rpmUtils.arch.legitMultiArchesInSameLib()
+                                best.append('noarch')
+                                for pkg in pkgs:
+                                    if pkg.arch in best:
+                                        use.append(pkg)
+                                pkgs = use
+                               
+                        pkgs = packagesNewestByNameArch(pkgs)
 
+                        if not self.tsInfo.conditionals.has_key(cond):
+                            self.tsInfo.conditionals[cond] = []
+                        self.tsInfo.conditionals[cond].extend(pkgs)
         return txmbrs_used
 
     def deselectGroup(self, grpid):
