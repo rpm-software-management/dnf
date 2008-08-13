@@ -30,8 +30,10 @@ import warnings
 from rpmUtils import RpmUtilsError
 import rpmUtils.arch
 import rpmUtils.miscutils
+from rpmUtils.miscutils import flagToString, stringToVersion
 import Errors
 import errno
+import struct
 
 import urlparse
 urlparse.uses_fragment.append("media")
@@ -818,7 +820,7 @@ class YumAvailablePackage(PackageObject, RpmBase):
         mylist = getattr(self, pcotype)
         if mylist: msg = "\n    <rpm:%s>\n" % pcotype
         for (name, flags, (e,v,r)) in mylist:
-            pcostring = '''      <rpm:entry name="%s"''' % name
+            pcostring = '''      <rpm:entry name="%s"''' % misc.to_xml(name, attrib=True)
             if flags:
                 pcostring += ''' flags="%s"''' % flags
                 if e:
@@ -903,7 +905,7 @@ class YumAvailablePackage(PackageObject, RpmBase):
         for (name, flags, (e,v,r),pre) in mylist:
             if name.startswith('rpmlib('):
                 continue
-            prcostring = '''      <rpm:entry name="%s"''' % name
+            prcostring = '''      <rpm:entry name="%s"''' % misc.to_xml(name, attrib=True)
             if flags:
                 prcostring += ''' flags="%s"''' % flags
                 if e:
@@ -931,7 +933,8 @@ class YumAvailablePackage(PackageObject, RpmBase):
                 break
             clog_count += 1
             msg += '''<changelog author="%s" date="%s">%s</changelog>\n''' % (
-                        misc.to_xml(author, attrib=True), str(ts), misc.to_xml(content))
+                        misc.to_xml(author, attrib=True), str(ts), 
+                        misc.to_xml(content))
         return msg
 
     def xml_dump_primary_metadata(self):
@@ -1462,10 +1465,20 @@ class YumLocalPackage(YumHeaderPackage):
         YumHeaderPackage.__init__(self, fakerepo, hdr)
         self.id = self.pkgid
         self._stat = os.stat(self.localpath)
-        self.filetime = str(self._stat[-1])
+        self.filetime = str(self._stat[-2])
         self.packagesize = str(self._stat[6])
         self.arch = self.isSrpm()
         self.pkgtup = (self.name, self.arch, self.epoch, self.ver, self.rel)
+        self._hdrstart = None
+        self._hdrend = None
+        self.arch = self.isSrpm()
+        self.checksum_type = 'sha'
+
+        # these can be set by callers that need these features (ex: createrepo)
+        self._reldir = None 
+        self._baseurl = "" 
+        # self._packagenumber will be needed when we do sqlite creation here
+
         
     def isSrpm(self):
         if self.tagByName('sourcepackage') == 1 or not self.tagByName('sourcerpm'):
@@ -1482,6 +1495,75 @@ class YumLocalPackage(YumHeaderPackage):
             
         return self._checksum    
 
-    checksum = property(fget=lambda self: self._do_checksum())    
+    checksum = property(fget=lambda self: self._do_checksum())   
     
+    def _get_header_byte_range(self):
+        """takes an rpm file or fileobject and returns byteranges for location of the header"""
+        if self._hdrstart and self._hdrend:
+            return (self._hdrstart, self._hdrend)
+      
+           
+        fo = open(self.localpath, 'r')
+        #read in past lead and first 8 bytes of sig header
+        fo.seek(104)
+        # 104 bytes in
+        binindex = fo.read(4)
+        # 108 bytes in
+        (sigindex, ) = struct.unpack('>I', binindex)
+        bindata = fo.read(4)
+        # 112 bytes in
+        (sigdata, ) = struct.unpack('>I', bindata)
+        # each index is 4 32bit segments - so each is 16 bytes
+        sigindexsize = sigindex * 16
+        sigsize = sigdata + sigindexsize
+        # we have to round off to the next 8 byte boundary
+        disttoboundary = (sigsize % 8)
+        if disttoboundary != 0:
+            disttoboundary = 8 - disttoboundary
+        # 112 bytes - 96 == lead, 8 = magic and reserved, 8 == sig header data
+        hdrstart = 112 + sigsize  + disttoboundary
+        
+        fo.seek(hdrstart) # go to the start of the header
+        fo.seek(8,1) # read past the magic number and reserved bytes
+
+        binindex = fo.read(4) 
+        (hdrindex, ) = struct.unpack('>I', binindex)
+        bindata = fo.read(4)
+        (hdrdata, ) = struct.unpack('>I', bindata)
+        
+        # each index is 4 32bit segments - so each is 16 bytes
+        hdrindexsize = hdrindex * 16 
+        # add 16 to the hdrsize to account for the 16 bytes of misc data b/t the
+        # end of the sig and the header.
+        hdrsize = hdrdata + hdrindexsize + 16
+        
+        # header end is hdrstart + hdrsize 
+        hdrend = hdrstart + hdrsize 
+        fo.close()
+        self._hdrstart = hdrstart
+        self._hdrend = hdrend
+       
+        return (hdrstart, hdrend)
+        
+    hdrend = property(fget=lambda self: self._get_header_byte_range()[1])
+    hdrstart = property(fget=lambda self: self._get_header_byte_range()[0])
+
+    def _return_remote_location(self):
+
+        # if we start seeing fullpaths in the location tag - this is the culprit
+        if self._reldir and self.localpath.startswith(self._reldir):
+            relpath = self.localpath.replace(self._reldir, '')
+            if relpath[0] == '/': relpath = relpath[1:]
+        else:
+            relpath = self.localpath
+
+        if self._baseurl:
+            msg = """<location xml:base="%s" href="%s"/>\n""" % (
+                                     misc.to_xml(self._baseurl, attrib=True),
+                                     misc.to_xml(relpath, attrib=True))
+        else:
+            msg = """<location href="%s"/>\n""" % misc.to_xml(relpath, attrib=True)
+
+        return msg
+
 
