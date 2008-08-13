@@ -638,10 +638,8 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
             
         ypl = self.doPackageLists(pkgnarrow=pkgnarrow, patterns=extcmds,
                                   ignore_case=True)
-        # rework the list output code to know about:
-        # obsoletes output
-        # the updates format
 
+        # This is mostly leftover from when patterns didn't exist
         def _shrinklist(lst, args):
             if len(lst) > 0 and len(args) > 0:
                 self.verbose_logger.log(yum.logginglevels.DEBUG_1,
@@ -658,12 +656,6 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         ypl.extras = _shrinklist(ypl.extras, extcmds)
         ypl.obsoletes = _shrinklist(ypl.obsoletes, extcmds)
         
-#        for lst in [ypl.obsoletes, ypl.updates]:
-#            if len(lst) > 0 and len(extcmds) > 0:
-#                self.logger.log(4, 'Matching packages for tupled package list to user args')
-#                for (pkg, instpkg) in lst:
-#                    exactmatch, matched, unmatched = yum.packages.parsePackages(lst, extcmds)
-                    
         return ypl
 
     def search(self, args):

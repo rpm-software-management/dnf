@@ -212,7 +212,12 @@ class InfoCommand(YumCommand):
         except yum.Errors.YumBaseError, e:
             return 1, [str(e)]
         else:
-            rip = base.listPkgs(ypl.installed, _('Installed Packages'), basecmd)
+            if ypl.installed:
+                update_pkgs = set([(po.name, po.arch) for po in ypl.available])
+            else:
+                update_pkgs = set()
+            rip = base.listPkgs(ypl.installed, _('Installed Packages'), basecmd,
+                                highlight_na=update_pkgs)
             rap = base.listPkgs(ypl.available, _('Available Packages'), basecmd)
             rep = base.listPkgs(ypl.extras, _('Extra Packages'), basecmd)
             rup = base.listPkgs(ypl.updates, _('Updated Packages'), basecmd)
