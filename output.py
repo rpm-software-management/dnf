@@ -245,21 +245,34 @@ class YumOutput:
         
     def simpleProgressBar(self, current, total, name=None):
         progressbar(current, total, name)
-    
-    def simpleList(self, pkg, ui_overflow=False):
-        ver = pkg.printVer()
-        na = '%s.%s' % (pkg.name, pkg.arch)
-        if ui_overflow and len(na) > 40:
-            print "%s %s" % (na, "...")
-            na = ""
-        print "%-40.40s %-22.22s %-16.16s" % (na, ver, pkg.repoid)
 
-    def simpleEnvraList(self, pkg, ui_overflow=False, indent=''):
-        envra = "%s%s" % (indent, str(pkg))
-        if ui_overflow and len(envra) > 63:
-            print "%s %s" % (envra, "...")
+    def _highlight(self, highlight):
+        if highlight:
+            hibeg = self.term.MODE['bold']
+            hiend = self.term.MODE['normal']
+        else:
+            hibeg = ''
+            hiend = ''
+        return (hibeg, hiend)
+
+    def simpleList(self, pkg, ui_overflow=False, indent='', highlight=False):
+        (hibeg, hiend) = self._highlight(highlight)
+        ver = pkg.printVer()
+        na = '%s%s.%s' % (indent, pkg.name, pkg.arch)
+        if ui_overflow and (len(na) - (len(hibeg) + len(hiend))) > 40:
+            print "%s%s%s %s" % (hibeg, na, hiend, "...")
+            na = ""
+        print "%s%-40.40s%s %-22.22s %-16.16s" % (hibeg, na, hiend,
+                                                  ver, pkg.repoid)
+
+    def simpleEnvraList(self, pkg, ui_overflow=False,
+                        indent='', highlight=False):
+        (hibeg, hiend) = self._highlight(highlight)
+        envra = '%s%s' % (indent, str(pkg))
+        if ui_overflow and (len(envra) - (len(hibeg) + len(hiend))) > 63:
+            print "%s%s%s %s" % (hibeg, envra, hiend, "...")
             envra = ""
-        print "%-63.63s %-16.16s" % (envra, pkg.repoid)
+        print "%s%-63.63s%s %-16.16s" % (hibeg, envra, hiend, pkg.repoid)
 
     def fmtKeyValFill(self, key, val):
         """ Return a key value pair in the common two column output format. """
@@ -300,8 +313,9 @@ class YumOutput:
                     break
         return to_unicode(s)
 
-    def infoOutput(self, pkg):
-        print _("Name       : %s") % pkg.name
+    def infoOutput(self, pkg, highlight=False):
+        (hibeg, hiend) = self._highlight(highlight)
+        print _("Name       : %s%s%s") % (hibeg, pkg.name, hiend)
         print _("Arch       : %s") % pkg.arch
         if pkg.epoch != "0":
             print _("Epoch      : %s") % pkg.epoch
@@ -333,21 +347,25 @@ class YumOutput:
         # FIXME - other ideas for how to print this out?
         print '%-35.35s [%.12s] %.10s %-20.20s' % (c_compact, c_repo, changetype, i_compact)
 
-    def listPkgs(self, lst, description, outputType):
+    def listPkgs(self, lst, description, outputType, highlight_na={}):
         """outputs based on whatever outputType is. Current options:
            'list' - simple pkg list
-           'info' - similar to rpm -qi output"""
-        
+           'info' - similar to rpm -qi output
+           ...also highlight_na can be passed, and we'll highlight
+           pkgs with (names, arch) in that set."""
+
         if outputType in ['list', 'info']:
             thingslisted = 0
             if len(lst) > 0:
                 thingslisted = 1
                 print '%s' % description
                 for pkg in sorted(lst):
+                    highlight = (pkg.name, pkg.arch) in highlight_na
                     if outputType == 'list':
-                        self.simpleList(pkg, ui_overflow=True)
+                        self.simpleList(pkg, ui_overflow=True,
+                                        highlight=highlight)
                     elif outputType == 'info':
-                        self.infoOutput(pkg)
+                        self.infoOutput(pkg, highlight=highlight)
                     else:
                         pass
     
@@ -392,25 +410,28 @@ class YumOutput:
         # FIXME what should we be printing here?
         return self.userconfirm()
 
-    def _group_names2pkgs(self, pkg_names):
-        # Convert pkg_names to installed pkgs and available pkgs
+    def _group_names2aipkgs(self, pkg_names):
+        """ Convert pkg_names to installed pkgs or available pkgs, return
+            value is a dict on pkg.name returning (apkg, ipkg). """
         ipkgs = self.rpmdb.searchNames(pkg_names)
         apkgs = self.pkgSack.searchNames(pkg_names)
         apkgs = packagesNewestByNameArch(apkgs)
 
-        # FIXME: Basically doPackageLists('all') behaviour
+        # This is somewhat similar to doPackageLists()
         pkgs = {}
         for pkg in ipkgs:
-            pkgs[(pkg.name, pkg.arch)] = pkg
+            pkgs[(pkg.name, pkg.arch)] = (None, pkg)
         for pkg in apkgs:
             key = (pkg.name, pkg.arch)
-            if key not in pkgs or pkg.verGT(pkgs[key]):
-                pkgs[(pkg.name, pkg.arch)] = pkg
+            if key not in pkgs:
+                pkgs[(pkg.name, pkg.arch)] = (pkg, None)
+            elif pkg.verGT(pkgs[key][1]):
+                pkgs[(pkg.name, pkg.arch)] = (pkg, pkgs[key][1])
 
         # Convert (pkg.name, pkg.arch) to pkg.name dict
         ret = {}
-        for pkg in pkgs.itervalues():
-            ret.setdefault(pkg.name, []).append(pkg)
+        for (apkg, ipkg) in pkgs.itervalues():
+            ret.setdefault(pkg.name, []).append((apkg, ipkg))
         return ret
 
     def _displayPkgsFromNames(self, pkg_names, verbose, pkg_names2pkgs,
@@ -423,8 +444,10 @@ class YumOutput:
                 if item not in pkg_names2pkgs:
                     print '%s%s' % (indent, item)
                     continue
-                for pkg in sorted(pkg_names2pkgs[item]):
-                    self.simpleEnvraList(pkg, ui_overflow=True, indent=indent)
+                for (apkg, ipkg) in sorted(pkg_names2pkgs[item],
+                                           key=lambda x: x[1] or x[0]):
+                    self.simpleEnvraList(ipkg or apkg, ui_overflow=True,
+                                         indent=indent, highlight=ipkg and apkg)
     
     def displayPkgsInGroups(self, group):
         mylang = get_my_lang_code()
@@ -433,7 +456,7 @@ class YumOutput:
         verb = self.verbose_logger.isEnabledFor(logginglevels.DEBUG_3)
         pkg_names2pkgs = None
         if verb:
-            pkg_names2pkgs = self._group_names2pkgs(group.packages)
+            pkg_names2pkgs = self._group_names2aipkgs(group.packages)
         if group.descriptionByLang(mylang) != "":
             print _(' Description: %s') % to_unicode(group.descriptionByLang(mylang))
         if len(group.mandatory_packages) > 0:
