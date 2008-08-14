@@ -531,6 +531,11 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
                                         _('No package %s available.'), arg)
                 matches = self.doPackageLists('available', patterns=[arg],
                                               ignore_case=True)
+                #  The problem here is that if this is the second time around
+                # then we've already pre-cached the results from doPackageLists
+                # to be all the available pkgs. So we need to match.
+                # FIXME: Really we should probably put this in
+                # doPackageLists() / returnPackages() when we have a pattern.
                 matches = matches.available
                 exactmatch, matched, unmatched = parsePackages(matches, [arg])
                 matches = yum.misc.unique(exactmatch + matched)
@@ -643,6 +648,9 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
                                   ignore_case=True)
 
         # This is mostly leftover from when patterns didn't exist
+        # FIXME: However when returnPackages() has already been run, we
+        # don't process teh patterns args. ... we should fix that in
+        # returnPackages() etc.
         def _shrinklist(lst, args):
             if len(lst) > 0 and len(args) > 0:
                 self.verbose_logger.log(yum.logginglevels.DEBUG_1,
