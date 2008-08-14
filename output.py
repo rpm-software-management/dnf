@@ -431,6 +431,7 @@ class YumOutput:
         # Convert (pkg.name, pkg.arch) to pkg.name dict
         ret = {}
         for (apkg, ipkg) in pkgs.itervalues():
+            pkg = apkg or ipkg
             ret.setdefault(pkg.name, []).append((apkg, ipkg))
         return ret
 
