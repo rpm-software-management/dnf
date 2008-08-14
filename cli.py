@@ -531,7 +531,10 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
                                         _('No package %s available.'), arg)
                 matches = self.doPackageLists('available', patterns=[arg],
                                               ignore_case=True)
-                matches = set(map(lambda x: x.name, matches.available))
+                matches = matches.available
+                exactmatch, matched, unmatched = parsePackages(matches, [arg])
+                matches = yum.misc.unique(exactmatch + matched)
+                matches = set(map(lambda x: x.name, matches))
                 if matches:
                     msg = self.fmtKeyValFill(_('  * Maybe you meant: '),
                                              ", ".join(matches))
@@ -644,7 +647,7 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
             if len(lst) > 0 and len(args) > 0:
                 self.verbose_logger.log(yum.logginglevels.DEBUG_1,
                     _('Matching packages for package list to user args'))
-                exactmatch, matched, unmatched = yum.packages.parsePackages(lst, args)
+                exactmatch, matched, unmatched = parsePackages(lst, args)
                 return yum.misc.unique(matched + exactmatch)
             else:
                 return lst
