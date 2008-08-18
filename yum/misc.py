@@ -87,6 +87,15 @@ def re_primary_filename(filename):
             return True
     return False
 
+_re_compiled_full_match = None
+def re_full_search_needed(s):
+    """ Tests if a string needs a full nevra match, instead of just name. """
+    # re.match('[\*\?].$', name)
+    global _re_compiled_full_match
+    if _re_compiled_full_match is None:
+        _re_compiled_full_match = re.compile('[-*?].*.$')
+    return _re_compiled_full_match.match(s)
+
 ###########
 # Title: Remove duplicates from a sequence
 # Submitter: Tim Peters 

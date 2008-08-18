@@ -1093,6 +1093,18 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
                                                         ignore_case))
             return returnList
         
+        fields = ['name', 'sql_nameArch', 'sql_nameVerRelArch',
+                  'sql_nameVer', 'sql_nameVerRel',
+                  'sql_envra', 'sql_nevra']
+        need_full = False
+        for pat in patterns:
+            if misc.re_full_search_needed(pat):
+                need_full = True
+                break
+
+        if not need_full:
+            fields = ['name']
+
         for (repo,cache) in self.primarydb.items():
             if (repoid == None or repoid == repo.id):
                 cur = cache.cursor()
@@ -1104,9 +1116,7 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
                 pat_data = []
                 for pattern in patterns:
                     done = False
-                    for field in ['name', 'sql_nameArch', 'sql_nameVerRelArch',
-                                  'sql_nameVer', 'sql_nameVerRel',
-                                  'sql_envra', 'sql_nevra']:
+                    for field in fields:
                         if ignore_case:
                             if not done:
                                 done = True
