@@ -90,11 +90,15 @@ def re_primary_filename(filename):
 _re_compiled_full_match = None
 def re_full_search_needed(s):
     """ Tests if a string needs a full nevra match, instead of just name. """
-    # re.match('[\*\?].$', name)
     global _re_compiled_full_match
     if _re_compiled_full_match is None:
-        _re_compiled_full_match = re.compile('[-*?].*.$')
-    return _re_compiled_full_match.match(s)
+        one   = re.compile('.*[-\*\?].*.$') # Any wildcard or - seperator
+        two   = re.compile('^[0-9]')        # Any epoch, for envra
+        _re_compiled_full_match = (one, two)
+    for rec in _re_compiled_full_match:
+        if rec.match(s):
+            return True
+    return False
 
 ###########
 # Title: Remove duplicates from a sequence
