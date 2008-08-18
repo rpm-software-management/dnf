@@ -281,7 +281,7 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
             'requires' : { },
             }
         self._key2pkg = {}
-        self._arch_allowed = set()
+        self._arch_allowed = None
 
     @catchSqliteException
     def _sql_MD(self, MD, repo, sql, *args):
@@ -392,7 +392,7 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
 
     def _pkgArchExcluded(self, pkgarch):
         """ Test the arch for a package against the archlist we were passed. """
-        if pkgarch not in self._arch_allowed:
+        if self._arch_allowed is not None and pkgarch not in self._arch_allowed:
             return True
         return False
 
@@ -1199,8 +1199,11 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
     @catchSqliteException
     def excludeArchs(self, archlist):
         """excludes incompatible arches - archlist is a list of compat arches"""
-        
-        self._arch_allowed.update(archlist)
+
+        if self._arch_allowed is None:
+            self._arch_allowed = set(archlist)
+        else:
+            self._arch_allowed = self._arch_allowed.intersection(archlist)
         sarchlist = map(lambda x: "'%s'" % x , archlist)
         arch_query = ",".join(sarchlist)
 
