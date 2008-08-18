@@ -389,8 +389,15 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
 
         return (repo, pkgKey) in self._excludes
 
+    def _pkgArchExcluded(self, pkgarch):
+        """ Test the arch for a package against the archlist we were passed. """
+        if pkgarch not in self._arch_allowed:
+            return True
+        return False
+
     def _pkgExcluded(self, po):
-        return self._pkgKeyExcluded(po.repo, po.pkgKey)
+        return (self._pkgKeyExcluded(po.repo, po.pkgKey) or
+                self._pkgArchExcluded(po.arch))
 
     def _packageByKey(self, repo, pkgKey):
         """ Lookup a pkg by it's pkgKey, if we don't have it load it """
@@ -402,10 +409,14 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
             cur = self._sql_MD('primary', repo, sql, (pkgKey,))
             po = self.pc(repo, cur.fetchone())
             self._key2pkg[repo][pkgKey] = po
+        if self._pkgArchExcluded(self._key2pkg[repo][pkgKey].arch):
+            return None
         return self._key2pkg[repo][pkgKey]
         
     def _packageByKeyData(self, repo, pkgKey, data):
         """ Like _packageByKey() but we already have the data for .pc() """
+        if self._pkgArchExcluded(data['arch']):
+            return None
         if data['pkgKey'] not in self._key2pkg.get(repo, {}):
             po = self.pc(repo, data)
             self._key2pkg.setdefault(repo, {})[pkgKey] = po
@@ -451,9 +462,12 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
             if self._pkgKeyExcluded(repo, ob['pkgKey']):
                 continue
             if have_data:
-                pkgs.append(self._packageByKeyData(repo, ob['pkgKey'], ob))
+                pkg = self._packageByKeyData(repo, ob['pkgKey'], ob)
             else:
-                pkgs.append(self._packageByKey(repo, ob['pkgKey']))
+                pkg = self._packageByKey(repo, ob['pkgKey'])
+            if pkg is None:
+                continue
+            pkgs.append(pkg)
         return pkgs
 
     @staticmethod
@@ -627,7 +641,10 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
             for ob in cur:
                 if self._pkgKeyExcluded(rep, ob['pkgKey']):
                     continue
-                result.append((self._packageByKey(rep, ob['pkgKey']), ob['total']))
+                pkg = self._packageByKey(rep, ob['pkgKey'])
+                if pkg is None:
+                    continue
+                result.append((pkg, ob['total']))
         return result
         
     @catchSqliteException
@@ -761,7 +778,10 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
                 for pkgKey, hits in tmp.iteritems():
                     if self._pkgKeyExcluded(rep, pkgKey):
                         continue
-                    result[self._packageByKey(rep, pkgKey)] = hits
+                    pkg = self._packageByKey(rep, pkgKey)
+                    if pkg is None:
+                        continue
+                    result[pkg] = hits
 
         for (rep,cache) in primarydb_items:
             if rep in self._all_excludes:
@@ -781,7 +801,10 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
             for pkgKey, hits in tmp.iteritems():
                 if self._pkgKeyExcluded(rep, pkgKey):
                     continue
-                result[self._packageByKey(rep, pkgKey)] = hits
+                pkg = self._packageByKey(rep, pkgKey)
+                if pkg is None:
+                    continue
+                result[pkg] = hits
 
         if prcotype != 'provides' or name[0] != '/':
             if not preload:
@@ -807,7 +830,10 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
             for ob in cur:
                 if self._pkgKeyExcluded(rep, ob['pkgKey']):
                     continue
-                result[self._packageByKey(rep, ob['pkgKey'])] = [(name, None, None)]
+                pkg = self._packageByKey(rep, ob['pkgKey'])
+                if pkg is None:
+                    continue
+                result[pkg] = [(name, None, None)]
         self._search_cache[prcotype][req] = result
         return result
 
@@ -1094,8 +1120,12 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
                 if pat_sqls:
                     qsql = _FULL_PARSE_QUERY_BEG + " OR ".join(pat_sqls)
                 executeSQL(cur, qsql, pat_data)
+                #  Note: Not using _sql_pkgKey2po() so that we can "un-exclude"
+                # things later on ... if that matters.
                 for x in cur:
                     po = self._packageByKeyData(repo, x['pkgKey'], x)
+                    if po is None: # Arch exclude is done here.
+                        continue
                     returnList.append(po)
         if not patterns:
             self.pkgobjlist = returnList
@@ -1159,14 +1189,18 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
     def excludeArchs(self, archlist):
         """excludes incompatible arches - archlist is a list of compat arches"""
         
+        self._arch_allowed = set(archlist)
         sarchlist = map(lambda x: "'%s'" % x , archlist)
         arch_query = ",".join(sarchlist)
 
         for (rep, cache) in self.primarydb.items():
             cur = cache.cursor()
 
-            # First of all, make sure this isn't a *-source repo or something
-            # where we'll be excluding everything.
+            #  This is a minor hack opt. for source repos. ... if they are
+            # enabled normally, we don't want to exclude each package so we
+            # check it and exclude the entire thing.
+            if not rep.id.endswith("-source") or 'src' in self._arch_allowed:
+                continue
             has_arch = False
             executeSQL(cur, "SELECT DISTINCT arch FROM packages")
             for row in cur:
@@ -1176,12 +1210,6 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
             if not has_arch:
                 self._delAllPackages(rep)
                 return
-            
-            myq = "select pkgId, pkgKey from packages where arch not in (%s)" % arch_query
-            executeSQL(cur, myq)
-            for row in cur:
-                obj = self.pc(rep, row)
-                self.delPackage(obj)
 
 # Simple helper functions
 
