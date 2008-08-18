@@ -474,12 +474,16 @@ class BaseConfig(object):
         self.cfg = parser
         self._section = section
 
+        if parser.has_section(section):
+            opts = set(parser.options(section))
+        else:
+            opts = set()
         for name in self.iterkeys():
             option = self.optionobj(name)
             value = None
-            try:
-                value = parser.get(section, name)
-            except (NoSectionError, NoOptionError):
+            if name in opts:
+                value = parser.data[section][name]
+            else:
                 # No matching option in this section, try inheriting
                 if parent and option.inherit:
                     value = getattr(parent, name)
