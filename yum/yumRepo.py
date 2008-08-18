@@ -44,6 +44,16 @@ import glob
 import shutil
 import stat
 
+#  If you want yum to _always_ check the MD .sqlite files then set this to
+# False (this doesn't affect .xml files or .sqilte files derived from them).
+# With this as True yum will only check when a new repomd.xml or
+# new MD is downloaded.
+#  Note that with atomic MD, we can't have old MD lying around anymore so
+# the only way we need this check is if someone does something like:
+#   cp primary.sqlite /var/cache/yum/blah
+# ...at which point you lose.
+skip_old_DBMD_check = True
+
 warnings.simplefilter("ignore", Errors.YumFutureDeprecationWarning)
 
 logger = logging.getLogger("yum.Repos")
@@ -189,6 +199,9 @@ class YumPackageSack(packageSack.PackageSack):
         result = None
         
         if os.path.exists(db_un_fn):
+            if skip_old_DBMD_check and repo._using_old_MD:
+                return db_un_fn
+
             try:
                 repo.checkMD(db_un_fn, mdtype, openchecksum=True)
             except URLGrabError:
@@ -220,6 +233,7 @@ class YumRepository(Repository, config.RepoConf):
                                               # eventually want
         self.repoMDFile = 'repodata/repomd.xml'
         self._repoXML = None
+        self._using_old_MD = None
         self._oldRepoMDData = {}
         self.cache = 0
         self.mirrorlistparsed = 0
@@ -930,6 +944,7 @@ class YumRepository(Repository, config.RepoConf):
             self._revertOldRepoXML()
             return False
 
+        self._using_old_MD = caching
         if caching:
             return False # Skip any work.
 
