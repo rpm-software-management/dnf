@@ -1133,7 +1133,7 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
                 if ignore_case:
                     patterns = self._sql_esc_glob(patterns)
                 else:
-                    patterns = map(lambda x: (x, ''), patterns)
+                    patterns = [(pat, '') for pat in patterns]
                 for (pattern, esc) in patterns:
                     for field in fields:
                         if ignore_case:
