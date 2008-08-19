@@ -482,6 +482,21 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
             pattern = pattern.replace("_", "!_")
         return (pattern, esc)
 
+    def _sql_esc_glob(self, patterns):
+        """ Converts patterns to SQL LIKE format, if required (or gives up if
+            not possible). """
+        ret = []
+        for pattern in patterns:
+            if '[' in pattern: # LIKE only has % and _, so [abc] can't be done.
+                return []      # So Load everything
+
+            # Convert to SQL LIKE format
+            (pattern, esc) = self._sql_esc(pattern)
+            pattern = pattern.replace("*", "%")
+            pattern = pattern.replace("?", "_")
+            ret.append((pattern, esc))
+        return ret
+
     def _skip_all(self):
         """ Are we going to skip every package in all our repos? """
         skip_all = True
@@ -1115,15 +1130,13 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
 
                 pat_sqls = []
                 pat_data = []
-                for pattern in patterns:
-                    done = False
+                if ignore_case:
+                    patterns = self._sql_esc_glob(patterns)
+                else:
+                    patterns = map(lambda x: (x, ''), patterns)
+                for (pattern, esc) in patterns:
                     for field in fields:
                         if ignore_case:
-                            if not done:
-                                done = True
-                                (pattern, esc) = self._sql_esc(pattern)
-                                pattern = pattern.replace("*", "%")
-                                pattern = pattern.replace("?", "_")
                             pat_sqls.append("%s LIKE ?%s" % (field, esc))
                         else:
                             pat_sqls.append("%s GLOB ?" % field)
