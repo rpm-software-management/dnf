@@ -272,6 +272,9 @@ class YumShell(cmd.Cmd):
             repos = self._shlex_split(args)
             for repo in repos:
                 try:
+                    #  Setup the sacks/repos, we need this because we are about
+                    # to setup the enabled one. And having some setup is bad.
+                    self.base.pkgSack
                     changed = self.base.repos.enableRepo(repo)
                 except Errors.ConfigError, e:
                     self.logger.critical(e)
