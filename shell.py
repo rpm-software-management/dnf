@@ -257,7 +257,7 @@ class YumShell(cmd.Cmd):
             cmds = self._shlex_split(args)
 
             if not cmds:
-                cmds = ['all']
+                cmds = ['enabled']
             cmds.insert(0, 'repolist')
             self.base.cmds = cmds
 
