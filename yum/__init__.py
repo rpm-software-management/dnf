@@ -234,7 +234,7 @@ class YumBase(depsolve.Depsolve):
         # Check sections in the .repo file that was just slurped up
         for section in parser.sections():
 
-            if section == 'main':
+            if section in ['main', 'installed']:
                 continue
 
             # Check the repo.id against the valid chars
