@@ -6,6 +6,8 @@
 import sys
 import glob
 
+from yum.misc import to_utf8
+
 def trans(msg, default):
     if msg == 'msgstr ""\n':
         return unicode(default, encoding='utf-8')
@@ -91,7 +93,9 @@ y          %5s: %s
 no         %5s: %s
 n          %5s: %s
 """ % (fname,
-       is_this_ok, sis_this_ok, yes, syes, y, sy, no, sno, n, sn)
+       to_utf8(is_this_ok), to_utf8(sis_this_ok),
+       to_utf8(yes), to_utf8(syes), to_utf8(y), to_utf8(sy),
+       to_utf8(no), to_utf8(sno), to_utf8(n), to_utf8(sn))
     if syes[0] != sy:
         print >>sys.stderr, """\
 ERROR: yes/y translations don't match in: %s
