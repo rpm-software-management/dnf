@@ -726,6 +726,9 @@ class YumOutput:
                 pkgsize = float(txmbr.po.size)
                 size = self.format_number(pkgsize)
 
+                if a is None: # gpgkeys are weird
+                    a = 'noarch'
+
                 lines.append((n, a, evr, repoid, size, txmbr.obsoletes))
                 #  Create a dict of field_length => number of packages, for
                 # each field.
