@@ -255,6 +255,30 @@ class YumOutput:
             hiend = ''
         return (hibeg, hiend)
 
+    def fmtColumns(self, columns, msg=u'', end=u''):
+        """ Return a fmt for columns of data, which can overflow."""
+        def _align_width(width):
+            if width < 0:
+                return (u"-", -width)
+            return (u"", width)
+
+        total_width = len(msg)
+        data = []
+        for (val, width) in columns[:-1]:
+            (align, width) = _align_width(width)
+            if len(val) <= width:
+                msg += u"%%%s%ds " % (align, width)
+            else:
+                msg += u"%s\n" + " " * (total_width + width + 1)
+            total_width += width
+            total_width += 1
+            data.append(val)
+        (val, width) = columns[-1]
+        (align, width) = _align_width(width)
+        msg += u"%%%s%ds%s" % (align, width, end)
+        data.append(val)
+        return msg % tuple(data)
+
     def simpleList(self, pkg, ui_overflow=False, indent='', highlight=False):
         (hibeg, hiend) = self._highlight(highlight)
         ver = pkg.printVer()
@@ -647,6 +671,8 @@ class YumOutput:
                     break
                 ret += tup[1]
             return ret
+        # FIXME: This should be a top level function called calcColumns(), or
+        # something. We output a lot of column data.
         def _calc_widths(data, a_wid):
             """ Dynamically calc. the width of the four fields. """
             # Convert the dict to ascending list of tuples, (field_length, pkgs)
@@ -724,18 +750,9 @@ class YumOutput:
             if lines:
                 totalmsg = u"%s:\n" % action
             for (n, a, evr, repoid, size, obsoletes) in lines:
-                total_width = 1
-                msg = u' '
-                for (val, width) in ((n,   n_wid), (a,      a_wid),
-                                     (evr, v_wid), (repoid, r_wid)):
-                    if len(val) <= width:
-                        msg += u"%%-%ds " % width
-                    else:
-                        msg += u"%s\n" + " " * (total_width + width + 1)
-                    total_width += width
-                    total_width += 1
-                msg += u"%5s\n"
-                msg %= (n, a, evr, repoid, size)
+                columns = ((n,   -n_wid), (a,      -a_wid),
+                           (evr, -v_wid), (repoid, -r_wid), (size, 5))
+                msg = self.fmtColumns(columns, u" ", u"\n")
                 for obspo in obsoletes:
                     appended = _('     replacing  %s.%s %s\n\n') % (obspo.name,
                         obspo.arch, obspo.printVer())
