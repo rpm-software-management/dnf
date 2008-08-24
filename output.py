@@ -384,7 +384,11 @@ class YumOutput:
                 thingslisted = 1
                 print '%s' % description
                 for pkg in sorted(lst):
-                    highlight = (pkg.name, pkg.arch) in highlight_na
+                    key = (pkg.name, pkg.arch)
+                    highlight = False
+                    if key in highlight_na and pkg.verLT(highlight_na[key]):
+                        highlight = True
+
                     if outputType == 'list':
                         self.simpleList(pkg, ui_overflow=True,
                                         highlight=highlight)
