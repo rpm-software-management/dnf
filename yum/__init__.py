@@ -96,6 +96,7 @@ class YumBase(depsolve.Depsolve):
         self._up = None
         self._comps = None
         self._pkgSack = None
+        self._lockfile = None
         self.logger = logging.getLogger("yum.YumBase")
         self.verbose_logger = logging.getLogger("yum.verbose.YumBase")
         self._repos = RepoStorage(self)
@@ -109,6 +110,8 @@ class YumBase(depsolve.Depsolve):
 
     def __del__(self):
         self.close()
+        self.closeRpmDB()
+        self.doUnlock()
 
     def close(self):
         if self._repos:
@@ -944,7 +947,7 @@ class YumBase(depsolve.Depsolve):
                 self._unlock(lockfile)
             else:
                 if oldpid == os.getpid(): # if we own the lock, we're fine
-                    return
+                    break
                 try: os.kill(oldpid, 0)
                 except OSError, e:
                     if e[0] == errno.ESRCH:
@@ -958,18 +961,26 @@ class YumBase(depsolve.Depsolve):
                     # Another copy seems to be running.
                     msg = _('Existing lock %s: another copy is running as pid %s.') % (lockfile, oldpid)
                     raise Errors.LockError(0, msg)
+        # We've got the lock, store it so we can auto-unlock on __del__...
+        self._lockfile = lockfile
     
-    def doUnlock(self, lockfile = YUM_PID_FILE):
+    def doUnlock(self, lockfile=None):
         """do the unlock for yum"""
         
         # if we're not root then we don't lock - just return nicely
         if self.conf.uid != 0:
             return
         
-        root = self.conf.installroot
-        lockfile = root + '/' + lockfile # lock in the chroot
+        if lockfile is not None:
+            root = self.conf.installroot
+            lockfile = root + '/' + lockfile # lock in the chroot
+        elif self._lockfile is None:
+            return # Don't delete other people's lock files on __del__
+        else:
+            lockfile = self._lockfile # Get the value we locked with
         
         self._unlock(lockfile)
+        self._lockfile = None
         
     def _lock(self, filename, contents='', mode=0777):
         lockdir = os.path.dirname(filename)
