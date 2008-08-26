@@ -402,7 +402,7 @@ class Comps(object):
 
         return None
 
-    def return_groups(self, group_pattern):
+    def return_groups(self, group_pattern, case_sensitive=False):
         """return all groups which match either by glob or exact match"""
         returns = {}
 
@@ -412,8 +412,12 @@ class Comps(object):
                 thisgroup = self._groups[item]
                 returns[thisgroup.groupid] = thisgroup
                 continue
-                            
-            match = re.compile(fnmatch.translate(item)).match
+            
+            if case_sensitive:
+                match = re.compile(fnmatch.translate(item)).match
+            else:
+                match = re.compile(fnmatch.translate(item), flags=re.I).match
+
             for group in self.groups:
                 names = [ group.name, group.groupid ]
                 names.extend(group.translated_name.values())
