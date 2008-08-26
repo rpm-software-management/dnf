@@ -2,7 +2,7 @@ Summary: RPM installer/updater
 Name: yum
 Version: 3.2.19
 Release: 0
-License: GPL
+License: GPLv2+
 Group: System Environment/Base
 Source: %{name}-%{version}.tar.gz
 URL: http://linux.duke.edu/yum/
