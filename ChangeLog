@@ -1,3 +1,327 @@
+2008-08-26  Seth Vidal <skvidal@fedoraproject.org>
+
+	Merge branch 'yum-3_2_X' of
+	ssh://login.linux.duke.edu/home/groups/yum/git/yum into yum-3_2_X  *
+	'yum-3_2_X' of ssh://login.linux.duke.edu/home/groups/yum/git/yum:
+	Set the close on exec flag. for the transaction-done file, bug
+	460098
+
+2008-08-26  Seth Vidal <skvidal@fedoraproject.org>
+
+	* yum.spec, yum/__init__.py, yum/comps.py: - make group* commands default to case insensitive like they used to
+	- mark as 3.2.19
+
+2008-08-26  James Antill <james@and.org>
+
+	* yum/rpmtrans.py: Set the close on exec flag. for the
+	transaction-done file, bug 460098
+
+2008-08-25  James Antill <james@and.org>
+
+	* yum/__init__.py: Auto unlock when YumBase is destroyed, hopefully
+	better dtrt. behaviour
+
+2008-08-25  Seth Vidal <skvidal@fedoraproject.org>
+
+	* yumcommands.py: add parens to make the or'd case for checkGPGKey
+	be tied together.
+
+2008-08-24  James Antill <james@and.org>
+
+	* yum/__init__.py: Make list extras a lot faster, ~5x speedup here
+
+2008-08-24  James Antill <james@and.org>
+
+	* output.py, yumcommands.py: Fix listPkgs() so we don't highlight
+	with old packages using showduplicates
+
+2008-08-22  James Antill <james@and.org>
+
+	* output.py: Give gpgkeys a noarch arch. in listTransaction()
+
+2008-08-22  James Antill <james@and.org>
+
+	* output.py: Add fmtColumns(), just move of code from
+	listTransaction so we can reuse
+
+2008-08-22  James Antill <james@and.org>
+
+	* test/check-po-yes-no.py: do to_utf8 for check-po-yes-no error
+	reporting
+
+2008-08-22  James Antill <james@and.org>
+
+	* yum/__init__.py: Don't allow an installed repo.
+
+2008-08-21  James Antill <james@and.org>
+
+	* shell.py: Make "echo repo list | yum shell" show just enabled,
+	like "yum repolist"
+
+2008-08-21  James Antill <james@and.org>
+
+	* shell.py:  Setup the normal repos. if we are enabling a new one. Fixes bug
+	 459654
+
+2008-08-19  James Antill <james@and.org>
+
+	* yum/sqlitesack.py: Use a list comprehension instead of map, mildly
+	more readable
+
+2008-08-19  James Antill <james@and.org>
+
+	* yum/sqlitesack.py:  Fix LIKE SQL queries with [] in the input.   Eg. yum list
+	 yum[!a]3.2.17[!a]2.fc9   Needs to match yum-3.2.17-2.fc9   Yes,
+	 it's a crazy corner case ... yes, it's a simplish fix to dtwt.
+
+2008-08-19  James Antill <james@and.org>
+
+	* yum/misc.py: Add [] to set of wildcards
+
+2008-08-18  James Antill <james@and.org>
+
+	* yum/sqlitesack.py: Really do the API compat. fix for
+	excludeArchs() now, not just make it work
+
+2008-08-18  James Antill <james@and.org>
+
+	* yum/sqlitesack.py:  Minor API fixup for arch_allowed.   now compatible with old
+	 behaviour if you don't call excludeArch()   or you call it twice
+	 with different args. (crack)
+
+2008-08-18  James Antill <james@and.org>
+
+	* yum/misc.py: Fix re_full_search_needed()
+
+2008-08-18  James Antill <james@and.org>
+
+	* cli.py: Suggest installed pkgs too, in "maybe you meant" output
+
+2008-08-18  James Antill <james@and.org>
+
+	* yum/yumRepo.py:  Skip checksumming old downloaded .sqlite files, we still check when
+	 we download them. Note that this _used_ to be needed before atomic
+	 MD because we might have an old DBMD file lying around ... that
+	 cannot be true anymore, unless the user does it via. cp. And it's
+	 costing is ~25% for simple operations.  Note because of the
+	 historical behaviour I added skip_old_DBMD_check to turn this
+	 on/off, if we are super paranoid we _might_ want to have it off by
+	 default but on in yumcli?
+
+2008-08-18  James Antill <james@and.org>
+
+	* yum/misc.py, yum/sqlitesack.py:  If we can get away with searching just the name field, do that as
+	 it's indexed so is basically as fast as searchNames().   This
+	 "fails" on terms like "python-*" ... but so what.   Saves about 0.1
+	 seconds on my machine (which is ~10% now).
+
+2008-08-18  James Antill <james@and.org>
+
+	* yum/sqlitesack.py:  We don't want to do a single "search for all packages with a bad
+	 arch" SQL search because "normally" there are no bad arches.  So we
+	 move to looking at the arch. at pkg load time, a la exclude by
+	 pkgKey.   This saves about .2 seconds on my machine.
+
+2008-08-18  James Antill <james@and.org>
+
+	* yum/config.py: Don't walk each config. option in populate(), .1 -
+	.2 opt.
+
+2008-08-16  Tim Lauridsen <tim@hoth.local>
+
+	* po/zh_CN.po: Added chinese translation by lijiansheng
+
+2008-08-14  James Antill <james@and.org>
+
+	* output.py: Fix stupid missing line from _group_names2aipkgs
+	conversion
+
+2008-08-14  James Antill <james@and.org>
+
+	* cli.py: Add comments about the previous bug, and better long term.
+	fix
+
+2008-08-14  James Antill <james@and.org>
+
+	* cli.py: Fix "full" available list by using parsePackages, bug
+	459076
+
+2008-08-13  James Antill <james@and.org>
+
+	* yum/metalink.py:  First attempt at a parser for the new MirrorManager MetaLink
+	 output.  Anyone relying on this API atm. is liable for a free
+	 stabbing.   This just parses the data into a usable form, hooking
+	 it into yumRepos is not done, neither is the metalink= [urls] repo.
+	 config. variable.
+
+2008-08-13  Seth Vidal <skvidal@fedoraproject.org>
+
+	Merge branch 'yum-3_2_X' of
+	ssh://login.linux.duke.edu/home/groups/yum/git/yum into yum-3_2_X  *
+	'yum-3_2_X' of ssh://login.linux.duke.edu/home/groups/yum/git/yum:
+	Delete some old, misleading, comments in returnPkgLists   Add
+	highlighting to packages which have updates in list commands,
+	Minor extra fixes for non-existant args. in doPackageLists, these
+	are only
+
+2008-08-13  Seth Vidal <skvidal@fedoraproject.org>
+
+	* yum/packages.py: merge over the bits from createrepo to let us
+	dump xml data from YumLocalPackage objects
+
+2008-08-13  James Antill <james@and.org>
+
+	* cli.py: Delete some old, misleading, comments in returnPkgLists
+
+2008-08-13  James Antill <james@and.org>
+
+	* output.py, yumcommands.py:  Add highlighting to packages which have updates in list commands,
+	 like list/info/groupinfo. Add some helper functions.  This makes it
+	 more obvious what is "available to install" and what is "available
+	 to update".   We also only do the processiing when we have the
+	 installed+available this is a feature.
+
+2008-08-12  James Antill <james@and.org>
+
+	* yum/__init__.py:  Minor extra fixes for non-existant args. in doPackageLists, these
+	 are only really noticable from the API.
+
+2008-08-12  Seth Vidal <skvidal@fedoraproject.org>
+
+	Merge branch 'yum-3_2_X' of
+	ssh://login.linux.duke.edu/home/groups/yum/git/yum into yum-3_2_X  *
+	'yum-3_2_X' of ssh://login.linux.duke.edu/home/groups/yum/git/yum:
+	Dynamically balance the field widths in listTransaction().   Tweak
+	output of the transaction, helps RHEL a lot due to long repoids
+
+2008-08-12  Seth Vidal <skvidal@fedoraproject.org>
+
+	* yum/__init__.py, yum/transactioninfo.py: fix for the conditional
+	pkgs installing too much but this time in an API-compliant way :)
+
+2008-08-11  James Antill <james@and.org>
+
+	* output.py:  Dynamically balance the field widths in listTransaction().   We try
+	 and make as many lines as possible not "overflow"   Also when they
+	 do overflow, it's slightly better to do so on the left.   This
+	 helps the weird cases like long package names or long evr's a lot.
+	 Also RHEL with it's 30+ character repoid's.   This is a lot of code
+	 to print the transaction now, _but_ it's always the same code path
+	 so if it works once it should always do so. Of course, in theory,
+	 it's possible for it to look worse than before.
+
+2008-08-11  James Antill <james@and.org>
+
+	* output.py: Tweak output of the transaction, helps RHEL a lot due
+	to long repoids
+
+2008-08-11  Seth Vidal <skvidal@fedoraproject.org>
+
+	* yum/__init__.py, yum/repos.py, yum/yumRepo.py: - when we delete a repo from our repos object, also close it - when
+	we add_enable_repo make sure we call setup on it, too, just to make
+	sure we get the dirs and caches setup - when _resetSack is called
+	just set _sack to None not sack
+
+2008-08-11  James Antill <james@and.org>
+
+	* test/depsolvetests.py, yum/__init__.py: Turn on fix for
+	test_min_up_and_dep[12] and add fix for test_min_up_and_dep3
+
+2008-08-11  James Antill <james@and.org>
+
+	* output.py: Tweak listTransaction() output so columns are always
+	aligned
+
+2008-08-11  James Antill <james@and.org>
+
+	* yum/__init__.py:  Remove two FIXME's:  . Print better messages (and don't error) for
+	 install'ing things already installed but unavailable.  . Put a
+	 deprecation warning in getInstalledPackageObject()
+
+2008-08-10  James Antill <james@and.org>
+
+	* yum/__init__.py: Fix yum install foo.src.rpm (bug 458589)
+
+2008-08-10  James Antill <james@and.org>
+
+	* yum/misc.py, yummain.py: Create helper function setup_locale() to
+	work around broken python unicode
+
+2008-08-09  James Antill <james@and.org>
+
+	* test/depsolvetests.py, yum/depsolve.py: Add
+	test_multi_inst_dep[45] and tweak the comments for _sort_reqs
+
+2008-08-09  James Antill <james@and.org>
+
+	* test/depsolvetests.py, yum/depsolve.py: Shared lib. deps sorted
+	after pkg. deps., solves test_multi_inst_dep3, 443459
+
+2008-08-09  James Antill <james@and.org>
+
+	* yum/depsolve.py: Sort the requires, so we handle things like BZ
+	443459 and test_multi_inst_dep*
+
+2008-08-08  James Antill <james@and.org>
+
+	* test/depsolvetests.py: Add a testcase where pkgA has deps. on an
+	older available version of pkgB
+
+2008-08-08  Seth Vidal <skvidal@fedoraproject.org>
+
+	Merge branch 'yum-3_2_X' of
+	ssh://login.linux.duke.edu/home/groups/yum/git/yum into yum-3_2_X  *
+	'yum-3_2_X' of ssh://login.linux.duke.edu/home/groups/yum/git/yum:
+	Add test for no pygpgme, and give useful error message   Fail
+	valid_detached_sig if gpgme isn't installed   Fix ts used for
+	rpm-4.5.90-0.git8461.1 gpg key importing   Fix copy&paste typo with
+	syslogFacilityMap, and fix YumBase.doLoggingSetup   Move syslog
+	configs. to StatupConfig, act on them in logging. use LOG_DAEMON
+	Another unicode => to_unicode, hopefully fixes 447504
+
+2008-08-08  Seth Vidal <skvidal@fedoraproject.org>
+
+	* yum/packages.py: minor clean up to make sure when re-assemble the
+	remote path we also make sure basepath isn't stupid for urljoin()
+
+2008-08-08  James Antill <james@and.org>
+
+	* yum/yumRepo.py: Add test for no pygpgme, and give useful error
+	message
+
+2008-08-08  James Antill <james@and.org>
+
+	* yum/misc.py: Fail valid_detached_sig if gpgme isn't installed
+
+2008-08-08  James Antill <james@and.org>
+
+	* yum/__init__.py: Fix ts used for rpm-4.5.90-0.git8461.1 gpg key
+	importing
+
+2008-08-07  James Antill <james@and.org>
+
+	* yum/__init__.py, yum/logginglevels.py: Fix copy&paste typo with
+	syslogFacilityMap, and fix YumBase.doLoggingSetup
+
+2008-08-07  James Antill <james@and.org>
+
+	* yum/__init__.py, yum/config.py, yum/logginglevels.py:  Move syslog configs. to StatupConfig, act on them in logging. use
+	 LOG_DAEMON   Fixes: bug 450949
+
+2008-08-07  James Antill <james@and.org>
+
+	* yummain.py: Another unicode => to_unicode, hopefully fixes 447504
+
+
+2008-08-07  James Antill <james@and.org>
+
+	* yum/__init__.py: Don't fail list cmd for packages which are
+	installed but not in any repos.
+
+2008-08-07  Seth Vidal <skvidal@fedoraproject.org>
+
+	* ChangeLog: merge changelog
+
 2008-08-07  Seth Vidal <skvidal@fedoraproject.org>
 
 	* yum.spec, yum/__init__.py: mark as 3.2.18
