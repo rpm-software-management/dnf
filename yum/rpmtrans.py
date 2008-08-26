@@ -160,14 +160,29 @@ class RPMTransaction:
         if not os.path.exists(self.base.conf.persistdir):
             os.makedirs(self.base.conf.persistdir) # make the dir, just in case
 
+    # Error checking? -- these should probably be where else
+    def _fdSetNonblock(self, fd):
+        """ Set the Non-blocking flag for a filedescriptor. """
+        flag = os.O_NONBLOCK
+        current_flags = fcntl.fcntl(fd, fcntl.F_GETFL)
+        if current_flags & flag:
+            return
+        fcntl.fcntl(fd, fcntl.F_SETFL, current_flags | flag)
+
+    def _fdSetCloseOnExec(self, fd):
+        """ Set the close on exec. flag for a filedescriptor. """
+        flag = fcntl.FD_CLOEXEC
+        current_flags = fcntl.fcntl(fd, fcntl.F_GETFD)
+        if current_flags & flag:
+            return
+        fcntl.fcntl(fd, fcntl.F_SETFD, current_flags | flag)
+
     def _setupOutputLogging(self):
         # UGLY... set up the transaction to record output from scriptlets
         (r, w) = os.pipe()
         # need fd objects, and read should be non-blocking
         self._readpipe = os.fdopen(r, 'r')
-        fcntl.fcntl(self._readpipe.fileno(), fcntl.F_SETFL,
-                    fcntl.fcntl(self._readpipe.fileno(),
-                                fcntl.F_GETFL) | os.O_NONBLOCK)
+        self._fdSetNonblock(self._readpipe.fileno())
         self._writepipe = os.fdopen(w, 'w')
         self.base.ts.scriptFd = self._writepipe.fileno()
         rpm.setVerbosity(rpm.RPMLOG_INFO)
@@ -219,6 +234,7 @@ class RPMTransaction:
             except (IOError, OSError), e:
                 self.display.errorlog('could not open ts_done file: %s' % e)
                 return
+            self._fdSetCloseOnExec(self._ts_done.fileno())
         
         # walk back through self._te_tuples
         # make sure the package and the action make some kind of sense
