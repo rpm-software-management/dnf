@@ -687,7 +687,7 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
                 # continue without processing the obsoletes
                 if self._pkgKeyExcluded(rep, ob['pkgKey']):
                     continue
-                if self._pkgArchExcluded(rep, ob['arch']):
+                if self._pkgArchExcluded(ob['arch']):
                     continue
                     
                 key = ( _share_data(ob['name']), _share_data(ob['arch']),
