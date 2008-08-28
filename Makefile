@@ -48,6 +48,9 @@ test:
 	@nosetests -i ".*test" test
 	@test/check-po-yes-no.py
 
+test-skipbroken:
+	@nosetests -i ".*test" test/skipbroken-tests.py
+
 check: test
 
 changelog:
