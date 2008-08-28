@@ -482,7 +482,7 @@ class BaseConfig(object):
             option = self.optionobj(name)
             value = None
             if name in opts:
-                value = parser.data[section][name]
+                value = parser.get(section, name)
             else:
                 # No matching option in this section, try inheriting
                 if parent and option.inherit:
