@@ -1114,3 +1114,41 @@ class DepsolveTests(DepsolveTests):
 
         self.assertEquals('ok', *self.resolveCode())
         self.assertResult((ipo1, po1))
+
+    def test_inst_require_conflict1(self):
+        ipo1 = FakePackage('foo')
+        ipo1.addRequires('bar', None, (None, None, None))
+        ipo1.addConflicts('bar', None, (None, None, None))
+        self.tsInfo.addInstall(ipo1)
+
+        po1 = FakePackage('bar')
+        self.xsack.addPackage(po1)
+
+        self.assertEquals('err', *self.resolveCode())
+
+    def test_inst_require_conflict_me1(self):
+        ipo1 = FakePackage('foo')
+        ipo1.addRequires('bar', None, (None, None, None))
+        self.tsInfo.addInstall(ipo1)
+
+        po1 = FakePackage('bar')
+        po1.addConflicts('foo', None, (None, None, None))
+        self.xsack.addPackage(po1)
+
+        self.assertEquals('err', *self.resolveCode())
+
+    def test_inst_require_obsoletes1(self):
+        ipo1 = FakePackage('foo')
+        ipo1.addRequires('bar', None, (None, None, None))
+        ipo1.addObsoletes('bar', None, (None, None, None))
+        self.tsInfo.addInstall(ipo1)
+
+        po1 = FakePackage('bar')
+        self.xsack.addPackage(po1)
+        
+        # FIXME: Does it make sense to ignore the obsoletes here? esp. as we
+        # don't ignore the conflicts above? ... I'm guessing ignoring it is
+        # by accident too? bah.
+        # self.assertEquals('err', *self.resolveCode())
+        self.assertEquals('ok', *self.resolveCode())
+        self.assertResult((ipo1, po1))
