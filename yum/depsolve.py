@@ -85,7 +85,7 @@ class Depsolve(object):
                 Errors.YumFutureDeprecationWarning, stacklevel=2)
         return self._getTs()
         
-    def _getTs(self):
+    def _getTs(self, remove_only=False):
         """setup all the transaction set storage items we'll need
            This can't happen in __init__ b/c we don't know our installroot
            yet"""
@@ -96,15 +96,21 @@ class Depsolve(object):
         if not self.conf.installroot:
             raise Errors.YumBaseError, _('Setting up TransactionSets before config class is up')
         
-        self._getTsInfo()
+        self._getTsInfo(remove_only)
         self.initActionTs()
     
-    def _getTsInfo(self):
+    def _getTsInfo(self, remove_only=False):
+        """ remove_only param. says if we are going to do _only_ remove(s) in
+            the transaction. If so we don't need to setup the remote repos. """
         if self._tsInfo is None:
             self._tsInfo = self._transactionDataFactory()
-            self._tsInfo.setDatabases(self.rpmdb, self.pkgSack)
+            if remove_only:
+                pkgSack = None
+            else:
+                pkgSack = self.pkgSack
+            self._tsInfo.setDatabases(self.rpmdb, pkgSack)
             self._tsInfo.installonlypkgs = self.conf.installonlypkgs # this kinda sucks
-            # this REALLY sucks, sadly
+            # this REALLY sucks, sadly (needed for group conditionals)
             self._tsInfo.install_method = self.install
             self._tsInfo.update_method = self.update
             self._tsInfo.remove_method = self.remove

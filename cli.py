@@ -327,12 +327,16 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         # setup our transaction set if the command we're using needs it
         # compat with odd modules not subclassing YumCommand
         needTs = True
-        if hasattr(self.yum_cli_commands[self.basecmd], 'needTs'):
-            needTs = self.yum_cli_commands[self.basecmd].needTs(self, self.basecmd, self.extcmds)
+        needTsRemove = False
+        cmd = self.yum_cli_commands[self.basecmd]
+        if hasattr(cmd, 'needTs'):
+            needTs = cmd.needTs(self, self.basecmd, self.extcmds)
+        if not needTs and hasattr(cmd, 'needTsRemove'):
+            needTsRemove = cmd.needTsRemove(self, self.basecmd, self.extcmds)
         
-        if needTs:
+        if needTs or needTsRemove:
             try:
-                self._getTs()
+                self._getTs(needTsRemove)
             except yum.Errors.YumBaseError, e:
                 return 1, [str(e)]
 

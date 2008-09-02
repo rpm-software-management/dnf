@@ -644,8 +644,8 @@ class YumBase(depsolve.Depsolve):
         
         if self.tsInfo.changed:
             (rescode, restring) = self.resolveDeps()
-        self.tsInfo.pkgSack.dropCachedData()
-        self.pkgSack.dropCachedData()
+        if self.tsInfo.pkgSack is not None: # rm Transactions don't have pkgSack
+            self.tsInfo.pkgSack.dropCachedData()
         self.rpmdb.dropCachedData()
 
         #  We _must_ get rid of all the used tses before we go on, so that C-c

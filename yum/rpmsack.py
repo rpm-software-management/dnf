@@ -60,9 +60,9 @@ class RPMInstalledPackage(YumInstalledPackage):
     def __getattr__(self, varname):
         self.hdr = val = self._get_hdr()
         self._has_hdr = True
-        if varname != 'hdr':   # This is very unusual, for anything it does
-            val = val[varname] # happen for it might be worth adding at __init_
-
+        if varname != 'hdr':   #  This is unusual, for anything that happens
+            val = val[varname] # a lot we should preload at __init__.
+                               # Also note that pkg.no_value raises KeyError.
         return val
 
 

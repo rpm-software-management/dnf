@@ -284,6 +284,9 @@ class EraseCommand(YumCommand):
     def needTs(self, base, basecmd, extcmds):
         return False
 
+    def needTsRemove(self, base, basecmd, extcmds):
+        return True
+
 class GroupCommand(YumCommand):
     def doCommand(self, base, basecmd, extcmds):
         base.verbose_logger.log(logginglevels.INFO_2, 
