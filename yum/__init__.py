@@ -2295,11 +2295,13 @@ class YumBase(depsolve.Depsolve):
                         mypkgs = self.returnPackagesByDep(arg)
                     except yum.Errors.YumBaseError, e:
                         self.logger.critical(_('No Match for argument: %s') % arg)
-                    elif mypkgs: #  Dep. installs don't do wildcards, so we
-                                 # just want a single named package.
-                        mypkgs = self.bestPackagesFromList(mypkgs,
-                                                           single_name=True)
-                        pkgs.extend(mypkgs)
+                    else:
+                        if mypkgs:
+                            #  Dep. installs don't do wildcards, so we
+                            # just want a single named package.
+                            mypkgs = self.bestPackagesFromList(mypkgs,
+                                                               single_name=True)
+                            pkgs.extend(mypkgs)
                         
             else:
                 nevra_dict = self._nevra_kwarg_parse(kwargs)
