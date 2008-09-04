@@ -2141,7 +2141,7 @@ class YumBase(depsolve.Depsolve):
 
         return best
 
-    def bestPackagesFromList(self, pkglist, arch=None):
+    def bestPackagesFromList(self, pkglist, arch=None, single_name=False):
         """Takes a list of packages, returns the best packages.
            This function is multilib aware so that it will not compare
            multilib to singlelib packages""" 
@@ -2165,6 +2165,10 @@ class YumBase(depsolve.Depsolve):
         multi = self._bestPackageFromList(multiLib)
         single = self._bestPackageFromList(singleLib)
         no = self._bestPackageFromList(noarch)
+
+        if single_name and multi and single and multi.name != single.name:
+            # Sinlge _must_ match multi, if we want a single package name
+            single = None
 
         # now, to figure out which arches we actually want
         # if there aren't noarch packages, it's easy. multi + single
@@ -2291,9 +2295,11 @@ class YumBase(depsolve.Depsolve):
                         mypkgs = self.returnPackagesByDep(arg)
                     except yum.Errors.YumBaseError, e:
                         self.logger.critical(_('No Match for argument: %s') % arg)
-                    else:
-                        if mypkgs:
-                            pkgs.extend(self.bestPackagesFromList(mypkgs))
+                    elif mypkgs: #  Dep. installs don't do wildcards, so we
+                                 # just want a single named package.
+                        mypkgs = self.bestPackagesFromList(mypkgs,
+                                                           single_name=True)
+                        pkgs.extend(mypkgs)
                         
             else:
                 nevra_dict = self._nevra_kwarg_parse(kwargs)
