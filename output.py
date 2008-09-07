@@ -875,14 +875,15 @@ Remove   %5.5s Package(s)
             return
 
         tl = urlgrabber.progress.TerminalLine(8)
-        print "-" * tl.rest()
+        self.verbose_logger.log(logginglevels.INFO_2, "-" * tl.rest())
         dl_time = time.time() - download_start_timestamp
         ui_size = tl.add(' | %5sB' % self.format_number(remote_size))
         ui_time = tl.add(' %9s' % self.format_time(dl_time))
         ui_end  = tl.add(' ' * 5)
         ui_bs   = tl.add(' %5sB/s' % self.format_number(remote_size / dl_time))
-        print "%-*.*s%s%s%s%s" % (tl.rest(), tl.rest(), _("Total"),
+        msg = "%-*.*s%s%s%s%s" % (tl.rest(), tl.rest(), _("Total"),
                                   ui_bs, ui_size, ui_time, ui_end)
+        self.verbose_logger.log(logginglevels.INFO_2, msg)
 
 
 class DepSolveProgressCallBack:
