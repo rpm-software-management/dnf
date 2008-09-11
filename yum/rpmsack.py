@@ -536,7 +536,7 @@ class RPMDBPackageSack(PackageSackBase):
 
     def getProvides(self, name, flags=None, version=(None, None, None)):
         """searches the rpmdb for what provides the arguments
-           returns a list of pkgtuples of providing packages, possibly empty"""
+           returns a list of pkg objects of providing packages, possibly empty"""
 
         name = misc.share_data(name)
         deptup = self._genDeptup(name, flags, version)

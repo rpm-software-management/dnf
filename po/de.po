@@ -1,19 +1,19 @@
 # Fabian Affolter <fab@fedoraproject.org>, 2007,2008.
 # Dominik Sandjaja <dominiksandjaja@fedoraproject.org>, 2008.
+# Thomas Spura <tomspur@fedoraproject.org>, 2008
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: yum\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-07-22 03:14+0000\n"
-"PO-Revision-Date: 2008-07-22 09:47+0100\n"
+"POT-Creation-Date: 2008-08-27 21:26+0000\n"
+"PO-Revision-Date: 2008-09-11 15:51+0100\n"
 "Last-Translator: Fabian Affolter <fab@fedoraproject.org>\n"
 "Language-Team: German <fedora-trans-de@redhat.com>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Poedit-Language: German\n"
 
 #: ../callback.py:48
 #: ../output.py:516
@@ -192,7 +192,7 @@ msgid ""
 "Refusing to automatically import keys when running unattended.\n"
 "Use \"-y\" to override."
 msgstr ""
-"Verweigere automatischen Import der Schlüssel, wenn unbeaufsichtigt augeführt.\n"
+"Verweigere automatischen Import der Schlüssel, wenn unbeaufsichtigt ausgeführt.\n"
 "Benutze \"-y\" zum Überschreiben."
 
 #: ../cli.py:494
@@ -639,7 +639,7 @@ msgstr "  Abhängigkeit: %s"
 
 #: ../output.py:407
 msgid "   Unsatisfied dependency"
-msgstr "   Unbefriedigte Abhängigkeit"
+msgstr "   Nicht erfüllte Abhängigkeit"
 
 #: ../output.py:465
 msgid "Matched from:"
@@ -766,10 +766,11 @@ msgstr "veraltet"
 msgid "erased"
 msgstr "gelöscht"
 
+# Dies ist das Sorgenkind. So weit ich weiss, werden die Verben von oben bezogen. Eventuell könnte auch eine radikale Änderung eine Lösung sein. Fabian
 #: ../output.py:650
 #, python-format
 msgid "---> Package %s.%s %s:%s-%s set to be %s"
-msgstr "---> Paket %s.%s %s:%s-%s markiert, um %s zu werden"
+msgstr "---> Paket %s.%s %s:%s-%s gesetzt, um %s zu werden"
 
 #: ../output.py:657
 msgid "--> Running transaction check"
@@ -1402,7 +1403,7 @@ msgstr "Repository-Objekt für Repository %s fehlt a _resetSack method\n"
 
 #: ../yum/__init__.py:475
 msgid "therefore this repo cannot be reset.\n"
-msgstr "deshlab dieses Repository kann nicht zurückgesetzt werden.\n"
+msgstr "deshalb dieses Repository kann nicht zurückgesetzt werden.\n"
 
 #: ../yum/__init__.py:480
 msgid "doUpdateSetup() will go away in a future version of Yum.\n"
@@ -1463,7 +1464,7 @@ msgstr "    %s von %s"
 
 #: ../yum/__init__.py:792
 msgid "Warning: scriptlet or other non-fatal errors occurred during transaction."
-msgstr "Warnung: Scriptlet- oder anderen nichtkritische Fehler sind bei der Verarbeitung aufgetreten."
+msgstr "Warnung: Es sind Scriptlet- oder andere nicht-fatale Fehler bei der Verarbeitung aufgetreten."
 
 #: ../yum/__init__.py:807
 #, python-format
@@ -1635,7 +1636,7 @@ msgstr "Stelle Übereinstimmung bereit: %s"
 
 #: ../yum/__init__.py:1717
 msgid "No group data available for configured repositories"
-msgstr "Keine Gruppen-Daten in den konfigurierten Repositories verfügbar"
+msgstr "Keine Gruppe für konfigurierte Repositories verfügbar"
 
 #: ../yum/__init__.py:1743
 #: ../yum/__init__.py:1762
@@ -1771,7 +1772,7 @@ msgstr "Untersuche %s: %s"
 #: ../yum/__init__.py:2504
 #, python-format
 msgid "Cannot add package %s to transaction. Not a compatible architecture: %s"
-msgstr "Kann Paket %s nicht zur Verarbeitung hinzufügen. Keine kompatible Architektur: %s"
+msgstr "Kann Paket %s nicht zur Transaktion hinzufügen. Keine kompatible Architektur: %s"
 
 #: ../yum/__init__.py:2512
 #, python-format
