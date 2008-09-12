@@ -1169,7 +1169,8 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
             pkgobjlist = self._buildPkgObjList(repoid, patterns, ignore_case)
 
         if hasattr(self, 'pkgobjlist') and patterns:
-            pkgobjlist = parsePackages(pkgobjlist, patterns, not ignore_case)
+            pkgobjlist = parsePackages(pkgobjlist, patterns, not ignore_case,
+                                       unique='repo-pkgkey')
             pkgobjlist = pkgobjlist[0] + pkgobjlist[1]
 
         returnList = []
