@@ -892,11 +892,10 @@ class YumBase(depsolve.Depsolve):
             self.verbose_logger.log(logginglevels.INFO_2, _('Excluding Packages from %s'),
                 repo.name)
 
-        pkgs = self._pkgSack.returnPackages(repoid, patterns=excludelist)
-        exactmatch, matched, unmatched = \
-           parsePackages(pkgs, excludelist, casematch=1, unique='repo-pkgkey')
+        pkgs = self._pkgSack.returnPackages(repoid, patterns=excludelist,
+                                            ignore_case=False)
 
-        for po in exactmatch + matched:
+        for po in pkgs:
             self.verbose_logger.debug('Excluding %s', po)
             po.repo.sack.delPackage(po)
             
@@ -2362,11 +2361,7 @@ class YumBase(depsolve.Depsolve):
             # Do we still want to return errors here?
             # We don't in the cases below, so I didn't here...
             if 'pattern' in kwargs:
-                pats = [kwargs['pattern']]
-                pkgs = self.rpmdb.returnPackages(patterns=pats)
-                exactmatch, matched, unmatched = parsePackages(pkgs, pats,
-                                                               casematch=1)
-                pkgs = exactmatch + matched
+                pkgs = self.rpmdb.returnPackages(patterns=[kwargs['pattern']])
             if 'name' in kwargs:
                 pkgs = self.rpmdb.searchNevra(name=kwargs['name'])
             for pkg in pkgs:
