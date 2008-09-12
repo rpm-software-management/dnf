@@ -918,9 +918,10 @@ class YumBase(depsolve.Depsolve):
         self.verbose_logger.log(logginglevels.INFO_2,
             _('Reducing %s to included packages only'), repo.name)
         rmlist = []
+        keeplist = set(exactmatch + matched)
         
         for po in pkglist:
-            if po in exactmatch + matched:
+            if po in keeplist:
                 self.verbose_logger.debug(_('Keeping included package %s'), po)
                 continue
             else:
