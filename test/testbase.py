@@ -34,6 +34,7 @@ class FakeConf(object):
         self.skip_broken = False
         self.disable_excludes = []
         self.multilib_policy = 'best'
+        self.persistdir = '/should-not-exist-bad-test!'
 
 class FakeRepo(object):
 
