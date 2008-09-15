@@ -199,8 +199,11 @@ class YumPlugins:
             key = _("Loaded plugins: ")
             val = ", ".join(sorted(self._plugins))
             nxt = ' ' * (len(key) - 2) + ': '
+            width = 80
+            if hasattr(self.base, 'term'):
+                width = self.base.term.columns
             self.verbose_logger.log(logginglevels.INFO_2,
-                                    fill(val, width=80, initial_indent=key,
+                                    fill(val, width=width, initial_indent=key,
                                          subsequent_indent=nxt))
 
         if self.disabledPlugins:
