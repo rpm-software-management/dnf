@@ -21,7 +21,7 @@ from rpmUtils import miscutils
 from rpmUtils.transaction import initReadOnlyTransaction
 import misc
 import Errors
-from packages import YumInstalledPackage
+from packages import YumInstalledPackage, parsePackages
 from packageSack import PackageSackBase
 
 # For returnPackages(patterns=)
@@ -296,7 +296,12 @@ class RPMDBPackageSack(PackageSackBase):
                 if self._match_repattern(rpats, hdr):
                     self._makePackageObject(hdr, idx)
             self._completely_loaded = patterns is None
-        return self._idx2pkg.values()
+
+        pkgobjlist = self._idx2pkg.values()
+        if patterns:
+            pkgobjlist = parsePackages(pkgobjlist, patterns, not ignore_case)
+            pkgobjlist = pkgobjlist[0] + pkgobjlist[1]
+        return pkgobjlist
 
     @staticmethod
     def _find_search_fields(fields, searchstrings, hdr):

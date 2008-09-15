@@ -24,7 +24,7 @@ import os.path
 import fnmatch
 
 import yumRepo
-from packages import PackageObject, RpmBase, YumAvailablePackage
+from packages import PackageObject, RpmBase, YumAvailablePackage, parsePackages
 import Errors
 import misc
 
@@ -870,7 +870,7 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
             return []
 
         returnList = []
-        max_entries = constants.PATTERNS_MAX
+        max_entries = constants.PATTERNS_INDEXED_MAX
         if len(names) > max_entries:
             for names in seq_max_split(names, max_entries):
                 returnList.extend(self.searchNames(names))
@@ -1104,12 +1104,6 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
             patterns = []
 
         returnList = []
-        max_entries = constants.PATTERNS_MAX / 7
-        if len(patterns) > max_entries:
-            for patterns in seq_max_split(patterns, max_entries):
-                returnList.extend(self._buildPkgObjList(repoid, patterns,
-                                                        ignore_case))
-            return returnList
         
         fields = ['name', 'sql_nameArch', 'sql_nameVerRelArch',
                   'sql_nameVer', 'sql_nameVerRel',
@@ -1120,8 +1114,12 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
                 need_full = True
                 break
 
+        pat_max = constants.PATTERNS_MAX
         if not need_full:
             fields = ['name']
+            pat_max = constants.PATTERNS_INDEXED_MAX
+        if len(patterns) > pat_max:
+            patterns = []
 
         for (repo,cache) in self.primarydb.items():
             if (repoid == None or repoid == repo.id):
@@ -1169,6 +1167,11 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
             pkgobjlist = self.pkgobjlist
         else:
             pkgobjlist = self._buildPkgObjList(repoid, patterns, ignore_case)
+
+        if hasattr(self, 'pkgobjlist') and patterns:
+            pkgobjlist = parsePackages(pkgobjlist, patterns, not ignore_case,
+                                       unique='repo-pkgkey')
+            pkgobjlist = pkgobjlist[0] + pkgobjlist[1]
 
         returnList = []
         for po in pkgobjlist:
