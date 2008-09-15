@@ -255,17 +255,86 @@ class YumOutput:
             hiend = ''
         return (hibeg, hiend)
 
+    @staticmethod
+    def _calc_columns_spaces_helps(current, data_tups, left):
+        """ Spaces left on the current field will help how many pkgs? """
+        ret = 0
+        for tup in data_tups:
+            if left < (tup[0] - current):
+                break
+            ret += tup[1]
+        return ret
+
+    def calcColumns(self, data, columns=None, remainder_column=0,
+                    total_width=None, indent=''):
+        """ Dynamically calculate the width of the fields in the data, data is
+            of the format [column-number][field_length] = rows. """
+
+        if total_width is None:
+            total_width = self.term.columns
+
+        cols = len(data)
+        # Convert the data to ascending list of tuples, (field_length, pkgs)
+        pdata = data
+        data  = [None] * cols # Don't modify the passed in data
+        for d in range(0, cols):
+            data[d] = sorted(pdata[d].items())
+
+        if columns is None:
+            columns = [1] * cols
+
+        total_width -= (sum(columns) + (cols - 1) + len(indent))
+        while total_width > 0:
+            # Find which field all the spaces left will help best
+            helps = 0
+            val   = 0
+            for d in xrange(0, cols):
+                thelps = self._calc_columns_spaces_helps(columns[d], data[d],
+                                                         total_width)
+                if not thelps:
+                    continue
+                if thelps < helps:
+                    continue
+                helps = thelps
+                val   = d
+
+            #  If we found a column to expand, move up to the next level with
+            # that column and start again with any remaining space.
+            if helps:
+                diff = data[val].pop(0)[0] - columns[val]
+                columns[val] += diff
+                total_width  -= diff
+                continue
+
+            #  Split the remaining spaces among each column equally, except the
+            # last one. And put the rest into the remainder column
+            cols -= 1
+            norm = total_width / cols
+            for d in xrange(0, cols):
+                columns[d] += norm
+            columns[remainder_column] += total_width - (cols * norm)
+            total_width = 0
+
+        return columns
+
+    @staticmethod
+    def _fmt_column_align_width(width):
+        if width < 0:
+            return (u"-", -width)
+        return (u"", width)
+
     def fmtColumns(self, columns, msg=u'', end=u''):
-        """ Return a fmt for columns of data, which can overflow."""
-        def _align_width(width):
-            if width < 0:
-                return (u"-", -width)
-            return (u"", width)
+        """ Return a string for columns of data, which can overflow."""
 
         total_width = len(msg)
         data = []
         for (val, width) in columns[:-1]:
-            (align, width) = _align_width(width)
+            if not width: # Don't count this column, invisible text
+                msg += u"%s"
+                data.append(val)
+                continue
+
+            (align, width) = self._fmt_column_align_width(width)
             if len(val) <= width:
                 msg += u"%%%s%ds " % (align, width)
             else:
@@ -274,29 +343,38 @@ class YumOutput:
             total_width += 1
             data.append(val)
         (val, width) = columns[-1]
-        (align, width) = _align_width(width)
+        (align, width) = self._fmt_column_align_width(width)
         msg += u"%%%s%ds%s" % (align, width, end)
         data.append(val)
         return msg % tuple(data)
 
-    def simpleList(self, pkg, ui_overflow=False, indent='', highlight=False):
+    def simpleList(self, pkg, ui_overflow=False, indent='', highlight=False,
+                   columns=None):
+        """ Simple to use function to print a pkg as a line. """
+
+        if columns is None:
+            columns = (-40, -22, -16) # Old default
         (hibeg, hiend) = self._highlight(highlight)
         ver = pkg.printVer()
         na = '%s%s.%s' % (indent, pkg.name, pkg.arch)
-        if ui_overflow and (len(na) - (len(hibeg) + len(hiend))) > 40:
-            print "%s%s%s %s" % (hibeg, na, hiend, "...")
-            na = ""
-        print "%s%-40.40s%s %-22.22s %-16.16s" % (hibeg, na, hiend,
-                                                  ver, pkg.repoid)
+        columns = zip((na, ver, pkg.repoid), columns)
+        columns.insert(1, (hiend, 0))
+        columns.insert(0, (hibeg, 0))
+        print self.fmtColumns(columns)
 
     def simpleEnvraList(self, pkg, ui_overflow=False,
-                        indent='', highlight=False):
+                        indent='', highlight=False, columns=None):
+        """ Simple to use function to print a pkg as a line, with the pkg
+            itself in envra format so it can be pased to list/install/etc. """
+
+        if columns is None:
+            columns = (-63, -16) # Old default
         (hibeg, hiend) = self._highlight(highlight)
         envra = '%s%s' % (indent, str(pkg))
-        if ui_overflow and (len(envra) - (len(hibeg) + len(hiend))) > 63:
-            print "%s%s%s %s" % (hibeg, envra, hiend, "...")
-            envra = ""
-        print "%s%-63.63s%s %-16.16s" % (hibeg, envra, hiend, pkg.repoid)
+        columns = zip((envra, pkg.repoid), columns)
+        columns.insert(1, (hiend, 0))
+        columns.insert(0, (hibeg, 0))
+        print self.fmtColumns(columns)
 
     def fmtKeyValFill(self, key, val):
         """ Return a key value pair in the common two column output format. """
@@ -360,18 +438,26 @@ class YumOutput:
         print self.fmtKeyValFill(_("Description: "), self._enc(pkg.description))
         print ""
     
-    def updatesObsoletesList(self, uotup, changetype):
+    def updatesObsoletesList(self, uotup, changetype, columns=None):
         """takes an updates or obsoletes tuple of pkgobjects and
            returns a simple printed string of the output and a string
            explaining the relationship between the tuple members"""
         (changePkg, instPkg) = uotup
+
+        if columns is not None:
+            # New style, output all info. for both old/new with old indented
+            self.simpleList(changePkg, columns=columns)
+            self.simpleList(instPkg,   columns=columns, indent=' ' * 4)
+            return
+
+        # Old style
         c_compact = changePkg.compactPrint()
         i_compact = '%s.%s' % (instPkg.name, instPkg.arch)
         c_repo = changePkg.repoid
-        # FIXME - other ideas for how to print this out?
         print '%-35.35s [%.12s] %.10s %-20.20s' % (c_compact, c_repo, changetype, i_compact)
 
-    def listPkgs(self, lst, description, outputType, highlight_na={}):
+    def listPkgs(self, lst, description, outputType, highlight_na={},
+                 columns=None):
         """outputs based on whatever outputType is. Current options:
            'list' - simple pkg list
            'info' - similar to rpm -qi output
@@ -391,7 +477,7 @@ class YumOutput:
 
                     if outputType == 'list':
                         self.simpleList(pkg, ui_overflow=True,
-                                        highlight=highlight)
+                                        highlight=highlight, columns=columns)
                     elif outputType == 'info':
                         self.infoOutput(pkg, highlight=highlight)
                     else:
@@ -667,53 +753,6 @@ class YumOutput:
         #   http://fedorapeople.org/~james/yum/commands/length_distributions.py
         # but it sucked for corner cases, so this is dynamic...
 
-        def _spaces_helps(current, data_tups, left):
-            """ Spaces left on the current field will help how many pkgs? """
-            ret = 0
-            for tup in data_tups:
-                if left < (tup[0] - current):
-                    break
-                ret += tup[1]
-            return ret
-        # FIXME: This should be a top level function called calcColumns(), or
-        # something. We output a lot of column data.
-        def _calc_widths(data, a_wid):
-            """ Dynamically calc. the width of the four fields. """
-            # Convert the dict to ascending list of tuples, (field_length, pkgs)
-            for d in ("n", "v", "r"):
-                data[d] = sorted(data[d].items())
-
-            wid  = {'n' : 1, 'v' : 1, 'r' : 1}
-            left = 69 - (a_wid + wid['n'] + wid['v'] + wid['r'])
-            while left > 0:
-                # Find which field all the spaces left will help best
-                helps = 0
-                val   = 'n'
-                for d in ("n", "v", "r"):
-                    thelps = _spaces_helps(wid[d], data[d], left)
-                    if not thelps:
-                        continue
-                    if thelps < helps:
-                        continue
-                    helps = thelps
-                    val   = d
-
-                # If we found one, move up to the next level with that field
-                if helps:
-                    diff = data[val].pop(0)[0] - wid[val]
-                    wid[val] += diff
-                    left     -= diff
-                    continue
-
-                # Split the remaining spaces among each field
-                wid['n'] += left / 4
-                a_wid    += left / 4
-                wid['v'] += left / 4
-                wid['r'] += left - (3 * (left / 4))
-                left = 0
-
-            return (wid['n'], a_wid, wid['v'], wid['r'])
-
         data  = {'n' : {}, 'v' : {}, 'r' : {}}
         a_wid = 0 # Arch can't get "that big" ... so always use the max.
         for (action, pkglist) in [(_('Installing'), self.tsInfo.installed),
@@ -745,20 +784,29 @@ class YumOutput:
             pkglist_lines.append((action, lines))
 
         if data['n']:
-            (n_wid, a_wid, v_wid, r_wid) = _calc_widths(data, a_wid)
+            data    = [data['n'],    {}, data['v'], data['r'], {}]
+            columns = [1,         a_wid,         1,         1,  5]
+            columns = self.calcColumns(data, indent="  ", columns=columns,
+                                       remainder_column=2)
+            (n_wid, a_wid, v_wid, r_wid, s_wid) = columns
+            assert s_wid == 5
+
             out = u"""
-================================================================================
- %-*s %-*s %-*s %-*s %-5s
-================================================================================
-""" % (n_wid, _('Package'), a_wid, _('Arch'),
-       v_wid, _('Version'), r_wid, _('Repository'), _('Size'))
+%s
+%s
+%s
+""" % ('=' * self.term.columns,
+       self.fmtColumns(((_('Package'), -n_wid), (_('Arch'), -a_wid),
+                        (_('Version'), -v_wid), (_('Repository'), -r_wid),
+                        (_('Size'), s_wid)), u" "),
+       '=' * self.term.columns)
 
         for (action, lines) in pkglist_lines:
             if lines:
                 totalmsg = u"%s:\n" % action
             for (n, a, evr, repoid, size, obsoletes) in lines:
                 columns = ((n,   -n_wid), (a,      -a_wid),
-                           (evr, -v_wid), (repoid, -r_wid), (size, 5))
+                           (evr, -v_wid), (repoid, -r_wid), (size, s_wid))
                 msg = self.fmtColumns(columns, u" ", u"\n")
                 for obspo in obsoletes:
                     appended = _('     replacing  %s.%s %s\n\n') % (obspo.name,
@@ -771,13 +819,14 @@ class YumOutput:
 
         summary = _("""
 Transaction Summary
-================================================================================
+%s
 Install  %5.5s Package(s)         
 Update   %5.5s Package(s)         
 Remove   %5.5s Package(s)         
-""") % (len(self.tsInfo.installed + self.tsInfo.depinstalled),
-       len(self.tsInfo.updated + self.tsInfo.depupdated),
-       len(self.tsInfo.removed + self.tsInfo.depremoved))
+""") % ('=' * self.term.columns,
+        len(self.tsInfo.installed + self.tsInfo.depinstalled),
+        len(self.tsInfo.updated + self.tsInfo.depupdated),
+        len(self.tsInfo.removed + self.tsInfo.depremoved))
         out = out + summary
         
         return out
