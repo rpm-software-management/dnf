@@ -549,8 +549,20 @@ class YumOutput:
             ret.setdefault(pkg.name, []).append((apkg, ipkg))
         return ret
 
+    def _calcDataPkgColumns(self, data, pkg_names, pkg_names2pkgs):
+        for item in pkg_names:
+            if item not in pkg_names2pkgs:
+                continue
+            for (apkg, ipkg) in pkg_names2pkgs[item]:
+                pkg = ipkg or apkg
+                envra = len(str(pkg))
+                rid   = len(pkg.repoid)
+                for (d, v) in (('envra', envra), ('rid', rid)):
+                    data[d].setdefault(v, 0)
+                    data[d][v] += 1
+
     def _displayPkgsFromNames(self, pkg_names, verbose, pkg_names2pkgs,
-                              indent='   '):
+                              indent='   ', columns=None):
         if not verbose:
             for item in sorted(pkg_names):
                 print '%s%s' % (indent, item)
@@ -562,7 +574,8 @@ class YumOutput:
                 for (apkg, ipkg) in sorted(pkg_names2pkgs[item],
                                            key=lambda x: x[1] or x[0]):
                     self.simpleEnvraList(ipkg or apkg, ui_overflow=True,
-                                         indent=indent, highlight=ipkg and apkg)
+                                         indent=indent, highlight=ipkg and apkg,
+                                         columns=columns)
     
     def displayPkgsInGroups(self, group):
         mylang = get_my_lang_code()
@@ -574,25 +587,25 @@ class YumOutput:
             pkg_names2pkgs = self._group_names2aipkgs(group.packages)
         if group.descriptionByLang(mylang) != "":
             print _(' Description: %s') % to_unicode(group.descriptionByLang(mylang))
-        if len(group.mandatory_packages) > 0:
-            print _(' Mandatory Packages:')
-            self._displayPkgsFromNames(group.mandatory_packages, verb,
-                                       pkg_names2pkgs)
 
-        if len(group.default_packages) > 0:
-            print _(' Default Packages:')
-            self._displayPkgsFromNames(group.default_packages, verb,
-                                       pkg_names2pkgs)
-        
-        if len(group.optional_packages) > 0:
-            print _(' Optional Packages:')
-            self._displayPkgsFromNames(group.optional_packages, verb,
-                                       pkg_names2pkgs)
+        sections = ((_(' Mandatory Packages:'),   group.mandatory_packages),
+                    (_(' Default Packages:'),     group.default_packages),
+                    (_(' Optional Packages:'),    group.optional_packages),
+                    (_(' Conditional Packages:'), group.conditional_packages))
+        columns = None
+        if verb:
+            data = {'envra' : {}, 'rid' : {}}
+            for (section_name, pkg_names) in sections:
+                self._calcDataPkgColumns(data, pkg_names, pkg_names2pkgs)
+            data = [data['envra'], data['rid']]
+            columns = self.calcColumns(data)
+            columns = (-columns[0], -columns[1])
 
-        if len(group.conditional_packages) > 0:
-            print _(' Conditional Packages:')
-            self._displayPkgsFromNames(group.conditional_packages, verb,
-                                       pkg_names2pkgs)
+        for (section_name, pkg_names) in sections:
+            if len(pkg_names) > 0:
+                print section_name
+                self._displayPkgsFromNames(pkg_names, verb, pkg_names2pkgs,
+                                           columns=columns)
 
     def depListOutput(self, results):
         """take a list of findDeps results and 'pretty print' the output"""
