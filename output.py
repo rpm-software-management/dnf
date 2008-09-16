@@ -549,13 +549,14 @@ class YumOutput:
             ret.setdefault(pkg.name, []).append((apkg, ipkg))
         return ret
 
-    def _calcDataPkgColumns(self, data, pkg_names, pkg_names2pkgs):
+    def _calcDataPkgColumns(self, data, pkg_names, pkg_names2pkgs,
+                            indent='   '):
         for item in pkg_names:
             if item not in pkg_names2pkgs:
                 continue
             for (apkg, ipkg) in pkg_names2pkgs[item]:
                 pkg = ipkg or apkg
-                envra = len(str(pkg))
+                envra = len(str(pkg)) + len(indent)
                 rid   = len(pkg.repoid)
                 for (d, v) in (('envra', envra), ('rid', rid)):
                     data[d].setdefault(v, 0)
