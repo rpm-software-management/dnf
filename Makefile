@@ -54,7 +54,7 @@ test-skipbroken:
 check: test
 
 changelog:
-	git log --pretty --numstat --summary | git2cl  > ChangeLog
+	git log --since=2007-05-16 --pretty --numstat --summary | git2cl  > ChangeLog
 
 testnewbehavior:
 	@NEW_BEHAVIOR=1 nosetests -i ".*test" test
