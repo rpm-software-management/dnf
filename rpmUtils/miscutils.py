@@ -413,5 +413,5 @@ def checkSignals():
                               signal.SIGPIPE,
                               signal.SIGQUIT,
                               signal.SIGHUP]):
-            exit(1)
+            sys.exit(1)
     
