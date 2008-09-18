@@ -11,7 +11,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
-# Copyright 2005 Duke University 
+# Copyright 2005 Duke University
 # Copyright 2007 Red Hat
 import os
 import re
@@ -132,9 +132,9 @@ class YumPackageSack(packageSack.PackageSack):
             if self.added.has_key(repo):
                 if item in self.added[repo]:
                     continue
-            
+
             db_fn = None
-            
+
             if item == 'metadata':
                 mydbtype = 'primary_db'
                 mymdtype = 'primary'
@@ -146,22 +146,22 @@ class YumPackageSack(packageSack.PackageSack):
                 mymdtype = 'filelists'
                 repo_get_function = repo.getFileListsXML
                 repo_cache_function = repo.cacheHandler.getFilelists
-                
+
             elif item == 'otherdata':
                 mydbtype = 'other_db'
                 mymdtype = 'other'
                 repo_get_function = repo.getOtherXML
                 repo_cache_function = repo.cacheHandler.getOtherdata
-                
+
             else:
                 continue
-                
+
             if self._check_db_version(repo, mydbtype):
                 # see if we have the uncompressed db and check it's checksum vs the openchecksum
                 # if not download the bz2 file
                 # decompress it
                 # unlink it
-                
+
                 db_un_fn = self._check_uncompressed_db(repo, mydbtype)
                 if not db_un_fn:
                     db_fn = repo._retrieveMD(mydbtype)
@@ -195,9 +195,9 @@ class YumPackageSack(packageSack.PackageSack):
         fname = os.path.basename(remote)
         bz2_fn = repo.cachedir + '/' + fname
         db_un_fn = bz2_fn.replace('.bz2', '')
-        
+
         result = None
-        
+
         if os.path.exists(db_un_fn):
             if skip_old_DBMD_check and repo._using_old_MD:
                 return db_un_fn
@@ -211,24 +211,24 @@ class YumPackageSack(packageSack.PackageSack):
                 result = db_un_fn
 
         return result
-        
+
     def _check_db_version(self, repo, mdtype):
         return repo._check_db_version(mdtype)
-        
+
 class YumRepository(Repository, config.RepoConf):
     """
     This is an actual repository object
-   
+
     Configuration attributes are pulled in from config.RepoConf.
     """
-                
+
     def __init__(self, repoid):
         config.RepoConf.__init__(self)
         Repository.__init__(self, repoid)
 
         self.repofile = None
         self._urls = []
-        self.enablegroups = 0 
+        self.enablegroups = 0
         self.groupsfilename = 'yumgroups.xml' # something some freaks might
                                               # eventually want
         self.repoMDFile = 'repodata/repomd.xml'
@@ -242,7 +242,7 @@ class YumRepository(Repository, config.RepoConf):
         self.metadata_cookie_fn = 'cachecookie'
         self.groups_added = False
         self.http_headers = {}
-        self.repo_config_age = 0 # if we're a repo not from a file then the 
+        self.repo_config_age = 0 # if we're a repo not from a file then the
                                  # config is very, very old
         # throw in some stubs for things that will be set by the config class
         self.basecachedir = ""
@@ -250,7 +250,7 @@ class YumRepository(Repository, config.RepoConf):
         self.pkgdir = ""
         self.hdrdir = ""
         self.cost = 1000
-        self.copy_local = 0        
+        self.copy_local = 0
         # holder for stuff we've grabbed
         self.retrieved = { 'primary':0, 'filelists':0, 'other':0, 'group':0,
                            'updateinfo':0}
@@ -264,7 +264,7 @@ class YumRepository(Repository, config.RepoConf):
 
         # callback function for handling media
         self.mediafunc = None
-        
+
         # callbacks for gpg key importing and confirmation
         self.gpg_import_func = None
         self.confirm_func = None
@@ -290,7 +290,7 @@ class YumRepository(Repository, config.RepoConf):
         if self._sack is not None:
             self.sack.close()
         Repository.close(self)
-    
+
     def _resetSack(self):
         self._sack = None
 
@@ -353,9 +353,9 @@ class YumRepository(Repository, config.RepoConf):
         vars = ['name', 'bandwidth', 'enabled', 'enablegroups',
                 'gpgcheck', 'repo_gpgcheck', # FIXME: gpgcheck => pkgs_gpgcheck
                 'includepkgs', 'keepalive', 'proxy',
-                 'proxy_password', 'proxy_username', 'exclude',
-                 'retries', 'throttle', 'timeout', 'mirrorlist',
-                 'cachedir', 'gpgkey', 'pkgdir', 'hdrdir']
+                'proxy_password', 'proxy_username', 'exclude',
+                'retries', 'throttle', 'timeout', 'mirrorlist',
+                'cachedir', 'gpgkey', 'pkgdir', 'hdrdir']
         vars.sort()
         for attr in vars:
             output = output + '%s = %s\n' % (attr, getattr(self, attr))
@@ -511,13 +511,13 @@ class YumRepository(Repository, config.RepoConf):
                 if not os.path.exists(dir):
                     raise Errors.RepoError, \
                         "Cannot access repository dir %s" % dir
-        # if we're using a cachedir that's not the system one, copy over these 
+        # if we're using a cachedir that's not the system one, copy over these
         # basic items from the system one
         self._preload_md_from_system_cache('repomd.xml')
         self._preload_md_from_system_cache('cachecookie')
-        self._preload_md_from_system_cache('mirrorlist.txt')        
-        
-        
+        self._preload_md_from_system_cache('mirrorlist.txt')
+
+
     def baseurlSetup(self):
         warnings.warn('baseurlSetup() will go away in a future version of Yum.\n',
                 Errors.YumFutureDeprecationWarning, stacklevel=2)
@@ -548,7 +548,7 @@ class YumRepository(Repository, config.RepoConf):
         # store them all back in baseurl for compat purposes
         self.baseurl = self._urls
         self.check()
-        
+
     def _replace_and_check_url(self, url_list):
         goodurls = []
         skipped = None
@@ -579,7 +579,7 @@ class YumRepository(Repository, config.RepoConf):
     urls = property(fget=lambda self: self._geturls(),
                     fset=lambda self, value: setattr(self, "_urls", value),
                     fdel=lambda self: setattr(self, "_urls", None))
-                    
+
 
     def _getFile(self, url=None, relative=None, local=None, start=None, end=None,
             copy_local=None, checkfunc=None, text=None, reget='simple', cache=True):
@@ -595,17 +595,17 @@ class YumRepository(Repository, config.RepoConf):
 
         # Turn our dict into a list of 2-tuples
         headers = self.__headersListFromDict()
-        
+
         # We will always prefer to send no-cache.
         if not (cache or self.http_headers.has_key('Pragma')):
             headers.append(('Pragma', 'no-cache'))
 
         headers = tuple(headers)
-        
+
         # if copylocal isn't specified pickup the repo-defined attr
         if copy_local is None:
             copy_local = self.copy_local
-            
+
         if local is None or relative is None:
             raise Errors.RepoError, \
                   "get request for Repo %s, gave no source or dest" % self.id
@@ -635,7 +635,7 @@ class YumRepository(Repository, config.RepoConf):
                 return result
             except Errors.MediaError, e:
                 verbose_logger.log(logginglevels.DEBUG_2, "Error getting package from media; falling back to url %s" %(e,))
-        
+
         if url is not None and scheme != "media":
             ug = URLGrabber(keepalive = self.keepalive,
                             bandwidth = self.bandwidth,
@@ -667,7 +667,7 @@ class YumRepository(Repository, config.RepoConf):
                     raise Errors.NoMoreMirrorsRepoError, errstr
                 else:
                     raise Errors.RepoError, errstr
-                    
+
 
         else:
             try:
@@ -693,7 +693,7 @@ class YumRepository(Repository, config.RepoConf):
         remote = package.relativepath
         local = package.localPkg()
         basepath = package.basepath
-            
+
         return self._getFile(url=basepath,
                         relative=remote,
                         local=local,
@@ -701,7 +701,7 @@ class YumRepository(Repository, config.RepoConf):
                         text=text,
                         cache=cache
                         )
-        
+
     def getHeader(self, package, checkfunc = None, reget = 'simple',
             cache = True):
 
@@ -715,7 +715,7 @@ class YumRepository(Repository, config.RepoConf):
                         reget=None, end=end, checkfunc=checkfunc, copy_local=1,
                         cache=cache,
                         )
- 
+
 
 
     def metadataCurrent(self):
@@ -729,12 +729,12 @@ class YumRepository(Repository, config.RepoConf):
         return self.withinCacheAge(self.metadata_cookie, self.metadata_expire)
 
     def withinCacheAge(self, myfile, expiration_time):
-        """check if any file is older than a certain amount of time. Used for 
+        """check if any file is older than a certain amount of time. Used for
            the cachecookie and the mirrorlist
            return True if w/i the expiration time limit
            false if the time limit has expired
-           
-           Additionally compare the file to age of the newest .repo or yum.conf 
+
+           Additionally compare the file to age of the newest .repo or yum.conf
            file. If any of them are newer then invalidate the cache
            """
 
@@ -749,14 +749,14 @@ class YumRepository(Repository, config.RepoConf):
             # WE ARE FROM THE FUTURE!!!!
             elif cookie_info[8] > time.time():
                 val = False
-            
+
             # make sure none of our config files for this repo are newer than
             # us
             if cookie_info[8] < int(self.repo_config_age):
                 val = False
 
         return val
-    
+
     def setMetadataCookie(self):
         """if possible, set touch the metadata_cookie file"""
 
@@ -791,7 +791,7 @@ class YumRepository(Repository, config.RepoConf):
                                              self.metadata_expire):
             return True
         return False
-    
+
     def _getFileRepoXML(self, local, text=None, grab_can_fail=None):
         """ Call _getFile() for the repomd.xml file. """
         checkfunc = (self._checkRepoXML, (), {})
@@ -810,10 +810,10 @@ class YumRepository(Repository, config.RepoConf):
             if grab_can_fail:
                 return None
             raise Errors.RepoError, 'Error downloading file %s: %s' % (local, e)
-        
-            
+
+
         return result
-        
+
     def _parseRepoXML(self, local, parse_can_fail=None):
         """ Parse the repomd.xml file. """
         try:
@@ -824,7 +824,7 @@ class YumRepository(Repository, config.RepoConf):
             if parse_can_fail:
                 return None
             raise Errors.RepoError, 'Error importing repomd.xml from %s: %s' % (self, e)
-        
+
     def _saveOldRepoXML(self, local):
         """ If we have an older repomd.xml file available, save it out. """
         # Cleanup old trash...
@@ -839,7 +839,7 @@ class YumRepository(Repository, config.RepoConf):
                                    'old_local' : old_local, 'new_MD_files' : []}
             return True
         return False
-            
+
 
     def _revertOldRepoXML(self):
         """ If we have older data available, revert to it. """
@@ -853,7 +853,7 @@ class YumRepository(Repository, config.RepoConf):
 
         old_data = self._oldRepoMDData
         self._oldRepoMDData = {}
-        
+
         if 'old_local' in old_data:
             os.rename(old_data['old_local'], old_data['local'])
 
@@ -876,7 +876,7 @@ class YumRepository(Repository, config.RepoConf):
             return
         for revert in old_data['old_MD_files']:
             os.unlink(revert + '.old.tmp')
-        
+
     def _get_mdtype_data(self, mdtype, repoXML=None):
         if repoXML is None:
             repoXML = self.repoXML
@@ -902,7 +902,7 @@ class YumRepository(Repository, config.RepoConf):
     def _groupCheckDataMDNewer(self):
         """ We check the timestamps, if any of the timestamps for the
             "new" data is older than what we have ... we revert. """
-        
+
         if 'old_repo_XML' not in self._oldRepoMDData:
             return True
         old_repo_XML = self._oldRepoMDData['old_repo_XML']
@@ -922,20 +922,20 @@ class YumRepository(Repository, config.RepoConf):
         local  = self.cachedir + '/repomd.xml'
         if self._repoXML is not None:
             return False
-    
+
         if self._cachingRepoXML(local):
             caching = True
             result = local
         else:
             caching = False
             self._saveOldRepoXML(local)
-                
+
             result = self._getFileRepoXML(local, text)
             if result is None:
                 # Ignore this as we have a copy
                 self._revertOldRepoXML()
                 return False
-            
+
             # if we have a 'fresh' repomd.xml then update the cookie
             self.setMetadataCookie()
 
@@ -952,7 +952,7 @@ class YumRepository(Repository, config.RepoConf):
             self._revertOldRepoXML()
             return False
         return True
-        
+
     def _check_db_version(self, mdtype, repoXML=None):
         if repoXML is None:
             repoXML = self.repoXML
@@ -1019,7 +1019,7 @@ class YumRepository(Repository, config.RepoConf):
         else:
             old_repo_XML = self._oldRepoMDData['old_repo_XML']
             self._oldRepoMDData['old_MD_files'] = reverts
-            
+
         # Inited twice atm. ... sue me
         self._oldRepoMDData['new_MD_files'] = []
         for mdtype in all_mdtypes:
@@ -1032,7 +1032,7 @@ class YumRepository(Repository, config.RepoConf):
                 if local:
                     if _mdtype_eq(omdtype, odata, nmdtype, ndata):
                         continue # If they are the same do nothing
-            
+
                     # Move this version, we _may_ get a new one.
                     # We delete it on success, revert it back on failure.
                     # We don't copy as we know it's bad due to above test.
@@ -1048,7 +1048,7 @@ class YumRepository(Repository, config.RepoConf):
             # No old repomd data, but we might still have uncompressed MD
             if self._groupCheckDataMDValid(ndata, nmdtype, mdtype):
                 continue
-            
+
             if not self._retrieveMD(nmdtype, retrieve_can_fail=True):
                 self._revertOldRepoXML()
                 return False
@@ -1100,18 +1100,18 @@ class YumRepository(Repository, config.RepoConf):
             self._revertOldRepoXML() # Undo metadata cookie?
             raise
         raise Errors.RepoError, 'Bad loadRepoXML policy: %s' % (self.mdpolicy)
-        
+
     def _getRepoXML(self):
         if self._repoXML:
             return self._repoXML
         try:
             self._loadRepoXML(text=self)
         except Errors.RepoError, e:
-            msg = ("Cannot retrieve repository metadata (repomd.xml) for repository: %s. " 
+            msg = ("Cannot retrieve repository metadata (repomd.xml) for repository: %s. "
                   "Please verify its path and try again" % self )
             raise Errors.RepoError, msg
         return self._repoXML
-        
+
 
     repoXML = property(fget=lambda self: self._getRepoXML(),
                        fset=lambda self, val: setattr(self, "_repoXML", val),
@@ -1122,7 +1122,7 @@ class YumRepository(Repository, config.RepoConf):
             filepath = fo.filename
         else:
             filepath = fo
-        
+
         if self.repo_gpgcheck:
 
             if misc.gpgme is None:
@@ -1139,10 +1139,10 @@ class YumRepository(Repository, config.RepoConf):
                                        cache=self.http_caching == 'all')
             except URLGrabError, e:
                 raise URLGrabError(-1, 'Error finding signature for repomd.xml for %s: %s' % (self, e))
-            
+
             if not os.path.exists(self.gpgdir):
-                if self.gpg_import_func: 
-                    #FIXME probably should have an else off of this to 
+                if self.gpg_import_func:
+                    #FIXME probably should have an else off of this to
                     # complain if there is no import function
                     try:
                         self.gpg_import_func(self, self.confirm_func)
@@ -1152,10 +1152,10 @@ class YumRepository(Repository, config.RepoConf):
                     # FIXME if we get the okay here to import the key then
                     # we should set an option so that future key imports for this
                     # repo will be allowed w/o question
-            
+
             if not misc.valid_detached_sig(result, filepath, self.gpgdir):
                 raise URLGrabError(-1, 'repomd.xml signature could not be verified for %s' % (self))
-        
+
         try:
             repoMDObject.RepoMD(self.id, filepath)
         except Errors.RepoMDError, e:
@@ -1165,7 +1165,7 @@ class YumRepository(Repository, config.RepoConf):
     def checkMD(self, fn, mdtype, openchecksum=False):
         """check the metadata type against its checksum"""
         return self._checkMD(fn, mdtype, openchecksum)
-    
+
     def _checkMD(self, fn, mdtype, openchecksum=False,
                  data=None, check_can_fail=False):
         """ Internal function, use .checkMD() from outside yum. """
@@ -1207,10 +1207,10 @@ class YumRepository(Repository, config.RepoConf):
            mdtype can be 'primary', 'filelists', 'other' or 'group'."""
         return self._retrieveMD(mdtype)
 
-    def _retrieveMD(self, mdtype, retrieve_can_fail=False):        
+    def _retrieveMD(self, mdtype, retrieve_can_fail=False):
         """ Internal function, use .retrieveMD() from outside yum. """
         thisdata = self.repoXML.getData(mdtype)
-        
+
         (r_base, remote) = thisdata.location
         fname = os.path.basename(remote)
         local = self.cachedir + '/' + fname
@@ -1266,7 +1266,7 @@ class YumRepository(Repository, config.RepoConf):
 
 
     def getFileListsXML(self):
-        """this gets you the path to the filelists.xml file, retrieving it if we 
+        """this gets you the path to the filelists.xml file, retrieving it if we
            need a new one"""
 
         return self.retrieveMD('filelists')
@@ -1327,7 +1327,7 @@ class YumRepository(Repository, config.RepoConf):
            """
         self.mirrorlist_file = self.cachedir + '/' + 'mirrorlist.txt'
         fo = None
-        
+
         cacheok = False
         if self.withinCacheAge(self.mirrorlist_file, self.mirrorlist_expire):
             cacheok = True
@@ -1364,18 +1364,18 @@ class YumRepository(Repository, config.RepoConf):
             return
         if self.old_base_cache_dir == "":
             return
-            
+
         glob_repo_cache_dir=os.path.join(self.old_base_cache_dir, self.id)
         if not os.path.exists(glob_repo_cache_dir):
             return
         if os.path.normpath(glob_repo_cache_dir) == os.path.normpath(self.cachedir):
             return
-            
+
         # copy repomd.xml, cachecookie and mirrorlist.txt
         fn = glob_repo_cache_dir + '/' + filename
         destfn = self.cachedir + '/' + os.path.basename(filename)
         # don't copy it if the copy in our users dir is newer or equal
-        if not os.path.exists(fn): 
+        if not os.path.exists(fn):
             return
         if os.path.exists(destfn):
             if os.stat(fn)[stat.ST_CTIME] <= os.stat(destfn)[stat.ST_CTIME]:
@@ -1386,7 +1386,7 @@ class YumRepository(Repository, config.RepoConf):
 
 def getMirrorList(mirrorlist, pdict = None):
     warnings.warn('getMirrorList() will go away in a future version of Yum.\n',
-            Errors.YumFutureDeprecationWarning, stacklevel=2)    
+            Errors.YumFutureDeprecationWarning, stacklevel=2)
     """retrieve an up2date-style mirrorlist file from a url,
        we also s/$ARCH/$BASEARCH/ and move along
        returns a list of the urls from that file"""

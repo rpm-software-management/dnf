@@ -213,16 +213,54 @@ class InfoCommand(YumCommand):
             return 1, [str(e)]
         else:
             update_pkgs = {}
+
+            columns = None
+            if basecmd == 'list':
+                # Dynamically size the columns
+                def _add_pkg_simple_list_lens(data, pkg, indent=''):
+                    """ Get the length of each pkg's column. Add that to data.
+                        This "knows" about simpleList and printVer. """
+                    na  = len(pkg.name)    + 1 + len(pkg.arch)    + len(indent)
+                    ver = len(pkg.version) + 1 + len(pkg.release)
+                    rid = len(pkg.repoid)
+                    if pkg.epoch != '0':
+                        ver += len(pkg.epoch) + 1
+                    for (d, v) in (('na', na), ('ver', ver), ('rid', rid)):
+                        data[d].setdefault(v, 0)
+                        data[d][v] += 1
+
+                data = {'na' : {}, 'ver' : {}, 'rid' : {}}
+                for lst in (ypl.installed, ypl.available, ypl.extras,
+                            ypl.updates, ypl.recent):
+                    for pkg in lst:
+                        _add_pkg_simple_list_lens(data, pkg)
+                if len(ypl.obsoletes) > 0:
+                    for (npkg, opkg) in ypl.obsoletesTuples:
+                        _add_pkg_simple_list_lens(data, npkg)
+                        _add_pkg_simple_list_lens(data, opkg, indent=" " * 4)
+
+                data = [data['na'], data['ver'], data['rid']]
+                columns = base.calcColumns(data, remainder_column=1)
+                columns = (-columns[0], -columns[1], -columns[2])
+
             if ypl.installed:
+                #  If we have installed and available lists, then do the
+                # highlighting for the installed packages so you can see what's
+                # available to install vs. available to update.
                 for pkg in ypl.available:
                     key = (pkg.name, pkg.arch)
                     if key not in update_pkgs or pkg.verGT(update_pkgs[key]):
                         update_pkgs[key] = pkg
+
+            # Output the packages:
             rip = base.listPkgs(ypl.installed, _('Installed Packages'), basecmd,
-                                highlight_na=update_pkgs)
-            rap = base.listPkgs(ypl.available, _('Available Packages'), basecmd)
-            rep = base.listPkgs(ypl.extras, _('Extra Packages'), basecmd)
-            rup = base.listPkgs(ypl.updates, _('Updated Packages'), basecmd)
+                                highlight_na=update_pkgs, columns=columns)
+            rap = base.listPkgs(ypl.available, _('Available Packages'), basecmd,
+                                columns=columns)
+            rep = base.listPkgs(ypl.extras, _('Extra Packages'), basecmd,
+                                columns=columns)
+            rup = base.listPkgs(ypl.updates, _('Updated Packages'), basecmd,
+                                columns=columns)
 
             # XXX put this into the ListCommand at some point
             if len(ypl.obsoletes) > 0 and basecmd == 'list': 
@@ -232,10 +270,13 @@ class InfoCommand(YumCommand):
                 # The tuple is (newPkg, oldPkg) ... so sort by new
                 for obtup in sorted(ypl.obsoletesTuples,
                                     key=operator.itemgetter(0)):
-                    base.updatesObsoletesList(obtup, 'obsoletes')
+                    base.updatesObsoletesList(obtup, 'obsoletes',
+                                              columns=columns)
             else:
-                rop = base.listPkgs(ypl.obsoletes, _('Obsoleting Packages'), basecmd)
-            rrap = base.listPkgs(ypl.recent, _('Recently Added Packages'), basecmd)
+                rop = base.listPkgs(ypl.obsoletes, _('Obsoleting Packages'),
+                                    basecmd, columns=columns)
+            rrap = base.listPkgs(ypl.recent, _('Recently Added Packages'),
+                                 basecmd, columns=columns)
             # extcmds is pop(0)'d if they pass a "special" param like "updates"
             # in returnPkgLists(). This allows us to always return "ok" for
             # things like "yum list updates".
