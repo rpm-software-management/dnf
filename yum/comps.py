@@ -227,21 +227,21 @@ class Group(object):
             msg += """   <langonly>%s</langonly>""" % self.langonly
             
         msg +="""   <name>%s</name>\n""" % self.name
-        for (lang, val) in self.translated_name.items():
+        for (lang, val) in sorted(self.translated_name.items()):
             msg += """   <name xml:lang="%s">%s</name>\n""" % (lang, val)
         
         msg += """   <description>%s</description>\n""" % self.description
-        for (lang, val) in self.translated_description.items():
+        for (lang, val) in sorted(self.translated_description.items()):
             msg += """   <description xml:lang="%s">%s</description>\n""" % (lang, val)
 
         msg += """    <packagelist>\n"""
-        for pkg in self.mandatory_packages.keys():
+        for pkg in sorted(self.mandatory_packages):
             msg += """      <packagereq type="mandatory">%s</packagereq>\n""" % pkg
-        for pkg in self.default_packages.keys():
+        for pkg in sorted(self.default_packages):
             msg += """      <packagereq type="default">%s</packagereq>\n""" % pkg
-        for pkg in self.optional_packages.keys():
+        for pkg in sorted(self.optional_packages):
             msg += """      <packagereq type="optional">%s</packagereq>\n""" % pkg
-        for (pkg, req) in self.conditional_packages.items():
+        for (pkg, req) in sorted(self.conditional_packages.items()):
             msg += """      <packagereq type="conditional" requires="%s">%s</packagereq>\n""" % (req, pkg)
         msg += """    </packagelist>\n"""
         msg += """  </group>"""
