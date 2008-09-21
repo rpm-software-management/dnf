@@ -177,6 +177,9 @@ def getArchList(thisarch=None):
     if archlist[0] == "sparc64v":
         archlist.insert(1,"sparc64")
     
+    # if we're a weirdo arch - add noarch on there.
+    if len(archlist) == 1 and archlist[0] == thisarch:
+        archlist.append('noarch')
     return archlist
     
         
