@@ -51,6 +51,11 @@ class CompsObj(object):
         """ Return the "name" of the object for the current locale. """
         return self.nameByLang(get_my_lang_code())
     
+    @property
+    def ui_description(self):
+        """ Return the "description" of the object for the current locale. """
+        return self.descriptionByLang(get_my_lang_code())
+
     def __cmp__(self, other):
         if other is None:
             return 1
