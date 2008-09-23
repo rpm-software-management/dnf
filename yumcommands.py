@@ -409,6 +409,9 @@ class GroupRemoveCommand(GroupCommand):
     def needTs(self, base, basecmd, extcmds):
         return False
 
+    def needTsRemove(self, base, basecmd, extcmds):
+        return True
+
 class GroupInfoCommand(GroupCommand):
     def getNames(self):
         return ['groupinfo']
