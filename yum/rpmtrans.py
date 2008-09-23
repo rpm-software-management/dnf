@@ -138,12 +138,33 @@ class SimpleCliCallBack(RPMBaseCallback):
         if msgs:
             print msgs,
 
+class _WrapNoExceptions:
+    def __init__(self, parent):
+        self.__parent = parent
+
+    def __getattr__(self, name):
+        """ Wraps all access to the parent functions. This is so it'll eat all
+            exceptions because rpm doesn't like exceptions in the callback. """
+        func = getattr(self.__parent, name)
+
+        def newFunc(*args, **kwargs):
+            try:
+                func(*args, **kwargs)
+            except:
+                pass
+
+        newFunc.__name__ = func.__name__
+        newFunc.__doc__ = func.__doc__
+        newFunc.__dict__.update(func.__dict__)
+        return newFunc
+
 class RPMTransaction:
     def __init__(self, base, test=False, display=NoOutputCallBack):
         if not callable(display):
             self.display = display
         else:
             self.display = display() # display callback
+        self.display = _WrapNoExceptions(self.display)
         self.base = base # base yum object b/c we need so much
         self.test = test # are we a test?
         self.trans_running = False
