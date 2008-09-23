@@ -579,15 +579,14 @@ class YumOutput:
                                          columns=columns)
     
     def displayPkgsInGroups(self, group):
-        mylang = get_my_lang_code()
-        print _('\nGroup: %s') % group.nameByLang(mylang)
+        print _('\nGroup: %s') % group.ui_name
 
         verb = self.verbose_logger.isEnabledFor(logginglevels.DEBUG_3)
         pkg_names2pkgs = None
         if verb:
             pkg_names2pkgs = self._group_names2aipkgs(group.packages)
-        if group.descriptionByLang(mylang) != "":
-            print _(' Description: %s') % to_unicode(group.descriptionByLang(mylang))
+        if group.ui_description:
+            print _(' Description: %s') % to_unicode(group.ui_description)
 
         sections = ((_(' Mandatory Packages:'),   group.mandatory_packages),
                     (_(' Default Packages:'),     group.default_packages),
