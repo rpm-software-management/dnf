@@ -138,6 +138,11 @@ class SimpleCliCallBack(RPMBaseCallback):
         if msgs:
             print msgs,
 
+#  This is ugly, but atm. rpm can go insane and run the "cleanup" phase
+# without the "install" phase if it gets an exception in it's callback. The
+# following means that we don't really need to know/care about that in the
+# display callback functions.
+#  Note try/except's in RPMTransaction are for the same reason.
 class _WrapNoExceptions:
     def __init__(self, parent):
         self.__parent = parent
@@ -292,8 +297,17 @@ class RPMTransaction:
         # hope springs eternal that this isn't wrong
         msg = '%s %s:%s-%s-%s.%s\n' % (t,e,n,v,r,a)
 
-        self._ts_done.write(msg)
-        self._ts_done.flush()
+        try:
+            self._ts_done.write(msg)
+            self._ts_done.flush()
+        except (IOError, OSError), e:
+            try:
+                #  Having incomplete transactions is probably worse than having
+                # nothing.
+                del self._ts_done
+                os.unlink(self.ts_done_fn)
+            except:
+                pass
         self._te_tuples.pop(0)
     
     def ts_all(self):
@@ -333,12 +347,20 @@ class RPMTransaction:
             self.display.errorlog('could not open ts_all file: %s' % e)
             return
 
-        for (t,e,n,v,r,a) in self._te_tuples:
-            msg = "%s %s:%s-%s-%s.%s\n" % (t,e,n,v,r,a)
-            fo.write(msg)
-        fo.flush()
-        fo.close()
-    
+        try:
+            for (t,e,n,v,r,a) in self._te_tuples:
+                msg = "%s %s:%s-%s-%s.%s\n" % (t,e,n,v,r,a)
+                fo.write(msg)
+            fo.flush()
+            fo.close()
+        except (IOError, OSError), e:
+            try:
+                #  Having incomplete transactions is probably worse than having
+                # nothing.
+                os.unlink(self.ts_all_fn)
+            except:
+                pass
+
     def callback( self, what, bytes, total, h, user ):
         if what == rpm.RPMCALLBACK_TRANS_START:
             self._transStart( bytes, total, h )
