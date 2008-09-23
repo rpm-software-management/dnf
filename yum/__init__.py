@@ -1804,7 +1804,7 @@ class YumBase(depsolve.Depsolve):
                 else:
                     available.append(grp)
             
-        return installed, available
+        return sorted(installed), sorted(available)
     
     
     def groupRemove(self, grpid):
