@@ -5,7 +5,7 @@ Release: 0
 License: GPLv2+
 Group: System Environment/Base
 Source: %{name}-%{version}.tar.gz
-URL: http://linux.duke.edu/yum/
+URL: http://yum.baseurl.org/
 BuildRoot: %{_tmppath}/%{name}-%{version}root
 BuildArchitectures: noarch
 BuildRequires: python
