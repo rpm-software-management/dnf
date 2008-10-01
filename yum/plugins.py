@@ -249,24 +249,33 @@ class YumPlugins:
             self.verbose_logger.debug(_('"%s" plugin is disabled'), modname)
             return
 
-        fp, pathname, description = imp.find_module(modname, [dir])
         try:
-            module = imp.load_module(modname, fp, pathname, description)
-        finally:
-            fp.close()
+            fp, pathname, description = imp.find_module(modname, [dir])
+            try:
+                module = imp.load_module(modname, fp, pathname, description)
+            finally:
+                fp.close()
+        except:
+            if self.verbose_logger.isEnabledFor(logginglevels.DEBUG_4):
+                raise # Give full backtrace:
+            self.verbose_logger.error(_('Plugin "%s" can\'t be imported') %
+                                      modname)
+            return
 
         # Check API version required by the plugin
         if not hasattr(module, 'requires_api_version'):
-             raise Errors.ConfigError(
-                _('Plugin "%s" doesn\'t specify required API version') % modname
-                )
+            self.verbose_logger.error(
+                _('Plugin "%s" doesn\'t specify required API version') %
+                modname)
+            return
         if not apiverok(API_VERSION, module.requires_api_version):
-            raise Errors.ConfigError(
+            self.verbose_logger.error(
                 _('Plugin "%s" requires API %s. Supported API is %s.') % (
                     modname,
                     module.requires_api_version,
                     API_VERSION,
                     ))
+            return
 
         # Check plugin type against filter
         plugintypes = getattr(module, 'plugin_type', ALL_TYPES)
