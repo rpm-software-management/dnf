@@ -503,7 +503,49 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
 
         return 0
 
-    
+    def _maybeYouMeant(self, arg):
+        """ If install argument doesn't match with case, tell the user. """
+        matches = self.doPackageLists(patterns=[arg], ignore_case=True)
+        matches = matches.installed + matches.available
+        matches = set(map(lambda x: x.name, matches))
+        if matches:
+            msg = self.fmtKeyValFill(_('  * Maybe you meant: '),
+                                     ", ".join(matches))
+            self.verbose_logger.log(yum.logginglevels.INFO_2, msg)
+
+    def _checkMaybeYouMeant(self, arg, always_output=True):
+        """ If the update/remove argument doesn't match with case, or due
+            to not being installed, tell the user. """
+        # always_output is a wart due to update/remove not producing the
+        # same output.
+        matches = self.doPackageLists(patterns=[arg], ignore_case=False)
+        if matches.installed: # Found a match so ignore
+            return
+        hibeg = self.term.MODE['bold']
+        hiend = self.term.MODE['normal']
+        if matches.available:
+            self.verbose_logger.log(yum.logginglevels.INFO_2,
+                _('Package(s) %s%s%s available, but not installed.'),
+                                    hibeg, arg, hiend)
+            return
+
+        # No package name, so do the maybeYouMeant thing here too
+        matches = self.doPackageLists(patterns=[arg], ignore_case=True)
+        if not matches.installed and matches.available:
+            self.verbose_logger.log(yum.logginglevels.INFO_2,
+                _('Package(s) %s%s%s available, but not installed.'),
+                                    hibeg, arg, hiend)
+            return
+        matches = set(map(lambda x: x.name, matches.installed))
+        if always_output or matches:
+            self.verbose_logger.log(yum.logginglevels.INFO_2,
+                                    _('No package %s%s%s available.'),
+                                    hibeg, arg, hiend)
+        if matches:
+            msg = self.fmtKeyValFill(_('  * Maybe you meant: '),
+                                     ", ".join(matches))
+            self.verbose_logger.log(yum.logginglevels.INFO_2, msg)
+
     def installPkgs(self, userlist):
         """Attempts to take the user specified list of packages/wildcards
            and install them, or if they are installed, update them to a newer
@@ -532,22 +574,10 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
                 self.install(pattern=arg)
             except yum.Errors.InstallError:
                 self.verbose_logger.log(yum.logginglevels.INFO_2,
-                                        _('No package %s available.'), arg)
-                matches = self.doPackageLists(patterns=[arg], ignore_case=True)
-                #  The problem here is that if this is the second time around
-                # then we've already pre-cached the results from doPackageLists
-                # to be all the available pkgs. So we need to match.
-                # FIXME: Really we should probably put this in
-                # doPackageLists() / returnPackages() when we have a pattern.
-                matches = matches.installed + matches.available
-                exactmatch, matched, unmatched = parsePackages(matches, [arg])
-                matches = yum.misc.unique(exactmatch + matched)
-                matches = set(map(lambda x: x.name, matches))
-                if matches:
-                    msg = self.fmtKeyValFill(_('  * Maybe you meant: '),
-                                             ", ".join(matches))
-                    self.verbose_logger.log(yum.logginglevels.INFO_2, msg)
-
+                                        _('No package %s%s%s available.'),
+                                        self.term.MODE['bold'], arg,
+                                        self.term.MODE['normal'])
+                self._maybeYouMeant(arg)
         if len(self.tsInfo) > oldcount:
             return 2, [_('Package(s) to install')]
         return 0, [_('Nothing to do')]
@@ -577,8 +607,9 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
                 for item in localupdates:
                     userlist.remove(item)
                 
-            for pattern in userlist:
-                self.update(pattern=pattern)
+            for arg in userlist:
+                if not self.update(pattern=arg):
+                    self._checkMaybeYouMeant(arg)
 
         if len(self.tsInfo) > oldcount:
             change = len(self.tsInfo) - oldcount
@@ -587,9 +618,6 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         else:
             return 0, [_('No Packages marked for Update')]
 
-
-        
-    
     def erasePkgs(self, userlist):
         """take user commands and populate a transaction wrapper with packages
            to be erased/removed"""
@@ -597,7 +625,8 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         oldcount = len(self.tsInfo)
         
         for arg in userlist:
-            self.remove(pattern=arg)
+            if not self.remove(pattern=arg):
+                self._checkMaybeYouMeant(arg, always_output=False)
         
         if len(self.tsInfo) > oldcount:
             change = len(self.tsInfo) - oldcount
