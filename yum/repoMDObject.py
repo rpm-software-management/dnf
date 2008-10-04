@@ -22,6 +22,7 @@ iterparse = cElementTree.iterparse
 from Errors import RepoMDError
 
 import sys
+from misc import AutoFileChecksums
 
 def ns_cleanup(qn):
     if qn.find('}') == -1: return qn 
@@ -72,6 +73,8 @@ class RepoMD:
         self.timestamp = 0
         self.repoid = repoid
         self.repoData = {}
+        self.checksums = {}
+        self.length    = 0
         
         if type(srcfile) == type('str'):
             # srcfile is a filename string
@@ -80,6 +83,8 @@ class RepoMD:
             # srcfile is a file object
             infile = srcfile
         
+        infile = AutoFileChecksums(infile, ['md5', 'sha1', 'sha256'],
+                                   ignore_missing=True)
         parser = iterparse(infile)
         
         try:
@@ -95,6 +100,9 @@ class RepoMD:
                             self.timestamp = nts
                     except:
                         pass
+
+            self.checksums = infile.checksums.hexdigests()
+            self.length    = len(infile.checksums)
         except SyntaxError, e:
             raise RepoMDError, "Damaged repomd.xml file"
             
@@ -112,6 +120,9 @@ class RepoMD:
         """dump fun output"""
 
         print "file timestamp: %s" % self.timestamp
+        print "file length   : %s" % self.length
+        for csum in sorted(self.checksums):
+            print "file checksum : %s/%s" % (csum, self.checksums[csum])
         for ft in sorted(self.fileTypes()):
             thisdata = self.repoData[ft]
             print '  datatype: %s' % thisdata.type
