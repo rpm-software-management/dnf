@@ -34,6 +34,7 @@ import sqlitesack
 from yum import config
 from yum import misc
 from constants import *
+import metalink
 
 import logging
 import logginglevels
@@ -240,6 +241,8 @@ class YumRepository(Repository, config.RepoConf):
         self.yumvar = {} # empty dict of yumvariables for $string replacement
         self._proxy_dict = {}
         self.metadata_cookie_fn = 'cachecookie'
+        self._metadataCurrent = None
+        self._metalink = None
         self.groups_added = False
         self.http_headers = {}
         self.repo_config_age = 0 # if we're a repo not from a file then the
@@ -354,7 +357,7 @@ class YumRepository(Repository, config.RepoConf):
                 'gpgcheck', 'repo_gpgcheck', # FIXME: gpgcheck => pkgs_gpgcheck
                 'includepkgs', 'keepalive', 'proxy',
                 'proxy_password', 'proxy_username', 'exclude',
-                'retries', 'throttle', 'timeout', 'mirrorlist',
+                'retries', 'throttle', 'timeout', 'mirrorlist', 'metalink',
                 'cachedir', 'gpgkey', 'pkgdir', 'hdrdir']
         vars.sort()
         for attr in vars:
@@ -516,6 +519,7 @@ class YumRepository(Repository, config.RepoConf):
         self._preload_md_from_system_cache('repomd.xml')
         self._preload_md_from_system_cache('cachecookie')
         self._preload_md_from_system_cache('mirrorlist.txt')
+        self._preload_md_from_system_cache('metalink.xml')
 
 
     def baseurlSetup(self):
@@ -527,12 +531,17 @@ class YumRepository(Repository, config.RepoConf):
         """go through the baseurls and mirrorlists and populate self.urls
            with valid ones, run  self.check() at the end to make sure it worked"""
 
+        self.baseurl = self._replace_and_check_url(self.baseurl)
+
         mirrorurls = []
+        if self.metalink and not self.mirrorlistparsed:
+            # FIXME: This is kind of lying to API callers
+            mirrorurls.extend(list(self.metalink_data.urls()))
+            self.mirrorlistparsed = True
         if self.mirrorlist and not self.mirrorlistparsed:
             mirrorurls.extend(self._getMirrorList())
             self.mirrorlistparsed = True
 
-        self.baseurl = self._replace_and_check_url(self.baseurl)
         self.mirrorurls = self._replace_and_check_url(mirrorurls)
         self._urls = self.baseurl + self.mirrorurls
         # if our mirrorlist is just screwed then make sure we unlink a mirrorlist cache
@@ -580,6 +589,53 @@ class YumRepository(Repository, config.RepoConf):
                     fset=lambda self, value: setattr(self, "_urls", value),
                     fdel=lambda self: setattr(self, "_urls", None))
 
+    def _getMetalink(self):
+        if not self._metalink:
+            self.metalink_filename = self.cachedir + '/' + 'metalink.xml'
+            local = self.metalink_filename + '.tmp'
+            if not self._metalinkCurrent():
+                url = misc.to_utf8(self.metalink)
+                try:
+                    ug = URLGrabber(bandwidth = self.bandwidth,
+                                    retry = self.retries,
+                                    throttle = self.throttle,
+                                    progress_obj = self.callback,
+                                    proxies=self.proxy_dict)
+                    ug.opts.user_agent = default_grabber.opts.user_agent
+                    result = ug.urlgrab(url, local, text=self.id + "/metalink")
+
+                except urlgrabber.grabber.URLGrabError, e:
+                    if not os.path.exists(self.metalink_filename):
+                        msg = ("Cannot retrieve metalink for repository: %s. "
+                               "Please verify its path and try again" % self )
+                        raise Errors.RepoError, msg
+                    #  Now, we have an old usable metalink, so we can't move to
+                    # a newer repomd.xml ... or checksums won't match.
+                    print "Could not get metalink %s error was \n%s" %(url, e)
+                    self._metadataCurrent = True
+
+            if not self._metadataCurrent:
+                try:
+                    self._metalink = metalink.MetaLinkRepoMD(result)
+                    shutil.move(result, self.metalink_filename)
+                except metalink.MetaLinkRepoErrorParseFail, e:
+                    # Downloaded file failed to parse, revert (dito. above):
+                    print "Could not parse metalink %s error was \n%s"%(url, e)
+                    self._metadataCurrent = True
+                    try:
+                        os.unlink(result)
+                    except:
+                        pass
+
+            if self._metadataCurrent:
+                self._metalink = metalink.MetaLinkRepoMD(self.metalink_filename)
+
+        return self._metalink
+
+    metalink_data = property(fget=lambda self: self._getMetalink(),
+                             fset=lambda self, value: setattr(self, "_metalink",
+                                                              value),
+                             fdel=lambda self: setattr(self, "_metalink", None))
 
     def _getFile(self, url=None, relative=None, local=None, start=None, end=None,
             copy_local=None, checkfunc=None, text=None, reget='simple', cache=True):
@@ -716,17 +772,35 @@ class YumRepository(Repository, config.RepoConf):
                         cache=cache,
                         )
 
-
-
     def metadataCurrent(self):
         """Check if there is a metadata_cookie and check its age. If the
         age of the cookie is less than metadata_expire time then return true
-        else return False"""
-        warnings.warn('metadataCurrent() will go away in a future version of Yum.\n \
-                       please use withinCacheAge() instead.',
-                Errors.YumFutureDeprecationWarning, stacklevel=2)
+        else return False. This result is cached, so that metalink/repomd.xml
+        are synchronized."""
+        if self._metadataCurrent is None:
+            self._metadataCurrent = self.withinCacheAge(self.metadata_cookie,
+                                                        self.metadata_expire)
+        return self._metadataCurrent
 
-        return self.withinCacheAge(self.metadata_cookie, self.metadata_expire)
+    #  The problem is that the metalink _cannot_ be newer than the repomd.xml
+    # or the checksums can be off.
+    #  Also see _getMetalink()
+    def _metalinkCurrent(self):
+        if self._metadataCurrent is not None:
+            return self._metadataCurrent
+
+        if self.cache and not os.path.exists(self.metalink_filename):
+            raise Errors.RepoError, 'Cannot find metalink.xml file for %s' %self
+
+        if self.cache:
+            self._metadataCurrent = True
+        elif not os.path.exists(self.metalink_filename):
+            self._metadataCurrent = False
+        elif self.withinCacheAge(self.metadata_cookie, self.metadata_expire):
+            self._metadataCurrent = True
+        else:
+            self._metadataCurrent = False
+        return self._metadataCurrent
 
     def withinCacheAge(self, myfile, expiration_time):
         """check if any file is older than a certain amount of time. Used for
@@ -787,8 +861,7 @@ class YumRepository(Repository, config.RepoConf):
         """ Should we cache the current repomd.xml """
         if self.cache and not os.path.exists(local):
             raise Errors.RepoError, 'Cannot find repomd.xml file for %s' % self
-        if self.cache or self.withinCacheAge(self.metadata_cookie,
-                                             self.metadata_expire):
+        if self.cache or self.metadataCurrent():
             return True
         return False
 
@@ -915,6 +988,58 @@ class YumRepository(Repository, config.RepoConf):
                             time.ctime(self.repoXML.timestamp)))
             return False
         return True
+
+    def _checkRepoMetalink(self, repoXML=None, metalink_data=None):
+        """ Check the repomd.xml against the metalink data, if we have it. """
+
+        def _chk_repomd(repomd):
+            verbose_logger.log(logginglevels.DEBUG_4, "checking repomd %d> %d",
+                               repoXML.timestamp, repomd.timestamp)
+            if repoXML.timestamp != repomd.timestamp:
+                return False
+            if repoXML.length != repomd.size:
+                return False
+
+            #  MirrorManager isn't generating sha256 yet, and we should probably
+            # not require all of the checksums we produce.
+            done = set()
+            for checksum in repoXML.checksums:
+                if checksum not in repomd.chksums:
+                    continue
+
+                if repoXML.checksums[checksum] != repomd.chksums[checksum]:
+                    return False
+                done.add(checksum)
+
+            #  Only allow approved checksums, might want to not "approve" of
+            # sha1/md5
+            for checksum in ('sha512', 'sha256', 'sha1', 'md5'):
+                if checksum in done:
+                    return True
+
+            return False
+
+        if repoXML is None:
+            repoXML = self._repoXML
+        if metalink_data is None:
+            metalink_data = self.metalink_data
+
+        if _chk_repomd(metalink_data.repomd):
+            return True
+
+        # FIXME: We probably want to skip to the first mirror which has the
+        # latest repomd.xml, but say "if we can't find one, use the newest old
+        # repomd.xml" ... alas. that's not so easy to do in urlgrabber atm.
+        for repomd in self.metalink_data.old_repomds:
+            if _chk_repomd(repomd):
+                verbose_logger.log(logginglevels.DEBUG_2,
+                                   "Using older repomd.xml\n"
+                                   "  Latest: %s\n"
+                                   "  Using: %s" %
+                                   (time.ctime(metalink_data.repomd.timestamp),
+                                    time.ctime(repomd.timestamp)))
+                return True
+        return False
 
     def _commonLoadRepoXML(self, text, mdtypes=None):
         """ Common LoadRepoXML for instant and group, returns False if you
@@ -1157,9 +1282,13 @@ class YumRepository(Repository, config.RepoConf):
                 raise URLGrabError(-1, 'repomd.xml signature could not be verified for %s' % (self))
 
         try:
-            repoMDObject.RepoMD(self.id, filepath)
+            repoXML = repoMDObject.RepoMD(self.id, filepath)
         except Errors.RepoMDError, e:
             raise URLGrabError(-1, 'Error importing repomd.xml for %s: %s' % (self, e))
+
+        if self.metalink and not self._checkRepoMetalink(repoXML):
+            raise URLGrabError(-1, 'repomd.xml does not match metalink for %s' %
+                               self)
 
 
     def checkMD(self, fn, mdtype, openchecksum=False):
