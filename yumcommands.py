@@ -28,6 +28,7 @@ import operator
 import locale
 import fnmatch
 import time
+from yum.misc import to_unicode
 
 def checkRootUID(base):
     """
@@ -741,7 +742,7 @@ class RepoListCommand(YumCommand):
                 ui_enabled = ehibeg + _('enabled') + hiend
                 num        = len(repo.sack)
                 tot_num   += num
-                ui_num     = locale.format("%d", num, True)
+                ui_num     = to_unicode(locale.format("%d", num, True))
                 ui_fmt_num = ": %7s"
                 if verbose:
                     ui_size = _repo_size(repo)
@@ -793,7 +794,7 @@ class RepoListCommand(YumCommand):
                                             repo, repo.name, ui_enabled,
                                             ui_fmt_num % ui_num)
 
-        return 0, ['repolist: ' + locale.format("%d", tot_num, True)]
+        return 0, ['repolist: ' +to_unicode(locale.format("%d", tot_num, True))]
 
     def needTs(self, base, basecmd, extcmds):
         return False
