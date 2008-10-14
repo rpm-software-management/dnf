@@ -1041,7 +1041,7 @@ class YumCliRPMCallBack(RPMBaseCallback):
         RPMBaseCallback.__init__(self)
         self.lastmsg = None
         self.lastpackage = None # name of last package we looked at
-        self.output = True
+        self.output = logging.getLogger("yum.verbose.cli").isEnabledFor(logginglevels.INFO_2)
         
         # for a progress bar
         self.mark = "#"
