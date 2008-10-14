@@ -932,8 +932,8 @@ class YumAvailablePackage(PackageObject, RpmBase):
             if clog_limit and clog_count >= clog_limit:
                 break
             clog_count += 1
-            msg += '''<changelog author="%s" date="%s">%s</changelog>\n''' % (
-                        misc.to_xml(author, attrib=True), str(ts), 
+            msg += """<changelog author="%s" date="%s">%s</changelog>\n""" % (
+                        misc.to_xml(author, attrib=True), misc.to_xml(str(ts)), 
                         misc.to_xml(content))
         return msg
 
@@ -956,8 +956,12 @@ class YumAvailablePackage(PackageObject, RpmBase):
         msg = """\n<package pkgid="%s" name="%s" arch="%s">
     <version epoch="%s" ver="%s" rel="%s"/>\n""" % (self.checksum, self.name, 
                                      self.arch, self.epoch, self.ver, self.rel)
-        msg += self._dump_changelog(clog_limit)
-        msg += "\n</package>\n"
+        clogs = str(self._dump_changelog(clog_limit))
+        #print type(clogs)
+        mystr  = "%s\n</package>\n"
+        #print type(mystr)
+        foo = "%s\n</package>\n" % clogs
+        msg += "%s\n</package>\n" % self._dump_changelog(clog_limit)
         return msg
 
 
@@ -1104,9 +1108,9 @@ class YumHeaderPackage(YumAvailablePackage):
         # then create a _loadChangelog() method to put them into the 
         # self._changelog attr
         if len(self.hdr['changelogname']) > 0:
-            return zip(self.hdr['changelogtime'],
-                       self.hdr['changelogname'],
-                       self.hdr['changelogtext'])
+            return zip(misc.to_unicode(self.hdr['changelogtime'], errors='replace'),
+                       misc.to_unicode(self.hdr['changelogname'], errors='replace'),
+                       misc.to_unicode(self.hdr['changelogtext'], errors='replace'))
         return []
 
     def returnChecksums(self):

@@ -204,8 +204,10 @@ class YumAvailablePackageSqlite(YumAvailablePackage, PackageObject, RpmBase):
             # Check count(pkgId) here, the same way we do in searchFiles()?
             # Failure mode is much less of a problem.
             for ob in cur:
-                result.append( (ob['date'], _share_data(ob['author']),
-                                ob['changelog']) )
+                c_date = ob['date']
+                c_author = ob['author'].encode('utf-8', 'replace')
+                c_log = ob['changelog'].encode('utf-8', 'replace')
+                result.append((c_date, _share_data(c_author), c_log))
             self._changelog = result
             return
     
