@@ -677,6 +677,7 @@ class RepoConf(BaseConfig):
     enabled = Inherit(YumConf.enabled)
     baseurl = UrlListOption()
     mirrorlist = UrlOption()
+    metalink   = UrlOption()
     mediaid = Option()
     gpgkey = UrlListOption()
     exclude = ListOption() 
@@ -700,6 +701,8 @@ class RepoConf(BaseConfig):
     http_caching = Inherit(YumConf.http_caching)
     metadata_expire = Inherit(YumConf.metadata_expire)
     mirrorlist_expire = Inherit(YumConf.mirrorlist_expire)
+    # NOTE: metalink expire _must_ be the same as metadata_expire, due to the
+    #       checksumming of the repomd.xml.
     mdpolicy = Inherit(YumConf.mdpolicy)
     cost = IntOption(1000)
     

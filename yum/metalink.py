@@ -20,11 +20,11 @@
 # Parse the new MirrorManager metalink output:
 
 import sys
-print >>sys.stderr, "Warning: Relying on the API to be stable is not recommended, yet."
-
 import os
 import time
 from urlgrabber.progress import format_number
+
+import Errors
 
 try:
     from xml.etree import cElementTree
@@ -32,7 +32,7 @@ except ImportError:
     import cElementTree
 xmlparse = cElementTree.parse
 
-class MetaLinkRepoErrorParseFail:
+class MetaLinkRepoErrorParseFail(Errors.YumBaseError):
     """ An exception thrown for an unparsable MetaLinkRepoMD file. """
     pass
 
@@ -177,6 +177,8 @@ class MetaLinkRepoMD:
         self.repomd = None
         self.old_repomds = []
         self.mirrors = []
+        if not os.path.exists(filename):
+            raise MetaLinkRepoErrorParseFail, "File %s does not exist" %filename
         root = xmlparse(filename)
 
         for elem in root.findall(__ML_FILE_ELEMENT__):
@@ -210,6 +212,23 @@ class MetaLinkRepoMD:
             raise MetaLinkRepoErrorParseFail, "No repomd file"
         if len(self.mirrors) < 1:
             raise MetaLinkRepoErrorParseFail, "No mirror"
+
+    def urls(self):
+        """ Iterate plain urls for the mirrors, like the old mirrorlist. """
+        for mirror in self.mirrors:
+            url = mirror.url
+
+            # This is what yum supports atm. ... no rsync etc.
+            if not (url.startswith("http:") or url.startswith("ftp:") or
+                    url.startswith("file:") or url.startswith("https:")):
+                continue
+
+            #  The mirror urls in the metalink file are for repomd.xml so it
+            # gives a list of mirrors for that one file, but we want the list
+            # of mirror baseurls. Joy of reusing other people's stds. :)
+            if not url.endswith("/repodata/repomd.xml"):
+                continue
+            yield url[:-len("/repodata/repomd.xml")]
 
     def __str__(self):
         ret = str(self.repomd)

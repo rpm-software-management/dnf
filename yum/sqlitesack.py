@@ -409,9 +409,12 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
         if not self._key2pkg[repo].has_key(pkgKey):
             sql = "SELECT pkgKey, pkgId, name, epoch, version, release " \
                   "FROM packages WHERE pkgKey = ?"
-            cur = self._sql_MD('primary', repo, sql, (pkgKey,))
-            po = self.pc(repo, cur.fetchone())
-            self._key2pkg[repo][pkgKey] = po
+            data = self._sql_MD('primary', repo, sql, (pkgKey,)).fetchone()
+            if data is None:
+                msg = "pkgKey %s doesn't exist in repo %s" % (pkgKey, repo)
+                raise Errors.RepoError, msg
+
+            self._key2pkg[repo][pkgKey] = self.pc(repo, data)
         if self._pkgArchExcluded(self._key2pkg[repo][pkgKey].arch):
             return None
         return self._key2pkg[repo][pkgKey]

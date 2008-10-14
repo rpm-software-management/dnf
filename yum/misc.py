@@ -172,6 +172,71 @@ def unique(s):
             u.append(x)
     return u
 
+class Checksums:
+    """ Generate checksum(s), on given pieces of data. Producing the
+        Length and the result(s) when complete. """
+
+    def __init__(self, checksums=None, ignore_missing=False):
+        self._checksums = checksums
+        if self._checksums is None:
+            self._checksums = ['sha256']
+        self._sumalgos = []
+        self._sumtypes = []
+        self._len = 0
+
+        done = set()
+        for sumtype in self._checksums:
+            if sumtype in done:
+                continue
+
+            if sumtype in _available_checksums:
+                sumalgo = hashlib.new(sumtype)
+            elif ignore_missing:
+                continue
+            else:
+                raise MiscError, 'Error Checksumming, bad checksum type %s' % sumtype
+            done.add(sumtype)
+            self._sumtypes.append(sumtype)
+            self._sumalgos.append(sumalgo)
+
+    def __len__(self):
+        return self._len
+
+    def update(self, data):
+        self._len += len(data)
+        for sumalgo in self._sumalgos:
+            sumalgo.update(data)
+
+    def read(self, fo, size=2**16):
+        data = fo.read(size)
+        self.update(data)
+        return data
+
+    def hexdigests(self):
+        ret = {}
+        for sumtype, sumdata in zip(self._sumtypes, self._sumalgos):
+            ret[sumtype] = sumdata.hexdigest()
+        return ret
+
+    def hexdigest(self, checksum):
+        return self.hexdigests()[checksum]
+
+
+class AutoFileChecksums:
+    """ Generate checksum(s), on given file/fileobject. Pretending to be a file
+        object (overrrides read). """
+
+    def __init__(self, fo, checksums, ignore_missing=False):
+        self._fo       = fo
+        self.checksums = Checksums(checksums, ignore_missing)
+
+    def __getattr__(self, attr):
+        return getattr(self._fo, attr)
+
+    def read(self, size=-1):
+        return self.checksums.read(self._fo, size)
+
+
 def checksum(sumtype, file, CHUNK=2**16):
     """takes filename, hand back Checksum of it
        sumtype = md5 or sha/sha1/sha256/sha512 (note sha == sha1)
@@ -187,20 +252,16 @@ def checksum(sumtype, file, CHUNK=2**16):
 
         if sumtype == 'sha':
             sumtype = 'sha1'
-        if sumtype in _available_checksums:
-            sumalgo = hashlib.new(sumtype)
-        else:
-            raise MiscError, 'Error Checksumming file, bad checksum type %s' % sumtype
-        chunk = fo.read
-        while chunk: 
-            chunk = fo.read(CHUNK)
-            sumalgo.update(chunk)
+
+        data = Checksums([sumtype])
+        while data.read(fo, CHUNK):
+            pass
 
         if type(file) is types.StringType:
             fo.close()
             del fo
             
-        return sumalgo.hexdigest()
+        return data.hexdigest(sumtype)
     except (IOError, OSError), e:
         raise MiscError, 'Error opening file for checksum: %s' % file
 
