@@ -890,7 +890,7 @@ class ReInstallCommand(YumCommand):
             return 0, [_('Nothing to do')]            
             
         except yum.Errors.YumBaseError, e:
-            return 1, [str(e)]
+            return 1, [to_unicode(e)]
 
     def getSummary(self):
         return _("reinstall a package")
