@@ -849,6 +849,35 @@ Remove   %5.5s Package(s)
         
         self.tsInfo.makelists()
 
+        #  Works a bit like calcColumns, but we never overflow a column we just
+        # have a dynamic number of columns.
+        def _fits_in_cols(msgs, num):
+            """ Work out how many columns we can use to display stuff, in
+                the post trans output. """
+            if len(msgs) < num:
+                return []
+
+            left = self.term.columns - ((num - 1) + 2)
+            if left <= 0:
+                return []
+
+            col_lens = [0] * num
+            col = 0
+            for msg in msgs:
+                if len(msg) > col_lens[col]:
+                    diff = (len(msg) - col_lens[col])
+                    if left <= diff:
+                        return []
+                    left -= diff
+                    col_lens[col] = len(msg)
+                col += 1
+                col %= len(col_lens)
+
+            for col in range(len(col_lens)):
+                col_lens[col] += left / num
+                col_lens[col] *= -1
+            return col_lens
+
         for (action, pkglist) in [(_('Removed'), self.tsInfo.removed), 
                                   (_('Dependency Removed'), self.tsInfo.depremoved),
                                   (_('Installed'), self.tsInfo.installed), 
@@ -856,14 +885,25 @@ Remove   %5.5s Package(s)
                                   (_('Updated'), self.tsInfo.updated),
                                   (_('Dependency Updated'), self.tsInfo.depupdated),
                                   (_('Replaced'), self.tsInfo.obsoleted)]:
-            
+            msgs = []
             if len(pkglist) > 0:
-                out += '\n%s:' % action
+                out += '\n%s:\n' % action
                 for txmbr in pkglist:
                     (n,a,e,v,r) = txmbr.pkgtup
-                    msg = " %s.%s %s:%s-%s" % (n,a,e,v,r)
-                    out += msg
-        
+                    msg = "%s.%s %s:%s-%s" % (n,a,e,v,r)
+                    msgs.append(msg)
+                for num in (8, 7, 6, 5, 4, 3, 2):
+                    cols = _fits_in_cols(msgs, num)
+                    if cols:
+                        break
+                if not cols:
+                    cols = [-(self.term.columns - 2)]
+                while msgs:
+                    current_msgs = msgs[:len(cols)]
+                    out += '  '
+                    out += self.fmtColumns(zip(current_msgs, cols), end=u'\n')
+                    msgs = msgs[len(cols):]
+
         return out
 
     def setupProgressCallbacks(self):
