@@ -62,7 +62,11 @@ class YumTerm:
 
     __enabled = True
 
-    columns = 80
+    if hasattr(urlgrabber.progress, 'terminal_width_cached'):
+        columns = property(lambda self:
+                           urlgrabber.progress.terminal_width_cached())
+    else:
+        columns = 80
     lines   = 24
     # Output modes:
     MODE = {
@@ -148,7 +152,8 @@ class YumTerm:
             return
         self._ctigetstr = curses.tigetstr
 
-        self.columns = curses.tigetnum('cols')
+        if not hasattr(urlgrabber.progress, 'terminal_width_cached'):
+            self.columns = curses.tigetnum('cols')
         self.lines   = curses.tigetnum('lines')
         
         # Look up string capabilities.
@@ -1077,6 +1082,9 @@ class YumCliRPMCallBack(RPMBaseCallback):
     Yum specific callback class for RPM operations.
     """
 
+    if hasattr(urlgrabber.progress, 'terminal_width_cached'):
+        _width = property(lambda x: urlgrabber.progress.terminal_width_cached())
+
     def __init__(self):
         RPMBaseCallback.__init__(self)
         self.lastmsg = None
@@ -1087,6 +1095,10 @@ class YumCliRPMCallBack(RPMBaseCallback):
         self.mark = "#"
         self.marks = 22
         
+        if hasattr(urlgrabber.progress, 'terminal_width_cached'):
+            self.width = self._width
+        else:
+            self.width = 80
         
     def event(self, package, action, te_current, te_total, ts_current, ts_total):
         # this is where a progress bar would be called
@@ -1104,7 +1116,7 @@ class YumCliRPMCallBack(RPMBaseCallback):
             percent = (te_current*100L)/te_total
         
         if self.output and (sys.stdout.isatty() or te_current == te_total):
-            fmt = self._makefmt(percent, ts_current, ts_total)
+            fmt = self._makefmt(percent, ts_current, ts_total, pkgname=pkgname)
             msg = fmt % (process, pkgname)
             if msg != self.lastmsg:
                 sys.stdout.write(to_unicode(msg))
@@ -1118,26 +1130,49 @@ class YumCliRPMCallBack(RPMBaseCallback):
             sys.stdout.write(to_unicode(msgs))
             sys.stdout.flush()
 
-    def _makefmt(self, percent, ts_current, ts_total, progress = True):
+    def _makefmt(self, percent, ts_current, ts_total, progress = True,
+                 pkgname=None):
         l = len(str(ts_total))
         size = "%s.%s" % (l, l)
-        fmt_done = "[%" + size + "s/%" + size + "s]"
+        fmt_done = "%" + size + "s/%" + size + "s"
         done = fmt_done % (ts_current, ts_total)
-        marks = self.marks - (2 * l)
+
+        #  This should probably use TerminLine, but we don't want to dep. on
+        # that. So we kind do an ok job by hand ... at least it's dynamic now.
+        if pkgname is None:
+            pnl = 22
+        else:
+            pnl = len(pkgname)
+
+        overhead  = (2 * l) + 2 # Length of done, above
+        overhead += 19          # Length of begining
+        overhead +=  1          # Space between pn and done
+        overhead +=  2          # Ends for progress
+        overhead +=  1          # Space for end
+        width = self.width
+        if width < overhead:
+            width = overhead    # Give up
+        width -= overhead
+        if pnl > width / 2:
+            pnl = width / 2
+
+        marks = self.width - (overhead + pnl)
         width = "%s.%s" % (marks, marks)
-        fmt_bar = "%-" + width + "s"
-        pnl = str(28 + marks + 1)
+        fmt_bar = "[%-" + width + "s]"
+        # pnl = str(28 + marks + 1)
+        full_pnl = "%%-%d.%ds" % (pnl + marks + 1, pnl + marks + 1)
+        half_pnl = "%%-%d.%ds" % (pnl, pnl)
 
         if progress and percent == 100: # Don't chop pkg name on 100%
-            fmt = "\r  %-15.15s: %-" + pnl + '.' + pnl + "s " + done
+            fmt = "\r  %-15.15s: " + full_pnl + "   " + done
         elif progress:
             bar = fmt_bar % (self.mark * int(marks * (percent / 100.0)), )
-            fmt = "\r  %-15.15s: %-28.28s " + bar + " " + done
+            fmt = "\r  %-15.15s: " + half_pnl + " " + bar + " " + done
         elif percent == 100:
-            fmt = "  %-15.15s: %-" + pnl + '.' + pnl + "s " + done
+            fmt = "  %-15.15s: " + full_pnl + "   " + done
         else:
             bar = fmt_bar % (self.mark * marks, )
-            fmt = "  %-15.15s: %-28.28s "  + bar + " " + done
+            fmt = "  %-15.15s: " + half_pnl + " " + bar + " " + done
         return fmt
 
 
@@ -1152,18 +1187,40 @@ def progressbar(current, total, name=None):
         percent = 0 
     else:
         if total != 0:
-            percent = current*100/total
+            percent = float(current) / total
         else:
             percent = 0
 
-    numblocks = int(percent/2)
-    hashbar = mark * numblocks
-    if name is None:
-        output = '\r%-50s %d/%d' % (hashbar, current, total)
-    elif current == total: # Don't chop name on 100%
-        output = '\r%-62.62s %d/%d' % (name, current, total)
+    if hasattr(urlgrabber.progress, 'terminal_width_cached'):
+        width = urlgrabber.progress.terminal_width_cached()
     else:
-        output = '\r%-10.10s: %-50s %d/%d' % (name, hashbar, current, total)
+        width = 80
+
+    if name is None and current == total:
+        name = '-'
+
+    end = ' %d/%d' % (current, total)
+    width -= len(end) + 1
+    if width < 0:
+        width = 0
+    if name is None:
+        width -= 2
+        if width < 0:
+            width = 0
+        hashbar = mark * int(width * percent)
+        output = '\r[%-*s]%s' % (width, hashbar, end)
+    elif current == total: # Don't chop name on 100%
+        output = '\r%-*.*s%s' % (width, width, name, end)
+    else:
+        width -= 4
+        if width < 0:
+            width = 0
+        nwid = width / 2
+        if nwid > len(name):
+            nwid = len(name)
+        width -= nwid
+        hashbar = mark * int(width * percent)
+        output = '\r%-*.*s: [%-*s]%s' % (nwid, nwid, name, width, hashbar, end)
      
     if current <= total:
         sys.stdout.write(output)
@@ -1195,7 +1252,9 @@ if __name__ == "__main__":
             progressbar(i, 100)
             time.sleep(0.1)
 
+    if len(sys.argv) > 1 and sys.argv[1] in ("progress", "rpm-progress"):
         cb = YumCliRPMCallBack()
+        cb.output = True
         cb.action["foo"] = "abcd"
         cb.action["bar"] = "_12345678_.end"
         print ""
