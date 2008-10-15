@@ -939,30 +939,25 @@ class YumAvailablePackage(PackageObject, RpmBase):
 
     def xml_dump_primary_metadata(self):
         msg = """\n<package type="rpm">"""
-        msg += self._dump_base_items()
-        msg += self._dump_format_items()
+        msg += misc.to_unicode(self._dump_base_items())
+        msg += misc.to_unicode(self._dump_format_items())
         msg += """\n</package>"""
-        return msg
+        return misc.to_utf8(msg)
 
     def xml_dump_filelists_metadata(self):
         msg = """\n<package pkgid="%s" name="%s" arch="%s">
     <version epoch="%s" ver="%s" rel="%s"/>\n""" % (self.checksum, self.name, 
                                      self.arch, self.epoch, self.ver, self.rel)
-        msg += self._dump_files()
+        msg += misc.to_unicode(self._dump_files())
         msg += "</package>\n"
-        return msg
+        return misc.to_utf8(msg)
 
     def xml_dump_other_metadata(self, clog_limit=0):
         msg = """\n<package pkgid="%s" name="%s" arch="%s">
     <version epoch="%s" ver="%s" rel="%s"/>\n""" % (self.checksum, self.name, 
                                      self.arch, self.epoch, self.ver, self.rel)
-        clogs = str(self._dump_changelog(clog_limit))
-        #print type(clogs)
-        mystr  = "%s\n</package>\n"
-        #print type(mystr)
-        foo = "%s\n</package>\n" % clogs
-        msg += "%s\n</package>\n" % self._dump_changelog(clog_limit)
-        return msg
+        msg += "%s\n</package>\n" % misc.to_unicode(self._dump_changelog(clog_limit))
+        return misc.to_utf8(msg)
 
 
 
