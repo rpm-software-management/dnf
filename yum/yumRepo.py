@@ -868,6 +868,8 @@ class YumRepository(Repository, config.RepoConf):
     def _getFileRepoXML(self, local, text=None, grab_can_fail=None):
         """ Call _getFile() for the repomd.xml file. """
         checkfunc = (self._checkRepoXML, (), {})
+        if grab_can_fail is None:
+            grab_can_fail = 'old_repo_XML' in self._oldRepoMDData
         try:
             result = self._getFile(relative=self.repoMDFile,
                                    local=local,
@@ -878,11 +880,13 @@ class YumRepository(Repository, config.RepoConf):
                                    cache=self.http_caching == 'all')
 
         except URLGrabError, e:
-            if grab_can_fail is None:
-                grab_can_fail = 'old_repo_XML' in self._oldRepoMDData
             if grab_can_fail:
                 return None
             raise Errors.RepoError, 'Error downloading file %s: %s' % (local, e)
+        except (Errors.NoMoreMirrorsRepoError, Errors.RepoError):
+            if grab_can_fail:
+                return None
+            raise
 
 
         return result
