@@ -195,7 +195,7 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         
         # Now parse the command line for real and 
         # apply some of the options to self.conf
-        (opts, self.cmds) = self.optparser.setupYumConfig()
+        (opts, self.cmds) = self.optparser.setupYumConfig(args=args)
 
         if opts.version:
             self.conf.cache = 1
@@ -1045,9 +1045,12 @@ class YumOptionParser(OptionParser):
             ret.extend(arg.replace(",", " ").split())
         return ret
         
-    def setupYumConfig(self):
+    def setupYumConfig(self, args=None):
         # Now parse the command line for real
-        (opts, cmds) = self.parse_args()
+        if args is not None:
+            (opts, cmds) = self.parse_args()
+        else:
+            (opts, cmds) = self.parse_args(args=args)
 
         # Let the plugins know what happened on the command line
         self.base.plugins.setCmdLine(opts, cmds)
