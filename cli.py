@@ -768,7 +768,7 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         
         if len(matching) == 0:
             for arg in args:
-                if '*' in arg:
+                if '*' in arg or (arg and arg[0] == '/'):
                     continue
                 self.logger.warning(_('Warning: 3.0.x versions of yum would erronously match against filenames.\n You can use "%s*/%s%s" and/or "%s*bin/%s%s" to get that behaviour'),
                                     self.term.MODE['bold'], arg,
