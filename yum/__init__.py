@@ -636,7 +636,7 @@ class YumBase(depsolve.Depsolve):
         """go through the packages in the transaction set, find them in the
            packageSack or rpmdb, and pack up the ts accordingly"""
         if misc.find_unfinished_transactions(yumlibpath=self.conf.persistdir):
-            msg = _('There are unfinished transactions remaining. You might' \
+            msg = _('There are unfinished transactions remaining. You might ' \
                     'consider running yum-complete-transaction first to finish them.' )
             self.logger.critical(msg)
             time.sleep(3)
