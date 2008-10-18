@@ -632,10 +632,11 @@ class YumBase(depsolve.Depsolve):
             self.verbose_logger.log(logginglevels.INFO_2, msg)
             self.repos.populateSack(mdtype='filelists')
            
-    def buildTransaction(self):
+    def buildTransaction(self, unfinished_transactions_check=True):
         """go through the packages in the transaction set, find them in the
            packageSack or rpmdb, and pack up the ts accordingly"""
-        if misc.find_unfinished_transactions(yumlibpath=self.conf.persistdir):
+        if (unfinished_transactions_check and
+            misc.find_unfinished_transactions(yumlibpath=self.conf.persistdir)):
             msg = _('There are unfinished transactions remaining. You might ' \
                     'consider running yum-complete-transaction first to finish them.' )
             self.logger.critical(msg)
