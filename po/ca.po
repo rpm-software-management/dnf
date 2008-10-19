@@ -27,7 +27,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=n != 1;"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
 
 #: ../callback.py:48 ../output.py:512
 msgid "Updating"
@@ -125,12 +125,14 @@ msgstr "  Es necessiten almenys %dMB al sistema de fitxers %s.\n"
 msgid ""
 "Error Summary\n"
 "-------------\n"
-msgstr "Resum d'errors\n"
+msgstr ""
+"Resum d'errors\n"
 "-------------\n"
 
 #: ../cli.py:317
 msgid "Trying to run the transaction but nothing to do. Exiting."
-msgstr "S'ha intentat executar la transacció però no hi ha res a fer. S'està sortint."
+msgstr ""
+"S'ha intentat executar la transacció però no hi ha res a fer. S'està sortint."
 
 #: ../cli.py:347
 msgid "Exiting on user Command"
@@ -180,7 +182,8 @@ msgstr "S'està executant la transacció"
 msgid ""
 "Refusing to automatically import keys when running unattended.\n"
 "Use \"-y\" to override."
-msgstr "No s'importaran automàticament les claus en una execució desatesa.\n"
+msgstr ""
+"No s'importaran automàticament les claus en una execució desatesa.\n"
 "Feu servir \"-y\" per a importar les claus."
 
 #: ../cli.py:491
@@ -235,7 +238,9 @@ msgstr "No s'ha proporcionat cap paquet"
 
 #: ../cli.py:654
 msgid "Matching packages for package list to user args"
-msgstr "S'està comparant els paquets per a la llista de paquets amb els arguments de l'usuari"
+msgstr ""
+"S'està comparant els paquets per a la llista de paquets amb els arguments de "
+"l'usuari"
 
 #: ../cli.py:701
 #, python-format
@@ -298,7 +303,9 @@ msgstr "Avís: El grup %s no existeix"
 
 #: ../cli.py:853
 msgid "No packages in any requested group available to install or update"
-msgstr "No hi ha cap paquet disponible per a instal·lar o actualitzar en els grups sol·licitats"
+msgstr ""
+"No hi ha cap paquet disponible per a instal·lar o actualitzar en els grups "
+"sol·licitats"
 
 #: ../cli.py:855
 #, python-format
@@ -333,7 +340,9 @@ msgstr "S'està descartant el paquet no comparable %s.%s"
 #: ../cli.py:952
 #, python-format
 msgid "No other %s installed, adding to list for potential install"
-msgstr "No hi ha cap altre %s instal·lat, s'afegeix a la llista per a una possible instal·lació"
+msgstr ""
+"No hi ha cap altre %s instal·lat, s'afegeix a la llista per a una possible "
+"instal·lació"
 
 #: ../cli.py:971
 #, python-format
@@ -390,7 +399,8 @@ msgstr "habilita un o més repositoris (es permeten caràcters de reemplaçament
 
 #: ../cli.py:1133
 msgid "disable one or more repositories (wildcards allowed)"
-msgstr "deshabilita un o més repositoris (es permeten caràcters de reemplaçament)"
+msgstr ""
+"deshabilita un o més repositoris (es permeten caràcters de reemplaçament)"
 
 #: ../cli.py:1136
 msgid "exclude package(s) by name or glob"
@@ -530,8 +540,8 @@ msgstr "Llicència    : %s"
 msgid "Description: "
 msgstr "Descripció: "
 
-#: ../output.py:351
 # REMEMBER to Translate [Y/N] to the current locale
+#: ../output.py:351
 msgid "Is this ok [y/N]: "
 msgstr "És correcte [s/N]: "
 
@@ -674,7 +684,6 @@ msgstr ""
 "Instal·la  %5.5s paquets\n"
 "Actualitza %5.5s paquets\n"
 "Esborra    %5.5s paquets\n"
-""
 
 #: ../output.py:554
 msgid "Removed"
@@ -704,8 +713,8 @@ msgid ""
 "seconds to exit.\n"
 msgstr ""
 "\n"
-"S'ha cancel·lat la descàrrega actual, %sinterromp (crtl-c) de nou%s en %s%s%s "
-"segons per a sortir.\n"
+"S'ha cancel·lat la descàrrega actual, %sinterromp (crtl-c) de nou%s en %s%s%"
+"s segons per a sortir.\n"
 
 #: ../output.py:628
 msgid "user interrupt"
@@ -738,7 +747,8 @@ msgstr "--> S'està executant la transacció de prova"
 
 #: ../output.py:658
 msgid "--> Restarting Dependency Resolution with new changes."
-msgstr "--> Tornant a calcular la resolució de dependències amb els nous canvis."
+msgstr ""
+"--> Tornant a calcular la resolució de dependències amb els nous canvis."
 
 #: ../output.py:663
 msgid "--> Finished Dependency Resolution"
@@ -761,12 +771,16 @@ msgstr "--> S'està processant el conflicte: %s té un conflicte amb %s"
 
 #: ../output.py:682
 msgid "--> Populating transaction set with selected packages. Please wait."
-msgstr "--> S'està poblant la transacció amb els paquets sel·leccionats. Si us plau, espereu."
+msgstr ""
+"--> S'està poblant la transacció amb els paquets sel·leccionats. Si us plau, "
+"espereu."
 
 #: ../output.py:686
 #, python-format
 msgid "---> Downloading header for %s to pack into transaction set."
-msgstr "---> S'està descarregant la capçalera per a %s per a empaquetar dins de la transacció de prova."
+msgstr ""
+"---> S'està descarregant la capçalera per a %s per a empaquetar dins de la "
+"transacció de prova."
 
 #: ../yumcommands.py:36
 msgid "You need to be root to perform this command."
@@ -790,7 +804,8 @@ msgid ""
 "For more information contact your distribution or package provider.\n"
 msgstr ""
 "\n"
-"Heu habilitat la comprovació de paquets utilitzant claus GPG. És una bona opció. \n"
+"Heu habilitat la comprovació de paquets utilitzant claus GPG. És una bona "
+"opció. \n"
 "No obstant, no teniu cap clau pública GPG instal·lada. Necessiteu "
 "descarregar\n"
 "les claus per als paquets paquets que desitdeu instal·lar i instal·lar-les.\n"
@@ -802,7 +817,8 @@ msgstr ""
 "per a un repositori en l'opció 'gpgkey' en la secció d'un repositori i yum \n"
 "la instal·larà per vosaltres.\n"
 "\n"
-"Per a més informació contacteu el vostre distribuidor o proveïdor de paquets.\n"
+"Per a més informació contacteu el vostre distribuidor o proveïdor de "
+"paquets.\n"
 
 #: ../yumcommands.py:63
 #, python-format
@@ -843,7 +859,8 @@ msgstr "El fitxer %s donat com a argument a l'intèrpret d'ordres no existeix."
 
 #: ../yumcommands.py:115
 msgid "Error: more than one file given as argument to shell."
-msgstr "Error: s'ha donat més d'un fitxer com a arguments per a l'intèrpret d'ordres."
+msgstr ""
+"Error: s'ha donat més d'un fitxer com a arguments per a l'intèrpret d'ordres."
 
 #: ../yumcommands.py:156
 msgid "PACKAGE..."
@@ -943,7 +960,8 @@ msgstr "Genera les metadades de la memòria cau"
 
 #: ../yumcommands.py:390
 msgid "Making cache files for all metadata files."
-msgstr "S'estan fent els fitxers de memòria cau per a tots els fitxers de metadades."
+msgstr ""
+"S'estan fent els fitxers de memòria cau per a tots els fitxers de metadades."
 
 #: ../yumcommands.py:391
 msgid "This may take a while depending on the speed of this computer"
@@ -1143,7 +1161,8 @@ msgstr "doTsSetup() desapareixerà en una futura versió de Yum.\n"
 
 #: ../yum/depsolve.py:95
 msgid "Setting up TransactionSets before config class is up"
-msgstr "S'està configurant TransactionSets abans que la classe de configuració "
+msgstr ""
+"S'està configurant TransactionSets abans que la classe de configuració "
 "estigui iniciada"
 
 #: ../yum/depsolve.py:136
@@ -1193,7 +1212,8 @@ msgstr "%s requereix: %s"
 
 #: ../yum/depsolve.py:312
 msgid "Needed Require has already been looked up, cheating"
-msgstr "El requeriment necessari ja s'ha buscat anteriorment, s'estan fent trampes"
+msgstr ""
+"El requeriment necessari ja s'ha buscat anteriorment, s'estan fent trampes"
 
 #: ../yum/depsolve.py:322
 #, python-format
@@ -1223,7 +1243,8 @@ msgstr "TSINFO: el paquet %s requereix %s marcat per a esborrar"
 #: ../yum/depsolve.py:372
 #, python-format
 msgid "TSINFO: Obsoleting %s with %s to resolve dep."
-msgstr "TSINFO: S'està marcant com a obsolet %s amb %s per resoldre dependències."
+msgstr ""
+"TSINFO: S'està marcant com a obsolet %s amb %s per resoldre dependències."
 
 #: ../yum/depsolve.py:375
 #, python-format
@@ -1244,17 +1265,22 @@ msgstr "No es pot resoldre el requeriment %s per a %s"
 #: ../yum/depsolve.py:434
 #, python-format
 msgid "%s is in providing packages but it is already installed, removing."
-msgstr "%s es troba en els paquets proporcionats però ja es troba instal·lat, s'està esborrant."
+msgstr ""
+"%s es troba en els paquets proporcionats però ja es troba instal·lat, s'està "
+"esborrant."
 
 #: ../yum/depsolve.py:449
 #, python-format
 msgid "Potential resolving package %s has newer instance in ts."
-msgstr "El paquet potencial que resol dependències %s té una instància nova a ts"
+msgstr ""
+"El paquet potencial que resol dependències %s té una instància nova a ts"
 
 #: ../yum/depsolve.py:460
 #, python-format
 msgid "Potential resolving package %s has newer instance installed."
-msgstr "El paquet potencial que resol dependències %s té una nova instància insta·lada."
+msgstr ""
+"El paquet potencial que resol dependències %s té una nova instància "
+"insta·lada."
 
 #: ../yum/depsolve.py:468 ../yum/depsolve.py:527
 #, python-format
@@ -1271,7 +1297,8 @@ msgstr "%s ja es troba en ts, s'està ometent"
 msgid ""
 "Failure finding best provider of %s for %s, exceeded maximum loop length"
 msgstr ""
-"S'ha produït un error trobant el millor proveïdor de %s per a %s, el bucle ha excedit la longitud màxima"
+"S'ha produït un error trobant el millor proveïdor de %s per a %s, el bucle "
+"ha excedit la longitud màxima"
 
 #: ../yum/depsolve.py:537
 #, python-format
@@ -1528,7 +1555,9 @@ msgstr "No coincideix la suma de verificació del paquet"
 #: ../yum/__init__.py:1036
 #, python-format
 msgid "package fails checksum but caching is enabled for %s"
-msgstr "la suma de verificació del paquet falla però l'ús de memòria cau està habilitat per a %s"
+msgstr ""
+"la suma de verificació del paquet falla però l'ús de memòria cau està "
+"habilitat per a %s"
 
 #: ../yum/__init__.py:1042
 #, python-format
@@ -1538,7 +1567,8 @@ msgstr "s'està utilitzant la còpia local de %s"
 #: ../yum/__init__.py:1061
 #, python-format
 msgid "Insufficient space in download directory %s to download"
-msgstr "No hi ha espai suficient al directori de descàrregues %s per a descarregar"
+msgstr ""
+"No hi ha espai suficient al directori de descàrregues %s per a descarregar"
 
 #: ../yum/__init__.py:1094
 msgid "Header is not complete."
@@ -1549,7 +1579,8 @@ msgstr "La capçalera no està completa."
 msgid ""
 "Header not in local cache and caching-only mode enabled. Cannot download %s"
 msgstr ""
-"La capçalera no es troba en la memòria cau local i està habilitat el mode de només memòria cau. No es pot descarregar %s"
+"La capçalera no es troba en la memòria cau local i està habilitat el mode de "
+"només memòria cau. No es pot descarregar %s"
 
 #: ../yum/__init__.py:1189
 #, python-format
@@ -1665,7 +1696,8 @@ msgstr "No s'ha pogut trobar la tupla de paquets %s al sac de paquets"
 
 #: ../yum/__init__.py:1917 ../yum/__init__.py:1960
 msgid "Invalid versioned dependency string, try quoting it."
-msgstr "La cadena de versió de dependència és invàlida, proveu-ho entre cometes."
+msgstr ""
+"La cadena de versió de dependència és invàlida, proveu-ho entre cometes."
 
 #: ../yum/__init__.py:1919 ../yum/__init__.py:1962
 msgid "Invalid version flag"
@@ -1688,7 +1720,9 @@ msgstr "No hi ha res especificat per a instal·lar"
 #: ../yum/__init__.py:2085
 #, python-format
 msgid "Checking for virtual provide or file-provide for %s"
-msgstr "S'està verificant si hi ha un proveïdor virtual o un fitxer proveïdor per a %s"
+msgstr ""
+"S'està verificant si hi ha un proveïdor virtual o un fitxer proveïdor per a %"
+"s"
 
 #: ../yum/__init__.py:2091 ../yum/__init__.py:2380
 #, python-format
@@ -1714,7 +1748,9 @@ msgstr "El paquet %s ja es troba instal·lat i en l'última versió."
 #: ../yum/__init__.py:2178
 #, python-format
 msgid "Package matching %s already installed. Checking for update."
-msgstr "El paquet coincident %s ja es troba instal·lat. S'està buscant una actualització."
+msgstr ""
+"El paquet coincident %s ja es troba instal·lat. S'està buscant una "
+"actualització."
 
 #. update everything (the easy case)
 #: ../yum/__init__.py:2220
@@ -1750,7 +1786,9 @@ msgstr "S'està examinant %s: %s"
 msgid ""
 "Package %s not installed, cannot update it. Run yum install to install it "
 "instead."
-msgstr "El paquet %s no està instal·lat; no es pot actualitzar. Executa yum install per a instal·lar-lo."
+msgstr ""
+"El paquet %s no està instal·lat; no es pot actualitzar. Executa yum install "
+"per a instal·lar-lo."
 
 #: ../yum/__init__.py:2468
 #, python-format
@@ -1774,7 +1812,8 @@ msgstr "%s no actualitza el paquet instal·lat."
 
 #: ../yum/__init__.py:2504
 msgid "Problem in reinstall: no package matched to remove"
-msgstr "Hi ha un problema en reinstal·lar: no hi ha cap paquet marcat per a esborrar"
+msgstr ""
+"Hi ha un problema en reinstal·lar: no hi ha cap paquet marcat per a esborrar"
 
 #: ../yum/__init__.py:2515
 #, python-format
@@ -1783,7 +1822,9 @@ msgstr "El paquet %s permet múltiples instal·lacions, s'està ometent"
 
 #: ../yum/__init__.py:2522
 msgid "Problem in reinstall: no package matched to install"
-msgstr "Hi ha un problema en reinstal·lar: no hi ha cap paquet marcat per a instal·lar"
+msgstr ""
+"Hi ha un problema en reinstal·lar: no hi ha cap paquet marcat per a "
+"instal·lar"
 
 #: ../yum/__init__.py:2570
 #, python-format
@@ -1829,9 +1870,10 @@ msgid ""
 "are not correct for this package.\n"
 "Check that the correct key URLs are configured for this repository."
 msgstr ""
-"Les claus GPG llistades pel repositori \"%s\" ja estan instal·lades però "
-"no són correctes per a aquest paquet.\n"
-"Comproveu que les URL de clau correctes estan configurades per a aquest repositori."
+"Les claus GPG llistades pel repositori \"%s\" ja estan instal·lades però no "
+"són correctes per a aquest paquet.\n"
+"Comproveu que les URL de clau correctes estan configurades per a aquest "
+"repositori."
 
 #: ../yum/__init__.py:2633
 msgid "Import of key(s) didn't help, wrong key(s)?"
@@ -1884,7 +1926,8 @@ msgstr "S'està carregant el connector \"%s\""
 msgid ""
 "Two or more plugins with the name \"%s\" exist in the plugin search path"
 msgstr ""
-"Existeixen dos o més connectors amb el mateix nom \"%s\" en el camí de cerca de connectors"
+"Existeixen dos o més connectors amb el mateix nom \"%s\" en el camí de cerca "
+"de connectors"
 
 #: ../yum/plugins.py:291
 #, python-format
@@ -1914,7 +1957,9 @@ msgstr "falla la comprobació md5 per al RPM %s"
 
 #: ../rpmUtils/oldUtils.py:144
 msgid "Could not open RPM database for reading. Perhaps it is already in use?"
-msgstr "No s'ha pogut obrir la base de dades RPM per a llegir-la. Potser ja està en ús?"
+msgstr ""
+"No s'ha pogut obrir la base de dades RPM per a llegir-la. Potser ja està en "
+"ús?"
 
 #: ../rpmUtils/oldUtils.py:174
 msgid "Got an empty Header, something has gone wrong"
@@ -1930,4 +1975,3 @@ msgstr "Capçalera danyada %s"
 #, python-format
 msgid "Error opening rpm %s - error %s"
 msgstr "Error en obrir rpm %s - error %s"
-

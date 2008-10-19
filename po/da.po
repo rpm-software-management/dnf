@@ -4,8 +4,8 @@
 # tim <timlau@fedoraproject.org>, 2008.
 # , fuzzy
 # tim <timlau@fedoraproject.org>, 2008.
-# 
-# 
+#
+#
 msgid ""
 msgstr ""
 "Project-Id-Version: yum 3.2.10\n"
@@ -16,7 +16,7 @@ msgstr ""
 "Language-Team: Danish <dansk@klid.dk>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
-"Content-Transfer-Encoding: 8bit"
+"Content-Transfer-Encoding: 8bit\n"
 
 #: ../callback.py:48 ../output.py:512
 msgid "Updating"
@@ -1773,7 +1773,8 @@ msgstr "Problem med geninstallation, ingen pakke fundet til at blive slettet"
 #: ../yum/__init__.py:2515
 #, python-format
 msgid "Package %s is allowed multiple installs, skipping"
-msgstr "Springer pakken %s over, da den er tilladt til installering i flere verisoner"
+msgstr ""
+"Springer pakken %s over, da den er tilladt til installering i flere verisoner"
 
 #: ../yum/__init__.py:2522
 msgid "Problem in reinstall: no package matched to install"
