@@ -614,7 +614,7 @@ class YumConf(StartupConf):
     installonlypkgs = ListOption(['kernel', 'kernel-bigmem',
             'kernel-enterprise','kernel-smp', 'kernel-modules', 'kernel-debug',
             'kernel-unsupported', 'kernel-source', 'kernel-devel', 'kernel-PAE',
-            'kernel-PAE-debug', 'kernel-firmware'])
+            'kernel-PAE-debug'])
     # NOTE: If you set this to 2, then because it keeps the current kernel it
     # means if you ever install an "old" kernel it'll get rid of the newest one
     # so you probably want to use 3 as a minimum ... if you turn it on.
