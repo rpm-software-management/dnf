@@ -1374,8 +1374,9 @@ class YumRepository(Repository, config.RepoConf):
 
         try:
             checkfunc = (self.checkMD, (mdtype,), {})
+            text = "%s/%s" % (self.id, mdtype)
             local = self._getFile(relative=remote, local=local, copy_local=1,
-                             checkfunc=checkfunc, reget=None,
+                             checkfunc=checkfunc, reget=None, text=text,
                              cache=self.http_caching == 'all')
         except (Errors.NoMoreMirrorsRepoError, Errors.RepoError):
             if retrieve_can_fail:
