@@ -778,7 +778,10 @@ class RepoListCommand(YumCommand):
                         out += [base.fmtKeyValFill(_("Repo-baseurl: "),
                                                    ", ".join(baseurls))]
 
-                    if repo.mirrorlist:
+                    if repo.metalink:
+                        out += [base.fmtKeyValFill(_("Repo-metalink: "),
+                                                   repo.metalink)]
+                    elif repo.mirrorlist:
                         out += [base.fmtKeyValFill(_("Repo-mirrors: "),
                                                    repo.mirrorlist)]
 
