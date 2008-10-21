@@ -761,12 +761,28 @@ class RepoListCommand(YumCommand):
                                             _('repo name'), _('status'), "")
                 done = True
                 if verbose:
+                    md = repo.repoXML
                     out = [base.fmtKeyValFill(_("Repo-id     : "), repo),
                            base.fmtKeyValFill(_("Repo-name   : "), repo.name),
                            base.fmtKeyValFill(_("Repo-status : "), ui_enabled)]
+                    if md.revision is not None:
+                        out += [base.fmtKeyValFill(_("Repo-revision: "),
+                                                   md.revision)]
+                    if md.tags['content']:
+                        tags = md.tags['content']
+                        out += [base.fmtKeyValFill(_("Repo-tags   : "),
+                                                   ", ".join(sorted(tags)))]
+
+                    if md.tags['distro']:
+                        for distro in sorted(md.tags['distro']):
+                            tags = md.tags['distro'][distro]
+                            out += [base.fmtKeyValFill(_("Repo-distro-tags: "),
+                                                       "[%s]: %s" % (distro,
+                                                       ", ".join(sorted(tags))))]
+
                     if enabled:
                         out += [base.fmtKeyValFill(_("Repo-updated: "),
-                                                   time.ctime(repo.repoXML.timestamp)),
+                                                   time.ctime(md.timestamp)),
                                 base.fmtKeyValFill(_("Repo-pkgs   : "), ui_num),
                                 base.fmtKeyValFill(_("Repo-size   : "),ui_size)]
 
