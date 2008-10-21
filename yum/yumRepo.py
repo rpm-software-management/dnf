@@ -532,6 +532,10 @@ class YumRepository(Repository, config.RepoConf):
            with valid ones, run  self.check() at the end to make sure it worked"""
 
         self.baseurl = self._replace_and_check_url(self.baseurl)
+        # FIXME: We put all the mirrors in .baseurl as well as
+        # .urls for backward compat. (see bottom of func). So we'll save this
+        # out for repolist -v ... or anything else wants to know the baseurl
+        self._orig_baseurl = self.baseurl
 
         mirrorurls = []
         if self.metalink and not self.mirrorlistparsed:

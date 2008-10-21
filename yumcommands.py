@@ -770,9 +770,13 @@ class RepoListCommand(YumCommand):
                                 base.fmtKeyValFill(_("Repo-pkgs   : "), ui_num),
                                 base.fmtKeyValFill(_("Repo-size   : "),ui_size)]
 
-                    if repo.baseurl:
+                    if hasattr(repo, '_orig_baseurl'):
+                        baseurls = repo._orig_baseurl
+                    else:
+                        baseurls = repo.baseurl
+                    if baseurls:
                         out += [base.fmtKeyValFill(_("Repo-baseurl: "),
-                                                   ", ".join(repo.baseurl))]
+                                                   ", ".join(baseurls))]
 
                     if repo.mirrorlist:
                         out += [base.fmtKeyValFill(_("Repo-mirrors: "),
