@@ -75,6 +75,8 @@ class RepoMD:
         self.repoData = {}
         self.checksums = {}
         self.length    = 0
+        self.revision  = None
+        self.tags      = {'content' : set(), 'distro' : {}}
         
         if type(srcfile) == type('str'):
             # srcfile is a filename string
@@ -100,6 +102,17 @@ class RepoMD:
                             self.timestamp = nts
                     except:
                         pass
+                elif elem_name == "revision":
+                    self.revision = elem.text
+                elif elem_name == "tags":
+                    for child in elem:
+                        child_name = ns_cleanup(child.tag)
+                        if child_name == 'content':
+                            self.tags['content'].add(child.text)
+                        if child_name == 'distro':
+                            cpeid = child.attrib.get('cpeid', '')
+                            distro = self.tags['distro'].setdefault(cpeid,set())
+                            distro.add(child.text)
 
             self.checksums = infile.checksums.hexdigests()
             self.length    = len(infile.checksums)
@@ -123,6 +136,16 @@ class RepoMD:
         print "file length   : %s" % self.length
         for csum in sorted(self.checksums):
             print "file checksum : %s/%s" % (csum, self.checksums[csum])
+        if self.revision is not None:
+            print 'revision: %s' % self.revision
+        if self.tags['content']:
+            print 'tags content: %s' % ", ".join(sorted(self.tags['content']))
+        if self.tags['distro']:
+            for distro in sorted(self.tags['distro']):
+                print 'tags distro: %s' % distro
+                tags = self.tags['distro'][distro]
+                print '  tags: %s' % ", ".join(sorted(tags))
+        print '\n---- Data ----'
         for ft in sorted(self.fileTypes()):
             thisdata = self.repoData[ft]
             print '  datatype: %s' % thisdata.type
