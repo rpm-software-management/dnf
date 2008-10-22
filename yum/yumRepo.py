@@ -272,6 +272,12 @@ class YumRepository(Repository, config.RepoConf):
         self.gpg_import_func = None
         self.confirm_func = None
 
+        #  Does this repoid "always" refer to the same repo. If true we
+        # can/should should do thing like the timestamp check, as we always
+        # want the newest data. If it isn't, then the timestamp might be "old"
+        # because we've just changed to an older/different repo.
+        self.fixed_repoid = True
+
         self._sack = None
 
         self._grabfunc = None
@@ -847,7 +853,6 @@ class YumRepository(Repository, config.RepoConf):
             fo.close()
             del fo
 
-
     def setup(self, cache, mediafunc = None, gpg_import_func=None, confirm_func=None):
         try:
             self.cache = cache
@@ -918,9 +923,8 @@ class YumRepository(Repository, config.RepoConf):
             xml = self._parseRepoXML(old_local, True)
             self._oldRepoMDData = {'old_repo_XML' : xml, 'local' : local,
                                    'old_local' : old_local, 'new_MD_files' : []}
-            return True
-        return False
-
+            return xml
+        return None
 
     def _revertOldRepoXML(self):
         """ If we have older data available, revert to it. """
@@ -988,7 +992,8 @@ class YumRepository(Repository, config.RepoConf):
             return True
         old_repo_XML = self._oldRepoMDData['old_repo_XML']
 
-        if old_repo_XML.timestamp > self.repoXML.timestamp:
+        if (self.fixed_repoid and
+            old_repo_XML.timestamp > self.repoXML.timestamp):
             logger.warning("Not using downloaded repomd.xml because it is "
                            "older than what we have:\n"
                            "  Current   : %s\n  Downloaded: %s" %
@@ -997,49 +1002,49 @@ class YumRepository(Repository, config.RepoConf):
             return False
         return True
 
+    @staticmethod
+    def _checkRepoXMLMetalink(repoXML, repomd):
+        """ Check parsed repomd.xml against metalink.repomd data. """
+        if repoXML.timestamp != repomd.timestamp:
+            return False
+        if repoXML.length != repomd.size:
+            return False
+
+        #  MirrorManager isn't generating sha256 yet, and we should probably
+        # not require all of the checksums we produce.
+        done = set()
+        for checksum in repoXML.checksums:
+            if checksum not in repomd.chksums:
+                continue
+
+            if repoXML.checksums[checksum] != repomd.chksums[checksum]:
+                return False
+            done.add(checksum)
+
+        #  Only allow approved checksums, might want to not "approve" of
+        # sha1/md5
+        for checksum in ('sha512', 'sha256', 'sha1', 'md5'):
+            if checksum in done:
+                return True
+
+        return False
+
     def _checkRepoMetalink(self, repoXML=None, metalink_data=None):
         """ Check the repomd.xml against the metalink data, if we have it. """
-
-        def _chk_repomd(repomd):
-            verbose_logger.log(logginglevels.DEBUG_4, "checking repomd %d> %d",
-                               repoXML.timestamp, repomd.timestamp)
-            if repoXML.timestamp != repomd.timestamp:
-                return False
-            if repoXML.length != repomd.size:
-                return False
-
-            #  MirrorManager isn't generating sha256 yet, and we should probably
-            # not require all of the checksums we produce.
-            done = set()
-            for checksum in repoXML.checksums:
-                if checksum not in repomd.chksums:
-                    continue
-
-                if repoXML.checksums[checksum] != repomd.chksums[checksum]:
-                    return False
-                done.add(checksum)
-
-            #  Only allow approved checksums, might want to not "approve" of
-            # sha1/md5
-            for checksum in ('sha512', 'sha256', 'sha1', 'md5'):
-                if checksum in done:
-                    return True
-
-            return False
 
         if repoXML is None:
             repoXML = self._repoXML
         if metalink_data is None:
             metalink_data = self.metalink_data
 
-        if _chk_repomd(metalink_data.repomd):
+        if self._checkRepoXMLMetalink(repoXML, metalink_data.repomd):
             return True
 
         # FIXME: We probably want to skip to the first mirror which has the
         # latest repomd.xml, but say "if we can't find one, use the newest old
         # repomd.xml" ... alas. that's not so easy to do in urlgrabber atm.
         for repomd in self.metalink_data.old_repomds:
-            if _chk_repomd(repomd):
+            if self._checkRepoXMLMetalink(repoXML, repomd):
                 verbose_logger.log(logginglevels.DEBUG_2,
                                    "Using older repomd.xml\n"
                                    "  Latest: %s\n"
@@ -1048,6 +1053,28 @@ class YumRepository(Repository, config.RepoConf):
                                     time.ctime(repomd.timestamp)))
                 return True
         return False
+
+    def _latestRepoXML(self, local):
+        """ Save the Old Repo XML, and if it exists check to see if it's the
+            latest available given the metalink data. """
+
+        oxml = self._saveOldRepoXML(local)
+        if not oxml: # No old repomd.xml data
+            return False
+
+        if not self.metalink: # Nothing to check it against
+            return False
+
+        # Get the latest metalink, and the latest repomd data from it
+        repomd = self.metalink_data.repomd
+
+        if self.fixed_repoid and oxml.timestamp > repomd.timestamp:
+            #  We have something "newer" than the latest, and have timestamp
+            # checking which will kill anything passing the metalink check.
+            return True
+
+        # Do we have the latest repomd already
+        return self._checkRepoXMLMetalink(oxml, repomd)
 
     def _commonLoadRepoXML(self, text, mdtypes=None):
         """ Common LoadRepoXML for instant and group, returns False if you
@@ -1061,7 +1088,10 @@ class YumRepository(Repository, config.RepoConf):
             result = local
         else:
             caching = False
-            self._saveOldRepoXML(local)
+            if self._latestRepoXML(local):
+                self._revertOldRepoXML()
+                self.setMetadataCookie()
+                return False
 
             result = self._getFileRepoXML(local, text)
             if result is None:
