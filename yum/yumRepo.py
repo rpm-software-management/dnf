@@ -272,11 +272,9 @@ class YumRepository(Repository, config.RepoConf):
         self.gpg_import_func = None
         self.confirm_func = None
 
-        #  Does this repoid "always" refer to the same repo. If true we
-        # can/should should do thing like the timestamp check, as we always
-        # want the newest data. If it isn't, then the timestamp might be "old"
-        # because we've just changed to an older/different repo.
-        self.fixed_repoid = True
+        #  The reason we want to turn this off are things like repoids
+        # called "tmp" in repoquery --repofrompath and/or new1/old1 in repodiff.
+        self.timestamp_check = True
 
         self._sack = None
 
@@ -992,7 +990,7 @@ class YumRepository(Repository, config.RepoConf):
             return True
         old_repo_XML = self._oldRepoMDData['old_repo_XML']
 
-        if (self.fixed_repoid and
+        if (self.timestamp_check and
             old_repo_XML.timestamp > self.repoXML.timestamp):
             logger.warning("Not using downloaded repomd.xml because it is "
                            "older than what we have:\n"
@@ -1068,7 +1066,7 @@ class YumRepository(Repository, config.RepoConf):
         # Get the latest metalink, and the latest repomd data from it
         repomd = self.metalink_data.repomd
 
-        if self.fixed_repoid and oxml.timestamp > repomd.timestamp:
+        if self.timestamp_check and oxml.timestamp > repomd.timestamp:
             #  We have something "newer" than the latest, and have timestamp
             # checking which will kill anything passing the metalink check.
             return True
