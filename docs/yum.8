@@ -75,7 +75,9 @@ Repository configuration is honored in all operations.
 Is used to install the latest version of a package or
 group of packages while ensuring that all dependencies are
 satisfied\&.  If no package matches the given package name(s), they are
-assumed to be a shell glob and any matches are then installed\&.
+assumed to be a shell glob and any matches are then installed\&. If the
+name starts with an @ character the rest of the name is used as though
+passed to the groupinstall command\&.
 .IP 
 .IP "\fBupdate\fP"
 If run without any packages, update will update every currently
