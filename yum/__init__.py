@@ -2643,6 +2643,12 @@ class YumBase(depsolve.Depsolve):
                     if requiringPo:
                         txmbr.setAsDep(requiringPo)
                     tx_return.append(txmbr)
+                
+                #else:
+                    #magically make allowdowngrade work here
+                    # yum --allow-downgrade update something-specific here
+                    # could work but we will need to be careful with it
+                    # maybe a downgrade command is necessary
 
         return tx_return
         
