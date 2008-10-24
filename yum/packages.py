@@ -523,8 +523,8 @@ class YumAvailablePackage(PackageObject, RpmBase):
                 base = base + '/'
             return urlparse.urljoin(base, self.remote_path)
         return urlparse.urljoin(self.repo.urls[0], self.remote_path)
-    
-    size = property(_size)
+
+    size = property(fget=lambda self: self._size())
     remote_path = property(_remote_path)
     remote_url = property(_remote_url)
 
@@ -1110,6 +1110,9 @@ class YumHeaderPackage(YumAvailablePackage):
 
     def returnChecksums(self):
         raise NotImplementedError()
+
+    def _size(self):
+        return self.hdr['size']
 
     def _is_pre_req(self, flag):
         """check the flags for a requirement, return 1 or 0 whether or not requires
