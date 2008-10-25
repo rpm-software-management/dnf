@@ -52,7 +52,7 @@ import misc
 from parser import ConfigPreProcessor, varReplace
 import transactioninfo
 import urlgrabber
-from urlgrabber.grabber import URLGrabError
+from urlgrabber.grabber import URLGrabber, URLGrabError
 from urlgrabber.progress import format_number
 from packageSack import packagesNewestByNameArch, packagesNewestByName
 import depsolve
@@ -2864,7 +2864,7 @@ class YumBase(depsolve.Depsolve):
 
         return returndict
 
-    def _retrievePublicKey(self, keyurl):
+    def _retrievePublicKey(self, keyurl, repo=None):
         """
         Retrieve a key file
         @param keyurl: url to the key to retrieve
@@ -2876,7 +2876,21 @@ class YumBase(depsolve.Depsolve):
 
         # Go get the GPG key from the given URL
         try:
-            rawkey = urlgrabber.urlread(keyurl, limit=9999)
+            url = misc.to_utf8(keyurl)
+            if repo is None:
+                rawkey = urlgrabber.urlread(url, limit=9999)
+            else:
+                #  If we have a repo. use the proxy etc. configuration for it.
+                # In theory we have a global proxy config. too, but meh...
+                # external callers should just update.
+                ug = URLGrabber(bandwidth = repo.bandwidth,
+                                retry = repo.retries,
+                                throttle = repo.throttle,
+                                progress_obj = repo.callback,
+                                proxies=repo.proxy_dict)
+                ug.opts.user_agent = default_grabber.opts.user_agent
+                rawkey = ug.urlread(url, text=repo.id + "/gpgkey")
+
         except urlgrabber.grabber.URLGrabError, e:
             raise Errors.YumBaseError(_('GPG key retrieval failed: ') +
                                       to_unicode(str(e)))
@@ -2916,7 +2930,7 @@ class YumBase(depsolve.Depsolve):
         ts = self.rpmdb.readOnlyTS()
 
         for keyurl in keyurls:
-            keys = self._retrievePublicKey(keyurl)
+            keys = self._retrievePublicKey(keyurl, repo)
 
             for info in keys:
                 # Check if key is already installed
@@ -2979,7 +2993,7 @@ class YumBase(depsolve.Depsolve):
         keyurls = repo.gpgkey
         key_installed = False
         for keyurl in keyurls:
-            keys = self._retrievePublicKey(keyurl)
+            keys = self._retrievePublicKey(keyurl, repo)
             for info in keys:
                 # Check if key is already installed
                 if info['keyid'] in misc.return_keyids_from_pubring(repo.gpgdir):
