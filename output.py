@@ -40,6 +40,18 @@ from yum.packageSack import packagesNewestByNameArch
 
 from textwrap import fill
 
+def _term_width():
+    """ Simple terminal width, limit to 20 chars. and make 0 == 80. """
+    if not hasattr(urlgrabber.progress, 'terminal_width_cached'):
+        return 80
+    ret = urlgrabber.progress.terminal_width_cached()
+    if ret == 0:
+        return 80
+    if ret < 20:
+        return 20
+    return ret
+
+
 class YumTextMeter(TextMeter):
 
     """
@@ -63,8 +75,7 @@ class YumTerm:
     __enabled = True
 
     if hasattr(urlgrabber.progress, 'terminal_width_cached'):
-        columns = property(lambda self:
-                           urlgrabber.progress.terminal_width_cached())
+        columns = property(lambda self: _term_width())
     else:
         columns = 80
     lines   = 24
@@ -1084,8 +1095,7 @@ class YumCliRPMCallBack(RPMBaseCallback):
     Yum specific callback class for RPM operations.
     """
 
-    if hasattr(urlgrabber.progress, 'terminal_width_cached'):
-        _width = property(lambda x: urlgrabber.progress.terminal_width_cached())
+    _width = property(lambda x: _term_width())
 
     def __init__(self):
         RPMBaseCallback.__init__(self)
@@ -1097,10 +1107,7 @@ class YumCliRPMCallBack(RPMBaseCallback):
         self.mark = "#"
         self.marks = 22
         
-        if hasattr(urlgrabber.progress, 'terminal_width_cached'):
-            self.width = self._width
-        else:
-            self.width = 80
+        self.width = self._width
         
     def event(self, package, action, te_current, te_total, ts_current, ts_total):
         # this is where a progress bar would be called
@@ -1193,10 +1200,7 @@ def progressbar(current, total, name=None):
         else:
             percent = 0
 
-    if hasattr(urlgrabber.progress, 'terminal_width_cached'):
-        width = urlgrabber.progress.terminal_width_cached()
-    else:
-        width = 80
+    width = _term_width()
 
     if name is None and current == total:
         name = '-'
