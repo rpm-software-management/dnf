@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pl\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-10-21 00:29+0200\n"
+"POT-Creation-Date: 2008-10-26 15:54+0100\n"
 "PO-Revision-Date: 2008-10-22 00:15+0200\n"
 "Last-Translator: Piotr Drąg <piotrdrag@gmail.com>\n"
 "Language-Team: Polish <pl@li.org>\n"
@@ -146,15 +146,15 @@ msgstr "Pobieranie pakietów:"
 msgid "Error Downloading Packages:\n"
 msgstr "Błąd podczas pobierania pakietów:\n"
 
-#: ../cli.py:404 ../yum/__init__.py:3134
+#: ../cli.py:404 ../yum/__init__.py:3154
 msgid "Running rpm_check_debug"
 msgstr "Wykonywanie rpm_check_debug"
 
-#: ../cli.py:407 ../yum/__init__.py:3137
+#: ../cli.py:407 ../yum/__init__.py:3157
 msgid "ERROR with rpm_check_debug vs depsolve:"
 msgstr "BŁĄD rpm_check_debug i rozwiązywania zależności:"
 
-#: ../cli.py:411 ../yum/__init__.py:3139
+#: ../cli.py:411 ../yum/__init__.py:3159
 msgid "Please report this error in bugzilla"
 msgstr "Zgłoś ten błąd w Bugzilli"
 
@@ -205,11 +205,11 @@ msgstr "Nie ma pakietu %s%s%s."
 msgid "Parsing package install arguments"
 msgstr "Analizowanie parametrów instalacji pakietów"
 
-#: ../cli.py:582 ../cli.py:657 ../yumcommands.py:889
+#: ../cli.py:582 ../cli.py:657 ../yumcommands.py:912
 msgid "Package(s) to install"
 msgstr "Pakiety do zainstalowania"
 
-#: ../cli.py:583 ../cli.py:658 ../yumcommands.py:150 ../yumcommands.py:890
+#: ../cli.py:583 ../cli.py:658 ../yumcommands.py:150 ../yumcommands.py:913
 msgid "Nothing to do"
 msgstr "Nie ma niczego do zrobienia"
 
@@ -675,7 +675,7 @@ msgstr "Nazwa pliku : %s"
 
 #: ../output.py:721
 msgid "Other       : "
-msgstr "Inne        : %s"
+msgstr "Inne        : "
 
 #: ../output.py:753
 msgid "There was an error calculating total download size"
@@ -1114,56 +1114,72 @@ msgstr "nazwa repozytorium"
 msgid "status"
 msgstr "stan"
 
-#: ../yumcommands.py:764
-msgid "Repo-id     : "
-msgstr "Identyfikator repozytorium    : "
-
 #: ../yumcommands.py:765
-msgid "Repo-name   : "
-msgstr "Nazwa repozytorium            : "
+msgid "Repo-id     : "
+msgstr "Identyfikator repozytorium        : "
 
 #: ../yumcommands.py:766
+msgid "Repo-name   : "
+msgstr "Nazwa repozytorium                : "
+
+#: ../yumcommands.py:767
 msgid "Repo-status : "
-msgstr "Stan repozytorium             : "
+msgstr "Stan repozytorium                 : "
 
-#: ../yumcommands.py:768
+#: ../yumcommands.py:769
+msgid "Repo-revision: "
+msgstr "Wersja repozytorium               : "
+
+#: ../yumcommands.py:773
+msgid "Repo-tags   : "
+msgstr "Znaczniki repozytorium            : "
+
+#: ../yumcommands.py:779
+msgid "Repo-distro-tags: "
+msgstr "Znaczniki dystrybucji repozytorium: "
+
+#: ../yumcommands.py:784
 msgid "Repo-updated: "
-msgstr "Aktualizacje repozytorium     : "
-
-#: ../yumcommands.py:770
-msgid "Repo-pkgs   : "
-msgstr "Pakiety repozytorium          : "
-
-#: ../yumcommands.py:771
-msgid "Repo-size   : "
-msgstr "Rozmiar repozytorium          : "
-
-#: ../yumcommands.py:774
-msgid "Repo-baseurl: "
-msgstr "Podstawowy URL repozytorium   : "
-
-#: ../yumcommands.py:778
-msgid "Repo-mirrors: "
-msgstr "Serwery lustrzane repozytorium: "
-
-#: ../yumcommands.py:782
-msgid "Repo-exclude: "
-msgstr "Wykluczenia z repozytorium: "
+msgstr "Aktualizacje repozytorium         : "
 
 #: ../yumcommands.py:786
-msgid "Repo-include: "
-msgstr "Dołączone z repozytorium: "
+msgid "Repo-pkgs   : "
+msgstr "Pakiety repozytorium              : "
 
-#: ../yumcommands.py:812
+#: ../yumcommands.py:787
+msgid "Repo-size   : "
+msgstr "Rozmiar repozytorium              : "
+
+#: ../yumcommands.py:794
+msgid "Repo-baseurl: "
+msgstr "Podstawowy URL repozytorium       : "
+
+#: ../yumcommands.py:798
+msgid "Repo-metalink: "
+msgstr "Metaodnośnik repozytorium         : "
+
+#: ../yumcommands.py:801
+msgid "Repo-mirrors: "
+msgstr "Serwery lustrzane repozytorium    : "
+
+#: ../yumcommands.py:805
+msgid "Repo-exclude: "
+msgstr "Wykluczenia z repozytorium        : "
+
+#: ../yumcommands.py:809
+msgid "Repo-include: "
+msgstr "Dołączone z repozytorium          : "
+
+#: ../yumcommands.py:835
 msgid "Display a helpful usage message"
 msgstr "Wyświetl pomocny komunikat o używaniu"
 
-#: ../yumcommands.py:846
+#: ../yumcommands.py:869
 #, python-format
 msgid "No help available for %s"
 msgstr "Brak pomocy dla %s"
 
-#: ../yumcommands.py:851
+#: ../yumcommands.py:874
 msgid ""
 "\n"
 "\n"
@@ -1173,7 +1189,7 @@ msgstr ""
 "\n"
 "aliasy: "
 
-#: ../yumcommands.py:853
+#: ../yumcommands.py:876
 msgid ""
 "\n"
 "\n"
@@ -1183,11 +1199,11 @@ msgstr ""
 "\n"
 "alias: "
 
-#: ../yumcommands.py:882
+#: ../yumcommands.py:905
 msgid "Setting up Reinstall Process"
 msgstr "Ustawianie procesu ponownej instalacji"
 
-#: ../yumcommands.py:896
+#: ../yumcommands.py:919
 msgid "reinstall a package"
 msgstr "ponownie zainstaluj pakiet"
 
@@ -1800,8 +1816,8 @@ msgstr "Nie można znaleźć krotki pakietu %s w zestawie pakietów"
 msgid ""
 "getInstalledPackageObject() will go away, use self.rpmdb.searchPkgTuple().\n"
 msgstr ""
-"getInstalledPackageObject() zostanie usunięte, użyj "
-"self.rpmdb.searchPkgTuple().\n"
+"getInstalledPackageObject() zostanie usunięte, użyj self.rpmdb.searchPkgTuple"
+"().\n"
 
 #: ../yum/__init__.py:2057 ../yum/__init__.py:2100
 msgid "Invalid versioned dependency string, try quoting it."
@@ -1830,7 +1846,7 @@ msgstr "Nie podano nic do zainstalowania"
 msgid "Checking for virtual provide or file-provide for %s"
 msgstr "Sprawdzanie wirtualnych zależności lub plików dla %s"
 
-#: ../yum/__init__.py:2305 ../yum/__init__.py:2681
+#: ../yum/__init__.py:2305 ../yum/__init__.py:2687
 #, python-format
 msgid "No Match for argument: %s"
 msgstr "Brak wyników dla parametru: %s"
@@ -1887,31 +1903,31 @@ msgstr "Pakiet został już zastąpiony: %s.%s %s:%s-%s"
 msgid "Not Updating Package that is already updated: %s.%s %s:%s-%s"
 msgstr "Już zaktualizowany pakiet nie zostanie zaktualizowany: %s.%s %s:%s-%s"
 
-#: ../yum/__init__.py:2678
+#: ../yum/__init__.py:2684
 #, python-format
 msgid "%s"
 msgstr "%s"
 
-#: ../yum/__init__.py:2694
+#: ../yum/__init__.py:2700
 msgid "No package matched to remove"
 msgstr "Brak pasujących pakietów do usunięcia"
 
-#: ../yum/__init__.py:2728
+#: ../yum/__init__.py:2734
 #, python-format
 msgid "Cannot open file: %s. Skipping."
 msgstr "Nie można otworzyć pliku: %s. Pomijanie."
 
-#: ../yum/__init__.py:2731
+#: ../yum/__init__.py:2737
 #, python-format
 msgid "Examining %s: %s"
 msgstr "Sprawdzanie %s: %s"
 
-#: ../yum/__init__.py:2739
+#: ../yum/__init__.py:2745
 #, python-format
 msgid "Cannot add package %s to transaction. Not a compatible architecture: %s"
 msgstr "Nie można dodać pakietu %s do transakcji. Niezgodna architektura: %s"
 
-#: ../yum/__init__.py:2747
+#: ../yum/__init__.py:2753
 #, python-format
 msgid ""
 "Package %s not installed, cannot update it. Run yum install to install it "
@@ -1920,83 +1936,83 @@ msgstr ""
 "Pakiet %s nie jest zainstalowany, nie można go zaktualizować. Uruchom yum "
 "install, aby go zainstalować."
 
-#: ../yum/__init__.py:2780
+#: ../yum/__init__.py:2786
 #, python-format
 msgid "Excluding %s"
 msgstr "Wykluczanie %s"
 
-#: ../yum/__init__.py:2785
+#: ../yum/__init__.py:2791
 #, python-format
 msgid "Marking %s to be installed"
 msgstr "Oznaczanie %s do zainstalowania"
 
-#: ../yum/__init__.py:2791
+#: ../yum/__init__.py:2797
 #, python-format
 msgid "Marking %s as an update to %s"
 msgstr "Oznaczanie %s jako aktualizacji %s"
 
-#: ../yum/__init__.py:2798
+#: ../yum/__init__.py:2804
 #, python-format
 msgid "%s: does not update installed package."
 msgstr "%s: nie aktualizuj zainstalowanego pakietu."
 
-#: ../yum/__init__.py:2816
+#: ../yum/__init__.py:2822
 msgid "Problem in reinstall: no package matched to remove"
 msgstr ""
 "Podczas ponownego instalowania wystąpił problem: brak pasujących pakietów do "
 "usunięcia"
 
-#: ../yum/__init__.py:2827
+#: ../yum/__init__.py:2833
 #, python-format
 msgid "Package %s is allowed multiple installs, skipping"
 msgstr "Pakiet %s może być wielokrotnie instalowany, pomijanie"
 
-#: ../yum/__init__.py:2834
+#: ../yum/__init__.py:2840
 msgid "Problem in reinstall: no package matched to install"
 msgstr ""
 "Podczas ponownego instalowania wystąpił problem: brak pasujących pakietów do "
 "zainstalowania"
 
-#: ../yum/__init__.py:2869
+#: ../yum/__init__.py:2875
 #, python-format
 msgid "Retrieving GPG key from %s"
 msgstr "Pobieranie klucza GPG z %s"
 
-#: ../yum/__init__.py:2875
+#: ../yum/__init__.py:2895
 msgid "GPG key retrieval failed: "
 msgstr "Pobranie klucza GPG nie powiodło się: "
 
-#: ../yum/__init__.py:2886
+#: ../yum/__init__.py:2906
 #, python-format
 msgid "GPG key parsing failed: key does not have value %s"
 msgstr ""
 "Przeanalizowanie klucza GPG nie powiodło się: klucz nie posiada wartości %s"
 
-#: ../yum/__init__.py:2918
+#: ../yum/__init__.py:2938
 #, python-format
 msgid "GPG key at %s (0x%s) is already installed"
 msgstr "Klucz GPG %s (0x%s) jest już zainstalowany"
 
 #. Try installing/updating GPG key
-#: ../yum/__init__.py:2923 ../yum/__init__.py:2985
+#: ../yum/__init__.py:2943 ../yum/__init__.py:3005
 #, python-format
 msgid "Importing GPG key 0x%s \"%s\" from %s"
 msgstr "Importowanie klucza GPG 0x%s \"%s\" z %s"
 
-#: ../yum/__init__.py:2940
+#: ../yum/__init__.py:2960
 msgid "Not installing key"
 msgstr "Klucz nie zostanie zainstalowany"
 
-#: ../yum/__init__.py:2946
+#: ../yum/__init__.py:2966
 #, python-format
 msgid "Key import failed (code %d)"
 msgstr "Zaimportowanie klucza nie powiodło się (kod %d)"
 
-#: ../yum/__init__.py:2947 ../yum/__init__.py:3006
+#: ../yum/__init__.py:2967 ../yum/__init__.py:3026
 msgid "Key imported successfully"
 msgstr "Klucz został pomyślnie zaimportowany"
 
-#: ../yum/__init__.py:2952 ../yum/__init__.py:3011
+#: ../yum/__init__.py:2972 ../yum/__init__.py:3031
 #, python-format
 msgid ""
 "The GPG keys listed for the \"%s\" repository are already installed but they "
@@ -2008,33 +2024,33 @@ msgstr ""
 "Sprawdź, czy dla tego repozytorium skonfigurowane są poprawne adresy do "
 "kluczy."
 
-#: ../yum/__init__.py:2961
+#: ../yum/__init__.py:2981
 msgid "Import of key(s) didn't help, wrong key(s)?"
 msgstr "Zaimportowanie kluczy nie pomogło, błędne klucze?"
 
-#: ../yum/__init__.py:2980
+#: ../yum/__init__.py:3000
 #, python-format
 msgid "GPG key at %s (0x%s) is already imported"
 msgstr "Klucz GPG %s (0x%s) został już zaimportowany"
 
-#: ../yum/__init__.py:3000
+#: ../yum/__init__.py:3020
 #, python-format
 msgid "Not installing key for repo %s"
 msgstr "Klucz dla repozytorium %s nie zostanie zainstalowany"
 
-#: ../yum/__init__.py:3005
+#: ../yum/__init__.py:3025
 msgid "Key import failed"
 msgstr "Zaimportowanie klucza nie powiodło się"
 
-#: ../yum/__init__.py:3096
+#: ../yum/__init__.py:3116
 msgid "Unable to find a suitable mirror."
 msgstr "Nie można znaleźć odpowiedniego serwera lustrzanego."
 
-#: ../yum/__init__.py:3098
+#: ../yum/__init__.py:3118
 msgid "Errors were encountered while downloading packages."
 msgstr "Podczas pobierania pakietów wystąpiły błędy."
 
-#: ../yum/__init__.py:3162
+#: ../yum/__init__.py:3182
 msgid "Test Transaction Errors: "
 msgstr "Błędy testu transakcji: "
 
