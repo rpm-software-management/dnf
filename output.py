@@ -29,7 +29,7 @@ import re # For YumTerm
 from urlgrabber.progress import TextMeter
 import urlgrabber.progress
 from urlgrabber.grabber import URLGrabError
-from yum.misc import sortPkgObj, prco_tuple_to_string, to_str, to_unicode, get_my_lang_code
+from yum.misc import sortPkgObj, prco_tuple_to_string, to_str, to_utf8, to_unicode, get_my_lang_code
 import yum.misc
 from rpmUtils.miscutils import checkSignals
 from yum.constants import *
@@ -1126,7 +1126,9 @@ class YumCliRPMCallBack(RPMBaseCallback):
         
         if self.output and (sys.stdout.isatty() or te_current == te_total):
             fmt = self._makefmt(percent, ts_current, ts_total, pkgname=pkgname)
-            msg = fmt % (process, pkgname)
+            # FIXME: Converting to utf8 here is a HACK ... but it's better
+            # to underflow than overflow, see the i18n-rpm-progress example
+            msg = fmt % (to_utf8(process), pkgname)
             if msg != self.lastmsg:
                 sys.stdout.write(to_unicode(msg))
                 sys.stdout.flush()
@@ -1275,5 +1277,18 @@ if __name__ == "__main__":
         for i in xrange(0, 101):
             cb.event("lpkg" + "-=" * 15 + ".end", "bar", i, 100, i, 100)
             time.sleep(0.1)
+
+    if len(sys.argv) > 1 and sys.argv[1] in ("progress", "rpm-progress",
+                                             'i18n-rpm-progress'):
+        yum.misc.setup_locale()
+        cb = YumCliRPMCallBack()
+        cb.output = True
+        cb.action["foo"] = to_unicode('\xe6\xad\xa3\xe5\x9c\xa8\xe5\xae\x89\xe8\xa3\x85')
+        print ""
+        print " Doing CB, i18n: small proc / small pkg"
+        print ""
+        for i in xrange(0, 101):
+            cb.event("spkg", "foo", i, 100, i, 100)
+            time.sleep(0.1)        
         print ""
         
