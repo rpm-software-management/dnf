@@ -757,6 +757,7 @@ class YumBase(depsolve.Depsolve):
     def _removePoFromTransaction(self,po):
         skip =  []
         if self.tsInfo.exists(po.pkgtup):
+            self.verbose_logger.debug('SKIPBROKEN: removing %s from transaction' % str(po))
             self.tsInfo.remove(po.pkgtup)
             if not po.repoid == 'installed':
                 skip.append(po)
