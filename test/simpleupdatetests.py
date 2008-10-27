@@ -348,3 +348,15 @@ class SimpleUpdateTests(OperationsTests):
                                      [p.required_updated, p.update_i386, p.update_x86_64])
         self.assert_(res=='ok', msg)
         self.assertResult((p.required_updated, p.update_i386, p.update_x86_64))
+
+    def testUpdateNotLatestDep(self):
+        foo11 = FakePackage('foo', '1', '1', '0', 'i386')
+        foo11.addRequires('bar', 'EQ', ('0', '1', '1'))
+        foo12 = FakePackage('foo', '1', '2', '0', 'i386')
+        foo12.addRequires('bar', 'EQ', ('0', '1', '2'))
+        bar11 = FakePackage('bar', '1', '1', '0', 'i386')
+        bar12 = FakePackage('bar', '1', '2', '0', 'i386')
+        bar21 = FakePackage('bar', '2', '1', '0', 'i386')
+        res, msg = self.runOperation(['install', 'foo'], [foo11, bar11], [foo12, bar12, bar21])
+        self.assert_(res=='ok', msg)
+        self.assertResult((foo12, bar12))
