@@ -390,6 +390,7 @@ class SkipBrokenTests(DepsolveTests):
     	foo-2.0, that requires barlib-2.0
     	But it only work if foo-1.0 -> foo-2.0 is added as an update, it is not 
     	pulled in by it self.
+    	FIXME: This test case will fail for now 
     	"""
         ipo1 = self.instPackage('foo', '1')
         ipo1.addRequires('barlib', 'EQ', ('0', '1', '0'))
