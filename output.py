@@ -778,7 +778,8 @@ class YumOutput:
                             (_('Removing'), self.tsInfo.removed),
                             (_('Installing for dependencies'), self.tsInfo.depinstalled),
                             (_('Updating for dependencies'), self.tsInfo.depupdated),
-                            (_('Removing for dependencies'), self.tsInfo.depremoved)]:
+                            (_('Removing for dependencies'), self.tsInfo.depremoved),
+                            (_('Skipped (dependency problems)'), self.skipped_packages),]:
             lines = []
             for txmbr in pkglist:
                 (n,a,e,v,r) = txmbr.pkgtup
@@ -889,6 +890,7 @@ Remove   %5.5s Package(s)
                                   (_('Dependency Installed'), self.tsInfo.depinstalled),
                                   (_('Updated'), self.tsInfo.updated),
                                   (_('Dependency Updated'), self.tsInfo.depupdated),
+                                  (_('Skipped (dependency problems)'), self.skipped_packages),
                                   (_('Replaced'), self.tsInfo.obsoleted)]:
             msgs = []
             if len(pkglist) > 0:
