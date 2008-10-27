@@ -709,7 +709,7 @@ class YumBase(depsolve.Depsolve):
                 skipped = self._skipFromTransaction(po)
                 for skip in skipped:
                     skipped_po.add(skip)
-                    # make sure we get the combat arch packages skip from pkgSack and up too.
+                    # make sure we get the compat arch packages skip from pkgSack and up too.
                     if skip not in removed_from_sack and skip.repoid == 'installed':
                         _remove_from_sack(skip)
             if not toRemove: # Nothing was removed, so we still got a problem
@@ -741,7 +741,7 @@ class YumBase(depsolve.Depsolve):
         if rpmUtils.arch.isMultiLibArch():
             archs = rpmUtils.arch.getArchList() 
             n,a,e,v,r = po.pkgtup
-            # skip for all combat archs
+            # skip for all compat archs
             for a in archs:
                 pkgtup = (n,a,e,v,r)
                 if self.tsInfo.exists(pkgtup):
