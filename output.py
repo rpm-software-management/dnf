@@ -1206,6 +1206,8 @@ def progressbar(current, total, name=None):
 
     if name is None and current == total:
         name = '-'
+    if name is not None: # FIXME: This is a hack without utf8_width()
+        width -= len(to_utf8(name)) - len(name)
 
     end = ' %d/%d' % (current, total)
     width -= len(end) + 1
@@ -1278,17 +1280,46 @@ if __name__ == "__main__":
             cb.event("lpkg" + "-=" * 15 + ".end", "bar", i, 100, i, 100)
             time.sleep(0.1)
 
-    if len(sys.argv) > 1 and sys.argv[1] in ("progress", "rpm-progress",
+    if len(sys.argv) > 1 and sys.argv[1] in ("progress", "i18n-progress",
+                                             "rpm-progress",
                                              'i18n-rpm-progress'):
         yum.misc.setup_locale()
+    if len(sys.argv) > 1 and sys.argv[1] in ("progress", "i18n-progress"):
+        print ""
+        print " Doing progress, i18n: small name"
+        print ""
+        for i in xrange(0, 101):
+            progressbar(i, 100, to_unicode('\xe6\xad\xa3\xe5\x9c\xa8\xe5\xae\x89\xe8\xa3\x85'))
+            time.sleep(0.1)
+        print ""
+
+        print ""
+        print " Doing progress, i18n: big name"
+        print ""
+        for i in xrange(0, 101):
+            progressbar(i, 100, to_unicode('\xe6\xad\xa3\xe5\x9c\xa8\xe5\xae\x89\xe8\xa3\x85' * 5 + ".end"))
+            time.sleep(0.1)
+        print ""
+
+
+    if len(sys.argv) > 1 and sys.argv[1] in ("progress", "i18n-progress",
+                                             "rpm-progress",
+                                             'i18n-rpm-progress'):
         cb = YumCliRPMCallBack()
         cb.output = True
         cb.action["foo"] = to_unicode('\xe6\xad\xa3\xe5\x9c\xa8\xe5\xae\x89\xe8\xa3\x85')
+        cb.action["bar"] = cb.action["foo"] * 5 + ".end"
         print ""
         print " Doing CB, i18n: small proc / small pkg"
         print ""
         for i in xrange(0, 101):
             cb.event("spkg", "foo", i, 100, i, 100)
             time.sleep(0.1)        
+        print ""
+        print " Doing CB, i18n: big proc / big pkg"
+        print ""
+        for i in xrange(0, 101):
+            cb.event("lpkg" + "-=" * 15 + ".end", "bar", i, 100, i, 100)
+            time.sleep(0.1)
         print ""
         
