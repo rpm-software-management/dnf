@@ -114,6 +114,8 @@ class Depsolve(object):
             self._tsInfo.install_method = self.install
             self._tsInfo.update_method = self.update
             self._tsInfo.remove_method = self.remove
+        elif not remove_only and self._tsInfo.pkgSack is None:
+            self._tsInfo.setDatabases(self.rpmdb, self.pkgSack)
         return self._tsInfo
 
     def _setTsInfo(self, value):
