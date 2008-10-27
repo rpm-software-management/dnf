@@ -676,14 +676,20 @@ class YumBase(depsolve.Depsolve):
                 return
             self._getPackagesToRemove(po, depTree, toRemove)
             # Only remove non installed packages from pkgSack
-            if not po.repoid == 'installed':
+            _remove_from_sack(po)
+
+        def _remove_from_sack(po):
+            if not po.repoid == 'installed' and po not in removed_from_sack:
+                self.verbose_logger.debug('SKIPBROKEN: removing %s from pkgSack & updates' % str(po))
                 self.pkgSack.delPackage(po)
                 self.up.delPackage(po.pkgtup)
+                removed_from_sack.add(po)
 
         # Keep removing packages & Depsolve until all errors is gone
         # or the transaction is empty
         count = 0
         skipped_po = set()
+        removed_from_sack = set()
         orig_restring = restring    # Keep the old error messages
         while len(self.po_with_problems) > 0 and rescode == 1:
             count += 1
@@ -701,6 +707,9 @@ class YumBase(depsolve.Depsolve):
                 skipped = self._skipFromTransaction(po)
                 for skip in skipped:
                     skipped_po.add(skip)
+                    # make sure we get the combat arch packages skip from pkgSack and up too.
+                    if skip not in removed_from_sack and skip.repoid == 'installed':
+                        _remove_from_sack(skip)
             if not toRemove: # Nothing was removed, so we still got a problem
                 break # Bail out
             rescode, restring = self.resolveDeps()
