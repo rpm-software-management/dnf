@@ -789,8 +789,7 @@ class YumOutput:
                             (_('Removing'), self.tsInfo.removed),
                             (_('Installing for dependencies'), self.tsInfo.depinstalled),
                             (_('Updating for dependencies'), self.tsInfo.depupdated),
-                            (_('Removing for dependencies'), self.tsInfo.depremoved),
-                            (_('Skipped (dependency problems)'), self.skipped_packages),]:
+                            (_('Removing for dependencies'), self.tsInfo.depremoved)]:
             lines = []
             for txmbr in pkglist:
                 (n,a,e,v,r) = txmbr.pkgtup
@@ -803,6 +802,30 @@ class YumOutput:
                     a = 'noarch'
 
                 lines.append((n, a, evr, repoid, size, txmbr.obsoletes))
+                #  Create a dict of field_length => number of packages, for
+                # each field.
+                for (d, v) in (("n",len(n)), ("v",len(evr)), ("r",len(repoid))):
+                    data[d].setdefault(v, 0)
+                    data[d][v] += 1
+                if a_wid < len(a): # max() is only in 2.5.z
+                    a_wid = len(a)
+
+            pkglist_lines.append((action, lines))
+
+        for (action, pkglist) in [(_('Skipped (dependency problems)'),
+                                   self.skipped_packages),]:
+            lines = []
+            for po in pkglist:
+                (n,a,e,v,r) = po.pkgtup
+                evr = po.printVer()
+                repoid = po.repoid
+                pkgsize = float(po.size)
+                size = self.format_number(pkgsize)
+
+                if a is None: # gpgkeys are weird
+                    a = 'noarch'
+
+                lines.append((n, a, evr, repoid, size, []))
                 #  Create a dict of field_length => number of packages, for
                 # each field.
                 for (d, v) in (("n",len(n)), ("v",len(evr)), ("r",len(repoid))):
