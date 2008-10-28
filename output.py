@@ -778,12 +778,29 @@ class YumOutput:
         self.tsInfo.makelists()
         out = u""
         pkglist_lines = []
-        #  Tried to do this statically using:
-        #   http://fedorapeople.org/~james/yum/commands/length_distributions.py
-        # but it sucked for corner cases, so this is dynamic...
-
         data  = {'n' : {}, 'v' : {}, 'r' : {}}
         a_wid = 0 # Arch can't get "that big" ... so always use the max.
+
+        def _add_line(lines, data, a_wid, po, obsoletes=[]):
+            (n,a,e,v,r) = po.pkgtup
+            evr = po.printVer()
+            repoid = po.repoid
+            pkgsize = float(po.size)
+            size = self.format_number(pkgsize)
+
+            if a is None: # gpgkeys are weird
+                a = 'noarch'
+
+            lines.append((n, a, evr, repoid, size, obsoletes))
+            #  Create a dict of field_length => number of packages, for
+            # each field.
+            for (d, v) in (("n",len(n)), ("v",len(evr)), ("r",len(repoid))):
+                data[d].setdefault(v, 0)
+                data[d][v] += 1
+            if a_wid < len(a): # max() is only in 2.5.z
+                a_wid = len(a)
+            return a_wid
+
         for (action, pkglist) in [(_('Installing'), self.tsInfo.installed),
                             (_('Updating'), self.tsInfo.updated),
                             (_('Removing'), self.tsInfo.removed),
@@ -792,23 +809,7 @@ class YumOutput:
                             (_('Removing for dependencies'), self.tsInfo.depremoved)]:
             lines = []
             for txmbr in pkglist:
-                (n,a,e,v,r) = txmbr.pkgtup
-                evr = txmbr.po.printVer()
-                repoid = txmbr.repoid
-                pkgsize = float(txmbr.po.size)
-                size = self.format_number(pkgsize)
-
-                if a is None: # gpgkeys are weird
-                    a = 'noarch'
-
-                lines.append((n, a, evr, repoid, size, txmbr.obsoletes))
-                #  Create a dict of field_length => number of packages, for
-                # each field.
-                for (d, v) in (("n",len(n)), ("v",len(evr)), ("r",len(repoid))):
-                    data[d].setdefault(v, 0)
-                    data[d][v] += 1
-                if a_wid < len(a): # max() is only in 2.5.z
-                    a_wid = len(a)
+                a_wid = _add_line(lines, data, a_wid, txmbr.po, txmbr.obsoletes)
 
             pkglist_lines.append((action, lines))
 
@@ -816,23 +817,7 @@ class YumOutput:
                                    self.skipped_packages),]:
             lines = []
             for po in pkglist:
-                (n,a,e,v,r) = po.pkgtup
-                evr = po.printVer()
-                repoid = po.repoid
-                pkgsize = float(po.size)
-                size = self.format_number(pkgsize)
-
-                if a is None: # gpgkeys are weird
-                    a = 'noarch'
-
-                lines.append((n, a, evr, repoid, size, []))
-                #  Create a dict of field_length => number of packages, for
-                # each field.
-                for (d, v) in (("n",len(n)), ("v",len(evr)), ("r",len(repoid))):
-                    data[d].setdefault(v, 0)
-                    data[d][v] += 1
-                if a_wid < len(a): # max() is only in 2.5.z
-                    a_wid = len(a)
+                a_wid = _add_line(lines, data, a_wid, po)
 
             pkglist_lines.append((action, lines))
 
