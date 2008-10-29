@@ -210,6 +210,35 @@ class _DepsolveTestsBase(unittest.TestCase):
             errors.append("\n")
             self.fail("".join(errors))
 
+class FakeRpmDb(packageSack.PackageSack):
+    '''
+    We use a PackagePack for a Fake rpmdb insted of the normal
+    RPMDBPackageSack, getProvides works a little different on
+    unversioned requirements so we have to overload an add some
+    extra checkcode.
+    '''
+    def __init__(self):
+        packageSack.PackageSack.__init__(self)
+
+    def getProvides(self, name, flags=None, version=(None, None, None)):
+        """return dict { packages -> list of matching provides }"""
+        self._checkIndexes(failure='build')
+        result = { }
+        # convert flags & version for unversioned reqirements
+        if not version:
+            version=(None, None, None)
+        if flags == '0':
+            flags=None
+        for po in self.provides.get(name, []):
+            hits = po.matchingPrcos('provides', (name, flags, version))
+            if hits:
+                result[po] = hits
+        if name[0] == '/':
+            hit = (name, None, (None, None, None))
+            for po in self.searchFiles(name):
+                result.setdefault(po, []).append(hit)
+        return result
+            
 
 #######################################################################
 ### Derive Tests from these classes or unittest.TestCase ##############
@@ -238,7 +267,7 @@ class DepsolveTests(_DepsolveTestsBase):
         """ Called at the start of each test. """
         _DepsolveTestsBase.setUp(self)
         self.tsInfo = transactioninfo.TransactionData()
-        self.rpmdb  = packageSack.PackageSack()
+        self.rpmdb  = FakeRpmDb()
         self.xsack  = packageSack.PackageSack()
         self.repo   = FakeRepo("installed")
         # XXX this side-affect is hacky:
