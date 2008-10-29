@@ -385,7 +385,7 @@ class SkipBrokenTests(DepsolveTests):
         self.assertResult([po1,po2,po3])               
 
 
-    def testInstalledFail(self):
+    def testBumpedSoName1(self):
         """
         """
         a1 = self.instPackage('a', '1', arch='x86_64')
@@ -420,8 +420,8 @@ class SkipBrokenTests(DepsolveTests):
         self.tsInfo.addUpdate(d2, oldpo=d1)
         self.tsInfo.addUpdate(e2, oldpo=e1)
         self.tsInfo.addUpdate(f2, oldpo=f1)
-        self.assertEquals('err', *self.resolveCode(skip=False))
-        #self.assertResult([a2,b2,c2,d2,e2,f2])
+        self.assertEquals('ok', *self.resolveCode(skip=True))
+        self.assertResult([a2,b1,c2,d1,e2,f2])
     
     def resolveCode(self,skip = False):
         solver = YumBase()
