@@ -386,11 +386,11 @@ class SkipBrokenTests(DepsolveTests):
 
 
     def testBumpedSoName1(self):
-        """ This will fail because the skip-broken code can handle this case
+        """ 
         d2 need a lib from b1, so the update fails.
         d2 and b2 get skipped, but the installed b1 needs a
         lib from a1, but it has been updated to a2, so it is
-        no longer there.
+        no longer there. so a2 needs to be skipped to
         """
         a1 = self.instPackage('a', '1', arch='x86_64')
         a1.addProvides("liba.so.1()(64bit)")
@@ -427,7 +427,7 @@ class SkipBrokenTests(DepsolveTests):
         self.tsInfo.addUpdate(e2, oldpo=e1)
         self.tsInfo.addUpdate(f2, oldpo=f1)
         self.assertEquals('ok', *self.resolveCode(skip=True))
-        #self.assertResult([a2,b1,c2,d1,e2,f2])
+        self.assertResult([a1,b1,c1,d1,e2,f2])
     
     def resolveCode(self,skip = False):
         solver = YumBase()

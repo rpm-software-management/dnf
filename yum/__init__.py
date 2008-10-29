@@ -692,7 +692,8 @@ class YumBase(depsolve.Depsolve):
         count = 0
         skipped_po = set()
         removed_from_sack = set()
-        orig_restring = restring    # Keep the old error messages
+        orig_restring = restring    # Keep the old error messages 
+        hard_restart = False
         while len(self.po_with_problems) > 0 and rescode == 1:
             count += 1
             self.verbose_logger.debug(_("Skip-broken round %i"), count)
@@ -712,14 +713,25 @@ class YumBase(depsolve.Depsolve):
                     # make sure we get the compat arch packages skip from pkgSack and up too.
                     if skip not in removed_from_sack and skip.repoid == 'installed':
                         _remove_from_sack(skip)
-            if not toRemove: # Nothing was removed, so we still got a problem
-                break # Bail out
+            # Nothing was removed, so we still got a problem
+             # the first time we get here we reset the resolved members of
+             # tsInfo and takes a new run all members in the current transaction
+            if not toRemove: 
+                if hard_restart:
+                    break # Bail out
+                else:
+                    self.tsInfo.resetResolved(hard=True)
             rescode, restring = self.resolveDeps()
             endTs = set(self.tsInfo)
              # Check if tsInfo has changes since we started to skip packages
              # if there is no changes then we got a loop.
+             # the first time we get here we reset the resolved members of
+             # tsInfo and takes a new run all members in the current transaction
             if startTs-endTs == set():
-                break    # bail out
+                if hard_restart:
+                    break # Bail out
+                else:
+                    self.tsInfo.resetResolved(hard=True)
         if rescode != 1:
             self.verbose_logger.debug(_("Skip-broken took %i rounds "), count)
             self.verbose_logger.info(_('\nPackages skipped because of dependency problems:'))
