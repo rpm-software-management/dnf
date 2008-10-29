@@ -384,6 +384,44 @@ class SkipBrokenTests(DepsolveTests):
         self.assertEquals('ok', *self.resolveCode(skip=True))
         self.assertResult([po1,po2,po3])               
 
+
+    def testInstalledFail(self):
+        """
+        """
+        a1 = self.instPackage('a', '1', arch='x86_64')
+        a1.addProvides("liba.so.1()(64bit)")
+        a2 = self.repoPackage('a', '2', arch='x86_64')
+        a2.addProvides("liba.so.2()(64bit)")
+        
+        b1 = self.instPackage('b', '1', arch='x86_64')
+        b1.addProvides("libb.so.1()(64bit)")
+        b2 = self.repoPackage('b', '2', arch='x86_64')
+        b2.addProvides("libb.so.2()(64bit)")
+        
+        c1 = self.instPackage('c', '1', arch='x86_64')
+        c1.addRequires("liba.so.1()(64bit)")
+        c2 = self.repoPackage('c', '2', arch='x86_64')
+        c2.addRequires("liba.so.2()(64bit)")
+
+        d1 = self.instPackage('d', '1', arch='x86_64')
+        d1.addRequires("libb.so.1()(64bit)")
+        d2 = self.repoPackage('d', '2', arch='x86_64')
+        d2.addRequires("libb.so.1()(64bit)")
+
+        e1 = self.instPackage('e', '1', arch='x86_64')
+        e2 = self.repoPackage('e', '2', arch='x86_64')
+
+        f1 = self.instPackage('f', '1', arch='x86_64')
+        f2 = self.repoPackage('f', '2', arch='x86_64')
+
+        self.tsInfo.addUpdate(a2, oldpo=a1)
+        self.tsInfo.addUpdate(b2, oldpo=b1)
+        self.tsInfo.addUpdate(c2, oldpo=c1)
+        self.tsInfo.addUpdate(d2, oldpo=d1)
+        self.tsInfo.addUpdate(e2, oldpo=e1)
+        self.tsInfo.addUpdate(f2, oldpo=f1)
+        self.assertEquals('err', *self.resolveCode(skip=False))
+        #self.assertResult([a2,b2,c2,d2,e2,f2])
     
     def resolveCode(self,skip = False):
         solver = YumBase()
@@ -392,6 +430,7 @@ class SkipBrokenTests(DepsolveTests):
         solver.tsInfo = solver._tsInfo = self.tsInfo
         solver.rpmdb = self.rpmdb
         solver.pkgSack = self.xsack
+        solver.dsCallback = DepSolveProgressCallBack()
         
         for po in self.rpmdb:
             po.repoid = po.repo.id = "installed"
@@ -415,4 +454,3 @@ def setup_logging():
     verbose.propagate = False
     verbose.addHandler(console_stdout)
     verbose.setLevel(2)
-

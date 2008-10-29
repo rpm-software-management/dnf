@@ -3,6 +3,8 @@ import sys
 import unittest
 
 import settestpath
+import logging
+import yum.logginglevels as logginglevels
 
 new_behavior = "NEW_BEHAVIOR" in os.environ.keys()
 
@@ -18,6 +20,10 @@ from rpmUtils import arch
 #############################################################
 ### Helper classes ##########################################
 #############################################################
+
+# Dummy translation wrapper
+def _(msg):
+    return msg
 
 class FakeConf(object):
 
@@ -81,6 +87,65 @@ class _Container(object):
     pass
 
 
+class DepSolveProgressCallBack:
+    """provides text output callback functions for Dependency Solver callback"""
+    
+    def __init__(self):
+        """requires yum-cli log and errorlog functions as arguments"""
+        self.verbose_logger = logging.getLogger("yum.verbose.cli")
+        self.loops = 0
+    
+    def pkgAdded(self, pkgtup, mode):
+        modedict = { 'i': _('installed'),
+                     'u': _('updated'),
+                     'o': _('obsoleted'),
+                     'e': _('erased')}
+        (n, a, e, v, r) = pkgtup
+        modeterm = modedict[mode]
+        self.verbose_logger.log(logginglevels.INFO_2,
+            _('---> Package %s.%s %s:%s-%s set to be %s'), n, a, e, v, r,
+            modeterm)
+        
+    def start(self):
+        self.loops += 1
+        
+    def tscheck(self):
+        self.verbose_logger.log(logginglevels.INFO_2, _('--> Running transaction check'))
+        
+    def restartLoop(self):
+        self.loops += 1
+        self.verbose_logger.log(logginglevels.INFO_2,
+            _('--> Restarting Dependency Resolution with new changes.'))
+        self.verbose_logger.debug('---> Loop Number: %d', self.loops)
+    
+    def end(self):
+        self.verbose_logger.log(logginglevels.INFO_2,
+            _('--> Finished Dependency Resolution'))
+
+    
+    def procReq(self, name, formatted_req):
+        self.verbose_logger.log(logginglevels.INFO_2,
+            _('--> Processing Dependency: %s for package: %s'), formatted_req,
+            name)
+        
+    
+    def unresolved(self, msg):
+        self.verbose_logger.log(logginglevels.INFO_2, _('--> Unresolved Dependency: %s'),
+            msg)
+
+    
+    def procConflict(self, name, confname):
+        self.verbose_logger.log(logginglevels.INFO_2,
+            _('--> Processing Conflict: %s conflicts %s'), name, confname)
+
+    def transactionPopulation(self):
+        self.verbose_logger.log(logginglevels.INFO_2, _('--> Populating transaction set '
+            'with selected packages. Please wait.'))
+    
+    def downloadHeader(self, name):
+        self.verbose_logger.log(logginglevels.INFO_2, _('---> Downloading header for %s '
+            'to pack into transaction set.'), name)
+      
 #######################################################################
 ### Abstract super class for test cases ###############################
 #######################################################################
@@ -178,6 +243,10 @@ class DepsolveTests(_DepsolveTestsBase):
         self.repo   = FakeRepo("installed")
         # XXX this side-affect is hacky:
         self.tsInfo.setDatabases(self.rpmdb, self.xsack)
+
+    def resetTsInfo(self):
+        self.tsInfo = transactioninfo.TransactionData()
+        
 
     def resolveCode(self):
         solver = YumBase()
