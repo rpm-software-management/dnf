@@ -720,6 +720,7 @@ class YumBase(depsolve.Depsolve):
                 if hard_restart:
                     break # Bail out
                 else:
+                    self.verbose_logger.debug('SKIPBROKEN: resetting already resovled packages (no packages to skip)' )
                     self.tsInfo.resetResolved(hard=True)
             rescode, restring = self.resolveDeps()
             endTs = set(self.tsInfo)
@@ -731,6 +732,7 @@ class YumBase(depsolve.Depsolve):
                 if hard_restart:
                     break # Bail out
                 else:
+                    self.verbose_logger.debug('SKIPBROKEN: resetting already resovled packages (transaction not changed)' )
                     self.tsInfo.resetResolved(hard=True)
         if rescode != 1:
             self.verbose_logger.debug(_("Skip-broken took %i rounds "), count)
