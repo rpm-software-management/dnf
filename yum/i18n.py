@@ -211,6 +211,52 @@ def utf8_width(msg):
             ret += __utf8_ucp_width(ucs)
     return ret
 
+def utf8_width_chop(msg, chop=None):
+    """ Return the textual width of a utf8 string, chopping it to a specified
+        value. """
+
+    if chop is None or utf8_width(msg) <= chop:
+        return utf8_width(msg), msg
+
+    ret = 0
+    passed_unicode = isinstance(msg, unicode)
+    msg_bytes = 0
+    msg = to_utf8(msg)
+    for (ucs, bytes) in __utf8_iter_ucs(msg):
+        if ucs is None:
+            width = bytes # Ugly ... should not feed bad utf8
+        else:
+            width = __utf8_ucp_width(ucs)
+
+        if chop is not None and (ret + width) > chop:
+            msg = msg[:msg_bytes]
+            break
+        ret += width
+        msg_bytes += bytes
+
+    if passed_unicode:
+        msg = to_unicode(msg)
+
+    return ret, msg
+
+def utf8_width_fill(msg, fill, chop=None, left=True):
+    """ Expand a utf8 msg to a specified "width" or chop to same.
+        Expansion can be left or right. """
+    passed_msg = msg
+    width, msg = utf8_width_chop(msg, chop)
+
+    if width < fill:
+        extra = " " * (fill - width)
+        if left:
+            msg = ''.join([msg, extra])
+        else:
+            msg = ''.join([extra, msg])
+
+    if isinstance(passed_msg, unicode):
+        return to_unicode(msg)
+
+    return msg
+
 def utf8_valid(msg):
     """ Return True/False is the text is valid utf8. """
     for (ucs, bytes) in __utf8_iter_ucs(msg):
@@ -238,36 +284,45 @@ except:
 if __name__ == "__main__":
     import sys
 
-    print " ---- Arguments/str ---- "
-    for arg in sys.argv[1:]:
+    def out(arg):
         arg = to_utf8(arg)
         print "UTF8 :", arg
         print "len  :", len(arg)
+        arg = to_unicode(arg)
+        print "USC  :", arg
+        print "len  :", len(arg)
         print "valid:", utf8_valid(arg)
         print "width:", utf8_width(arg)
+        print "4.8  :", "%s%s%s" % ('<', utf8_width_fill(arg,  4,  8), '>')
+        print "4.3  :", "%s%s%s" % ('<', utf8_width_fill(arg,  4,  3), '>')
+        print "4.2  :", "%s%s%s" % ('<', utf8_width_fill(arg,  4,  2), '>')
+        print "4.1  :", "%s%s%s" % ('<', utf8_width_fill(arg,  4,  1), '>')
+        print "3.3  :", "%s%s%s" % ('<', utf8_width_fill(arg,  3,  3), '>')
+        print "3.2  :", "%s%s%s" % ('<', utf8_width_fill(arg,  3,  2), '>')
+        print "3.1  :", "%s%s%s" % ('<', utf8_width_fill(arg,  3,  1), '>')
+        print "40.79:", "%s%s%s" % ('<', utf8_width_fill(arg, 40, 79), '>')
+        print "40.20:", "%s%s%s" % ('<', utf8_width_fill(arg, 40, 20), '>')
         print ''
+
+    print " ---- Arguments/str ---- "
+    for arg in sys.argv[1:]:
+        out(arg)
 
     print " ---- Arguments/gettext ---- "
     for arg in sys.argv[1:]:
-        arg = to_utf8(_(arg))
-        print "UTF8 :", arg
-        print "len  :", len(arg)
-        print "valid:", utf8_valid(arg)
-        print "width:", utf8_width(arg)
-        print ''
+        try:
+            arg = _(arg)
+        except UnicodeDecodeError:
+            continue
+        out(arg)
 
     if len(sys.argv) > 2:
         print " ---- Arguments/str/all ---- "
-        arg = to_utf8(sys.argv[1] % sys.argv[2:])
-        print "UTF8 :", arg
-        print "len  :", len(arg)
-        print "valid:", utf8_valid(arg)
-        print "width:", utf8_width(arg)
-        print ''
+        out(sys.argv[1] % sys.argv[2:])
+
         print " ---- Arguments/gettext/all ---- "
-        arg = to_utf8(_(sys.argv[1]) % map(_, sys.argv[2:]))
-        print "UTF8 :", arg
-        print "len  :", len(arg)
-        print "valid:", utf8_valid(arg)
-        print "width:", utf8_width(arg)
-        print ''
+        try:
+            arg = _(sys.argv[1]) % map(_, sys.argv[2:])
+        except UnicodeDecodeError:
+            sys.exit(0)
+        out(arg)
