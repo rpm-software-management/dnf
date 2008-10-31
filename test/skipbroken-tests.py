@@ -428,6 +428,51 @@ class SkipBrokenTests(DepsolveTests):
         self.tsInfo.addUpdate(f2, oldpo=f1)
         self.assertEquals('ok', *self.resolveCode(skip=True))
         self.assertResult([a1,b1,c1,d1,e2,f2])
+
+    def testBumpedSoName2(self):
+        """ 
+        https://bugzilla.redhat.com/show_bug.cgi?id=468785
+        """
+        c1 = self.instPackage('cyrus-sasl-lib', '2.1.22',"18")
+        c1.addRequires("libdb-4.3.so")
+        
+        d1 = self.instPackage('compat-db', '4.6.21',"4")
+        d1.addProvides("libdb-4.3.so")
+        od1 = self.repoPackage('compat-db46', '4.6.21',"5")
+        od1.addProvides("libdb-4.6.so")
+        od2 = self.repoPackage('compat-db45', '4.6.21',"5")
+        od2.addProvides("libdb-4.5.so")
+        
+        r1 = self.instPackage('rpm', '4.6.0-0','0.rc1.3')
+        r1.addRequires("libdb-4.5.so")
+        r2 = self.instPackage('rpm-libs', '4.6.0-0','0.rc1.3')
+        r2.addRequires("libdb-4.5.so")
+        r3 = self.instPackage('rpm-build', '4.6.0-0','0.rc1.3')
+        r3.addRequires("libdb-4.5.so")
+        r4 = self.instPackage('rpm-python', '4.6.0-0','0.rc1.3')
+        r4.addRequires("libdb-4.5.so")
+
+        ur1 = self.repoPackage('rpm', '4.6.0-0','0.rc1.5')
+        ur1.addRequires("compat-db45")
+        ur2 = self.repoPackage('rpm-libs', '4.6.0-0','0.rc1.5')
+        ur2.addRequires("compat-db45")
+        ur3 = self.repoPackage('rpm-build', '4.6.0-0','0.rc1.5')
+        ur3.addRequires("compat-db45")
+        ur4 = self.repoPackage('rpm-python', '4.6.0-0','0.rc1.5')
+        ur4.addRequires("compat-db45")
+
+
+        self.tsInfo.addObsoleting(od2, oldpo=d1)
+        self.tsInfo.addObsoleted(d1, od2)
+        self.tsInfo.addObsoleting(od1, oldpo=d1)
+        self.tsInfo.addObsoleted(d1, od1)
+        self.tsInfo.addUpdate(ur1, oldpo=r1)
+        self.tsInfo.addUpdate(ur2, oldpo=r2)
+        self.tsInfo.addUpdate(ur3, oldpo=r3)
+        self.tsInfo.addUpdate(ur4, oldpo=r4)
+        
+        self.assertEquals('ok', *self.resolveCode(skip=True))
+        self.assertResult([c1,d1,r1,r2,r3,r4])
     
     def resolveCode(self,skip = False):
         solver = YumBase()
