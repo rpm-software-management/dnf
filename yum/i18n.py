@@ -234,3 +234,40 @@ except:
     returning the same text
     '''
     _ = dummy_wrapper
+
+if __name__ == "__main__":
+    import sys
+
+    print " ---- Arguments/str ---- "
+    for arg in sys.argv[1:]:
+        arg = to_utf8(arg)
+        print "UTF8 :", arg
+        print "len  :", len(arg)
+        print "valid:", utf8_valid(arg)
+        print "width:", utf8_width(arg)
+        print ''
+
+    print " ---- Arguments/gettext ---- "
+    for arg in sys.argv[1:]:
+        arg = to_utf8(_(arg))
+        print "UTF8 :", arg
+        print "len  :", len(arg)
+        print "valid:", utf8_valid(arg)
+        print "width:", utf8_width(arg)
+        print ''
+
+    if len(sys.argv) > 2:
+        print " ---- Arguments/str/all ---- "
+        arg = to_utf8(sys.argv[1] % sys.argv[2:])
+        print "UTF8 :", arg
+        print "len  :", len(arg)
+        print "valid:", utf8_valid(arg)
+        print "width:", utf8_width(arg)
+        print ''
+        print " ---- Arguments/gettext/all ---- "
+        arg = to_utf8(_(sys.argv[1]) % map(_, sys.argv[2:]))
+        print "UTF8 :", arg
+        print "len  :", len(arg)
+        print "valid:", utf8_valid(arg)
+        print "width:", utf8_width(arg)
+        print ''
