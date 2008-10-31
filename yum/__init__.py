@@ -694,10 +694,11 @@ class YumBase(depsolve.Depsolve):
         removed_from_sack = set()
         orig_restring = restring    # Keep the old error messages 
         hard_restart = False
-        while len(self.po_with_problems) > 0 and rescode == 1:
+        while (len(self.po_with_problems) > 0 and rescode == 1):
             count += 1
             self.verbose_logger.debug(_("Skip-broken round %i"), count)
             depTree = self._buildDepTree()
+            print depTree
             startTs = set(self.tsInfo)
             toRemove = set()
             for po,wpo,err in self.po_with_problems:
@@ -734,6 +735,15 @@ class YumBase(depsolve.Depsolve):
                 else:
                     self.verbose_logger.debug('SKIPBROKEN: resetting already resovled packages (transaction not changed)' )
                     self.tsInfo.resetResolved(hard=True)
+            # if we are all clear, then we have to check that the whole current transaction 
+            # can complete the depsolve without error, because the packages skipped
+            # can have broken something that passed the tests earliere.
+            # FIXME: We need do this in a better way.
+            if rescode != 1:
+                self.verbose_logger.debug('SKIPBROKEN: Check the current transaction one last time' )
+                self.tsInfo.resetResolved(hard=True)
+                self._checkMissingObsoleted() # This is totally insane, but needed :(
+                rescode, restring = self.resolveDeps()
         if rescode != 1:
             self.verbose_logger.debug(_("Skip-broken took %i rounds "), count)
             self.verbose_logger.info(_('\nPackages skipped because of dependency problems:'))
@@ -749,6 +759,17 @@ class YumBase(depsolve.Depsolve):
             return 1, orig_restring
         
         return rescode, restring
+
+    def _checkMissingObsoleted(self):
+        """ 
+        If multiple packages is obsoleting the same package
+        then the TS_OBSOLETED can get removed from the transaction
+        so we must make sure that they, exist and else create them
+        """
+        for txmbr in self.tsInfo:
+            for pkg in txmbr.obsoletes:
+                if not self.tsInfo.exists(pkg.pkgtup):
+                    self.tsInfo.addObsoleted(pkg,txmbr.po)
 
     def _skipFromTransaction(self,po):
         skipped =  []
