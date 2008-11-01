@@ -37,6 +37,8 @@ from weakref import proxy as weakref
 
 from yum import _
 
+from yum.i18n import utf8_width, utf8_width_fill
+
 # TODO: expose rpm package sack objects to plugins (once finished)
 # TODO: allow plugins to use the existing config stuff to define options for
 # their own configuration files (would replace confString() etc).
@@ -198,7 +200,7 @@ class YumPlugins:
             # Mostly copied from YumOutput._outKeyValFill()
             key = _("Loaded plugins: ")
             val = ", ".join(sorted(self._plugins))
-            nxt = ' ' * (len(key) - 2) + ': '
+            nxt = ' ' * (utf8_width(key) - 2) + ': '
             width = 80
             if hasattr(self.base, 'term'):
                 width = self.base.term.columns

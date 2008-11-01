@@ -39,6 +39,7 @@ from yum.rpmtrans import RPMBaseCallback
 from yum.packageSack import packagesNewestByNameArch
 
 from textwrap import fill
+from yum.i18n import utf8_width, utf8_width_fill
 
 def _term_width():
     """ Simple terminal width, limit to 20 chars. and make 0 == 80. """
@@ -299,7 +300,7 @@ class YumOutput:
         if columns is None:
             columns = [1] * cols
 
-        total_width -= (sum(columns) + (cols - 1) + len(indent))
+        total_width -= (sum(columns) + (cols - 1) + utf8_width(indent))
         while total_width > 0:
             # Find which field all the spaces left will help best
             helps = 0
@@ -351,8 +352,9 @@ class YumOutput:
                 continue
 
             (align, width) = self._fmt_column_align_width(width)
-            if len(val) <= width:
-                msg += u"%%%s%ds " % (align, width)
+            if utf8_width(val) <= width:
+                msg += u"%s "
+                val = utf8_width_fill(val, width, left=(align == u'-'))
             else:
                 msg += u"%s\n" + " " * (total_width + width + 1)
             total_width += width
@@ -360,7 +362,8 @@ class YumOutput:
             data.append(val)
         (val, width) = columns[-1]
         (align, width) = self._fmt_column_align_width(width)
-        msg += u"%%%s%ds%s" % (align, width, end)
+        val = utf8_width_fill(val, width, left=(align == u'-'))
+        msg += u"%%s%s" % end
         data.append(val)
         return msg % tuple(data)
 
@@ -395,7 +398,7 @@ class YumOutput:
     def fmtKeyValFill(self, key, val):
         """ Return a key value pair in the common two column output format. """
         val = to_str(val)
-        keylen = len(key)
+        keylen = utf8_width(key)
         cols = self.term.columns
         nxt = ' ' * (keylen - 2) + ': '
         ret = fill(val, width=cols,
@@ -572,7 +575,7 @@ class YumOutput:
                 continue
             for (apkg, ipkg) in pkg_names2pkgs[item]:
                 pkg = ipkg or apkg
-                envra = len(str(pkg)) + len(indent)
+                envra = utf8_width(str(pkg)) + utf8_width(indent)
                 rid   = len(pkg.repoid)
                 for (d, v) in (('envra', envra), ('rid', rid)):
                     data[d].setdefault(v, 0)
@@ -1009,8 +1012,8 @@ Remove   %5.5s Package(s)
         ui_time = tl.add(' %9s' % self.format_time(dl_time))
         ui_end  = tl.add(' ' * 5)
         ui_bs   = tl.add(' %5sB/s' % self.format_number(remote_size / dl_time))
-        msg = "%-*.*s%s%s%s%s" % (tl.rest(), tl.rest(), _("Total"),
-                                  ui_bs, ui_size, ui_time, ui_end)
+        msg = "%s%s%s%s%s" % (utf8_width_fill(_("Total"), tl.rest(), tl.rest()),
+                              ui_bs, ui_size, ui_time, ui_end)
         self.verbose_logger.log(logginglevels.INFO_2, msg)
 
 
@@ -1133,10 +1136,10 @@ class YumCliRPMCallBack(RPMBaseCallback):
             percent = (te_current*100L)/te_total
         
         if self.output and (sys.stdout.isatty() or te_current == te_total):
-            fmt = self._makefmt(percent, ts_current, ts_total, pkgname=pkgname)
-            # FIXME: Converting to utf8 here is a HACK ... but it's better
-            # to underflow than overflow, see the i18n-rpm-progress example
-            msg = fmt % (to_utf8(process), pkgname)
+            (fmt, wid1, wid2) = self._makefmt(percent, ts_current, ts_total,
+                                              pkgname=pkgname)
+            msg = fmt % (utf8_width_fill(process, wid1, wid1),
+                         utf8_width_fill(pkgname, wid2, wid2))
             if msg != self.lastmsg:
                 sys.stdout.write(to_unicode(msg))
                 sys.stdout.flush()
@@ -1161,7 +1164,7 @@ class YumCliRPMCallBack(RPMBaseCallback):
         if pkgname is None:
             pnl = 22
         else:
-            pnl = len(pkgname)
+            pnl = utf8_width(pkgname)
 
         overhead  = (2 * l) + 2 # Length of done, above
         overhead += 19          # Length of begining
@@ -1179,20 +1182,23 @@ class YumCliRPMCallBack(RPMBaseCallback):
         width = "%s.%s" % (marks, marks)
         fmt_bar = "[%-" + width + "s]"
         # pnl = str(28 + marks + 1)
-        full_pnl = "%%-%d.%ds" % (pnl + marks + 1, pnl + marks + 1)
-        half_pnl = "%%-%d.%ds" % (pnl, pnl)
+        full_pnl = pnl + marks + 1
 
         if progress and percent == 100: # Don't chop pkg name on 100%
-            fmt = "\r  %-15.15s: " + full_pnl + "   " + done
+            fmt = "\r  %s: %s   " + done
+            wid2 = full_pnl
         elif progress:
             bar = fmt_bar % (self.mark * int(marks * (percent / 100.0)), )
-            fmt = "\r  %-15.15s: " + half_pnl + " " + bar + " " + done
+            fmt = "\r  %s: %s " + bar + " " + done
+            wid2 = pnl
         elif percent == 100:
-            fmt = "  %-15.15s: " + full_pnl + "   " + done
+            fmt = "  %s: %s   " + done
+            wid2 = full_pnl
         else:
             bar = fmt_bar % (self.mark * marks, )
-            fmt = "  %-15.15s: " + half_pnl + " " + bar + " " + done
-        return fmt
+            fmt = "  %s: %s " + bar + " " + done
+            wid2 = pnl
+        return fmt, 15, wid2
 
 
 def progressbar(current, total, name=None):
@@ -1214,8 +1220,6 @@ def progressbar(current, total, name=None):
 
     if name is None and current == total:
         name = '-'
-    if name is not None: # FIXME: This is a hack without utf8_width()
-        width -= len(to_utf8(name)) - len(name)
 
     end = ' %d/%d' % (current, total)
     width -= len(end) + 1
@@ -1228,17 +1232,18 @@ def progressbar(current, total, name=None):
         hashbar = mark * int(width * percent)
         output = '\r[%-*s]%s' % (width, hashbar, end)
     elif current == total: # Don't chop name on 100%
-        output = '\r%-*.*s%s' % (width, width, name, end)
+        output = '\r%s%s' % (utf8_width_fill(name, width, width), end)
     else:
         width -= 4
         if width < 0:
             width = 0
         nwid = width / 2
-        if nwid > len(name):
-            nwid = len(name)
+        if nwid > utf8_width(name):
+            nwid = utf8_width(name)
         width -= nwid
         hashbar = mark * int(width * percent)
-        output = '\r%-*.*s: [%-*s]%s' % (nwid, nwid, name, width, hashbar, end)
+        output = '\r%s: [%-*s]%s' % (utf8_width_fill(name, nwid, nwid), width,
+                                     hashbar, end)
      
     if current <= total:
         sys.stdout.write(output)
