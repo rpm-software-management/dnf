@@ -665,7 +665,11 @@ class YumBase(depsolve.Depsolve):
         # Try another depsolve
         if self.conf.skip_broken and rescode==1:
             self.skipped_packages = []    # reset the public list of skipped packages.
+            sb_st = time.time()
+            self._printTransaction()        
             rescode, restring = self._skipPackagesWithProblems(rescode, restring)
+            self._printTransaction()        
+            self.verbose_logger.debug('Skip-Broken time: %0.3f' % (time.time() - sb_st))
 
         self.verbose_logger.debug('Depsolve time: %0.3f' % (time.time() - ds_st))
         return rescode, restring
@@ -698,7 +702,6 @@ class YumBase(depsolve.Depsolve):
             count += 1
             self.verbose_logger.debug(_("Skip-broken round %i"), count)
             depTree = self._buildDepTree()
-            print depTree
             startTs = set(self.tsInfo)
             toRemove = set()
             for po,wpo,err in self.po_with_problems:
@@ -740,7 +743,7 @@ class YumBase(depsolve.Depsolve):
             # can have broken something that passed the tests earliere.
             # FIXME: We need do this in a better way.
             if rescode != 1:
-                self.verbose_logger.debug('SKIPBROKEN: Check the current transaction one last time' )
+                self.verbose_logger.debug('SKIPBROKEN: sanity check the current transaction' )
                 self.tsInfo.resetResolved(hard=True)
                 self._checkMissingObsoleted() # This is totally insane, but needed :(
                 rescode, restring = self.resolveDeps()
@@ -757,7 +760,6 @@ class YumBase(depsolve.Depsolve):
             # If we cant solve the problems the show the original error messages.
             self.verbose_logger.info("Skip-broken could not solve problems")
             return 1, orig_restring
-        
         return rescode, restring
 
     def _checkMissingObsoleted(self):
@@ -766,10 +768,15 @@ class YumBase(depsolve.Depsolve):
         then the TS_OBSOLETED can get removed from the transaction
         so we must make sure that they, exist and else create them
         """
+        added = set()
         for txmbr in self.tsInfo:
             for pkg in txmbr.obsoletes:
                 if not self.tsInfo.exists(pkg.pkgtup):
-                    self.tsInfo.addObsoleted(pkg,txmbr.po)
+                    obs = self.tsInfo.addObsoleted(pkg,txmbr.po)
+                    self.verbose_logger.debug('SKIPBROKEN: Added missing obsoleted %s (%s)' % (pkg,txmbr.po) )
+                    added.add(obs)
+        return added
+                    
 
     def _skipFromTransaction(self,po):
         skipped =  []
@@ -813,6 +820,22 @@ class YumBase(depsolve.Depsolve):
             for p in l:
                 print "\t", p
 
+    def _printTransaction(self):
+        #transaction set states
+        state = { TS_UPDATE     : "update",
+                  TS_INSTALL    : "install",
+                  TS_TRUEINSTALL: "trueinstall",
+                  TS_ERASE      : "erase",
+                  TS_OBSOLETED  : "obsoleted",
+                  TS_OBSOLETING : "obsoleting",
+                  TS_AVAILABLE  : "available",
+                  TS_UPDATED    : "updated"}
+
+        self.verbose_logger.log(logginglevels.DEBUG_2,"TSINFO: Current Transaction : %i member(s) " % len(self.tsInfo))
+        for txmbr in self.tsInfo:
+            msg = "  %-11s : %s" % (state[txmbr.output_state],txmbr.po)
+            self.verbose_logger.log(logginglevels.DEBUG_2, msg)
+                                    
     def _getPackagesToRemove(self,po,deptree,toRemove):
         '''
         get the (related) pos to remove.
