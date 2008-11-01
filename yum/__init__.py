@@ -666,7 +666,6 @@ class YumBase(depsolve.Depsolve):
         if self.conf.skip_broken and rescode==1:
             self.skipped_packages = []    # reset the public list of skipped packages.
             sb_st = time.time()
-            self._printTransaction()        
             rescode, restring = self._skipPackagesWithProblems(rescode, restring)
             self._printTransaction()        
             self.verbose_logger.debug('Skip-Broken time: %0.3f' % (time.time() - sb_st))
@@ -701,6 +700,7 @@ class YumBase(depsolve.Depsolve):
         while (len(self.po_with_problems) > 0 and rescode == 1):
             count += 1
             self.verbose_logger.debug(_("Skip-broken round %i"), count)
+            self._printTransaction()        
             depTree = self._buildDepTree()
             startTs = set(self.tsInfo)
             toRemove = set()
@@ -833,8 +833,12 @@ class YumBase(depsolve.Depsolve):
 
         self.verbose_logger.log(logginglevels.DEBUG_2,"TSINFO: Current Transaction : %i member(s) " % len(self.tsInfo))
         for txmbr in self.tsInfo:
-            msg = "  %-11s : %s" % (state[txmbr.output_state],txmbr.po)
+            msg = "  %-11s : %s " % (state[txmbr.output_state],txmbr.po)
             self.verbose_logger.log(logginglevels.DEBUG_2, msg)
+            for po,rel in txmbr.relatedto:
+                msg = "                   %s : %s" % (rel,po)
+                self.verbose_logger.log(logginglevels.DEBUG_2, msg)
+                
                                     
     def _getPackagesToRemove(self,po,deptree,toRemove):
         '''
