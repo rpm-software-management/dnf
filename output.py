@@ -1012,8 +1012,8 @@ Remove   %5.5s Package(s)
         ui_time = tl.add(' %9s' % self.format_time(dl_time))
         ui_end  = tl.add(' ' * 5)
         ui_bs   = tl.add(' %5sB/s' % self.format_number(remote_size / dl_time))
-        msg = "%-*.*s%s%s%s%s" % (tl.rest(), tl.rest(), _("Total"),
-                                  ui_bs, ui_size, ui_time, ui_end)
+        msg = "%s%s%s%s%s" % (utf8_width_fill(_("Total"), tl.rest(), tl.rest()),
+                              ui_bs, ui_size, ui_time, ui_end)
         self.verbose_logger.log(logginglevels.INFO_2, msg)
 
 
