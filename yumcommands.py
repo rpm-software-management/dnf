@@ -29,6 +29,7 @@ import locale
 import fnmatch
 import time
 from yum.misc import to_unicode
+from yum.i18n import utf8_width_fill
 
 def checkRootUID(base):
     """
@@ -719,7 +720,6 @@ class RepoListCommand(YumCommand):
         # Setup so len(repo.sack) is correct
         base.repos.populateSack()
 
-        format_string = "%-20.20s %-40.40s %-8s%s"
         repos = base.repos.repos.values()
         repos.sort()
         enabled_repos = base.repos.listEnabled()
@@ -755,12 +755,20 @@ class RepoListCommand(YumCommand):
             if (arg == 'all' or
                 (arg == 'enabled' and enabled) or
                 (arg == 'disabled' and not enabled)):
-                if not done and not verbose:
-                    base.verbose_logger.log(logginglevels.INFO_2,
-                                            format_string, _('repo id'),
-                                            _('repo name'), _('status'), "")
-                done = True
-                if verbose:
+                if not verbose:
+                    if not done:
+                        txt_rid  = utf8_width_fill(_('repo id'), 20, 20)
+                        txt_rnam = utf8_width_fill(_('repo name'), 40, 40)
+                        txt_stat = utf8_width_fill(_('status'), 8)
+                        base.verbose_logger.log(logginglevels.INFO_2,"%s %s %s",
+                                                txt_rid, txt_rnam, txt_stat)
+                        done = True
+                    base.verbose_logger.log(logginglevels.INFO_2, "%s %s %s%s",
+                                            utf8_width_fill(str(repo), 20, 20),
+                                            utf8_width_fill(repo.name, 40, 40),
+                                            utf8_width_fill(ui_enabled, 8),
+                                            ui_fmt_num % ui_num)
+                else:
                     md = repo.repoXML
                     out = [base.fmtKeyValFill(_("Repo-id     : "), repo),
                            base.fmtKeyValFill(_("Repo-name   : "), repo.name),
@@ -812,10 +820,6 @@ class RepoListCommand(YumCommand):
                     base.verbose_logger.log(logginglevels.DEBUG_3,
                                             "%s\n",
                                             "\n".join(out))
-                else:
-                    base.verbose_logger.log(logginglevels.INFO_2, format_string,
-                                            repo, repo.name, ui_enabled,
-                                            ui_fmt_num % ui_num)
 
         return 0, ['repolist: ' +to_unicode(locale.format("%d", tot_num, True))]
 
