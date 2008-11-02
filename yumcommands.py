@@ -29,7 +29,7 @@ import locale
 import fnmatch
 import time
 from yum.misc import to_unicode
-from yum.i18n import utf8_width_fill
+from yum.i18n import utf8_width, utf8_width_fill
 
 def checkRootUID(base):
     """
@@ -751,6 +751,9 @@ class RepoListCommand(YumCommand):
                 ui_enabled = dhibeg + _('disabled') + hiend
                 ui_num     = ""
                 ui_fmt_num = "%s"
+            ui_endis_wid = utf8_width(_('disabled'))
+            if ui_endis_wid < utf8_width(_('enabled')):
+                ui_endis_wid = utf8_width(_('enabled'))
                 
             if (arg == 'all' or
                 (arg == 'enabled' and enabled) or
@@ -759,14 +762,14 @@ class RepoListCommand(YumCommand):
                     if not done:
                         txt_rid  = utf8_width_fill(_('repo id'), 20, 20)
                         txt_rnam = utf8_width_fill(_('repo name'), 40, 40)
-                        txt_stat = utf8_width_fill(_('status'), 8)
                         base.verbose_logger.log(logginglevels.INFO_2,"%s %s %s",
-                                                txt_rid, txt_rnam, txt_stat)
+                                                txt_rid, txt_rnam, _('status'))
                         done = True
                     base.verbose_logger.log(logginglevels.INFO_2, "%s %s %s%s",
                                             utf8_width_fill(str(repo), 20, 20),
                                             utf8_width_fill(repo.name, 40, 40),
-                                            utf8_width_fill(ui_enabled, 8),
+                                            utf8_width_fill(ui_enabled,
+                                                            ui_endis_wid),
                                             ui_fmt_num % ui_num)
                 else:
                     md = repo.repoXML
