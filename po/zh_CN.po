@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: yum\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2008-03-25 11:29+0100\n"
-"PO-Revision-Date: 2008-07-24 19:43+0800\n"
+"PO-Revision-Date: 2008-11-01 23:43+0400\n"
 "Last-Translator: lijiansheng <lijiangsheng1@gmail.com>\n"
 "Language-Team: zh_CN <lijiangsheng1@gmail.com>\n"
 "MIME-Version: 1.0\n"
@@ -460,61 +460,61 @@ msgstr "尝试其他镜像."
 
 #: ../output.py:293
 #, python-format
-msgid "Name       : %s"
-msgstr "名称       : %s"
+msgid "Name       : %s%s%s"
+msgstr "名称          : %s%s%s"
 
 #: ../output.py:294
 #, python-format
 msgid "Arch       : %s"
-msgstr "架构 : %s"
+msgstr "架构          : %s"
 
 #: ../output.py:296
 #, python-format
 msgid "Epoch      : %s"
-msgstr "Epoch      : %s"
+msgstr "Epoch          : %s"
 
 #: ../output.py:297
 #, python-format
 msgid "Version    : %s"
-msgstr "版本    : %s"
+msgstr "版本          : %s"
 
 #: ../output.py:298
 #, python-format
 msgid "Release    : %s"
-msgstr "发行    : %s"
+msgstr "发行          : %s"
 
 #: ../output.py:299
 #, python-format
 msgid "Size       : %s"
-msgstr "大小    : %s"
+msgstr "大小          : %s"
 
 #: ../output.py:300
 #, python-format
 msgid "Repo       : %s"
-msgstr "Repo       : %s"
+msgstr "Repo          : %s"
 
 #: ../output.py:302
 #, python-format
 msgid "Committer  : %s"
-msgstr "Übermittler  : %s"
+msgstr "Übermittler   : %s"
 
 #: ../output.py:303
 msgid "Summary    : "
-msgstr "语法    : "
+msgstr "语法          : "
 
 #: ../output.py:305
 #, python-format
 msgid "URL        : %s"
-msgstr "统一资源定位符       : %s"
+msgstr "统一资源定位符: %s"
 
 #: ../output.py:306
 #, python-format
 msgid "License    : %s"
-msgstr "许可证    : %s"
+msgstr "许可证        : %s"
 
 #: ../output.py:307
 msgid "Description: "
-msgstr "升级:"
+msgstr "升级          : "
 
 #: ../output.py:351
 msgid "Is this ok [y/N]: "
