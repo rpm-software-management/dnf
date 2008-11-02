@@ -165,8 +165,8 @@ def __utf8_iter_ucs(msg):
             yield (byte0, 1)
         elif (byte0 & 0xe0) == 0xc0: # 110XXXXx 10xxxxxx
             byte1 = uiter.next()
-            if (((byte0 & 0xc0) != 0x80) or 
-                ((byte1 & 0xfe) == 0xc0)):                          # overlong?
+            if (((byte1 & 0xc0) != 0x80) or
+                ((byte0 & 0xfe) == 0xc0)):                          # overlong?
                 yield (None, 2)
                 return
             yield ((((byte0 & 0x1f) << 6) | (byte1 & 0x3f)), 2)
