@@ -213,7 +213,9 @@ def utf8_width(msg):
 
 def utf8_width_chop(msg, chop=None):
     """ Return the textual width of a utf8 string, chopping it to a specified
-        value. """
+        value. This is what you want to use instead of %.*s, as it does the
+        "right" thing with regard to utf-8 sequences. Eg.
+        "%.*s" % (10, msg)   <= becomes => "%s" % (utf8_width_chop(msg, 10)) """
 
     if chop is None or utf8_width(msg) <= chop:
         return utf8_width(msg), msg
@@ -241,7 +243,17 @@ def utf8_width_chop(msg, chop=None):
 
 def utf8_width_fill(msg, fill, chop=None, left=True):
     """ Expand a utf8 msg to a specified "width" or chop to same.
-        Expansion can be left or right. """
+        Expansion can be left or right. This is what you want to use instead of
+        %*.*s, as it does the "right" thing with regard to utf-8 sequences.
+        Eg.
+        "%-*.*s" % (10, 20, msg)
+           <= becomes =>
+        "%s" % (utf8_width_fill(msg, 10, 20)).
+
+        "%20.10s" % (msg)
+           <= becomes =>
+        "%s" % (utf8_width_fill(msg, 20, 10, left=False)).
+        """
     passed_msg = msg
     width, msg = utf8_width_chop(msg, chop)
 
