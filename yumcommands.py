@@ -536,10 +536,24 @@ class CheckUpdateCommand(YumCommand):
         result = 0
         try:
             ypl = base.returnPkgLists(extcmds)
+            if base.verbose_logger.isEnabledFor(logginglevels.DEBUG_3):
+                typl = base.returnPkgLists(['obsoletes'])
+                ypl.obsoletes = typl.obsoletes
+                ypl.obsoletesTuples = typl.obsoletesTuples
+
             columns = _list_cmd_calc_columns(base, ypl)
             if len(ypl.updates) > 0:
                 base.listPkgs(ypl.updates, '', outputType='list',
                               columns=columns)
+                result = 100
+            if len(ypl.obsoletes) > 0: # This only happens in verbose mode
+                rop = [0, '']
+                print _('Obsoleting Packages')
+                # The tuple is (newPkg, oldPkg) ... so sort by new
+                for obtup in sorted(ypl.obsoletesTuples,
+                                    key=operator.itemgetter(0)):
+                    base.updatesObsoletesList(obtup, 'obsoletes',
+                                              columns=columns)
                 result = 100
         except yum.Errors.YumBaseError, e:
             return 1, [str(e)]
