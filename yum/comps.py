@@ -247,8 +247,8 @@ class Group(CompsObj):
    <id>%s</id>
    <default>%s</default>
    <uservisible>%s</uservisible>
-   <display_order>%s</display_order>\n""" % (self.groupid, str(self.default), 
-                                  str(self.user_visible), self.display_order)
+   <display_order>%s</display_order>\n""" % (self.groupid, str(self.default).lower(), 
+                                  str(self.user_visible).lower(), self.display_order)
    
         if self.langonly:
             msg += """   <langonly>%s</langonly>""" % self.langonly
