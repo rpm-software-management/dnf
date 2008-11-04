@@ -354,7 +354,7 @@ class Category(CompsObj):
                 self.translated_description[lang] = obj.translated_description[lang]
 
     def xml(self):
-        """write out an xml stanza for the group object"""
+        """write out an xml stanza for the category object"""
         msg ="""        
   <category>
    <id>%s</id>
