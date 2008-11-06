@@ -207,7 +207,10 @@ class YumPackageSack(packageSack.PackageSack):
                 repo.checkMD(db_un_fn, mdtype, openchecksum=True)
             except URLGrabError:
                 if not repo.cache:
-                    os.unlink(db_un_fn)
+                    try:
+                        os.unlink(db_un_fn)
+                    except: # Could have an error before anything happens
+                        pass
             else:
                 result = db_un_fn
 
