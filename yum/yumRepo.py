@@ -44,6 +44,7 @@ import warnings
 import glob
 import shutil
 import stat
+import errno
 
 #  If you want yum to _always_ check the MD .sqlite files then set this to
 # False (this doesn't affect .xml files or .sqilte files derived from them).
@@ -209,8 +210,9 @@ class YumPackageSack(packageSack.PackageSack):
                 if not repo.cache:
                     try:
                         os.unlink(db_un_fn)
-                    except: # Could have an error before anything happens
-                        pass
+                    except OSError, e:
+                        if e.errno != errno.ENOENT:
+                            raise # Could have an error before anything happens
             else:
                 result = db_un_fn
 
