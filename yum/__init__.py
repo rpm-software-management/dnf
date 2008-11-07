@@ -2508,8 +2508,19 @@ class YumBase(depsolve.Depsolve):
                 self.install(po=obsoleting_pkg)
                 continue
                 
-            txmbr = self.tsInfo.addInstall(po)
-            tx_return.append(txmbr)
+            # at this point we are going to mark the pkg to be installed, make sure
+            # it doesn't obsolete anything. If it does, mark that in the tsInfo, too
+            if po.pkgtup in self.up.getObsoletesList(name=po.name, arch=po.arch):
+                for (obstup, inst_tup) in self.up.getObsoletesTuples(name=po.name, 
+                                                                     arch=po.arch):
+                    if po.pkgtup == obstup:
+                        installed_pkg =  self.rpmdb.searchPkgTuple(inst_tup)[0]
+                        txmbr = self.tsInfo.addObsoleting(po, installed_pkg)
+                        self.tsInfo.addObsoleted(installed_pkg, po)
+                        tx_return.append(txmbr)
+            else:
+                txmbr = self.tsInfo.addInstall(po)
+                tx_return.append(txmbr)
         
         return tx_return
 
