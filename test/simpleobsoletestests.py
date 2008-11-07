@@ -223,6 +223,46 @@ class SimpleObsoletesTests(OperationsTests):
         self.assert_(res=='ok', msg)
         self.assertResult((p.obsoletes_noarch,))
 
+    def _MultiObsHelper(self):
+        ret = {'zsh'  : FakePackage('zsh', '1', '1', '0', 'noarch'),
+               'ksh'  : FakePackage('ksh', '1', '1', '0', 'noarch'),
+               'nash' : FakePackage('nash', '1', '1', '0', 'noarch')}
+        ret['pi'] = [ret['zsh'], ret['ksh'], ret['nash']]
+              
+        ret['fish'] = FakePackage('fish', '0.1', '1', '0', 'noarch')
+        ret['fish'].addObsoletes('zsh', None, (None, None, None))
+        ret['bigfish'] = FakePackage('bigfish', '0.2', '1', '0', 'noarch')
+        ret['bigfish'].addObsoletes('zsh', None, (None, None, None))
+        ret['bigfish'].addObsoletes('ksh', None, (None, None, None))
+        ret['shark'] = FakePackage('shark', '0.3', '1', '0', 'noarch')
+        ret['shark'].addObsoletes('zsh', None, (None, None, None))
+        ret['shark'].addObsoletes('ksh', None, (None, None, None))
+        ret['shark'].addObsoletes('nash', None, (None, None, None))
+
+        ret['po'] = [ret['fish'], ret['bigfish'], ret['shark']]
+        return ret
+
+    def testMultiObs1(self):
+        pkgs = self._MultiObsHelper()
+        res, msg = self.runOperation(['install', 'fish'],
+                                     pkgs['pi'], pkgs['po'])
+        self.assert_(res=='ok', msg)
+        self.assertResult((pkgs['ksh'],pkgs['nash'],pkgs['fish'],))
+
+    def testMultiObs2(self):
+        pkgs = self._MultiObsHelper()
+        res, msg = self.runOperation(['install', 'bigfish'],
+                                     pkgs['pi'], pkgs['po'])
+        self.assert_(res=='ok', msg)
+        self.assertResult((pkgs['nash'],pkgs['bigfish'],))
+
+    def testMultiObs2(self):
+        pkgs = self._MultiObsHelper()
+        res, msg = self.runOperation(['install', 'shark'],
+                                     pkgs['pi'], pkgs['po'])
+        self.assert_(res=='ok', msg)
+        self.assertResult((pkgs['shark'],))
+
 class GitMetapackageObsoletesTests(OperationsTests):
 
     @staticmethod
