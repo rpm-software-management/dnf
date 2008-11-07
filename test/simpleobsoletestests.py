@@ -217,6 +217,12 @@ class SimpleObsoletesTests(OperationsTests):
         self.assertResult((p.obsoletes_i386, p.obsoletes_x86_64, p.requires_obsoletes))
 
 
+    def testInstallObsoletenoarchTonoarch(self):
+        p = self.pkgs
+        res, msg = self.runOperation(['install', 'zsh-ng'], [p.installed_noarch], [p.obsoletes_noarch])
+        self.assert_(res=='ok', msg)
+        self.assertResult((p.obsoletes_noarch,))
+
 class GitMetapackageObsoletesTests(OperationsTests):
 
     @staticmethod
