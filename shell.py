@@ -337,11 +337,13 @@ class YumShell(cmd.Cmd):
                 if e.errno == 32:
                     self.logger.critical('\n\nExiting on Broken Pipe')
             else:
-                if returnval != 0:
-                    self.verbose_logger.info('Transaction did not run.')
+                if returnval not in [0,1]:
+                    self.verbose_logger.info('Transaction encountered a serious error.')
                 else:
+                    if returnval == 1:
+                        self.verbose_logger.info('There were non-fatal errors in the transaction')
                     self.verbose_logger.log(logginglevels.INFO_2,
                         'Finished Transaction')
-                    self.base.closeRpmDB()
+                self.base.closeRpmDB()
 
 
