@@ -256,7 +256,7 @@ class SimpleObsoletesTests(OperationsTests):
         self.assert_(res=='ok', msg)
         self.assertResult((pkgs['nash'],pkgs['bigfish'],))
 
-    def testMultiObs2(self):
+    def testMultiObs3(self):
         pkgs = self._MultiObsHelper()
         res, msg = self.runOperation(['install', 'shark'],
                                      pkgs['pi'], pkgs['po'])
