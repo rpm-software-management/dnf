@@ -267,6 +267,7 @@ class DepsolveTests(_DepsolveTestsBase):
         """ Called at the start of each test. """
         _DepsolveTestsBase.setUp(self)
         self.tsInfo = transactioninfo.TransactionData()
+        self.tsInfo.debug = 1
         self.rpmdb  = FakeRpmDb()
         self.xsack  = packageSack.PackageSack()
         self.repo   = FakeRepo("installed")
