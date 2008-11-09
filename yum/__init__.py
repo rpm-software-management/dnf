@@ -768,14 +768,18 @@ class YumBase(depsolve.Depsolve):
         then the TS_OBSOLETED can get removed from the transaction
         so we must make sure that they, exist and else create them
         """
-        added = set()
         for txmbr in self.tsInfo:
             for pkg in txmbr.obsoletes:
                 if not self.tsInfo.exists(pkg.pkgtup):
                     obs = self.tsInfo.addObsoleted(pkg,txmbr.po)
                     self.verbose_logger.debug('SKIPBROKEN: Added missing obsoleted %s (%s)' % (pkg,txmbr.po) )
-                    added.add(obs)
-        return added
+            for pkg in txmbr.obsoleted_by:
+                # check if the obsoleting txmbr is in the transaction
+                # else remove the obsoleted txmbr
+                # it clean out some really wierd cases
+                if not self.tsInfo.exists(pkg.pkgtup):
+                    self.verbose_logger.debug('SKIPBROKEN: Remove extra obsoleted %s (%s)' % (txmbr.po,pkg) )
+                    self.tsInfo.remove(txmbr.po.pkgtup)
                     
 
     def _skipFromTransaction(self,po):
