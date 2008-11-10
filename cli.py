@@ -843,8 +843,12 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         if len(userlist) > 0:
             if userlist[0] == 'hidden':
                 uservisible=0
+                userlist.pop(0)
+        if not userlist:
+            userlist = None # Match everything...
 
-        installed, available = self.doGroupLists(uservisible=uservisible)
+        installed, available = self.doGroupLists(uservisible=uservisible,
+                                                 patterns=userlist)
         
         if len(installed) > 0:
             self.verbose_logger.log(yum.logginglevels.INFO_2,

@@ -1870,7 +1870,7 @@ class YumBase(depsolve.Depsolve):
             
         return matches
 
-    def doGroupLists(self, uservisible=0):
+    def doGroupLists(self, uservisible=0, patterns=None, ignore_case=True):
         """returns two lists of groups, installed groups and available groups
            optional 'uservisible' bool to tell it whether or not to return
            only groups marked as uservisible"""
@@ -1882,7 +1882,12 @@ class YumBase(depsolve.Depsolve):
         if self.comps.compscount == 0:
             raise Errors.GroupsError, _('No group data available for configured repositories')
         
-        for grp in self.comps.groups:
+        if patterns is None:
+            grps = self.comps.groups
+        else:
+            grps = self.comps.return_groups(",".join(patterns),
+                                            case_sensitive=not ignore_case)
+        for grp in grps:
             if grp.installed:
                 if uservisible:
                     if grp.user_visible:
