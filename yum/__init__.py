@@ -684,11 +684,16 @@ class YumBase(depsolve.Depsolve):
             _remove_from_sack(po)
 
         def _remove_from_sack(po):
-            if not po.repoid == 'installed' and po not in removed_from_sack:
-                self.verbose_logger.debug('SKIPBROKEN: removing %s from pkgSack & updates' % str(po))
-                self.pkgSack.delPackage(po)
-                self.up.delPackage(po.pkgtup)
-                removed_from_sack.add(po)
+            # get all compatible arch packages from pkgSack
+            # we need to remove them to so a i386 paqckages is not 
+            # dragged in when a x86_64 is skipped.
+            pkgs = self._getPackagesToRemoveAllArch(po)
+            for pkg in pkgs:
+                if not po.repoid == 'installed' and pkg not in removed_from_sack:             
+                    self.verbose_logger.debug('SKIPBROKEN: removing %s from pkgSack & updates' % str(po))
+                    self.pkgSack.delPackage(pkg)
+                    self.up.delPackage(pkg.pkgtup)
+                    removed_from_sack.add(pkg)
 
         # Keep removing packages & Depsolve until all errors is gone
         # or the transaction is empty
@@ -780,7 +785,25 @@ class YumBase(depsolve.Depsolve):
                 if not self.tsInfo.exists(pkg.pkgtup):
                     self.verbose_logger.debug('SKIPBROKEN: Remove extra obsoleted %s (%s)' % (txmbr.po,pkg) )
                     self.tsInfo.remove(txmbr.po.pkgtup)
-                    
+
+    def _getPackagesToRemoveAllArch(self,po):
+        ''' get all compatible arch packages in pkgSack'''
+        pkgs = []
+        if rpmUtils.arch.isMultiLibArch():
+            archs = rpmUtils.arch.getArchList() 
+            n,a,e,v,r = po.pkgtup
+            # skip for all compat archs
+            for a in archs:
+                pkgtup = (n,a,e,v,r)
+                matched = self.pkgSack.searchNevra(n,e,v,r,a) 
+                pkgs.extend(matched)
+        else:
+            pkgs.append(po)
+        return pkgs   
+        
+                
+                
+        
 
     def _skipFromTransaction(self,po):
         skipped =  []

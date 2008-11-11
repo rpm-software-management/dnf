@@ -526,6 +526,62 @@ class SkipBrokenTests(DepsolveTests):
         self.tsInfo.addUpdate(ur4, oldpo=r4)
         
         self.assertEquals('err', *self.resolveCode(skip=False))
+        
+    def testBumpedSoNameMultiArch(self):
+        """ 
+        if compat-db45.x86_64 get skipped, then compat-db45.i386 should not 
+        get pulled in instead
+        """
+        c1 = self.instPackage('cyrus-sasl-lib', '2.1.22',"18", arch='x86_64')
+        c1.addRequires("libdb-4.3.so")
+        
+        d1 = self.instPackage('compat-db', '4.6.21',"4", arch='x86_64')
+        d1.addProvides("libdb-4.3.so")
+        od1 = self.repoPackage('compat-db46', '4.6.21',"5", arch='x86_64')
+        od1.addProvides("libdb-4.6.so")
+        od1.addObsoletes("compat-db")
+        od2 = self.repoPackage('compat-db45', '4.6.21',"5", arch='x86_64')
+        od2.addProvides("libdb-4.5.so")
+        od2.addObsoletes("compat-db")
+        od3 = self.repoPackage('compat-db45', '4.6.21',"5", arch='i386')
+        od3.addProvides("libdb-4.5.so")
+        od3.addObsoletes("compat-db")
+        
+        r1 = self.instPackage('rpm', '4.6.0-0','0.rc1.3', arch='x86_64')
+        r1.addRequires("libdb-4.5.so")
+        r2 = self.instPackage('rpm-libs', '4.6.0-0','0.rc1.3', arch='x86_64')
+        r2.addRequires("libdb-4.5.so")
+        r3 = self.instPackage('rpm-build', '4.6.0-0','0.rc1.3', arch='x86_64')
+        r3.addRequires("libdb-4.5.so")
+        r4 = self.instPackage('rpm-python', '4.6.0-0','0.rc1.3', arch='x86_64')
+        r4.addRequires("libdb-4.5.so")
+
+        ur1 = self.repoPackage('rpm', '4.6.0-0','0.rc1.5', arch='x86_64')
+        ur1.addRequires("libdb-4.5.so")
+        ur1.addRequires("compat-db45")
+        ur2 = self.repoPackage('rpm-libs', '4.6.0-0','0.rc1.5', arch='x86_64')
+        ur2.addRequires("libdb-4.5.so")
+        ur2.addRequires("compat-db45")
+        ur3 = self.repoPackage('rpm-build', '4.6.0-0','0.rc1.5', arch='x86_64')
+        ur3.addRequires("libdb-4.5.so")
+        ur3.addRequires("compat-db45")
+        ur4 = self.repoPackage('rpm-python', '4.6.0-0','0.rc1.5', arch='x86_64')
+        ur4.addRequires("libdb-4.5.so")
+        ur4.addRequires("compat-db45")
+
+
+        self.tsInfo.addObsoleting(od2, oldpo=d1)
+        self.tsInfo.addObsoleted(d1, od2)
+        self.tsInfo.addObsoleting(od1, oldpo=d1)
+        self.tsInfo.addObsoleted(d1, od1)
+        self.tsInfo.addUpdate(ur1, oldpo=r1)
+        self.tsInfo.addUpdate(ur2, oldpo=r2)
+        self.tsInfo.addUpdate(ur3, oldpo=r3)
+        self.tsInfo.addUpdate(ur4, oldpo=r4)
+
+        self.assertEquals('empty', *self.resolveCode(skip=True))
+        self.assertResult([c1,d1,r1,r2,r3,r4])
+        
     
     def resolveCode(self,skip = False):
         solver = YumBase()
