@@ -1284,6 +1284,20 @@ class YumRepository(Repository, config.RepoConf):
                        fdel=lambda self: setattr(self, "_repoXML", None))
 
     def _checkRepoXML(self, fo):
+        try:
+            self._checkRepoXML_inner(fo)
+        except:
+            #  Unlink the repomd.xml if it didn't pass our checks, really
+            # urlgrabber/whatever should be doing this ... but we do it.
+            #  Also we are screwed if this can ever fail for some reason like
+            # the ZFS quota snafu.
+            try:
+                os.unlink(self.cachedir + '/repomd.xml')
+            except:
+                pass
+            raise
+
+    def _checkRepoXML_inner(self, fo):
         if type(fo) is types.InstanceType:
             filepath = fo.filename
         else:
