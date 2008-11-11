@@ -45,6 +45,7 @@ import glob
 import shutil
 import stat
 import errno
+import tempfile
 
 #  If you want yum to _always_ check the MD .sqlite files then set this to
 # False (this doesn't affect .xml files or .sqilte files derived from them).
@@ -879,12 +880,20 @@ class YumRepository(Repository, config.RepoConf):
 
     def _getFileRepoXML(self, local, text=None, grab_can_fail=None):
         """ Call _getFile() for the repomd.xml file. """
+        def _cleanup_tmp():
+            try:
+                os.unlink(tfname)
+            except:
+                pass
         checkfunc = (self._checkRepoXML, (), {})
         if grab_can_fail is None:
             grab_can_fail = 'old_repo_XML' in self._oldRepoMDData
         try:
+            # This is named so that "yum clean metadata" picks it up
+            tfname = tempfile.mktemp(prefix='repomd', suffix="tmp.xml",
+                                     dir=os.path.dirname(local))
             result = self._getFile(relative=self.repoMDFile,
-                                   local=local,
+                                   local=tfname,
                                    copy_local=1,
                                    text=text,
                                    reget=None,
@@ -892,16 +901,27 @@ class YumRepository(Repository, config.RepoConf):
                                    cache=self.http_caching == 'all')
 
         except URLGrabError, e:
+            _cleanup_tmp()
             if grab_can_fail:
                 return None
             raise Errors.RepoError, 'Error downloading file %s: %s' % (local, e)
         except (Errors.NoMoreMirrorsRepoError, Errors.RepoError):
+            _cleanup_tmp()
             if grab_can_fail:
                 return None
             raise
 
-
-        return result
+        # This should always work...
+        try:
+            os.rename(result, local)
+        except:
+            # But in case it doesn't...
+            _cleanup_tmp()
+            if grab_can_fail:
+                return None
+            raise Errors.RepoError, 'Error renaming file %s to %s' % (result,
+                                                                      local)
+        return local
 
     def _parseRepoXML(self, local, parse_can_fail=None):
         """ Parse the repomd.xml file. """
@@ -1284,20 +1304,6 @@ class YumRepository(Repository, config.RepoConf):
                        fdel=lambda self: setattr(self, "_repoXML", None))
 
     def _checkRepoXML(self, fo):
-        try:
-            self._checkRepoXML_inner(fo)
-        except:
-            #  Unlink the repomd.xml if it didn't pass our checks, really
-            # urlgrabber/whatever should be doing this ... but we do it.
-            #  Also we are screwed if this can ever fail for some reason like
-            # the ZFS quota snafu.
-            try:
-                os.unlink(self.cachedir + '/repomd.xml')
-            except:
-                pass
-            raise
-
-    def _checkRepoXML_inner(self, fo):
         if type(fo) is types.InstanceType:
             filepath = fo.filename
         else:
