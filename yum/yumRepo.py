@@ -1326,18 +1326,11 @@ class YumRepository(Repository, config.RepoConf):
             except URLGrabError, e:
                 raise URLGrabError(-1, 'Error finding signature for repomd.xml for %s: %s' % (self, e))
 
-            if not os.path.exists(self.gpgdir):
-                if self.gpg_import_func:
-                    #FIXME probably should have an else off of this to
-                    # complain if there is no import function
-                    try:
-                        self.gpg_import_func(self, self.confirm_func)
-                    except Errors.YumBaseError, e:
-                        raise URLGrabError(-1, 'Gpg Keys not imported, cannot verify repomd.xml for repo %s' % (self))
-
-                    # FIXME if we get the okay here to import the key then
-                    # we should set an option so that future key imports for this
-                    # repo will be allowed w/o question
+            if self.gpg_import_func:
+                try:
+                    self.gpg_import_func(self, self.confirm_func)
+                except Errors.YumBaseError, e:
+                    raise URLGrabError(-1, 'Gpg Keys not imported, cannot verify repomd.xml for repo %s' % (self))
 
             if not misc.valid_detached_sig(result, filepath, self.gpgdir):
                 raise URLGrabError(-1, 'repomd.xml signature could not be verified for %s' % (self))
