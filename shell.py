@@ -114,7 +114,7 @@ class YumShell(cmd.Cmd):
         msg = """
     Shell specific arguments:
       config - set config options
-      repository (or repo) - enable/disable repositories
+      repository (or repo) - enable/disable/list repositories
       transaction (or ts) - list, reset or run the transaction set
       run - run the transaction set
       exit or quit - exit the shell
@@ -131,7 +131,7 @@ class YumShell(cmd.Cmd):
         elif arg in ['repo', 'repository']:
             msg = """
     %s arg [option]
-      list: lists repositories and their status
+      list: lists repositories and their status. option = [all] name/id glob
       enable: enable repositories. option = repository id
       disable: disable repositories. option = repository id
     """ % arg
