@@ -179,7 +179,10 @@ class MetaLinkRepoMD:
         self.mirrors = []
         if not os.path.exists(filename):
             raise MetaLinkRepoErrorParseFail, "File %s does not exist" %filename
-        root = xmlparse(filename)
+        try:
+            root = xmlparse(filename)
+        except SyntaxError:
+            raise MetaLinkRepoErrorParseFail, "File %s is not XML" % filename
 
         for elem in root.findall(__ML_FILE_ELEMENT__):
             name = elem.get('name')
