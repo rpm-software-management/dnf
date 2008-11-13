@@ -408,7 +408,7 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
                 for msg in msgs:
                     print to_utf8(msg)
     
-                return 1, [_('Please report this error in bugzilla')]
+                return 1, [_('Please report this error in %s') % self.conf.bugtracker_url]
 
             self.verbose_logger.debug('rpm_check_debug time: %0.3f' % (time.time() - rcd_st))
 

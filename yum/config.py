@@ -667,7 +667,7 @@ class YumConf(StartupConf):
                  # all == install any/all arches you can
                  # best == use the 'best  arch' for the system
                  
-
+    bugtracker_url = Option('http://yum.baseurl.org/report')
     
     _reposlist = []
 

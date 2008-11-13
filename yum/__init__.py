@@ -3289,7 +3289,8 @@ class YumBase(depsolve.Depsolve):
             if msgs:
                 retmsgs = [_('ERROR with rpm_check_debug vs depsolve:')]
                 retmsgs.extend(msgs) 
-                retmsgs.append(_('Please report this error in bugzilla'))
+                retmsgs.append(_('Please report this error at %s') 
+                                             % self.conf.bugtracker_url)
                 raise Errors.YumRPMCheckError,retmsgs
         
         tsConf = {}
