@@ -1460,7 +1460,7 @@ class YumBase(depsolve.Depsolve):
         return self._cleanFiles(exts, 'cachedir', 'sqlite')
 
     def cleanMetadata(self):
-        exts = ['xml.gz', 'xml', 'cachecookie', 'mirrorlist.txt']
+        exts = ['xml.gz', 'xml', 'cachecookie', 'mirrorlist.txt', 'asc']
         # Metalink is also here, but is a *.xml file
         return self._cleanFiles(exts, 'cachedir', 'metadata') 
 
