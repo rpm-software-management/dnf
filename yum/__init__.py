@@ -2713,18 +2713,10 @@ class YumBase(depsolve.Depsolve):
 
         # check for obsoletes first
         if self.conf.obsoletes:
-            print "JDBG:", instpkgs, availpkgs
             for installed_pkg in instpkgs:
-                print "JDBG: inst:", installed_pkg, self.up.getObsoletesList(name=installed_pkg.name, arch=installed_pkg.arch)
                 for obsoleting in self.up.obsoleted_dict.get(installed_pkg.pkgtup, []):
-                    print "JDBG: obs:", obsoleting
                     obsoleting_pkg = self.getPackageObject(obsoleting)
-                    # FIXME check for what might be in there here
-                    txmbr = self.tsInfo.addObsoleting(obsoleting_pkg, installed_pkg)
-                    self.tsInfo.addObsoleted(installed_pkg, obsoleting_pkg)
-                    if requiringPo:
-                        txmbr.setAsDep(requiringPo)
-                    tx_return.append(txmbr)
+                    tx_return.extend(self.install(po=obsoleting_pkg))
             for available_pkg in availpkgs:
                 for obsoleted in self.up.obsoleting_dict.get(available_pkg.pkgtup, []):
                     obsoleted_pkg = self.getInstalledPackageObject(obsoleted)
