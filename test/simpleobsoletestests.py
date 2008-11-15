@@ -263,6 +263,16 @@ class SimpleObsoletesTests(OperationsTests):
         self.assert_(res=='ok', msg)
         self.assertResult((pkgs['shark'],))
 
+    def testMultiObs4(self):
+        # This tests update...
+        pkgs = self._MultiObsHelper()
+        oldshark = FakePackage('shark', '0.1', '1', '0', 'noarch')
+
+        res, msg = self.runOperation(['update', 'shark'],
+                                     pkgs['pi'] + [oldshark], pkgs['po'])
+        self.assert_(res=='ok', msg)
+        self.assertResult((pkgs['shark'],))
+
 class GitMetapackageObsoletesTests(OperationsTests):
 
     @staticmethod

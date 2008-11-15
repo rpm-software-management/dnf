@@ -2382,6 +2382,15 @@ class YumBase(depsolve.Depsolve):
             tx_return.extend(txmbrs)
         return tx_return
 
+    def _find_obsoletees(self, po):
+        """ Return the pkgs. that are obsoleted by the po we pass in. """
+        for (obstup, inst_tup) in self.up.getObsoletesTuples(name=po.name, 
+                                                             arch=po.arch):
+            if po.pkgtup == obstup:
+                installed_pkg =  self.rpmdb.searchPkgTuple(inst_tup)[0]
+                yield installed_pkg
+
+
     def install(self, po=None, **kwargs):
         """try to mark for install the item specified. Uses provided package 
            object, if available. If not it uses the kwargs and gets the best
@@ -2543,13 +2552,10 @@ class YumBase(depsolve.Depsolve):
             # at this point we are going to mark the pkg to be installed, make sure
             # it doesn't obsolete anything. If it does, mark that in the tsInfo, too
             if po.pkgtup in self.up.getObsoletesList(name=po.name, arch=po.arch):
-                for (obstup, inst_tup) in self.up.getObsoletesTuples(name=po.name, 
-                                                                     arch=po.arch):
-                    if po.pkgtup == obstup:
-                        installed_pkg =  self.rpmdb.searchPkgTuple(inst_tup)[0]
-                        txmbr = self.tsInfo.addObsoleting(po, installed_pkg)
-                        self.tsInfo.addObsoleted(installed_pkg, po)
-                        tx_return.append(txmbr)
+                for obsoletee in self._find_obsoletees(po):
+                    txmbr = self.tsInfo.addObsoleting(po, obsoletee)
+                    self.tsInfo.addObsoleted(obsoletee, po)
+                    tx_return.append(txmbr)
             else:
                 txmbr = self.tsInfo.addInstall(po)
                 tx_return.append(txmbr)
@@ -2707,8 +2713,11 @@ class YumBase(depsolve.Depsolve):
 
         # check for obsoletes first
         if self.conf.obsoletes:
+            print "JDBG:", instpkgs, availpkgs
             for installed_pkg in instpkgs:
+                print "JDBG: inst:", installed_pkg, self.up.getObsoletesList(name=installed_pkg.name, arch=installed_pkg.arch)
                 for obsoleting in self.up.obsoleted_dict.get(installed_pkg.pkgtup, []):
+                    print "JDBG: obs:", obsoleting
                     obsoleting_pkg = self.getPackageObject(obsoleting)
                     # FIXME check for what might be in there here
                     txmbr = self.tsInfo.addObsoleting(obsoleting_pkg, installed_pkg)
@@ -2731,12 +2740,23 @@ class YumBase(depsolve.Depsolve):
 
         for installed_pkg in instpkgs:
             for updating in self.up.updatesdict.get(installed_pkg.pkgtup, []):
-                updating_pkg = self.getPackageObject(updating)
+                po = self.getPackageObject(updating)
                 if self.tsInfo.isObsoleted(installed_pkg.pkgtup):
                     self.verbose_logger.log(logginglevels.DEBUG_2, _('Not Updating Package that is already obsoleted: %s.%s %s:%s-%s'), 
                                             installed_pkg.pkgtup)                                               
+                # at this point we are going to mark the pkg to be installed, make sure
+                # it doesn't obsolete anything. If it does, mark that in the tsInfo, too
+                elif po.pkgtup in self.up.getObsoletesList(name=po.name,
+                                                           arch=po.arch):
+                    for obsoletee in self._find_obsoletees(po):
+                        txmbr = self.tsInfo.addUpdate(po, installed_pkg)
+                        if requiringPo:
+                            txmbr.setAsDep(requiringPo)
+                        self.tsInfo.addObsoleting(po, obsoletee)
+                        self.tsInfo.addObsoleted(obsoletee, po)
+                        tx_return.append(txmbr)
                 else:
-                    txmbr = self.tsInfo.addUpdate(updating_pkg, installed_pkg)
+                    txmbr = self.tsInfo.addUpdate(po, installed_pkg)
                     if requiringPo:
                         txmbr.setAsDep(requiringPo)
                     tx_return.append(txmbr)
