@@ -283,6 +283,53 @@ class SimpleObsoletesTests(OperationsTests):
         self.assert_(res=='ok', msg)
         self.assertResult((pkgs['shark'],))
 
+    # NOTE: Do we really want to remove the old kernel-xen? ... not 100% sure
+    def testMultiObsKern1(self):
+        # kernel + kernel-xen installed, and update kernel obsoletes kernel-xen
+        okern1    = FakePackage('kernel',     '0.1', '1', '0', 'noarch')
+        okern2    = FakePackage('kernel',     '0.2', '1', '0', 'noarch')
+        okernxen1 = FakePackage('kernel-xen', '0.1', '1', '0', 'noarch')
+        okernxen2 = FakePackage('kernel-xen', '0.2', '1', '0', 'noarch')
+        nkern     = FakePackage('kernel',     '0.8', '1', '0', 'noarch')
+        nkern.addObsoletes('kernel-xen', None, (None, None, None))
+
+        res, msg = self.runOperation(['update', 'kernel'],
+                                     [okern1, okernxen1,
+                                      okern2, okernxen2], [nkern])
+        self.assert_(res=='ok', msg)
+        self.assertResult((okern1,okern2,nkern,))
+
+    def testMultiObsKern2(self):
+        # kernel + kernel-xen installed, and update kernel obsoletes kernel-xen
+        okern1    = FakePackage('kernel',     '0.1', '1', '0', 'noarch')
+        okern2    = FakePackage('kernel',     '0.2', '1', '0', 'noarch')
+        okernxen1 = FakePackage('kernel-xen', '0.1', '1', '0', 'noarch')
+        okernxen2 = FakePackage('kernel-xen', '0.2', '1', '0', 'noarch')
+        nkern     = FakePackage('kernel',     '0.8', '1', '0', 'noarch')
+        nkern.addObsoletes('kernel-xen', None, (None, None, None))
+
+        res, msg = self.runOperation(['update', 'kernel-xen'],
+                                     [okern1, okernxen1,
+                                      okern2, okernxen2], [nkern])
+        self.assert_(res=='ok', msg)
+        self.assertResult((okern1,okern2,nkern,))
+
+    def testMultiObsKern3(self):
+        # kernel + kernel-xen installed, and update kernel obsoletes kernel-xen
+        okern1    = FakePackage('kernel',     '0.1', '1', '0', 'noarch')
+        okern2    = FakePackage('kernel',     '0.2', '1', '0', 'noarch')
+        okernxen1 = FakePackage('kernel-xen', '0.1', '1', '0', 'noarch')
+        okernxen2 = FakePackage('kernel-xen', '0.2', '1', '0', 'noarch')
+        nkern     = FakePackage('kernel',     '0.8', '1', '0', 'noarch')
+        nkern.addObsoletes('kernel-xen', None, (None, None, None))
+
+        res, msg = self.runOperation(['update'],
+                                     [okern1, okernxen1,
+                                      okern2, okernxen2], [nkern])
+        self.assert_(res=='ok', msg)
+        self.assertResult((okern1,okern2,nkern,))
+
+
 class GitMetapackageObsoletesTests(OperationsTests):
 
     @staticmethod
