@@ -711,6 +711,7 @@ class YumOutput:
         if not verbose:
             return
 
+        print _("Repo        : %s") % po.repoid
         print _('Matched from:')
         for item in yum.misc.unique(values):
             if po.name == item or po.summary == item:
