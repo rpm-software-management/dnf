@@ -738,7 +738,6 @@ class RepoListCommand(YumCommand):
         repos = base.repos.repos.values()
         repos.sort()
         enabled_repos = base.repos.listEnabled()
-        done = False
         verbose = base.verbose_logger.isEnabledFor(logginglevels.DEBUG_3)
         if arg == 'all':
             ehibeg = base.term.FG_COLOR['green'] + base.term.MODE['bold']
@@ -749,43 +748,31 @@ class RepoListCommand(YumCommand):
             dhibeg = ''
             hiend  = ''
         tot_num = 0
+        cols = []
         for repo in repos:
             if len(extcmds) and not _repo_match(repo, extcmds):
                 continue
             if repo in enabled_repos:
                 enabled = True
-                ui_enabled = ehibeg + _('enabled') + hiend
+                ui_enabled = ehibeg + _('enabled') + hiend + ": "
+                ui_endis_wid = utf8_width(_('enabled')) + 2
                 num        = len(repo.sack)
                 tot_num   += num
                 ui_num     = to_unicode(locale.format("%d", num, True))
-                ui_fmt_num = ": %7s"
                 if verbose:
                     ui_size = _repo_size(repo)
             else:
                 enabled = False
                 ui_enabled = dhibeg + _('disabled') + hiend
+                ui_endis_wid = utf8_width(_('disabled'))
                 ui_num     = ""
-                ui_fmt_num = "%s"
-            ui_endis_wid = utf8_width(_('disabled'))
-            if ui_endis_wid < utf8_width(_('enabled')):
-                ui_endis_wid = utf8_width(_('enabled'))
                 
             if (arg == 'all' or
                 (arg == 'enabled' and enabled) or
                 (arg == 'disabled' and not enabled)):
                 if not verbose:
-                    if not done:
-                        txt_rid  = utf8_width_fill(_('repo id'), 20, 20)
-                        txt_rnam = utf8_width_fill(_('repo name'), 40, 40)
-                        base.verbose_logger.log(logginglevels.INFO_2,"%s %s %s",
-                                                txt_rid, txt_rnam, _('status'))
-                        done = True
-                    base.verbose_logger.log(logginglevels.INFO_2, "%s %s %s%s",
-                                            utf8_width_fill(str(repo), 20, 20),
-                                            utf8_width_fill(repo.name, 40, 40),
-                                            utf8_width_fill(ui_enabled,
-                                                            ui_endis_wid),
-                                            ui_fmt_num % ui_num)
+                    cols.append((str(repo), repo.name,
+                                 (ui_enabled, ui_endis_wid), ui_num))
                 else:
                     md = repo.repoXML
                     out = [base.fmtKeyValFill(_("Repo-id     : "), repo),
@@ -838,6 +825,47 @@ class RepoListCommand(YumCommand):
                     base.verbose_logger.log(logginglevels.DEBUG_3,
                                             "%s\n",
                                             "\n".join(out))
+
+        if not verbose and cols:
+            #  Work out the first (id) and last (enabled/disalbed/count),
+            # then chop the middle (name)...
+            id_len = utf8_width(_('repo id'))
+            nm_len = 0
+            ct_len = 0
+            ui_len = 0
+
+            for (rid, rname, (ui_enabled, ui_endis_wid), ui_num) in cols:
+                if id_len < utf8_width(rid):
+                    id_len = utf8_width(rid)
+                if nm_len < utf8_width(rname):
+                    nm_len = utf8_width(rname)
+                if ct_len < ui_endis_wid:
+                    ct_len = ui_endis_wid
+                if ui_len < len(ui_num):
+                    ui_len = len(ui_num)
+            if utf8_width(_('status')) > ct_len + ui_len:
+                left = base.term.columns - (id_len + utf8_width(_('status')) +2)
+            else:
+                left = base.term.columns - (id_len + ct_len + ui_len + 2)
+
+            if left < nm_len: # Name gets chopped
+                nm_len = left
+            else: # Share the extra...
+                left -= nm_len
+                id_len += left / 2
+                nm_len += left - (left / 2)
+
+            txt_rid  = utf8_width_fill(_('repo id'), id_len)
+            txt_rnam = utf8_width_fill(_('repo name'), nm_len, nm_len)
+            base.verbose_logger.log(logginglevels.INFO_2,"%s %s %s",
+                                    txt_rid, txt_rnam, _('status'))
+            for (rid, rname, (ui_enabled, ui_endis_wid), ui_num) in cols:
+                if ui_num:
+                    ui_num = utf8_width_fill(ui_num, ui_len, left=False)
+                base.verbose_logger.log(logginglevels.INFO_2, "%s %s %s%s",
+                                        utf8_width_fill(rid, id_len),
+                                        utf8_width_fill(rname, nm_len, nm_len),
+                                        ui_enabled, ui_num)
 
         return 0, ['repolist: ' +to_unicode(locale.format("%d", tot_num, True))]
 
