@@ -780,6 +780,9 @@ class YumRepository(Repository, config.RepoConf):
         start = package.hdrstart
         end = package.hdrend
         basepath = package.basepath
+        # yes, I know, don't ask
+        if not os.path.exists(self.hdrdir):
+            os.makedirs(self.hdrdir)
 
         return self._getFile(url=basepath, relative=remote, local=local, start=start,
                         reget=None, end=end, checkfunc=checkfunc, copy_local=1,
