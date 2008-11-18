@@ -1322,20 +1322,22 @@ class YumRepository(Repository, config.RepoConf):
                 result = self._getFile(relative='repodata/repomd.xml.asc',
                                        copy_local=1,
                                        local = sigfile,
-                                       text='%s repo signature' % self.id,
+                                       text='%s/signature' % self.id,
                                        reget=None,
                                        checkfunc=None,
                                        cache=self.http_caching == 'all')
             except URLGrabError, e:
                 raise URLGrabError(-1, 'Error finding signature for repomd.xml for %s: %s' % (self, e))
 
-            if self.gpg_import_func:
+            valid = misc.valid_detached_sig(result, filepath, self.gpgdir)
+            if not valid and self.gpg_import_func:
                 try:
                     self.gpg_import_func(self, self.confirm_func)
                 except Errors.YumBaseError, e:
                     raise URLGrabError(-1, 'Gpg Keys not imported, cannot verify repomd.xml for repo %s' % (self))
+                valid = misc.valid_detached_sig(result, filepath, self.gpgdir)
 
-            if not misc.valid_detached_sig(result, filepath, self.gpgdir):
+            if not valid:
                 raise URLGrabError(-1, 'repomd.xml signature could not be verified for %s' % (self))
 
         try:
