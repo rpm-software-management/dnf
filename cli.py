@@ -657,7 +657,7 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
             return 2, [_('Package(s) to install')]
         return 0, [_('Nothing to do')]
 
-    def returnPkgLists(self, extcmds):
+    def returnPkgLists(self, extcmds, installed_available=False):
         """Returns packages lists based on arguments on the cli.returns a 
            GenericHolder instance with the following lists defined:
            available = list of packageObjects
@@ -666,14 +666,22 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
            extras = list of packageObjects
            obsoletes = tuples of packageObjects (obsoleting, installed)
            recent = list of packageObjects
+
+           installed_available = that the available package list is present
+                                 as .hidden_available when doing any of:
+                                 all/available/installed
            """
         
         special = ['available', 'installed', 'all', 'extras', 'updates', 'recent',
                    'obsoletes']
         
         pkgnarrow = 'all'
+        done_hidden_available = False
         if len(extcmds) > 0:
-            if extcmds[0] in special:
+            if installed_available and extcmds[0] == 'installed':
+                done_hidden_available = True
+                extcmds.pop(0)
+            elif extcmds[0] in special:
                 pkgnarrow = extcmds.pop(0)
             
         ypl = self.doPackageLists(pkgnarrow=pkgnarrow, patterns=extcmds,
@@ -699,6 +707,10 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         ypl.extras = _shrinklist(ypl.extras, extcmds)
         ypl.obsoletes = _shrinklist(ypl.obsoletes, extcmds)
         
+        if installed_available:
+            ypl.hidden_available = ypl.available
+        if done_hidden_available:
+            ypl.available = []
         return ypl
 
     def search(self, args):

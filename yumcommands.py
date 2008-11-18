@@ -238,7 +238,8 @@ class InfoCommand(YumCommand):
 
     def doCommand(self, base, basecmd, extcmds):
         try:
-            ypl = base.returnPkgLists(extcmds)
+            highlight = base.term.MODE['bold']
+            ypl = base.returnPkgLists(extcmds, installed_available=highlight)
         except yum.Errors.YumBaseError, e:
             return 1, [str(e)]
         else:
@@ -249,11 +250,11 @@ class InfoCommand(YumCommand):
                 # Dynamically size the columns
                 columns = _list_cmd_calc_columns(base, ypl)
 
-            if ypl.installed:
+            if highlight and ypl.installed:
                 #  If we have installed and available lists, then do the
                 # highlighting for the installed packages so you can see what's
                 # available to install vs. available to update.
-                for pkg in ypl.available:
+                for pkg in ypl.hidden_available:
                     key = (pkg.name, pkg.arch)
                     if key not in update_pkgs or pkg.verGT(update_pkgs[key]):
                         update_pkgs[key] = pkg
