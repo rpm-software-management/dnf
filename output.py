@@ -76,42 +76,7 @@ class YumTerm:
     __enabled = True
 
     if hasattr(urlgrabber.progress, 'terminal_width_cached'):
-        columns = property(lambda self: _term_width())
-    else:
-        columns = 80
-    lines   = 24
-    # Output modes:
-    MODE = {
-        'bold' : '',
-        'blink' : '',
-        'dim' : '',
-        'reverse' : '',
-        'underline' : '',
-        'normal' : ''
-        }
-
-    # Colours
-    FG_COLOR = {
-        'black' : '',
-        'blue' : '',
-        'green' : '',
-        'cyan' : '',
-        'red' : '',
-        'magenta' : '',
-        'yellow' : '',
-        'white' : ''
-        }
-
-    BG_COLOR = {
-        'black' : '',
-        'blue' : '',
-        'green' : '',
-        'cyan' : '',
-        'red' : '',
-        'magenta' : '',
-        'yellow' : '',
-        'white' : ''
-        }
+        __auto_columns = property(lambda self: _term_width())
 
     __cap_names = {
         'underline' : 'smul',
@@ -139,8 +104,90 @@ class YumTerm:
         'cyan' : 6,
         'white' : 7
         }
+    __ansi_forced_MODE = {
+        'bold' : '\x1b[1m',
+        'blink' : '\x1b[5m',
+        'dim' : '',
+        'reverse' : '\x1b[7m',
+        'underline' : '\x1b[4m',
+        'normal' : '\x1b(B\x1b[m'
+        }
+    __ansi_forced_FG_COLOR = {
+        'black' : '\x1b[30m',
+        'red' : '\x1b[31m',
+        'green' : '\x1b[32m',
+        'yellow' : '\x1b[33m',
+        'blue' : '\x1b[34m',
+        'magenta' : '\x1b[35m',
+        'cyan' : '\x1b[36m',
+        'white' : '\x1b[37m'
+        }
+    __ansi_forced_BG_COLOR = {
+        'black' : '\x1b[40m',
+        'red' : '\x1b[41m',
+        'green' : '\x1b[42m',
+        'yellow' : '\x1b[43m',
+        'blue' : '\x1b[44m',
+        'magenta' : '\x1b[45m',
+        'cyan' : '\x1b[46m',
+        'white' : '\x1b[47m'
+        }
 
-    def __init__(self, term_stream=None):
+    def __forced_init(self):
+        self.MODE = self.__ansi_forced_MODE
+        self.FG_COLOR = self.__ansi_forced_FG_COLOR
+        self.BG_COLOR = self.__ansi_forced_BG_COLOR
+
+    def reinit(self, term_stream=None, color='auto'):
+        if color == 'never':
+            self.__enabled = False
+            return
+
+        self.__enabled = True
+        if hasattr(urlgrabber.progress, 'terminal_width_cached'):
+            self.columns = self.__auto_columns
+        else:
+            self.columns = 80
+        self.lines = 24
+
+        if color == 'always':
+            self.__forced_init()
+            return
+        assert color == 'auto'
+
+        # Output modes:
+        self.MODE = {
+            'bold' : '',
+            'blink' : '',
+            'dim' : '',
+            'reverse' : '',
+            'underline' : '',
+            'normal' : ''
+            }
+
+        # Colours
+        self.FG_COLOR = {
+            'black' : '',
+            'blue' : '',
+            'green' : '',
+            'cyan' : '',
+            'red' : '',
+            'magenta' : '',
+            'yellow' : '',
+            'white' : ''
+            }
+
+        self.BG_COLOR = {
+            'black' : '',
+            'blue' : '',
+            'green' : '',
+            'cyan' : '',
+            'red' : '',
+            'magenta' : '',
+            'yellow' : '',
+            'white' : ''
+            }
+
         # Curses isn't available on all platforms
         try:
             import curses
@@ -166,7 +213,7 @@ class YumTerm:
 
         if not hasattr(urlgrabber.progress, 'terminal_width_cached'):
             self.columns = curses.tigetnum('cols')
-        self.lines   = curses.tigetnum('lines')
+        self.lines = curses.tigetnum('lines')
         
         # Look up string capabilities.
         for cap_name in self.MODE:
@@ -192,6 +239,9 @@ class YumTerm:
         if set_bg_ansi:
             for (color, val) in self.__ansi_colors.items():
                 self.BG_COLOR[color] = curses.tparm(set_bg_ansi, val) or ''
+
+    def __init__(self, term_stream=None, color='auto'):
+        self.reinit(term_stream, color)
 
     def _tigetstr(self, cap_name):
         # String capabilities can include "delays" of the form "$<2>".
@@ -359,12 +409,24 @@ class YumOutput:
             return (u"-", -width)
         return (u"", width)
 
+    def _col_data(self, col_data):
+        assert len(col_data) == 2 or len(col_data) == 3
+        if len(col_data) == 2:
+            (val, width) = col_data
+            hibeg = hiend = ''
+        if len(col_data) == 3:
+            (val, width, highlight) = col_data
+            (hibeg, hiend) = self._highlight(highlight)
+        return (val, width, hibeg, hiend)
+
     def fmtColumns(self, columns, msg=u'', end=u''):
         """ Return a string for columns of data, which can overflow."""
 
         total_width = len(msg)
         data = []
-        for (val, width) in columns[:-1]:
+        for col_data in columns[:-1]:
+            (val, width, hibeg, hiend) = self._col_data(col_data)
+
             if not width: # Don't count this column, invisible text
                 msg += u"%s"
                 data.append(val)
@@ -373,15 +435,18 @@ class YumOutput:
             (align, width) = self._fmt_column_align_width(width)
             if utf8_width(val) <= width:
                 msg += u"%s "
-                val = utf8_width_fill(val, width, left=(align == u'-'))
+                val = utf8_width_fill(val, width, left=(align == u'-'),
+                                      prefix=hibeg, suffix=hiend)
+                data.append(val)
             else:
-                msg += u"%s\n" + " " * (total_width + width + 1)
+                msg += u"%s%s%s\n" + " " * (total_width + width + 1)
+                data.extend([hibeg, val, hiend])
             total_width += width
             total_width += 1
-            data.append(val)
-        (val, width) = columns[-1]
+        (val, width, hibeg, hiend) = self._col_data(columns[-1])
         (align, width) = self._fmt_column_align_width(width)
-        val = utf8_width_fill(val, width, left=(align == u'-'))
+        val = utf8_width_fill(val, width, left=(align == u'-'),
+                              prefix=hibeg, suffix=hiend)
         msg += u"%%s%s" % end
         data.append(val)
         return msg % tuple(data)
@@ -392,12 +457,10 @@ class YumOutput:
 
         if columns is None:
             columns = (-40, -22, -16) # Old default
-        (hibeg, hiend) = self._highlight(highlight)
         ver = pkg.printVer()
         na = '%s%s.%s' % (indent, pkg.name, pkg.arch)
-        columns = zip((na, ver, pkg.repoid), columns)
-        columns.insert(1, (hiend, 0))
-        columns.insert(0, (hibeg, 0))
+        hi_cols = [highlight, 'normal', 'normal']
+        columns = zip((na, ver, pkg.repoid), columns, hi_cols)
         print self.fmtColumns(columns)
 
     def simpleEnvraList(self, pkg, ui_overflow=False,
@@ -407,11 +470,9 @@ class YumOutput:
 
         if columns is None:
             columns = (-63, -16) # Old default
-        (hibeg, hiend) = self._highlight(highlight)
         envra = '%s%s' % (indent, str(pkg))
-        columns = zip((envra, pkg.repoid), columns)
-        columns.insert(1, (hiend, 0))
-        columns.insert(0, (hibeg, 0))
+        hi_cols = [highlight, 'normal', 'normal']
+        columns = zip((envra, pkg.repoid), columns, hi_cols)
         print self.fmtColumns(columns)
 
     def fmtKeyValFill(self, key, val):

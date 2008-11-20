@@ -668,6 +668,17 @@ class YumConf(StartupConf):
                  # best == use the 'best  arch' for the system
                  
     bugtracker_url = Option('http://yum.baseurl.org/report')
+
+    color = SelectionOption('auto', ('auto', 'never', 'always'),
+                            mapper={'on' : 'always',
+                                    'off' : 'nevern'})
+    color_list_installed_older = Option('bold')
+    color_list_installed_newer = Option('bold,yellow')
+    color_list_installed_extra = Option('bold,red')
+
+    color_list_available_upgrade = Option('bold,blue')
+    color_list_available_downgrade = Option('dim,cyan')
+    color_list_available_install = Option('normal')
     
     _reposlist = []
 

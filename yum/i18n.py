@@ -241,7 +241,7 @@ def utf8_width_chop(msg, chop=None):
 
     return ret, msg
 
-def utf8_width_fill(msg, fill, chop=None, left=True):
+def utf8_width_fill(msg, fill, chop=None, left=True, prefix='', suffix=''):
     """ Expand a utf8 msg to a specified "width" or chop to same.
         Expansion can be left or right. This is what you want to use instead of
         %*.*s, as it does the "right" thing with regard to utf-8 sequences.
@@ -260,9 +260,9 @@ def utf8_width_fill(msg, fill, chop=None, left=True):
     if width < fill:
         extra = " " * (fill - width)
         if left:
-            msg = ''.join([msg, extra])
+            msg = ''.join([prefix, msg, suffix, extra])
         else:
-            msg = ''.join([extra, msg])
+            msg = ''.join([extra, prefix, msg, suffix])
 
     if isinstance(passed_msg, unicode):
         return to_unicode(msg)

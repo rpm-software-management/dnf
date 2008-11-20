@@ -272,15 +272,20 @@ class InfoCommand(YumCommand):
                         inst_pkgs[key] = pkg
 
             # Output the packages:
+            clio = base.conf.color_list_installed_older
+            clin = base.conf.color_list_installed_newer
+            clie = base.conf.color_list_installed_extra
             rip = base.listPkgs(ypl.installed, _('Installed Packages'), basecmd,
                                 highlight_na=update_pkgs, columns=columns,
-                                highlight_modes={'>' : 'bold',
-                                                 '<' : 'bold,yellow',
-                                                 'not in' : 'red,bold'})
+                                highlight_modes={'>' : clio, '<' : clin,
+                                                 'not in' : clie})
+            clau = base.conf.color_list_available_upgrade
+            clad = base.conf.color_list_available_downgrade
+            clai = base.conf.color_list_available_install
             rap = base.listPkgs(ypl.available, _('Available Packages'), basecmd,
                                 highlight_na=inst_pkgs, columns=columns,
-                                highlight_modes={'<' : 'bold,blue',
-                                                 '>' : 'cyan,dim'})
+                                highlight_modes={'<' : clau, '>' : clad,
+                                                 'not in' : clai})
             rep = base.listPkgs(ypl.extras, _('Extra Packages'), basecmd,
                                 columns=columns)
             rup = base.listPkgs(ypl.updates, _('Updated Packages'), basecmd,

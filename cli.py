@@ -1106,6 +1106,20 @@ class YumOptionParser(OptionParser):
             if opts.showdupesfromrepos:
                 self.base.conf.showdupesfromrepos = True
 
+            if opts.color not in (None, 'auto', 'always', 'never',
+                                  'tty', 'if-tty', 'yes', 'no', 'on', 'off'):
+                raise ValueError, _("--color takes one of: auto, always, never")
+            elif opts.color is None:
+                if self.base.conf.color != 'auto':
+                    self.base.term.reinit(color=self.base.conf.color)
+            else:
+                _remap = {'tty' : 'auto', 'if-tty' : 'auto',
+                          'yes' : 'always', 'on' : 'always',
+                          'no' : 'never', 'off' : 'never'}
+                opts.color = _remap.get(opts.color, opts.color)
+                if opts.color != 'auto':
+                    self.base.term.reinit(color=opts.color)
+
             if opts.disableexcludes:
                 disable_excludes = self._splitArg(opts.disableexcludes)
             else:
@@ -1251,6 +1265,8 @@ class YumOptionParser(OptionParser):
                 metavar='[plugin]')
         self.add_option("--skip-broken", action="store_true", dest="skipbroken",
                 help=_("skip packages with depsolving problems"))
+        self.add_option("", "--color", dest="color", default=None, 
+                help=_("control whether color is used"))
 
 
         
