@@ -244,6 +244,7 @@ class InfoCommand(YumCommand):
             return 1, [str(e)]
         else:
             update_pkgs = {}
+            inst_pkgs   = {}
 
             columns = None
             if basecmd == 'list':
@@ -253,17 +254,33 @@ class InfoCommand(YumCommand):
             if highlight and ypl.installed:
                 #  If we have installed and available lists, then do the
                 # highlighting for the installed packages so you can see what's
-                # available to install vs. available to update.
-                for pkg in ypl.hidden_available:
+                # available to update, an extra, or newer than what we have.
+                for pkg in (ypl.hidden_available +
+                            ypl.reinstall_available +
+                            ypl.old_available):
                     key = (pkg.name, pkg.arch)
                     if key not in update_pkgs or pkg.verGT(update_pkgs[key]):
                         update_pkgs[key] = pkg
 
+            if highlight and ypl.available:
+                #  If we have installed and available lists, then do the
+                # highlighting for the available packages so you can see what's
+                # available to install vs. update vs. old.
+                for pkg in ypl.hidden_installed:
+                    key = (pkg.name, pkg.arch)
+                    if key not in inst_pkgs or pkg.verGT(inst_pkgs[key]):
+                        inst_pkgs[key] = pkg
+
             # Output the packages:
             rip = base.listPkgs(ypl.installed, _('Installed Packages'), basecmd,
-                                highlight_na=update_pkgs, columns=columns)
+                                highlight_na=update_pkgs, columns=columns,
+                                highlight_modes={'>' : 'bold',
+                                                 '<' : 'bold,yellow',
+                                                 'not in' : 'red,bold'})
             rap = base.listPkgs(ypl.available, _('Available Packages'), basecmd,
-                                columns=columns)
+                                highlight_na=inst_pkgs, columns=columns,
+                                highlight_modes={'<' : 'bold,blue',
+                                                 '>' : 'cyan,dim'})
             rep = base.listPkgs(ypl.extras, _('Extra Packages'), basecmd,
                                 columns=columns)
             rup = base.listPkgs(ypl.updates, _('Updated Packages'), basecmd,

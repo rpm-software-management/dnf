@@ -264,12 +264,31 @@ class YumOutput:
         progressbar(current, total, name)
 
     def _highlight(self, highlight):
-        if highlight:
+        hibeg = ''
+        hiend = ''
+        if not highlight:
+            pass
+        elif not isinstance(highlight, basestring) or highlight == 'bold':
             hibeg = self.term.MODE['bold']
-            hiend = self.term.MODE['normal']
         else:
-            hibeg = ''
-            hiend = ''
+            # Turn a string into a specific output: colour, bold, etc.
+            for high in highlight.replace(',', ' ').split():
+                if False: pass
+                elif high == 'normal':
+                    hibeg = ''
+                elif high in self.term.MODE:
+                    hibeg += self.term.MODE[high]
+                elif high in self.term.FG_COLOR:
+                    hibeg += self.term.FG_COLOR[high]
+                elif (high.startswith('fg:') and
+                      high[3:] in self.term.FG_COLOR):
+                    hibeg += self.term.FG_COLOR[high[3:]]
+                elif (high.startswith('bg:') and
+                      high[3:] in self.term.BG_COLOR):
+                    hibeg += self.term.BG_COLOR[high[3:]]
+
+        if hibeg:
+            hiend = self.term.MODE['normal']
         return (hibeg, hiend)
 
     @staticmethod
@@ -476,7 +495,7 @@ class YumOutput:
         print '%-35.35s [%.12s] %.10s %-20.20s' % (c_compact, c_repo, changetype, i_compact)
 
     def listPkgs(self, lst, description, outputType, highlight_na={},
-                 columns=None):
+                 columns=None, highlight_modes={}):
         """outputs based on whatever outputType is. Current options:
            'list' - simple pkg list
            'info' - similar to rpm -qi output
@@ -491,8 +510,15 @@ class YumOutput:
                 for pkg in sorted(lst):
                     key = (pkg.name, pkg.arch)
                     highlight = False
-                    if key in highlight_na and pkg.verLT(highlight_na[key]):
-                        highlight = True
+                    if False: pass
+                    elif key not in highlight_na:
+                        highlight = highlight_modes.get('not in', 'normal')
+                    elif pkg.verEQ(highlight_na[key]):
+                        highlight = highlight_modes.get('=', 'normal')
+                    elif pkg.verLT(highlight_na[key]):
+                        highlight = highlight_modes.get('>', 'bold')
+                    else:
+                        highlight = highlight_modes.get('<', 'normal')
 
                     if outputType == 'list':
                         self.simpleList(pkg, ui_overflow=True,

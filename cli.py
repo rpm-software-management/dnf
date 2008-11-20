@@ -677,9 +677,13 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         
         pkgnarrow = 'all'
         done_hidden_available = False
+        done_hidden_installed = False
         if len(extcmds) > 0:
             if installed_available and extcmds[0] == 'installed':
                 done_hidden_available = True
+                extcmds.pop(0)
+            elif installed_available and extcmds[0] == 'available':
+                done_hidden_installed = True
                 extcmds.pop(0)
             elif extcmds[0] in special:
                 pkgnarrow = extcmds.pop(0)
@@ -709,8 +713,11 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         
         if installed_available:
             ypl.hidden_available = ypl.available
+            ypl.hidden_installed = ypl.installed
         if done_hidden_available:
             ypl.available = []
+        if done_hidden_installed:
+            ypl.installed = []
         return ypl
 
     def search(self, args):
