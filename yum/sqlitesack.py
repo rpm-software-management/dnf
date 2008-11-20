@@ -34,7 +34,7 @@ import sqlutils
 import constants
 import operator
 import time
-from yum.misc import seq_max_split
+from yum.misc import seq_max_split, to_utf8
 
 def catchSqliteException(func):
     """This decorator converts sqlite exceptions into RepoError"""
@@ -205,8 +205,8 @@ class YumAvailablePackageSqlite(YumAvailablePackage, PackageObject, RpmBase):
             # Failure mode is much less of a problem.
             for ob in cur:
                 c_date = ob['date']
-                c_author = ob['author'].encode('utf-8', 'replace')
-                c_log = ob['changelog'].encode('utf-8', 'replace')
+                c_author = to_utf8(ob['author'])
+                c_log = to_utf8(ob['changelog'])
                 result.append((c_date, _share_data(c_author), c_log))
             self._changelog = result
             return
