@@ -443,8 +443,7 @@ class YumOutput:
     def _enc(self, s):
         """Get the translated version from specspo and ensure that
         it's actually encoded in UTF-8."""
-        if type(s) == unicode:
-            s = s.encode("UTF-8")
+        s = to_utf8(s)
         if len(s) > 0:
             for d in self.i18ndomains:
                 t = gettext.dgettext(d, s)
@@ -455,24 +454,24 @@ class YumOutput:
 
     def infoOutput(self, pkg, highlight=False):
         (hibeg, hiend) = self._highlight(highlight)
-        print _("Name       : %s%s%s") % (hibeg, pkg.name, hiend)
-        print _("Arch       : %s") % pkg.arch
+        print _("Name       : %s%s%s") % (hibeg, to_unicode(pkg.name), hiend)
+        print _("Arch       : %s") % to_unicode(pkg.arch)
         if pkg.epoch != "0":
-            print _("Epoch      : %s") % pkg.epoch
-        print _("Version    : %s") % pkg.version
-        print _("Release    : %s") % pkg.release
+            print _("Epoch      : %s") % to_unicode(pkg.epoch)
+        print _("Version    : %s") % to_unicode(pkg.version)
+        print _("Release    : %s") % to_unicode(pkg.release)
         print _("Size       : %s") % self.format_number(float(pkg.size))
-        print _("Repo       : %s") % pkg.repoid
+        print _("Repo       : %s") % to_unicode(pkg.repoid)
         if self.verbose_logger.isEnabledFor(logginglevels.DEBUG_3):
-            print _("Committer  : %s") % pkg.committer
+            print _("Committer  : %s") % to_unicode(pkg.committer)
             print _("Committime : %s") % time.ctime(pkg.committime)
             print _("Buildtime  : %s") % time.ctime(pkg.buildtime)
             if hasattr(pkg, 'installtime'):
                 print _("Installtime: %s") % time.ctime(pkg.installtime)
         print self.fmtKeyValFill(_("Summary    : "), self._enc(pkg.summary))
         if pkg.url:
-            print _("URL        : %s") % pkg.url
-        print _("License    : %s") % pkg.license
+            print _("URL        : %s") % to_unicode(pkg.url)
+        print _("License    : %s") % to_unicode(pkg.license)
         print self.fmtKeyValFill(_("Description: "), self._enc(pkg.description))
         print ""
     
