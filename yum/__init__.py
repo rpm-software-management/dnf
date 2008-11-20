@@ -1501,6 +1501,8 @@ class YumBase(depsolve.Depsolve):
         
         installed = []
         available = []
+        reinstall_available = []
+        old_available = []
         updates = []
         obsoletes = []
         obsoletesTuples = []
@@ -1526,7 +1528,6 @@ class YumBase(depsolve.Depsolve):
                 avail = self.pkgSack.returnPackages(patterns=patterns,
                                                     ignore_case=ic)
             else:
-                del dinst # Using ndinst instead
                 try:
                   avail = self.pkgSack.returnNewestByNameArch(patterns=patterns,
                                                               ignore_case=ic)
@@ -1535,12 +1536,18 @@ class YumBase(depsolve.Depsolve):
             
             for pkg in avail:
                 if showdups:
-                    if pkg.pkgtup not in dinst:
+                    if pkg.pkgtup in dinst:
+                        reinstall_available.append(pkg)
+                    else:
                         available.append(pkg)
                 else:
                     key = (pkg.name, pkg.arch)
-                    if key not in ndinst or pkg.verGT(ndinst[key]):
+                    if pkg.pkgtup in dinst:
+                        reinstall_available.append(pkg)
+                    elif key not in ndinst or pkg.verGT(ndinst[key]):
                         available.append(pkg)
+                    else:
+                        old_available.append(pkg)
 
         # produce the updates list of tuples
         elif pkgnarrow == 'updates':
@@ -1578,12 +1585,20 @@ class YumBase(depsolve.Depsolve):
             
             for pkg in avail:
                 if showdups:
-                    if not self.rpmdb.contains(po=pkg):
+                    if self.rpmdb.contains(po=pkg):
+                        reinstall_available.append(pkg)
+                    else:
                         available.append(pkg)
                 else:
                     ipkgs = self.rpmdb.searchNevra(pkg.name, arch=pkg.arch)
-                    if not ipkgs or pkg.verGT(sorted(ipkgs, reverse=True)[0]):
+                    if ipkgs:
+                        latest = sorted(ipkgs, reverse=True)[0]
+                    if not ipkgs or pkg.verGT(latest):
                         available.append(pkg)
+                    elif pkg.verEQ(latest):
+                        reinstall_available.append(pkg)
+                    else:
+                        old_available.append(pkg)
 
         # not in a repo but installed
         elif pkgnarrow == 'extras':
@@ -1639,6 +1654,8 @@ class YumBase(depsolve.Depsolve):
         
         ygh.installed = installed
         ygh.available = available
+        ygh.reinstall_available = reinstall_available
+        ygh.old_available = old_available
         ygh.updates = updates
         ygh.obsoletes = obsoletes
         ygh.obsoletesTuples = obsoletesTuples
