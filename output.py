@@ -431,7 +431,7 @@ class YumOutput:
     def fmtSection(self, name, fill='='):
         name = to_str(name)
         cols = self.term.columns - 2
-        name_len = len(name)
+        name_len = utf8_width(name)
         if name_len >= (cols - 4):
             beg = end = fill * 2
         else:
