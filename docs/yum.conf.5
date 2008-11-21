@@ -309,6 +309,55 @@ if it is available. Best means install the best arch for this platform, only.
 Url where bugs should be filed for yum. Configurable for local versions or distro-specific
 bugtrackers.
 
+.IP \fBcolor \fR
+Display colorized output automatically, depending on the output terminal,
+always (using ANSI codes) or never.
+Command-line option: \fB\-\-color\fP
+
+.IP \fBcolor_list_installed_older \fR
+The colorization/highlighting for pacakges in list/info installed which are
+older than the latest available package with the same name and arch.
+Default is `bold'.
+Possible values are a comma seperated list containing: bold, blink, dim,
+reverse, underline, fg:black, fg:red, fg:green, fg:yellow, fg:blue, fg:magenta,
+fg:cyan, fg:white, bg:black, bg:red, bg:green, bg:yellow, bg:blue, bg:magenta,
+bg:cyan, bg:white.
+
+.IP \fBcolor_list_installed_newer \fR
+The colorization/highlighting for pacakges in list/info installed which are
+newer than the latest available package with the same name and arch.
+Default is `bold,yellow'.
+See color_list_installed_older for possible values.
+
+.IP \fBcolor_list_installed_extra \fR
+The colorization/highlighting for pacakges in list/info installed which has
+no available package with the same name and arch.
+Default is `bold,red'.
+See color_list_installed_older for possible values.
+
+.IP \fBcolor_list_available_upgrade \fR
+The colorization/highlighting for pacakges in list/info available which is
+an upgrade for the latest installed package with the same name and arch.
+Default is `bold,blue'.
+See color_list_installed_older for possible values.
+
+.IP \fBcolor_list_available_downgrade \fR
+The colorization/highlighting for pacakges in list/info available which is
+a downgrade for the latest installed package with the same name and arch.
+Default is `dim,cyan'.
+See color_list_installed_older for possible values.
+
+.IP \fBcolor_list_available_install \fR
+The colorization/highlighting for pacakges in list/info available which has
+no installed package with the same name and arch.
+Default is `normal'.
+See color_list_installed_older for possible values.
+
+.IP \fBcolor_search_match \fR
+The colorization/highlighting for text matches in search.
+Default is `bold'.
+See color_list_installed_older for possible values.
+
 .SH "[repository] OPTIONS"
 .LP 
 The repository section(s) take the following form:
