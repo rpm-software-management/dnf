@@ -53,6 +53,8 @@ logging.addLevelName(DEBUG_4, "DEBUG_4")
 __NO_LOGGING = 100
 logging.raiseExceptions = False
 
+import syslog as syslog_module
+
 syslog = None
 
 DEBUG_QUIET_LEVEL   = 0
@@ -73,6 +75,34 @@ ERROR_VERBOSE_LEVEL = 2
 
 ERROR_MIN_LEVEL     = 0
 ERROR_MAX_LEVEL     = ERROR_VERBOSE_LEVEL
+
+# Mostly borrowed from original yum-updated.py
+_syslog_facility_map = { "KERN"   : syslog_module.LOG_KERN,
+                         "USER"   : syslog_module.LOG_USER,
+                         "MAIL"   : syslog_module.LOG_MAIL,
+                         "DAEMON" : syslog_module.LOG_DAEMON,
+                         "AUTH"   : syslog_module.LOG_AUTH,
+                         "LPR"    : syslog_module.LOG_LPR,
+                         "NEWS"   : syslog_module.LOG_NEWS,
+                         "UUCP"   : syslog_module.LOG_UUCP,
+                         "CRON"   : syslog_module.LOG_CRON,
+                         "LOCAL0" : syslog_module.LOG_LOCAL0,
+                         "LOCAL1" : syslog_module.LOG_LOCAL1,
+                         "LOCAL2" : syslog_module.LOG_LOCAL2,
+                         "LOCAL3" : syslog_module.LOG_LOCAL3,
+                         "LOCAL4" : syslog_module.LOG_LOCAL4,
+                         "LOCAL5" : syslog_module.LOG_LOCAL5,
+                         "LOCAL6" : syslog_module.LOG_LOCAL6,
+                         "LOCAL7" : syslog_module.LOG_LOCAL7,}
+def syslogFacilityMap(facility):
+    if type(facility) == int:
+        return facility
+    elif facility.upper() in _syslog_facility_map:
+        return _syslog_facility_map[facility.upper()]
+    elif (facility.upper().startswith("LOG_") and
+          facility[4:].upper() in _syslog_facility_map):
+        return _syslog_facility_map[facility[4:].upper()]
+    return syslog.LOG_USER
 
 def logLevelFromErrorLevel(error_level):
     """ Convert an old-style error logging level to the new style. """
@@ -115,7 +145,8 @@ def setErrorLevel(level):
     logging.getLogger("yum").setLevel(converted_level)
 
 _added_handlers = False
-def doLoggingSetup(debuglevel, errorlevel):
+def doLoggingSetup(debuglevel, errorlevel,
+                   syslog_ident=None, syslog_facility=None):
     """
     Configure the python logger.
     
@@ -161,6 +192,10 @@ def doLoggingSetup(debuglevel, errorlevel):
             syslog = logging.handlers.SysLogHandler(log_dev)
             syslog.setFormatter(syslogformatter)
             filelogger.addHandler(syslog)
+            if syslog_ident is not None or syslog_facility is not None:
+                ident = syslog_ident    or ''
+                facil = syslog_facility or 'LOG_USER'
+                syslog_module.openlog(ident, 0, syslogFacilityMap(facil))
         except socket.error:
             if syslog is not None:
                 syslog.close()

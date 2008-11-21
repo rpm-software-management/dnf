@@ -9,7 +9,7 @@ class ComplicatedTests(OperationsTests):
         simpleobsoletestests.SimpleObsoletesTests.buildPkgs(pkgs)
         # conflicts
         pkgs.conflicts = FakePackage('super-zippy', '0.3', '1', '0', 'i386')
-        pkgs.conflicts.addConflicts('zsh', EQ, ('0', '1', '1'))
+        pkgs.conflicts.addConflicts('zsh', 'EQ', ('0', '1', '1'))
 
     def testObsoleteForConflict(self):
         p = self.pkgs
@@ -31,11 +31,11 @@ class CombinedUpdateObsoletesTest(OperationsTests):
         pkgs.kdevel_2 = FakePackage('k-devel', '3.5', '2')
         pkgs.kdevel_2.addRequires('k')
         pkgs.klibs_2_i386 = FakePackage('klibs', '3.5', '2', arch='i386')
-        pkgs.klibs_2_i386.addObsoletes('klibs', LT, (None, '3.5', '2'))
-        pkgs.klibs_2_i386.addObsoletes('k', LT, (None, '3.5', '2'))
+        pkgs.klibs_2_i386.addObsoletes('klibs', 'LT', (None, '3.5', '2'))
+        pkgs.klibs_2_i386.addObsoletes('k', 'LT', (None, '3.5', '2'))
         pkgs.klibs_2_x86_64 = FakePackage('klibs', '3.5', '2', arch='x86_64')
-        pkgs.klibs_2_x86_64.addObsoletes('klibs', LT, (None, '3.5', '2'))
-        pkgs.klibs_2_x86_64.addObsoletes('k', LT, (None, '3.5', '2'))
+        pkgs.klibs_2_x86_64.addObsoletes('klibs', 'LT', (None, '3.5', '2'))
+        pkgs.klibs_2_x86_64.addObsoletes('k', 'LT', (None, '3.5', '2'))
 
     def testSelfObsolete(self):
         p = self.pkgs

@@ -33,6 +33,10 @@ import rpmUtils.arch
 import Errors
 import logginglevels
 
+# Alter/patch these to change the default checking...
+__pkgs_gpgcheck_default__ = False
+__repo_gpgcheck_default__ = False
+
 class Option(object):
     '''
     This class handles a single Yum configuration file option. Create
@@ -61,6 +65,7 @@ class Option(object):
         @return: The parsed option value or the default value if the value
             wasn't set in the configuration file.
         '''
+        # xemacs highlighting hack: '
         if obj is None:
             return self
 
@@ -332,14 +337,24 @@ class FloatOption(Option):
 class SelectionOption(Option):
     '''Handles string values where only specific values are allowed
     '''
-    def __init__(self, default=None, allowed=()):
+    def __init__(self, default=None, allowed=(), mapper={}):
         super(SelectionOption, self).__init__(default)
         self._allowed = allowed
+        self._mapper  = mapper
         
     def parse(self, s):
+        if s in self._mapper:
+            s = self._mapper[s]
         if s not in self._allowed:
             raise ValueError('"%s" is not an allowed value' % s)
         return s
+
+class CaselessSelectionOption(SelectionOption):
+    ''' Mainly for compat. with BoolOption, works like SelectionOption but
+        lowers input case. '''
+
+    def parse(self, s):
+        return super(CaselessSelectionOption, self).parse(s.lower())
 
 class BytesOption(Option):
 
@@ -430,7 +445,6 @@ class ThrottleOption(BytesOption):
         else:
             return BytesOption.parse(self, s)
 
-
 class BaseConfig(object):
     '''
     Base class for storing configuration definitions. Subclass when creating
@@ -462,12 +476,16 @@ class BaseConfig(object):
         self.cfg = parser
         self._section = section
 
+        if parser.has_section(section):
+            opts = set(parser.options(section))
+        else:
+            opts = set()
         for name in self.iterkeys():
             option = self.optionobj(name)
             value = None
-            try:
+            if name in opts:
                 value = parser.get(section, name)
-            except (NoSectionError, NoOptionError):
+            else:
                 # No matching option in this section, try inheriting
                 if parent and option.inherit:
                     value = getattr(parent, name)
@@ -559,6 +577,7 @@ class StartupConf(BaseConfig):
     required early in the initialisation process or before the other [main]
     options can be parsed. 
     '''
+    # xemacs highlighting hack: '
     debuglevel = IntOption(logginglevels.DEBUG_NORMAL_LEVEL,
                            logginglevels.DEBUG_MIN_LEVEL,
                            logginglevels.DEBUG_MAX_LEVEL)
@@ -573,6 +592,8 @@ class StartupConf(BaseConfig):
     pluginpath = ListOption(['/usr/share/yum-plugins', '/usr/lib/yum-plugins'])
     pluginconfpath = ListOption(['/etc/yum/pluginconf.d'])
     gaftonmode = BoolOption(False)
+    syslog_ident = Option()
+    syslog_facility = Option('LOG_DAEMON')
 
 class YumConf(StartupConf):
     '''
@@ -588,8 +609,6 @@ class YumConf(StartupConf):
     keepcache = BoolOption(True)
     logfile = Option('/var/log/yum.log')
     reposdir = ListOption(['/etc/yum/repos.d', '/etc/yum.repos.d'])
-    syslog_ident = Option()
-    syslog_facility = Option('LOG_DAEMON')
 
     commands = ListOption()
     exclude = ListOption()
@@ -620,7 +639,9 @@ class YumConf(StartupConf):
     diskspacecheck = BoolOption(True)
     overwrite_groups = BoolOption(False)
     keepalive = BoolOption(True)
-    gpgcheck = BoolOption(False)
+    # FIXME: rename gpgcheck to pkgs_gpgcheck
+    gpgcheck = BoolOption(__pkgs_gpgcheck_default__)
+    repo_gpgcheck = BoolOption(__repo_gpgcheck_default__)
     obsoletes = BoolOption(False)
     showdupesfromrepos = BoolOption(False)
     enabled = BoolOption(True)
@@ -651,7 +672,23 @@ class YumConf(StartupConf):
                  # all == install any/all arches you can
                  # best == use the 'best  arch' for the system
                  
+    bugtracker_url = Option('http://yum.baseurl.org/report')
 
+    color = SelectionOption('auto', ('auto', 'never', 'always'),
+                            mapper={'on' : 'always', 'yes' : 'always',
+                                    '1' : 'always', 'true' : 'always',
+                                    'off' : 'never', 'no' : 'never',
+                                    '0' : 'never', 'false' : 'never',
+                                    'tty' : 'auto', 'if-tty' : 'auto'})
+    color_list_installed_older = Option('bold')
+    color_list_installed_newer = Option('bold,yellow')
+    color_list_installed_extra = Option('bold,red')
+
+    color_list_available_upgrade = Option('bold,blue')
+    color_list_available_downgrade = Option('dim,cyan')
+    color_list_available_install = Option('normal')
+
+    color_search_match = Option('bold')
     
     _reposlist = []
 
@@ -663,6 +700,7 @@ class RepoConf(BaseConfig):
     enabled = Inherit(YumConf.enabled)
     baseurl = UrlListOption()
     mirrorlist = UrlOption()
+    metalink   = UrlOption()
     mediaid = Option()
     gpgkey = UrlListOption()
     exclude = ListOption() 
@@ -674,7 +712,9 @@ class RepoConf(BaseConfig):
     retries = Inherit(YumConf.retries)
     failovermethod = Inherit(YumConf.failovermethod)
 
+    # FIXME: rename gpgcheck to pkgs_gpgcheck
     gpgcheck = Inherit(YumConf.gpgcheck)
+    repo_gpgcheck = Inherit(YumConf.repo_gpgcheck)
     keepalive = Inherit(YumConf.keepalive)
     enablegroups = Inherit(YumConf.enablegroups)
 
@@ -684,6 +724,8 @@ class RepoConf(BaseConfig):
     http_caching = Inherit(YumConf.http_caching)
     metadata_expire = Inherit(YumConf.metadata_expire)
     mirrorlist_expire = Inherit(YumConf.mirrorlist_expire)
+    # NOTE: metalink expire _must_ be the same as metadata_expire, due to the
+    #       checksumming of the repomd.xml.
     mdpolicy = Inherit(YumConf.mdpolicy)
     cost = IntOption(1000)
     

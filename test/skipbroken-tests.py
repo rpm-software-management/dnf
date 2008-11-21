@@ -76,7 +76,7 @@ class SkipBrokenTests(DepsolveTests):
         po2 = self.repoPackage('foo', '2')
 
         ipo = self.instPackage('foo-tools', '2.5')
-        ipo.addRequires('foo', EQ, ('0', '1', '0'))
+        ipo.addRequires('foo', 'EQ', ('0', '1', '0'))
 
         self.tsInfo.addUpdate(po2, oldpo=po1)
         
@@ -89,9 +89,9 @@ class SkipBrokenTests(DepsolveTests):
         is not provided, the update should be skipped and result in a empty transaction
         '''
         po1 = self.instPackage('foo', '1')
-        po1.addRequires('foo-tools', EQ, ('0', '1', '0'))
+        po1.addRequires('foo-tools', 'EQ', ('0', '1', '0'))
         po2 = self.repoPackage('foo', '2')
-        po2.addRequires('foo-tools', EQ, ('0', '2', '0'))
+        po2.addRequires('foo-tools', 'EQ', ('0', '2', '0'))
 
         ipo = self.instPackage('foo-tools', '1')
 
@@ -108,13 +108,13 @@ class SkipBrokenTests(DepsolveTests):
         there is not longer provided.
         '''
         po1 = self.instPackage('foo', '1')
-        po1.addRequires('foo-tools', EQ, ('0', '1', '0'))
+        po1.addRequires('foo-tools', 'EQ', ('0', '1', '0'))
         po2 = self.repoPackage('foo', '2')
-        po2.addRequires('foo-tools', EQ, ('0', '2', '0'))
+        po2.addRequires('foo-tools', 'EQ', ('0', '2', '0'))
 
         ipo = self.instPackage('foo-tools', '1')
         por =  self.repoPackage('foo-gui', '1')
-        por.addRequires('foo', EQ, ('0', '2', '0'))
+        por.addRequires('foo', 'EQ', ('0', '2', '0'))
 
         self.tsInfo.addUpdate(po2, oldpo=po1)
         self.tsInfo.addInstall(por)
@@ -129,7 +129,7 @@ class SkipBrokenTests(DepsolveTests):
         '''
         ipo = self.instPackage('foo', '1')
         ipo2 = self.instPackage('foo-tools', '1')
-        ipo2.addRequires('foo', EQ, ('0', '1', '0'))
+        ipo2.addRequires('foo', 'EQ', ('0', '1', '0'))
 
         self.tsInfo.addErase(ipo)
         self.assertEquals('ok', *self.resolveCode(skip=True))
@@ -141,10 +141,10 @@ class SkipBrokenTests(DepsolveTests):
         '''
         ipo = self.instPackage('foo', '1')
         ipo2 = self.instPackage('foo-tools', '1')
-        ipo2.addRequires('foo', EQ, ('0', '1', '0'))
+        ipo2.addRequires('foo', 'EQ', ('0', '1', '0'))
 
         upo2 = self.repoPackage('foo-tools', '2')
-        upo2.addRequires('foo', EQ, ('0', '1', '0'))
+        upo2.addRequires('foo', 'EQ', ('0', '1', '0'))
 
         self.tsInfo.addErase(ipo)
         self.tsInfo.addUpdate(upo2, oldpo=ipo2)
@@ -158,10 +158,10 @@ class SkipBrokenTests(DepsolveTests):
         '''
         ipo = self.instPackage('foo', '1')
         ipo2 = self.instPackage('foo-tools', '1')
-        ipo2.addRequires('foo', EQ, ('0', '1', '0'))
+        ipo2.addRequires('foo', 'EQ', ('0', '1', '0'))
 
         upo2 = self.repoPackage('foo-tools', '2')
-        upo2.addRequires('foo', EQ, ('0', '1', '0'))
+        upo2.addRequires('foo', 'EQ', ('0', '1', '0'))
 
         self.tsInfo.addUpdate(upo2, oldpo=ipo2)
         self.tsInfo.addErase(ipo)
@@ -176,7 +176,7 @@ class SkipBrokenTests(DepsolveTests):
         '''
         po1 = self.instPackage('foo', '1')
         po2 = self.repoPackage('foo', '2')
-        po2.addConflicts('bar', EQ, ('0', '1', '0'))
+        po2.addConflicts('bar', 'EQ', ('0', '1', '0'))
 
         ipo = self.instPackage('bar', '1')
 
@@ -193,13 +193,13 @@ class SkipBrokenTests(DepsolveTests):
         '''
         po1 = self.instPackage('foo', '1')
         po2 = self.repoPackage('foo', '2')
-        po2.addConflicts('bar', EQ, ('0', '1', '0'))
+        po2.addConflicts('bar', 'EQ', ('0', '1', '0'))
 
         ipo = self.instPackage('bar', '1')
 
 
         xpo = self.repoPackage('bar', '2')
-        xpo.addRequires('foo', EQ, ('0', '1', '0'))
+        xpo.addRequires('foo', 'EQ', ('0', '1', '0'))
 
         self.tsInfo.addUpdate(po2, oldpo=po1)
         
@@ -215,13 +215,13 @@ class SkipBrokenTests(DepsolveTests):
         '''
         po1 = self.instPackage('foo', '1')
         po2 = self.repoPackage('foo', '2')
-        po2.addConflicts('bar', EQ, ('0', '1', '0'))
+        po2.addConflicts('bar', 'EQ', ('0', '1', '0'))
 
         ipo = self.instPackage('bar', '1')
 
 
         xpo = self.repoPackage('bar', '2')
-        xpo.addRequires('poo', EQ, ('0', '1', '0'))
+        xpo.addRequires('poo', 'EQ', ('0', '1', '0'))
 
         self.tsInfo.addUpdate(po2, oldpo=po1)
         
@@ -286,7 +286,7 @@ class SkipBrokenTests(DepsolveTests):
         self.tsInfo.addInstall(po1)
 
         po2 = self.repoPackage('bar')
-        po2.addRequires('baz', EQ, (None, '2', '1'))
+        po2.addRequires('baz', 'EQ', (None, '2', '1'))
 
         ipo = self.instPackage('baz')
         upo = self.repoPackage('baz', '2', '1')
@@ -353,14 +353,236 @@ class SkipBrokenTests(DepsolveTests):
         ipo2 = self.instPackage('foo', '1',arch='x86_64')
         po1 = self.repoPackage('foo', '2',arch='i386')
         po2 = self.repoPackage('foo', '2',arch='x86_64')
-        po2.addRequires('notfound', EQ, ('0', '1', '0'))
+        po2.addRequires('notfound', 'EQ', ('0', '1', '0'))
         self.tsInfo.addUpdate(po1, oldpo=ipo1)
         self.tsInfo.addUpdate(po2, oldpo=ipo2)
         self.assertEquals('empty', *self.resolveCode(skip=True))
         self.assertResult([ipo1,ipo2])
+
+    def testInstReqOldVer1(self):
+    	""" 
+    	zap-2.0 updates zap-1.0, but zap-2.0 needs barlib-2.0 provided by
+    	bar-2.0, but the installed foo, needs barlib-1.0,  so it need to be updated to
+    	foo-2.0, that requires barlib-2.0
+    	But it only work if foo-1.0 -> foo-2.0 is added as an update, it is not 
+    	pulled in by it self.
+    	"""
+        ipo1 = self.instPackage('foo', '1')
+        ipo1.addRequires('barlib', 'EQ', ('0', '1', '0'))
+        ipo2 = self.instPackage('bar', '1')
+        ipo2.addProvides('barlib', 'EQ', ('0', '1', '0'))
+        ipo3 = self.instPackage('zap', '1')
+        po1 = self.repoPackage('foo', '2')
+        po1.addRequires('barlib', 'EQ', ('0', '2', '0'))
+        po2 = self.repoPackage('bar', '2')
+        po2.addProvides('barlib', 'EQ', ('0', '2', '0'))
+        po3 = self.repoPackage('zap', '2')
+        po3.addRequires('barlib', 'EQ', ('0', '2', '0'))
+        #FIXME: Find out why this line is needed, it should be auto updated by the solver.
+        self.tsInfo.addUpdate(po1, oldpo=ipo1) # why is this needed, it should work without ?
+        self.tsInfo.addUpdate(po3, oldpo=ipo3)
+        self.assertEquals('ok', *self.resolveCode(skip=True))
+        self.assertResult([po1,po2,po3])               
+
+
+    def testBumpedSoName1(self):
+        """ 
+        d2 need a lib from b1, so the update fails.
+        d2 and b2 get skipped, but the installed b1 needs a
+        lib from a1, but it has been updated to a2, so it is
+        no longer there. so a2 needs to be skipped to
+        """
+        a1 = self.instPackage('a', '1', arch='x86_64')
+        a1.addProvides("liba.so.1()(64bit)")
+        a2 = self.repoPackage('a', '2', arch='x86_64')
+        a2.addProvides("liba.so.2()(64bit)")
         
+        b1 = self.instPackage('b', '1', arch='x86_64')
+        b1.addProvides("libb.so.1()(64bit)")
+        b1.addRequires("liba.so.1()(64bit)")
+        b2 = self.repoPackage('b', '2', arch='x86_64')
+        b2.addProvides("libb.so.2()(64bit)")
+        b2.addRequires("liba.so.2()(64bit)")
+        
+        c1 = self.instPackage('c', '1', arch='x86_64')
+        c1.addRequires("liba.so.1()(64bit)")
+        c2 = self.repoPackage('c', '2', arch='x86_64')
+        c2.addRequires("liba.so.2()(64bit)")
+
+        d1 = self.instPackage('d', '1', arch='x86_64')
+        d1.addRequires("libb.so.1()(64bit)")
+        d2 = self.repoPackage('d', '2', arch='x86_64')
+        d2.addRequires("libb.so.1()(64bit)")
+
+        e1 = self.instPackage('e', '1', arch='x86_64')
+        e2 = self.repoPackage('e', '2', arch='x86_64')
+
+        f1 = self.instPackage('f', '1', arch='x86_64')
+        f2 = self.repoPackage('f', '2', arch='x86_64')
+
+        self.tsInfo.addUpdate(a2, oldpo=a1)
+        self.tsInfo.addUpdate(b2, oldpo=b1)
+        self.tsInfo.addUpdate(c2, oldpo=c1)
+        self.tsInfo.addUpdate(d2, oldpo=d1)
+        self.tsInfo.addUpdate(e2, oldpo=e1)
+        self.tsInfo.addUpdate(f2, oldpo=f1)
+        self.assertEquals('ok', *self.resolveCode(skip=True))
+        self.assertResult([a1,b1,c1,d1,e2,f2])
+
+    def testBumpedSoName2(self):
+        """ 
+        https://bugzilla.redhat.com/show_bug.cgi?id=468785
+        """
+        c1 = self.instPackage('cyrus-sasl-lib', '2.1.22',"18")
+        c1.addRequires("libdb-4.3.so")
+        
+        d1 = self.instPackage('compat-db', '4.6.21',"4")
+        d1.addProvides("libdb-4.3.so")
+        od1 = self.repoPackage('compat-db46', '4.6.21',"5")
+        od1.addProvides("libdb-4.6.so")
+        od1.addObsoletes("compat-db")
+        od2 = self.repoPackage('compat-db45', '4.6.21',"5")
+        od2.addProvides("libdb-4.5.so")
+        od2.addObsoletes("compat-db")
+        
+        r1 = self.instPackage('rpm', '4.6.0-0','0.rc1.3')
+        r1.addRequires("libdb-4.5.so")
+        r2 = self.instPackage('rpm-libs', '4.6.0-0','0.rc1.3')
+        r2.addRequires("libdb-4.5.so")
+        r3 = self.instPackage('rpm-build', '4.6.0-0','0.rc1.3')
+        r3.addRequires("libdb-4.5.so")
+        r4 = self.instPackage('rpm-python', '4.6.0-0','0.rc1.3')
+        r4.addRequires("libdb-4.5.so")
+
+        ur1 = self.repoPackage('rpm', '4.6.0-0','0.rc1.5')
+        ur1.addRequires("libdb-4.5.so")
+        ur1.addRequires("compat-db45")
+        ur2 = self.repoPackage('rpm-libs', '4.6.0-0','0.rc1.5')
+        ur2.addRequires("libdb-4.5.so")
+        ur2.addRequires("compat-db45")
+        ur3 = self.repoPackage('rpm-build', '4.6.0-0','0.rc1.5')
+        ur3.addRequires("libdb-4.5.so")
+        ur3.addRequires("compat-db45")
+        ur4 = self.repoPackage('rpm-python', '4.6.0-0','0.rc1.5')
+        ur4.addRequires("libdb-4.5.so")
+        ur4.addRequires("compat-db45")
+
+        self.tsInfo.addObsoleting(od2, oldpo=d1)
+        self.tsInfo.addObsoleted(d1, od2)
+        self.tsInfo.addObsoleting(od1, oldpo=d1)
+        self.tsInfo.addObsoleted(d1, od1)
+        self.tsInfo.addUpdate(ur1, oldpo=r1)
+        self.tsInfo.addUpdate(ur2, oldpo=r2)
+        self.tsInfo.addUpdate(ur3, oldpo=r3)
+        self.tsInfo.addUpdate(ur4, oldpo=r4)
+        
+        self.assertEquals('empty', *self.resolveCode(skip=True))
+        self.assertResult([c1,d1,r1,r2,r3,r4])
+
+    def testBumpedSoName3(self):
+        """ 
+        https://bugzilla.redhat.com/show_bug.cgi?id=468785
+        yum update compat-db46
+        """
+        c1 = self.instPackage('cyrus-sasl-lib', '2.1.22',"18")
+        c1.addRequires("libdb-4.3.so")
+        
+        d1 = self.instPackage('compat-db', '4.6.21',"4")
+        d1.addProvides("libdb-4.3.so")
+        od1 = self.repoPackage('compat-db46', '4.6.21',"5")
+        od1.addProvides("libdb-4.6.so")
+        od1.addObsoletes("compat-db")
+        od2 = self.repoPackage('compat-db45', '4.6.21',"5")
+        od2.addProvides("libdb-4.5.so")
+        od2.addObsoletes("compat-db")
+        
+        r1 = self.instPackage('rpm', '4.6.0-0','0.rc1.3')
+        r1.addRequires("libdb-4.5.so")
+        r2 = self.instPackage('rpm-libs', '4.6.0-0','0.rc1.3')
+        r2.addRequires("libdb-4.5.so")
+        r3 = self.instPackage('rpm-build', '4.6.0-0','0.rc1.3')
+        r3.addRequires("libdb-4.5.so")
+        r4 = self.instPackage('rpm-python', '4.6.0-0','0.rc1.3')
+        r4.addRequires("libdb-4.5.so")
+
+        ur1 = self.repoPackage('rpm', '4.6.0-0','0.rc1.5')
+        ur1.addRequires("libdb-4.5.so")
+        ur1.addRequires("compat-db45")
+        ur2 = self.repoPackage('rpm-libs', '4.6.0-0','0.rc1.5')
+        ur2.addRequires("libdb-4.5.so")
+        ur2.addRequires("compat-db45")
+        ur3 = self.repoPackage('rpm-build', '4.6.0-0','0.rc1.5')
+        ur3.addRequires("libdb-4.5.so")
+        ur3.addRequires("compat-db45")
+        ur4 = self.repoPackage('rpm-python', '4.6.0-0','0.rc1.5')
+        ur4.addRequires("libdb-4.5.so")
+        ur4.addRequires("compat-db45")
+
+        self.tsInfo.addObsoleting(od1, oldpo=d1)
+        self.tsInfo.addObsoleted(d1, od1)
+        self.tsInfo.addUpdate(ur1, oldpo=r1)
+        self.tsInfo.addUpdate(ur2, oldpo=r2)
+        self.tsInfo.addUpdate(ur3, oldpo=r3)
+        self.tsInfo.addUpdate(ur4, oldpo=r4)
+        
+        self.assertEquals('err', *self.resolveCode(skip=False))
+        
+    def testBumpedSoNameMultiArch(self):
+        """ 
+        if compat-db45.x86_64 get skipped, then compat-db45.i386 should not 
+        get pulled in instead
+        """
+        c1 = self.instPackage('cyrus-sasl-lib', '2.1.22',"18", arch='x86_64')
+        c1.addRequires("libdb-4.3.so")
+        
+        d1 = self.instPackage('compat-db', '4.6.21',"4", arch='x86_64')
+        d1.addProvides("libdb-4.3.so")
+        od1 = self.repoPackage('compat-db46', '4.6.21',"5", arch='x86_64')
+        od1.addProvides("libdb-4.6.so")
+        od1.addObsoletes("compat-db")
+        od2 = self.repoPackage('compat-db45', '4.6.21',"5", arch='x86_64')
+        od2.addProvides("libdb-4.5.so")
+        od2.addObsoletes("compat-db")
+        od3 = self.repoPackage('compat-db45', '4.6.21',"5", arch='i386')
+        od3.addProvides("libdb-4.5.so")
+        od3.addObsoletes("compat-db")
+        
+        r1 = self.instPackage('rpm', '4.6.0-0','0.rc1.3', arch='x86_64')
+        r1.addRequires("libdb-4.5.so")
+        r2 = self.instPackage('rpm-libs', '4.6.0-0','0.rc1.3', arch='x86_64')
+        r2.addRequires("libdb-4.5.so")
+        r3 = self.instPackage('rpm-build', '4.6.0-0','0.rc1.3', arch='x86_64')
+        r3.addRequires("libdb-4.5.so")
+        r4 = self.instPackage('rpm-python', '4.6.0-0','0.rc1.3', arch='x86_64')
+        r4.addRequires("libdb-4.5.so")
+
+        ur1 = self.repoPackage('rpm', '4.6.0-0','0.rc1.5', arch='x86_64')
+        ur1.addRequires("libdb-4.5.so")
+        ur1.addRequires("compat-db45")
+        ur2 = self.repoPackage('rpm-libs', '4.6.0-0','0.rc1.5', arch='x86_64')
+        ur2.addRequires("libdb-4.5.so")
+        ur2.addRequires("compat-db45")
+        ur3 = self.repoPackage('rpm-build', '4.6.0-0','0.rc1.5', arch='x86_64')
+        ur3.addRequires("libdb-4.5.so")
+        ur3.addRequires("compat-db45")
+        ur4 = self.repoPackage('rpm-python', '4.6.0-0','0.rc1.5', arch='x86_64')
+        ur4.addRequires("libdb-4.5.so")
+        ur4.addRequires("compat-db45")
 
 
+        self.tsInfo.addObsoleting(od2, oldpo=d1)
+        self.tsInfo.addObsoleted(d1, od2)
+        self.tsInfo.addObsoleting(od1, oldpo=d1)
+        self.tsInfo.addObsoleted(d1, od1)
+        self.tsInfo.addUpdate(ur1, oldpo=r1)
+        self.tsInfo.addUpdate(ur2, oldpo=r2)
+        self.tsInfo.addUpdate(ur3, oldpo=r3)
+        self.tsInfo.addUpdate(ur4, oldpo=r4)
+
+        self.assertEquals('empty', *self.resolveCode(skip=True))
+        self.assertResult([c1,d1,r1,r2,r3,r4])
+        
+    
     def resolveCode(self,skip = False):
         solver = YumBase()
         solver.conf = FakeConf()
@@ -368,6 +590,7 @@ class SkipBrokenTests(DepsolveTests):
         solver.tsInfo = solver._tsInfo = self.tsInfo
         solver.rpmdb = self.rpmdb
         solver.pkgSack = self.xsack
+        solver.dsCallback = DepSolveProgressCallBack()
         
         for po in self.rpmdb:
             po.repoid = po.repo.id = "installed"
@@ -391,4 +614,3 @@ def setup_logging():
     verbose.propagate = False
     verbose.addHandler(console_stdout)
     verbose.setLevel(2)
-

@@ -22,6 +22,7 @@ iterparse = cElementTree.iterparse
 from Errors import RepoMDError
 
 import sys
+from misc import AutoFileChecksums
 
 def ns_cleanup(qn):
     if qn.find('}') == -1: return qn 
@@ -69,8 +70,13 @@ class RepoMD:
     def __init__(self, repoid, srcfile):
         """takes a repoid and a filename for the repomd.xml"""
         
+        self.timestamp = 0
         self.repoid = repoid
         self.repoData = {}
+        self.checksums = {}
+        self.length    = 0
+        self.revision  = None
+        self.tags      = {'content' : set(), 'distro' : {}}
         
         if type(srcfile) == type('str'):
             # srcfile is a filename string
@@ -79,6 +85,8 @@ class RepoMD:
             # srcfile is a file object
             infile = srcfile
         
+        infile = AutoFileChecksums(infile, ['md5', 'sha1', 'sha256'],
+                                   ignore_missing=True)
         parser = iterparse(infile)
         
         try:
@@ -88,6 +96,26 @@ class RepoMD:
                 if elem_name == "data":
                     thisdata = RepoData(elem=elem)
                     self.repoData[thisdata.type] = thisdata
+                    try:
+                        nts = int(thisdata.timestamp)
+                        if nts > self.timestamp: # max() not in old python
+                            self.timestamp = nts
+                    except:
+                        pass
+                elif elem_name == "revision":
+                    self.revision = elem.text
+                elif elem_name == "tags":
+                    for child in elem:
+                        child_name = ns_cleanup(child.tag)
+                        if child_name == 'content':
+                            self.tags['content'].add(child.text)
+                        if child_name == 'distro':
+                            cpeid = child.attrib.get('cpeid', '')
+                            distro = self.tags['distro'].setdefault(cpeid,set())
+                            distro.add(child.text)
+
+            self.checksums = infile.checksums.hexdigests()
+            self.length    = len(infile.checksums)
         except SyntaxError, e:
             raise RepoMDError, "Damaged repomd.xml file"
             
@@ -103,20 +131,35 @@ class RepoMD:
             
     def dump(self):
         """dump fun output"""
-        
-        for ft in self.fileTypes():
+
+        print "file timestamp: %s" % self.timestamp
+        print "file length   : %s" % self.length
+        for csum in sorted(self.checksums):
+            print "file checksum : %s/%s" % (csum, self.checksums[csum])
+        if self.revision is not None:
+            print 'revision: %s' % self.revision
+        if self.tags['content']:
+            print 'tags content: %s' % ", ".join(sorted(self.tags['content']))
+        if self.tags['distro']:
+            for distro in sorted(self.tags['distro']):
+                print 'tags distro: %s' % distro
+                tags = self.tags['distro'][distro]
+                print '  tags: %s' % ", ".join(sorted(tags))
+        print '\n---- Data ----'
+        for ft in sorted(self.fileTypes()):
             thisdata = self.repoData[ft]
-            print 'datatype: %s' % thisdata.type
-            print 'location: %s %s' % thisdata.location
-            print 'timestamp: %s' % thisdata.timestamp
-            print 'checksum: %s -%s' % thisdata.checksum
-            print 'open checksum: %s - %s' %  thisdata.openchecksum
-            print 'dbversion: %s' % thisdata.dbversion
+            print '  datatype: %s' % thisdata.type
+            print '    location     : %s %s' % thisdata.location
+            print '    timestamp    : %s' % thisdata.timestamp
+            print '    checksum     : %s - %s' % thisdata.checksum
+            print '    open checksum: %s - %s' %  thisdata.openchecksum
+            print '    dbversion    : %s' % thisdata.dbversion
+            print ''
 
 def main():
 
     try:
-        print sys.argv[1]
+        print "file          : %s" % sys.argv[1]
         p = RepoMD('repoid', sys.argv[1])
         p.dump()
         

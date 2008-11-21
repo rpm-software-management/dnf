@@ -32,7 +32,7 @@ runs. The default is `/var/lib/yum'.
 
 .IP \fBkeepcache\fR
 Either `1' or `0'. Determines whether or not yum keeps the cache
-of headers and packages after succesful installation.  Default is '1'
+of headers and packages after successful installation.  Default is '1'
 (keep files)
 .br
 
@@ -60,6 +60,11 @@ default for all repositories. This option also determines whether or not an
 install of a package from a local RPM file will be GPG signature checked. The
 default is `0'.
 
+.IP \fBrepo_gpgcheck\fR
+Either `1' or `0'. This tells yum whether or not it should perform a GPG
+signature check on the repodata. When this is set in the [main] section it sets the
+default for all repositories. The default is `0'.
+
 .IP \fBskip_broken\fR
 Either `1' or `0'. Resolve depsolve problems by removing packages that
 are causing problems from the transaction.
@@ -68,7 +73,7 @@ are causing problems from the transaction.
 Either `1' or `0'. Determines whether or not yum prompts for confirmation of
 critical actions. Default is `0' (do prompt).
 .br
-Commmand-line option: \fB\-y\fP
+Command-line option: \fB\-y\fP
 
 .IP \fBalwaysprompt\fR
 Either `1' or `0'. Without this option, yum will not prompt for confirmation
@@ -84,7 +89,7 @@ command line with regard to packages. For example: if you request to install
 foo, bar and baz and baz is installed; yum won't error out complaining that baz
 is already installed. Default to `0' (not tolerant).
 .br
-Commmand-line option: \fB\-t\fP
+Command-line option: \fB\-t\fP
 
 .IP \fBexclude\fR
 List of packages to exclude from updates or installs. This should be a space
@@ -120,7 +125,7 @@ This option only has affect during an \fBupdate\fR. It enables yum's
 obsoletes processing logic. Useful when doing distribution level upgrades. See
 also the yum \fBupgrade\fR command documentation for more details (yum(8)).
 .br
-Commmand-line option: \fB\-\-obsoletes\fP
+Command-line option: \fB\-\-obsoletes\fP
 
 .IP \fBoverwrite_groups \fR
 Either `0' or `1'. Used to determine yum's behaviour if two or more
@@ -142,7 +147,7 @@ Default is: default, mandatory
 Specifies an alternative installroot, relative to which all packages will be
 installed. 
 .br
-Commmand-line option: \fB\-\-installroot\fP
+Command-line option: \fB\-\-installroot\fP
 
 .IP \fBdistroverpkg\fR
 The package used by yum to determine the "version" of the distribution. This
@@ -250,10 +255,12 @@ current metadata downloaded is less than this many seconds old then yum will
 not update the metadata against the repository.  If you find that
 yum is not downloading information on updates as often as you would like
 lower the value of this option. You can also change from the default of using
-seconds to using days, hours or minutes by appending a d, h or m respectivley.
+seconds to using days, hours or minutes by appending a d, h or m respectively.
 The default is 1.5 hours, to compliment yum-updatesd running once an hour.
 It's also possible to use the word "never", meaning that the metadata will
-never expire.
+never expire. Note that when using a metalink file the metalink must always
+be newer than the metadata for the repository, due to the validation, so this
+timeout also applies to the metalink file.
 
 .IP \fBmirrorlist_expire \fR
 Time (in seconds) after which the mirrorlist locally cached will expire. 
@@ -298,6 +305,59 @@ Can be set to 'all' or 'best'. All means install all possible arches for any pac
 want to install. Therefore yum install foo will install foo.i386 and foo.x86_64 on x86_64, 
 if it is available. Best means install the best arch for this platform, only.
 
+.IP \fBbugtracker_url \fR
+Url where bugs should be filed for yum. Configurable for local versions or distro-specific
+bugtrackers.
+
+.IP \fBcolor \fR
+Display colorized output automatically, depending on the output terminal,
+always (using ANSI codes) or never.
+Command-line option: \fB\-\-color\fP
+
+.IP \fBcolor_list_installed_older \fR
+The colorization/highlighting for pacakges in list/info installed which are
+older than the latest available package with the same name and arch.
+Default is `bold'.
+Possible values are a comma seperated list containing: bold, blink, dim,
+reverse, underline, fg:black, fg:red, fg:green, fg:yellow, fg:blue, fg:magenta,
+fg:cyan, fg:white, bg:black, bg:red, bg:green, bg:yellow, bg:blue, bg:magenta,
+bg:cyan, bg:white.
+
+.IP \fBcolor_list_installed_newer \fR
+The colorization/highlighting for pacakges in list/info installed which are
+newer than the latest available package with the same name and arch.
+Default is `bold,yellow'.
+See color_list_installed_older for possible values.
+
+.IP \fBcolor_list_installed_extra \fR
+The colorization/highlighting for pacakges in list/info installed which has
+no available package with the same name and arch.
+Default is `bold,red'.
+See color_list_installed_older for possible values.
+
+.IP \fBcolor_list_available_upgrade \fR
+The colorization/highlighting for pacakges in list/info available which is
+an upgrade for the latest installed package with the same name and arch.
+Default is `bold,blue'.
+See color_list_installed_older for possible values.
+
+.IP \fBcolor_list_available_downgrade \fR
+The colorization/highlighting for pacakges in list/info available which is
+a downgrade for the latest installed package with the same name and arch.
+Default is `dim,cyan'.
+See color_list_installed_older for possible values.
+
+.IP \fBcolor_list_available_install \fR
+The colorization/highlighting for pacakges in list/info available which has
+no installed package with the same name and arch.
+Default is `normal'.
+See color_list_installed_older for possible values.
+
+.IP \fBcolor_search_match \fR
+The colorization/highlighting for text matches in search.
+Default is `bold'.
+See color_list_installed_older for possible values.
+
 .SH "[repository] OPTIONS"
 .LP 
 The repository section(s) take the following form:
@@ -338,6 +398,16 @@ you've been warned.
 You can use HTTP basic auth by prepending "user:password@" to the server
 name in the baseurl line.  For example: "baseurl=http://user:passwd@example.com/".
 
+.IP \fBmetalink\fR
+Specifies a URL to a metalink file for the repomd.xml, a list of mirrors for
+the entire repository are generated by converting the mirrors for the
+repomd.xml file to a baseurl. The metalink file also contains the latest
+timestamp from the data in the repomd.xml, the length of the repomd.xml and
+checksum data. This data is checked against any downloaded repomd.xml file
+and all of the information from the metalink file must match. This can be used
+instead of or with the \fBbaseurl\fR option. Substitution variables, described
+below, can be used with this option. This option disables the mirrorlist option.
+
 .IP \fBmirrorlist\fR
 Specifies a URL to a file containing a list of baseurls. This can be used
 instead of or with the \fBbaseurl\fR option. Substitution variables, described
@@ -349,6 +419,10 @@ Either `1' or `0'. This tells yum whether or not use this repository.
 .IP \fBgpgcheck\fR
 Either `1' or `0'. This tells yum whether or not it should perform a GPG
 signature check on the packages gotten from this repository.
+
+.IP \fBrepo_gpgcheck\fR
+Either `1' or `0'. This tells yum whether or not it should perform a GPG
+signature check on the repodata from this repository.
 
 .IP \fBgpgkey\fR
 A URL pointing to the ASCII-armoured GPG key file for the repository. This

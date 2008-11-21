@@ -114,7 +114,7 @@ class YumShell(cmd.Cmd):
         msg = """
     Shell specific arguments:
       config - set config options
-      repository (or repo) - enable/disable repositories
+      repository (or repo) - enable/disable/list repositories
       transaction (or ts) - list, reset or run the transaction set
       run - run the transaction set
       exit or quit - exit the shell
@@ -131,7 +131,7 @@ class YumShell(cmd.Cmd):
         elif arg in ['repo', 'repository']:
             msg = """
     %s arg [option]
-      list: lists repositories and their status
+      list: lists repositories and their status. option = [all] name/id glob
       enable: enable repositories. option = repository id
       disable: disable repositories. option = repository id
     """ % arg
@@ -214,7 +214,7 @@ class YumShell(cmd.Cmd):
                 elif cmd == 'errorlevel':
                     logginglevels.setErrorLevel(val)
         # bools
-        elif cmd in ['gpgcheck', 'obsoletes', 'assumeyes']:
+        elif cmd in ['gpgcheck', 'repo_gpgcheck', 'obsoletes', 'assumeyes']:
             opts = self._shlex_split(args)
             if not opts:
                 self.verbose_logger.log(logginglevels.INFO_2, '%s: %s', cmd,
@@ -257,7 +257,7 @@ class YumShell(cmd.Cmd):
             cmds = self._shlex_split(args)
 
             if not cmds:
-                cmds = ['all']
+                cmds = ['enabled']
             cmds.insert(0, 'repolist')
             self.base.cmds = cmds
 
@@ -272,6 +272,9 @@ class YumShell(cmd.Cmd):
             repos = self._shlex_split(args)
             for repo in repos:
                 try:
+                    #  Setup the sacks/repos, we need this because we are about
+                    # to setup the enabled one. And having some setup is bad.
+                    self.base.pkgSack
                     changed = self.base.repos.enableRepo(repo)
                 except Errors.ConfigError, e:
                     self.logger.critical(e)
@@ -334,11 +337,13 @@ class YumShell(cmd.Cmd):
                 if e.errno == 32:
                     self.logger.critical('\n\nExiting on Broken Pipe')
             else:
-                if returnval != 0:
-                    self.verbose_logger.info('Transaction did not run.')
+                if returnval not in [0,1]:
+                    self.verbose_logger.info('Transaction encountered a serious error.')
                 else:
+                    if returnval == 1:
+                        self.verbose_logger.info('There were non-fatal errors in the transaction')
                     self.verbose_logger.log(logginglevels.INFO_2,
                         'Finished Transaction')
-                    self.base.closeRpmDB()
+                self.base.closeRpmDB()
 
 

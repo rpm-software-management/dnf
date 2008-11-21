@@ -20,7 +20,6 @@ Entrance point for the yum command line interface.
 
 import os
 import sys
-import locale
 import logging
 import time # test purposes only
 
@@ -28,28 +27,15 @@ from yum import Errors
 from yum import plugins
 from yum import logginglevels
 from yum import _
+from yum.misc import to_unicode
+import yum.misc
 import cli
 
 
 def main(args):
     """This does all the real work"""
 
-    # This test needs to be before locale.getpreferredencoding() as that
-    # does setlocale(LC_CTYPE, "")
-    try:
-        locale.setlocale(locale.LC_ALL, '')
-        # set time to C so that we output sane things in the logs (#433091)
-        locale.setlocale(locale.LC_TIME, 'C')
-    except locale.Error, e:
-        # default to C locale if we get a failure.
-        print >> sys.stderr, 'Failed to set locale, defaulting to C'
-        os.environ['LC_ALL'] = 'C'
-        locale.setlocale(locale.LC_ALL, 'C')
-        
-    if True: # not sys.stdout.isatty():
-        import codecs
-        sys.stdout = codecs.getwriter(locale.getpreferredencoding())(sys.stdout)
-        sys.stdout.errors = 'replace'
+    yum.misc.setup_locale(override_time=True)
 
     def exUserCancel():
         logger.critical(_('\n\nExiting on user cancel'))
@@ -74,7 +60,7 @@ def main(args):
         return 1
 
     def exFatal(e):
-        logger.critical('\n\n%s', unicode(e))
+        logger.critical('\n\n%s', to_unicode(e))
         if unlock(): return 200
         return 1
 
@@ -192,7 +178,7 @@ def main(args):
 
     # Run the transaction
     try:
-        base.doTransaction()
+        return_code = base.doTransaction()
     except plugins.PluginYumExit, e:
         return exPluginExit(e)
     except Errors.YumBaseError, e:
@@ -204,7 +190,7 @@ def main(args):
 
     verbose_logger.log(logginglevels.INFO_2, _('Complete!'))
     if unlock(): return 200
-    return 0
+    return return_code
 
 def hotshot(func, *args, **kwargs):
     import hotshot.stats, os.path

@@ -25,9 +25,7 @@ from Errors import CompsException
 # switch all compsexceptions to grouperrors after api break
 import fnmatch
 import re
-import gzip
-import bz2
-from yum.misc import to_unicode
+from yum.misc import to_unicode, get_my_lang_code
 
 lang_attr = '{http://www.w3.org/XML/1998/namespace}lang'
 
@@ -40,42 +38,34 @@ def parse_boolean(strng):
 def parse_number(strng):
     return int(strng)
 
-class Group(object):
-    def __init__(self, elem=None):
-        self.user_visible = True
-        self.default = False
-        self.selected = False
-        self.name = ""
-        self.description = ""
-        self.translated_name = {}
-        self.translated_description = {}
-        self.mandatory_packages = {}
-        self.optional_packages = {}
-        self.default_packages = {}
-        self.conditional_packages = {}
-        self.langonly = None 
-        self.groupid = None
-        self.display_order = 1024
-        self.installed = False
-        self.toremove = False
-        
+class CompsObj(object):
+    """ Group/Category helper object. """
 
-        if elem:
-            self.parse(elem)
-        
+    # Could be the same as ui_name?
     def __str__(self):
+        """ Return the "name" of the object for the C locale. """
         return self.name
+
+    @property
+    def ui_name(self):
+        """ Return the "name" of the object for the current locale. """
+        return self.nameByLang(get_my_lang_code())
     
-    def _packageiter(self):
-        # Gah, FIXME: real iterator/class
-        lst = self.mandatory_packages.keys() + \
-              self.optional_packages.keys() + \
-              self.default_packages.keys() + \
-              self.conditional_packages.keys() 
-        
-        return lst
-    
-    packages = property(_packageiter)
+    @property
+    def ui_description(self):
+        """ Return the "description" of the object for the current locale. """
+        return self.descriptionByLang(get_my_lang_code())
+
+    def __cmp__(self, other):
+        if other is None:
+            return 1
+
+        if self.display_order > other.display_order:
+            return 1
+        if self.display_order < other.display_order:
+            return -1
+
+        return cmp(self.ui_name, other.ui_name)
 
     def _expand_languages(self, lang):
         import gettext
@@ -100,12 +90,47 @@ class Group(object):
 
         return to_unicode(self.name)
 
-
     def descriptionByLang(self, lang):
         for langcode in self._expand_languages(lang):
             if self.translated_description.has_key(langcode):
                 return to_unicode(self.translated_description[langcode])
         return to_unicode(self.description)
+
+
+class Group(CompsObj):
+    """ Group object parsed from group data in each repo. and merged. """
+
+    def __init__(self, elem=None):
+        self.user_visible = True
+        self.default = False
+        self.selected = False
+        self.name = ""
+        self.description = ""
+        self.translated_name = {}
+        self.translated_description = {}
+        self.mandatory_packages = {}
+        self.optional_packages = {}
+        self.default_packages = {}
+        self.conditional_packages = {}
+        self.langonly = None ## what the hell is this?
+        self.groupid = None
+        self.display_order = 1024
+        self.installed = False
+        self.toremove = False
+
+        if elem:
+            self.parse(elem)
+
+    def _packageiter(self):
+        # Gah, FIXME: real iterator/class
+        lst = self.mandatory_packages.keys() + \
+              self.optional_packages.keys() + \
+              self.default_packages.keys() + \
+              self.conditional_packages.keys()
+
+        return lst
+
+    packages = property(_packageiter)
 
     def parse(self, elem):
         for child in elem:
@@ -222,38 +247,38 @@ class Group(object):
    <id>%s</id>
    <default>%s</default>
    <uservisible>%s</uservisible>
-   <display_order>%s</display_order>\n""" % (self.groupid, str(self.default), 
-                                  str(self.user_visible), self.display_order)
+   <display_order>%s</display_order>\n""" % (self.groupid, str(self.default).lower(), 
+                                  str(self.user_visible).lower(), self.display_order)
    
         if self.langonly:
             msg += """   <langonly>%s</langonly>""" % self.langonly
             
         msg +="""   <name>%s</name>\n""" % self.name
-        for (lang, val) in self.translated_name.items():
+        for (lang, val) in sorted(self.translated_name.items()):
             msg += """   <name xml:lang="%s">%s</name>\n""" % (lang, val)
         
         msg += """   <description>%s</description>\n""" % self.description
-        for (lang, val) in self.translated_description.items():
+        for (lang, val) in sorted(self.translated_description.items()):
             msg += """   <description xml:lang="%s">%s</description>\n""" % (lang, val)
 
         msg += """    <packagelist>\n"""
-        for pkg in self.mandatory_packages.keys():
+        for pkg in sorted(self.mandatory_packages):
             msg += """      <packagereq type="mandatory">%s</packagereq>\n""" % pkg
-        for pkg in self.default_packages.keys():
+        for pkg in sorted(self.default_packages):
             msg += """      <packagereq type="default">%s</packagereq>\n""" % pkg
-        for pkg in self.optional_packages.keys():
+        for pkg in sorted(self.optional_packages):
             msg += """      <packagereq type="optional">%s</packagereq>\n""" % pkg
-        for (pkg, req) in self.conditional_packages.items():
+        for (pkg, req) in sorted(self.conditional_packages.items()):
             msg += """      <packagereq type="conditional" requires="%s">%s</packagereq>\n""" % (req, pkg)
         msg += """    </packagelist>\n"""
         msg += """  </group>"""
 
         return msg      
-        
-        
 
 
-class Category(object):
+class Category(CompsObj):
+    """ Category object parsed from group data in each repo. and merged. """
+
     def __init__(self, elem=None):
         self.name = ""
         self.categoryid = None
@@ -266,9 +291,6 @@ class Category(object):
         if elem:
             self.parse(elem)
             
-    def __str__(self):
-        return self.name
-    
     def _groupiter(self):
         return self._groups.keys()
     
@@ -332,7 +354,7 @@ class Category(object):
                 self.translated_description[lang] = obj.translated_description[lang]
 
     def xml(self):
-        """write out an xml stanza for the group object"""
+        """write out an xml stanza for the category object"""
         msg ="""        
   <category>
    <id>%s</id>
@@ -354,6 +376,7 @@ class Category(object):
 
         return msg                
         
+
 class Comps(object):
     def __init__(self, overwrite_groups=False):
         self._groups = {}
@@ -365,10 +388,11 @@ class Comps(object):
 
 
     def __sort_order(self, item1, item2):
+        """ This sorts for machines, so is the same in all locales. """
         if item1.display_order > item2.display_order:
             return 1
         elif item1.display_order == item2.display_order:
-            return 0
+            return cmp(item1.name, item2.name)
         else:
             return -1
     
@@ -381,12 +405,9 @@ class Comps(object):
         cats = self._categories.values()
         cats.sort(self.__sort_order)
         return cats
-        
     
     groups = property(get_groups)
     categories = property(get_categories)
-    
-    
     
     def has_group(self, grpid):
         exists = self.return_groups(grpid)
@@ -404,7 +425,7 @@ class Comps(object):
 
         return None
 
-    def return_groups(self, group_pattern):
+    def return_groups(self, group_pattern, case_sensitive=False):
         """return all groups which match either by glob or exact match"""
         returns = {}
 
@@ -414,8 +435,12 @@ class Comps(object):
                 thisgroup = self._groups[item]
                 returns[thisgroup.groupid] = thisgroup
                 continue
-                            
-            match = re.compile(fnmatch.translate(item)).match
+            
+            if case_sensitive:
+                match = re.compile(fnmatch.translate(item)).match
+            else:
+                match = re.compile(fnmatch.translate(item), flags=re.I).match
+
             for group in self.groups:
                 names = [ group.name, group.groupid ]
                 names.extend(group.translated_name.values())
@@ -425,7 +450,46 @@ class Comps(object):
 
         return returns.values()
 
+    #  This is close to returnPackages() etc. API ... need to std. these names
+    # the above return_groups uses different, but equal, API.
+    def return_categories(self, pattern, ignore_case=True):
+        """return all categories which match either by glob or exact match"""
+        returns = {}
 
+        for item in pattern.split(','):
+            item = item.strip()
+            if self._categories.has_key(item):
+                cat = self._categories[item]
+                returns[cat.categoryid] = cat
+                continue
+
+            if not ignore_case:
+                match = re.compile(fnmatch.translate(item)).match
+            else:
+                match = re.compile(fnmatch.translate(item), flags=re.I).match
+
+            for cat in self.categories:
+                names = [ cat.name, cat.categoryid ]
+                names.extend(cat.translated_name.values())
+                for name in names:
+                    if match(name):
+                        returns[cat.categoryid] = cat
+
+        return returns.values()
+
+    def add_group(self, group):
+        if self._groups.has_key(group.groupid):
+            thatgroup = self._groups[group.groupid]
+            thatgroup.add(group)
+        else:
+            self._groups[group.groupid] = group
+
+    def add_category(self, category):
+        if self._categories.has_key(category.categoryid):
+            thatcat = self._categories[category.categoryid]
+            thatcat.add(category)
+        else:
+            self._categories[category.categoryid] = category
 
     def add(self, srcfile = None):
         if not srcfile:
@@ -451,19 +515,10 @@ class Comps(object):
             for event, elem in parser:
                 if elem.tag == "group":
                     group = Group(elem)
-                    if self._groups.has_key(group.groupid):
-                        thatgroup = self._groups[group.groupid]
-                        thatgroup.add(group)
-                    else:
-                        self._groups[group.groupid] = group
-
+                    self.add_group(group)
                 if elem.tag == "category":
                     category = Category(elem)
-                    if self._categories.has_key(category.categoryid):
-                        thatcat = self._categories[category.categoryid]
-                        thatcat.add(category)
-                    else:
-                        self._categories[category.categoryid] = category
+                    self.add_category(category)
         except SyntaxError, e:
             raise CompsException, "comps file is empty/damaged"
             del parser
@@ -518,7 +573,7 @@ class Comps(object):
         for c in self.get_categories():
             msg += c.xml()
 
-        msg += """</comps>\n"""
+        msg += """\n</comps>\n"""
         
         return msg
             

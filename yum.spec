@@ -1,11 +1,11 @@
 Summary: RPM installer/updater
 Name: yum
-Version: 3.2.16
+Version: 3.2.20
 Release: 0
-License: GPL
+License: GPLv2+
 Group: System Environment/Base
 Source: %{name}-%{version}.tar.gz
-URL: http://linux.duke.edu/yum/
+URL: http://yum.baseurl.org/
 BuildRoot: %{_tmppath}/%{name}-%{version}root
 BuildArchitectures: noarch
 BuildRequires: python
@@ -99,6 +99,18 @@ exit 0
 %{_mandir}/man*/yum-updatesd*
 
 %changelog
+* Mon Oct 27 2008 Seth Vidal <skvidal at fedoraproject.org>
+- 3.2.20
+
+* Mon Aug 25 2008 Seth Vidal <skvidal at fedoraproject.org>
+- 3.2.19
+
+* Thu Aug  7 2008 Seth Vidal <skvidal at fedoraproject.org>
+- 3.2.18
+
+* Wed Jul  8 2008 Seth Vidal <skvidal at fedoraproject.org>
+- 3.2.17 
+
 * Wed May 14 2008 Seth Vidal <skvidal at fedoraproject.org>
 -  3.2.16
 

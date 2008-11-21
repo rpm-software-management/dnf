@@ -138,12 +138,38 @@ class SimpleCliCallBack(RPMBaseCallback):
         if msgs:
             print msgs,
 
+#  This is ugly, but atm. rpm can go insane and run the "cleanup" phase
+# without the "install" phase if it gets an exception in it's callback. The
+# following means that we don't really need to know/care about that in the
+# display callback functions.
+#  Note try/except's in RPMTransaction are for the same reason.
+class _WrapNoExceptions:
+    def __init__(self, parent):
+        self.__parent = parent
+
+    def __getattr__(self, name):
+        """ Wraps all access to the parent functions. This is so it'll eat all
+            exceptions because rpm doesn't like exceptions in the callback. """
+        func = getattr(self.__parent, name)
+
+        def newFunc(*args, **kwargs):
+            try:
+                func(*args, **kwargs)
+            except:
+                pass
+
+        newFunc.__name__ = func.__name__
+        newFunc.__doc__ = func.__doc__
+        newFunc.__dict__.update(func.__dict__)
+        return newFunc
+
 class RPMTransaction:
     def __init__(self, base, test=False, display=NoOutputCallBack):
         if not callable(display):
             self.display = display
         else:
             self.display = display() # display callback
+        self.display = _WrapNoExceptions(self.display)
         self.base = base # base yum object b/c we need so much
         self.test = test # are we a test?
         self.trans_running = False
@@ -160,14 +186,29 @@ class RPMTransaction:
         if not os.path.exists(self.base.conf.persistdir):
             os.makedirs(self.base.conf.persistdir) # make the dir, just in case
 
+    # Error checking? -- these should probably be where else
+    def _fdSetNonblock(self, fd):
+        """ Set the Non-blocking flag for a filedescriptor. """
+        flag = os.O_NONBLOCK
+        current_flags = fcntl.fcntl(fd, fcntl.F_GETFL)
+        if current_flags & flag:
+            return
+        fcntl.fcntl(fd, fcntl.F_SETFL, current_flags | flag)
+
+    def _fdSetCloseOnExec(self, fd):
+        """ Set the close on exec. flag for a filedescriptor. """
+        flag = fcntl.FD_CLOEXEC
+        current_flags = fcntl.fcntl(fd, fcntl.F_GETFD)
+        if current_flags & flag:
+            return
+        fcntl.fcntl(fd, fcntl.F_SETFD, current_flags | flag)
+
     def _setupOutputLogging(self):
         # UGLY... set up the transaction to record output from scriptlets
         (r, w) = os.pipe()
         # need fd objects, and read should be non-blocking
         self._readpipe = os.fdopen(r, 'r')
-        fcntl.fcntl(self._readpipe.fileno(), fcntl.F_SETFL,
-                    fcntl.fcntl(self._readpipe.fileno(),
-                                fcntl.F_GETFL) | os.O_NONBLOCK)
+        self._fdSetNonblock(self._readpipe.fileno())
         self._writepipe = os.fdopen(w, 'w')
         self.base.ts.scriptFd = self._writepipe.fileno()
         rpm.setVerbosity(rpm.RPMLOG_INFO)
@@ -219,6 +260,7 @@ class RPMTransaction:
             except (IOError, OSError), e:
                 self.display.errorlog('could not open ts_done file: %s' % e)
                 return
+            self._fdSetCloseOnExec(self._ts_done.fileno())
         
         # walk back through self._te_tuples
         # make sure the package and the action make some kind of sense
@@ -255,8 +297,17 @@ class RPMTransaction:
         # hope springs eternal that this isn't wrong
         msg = '%s %s:%s-%s-%s.%s\n' % (t,e,n,v,r,a)
 
-        self._ts_done.write(msg)
-        self._ts_done.flush()
+        try:
+            self._ts_done.write(msg)
+            self._ts_done.flush()
+        except (IOError, OSError), e:
+            try:
+                #  Having incomplete transactions is probably worse than having
+                # nothing.
+                del self._ts_done
+                os.unlink(self.ts_done_fn)
+            except:
+                pass
         self._te_tuples.pop(0)
     
     def ts_all(self):
@@ -296,12 +347,20 @@ class RPMTransaction:
             self.display.errorlog('could not open ts_all file: %s' % e)
             return
 
-        for (t,e,n,v,r,a) in self._te_tuples:
-            msg = "%s %s:%s-%s-%s.%s\n" % (t,e,n,v,r,a)
-            fo.write(msg)
-        fo.flush()
-        fo.close()
-    
+        try:
+            for (t,e,n,v,r,a) in self._te_tuples:
+                msg = "%s %s:%s-%s-%s.%s\n" % (t,e,n,v,r,a)
+                fo.write(msg)
+            fo.flush()
+            fo.close()
+        except (IOError, OSError), e:
+            try:
+                #  Having incomplete transactions is probably worse than having
+                # nothing.
+                os.unlink(self.ts_all_fn)
+            except:
+                pass
+
     def callback( self, what, bytes, total, h, user ):
         if what == rpm.RPMCALLBACK_TRANS_START:
             self._transStart( bytes, total, h )

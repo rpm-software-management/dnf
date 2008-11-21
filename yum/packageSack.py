@@ -57,6 +57,9 @@ class PackageSackBase(object):
         """return list of pkgobjects matching the nevra requested"""
         raise NotImplementedError()
 
+    def searchNames(self, names=[]):
+        raise NotImplementedError()
+
     def searchPO(self, po):
         """return list of package objects matching the name, epoch, ver, rel,
            arch of the package object passed in"""
@@ -88,12 +91,20 @@ class PackageSackBase(object):
         """return dict { packages -> list of matching requires }"""
         raise NotImplementedError()
 
-    def getConflicts(self, name, flags=None, version=(None, None, None)):
-        """return dict { packages -> list of matching conflicts }"""
+    def searchRequires(self, name):
+        """return list of package requiring the name (any evr and flag)"""
         raise NotImplementedError()
 
-    def getObsoletes(self, name, flags=None, version=(None, None, None)):
-        """return dict { packages -> list of matching obsoletes }"""
+    def searchProvides(self, name):
+        """return list of package providing the name (any evr and flag)"""
+        raise NotImplementedError()
+
+    def searchConflicts(self, name):
+        """return list of package conflicting with the name (any evr and flag)"""
+        raise NotImplementedError()
+
+    def searchObsoletes(self, name):
+        """return list of package obsoleting the name (any evr and flag)"""
         raise NotImplementedError()
 
     def returnObsoletes(self, newest=False):
@@ -118,24 +129,25 @@ class PackageSackBase(object):
         """delete a pkgobject"""
         raise NotImplementedError()
 
-    def returnPackages(self, repoid=None, patterns=None):
+    def returnPackages(self, repoid=None, patterns=None, ignore_case=False):
         """return list of all packages"""
         raise NotImplementedError()
 
-    def returnNewestByNameArch(self, naTup=None, patterns=None):
+    def returnNewestByNameArch(self, naTup=None,
+                               patterns=None, ignore_case=False):
         """return list of newest packages based on name, arch matching
            this means(in name.arch form): foo.i386 and foo.noarch are not
            compared to each other for highest version only foo.i386 and
            foo.i386 will be compared"""
         raise NotImplementedError()
 
-    def returnNewestByName(self, name=None):
+    def returnNewestByName(self, name=None, patterns=None, ignore_case=False):
         """return list of newest packages based on name matching
            this means(in name.arch form): foo.i386 and foo.noarch will
            be compared to each other for highest version"""
         raise NotImplementedError()
 
-    def simplePkgList(self, patterns=None):
+    def simplePkgList(self, patterns=None, ignore_case=False):
         """returns a list of pkg tuples (n, a, e, v, r)"""
         raise NotImplementedError()
 
@@ -221,8 +233,6 @@ class PackageSackBase(object):
                     req[r] = set()
                 req[r].add(po)
      
-     
-     
         for po in self.returnPackages(repoid=repoid):
             preq = 0
             for p in po.provides_names + po.filelist + po.dirlist + po.ghostlist:
@@ -282,6 +292,9 @@ class MetaSack(PackageSackBase):
         """return list of pkgobjects matching the nevra requested"""
         return self._computeAggregateListResult("searchNevra", name, epoch, ver, rel, arch)
 
+    def searchNames(self, names=[]):
+        return self._computeAggregateListResult("searchNames", names)
+
     def getProvides(self, name, flags=None, version=(None, None, None)):
         """return dict { packages -> list of matching provides }"""
         return self._computeAggregateDictResult("getProvides", name, flags, version)
@@ -290,13 +303,21 @@ class MetaSack(PackageSackBase):
         """return dict { packages -> list of matching requires }"""
         return self._computeAggregateDictResult("getRequires", name, flags, version)
 
-    def getConflicts(self, name, flags=None, version=(None, None, None)):
-        """return dict { packages -> list of matching provides }"""
-        return self._computeAggregateDictResult("getConflicts", name, flags, version)
+    def searchRequires(self, name):
+        """return list of package requiring the name (any evr and flag)"""
+        return self._computeAggregateListResult("searchRequires", name)
 
-    def getObsoletes(self, name, flags=None, version=(None, None, None)):
-        """return dict { packages -> list of matching requires }"""
-        return self._computeAggregateDictResult("getObsoletes", name, flags, version)
+    def searchProvides(self, name):
+        """return list of package providing the name (any evr and flag)"""
+        return self._computeAggregateListResult("searchProvides", name)
+
+    def searchConflicts(self, name):
+        """return list of package conflicting with the name (any evr and flag)"""
+        return self._computeAggregateListResult("searchConflicts", name)
+
+    def searchObsoletes(self, name):
+        """return list of package obsoleting the name (any evr and flag)"""
+        return self._computeAggregateListResult("searchObsoletes", name)
 
     def returnObsoletes(self, newest=False):
         """returns a dict of obsoletes dict[obsoleting pkgtuple] = [list of obs]"""
@@ -311,9 +332,12 @@ class MetaSack(PackageSackBase):
         
         # go through each of the keys of the obs dict and see if it is in the
         # sack of newest pkgs - if it is not - remove the entry
-        for obstup in obsdict.keys():
+        togo = []
+        for obstup in obsdict:
             if obstup not in newest_tups:
-                del obsdict[obstup]
+                togo.append(obstup)
+        for obstup in togo:
+            del obsdict[obstup]
         
         return obsdict
         
@@ -338,38 +362,47 @@ class MetaSack(PackageSackBase):
         obj.repo.sack.delPackage(obj)
 
 
-    def returnPackages(self, repoid=None, patterns=None):
+    def returnPackages(self, repoid=None, patterns=None, ignore_case=False):
         """return list of all packages, takes optional repoid"""
         if not repoid:
             return self._computeAggregateListResult("returnPackages",
-                                                    None, patterns)
-        return self.sacks[repoid].returnPackages(patterns=patterns)
+                                                    None, patterns, ignore_case)
+        return self.sacks[repoid].returnPackages(patterns=patterns,
+                                                 ignore_case=ignore_case)
 
-    def returnNewestByNameArch(self, naTup=None, patterns=None):
+    def returnNewestByNameArch(self, naTup=None,
+                               patterns=None, ignore_case=False):
         """return list of newest packages based on name, arch matching
            this means(in name.arch form): foo.i386 and foo.noarch are not
            compared to each other for highest version only foo.i386 and
            foo.i386 will be compared"""
         calr = self._computeAggregateListResult
-        pkgs = calr("returnNewestByNameArch", naTup, patterns)
+        pkgs = calr("returnNewestByNameArch", naTup, patterns, ignore_case)
         pkgs = packagesNewestByNameArch(pkgs)
-        if not pkgs:
-            raise Errors.PackageSackError, 'No Package Matching %s' % name          
+        if not pkgs and (naTup or patterns):
+            ui_pats = ", ".join(patterns or [])
+            raise PackageSackError, 'No Package Matching %s' % ui_pats
         return pkgs
                 
-    def returnNewestByName(self, name=None):
+    def returnNewestByName(self, name=None, patterns=None, ignore_case=False):
         """return list of newest packages based on name matching
            this means(in name.arch form): foo.i386 and foo.noarch will
            be compared to each other for highest version"""
-        pkgs = self._computeAggregateListResult("returnNewestByName", name)
+        pkgs = self._computeAggregateListResult("returnNewestByName", name,
+                                                patterns, ignore_case)
         pkgs = packagesNewestByName(pkgs)
-        if not pkgs:
-            raise Errors.PackageSackError, 'No Package Matching %s' % name        
+        if not pkgs and (name or patterns):
+            if name:
+                ui_pats = name
+            else:
+                ui_pats = ", ".join(patterns or [])
+            raise PackageSackError, 'No Package Matching %s' % ui_pats
         return pkgs
         
-    def simplePkgList(self, patterns=None):
+    def simplePkgList(self, patterns=None, ignore_case=False):
         """returns a list of pkg tuples (n, a, e, v, r)"""
-        return self._computeAggregateListResult("simplePkgList", patterns)
+        return self._computeAggregateListResult("simplePkgList",
+                                                patterns, ignore_case)
 
     def printPackages(self):
         for sack in self.sacks.values():
@@ -510,20 +543,14 @@ class PackageSack(PackageSackBase):
             result.append(po)
         return result
         
-    def _getPRCO(self, PRCO, name, flags=None, version=(None, None, None)):
-        """return dict { packages -> list of matching RCO }"""
-        self._checkIndexes(failure='build')
-        result = { }
-        for po in getattr(self, PRCO).get(name, []):
-            hits = po.matchingPrcos(PRCO, (name, flags, version))
-            if hits:
-                result[po] = hits
-        return result
-
     def getProvides(self, name, flags=None, version=(None, None, None)):
         """return dict { packages -> list of matching provides }"""
         self._checkIndexes(failure='build')
-        result = self._getPRCO('provides', name, flags, version)
+        result = { }
+        for po in self.provides.get(name, []):
+            hits = po.matchingPrcos('provides', (name, flags, version))
+            if hits:
+                result[po] = hits
         if name[0] == '/':
             hit = (name, None, (None, None, None))
             for po in self.searchFiles(name):
@@ -531,11 +558,50 @@ class PackageSack(PackageSackBase):
         return result
 
     def getRequires(self, name, flags=None, version=(None, None, None)):
-        return self._getPRCO('requires', name, flags, version)
-    def getConflicts(self, name, flags=None, version=(None, None, None)):
-        return self._getPRCO('conflicts', name, flags, version)
-    def getObsoletes(self, name, flags=None, version=(None, None, None)):
-        return self._getPRCO('obsoletes', name, flags, version)
+        """return dict { packages -> list of matching requires }"""
+        self._checkIndexes(failure='build')
+        result = { }
+        for po in self.requires.get(name, []):
+            hits = po.matchingPrcos('requires', (name, flags, version))
+            if hits:
+                result[po] = hits
+        return result
+
+    def searchRequires(self, name):
+        """return list of package requiring the name (any evr and flag)"""
+        self._checkIndexes(failure='build')        
+        if self.requires.has_key(name):
+            return self.requires[name]
+        else:
+            return []
+
+    def searchProvides(self, name):
+        """return list of package providing the name (any evr and flag)"""
+        # FIXME - should this do a pkgobj.checkPrco((name, flag, (e,v,r,))??
+        # has to do a searchFiles and a searchProvides for things starting with /
+        self._checkIndexes(failure='build')        
+        returnList = []
+        if name[0] == '/':
+             returnList.extend(self.searchFiles(name))
+        if self.provides.has_key(name):
+            returnList.extend(self.provides[name])
+        return returnList
+
+    def searchConflicts(self, name):
+        """return list of package conflicting with the name (any evr and flag)"""
+        self._checkIndexes(failure='build')        
+        if self.conflicts.has_key(name):
+            return self.conflicts[name]
+        else:
+            return []
+
+    def searchObsoletes(self, name):
+        """return list of package obsoleting the name (any evr and flag)"""
+        self._checkIndexes(failure='build')        
+        if self.obsoletes.has_key(name):
+            return self.obsoletes[name]
+        else:
+            return []
 
     def returnObsoletes(self, newest=False):
         """returns a dict of obsoletes dict[obsoleting pkgtuple] = [list of obs]"""
@@ -543,11 +609,7 @@ class PackageSack(PackageSackBase):
         for po in self.returnPackages():
             if len(po.obsoletes) == 0:
                 continue
-
-            if not obs.has_key(po.pkgtup):
-                obs[po.pkgtup] = po.obsoletes
-            else:
-                obs[po.pkgtup].extend(po.obsoletes)
+            obs.setdefault(po.pkgtup, []).extend(po.obsoletes)
 
         if not newest:
             return obs
@@ -558,9 +620,12 @@ class PackageSack(PackageSackBase):
 
         # go through each of the keys of the obs dict and see if it is in the
         # sack of newest pkgs - if it is not - remove the entry
-        for obstup in obs.keys():
-            if obstup not in  newest_tups:
-                del obs[obstup]
+        togo = []
+        for obstup in obs:
+            if obstup not in newest_tups:
+                togo.append(obstup)
+        for obstup in togo:
+            del obs[obstup]
             
         return obs
         
@@ -674,7 +739,7 @@ class PackageSack(PackageSackBase):
         if self.indexesBuilt: 
             self._delPackageFromIndex(obj)
         
-    def returnPackages(self, repoid=None, patterns=None):
+    def returnPackages(self, repoid=None, patterns=None, ignore_case=False):
         """return list of all packages, takes optional repoid"""
         returnList = []
         if repoid is None:
@@ -689,7 +754,8 @@ class PackageSack(PackageSackBase):
         
         return returnList
 
-    def returnNewestByNameArch(self, naTup=None, patterns=None):
+    def returnNewestByNameArch(self, naTup=None,
+                               patterns=None, ignore_case=False):
         """return list of newest packages based on name, arch matching
            this means(in name.arch form): foo.i386 and foo.noarch are not 
            compared to each other for highest version only foo.i386 and 
@@ -703,14 +769,15 @@ class PackageSack(PackageSackBase):
             if (not where):
                 raise PackageSackError, 'No Package Matching %s.%s' % naTup
         else:
-            where = self.returnPackages(patterns=patterns)
+            where = self.returnPackages(patterns=patterns,
+                                        ignore_case=ignore_case)
 
         for pkg in where:
             if not highdict.has_key((pkg.name, pkg.arch)):
                 highdict[(pkg.name, pkg.arch)] = pkg
             else:
                 pkg2 = highdict[(pkg.name, pkg.arch)]
-                if pkg.EVR > pkg2.EVR:
+                if pkg.verGT(pkg2):
                     highdict[(pkg.name, pkg.arch)] = pkg
         
         if naTup:
@@ -721,20 +788,21 @@ class PackageSack(PackageSackBase):
         
         return highdict.values()
         
-    def returnNewestByName(self, name=None, patterns=None):
+    def returnNewestByName(self, name=None, patterns=None, ignore_case=False):
         """return list of newest packages based on name matching
            this means(in name.arch form): foo.i386 and foo.noarch will
            be compared to each other for highest version"""
         highdict = {}
-        for pkg in self.returnPackages(patterns=patterns):
+        for pkg in self.returnPackages(patterns=patterns,
+                                       ignore_case=ignore_case):
             if not highdict.has_key(pkg.name):
                 highdict[pkg.name] = []
                 highdict[pkg.name].append(pkg)
             else:
                 pkg2 = highdict[pkg.name][0]
-                if pkg.EVR > pkg2.EVR:
+                if pkg.verGT(pkg2):
                     highdict[pkg.name] = [pkg]
-                if pkg.EVR == pkg2.EVR:
+                if pkg.verEQ(pkg2):
                     highdict[pkg.name].append(pkg)
                 
         if name:
@@ -751,11 +819,12 @@ class PackageSack(PackageSackBase):
 
         return returnlist
            
-    def simplePkgList(self, patterns=None):
+    def simplePkgList(self, patterns=None, ignore_case=False):
         """returns a list of pkg tuples (n, a, e, v, r) optionally from a single repoid"""
         
         # Don't cache due to excludes
-        return [pkg.pkgtup for pkg in self.returnPackages(patterns=patterns)]
+        return [pkg.pkgtup for pkg in self.returnPackages(patterns=patterns,
+                                                          ignore_case=False)]
                        
     def printPackages(self):
         for pkg in self.returnPackages():
@@ -789,11 +858,14 @@ def packagesNewestByName(pkgs):
     newest = {}
     for pkg in pkgs:
         key = pkg.name
-        if key not in newest or pkg > newest[key][0]:
+
+        # Can't use pkg.__cmp__ because it takes .arch into account
+        cval = 1
+        if key in newest:
+            cval = pkg.verCMP(newest[key][0])
+        if cval > 0:
             newest[key] = [pkg]
-        elif pkg < newest[key][0]:
-            continue
-        else:
+        elif cval == 0:
             newest[key].append(pkg)
     ret = []
     for vals in newest.itervalues():
@@ -804,7 +876,7 @@ def packagesNewestByNameArch(pkgs):
     newest = {}
     for pkg in pkgs:
         key = (pkg.name, pkg.arch)
-        if key in newest and pkg <= newest[key]:
+        if key in newest and pkg.verLE(newest[key]):
             continue
         newest[key] = pkg
     return newest.values()

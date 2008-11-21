@@ -26,6 +26,9 @@ import gzip
 
 from textwrap import wrap
 from yum.yumRepo import YumRepository
+from yum.misc import to_xml
+
+import rpmUtils.miscutils
 
 try:
     from xml.etree import cElementTree
@@ -83,7 +86,7 @@ class UpdateNotice(object):
 """ % self._md
 
         if self._md['updated'] and self._md['updated'] != self._md['issued']:
-            head += "    Updated : %(updated)s" % self._md['updated']
+            head += "    Updated : %s" % self._md['updated']
 
         # Add our bugzilla references
         bzs = filter(lambda r: r['type'] == 'bugzilla', self._md['references'])
@@ -102,13 +105,19 @@ class UpdateNotice(object):
                 cvelist += " %s\n\t    :" % cve['id']
             head += cvelist[:-1].rstrip() + '\n'
 
-        desc = wrap(self._md['description'], width=64,
-                    subsequent_indent=' ' * 12 + ': ')
-        head += "Description : %s\n" % '\n'.join(desc)
+        if self._md['description'] is not None:
+            desc = wrap(self._md['description'], width=64,
+                        subsequent_indent=' ' * 12 + ': ')
+            head += "Description : %s\n" % '\n'.join(desc)
+
+        #  Get a list of arches we care about:
+        arches = set(rpmUtils.arch.getArchList())
 
         filelist = "      Files :"
         for pkg in self._md['pkglist']:
             for file in pkg['packages']:
+                if file['arch'] not in arches:
+                    continue
                 filelist += " %s\n\t    :" % file['filename']
         head += filelist[:-1].rstrip()
 
@@ -225,6 +234,60 @@ class UpdateNotice(object):
                 self._md['reboot_suggested'] = True
         return package
 
+    def xml(self):
+        """Generate the xml for this update notice object"""
+        msg="""
+<update from="%s" status="%s" type="%s" version="%s">
+  <id>%s</id>
+  <title>%s</title>
+  <release>%s</release>
+  <issued date="%s"/>
+  <description>%s</description>\n""" % (to_xml(self._md['from']),
+                to_xml(self._md['status']), to_xml(self._md['type']), 
+                to_xml(self._md['version']),to_xml(self._md['update_id']),
+                to_xml(self._md['title']), to_xml(self._md['release']),
+                to_xml(self._md['issued'], attrib=True), 
+                to_xml(self._md['description']))
+        
+        if self._md['references']:
+            msg += """  <references>\n"""
+            for ref in self._md['references']:
+                if ref['title']:
+                    msg += """    <reference href="%s" id="%s" title="%s" type="%s"/>\n""" % (
+                    to_xml(ref['href'], attrib=True), to_xml(ref['id'], attrib=True),
+                    to_xml(ref['title'], attrib=True), to_xml(ref['type'], attrib=True))
+                else:
+                    msg += """    <reference href="%s" id="%s"  type="%s"/>\n""" % (
+                    to_xml(ref['href'], attrib=True), to_xml(ref['id'], attrib=True),
+                    to_xml(ref['type'], attrib=True))
+
+            msg += """  </references>\n"""
+        
+        if self._md['pkglist']:
+            msg += """  <pkglist>\n"""
+            for coll in self._md['pkglist']:
+                msg += """    <collection short="%s">\n      <name>%s</name>\n""" % (
+                      to_xml(coll['short'], attrib=True),
+                      to_xml(coll['name']))
+  
+                for pkg in coll['packages']:
+                    msg += """      <package arch="%s" name="%s" release="%s" src="%s" version="%s">
+        <filename>%s</filename>
+      </package>\n""" % (to_xml(pkg['arch'], attrib=True),
+                                to_xml(pkg['name'], attrib=True),
+                                to_xml(pkg['release'], attrib=True),
+                                to_xml(pkg['src'], attrib=True),
+                                to_xml(pkg['version'], attrib=True),
+                                to_xml(pkg['filename']))
+                msg += """    </collection>\n"""
+                msg += """  </pkglist>\n"""
+        msg += """</update>\n"""
+        return msg
+
+def _rpm_tup_vercmp(tup1, tup2):
+    """ Compare two "std." tuples, (n, a, e, v, r). """
+    return rpmUtils.miscutils.compareEVR((tup1[2], tup1[3], tup1[4]),
+                                         (tup2[2], tup2[3], tup2[4]))
 
 class UpdateMetadata(object):
 
@@ -234,12 +297,15 @@ class UpdateMetadata(object):
 
     def __init__(self):
         self._notices = {}
-        self._cache = {}    # a pkg name => notice cache for quick lookups
+        self._cache = {}    # a pkg nvr => notice cache for quick lookups
+        self._no_cache = {}    # a pkg name only => notice list
         self._repos = []    # list of repo ids that we've parsed
 
-    def get_notices(self):
+    def get_notices(self, name=None):
         """ Return all notices. """
-        return self._notices.values()
+        if name is None:
+            return self._notices.values()
+        return name in self._no_cache and self._no_cache[name] or []
 
     notices = property(get_notices)
 
@@ -251,6 +317,36 @@ class UpdateMetadata(object):
         if type(nvr) in (type([]), type(())):
             nvr = '-'.join(nvr)
         return self._cache.has_key(nvr) and self._cache[nvr] or None
+
+    #  The problem with the above "get_notice" is that not everyone updates
+    # daily. So if you are at pkg-1, pkg-2 has a security notice, and pkg-3
+    # has a BZ fix notice. All you can see is the BZ notice for the new "pkg-3"
+    # with the above.
+    #  So now instead you lookup based on the _installed_ pkg.pkgtup, and get
+    # two notices, in order: [(pkg-3, notice), (pkg-2, notice)]
+    # the reason for the sorting order is that the first match will give you
+    # the minimum pkg you need to move to.
+    def get_applicable_notices(self, pkgtup):
+        """
+        Retrieve any update notices which are newer than a
+        given std. pkgtup (name, arch, epoch, version, release) tuple.
+        """
+        oldpkgtup = pkgtup
+        name = oldpkgtup[0]
+        arch = oldpkgtup[1]
+        ret = []
+        for notice in self.get_notices(name):
+            for upkg in notice['pkglist']:
+                for pkg in upkg['packages']:
+                    if pkg['name'] != name or pkg['arch'] != arch:
+                        continue
+                    pkgtup = (pkg['name'], pkg['arch'], pkg['epoch'] or '0',
+                              pkg['version'], pkg['release'])
+                    if _rpm_tup_vercmp(pkgtup, oldpkgtup) <= 0:
+                        continue
+                    ret.append((pkgtup, notice))
+        ret.sort(cmp=_rpm_tup_vercmp, key=lambda x: x[0], reverse=True)
+        return ret
 
     def add(self, obj, mdtype='updateinfo'):
         """ Parse a metadata from a given YumRepository, file, or filename. """
@@ -278,12 +374,36 @@ class UpdateMetadata(object):
                             self._cache['%s-%s-%s' % (file['name'],
                                                       file['version'],
                                                       file['release'])] = un
+                            no = self._no_cache.setdefault(file['name'], set())
+                            no.add(un)
 
     def __str__(self):
         ret = ''
         for notice in self.notices:
             ret += str(notice)
         return ret
+
+    def xml(self, fileobj=None):
+        msg = """<?xml version="1.0"?>\n<updates>"""
+        if fileobj:
+            fileobj.write(msg)
+
+        for notice in self._notices.values():
+            if fileobj:
+                fileobj.write(notice.xml())
+            else:
+                msg += notice.xml()
+
+        end = """</updates>\n"""
+        if fileobj:
+            fileobj.write(end)
+        else:
+            msg+= end
+
+        if fileobj:
+            return
+
+        return msg
 
 
 def main():

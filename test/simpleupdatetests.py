@@ -18,18 +18,18 @@ class SimpleUpdateTests(OperationsTests):
     def buildPkgs(pkgs, *args):
         # installed
         pkgs.installed_i386 = FakePackage('zsh', '1', '1', '0', 'i386')
-        pkgs.installed_i386.addRequires('bar', EQ, ('0', '1', '1'))
+        pkgs.installed_i386.addRequires('bar', 'EQ', ('0', '1', '1'))
         pkgs.installed_x86_64 = FakePackage('zsh', '1', '1', '0', 'x86_64')
-        pkgs.installed_x86_64.addRequires('bar', EQ, ('0', '1', '1'))
+        pkgs.installed_x86_64.addRequires('bar', 'EQ', ('0', '1', '1'))
         pkgs.installed_noarch = FakePackage('zsh', '1', '1', '0', 'noarch')
-        pkgs.installed_noarch.addRequires('bar', EQ, ('0', '1', '1'))
+        pkgs.installed_noarch.addRequires('bar', 'EQ', ('0', '1', '1'))
         # updates
         pkgs.update_i386 = FakePackage('zsh', '2', '1', '0', 'i386')
         pkgs.update_x86_64 = FakePackage('zsh', '2', '1', '0', 'x86_64')
         pkgs.update_noarch = FakePackage('zsh', '2', '1', '0', 'noarch')
         # requires update (UpdateForDependency tests)
         pkgs.requires_update = FakePackage('zsh-utils', '2', '1', '0', 'noarch')
-        pkgs.requires_update.addRequires('zsh', EQ, ('0', '2', '1'))
+        pkgs.requires_update.addRequires('zsh', 'EQ', ('0', '2', '1'))
         # removed requirement due to update (UpdateForDependency2 tests)
         pkgs.required = FakePackage('bar', '1', '1', '0')
         pkgs.required_updated = FakePackage('bar', version='2')
@@ -100,7 +100,7 @@ class SimpleUpdateTests(OperationsTests):
         p = self.pkgs
         res, msg = self.runOperation(['install', 'zsh-utils'], [p.installed_noarch], [p.update_x86_64, p.update_i386, p.requires_update])
         self.assert_(res=='ok', msg)
-        if rpmUtils.arch.getBestArch() == 'x86_64':
+        if os.uname()[-1] == 'x86_64':
             self.assertResult((p.update_x86_64, p.requires_update))
         else:
             self.assertResult((p.update_i386, p.requires_update))
@@ -108,7 +108,7 @@ class SimpleUpdateTests(OperationsTests):
         p = self.pkgs
         res, msg = self.runOperation(['install', 'zsh-utils'], [p.installed_noarch], [p.update_i386, p.update_x86_64, p.requires_update])
         self.assert_(res=='ok', msg)
-        if rpmUtils.arch.getBestArch() == 'x86_64':
+        if os.uname()[-1] == 'x86_64':
             self.assertResult((p.update_x86_64, p.requires_update))
         else:
             self.assertResult((p.update_i386, p.requires_update))
@@ -348,3 +348,15 @@ class SimpleUpdateTests(OperationsTests):
                                      [p.required_updated, p.update_i386, p.update_x86_64])
         self.assert_(res=='ok', msg)
         self.assertResult((p.required_updated, p.update_i386, p.update_x86_64))
+
+    def testUpdateNotLatestDep(self):
+        foo11 = FakePackage('foo', '1', '1', '0', 'i386')
+        foo11.addRequires('bar', 'EQ', ('0', '1', '1'))
+        foo12 = FakePackage('foo', '1', '2', '0', 'i386')
+        foo12.addRequires('bar', 'EQ', ('0', '1', '2'))
+        bar11 = FakePackage('bar', '1', '1', '0', 'i386')
+        bar12 = FakePackage('bar', '1', '2', '0', 'i386')
+        bar21 = FakePackage('bar', '2', '1', '0', 'i386')
+        res, msg = self.runOperation(['install', 'foo'], [foo11, bar11], [foo12, bar12, bar21])
+        self.assert_(res=='ok', msg)
+        self.assertResult((foo12, bar12))

@@ -16,7 +16,28 @@ import pwd
 import fnmatch
 import bz2
 from stat import *
-import gpgme
+try:
+    import gpgme
+    import gpgme.editutil
+except ImportError:
+    gpgme = None
+try:
+    import hashlib
+    _available_checksums = ['md5', 'sha1', 'sha256', 'sha512']
+except ImportError:
+    # Python-2.4.z ... gah!
+    import sha
+    import md5
+    _available_checksums = ['md5', 'sha1']
+    class hashlib:
+
+        @staticmethod
+        def new(algo):
+            if algo == 'md5':
+                return md5.new()
+            if algo == 'sha1':
+                return sha.new()
+            raise ValueError, "Bad checksum type"
 
 from Errors import MiscError
 
@@ -63,6 +84,19 @@ def re_primary_filename(filename):
         _re_compiled_pri_fnames_match = (one, two, three)
     for rec in _re_compiled_pri_fnames_match:
         if rec.match(filename):
+            return True
+    return False
+
+_re_compiled_full_match = None
+def re_full_search_needed(s):
+    """ Tests if a string needs a full nevra match, instead of just name. """
+    global _re_compiled_full_match
+    if _re_compiled_full_match is None:
+        one   = re.compile('.*[-\.\*\?\[\]].*.$') # Any wildcard or - seperator
+        two   = re.compile('^[0-9]')        # Any epoch, for envra
+        _re_compiled_full_match = (one, two)
+    for rec in _re_compiled_full_match:
+        if rec.match(s):
             return True
     return False
 
@@ -138,9 +172,74 @@ def unique(s):
             u.append(x)
     return u
 
+class Checksums:
+    """ Generate checksum(s), on given pieces of data. Producing the
+        Length and the result(s) when complete. """
+
+    def __init__(self, checksums=None, ignore_missing=False):
+        self._checksums = checksums
+        if self._checksums is None:
+            self._checksums = ['sha256']
+        self._sumalgos = []
+        self._sumtypes = []
+        self._len = 0
+
+        done = set()
+        for sumtype in self._checksums:
+            if sumtype in done:
+                continue
+
+            if sumtype in _available_checksums:
+                sumalgo = hashlib.new(sumtype)
+            elif ignore_missing:
+                continue
+            else:
+                raise MiscError, 'Error Checksumming, bad checksum type %s' % sumtype
+            done.add(sumtype)
+            self._sumtypes.append(sumtype)
+            self._sumalgos.append(sumalgo)
+
+    def __len__(self):
+        return self._len
+
+    def update(self, data):
+        self._len += len(data)
+        for sumalgo in self._sumalgos:
+            sumalgo.update(data)
+
+    def read(self, fo, size=2**16):
+        data = fo.read(size)
+        self.update(data)
+        return data
+
+    def hexdigests(self):
+        ret = {}
+        for sumtype, sumdata in zip(self._sumtypes, self._sumalgos):
+            ret[sumtype] = sumdata.hexdigest()
+        return ret
+
+    def hexdigest(self, checksum):
+        return self.hexdigests()[checksum]
+
+
+class AutoFileChecksums:
+    """ Generate checksum(s), on given file/fileobject. Pretending to be a file
+        object (overrrides read). """
+
+    def __init__(self, fo, checksums, ignore_missing=False):
+        self._fo       = fo
+        self.checksums = Checksums(checksums, ignore_missing)
+
+    def __getattr__(self, attr):
+        return getattr(self._fo, attr)
+
+    def read(self, size=-1):
+        return self.checksums.read(self._fo, size)
+
+
 def checksum(sumtype, file, CHUNK=2**16):
     """takes filename, hand back Checksum of it
-       sumtype = md5 or sha
+       sumtype = md5 or sha/sha1/sha256/sha512 (note sha == sha1)
        filename = /path/to/file
        CHUNK=65536 by default"""
      
@@ -150,25 +249,19 @@ def checksum(sumtype, file, CHUNK=2**16):
             fo = file # assume it's a file-like-object
         else:           
             fo = open(file, 'r', CHUNK)
-            
-        if sumtype == 'md5':
-            import md5
-            sumalgo = md5.new()
-        elif sumtype == 'sha':
-            import sha
-            sumalgo = sha.new()
-        else:
-            raise MiscError, 'Error Checksumming file, bad checksum type %s' % sumtype
-        chunk = fo.read
-        while chunk: 
-            chunk = fo.read(CHUNK)
-            sumalgo.update(chunk)
+
+        if sumtype == 'sha':
+            sumtype = 'sha1'
+
+        data = Checksums([sumtype])
+        while data.read(fo, CHUNK):
+            pass
 
         if type(file) is types.StringType:
             fo.close()
             del fo
             
-        return sumalgo.hexdigest()
+        return data.hexdigest(sumtype)
     except (IOError, OSError), e:
         raise MiscError, 'Error opening file for checksum: %s' % file
 
@@ -233,8 +326,8 @@ def procgpgkey(rawkey):
     # Decode and return
     return base64.decodestring(block.getvalue())
 
-def getgpgkeyinfo(rawkey):
-    '''Return a list of dicts of info for the given ASCII armoured key text
+def getgpgkeyinfo(rawkey, multiple=False):
+    '''Return a dict of info for the given ASCII armoured key text
 
     Returned dicts will have the following keys: 'userid', 'keyid', 'timestamp'
 
@@ -275,8 +368,10 @@ def getgpgkeyinfo(rawkey):
                         info['timestamp'] = int(tspkt[1])
                         break
         key_info_objs.append(info)
+    if multiple:      
         return key_info_objs
-        
+    else:
+        return key_info_objs[0]
 
 def keyIdToRPMVer(keyid):
     '''Convert an integer representing a GPG key ID to the hex version string
@@ -318,26 +413,37 @@ def keyInstalled(ts, keyid, timestamp):
 
     return -1
 
-def import_key_to_pubring(rawkey, repo_cachedir):
-    gpgdir = '%s/gpgdir' % repo_cachedir
+def import_key_to_pubring(rawkey, keyid, cachedir=None, gpgdir=None):
+    # FIXME - cachedir can be removed from this method when we break api
+    if gpgme is None:
+        return False
+    
+    if not gpgdir:
+        gpgdir = '%s/gpgdir' % cachedir
+    
     if not os.path.exists(gpgdir):
         os.makedirs(gpgdir)
     
     key_fo = StringIO(rawkey) 
-    ctx = gpgme.Context()
     os.environ['GNUPGHOME'] = gpgdir
+    # import the key
+    ctx = gpgme.Context()
     fp = open(os.path.join(gpgdir, 'gpg.conf'), 'wb')
     fp.write('')
     fp.close()
     ctx.import_(key_fo)
     key_fo.close()
+    # ultimately trust the key or pygpgme is definitionally stupid
+    k = ctx.get_key(keyid)
+    gpgme.editutil.edit_trust(ctx, k, gpgme.VALIDITY_ULTIMATE)
+    return True
     
 def return_keyids_from_pubring(gpgdir):
-    ctx = gpgme.Context()
-    if not os.path.exists(gpgdir):
+    if gpgme is None or not os.path.exists(gpgdir):
         return []
-        
+
     os.environ['GNUPGHOME'] = gpgdir
+    ctx = gpgme.Context()
     keyids = []
     for k in ctx.keylist():
         for subkey in k.subkeys:
@@ -345,7 +451,37 @@ def return_keyids_from_pubring(gpgdir):
                 keyids.append(subkey.keyid)
 
     return keyids
-        
+
+def valid_detached_sig(sig_file, signed_file, gpghome=None):
+    """takes signature , file that was signed and an optional gpghomedir"""
+
+    if gpgme is None:
+        return False
+
+    if gpghome and os.path.exists(gpghome):
+        os.environ['GNUPGHOME'] = gpghome
+
+    sig = open(sig_file, 'r')
+    signed_text = open(signed_file, 'r')
+    plaintext = None
+    ctx = gpgme.Context()
+
+    try:
+        sigs = ctx.verify(sig, signed_text, plaintext)
+    except gpgme.GpgmeError, e:
+        return False
+    else:
+        # is there ever a case where we care about a sig beyond the first one?
+        thissig = sigs[0]
+        if not thissig:
+            return False
+
+        if thissig.validity in (gpgme.VALIDITY_FULL, gpgme.VALIDITY_MARGINAL,
+                                gpgme.VALIDITY_ULTIMATE):
+            return True
+
+    return False
+
 def getCacheDir(tmpdir='/var/tmp'):
     """return a path to a valid and safe cachedir - only used when not running
        as root or when --tempcache is set"""
@@ -385,10 +521,10 @@ def newestInList(pkgs):
     ret = [ pkgs.pop() ]
     newest = ret[0]
     for pkg in pkgs:
-        if pkg.EVR > newest.EVR:
+        if pkg.verGT(newest):
             ret = [ pkg ]
             newest = pkg
-        elif pkg.EVR == newest.EVR:
+        elif pkg.verEQ(newest):
             ret.append(pkg)
     return ret
 
@@ -532,7 +668,100 @@ def find_ts_remaining(timestamp, yumlibpath='/var/lib/yum'):
         to_complete_items.append((action, pkgspec))
     
     return to_complete_items
+
+def seq_max_split(seq, max_entries):
+    """ Given a seq, split into a list of lists of length max_entries each. """
+    ret = []
+    num = len(seq)
+    beg = 0
+    while num > max_entries:
+        end = beg + max_entries
+        ret.append(seq[beg:end])
+        beg += max_entries
+        num -= max_entries
+    ret.append(seq[beg:])
+    return ret
+
+def _ugly_utf8_string_hack(item):
+    """hands back a unicoded string"""
+    # this is backward compat for handling non-utf8 filenames 
+    # and content inside packages. :(
+    # content that xml can cope with but isn't really kosher
+
+    # if we're anything obvious - do them first
+    if item is None:
+        return ''
+    elif isinstance(item, unicode):    
+        return item
     
+    # this handles any bogon formats we see
+    du = False
+    try:
+        x = unicode(item, 'ascii')
+        du = True
+    except UnicodeError:
+        encodings = ['utf-8', 'iso-8859-1', 'iso-8859-15', 'iso-8859-2']
+        for enc in encodings:
+            try:
+                x = unicode(item, enc)
+            except UnicodeError:
+                pass
+                
+            else:
+                if x.encode(enc) == item:
+                    if enc != 'utf-8':
+                        print '\n%s encoding on %s\n' % (enc, item)
+                    return x.encode('utf-8')
+    
+    
+    # Kill bytes (or libxml will die) not in the small byte portion of:
+    #  http://www.w3.org/TR/REC-xml/#NT-Char
+    # we allow high bytes, if it passed the utf8 check above. Eg.
+    # good chars = #x9 | #xA | #xD | [#x20-...]
+    newitem = ''
+    bad_small_bytes = range(0, 8) + [11, 12] + range(14, 32)
+    for char in item:
+        if ord(char) in bad_small_bytes:
+            pass # Just ignore these bytes...
+        elif not du and ord(char) > 127:
+            newitem = newitem + '?' # byte by byte equiv of escape
+        else:
+            newitem = newitem + char
+    return newitem
+
+def to_xml(item, attrib=False):
+    import xml.sax.saxutils
+    item = _ugly_utf8_string_hack(item)
+    item = to_utf8(item)
+    item = item.rstrip()
+    if attrib:
+        item = xml.sax.saxutils.escape(item, entities={'"':"&quot;"})
+    else:
+        item = xml.sax.saxutils.escape(item)
+    return item
+
+# ---------- i18n ----------
+import locale
+import sys
+def setup_locale(override_codecs=True, override_time=False):
+    # This test needs to be before locale.getpreferredencoding() as that
+    # does setlocale(LC_CTYPE, "")
+    try:
+        locale.setlocale(locale.LC_ALL, '')
+        # set time to C so that we output sane things in the logs (#433091)
+        if override_time:
+            locale.setlocale(locale.LC_TIME, 'C')
+    except locale.Error, e:
+        # default to C locale if we get a failure.
+        print >> sys.stderr, 'Failed to set locale, defaulting to C'
+        os.environ['LC_ALL'] = 'C'
+        locale.setlocale(locale.LC_ALL, 'C')
+        
+    if override_codecs:
+        import codecs
+        sys.stdout = codecs.getwriter(locale.getpreferredencoding())(sys.stdout)
+        sys.stdout.errors = 'replace'
+
 def to_unicode(obj, encoding='utf-8', errors='replace'):
     ''' convert a 'str' to 'unicode' '''
     if isinstance(obj, basestring):
@@ -563,7 +792,6 @@ def to_str(obj):
     return obj
 
 def get_my_lang_code():
-    import locale
     mylang = locale.getlocale()
     if mylang == (None, None): # odd :)
         mylang = 'C'

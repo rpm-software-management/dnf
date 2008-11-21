@@ -26,6 +26,10 @@ from yum import _
 import yum.Errors
 import operator
 import locale
+import fnmatch
+import time
+from yum.misc import to_unicode
+from yum.i18n import utf8_width, utf8_width_fill
 
 def checkRootUID(base):
     """
@@ -40,7 +44,7 @@ def checkRootUID(base):
 def checkGPGKey(base):
     if not base.gpgKeyCheck():
         for repo in base.repos.listEnabled():
-            if repo.gpgcheck and repo.gpgkey == '':
+            if (repo.gpgcheck or repo.repo_gpgcheck) and repo.gpgkey == '':
                 msg = _("""
 You have enabled checking of packages via GPG keys. This is a good thing. 
 However, you do not have any GPG public keys installed. You need to download
@@ -194,6 +198,34 @@ class UpdateCommand(YumCommand):
         except yum.Errors.YumBaseError, e:
             return 1, [str(e)]
 
+def _add_pkg_simple_list_lens(data, pkg, indent=''):
+    """ Get the length of each pkg's column. Add that to data.
+        This "knows" about simpleList and printVer. """
+    na  = len(pkg.name)    + 1 + len(pkg.arch)    + len(indent)
+    ver = len(pkg.version) + 1 + len(pkg.release)
+    rid = len(pkg.repoid)
+    if pkg.epoch != '0':
+        ver += len(pkg.epoch) + 1
+    for (d, v) in (('na', na), ('ver', ver), ('rid', rid)):
+        data[d].setdefault(v, 0)
+        data[d][v] += 1
+
+def _list_cmd_calc_columns(base, ypl):
+    """ Work out the dynamic size of the columns to pass to fmtColumns. """
+    data = {'na' : {}, 'ver' : {}, 'rid' : {}}
+    for lst in (ypl.installed, ypl.available, ypl.extras,
+                ypl.updates, ypl.recent):
+        for pkg in lst:
+            _add_pkg_simple_list_lens(data, pkg)
+    if len(ypl.obsoletes) > 0:
+        for (npkg, opkg) in ypl.obsoletesTuples:
+            _add_pkg_simple_list_lens(data, npkg)
+            _add_pkg_simple_list_lens(data, opkg, indent=" " * 4)
+
+    data = [data['na'], data['ver'], data['rid']]
+    columns = base.calcColumns(data, remainder_column=1)
+    return (-columns[0], -columns[1], -columns[2])
+
 class InfoCommand(YumCommand):
     def getNames(self):
         return ['info']
@@ -206,14 +238,58 @@ class InfoCommand(YumCommand):
 
     def doCommand(self, base, basecmd, extcmds):
         try:
-            ypl = base.returnPkgLists(extcmds)
+            highlight = base.term.MODE['bold']
+            ypl = base.returnPkgLists(extcmds, installed_available=highlight)
         except yum.Errors.YumBaseError, e:
             return 1, [str(e)]
         else:
-            rip = base.listPkgs(ypl.installed, _('Installed Packages'), basecmd)
-            rap = base.listPkgs(ypl.available, _('Available Packages'), basecmd)
-            rep = base.listPkgs(ypl.extras, _('Extra Packages'), basecmd)
-            rup = base.listPkgs(ypl.updates, _('Updated Packages'), basecmd)
+            update_pkgs = {}
+            inst_pkgs   = {}
+
+            columns = None
+            if basecmd == 'list':
+                # Dynamically size the columns
+                columns = _list_cmd_calc_columns(base, ypl)
+
+            if highlight and ypl.installed:
+                #  If we have installed and available lists, then do the
+                # highlighting for the installed packages so you can see what's
+                # available to update, an extra, or newer than what we have.
+                for pkg in (ypl.hidden_available +
+                            ypl.reinstall_available +
+                            ypl.old_available):
+                    key = (pkg.name, pkg.arch)
+                    if key not in update_pkgs or pkg.verGT(update_pkgs[key]):
+                        update_pkgs[key] = pkg
+
+            if highlight and ypl.available:
+                #  If we have installed and available lists, then do the
+                # highlighting for the available packages so you can see what's
+                # available to install vs. update vs. old.
+                for pkg in ypl.hidden_installed:
+                    key = (pkg.name, pkg.arch)
+                    if key not in inst_pkgs or pkg.verGT(inst_pkgs[key]):
+                        inst_pkgs[key] = pkg
+
+            # Output the packages:
+            clio = base.conf.color_list_installed_older
+            clin = base.conf.color_list_installed_newer
+            clie = base.conf.color_list_installed_extra
+            rip = base.listPkgs(ypl.installed, _('Installed Packages'), basecmd,
+                                highlight_na=update_pkgs, columns=columns,
+                                highlight_modes={'>' : clio, '<' : clin,
+                                                 'not in' : clie})
+            clau = base.conf.color_list_available_upgrade
+            clad = base.conf.color_list_available_downgrade
+            clai = base.conf.color_list_available_install
+            rap = base.listPkgs(ypl.available, _('Available Packages'), basecmd,
+                                highlight_na=inst_pkgs, columns=columns,
+                                highlight_modes={'<' : clau, '>' : clad,
+                                                 'not in' : clai})
+            rep = base.listPkgs(ypl.extras, _('Extra Packages'), basecmd,
+                                columns=columns)
+            rup = base.listPkgs(ypl.updates, _('Updated Packages'), basecmd,
+                                columns=columns)
 
             # XXX put this into the ListCommand at some point
             if len(ypl.obsoletes) > 0 and basecmd == 'list': 
@@ -223,10 +299,13 @@ class InfoCommand(YumCommand):
                 # The tuple is (newPkg, oldPkg) ... so sort by new
                 for obtup in sorted(ypl.obsoletesTuples,
                                     key=operator.itemgetter(0)):
-                    base.updatesObsoletesList(obtup, 'obsoletes')
+                    base.updatesObsoletesList(obtup, 'obsoletes',
+                                              columns=columns)
             else:
-                rop = base.listPkgs(ypl.obsoletes, _('Obsoleting Packages'), basecmd)
-            rrap = base.listPkgs(ypl.recent, _('Recently Added Packages'), basecmd)
+                rop = base.listPkgs(ypl.obsoletes, _('Obsoleting Packages'),
+                                    basecmd, columns=columns)
+            rrap = base.listPkgs(ypl.recent, _('Recently Added Packages'),
+                                 basecmd, columns=columns)
             # extcmds is pop(0)'d if they pass a "special" param like "updates"
             # in returnPkgLists(). This allows us to always return "ok" for
             # things like "yum list updates".
@@ -274,6 +353,9 @@ class EraseCommand(YumCommand):
 
     def needTs(self, base, basecmd, extcmds):
         return False
+
+    def needTsRemove(self, base, basecmd, extcmds):
+        return True
 
 class GroupCommand(YumCommand):
     def doCommand(self, base, basecmd, extcmds):
@@ -351,6 +433,9 @@ class GroupRemoveCommand(GroupCommand):
 
     def needTs(self, base, basecmd, extcmds):
         return False
+
+    def needTsRemove(self, base, basecmd, extcmds):
+        return True
 
 class GroupInfoCommand(GroupCommand):
     def getNames(self):
@@ -474,8 +559,24 @@ class CheckUpdateCommand(YumCommand):
         result = 0
         try:
             ypl = base.returnPkgLists(extcmds)
+            if base.verbose_logger.isEnabledFor(logginglevels.DEBUG_3):
+                typl = base.returnPkgLists(['obsoletes'])
+                ypl.obsoletes = typl.obsoletes
+                ypl.obsoletesTuples = typl.obsoletesTuples
+
+            columns = _list_cmd_calc_columns(base, ypl)
             if len(ypl.updates) > 0:
-                base.listPkgs(ypl.updates, '', outputType='list')
+                base.listPkgs(ypl.updates, '', outputType='list',
+                              columns=columns)
+                result = 100
+            if len(ypl.obsoletes) > 0: # This only happens in verbose mode
+                rop = [0, '']
+                print _('Obsoleting Packages')
+                # The tuple is (newPkg, oldPkg) ... so sort by new
+                for obtup in sorted(ypl.obsoletesTuples,
+                                    key=operator.itemgetter(0)):
+                    base.updatesObsoletesList(obtup, 'obsoletes',
+                                              columns=columns)
                 result = 100
         except yum.Errors.YumBaseError, e:
             return 1, [str(e)]
@@ -629,27 +730,36 @@ class RepoListCommand(YumCommand):
     def getSummary(self):
         return _('Display the configured software repositories')
 
-    def doCheck(self, base, basecmd, extcmds):
-        if len(extcmds) == 0:
-            return
-        elif len(extcmds) > 1 or extcmds[0] not in ('all', 'disabled',
-                'enabled'):
-            raise cli.CliError
-
     def doCommand(self, base, basecmd, extcmds):
-        if len(extcmds) == 1:
+        def _repo_size(repo):
+            ret = 0
+            for pkg in repo.sack.returnPackages():
+                ret += pkg.packagesize
+            return base.format_number(ret)
+
+        def _repo_match(repo, patterns):
+            rid = repo.id.lower()
+            rnm = repo.name.lower()
+            for pat in patterns:
+                if fnmatch.fnmatch(rid, pat):
+                    return True
+                if fnmatch.fnmatch(rnm, pat):
+                    return True
+            return False
+
+        if len(extcmds) >= 1 and extcmds[0] in ('all', 'disabled', 'enabled'):
             arg = extcmds[0]
+            extcmds = extcmds[1:]
         else:
             arg = 'enabled'
+        extcmds = map(lambda x: x.lower(), extcmds)
 
         # Setup so len(repo.sack) is correct
         base.repos.populateSack()
 
-        format_string = "%-20.20s %-40.40s %-8s%s"
         repos = base.repos.repos.values()
         repos.sort()
         enabled_repos = base.repos.listEnabled()
-        done = False
         verbose = base.verbose_logger.isEnabledFor(logginglevels.DEBUG_3)
         if arg == 'all':
             ehibeg = base.term.FG_COLOR['green'] + base.term.MODE['bold']
@@ -660,42 +770,126 @@ class RepoListCommand(YumCommand):
             dhibeg = ''
             hiend  = ''
         tot_num = 0
+        cols = []
         for repo in repos:
+            if len(extcmds) and not _repo_match(repo, extcmds):
+                continue
             if repo in enabled_repos:
                 enabled = True
-                ui_enabled = ehibeg + _('enabled') + hiend
+                ui_enabled = ehibeg + _('enabled') + hiend + ": "
+                ui_endis_wid = utf8_width(_('enabled')) + 2
                 num        = len(repo.sack)
                 tot_num   += num
-                ui_num     = locale.format("%d", num, True)
-                ui_fmt_num = ": %7s"
+                ui_num     = to_unicode(locale.format("%d", num, True))
+                if verbose:
+                    ui_size = _repo_size(repo)
             else:
                 enabled = False
                 ui_enabled = dhibeg + _('disabled') + hiend
+                ui_endis_wid = utf8_width(_('disabled'))
                 ui_num     = ""
-                ui_fmt_num = "%s"
                 
             if (arg == 'all' or
                 (arg == 'enabled' and enabled) or
                 (arg == 'disabled' and not enabled)):
-                if not done and not verbose:
-                    base.verbose_logger.log(logginglevels.INFO_2,
-                                            format_string, _('repo id'),
-                                            _('repo name'), _('status'))
-                done = True
-                if verbose:
-                    line1 = base.fmtKeyValFill(_("Repo-id     : "), repo)
-                    line2 = base.fmtKeyValFill(_("Repo-name   : "), repo.name)
-                    line3 = base.fmtKeyValFill(_("Repo-enabled: "), ui_enabled)
-                    line4 = base.fmtKeyValFill(_("Repo-size   : "), ui_num)
-                    base.verbose_logger.log(logginglevels.DEBUG_3,
-                                            "%s\n%s\n%s\n%s\n",
-                                            line1, line2, line3, line4)
+                if not verbose:
+                    cols.append((str(repo), repo.name,
+                                 (ui_enabled, ui_endis_wid), ui_num))
                 else:
-                    base.verbose_logger.log(logginglevels.INFO_2, format_string,
-                                            repo, repo.name, ui_enabled,
-                                            ui_fmt_num % ui_num)
+                    md = repo.repoXML
+                    out = [base.fmtKeyValFill(_("Repo-id     : "), repo),
+                           base.fmtKeyValFill(_("Repo-name   : "), repo.name),
+                           base.fmtKeyValFill(_("Repo-status : "), ui_enabled)]
+                    if md.revision is not None:
+                        out += [base.fmtKeyValFill(_("Repo-revision: "),
+                                                   md.revision)]
+                    if md.tags['content']:
+                        tags = md.tags['content']
+                        out += [base.fmtKeyValFill(_("Repo-tags   : "),
+                                                   ", ".join(sorted(tags)))]
 
-        return 0, ['repolist: ' + locale.format("%d", tot_num, True)]
+                    if md.tags['distro']:
+                        for distro in sorted(md.tags['distro']):
+                            tags = md.tags['distro'][distro]
+                            out += [base.fmtKeyValFill(_("Repo-distro-tags: "),
+                                                       "[%s]: %s" % (distro,
+                                                       ", ".join(sorted(tags))))]
+
+                    if enabled:
+                        out += [base.fmtKeyValFill(_("Repo-updated: "),
+                                                   time.ctime(md.timestamp)),
+                                base.fmtKeyValFill(_("Repo-pkgs   : "), ui_num),
+                                base.fmtKeyValFill(_("Repo-size   : "),ui_size)]
+
+                    if hasattr(repo, '_orig_baseurl'):
+                        baseurls = repo._orig_baseurl
+                    else:
+                        baseurls = repo.baseurl
+                    if baseurls:
+                        out += [base.fmtKeyValFill(_("Repo-baseurl: "),
+                                                   ", ".join(baseurls))]
+
+                    if repo.metalink:
+                        out += [base.fmtKeyValFill(_("Repo-metalink: "),
+                                                   repo.metalink)]
+                    elif repo.mirrorlist:
+                        out += [base.fmtKeyValFill(_("Repo-mirrors: "),
+                                                   repo.mirrorlist)]
+
+                    if repo.exclude:
+                        out += [base.fmtKeyValFill(_("Repo-exclude: "),
+                                                   ", ".join(repo.exclude))]
+
+                    if repo.includepkgs:
+                        out += [base.fmtKeyValFill(_("Repo-include: "),
+                                                   ", ".join(repo.includepkgs))]
+
+                    base.verbose_logger.log(logginglevels.DEBUG_3,
+                                            "%s\n",
+                                            "\n".join(out))
+
+        if not verbose and cols:
+            #  Work out the first (id) and last (enabled/disalbed/count),
+            # then chop the middle (name)...
+            id_len = utf8_width(_('repo id'))
+            nm_len = 0
+            ct_len = 0
+            ui_len = 0
+
+            for (rid, rname, (ui_enabled, ui_endis_wid), ui_num) in cols:
+                if id_len < utf8_width(rid):
+                    id_len = utf8_width(rid)
+                if nm_len < utf8_width(rname):
+                    nm_len = utf8_width(rname)
+                if ct_len < ui_endis_wid:
+                    ct_len = ui_endis_wid
+                if ui_len < len(ui_num):
+                    ui_len = len(ui_num)
+            if utf8_width(_('status')) > ct_len + ui_len:
+                left = base.term.columns - (id_len + utf8_width(_('status')) +2)
+            else:
+                left = base.term.columns - (id_len + ct_len + ui_len + 2)
+
+            if left < nm_len: # Name gets chopped
+                nm_len = left
+            else: # Share the extra...
+                left -= nm_len
+                id_len += left / 2
+                nm_len += left - (left / 2)
+
+            txt_rid  = utf8_width_fill(_('repo id'), id_len)
+            txt_rnam = utf8_width_fill(_('repo name'), nm_len, nm_len)
+            base.verbose_logger.log(logginglevels.INFO_2,"%s %s %s",
+                                    txt_rid, txt_rnam, _('status'))
+            for (rid, rname, (ui_enabled, ui_endis_wid), ui_num) in cols:
+                if ui_num:
+                    ui_num = utf8_width_fill(ui_num, ui_len, left=False)
+                base.verbose_logger.log(logginglevels.INFO_2, "%s %s %s%s",
+                                        utf8_width_fill(rid, id_len),
+                                        utf8_width_fill(rname, nm_len, nm_len),
+                                        ui_enabled, ui_num)
+
+        return 0, ['repolist: ' +to_unicode(locale.format("%d", tot_num, True))]
 
     def needTs(self, base, basecmd, extcmds):
         return False
@@ -791,7 +985,7 @@ class ReInstallCommand(YumCommand):
             return 0, [_('Nothing to do')]            
             
         except yum.Errors.YumBaseError, e:
-            return 1, [str(e)]
+            return 1, [to_unicode(e)]
 
     def getSummary(self):
         return _("reinstall a package")

@@ -3,6 +3,8 @@ import sys
 import unittest
 
 import settestpath
+import logging
+import yum.logginglevels as logginglevels
 
 new_behavior = "NEW_BEHAVIOR" in os.environ.keys()
 
@@ -16,20 +18,12 @@ import inspect
 from rpmUtils import arch
 
 #############################################################
-### RPM Flag constants ######################################
-############################################################# 
-import rpm
-
-GT = rpm.RPMSENSE_GREATER
-GE = rpm.RPMSENSE_EQUAL | rpm.RPMSENSE_GREATER
-LT = rpm.RPMSENSE_LESS
-LE = rpm.RPMSENSE_LESS | rpm.RPMSENSE_EQUAL
-EQ = rpm.RPMSENSE_EQUAL
-
-
-#############################################################
 ### Helper classes ##########################################
 #############################################################
+
+# Dummy translation wrapper
+def _(msg):
+    return msg
 
 class FakeConf(object):
 
@@ -46,6 +40,7 @@ class FakeConf(object):
         self.skip_broken = False
         self.disable_excludes = []
         self.multilib_policy = 'best'
+        self.persistdir = '/should-not-exist-bad-test!'
 
 class FakeRepo(object):
 
@@ -72,7 +67,7 @@ class FakePackage(packages.YumAvailablePackage):
         self.arch = arch
         self.pkgtup = (self.name, self.arch, self.epoch, self.version, self.release)
 
-        self.prco['provides'].append((name, EQ, (epoch, version, release)))
+        self.prco['provides'].append((name, 'EQ', (epoch, version, release)))
 
         # Just a unique integer
         self.id = self.__hash__()
@@ -92,6 +87,65 @@ class _Container(object):
     pass
 
 
+class DepSolveProgressCallBack:
+    """provides text output callback functions for Dependency Solver callback"""
+    
+    def __init__(self):
+        """requires yum-cli log and errorlog functions as arguments"""
+        self.verbose_logger = logging.getLogger("yum.verbose.cli")
+        self.loops = 0
+    
+    def pkgAdded(self, pkgtup, mode):
+        modedict = { 'i': _('installed'),
+                     'u': _('updated'),
+                     'o': _('obsoleted'),
+                     'e': _('erased')}
+        (n, a, e, v, r) = pkgtup
+        modeterm = modedict[mode]
+        self.verbose_logger.log(logginglevels.INFO_2,
+            _('---> Package %s.%s %s:%s-%s set to be %s'), n, a, e, v, r,
+            modeterm)
+        
+    def start(self):
+        self.loops += 1
+        
+    def tscheck(self):
+        self.verbose_logger.log(logginglevels.INFO_2, _('--> Running transaction check'))
+        
+    def restartLoop(self):
+        self.loops += 1
+        self.verbose_logger.log(logginglevels.INFO_2,
+            _('--> Restarting Dependency Resolution with new changes.'))
+        self.verbose_logger.debug('---> Loop Number: %d', self.loops)
+    
+    def end(self):
+        self.verbose_logger.log(logginglevels.INFO_2,
+            _('--> Finished Dependency Resolution'))
+
+    
+    def procReq(self, name, formatted_req):
+        self.verbose_logger.log(logginglevels.INFO_2,
+            _('--> Processing Dependency: %s for package: %s'), formatted_req,
+            name)
+        
+    
+    def unresolved(self, msg):
+        self.verbose_logger.log(logginglevels.INFO_2, _('--> Unresolved Dependency: %s'),
+            msg)
+
+    
+    def procConflict(self, name, confname):
+        self.verbose_logger.log(logginglevels.INFO_2,
+            _('--> Processing Conflict: %s conflicts %s'), name, confname)
+
+    def transactionPopulation(self):
+        self.verbose_logger.log(logginglevels.INFO_2, _('--> Populating transaction set '
+            'with selected packages. Please wait.'))
+    
+    def downloadHeader(self, name):
+        self.verbose_logger.log(logginglevels.INFO_2, _('---> Downloading header for %s '
+            'to pack into transaction set.'), name)
+      
 #######################################################################
 ### Abstract super class for test cases ###############################
 #######################################################################
@@ -156,6 +210,35 @@ class _DepsolveTestsBase(unittest.TestCase):
             errors.append("\n")
             self.fail("".join(errors))
 
+class FakeRpmDb(packageSack.PackageSack):
+    '''
+    We use a PackagePack for a Fake rpmdb insted of the normal
+    RPMDBPackageSack, getProvides works a little different on
+    unversioned requirements so we have to overload an add some
+    extra checkcode.
+    '''
+    def __init__(self):
+        packageSack.PackageSack.__init__(self)
+
+    def getProvides(self, name, flags=None, version=(None, None, None)):
+        """return dict { packages -> list of matching provides }"""
+        self._checkIndexes(failure='build')
+        result = { }
+        # convert flags & version for unversioned reqirements
+        if not version:
+            version=(None, None, None)
+        if flags == '0':
+            flags=None
+        for po in self.provides.get(name, []):
+            hits = po.matchingPrcos('provides', (name, flags, version))
+            if hits:
+                result[po] = hits
+        if name[0] == '/':
+            hit = (name, None, (None, None, None))
+            for po in self.searchFiles(name):
+                result.setdefault(po, []).append(hit)
+        return result
+            
 
 #######################################################################
 ### Derive Tests from these classes or unittest.TestCase ##############
@@ -169,7 +252,7 @@ class DepsolveTests(_DepsolveTestsBase):
 
     def testInstallPackageRequireInstalled(self):
         po = FakePackage('zsh', '1', '1', None, 'i386')
-        po.addRequires('zip', EQ, (None, '1.3', '2'))
+        po.addRequires('zip', 'EQ', (None, '1.3', '2'))
         self.tsInfo.addInstall(po)
 
         ipo = FakePackage('zip', '1.3', '2', None, 'i386')
@@ -184,11 +267,16 @@ class DepsolveTests(_DepsolveTestsBase):
         """ Called at the start of each test. """
         _DepsolveTestsBase.setUp(self)
         self.tsInfo = transactioninfo.TransactionData()
-        self.rpmdb  = packageSack.PackageSack()
+        self.tsInfo.debug = 1
+        self.rpmdb  = FakeRpmDb()
         self.xsack  = packageSack.PackageSack()
         self.repo   = FakeRepo("installed")
         # XXX this side-affect is hacky:
         self.tsInfo.setDatabases(self.rpmdb, self.xsack)
+
+    def resetTsInfo(self):
+        self.tsInfo = transactioninfo.TransactionData()
+        
 
     def resolveCode(self):
         solver = YumBase()

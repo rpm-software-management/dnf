@@ -40,10 +40,14 @@ class RepoStorage:
         self._setup = False
 
         self.ayum = weakref(ayum)
+        # callbacks for handling gpg key imports for repomd.xml sig checks
+        # need to be set from outside of the repos object to do anything
+        # even quasi-useful
+        self.gpg_import_func = self.ayum.getKeyForRepo # defaults to what is probably sane-ish
+        self.confirm_func = None
 
     def doSetup(self, thisrepo = None):
         
-
         self.ayum.plugins.run('prereposetup')
         
         if thisrepo is None:
@@ -56,9 +60,9 @@ class RepoStorage:
 
         num = 1
         for repo in repos:
-            repo.setup(self.ayum.conf.cache, self.ayum.mediagrabber)
+            repo.setup(self.ayum.conf.cache, self.ayum.mediagrabber,
+                   gpg_import_func = self.gpg_import_func, confirm_func=self.confirm_func)
             num += 1
-            
             
         if self.callback and len(repos) > 0:
             self.callback.progressbar(num, len(repos), repo.id)
@@ -84,6 +88,8 @@ class RepoStorage:
 
     def delete(self, repoid):
         if self.repos.has_key(repoid):
+            thisrepo = self.repos[repoid]
+            thisrepo.close()
             del self.repos[repoid]
             
     def sort(self):

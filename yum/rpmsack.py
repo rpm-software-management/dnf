@@ -21,7 +21,7 @@ from rpmUtils import miscutils
 from rpmUtils.transaction import initReadOnlyTransaction
 import misc
 import Errors
-from packages import YumInstalledPackage
+from packages import YumInstalledPackage, parsePackages
 from packageSack import PackageSackBase
 
 # For returnPackages(patterns=)
@@ -60,9 +60,9 @@ class RPMInstalledPackage(YumInstalledPackage):
     def __getattr__(self, varname):
         self.hdr = val = self._get_hdr()
         self._has_hdr = True
-        if varname != 'hdr':   # This is very unusual, for anything it does
-            val = val[varname] # happen for it might be worth adding at __init_
-
+        if varname != 'hdr':   #  This is unusual, for anything that happens
+            val = val[varname] # a lot we should preload at __init__.
+                               # Also note that pkg.no_value raises KeyError.
         return val
 
 
@@ -93,11 +93,16 @@ class RPMDBPackageSack(PackageSackBase):
         self._tup2pkg = {}
         self._completely_loaded = False
         self._simple_pkgtup_list = []
-        self._get_prco_cache = {'provides' : {},
-                                'requires' : {},
-                                'conflicts' : {},
-                                'obsoletes' : {}}
+        self._get_pro_cache = {}
+        self._get_req_cache  = {}
         self.ts = None
+
+        self._cache = {
+            'provides' : { },
+            'requires' : { },
+            'conflicts' : { },
+            'obsoletes' : { },
+            }
         
     def _get_pkglist(self):
         '''Getter for the pkglist property. 
@@ -117,9 +122,15 @@ class RPMDBPackageSack(PackageSackBase):
         self._tup2pkg = {}
         self._completely_loaded = False
         self._simple_pkgtup_list = []
-        for cache in self._get_prco_cache.values():
-            cache.clear()
+        self._get_pro_cache = {}
+        self._get_req_cache = {}
         misc.unshare_data()
+        self._cache = {
+            'provides' : { },
+            'requires' : { },
+            'conflicts' : { },
+            'obsoletes' : { },
+            }
 
     def readOnlyTS(self):
         if not self.ts:
@@ -175,6 +186,43 @@ class RPMDBPackageSack(PackageSackBase):
         result = result.values()
         return result
         
+    def searchPrco(self, name, prcotype):
+
+        result = self._cache[prcotype].get(name)
+        if result is not None:
+            return result
+
+        ts = self.readOnlyTS()
+        result = {}
+        tag = self.DEP_TABLE[prcotype][0]
+        mi = ts.dbMatch(tag, name)
+        for hdr in mi:
+            po = self._makePackageObject(hdr, mi.instance())
+            result[po.pkgid] = po
+        del mi
+
+        # If it's not a provides or filename, we are done
+        if prcotype == 'provides' and name[0] == '/':
+            fileresults = self.searchFiles(name)
+            for pkg in fileresults:
+                result[pkg.pkgid] = pkg
+        
+        result = result.values()
+        self._cache[prcotype][name] = result
+        return result
+
+    def searchProvides(self, name):
+        return self.searchPrco(name, 'provides')
+
+    def searchRequires(self, name):
+        return self.searchPrco(name, 'requires')
+
+    def searchObsoletes(self, name):
+        return self.searchPrco(name, 'obsoletes')
+
+    def searchConflicts(self, name):
+        return self.searchPrco(name, 'conflicts')
+
     def simplePkgList(self):
         return self.pkglist
 
@@ -207,17 +255,21 @@ class RPMDBPackageSack(PackageSackBase):
         return misc.newestInList(allpkgs)
 
     @staticmethod
-    def _compile_patterns(patterns):
+    def _compile_patterns(patterns, ignore_case=False):
         if not patterns or len(patterns) > constants.PATTERNS_MAX:
             return None
         ret = []
         for pat in patterns:
-            ret.append(re.compile(fnmatch.translate(pat)))
+            if ignore_case:
+                ret.append(re.compile(fnmatch.translate(pat), re.I))
+            else:
+                ret.append(re.compile(fnmatch.translate(pat)))
         return ret
     @staticmethod
     def _match_repattern(repatterns, hdr):
         if repatterns is None:
             return True
+
         for repat in repatterns:
             if repat.match(hdr['name']):
                 return True
@@ -237,14 +289,19 @@ class RPMDBPackageSack(PackageSackBase):
                 return True
         return False
 
-    def returnPackages(self, repoid=None, patterns=None):
+    def returnPackages(self, repoid=None, patterns=None, ignore_case=False):
         if not self._completely_loaded:
-            rpats = self._compile_patterns(patterns)
+            rpats = self._compile_patterns(patterns, ignore_case)
             for hdr, idx in self._all_packages():
                 if self._match_repattern(rpats, hdr):
                     self._makePackageObject(hdr, idx)
             self._completely_loaded = patterns is None
-        return self._idx2pkg.values()
+
+        pkgobjlist = self._idx2pkg.values()
+        if patterns:
+            pkgobjlist = parsePackages(pkgobjlist, patterns, not ignore_case)
+            pkgobjlist = pkgobjlist[0] + pkgobjlist[1]
+        return pkgobjlist
 
     @staticmethod
     def _find_search_fields(fields, searchstrings, hdr):
@@ -267,6 +324,11 @@ class RPMDBPackageSack(PackageSackBase):
             if n > 0:
                 ret.append((self._makePackageObject(hdr, idx), n))
         return ret
+    def searchNames(self, names=[]):
+        returnList = []
+        for name in names:
+            returnList.extend(self._search(name=name))
+        return returnList
 
     def searchNevra(self, name=None, epoch=None, ver=None, rel=None, arch=None):
         return self._search(name, epoch, ver, rel, arch)
@@ -477,55 +539,63 @@ class RPMDBPackageSack(PackageSackBase):
                    misc.share_data(r_r)))
         return misc.share_data(deptup)
 
-    def _getPRCO(self, PRCO, name, flags=None, version=(None, None, None)):
+    def getProvides(self, name, flags=None, version=(None, None, None)):
+        """searches the rpmdb for what provides the arguments
+           returns a list of pkg objects of providing packages, possibly empty"""
+
+        name = misc.share_data(name)
+        deptup = self._genDeptup(name, flags, version)
+        if deptup in self._get_pro_cache:
+            return self._get_pro_cache[deptup]
+        r_v = deptup[2][1]
+        
+        pkgs = self.searchProvides(name)
+        
+        result = { }
+        
+        for po in pkgs:
+            if name[0] == '/' and r_v is None:
+                result[po] = [(name, None, (None, None, None))]
+                continue
+            hits = po.matchingPrcos('provides', deptup)
+            if hits:
+                result[po] = hits
+        self._get_pro_cache[deptup] = result
+        return result
+
+    def whatProvides(self, name, flags, version):
+        # XXX deprecate?
+        return [po.pkgtup for po in self.getProvides(name, flags, version)]
+
+    def getRequires(self, name, flags=None, version=(None, None, None)):
         """searches the rpmdb for what provides the arguments
            returns a list of pkgtuples of providing packages, possibly empty"""
 
         name = misc.share_data(name)
         deptup = self._genDeptup(name, flags, version)
-        if deptup in self._get_prco_cache[PRCO]:
-            return self._get_prco_cache[PRCO][deptup]
+        if deptup in self._get_req_cache:
+            return self._get_req_cache[deptup]
         r_v = deptup[2][1]
 
-        ts = self.readOnlyTS()
-        pkgs = {}
-        tag = self.DEP_TABLE[PRCO][0]
-        mi = ts.dbMatch(tag, name)
-        for hdr in mi:
-            po = self._makePackageObject(hdr, mi.instance())
-            pkgs[po.pkgid] = po
-        del mi
+        pkgs = self.searchRequires(name)
 
-        # If it's not a provides or filename, we are done
-        if PRCO == 'provides' and name[0] == '/':
-            fileresults = self.searchFiles(name)
-            for pkg in fileresults:
-                pkgs[pkg.pkgid] = pkg
-        
-        result = {}
-        for po in pkgs.values():
+        result = { }
+
+        for po in pkgs:
             if name[0] == '/' and r_v is None:
                 # file dep add all matches to the defSack
                 result[po] = [(name, None, (None, None, None))]
                 continue
-            hits = po.matchingPrcos(PRCO, deptup)
+            hits = po.matchingPrcos('requires', deptup)
             if hits:
                 result[po] = hits
-        self._get_prco_cache[PRCO][deptup] = result
+        self._get_req_cache[deptup] = result
         return result
 
-    def getProvides(self, name, flags=None, version=(None, None, None)):
-        return self._getPRCO('provides', name, flags, version)
-
-    def getRequires(self, name, flags=None, version=(None, None, None)):
-        return self._getPRCO('requires', name, flags, version)
-
-    def getConflicts(self, name, flags=None, version=(None, None, None)):
-        return self._getPRCO('conflicts', name, flags, version)
-
-    def getObsoletes(self, name, flags=None, version=(None, None, None)):
-        return self._getPRCO('obsoletes', name, flags, version)
-
+    def whatRequires(self, name, flags, version):
+        # XXX deprecate?
+        return [po.pkgtup for po in self.getRequires(name, flags, version)]
+            
 def main():
     sack = RPMDBPackageSack('/')
     for p in sack.simplePkgList():

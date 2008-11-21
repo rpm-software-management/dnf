@@ -18,6 +18,7 @@ yum/i18n.py
 yum/__init__.py
 yum/logginglevels.py
 yum/mdparser.py
+yum/metalink.py
 yum/misc.py
 yum/packageSack.py
 yum/packages.py

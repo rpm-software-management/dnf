@@ -4,8 +4,8 @@
 # This file is distributed under the same license as the yum package.
 # Silvio Pierro <perplesso82@gmail.com>, 2008.
 # Gianluca Busiello <busiello@ceinge.unina.it>, 2008.
-# 
-# 
+#
+#
 msgid ""
 msgstr ""
 "Project-Id-Version: yum-it 3.2.8\n"
@@ -527,8 +527,8 @@ msgstr "Licenza    : %s"
 msgid "Description: "
 msgstr "Descrizione: "
 
+#
 #: ../output.py:351
-# 
 msgid "Is this ok [y/N]: "
 msgstr "È corretto [s/N]: "
 

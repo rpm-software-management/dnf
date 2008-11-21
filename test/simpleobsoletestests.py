@@ -217,6 +217,119 @@ class SimpleObsoletesTests(OperationsTests):
         self.assertResult((p.obsoletes_i386, p.obsoletes_x86_64, p.requires_obsoletes))
 
 
+    def testInstallObsoletenoarchTonoarch(self):
+        p = self.pkgs
+        res, msg = self.runOperation(['install', 'zsh-ng'], [p.installed_noarch], [p.obsoletes_noarch])
+        self.assert_(res=='ok', msg)
+        self.assertResult((p.obsoletes_noarch,))
+
+    def _MultiObsHelper(self):
+        ret = {'zsh'  : FakePackage('zsh', '1', '1', '0', 'noarch'),
+               'ksh'  : FakePackage('ksh', '1', '1', '0', 'noarch'),
+               'nash' : FakePackage('nash', '1', '1', '0', 'noarch')}
+        ret['pi'] = [ret['zsh'], ret['ksh'], ret['nash']]
+              
+        ret['fish'] = FakePackage('fish', '0.1', '1', '0', 'noarch')
+        ret['fish'].addObsoletes('zsh', None, (None, None, None))
+        ret['bigfish'] = FakePackage('bigfish', '0.2', '1', '0', 'noarch')
+        ret['bigfish'].addObsoletes('zsh', None, (None, None, None))
+        ret['bigfish'].addObsoletes('ksh', None, (None, None, None))
+        ret['shark'] = FakePackage('shark', '0.3', '1', '0', 'noarch')
+        ret['shark'].addObsoletes('zsh', None, (None, None, None))
+        ret['shark'].addObsoletes('ksh', None, (None, None, None))
+        ret['shark'].addObsoletes('nash', None, (None, None, None))
+
+        ret['po'] = [ret['fish'], ret['bigfish'], ret['shark']]
+        return ret
+
+    def testMultiObs1(self):
+        pkgs = self._MultiObsHelper()
+        res, msg = self.runOperation(['install', 'fish'],
+                                     pkgs['pi'], pkgs['po'])
+        self.assert_(res=='ok', msg)
+        self.assertResult((pkgs['ksh'],pkgs['nash'],pkgs['fish'],))
+
+    def testMultiObs2(self):
+        pkgs = self._MultiObsHelper()
+        res, msg = self.runOperation(['install', 'bigfish'],
+                                     pkgs['pi'], pkgs['po'])
+        self.assert_(res=='ok', msg)
+        self.assertResult((pkgs['nash'],pkgs['bigfish'],))
+
+    def testMultiObs3(self):
+        pkgs = self._MultiObsHelper()
+        res, msg = self.runOperation(['install', 'shark'],
+                                     pkgs['pi'], pkgs['po'])
+        self.assert_(res=='ok', msg)
+        self.assertResult((pkgs['shark'],))
+
+    def testMultiObs4(self):
+        # This tests update...
+        pkgs = self._MultiObsHelper()
+        oldshark = FakePackage('shark', '0.1', '1', '0', 'noarch')
+
+        res, msg = self.runOperation(['update', 'shark'],
+                                     pkgs['pi'] + [oldshark], pkgs['po'])
+        self.assert_(res=='ok', msg)
+        self.assertResult((pkgs['shark'],))
+
+    def testMultiObs5(self):
+        # This tests update of the to be obsoleted pkg...
+        pkgs = self._MultiObsHelper()
+        oldshark = FakePackage('shark', '0.1', '1', '0', 'noarch')
+
+        res, msg = self.runOperation(['update', 'nash'],
+                                     pkgs['pi'] + [oldshark], pkgs['po'])
+        self.assert_(res=='ok', msg)
+        self.assertResult((pkgs['shark'],))
+
+    # NOTE: Do we really want to remove the old kernel-xen? ... not 100% sure
+    def testMultiObsKern1(self):
+        # kernel + kernel-xen installed, and update kernel obsoletes kernel-xen
+        okern1    = FakePackage('kernel',     '0.1', '1', '0', 'noarch')
+        okern2    = FakePackage('kernel',     '0.2', '1', '0', 'noarch')
+        okernxen1 = FakePackage('kernel-xen', '0.1', '1', '0', 'noarch')
+        okernxen2 = FakePackage('kernel-xen', '0.2', '1', '0', 'noarch')
+        nkern     = FakePackage('kernel',     '0.8', '1', '0', 'noarch')
+        nkern.addObsoletes('kernel-xen', None, (None, None, None))
+
+        res, msg = self.runOperation(['update', 'kernel'],
+                                     [okern1, okernxen1,
+                                      okern2, okernxen2], [nkern])
+        self.assert_(res=='ok', msg)
+        self.assertResult((okern1,okern2,nkern,))
+
+    def testMultiObsKern2(self):
+        # kernel + kernel-xen installed, and update kernel obsoletes kernel-xen
+        okern1    = FakePackage('kernel',     '0.1', '1', '0', 'noarch')
+        okern2    = FakePackage('kernel',     '0.2', '1', '0', 'noarch')
+        okernxen1 = FakePackage('kernel-xen', '0.1', '1', '0', 'noarch')
+        okernxen2 = FakePackage('kernel-xen', '0.2', '1', '0', 'noarch')
+        nkern     = FakePackage('kernel',     '0.8', '1', '0', 'noarch')
+        nkern.addObsoletes('kernel-xen', None, (None, None, None))
+
+        res, msg = self.runOperation(['update', 'kernel-xen'],
+                                     [okern1, okernxen1,
+                                      okern2, okernxen2], [nkern])
+        self.assert_(res=='ok', msg)
+        self.assertResult((okern1,okern2,nkern,))
+
+    def testMultiObsKern3(self):
+        # kernel + kernel-xen installed, and update kernel obsoletes kernel-xen
+        okern1    = FakePackage('kernel',     '0.1', '1', '0', 'noarch')
+        okern2    = FakePackage('kernel',     '0.2', '1', '0', 'noarch')
+        okernxen1 = FakePackage('kernel-xen', '0.1', '1', '0', 'noarch')
+        okernxen2 = FakePackage('kernel-xen', '0.2', '1', '0', 'noarch')
+        nkern     = FakePackage('kernel',     '0.8', '1', '0', 'noarch')
+        nkern.addObsoletes('kernel-xen', None, (None, None, None))
+
+        res, msg = self.runOperation(['update'],
+                                     [okern1, okernxen1,
+                                      okern2, okernxen2], [nkern])
+        self.assert_(res=='ok', msg)
+        self.assertResult((okern1,okern2,nkern,))
+
+
 class GitMetapackageObsoletesTests(OperationsTests):
 
     @staticmethod
@@ -226,11 +339,11 @@ class GitMetapackageObsoletesTests(OperationsTests):
         pkgs.metapackage = FakePackage('git', '1.5.4.2', '1', '0', 'x86_64')
         # obsoletes
         pkgs.new_git = FakePackage('git', '1.5.4.4', '1', '0', 'x86_64')
-        pkgs.new_git.addObsoletes('git-core', LE, ('0', '1.5.4.3', '1'))
-        pkgs.new_git.addProvides('git-core', EQ, ('0', '1.5.4', '1'))
+        pkgs.new_git.addObsoletes('git-core', 'LE', ('0', '1.5.4.3', '1'))
+        pkgs.new_git.addProvides('git-core', 'EQ', ('0', '1.5.4', '1'))
 
         pkgs.git_all = FakePackage('git-all', '1.5.4', '1', '0', 'x86_64')
-        pkgs.git_all.addObsoletes('git', LE, ('0', '1.5.4.3', '1'))
+        pkgs.git_all.addObsoletes('git', 'LE', ('0', '1.5.4.3', '1'))
 
 
     def testGitMetapackageOnlyCoreInstalled(self):

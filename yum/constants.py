@@ -98,5 +98,12 @@ RPM_TO_SQLITE = { 'packagesize' : 'size_package',
                  'license' : 'rpm_license'
                         }
 
-# Cut over for when we should just give up and load everything
-PATTERNS_MAX = 128
+#  Cut over for when we should just give up and load everything.
+#  The main problem here is not so much SQLite dying (although that happens
+# at large values: http://sqlite.org/limits.html#max_variable_number) but that
+# but SQLite going really slow when it gets medium sized values (much slower
+# than just loading everything and filtering it in python).
+PATTERNS_MAX = 8
+#  We have another value here because name is indexed and sqlite is _much_
+# faster even at large numbers of patterns.
+PATTERNS_INDEXED_MAX = 128
