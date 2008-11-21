@@ -1114,7 +1114,9 @@ class YumOptionParser(OptionParser):
                     self.base.term.reinit(color=self.base.conf.color)
             else:
                 _remap = {'tty' : 'auto', 'if-tty' : 'auto',
+                          '1' : 'always', 'true' : 'always',
                           'yes' : 'always', 'on' : 'always',
+                          '0' : 'always', 'false' : 'always',
                           'no' : 'never', 'off' : 'never'}
                 opts.color = _remap.get(opts.color, opts.color)
                 if opts.color != 'auto':

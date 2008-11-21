@@ -670,8 +670,11 @@ class YumConf(StartupConf):
     bugtracker_url = Option('http://yum.baseurl.org/report')
 
     color = SelectionOption('auto', ('auto', 'never', 'always'),
-                            mapper={'on' : 'always',
-                                    'off' : 'nevern'})
+                            mapper={'on' : 'always', 'yes' : 'always',
+                                    '1' : 'always', 'true' : 'always',
+                                    'off' : 'never', 'no' : 'never',
+                                    '0' : 'never', 'false' : 'never',
+                                    'tty' : 'auto', 'if-tty' : 'auto'})
     color_list_installed_older = Option('bold')
     color_list_installed_newer = Option('bold,yellow')
     color_list_installed_extra = Option('bold,red')
