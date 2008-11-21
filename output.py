@@ -250,7 +250,7 @@ class YumTerm:
         cap = self._ctigetstr(cap_name) or ''
         return re.sub(r'\$<\d+>[/*]?', '', cap)
 
-    def sub(self, haystack, beg, end, needles, escape=None):
+    def sub(self, haystack, beg, end, needles, escape=None, ignore_case=False):
         if not self.__enabled:
             return haystack
 
@@ -259,7 +259,10 @@ class YumTerm:
 
         render = lambda match: beg + match.group() + end
         for needle in needles:
-            haystack = re.sub(escape(needle), render, haystack)
+            pat = escape(needle)
+            if ignore_case:
+                pat = re.template(pat, re.I)
+            haystack = re.sub(pat, render, haystack)
         return haystack
     def sub_norm(self, haystack, beg, needles, **kwds):
         return self.sub(haystack, beg, self.MODE['normal'], needles, **kwds)
@@ -268,7 +271,7 @@ class YumTerm:
         return self.sub_norm(haystack, self.MODE[mode], needles, **kwds)
 
     def sub_bold(self, haystack, needles, **kwds):
-        return self.sub_mode(haystack, 'bold', needles)
+        return self.sub_mode(haystack, 'bold', needles, **kwds)
     
     def sub_fg(self, haystack, color, needles, **kwds):
         return self.sub_norm(haystack, self.FG_COLOR[color], needles, **kwds)
@@ -340,6 +343,10 @@ class YumOutput:
         if hibeg:
             hiend = self.term.MODE['normal']
         return (hibeg, hiend)
+
+    def _sub_highlight(self, haystack, highlight, needles, **kwds):
+        hibeg, hiend = self._highlight(highlight)
+        return self.term.sub(haystack, hibeg, hiend, needles, **kwds)
 
     @staticmethod
     def _calc_columns_spaces_helps(current, data_tups, left):
@@ -775,7 +782,8 @@ class YumOutput:
     def format_time(seconds, use_hours=0):
         return urlgrabber.progress.format_time(seconds, use_hours)
 
-    def matchcallback(self, po, values, matchfor=None, verbose=None):
+    def matchcallback(self, po, values, matchfor=None, verbose=None,
+                      highlight=None):
         """ Output search/provides type callback matches. po is the pkg object,
             values are the things in the po that we've matched.
             If matchfor is passed, all the strings in that list will be
@@ -788,7 +796,9 @@ class YumOutput:
             msg = '%s.%s : ' % (po.name, po.arch)
         msg = self.fmtKeyValFill(msg, self._enc(po.summary))
         if matchfor:
-            msg = self.term.sub_bold(msg, matchfor)
+            if highlight is None:
+                highlight = self.conf.color_search_match
+            msg = self._sub_highlight(msg, highlight, matchfor,ignore_case=True)
         
         print msg
 
@@ -822,7 +832,8 @@ class YumOutput:
                 key = _("Other       : ")
 
             if matchfor:
-                item = self.term.sub_bold(item, matchfor)
+                item = self._sub_highlight(item, highlight, matchfor,
+                                           ignore_case=True)
             if can_overflow:
                 print self.fmtKeyValFill(key, item)
             else:

@@ -679,6 +679,8 @@ class YumConf(StartupConf):
     color_list_available_upgrade = Option('bold,blue')
     color_list_available_downgrade = Option('dim,cyan')
     color_list_available_install = Option('normal')
+
+    color_search_match = Option('bold')
     
     _reposlist = []
 
