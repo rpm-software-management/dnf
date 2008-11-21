@@ -323,6 +323,8 @@ class YumOutput:
             pass
         elif not isinstance(highlight, basestring) or highlight == 'bold':
             hibeg = self.term.MODE['bold']
+        elif highlight == 'normal':
+            pass # Minor opt.
         else:
             # Turn a string into a specific output: colour, bold, etc.
             for high in highlight.replace(',', ' ').split():
