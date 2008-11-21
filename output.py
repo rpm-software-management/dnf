@@ -686,8 +686,14 @@ class YumOutput:
                     continue
                 for (apkg, ipkg) in sorted(pkg_names2pkgs[item],
                                            key=lambda x: x[1] or x[0]):
+                    if ipkg and apkg:
+                        highlight = self.conf.color_list_installed_older
+                    elif apkg:
+                        highlight = self.conf.color_list_available_install
+                    else:
+                        highlight = False
                     self.simpleEnvraList(ipkg or apkg, ui_overflow=True,
-                                         indent=indent, highlight=ipkg and apkg,
+                                         indent=indent, highlight=highlight,
                                          columns=columns)
     
     def displayPkgsInGroups(self, group):
