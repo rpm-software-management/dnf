@@ -95,7 +95,7 @@ class UpdateNotice(object):
             for bz in bzs:
                 buglist += " %s%s\n\t    :" % (bz['id'], bz.has_key('title')
                                                and ' - %s' % bz['title'] or '')
-            head += buglist[:-1].rstrip() + '\n'
+            head += buglist[: - 1].rstrip() + '\n'
 
         # Add our CVE references
         cves = filter(lambda r: r['type'] == 'cve', self._md['references'])
@@ -103,7 +103,7 @@ class UpdateNotice(object):
             cvelist = "       CVEs :"
             for cve in cves:
                 cvelist += " %s\n\t    :" % cve['id']
-            head += cvelist[:-1].rstrip() + '\n'
+            head += cvelist[: - 1].rstrip() + '\n'
 
         if self._md['description'] is not None:
             desc = wrap(self._md['description'], width=64,
@@ -119,7 +119,7 @@ class UpdateNotice(object):
                 if file['arch'] not in arches:
                     continue
                 filelist += " %s\n\t    :" % file['filename']
-        head += filelist[:-1].rstrip()
+        head += filelist[: - 1].rstrip()
 
         return head
 
@@ -236,17 +236,17 @@ class UpdateNotice(object):
 
     def xml(self):
         """Generate the xml for this update notice object"""
-        msg="""
+        msg = """
 <update from="%s" status="%s" type="%s" version="%s">
   <id>%s</id>
   <title>%s</title>
   <release>%s</release>
   <issued date="%s"/>
   <description>%s</description>\n""" % (to_xml(self._md['from']),
-                to_xml(self._md['status']), to_xml(self._md['type']), 
-                to_xml(self._md['version']),to_xml(self._md['update_id']),
+                to_xml(self._md['status']), to_xml(self._md['type']),
+                to_xml(self._md['version']), to_xml(self._md['update_id']),
                 to_xml(self._md['title']), to_xml(self._md['release']),
-                to_xml(self._md['issued'], attrib=True), 
+                to_xml(self._md['issued'], attrib=True),
                 to_xml(self._md['description']))
         
         if self._md['references']:
@@ -398,7 +398,7 @@ class UpdateMetadata(object):
         if fileobj:
             fileobj.write(end)
         else:
-            msg+= end
+            msg += end
 
         if fileobj:
             return
