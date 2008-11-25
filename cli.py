@@ -695,6 +695,8 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
             
         ypl = self.doPackageLists(pkgnarrow=pkgnarrow, patterns=extcmds,
                                   ignore_case=True)
+        if self.conf.showdupesfromrepos:
+            ypl.available += ypl.reinstall_available
 
         # This is mostly leftover from when patterns didn't exist
         # FIXME: However when returnPackages() has already been run, we
