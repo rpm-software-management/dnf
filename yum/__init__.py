@@ -1065,11 +1065,11 @@ class YumBase(depsolve.Depsolve):
                     else:
                         # Whoa. What the heck happened?
                         msg = _('Unable to check if PID %s is active') % oldpid
-                        raise Errors.LockError(1, msg)
+                        raise Errors.LockError(1, msg, oldpid)
                 else:
                     # Another copy seems to be running.
                     msg = _('Existing lock %s: another copy is running as pid %s.') % (lockfile, oldpid)
-                    raise Errors.LockError(0, msg)
+                    raise Errors.LockError(0, msg, oldpid)
         # We've got the lock, store it so we can auto-unlock on __del__...
         self._lockfile = lockfile
     

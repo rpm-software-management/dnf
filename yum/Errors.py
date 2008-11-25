@@ -42,10 +42,11 @@ class YumRPMCheckError(YumBaseError):
     pass
         
 class LockError(YumBaseError):
-    def __init__(self, errno, msg):
+    def __init__(self, errno, msg, pid=0):
         YumBaseError.__init__(self)
         self.errno = errno
         self.msg = msg
+        self.pid = pid
         
 class DepError(YumBaseError):
     pass
