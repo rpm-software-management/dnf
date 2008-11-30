@@ -135,8 +135,11 @@ class MetaLinkURL:
 
         self.url        = elem.text
         self.preference = int(elem.get("preference", -1))
-        self.protocol   = elem.get("protocol")
+        self.protocol   = elem.get("type") # This is the "std" attribute name
         self.location   = elem.get("location")
+
+        if self.protocol is None: # Try for the old MM protocol attribute
+            self.protocol   = elem.get("protocol")
 
     def __str__(self):
         return """\
