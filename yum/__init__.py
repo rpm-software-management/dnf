@@ -493,7 +493,7 @@ class YumBase(depsolve.Depsolve):
         
         if self.conf.obsoletes:
             obs_init = time.time()    
-            self._up.rawobsoletes = self.pkgSack.returnObsoletes(newest=True)
+            self._up.rawobsoletes = self.pkgSack.returnObsoletes()
             self.verbose_logger.debug('up:Obs Init time: %0.3f' % (time.time() - obs_init))
             
         self._up.exactarch = self.conf.exactarch
