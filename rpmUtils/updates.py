@@ -18,6 +18,8 @@ import rpmUtils
 import rpmUtils.miscutils
 import rpmUtils.arch
 
+def _vertup_cmp(tup1, tup2):
+    return rpmUtils.miscutils.compareEVR(tup1, tup2)
 class Updates:
     """
     This class computes and keeps track of updates and obsoletes.
@@ -38,8 +40,10 @@ class Updates:
         self.obsoleting_dict = {} # obsoleting pkgtup -> [ obsoleted pkgtups ]
 
         self.exactarch = 1 # don't change archs by default
-        self.exactarchlist = ['kernel', 'kernel-smp', 'glibc', 'kernel-hugemem',
-                              'kernel-enterprise', 'kernel-bigmem', 'kernel-BOOT']
+        self.exactarchlist = set(['kernel', 'kernel-smp', 'glibc',
+                                  'kernel-hugemem',
+                                  'kernel-enterprise', 'kernel-bigmem',
+                                  'kernel-BOOT'])
                               
         self.myarch = rpmUtils.arch.canonArch # set this if you want to
                                               # test on some other arch
@@ -96,7 +100,7 @@ class Updates:
     def debugprint(self, msg):
         if self.debug:
             print msg
-        
+
     def makeNADict(self, pkglist, Nonelists):
         """return lists of (e,v,r) tuples as value of a dict keyed on (n, a)
             optionally will return a (n, None) entry with all the a for that
@@ -139,28 +143,21 @@ class Updates:
         """returns a list of package tuples in a list (n, a, e, v, r)
            takes a package name, a list of archs, and a list of pkgs in
            (n, a, e, v, r) form."""
-        # go through list and throw out all pkgs not in archlist
-        matchlist = []
-        for (n, a, e, v, r) in pkglist:
-            if name == n:
-                if a in archlist:
-                    matchlist.append((n, a, e, v, r))
-
-        if len(matchlist) == 0:
-            return []
-            
-        # get all the evr's in a tuple list for returning the highest
-        verlist = []
-        for (n, a, e, v, r) in matchlist:
-            verlist.append((e,v,r))
-
-        (high_e, high_v, high_r) = self.returnNewest(verlist)
-            
         returnlist = []
-        for (n, a, e, v, r) in matchlist:
-            if (high_e, high_v, high_r) == (e, v, r):
-                returnlist.append((n,a,e,v,r))
-                
+        high_vertup = None
+        for pkgtup in pkglist:
+            (n, a, e, v, r) = pkgtup
+            # FIXME: returnlist used to _possibly_ contain things not in
+            #        archlist ... was that desired?
+            if name == n and a in archlist:
+                vertup = (e, v, r)
+                if (high_vertup is None or
+                    (_vertup_cmp(high_vertup, vertup) < 0)):
+                    high_vertup = vertup
+                    returnlist = []
+                if vertup == high_vertup:
+                    returnlist.append(pkgtup)
+
         return returnlist
            
     def condenseUpdates(self):
@@ -294,7 +291,6 @@ class Updates:
         newpkgs = self.availdict
         
         archlist = rpmUtils.arch.getArchList(self.myarch)
-                
         for (n, a) in newpkgs.keys():
             # remove stuff not in our archdict
             # high log here
@@ -420,9 +416,11 @@ class Updates:
             
             multicompat = rpmUtils.arch.getMultiArchInfo(self.myarch)[0]
             multiarchlist = rpmUtils.arch.getArchList(multicompat)
-            archlists = [ biarches, multiarchlist ]
+            archlists = [ set(biarches), set(multiarchlist) ]
+            # archlists = [ biarches, multiarchlist ]
         else:
-            archlists = [ archlist ]
+            archlists = [ set(archlist) ]
+            # archlists = [ archlist ]
             
         for n in complexupdate:
             for thisarchlist in archlists:
@@ -434,19 +432,18 @@ class Updates:
 
                 highestinstalledpkgs = self.returnHighestVerFromAllArchsByName(n,
                                          thisarchlist, tmplist)
+                hipdict = self.makeNADict(highestinstalledpkgs, 0)
                                          
                 
-                tmplist = []
-                for (a, e, v, r) in newpkgs[(n, None)]:
-                    tmplist.append((n, a, e, v, r))                        
-                highestavailablepkgs = self.returnHighestVerFromAllArchsByName(n,
-                                         thisarchlist, tmplist)
-
-                hapdict = self.makeNADict(highestavailablepkgs, 0)
-                hipdict = self.makeNADict(highestinstalledpkgs, 0)
-
-                # now we have the two sets of pkgs
                 if n in self.exactarchlist:
+                    tmplist = []
+                    for (a, e, v, r) in newpkgs[(n, None)]:
+                        tmplist.append((n, a, e, v, r))
+                    highestavailablepkgs = self.returnHighestVerFromAllArchsByName(n,
+                                             thisarchlist, tmplist)
+
+                    hapdict = self.makeNADict(highestavailablepkgs, 0)
+
                     for (n, a) in hipdict:
                         if hapdict.has_key((n, a)):
                             self.debugprint('processing %s.%s' % (n, a))
@@ -464,16 +461,25 @@ class Updates:
                     # this is where we have to have an arch contest if there
                     # is more than one arch updating with the highest ver
                     instarchs = []
-                    availarchs = []
                     for (n,a) in hipdict:
                         instarchs.append(a)
-                    for (n,a) in hapdict:
-                        availarchs.append(a)
                     
                     rpm_a = rpmUtils.arch.getBestArchFromList(instarchs, myarch=self.myarch)
+                    if rpm_a is None:
+                        continue
+
+                    tmplist = []
+                    for (a, e, v, r) in newpkgs[(n, None)]:
+                        tmplist.append((n, a, e, v, r))
+                    highestavailablepkgs = self.returnHighestVerFromAllArchsByName(n,
+                                             thisarchlist, tmplist)
+
+                    hapdict = self.makeNADict(highestavailablepkgs, 0)
+                    availarchs = []
+                    for (n,a) in hapdict:
+                        availarchs.append(a)
                     a = rpmUtils.arch.getBestArchFromList(availarchs, myarch=self.myarch)
-                    
-                    if rpm_a is None or a is None:
+                    if a is None:
                         continue
                         
                     (rpm_e, rpm_v, rpm_r) = hipdict[(n, rpm_a)][0] # there can be just one
