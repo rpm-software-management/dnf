@@ -13,7 +13,12 @@
 ##You should have received a copy of the GNU General Public License
 ##along with this program; if not, write to the Free Software
 ##Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
-import struct, time, cStringIO, base64, types, md5, sha
+import struct, time, cStringIO, base64, types
+
+#  We use this so that we can work on python-2.4 and python-2.6, and thus.
+# use import md5/import sha on the older one and import hashlib on the newer.
+#  Stupid deprecation warnings.
+from misc import Checksums
 
 debug = None
 
@@ -378,14 +383,14 @@ class public_key(pgp_packet) :
         # otherwise calculate it now and cache it
         # v3 and v4 are calculated differently
         if self.version == 3 :
-            h = md5.new()
+            h = misc.Checksums(['md5'])
             h.update(pack_long(self.pk_rsa_mod))
             h.update(pack_long(self.pk_rsa_exp))
             self.fingerprint_ = h.digest()
         elif self.version == 4 :
             # we hash what would be the whole PGP message containing
             # the pgp certificate
-            h = sha.new()
+            h = misc.Checksums(['sha1'])
             h.update('\x99')
             # we need to has the length of the packet as well
             buf = self.serialize()
