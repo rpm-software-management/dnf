@@ -177,15 +177,14 @@ class Checksums:
         Length and the result(s) when complete. """
 
     def __init__(self, checksums=None, ignore_missing=False):
-        self._checksums = checksums
-        if self._checksums is None:
-            self._checksums = ['sha256']
+        if checksums is None:
+            checksums = ['sha256']
         self._sumalgos = []
         self._sumtypes = []
         self._len = 0
 
         done = set()
-        for sumtype in self._checksums:
+        for sumtype in checksums:
             if sumtype in done:
                 continue
 
@@ -198,6 +197,8 @@ class Checksums:
             done.add(sumtype)
             self._sumtypes.append(sumtype)
             self._sumalgos.append(sumalgo)
+        if not done:
+            raise MiscError, 'Error Checksumming, no valid checksum type'
 
     def __len__(self):
         return self._len
@@ -218,8 +219,21 @@ class Checksums:
             ret[sumtype] = sumdata.hexdigest()
         return ret
 
-    def hexdigest(self, checksum):
+    def hexdigest(self, checksum=None):
+        if checksum is None:
+            checksum = self._sumtypes[0]
         return self.hexdigests()[checksum]
+
+    def digests(self):
+        ret = {}
+        for sumtype, sumdata in zip(self._sumtypes, self._sumalgos):
+            ret[sumtype] = sumdata.digest()
+        return ret
+
+    def digest(self, checksum=None):
+        if checksum is None:
+            checksum = self._sumtypes[0]
+        return self.digests()[checksum]
 
 
 class AutoFileChecksums:
