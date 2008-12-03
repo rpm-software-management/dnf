@@ -1216,7 +1216,7 @@ class YumCliRPMCallBack(RPMBaseCallback):
 
     def __init__(self):
         RPMBaseCallback.__init__(self)
-        self.lastmsg = None
+        self.lastmsg = to_unicode("")
         self.lastpackage = None # name of last package we looked at
         self.output = logging.getLogger("yum.verbose.cli").isEnabledFor(logginglevels.INFO_2)
         

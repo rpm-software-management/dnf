@@ -18,7 +18,21 @@ import struct, time, cStringIO, base64, types
 #  We use this so that we can work on python-2.4 and python-2.6, and thus.
 # use import md5/import sha on the older one and import hashlib on the newer.
 #  Stupid deprecation warnings.
-from misc import Checksums
+try:
+    import hashlib
+except ImportError:
+    # Python-2.4.z ... gah!
+    import sha
+    import md5
+    class hashlib:
+
+        @staticmethod
+        def new(algo):
+            if algo == 'md5':
+                return md5.new()
+            if algo == 'sha1':
+                return sha.new()
+            raise ValueError, "Bad checksum type"
 
 debug = None
 
@@ -383,14 +397,14 @@ class public_key(pgp_packet) :
         # otherwise calculate it now and cache it
         # v3 and v4 are calculated differently
         if self.version == 3 :
-            h = misc.Checksums(['md5'])
+            h = hashlib.new('md5')
             h.update(pack_long(self.pk_rsa_mod))
             h.update(pack_long(self.pk_rsa_exp))
             self.fingerprint_ = h.digest()
         elif self.version == 4 :
             # we hash what would be the whole PGP message containing
             # the pgp certificate
-            h = misc.Checksums(['sha1'])
+            h = hashlib.new('sha1')
             h.update('\x99')
             # we need to has the length of the packet as well
             buf = self.serialize()
