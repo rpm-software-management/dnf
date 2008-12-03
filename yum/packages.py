@@ -978,7 +978,9 @@ class YumHeaderPackage(YumAvailablePackage):
         self.ver = self.version
         self.rel = self.release
         self.pkgtup = (self.name, self.arch, self.epoch, self.version, self.release)
-        self.summary = misc.share_data(self.hdr['summary'].replace('\n', ''))
+        # Summaries "can be" empty, which rpm return [], see BZ 473239, *sigh*
+        self.summary = self.hdr['summary'] or ''
+        self.summary = misc.share_data(self.summary.replace('\n', ''))
         self.description = misc.share_data(self.hdr['description'])
         self.pkgid = self.hdr[rpm.RPMTAG_SHA1HEADER]
         if not self.pkgid:
