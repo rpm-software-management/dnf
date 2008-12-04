@@ -523,8 +523,9 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         # always_output is a wart due to update/remove not producing the
         # same output.
         matches = self.doPackageLists(patterns=[arg], ignore_case=False)
-        if matches.installed: # Found a match so ignore
-            return
+        if (matches.installed or (not matches.available and
+                                  self.returnInstalledPackagesByDep(arg))):
+            return # Found a match so ignore
         hibeg = self.term.MODE['bold']
         hiend = self.term.MODE['normal']
         if matches.available:
