@@ -54,6 +54,7 @@ class Updates:
         self.updating_dict = {}
         #debug, ignore me
         self.debug = 0
+        self.obsoletes = {}
 
     def _delFromDict(self, dict_, keys, value):
         for key in keys:
