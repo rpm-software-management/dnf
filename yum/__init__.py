@@ -2541,6 +2541,16 @@ class YumBase(depsolve.Depsolve):
                 tx_return.extend(txmbrs)
                 continue
             
+            #  Make sure we're not installing a package which is obsoleted by
+            # something else in the repo. Unless there is a obsoletion loop,
+            # at which point ignore everything.
+            obsoleting_pkg = self._test_loop(po, self._pkg2obspkg)
+            if obsoleting_pkg is not None:
+                self.verbose_logger.warning(_('Package %s is obsoleted by %s, trying to install %s instead'),
+                    po.name, obsoleting_pkg.name, obsoleting_pkg)               
+                self.install(po=obsoleting_pkg)
+                continue
+            
             # make sure it's not already installed
             if self.rpmdb.contains(po=po):
                 if not self.tsInfo.getMembersWithState(po.pkgtup, TS_REMOVE_STATES):
@@ -2556,15 +2566,6 @@ class YumBase(depsolve.Depsolve):
                     tx_return.extend(txmbrs)
                     continue
 
-            #  Make sure we're not installing a package which is obsoleted by
-            # something else in the repo. Unless there is a obsoletion loop,
-            # at which point ignore everything.
-            obsoleting_pkg = self._test_loop(po, self._pkg2obspkg)
-            if obsoleting_pkg is not None:
-                self.verbose_logger.warning(_('Package %s is obsoleted by %s, trying to install %s instead'),
-                    po.name, obsoleting_pkg.name, obsoleting_pkg)               
-                self.install(po=obsoleting_pkg)
-                continue
                 
             # at this point we are going to mark the pkg to be installed, make sure
             # it doesn't obsolete anything. If it does, mark that in the tsInfo, too
@@ -2684,6 +2685,19 @@ class YumBase(depsolve.Depsolve):
             (e, m, u) = self.rpmdb.matchPackageNames([kwargs['pattern']])
             instpkgs.extend(e)
             instpkgs.extend(m)
+
+            if u:
+                depmatches = []
+                arg = u[0]
+                try:
+                    depmatches = self.returnInstalledPackagesByDep(arg)
+                except yum.Errors.YumBaseError, e:
+                    self.logger.critical(_('%s') % e)
+                
+                if not depmatches:
+                    self.logger.critical(_('No Match for argument: %s') % arg)
+                else:
+                    instpkgs.extend(depmatches)
 
             # if we can't find an installed package then look at available pkgs
             if not instpkgs:
