@@ -87,7 +87,8 @@ will ensure that all dependencies are satisfied\&.  If no package
 matches the given package name(s), they are assumed to be a shell glob
 and any matches are then installed\&. 
 
-If the \-\-obsoletes flag is present \fByum\fP will include package 
+If the main obsoletes configure option is true (default) or the \-\-obsoletes
+flag is present \fByum\fP will include package 
 obsoletes in its calculations - this makes it better for distro\-version 
 changes, for example: upgrading from somelinux 8.0 to somelinux 9.
 .IP 
@@ -97,6 +98,7 @@ be applied without running it interactively. Returns exit value of 100 if
 there are packages available for an update. Also returns a list of the pkgs
 to be updated in list format. Returns 0 if no packages are available for
 update. Returns 1 if an error occured.
+Running in verbose mode also shows obsoletes.
 .IP
 .IP "\fBupgrade\fP"
 Is the same as the update command with the \-\-obsoletes flag set. See update 
