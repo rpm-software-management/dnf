@@ -35,6 +35,7 @@ import constants
 import operator
 import time
 from yum.misc import seq_max_split, to_utf8
+import sys
 
 def catchSqliteException(func):
     """This decorator converts sqlite exceptions into RepoError"""
@@ -42,7 +43,9 @@ def catchSqliteException(func):
         try:
             return func(*args, **kwargs)
         except sqlutils.sqlite.Error, e:
-            if hasattr(e, "message"):
+            # 2.4.x requires this, but 2.6.x complains about even hasattr()
+            # of e.message ... *sigh*
+            if sys.hexversion < 0x02050000:
                 raise Errors.RepoError, str(e.message)
             raise Errors.RepoError, str(e)
 
