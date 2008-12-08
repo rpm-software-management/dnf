@@ -2632,15 +2632,15 @@ class YumBase(depsolve.Depsolve):
         # if no po do kwargs
         # uninstalled pkgs called for update get returned with errors in a list, maybe?
 
-        updates = self.up.getUpdatesTuples()
-        if self.conf.obsoletes:
-            obsoletes = self.up.getObsoletesTuples(newest=1)
-        else:
-            obsoletes = []
-
         tx_return = []
         if not po and not kwargs: # update everything (the easy case)
             self.verbose_logger.log(logginglevels.DEBUG_2, _('Updating Everything'))
+            updates = self.up.getUpdatesTuples()
+            if self.conf.obsoletes:
+                obsoletes = self.up.getObsoletesTuples(newest=1)
+            else:
+                obsoletes = []
+
             for (obsoleting, installed) in obsoletes:
                 obsoleting_pkg = self.getPackageObject(obsoleting)
                 installed_pkg =  self.rpmdb.searchPkgTuple(installed)[0]
