@@ -2694,8 +2694,10 @@ class YumBase(depsolve.Depsolve):
                 else:
                     instpkgs.extend(depmatches)
 
-            # if we can't find an installed package then look at available pkgs
-            if not instpkgs:
+            #  Always look for available packages, it doesn't seem to do any
+            # harm (apart from some time). And it fixes weird edge cases where
+            # "update a" (which requires a new b) is different from "update b"
+            if True or not instpkgs:
                 (e, m, u) = self.pkgSack.matchPackageNames([kwargs['pattern']])
                 availpkgs.extend(e)
                 availpkgs.extend(m)
