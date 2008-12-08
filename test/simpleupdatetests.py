@@ -447,3 +447,35 @@ class SimpleUpdateTests(OperationsTests):
                                      [foo20, bar12])
         self.assert_(res=='ok', msg)
         self.assertResult((bar12,))
+
+    def testUpdateBadMultiInstall7(self):
+        # This is a bug, but we shouldn't die too badly on it...
+        foo11 = FakePackage('foo', '1', '1', '0', 'i386')
+        foo12 = FakePackage('foo', '1', '2', '0', 'i386')
+        foo13 = FakePackage('foo', '1', '3', '0', 'i386')
+        foo20 = FakePackage('foo', '2', '0', '0', 'i386')
+        bar11 = FakePackage('bar', '1', '1', '0', 'i386')
+        bar12 = FakePackage('bar', '1', '2', '0', 'i386')
+        bar12.addRequires('foo', 'EQ', ('0', '2', '0'))
+
+        res, msg = self.runOperation(['update', '*'],
+                                     [foo11, foo12, foo13, bar11],
+                                     [foo20, bar12])
+        self.assert_(res=='ok', msg)
+        self.assertResult((foo20,bar12))
+
+    def testUpdateBadMultiInstall8(self):
+        # This is a bug, but we shouldn't die too badly on it...
+        foo11 = FakePackage('foo', '1', '1', '0', 'i386')
+        foo12 = FakePackage('foo', '1', '2', '0', 'i386')
+        foo13 = FakePackage('foo', '1', '3', '0', 'i386')
+        foo20 = FakePackage('foo', '2', '0', '0', 'i386')
+        bar11 = FakePackage('bar', '1', '1', '0', 'i386')
+        bar12 = FakePackage('bar', '1', '2', '0', 'i386')
+        bar12.addObsoletes('foo', None, (None, None, None))
+
+        res, msg = self.runOperation(['update', '*'],
+                                     [foo11, foo12, foo13, bar11],
+                                     [foo20, bar12])
+        self.assert_(res=='ok', msg)
+        self.assertResult((bar12,))
