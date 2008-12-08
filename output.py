@@ -763,17 +763,14 @@ class YumOutput:
     
         thresh = 999
         depth = 0
+        max_depth = len(symbols) - 1
     
-        # we want numbers between 
-        while number > thresh:
+        # we want numbers between 0 and thresh, but don't exceed the length
+        # of our list.  In that event, the formatting will be screwed up,
+        # but it'll still show the right number.
+        while number > thresh and depth < max_depth:
             depth  = depth + 1
             number = number / step
-    
-        # just in case someone needs more than 1000 yottabytes!
-        diff = depth - len(symbols) + 1
-        if diff > 0:
-            depth = depth - diff
-            number = number * thresh**depth
     
         if type(number) == type(1) or type(number) == type(1L):
             format = '%i%s%s'
@@ -784,7 +781,7 @@ class YumOutput:
         else:
             format = '%.0f%s%s'
     
-        return(format % (number, space, symbols[depth]))
+        return(format % (float(number or 0), space, symbols[depth]))
 
     @staticmethod
     def format_time(seconds, use_hours=0):
