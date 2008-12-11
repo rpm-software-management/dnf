@@ -568,8 +568,6 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         toBeInstalled = {} # keyed on name
         passToUpdate = [] # list of pkgtups to pass along to updatecheck
 
-        self.verbose_logger.log(yum.logginglevels.INFO_2,
-            _('Parsing package install arguments'))
         for arg in userlist:
             if os.path.exists(arg) and arg.endswith('.rpm'): # this is hurky, deal w/it
                 val, msglist = self.localInstall(filelist=[arg])

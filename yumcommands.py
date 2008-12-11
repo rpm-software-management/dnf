@@ -123,6 +123,14 @@ def checkShellArg(base, basecmd, extcmds):
 
 class YumCommand:
         
+    def __init__(self):
+        self.done_command_once = False
+
+    def doneCommand(self, base, msg, *args):
+        if not self.done_command_once:
+            base.verbose_logger.log(logginglevels.INFO_2, msg, *args)
+        self.done_command_once = True
+
     def getNames(self):
         return []
 
@@ -169,8 +177,7 @@ class InstallCommand(YumCommand):
         checkPackageArg(base, basecmd, extcmds)
 
     def doCommand(self, base, basecmd, extcmds):
-        base.verbose_logger.log(logginglevels.INFO_2, 
-                _("Setting up Install Process"))
+        self.doneCommand(base, _("Setting up Install Process"))
         try:
             return base.installPkgs(extcmds)
         except yum.Errors.YumBaseError, e:
@@ -191,8 +198,7 @@ class UpdateCommand(YumCommand):
         checkGPGKey(base)
 
     def doCommand(self, base, basecmd, extcmds):
-        base.verbose_logger.log(logginglevels.INFO_2, 
-                _("Setting up Update Process"))
+        self.doneCommand(base, _("Setting up Update Process"))
         try:
             return base.updatePkgs(extcmds)
         except yum.Errors.YumBaseError, e:
@@ -344,8 +350,7 @@ class EraseCommand(YumCommand):
         checkPackageArg(base, basecmd, extcmds)
 
     def doCommand(self, base, basecmd, extcmds):
-        base.verbose_logger.log(logginglevels.INFO_2, 
-                _("Setting up Remove Process"))
+        self.doneCommand(base, _("Setting up Remove Process"))
         try:
             return base.erasePkgs(extcmds)
         except yum.Errors.YumBaseError, e:
@@ -359,8 +364,7 @@ class EraseCommand(YumCommand):
 
 class GroupCommand(YumCommand):
     def doCommand(self, base, basecmd, extcmds):
-        base.verbose_logger.log(logginglevels.INFO_2, 
-                _("Setting up Group Process"))
+        self.doneCommand(base, _("Setting up Group Process"))
 
         base.doRepoSetup(dosack=0)
         try:
@@ -622,8 +626,7 @@ class UpgradeCommand(YumCommand):
 
     def doCommand(self, base, basecmd, extcmds):
         base.conf.obsoletes = 1
-        base.verbose_logger.log(logginglevels.INFO_2, 
-                _("Setting up Upgrade Process"))
+        self.doneCommand(base, _("Setting up Upgrade Process"))
         try:
             return base.updatePkgs(extcmds)
         except yum.Errors.YumBaseError, e:
@@ -645,8 +648,7 @@ class LocalInstallCommand(YumCommand):
         checkPackageArg(base, basecmd, extcmds)
         
     def doCommand(self, base, basecmd, extcmds):
-        base.verbose_logger.log(logginglevels.INFO_2,
-                                _("Setting up Local Package Process"))
+        self.doneCommand(base, _("Setting up Local Package Process"))
 
         updateonly = basecmd == 'localupdate'
         try:
@@ -688,7 +690,7 @@ class ShellCommand(YumCommand):
         checkShellArg(base, basecmd, extcmds)
 
     def doCommand(self, base, basecmd, extcmds):
-        base.verbose_logger.log(logginglevels.INFO_2, _('Setting up Yum Shell'))
+        self.doneCommand(base, _('Setting up Yum Shell'))
         try:
             return base.doShell()
         except yum.Errors.YumBaseError, e:
@@ -712,7 +714,7 @@ class DepListCommand(YumCommand):
         checkPackageArg(base, basecmd, extcmds)
 
     def doCommand(self, base, basecmd, extcmds):
-       base.verbose_logger.log(logginglevels.INFO_2, _("Finding dependencies: "))
+       self.doneCommand(base, _("Finding dependencies: "))
        try:
           return base.deplist(extcmds)
        except yum.Errors.YumBaseError, e:
@@ -973,8 +975,7 @@ class ReInstallCommand(YumCommand):
         checkPackageArg(base, basecmd, extcmds)
 
     def doCommand(self, base, basecmd, extcmds):
-        base.verbose_logger.log(logginglevels.INFO_2, 
-                _("Setting up Reinstall Process"))
+        self.doneCommand(base, _("Setting up Reinstall Process"))
         oldcount = len(base.tsInfo)
         try:
             for item in extcmds:
