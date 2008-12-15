@@ -24,7 +24,7 @@ Update metadata (updateinfo.xml) parsing.
 import sys
 import gzip
 
-from textwrap import wrap
+from yum.i18n import utf8_text_wrap
 from yum.yumRepo import YumRepository
 from yum.misc import to_xml
 
@@ -106,8 +106,8 @@ class UpdateNotice(object):
             head += cvelist[: - 1].rstrip() + '\n'
 
         if self._md['description'] is not None:
-            desc = wrap(self._md['description'], width=64,
-                        subsequent_indent=' ' * 12 + ': ')
+            desc = utf8_text_wrap(self._md['description'], width=64,
+                                  subsequent_indent=' ' * 12 + ': ')
             head += "Description : %s\n" % '\n'.join(desc)
 
         #  Get a list of arches we care about:
