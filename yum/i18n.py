@@ -275,6 +275,83 @@ def utf8_valid(msg):
         if ucs is None:
             return False
     return True
+
+def utf8_text_wrap(text, width=70, initial_indent='', subsequent_indent=''):
+    """ Works like we want textwrap.wrap() to work, uses utf-8 data and
+        doesn't screw up lists/blocks/etc. """
+    # Tested with:
+    # yum info robodoc gpicview php-pear-Net-Socket wmctrl ustr moreutils
+    #          mediawiki-HNP ocspd insight yum mousepad
+    # ...at 120, 80 and 40 chars.
+    passed_unicode = isinstance(text, unicode)
+
+    def _indent_at_beg(line):
+        count = 0
+        byte = 'X'
+        for byte in line:
+            if byte != ' ':
+                break
+            count += 1
+        list_chr = utf8_width_chop(line[count:], 1)[1]
+        if list_chr in ("-", "*", ".",
+                        "\xe2\x80\xa2", "\xe2\x80\xa3", "\xe2\x88\x98"):
+            nxt = _indent_at_beg(line[count+len(list_chr):])
+            nxt = nxt[1] or nxt[0]
+            if nxt:
+                return count, count + 1 + nxt
+        return count, 0
+
+    initial_indent = to_utf8(initial_indent)
+    subsequent_indent = to_utf8(subsequent_indent)
+
+    text = to_utf8(text).rstrip('\n')
+    lines = to_utf8(text).replace('\t', ' ' * 8).split('\n')
+
+    ret = []
+    indent = initial_indent
+    wrap_last = False
+    csab = 0
+    cspc_indent = 0
+    for line in lines:
+        line = line.rstrip(' ')
+        (lsab, lspc_indent) = (csab, cspc_indent)
+        (csab, cspc_indent) = _indent_at_beg(line)
+        if wrap_last and cspc_indent:
+            ret.append(indent.rstrip(' '))
+            indent = subsequent_indent
+            wrap_last = False
+        if wrap_last:
+            line = line.lstrip(' ')
+            cspc_indent = lspc_indent
+
+        if (utf8_width(indent) + utf8_width(line)) <= width:
+            wrap_last = False
+            ret.append(indent + line)
+            indent = subsequent_indent
+            continue
+
+        wrap_last = True
+        words = line.split(' ')
+        line = indent
+        while words:
+            word = words.pop(0)
+            if (utf8_width(line) + utf8_width(word)) > width:
+                ret.append(line.rstrip(' '))
+                line = subsequent_indent + ' ' * cspc_indent
+            line += word
+            line += ' '
+        indent = line.rstrip(' ') + ' '
+    if wrap_last:
+        ret.append(indent.rstrip(' '))
+
+    if passed_unicode:
+        return map(to_unicode, ret)
+    return ret
+
+def utf8_text_fill(text, *args, **kwargs):
+    """ Works like we want textwrap.fill() to work, uses utf-8 data and
+        doesn't screw up lists/blocks/etc. """
+    return '\n'.join(utf8_text_wrap(text, *args, **kwargs))
 # ----------------------------- END utf8 -----------------------------
 
 try: 
