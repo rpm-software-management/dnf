@@ -293,7 +293,7 @@ def utf8_text_wrap(text, width=70, initial_indent='', subsequent_indent=''):
                 break
             count += 1
         list_chr = utf8_width_chop(line[count:], 1)[1]
-        if list_chr in ("-", "*", ".",
+        if list_chr in ("-", "*", ".", "o",
                         "\xe2\x80\xa2", "\xe2\x80\xa3", "\xe2\x88\x98"):
             nxt = _indent_at_beg(line[count+len(list_chr):])
             nxt = nxt[1] or nxt[0]
