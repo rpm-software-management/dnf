@@ -38,8 +38,7 @@ from yum import logginglevels, _
 from yum.rpmtrans import RPMBaseCallback
 from yum.packageSack import packagesNewestByNameArch
 
-from textwrap import fill
-from yum.i18n import utf8_width, utf8_width_fill
+from yum.i18n import utf8_width, utf8_width_fill, utf8_text_fill
 
 def _term_width():
     """ Simple terminal width, limit to 20 chars. and make 0 == 80. """
@@ -490,12 +489,13 @@ class YumOutput:
         keylen = utf8_width(key)
         cols = self.term.columns
         nxt = ' ' * (keylen - 2) + ': '
-        ret = fill(val, width=cols,
-                   initial_indent=key, subsequent_indent=nxt)
+        ret = utf8_text_fill(val, width=cols,
+                             initial_indent=key, subsequent_indent=nxt)
         if ret.count("\n") > 1 and keylen > (cols / 3):
             # If it's big, redo it again with a smaller subsequent off
-            ret = fill(val, width=cols,
-                       initial_indent=key, subsequent_indent='     ...: ')
+            ret = utf8_text_fill(val, width=cols,
+                                 initial_indent=key,
+                                 subsequent_indent='     ...: ')
         return ret
     
     def fmtSection(self, name, fill='='):

@@ -701,7 +701,7 @@ class YumBase(depsolve.Depsolve):
         skipped_po = set()
         removed_from_sack = set()
         orig_restring = restring    # Keep the old error messages 
-        hard_restart = False
+        looping = 0 
         while (len(self.po_with_problems) > 0 and rescode == 1):
             count += 1
             self.verbose_logger.debug(_("Skip-broken round %i"), count)
@@ -726,7 +726,8 @@ class YumBase(depsolve.Depsolve):
              # the first time we get here we reset the resolved members of
              # tsInfo and takes a new run all members in the current transaction
             if not toRemove: 
-                if hard_restart:
+                looping += 1
+                if looping > 2:
                     break # Bail out
                 else:
                     self.verbose_logger.debug('SKIPBROKEN: resetting already resovled packages (no packages to skip)' )
@@ -738,12 +739,14 @@ class YumBase(depsolve.Depsolve):
              # the first time we get here we reset the resolved members of
              # tsInfo and takes a new run all members in the current transaction
             if startTs-endTs == set():
-                if hard_restart:
+                looping += 1
+                if looping > 2:
                     break # Bail out
                 else:
                     self.verbose_logger.debug('SKIPBROKEN: resetting already resovled packages (transaction not changed)' )
                     self.tsInfo.resetResolved(hard=True)
-            # if we are all clear, then we have to check that the whole current transaction 
+                    
+            # if we are alel clear, then we have to check that the whole current transaction 
             # can complete the depsolve without error, because the packages skipped
             # can have broken something that passed the tests earliere.
             # FIXME: We need do this in a better way.
