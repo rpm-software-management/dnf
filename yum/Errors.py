@@ -18,6 +18,8 @@
 Exceptions and Errors thrown by yum.
 """
 
+from i18n import to_unicode
+
 class YumBaseError(Exception):
     """
     Base Yum Error. All other Errors thrown by yum should inherit from
@@ -28,6 +30,9 @@ class YumBaseError(Exception):
         self.value = value
     def __str__(self):
         return "%s" %(self.value,)
+
+    def __unicode__(self):
+        return '%s' % to_unicode(self.value)
 
 class YumGPGCheckError(YumBaseError):
     pass

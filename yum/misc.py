@@ -40,6 +40,7 @@ except ImportError:
             raise ValueError, "Bad checksum type"
 
 from Errors import MiscError
+from i18n import to_unicode, to_unicode_maybe, to_utf8, to_str
 
 _share_data_store   = {}
 _share_data_store_u = {}
@@ -777,34 +778,6 @@ def setup_locale(override_codecs=True, override_time=False):
         sys.stdout = codecs.getwriter(locale.getpreferredencoding())(sys.stdout)
         sys.stdout.errors = 'replace'
 
-def to_unicode(obj, encoding='utf-8', errors='replace'):
-    ''' convert a 'str' to 'unicode' '''
-    if isinstance(obj, basestring):
-        if not isinstance(obj, unicode):
-            obj = unicode(obj, encoding, errors)
-    return obj
-
-def to_utf8(obj, errors='replace'):
-    '''convert 'unicode' to an encoded utf-8 byte string '''
-    if isinstance(obj, unicode):
-        obj = obj.encode('utf-8', errors)
-    return obj
-
-# Don't use this, to_unicode should just work now
-def to_unicode_maybe(obj, encoding='utf-8', errors='replace'):
-    ''' Don't ask don't tell, only use when you must '''
-    try:
-        return to_unicode(obj, encoding, errors)
-    except UnicodeEncodeError:
-        return obj
-
-def to_str(obj):
-    """ Convert something to a string, if it isn't one. """
-    # NOTE: unicode counts as a string just fine. We just want objects to call
-    # their __str__ methods.
-    if not isinstance(obj, basestring):
-        obj = str(obj)
-    return obj
 
 def get_my_lang_code():
     mylang = locale.getlocale()

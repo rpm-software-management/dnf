@@ -13,7 +13,6 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
-from yum.misc import to_unicode, to_utf8
 
 def dummy_wrapper(str):
     '''
@@ -276,6 +275,36 @@ def utf8_valid(msg):
             return False
     return True
 # ----------------------------- END utf8 -----------------------------
+
+def to_unicode(obj, encoding='utf-8', errors='replace'):
+    ''' convert a 'str' to 'unicode' '''
+    if isinstance(obj, basestring):
+        if not isinstance(obj, unicode):
+            obj = unicode(obj, encoding, errors)
+    return obj
+
+def to_utf8(obj, errors='replace'):
+    '''convert 'unicode' to an encoded utf-8 byte string '''
+    if isinstance(obj, unicode):
+        obj = obj.encode('utf-8', errors)
+    return obj
+
+# Don't use this, to_unicode should just work now
+def to_unicode_maybe(obj, encoding='utf-8', errors='replace'):
+    ''' Don't ask don't tell, only use when you must '''
+    try:
+        return to_unicode(obj, encoding, errors)
+    except UnicodeEncodeError:
+        return obj
+
+def to_str(obj):
+    """ Convert something to a string, if it isn't one. """
+    # NOTE: unicode counts as a string just fine. We just want objects to call
+    # their __str__ methods.
+    if not isinstance(obj, basestring):
+        obj = str(obj)
+    return obj
+
 
 try: 
     '''
