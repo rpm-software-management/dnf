@@ -2571,6 +2571,14 @@ class YumBase(depsolve.Depsolve):
 
                 
             # at this point we are going to mark the pkg to be installed, make sure
+            # it's not an older package that is allowed in due to multiple installs
+            # or some other oddity. If it is - then modify the problem filter to cope
+            
+            for ipkg in self.rpmdb.searchNevra(name=po.name, arch=po.arch):
+                if ipkg.EVR > po.EVR:
+                    self.tsInfo.probFilterFlags.append(rpm.RPMPROB_FILTER_OLDPACKAGE)
+                    break
+            
             # it doesn't obsolete anything. If it does, mark that in the tsInfo, too
             if po.pkgtup in self.up.getObsoletesList(name=po.name, arch=po.arch):
                 for obsoletee in self._find_obsoletees(po):
