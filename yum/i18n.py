@@ -328,15 +328,17 @@ def utf8_text_wrap(text, width=70, initial_indent='', subsequent_indent=''):
         force_nl = False # We want to stop wrapping under "certain" conditions:
         if wrap_last and cspc_indent:      # if line starts a list or
             force_nl = True
+        if wrap_last and csab == len(line):# is empty line
+            force_nl = True
         if wrap_last and not lspc_indent:  # if line doesn't continue a list and
-            if csab == len(line):          # is empty line
-                force_nl = True
             if csab >= 4 and csab != lsab: # is "block indented"
                 force_nl = True
         if force_nl:
             ret.append(indent.rstrip(' '))
             indent = subsequent_indent
             wrap_last = False
+        if csab == len(line): # empty line, remove spaces to make it easier.
+            line = ''
         if wrap_last:
             line = line.lstrip(' ')
             cspc_indent = lspc_indent
