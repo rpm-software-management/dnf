@@ -981,7 +981,8 @@ class YumHeaderPackage(YumAvailablePackage):
         # Summaries "can be" empty, which rpm return [], see BZ 473239, *sigh*
         self.summary = self.hdr['summary'] or ''
         self.summary = misc.share_data(self.summary.replace('\n', ''))
-        self.description = misc.share_data(self.hdr['description'])
+        self.description = self.hdr['description'] or ''
+        self.description = misc.share_data(self.description)
         self.pkgid = self.hdr[rpm.RPMTAG_SHA1HEADER]
         if not self.pkgid:
             self.pkgid = "%s.%s" %(self.hdr['name'], self.hdr['buildtime'])

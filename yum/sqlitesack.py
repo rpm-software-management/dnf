@@ -154,6 +154,8 @@ class YumAvailablePackageSqlite(YumAvailablePackage, PackageObject, RpmBase):
         value = r[0]
         if varname == 'epoch' and value is None:
             value = '0'
+        if value is None:
+            value = '' # Description for picasa, probably among others *sigh*
         if varname in {'vendor' : 1, 'packager' : 1, 'buildhost' : 1,
                        'license' : 1, 'group' : 1,
                        'summary' : 1, 'description' : 1, 'sourcerpm' : 1,
