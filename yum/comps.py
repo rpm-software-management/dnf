@@ -496,7 +496,7 @@ class Comps(object):
         if not srcfile:
             raise CompsException
             
-        if type(srcfile) not in types.StringTypes:
+        if type(srcfile) in types.StringTypes:
             # srcfile is a filename string
             infile = open(srcfile, 'rt')
         else:

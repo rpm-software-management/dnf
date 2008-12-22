@@ -79,7 +79,7 @@ class RepoMD:
         self.revision  = None
         self.tags      = {'content' : set(), 'distro' : {}}
         
-        if type(srcfile) not in types.StringTypes:
+        if type(srcfile) in types.StringTypes:
             # srcfile is a filename string
             infile = open(srcfile, 'rt')
         else:
