@@ -135,7 +135,7 @@ class ConfigPreProcessor:
                     # check if the current line starts a new section
                     secmatch = re.match( r'\s*\[(?P<section>.*)\]', line )
                     if secmatch:
-			self._section = secmatch.group('section')
+                        self._section = secmatch.group('section')
                     # line didn't match include=, just return it as is
                     # for the ConfigParser
                     break
