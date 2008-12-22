@@ -1152,3 +1152,42 @@ class DepsolveTests(DepsolveTests):
         # self.assertEquals('err', *self.resolveCode())
         self.assertEquals('ok', *self.resolveCode())
         self.assertResult((ipo1, po1))
+
+    def testUpdate_so_req1(self):
+        rpo1 = FakePackage('foo')
+        rpo1.addRequires('libbar.so.1()', None, (None, None, None))
+        rpo2 = FakePackage('bar')
+        rpo2.addProvides('libbar.so.1()', None, (None, None, None))
+        self.rpmdb.addPackage(rpo1)
+
+        apo1 = FakePackage('foo', version=2)
+        apo1.addRequires('libbar.so.2()', None, (None, None, None))
+        self.xsack.addPackage(apo1)
+        apo2 = FakePackage('bar', version=2)
+        apo2.addProvides('libbar.so.2()', None, (None, None, None))
+        self.xsack.addPackage(apo2)
+
+        self.tsInfo.addUpdate(apo1, oldpo=rpo1)
+
+        self.assertEquals('ok', *self.resolveCode())
+        self.assertResult((apo1, apo2))
+
+    def testUpdate_so_req2(self):
+        rpo1 = FakePackage('foo')
+        rpo1.addRequires('libbar.so.1()', None, (None, None, None))
+        rpo2 = FakePackage('bar')
+        rpo2.addProvides('libbar.so.1()', None, (None, None, None))
+        self.rpmdb.addPackage(rpo1)
+
+        apo1 = FakePackage('foo', version=2)
+        apo1.addRequires('libbar.so.2()', None, (None, None, None))
+        self.xsack.addPackage(apo1)
+        apo2 = FakePackage('bar', version=2)
+        apo2.addProvides('libbar.so.2()', None, (None, None, None))
+        self.xsack.addPackage(apo2)
+
+        self.tsInfo.addUpdate(apo2, oldpo=rpo2)
+
+        self.assertEquals('ok', *self.resolveCode())
+        self.assertResult((apo1, apo2))
+
