@@ -386,7 +386,8 @@ class Depsolve(object):
         
         if needmode in ['i', 'u']:
             length = len(self.tsInfo)
-            self.update(name=name, epoch=epoch, version=ver, release=rel)
+            self.update(name=name, epoch=epoch, version=ver, release=rel,
+                        requiringPo=requiringPo)
             txmbrs = self.tsInfo.getMembersWithState(requiringPo.pkgtup, TS_REMOVE_STATES)
             if len(self.tsInfo) != length and txmbrs:
                 if txmbrs[0].output_state == TS_OBSOLETED:

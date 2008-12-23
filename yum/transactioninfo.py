@@ -254,7 +254,7 @@ class TransactionData:
 
         for txmbr in self.getMembers():
             if txmbr.output_state == TS_UPDATE:
-                if txmbr.isDep and txmbr.reason == "dep":
+                if txmbr.isDep:
                     self.depupdated.append(txmbr)
                 else:
                     self.updated.append(txmbr)
