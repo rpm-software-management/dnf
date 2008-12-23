@@ -2405,7 +2405,6 @@ class YumBase(depsolve.Depsolve):
     def _find_obsoletees(self, po):
         """ Return the pkgs. that are obsoleted by the po we pass in. """
         for (obstup, inst_tup) in self.up.getObsoletersTuples(name=po.name):
-            print "JDBG:", po, obstup
             if po.pkgtup == obstup:
                 installed_pkg =  self.rpmdb.searchPkgTuple(inst_tup)[0]
                 yield installed_pkg
