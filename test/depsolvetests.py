@@ -1174,6 +1174,6 @@ class DepsolveTests(DepsolveTests):
 
         self.tsInfo.addUpdate(apo2, oldpo=rpo2)
 
-        self.assertEquals('ok', *self.resolveCode(obs=True))
+        self.assertEquals('ok', *self.resolveCode())
         self.assertResult((apo1, apo2))
 
