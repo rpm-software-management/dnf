@@ -398,8 +398,6 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         if self.gpgsigcheck(downloadpkgs) != 0:
             return 1
         
-        self.verbose_logger.log(yum.logginglevels.INFO_2, 
-                                self.fmtSection(_("Entering rpm code")))
         if self.conf.rpm_check_debug:
             rcd_st = time.time()
             self.verbose_logger.log(yum.logginglevels.INFO_2, 
@@ -466,8 +464,6 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         resultobject = self.runTransaction(cb=cb)
 
         self.verbose_logger.debug('Transaction time: %0.3f' % (time.time() - ts_st))
-        self.verbose_logger.log(yum.logginglevels.INFO_2, 
-                                self.fmtSection(_("Leaving rpm code")))
         # close things
         self.verbose_logger.log(yum.logginglevels.INFO_1,
             self.postTransactionOutput())
