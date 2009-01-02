@@ -94,8 +94,10 @@ class TransactionData:
             returnlist.extend(self.pkgdict[pkgtup])
         return returnlist
             
+    # The order we resolve things in _matters_, so for sanity sort the list
+    # otherwise .i386 can be different to .x86_64 etc.
     def getUnresolvedMembers(self):
-        return list(self._unresolvedMembers)
+        return list(sorted(self._unresolvedMembers))
 
     def markAsResolved(self, txmbr):
         self._unresolvedMembers.discard(txmbr)
@@ -154,6 +156,10 @@ class TransactionData:
 
     def _isLocalPackage(self, txmember):
         # Is this the right criteria?
+        # FIXME: This is kinda weird, we really want all local pkgs to be in a
+        # special pkgsack before this point ... so that "yum up ./*.rpm" works.
+        #  Also FakePackage() sets it off ... which is confusing and not what
+        # happens IRL.
         return txmember.ts_state in ('u', 'i') and not isinstance(txmember.po, (YumInstalledPackage, YumAvailablePackageSqlite))
 
     def _allowedMultipleInstalls(self, po):
