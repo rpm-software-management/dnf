@@ -1030,9 +1030,22 @@ class Depsolve(object):
             return x
             
         pkgresults = {}
+        ipkgresults = {}
 
         for pkg in pkgs:
             pkgresults[pkg] = 0
+            if self.rpmdb.contains(pkg.name):
+                ipkgresults[pkg] = 0
+
+        #  This is probably only for "renames". What happens is that pkgA-1 gets
+        # obsoleted by pkgB but pkgB requires pkgA-2, now _if_ the pkgA txmbr
+        # gets processed before pkgB then we'll process the "checkRemove" of
+        # pkgA ... so any deps. on pkgA-1 will look for a new provider, one of
+        # which is pkgA-2 in that case we want to choose that pkg over any
+        # others. This works for multiple cases too, but who'd do that right?:)
+        if ipkgresults:
+            pkgresults = ipkgresults
+            pkgs = ipkgresults.keys()
             
         # go through each pkg and compare to others
         # if it is same skip it
