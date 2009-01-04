@@ -719,6 +719,8 @@ class Depsolve(object):
                     (checkdep, errormsgs) = self._processConflict(*conflict)
                     CheckDeps |= checkdep
                     errors += errormsgs
+                    if checkdep:
+                        break # The next conflict might be the same pkg
 
                 if CheckDeps:
                     if self.dsCallback: self.dsCallback.restartLoop()
