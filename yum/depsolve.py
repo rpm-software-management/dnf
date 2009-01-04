@@ -580,6 +580,7 @@ class Depsolve(object):
         else:
             self.verbose_logger.debug(_('TSINFO: Marking %s as install for %s'), best,
                 requiringPo)
+            # FIXME: Don't we want .install() here, so obsoletes get done?
             txmbr = self.tsInfo.addInstall(best)
             txmbr.setAsDep(po=requiringPo)
             self._last_req = best
@@ -885,6 +886,8 @@ class Depsolve(object):
                 continue
             if newpoprovs.has_key(prov):
                 continue
+            # FIXME: This is probably the best place to fix the postfix rename
+            # problem long term (post .21) ... see compare_providers.
             for pkg, hits in self.tsInfo.getRequires(*prov).iteritems():
                 for rn, rf, rv in hits:
                     if not self.tsInfo.getProvides(rn, rf, rv):
@@ -1045,6 +1048,8 @@ class Depsolve(object):
         # pkgA ... so any deps. on pkgA-1 will look for a new provider, one of
         # which is pkgA-2 in that case we want to choose that pkg over any
         # others. This works for multiple cases too, but who'd do that right?:)
+        #  FIXME: A good long term. fix here is to just not get into this
+        # problem, but that's too much for .21. This is much safer.
         if ipkgresults:
             pkgresults = ipkgresults
             pkgs = ipkgresults.keys()
