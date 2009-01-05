@@ -1152,3 +1152,28 @@ class DepsolveTests(DepsolveTests):
         # self.assertEquals('err', *self.resolveCode())
         self.assertEquals('ok', *self.resolveCode())
         self.assertResult((ipo1, po1))
+
+    def testUpdate_so_req_diff_arch(self):
+        rpo1 = FakePackage('foozoomer')
+        rpo1.addRequires('libbar.so.1()', None, (None, None, None))
+        rpo1.addObsoletes('zoom', 'LT', ('8', '8', '8'))
+        self.rpmdb.addPackage(rpo1)
+        rpo2 = FakePackage('bar')
+        rpo2.addProvides('libbar.so.1()', None, (None, None, None))
+        self.rpmdb.addPackage(rpo2)
+        rpo3 = FakePackage('zoom', arch='i386')
+        self.rpmdb.addPackage(rpo3)
+
+        apo1 = FakePackage('foozoomer', version=2)
+        apo1.addRequires('libbar.so.2()', None, (None, None, None))
+        apo1.addObsoletes('zoom', 'LT', ('8', '8', '8'))
+        self.xsack.addPackage(apo1)
+        apo2 = FakePackage('bar', version=2)
+        apo2.addProvides('libbar.so.2()', None, (None, None, None))
+        self.xsack.addPackage(apo2)
+
+        self.tsInfo.addUpdate(apo2, oldpo=rpo2)
+
+        self.assertEquals('ok', *self.resolveCode())
+        self.assertResult((apo1, apo2))
+

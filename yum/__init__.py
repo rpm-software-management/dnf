@@ -715,7 +715,7 @@ class YumBase(depsolve.Depsolve):
         skipped_po = set()
         removed_from_sack = set()
         orig_restring = restring    # Keep the old error messages 
-        hard_restart = False
+        looping = 0 
         while (len(self.po_with_problems) > 0 and rescode == 1):
             count += 1
             vdebug(_("Skip-broken round %i"), count)
@@ -740,7 +740,8 @@ class YumBase(depsolve.Depsolve):
              # the first time we get here we reset the resolved members of
              # tsInfo and takes a new run all members in the current transaction
             if not toRemove: 
-                if hard_restart:
+                looping += 1
+                if looping > 2:
                     break # Bail out
                 else:
                     self.verbose_logger.debug('SKIPBROKEN: resetting already resovled packages (no packages to skip)' )
@@ -752,12 +753,14 @@ class YumBase(depsolve.Depsolve):
              # the first time we get here we reset the resolved members of
              # tsInfo and takes a new run all members in the current transaction
             if startTs-endTs == set():
-                if hard_restart:
+                looping += 1
+                if looping > 2:
                     break # Bail out
                 else:
                     self.verbose_logger.debug('SKIPBROKEN: resetting already resovled packages (transaction not changed)' )
                     self.tsInfo.resetResolved(hard=True)
-            # if we are all clear, then we have to check that the whole current transaction 
+                    
+            # if we are alel clear, then we have to check that the whole current transaction 
             # can complete the depsolve without error, because the packages skipped
             # can have broken something that passed the tests earliere.
             # FIXME: We need do this in a better way.
@@ -2403,8 +2406,7 @@ class YumBase(depsolve.Depsolve):
 
     def _find_obsoletees(self, po):
         """ Return the pkgs. that are obsoleted by the po we pass in. """
-        for (obstup, inst_tup) in self.up.getObsoletesTuples(name=po.name, 
-                                                             arch=po.arch):
+        for (obstup, inst_tup) in self.up.getObsoletersTuples(name=po.name):
             if po.pkgtup == obstup:
                 installed_pkg =  self.rpmdb.searchPkgTuple(inst_tup)[0]
                 yield installed_pkg
@@ -2545,6 +2547,16 @@ class YumBase(depsolve.Depsolve):
                 result.add(res)
                 continue
             
+            #  Make sure we're not installing a package which is obsoleted by
+            # something else in the repo. Unless there is a obsoletion loop,
+            # at which point ignore everything.
+            obsoleting_pkg = self._test_loop(po, self._pkg2obspkg)
+            if obsoleting_pkg is not None:
+                self.verbose_logger.warning(_('Package %s is obsoleted by %s, trying to install %s instead'),
+                    po.name, obsoleting_pkg.name, obsoleting_pkg)               
+                self.install(po=obsoleting_pkg)
+                continue
+            
             # make sure it's not already installed
             if self.rpmdb.contains(po=po):
                 if not self.tsInfo.getMembersWithState(po.pkgtup, TS_REMOVE_STATES):
@@ -2560,19 +2572,17 @@ class YumBase(depsolve.Depsolve):
                     result.add(res)
                     continue
 
-            #  Make sure we're not installing a package which is obsoleted by
-            # something else in the repo. Unless there is a obsoletion loop,
-            # at which point ignore everything.
-            obsoleting_pkg = self._test_loop(po, self._pkg2obspkg)
-            if obsoleting_pkg is not None:
-                vwarning(_('Package %s is obsoleted by %s, trying to install %s instead'),
-                    po.name, obsoleting_pkg.name, obsoleting_pkg)               
-                self.install(po=obsoleting_pkg) # XXX result???
-                continue
-                
             # at this point we are going to mark the pkg to be installed, make sure
+            # it's not an older package that is allowed in due to multiple installs
+            # or some other oddity. If it is - then modify the problem filter to cope
+            
+            for ipkg in self.rpmdb.searchNevra(name=po.name, arch=po.arch):
+                if ipkg.EVR > po.EVR:
+                    self.tsInfo.probFilterFlags.append(rpm.RPMPROB_FILTER_OLDPACKAGE)
+                    break
+            
             # it doesn't obsolete anything. If it does, mark that in the tsInfo, too
-            if po.pkgtup in self.up.getObsoletesList(name=po.name, arch=po.arch):
+            if po.pkgtup in self.up.getObsoletesList(name=po.name):
                 for obsoletee in self._find_obsoletees(po):
                     txmbr = self.tsInfo.addObsoleting(po, obsoletee)
                     self.tsInfo.addObsoleted(obsoletee, po)
@@ -2635,15 +2645,15 @@ class YumBase(depsolve.Depsolve):
         # if no po do kwargs
         # uninstalled pkgs called for update get returned with errors in a list, maybe?
 
-        updates = self.up.getUpdatesTuples()
-        if self.conf.obsoletes:
-            obsoletes = self.up.getObsoletesTuples(newest=1)
-        else:
-            obsoletes = []
-
-        result = transactioninfo.AdditionResult()
+        tx_return = []
         if not po and not kwargs: # update everything (the easy case)
             vdebug2(_('Updating Everything'))
+            updates = self.up.getUpdatesTuples()
+            if self.conf.obsoletes:
+                obsoletes = self.up.getObsoletesTuples(newest=1)
+            else:
+                obsoletes = []
+
             for (obsoleting, installed) in obsoletes:
                 obsoleting_pkg = self.getPackageObject(obsoleting)
                 installed_pkg =  self.rpmdb.searchPkgTuple(installed)[0]
@@ -2658,12 +2668,7 @@ class YumBase(depsolve.Depsolve):
                     vdebug2(_('Not Updating Package that is already obsoleted: %s.%s %s:%s-%s'), 
                         old)
                 else:
-                    updating_pkg = self.getPackageObject(new)
-                    updated_pkg = self.rpmdb.searchPkgTuple(old)[0]
-                    res = self.tsInfo.addUpdate(updating_pkg, updated_pkg)
-                    if requiringPo:
-                        res.primary.setAsDep(requiringPo)
-                    result.add(res)
+                    tx_return.extend(self.update(po=self.getPackageObject(new)))
             
             return result
 
@@ -2689,8 +2694,23 @@ class YumBase(depsolve.Depsolve):
             instpkgs.extend(e)
             instpkgs.extend(m)
 
-            # if we can't find an installed package then look at available pkgs
-            if not instpkgs:
+            if u:
+                depmatches = []
+                arg = u[0]
+                try:
+                    depmatches = self.returnInstalledPackagesByDep(arg)
+                except yum.Errors.YumBaseError, e:
+                    self.logger.critical(_('%s') % e)
+                
+                if not depmatches:
+                    self.logger.critical(_('No Match for argument: %s') % arg)
+                else:
+                    instpkgs.extend(depmatches)
+
+            #  Always look for available packages, it doesn't seem to do any
+            # harm (apart from some time). And it fixes weird edge cases where
+            # "update a" (which requires a new b) is different from "update b"
+            if True or not instpkgs:
                 (e, m, u) = self.pkgSack.matchPackageNames([kwargs['pattern']])
                 availpkgs.extend(e)
                 availpkgs.extend(m)
@@ -2759,8 +2779,7 @@ class YumBase(depsolve.Depsolve):
                             installed_pkg.pkgtup)
                 # at this point we are going to mark the pkg to be installed, make sure
                 # it doesn't obsolete anything. If it does, mark that in the tsInfo, too
-                elif po.pkgtup in self.up.getObsoletesList(name=po.name,
-                                                           arch=po.arch):
+                elif po.pkgtup in self.up.getObsoletesList(name=po.name):
                     for obsoletee in self._find_obsoletees(po):
                         txmbr = self.tsInfo.addUpdate(po, installed_pkg)
                         if requiringPo:

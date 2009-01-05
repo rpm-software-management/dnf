@@ -41,6 +41,7 @@ class FakeConf(object):
         self.disable_excludes = []
         self.multilib_policy = 'best'
         self.persistdir = '/should-not-exist-bad-test!'
+        self.showdupesfromrepos = False
 
 class FakeRepo(object):
 

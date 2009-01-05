@@ -58,6 +58,9 @@ class ConfigPreProcessor:
     def __init__(self, configfile, vars=None):
         # put the vars away in a helpful place
         self._vars = vars
+
+        # used to track the current ini-section
+        self._section = None
         
         # set some file-like object attributes for ConfigParser
         # these just make confpp look more like a real file object.
@@ -129,6 +132,10 @@ class ConfigPreProcessor:
                         # whooohoo a valid include line.. push it on the stack
                         fo = self._pushfile( url )
                 else:
+                    # check if the current line starts a new section
+                    secmatch = re.match( r'\s*\[(?P<section>.*)\]', line )
+                    if secmatch:
+                        self._section = secmatch.group('section')
                     # line didn't match include=, just return it as is
                     # for the ConfigParser
                     break
@@ -156,8 +163,7 @@ class ConfigPreProcessor:
             return url
         else:
             return urlparse.urljoin( self.geturl(), url )
-    
-    
+
     def _pushfile( self, url ):
         """
         Opens the url specified, pushes it on the stack, and 
@@ -169,8 +175,12 @@ class ConfigPreProcessor:
         # absolutize this url using the including files url
         # as a base url.
         absurl = self._absurl(url)
+
+        # get the current section to add it to the included
+        # url's name.
+        includetuple = (absurl, self._section)
         # check if this has previously been included.
-        if self._urlalreadyincluded(absurl):
+        if self._isalreadyincluded(includetuple):
             return None
         try:
             fo = urlgrabber.grabber.urlopen(absurl)
@@ -179,7 +189,7 @@ class ConfigPreProcessor:
         if fo is not None:
             self.name = absurl
             self._incstack.append( fo )
-            self._alreadyincluded.append(absurl)
+            self._alreadyincluded.append(includetuple)
         else:
             raise Errors.ConfigError, \
                   'Error accessing file for config %s' % (absurl)
@@ -199,13 +209,13 @@ class ConfigPreProcessor:
             self.name = None
     
     
-    def _urlalreadyincluded( self, url ):
+    def _isalreadyincluded( self, tuple ):
         """
-        Checks if the url has already been included at all.. this 
-        does not necessarily have to be recursive
+        Checks if the tuple describes an include that was already done.
+        This does not necessarily have to be recursive
         """
-        for eurl in self._alreadyincluded:
-            if eurl == url: return 1
+        for etuple in self._alreadyincluded:
+            if etuple == tuple: return 1
         return 0
     
     

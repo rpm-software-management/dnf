@@ -13,6 +13,7 @@
 # Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 # Copyright 2005 Duke University
 
+import types
 import sys
 from constants import *
 try:
@@ -495,7 +496,7 @@ class Comps(object):
         if not srcfile:
             raise CompsException
             
-        if type(srcfile) == type('str'):
+        if type(srcfile) in types.StringTypes:
             # srcfile is a filename string
             if srcfile.endswith('.gz'):
                 infile = gzip.open(srcfile, 'r')

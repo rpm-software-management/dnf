@@ -642,7 +642,7 @@ class YumConf(StartupConf):
     # FIXME: rename gpgcheck to pkgs_gpgcheck
     gpgcheck = BoolOption(__pkgs_gpgcheck_default__)
     repo_gpgcheck = BoolOption(__repo_gpgcheck_default__)
-    obsoletes = BoolOption(False)
+    obsoletes = BoolOption(True)
     showdupesfromrepos = BoolOption(False)
     enabled = BoolOption(True)
     enablegroups = BoolOption(True)

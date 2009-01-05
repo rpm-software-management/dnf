@@ -13,7 +13,6 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
-from yum.misc import to_unicode, to_utf8
 
 def dummy_wrapper(str):
     '''
@@ -275,7 +274,137 @@ def utf8_valid(msg):
         if ucs is None:
             return False
     return True
+
+def utf8_text_wrap(text, width=70, initial_indent='', subsequent_indent=''):
+    """ Works like we want textwrap.wrap() to work, uses utf-8 data and
+        doesn't screw up lists/blocks/etc. """
+    # Tested with:
+    # yum info robodoc gpicview php-pear-Net-Socket wmctrl ustr moreutils
+    #          mediawiki-HNP ocspd insight yum mousepad
+    # ...at 120, 80 and 40 chars.
+    # Also, notable among lots of others, searching for "\n  ":
+    #   exim-clamav, jpackage-utils, tcldom, synaptics, "quake3",
+    #   perl-Class-Container, ez-ipupdate, perl-Net-XMPP, "kipi-plugins",
+    #   perl-Apache-DBI, netcdf, python-configobj, "translate-toolkit", alpine,
+    #   "udunits", "conntrack-tools"
+    #
+    # Note that, we "fail" on:
+    #   alsa-plugins-jack, setools*, dblatex, uisp, "perl-Getopt-GUI-Long",
+    #   suitesparse, "synce-serial", writer2latex, xenwatch, ltsp-utils
+
+    passed_unicode = isinstance(text, unicode)
+
+    def _indent_at_beg(line):
+        count = 0
+        byte = 'X'
+        for byte in line:
+            if byte != ' ':
+                break
+            count += 1
+        list_chr = utf8_width_chop(line[count:], 1)[1]
+        if list_chr in ("-", "*", ".", "o",
+                        "\xe2\x80\xa2", "\xe2\x80\xa3", "\xe2\x88\x98"):
+            nxt = _indent_at_beg(line[count+len(list_chr):])
+            nxt = nxt[1] or nxt[0]
+            if nxt:
+                return count, count + 1 + nxt
+        return count, 0
+
+    initial_indent = to_utf8(initial_indent)
+    subsequent_indent = to_utf8(subsequent_indent)
+
+    text = to_utf8(text).rstrip('\n')
+    lines = to_utf8(text).replace('\t', ' ' * 8).split('\n')
+
+    ret = []
+    indent = initial_indent
+    wrap_last = False
+    csab = 0
+    cspc_indent = 0
+    for line in lines:
+        line = line.rstrip(' ')
+        (lsab, lspc_indent) = (csab, cspc_indent)
+        (csab, cspc_indent) = _indent_at_beg(line)
+        force_nl = False # We want to stop wrapping under "certain" conditions:
+        if wrap_last and cspc_indent:      # if line starts a list or
+            force_nl = True
+        if wrap_last and csab == len(line):# is empty line
+            force_nl = True
+        if wrap_last and not lspc_indent:  # if line doesn't continue a list and
+            if csab >= 4 and csab != lsab: # is "block indented"
+                force_nl = True
+        if force_nl:
+            ret.append(indent.rstrip(' '))
+            indent = subsequent_indent
+            wrap_last = False
+        if csab == len(line): # empty line, remove spaces to make it easier.
+            line = ''
+        if wrap_last:
+            line = line.lstrip(' ')
+            cspc_indent = lspc_indent
+
+        if (utf8_width(indent) + utf8_width(line)) <= width:
+            wrap_last = False
+            ret.append(indent + line)
+            indent = subsequent_indent
+            continue
+
+        wrap_last = True
+        words = line.split(' ')
+        line = indent
+        spcs = cspc_indent
+        if not spcs and csab >= 4:
+            spcs = csab
+        while words:
+            word = words.pop(0)
+            if (utf8_width(line) + utf8_width(word)) > width:
+                ret.append(line.rstrip(' '))
+                line = subsequent_indent + ' ' * spcs
+            line += word
+            line += ' '
+        indent = line.rstrip(' ') + ' '
+    if wrap_last:
+        ret.append(indent.rstrip(' '))
+
+    if passed_unicode:
+        return map(to_unicode, ret)
+    return ret
+
+def utf8_text_fill(text, *args, **kwargs):
+    """ Works like we want textwrap.fill() to work, uses utf-8 data and
+        doesn't screw up lists/blocks/etc. """
+    return '\n'.join(utf8_text_wrap(text, *args, **kwargs))
 # ----------------------------- END utf8 -----------------------------
+
+def to_unicode(obj, encoding='utf-8', errors='replace'):
+    ''' convert a 'str' to 'unicode' '''
+    if isinstance(obj, basestring):
+        if not isinstance(obj, unicode):
+            obj = unicode(obj, encoding, errors)
+    return obj
+
+def to_utf8(obj, errors='replace'):
+    '''convert 'unicode' to an encoded utf-8 byte string '''
+    if isinstance(obj, unicode):
+        obj = obj.encode('utf-8', errors)
+    return obj
+
+# Don't use this, to_unicode should just work now
+def to_unicode_maybe(obj, encoding='utf-8', errors='replace'):
+    ''' Don't ask don't tell, only use when you must '''
+    try:
+        return to_unicode(obj, encoding, errors)
+    except UnicodeEncodeError:
+        return obj
+
+def to_str(obj):
+    """ Convert something to a string, if it isn't one. """
+    # NOTE: unicode counts as a string just fine. We just want objects to call
+    # their __str__ methods.
+    if not isinstance(obj, basestring):
+        obj = str(obj)
+    return obj
+
 
 try: 
     '''

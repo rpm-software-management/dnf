@@ -399,8 +399,6 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         if self.gpgsigcheck(downloadpkgs) != 0:
             return 1
         
-        self.verbose_logger.log(yum.logginglevels.INFO_2, 
-                                self.fmtSection(_("Entering rpm code")))
         if self.conf.rpm_check_debug:
             rcd_st = time.time()
             self.verbose_logger.log(yum.logginglevels.INFO_2, 
@@ -467,8 +465,6 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         resultobject = self.runTransaction(cb=cb)
 
         self.verbose_logger.debug('Transaction time: %0.3f' % (time.time() - ts_st))
-        self.verbose_logger.log(yum.logginglevels.INFO_2, 
-                                self.fmtSection(_("Leaving rpm code")))
         # close things
         self.verbose_logger.log(yum.logginglevels.INFO_1,
             self.postTransactionOutput())
@@ -524,8 +520,9 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         # always_output is a wart due to update/remove not producing the
         # same output.
         matches = self.doPackageLists(patterns=[arg], ignore_case=False)
-        if matches.installed: # Found a match so ignore
-            return
+        if (matches.installed or (not matches.available and
+                                  self.returnInstalledPackagesByDep(arg))):
+            return # Found a match so ignore
         hibeg = self.term.MODE['bold']
         hiend = self.term.MODE['normal']
         if matches.available:
