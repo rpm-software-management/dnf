@@ -401,6 +401,28 @@ class SimpleObsoletesTests(OperationsTests):
         self.assert_(res=='ok', msg)
         self.assertResult((dep, pfix2, pnewfix))
 
+    def testConflictMultiplePkgs(self):
+        rp1        = FakePackage('foo', '1', '1', '0', 'noarch')
+
+        aop        = FakePackage('bar', '1', '1', '0', 'noarch')
+        aop.addObsoletes('foo', 'LT', ('0', '1', '2'))
+        ap         = FakePackage('baz', '1', '1', '0', 'noarch')
+        ap.addRequires('d1')
+        ap.addRequires('d2')
+        ap.addRequires('d3')
+
+        dep1        = FakePackage('d1', '1', '1', '0', 'noarch')
+        dep1.addConflicts('foo', 'LT', ('0', '1', '2'))
+        dep2        = FakePackage('d2', '1', '1', '0', 'noarch')
+        dep2.addConflicts('foo', 'LT', ('0', '1', '2'))
+        dep3        = FakePackage('d3', '1', '1', '0', 'noarch')
+        dep3.addConflicts('foo', 'LT', ('0', '1', '2'))
+
+        res, msg = self.runOperation(['install', 'baz'],
+                                     [rp1], [ap, aop, dep1, dep2, dep3])
+        self.assert_(res=='ok', msg)
+        self.assertResult((ap, aop, dep1, dep2, dep3))
+
 
 class GitMetapackageObsoletesTests(OperationsTests):
 
