@@ -329,7 +329,7 @@ class DepsolveTests(DepsolveTests):
         self.xsack.addPackage(xpo64)
 
         self.assertEquals('ok', *self.resolveCode())
-        if os.uname()[-1] == 'x86_64':
+        if self.canonArch == 'x86_64':
             self.assertResult((po, xpo64))
         else:
             self.assertResult((po, xpo))
@@ -648,7 +648,7 @@ class DepsolveTests(DepsolveTests):
 
     def testCompareProvidersSameLen2_noarch_to_64_1(self):
         # Make sure they are still ok, the other way around
-        myarch = arch.getBaseArch(arch.getCanonArch())
+        myarch = self.canonArch
 
         if myarch not in ('i386', 'x86_64'):
             return
@@ -675,7 +675,7 @@ class DepsolveTests(DepsolveTests):
 
     def testCompareProvidersSameLen2_noarch_to_64_2(self):
         # Make sure they are still ok, the other way around
-        myarch = arch.getBaseArch(arch.getCanonArch())
+        myarch = self.canonArch
 
         if myarch not in ('i386', 'x86_64'):
             return
