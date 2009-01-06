@@ -100,7 +100,7 @@ class SimpleUpdateTests(OperationsTests):
         p = self.pkgs
         res, msg = self.runOperation(['install', 'zsh-utils'], [p.installed_noarch], [p.update_x86_64, p.update_i386, p.requires_update])
         self.assert_(res=='ok', msg)
-        if os.uname()[-1] == 'x86_64':
+        if self.canonArch == 'x86_64':
             self.assertResult((p.update_x86_64, p.requires_update))
         else:
             self.assertResult((p.update_i386, p.requires_update))
@@ -108,7 +108,7 @@ class SimpleUpdateTests(OperationsTests):
         p = self.pkgs
         res, msg = self.runOperation(['install', 'zsh-utils'], [p.installed_noarch], [p.update_i386, p.update_x86_64, p.requires_update])
         self.assert_(res=='ok', msg)
-        if os.uname()[-1] == 'x86_64':
+        if self.canonArch == 'x86_64':
             self.assertResult((p.update_x86_64, p.requires_update))
         else:
             self.assertResult((p.update_i386, p.requires_update))

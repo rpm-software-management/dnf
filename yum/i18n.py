@@ -282,6 +282,16 @@ def utf8_text_wrap(text, width=70, initial_indent='', subsequent_indent=''):
     # yum info robodoc gpicview php-pear-Net-Socket wmctrl ustr moreutils
     #          mediawiki-HNP ocspd insight yum mousepad
     # ...at 120, 80 and 40 chars.
+    # Also, notable among lots of others, searching for "\n  ":
+    #   exim-clamav, jpackage-utils, tcldom, synaptics, "quake3",
+    #   perl-Class-Container, ez-ipupdate, perl-Net-XMPP, "kipi-plugins",
+    #   perl-Apache-DBI, netcdf, python-configobj, "translate-toolkit", alpine,
+    #   "udunits", "conntrack-tools"
+    #
+    # Note that, we "fail" on:
+    #   alsa-plugins-jack, setools*, dblatex, uisp, "perl-Getopt-GUI-Long",
+    #   suitesparse, "synce-serial", writer2latex, xenwatch, ltsp-utils
+
     passed_unicode = isinstance(text, unicode)
 
     def _indent_at_beg(line):
@@ -315,10 +325,20 @@ def utf8_text_wrap(text, width=70, initial_indent='', subsequent_indent=''):
         line = line.rstrip(' ')
         (lsab, lspc_indent) = (csab, cspc_indent)
         (csab, cspc_indent) = _indent_at_beg(line)
-        if wrap_last and cspc_indent:
+        force_nl = False # We want to stop wrapping under "certain" conditions:
+        if wrap_last and cspc_indent:      # if line starts a list or
+            force_nl = True
+        if wrap_last and csab == len(line):# is empty line
+            force_nl = True
+        if wrap_last and not lspc_indent:  # if line doesn't continue a list and
+            if csab >= 4 and csab != lsab: # is "block indented"
+                force_nl = True
+        if force_nl:
             ret.append(indent.rstrip(' '))
             indent = subsequent_indent
             wrap_last = False
+        if csab == len(line): # empty line, remove spaces to make it easier.
+            line = ''
         if wrap_last:
             line = line.lstrip(' ')
             cspc_indent = lspc_indent
@@ -332,11 +352,14 @@ def utf8_text_wrap(text, width=70, initial_indent='', subsequent_indent=''):
         wrap_last = True
         words = line.split(' ')
         line = indent
+        spcs = cspc_indent
+        if not spcs and csab >= 4:
+            spcs = csab
         while words:
             word = words.pop(0)
             if (utf8_width(line) + utf8_width(word)) > width:
                 ret.append(line.rstrip(' '))
-                line = subsequent_indent + ' ' * cspc_indent
+                line = subsequent_indent + ' ' * spcs
             line += word
             line += ' '
         indent = line.rstrip(' ') + ' '

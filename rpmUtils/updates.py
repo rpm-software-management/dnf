@@ -528,6 +528,7 @@ class Updates:
             for newtup in self.updatesdict[oldtup]:
                 returnlist.append((newtup, oldtup))
         
+        # self.reduceListByNameArch() for double tuples
         tmplist = []
         if name:
             for ((n, a, e, v, r), oldtup) in returnlist:
@@ -558,6 +559,8 @@ class Updates:
         
         return returnlist
                 
+    # NOTE: This returns obsoleters and obsoletees, but narrows based on
+    # _obsoletees_ (unlike getObsoletesList). Look at getObsoletersTuples
     def getObsoletesTuples(self, newest=0, name=None, arch=None):
         """returns obsoletes for packages in a list of tuples of:
            (obsoleting naevr, installed naevr). You can specify name and/or
@@ -574,6 +577,7 @@ class Updates:
             for rpmtup in self.obsoletes[obstup]:
                 tmplist.append((obstup, rpmtup))
         
+        # self.reduceListByNameArch() for double tuples
         returnlist = []
         if name or arch:
             for (obstup, (n, a, e, v, r)) in tmplist:
@@ -590,8 +594,43 @@ class Updates:
 
         return returnlist
                         
+    # NOTE: This returns obsoleters and obsoletees, but narrows based on
+    # _obsoleters_ (like getObsoletesList).
+    def getObsoletersTuples(self, newest=0, name=None, arch=None):
+        """returns obsoletes for packages in a list of tuples of:
+           (obsoleting naevr, installed naevr). You can specify name and/or
+           arch of the obsoleting package to narrow the results.
+           You can also specify newest=1 to get the set of newest pkgs (name, arch)
+           sorted, that obsolete something"""
            
+        tmplist = []
+        obslist = self.obsoletes.keys()
+        if newest:
+            obslist = self._reduceListNewestByNameArch(obslist)
+
+        for obstup in obslist:
+            for rpmtup in self.obsoletes[obstup]:
+                tmplist.append((obstup, rpmtup))
+
+        # self.reduceListByNameArch() for double tuples
+        returnlist = []
+        if name or arch:
+            for ((n, a, e, v, r), insttup) in tmplist:
+                if name:
+                    if name == n:
+                        returnlist.append(((n, a, e, v, r), insttup))
+                        continue
+                if arch:
+                    if arch == a:
+                        returnlist.append(((n, a, e, v, r), insttup))
+                        continue
+        else:
+            returnlist = tmplist
+
+        return returnlist
            
+    # NOTE: This returns _obsoleters_, and narrows based on that (unlike
+    # getObsoletesTuples, but like getObsoletersTuples)
     def getObsoletesList(self, newest=0, name=None, arch=None):
         """returns obsoleting packages in a list of naevr tuples of just the
            packages that obsolete something that is installed. You can specify

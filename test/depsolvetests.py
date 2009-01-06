@@ -329,7 +329,7 @@ class DepsolveTests(DepsolveTests):
         self.xsack.addPackage(xpo64)
 
         self.assertEquals('ok', *self.resolveCode())
-        if os.uname()[-1] == 'x86_64':
+        if self.canonArch == 'x86_64':
             self.assertResult((po, xpo64))
         else:
             self.assertResult((po, xpo))
@@ -648,7 +648,7 @@ class DepsolveTests(DepsolveTests):
 
     def testCompareProvidersSameLen2_noarch_to_64_1(self):
         # Make sure they are still ok, the other way around
-        myarch = arch.getBaseArch(arch.getCanonArch())
+        myarch = self.canonArch
 
         if myarch not in ('i386', 'x86_64'):
             return
@@ -675,7 +675,7 @@ class DepsolveTests(DepsolveTests):
 
     def testCompareProvidersSameLen2_noarch_to_64_2(self):
         # Make sure they are still ok, the other way around
-        myarch = arch.getBaseArch(arch.getCanonArch())
+        myarch = self.canonArch
 
         if myarch not in ('i386', 'x86_64'):
             return
@@ -1152,3 +1152,28 @@ class DepsolveTests(DepsolveTests):
         # self.assertEquals('err', *self.resolveCode())
         self.assertEquals('ok', *self.resolveCode())
         self.assertResult((ipo1, po1))
+
+    def testUpdate_so_req_diff_arch(self):
+        rpo1 = FakePackage('foozoomer')
+        rpo1.addRequires('libbar.so.1()', None, (None, None, None))
+        rpo1.addObsoletes('zoom', 'LT', ('8', '8', '8'))
+        self.rpmdb.addPackage(rpo1)
+        rpo2 = FakePackage('bar')
+        rpo2.addProvides('libbar.so.1()', None, (None, None, None))
+        self.rpmdb.addPackage(rpo2)
+        rpo3 = FakePackage('zoom', arch='i386')
+        self.rpmdb.addPackage(rpo3)
+
+        apo1 = FakePackage('foozoomer', version=2)
+        apo1.addRequires('libbar.so.2()', None, (None, None, None))
+        apo1.addObsoletes('zoom', 'LT', ('8', '8', '8'))
+        self.xsack.addPackage(apo1)
+        apo2 = FakePackage('bar', version=2)
+        apo2.addProvides('libbar.so.2()', None, (None, None, None))
+        self.xsack.addPackage(apo2)
+
+        self.tsInfo.addUpdate(apo2, oldpo=rpo2)
+
+        self.assertEquals('ok', *self.resolveCode())
+        self.assertResult((apo1, apo2))
+

@@ -2404,8 +2404,7 @@ class YumBase(depsolve.Depsolve):
 
     def _find_obsoletees(self, po):
         """ Return the pkgs. that are obsoleted by the po we pass in. """
-        for (obstup, inst_tup) in self.up.getObsoletesTuples(name=po.name, 
-                                                             arch=po.arch):
+        for (obstup, inst_tup) in self.up.getObsoletersTuples(name=po.name):
             if po.pkgtup == obstup:
                 installed_pkg =  self.rpmdb.searchPkgTuple(inst_tup)[0]
                 yield installed_pkg
@@ -2580,7 +2579,7 @@ class YumBase(depsolve.Depsolve):
                     break
             
             # it doesn't obsolete anything. If it does, mark that in the tsInfo, too
-            if po.pkgtup in self.up.getObsoletesList(name=po.name, arch=po.arch):
+            if po.pkgtup in self.up.getObsoletesList(name=po.name):
                 for obsoletee in self._find_obsoletees(po):
                     txmbr = self.tsInfo.addObsoleting(po, obsoletee)
                     self.tsInfo.addObsoleted(obsoletee, po)
@@ -2777,8 +2776,7 @@ class YumBase(depsolve.Depsolve):
                                             installed_pkg.pkgtup)                                               
                 # at this point we are going to mark the pkg to be installed, make sure
                 # it doesn't obsolete anything. If it does, mark that in the tsInfo, too
-                elif po.pkgtup in self.up.getObsoletesList(name=po.name,
-                                                           arch=po.arch):
+                elif po.pkgtup in self.up.getObsoletesList(name=po.name):
                     for obsoletee in self._find_obsoletees(po):
                         txmbr = self.tsInfo.addUpdate(po, installed_pkg)
                         if requiringPo:

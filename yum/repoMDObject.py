@@ -22,6 +22,7 @@ iterparse = cElementTree.iterparse
 from Errors import RepoMDError
 
 import sys
+import types
 from misc import AutoFileChecksums
 
 def ns_cleanup(qn):
@@ -78,7 +79,7 @@ class RepoMD:
         self.revision  = None
         self.tags      = {'content' : set(), 'distro' : {}}
         
-        if type(srcfile) == type('str'):
+        if type(srcfile) in types.StringTypes:
             # srcfile is a filename string
             infile = open(srcfile, 'rt')
         else:

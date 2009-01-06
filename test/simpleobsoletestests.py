@@ -329,6 +329,100 @@ class SimpleObsoletesTests(OperationsTests):
         self.assert_(res=='ok', msg)
         self.assertResult((okern1,okern2,nkern,))
 
+    def testIncluderObs1(self):
+        #  We use an obsolete to include a new package Y for people with an
+        # installed pkg X. X satisfies deps. but isn't the normal best provider
+        # ... traditionally we've included the other dep. _as well_.
+        #  The "main" offender has been postfix, which brings in exim.
+        pfix1      = FakePackage('postfix',      '1', '1', '0', 'noarch')
+        pfix1.addProvides('/usr/bin/sendmail')
+        pfix2      = FakePackage('postfix',      '1', '2', '0', 'noarch')
+        pfix2.addProvides('/usr/bin/sendmail')
+        pnewfix    = FakePackage('postfix-blah', '1', '2', '0', 'noarch')
+        pnewfix.addObsoletes('postfix', 'LT', ('0', '1', '2'))
+        pnewfix.addRequires('postfix', 'EQ', ('0', '1', '2'))
+
+        dep        = FakePackage('foo', '1', '1', '0', 'noarch')
+        dep.addRequires('/usr/bin/sendmail')
+
+        exim       = FakePackage('exim', '1', '1', '0', 'noarch')
+        exim.addProvides('/usr/bin/sendmail')
+
+        res, msg = self.runOperation(['update', 'postfix'],
+                                     [pfix1, dep], [exim, pnewfix, pfix2, dep])
+        self.assert_(res=='ok', msg)
+        self.assertResult((dep, pfix2, pnewfix))
+
+    def testIncluderObs2(self):
+        #  We use an obsolete to include a new package Y for people with an
+        # installed pkg X. X satisfies deps. but isn't the normal best provider
+        # ... traditionally we've included the other dep. _as well_.
+        #  The "main" offender has been postfix, which brings in exim.
+        dep        = FakePackage('foo', '1', '1', '0', 'noarch')
+        dep.addRequires('/usr/bin/sendmail')
+
+        pfix1      = FakePackage('postfix',      '1', '1', '0', 'noarch')
+        pfix1.addProvides('/usr/bin/sendmail')
+        pfix2      = FakePackage('postfix',      '1', '2', '0', 'noarch')
+        pfix2.addProvides('/usr/bin/sendmail')
+        pnewfix    = FakePackage('postfix-blah', '1', '2', '0', 'noarch')
+        pnewfix.addObsoletes('postfix', 'LT', ('0', '1', '2'))
+        pnewfix.addRequires('postfix', 'EQ', ('0', '1', '2'))
+
+        exim       = FakePackage('exim', '1', '1', '0', 'noarch')
+        exim.addProvides('/usr/bin/sendmail')
+
+        res, msg = self.runOperation(['update', 'postfix'],
+                                     [dep, pfix1], [dep, pfix2, pnewfix, exim])
+        self.assert_(res=='ok', msg)
+        self.assertResult((dep, pfix2, pnewfix))
+
+    def testIncluderObs3(self):
+        #  We use an obsolete to include a new package Y for people with an
+        # installed pkg X. X satisfies deps. but isn't the normal best provider
+        # ... traditionally we've included the other dep. _as well_.
+        #  The "main" offender has been postfix, which brings in exim.
+        dep        = FakePackage('foo', '1', '1', '0', 'noarch')
+        dep.addRequires('/usr/bin/sendmail')
+
+        pfix1      = FakePackage('postfix',      '1', '1', '0', 'noarch')
+        pfix1.addProvides('/usr/bin/sendmail')
+        pfix2      = FakePackage('postfix',      '1', '2', '0', 'noarch')
+        pfix2.addProvides('/usr/bin/sendmail')
+        pnewfix    = FakePackage('postfix-blah', '1', '2', '0', 'noarch')
+        pnewfix.addObsoletes('postfix', 'LT', ('0', '1', '2'))
+        pnewfix.addRequires('postfix', 'EQ', ('0', '1', '2'))
+
+        exim       = FakePackage('exim', '1', '1', '0', 'noarch')
+        exim.addProvides('/usr/bin/sendmail')
+
+        res, msg = self.runOperation(['install', 'postfix-blah'],
+                                     [dep, pfix1], [dep, pfix2, pnewfix, exim])
+        self.assert_(res=='ok', msg)
+        self.assertResult((dep, pfix2, pnewfix))
+
+    def testConflictMultiplePkgs(self):
+        rp1        = FakePackage('foo', '1', '1', '0', 'noarch')
+
+        aop        = FakePackage('bar', '1', '1', '0', 'noarch')
+        aop.addObsoletes('foo', 'LT', ('0', '1', '2'))
+        ap         = FakePackage('baz', '1', '1', '0', 'noarch')
+        ap.addRequires('d1')
+        ap.addRequires('d2')
+        ap.addRequires('d3')
+
+        dep1        = FakePackage('d1', '1', '1', '0', 'noarch')
+        dep1.addConflicts('foo', 'LT', ('0', '1', '2'))
+        dep2        = FakePackage('d2', '1', '1', '0', 'noarch')
+        dep2.addConflicts('foo', 'LT', ('0', '1', '2'))
+        dep3        = FakePackage('d3', '1', '1', '0', 'noarch')
+        dep3.addConflicts('foo', 'LT', ('0', '1', '2'))
+
+        res, msg = self.runOperation(['install', 'baz'],
+                                     [rp1], [ap, aop, dep1, dep2, dep3])
+        self.assert_(res=='ok', msg)
+        self.assertResult((ap, aop, dep1, dep2, dep3))
+
 
 class GitMetapackageObsoletesTests(OperationsTests):
 
