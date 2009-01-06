@@ -2815,7 +2815,10 @@ class YumBase(depsolve.Depsolve):
             #        it to of what is installed. in the meantime name.arch is
             #        most likely correct
             pot_updated = self.rpmdb.searchNevra(name=available_pkg.name, arch=available_pkg.arch)
-            for ipkg in pot_updated:
+            # only compare against the newest of what's installed
+            if pot_updated:
+                pot_updated.sort()
+                ipkg = pot_updated[-1]
                 if self.tsInfo.isObsoleted(ipkg.pkgtup):
                     self.verbose_logger.log(logginglevels.DEBUG_2, _('Not Updating Package that is already obsoleted: %s.%s %s:%s-%s'), 
                                             ipkg.pkgtup)
