@@ -1,3 +1,707 @@
+2009-01-07  Seth Vidal <skvidal@fedoraproject.org>
+
+	* yum.spec, yum/__init__.py: mark as 3.2.21
+
+2009-01-07  Seth Vidal <skvidal@fedoraproject.org>
+
+	* docs/yum.8: fix some confusing ambiguity in the 'update' command
+	docs
+
+2009-01-06  Seth Vidal <skvidal@fedoraproject.org>
+
+	Merge branch 'yum-3_2_X' of
+	ssh://yum.baseurl.org/srv/projects/yum/git/yum into yum-3_2_X  *
+	'yum-3_2_X' of ssh://yum.baseurl.org/srv/projects/yum/git/yum: (22
+	commits)   Fix canonArch using test cases for .i386   Testcase for
+	multiple packags with the same conflict.   Add comments about the
+	installed provider (postfix) fix.   After fixing a conflict, restart
+	as we might have N pkgs conflicting on one   Remove the rpm code
+	enter/leave lines, because notting hates us   If a provider is
+	installed, prefer it (adds huge comment), fixes BZ 472756   Sort the
+	_unresolvedMembers set as we turn it into a list, because just   Add
+	tests to show the hard to find postfix problem, bug BZ 472756
+	Remove temp. change to test obs. processing (not added, so now
+	broken)   Don't let location_base (and probably others) convert from
+	None to ''   Remove debugging msg   Get the "updating for deps" text
+	correct   Use getObsoletersTuples() where that's what we wanted.
+	Add getObsoletersTuples() for searching based on the obsoleter   Fix
+	the testcase for gnome-packagekit, PackageKit and pirut   Fix tab
+	vs. spaces crack, so stupid python is happy   Work around "empty"
+	deescriptions as we do for summaries, picasa needs this   Remove
+	"not" in test for strings   Add tests for .so dep. problems
+	Understand unicode strings for comps/repoMD   ...
+
+2009-01-06  Seth Vidal <skvidal@fedoraproject.org>
+
+	* yum/__init__.py: fix for
+	https://bugzilla.redhat.com/show_bug.cgi?id=478880 - make sure when
+	we are checking to see if what we're installing is newer than the
+	most recent item, not newer than any item.
+
+2009-01-05  James Antill <james@and.org>
+
+	* test/depsolvetests.py, test/simpleupdatetests.py: Fix canonArch
+	using test cases for .i386
+
+2009-01-05  James Antill <james@and.org>
+
+	* test/simpleobsoletestests.py: Testcase for multiple packags with
+	the same conflict.
+
+2009-01-04  James Antill <james@and.org>
+
+	* yum/depsolve.py:  Add comments about the installed provider (postfix) fix.  Add
+	 comment about the fact we do install() directly.
+
+2009-01-04  James Antill <james@and.org>
+
+	* yum/depsolve.py:  After fixing a conflict, restart as we might have N pkgs
+	 conflicting on one pkg. Fixes RHBZ 478748.
+
+2009-01-02  James Antill <james@and.org>
+
+	* cli.py: Remove the rpm code enter/leave lines, because notting
+	hates us
+
+2009-01-02  James Antill <james@and.org>
+
+	* yum/depsolve.py: If a provider is installed, prefer it (adds huge
+	comment), fixes BZ 472756
+
+2009-01-02  James Antill <james@and.org>
+
+	* yum/transactioninfo.py:  Sort the _unresolvedMembers set as we turn it into a list, because
+	 just turning it into a list makes it different on .i386 and .x86_64
+	 which is _very_ confusing.  Add some comments for the
+	 insanity/weirdness.
+
+2009-01-02  James Antill <james@and.org>
+
+	* test/simpleobsoletestests.py: Add tests to show the hard to find
+	postfix problem, bug BZ 472756
+
+2009-01-02  James Antill <james@and.org>
+
+	* test/depsolvetests.py: Remove temp. change to test obs. processing
+	(not added, so now broken)
+
+2008-12-23  James Antill <james@and.org>
+
+	* yum/sqlitesack.py: Don't let location_base (and probably others)
+	convert from None to ''
+
+2008-12-23  James Antill <james@and.org>
+
+	* yum/__init__.py: Remove debugging msg
+
+2008-12-23  James Antill <james@and.org>
+
+	* yum/depsolve.py, yum/transactioninfo.py: Get the "updating for
+	deps" text correct
+
+2008-12-23  James Antill <james@and.org>
+
+	* yum/__init__.py:  Use getObsoletersTuples() where that's what we wanted.  Don't pass
+	 arch (it's an or test -- bad monkey), as name will work now we are
+	 using the right selector.  This fixes:
+	 testUpdate_so_req_diff_arch().
+
+2008-12-23  James Antill <james@and.org>
+
+	* rpmUtils/updates.py:  Add getObsoletersTuples() for searching based on the obsoleter
+	 add comments for WTF the difference is between
+	 getObsoletesTuples and    getObsoletesList (same prefix, different
+	 selector == bad monkey)
+
+2008-12-23  James Antill <james@and.org>
+
+	* test/depsolvetests.py: Fix the testcase for gnome-packagekit,
+	PackageKit and pirut
+
+2008-12-22  James Antill <james@and.org>
+
+	* yum/parser.py: Fix tab vs. spaces crack, so stupid python is happy
+
+
+2008-12-22  James Antill <james@and.org>
+
+	* yum/packages.py, yum/sqlitesack.py: Work around "empty"
+	deescriptions as we do for summaries, picasa needs this
+
+2008-12-22  James Antill <james@and.org>
+
+	* yum/comps.py, yum/repoMDObject.py: Remove "not" in test for
+	strings
+
+2008-12-22  James Antill <james@and.org>
+
+	* test/depsolvetests.py: Add tests for .so dep. problems
+
+2008-12-19  James Antill <james@and.org>
+
+	* yum/comps.py, yum/repoMDObject.py: Understand unicode strings for
+	comps/repoMD
+
+2008-12-17  James Antill <james@and.org>
+
+	* yum/i18n.py: Deal with blank lines after lists
+
+2008-12-17  James Antill <james@and.org>
+
+	* yum/i18n.py: Do even more tests on utf8_text_wrap() and tweak the
+	output a bit
+
+2008-12-16  Seth Vidal <skvidal@fedoraproject.org>
+
+	* yum/__init__.py: add in the oldpackage filter if we get into a
+	place where we're going to install a package but it is not newer
+	than something we have installed.
+
+2008-12-16  Seth Vidal <skvidal@fedoraproject.org>
+
+	* yum/parser.py: add Patch from Andreas Rogge to allow the same file
+	to be included in multiple places, provided it isn't included twice
+	under the same stanza
+
+2008-12-16  Seth Vidal <skvidal@fedoraproject.org>
+
+	Merge branch 'yum-3_2_X' of
+	ssh://yum.baseurl.org/srv/projects/yum/git/yum into yum-3_2_X  *
+	'yum-3_2_X' of ssh://yum.baseurl.org/srv/projects/yum/git/yum:
+	pt_BR translation updates by Igor Pires Soares   Add o as list
+	option, for FEDORA-2008-9779 among others   Use our utf8/non-broken,
+	textwrap, for yum info-security   Use our utf8/non-broken, textwrap,
+	for yum info   Add textwrap.wrap/fill ... as the core versions are
+	broken in various ways   Stop skip-broken from looping in weird
+	cases
+
+2008-12-16  Seth Vidal <skvidal@fedoraproject.org>
+
+	* yum/Errors.py, yum/i18n.py, yum/misc.py: to make exception
+	reporting work on python 2.6. thanks to Ignacio Vazquez for finding
+	the specific problem. closes rh bug #475633
+
+2008-12-16  Tim Lauridsen <timlau@fedoraproject.org>
+
+	* po/pt_BR.po: pt_BR translation updates by Igor Pires Soares
+
+2008-12-15  James Antill <james@and.org>
+
+	* yum/i18n.py: Add o as list option, for FEDORA-2008-9779 among
+	others
+
+2008-12-15  James Antill <james@and.org>
+
+	* yum/update_md.py: Use our utf8/non-broken, textwrap, for yum
+	info-security
+
+2008-12-15  James Antill <james@and.org>
+
+	* output.py: Use our utf8/non-broken, textwrap, for yum info
+
+2008-12-15  James Antill <james@and.org>
+
+	* yum/i18n.py: Add textwrap.wrap/fill ... as the core versions are
+	broken in various ways
+
+2008-12-11  tla@dk.ibm.com <tla@tlaws.local>
+
+	* yum/__init__.py: Stop skip-broken from looping in weird cases
+
+2008-12-08  James Antill <james@and.org>
+
+	* output.py: Sync format_number with urlgrabber
+
+2008-12-07  James Antill <james@and.org>
+
+	* yum/__init__.py: Only get the updates tuples when we'll use them
+
+2008-12-07  James Antill <james@and.org>
+
+	* test/simpleupdatetests.py: Add "update *" to the bad-multi-install
+	tests
+
+2008-12-07  James Antill <james@and.org>
+
+	* yum/__init__.py: Always look for available pkgs, on pattern
+	updates
+
+2008-12-07  James Antill <james@and.org>
+
+	* yum/__init__.py: Don't do the package updates by hand, just call
+	into ourself
+
+2008-12-07  James Antill <james@and.org>
+
+	* test/testbase.py: Add showdupesfromrepos so "maybe you meant"
+	works when called from testcases
+
+2008-12-07  James Antill <james@and.org>
+
+	* test/simpleupdatetests.py:  Add some test cases to try and trigger the searchPkgTuple()[0]
+	 problems.   ... didn't succeed, but found weird multiple pkgs
+	 installed edge cases.  Also made noarch => arch update follow the
+	 same behaviour as install would.
+
+2008-12-07  James Antill <james@and.org>
+
+	* yum/sqlitesack.py: Fix the e.message warnings from 2.6.x
+
+2008-12-04  James Antill <james@and.org>
+
+	* docs/yum.8, docs/yum.conf.5, yum/config.py: Change the default for
+	obsoletes to be true, and tweaks docs.
+
+2008-12-04  James Antill <james@and.org>
+
+	* rpmUtils/updates.py: Always have an obsoletes dict, so we can
+	always call getObsoletesTuples() etc.
+
+2008-12-04  James Antill <james@and.org>
+
+	* cli.py: Make "yum update /usr/bin/yum" not produce the weird msg
+	when no updates
+
+2008-12-04  Seth Vidal <skvidal@fedoraproject.org>
+
+	* yum/__init__.py: - check if a requested install pkg is obsoleted before we check if
+	it is already installed fixes rh bug #474514 - allow provides-based
+	updating just like remove and install have.
+
+2008-12-02  James Antill <james@and.org>
+
+	* yum/packages.py: Work around for the crazy rpm package summaries
+	bug, BZ 473239
+
+2008-12-01  James Antill <james@and.org>
+
+	* output.py: Make lastmsg a unicode string so we can do == tests,
+	fixes Fedora BZ 473328
+
+2008-12-01  James Antill <james@and.org>
+
+	* yum/pgpmsg.py: Use "hashlib" directly in pgpmsg, so we don't have
+	cross deps.
+
+2008-12-01  James Antill <james@and.org>
+
+	* yum/misc.py, yum/pgpmsg.py: Simple fix for python-2.6, remove
+	sha/md5 imports from pgpmsg
+
+2008-11-30  James Antill <james@and.org>
+
+	* yum/metalink.py: Fix the protocol attribute to use the "std"
+	attribute name
+
+2008-11-25  James Antill <james@and.org>
+
+	* cli.py: When showing dups, also show "reinstall dups"
+
+2008-11-22  Tim Lauridsen <timlau@fedoraproject.org>
+
+	* po/de.po: updated German translation by Fabian Affolter
+
+2008-11-22  Tim Lauridsen <timlau@fedoraproject.org>
+
+	* po/pl.po, yum/update_md.py: updated Polish translation by Piotr
+	Drąg
+
+2008-11-21  James Antill <james@and.org>
+
+	* cli.py, yum/config.py: Fix the color config. option to work the
+	same as the --color cmd line opt.
+
+2008-11-21  James Antill <james@and.org>
+
+	* docs/yum.conf.5: Add documentation for all the color* config.
+	options
+
+2008-11-21  James Antill <james@and.org>
+
+	* docs/yum.8: Add documentation for the --color option
+
+2008-11-21  James Antill <james@and.org>
+
+	* output.py: Minor opt. for no highlighting
+
+2008-11-21  James Antill <james@and.org>
+
+	* output.py: Use highlighting config. in groupinfo -v
+
+2008-11-20  James Antill <james@and.org>
+
+	* output.py, yum/config.py: Fix search highlighting to ignore case,
+	allow configurable highlight
+
+2008-11-20  James Antill <james@and.org>
+
+	* cli.py, output.py, yum/config.py, yum/i18n.py, yumcommands.py:  Make list color programable, so Seth can have blink :).  Allow
+	 color to be turned off/on al. la. GNU cmd line (plus .conf).  Add
+	 hilight data for fmtColumns().  Add prefix/suffix arguments for
+	 utf8_width_fill().
+
+2008-11-20  James Antill <james@and.org>
+
+	* yum/sqlitesack.py: Use to_utf8 for changelog data
+
+2008-11-20  James Antill <james@and.org>
+
+	* output.py: Deal with utf8 in licenses! Given it's there just shoot
+	everything with it
+
+2008-11-20  James Antill <james@and.org>
+
+	* cli.py: Add sections for entering/leaving rpm code
+
+2008-11-20  James Antill <james@and.org>
+
+	* output.py: Use utf8_width for fmtSection
+
+2008-11-20  James Antill <james@and.org>
+
+	* cli.py, output.py, yumcommands.py:  Allow _highlight() to do colour and other modes.  Extra whizbang
+	 highlighting:    . Show installed "extra" packages in bold red.
+	 . Show installed "newer than available" packages in bold yellow.
+	 . Show installed "update available" packages in bold.    . Show
+	 available "old" packages in dim cyan.    . Show available "newest"
+	 packages in bold blue.   ...it's still mostly blank, and all seem
+	 to be visible when they are used,      on white and black
+	 backgrounds.  Do highlighting for "list available".
+
+2008-11-20  James Antill <james@and.org>
+
+	* yum/__init__.py: Add reinstall_available and old_available do
+	doPkgLists
+
+2008-11-18  James Antill <james@and.org>
+
+	* yumcommands.py: Do dynamic repolist columns, always output the id
+	and num, chop name
+
+2008-11-18  James Antill <james@and.org>
+
+	* output.py: Add repo back into search -v
+
+2008-11-18  James Antill <james@and.org>
+
+	* cli.py, yumcommands.py: Do the update pkg highlighting for "yum
+	list install", turn off when no bold
+
+2008-11-18  Seth Vidal <skvidal@fedoraproject.org>
+
+	Merge branch 'yum-3_2_X' of
+	ssh://yum.baseurl.org/srv/projects/yum/git/yum into yum-3_2_X  *
+	'yum-3_2_X' of ssh://yum.baseurl.org/srv/projects/yum/git/yum:
+	Test cases for kernel/kernel-xen obsoletes   Remove debug lines, fix
+	"yum update foo" where foo is obsolseted by an update   Add test
+	case and fix for 471736, same as 470440 but for update not install
+	Cleanup the repomd.xml.asc files with the metadata   Only try
+	importing the repo key, if the sig verify failed (like pkgs).
+
+2008-11-18  Seth Vidal <skvidal@fedoraproject.org>
+
+	* yum/yumRepo.py: yes, umm, if you do need to get headers for some
+	crack reason (like checking for potential file conflicts) then you
+	need to make the header dir.
+
+2008-11-17  James Antill <james@and.org>
+
+	* test/simpleobsoletestests.py: Test cases for kernel/kernel-xen
+	obsoletes
+
+2008-11-15  James Antill <james@and.org>
+
+	* test/simpleobsoletestests.py, yum/__init__.py: Remove debug lines,
+	fix "yum update foo" where foo is obsolseted by an update
+
+2008-11-15  James Antill <james@and.org>
+
+	* test/simpleobsoletestests.py, yum/__init__.py: Add test case and
+	fix for 471736, same as 470440 but for update not install
+
+2008-11-14  James Antill <james@and.org>
+
+	* yum/__init__.py: Cleanup the repomd.xml.asc files with the
+	metadata
+
+2008-11-14  James Antill <james@and.org>
+
+	* yum/yumRepo.py: Only try importing the repo key, if the sig verify
+	failed (like pkgs).
+
+2008-11-13  James Antill <james@and.org>
+
+	* yum/metalink.py: Catch XML parse exceptions and convert to
+	MetaLinkRepoErrorParseFail
+
+2008-11-12  James Antill <james@and.org>
+
+	* shell.py: Explain "repo list" better in shell command help
+
+2008-11-13  Seth Vidal <skvidal@fedoraproject.org>
+
+	* cli.py, docs/yum.conf.5, yum/__init__.py, yum/config.py: add
+	bugtracker_url as a config option - for when we tell someone to file
+	a bug rh bug #471164
+
+2008-11-12  James Antill <james@and.org>
+
+	* yum/yumRepo.py: Allow re-adding deleted keys
+
+2008-11-11  James Antill <james@and.org>
+
+	* yum/yumRepo.py:  Revert the previous attempt to fix repomd.xml verification failing
+	 Use download to tempfile + rename.   This means even if someone
+	 pulls the plug after the download, but before the   failure, we'll
+	 still not have a bad repomd.xml file there.
+
+2008-11-11  James Antill <james@and.org>
+
+	* yum/yumRepo.py: If anything bad happens with the repomd.xml
+	checking, delete it for safety
+
+2008-11-11  James Antill <james@and.org>
+
+	Merge branch 'yum-3_2_X' of
+	ssh://yum.baseurl.org/srv/projects/yum/git/yum into yum-3_2_X  *
+	'yum-3_2_X' of ssh://yum.baseurl.org/srv/projects/yum/git/yum:
+	make skip-broken handle a case where foo.x86_64 is skipped, and the
+	foo.i386 is pulled in instead (rhbz #470291)   handle obsoleted
+	txmbr without obsoleting txmbr in skip-broken   add tsInfo debug
+	messages to output in broken tests
+
+2008-11-11  James Antill <james@and.org>
+
+	* utils.py: Obey enable/disable plugins for yumdownloader etc. ...
+	fixes bug 470936
+
+2008-11-11  Tim Lauridsen <timlau@fedoraproject.org>
+
+	* test/skipbroken-tests.py, yum/__init__.py: make skip-broken handle
+	a case where foo.x86_64 is skipped, and the foo.i386 is pulled in
+	instead (rhbz #470291)
+
+2008-11-10  James Antill <james@and.org>
+
+	* cli.py, yum/__init__.py: Allow arguments to grouplist to only show
+	a subset of groups
+
+2008-11-09  Tim Lauridsen <timlau@fedoraproject.org>
+
+	* yum/__init__.py: handle obsoleted txmbr without obsoleting txmbr
+	in skip-broken
+
+2008-11-09  Tim Lauridsen <timlau@fedoraproject.org>
+
+	* test/testbase.py: add tsInfo debug messages to output in broken
+	tests
+
+2008-11-07  James Antill <james@and.org>
+
+	* test/simpleobsoletestests.py: Fix typo which stopped a testcase
+	from running
+
+2008-11-07  James Antill <james@and.org>
+
+	* test/simpleobsoletestests.py: Test multi. obsoletes for install
+
+2008-11-07  James Antill <james@and.org>
+
+	* test/simpleobsoletestests.py: Add testcase for install obsoleters
+
+
+2008-11-07  Seth Vidal <skvidal@fedoraproject.org>
+
+	* yum/__init__.py: make sure we mark as obsoleted pkgs when we do an
+	install. closes rh bug 470440
+
+2008-11-07  Seth Vidal <skvidal@fedoraproject.org>
+
+	* shell.py: minor modification to make the error message be more
+	accurate
+
+2008-11-06  James Antill <james@and.org>
+
+	* yum/yumRepo.py: Only eat the exception if it's ENOENT
+
+2008-11-06  James Antill <james@and.org>
+
+	* yum/yumRepo.py: Don't die if we haven't downloaded anything before
+	we get the URLGrabError
+
+2008-11-04  James Antill <james@and.org>
+
+	* yum/comps.py: Minor comment copy/paste fix, group => category
+
+2008-11-06  Tim Lauridsen <timlau@fedoraproject.org>
+
+	* po/ca.po: updated catalan translation Xavier Conde
+
+2008-11-04  Seth Vidal <skvidal@fedoraproject.org>
+
+	Merge branch 'yum-3_2_X' of
+	ssh://yum.baseurl.org/srv/projects/yum/git/yum into yum-3_2_X  *
+	'yum-3_2_X' of ssh://yum.baseurl.org/srv/projects/yum/git/yum:   Add
+	bigger doc comments to utf8_width_chop and utf8_width_full
+	check-update -v lists obsoleted pkgs too, related to 462999
+
+2008-11-04  Seth Vidal <skvidal@fedoraproject.org>
+
+	* yum/comps.py: make sure the bools in the xml output of groups are
+	lowercase b/c relaxng is fairly retarded.
+
+2008-11-03  James Antill <james@and.org>
+
+	* yum/i18n.py: Add bigger doc comments to utf8_width_chop and
+	utf8_width_full
+
+2008-11-03  James Antill <james@and.org>
+
+	* yumcommands.py: check-update -v lists obsoleted pkgs too, related
+	to 462999
+
+2008-11-02  James Antill <james@and.org>
+
+	* yum/i18n.py: Fix stupid typo in port of utf8_width, all 2 pair
+	sequences were seen as bad
+
+2008-11-02  James Antill <james@and.org>
+
+	* yumcommands.py: Make the width of enabled/disable in repolist,
+	correct for i18n
+
+2008-11-02  James Antill <james@and.org>
+
+	* po/zh_CN.po: Space the info output for po/zh_CN, to prove we can
+	make non-en look good
+
+2008-11-02  James Antill <james@and.org>
+
+	* yumcommands.py: Use utf8_width_fill for repolist
+
+2008-11-01  Tim Lauridsen <timlau@fedoraproject.org>
+
+	* yum/__init__.py: better skip-broken transaction debug data (-d7)
+
+2008-11-01  Tim Lauridsen <timlau@fedoraproject.org>
+
+	* po/sr.po, po/sr@latin.po: Updated Serbian translations by Milos
+	Komarcevic
+
+2008-11-01  Tim Lauridsen <timlau@fedoraproject.org>
+
+	* po/pt_BR.po: Updated Brazilian Portuguese translation by Igor
+	Pires Soares
+
+2008-11-01  Tim Lauridsen <timlau@fedoraproject.org>
+
+	* po/nb.po: added updated Norsk translation by Kjartan Maraas
+
+2008-11-01  Tim Lauridsen <timlau@fedoraproject.org>
+
+	Merge branch 'yum-3_2_X' of
+	ssh://yum.baseurl.org/srv/projects/yum/git/yum into yum-3_2_X
+
+2008-11-01  Tim Lauridsen <timlau@fedoraproject.org>
+
+	* yum/__init__.py: add some extra skip-broken debug output and minor
+	cleanups
+
+2008-11-01  James Antill <james@and.org>
+
+	* output.py: Fix the total download line to use utf8_width_fill too
+
+
+2008-10-31  James Antill <james@and.org>
+
+	* yum/plugins.py: Fix "Loaded plugins" line to use correct utf8
+	widths
+
+2008-10-31  James Antill <james@and.org>
+
+	* output.py: Fix fmtKeyValFill, fmtColumns and progress to work with
+	correct utf8 widths
+
+2008-10-31  James Antill <james@and.org>
+
+	* yum/i18n.py: Add utf8_width chop/fill as helper functions for
+	printing utf8 stuff
+
+2008-10-31  James Antill <james@and.org>
+
+	* yum/i18n.py: Add testing code for utf8_width
+
+2008-10-29  James Antill <james@and.org>
+
+	* yum/i18n.py: Add utf8_width to i18n, so we can do progress bars
+	etc. well
+
+2008-10-31  Tim Lauridsen <timlau@fedoraproject.org>
+
+	* test/skipbroken-tests.py, yum/__init__.py: * Added an extra depsolve on the result transaction after
+	skip-broken has ripped out the disty stuff, to make sure that
+	allready depsolved packages, not has been broken by the skipped
+	package. * Added a check for missing TS_OBSOLETED members, this
+	problem occours if multiple packages are obsoleting the same
+	packages and one of these get skipped. (rhbz# 468785) (It is totally
+	DIRTY HACK, but need for now)
+
+2008-10-31  Tim Lauridsen <timlau@fedoraproject.org>
+
+	* test/skipbroken-tests.py: Added testcase to show the skipbroken
+	problem in rhbz #468785
+
+2008-10-30  Tim Lauridsen <timlau@fedoraproject.org>
+
+	* yum/__init__.py: Extra skip-broken debug info
+
+2008-10-29  Tim Lauridsen <timlau@fedoraproject.org>
+
+	* test/skipbroken-tests.py, yum/__init__.py: make skip-broken better
+	and solve the latest added test case
+
+2008-10-29  Tim Lauridsen <timlau@fedoraproject.org>
+
+	* test/skipbroken-tests.py: added a failing skip-broken test case
+	there reproduces the case in rhbz #468394 and others
+
+2008-10-29  Tim Lauridsen <timlau@fedoraproject.org>
+
+	* test/skipbroken-tests.py: added a skipbroken test case
+
+2008-10-29  Tim Lauridsen <timlau@fedoraproject.org>
+
+	* test/testbase.py: make at FakeRpmDB class to use as self.rpmdb
+	when doing unit tests, because PackageSack dont always behave the
+	same as RPMDBSack, so it can break skipbroken tests using
+	unversioned lib requests
+
+2008-10-29  Tim Lauridsen <timlau@fedoraproject.org>
+
+	* test/skipbroken-tests.py, test/testbase.py: Added depsolve
+	callbacks to skipbroken tests, to get better output if a test fails
+
+
+2008-10-28  Tim Lauridsen <timlau@fedoraproject.org>
+
+	* test/skipbroken-tests.py: remove failing skip-broken test and add
+	FIXME note the the working one, it causes to much confusion when
+	testing the skipbroken code
+
+2008-10-28  James Antill <james@and.org>
+
+	* output.py: Merge the txmbr and po loops in listTransaction, code
+	tidy up
+
+2008-10-27  James Antill <james@and.org>
+
+	* output.py: Iterate skipped_packages properly as they are pos not
+	txmbrs, fixes BZ 468785
+
+2008-10-27  Seth Vidal <skvidal@fedoraproject.org>
+
+	* ChangeLog: merge changelog
+
 2008-10-27  Seth Vidal <skvidal@fedoraproject.org>
 
 	* yum.spec, yum/__init__.py: mark as 3.2.20
