@@ -81,11 +81,10 @@ passed to the groupinstall command\&.
 .IP 
 .IP "\fBupdate\fP"
 If run without any packages, update will update every currently
-installed package.  If one or more packages are specified, Yum will
+installed package.  If one or more packages or package globs are specified, Yum will
 only update the listed packages\&.  While updating packages, \fByum\fP
-will ensure that all dependencies are satisfied\&.  If no package
-matches the given package name(s), they are assumed to be a shell glob
-and any matches are then installed\&. 
+will ensure that all dependencies are satisfied\&. If the packages or globs specified
+match to packages which are not currently installed then update will not install them\&.
 
 If the main obsoletes configure option is true (default) or the \-\-obsoletes
 flag is present \fByum\fP will include package 
