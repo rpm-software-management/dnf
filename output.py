@@ -75,7 +75,7 @@ class YumTerm:
     __enabled = True
 
     if hasattr(urlgrabber.progress, 'terminal_width_cached'):
-        __auto_columns = property(lambda self: _term_width())
+        columns = property(lambda self: _term_width())
 
     __cap_names = {
         'underline' : 'smul',
@@ -143,9 +143,7 @@ class YumTerm:
             return
 
         self.__enabled = True
-        if hasattr(urlgrabber.progress, 'terminal_width_cached'):
-            self.columns = self.__auto_columns
-        else:
+        if not hasattr(urlgrabber.progress, 'terminal_width_cached'):
             self.columns = 80
         self.lines = 24
 
@@ -1209,7 +1207,7 @@ class YumCliRPMCallBack(RPMBaseCallback):
     Yum specific callback class for RPM operations.
     """
 
-    _width = property(lambda x: _term_width())
+    width = property(lambda x: _term_width())
 
     def __init__(self):
         RPMBaseCallback.__init__(self)
@@ -1220,8 +1218,6 @@ class YumCliRPMCallBack(RPMBaseCallback):
         # for a progress bar
         self.mark = "#"
         self.marks = 22
-        
-        self.width = self._width
         
     def event(self, package, action, te_current, te_total, ts_current, ts_total):
         # this is where a progress bar would be called
