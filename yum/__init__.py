@@ -917,11 +917,10 @@ class YumBase(depsolve.Depsolve):
         for i in ('ts_all_fn', 'ts_done_fn'):
             if hasattr(cb, i):
                 fn = getattr(cb, i)
-                if os.path.exists(fn):
-                    try:
-                        os.unlink(fn)
-                    except (IOError, OSError), e:
-                        self.logger.critical(_('Failed to remove transaction file %s') % fn)
+                try:
+                    misc.unlink_f(fn)
+                except (IOError, OSError), e:
+                    self.logger.critical(_('Failed to remove transaction file %s') % fn)
 
         self.plugins.run('posttrans')
         return resultobject
@@ -1109,11 +1108,7 @@ class YumBase(depsolve.Depsolve):
             return 1
     
     def _unlock(self, filename):
-        try:
-            os.unlink(filename)
-        except OSError, msg:
-            pass
-
+        misc.unlink_f(filename)
 
     def verifyPkg(self, fo, po, raiseError):
         """verifies the package is what we expect it to be
@@ -1325,10 +1320,7 @@ class YumBase(depsolve.Depsolve):
             except URLGrabError, e:
                 # might add a check for length of file - if it is < 
                 # required doing a reget
-                try:
-                    os.unlink(local)
-                except OSError, e:
-                    pass
+                misc.unlink_f(local)
             else:
                 po.hdrpath = local
                 return
@@ -1349,11 +1341,11 @@ class YumBase(depsolve.Depsolve):
         except Errors.RepoError, e:
             saved_repo_error = e
             try:
-                os.unlink(local)
+                misc.unlink_f(local)
             except OSError, e:
                 raise Errors.RepoError, saved_repo_error
             else:
-                raise
+                raise Errors.RepoError, saved_repo_error
         else:
             po.hdrpath = hdrpath
             return
@@ -1442,7 +1434,7 @@ class YumBase(depsolve.Depsolve):
             if not os.path.exists(fn):
                 continue
             try:
-                os.unlink(fn)
+                misc.unlink_f(fn)
             except OSError, e:
                 self.logger.warning(_('Cannot remove %s'), fn)
                 continue
@@ -1483,7 +1475,7 @@ class YumBase(depsolve.Depsolve):
 
         for item in filelist:
             try:
-                os.unlink(item)
+                misc.unlink_f(item)
             except OSError, e:
                 self.logger.critical(_('Cannot remove %s file %s'), filetype, item)
                 continue

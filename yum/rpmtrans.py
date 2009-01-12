@@ -25,7 +25,7 @@ import types
 import sys
 from yum.constants import *
 from yum import _
-
+import misc
 
 class NoOutputCallBack:
     def __init__(self):
@@ -301,13 +301,10 @@ class RPMTransaction:
             self._ts_done.write(msg)
             self._ts_done.flush()
         except (IOError, OSError), e:
-            try:
-                #  Having incomplete transactions is probably worse than having
-                # nothing.
-                del self._ts_done
-                os.unlink(self.ts_done_fn)
-            except:
-                pass
+            #  Having incomplete transactions is probably worse than having
+            # nothing.
+            del self._ts_done
+            misc.unlink_f(self.ts_done_fn)
         self._te_tuples.pop(0)
     
     def ts_all(self):
@@ -354,12 +351,9 @@ class RPMTransaction:
             fo.flush()
             fo.close()
         except (IOError, OSError), e:
-            try:
-                #  Having incomplete transactions is probably worse than having
-                # nothing.
-                os.unlink(self.ts_all_fn)
-            except:
-                pass
+            #  Having incomplete transactions is probably worse than having
+            # nothing.
+            misc.unlink_f(self.ts_all_fn)
 
     def callback( self, what, bytes, total, h, user ):
         if what == rpm.RPMCALLBACK_TRANS_START:
