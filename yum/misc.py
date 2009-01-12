@@ -9,6 +9,7 @@ from cStringIO import StringIO
 import base64
 import struct
 import re
+import errno
 import pgpmsg
 import tempfile
 import glob
@@ -755,6 +756,15 @@ def to_xml(item, attrib=False):
     else:
         item = xml.sax.saxutils.escape(item)
     return item
+
+def unlink_f(filename):
+    """ Call os.unlink, but don't die if the file isn't there. This is the main
+        difference between "rm -f" and plain "rm". """
+    try:
+        os.unlink(filename)
+    except OSError, e:
+        if e.errno != errno.ENOENT:
+            raise
 
 # ---------- i18n ----------
 import locale
