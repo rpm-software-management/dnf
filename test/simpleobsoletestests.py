@@ -428,13 +428,15 @@ class SimpleObsoletesTests(OperationsTests):
 
         aop1        = FakePackage('bar', '1', '1', '0', 'noarch')
         aop1.addObsoletes('foo', 'LT', ('0', '1', '2'))
+        aop1.addConflicts('bazing')
         aop2        = FakePackage('bazing', '1', '1', '0', 'noarch')
         aop2.addObsoletes('foo', 'LT', ('0', '1', '2'))
+        aop2.addConflicts('bar')
 
         res, msg = self.runOperation(['update'],
                                      [rp1], [aop1, aop2])
-        self.assert_(res=='ok', msg)
-        self.assertResult((aop1,))
+        self.assert_(res=='err', msg)
+        # self.assertResult((aop1,aop2))
 
 
 class GitMetapackageObsoletesTests(OperationsTests):
