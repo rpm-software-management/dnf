@@ -1227,10 +1227,10 @@ class YumBase(depsolve.Depsolve):
             #  Recheck if the file is there, works around a couple of weird
             # edge cases.
             local = po.localPkg()
+            i += 1
             if os.path.exists(local):
                 if self.verifyPkg(local, po, False):
                     self.verbose_logger.debug(_("using local copy of %s") %(po,))
-                    i -= 1
                     remote_size -= po.size
                     if hasattr(urlgrabber.progress, 'text_meter_total_size'):
                         urlgrabber.progress.text_meter_total_size(remote_size,
@@ -1239,7 +1239,6 @@ class YumBase(depsolve.Depsolve):
                 if os.path.getsize(local) >= po.size:
                     os.unlink(local)
 
-            i += 1
             checkfunc = (self.verifyPkg, (po, 1), {})
             dirstat = os.statvfs(po.repo.pkgdir)
             if (dirstat.f_bavail * dirstat.f_bsize) <= long(po.size):
