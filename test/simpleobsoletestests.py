@@ -423,6 +423,19 @@ class SimpleObsoletesTests(OperationsTests):
         self.assert_(res=='ok', msg)
         self.assertResult((ap, aop, dep1, dep2, dep3))
 
+    def testMultipleObsoleters(self):
+        rp1        = FakePackage('foo', '1', '1', '0', 'noarch')
+
+        aop1        = FakePackage('bar', '1', '1', '0', 'noarch')
+        aop1.addObsoletes('foo', 'LT', ('0', '1', '2'))
+        aop2        = FakePackage('bazing', '1', '1', '0', 'noarch')
+        aop2.addObsoletes('foo', 'LT', ('0', '1', '2'))
+
+        res, msg = self.runOperation(['update'],
+                                     [rp1], [aop1, aop2])
+        self.assert_(res=='ok', msg)
+        self.assertResult((aop1,))
+
 
 class GitMetapackageObsoletesTests(OperationsTests):
 
