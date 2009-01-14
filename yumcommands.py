@@ -798,26 +798,29 @@ class RepoListCommand(YumCommand):
                     cols.append((str(repo), repo.name,
                                  (ui_enabled, ui_endis_wid), ui_num))
                 else:
-                    md = repo.repoXML
+                    if enabled:
+                        md = repo.repoXML
+                    else:
+                        md = None
                     out = [base.fmtKeyValFill(_("Repo-id     : "), repo),
                            base.fmtKeyValFill(_("Repo-name   : "), repo.name),
                            base.fmtKeyValFill(_("Repo-status : "), ui_enabled)]
-                    if md.revision is not None:
+                    if md and md.revision is not None:
                         out += [base.fmtKeyValFill(_("Repo-revision: "),
                                                    md.revision)]
-                    if md.tags['content']:
+                    if md and md.tags['content']:
                         tags = md.tags['content']
                         out += [base.fmtKeyValFill(_("Repo-tags   : "),
                                                    ", ".join(sorted(tags)))]
 
-                    if md.tags['distro']:
+                    if md and md.tags['distro']:
                         for distro in sorted(md.tags['distro']):
                             tags = md.tags['distro'][distro]
                             out += [base.fmtKeyValFill(_("Repo-distro-tags: "),
                                                        "[%s]: %s" % (distro,
                                                        ", ".join(sorted(tags))))]
 
-                    if enabled:
+                    if md:
                         out += [base.fmtKeyValFill(_("Repo-updated: "),
                                                    time.ctime(md.timestamp)),
                                 base.fmtKeyValFill(_("Repo-pkgs   : "), ui_num),
