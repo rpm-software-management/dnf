@@ -351,9 +351,15 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
                 self.verbose_logger.info(_('Trying to run the transaction but nothing to do. Exiting.'))
                 return 1
 
-        # output what will be done:
-        self.verbose_logger.log(yum.logginglevels.INFO_1,
-            self.listTransaction())
+        # NOTE: In theory we can skip this in -q -y mode, for a slight perf.
+        #       gain. But it's probably doom to have a different code path.
+        lsts = self.listTransaction()
+        if self.verbose_logger.isEnabledFor(yum.logginglevels.INFO_1):
+            self.verbose_logger.log(yum.logginglevels.INFO_1, lsts)
+        elif not self.conf.assumeyes:
+            #  If we are in quiet, and assumeyes isn't on we want to output
+            # at least the transaction list anyway.
+            self.logger.warn(lsts)
         
         # Check which packages have to be downloaded
         downloadpkgs = []
