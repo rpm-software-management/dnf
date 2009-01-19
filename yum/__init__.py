@@ -82,6 +82,23 @@ __version_info__ = tuple([ int(num) for num in __version__.split('.')])
 # multiple YumBase() objects.
 default_grabber.opts.user_agent += " yum/" + __version__
 
+class _YumPreBaseConf:
+    """This is the configuration interface for the YumBase configuration.
+       So if you want to change if plugins are on/off, or debuglevel/etc.
+       you tweak it here, and when yb.conf does it's thing ... it happens. """
+
+    def __init__(self):
+        self.fn = '/etc/yum/yum.conf'
+        self.root = '/'
+        self.init_plugins = True
+        self.plugin_types = (plugins.TYPE_CORE,)
+        self.optparser = None
+        self.debuglevel = None
+        self.errorlevel = None
+        self.disabled_plugins = None
+        self.enabled_plugins = None
+
+
 class YumBase(depsolve.Depsolve):
     """This is a primary structure and base class. It houses the objects and
        methods needed to perform most things in yum. It is almost an abstract
@@ -109,6 +126,8 @@ class YumBase(depsolve.Depsolve):
 
         self.mediagrabber = None
 
+        self.preconf = _YumPreBaseConf()
+
     def __del__(self):
         self.close()
         self.closeRpmDB()
@@ -125,8 +144,8 @@ class YumBase(depsolve.Depsolve):
     def doGenericSetup(self, cache=0):
         """do a default setup for all the normal/necessary yum components,
            really just a shorthand for testing"""
-        
-        self._getConfig(init_plugins=False)
+
+        self.preconf.init_plugins = False
         self.conf.cache = cache
 
     def doConfigSetup(self, fn='/etc/yum/yum.conf', root='/', init_plugins=True,
@@ -134,38 +153,44 @@ class YumBase(depsolve.Depsolve):
             errorlevel=None):
         warnings.warn(_('doConfigSetup() will go away in a future version of Yum.\n'),
                 Errors.YumFutureDeprecationWarning, stacklevel=2)
-                
-        return self._getConfig(fn=fn, root=root, init_plugins=init_plugins,
-             plugin_types=plugin_types, optparser=optparser, debuglevel=debuglevel,
-             errorlevel=errorlevel)
+
+        if hasattr(self, 'preconf'):
+            self.preconf.fn = fn
+            self.preconf.root = root
+            self.preconf.init_plugins = init_plugins
+            self.preconf.plugin_types = plugin_types
+            self.preconf.optparser = optparser
+            self.preconf.debuglevel = debuglevel
+            self.preconf.errorlevel = errorlevel
+
+        return self.conf
         
-    def _getConfig(self, fn='/etc/yum/yum.conf', root='/', init_plugins=True,
-            plugin_types=(plugins.TYPE_CORE,), optparser=None, debuglevel=None,
-            errorlevel=None,disabled_plugins=None,enabled_plugins=None):
+    def _getConfig(self):
         '''
         Parse and load Yum's configuration files and call hooks initialise
-        plugins and logging.
-
-        @param fn: Path to main configuration file to parse (yum.conf).
-        @param root: Filesystem root to use.
-        @param init_plugins: If False, plugins will not be loaded here. If
-            True, plugins will be loaded if the "plugins" option is enabled in
-            the configuration file.
-        @param plugin_types: As per doPluginSetup()
-        @param optparser: As per doPluginSetup()
-        @param debuglevel: Debug level to use for logging. If None, the debug
-            level will be read from the configuration file.
-        @param errorlevel: Error level to use for logging. If None, the debug
-            level will be read from the configuration file.
-        @param disabled_plugins: Plugins to be disabled    
-        @param enabled_plugins: Plugins to be enabled
-        '''
+        plugins and logging. Uses self.preconf for pre-configuration,
+        configuration. '''
 
         # ' xemacs syntax hack
 
         if self._conf:
             return self._conf
         conf_st = time.time()            
+
+        fn = self.preconf.fn
+        root = self.preconf.root
+        init_plugins = self.preconf.init_plugins
+        plugin_types = self.preconf.plugin_types
+        optparser = self.preconf.optparser
+        debuglevel = self.preconf.debuglevel
+        errorlevel = self.preconf.errorlevel
+        disabled_plugins = self.preconf.disabled_plugins
+        enabled_plugins = self.preconf.enabled_plugins
+
+        #  We don't want people accessing/altering preconf after it becomes
+        # worthless. So we delete it, and thus. it'll raise AttributeError
+        del self.preconf
+
         # TODO: Remove this block when we no longer support configs outside
         # of /etc/yum/
         if fn == '/etc/yum/yum.conf' and not os.path.exists(fn):
@@ -392,7 +417,7 @@ class YumBase(depsolve.Depsolve):
 
     def _getRepos(self, thisrepo=None, doSetup = False):
         """ For each enabled repository set up the basics of the repository. """
-        self._getConfig() # touch the config class first
+        self.conf # touch the config class first
 
         if doSetup:
             repo_st = time.time()        

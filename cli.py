@@ -174,14 +174,18 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
        
         # Read up configuration options and initialise plugins
         try:
-            self._getConfig(opts.conffile, root, 
-                    init_plugins=not opts.noplugins,
-                    plugin_types=(yum.plugins.TYPE_CORE, yum.plugins.TYPE_INTERACTIVE),
-                    optparser=self.optparser,
-                    debuglevel=opts.debuglevel,
-                    errorlevel=opts.errorlevel,
-                    disabled_plugins=self.optparser._splitArg(opts.disableplugins),
-                    enabled_plugins=self.optparser._splitArg(opts.enableplugins))
+            pc = self.preconf
+            pc.fn = opts.conffile
+            pc.root = root
+            pc.init_plugins = not opts.noplugins
+            pc.plugin_types = (yum.plugins.TYPE_CORE,
+                               yum.plugins.TYPE_INTERACTIVE)
+            pc.optparser = self.optparser
+            pc.debuglevel = opts.debuglevel
+            pc.errorlevel = opts.errorlevel
+            pc.disabled_plugins = self.optparser._splitArg(opts.disableplugins)
+            pc.enabled_plugins  = self.optparser._splitArg(opts.enableplugins)
+            self.conf
                     
         except yum.Errors.ConfigError, e:
             self.logger.critical(_('Config Error: %s'), e)

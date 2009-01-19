@@ -61,20 +61,20 @@ class YumUtilBase(YumBaseCli):
         root = self._parser.getRoot(opts)
         # Read up configuration options and initialise plugins
         try:
-            disabled_plugins = None
+            pc = self.preconf
+            pc.fn = opts.conffile
+            pc.root = root
+            pc.init_plugins = not opts.noplugins
+            pc.plugin_types = pluginsTypes
+            pc.optparser = self._parser
+            pc.debuglevel = opts.debuglevel
+            pc.errorlevel = opts.errorlevel
             if hasattr(opts, "disableplugins"):
-                disabled_plugins = self._parser._splitArg(opts.disableplugins)
-            enabled_plugins  = None
+                pc.disabled_plugins =self._parser._splitArg(opts.disableplugins)
             if hasattr(opts, "enableplugins"):
-                enabled_plugins = self._parser._splitArg(opts.enableplugins)
-            self._getConfig(opts.conffile, root, 
-                    init_plugins=not opts.noplugins,
-                    plugin_types= pluginsTypes,
-                    optparser=self._parser,
-                    debuglevel=opts.debuglevel,
-                    errorlevel=opts.errorlevel,
-                    disabled_plugins=disabled_plugins,
-                    enabled_plugins=enabled_plugins)
+                pc.enabled_plugins = self._parser._splitArg(opts.enableplugins)
+            self.conf
+
         except yum.Errors.ConfigError, e:
             self.logger.critical(_('Config Error: %s'), e)
             sys.exit(1)
