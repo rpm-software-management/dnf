@@ -954,11 +954,12 @@ class YumAvailablePackage(PackageObject, RpmBase):
         if not self.changelog:
             return ""
         msg = "\n"
-        clog_count = 0
-        for (ts, author, content) in reversed(sorted(self.changelog)):
-            if clog_limit and clog_count >= clog_limit:
-                break
-            clog_count += 1
+        # We need to output them "backwards", so the oldest is first
+        if not clog_limit:
+            clogs = self.changelog
+        else:
+            clogs = self.changelog[:clog_limit]
+        for (ts, author, content) in reversed(clogs):
             msg += """<changelog author="%s" date="%s">%s</changelog>\n""" % (
                         misc.to_xml(author, attrib=True), misc.to_xml(str(ts)), 
                         misc.to_xml(content))
