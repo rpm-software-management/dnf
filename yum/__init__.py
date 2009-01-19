@@ -917,11 +917,10 @@ class YumBase(depsolve.Depsolve):
         for i in ('ts_all_fn', 'ts_done_fn'):
             if hasattr(cb, i):
                 fn = getattr(cb, i)
-                if os.path.exists(fn):
-                    try:
-                        os.unlink(fn)
-                    except (IOError, OSError), e:
-                        self.logger.critical(_('Failed to remove transaction file %s') % fn)
+                try:
+                    misc.unlink_f(fn)
+                except (IOError, OSError), e:
+                    self.logger.critical(_('Failed to remove transaction file %s') % fn)
 
         self.plugins.run('posttrans')
         return resultobject
@@ -1109,11 +1108,7 @@ class YumBase(depsolve.Depsolve):
             return 1
     
     def _unlock(self, filename):
-        try:
-            os.unlink(filename)
-        except OSError, msg:
-            pass
-
+        misc.unlink_f(filename)
 
     def verifyPkg(self, fo, po, raiseError):
         """verifies the package is what we expect it to be
@@ -1232,10 +1227,10 @@ class YumBase(depsolve.Depsolve):
             #  Recheck if the file is there, works around a couple of weird
             # edge cases.
             local = po.localPkg()
+            i += 1
             if os.path.exists(local):
                 if self.verifyPkg(local, po, False):
                     self.verbose_logger.debug(_("using local copy of %s") %(po,))
-                    i -= 1
                     remote_size -= po.size
                     if hasattr(urlgrabber.progress, 'text_meter_total_size'):
                         urlgrabber.progress.text_meter_total_size(remote_size,
@@ -1244,7 +1239,6 @@ class YumBase(depsolve.Depsolve):
                 if os.path.getsize(local) >= po.size:
                     os.unlink(local)
 
-            i += 1
             checkfunc = (self.verifyPkg, (po, 1), {})
             dirstat = os.statvfs(po.repo.pkgdir)
             if (dirstat.f_bavail * dirstat.f_bsize) <= long(po.size):
@@ -1325,10 +1319,7 @@ class YumBase(depsolve.Depsolve):
             except URLGrabError, e:
                 # might add a check for length of file - if it is < 
                 # required doing a reget
-                try:
-                    os.unlink(local)
-                except OSError, e:
-                    pass
+                misc.unlink_f(local)
             else:
                 po.hdrpath = local
                 return
@@ -1349,11 +1340,11 @@ class YumBase(depsolve.Depsolve):
         except Errors.RepoError, e:
             saved_repo_error = e
             try:
-                os.unlink(local)
+                misc.unlink_f(local)
             except OSError, e:
                 raise Errors.RepoError, saved_repo_error
             else:
-                raise
+                raise Errors.RepoError, saved_repo_error
         else:
             po.hdrpath = hdrpath
             return
@@ -1442,7 +1433,7 @@ class YumBase(depsolve.Depsolve):
             if not os.path.exists(fn):
                 continue
             try:
-                os.unlink(fn)
+                misc.unlink_f(fn)
             except OSError, e:
                 self.logger.warning(_('Cannot remove %s'), fn)
                 continue
@@ -1483,7 +1474,7 @@ class YumBase(depsolve.Depsolve):
 
         for item in filelist:
             try:
-                os.unlink(item)
+                misc.unlink_f(item)
             except OSError, e:
                 self.logger.critical(_('Cannot remove %s file %s'), filetype, item)
                 continue
@@ -2813,10 +2804,11 @@ class YumBase(depsolve.Depsolve):
             #        it to of what is installed. in the meantime name.arch is
             #        most likely correct
             pot_updated = self.rpmdb.searchNevra(name=available_pkg.name, arch=available_pkg.arch)
-            # only compare against the newest of what's installed
-            if pot_updated:
-                pot_updated.sort()
-                ipkg = pot_updated[-1]
+            if pot_updated and self.allowedMultipleInstalls(available_pkg):
+                # only compare against the newest of what's installed for kernel
+                pot_updated = sorted(pot_updated)[-1:]
+
+            for ipkg in pot_updated:
                 if self.tsInfo.isObsoleted(ipkg.pkgtup):
                     self.verbose_logger.log(logginglevels.DEBUG_2, _('Not Updating Package that is already obsoleted: %s.%s %s:%s-%s'), 
                                             ipkg.pkgtup)

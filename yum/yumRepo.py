@@ -172,7 +172,7 @@ class YumPackageSack(packageSack.PackageSack):
                         db_un_fn = db_fn.replace('.bz2', '')
                         if not repo.cache:
                             misc.bunzipFile(db_fn, db_un_fn)
-                            os.unlink(db_fn)
+                            misc.unlink_f(db_fn)
                             db_un_fn = self._check_uncompressed_db(repo, mydbtype)
 
                 dobj = repo.cacheHandler.open_database(db_un_fn)
@@ -209,11 +209,7 @@ class YumPackageSack(packageSack.PackageSack):
                 repo.checkMD(db_un_fn, mdtype, openchecksum=True)
             except URLGrabError:
                 if not repo.cache:
-                    try:
-                        os.unlink(db_un_fn)
-                    except OSError, e:
-                        if e.errno != errno.ENOENT:
-                            raise # Could have an error before anything happens
+                    misc.unlink_f(db_un_fn)
             else:
                 result = db_un_fn
 
@@ -384,7 +380,7 @@ class YumRepository(Repository, config.RepoConf):
         try:
             config.writeRawRepoFile(self,only=['enabled'])
         except IOError, e:
-            if e.errno == 13:
+            if e.errno == errno.EACCES:
                 self.logger.warning(e)
             else:
                 raise IOError, str(e)
@@ -395,7 +391,7 @@ class YumRepository(Repository, config.RepoConf):
         try:
             config.writeRawRepoFile(self,only=['enabled'])
         except IOError, e:
-            if e.errno == 13:
+            if e.errno == errno.EACCES:
                 self.logger.warning(e)
             else:
                 raise IOError, str(e)
@@ -563,7 +559,7 @@ class YumRepository(Repository, config.RepoConf):
             if hasattr(self, 'mirrorlist_file') and os.path.exists(self.mirrorlist_file):
                 if not self.cache:
                     try:
-                        os.unlink(self.mirrorlist_file)
+                        misc.unlink_f(self.mirrorlist_file)
                     except (IOError, OSError), e:
                         print 'Could not delete bad mirrorlist file: %s - %s' % (self.mirrorlist_file, e)
                     else:
@@ -636,10 +632,7 @@ class YumRepository(Repository, config.RepoConf):
                     # Downloaded file failed to parse, revert (dito. above):
                     print "Could not parse metalink %s error was \n%s"%(url, e)
                     self._metadataCurrent = True
-                    try:
-                        os.unlink(result)
-                    except:
-                        pass
+                    misc.unlink_f(result)
 
             if self._metadataCurrent:
                 self._metalink = metalink.MetaLinkRepoMD(self.metalink_filename)
@@ -883,14 +876,10 @@ class YumRepository(Repository, config.RepoConf):
 
     def _getFileRepoXML(self, local, text=None, grab_can_fail=None):
         """ Call _getFile() for the repomd.xml file. """
-        def _cleanup_tmp():
-            try:
-                os.unlink(tfname)
-            except:
-                pass
         checkfunc = (self._checkRepoXML, (), {})
         if grab_can_fail is None:
             grab_can_fail = 'old_repo_XML' in self._oldRepoMDData
+        tfname = ''
         try:
             # This is named so that "yum clean metadata" picks it up
             tfname = tempfile.mktemp(prefix='repomd', suffix="tmp.xml",
@@ -904,12 +893,12 @@ class YumRepository(Repository, config.RepoConf):
                                    cache=self.http_caching == 'all')
 
         except URLGrabError, e:
-            _cleanup_tmp()
+            misc.unlink_f(tfname)
             if grab_can_fail:
                 return None
             raise Errors.RepoError, 'Error downloading file %s: %s' % (local, e)
         except (Errors.NoMoreMirrorsRepoError, Errors.RepoError):
-            _cleanup_tmp()
+            misc.unlink_f(tfname)
             if grab_can_fail:
                 return None
             raise
@@ -919,7 +908,7 @@ class YumRepository(Repository, config.RepoConf):
             os.rename(result, local)
         except:
             # But in case it doesn't...
-            _cleanup_tmp()
+            misc.unlink_f(tfname)
             if grab_can_fail:
                 return None
             raise Errors.RepoError, 'Error renaming file %s to %s' % (result,
@@ -941,7 +930,7 @@ class YumRepository(Repository, config.RepoConf):
         """ If we have an older repomd.xml file available, save it out. """
         # Cleanup old trash...
         for fname in glob.glob(self.cachedir + "/*.old.tmp"):
-            os.unlink(fname)
+            misc.unlink_f(fname)
 
         if os.path.exists(local):
             old_local = local + '.old.tmp' # locked, so this is ok
@@ -960,7 +949,7 @@ class YumRepository(Repository, config.RepoConf):
 
         # Unique names mean the rename doesn't work anymore.
         for fname in self._oldRepoMDData['new_MD_files']:
-            os.unlink(fname)
+            misc.unlink_f(fname)
 
         old_data = self._oldRepoMDData
         self._oldRepoMDData = {}
@@ -981,12 +970,12 @@ class YumRepository(Repository, config.RepoConf):
         self._oldRepoMDData = {}
 
         if 'old_local' in old_data:
-            os.unlink(old_data['old_local'])
+            misc.unlink_f(old_data['old_local'])
 
         if 'old_MD_files' not in old_data:
             return
         for revert in old_data['old_MD_files']:
-            os.unlink(revert + '.old.tmp')
+            misc.unlink_f(revert + '.old.tmp')
 
     def _get_mdtype_data(self, mdtype, repoXML=None):
         if repoXML is None:
@@ -1247,7 +1236,7 @@ class YumRepository(Repository, config.RepoConf):
                 dl_local = local
                 local = local.replace('.bz2', '')
                 misc.bunzipFile(dl_local, local)
-                os.unlink(dl_local)
+                misc.unlink_f(dl_local)
             self._oldRepoMDData['new_MD_files'].append(local)
 
         self._doneOldRepoXML()
