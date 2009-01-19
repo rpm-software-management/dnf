@@ -41,14 +41,25 @@ urlparse.uses_fragment.append("media")
 # For verify
 import pwd
 import grp
+import sys
 
 def comparePoEVR(po1, po2):
     """
-    Compare two PackageEVR objects.
+    Compare two Package or PackageEVR objects.
     """
     (e1, v1, r1) = (po1.epoch, po1.version, po1.release)
     (e2, v2, r2) = (po2.epoch, po2.version, po2.release)
     return rpmUtils.miscutils.compareEVR((e1, v1, r1), (e2, v2, r2))
+def comparePoEVREQ(po1, po2):
+    """
+    Compare two Package or PackageEVR objects for equality.
+    """
+    (e1, v1, r1) = (po1.epoch, po1.version, po1.release)
+    (e2, v2, r2) = (po2.epoch, po2.version, po2.release)
+    if r1 != r2: return False
+    if v1 != v2: return False
+    if e1 != e2: return False
+    return True
 
 def buildPkgRefDict(pkgs, casematch=True):
     """take a list of pkg objects and return a dict the contains all the possible
@@ -207,10 +218,29 @@ class PackageObject(object):
         if ret == 0 and hasattr(self, 'repoid') and hasattr(other, 'repoid'):
             ret = cmp(self.repoid, other.repoid)
         return ret
+    def __eq__(self, other):
+        """ Compare packages for yes/no equality, includes everything in the
+            UI package comparison. """
+        if not other:
+            return False
+        if self.pkgtup != other.pkgtup:
+            return False
+        if self.repoid != other.repoid:
+            return False
+        return True
+    def __ne__(self, other):
+        if not (self == other):
+            return True
+        return False
 
     def verEQ(self, other):
-        """ Uses verCMP, tests if the _rpm-versions_ are the same. """
-        return self.verCMP(other) == 0
+        """ Compare package to another one, only rpm-version equality. """
+        if not other:
+            return False
+        ret = cmp(self.name, other.name)
+        if ret != 0:
+            return False
+        return comparePoEVREQ(self, other)
     def verLT(self, other):
         """ Uses verCMP, tests if the other _rpm-version_ is <  ours. """
         return self.verCMP(other) <  0
@@ -259,22 +289,21 @@ class RpmBase(object):
         self.licenses = []
         self._hash = None
 
-    #  Do we still need __eq__ and __ne__ given that
-    # PackageObject has a working __cmp__?
+    # FIXME: This is identical to PackageObject.__eq__ and __ne__, should be
+    #        remove (is .repoid fine here? ... we need it, maybe .repo.id).
     def __eq__(self, other):
         if not other: # check if other not is a package object. 
             return False
-        if comparePoEVR(self, other) == 0 and self.arch == other.arch and self.name == other.name:
+        if self.pkgtup != other.pkgtup:
+            return False
+        if self.repoid != other.repoid:
+            return False
+        return True
+    def __ne__(self, other):
+        if not (self == other):
             return True
         return False
 
-    def __ne__(self, other):
-        if not other:
-            return True
-        if comparePoEVR(self, other) != 0 or self.arch != other.arch or self.name != other.name:
-            return True
-        return False
-       
     def returnEVR(self):
         return PackageEVR(self.epoch, self.version, self.release)
     
@@ -459,12 +488,10 @@ class PackageEVR:
         return False
 
     def __eq__(self, other):
-        if self.compare(other) == 0:
-            return True
-        return False
+        return comparePoEVREQ(self, other)
 
     def __ne__(self, other):
-        if self.compare(other) != 0:
+        if not (self == other):
             return True
         return False
     
