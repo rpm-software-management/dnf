@@ -59,6 +59,8 @@ gnome\-packagekit application\&.
 .br
 .I \fR * localupdate rpmfile1 [rpmfile2] [\&.\&.\&.] 
 .br
+.I \fR * reinstall package1
+.br
 .I \fR * deplist package1 [package2] [\&.\&.\&.] 
 .br
 .I \fR * repolist [all|enabled|disabled] 
@@ -186,6 +188,11 @@ Is used to update the system by specifying local rpm files. Only the specified
 rpm files of which an older version is already installed will be installed,
 the remaining specified packages will be ignored.
 If required the enabled repositories will be used to resolve dependencies.
+.IP
+.IP "\fBreinstall\fP"
+Will reinstall the identically versioned package as is currently installed. 
+It will not necessarily work for all pkgs. Kernels, in particular are not
+going to play nicely with this.
 .IP
 .IP "\fBdeplist\fP"
 Produces a list of all dependencies and what packages provide those
