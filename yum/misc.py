@@ -131,18 +131,16 @@ def unique(s):
     if n == 0:
         return []
 
-    # Try using a dict first, as that's the fastest and will usually
+    # Try using a set first, as that's the fastest and will usually
     # work.  If it doesn't work, it will usually fail quickly, so it
     # usually doesn't cost much to *try* it.  It requires that all the
     # sequence elements be hashable, and support equality comparison.
-    u = {}
     try:
-        for x in s:
-            u[x] = 1
+        u = set(s)
     except TypeError:
         del u  # move on to the next method
     else:
-        return u.keys()
+        return list(u)
 
     # We can't hash all the elements.  Second fastest is to sort,
     # which brings the equal elements together; then duplicates are
