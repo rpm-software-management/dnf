@@ -257,6 +257,7 @@ class TransactionData:
         self.depremoved = []
         self.depinstalled = []
         self.depupdated = []
+        self.failed = []
 
         for txmbr in self.getMembers():
             if txmbr.output_state == TS_UPDATE:
@@ -289,6 +290,8 @@ class TransactionData:
                 
             elif txmbr.output_state == TS_OBSOLETING:
                 self.installed.append(txmbr)
+            elif txmbr.output_state == TS_FAILED:
+                self.failed.append(txmbr)
                 
             else:
                 pass
@@ -302,6 +305,7 @@ class TransactionData:
         self.depremoved.sort()
         self.instgroups.sort()
         self.removedgroups.sort()
+        self.failed.sort()
 
     
     def addInstall(self, po):

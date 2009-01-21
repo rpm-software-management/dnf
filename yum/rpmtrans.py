@@ -384,6 +384,9 @@ class RPMTransaction:
             self._cpioError(bytes, total, h)
         elif what == rpm.RPMCALLBACK_UNPACK_ERROR:
             self._unpackError(bytes, total, h)
+        # SCRIPT_ERROR is only in rpm >= 4.6.0
+        elif hasattr(rpm, "RPMCALLBACK_SCRIPT_ERROR") and what == rpm.RPMCALLBACK_SCRIPT_ERROR:
+            self._scriptError(bytes, total, h)
     
     
     def _transStart(self, bytes, total, h):
@@ -487,6 +490,7 @@ class RPMTransaction:
         txmbrs = self.base.tsInfo.getMembers(pkgtup=pkgtup)
         for txmbr in txmbrs:
             msg = "Error in cpio payload of rpm package %s" % txmbr.po
+            txmbr.output_state = TS_FAILED
             self.display.errorlog(msg)
             # FIXME - what else should we do here? raise a failure and abort?
     
@@ -495,8 +499,24 @@ class RPMTransaction:
         pkgtup = self._dopkgtup(hdr)
         txmbrs = self.base.tsInfo.getMembers(pkgtup=pkgtup)
         for txmbr in txmbrs:
+            txmbr.output_state = TS_FAILED
             msg = "Error unpacking rpm package %s" % txmbr.po
             self.display.errorlog(msg)
             # FIXME - should we raise? I need a test case pkg to see what the
             # right behavior should be
                 
+    def _scriptError(self, bytes, total, h):
+        (hdr, rpmloc) = h
+        pkgtup = self._dopkgtup(hdr)
+        txmbrs = self.base.tsInfo.getMembers(pkgtup=pkgtup)
+        for txmbr in txmbrs:
+            # "bytes" carries the failed scriptlet tag,
+            # "total" carries fatal/non-fatal status
+            if total:
+                msg = "Error in %s scriptlet in rpm package %s" % (rpm.tagnames[bytes], txmbr.po)
+                txmbr.output_state = TS_FAILED
+            else:
+                msg = "Non-fatal %s scriptlet failure in rpm package %s" % (rpm.tagnames[bytes], txmbr.po)
+            self.display.errorlog(msg)
+            # FIXME - what else should we do here? raise a failure and abort?
+    

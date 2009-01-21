@@ -1014,7 +1014,8 @@ Remove   %5.5s Package(s)
                                   (_('Updated'), self.tsInfo.updated),
                                   (_('Dependency Updated'), self.tsInfo.depupdated),
                                   (_('Skipped (dependency problems)'), self.skipped_packages),
-                                  (_('Replaced'), self.tsInfo.obsoleted)]:
+                                  (_('Replaced'), self.tsInfo.obsoleted),
+                                  (_('Failed'), self.tsInfo.failed)]:
             msgs = []
             if len(pkglist) > 0:
                 out += '\n%s:\n' % action
