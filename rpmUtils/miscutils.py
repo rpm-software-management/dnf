@@ -160,7 +160,7 @@ def rangeCompare(reqtuple, provtuple):
     if r is None:
         reqr = None
 
-    rc = rpmUtils.miscutils.compareEVR((e, v, r), (reqe, reqv, reqr))
+    rc = compareEVR((e, v, r), (reqe, reqv, reqr))
 
     # does not match unless
     if rc >= 1:
