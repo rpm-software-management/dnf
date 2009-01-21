@@ -54,7 +54,7 @@ import transactioninfo
 import urlgrabber
 from urlgrabber.grabber import URLGrabber, URLGrabError
 from urlgrabber.progress import format_number
-from packageSack import packagesNewestByNameArch, packagesNewestByName
+from packageSack import packagesNewestByNameArch
 import depsolve
 import plugins
 import logginglevels
@@ -2276,36 +2276,8 @@ class YumBase(depsolve.Depsolve):
         if len(pkglist) == 1:
             return pkglist[0]
 
-        bestlist  = packagesNewestByNameArch(pkglist)
-        #  Here we need the list of the latest version of each package
-        # the problem we are trying to fix is: ABC-1.2.i386 and ABC-1.3.noarch
-        # so in the above we need to "exclude" ABC < 1.3, which is done by
-        # making another list from newest by name and then make sure any pkg is
-        # in nbestlist.
-        nbestlist = packagesNewestByName(bestlist)
-
-        best = nbestlist[0]
-        nbestlist = set(nbestlist)
-        for pkg in bestlist:
-            if pkg == best:
-                continue
-            if pkg not in nbestlist:
-                continue
-
-            # This is basically _compare_providers() ... but without a reqpo
-            if len(pkg.name) < len(best.name): # shortest name silliness
-                best = pkg
-                continue
-            elif len(pkg.name) > len(best.name):
-                continue
-
-            # compare arch
-            arch = rpmUtils.arch.getBestArchFromList([pkg.arch, best.arch])
-            if arch == pkg.arch:
-                best = pkg
-                continue
-
-        return best
+        bestlist = self._compare_providers(pkglist, None)
+        return bestlist[0][0]
 
     def bestPackagesFromList(self, pkglist, arch=None, single_name=False):
         """Takes a list of packages, returns the best packages.
