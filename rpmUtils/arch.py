@@ -125,13 +125,14 @@ def getBestArchFromList(archlist, myarch=None):
         then return the best arch from the list for the canonArch.
     """
     
+    if len(archlist) == 0:
+        return None
+
     if myarch is None:
         myarch = canonArch
     
     mybestarch = getBestArch(myarch)
     
-    if len(archlist) == 0:
-        return None
     bestarch = getBestArch(myarch)
     if bestarch != myarch:
         bestarchchoice = getBestArchFromList(archlist, bestarch)
