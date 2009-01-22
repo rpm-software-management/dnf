@@ -180,7 +180,10 @@ class Checksums:
 
     def __init__(self, checksums=None, ignore_missing=False):
         if checksums is None:
-            checksums = ['sha256']
+            if 'sha256' not in _available_checksums:
+                checksums = ['sha1'] # for python 2.4 compat
+            else:
+                checksums = ['sha256']
         self._sumalgos = []
         self._sumtypes = []
         self._len = 0
