@@ -193,7 +193,7 @@ class YumPlugins:
         for dir in self.searchpath:
             if not os.path.isdir(dir):
                 continue
-            for modulefile in glob.glob('%s/*.py' % dir):
+            for modulefile in sorted(glob.glob('%s/*.py' % dir)):
                 self._loadplugin(modulefile, types)
 
         if self._plugins:

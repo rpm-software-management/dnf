@@ -514,7 +514,7 @@ def getCacheDir(tmpdir='/var/tmp'):
     # check for /var/tmp/yum-username-* - 
     prefix = 'yum-%s-' % username    
     dirpath = '%s/%s*' % (tmpdir, prefix)
-    cachedirs = glob.glob(dirpath)
+    cachedirs = sorted(glob.glob(dirpath))
     
     for thisdir in cachedirs:
         stats = os.lstat(thisdir)
@@ -618,7 +618,7 @@ def get_running_kernel_version_release(ts):
             
     # we've got nothing so far, so... we glob for the file that MIGHT have
     # this kernels and then look up the file in our rpmdb
-    fns = glob.glob('/boot/vmlinuz*%s*' % ver)
+    fns = sorted(glob.glob('/boot/vmlinuz*%s*' % ver))
     for fn in fns:
         mi = ts.dbMatch('basenames', fn)
         for h in mi:
