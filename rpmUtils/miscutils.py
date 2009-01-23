@@ -111,7 +111,7 @@ def pkgTupleFromHeader(hdr):
        None epoch to 0, as well."""
    
     name = hdr['name']
-    if hdr[rpm.RPMTAG_SOURCERPM]:
+    if hdr[rpm.RPMTAG_SOURCERPM] == 1:
         arch = hdr['arch']
     else:
         arch = 'src'
