@@ -650,11 +650,9 @@ class YumConf(StartupConf):
     throttle = ThrottleOption(0)
 
     http_caching = SelectionOption('all', ('none', 'packages', 'all'))
-    #  Time in seconds (1.5h), yum-updatesd runs once per. hour by default
-    # this time means we don't do interactive network checks/updates if
-    # yum-updatesd is running.
-    metadata_expire = SecondsOption(60 * 90)
-    mirrorlist_expire = SecondsOption(86400) # time in seconds (1 day)
+    metadata_expire = SecondsOption(60 * 60 * 6) # Time in seconds (6h).
+    # Time in seconds (1 day). NOTE: This isn't used when using metalinks
+    mirrorlist_expire = SecondsOption(60 * 60 * 24)
     rpm_check_debug = BoolOption(True)
     disable_excludes = ListOption()    
     skip_broken = BoolOption(False)
