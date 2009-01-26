@@ -1297,7 +1297,7 @@ class YumBase(depsolve.Depsolve):
                 if errors.has_key(po):
                     del errors[po]
 
-        if callback_total is not None:
+        if callback_total is not None and not errors:
             callback_total(remote_pkgs, remote_size, beg_download)
 
         self.plugins.run('postdownload', pkglist=pkglist, errors=errors)
