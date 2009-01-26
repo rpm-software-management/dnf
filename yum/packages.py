@@ -787,22 +787,22 @@ class YumAvailablePackage(PackageObject, RpmBase):
         
         if self.url:
             url = misc.to_xml(self.url)
-                    
+        (csum_type, csum, csumid) = self._checksums[0]
         msg = """
   <name>%s</name>
   <arch>%s</arch>
   <version epoch="%s" ver="%s" rel="%s"/>
-  <checksum type="sha" pkgid="YES">%s</checksum>
+  <checksum type="%s" pkgid="YES">%s</checksum>
   <summary>%s</summary>
   <description>%s</description>
   <packager>%s</packager>
   <url>%s</url>
   <time file="%s" build="%s"/>
   <size package="%s" installed="%s" archive="%s"/>\n""" % (self.name, 
-         self.arch, self.epoch, self.ver, self.rel, self.checksum, 
-         misc.to_xml(self.summary), misc.to_xml(self.description), packager, 
-         url, self.filetime, self.buildtime, self.packagesize, self.size, 
-         self.archivesize)
+         self.arch, self.epoch, self.ver, self.rel, csum_type, csum, 
+         misc.to_xml(self.summary), misc.to_xml(self.description), 
+         misc.to_xml(packager), misc.to_xml(url), self.filetime, 
+         self.buildtime, self.packagesize, self.size, self.archivesize)
         
         msg += self._return_remote_location()
         return msg
@@ -1505,7 +1505,7 @@ class YumLocalPackage(YumHeaderPackage):
         self._hdrstart = None
         self._hdrend = None
         self.arch = self.isSrpm()
-        self.checksum_type = 'sha'
+        self.checksum_type = 'sha256'
 
         # these can be set by callers that need these features (ex: createrepo)
         self._reldir = None 
@@ -1522,7 +1522,7 @@ class YumLocalPackage(YumHeaderPackage):
     def localPkg(self):
         return self.localpath
     
-    def _do_checksum(self, checksum_type='sha'):
+    def _do_checksum(self, checksum_type='sha256'):
         if not self._checksum:
             self._checksum = misc.checksum(checksum_type, self.localpath)
             
