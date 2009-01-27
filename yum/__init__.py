@@ -165,7 +165,7 @@ class YumBase(depsolve.Depsolve):
 
         return self.conf
         
-    def _getConfig(self):
+    def _getConfig(self, **kwargs):
         '''
         Parse and load Yum's configuration files and call hooks initialise
         plugins and logging. Uses self.preconf for pre-configuration,
@@ -173,9 +173,19 @@ class YumBase(depsolve.Depsolve):
 
         # ' xemacs syntax hack
 
+        if kwargs:
+            warnings.warn('Use .preconf instead of passing args to _getConfig')
+
         if self._conf:
             return self._conf
         conf_st = time.time()            
+
+        if kwargs:
+            for arg in ('fn', 'root', 'init_plugins', 'plugin_types',
+                        'optparser', 'debuglevel', 'errorlevel',
+                        'disabled_plugins', 'enabled_plugins'):
+                if arg in kwargs:
+                    setattr(self.preconf, arg, kwargs[arg])
 
         fn = self.preconf.fn
         root = self.preconf.root
