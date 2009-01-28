@@ -90,7 +90,9 @@ def main(args):
         if not pid:
             return
 
+        # Maybe true if /proc isn't mounted, or not Linux ... or something.
         if (not os.path.exists("/proc/%d/status" % pid) or
+            not os.path.exists("/proc/stat") or
             not os.path.exists("/proc/%d/stat" % pid)):
             return
 
