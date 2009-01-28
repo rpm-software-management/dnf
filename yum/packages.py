@@ -461,7 +461,9 @@ class PackageEVR:
     def __init__(self,e,v,r):
         self.epoch = e
         self.ver = v
+        self.version = v
         self.rel = r
+        self.release = r
         
     def compare(self,other):
         return rpmUtils.miscutils.compareEVR((self.epoch, self.ver, self.rel), (other.epoch, other.ver, other.rel))
