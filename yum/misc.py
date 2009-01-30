@@ -25,11 +25,13 @@ except ImportError:
 try:
     import hashlib
     _available_checksums = ['md5', 'sha1', 'sha256', 'sha512']
+    _default_checksums = ['sha256']
 except ImportError:
     # Python-2.4.z ... gah!
     import sha
     import md5
     _available_checksums = ['md5', 'sha1']
+    _default_checksums = ['sha1']
     class hashlib:
 
         @staticmethod
@@ -178,10 +180,7 @@ class Checksums:
 
     def __init__(self, checksums=None, ignore_missing=False):
         if checksums is None:
-            if 'sha256' not in _available_checksums:
-                checksums = ['sha1'] # for python 2.4 compat
-            else:
-                checksums = ['sha256']
+            checksums = _default_checksums
         self._sumalgos = []
         self._sumtypes = []
         self._len = 0
