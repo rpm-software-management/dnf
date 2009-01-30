@@ -201,6 +201,7 @@ class YumPackageSack(packageSack.PackageSack):
 
         result = None
 
+        repo._preload_md_from_system_cache(os.path.basename(db_un_fn))
         if os.path.exists(db_un_fn):
             if skip_old_DBMD_check and repo._using_old_MD:
                 return db_un_fn
@@ -1139,6 +1140,8 @@ class YumRepository(Repository, config.RepoConf):
                 return True
         return False
 
+    # mmdtype is unused, but in theory was == primary
+    # dbmtype == primary_db etc.
     def _groupCheckDataMDValid(self, data, dbmdtype, mmdtype, file_check=False):
         """ Check that we already have this data, and that it's valid. Given
             the DB mdtype and the main mdtype (no _db suffix). """
@@ -1155,7 +1158,10 @@ class YumRepository(Repository, config.RepoConf):
             if not os.path.exists(local):
                 local = local.replace('.bz2', '')
                 compressed = True
-        # if we can, make a copy of the system-wide-cache version of this file
+        #  If we can, make a copy of the system-wide-cache version of this file,
+        # note that we often don't get here. So we also do this in
+        # YumPackageSack.populate ... and we look for the uncompressed versions
+        # in retrieveMD.
         self._preload_md_from_system_cache(os.path.basename(local))
         if not self._checkMD(local, dbmdtype, openchecksum=compressed,
                              data=data, check_can_fail=True):
@@ -1411,7 +1417,8 @@ class YumRepository(Repository, config.RepoConf):
                     "Caching enabled but no local cache of %s from %s" % (local,
                            self)
 
-        if os.path.exists(local):
+        if (os.path.exists(local) or
+            self._preload_md_from_system_cache(os.path.basename(local))):
             if self._checkMD(local, mdtype, check_can_fail=True):
                 self.retrieved[mdtype] = 1
                 return local # it's the same return the local one
@@ -1536,30 +1543,40 @@ class YumRepository(Repository, config.RepoConf):
 
         return returnlist
 
-    def _preload_md_from_system_cache(self, filename):
-        """attempts to download the file from the system-wide cache, if possible"""
+    def _preload_file_from_system_cache(self, filename, subdir=''):
+        """attempts to copy the file from the system-wide cache,
+           if possible"""
         if not hasattr(self, 'old_base_cache_dir'):
-            return
+            return False
         if self.old_base_cache_dir == "":
-            return
+            return False
 
         glob_repo_cache_dir=os.path.join(self.old_base_cache_dir, self.id)
         if not os.path.exists(glob_repo_cache_dir):
-            return
+            return False
         if os.path.normpath(glob_repo_cache_dir) == os.path.normpath(self.cachedir):
-            return
+            return False
 
-        # copy repomd.xml, cachecookie and mirrorlist.txt
-        fn = glob_repo_cache_dir + '/' + filename
-        destfn = self.cachedir + '/' + os.path.basename(filename)
+        # Try to copy whatever file it is
+        fn = glob_repo_cache_dir + '/' + subdir + os.path.basename(filename)
+        destfn = self.cachedir   + '/' + subdir + os.path.basename(filename)
         # don't copy it if the copy in our users dir is newer or equal
         if not os.path.exists(fn):
-            return
+            return False
         if os.path.exists(destfn):
             if os.stat(fn)[stat.ST_CTIME] <= os.stat(destfn)[stat.ST_CTIME]:
-                return
-        #print 'copying %s to %s' % (fn, destfn)
+                return False
         shutil.copy2(fn, destfn)
+        return True
+
+    def _preload_md_from_system_cache(self, filename):
+        """attempts to copy the metadata file from the system-wide cache,
+           if possible"""
+        return self._preload_file_from_system_cache(filename)
+    def _preload_pkg_from_system_cache(self, pkg):
+        """attempts to copy the package from the system-wide cache,
+           if possible"""
+        return self._preload_file_from_system_cache(filename,subdir='packages/')
 
 
 def getMirrorList(mirrorlist, pdict = None):
