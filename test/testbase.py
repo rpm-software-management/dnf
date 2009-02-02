@@ -72,6 +72,7 @@ class FakePackage(packages.YumAvailablePackage):
 
         # Just a unique integer
         self.id = self.__hash__()
+        self.pkgKey = self.__hash__()
 
     def addProvides(self, name, flag=None, evr=(None, None, None)):
         self.prco['provides'].append((name, flag, evr))
