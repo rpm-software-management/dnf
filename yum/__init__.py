@@ -1504,7 +1504,6 @@ class YumBase(depsolve.Depsolve):
         removed = 0
         for ext in exts:
             for repo in self.repos.listEnabled():
-                repo.dirSetup()
                 path = getattr(repo, pathattr)
                 if os.path.exists(path) and os.path.isdir(path):
                     filelist = misc.getFileList(path, ext, filelist)

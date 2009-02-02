@@ -252,9 +252,6 @@ class YumRepository(Repository, config.RepoConf):
                                  # config is very, very old
         # throw in some stubs for things that will be set by the config class
         self.basecachedir = ""
-        self.cachedir = ""
-        self.pkgdir = ""
-        self.hdrdir = ""
         self.cost = 1000
         self.copy_local = 0
         # holder for stuff we've grabbed
@@ -499,13 +496,13 @@ class YumRepository(Repository, config.RepoConf):
         cachedir = os.path.join(self.basecachedir, self.id)
         pkgdir = os.path.join(cachedir, 'packages')
         hdrdir = os.path.join(cachedir, 'headers')
-        self.setAttribute('cachedir', cachedir)
-        self.setAttribute('pkgdir', pkgdir)
-        self.setAttribute('hdrdir', hdrdir)
-        self.setAttribute('gpgdir', self.cachedir + '/gpgdir')
+        self.setAttribute('_dir_setup_cachedir', cachedir)
+        self.setAttribute('_dir_setup_pkgdir', pkgdir)
+        self.setAttribute('_dir_setup_hdrdir', hdrdir)
+        self.setAttribute('_dir_setup_gpgdir', self.cachedir + '/gpgdir')
 
         cookie = self.cachedir + '/' + self.metadata_cookie_fn
-        self.setAttribute('metadata_cookie', cookie)
+        self.setAttribute('_dir_setup_metadata_cookie', cookie)
 
         for dir in [self.cachedir, self.pkgdir]:
             if self.cache == 0:
@@ -528,6 +525,17 @@ class YumRepository(Repository, config.RepoConf):
         self._preload_md_from_system_cache('mirrorlist.txt')
         self._preload_md_from_system_cache('metalink.xml')
 
+    def _dirAttr(self, attr):
+        """ Make the directory attributes call .dirSetup() if needed. """
+        attr = '_dir_setup_' + attr
+        if not hasattr(self, attr):
+            self.dirSetup()
+        return getattr(self, attr)
+    cachedir = property(lambda self: self._dirAttr('cachedir'))
+    pkgdir   = property(lambda self: self._dirAttr('pkgdir'))
+    hdrdir   = property(lambda self: self._dirAttr('hdrdir'))
+    gpgdir   = property(lambda self: self._dirAttr('gpgdir'))
+    metadata_cookie = property(lambda self: self._dirAttr('metadata_cookie'))
 
     def baseurlSetup(self):
         warnings.warn('baseurlSetup() will go away in a future version of Yum.\n',
@@ -860,7 +868,6 @@ class YumRepository(Repository, config.RepoConf):
             self.mediafunc = mediafunc
             self.gpg_import_func = gpg_import_func
             self.confirm_func = confirm_func
-            self.dirSetup()
         except Errors.RepoError, e:
             raise
         if not self.mediafunc and self.mediaid and not self.mirrorlist and not self.baseurl:
