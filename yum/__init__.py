@@ -1051,6 +1051,8 @@ class YumBase(depsolve.Depsolve):
         if len(includelist) == 0:
             return
         
+        # FIXME: Here we have to get all packages, and then exclude those that
+        #        don't match. Need a "negation" flag for returnPackages().
         pkglist = self.pkgSack.returnPackages(repo.id)
         exactmatch, matched, unmatched = \
            parsePackages(pkglist, includelist, casematch=1)
@@ -2434,16 +2436,14 @@ class YumBase(depsolve.Depsolve):
 
                 was_pattern = True
                 pats = [kwargs['pattern']]
-                exactmatch, matched, unmatched = \
-                    parsePackages(self.pkgSack.returnPackages(patterns=pats),
-                                  pats, casematch=1)
-                pkgs.extend(exactmatch)
-                pkgs.extend(matched)
+                mypkgs = self.pkgSack.returnPackages(patterns=pats,
+                                                      ignore_case=False)
+                pkgs.extend(mypkgs)
                 # if we have anything left unmatched, let's take a look for it
                 # being a dep like glibc.so.2 or /foo/bar/baz
                 
-                if len(unmatched) > 0:
-                    arg = unmatched[0] #only one in there
+                if not mypkgs:
+                    arg = kwargs['pattern']
                     self.verbose_logger.debug(_('Checking for virtual provide or file-provide for %s'), 
                         arg)
 
@@ -2512,10 +2512,15 @@ class YumBase(depsolve.Depsolve):
             # Do we still want to return errors here?
             # We don't in the cases below, so I didn't here...
             if 'pattern' in kwargs:
-                pkgs = self.rpmdb.returnPackages(patterns=[kwargs['pattern']])
+                pkgs = self.rpmdb.returnPackages(patterns=[kwargs['pattern']],
+                                                 ignore_case=False)
             if 'name' in kwargs:
                 pkgs = self.rpmdb.searchNevra(name=kwargs['name'])
-            for pkg in pkgs:
+            # Warning here does "weird" things when doing:
+            # yum --disablerepo='*' install '*'
+            # etc. ... see RHBZ#480402
+            if False:
+              for pkg in pkgs:
                 self.verbose_logger.warning(_('Package %s installed and not available'), pkg)
             if pkgs:
                 return []
