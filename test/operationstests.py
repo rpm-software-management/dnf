@@ -127,17 +127,17 @@ class KernelTests(OperationsTests):
         pkgs.avail.append(FakePackage('kernel', '2.6.23.1', '42',arch='i686'))
         pkgs.avail.append(FakePackage('kernel', '2.6.23.1', '42',arch='i586'))
     
-    def testKernelInstall(self):
+    def testKernelInstall1(self):
         p = self.pkgs
         res, msg = self.runOperation(['install','kernel'], p.inst, p.avail)
         self.assertResult(p.inst)
 
-    def testKernelInstall(self):
+    def testKernelInstall2(self):
         p = self.pkgs
         res, msg = self.runOperation(['install','kernel-2.6.23.1-42'], p.inst, p.avail)
         self.assertResult(p.inst + [ p.avail[4] ] )
 
-    def testKernelInstall(self):
+    def testKernelInstall3(self):
         p = self.pkgs
         res, msg = self.runOperation(['install','kernel-2.6.23.8'], p.inst, p.avail)
         self.assertResult(p.inst)
