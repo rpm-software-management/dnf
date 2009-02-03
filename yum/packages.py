@@ -789,7 +789,7 @@ class YumAvailablePackage(PackageObject, RpmBase):
         
         if self.url:
             url = misc.to_xml(self.url)
-        (csum_type, csum, csumid) = self._checksums[0]
+        (csum_type, csum, csumid) = self.checksums[0]
         msg = """
   <name>%s</name>
   <arch>%s</arch>
@@ -1527,11 +1527,15 @@ class YumLocalPackage(YumHeaderPackage):
     def _do_checksum(self, checksum_type='sha256'):
         if not self._checksum:
             self._checksum = misc.checksum(checksum_type, self.localpath)
-            
+            self._checksums = [(checksum_type, self._checksum, 1)]
+
         return self._checksum    
 
     checksum = property(fget=lambda self: self._do_checksum())   
-    
+
+    def returnChecksums(self):
+        return self._checksums
+
     def _get_header_byte_range(self):
         """takes an rpm file or fileobject and returns byteranges for location of the header"""
         if self._hdrstart and self._hdrend:
