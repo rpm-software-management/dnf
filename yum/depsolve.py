@@ -1090,7 +1090,7 @@ class Depsolve(object):
                 if reqpo:
                     arches = (reqpo.arch, getBestArch())
                 else:
-                    arches = (getBestArch())
+                    arches = (getBestArch(),)
                 
                 for thisarch in arches:
                     res = _compare_arch_distance(po, nextpo, thisarch)

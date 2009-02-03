@@ -23,6 +23,7 @@ import warnings
 import re
 import fnmatch
 import misc
+from packages import parsePackages
 
 class PackageSackBase(object):
     """Base class that provides the interface for PackageSacks."""
@@ -752,6 +753,10 @@ class PackageSack(PackageSackBase):
                 # nothing to return
                 pass
         
+        if patterns:
+            returnList = parsePackages(returnList, patterns, not ignore_case,
+                                       unique='repo-pkgkey')
+            returnList = returnList[0] + returnList[1]
         return returnList
 
     def returnNewestByNameArch(self, naTup=None,
