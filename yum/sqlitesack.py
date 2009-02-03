@@ -46,7 +46,10 @@ def catchSqliteException(func):
             # 2.4.x requires this, but 2.6.x complains about even hasattr()
             # of e.message ... *sigh*
             if sys.hexversion < 0x02050000:
-                raise Errors.RepoError, str(e.message)
+                if hasattr(e,'message'):
+                    raise Errors.RepoError, str(e.message)
+                else:
+                    raise Errors.RepoError, str(e)
             raise Errors.RepoError, str(e)
 
     newFunc.__name__ = func.__name__
