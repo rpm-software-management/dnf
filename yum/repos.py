@@ -43,8 +43,15 @@ class RepoStorage:
         # callbacks for handling gpg key imports for repomd.xml sig checks
         # need to be set from outside of the repos object to do anything
         # even quasi-useful
-        self.gpg_import_func = self.ayum.getKeyForRepo # defaults to what is probably sane-ish
+        # defaults to what is probably sane-ish
+        self.gpg_import_func = self._wrap_ayum_getKeyForRepo
         self.confirm_func = None
+
+    def _wrap_ayum_getKeyForRepo(repo, callback=None):
+        """ This is a wrapper for calling self.ayum.getKeyForRepo() because
+            otherwise we take a real reference through the bound method and
+            that is d00m. """
+        return self.ayum.getKeyForRepo(repo, callback)
 
     def doSetup(self, thisrepo = None):
         
