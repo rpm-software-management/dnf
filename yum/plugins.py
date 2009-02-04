@@ -171,8 +171,9 @@ class YumPlugins:
         conduitcls = eval(conduitcls)       # Convert name to class object
 
         for modname, func in self._pluginfuncs[slotname]:
-            self.verbose_logger.debug('Running "%s" handler for "%s" plugin', slotname,
-                modname)
+            self.verbose_logger.log(logginglevels.DEBUG_4,
+                                    'Running "%s" handler for "%s" plugin',
+                                    slotname, modname)
     
             _, conf = self._plugins[modname]
             func(conduitcls(self, self.base, conf, **kwargs))
@@ -196,7 +197,9 @@ class YumPlugins:
             for modulefile in sorted(glob.glob('%s/*.py' % dir)):
                 self._loadplugin(modulefile, types)
 
-        if self._plugins:
+        # If we are in verbose mode we get the full 'Loading "blah" plugin' lines
+        if (self._plugins and
+            not self.verbose_logger.isEnabledFor(logginglevels.DEBUG_3)):
             # Mostly copied from YumOutput._outKeyValFill()
             key = _("Loaded plugins: ")
             val = ", ".join(sorted(self._plugins))
@@ -248,7 +251,7 @@ class YumPlugins:
                                   config.BoolOption(False)) and
              not self._plugin_cmdline_match(modname, self.enabledPlugins,
                                             self._used_enable_plugin))):
-            self.verbose_logger.debug(_('"%s" plugin is disabled'), modname)
+            self.verbose_logger.debug(_('Not loading "%s" plugin, as it is disabled'), modname)
             return
 
         try:

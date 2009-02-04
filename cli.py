@@ -253,8 +253,10 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         base command + argument makes any sense at all""" 
 
         self.verbose_logger.debug('Yum Version: %s', yum.__version__)
-        self.verbose_logger.debug('COMMAND: %s', self.cmdstring)
-        self.verbose_logger.debug('Installroot: %s', self.conf.installroot)
+        self.verbose_logger.log(yum.logginglevels.DEBUG_4,
+                                'COMMAND: %s', self.cmdstring)
+        self.verbose_logger.log(yum.logginglevels.DEBUG_4,
+                                'Installroot: %s', self.conf.installroot)
         if len(self.conf.commands) == 0 and len(self.cmds) < 1:
             self.cmds = self.conf.commands
         else:
@@ -268,9 +270,10 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         self.extcmds = self.cmds[1:] # out extended arguments/commands
         
         if len(self.extcmds) > 0:
-            self.verbose_logger.debug('Ext Commands:\n')
+            self.verbose_logger.log(yum.logginglevels.DEBUG_4,
+                                    'Ext Commands:\n')
             for arg in self.extcmds:
-                self.verbose_logger.debug('   %s', arg)
+                self.verbose_logger.log(yum.logginglevels.DEBUG_4, '   %s', arg)
         
         if not self.yum_cli_commands.has_key(self.basecmd):
             self.usage()

@@ -402,7 +402,8 @@ class YumBase(depsolve.Depsolve):
 
         if self._rpmdb is None:
             rpmdb_st = time.time()
-            self.verbose_logger.debug(_('Reading Local RPMDB'))
+            self.verbose_logger.log(logginglevels.DEBUG_4,
+                                    _('Reading Local RPMDB'))
             self._rpmdb = rpmsack.RPMDBPackageSack(root=self.conf.installroot)
             self.verbose_logger.debug('rpmdb time: %0.3f' % (time.time() - rpmdb_st))
         return self._rpmdb
@@ -573,7 +574,8 @@ class YumBase(depsolve.Depsolve):
             return self._comps
 
         group_st = time.time()            
-        self.verbose_logger.debug(_('Getting group metadata'))
+        self.verbose_logger.log(logginglevels.DEBUG_4,
+                                _('Getting group metadata'))
         reposWithGroups = []
         self.repos.doSetup()
         for repo in self.repos.listGroupsEnabled():
@@ -598,7 +600,7 @@ class YumBase(depsolve.Depsolve):
             if repo.groups_added: # already added the groups from this repo
                 continue
                 
-            self.verbose_logger.log(logginglevels.DEBUG_1,
+            self.verbose_logger.log(logginglevels.DEBUG_4,
                 _('Adding group file from repository: %s'), repo)
             groupfile = repo.getGroups()
             # open it up as a file object so iterparse can cope with our gz file
