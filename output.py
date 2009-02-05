@@ -700,6 +700,8 @@ class YumOutput:
         print _('\nGroup: %s') % group.ui_name
 
         verb = self.verbose_logger.isEnabledFor(logginglevels.DEBUG_3)
+        if verb:
+            print _(' Group-Id: %s') % to_unicode(group.groupid)
         pkg_names2pkgs = None
         if verb:
             pkg_names2pkgs = self._group_names2aipkgs(group.packages)
