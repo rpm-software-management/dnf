@@ -802,8 +802,9 @@ class YumAvailablePackage(PackageObject, RpmBase):
   <time file="%s" build="%s"/>
   <size package="%s" installed="%s" archive="%s"/>\n""" % (self.name, 
          self.arch, self.epoch, self.ver, self.rel, csum_type, csum, 
-         misc.to_xml(self.summary), misc.to_xml(self.description), 
-         misc.to_xml(packager), misc.to_xml(url), self.filetime, 
+         misc.to_unicode(misc.to_xml(self.summary)), 
+         misc.to_unicode(misc.to_xml(self.description)), 
+         packager, url, self.filetime, 
          self.buildtime, self.packagesize, self.size, self.archivesize)
         
         msg += self._return_remote_location()
