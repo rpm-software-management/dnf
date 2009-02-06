@@ -1082,8 +1082,8 @@ Remove   %5.5s Package(s)
 
         @param cbobj: urlgrabber callback obj
         '''
-        delta_exit_chk = 2.0   # Delta between C-c's so we treat as exit
-        delta_exit_str = "two" # Human readable version of above
+        delta_exit_chk = 2.0      # Delta between C-c's so we treat as exit
+        delta_exit_str = _("two") # Human readable version of above
 
         now = time.time()
 
