@@ -42,6 +42,7 @@ class FakeConf(object):
         self.multilib_policy = 'best'
         self.persistdir = '/should-not-exist-bad-test!'
         self.showdupesfromrepos = False
+        self.uid = 0
 
 class FakeRepo(object):
 
@@ -324,7 +325,7 @@ class OperationsTests(_DepsolveTestsBase):
         requirements from.
         """
         depsolver = YumBaseCli()
-        self.rpmdb = depsolver.rpmdb = packageSack.PackageSack()
+        self.rpmdb = depsolver.rpmdb = FakeRpmDb()
         self.xsack = depsolver._pkgSack  = packageSack.PackageSack()
         self.repo = depsolver.repo = FakeRepo("installed")
         depsolver.conf = FakeConf()
