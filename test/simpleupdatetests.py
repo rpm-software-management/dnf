@@ -630,3 +630,56 @@ class SimpleUpdateTests(OperationsTests):
         self.assert_(res=='err', msg)
         # self.assert_(res=='ok', msg)
         # self.assertResult((p12,pv12))
+
+    def testInstallFilenamePkgSplit1(self):
+        pi11 = FakePackage('phoo', '1', '1', '0', 'i386')
+        pi11.addProvides('/path/to/phooy', 'EQ', ('0', '1', '1'))
+        pr11 = FakePackage('phoo', '1', '1', '0', 'i386')
+        pr11.addProvides('/path/to/phooy', 'EQ', ('0', '1', '1'))
+        p12 = FakePackage('phoo', '1', '2', '0', 'i386')
+        py12 = FakePackage('phoo-y', '1', '2', '0', 'i386')
+        py12.addProvides('/path/to/phooy', 'EQ', ('0', '1', '2'))
+
+
+        res, msg = self.runOperation(['update', '/path/to/phooy'],
+                                     [pi11],
+                                     [pr11,p12, py12])
+        self.assert_(res=='ok', msg)
+        # FIXME: We'd really like it to be:
+        # self.assertResult((p12,py12))
+        # ...but there is no info. you can work this out with.
+        self.assertResult((p12,))
+
+    def testInstallFilenamePkgSplit2(self):
+        pi11 = FakePackage('phoo', '1', '1', '0', 'i386')
+        pi11.addProvides('/path/to/phooy', 'EQ', ('0', '1', '1'))
+        pr11 = FakePackage('phoo', '1', '1', '0', 'i386')
+        pr11.addProvides('/path/to/phooy', 'EQ', ('0', '1', '1'))
+        p12 = FakePackage('phoo', '1', '2', '0', 'i386')
+        p12.addObsoletes('phoo', 'LE', ('0', '1', '1'))
+        py12 = FakePackage('phoo-y', '1', '2', '0', 'i386')
+        py12.addProvides('/path/to/phooy', 'EQ', ('0', '1', '2'))
+        py12.addObsoletes('phoo', 'LE', ('0', '1', '1'))
+
+        res, msg = self.runOperation(['update', '/path/to/phooy'],
+                                     [pi11],
+                                     [pr11,p12, py12])
+        self.assert_(res=='ok', msg)
+        self.assertResult((p12,py12))
+
+    def testInstallFilenamePkgSplit3(self):
+        p11 = FakePackage('phoo', '1', '1', '0', 'i386')
+        p11.addProvides('/path/to/phooy', 'EQ', ('0', '1', '1'))
+        pi12 = FakePackage('phoo', '1', '2', '0', 'i386')
+        pi12.addObsoletes('phoo', 'LE', ('0', '1', '1'))
+        pr12 = FakePackage('phoo', '1', '2', '0', 'i386')
+        pr12.addObsoletes('phoo', 'LE', ('0', '1', '1'))
+        py12 = FakePackage('phoo-y', '1', '2', '0', 'i386')
+        py12.addProvides('/path/to/phooy', 'EQ', ('0', '1', '2'))
+        py12.addObsoletes('phoo', 'LE', ('0', '1', '1'))
+
+        res, msg = self.runOperation(['install', '/path/to/phooy'],
+                                     [pi12],
+                                     [p11, pr12, py12])
+        self.assert_(res=='ok', msg)
+        self.assertResult((pi12,py12))
