@@ -1040,7 +1040,14 @@ class Depsolve(object):
         for pkg in pkgs:
             pkgresults[pkg] = 0
             if self.rpmdb.contains(pkg.name):
-                ipkgresults[pkg] = 0
+                #  We only want to count things as "installed" if they are
+                # older than what we are comparing, because this then an update
+                # so we give preference. If they are newer then obsoletes/etc.
+                # could play a part ... this probably needs a better fix.
+                rpmdbpkgs = self.rpmdb.returnPackages(patterns=[pkg.name])
+                newest = sorted(rpmdbpkgs)[-1]
+                if newest.verLT(pkg):
+                    ipkgresults[pkg] = 0
 
         #  This is probably only for "renames". What happens is that pkgA-1 gets
         # obsoleted by pkgB but pkgB requires pkgA-2, now _if_ the pkgA txmbr
