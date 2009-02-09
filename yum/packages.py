@@ -785,10 +785,10 @@ class YumAvailablePackage(PackageObject, RpmBase):
         
         packager = url = ''
         if self.packager:
-            packager = misc.to_xml(self.packager)
+            packager = misc.to_unicode(misc.to_xml(self.packager))
         
         if self.url:
-            url = misc.to_xml(self.url)
+            url = misc.to_unicode(misc.to_xml(self.url))
         (csum_type, csum, csumid) = self.checksums[0]
         msg = """
   <name>%s</name>
