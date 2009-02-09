@@ -797,12 +797,17 @@ class YumRepository(Repository, config.RepoConf):
         else return False. This result is cached, so that metalink/repomd.xml
         are synchronized."""
         if self._metadataCurrent is None:
+            mlfn = self.cachedir + '/' + 'metalink.xml'
+            if self.metalink and not os.path.exists(mlfn):
+                self._metadataCurrent = False
+        if self._metadataCurrent is None:
             self._metadataCurrent = self.withinCacheAge(self.metadata_cookie,
                                                         self.metadata_expire)
         return self._metadataCurrent
 
-    #  The problem is that the metalink _cannot_ be newer than the repomd.xml
-    # or the checksums can be off.
+    #  The metalink _shouldn't_ be newer than the repomd.xml or the checksums
+    # will be off, but we only really care when we are downloading the
+    # repomd.xml ... so keep it in mind that they can be off on disk.
     #  Also see _getMetalink()
     def _metalinkCurrent(self):
         if self._metadataCurrent is not None:
