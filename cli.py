@@ -208,7 +208,7 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
             done = False
             def sm_ui_time(x):
                 return time.strftime("%Y-%m-%d %H:%M", time.gmtime(x))
-            for pkg in self.rpmdb.returnPackages(patterns=yum_progs):
+            for pkg in sorted(self.rpmdb.returnPackages(patterns=yum_progs)):
                 # We should only have 1 version of each...
                 if done: print ""
                 done = True
