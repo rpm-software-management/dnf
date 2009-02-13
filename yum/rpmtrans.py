@@ -511,17 +511,19 @@ class RPMTransaction:
         txmbrs = self.base.tsInfo.getMembers(pkgtup=pkgtup)
         for txmbr in txmbrs:
             # "bytes" carries the failed scriptlet tag,
-            # apparently it carries it as a Long?!
-            if type(bytes) == type(1L):
-                tagnum = int(bytes)
-            else:
-                tagnum = bytes
             # "total" carries fatal/non-fatal status
+            scriptlet_name = rpm.tagnames.get(bytes, "<unknown>")
             if total:
                 msg = "Error in %s scriptlet in rpm package %s" % (rpm.tagnames[tagnum], txmbr.po)
                 txmbr.output_state = TS_FAILED
             else:
                 msg = "Non-fatal %s scriptlet failure in rpm package %s" % (rpm.tagnames[tagnum], txmbr.po)
+                msg = ("Error in %s scriptlet in rpm package %s" %
+                       (scriptlet_name, txmbr.po))
+                txmbr.output_state = TS_FAILED
+            else:
+                msg = ("Non-fatal %s scriptlet failure in rpm package %s" %
+                       (scriptlet_name, txmbr.po))
             self.display.errorlog(msg)
             # FIXME - what else should we do here? raise a failure and abort?
     

@@ -208,7 +208,7 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
             done = False
             def sm_ui_time(x):
                 return time.strftime("%Y-%m-%d %H:%M", time.gmtime(x))
-            for pkg in self.rpmdb.returnPackages(patterns=yum_progs):
+            for pkg in sorted(self.rpmdb.returnPackages(patterns=yum_progs)):
                 # We should only have 1 version of each...
                 if done: print ""
                 done = True
@@ -1099,10 +1099,18 @@ class YumOptionParser(OptionParser):
             # Handle remaining options
             if opts.assumeyes:
                 self.base.conf.assumeyes =1
-            # seems a good place for it - to go back to yum 3.0.X behavior
-            # if not root then caching is enabled
-            if opts.cacheonly or self.base.conf.uid != 0:
+
+            #  Instead of going cache-only for a non-root user, try to use a
+            # user writable cachedir. If that fails fall back to cache-only.
+            if opts.cacheonly:
                 self.base.conf.cache = 1
+            elif self.base.conf.uid != 0:
+                cachedir = yum.misc.getCacheDir()
+                if cachedir is None:
+                    self.base.conf.cache = 1
+                else:
+                    self.base.conf.cachedir = cachedir
+                    self.base.repos.setCacheDir(cachedir)
 
             if opts.obsoletes:
                 self.base.conf.obsoletes = 1
