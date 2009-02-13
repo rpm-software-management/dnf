@@ -675,10 +675,12 @@ class YumConf(StartupConf):
                                     'tty' : 'auto', 'if-tty' : 'auto'})
     color_list_installed_older = Option('bold')
     color_list_installed_newer = Option('bold,yellow')
+    color_list_installed_reinstall = Option('normal')
     color_list_installed_extra = Option('bold,red')
 
     color_list_available_upgrade = Option('bold,blue')
     color_list_available_downgrade = Option('dim,cyan')
+    color_list_available_reinstall = Option('bold,underline,green')
     color_list_available_install = Option('normal')
 
     color_search_match = Option('bold')
