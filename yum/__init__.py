@@ -959,6 +959,7 @@ class YumBase(depsolve.Depsolve):
                 except (IOError, OSError), e:
                     self.logger.critical(_('Failed to remove transaction file %s') % fn)
 
+        self.rpmdb.dropCachedData() # drop out the rpm cache so we don't step on bad hdr indexes
         self.plugins.run('posttrans')
         return resultobject
 
