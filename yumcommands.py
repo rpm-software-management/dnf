@@ -251,6 +251,7 @@ class InfoCommand(YumCommand):
         else:
             update_pkgs = {}
             inst_pkgs   = {}
+            local_pkgs  = {}
 
             columns = None
             if basecmd == 'list':
@@ -277,6 +278,12 @@ class InfoCommand(YumCommand):
                     if key not in inst_pkgs or pkg.verGT(inst_pkgs[key]):
                         inst_pkgs[key] = pkg
 
+            if highlight and sorted(ypl.updates):
+                # Do the local/remote split we get in "yum updates"
+                for po in ypl.updates:
+                    if po.repo.id != 'installed' and po.verifyLocalPkg():
+                        local_pkgs[(po.name, po.arch)] = po
+
             # Output the packages:
             clio = base.conf.color_list_installed_older
             clin = base.conf.color_list_installed_newer
@@ -296,8 +303,11 @@ class InfoCommand(YumCommand):
                                                  '=' : clar, 'not in' : clai})
             rep = base.listPkgs(ypl.extras, _('Extra Packages'), basecmd,
                                 columns=columns)
+            cul = base.conf.color_update_local
+            cur = base.conf.color_update_remote
             rup = base.listPkgs(ypl.updates, _('Updated Packages'), basecmd,
-                                columns=columns)
+                                highlight_na=local_pkgs, columns=columns,
+                                highlight_modes={'=' : cul, 'not in' : cur})
 
             # XXX put this into the ListCommand at some point
             if len(ypl.obsoletes) > 0 and basecmd == 'list': 
@@ -572,8 +582,19 @@ class CheckUpdateCommand(YumCommand):
 
             columns = _list_cmd_calc_columns(base, ypl)
             if len(ypl.updates) > 0:
+                local_pkgs = {}
+                highlight = base.term.MODE['bold']
+                if highlight:
+                    # Do the local/remote split we get in "yum updates"
+                    for po in sorted(ypl.updates):
+                        if po.repo.id != 'installed' and po.verifyLocalPkg():
+                            local_pkgs[(po.name, po.arch)] = po
+
+                cul = base.conf.color_update_local
+                cur = base.conf.color_update_remote
                 base.listPkgs(ypl.updates, '', outputType='list',
-                              columns=columns)
+                              highlight_na=local_pkgs, columns=columns,
+                              highlight_modes={'=' : cul, 'not in' : cur})
                 result = 100
             if len(ypl.obsoletes) > 0: # This only happens in verbose mode
                 rop = [0, '']
