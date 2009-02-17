@@ -551,8 +551,12 @@ class YumOutput:
 
         if columns is not None:
             # New style, output all info. for both old/new with old indented
-            self.simpleList(changePkg, columns=columns)
-            self.simpleList(instPkg,   columns=columns, indent=' ' * 4)
+            chi = self.conf.color_update_remote
+            if changePkg.repo.id != 'installed' and changePkg.verifyLocalPkg():
+                chi = self.conf.color_update_local
+            self.simpleList(changePkg, columns=columns, highlight=chi)
+            self.simpleList(instPkg,   columns=columns, indent=' ' * 4,
+                            highlight=self.conf.color_update_installed)
             return
 
         # Old style
