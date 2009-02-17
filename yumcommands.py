@@ -278,9 +278,9 @@ class InfoCommand(YumCommand):
                     if key not in inst_pkgs or pkg.verGT(inst_pkgs[key]):
                         inst_pkgs[key] = pkg
 
-            if highlight and sorted(ypl.updates):
+            if highlight and ypl.updates:
                 # Do the local/remote split we get in "yum updates"
-                for po in ypl.updates:
+                for po in sorted(ypl.updates):
                     if po.repo.id != 'installed' and po.verifyLocalPkg():
                         local_pkgs[(po.name, po.arch)] = po
 
