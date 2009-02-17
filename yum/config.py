@@ -683,6 +683,10 @@ class YumConf(StartupConf):
     color_list_available_reinstall = Option('bold,underline,green')
     color_list_available_install = Option('normal')
 
+    color_update_installed = Option('normal')
+    color_update_local     = Option('bold')
+    color_update_remote    = Option('normal')
+
     color_search_match = Option('bold')
     
     _reposlist = []
