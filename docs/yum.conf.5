@@ -330,6 +330,12 @@ newer than the latest available package with the same name and arch.
 Default is `bold,yellow'.
 See color_list_installed_older for possible values.
 
+.IP \fBcolor_list_installed_reinstall \fR
+The colorization/highlighting for pacakges in list/info installed which is
+the same version as the latest available package with the same name and arch.
+Default is `normal'.
+See color_list_installed_older for possible values.
+
 .IP \fBcolor_list_installed_extra \fR
 The colorization/highlighting for pacakges in list/info installed which has
 no available package with the same name and arch.
@@ -354,9 +360,36 @@ no installed package with the same name and arch.
 Default is `normal'.
 See color_list_installed_older for possible values.
 
+.IP \fBcolor_list_available_reinstall \fR
+The colorization/highlighting for pacakges in list/info available which is
+the same version as the installed package with the same name and arch.
+Default is `bold,underline,green.
+See color_list_installed_older for possible values.
+
 .IP \fBcolor_search_match \fR
 The colorization/highlighting for text matches in search.
 Default is `bold'.
+See color_list_installed_older for possible values.
+
+.IP \fBcolor_update_installed \fR
+The colorization/highlighting for packages in the "updates list" which are
+installed. The updates list is what is printed when you run "yum update",
+"yum list updates", "yum list obsoletes" and "yum check-update".
+Default is `normal'.
+See color_list_installed_older for possible values.
+
+.IP \fBcolor_update_local \fR
+The colorization/highlighting for packages in the "updates list" which are
+already downloaded. The updates list is what is printed when you run
+"yum update", "yum list updates", "yum list obsoletes" and "yum check-update".
+Default is `bold'.
+See color_list_installed_older for possible values.
+
+.IP \fBcolor_update_remote \fR
+The colorization/highlighting for packages in the "updates list" which need to
+be downloaded. The updates list is what is printed when you run "yum update",
+"yum list updates", "yum list obsoletes" and "yum check-update".
+Default is `normal'.
 See color_list_installed_older for possible values.
 
 .SH "[repository] OPTIONS"

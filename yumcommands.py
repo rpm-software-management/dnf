@@ -597,7 +597,6 @@ class CheckUpdateCommand(YumCommand):
                               highlight_modes={'=' : cul, 'not in' : cur})
                 result = 100
             if len(ypl.obsoletes) > 0: # This only happens in verbose mode
-                rop = [0, '']
                 print _('Obsoleting Packages')
                 # The tuple is (newPkg, oldPkg) ... so sort by new
                 for obtup in sorted(ypl.obsoletesTuples,
