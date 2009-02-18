@@ -524,7 +524,7 @@ class YumBase(depsolve.Depsolve):
         up_st = time.time()
 
         self._up = rpmUtils.updates.Updates(self.rpmdb.simplePkgList(), self.pkgSack.simplePkgList())
-        if self.conf.debuglevel >= 6:
+        if self.conf.debuglevel >= 7:
             self._up.debug = 1
         
         if self.conf.obsoletes:
