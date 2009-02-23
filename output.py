@@ -551,8 +551,12 @@ class YumOutput:
 
         if columns is not None:
             # New style, output all info. for both old/new with old indented
-            self.simpleList(changePkg, columns=columns)
-            self.simpleList(instPkg,   columns=columns, indent=' ' * 4)
+            chi = self.conf.color_update_remote
+            if changePkg.repo.id != 'installed' and changePkg.verifyLocalPkg():
+                chi = self.conf.color_update_local
+            self.simpleList(changePkg, columns=columns, highlight=chi)
+            self.simpleList(instPkg,   columns=columns, indent=' ' * 4,
+                            highlight=self.conf.color_update_installed)
             return
 
         # Old style
@@ -897,7 +901,14 @@ class YumOutput:
             if a is None: # gpgkeys are weird
                 a = 'noarch'
 
-            lines.append((n, a, evr, repoid, size, obsoletes))
+            # none, partial, full?
+            if po.repo.id == 'installed':
+                hi = self.conf.color_update_installed
+            elif po.verifyLocalPkg():
+                hi = self.conf.color_update_local
+            else:
+                hi = self.conf.color_update_remote
+            lines.append((n, a, evr, repoid, size, obsoletes, hi))
             #  Create a dict of field_length => number of packages, for
             # each field.
             for (d, v) in (("n",len(n)), ("v",len(evr)), ("r",len(repoid))):
@@ -948,13 +959,15 @@ class YumOutput:
         for (action, lines) in pkglist_lines:
             if lines:
                 totalmsg = u"%s:\n" % action
-            for (n, a, evr, repoid, size, obsoletes) in lines:
-                columns = ((n,   -n_wid), (a,      -a_wid),
+            for (n, a, evr, repoid, size, obsoletes, hi) in lines:
+                columns = ((n,   -n_wid, hi), (a,      -a_wid),
                            (evr, -v_wid), (repoid, -r_wid), (size, s_wid))
                 msg = self.fmtColumns(columns, u" ", u"\n")
+                hibeg, hiend = self._highlight(self.conf.color_update_installed)
                 for obspo in obsoletes:
-                    appended = _('     replacing  %s.%s %s\n\n') % (obspo.name,
-                        obspo.arch, obspo.printVer())
+                    appended = _('     replacing  %s%s%s.%s %s\n\n')
+                    appended %= (hibeg, obspo.name, hiend,
+                                 obspo.arch, obspo.printVer())
                     msg = msg+appended
                 totalmsg = totalmsg + msg
         

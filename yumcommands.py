@@ -251,6 +251,7 @@ class InfoCommand(YumCommand):
         else:
             update_pkgs = {}
             inst_pkgs   = {}
+            local_pkgs  = {}
 
             columns = None
             if basecmd == 'list':
@@ -277,25 +278,36 @@ class InfoCommand(YumCommand):
                     if key not in inst_pkgs or pkg.verGT(inst_pkgs[key]):
                         inst_pkgs[key] = pkg
 
+            if highlight and ypl.updates:
+                # Do the local/remote split we get in "yum updates"
+                for po in sorted(ypl.updates):
+                    if po.repo.id != 'installed' and po.verifyLocalPkg():
+                        local_pkgs[(po.name, po.arch)] = po
+
             # Output the packages:
             clio = base.conf.color_list_installed_older
             clin = base.conf.color_list_installed_newer
+            clir = base.conf.color_list_installed_reinstall
             clie = base.conf.color_list_installed_extra
             rip = base.listPkgs(ypl.installed, _('Installed Packages'), basecmd,
                                 highlight_na=update_pkgs, columns=columns,
                                 highlight_modes={'>' : clio, '<' : clin,
-                                                 'not in' : clie})
+                                                 '=' : clir, 'not in' : clie})
             clau = base.conf.color_list_available_upgrade
             clad = base.conf.color_list_available_downgrade
+            clar = base.conf.color_list_available_reinstall
             clai = base.conf.color_list_available_install
             rap = base.listPkgs(ypl.available, _('Available Packages'), basecmd,
                                 highlight_na=inst_pkgs, columns=columns,
                                 highlight_modes={'<' : clau, '>' : clad,
-                                                 'not in' : clai})
+                                                 '=' : clar, 'not in' : clai})
             rep = base.listPkgs(ypl.extras, _('Extra Packages'), basecmd,
                                 columns=columns)
+            cul = base.conf.color_update_local
+            cur = base.conf.color_update_remote
             rup = base.listPkgs(ypl.updates, _('Updated Packages'), basecmd,
-                                columns=columns)
+                                highlight_na=local_pkgs, columns=columns,
+                                highlight_modes={'=' : cul, 'not in' : cur})
 
             # XXX put this into the ListCommand at some point
             if len(ypl.obsoletes) > 0 and basecmd == 'list': 
@@ -570,11 +582,21 @@ class CheckUpdateCommand(YumCommand):
 
             columns = _list_cmd_calc_columns(base, ypl)
             if len(ypl.updates) > 0:
+                local_pkgs = {}
+                highlight = base.term.MODE['bold']
+                if highlight:
+                    # Do the local/remote split we get in "yum updates"
+                    for po in sorted(ypl.updates):
+                        if po.repo.id != 'installed' and po.verifyLocalPkg():
+                            local_pkgs[(po.name, po.arch)] = po
+
+                cul = base.conf.color_update_local
+                cur = base.conf.color_update_remote
                 base.listPkgs(ypl.updates, '', outputType='list',
-                              columns=columns)
+                              highlight_na=local_pkgs, columns=columns,
+                              highlight_modes={'=' : cul, 'not in' : cur})
                 result = 100
             if len(ypl.obsoletes) > 0: # This only happens in verbose mode
-                rop = [0, '']
                 print _('Obsoleting Packages')
                 # The tuple is (newPkg, oldPkg) ... so sort by new
                 for obtup in sorted(ypl.obsoletesTuples,
