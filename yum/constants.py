@@ -108,3 +108,6 @@ PATTERNS_MAX = 8
 #  We have another value here because name is indexed and sqlite is _much_
 # faster even at large numbers of patterns.
 PATTERNS_INDEXED_MAX = 128
+
+RPM_CHECKSUM_TYPES = { 1:'md5', 2:'sha1', 8:'sha256', 9:'sha384', 10:'sha512',
+                       11:'sha224' } # from RFC 4880

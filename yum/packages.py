@@ -34,6 +34,7 @@ from rpmUtils.miscutils import flagToString, stringToVersion
 import Errors
 import errno
 import struct
+from constants import *
 
 import urlparse
 urlparse.uses_fragment.append("media")
@@ -1221,7 +1222,7 @@ class _PkgVerifyProb:
         return ret
 
 # From: lib/rpmvf.h ... not in rpm *sigh*
-_RPMVERIFY_MD5      = (1 << 0)
+_RPMVERIFY_DIGEST     = (1 << 0)
 _RPMVERIFY_FILESIZE = (1 << 1)
 _RPMVERIFY_LINKTO   = (1 << 2)
 _RPMVERIFY_USER     = (1 << 3)
@@ -1265,9 +1266,18 @@ class YumInstalledPackage(YumHeaderPackage):
         prelink_cmd = "/usr/sbin/prelink"
         have_prelink = os.path.exists(prelink_cmd)
 
+        # determine what checksum algo to use:
+        csum_type = 'md5' # default for legacy
+        if hasattr(rpm, 'RPMTAG_FILEDIGESTALGO'):
+            csum_num = self.hdr[rpm.RPMTAG_FILEDIGESTALGO]
+            if csum_num:
+                if RPM_CHECKSUM_TYPES.has_key(csum_num):
+                    csum_type = RPM_CHECKSUM_TYPES[csum_num]
+                # maybe an else with an error code here? or even a verify issue?
+
         for filetuple in fi:
             #tuple is: (filename, fsize, mode, mtime, flags, frdev?, inode, link,
-            #           state, vflags?, user, group, md5sum(or none for dirs) 
+            #           state, vflags?, user, group, checksum(or none for dirs) 
             (fn, size, mode, mtime, flags, dev, inode, link, state, vflags, 
                        user, group, csum) = filetuple
             if patterns:
@@ -1407,15 +1417,15 @@ class YumInstalledPackage(YumHeaderPackage):
                 # just so we get the size correct.
                 if (check_content and
                     ((have_prelink and vflags & _RPMVERIFY_FILESIZE) or
-                     (csum and vflags & _RPMVERIFY_MD5))):
+                     (csum and vflags & _RPMVERIFY_DIGEST))):
                     try:
-                        my_csum = misc.checksum('md5', fn)
+                        my_csum = misc.checksum(csum_type, fn)
                         gen_csum = True
                     except Errors.MiscError:
                         # Don't have permission?
                         gen_csum = False
 
-                    if csum and vflags & _RPMVERIFY_MD5 and not gen_csum:
+                    if csum and vflags & _RPMVERIFY_DIGEST and not gen_csum:
                         prob = _PkgVerifyProb('genchecksum',
                                               'checksum not available', ftypes)
                         prob.database_value = csum
@@ -1428,10 +1438,10 @@ class YumInstalledPackage(YumHeaderPackage):
                         (ig, fp,er) = os.popen3([prelink_cmd, "-y", fn])
                         # er.read(1024 * 1024) # Try and get most of the stderr
                         fp = _CountedReadFile(fp)
-                        my_csum = misc.checksum('md5', fp)
+                        my_csum = misc.checksum(csum_type, fp)
                         my_st_size = fp.read_size
 
-                    if (csum and vflags & _RPMVERIFY_MD5 and gen_csum and
+                    if (csum and vflags & _RPMVERIFY_DIGEST and gen_csum and
                         my_csum != csum):
                         prob = _PkgVerifyProb('checksum',
                                               'checksum does not match', ftypes)
