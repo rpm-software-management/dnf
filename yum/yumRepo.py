@@ -708,7 +708,7 @@ class YumRepository(Repository, config.RepoConf):
             except Errors.MediaError, e:
                 verbose_logger.log(logginglevels.DEBUG_2, "Error getting package from media; falling back to url %s" %(e,))
 
-        if url is not None and scheme != "media":
+        if url and scheme != "media":
             ug = URLGrabber(keepalive = self.keepalive,
                             bandwidth = self.bandwidth,
                             retry = self.retries,
