@@ -1271,7 +1271,7 @@ class YumInstalledPackage(YumHeaderPackage):
         if hasattr(rpm, 'RPMTAG_FILEDIGESTALGO'):
             csum_num = self.hdr[rpm.RPMTAG_FILEDIGESTALGO]
             if csum_num:
-                if RPM_CHECKSUM_TYPES.has_key(csum_num):
+                if csum_num in RPM_CHECKSUM_TYPES:
                     csum_type = RPM_CHECKSUM_TYPES[csum_num]
                 # maybe an else with an error code here? or even a verify issue?
 
