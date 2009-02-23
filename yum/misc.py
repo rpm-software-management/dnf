@@ -499,7 +499,7 @@ def valid_detached_sig(sig_file, signed_file, gpghome=None):
 
     return False
 
-def getCacheDir(tmpdir='/var/tmp'):
+def getCacheDir(tmpdir='/var/tmp', reuse=True):
     """return a path to a valid and safe cachedir - only used when not running
        as root or when --tempcache is set"""
     
@@ -510,15 +510,16 @@ def getCacheDir(tmpdir='/var/tmp'):
     except KeyError:
         return None # if it returns None then, well, it's bollocksed
 
-    # check for /var/tmp/yum-username-* - 
     prefix = 'yum-%s-' % username    
-    dirpath = '%s/%s*' % (tmpdir, prefix)
-    cachedirs = sorted(glob.glob(dirpath))
     
-    for thisdir in cachedirs:
-        stats = os.lstat(thisdir)
-        if S_ISDIR(stats[0]) and S_IMODE(stats[0]) == 448 and stats[4] == uid:
-            return thisdir
+    if reuse:
+        # check for /var/tmp/yum-username-* - 
+        dirpath = '%s/%s*' % (tmpdir, prefix)
+        cachedirs = sorted(glob.glob(dirpath))
+        for thisdir in cachedirs:
+            stats = os.lstat(thisdir)
+            if S_ISDIR(stats[0]) and S_IMODE(stats[0]) == 448 and stats[4] == uid:
+                return thisdir
 
     # make the dir (tempfile.mkdtemp())
     cachedir = tempfile.mkdtemp(prefix=prefix, dir=tmpdir)
