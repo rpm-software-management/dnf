@@ -510,10 +510,11 @@ def getCacheDir(tmpdir='/var/tmp', reuse=True):
     except KeyError:
         return None # if it returns None then, well, it's bollocksed
 
-    prefix = 'yum-%s-' % username    
-    
+    prefix = 'yum-'
+
     if reuse:
         # check for /var/tmp/yum-username-* - 
+        prefix = 'yum-%s-' % username    
         dirpath = '%s/%s*' % (tmpdir, prefix)
         cachedirs = sorted(glob.glob(dirpath))
         for thisdir in cachedirs:
