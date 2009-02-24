@@ -40,6 +40,20 @@ class PackageSackBase(object):
         else:
             return iter(ret)
 
+    def __cmp__(self, other):
+        if other is None:
+            return 1
+
+        s_repos = list(self.added)
+        o_repos = list(other.added)
+        if len(s_repos) != len(o_repos):
+            return len(s_repos) - len(o_repos)
+        for (s_repo, o_repo) in zip(sorted(s_repos), sorted(o_repos)):
+            ret = cmp(s_repo, o_repo)
+            if ret:
+                return ret
+        return 0
+
     def setCompatArchs(self, compatArchs):
         raise NotImplementedError()
 
@@ -260,7 +274,7 @@ class MetaSack(PackageSackBase):
 
     def __len__(self):
         ret = 0
-        for sack in self.sacks.values():
+        for sack in sorted(self.sacks.values()):
             ret += len(sack)
         return ret
 
@@ -449,7 +463,7 @@ class MetaSack(PackageSackBase):
 
     def _computeAggregateListResult(self, methodName, *args):
         result = []
-        for sack in self.sacks.values():
+        for sack in sorted(self.sacks.values()):
             if hasattr(sack, methodName):
                 method = getattr(sack, methodName)
                 try:
@@ -464,7 +478,7 @@ class MetaSack(PackageSackBase):
 
     def _computeAggregateDictResult(self, methodName, *args):
         result = {}
-        for sack in self.sacks.values():
+        for sack in sorted(self.sacks.values()):
             if hasattr(sack, methodName):
                 method = getattr(sack, methodName)
                 try:
