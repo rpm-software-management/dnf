@@ -281,6 +281,19 @@ class YumRepository(Repository, config.RepoConf):
         self._grabfunc = None
         self._grab = None
 
+    def __cmp__(self, other):
+        """ Sort yum repos. by cost, and then by alphanumeric on their id. """
+        if other is None:
+            return 1
+        if hasattr(other, 'cost'):
+            ocost = other.cost
+        else:
+            ocost = 1000
+        ret = cmp(self.cost, ocost)
+        if ret:
+            return 1
+        return cmp(self.id, other.id)
+
     def _getSack(self):
         # FIXME: Note that having the repo hold the sack, which holds "repos"
         # is not only confusing but creates a circular dep.

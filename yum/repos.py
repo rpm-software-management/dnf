@@ -167,6 +167,7 @@ class RepoStorage:
             if repo.isEnabled():
                 returnlist.append(repo)
 
+        returnlist.sort()
         return returnlist
 
     def listGroupsEnabled(self):
@@ -267,6 +268,8 @@ class Repository:
         self.disable()
 
     def __cmp__(self, other):
+        """ Sort base class repos. by alphanumeric on their id, also
+            see __cmp__ in YumRepository(). """
         if self.id > other.id:
             return 1
         elif self.id < other.id:

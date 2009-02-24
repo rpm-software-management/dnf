@@ -221,12 +221,26 @@ class MetaLinkRepoMD:
 
     def urls(self):
         """ Iterate plain urls for the mirrors, like the old mirrorlist. """
+
+        # Get the hostname from a url, stripping away any usernames/passwords
+        # Borrowd from fastestmirror
+        url2host = lambda url: url.split('/')[2].split('@')[-1]
+        hosts = set() # Don't want multiple urls for one host in plain mode
+                      # The list of URLs is sorted, so http is before ftp
+
         for mirror in self.mirrors:
             url = mirror.url
 
             # This is what yum supports atm. ... no rsync etc.
-            if not (url.startswith("http:") or url.startswith("ftp:") or
-                    url.startswith("file:") or url.startswith("https:")):
+            if url.startswith("file:"):
+                pass
+            elif (url.startswith("http:") or url.startswith("ftp:") or
+                  url.startswith("https:")):
+                host = url2host(url)
+                if host in hosts:
+                    continue
+                hosts.add(host)
+            else:
                 continue
 
             #  The mirror urls in the metalink file are for repomd.xml so it
