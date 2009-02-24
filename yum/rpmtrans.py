@@ -406,7 +406,7 @@ class RPMTransaction:
         self.lastmsg = None
         hdr = None
         if h is not None:
-            hdr, rpmloc = h
+            hdr, rpmloc = h[0], h[1]
             handle = self._makeHandle(hdr)
             fd = os.open(rpmloc, os.O_RDONLY)
             self.filehandles[handle]=fd
@@ -421,7 +421,7 @@ class RPMTransaction:
     def _instCloseFile(self, bytes, total, h):
         hdr = None
         if h is not None:
-            hdr, rpmloc = h
+            hdr, rpmloc = h[0], h[1]
             handle = self._makeHandle(hdr)
             os.close(self.filehandles[handle])
             fd = 0
@@ -445,7 +445,7 @@ class RPMTransaction:
                                 self.complete_actions, self.total_actions)
 
             else:
-                hdr, rpmloc = h
+                hdr, rpmloc = h[0], h[1]
                 pkgtup = self._dopkgtup(hdr)
                 txmbrs = self.base.tsInfo.getMembers(pkgtup=pkgtup)
                 for txmbr in txmbrs:
@@ -485,7 +485,7 @@ class RPMTransaction:
         pass
         
     def _cpioError(self, bytes, total, h):
-        (hdr, rpmloc) = h
+        hdr, rpmloc = h[0], h[1]
         pkgtup = self._dopkgtup(hdr)
         txmbrs = self.base.tsInfo.getMembers(pkgtup=pkgtup)
         for txmbr in txmbrs:
@@ -495,7 +495,7 @@ class RPMTransaction:
             # FIXME - what else should we do here? raise a failure and abort?
     
     def _unpackError(self, bytes, total, h):
-        (hdr, rpmloc) = h
+        hdr, rpmloc = h[0], h[1]
         pkgtup = self._dopkgtup(hdr)
         txmbrs = self.base.tsInfo.getMembers(pkgtup=pkgtup)
         for txmbr in txmbrs:
@@ -506,7 +506,7 @@ class RPMTransaction:
             # right behavior should be
                 
     def _scriptError(self, bytes, total, h):
-        (hdr, rpmloc) = h
+        hdr, rpmloc = h[0], h[1]
         pkgtup = self._dopkgtup(hdr)
         txmbrs = self.base.tsInfo.getMembers(pkgtup=pkgtup)
         for txmbr in txmbrs:
