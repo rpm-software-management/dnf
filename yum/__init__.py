@@ -3021,6 +3021,7 @@ class YumBase(depsolve.Depsolve):
             # for now, banned and dropped.
             if self.allowedMultipleInstalls(item.po):
                 self.tsInfo.remove(item.pkgtup)
+                tx_mbrs.remove(item)
                 msg = _("Package %s is allowed multiple installs, skipping") % item.po
                 self.verbose_logger.log(logginglevels.INFO_2, msg)
                 continue
@@ -3028,10 +3029,12 @@ class YumBase(depsolve.Depsolve):
             members = self.install(name=item.name, arch=item.arch,
                            ver=item.version, release=item.release, epoch=item.epoch)
             if len(members) == 0:
+                self.tsInfo.remove(item.pkgtup)
+                tx_mbrs.remove(item)
                 raise Errors.ReinstallError, _("Problem in reinstall: no package matched to install")
             new_members.extend(members)
 
-        tx_mbrs.extend(new_members)            
+        tx_mbrs.extend(new_members)
         return tx_mbrs
         
 
