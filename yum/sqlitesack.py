@@ -209,7 +209,8 @@ class YumAvailablePackageSqlite(YumAvailablePackage, PackageObject, RpmBase):
             cur = self._sql_MD('other',
                                "SELECT date, author, changelog " \
                                "FROM   changelog JOIN packages USING(pkgKey) " \
-                               "WHERE  pkgId = ?", (self.pkgId,))
+                               "WHERE  pkgId = ? ORDER BY date DESC",
+                               (self.pkgId,))
             # Check count(pkgId) here, the same way we do in searchFiles()?
             # Failure mode is much less of a problem.
             for ob in cur:
