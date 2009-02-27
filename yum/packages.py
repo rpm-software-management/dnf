@@ -660,8 +660,11 @@ class YumAvailablePackage(PackageObject, RpmBase):
     def verifyLocalPkg(self):
         """check the package checksum vs the localPkg
            return True if pkg is good, False if not"""
-           
-        (csum_type, csum) = self.returnIdSum()
+
+        checksum_data = self.returnIdSum()
+        if checksum_data is None:
+            return False
+        (csum_type, csum) = checksum_data
         
         try:
             filesum = misc.checksum(csum_type, self.localPkg())
