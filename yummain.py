@@ -234,6 +234,10 @@ def main(args):
         # Fatal error
         for msg in resultmsgs:
             logger.critical(_('Error: %s'), msg)
+        if not base.conf.skip_broken:
+            verbose_logger.info(_(" You could try using --skip-broken to work around the problem"))
+        verbose_logger.info(_(" You could try running: package-cleanup --problems\n"
+                              "                        package-cleanup --dupes"))
         if unlock(): return 200
         return 1
     elif result == 2:
