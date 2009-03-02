@@ -871,37 +871,23 @@ class YumAvailablePackage(PackageObject, RpmBase):
         return msg
     
     def _return_primary_files(self, list_of_files=None):
-        fileglobs = ['.*bin\/.*', '^\/etc\/.*', '^\/usr\/lib\/sendmail$']
-        file_re = []
-        for glob in fileglobs:
-            file_re.append(re.compile(glob))        
-
-
         returns = {}
         if list_of_files is None:
             list_of_files = self.returnFileEntries('file')
         for item in list_of_files:
             if item is None:
                 continue
-            for glob in file_re:
-                if glob.match(item):
-                    returns[item] = 1
+            if misc.re_primary_filename(item):
+                returns[item] = 1
         return returns.keys()
 
     def _return_primary_dirs(self):
-        dirglobs = ['.*bin\/.*', '^\/etc\/.*']
-        dir_re = []
-        
-        for glob in dirglobs:
-            dir_re.append(re.compile(glob))
-
         returns = {}
         for item in self.returnFileEntries('dir'):
             if item is None:
                 continue
-            for glob in dir_re:
-                if glob.match(item):
-                    returns[item] = 1
+            if misc.re_primary_dirname(item):
+                returns[item] = 1
         return returns.keys()
         
         

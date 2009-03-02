@@ -91,6 +91,18 @@ def re_primary_filename(filename):
             return True
     return False
 
+_re_compiled_pri_dnames_match = None
+def re_primary_dirname(dirname):
+    global _re_compiled_pri_dnames_match
+    if _re_compiled_pri_dnames_match is None:
+        one   = re.compile('.*bin\/.*')
+        two   = re.compile('^\/etc\/.*')
+        _re_compiled_pri_dnames_match = (one, two)
+    for rec in _re_compiled_pri_dnames_match:
+        if rec.match(dirname):
+            return True
+    return False
+
 _re_compiled_full_match = None
 def re_full_search_needed(s):
     """ Tests if a string needs a full nevra match, instead of just name. """
