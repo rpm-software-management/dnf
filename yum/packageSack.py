@@ -234,6 +234,18 @@ class PackageSackBase(object):
         """returns a list of package objects that are not required by
            any other package in this repository"""
            
+        def _return_all_provides(po):
+            """ Return all the provides, via. yield. """
+            # These are done one by one, so that we get lazy loading
+            for prov in po.provides_names:
+                yield prov
+            for prov in po.filelist:
+                yield prov
+            for prov in po.dirlist:
+                yield prov
+            for prov in po.ghostlist:
+                yield prov
+
         # fixme - maybe cache this list?
         
         req = {}
@@ -250,7 +262,7 @@ class PackageSackBase(object):
      
         for po in self.returnPackages(repoid=repoid):
             preq = 0
-            for p in po.provides_names + po.filelist + po.dirlist + po.ghostlist:
+            for p in _return_all_provides(po):
                 if req.has_key(p):
                     # Don't count a package that provides its require
                     s = req[p]
