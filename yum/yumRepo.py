@@ -555,6 +555,21 @@ class YumRepository(Repository, config.RepoConf):
                 Errors.YumFutureDeprecationWarning, stacklevel=2)
         self._baseurlSetup()
 
+    def _hack_mirrorlist_for_anaconda(self):
+        #  Anaconda doesn't like having mirrorlist and metalink, so we allow
+        # mirrorlist to act like metalink. Except we'd really like to know which
+        # we have without parsing it ... and want to store it in the right
+        # place etc.
+        #  So here is #1 hack: see if the metalin kis unset and the mirrorlist
+        # URL contains the string "metalink", if it does we copy it over.
+        if self.metalink:
+            return
+        if not self.mirrorlist:
+            return
+        if self.mirrorlist.find("metalink") == -1:
+            return
+        self.metalink = self.mirrorlist
+
     def _baseurlSetup(self):
         """go through the baseurls and mirrorlists and populate self.urls
            with valid ones, run  self.check() at the end to make sure it worked"""
@@ -566,6 +581,7 @@ class YumRepository(Repository, config.RepoConf):
         self._orig_baseurl = self.baseurl
 
         mirrorurls = []
+        self._hack_mirrorlist_for_anaconda()
         if self.metalink and not self.mirrorlistparsed:
             # FIXME: This is kind of lying to API callers
             mirrorurls.extend(list(self.metalink_data.urls()))
@@ -1103,6 +1119,7 @@ class YumRepository(Repository, config.RepoConf):
         if not oxml: # No old repomd.xml data
             return False
 
+        self._hack_mirrorlist_for_anaconda()
         if not self.metalink: # Nothing to check it against
             return False
 
@@ -1365,6 +1382,7 @@ class YumRepository(Repository, config.RepoConf):
         except Errors.RepoMDError, e:
             raise URLGrabError(-1, 'Error importing repomd.xml for %s: %s' % (self, e))
 
+        self._hack_mirrorlist_for_anaconda()
         if self.metalink and not self._checkRepoMetalink(repoXML):
             raise URLGrabError(-1, 'repomd.xml does not match metalink for %s' %
                                self)
