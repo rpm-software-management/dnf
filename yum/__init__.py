@@ -2222,12 +2222,10 @@ class YumBase(depsolve.Depsolve):
         
         if depstring[0] != '/':
             # not a file dep - look at it for being versioned
-            if re.search('\s+[(>=)(<=)<=>]', depstring):  # versioned
-                try:
-                    depname, flagsymbol, depver = depstring.split()
-                except ValueError, e:
-                    raise Errors.YumBaseError, _('Invalid versioned dependency string, try quoting it.')
-                if not SYMBOLFLAGS.has_key(flagsymbol):
+            dep_split = depstring.split()
+            if len(dep_split) == 3:
+                depname, flagsymbol, depver = dep_split
+                if not flagsymbol in SYMBOLFLAGS:
                     raise Errors.YumBaseError, _('Invalid version flag')
                 depflags = SYMBOLFLAGS[flagsymbol]
                 
@@ -2265,15 +2263,13 @@ class YumBase(depsolve.Depsolve):
         
         if depstring[0] != '/':
             # not a file dep - look at it for being versioned
-            if re.search('\s+[(>=)(<=)<=>]', depstring):  # versioned
-                try:
-                    depname, flagsymbol, depver = depstring.split()
-                except ValueError:
-                    raise Errors.YumBaseError, _('Invalid versioned dependency string, try quoting it.')
-                if not SYMBOLFLAGS.has_key(flagsymbol):
+            dep_split = depstring.split()
+            if len(dep_split) == 3:
+                depname, flagsymbol, depver = dep_split
+                if not flagsymbol in SYMBOLFLAGS:
                     raise Errors.YumBaseError, _('Invalid version flag')
                 depflags = SYMBOLFLAGS[flagsymbol]
-        
+
         return self.rpmdb.getProvides(depname, depflags, depver).keys()
 
     def _bestPackageFromList(self, pkglist):
