@@ -2222,7 +2222,7 @@ class YumBase(depsolve.Depsolve):
         
         if depstring[0] != '/':
             # not a file dep - look at it for being versioned
-            if re.search('[>=<]', depstring):  # versioned
+            if re.search('\s+[(>=)(<=)<=>]', depstring):  # versioned
                 try:
                     depname, flagsymbol, depver = depstring.split()
                 except ValueError, e:
@@ -2265,7 +2265,7 @@ class YumBase(depsolve.Depsolve):
         
         if depstring[0] != '/':
             # not a file dep - look at it for being versioned
-            if re.search('[>=<]', depstring):  # versioned
+            if re.search('\s+[(>=)(<=)<=>]', depstring):  # versioned
                 try:
                     depname, flagsymbol, depver = depstring.split()
                 except ValueError:
