@@ -661,10 +661,7 @@ class YumAvailablePackage(PackageObject, RpmBase):
         """check the package checksum vs the localPkg
            return True if pkg is good, False if not"""
 
-        checksum_data = self.returnIdSum()
-        if checksum_data is None:
-            return False
-        (csum_type, csum) = checksum_data
+        (csum_type, csum) = self.returnIdSum()
         
         try:
             filesum = misc.checksum(csum_type, self.localPkg())
@@ -1534,6 +1531,7 @@ class YumLocalPackage(YumHeaderPackage):
     checksum = property(fget=lambda self: self._do_checksum())   
 
     def returnChecksums(self):
+        self._do_checksum()
         return self._checksums
 
     def _get_header_byte_range(self):
