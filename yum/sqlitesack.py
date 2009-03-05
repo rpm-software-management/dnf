@@ -1138,7 +1138,7 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
         if ignore_case:
             patterns = self._sql_esc_glob(patterns)
         else:
-            patterns = [(pat, '') for pat in patterns]
+            patterns = [(pat, misc.re_glob(pat) and 1) for pat in patterns]
 
         for (repo,cache) in self.primarydb.items():
             if (repoid == None or repoid == repo.id):
@@ -1149,12 +1149,13 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
 
                 pat_sqls = []
                 pat_data = []
-                for (pattern, esc) in patterns:
+                for (pattern, rest) in patterns:
                     for field in fields:
                         if ignore_case:
-                            pat_sqls.append("%s LIKE ?%s" % (field, esc))
+                            pat_sqls.append("%s LIKE ?%s" % (field, rest))
                         else:
-                            pat_sqls.append("%s GLOB ?" % field)
+                            querytype = rest and 'GLOB' or '='
+                            pat_sqls.append("%s %s ?" % (field, querytype))
                         pat_data.append(pattern)
                 if pat_sqls:
                     qsql = _FULL_PARSE_QUERY_BEG + " OR ".join(pat_sqls)
