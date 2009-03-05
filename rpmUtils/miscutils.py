@@ -111,7 +111,11 @@ def pkgTupleFromHeader(hdr):
        None epoch to 0, as well."""
    
     name = hdr['name']
-    if hdr[rpm.RPMTAG_SOURCERPM]:
+
+    # RPMTAG_SOURCEPACKAGE: RPMTAG_SOURCERPM is not necessarily there for
+    # e.g. gpg-pubkeys imported with older rpm versions
+    # http://lists.baseurl.org/pipermail/yum/2009-January/022275.html
+    if hdr[rpm.RPMTAG_SOURCERPM] or hdr[rpm.RPMTAG_SOURCEPACKAGE] != 1:
         arch = hdr['arch']
     else:
         arch = 'src'
