@@ -688,7 +688,7 @@ class YumBase(depsolve.Depsolve):
         self.plugins.run('postresolve', rescode=rescode, restring=restring)
         
         if self.tsInfo.changed:
-            (rescode, restring) = self.resolveDeps()
+            (rescode, restring) = self.resolveDeps(rescode == 1)
         if self.tsInfo.pkgSack is not None: # rm Transactions don't have pkgSack
             self.tsInfo.pkgSack.dropCachedData()
         self.rpmdb.dropCachedData()

@@ -668,7 +668,7 @@ class Depsolve(object):
         p.print_stats(20)
         return rc
 
-    def resolveDeps(self):
+    def resolveDeps(self, full_check=True):
 
         if not len(self.tsInfo):
             return (0, [_('Success - empty transaction')])
@@ -679,8 +679,8 @@ class Depsolve(object):
         self.tsInfo.resetResolved(hard=False)
 
         CheckDeps = True
-        CheckRemoves = False
-        CheckInstalls = False
+        CheckRemoves = full_check
+        CheckInstalls = full_check
 
         missingdep = 0
         errors = []
