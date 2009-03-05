@@ -1135,6 +1135,10 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
             pat_max = constants.PATTERNS_INDEXED_MAX
         if len(patterns) > pat_max:
             patterns = []
+        if ignore_case:
+            patterns = self._sql_esc_glob(patterns)
+        else:
+            patterns = [(pat, '') for pat in patterns]
 
         for (repo,cache) in self.primarydb.items():
             if (repoid == None or repoid == repo.id):
@@ -1145,10 +1149,6 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
 
                 pat_sqls = []
                 pat_data = []
-                if ignore_case:
-                    patterns = self._sql_esc_glob(patterns)
-                else:
-                    patterns = [(pat, '') for pat in patterns]
                 for (pattern, esc) in patterns:
                     for field in fields:
                         if ignore_case:
