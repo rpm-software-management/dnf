@@ -238,7 +238,7 @@ def main(args):
             verbose_logger.info(_(" You could try using --skip-broken to work around the problem"))
         verbose_logger.info(_(" You could try running: package-cleanup --problems\n"
                               "                        package-cleanup --dupes\n"
-                              "                        rpm -Va --nofiles --nomd5"))
+                              "                        rpm -Va --nofiles --nodigest"))
         if unlock(): return 200
         return 1
     elif result == 2:
