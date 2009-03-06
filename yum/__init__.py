@@ -847,20 +847,16 @@ class YumBase(depsolve.Depsolve):
 
     def _skipFromTransaction(self,po):
         skipped =  []
-        if rpmUtils.arch.isMultiLibArch():
-            archs = rpmUtils.arch.getArchList() 
-            n,a,e,v,r = po.pkgtup
-            # skip for all compat archs
-            for a in archs:
-                pkgtup = (n,a,e,v,r)
-                if self.tsInfo.exists(pkgtup):
-                    for txmbr in self.tsInfo.getMembers(pkgtup):
-                        pkg = txmbr.po
-                        skip = self._removePoFromTransaction(pkg)
-                        skipped.extend(skip)
-        else:
-            msgs = self._removePoFromTransaction(po)
-            skipped.extend(msgs)
+        archs = rpmUtils.arch.getArchList() 
+        n,a,e,v,r = po.pkgtup
+        # skip for all compat archs
+        for a in archs:
+            pkgtup = (n,a,e,v,r)
+            if self.tsInfo.exists(pkgtup):
+                for txmbr in self.tsInfo.getMembers(pkgtup):
+                    pkg = txmbr.po
+                    skip = self._removePoFromTransaction(pkg)
+                    skipped.extend(skip)
         return skipped
 
     def _removePoFromTransaction(self,po):
