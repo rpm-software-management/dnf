@@ -34,6 +34,7 @@ import gzip
 
 import yum.i18n
 _ = yum.i18n._
+P_ = yum.i18n.P_
 
 try:
     from iniparse.compat import ParsingError, ConfigParser

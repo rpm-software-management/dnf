@@ -20,6 +20,16 @@ def dummy_wrapper(str):
     '''
     return to_unicode(str)
 
+def dummyP_wrapper(str1, str2, n):
+    '''
+    Dummy Plural Translation wrapper, just returning the singular or plural
+    string.
+    '''
+    if n == 1:
+        return str1
+    else:
+        return str2
+
 # This is ported from ustr_utf8_* which I got from:
 #     http://www.cl.cam.ac.uk/~mgk25/ucs/wcwidth.c
 #  I've tried to leave it close to the original C (same names etc.) so that
@@ -417,19 +427,21 @@ def to_str(obj):
 
 try: 
     '''
-    Setup the yum translation domain and make _() translation wrapper
+    Setup the yum translation domain and make _() and P_() translation wrappers
     available.
     using ugettext to make sure translated strings are in Unicode.
     '''
     import gettext
     t = gettext.translation('yum', fallback=True)
     _ = t.ugettext
+    P_ = t.nugettext
 except:
     '''
     Something went wrong so we make a dummy _() wrapper there is just
     returning the same text
     '''
     _ = dummy_wrapper
+    P_ = dummyP_wrapper
 
 if __name__ == "__main__":
     import sys
