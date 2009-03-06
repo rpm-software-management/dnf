@@ -507,19 +507,31 @@ class RPMTransaction:
                 
     def _scriptError(self, bytes, total, h):
         hdr, rpmloc = h[0], h[1]
-        pkgtup = self._dopkgtup(hdr)
-        txmbrs = self.base.tsInfo.getMembers(pkgtup=pkgtup)
-        for txmbr in txmbrs:
+        remove_hdr = False # if we're in a clean up/remove then hdr will not be an rpm.hdr
+        if not isinstance(hdr, rpm.hdr):
+            txmbrs = [hdr]
+            remove_hdr = True
+        else:
+            pkgtup = self._dopkgtup(hdr)
+            txmbrs = self.base.tsInfo.getMembers(pkgtup=pkgtup)
+            
+        for pkg in txmbrs:
             # "bytes" carries the failed scriptlet tag,
             # "total" carries fatal/non-fatal status
             scriptlet_name = rpm.tagnames.get(bytes, "<unknown>")
+            if remove_hdr:
+                package_name = pkg
+            else:
+                package_name = txmbr.po
+                
             if total:
                 msg = ("Error in %s scriptlet in rpm package %s" % 
-                        (scriptlet_name, txmbr.po))
-                txmbr.output_state = TS_FAILED
+                        (scriptlet_name, package_name))
+                if not remove_hdr:        
+                    txmbr.output_state = TS_FAILED
             else:
                 msg = ("Non-fatal %s scriptlet failure in rpm package %s" % 
-                       (scriptlet_name, txmbr.po))
+                       (scriptlet_name, package_name))
             self.display.errorlog(msg)
             # FIXME - what else should we do here? raise a failure and abort?
     
