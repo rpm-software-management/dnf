@@ -522,13 +522,13 @@ class RPMTransaction:
             if remove_hdr:
                 package_name = pkg
             else:
-                package_name = txmbr.po
+                package_name = pkg.po
                 
             if total:
                 msg = ("Error in %s scriptlet in rpm package %s" % 
                         (scriptlet_name, package_name))
                 if not remove_hdr:        
-                    txmbr.output_state = TS_FAILED
+                    pkg.output_state = TS_FAILED
             else:
                 msg = ("Non-fatal %s scriptlet failure in rpm package %s" % 
                        (scriptlet_name, package_name))
