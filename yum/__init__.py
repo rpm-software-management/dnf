@@ -97,6 +97,9 @@ class _YumPreBaseConf:
         self.errorlevel = None
         self.disabled_plugins = None
         self.enabled_plugins = None
+        self.syslog_ident = None
+        self.syslog_facility = None
+        self.syslog_device = '/dev/log'
 
 
 class YumBase(depsolve.Depsolve):
@@ -196,6 +199,9 @@ class YumBase(depsolve.Depsolve):
         errorlevel = self.preconf.errorlevel
         disabled_plugins = self.preconf.disabled_plugins
         enabled_plugins = self.preconf.enabled_plugins
+        syslog_ident    = self.preconf.syslog_ident
+        syslog_facility = self.preconf.syslog_facility
+        syslog_device   = self.preconf.syslog_device
 
         #  We don't want people accessing/altering preconf after it becomes
         # worthless. So we delete it, and thus. it'll raise AttributeError
@@ -216,9 +222,14 @@ class YumBase(depsolve.Depsolve):
             startupconf.debuglevel = debuglevel
         if errorlevel != None:
             startupconf.errorlevel = errorlevel
+        if syslog_ident != None:
+            startupconf.syslog_ident = syslog_ident
+        if syslog_facility != None:
+            startupconf.syslog_facility = syslog_facility
 
         self.doLoggingSetup(startupconf.debuglevel, startupconf.errorlevel,
-                            startupconf.syslog_ident, startupconf.syslog_facility)
+                            startupconf.syslog_ident,
+                            startupconf.syslog_facility, syslog_device)
 
         if init_plugins and startupconf.plugins:
             self.doPluginSetup(optparser, plugin_types, startupconf.pluginpath,
@@ -243,7 +254,8 @@ class YumBase(depsolve.Depsolve):
         
 
     def doLoggingSetup(self, debuglevel, errorlevel,
-                       syslog_ident=None, syslog_facility=None):
+                       syslog_ident=None, syslog_facility=None,
+                       syslog_device='/dev/log'):
         '''
         Perform logging related setup.
 
@@ -251,7 +263,8 @@ class YumBase(depsolve.Depsolve):
         @param errorlevel: Error logging level to use.
         '''
         logginglevels.doLoggingSetup(debuglevel, errorlevel,
-                                     syslog_ident, syslog_facility)
+                                     syslog_ident, syslog_facility,
+                                     syslog_device)
 
     def doFileLogSetup(self, uid, logfile):
         logginglevels.setFileLog(uid, logfile)

@@ -118,7 +118,8 @@ def setErrorLevel(level):
 
 _added_handlers = False
 def doLoggingSetup(debuglevel, errorlevel,
-                   syslog_ident=None, syslog_facility=None):
+                   syslog_ident=None, syslog_facility=None,
+                   syslog_device='/dev/log'):
     """
     Configure the python logger.
     
@@ -157,7 +158,7 @@ def doLoggingSetup(debuglevel, errorlevel,
     filelogger.setLevel(logging.INFO)
     filelogger.propagate = False
 
-    log_dev = '/dev/log'
+    log_dev = syslog_device
     global syslog
     if os.path.exists(log_dev):
         try:
