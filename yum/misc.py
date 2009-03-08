@@ -152,7 +152,7 @@ def unique(s):
     try:
         u = set(s)
     except TypeError:
-        del u  # move on to the next method
+        pass
     else:
         return list(u)
 
