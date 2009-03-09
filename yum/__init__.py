@@ -1129,7 +1129,10 @@ class YumBase(depsolve.Depsolve):
         """do the unlock for yum"""
         
         # if we're not root then we don't lock - just return nicely
-        if self.conf.uid != 0:
+        #  Note that we can get here from __del__, so if we haven't created
+        # YumBase.conf we don't want to do so here as creating stuff inside
+        # __del__ is bad.
+        if hasattr(self, 'preconf') or self.conf.uid != 0:
             return
         
         if lockfile is not None:
