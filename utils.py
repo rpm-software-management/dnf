@@ -98,7 +98,7 @@ class YumUtilBase(YumBaseCli):
         try:
             self._getTs()
             self._getRpmDB()
-            self._getRepos()
+            self._getRepos(doSetup = True)
             self._getSacks()
         except yum.Errors.YumBaseError, msg:
             self.logger.critical(str(msg))
