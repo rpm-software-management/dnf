@@ -620,17 +620,9 @@ def get_running_kernel_version_release(ts):
     """This takes the output of uname and figures out the (version, release)
     tuple for the running kernel."""
     ver = os.uname()[2]
-    reduced = ver
-    # FIXME this should probably get passed this list from somewhere in config
-    # possibly from the kernelpkgnames option
-    for s in ("bigmem", "enterprise", "smp", "hugemem", "PAE", "rt",
-              "guest", "hypervisor", "xen0", "xenU", "xen", "debug",
-              "PAE-debug"):
-        if ver.endswith(s):
-            reduced = ver.replace(s, "")
-            
-    # we've got nothing so far, so... we glob for the file that MIGHT have
-    # this kernels and then look up the file in our rpmdb
+
+    # we glob for the file that MIGHT have this kernel
+    # and then look up the file in our rpmdb.
     fns = sorted(glob.glob('/boot/vmlinuz*%s*' % ver))
     for fn in fns:
         mi = ts.dbMatch('basenames', fn)
