@@ -989,7 +989,10 @@ class YumHeaderPackage(YumAvailablePackage):
 
         self.hdr = hdr
         self.name = misc.share_data(self.hdr['name'])
-        self.arch = misc.share_data(self.hdr['arch'])
+        this_a = self.hdr['arch']
+        if not this_a: # this should only happen on gpgkeys and other "odd" pkgs
+            this_a = 'noarch'
+        self.arch = misc.share_data(this_a)
         self.epoch = misc.share_data(self.doepoch())
         self.version = misc.share_data(self.hdr['version'])
         self.release = misc.share_data(self.hdr['release'])
