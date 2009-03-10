@@ -488,7 +488,7 @@ class MakeCacheCommand(YumCommand):
         return _("Generate the metadata cache")
 
     def doCheck(self, base, basecmd, extcmds):
-        checkRootUID(base)
+        pass
 
     def doCommand(self, base, basecmd, extcmds):
         base.logger.debug(_("Making cache files for all metadata files."))
