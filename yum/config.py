@@ -492,24 +492,22 @@ class BaseConfig(object):
             if value is not None:
                 setattr(self, name, value)
 
-    def optionobj(cls, name):
+    def optionobj(cls, name, exceptions=True):
         '''Return the Option instance for the given name
         '''
         obj = getattr(cls, name, None)
         if isinstance(obj, Option):
             return obj
-        else:
+        elif exceptions:
             raise KeyError
+        else:
+            return None
     optionobj = classmethod(optionobj)
 
     def isoption(cls, name):
         '''Return True if the given name refers to a defined option 
         '''
-        try:
-            cls.optionobj(name)
-            return True
-        except KeyError:
-            return False
+        return cls.optionobj(name, exceptions=False) is not None
     isoption = classmethod(isoption)
 
     def iterkeys(self):
@@ -742,6 +740,8 @@ def readStartupConfig(configfile, root):
     May raise Errors.ConfigError if a problem is detected with while parsing.
     '''
 
+    # ' xemacs syntax hack
+
     StartupConf.installroot.default = root
     startupconf = StartupConf()
     startupconf.config_file_path = configfile
@@ -771,6 +771,8 @@ def readMainConfig(startupconf):
     @return: Populated YumConf instance.
     '''
     
+    # ' xemacs syntax hack
+
     # Set up substitution vars
     yumvars = _getEnvVar()
     yumvars['basearch'] = rpmUtils.arch.getBaseArch()          # FIXME make this configurable??
