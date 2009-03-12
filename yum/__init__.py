@@ -2462,11 +2462,13 @@ class YumBase(depsolve.Depsolve):
                     except yum.Errors.YumBaseError, e:
                         self.logger.critical(_('No Match for argument: %s') % arg)
                     else:
-                        if mypkgs:
-                            #  Dep. installs don't do wildcards, so we
-                            # just want a single named package.
+                        # install MTA* == fail, because provides don't do globs
+                        # install /usr/kerberos/bin/* == success (and we want
+                        #                                all of the pkgs)
+                        if mypkgs and not misc.re_glob(arg):
                             mypkgs = self.bestPackagesFromList(mypkgs,
                                                                single_name=True)
+                        if mypkgs:
                             pkgs.extend(mypkgs)
                         
             else:
