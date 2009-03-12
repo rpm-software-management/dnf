@@ -88,7 +88,25 @@ def legitMultiArchesInSameLib(arch=None):
     return results        
 
 
+def canCoinstall(arch1, arch2):
+    """Take two arches and return True if it is possible that they can be
+       installed together with the same nevr. Ex: arch1=i386 and arch2=i686 then
+       it will return False. arch1=i386 and arch2=x86_64 will return True.
+       It does not determine whether or not the arches make any sense. Just whether
+       they could possibly install w/o conflict"""
 
+    # if both are a multlibarch then we can't coinstall  (x86_64, ia32e)
+    # if both are not multilibarches then we can't coinstall (i386, i686)
+    
+    if 'noarch' in [arch1, arch2]: # noarch can never coinstall
+        return False
+
+    if isMultiLibArch(arch=arch1) == isMultiLibArch(arch=arch2):
+        return False
+    # this section keeps arch1=x86_64 arch2=ppc from returning True
+    if arch1 in getArchList(arch2) or arch2 in getArchList(arch1):
+        return True
+    return False
 
 # this computes the difference between myarch and targetarch
 def archDifference(myarch, targetarch):

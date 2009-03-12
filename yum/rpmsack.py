@@ -207,7 +207,7 @@ class RPMDBPackageSack(PackageSackBase):
         ts = self.readOnlyTS()
         result = {}
         tag = self.DEP_TABLE[prcotype][0]
-        mi = ts.dbMatch(tag, name)
+        mi = ts.dbMatch(tag, misc.to_utf8(name))
         for hdr in mi:
             po = self._makePackageObject(hdr, mi.instance())
             result[po.pkgid] = po

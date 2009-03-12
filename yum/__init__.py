@@ -1848,6 +1848,7 @@ class YumBase(depsolve.Depsolve):
         
         matches = {}
         for arg in args:
+            arg = to_unicode(arg)
             if not misc.re_glob(arg):
                 isglob = False
                 if arg[0] != '/':
@@ -1921,7 +1922,7 @@ class YumBase(depsolve.Depsolve):
                 usedDepString = True
                 for po in where:
                     tmpvalues = []
-                    msg = _('Provides-match: %s') % arg
+                    msg = _('Provides-match: %s') % to_unicode(arg)
                     tmpvalues.append(msg)
 
                     if len(tmpvalues) > 0:

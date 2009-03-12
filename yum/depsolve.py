@@ -25,7 +25,7 @@ import logging
 import rpmUtils.transaction
 import rpmUtils.miscutils
 import rpmUtils.arch
-from rpmUtils.arch import archDifference, isMultiLibArch, getBestArch
+from rpmUtils.arch import archDifference, isMultiLibArch, getBestArch, canCoinstall
 import misc
 from misc import unique, version_tuple_to_string
 import rpm
@@ -489,20 +489,21 @@ class Depsolve(object):
             tspkgs = []
             if not self.allowedMultipleInstalls(pkg):
                 # from ts
-                tspkgs = self.tsInfo.matchNaevr(name=pkg.name, arch=pkg.arch)
+                tspkgs = self.tsInfo.matchNaevr(name=pkg.name)
                 for tspkg in tspkgs:
-                    if tspkg.po.verGT(pkg):
-                        msg = _('Potential resolving package %s has newer instance in ts.') % pkg
-                        self.verbose_logger.log(logginglevels.DEBUG_2, msg)
-                        provSack.delPackage(pkg)
-                        continue
-                    elif tspkg.po.verLT(pkg):
-                        upgraded.setdefault(pkg.pkgtup, []).append(tspkg.pkgtup)
+                    if not canCoinstall(pkg.arch, tspkg.po.arch): # a comparable arch
+                        if tspkg.po.verGT(pkg):
+                            msg = _('Potential resolving package %s has newer instance in ts.') % pkg
+                            self.verbose_logger.log(logginglevels.DEBUG_2, msg)
+                            provSack.delPackage(pkg)
+                            continue
+                        elif tspkg.po.verLT(pkg):
+                            upgraded.setdefault(pkg.pkgtup, []).append(tspkg.pkgtup)
                 
                 # from rpmdb
-                dbpkgs = self.rpmdb.searchNevra(name=pkg.name, arch=pkg.arch)
+                dbpkgs = self.rpmdb.searchNevra(name=pkg.name)
                 for dbpkg in dbpkgs:
-                    if dbpkg.verGT(pkg):
+                    if dbpkg.verGT(pkg) and not canCoinstall(pkg.arch, tspkg.arch):
                         msg = _('Potential resolving package %s has newer instance installed.') % pkg
                         self.verbose_logger.log(logginglevels.DEBUG_2, msg)
                         provSack.delPackage(pkg)

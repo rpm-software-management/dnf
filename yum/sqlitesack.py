@@ -34,7 +34,7 @@ import sqlutils
 import constants
 import operator
 import time
-from yum.misc import seq_max_split, to_utf8
+from yum.misc import seq_max_split, to_utf8, to_unicode
 import sys
 
 def catchSqliteException(func):
@@ -769,9 +769,11 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
 
     @catchSqliteException
     def _search(self, prcotype, name, flags, version):
+
         if self._skip_all():
             return {}
-
+        
+        name = to_unicode(name)
         if flags == 0:
             flags = None
         if type(version) in (str, type(None), unicode):
@@ -883,7 +885,7 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
         
         if self._skip_all():
             return []
-
+        
         returnList = []
         max_entries = constants.PATTERNS_INDEXED_MAX
         if len(names) > max_entries:
@@ -911,7 +913,8 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
         """return list of packages having prcotype name (any evr and flag)"""
         if self._skip_all():
             return []
-
+        
+        name = to_unicode(name)
         glob = True
         querytype = 'glob'
         if not misc.re_glob(name):
