@@ -492,31 +492,30 @@ class BaseConfig(object):
             if value is not None:
                 setattr(self, name, value)
 
-    def optionobj(cls, name):
+    def optionobj(cls, name, exceptions=True):
         '''Return the Option instance for the given name
         '''
         obj = getattr(cls, name, None)
         if isinstance(obj, Option):
             return obj
-        else:
+        elif exceptions:
             raise KeyError
+        else:
+            return None
     optionobj = classmethod(optionobj)
 
     def isoption(cls, name):
         '''Return True if the given name refers to a defined option 
         '''
-        try:
-            cls.optionobj(name)
-            return True
-        except KeyError:
-            return False
+        return cls.optionobj(name, exceptions=False) is not None
     isoption = classmethod(isoption)
 
     def iterkeys(self):
         '''Yield the names of all defined options in the instance.
         '''
-        for name, item in self.iteritems():
-            yield name
+        for name in dir(self):
+            if self.isoption(name):
+                yield name
 
     def iteritems(self):
         '''Yield (name, value) pairs for every option in the instance.
@@ -524,9 +523,8 @@ class BaseConfig(object):
         The value returned is the parsed, validated option value.
         '''
         # Use dir() so that we see inherited options too
-        for name in dir(self):
-            if self.isoption(name):
-                yield (name, getattr(self, name))
+        for name in self.iterkeys():
+            yield (name, getattr(self, name))
 
     def write(self, fileobj, section=None, always=()):
         '''Write out the configuration to a file-like object
@@ -695,6 +693,20 @@ class RepoConf(BaseConfig):
     '''
     Option definitions for repository INI file sections.
     '''
+
+    __cached_keys = set()
+    def iterkeys(self):
+        '''Yield the names of all defined options in the instance.
+        '''
+        ck = self.__cached_keys
+        if not isinstance(self, RepoConf):
+            ck = set()
+        if not ck:
+            ck.update(list(BaseConfig.iterkeys(self)))
+
+        for name in self.__cached_keys:
+            yield name
+
     name = Option()
     enabled = Inherit(YumConf.enabled)
     baseurl = UrlListOption()
@@ -742,6 +754,8 @@ def readStartupConfig(configfile, root):
     May raise Errors.ConfigError if a problem is detected with while parsing.
     '''
 
+    # ' xemacs syntax hack
+
     StartupConf.installroot.default = root
     startupconf = StartupConf()
     startupconf.config_file_path = configfile
@@ -771,6 +785,8 @@ def readMainConfig(startupconf):
     @return: Populated YumConf instance.
     '''
     
+    # ' xemacs syntax hack
+
     # Set up substitution vars
     yumvars = _getEnvVar()
     yumvars['basearch'] = rpmUtils.arch.getBaseArch()          # FIXME make this configurable??
