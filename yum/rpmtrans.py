@@ -26,6 +26,7 @@ import sys
 from yum.constants import *
 from yum import _
 import misc
+import tempfile
 
 class NoOutputCallBack:
     def __init__(self):
@@ -205,11 +206,10 @@ class RPMTransaction:
 
     def _setupOutputLogging(self):
         # UGLY... set up the transaction to record output from scriptlets
-        (r, w) = os.pipe()
-        # need fd objects, and read should be non-blocking
-        self._readpipe = os.fdopen(r, 'r')
-        self._fdSetNonblock(self._readpipe.fileno())
-        self._writepipe = os.fdopen(w, 'w')
+        io_r = tempfile.TemporaryFile()
+        w = os.dup(io_r.fileno())
+        self._readpipe = io_r
+        self._writepipe = os.fdopen(w, 'w+b')
         self.base.ts.scriptFd = self._writepipe.fileno()
         rpm.setVerbosity(rpm.RPMLOG_INFO)
         rpm.setLogFile(self._writepipe)
