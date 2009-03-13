@@ -2101,11 +2101,17 @@ class YumBase(depsolve.Depsolve):
                         except Errors.InstallError:
                             # we don't care if the package doesn't exist
                             continue
+                        else:
+                            if cond not in self.tsInfo.conditionals:
+                                self.tsInfo.conditionals[cond]=[]
+
                         txmbrs_used.extend(txmbrs)
                         for txmbr in txmbrs:
                             txmbr.groups.append(thisgroup.groupid)
+                            self.tsInfo.conditionals[cond].append(txmbr.po)
                         continue
-                    # Otherwise we hook into tsInfo.add
+                    # Otherwise we hook into tsInfo.add to make 
+                    # sure we'll catch it if its added later in this transaction
                     pkgs = self.pkgSack.searchNevra(name=condreq)
                     if pkgs:
                         if rpmUtils.arch.isMultiLibArch():
@@ -2153,8 +2159,10 @@ class YumBase(depsolve.Depsolve):
                         # if there aren't any other groups mentioned then remove the pkg
                         if len(txmbr.groups) == 0:
                             self.tsInfo.remove(txmbr.po.pkgtup)
+                            
+                            for pkg in self.tsInfo.conditionals.get(txmbr.name, []):
+                                self.tsInfo.remove(pkg.pkgtup)
 
-                    
         
     def getPackageObject(self, pkgtup):
         """retrieves a packageObject from a pkgtuple - if we need
