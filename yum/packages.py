@@ -153,10 +153,20 @@ def parsePackages(pkgs, usercommands, casematch=0,
         raise ValueError, "Bad value for unique: %s" % unique
     return exactmatch, matched, unmatched
 
+class FakeSack:
+    """ Fake PackageSack to use with FakeRepository"""
+    def __init__(self):
+        pass # This is fake, so do nothing
+    
+    def delPackage(self, obj):
+        """delete a pkgobject, do nothing, but make localpackages work with --skip-broken"""
+        pass # This is fake, so do nothing
+            
 class FakeRepository:
     """Fake repository class for use in rpmsack package objects"""
     def __init__(self, repoid):
         self.id = repoid
+        self.sack = FakeSack()
 
     def __cmp__(self, other):
         if self.id > other.id:
