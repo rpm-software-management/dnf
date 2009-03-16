@@ -344,7 +344,6 @@ class YumBase(depsolve.Depsolve):
             if os.path.exists(self.conf.installroot+'/'+reposdir):
                 reposdir = self.conf.installroot + '/' + reposdir
 
-            reposdir = self.conf.installroot + '/' + reposdir
             if os.path.isdir(reposdir):
                 for repofn in sorted(glob.glob('%s/*.repo' % reposdir)):
                     thisrepo_age = os.stat(repofn)[8]
