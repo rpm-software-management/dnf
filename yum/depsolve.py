@@ -503,7 +503,7 @@ class Depsolve(object):
                 # from rpmdb
                 dbpkgs = self.rpmdb.searchNevra(name=pkg.name)
                 for dbpkg in dbpkgs:
-                    if dbpkg.verGT(pkg) and not canCoinstall(pkg.arch, tspkg.arch):
+                    if dbpkg.verGT(pkg) and not canCoinstall(pkg.arch, dbpkg.arch):
                         msg = _('Potential resolving package %s has newer instance installed.') % pkg
                         self.verbose_logger.log(logginglevels.DEBUG_2, msg)
                         provSack.delPackage(pkg)
