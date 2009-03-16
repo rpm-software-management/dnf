@@ -338,6 +338,12 @@ class YumBase(depsolve.Depsolve):
         self.getReposFromConfigFile(self.conf.config_file_path, repo_config_age)
 
         for reposdir in self.conf.reposdir:
+            # this check makes sure that our dirs exist properly.
+            # if they aren't in the installroot then don't prepent the installroot path
+            # if we don't do this then anaconda likes to not  work.
+            if os.path.exists(self.conf.installroot+'/'+reposdir):
+                reposdir = self.conf.installroot + '/' + reposdir
+
             reposdir = self.conf.installroot + '/' + reposdir
             if os.path.isdir(reposdir):
                 for repofn in sorted(glob.glob('%s/*.repo' % reposdir)):
