@@ -2727,18 +2727,17 @@ class YumBase(depsolve.Depsolve):
                 except yum.Errors.YumBaseError, e:
                     self.logger.critical(_('%s') % e)
                 
-                if not depmatches:
-                    self.logger.critical(_('No Match for argument: %s') % arg)
-                else:
-                    instpkgs.extend(depmatches)
+                instpkgs.extend(depmatches)
 
             #  Always look for available packages, it doesn't seem to do any
             # harm (apart from some time). And it fixes weird edge cases where
             # "update a" (which requires a new b) is different from "update b"
-            if True or not instpkgs:
-                (e, m, u) = self.pkgSack.matchPackageNames([kwargs['pattern']])
-                availpkgs.extend(e)
-                availpkgs.extend(m)
+            (e, m, u) = self.pkgSack.matchPackageNames([kwargs['pattern']])
+            availpkgs.extend(e)
+            availpkgs.extend(m)
+
+            if not availpkgs and not instpkgs:
+                self.logger.critical(_('No Match for argument: %s') % arg)
         
         else: # we have kwargs, sort them out.
             nevra_dict = self._nevra_kwarg_parse(kwargs)
