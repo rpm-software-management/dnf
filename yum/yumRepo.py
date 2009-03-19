@@ -830,6 +830,10 @@ class YumRepository(Repository, config.RepoConf):
             if self.metalink and not os.path.exists(mlfn):
                 self._metadataCurrent = False
         if self._metadataCurrent is None:
+            repomdfn = self.cachedir + '/' + 'repomd.xml'
+            if not os.path.exists(repomdfn):
+                self._metadataCurrent = False
+        if self._metadataCurrent is None:
             self._metadataCurrent = self.withinCacheAge(self.metadata_cookie,
                                                         self.metadata_expire)
         return self._metadataCurrent
