@@ -25,6 +25,18 @@ from packageSack import MetaSack
 
 from weakref import proxy as weakref
 
+class _wrap_ayum_getKeyForRepo:
+    """ This is a wrapper for calling YumBase.getKeyForRepo() because
+        otherwise we take a real reference through the bound method and
+        that is d00m (this applies to YumBase and RepoStorage, hence why
+        we have a seperate class).
+        A "better" fix might be to explicitly pass the YumBase instance to
+        the callback ... API change! """
+    def __init__(self, ayum):
+        self.ayum = weakref(ayum)
+    def __call__(self, repo, callback=None):
+        return self.ayum.getKeyForRepo(repo, callback)
+
 class RepoStorage:
     """This class contains multiple repositories and core configuration data
        about them."""
@@ -44,14 +56,8 @@ class RepoStorage:
         # need to be set from outside of the repos object to do anything
         # even quasi-useful
         # defaults to what is probably sane-ish
-        self.gpg_import_func = self._wrap_ayum_getKeyForRepo
+        self.gpg_import_func = _wrap_ayum_getKeyForRepo(ayum)
         self.confirm_func = None
-
-    def _wrap_ayum_getKeyForRepo(repo, callback=None):
-        """ This is a wrapper for calling self.ayum.getKeyForRepo() because
-            otherwise we take a real reference through the bound method and
-            that is d00m. """
-        return self.ayum.getKeyForRepo(repo, callback)
 
     def doSetup(self, thisrepo = None):
         
