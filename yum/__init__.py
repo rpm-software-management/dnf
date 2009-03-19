@@ -2596,8 +2596,15 @@ class YumBase(depsolve.Depsolve):
 
             # make sure we don't have a name.arch of this already installed
             # if so pass it to update b/c it should be able to figure it out
-            if self.rpmdb.contains(name=po.name, arch=po.arch) and not self.allowedMultipleInstalls(po):
-                if not self.tsInfo.getMembersWithState(po.pkgtup, TS_REMOVE_STATES):
+            # if self.rpmdb.contains(name=po.name, arch=po.arch) and not self.allowedMultipleInstalls(po):
+            if not self.allowedMultipleInstalls(po):
+                found = True
+                for ipkg in self.rpmdb.searchNevra(name=po.name, arch=po.arch):
+                    found = False
+                    if self.tsInfo.getMembersWithState(ipkg.pkgtup, TS_REMOVE_STATES):
+                        found = True
+                        break
+                if not found:
                     self.verbose_logger.warning(_('Package matching %s already installed. Checking for update.'), po)            
                     txmbrs = self.update(po=po)
                     tx_return.extend(txmbrs)
