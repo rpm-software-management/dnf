@@ -887,17 +887,26 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
             self.verbose_logger.log(yum.logginglevels.INFO_2,
                 _('Installed Groups:'))
             for group in installed:
-                self.verbose_logger.log(yum.logginglevels.INFO_2, '   %s',
-                    group.ui_name)
+                if self.verbose_logger.isEnabledFor(yum.logginglevels.DEBUG_3):
+                    self.verbose_logger.log(yum.logginglevels.INFO_2,
+                                            '   %s (%s)', group.ui_name,
+                                            group.groupid)
+                else:
+                    self.verbose_logger.log(yum.logginglevels.INFO_2,
+                                            '   %s', group.ui_name)
         
         if len(available) > 0:
             self.verbose_logger.log(yum.logginglevels.INFO_2,
                 _('Available Groups:'))
             for group in available:
-                self.verbose_logger.log(yum.logginglevels.INFO_2, '   %s',
-                    group.ui_name)
+                if self.verbose_logger.isEnabledFor(yum.logginglevels.DEBUG_3):
+                    self.verbose_logger.log(yum.logginglevels.INFO_2,
+                                            '   %s (%s)', group.ui_name,
+                                            group.groupid)
+                else:
+                    self.verbose_logger.log(yum.logginglevels.INFO_2,
+                                            '   %s', group.ui_name)
 
-            
         return 0, [_('Done')]
     
     def returnGroupInfo(self, userlist):
