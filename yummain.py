@@ -101,6 +101,8 @@ def main(args):
             if line[-1] != '\n':
                 continue
             data = line[:-1].split(':\t', 1)
+            if len(data) < 2:
+                continue
             if data[1].endswith(' kB'):
                 data[1] = data[1][:-3]
             ps[data[0].strip().lower()] = data[1].strip()
