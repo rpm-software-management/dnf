@@ -2432,6 +2432,21 @@ class YumBase(depsolve.Depsolve):
             tx_return.extend(txmbrs)
         return tx_return
 
+    #  Note that this returns available pkgs, and not txmbrs like the other
+    # _at_group* functions.
+    def _at_groupdowngrade(self, pattern):
+        " Do downgrade of a group via. leading @ on the cmd line."
+        assert pattern[0] == '@'
+        grpid = pattern[1:]
+
+        thesegroups = self.comps.return_groups(grpid)
+        if not thesegroups:
+            raise Errors.GroupsError, _("No Group named %s exists") % grpid
+        pkgnames = set()
+        for thisgroup in thesegroups:
+            pkgnames.update(thisgroup.packages)
+        return self.pkgSack.searchNames(pkgnames)
+
     def _find_obsoletees(self, po):
         """ Return the pkgs. that are obsoleted by the po we pass in. """
         for (obstup, inst_tup) in self.up.getObsoletersTuples(name=po.name):
@@ -2539,6 +2554,7 @@ class YumBase(depsolve.Depsolve):
                 for pkgs in pkgbyname.values():
                     lst.extend(self.bestPackagesFromList(pkgs))
                 pkgs = lst
+
 
         if not pkgs:
             # Do we still want to return errors here?
@@ -3073,7 +3089,7 @@ class YumBase(depsolve.Depsolve):
         tx_mbrs.extend(new_members)
         return tx_mbrs
         
-    def downgrade(self, **kwargs):
+    def downgrade(self, po=None, **kwargs):
         """ Try to downgrade a package. Works like:
             % yum shell <<EOL
             remove  abcd
@@ -3081,13 +3097,29 @@ class YumBase(depsolve.Depsolve):
             run
             EOL """
 
-        # FIXME: Add @group?
-        if 'pattern' in kwargs:
-            if False and kwargs['pattern'][0] == '@':
-                return [] # We _could_ do this, I guess.
+        if not po and not kwargs:
+            raise Errors.DowngradeError, 'Nothing specified to remove'
 
-            apkgs = self.pkgSack.returnPackages(patterns=[kwargs['pattern']])
-            # FIXME: Add umatched and/or deps.
+        doing_group_pkgs = False
+        if po:
+            apkgs = [po]
+        elif 'pattern' in kwargs:
+            if kwargs['pattern'][0] == '@':
+               apkgs = self._at_groupdowngrade(kwargs['pattern'])
+               doing_group_pkgs = True # Don't warn. about some things
+            else:
+               apkgs = self.pkgSack.returnPackages(patterns=[kwargs['pattern']],
+                                                   ignore_case=False)
+               if not apkgs:
+                    arg = kwargs['pattern']
+                    self.verbose_logger.debug(_('Checking for virtual provide or file-provide for %s'), 
+                        arg)
+
+                    try:
+                        apkgs = self.returnPackagesByDep(arg)
+                    except yum.Errors.YumBaseError, e:
+                        self.logger.critical(_('No Match for argument: %s') % arg)
+
         else:
             nevra_dict = self._nevra_kwarg_parse(kwargs)
             apkgs = self.pkgSack.searchNevra(name=nevra_dict['name'], 
@@ -3095,6 +3127,18 @@ class YumBase(depsolve.Depsolve):
                                              arch=nevra_dict['arch'], 
                                              ver=nevra_dict['version'],
                                              rel=nevra_dict['release'])
+        if not apkgs:
+            # Do we still want to return errors here?
+            # We don't in the cases below, so I didn't here...
+            if 'pattern' in kwargs:
+                pkgs = self.rpmdb.returnPackages(patterns=[kwargs['pattern']],
+                                                 ignore_case=False)
+            if 'name' in kwargs:
+                pkgs = self.rpmdb.searchNevra(name=kwargs['name'])
+            if pkgs:
+                return []
+            raise Errors.DowngradeError, _('No package(s) available to downgrade')
+
         warned_names = set()
         # Skip kernel etc.
         tapkgs = []
@@ -3123,14 +3167,18 @@ class YumBase(depsolve.Depsolve):
         downgrade_apkgs = {}
         for pkg in sorted(apkgs):
             if pkg.name not in latest_installed:
-                if pkg.name not in warned_names:
+                if pkg.name not in warned_names and not doing_group_pkgs:
                     msg = _('No Match for available package: %s') % pkg
                     self.logger.critical(msg)
                 warned_names.add(pkg.name)
                 continue
             if pkg.verGE(latest_installed[pkg.name]):
-                # FIXME: Add error stuff if we only have later than installed
+                if pkg.name not in warned_names:
+                    msg = _('Only Upgrade available on package: %s') % pkg
+                    self.logger.critical(msg)
+                warned_names.add(pkg.name)
                 continue
+            warned_names.add(pkg.name)
             if (pkg.name in downgrade_apkgs and
                 pkg.verLE(downgrade_apkgs[pkg.name])):
                 continue # Skip older than "latest downgrade"

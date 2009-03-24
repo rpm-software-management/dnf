@@ -565,7 +565,8 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         """Attempts to take the user specified list of packages/wildcards
            and install them, or if they are installed, update them to a newer
            version. If a complete version number if specified, attempt to 
-           downgrade them to the specified version"""
+           upgrade (or downgrade if they have been removed) them to the
+           specified version"""
         # get the list of available packages
         # iterate over the user's list
         # add packages to Transaction holding class if they match.
@@ -575,9 +576,6 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         
         oldcount = len(self.tsInfo)
         
-        toBeInstalled = {} # keyed on name
-        passToUpdate = [] # list of pkgtups to pass along to updatecheck
-
         for arg in userlist:
             if os.path.exists(arg) and arg.endswith('.rpm'): # this is hurky, deal w/it
                 val, msglist = self.localInstall(filelist=[arg])
@@ -648,6 +646,33 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         else:
             return 0, [_('No Packages marked for removal')]
     
+    def downgradePkgs(self, userlist):
+        """Attempts to take the user specified list of packages/wildcards
+           and downgrade them. If a complete version number if specified,
+           attempt to downgrade them to the specified version"""
+
+        oldcount = len(self.tsInfo)
+        
+        for arg in userlist:
+            # FIXME: We should allow local file downgrades too
+            #        even more important for Fedora.
+            if False and os.path.exists(arg) and arg.endswith('.rpm'):
+                val, msglist = self.localDowngrade(filelist=[arg])
+                continue # it was something on disk and it ended in rpm 
+                         # no matter what we don't go looking at repos
+
+            try:
+                self.downgrade(pattern=arg)
+            except yum.Errors.DowngradeError:
+                self.verbose_logger.log(yum.logginglevels.INFO_2,
+                                        _('No package %s%s%s available.'),
+                                        self.term.MODE['bold'], arg,
+                                        self.term.MODE['normal'])
+                self._maybeYouMeant(arg)
+        if len(self.tsInfo) > oldcount:
+            return 2, [_('Package(s) to downgrade')]
+        return 0, [_('Nothing to do')]
+        
     def localInstall(self, filelist, updateonly=0):
         """handles installs/updates of rpms provided on the filesystem in a 
            local dir (ie: not from a repo)"""

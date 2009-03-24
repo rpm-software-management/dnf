@@ -1003,6 +1003,8 @@ class ReInstallCommand(YumCommand):
         self.doneCommand(base, _("Setting up Reinstall Process"))
         oldcount = len(base.tsInfo)
         try:
+            # FIXME: Due to not having reinstallPkgs() we don't get
+            #        localreinstall and maybe_you_meant features.
             for item in extcmds:
                 base.reinstall(pattern=item)
 
@@ -1033,17 +1035,10 @@ class DowngradeCommand(YumCommand):
 
     def doCommand(self, base, basecmd, extcmds):
         self.doneCommand(base, _("Setting up Downgrade Process"))
-        oldcount = len(base.tsInfo)
         try:
-            for item in extcmds:
-                base.downgrade(pattern=item)
-
-            if len(base.tsInfo) > oldcount:
-                return 2, [_('Package(s) to downgrade')]
-            return 0, [_('Nothing to do')]            
-            
+            return base.downgradePkgs(extcmds)
         except yum.Errors.YumBaseError, e:
-            return 1, [to_unicode(e)]
+            return 1, [str(e)]
 
     def getSummary(self):
         return _("downgrade a package")
