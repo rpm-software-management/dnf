@@ -3073,7 +3073,83 @@ class YumBase(depsolve.Depsolve):
         tx_mbrs.extend(new_members)
         return tx_mbrs
         
+    def downgrade(self, **kwargs):
+        """ Try to downgrade a package. Works like:
+            % yum shell <<EOL
+            remove  abcd
+            install abcd-<old-version>
+            run
+            EOL """
 
+        # FIXME: Add @group?
+        if 'pattern' in kwargs:
+            if False and kwargs['pattern'][0] == '@':
+                return [] # We _could_ do this, I guess.
+
+            apkgs = self.pkgSack.returnPackages(patterns=[kwargs['pattern']])
+            # FIXME: Add umatched and/or deps.
+        else:
+            nevra_dict = self._nevra_kwarg_parse(kwargs)
+            apkgs = self.pkgSack.searchNevra(name=nevra_dict['name'], 
+                                             epoch=nevra_dict['epoch'],
+                                             arch=nevra_dict['arch'], 
+                                             ver=nevra_dict['version'],
+                                             rel=nevra_dict['release'])
+        warned_names = set()
+        # Skip kernel etc.
+        tapkgs = []
+        for pkg in apkgs:
+            if self.allowedMultipleInstalls(pkg):
+                if pkg.name not in warned_names:
+                    msg = _("Package %s is allowed multiple installs, skipping") % pkg
+                    self.verbose_logger.log(logginglevels.INFO_2, msg)
+                warned_names.add(pkg.name)
+                continue
+            tapkgs.append(pkg)
+        apkgs = tapkgs
+
+        # Find installed versions of "to downgrade pkgs"
+        apkg_names = set()
+        for pkg in apkgs:
+            apkg_names.add(pkg.name)
+        ipkgs = self.rpmdb.searchNames(list(apkg_names))
+
+        latest_installed = {}
+        for pkg in ipkgs:
+            latest_installed[pkg.name] = pkg
+
+        #  Find "latest downgrade", ie. latest available pkg before
+        # installed version.
+        downgrade_apkgs = {}
+        for pkg in sorted(apkgs):
+            if pkg.name not in latest_installed:
+                if pkg.name not in warned_names:
+                    msg = _('No Match for available package: %s') % pkg
+                    self.logger.critical(msg)
+                warned_names.add(pkg.name)
+                continue
+            if pkg.verGE(latest_installed[pkg.name]):
+                # FIXME: Add error stuff if we only have later than installed
+                continue
+            if (pkg.name in downgrade_apkgs and
+                pkg.verLE(downgrade_apkgs[pkg.name])):
+                continue # Skip older than "latest downgrade"
+            downgrade_apkgs[pkg.name] = pkg
+
+        tx_return = []
+        for po in ipkgs:
+            if po.name not in downgrade_apkgs:
+                continue
+            itxmbr = self.tsInfo.addErase(po)
+            atxmbr = self.tsInfo.addInstall(downgrade_apkgs[po.name])
+            if not atxmbr: # Fail?
+                self.tsInfo.remove(itxmbr.pkgtup)
+                continue
+            self.tsInfo.probFilterFlags.append(rpm.RPMPROB_FILTER_OLDPACKAGE)
+            tx_return.append(itxmbr)
+            tx_return.append(atxmbr)
+
+        return tx_return
         
     def _nevra_kwarg_parse(self, kwargs):
             
