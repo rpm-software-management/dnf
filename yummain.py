@@ -311,6 +311,14 @@ def user_main(args, exit_code=False):
     return errcode
 
 if __name__ == "__main__":
+    if True:
+        print """
+  This is the unstable development branch of what will eventually be 4.0.0.
+You almost certainly don't want to be running this. Instead run:
+
+    git checkout -t origin/yum-3_2_X
+"""
+        sys.exit(1)
     try:
         user_main(sys.argv[1:], exit_code=True)
     except KeyboardInterrupt, e:
