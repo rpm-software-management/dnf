@@ -696,6 +696,7 @@ def seq_max_split(seq, max_entries):
     """ Given a seq, split into a list of lists of length max_entries each. """
     ret = []
     num = len(seq)
+    seq = list(seq) # Trying to use a set/etc. here is bad
     beg = 0
     while num > max_entries:
         end = beg + max_entries
