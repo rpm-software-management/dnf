@@ -20,6 +20,16 @@ def dummy_wrapper(str):
     '''
     return to_unicode(str)
 
+def dummyP_wrapper(str1, str2, n):
+    '''
+    Dummy Plural Translation wrapper, just returning the singular or plural
+    string.
+    '''
+    if n == 1:
+        return str1
+    else:
+        return str2
+
 # This is ported from ustr_utf8_* which I got from:
 #     http://www.cl.cam.ac.uk/~mgk25/ucs/wcwidth.c
 #  I've tried to leave it close to the original C (same names etc.) so that
@@ -244,6 +254,8 @@ def utf8_width_fill(msg, fill, chop=None, left=True, prefix='', suffix=''):
     """ Expand a utf8 msg to a specified "width" or chop to same.
         Expansion can be left or right. This is what you want to use instead of
         %*.*s, as it does the "right" thing with regard to utf-8 sequences.
+        prefix and suffix should be used for "invisible" bytes, like
+        highlighting.
         Eg.
         "%-*.*s" % (10, 20, msg)
            <= becomes =>
@@ -252,11 +264,18 @@ def utf8_width_fill(msg, fill, chop=None, left=True, prefix='', suffix=''):
         "%20.10s" % (msg)
            <= becomes =>
         "%s" % (utf8_width_fill(msg, 20, 10, left=False)).
+
+        "%s%.10s%s" % (prefix, msg, suffix)
+           <= becomes =>
+        "%s" % (utf8_width_fill(msg, 0, 10, prefix=prefix, suffix=suffix)).
         """
     passed_msg = msg
     width, msg = utf8_width_chop(msg, chop)
 
-    if width < fill:
+    if width >= fill:
+        if prefix or suffix:
+            msg = ''.join([prefix, msg, suffix])
+    else:
         extra = " " * (fill - width)
         if left:
             msg = ''.join([prefix, msg, suffix, extra])
@@ -408,19 +427,21 @@ def to_str(obj):
 
 try: 
     '''
-    Setup the yum translation domain and make _() translation wrapper
+    Setup the yum translation domain and make _() and P_() translation wrappers
     available.
     using ugettext to make sure translated strings are in Unicode.
     '''
     import gettext
     t = gettext.translation('yum', fallback=True)
     _ = t.ugettext
+    P_ = t.nugettext
 except:
     '''
     Something went wrong so we make a dummy _() wrapper there is just
     returning the same text
     '''
     _ = dummy_wrapper
+    P_ = dummyP_wrapper
 
 if __name__ == "__main__":
     import sys

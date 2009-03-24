@@ -75,7 +75,7 @@ class YumTerm:
     __enabled = True
 
     if hasattr(urlgrabber.progress, 'terminal_width_cached'):
-        __auto_columns = property(lambda self: _term_width())
+        columns = property(lambda self: _term_width())
 
     __cap_names = {
         'underline' : 'smul',
@@ -143,9 +143,7 @@ class YumTerm:
             return
 
         self.__enabled = True
-        if hasattr(urlgrabber.progress, 'terminal_width_cached'):
-            self.columns = self.__auto_columns
-        else:
+        if not hasattr(urlgrabber.progress, 'terminal_width_cached'):
             self.columns = 80
         self.lines = 24
 
@@ -553,8 +551,12 @@ class YumOutput:
 
         if columns is not None:
             # New style, output all info. for both old/new with old indented
-            self.simpleList(changePkg, columns=columns)
-            self.simpleList(instPkg,   columns=columns, indent=' ' * 4)
+            chi = self.conf.color_update_remote
+            if changePkg.repo.id != 'installed' and changePkg.verifyLocalPkg():
+                chi = self.conf.color_update_local
+            self.simpleList(changePkg, columns=columns, highlight=chi)
+            self.simpleList(instPkg,   columns=columns, indent=' ' * 4,
+                            highlight=self.conf.color_update_installed)
             return
 
         # Old style
@@ -702,6 +704,8 @@ class YumOutput:
         print _('\nGroup: %s') % group.ui_name
 
         verb = self.verbose_logger.isEnabledFor(logginglevels.DEBUG_3)
+        if verb:
+            print _(' Group-Id: %s') % to_unicode(group.groupid)
         pkg_names2pkgs = None
         if verb:
             pkg_names2pkgs = self._group_names2aipkgs(group.packages)
@@ -897,7 +901,14 @@ class YumOutput:
             if a is None: # gpgkeys are weird
                 a = 'noarch'
 
-            lines.append((n, a, evr, repoid, size, obsoletes))
+            # none, partial, full?
+            if po.repo.id == 'installed':
+                hi = self.conf.color_update_installed
+            elif po.verifyLocalPkg():
+                hi = self.conf.color_update_local
+            else:
+                hi = self.conf.color_update_remote
+            lines.append((n, a, evr, repoid, size, obsoletes, hi))
             #  Create a dict of field_length => number of packages, for
             # each field.
             for (d, v) in (("n",len(n)), ("v",len(evr)), ("r",len(repoid))):
@@ -948,13 +959,15 @@ class YumOutput:
         for (action, lines) in pkglist_lines:
             if lines:
                 totalmsg = u"%s:\n" % action
-            for (n, a, evr, repoid, size, obsoletes) in lines:
-                columns = ((n,   -n_wid), (a,      -a_wid),
+            for (n, a, evr, repoid, size, obsoletes, hi) in lines:
+                columns = ((n,   -n_wid, hi), (a,      -a_wid),
                            (evr, -v_wid), (repoid, -r_wid), (size, s_wid))
                 msg = self.fmtColumns(columns, u" ", u"\n")
+                hibeg, hiend = self._highlight(self.conf.color_update_installed)
                 for obspo in obsoletes:
-                    appended = _('     replacing  %s.%s %s\n\n') % (obspo.name,
-                        obspo.arch, obspo.printVer())
+                    appended = _('     replacing  %s%s%s.%s %s\n\n')
+                    appended %= (hibeg, obspo.name, hiend,
+                                 obspo.arch, obspo.printVer())
                     msg = msg+appended
                 totalmsg = totalmsg + msg
         
@@ -1016,7 +1029,8 @@ Remove   %5.5s Package(s)
                                   (_('Updated'), self.tsInfo.updated),
                                   (_('Dependency Updated'), self.tsInfo.depupdated),
                                   (_('Skipped (dependency problems)'), self.skipped_packages),
-                                  (_('Replaced'), self.tsInfo.obsoleted)]:
+                                  (_('Replaced'), self.tsInfo.obsoleted),
+                                  (_('Failed'), self.tsInfo.failed)]:
             msgs = []
             if len(pkglist) > 0:
                 out += '\n%s:\n' % action
@@ -1081,8 +1095,8 @@ Remove   %5.5s Package(s)
 
         @param cbobj: urlgrabber callback obj
         '''
-        delta_exit_chk = 2.0   # Delta between C-c's so we treat as exit
-        delta_exit_str = "two" # Human readable version of above
+        delta_exit_chk = 2.0      # Delta between C-c's so we treat as exit
+        delta_exit_str = _("two") # Human readable version of above
 
         now = time.time()
 
@@ -1209,7 +1223,7 @@ class YumCliRPMCallBack(RPMBaseCallback):
     Yum specific callback class for RPM operations.
     """
 
-    _width = property(lambda x: _term_width())
+    width = property(lambda x: _term_width())
 
     def __init__(self):
         RPMBaseCallback.__init__(self)
@@ -1220,8 +1234,6 @@ class YumCliRPMCallBack(RPMBaseCallback):
         # for a progress bar
         self.mark = "#"
         self.marks = 22
-        
-        self.width = self._width
         
     def event(self, package, action, te_current, te_total, ts_current, ts_total):
         # this is where a progress bar would be called

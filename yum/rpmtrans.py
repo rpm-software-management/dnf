@@ -25,7 +25,7 @@ import types
 import sys
 from yum.constants import *
 from yum import _
-
+import misc
 
 class NoOutputCallBack:
     def __init__(self):
@@ -301,13 +301,10 @@ class RPMTransaction:
             self._ts_done.write(msg)
             self._ts_done.flush()
         except (IOError, OSError), e:
-            try:
-                #  Having incomplete transactions is probably worse than having
-                # nothing.
-                del self._ts_done
-                os.unlink(self.ts_done_fn)
-            except:
-                pass
+            #  Having incomplete transactions is probably worse than having
+            # nothing.
+            del self._ts_done
+            misc.unlink_f(self.ts_done_fn)
         self._te_tuples.pop(0)
     
     def ts_all(self):
@@ -354,12 +351,9 @@ class RPMTransaction:
             fo.flush()
             fo.close()
         except (IOError, OSError), e:
-            try:
-                #  Having incomplete transactions is probably worse than having
-                # nothing.
-                os.unlink(self.ts_all_fn)
-            except:
-                pass
+            #  Having incomplete transactions is probably worse than having
+            # nothing.
+            misc.unlink_f(self.ts_all_fn)
 
     def callback( self, what, bytes, total, h, user ):
         if what == rpm.RPMCALLBACK_TRANS_START:
@@ -390,6 +384,9 @@ class RPMTransaction:
             self._cpioError(bytes, total, h)
         elif what == rpm.RPMCALLBACK_UNPACK_ERROR:
             self._unpackError(bytes, total, h)
+        # SCRIPT_ERROR is only in rpm >= 4.6.0
+        elif hasattr(rpm, "RPMCALLBACK_SCRIPT_ERROR") and what == rpm.RPMCALLBACK_SCRIPT_ERROR:
+            self._scriptError(bytes, total, h)
     
     
     def _transStart(self, bytes, total, h):
@@ -409,7 +406,7 @@ class RPMTransaction:
         self.lastmsg = None
         hdr = None
         if h is not None:
-            hdr, rpmloc = h
+            hdr, rpmloc = h[0], h[1]
             handle = self._makeHandle(hdr)
             fd = os.open(rpmloc, os.O_RDONLY)
             self.filehandles[handle]=fd
@@ -424,7 +421,7 @@ class RPMTransaction:
     def _instCloseFile(self, bytes, total, h):
         hdr = None
         if h is not None:
-            hdr, rpmloc = h
+            hdr, rpmloc = h[0], h[1]
             handle = self._makeHandle(hdr)
             os.close(self.filehandles[handle])
             fd = 0
@@ -448,7 +445,7 @@ class RPMTransaction:
                                 self.complete_actions, self.total_actions)
 
             else:
-                hdr, rpmloc = h
+                hdr, rpmloc = h[0], h[1]
                 pkgtup = self._dopkgtup(hdr)
                 txmbrs = self.base.tsInfo.getMembers(pkgtup=pkgtup)
                 for txmbr in txmbrs:
@@ -488,21 +485,53 @@ class RPMTransaction:
         pass
         
     def _cpioError(self, bytes, total, h):
-        (hdr, rpmloc) = h
+        hdr, rpmloc = h[0], h[1]
         pkgtup = self._dopkgtup(hdr)
         txmbrs = self.base.tsInfo.getMembers(pkgtup=pkgtup)
         for txmbr in txmbrs:
             msg = "Error in cpio payload of rpm package %s" % txmbr.po
+            txmbr.output_state = TS_FAILED
             self.display.errorlog(msg)
             # FIXME - what else should we do here? raise a failure and abort?
     
     def _unpackError(self, bytes, total, h):
-        (hdr, rpmloc) = h
+        hdr, rpmloc = h[0], h[1]
         pkgtup = self._dopkgtup(hdr)
         txmbrs = self.base.tsInfo.getMembers(pkgtup=pkgtup)
         for txmbr in txmbrs:
+            txmbr.output_state = TS_FAILED
             msg = "Error unpacking rpm package %s" % txmbr.po
             self.display.errorlog(msg)
             # FIXME - should we raise? I need a test case pkg to see what the
             # right behavior should be
                 
+    def _scriptError(self, bytes, total, h):
+        hdr, rpmloc = h[0], h[1]
+        remove_hdr = False # if we're in a clean up/remove then hdr will not be an rpm.hdr
+        if not isinstance(hdr, rpm.hdr):
+            txmbrs = [hdr]
+            remove_hdr = True
+        else:
+            pkgtup = self._dopkgtup(hdr)
+            txmbrs = self.base.tsInfo.getMembers(pkgtup=pkgtup)
+            
+        for pkg in txmbrs:
+            # "bytes" carries the failed scriptlet tag,
+            # "total" carries fatal/non-fatal status
+            scriptlet_name = rpm.tagnames.get(bytes, "<unknown>")
+            if remove_hdr:
+                package_name = pkg
+            else:
+                package_name = pkg.po
+                
+            if total:
+                msg = ("Error in %s scriptlet in rpm package %s" % 
+                        (scriptlet_name, package_name))
+                if not remove_hdr:        
+                    pkg.output_state = TS_FAILED
+            else:
+                msg = ("Non-fatal %s scriptlet failure in rpm package %s" % 
+                       (scriptlet_name, package_name))
+            self.display.errorlog(msg)
+            # FIXME - what else should we do here? raise a failure and abort?
+    

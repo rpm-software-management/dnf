@@ -100,7 +100,7 @@ class SimpleUpdateTests(OperationsTests):
         p = self.pkgs
         res, msg = self.runOperation(['install', 'zsh-utils'], [p.installed_noarch], [p.update_x86_64, p.update_i386, p.requires_update])
         self.assert_(res=='ok', msg)
-        if os.uname()[-1] == 'x86_64':
+        if self.canonArch == 'x86_64':
             self.assertResult((p.update_x86_64, p.requires_update))
         else:
             self.assertResult((p.update_i386, p.requires_update))
@@ -108,7 +108,7 @@ class SimpleUpdateTests(OperationsTests):
         p = self.pkgs
         res, msg = self.runOperation(['install', 'zsh-utils'], [p.installed_noarch], [p.update_i386, p.update_x86_64, p.requires_update])
         self.assert_(res=='ok', msg)
-        if os.uname()[-1] == 'x86_64':
+        if self.canonArch == 'x86_64':
             self.assertResult((p.update_x86_64, p.requires_update))
         else:
             self.assertResult((p.update_i386, p.requires_update))
@@ -479,3 +479,207 @@ class SimpleUpdateTests(OperationsTests):
                                      [foo20, bar12])
         self.assert_(res=='ok', msg)
         self.assertResult((bar12,))
+
+    def testUpdateMultiRequiresVersions1(self):
+        pi11 = FakePackage('perl', '1', '1', '0', 'i386')
+        pr11 = FakePackage('perl', '1', '1', '0', 'i386')
+        p12 = FakePackage('perl', '1', '2', '0', 'i386')
+
+        pvi11 = FakePackage('perl-version', '1', '1', '0', 'i386')
+        pvi11.addRequires('perl', 'GE', ('0', '0', '0'))
+        pvi11.addRequires('perl', 'EQ', ('0', '1', '1'))
+        pvr11 = FakePackage('perl-version', '1', '1', '0', 'i386')
+        pvr11.addRequires('perl', 'GE', ('0', '0', '0'))
+        pvr11.addRequires('perl', 'EQ', ('0', '1', '1'))
+        pv12 = FakePackage('perl-version', '1', '2', '0', 'i386')
+        pv12.addRequires('perl', 'GE', ('0', '0', '0'))
+        pv12.addRequires('perl', 'EQ', ('0', '1', '2'))
+
+        res, msg = self.runOperation(['update', 'perl'],
+                                     [pi11, pvi11],
+                                     [p12, pv12])
+        self.assert_(res=='ok', msg)
+        self.assertResult((p12,pv12))
+
+    def testUpdateMultiRequiresVersions2(self):
+        pi11 = FakePackage('perl', '1', '1', '0', 'i386')
+        pr11 = FakePackage('perl', '1', '1', '0', 'i386')
+        p12 = FakePackage('perl', '1', '2', '0', 'i386')
+
+        pvi11 = FakePackage('perl-version', '1', '1', '0', 'i386')
+        pvi11.addRequires('perl', 'GE', ('0', '0', '0'))
+        pvi11.addRequires('perl', 'EQ', ('0', '1', '1'))
+        pvr11 = FakePackage('perl-version', '1', '1', '0', 'i386')
+        pvr11.addRequires('perl', 'GE', ('0', '0', '0'))
+        pvr11.addRequires('perl', 'EQ', ('0', '1', '1'))
+        pv12 = FakePackage('perl-version', '1', '2', '0', 'i386')
+        pv12.addRequires('perl', 'GE', ('0', '0', '0'))
+        pv12.addRequires('perl', 'EQ', ('0', '1', '2'))
+
+        res, msg = self.runOperation(['update', 'perl'],
+                                     [pi11, pvi11],
+                                     [pr11,p12, pvr11,pv12])
+        self.assert_(res=='ok', msg)
+        self.assertResult((p12,pv12))
+
+    def testUpdateMultiRequiresVersions3(self):
+        pi11 = FakePackage('perl', '1', '1', '0', 'i386')
+        pr11 = FakePackage('perl', '1', '1', '0', 'i386')
+        p12 = FakePackage('perl', '1', '2', '0', 'i386')
+
+        pvi11 = FakePackage('perl-version', '1', '1', '0', 'i386')
+        pvi11.addRequires('perl', 'GE', ('0', '0', '0'))
+        pvi11.addRequires('perl', 'EQ', ('0', '1', '1'))
+        pvr11 = FakePackage('perl-version', '1', '1', '0', 'i386')
+        pvr11.addRequires('perl', 'GE', ('0', '0', '0'))
+        pvr11.addRequires('perl', 'EQ', ('0', '1', '1'))
+        pv12 = FakePackage('perl-version', '1', '2', '0', 'i386')
+        pv12.addRequires('perl', 'GE', ('0', '0', '0'))
+        pv12.addRequires('perl', 'EQ', ('0', '1', '2'))
+
+        res, msg = self.runOperation(['update', 'perl-version'],
+                                     [pi11, pvi11],
+                                     [pr11,p12, pvr11,pv12])
+        self.assert_(res=='ok', msg)
+        self.assertResult((p12,pv12))
+
+    def testUpdateMultiRequiresVersions4(self):
+        pi11 = FakePackage('perl', '1', '1', '0', 'i386')
+        pr11 = FakePackage('perl', '1', '1', '0', 'i386')
+        p12 = FakePackage('perl', '1', '2', '0', 'i386')
+
+        pvi11 = FakePackage('perl-version', '1', '1', '0', 'i386')
+        pvi11.addRequires('perl', 'GE', ('0', '0', '0'))
+        pvi11.addRequires('perl', 'EQ', ('0', '1', '1'))
+        pvr11 = FakePackage('perl-version', '1', '1', '0', 'i386')
+        pvr11.addRequires('perl', 'GE', ('0', '0', '0'))
+        pvr11.addRequires('perl', 'EQ', ('0', '1', '1'))
+        pv12 = FakePackage('perl-version', '1', '2', '0', 'i386')
+        pv12.addRequires('perl', 'GE', ('0', '0', '0'))
+        pv12.addRequires('perl', 'EQ', ('0', '1', '2'))
+
+        pbi11 = FakePackage('perl-blah', '1', '1', '0', 'i386')
+        pbi11.addRequires('perl', 'EQ', ('0', '1', '1'))
+        pbi11.addRequires('perl', 'GE', ('0', '0', '0'))
+        pbr11 = FakePackage('perl-blah', '1', '1', '0', 'i386')
+        pbr11.addRequires('perl', 'EQ', ('0', '1', '1'))
+        pbr11.addRequires('perl', 'GE', ('0', '0', '0'))
+        pb12 = FakePackage('perl-blah', '1', '2', '0', 'i386')
+        pb12.addRequires('perl', 'EQ', ('0', '1', '2'))
+        pb12.addRequires('perl', 'GE', ('0', '0', '0'))
+
+        res, msg = self.runOperation(['update', 'perl-version'],
+                                     [pi11, pbi11, pvi11],
+                                     [pr11,p12, pbr11,pb12, pvr11,pv12])
+        self.assert_(res=='ok', msg)
+        self.assertResult((p12,pb12,pv12))
+
+    def testUpdateMultiRequiresVersions5(self):
+        pi11 = FakePackage('perl', '1', '1', '0', 'i386')
+        pr11 = FakePackage('perl', '1', '1', '0', 'i386')
+        p12 = FakePackage('perl', '1', '2', '0', 'i386')
+
+        pvi11 = FakePackage('perl-version', '1', '1', '0', 'i386')
+        pvi11.addRequires('perl', 'GE', ('0', '0', '0'))
+        pvi11.addRequires('perl', 'EQ', ('0', '1', '1'))
+        pvr11 = FakePackage('perl-version', '1', '1', '0', 'i386')
+        pvr11.addRequires('perl', 'GE', ('0', '0', '0'))
+        pvr11.addRequires('perl', 'EQ', ('0', '1', '1'))
+        pv12 = FakePackage('perl-version', '1', '2', '0', 'i386')
+        pv12.addRequires('perl', 'GE', ('0', '0', '0'))
+        pv12.addRequires('perl', 'EQ', ('0', '1', '2'))
+
+        pbi11 = FakePackage('perl-blah', '1', '1', '0', 'i386')
+        pbi11.addRequires('perl', 'EQ', ('0', '1', '1'))
+        pbi11.addRequires('perl', 'GE', ('0', '0', '0'))
+        pbr11 = FakePackage('perl-blah', '1', '1', '0', 'i386')
+        pbr11.addRequires('perl', 'EQ', ('0', '1', '1'))
+        pbr11.addRequires('perl', 'GE', ('0', '0', '0'))
+        pb12 = FakePackage('perl-blah', '1', '2', '0', 'i386')
+        pb12.addRequires('perl', 'EQ', ('0', '1', '2'))
+        pb12.addRequires('perl', 'GE', ('0', '0', '0'))
+
+        res, msg = self.runOperation(['update', 'perl-blah'],
+                                     [pi11, pbi11, pvi11],
+                                     [pr11,p12, pbr11,pb12, pvr11,pv12])
+        self.assert_(res=='ok', msg)
+        self.assertResult((p12,pb12,pv12))
+
+    def testUpdateMultiRequiresVersions8(self):
+        pi11 = FakePackage('perl', '1', '1', '0', 'i386')
+        pr11 = FakePackage('perl', '1', '1', '0', 'i386')
+        p12 = FakePackage('perl', '1', '2', '0', 'i386')
+
+        pvi11 = FakePackage('perl-version', '1', '1', '0', 'i386')
+        pvi11.addRequires('perl', 'GE', ('0', '0', '0'))
+        pvi11.addRequires('perl', 'EQ', ('0', '1', '1'))
+        pvr11 = FakePackage('perl-version', '1', '1', '0', 'i386')
+        pvr11.addRequires('perl', 'GE', ('0', '0', '0'))
+        pvr11.addRequires('perl', 'EQ', ('0', '1', '1'))
+        pv12 = FakePackage('perl-version', '1', '2', '0', 'i386')
+        pv12.addRequires('perl', 'GE', ('0', '0', '0'))
+        pv12.addRequires('perl', 'EQ', ('0', '1', '2'))
+        pv13 = FakePackage('perl-version', '1', '3', '0', 'i386')
+        pv13.addRequires('perl', 'GE', ('0', '0', '0'))
+        pv13.addRequires('perl', 'EQ', ('0', '1', '3'))
+
+        res, msg = self.runOperation(['update', 'perl'],
+                                     [pi11, pvi11],
+                                     [pr11,p12, pvr11,pv12,pv13])
+        # FIXME: This fails ... it tries to install pv13 instead
+        self.assert_(res=='err', msg)
+        # self.assert_(res=='ok', msg)
+        # self.assertResult((p12,pv12))
+
+    def testInstallFilenamePkgSplit1(self):
+        pi11 = FakePackage('phoo', '1', '1', '0', 'i386')
+        pi11.addProvides('/path/to/phooy', 'EQ', ('0', '1', '1'))
+        pr11 = FakePackage('phoo', '1', '1', '0', 'i386')
+        pr11.addProvides('/path/to/phooy', 'EQ', ('0', '1', '1'))
+        p12 = FakePackage('phoo', '1', '2', '0', 'i386')
+        py12 = FakePackage('phoo-y', '1', '2', '0', 'i386')
+        py12.addProvides('/path/to/phooy', 'EQ', ('0', '1', '2'))
+
+
+        res, msg = self.runOperation(['update', '/path/to/phooy'],
+                                     [pi11],
+                                     [pr11,p12, py12])
+        self.assert_(res=='ok', msg)
+        # FIXME: We'd really like it to be:
+        # self.assertResult((p12,py12))
+        # ...but there is no info. you can work this out with.
+        self.assertResult((p12,))
+
+    def testInstallFilenamePkgSplit2(self):
+        pi11 = FakePackage('phoo', '1', '1', '0', 'i386')
+        pi11.addProvides('/path/to/phooy', 'EQ', ('0', '1', '1'))
+        pr11 = FakePackage('phoo', '1', '1', '0', 'i386')
+        pr11.addProvides('/path/to/phooy', 'EQ', ('0', '1', '1'))
+        p12 = FakePackage('phoo', '1', '2', '0', 'i386')
+        p12.addObsoletes('phoo', 'LE', ('0', '1', '1'))
+        py12 = FakePackage('phoo-y', '1', '2', '0', 'i386')
+        py12.addProvides('/path/to/phooy', 'EQ', ('0', '1', '2'))
+        py12.addObsoletes('phoo', 'LE', ('0', '1', '1'))
+
+        res, msg = self.runOperation(['update', '/path/to/phooy'],
+                                     [pi11],
+                                     [pr11,p12, py12])
+        self.assert_(res=='ok', msg)
+        self.assertResult((p12,py12))
+
+    def testInstallFilenamePkgSplit3(self):
+        p11 = FakePackage('phoo', '1', '1', '0', 'i386')
+        p11.addProvides('/path/to/phooy', 'EQ', ('0', '1', '1'))
+        pi12 = FakePackage('phoo', '1', '2', '0', 'i386')
+        pi12.addObsoletes('phoo', 'LE', ('0', '1', '1'))
+        pr12 = FakePackage('phoo', '1', '2', '0', 'i386')
+        pr12.addObsoletes('phoo', 'LE', ('0', '1', '1'))
+        py12 = FakePackage('phoo-y', '1', '2', '0', 'i386')
+        py12.addProvides('/path/to/phooy', 'EQ', ('0', '1', '2'))
+        py12.addObsoletes('phoo', 'LE', ('0', '1', '1'))
+
+        res, msg = self.runOperation(['install', '/path/to/phooy'],
+                                     [pi12],
+                                     [p11, pr12, py12])
+        self.assert_(res=='ok', msg)
+        self.assertResult((pi12,py12))

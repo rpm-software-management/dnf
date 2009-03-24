@@ -28,6 +28,7 @@ TS_OBSOLETED = 50
 TS_OBSOLETING = 60
 TS_AVAILABLE = 70
 TS_UPDATED = 90
+TS_FAILED = 100
 
 TS_INSTALL_STATES = [TS_INSTALL, TS_TRUEINSTALL, TS_UPDATE, TS_OBSOLETING]
 TS_REMOVE_STATES = [TS_ERASE, TS_OBSOLETED, TS_UPDATED]
@@ -107,3 +108,6 @@ PATTERNS_MAX = 8
 #  We have another value here because name is indexed and sqlite is _much_
 # faster even at large numbers of patterns.
 PATTERNS_INDEXED_MAX = 128
+
+RPM_CHECKSUM_TYPES = { 1:'md5', 2:'sha1', 8:'sha256', 9:'sha384', 10:'sha512',
+                       11:'sha224' } # from RFC 4880

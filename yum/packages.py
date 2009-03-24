@@ -34,6 +34,7 @@ from rpmUtils.miscutils import flagToString, stringToVersion
 import Errors
 import errno
 import struct
+from constants import *
 
 import urlparse
 urlparse.uses_fragment.append("media")
@@ -41,14 +42,25 @@ urlparse.uses_fragment.append("media")
 # For verify
 import pwd
 import grp
+import sys
 
 def comparePoEVR(po1, po2):
     """
-    Compare two PackageEVR objects.
+    Compare two Package or PackageEVR objects.
     """
     (e1, v1, r1) = (po1.epoch, po1.version, po1.release)
     (e2, v2, r2) = (po2.epoch, po2.version, po2.release)
     return rpmUtils.miscutils.compareEVR((e1, v1, r1), (e2, v2, r2))
+def comparePoEVREQ(po1, po2):
+    """
+    Compare two Package or PackageEVR objects for equality.
+    """
+    (e1, v1, r1) = (po1.epoch, po1.version, po1.release)
+    (e2, v2, r2) = (po2.epoch, po2.version, po2.release)
+    if r1 != r2: return False
+    if v1 != v2: return False
+    if e1 != e2: return False
+    return True
 
 def buildPkgRefDict(pkgs, casematch=True):
     """take a list of pkg objects and return a dict the contains all the possible
@@ -141,10 +153,20 @@ def parsePackages(pkgs, usercommands, casematch=0,
         raise ValueError, "Bad value for unique: %s" % unique
     return exactmatch, matched, unmatched
 
+class FakeSack:
+    """ Fake PackageSack to use with FakeRepository"""
+    def __init__(self):
+        pass # This is fake, so do nothing
+    
+    def delPackage(self, obj):
+        """delete a pkgobject, do nothing, but make localpackages work with --skip-broken"""
+        pass # This is fake, so do nothing
+            
 class FakeRepository:
     """Fake repository class for use in rpmsack package objects"""
     def __init__(self, repoid):
         self.id = repoid
+        self.sack = FakeSack()
 
     def __cmp__(self, other):
         if self.id > other.id:
@@ -207,10 +229,29 @@ class PackageObject(object):
         if ret == 0 and hasattr(self, 'repoid') and hasattr(other, 'repoid'):
             ret = cmp(self.repoid, other.repoid)
         return ret
+    def __eq__(self, other):
+        """ Compare packages for yes/no equality, includes everything in the
+            UI package comparison. """
+        if not other:
+            return False
+        if self.pkgtup != other.pkgtup:
+            return False
+        if self.repoid != other.repoid:
+            return False
+        return True
+    def __ne__(self, other):
+        if not (self == other):
+            return True
+        return False
 
     def verEQ(self, other):
-        """ Uses verCMP, tests if the _rpm-versions_ are the same. """
-        return self.verCMP(other) == 0
+        """ Compare package to another one, only rpm-version equality. """
+        if not other:
+            return False
+        ret = cmp(self.name, other.name)
+        if ret != 0:
+            return False
+        return comparePoEVREQ(self, other)
     def verLT(self, other):
         """ Uses verCMP, tests if the other _rpm-version_ is <  ours. """
         return self.verCMP(other) <  0
@@ -259,22 +300,21 @@ class RpmBase(object):
         self.licenses = []
         self._hash = None
 
-    #  Do we still need __eq__ and __ne__ given that
-    # PackageObject has a working __cmp__?
+    # FIXME: This is identical to PackageObject.__eq__ and __ne__, should be
+    #        remove (is .repoid fine here? ... we need it, maybe .repo.id).
     def __eq__(self, other):
         if not other: # check if other not is a package object. 
             return False
-        if comparePoEVR(self, other) == 0 and self.arch == other.arch and self.name == other.name:
+        if self.pkgtup != other.pkgtup:
+            return False
+        if self.repoid != other.repoid:
+            return False
+        return True
+    def __ne__(self, other):
+        if not (self == other):
             return True
         return False
 
-    def __ne__(self, other):
-        if not other:
-            return True
-        if comparePoEVR(self, other) != 0 or self.arch != other.arch or self.name != other.name:
-            return True
-        return False
-       
     def returnEVR(self):
         return PackageEVR(self.epoch, self.version, self.release)
     
@@ -432,7 +472,9 @@ class PackageEVR:
     def __init__(self,e,v,r):
         self.epoch = e
         self.ver = v
+        self.version = v
         self.rel = r
+        self.release = r
         
     def compare(self,other):
         return rpmUtils.miscutils.compareEVR((self.epoch, self.ver, self.rel), (other.epoch, other.ver, other.rel))
@@ -459,12 +501,10 @@ class PackageEVR:
         return False
 
     def __eq__(self, other):
-        if self.compare(other) == 0:
-            return True
-        return False
+        return comparePoEVREQ(self, other)
 
     def __ne__(self, other):
-        if self.compare(other) != 0:
+        if not (self == other):
             return True
         return False
     
@@ -630,7 +670,7 @@ class YumAvailablePackage(PackageObject, RpmBase):
     def verifyLocalPkg(self):
         """check the package checksum vs the localPkg
            return True if pkg is good, False if not"""
-           
+
         (csum_type, csum) = self.returnIdSum()
         
         try:
@@ -756,26 +796,27 @@ class YumAvailablePackage(PackageObject, RpmBase):
         
         packager = url = ''
         if self.packager:
-            packager = misc.to_xml(self.packager)
+            packager = misc.to_unicode(misc.to_xml(self.packager))
         
         if self.url:
-            url = misc.to_xml(self.url)
-                    
+            url = misc.to_unicode(misc.to_xml(self.url))
+        (csum_type, csum, csumid) = self.checksums[0]
         msg = """
   <name>%s</name>
   <arch>%s</arch>
   <version epoch="%s" ver="%s" rel="%s"/>
-  <checksum type="sha" pkgid="YES">%s</checksum>
+  <checksum type="%s" pkgid="YES">%s</checksum>
   <summary>%s</summary>
   <description>%s</description>
   <packager>%s</packager>
   <url>%s</url>
   <time file="%s" build="%s"/>
   <size package="%s" installed="%s" archive="%s"/>\n""" % (self.name, 
-         self.arch, self.epoch, self.ver, self.rel, self.checksum, 
-         misc.to_xml(self.summary), misc.to_xml(self.description), packager, 
-         url, self.filetime, self.buildtime, self.packagesize, self.size, 
-         self.archivesize)
+         self.arch, self.epoch, self.ver, self.rel, csum_type, csum, 
+         misc.to_unicode(misc.to_xml(self.summary)), 
+         misc.to_unicode(misc.to_xml(self.description)), 
+         packager, url, self.filetime, 
+         self.buildtime, self.packagesize, self.size, self.archivesize)
         
         msg += self._return_remote_location()
         return msg
@@ -837,37 +878,23 @@ class YumAvailablePackage(PackageObject, RpmBase):
         return msg
     
     def _return_primary_files(self, list_of_files=None):
-        fileglobs = ['.*bin\/.*', '^\/etc\/.*', '^\/usr\/lib\/sendmail$']
-        file_re = []
-        for glob in fileglobs:
-            file_re.append(re.compile(glob))        
-
-
         returns = {}
         if list_of_files is None:
             list_of_files = self.returnFileEntries('file')
         for item in list_of_files:
             if item is None:
                 continue
-            for glob in file_re:
-                if glob.match(item):
-                    returns[item] = 1
+            if misc.re_primary_filename(item):
+                returns[item] = 1
         return returns.keys()
 
     def _return_primary_dirs(self):
-        dirglobs = ['.*bin\/.*', '^\/etc\/.*']
-        dir_re = []
-        
-        for glob in dirglobs:
-            dir_re.append(re.compile(glob))
-
         returns = {}
         for item in self.returnFileEntries('dir'):
             if item is None:
                 continue
-            for glob in dir_re:
-                if glob.match(item):
-                    returns[item] = 1
+            if misc.re_primary_dirname(item):
+                returns[item] = 1
         return returns.keys()
         
         
@@ -927,11 +954,12 @@ class YumAvailablePackage(PackageObject, RpmBase):
         if not self.changelog:
             return ""
         msg = "\n"
-        clog_count = 0
-        for (ts, author, content) in reversed(sorted(self.changelog)):
-            if clog_limit and clog_count >= clog_limit:
-                break
-            clog_count += 1
+        # We need to output them "backwards", so the oldest is first
+        if not clog_limit:
+            clogs = self.changelog
+        else:
+            clogs = self.changelog[:clog_limit]
+        for (ts, author, content) in reversed(clogs):
             msg += """<changelog author="%s" date="%s">%s</changelog>\n""" % (
                         misc.to_xml(author, attrib=True), misc.to_xml(str(ts)), 
                         misc.to_xml(content))
@@ -971,7 +999,10 @@ class YumHeaderPackage(YumAvailablePackage):
 
         self.hdr = hdr
         self.name = misc.share_data(self.hdr['name'])
-        self.arch = misc.share_data(self.hdr['arch'])
+        this_a = self.hdr['arch']
+        if not this_a: # this should only happen on gpgkeys and other "odd" pkgs
+            this_a = 'noarch'
+        self.arch = misc.share_data(this_a)
         self.epoch = misc.share_data(self.doepoch())
         self.version = misc.share_data(self.hdr['version'])
         self.release = misc.share_data(self.hdr['release'])
@@ -1190,7 +1221,7 @@ class _PkgVerifyProb:
         return ret
 
 # From: lib/rpmvf.h ... not in rpm *sigh*
-_RPMVERIFY_MD5      = (1 << 0)
+_RPMVERIFY_DIGEST     = (1 << 0)
 _RPMVERIFY_FILESIZE = (1 << 1)
 _RPMVERIFY_LINKTO   = (1 << 2)
 _RPMVERIFY_USER     = (1 << 3)
@@ -1234,9 +1265,18 @@ class YumInstalledPackage(YumHeaderPackage):
         prelink_cmd = "/usr/sbin/prelink"
         have_prelink = os.path.exists(prelink_cmd)
 
+        # determine what checksum algo to use:
+        csum_type = 'md5' # default for legacy
+        if hasattr(rpm, 'RPMTAG_FILEDIGESTALGO'):
+            csum_num = self.hdr[rpm.RPMTAG_FILEDIGESTALGO]
+            if csum_num:
+                if csum_num in RPM_CHECKSUM_TYPES:
+                    csum_type = RPM_CHECKSUM_TYPES[csum_num]
+                # maybe an else with an error code here? or even a verify issue?
+
         for filetuple in fi:
             #tuple is: (filename, fsize, mode, mtime, flags, frdev?, inode, link,
-            #           state, vflags?, user, group, md5sum(or none for dirs) 
+            #           state, vflags?, user, group, checksum(or none for dirs) 
             (fn, size, mode, mtime, flags, dev, inode, link, state, vflags, 
                        user, group, csum) = filetuple
             if patterns:
@@ -1376,15 +1416,15 @@ class YumInstalledPackage(YumHeaderPackage):
                 # just so we get the size correct.
                 if (check_content and
                     ((have_prelink and vflags & _RPMVERIFY_FILESIZE) or
-                     (csum and vflags & _RPMVERIFY_MD5))):
+                     (csum and vflags & _RPMVERIFY_DIGEST))):
                     try:
-                        my_csum = misc.checksum('md5', fn)
+                        my_csum = misc.checksum(csum_type, fn)
                         gen_csum = True
                     except Errors.MiscError:
                         # Don't have permission?
                         gen_csum = False
 
-                    if csum and vflags & _RPMVERIFY_MD5 and not gen_csum:
+                    if csum and vflags & _RPMVERIFY_DIGEST and not gen_csum:
                         prob = _PkgVerifyProb('genchecksum',
                                               'checksum not available', ftypes)
                         prob.database_value = csum
@@ -1397,10 +1437,10 @@ class YumInstalledPackage(YumHeaderPackage):
                         (ig, fp,er) = os.popen3([prelink_cmd, "-y", fn])
                         # er.read(1024 * 1024) # Try and get most of the stderr
                         fp = _CountedReadFile(fp)
-                        my_csum = misc.checksum('md5', fp)
+                        my_csum = misc.checksum(csum_type, fp)
                         my_st_size = fp.read_size
 
-                    if (csum and vflags & _RPMVERIFY_MD5 and gen_csum and
+                    if (csum and vflags & _RPMVERIFY_DIGEST and gen_csum and
                         my_csum != csum):
                         prob = _PkgVerifyProb('checksum',
                                               'checksum does not match', ftypes)
@@ -1477,7 +1517,7 @@ class YumLocalPackage(YumHeaderPackage):
         self._hdrstart = None
         self._hdrend = None
         self.arch = self.isSrpm()
-        self.checksum_type = 'sha'
+        self.checksum_type = 'sha256'
 
         # these can be set by callers that need these features (ex: createrepo)
         self._reldir = None 
@@ -1494,14 +1534,19 @@ class YumLocalPackage(YumHeaderPackage):
     def localPkg(self):
         return self.localpath
     
-    def _do_checksum(self, checksum_type='sha'):
+    def _do_checksum(self, checksum_type='sha256'):
         if not self._checksum:
             self._checksum = misc.checksum(checksum_type, self.localpath)
-            
+            self._checksums = [(checksum_type, self._checksum, 1)]
+
         return self._checksum    
 
     checksum = property(fget=lambda self: self._do_checksum())   
-    
+
+    def returnChecksums(self):
+        self._do_checksum()
+        return self._checksums
+
     def _get_header_byte_range(self):
         """takes an rpm file or fileobject and returns byteranges for location of the header"""
         if self._hdrstart and self._hdrend:

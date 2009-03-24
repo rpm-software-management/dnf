@@ -96,6 +96,9 @@ class RPMDBPackageSack(PackageSackBase):
         self._get_pro_cache = {}
         self._get_req_cache  = {}
         self.ts = None
+        self.auto_close = False # this forces a self.ts.close() after
+                                     # most operations so it doesn't leave
+                                     # any lingering locks.
 
         self._cache = {
             'provides' : { },
@@ -135,6 +138,8 @@ class RPMDBPackageSack(PackageSackBase):
     def readOnlyTS(self):
         if not self.ts:
             self.ts =  initReadOnlyTransaction(root=self.root)
+        if not self.ts.open:
+            self.ts = initReadOnlyTransaction(root=self.root)
         return self.ts
 
     def buildIndexes(self):
@@ -168,6 +173,9 @@ class RPMDBPackageSack(PackageSackBase):
             if not result.has_key(pkg.pkgid):
                 result[pkg.pkgid] = pkg
         
+        if self.auto_close:
+            self.ts.close()
+
         return result.values()
 
     def searchFiles(self, name):
@@ -184,6 +192,10 @@ class RPMDBPackageSack(PackageSackBase):
         del mi
 
         result = result.values()
+
+        if self.auto_close:
+            self.ts.close()
+
         return result
         
     def searchPrco(self, name, prcotype):
@@ -195,7 +207,7 @@ class RPMDBPackageSack(PackageSackBase):
         ts = self.readOnlyTS()
         result = {}
         tag = self.DEP_TABLE[prcotype][0]
-        mi = ts.dbMatch(tag, name)
+        mi = ts.dbMatch(tag, misc.to_utf8(name))
         for hdr in mi:
             po = self._makePackageObject(hdr, mi.instance())
             result[po.pkgid] = po
@@ -209,6 +221,10 @@ class RPMDBPackageSack(PackageSackBase):
         
         result = result.values()
         self._cache[prcotype][name] = result
+
+        if self.auto_close:
+            self.ts.close()
+
         return result
 
     def searchProvides(self, name):
@@ -363,6 +379,9 @@ class RPMDBPackageSack(PackageSackBase):
             if hdr['name'] != 'gpg-pubkey':
                 yield (hdr, mi.instance())
         del mi
+        if self.auto_close:
+            self.ts.close()
+
 
     def _header_from_index(self, idx):
         """returns a package header having been given an index"""
@@ -382,6 +401,9 @@ class RPMDBPackageSack(PackageSackBase):
             del hdr
 
         del mi
+        if self.auto_close:
+            self.ts.close()
+
 
     def _search(self, name=None, epoch=None, ver=None, rel=None, arch=None):
         '''Generator that yields matching packages
@@ -422,6 +444,10 @@ class RPMDBPackageSack(PackageSackBase):
                     break
             else:
                 ret.append(po)
+
+        if self.auto_close:
+            self.ts.close()
+
         return ret
 
     def _makePackageObject(self, hdr, index):

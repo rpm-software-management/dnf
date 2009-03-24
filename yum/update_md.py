@@ -24,7 +24,7 @@ Update metadata (updateinfo.xml) parsing.
 import sys
 import gzip
 
-from yum.i18n import utf8_text_wrap
+from yum.i18n import utf8_text_wrap, to_utf8
 from yum.yumRepo import YumRepository
 from yum.misc import to_xml
 
@@ -377,11 +377,13 @@ class UpdateMetadata(object):
                             no = self._no_cache.setdefault(file['name'], set())
                             no.add(un)
 
-    def __str__(self):
-        ret = ''
+    def __unicode__(self):
+        ret = u''
         for notice in self.notices:
-            ret += str(notice)
+            ret += unicode(notice)
         return ret
+    def __str__(self):
+        return to_utf8(self.__unicode__())
 
     def xml(self, fileobj=None):
         msg = """<?xml version="1.0"?>\n<updates>"""
@@ -408,6 +410,9 @@ class UpdateMetadata(object):
 
 def main():
     """ update_md test function. """
+    import yum.misc
+
+    yum.misc.setup_locale()
     def usage():
         print >> sys.stderr, "Usage: %s <update metadata> ..." % sys.argv[0]
         sys.exit(1)
@@ -420,7 +425,7 @@ def main():
         um = UpdateMetadata()
         for srcfile in sys.argv[1:]:
             um.add(srcfile)
-        print um
+        print unicode(um)
     except IOError:
         print >> sys.stderr, "%s: No such file:\'%s\'" % (sys.argv[0],
                                                           sys.argv[1:])

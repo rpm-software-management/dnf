@@ -23,6 +23,7 @@ import warnings
 import re
 import fnmatch
 import misc
+from packages import parsePackages
 
 class PackageSackBase(object):
     """Base class that provides the interface for PackageSacks."""
@@ -38,6 +39,20 @@ class PackageSackBase(object):
             return ret.__iter__()
         else:
             return iter(ret)
+
+    def __cmp__(self, other):
+        if other is None:
+            return 1
+
+        s_repos = list(self.added)
+        o_repos = list(other.added)
+        if len(s_repos) != len(o_repos):
+            return len(s_repos) - len(o_repos)
+        for (s_repo, o_repo) in zip(sorted(s_repos), sorted(o_repos)):
+            ret = cmp(s_repo, o_repo)
+            if ret:
+                return ret
+        return 0
 
     def setCompatArchs(self, compatArchs):
         raise NotImplementedError()
@@ -219,6 +234,18 @@ class PackageSackBase(object):
         """returns a list of package objects that are not required by
            any other package in this repository"""
            
+        def _return_all_provides(po):
+            """ Return all the provides, via. yield. """
+            # These are done one by one, so that we get lazy loading
+            for prov in po.provides_names:
+                yield prov
+            for prov in po.filelist:
+                yield prov
+            for prov in po.dirlist:
+                yield prov
+            for prov in po.ghostlist:
+                yield prov
+
         # fixme - maybe cache this list?
         
         req = {}
@@ -235,7 +262,7 @@ class PackageSackBase(object):
      
         for po in self.returnPackages(repoid=repoid):
             preq = 0
-            for p in po.provides_names + po.filelist + po.dirlist + po.ghostlist:
+            for p in _return_all_provides(po):
                 if req.has_key(p):
                     # Don't count a package that provides its require
                     s = req[p]
@@ -259,7 +286,7 @@ class MetaSack(PackageSackBase):
 
     def __len__(self):
         ret = 0
-        for sack in self.sacks.values():
+        for sack in sorted(self.sacks.values()):
             ret += len(sack)
         return ret
 
@@ -448,7 +475,7 @@ class MetaSack(PackageSackBase):
 
     def _computeAggregateListResult(self, methodName, *args):
         result = []
-        for sack in self.sacks.values():
+        for sack in sorted(self.sacks.values()):
             if hasattr(sack, methodName):
                 method = getattr(sack, methodName)
                 try:
@@ -463,7 +490,7 @@ class MetaSack(PackageSackBase):
 
     def _computeAggregateDictResult(self, methodName, *args):
         result = {}
-        for sack in self.sacks.values():
+        for sack in sorted(self.sacks.values()):
             if hasattr(sack, methodName):
                 method = getattr(sack, methodName)
                 try:
@@ -752,6 +779,10 @@ class PackageSack(PackageSackBase):
                 # nothing to return
                 pass
         
+        if patterns:
+            returnList = parsePackages(returnList, patterns, not ignore_case,
+                                       unique='repo-pkgkey')
+            returnList = returnList[0] + returnList[1]
         return returnList
 
     def returnNewestByNameArch(self, naTup=None,

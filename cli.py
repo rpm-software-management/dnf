@@ -175,14 +175,18 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
        
         # Read up configuration options and initialise plugins
         try:
-            self._getConfig(opts.conffile, root, 
-                    init_plugins=not opts.noplugins,
-                    plugin_types=(yum.plugins.TYPE_CORE, yum.plugins.TYPE_INTERACTIVE),
-                    optparser=self.optparser,
-                    debuglevel=opts.debuglevel,
-                    errorlevel=opts.errorlevel,
-                    disabled_plugins=self.optparser._splitArg(opts.disableplugins),
-                    enabled_plugins=self.optparser._splitArg(opts.enableplugins))
+            pc = self.preconf
+            pc.fn = opts.conffile
+            pc.root = root
+            pc.init_plugins = not opts.noplugins
+            pc.plugin_types = (yum.plugins.TYPE_CORE,
+                               yum.plugins.TYPE_INTERACTIVE)
+            pc.optparser = self.optparser
+            pc.debuglevel = opts.debuglevel
+            pc.errorlevel = opts.errorlevel
+            pc.disabled_plugins = self.optparser._splitArg(opts.disableplugins)
+            pc.enabled_plugins  = self.optparser._splitArg(opts.enableplugins)
+            self.conf
                     
         except yum.Errors.ConfigError, e:
             self.logger.critical(_('Config Error: %s'), e)
@@ -205,7 +209,7 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
             done = False
             def sm_ui_time(x):
                 return time.strftime("%Y-%m-%d %H:%M", time.gmtime(x))
-            for pkg in self.rpmdb.returnPackages(patterns=yum_progs):
+            for pkg in sorted(self.rpmdb.returnPackages(patterns=yum_progs)):
                 # We should only have 1 version of each...
                 if done: print ""
                 done = True
@@ -250,8 +254,10 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         base command + argument makes any sense at all""" 
 
         self.verbose_logger.debug('Yum Version: %s', yum.__version__)
-        self.verbose_logger.debug('COMMAND: %s', self.cmdstring)
-        self.verbose_logger.debug('Installroot: %s', self.conf.installroot)
+        self.verbose_logger.log(yum.logginglevels.DEBUG_4,
+                                'COMMAND: %s', self.cmdstring)
+        self.verbose_logger.log(yum.logginglevels.DEBUG_4,
+                                'Installroot: %s', self.conf.installroot)
         if len(self.conf.commands) == 0 and len(self.cmds) < 1:
             self.cmds = self.conf.commands
         else:
@@ -265,9 +271,10 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         self.extcmds = self.cmds[1:] # out extended arguments/commands
         
         if len(self.extcmds) > 0:
-            self.verbose_logger.debug('Ext Commands:\n')
+            self.verbose_logger.log(yum.logginglevels.DEBUG_4,
+                                    'Ext Commands:\n')
             for arg in self.extcmds:
-                self.verbose_logger.debug('   %s', arg)
+                self.verbose_logger.log(yum.logginglevels.DEBUG_4, '   %s', arg)
         
         if not self.yum_cli_commands.has_key(self.basecmd):
             self.usage()
@@ -352,9 +359,15 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
                 self.verbose_logger.info(_('Trying to run the transaction but nothing to do. Exiting.'))
                 return 1
 
-        # output what will be done:
-        self.verbose_logger.log(yum.logginglevels.INFO_1,
-            self.listTransaction())
+        # NOTE: In theory we can skip this in -q -y mode, for a slight perf.
+        #       gain. But it's probably doom to have a different code path.
+        lsts = self.listTransaction()
+        if self.verbose_logger.isEnabledFor(yum.logginglevels.INFO_1):
+            self.verbose_logger.log(yum.logginglevels.INFO_1, lsts)
+        elif not self.conf.assumeyes:
+            #  If we are in quiet, and assumeyes isn't on we want to output
+            # at least the transaction list anyway.
+            self.logger.warn(lsts)
         
         # Check which packages have to be downloaded
         downloadpkgs = []
@@ -565,8 +578,6 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         toBeInstalled = {} # keyed on name
         passToUpdate = [] # list of pkgtups to pass along to updatecheck
 
-        self.verbose_logger.log(yum.logginglevels.INFO_2,
-            _('Parsing package install arguments'))
         for arg in userlist:
             if os.path.exists(arg) and arg.endswith('.rpm'): # this is hurky, deal w/it
                 val, msglist = self.localInstall(filelist=[arg])
@@ -793,7 +804,7 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
             for arg in args:
                 if '*' in arg or (arg and arg[0] == '/'):
                     continue
-                self.logger.warning(_('Warning: 3.0.x versions of yum would erronously match against filenames.\n You can use "%s*/%s%s" and/or "%s*bin/%s%s" to get that behaviour'),
+                self.logger.warning(_('Warning: 3.0.x versions of yum would erroneously match against filenames.\n You can use "%s*/%s%s" and/or "%s*bin/%s%s" to get that behaviour'),
                                     self.term.MODE['bold'], arg,
                                     self.term.MODE['normal'],
                                     self.term.MODE['bold'], arg,
@@ -1089,10 +1100,18 @@ class YumOptionParser(OptionParser):
             # Handle remaining options
             if opts.assumeyes:
                 self.base.conf.assumeyes =1
-            # seems a good place for it - to go back to yum 3.0.X behavior
-            # if not root then caching is enabled
-            if opts.cacheonly or self.base.conf.uid != 0:
+
+            #  Instead of going cache-only for a non-root user, try to use a
+            # user writable cachedir. If that fails fall back to cache-only.
+            if opts.cacheonly:
                 self.base.conf.cache = 1
+            elif self.base.conf.uid != 0:
+                cachedir = yum.misc.getCacheDir()
+                if cachedir is None:
+                    self.base.conf.cache = 1
+                else:
+                    self.base.conf.cachedir = cachedir
+                    self.base.repos.setCacheDir(cachedir)
 
             if opts.obsoletes:
                 self.base.conf.obsoletes = 1

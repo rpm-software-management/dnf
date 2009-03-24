@@ -38,6 +38,7 @@ class YumShell(cmd.Cmd):
         self.base = base
         self.prompt = '> '
         self.result = 0
+        self.identchars += '-'
         self.from_file = False # if we're running from a file, set this
         self.resultmsgs = ['Leaving Shell']
         if (len(base.extcmds)) > 0:

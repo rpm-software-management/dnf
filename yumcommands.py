@@ -123,6 +123,14 @@ def checkShellArg(base, basecmd, extcmds):
 
 class YumCommand:
         
+    def __init__(self):
+        self.done_command_once = False
+
+    def doneCommand(self, base, msg, *args):
+        if not self.done_command_once:
+            base.verbose_logger.log(logginglevels.INFO_2, msg, *args)
+        self.done_command_once = True
+
     def getNames(self):
         return []
 
@@ -169,8 +177,7 @@ class InstallCommand(YumCommand):
         checkPackageArg(base, basecmd, extcmds)
 
     def doCommand(self, base, basecmd, extcmds):
-        base.verbose_logger.log(logginglevels.INFO_2, 
-                _("Setting up Install Process"))
+        self.doneCommand(base, _("Setting up Install Process"))
         try:
             return base.installPkgs(extcmds)
         except yum.Errors.YumBaseError, e:
@@ -191,8 +198,7 @@ class UpdateCommand(YumCommand):
         checkGPGKey(base)
 
     def doCommand(self, base, basecmd, extcmds):
-        base.verbose_logger.log(logginglevels.INFO_2, 
-                _("Setting up Update Process"))
+        self.doneCommand(base, _("Setting up Update Process"))
         try:
             return base.updatePkgs(extcmds)
         except yum.Errors.YumBaseError, e:
@@ -245,6 +251,7 @@ class InfoCommand(YumCommand):
         else:
             update_pkgs = {}
             inst_pkgs   = {}
+            local_pkgs  = {}
 
             columns = None
             if basecmd == 'list':
@@ -271,25 +278,36 @@ class InfoCommand(YumCommand):
                     if key not in inst_pkgs or pkg.verGT(inst_pkgs[key]):
                         inst_pkgs[key] = pkg
 
+            if highlight and ypl.updates:
+                # Do the local/remote split we get in "yum updates"
+                for po in sorted(ypl.updates):
+                    if po.repo.id != 'installed' and po.verifyLocalPkg():
+                        local_pkgs[(po.name, po.arch)] = po
+
             # Output the packages:
             clio = base.conf.color_list_installed_older
             clin = base.conf.color_list_installed_newer
+            clir = base.conf.color_list_installed_reinstall
             clie = base.conf.color_list_installed_extra
             rip = base.listPkgs(ypl.installed, _('Installed Packages'), basecmd,
                                 highlight_na=update_pkgs, columns=columns,
                                 highlight_modes={'>' : clio, '<' : clin,
-                                                 'not in' : clie})
+                                                 '=' : clir, 'not in' : clie})
             clau = base.conf.color_list_available_upgrade
             clad = base.conf.color_list_available_downgrade
+            clar = base.conf.color_list_available_reinstall
             clai = base.conf.color_list_available_install
             rap = base.listPkgs(ypl.available, _('Available Packages'), basecmd,
                                 highlight_na=inst_pkgs, columns=columns,
                                 highlight_modes={'<' : clau, '>' : clad,
-                                                 'not in' : clai})
+                                                 '=' : clar, 'not in' : clai})
             rep = base.listPkgs(ypl.extras, _('Extra Packages'), basecmd,
                                 columns=columns)
+            cul = base.conf.color_update_local
+            cur = base.conf.color_update_remote
             rup = base.listPkgs(ypl.updates, _('Updated Packages'), basecmd,
-                                columns=columns)
+                                highlight_na=local_pkgs, columns=columns,
+                                highlight_modes={'=' : cul, 'not in' : cur})
 
             # XXX put this into the ListCommand at some point
             if len(ypl.obsoletes) > 0 and basecmd == 'list': 
@@ -344,8 +362,7 @@ class EraseCommand(YumCommand):
         checkPackageArg(base, basecmd, extcmds)
 
     def doCommand(self, base, basecmd, extcmds):
-        base.verbose_logger.log(logginglevels.INFO_2, 
-                _("Setting up Remove Process"))
+        self.doneCommand(base, _("Setting up Remove Process"))
         try:
             return base.erasePkgs(extcmds)
         except yum.Errors.YumBaseError, e:
@@ -359,8 +376,7 @@ class EraseCommand(YumCommand):
 
 class GroupCommand(YumCommand):
     def doCommand(self, base, basecmd, extcmds):
-        base.verbose_logger.log(logginglevels.INFO_2, 
-                _("Setting up Group Process"))
+        self.doneCommand(base, _("Setting up Group Process"))
 
         base.doRepoSetup(dosack=0)
         try:
@@ -472,7 +488,7 @@ class MakeCacheCommand(YumCommand):
         return _("Generate the metadata cache")
 
     def doCheck(self, base, basecmd, extcmds):
-        checkRootUID(base)
+        pass
 
     def doCommand(self, base, basecmd, extcmds):
         base.logger.debug(_("Making cache files for all metadata files."))
@@ -566,11 +582,21 @@ class CheckUpdateCommand(YumCommand):
 
             columns = _list_cmd_calc_columns(base, ypl)
             if len(ypl.updates) > 0:
+                local_pkgs = {}
+                highlight = base.term.MODE['bold']
+                if highlight:
+                    # Do the local/remote split we get in "yum updates"
+                    for po in sorted(ypl.updates):
+                        if po.repo.id != 'installed' and po.verifyLocalPkg():
+                            local_pkgs[(po.name, po.arch)] = po
+
+                cul = base.conf.color_update_local
+                cur = base.conf.color_update_remote
                 base.listPkgs(ypl.updates, '', outputType='list',
-                              columns=columns)
+                              highlight_na=local_pkgs, columns=columns,
+                              highlight_modes={'=' : cul, 'not in' : cur})
                 result = 100
             if len(ypl.obsoletes) > 0: # This only happens in verbose mode
-                rop = [0, '']
                 print _('Obsoleting Packages')
                 # The tuple is (newPkg, oldPkg) ... so sort by new
                 for obtup in sorted(ypl.obsoletesTuples,
@@ -622,8 +648,7 @@ class UpgradeCommand(YumCommand):
 
     def doCommand(self, base, basecmd, extcmds):
         base.conf.obsoletes = 1
-        base.verbose_logger.log(logginglevels.INFO_2, 
-                _("Setting up Upgrade Process"))
+        self.doneCommand(base, _("Setting up Upgrade Process"))
         try:
             return base.updatePkgs(extcmds)
         except yum.Errors.YumBaseError, e:
@@ -645,8 +670,7 @@ class LocalInstallCommand(YumCommand):
         checkPackageArg(base, basecmd, extcmds)
         
     def doCommand(self, base, basecmd, extcmds):
-        base.verbose_logger.log(logginglevels.INFO_2,
-                                _("Setting up Local Package Process"))
+        self.doneCommand(base, _("Setting up Local Package Process"))
 
         updateonly = basecmd == 'localupdate'
         try:
@@ -688,7 +712,7 @@ class ShellCommand(YumCommand):
         checkShellArg(base, basecmd, extcmds)
 
     def doCommand(self, base, basecmd, extcmds):
-        base.verbose_logger.log(logginglevels.INFO_2, _('Setting up Yum Shell'))
+        self.doneCommand(base, _('Setting up Yum Shell'))
         try:
             return base.doShell()
         except yum.Errors.YumBaseError, e:
@@ -712,7 +736,7 @@ class DepListCommand(YumCommand):
         checkPackageArg(base, basecmd, extcmds)
 
     def doCommand(self, base, basecmd, extcmds):
-       base.verbose_logger.log(logginglevels.INFO_2, _("Finding dependencies: "))
+       self.doneCommand(base, _("Finding dependencies: "))
        try:
           return base.deplist(extcmds)
        except yum.Errors.YumBaseError, e:
@@ -796,26 +820,29 @@ class RepoListCommand(YumCommand):
                     cols.append((str(repo), repo.name,
                                  (ui_enabled, ui_endis_wid), ui_num))
                 else:
-                    md = repo.repoXML
+                    if enabled:
+                        md = repo.repoXML
+                    else:
+                        md = None
                     out = [base.fmtKeyValFill(_("Repo-id     : "), repo),
                            base.fmtKeyValFill(_("Repo-name   : "), repo.name),
                            base.fmtKeyValFill(_("Repo-status : "), ui_enabled)]
-                    if md.revision is not None:
+                    if md and md.revision is not None:
                         out += [base.fmtKeyValFill(_("Repo-revision: "),
                                                    md.revision)]
-                    if md.tags['content']:
+                    if md and md.tags['content']:
                         tags = md.tags['content']
                         out += [base.fmtKeyValFill(_("Repo-tags   : "),
                                                    ", ".join(sorted(tags)))]
 
-                    if md.tags['distro']:
+                    if md and md.tags['distro']:
                         for distro in sorted(md.tags['distro']):
                             tags = md.tags['distro'][distro]
                             out += [base.fmtKeyValFill(_("Repo-distro-tags: "),
                                                        "[%s]: %s" % (distro,
                                                        ", ".join(sorted(tags))))]
 
-                    if enabled:
+                    if md:
                         out += [base.fmtKeyValFill(_("Repo-updated: "),
                                                    time.ctime(md.timestamp)),
                                 base.fmtKeyValFill(_("Repo-pkgs   : "), ui_num),
@@ -973,8 +1000,7 @@ class ReInstallCommand(YumCommand):
         checkPackageArg(base, basecmd, extcmds)
 
     def doCommand(self, base, basecmd, extcmds):
-        base.verbose_logger.log(logginglevels.INFO_2, 
-                _("Setting up Reinstall Process"))
+        self.doneCommand(base, _("Setting up Reinstall Process"))
         oldcount = len(base.tsInfo)
         try:
             for item in extcmds:

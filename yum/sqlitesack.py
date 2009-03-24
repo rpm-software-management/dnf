@@ -34,7 +34,7 @@ import sqlutils
 import constants
 import operator
 import time
-from yum.misc import seq_max_split, to_utf8
+from yum.misc import seq_max_split, to_utf8, to_unicode
 import sys
 
 def catchSqliteException(func):
@@ -46,7 +46,10 @@ def catchSqliteException(func):
             # 2.4.x requires this, but 2.6.x complains about even hasattr()
             # of e.message ... *sigh*
             if sys.hexversion < 0x02050000:
-                raise Errors.RepoError, str(e.message)
+                if hasattr(e,'message'):
+                    raise Errors.RepoError, str(e.message)
+                else:
+                    raise Errors.RepoError, str(e)
             raise Errors.RepoError, str(e)
 
     newFunc.__name__ = func.__name__
@@ -206,7 +209,8 @@ class YumAvailablePackageSqlite(YumAvailablePackage, PackageObject, RpmBase):
             cur = self._sql_MD('other',
                                "SELECT date, author, changelog " \
                                "FROM   changelog JOIN packages USING(pkgKey) " \
-                               "WHERE  pkgId = ?", (self.pkgId,))
+                               "WHERE  pkgId = ? ORDER BY date DESC",
+                               (self.pkgId,))
             # Check count(pkgId) here, the same way we do in searchFiles()?
             # Failure mode is much less of a problem.
             for ob in cur:
@@ -765,9 +769,11 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
 
     @catchSqliteException
     def _search(self, prcotype, name, flags, version):
+
         if self._skip_all():
             return {}
-
+        
+        name = to_unicode(name)
         if flags == 0:
             flags = None
         if type(version) in (str, type(None), unicode):
@@ -879,7 +885,7 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
         
         if self._skip_all():
             return []
-
+        
         returnList = []
         max_entries = constants.PATTERNS_INDEXED_MAX
         if len(names) > max_entries:
@@ -907,7 +913,8 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
         """return list of packages having prcotype name (any evr and flag)"""
         if self._skip_all():
             return []
-
+        
+        name = to_unicode(name)
         glob = True
         querytype = 'glob'
         if not misc.re_glob(name):
@@ -1131,6 +1138,16 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
             pat_max = constants.PATTERNS_INDEXED_MAX
         if len(patterns) > pat_max:
             patterns = []
+        if ignore_case:
+            patterns = self._sql_esc_glob(patterns)
+        else:
+            tmp = []
+            for pat in patterns:
+                if misc.re_glob(pat):
+                    tmp.append((pat, 'glob'))
+                else:
+                    tmp.append((pat, '='))
+            patterns = tmp
 
         for (repo,cache) in self.primarydb.items():
             if (repoid == None or repoid == repo.id):
@@ -1141,16 +1158,12 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
 
                 pat_sqls = []
                 pat_data = []
-                if ignore_case:
-                    patterns = self._sql_esc_glob(patterns)
-                else:
-                    patterns = [(pat, '') for pat in patterns]
-                for (pattern, esc) in patterns:
+                for (pattern, rest) in patterns:
                     for field in fields:
                         if ignore_case:
-                            pat_sqls.append("%s LIKE ?%s" % (field, esc))
+                            pat_sqls.append("%s LIKE ?%s" % (field, rest))
                         else:
-                            pat_sqls.append("%s GLOB ?" % field)
+                            pat_sqls.append("%s %s ?" % (field, rest))
                         pat_data.append(pattern)
                 if pat_sqls:
                     qsql = _FULL_PARSE_QUERY_BEG + " OR ".join(pat_sqls)

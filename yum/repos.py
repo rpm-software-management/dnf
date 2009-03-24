@@ -25,6 +25,18 @@ from packageSack import MetaSack
 
 from weakref import proxy as weakref
 
+class _wrap_ayum_getKeyForRepo:
+    """ This is a wrapper for calling YumBase.getKeyForRepo() because
+        otherwise we take a real reference through the bound method and
+        that is d00m (this applies to YumBase and RepoStorage, hence why
+        we have a seperate class).
+        A "better" fix might be to explicitly pass the YumBase instance to
+        the callback ... API change! """
+    def __init__(self, ayum):
+        self.ayum = weakref(ayum)
+    def __call__(self, repo, callback=None):
+        return self.ayum.getKeyForRepo(repo, callback)
+
 class RepoStorage:
     """This class contains multiple repositories and core configuration data
        about them."""
@@ -43,7 +55,8 @@ class RepoStorage:
         # callbacks for handling gpg key imports for repomd.xml sig checks
         # need to be set from outside of the repos object to do anything
         # even quasi-useful
-        self.gpg_import_func = self.ayum.getKeyForRepo # defaults to what is probably sane-ish
+        # defaults to what is probably sane-ish
+        self.gpg_import_func = _wrap_ayum_getKeyForRepo(ayum)
         self.confirm_func = None
 
     def doSetup(self, thisrepo = None):
@@ -160,6 +173,7 @@ class RepoStorage:
             if repo.isEnabled():
                 returnlist.append(repo)
 
+        returnlist.sort()
         return returnlist
 
     def listGroupsEnabled(self):
@@ -260,6 +274,8 @@ class Repository:
         self.disable()
 
     def __cmp__(self, other):
+        """ Sort base class repos. by alphanumeric on their id, also
+            see __cmp__ in YumRepository(). """
         if self.id > other.id:
             return 1
         elif self.id < other.id:

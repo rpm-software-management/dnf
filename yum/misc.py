@@ -9,6 +9,7 @@ from cStringIO import StringIO
 import base64
 import struct
 import re
+import errno
 import pgpmsg
 import tempfile
 import glob
@@ -24,11 +25,13 @@ except ImportError:
 try:
     import hashlib
     _available_checksums = ['md5', 'sha1', 'sha256', 'sha512']
+    _default_checksums = ['sha256']
 except ImportError:
     # Python-2.4.z ... gah!
     import sha
     import md5
     _available_checksums = ['md5', 'sha1']
+    _default_checksums = ['sha1']
     class hashlib:
 
         @staticmethod
@@ -88,6 +91,18 @@ def re_primary_filename(filename):
             return True
     return False
 
+_re_compiled_pri_dnames_match = None
+def re_primary_dirname(dirname):
+    global _re_compiled_pri_dnames_match
+    if _re_compiled_pri_dnames_match is None:
+        one   = re.compile('.*bin\/.*')
+        two   = re.compile('^\/etc\/.*')
+        _re_compiled_pri_dnames_match = (one, two)
+    for rec in _re_compiled_pri_dnames_match:
+        if rec.match(dirname):
+            return True
+    return False
+
 _re_compiled_full_match = None
 def re_full_search_needed(s):
     """ Tests if a string needs a full nevra match, instead of just name. """
@@ -130,18 +145,16 @@ def unique(s):
     if n == 0:
         return []
 
-    # Try using a dict first, as that's the fastest and will usually
+    # Try using a set first, as that's the fastest and will usually
     # work.  If it doesn't work, it will usually fail quickly, so it
     # usually doesn't cost much to *try* it.  It requires that all the
     # sequence elements be hashable, and support equality comparison.
-    u = {}
     try:
-        for x in s:
-            u[x] = 1
+        u = set(s)
     except TypeError:
-        del u  # move on to the next method
+        pass
     else:
-        return u.keys()
+        return list(u)
 
     # We can't hash all the elements.  Second fastest is to sort,
     # which brings the equal elements together; then duplicates are
@@ -179,7 +192,7 @@ class Checksums:
 
     def __init__(self, checksums=None, ignore_missing=False):
         if checksums is None:
-            checksums = ['sha256']
+            checksums = _default_checksums
         self._sumalgos = []
         self._sumtypes = []
         self._len = 0
@@ -497,7 +510,7 @@ def valid_detached_sig(sig_file, signed_file, gpghome=None):
 
     return False
 
-def getCacheDir(tmpdir='/var/tmp'):
+def getCacheDir(tmpdir='/var/tmp', reuse=True):
     """return a path to a valid and safe cachedir - only used when not running
        as root or when --tempcache is set"""
     
@@ -508,15 +521,17 @@ def getCacheDir(tmpdir='/var/tmp'):
     except KeyError:
         return None # if it returns None then, well, it's bollocksed
 
-    # check for /var/tmp/yum-username-* - 
-    prefix = 'yum-%s-' % username    
-    dirpath = '%s/%s*' % (tmpdir, prefix)
-    cachedirs = glob.glob(dirpath)
-    
-    for thisdir in cachedirs:
-        stats = os.lstat(thisdir)
-        if S_ISDIR(stats[0]) and S_IMODE(stats[0]) == 448 and stats[4] == uid:
-            return thisdir
+    prefix = 'yum-'
+
+    if reuse:
+        # check for /var/tmp/yum-username-* - 
+        prefix = 'yum-%s-' % username    
+        dirpath = '%s/%s*' % (tmpdir, prefix)
+        cachedirs = sorted(glob.glob(dirpath))
+        for thisdir in cachedirs:
+            stats = os.lstat(thisdir)
+            if S_ISDIR(stats[0]) and S_IMODE(stats[0]) == 448 and stats[4] == uid:
+                return thisdir
 
     # make the dir (tempfile.mkdtemp())
     cachedir = tempfile.mkdtemp(prefix=prefix, dir=tmpdir)
@@ -604,18 +619,10 @@ def get_running_kernel_version_release(ts):
     """This takes the output of uname and figures out the (version, release)
     tuple for the running kernel."""
     ver = os.uname()[2]
-    reduced = ver
-    # FIXME this should probably get passed this list from somewhere in config
-    # possibly from the kernelpkgnames option
-    for s in ("bigmem", "enterprise", "smp", "hugemem", "PAE", "rt",
-              "guest", "hypervisor", "xen0", "xenU", "xen", "debug",
-              "PAE-debug"):
-        if ver.endswith(s):
-            reduced = ver.replace(s, "")
-            
-    # we've got nothing so far, so... we glob for the file that MIGHT have
-    # this kernels and then look up the file in our rpmdb
-    fns = glob.glob('/boot/vmlinuz*%s*' % ver)
+
+    # we glob for the file that MIGHT have this kernel
+    # and then look up the file in our rpmdb.
+    fns = sorted(glob.glob('/boot/vmlinuz*%s*' % ver))
     for fn in fns:
         mi = ts.dbMatch('basenames', fn)
         for h in mi:
@@ -688,6 +695,7 @@ def seq_max_split(seq, max_entries):
     """ Given a seq, split into a list of lists of length max_entries each. """
     ret = []
     num = len(seq)
+    seq = list(seq) # Trying to use a set/etc. here is bad
     beg = 0
     while num > max_entries:
         end = beg + max_entries
@@ -754,6 +762,15 @@ def to_xml(item, attrib=False):
     else:
         item = xml.sax.saxutils.escape(item)
     return item
+
+def unlink_f(filename):
+    """ Call os.unlink, but don't die if the file isn't there. This is the main
+        difference between "rm -f" and plain "rm". """
+    try:
+        os.unlink(filename)
+    except OSError, e:
+        if e.errno != errno.ENOENT:
+            raise
 
 # ---------- i18n ----------
 import locale

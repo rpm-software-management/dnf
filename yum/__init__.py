@@ -32,9 +32,10 @@ import gzip
 
 import yum.i18n
 _ = yum.i18n._
+P_ = yum.i18n.P_
 
 try:
-    from iniparse.compat import ParsingError, ConfigParser
+    from iniparse.compat import ParsingError, RawConfigParser as ConfigParser
 except ImportError:
     from ConfigParser import ParsingError, ConfigParser
 import Errors
@@ -52,7 +53,7 @@ import transactioninfo
 import urlgrabber
 from urlgrabber.grabber import URLGrabber, URLGrabError
 from urlgrabber.progress import format_number
-from packageSack import packagesNewestByNameArch, packagesNewestByName
+from packageSack import packagesNewestByNameArch
 import depsolve
 import plugins
 import logginglevels
@@ -71,7 +72,7 @@ import string
 
 from urlgrabber.grabber import default_grabber
 
-__version__ = '3.2.20'
+__version__ = '3.2.22'
 __version_info__ = tuple([ int(num) for num in __version__.split('.')])
 
 #  Setup a default_grabber UA here that says we are yum, done using the global
@@ -98,6 +99,25 @@ vlog = logginglevels.EasyLogger("yum.verbose.YumBase")
 (vdebug1, vdebug2)          = (vlog.debug1, vlog.debug2)
 (vdebug3, vdebug4)          = (vlog.debug3, vlog.debug4)
 verbose                     = vlog.verbose
+
+class _YumPreBaseConf:
+    """This is the configuration interface for the YumBase configuration.
+       So if you want to change if plugins are on/off, or debuglevel/etc.
+       you tweak it here, and when yb.conf does it's thing ... it happens. """
+
+    def __init__(self):
+        self.fn = '/etc/yum/yum.conf'
+        self.root = '/'
+        self.init_plugins = True
+        self.plugin_types = (plugins.TYPE_CORE,)
+        self.optparser = None
+        self.debuglevel = None
+        self.errorlevel = None
+        self.disabled_plugins = None
+        self.enabled_plugins = None
+        self.syslog_ident = None
+        self.syslog_facility = None
+        self.syslog_device = '/dev/log'
 
 class YumBase(depsolve.Depsolve):
     """This is a primary structure and base class. It houses the objects and
@@ -128,6 +148,8 @@ class YumBase(depsolve.Depsolve):
 
         self.mediagrabber = None
 
+        self.preconf = _YumPreBaseConf()
+
     def __del__(self):
         self.close()
         self.closeRpmDB()
@@ -144,8 +166,8 @@ class YumBase(depsolve.Depsolve):
     def doGenericSetup(self, cache=0):
         """do a default setup for all the normal/necessary yum components,
            really just a shorthand for testing"""
-        
-        self._getConfig(init_plugins=False)
+
+        self.preconf.init_plugins = False
         self.conf.cache = cache
 
     def doConfigSetup(self, fn='/etc/yum/yum.conf', root='/', init_plugins=True,
@@ -153,38 +175,57 @@ class YumBase(depsolve.Depsolve):
             errorlevel=None):
         warnings.warn(_('doConfigSetup() will go away in a future version of Yum.\n'),
                 Errors.YumFutureDeprecationWarning, stacklevel=2)
-                
-        return self._getConfig(fn=fn, root=root, init_plugins=init_plugins,
-             plugin_types=plugin_types, optparser=optparser, debuglevel=debuglevel,
-             errorlevel=errorlevel)
+
+        if hasattr(self, 'preconf'):
+            self.preconf.fn = fn
+            self.preconf.root = root
+            self.preconf.init_plugins = init_plugins
+            self.preconf.plugin_types = plugin_types
+            self.preconf.optparser = optparser
+            self.preconf.debuglevel = debuglevel
+            self.preconf.errorlevel = errorlevel
+
+        return self.conf
         
-    def _getConfig(self, fn='/etc/yum/yum.conf', root='/', init_plugins=True,
-            plugin_types=(plugins.TYPE_CORE,), optparser=None, debuglevel=None,
-            errorlevel=None,disabled_plugins=None,enabled_plugins=None):
+    def _getConfig(self, **kwargs):
         '''
         Parse and load Yum's configuration files and call hooks initialise
-        plugins and logging.
-
-        @param fn: Path to main configuration file to parse (yum.conf).
-        @param root: Filesystem root to use.
-        @param init_plugins: If False, plugins will not be loaded here. If
-            True, plugins will be loaded if the "plugins" option is enabled in
-            the configuration file.
-        @param plugin_types: As per doPluginSetup()
-        @param optparser: As per doPluginSetup()
-        @param debuglevel: Debug level to use for logging. If None, the debug
-            level will be read from the configuration file.
-        @param errorlevel: Error level to use for logging. If None, the debug
-            level will be read from the configuration file.
-        @param disabled_plugins: Plugins to be disabled    
-        @param enabled_plugins: Plugins to be enabled
-        '''
+        plugins and logging. Uses self.preconf for pre-configuration,
+        configuration. '''
 
         # ' xemacs syntax hack
+
+        if kwargs:
+            warnings.warn('Use .preconf instead of passing args to _getConfig')
 
         if self._conf:
             return self._conf
         conf_st = time.time()            
+
+        if kwargs:
+            for arg in ('fn', 'root', 'init_plugins', 'plugin_types',
+                        'optparser', 'debuglevel', 'errorlevel',
+                        'disabled_plugins', 'enabled_plugins'):
+                if arg in kwargs:
+                    setattr(self.preconf, arg, kwargs[arg])
+
+        fn = self.preconf.fn
+        root = self.preconf.root
+        init_plugins = self.preconf.init_plugins
+        plugin_types = self.preconf.plugin_types
+        optparser = self.preconf.optparser
+        debuglevel = self.preconf.debuglevel
+        errorlevel = self.preconf.errorlevel
+        disabled_plugins = self.preconf.disabled_plugins
+        enabled_plugins = self.preconf.enabled_plugins
+        syslog_ident    = self.preconf.syslog_ident
+        syslog_facility = self.preconf.syslog_facility
+        syslog_device   = self.preconf.syslog_device
+
+        #  We don't want people accessing/altering preconf after it becomes
+        # worthless. So we delete it, and thus. it'll raise AttributeError
+        del self.preconf
+
         # TODO: Remove this block when we no longer support configs outside
         # of /etc/yum/
         if fn == '/etc/yum/yum.conf' and not os.path.exists(fn):
@@ -200,9 +241,14 @@ class YumBase(depsolve.Depsolve):
             startupconf.debuglevel = debuglevel
         if errorlevel != None:
             startupconf.errorlevel = errorlevel
+        if syslog_ident != None:
+            startupconf.syslog_ident = syslog_ident
+        if syslog_facility != None:
+            startupconf.syslog_facility = syslog_facility
 
         self.doLoggingSetup(startupconf.debuglevel, startupconf.errorlevel,
-                            startupconf.syslog_ident, startupconf.syslog_facility)
+                            startupconf.syslog_ident,
+                            startupconf.syslog_facility, syslog_device)
 
         if init_plugins and startupconf.plugins:
             self.doPluginSetup(optparser, plugin_types, startupconf.pluginpath,
@@ -227,7 +273,8 @@ class YumBase(depsolve.Depsolve):
         
 
     def doLoggingSetup(self, debuglevel, errorlevel,
-                       syslog_ident=None, syslog_facility=None):
+                       syslog_ident=None, syslog_facility=None,
+                       syslog_device='/dev/log'):
         '''
         Perform logging related setup.
 
@@ -235,7 +282,8 @@ class YumBase(depsolve.Depsolve):
         @param errorlevel: Error logging level to use.
         '''
         logginglevels.doLoggingSetup(debuglevel, errorlevel,
-                                     syslog_ident, syslog_facility)
+                                     syslog_ident, syslog_facility,
+                                     syslog_device)
 
     def doFileLogSetup(self, uid, logfile):
         logginglevels.setFileLog(uid, logfile)
@@ -308,11 +356,14 @@ class YumBase(depsolve.Depsolve):
         self.getReposFromConfigFile(self.conf.config_file_path, repo_config_age)
 
         for reposdir in self.conf.reposdir:
+            # this check makes sure that our dirs exist properly.
+            # if they aren't in the installroot then don't prepent the installroot path
+            # if we don't do this then anaconda likes to not  work.
             if os.path.exists(self.conf.installroot+'/'+reposdir):
                 reposdir = self.conf.installroot + '/' + reposdir
 
             if os.path.isdir(reposdir):
-                for repofn in glob.glob('%s/*.repo' % reposdir):
+                for repofn in sorted(glob.glob('%s/*.repo' % reposdir)):
                     thisrepo_age = os.stat(repofn)[8]
                     if thisrepo_age < repo_config_age:
                         thisrepo_age = repo_config_age
@@ -387,7 +438,7 @@ class YumBase(depsolve.Depsolve):
 
         if self._rpmdb is None:
             rpmdb_st = time.time()
-            vdebug(_('Reading Local RPMDB'))
+            vdebug4(_('Reading Local RPMDB'))
             self._rpmdb = rpmsack.RPMDBPackageSack(root=self.conf.installroot)
             vdebug_tm(rpmdb_st, 'rpmdb time')
         return self._rpmdb
@@ -412,7 +463,7 @@ class YumBase(depsolve.Depsolve):
 
     def _getRepos(self, thisrepo=None, doSetup = False):
         """ For each enabled repository set up the basics of the repository. """
-        self._getConfig() # touch the config class first
+        self.conf # touch the config class first
 
         if doSetup:
             repo_st = time.time()        
@@ -513,7 +564,7 @@ class YumBase(depsolve.Depsolve):
         
         if self.conf.obsoletes:
             obs_init = time.time()    
-            self._up.rawobsoletes = self.pkgSack.returnObsoletes(newest=True)
+            self._up.rawobsoletes = self.pkgSack.returnObsoletes()
             vdebug_tm(obs_init, 'up:Obs Init time')
             
         self._up.exactarch = self.conf.exactarch
@@ -558,7 +609,7 @@ class YumBase(depsolve.Depsolve):
             return self._comps
 
         group_st = time.time()            
-        vdebug(_('Getting group metadata'))
+        vdebug4(_('Getting group metadata'))
         reposWithGroups = []
         self.repos.doSetup()
         for repo in self.repos.listGroupsEnabled():
@@ -583,7 +634,7 @@ class YumBase(depsolve.Depsolve):
             if repo.groups_added: # already added the groups from this repo
                 continue
                 
-            vdebug1(_('Adding group file from repository: %s'), repo)
+            vdebug4(_('Adding group file from repository: %s'), repo)
             groupfile = repo.getGroups()
             try:
                 self._comps.add(groupfile)
@@ -665,7 +716,7 @@ class YumBase(depsolve.Depsolve):
         self.plugins.run('postresolve', rescode=rescode, restring=restring)
         
         if self.tsInfo.changed:
-            (rescode, restring) = self.resolveDeps()
+            (rescode, restring) = self.resolveDeps(rescode == 1)
         if self.tsInfo.pkgSack is not None: # rm Transactions don't have pkgSack
             self.tsInfo.pkgSack.dropCachedData()
         self.rpmdb.dropCachedData()
@@ -746,7 +797,7 @@ class YumBase(depsolve.Depsolve):
                 else:
                     self.verbose_logger.debug('SKIPBROKEN: resetting already resovled packages (no packages to skip)' )
                     self.tsInfo.resetResolved(hard=True)
-            rescode, restring = self.resolveDeps()
+            rescode, restring = self.resolveDeps(True)
             endTs = set(self.tsInfo)
              # Check if tsInfo has changes since we started to skip packages
              # if there is no changes then we got a loop.
@@ -823,20 +874,16 @@ class YumBase(depsolve.Depsolve):
 
     def _skipFromTransaction(self,po):
         skipped =  []
-        if rpmUtils.arch.isMultiLibArch():
-            archs = rpmUtils.arch.getArchList() 
-            n,a,e,v,r = po.pkgtup
-            # skip for all compat archs
-            for a in archs:
-                pkgtup = (n,a,e,v,r)
-                if self.tsInfo.exists(pkgtup):
-                    for txmbr in self.tsInfo.getMembers(pkgtup):
-                        pkg = txmbr.po
-                        skip = self._removePoFromTransaction(pkg)
-                        skipped.extend(skip)
-        else:
-            msgs = self._removePoFromTransaction(po)
-            skipped.extend(msgs)
+        archs = rpmUtils.arch.getArchList() 
+        n,a,e,v,r = po.pkgtup
+        # skip for all compat archs
+        for a in archs:
+            pkgtup = (n,a,e,v,r)
+            if self.tsInfo.exists(pkgtup):
+                for txmbr in self.tsInfo.getMembers(pkgtup):
+                    pkg = txmbr.po
+                    skip = self._removePoFromTransaction(pkg)
+                    skipped.extend(skip)
         return skipped
 
     def _removePoFromTransaction(self,po):
@@ -930,12 +977,12 @@ class YumBase(depsolve.Depsolve):
         for i in ('ts_all_fn', 'ts_done_fn'):
             if hasattr(cb, i):
                 fn = getattr(cb, i)
-                if os.path.exists(fn):
-                    try:
-                        os.unlink(fn)
-                    except (IOError, OSError), e:
-                        critical(_('Failed to remove transaction file %s'), fn)
+                try:
+                    misc.unlink_f(fn)
+                except (IOError, OSError), e:
+                    critical(_('Failed to remove transaction file %s'), fn)
 
+        self.rpmdb.dropCachedData() # drop out the rpm cache so we don't step on bad hdr indexes
         self.plugins.run('posttrans')
         return resultobject
 
@@ -1029,6 +1076,8 @@ class YumBase(depsolve.Depsolve):
         if len(includelist) == 0:
             return
         
+        # FIXME: Here we have to get all packages, and then exclude those that
+        #        don't match. Need a "negation" flag for returnPackages().
         pkglist = self.pkgSack.returnPackages(repo.id)
         exactmatch, matched, unmatched = \
            parsePackages(pkglist, includelist, casematch=1)
@@ -1079,11 +1128,11 @@ class YumBase(depsolve.Depsolve):
                     else:
                         # Whoa. What the heck happened?
                         msg = _('Unable to check if PID %s is active') % oldpid
-                        raise Errors.LockError(1, msg)
+                        raise Errors.LockError(1, msg, oldpid)
                 else:
                     # Another copy seems to be running.
                     msg = _('Existing lock %s: another copy is running as pid %s.') % (lockfile, oldpid)
-                    raise Errors.LockError(0, msg)
+                    raise Errors.LockError(0, msg, oldpid)
         # We've got the lock, store it so we can auto-unlock on __del__...
         self._lockfile = lockfile
     
@@ -1091,7 +1140,10 @@ class YumBase(depsolve.Depsolve):
         """do the unlock for yum"""
         
         # if we're not root then we don't lock - just return nicely
-        if self.conf.uid != 0:
+        #  Note that we can get here from __del__, so if we haven't created
+        # YumBase.conf we don't want to do so here as creating stuff inside
+        # __del__ is bad.
+        if hasattr(self, 'preconf') or self.conf.uid != 0:
             return
         
         if lockfile is not None:
@@ -1120,11 +1172,7 @@ class YumBase(depsolve.Depsolve):
             return 1
     
     def _unlock(self, filename):
-        try:
-            os.unlink(filename)
-        except OSError, msg:
-            pass
-
+        misc.unlink_f(filename)
 
     def verifyPkg(self, fo, po, raiseError):
         """verifies the package is what we expect it to be
@@ -1243,10 +1291,10 @@ class YumBase(depsolve.Depsolve):
             #  Recheck if the file is there, works around a couple of weird
             # edge cases.
             local = po.localPkg()
+            i += 1
             if os.path.exists(local):
                 if self.verifyPkg(local, po, False):
                     self.verbose_logger.debug(_("using local copy of %s") %(po,))
-                    i -= 1
                     remote_size -= po.size
                     if hasattr(urlgrabber.progress, 'text_meter_total_size'):
                         urlgrabber.progress.text_meter_total_size(remote_size,
@@ -1255,7 +1303,6 @@ class YumBase(depsolve.Depsolve):
                 if os.path.getsize(local) >= po.size:
                     os.unlink(local)
 
-            i += 1
             checkfunc = (self.verifyPkg, (po, 1), {})
             dirstat = os.statvfs(po.repo.pkgdir)
             if (dirstat.f_bavail * dirstat.f_bsize) <= long(po.size):
@@ -1289,7 +1336,7 @@ class YumBase(depsolve.Depsolve):
                 if errors.has_key(po):
                     del errors[po]
 
-        if callback_total is not None:
+        if callback_total is not None and not errors:
             callback_total(remote_pkgs, remote_size, beg_download)
 
         self.plugins.run('postdownload', pkglist=pkglist, errors=errors)
@@ -1336,10 +1383,7 @@ class YumBase(depsolve.Depsolve):
             except URLGrabError, e:
                 # might add a check for length of file - if it is < 
                 # required doing a reget
-                try:
-                    os.unlink(local)
-                except OSError, e:
-                    pass
+                misc.unlink_f(local)
             else:
                 po.hdrpath = local
                 return
@@ -1360,11 +1404,11 @@ class YumBase(depsolve.Depsolve):
         except Errors.RepoError, e:
             saved_repo_error = e
             try:
-                os.unlink(local)
+                misc.unlink_f(local)
             except OSError, e:
                 raise Errors.RepoError, saved_repo_error
             else:
-                raise
+                raise Errors.RepoError, saved_repo_error
         else:
             po.hdrpath = hdrpath
             return
@@ -1453,7 +1497,7 @@ class YumBase(depsolve.Depsolve):
             if not os.path.exists(fn):
                 continue
             try:
-                os.unlink(fn)
+                misc.unlink_f(fn)
             except OSError, e:
                 warning(_('Cannot remove %s'), fn)
                 continue
@@ -1486,14 +1530,13 @@ class YumBase(depsolve.Depsolve):
         removed = 0
         for ext in exts:
             for repo in self.repos.listEnabled():
-                repo.dirSetup()
                 path = getattr(repo, pathattr)
                 if os.path.exists(path) and os.path.isdir(path):
                     filelist = misc.getFileList(path, ext, filelist)
 
         for item in filelist:
             try:
-                os.unlink(item)
+                misc.unlink_f(item)
             except OSError, e:
                 critical(_('Cannot remove %s file %s'), filetype, item)
                 continue
@@ -1813,6 +1856,7 @@ class YumBase(depsolve.Depsolve):
         
         matches = {}
         for arg in args:
+            arg = to_unicode(arg)
             if not misc.re_glob(arg):
                 isglob = False
                 if arg[0] != '/':
@@ -1882,7 +1926,7 @@ class YumBase(depsolve.Depsolve):
                 usedDepString = True
                 for po in where:
                     tmpvalues = []
-                    msg = _('Provides-match: %s') % arg
+                    msg = _('Provides-match: %s') % to_unicode(arg)
                     tmpvalues.append(msg)
 
                     if len(tmpvalues) > 0:
@@ -2062,11 +2106,17 @@ class YumBase(depsolve.Depsolve):
                         except Errors.InstallError:
                             # we don't care if the package doesn't exist
                             continue
+                        else:
+                            if cond not in self.tsInfo.conditionals:
+                                self.tsInfo.conditionals[cond]=[]
+
                         txmbrs_used.extend(txmbrs)
                         for txmbr in txmbrs:
                             txmbr.groups.append(thisgroup.groupid)
+                            self.tsInfo.conditionals[cond].append(txmbr.po)
                         continue
-                    # Otherwise we hook into tsInfo.add
+                    # Otherwise we hook into tsInfo.add to make 
+                    # sure we'll catch it if its added later in this transaction
                     pkgs = self.pkgSack.searchNevra(name=condreq)
                     if pkgs:
                         if rpmUtils.arch.isMultiLibArch():
@@ -2113,8 +2163,10 @@ class YumBase(depsolve.Depsolve):
                         # if there aren't any other groups mentioned then remove the pkg
                         if len(txmbr.groups) == 0:
                             self.tsInfo.remove(txmbr.po.pkgtup)
+                            
+                            for pkg in self.tsInfo.conditionals.get(txmbr.name, []):
+                                self.tsInfo.remove(pkg.pkgtup)
 
-                    
         
     def getPackageObject(self, pkgtup):
         """retrieves a packageObject from a pkgtuple - if we need
@@ -2194,12 +2246,10 @@ class YumBase(depsolve.Depsolve):
         
         if depstring[0] != '/':
             # not a file dep - look at it for being versioned
-            if re.search('[>=<]', depstring):  # versioned
-                try:
-                    depname, flagsymbol, depver = depstring.split()
-                except ValueError, e:
-                    raise Errors.YumBaseError, _('Invalid versioned dependency string, try quoting it.')
-                if not SYMBOLFLAGS.has_key(flagsymbol):
+            dep_split = depstring.split()
+            if len(dep_split) == 3:
+                depname, flagsymbol, depver = dep_split
+                if not flagsymbol in SYMBOLFLAGS:
                     raise Errors.YumBaseError, _('Invalid version flag')
                 depflags = SYMBOLFLAGS[flagsymbol]
                 
@@ -2237,15 +2287,13 @@ class YumBase(depsolve.Depsolve):
         
         if depstring[0] != '/':
             # not a file dep - look at it for being versioned
-            if re.search('[>=<]', depstring):  # versioned
-                try:
-                    depname, flagsymbol, depver = depstring.split()
-                except ValueError:
-                    raise Errors.YumBaseError, _('Invalid versioned dependency string, try quoting it.')
-                if not SYMBOLFLAGS.has_key(flagsymbol):
+            dep_split = depstring.split()
+            if len(dep_split) == 3:
+                depname, flagsymbol, depver = dep_split
+                if not flagsymbol in SYMBOLFLAGS:
                     raise Errors.YumBaseError, _('Invalid version flag')
                 depflags = SYMBOLFLAGS[flagsymbol]
-        
+
         return self.rpmdb.getProvides(depname, depflags, depver).keys()
 
     def _bestPackageFromList(self, pkglist):
@@ -2262,36 +2310,8 @@ class YumBase(depsolve.Depsolve):
         if len(pkglist) == 1:
             return pkglist[0]
 
-        bestlist  = packagesNewestByNameArch(pkglist)
-        #  Here we need the list of the latest version of each package
-        # the problem we are trying to fix is: ABC-1.2.i386 and ABC-1.3.noarch
-        # so in the above we need to "exclude" ABC < 1.3, which is done by
-        # making another list from newest by name and then make sure any pkg is
-        # in nbestlist.
-        nbestlist = packagesNewestByName(bestlist)
-
-        best = nbestlist[0]
-        nbestlist = set(nbestlist)
-        for pkg in bestlist:
-            if pkg == best:
-                continue
-            if pkg not in nbestlist:
-                continue
-
-            # This is basically _compare_providers() ... but without a reqpo
-            if len(pkg.name) < len(best.name): # shortest name silliness
-                best = pkg
-                continue
-            elif len(pkg.name) > len(best.name):
-                continue
-
-            # compare arch
-            arch = rpmUtils.arch.getBestArchFromList([pkg.arch, best.arch])
-            if arch == pkg.arch:
-                best = pkg
-                continue
-
-        return best
+        bestlist = self._compare_providers(pkglist, None)
+        return bestlist[0][0]
 
     def bestPackagesFromList(self, pkglist, arch=None, single_name=False):
         """Takes a list of packages, returns the best packages.
@@ -2438,16 +2458,14 @@ class YumBase(depsolve.Depsolve):
 
                 was_pattern = True
                 pats = [kwargs['pattern']]
-                exactmatch, matched, unmatched = \
-                    parsePackages(self.pkgSack.returnPackages(patterns=pats),
-                                  pats, casematch=1)
-                pkgs.extend(exactmatch)
-                pkgs.extend(matched)
+                mypkgs = self.pkgSack.returnPackages(patterns=pats,
+                                                      ignore_case=False)
+                pkgs.extend(mypkgs)
                 # if we have anything left unmatched, let's take a look for it
                 # being a dep like glibc.so.2 or /foo/bar/baz
                 
-                if len(unmatched) > 0:
-                    arg = unmatched[0] #only one in there
+                if not mypkgs:
+                    arg = kwargs['pattern']
                     vdebug(_('Checking for virtual provide or file-provide for %s'), 
                            arg)
 
@@ -2456,11 +2474,13 @@ class YumBase(depsolve.Depsolve):
                     except yum.Errors.YumBaseError, e:
                         critical(_('No Match for argument: %s'), arg)
                     else:
-                        if mypkgs:
-                            #  Dep. installs don't do wildcards, so we
-                            # just want a single named package.
+                        # install MTA* == fail, because provides don't do globs
+                        # install /usr/kerberos/bin/* == success (and we want
+                        #                                all of the pkgs)
+                        if mypkgs and not misc.re_glob(arg):
                             mypkgs = self.bestPackagesFromList(mypkgs,
                                                                single_name=True)
+                        if mypkgs:
                             pkgs.extend(mypkgs)
                         
             else:
@@ -2516,10 +2536,15 @@ class YumBase(depsolve.Depsolve):
             # Do we still want to return errors here?
             # We don't in the cases below, so I didn't here...
             if 'pattern' in kwargs:
-                pkgs = self.rpmdb.returnPackages(patterns=[kwargs['pattern']])
+                pkgs = self.rpmdb.returnPackages(patterns=[kwargs['pattern']],
+                                                 ignore_case=False)
             if 'name' in kwargs:
                 pkgs = self.rpmdb.searchNevra(name=kwargs['name'])
-            for pkg in pkgs:
+            # Warning here does "weird" things when doing:
+            # yum --disablerepo='*' install '*'
+            # etc. ... see RHBZ#480402
+            if False:
+              for pkg in pkgs:
                 self.verbose_logger.warning(_('Package %s installed and not available'), pkg)
             if pkgs:
                 return []
@@ -2702,18 +2727,17 @@ class YumBase(depsolve.Depsolve):
                 except yum.Errors.YumBaseError, e:
                     self.logger.critical(_('%s') % e)
                 
-                if not depmatches:
-                    self.logger.critical(_('No Match for argument: %s') % arg)
-                else:
-                    instpkgs.extend(depmatches)
+                instpkgs.extend(depmatches)
 
             #  Always look for available packages, it doesn't seem to do any
             # harm (apart from some time). And it fixes weird edge cases where
             # "update a" (which requires a new b) is different from "update b"
-            if True or not instpkgs:
-                (e, m, u) = self.pkgSack.matchPackageNames([kwargs['pattern']])
-                availpkgs.extend(e)
-                availpkgs.extend(m)
+            (e, m, u) = self.pkgSack.matchPackageNames([kwargs['pattern']])
+            availpkgs.extend(e)
+            availpkgs.extend(m)
+
+            if not availpkgs and not instpkgs:
+                self.logger.critical(_('No Match for argument: %s') % arg)
         
         else: # we have kwargs, sort them out.
             nevra_dict = self._nevra_kwarg_parse(kwargs)
@@ -2816,6 +2840,10 @@ class YumBase(depsolve.Depsolve):
             #        it to of what is installed. in the meantime name.arch is
             #        most likely correct
             pot_updated = self.rpmdb.searchNevra(name=available_pkg.name, arch=available_pkg.arch)
+            if pot_updated and self.allowedMultipleInstalls(available_pkg):
+                # only compare against the newest of what's installed for kernel
+                pot_updated = sorted(pot_updated)[-1:]
+
             for ipkg in pot_updated:
                 if self.tsInfo.isObsoleted(ipkg.pkgtup):
                     vdebug2(_('Not Updating Package that is already obsoleted: %s.%s %s:%s-%s'), 
@@ -3011,15 +3039,18 @@ class YumBase(depsolve.Depsolve):
                 self.tsInfo.remove(item.pkgtup)
                 vinfo2(_("Package %s is allowed multiple installs, skipping"),
                        item.po)
+                tx_mbrs.remove(item)
                 continue
             
             members = self.install(name=item.name, arch=item.arch,
                            ver=item.version, release=item.release, epoch=item.epoch)
             if len(members) == 0:
+                self.tsInfo.remove(item.pkgtup)
+                tx_mbrs.remove(item)
                 raise Errors.ReinstallError, _("Problem in reinstall: no package matched to install")
             new_members.extend(members)
 
-        tx_mbrs.extend(new_members)            
+        tx_mbrs.extend(new_members)
         return tx_mbrs
         
 

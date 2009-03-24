@@ -172,7 +172,7 @@ class YumPackageSack(packageSack.PackageSack):
                         db_un_fn = db_fn.replace('.bz2', '')
                         if not repo.cache:
                             misc.bunzipFile(db_fn, db_un_fn)
-                            os.unlink(db_fn)
+                            misc.unlink_f(db_fn)
                             db_un_fn = self._check_uncompressed_db(repo, mydbtype)
 
                 dobj = repo.cacheHandler.open_database(db_un_fn)
@@ -201,6 +201,7 @@ class YumPackageSack(packageSack.PackageSack):
 
         result = None
 
+        repo._preload_md_from_system_cache(os.path.basename(db_un_fn))
         if os.path.exists(db_un_fn):
             if skip_old_DBMD_check and repo._using_old_MD:
                 return db_un_fn
@@ -209,11 +210,7 @@ class YumPackageSack(packageSack.PackageSack):
                 repo.checkMD(db_un_fn, mdtype, openchecksum=True)
             except URLGrabError:
                 if not repo.cache:
-                    try:
-                        os.unlink(db_un_fn)
-                    except OSError, e:
-                        if e.errno != errno.ENOENT:
-                            raise # Could have an error before anything happens
+                    misc.unlink_f(db_un_fn)
             else:
                 result = db_un_fn
 
@@ -255,11 +252,8 @@ class YumRepository(Repository, config.RepoConf):
                                  # config is very, very old
         # throw in some stubs for things that will be set by the config class
         self.basecachedir = ""
-        self.cachedir = ""
-        self.pkgdir = ""
-        self.hdrdir = ""
         self.cost = 1000
-        self.copy_local = 0
+        self.copy_local = 1
         # holder for stuff we've grabbed
         self.retrieved = { 'primary':0, 'filelists':0, 'other':0, 'group':0,
                            'updateinfo':0}
@@ -286,6 +280,19 @@ class YumRepository(Repository, config.RepoConf):
 
         self._grabfunc = None
         self._grab = None
+
+    def __cmp__(self, other):
+        """ Sort yum repos. by cost, and then by alphanumeric on their id. """
+        if other is None:
+            return 1
+        if hasattr(other, 'cost'):
+            ocost = other.cost
+        else:
+            ocost = 1000
+        ret = cmp(self.cost, ocost)
+        if ret:
+            return 1
+        return cmp(self.id, other.id)
 
     def _getSack(self):
         # FIXME: Note that having the repo hold the sack, which holds "repos"
@@ -384,7 +391,7 @@ class YumRepository(Repository, config.RepoConf):
         try:
             config.writeRawRepoFile(self,only=['enabled'])
         except IOError, e:
-            if e.errno == 13:
+            if e.errno == errno.EACCES:
                 self.logger.warning(e)
             else:
                 raise IOError, str(e)
@@ -395,7 +402,7 @@ class YumRepository(Repository, config.RepoConf):
         try:
             config.writeRawRepoFile(self,only=['enabled'])
         except IOError, e:
-            if e.errno == 13:
+            if e.errno == errno.EACCES:
                 self.logger.warning(e)
             else:
                 raise IOError, str(e)
@@ -502,13 +509,13 @@ class YumRepository(Repository, config.RepoConf):
         cachedir = os.path.join(self.basecachedir, self.id)
         pkgdir = os.path.join(cachedir, 'packages')
         hdrdir = os.path.join(cachedir, 'headers')
-        self.setAttribute('cachedir', cachedir)
-        self.setAttribute('pkgdir', pkgdir)
-        self.setAttribute('hdrdir', hdrdir)
-        self.setAttribute('gpgdir', self.cachedir + '/gpgdir')
+        self.setAttribute('_dir_setup_cachedir', cachedir)
+        self.setAttribute('_dir_setup_pkgdir', pkgdir)
+        self.setAttribute('_dir_setup_hdrdir', hdrdir)
+        self.setAttribute('_dir_setup_gpgdir', self.cachedir + '/gpgdir')
 
         cookie = self.cachedir + '/' + self.metadata_cookie_fn
-        self.setAttribute('metadata_cookie', cookie)
+        self.setAttribute('_dir_setup_metadata_cookie', cookie)
 
         for dir in [self.cachedir, self.pkgdir]:
             if self.cache == 0:
@@ -531,11 +538,37 @@ class YumRepository(Repository, config.RepoConf):
         self._preload_md_from_system_cache('mirrorlist.txt')
         self._preload_md_from_system_cache('metalink.xml')
 
+    def _dirAttr(self, attr):
+        """ Make the directory attributes call .dirSetup() if needed. """
+        attr = '_dir_setup_' + attr
+        if not hasattr(self, attr):
+            self.dirSetup()
+        return getattr(self, attr)
+    cachedir = property(lambda self: self._dirAttr('cachedir'))
+    pkgdir   = property(lambda self: self._dirAttr('pkgdir'))
+    hdrdir   = property(lambda self: self._dirAttr('hdrdir'))
+    gpgdir   = property(lambda self: self._dirAttr('gpgdir'))
+    metadata_cookie = property(lambda self: self._dirAttr('metadata_cookie'))
 
     def baseurlSetup(self):
         warnings.warn('baseurlSetup() will go away in a future version of Yum.\n',
                 Errors.YumFutureDeprecationWarning, stacklevel=2)
         self._baseurlSetup()
+
+    def _hack_mirrorlist_for_anaconda(self):
+        #  Anaconda doesn't like having mirrorlist and metalink, so we allow
+        # mirrorlist to act like metalink. Except we'd really like to know which
+        # we have without parsing it ... and want to store it in the right
+        # place etc.
+        #  So here is #1 hack: see if the metalin kis unset and the mirrorlist
+        # URL contains the string "metalink", if it does we copy it over.
+        if self.metalink:
+            return
+        if not self.mirrorlist:
+            return
+        if self.mirrorlist.find("metalink") == -1:
+            return
+        self.metalink = self.mirrorlist
 
     def _baseurlSetup(self):
         """go through the baseurls and mirrorlists and populate self.urls
@@ -548,6 +581,7 @@ class YumRepository(Repository, config.RepoConf):
         self._orig_baseurl = self.baseurl
 
         mirrorurls = []
+        self._hack_mirrorlist_for_anaconda()
         if self.metalink and not self.mirrorlistparsed:
             # FIXME: This is kind of lying to API callers
             mirrorurls.extend(list(self.metalink_data.urls()))
@@ -563,7 +597,7 @@ class YumRepository(Repository, config.RepoConf):
             if hasattr(self, 'mirrorlist_file') and os.path.exists(self.mirrorlist_file):
                 if not self.cache:
                     try:
-                        os.unlink(self.mirrorlist_file)
+                        misc.unlink_f(self.mirrorlist_file)
                     except (IOError, OSError), e:
                         print 'Could not delete bad mirrorlist file: %s - %s' % (self.mirrorlist_file, e)
                     else:
@@ -636,10 +670,7 @@ class YumRepository(Repository, config.RepoConf):
                     # Downloaded file failed to parse, revert (dito. above):
                     print "Could not parse metalink %s error was \n%s"%(url, e)
                     self._metadataCurrent = True
-                    try:
-                        os.unlink(result)
-                    except:
-                        pass
+                    misc.unlink_f(result)
 
             if self._metadataCurrent:
                 self._metalink = metalink.MetaLinkRepoMD(self.metalink_filename)
@@ -706,7 +737,7 @@ class YumRepository(Repository, config.RepoConf):
             except Errors.MediaError, e:
                 verbose_logger.log(logginglevels.DEBUG_2, "Error getting package from media; falling back to url %s" %(e,))
 
-        if url is not None and scheme != "media":
+        if url and scheme != "media":
             ug = URLGrabber(keepalive = self.keepalive,
                             bandwidth = self.bandwidth,
                             retry = self.retries,
@@ -795,12 +826,17 @@ class YumRepository(Repository, config.RepoConf):
         else return False. This result is cached, so that metalink/repomd.xml
         are synchronized."""
         if self._metadataCurrent is None:
+            mlfn = self.cachedir + '/' + 'metalink.xml'
+            if self.metalink and not os.path.exists(mlfn):
+                self._metadataCurrent = False
+        if self._metadataCurrent is None:
             self._metadataCurrent = self.withinCacheAge(self.metadata_cookie,
                                                         self.metadata_expire)
         return self._metadataCurrent
 
-    #  The problem is that the metalink _cannot_ be newer than the repomd.xml
-    # or the checksums can be off.
+    #  The metalink _shouldn't_ be newer than the repomd.xml or the checksums
+    # will be off, but we only really care when we are downloading the
+    # repomd.xml ... so keep it in mind that they can be off on disk.
     #  Also see _getMetalink()
     def _metalinkCurrent(self):
         if self._metadataCurrent is not None:
@@ -866,7 +902,6 @@ class YumRepository(Repository, config.RepoConf):
             self.mediafunc = mediafunc
             self.gpg_import_func = gpg_import_func
             self.confirm_func = confirm_func
-            self.dirSetup()
         except Errors.RepoError, e:
             raise
         if not self.mediafunc and self.mediaid and not self.mirrorlist and not self.baseurl:
@@ -883,14 +918,10 @@ class YumRepository(Repository, config.RepoConf):
 
     def _getFileRepoXML(self, local, text=None, grab_can_fail=None):
         """ Call _getFile() for the repomd.xml file. """
-        def _cleanup_tmp():
-            try:
-                os.unlink(tfname)
-            except:
-                pass
         checkfunc = (self._checkRepoXML, (), {})
         if grab_can_fail is None:
             grab_can_fail = 'old_repo_XML' in self._oldRepoMDData
+        tfname = ''
         try:
             # This is named so that "yum clean metadata" picks it up
             tfname = tempfile.mktemp(prefix='repomd', suffix="tmp.xml",
@@ -904,12 +935,12 @@ class YumRepository(Repository, config.RepoConf):
                                    cache=self.http_caching == 'all')
 
         except URLGrabError, e:
-            _cleanup_tmp()
+            misc.unlink_f(tfname)
             if grab_can_fail:
                 return None
             raise Errors.RepoError, 'Error downloading file %s: %s' % (local, e)
         except (Errors.NoMoreMirrorsRepoError, Errors.RepoError):
-            _cleanup_tmp()
+            misc.unlink_f(tfname)
             if grab_can_fail:
                 return None
             raise
@@ -919,7 +950,7 @@ class YumRepository(Repository, config.RepoConf):
             os.rename(result, local)
         except:
             # But in case it doesn't...
-            _cleanup_tmp()
+            misc.unlink_f(tfname)
             if grab_can_fail:
                 return None
             raise Errors.RepoError, 'Error renaming file %s to %s' % (result,
@@ -941,7 +972,7 @@ class YumRepository(Repository, config.RepoConf):
         """ If we have an older repomd.xml file available, save it out. """
         # Cleanup old trash...
         for fname in glob.glob(self.cachedir + "/*.old.tmp"):
-            os.unlink(fname)
+            misc.unlink_f(fname)
 
         if os.path.exists(local):
             old_local = local + '.old.tmp' # locked, so this is ok
@@ -960,7 +991,7 @@ class YumRepository(Repository, config.RepoConf):
 
         # Unique names mean the rename doesn't work anymore.
         for fname in self._oldRepoMDData['new_MD_files']:
-            os.unlink(fname)
+            misc.unlink_f(fname)
 
         old_data = self._oldRepoMDData
         self._oldRepoMDData = {}
@@ -981,12 +1012,12 @@ class YumRepository(Repository, config.RepoConf):
         self._oldRepoMDData = {}
 
         if 'old_local' in old_data:
-            os.unlink(old_data['old_local'])
+            misc.unlink_f(old_data['old_local'])
 
         if 'old_MD_files' not in old_data:
             return
         for revert in old_data['old_MD_files']:
-            os.unlink(revert + '.old.tmp')
+            misc.unlink_f(revert + '.old.tmp')
 
     def _get_mdtype_data(self, mdtype, repoXML=None):
         if repoXML is None:
@@ -1088,6 +1119,7 @@ class YumRepository(Repository, config.RepoConf):
         if not oxml: # No old repomd.xml data
             return False
 
+        self._hack_mirrorlist_for_anaconda()
         if not self.metalink: # Nothing to check it against
             return False
 
@@ -1150,6 +1182,8 @@ class YumRepository(Repository, config.RepoConf):
                 return True
         return False
 
+    # mmdtype is unused, but in theory was == primary
+    # dbmtype == primary_db etc.
     def _groupCheckDataMDValid(self, data, dbmdtype, mmdtype, file_check=False):
         """ Check that we already have this data, and that it's valid. Given
             the DB mdtype and the main mdtype (no _db suffix). """
@@ -1166,7 +1200,10 @@ class YumRepository(Repository, config.RepoConf):
             if not os.path.exists(local):
                 local = local.replace('.bz2', '')
                 compressed = True
-        # if we can, make a copy of the system-wide-cache version of this file
+        #  If we can, make a copy of the system-wide-cache version of this file,
+        # note that we often don't get here. So we also do this in
+        # YumPackageSack.populate ... and we look for the uncompressed versions
+        # in retrieveMD.
         self._preload_md_from_system_cache(os.path.basename(local))
         if not self._checkMD(local, dbmdtype, openchecksum=compressed,
                              data=data, check_can_fail=True):
@@ -1247,7 +1284,7 @@ class YumRepository(Repository, config.RepoConf):
                 dl_local = local
                 local = local.replace('.bz2', '')
                 misc.bunzipFile(dl_local, local)
-                os.unlink(dl_local)
+                misc.unlink_f(dl_local)
             self._oldRepoMDData['new_MD_files'].append(local)
 
         self._doneOldRepoXML()
@@ -1345,6 +1382,7 @@ class YumRepository(Repository, config.RepoConf):
         except Errors.RepoMDError, e:
             raise URLGrabError(-1, 'Error importing repomd.xml for %s: %s' % (self, e))
 
+        self._hack_mirrorlist_for_anaconda()
         if self.metalink and not self._checkRepoMetalink(repoXML):
             raise URLGrabError(-1, 'repomd.xml does not match metalink for %s' %
                                self)
@@ -1422,7 +1460,8 @@ class YumRepository(Repository, config.RepoConf):
                     "Caching enabled but no local cache of %s from %s" % (local,
                            self)
 
-        if os.path.exists(local):
+        if (os.path.exists(local) or
+            self._preload_md_from_system_cache(os.path.basename(local))):
             if self._checkMD(local, mdtype, check_can_fail=True):
                 self.retrieved[mdtype] = 1
                 return local # it's the same return the local one
@@ -1547,30 +1586,40 @@ class YumRepository(Repository, config.RepoConf):
 
         return returnlist
 
-    def _preload_md_from_system_cache(self, filename):
-        """attempts to download the file from the system-wide cache, if possible"""
+    def _preload_file_from_system_cache(self, filename, subdir=''):
+        """attempts to copy the file from the system-wide cache,
+           if possible"""
         if not hasattr(self, 'old_base_cache_dir'):
-            return
+            return False
         if self.old_base_cache_dir == "":
-            return
+            return False
 
         glob_repo_cache_dir=os.path.join(self.old_base_cache_dir, self.id)
         if not os.path.exists(glob_repo_cache_dir):
-            return
+            return False
         if os.path.normpath(glob_repo_cache_dir) == os.path.normpath(self.cachedir):
-            return
+            return False
 
-        # copy repomd.xml, cachecookie and mirrorlist.txt
-        fn = glob_repo_cache_dir + '/' + filename
-        destfn = self.cachedir + '/' + os.path.basename(filename)
+        # Try to copy whatever file it is
+        fn = glob_repo_cache_dir + '/' + subdir + os.path.basename(filename)
+        destfn = self.cachedir   + '/' + subdir + os.path.basename(filename)
         # don't copy it if the copy in our users dir is newer or equal
         if not os.path.exists(fn):
-            return
+            return False
         if os.path.exists(destfn):
             if os.stat(fn)[stat.ST_CTIME] <= os.stat(destfn)[stat.ST_CTIME]:
-                return
-        #print 'copying %s to %s' % (fn, destfn)
+                return False
         shutil.copy2(fn, destfn)
+        return True
+
+    def _preload_md_from_system_cache(self, filename):
+        """attempts to copy the metadata file from the system-wide cache,
+           if possible"""
+        return self._preload_file_from_system_cache(filename)
+    def _preload_pkg_from_system_cache(self, pkg):
+        """attempts to copy the package from the system-wide cache,
+           if possible"""
+        return self._preload_file_from_system_cache(filename,subdir='packages/')
 
 
 def getMirrorList(mirrorlist, pdict = None):

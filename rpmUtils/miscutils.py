@@ -111,7 +111,11 @@ def pkgTupleFromHeader(hdr):
        None epoch to 0, as well."""
    
     name = hdr['name']
-    arch = hdr['arch']
+    if hdr[rpm.RPMTAG_SOURCERPM]:
+        arch = hdr['arch']
+    else:
+        arch = 'src'
+        
     ver = hdr['version']
     rel = hdr['release']
     epoch = hdr['epoch']
@@ -157,7 +161,7 @@ def rangeCompare(reqtuple, provtuple):
     if r is None:
         reqr = None
 
-    rc = rpmUtils.miscutils.compareEVR((e, v, r), (reqe, reqv, reqr))
+    rc = compareEVR((e, v, r), (reqe, reqv, reqr))
 
     # does not match unless
     if rc >= 1:

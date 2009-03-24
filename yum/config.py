@@ -493,31 +493,30 @@ class BaseConfig(object):
             if value is not None:
                 setattr(self, name, value)
 
-    def optionobj(cls, name):
+    def optionobj(cls, name, exceptions=True):
         '''Return the Option instance for the given name
         '''
         obj = getattr(cls, name, None)
         if isinstance(obj, Option):
             return obj
-        else:
+        elif exceptions:
             raise KeyError
+        else:
+            return None
     optionobj = classmethod(optionobj)
 
     def isoption(cls, name):
         '''Return True if the given name refers to a defined option 
         '''
-        try:
-            cls.optionobj(name)
-            return True
-        except KeyError:
-            return False
+        return cls.optionobj(name, exceptions=False) is not None
     isoption = classmethod(isoption)
 
     def iterkeys(self):
         '''Yield the names of all defined options in the instance.
         '''
-        for name, item in self.iteritems():
-            yield name
+        for name in dir(self):
+            if self.isoption(name):
+                yield name
 
     def iteritems(self):
         '''Yield (name, value) pairs for every option in the instance.
@@ -525,9 +524,8 @@ class BaseConfig(object):
         The value returned is the parsed, validated option value.
         '''
         # Use dir() so that we see inherited options too
-        for name in dir(self):
-            if self.isoption(name):
-                yield (name, getattr(self, name))
+        for name in self.iterkeys():
+            yield (name, getattr(self, name))
 
     def write(self, fileobj, section=None, always=()):
         '''Write out the configuration to a file-like object
@@ -627,7 +625,7 @@ class YumConf(StartupConf):
                                           names_of_0=["0", "<off>"])
     kernelpkgnames = ListOption(['kernel','kernel-smp', 'kernel-enterprise',
             'kernel-bigmem', 'kernel-BOOT', 'kernel-PAE', 'kernel-PAE-debug'])
-    exactarchlist = ListOption(['kernel', 'kernel-smp', 'glibc',
+    exactarchlist = ListOption(['kernel', 'kernel-smp',
             'kernel-hugemem', 'kernel-enterprise', 'kernel-bigmem',
             'kernel-devel', 'kernel-PAE', 'kernel-PAE-debug'])
     tsflags = ListOption()
@@ -655,11 +653,9 @@ class YumConf(StartupConf):
     throttle = ThrottleOption(0)
 
     http_caching = SelectionOption('all', ('none', 'packages', 'all'))
-    #  Time in seconds (1.5h), yum-updatesd runs once per. hour by default
-    # this time means we don't do interactive network checks/updates if
-    # yum-updatesd is running.
-    metadata_expire = SecondsOption(60 * 90)
-    mirrorlist_expire = SecondsOption(86400) # time in seconds (1 day)
+    metadata_expire = SecondsOption(60 * 60 * 6) # Time in seconds (6h).
+    # Time in seconds (1 day). NOTE: This isn't used when using metalinks
+    mirrorlist_expire = SecondsOption(60 * 60 * 24)
     rpm_check_debug = BoolOption(True)
     disable_excludes = ListOption()    
     skip_broken = BoolOption(False)
@@ -682,11 +678,17 @@ class YumConf(StartupConf):
                                     'tty' : 'auto', 'if-tty' : 'auto'})
     color_list_installed_older = Option('bold')
     color_list_installed_newer = Option('bold,yellow')
+    color_list_installed_reinstall = Option('normal')
     color_list_installed_extra = Option('bold,red')
 
     color_list_available_upgrade = Option('bold,blue')
     color_list_available_downgrade = Option('dim,cyan')
+    color_list_available_reinstall = Option('bold,underline,green')
     color_list_available_install = Option('normal')
+
+    color_update_installed = Option('normal')
+    color_update_local     = Option('bold')
+    color_update_remote    = Option('normal')
 
     color_search_match = Option('bold')
     
@@ -696,6 +698,20 @@ class RepoConf(BaseConfig):
     '''
     Option definitions for repository INI file sections.
     '''
+
+    __cached_keys = set()
+    def iterkeys(self):
+        '''Yield the names of all defined options in the instance.
+        '''
+        ck = self.__cached_keys
+        if not isinstance(self, RepoConf):
+            ck = set()
+        if not ck:
+            ck.update(list(BaseConfig.iterkeys(self)))
+
+        for name in self.__cached_keys:
+            yield name
+
     name = Option()
     enabled = Inherit(YumConf.enabled)
     baseurl = UrlListOption()
@@ -743,6 +759,8 @@ def readStartupConfig(configfile, root):
     May raise Errors.ConfigError if a problem is detected with while parsing.
     '''
 
+    # ' xemacs syntax hack
+
     StartupConf.installroot.default = root
     startupconf = StartupConf()
     startupconf.config_file_path = configfile
@@ -772,6 +790,8 @@ def readMainConfig(startupconf):
     @return: Populated YumConf instance.
     '''
     
+    # ' xemacs syntax hack
+
     # Set up substitution vars
     yumvars = _getEnvVar()
     yumvars['basearch'] = rpmUtils.arch.getBaseArch()          # FIXME make this configurable??

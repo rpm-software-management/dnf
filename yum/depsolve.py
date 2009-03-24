@@ -25,7 +25,7 @@ import logging
 import rpmUtils.transaction
 import rpmUtils.miscutils
 import rpmUtils.arch
-from rpmUtils.arch import archDifference, isMultiLibArch, getBestArch
+from rpmUtils.arch import archDifference, isMultiLibArch, getBestArch, canCoinstall
 import misc
 from misc import unique, version_tuple_to_string
 import rpm
@@ -489,20 +489,21 @@ class Depsolve(object):
             tspkgs = []
             if not self.allowedMultipleInstalls(pkg):
                 # from ts
-                tspkgs = self.tsInfo.matchNaevr(name=pkg.name, arch=pkg.arch)
+                tspkgs = self.tsInfo.matchNaevr(name=pkg.name)
                 for tspkg in tspkgs:
-                    if tspkg.po.verGT(pkg):
-                        msg = _('Potential resolving package %s has newer instance in ts.') % pkg
-                        self.verbose_logger.log(logginglevels.DEBUG_2, msg)
-                        provSack.delPackage(pkg)
-                        continue
-                    elif tspkg.po.verLT(pkg):
-                        upgraded.setdefault(pkg.pkgtup, []).append(tspkg.pkgtup)
+                    if not canCoinstall(pkg.arch, tspkg.po.arch): # a comparable arch
+                        if tspkg.po.verGT(pkg):
+                            msg = _('Potential resolving package %s has newer instance in ts.') % pkg
+                            self.verbose_logger.log(logginglevels.DEBUG_2, msg)
+                            provSack.delPackage(pkg)
+                            continue
+                        elif tspkg.po.verLT(pkg):
+                            upgraded.setdefault(pkg.pkgtup, []).append(tspkg.pkgtup)
                 
                 # from rpmdb
-                dbpkgs = self.rpmdb.searchNevra(name=pkg.name, arch=pkg.arch)
+                dbpkgs = self.rpmdb.searchNevra(name=pkg.name)
                 for dbpkg in dbpkgs:
-                    if dbpkg.verGT(pkg):
+                    if dbpkg.verGT(pkg) and not canCoinstall(pkg.arch, dbpkg.arch):
                         msg = _('Potential resolving package %s has newer instance installed.') % pkg
                         self.verbose_logger.log(logginglevels.DEBUG_2, msg)
                         provSack.delPackage(pkg)
@@ -668,7 +669,7 @@ class Depsolve(object):
         p.print_stats(20)
         return rc
 
-    def resolveDeps(self):
+    def resolveDeps(self, full_check=True):
 
         if not len(self.tsInfo):
             return (0, [_('Success - empty transaction')])
@@ -679,8 +680,8 @@ class Depsolve(object):
         self.tsInfo.resetResolved(hard=False)
 
         CheckDeps = True
-        CheckRemoves = False
-        CheckInstalls = False
+        CheckRemoves = full_check
+        CheckInstalls = full_check
 
         missingdep = 0
         errors = []
@@ -1039,7 +1040,14 @@ class Depsolve(object):
         for pkg in pkgs:
             pkgresults[pkg] = 0
             if self.rpmdb.contains(pkg.name):
-                ipkgresults[pkg] = 0
+                #  We only want to count things as "installed" if they are
+                # older than what we are comparing, because this then an update
+                # so we give preference. If they are newer then obsoletes/etc.
+                # could play a part ... this probably needs a better fix.
+                rpmdbpkgs = self.rpmdb.returnPackages(patterns=[pkg.name])
+                newest = sorted(rpmdbpkgs)[-1]
+                if newest.verLT(pkg):
+                    ipkgresults[pkg] = 0
 
         #  This is probably only for "renames". What happens is that pkgA-1 gets
         # obsoleted by pkgB but pkgB requires pkgA-2, now _if_ the pkgA txmbr
@@ -1089,7 +1097,7 @@ class Depsolve(object):
                 if reqpo:
                     arches = (reqpo.arch, getBestArch())
                 else:
-                    arches = (getBestArch())
+                    arches = (getBestArch(),)
                 
                 for thisarch in arches:
                     res = _compare_arch_distance(po, nextpo, thisarch)
