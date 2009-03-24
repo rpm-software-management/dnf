@@ -1007,7 +1007,7 @@ class ReInstallCommand(YumCommand):
                 base.reinstall(pattern=item)
 
             if len(base.tsInfo) > oldcount:
-                return 2, [_('Package(s) to install')]
+                return 2, [_('Package(s) to reinstall')]
             return 0, [_('Nothing to do')]            
             
         except yum.Errors.YumBaseError, e:
@@ -1016,6 +1016,37 @@ class ReInstallCommand(YumCommand):
     def getSummary(self):
         return _("reinstall a package")
 
+    def needTs(self, base, basecmd, extcmds):
+        return False
+        
+class DowngradeCommand(YumCommand):
+    def getNames(self):
+        return ['downgrade']
+
+    def getUsage(self):
+        return "PACKAGE..."
+
+    def doCheck(self, base, basecmd, extcmds):
+        checkRootUID(base)
+        checkGPGKey(base)
+        checkPackageArg(base, basecmd, extcmds)
+
+    def doCommand(self, base, basecmd, extcmds):
+        self.doneCommand(base, _("Setting up Downgrade Process"))
+        oldcount = len(base.tsInfo)
+        try:
+            for item in extcmds:
+                base.downgrade(pattern=item)
+
+            if len(base.tsInfo) > oldcount:
+                return 2, [_('Package(s) to downgrade')]
+            return 0, [_('Nothing to do')]            
+            
+        except yum.Errors.YumBaseError, e:
+            return 1, [to_unicode(e)]
+
+    def getSummary(self):
+        return _("downgrade a package")
 
     def needTs(self, base, basecmd, extcmds):
         return False
