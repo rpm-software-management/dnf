@@ -59,7 +59,9 @@ gnome\-packagekit application\&.
 .br
 .I \fR * localupdate rpmfile1 [rpmfile2] [\&.\&.\&.] 
 .br
-.I \fR * reinstall package1
+.I \fR * reinstall package1 [package2] [\&.\&.\&.] 
+.br
+.I \fR * downgrade package1 [package2] [\&.\&.\&.] 
 .br
 .I \fR * deplist package1 [package2] [\&.\&.\&.] 
 .br
@@ -191,8 +193,14 @@ If required the enabled repositories will be used to resolve dependencies.
 .IP
 .IP "\fBreinstall\fP"
 Will reinstall the identically versioned package as is currently installed. 
-It will not necessarily work for all pkgs. Kernels, in particular are not
-going to play nicely with this.
+This does not work for "installonly" packages, like Kernels.
+.IP
+.IP "\fBdowngrade\fP"
+Will try and downgrade a package from the version currently installed to the
+previously highest version (or the specified version).
+The depsolver will not necessarily work, but if you specify all the packages it
+should work (and thus. all the simple cases will work). Also this does not
+work for "installonly" packages, like Kernels.
 .IP
 .IP "\fBdeplist\fP"
 Produces a list of all dependencies and what packages provide those
