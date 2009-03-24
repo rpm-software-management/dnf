@@ -1,6 +1,6 @@
 Summary: RPM installer/updater
 Name: yum
-Version: 3.2.21
+Version: 3.2.22
 Release: 0
 License: GPLv2+
 Group: System Environment/Base
@@ -99,6 +99,9 @@ exit 0
 %{_mandir}/man*/yum-updatesd*
 
 %changelog
+* Tue Mar 24 2009 Seth Vidal <skvidal at fedoraproject.org>
+- 3.2.22
+
 * Wed Jan  7 2009 Seth Vidal <skvidal at fedoraproject.org>
 - 3.2.21
 
