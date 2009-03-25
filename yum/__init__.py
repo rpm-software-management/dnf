@@ -3024,6 +3024,8 @@ class YumBase(depsolve.Depsolve):
                     installpkgs.append(po)
                 else:
                     donothingpkgs.append(po)
+            elif self.allowedMultipleInstalls(po):
+                installpkgs.append(po)
             else:
                 donothingpkgs.append(po)
 
