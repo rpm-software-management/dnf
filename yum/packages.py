@@ -671,6 +671,20 @@ class YumAvailablePackage(PackageObject, RpmBase):
         """check the package checksum vs the localPkg
            return True if pkg is good, False if not"""
 
+        #  This is called a few times now, so we want some way to not have to
+        # read+checksum "large" datasets multiple times per. transaction.
+        try:
+            nst = os.stat(self.localPkg())
+        except OSError, e:
+            return False
+        if hasattr(self, "_verify_local_pkg_cache"):
+            ost = self._verify_local_pkg_cache
+            if (ost.st_ino   == nst.st_ino   and
+                ost.st_dev   == nst.st_dev   and
+                ost.st_mtime == nst.st_mtime and
+                ost.st_size  == nst.st_size):
+                return True
+
         (csum_type, csum) = self.returnIdSum()
         
         try:
@@ -681,6 +695,8 @@ class YumAvailablePackage(PackageObject, RpmBase):
         if filesum != csum:
             return False
         
+        self._verify_local_pkg_cache = nst
+
         return True
         
     def prcoPrintable(self, prcoTuple):
