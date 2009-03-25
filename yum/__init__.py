@@ -2454,6 +2454,11 @@ class YumBase(depsolve.Depsolve):
                 installed_pkg =  self.rpmdb.searchPkgTuple(inst_tup)[0]
                 yield installed_pkg
 
+    def _add_prob_flags(self, *flags):
+        """ Add all of the passed flags to the tsInfo.probFilterFlags array. """
+        for flag in flags:
+            if flag not in self.tsInfo.probFilterFlags:
+                self.tsInfo.probFilterFlags.append(flag)
 
     def install(self, po=None, **kwargs):
         """try to mark for install the item specified. Uses provided package 
@@ -2632,8 +2637,13 @@ class YumBase(depsolve.Depsolve):
             # or some other oddity. If it is - then modify the problem filter to cope
             
             for ipkg in self.rpmdb.searchNevra(name=po.name, arch=po.arch):
-                if ipkg.EVR > po.EVR:
-                    self.tsInfo.probFilterFlags.append(rpm.RPMPROB_FILTER_OLDPACKAGE)
+                if ipkg.verEQ(po):
+                    self._add_prob_flags(rpm.RPMPROB_FILTER_REPLACEPKG,
+                                         rpm.RPMPROB_FILTER_REPLACENEWFILES,
+                                         rpm.RPMPROB_FILTER_REPLACEOLDFILES)
+                    break
+                if ipkg.verGT(po):
+                    self._add_prob_flags(rpm.RPMPROB_FILTER_OLDPACKAGE)
                     break
             
             # it doesn't obsolete anything. If it does, mark that in the tsInfo, too
@@ -3052,12 +3062,9 @@ class YumBase(depsolve.Depsolve):
         """Setup the problem filters to allow a reinstall to work, then
            pass everything off to install"""
            
-        if rpm.RPMPROB_FILTER_REPLACEPKG not in self.tsInfo.probFilterFlags:
-            self.tsInfo.probFilterFlags.append(rpm.RPMPROB_FILTER_REPLACEPKG)
-        if rpm.RPMPROB_FILTER_REPLACENEWFILES not in self.tsInfo.probFilterFlags:
-            self.tsInfo.probFilterFlags.append(rpm.RPMPROB_FILTER_REPLACENEWFILES)
-        if rpm.RPMPROB_FILTER_REPLACEOLDFILES not in self.tsInfo.probFilterFlags:
-            self.tsInfo.probFilterFlags.append(rpm.RPMPROB_FILTER_REPLACEOLDFILES)
+        self._add_prob_flags(rpm.RPMPROB_FILTER_REPLACEPKG,
+                             rpm.RPMPROB_FILTER_REPLACENEWFILES,
+                             rpm.RPMPROB_FILTER_REPLACEOLDFILES)
 
         tx_mbrs = []
         tx_mbrs.extend(self.remove(po, **kwargs))
@@ -3193,7 +3200,7 @@ class YumBase(depsolve.Depsolve):
             if not atxmbr: # Fail?
                 self.tsInfo.remove(itxmbr.pkgtup)
                 continue
-            self.tsInfo.probFilterFlags.append(rpm.RPMPROB_FILTER_OLDPACKAGE)
+            self._add_prob_flags(rpm.RPMPROB_FILTER_OLDPACKAGE)
             tx_return.append(itxmbr)
             tx_return.append(atxmbr)
 
