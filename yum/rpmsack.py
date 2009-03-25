@@ -54,8 +54,10 @@ class RPMInstalledPackage(YumInstalledPackage):
 
         ts = self.rpmdb.readOnlyTS()
         mi = ts.dbMatch(0, self.idx)
-        return mi.next()
-        return self.hdr
+        try:
+            return mi.next()
+        except StopIteration:
+            raise Errors.PackageSackError, 'Rpmdb changed underneath us'
 
     def __getattr__(self, varname):
         self.hdr = val = self._get_hdr()
