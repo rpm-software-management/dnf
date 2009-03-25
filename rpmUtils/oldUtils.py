@@ -6,7 +6,12 @@ import os
 import gzip
 import sys
 from gzip import write32u, FNAME
+from urlgrabber.grabber import URLGrabError
+from zlib import error as zlibError
 
+def log(num, msg):
+    print >>sys.stderr, msg
+errorlog = log
 
 def _(msg):
     return msg
@@ -168,6 +173,8 @@ def _gzipOpen(filename, mode="rb", compresslevel=9):
     return GzipFile(filename, mode, compresslevel)
 
 class RPM_Base_Work:
+    def __init__(self):
+        self.hdr = None
 
     def _getTag(self, tag):
         if self.hdr is None:
