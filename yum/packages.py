@@ -1076,6 +1076,9 @@ class YumHeaderPackage(YumAvailablePackage):
     def __getattr__(self, thing):
         #FIXME - if an error - return AttributeError, not KeyError 
         # ONLY FIX THIS AFTER THE API BREAK
+        if thing.startswith('__') and thing.endswith('__'):
+            if not hasattr(self, thing):
+                raise AttributeError, "%s has no attribute %s" % (self, thing)
         return self.hdr[thing]
 
     def doepoch(self):

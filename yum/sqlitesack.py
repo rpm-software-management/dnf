@@ -141,6 +141,10 @@ class YumAvailablePackageSqlite(YumAvailablePackage, PackageObject, RpmBase):
                          'license' : 'rpm_license',
                          'checksum_value' : 'pkgId',
                         }
+
+        if varname.startswith('__') and varname.endswith('__'):
+            if not hasattr(self, varname):
+                raise AttributeError, varname
         
         dbname = varname
         if db2simplemap.has_key(varname):
