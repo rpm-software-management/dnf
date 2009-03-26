@@ -1860,7 +1860,10 @@ class YumBase(depsolve.Depsolve):
                     canBeFile = True
             else:
                 isglob = True
-                canBeFile = True
+                if arg[0] != '/' and not misc.re_glob(arg[0]):
+                    canBeFile = False
+                else:
+                    canBeFile = True
                 
             if not isglob:
                 usedDepString = True
@@ -1883,7 +1886,7 @@ class YumBase(depsolve.Depsolve):
                     # then it is not a globbed file we have matched it precisely
                     tmpvalues.append(arg)
                     
-                if isglob:
+                if isglob and canBeFile:
                     self.verbose_logger.log(logginglevels.DEBUG_2,
                         _('searching in file entries'))
                     for thisfile in po.dirlist + po.filelist + po.ghostlist:

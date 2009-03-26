@@ -934,7 +934,7 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
         # If it's not a provides or a filename, we are done
         if prcotype != "provides":
             return results
-        if not glob and name[0] != '/':
+        if name[0] != '/' and (not glob or not misc.re_glob(name[0])):
             return results
 
         # If it is a filename, search the primary.xml file info
