@@ -294,6 +294,30 @@ def utf8_valid(msg):
             return False
     return True
 
+def _utf8_width_le(width, *args):
+    """ Minor speed hack, we often want to know "does X fit in Y". It takes
+        "a while" to work out a utf8_width() (see above), and we know that a
+        utf8 character is always <= byte. So given:
+
+        assert bytes >= characters
+        characters <= width?
+
+        ...we can change to:
+
+        bytes <= width or characters <= width
+
+        ...and bytes are much faster. """
+    # This assumes that all args. are utf8.
+    ret = 0
+    for arg in args:
+        ret += len(arg)
+    if ret <= width:
+        return True
+    ret = 0
+    for arg in args:
+        ret += utf8_width(arg)
+    return ret <= width
+
 def utf8_text_wrap(text, width=70, initial_indent='', subsequent_indent=''):
     """ Works like we want textwrap.wrap() to work, uses utf-8 data and
         doesn't screw up lists/blocks/etc. """
@@ -320,6 +344,8 @@ def utf8_text_wrap(text, width=70, initial_indent='', subsequent_indent=''):
             if byte != ' ':
                 break
             count += 1
+        if byte not in ("-", "*", ".", "o", '\xe2'):
+            return count, 0
         list_chr = utf8_width_chop(line[count:], 1)[1]
         if list_chr in ("-", "*", ".", "o",
                         "\xe2\x80\xa2", "\xe2\x80\xa3", "\xe2\x88\x98"):
@@ -362,7 +388,7 @@ def utf8_text_wrap(text, width=70, initial_indent='', subsequent_indent=''):
             line = line.lstrip(' ')
             cspc_indent = lspc_indent
 
-        if (utf8_width(indent) + utf8_width(line)) <= width:
+        if _utf8_width_le(width, indent, line):
             wrap_last = False
             ret.append(indent + line)
             indent = subsequent_indent
@@ -375,7 +401,7 @@ def utf8_text_wrap(text, width=70, initial_indent='', subsequent_indent=''):
         if not spcs and csab >= 4:
             spcs = csab
         for word in words:
-            if ((utf8_width(line) + utf8_width(word)) > width and
+            if (not _utf8_width_le(width, line, word) and
                 utf8_width(line) > utf8_width(subsequent_indent)):
                 ret.append(line.rstrip(' '))
                 line = subsequent_indent + ' ' * spcs
