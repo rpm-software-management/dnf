@@ -374,9 +374,9 @@ def utf8_text_wrap(text, width=70, initial_indent='', subsequent_indent=''):
         spcs = cspc_indent
         if not spcs and csab >= 4:
             spcs = csab
-        while words:
-            word = words.pop(0)
-            if (utf8_width(line) + utf8_width(word)) > width:
+        for word in words:
+            if ((utf8_width(line) + utf8_width(word)) > width and
+                utf8_width(line) > utf8_width(subsequent_indent)):
                 ret.append(line.rstrip(' '))
                 line = subsequent_indent + ' ' * spcs
             line += word
