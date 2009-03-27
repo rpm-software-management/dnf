@@ -859,6 +859,10 @@ class RepoListCommand(YumCommand):
                     if repo.metalink:
                         out += [base.fmtKeyValFill(_("Repo-metalink: "),
                                                    repo.metalink)]
+                        if enabled:
+                            ts = repo.metalink_data.repomd.timestamp
+                            out += [base.fmtKeyValFill(_("  Updated    : "),
+                                                       time.ctime(ts))]
                     elif repo.mirrorlist:
                         out += [base.fmtKeyValFill(_("Repo-mirrors: "),
                                                    repo.mirrorlist)]
