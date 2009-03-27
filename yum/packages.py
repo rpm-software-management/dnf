@@ -1172,13 +1172,12 @@ class YumHeaderPackage(YumAvailablePackage):
            is a pre-requires or a not"""
         # FIXME this should probably be put in rpmUtils.miscutils since 
         # - that's what it is
-        newflag = flag
         if flag is not None:
-            newflag = flag & rpm.RPMSENSE_PREREQ
-            if newflag == rpm.RPMSENSE_PREREQ:
+            # Note: RPMSENSE_PREREQ == 0 since rpm-4.4'ish
+            if flag & (rpm.RPMSENSE_PREREQ |
+                       rpm.RPMSENSE_SCRIPT_PRE |
+                       rpm.RPMSENSE_SCRIPT_POST):
                 return 1
-            else:
-                return 0
         return 0
 
     def _requires_with_pre(self):
