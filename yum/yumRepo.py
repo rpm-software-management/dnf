@@ -1538,7 +1538,7 @@ class YumRepository(Repository, config.RepoConf):
             try:
                 content = fo.readlines()
             except Exception, e:
-                print "Could not read mirrorlist %s error was \n%s" %(url, e)
+                print "Could not read mirrorlist, error was \n%s" %(e)
                 content = []
             for line in content:
                 if re.match('^\s*\#.*', line) or re.match('^\s*$', line):
@@ -1620,10 +1620,11 @@ class YumRepository(Repository, config.RepoConf):
         """attempts to copy the metadata file from the system-wide cache,
            if possible"""
         return self._preload_file_from_system_cache(filename)
+    
     def _preload_pkg_from_system_cache(self, pkg):
         """attempts to copy the package from the system-wide cache,
            if possible"""
-        return self._preload_file_from_system_cache(filename,subdir='packages/')
+        return self._preload_file_from_system_cache(pkg.localPkg(),subdir='packages/')
 
 
 def getMirrorList(mirrorlist, pdict = None):
