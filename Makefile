@@ -57,6 +57,9 @@ check: test
 pylint:
 	@pylint --rcfile=test/yum-pylintrc $(PYLINT_FILES)
 
+pylint-errors:
+	@pylint -e --rcfile=test/yum-pylintrc $(PYLINT_FILES)
+
 changelog:
 	git log --since=2007-05-16 --pretty --numstat --summary | git2cl  > ChangeLog
 
