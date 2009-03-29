@@ -40,7 +40,7 @@ import gobject
 import smtplib
 import threading
 from optparse import OptionParser
-from email.MIMEText import MIMEText
+from email.mime.text import MIMEText
 
 
 
