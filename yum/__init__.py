@@ -65,7 +65,7 @@ import callbacks
 import warnings
 warnings.simplefilter("ignore", Errors.YumFutureDeprecationWarning)
 
-from packages import parsePackages, YumAvailablePackage, YumLocalPackage, YumInstalledPackage
+from packages import parsePackages, YumAvailablePackage, YumLocalPackage, YumInstalledPackage, comparePoEVR
 from constants import *
 from yum.rpmtrans import RPMTransaction,SimpleCliCallBack
 from misc import to_unicode
@@ -3420,7 +3420,7 @@ class YumBase(depsolve.Depsolve):
                     installed = self.rpmdb.searchNevra(name=m.name)
                     if len(installed) >= self.conf.installonly_limit - 1: # since we're adding one
                         numleft = len(installed) - self.conf.installonly_limit + 1
-                        installed.sort(packages.comparePoEVR)
+                        installed.sort(comparePoEVR)
                         for po in installed:
                             if (po.version, po.release) == (cur_kernel_v, cur_kernel_r): 
                                 # don't remove running
