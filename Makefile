@@ -1,5 +1,6 @@
 SUBDIRS = rpmUtils yum etc docs po
 PYFILES = $(wildcard *.py)
+PYLINT_FILES =  $(wildcard *.py) $(wildcard yum/*.py) $(wildcard rpmUtils/*.py)
 
 PKGNAME = yum
 VERSION=$(shell awk '/Version:/ { print $$2 }' ${PKGNAME}.spec)
@@ -52,6 +53,9 @@ test-skipbroken:
 	@nosetests -i ".*test" test/skipbroken-tests.py
 
 check: test
+
+pylint:
+	@pylint --rcfile=test/yum-pylintrc $(PYLINT_FILES)
 
 changelog:
 	git log --since=2007-05-16 --pretty --numstat --summary | git2cl  > ChangeLog
