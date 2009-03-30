@@ -677,7 +677,8 @@ class YumAvailablePackage(PackageObject, RpmBase):
             nst = os.stat(self.localPkg())
         except OSError, e:
             return False
-        if self._verify_local_pkg_cache:
+        if (hasattr(self, '_verify_local_pkg_cache') and
+            self._verify_local_pkg_cache):
             ost = self._verify_local_pkg_cache
             if (ost.st_ino   == nst.st_ino   and
                 ost.st_dev   == nst.st_dev   and
