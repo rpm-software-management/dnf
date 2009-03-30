@@ -3214,6 +3214,15 @@ class YumBase(depsolve.Depsolve):
             
         returndict = {}
         
+        if 'pkgtup' in kwargs:
+            (n, a, e, v, r) = kwargs['pkgtup']
+            returndict['name'] = n
+            returndict['epoch'] = e
+            returndict['arch'] = a
+            returndict['version'] = v
+            returndict['release'] = r
+            return returndict
+
         returndict['name'] = kwargs.get('name')
         returndict['epoch'] = kwargs.get('epoch')
         returndict['arch'] = kwargs.get('arch')
