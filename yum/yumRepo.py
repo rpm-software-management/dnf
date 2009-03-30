@@ -1566,6 +1566,7 @@ class YumRepository(Repository, config.RepoConf):
         if self.withinCacheAge(self.mirrorlist_file, self.mirrorlist_expire):
             cacheok = True
             fo = open(self.mirrorlist_file, 'r')
+            url = 'file://' + self.mirrorlist_file # just to keep self._readMirrorList(fo,url) happy
         else:
             url = self.mirrorlist
             scheme = urlparse.urlparse(url)[0]
