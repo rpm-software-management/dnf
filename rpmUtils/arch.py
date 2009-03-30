@@ -163,7 +163,7 @@ def getBestArchFromList(archlist, myarch=None):
         val1 = archDifference(myarch, thisarch)
         val2 = archDifference(myarch, arch)
         if val1 == 0 and val2 == 0:
-           continue
+            continue
         if val1 < val2:
             if val1 == 0:
                 thisarch = arch                
