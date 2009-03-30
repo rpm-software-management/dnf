@@ -883,7 +883,7 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
         return self._search("requires", name, flags, version)
 
     @catchSqliteException
-    def searchNames(self, names):
+    def searchNames(self, names=[]):
         """return a list of packages matching any of the given names. This is 
            only a match on package name, nothing else"""
         
