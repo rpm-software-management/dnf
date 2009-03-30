@@ -736,11 +736,11 @@ class DepListCommand(YumCommand):
         checkPackageArg(base, basecmd, extcmds)
 
     def doCommand(self, base, basecmd, extcmds):
-       self.doneCommand(base, _("Finding dependencies: "))
-       try:
-          return base.deplist(extcmds)
-       except yum.Errors.YumBaseError, e:
-          return 1, [str(e)]
+        self.doneCommand(base, _("Finding dependencies: "))
+        try:
+            return base.deplist(extcmds)
+        except yum.Errors.YumBaseError, e:
+            return 1, [str(e)]
 
 
 class RepoListCommand(YumCommand):
