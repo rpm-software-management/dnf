@@ -42,7 +42,6 @@ urlparse.uses_fragment.append("media")
 # For verify
 import pwd
 import grp
-import sys
 
 def comparePoEVR(po1, po2):
     """
