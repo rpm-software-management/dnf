@@ -28,7 +28,6 @@
 # $ dbus-send --system --print-reply --type=method_call \
 #   --dest=edu.duke.linux.yum /Updatesd edu.duke.linux.yum.CheckNow
 
-import gettext
 import os
 import sys
 import time
@@ -84,8 +83,8 @@ class UpdateEmitter(object):
         pass
 
     def setupFailed(self, error, translation_domain):
-       """Emitted when plugin initialization failed."""
-       pass
+        """Emitted when plugin initialization failed."""
+        pass
  
 
 class SyslogUpdateEmitter(UpdateEmitter):
