@@ -521,6 +521,7 @@ class YumAvailablePackage(PackageObject, RpmBase):
         self.repo = repo
         self.state = None
         self._loadedfiles = False
+        self._verify_local_pkg_cache = None
 
         if pkgdict != None:
             self.importFromDict(pkgdict)
@@ -676,7 +677,7 @@ class YumAvailablePackage(PackageObject, RpmBase):
             nst = os.stat(self.localPkg())
         except OSError, e:
             return False
-        if hasattr(self, "_verify_local_pkg_cache"):
+        if self._verify_local_pkg_cache:
             ost = self._verify_local_pkg_cache
             if (ost.st_ino   == nst.st_ino   and
                 ost.st_dev   == nst.st_dev   and
