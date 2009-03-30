@@ -86,7 +86,7 @@ disable-msg=E1101,F0401,W0704,W0612,W0212,W0613,W0602,W0511,W0401,W0614,W0232,W0
 output-format=text
 
 # Include message's id in output
-include-ids=no
+include-ids=yes
 
 # Put messages in a separate file for each module / package specified on the
 # command line instead of printing them on stdout. Reports (if any) will be
