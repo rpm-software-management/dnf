@@ -344,15 +344,6 @@ class YumRepository(Repository, config.RepoConf):
             thisdata = self.repoXML.getData('group')
         return thisdata.location
 
-
-    def __cmp__(self, other):
-        if self.id > other.id:
-            return 1
-        elif self.id < other.id:
-            return -1
-        else:
-            return 0
-
     def __str__(self):
         return self.id
 
