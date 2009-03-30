@@ -227,7 +227,7 @@ class YumAvailablePackageSqlite(YumAvailablePackage, PackageObject, RpmBase):
     
         
     def returnIdSum(self):
-            return (self.checksum_type, self.pkgId)
+        return (self.checksum_type, self.pkgId)
     
     def returnChangelog(self):
         self._loadChangelog()
@@ -1017,7 +1017,6 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
 
     def db2class(self, db, nevra_only=False):
         print 'die die die die die db2class'
-        pass
         class tmpObject:
             pass
         y = tmpObject()

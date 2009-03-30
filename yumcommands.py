@@ -104,7 +104,6 @@ def checkShellArg(base, basecmd, extcmds):
     """
     if len(extcmds) == 0:
         base.verbose_logger.debug(_("No argument to shell"))
-        pass
     elif len(extcmds) == 1:
         base.verbose_logger.debug(_("Filename passed to shell: %s"), 
             extcmds[0])              
