@@ -71,6 +71,7 @@ class YumAvailablePackageSqlite(YumAvailablePackage, PackageObject, RpmBase):
         self.repo = repo
         self.state = None
         self._loadedfiles = False
+        self._files = None
         self._read_db_obj(db_obj)
         # for stupid metadata created without epochs listed in the version tag
         # die die
@@ -83,6 +84,7 @@ class YumAvailablePackageSqlite(YumAvailablePackage, PackageObject, RpmBase):
 
         self._changelog = None
         self._hash = None
+        
 
     files = property(fget=lambda self: self._loadFiles())
 
