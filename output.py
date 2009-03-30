@@ -294,6 +294,8 @@ class YumOutput:
             self.i18ndomains = ["redhat-dist"]
 
         self.term = YumTerm()
+        self._last_interrupt = None
+
     
     def printtime(self):
         months = [_('Jan'), _('Feb'), _('Mar'), _('Apr'), _('May'), _('Jun'),
@@ -1101,7 +1103,7 @@ Remove   %5.5s Package(s)
 
         now = time.time()
 
-        if not hasattr(self, '_last_interrupt'):
+        if not self._last_interrupt:
             hibeg = self.term.MODE['bold']
             hiend = self.term.MODE['normal']
             msg = _("""
