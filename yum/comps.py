@@ -518,7 +518,6 @@ class Comps(object):
                     self.add_category(category)
         except SyntaxError, e:
             raise CompsException, "comps file is empty/damaged"
-            del parser
             
         del parser
         

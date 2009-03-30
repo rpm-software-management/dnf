@@ -200,7 +200,6 @@ def test():
     for pkg in parser:
         print '-' * 40
         print pkg
-        pass
 
     print 'read: %s packages (%s suggested)' % (parser.count, parser.total)
 
