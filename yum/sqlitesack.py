@@ -33,7 +33,6 @@ import rpmUtils.miscutils
 import sqlutils
 import constants
 import operator
-import time
 from yum.misc import seq_max_split
 from yum.i18n import to_utf8, to_unicode
 import sys
