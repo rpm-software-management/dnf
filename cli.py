@@ -43,7 +43,7 @@ from yum.rpmtrans import RPMTransaction
 import signal
 import yumcommands
 
-from yum.misc import to_unicode, to_utf8
+from yum.i18n import to_unicode, to_utf8
 
 def sigquit(signum, frame):
     """ SIGQUIT handler for the yum cli. """

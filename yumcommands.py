@@ -28,8 +28,7 @@ import operator
 import locale
 import fnmatch
 import time
-from yum.misc import to_unicode
-from yum.i18n import utf8_width, utf8_width_fill
+from yum.i18n import utf8_width, utf8_width_fill, to_unicode
 
 def checkRootUID(base):
     """

@@ -75,10 +75,9 @@ class RepoStorage:
         for repo in repos:
             repo.setup(self.ayum.conf.cache, self.ayum.mediagrabber,
                    gpg_import_func = self.gpg_import_func, confirm_func=self.confirm_func)
-            num += 1
-            
-        if self.callback and len(repos) > 0:
-            self.callback.progressbar(num, len(repos), repo.id)
+            num += 1            
+            if self.callback and len(repos) > 0:
+                self.callback.progressbar(num, len(repos), repo.id)
 
         self._setup = True
         self.ayum.plugins.run('postreposetup')

@@ -28,7 +28,7 @@ from yum import Errors
 from yum import plugins
 from yum import logginglevels
 from yum import _
-from yum.misc import to_unicode
+from yum.i18n import to_unicode
 import yum.misc
 import cli
 

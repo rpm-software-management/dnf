@@ -26,7 +26,8 @@ from Errors import CompsException
 # switch all compsexceptions to grouperrors after api break
 import fnmatch
 import re
-from yum.misc import to_unicode, get_my_lang_code
+from yum.i18n import to_unicode
+from misc import get_my_lang_code
 
 lang_attr = '{http://www.w3.org/XML/1998/namespace}lang'
 

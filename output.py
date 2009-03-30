@@ -29,7 +29,8 @@ import re # For YumTerm
 from urlgrabber.progress import TextMeter
 import urlgrabber.progress
 from urlgrabber.grabber import URLGrabError
-from yum.misc import prco_tuple_to_string, to_str, to_utf8, to_unicode
+from yum.misc import prco_tuple_to_string
+from yum.i18n import to_str, to_utf8, to_unicode
 import yum.misc
 from rpmUtils.miscutils import checkSignals
 from yum.constants import *
