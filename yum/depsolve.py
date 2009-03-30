@@ -45,14 +45,14 @@ try:
     assert max(2, 4) == 4
 except:
     # Python-2.4.x doesn't have min/max ... *sigh*
-        def min(x, *args): 
-            for y in args:
-                if x > y: x = y
-            return x
-        def max(x, *args):
-            for y in args:
-                if x < y: x = y
-            return x
+    def min(x, *args): 
+        for y in args:
+            if x > y: x = y
+        return x
+    def max(x, *args):
+        for y in args:
+            if x < y: x = y
+        return x
 flags = {"GT": rpm.RPMSENSE_GREATER,
          "GE": rpm.RPMSENSE_EQUAL | rpm.RPMSENSE_GREATER,
          "LT": rpm.RPMSENSE_LESS,
