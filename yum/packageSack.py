@@ -609,7 +609,7 @@ class PackageSack(PackageSackBase):
         self._checkIndexes(failure='build')        
         returnList = []
         if name[0] == '/':
-             returnList.extend(self.searchFiles(name))
+            returnList.extend(self.searchFiles(name))
         if self.provides.has_key(name):
             returnList.extend(self.provides[name])
         return returnList
