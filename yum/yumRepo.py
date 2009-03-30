@@ -1529,7 +1529,7 @@ class YumRepository(Repository, config.RepoConf):
         self.interrupt_callback = callback
         self._callbacks_changed = True
 
-    def _readMirrorList(self, fo):
+    def _readMirrorList(self, fo, url=None):
         """ read the mirror list from the specified file object """
         returnlist = []
 
@@ -1538,7 +1538,9 @@ class YumRepository(Repository, config.RepoConf):
             try:
                 content = fo.readlines()
             except Exception, e:
-                print "Could not read mirrorlist, error was \n%s" %(e)
+                if url is None: # Shouldn't happen
+                    url = "<unknown>"
+                print "Could not read mirrorlist %s, error was \n%s" %(url, e)
                 content = []
             for line in content:
                 if re.match('^\s*\#.*', line) or re.match('^\s*$', line):
@@ -1575,7 +1577,7 @@ class YumRepository(Repository, config.RepoConf):
                 print "Could not retrieve mirrorlist %s error was\n%s" % (url, e)
                 fo = None
 
-        (returnlist, content) = self._readMirrorList(fo)
+        (returnlist, content) = self._readMirrorList(fo, url)
 
         if returnlist:
             if not self.cache and not cacheok:
