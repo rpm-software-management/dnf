@@ -335,7 +335,7 @@ class Updates:
                             try:
                                 newpkgs[(n, a)].remove((e, v, r))
                             except ValueError:
-                               pass
+                                pass
 
         # get rid of all the empty dict entries:
         for nakey in newpkgs.keys():
