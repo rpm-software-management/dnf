@@ -17,6 +17,8 @@ def _(msg):
     return msg
     
 
+# pylint: disable-msg=E0602
+
 def checkheader(headerfile, name, arch):
     """check a header by opening it and comparing the results to the name and arch
        we believe it to be for. if it fails raise URLGrabError(-1)"""

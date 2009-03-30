@@ -1,6 +1,6 @@
 #! /usr/bin/python -tt
 
-import yum, os, sys, time, gc
+import yum, os, time, gc
 from urlgrabber.progress import format_number
 
 def out_mem(pid):

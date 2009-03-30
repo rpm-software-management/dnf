@@ -43,7 +43,10 @@ except ImportError:
             raise ValueError, "Bad checksum type"
 
 from Errors import MiscError
-from i18n import to_utf8
+# These are API things, so we can't remove them even if they aren't used here.
+# pylint: disable-msg=W0611
+from i18n import to_utf8, to_unicode
+# pylint: enable-msg=W0611
 
 _share_data_store   = {}
 _share_data_store_u = {}
