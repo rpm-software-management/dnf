@@ -37,7 +37,7 @@ from weakref import proxy as weakref
 
 from yum import _
 
-from yum.i18n import utf8_width, utf8_width_fill
+from yum.i18n import utf8_width
 
 # TODO: expose rpm package sack objects to plugins (once finished)
 # TODO: allow plugins to use the existing config stuff to define options for
