@@ -305,7 +305,7 @@ class YumBase(depsolve.Depsolve):
 
             if bad:
                 self.logger.warning("Bad id for repo: %s, byte = %s %d" %
-                                    (section, bad, section.find(byte)))
+                                    (section, bad, section.find(bad)))
                 continue
 
             try:
@@ -1565,7 +1565,7 @@ class YumBase(depsolve.Depsolve):
             ndinst = {} # Newest versions by name.arch
             for po in self.rpmdb.returnPackages(patterns=patterns,
                                                 ignore_case=ic):
-                dinst[po.pkgtup] = po;
+                dinst[po.pkgtup] = po
                 if showdups:
                     continue
                 key = (po.name, po.arch)
@@ -1578,10 +1578,10 @@ class YumBase(depsolve.Depsolve):
                                                     ignore_case=ic)
             else:
                 try:
-                  avail = self.pkgSack.returnNewestByNameArch(patterns=patterns,
+                    avail = self.pkgSack.returnNewestByNameArch(patterns=patterns,
                                                               ignore_case=ic)
                 except Errors.PackageSackError:
-                  avail = []
+                    avail = []
             
             for pkg in avail:
                 if showdups:
@@ -1627,10 +1627,10 @@ class YumBase(depsolve.Depsolve):
                                                     ignore_case=ic)
             else:
                 try:
-                  avail = self.pkgSack.returnNewestByNameArch(patterns=patterns,
+                    avail = self.pkgSack.returnNewestByNameArch(patterns=patterns,
                                                               ignore_case=ic)
                 except Errors.PackageSackError:
-                  avail = []
+                    avail = []
             
             for pkg in avail:
                 if showdups:
@@ -1683,10 +1683,10 @@ class YumBase(depsolve.Depsolve):
                                                     ignore_case=ic)
             else:
                 try:
-                  avail = self.pkgSack.returnNewestByNameArch(patterns=patterns,
+                    avail = self.pkgSack.returnNewestByNameArch(patterns=patterns,
                                                               ignore_case=ic)
                 except Errors.PackageSackError:
-                  avail = []
+                    avail = []
             
             for po in avail:
                 ftime = int(po.filetime)
@@ -2188,7 +2188,6 @@ class YumBase(depsolve.Depsolve):
 
         if len(pkgs) == 0:
             raise Errors.DepError, _('Package tuple %s could not be found in packagesack') % str(pkgtup)
-            return None
             
         if len(pkgs) > 1: # boy it'd be nice to do something smarter here FIXME
             result = pkgs[0]
@@ -2531,23 +2530,23 @@ class YumBase(depsolve.Depsolve):
                 if rpmUtils.arch.isMultiLibArch():
                     if was_pattern or not nevra_dict['arch']: # and only if they
                                                               # they didn't specify an arch
-                       if self.conf.multilib_policy == 'best':
-                           pkgs_by_name = {}
-                           use = []
-                           not_added = []
-                           best = rpmUtils.arch.legitMultiArchesInSameLib()
-                           best.append('noarch')
-                           for pkg in pkgs:
-                               if pkg.arch in best:
-                                   pkgs_by_name[pkg.name] = 1    
-                                   use.append(pkg)  
-                               else:
-                                   not_added.append(pkg)
-                           for pkg in not_added:
-                               if not pkg.name in pkgs_by_name:
-                                   use.append(pkg)
+                        if self.conf.multilib_policy == 'best':
+                            pkgs_by_name = {}
+                            use = []
+                            not_added = []
+                            best = rpmUtils.arch.legitMultiArchesInSameLib()
+                            best.append('noarch')
+                            for pkg in pkgs:
+                                if pkg.arch in best:
+                                    pkgs_by_name[pkg.name] = 1    
+                                    use.append(pkg)  
+                                else:
+                                    not_added.append(pkg)
+                            for pkg in not_added:
+                                if not pkg.name in pkgs_by_name:
+                                    use.append(pkg)
                            
-                           pkgs = use
+                            pkgs = use
                            
                 pkgs = packagesNewestByNameArch(pkgs)
 
@@ -2576,8 +2575,8 @@ class YumBase(depsolve.Depsolve):
             # yum --disablerepo='*' install '*'
             # etc. ... see RHBZ#480402
             if False:
-              for pkg in pkgs:
-                self.verbose_logger.warning(_('Package %s installed and not available'), pkg)
+                for pkg in pkgs:
+                    self.verbose_logger.warning(_('Package %s installed and not available'), pkg)
             if pkgs:
                 return []
             raise Errors.InstallError, _('No package(s) available to install')
@@ -3035,14 +3034,14 @@ class YumBase(depsolve.Depsolve):
         # handle excludes for a localinstall
         toexc = []
         if len(self.conf.exclude) > 0:
-           exactmatch, matched, unmatched = \
+            exactmatch, matched, unmatched = \
                    parsePackages(installpkgs + map(lambda x: x[0], updatepkgs),
                                  self.conf.exclude, casematch=1)
-           toexc = exactmatch + matched
+            toexc = exactmatch + matched
 
         if po in toexc:
-           self.verbose_logger.debug(_('Excluding %s'), po)
-           return tx_return
+            self.verbose_logger.debug(_('Excluding %s'), po)
+            return tx_return
 
         for po in installpkgs:
             self.verbose_logger.log(logginglevels.INFO_2,
@@ -3117,12 +3116,12 @@ class YumBase(depsolve.Depsolve):
             apkgs = [po]
         elif 'pattern' in kwargs:
             if kwargs['pattern'][0] == '@':
-               apkgs = self._at_groupdowngrade(kwargs['pattern'])
-               doing_group_pkgs = True # Don't warn. about some things
+                apkgs = self._at_groupdowngrade(kwargs['pattern'])
+                doing_group_pkgs = True # Don't warn. about some things
             else:
-               apkgs = self.pkgSack.returnPackages(patterns=[kwargs['pattern']],
+                apkgs = self.pkgSack.returnPackages(patterns=[kwargs['pattern']],
                                                    ignore_case=False)
-               if not apkgs:
+                if not apkgs:
                     arg = kwargs['pattern']
                     self.verbose_logger.debug(_('Checking for virtual provide or file-provide for %s'), 
                         arg)
@@ -3499,7 +3498,7 @@ class YumBase(depsolve.Depsolve):
                 # Verified ok, or verify not req'd
                 continue            
             elif result == 1:
-               self.getKeyForPackage(po, self._askForGPGKeyImport)
+                self.getKeyForPackage(po, self._askForGPGKeyImport)
             else:
                 raise Errors.YumGPGCheckError, errmsg
 
@@ -3548,7 +3547,7 @@ class YumBase(depsolve.Depsolve):
         if len( tserrors ) > 0:
             errstring =  _('Test Transaction Errors: ')
             for descr in tserrors:
-                 errstring += '  %s\n' % descr 
+                errstring += '  %s\n' % descr 
             raise Errors.YumTestTransactionError, errstring
 
         del self.ts
