@@ -1,6 +1,7 @@
 SUBDIRS = rpmUtils yum etc docs po
 PYFILES = $(wildcard *.py)
-PYLINT_FILES =  $(wildcard *.py) $(wildcard yum/*.py) $(wildcard rpmUtils/*.py)
+PYLINT_MODULES =  *.py yum rpmUtils
+PYLINT_IGNORE = oldUtils.py
 
 PKGNAME = yum
 VERSION=$(shell awk '/Version:/ { print $$2 }' ${PKGNAME}.spec)
@@ -55,10 +56,10 @@ test-skipbroken:
 check: test
 
 pylint:
-	@pylint --rcfile=test/yum-pylintrc $(PYLINT_FILES)
+	@pylint --rcfile=test/yum-pylintrc --ignore=$(PYLINT_IGNORE) $(PYLINT_MODULES)
 
-pylint-errors:
-	@pylint -e --rcfile=test/yum-pylintrc $(PYLINT_FILES)
+pylint-short:
+	@pylint -r n --rcfile=test/yum-pylintrc --ignore=$(PYLINT_IGNORE) $(PYLINT_MODULES)
 
 changelog:
 	git log --since=2007-05-16 --pretty --numstat --summary | git2cl  > ChangeLog
