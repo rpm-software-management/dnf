@@ -35,11 +35,9 @@ import yum.Errors
 import yum.logginglevels
 import yum.misc
 import yum.plugins
-from yum.constants import TS_OBSOLETED
 import rpmUtils.arch
-from rpmUtils.arch import isMultiLibArch
 import rpmUtils.miscutils
-from yum.packages import parsePackages, YumLocalPackage
+from yum.packages import parsePackages
 from yum import _
 from yum.rpmtrans import RPMTransaction
 import signal
@@ -306,9 +304,9 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
                 disk[m.group(2)] = int(m.group(1))
                 
         if disk:
-           summary += _('Disk Requirements:\n')
-           for k in disk:
-              summary += _('  At least %dMB needed on the %s filesystem.\n') % (disk[k], k)
+            summary += _('Disk Requirements:\n')
+            for k in disk:
+                summary += _('  At least %dMB needed on the %s filesystem.\n') % (disk[k], k)
 
         # TODO: simplify the dependency errors?
 
@@ -356,8 +354,8 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
     
         # just make sure there's not, well, nothing to do
         if len(self.tsInfo) == 0:
-                self.verbose_logger.info(_('Trying to run the transaction but nothing to do. Exiting.'))
-                return 1
+            self.verbose_logger.info(_('Trying to run the transaction but nothing to do. Exiting.'))
+            return 1
 
         # NOTE: In theory we can skip this in -q -y mode, for a slight perf.
         #       gain. But it's probably doom to have a different code path.
@@ -502,14 +500,14 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
                 continue            
 
             elif result == 1:
-               if not sys.stdin.isatty() and not self.conf.assumeyes:
-                  raise yum.Errors.YumBaseError, \
-                        _('Refusing to automatically import keys when running ' \
-                        'unattended.\nUse "-y" to override.')
+                if not sys.stdin.isatty() and not self.conf.assumeyes:
+                    raise yum.Errors.YumBaseError, \
+                            _('Refusing to automatically import keys when running ' \
+                            'unattended.\nUse "-y" to override.')
 
-               # the callback here expects to be able to take options which
-               # userconfirm really doesn't... so fake it
-               self.getKeyForPackage(po, lambda x, y, z: self.userconfirm())
+                # the callback here expects to be able to take options which
+                # userconfirm really doesn't... so fake it
+                self.getKeyForPackage(po, lambda x, y, z: self.userconfirm())
 
             else:
                 # Fatal error
