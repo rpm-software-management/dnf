@@ -43,7 +43,7 @@ except ImportError:
             raise ValueError, "Bad checksum type"
 
 from Errors import MiscError
-from i18n import to_unicode, to_unicode_maybe, to_utf8, to_str
+from i18n import to_utf8
 
 _share_data_store   = {}
 _share_data_store_u = {}
@@ -308,8 +308,8 @@ def getFileList(path, ext, filelist):
             filelist = getFileList(path + '/' + d, ext, filelist)
         else:
             if d[-extlen:].lower() == '%s' % (ext):
-               newpath = os.path.normpath(path + '/' + d)
-               filelist.append(newpath)
+                newpath = os.path.normpath(path + '/' + d)
+                filelist.append(newpath)
                     
     return filelist
 
