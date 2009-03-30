@@ -72,13 +72,13 @@ def __utf8_bisearch(ucs, table):
         return False
 
     while max >= min:
-        mid = (min + max) / 2;
+        mid = (min + max) / 2
         if ucs > table[mid][1]:
-            min = mid + 1;
+            min = mid + 1
         elif ucs < table[mid][0]:
-            max = mid - 1;
+            max = mid - 1
         else:
-          return True
+            return True
 
     return False
 
