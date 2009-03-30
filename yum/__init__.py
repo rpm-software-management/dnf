@@ -68,7 +68,7 @@ warnings.simplefilter("ignore", Errors.YumFutureDeprecationWarning)
 from packages import parsePackages, YumAvailablePackage, YumLocalPackage, YumInstalledPackage, comparePoEVR
 from constants import *
 from yum.rpmtrans import RPMTransaction,SimpleCliCallBack
-from misc import to_unicode
+from yum.i18n import to_unicode
 
 import string
 
