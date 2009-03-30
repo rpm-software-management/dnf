@@ -174,7 +174,7 @@ good-names=i,j,k,ex,Run,_,n,e,r,v,a,po,f,m,u,h,l
 bad-names=foo,bar,baz,toto,tutu,tata
 
 # List of builtins function names that should not be used, separated by a comma
-bad-functions=apply,input
+bad-functions=input
 
 
 # checks for
@@ -206,7 +206,7 @@ ignore-mixin-members=yes
 
 # List of classes names for which member attributes should not be checked
 # (useful for classes with attributes dynamicaly set).
-ignored-classes=SQLObject
+ignored-classes=SQLObject,NullTranslations
 
 # When zope mode is activated, consider the acquired-members option to ignore
 # access to some undefined attributes.
@@ -253,7 +253,7 @@ int-import-graph=
 
 # List of interface methods to ignore, separated by a comma. This is used for
 # instance to not check methods defines in Zope's Interface base class.
-ignore-iface-methods=isImplementedBy,deferred,extends,names,namesAndDescriptions,queryDescriptionFor,getBases,getDescriptionFor,getDoc,getName,getTaggedValue,getTaggedValueTags,isEqualOrExtendedBy,setTaggedValue,isImplementedByInstancesOf,adaptWith,is_implemented_by
+ignore-iface-methods=interrupt_callback
 
 # List of method names used to declare (i.e. assign) instance attributes.
 defining-attr-methods=__init__,__new__,setUp
