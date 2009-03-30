@@ -29,7 +29,7 @@ import re # For YumTerm
 from urlgrabber.progress import TextMeter
 import urlgrabber.progress
 from urlgrabber.grabber import URLGrabError
-from yum.misc import sortPkgObj, prco_tuple_to_string, to_str, to_utf8, to_unicode, get_my_lang_code
+from yum.misc import prco_tuple_to_string, to_str, to_utf8, to_unicode
 import yum.misc
 from rpmUtils.miscutils import checkSignals
 from yum.constants import *
@@ -865,14 +865,14 @@ class YumOutput:
                 size = int(pkg.size)
                 totsize += size
                 try:
-                   if pkg.verifyLocalPkg():
-                       locsize += size
+                    if pkg.verifyLocalPkg():
+                        locsize += size
                 except:
-                   pass
+                    pass
             except:
-                 error = True
-                 self.logger.error(_('There was an error calculating total download size'))
-                 break
+                error = True
+                self.logger.error(_('There was an error calculating total download size'))
+                break
 
         if (not error):
             if locsize:
