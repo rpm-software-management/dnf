@@ -27,6 +27,7 @@ import gzip
 from yum.i18n import utf8_text_wrap, to_utf8
 from yum.yumRepo import YumRepository
 from yum.misc import to_xml
+import Errors
 
 import rpmUtils.miscutils
 
@@ -295,11 +296,16 @@ class UpdateMetadata(object):
     The root update metadata object.
     """
 
-    def __init__(self):
+    def __init__(self, repos=[]):
         self._notices = {}
         self._cache = {}    # a pkg nvr => notice cache for quick lookups
         self._no_cache = {}    # a pkg name only => notice list
         self._repos = []    # list of repo ids that we've parsed
+        for repo in repos:
+            try: # attempt to grab the updateinfo.xml.gz from the repodata
+                self.add(repo)
+            except Errors.RepoMDError:
+                continue # No metadata found for this repo
 
     def get_notices(self, name=None):
         """ Return all notices. """
