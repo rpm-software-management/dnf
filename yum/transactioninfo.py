@@ -313,7 +313,7 @@ class TransactionData:
            takes a packages object and returns a TransactionMember Object"""
 
         if self._allowedMultipleInstalls(po):
-           return self.addTrueInstall(po)
+            return self.addTrueInstall(po)
     
         txmbr = TransactionMember(po)
         txmbr.current_state = TS_AVAILABLE
@@ -355,7 +355,7 @@ class TransactionData:
            takes a packages object and returns a TransactionMember Object"""
         
         if self._allowedMultipleInstalls(po):
-           return self.addTrueInstall(po)
+            return self.addTrueInstall(po)
             
         txmbr = TransactionMember(po)
         txmbr.current_state = TS_AVAILABLE
