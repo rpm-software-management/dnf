@@ -1106,6 +1106,10 @@ Remove   %5.5s Package(s)
         if not self._last_interrupt:
             hibeg = self.term.MODE['bold']
             hiend = self.term.MODE['normal']
+            # For translators: This is output like:
+#  Current download cancelled, interrupt (ctrl-c) again within two seconds
+# to exit.
+            # Where "interupt (ctrl-c) again" and "two" are highlighted.
             msg = _("""
  Current download cancelled, %sinterrupt (ctrl-c) again%s within %s%s%s seconds to exit.
 """) % (hibeg, hiend, hibeg, delta_exit_str, hiend)
