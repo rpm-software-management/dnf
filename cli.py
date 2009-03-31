@@ -1089,6 +1089,9 @@ class YumOptionParser(OptionParser):
         OptionParser.__init__(self, **kwargs)
         self.logger = logging.getLogger("yum.cli")
         self.base = base
+        self.plugin_option_group = OptionGroup(self, _("Plugin Options"))
+        self.add_option_group(self.plugin_option_group)
+
         self._addYumBasicOptions()
 
     def error(self, msg):

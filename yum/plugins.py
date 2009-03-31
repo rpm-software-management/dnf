@@ -410,7 +410,7 @@ class PluginConduit:
         @return: the global optparse.OptionParser instance used by Yum. May be
             None if an OptionParser isn't in use.
         '''
-        return self._parent.optparser
+        return self._parent.optparser.plugin_option_group
 
     def confString(self, section, opt, default=None):
         '''Read a string value from the plugin's own configuration file
