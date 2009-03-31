@@ -19,6 +19,7 @@ import time
 import yum
 from cli import *
 from yum import _
+from optparse import OptionGroup
 
 import yum.plugins as plugins
 
@@ -29,9 +30,16 @@ class YumUtilBase(YumBaseCli):
         self._usage = usage
         self._utilName = name
         self._utilVer = ver
+        self._option_group = OptionGroup(self._parser, "%s options" % self._utilName,"")
+        self._parser.add_option_group(self._option_group)
+
         
     def getOptionParser(self):
         return self._parser        
+
+    def getOptionGroup(self):
+        """ Get an option group to add non inherited options"""
+        return self._option_group    
     
     def waitForLock(self):
         lockerr = ""
