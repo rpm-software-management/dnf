@@ -635,6 +635,8 @@ class RPMDBPackageSack(PackageSackBase):
         # XXX deprecate?
         return [po.pkgtup for po in self.getRequires(name, flags, version)]
 
+def _sanitize(path):
+    return path.replace('/', '').replace('~', '')
 
 
 class RPMDBAdditionalData(object):
@@ -673,6 +675,7 @@ class RPMDBAdditionalData(object):
         if pkgid in self._packages:
             return self._packages[pkgid]
         (n, a, e, v,r) = pkgtup
+        n = _sanitize(n) # Please die in a fire rpmbuild
         thisdir = '%s/%s/%s-%s-%s-%s-%s' % (self.conf.db_path,
                                             n[0], pkgid, n, v, r, a)
         self._packages[pkgid] = thisdir
@@ -684,30 +687,28 @@ class RPMDBAdditionalData(object):
             thisdir = self._get_dir_name(po.pkgtup, po.pkgid)
         elif pkgtup and pkgid:
             thisdir = self._get_dir_name(pkgtup, pkgid)
+        else:
+            raise ValueError,"Pass something to RPMDBAdditionalData.get_package"
         
         return RPMDBAdditionalDataPackage(self.conf, thisdir)
-
-    def sync_with_rpmdb(self, rpmdbobj):
-        """populate out the dirs and remove all the items no longer in the rpmdb
-           and/or populate various bits to the currently installed version"""
-        pass
 
 class RPMDBAdditionalDataPackage(object):
     def __init__(self, conf, pkgdir):
         self._conf = conf
         self._mydir = pkgdir
         # FIXME needs some intelligent caching beyond the FS cache
+        self._read_cached_data = {}
 
     def _write(self, attr, value):
         # check for self._conf.writable before going on?
         if not os.path.exists(self._mydir):
             os.makedirs(self._mydir)
-        
-        attr = attr.replace('/', '')
-        attr = attr.replace('~', '')
+
+        attr = _sanitize(attr)
+        del self._read_cached_data[attr]
         fn = self._mydir + '/' + attr
         fn = os.path.normpath(fn)
-        fo = open(fn, 'w')
+        fo = open(fn + '.tmp', 'w')
         try:
             fo.write(value)
         except (OSError, IOError), e:
@@ -716,21 +717,24 @@ class RPMDBAdditionalDataPackage(object):
         fo.flush()
         fo.close()
         del fo
-        del fn
+        os.rename(fn +  '.tmp', fn) # even works on ext4 now!:o
+        self._read_cached_data[attr] = value
     
     def _read(self, attr):
-        attr = attr.replace('/', '')
-        attr = attr.replace('~', '')
+        attr = _sanitize(attr)
+
+        if attr in self._read_cached_data:
+            return self._read_cached_data[attr]
+
         fn = self._mydir + '/' + attr
         if not os.path.exists(fn):
             raise AttributeError, "%s has no attribute %s" % (self, attr)
 
         fo = open(fn, 'r')
-        res = fo.read()
+        self._read_cached_data[attr] = fo.read()
         fo.close()
         del fo
-        del fn
-        return res
+        return self._read_cached_data[attr]
     
     def _delete(self, attr):
         """remove the attribute file"""
