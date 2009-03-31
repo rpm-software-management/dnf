@@ -22,6 +22,8 @@ Requires: pygpgme
 Prereq: /sbin/chkconfig, /sbin/service, coreutils
 Conflicts: yum-skip-broken
 Obsoletes: yum-basearchonly
+Obsoletes: yum-allow-downgrade < 1.1.20-0
+Obsoletes: yum-plugin-allow-downgrade < 1.1.22-0
 
 %description
 Yum is a utility that can check for and automatically download and
