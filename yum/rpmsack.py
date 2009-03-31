@@ -16,6 +16,9 @@
 import rpm
 import types
 import warnings
+import glob
+import os
+import os.path
 
 from rpmUtils import miscutils
 from rpmUtils.transaction import initReadOnlyTransaction
@@ -34,7 +37,7 @@ import constants
 class RPMInstalledPackage(YumInstalledPackage):
 
     def __init__(self, rpmhdr, index, rpmdb):
-        YumInstalledPackage.__init__(self, rpmhdr)
+        YumInstalledPackage.__init__(self, rpmhdr, yumdb=rpmdb.yumdb)
         # NOTE: We keep summary/description/url because it doesn't add much
         # and "yum search" uses them all.
         self.url       = rpmhdr['url']
@@ -114,6 +117,9 @@ class RPMDBPackageSack(PackageSackBase):
             'obsoletes' : { },
             }
         
+        addldb_path = os.path.normpath(root + '/' + '/var/lib/yum/yumdb')
+        self.yumdb = RPMDBAdditionalData(db_path=addldb_path)
+
     def _get_pkglist(self):
         '''Getter for the pkglist property. 
         Returns a list of package tuples.
@@ -628,7 +634,135 @@ class RPMDBPackageSack(PackageSackBase):
     def whatRequires(self, name, flags, version):
         # XXX deprecate?
         return [po.pkgtup for po in self.getRequires(name, flags, version)]
-            
+
+
+
+class RPMDBAdditionalData(object):
+    """class for access to the additional data not able to be stored in the
+       rpmdb"""
+    # dir: /var/lib/yum/yumdb/
+    # pkgs stored in name[0]/name[1]/pkgid-name-ver-rel-arch dirs
+    # dirs have files per piece of info we're keeping
+    #    repoid, install reason, status, blah, (group installed for?), notes?
+    
+    def __init__(self, db_path='/var/lib/yum/yumdb'):
+        self.conf = misc.GenericHolder()
+        self.conf.db_path = db_path
+        self.conf.writable = False
+        
+        self._packages = {} # pkgid = dir
+        if not os.path.exists(self.conf.db_path):
+            try:
+                os.makedirs(self.conf.db_path)
+            except (IOError, OSError), e:
+                # some sort of useful thing here? A warning?
+                return
+            self.conf.writable = True
+        else:
+            if os.access(self.conf.db_path, os.W_OK):
+                self.conf.writable = True
+                
+        # glob the path and get a dict of pkgs to their subdir
+        glb = '%s/*/*/' % self.conf.db_path
+        pkgdirs = glob.glob(glb)
+        for d in pkgdirs:
+            pkgid = os.path.basename(d).split('-')[0]
+            self._packages[pkgid] = d
+
+    def _get_dir_name(self, po):
+        if po.pkgid in self._packages:
+            return self._packages[po.pkgid]
+        thisdir = '%s/%s/%s/%s-%s-%s-%s-%s' % (self.conf.db_path, po.name[0], 
+                              po.name[1], po.pkgid, po.name, po.ver, 
+                              po.rel, po.arch)
+        self._packages[po.pkgid] = thisdir
+        return thisdir
+
+    def get_package(self, po):
+        """Return an RPMDBAdditionalDataPackage Object for this package"""
+        thisdir = self._get_dir_name(po)
+        return RPMDBAdditionalDataPackage(self.conf, po, thisdir)
+        
+    def sync_with_rpmdb(self, rpmdbobj):
+        """populate out the dirs and remove all the items no longer in the rpmdb
+           and/or populate various bits to the currently installed version"""
+        pass
+
+class RPMDBAdditionalDataPackage(object):
+    def __init__(self, conf, po, pkgdir):
+        self._conf = conf
+        self._po = po
+        self._mydir = pkgdir
+        # FIXME needs some intelligent caching beyond the FS cache
+
+    def _write(self, attr, value):
+        # check for self._conf.writable before going on?
+        if not os.path.exists(self._mydir):
+            os.makedirs(self._mydir)
+        
+        fn = self._mydir + '/' + attr
+        fn = os.path.normpath(fn)
+        fo = open(fn, 'w')
+        try:
+            fo.write(value)
+        except (OSError, IOError), e:
+            raise AttributeError, "Cannot set attribute %s on %s" % (attr, self)
+
+        fo.flush()
+        fo.close()
+        del fo
+        del fn
+    
+    def _read(self, attr):
+        fn = self._mydir + '/' + attr
+        if not os.path.exists(fn):
+            raise AttributeError, "%s has no attribute %s" % (self, attr)
+
+        fo = open(fn, 'r')
+        res = fo.read()
+        fo.close()
+        del fo
+        del fn
+        return res
+    
+    def _delete(self, attr):
+        """remove the attribute file"""
+
+        self.get(attr)
+        fn = self._mydir + '/' + attr
+        if os.path.exists(fn):
+            try:
+                os.unlink(fn)
+            except (IOError, OSError):
+                raise AttributeError, "Cannot delete attribute %s on " % (attr, self)
+        return None
+    
+    
+    def __getattr__(self, attr):
+        return self._read(attr)
+
+    def __setattr__(self, attr, value):
+        if not attr.startswith('_'):
+            self._write(attr, value)
+        else:
+            object.__setattr__(self, attr, value)
+
+    def __delattr__(self, attr):
+        if not attr.startswith('_'):
+            self._delete(attr)
+        else:
+            object.__delattr__(self, attr)
+
+    def get(self, attr, default=None):
+        """retrieve an add'l data obj"""
+
+        try:
+            res = self._read(attr)
+        except AttributeError:
+            return default
+        return res
+        
+        
 def main():
     sack = RPMDBPackageSack('/')
     for p in sack.simplePkgList():

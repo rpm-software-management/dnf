@@ -1253,10 +1253,11 @@ _installed_repo = FakeRepository('installed')
 _installed_repo.cost = 0
 class YumInstalledPackage(YumHeaderPackage):
     """super class for dealing with packages in the rpmdb"""
-    def __init__(self, hdr):
-        fakerepo = _installed_repo
-        YumHeaderPackage.__init__(self, fakerepo, hdr)
-        
+    def __init__(self, hdr, yumdb=None):
+        YumHeaderPackage.__init__(self, _installed_repo, hdr)
+        if yumdb:
+            self.yumdb_info = yumdb.get_package(self)
+
     def verify(self, patterns=[], deps=False, script=False,
                fake_problems=True, all=False):
         """verify that the installed files match the packaged checksum
