@@ -25,7 +25,7 @@ import sys
 import time
 import random
 import logging
-from optparse import OptionParser
+from optparse import OptionParser,OptionGroup
 import rpm
 
 import output
@@ -1080,6 +1080,12 @@ class YumOptionParser(OptionParser):
     '''
 
     def __init__(self,base, **kwargs):
+        # check if this is called with a utils=True/False parameter
+        if 'utils' in kwargs:
+            self._utils = kwargs['utils']
+            del kwargs['utils'] 
+        else:
+            self._utils = False
         OptionParser.__init__(self, **kwargs)
         self.logger = logging.getLogger("yum.cli")
         self.base = base
@@ -1254,71 +1260,76 @@ class YumOptionParser(OptionParser):
             dest = eval('parser.values.%s' % optobj.dest)
             dest.append((opt, value))
 
-
+        if self._utils:
+           group = OptionGroup(self, "Yum Base Options")
+           self.add_option_group(group)
+        else:
+            group = self
+    
         # Note that we can't use the default action="help" because of the
         # fact that print_help() unconditionally does .encode() ... which is
         # bad on unicode input.
-        self.conflict_handler = "resolve"
-        self.add_option("-h", "--help", action="callback",
+        group.conflict_handler = "resolve"
+        group.add_option("-h", "--help", action="callback",
                         callback=self._wrapOptParseUsage, 
                 help=_("show this help message and exit"))
-        self.conflict_handler = "error"
+        group.conflict_handler = "error"
 
-        self.add_option("-t", "--tolerant", action="store_true",
+        group.add_option("-t", "--tolerant", action="store_true",
                 help=_("be tolerant of errors"))
-        self.add_option("-C", dest="cacheonly", action="store_true",
+        group.add_option("-C", dest="cacheonly", action="store_true",
                 help=_("run entirely from cache, don't update cache"))
-        self.add_option("-c", dest="conffile", default='/etc/yum/yum.conf',
+        group.add_option("-c", dest="conffile", default='/etc/yum/yum.conf',
                 help=_("config file location"), metavar=' [config file]')
-        self.add_option("-R", dest="sleeptime", type='int', default=None,
+        group.add_option("-R", dest="sleeptime", type='int', default=None,
                 help=_("maximum command wait time"), metavar=' [minutes]')
-        self.add_option("-d", dest="debuglevel", default=None,
+        group.add_option("-d", dest="debuglevel", default=None,
                 help=_("debugging output level"), type='int',
                 metavar=' [debug level]')
-        self.add_option("--showduplicates", dest="showdupesfromrepos",
+        group.add_option("--showduplicates", dest="showdupesfromrepos",
                         action="store_true",
                 help=_("show duplicates, in repos, in list/search commands"))
-        self.add_option("-e", dest="errorlevel", default=None,
+        group.add_option("-e", dest="errorlevel", default=None,
                 help=_("error output level"), type='int',
                 metavar=' [error level]')
-        self.add_option("-q", "--quiet", dest="quiet", action="store_true",
+        group.add_option("-q", "--quiet", dest="quiet", action="store_true",
                         help=_("quiet operation"))
-        self.add_option("-v", "--verbose", dest="verbose", action="store_true",
+        group.add_option("-v", "--verbose", dest="verbose", action="store_true",
                         help=_("verbose operation"))
-        self.add_option("-y", dest="assumeyes", action="store_true",
+        group.add_option("-y", dest="assumeyes", action="store_true",
                 help=_("answer yes for all questions"))
-        self.add_option("--version", action="store_true", 
+        group.add_option("--version", action="store_true", 
                 help=_("show Yum version and exit"))
-        self.add_option("--installroot", help=_("set install root"), 
+        group.add_option("--installroot", help=_("set install root"), 
                 metavar='[path]')
-        self.add_option("--enablerepo", action='callback',
+        group.add_option("--enablerepo", action='callback',
                 type='string', callback=repo_optcb, dest='repos', default=[],
                 help=_("enable one or more repositories (wildcards allowed)"),
                 metavar='[repo]')
-        self.add_option("--disablerepo", action='callback',
+        group.add_option("--disablerepo", action='callback',
                 type='string', callback=repo_optcb, dest='repos', default=[],
                 help=_("disable one or more repositories (wildcards allowed)"),
                 metavar='[repo]')
-        self.add_option("-x", "--exclude", default=[], action="append",
+        group.add_option("-x", "--exclude", default=[], action="append",
                 help=_("exclude package(s) by name or glob"), metavar='[package]')
-        self.add_option("", "--disableexcludes", default=[], action="append",
+        group.add_option("", "--disableexcludes", default=[], action="append",
                 help=_("disable exclude from main, for a repo or for everything"),
                         metavar='[repo]')
-        self.add_option("--obsoletes", action="store_true", 
+        group.add_option("--obsoletes", action="store_true", 
                 help=_("enable obsoletes processing during updates"))
-        self.add_option("--noplugins", action="store_true", 
+        group.add_option("--noplugins", action="store_true", 
                 help=_("disable Yum plugins"))
-        self.add_option("--nogpgcheck", action="store_true",
+        group.add_option("--nogpgcheck", action="store_true",
                 help=_("disable gpg signature checking"))
-        self.add_option("", "--disableplugin", dest="disableplugins", default=[], 
+        group.add_option("", "--disableplugin", dest="disableplugins", default=[], 
                 action="append", help=_("disable plugins by name"),
                 metavar='[plugin]')
-        self.add_option("", "--enableplugin", dest="enableplugins", default=[], 
+        group.add_option("", "--enableplugin", dest="enableplugins", default=[], 
                 action="append", help=_("enable plugins by name"),
                 metavar='[plugin]')
-        self.add_option("--skip-broken", action="store_true", dest="skipbroken",
+        group.add_option("--skip-broken", action="store_true", dest="skipbroken",
                 help=_("skip packages with depsolving problems"))
-        self.add_option("", "--color", dest="color", default=None, 
+        group.add_option("", "--color", dest="color", default=None, 
                 help=_("control whether color is used"))
 
 

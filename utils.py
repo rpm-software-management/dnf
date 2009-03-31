@@ -26,7 +26,7 @@ import yum.plugins as plugins
 class YumUtilBase(YumBaseCli):
     def __init__(self,name,ver,usage):
         YumBaseCli.__init__(self)
-        self._parser = YumOptionParser(base=self,usage=usage)
+        self._parser = YumOptionParser(base=self,utils=True,usage=usage)
         self._usage = usage
         self._utilName = name
         self._utilVer = ver
