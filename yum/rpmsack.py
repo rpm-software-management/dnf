@@ -705,7 +705,8 @@ class RPMDBAdditionalDataPackage(object):
             os.makedirs(self._mydir)
 
         attr = _sanitize(attr)
-        del self._read_cached_data[attr]
+        if attr in self._read_cached_data:
+            del self._read_cached_data[attr]
         fn = self._mydir + '/' + attr
         fn = os.path.normpath(fn)
         fo = open(fn + '.tmp', 'w')
@@ -765,8 +766,13 @@ class RPMDBAdditionalDataPackage(object):
             object.__delattr__(self, attr)
 
     def __iter__(self):
-        items = glob.glob(self._mydir + '/*')
-        return [ item.replace(self._mydir + '/', '') for item in items].__iter__()
+        for item in self._read_cached_data:
+            yield item
+        for item in glob.glob(self._mydir + '/*'):
+            item = item[(len(self._mydir) + 1):]
+            if item in self._read_cached_data:
+                continue
+            yield item
 
 #    def __dir__(self): # for 2.6 and beyond, apparently
 #        return list(self.__iter__()) + self.__dict__.keys()
