@@ -669,29 +669,32 @@ class RPMDBAdditionalData(object):
             pkgid = os.path.basename(d).split('-')[0]
             self._packages[pkgid] = d
 
-    def _get_dir_name(self, po):
-        if po.pkgid in self._packages:
-            return self._packages[po.pkgid]
-        thisdir = '%s/%s/%s/%s-%s-%s-%s-%s' % (self.conf.db_path, po.name[0], 
-                              po.name[1], po.pkgid, po.name, po.ver, 
-                              po.rel, po.arch)
-        self._packages[po.pkgid] = thisdir
+    def _get_dir_name(self, pkgtup, pkgid):
+        if pkgid in self._packages:
+            return self._packages[pkgid]
+        (n, a, e, v,r) = pkgtup
+        thisdir = '%s/%s/%s-%s-%s-%s-%s' % (self.conf.db_path,
+                                            n[0], pkgid, n, v, r, a)
+        self._packages[pkgid] = thisdir
         return thisdir
 
-    def get_package(self, po):
+    def get_package(self, po=None, pkgtup=None, pkgid=None):
         """Return an RPMDBAdditionalDataPackage Object for this package"""
-        thisdir = self._get_dir_name(po)
-        return RPMDBAdditionalDataPackage(self.conf, po, thisdir)
+        if po:
+            thisdir = self._get_dir_name(po.pkgtup, po.pkgid)
+        elif pkgtup and pkgid:
+            thisdir = self._get_dir_name(pkgtup, pkgid)
         
+        return RPMDBAdditionalDataPackage(self.conf, thisdir)
+
     def sync_with_rpmdb(self, rpmdbobj):
         """populate out the dirs and remove all the items no longer in the rpmdb
            and/or populate various bits to the currently installed version"""
         pass
 
 class RPMDBAdditionalDataPackage(object):
-    def __init__(self, conf, po, pkgdir):
+    def __init__(self, conf, pkgdir):
         self._conf = conf
-        self._po = po
         self._mydir = pkgdir
         # FIXME needs some intelligent caching beyond the FS cache
 
@@ -700,6 +703,8 @@ class RPMDBAdditionalDataPackage(object):
         if not os.path.exists(self._mydir):
             os.makedirs(self._mydir)
         
+        attr = attr.replace('/', '')
+        attr = attr.replace('~', '')
         fn = self._mydir + '/' + attr
         fn = os.path.normpath(fn)
         fo = open(fn, 'w')
@@ -714,6 +719,8 @@ class RPMDBAdditionalDataPackage(object):
         del fn
     
     def _read(self, attr):
+        attr = attr.replace('/', '')
+        attr = attr.replace('~', '')
         fn = self._mydir + '/' + attr
         if not os.path.exists(fn):
             raise AttributeError, "%s has no attribute %s" % (self, attr)
@@ -752,6 +759,13 @@ class RPMDBAdditionalDataPackage(object):
             self._delete(attr)
         else:
             object.__delattr__(self, attr)
+
+    def __iter__(self):
+        items = glob.glob(self._mydir + '/*')
+        return [ item.replace(self._mydir + '/', '') for item in items].__iter__()
+
+#    def __dir__(self): # for 2.6 and beyond, apparently
+#        return list(self.__iter__()) + self.__dict__.keys()
 
     def get(self, attr, default=None):
         """retrieve an add'l data obj"""
