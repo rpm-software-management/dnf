@@ -1264,8 +1264,8 @@ class YumOptionParser(OptionParser):
             dest.append((opt, value))
 
         if self._utils:
-           group = OptionGroup(self, "Yum Base Options")
-           self.add_option_group(group)
+            group = OptionGroup(self, "Yum Base Options")
+            self.add_option_group(group)
         else:
             group = self
     
