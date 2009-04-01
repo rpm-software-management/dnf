@@ -695,6 +695,12 @@ class RPMDBAdditionalData(object):
     def sync_with_rpmdb(self, rpmdbobj):
         """populate out the dirs and remove all the items no longer in the rpmd
            and/or populate various bits to the currently installed version"""
+        # TODO:
+        # get list of all items in the yumdb
+        # remove any no longer in the rpmdb/andor migrate them up to the currently
+        # installed version
+        # add entries for items in the rpmdb if they don't exist in the yumdb
+
         pass
 
 class RPMDBAdditionalDataPackage(object):

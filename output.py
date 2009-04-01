@@ -470,7 +470,7 @@ class YumOutput:
         na = '%s%s.%s' % (indent, pkg.name, pkg.arch)
         hi_cols = [highlight, 'normal', 'normal']
         rid = pkg.repoid
-        if hasattr(pkg, 'yumdb_info') and 'repoid' in pkg.yumdb_info:
+        if 'repoid' in pkg.yumdb_info:
             rid = '@' + pkg.yumdb_info.repoid
         columns = zip((na, ver, rid), columns, hi_cols)
         print self.fmtColumns(columns)
