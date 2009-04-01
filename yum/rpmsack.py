@@ -692,6 +692,11 @@ class RPMDBAdditionalData(object):
         
         return RPMDBAdditionalDataPackage(self.conf, thisdir)
 
+    def sync_with_rpmdb(self, rpmdbobj):
+        """populate out the dirs and remove all the items no longer in the rpmd
+           and/or populate various bits to the currently installed version"""
+        pass
+
 class RPMDBAdditionalDataPackage(object):
     def __init__(self, conf, pkgdir):
         self._conf = conf
