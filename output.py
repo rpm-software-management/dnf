@@ -469,7 +469,10 @@ class YumOutput:
         ver = pkg.printVer()
         na = '%s%s.%s' % (indent, pkg.name, pkg.arch)
         hi_cols = [highlight, 'normal', 'normal']
-        columns = zip((na, ver, pkg.repoid), columns, hi_cols)
+        rid = pkg.repoid
+        if hasattr(pkg, 'yumdb_info') and 'repoid' in pkg.yumdb_info:
+            rid = '@' + pkg.yumdb_info.repoid
+        columns = zip((na, ver, rid), columns, hi_cols)
         print self.fmtColumns(columns)
 
     def simpleEnvraList(self, pkg, ui_overflow=False,
@@ -481,7 +484,10 @@ class YumOutput:
             columns = (-63, -16) # Old default
         envra = '%s%s' % (indent, str(pkg))
         hi_cols = [highlight, 'normal', 'normal']
-        columns = zip((envra, pkg.repoid), columns, hi_cols)
+        rid = pkg.repoid
+        if hasattr(pkg, 'yumdb_info') and 'repoid' in pkg.yumdb_info:
+            rid = '@' + pkg.yumdb_info.repoid
+        columns = zip((envra, rid), columns, hi_cols)
         print self.fmtColumns(columns)
 
     def fmtKeyValFill(self, key, val):
@@ -533,6 +539,8 @@ class YumOutput:
         print _("Release    : %s") % to_unicode(pkg.release)
         print _("Size       : %s") % self.format_number(float(pkg.size))
         print _("Repo       : %s") % to_unicode(pkg.repoid)
+        if hasattr(pkg, 'yumdb_info') and 'repoid' in pkg.yumdb_info:
+            print _("From repo  : %s") % to_unicode(pkg.yumdb_info.repoid)
         if self.verbose_logger.isEnabledFor(logginglevels.DEBUG_3):
             print _("Committer  : %s") % to_unicode(pkg.committer)
             print _("Committime : %s") % time.ctime(pkg.committime)
