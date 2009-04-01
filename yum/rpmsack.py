@@ -760,12 +760,6 @@ class RPMDBAdditionalDataPackage(object):
                 os.unlink(fn)
             except (IOError, OSError):
                 raise AttributeError, "Cannot delete attribute %s on " % (attr, self)
-            else:
-                if not self._read_cached_data:
-                    try:
-                        os.rmdir(self._mydir)
-                    except:
-                        pass
     
     def __getattr__(self, attr):
         return self._read(attr)
