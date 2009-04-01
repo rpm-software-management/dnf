@@ -747,13 +747,13 @@ class RPMDBAdditionalDataPackage(object):
 
         self.get(attr)
         fn = self._mydir + '/' + attr
+        if attr in self._read_cached_data:
+            del self._read_cached_data[attr]
         if os.path.exists(fn):
             try:
                 os.unlink(fn)
             except (IOError, OSError):
                 raise AttributeError, "Cannot delete attribute %s on " % (attr, self)
-        return None
-    
     
     def __getattr__(self, attr):
         return self._read(attr)
