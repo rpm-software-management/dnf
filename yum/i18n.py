@@ -460,7 +460,7 @@ try:
     import gettext
     t = gettext.translation('yum', fallback=True)
     _ = t.ugettext
-    P_ = t.nugettext
+    P_ = t.ungettext
 except:
     '''
     Something went wrong so we make a dummy _() wrapper there is just
