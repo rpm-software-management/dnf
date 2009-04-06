@@ -1233,8 +1233,7 @@ class YumBase(depsolve.Depsolve):
             a = apo.getDiscNum()
             b = bpo.getDiscNum()
             if a is None and b is None:
-                # Download smallest pkgs first
-                return apo.size - bpo.size
+                return cmp(apo, bpo)
             if a is None:
                 return -1
             if b is None:
@@ -2785,8 +2784,7 @@ class YumBase(depsolve.Depsolve):
             #  Always look for available packages, it doesn't seem to do any
             # harm (apart from some time). And it fixes weird edge cases where
             # "update a" (which requires a new b) is different from "update b"
-            (e, m, u) = self.pkgSack.matchPackageNames([kwargs['pattern']])
-            availpkgs.extend(e)
+            m =self.pkgSack.returnNewestByNameArch(patterns=[kwargs['pattern']])
             availpkgs.extend(m)
 
             if not availpkgs and not instpkgs:

@@ -563,10 +563,7 @@ class TransactionMember:
             self.depends_on.append(po)
 
     def __cmp__(self, other):
-        result = cmp(self.name, other.name)
-        if not result:
-            return cmp(id(self), id(other))
-        return result
+        return cmp(self.po, other.po)
 
     def __hash__(self):
         return object.__hash__(self)

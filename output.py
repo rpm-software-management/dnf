@@ -470,7 +470,7 @@ class YumOutput:
         na = '%s%s.%s' % (indent, pkg.name, pkg.arch)
         hi_cols = [highlight, 'normal', 'normal']
         rid = pkg.repoid
-        if 'repoid' in pkg.yumdb_info:
+        if pkg.repoid == 'installed' and 'repoid' in pkg.yumdb_info:
             rid = '@' + pkg.yumdb_info.repoid
         columns = zip((na, ver, rid), columns, hi_cols)
         print self.fmtColumns(columns)
@@ -485,7 +485,7 @@ class YumOutput:
         envra = '%s%s' % (indent, str(pkg))
         hi_cols = [highlight, 'normal', 'normal']
         rid = pkg.repoid
-        if hasattr(pkg, 'yumdb_info') and 'repoid' in pkg.yumdb_info:
+        if pkg.repoid == 'installed' and 'repoid' in pkg.yumdb_info:
             rid = '@' + pkg.yumdb_info.repoid
         columns = zip((envra, rid), columns, hi_cols)
         print self.fmtColumns(columns)
@@ -539,7 +539,7 @@ class YumOutput:
         print _("Release    : %s") % to_unicode(pkg.release)
         print _("Size       : %s") % self.format_number(float(pkg.size))
         print _("Repo       : %s") % to_unicode(pkg.repoid)
-        if hasattr(pkg, 'yumdb_info') and 'repoid' in pkg.yumdb_info:
+        if pkg.repoid == 'installed' and 'repoid' in pkg.yumdb_info:
             print _("From repo  : %s") % to_unicode(pkg.yumdb_info.repoid)
         if self.verbose_logger.isEnabledFor(logginglevels.DEBUG_3):
             print _("Committer  : %s") % to_unicode(pkg.committer)
@@ -684,7 +684,10 @@ class YumOutput:
             for (apkg, ipkg) in pkg_names2pkgs[item]:
                 pkg = ipkg or apkg
                 envra = utf8_width(str(pkg)) + utf8_width(indent)
-                rid   = len(pkg.repoid)
+                if pkg.repoid == 'installed' and 'repoid' in pkg.yumdb_info:
+                    rid = len(pkg.yumdb_info.repoid) + 1
+                else:
+                    rid   = len(pkg.repoid)
                 for (d, v) in (('envra', envra), ('rid', rid)):
                     data[d].setdefault(v, 0)
                     data[d][v] += 1
