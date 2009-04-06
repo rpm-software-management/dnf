@@ -996,6 +996,12 @@ class Depsolve(object):
         self.verbose_logger.log(logginglevels.DEBUG_4,
               _("Running compare_providers() for %s") %(str(pkgs)))
 
+        def _cmp_best_providers(x, y):
+            """ Compare first by score, and then compare the pkgs if the score
+                is the same. Note that this sorts in reverse. """
+            ret = cmp(y[1], x[1])
+            if ret: return ret
+            return cmp(y[0], x[0])
         
         def _common_prefix_len(x, y, minlen=2):
             num = min(len(x), len(y))
@@ -1121,7 +1127,7 @@ class Depsolve(object):
             
             pkgresults[po] += (len(po.name)*-1)
 
-        bestorder = sorted(pkgresults.items(), key=itemgetter(1), reverse=True)
+        bestorder = sorted(pkgresults.items(), cmp=_cmp_best_providers)
         self.verbose_logger.log(logginglevels.DEBUG_4,
                 _('Best Order: %s' % str(bestorder)))
 
