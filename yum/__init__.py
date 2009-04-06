@@ -974,8 +974,19 @@ class YumBase(depsolve.Depsolve):
 
         self.rpmdb.dropCachedData() # drop out the rpm cache so we don't step on bad hdr indexes
         self.plugins.run('posttrans')
+        # sync up what just happened versus what is in the rpmdb
+        self.verifyTransaction()
         return resultobject
 
+    def verifyTransaction(self):
+        """checks that the transaction did what we expected it to do. Also 
+           propagates our external yumdb info"""
+        
+        # check to see that the rpmdb and the tsInfo roughly matches
+        # push package object metadata outside of rpmdb into yumdb
+        # delete old yumdb metadata entries
+        pass
+        
     def costExcludePackages(self):
         """exclude packages if they have an identical package in another repo
         and their repo.cost value is the greater one"""
