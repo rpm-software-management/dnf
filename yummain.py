@@ -241,6 +241,7 @@ def main(args):
         verbose_logger.info(_(" You could try running: package-cleanup --problems\n"
                               "                        package-cleanup --dupes\n"
                               "                        rpm -Va --nofiles --nodigest"))
+        base.yumUtilsMsg(verbose_logger.info, "package-cleanup")
         if unlock(): return 200
         return 1
     elif result == 2:

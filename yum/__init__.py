@@ -687,15 +687,28 @@ class YumBase(depsolve.Depsolve):
             self.verbose_logger.log(logginglevels.INFO_2, msg)
             self.repos.populateSack(mdtype='filelists')
            
+    def yumUtilsMsg(self, func, prog):
+        """ Output a message that the tool requires the yum-utils package,
+            if not installed. """
+        if self.rpmdb.contains(name="yum-utils"):
+            return
+
+        hibeg, hiend = "", ""
+        if hasattr(self, 'term'):
+            hibeg, hiend = self.term.MODE['bold'], self.term.MODE['normal']
+
+        func(_("The program %s%s%s is found in the yum-utils package.") %
+             (hibeg, prog, hiend))
+
     def buildTransaction(self, unfinished_transactions_check=True):
         """go through the packages in the transaction set, find them in the
            packageSack or rpmdb, and pack up the ts accordingly"""
         if (unfinished_transactions_check and
             misc.find_unfinished_transactions(yumlibpath=self.conf.persistdir)):
             msg = _('There are unfinished transactions remaining. You might ' \
-                    'consider running yum-complete-transaction (found in the ' \
-                    'yum-utils package) first to finish them.' )
+                    'consider running yum-complete-transaction first to finish them.' )
             self.logger.critical(msg)
+            base.yumUtilsMsg(self.logger.critical, "yum-complete-transaction")
             time.sleep(3)
 
         self.plugins.run('preresolve')
