@@ -367,22 +367,22 @@ class SkipBrokenTests(DepsolveTests):
     	But it only work if foo-1.0 -> foo-2.0 is added as an update, it is not 
     	pulled in by it self.
     	"""
-    ipo1 = self.instPackage('foo', '1')
-    ipo1.addRequires('barlib', 'EQ', ('0', '1', '0'))
-    ipo2 = self.instPackage('bar', '1')
-    ipo2.addProvides('barlib', 'EQ', ('0', '1', '0'))
-    ipo3 = self.instPackage('zap', '1')
-    po1 = self.repoPackage('foo', '2')
-    po1.addRequires('barlib', 'EQ', ('0', '2', '0'))
-    po2 = self.repoPackage('bar', '2')
-    po2.addProvides('barlib', 'EQ', ('0', '2', '0'))
-    po3 = self.repoPackage('zap', '2')
-    po3.addRequires('barlib', 'EQ', ('0', '2', '0'))
-    #FIXME: Find out why this line is needed, it should be auto updated by the solver.
-    self.tsInfo.addUpdate(po1, oldpo=ipo1) # why is this needed, it should work without ?
-    self.tsInfo.addUpdate(po3, oldpo=ipo3)
-    self.assertEquals('ok', *self.resolveCode(skip=True))
-    self.assertResult([po1,po2,po3])               
+        ipo1 = self.instPackage('foo', '1')
+        ipo1.addRequires('barlib', 'EQ', ('0', '1', '0'))
+        ipo2 = self.instPackage('bar', '1')
+        ipo2.addProvides('barlib', 'EQ', ('0', '1', '0'))
+        ipo3 = self.instPackage('zap', '1')
+        po1 = self.repoPackage('foo', '2')
+        po1.addRequires('barlib', 'EQ', ('0', '2', '0'))
+        po2 = self.repoPackage('bar', '2')
+        po2.addProvides('barlib', 'EQ', ('0', '2', '0'))
+        po3 = self.repoPackage('zap', '2')
+        po3.addRequires('barlib', 'EQ', ('0', '2', '0'))
+        #FIXME: Find out why this line is needed, it should be auto updated by the solver.
+        self.tsInfo.addUpdate(po1, oldpo=ipo1) # why is this needed, it should work without ?
+        self.tsInfo.addUpdate(po3, oldpo=ipo3)
+        self.assertEquals('ok', *self.resolveCode(skip=True))
+        self.assertResult([po1,po2,po3])               
 
 
     def testBumpedSoName1(self):
