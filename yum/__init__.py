@@ -693,7 +693,8 @@ class YumBase(depsolve.Depsolve):
         if (unfinished_transactions_check and
             misc.find_unfinished_transactions(yumlibpath=self.conf.persistdir)):
             msg = _('There are unfinished transactions remaining. You might ' \
-                    'consider running yum-complete-transaction first to finish them.' )
+                    'consider running yum-complete-transaction (found in the ' \
+                    'yum-utils package) first to finish them.' )
             self.logger.critical(msg)
             time.sleep(3)
 
