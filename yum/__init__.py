@@ -55,7 +55,7 @@ import transactioninfo
 import urlgrabber
 from urlgrabber.grabber import URLGrabber, URLGrabError
 from urlgrabber.progress import format_number
-from packageSack import packagesNewestByNameArch
+from packageSack import packagesNewestByNameArch, ListPackageSack
 import depsolve
 import plugins
 import logginglevels
@@ -2284,7 +2284,8 @@ class YumBase(depsolve.Depsolve):
         except Errors.YumBaseError:
             raise Errors.YumBaseError, _('No Package found for %s') % depstring
         
-        result = self._bestPackageFromList(pkglist)
+        ps = ListPackageSack(pkglist)
+        result = self._bestPackageFromList(ps.returnNewestByNameArch())
         if result is None:
             raise Errors.YumBaseError, _('No Package found for %s') % depstring
         
