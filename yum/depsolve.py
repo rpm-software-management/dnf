@@ -1084,17 +1084,14 @@ class Depsolve(object):
                 if po == nextpo:
                     continue
                 obsoleted = False
-                for obs in nextpo.obsoletes:
-                    if po.inPrcoRange('provides', obs):
-                        obsoleted = True
+                poprovtup = (po.name, 'EQ', (po.epoch, po.ver, po.release))
+                if nextpo.inPrcoRange('obsoletes', poprovtup):
+                    obsoleted = True
+                    pkgresults[po] -= 1024
                                 
-                        self.verbose_logger.log(logginglevels.DEBUG_4,
-                            _("%s obsoletes %s") % (po, nextpo))
+                    self.verbose_logger.log(logginglevels.DEBUG_4,
+                        _("%s obsoletes %s") % (nextpo, po))
 
-                    if obsoleted:
-                        pkgresults[po] -= 1024
-                        break
-                
                 if reqpo:
                     arches = (reqpo.arch, getBestArch())
                 else:
