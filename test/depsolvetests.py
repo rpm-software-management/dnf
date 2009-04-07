@@ -844,7 +844,7 @@ class DepsolveTests(DepsolveTests):
         self.xsack.addPackage(po3)
 
         self.assertEquals('ok', *self.resolveCode())
-        self.assertResult((xpo, po3))
+        self.assertResult((xpo, po2))
 
     def testMultiPkgVersions4(self):
         ipo1 = FakePackage('abcd', arch='i386')
