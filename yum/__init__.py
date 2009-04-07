@@ -3117,8 +3117,13 @@ class YumBase(depsolve.Depsolve):
                 self.verbose_logger.log(logginglevels.INFO_2, msg)
                 continue
             
+            #  Make sure obsoletes processing is off, so we can reinstall()
+            # pkgs that are obsolete.
+            old_conf_obs = self.conf.obsoletes
+            self.conf.obsoletes = False
             members = self.install(name=item.name, arch=item.arch,
                            ver=item.version, release=item.release, epoch=item.epoch)
+            self.conf.obsoletes = old_conf_obs
             if len(members) == 0:
                 self.tsInfo.remove(item.pkgtup)
                 tx_mbrs.remove(item)
