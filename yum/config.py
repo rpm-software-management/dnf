@@ -800,7 +800,10 @@ def readMainConfig(startupconf):
     # Apply the installroot to directory options
     for option in ('cachedir', 'logfile', 'persistdir'):
         path = getattr(yumconf, option)
-        setattr(yumconf, option, yumconf.installroot + path)
+        ir_path = yumconf.installroot + path
+        ir_path = ir_path.replace('//', '/') # os.path.normpath won't fix this and
+                                             # it annoys me
+        setattr(yumconf, option, ir_path)
     
     # Add in some extra attributes which aren't actually configuration values 
     yumconf.yumvar = yumvars

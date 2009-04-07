@@ -1215,8 +1215,12 @@ class YumBase(depsolve.Depsolve):
             cursize = os.stat(fo)[6]
             totsize = long(po.size)
             if cursize >= totsize and not po.repo.cache:
-                os.unlink(fo)
-                                                                                             
+                # if the path to the file is NOT inside the cachedir then don't
+                # unlink it b/c it is probably a file:// url and possibly
+                # unlinkable
+                if fo.startswith(po.repo.cachedir):
+                    os.unlink(fo)
+
             if raiseError:
                 raise URLGrabError(-1, _('Package does not match intended download'))
             else:

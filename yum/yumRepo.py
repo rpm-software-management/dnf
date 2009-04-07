@@ -253,7 +253,7 @@ class YumRepository(Repository, config.RepoConf):
         # throw in some stubs for things that will be set by the config class
         self.basecachedir = ""
         self.cost = 1000
-        self.copy_local = 1
+        self.copy_local = 0
         # holder for stuff we've grabbed
         self.retrieved = { 'primary':0, 'filelists':0, 'other':0, 'group':0,
                            'updateinfo':0}
