@@ -639,7 +639,7 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
             return []
 
         result = [] # (pkg, num matches)
-        if len(fields) < 1:
+        if not fields or not searchstrings:
             return result
         
         # NOTE: I can't see any reason not to use this all the time, speed
