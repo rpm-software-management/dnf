@@ -708,7 +708,7 @@ class YumBase(depsolve.Depsolve):
             msg = _('There are unfinished transactions remaining. You might ' \
                     'consider running yum-complete-transaction first to finish them.' )
             self.logger.critical(msg)
-            base.yumUtilsMsg(self.logger.critical, "yum-complete-transaction")
+            self.yumUtilsMsg(self.logger.critical, "yum-complete-transaction")
             time.sleep(3)
 
         self.plugins.run('preresolve')
