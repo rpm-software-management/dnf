@@ -356,6 +356,9 @@ mode. Note that "all files" in the commands below means
 If you want to also clean any (temporarily) disabled repositories you need to
 use \fB--enablerepo='*'\fP option.
 
+.IP "\fByum clean expire-cache\fP"
+Eliminate the local data saying when the metadata and mirrorlists were downloaded for each repo. This means yum will revalidate the cache for each repo. next time it is used. However if the cache is still valid, nothing significant was deleted.
+
 .IP "\fByum clean packages\fP"
 Eliminate any cached packages from the system.  Note that packages are not automatically deleted after they are downloaded.
 
