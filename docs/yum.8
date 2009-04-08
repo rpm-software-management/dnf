@@ -43,7 +43,7 @@ gnome\-packagekit application\&.
 .br
 .I \fR * groupupdate group1 [group2] [\&.\&.\&.]
 .br 
-.I \fR * grouplist [hidden]
+.I \fR * grouplist [hidden] [groupwildcard] [\&.\&.\&.]
 .br
 .I \fR * groupremove group1 [group2] [\&.\&.\&.]
 .br
@@ -81,14 +81,20 @@ group of packages while ensuring that all dependencies are
 satisfied\&.  If no package matches the given package name(s), they are
 assumed to be a shell glob and any matches are then installed\&. If the
 name starts with an @ character the rest of the name is used as though
-passed to the groupinstall command\&.
+passed to the groupinstall command\&. If the name is a file, then install works
+like localinstall\&. If the name doesn't match a package, then package
+"provides" are searched (Eg. "_sqlitecache.so()(64bit)") as are
+filelists (Eg. "/usr/bin/yum"). Also note that for filelists, wildcards will
+match multiple packages\&.
 .IP 
 .IP "\fBupdate\fP"
 If run without any packages, update will update every currently
 installed package.  If one or more packages or package globs are specified, Yum will
 only update the listed packages\&.  While updating packages, \fByum\fP
-will ensure that all dependencies are satisfied\&. If the packages or globs specified
-match to packages which are not currently installed then update will not install them\&.
+will ensure that all dependencies are satisfied\&. If the packages or globs
+specified match to packages which are not currently installed then update will
+not install them\&. update operates on groups, files, provides and filelists
+just like the "install" command\&.
 
 If the main obsoletes configure option is true (default) or the \-\-obsoletes
 flag is present \fByum\fP will include package 
@@ -110,7 +116,8 @@ for more details.
 .IP "\fBremove\fP or \fBerase\fP"
 Are used to remove the specified packages from the system
 as well as removing any packages which depend on the package being
-removed\&.
+removed\&. remove operates on groups, files, provides and filelists just like
+the "install" command\&.
 .IP 
 .IP "\fBlist\fP"
 Is used to list various information about available
@@ -171,7 +178,9 @@ by "groupremove Y" does not do give you the same result as "groupinstall X".
 Is used to give the description and package list of a group (and which type
 those packages are marked as). Note that you can use the yum-filter-data and
 yum-list-data plugins to get/use the data the other way around (Ie. what
-groups own packages need updating).
+groups own packages need updating). If you pass the -v option, to enable verbose
+mode, then the package names are matched against installed/available packages
+similar to the list command.
 .IP 
 .IP "\fBshell\fP"
 Is used to enter the 'yum shell', when a filename is specified the contents of
@@ -183,24 +192,28 @@ package is listed per dependency.
 .IP
 .IP "\fBlocalinstall\fP"
 Is used to install a set of local rpm files. If required the enabled 
-repositories will be used to resolve dependencies. 
+repositories will be used to resolve dependencies. Note that the install command
+will do a local install, if given a filename.
 .IP
 .IP "\fBlocalupdate\fP"
 Is used to update the system by specifying local rpm files. Only the specified 
 rpm files of which an older version is already installed will be installed,
 the remaining specified packages will be ignored.
-If required the enabled repositories will be used to resolve dependencies.
+If required the enabled repositories will be used to resolve dependencies. Note
+that the update command will do a local install, if given a filename.
 .IP
 .IP "\fBreinstall\fP"
 Will reinstall the identically versioned package as is currently installed. 
-This does not work for "installonly" packages, like Kernels.
+This does not work for "installonly" packages, like Kernels. reinstall operates
+on groups, files, provides and filelists just like the "install" command\&.
 .IP
 .IP "\fBdowngrade\fP"
 Will try and downgrade a package from the version currently installed to the
 previously highest version (or the specified version).
 The depsolver will not necessarily work, but if you specify all the packages it
 should work (and thus. all the simple cases will work). Also this does not
-work for "installonly" packages, like Kernels.
+work for "installonly" packages, like Kernels. downgrade operates
+on groups, files, provides and filelists just like the "install" command\&.
 .IP
 .IP "\fBdeplist\fP"
 Produces a list of all dependencies and what packages provide those
@@ -208,7 +221,8 @@ dependencies for the given packages.
 .IP
 .IP "\fBrepolist\fP"
 Produces a list of configured repositories. The default is to list all
-enabled repositories.
+enabled repositories. If you pass -v, for verbose mode, more information is
+listed.
 .IP
 .IP "\fBhelp\fP"
 Produces help, either for all commands or if given a command name then the help
@@ -280,7 +294,8 @@ Configuration Option: \fBexclude\fP
 .br
 .IP "\fB\-\-color=[always|auto|never]\fP"
 Display colorized output automatically, depending on the output terminal,
-always (using ANSI codes) or never.
+always (using ANSI codes) or never. Note that some commands (Eg. list and info)
+will do a little extra work when color is enabled.
 Configuration Option: \fBcolor\fP
 .br
 .IP "\fB\-\-disableexcludes=[all|main|repoid]\fP"
