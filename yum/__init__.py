@@ -999,6 +999,17 @@ class YumBase(depsolve.Depsolve):
         # check to see that the rpmdb and the tsInfo roughly matches
         # push package object metadata outside of rpmdb into yumdb
         # delete old yumdb metadata entries
+        
+        # for each pkg in the tsInfo
+        # if it is an install - see that the pkg is installed
+        # if it is an update - see that the pkg is installed and the old version
+        #   has been removed
+        # if it is a remove - see that the pkg is no longer installed, provided
+        #    that there is not also an install of this pkg in the tsInfo (reinstall)
+        # if it is an obsolete - see that the pkg is installed and the obsoleted pkg
+        # has been removed
+        # for any kind of install add from_repo to the yumdb
+
         pass
         
     def costExcludePackages(self):
@@ -1200,7 +1211,10 @@ class YumBase(depsolve.Depsolve):
 
         if type(fo) is types.InstanceType:
             fo = fo.filename
-            
+        
+        if fo != po.localPkg():
+            po.localpath = fo
+
         if not po.verifyLocalPkg():
             failed = True
         else:
