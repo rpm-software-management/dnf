@@ -755,6 +755,9 @@ class YumRepository(Repository, config.RepoConf):
                                     )
             except URLGrabError, e:
                 errstr = "failed to retrieve %s from %s\nerror was %s" % (relative, self.id, e)
+                if self.mirrorurls:
+                    errstr +="\n  You could try running: yum clean expire-cache"
+                    errstr +="\n  To get a new set of mirrors."
                 if e.errno == 256:
                     raise Errors.NoMoreMirrorsRepoError, errstr
                 else:
