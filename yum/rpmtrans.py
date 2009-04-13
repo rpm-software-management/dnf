@@ -408,13 +408,17 @@ class RPMTransaction:
         if h is not None:
             hdr, rpmloc = h[0], h[1]
             handle = self._makeHandle(hdr)
-            fd = os.open(rpmloc, os.O_RDONLY)
-            self.filehandles[handle]=fd
-            if self.trans_running:
-                self.total_installed += 1
-                self.complete_actions += 1
-                self.installed_pkg_names.append(hdr['name'])
-            return fd
+            try:
+                fd = os.open(rpmloc, os.O_RDONLY)
+            except OSError, e:
+                self.displaylog.errorlog("Error: Cannot open file %s: %s" % (rpmloc, e))
+            else:
+                self.filehandles[handle]=fd
+                if self.trans_running:
+                    self.total_installed += 1
+                    self.complete_actions += 1
+                    self.installed_pkg_names.append(hdr['name'])
+                return fd
         else:
             self.display.errorlog("Error: No Header to INST_OPEN_FILE")
             
