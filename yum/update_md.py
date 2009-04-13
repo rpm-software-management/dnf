@@ -26,6 +26,7 @@ import gzip
 
 from yum.i18n import utf8_text_wrap, to_utf8
 from yum.yumRepo import YumRepository
+from yum.packages import FakeRepository
 from yum.misc import to_xml
 import Errors
 
@@ -367,6 +368,8 @@ class UpdateMetadata(object):
                 if not md:
                     raise UpdateNoticeException()
                 infile = gzip.open(md)
+        elif isinstance(obj, FakeRepository):
+            raise Errors.RepoMDError, "No updateinfo for local pkg"
         else:   # obj is a file object
             infile = obj
 
