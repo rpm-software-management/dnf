@@ -163,8 +163,26 @@ class FakeSack:
             
 class FakeRepository:
     """Fake repository class for use in rpmsack package objects"""
+
+    def _set_cleanup_repoid(self, repoid):
+        """ Set the repoid, but because it can be random ... clean it up. """
+
+        #  We don't want repoids to contain random bytes that can be
+        # in the FS directories. It's also nice if they aren't "huge". So
+        # just chop to the rpm name.
+        repoid = os.path.basename(repoid)
+        if repoid.endswith(".rpm"):
+            repoid = repoid[:-4]
+
+        bytes = [] # Just in case someone uses mv to be evil:
+        for byte in repoid:
+            if ord(byte) >= 128:
+                byte = '?'
+            bytes.append(byte)
+        self.id = "/" + "".join(bytes)
+
     def __init__(self, repoid):
-        self.id = repoid
+        self._set_cleanup_repoid(repoid)
         self.sack = FakeSack()
 
     def __cmp__(self, other):
