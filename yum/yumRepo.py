@@ -291,7 +291,7 @@ class YumRepository(Repository, config.RepoConf):
             ocost = 1000
         ret = cmp(self.cost, ocost)
         if ret:
-            return 1
+            return ret
         return cmp(self.id, other.id)
 
     def _getSack(self):
