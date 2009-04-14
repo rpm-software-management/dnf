@@ -170,16 +170,24 @@ class FakeRepository:
         #  We don't want repoids to contain random bytes that can be
         # in the FS directories. It's also nice if they aren't "huge". So
         # just chop to the rpm name.
-        repoid = os.path.basename(repoid)
+        pathbased = False
+        if '/' in repoid:
+            repoid = os.path.basename(repoid)
+            pathbased = True
+
         if repoid.endswith(".rpm"):
             repoid = repoid[:-4]
+            pathbased = True
 
         bytes = [] # Just in case someone uses mv to be evil:
+        if pathbased:
+            bytes.append('/')
+
         for byte in repoid:
             if ord(byte) >= 128:
                 byte = '?'
             bytes.append(byte)
-        self.id = "/" + "".join(bytes)
+        self.id = "".join(bytes)
 
     def __init__(self, repoid):
         self._set_cleanup_repoid(repoid)
