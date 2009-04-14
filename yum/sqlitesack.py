@@ -895,9 +895,10 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
         returnList = []
         max_entries = constants.PATTERNS_INDEXED_MAX
         if len(names) > max_entries:
+            returnList = set() # Unique
             for names in seq_max_split(names, max_entries):
-                returnList.extend(self.searchNames(names))
-            return returnList
+                returnList.update(self.searchNames(names))
+            return list(returnList)
 
         pat_sqls = []
         qsql = """select pkgId,pkgKey,name,epoch,version,release,arch
