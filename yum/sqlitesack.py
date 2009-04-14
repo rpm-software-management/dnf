@@ -893,6 +893,16 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
             return []
         
         returnList = []
+        if hasattr(self, 'pkgobjlist'):
+            names = set(names)
+            for po in self.pkgobjlist:
+                if po.name not in names:
+                    continue
+                if self._pkgExcluded(po):
+                    continue
+                returnList.append(po)
+            return returnList
+
         max_entries = constants.PATTERNS_INDEXED_MAX
         if len(names) > max_entries:
             returnList = set() # Unique
