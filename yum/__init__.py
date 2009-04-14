@@ -3147,6 +3147,44 @@ class YumBase(depsolve.Depsolve):
         tx_mbrs.extend(new_members)
         return tx_mbrs
         
+    def downgradeLocal(self, pkg, po=None):
+        """
+        handles downgrades of rpms provided on the filesystem in a
+        local dir (ie: not from a repo)
+
+        Return the added transaction members.
+
+        @param pkg: a path to an rpm file on disk.
+        @param po: A YumLocalPackage
+        """
+
+        if not po:
+            try:
+                po = YumLocalPackage(ts=self.rpmdb.readOnlyTS(), filename=pkg)
+            except Errors.MiscError:
+                self.logger.critical(_('Cannot open file: %s. Skipping.'), pkg)
+                return []
+            self.verbose_logger.log(logginglevels.INFO_2,
+                _('Examining %s: %s'), po.localpath, po)
+
+        if po.arch not in rpmUtils.arch.getArchList():
+            self.logger.critical(_('Cannot add package %s to transaction. Not a compatible architecture: %s'), pkg, po.arch)
+            return []
+
+        # handle excludes for a local downgrade
+        toexc = []
+        if len(self.conf.exclude) > 0:
+            exactmatch, matched, unmatched = \
+                   parsePackages(installpkgs + map(lambda x: x[0], updatepkgs),
+                                 self.conf.exclude, casematch=1)
+            toexc = exactmatch + matched
+
+        if po in toexc:
+            self.verbose_logger.debug(_('Excluding %s'), po)
+            return []
+
+        return self.downgrade(po=po)
+
     def downgrade(self, po=None, **kwargs):
         """ Try to downgrade a package. Works like:
             % yum shell <<EOL

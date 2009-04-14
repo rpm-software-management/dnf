@@ -575,8 +575,8 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         oldcount = len(self.tsInfo)
         
         for arg in userlist:
-            if os.path.exists(arg) and arg.endswith('.rpm'): # this is hurky, deal w/it
-                val, msglist = self.localInstall(filelist=[arg])
+            if arg.endswith('.rpm') and os.path.exists(arg): # this is hurky, deal w/it
+                self.localInstall(filelist=[arg])
                 continue # it was something on disk and it ended in rpm 
                          # no matter what we don't go looking at repos
             try:
@@ -608,11 +608,11 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
             # pass them off to localInstall() and then move on
             localupdates = []
             for item in userlist:
-                if os.path.exists(item) and item[-4:] == '.rpm': # this is hurky, deal w/it
+                if item.endswith('.rpm') and os.path.exists(item): # this is hurky, deal w/it
                     localupdates.append(item)
             
             if len(localupdates) > 0:
-                val, msglist = self.localInstall(filelist=localupdates, updateonly=1)
+                self.localInstall(filelist=localupdates, updateonly=1)
                 for item in localupdates:
                     userlist.remove(item)
                 
@@ -652,10 +652,8 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         oldcount = len(self.tsInfo)
         
         for arg in userlist:
-            # FIXME: We should allow local file downgrades too
-            #        even more important for Fedora.
-            if False and os.path.exists(arg) and arg.endswith('.rpm'):
-                val, msglist = self.localDowngrade(filelist=[arg])
+            if arg.endswith('.rpm') and os.path.exists(arg):
+                self.downgradeLocal(arg)
                 continue # it was something on disk and it ended in rpm 
                          # no matter what we don't go looking at repos
 
@@ -797,7 +795,7 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
 
         pkgs = []
         for arg in args:
-            if os.path.exists(arg) and arg.endswith('.rpm'): # this is hurky, deal w/it
+            if arg.endswith('.rpm') and os.path.exists(arg): # this is hurky, deal w/it
                 thispkg = yum.packages.YumLocalPackage(self.ts, arg)
                 pkgs.append(thispkg)
             else:                
