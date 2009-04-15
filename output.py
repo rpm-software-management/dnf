@@ -833,18 +833,19 @@ class YumOutput:
         print _("Repo        : %s") % po.repoid
         print _('Matched from:')
         for item in yum.misc.unique(values):
-            if po.name == item or po.summary == item:
+            item = to_utf8(item)
+            if to_utf8(po.name) == item or to_utf8(po.summary) == item:
                 continue # Skip double name/summary printing
 
             can_overflow = True
             if False: pass
-            elif po.description == item:
+            elif to_utf8(po.description) == item:
                 key = _("Description : ")
                 item = self._enc(item)
-            elif po.url == item:
+            elif to_utf8(po.url) == item:
                 key = _("URL         : %s")
                 can_overflow = False
-            elif po.license == item:
+            elif to_utf8(po.license) == item:
                 key = _("License     : %s")
                 can_overflow = False
             elif item.startswith("/"):
