@@ -1089,6 +1089,16 @@ class Depsolve(object):
             for nextpo in pkgs:
                 if po == nextpo:
                     continue
+
+                #  If this package isn't the latest version of said package,
+                # treat it like it's obsoleted. The problem here is X-1
+                # accidentally provides FOO, so you release X-2 without the
+                # provide, but X-1 is still picked over a real provider.
+                na = (po.name,po.arch)
+                lpos = self.pkgSack.returnNewestByNameArch(naTup=na)
+                if not lpos or po != sorted(lpos)[-1]:
+                    pkgresults[po] -= 1024
+
                 obsoleted = False
                 poprovtup = (po.name, 'EQ', (po.epoch, po.ver, po.release))
                 if nextpo.inPrcoRange('obsoletes', poprovtup):
