@@ -1177,3 +1177,22 @@ class DepsolveTests(DepsolveTests):
         self.assertEquals('ok', *self.resolveCode())
         self.assertResult((apo1, apo2))
 
+    def testInstalllib_oldbad_prov1(self):
+        # old version of X provides foo, as does foo itself
+        # new version of X doesn't provide foo
+        # So X shouldn't be installed as a provider of foo.
+        apo1 = FakePackage('X')
+        apo1.addProvides('libfoo.so.2()', None, (None, None, None))
+        self.xsack.addPackage(apo1)
+        apo2 = FakePackage('X', version=2)
+        self.xsack.addPackage(apo2)
+        apo3 = FakePackage('libfoo')
+        apo3.addProvides('libfoo.so.2()', None, (None, None, None))
+        self.xsack.addPackage(apo3)
+
+        ipo1 = FakePackage('bar')
+        ipo1.addRequires('libfoo.so.2()', None, (None, None, None))
+        self.tsInfo.addInstall(ipo1)
+
+        self.assertEquals('ok', *self.resolveCode())
+        self.assertResult((ipo1, apo3))
