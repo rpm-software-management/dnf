@@ -44,7 +44,7 @@ import Errors
 import rpmsack
 import rpmUtils.updates
 import rpmUtils.arch
-from rpmUtils.arch import getCanonArch, archDifference
+from rpmUtils.arch import getCanonArch, archDifference, canCoinstall
 import rpmUtils.transaction
 import comps
 import config
@@ -3235,15 +3235,15 @@ class YumBase(depsolve.Depsolve):
                 return []
             raise Errors.DowngradeError, _('No package(s) available to downgrade')
 
-        warned_names = set()
+        warned_nas = set()
         # Skip kernel etc.
         tapkgs = []
         for pkg in apkgs:
             if self.allowedMultipleInstalls(pkg):
-                if pkg.name not in warned_names:
+                if (pkg.name, pkg.arch) not in warned_nas:
                     msg = _("Package %s is allowed multiple installs, skipping") % pkg
                     self.verbose_logger.log(logginglevels.INFO_2, msg)
-                warned_names.add(pkg.name)
+                warned_nas.add((pkg.name, pkg.arch))
                 continue
             tapkgs.append(pkg)
         apkgs = tapkgs
@@ -3254,38 +3254,52 @@ class YumBase(depsolve.Depsolve):
             apkg_names.add(pkg.name)
         ipkgs = self.rpmdb.searchNames(list(apkg_names))
 
-        latest_installed = {}
+        latest_installed_na = {}
+        latest_installed_n  = {}
         for pkg in ipkgs:
-            latest_installed[pkg.name] = pkg
+            latest_installed_n[pkg.name] = pkg
+            latest_installed_na[(pkg.name, pkg.arch)] = pkg
 
         #  Find "latest downgrade", ie. latest available pkg before
         # installed version.
         downgrade_apkgs = {}
         for pkg in sorted(apkgs):
-            if pkg.name not in latest_installed:
-                if pkg.name not in warned_names and not doing_group_pkgs:
+            na  = (pkg.name, pkg.arch)
+
+            # Here we allow downgrades from .i386 => .noarch, or .i586 => .i386
+            # but not .i386 => .x86_64 (similar to update).
+            key = na
+            latest_installed = latest_installed_na
+            if pkg.name in latest_installed_n and na not in latest_installed_na:
+                if not canCoinstall(pkg.arch,latest_installed_n[pkg.name].arch):
+                    key = pkg.name
+                    latest_installed = latest_installed_n
+
+            if key not in latest_installed:
+                if na not in warned_nas and not doing_group_pkgs:
                     msg = _('No Match for available package: %s') % pkg
                     self.logger.critical(msg)
-                warned_names.add(pkg.name)
+                warned_nas.add(na)
                 continue
-            if pkg.verGE(latest_installed[pkg.name]):
-                if pkg.name not in warned_names:
+            if pkg.verGE(latest_installed[key]):
+                if na not in warned_nas:
                     msg = _('Only Upgrade available on package: %s') % pkg
                     self.logger.critical(msg)
-                warned_names.add(pkg.name)
+                warned_nas.add(na)
                 continue
-            warned_names.add(pkg.name)
-            if (pkg.name in downgrade_apkgs and
-                pkg.verLE(downgrade_apkgs[pkg.name])):
+            warned_nas.add(na)
+            if (na in downgrade_apkgs and
+                pkg.verLE(downgrade_apkgs[na])):
                 continue # Skip older than "latest downgrade"
-            downgrade_apkgs[pkg.name] = pkg
+            downgrade_apkgs[na] = pkg
 
         tx_return = []
         for po in ipkgs:
-            if po.name not in downgrade_apkgs:
+            na = (po.name, po.arch)
+            if na not in downgrade_apkgs:
                 continue
             itxmbr = self.tsInfo.addErase(po)
-            atxmbr = self.tsInfo.addInstall(downgrade_apkgs[po.name])
+            atxmbr = self.tsInfo.addInstall(downgrade_apkgs[na])
             if not atxmbr: # Fail?
                 self.tsInfo.remove(itxmbr.pkgtup)
                 continue
