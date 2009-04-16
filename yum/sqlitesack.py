@@ -396,6 +396,8 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
             'requires' : { },
             }
         self._key2pkg = {}
+        self._pkgname2pkgkeys = {}
+        self._pkgnames_loaded = set()
         self._arch_allowed = None
         self._pkgExcluder = []
 
@@ -443,6 +445,8 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
         if hasattr(self, 'pkgobjlist'):
             del self.pkgobjlist
         self._key2pkg = {}
+        self._pkgname2pkgkeys = {}
+        self._pkgnames_loaded = set()
         self._search_cache = {
             'provides' : { },
             'requires' : { },
@@ -498,6 +502,8 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
             del self.excludes[repo]
         if repo in self._key2pkg:
             del self._key2pkg[repo]
+        if repo in self._pkgname2pkgkeys:
+            del self._pkgname2pkgkeys[repo]
 
     def _excluded(self, repo, pkgId):
         if repo in self._all_excludes:
@@ -625,6 +631,7 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
 
         if not self._key2pkg.has_key(repo):
             self._key2pkg[repo] = {}
+            self._pkgname2pkgkeys[repo] = {}
         if not self._key2pkg[repo].has_key(pkgKey):
             sql = "SELECT pkgKey, pkgId, name, epoch, version, release, arch " \
                   "FROM packages WHERE pkgKey = ?"
@@ -635,16 +642,38 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
             if exclude and self._pkgExcludedRKD(repo, pkgKey, data):
                 return None
             self._key2pkg[repo][pkgKey] = self.pc(repo, data)
+            pkgkeys = self._pkgname2pkgkeys[repo].setdefault(data['name'], [])
+            pkgkeys.append(pkgKey)
         return self._key2pkg[repo][pkgKey]
         
     def _packageByKeyData(self, repo, pkgKey, data, exclude=True):
         """ Like _packageByKey() but we already have the data for .pc() """
         if exclude and self._pkgExcludedRKD(repo, pkgKey, data):
             return None
+        if repo not in self._key2pkg:
+            self._key2pkg[repo] = {}
+            self._pkgname2pkgkeys[repo] = {}
         if data['pkgKey'] not in self._key2pkg.get(repo, {}):
             po = self.pc(repo, data)
-            self._key2pkg.setdefault(repo, {})[pkgKey] = po
+            self._key2pkg[repo][pkgKey] = po
+            pkgkeys = self._pkgname2pkgkeys[repo].setdefault(data['name'], [])
+            pkgkeys.append(pkgKey)
         return self._key2pkg[repo][data['pkgKey']]
+
+    def _packagesByName(self, pkgname):
+        """ Load all pkgnames from cache, with a given name. """
+        ret = []
+        for repo in self.primarydb:
+            pkgkeys = self._pkgname2pkgkeys.get(repo, {}).get(pkgname, [])
+            if not pkgkeys:
+                continue
+
+            for pkgkey in pkgkeys:
+                pkg = self._packageByKey(repo, pkgkey)
+                if pkg is None:
+                    continue
+                ret.append(pkg)
+        return ret
 
     def addDict(self, repo, datatype, dataobj, callback=None):
         if self.added.has_key(repo):
@@ -1098,23 +1127,25 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
         if self._skip_all():
             return []
         
+        loaded_all_names = hasattr(self, 'pkgobjlist')
         returnList = []
-        if hasattr(self, 'pkgobjlist'):
-            names = set(names)
-            for po in self.pkgobjlist:
-                if po.name not in names:
-                    continue
-                if self._pkgExcluded(po):
-                    continue
-                returnList.append(po)
+        user_names = set(names)
+        names = []
+        for pkgname in user_names:
+            if loaded_all_names or pkgname in self._pkgnames_loaded:
+                returnList.extend(self._packagesByName(pkgname))
+            else:
+                names.append(pkgname)
+
+        if not names:
             return returnList
 
         max_entries = constants.PATTERNS_INDEXED_MAX
         if len(names) > max_entries:
-            returnList = set() # Unique
+            # Unique is done at user_names time, above.
             for names in seq_max_split(names, max_entries):
-                returnList.update(self.searchNames(names))
-            return list(returnList)
+                returnList.extend(self.searchNames(names))
+            return returnList
 
         pat_sqls = []
         qsql = """select pkgId,pkgKey,name,epoch,version,release,arch
@@ -1125,9 +1156,12 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
 
         for (repo, cache) in self.primarydb.items():
             cur = cache.cursor()
-            executeSQL(cur, qsql, list(names))
+            executeSQL(cur, qsql, names)
 
             self._sql_pkgKey2po(repo, cur, returnList, have_data=True)
+
+        # Mark all the processed pkgnames as fully loaded
+        self._pkgnames_loaded.update([name for name in names])
 
         return returnList
  
@@ -1364,11 +1398,15 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
             patterns = self._sql_esc_glob(patterns)
         else:
             tmp = []
+            need_glob = False
             for pat in patterns:
                 if misc.re_glob(pat):
                     tmp.append((pat, 'glob'))
+                    need_glob = True
                 else:
                     tmp.append((pat, '='))
+            if not need_full and not need_glob and patterns:
+                return self.searchNames(patterns)
             patterns = tmp
 
         for (repo,cache) in self.primarydb.items():
@@ -1401,8 +1439,13 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
                     if po is None:
                         continue
                     returnList.append(po)
-        if not patterns:
+        if not patterns and repoid is None:
             self.pkgobjlist = returnList
+            self._pkgnames_loaded = set() # Save memory
+        if not need_full and repoid is None:
+            # Mark all the processed pkgnames as fully loaded
+            self._pkgnames_loaded.update([po.name for po in returnList])
+
         return returnList
                 
     def returnPackages(self, repoid=None, patterns=None, ignore_case=False):
@@ -1448,6 +1491,18 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
 
         returnList = []
         
+        if name: # Almost always true...
+            for pkg in self.searchNames(names=[name]):
+                match = True
+                for (col, var) in [('epoch', epoch), ('version', ver),
+                                   ('arch', arch), ('release', rel)]:
+                    if var and getattr(pkg, col) != var:
+                        match = False
+                        break
+                if match:
+                    returnList.append(pkg)
+            return returnList
+
         # make sure some dumbass didn't pass us NOTHING to search on
         empty = True
         for arg in (name, epoch, ver, rel, arch):
