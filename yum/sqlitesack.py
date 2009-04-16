@@ -1215,6 +1215,8 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
 
         returnList = []
         for po in pkgobjlist:
+            if repoid is not None and repoid != po.repoid:
+                continue
             if self._pkgExcluded(po):
                 continue
             returnList.append(po)
