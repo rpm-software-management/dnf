@@ -3095,7 +3095,7 @@ class YumBase(depsolve.Depsolve):
             self.verbose_logger.log(logginglevels.INFO_2,
                 _('Marking %s as an update to %s'), po.localpath, oldpo)
             self.localPackages.append(po)
-            txmbr = self.tsInfo.addUpdate(po, oldpo)
+            txmbr = self.update(po=po)
             tx_return.append(txmbr)
 
         for po in donothingpkgs:
