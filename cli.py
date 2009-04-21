@@ -1124,7 +1124,7 @@ class YumOptionParser(OptionParser):
         
     def setupYumConfig(self, args=None):
         # Now parse the command line for real
-        if args is not None:
+        if not args:
             (opts, cmds) = self.parse_args()
         else:
             (opts, cmds) = self.parse_args(args=args)
