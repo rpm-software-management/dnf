@@ -127,21 +127,20 @@ class TransactionData:
         else:
             return states[0]
             
-
-    
     def matchNaevr(self, name=None, arch=None, epoch=None, ver=None, rel=None):
         """returns the list of packages matching the args above"""
         if name is None:
             txmbrs = self.getMembers()
         else:
             txmbrs = self._namedict.get(name, [])
+            if arch is None and epoch is None and ver is None and rel is None:
+                return txmbrs[:]
 
         result = []
 
         for txmbr in txmbrs:
             (n, a, e, v, r) = txmbr.pkgtup
-            if name is not None and name != n:
-                continue
+            # Name is done above
             if arch is not None and arch != a:
                 continue
             if epoch is not None and epoch != e:
