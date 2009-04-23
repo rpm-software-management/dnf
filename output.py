@@ -1197,6 +1197,11 @@ class DepSolveProgressCallBack:
             _('--> Processing Dependency: %s for package: %s'), formatted_req,
             name)
 
+    def procReqPo(self, po, formatted_req):
+        self.verbose_logger.log(logginglevels.INFO_2,
+            _('--> Processing Dependency: %s for package: %s'), formatted_req,
+            po)
+    
     def unresolved(self, msg):
         self.verbose_logger.log(logginglevels.INFO_2, _('--> Unresolved Dependency: %s'),
             msg)
@@ -1206,6 +1211,11 @@ class DepSolveProgressCallBack:
         self.verbose_logger.log(logginglevels.INFO_2,
             _('--> Processing Conflict: %s conflicts %s'),
                                 name, confname)
+
+    def procConflictPo(self, po, confname):
+        self.verbose_logger.log(logginglevels.INFO_2,
+            _('--> Processing Conflict: %s conflicts %s'),
+                                po, confname)
 
     def transactionPopulation(self):
         self.verbose_logger.log(logginglevels.INFO_2, _('--> Populating transaction set '

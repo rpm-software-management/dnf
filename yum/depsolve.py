@@ -263,6 +263,17 @@ class Depsolve(object):
                 self.verbose_logger.log(logginglevels.DEBUG_1,
                     _('Removing Package %s'), txmbr.po)
 
+    def _dscb_procReq(self, po, niceformatneed):
+        """ Call the callback for processing requires, call the nicest one
+            available. """
+        if not self.dsCallback:
+            return
+
+        if hasattr(self.dsCallback, 'procReqPo'):
+            self.dsCallback.procReqPo(po, niceformatneed)
+        else:
+            self.dsCallback.procReq(po.name, niceformatneed)
+
     def _processReq(self, po, requirement):
         """processes a Requires dep from the resolveDeps functions, returns a tuple
            of (CheckDeps, missingdep, conflicts, errors) the last item is an array
@@ -273,7 +284,7 @@ class Depsolve(object):
         needname, flags, needversion = requirement
         niceformatneed = rpmUtils.miscutils.formatRequire(needname, needversion, flags)
         self.verbose_logger.log(logginglevels.DEBUG_1, _('%s requires: %s'), po, niceformatneed)
-        if self.dsCallback: self.dsCallback.procReq(po.name, niceformatneed)
+        self._dscb_procReq(po, niceformatneed)
 
         try:    
             if po.repo.id != "installed":
@@ -596,6 +607,16 @@ class Depsolve(object):
         
         return checkdeps, missingdep
 
+    def _dscb_procConflict(self, po, niceformatneed):
+        """ Call the callback for processing requires, call the nicest one
+            available. """
+        if not self.dsCallback:
+            return
+
+        if hasattr(self.dsCallback, 'procConflictPo'):
+            self.dsCallback.procConflictPo(po, niceformatneed)
+        else:
+            self.dsCallback.procConflict(po.name, niceformatneed)
 
     def _processConflict(self, po, conflict, conflicting_po):
         """processes a Conflict dep from the resolveDeps() method"""
@@ -607,7 +628,7 @@ class Depsolve(object):
         (name, arch, epoch, ver, rel) = po.pkgtup
 
         niceformatneed = rpmUtils.miscutils.formatRequire(needname, needversion, flags)
-        if self.dsCallback: self.dsCallback.procConflict(name, niceformatneed)
+        self._dscb_procConflict(po, niceformatneed)
 
         length = len(self.tsInfo)
         if flags & rpm.RPMSENSE_LESS:
