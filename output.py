@@ -26,6 +26,8 @@ import rpm
 
 import re # For YumTerm
 
+from weakref import proxy as weakref
+
 from urlgrabber.progress import TextMeter
 import urlgrabber.progress
 from urlgrabber.grabber import URLGrabError
@@ -1089,7 +1091,7 @@ Remove   %5.5s Package(s)
         self.repos.setInterruptCallback(self.interrupt_callback)
         
         # setup our depsolve progress callback
-        dscb = DepSolveProgressCallBack()
+        dscb = DepSolveProgressCallBack(weakref(self))
         self.dsCallback = dscb
     
     def setupProgessCallbacks(self):
@@ -1156,11 +1158,12 @@ Remove   %5.5s Package(s)
 class DepSolveProgressCallBack:
     """provides text output callback functions for Dependency Solver callback"""
     
-    def __init__(self):
+    def __init__(self, ayum=None):
         """requires yum-cli log and errorlog functions as arguments"""
         self.verbose_logger = logging.getLogger("yum.verbose.cli")
         self.loops = 0
-    
+        self.ayum = ayum
+
     def pkgAdded(self, pkgtup, mode):
         modedict = { 'i': _('installed'),
                      'u': _('updated'),
@@ -1193,8 +1196,7 @@ class DepSolveProgressCallBack:
         self.verbose_logger.log(logginglevels.INFO_2,
             _('--> Processing Dependency: %s for package: %s'), formatted_req,
             name)
-        
-    
+
     def unresolved(self, msg):
         self.verbose_logger.log(logginglevels.INFO_2, _('--> Unresolved Dependency: %s'),
             msg)
@@ -1202,7 +1204,8 @@ class DepSolveProgressCallBack:
     
     def procConflict(self, name, confname):
         self.verbose_logger.log(logginglevels.INFO_2,
-            _('--> Processing Conflict: %s conflicts %s'), name, confname)
+            _('--> Processing Conflict: %s conflicts %s'),
+                                name, confname)
 
     def transactionPopulation(self):
         self.verbose_logger.log(logginglevels.INFO_2, _('--> Populating transaction set '
@@ -1236,6 +1239,55 @@ class CacheProgressCallback:
     def progressbar(self, current, total, name=None):
         progressbar(current, total, name)
 
+def _pkgname_ui(ayum, pkgname, ts_states=None):
+    """ Get more information on a simple pkgname, if we can. We need to search
+        packages that we are dealing with atm. and installed packages (if the
+        transaction isn't complete). """
+    if ayum is None:
+        return pkgname
+
+    if ts_states is None:
+        #  Note 'd' is a placeholder for downgrade, and
+        # 'r' is a placeholder for reinstall. Neither exist atm.
+        ts_states = ('d', 'e', 'i', 'r', 'u')
+
+    matches = []
+    def _cond_add(po):
+        if matches and matches[0].arch == po.arch and matches[0].verEQ(po):
+            return
+        matches.append(po)
+
+    for txmbr in ayum.tsInfo.matchNaevr(name=pkgname):
+        if txmbr.ts_state not in ts_states:
+            continue
+        _cond_add(txmbr.po)
+
+    if not matches:
+        return pkgname
+    fmatch = matches.pop(0)
+    if not matches:
+        return str(fmatch)
+
+    show_ver  = True
+    show_arch = True
+    for match in matches:
+        if not fmatch.verEQ(match):
+            show_ver  = False
+        if fmatch.arch != match.arch:
+            show_arch = False
+
+    if show_ver: # Multilib. *sigh*
+        if fmatch.epoch == '0':
+            return '%s-%s-%s' % (fmatch.name, fmatch.version, fmatch.release)
+        else:
+            return '%s:%s-%s-%s' % (fmatch.epoch, fmatch.name,
+                                    fmatch.version, fmatch.release)
+
+    if show_arch:
+        return '%s.%s' % (fmatch.name, fmatch.arch)
+
+    return pkgname
+
 class YumCliRPMCallBack(RPMBaseCallback):
 
     """
@@ -1244,7 +1296,7 @@ class YumCliRPMCallBack(RPMBaseCallback):
 
     width = property(lambda x: _term_width())
 
-    def __init__(self):
+    def __init__(self, ayum=None):
         RPMBaseCallback.__init__(self)
         self.lastmsg = to_unicode("")
         self.lastpackage = None # name of last package we looked at
@@ -1253,15 +1305,22 @@ class YumCliRPMCallBack(RPMBaseCallback):
         # for a progress bar
         self.mark = "#"
         self.marks = 22
-        
+        self.ayum = ayum
+
+    #  Installing things have pkg objects passed to the events, so only need to
+    # lookup for erased/obsoleted.
+    def pkgname_ui(self, pkgname, ts_states=('e' 'o')):
+        """ Get more information on a simple pkgname, if we can. """
+        return _pkgname_ui(self.ayum, pkgname, ts_states)
+
     def event(self, package, action, te_current, te_total, ts_current, ts_total):
         # this is where a progress bar would be called
         process = self.action[action]
         
         if type(package) not in types.StringTypes:
-            pkgname = package.name
+            pkgname = str(package)
         else:
-            pkgname = package
+            pkgname = self.pkgname_ui(package)
             
         self.lastpackage = package
         if te_total == 0:

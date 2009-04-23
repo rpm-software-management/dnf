@@ -28,6 +28,8 @@ import logging
 from optparse import OptionParser,OptionGroup
 import rpm
 
+from weakref import proxy as weakref
+
 import output
 import shell
 import yum
@@ -468,7 +470,8 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         # put back our depcheck callback
         self.dsCallback = dscb
         # setup our rpm ts callback
-        cb = RPMTransaction(self, display=output.YumCliRPMCallBack)
+        cb = RPMTransaction(self,
+                            display=output.YumCliRPMCallBack(weakref(self)))
         if self.conf.debuglevel < 2:
             cb.display.output = False
 
