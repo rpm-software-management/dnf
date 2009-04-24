@@ -1318,8 +1318,7 @@ class YumRepository(Repository, config.RepoConf):
                                                      "filelists", "updateinfo",
                                                      "prestodelta"])
             if self.mdpolicy in ["group:small"]:
-                return self._groupLoadRepoXML(text, ["primary", "updateinfo",
-                                                     "prestodelta"])
+                return self._groupLoadRepoXML(text, ["primary", "updateinfo"])
             if self.mdpolicy in ["group:primary"]:
                 return self._groupLoadRepoXML(text, ["primary"])
         except KeyboardInterrupt:
