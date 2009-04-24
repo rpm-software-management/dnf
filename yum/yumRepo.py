@@ -256,7 +256,7 @@ class YumRepository(Repository, config.RepoConf):
         self.copy_local = 0
         # holder for stuff we've grabbed
         self.retrieved = { 'primary':0, 'filelists':0, 'other':0, 'group':0,
-                           'updateinfo':0}
+                           'updateinfo':0, 'prestodelta' : 0}
 
         # callbacks
         self.callback = None  # for the grabber
@@ -1315,9 +1315,11 @@ class YumRepository(Repository, config.RepoConf):
                 return self._groupLoadRepoXML(text)
             if self.mdpolicy in ["group:main"]:
                 return self._groupLoadRepoXML(text, ["primary", "group",
-                                                     "filelists", "updateinfo"])
+                                                     "filelists", "updateinfo",
+                                                     "prestodelta"])
             if self.mdpolicy in ["group:small"]:
-                return self._groupLoadRepoXML(text, ["primary", "updateinfo"])
+                return self._groupLoadRepoXML(text, ["primary", "updateinfo",
+                                                     "prestodelta"])
             if self.mdpolicy in ["group:primary"]:
                 return self._groupLoadRepoXML(text, ["primary"])
         except KeyboardInterrupt:
