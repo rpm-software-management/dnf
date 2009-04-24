@@ -83,6 +83,7 @@ SLOT_TO_CONDUIT = {
     'config': 'ConfigPluginConduit',
     'postconfig': 'PostConfigPluginConduit',
     'init': 'InitPluginConduit',
+    'args': 'ArgsPluginConduit',
     'predownload': 'DownloadPluginConduit',
     'postdownload': 'DownloadPluginConduit',
     'prereposetup': 'PreRepoSetupPluginConduit',
@@ -514,6 +515,15 @@ class InitPluginConduit(PluginConduit):
         @return: Yum's RepoStorage instance
         '''
         return self._base.repos
+
+class ArgsPluginConduit(InitPluginConduit):
+
+    def __init__(self, parent, base, conf, args):
+        InitPluginConduit.__init__(self, parent, base, conf)
+        self._args = args
+
+    def getArgs(self):
+        return self._args
 
 class PreRepoSetupPluginConduit(InitPluginConduit):
 

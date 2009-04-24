@@ -198,6 +198,7 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         # update usage in case plugins have added commands
         self.optparser.set_usage(self._makeUsage())
         
+        self.plugins.run('args', args=args)
         # Now parse the command line for real and 
         # apply some of the options to self.conf
         (opts, self.cmds) = self.optparser.setupYumConfig(args=args)
