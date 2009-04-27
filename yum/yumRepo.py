@@ -1434,6 +1434,8 @@ class YumRepository(Repository, config.RepoConf):
 
     def _retrieveMD(self, mdtype, retrieve_can_fail=False):
         """ Internal function, use .retrieveMD() from outside yum. """
+        #  Note that this can raise Errors.RepoMDError if mdtype doesn't exist
+        # for this repo.
         thisdata = self.repoXML.getData(mdtype)
 
         (r_base, remote) = thisdata.location
