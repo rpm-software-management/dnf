@@ -61,7 +61,7 @@ def main(args):
         return 1
 
     def exFatal(e):
-        logger.critical('\n\n%s', to_unicode(e))
+        logger.critical('\n\n%s', to_unicode(e.value))
         if unlock(): return 200
         return 1
 
