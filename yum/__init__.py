@@ -1370,6 +1370,8 @@ class YumBase(depsolve.Depsolve):
                 if errors.has_key(po):
                     del errors[po]
 
+        if hasattr(urlgrabber.progress, 'text_meter_total_size'):
+            urlgrabber.progress.text_meter_total_size(0)
         if callback_total is not None and not errors:
             callback_total(remote_pkgs, remote_size, beg_download)
 
