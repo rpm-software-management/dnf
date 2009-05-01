@@ -1018,6 +1018,7 @@ class YumBase(depsolve.Depsolve):
                 po = self.rpmdb.searchPkgTuple(txmbr.pkgtup)[0]
                 po.yumdb_info.from_repo = txmbr.po.repoid
                 po.yumdb_info.reason = txmbr.reason
+                po.yumdb_info.releasever = self.yumvar['releasever']
                 if hasattr(self, 'cmds') and self.cmds:
                     po.yumdb_info.command_line = ' '.join(self.cmds)
             
