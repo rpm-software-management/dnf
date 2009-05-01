@@ -207,8 +207,8 @@ def _add_pkg_simple_list_lens(data, pkg, indent=''):
         This "knows" about simpleList and printVer. """
     na  = len(pkg.name)    + 1 + len(pkg.arch)    + len(indent)
     ver = len(pkg.version) + 1 + len(pkg.release)
-    if pkg.repoid == 'installed' and 'repoid' in pkg.yumdb_info:
-        rid = len(pkg.yumdb_info.repoid) + 1
+    if pkg.repoid == 'installed' and 'from_repo' in pkg.yumdb_info:
+        rid = len(pkg.yumdb_info.from_repo) + 1
     else:
         rid = len(pkg.repoid)
     if pkg.epoch != '0':
