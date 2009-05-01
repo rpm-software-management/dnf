@@ -789,7 +789,10 @@ class RPMDBAdditionalDataPackage(object):
         # purge out everything
         for item in self:
             self._delete(item)
-        os.rmdir(self._mydir)
+        try:
+            os.rmdir(self._mydir)
+        except OSError:
+            pass
 
 #    def __dir__(self): # for 2.6 and beyond, apparently
 #        return list(self.__iter__()) + self.__dict__.keys()
