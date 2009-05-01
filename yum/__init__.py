@@ -1002,16 +1002,41 @@ class YumBase(depsolve.Depsolve):
         
         # for each pkg in the tsInfo
         # if it is an install - see that the pkg is installed
-        # if it is an update - see that the pkg is installed and the old version
-        #   has been removed
         # if it is a remove - see that the pkg is no longer installed, provided
         #    that there is not also an install of this pkg in the tsInfo (reinstall)
-        # if it is an obsolete - see that the pkg is installed and the obsoleted pkg
-        # has been removed
-        # for any kind of install add from_repo to the yumdb
+        # for any kind of install add from_repo to the yumdb, and the cmdline
+        # and the install reason
 
-        pass
-        
+        for txmbr in self.tsInfo:
+            if txmbr.output_state in TS_INSTALL_STATES:
+                if not self.rpmdb.contains(po=txmbr.po):
+                    # maybe a file log here, too
+                    # but raising an exception is not going to do any good
+                    self.logger.critical(_('%s was supposed to be installed' \
+                                           ' but is not!' % txmbr.po))
+                    continue
+                po = self.rpmdb.searchPkgTuple(txmbr.pkgtup)[0]
+                po.yumdb_info.from_repo = txmbr.po.repoid
+                po.yumdb_info.reason = txmbr.reason
+                if hasattr(self, 'cmds') and self.cmds:
+                    po.yumdb_info.command_line = ' '.join(self.cmds)
+            
+            elif txmbr.output_state in TS_REMOVE_STATES:
+                if self.rpmdb.contains(po=txmbr.po):
+                    if not self.tsInfo.getMembersWithState(pkgtup=txmbr.pkgtup,
+                                output_states=TS_INSTALL_STATES):
+                        # maybe a file log here, too
+                        # but raising an exception is not going to do any good
+                        self.logger.critical(_('%s was supposed to be removed' \
+                                               ' but is not!' % txmbr.po))
+                        continue
+                yumdb_item = self.rpmdb.yumdb.get_package(po=txmbr.po)
+                yumdb_item.clean()
+            else:
+                self.verbose_logger.log(logginglevels.DEBUG_2, 'What is this? %s' % txmbr.po)
+
+
+
     def costExcludePackages(self):
         """exclude packages if they have an identical package in another repo
         and their repo.cost value is the greater one"""

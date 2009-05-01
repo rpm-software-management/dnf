@@ -785,6 +785,12 @@ class RPMDBAdditionalDataPackage(object):
                 continue
             yield item
 
+    def clean(self):
+        # purge out everything
+        for item in self:
+            self._delete(item)
+        os.rmdir(self._mydir)
+
 #    def __dir__(self): # for 2.6 and beyond, apparently
 #        return list(self.__iter__()) + self.__dict__.keys()
 
