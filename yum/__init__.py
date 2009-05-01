@@ -716,14 +716,7 @@ class YumBase(depsolve.Depsolve):
 
         (rescode, restring) = self.resolveDeps()
         self._limit_installonly_pkgs()
-        self.plugins.run('postresolve', rescode=rescode, restring=restring)
         
-        if self.tsInfo.changed:
-            (rescode, restring) = self.resolveDeps(rescode == 1)
-        if self.tsInfo.pkgSack is not None: # rm Transactions don't have pkgSack
-            self.tsInfo.pkgSack.dropCachedData()
-        self.rpmdb.dropCachedData()
-
         #  We _must_ get rid of all the used tses before we go on, so that C-c
         # works for downloads / mirror failover etc.
         self.rpmdb.ts = None
@@ -737,6 +730,14 @@ class YumBase(depsolve.Depsolve):
             rescode, restring = self._skipPackagesWithProblems(rescode, restring)
             self._printTransaction()        
             self.verbose_logger.debug('Skip-Broken time: %0.3f' % (time.time() - sb_st))
+
+        self.plugins.run('postresolve', rescode=rescode, restring=restring)
+
+        if self.tsInfo.changed:
+            (rescode, restring) = self.resolveDeps(rescode == 1)
+        if self.tsInfo.pkgSack is not None: # rm Transactions don't have pkgSack
+            self.tsInfo.pkgSack.dropCachedData()
+        self.rpmdb.dropCachedData()
 
         self.verbose_logger.debug('Depsolve time: %0.3f' % (time.time() - ds_st))
         return rescode, restring
