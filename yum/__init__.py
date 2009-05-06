@@ -1617,7 +1617,7 @@ class YumBase(depsolve.Depsolve):
 
         if showdups is None:
             showdups = self.conf.showdupesfromrepos
-        ygh = misc.GenericHolder()
+        ygh = misc.GenericHolder(iter=pkgnarrow)
         
         installed = []
         available = []
