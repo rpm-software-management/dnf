@@ -965,7 +965,7 @@ class YumBase(depsolve.Depsolve):
         # list that there were errors preventing the ts from starting...
         
         # make resultobject - just a plain yumgenericholder object
-        resultobject = misc.GenericHolder
+        resultobject = misc.GenericHolder()
         resultobject.return_code = 0
         if errors is None:
             pass
@@ -1617,7 +1617,7 @@ class YumBase(depsolve.Depsolve):
 
         if showdups is None:
             showdups = self.conf.showdupesfromrepos
-        ygh = misc.GenericHolder()
+        ygh = misc.GenericHolder(iter=pkgnarrow)
         
         installed = []
         available = []
@@ -1684,6 +1684,10 @@ class YumBase(depsolve.Depsolve):
                 else:
                     self.verbose_logger.log(logginglevels.DEBUG_1,
                         _('Nothing matches %s.%s %s:%s-%s from update'), n,a,e,v,r)
+            if patterns:
+                exactmatch, matched, unmatched = \
+                   parsePackages(updates, patterns, casematch=not ignore_case)
+                updates = exactmatch + matched
 
         # installed only
         elif pkgnarrow == 'installed':
@@ -1743,6 +1747,17 @@ class YumBase(depsolve.Depsolve):
                 for po in pkgs:
                     obsoletes.append(po)
                     obsoletesTuples.append((po, instpo))
+            if patterns:
+                exactmatch, matched, unmatched = \
+                   parsePackages(obsoletes, patterns, casematch=not ignore_case)
+                obsoletes = exactmatch + matched
+                matched_obsoletes = set(obsoletes)
+                nobsoletesTuples = []
+                for po, instpo in obsoletesTuples:
+                    if po not in matched_obsoletes:
+                        continue
+                    nobsoletesTuples.append((po, instpo))
+                obsoletesTuples = nobsoletesTuples
         
         # packages recently added to the repositories
         elif pkgnarrow == 'recent':

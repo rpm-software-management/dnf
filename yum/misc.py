@@ -323,7 +323,14 @@ class GenericHolder:
        It exists purely to be able to do object.somestuff, object.someotherstuff
        or object[key] and pass object to another function that will 
        understand it"""
+
+    def __init__(self, iter=None):
+        self.__iter = iter
        
+    def __iter__(self):
+        if self.__iter is not None:
+            return iter(self[self.__iter])
+
     def __getitem__(self, item):
         if hasattr(self, item):
             return getattr(self, item)
