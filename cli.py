@@ -731,26 +731,6 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         if self.conf.showdupesfromrepos:
             ypl.available += ypl.reinstall_available
 
-        # This is mostly leftover from when patterns didn't exist
-        # FIXME: However when returnPackages() has already been run, we
-        # don't process teh patterns args. ... we should fix that in
-        # returnPackages() etc.
-        def _shrinklist(lst, args):
-            if len(lst) > 0 and len(args) > 0:
-                self.verbose_logger.log(yum.logginglevels.DEBUG_1,
-                    _('Matching packages for package list to user args'))
-                exactmatch, matched, unmatched = parsePackages(lst, args)
-                return yum.misc.unique(matched + exactmatch)
-            else:
-                return lst
-        
-        ypl.updates = _shrinklist(ypl.updates, extcmds)
-        ypl.installed = _shrinklist(ypl.installed, extcmds)
-        ypl.available = _shrinklist(ypl.available, extcmds)
-        ypl.recent = _shrinklist(ypl.recent, extcmds)
-        ypl.extras = _shrinklist(ypl.extras, extcmds)
-        ypl.obsoletes = _shrinklist(ypl.obsoletes, extcmds)
-        
         if installed_available:
             ypl.hidden_available = ypl.available
             ypl.hidden_installed = ypl.installed
