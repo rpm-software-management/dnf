@@ -1747,6 +1747,17 @@ class YumBase(depsolve.Depsolve):
                 for po in pkgs:
                     obsoletes.append(po)
                     obsoletesTuples.append((po, instpo))
+            if patterns:
+                exactmatch, matched, unmatched = \
+                   parsePackages(obsoletes, patterns, casematch=not ignore_case)
+                obsoletes = exactmatch + matched
+                matched_obsoletes = set(obsoletes)
+                nobsoletesTuples = []
+                for po, instpo in obsoletesTuples:
+                    if po not in matched_obsoletes:
+                        continue
+                    nobsoletesTuples.append((po, instpo))
+                obsoletesTuples = nobsoletesTuples
         
         # packages recently added to the repositories
         elif pkgnarrow == 'recent':
