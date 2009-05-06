@@ -202,6 +202,8 @@ class Checksums:
 
         done = set()
         for sumtype in checksums:
+            if sumtype == 'sha':
+                sumtype = 'sha1'
             if sumtype in done:
                 continue
 
