@@ -1684,6 +1684,10 @@ class YumBase(depsolve.Depsolve):
                 else:
                     self.verbose_logger.log(logginglevels.DEBUG_1,
                         _('Nothing matches %s.%s %s:%s-%s from update'), n,a,e,v,r)
+            if patterns:
+                exactmatch, matched, unmatched = \
+                   parsePackages(updates, patterns, casematch=not ignore_case)
+                updates = exactmatch + matched
 
         # installed only
         elif pkgnarrow == 'installed':
