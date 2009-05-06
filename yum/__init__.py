@@ -965,7 +965,7 @@ class YumBase(depsolve.Depsolve):
         # list that there were errors preventing the ts from starting...
         
         # make resultobject - just a plain yumgenericholder object
-        resultobject = misc.GenericHolder
+        resultobject = misc.GenericHolder()
         resultobject.return_code = 0
         if errors is None:
             pass
