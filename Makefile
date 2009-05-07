@@ -41,7 +41,7 @@ install:
 DOCS = yum rpmUtils callback.py yumcommands.py shell.py output.py cli.py \
 	   yummain.py
 docs:
-	epydoc -n yum -o docs/epydoc -u http://linux.duke.edu/projects/yum $(DOCS)
+	epydoc -n yum -o docs/epydoc -u http://linux.duke.edu/projects/yum $(DOCS) --graph all
 
 doccheck:
 	epydoc --check $(DOCS)
