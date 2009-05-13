@@ -3222,8 +3222,7 @@ class YumBase(depsolve.Depsolve):
         toexc = []
         if len(self.conf.exclude) > 0:
             exactmatch, matched, unmatched = \
-                   parsePackages(installpkgs + map(lambda x: x[0], updatepkgs),
-                                 self.conf.exclude, casematch=1)
+                   parsePackages([po], self.conf.exclude, casematch=1)
             toexc = exactmatch + matched
 
         if po in toexc:
