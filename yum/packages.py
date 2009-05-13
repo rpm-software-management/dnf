@@ -1595,6 +1595,10 @@ class YumLocalPackage(YumHeaderPackage):
         self._do_checksum()
         return self._checksums
 
+    def verifyLocalPkg(self):
+        """ don't bother "checking" the package matches itself. """
+        return True
+
     def _get_header_byte_range(self):
         """takes an rpm file or fileobject and returns byteranges for location of the header"""
         if self._hdrstart and self._hdrend:
