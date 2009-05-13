@@ -81,7 +81,10 @@ class RepoMD:
         
         if type(srcfile) in types.StringTypes:
             # srcfile is a filename string
-            infile = open(srcfile, 'rt')
+            try:
+                infile = open(srcfile, 'rt')
+            except IOError:
+                raise RepoMDError, "Unable to open %s" %(srcfile,)
         else:
             # srcfile is a file object
             infile = srcfile
