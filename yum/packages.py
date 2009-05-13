@@ -1580,7 +1580,9 @@ class YumLocalPackage(YumHeaderPackage):
     def localPkg(self):
         return self.localpath
     
-    def _do_checksum(self, checksum_type='sha256'):
+    def _do_checksum(self, checksum_type=None):
+        if checksum_type is None:
+            checksum_type = misc._default_checksums[0]
         if not self._checksum:
             self._checksum = misc.checksum(checksum_type, self.localpath)
             self._checksums = [(checksum_type, self._checksum, 1)]
