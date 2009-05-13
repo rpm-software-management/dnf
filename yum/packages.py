@@ -1563,7 +1563,7 @@ class YumLocalPackage(YumHeaderPackage):
         self._hdrstart = None
         self._hdrend = None
         self.arch = self.isSrpm()
-        self.checksum_type = 'sha256'
+        self.checksum_type = misc._default_checksums[0]
 
         # these can be set by callers that need these features (ex: createrepo)
         self._reldir = None 
