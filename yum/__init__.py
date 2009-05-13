@@ -3151,6 +3151,43 @@ class YumBase(depsolve.Depsolve):
 
         return tx_return
 
+    def reinstallLocal(self, pkg, po=None):
+        """
+        handles reinstall of rpms provided on the filesystem in a
+        local dir (ie: not from a repo)
+
+        Return the added transaction members.
+
+        @param pkg: a path to an rpm file on disk.
+        @param po: A YumLocalPackage
+        """
+
+        if not po:
+            try:
+                po = YumLocalPackage(ts=self.rpmdb.readOnlyTS(), filename=pkg)
+            except Errors.MiscError:
+                self.logger.critical(_('Cannot open file: %s. Skipping.'), pkg)
+                return []
+            self.verbose_logger.log(logginglevels.INFO_2,
+                _('Examining %s: %s'), po.localpath, po)
+
+        if po.arch not in rpmUtils.arch.getArchList():
+            self.logger.critical(_('Cannot add package %s to transaction. Not a compatible architecture: %s'), pkg, po.arch)
+            return []
+
+        # handle excludes for a local reinstall
+        toexc = []
+        if len(self.conf.exclude) > 0:
+            exactmatch, matched, unmatched = \
+                   parsePackages([po], self.conf.exclude, casematch=1)
+            toexc = exactmatch + matched
+
+        if po in toexc:
+            self.verbose_logger.debug(_('Excluding %s'), po)
+            return []
+
+        return self.reinstall(po=po)
+
     def reinstall(self, po=None, **kwargs):
         """Setup the problem filters to allow a reinstall to work, then
            pass everything off to install"""
@@ -3182,8 +3219,12 @@ class YumBase(depsolve.Depsolve):
             # pkgs that are obsolete.
             old_conf_obs = self.conf.obsoletes
             self.conf.obsoletes = False
-            members = self.install(name=item.name, arch=item.arch,
-                           ver=item.version, release=item.release, epoch=item.epoch)
+            if isinstance(po, YumLocalPackage):
+                members = self.install(po=po)
+            else:
+                members = self.install(name=item.name, arch=item.arch,
+                                       ver=item.version, release=item.release,
+                                       epoch=item.epoch)
             self.conf.obsoletes = old_conf_obs
             if len(members) == 0:
                 self.tsInfo.remove(item.pkgtup)

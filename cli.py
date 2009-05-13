@@ -673,6 +673,30 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
             return 2, [_('Package(s) to downgrade')]
         return 0, [_('Nothing to do')]
         
+    def reinstallPkgs(self, userlist):
+        """Attempts to take the user specified list of packages/wildcards
+           and reinstall them. """
+
+        oldcount = len(self.tsInfo)
+
+        for arg in userlist:
+            if arg.endswith('.rpm') and os.path.exists(arg):
+                self.reinstallLocal(arg)
+                continue # it was something on disk and it ended in rpm
+                         # no matter what we don't go looking at repos
+
+            try:
+                self.reinstall(pattern=arg)
+            except yum.Errors.ReinstallError:
+                self.verbose_logger.log(yum.logginglevels.INFO_2,
+                                        _('No package %s%s%s available.'),
+                                        self.term.MODE['bold'], arg,
+                                        self.term.MODE['normal'])
+                self._maybeYouMeant(arg)
+        if len(self.tsInfo) > oldcount:
+            return 2, [_('Package(s) to reinstall')]
+        return 0, [_('Nothing to do')]
+
     def localInstall(self, filelist, updateonly=0):
         """handles installs/updates of rpms provided on the filesystem in a 
            local dir (ie: not from a repo)"""

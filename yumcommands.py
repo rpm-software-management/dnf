@@ -1006,16 +1006,8 @@ class ReInstallCommand(YumCommand):
 
     def doCommand(self, base, basecmd, extcmds):
         self.doneCommand(base, _("Setting up Reinstall Process"))
-        oldcount = len(base.tsInfo)
         try:
-            # FIXME: Due to not having reinstallPkgs() we don't get
-            #        localreinstall and maybe_you_meant features.
-            for item in extcmds:
-                base.reinstall(pattern=item)
-
-            if len(base.tsInfo) > oldcount:
-                return 2, [_('Package(s) to reinstall')]
-            return 0, [_('Nothing to do')]            
+            return base.reinstallPkgs(extcmds)
             
         except yum.Errors.YumBaseError, e:
             return 1, [to_unicode(e)]
