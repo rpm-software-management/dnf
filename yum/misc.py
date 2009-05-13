@@ -270,7 +270,7 @@ class AutoFileChecksums:
         return self.checksums.read(self._fo, size)
 
 
-def checksum(sumtype, file, CHUNK=2**16):
+def checksum(sumtype, file, CHUNK=2**16, datasize=None):
     """takes filename, hand back Checksum of it
        sumtype = md5 or sha/sha1/sha256/sha512 (note sha == sha1)
        filename = /path/to/file
@@ -294,6 +294,11 @@ def checksum(sumtype, file, CHUNK=2**16):
             fo.close()
             del fo
             
+        # This screws up the length, but that shouldn't matter. We only care
+        # if this checksum == what we expect.
+        if datasize is not None and datasize > len(data):
+            return '!%u!%s' % (datasize, data.hexdigest(sumtype))
+
         return data.hexdigest(sumtype)
     except (IOError, OSError), e:
         raise MiscError, 'Error opening file for checksum: %s' % file
