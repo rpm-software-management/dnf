@@ -283,9 +283,6 @@ def checksum(sumtype, file, CHUNK=2**16, datasize=None):
         else:           
             fo = open(file, 'r', CHUNK)
 
-        if sumtype == 'sha':
-            sumtype = 'sha1'
-
         data = Checksums([sumtype])
         while data.read(fo, CHUNK):
             pass
