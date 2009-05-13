@@ -715,7 +715,8 @@ class YumAvailablePackage(PackageObject, RpmBase):
         (csum_type, csum) = self.returnIdSum()
         
         try:
-            filesum = misc.checksum(csum_type, self.localPkg())
+            filesum = misc.checksum(csum_type, self.localPkg(),
+                                    datasize=self.packagesize)
         except Errors.MiscError:
             return False
         

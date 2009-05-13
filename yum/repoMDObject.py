@@ -38,6 +38,8 @@ class RepoData:
         self.openchecksum = (None,None) # type,value
         self.timestamp = None
         self.dbversion = None
+        self.size      = None
+        self.opensize  = None
     
         self.parse(elem)
 
@@ -64,6 +66,10 @@ class RepoData:
                 self.timestamp = child.text
             elif child_name == 'database_version':
                 self.dbversion = child.text
+            elif child_name == 'size':
+                self.size = child.text
+            elif child_name == 'open-size':
+                self.opensize = child.text
         
 class RepoMD:
     """represents the repomd xml file"""
@@ -72,8 +78,8 @@ class RepoMD:
         """takes a repoid and a filename for the repomd.xml"""
         
         self.timestamp = 0
-        self.repoid = repoid
-        self.repoData = {}
+        self.repoid    = repoid
+        self.repoData  = {}
         self.checksums = {}
         self.length    = 0
         self.revision  = None
@@ -155,6 +161,8 @@ class RepoMD:
             print '  datatype: %s' % thisdata.type
             print '    location     : %s %s' % thisdata.location
             print '    timestamp    : %s' % thisdata.timestamp
+            print '    size         : %s' % thisdata.size
+            print '    open size    : %s' % thisdata.opensize
             print '    checksum     : %s - %s' % thisdata.checksum
             print '    open checksum: %s - %s' %  thisdata.openchecksum
             print '    dbversion    : %s' % thisdata.dbversion

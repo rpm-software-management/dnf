@@ -347,13 +347,14 @@ class YumRepository(Repository, config.RepoConf):
     def __str__(self):
         return self.id
 
-    def _checksum(self, sumtype, file, CHUNK=2**16, checksum_can_fail=False):
+    def _checksum(self, sumtype, file, CHUNK=2**16, checksum_can_fail=False,
+                  datasize=None):
         """takes filename, hand back Checksum of it
            sumtype = md5 or sha
            filename = /path/to/file
            CHUNK=65536 by default"""
         try:
-            return misc.checksum(sumtype, file, CHUNK)
+            return misc.checksum(sumtype, file, CHUNK, datasize)
         except (Errors.MiscError, EnvironmentError), e:
             if checksum_can_fail:
                 return None
@@ -1402,16 +1403,21 @@ class YumRepository(Repository, config.RepoConf):
         # Note openchecksum means do it after you've uncompressed the data.
         if openchecksum:
             (r_ctype, r_csum) = thisdata.openchecksum # get the remote checksum
+            size = thisdata.opensize
         else:
             (r_ctype, r_csum) = thisdata.checksum # get the remote checksum
+            size = thisdata.size
 
         if type(fn) == types.InstanceType: # this is an urlgrabber check
             file = fn.filename
         else:
             file = fn
 
-        try:
-            l_csum = self._checksum(r_ctype, file) # get the local checksum
+        if size is not None:
+            size = int(size)
+
+        try: # get the local checksum
+            l_csum = self._checksum(r_ctype, file, datasize=size)
         except Errors.RepoError, e:
             if check_can_fail:
                 return None
