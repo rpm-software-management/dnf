@@ -241,6 +241,8 @@ class Checksums:
     def hexdigest(self, checksum=None):
         if checksum is None:
             checksum = self._sumtypes[0]
+        if checksum == 'sha':
+            checksum = 'sha1'
         return self.hexdigests()[checksum]
 
     def digests(self):
@@ -252,6 +254,8 @@ class Checksums:
     def digest(self, checksum=None):
         if checksum is None:
             checksum = self._sumtypes[0]
+        if checksum == 'sha':
+            checksum = 'sha1'
         return self.digests()[checksum]
 
 
