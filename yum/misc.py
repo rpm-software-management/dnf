@@ -24,13 +24,13 @@ except ImportError:
     gpgme = None
 try:
     import hashlib
-    _available_checksums = ['md5', 'sha1', 'sha256', 'sha512']
+    _available_checksums = set(['md5', 'sha1', 'sha256', 'sha512'])
     _default_checksums = ['sha256']
 except ImportError:
     # Python-2.4.z ... gah!
     import sha
     import md5
-    _available_checksums = ['md5', 'sha1']
+    _available_checksums = set(['md5', 'sha1'])
     _default_checksums = ['sha1']
     class hashlib:
 
