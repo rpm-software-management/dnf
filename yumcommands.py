@@ -531,7 +531,6 @@ class CleanCommand(YumCommand):
         return _("Remove cached data")
 
     def doCheck(self, base, basecmd, extcmds):
-        checkRootUID(base)
         checkCleanArg(base, basecmd, extcmds)
         
     def doCommand(self, base, basecmd, extcmds):
