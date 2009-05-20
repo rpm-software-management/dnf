@@ -140,7 +140,10 @@ class RPMDBPackageSack(PackageSackBase):
         self._simple_pkgtup_list = []
         self._get_pro_cache = {}
         self._get_req_cache = {}
-        misc.unshare_data()
+        #  We can be called on python shutdown (due to yb.__del__), at which
+        # point other modules might not be available.
+        if misc is not None:
+            misc.unshare_data()
         self._cache = {
             'provides' : { },
             'requires' : { },
