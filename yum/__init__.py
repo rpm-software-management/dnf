@@ -427,6 +427,9 @@ class YumBase(depsolve.Depsolve):
 
     def closeRpmDB(self):
         """closes down the instances of the rpmdb we have wangling around"""
+        if self._rpmdb is not None:
+            self._rpmdb.ts = None
+            self._rpmdb.dropCachedData()
         self._rpmdb = None
         self._ts = None
         self._tsInfo = None
@@ -1008,6 +1011,7 @@ class YumBase(depsolve.Depsolve):
         # for any kind of install add from_repo to the yumdb, and the cmdline
         # and the install reason
 
+        self.rpmdb.dropCachedData()
         for txmbr in self.tsInfo:
             if txmbr.output_state in TS_INSTALL_STATES:
                 if not self.rpmdb.contains(po=txmbr.po):
@@ -1037,7 +1041,7 @@ class YumBase(depsolve.Depsolve):
             else:
                 self.verbose_logger.log(logginglevels.DEBUG_2, 'What is this? %s' % txmbr.po)
 
-
+        self.rpmdb.dropCachedData()
 
     def costExcludePackages(self):
         """exclude packages if they have an identical package in another repo
