@@ -1,0 +1,2191 @@
+# translation of yum.master.po to ja_JP
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# Tadashi Jokagi <elf@elf.no-ip.org>, 2008-2009.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: yum master\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2009-05-07 11:34+0900\n"
+"PO-Revision-Date: 2009-05-20 03:23+0900\n"
+"Last-Translator: Tadashi Jokagi <elf@elf.no-ip.org>\n"
+"Language-Team: Japanese <ja@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: callback.py:48 output.py:922 yum/rpmtrans.py:71
+msgid "Updating"
+msgstr "更新"
+
+#: callback.py:49 yum/rpmtrans.py:72
+msgid "Erasing"
+msgstr "削除中"
+
+#: callback.py:50 callback.py:51 callback.py:53 output.py:921
+#: yum/rpmtrans.py:73 yum/rpmtrans.py:74 yum/rpmtrans.py:76
+msgid "Installing"
+msgstr "インストールしています"
+
+#: callback.py:52 callback.py:58 yum/rpmtrans.py:75
+msgid "Obsoleted"
+msgstr "不要でした"
+
+#: callback.py:54 output.py:1029
+msgid "Updated"
+msgstr "更新しました"
+
+#: callback.py:55
+msgid "Erased"
+msgstr "削除しました"
+
+#: callback.py:56 callback.py:57 callback.py:59 output.py:1027
+msgid "Installed"
+msgstr "インストールしました"
+
+#: callback.py:130
+msgid "No header - huh?"
+msgstr "ヘッダーがありません - はて?"
+
+#: callback.py:168
+msgid "Repackage"
+msgstr "再パッケージ"
+
+#: callback.py:189
+#, python-format
+msgid "Error: invalid output state: %s for %s"
+msgstr "エラー: 不正な出力状態: %s for %s"
+
+#: callback.py:212
+#, python-format
+msgid "Erased: %s"
+msgstr "削除しました: %s"
+
+#: callback.py:217 output.py:923
+msgid "Removing"
+msgstr "削除"
+
+#: callback.py:219 yum/rpmtrans.py:77
+msgid "Cleanup"
+msgstr "整理中"
+
+#: cli.py:105
+#, python-format
+msgid "Command \"%s\" already defined"
+msgstr "コマンド「%s」はすでに定義済みです"
+
+#: cli.py:117
+msgid "Setting up repositories"
+msgstr "リポジトリーの設定"
+
+#: cli.py:128
+msgid "Reading repository metadata in from local files"
+msgstr "ローカルファイルからリポジトリーのメタデータを読み込んでいます"
+
+#: cli.py:192 utils.py:79
+#, python-format
+msgid "Config Error: %s"
+msgstr "設定エラー: %s"
+
+#: cli.py:195 cli.py:1190 utils.py:82
+#, python-format
+msgid "Options Error: %s"
+msgstr "オプションエラー: %s"
+
+#: cli.py:223
+#, python-format
+msgid "  Installed: %s-%s at %s"
+msgstr ""
+
+#: cli.py:225
+#, python-format
+msgid "  Built    : %s at %s"
+msgstr ""
+
+#: cli.py:227
+#, python-format
+msgid "  Committed: %s at %s"
+msgstr ""
+
+#: cli.py:266
+msgid "You need to give some command"
+msgstr "いくつかのコマンドを指定する必要があります"
+
+#: cli.py:309
+msgid "Disk Requirements:\n"
+msgstr "ディスク要求:\n"
+
+#: cli.py:311
+#, python-format
+msgid "  At least %dMB needed on the %s filesystem.\n"
+msgstr "  少なくとも %d MB の空き容量がファイルシステム %s で必要です。\n"
+
+#: cli.py:316
+msgid ""
+"Error Summary\n"
+"-------------\n"
+msgstr ""
+"エラーの要約\n"
+"-------------\n"
+
+#: cli.py:359
+msgid "Trying to run the transaction but nothing to do. Exiting."
+msgstr ""
+"トランザクションの実行を試みましたが、何もありませんでした。終了します。"
+
+#: cli.py:395
+msgid "Exiting on user Command"
+msgstr "ユーザーコマンドを終了しています"
+
+#: cli.py:399
+msgid "Downloading Packages:"
+msgstr "パッケージをダウンロードしています:"
+
+#: cli.py:404
+msgid "Error Downloading Packages:\n"
+msgstr "パッケージのダウンロードでエラー:\n"
+
+#: cli.py:418 yum/__init__.py:3362
+msgid "Running rpm_check_debug"
+msgstr "rpm_check_debug を実行しています"
+
+#: cli.py:421 yum/__init__.py:3365
+msgid "ERROR with rpm_check_debug vs depsolve:"
+msgstr ""
+
+#: cli.py:425
+#, python-format
+msgid "Please report this error in %s"
+msgstr "%s にこのエラーを報告してください"
+
+#: cli.py:431
+msgid "Running Transaction Test"
+msgstr "トランザクションのテストを実行しています"
+
+#: cli.py:447
+msgid "Finished Transaction Test"
+msgstr "トランザクションのテストを終了しました"
+
+#: cli.py:449
+msgid "Transaction Check Error:\n"
+msgstr "トランザクションの確認エラー\n"
+
+#: cli.py:456
+msgid "Transaction Test Succeeded"
+msgstr "トランザクションのテストを成功しました"
+
+#: cli.py:477
+msgid "Running Transaction"
+msgstr "トランザクションを実行しています"
+
+#: cli.py:507
+msgid ""
+"Refusing to automatically import keys when running unattended.\n"
+"Use \"-y\" to override."
+msgstr ""
+
+#: cli.py:526 cli.py:560
+msgid "  * Maybe you meant: "
+msgstr ""
+
+#: cli.py:543 cli.py:551
+#, python-format
+msgid "Package(s) %s%s%s available, but not installed."
+msgstr "パッケージ %s%s%s は利用できますが、インストールしませんでした。"
+
+#: cli.py:557 cli.py:590
+#, python-format
+msgid "No package %s%s%s available."
+msgstr "パッケージ %s%s%s は利用できません。"
+
+#: cli.py:595 cli.py:670 yumcommands.py:1010
+msgid "Package(s) to install"
+msgstr "インストールするパッケージ"
+
+#: cli.py:596 cli.py:671 yumcommands.py:159 yumcommands.py:1011
+msgid "Nothing to do"
+msgstr "何もしません"
+
+#: cli.py:629
+#, python-format
+msgid "%d packages marked for Update"
+msgstr "%d 個のパッケージが更新の設定しました"
+
+#: cli.py:632
+msgid "No Packages marked for Update"
+msgstr "更新と設定されたパッケージがありません"
+
+#: cli.py:646
+#, python-format
+msgid "%d packages marked for removal"
+msgstr "%d 個のパッケージが削除の設定しました"
+
+#: cli.py:649
+msgid "No Packages marked for removal"
+msgstr "削除と設定されたパッケージがありません"
+
+#: cli.py:661
+msgid "No Packages Provided"
+msgstr "パッケージが提供されていません"
+
+#: cli.py:716
+msgid "Matching packages for package list to user args"
+msgstr "ユーザーの引数にパッケージ一覧のパッケージを一致させています"
+
+#: cli.py:765
+#, python-format
+msgid "Warning: No matches found for: %s"
+msgstr "警告: 一致するものが見つかりません: %s"
+
+#: cli.py:768
+msgid "No Matches found"
+msgstr "見つかりませんでした"
+
+#: cli.py:807
+#, python-format
+msgid ""
+"Warning: 3.0.x versions of yum would erroneously match against filenames.\n"
+" You can use \"%s*/%s%s\" and/or \"%s*bin/%s%s\" to get that behaviour"
+msgstr ""
+
+#: cli.py:823
+#, python-format
+msgid "No Package Found for %s"
+msgstr "%s のパッケージが見つかりません"
+
+#: cli.py:835
+msgid "Cleaning up Everything"
+msgstr "すべて掃除しています"
+
+#: cli.py:849
+msgid "Cleaning up Headers"
+msgstr "ヘッダーを掃除しています"
+
+#: cli.py:852
+msgid "Cleaning up Packages"
+msgstr "パッケージを掃除しています"
+
+#: cli.py:855
+msgid "Cleaning up xml metadata"
+msgstr "XML メタデータを掃除しています"
+
+#: cli.py:858
+msgid "Cleaning up database cache"
+msgstr "データベースキャッシュを掃除しています"
+
+#: cli.py:861
+msgid "Cleaning up expire-cache metadata"
+msgstr "期限切れのメタデータキャッシュを掃除しています"
+
+#: cli.py:864
+msgid "Cleaning up plugins"
+msgstr "プラグインを掃除しています"
+
+#: cli.py:889
+msgid "Installed Groups:"
+msgstr "インストール済みグループ:"
+
+#: cli.py:896
+msgid "Available Groups:"
+msgstr "利用可能なグループ"
+
+#: cli.py:902
+msgid "Done"
+msgstr "完了"
+
+#: cli.py:913 cli.py:931 cli.py:937 yum/__init__.py:2410
+#, python-format
+msgid "Warning: Group %s does not exist."
+msgstr "警告: グループ %s が存在しません。"
+
+#: cli.py:941
+msgid "No packages in any requested group available to install or update"
+msgstr ""
+
+#: cli.py:943
+#, python-format
+msgid "%d Package(s) to Install"
+msgstr "%d 個のパッケージをインストールします"
+
+#: cli.py:953 yum/__init__.py:2422
+#, python-format
+msgid "No group named %s exists"
+msgstr "グループ名 %s が存在しません"
+
+#: cli.py:959
+msgid "No packages to remove from groups"
+msgstr "グループから削除するパッケージがありません"
+
+#: cli.py:961
+#, python-format
+msgid "%d Package(s) to remove"
+msgstr "%d 個のパッケージを削除します"
+
+#: cli.py:1003
+#, python-format
+msgid "Package %s is already installed, skipping"
+msgstr "パッケージ %s は既にインストールされているので飛ばします"
+
+#: cli.py:1014
+#, python-format
+msgid "Discarding non-comparable pkg %s.%s"
+msgstr "非互換のパッケージ %s.%s を破棄しています"
+
+#: cli.py:1040
+#, python-format
+msgid "No other %s installed, adding to list for potential install"
+msgstr ""
+
+#: cli.py:1059
+#, python-format
+msgid "Command line error: %s"
+msgstr "コマンドラインエラー: %s"
+
+#: cli.py:1072
+#, python-format
+msgid ""
+"\n"
+"\n"
+"%s: %s option requires an argument"
+msgstr ""
+"\n"
+"\n"
+"%s: オプション %sは引数が必要です "
+
+#: cli.py:1130
+msgid "--color takes one of: auto, always, never"
+msgstr "--color がとることができる値な次のうちひとつです: auto、always、never"
+
+#: cli.py:1232
+msgid "show this help message and exit"
+msgstr "このヘルプメッセージを表示して終了する"
+
+#: cli.py:1236
+msgid "be tolerant of errors"
+msgstr ""
+
+#: cli.py:1238
+msgid "run entirely from cache, don't update cache"
+msgstr "キャッシュから完全に実行します。キャッシュを更新しません"
+
+#: cli.py:1240
+msgid "config file location"
+msgstr "構成ファイルの場所"
+
+#: cli.py:1242
+msgid "maximum command wait time"
+msgstr "コマンドの最大待ち時間"
+
+#: cli.py:1244
+msgid "debugging output level"
+msgstr "デバッグ情報の出力レベル"
+
+#: cli.py:1248
+msgid "show duplicates, in repos, in list/search commands"
+msgstr "一覧/検索コマンドのリポジトリーの重複の表示"
+
+#: cli.py:1250
+msgid "error output level"
+msgstr "エラー出力レベル"
+
+#: cli.py:1253
+msgid "quiet operation"
+msgstr "静かに処理をする"
+
+#: cli.py:1255
+msgid "verbose operation"
+msgstr "冗長に処理をする"
+
+#: cli.py:1257
+msgid "answer yes for all questions"
+msgstr "すべての問い合わせに「yes」で答える"
+
+#: cli.py:1259
+msgid "show Yum version and exit"
+msgstr "Yum のバージョンを表示して終了する"
+
+#: cli.py:1260
+msgid "set install root"
+msgstr "インストールのベースディレクトリを設定する"
+
+#: cli.py:1264
+msgid "enable one or more repositories (wildcards allowed)"
+msgstr "ひとつ以上のリポジトリーを有効にする (ワイルドカード許可)"
+
+#: cli.py:1268
+msgid "disable one or more repositories (wildcards allowed)"
+msgstr "ひとつ以上のリポジトリーを無効にする (ワイルドカード許可)"
+
+#: cli.py:1271
+msgid "exclude package(s) by name or glob"
+msgstr "名前かワイルドカードでパッケージを除外する"
+
+#: cli.py:1273
+msgid "disable exclude from main, for a repo or for everything"
+msgstr ""
+
+#: cli.py:1276
+msgid "enable obsoletes processing during updates"
+msgstr "更新中に不要な処理を有効にします"
+
+#: cli.py:1278
+msgid "disable Yum plugins"
+msgstr "Yum プラグインを無効にする"
+
+#: cli.py:1280
+msgid "disable gpg signature checking"
+msgstr "GPG 署名の確認を無効にする"
+
+#: cli.py:1282
+msgid "disable plugins by name"
+msgstr "名前でプラグインを無効にする"
+
+#: cli.py:1285
+msgid "enable plugins by name"
+msgstr "名前でプラグインを有効にする"
+
+#: cli.py:1288
+msgid "skip packages with depsolving problems"
+msgstr "依存性に問題があるパッケージを飛ばす"
+
+#: cli.py:1290
+msgid "control whether color is used"
+msgstr ""
+
+#: output.py:298
+msgid "Jan"
+msgstr "1 月"
+
+#: output.py:298
+msgid "Feb"
+msgstr "2 月"
+
+#: output.py:298
+msgid "Mar"
+msgstr "3 月"
+
+#: output.py:298
+msgid "Apr"
+msgstr "4 月"
+
+#: output.py:298
+msgid "May"
+msgstr "5 月"
+
+#: output.py:298
+msgid "Jun"
+msgstr "6 月"
+
+#: output.py:299
+msgid "Jul"
+msgstr "7 月"
+
+#: output.py:299
+msgid "Aug"
+msgstr "8 月"
+
+#: output.py:299
+msgid "Sep"
+msgstr "9 月"
+
+#: output.py:299
+msgid "Oct"
+msgstr "10 月"
+
+#: output.py:299
+msgid "Nov"
+msgstr "11 月"
+
+#: output.py:299
+msgid "Dec"
+msgstr "12 月"
+
+#: output.py:309
+msgid "Trying other mirror."
+msgstr "他のミラーを試します。"
+
+#: output.py:525
+#, python-format
+msgid "Name       : %s%s%s"
+msgstr "名前          : %s%s%s"
+
+#: output.py:526
+#, python-format
+msgid "Arch       : %s"
+msgstr "アーキテクチャ: %s"
+
+#: output.py:528
+#, python-format
+msgid "Epoch      : %s"
+msgstr "エポック      : %s"
+
+#: output.py:529
+#, python-format
+msgid "Version    : %s"
+msgstr "バージョン    : %s"
+
+#: output.py:530
+#, python-format
+msgid "Release    : %s"
+msgstr "リリース      : %s"
+
+#: output.py:531
+#, python-format
+msgid "Size       : %s"
+msgstr "容量          : %s"
+
+#: output.py:532
+#, python-format
+msgid "Repo       : %s"
+msgstr "リポジトリー  : %s"
+
+#: output.py:534
+#, python-format
+msgid "Committer  : %s"
+msgstr "コミット者    : %s"
+
+#: output.py:535
+#, python-format
+msgid "Committime : %s"
+msgstr "コミット日時  : %s"
+
+#: output.py:536
+#, python-format
+msgid "Buildtime  : %s"
+msgstr "ビルド日時    : %s"
+
+#: output.py:538
+#, python-format
+msgid "Installtime: %s"
+msgstr "インストール日時 : %s "
+
+#: output.py:539
+msgid "Summary    : "
+msgstr "要約          : "
+
+#: output.py:541
+#, python-format
+msgid "URL        : %s"
+msgstr "URL           : %s"
+
+#: output.py:542
+#, python-format
+msgid "License    : %s"
+msgstr "ライセンス    : %s"
+
+#: output.py:543
+msgid "Description: "
+msgstr "説明          : "
+
+#: output.py:611
+msgid "y"
+msgstr "y"
+
+#: output.py:611
+msgid "yes"
+msgstr "はい"
+
+#: output.py:612
+msgid "n"
+msgstr "n"
+
+#: output.py:612
+msgid "no"
+msgstr "いいえ"
+
+# REMEMBER to Translate [Y/N] to the current locale
+#: output.py:616
+msgid "Is this ok [y/N]: "
+msgstr "これでいいですか? [y/N]"
+
+#: output.py:704
+#, python-format
+msgid ""
+"\n"
+"Group: %s"
+msgstr ""
+"\n"
+"グループ: %s"
+
+#: output.py:708
+#, python-format
+msgid " Group-Id: %s"
+msgstr " グループ ID: %s"
+
+#: output.py:713
+#, python-format
+msgid " Description: %s"
+msgstr " 説明: %s"
+
+#: output.py:715
+msgid " Mandatory Packages:"
+msgstr " 強制的なパッケージ:"
+
+#: output.py:716
+msgid " Default Packages:"
+msgstr " 標準パッケージ:"
+
+#: output.py:717
+msgid " Optional Packages:"
+msgstr " オプションパッケージ:"
+
+#: output.py:718
+msgid " Conditional Packages:"
+msgstr " 条件付パッケージ:"
+
+#: output.py:738
+#, python-format
+msgid "package: %s"
+msgstr "パッケージ    : %s"
+
+#: output.py:740
+msgid "  No dependencies for this package"
+msgstr "  このパッケージの依存はありません"
+
+#: output.py:745
+#, python-format
+msgid "  dependency: %s"
+msgstr "  依存性      : %s"
+
+#: output.py:747
+msgid "   Unsatisfied dependency"
+msgstr "  満たされていない依存性"
+
+#: output.py:819
+#, python-format
+msgid "Repo        : %s"
+msgstr "リポジトリー  : %s"
+
+#: output.py:820
+msgid "Matched from:"
+msgstr ""
+
+#: output.py:828
+msgid "Description : "
+msgstr "説明          : "
+
+#: output.py:831
+#, python-format
+msgid "URL         : %s"
+msgstr "URL           : %s"
+
+#: output.py:834
+#, python-format
+msgid "License     : %s"
+msgstr "ライセンス    : %s"
+
+#: output.py:837
+#, python-format
+msgid "Filename    : %s"
+msgstr "リリース      : %s"
+
+#: output.py:841
+msgid "Other       : "
+msgstr "その他        : "
+
+#: output.py:874
+msgid "There was an error calculating total download size"
+msgstr "総ダウンロード容量の計算中にエラーです"
+
+#: output.py:879
+#, python-format
+msgid "Total size: %s"
+msgstr "合計容量: %s"
+
+#: output.py:882
+#, python-format
+msgid "Total download size: %s"
+msgstr "総ダウンロード容量: %s"
+
+#: output.py:924
+msgid "Installing for dependencies"
+msgstr "依存性関連でのインストールをします"
+
+#: output.py:925
+msgid "Updating for dependencies"
+msgstr "依存性関連での更新をします"
+
+#: output.py:926
+msgid "Removing for dependencies"
+msgstr "依存性関連での削除をします"
+
+#: output.py:933 output.py:1031
+msgid "Skipped (dependency problems)"
+msgstr "飛ばしました (依存性の問題)"
+
+#: output.py:954
+msgid "Package"
+msgstr ""
+
+#: output.py:954
+msgid "Arch"
+msgstr ""
+
+#: output.py:955
+msgid "Version"
+msgstr ""
+
+#: output.py:955
+msgid "Repository"
+msgstr ""
+
+#: output.py:956
+msgid "Size"
+msgstr ""
+
+#: output.py:968
+#, python-format
+msgid ""
+"     replacing  %s%s%s.%s %s\n"
+"\n"
+msgstr "     置き換えています  %s%s%s.%s %s\n\n"
+
+#: output.py:977
+#, python-format
+msgid ""
+"\n"
+"Transaction Summary\n"
+"%s\n"
+"Install  %5.5s Package(s)         \n"
+"Update   %5.5s Package(s)         \n"
+"Remove   %5.5s Package(s)         \n"
+msgstr ""
+"\n"
+"トランザクションの要約\n"
+"%s\n"
+"インストール  %5.5s パッケージ    \n"
+"更新          %5.5s パッケージ    \n"
+"削除          %5.5s パッケージ    \n"
+
+#: output.py:1025
+msgid "Removed"
+msgstr "削除しました"
+
+#: output.py:1026
+msgid "Dependency Removed"
+msgstr "依存性の削除をしました"
+
+#: output.py:1028
+msgid "Dependency Installed"
+msgstr "依存性関連をインストールしました"
+
+#: output.py:1030
+msgid "Dependency Updated"
+msgstr "依存性を更新しました"
+
+#: output.py:1032
+msgid "Replaced"
+msgstr "置換しました"
+
+#: output.py:1033
+msgid "Failed"
+msgstr "失敗しました"
+
+#: output.py:1099
+msgid "two"
+msgstr ""
+
+#: output.py:1106
+#, python-format
+msgid ""
+"\n"
+" Current download cancelled, %sinterrupt (ctrl-c) again%s within %s%s%s "
+"seconds to exit.\n"
+msgstr ""
+
+#: output.py:1116
+msgid "user interrupt"
+msgstr "ユーザーの割り込み"
+
+#: output.py:1132
+msgid "Total"
+msgstr "合計"
+
+#: output.py:1146
+msgid "installed"
+msgstr "インストール"
+
+#: output.py:1147
+msgid "updated"
+msgstr "更新"
+
+#: output.py:1148
+msgid "obsoleted"
+msgstr "不要"
+
+#: output.py:1149
+msgid "erased"
+msgstr "削除"
+
+#: output.py:1153
+#, python-format
+msgid "---> Package %s.%s %s:%s-%s set to be %s"
+msgstr "---> パッケージ %s.%s %s:%s-%s を%sに設定しました"
+
+#: output.py:1160
+msgid "--> Running transaction check"
+msgstr "--> トランザクションの確認を実行しています"
+
+#: output.py:1165
+msgid "--> Restarting Dependency Resolution with new changes."
+msgstr "--> 新しい変更と依存性の解決を再開しています。"
+
+#: output.py:1170
+msgid "--> Finished Dependency Resolution"
+msgstr "--> 依存性解決を終了しました"
+
+#: output.py:1175
+#, python-format
+msgid "--> Processing Dependency: %s for package: %s"
+msgstr "--> 依存性の処理をしています: %s のパッケージ: %s"
+
+#: output.py:1180
+#, python-format
+msgid "--> Unresolved Dependency: %s"
+msgstr "--> 未解決の依存性: %s"
+
+#: output.py:1186
+#, python-format
+msgid "--> Processing Conflict: %s conflicts %s"
+msgstr "--> 衝突を処理しています: %s は %s と衝突しています"
+
+#: output.py:1189
+msgid "--> Populating transaction set with selected packages. Please wait."
+msgstr ""
+
+#: output.py:1193
+#, python-format
+msgid "---> Downloading header for %s to pack into transaction set."
+msgstr ""
+"---> トランザクションセットに束ねるために %s のヘッダーをダウンロードしていま"
+"す"
+
+#: yumcommands.py:41
+msgid "You need to be root to perform this command."
+msgstr "このコマンドを実行するには root である必要があります。"
+
+#: yumcommands.py:48
+msgid ""
+"\n"
+"You have enabled checking of packages via GPG keys. This is a good thing. \n"
+"However, you do not have any GPG public keys installed. You need to "
+"download\n"
+"the keys for packages you wish to install and install them.\n"
+"You can do that by running the command:\n"
+"    rpm --import public.gpg.key\n"
+"\n"
+"\n"
+"Alternatively you can specify the url to the key you would like to use\n"
+"for a repository in the 'gpgkey' option in a repository section and yum \n"
+"will install it for you.\n"
+"\n"
+"For more information contact your distribution or package provider.\n"
+msgstr ""
+
+#: yumcommands.py:68
+#, python-format
+msgid "Error: Need to pass a list of pkgs to %s"
+msgstr "エラー: パッケージの一覧を %s に渡す必要があります"
+
+#: yumcommands.py:74
+msgid "Error: Need an item to match"
+msgstr "エラー: 一致する項目が必要です"
+
+#: yumcommands.py:80
+msgid "Error: Need a group or list of groups"
+msgstr "エラー: グループ化グループの一覧が必要です"
+
+#: yumcommands.py:89
+#, python-format
+msgid "Error: clean requires an option: %s"
+msgstr "エラー: clean は引数をひとつ要求します: %s"
+
+#: yumcommands.py:94
+#, python-format
+msgid "Error: invalid clean argument: %r"
+msgstr "エラー: 不正な clean の引数です: %r"
+
+#: yumcommands.py:107
+msgid "No argument to shell"
+msgstr "シェルへの引数がありません"
+
+#: yumcommands.py:110
+#, python-format
+msgid "Filename passed to shell: %s"
+msgstr "シェルに渡すファイル名: %s"
+
+#: yumcommands.py:114
+#, python-format
+msgid "File %s given as argument to shell does not exist."
+msgstr "シェルへの引数として渡したファイル %s は存在しません。"
+
+#: yumcommands.py:120
+msgid "Error: more than one file given as argument to shell."
+msgstr "エラー: シェルへの引数としてひとつ以上のファイルを渡しました。"
+
+#: yumcommands.py:169
+msgid "PACKAGE..."
+msgstr "パッケージ..."
+
+#: yumcommands.py:172
+msgid "Install a package or packages on your system"
+msgstr "システムにパッケージをインストールする"
+
+#: yumcommands.py:180
+msgid "Setting up Install Process"
+msgstr "インストール処理の設定をしています"
+
+#: yumcommands.py:191
+msgid "[PACKAGE...]"
+msgstr "[パッケージ...]"
+
+#: yumcommands.py:194
+msgid "Update a package or packages on your system"
+msgstr "システムのパッケージを更新する"
+
+#: yumcommands.py:201
+msgid "Setting up Update Process"
+msgstr "更新処理の設定をしています"
+
+#: yumcommands.py:243
+msgid "Display details about a package or group of packages"
+msgstr "パッケージもしくはパッケージのグループについての詳細を表示する"
+
+#: yumcommands.py:292
+msgid "Installed Packages"
+msgstr "インストール済みパッケージ"
+
+#: yumcommands.py:300
+msgid "Available Packages"
+msgstr "利用可能なパッケージ"
+
+#: yumcommands.py:304
+msgid "Extra Packages"
+msgstr "外部パッケージ"
+
+#: yumcommands.py:308
+msgid "Updated Packages"
+msgstr "更新したパッケージ"
+
+#: yumcommands.py:316 yumcommands.py:323 yumcommands.py:600
+msgid "Obsoleting Packages"
+msgstr "パッケージを不要にしています"
+
+#: yumcommands.py:325
+msgid "Recently Added Packages"
+msgstr "最近追加したパッケージ"
+
+#: yumcommands.py:332
+msgid "No matching Packages to list"
+msgstr "表示するパッケージはありません"
+
+#: yumcommands.py:346
+msgid "List a package or groups of packages"
+msgstr "パッケージグループの一覧を表示する"
+
+#: yumcommands.py:358
+msgid "Remove a package or packages from your system"
+msgstr "システムから削除するパッケージ"
+
+#: yumcommands.py:365
+msgid "Setting up Remove Process"
+msgstr "削除処理の設定をしています"
+
+#: yumcommands.py:379
+msgid "Setting up Group Process"
+msgstr "グループ処理の設定をしています"
+
+#: yumcommands.py:385
+msgid "No Groups on which to run command"
+msgstr ""
+
+#: yumcommands.py:398
+msgid "List available package groups"
+msgstr "利用できるパッケージグループの一覧"
+
+#: yumcommands.py:415
+msgid "Install the packages in a group on your system"
+msgstr "システムのグループのパッケージをインストールする"
+
+#: yumcommands.py:437
+msgid "Remove the packages in a group from your system"
+msgstr "システムからグループのパッケージを削除する"
+
+#: yumcommands.py:464
+msgid "Display details about a package group"
+msgstr "パッケージグループについての詳細を表示する"
+
+#: yumcommands.py:488
+msgid "Generate the metadata cache"
+msgstr "メタデータキャッシュを生成する"
+
+#: yumcommands.py:494
+msgid "Making cache files for all metadata files."
+msgstr "すべて飲めたデータファイルのキャッシュを作成します。"
+
+#: yumcommands.py:495
+msgid "This may take a while depending on the speed of this computer"
+msgstr ""
+
+#: yumcommands.py:516
+msgid "Metadata Cache Created"
+msgstr "メタデータのキャッシュを作成しました"
+
+#: yumcommands.py:530
+msgid "Remove cached data"
+msgstr "キャッシュデータを削除する"
+
+#: yumcommands.py:551
+msgid "Find what package provides the given value"
+msgstr ""
+
+#: yumcommands.py:571
+msgid "Check for available package updates"
+msgstr "更新に利用できるパッケージを確認する"
+
+#: yumcommands.py:620
+msgid "Search package details for the given string"
+msgstr "指定した文字列でパッケージの詳細を検索する"
+
+#: yumcommands.py:626
+msgid "Searching Packages: "
+msgstr "パッケージの検索中: "
+
+#: yumcommands.py:643
+msgid "Update packages taking obsoletes into account"
+msgstr ""
+
+#: yumcommands.py:651
+msgid "Setting up Upgrade Process"
+msgstr "更新処理の設定をしています"
+
+#: yumcommands.py:665
+msgid "Install a local RPM"
+msgstr "ローカル RPM のインストール"
+
+#: yumcommands.py:673
+msgid "Setting up Local Package Process"
+msgstr "ローカルパッケージ処理の設定をしています"
+
+#: yumcommands.py:692
+msgid "Determine which package provides the given dependency"
+msgstr ""
+
+#: yumcommands.py:695
+msgid "Searching Packages for Dependency:"
+msgstr "依存性のパッケージ検索:"
+
+#: yumcommands.py:709
+msgid "Run an interactive yum shell"
+msgstr "対話型の yum シェルを実行する"
+
+#: yumcommands.py:715
+msgid "Setting up Yum Shell"
+msgstr "Yum シェルの設定をしています"
+
+#: yumcommands.py:733
+msgid "List a package's dependencies"
+msgstr "パッケージの依存性の一覧を表示する"
+
+#: yumcommands.py:739
+msgid "Finding dependencies: "
+msgstr "依存性の検索中: "
+
+#: yumcommands.py:755
+msgid "Display the configured software repositories"
+msgstr "ソフトウェアリポジトリーの構成を表示する"
+
+#: yumcommands.py:803 yumcommands.py:804
+msgid "enabled"
+msgstr "有効"
+
+#: yumcommands.py:812 yumcommands.py:813
+msgid "disabled"
+msgstr "無効"
+
+#: yumcommands.py:827
+msgid "Repo-id     : "
+msgstr "リポジトリーID   : "
+
+#: yumcommands.py:828
+msgid "Repo-name   : "
+msgstr "リポジトリー名   : "
+
+#: yumcommands.py:829
+msgid "Repo-status : "
+msgstr "リポジトリーの状態: "
+
+#: yumcommands.py:831
+msgid "Repo-revision: "
+msgstr "リポジトリーのリビジョン: "
+
+#: yumcommands.py:835
+msgid "Repo-tags   : "
+msgstr "リポジトリータグ : "
+
+#: yumcommands.py:841
+msgid "Repo-distro-tags: "
+msgstr ""
+
+#: yumcommands.py:846
+msgid "Repo-updated: "
+msgstr ""
+
+#: yumcommands.py:848
+msgid "Repo-pkgs   : "
+msgstr ""
+
+#: yumcommands.py:849
+msgid "Repo-size   : "
+msgstr "リポジトリー容量 : %s"
+
+#: yumcommands.py:856
+msgid "Repo-baseurl: "
+msgstr ""
+
+#: yumcommands.py:860
+msgid "Repo-metalink: "
+msgstr ""
+
+#: yumcommands.py:863
+msgid "Repo-mirrors: "
+msgstr ""
+
+#: yumcommands.py:867
+msgid "Repo-exclude: "
+msgstr ""
+
+#: yumcommands.py:871
+msgid "Repo-include: "
+msgstr ""
+
+#: yumcommands.py:881 yumcommands.py:907
+msgid "repo id"
+msgstr ""
+
+#: yumcommands.py:895 yumcommands.py:896 yumcommands.py:910
+msgid "status"
+msgstr ""
+
+#: yumcommands.py:908
+msgid "repo name"
+msgstr ""
+
+#: yumcommands.py:934
+msgid "Display a helpful usage message"
+msgstr "役立つ使い方のメッセージを表示する"
+
+#: yumcommands.py:968
+#, python-format
+msgid "No help available for %s"
+msgstr "%s のヘルプは利用できません"
+
+#: yumcommands.py:973
+msgid ""
+"\n"
+"\n"
+"aliases: "
+msgstr ""
+"\n"
+"\n"
+"別名: "
+
+#: yumcommands.py:975
+msgid ""
+"\n"
+"\n"
+"alias: "
+msgstr ""
+"\n"
+"\n"
+"別名: "
+
+#: yumcommands.py:1003
+msgid "Setting up Reinstall Process"
+msgstr "再インストール処理の設定をしています"
+
+#: yumcommands.py:1017
+msgid "reinstall a package"
+msgstr "パッケージの再インストール"
+
+#: yummain.py:42
+msgid ""
+"\n"
+"\n"
+"Exiting on user cancel"
+msgstr ""
+"\n"
+"\n"
+"ユーザーの取り消しで終了しています"
+
+#: yummain.py:48
+msgid ""
+"\n"
+"\n"
+"Exiting on Broken Pipe"
+msgstr ""
+"\n"
+"\n"
+"パイプが壊れたため終了しています"
+
+#: yummain.py:126
+msgid "Running"
+msgstr "実行中"
+
+#: yummain.py:127
+msgid "Sleeping"
+msgstr "スリープ中"
+
+#: yummain.py:128
+msgid "Uninteruptable"
+msgstr ""
+
+#: yummain.py:129
+msgid "Zombie"
+msgstr "ゾンビ"
+
+#: yummain.py:130
+msgid "Traced/Stopped"
+msgstr ""
+
+#: yummain.py:131
+msgid "Unknown"
+msgstr "不明"
+
+#: yummain.py:135
+msgid "  The other application is: PackageKit"
+msgstr " 他のアプリケーション: PackageKit"
+
+#: yummain.py:137
+#, python-format
+msgid "  The other application is: %s"
+msgstr " 他のアプリケーション: %s"
+
+#: yummain.py:140
+#, python-format
+msgid "    Memory : %5s RSS (%5sB VSZ)"
+msgstr "   メモリー: %5s RSS (%5sB VSZ)"
+
+#: yummain.py:144
+#, python-format
+msgid "    Started: %s - %s ago"
+msgstr "    開始   : %s - %s 秒経過"
+
+#: yummain.py:146
+#, python-format
+msgid "    State  : %s, pid: %d"
+msgstr "    状態   : %s、PID: %d"
+
+#: yummain.py:171
+msgid ""
+"Another app is currently holding the yum lock; waiting for it to exit..."
+msgstr ""
+"別のアプリケーションが現在 yum のロックを持っています。終了するまで待っていま"
+"す..."
+
+#: yummain.py:199 yummain.py:238
+#, python-format
+msgid "Error: %s"
+msgstr "エラー: %s"
+
+#: yummain.py:209 yummain.py:250
+#, python-format
+msgid "Unknown Error(s): Exit Code: %d:"
+msgstr "不明なエラー: 終了コード: %d:"
+
+#: yummain.py:216
+msgid "Resolving Dependencies"
+msgstr "依存性の解決をしています"
+
+#: yummain.py:240
+msgid " You could try using --skip-broken to work around the problem"
+msgstr " 問題を回避するために --skip-broken を用いることができません"
+
+#: yummain.py:241
+msgid ""
+" You could try running: package-cleanup --problems\n"
+"                        package-cleanup --dupes\n"
+"                        rpm -Va --nofiles --nodigest"
+msgstr ""
+" 実行を試せません: package-cleanup --problems\n"
+"                   package-cleanup --dupes\n"
+"                   rpm -Va --nofiles --nodigest"
+
+#: yummain.py:256
+msgid ""
+"\n"
+"Dependencies Resolved"
+msgstr ""
+"\n"
+"依存性を解決しました"
+
+#: yummain.py:270
+msgid "Complete!"
+msgstr "完了しました!"
+
+#: yummain.py:325
+msgid ""
+"\n"
+"\n"
+"Exiting on user cancel."
+msgstr "\n\n\nユーザーによる取り消しで終了しています。"
+
+#: yum/depsolve.py:84
+msgid "doTsSetup() will go away in a future version of Yum.\n"
+msgstr "doTsSetup() は Yum の将来のバージョンでなくなります。\n"
+
+#: yum/depsolve.py:99
+msgid "Setting up TransactionSets before config class is up"
+msgstr "構成クラスが終わる前にトランザクションセットを設定しています"
+
+#: yum/depsolve.py:150
+#, python-format
+msgid "Invalid tsflag in config file: %s"
+msgstr "構成ファイルの tsflag が不正です: %s"
+
+#: yum/depsolve.py:161
+#, python-format
+msgid "Searching pkgSack for dep: %s"
+msgstr "依存性の pkgSack を検索しています: %s"
+
+#: yum/depsolve.py:184
+#, python-format
+msgid "Potential match for %s from %s"
+msgstr ""
+
+#: yum/depsolve.py:192
+#, python-format
+msgid "Matched %s to require for %s"
+msgstr ""
+
+#: yum/depsolve.py:233
+#, python-format
+msgid "Member: %s"
+msgstr "メンバー: %s"
+
+#: yum/depsolve.py:247 yum/depsolve.py:738
+#, python-format
+msgid "%s converted to install"
+msgstr "%s をインストールに変更しました"
+
+#: yum/depsolve.py:254
+#, python-format
+msgid "Adding Package %s in mode %s"
+msgstr "モード %s にパッケージ %s を追加しています"
+
+#: yum/depsolve.py:264
+#, python-format
+msgid "Removing Package %s"
+msgstr "パッケージ %s の削除をしています"
+
+#: yum/depsolve.py:275
+#, python-format
+msgid "%s requires: %s"
+msgstr "%s の要求: %s"
+
+#: yum/depsolve.py:333
+msgid "Needed Require has already been looked up, cheating"
+msgstr "必要な要求は既に調べましたが不正をしています"
+
+#: yum/depsolve.py:343
+#, python-format
+msgid "Needed Require is not a package name. Looking up: %s"
+msgstr "必要な要求はパッケージ名ではありません。調べています: %s"
+
+#: yum/depsolve.py:350
+#, python-format
+msgid "Potential Provider: %s"
+msgstr ""
+
+#: yum/depsolve.py:373
+#, python-format
+msgid "Mode is %s for provider of %s: %s"
+msgstr ""
+
+#: yum/depsolve.py:377
+#, python-format
+msgid "Mode for pkg providing %s: %s"
+msgstr ""
+
+#: yum/depsolve.py:381
+#, python-format
+msgid "TSINFO: %s package requiring %s marked as erase"
+msgstr ""
+
+#: yum/depsolve.py:394
+#, python-format
+msgid "TSINFO: Obsoleting %s with %s to resolve dep."
+msgstr ""
+
+#: yum/depsolve.py:397
+#, python-format
+msgid "TSINFO: Updating %s to resolve dep."
+msgstr ""
+
+#: yum/depsolve.py:405
+#, python-format
+msgid "Cannot find an update path for dep for: %s"
+msgstr ""
+
+#: yum/depsolve.py:415
+#, python-format
+msgid "Unresolvable requirement %s for %s"
+msgstr "要求された %s は %s で解決しませんでした"
+
+#: yum/depsolve.py:438
+#, python-format
+msgid "Quick matched %s to require for %s"
+msgstr ""
+
+#: yum/depsolve.py:480
+#, python-format
+msgid "%s is in providing packages but it is already installed, removing."
+msgstr ""
+"%s を提供するパッケージはすでにインストールされています。削除しています。"
+
+#: yum/depsolve.py:496
+#, python-format
+msgid "Potential resolving package %s has newer instance in ts."
+msgstr ""
+
+#: yum/depsolve.py:507
+#, python-format
+msgid "Potential resolving package %s has newer instance installed."
+msgstr ""
+
+#: yum/depsolve.py:515 yum/depsolve.py:564
+#, python-format
+msgid "Missing Dependency: %s is needed by package %s"
+msgstr "依存性の欠落: %s はパッケージ %s が必要としています"
+
+#: yum/depsolve.py:528
+#, python-format
+msgid "%s already in ts, skipping this one"
+msgstr ""
+
+#: yum/depsolve.py:574
+#, python-format
+msgid "TSINFO: Marking %s as update for %s"
+msgstr "TSINFO: %s を更新として %s で設定しています"
+
+#: yum/depsolve.py:582
+#, python-format
+msgid "TSINFO: Marking %s as install for %s"
+msgstr "TSINFO: %s をインストールとして %s で設定しています"
+
+#: yum/depsolve.py:675 yum/depsolve.py:756
+msgid "Success - empty transaction"
+msgstr "成功 - 空のトランザクション"
+
+#: yum/depsolve.py:713 yum/depsolve.py:728
+msgid "Restarting Loop"
+msgstr "ループを再開しています"
+
+#: yum/depsolve.py:744
+msgid "Dependency Process ending"
+msgstr "依存性の処理を終了しています"
+
+#: yum/depsolve.py:750
+#, python-format
+msgid "%s from %s has depsolving problems"
+msgstr "%s(%s) は依存性に問題があります"
+
+#: yum/depsolve.py:757
+msgid "Success - deps resolved"
+msgstr "成功 - 依存性を解決しました"
+
+#: yum/depsolve.py:771
+#, python-format
+msgid "Checking deps for %s"
+msgstr "%s の依存性を確認しています"
+
+#: yum/depsolve.py:854
+#, python-format
+msgid "looking for %s as a requirement of %s"
+msgstr ""
+
+#: yum/depsolve.py:996
+#, python-format
+msgid "Running compare_providers() for %s"
+msgstr "%s の compare_providers() を実行しています"
+
+#: yum/depsolve.py:1024 yum/depsolve.py:1030
+#, python-format
+msgid "better arch in po %s"
+msgstr ""
+
+#: yum/depsolve.py:1091
+#, python-format
+msgid "%s obsoletes %s"
+msgstr ""
+
+#: yum/depsolve.py:1107
+#, python-format
+msgid ""
+"archdist compared %s to %s on %s\n"
+"  Winner: %s"
+msgstr ""
+
+#: yum/depsolve.py:1114
+#, python-format
+msgid "common sourcerpm %s and %s"
+msgstr "%s と %s の共通ソース RPM(SRPM)"
+
+#: yum/depsolve.py:1120
+#, python-format
+msgid "common prefix of %s between %s and %s"
+msgstr "%s から %s と %s の共通接頭辞"
+
+#: yum/depsolve.py:1128
+#, python-format
+msgid "Best Order: %s"
+msgstr "最適の順序: %s"
+
+#: yum/__init__.py:176
+msgid "doConfigSetup() will go away in a future version of Yum.\n"
+msgstr "doConfigSetup() は Yum の将来のバージョンでなくなります。\n"
+
+#: yum/__init__.py:386
+#, python-format
+msgid "Repository %r is missing name in configuration, using id"
+msgstr "リポジトリー %r は構成中に名前がありませんので ID を使います"
+
+#: yum/__init__.py:424
+msgid "plugins already initialised"
+msgstr "プラグインは既に初期化されています"
+
+#: yum/__init__.py:431
+msgid "doRpmDBSetup() will go away in a future version of Yum.\n"
+msgstr "dbRpmDBSetup() は Yum の将来のバージョンでなくなります。\n"
+
+#: yum/__init__.py:441
+msgid "Reading Local RPMDB"
+msgstr "ローカルの RPMDB を読み込んでいます"
+
+#: yum/__init__.py:459
+msgid "doRepoSetup() will go away in a future version of Yum.\n"
+msgstr "doRepoSetup() は Yum の将来のバージョンでなくなります。\n"
+
+#: yum/__init__.py:479
+msgid "doSackSetup() will go away in a future version of Yum.\n"
+msgstr "doSackSetup() は Yum の将来のバージョンでなくなります。\n"
+
+#: yum/__init__.py:496
+msgid "Setting up Package Sacks"
+msgstr ""
+
+#: yum/__init__.py:539
+#, python-format
+msgid "repo object for repo %s lacks a _resetSack method\n"
+msgstr ""
+
+#: yum/__init__.py:540
+msgid "therefore this repo cannot be reset.\n"
+msgstr ""
+
+#: yum/__init__.py:545
+msgid "doUpdateSetup() will go away in a future version of Yum.\n"
+msgstr "doUpdateSetup() は Yum の将来のバージョンでなくなります。\n"
+
+#: yum/__init__.py:557
+msgid "Building updates object"
+msgstr "オブジェクトの更新を構築しています"
+
+#: yum/__init__.py:588
+msgid "doGroupSetup() will go away in a future version of Yum.\n"
+msgstr "doGroupSetup() は Yum の将来のバージョンでなくなります。\n"
+
+#: yum/__init__.py:612
+msgid "Getting group metadata"
+msgstr "グループメタデータを取得しています"
+
+#: yum/__init__.py:637
+#, python-format
+msgid "Adding group file from repository: %s"
+msgstr "リポジトリーからグループファイルを追加しています: %s"
+
+#: yum/__init__.py:642
+#, python-format
+msgid "Failed to add groups file for repository: %s - %s"
+msgstr "リポジトリーのグループファイルに追加できませんでした: %s - %s"
+
+#: yum/__init__.py:648
+msgid "No Groups Available in any repository"
+msgstr "いずれかのリポジトリーに利用できるグループはありません"
+
+#: yum/__init__.py:698
+msgid "Importing additional filelist information"
+msgstr "追加ファイル一覧情報にインポートしています"
+
+#: yum/__init__.py:706
+msgid ""
+"There are unfinished transactions remaining. You might consider running yum-"
+"complete-transaction first to finish them."
+msgstr "終了していない残作業があります。それらを終了するためにはじめに yum-complete-transaction の実行を検討するかもしれません。"
+
+#: yum/__init__.py:772
+#, python-format
+msgid "Skip-broken round %i"
+msgstr ""
+
+#: yum/__init__.py:824
+#, python-format
+msgid "Skip-broken took %i rounds "
+msgstr ""
+
+#: yum/__init__.py:825
+msgid ""
+"\n"
+"Packages skipped because of dependency problems:"
+msgstr ""
+"\n"
+"パッケージは依存関係に問題があるため、飛ばします:"
+
+#: yum/__init__.py:829
+#, python-format
+msgid "    %s from %s"
+msgstr ""
+
+#: yum/__init__.py:968
+msgid ""
+"Warning: scriptlet or other non-fatal errors occurred during transaction."
+msgstr "警告: スクリプト、もしくはその他で処理の間に致命的ではないエラーが発生しました。"
+
+#: yum/__init__.py:983
+#, python-format
+msgid "Failed to remove transaction file %s"
+msgstr "トランザクションファイル %s の削除に失敗しました"
+
+#: yum/__init__.py:1025
+#, python-format
+msgid "excluding for cost: %s from %s"
+msgstr ""
+
+#: yum/__init__.py:1056
+msgid "Excluding Packages in global exclude list"
+msgstr "全体の除外一覧でパッケージを除外します"
+
+#: yum/__init__.py:1058
+#, python-format
+msgid "Excluding Packages from %s"
+msgstr "%s からパッケージを除外しています"
+
+#: yum/__init__.py:1085
+#, python-format
+msgid "Reducing %s to included packages only"
+msgstr ""
+
+#: yum/__init__.py:1091
+#, python-format
+msgid "Keeping included package %s"
+msgstr ""
+
+#: yum/__init__.py:1097
+#, python-format
+msgid "Removing unmatched package %s"
+msgstr ""
+
+#: yum/__init__.py:1100
+msgid "Finished"
+msgstr "完了しました"
+
+#: yum/__init__.py:1130
+#, python-format
+msgid "Unable to check if PID %s is active"
+msgstr ""
+
+#: yum/__init__.py:1134
+#, python-format
+msgid "Existing lock %s: another copy is running as pid %s."
+msgstr "ロックファイル %s が存在します: PID %s として別に実行されています。"
+
+#: yum/__init__.py:1204
+msgid "Package does not match intended download"
+msgstr "パッケージは意図したダウンロードと一致しません"
+
+#: yum/__init__.py:1219
+msgid "Could not perform checksum"
+msgstr "チェックサムの実行ができません"
+
+#: yum/__init__.py:1222
+msgid "Package does not match checksum"
+msgstr "パッケージのチェックサムが一致しません"
+
+#: yum/__init__.py:1265
+#, python-format
+msgid "package fails checksum but caching is enabled for %s"
+msgstr "%s のためにキャッシュを有効にしていますが、パッケージのチェックサム演算に失敗します。"
+
+#: yum/__init__.py:1268 yum/__init__.py:1297
+#, python-format
+msgid "using local copy of %s"
+msgstr "%s のローカルコピーを使う"
+
+#: yum/__init__.py:1309
+#, python-format
+msgid ""
+"Insufficient space in download directory %s\n"
+"    * free   %s\n"
+"    * needed %s"
+msgstr ""
+"ダウンロードディレクトリー %s の空きが不十分です\n"
+"    * 空き容量 %s\n"
+"    * 必要容量 %s"
+
+#: yum/__init__.py:1356
+msgid "Header is not complete."
+msgstr "ヘッダーが完了していません。"
+
+#: yum/__init__.py:1393
+#, python-format
+msgid ""
+"Header not in local cache and caching-only mode enabled. Cannot download %s"
+msgstr "ヘッダーはキャッシュのみのモードが有効で、ローカルにありません。%s のダウンロードができません"
+
+#: yum/__init__.py:1448
+#, python-format
+msgid "Public key for %s is not installed"
+msgstr "%s の公開鍵がインストールされていません"
+
+#: yum/__init__.py:1452
+#, python-format
+msgid "Problem opening package %s"
+msgstr "パッケージ %s を開いている最中に問題です"
+
+#: yum/__init__.py:1460
+#, python-format
+msgid "Public key for %s is not trusted"
+msgstr "%s の公開鍵が信頼されません"
+
+#: yum/__init__.py:1464
+#, python-format
+msgid "Package %s is not signed"
+msgstr "パッケージ %s は署名されていません"
+
+#: yum/__init__.py:1502
+#, python-format
+msgid "Cannot remove %s"
+msgstr "%s を削除できません"
+
+#: yum/__init__.py:1505
+#, python-format
+msgid "%s removed"
+msgstr "%s を削除しました"
+
+#: yum/__init__.py:1541
+#, python-format
+msgid "Cannot remove %s file %s"
+msgstr "%s のファイル %s を削除できませんでした"
+
+#: yum/__init__.py:1544
+#, python-format
+msgid "%s file %s removed"
+msgstr "%s のファイル %s を削除しました"
+
+#: yum/__init__.py:1546
+#, python-format
+msgid "%d %s files removed"
+msgstr "%d %sファイルを削除しました"
+
+#: yum/__init__.py:1614
+#, python-format
+msgid "More than one identical match in sack for %s"
+msgstr ""
+
+#: yum/__init__.py:1619
+#, python-format
+msgid "Nothing matches %s.%s %s:%s-%s from update"
+msgstr "更新から %s.%s %s:%s-%s に一致しません"
+
+#: yum/__init__.py:1838
+msgid ""
+"searchPackages() will go away in a future version of "
+"Yum.                      Use searchGenerator() instead. \n"
+msgstr ""
+"searchPackages() は Yum の将来のバージョンでなくなりま"
+"す。                      代わりに searchGenerator() を使います。\n"
+
+#: yum/__init__.py:1876
+#, python-format
+msgid "Searching %d packages"
+msgstr "%d 個のパッケージを検索しています"
+
+#: yum/__init__.py:1879
+#, python-format
+msgid "searching package %s"
+msgstr "パッケージ %s を検索しています"
+
+#: yum/__init__.py:1890
+msgid "searching in file entries"
+msgstr "ファイルのエントリーから検索しています"
+
+#: yum/__init__.py:1896
+msgid "searching in provides entries"
+msgstr "提供されたエントリーを検索しています"
+
+#: yum/__init__.py:1929
+#, python-format
+msgid "Provides-match: %s"
+msgstr ""
+
+#: yum/__init__.py:1978
+msgid "No group data available for configured repositories"
+msgstr "構成されたリポジトリーに利用できるグループはありません"
+
+#: yum/__init__.py:2009 yum/__init__.py:2028 yum/__init__.py:2058
+#: yum/__init__.py:2064 yum/__init__.py:2143 yum/__init__.py:2147
+#, python-format
+msgid "No Group named %s exists"
+msgstr "グループ名 %s が存在しません"
+
+#: yum/__init__.py:2039 yum/__init__.py:2159
+#, python-format
+msgid "package %s was not marked in group %s"
+msgstr "パッケージ%s はグループ %s で設定されていません"
+
+#: yum/__init__.py:2085
+#, python-format
+msgid "Adding package %s from group %s"
+msgstr "パッケージ %s をグループ %s から追加しています"
+
+#: yum/__init__.py:2090
+#, python-format
+msgid "No package named %s available to be installed"
+msgstr ""
+
+#: yum/__init__.py:2186
+#, python-format
+msgid "Package tuple %s could not be found in packagesack"
+msgstr ""
+
+#: yum/__init__.py:2201
+msgid ""
+"getInstalledPackageObject() will go away, use self.rpmdb.searchPkgTuple().\n"
+msgstr ""
+
+#: yum/__init__.py:2253 yum/__init__.py:2294
+msgid "Invalid version flag"
+msgstr "不正なバージョンフラグ"
+
+#: yum/__init__.py:2268 yum/__init__.py:2272
+#, python-format
+msgid "No Package found for %s"
+msgstr "%s のパッケージが見つかりません"
+
+#: yum/__init__.py:2449
+msgid "Package Object was not a package object instance"
+msgstr ""
+
+#: yum/__init__.py:2453
+msgid "Nothing specified to install"
+msgstr "インストールへの指定がありません"
+
+#: yum/__init__.py:2469
+#, python-format
+msgid "Checking for virtual provide or file-provide for %s"
+msgstr ""
+
+#: yum/__init__.py:2475 yum/__init__.py:2740 yum/__init__.py:2900
+#, python-format
+msgid "No Match for argument: %s"
+msgstr "引数に一致しません: %s"
+
+#: yum/__init__.py:2548
+#, python-format
+msgid "Package %s installed and not available"
+msgstr "パッケージ %s はインストール済みか利用できません"
+
+#: yum/__init__.py:2551
+msgid "No package(s) available to install"
+msgstr "インストールに利用できるパッケージはありません"
+
+#: yum/__init__.py:2564
+#, python-format
+msgid "Package: %s  - already in transaction set"
+msgstr "パッケージ: %s - すでにトランザクション設定をしています"
+
+#: yum/__init__.py:2580
+#, python-format
+msgid "Package %s is obsoleted by %s, trying to install %s instead"
+msgstr ""
+"パッケージ %s は %s に不要です。代わりに %s のインストールを試みています"
+
+#: yum/__init__.py:2588
+#, python-format
+msgid "Package %s already installed and latest version"
+msgstr "パッケージ %s はインストール済みか最新バージョンです"
+
+#: yum/__init__.py:2595
+#, python-format
+msgid "Package matching %s already installed. Checking for update."
+msgstr ""
+"一致したパッケージ %s はすでにインストールされています。更新を確認していま"
+"す。"
+
+#: yum/__init__.py:2675
+msgid "Updating Everything"
+msgstr "すべて更新しています"
+
+#: yum/__init__.py:2693 yum/__init__.py:2802 yum/__init__.py:2823
+#: yum/__init__.py:2849
+#, python-format
+msgid "Not Updating Package that is already obsoleted: %s.%s %s:%s-%s"
+msgstr "既に不要なパッケージの更新はありません: %s.%s %s:%s-%s"
+
+#: yum/__init__.py:2728 yum/__init__.py:2897
+#, python-format
+msgid "%s"
+msgstr "%s"
+
+#: yum/__init__.py:2793
+#, python-format
+msgid "Package is already obsoleted: %s.%s %s:%s-%s"
+msgstr "パッケージは既に不要です: %s.%s %s:%s-%s"
+
+#: yum/__init__.py:2826 yum/__init__.py:2852
+#, python-format
+msgid "Not Updating Package that is already updated: %s.%s %s:%s-%s"
+msgstr ""
+"既にアップデートされているのでパッケージをアップデートしません: %s.%s %s:%s-%"
+"s"
+
+#: yum/__init__.py:2913
+msgid "No package matched to remove"
+msgstr "削除に一致するパッケージはありません"
+
+#: yum/__init__.py:2947
+#, python-format
+msgid "Cannot open file: %s. Skipping."
+msgstr "ファイル %s が開けません。飛ばします。"
+
+#: yum/__init__.py:2949
+#, python-format
+msgid "Examining %s: %s"
+msgstr "%s を調べています: %s"
+
+#: yum/__init__.py:2957
+#, python-format
+msgid "Cannot add package %s to transaction. Not a compatible architecture: %s"
+msgstr ""
+"トランザクションにパッケージ %s を追加できません。アーキテクチャに互換性があ"
+"りません: %s"
+
+#: yum/__init__.py:2965
+#, python-format
+msgid ""
+"Package %s not installed, cannot update it. Run yum install to install it "
+"instead."
+msgstr ""
+"パッケージ %s はインストールされていないので更新できません。代わりに「yum "
+"install」を実行してインストールしてください。"
+
+#: yum/__init__.py:2998
+#, python-format
+msgid "Excluding %s"
+msgstr "%s の除外中"
+
+#: yum/__init__.py:3002
+#, python-format
+msgid "Marking %s to be installed"
+msgstr "%s をインストール済みとして設定しています"
+
+#: yum/__init__.py:3007
+#, python-format
+msgid "Marking %s as an update to %s"
+msgstr "次のリポジトリーへの更新として %s を設定します: %s"
+
+#: yum/__init__.py:3012
+#, python-format
+msgid "%s: does not update installed package."
+msgstr "%s: インストールされたパッケージを更新しません。"
+
+#: yum/__init__.py:3029
+msgid "Problem in reinstall: no package matched to remove"
+msgstr "再インストール中に問題: 削除するパッケージがありません"
+
+#: yum/__init__.py:3040
+#, python-format
+msgid "Package %s is allowed multiple installs, skipping"
+msgstr "パッケージ %s は複数インストールが許可されています。飛ばします"
+
+#: yum/__init__.py:3050
+msgid "Problem in reinstall: no package matched to install"
+msgstr "再インストール中に問題: インストールするパッケージがありません"
+
+#: yum/__init__.py:3085
+#, python-format
+msgid "Retrieving GPG key from %s"
+msgstr "%s から GPG 鍵を取得しています"
+
+#: yum/__init__.py:3105
+msgid "GPG key retrieval failed: "
+msgstr "GPG 鍵の取得に失敗しました: "
+
+#: yum/__init__.py:3116
+#, python-format
+msgid "GPG key parsing failed: key does not have value %s"
+msgstr "GPG 鍵の解析に失敗しました: 鍵は値 %s を持っていません"
+
+#: yum/__init__.py:3148
+#, python-format
+msgid "GPG key at %s (0x%s) is already installed"
+msgstr "GPG 鍵 %s (0x%s) はすでにインストールしています"
+
+#: yum/__init__.py:3153 yum/__init__.py:3214
+#, python-format
+msgid "Importing GPG key 0x%s \"%s\" from %s"
+msgstr "GPG 公開鍵 0x%s 「%s」を %s からインポートしています"
+
+#: yum/__init__.py:3169
+msgid "Not installing key"
+msgstr "インストールする鍵がありません"
+
+#: yum/__init__.py:3175
+#, python-format
+msgid "Key import failed (code %d)"
+msgstr "鍵のインポートに失敗しました (コード: %d)"
+
+#: yum/__init__.py:3176 yum/__init__.py:3236
+msgid "Key imported successfully"
+msgstr "鍵のインポートに成功しました"
+
+#: yum/__init__.py:3181 yum/__init__.py:3241
+#, python-format
+msgid ""
+"The GPG keys listed for the \"%s\" repository are already installed but they "
+"are not correct for this package.\n"
+"Check that the correct key URLs are configured for this repository."
+msgstr ""
+
+#: yum/__init__.py:3190
+msgid "Import of key(s) didn't help, wrong key(s)?"
+msgstr ""
+
+#: yum/__init__.py:3209
+#, python-format
+msgid "GPG key at %s (0x%s) is already imported"
+msgstr "GPG 鍵 %s (0x%s) はすでにインポートしています"
+
+#: yum/__init__.py:3228
+#, python-format
+msgid "Not installing key for repo %s"
+msgstr "リポジトリー %s の鍵がインストールされていません"
+
+#: yum/__init__.py:3235
+msgid "Key import failed"
+msgstr "鍵のインポートに失敗しました"
+
+#: yum/__init__.py:3325
+msgid "Unable to find a suitable mirror."
+msgstr "適当なミラーを見つけることができませんでした。"
+
+#: yum/__init__.py:3327
+msgid "Errors were encountered while downloading packages."
+msgstr "パッケージのダウンロード中にエラーに遭遇しました。"
+
+#: yum/__init__.py:3367
+#, python-format
+msgid "Please report this error at %s"
+msgstr "%s にこのエラーを報告してください"
+
+#: yum/__init__.py:3391
+msgid "Test Transaction Errors: "
+msgstr "テストトランザクションでエラー: "
+
+#: yum/plugins.py:204
+msgid "Loaded plugins: "
+msgstr "読み込んだプラグイン:"
+
+#: yum/plugins.py:218 yum/plugins.py:224
+#, python-format
+msgid "No plugin match for: %s"
+msgstr "プラグインが一致しません: %s"
+
+#: yum/plugins.py:254
+#, python-format
+msgid "Not loading \"%s\" plugin, as it is disabled"
+msgstr "無効になっているため、プラグイン「%s」は読み込みません"
+
+#: yum/plugins.py:266
+#, python-format
+msgid "Plugin \"%s\" can't be imported"
+msgstr "プラグイン「%s」はインポートできませんでした"
+
+#: yum/plugins.py:273
+#, python-format
+msgid "Plugin \"%s\" doesn't specify required API version"
+msgstr "プラグイン「%s」は要求された API バージョンを明記していません"
+
+#: yum/plugins.py:278
+#, python-format
+msgid "Plugin \"%s\" requires API %s. Supported API is %s."
+msgstr ""
+"プラグイン「%s」は API %s を要求しています。サポートした API は %s です。"
+
+#: yum/plugins.py:311
+#, python-format
+msgid "Loading \"%s\" plugin"
+msgstr "プラグイン「%s」を読み込んでいます"
+
+#: yum/plugins.py:318
+#, python-format
+msgid ""
+"Two or more plugins with the name \"%s\" exist in the plugin search path"
+msgstr ""
+
+#: yum/plugins.py:338
+#, python-format
+msgid "Configuration file %s not found"
+msgstr "構成ファイル %s が見つかりません"
+
+#: yum/plugins.py:341
+#, python-format
+msgid "Unable to find configuration file for plugin %s"
+msgstr "プラグイン %s の構成ファイルの検索に失敗しました"
+
+#: yum/plugins.py:495
+msgid "registration of commands not supported"
+msgstr "コマンドの登録をサポートしていません"
+
+#: yum/rpmtrans.py:78
+msgid "Repackaging"
+msgstr "再パッケージをしています"
+
+#: rpmUtils/oldUtils.py:26
+#, python-format
+msgid "Header cannot be opened or does not match %s, %s."
+msgstr "%s (%s) が一致しないかヘッダーが開けません"
+
+#: rpmUtils/oldUtils.py:46
+#, python-format
+msgid "RPM %s fails md5 check"
+msgstr "RPM %s は MD5 検査に失敗しました"
+
+#: rpmUtils/oldUtils.py:144
+msgid "Could not open RPM database for reading. Perhaps it is already in use?"
+msgstr ""
+"読み込みのために RPM データベースを開くことができません。おそらく既に使用して"
+"いませんか?"
+
+#: rpmUtils/oldUtils.py:174
+msgid "Got an empty Header, something has gone wrong"
+msgstr "空のヘッダーを取得しました。何かがうまくいっていません"
+
+#: rpmUtils/oldUtils.py:244 rpmUtils/oldUtils.py:251 rpmUtils/oldUtils.py:254
+#: rpmUtils/oldUtils.py:257
+#, python-format
+msgid "Damaged Header %s"
+msgstr "ヘッダー %s は損傷があります"
+
+#: rpmUtils/oldUtils.py:272
+#, python-format
+msgid "Error opening rpm %s - error %s"
+msgstr "RPM %s へのアクセスでエラー - %s エラー"
+
+#~ msgid "Parsing package install arguments"
+#~ msgstr "パッケージインストールの引数を解析しています"
+
+#~ msgid "Could not find update match for %s"
+#~ msgstr "%s に一致する更新を見つけることができません"
