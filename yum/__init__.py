@@ -1021,11 +1021,21 @@ class YumBase(depsolve.Depsolve):
                                            ' but is not!' % txmbr.po))
                     continue
                 po = self.rpmdb.searchPkgTuple(txmbr.pkgtup)[0]
-                po.yumdb_info.from_repo = txmbr.po.repoid
+                rpo = txmbr.po
+                po.yumdb_info.from_repo = rpo.repoid
                 po.yumdb_info.reason = txmbr.reason
                 po.yumdb_info.releasever = self.yumvar['releasever']
                 if hasattr(self, 'cmds') and self.cmds:
                     po.yumdb_info.command_line = ' '.join(self.cmds)
+                csum = rpo.returnIdSum()
+                if csum is not None:
+                    po.yumdb_info.checksum_type = str(csum[0])
+                    po.yumdb_info.checksum_data = str(csum[1])
+                md = rpo.repo.repoXML
+                if md and md.revision is not None:
+                    po.yumdb_info.from_repo_revision  = str(md.revision)
+                if md:
+                    po.yumdb_info.from_repo_timestamp = str(md.timestamp)
             
             elif txmbr.output_state in TS_REMOVE_STATES:
                 if self.rpmdb.contains(po=txmbr.po):
