@@ -738,6 +738,9 @@ class RPMDBAdditionalDataPackage(object):
     def _read(self, attr):
         attr = _sanitize(attr)
 
+        if attr.endswith('.tmp'):
+            raise AttributeError, "%s has no attribute %s" % (self, attr)
+
         if attr in self._read_cached_data:
             return self._read_cached_data[attr]
 
@@ -754,7 +757,7 @@ class RPMDBAdditionalDataPackage(object):
     def _delete(self, attr):
         """remove the attribute file"""
 
-        self.get(attr)
+        attr = _sanitize(attr)
         fn = self._mydir + '/' + attr
         if attr in self._read_cached_data:
             del self._read_cached_data[attr]
@@ -779,18 +782,20 @@ class RPMDBAdditionalDataPackage(object):
         else:
             object.__delattr__(self, attr)
 
-    def __iter__(self):
+    def __iter__(self, show_hidden=False):
         for item in self._read_cached_data:
             yield item
         for item in glob.glob(self._mydir + '/*'):
             item = item[(len(self._mydir) + 1):]
             if item in self._read_cached_data:
                 continue
+            if not show_hidden and item.endswith('.tmp'):
+                continue
             yield item
 
     def clean(self):
         # purge out everything
-        for item in self:
+        for item in self.__iter__(show_hidden=True):
             self._delete(item)
         try:
             os.rmdir(self._mydir)
