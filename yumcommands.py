@@ -1058,18 +1058,50 @@ class VersionCommand(YumCommand):
         if extcmds:
             vcmd = extcmds[0]
 
+        def _append_repos(cols, repo_data):
+            for repoid in sorted(repo_data):
+                cur = repo_data[repoid]
+                if None in data[1][repoid]:
+                    cols.append(("    %s" % repoid, str(cur[None])))
+                for rev in sorted(cur):
+                    if rev is None:
+                        continue
+                    cols.append(("    %s/%s" % (repoid, rev), str(cur[rev])))
+
+        rel = base.yumvar['releasever']
+        ba  = base.yumvar['basearch']
+        cols = []
         if vcmd in ('installed', 'all'):
             try:
                 data = base.rpmdb.simpleVersion()
-                print "Installed:", data[0]
+                cols.append(("%s %s/%s" % (_("Installed:"), rel, ba),
+                             str(data[0])))
+                if base.verbose_logger.isEnabledFor(logginglevels.DEBUG_3):
+                    _append_repos(cols, data[1])
             except yum.Errors.YumBaseError, e:
                 return 1, [str(e)]
         if vcmd in ('available', 'all'):
             try:
                 data = base.pkgSack.simpleVersion()
-                print "Available:", data[0]
+                cols.append(("%s %s/%s" % (_("Available:"), rel, ba),
+                             str(data[0])))
+                if base.verbose_logger.isEnabledFor(logginglevels.DEBUG_3):
+                    _append_repos(cols, data[1])
             except yum.Errors.YumBaseError, e:
                 return 1, [str(e)]
+
+        data = {'rid' : {}, 'ver' : {}}
+        for (rid, ver) in cols:
+            for (d, v) in (('rid', len(rid)), ('ver', len(ver))):
+                data[d].setdefault(v, 0)
+                data[d][v] += 1
+        data = [data['rid'], data['ver']]
+        columns = base.calcColumns(data)
+        columns = (-columns[0], columns[1])
+
+        for line in cols:
+            print base.fmtColumns(zip(line, columns))
+
         return 0, []
 
     def needTs(self, base, basecmd, extcmds):

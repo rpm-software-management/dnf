@@ -25,6 +25,22 @@ import fnmatch
 import misc
 from packages import parsePackages
 
+class PackageSackVersion:
+    def __init__(self):
+        self._num = 0
+        self._chksum = misc.Checksums(['sha1'])
+
+    def __str__(self):
+        return "%u:%s" % (self._num, self._chksum.hexdigest())
+
+    def update(self, pkg, csum):
+        self._num += 1
+        self._chksum.update(str(pkg))
+        if csum is not None:
+            self._chksum.update(csum[0])
+            self._chksum.update(csum[1])
+
+
 class PackageSackBase(object):
     """Base class that provides the interface for PackageSacks."""
     def __init__(self):
@@ -150,15 +166,22 @@ class PackageSackBase(object):
 
     def simpleVersion(self):
         """ Return a simple version for all available packages. """
-        chksum = misc.Checksums(['sha1'])
-        num = 0
+        main = PackageSackVersion()
+        arepos = {}
         for pkg in sorted(self.returnPackages()):
-            num += 1
-            chksum.update(str(pkg))
-            for x in pkg.returnIdSum():
-                chksum.update(x)
+            csum = pkg.returnIdSum()
+            main.update(pkg, csum)
 
-        return ["%u:%s" % (num, chksum.hexdigest())]
+            arevs = arepos.setdefault(pkg.repoid, {})
+            rpsv = arevs.setdefault(None, PackageSackVersion())
+            rpsv.update(pkg, csum)
+
+            if pkg.repo.repoXML.revision is not None:
+                rev = pkg.repo.repoXML.revision
+                rpsv = arevs.setdefault(rev, PackageSackVersion())
+                rpsv.update(pkg, csum)
+
+        return [main, arepos]
 
     def returnNewestByNameArch(self, naTup=None,
                                patterns=None, ignore_case=False):

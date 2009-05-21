@@ -25,7 +25,7 @@ from rpmUtils.transaction import initReadOnlyTransaction
 import misc
 import Errors
 from packages import YumInstalledPackage, parsePackages
-from packageSack import PackageSackBase
+from packageSack import PackageSackBase, PackageSackVersion
 
 # For returnPackages(patterns=)
 import fnmatch
@@ -337,17 +337,29 @@ class RPMDBPackageSack(PackageSackBase):
 
     def simpleVersion(self):
         """ Return a simple version for all installed packages. """
-        chksum = misc.Checksums(['sha1'])
-        num = 0
+        main = PackageSackVersion()
+        irepos = {}
         for pkg in sorted(self.returnPackages()):
-            num += 1
-            chksum.update(str(pkg))
-            if 'checksum_type' in pkg.yumdb_info:
-                chksum.update(pkg.yumdb_info.checksum_type)
-            if 'checksum_data' in pkg.yumdb_info:
-                chksum.update(pkg.yumdb_info.checksum_data)
+            ydbi = pkg.yumdb_info
+            csum = None
+            if 'checksum_type' in ydbi and 'checksum_data' in ydbi:
+                csum = (ydbi.checksum_type, ydbi.checksum_data)
+            main.update(pkg, csum)
 
-        return ["%u:%s" % (num, chksum.hexdigest())]
+            repoid = 'installed'
+            rev = None
+            if 'from_repo' in pkg.yumdb_info:
+                repoid = '@' + pkg.yumdb_info.from_repo
+                if 'from_repo_revision' in pkg.yumdb_info:
+                    rev = pkg.yumdb_info.from_repo_revision
+            irevs = irepos.setdefault(repoid, {})
+            rpsv = irevs.setdefault(None, PackageSackVersion())
+            rpsv.update(pkg, csum)
+            if rev is not None:
+                rpsv = irevs.setdefault(rev, PackageSackVersion())
+                rpsv.update(pkg, csum)
+
+        return [main, irepos]
 
     @staticmethod
     def _find_search_fields(fields, searchstrings, hdr):
