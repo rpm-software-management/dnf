@@ -1042,3 +1042,38 @@ class DowngradeCommand(YumCommand):
     def needTs(self, base, basecmd, extcmds):
         return False
         
+
+class VersionCommand(YumCommand):
+    def getNames(self):
+        return ['version']
+
+    def getUsage(self):
+        return "[all|installed|available]"
+
+    def getSummary(self):
+        return _("Display a version for the machine and/or available repos.")
+
+    def doCommand(self, base, basecmd, extcmds):
+        vcmd = 'installed'
+        if extcmds:
+            vcmd = extcmds[0]
+
+        if vcmd in ('installed', 'all'):
+            try:
+                data = base.rpmdb.simpleVersion()
+                print "Installed:", data[0]
+            except yum.Errors.YumBaseError, e:
+                return 1, [str(e)]
+        if vcmd in ('available', 'all'):
+            try:
+                data = base.pkgSack.simpleVersion()
+                print "Available:", data[0]
+            except yum.Errors.YumBaseError, e:
+                return 1, [str(e)]
+        return 0, []
+
+    def needTs(self, base, basecmd, extcmds):
+        vcmd = 'installed'
+        if extcmds:
+            vcmd = extcmds[0]
+        return vcmd in ('available', 'all')

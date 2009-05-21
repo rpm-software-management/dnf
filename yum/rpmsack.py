@@ -335,6 +335,20 @@ class RPMDBPackageSack(PackageSackBase):
             pkgobjlist = pkgobjlist[0] + pkgobjlist[1]
         return pkgobjlist
 
+    def simpleVersion(self):
+        """ Return a simple version for all installed packages. """
+        chksum = misc.Checksums(['sha1'])
+        num = 0
+        for pkg in sorted(self.returnPackages()):
+            num += 1
+            chksum.update(str(pkg))
+            if 'checksum_type' in pkg.yumdb_info:
+                chksum.update(pkg.yumdb_info.checksum_type)
+            if 'checksum_data' in pkg.yumdb_info:
+                chksum.update(pkg.yumdb_info.checksum_data)
+
+        return ["%u:%s" % (num, chksum.hexdigest())]
+
     @staticmethod
     def _find_search_fields(fields, searchstrings, hdr):
         count = 0

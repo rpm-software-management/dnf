@@ -148,6 +148,18 @@ class PackageSackBase(object):
         """return list of all packages"""
         raise NotImplementedError()
 
+    def simpleVersion(self):
+        """ Return a simple version for all available packages. """
+        chksum = misc.Checksums(['sha1'])
+        num = 0
+        for pkg in sorted(self.returnPackages()):
+            num += 1
+            chksum.update(str(pkg))
+            for x in pkg.returnIdSum():
+                chksum.update(x)
+
+        return ["%u:%s" % (num, chksum.hexdigest())]
+
     def returnNewestByNameArch(self, naTup=None,
                                patterns=None, ignore_case=False):
         """return list of newest packages based on name, arch matching
