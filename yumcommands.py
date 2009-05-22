@@ -856,6 +856,10 @@ class RepoListCommand(YumCommand):
                         out += [base.fmtKeyValFill(_("Repo-baseurl: "),
                                                    ", ".join(baseurls))]
 
+                    if enabled:
+                        #  This needs to be here due to the mirrorlists are
+                        # metalinks hack.
+                        repo.urls
                     if repo.metalink:
                         out += [base.fmtKeyValFill(_("Repo-metalink: "),
                                                    repo.metalink)]
