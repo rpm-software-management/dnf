@@ -3842,3 +3842,20 @@ class YumBase(depsolve.Depsolve):
         self.repos.enableRepo(newrepo.id)
         return newrepo
 
+    def setCacheDir(self, force=False, tmpdir='/var/tmp', reuse=True,
+                    suffix='/$basearch/$releasever'):
+        ''' Set a new cache dir, using misc.getCacheDir() and var. replace
+            on suffix. '''
+
+        if not force and os.geteuid() == 0:
+            return True # We are root, not forced, so happy with the global dir.
+
+        cachedir = misc.getCacheDir(tmpdir, reuse)
+        if cachedir is None:
+            return False # Tried, but failed, to get a "user" cachedir
+
+        self.repos.setCacheDir(cachedir + varReplace(suffix, self.yumvar))
+        self.conf.cache = 0 # yum set cache=1, if uid != 0
+
+        return True # We got a new cache dir
+
