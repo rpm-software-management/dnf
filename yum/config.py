@@ -24,7 +24,7 @@ import warnings
 import rpm
 import copy
 import urlparse
-from parser import ConfigPreProcessor
+from parser import ConfigPreProcessor, varReplace
 from iniparse import INIConfig
 from iniparse.compat import NoSectionError, NoOptionError, ConfigParser
 from iniparse.compat import ParsingError
@@ -803,6 +803,7 @@ def readMainConfig(startupconf):
         ir_path = yumconf.installroot + path
         ir_path = ir_path.replace('//', '/') # os.path.normpath won't fix this and
                                              # it annoys me
+        ir_path = varReplace(ir_path, yumvars)
         setattr(yumconf, option, ir_path)
     
     # Add in some extra attributes which aren't actually configuration values 
