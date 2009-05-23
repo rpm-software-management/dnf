@@ -1153,13 +1153,8 @@ class YumOptionParser(OptionParser):
             # user writable cachedir. If that fails fall back to cache-only.
             if opts.cacheonly:
                 self.base.conf.cache = 1
-            elif self.base.conf.uid != 0:
-                cachedir = yum.misc.getCacheDir()
-                if cachedir is None:
-                    self.base.conf.cache = 1
-                else:
-                    self.base.conf.cachedir = cachedir
-                    self.base.repos.setCacheDir(cachedir)
+            elif not self.base.setCacheDir():
+                self.base.conf.cache = 1
 
             if opts.obsoletes:
                 self.base.conf.obsoletes = 1

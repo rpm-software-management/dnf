@@ -3855,7 +3855,6 @@ class YumBase(depsolve.Depsolve):
             return False # Tried, but failed, to get a "user" cachedir
 
         self.repos.setCacheDir(cachedir + varReplace(suffix, self.yumvar))
-        self.conf.cache = 0 # yum set cache=1, if uid != 0
 
         return True # We got a new cache dir
 
