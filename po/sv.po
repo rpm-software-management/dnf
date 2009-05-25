@@ -3,14 +3,14 @@
 # This file is distributed under the same license as the yum package.
 # Göran Uddeborg <goeran@uddeborg.se>, 2009.
 #
-# $Id: yum.po,v 1.7 2009-05-21 20:16:26+02 göran Exp $
+# $Id: yum.po,v 1.8 2009-05-23 18:52:34+02 göran Exp $
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: yum\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2009-05-21 14:38+0000\n"
-"PO-Revision-Date: 2009-05-21 20:15+0200\n"
+"PO-Revision-Date: 2009-05-23 18:52+0200\n"
 "Last-Translator: Göran Uddeborg <goeran@uddeborg.se>\n"
 "Language-Team: Swedish <tp-sv@listor.tp-sv.se>\n"
 "MIME-Version: 1.0\n"
@@ -763,7 +763,7 @@ msgid ""
 "Remove   %5.5s Package(s)         \n"
 msgstr ""
 "\n"
-"Transaktionssamanfattning\n"
+"Transaktionssammanfattning\n"
 "%s\n"
 "Installerar  %5.5s Paket         \n"
 "Uppdaterar   %5.5s Paket         \n"
@@ -800,8 +800,7 @@ msgstr "två"
 
 # Alla utom fjärde %s ger styrtecken för att styra fetstil.
 #
-# Det sista är den hårdkodade strängen "two", felrapporterad:
-# http://yum.baseurl.org/ticket/34
+# Det sista är den översättningen av strängen "two".
 #: ../output.py:1106
 #, python-format
 msgid ""
