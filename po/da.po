@@ -1,5 +1,5 @@
 # Danish translation of yum
-# Copyright (C) 2008 THE yum'S COPYRIGHT HOLDER
+# Copyright (C) 2008 yum
 # This file is distributed under the same license as the yum package.
 # tim <timlau@fedoraproject.org>, 2008.
 # Kris Thomsen <lakristho@gmail.com>, 2009.
@@ -9,15 +9,15 @@ msgid ""
 msgstr ""
 "Project-Id-Version: yum 3.2.x\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-04-15 14:37+0000\n"
-"PO-Revision-Date: 2009-04-15 16:39+0200\n"
+"POT-Creation-Date: 2009-05-23 20:05+0000\n"
+"PO-Revision-Date: 2009-05-24 13:08+0200\n"
 "Last-Translator: Kris Thomsen <lakristho@gmail.com>\n"
 "Language-Team: Danish <dansk@dansk-gruppen.dk>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: ../callback.py:48 ../output.py:936 ../yum/rpmtrans.py:71
+#: ../callback.py:48 ../output.py:939 ../yum/rpmtrans.py:71
 msgid "Updating"
 msgstr "Opdaterer"
 
@@ -25,7 +25,7 @@ msgstr "Opdaterer"
 msgid "Erasing"
 msgstr "Sletter"
 
-#: ../callback.py:50 ../callback.py:51 ../callback.py:53 ../output.py:935
+#: ../callback.py:50 ../callback.py:51 ../callback.py:53 ../output.py:938
 #: ../yum/rpmtrans.py:73 ../yum/rpmtrans.py:74 ../yum/rpmtrans.py:76
 msgid "Installing"
 msgstr "Installerer"
@@ -34,7 +34,7 @@ msgstr "Installerer"
 msgid "Obsoleted"
 msgstr "Overflødiggjort"
 
-#: ../callback.py:54 ../output.py:1043
+#: ../callback.py:54 ../output.py:1046
 msgid "Updated"
 msgstr "Opdateret"
 
@@ -42,7 +42,7 @@ msgstr "Opdateret"
 msgid "Erased"
 msgstr "Slettet"
 
-#: ../callback.py:56 ../callback.py:57 ../callback.py:59 ../output.py:1041
+#: ../callback.py:56 ../callback.py:57 ../callback.py:59 ../output.py:1044
 msgid "Installed"
 msgstr "Installeret"
 
@@ -64,7 +64,7 @@ msgstr "Error: ugyldig uddatastatus: %s for %s"
 msgid "Erased: %s"
 msgstr "Slettet: %s"
 
-#: ../callback.py:217 ../output.py:937
+#: ../callback.py:217 ../output.py:940
 msgid "Removing"
 msgstr "Sletter"
 
@@ -72,60 +72,60 @@ msgstr "Sletter"
 msgid "Cleanup"
 msgstr "Oprydning af"
 
-#: ../cli.py:104
+#: ../cli.py:107
 #, python-format
 msgid "Command \"%s\" already defined"
 msgstr "Kommandoen \"%s\" er allerede defineret"
 
-#: ../cli.py:116
+#: ../cli.py:119
 msgid "Setting up repositories"
 msgstr "Indstiller pakkearkiver"
 
-#: ../cli.py:127
+#: ../cli.py:130
 msgid "Reading repository metadata in from local files"
 msgstr "Læser pakkearkiv for metadata fra lokale filer"
 
-#: ../cli.py:190 ../utils.py:87
+#: ../cli.py:193 ../utils.py:87
 #, python-format
 msgid "Config Error: %s"
 msgstr "Konfigurationsfejl: %s"
 
-#: ../cli.py:193 ../cli.py:1229 ../utils.py:90
+#: ../cli.py:196 ../cli.py:1233 ../utils.py:90
 #, python-format
 msgid "Options Error: %s"
 msgstr "Fejl i indstilling: %s"
 
-#: ../cli.py:221
+#: ../cli.py:225
 #, python-format
 msgid "  Installed: %s-%s at %s"
 msgstr "  Installeret: %s-%s på %s"
 
-#: ../cli.py:223
+#: ../cli.py:227
 #, python-format
 msgid "  Built    : %s at %s"
 msgstr "  Bygget    : %s på %s"
 
-#: ../cli.py:225
+#: ../cli.py:229
 #, python-format
 msgid "  Committed: %s at %s"
 msgstr "  Indsendt: %s på %s"
 
-#: ../cli.py:264
+#: ../cli.py:268
 msgid "You need to give some command"
 msgstr "Du skal angive en kommando"
 
-#: ../cli.py:307
+#: ../cli.py:311
 msgid "Disk Requirements:\n"
 msgstr "Behov for diskplads:\n"
 
-#: ../cli.py:309
+#: ../cli.py:313
 #, python-format
 msgid "  At least %dMB needed on the %s filesystem.\n"
 msgstr "  Der er brug for mindst %dmb på %s-filsystemet.\n"
 
 #. TODO: simplify the dependency errors?
 #. Fixup the summary
-#: ../cli.py:314
+#: ../cli.py:318
 msgid ""
 "Error Summary\n"
 "-------------\n"
@@ -133,56 +133,56 @@ msgstr ""
 "Fejlopsummering\n"
 "---------------\n"
 
-#: ../cli.py:357
+#: ../cli.py:361
 msgid "Trying to run the transaction but nothing to do. Exiting."
 msgstr "Forsøger at udføre overførslen, men der intet at udføre. Afslutter."
 
-#: ../cli.py:393
+#: ../cli.py:397
 msgid "Exiting on user Command"
 msgstr "Afslutter efter brugerens ønske"
 
-#: ../cli.py:397
+#: ../cli.py:401
 msgid "Downloading Packages:"
 msgstr "Henter pakker:"
 
-#: ../cli.py:402
+#: ../cli.py:406
 msgid "Error Downloading Packages:\n"
 msgstr "Fejl ved hentning af pakker:\n"
 
-#: ../cli.py:416 ../yum/__init__.py:3613
+#: ../cli.py:420 ../yum/__init__.py:3728
 msgid "Running rpm_check_debug"
 msgstr "Kører rpm_check_debug"
 
-#: ../cli.py:419 ../yum/__init__.py:3616
+#: ../cli.py:423 ../yum/__init__.py:3731
 msgid "ERROR with rpm_check_debug vs depsolve:"
 msgstr "FEJL i rpm_check_dedug vs afhængighedsløsning:"
 
-#: ../cli.py:423
+#: ../cli.py:427
 #, python-format
 msgid "Please report this error in %s"
 msgstr "Rapportér venligst denne fejl i %s"
 
-#: ../cli.py:429
+#: ../cli.py:433
 msgid "Running Transaction Test"
 msgstr "Kører overførselstest"
 
-#: ../cli.py:445
+#: ../cli.py:449
 msgid "Finished Transaction Test"
 msgstr "Afsluttede overførselstest"
 
-#: ../cli.py:447
+#: ../cli.py:451
 msgid "Transaction Check Error:\n"
 msgstr "Fejl i overførselskontrol:\n"
 
-#: ../cli.py:454
+#: ../cli.py:458
 msgid "Transaction Test Succeeded"
 msgstr "Overførselstest afsluttet uden fejl"
 
-#: ../cli.py:475
+#: ../cli.py:480
 msgid "Running Transaction"
 msgstr "Kører overførsel"
 
-#: ../cli.py:505
+#: ../cli.py:510
 msgid ""
 "Refusing to automatically import keys when running unattended.\n"
 "Use \"-y\" to override."
@@ -190,69 +190,69 @@ msgstr ""
 "Afviser automatisk importering af nøgler ved baggrundskørsel.\n"
 "Brug \"-y\" til at overskrive."
 
-#: ../cli.py:524 ../cli.py:558
+#: ../cli.py:529 ../cli.py:563
 msgid "  * Maybe you meant: "
 msgstr "  * Du mente måske: "
 
-#: ../cli.py:541 ../cli.py:549
+#: ../cli.py:546 ../cli.py:554
 #, python-format
 msgid "Package(s) %s%s%s available, but not installed."
 msgstr "Pakke(r) %s%s%S tilgængelig(e), men ikke installeret."
 
-#: ../cli.py:555 ../cli.py:586 ../cli.py:664
+#: ../cli.py:560 ../cli.py:591 ../cli.py:669 ../cli.py:693
 #, python-format
 msgid "No package %s%s%s available."
 msgstr "Pakken %s%s%s er ikke tilgængelig."
 
-#: ../cli.py:591 ../cli.py:691
+#: ../cli.py:596 ../cli.py:720
 msgid "Package(s) to install"
 msgstr "Pakke(r) til installation"
 
-#: ../cli.py:592 ../cli.py:670 ../cli.py:692 ../yumcommands.py:157
-#: ../yumcommands.py:1018
+#: ../cli.py:597 ../cli.py:675 ../cli.py:699 ../cli.py:721
+#: ../yumcommands.py:157
 msgid "Nothing to do"
 msgstr "Intet at udføre"
 
-#: ../cli.py:625
+#: ../cli.py:630
 #, python-format
 msgid "%d packages marked for Update"
 msgstr "%d pakker markeret til opdatering"
 
-#: ../cli.py:628
+#: ../cli.py:633
 msgid "No Packages marked for Update"
 msgstr "Ingen pakker markeret til opdatering"
 
-#: ../cli.py:642
+#: ../cli.py:647
 #, python-format
 msgid "%d packages marked for removal"
 msgstr "%d pakker markeret til sletning"
 
-#: ../cli.py:645
+#: ../cli.py:650
 msgid "No Packages marked for removal"
 msgstr "Ingen pakker markeret til sletning"
 
-#: ../cli.py:669
+#: ../cli.py:674
 msgid "Package(s) to downgrade"
 msgstr "Pakke(r) til nedgradering"
 
-#: ../cli.py:682
+#: ../cli.py:698
+msgid "Package(s) to reinstall"
+msgstr "Pakke(r) til geninstallation"
+
+#: ../cli.py:711
 msgid "No Packages Provided"
 msgstr "Ingen pakker angivet"
 
-#: ../cli.py:737
-msgid "Matching packages for package list to user args"
-msgstr "Matcher pakker til pakkeliste baseret på brugerens argumenter"
-
-#: ../cli.py:786
+#: ../cli.py:795
 #, python-format
 msgid "Warning: No matches found for: %s"
 msgstr "Advarsel: Ingen match blev fundet for: %s"
 
-#: ../cli.py:789
+#: ../cli.py:798
 msgid "No Matches found"
 msgstr "Ingen match fundet"
 
-#: ../cli.py:828
+#: ../cli.py:837
 #, python-format
 msgid ""
 "Warning: 3.0.x versions of yum would erroneously match against filenames.\n"
@@ -261,108 +261,108 @@ msgstr ""
 "Advarsel: 3.0.x-versioner af yum vil matche fejlagtigt mod filnavne.\n"
 " Du kan bruge \"%s*/%s%s\" og/eller \"%s*bin/%s%s\" for at få den opførsel"
 
-#: ../cli.py:844
+#: ../cli.py:853
 #, python-format
 msgid "No Package Found for %s"
 msgstr "Ingen pakke fundet for %s"
 
-#: ../cli.py:856
+#: ../cli.py:865
 msgid "Cleaning up Everything"
 msgstr "Oprydning af alt"
 
-#: ../cli.py:870
+#: ../cli.py:879
 msgid "Cleaning up Headers"
 msgstr "Oprydning af headerfiler"
 
-#: ../cli.py:873
+#: ../cli.py:882
 msgid "Cleaning up Packages"
 msgstr "Oprydning af pakker"
 
-#: ../cli.py:876
+#: ../cli.py:885
 msgid "Cleaning up xml metadata"
 msgstr "Oprydning af xml-metadata"
 
-#: ../cli.py:879
+#: ../cli.py:888
 msgid "Cleaning up database cache"
 msgstr "Oprydning af mellemlager til database"
 
-#: ../cli.py:882
+#: ../cli.py:891
 msgid "Cleaning up expire-cache metadata"
 msgstr "Oprydning af udløbet mellemlager til metadata"
 
-#: ../cli.py:885
+#: ../cli.py:894
 msgid "Cleaning up plugins"
 msgstr "Oprydning af udvidelsesmoduler"
 
-#: ../cli.py:910
+#: ../cli.py:919
 msgid "Installed Groups:"
 msgstr "Installerede grupper:"
 
-#: ../cli.py:922
+#: ../cli.py:931
 msgid "Available Groups:"
 msgstr "Tilgængelige grupper:"
 
-#: ../cli.py:932
+#: ../cli.py:941
 msgid "Done"
 msgstr "Afsluttet"
 
-#: ../cli.py:943 ../cli.py:961 ../cli.py:967 ../yum/__init__.py:2463
+#: ../cli.py:952 ../cli.py:970 ../cli.py:976 ../yum/__init__.py:2521
 #, python-format
 msgid "Warning: Group %s does not exist."
 msgstr "Advarsel: Gruppen %s findes ikke."
 
-#: ../cli.py:971
+#: ../cli.py:980
 msgid "No packages in any requested group available to install or update"
 msgstr ""
 "Ingen pakke i nogen de efterspurgte grupper, er tilgængelige til "
 "installation eller opdatering"
 
-#: ../cli.py:973
+#: ../cli.py:982
 #, python-format
 msgid "%d Package(s) to Install"
 msgstr "%d pakke(r) til installation"
 
-#: ../cli.py:983 ../yum/__init__.py:2475
+#: ../cli.py:992 ../yum/__init__.py:2533
 #, python-format
 msgid "No group named %s exists"
 msgstr "Gruppen %s findes ikke"
 
-#: ../cli.py:989
+#: ../cli.py:998
 msgid "No packages to remove from groups"
 msgstr "Ingen pakker at slette fra grupper"
 
-#: ../cli.py:991
+#: ../cli.py:1000
 #, python-format
 msgid "%d Package(s) to remove"
 msgstr "%d pakke(r) til sletning"
 
-#: ../cli.py:1033
+#: ../cli.py:1042
 #, python-format
 msgid "Package %s is already installed, skipping"
 msgstr "Pakken %s er allerede installeret, springer over"
 
-#: ../cli.py:1044
+#: ../cli.py:1053
 #, python-format
 msgid "Discarding non-comparable pkg %s.%s"
 msgstr "Ser bort fra ikke-kompatibel pakke %s.%s"
 
 #. we've not got any installed that match n or n+a
-#: ../cli.py:1070
+#: ../cli.py:1079
 #, python-format
 msgid "No other %s installed, adding to list for potential install"
 msgstr ""
 "Ingen andre %s er installeret, tilføjer til liste til mulig installation"
 
-#: ../cli.py:1090
+#: ../cli.py:1099
 msgid "Plugin Options"
 msgstr "Indstillinger til udvidelsesmodul"
 
-#: ../cli.py:1098
+#: ../cli.py:1107
 #, python-format
 msgid "Command line error: %s"
 msgstr "Kommandoliniefejl: %s"
 
-#: ../cli.py:1111
+#: ../cli.py:1120
 #, python-format
 msgid ""
 "\n"
@@ -373,257 +373,257 @@ msgstr ""
 "\n"
 "%s: %s indstilling kræver et argument"
 
-#: ../cli.py:1169
+#: ../cli.py:1173
 msgid "--color takes one of: auto, always, never"
 msgstr "--color tager en af: auto, altid, aldrig"
 
-#: ../cli.py:1276
+#: ../cli.py:1280
 msgid "show this help message and exit"
 msgstr "vis denne hjælpemeddelse og afslut"
 
-#: ../cli.py:1280
+#: ../cli.py:1284
 msgid "be tolerant of errors"
 msgstr "vær fejltolerant"
 
-#: ../cli.py:1282
+#: ../cli.py:1286
 msgid "run entirely from cache, don't update cache"
 msgstr "kør kun fra mellemlager, ingen opdatering af mellemlageret"
 
-#: ../cli.py:1284
+#: ../cli.py:1288
 msgid "config file location"
 msgstr "placering af konfigurationsfil"
 
-#: ../cli.py:1286
+#: ../cli.py:1290
 msgid "maximum command wait time"
 msgstr "maksimal ventetid på kommando"
 
-#: ../cli.py:1288
+#: ../cli.py:1292
 msgid "debugging output level"
 msgstr "debug-visningsniveau"
 
-#: ../cli.py:1292
+#: ../cli.py:1296
 msgid "show duplicates, in repos, in list/search commands"
 msgstr "vis gengangere, i pakkearkiver, i list/search-kommandoer"
 
-#: ../cli.py:1294
+#: ../cli.py:1298
 msgid "error output level"
 msgstr "fejlvisningsniveau"
 
-#: ../cli.py:1297
+#: ../cli.py:1301
 msgid "quiet operation"
 msgstr "stille operation"
 
-#: ../cli.py:1299
+#: ../cli.py:1303
 msgid "verbose operation"
 msgstr "uddybende operation"
 
-#: ../cli.py:1301
+#: ../cli.py:1305
 msgid "answer yes for all questions"
 msgstr "svar ja til alle spørgsmål"
 
-#: ../cli.py:1303
+#: ../cli.py:1307
 msgid "show Yum version and exit"
 msgstr "vis Yum-version og afslut"
 
-#: ../cli.py:1304
+#: ../cli.py:1308
 msgid "set install root"
 msgstr "sæt installationsroden"
 
-#: ../cli.py:1308
+#: ../cli.py:1312
 msgid "enable one or more repositories (wildcards allowed)"
 msgstr "aktivér en eller flere pakkearkiver (wildcards er tilladt)"
 
-#: ../cli.py:1312
+#: ../cli.py:1316
 msgid "disable one or more repositories (wildcards allowed)"
 msgstr "deaktivér en eller flere pakkearkiver (wildcards er tilladt)"
 
-#: ../cli.py:1315
+#: ../cli.py:1319
 msgid "exclude package(s) by name or glob"
 msgstr "ekskludér pakke(r) med navn eller klump"
 
-#: ../cli.py:1317
+#: ../cli.py:1321
 msgid "disable exclude from main, for a repo or for everything"
 msgstr "deaktivér ekskludering fra main, for et pakkearkiv eller for alt"
 
-#: ../cli.py:1320
+#: ../cli.py:1324
 msgid "enable obsoletes processing during updates"
 msgstr "aktivér overflødiggørelse under behandling af opdateringer"
 
-#: ../cli.py:1322
+#: ../cli.py:1326
 msgid "disable Yum plugins"
 msgstr "deaktivér Yum-udvidelsesmoduler"
 
-#: ../cli.py:1324
+#: ../cli.py:1328
 msgid "disable gpg signature checking"
 msgstr "deaktivér kontrol af gpg-signaturer"
 
-#: ../cli.py:1326
+#: ../cli.py:1330
 msgid "disable plugins by name"
 msgstr "deaktivér udvidelsesmoduler ved navn"
 
-#: ../cli.py:1329
+#: ../cli.py:1333
 msgid "enable plugins by name"
 msgstr "aktivér udvidelsesmoduler ved navn"
 
-#: ../cli.py:1332
+#: ../cli.py:1336
 msgid "skip packages with depsolving problems"
 msgstr "spring pakker med afhængighedsproblemer over"
 
-#: ../cli.py:1334
+#: ../cli.py:1338
 msgid "control whether color is used"
 msgstr "kontrollér om farve er brugt"
 
-#: ../output.py:301
+#: ../output.py:303
 msgid "Jan"
 msgstr "Jan"
 
-#: ../output.py:301
+#: ../output.py:303
 msgid "Feb"
 msgstr "Feb"
 
-#: ../output.py:301
+#: ../output.py:303
 msgid "Mar"
 msgstr "Mar"
 
-#: ../output.py:301
+#: ../output.py:303
 msgid "Apr"
 msgstr "Apr"
 
-#: ../output.py:301
+#: ../output.py:303
 msgid "May"
 msgstr "Maj"
 
-#: ../output.py:301
+#: ../output.py:303
 msgid "Jun"
 msgstr "Jun"
 
-#: ../output.py:302
+#: ../output.py:304
 msgid "Jul"
 msgstr "Jul"
 
-#: ../output.py:302
+#: ../output.py:304
 msgid "Aug"
 msgstr "Aug"
 
-#: ../output.py:302
+#: ../output.py:304
 msgid "Sep"
 msgstr "Sep"
 
-#: ../output.py:302
+#: ../output.py:304
 msgid "Oct"
 msgstr "Okt"
 
-#: ../output.py:302
+#: ../output.py:304
 msgid "Nov"
 msgstr "Nov"
 
-#: ../output.py:302
+#: ../output.py:304
 msgid "Dec"
 msgstr "Dec"
 
-#: ../output.py:312
+#: ../output.py:314
 msgid "Trying other mirror."
 msgstr "Prøver et andet filspejl."
 
-#: ../output.py:534
+#: ../output.py:536
 #, python-format
 msgid "Name       : %s%s%s"
 msgstr "Navn       : %s%s%s"
 
-#: ../output.py:535
+#: ../output.py:537
 #, python-format
 msgid "Arch       : %s"
 msgstr "Arkitektur       : %s"
 
-#: ../output.py:537
+#: ../output.py:539
 #, python-format
 msgid "Epoch      : %s"
 msgstr "Epoch      : %s"
 
-#: ../output.py:538
+#: ../output.py:540
 #, python-format
 msgid "Version    : %s"
 msgstr "Version    : %s"
 
-#: ../output.py:539
+#: ../output.py:541
 #, python-format
 msgid "Release    : %s"
 msgstr "Udgivelse    : %s"
 
-#: ../output.py:540
+#: ../output.py:542
 #, python-format
 msgid "Size       : %s"
 msgstr "Størrelse       : %s"
 
-#: ../output.py:541
+#: ../output.py:543
 #, python-format
 msgid "Repo       : %s"
 msgstr "Kilde      : %s"
 
-#: ../output.py:543
+#: ../output.py:545
 #, python-format
 msgid "From repo  : %s"
 msgstr "Fra kilde    : %s"
 
-#: ../output.py:545
+#: ../output.py:547
 #, python-format
 msgid "Committer  : %s"
 msgstr "Indsender  : %s"
 
-#: ../output.py:546
+#: ../output.py:548
 #, python-format
 msgid "Committime : %s"
 msgstr "Indsendingstid  : %s"
 
-#: ../output.py:547
+#: ../output.py:549
 #, python-format
 msgid "Buildtime  : %s"
 msgstr "Byggetid  : %s"
 
-#: ../output.py:549
+#: ../output.py:551
 #, python-format
 msgid "Installtime: %s"
 msgstr "Installationstid: %s"
 
-#: ../output.py:550
+#: ../output.py:552
 msgid "Summary    : "
 msgstr "Resumé    : "
 
-#: ../output.py:552
+#: ../output.py:554
 #, python-format
 msgid "URL        : %s"
 msgstr "URL        : %s"
 
-#: ../output.py:553
+#: ../output.py:555
 #, python-format
 msgid "License    : %s"
 msgstr "Licens     : %s"
 
-#: ../output.py:554
+#: ../output.py:556
 msgid "Description: "
 msgstr "Beskrivelse: "
 
-#: ../output.py:622
+#: ../output.py:624
 msgid "y"
 msgstr "j"
 
-#: ../output.py:622
+#: ../output.py:624
 msgid "yes"
 msgstr "ja"
 
-#: ../output.py:623
+#: ../output.py:625
 msgid "n"
 msgstr "n"
 
-#: ../output.py:623
+#: ../output.py:625
 msgid "no"
 msgstr "nej"
 
-#: ../output.py:627
+#: ../output.py:629
 msgid "Is this ok [y/N]: "
 msgstr "Er dette o.k. [j/N]: "
 
-#: ../output.py:718
+#: ../output.py:720
 #, python-format
 msgid ""
 "\n"
@@ -632,133 +632,133 @@ msgstr ""
 "\n"
 "Gruppe: %s"
 
-#: ../output.py:722
+#: ../output.py:724
 #, python-format
 msgid " Group-Id: %s"
 msgstr " Gruppeid: %s"
 
-#: ../output.py:727
+#: ../output.py:729
 #, python-format
 msgid " Description: %s"
 msgstr " Beskrivelse: %s"
 
-#: ../output.py:729
+#: ../output.py:731
 msgid " Mandatory Packages:"
 msgstr " Tvungne pakker:"
 
-#: ../output.py:730
+#: ../output.py:732
 msgid " Default Packages:"
 msgstr " Standardpakker:"
 
-#: ../output.py:731
+#: ../output.py:733
 msgid " Optional Packages:"
 msgstr " Valgfrie pakker:"
 
-#: ../output.py:732
+#: ../output.py:734
 msgid " Conditional Packages:"
 msgstr " Afhængige pakker:"
 
-#: ../output.py:752
+#: ../output.py:754
 #, python-format
 msgid "package: %s"
 msgstr "pakke: %s"
 
-#: ../output.py:754
+#: ../output.py:756
 msgid "  No dependencies for this package"
 msgstr "  Ingen afhængigheder for denne pakke"
 
-#: ../output.py:759
+#: ../output.py:761
 #, python-format
 msgid "  dependency: %s"
 msgstr "  afhængighed: %s"
 
-#: ../output.py:761
+#: ../output.py:763
 msgid "   Unsatisfied dependency"
 msgstr "   Ufuldendt afhængighed"
 
-#: ../output.py:833
+#: ../output.py:835
 #, python-format
 msgid "Repo        : %s"
 msgstr "Kilde       : %s"
 
-#: ../output.py:834
+#: ../output.py:836
 msgid "Matched from:"
 msgstr "Matchet af:"
 
-#: ../output.py:842
+#: ../output.py:845
 msgid "Description : "
 msgstr "Beskrivelse : "
 
-#: ../output.py:845
+#: ../output.py:848
 #, python-format
 msgid "URL         : %s"
 msgstr "URL         : %s"
 
-#: ../output.py:848
+#: ../output.py:851
 #, python-format
 msgid "License     : %s"
 msgstr "Licens      : %s"
 
-#: ../output.py:851
+#: ../output.py:854
 #, python-format
 msgid "Filename    : %s"
 msgstr "Filnavn     : %s"
 
-#: ../output.py:855
+#: ../output.py:858
 msgid "Other       : "
 msgstr "Andre       : "
 
-#: ../output.py:888
+#: ../output.py:891
 msgid "There was an error calculating total download size"
 msgstr "Der opstod en fejl i beregning af den totale hentningsstørrelse"
 
-#: ../output.py:893
+#: ../output.py:896
 #, python-format
 msgid "Total size: %s"
 msgstr "Total størrelse: %s"
 
-#: ../output.py:896
+#: ../output.py:899
 #, python-format
 msgid "Total download size: %s"
 msgstr "Total hentningsstørrelse: %s"
 
-#: ../output.py:938
+#: ../output.py:941
 msgid "Installing for dependencies"
 msgstr "Installerer til afhængigheder"
 
-#: ../output.py:939
+#: ../output.py:942
 msgid "Updating for dependencies"
 msgstr "Opdaterer til afhængigheder"
 
-#: ../output.py:940
+#: ../output.py:943
 msgid "Removing for dependencies"
 msgstr "Sletter til afhængigheder"
 
-#: ../output.py:947 ../output.py:1045
+#: ../output.py:950 ../output.py:1048
 msgid "Skipped (dependency problems)"
 msgstr "Sprunget over (afhængighedsproblemer)"
 
-#: ../output.py:968
+#: ../output.py:971
 msgid "Package"
 msgstr "Pakke"
 
-#: ../output.py:968
+#: ../output.py:971
 msgid "Arch"
 msgstr "Arkitektur"
 
-#: ../output.py:969
+#: ../output.py:972
 msgid "Version"
 msgstr "Version"
 
-#: ../output.py:969
+#: ../output.py:972
 msgid "Repository"
 msgstr "Pakkearkiv"
 
-#: ../output.py:970
+#: ../output.py:973
 msgid "Size"
 msgstr "Størrelse"
 
-#: ../output.py:982
+#: ../output.py:985
 #, python-format
 msgid ""
 "     replacing  %s%s%s.%s %s\n"
@@ -767,7 +767,7 @@ msgstr ""
 "     erstatter  %s%s%s.%s %s\n"
 "\n"
 
-#: ../output.py:991
+#: ../output.py:994
 #, python-format
 msgid ""
 "\n"
@@ -784,32 +784,32 @@ msgstr ""
 "Opdaterer    %5.5s pakke(r)         \n"
 "Sletter      %5.5s pakke(r)         \n"
 
-#: ../output.py:1039
+#: ../output.py:1042
 msgid "Removed"
 msgstr "Slettet"
 
-#: ../output.py:1040
+#: ../output.py:1043
 msgid "Dependency Removed"
 msgstr "Afhængighed slettet"
 
-#: ../output.py:1042
+#: ../output.py:1045
 msgid "Dependency Installed"
 msgstr "Afhængighed installeret"
 
-#: ../output.py:1044
+#: ../output.py:1047
 msgid "Dependency Updated"
 msgstr "Afhængighed opdateret"
 
-#: ../output.py:1046
+#: ../output.py:1049
 msgid "Replaced"
 msgstr "Erstattet"
 
-#: ../output.py:1047
+#: ../output.py:1050
 msgid "Failed"
 msgstr "Fejlede"
 
 #. Delta between C-c's so we treat as exit
-#: ../output.py:1113
+#: ../output.py:1116
 msgid "two"
 msgstr "to"
 
@@ -817,7 +817,7 @@ msgstr "to"
 #. Current download cancelled, interrupt (ctrl-c) again within two seconds
 #. to exit.
 #. Where "interupt (ctrl-c) again" and "two" are highlighted.
-#: ../output.py:1124
+#: ../output.py:1127
 #, python-format
 msgid ""
 "\n"
@@ -828,67 +828,67 @@ msgstr ""
 " Nuværende hentning afbrudt, %safbryd (ctrl-c) igen %s indenfor %s%s%s "
 "sekunder for at afslutte.\n"
 
-#: ../output.py:1134
+#: ../output.py:1137
 msgid "user interrupt"
 msgstr "afsluttet af bruger"
 
-#: ../output.py:1150
+#: ../output.py:1153
 msgid "Total"
 msgstr "Ialt"
 
-#: ../output.py:1164
+#: ../output.py:1168
 msgid "installed"
 msgstr "installeret"
 
-#: ../output.py:1165
+#: ../output.py:1169
 msgid "updated"
 msgstr "opdateret"
 
-#: ../output.py:1166
+#: ../output.py:1170
 msgid "obsoleted"
 msgstr "overflødiggjort"
 
-#: ../output.py:1167
+#: ../output.py:1171
 msgid "erased"
 msgstr "slettet"
 
-#: ../output.py:1171
+#: ../output.py:1175
 #, python-format
 msgid "---> Package %s.%s %s:%s-%s set to be %s"
 msgstr "---> Pakke %s.%s %s:%s-%s sat til at blive %s"
 
-#: ../output.py:1178
+#: ../output.py:1182
 msgid "--> Running transaction check"
 msgstr "--> Kører overførselskontrol"
 
-#: ../output.py:1183
+#: ../output.py:1187
 msgid "--> Restarting Dependency Resolution with new changes."
 msgstr "--> Genstarter afhængighedssøgning med nye ændringer."
 
-#: ../output.py:1188
+#: ../output.py:1192
 msgid "--> Finished Dependency Resolution"
 msgstr "--> Afsluttede afhængighedssøgningen"
 
-#: ../output.py:1193
+#: ../output.py:1197 ../output.py:1202
 #, python-format
 msgid "--> Processing Dependency: %s for package: %s"
 msgstr "--> Behandler afhængighed: %s for pakken: %s"
 
-#: ../output.py:1198
+#: ../output.py:1206
 #, python-format
 msgid "--> Unresolved Dependency: %s"
 msgstr "--> Ikke fundet afhængighed: %s"
 
-#: ../output.py:1204
+#: ../output.py:1212 ../output.py:1217
 #, python-format
 msgid "--> Processing Conflict: %s conflicts %s"
 msgstr "--> Behandler konflikt: %s konflikter med %s"
 
-#: ../output.py:1207
+#: ../output.py:1221
 msgid "--> Populating transaction set with selected packages. Please wait."
 msgstr "--> Udfylder overførselssættet med valgte pakker. Vent venligst."
 
-#: ../output.py:1211
+#: ../output.py:1225
 #, python-format
 msgid "---> Downloading header for %s to pack into transaction set."
 msgstr "---> Henter headerfil for %s til at indsætte i overførselssættet."
@@ -1015,7 +1015,7 @@ msgid "Updated Packages"
 msgstr "Opdaterede pakker"
 
 #. This only happens in verbose mode
-#: ../yumcommands.py:317 ../yumcommands.py:324 ../yumcommands.py:601
+#: ../yumcommands.py:317 ../yumcommands.py:324 ../yumcommands.py:600
 msgid "Obsoleting Packages"
 msgstr "Overflødiggør pakker"
 
@@ -1084,158 +1084,158 @@ msgstr "Mellemlager for metadata oprettet"
 msgid "Remove cached data"
 msgstr "Sletter data fra cachen"
 
-#: ../yumcommands.py:552
+#: ../yumcommands.py:551
 msgid "Find what package provides the given value"
 msgstr "Finder pakker som leverer en given værdi"
 
-#: ../yumcommands.py:572
+#: ../yumcommands.py:571
 msgid "Check for available package updates"
 msgstr "Kontrol af tilgængelige pakkeopdateringer"
 
-#: ../yumcommands.py:621
+#: ../yumcommands.py:620
 msgid "Search package details for the given string"
 msgstr "Søger efter en given streng i pakkeinformationerne"
 
-#: ../yumcommands.py:627
+#: ../yumcommands.py:626
 msgid "Searching Packages: "
 msgstr "Søger i pakkerne: "
 
-#: ../yumcommands.py:644
+#: ../yumcommands.py:643
 msgid "Update packages taking obsoletes into account"
 msgstr "Opdaterer pakker, tager hensyn til overflødiggjorte pakker"
 
-#: ../yumcommands.py:652
+#: ../yumcommands.py:651
 msgid "Setting up Upgrade Process"
 msgstr "Opsætning af opgraderingsprocessen"
 
-#: ../yumcommands.py:666
+#: ../yumcommands.py:665
 msgid "Install a local RPM"
 msgstr "Installer en lokal RPM-fil"
 
-#: ../yumcommands.py:674
+#: ../yumcommands.py:673
 msgid "Setting up Local Package Process"
 msgstr "Opsætning af lokalpakkeprocessen"
 
-#: ../yumcommands.py:693
+#: ../yumcommands.py:692
 msgid "Determine which package provides the given dependency"
 msgstr "Bestem hvilken pakke som leverer en bestemt afhængighed"
 
-#: ../yumcommands.py:696
+#: ../yumcommands.py:695
 msgid "Searching Packages for Dependency:"
 msgstr "Søger efter afhængighed i pakkerne:"
 
-#: ../yumcommands.py:710
+#: ../yumcommands.py:709
 msgid "Run an interactive yum shell"
 msgstr "Kør en interaktiv Yum-skal"
 
-#: ../yumcommands.py:716
+#: ../yumcommands.py:715
 msgid "Setting up Yum Shell"
 msgstr "Opsætning af Yum-skal"
 
-#: ../yumcommands.py:734
+#: ../yumcommands.py:733
 msgid "List a package's dependencies"
 msgstr "Viser en pakkes afhængigheder"
 
-#: ../yumcommands.py:740
+#: ../yumcommands.py:739
 msgid "Finding dependencies: "
 msgstr "Finder afhængigheder: "
 
-#: ../yumcommands.py:756
+#: ../yumcommands.py:755
 msgid "Display the configured software repositories"
 msgstr "Viser de konfigurerede pakkearkiver"
 
-#: ../yumcommands.py:804 ../yumcommands.py:805
+#: ../yumcommands.py:803 ../yumcommands.py:804
 msgid "enabled"
 msgstr "aktiveret"
 
-#: ../yumcommands.py:813 ../yumcommands.py:814
+#: ../yumcommands.py:812 ../yumcommands.py:813
 msgid "disabled"
 msgstr "deaktiveret"
 
-#: ../yumcommands.py:828
+#: ../yumcommands.py:827
 msgid "Repo-id     : "
 msgstr "Kildeid     : "
 
-#: ../yumcommands.py:829
+#: ../yumcommands.py:828
 msgid "Repo-name   : "
 msgstr "Kildenavn   : "
 
-#: ../yumcommands.py:830
+#: ../yumcommands.py:829
 msgid "Repo-status : "
 msgstr "Kildestatus : "
 
-#: ../yumcommands.py:832
+#: ../yumcommands.py:831
 msgid "Repo-revision: "
 msgstr "Kilderevision: "
 
-#: ../yumcommands.py:836
+#: ../yumcommands.py:835
 msgid "Repo-tags   : "
 msgstr "Kildeflag   : "
 
-#: ../yumcommands.py:842
+#: ../yumcommands.py:841
 msgid "Repo-distro-tags: "
 msgstr "Kildedistroflag: "
 
-#: ../yumcommands.py:847
+#: ../yumcommands.py:846
 msgid "Repo-updated: "
 msgstr "Kildeopdateret: "
 
-#: ../yumcommands.py:849
+#: ../yumcommands.py:848
 msgid "Repo-pkgs   : "
 msgstr "Kildepakker   : "
 
-#: ../yumcommands.py:850
+#: ../yumcommands.py:849
 msgid "Repo-size   : "
 msgstr "Kildestørrelse   : "
 
-#: ../yumcommands.py:857
+#: ../yumcommands.py:856
 msgid "Repo-baseurl: "
 msgstr "Kildegrundurl: "
 
-#: ../yumcommands.py:861
+#: ../yumcommands.py:864
 msgid "Repo-metalink: "
 msgstr "Kildemetahenvisning: "
 
-#: ../yumcommands.py:865
+#: ../yumcommands.py:868
 msgid "  Updated    : "
 msgstr "  Opdateret    : "
 
-#: ../yumcommands.py:868
+#: ../yumcommands.py:871
 msgid "Repo-mirrors: "
 msgstr "Kildespejle: "
 
-#: ../yumcommands.py:872
+#: ../yumcommands.py:875
 msgid "Repo-exclude: "
 msgstr "Kildeekskluder: "
 
-#: ../yumcommands.py:876
+#: ../yumcommands.py:879
 msgid "Repo-include: "
 msgstr "Kildeinkluder: "
 
 #. Work out the first (id) and last (enabled/disalbed/count),
 #. then chop the middle (name)...
-#: ../yumcommands.py:886 ../yumcommands.py:912
+#: ../yumcommands.py:889 ../yumcommands.py:915
 msgid "repo id"
 msgstr "kildeid"
 
-#: ../yumcommands.py:900 ../yumcommands.py:901 ../yumcommands.py:915
+#: ../yumcommands.py:903 ../yumcommands.py:904 ../yumcommands.py:918
 msgid "status"
 msgstr "status"
 
-#: ../yumcommands.py:913
+#: ../yumcommands.py:916
 msgid "repo name"
 msgstr "kildenavn"
 
-#: ../yumcommands.py:939
+#: ../yumcommands.py:942
 msgid "Display a helpful usage message"
 msgstr "Viser hjælp om brugen af en kommando"
 
-#: ../yumcommands.py:973
+#: ../yumcommands.py:976
 #, python-format
 msgid "No help available for %s"
 msgstr "Ingen tilgængelig hjælp til %s"
 
-#: ../yumcommands.py:978
+#: ../yumcommands.py:981
 msgid ""
 "\n"
 "\n"
@@ -1245,7 +1245,7 @@ msgstr ""
 "\n"
 "aliaser: "
 
-#: ../yumcommands.py:980
+#: ../yumcommands.py:983
 msgid ""
 "\n"
 "\n"
@@ -1255,25 +1255,33 @@ msgstr ""
 "\n"
 "alias: "
 
-#: ../yumcommands.py:1008
+#: ../yumcommands.py:1011
 msgid "Setting up Reinstall Process"
 msgstr "Opsætning af geninstallationsprocessen"
 
-#: ../yumcommands.py:1017
-msgid "Package(s) to reinstall"
-msgstr "Pakke(r) til geninstallation"
-
-#: ../yumcommands.py:1024
+#: ../yumcommands.py:1019
 msgid "reinstall a package"
 msgstr "geninstallér en pakke"
 
-#: ../yumcommands.py:1042
+#: ../yumcommands.py:1037
 msgid "Setting up Downgrade Process"
 msgstr "Opsætning af nedgraderingsprocessen"
 
-#: ../yumcommands.py:1049
+#: ../yumcommands.py:1044
 msgid "downgrade a package"
 msgstr "nedgradér en pakke"
+
+#: ../yumcommands.py:1058
+msgid "Display a version for the machine and/or available repos."
+msgstr "Vis en version for maskinen og/eller tilgængelige pakkearkiver."
+
+#: ../yumcommands.py:1081
+msgid "Installed:"
+msgstr "Installeret:"
+
+#: ../yumcommands.py:1090
+msgid "Available:"
+msgstr "Tilgængelige:"
 
 #: ../yummain.py:42
 msgid ""
@@ -1432,7 +1440,7 @@ msgstr "Matchede %s som afhængighed for %s"
 msgid "Member: %s"
 msgstr "Medlem: %s"
 
-#: ../yum/depsolve.py:247 ../yum/depsolve.py:739
+#: ../yum/depsolve.py:247 ../yum/depsolve.py:760
 #, python-format
 msgid "%s converted to install"
 msgstr "%s konverteret til installation"
@@ -1447,148 +1455,148 @@ msgstr "Tilføjer pakke %s i mode %s"
 msgid "Removing Package %s"
 msgstr "Sletter Pakke %s"
 
-#: ../yum/depsolve.py:275
+#: ../yum/depsolve.py:286
 #, python-format
 msgid "%s requires: %s"
 msgstr "%s behøver: %s"
 
-#: ../yum/depsolve.py:333
+#: ../yum/depsolve.py:344
 msgid "Needed Require has already been looked up, cheating"
 msgstr "Afhængighed fundet tidligere, snyder"
 
-#: ../yum/depsolve.py:343
+#: ../yum/depsolve.py:354
 #, python-format
 msgid "Needed Require is not a package name. Looking up: %s"
 msgstr "Afhængighed er ikke et pakkenavn. Søger efter: %s"
 
-#: ../yum/depsolve.py:350
+#: ../yum/depsolve.py:361
 #, python-format
 msgid "Potential Provider: %s"
 msgstr "Mulig udbyder: %s"
 
-#: ../yum/depsolve.py:373
+#: ../yum/depsolve.py:384
 #, python-format
 msgid "Mode is %s for provider of %s: %s"
 msgstr "Tilstand er %s for udbyder af %s: %s"
 
-#: ../yum/depsolve.py:377
+#: ../yum/depsolve.py:388
 #, python-format
 msgid "Mode for pkg providing %s: %s"
 msgstr "Tilstand for pakke som leverer  %s: %s"
 
-#: ../yum/depsolve.py:381
+#: ../yum/depsolve.py:392
 #, python-format
 msgid "TSINFO: %s package requiring %s marked as erase"
 msgstr "TSINFO: %s pakker som behøver %s markeret til sletning"
 
-#: ../yum/depsolve.py:394
+#: ../yum/depsolve.py:405
 #, python-format
 msgid "TSINFO: Obsoleting %s with %s to resolve dep."
 msgstr "TSINFO: Overflødiggør %s med %s for at finde afhængighed."
 
-#: ../yum/depsolve.py:397
+#: ../yum/depsolve.py:408
 #, python-format
 msgid "TSINFO: Updating %s to resolve dep."
 msgstr "TSINFO: Opdaterer %s for at opfylde afhængighed."
 
-#: ../yum/depsolve.py:405
+#: ../yum/depsolve.py:416
 #, python-format
 msgid "Cannot find an update path for dep for: %s"
 msgstr "Kan ikke finde en opdateringsvej for afhængigheden for: %s"
 
-#: ../yum/depsolve.py:415
+#: ../yum/depsolve.py:426
 #, python-format
 msgid "Unresolvable requirement %s for %s"
 msgstr "Uløst afhængighed %s for %s"
 
-#: ../yum/depsolve.py:438
+#: ../yum/depsolve.py:449
 #, python-format
 msgid "Quick matched %s to require for %s"
 msgstr "Hurtigmatchede %s som afhængighed for %s"
 
 #. is it already installed?
-#: ../yum/depsolve.py:480
+#: ../yum/depsolve.py:491
 #, python-format
 msgid "%s is in providing packages but it is already installed, removing."
 msgstr "%s er i udbydet pakker, men er allerede installeret, fjerner."
 
-#: ../yum/depsolve.py:496
+#: ../yum/depsolve.py:507
 #, python-format
 msgid "Potential resolving package %s has newer instance in ts."
 msgstr "Mulig løsningspakke %s har en nyere udgave i ts."
 
-#: ../yum/depsolve.py:507
+#: ../yum/depsolve.py:518
 #, python-format
 msgid "Potential resolving package %s has newer instance installed."
 msgstr "Mulig løsningspakke %s har en nyere udgave installeret."
 
-#: ../yum/depsolve.py:515 ../yum/depsolve.py:564
+#: ../yum/depsolve.py:526 ../yum/depsolve.py:575
 #, python-format
 msgid "Missing Dependency: %s is needed by package %s"
 msgstr "Manglende afhængighed: %s behøves af følgende pakke %s"
 
-#: ../yum/depsolve.py:528
+#: ../yum/depsolve.py:539
 #, python-format
 msgid "%s already in ts, skipping this one"
 msgstr "%s er allerede i ts, springer den over"
 
-#: ../yum/depsolve.py:574
+#: ../yum/depsolve.py:585
 #, python-format
 msgid "TSINFO: Marking %s as update for %s"
 msgstr "TSINFO: Markerer %s som en opdatering for %s"
 
-#: ../yum/depsolve.py:582
+#: ../yum/depsolve.py:593
 #, python-format
 msgid "TSINFO: Marking %s as install for %s"
 msgstr "TSINFO: Markerer %s til installerer for %s"
 
-#: ../yum/depsolve.py:675 ../yum/depsolve.py:757
+#: ../yum/depsolve.py:696 ../yum/depsolve.py:778
 msgid "Success - empty transaction"
 msgstr "Succes -- tom overførsel"
 
-#: ../yum/depsolve.py:714 ../yum/depsolve.py:729
+#: ../yum/depsolve.py:735 ../yum/depsolve.py:750
 msgid "Restarting Loop"
 msgstr "Genstarter løkke"
 
-#: ../yum/depsolve.py:745
+#: ../yum/depsolve.py:766
 msgid "Dependency Process ending"
 msgstr "Afhængighedsproces afslutter"
 
-#: ../yum/depsolve.py:751
+#: ../yum/depsolve.py:772
 #, python-format
 msgid "%s from %s has depsolving problems"
 msgstr "%s fra %s har afhængighedsproblemer"
 
-#: ../yum/depsolve.py:758
+#: ../yum/depsolve.py:779
 msgid "Success - deps resolved"
 msgstr "Succes - afhængigheder løst"
 
-#: ../yum/depsolve.py:772
+#: ../yum/depsolve.py:793
 #, python-format
 msgid "Checking deps for %s"
 msgstr "Kontrollerer afhængigheder for %s"
 
-#: ../yum/depsolve.py:855
+#: ../yum/depsolve.py:876
 #, python-format
 msgid "looking for %s as a requirement of %s"
 msgstr "søger efter %s som afhængighed for %s"
 
-#: ../yum/depsolve.py:997
+#: ../yum/depsolve.py:1018
 #, python-format
 msgid "Running compare_providers() for %s"
 msgstr "Kører compare_providers() for %s"
 
-#: ../yum/depsolve.py:1031 ../yum/depsolve.py:1037
+#: ../yum/depsolve.py:1052 ../yum/depsolve.py:1058
 #, python-format
 msgid "better arch in po %s"
 msgstr "bedre arkitektur i po %s"
 
-#: ../yum/depsolve.py:1099
+#: ../yum/depsolve.py:1130
 #, python-format
 msgid "%s obsoletes %s"
 msgstr "%s overflødigør %s"
 
-#: ../yum/depsolve.py:1111
+#: ../yum/depsolve.py:1142
 #, python-format
 msgid ""
 "archdist compared %s to %s on %s\n"
@@ -1597,17 +1605,17 @@ msgstr ""
 "arkitekturdistribution sammenligner %s med %s på %s\n"
 "  Vinder: %s"
 
-#: ../yum/depsolve.py:1118
+#: ../yum/depsolve.py:1149
 #, python-format
 msgid "common sourcerpm %s and %s"
 msgstr "normal kilde-RPM %s og %s"
 
-#: ../yum/depsolve.py:1124
+#: ../yum/depsolve.py:1155
 #, python-format
 msgid "common prefix of %s between %s and %s"
 msgstr "normal præfiks af %s mellem %s og %s"
 
-#: ../yum/depsolve.py:1132
+#: ../yum/depsolve.py:1163
 #, python-format
 msgid "Best Order: %s"
 msgstr "Bedste orden: %s"
@@ -1633,67 +1641,67 @@ msgstr "doRpmDBSetup() vil forsvinde i en fremtidig version af Yum.\n"
 msgid "Reading Local RPMDB"
 msgstr "Læser lokal RPMDB"
 
-#: ../yum/__init__.py:441
+#: ../yum/__init__.py:444
 msgid "doRepoSetup() will go away in a future version of Yum.\n"
 msgstr "doRepoSetup() vil forsvinde i en fremtidig version af Yum.\n"
 
-#: ../yum/__init__.py:461
+#: ../yum/__init__.py:464
 msgid "doSackSetup() will go away in a future version of Yum.\n"
 msgstr "doSackSetup() vil forsvinde i en fremtidig version af Yum.\n"
 
-#: ../yum/__init__.py:478
+#: ../yum/__init__.py:481
 msgid "Setting up Package Sacks"
 msgstr "Opsætning af pakkelister"
 
-#: ../yum/__init__.py:521
+#: ../yum/__init__.py:524
 #, python-format
 msgid "repo object for repo %s lacks a _resetSack method\n"
 msgstr "kildeobjekt for kilde %s mangler en _resetSack-metode\n"
 
-#: ../yum/__init__.py:522
+#: ../yum/__init__.py:525
 msgid "therefore this repo cannot be reset.\n"
 msgstr "derfor kan dette pakkearkiv ikke blive nulstillet.\n"
 
-#: ../yum/__init__.py:527
+#: ../yum/__init__.py:530
 msgid "doUpdateSetup() will go away in a future version of Yum.\n"
 msgstr "doUpdateSetup() vil forsvinde i en fremtidig version af Yum.\n"
 
-#: ../yum/__init__.py:539
+#: ../yum/__init__.py:542
 msgid "Building updates object"
 msgstr "Bygger opdateringsobjekt"
 
-#: ../yum/__init__.py:570
+#: ../yum/__init__.py:573
 msgid "doGroupSetup() will go away in a future version of Yum.\n"
 msgstr "doGroupSetup() vil forsvinde i en fremtidig version af Yum.\n"
 
-#: ../yum/__init__.py:595
+#: ../yum/__init__.py:598
 msgid "Getting group metadata"
 msgstr "Henter gruppemetadata"
 
-#: ../yum/__init__.py:621
+#: ../yum/__init__.py:624
 #, python-format
 msgid "Adding group file from repository: %s"
 msgstr "Tilfører gruppefil fra pakkearkiv: %s"
 
-#: ../yum/__init__.py:630
+#: ../yum/__init__.py:633
 #, python-format
 msgid "Failed to add groups file for repository: %s - %s"
 msgstr "Tilføjelse af gruppefil fejlede for følgende pakkearkiv: %s - %s"
 
-#: ../yum/__init__.py:636
+#: ../yum/__init__.py:639
 msgid "No Groups Available in any repository"
 msgstr "Ingen tilgængelige grupper i noget pakkearkiv"
 
-#: ../yum/__init__.py:686
+#: ../yum/__init__.py:689
 msgid "Importing additional filelist information"
 msgstr "Importerer yderligere information om filliste"
 
-#: ../yum/__init__.py:700
+#: ../yum/__init__.py:703
 #, python-format
 msgid "The program %s%s%s is found in the yum-utils package."
 msgstr "Programmet %s%s%s er fundet i yum-utils-pakken."
 
-#: ../yum/__init__.py:708
+#: ../yum/__init__.py:711
 msgid ""
 "There are unfinished transactions remaining. You might consider running yum-"
 "complete-transaction first to finish them."
@@ -1701,17 +1709,17 @@ msgstr ""
 "Der er uafsluttede overførsler tilbage. Du bør overveje at køre yum-complete-"
 "transaction først for at afslutte dem."
 
-#: ../yum/__init__.py:775
+#: ../yum/__init__.py:779
 #, python-format
 msgid "Skip-broken round %i"
 msgstr "Skip-broken runde %i"
 
-#: ../yum/__init__.py:827
+#: ../yum/__init__.py:831
 #, python-format
 msgid "Skip-broken took %i rounds "
 msgstr "Skip-broken tog %i runder "
 
-#: ../yum/__init__.py:828
+#: ../yum/__init__.py:832
 msgid ""
 "\n"
 "Packages skipped because of dependency problems:"
@@ -1719,90 +1727,104 @@ msgstr ""
 "\n"
 "Pakker sprunget over på grund af problemer med afhængigheder:"
 
-#: ../yum/__init__.py:832
+#: ../yum/__init__.py:836
 #, python-format
 msgid "    %s from %s"
 msgstr "    %s fra %s"
 
-#: ../yum/__init__.py:972
+#: ../yum/__init__.py:976
 msgid ""
 "Warning: scriptlet or other non-fatal errors occurred during transaction."
 msgstr ""
 "Advarsel: skriptlet eller andre ikke-fatale fejl opstod under overførslen."
 
-#: ../yum/__init__.py:987
+#: ../yum/__init__.py:991
 #, python-format
 msgid "Failed to remove transaction file %s"
 msgstr "Kunne ikke slette transaktionsfilen %s"
 
-#: ../yum/__init__.py:1051
+#. maybe a file log here, too
+#. but raising an exception is not going to do any good
+#: ../yum/__init__.py:1020
+#, python-format
+msgid "%s was supposed to be installed but is not!"
+msgstr "%s skulle være blevet installeret, men det blev den ikke!"
+
+#. maybe a file log here, too
+#. but raising an exception is not going to do any good
+#: ../yum/__init__.py:1046
+#, python-format
+msgid "%s was supposed to be removed but is not!"
+msgstr "%s skulle være blevet fjernet, men det blev den ikke!"
+
+#: ../yum/__init__.py:1092
 #, python-format
 msgid "excluding for cost: %s from %s"
 msgstr "ekskluderer for cost: %s fra %s"
 
-#: ../yum/__init__.py:1082
+#: ../yum/__init__.py:1123
 msgid "Excluding Packages in global exclude list"
 msgstr "Ekskluderer pakker i den globale ekskluderingsliste"
 
-#: ../yum/__init__.py:1084
+#: ../yum/__init__.py:1125
 #, python-format
 msgid "Excluding Packages from %s"
 msgstr "Ekskluderer pakker fra %s"
 
-#: ../yum/__init__.py:1113
+#: ../yum/__init__.py:1154
 #, python-format
 msgid "Reducing %s to included packages only"
 msgstr "Reducerer %s til kun at indholde inkluderede pakker"
 
-#: ../yum/__init__.py:1119
+#: ../yum/__init__.py:1160
 #, python-format
 msgid "Keeping included package %s"
 msgstr "Beholder inkluderet pakke %s"
 
-#: ../yum/__init__.py:1125
+#: ../yum/__init__.py:1166
 #, python-format
 msgid "Removing unmatched package %s"
 msgstr "Sletter umatchende pakke %s"
 
-#: ../yum/__init__.py:1128
+#: ../yum/__init__.py:1169
 msgid "Finished"
 msgstr "Afsluttet"
 
 #. Whoa. What the heck happened?
-#: ../yum/__init__.py:1158
+#: ../yum/__init__.py:1199
 #, python-format
 msgid "Unable to check if PID %s is active"
 msgstr "Kunne ikke kontrollere om PID %s er aktiv"
 
 #. Another copy seems to be running.
-#: ../yum/__init__.py:1162
+#: ../yum/__init__.py:1203
 #, python-format
 msgid "Existing lock %s: another copy is running as pid %s."
 msgstr "Lås fundet %s: en anden kopi kører som PID %s."
 
-#: ../yum/__init__.py:1239
+#: ../yum/__init__.py:1280
 msgid "Package does not match intended download"
 msgstr "Pakken matcher ikke den planlagte nedhentning"
 
-#: ../yum/__init__.py:1254
+#: ../yum/__init__.py:1295
 msgid "Could not perform checksum"
 msgstr "Kunne ikke udføre checksum"
 
-#: ../yum/__init__.py:1257
+#: ../yum/__init__.py:1298
 msgid "Package does not match checksum"
 msgstr "Pakken matcher ikke checksum"
 
-#: ../yum/__init__.py:1299
+#: ../yum/__init__.py:1340
 #, python-format
 msgid "package fails checksum but caching is enabled for %s"
 msgstr "pakken fejlede checksum, men mellemlagring er aktiveret for %s"
 
-#: ../yum/__init__.py:1302 ../yum/__init__.py:1331
+#: ../yum/__init__.py:1343 ../yum/__init__.py:1372
 #, python-format
 msgid "using local copy of %s"
 msgstr "bruger lokal kopi af %s"
 
-#: ../yum/__init__.py:1343
+#: ../yum/__init__.py:1384
 #, python-format
 msgid ""
 "Insufficient space in download directory %s\n"
@@ -1813,11 +1835,11 @@ msgstr ""
 "    * fri     %s\n"
 "    * behøvet %s"
 
-#: ../yum/__init__.py:1390
+#: ../yum/__init__.py:1433
 msgid "Header is not complete."
 msgstr "Headerfil er ikke komplet."
 
-#: ../yum/__init__.py:1427
+#: ../yum/__init__.py:1470
 #, python-format
 msgid ""
 "Header not in local cache and caching-only mode enabled. Cannot download %s"
@@ -1825,62 +1847,62 @@ msgstr ""
 "Headerfil er ikke i lokal cache og kun-caching-tilstand er aktiveret. Kan "
 "ikke hente %s"
 
-#: ../yum/__init__.py:1482
+#: ../yum/__init__.py:1525
 #, python-format
 msgid "Public key for %s is not installed"
 msgstr "Offentlig nøgle for %s er ikke installeret"
 
-#: ../yum/__init__.py:1486
+#: ../yum/__init__.py:1529
 #, python-format
 msgid "Problem opening package %s"
 msgstr "Kunne ikke åbne pakke %s"
 
-#: ../yum/__init__.py:1494
+#: ../yum/__init__.py:1537
 #, python-format
 msgid "Public key for %s is not trusted"
 msgstr "Offentlig nøgle for %s er ikke sikker"
 
-#: ../yum/__init__.py:1498
+#: ../yum/__init__.py:1541
 #, python-format
 msgid "Package %s is not signed"
 msgstr "Pakken %s er ikke signeret"
 
-#: ../yum/__init__.py:1536
+#: ../yum/__init__.py:1579
 #, python-format
 msgid "Cannot remove %s"
 msgstr "Kan ikke slette %s"
 
-#: ../yum/__init__.py:1540
+#: ../yum/__init__.py:1583
 #, python-format
 msgid "%s removed"
 msgstr "%s slettet"
 
-#: ../yum/__init__.py:1576
+#: ../yum/__init__.py:1619
 #, python-format
 msgid "Cannot remove %s file %s"
 msgstr "Kan ikke slette %s filen %s"
 
-#: ../yum/__init__.py:1580
+#: ../yum/__init__.py:1623
 #, python-format
 msgid "%s file %s removed"
 msgstr "%s filen %s er slettet"
 
-#: ../yum/__init__.py:1582
+#: ../yum/__init__.py:1625
 #, python-format
 msgid "%d %s files removed"
 msgstr "%d %s filer slettet"
 
-#: ../yum/__init__.py:1651
+#: ../yum/__init__.py:1694
 #, python-format
 msgid "More than one identical match in sack for %s"
 msgstr "Mere end et identisk match i liste for %s"
 
-#: ../yum/__init__.py:1657
+#: ../yum/__init__.py:1700
 #, python-format
 msgid "Nothing matches %s.%s %s:%s-%s from update"
 msgstr "Ingen opdateringer matcher %s.%s %s:%s-%s"
 
-#: ../yum/__init__.py:1875
+#: ../yum/__init__.py:1933
 msgid ""
 "searchPackages() will go away in a future version of "
 "Yum.                      Use searchGenerator() instead. \n"
@@ -1888,173 +1910,173 @@ msgstr ""
 "searchPackages() vil forsvinde i en fremtidig version af "
 "Yum.                      Brug searchGenerator() istedet. \n"
 
-#: ../yum/__init__.py:1917
+#: ../yum/__init__.py:1975
 #, python-format
 msgid "Searching %d packages"
 msgstr "Genemsøger %d pakker"
 
-#: ../yum/__init__.py:1921
+#: ../yum/__init__.py:1979
 #, python-format
 msgid "searching package %s"
 msgstr "gennemsøger pakke %s"
 
-#: ../yum/__init__.py:1933
+#: ../yum/__init__.py:1991
 msgid "searching in file entries"
 msgstr "gennemsøger filopslag"
 
-#: ../yum/__init__.py:1940
+#: ../yum/__init__.py:1998
 msgid "searching in provides entries"
 msgstr "søger efter afhængigheder"
 
-#: ../yum/__init__.py:1973
+#: ../yum/__init__.py:2031
 #, python-format
 msgid "Provides-match: %s"
 msgstr "Leverer match: %s"
 
-#: ../yum/__init__.py:2022
+#: ../yum/__init__.py:2080
 msgid "No group data available for configured repositories"
 msgstr "Ingen tilgængelige gruppedata i konfigurerede pakkearkiver"
 
-#: ../yum/__init__.py:2053 ../yum/__init__.py:2072 ../yum/__init__.py:2103
-#: ../yum/__init__.py:2109 ../yum/__init__.py:2188 ../yum/__init__.py:2192
-#: ../yum/__init__.py:2489
+#: ../yum/__init__.py:2111 ../yum/__init__.py:2130 ../yum/__init__.py:2161
+#: ../yum/__init__.py:2167 ../yum/__init__.py:2246 ../yum/__init__.py:2250
+#: ../yum/__init__.py:2547
 #, python-format
 msgid "No Group named %s exists"
 msgstr "Gruppen %s findes ikke"
 
-#: ../yum/__init__.py:2084 ../yum/__init__.py:2205
+#: ../yum/__init__.py:2142 ../yum/__init__.py:2263
 #, python-format
 msgid "package %s was not marked in group %s"
 msgstr "pakken %s var ikke markeret i gruppen %s"
 
-#: ../yum/__init__.py:2131
+#: ../yum/__init__.py:2189
 #, python-format
 msgid "Adding package %s from group %s"
 msgstr "Tilføjer pakken %s fra gruppen %s"
 
-#: ../yum/__init__.py:2135
+#: ../yum/__init__.py:2193
 #, python-format
 msgid "No package named %s available to be installed"
 msgstr "Pakken %s er ikke tilgængelig til installation"
 
-#: ../yum/__init__.py:2232
+#: ../yum/__init__.py:2290
 #, python-format
 msgid "Package tuple %s could not be found in packagesack"
 msgstr "Pakken %s kunne ikke findes i pakkeliste"
 
-#: ../yum/__init__.py:2246
+#: ../yum/__init__.py:2304
 msgid ""
 "getInstalledPackageObject() will go away, use self.rpmdb.searchPkgTuple().\n"
 msgstr ""
 "getInstalledPackageObject() vil forsvinde, brug self.rpmdb.searchPkgTuple"
 "().\n"
 
-#: ../yum/__init__.py:2302 ../yum/__init__.py:2347
+#: ../yum/__init__.py:2360 ../yum/__init__.py:2405
 msgid "Invalid version flag"
 msgstr "Ugyldig versionsflag"
 
-#: ../yum/__init__.py:2317 ../yum/__init__.py:2322
+#: ../yum/__init__.py:2375 ../yum/__init__.py:2380
 #, python-format
 msgid "No Package found for %s"
 msgstr "Ingen pakke fundet for %s"
 
-#: ../yum/__init__.py:2522
+#: ../yum/__init__.py:2580
 msgid "Package Object was not a package object instance"
 msgstr "Pakkeobjektet er ikke en pakkeobjektinstans"
 
-#: ../yum/__init__.py:2526
+#: ../yum/__init__.py:2584
 msgid "Nothing specified to install"
 msgstr "Der er intet angivet til installation"
 
-#: ../yum/__init__.py:2542 ../yum/__init__.py:3211
+#: ../yum/__init__.py:2600 ../yum/__init__.py:3312
 #, python-format
 msgid "Checking for virtual provide or file-provide for %s"
 msgstr "Kontrollerer for virtueludbyder eller filudbyder for %s"
 
-#: ../yum/__init__.py:2548 ../yum/__init__.py:2824 ../yum/__init__.py:2984
-#: ../yum/__init__.py:3217
+#: ../yum/__init__.py:2606 ../yum/__init__.py:2882 ../yum/__init__.py:3045
+#: ../yum/__init__.py:3318
 #, python-format
 msgid "No Match for argument: %s"
 msgstr "Ingen match for argument: %s"
 
-#: ../yum/__init__.py:2622
+#: ../yum/__init__.py:2680
 #, python-format
 msgid "Package %s installed and not available"
 msgstr "Pakken %s installeret og ikke tilgængelig"
 
-#: ../yum/__init__.py:2625
+#: ../yum/__init__.py:2683
 msgid "No package(s) available to install"
 msgstr "Ingen pakke(r) er tilgængelig(e) til installation"
 
-#: ../yum/__init__.py:2637
+#: ../yum/__init__.py:2695
 #, python-format
 msgid "Package: %s  - already in transaction set"
 msgstr "Pakken: %s  - allerede i overførselssættet"
 
-#: ../yum/__init__.py:2652
+#: ../yum/__init__.py:2710
 #, python-format
 msgid "Package %s is obsoleted by %s, trying to install %s instead"
 msgstr "Pakke %s er overflødiggjort af %s, prøver at installere %s istedet"
 
-#: ../yum/__init__.py:2660
+#: ../yum/__init__.py:2718
 #, python-format
 msgid "Package %s already installed and latest version"
 msgstr "Pakke %s er allerede installeret i den nyeste version"
 
-#: ../yum/__init__.py:2674
+#: ../yum/__init__.py:2732
 #, python-format
 msgid "Package matching %s already installed. Checking for update."
 msgstr "Pakken som matcher %s er allerede installeret. Søger efter opdatering."
 
 #. update everything (the easy case)
-#: ../yum/__init__.py:2760
+#: ../yum/__init__.py:2818
 msgid "Updating Everything"
 msgstr "Opdaterer alt"
 
-#: ../yum/__init__.py:2778 ../yum/__init__.py:2886 ../yum/__init__.py:2907
-#: ../yum/__init__.py:2933
+#: ../yum/__init__.py:2836 ../yum/__init__.py:2947 ../yum/__init__.py:2968
+#: ../yum/__init__.py:2994
 #, python-format
 msgid "Not Updating Package that is already obsoleted: %s.%s %s:%s-%s"
 msgstr ""
 "Ingen opdatering af pakke som allerede er overflødiggjort: %s.%s %s:%s-%s"
 
-#: ../yum/__init__.py:2813 ../yum/__init__.py:2981
+#: ../yum/__init__.py:2871 ../yum/__init__.py:3042
 #, python-format
 msgid "%s"
 msgstr "%s"
 
-#: ../yum/__init__.py:2877
+#: ../yum/__init__.py:2938
 #, python-format
 msgid "Package is already obsoleted: %s.%s %s:%s-%s"
 msgstr "Pakke er allerede overflødiggjort: %s.%s %s:%s-%s"
 
-#: ../yum/__init__.py:2910 ../yum/__init__.py:2936
+#: ../yum/__init__.py:2971 ../yum/__init__.py:2997
 #, python-format
 msgid "Not Updating Package that is already updated: %s.%s %s:%s-%s"
 msgstr ""
 "Ingen opdatering af pakke som allerede er overflødiggjort: %s.%s %s:%s-%s"
 
-#: ../yum/__init__.py:2997
+#: ../yum/__init__.py:3058
 msgid "No package matched to remove"
 msgstr "Ingen pakker fundet til sletning"
 
-#: ../yum/__init__.py:3031 ../yum/__init__.py:3165
+#: ../yum/__init__.py:3092 ../yum/__init__.py:3183 ../yum/__init__.py:3267
 #, python-format
 msgid "Cannot open file: %s. Skipping."
 msgstr "Kan ikke åbne fil: %s. Springer over."
 
-#: ../yum/__init__.py:3034 ../yum/__init__.py:3168
+#: ../yum/__init__.py:3095 ../yum/__init__.py:3186 ../yum/__init__.py:3270
 #, python-format
 msgid "Examining %s: %s"
 msgstr "Undersøger %s: %s"
 
-#: ../yum/__init__.py:3042 ../yum/__init__.py:3171
+#: ../yum/__init__.py:3103 ../yum/__init__.py:3189 ../yum/__init__.py:3273
 #, python-format
 msgid "Cannot add package %s to transaction. Not a compatible architecture: %s"
 msgstr ""
 "Kan ikke tilføje pakke %s til overførsel. Ikke en kompatibel arkitektur: %s"
 
-#: ../yum/__init__.py:3050
+#: ../yum/__init__.py:3111
 #, python-format
 msgid ""
 "Package %s not installed, cannot update it. Run yum install to install it "
@@ -2063,92 +2085,92 @@ msgstr ""
 "Pakken %s er ikke installeret, så den kan ikke opdateres. Kør yum install "
 "for at installere den istedet."
 
-#: ../yum/__init__.py:3085 ../yum/__init__.py:3183
+#: ../yum/__init__.py:3146 ../yum/__init__.py:3200 ../yum/__init__.py:3284
 #, python-format
 msgid "Excluding %s"
 msgstr "Ekskluderer %s"
 
-#: ../yum/__init__.py:3090
+#: ../yum/__init__.py:3151
 #, python-format
 msgid "Marking %s to be installed"
 msgstr "Markerer %s til installation"
 
-#: ../yum/__init__.py:3096
+#: ../yum/__init__.py:3157
 #, python-format
 msgid "Marking %s as an update to %s"
 msgstr "Markerer %s som en opdatering til %s"
 
-#: ../yum/__init__.py:3103
+#: ../yum/__init__.py:3164
 #, python-format
 msgid "%s: does not update installed package."
 msgstr "%s kan ikke opdatere installeret pakke."
 
-#: ../yum/__init__.py:3118
+#: ../yum/__init__.py:3216
 msgid "Problem in reinstall: no package matched to remove"
 msgstr "Problem med geninstallation, ingen pakke fundet til at blive slettet"
 
-#: ../yum/__init__.py:3130 ../yum/__init__.py:3244
+#: ../yum/__init__.py:3228 ../yum/__init__.py:3345
 #, python-format
 msgid "Package %s is allowed multiple installs, skipping"
 msgstr "Pakke %s er tilladt at have flere installationer, springer over"
 
-#: ../yum/__init__.py:3144
+#: ../yum/__init__.py:3246
 msgid "Problem in reinstall: no package matched to install"
 msgstr "Problem med geninstallation: ingen pakke fundet til at installere"
 
-#: ../yum/__init__.py:3236
+#: ../yum/__init__.py:3337
 msgid "No package(s) available to downgrade"
 msgstr "Ingen pakke(r) er tilgængelig(e) til nedgradering"
 
-#: ../yum/__init__.py:3267
+#: ../yum/__init__.py:3381
 #, python-format
 msgid "No Match for available package: %s"
 msgstr "Ingen match for tilgængelig pakke: %s"
 
-#: ../yum/__init__.py:3273
+#: ../yum/__init__.py:3387
 #, python-format
 msgid "Only Upgrade available on package: %s"
 msgstr "Opgradér kun tilgængelig på pakke: %s"
 
-#: ../yum/__init__.py:3334
+#: ../yum/__init__.py:3449
 #, python-format
 msgid "Retrieving GPG key from %s"
 msgstr "Henter GPG-nøgle fra %s"
 
-#: ../yum/__init__.py:3354
+#: ../yum/__init__.py:3469
 msgid "GPG key retrieval failed: "
 msgstr "Hentning af GPG-nøglen mislykkedes: "
 
-#: ../yum/__init__.py:3365
+#: ../yum/__init__.py:3480
 #, python-format
 msgid "GPG key parsing failed: key does not have value %s"
 msgstr "Tolkning af GPG-nøgle mislykkedes: nøgle har ikke nogen værdi %s"
 
-#: ../yum/__init__.py:3397
+#: ../yum/__init__.py:3512
 #, python-format
 msgid "GPG key at %s (0x%s) is already installed"
 msgstr "GPG-nøgle på %s (0x%s) er allerede installeret"
 
 #. Try installing/updating GPG key
-#: ../yum/__init__.py:3402 ../yum/__init__.py:3464
+#: ../yum/__init__.py:3517 ../yum/__init__.py:3579
 #, python-format
 msgid "Importing GPG key 0x%s \"%s\" from %s"
 msgstr "Importerer GPG-nøgle 0x%s \"%s\" fra %s"
 
-#: ../yum/__init__.py:3419
+#: ../yum/__init__.py:3534
 msgid "Not installing key"
 msgstr "Installerer ikke nøgle"
 
-#: ../yum/__init__.py:3425
+#: ../yum/__init__.py:3540
 #, python-format
 msgid "Key import failed (code %d)"
 msgstr "Importering af nøgle mislykkedes (kode %d)"
 
-#: ../yum/__init__.py:3426 ../yum/__init__.py:3485
+#: ../yum/__init__.py:3541 ../yum/__init__.py:3600
 msgid "Key imported successfully"
 msgstr "Nøglen blev importet med succes"
 
-#: ../yum/__init__.py:3431 ../yum/__init__.py:3490
+#: ../yum/__init__.py:3546 ../yum/__init__.py:3605
 #, python-format
 msgid ""
 "The GPG keys listed for the \"%s\" repository are already installed but they "
@@ -2159,79 +2181,79 @@ msgstr ""
 "er ikke korrekt for denne pakke.\n"
 "Kontrollér at konfigurationen af nøgle-URL'er er korrekt for denne kilde."
 
-#: ../yum/__init__.py:3440
+#: ../yum/__init__.py:3555
 msgid "Import of key(s) didn't help, wrong key(s)?"
 msgstr "Importering af nøgle(r) hjalp ikke, forkerte nøgle(r)?"
 
-#: ../yum/__init__.py:3459
+#: ../yum/__init__.py:3574
 #, python-format
 msgid "GPG key at %s (0x%s) is already imported"
 msgstr "GPG-nøgle på %s (0x%s) er allerede importeret"
 
-#: ../yum/__init__.py:3479
+#: ../yum/__init__.py:3594
 #, python-format
 msgid "Not installing key for repo %s"
 msgstr "Installerer ikke nøgle for kilde %s"
 
-#: ../yum/__init__.py:3484
+#: ../yum/__init__.py:3599
 msgid "Key import failed"
 msgstr "Importering af nøgle mislykkedes"
 
-#: ../yum/__init__.py:3575
+#: ../yum/__init__.py:3690
 msgid "Unable to find a suitable mirror."
 msgstr "Kunne ikke finde et passende filspejl."
 
-#: ../yum/__init__.py:3577
+#: ../yum/__init__.py:3692
 msgid "Errors were encountered while downloading packages."
 msgstr "Fejl blev fundet under hentning af pakker."
 
-#: ../yum/__init__.py:3618
+#: ../yum/__init__.py:3733
 #, python-format
 msgid "Please report this error at %s"
 msgstr "Rapportér venligst denne fejl på %s"
 
-#: ../yum/__init__.py:3642
+#: ../yum/__init__.py:3757
 msgid "Test Transaction Errors: "
 msgstr "Fejl i testoverførslen: "
 
 #. Mostly copied from YumOutput._outKeyValFill()
-#: ../yum/plugins.py:204
+#: ../yum/plugins.py:205
 msgid "Loaded plugins: "
 msgstr "Indlæste udvidelsesmoduler: "
 
-#: ../yum/plugins.py:218 ../yum/plugins.py:224
+#: ../yum/plugins.py:219 ../yum/plugins.py:225
 #, python-format
 msgid "No plugin match for: %s"
 msgstr "Intet udvidelsesmodul til: %s"
 
-#: ../yum/plugins.py:254
+#: ../yum/plugins.py:255
 #, python-format
 msgid "Not loading \"%s\" plugin, as it is disabled"
 msgstr "Indlæser ikke \"%s\" udvidelsesmodul, fordi det er deaktiveret"
 
 #. Give full backtrace:
-#: ../yum/plugins.py:266
+#: ../yum/plugins.py:267
 #, python-format
 msgid "Plugin \"%s\" can't be imported"
 msgstr "Udvidelsesmodul \"%s\" kan ikke importeres"
 
-#: ../yum/plugins.py:273
+#: ../yum/plugins.py:274
 #, python-format
 msgid "Plugin \"%s\" doesn't specify required API version"
 msgstr ""
 "Udvidelsesmodul \"%s\" angiver ikke hvilken API-version der er påkrævet"
 
-#: ../yum/plugins.py:278
+#: ../yum/plugins.py:279
 #, python-format
 msgid "Plugin \"%s\" requires API %s. Supported API is %s."
 msgstr "Udvidelsesmodul \"%s\" krævet API %s. Understøttet API er %s."
 
-#: ../yum/plugins.py:311
+#: ../yum/plugins.py:312
 #, python-format
 msgid "Loading \"%s\" plugin"
 msgstr "Indlæser \"%s\" udvidelsesmodul"
 
-#: ../yum/plugins.py:318
+#: ../yum/plugins.py:319
 #, python-format
 msgid ""
 "Two or more plugins with the name \"%s\" exist in the plugin search path"
@@ -2239,19 +2261,19 @@ msgstr ""
 "To eller flere udvidelsesmoduler med navnet \"%s\" er fundet i søgestien for "
 "udvidelsesmoduler"
 
-#: ../yum/plugins.py:338
+#: ../yum/plugins.py:339
 #, python-format
 msgid "Configuration file %s not found"
 msgstr "Konfigurationsfilen %s er ikke fundet"
 
 #. for
 #. Configuration files for the plugin not found
-#: ../yum/plugins.py:341
+#: ../yum/plugins.py:342
 #, python-format
 msgid "Unable to find configuration file for plugin %s"
 msgstr "Kunne ikke finde konfigurationsfilen til udvidelsesmodul: %s"
 
-#: ../yum/plugins.py:499
+#: ../yum/plugins.py:500
 msgid "registration of commands not supported"
 msgstr "registrering af komandoer er ikke understøttet"
 
@@ -2288,6 +2310,9 @@ msgstr "Ødelagt headerfil %s"
 #, python-format
 msgid "Error opening rpm %s - error %s"
 msgstr "Fejl ved åbning af RPM %s - fejl %s"
+
+#~ msgid "Matching packages for package list to user args"
+#~ msgstr "Matcher pakker til pakkeliste baseret på brugerens argumenter"
 
 #~ msgid "Parsing package install arguments"
 #~ msgstr "Behandler argumenter for pakkeinstallation"
