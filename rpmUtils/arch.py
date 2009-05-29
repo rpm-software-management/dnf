@@ -380,3 +380,33 @@ def getBaseArch(myarch=None):
     
         return basearch
         
+
+class ArchStorage(object):
+    """class for keeping track of what arch we have set and doing various 
+       permutations based on it"""
+    def __init__(self):
+        self.canonarch = None 
+        self.basearch = None
+        self.bestarch = None
+        self.compatarch = None
+        self.archlist = []
+        self.multilib = False
+        self.setup_arch()
+
+    def setup_arch(self, arch=None):
+        if arch:
+            self.canonarch = arch
+        else:
+            self.canonarch = getCanonArch()
+        
+        self.basearch = getBaseArch(myarch=self.canonarch)
+        self.archlist = getArchList(thisarch=self.canonarch)
+        self.bestarch = getBestArch(myarch=self.canonarch)
+        self.compatarch = getMultiArchInfo(arch=self.canonarch)
+        self.multilib = isMultiLibArch(arch=self.canonarch)
+
+
+    def get_best_arch_from_list(self,archlist, fromarch=None):
+        if not fromarch:
+            fromarch = self.canonarch
+        return getBestArchFromList(archlist, myarch=fromarch)
