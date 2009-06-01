@@ -24,8 +24,7 @@ import logging
 
 import rpmUtils.transaction
 import rpmUtils.miscutils
-import rpmUtils.arch
-from rpmUtils.arch import archDifference, isMultiLibArch, getBestArch, canCoinstall
+from rpmUtils.arch import archDifference, canCoinstall
 import misc
 from misc import unique, version_tuple_to_string
 import rpm
@@ -1046,7 +1045,7 @@ class Depsolve(object):
             # return the package which is closer or None for equal, or equally useless
             
             x_dist = archDifference(req_compare_arch, x.arch)
-            if isMultiLibArch(): # only go to the next one if we're multilib - 
+            if self.arch.multilib: # only go to the next one if we're multilib - 
                 if x_dist == 0: # can't really use best's arch anyway...
                     self.verbose_logger.log(logginglevels.DEBUG_4,
                         _("better arch in po %s") %(y))
@@ -1130,9 +1129,9 @@ class Depsolve(object):
                         _("%s obsoletes %s") % (nextpo, po))
 
                 if reqpo:
-                    arches = (reqpo.arch, getBestArch())
+                    arches = (reqpo.arch, self.arch.bestarch)
                 else:
-                    arches = (getBestArch(),)
+                    arches = (self.arch.bestarch,)
                 
                 for thisarch in arches:
                     res = _compare_arch_distance(po, nextpo, thisarch)

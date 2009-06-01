@@ -48,7 +48,12 @@ class Updates:
         self.myarch = rpmUtils.arch.canonArch # set this if you want to
                                               # test on some other arch
                                               # otherwise leave it alone
+        self._is_multilib = rpmUtils.arch.isMultiLibArch(self.myarch)
         
+        self._archlist = rpmUtils.arch.getArchList(self.myarch)
+
+        self._multilib_compat_arches = rpmUtils.arch.getMultiArchInfo(self.myarch)
+
         # make some dicts from installed and available
         self.installdict = self.makeNADict(self.installed, 1)
         self.availdict = self.makeNADict(self.available, 1)
@@ -291,7 +296,7 @@ class Updates:
         newpkgs = []
         newpkgs = self.availdict
         
-        archlist = rpmUtils.arch.getArchList(self.myarch)
+        archlist = self._archlist 
         for (n, a) in newpkgs.keys():
             # remove stuff not in our archdict
             # high log here
@@ -408,14 +413,14 @@ class Updates:
         # however, we do want to descend x86_64->noarch, sadly.
         
         archlists = []
-        if rpmUtils.arch.isMultiLibArch(arch=self.myarch):
+        if self._is_multilib:
             if rpmUtils.arch.multilibArches.has_key(self.myarch):
                 biarches = [self.myarch]
             else:
                 biarches = [self.myarch, rpmUtils.arch.arches[self.myarch]]
             biarches.append('noarch')
             
-            multicompat = rpmUtils.arch.getMultiArchInfo(self.myarch)[0]
+            multicompat = self._multilib_compat_arches[0]
             multiarchlist = rpmUtils.arch.getArchList(multicompat)
             archlists = [ set(biarches), set(multiarchlist) ]
             # archlists = [ biarches, multiarchlist ]

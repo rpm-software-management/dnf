@@ -28,7 +28,6 @@ import fnmatch
 import stat
 import warnings
 from rpmUtils import RpmUtilsError
-import rpmUtils.arch
 import rpmUtils.miscutils
 from rpmUtils.miscutils import flagToString, stringToVersion
 import Errors

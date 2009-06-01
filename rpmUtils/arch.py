@@ -388,7 +388,7 @@ class ArchStorage(object):
         self.canonarch = None 
         self.basearch = None
         self.bestarch = None
-        self.compatarch = None
+        self.compatarches = []
         self.archlist = []
         self.multilib = False
         self.setup_arch()
@@ -402,11 +402,19 @@ class ArchStorage(object):
         self.basearch = getBaseArch(myarch=self.canonarch)
         self.archlist = getArchList(thisarch=self.canonarch)
         self.bestarch = getBestArch(myarch=self.canonarch)
-        self.compatarch = getMultiArchInfo(arch=self.canonarch)
+        self.compatarches = getMultiArchInfo(arch=self.canonarch)
         self.multilib = isMultiLibArch(arch=self.canonarch)
+        self.legit_multi_arches = legitMultiArchesInSameLib(arch = self.canonarch)
 
-
-    def get_best_arch_from_list(self,archlist, fromarch=None):
+    def get_best_arch_from_list(self, archlist, fromarch=None):
         if not fromarch:
             fromarch = self.canonarch
         return getBestArchFromList(archlist, myarch=fromarch)
+
+    def score(self, arch):
+        return archDifference(self.canonarch, arch)
+
+    def get_arch_list(self, arch):
+        if not arch:
+            return self.archlist
+        return getArchList(thisarch=arch)

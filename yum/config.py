@@ -29,7 +29,6 @@ from iniparse import INIConfig
 from iniparse.compat import NoSectionError, NoOptionError, ConfigParser
 from iniparse.compat import ParsingError
 import rpmUtils.transaction
-import rpmUtils.arch
 import Errors
 
 # Alter/patch these to change the default checking...
@@ -771,9 +770,10 @@ def readStartupConfig(configfile, root):
     for path in startupconf.pluginpath:
         if not path[0] == '/':
             raise Errors.ConfigError("All plugin search paths must be absolute")
-
     # Stuff this here to avoid later re-parsing
     startupconf._parser = parser
+    # setup the release ver here
+    startupconf.releasever = _getsysver(startupconf.installroot, startupconf.distroverpkg)
 
     return startupconf
 
@@ -789,9 +789,9 @@ def readMainConfig(startupconf):
 
     # Set up substitution vars
     yumvars = _getEnvVar()
-    yumvars['basearch'] = rpmUtils.arch.getBaseArch()          # FIXME make this configurable??
-    yumvars['arch'] = rpmUtils.arch.getCanonArch()             # FIXME make this configurable??
-    yumvars['releasever'] = _getsysver(startupconf.installroot, startupconf.distroverpkg)
+    yumvars['basearch'] = startupconf.basearch
+    yumvars['arch'] = startupconf.arch
+    yumvars['releasever'] = startupconf.releasever
 
     # Read [main] section
     yumconf = YumConf()

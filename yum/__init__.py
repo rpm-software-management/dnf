@@ -43,8 +43,7 @@ except ImportError:
 import Errors
 import rpmsack
 import rpmUtils.updates
-import rpmUtils.arch
-from rpmUtils.arch import getCanonArch, archDifference, canCoinstall
+from rpmUtils.arch import canCoinstall, ArchStorage, isMultiLibArch
 import rpmUtils.transaction
 import comps
 import config
@@ -101,7 +100,8 @@ class _YumPreBaseConf:
         self.syslog_ident = None
         self.syslog_facility = None
         self.syslog_device = '/dev/log'
-
+        self.arch = None
+        self.releasever = None
 
 class YumBase(depsolve.Depsolve):
     """This is a primary structure and base class. It houses the objects and
@@ -129,8 +129,9 @@ class YumBase(depsolve.Depsolve):
         self.localPackages = [] # for local package handling
 
         self.mediagrabber = None
-
+        self.arch = ArchStorage()
         self.preconf = _YumPreBaseConf()
+
 
     def __del__(self):
         self.close()
@@ -203,6 +204,13 @@ class YumBase(depsolve.Depsolve):
         syslog_ident    = self.preconf.syslog_ident
         syslog_facility = self.preconf.syslog_facility
         syslog_device   = self.preconf.syslog_device
+        releasever = self.preconf.releasever
+        arch = self.preconf.arch
+
+        if arch: # if preconf is setting an arch we need to pass that up
+            self.arch.setup_arch(arch)
+        else:
+            arch = self.arch.canonarch
 
         #  We don't want people accessing/altering preconf after it becomes
         # worthless. So we delete it, and thus. it'll raise AttributeError
@@ -215,6 +223,9 @@ class YumBase(depsolve.Depsolve):
             fn = '/etc/yum.conf'
 
         startupconf = config.readStartupConfig(fn, root)
+        startupconf.arch = arch
+        startupconf.basearch = self.arch.basearch
+
         if startupconf.gaftonmode:
             global _
             _ = yum.i18n.dummy_wrapper
@@ -227,6 +238,8 @@ class YumBase(depsolve.Depsolve):
             startupconf.syslog_ident = syslog_ident
         if syslog_facility != None:
             startupconf.syslog_facility = syslog_facility
+        if releasever != None:
+            startupconf.releasever = releasever
 
         self.doLoggingSetup(startupconf.debuglevel, startupconf.errorlevel,
                             startupconf.syslog_ident,
@@ -481,7 +494,7 @@ class YumBase(depsolve.Depsolve):
         self.verbose_logger.debug(_('Setting up Package Sacks'))
         sack_st = time.time()
         if not archlist:
-            archlist = rpmUtils.arch.getArchList()
+            archlist = self.arch.archlist
         
         archdict = {}
         for arch in archlist:
@@ -551,7 +564,11 @@ class YumBase(depsolve.Depsolve):
             obs_init = time.time()    
             self._up.rawobsoletes = self.pkgSack.returnObsoletes()
             self.verbose_logger.debug('up:Obs Init time: %0.3f' % (time.time() - obs_init))
-            
+
+        self._up.myarch = self.arch.canonarch
+        self._up._is_multilib = self.arch.multilib
+        self._up._archlist = self.arch.archlist
+        self._up._multilib_compat_arches = self.arch.compatarches
         self._up.exactarch = self.conf.exactarch
         self._up.exactarchlist = self.conf.exactarchlist
         up_pr_st = time.time()
@@ -864,11 +881,10 @@ class YumBase(depsolve.Depsolve):
     def _getPackagesToRemoveAllArch(self,po):
         ''' get all compatible arch packages in pkgSack'''
         pkgs = []
-        if rpmUtils.arch.isMultiLibArch():
-            archs = rpmUtils.arch.getArchList() 
+        if self.arch.multilib:
             n,a,e,v,r = po.pkgtup
             # skip for all compat archs
-            for a in archs:
+            for a in self.arch.archlist:
                 pkgtup = (n,a,e,v,r)
                 matched = self.pkgSack.searchNevra(n,e,v,r,a) 
                 pkgs.extend(matched)
@@ -882,10 +898,9 @@ class YumBase(depsolve.Depsolve):
 
     def _skipFromTransaction(self,po):
         skipped =  []
-        archs = rpmUtils.arch.getArchList() 
         n,a,e,v,r = po.pkgtup
         # skip for all compat archs
-        for a in archs:
+        for a in self.arch.archlist:
             pkgtup = (n,a,e,v,r)
             if self.tsInfo.exists(pkgtup):
                 for txmbr in self.tsInfo.getMembers(pkgtup):
@@ -2222,10 +2237,10 @@ class YumBase(depsolve.Depsolve):
                     # sure we'll catch it if its added later in this transaction
                     pkgs = self.pkgSack.searchNevra(name=condreq)
                     if pkgs:
-                        if rpmUtils.arch.isMultiLibArch():
+                        if self.arch.multilib:
                             if self.conf.multilib_policy == 'best':
                                 use = []
-                                best = rpmUtils.arch.legitMultiArchesInSameLib()
+                                best = self.arch.legit_multi_arches
                                 best.append('noarch')
                                 for pkg in pkgs:
                                     if pkg.arch in best:
@@ -2430,7 +2445,7 @@ class YumBase(depsolve.Depsolve):
            multilib to singlelib packages""" 
     
         returnlist = []
-        compatArchList = rpmUtils.arch.getArchList(arch)
+        compatArchList = self.arch.get_arch_list(arch)
         multiLib = []
         singleLib = []
         noarch = []
@@ -2439,7 +2454,7 @@ class YumBase(depsolve.Depsolve):
                 continue
             elif po.arch in ("noarch"):
                 noarch.append(po)
-            elif rpmUtils.arch.isMultiLibArch(arch=po.arch):
+            elif isMultiLibArch(arch=po.arch):
                 multiLib.append(po)
             else:
                 singleLib.append(po)
@@ -2628,14 +2643,14 @@ class YumBase(depsolve.Depsolve):
 
                 
                 # only do these things if we're multilib
-                if rpmUtils.arch.isMultiLibArch():
+                if self.arch.multilib:
                     if was_pattern or not nevra_dict['arch']: # and only if they
                                                               # they didn't specify an arch
                         if self.conf.multilib_policy == 'best':
                             pkgs_by_name = {}
                             use = []
                             not_added = []
-                            best = rpmUtils.arch.legitMultiArchesInSameLib()
+                            best = self.arch.legit_multi_arches
                             best.append('noarch')
                             for pkg in pkgs:
                                 if pkg.arch in best:
@@ -3099,7 +3114,7 @@ class YumBase(depsolve.Depsolve):
         # do this: but it's not a config file sort of thing
         # FIXME: Should add noarch, yum localinstall works ...
         # just rm this method?
-        if po.arch not in rpmUtils.arch.getArchList():
+        if po.arch not in self.arch.archlist:
             self.logger.critical(_('Cannot add package %s to transaction. Not a compatible architecture: %s'), pkg, po.arch)
             return tx_return
         
@@ -3124,8 +3139,8 @@ class YumBase(depsolve.Depsolve):
                     updatepkgs.append((po, installed_pkg))
             elif po.verEQ(installed_pkg):
                 if (po.arch != installed_pkg.arch and
-                    (rpmUtils.arch.isMultiLibArch(po.arch) or
-                     rpmUtils.arch.isMultiLibArch(installed_pkg.arch))):
+                    (isMultiLibArch(po.arch) or
+                     isMultiLibArch(installed_pkg.arch))):
                     installpkgs.append(po)
                 else:
                     donothingpkgs.append(po)
@@ -3185,7 +3200,7 @@ class YumBase(depsolve.Depsolve):
             self.verbose_logger.log(logginglevels.INFO_2,
                 _('Examining %s: %s'), po.localpath, po)
 
-        if po.arch not in rpmUtils.arch.getArchList():
+        if po.arch not in self.arch.archlist:
             self.logger.critical(_('Cannot add package %s to transaction. Not a compatible architecture: %s'), pkg, po.arch)
             return []
 
@@ -3269,7 +3284,7 @@ class YumBase(depsolve.Depsolve):
             self.verbose_logger.log(logginglevels.INFO_2,
                 _('Examining %s: %s'), po.localpath, po)
 
-        if po.arch not in rpmUtils.arch.getArchList():
+        if po.arch not in self.arch.archlist:
             self.logger.critical(_('Cannot add package %s to transaction. Not a compatible architecture: %s'), pkg, po.arch)
             return []
 

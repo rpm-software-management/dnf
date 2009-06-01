@@ -37,7 +37,7 @@ import yum.Errors
 import yum.logginglevels
 import yum.misc
 import yum.plugins
-import rpmUtils.arch
+from rpmUtils.arch import isMultiLibArch
 import rpmUtils.miscutils
 from yum.packages import parsePackages
 from yum import _
@@ -1046,7 +1046,7 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         installedByKey = self.rpmdb.searchNevra(name=pkg.name)
         comparable = []
         for instpo in installedByKey:
-            if rpmUtils.arch.isMultiLibArch(instpo.arch) == rpmUtils.arch.isMultiLibArch(pkg.arch):
+            if isMultiLibArch(instpo.arch) == isMultiLibArch(pkg.arch):
                 comparable.append(instpo)
             else:
                 self.verbose_logger.log(yum.logginglevels.DEBUG_3,

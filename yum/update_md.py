@@ -113,6 +113,8 @@ class UpdateNotice(object):
             head += "Description : %s\n" % '\n'.join(desc)
 
         #  Get a list of arches we care about:
+        #XXX ARCH CHANGE - what happens here if we set the arch - we need to
+        # pass this in, perhaps
         arches = set(rpmUtils.arch.getArchList())
 
         filelist = "      Files :"
