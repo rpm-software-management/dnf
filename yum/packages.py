@@ -908,11 +908,11 @@ class YumAvailablePackage(PackageObject, RpmBase):
             if flags:
                 pcostring += ''' flags="%s"''' % flags
                 if e:
-                    pcostring += ''' epoch="%s"''' % e
+                    pcostring += ''' epoch="%s"''' % misc.to_xml(e, attrib=True)
                 if v:
-                    pcostring += ''' ver="%s"''' % v
+                    pcostring += ''' ver="%s"''' % misc.to_xml(v, attrib=True)
                 if r:
-                    pcostring += ''' rel="%s"''' % r
+                    pcostring += ''' rel="%s"''' % misc.to_xml(r, attrib=True)
                     
             pcostring += "/>\n"
             msg += pcostring
@@ -979,11 +979,11 @@ class YumAvailablePackage(PackageObject, RpmBase):
             if flags:
                 prcostring += ''' flags="%s"''' % flags
                 if e:
-                    prcostring += ''' epoch="%s"''' % e
+                    prcostring += ''' epoch="%s"''' % misc.to_xml(e, attrib=True)
                 if v:
-                    prcostring += ''' ver="%s"''' % v
+                    prcostring += ''' ver="%s"''' % misc.to_xml(v, attrib=True)
                 if r:
-                    prcostring += ''' rel="%s"''' % r
+                    prcostring += ''' rel="%s"''' % misc.to_xml(r, attrib=True)
             if pre:
                 prcostring += ''' pre="%s"''' % pre
                     
