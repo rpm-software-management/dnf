@@ -1131,24 +1131,8 @@ class YumBase(depsolve.Depsolve):
             excludelist = repo.getExcludePkgList()
             repoid = repo.id
 
-        if len(excludelist) == 0:
-            return
-
-        if not repo:
-            self.verbose_logger.log(logginglevels.INFO_2, _('Excluding Packages in global exclude list'))
-        else:
-            self.verbose_logger.log(logginglevels.INFO_2, _('Excluding Packages from %s'),
-                repo.name)
-
-        pkgs = self._pkgSack.returnPackages(repoid, patterns=excludelist,
-                                            ignore_case=False)
-
-        for po in pkgs:
-            self.verbose_logger.debug('Excluding %s', po)
-            po.repo.sack.delPackage(po)
-            
-        
-        self.verbose_logger.log(logginglevels.INFO_2, 'Finished')
+        for match in excludelist:
+            self.pkgSack.addPackageExcluder(repoid, 'exclude.match', match)
 
     def includePackages(self, repo):
         """removes packages from packageSacks based on list of packages, to include.
@@ -1159,29 +1143,9 @@ class YumBase(depsolve.Depsolve):
         if len(includelist) == 0:
             return
         
-        # FIXME: Here we have to get all packages, and then exclude those that
-        #        don't match. Need a "negation" flag for returnPackages().
-        pkglist = self.pkgSack.returnPackages(repo.id)
-        exactmatch, matched, unmatched = \
-           parsePackages(pkglist, includelist, casematch=1)
-        
-        self.verbose_logger.log(logginglevels.INFO_2,
-            _('Reducing %s to included packages only'), repo.name)
-        rmlist = []
-        keeplist = set(exactmatch + matched)
-        
-        for po in pkglist:
-            if po in keeplist:
-                self.verbose_logger.debug(_('Keeping included package %s'), po)
-                continue
-            else:
-                rmlist.append(po)
-        
-        for po in rmlist:
-            self.verbose_logger.debug(_('Removing unmatched package %s'), po)
-            po.repo.sack.delPackage(po)
-            
-        self.verbose_logger.log(logginglevels.INFO_2, _('Finished'))
+        for match in includelist:
+            self.pkgSack.addPackageExcluder(repo.id, 'include.match', match)
+        self.pkgSack.addPackageExcluder(repo.id, 'exclude.*')
         
     def doLock(self, lockfile = YUM_PID_FILE):
         """perform the yum locking, raise yum-based exceptions, not OSErrors"""

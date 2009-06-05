@@ -60,6 +60,52 @@ def catchSqliteException(func):
 def _share_data(value):
     return misc.share_data(value)
 
+# FIXME: parsePackages()
+import re
+import fnmatch
+def _parse_pkg_n(match, regexp_match, n):
+    if match == n:
+        return True
+    if not regexp_match:
+        return False
+
+    if (match and n and match[0] not in ('?', '*') and match[0] != n[0]):
+        return False
+    if regexp_match(n):
+        return True
+    return False
+
+def _parse_pkg(match, regexp_match, data, e,v,r,a):
+
+    n = data['n']
+    assert e, 'Nothing in epoch'
+    # Worthless speed hacks?
+    if match == n:
+        return True
+    if (match and n and match[0] not in ('?', '*') and
+        match[0] != n[0] and match[0] != e[0]):
+        return False
+
+    if 'nameArch' not in data:
+        data['nameArch'] = '%s.%s' % (n, a)
+        data['nameVerRelArch'] = '%s-%s-%s.%s' % (n, v, r, a)
+        data['nameVer'] = '%s-%s' % (n, v)
+        data['nameVerRel'] = '%s-%s-%s' % (n, v, r)
+        data['envra'] = '%s:%s-%s-%s.%s' % (e, n, v, r, a)
+        data['nevra'] = '%s-%s:%s-%s.%s' % (n, e, v, r, a)
+    data = set([n, data['nameArch'], data['nameVerRelArch'], data['nameVer'],
+                data['nameVerRel'], data['envra'], data['nevra']])
+
+    if match in data:
+        return True
+    if not regexp_match:
+        return False
+
+    for item in data:
+        if regexp_match(item):
+            return True
+    return False
+
 class YumAvailablePackageSqlite(YumAvailablePackage, PackageObject, RpmBase):
     def __init__(self, repo, db_obj):
         self.prco = { 'obsoletes': (),
@@ -293,6 +339,7 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
         self.otherdb = {}
         self.excludes = {}     # of [repo] => {} of pkgId's => 1
         self._excludes = set() # of (repo, pkgKey)
+        self._exclude_whitelist = set() # of (repo, pkgKey)
         self._all_excludes = {}
         self._search_cache = {
             'provides' : { },
@@ -300,6 +347,7 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
             }
         self._key2pkg = {}
         self._arch_allowed = None
+        self._pkgExcluder = []
 
     @catchSqliteException
     def _sql_MD(self, MD, repo, sql, *args):
@@ -364,6 +412,7 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
         self.otherdb = {}
         self.excludes = {}
         self._excludes = set()
+        self._exclude_whitelist = set()
         self._all_excludes = {}
 
         yumRepo.YumPackageSack.close(self)
@@ -418,7 +467,12 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
                 . Tests repo against allowed repos.
                 . Tests pkgKey against allowed packages.
                 . Tests arch against allowed arches.
+                . Tests addPackageExcluder() calls.
         '''
+
+        if (repo, pkgKey) in self._exclude_whitelist:
+            return False
+
         if self._pkgKeyExcluded(repo, pkgKey):
             return True
 
@@ -426,6 +480,55 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
             self._delPackageRK(repo, pkgKey)
             return True
 
+        data = {'n' : n.lower()}
+        e = e.lower()
+        v = v.lower()
+        r = r.lower()
+        a = a.lower()
+
+        for repoid, excluder, match, regexp_match in self._pkgExcluder:
+            if repoid is not None and repoid != repo.id:
+                continue
+
+            if False: pass
+            elif excluder in ('exclude.eq', 'exclude.match'):
+                if _parse_pkg(match, regexp_match, data, e,v,r,a):
+                    self._delPackageRK(repo, pkgKey)
+                    return True
+
+            elif excluder in ('exclude.name.eq', 'exclude.name.match'):
+                if _parse_pkg_n(match, regexp_match, data['n']):
+                    self._delPackageRK(repo, pkgKey)
+                    return True
+
+            elif excluder in ('exclude.arch.eq', 'exclude.arch.match'):
+                if _parse_pkg_n(match, regexp_match, a):
+                    self._delPackageRK(repo, pkgKey)
+                    return True
+
+            elif excluder in ('include.eq', 'include.match'):
+                if _parse_pkg(match, regexp_match, data, e,v,r,a):
+                    break
+
+            elif excluder in ('include.name.eq', 'include.name.match'):
+                if _parse_pkg_n(match, regexp_match, data['n']):
+                    break
+
+            elif excluder in ('include.arch.eq', 'include.arch.match'):
+                if _parse_pkg_n(match, regexp_match, a):
+                    break
+
+            elif excluder == 'exclude.*':
+                self._delPackageRK(repo, pkgKey)
+                return True
+
+            elif excluder == 'include.*':
+                break
+
+            else:
+                assert False, 'Bad excluder: ' + excluder
+
+        self._exclude_whitelist.add((repo, pkgKey))
         return False
 
     def _pkgExcludedRKT(self, repo,pkgKey, pkgtup):
@@ -445,6 +548,17 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
         ''' Helper function to call _pkgRKNEVRAExcluded.
             Takes a package object. '''
         return self._pkgExcludedRKT(po.repo, po.pkgKey, po.pkgtup)
+
+    def addPackageExcluder(self, repoid, excluder, *args):
+        match        = None
+        regexp_match = None
+        if excluder.endswith('.eq'):
+            match = args[0].lower()
+        if excluder.endswith('.match'):
+            match = args[0].lower()
+            if misc.re_glob(match):
+                regexp_match = re.compile(fnmatch.translate(match)).match
+        self._pkgExcluder.append((repoid, excluder, match, regexp_match))
 
     def _packageByKey(self, repo, pkgKey, exclude=True):
         """ Lookup a pkg by it's pkgKey, if we don't have it load it """
@@ -1204,8 +1318,11 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
                 #  Note: If we are building the pkgobjlist, we don't exclude
                 # here, so that we can un-exclude later on ... if that matters.
                 for x in cur:
+                    exclude = not patterns
+                    if True: # NOTE: Can't unexclude things...
+                        exclude = True
                     po = self._packageByKeyData(repo, x['pkgKey'], x,
-                                                exclude=bool(patterns))
+                                                exclude=exclude)
                     if po is None:
                         continue
                     returnList.append(po)
@@ -1221,15 +1338,22 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
         if self._skip_all():
             return []
 
-        if hasattr(self, 'pkgobjlist'):
+        internal_pkgoblist = hasattr(self, 'pkgobjlist')
+        if internal_pkgoblist:
             pkgobjlist = self.pkgobjlist
         else:
             pkgobjlist = self._buildPkgObjList(repoid, patterns, ignore_case)
 
-        if hasattr(self, 'pkgobjlist') and patterns:
+        if internal_pkgoblist and patterns:
+            internal_pkgoblist = False
             pkgobjlist = parsePackages(pkgobjlist, patterns, not ignore_case,
                                        unique='repo-pkgkey')
             pkgobjlist = pkgobjlist[0] + pkgobjlist[1]
+
+        if True: # NOTE: Can't unexclude things...
+            if internal_pkgoblist:
+                pkgobjlist = pkgobjlist[:]
+            return pkgobjlist
 
         returnList = []
         for po in pkgobjlist:

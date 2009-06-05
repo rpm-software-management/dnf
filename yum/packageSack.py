@@ -164,6 +164,10 @@ class PackageSackBase(object):
         """return list of all packages"""
         raise NotImplementedError()
 
+    def addPackageExcluder(self, repoid, excluder, *args):
+        """exclude packages, for a variety of reasons"""
+        raise NotImplementedError()
+
     def simpleVersion(self):
         """ Return a simple version for all available packages. """
         main = PackageSackVersion()
@@ -431,6 +435,13 @@ class MetaSack(PackageSackBase):
                                                     None, patterns, ignore_case)
         return self.sacks[repoid].returnPackages(patterns=patterns,
                                                  ignore_case=ignore_case)
+
+    def addPackageExcluder(self, repoid, excluder, *args):
+        """exclude packages, for a variety of reasons"""
+        if not repoid:
+            return self._computeAggregateListResult("addPackageExcluder",
+                                                    None, excluder, *args)
+        return self.sacks[repoid].addPackageExcluder(None, excluder, *args)
 
     def returnNewestByNameArch(self, naTup=None,
                                patterns=None, ignore_case=False):
