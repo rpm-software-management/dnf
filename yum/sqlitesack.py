@@ -418,8 +418,10 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
         return (self._pkgKeyExcluded(po.repo, po.pkgKey) or
                 self._pkgArchExcluded(po.arch))
 
-    def _packageByKey(self, repo, pkgKey):
+    def _packageByKey(self, repo, pkgKey, exclude=True):
         """ Lookup a pkg by it's pkgKey, if we don't have it load it """
+        if exclude and self._pkgKeyExcluded(repo, pkgKey):
+            continue
         if not self._key2pkg.has_key(repo):
             self._key2pkg[repo] = {}
         if not self._key2pkg[repo].has_key(pkgKey):
@@ -435,8 +437,10 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
             return None
         return self._key2pkg[repo][pkgKey]
         
-    def _packageByKeyData(self, repo, pkgKey, data):
+    def _packageByKeyData(self, repo, pkgKey, data, exclude=True):
         """ Like _packageByKey() but we already have the data for .pc() """
+        if exclude and self._pkgKeyExcluded(repo, data['pkgKey']):
+            continue
         if self._pkgArchExcluded(data['arch']):
             return None
         if data['pkgKey'] not in self._key2pkg.get(repo, {}):
@@ -676,8 +680,6 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
             cur = cache.cursor()
             executeSQL(cur, totalstring)
             for ob in cur:
-                if self._pkgKeyExcluded(rep, ob['pkgKey']):
-                    continue
                 pkg = self._packageByKey(rep, ob['pkgKey'])
                 if pkg is None:
                     continue
@@ -817,8 +819,6 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
                     if rpmUtils.miscutils.rangeCompare(req, val):
                         tmp.setdefault(pkgkey, []).append(val)
                 for pkgKey, hits in tmp.iteritems():
-                    if self._pkgKeyExcluded(rep, pkgKey):
-                        continue
                     pkg = self._packageByKey(rep, pkgKey)
                     if pkg is None:
                         continue
@@ -840,8 +840,6 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
                 if rpmUtils.miscutils.rangeCompare(req, val):
                     tmp.setdefault(x['pkgKey'], []).append(val)
             for pkgKey, hits in tmp.iteritems():
-                if self._pkgKeyExcluded(rep, pkgKey):
-                    continue
                 pkg = self._packageByKey(rep, pkgKey)
                 if pkg is None:
                     continue
@@ -869,8 +867,6 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
             cur = cache.cursor()
             executeSQL(cur, "select DISTINCT pkgKey from files where name = ?", (name,))
             for ob in cur:
-                if self._pkgKeyExcluded(rep, ob['pkgKey']):
-                    continue
                 pkg = self._packageByKey(rep, ob['pkgKey'])
                 if pkg is None:
                     continue
@@ -1184,11 +1180,12 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
                 if pat_sqls:
                     qsql = _FULL_PARSE_QUERY_BEG + " OR ".join(pat_sqls)
                 executeSQL(cur, qsql, pat_data)
-                #  Note: Not using _sql_pkgKey2po() so that we can "un-exclude"
-                # things later on ... if that matters.
+                #  Note: If we are building the pkgobjlist, we don't exclude
+                # here, so that we can un-exclude later on ... if that matters.
                 for x in cur:
-                    po = self._packageByKeyData(repo, x['pkgKey'], x)
-                    if po is None: # Arch exclude is done here.
+                    po = self._packageByKeyData(repo, x['pkgKey'], x,
+                                                exclude=bool(patterns))
+                    if po is None:
                         continue
                     returnList.append(po)
         if not patterns:
