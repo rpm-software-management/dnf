@@ -291,7 +291,7 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
         self.primarydb = {}
         self.filelistsdb = {}
         self.otherdb = {}
-        self.excludes = {}
+        self.excludes = {}     # of [repo] => {} of pkgId's => 1
         self._excludes = set() # of (repo, pkgKey)
         self._all_excludes = {}
         self._search_cache = {
@@ -376,6 +376,11 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
     def _checkIndexes(self, failure='error'):
         return
 
+    def _delPackageRK(self, repo, pkgKey):
+        ''' Exclude a package so that _pkgExcluded*() knows it's gone.
+            Note that this doesn't update self.exclude. '''
+        self._excludes.add((repo, pkgKey))
+
     # Remove a package
     # Because we don't want to remove a package from the database we just
     # add it to the exclude list
@@ -383,7 +388,7 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
         if not self.excludes.has_key(obj.repo):
             self.excludes[obj.repo] = {}
         self.excludes[obj.repo][obj.pkgId] = 1
-        self._excludes.add( (obj.repo, obj.pkgKey) )
+        self._delPackageRK(obj.repo, obj.pkgKey)
 
     def _delAllPackages(self, repo):
         """ Exclude all packages from the repo. """
@@ -408,22 +413,33 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
 
         return (repo, pkgKey) in self._excludes
 
-    def _pkgArchExcluded(self, pkgarch):
-        """ Test the arch for a package against the archlist we were passed. """
-        if self._arch_allowed is not None and pkgarch not in self._arch_allowed:
-            return True
-        return False
-
     def _pkgExcludedRKNEVRA(self, repo,pkgKey, n,e,v,r,a):
-        ''' Main function to use for "can we use this package" question. '''
-        return (self._pkgKeyExcluded(repo, pkgKey) or
-                self._pkgArchExcluded(a))
+        ''' Main function to use for "can we use this package" question.
+                . Tests repo against allowed repos.
+                . Tests pkgKey against allowed packages.
+                . Tests arch against allowed arches.
+        '''
+        if self._pkgKeyExcluded(repo, pkgKey):
+            return True
+
+        if self._arch_allowed is not None and a not in self._arch_allowed:
+            self._delPackageRK(repo, pkgKey)
+            return True
+
+        return False
 
     def _pkgExcludedRKT(self, repo,pkgKey, pkgtup):
         ''' Helper function to call _pkgRKNEVRAExcluded.
             Takes a repo, pkgKey and a package tuple'''
         (n,a,e,v,r) = pkgtup
-        return self._pkgExcludedRKNEVRA(po.repo, po.pkgKey, n,e,v,r,a)
+        return self._pkgExcludedRKNEVRA(repo, pkgKey, n,e,v,r,a)
+
+    def _pkgExcludedRKD(self, repo,pkgKey, data):
+        ''' Helper function to call _pkgRKNEVRAExcluded.
+            Takes a repo, pkgKey and a dict of package data'''
+        (n,a,e,v,r) = (data['name'], data['arch'],
+                       data['epoch'], data['version'], data['release'])
+        return self._pkgExcludedRKNEVRA(repo, pkgKey, n,e,v,r,a)
 
     def _pkgExcluded(self, po):
         ''' Helper function to call _pkgRKNEVRAExcluded.
@@ -432,8 +448,10 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
 
     def _packageByKey(self, repo, pkgKey, exclude=True):
         """ Lookup a pkg by it's pkgKey, if we don't have it load it """
-        if exclude and self._pkgKeyExcluded(repo, pkgKey):
-            continue
+        # Speed hack, so we don't load the pkg. if the pkgKey is dead.
+        if exclude and _pkgKeyExcluded(repo, pkgKey):
+            return None
+
         if not self._key2pkg.has_key(repo):
             self._key2pkg[repo] = {}
         if not self._key2pkg[repo].has_key(pkgKey):
@@ -443,17 +461,14 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
             if data is None:
                 msg = "pkgKey %s doesn't exist in repo %s" % (pkgKey, repo)
                 raise Errors.RepoError, msg
-
+            if exclude and self._pkgExcludedRKD(repo, pkgKey, data):
+                return None
             self._key2pkg[repo][pkgKey] = self.pc(repo, data)
-        if self._pkgArchExcluded(self._key2pkg[repo][pkgKey].arch):
-            return None
         return self._key2pkg[repo][pkgKey]
         
     def _packageByKeyData(self, repo, pkgKey, data, exclude=True):
         """ Like _packageByKey() but we already have the data for .pc() """
-        if exclude and self._pkgKeyExcluded(repo, data['pkgKey']):
-            continue
-        if self._pkgArchExcluded(data['arch']):
+        if exclude and self._pkgExcludedRKD(repo, pkgKey, data):
             return None
         if data['pkgKey'] not in self._key2pkg.get(repo, {}):
             po = self.pc(repo, data)
@@ -497,8 +512,6 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
         """ Takes a cursor and maps the pkgKey rows into a list of packages. """
         if pkgs is None: pkgs = []
         for ob in cur:
-            if self._pkgKeyExcluded(repo, ob['pkgKey']):
-                continue
             if have_data:
                 pkg = self._packageByKeyData(repo, ob['pkgKey'], ob)
             else:
@@ -718,16 +731,12 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
                 obsoletes.flags as oflags\
                 from obsoletes,packages where obsoletes.pkgKey = packages.pkgKey")
             for ob in cur:
-                # If the package that is causing the obsoletes is excluded
-                # continue without processing the obsoletes
-                if self._pkgKeyExcluded(rep, ob['pkgKey']):
-                    continue
-                if self._pkgArchExcluded(ob['arch']):
-                    continue
-                    
                 key = ( _share_data(ob['name']), _share_data(ob['arch']),
                         _share_data(ob['epoch']), _share_data(ob['version']),
                         _share_data(ob['release']))
+                if self._pkgExcludedRKT(rep, ob['pkgKey'], key):
+                    continue
+
                 (n,f,e,v,r) = ( _share_data(ob['oname']),
                                 _share_data(ob['oflags']),
                                 _share_data(ob['oepoch']),
