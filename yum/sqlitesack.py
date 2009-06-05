@@ -414,9 +414,21 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
             return True
         return False
 
+    def _pkgExcludedRKNEVRA(self, repo,pkgKey, n,e,v,r,a):
+        ''' Main function to use for "can we use this package" question. '''
+        return (self._pkgKeyExcluded(repo, pkgKey) or
+                self._pkgArchExcluded(a))
+
+    def _pkgExcludedRKT(self, repo,pkgKey, pkgtup):
+        ''' Helper function to call _pkgRKNEVRAExcluded.
+            Takes a repo, pkgKey and a package tuple'''
+        (n,a,e,v,r) = pkgtup
+        return self._pkgExcludedRKNEVRA(po.repo, po.pkgKey, n,e,v,r,a)
+
     def _pkgExcluded(self, po):
-        return (self._pkgKeyExcluded(po.repo, po.pkgKey) or
-                self._pkgArchExcluded(po.arch))
+        ''' Helper function to call _pkgRKNEVRAExcluded.
+            Takes a package object. '''
+        return self._pkgExcludedRKT(po.repo, po.pkgKey, po.pkgtup)
 
     def _packageByKey(self, repo, pkgKey, exclude=True):
         """ Lookup a pkg by it's pkgKey, if we don't have it load it """
