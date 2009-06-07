@@ -506,6 +506,25 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
                     self._delPackageRK(repo, pkgKey)
                     return True
 
+            elif excluder in ('exclude.nevra.eq', 'exclude.nevra.match'):
+                if 'nevra' not in data:
+                    data['nevra'] = '%s-%s:%s-%s.%s' % (n, e, v, r, a)
+                if _parse_pkg_n(match, regexp_match, data['nevra']):
+                    self._delPackageRK(repo, pkgKey)
+                    return True
+
+            elif excluder == 'exclude.name.in':
+                if data['n'] in match:
+                    self._delPackageRK(repo, pkgKey)
+                    return True
+
+            elif excluder == 'exclude.nevra.in':
+                if 'nevra' not in data:
+                    data['nevra'] = '%s-%s:%s-%s.%s' % (n, e, v, r, a)
+                if data['nevra'] in match:
+                    self._delPackageRK(repo, pkgKey)
+                    return True
+
             elif excluder in ('include.eq', 'include.match'):
                 if _parse_pkg(match, regexp_match, data, e,v,r,a):
                     break
@@ -516,6 +535,22 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
 
             elif excluder in ('include.arch.eq', 'include.arch.match'):
                 if _parse_pkg_n(match, regexp_match, a):
+                    break
+
+            elif excluder in ('include.nevra.eq', 'include.nevra.match'):
+                if 'nevra' not in data:
+                    data['nevra'] = '%s-%s:%s-%s.%s' % (n, e, v, r, a)
+                if _parse_pkg_n(match, regexp_match, data['nevra']):
+                    break
+
+            elif excluder == 'include.name.in':
+                if data['n'] in match:
+                    break
+
+            elif excluder == 'include.nevra.in':
+                if 'nevra' not in data:
+                    data['nevra'] = '%s-%s:%s-%s.%s' % (n, e, v, r, a)
+                if data['nevra'] in match:
                     break
 
             elif excluder == 'exclude.*':
@@ -552,12 +587,20 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
     def addPackageExcluder(self, repoid, excluder, *args):
         match        = None
         regexp_match = None
-        if excluder.endswith('.eq'):
+        if False: pass
+        elif excluder.endswith('.eq'):
+            assert len(args) == 1
             match = args[0].lower()
-        if excluder.endswith('.match'):
+        elif excluder.endswith('.in'):
+            assert len(args) == 1
+            match = args[0]
+        elif excluder.endswith('.match'):
+            assert len(args) == 1
             match = args[0].lower()
             if misc.re_glob(match):
                 regexp_match = re.compile(fnmatch.translate(match)).match
+        elif excluder.endswith('.*'):
+            assert len(args) == 0
         self._pkgExcluder.append((repoid, excluder, match, regexp_match))
 
     def _packageByKey(self, repo, pkgKey, exclude=True):
