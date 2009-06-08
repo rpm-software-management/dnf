@@ -3192,7 +3192,7 @@ class YumBase(depsolve.Depsolve):
         tx_mbrs = []
         tx_mbrs.extend(self.remove(po, **kwargs))
         if not tx_mbrs:
-            raise Errors.ReinstallError, _("Problem in reinstall: no package matched to remove")
+            raise Errors.ReinstallRemoveError, _("Problem in reinstall: no package matched to remove")
         templen = len(tx_mbrs)
         # this is a reinstall, so if we can't reinstall exactly what we uninstalled
         # then we really shouldn't go on
@@ -3222,7 +3222,7 @@ class YumBase(depsolve.Depsolve):
             if len(members) == 0:
                 self.tsInfo.remove(item.pkgtup)
                 tx_mbrs.remove(item)
-                raise Errors.ReinstallError, _("Problem in reinstall: no package matched to install")
+                raise Errors.ReinstallInstallError, _("Problem in reinstall: no package %s matched to install") % item.po
             new_members.extend(members)
 
         tx_mbrs.extend(new_members)

@@ -86,6 +86,12 @@ class RemoveError(YumBaseError):
 class ReinstallError(YumBaseError):
     pass
 
+class ReinstallRemoveError(ReinstallError):
+    pass
+
+class ReinstallInstallError(ReinstallError):
+    pass
+
 class DowngradeError(YumBaseError):
     pass
 
