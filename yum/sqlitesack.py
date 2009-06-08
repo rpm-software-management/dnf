@@ -606,13 +606,13 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
     def _packageByKey(self, repo, pkgKey, exclude=True):
         """ Lookup a pkg by it's pkgKey, if we don't have it load it """
         # Speed hack, so we don't load the pkg. if the pkgKey is dead.
-        if exclude and _pkgKeyExcluded(repo, pkgKey):
+        if exclude and self._pkgKeyExcluded(repo, pkgKey):
             return None
 
         if not self._key2pkg.has_key(repo):
             self._key2pkg[repo] = {}
         if not self._key2pkg[repo].has_key(pkgKey):
-            sql = "SELECT pkgKey, pkgId, name, epoch, version, release " \
+            sql = "SELECT pkgKey, pkgId, name, epoch, version, release, arch " \
                   "FROM packages WHERE pkgKey = ?"
             data = self._sql_MD('primary', repo, sql, (pkgKey,)).fetchone()
             if data is None:
