@@ -3589,6 +3589,33 @@ class YumBase(depsolve.Depsolve):
 
 
     def _limit_installonly_pkgs(self):
+        """ Limit packages based on conf.installonly_limit, if any of the
+            packages being installed have a provide in conf.installonlypkgs.
+            New in 3.2.24: Obey yumdb_info.installonly data. """
+
+        def _sort_and_filter_installonly(pkgs):
+            """ Allow the admin to specify some overrides fo installonly pkgs.
+                using the yumdb. """
+            ret_beg = []
+            ret_mid = []
+            ret_end = []
+            for pkg in sorted(pkgs):
+                if 'installonly' not in pkg.yumdb_info:
+                    ret_mid.append(pkg)
+                    continue
+
+                if pkg.yumdb_info.installonly == 'keep':
+                    continue
+
+                if pkg.yumdb_info.installonly == 'remove-first':
+                    ret_beg.append(pkg)
+                elif pkg.yumdb_info.installonly == 'remove-last':
+                    ret_end.append(pkg)
+                else:
+                    ret_mid.append(pkg)
+
+            return ret_beg + ret_mid + ret_end
+
         if self.conf.installonly_limit < 1 :
             return 
             
@@ -3605,9 +3632,9 @@ class YumBase(depsolve.Depsolve):
                 if (m.name == instpkg or instpkg in m.po.provides_names) \
                        and m.ts_state in ('i', 'u'):
                     installed = self.rpmdb.searchNevra(name=m.name)
+                    installed = _sort_and_filter_installonly(installed)
                     if len(installed) >= self.conf.installonly_limit - 1: # since we're adding one
                         numleft = len(installed) - self.conf.installonly_limit + 1
-                        installed.sort(comparePoEVR)
                         for po in installed:
                             if (po.version, po.release) == (cur_kernel_v, cur_kernel_r): 
                                 # don't remove running
