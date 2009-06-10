@@ -377,7 +377,12 @@ class UpdateMetadata(object):
 
         for event, elem in iterparse(infile):
             if elem.tag == 'update':
-                un = UpdateNotice(elem)
+                try:
+                    un = UpdateNotice(elem)
+                except UpdateNoticeException, e:
+                    print >> sys.stderr, "An update notice lacks ID tag, skipping."
+                    # what else should we do?
+                    continue
                 if not self._notices.has_key(un['update_id']):
                     self._notices[un['update_id']] = un
                     for pkg in un['pkglist']:
