@@ -996,17 +996,26 @@ class YumOutput:
         summary = _("""
 Transaction Summary
 %s
+""") % ('=' * self.term.columns,)
+        out = out + summary
+        num_in = len(self.tsInfo.installed + self.tsInfo.depinstalled)
+        num_up = len(self.tsInfo.updated + self.tsInfo.depupdated)
+        summary = _("""\
 Install   %5.5s Package(s)
 Upgrade   %5.5s Package(s)
+""") % (num_in, num_up,)
+        if num_in or num_up: # Always do this?
+            out = out + summary
+        num_rm = len(self.tsInfo.removed + self.tsInfo.depremoved)
+        num_re = len(self.tsInfo.reinstalled)
+        num_dg = len(self.tsInfo.downgraded)
+        summary = _("""\
 Remove    %5.5s Package(s)
 Reinstall %5.5s Package(s)
 Downgrade %5.5s Package(s)
-""") % ('=' * self.term.columns,
-        len(self.tsInfo.installed + self.tsInfo.depinstalled),
-        len(self.tsInfo.updated + self.tsInfo.depupdated),
-        len(self.tsInfo.removed + self.tsInfo.depremoved),
-        len(self.tsInfo.reinstalled), len(self.tsInfo.downgraded))
-        out = out + summary
+""") % (num_rm, num_re, num_dg)
+        if num_rm or num_re or num_dg:
+            out = out + summary
         
         return out
         
