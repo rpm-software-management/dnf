@@ -965,7 +965,7 @@ class YumOutput:
             (n_wid, a_wid, v_wid, r_wid, s_wid) = columns
             assert s_wid == 5
 
-            out = u"""
+            out = [u"""
 %s
 %s
 %s
@@ -973,7 +973,7 @@ class YumOutput:
        self.fmtColumns(((_('Package'), -n_wid), (_('Arch'), -a_wid),
                         (_('Version'), -v_wid), (_('Repository'), -r_wid),
                         (_('Size'), s_wid)), u" "),
-       '=' * self.term.columns)
+       '=' * self.term.columns)]
 
         for (action, lines) in pkglist_lines:
             if lines:
@@ -991,13 +991,13 @@ class YumOutput:
                 totalmsg = totalmsg + msg
         
             if lines:
-                out = out + totalmsg
+                out.append(totalmsg)
 
         summary = _("""
 Transaction Summary
 %s
 """) % ('=' * self.term.columns,)
-        out = out + summary
+        out.append(summary)
         num_in = len(self.tsInfo.installed + self.tsInfo.depinstalled)
         num_up = len(self.tsInfo.updated + self.tsInfo.depupdated)
         summary = _("""\
@@ -1005,7 +1005,7 @@ Install   %5.5s Package(s)
 Upgrade   %5.5s Package(s)
 """) % (num_in, num_up,)
         if num_in or num_up: # Always do this?
-            out = out + summary
+            out.append(summary)
         num_rm = len(self.tsInfo.removed + self.tsInfo.depremoved)
         num_re = len(self.tsInfo.reinstalled)
         num_dg = len(self.tsInfo.downgraded)
@@ -1015,9 +1015,9 @@ Reinstall %5.5s Package(s)
 Downgrade %5.5s Package(s)
 """) % (num_rm, num_re, num_dg)
         if num_rm or num_re or num_dg:
-            out = out + summary
+            out.append(summary)
         
-        return out
+        return ''.join(out)
         
     def postTransactionOutput(self):
         out = ''
