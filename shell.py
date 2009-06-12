@@ -86,13 +86,17 @@ class YumShell(cmd.Cmd):
         else:
             (cmd, args, line) = self.parseline(line)
             if cmd not in self.commandlist:
-                self.do_help('')
-                return False
+                xargs = [cmd]
+                self.base.plugins.run('args', args=xargs)
+                if xargs[0] == cmd:
+                    self.do_help('')
+                    return False
             if cmd == 'shell':
                 return
             self.base.cmdstring = line
             self.base.cmdstring = self.base.cmdstring.replace('\n', '')
             self.base.cmds = self._shlex_split(self.base.cmdstring)
+            self.base.plugins.run('args', args=self.base.cmds)
 
             try:
                 self.base.parseCommands()
