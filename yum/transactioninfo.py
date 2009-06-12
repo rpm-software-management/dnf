@@ -63,6 +63,8 @@ class TransactionData:
         self.depremoved = []
         self.depinstalled = []
         self.depupdated = []
+        self.reinstalled = []
+        self.downgraded = []
         
     def __len__(self):
         return len(self.pkgdict)
@@ -242,7 +244,7 @@ class TransactionData:
         
         return False
                 
-    def makelists(self):
+    def makelists(self, include_reinstall=False, include_downgrade=False):
         """returns lists of transaction Member objects based on mode:
            updated, installed, erased, obsoleted, depupdated, depinstalled
            deperased"""
@@ -256,7 +258,17 @@ class TransactionData:
         self.depremoved = []
         self.depinstalled = []
         self.depupdated = []
+        self.reinstalled = []
+        self.downgraded = []
         self.failed = []
+
+        if include_reinstall:
+            pkgtups = {'up' : set(), 'in' : set(), 'rm' : set()}
+            for txmbr in self.getMembers():
+                if txmbr.output_state in (TS_INSTALL, TS_TRUEINSTALL):
+                    pkgtups['in'].add(txmbr.po.pkgtup)
+                if txmbr.output_state ==  TS_ERASE:
+                    pkgtups['rm'].add(txmbr.po.pkgtup)
 
         for txmbr in self.getMembers():
             if txmbr.output_state == TS_UPDATE:
@@ -265,7 +277,15 @@ class TransactionData:
                 else:
                     self.updated.append(txmbr)
                     
-            elif txmbr.output_state == TS_INSTALL or txmbr.output_state == TS_TRUEINSTALL:
+            elif txmbr.output_state in (TS_INSTALL, TS_TRUEINSTALL):
+                if include_reinstall and txmbr.po.pkgtup in pkgtups['rm']:
+                    self.reinstalled.append(txmbr)
+                    continue
+
+                if include_downgrade and txmbr.downgrades:
+                    self.downgraded.append(txmbr)
+                    continue
+
                 if txmbr.groups:
                     for g in txmbr.groups:
                         if g not in self.instgroups:
@@ -276,6 +296,12 @@ class TransactionData:
                     self.installed.append(txmbr)
             
             elif txmbr.output_state == TS_ERASE:
+                if include_reinstall and txmbr.po.pkgtup in pkgtups['in']:
+                    continue
+
+                if include_downgrade and txmbr.downgraded_by:
+                    continue
+
                 for g in txmbr.groups:
                     if g not in self.instgroups:
                         self.removedgroups.append(g)
@@ -367,6 +393,23 @@ class TransactionData:
             
         self.add(txmbr)
         return txmbr
+
+    def addDowngrade(self, po, oldpo):
+        """adds a package as an downgrade takes a packages object and returns
+           a pair of TransactionMember Objects"""
+
+        itxmbr = self.addErase(oldpo)
+        itxmbr.relatedto.append((po, 'downgradedby'))
+        itxmbr.downgraded_by.append(po)
+
+        atxmbr = self.addInstall(po)
+        if not atxmbr: # Fail?
+            self.remove(itxmbr.pkgtup)
+            return None
+        atxmbr.relatedto.append((oldpo, 'downgrades'))
+        atxmbr.downgrades.append(oldpo)
+
+        return (itxmbr, atxmbr)
 
     def addUpdated(self, po, updating_po):
         """adds a package as being updated by another pkg
@@ -544,6 +587,8 @@ class TransactionMember:
         self.obsoleted_by = []
         self.updates = []
         self.updated_by = []
+        self.downgrades = []
+        self.downgraded_by = []
         self.groups = [] # groups it's in
         self._poattr = ['pkgtup', 'repoid', 'name', 'arch', 'epoch', 'version',
                         'release']

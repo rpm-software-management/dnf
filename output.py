@@ -902,7 +902,7 @@ class YumOutput:
     def listTransaction(self):
         """returns a string rep of the  transaction in an easy-to-read way."""
         
-        self.tsInfo.makelists()
+        self.tsInfo.makelists(True, True)
         out = u""
         pkglist_lines = []
         data  = {'n' : {}, 'v' : {}, 'r' : {}}
@@ -938,6 +938,8 @@ class YumOutput:
         for (action, pkglist) in [(_('Installing'), self.tsInfo.installed),
                             (_('Updating'), self.tsInfo.updated),
                             (_('Removing'), self.tsInfo.removed),
+                            (_('Reinstalling'), self.tsInfo.reinstalled),
+                            (_('Downgrading'), self.tsInfo.downgraded),
                             (_('Installing for dependencies'), self.tsInfo.depinstalled),
                             (_('Updating for dependencies'), self.tsInfo.depupdated),
                             (_('Removing for dependencies'), self.tsInfo.depremoved)]:
@@ -994,13 +996,16 @@ class YumOutput:
         summary = _("""
 Transaction Summary
 %s
-Install  %5.5s Package(s)         
-Update   %5.5s Package(s)         
-Remove   %5.5s Package(s)         
+Install   %5.5s Package(s)
+Upgrade   %5.5s Package(s)
+Remove    %5.5s Package(s)
+Reinstall %5.5s Package(s)
+Downgrade %5.5s Package(s)
 """) % ('=' * self.term.columns,
         len(self.tsInfo.installed + self.tsInfo.depinstalled),
         len(self.tsInfo.updated + self.tsInfo.depupdated),
-        len(self.tsInfo.removed + self.tsInfo.depremoved))
+        len(self.tsInfo.removed + self.tsInfo.depremoved),
+        len(self.tsInfo.reinstalled), len(self.tsInfo.downgraded))
         out = out + summary
         
         return out

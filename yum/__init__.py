@@ -3378,14 +3378,11 @@ class YumBase(depsolve.Depsolve):
             na = (po.name, po.arch)
             if na not in downgrade_apkgs:
                 continue
-            itxmbr = self.tsInfo.addErase(po)
-            atxmbr = self.tsInfo.addInstall(downgrade_apkgs[na])
-            if not atxmbr: # Fail?
-                self.tsInfo.remove(itxmbr.pkgtup)
+            txmbrs = self.tsInfo.addDowngrade(downgrade_apkgs[na], po)
+            if not txmbrs: # Fail?
                 continue
             self._add_prob_flags(rpm.RPMPROB_FILTER_OLDPACKAGE)
-            tx_return.append(itxmbr)
-            tx_return.append(atxmbr)
+            tx_return.extend(txmbrs)
 
         return tx_return
         
