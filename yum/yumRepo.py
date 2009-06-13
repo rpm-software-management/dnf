@@ -821,6 +821,7 @@ class YumRepository(Repository, config.RepoConf):
         else return False. This result is cached, so that metalink/repomd.xml
         are synchronized."""
         if self._metadataCurrent is None:
+            self._hack_mirrorlist_for_anaconda()
             mlfn = self.cachedir + '/' + 'metalink.xml'
             if self.metalink and not os.path.exists(mlfn):
                 self._metadataCurrent = False
