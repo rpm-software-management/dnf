@@ -820,19 +820,28 @@ class YumRepository(Repository, config.RepoConf):
         age of the cookie is less than metadata_expire time then return true
         else return False. This result is cached, so that metalink/repomd.xml
         are synchronized."""
-        if self._metadataCurrent is None:
-            self._hack_mirrorlist_for_anaconda()
-            mlfn = self.cachedir + '/' + 'metalink.xml'
-            if self.metalink and not os.path.exists(mlfn):
-                self._metadataCurrent = False
-        if self._metadataCurrent is None:
-            repomdfn = self.cachedir + '/' + 'repomd.xml'
-            if not os.path.exists(repomdfn):
-                self._metadataCurrent = False
-        if self._metadataCurrent is None:
-            self._metadataCurrent = self.withinCacheAge(self.metadata_cookie,
-                                                        self.metadata_expire)
-        return self._metadataCurrent
+        if self._metadataCurrent is not None:
+            return self._metadataCurrent
+
+        mC_def = self.withinCacheAge(self.metadata_cookie, self.metadata_expire)
+        if not mC_def: # Normal path...
+            self._metadataCurrent = mC_def
+            return mC_def
+
+        # Edge cases, both repomd.xml and metalink (if used). Must exist.
+        repomdfn = self.cachedir + '/' + 'repomd.xml'
+        if not os.path.exists(repomdfn):
+            self._metadataCurrent = False
+            return False
+
+        self._hack_mirrorlist_for_anaconda()
+        mlfn = self.cachedir + '/' + 'metalink.xml'
+        if self.metalink and not os.path.exists(mlfn):
+            self._metadataCurrent = False
+            return False
+
+        self._metadataCurrent = True
+        return True
 
     #  The metalink _shouldn't_ be newer than the repomd.xml or the checksums
     # will be off, but we only really care when we are downloading the
