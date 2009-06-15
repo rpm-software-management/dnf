@@ -15,7 +15,7 @@
 # Copyright 2005 Duke University 
 
 """
-Depedancy resolution module for yum.
+Dependency resolution module for yum.
 """
 
 import os.path
