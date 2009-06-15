@@ -380,11 +380,7 @@ class UpdateMetadata(object):
                 try:
                     un = UpdateNotice(elem)
                 except UpdateNoticeException, e:
-                    #  Note that this isn't really accurate, it's just been
-                    # very common for Fedora rel-eng to produce data with no
-                    # IDs. Seth didn't want me to change the message, so blame
-                    # him :p~
-                    print >> sys.stderr, "An update notice lacks ID tag, skipping."
+                    print >> sys.stderr, "An update notice is broken, skipping."
                     # what else should we do?
                     continue
                 if not self._notices.has_key(un['update_id']):
