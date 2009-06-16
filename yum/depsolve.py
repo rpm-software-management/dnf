@@ -1105,6 +1105,9 @@ class Depsolve(object):
         
         # add the negative of the length of the name to the score
         
+        # if any of the pkgs are name.noarch and others are name.arch
+        # compare their evrs directly. Score down the name.arch one
+        
         for po in pkgs:
             for nextpo in pkgs:
                 if po == nextpo:

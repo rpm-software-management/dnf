@@ -329,10 +329,7 @@ class DepsolveTests(DepsolveTests):
         self.xsack.addPackage(xpo64)
 
         self.assertEquals('ok', *self.resolveCode())
-        if self.canonArch == 'x86_64':
-            self.assertResult((po, xpo64))
-        else:
-            self.assertResult((po, xpo))
+        self.assertResult((po, xpo64))
 
     def testUpdateSinglePackage(self):
         ipo = FakePackage('zsh', '1', '1', None, 'i386')
@@ -648,11 +645,6 @@ class DepsolveTests(DepsolveTests):
 
     def testCompareProvidersSameLen2_noarch_to_64_1(self):
         # Make sure they are still ok, the other way around
-        myarch = self.canonArch
-
-        if myarch not in ('i386', 'x86_64'):
-            return
-            
 
         po = FakePackage('abcd', arch='noarch')
         po.addRequires('libxyz-1.so.0', None, (None, None, None))
@@ -666,20 +658,12 @@ class DepsolveTests(DepsolveTests):
         self.xsack.addPackage(po1)
 
         self.assertEquals('ok', *self.resolveCode())
-        if myarch == 'i386':
-            self.assertResult((po, po2))
-        
-        if myarch == 'x86_64':
-            self.assertResult((po, po1))
+        self.assertResult((po, po1))
         
 
     def testCompareProvidersSameLen2_noarch_to_64_2(self):
         # Make sure they are still ok, the other way around
-        myarch = self.canonArch
 
-        if myarch not in ('i386', 'x86_64'):
-            return
-                    
         po = FakePackage('abcd', arch='noarch')
         po.addRequires('libxyz-1.so.0', None, (None, None, None))
         self.tsInfo.addInstall(po)
@@ -692,10 +676,7 @@ class DepsolveTests(DepsolveTests):
         self.xsack.addPackage(po1)
         
         self.assertEquals('ok', *self.resolveCode())
-        if myarch == 'x86_64':
-            self.assertResult((po, po2))
-        if myarch == 'i386':
-            self.assertResult((po, po1))
+        self.assertResult((po, po2))
             
 
     def testCompareProvidersDiffLen_64(self):

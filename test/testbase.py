@@ -30,7 +30,7 @@ class FakeConf(object):
     def __init__(self):
         self.installonlypkgs = ['kernel']
         self.exclude = []
-        self.debuglevel = 0
+        self.debuglevel = 8
         self.obsoletes = True
         self.exactarch = False
         self.exactarchlist = []
@@ -156,7 +156,6 @@ class DepSolveProgressCallBack:
 class _DepsolveTestsBase(unittest.TestCase):
 
     res = {0 : 'empty', 2 : 'ok', 1 : 'err'}
-    canonArch = "x86_64"
 
     def __init__(self, methodName='runTest'):
         unittest.TestCase.__init__(self, methodName)
@@ -164,10 +163,9 @@ class _DepsolveTestsBase(unittest.TestCase):
         self.buildPkgs(self.pkgs)
 
     def setUp(self):
-        self._canonArch = arch.canonArch
-        arch.canonArch = self.canonArch
+        pass
     def tearDown(self):
-        arch.canonArch = self._canonArch
+        pass
 
     @staticmethod
     def buildPkgs(pkgs, *args):
@@ -284,6 +282,7 @@ class DepsolveTests(_DepsolveTestsBase):
     def resolveCode(self):
         solver = YumBase()
         solver.conf = FakeConf()
+        solver.arch.setup_arch('x86_64')
         solver.tsInfo = solver._tsInfo = self.tsInfo
         solver.rpmdb = self.rpmdb
         solver.pkgSack = self.xsack
@@ -325,6 +324,7 @@ class OperationsTests(_DepsolveTestsBase):
         requirements from.
         """
         depsolver = YumBaseCli()
+        depsolver.arch.setup_arch('x86_64')
         self.rpmdb = depsolver.rpmdb = FakeRpmDb()
         self.xsack = depsolver._pkgSack  = packageSack.PackageSack()
         self.repo = depsolver.repo = FakeRepo("installed")
