@@ -1105,8 +1105,6 @@ class Depsolve(object):
         
         # add the negative of the length of the name to the score
         
-        # if any of the pkgs are name.noarch and others are name.arch
-        # compare their evrs directly. Score down the name.arch one
         
         for po in pkgs:
             for nextpo in pkgs:
@@ -1117,8 +1115,7 @@ class Depsolve(object):
                 # treat it like it's obsoleted. The problem here is X-1
                 # accidentally provides FOO, so you release X-2 without the
                 # provide, but X-1 is still picked over a real provider.
-                na = (po.name,po.arch)
-                lpos = self.pkgSack.returnNewestByNameArch(naTup=na)
+                lpos = self.pkgSack.returnNewestByName(po.name)
                 if not lpos or po != sorted(lpos)[-1]:
                     pkgresults[po] -= 1024
 

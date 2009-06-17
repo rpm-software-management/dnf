@@ -1177,3 +1177,23 @@ class DepsolveTests(DepsolveTests):
 
         self.assertEquals('ok', *self.resolveCode())
         self.assertResult((ipo1, apo3))
+
+    def testCompareProvidersNoarchWithHigherVer_to_64(self):
+
+        po = FakePackage('abcd', arch='x86_64')
+        po.addRequires('libxyz-1.so.0', None, (None, None, None))
+        self.tsInfo.addInstall(po)
+
+        po3 = FakePackage('libbar', version='1.1', arch='x86_64')
+        po3.addProvides('libxyz-1.so.0', None,(None,None,None))
+        self.xsack.addPackage(po3)
+        po2 = FakePackage('libbar', version='1.2', arch='noarch')
+        po2.addProvides('libxyz-1.so.0', None,(None,None,None))
+        self.xsack.addPackage(po2)
+        po1 = FakePackage('libbar', version='1.1', arch='i386')
+        po1.addProvides('libxyz-1.so.0', None,(None,None,None))
+        self.xsack.addPackage(po1)
+        
+        self.assertEquals('ok', *self.resolveCode())
+        self.assertResult((po, po2))
+           
