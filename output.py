@@ -141,10 +141,6 @@ class YumTerm:
         self.BG_COLOR = self.__ansi_forced_BG_COLOR
 
     def reinit(self, term_stream=None, color='auto'):
-        if color == 'never':
-            self.__enabled = False
-            return
-
         self.__enabled = True
         if not hasattr(urlgrabber.progress, 'terminal_width_cached'):
             self.columns = 80
@@ -153,7 +149,6 @@ class YumTerm:
         if color == 'always':
             self.__forced_init()
             return
-        assert color == 'auto'
 
         # Output modes:
         self.MODE = {
@@ -187,6 +182,11 @@ class YumTerm:
             'yellow' : '',
             'white' : ''
             }
+
+        if color == 'never':
+            self.__enabled = False
+            return
+        assert color == 'auto'
 
         # Curses isn't available on all platforms
         try:
