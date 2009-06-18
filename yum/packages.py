@@ -27,6 +27,7 @@ import re
 import fnmatch
 import stat
 import warnings
+from subprocess import Popen, PIPE
 from rpmUtils import RpmUtilsError
 import rpmUtils.miscutils
 from rpmUtils.miscutils import flagToString, stringToVersion
@@ -1480,7 +1481,10 @@ class YumInstalledPackage(YumHeaderPackage):
                     if gen_csum and my_csum != csum and have_prelink:
                         #  This is how rpm -V works, try and if that fails try
                         # again with prelink.
-                        (ig, fp,er) = os.popen3([prelink_cmd, "-y", fn])
+                        p = Popen([prelink_cmd, "-y", fn], 
+                            shell=True, bufsize=-1, stdin=PIPE, 
+                            stdout=PIPE, stderr=PIPE, close_fds=True)
+                        (ig, fp, er) = (p.stdin, p.stdout, p.stderr)
                         # er.read(1024 * 1024) # Try and get most of the stderr
                         fp = _CountedReadFile(fp)
                         my_csum = misc.checksum(csum_type, fp)
