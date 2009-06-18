@@ -1386,8 +1386,14 @@ class YumInstalledPackage(YumHeaderPackage):
                 # stat
                 my_st = os.lstat(fn)
                 my_st_size = my_st.st_size
-                my_user  = pwd.getpwuid(my_st[stat.ST_UID])[0]
-                my_group = grp.getgrgid(my_st[stat.ST_GID])[0]
+                try:
+                    my_user  = pwd.getpwuid(my_st[stat.ST_UID])[0]
+                except KeyError, e:
+                    my_user = 'uid %s not found' % my_st[stat.ST_UID]
+                try:
+                    my_group = grp.getgrgid(my_st[stat.ST_GID])[0]
+                except KeyError, e:
+                    my_group = 'gid %s not found' % my_st[stat.ST_GID]
 
                 if mode < 0:
                     # Stupid rpm, should be unsigned value but is signed ...
