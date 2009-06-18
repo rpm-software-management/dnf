@@ -495,6 +495,21 @@ class YumRepository(Repository, config.RepoConf):
     grabfunc = property(lambda self: self._getgrabfunc())
     grab = property(lambda self: self._getgrab())
 
+    def _dirSetupMkdir_p(self, dpath):
+        """make the necessary directory path, if possible, raise on failure"""
+        if os.path.exists(dpath) and os.path.isdir(dpath):
+            return
+
+        if self.cache:
+            raise Errors.RepoError, "Cannot access repository dir %s" % dpath
+
+        try:
+            os.makedirs(dpath, mode=0755)
+        except OSError, e:
+            msg = "%s: %s %s: %s" % ("Error making cache directory",
+                                     dpath, "error was", e)
+            raise Errors.RepoError, msg
+
     def dirSetup(self):
         """make the necessary dirs, if possible, raise on failure"""
 
@@ -510,19 +525,8 @@ class YumRepository(Repository, config.RepoConf):
         self.setAttribute('_dir_setup_metadata_cookie', cookie)
 
         for dir in [self.cachedir, self.pkgdir]:
-            if self.cache == 0:
-                if os.path.exists(dir) and os.path.isdir(dir):
-                    continue
-                else:
-                    try:
-                        os.makedirs(dir, mode=0755)
-                    except OSError, e:
-                        raise Errors.RepoError, \
-                            "Error making cache directory: %s error was: %s" % (dir, e)
-            else:
-                if not os.path.exists(dir):
-                    raise Errors.RepoError, \
-                        "Cannot access repository dir %s" % dir
+            self._dirSetupMkdir_p(dir)
+
         # if we're using a cachedir that's not the system one, copy over these
         # basic items from the system one
         self._preload_md_from_system_cache('repomd.xml')
@@ -530,17 +534,35 @@ class YumRepository(Repository, config.RepoConf):
         self._preload_md_from_system_cache('mirrorlist.txt')
         self._preload_md_from_system_cache('metalink.xml')
 
-    def _dirAttr(self, attr):
+    def _dirGetAttr(self, attr):
         """ Make the directory attributes call .dirSetup() if needed. """
         attr = '_dir_setup_' + attr
         if not hasattr(self, attr):
             self.dirSetup()
         return getattr(self, attr)
-    cachedir = property(lambda self: self._dirAttr('cachedir'))
-    pkgdir   = property(lambda self: self._dirAttr('pkgdir'))
-    hdrdir   = property(lambda self: self._dirAttr('hdrdir'))
-    gpgdir   = property(lambda self: self._dirAttr('gpgdir'))
-    metadata_cookie = property(lambda self: self._dirAttr('metadata_cookie'))
+    def _dirSetAttr(self, attr, val):
+        """ Make the directory attributes call .dirSetup() if needed. """
+        attr = '_dir_setup_' + attr
+        if not hasattr(self, attr):
+            self.dirSetup()
+
+        if attr == '_dir_setup_pkgdir':
+            if not hasattr(self, '_old_pkgdirs'):
+                self._old_pkgdirs = []
+            self._old_pkgdirs.append(getattr(self, attr))
+
+        ret = setattr(self, attr, val)
+        if attr in ('_dir_setup_pkgdir', ):
+            self._dirSetupMkdir_p(val)
+        return ret
+    cachedir = property(lambda self: self._dirGetAttr('cachedir'))
+    pkgdir   = property(lambda self: self._dirGetAttr('pkgdir'),
+                        lambda self, x: self._dirSetAttr('pkgdir', x))
+    hdrdir   = property(lambda self: self._dirGetAttr('hdrdir'),
+                        lambda self, x: self._dirSetAttr('hdrdir', x))
+    gpgdir   = property(lambda self: self._dirGetAttr('gpgdir'),
+                        lambda self, x: self._dirSetAttr('gpgdir', x))
+    metadata_cookie = property(lambda self: self._dirGetAttr('metadata_cookie'))
 
     def baseurlSetup(self):
         warnings.warn('baseurlSetup() will go away in a future version of Yum.\n',
@@ -789,6 +811,11 @@ class YumRepository(Repository, config.RepoConf):
         remote = package.relativepath
         local = package.localPkg()
         basepath = package.basepath
+
+        if self._preload_pkg_from_system_cache(package):
+            if package.verifyLocalPkg():
+                return local
+            misc.unlink_f(local)
 
         return self._getFile(url=basepath,
                         relative=remote,
@@ -1606,7 +1633,19 @@ class YumRepository(Repository, config.RepoConf):
 
         return returnlist
 
-    def _preload_file_from_system_cache(self, filename, subdir=''):
+    def _preload_file(self, fn, destfn):
+        """attempts to copy the file, if possible"""
+        # don't copy it if the copy in our users dir is newer or equal
+        if not os.path.exists(fn):
+            return False
+        if os.path.exists(destfn):
+            if os.stat(fn)[stat.ST_CTIME] <= os.stat(destfn)[stat.ST_CTIME]:
+                return False
+        shutil.copy2(fn, destfn)
+        return True
+
+    def _preload_file_from_system_cache(self, filename, subdir='',
+                                        destfn=None):
         """attempts to copy the file from the system-wide cache,
            if possible"""
         if not hasattr(self, 'old_base_cache_dir'):
@@ -1621,16 +1660,10 @@ class YumRepository(Repository, config.RepoConf):
             return False
 
         # Try to copy whatever file it is
-        fn = glob_repo_cache_dir + '/' + subdir + os.path.basename(filename)
-        destfn = self.cachedir   + '/' + subdir + os.path.basename(filename)
-        # don't copy it if the copy in our users dir is newer or equal
-        if not os.path.exists(fn):
-            return False
-        if os.path.exists(destfn):
-            if os.stat(fn)[stat.ST_CTIME] <= os.stat(destfn)[stat.ST_CTIME]:
-                return False
-        shutil.copy2(fn, destfn)
-        return True
+        fn = glob_repo_cache_dir   + '/' + subdir + os.path.basename(filename)
+        if destfn is None:
+            destfn = self.cachedir + '/' + subdir + os.path.basename(filename)
+        return self._preload_file(fn, destfn)
 
     def _preload_md_from_system_cache(self, filename):
         """attempts to copy the metadata file from the system-wide cache,
@@ -1640,7 +1673,19 @@ class YumRepository(Repository, config.RepoConf):
     def _preload_pkg_from_system_cache(self, pkg):
         """attempts to copy the package from the system-wide cache,
            if possible"""
-        return self._preload_file_from_system_cache(pkg.localPkg(),subdir='packages/')
+        pname  = os.path.basename(pkg.localPkg())
+        destfn = os.path.join(self.pkgdir, pname)
+        if self._preload_file_from_system_cache(pkg.localPkg(),
+                                                subdir='packages/',
+                                                destfn=destfn):
+            return True
+
+        if not hasattr(self, '_old_pkgdirs'):
+            return False
+        for opkgdir in self._old_pkgdirs:
+            if self._preload_file(os.path.join(opkgdir, pname), destfn):
+                return True
+        return False
 
 
 def getMirrorList(mirrorlist, pdict = None):
