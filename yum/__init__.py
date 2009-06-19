@@ -3190,7 +3190,10 @@ class YumBase(depsolve.Depsolve):
                              rpm.RPMPROB_FILTER_REPLACEOLDFILES)
 
         tx_mbrs = []
-        tx_mbrs.extend(self.remove(po, **kwargs))
+        if po: # The po, is the "available" po ... we want the installed po
+            tx_mbrs.extend(self.remove(pkgtup=po.pkgtup))
+        else:
+            tx_mbrs.extend(self.remove(**kwargs))
         if not tx_mbrs:
             raise Errors.ReinstallRemoveError, _("Problem in reinstall: no package matched to remove")
         templen = len(tx_mbrs)
