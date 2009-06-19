@@ -1066,12 +1066,13 @@ class Depsolve(object):
 
         for pkg in pkgs:
             pkgresults[pkg] = 0
-            if self.rpmdb.contains(pkg.name):
+
+            rpmdbpkgs = self.rpmdb.searchNevra(name=pkg.name)
+            if rpmdbpkgs:
                 #  We only want to count things as "installed" if they are
                 # older than what we are comparing, because this then an update
                 # so we give preference. If they are newer then obsoletes/etc.
                 # could play a part ... this probably needs a better fix.
-                rpmdbpkgs = self.rpmdb.returnPackages(patterns=[pkg.name])
                 newest = sorted(rpmdbpkgs)[-1]
                 if newest.verLT(pkg):
                     ipkgresults[pkg] = 0
