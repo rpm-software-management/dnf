@@ -1046,6 +1046,19 @@ class YumBase(depsolve.Depsolve):
                 if csum is not None:
                     po.yumdb_info.checksum_type = str(csum[0])
                     po.yumdb_info.checksum_data = str(csum[1])
+
+                if isinstance(rpo, YumLocalPackage):
+                    try:
+                        st = os.stat(rpo.localPkg())
+                        lp_ctime = str(int(st.st_ctime))
+                        lp_mtime = str(int(st.st_mtime))
+                        po.yumdb_info.from_repo_revision  = lp_ctime
+                        po.yumdb_info.from_repo_timestamp = lp_mtime
+                    except: pass
+
+                if not hasattr(rpo.repo, 'repoXML'):
+                    continue
+
                 md = rpo.repo.repoXML
                 if md and md.revision is not None:
                     po.yumdb_info.from_repo_revision  = str(md.revision)
