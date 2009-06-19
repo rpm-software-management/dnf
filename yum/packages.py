@@ -1123,7 +1123,10 @@ class YumHeaderPackage(YumAvailablePackage):
         if thing.startswith('__') and thing.endswith('__'):
             if not hasattr(self, thing):
                 raise AttributeError, "%s has no attribute %s" % (self, thing)
-        return self.hdr[thing]
+        try:
+            return self.hdr[thing]
+        except KeyError:
+            raise AttributeError, "%s has no attribute %s" % (self, thing)
 
     def doepoch(self):
         tmpepoch = self.hdr['epoch']
