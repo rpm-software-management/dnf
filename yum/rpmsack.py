@@ -268,12 +268,12 @@ class RPMDBPackageSack(PackageSackBase):
         
         (name, arch) = naTup
 
-        allpkg = [ po.pkgtup for po in self._search(name=name, arch=arch) ]
+        allpkg = self._search(name=name, arch=arch)
 
         if not allpkg:
             raise Errors.PackageSackError, 'No Package Matching %s' % name
 
-        return misc.newestInList(allpkg)
+        return [ po.pkgtup for po in misc.newestInList(allpkg) ]
 
     def returnNewestByName(self, name=None):
         if not name:
