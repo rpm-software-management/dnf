@@ -448,8 +448,7 @@ class RPMDBPackageSack(PackageSackBase):
 
 
     def _search(self, name=None, epoch=None, ver=None, rel=None, arch=None):
-        '''Generator that yields matching packages
-        '''
+        '''List of matching packages, to zero or more of NEVRA.'''
         pkgtup = (name, arch, epoch, ver, rel)
         if self._tup2pkg.has_key(pkgtup):
             return [self._tup2pkg[pkgtup]]
