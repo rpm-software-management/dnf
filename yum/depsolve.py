@@ -1106,6 +1106,7 @@ class Depsolve(object):
         # add the negative of the length of the name to the score
         
         
+        lpos = {}
         for po in pkgs:
             for nextpo in pkgs:
                 if po == nextpo:
@@ -1115,8 +1116,9 @@ class Depsolve(object):
                 # treat it like it's obsoleted. The problem here is X-1
                 # accidentally provides FOO, so you release X-2 without the
                 # provide, but X-1 is still picked over a real provider.
-                lpos = self.pkgSack.returnNewestByName(po.name)
-                if not lpos or po != sorted(lpos)[-1]:
+                if po.name not in lpos:
+                    lpos[po.name] = self.pkgSack.returnNewestByName(po.name)[:1]
+                if not lpos[po.name] or not po.verEQ(lpos[po.name][0]):
                     pkgresults[po] -= 1024
 
                 obsoleted = False
