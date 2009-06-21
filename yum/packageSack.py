@@ -33,6 +33,14 @@ class PackageSackVersion:
     def __str__(self):
         return "%u:%s" % (self._num, self._chksum.hexdigest())
 
+    def __eq__(self, other):
+        if other is None: return False
+        if self._num != other._num: return False
+        if self._chksum.digest() != other._chksum.digest(): return False
+        return True
+    def __ne__(self, other):
+        return not (self == other)
+
     def update(self, pkg, csum):
         self._num += 1
         self._chksum.update(str(pkg))
