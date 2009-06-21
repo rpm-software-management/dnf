@@ -1065,12 +1065,16 @@ class VersionCommand(YumCommand):
         def _append_repos(cols, repo_data):
             for repoid in sorted(repo_data):
                 cur = repo_data[repoid]
-                if None in cur and len(cur) != 2:
-                    cols.append(("    %s" % repoid, str(cur[None])))
+                ncols = []
+                last_rev = None
                 for rev in sorted(cur):
                     if rev is None:
                         continue
-                    cols.append(("    %s/%s" % (repoid, rev), str(cur[rev])))
+                    last_rev = cur[rev]
+                    ncols.append(("    %s/%s" % (repoid, rev), str(cur[rev])))
+                if None in cur and (not last_rev or cur[None] != last_rev):
+                    cols.append(("    %s" % repoid, str(cur[None])))
+                cols.extend(ncols)
 
         rel = base.yumvar['releasever']
         ba  = base.yumvar['basearch']
