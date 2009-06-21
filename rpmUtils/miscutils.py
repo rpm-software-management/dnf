@@ -340,7 +340,7 @@ def rpm2cpio(fdno, out=sys.stdout, bufsize=2048):
 def formatRequire (name, version, flags):
     s = name
     
-    if flags:
+    if flags and version:
         if flags & (rpm.RPMSENSE_LESS | rpm.RPMSENSE_GREATER |
                     rpm.RPMSENSE_EQUAL):
             s = s + " "
@@ -350,8 +350,7 @@ def formatRequire (name, version, flags):
                 s = s + ">"
             if flags & rpm.RPMSENSE_EQUAL:
                 s = s + "="
-            if version:
-                s = "%s %s" %(s, version)
+            s = "%s %s" % (s, version)
     return s
     
 def flagToString(flags):
