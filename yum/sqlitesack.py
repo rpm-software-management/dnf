@@ -437,6 +437,8 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
         if not self.excludes.has_key(obj.repo):
             self.excludes[obj.repo] = {}
         self.excludes[obj.repo][obj.pkgId] = 1
+        if (obj.repo, obj.pkgKey) in self._exclude_whitelist:
+            self._exclude_whitelist.discard((obj.repo, obj.pkgKey))
         self._delPackageRK(obj.repo, obj.pkgKey)
 
     def _delAllPackages(self, repo):
