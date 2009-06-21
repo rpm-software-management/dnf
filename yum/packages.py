@@ -1126,7 +1126,9 @@ class YumHeaderPackage(YumAvailablePackage):
         try:
             return self.hdr[thing]
         except KeyError:
-            raise AttributeError, "%s has no attribute %s" % (self, thing)
+            #  Note above, API break to fix this ... this at least is a nicer
+            # msg. so we know what we accessed that is bad.
+            raise KeyError, "%s has no attribute %s" % (self, thing)
 
     def doepoch(self):
         tmpepoch = self.hdr['epoch']
