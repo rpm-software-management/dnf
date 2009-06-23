@@ -36,6 +36,7 @@ import operator
 from yum.misc import seq_max_split
 from yum.i18n import to_utf8, to_unicode
 import sys
+import re
 
 def catchSqliteException(func):
     """This decorator converts sqlite exceptions into RepoError"""
@@ -727,10 +728,16 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
         # if so, just use those for the lookup
         
         glob = True
+        file_glob = True
         querytype = 'glob'
+        dirname  = os.path.dirname(name)
+        filename = os.path.basename(name)
         if strict or not misc.re_glob(name):
             glob = False
+            file_glob = False
             querytype = '='
+        elif not misc.re_glob(filename):
+            file_glob = False
 
         # Take off the trailing slash to act like rpm
         if name[-1] == '/':
@@ -754,41 +761,53 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
             if pri_pkgs != fil_pkgs:
                 raise Errors.RepoError
 
+        sql_params = []
+        dirname_check = ""
+        if not glob:
+            (pattern, esc) = self._sql_esc(filename)
+            dirname_check = "dirname = ? and filenames LIKE ? %s and " % esc
+            sql_params.append(dirname)
+            sql_params.append('%' + pattern + '%')
+        elif not file_glob:
+            (pattern, esc) = self._sql_esc(filename)
+            dirname_check = "dirname GLOB ? and filenames LIKE ? %s and " % esc
+            sql_params.append(dirname)
+            sql_params.append('%' + pattern + '%')
+
         for (rep,cache) in self.filelistsdb.items():
             if rep in self._all_excludes:
                 continue
 
             cur = cache.cursor()
 
-            if glob:
-                dirname_check = ""
-            else:
-                dirname = os.path.dirname(name)
-                dirname_check = "dirname = \"%s\" and " % dirname
-
             # grab the entries that are a single file in the 
             # filenames section, use sqlites globbing if it is a glob
             executeSQL(cur, "select pkgKey from filelist where \
                     %s length(filetypes) = 1 and \
                     dirname || ? || filenames \
-                    %s ?" % (dirname_check, querytype), ('/', name))
+                    %s ?" % (dirname_check, querytype), sql_params + ['/',name])
             self._sql_pkgKey2po(rep, cur, pkgs)
 
-            def filelist_globber(dirname, filenames):
-                files = filenames.split('/')
-                fns = map(lambda f: '%s/%s' % (dirname, f), files)
-                if glob:
-                    matches = fnmatch.filter(fns, name)
-                else:
-                    matches = filter(lambda x: name==x, fns)
-                return len(matches)
+            if file_glob:
+                name_re = re.compile(fnmatch.translate(name))
+            def filelist_globber(sql_dirname, sql_filenames):
+                files = sql_filenames.split('/')
+                if not file_glob:
+                    return filename in files
+
+                fns = map(lambda f: '%s/%s' % (sql_dirname, f), files)
+                for match in fns:
+                    if name_re.match(match):
+                        return True
+                return False
 
             cache.create_function("filelist_globber", 2, filelist_globber)
             # for all the ones where filenames is multiple files, 
             # make the files up whole and use python's globbing method
             executeSQL(cur, "select pkgKey from filelist where \
                              %s length(filetypes) > 1 \
-                             and filelist_globber(dirname,filenames)" % dirname_check)
+                             and filelist_globber(dirname,filenames)" % dirname_check,
+                       sql_params)
 
             self._sql_pkgKey2po(rep, cur, pkgs)
 
