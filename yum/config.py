@@ -865,7 +865,11 @@ def _getsysver(installroot, distroverpkg):
     '''
     ts = rpmUtils.transaction.initReadOnlyTransaction(root=installroot)
     ts.pushVSFlags(~(rpm._RPMVSF_NOSIGNATURES|rpm._RPMVSF_NODIGESTS))
-    idx = ts.dbMatch('provides', distroverpkg)
+    try:
+        idx = ts.dbMatch('provides', distroverpkg)
+    except TypeError, e:
+        # This is code for "cannot open rpmdb"
+        raise Errors.YumBaseError(e.message)
     # we're going to take the first one - if there is more than one of these
     # then the user needs a beating
     if idx.count() == 0:
