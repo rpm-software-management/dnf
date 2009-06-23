@@ -184,9 +184,72 @@ class BuildPackageDictRefTests(unittest.TestCase):
 
         self.assertEquals(0, len(unseen_keys))
 
+def _perms(evr): # Magic comp. sci. stuff ... oooh
+    e, v, r = evr
+    for num in range(8):
+        perm = []
+        if num & 1:
+            perm.append(e)
+        else:
+            perm.append(None)
+        if num & 2:
+            perm.append(v)
+        else:
+            perm.append(None)
+        if num & 4:
+            perm.append(r)
+        else:
+            perm.append(None)
+        yield tuple(perm)
+
 class RangeCompareTests(unittest.TestCase):
 
     def testRangeCompare(self):
+        def tst(requires, provides, result):
+            print requires, provides
+            self.assertEquals(miscutils.rangeCompare(requires, provides),result)
+        def tst_lege_prov(requires, provides, result):
+            if not result or provides[1] != 'EQ':
+                return
+            for flag in ('GE', 'LE'): # EQ is a subset of either LE or GE
+                nprovides = (provides[0], flag, provides[2])
+                tst(requires, nprovides, result)
+        def tst_lege_reqs(requires, provides, result):
+            tst_lege_prov(requires, provides, result)
+            if not result or requires[1] != 'EQ':
+                return
+            for flag in ('GE', 'LE'): # EQ is a subset of either LE or GE
+                nrequires = (requires[0], flag, requires[2])
+                tst(nrequires, provides, result)
+                tst_lege_prov(nrequires, provides, result)
+        def tst_none_reqs(requires, provides, result):
+            if (not result or requires[1] or provides[1] != 'EQ' or
+                requires[2] != (None, None, None)):
+                return
+            tst_lege_prov(requires, provides, result)
+            # Doesn't matter about versions
+            for flag in ('GE', 'EQ', 'LE'):
+                nrequires = (requires[0], flag, requires[2])
+                tst(nrequires, provides, result)
+                tst_lege_prov(nrequires, provides, result)
+        def tst_none_expand(requires, provides, result, *args):
+            if requires[2] != (None, None, None):
+                return
+            # Expand parts of the version, replacing with data from provides.
+            # Eg. (None, None, None) and ('1', '2', '3') becomes:
+            #     (None, None, None)
+            #     ('1',  None,  None)
+            #     (None,  '2',  None)
+            #     (None, None,  '3')
+            #     ('1',   '2',  None)
+            #     ...
+            #     ('1',   '2',   '3')
+
+            for evr in _perms(provides[2]):
+                nrequires = (requires[0], requires[1], evr)
+                for func in args:
+                    func(nrequires, provides, result)
+
         for requires, provides, result in (
             (('foo', 'EQ', ('0', '1.4.4', '0')),   ('foo', 'EQ', ('0', '1.4.4', '0')),  1),
             (('foo', 'EQ', ('0', '1.4.4', '0')),   ('foo', 'EQ', ('0', '1.4.4', None)), 1),
@@ -195,5 +258,25 @@ class RangeCompareTests(unittest.TestCase):
             (('foo', 'GE', ('0', '1.4.4', '7.1')), ('foo', 'EQ', ('0', '1.4.4', '7')),  0),
             (('foo', 'EQ', ('0', '1.4', None)),    ('foo', 'EQ', ('0', '1.4.4', '7')),  0),
             (('foo', 'GT', ('1', '1.4.4', None)),  ('foo', 'EQ', ('3', '1.2.4', '7')),  1),
+            (('foo', None, (None, None, None)),    ('foo', 'EQ', ('3', '1.2.4', '7')),  1),
+            (('fuu', None, (None, None, None)),    ('foo', 'EQ', ('3', '1.2.4', '7')),  0),
+            (('foo', None, (None, None, None)),    ('foo', 'GT', ('3', '1.2.4', '7')),  1),
+
+            (('foo', 'EQ', (None, None, None)),    ('foo', 'GT', ('3', '1.2.4', '7')),  0),
+            (('foo', 'LT', (None, None, None)),    ('foo', 'GT', ('3', '1.2.4', '7')),  0),
+            (('foo', 'LE', (None, None, None)),    ('foo', 'GT', ('3', '1.2.4', '7')),  0),
+            (('foo', 'GE', (None, None, None)),    ('foo', 'GT', ('3', '1.2.4', '7')),  1),
+            (('foo', 'GT', (None, None, None)),    ('foo', 'GT', ('3', '1.2.4', '7')),  1),
+
+            (('foo', 'EQ', (None, None, None)),    ('foo', 'LT', ('3', '1.2.4', '7')),  0),
+            (('foo', 'LT', (None, None, None)),    ('foo', 'LT', ('3', '1.2.4', '7')),  1),
+            (('foo', 'LE', (None, None, None)),    ('foo', 'LT', ('3', '1.2.4', '7')),  1),
+            (('foo', 'GE', (None, None, None)),    ('foo', 'LT', ('3', '1.2.4', '7')),  0),
+            (('foo', 'GT', (None, None, None)),    ('foo', 'LT', ('3', '1.2.4', '7')),  0),
             ):
-            self.assertEquals(miscutils.rangeCompare(requires, provides), result)
+
+            tst(requires, provides, result)
+
+            tst_lege_reqs(requires, provides, result)
+            tst_none_expand(requires, provides, result,
+                            tst, tst_lege_reqs, tst_none_reqs)
