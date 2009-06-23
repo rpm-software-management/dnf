@@ -869,7 +869,7 @@ def _getsysver(installroot, distroverpkg):
         idx = ts.dbMatch('provides', distroverpkg)
     except TypeError, e:
         # This is code for "cannot open rpmdb"
-        raise Errors.YumBaseError(e.message)
+        raise Errors.YumBaseError("Error: " + e.message)
     # we're going to take the first one - if there is more than one of these
     # then the user needs a beating
     if idx.count() == 0:
