@@ -212,10 +212,6 @@ class YumBase(depsolve.Depsolve):
         else:
             arch = self.arch.canonarch
 
-        #  We don't want people accessing/altering preconf after it becomes
-        # worthless. So we delete it, and thus. it'll raise AttributeError
-        del self.preconf
-
         # TODO: Remove this block when we no longer support configs outside
         # of /etc/yum/
         if fn == '/etc/yum/yum.conf' and not os.path.exists(fn):
@@ -250,6 +246,10 @@ class YumBase(depsolve.Depsolve):
                     startupconf.pluginconfpath,disabled_plugins,enabled_plugins)
 
         self._conf = config.readMainConfig(startupconf)
+
+        #  We don't want people accessing/altering preconf after it becomes
+        # worthless. So we delete it, and thus. it'll raise AttributeError
+        del self.preconf
 
         # run the postconfig plugin hook
         self.plugins.run('postconfig')

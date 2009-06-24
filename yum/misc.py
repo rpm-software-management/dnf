@@ -815,7 +815,7 @@ def setup_locale(override_codecs=True, override_time=False):
 
 
 def get_my_lang_code():
-    mylang = locale.getlocale()
+    mylang = locale.getlocale(locale.LC_MESSAGES)
     if mylang == (None, None): # odd :)
         mylang = 'C'
     else:

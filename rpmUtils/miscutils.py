@@ -146,7 +146,8 @@ def rangeCompare(reqtuple, provtuple):
     if reqn != n:
         return 0
 
-    if f is None or reqf is None:
+    # unversioned satisfies everything
+    if not f or not reqf:
         return 1
 
     # and you thought we were done having fun
