@@ -27,8 +27,8 @@ import urlparse
 import shlex
 from parser import ConfigPreProcessor, varReplace
 from iniparse import INIConfig
-from iniparse.compat import NoSectionError, NoOptionError, ConfigParser
-from iniparse.compat import ParsingError
+from iniparse.compat import NoSectionError, NoOptionError, ParsingError
+from iniparse.compat import RawConfigParser as ConfigParser
 import rpmUtils.transaction
 import Errors
 

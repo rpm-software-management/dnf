@@ -22,11 +22,8 @@ import gettext
 import logging
 import logginglevels
 from constants import *
-try:
-    import iniparse.compat as ConfigParser
-except ImportError:
-    import ConfigParser
 import config 
+from config import ParsingError, ConfigParser
 import Errors
 from parser import ConfigPreProcessor
 
@@ -342,11 +339,11 @@ class YumPlugins:
             self.verbose_logger.log(logginglevels.INFO_2, _("Unable to find configuration file for plugin %s")
                 % modname)
             return None
-        parser = ConfigParser.ConfigParser()
+        parser = ConfigParser()
         confpp_obj = ConfigPreProcessor(conffilename)
         try:
             parser.readfp(confpp_obj)
-        except ConfigParser.ParsingError, e:
+        except ParsingError, e:
             raise Errors.ConfigError("Couldn't parse %s: %s" % (conffilename,
                 str(e)))
         return parser

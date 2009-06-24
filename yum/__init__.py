@@ -36,17 +36,14 @@ import yum.i18n
 _ = yum.i18n._
 P_ = yum.i18n.P_
 
-try:
-    from iniparse.compat import ParsingError, RawConfigParser as ConfigParser
-except ImportError:
-    from ConfigParser import ParsingError, ConfigParser
+import config
+from config import ParsingError, ConfigParser
 import Errors
 import rpmsack
 import rpmUtils.updates
 from rpmUtils.arch import canCoinstall, ArchStorage, isMultiLibArch
 import rpmUtils.transaction
 import comps
-import config
 from repos import RepoStorage
 import misc
 from parser import ConfigPreProcessor, varReplace
