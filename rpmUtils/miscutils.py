@@ -410,7 +410,7 @@ def hdrFromPackage(ts, package):
         raise rpmUtils.RpmUtilsError, "RPM Error opening Package"
     if type(hdr) != rpm.hdr:
         os.close(fdno)
-        raise rpmUtils.RpmUtilsError, "RPM Error opening Package"
+        raise rpmUtils.RpmUtilsError, "RPM Error opening Package (type)"
     
     os.close(fdno)
     return hdr

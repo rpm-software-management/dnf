@@ -1562,9 +1562,9 @@ class YumLocalPackage(YumHeaderPackage):
         
         try:
             hdr = rpmUtils.miscutils.hdrFromPackage(ts, self.localpath)
-        except RpmUtilsError:
+        except RpmUtilsError, e:
             raise Errors.MiscError, \
-                'Could not open local rpm file: %s' % self.localpath
+                'Could not open local rpm file: %s: %s' % (self.localpath, e)
         
         fakerepo = FakeRepository(filename)
         fakerepo.cost = 0
