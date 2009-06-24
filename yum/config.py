@@ -18,6 +18,7 @@
 """
 Configuration parser and default values for yum.
 """
+_use_iniparse = True
 
 import os
 import warnings
@@ -26,9 +27,15 @@ import copy
 import urlparse
 import shlex
 from parser import ConfigPreProcessor, varReplace
-from iniparse import INIConfig
-from iniparse.compat import NoSectionError, NoOptionError, ParsingError
-from iniparse.compat import RawConfigParser as ConfigParser
+try:
+    from iniparse import INIConfig
+    from iniparse.compat import NoSectionError, NoOptionError, ParsingError
+    from iniparse.compat import RawConfigParser as ConfigParser
+except ImportError:
+    _use_iniparse = False
+if not _use_iniparse:
+    from ConfigParser import NoSectionError, NoOptionError, ParsingError
+    from ConfigParser import ConfigParser
 import rpmUtils.transaction
 import Errors
 
@@ -894,6 +901,10 @@ def writeRawRepoFile(repo,only=None):
     @param only: List of attributes to work on (None = All)
     It work by reading the repo file, changes the values there shall be changed and write it back to disk.
     """
+
+    if not _use_iniparse:
+        return
+
     ini = INIConfig(open(repo.repofile))
     # Updated the ConfigParser with the changed values    
     cfgOptions = repo.cfg.options(repo.id)
