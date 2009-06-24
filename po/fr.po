@@ -162,7 +162,7 @@ msgstr "ERREUR de résolution de dépendance par rpm_check_debug :"
 
 #: ../cli.py:423, python-format
 msgid "Please report this error in %s"
-msgstr "Veuillez reporter cette erreur dans %"
+msgstr "Veuillez reporter cette erreur dans %s"
 
 #: ../cli.py:429
 msgid "Running Transaction Test"
