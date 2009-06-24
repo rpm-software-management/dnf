@@ -2699,9 +2699,23 @@ class YumBase(depsolve.Depsolve):
             # at which point ignore everything.
             obsoleting_pkg = self._test_loop(po, self._pkg2obspkg)
             if obsoleting_pkg is not None:
-                self.verbose_logger.warning(_('Package %s is obsoleted by %s, trying to install %s instead'),
-                    po.name, obsoleting_pkg.name, obsoleting_pkg)               
-                self.install(po=obsoleting_pkg)
+                # this is not a definitive check but it'll make sure we don't
+                # pull in foo.i586 when foo.x86_64 already obsoletes the pkg and
+                # is already installed
+                already_obs = None
+                poprovtup = (po.name, 'EQ', (po.epoch, po.ver, po.release))
+                for pkg in self.rpmdb.searchNevra(name=obsoleting_pkg.name):
+                    if pkg.inPrcoRange('obsoletes', poprovtup):
+                        already_obs = pkg
+                        continue
+
+                if already_obs:
+                    self.verbose_logger.warning(_('Package %s is obsoleted by %s which is already installed'), 
+                                                po, already_obs)
+                else:
+                    self.verbose_logger.warning(_('Package %s is obsoleted by %s, trying to install %s instead'),
+                        po.name, obsoleting_pkg.name, obsoleting_pkg)               
+                    self.install(po=obsoleting_pkg)
                 continue
             
             # make sure it's not already installed
