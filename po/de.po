@@ -805,7 +805,7 @@ msgstr ""
 "%s\n"
 "Installieren      %5.5s Paket(e)         \n"
 "Aktualisieren     %5.5s Paket(e)         \n"
-"Entfernen          %5.5s Paket(e)         \n"
+"Entfernen         %5.5s Paket(e)         \n"
 
 #: ../output.py:1025
 msgid "Removed"
