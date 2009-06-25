@@ -24,6 +24,7 @@ import warnings
 import rpm
 import copy
 import urlparse
+import shlex
 from parser import ConfigPreProcessor, varReplace
 from iniparse import INIConfig
 from iniparse.compat import NoSectionError, NoOptionError, ConfigParser
@@ -213,6 +214,10 @@ class UrlListOption(ListOption):
         
     def parse(self, s):
         out = []
+        s = s.replace('\n', ' ')
+        s = s.replace(',', ' ')
+        items = [ item.replace(' ', '%20') for item in shlex.split(s) ]
+        s = ' '.join(items)
         for url in super(UrlListOption, self).parse(s):
             out.append(self._urloption.parse(url))
         return out
