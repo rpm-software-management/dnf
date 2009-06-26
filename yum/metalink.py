@@ -32,7 +32,7 @@ except ImportError:
     import cElementTree
 xmlparse = cElementTree.parse
 
-class MetaLinkRepoErrorParseFail(Errors.YumBaseError):
+class MetaLinkRepoErrorParseFail(Errors.RepoError):
     """ An exception thrown for an unparsable MetaLinkRepoMD file. """
     pass
 
