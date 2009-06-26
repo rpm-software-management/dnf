@@ -480,6 +480,19 @@ class YumBase(depsolve.Depsolve):
         """populates the package sacks for information from our repositories,
            takes optional archlist for archs to include"""
 
+        # FIXME: Fist of death ... normally we'd do either:
+        #
+        # 1. use self._pkgSack is not None, and only init. once.
+        # 2. auto. correctly re-init each time a repo is added/removed
+        #
+        # ...we should probably just smeg it and do #2, but it's hard and will
+        # probably break something (but it'll "fix" excludes).
+        #  #1 can't be done atm. because we did self._pkgSack and external
+        # tools now rely on being able to create an empty sack and then have it
+        # auto. re-init when they add some stuff. So we add a bit more "clever"
+        # and don't setup the pkgSack to not be None when it's empty. This means
+        # we skip excludes/includes/etc. ... but there's no packages, so
+        # hopefully that's ok.
         if self._pkgSack is not None and thisrepo is None:
             return self._pkgSack
         
@@ -499,6 +512,8 @@ class YumBase(depsolve.Depsolve):
         
         self.repos.getPackageSack().setCompatArchs(archdict)
         self.repos.populateSack(which=repos)
+        if not self.repos.getPackageSack():
+            return self.repos.getPackageSack() # ha ha, see above
         self._pkgSack = self.repos.getPackageSack()
         
         self.excludePackages()
