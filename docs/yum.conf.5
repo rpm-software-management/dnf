@@ -22,21 +22,25 @@ repository/server. There should be one or more repository sections.
 The [main] section must exist for yum to do anything. It consists of the
 following options:
 
-.IP \fBcachedir\fR
+.IP
+\fBcachedir\fR
 Directory where yum should store its cache and db files. The default is
 `/var/cache/yum'.
 
-.IP \fBpersistdir\fR
+.IP
+\fBpersistdir\fR
 Directory where yum should store information that should persist over multiple
 runs. The default is `/var/lib/yum'.
 
-.IP \fBkeepcache\fR
+.IP
+\fBkeepcache\fR
 Either `1' or `0'. Determines whether or not yum keeps the cache
 of headers and packages after successful installation.  Default is '1'
 (keep files)
 .br
 
-.IP \fBreposdir\fR
+.IP
+\fBreposdir\fR
 A list of directories where yum should look for .repo files which define
 repositories to use. Default is `/etc/yum/repos.d'. Each
 file in this directory should contain one or more repository sections as
@@ -44,38 +48,46 @@ documented in \fB[repository] options\fR below. These will be merged with the
 repositories defined in /etc/yum/yum.conf to form the complete set of
 repositories that yum will use.
 
-.IP \fBdebuglevel\fR
+.IP
+\fBdebuglevel\fR
 Debug message output level. Practical range is 0\-10. Default is `2'.
 
-.IP \fBerrorlevel\fR
+.IP
+\fBerrorlevel\fR
 Error message output level. Practical range is 0\-10. Default is `2'.
 
-.IP \fBlogfile\fR
+.IP
+\fBlogfile\fR
 Full directory and file name for where yum should write its log file.
 
-.IP \fBgpgcheck\fR
+.IP
+\fBgpgcheck\fR
 Either `1' or `0'. This tells yum whether or not it should perform a GPG
 signature check on packages. When this is set in the [main] section it sets the
 default for all repositories. This option also determines whether or not an
 install of a package from a local RPM file will be GPG signature checked. The
 default is `0'.
 
-.IP \fBrepo_gpgcheck\fR
+.IP
+\fBrepo_gpgcheck\fR
 Either `1' or `0'. This tells yum whether or not it should perform a GPG
 signature check on the repodata. When this is set in the [main] section it sets the
 default for all repositories. The default is `0'.
 
-.IP \fBskip_broken\fR
+.IP
+\fBskip_broken\fR
 Either `1' or `0'. Resolve depsolve problems by removing packages that
 are causing problems from the transaction.
 
-.IP \fBassumeyes\fR
+.IP
+\fBassumeyes\fR
 Either `1' or `0'. Determines whether or not yum prompts for confirmation of
 critical actions. Default is `0' (do prompt).
 .br
 Command-line option: \fB\-y\fP
 
-.IP \fBalwaysprompt\fR
+.IP
+\fBalwaysprompt\fR
 Either `1' or `0'. Without this option, yum will not prompt for confirmation
 when the list of packages to be installed exactly matches those given on the
 command line. Unless \fBassumeyes\fR is enabled, it will still prompt for
@@ -83,7 +95,8 @@ package removal, or when additional packages need to be installed to fulfill
 dependencies. Default is `1'.
 .br
 
-.IP \fBtolerant\fR
+.IP
+\fBtolerant\fR
 Either `1' or `0'. If enabled, then yum will be tolerant of errors on the
 command line with regard to packages. For example: if you request to install
 foo, bar and baz and baz is installed; yum won't error out complaining that baz
@@ -91,38 +104,45 @@ is already installed. Default to `0' (not tolerant).
 .br
 Command-line option: \fB\-t\fP
 
-.IP \fBexclude\fR
+.IP
+\fBexclude\fR
 List of packages to exclude from updates or installs. This should be a space
 separated list.
 Shell globs using wildcards (eg. * and ?) are allowed.
 
-.IP \fBexactarch\fR
+.IP
+\fBexactarch\fR
 Either `1' or `0'. Set to `1' to make yum update only update the architectures
 of packages that you have installed. ie: with this enabled yum will not install
 an i686 package to update an i386 package. Default is `1'.
 
-.IP \fBinstallonlypkgs \fR
+.IP
+\fBinstallonlypkgs \fR
 List of packages that should only ever be installed, never updated. Kernels
 in particular fall into this category. Defaults to kernel, kernel-smp,
 kernel-bigmem, kernel-enterprise, kernel-debug, kernel-unsupported.
 
-.IP \fBinstallonly_limit \fR
+.IP
+\fBinstallonly_limit \fR
 Number of packages listed in installonlypkgs to keep installed at the same
 time. Setting to 0 disables this feature. Default is '0'. Note that this
 functionality used to be in the "installonlyn" plugin, where this option was
 altered via. tokeep.
 
-.IP \fBkernelpkgnames \fR
+.IP
+\fBkernelpkgnames \fR
 List of package names that are kernels. This is really only here for the
 updating of kernel packages and should be removed out in the yum 2.1 series.
 
-.IP \fBshowdupesfromrepos\fR
+.IP
+\fBshowdupesfromrepos\fR
 Either `0' or `1'. Set to `1' if you wish to show any duplicate packages from
 any repository, from package listings like the info or list commands. Set
 to `0' if you want only to see the newest packages from any repository.
 Default is `0'.
 
-.IP \fBobsoletes \fR
+.IP
+\fBobsoletes \fR
 This option only has affect during an \fBupdate\fR. It enables yum's
 obsoletes processing logic. Useful when doing distribution level upgrades. See
 also the yum \fBupgrade\fR command documentation for more details (yum(8)).
@@ -130,63 +150,75 @@ Default is `true'.
 .br
 Command-line option: \fB\-\-obsoletes\fP
 
-.IP \fBoverwrite_groups \fR
+.IP
+\fBoverwrite_groups \fR
 Either `0' or `1'. Used to determine yum's behaviour if two or more
 repositories offer the package groups with the same name. If
 \fBoverwrite_groups\fR is `1' then the group packages of the last matching
 repository will be used. If \fBoverwrite_groups\fR is `0' then the groups
 from all matching repositories will be merged together as one large group.
 
-.IP \fBenable_group_conditionals\fR
+.IP
+\fBenable_group_conditionals\fR
 Either `0' or `1'. Determines whether yum will allow the use of conditionals
 packages. Default is `1' (package conditionals are allowed).
 
-.IP \fBgroup_package_types\fR
+.IP
+\fBgroup_package_types\fR
 List of the following: optional, default, mandatory. Tells yum which type
 of packages in groups will be installed when 'groupinstall' is called. 
 Default is: default, mandatory
 
-.IP \fBinstallroot \fR
+.IP
+\fBinstallroot \fR
 Specifies an alternative installroot, relative to which all packages will be
 installed. 
 .br
 Command-line option: \fB\-\-installroot\fP
 
-.IP \fBdistroverpkg\fR
+.IP
+\fBdistroverpkg\fR
 The package used by yum to determine the "version" of the distribution. This
 can be any installed package. Default is `redhat-release'. You can see what
 provides this manually by using: "yum whatprovides redhat-release".
 
-.IP \fBdiskspacecheck\fR
+.IP
+\fBdiskspacecheck\fR
 Either `0' or `1'. Set this to `0' to disable the checking for sufficient
 diskspace before a RPM transaction is run. Default is `1' (perform the check).
 
-.IP \fBtsflags\fR
+.IP
+\fBtsflags\fR
 Comma or space separated list of transaction flags to pass to the rpm
 transaction set. These include 'noscripts', 'notriggers', 'nodocs', 'test', and 'repackage'.
 You can set all/any of them. However, if you don't know what these do in the
 context of an rpm transaction set you're best leaving it alone. Default is
 an empty list.
 
-.IP \fBrecent\fR
+.IP
+\fBrecent\fR
 Number of days back to look for `recent' packages added to a repository.
 Used by the \fBlist recent\fR command. Default is `7'.
 
-.IP \fBretries\fR
+.IP
+\fBretries\fR
 Set the number of times any attempt to retrieve a file should retry before 
 returning an error. Setting this to `0' makes yum try forever. Default is `10'.
 
-.IP \fBkeepalive \fR
+.IP
+\fBkeepalive \fR
 Either `0' or `1'. Set whether HTTP keepalive should be used for HTTP/1.1
 servers that support it. This can improve transfer speeds by using one
 connection when downloading multiple files from a repository. Default is `1'.
 
-.IP \fBtimeout \fR
+.IP
+\fBtimeout \fR
 Number of seconds to wait for a connection before timing out. Defaults to
 30 seconds. This may be too short of a time for extremely overloaded
 sites.
 
-.IP \fBhttp_caching\fR
+.IP
+\fBhttp_caching\fR
 Determines how upstream HTTP caches are instructed to handle any HTTP downloads
 that Yum does. This option can take the following values:
 
@@ -201,7 +233,8 @@ The default is `all'. This is recommended unless you are experiencing caching
 related issues. Try to at least use `packages' to minimise load on repository
 servers.
 
-.IP \fBthrottle \fR
+.IP
+\fBthrottle \fR
 Enable bandwidth throttling for downloads. This option can be expressed as a
 absolute data rate in bytes/sec. An SI prefix (k, M or G) may be appended to the
 bandwidth value (eg. `5.5k' is 5.5 kilobytes/sec, `2M' is 2 Megabytes/sec).
@@ -212,47 +245,58 @@ the maximum available bandwidth.
 
 Set to `0' to disable bandwidth throttling. This is the default.
 
-.IP \fBbandwidth \fR
+.IP
+\fBbandwidth \fR
 Use to specify the maximum available network bandwidth in bytes/second.  Used
 with the \fBthrottle\fR option (above). If \fBthrottle\fR is a percentage and
 \fBbandwidth\fR is `0' then bandwidth throttling will be disabled. If
 \fBthrottle\fR is expressed as a data rate (bytes/sec) then this option is
 ignored. Default is `0' (no bandwidth throttling). 
 
-.IP \fBcommands\fR
+.IP
+\fBcommands\fR
 List of functional commands to run if no functional commands are specified
 on the command line (eg. "update foo bar baz quux").  None of the short options
-(eg. -y, -e, -d) are accepted for this option.
+(eg. \-y, \-e, \-d) are accepted for this option.
 
-." .IP \fBsyslog_ident \fR
-." XXX not implemented yet
+.IP
+\fBsyslog_ident \fR
+XXX not implemented yet
 
-." .IP \fBsyslog_facility \fR
-." XXX not implemented yet
+.IP
+\fBsyslog_facility \fR
+XXX not implemented yet
 
-.IP \fBproxy \fR
+.IP
+\fBproxy \fR
 url to the proxy server that yum should use.
 
-.IP \fBproxy_username \fR
+.IP
+\fBproxy_username \fR
 username to use for proxy
 
-.IP \fBproxy_password \fR
+.IP
+\fBproxy_password \fR
 password for this proxy
 
-.IP \fBplugins \fR
+.IP
+\fBplugins \fR
 Either `0' or `1'. Global switch to enable or disable yum plugins. Default is
 `0' (plugins disabled). See the \fBPLUGINS\fR section of the \fByum(8)\fR man
 for more information on installing yum plugins.
 
-.IP \fBpluginpath \fR
+.IP
+\fBpluginpath \fR
 A list of directories where yum should look for plugin modules. Default is
 `/usr/share/yum-plugins' and `/usr/lib/yum-plugins'.
 
-.IP \fBpluginconfpath \fR
+.IP
+\fBpluginconfpath \fR
 A list of directories where yum should look for plugin configuration files.
 Default is `/etc/yum/pluginconf.d'.
 
-.IP \fBmetadata_expire \fR
+.IP
+\fBmetadata_expire \fR
 Time (in seconds) after which the metadata will expire. So that if the
 current metadata downloaded is less than this many seconds old then yum will
 not update the metadata against the repository.  If you find that
@@ -265,7 +309,8 @@ never expire. Note that when using a metalink file the metalink must always
 be newer than the metadata for the repository, due to the validation, so this
 timeout also applies to the metalink file.
 
-.IP \fBmirrorlist_expire \fR
+.IP
+\fBmirrorlist_expire \fR
 Time (in seconds) after which the mirrorlist locally cached will expire. 
 If the current mirrorlist is less than this many seconds old then yum
 will not download another copy of the mirrorlist, it has the same extra format
@@ -273,7 +318,8 @@ as metadata_expire.
 If you find that yum is not downloading the mirrorlists as 
 often as you would like lower the value of this option.
 
-.IP \fBmdpolicy \fR
+.IP
+\fBmdpolicy \fR
 You can select from different metadata download policies depending on how much
 data you want to download with the main repository metadata index. The
 advantages of downloading more metadata with the index is that you can't get
@@ -303,21 +349,25 @@ group data is used in some graphical clients and for group operations like
 not listed above is the other metadata, which contains the changelog information
 which is used by yum-changelog. This is what "yum makecache" uses.
 
-.IP \fBmultilib_policy \fR
+.IP
+\fBmultilib_policy \fR
 Can be set to 'all' or 'best'. All means install all possible arches for any package you 
 want to install. Therefore yum install foo will install foo.i386 and foo.x86_64 on x86_64, 
 if it is available. Best means install the best arch for this platform, only.
 
-.IP \fBbugtracker_url \fR
+.IP
+\fBbugtracker_url \fR
 Url where bugs should be filed for yum. Configurable for local versions or distro-specific
 bugtrackers.
 
-.IP \fBcolor \fR
+.IP
+\fBcolor \fR
 Display colorized output automatically, depending on the output terminal,
 always (using ANSI codes) or never.
 Command-line option: \fB\-\-color\fP
 
-.IP \fBcolor_list_installed_older \fR
+.IP
+\fBcolor_list_installed_older \fR
 The colorization/highlighting for packages in list/info installed which are
 older than the latest available package with the same name and arch.
 Default is `bold'.
@@ -326,68 +376,79 @@ reverse, underline, fg:black, fg:red, fg:green, fg:yellow, fg:blue, fg:magenta,
 fg:cyan, fg:white, bg:black, bg:red, bg:green, bg:yellow, bg:blue, bg:magenta,
 bg:cyan, bg:white.
 
-.IP \fBcolor_list_installed_newer \fR
+.IP
+\fBcolor_list_installed_newer \fR
 The colorization/highlighting for packages in list/info installed which are
 newer than the latest available package with the same name and arch.
 Default is `bold,yellow'.
 See color_list_installed_older for possible values.
 
-.IP \fBcolor_list_installed_reinstall \fR
+.IP
+\fBcolor_list_installed_reinstall \fR
 The colorization/highlighting for packages in list/info installed which is
 the same version as the latest available package with the same name and arch.
 Default is `normal'.
 See color_list_installed_older for possible values.
 
-.IP \fBcolor_list_installed_extra \fR
+.IP
+\fBcolor_list_installed_extra \fR
 The colorization/highlighting for packages in list/info installed which has
 no available package with the same name and arch.
 Default is `bold,red'.
 See color_list_installed_older for possible values.
 
-.IP \fBcolor_list_available_upgrade \fR
+.IP
+\fBcolor_list_available_upgrade \fR
 The colorization/highlighting for packages in list/info available which is
 an upgrade for the latest installed package with the same name and arch.
 Default is `bold,blue'.
 See color_list_installed_older for possible values.
 
-.IP \fBcolor_list_available_downgrade \fR
+.IP
+\fBcolor_list_available_downgrade \fR
 The colorization/highlighting for packages in list/info available which is
 a downgrade for the latest installed package with the same name and arch.
 Default is `dim,cyan'.
 See color_list_installed_older for possible values.
 
-.IP \fBcolor_list_available_install \fR
+.IP
+\fBcolor_list_available_install \fR
 The colorization/highlighting for packages in list/info available which has
 no installed package with the same name and arch.
 Default is `normal'.
 See color_list_installed_older for possible values.
 
-.IP \fBcolor_list_available_reinstall \fR
+.IP
+\fBcolor_list_available_reinstall \fR
 The colorization/highlighting for packages in list/info available which is
 the same version as the installed package with the same name and arch.
 Default is `bold,underline,green.
 See color_list_installed_older for possible values.
 
-.IP \fBcolor_search_match \fR
+.IP
+\fBcolor_search_match \fR
 The colorization/highlighting for text matches in search.
 Default is `bold'.
 See color_list_installed_older for possible values.
 
-.IP \fBcolor_update_installed \fR
+.IP
+\fBcolor_update_installed \fR
 The colorization/highlighting for packages in the "updates list" which are
 installed. The updates list is what is printed when you run "yum update",
 "yum list updates", "yum list obsoletes" and "yum check-update".
 Default is `normal'.
 See color_list_installed_older for possible values.
 
-.IP \fBcolor_update_local \fR
+.IP
+\fBcolor_update_local \fR
 The colorization/highlighting for packages in the "updates list" which are
 already downloaded. The updates list is what is printed when you run
 "yum update", "yum list updates", "yum list obsoletes" and "yum check-update".
 Default is `bold'.
 See color_list_installed_older for possible values.
 
-.IP \fBcolor_update_remote \fR
+.IP
+\fBcolor_update_remote \fR
 The colorization/highlighting for packages in the "updates list" which need to
 be downloaded. The updates list is what is printed when you run "yum update",
 "yum list updates", "yum list obsoletes" and "yum check-update".
@@ -397,7 +458,8 @@ See color_list_installed_older for possible values.
 .SH "[repository] OPTIONS"
 .LP 
 The repository section(s) take the following form:
-.IP \fBExample\fP:
+.IP
+\fBExample\fP:
 [repositoryid] 
 .br 
 name=Some name for this repository
@@ -405,13 +467,16 @@ name=Some name for this repository
 baseurl=url://path/to/repository/ 
 .br 
 
-.IP \fBrepositoryid\fR
+.IP
+\fBrepositoryid\fR
 Must be a unique name for each repository, one word.
 
-.IP \fBname\fR
+.IP
+\fBname\fR
 A human readable string describing the repository.
 
-.IP \fBbaseurl\fR
+.IP
+\fBbaseurl\fR
 Must be a URL to the directory where the yum repository's `repodata' directory
 lives. Can be an http://, ftp:// or file:// URL. You can specify multiple URLs
 in one baseurl statement. The best way to do this is like this:
@@ -434,7 +499,8 @@ you've been warned.
 You can use HTTP basic auth by prepending "user:password@" to the server
 name in the baseurl line.  For example: "baseurl=http://user:passwd@example.com/".
 
-.IP \fBmetalink\fR
+.IP
+\fBmetalink\fR
 Specifies a URL to a metalink file for the repomd.xml, a list of mirrors for
 the entire repository are generated by converting the mirrors for the
 repomd.xml file to a baseurl. The metalink file also contains the latest
@@ -446,7 +512,8 @@ below, can be used with this option. This option disables the mirrorlist option.
 As a special hack is the mirrorlist URL contains the word "metalink" then the
 value of mirrorlist is copied to metalink (if metalink is not set).
 
-.IP \fBmirrorlist\fR
+.IP
+\fBmirrorlist\fR
 Specifies a URL to a file containing a list of baseurls. This can be used
 instead of or with the \fBbaseurl\fR option. Substitution variables, described
 below, can be used with this option. 
@@ -454,18 +521,22 @@ As a special hack is the mirrorlist URL contains the word "metalink" then the
 value of mirrorlist is copied to metalink (if metalink is not set).
 
 
-.IP \fBenabled\fR
+.IP
+\fBenabled\fR
 Either `1' or `0'. This tells yum whether or not use this repository.
 
-.IP \fBgpgcheck\fR
+.IP
+\fBgpgcheck\fR
 Either `1' or `0'. This tells yum whether or not it should perform a GPG
 signature check on the packages gotten from this repository.
 
-.IP \fBrepo_gpgcheck\fR
+.IP
+\fBrepo_gpgcheck\fR
 Either `1' or `0'. This tells yum whether or not it should perform a GPG
 signature check on the repodata from this repository.
 
-.IP \fBgpgkey\fR
+.IP
+\fBgpgkey\fR
 A URL pointing to the ASCII-armoured GPG key file for the repository. This
 option is used if yum needs a public key to verify a package and the required
 key hasn't been imported into the RPM database. If this option is set, yum will
@@ -476,21 +547,25 @@ Multiple URLs may be specified here in the same manner as the \fBbaseurl\fR
 option (above). If a GPG key is required to install a package from a
 repository, all keys specified for that repository will be installed.
 
-.IP \fBexclude\fR
+.IP
+\fBexclude\fR
 Same as the [main] \fBexclude\fR option but only for this repository.
 Substitution variables, described below, are honored here.
 
-.IP \fBincludepkgs\fR
+.IP
+\fBincludepkgs\fR
 Inverse of exclude. This is a list of packages you want to use from a
 repository. If this option lists only one package then that is all yum will
 ever see from the repository. Defaults to an empty list.  Substitution
 variables, described below, are honored here.
 
-.IP \fBenablegroups\fR
+.IP
+\fBenablegroups\fR
 Either `0' or `1'. Determines whether yum will allow the use of package groups
 for this repository. Default is `1' (package groups are allowed).
 
-.IP \fBfailovermethod\fR
+.IP
+\fBfailovermethod\fR
 Either `roundrobin' or `priority'.
 
 `roundrobin' randomly selects a URL out of
@@ -502,50 +577,62 @@ sequentially.
 
 \fBfailovermethod\fR defaults to `roundrobin' if not specified.
 
-.IP \fBkeepalive\fR
+.IP
+\fBkeepalive\fR
 Either `1' or `0'. This tells yum whether or not HTTP/1.1 keepalive should be
 used with this repository. See the global option in the [main] section above
 for more information.
 
-.IP \fBtimeout\fR
+.IP
+\fBtimeout\fR
 Overrides the \fBtimeout\fR option from the [main] section for this repository.
 
-.IP \fBhttp_caching\fR
+.IP
+\fBhttp_caching\fR
 Overrides the \fBhttp_caching\fR option from the [main] section for this repository.
 
-.IP \fBretries\fR
+.IP
+\fBretries\fR
 Overrides the \fBretries\fR option from the [main] section for this repository.
 
-.IP \fBthrottle\fR
+.IP
+\fBthrottle\fR
 Overrides the \fBthrottle\fR option from the [main] section for this
 repository.
 
-.IP \fBbandwidth\fR
+.IP
+\fBbandwidth\fR
 Overrides the \fBbandwidth\fR option from the [main] section for this
 repository.
 
-.IP \fBmetadata_expire \fR
+.IP
+\fBmetadata_expire \fR
 Overrides the \fBmetadata_expire\fR option from the [main] section for this
 repository.
 
-.IP \fBmirrorlist_expire \fR
+.IP
+\fBmirrorlist_expire \fR
 Overrides the \fBmirrorlist_expire\fR option from the [main] section for this
 repository.
 
-.IP \fBproxy \fR
+.IP
+\fBproxy \fR
 url to the proxy server for this repository. Set to '_none_' to disable the 
 global proxy setting for this repository. If this is unset it 
 inherits it from the global setting
 
-.IP \fBproxy_username \fR
+.IP
+\fBproxy_username \fR
 username to use for proxy.
 If this is unset it inherits it from the global setting
 
-.IP \fBproxy_password \fR
+.IP
+\fBproxy_password \fR
 password for this proxy.
 If this is unset it inherits it from the global setting
 
-.IP \fBcost \fR
+.IP
+\fBcost \fR
 relative cost of accessing this repository. Useful for weighing one repo's packages
 as greater/less than any other. defaults to 1000
 
@@ -568,20 +655,24 @@ configuration files. They are available in the values of several options
 including \fBname\fR, \fBbaseurl\fR and \fBcommands\fB.
 .LP
 
-.IP \fB$releasever\fR
+.IP
+\fB$releasever\fR
 This will be replaced with the value of the version of the package listed
 in \fBdistroverpkg\fR. This defaults to the version of `redhat-release'
 package.
 
-.IP \fB$arch\fR
+.IP
+\fB$arch\fR
 This will be replaced with your architecture as listed by os.uname()[4] in
 Python.
 
-.IP \fB$basearch\fR
+.IP
+\fB$basearch\fR
 This will be replaced with your base architecture in yum. For example, if
 your $arch is i686 your $basearch will be i386.
 
-.IP \fB$YUM0-$YUM9\fR
+.IP
+\fB$YUM0-$YUM9\fR
 These will be replaced with the value of the shell environment variable of
 the same name. If the shell environment variable does not exist then the
 configuration file variable will not be replaced.
