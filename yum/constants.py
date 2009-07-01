@@ -111,3 +111,11 @@ PATTERNS_INDEXED_MAX = 128
 
 RPM_CHECKSUM_TYPES = { 1:'md5', 2:'sha1', 8:'sha256', 9:'sha384', 10:'sha512',
                        11:'sha224' } # from RFC 4880
+
+
+# for repo verification/checks
+REPO_PROBLEM_REPOMD=1
+REPO_PROBLEM_METADATA=2
+REPO_PROBLEM_COMPS=3
+REPO_PROBLEM_OTHER=4
+REPO_PROBLEM_PACKAGE=5

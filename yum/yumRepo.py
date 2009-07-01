@@ -19,6 +19,7 @@ import time
 import types
 import urlparse
 urlparse.uses_fragment.append("media")
+import gzip
 
 import Errors
 from urlgrabber.grabber import URLGrabber
@@ -33,6 +34,7 @@ import sqlitecachec
 import sqlitesack
 from yum import config
 from yum import misc
+from yum import comps
 from constants import *
 import metalink
 
@@ -624,6 +626,9 @@ class YumRepository(Repository, config.RepoConf):
         goodurls = []
         skipped = None
         for url in url_list:
+            # obvious bogons get ignored b/c, we could get more interesting checks but <shrug>
+            if url in ['', None]:
+                continue
             url = parser.varReplace(url, self.yumvar)
             if url[-1] != '/':
                 url= url + '/'
@@ -1687,6 +1692,74 @@ class YumRepository(Repository, config.RepoConf):
                 return True
         return False
 
+    def _verify_md(self):
+        problems = []
+        print 'verifying md'
+        try:
+            md_types = self.repoXML.fileTypes()
+        except Errors.RepoError, e:
+            prb = RepoVerifyProblem(1, "failed to load repomd.xml", str(e))
+            problems.append(prb)
+            return problems
+
+        for md_type in md_types:
+            print 'verifying %s' % md_type
+            try:
+                self.retrieveMD(md_type)
+            except Errors.RepoError, e:
+                msg = "%s metadata missing or does not match checksum" % md_type
+                prb = RepoVerifyProblem(2, msg, str(e))
+                problems.append(prb)
+
+        return problems
+
+    def _verify_comps(self):
+        print 'verifying comps'
+        problems = []
+        # grab the comps for this repo
+        # run the xmllint on it
+        # chuck it into a comps object
+        # make sure it parses
+
+        grpfile = self.getGroups()
+
+        # open it up as a file object so iterparse can cope with our gz file
+        if grpfile is not None and grpfile.endswith('.gz'):
+            grpfile = gzip.open(grpfile)
+        try:
+            c = comps.Comps()
+            c.add(grpfile)
+        except (Errors.GroupsError, Errors.CompsException), e:
+            msg = "comps file failed to add"
+            prb = RepoVerifyProblem(REPO_PROBLEM_COMPS, msg, str(e))
+            problems.add(prb)
+        else:
+            if c.compscount == 0:
+                msg = "no groups in comps"
+                prb = RepoVerifyProblem(REPO_PROBLEM_COMPS, msg, "")
+                problems.add(prb)
+
+        return problems
+
+    def _verify_packages(self):
+        return []
+
+    def verify(self, items=['repodata', 'comps']):
+        """download/verify the specified items
+           @items = ['repodata', 'comps'] can include: repodata, comps, packages
+        """
+        problems = []
+        if 'repodata' in items:
+            problems.extend(self._verify_md())
+        if 'comps' in items:        
+            if self.enablegroups:
+                problems.extend(self._verify_comps())
+        if 'packages' in items:
+            problems.extend(self._verify_packages())
+        # what else can we verify?
+
+        return problems
+
 
 def getMirrorList(mirrorlist, pdict = None):
     warnings.warn('getMirrorList() will go away in a future version of Yum.\n',
@@ -1725,3 +1798,11 @@ def getMirrorList(mirrorlist, pdict = None):
 
     return returnlist
 
+class RepoVerifyProblem:
+    """ Holder for each "problem" we find with a repo.verify(). """
+    
+    def __init__(self, type, msg, details, fake=False):
+        self.type           = type
+        self.message        = msg
+        self.details        = details
+        self.fake           = fake
