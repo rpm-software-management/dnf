@@ -237,6 +237,11 @@ class PackageObject(object):
                                       self.arch)
         return out
 
+    def __unicode__(self):
+        """ This is here because unicode(pkg) is roughly 50x slower than
+            str(pkg), and "%s" % (pkg,) uses unicode(). """
+        return misc.to_unicode(self.__str__())
+
     def verCMP(self, other):
         """ Compare package to another one, only rpm-version ordering. """
         if not other:
