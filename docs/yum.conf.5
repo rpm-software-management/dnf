@@ -230,7 +230,7 @@ repository metadata downloads).
 `none' means that no HTTP downloads should be cached.
 
 The default is `all'. This is recommended unless you are experiencing caching
-related issues. Try to at least use `packages' to minimise load on repository
+related issues. Try to at least use `packages' to minimize load on repository
 servers.
 
 .IP
@@ -324,7 +324,7 @@ You can select from different metadata download policies depending on how much
 data you want to download with the main repository metadata index. The
 advantages of downloading more metadata with the index is that you can't get
 into situations where you need to use that metadata later and the versions
-available aren't compatible (or the user lacks privilages) and that if the
+available aren't compatible (or the user lacks privileges) and that if the
 metadata is corrupt in any way yum will revert to the previous metadata.
 
 `instant' - Just download the new metadata index, this is roughly what yum
@@ -341,7 +341,7 @@ This file also tends to be significantly smaller than most others.
 
 `group:main' - With the primary and updateinfo download the filelists metadata
 and the group metadata. The filelists data is required for operations like
-"yum install /bin/bash", and also some dependancy resolutions require it. The
+"yum install /bin/bash", and also some dependency resolutions require it. The
 group data is used in some graphical clients and for group operations like
 "yum grouplist Base".
 
@@ -371,7 +371,7 @@ Command-line option: \fB\-\-color\fP
 The colorization/highlighting for packages in list/info installed which are
 older than the latest available package with the same name and arch.
 Default is `bold'.
-Possible values are a comma seperated list containing: bold, blink, dim,
+Possible values are a comma separated list containing: bold, blink, dim,
 reverse, underline, fg:black, fg:red, fg:green, fg:yellow, fg:blue, fg:magenta,
 fg:cyan, fg:white, bg:black, bg:red, bg:green, bg:yellow, bg:blue, bg:magenta,
 bg:cyan, bg:white.
@@ -537,7 +537,7 @@ signature check on the repodata from this repository.
 
 .IP
 \fBgpgkey\fR
-A URL pointing to the ASCII-armoured GPG key file for the repository. This
+A URL pointing to the ASCII-armored GPG key file for the repository. This
 option is used if yum needs a public key to verify a package and the required
 key hasn't been imported into the RPM database. If this option is set, yum will
 automatically import the key from the specified URL. You will be prompted before

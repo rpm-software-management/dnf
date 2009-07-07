@@ -7,7 +7,7 @@ yum \- Yellowdog Updater Modified
 .SH "DESCRIPTION"
 .PP 
 \fByum\fP is an interactive, rpm based, package manager. It can automatically
-perform system updates, including dependancy analysis and obsolete processing
+perform system updates, including dependency analysis and obsolete processing
 based on "repository" metadata. It can also perform installation of new
 packages, removal of old packages and perform queries on the installed and/or
 available packages among many other commands/services (see below)\&. \fByum\fP
@@ -106,7 +106,7 @@ Implemented so you could know if your machine had any updates that needed to
 be applied without running it interactively. Returns exit value of 100 if
 there are packages available for an update. Also returns a list of the pkgs
 to be updated in list format. Returns 0 if no packages are available for
-update. Returns 1 if an error occured.
+update. Returns 1 if an error occurred.
 Running in verbose mode also shows obsoletes.
 .IP
 .IP "\fBupgrade\fP"
@@ -170,7 +170,7 @@ The optional "hidden" argument will also list groups marked as not being
 groupid's are displayed.
 .IP 
 .IP "\fBgroupremove\fP"
-Is used to remove all of the pacakges in a group, unlike "groupinstall" this
+Is used to remove all of the packages in a group, unlike "groupinstall" this
 will remove everything regardless of group_package_types. It is worth pointing
 out that packages can be in more than one group, so "groupinstall X Y" followed
 by "groupremove Y" does not do give you the same result as "groupinstall X".
@@ -309,7 +309,7 @@ main == disable excludes defined in [main] in yum.conf
 repoid == disable excludes defined for that repo
 .br
 .IP "\fB\-\-disableplugin=plugin\fP"
-Run with one or more plugins disabled, the argument is a comma seperated list
+Run with one or more plugins disabled, the argument is a comma separated list
 of wildcards to match against plugin names.
 .br
 .IP "\fB\-\-noplugins\fP"
