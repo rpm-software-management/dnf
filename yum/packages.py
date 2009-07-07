@@ -1121,8 +1121,9 @@ class YumHeaderPackage(YumAvailablePackage):
         #FIXME - if an error - return AttributeError, not KeyError 
         # ONLY FIX THIS AFTER THE API BREAK
         if thing.startswith('__') and thing.endswith('__'):
-            if not hasattr(self, thing):
-                raise AttributeError, "%s has no attribute %s" % (self, thing)
+            # If these existed, then we wouldn't get here ...
+            # So these are missing.
+            raise AttributeError, "%s has no attribute %s" % (self, thing)
         try:
             return self.hdr[thing]
         except KeyError:

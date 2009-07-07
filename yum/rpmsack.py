@@ -65,9 +65,10 @@ class RPMInstalledPackage(YumInstalledPackage):
     def __getattr__(self, varname):
         self.hdr = val = self._get_hdr()
         self._has_hdr = True
+        # If these existed, then we wouldn't get here ... and nothing in the DB
+        # starts and ends with __'s. So these are missing.
         if varname.startswith('__') and varname.endswith('__'):
-            if not hasattr(self, varname):
-                raise AttributeError, "%s has no attribute %s" % (self, varname)
+            raise AttributeError, "%s has no attribute %s" % (self, varname)
             
         if varname != 'hdr':   #  This is unusual, for anything that happens
             val = val[varname] # a lot we should preload at __init__.

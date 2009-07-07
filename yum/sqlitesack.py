@@ -191,9 +191,10 @@ class YumAvailablePackageSqlite(YumAvailablePackage, PackageObject, RpmBase):
                          'checksum_value' : 'pkgId',
                         }
 
+        # If these existed, then we wouldn't get here ... and nothing in the DB
+        # starts and ends with __'s. So these are missing.
         if varname.startswith('__') and varname.endswith('__'):
-            if not hasattr(self, varname):
-                raise AttributeError, varname
+            raise AttributeError, varname
         
         dbname = varname
         if db2simplemap.has_key(varname):
