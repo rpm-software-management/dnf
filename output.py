@@ -861,7 +861,7 @@ class YumOutput:
                 item = self._sub_highlight(item, highlight, matchfor,
                                            ignore_case=True)
             if can_overflow:
-                print self.fmtKeyValFill(key, item)
+                print self.fmtKeyValFill(key, to_unicode(item))
             else:
                 print key % item
         print '\n\n'
