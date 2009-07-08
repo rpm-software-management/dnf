@@ -2842,6 +2842,9 @@ class YumBase(depsolve.Depsolve):
 
             for (obsoleting, installed) in obsoletes:
                 obsoleting_pkg = self.getPackageObject(obsoleting)
+                topkg = self._test_loop(obsoleting_pkg, self._pkg2obspkg)
+                if topkg is not None:
+                    obsoleting_pkg = topkg
                 installed_pkg =  self.rpmdb.searchPkgTuple(installed)[0]
                 txmbr = self.tsInfo.addObsoleting(obsoleting_pkg, installed_pkg)
                 self.tsInfo.addObsoleted(installed_pkg, obsoleting_pkg)

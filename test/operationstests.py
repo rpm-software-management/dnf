@@ -68,7 +68,7 @@ class ComplicatedObsoletesTests(OperationsTests):
         p = self.pkgs
         res, msg = self.runOperation(['update'], [p.installed], [p.obsoletes, p.obsoletes2])
         self.assert_(res=='ok', msg)
-        if new_behavior:
+        if True or new_behavior:
             self.assertResult((p.obsoletes2,))
         else:
             self.assertResult((p.obsoletes,))
@@ -85,7 +85,7 @@ class ComplicatedObsoletesTests(OperationsTests):
         if new_behavior:
             self.assertResult((p.obsoletecircle,))
         else:
-            self.assertResult((p.obsoletes,))
+            self.assertResult((p.obsoletes2,))
     def testObsoleteCircleNext(self):
         p = self.pkgs
         res, msg = self.runOperation(['update'], [p.obsoletes], [p.obsoletecircle, p.obsoletes, p.obsoletes2])
@@ -109,7 +109,7 @@ class ComplicatedObsoletesTests(OperationsTests):
         if new_behavior:
             self.assertResult((p.obsoletecircle,))
         else:
-            self.assertResult((p.obsoletes,))
+            self.assertResult((p.obsoletes2,))
     # continue endlessly
     
 class KernelTests(OperationsTests):
