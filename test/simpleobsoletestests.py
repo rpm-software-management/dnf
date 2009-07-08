@@ -438,6 +438,110 @@ class SimpleObsoletesTests(OperationsTests):
         self.assert_(res=='err', msg)
         # self.assertResult((aop1,aop2))
 
+    def _helperRLDaplMess(self):
+        rp1 = FakePackage('dapl',       '1.2.1', '7', arch='i386')
+        rp2 = FakePackage('dapl-devel', '1.2.1', '7', arch='i386')
+        rp2.addRequires('dapl', 'EQ', ('0', '1.2.1', '7'))
+
+        arp1 = FakePackage('dapl',       '1.2.1.1', '7', arch='i386')
+        arp2 = FakePackage('dapl-devel', '1.2.1.1', '7', arch='i386')
+        arp2.addRequires('dapl', 'EQ', ('0', '1.2.1.1', '7'))
+        arp3 = FakePackage('dapl',       '2.0.15', '1.el4', arch='i386')
+        arp4 = FakePackage('dapl-devel', '2.0.15', '1.el4', arch='i386')
+        arp4.addRequires('dapl', 'EQ', ('0', '2.0.15', '1.el4'))
+
+        aop1 = FakePackage('compat-dapl-1.2.5', '2.0.7', '2.el4', arch='i386')
+        aop1.addObsoletes('dapl', 'LE', (None, '1.2.1.1', None))
+        aop2 = FakePackage('compat-dapl-devel-1.2.5', '2.0.7', '2.el4',
+                           arch='i386')
+        aop2.addObsoletes('dapl-devel', 'LE', (None, '1.2.1.1', None))
+        aop2.addRequires('dapl', 'EQ', ('0', '2.0.7', '2.el4'))
+
+        aoop1 = FakePackage('compat-dapl', '2.0.15', '1.el4', arch='i386')
+        aoop1.addObsoletes('dapl', 'LE', (None, '1.2.1.1', None))
+        aoop1.addObsoletes('compat-dapl-1.2.5', None, (None, None, None))
+        aoop2 = FakePackage('compat-dapl-devel', '2.0.15', '1.el4', arch='i386')
+        aoop2.addObsoletes('dapl-devel', 'LE', (None, '1.2.1.1', None))
+        aoop2.addObsoletes('compat-dapl-devel-1.2.5', None, (None, None, None))
+        aoop2.addRequires('compat-dapl', 'EQ', ('0', '2.0.15', '1.el4'))
+
+        return [rp1, rp2], [arp1, arp2, arp3, arp4,
+                            aop1, aop2, aoop1, aoop2], [aoop1, aoop2], locals()
+
+    def testRLDaplMess1(self):
+        rps, aps, ret, all = self._helperRLDaplMess()
+        res, msg = self.runOperation(['update'], rps, aps)
+
+        self.assert_(res=='ok', msg)
+        self.assertResult(ret)
+
+    def testRLDaplMess2(self):
+        rps, aps, ret, all = self._helperRLDaplMess()
+        res, msg = self.runOperation(['update', 'dapl'], rps, aps)
+
+        self.assert_(res=='ok', msg)
+        self.assertResult(ret)
+
+    def testRLDaplMess3(self):
+        rps, aps, ret, all = self._helperRLDaplMess()
+        res, msg = self.runOperation(['update', 'dapl-devel'], rps, aps)
+
+        self.assert_(res=='ok', msg)
+        self.assertResult(ret)
+
+    def testRLDaplMess4(self):
+        rps, aps, ret, all = self._helperRLDaplMess()
+        res, msg = self.runOperation(['install', 'compat-dapl'], rps, aps)
+
+        self.assert_(res=='ok', msg)
+        self.assertResult(ret)
+
+    def testRLDaplMess5(self):
+        rps, aps, ret, all = self._helperRLDaplMess()
+        res, msg = self.runOperation(['install', 'compat-dapl-devel'], rps, aps)
+
+        self.assert_(res=='ok', msg)
+        self.assertResult(ret)
+
+    def testRLDaplMess6(self):
+        rps, aps, ret, all = self._helperRLDaplMess()
+        res, msg = self.runOperation(['install', 'compat-dapl-1.2.5'], rps, aps)
+
+        self.assert_(res=='ok', msg)
+        self.assertResult(ret)
+
+    def testRLDaplMess7(self):
+        rps, aps, ret, all = self._helperRLDaplMess()
+        res, msg = self.runOperation(['install', 'compat-dapl-devel-1.2.5'],
+                                     rps, aps)
+
+        self.assert_(res=='ok', msg)
+        self.assertResult(ret)
+
+    # Now we get a bit weird, as we have obsoletes fighting with updates
+    def testRLDaplMessWeird1(self):
+        rps, aps, ret, all = self._helperRLDaplMess()
+        res, msg = self.runOperation(['install', 'dapl-1.2.1.1-7'], rps, aps)
+
+        self.assert_(res=='ok', msg)
+        self.assertResult(ret)
+    def testRLDaplMessWeird2(self):
+        rps, aps, ret, all = self._helperRLDaplMess()
+        res, msg = self.runOperation(['install', 'dapl-2.0.15',
+                                      'dapl-devel-2.0.15'], rps, aps)
+
+        self.assert_(res=='ok', msg)
+        self.assertResult((all['arp3'], all['arp4']))
+    def testRLDaplMessWeird3(self):
+        rps, aps, ret, all = self._helperRLDaplMess()
+        res, msg = self.runOperation(['install', 'dapl-2.0.15'], rps, aps)
+
+        self.assert_(res=='ok', msg)
+        # This will almost certainly fail, but it's pretty weird:
+        self.assertResult((all['arp3'], all['aoop1'], all['aoop2']))
+        # FIXME: Optimally we'd get:
+        # self.assertResult((all['arp3'], all['arp4']))
+
 
 class GitMetapackageObsoletesTests(OperationsTests):
 
