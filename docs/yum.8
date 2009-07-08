@@ -333,7 +333,14 @@ This option currently does nothing.
 The following are the ways which you can invoke \fByum\fP in list
 mode\&.  Note that all \fBlist\fP commands include information on the
 version of the package\&.
-.IP 
+.IP
+.IP "\fBOUTPUT\fP"
+
+
+The format of the output of yum list is:
+
+name.arch \[epoch\:\]version-release  repo or \@installed-from-repo
+
 .IP "\fByum list [all | glob_exp1] [glob_exp2] [\&.\&.\&.]\fP"
 List all available and installed packages\&.
 .IP "\fByum list available [glob_exp1] [\&.\&.\&.]\fP"
