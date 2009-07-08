@@ -2484,6 +2484,14 @@ class YumBase(depsolve.Depsolve):
 
         return returnlist
 
+    # FIXME: This doesn't really work, as it assumes one obsoleter for each pkg
+    # when we can have:
+    # 1 pkg obsoleted by multiple pkgs _and_
+    # 1 pkg obsoleting multiple pkgs
+    # ...and we need to detect loops, and get the arches "right" and do this
+    # for chains. Atm. I hate obsoletes, and I can't get it to work better,
+    # easily ... so screw it, don't create huge chains of obsoletes with some
+    # loops in there too ... or I'll have to hurt you.
     def _pkg2obspkg(self, po):
         """ Given a package return the package it's obsoleted by and so
             we should install instead. Or None if there isn't one. """
@@ -2727,7 +2735,7 @@ class YumBase(depsolve.Depsolve):
                 else:
                     self.verbose_logger.warning(_('Package %s is obsoleted by %s, trying to install %s instead'),
                         po.name, obsoleting_pkg.name, obsoleting_pkg)               
-                    self.install(po=obsoleting_pkg)
+                    tx_return.extend(self.install(po=obsoleting_pkg))
                 continue
             
             # make sure it's not already installed
@@ -2776,7 +2784,7 @@ class YumBase(depsolve.Depsolve):
             else:
                 txmbr = self.tsInfo.addInstall(po)
                 tx_return.append(txmbr)
-        
+
         return tx_return
 
     def _check_new_update_provides(self, opkg, npkg):
@@ -2785,6 +2793,7 @@ class YumBase(depsolve.Depsolve):
             too, to the latest version. """
         oprovs = set(opkg.returnPrco('provides'))
         nprovs = set(npkg.returnPrco('provides'))
+        tx_return = []
         for prov in oprovs.difference(nprovs):
             reqs = self.tsInfo.getRequires(*prov)
             for pkg in reqs:
@@ -2792,10 +2801,11 @@ class YumBase(depsolve.Depsolve):
                     if not npkg.inPrcoRange('provides', req):
                         naTup = (pkg.name, pkg.arch)
                         for pkg in self.pkgSack.returnNewestByNameArch(naTup):
-                            self.update(po=pkg)
+                            tx_return.extend(self.update(po=pkg))
                         break
+        return tx_return
 
-    def _newer_update_in_trans(self, pkgtup, available_pkg):
+    def _newer_update_in_trans(self, pkgtup, available_pkg, tx_return):
         """ We return True if there is a newer package already in the
             transaction. If there is an older one, we remove it (and update any
             deps. that aren't satisfied by the newer pkg) and return False so
@@ -2809,8 +2819,9 @@ class YumBase(depsolve.Depsolve):
                 else:
                     for ntxmbr in self.tsInfo.getMembers(po.pkgtup):
                         self.tsInfo.remove(ntxmbr.po.pkgtup)
-                        self._check_new_update_provides(ntxmbr.po,
-                                                        available_pkg)
+                        txs = self._check_new_update_provides(ntxmbr.po,
+                                                              available_pkg)
+                        tx_return.extend(txs)
             if count:
                 found = True
             else:
@@ -2984,11 +2995,20 @@ class YumBase(depsolve.Depsolve):
                     tx_return.append(txmbr)
                         
         for available_pkg in availpkgs:
+            #  Make sure we're not installing a package which is obsoleted by
+            # something else in the repo. Unless there is a obsoletion loop,
+            # at which point ignore everything.
+            obsoleting_pkg = self._test_loop(available_pkg, self._pkg2obspkg)
+            if obsoleting_pkg is not None:
+                self.verbose_logger.log(logginglevels.DEBUG_2, _('Not Updating Package that is obsoleted: %s'), available_pkg)
+                tx_return.extend(self.install(po=obsoleting_pkg))
+                continue
             for updated in self.up.updating_dict.get(available_pkg.pkgtup, []):
                 if self.tsInfo.isObsoleted(updated):
                     self.verbose_logger.log(logginglevels.DEBUG_2, _('Not Updating Package that is already obsoleted: %s.%s %s:%s-%s'), 
                                             updated)
-                elif self._newer_update_in_trans(updated, available_pkg):
+                elif self._newer_update_in_trans(updated, available_pkg,
+                                                 tx_return):
                     self.verbose_logger.log(logginglevels.DEBUG_2, _('Not Updating Package that is already updated: %s.%s %s:%s-%s'), 
                                             updated)
                 
@@ -3014,7 +3034,8 @@ class YumBase(depsolve.Depsolve):
                 if self.tsInfo.isObsoleted(ipkg.pkgtup):
                     self.verbose_logger.log(logginglevels.DEBUG_2, _('Not Updating Package that is already obsoleted: %s.%s %s:%s-%s'), 
                                             ipkg.pkgtup)
-                elif self._newer_update_in_trans(ipkg.pkgtup, available_pkg):
+                elif self._newer_update_in_trans(ipkg.pkgtup, available_pkg,
+                                                 tx_return):
                     self.verbose_logger.log(logginglevels.DEBUG_2, _('Not Updating Package that is already updated: %s.%s %s:%s-%s'), 
                                             ipkg.pkgtup)
                 elif ipkg.verLT(available_pkg):
@@ -3022,12 +3043,6 @@ class YumBase(depsolve.Depsolve):
                     if requiringPo:
                         txmbr.setAsDep(requiringPo)
                     tx_return.append(txmbr)
-                
-                #else:
-                    #magically make allowdowngrade work here
-                    # yum --allow-downgrade update something-specific here
-                    # could work but we will need to be careful with it
-                    # maybe a downgrade command is necessary
 
         return tx_return
         
