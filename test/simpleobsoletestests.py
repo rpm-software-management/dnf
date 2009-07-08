@@ -436,7 +436,9 @@ class SimpleObsoletesTests(OperationsTests):
         res, msg = self.runOperation(['update'],
                                      [rp1], [aop1, aop2])
         self.assert_(res=='err', msg)
-        # self.assertResult((aop1,aop2))
+        # FIXME: This is really what should happen, but just sucking works too
+        # self.assert_(res=='ok', msg)
+        # self.assertResult((aop1,))
 
     def _helperRLDaplMess(self):
         rp1 = FakePackage('dapl',       '1.2.1', '7', arch='i386')
@@ -519,22 +521,44 @@ class SimpleObsoletesTests(OperationsTests):
         self.assertResult(ret)
 
     # Now we get a bit weird, as we have obsoletes fighting with updates
-    def testRLDaplMessWeird1(self):
+    def testRLDaplMessWeirdInst1(self):
         rps, aps, ret, all = self._helperRLDaplMess()
         res, msg = self.runOperation(['install', 'dapl-1.2.1.1-7'], rps, aps)
 
         self.assert_(res=='ok', msg)
         self.assertResult(ret)
-    def testRLDaplMessWeird2(self):
+    def testRLDaplMessWeirdInst2(self):
         rps, aps, ret, all = self._helperRLDaplMess()
         res, msg = self.runOperation(['install', 'dapl-2.0.15',
                                       'dapl-devel-2.0.15'], rps, aps)
 
         self.assert_(res=='ok', msg)
         self.assertResult((all['arp3'], all['arp4']))
-    def testRLDaplMessWeird3(self):
+    def testRLDaplMessWeirdInst3(self):
         rps, aps, ret, all = self._helperRLDaplMess()
         res, msg = self.runOperation(['install', 'dapl-2.0.15'], rps, aps)
+
+        self.assert_(res=='ok', msg)
+        # This will almost certainly fail, but it's pretty weird:
+        self.assertResult((all['arp3'], all['aoop1'], all['aoop2']))
+        # FIXME: Optimally we'd get:
+        # self.assertResult((all['arp3'], all['arp4']))
+    def testRLDaplMessWeirdUp1(self):
+        rps, aps, ret, all = self._helperRLDaplMess()
+        res, msg = self.runOperation(['update', 'dapl-1.2.1.1-7'], rps, aps)
+
+        self.assert_(res=='ok', msg)
+        self.assertResult(ret)
+    def testRLDaplMessWeirdUp2(self):
+        rps, aps, ret, all = self._helperRLDaplMess()
+        res, msg = self.runOperation(['update', 'dapl-2.0.15',
+                                      'dapl-devel-2.0.15'], rps, aps)
+
+        self.assert_(res=='ok', msg)
+        self.assertResult((all['arp3'], all['arp4']))
+    def testRLDaplMessWeirdUp3(self):
+        rps, aps, ret, all = self._helperRLDaplMess()
+        res, msg = self.runOperation(['update', 'dapl-2.0.15'], rps, aps)
 
         self.assert_(res=='ok', msg)
         # This will almost certainly fail, but it's pretty weird:
