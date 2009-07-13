@@ -28,7 +28,7 @@ import operator
 import locale
 import fnmatch
 import time
-from yum.i18n import utf8_width, utf8_width_fill, to_unicode
+from yum.i18n import utf8_width, utf8_width_fill, utf8_text_fill, to_unicode
 
 def checkRootUID(base):
     """
@@ -120,7 +120,10 @@ def checkShellArg(base, basecmd, extcmds):
         raise cli.CliError
 
 class YumCommand:
-        
+
+    # Epoch seconds. Use: date -d '2006-09-26 13:24:58 +0000' +'%s' ... etc.
+    created = 0
+
     def __init__(self):
         self.done_command_once = False
 
@@ -160,6 +163,9 @@ class YumCommand:
         return True
         
 class InstallCommand(YumCommand):
+
+    created = 1159277098
+
     def getNames(self):
         return ['install']
 
@@ -182,6 +188,9 @@ class InstallCommand(YumCommand):
             return 1, [str(e)]
 
 class UpdateCommand(YumCommand):
+
+    created = 1159277098
+
     def getNames(self):
         return ['update']
 
@@ -234,6 +243,9 @@ def _list_cmd_calc_columns(base, ypl):
     return (-columns[0], -columns[1], -columns[2])
 
 class InfoCommand(YumCommand):
+
+    created = 1159277098
+
     def getNames(self):
         return ['info']
 
@@ -340,6 +352,9 @@ class InfoCommand(YumCommand):
         return True
 
 class ListCommand(InfoCommand):
+
+    created = 1159277098
+
     def getNames(self):
         return ['list']
 
@@ -348,7 +363,9 @@ class ListCommand(InfoCommand):
 
 
 class EraseCommand(YumCommand):
-        
+
+    created = 1159277098
+
     def getNames(self):
         return ['erase', 'remove']
 
@@ -376,6 +393,9 @@ class EraseCommand(YumCommand):
         return True
 
 class GroupCommand(YumCommand):
+
+    created = 1159277098
+
     def doCommand(self, base, basecmd, extcmds):
         self.doneCommand(base, _("Setting up Group Process"))
 
@@ -479,6 +499,8 @@ class GroupInfoCommand(GroupCommand):
 
 class MakeCacheCommand(YumCommand):
 
+    created = 1159277098
+
     def getNames(self):
         return ['makecache']
 
@@ -520,7 +542,9 @@ class MakeCacheCommand(YumCommand):
         return False
 
 class CleanCommand(YumCommand):
-    
+
+    created = 1159277098
+
     def getNames(self):
         return ['clean']
 
@@ -541,6 +565,9 @@ class CleanCommand(YumCommand):
         return False
 
 class ProvidesCommand(YumCommand):
+
+    created = 1159277098
+
     def getNames(self):
         return ['provides', 'whatprovides']
 
@@ -561,6 +588,9 @@ class ProvidesCommand(YumCommand):
             return 1, [str(e)]
 
 class CheckUpdateCommand(YumCommand):
+
+    created = 1159277098
+
     def getNames(self):
         return ['check-update']
 
@@ -610,6 +640,9 @@ class CheckUpdateCommand(YumCommand):
             return result, []
 
 class SearchCommand(YumCommand):
+
+    created = 1159277098
+
     def getNames(self):
         return ['search']
 
@@ -633,6 +666,9 @@ class SearchCommand(YumCommand):
         return False
 
 class UpgradeCommand(YumCommand):
+
+    created = 1159277098
+
     def getNames(self):
         return ['upgrade']
 
@@ -655,6 +691,9 @@ class UpgradeCommand(YumCommand):
             return 1, [str(e)]
 
 class LocalInstallCommand(YumCommand):
+
+    created = 1159277098
+
     def getNames(self):
         return ['localinstall', 'localupdate']
 
@@ -682,6 +721,9 @@ class LocalInstallCommand(YumCommand):
         return False
 
 class ResolveDepCommand(YumCommand):
+
+    created = 1159277098
+
     def getNames(self):
         return ['resolvedep']
 
@@ -699,6 +741,9 @@ class ResolveDepCommand(YumCommand):
             return 1, [str(e)]
 
 class ShellCommand(YumCommand):
+
+    created = 1159277098
+
     def getNames(self):
         return ['shell']
 
@@ -723,6 +768,9 @@ class ShellCommand(YumCommand):
 
 
 class DepListCommand(YumCommand):
+
+    created = 1159277098
+
     def getNames(self):
         return ['deplist']
 
@@ -744,6 +792,8 @@ class DepListCommand(YumCommand):
 
 
 class RepoListCommand(YumCommand):
+
+    created = 1178147972
     
     def getNames(self):
         return ('repolist',)
@@ -932,6 +982,24 @@ class RepoListCommand(YumCommand):
 
 class HelpCommand(YumCommand):
 
+    created = 1201218844
+
+    @staticmethod
+    def _key_created(cmd):
+        if hasattr(cmd, 'created'):
+            return cmd.created
+        return 0
+    @staticmethod
+    def _key_summary(cmd):
+        if hasattr(cmd, 'getSummary'):
+            return cmd.getSummary()
+        return ''
+    @staticmethod
+    def _key_usage(cmd):
+        if hasattr(cmd, 'getUsage'):
+            return cmd.getUsage()
+        return ''
+
     def getNames(self):
         return ['help']
 
@@ -945,6 +1013,10 @@ class HelpCommand(YumCommand):
         if len(extcmds) == 0:
             base.usage()
             raise cli.CliError
+        elif len(extcmds) in (1, 2) and extcmds[0] == 'recent':
+            pass
+        elif len(extcmds) == 2 and extcmds[0] in ('cmd', 'command'):
+            pass
         elif len(extcmds) > 1 or extcmds[0] not in base.yum_cli_commands:
             base.usage()
             raise cli.CliError
@@ -986,6 +1058,50 @@ class HelpCommand(YumCommand):
         return help_output
 
     def doCommand(self, base, basecmd, extcmds):
+        if extcmds[0] == 'recent':
+            last = "4"
+            if len(extcmds) > 1:
+                last = extcmds[1]
+            last = int(last)
+            if last < 1:
+                last = 1
+
+            cols = base.term.columns
+            print base.fmtSection("%d most recent command(s)" % (last,))
+            colname = _("Command")
+            maxname = utf8_width(colname)
+            cur = 0
+            for cmd in sorted(base.yum_cli_commands.values(), reverse=True,
+                              key=self._key_created):
+                if maxname < len(cmd.getNames()[0]):
+                    maxname = len(cmd.getNames()[0])
+                cur += 1
+                if cur >= last:
+                    break
+            print "%s %s %s" % (utf8_width_fill(colname, maxname),
+                                utf8_width_fill(_("Created"), 10, 10),
+                                _("Summary"))
+            cur = 0
+            for cmd in sorted(base.yum_cli_commands.values(), reverse=True,
+                              key=self._key_created):
+                name = cmd.getNames()[0]
+                created = self._key_created(cmd)
+                if not created:
+                    created = 'N/A' # Not i18n, because it should be fixed
+                else:
+                    created = time.strftime("%Y-%m-%d", time.localtime(created))
+                summary = self._key_summary(cmd)
+                text = "%s %-10s " % (utf8_width_fill(name, maxname), created)
+                print utf8_text_fill(summary, width=cols, initial_indent=text,
+                                     subsequent_indent=' ' * utf8_width(text))
+
+                cur += 1
+                if cur >= last:
+                    break
+            return 0, []
+
+        if extcmds[0] in ('cmd', 'command'):
+            extcmds = extcmds[1:]
         if base.yum_cli_commands.has_key(extcmds[0]):
             command = base.yum_cli_commands[extcmds[0]]
             base.verbose_logger.log(logginglevels.INFO_2,
@@ -996,6 +1112,9 @@ class HelpCommand(YumCommand):
         return False
 
 class ReInstallCommand(YumCommand):
+
+    created = 1202159716
+
     def getNames(self):
         return ['reinstall']
 
@@ -1022,6 +1141,9 @@ class ReInstallCommand(YumCommand):
         return False
         
 class DowngradeCommand(YumCommand):
+
+    created = 1237904399
+
     def getNames(self):
         return ['downgrade']
 
@@ -1048,6 +1170,9 @@ class DowngradeCommand(YumCommand):
         
 
 class VersionCommand(YumCommand):
+
+    created = 1242925190
+
     def getNames(self):
         return ['version']
 
