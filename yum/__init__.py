@@ -523,8 +523,8 @@ class YumBase(depsolve.Depsolve):
         if repos == 'enabled':
             repos = self.repos.listEnabled()
         for repo in repos:
-            self.excludePackages(repo)
             self.includePackages(repo)
+            self.excludePackages(repo)
         self.plugins.run('exclude')
         self._pkgSack.buildIndexes()
 
@@ -1168,9 +1168,13 @@ class YumBase(depsolve.Depsolve):
         if len(includelist) == 0:
             return
         
+        # includepkgs actually means "exclude everything that doesn't match".
+        #  So we mark everything, then wash those we want to keep and then
+        # exclude everything that is marked.
+        self.pkgSack.addPackageExcluder(repo.id, 'mark.washed')
         for match in includelist:
-            self.pkgSack.addPackageExcluder(repo.id, 'include.match', match)
-        self.pkgSack.addPackageExcluder(repo.id, 'exclude.*')
+            self.pkgSack.addPackageExcluder(repo.id, 'wash.match', match)
+        self.pkgSack.addPackageExcluder(repo.id, 'exclude.marked')
         
     def doLock(self, lockfile = YUM_PID_FILE):
         """perform the yum locking, raise yum-based exceptions, not OSErrors"""
