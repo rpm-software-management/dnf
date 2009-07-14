@@ -107,6 +107,54 @@ def _parse_pkg(match, regexp_match, data, e,v,r,a):
             return True
     return False
 
+def _excluder_match(excluder, match, regexp_match, data, e,v,r,a):
+    if False: pass
+    elif excluder in ('eq', 'match'):
+        if _parse_pkg(match, regexp_match, data, e,v,r,a):
+            return True
+
+    elif excluder in ('name.eq', 'name.match'):
+        if _parse_pkg_n(match, regexp_match, data['n']):
+            return True
+
+    elif excluder in ('arch.eq', 'arch.match'):
+        if _parse_pkg_n(match, regexp_match, a):
+            return True
+
+    elif excluder in ('nevra.eq', 'nevra.match'):
+        if 'nevra' not in data:
+            data['nevra'] = '%s-%s:%s-%s.%s' % (n, e, v, r, a)
+        if _parse_pkg_n(match, regexp_match, data['nevra']):
+            return True
+
+    elif excluder == 'name.in':
+        if data['n'] in match:
+            return True
+
+    elif excluder == 'nevra.in':
+        if 'nevra' not in data:
+            data['nevra'] = '%s-%s:%s-%s.%s' % (n, e, v, r, a)
+        if data['nevra'] in match:
+            return True
+
+    elif excluder == 'marked':
+        if data['marked']:
+            return True
+
+    elif excluder == 'washed':
+        if not data['marked']:
+            return True
+
+    elif excluder == '*':
+        return True
+
+    else:
+        assert False, 'Bad excluder: ' + excluder
+        return None
+
+    return False
+
+
 class YumAvailablePackageSqlite(YumAvailablePackage, PackageObject, RpmBase):
     def __init__(self, repo, db_obj):
         self.prco = { 'obsoletes': (),
@@ -484,7 +532,7 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
             self._delPackageRK(repo, pkgKey)
             return True
 
-        data = {'n' : n.lower()}
+        data = {'n' : n.lower(), 'marked' : False}
         e = e.lower()
         v = v.lower()
         r = r.lower()
@@ -494,75 +542,33 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
             if repoid is not None and repoid != repo.id:
                 continue
 
+            exSPLIT = excluder.split('.', 1)
+            if len(exSPLIT) != 2:
+                assert False, 'Bad excluder: ' + excluder
+                continue
+
+            exT, exM = exSPLIT
             if False: pass
-            elif excluder in ('exclude.eq', 'exclude.match'):
-                if _parse_pkg(match, regexp_match, data, e,v,r,a):
+            elif exT == 'exclude':
+                if _excluder_match(exM, match, regexp_match, data, e,v,r,a):
                     self._delPackageRK(repo, pkgKey)
                     return True
 
-            elif excluder in ('exclude.name.eq', 'exclude.name.match'):
-                if _parse_pkg_n(match, regexp_match, data['n']):
-                    self._delPackageRK(repo, pkgKey)
-                    return True
-
-            elif excluder in ('exclude.arch.eq', 'exclude.arch.match'):
-                if _parse_pkg_n(match, regexp_match, a):
-                    self._delPackageRK(repo, pkgKey)
-                    return True
-
-            elif excluder in ('exclude.nevra.eq', 'exclude.nevra.match'):
-                if 'nevra' not in data:
-                    data['nevra'] = '%s-%s:%s-%s.%s' % (n, e, v, r, a)
-                if _parse_pkg_n(match, regexp_match, data['nevra']):
-                    self._delPackageRK(repo, pkgKey)
-                    return True
-
-            elif excluder == 'exclude.name.in':
-                if data['n'] in match:
-                    self._delPackageRK(repo, pkgKey)
-                    return True
-
-            elif excluder == 'exclude.nevra.in':
-                if 'nevra' not in data:
-                    data['nevra'] = '%s-%s:%s-%s.%s' % (n, e, v, r, a)
-                if data['nevra'] in match:
-                    self._delPackageRK(repo, pkgKey)
-                    return True
-
-            elif excluder in ('include.eq', 'include.match'):
-                if _parse_pkg(match, regexp_match, data, e,v,r,a):
+            elif exT == 'include':
+                if _excluder_match(exM, match, regexp_match, data, e,v,r,a):
                     break
 
-            elif excluder in ('include.name.eq', 'include.name.match'):
-                if _parse_pkg_n(match, regexp_match, data['n']):
-                    break
+            elif exT == 'mark':
+                if data['marked']:
+                    pass # Speed opt. don't do matches we don't need to do.
+                elif _excluder_match(exM, match, regexp_match, data, e,v,r,a):
+                    data['marked'] = True
 
-            elif excluder in ('include.arch.eq', 'include.arch.match'):
-                if _parse_pkg_n(match, regexp_match, a):
-                    break
-
-            elif excluder in ('include.nevra.eq', 'include.nevra.match'):
-                if 'nevra' not in data:
-                    data['nevra'] = '%s-%s:%s-%s.%s' % (n, e, v, r, a)
-                if _parse_pkg_n(match, regexp_match, data['nevra']):
-                    break
-
-            elif excluder == 'include.name.in':
-                if data['n'] in match:
-                    break
-
-            elif excluder == 'include.nevra.in':
-                if 'nevra' not in data:
-                    data['nevra'] = '%s-%s:%s-%s.%s' % (n, e, v, r, a)
-                if data['nevra'] in match:
-                    break
-
-            elif excluder == 'exclude.*':
-                self._delPackageRK(repo, pkgKey)
-                return True
-
-            elif excluder == 'include.*':
-                break
+            elif exT == 'wash':
+                if not data['marked']:
+                    pass # Speed opt. don't do matches we don't need to do.
+                elif _excluder_match(exM, match, regexp_match, data, e,v,r,a):
+                    data['marked'] = False
 
             else:
                 assert False, 'Bad excluder: ' + excluder
@@ -604,6 +610,10 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
             if misc.re_glob(match):
                 regexp_match = re.compile(fnmatch.translate(match)).match
         elif excluder.endswith('.*'):
+            assert len(args) == 0
+        elif excluder.endswith('.marked'):
+            assert len(args) == 0
+        elif excluder.endswith('.washed'):
             assert len(args) == 0
         self._pkgExcluder.append((repoid, excluder, match, regexp_match))
 
