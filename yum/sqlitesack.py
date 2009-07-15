@@ -400,6 +400,7 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
         self._pkgnames_loaded = set()
         self._arch_allowed = None
         self._pkgExcluder = []
+        self._pkgobjlist_dirty = False
 
     @catchSqliteException
     def _sql_MD(self, MD, repo, sql, *args):
@@ -428,7 +429,7 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
         exclude_num = 0
         for repo in self.excludes:
             exclude_num += len(self.excludes[repo])
-        if hasattr(self, 'pkgobjlist'):
+        if hasattr(self, 'pkgobjlist') and not self._pkgobjlist_dirty:
             return len(self.pkgobjlist) - exclude_num
         
         pkg_num = 0
@@ -444,6 +445,7 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
             del self._memoize_provides
         if hasattr(self, 'pkgobjlist'):
             del self.pkgobjlist
+        self._pkgobjlist_dirty = False
         self._key2pkg = {}
         self._pkgname2pkgkeys = {}
         self._pkgnames_loaded = set()
@@ -483,6 +485,9 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
         ''' Exclude a package so that _pkgExcluded*() knows it's gone.
             Note that this doesn't update self.exclude. '''
         self._excludes.add((repo, pkgKey))
+        # Don't keep references around, just wastes memory.
+        if repo in self._key2pkg:
+            self._key2pkg[repo].pop(pkgKey, 0)
 
     # Remove a package
     # Because we don't want to remove a package from the database we just
@@ -494,6 +499,7 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
         if (obj.repo, obj.pkgKey) in self._exclude_whitelist:
             self._exclude_whitelist.discard((obj.repo, obj.pkgKey))
         self._delPackageRK(obj.repo, obj.pkgKey)
+        self._pkgobjlist_dirty = True
 
     def _delAllPackages(self, repo):
         """ Exclude all packages from the repo. """
@@ -621,6 +627,9 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
             assert len(args) == 0
         elif excluder.endswith('.washed'):
             assert len(args) == 0
+        #  Really need to do this, need to cleanup pkgExcluder first though
+        # or it does nothing.
+        # self._pkgobjlist_dirty = True
         self._pkgExcluder.append((repoid, excluder, match, regexp_match))
 
     def _packageByKey(self, repo, pkgKey, exclude=True):
@@ -1458,6 +1467,10 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
 
         internal_pkgoblist = hasattr(self, 'pkgobjlist')
         if internal_pkgoblist:
+            if self._pkgobjlist_dirty:
+                pol = filter(lambda x: not self._pkgExcluded(x),self.pkgobjlist)
+                self.pkgobjlist = pol
+                self._pkgobjlist_dirty = False
             pkgobjlist = self.pkgobjlist
         else:
             pkgobjlist = self._buildPkgObjList(repoid, patterns, ignore_case)
@@ -1468,16 +1481,15 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
                                        unique='repo-pkgkey')
             pkgobjlist = pkgobjlist[0] + pkgobjlist[1]
 
-        if True: # NOTE: Can't unexclude things...
+        # Can't unexclude things, and new excludes are done above...
+        if repoid is None:
             if internal_pkgoblist:
                 pkgobjlist = pkgobjlist[:]
             return pkgobjlist
 
         returnList = []
         for po in pkgobjlist:
-            if repoid is not None and repoid != po.repoid:
-                continue
-            if self._pkgExcluded(po):
+            if repoid != po.repoid:
                 continue
             returnList.append(po)
 
