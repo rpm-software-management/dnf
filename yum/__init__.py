@@ -1150,14 +1150,19 @@ class YumBase(depsolve.Depsolve):
                 return
             excludelist = self.conf.exclude
             repoid = None
+            exid_beg = 'yum.excludepkgs'
         else:
             if repo.id in self.conf.disable_excludes:
                 return
             excludelist = repo.getExcludePkgList()
             repoid = repo.id
+            exid_beg = 'yum.excludepkgs.' + repoid
 
+        count = 0
         for match in excludelist:
-            self.pkgSack.addPackageExcluder(repoid, 'exclude.match', match)
+            count += 1
+            exid = "%s.%u" % (exid_beg, count)
+            self.pkgSack.addPackageExcluder(repoid, exid,'exclude.match', match)
 
     def includePackages(self, repo):
         """removes packages from packageSacks based on list of packages, to include.
@@ -1171,10 +1176,15 @@ class YumBase(depsolve.Depsolve):
         # includepkgs actually means "exclude everything that doesn't match".
         #  So we mark everything, then wash those we want to keep and then
         # exclude everything that is marked.
-        self.pkgSack.addPackageExcluder(repo.id, 'mark.washed')
+        exid = "yum.includepkgs.1"
+        self.pkgSack.addPackageExcluder(repo.id, exid, 'mark.washed')
+        count = 0
         for match in includelist:
-            self.pkgSack.addPackageExcluder(repo.id, 'wash.match', match)
-        self.pkgSack.addPackageExcluder(repo.id, 'exclude.marked')
+            count += 1
+            exid = "%s.%u" % ("yum.includepkgs.2", count)
+            self.pkgSack.addPackageExcluder(repo.id, exid, 'wash.match', match)
+        exid = "yum.includepkgs.3"
+        self.pkgSack.addPackageExcluder(repo.id, exid, 'exclude.marked')
         
     def doLock(self, lockfile = YUM_PID_FILE):
         """perform the yum locking, raise yum-based exceptions, not OSErrors"""

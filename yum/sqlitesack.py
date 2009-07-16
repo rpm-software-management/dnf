@@ -424,6 +424,7 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
         self._pkgnames_loaded = set()
         self._arch_allowed = None
         self._pkgExcluder = []
+        self._pkgExcludeIds = {}
         self._pkgobjlist_dirty = False
 
     @catchSqliteException
@@ -494,6 +495,9 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
         self._excludes = set()
         self._exclude_whitelist = set()
         self._all_excludes = {}
+        self._pkgExcluder = []
+        self._pkgExcludeIds = {}
+        self._pkgobjlist_dirty = False
 
         yumRepo.YumPackageSack.close(self)
 
@@ -630,7 +634,17 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
             Takes a package object. '''
         return self._pkgExcludedRKT(po.repo, po.pkgKey, po.pkgtup)
 
-    def addPackageExcluder(self, repoid, excluder, *args):
+    def addPackageExcluder(self, repoid, excluderid, excluder, *args):
+        """ Add an "excluder" for all packages in the repo/sack. Can basically
+            do anything based on nevra, changes lots of exclude decisions from
+            "preload package; test; delPackage" into "load excluder".
+            Excluderid is used so the caller doesn't have to track
+            "have I loaded the excluder for this repo.", it's probably only
+            useful when repoid is None ... if it turns out utterly worthless
+            then it's still not a huge wart. """
+        if excluderid is not None and excluderid in self._pkgExcludeIds:
+            return
+
         match        = None
         regexp_match = None
         if False: pass
@@ -655,6 +669,8 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
         # or it does nothing.
         # self._pkgobjlist_dirty = True
         self._pkgExcluder.append((repoid, excluder, match, regexp_match))
+        if excluderid is not None:
+            self._pkgExcludeIds[excluderid] = len(self._pkgExcluder)
 
     def _packageByKey(self, repo, pkgKey, exclude=True):
         """ Lookup a pkg by it's pkgKey, if we don't have it load it """

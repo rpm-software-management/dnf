@@ -172,8 +172,14 @@ class PackageSackBase(object):
         """return list of all packages"""
         raise NotImplementedError()
 
-    def addPackageExcluder(self, repoid, excluder, *args):
-        """exclude packages, for a variety of reasons"""
+    def addPackageExcluder(self, repoid, excluderid, excluder, *args):
+        """ Add an "excluder" for all packages in the repo/sack. Can basically
+            do anything based on nevra, changes lots of exclude decisions from
+            "preload package; test; delPackage" into "load excluder".
+            Excluderid is used so the caller doesn't have to track
+            "have I loaded the excluder for this repo.", it's probably only
+            useful when repoid is None ... if it turns out utterly worthless
+            then it's still not a huge wart. """
         raise NotImplementedError()
 
     def simpleVersion(self):
@@ -444,12 +450,19 @@ class MetaSack(PackageSackBase):
         return self.sacks[repoid].returnPackages(patterns=patterns,
                                                  ignore_case=ignore_case)
 
-    def addPackageExcluder(self, repoid, excluder, *args):
-        """exclude packages, for a variety of reasons"""
+    def addPackageExcluder(self, repoid, excluderid, excluder, *args):
+        """ Add an "excluder" for all packages in the repo/sack. Can basically
+            do anything based on nevra, changes lots of exclude decisions from
+            "preload package; test; delPackage" into "load excluder".
+            Excluderid is used so the caller doesn't have to track
+            "have I loaded the excluder for this repo.", it's probably only
+            useful when repoid is None ... if it turns out utterly worthless
+            then it's still not a huge wart. """
         if not repoid:
-            return self._computeAggregateListResult("addPackageExcluder",
-                                                    None, excluder, *args)
-        return self.sacks[repoid].addPackageExcluder(None, excluder, *args)
+            calr = self._computeAggregateListResult
+            return calr("addPackageExcluder", None, excluderid, excluder, *args)
+        return self.sacks[repoid].addPackageExcluder(None,
+                                                     excluderid,excluder, *args)
 
     def returnNewestByNameArch(self, naTup=None,
                                patterns=None, ignore_case=False):
