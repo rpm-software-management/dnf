@@ -441,6 +441,18 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
         sql = "SELECT count(pkgId) FROM packages"
         return self._sql_MD('primary', repo, sql).fetchone()[0]
         
+    def _clean_pkgobjlist(self):
+        """ If the pkgobjlist is dirty (possible pkgs on it which are excluded)
+            then clean it, and return the clean list. """
+        assert hasattr(self, 'pkgobjlist')
+
+        if self._pkgobjlist_dirty:
+            pol = filter(lambda x: not self._pkgExcluded(x), self.pkgobjlist)
+            self.pkgobjlist = pol
+            self._pkgobjlist_dirty = False
+
+        return self.pkgobjlist
+
     def __len__(self):
         # First check if everything is excluded
         all_excluded = True
@@ -451,12 +463,12 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
         if all_excluded:
             return 0
             
+        if hasattr(self, 'pkgobjlist'):
+            return len(self._clean_pkgobjlist())
+
         exclude_num = 0
         for repo in self.excludes:
             exclude_num += len(self.excludes[repo])
-        if hasattr(self, 'pkgobjlist') and not self._pkgobjlist_dirty:
-            return len(self.pkgobjlist) - exclude_num
-        
         pkg_num = 0
         sql = "SELECT count(pkgId) FROM packages"
         for repo in self.primarydb:
@@ -1507,11 +1519,7 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
 
         internal_pkgoblist = hasattr(self, 'pkgobjlist')
         if internal_pkgoblist:
-            if self._pkgobjlist_dirty:
-                pol = filter(lambda x: not self._pkgExcluded(x),self.pkgobjlist)
-                self.pkgobjlist = pol
-                self._pkgobjlist_dirty = False
-            pkgobjlist = self.pkgobjlist
+            pkgobjlist = self._clean_pkgobjlist()
         else:
             pkgobjlist = self._buildPkgObjList(repoid, patterns, ignore_case)
 
