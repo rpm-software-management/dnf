@@ -123,13 +123,13 @@ def _excluder_match(excluder, match, regexp_match, data, e,v,r,a):
 
     elif excluder == 'nevr.eq':
         if 'nevr' not in data:
-            data['nevr'] = '%s-%s:%s-%s' % (n, e, v, r)
+            data['nevr'] = '%s-%s:%s-%s' % (data['n'], e, v, r)
         if match == data['nevr']:
             return True
 
     elif excluder in ('nevra.eq', 'nevra.match'):
         if 'nevra' not in data:
-            data['nevra'] = '%s-%s:%s-%s.%s' % (n, e, v, r, a)
+            data['nevra'] = '%s-%s:%s-%s.%s' % (data['n'], e, v, r, a)
         if _parse_pkg_n(match, regexp_match, data['nevra']):
             return True
 
@@ -139,25 +139,25 @@ def _excluder_match(excluder, match, regexp_match, data, e,v,r,a):
 
     elif excluder == 'nevr.in':
         if 'nevr' not in data:
-            data['nevr'] = '%s-%s:%s-%s' % (n, e, v, r)
+            data['nevr'] = '%s-%s:%s-%s' % (data['n'], e, v, r)
         if data['nevr'] in match:
             return True
 
     elif excluder == 'nevra.in':
         if 'nevra' not in data:
-            data['nevra'] = '%s-%s:%s-%s.%s' % (n, e, v, r, a)
+            data['nevra'] = '%s-%s:%s-%s.%s' % (data['n'], e, v, r, a)
         if data['nevra'] in match:
             return True
 
     elif excluder == 'pkgtup.eq':
         if 'pkgtup' not in data:
-            data['pkgtup'] = (n, a, e, v, r)
+            data['pkgtup'] = (data['n'], a, e, v, r)
         if match == data['pkgtup']:
             return True
 
     elif excluder == 'pkgtup.in':
         if 'pkgtup' not in data:
-            data['pkgtup'] = (n, a, e, v, r)
+            data['pkgtup'] = (data['n'], a, e, v, r)
         if data['pkgtup'] in match:
             return True
 
