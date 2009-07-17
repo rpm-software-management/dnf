@@ -68,6 +68,8 @@ from yum.i18n import to_unicode
 
 import string
 
+from weakref import proxy as weakref
+
 from urlgrabber.grabber import default_grabber
 
 __version__ = '3.2.23'
@@ -99,6 +101,28 @@ class _YumPreBaseConf:
         self.syslog_device = '/dev/log'
         self.arch = None
         self.releasever = None
+
+class _YumCostExclude:
+    """ This excludes packages that are in repos. of lower cost than the passed
+        repo. """
+
+    def __init__(self, repo, repos):
+        self.repo   = weakref(repo)
+        self._repos = weakref(repos)
+
+    def __contains__(self, pkgtup):
+        # (n, a, e, v, r) = pkgtup
+        for repo in self._repos.listEnabled():
+            if repo.cost >= self.repo.cost:
+                break
+            #  searchNevra is a bit slower, although more generic for repos. 
+            # that don't use sqlitesack as the backend ... although they are
+            # probably screwed anyway.
+            #
+            # if repo.sack.searchNevra(n, e, v, r, a):
+            if pkgtup in repo.sack._pkgtup2pkgs:
+                return True
+        return False
 
 class YumBase(depsolve.Depsolve):
     """This is a primary structure and base class. It houses the objects and
@@ -1094,45 +1118,30 @@ class YumBase(depsolve.Depsolve):
         self.rpmdb.dropCachedData()
 
     def costExcludePackages(self):
-        """exclude packages if they have an identical package in another repo
-        and their repo.cost value is the greater one"""
+        """ Create an excluder for repos. with higher cost. Eg.
+            repo-A:cost=1 repo-B:cost=2 ... here we setup an excluder on repo-B
+            that looks for pkgs in repo-B."""
         
-        # check to see if the cost per repo is anything other than equal
         # if all the repo.costs are equal then don't bother running things
         costs = {}
         for r in self.repos.listEnabled():
-            costs[r.cost] = 1
+            costs.setdefault(r.cost, []).append(r)
 
-        if len(costs) <= 1: # if all of our costs are the same then return
+        if len(costs) <= 1:
             return
-            
-        def _sort_by_cost(a, b):
-            if a.repo.cost < b.repo.cost:
-                return -1
-            if a.repo.cost == b.repo.cost:
-                return 0
-            if a.repo.cost > b.repo.cost:
-                return 1
-                
-        pkgdict = {}
-        for po in self.pkgSack:
-            if not pkgdict.has_key(po.pkgtup):
-                pkgdict[po.pkgtup] = []
-            pkgdict[po.pkgtup].append(po)
-        
-        for pkgs in pkgdict.values():
-            if len(pkgs) == 1:
-                continue
-                
-            pkgs.sort(_sort_by_cost)
-            lowcost = pkgs[0].repo.cost
-            #print '%s : %s : %s' % (pkgs[0], pkgs[0].repo, pkgs[0].repo.cost)
-            for pkg in pkgs[1:]:
-                if pkg.repo.cost > lowcost:
-                    msg = _('excluding for cost: %s from %s') % (pkg, pkg.repo.id)
-                    self.verbose_logger.log(logginglevels.DEBUG_3, msg)
-                    pkg.repo.sack.delPackage(pkg)
-            
+
+        done = False
+        exid = "yum.costexcludes"
+        orepos = []
+        for cost in sorted(costs):
+            if done: # Skip the first one, as they have lowest cost so are good.
+                for repo in costs[cost]:
+                    print "JDBG:", repo, cost, len(orepos)
+                    yce = _YumCostExclude(repo, self.repos)
+                    repo.sack.addPackageExcluder(repo.id, exid,
+                                                 'exclude.pkgtup.in', yce)
+            orepos.extend(costs[cost])
+            done = True
 
     def excludePackages(self, repo=None):
         """removes packages from packageSacks based on global exclude lists,

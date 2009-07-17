@@ -421,6 +421,7 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
             }
         self._key2pkg = {}
         self._pkgname2pkgkeys = {}
+        self._pkgtup2pkgs = {}
         self._pkgnames_loaded = set()
         self._arch_allowed = None
         self._pkgExcluder = []
@@ -527,7 +528,11 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
         self._excludes.add((repo, pkgKey))
         # Don't keep references around, just wastes memory.
         if repo in self._key2pkg:
-            self._key2pkg[repo].pop(pkgKey, 0)
+            po = self._key2pkg[repo].pop(pkgKey, None)
+            if po is not None: # Will also be in the pkgtup2pkgs cache...
+                pos = self._pkgtup2pkgs[po.pkgtup]
+                pos = filter(lambda x: id(x) == id(po), pos)
+                self._pkgtup2pkgs[po.pkgtup] = pos
 
     # Remove a package
     # Because we don't want to remove a package from the database we just
@@ -702,7 +707,9 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
                 raise Errors.RepoError, msg
             if exclude and self._pkgExcludedRKD(repo, pkgKey, data):
                 return None
-            self._key2pkg[repo][pkgKey] = self.pc(repo, data)
+            po = self.pc(repo, data)
+            self._key2pkg[repo][pkgKey] = po
+            self._pkgtup2pkgs.setdefault(po.pkgtup, []).append(po)
             pkgkeys = self._pkgname2pkgkeys[repo].setdefault(data['name'], [])
             pkgkeys.append(pkgKey)
         return self._key2pkg[repo][pkgKey]
@@ -717,6 +724,7 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
         if data['pkgKey'] not in self._key2pkg.get(repo, {}):
             po = self.pc(repo, data)
             self._key2pkg[repo][pkgKey] = po
+            self._pkgtup2pkgs.setdefault(po.pkgtup, []).append(po)
             pkgkeys = self._pkgname2pkgkeys[repo].setdefault(data['name'], [])
             pkgkeys.append(pkgKey)
         return self._key2pkg[repo][data['pkgKey']]

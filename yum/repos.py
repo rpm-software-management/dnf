@@ -59,6 +59,10 @@ class RepoStorage:
         self.gpg_import_func = _wrap_ayum_getKeyForRepo(ayum)
         self.confirm_func = None
 
+        # This allow listEnabled() to be O(1) most of the time.
+        self._cache_enabled_repos = []
+        self.quick_enable_disable = {}
+
     def doSetup(self, thisrepo = None):
         
         self.ayum.plugins.run('prereposetup')
@@ -92,7 +96,10 @@ class RepoStorage:
         if self.repos.has_key(repoobj.id):
             raise Errors.DuplicateRepoError, 'Repository %s is listed more than once in the configuration' % (repoobj.id)
         self.repos[repoobj.id] = repoobj
-        
+        if hasattr(repoobj, 'quick_enable_disable'):
+            repoobj.quick_enable_disable = self.quick_enable_disable
+        else:
+            self._cache_enabled_repos = None
 
     def delete(self, repoid):
         if self.repos.has_key(repoid):
@@ -163,12 +170,21 @@ class RepoStorage:
         
     def listEnabled(self):
         """return list of enabled repo objects"""
+
+        if (self._cache_enabled_repos is not None and
+            not self.quick_enable_disable):
+            return self._cache_enabled_repos
+
         returnlist = []
         for repo in self.repos.values():
             if repo.isEnabled():
                 returnlist.append(repo)
 
         returnlist.sort()
+
+        if self._cache_enabled_repos is not None:
+            self._cache_enabled_repos = returnlist
+            self.quick_enable_disable.clear()
         return returnlist
 
     def listGroupsEnabled(self):
@@ -266,6 +282,7 @@ class Repository:
 
     def __init__(self, repoid):
         self.id = repoid
+        self.quick_enable_disable = {}
         self.disable()
 
     def __cmp__(self, other):
@@ -303,9 +320,11 @@ class Repository:
 
     def enable(self):
         self.setAttribute('enabled', 1)
+        self.quick_enable_disable[self.id] = True
                     
     def disable(self):
         self.setAttribute('enabled', 0)
+        self.quick_enable_disable[self.id] = False
 
     def getExcludePkgList(self):
         excludeList = self.getAttribute('exclude')
