@@ -97,6 +97,7 @@ class RepoStorage:
             raise Errors.DuplicateRepoError, 'Repository %s is listed more than once in the configuration' % (repoobj.id)
         self.repos[repoobj.id] = repoobj
         if hasattr(repoobj, 'quick_enable_disable'):
+            self.quick_enable_disable.update(repoobj.quick_enable_disable)
             repoobj.quick_enable_disable = self.quick_enable_disable
         else:
             self._cache_enabled_repos = None
