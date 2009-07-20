@@ -150,14 +150,10 @@ def _excluder_match(excluder, match, regexp_match, data, e,v,r,a):
             return True
 
     elif excluder == 'pkgtup.eq':
-        if 'pkgtup' not in data:
-            data['pkgtup'] = (data['n'], a, e, v, r)
         if match == data['pkgtup']:
             return True
 
     elif excluder == 'pkgtup.in':
-        if 'pkgtup' not in data:
-            data['pkgtup'] = (data['n'], a, e, v, r)
         if data['pkgtup'] in match:
             return True
 
@@ -589,7 +585,7 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
             self._delPackageRK(repo, pkgKey)
             return True
 
-        data = {'n' : n.lower(), 'marked' : False}
+        data = {'n' : n.lower(), 'pkgtup' : (n, a, e, v, r), 'marked' : False}
         e = e.lower()
         v = v.lower()
         r = r.lower()
