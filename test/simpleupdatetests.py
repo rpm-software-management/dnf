@@ -677,3 +677,20 @@ class SimpleUpdateTests(OperationsTests):
                                      [p11, pr12, py12])
         self.assert_(res=='ok', msg)
         self.assertResult((pi12,py12))
+
+    def testUpdateMultiArchConflict(self):
+        pi1 = FakePackage('A', '1', '1', '0', 'i386')
+        pi2 = FakePackage('B', '1', '1', '0', 'i386')
+        pi3 = FakePackage('B', '1', '1', '0', 'x86_64')
+
+        pa1 = FakePackage('A', '1', '2', '0', 'i386')
+        pa2 = FakePackage('B', '1', '2', '0', 'i386')
+        pa2.addConflicts('A', 'LE', ('0', '1', '1'))
+        pa3 = FakePackage('B', '1', '2', '0', 'x86_64')
+        pa3.addConflicts('A', 'LE', ('0', '1', '1'))
+
+        res, msg = self.runOperation(['update', 'B'],
+                                     [pi1, pi2, pi3],
+                                     [pa1, pa2, pa3])
+        self.assert_(res=='ok', msg)
+        self.assertResult((pa1, pa2, pa3))
