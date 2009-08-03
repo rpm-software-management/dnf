@@ -2707,6 +2707,8 @@ class YumBase(depsolve.Depsolve):
                                                  ignore_case=False)
             if 'name' in kwargs:
                 pkgs = self.rpmdb.searchNevra(name=kwargs['name'])
+            if 'pkgtup' in kwargs:
+                pkgs = self.rpmdb.searchNevra(name=kwargs['pkgtup'][0])
             # Warning here does "weird" things when doing:
             # yum --disablerepo='*' install '*'
             # etc. ... see RHBZ#480402
@@ -3299,9 +3301,7 @@ class YumBase(depsolve.Depsolve):
             if isinstance(po, YumLocalPackage):
                 members = self.install(po=po)
             else:
-                members = self.install(name=item.name, arch=item.arch,
-                                       ver=item.version, release=item.release,
-                                       epoch=item.epoch)
+                members = self.install(pkgtup=item.pkgtup)
             self.conf.obsoletes = old_conf_obs
             if len(members) == 0:
                 self.tsInfo.remove(item.pkgtup)
