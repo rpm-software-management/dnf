@@ -3280,7 +3280,8 @@ class YumBase(depsolve.Depsolve):
         # this is a reinstall, so if we can't reinstall exactly what we uninstalled
         # then we really shouldn't go on
         new_members = []
-        for item in tx_mbrs:
+        failed = []
+        for item in tx_mbrs[:]:
             #FIXME future - if things in the rpm transaction handling get
             # a bit finer-grained, then we should allow reinstalls of kernels
             # for now, banned and dropped.
@@ -3305,9 +3306,12 @@ class YumBase(depsolve.Depsolve):
             if len(members) == 0:
                 self.tsInfo.remove(item.pkgtup)
                 tx_mbrs.remove(item)
-                raise Errors.ReinstallInstallError, _("Problem in reinstall: no package %s matched to install") % item.po
+                failed.append(str(item.po))
+                continue
             new_members.extend(members)
 
+        if failed and not tx_mbrs:
+            raise Errors.ReinstallInstallError, _("Problem in reinstall: no package %s matched to install") % ", ".join(failed)
         tx_mbrs.extend(new_members)
         return tx_mbrs
         
