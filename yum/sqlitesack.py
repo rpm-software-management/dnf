@@ -1526,6 +1526,7 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
             pkgobjlist = self._clean_pkgobjlist()
         else:
             pkgobjlist = self._buildPkgObjList(repoid, patterns, ignore_case)
+            internal_pkgoblist = hasattr(self, 'pkgobjlist')
 
         if internal_pkgoblist and patterns:
             internal_pkgoblist = False
