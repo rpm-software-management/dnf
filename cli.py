@@ -420,10 +420,21 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
                  _('Running rpm_check_debug'))
             msgs = self._run_rpm_check_debug()
             if msgs:
-                print _('ERROR with rpm_check_debug vs depsolve:')
+                rpmlib_only = True
+                for msg in msgs:
+                    if msg.startswith('rpmlib('):
+                        continue
+                    rpmlib_only = False
+                if rpmlib_only:
+                    print _("ERROR You need to update rpm to handle:")
+                else:
+                    print _('ERROR with rpm_check_debug vs depsolve:')
+
                 for msg in msgs:
                     print to_utf8(msg)
-    
+
+                if rpmlib_only:
+                    return 1, [_('RPM needs to be updated')]
                 return 1, [_('Please report this error in %s') % self.conf.bugtracker_url]
 
             self.verbose_logger.debug('rpm_check_debug time: %0.3f' % (time.time() - rcd_st))
