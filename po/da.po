@@ -197,7 +197,7 @@ msgstr "  * Du mente måske: "
 #: ../cli.py:546 ../cli.py:554
 #, python-format
 msgid "Package(s) %s%s%s available, but not installed."
-msgstr "Pakke(r) %s%s%S tilgængelig(e), men ikke installeret."
+msgstr "Pakke(r) %s%s%s tilgængelig(e), men ikke installeret."
 
 #: ../cli.py:560 ../cli.py:591 ../cli.py:669 ../cli.py:693
 #, python-format
@@ -1339,7 +1339,7 @@ msgstr "  Det andet program er: %s"
 #: ../yummain.py:140
 #, python-format
 msgid "    Memory : %5s RSS (%5sB VSZ)"
-msgstr "    Hukommelse : %5a RSS (%5sB VSZ)"
+msgstr "    Hukommelse : %5s RSS (%5sB VSZ)"
 
 #: ../yummain.py:144
 #, python-format
