@@ -3821,6 +3821,15 @@ class YumBase(depsolve.Depsolve):
                  _('Running rpm_check_debug'))
             msgs = self._run_rpm_check_debug()
             if msgs:
+                rpmlib_only = True
+                for msg in msgs:
+                    if msg.startswith('rpmlib('):
+                        continue
+                    rpmlib_only = False
+                if rpmlib_only:
+                    retmsgs = [_("ERROR You need to update rpm to handle:")]
+                    retmsgs.extend(msgs)
+                    raise Errors.YumRPMCheckError, retmsgs
                 retmsgs = [_('ERROR with rpm_check_debug vs depsolve:')]
                 retmsgs.extend(msgs) 
                 retmsgs.append(_('Please report this error at %s') 
