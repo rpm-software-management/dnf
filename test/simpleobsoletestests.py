@@ -566,6 +566,12 @@ class SimpleObsoletesTests(OperationsTests):
         # FIXME: Optimally we'd get:
         # self.assertResult((all['arp3'], all['arp4']))
 
+    def testRLDaplFixUpdateNotInstall(self):
+        rps, aps, ret, all = self._helperRLDaplMess()
+        res, msg = self.runOperation(['update', 'dapl-1.2.1*'], [], rps + aps)
+
+        # self.assert_(res=='err', msg)
+        self.assertResult([])
 
 class GitMetapackageObsoletesTests(OperationsTests):
 
