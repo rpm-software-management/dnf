@@ -1136,7 +1136,6 @@ class YumBase(depsolve.Depsolve):
         for cost in sorted(costs):
             if done: # Skip the first one, as they have lowest cost so are good.
                 for repo in costs[cost]:
-                    print "JDBG:", repo, cost, len(orepos)
                     yce = _YumCostExclude(repo, self.repos)
                     repo.sack.addPackageExcluder(repo.id, exid,
                                                  'exclude.pkgtup.in', yce)
@@ -3026,7 +3025,7 @@ class YumBase(depsolve.Depsolve):
             obsoleting_pkg = self._test_loop(available_pkg, self._pkg2obspkg)
             if obsoleting_pkg is not None:
                 self.verbose_logger.log(logginglevels.DEBUG_2, _('Not Updating Package that is obsoleted: %s'), available_pkg)
-                tx_return.extend(self.install(po=obsoleting_pkg))
+                tx_return.extend(self.update(po=obsoleting_pkg))
                 continue
             for updated in self.up.updating_dict.get(available_pkg.pkgtup, []):
                 if self.tsInfo.isObsoleted(updated):
