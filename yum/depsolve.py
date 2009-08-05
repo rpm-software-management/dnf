@@ -554,18 +554,15 @@ class Depsolve(object):
                     self._last_req = pkg
                     return checkdeps, missingdep
 
-        # find out which arch of the ones we can choose from is closest
-        # to the arch of the requesting pkg
-        newest = provSack.returnNewestByNameArch()
-        if len(newest) > 1: # there's no way this can be zero
-                            
-            pkgresults = self._compare_providers(newest, requiringPo)
-            # take the first one...
-            best = pkgresults[0][0]                   
-                
-        elif len(newest) == 1:
-            best = newest[0]
-        
+        pkgs = provSack.returnPackages()
+        if len(pkgs) == 1: # Minor opt.
+            best = pkgs[0]
+        else:
+            #  Always do compare providers for multiple pkgs, it deals with
+            # newest etc. ... so no need to do NewestNameArch() ... and it
+            # stops compare_providers from being clever.
+            pkgresults = self._compare_providers(pkgs, requiringPo)
+            best = pkgresults[0][0]
         
         if self.rpmdb.contains(po=best): # is it already installed?
             missingdep = 1
@@ -1060,6 +1057,17 @@ class Depsolve(object):
             if y_dist == x_dist:
                 return None
             return x
+
+        #  Actual start of _compare_providers().
+
+        # Do a NameArch filtering, based on repo. __cmp__
+        unique_nevra_pkgs = {}
+        for pkg in pkgs:
+            if (pkg.pkgtup in unique_nevra_pkgs and
+                unique_nevra_pkgs[pkg.pkgtup].repo <= pkg.repo):
+                continue
+            unique_nevra_pkgs[pkg.pkgtup] = pkg
+        pkgs = unique_nevra_pkgs.values()
             
         pkgresults = {}
         ipkgresults = {}
