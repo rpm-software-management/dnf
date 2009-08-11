@@ -2586,10 +2586,18 @@ class YumBase(depsolve.Depsolve):
 
     def _find_obsoletees(self, po):
         """ Return the pkgs. that are obsoleted by the po we pass in. """
-        for (obstup, inst_tup) in self.up.getObsoletersTuples(name=po.name):
-            if po.pkgtup == obstup:
-                installed_pkg =  self.rpmdb.searchPkgTuple(inst_tup)[0]
-                yield installed_pkg
+        if not isinstance(po, YumLocalPackage):
+            for (obstup, inst_tup) in self.up.getObsoletersTuples(name=po.name):
+                if po.pkgtup == obstup:
+                    installed_pkg =  self.rpmdb.searchPkgTuple(inst_tup)[0]
+                    yield installed_pkg
+        else:
+            for (obs_n, obs_f, (obs_e, obs_v, obs_r)) in po.obsoletes:
+                for pkg in self.rpmdb.searchNevra(name=obs_n):
+                    installedtup = (pkg.name, 'EQ', (pkg.epoch, 
+                                   pkg.ver, pkg.release))
+                    if po.inPrcoRange('obsoletes', installedtup):
+                        yield pkg
 
     def _add_prob_flags(self, *flags):
         """ Add all of the passed flags to the tsInfo.probFilterFlags array. """
@@ -3139,7 +3147,6 @@ class YumBase(depsolve.Depsolve):
         # append it to self.localPackages
         # check if it can be installed or updated based on nevra versus rpmdb
         # don't import the repos until we absolutely need them for depsolving
-
         tx_return = []
         installpkgs = []
         updatepkgs = []
@@ -3222,7 +3229,14 @@ class YumBase(depsolve.Depsolve):
         for po in donothingpkgs:
             self.verbose_logger.log(logginglevels.INFO_2,
                 _('%s: does not update installed package.'), po.localpath)
-
+        
+        for txmbr in tx_return:
+            if txmbr.po.obsoletes:
+                for obs_pkg in self._find_obsoletees(txmbr.po):
+                    self.tsInfo.addObsoleted(obs_pkg, txmbr.po)
+                    txmbr.obsoletes.append(obs_pkg)
+                    self.tsInfo.addObsoleting(txmbr.po,obs_pkg)
+                
         return tx_return
 
     def reinstallLocal(self, pkg, po=None):
