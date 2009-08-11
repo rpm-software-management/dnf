@@ -871,6 +871,22 @@ class RepoListCommand(YumCommand):
                         out += [base.fmtKeyValFill(_("Repo-mirrors: "),
                                                    repo.mirrorlist)]
 
+                    if not os.path.exists(repo.metadata_cookie):
+                        last = _("Unknown")
+                    else:
+                        last = os.stat(repo.metadata_cookie).st_mtime
+                        last = time.ctime(last)
+
+                    if repo.metadata_expire <= -1:
+                        num = _("Never (last: %s)") % last
+                    elif not repo.metadata_expire:
+                        num = _("Instant (last: %s)") % last
+                    else:
+                        num = locale.format("%d", repo.metadata_expire, True)
+                        num = _("%s second(s) (last: %s)") % (num, last)
+
+                    out += [base.fmtKeyValFill(_("Repo-expire : "), num)]
+
                     if repo.exclude:
                         out += [base.fmtKeyValFill(_("Repo-exclude: "),
                                                    ", ".join(repo.exclude))]
