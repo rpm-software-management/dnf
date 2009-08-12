@@ -174,13 +174,11 @@ def rangeCompare(reqtuple, provtuple):
             return 1
         if reqf in ['EQ', 8]:
             if f in ['LE', 10, 'LT', 2]:
+                return 1                
+        if reqf in ['LE', 'LT', 'EQ', 10, 2, 8]:
+            if f in ['LE', 'LT', 10, 2]:
                 return 1
-        # there is more to be done here to make sure it is right
-        # my brain melted trying to map these- skvidal 8/11/2009
-        if reqf in ['LT', 2]:
-            if f in ['LT', 2]:
-                return 1
-        
+
     if rc == 0:
         if reqf in ['GT', 4]:
             if f in ['GT', 'GE', 4, 12]:
