@@ -3230,6 +3230,12 @@ class YumBase(depsolve.Depsolve):
             self.verbose_logger.log(logginglevels.INFO_2,
                 _('%s: does not update installed package.'), po.localpath)
         
+        # this checks to make sure that any of the to-be-installed pkgs
+        # does not obsolete something else that's installed
+        # this doesn't handle the localpkgs obsoleting EACH OTHER or
+        # anything else in the transaction set, though. That could/should
+        # be fixed later but a fair bit of that is a pebkac and should be
+        # said as "don't do that". potential 'fixme'
         for txmbr in tx_return:
             if txmbr.po.obsoletes:
                 for obs_pkg in self._find_obsoletees(txmbr.po):
