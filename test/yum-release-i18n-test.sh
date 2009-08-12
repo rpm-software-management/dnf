@@ -53,9 +53,9 @@ I18N="C \
 cmd()
 {
   echo $beg_hdr
-  echo "Doing: LANG=$lang yum --enablerepo=development $@"
+  echo "Doing: LANG=$lang yum --enablerepo=rawhide $@"
   echo $end_hdr
-  LANG=$lang yum --enablerepo=development "$@"
+  LANG=$lang yum --enablerepo=rawhide "$@"
 }
 scmd()
 {

@@ -49,6 +49,17 @@ class FakeRepo(object):
     def __init__(self, id=None,sack=None):
         self.id = id
         self.sack = sack
+        self.cost = 1000
+
+    def __cmp__(self, other):
+        """ Sort base class repos. by alphanumeric on their id, also
+            see __cmp__ in YumRepository(). """
+        if self.id > other.id:
+            return 1
+        elif self.id < other.id:
+            return -1
+        else:
+            return 0
 
 class FakePackage(packages.YumAvailablePackage):
 
@@ -290,10 +301,14 @@ class DepsolveTests(_DepsolveTestsBase):
         for po in self.rpmdb:
             po.repoid = po.repo.id = "installed"
         for po in self.xsack:
-            po.repoid = po.repo.id = "TestRepository"
+            if po.repo.id is None:
+                po.repo.id = "TestRepository"
+            po.repoid = po.repo.id
         for txmbr in self.tsInfo:
             if txmbr.ts_state in ('u', 'i'):
-                txmbr.po.repoid = txmbr.po.repo.id = "TestRepository"
+                if txmbr.po.repo.id is None:
+                    txmbr.po.repo.id = "TestRepository"
+                txmbr.po.repoid = txmbr.po.repo.id
             else:
                 txmbr.po.repoid = txmbr.po.repo.id = "installed"
 
@@ -338,7 +353,9 @@ class OperationsTests(_DepsolveTestsBase):
             po.repoid = po.repo.id = "installed"
             self.depsolver.rpmdb.addPackage(po)
         for po in available:
-            po.repoid = po.repo.id = "TestRepository"
+            if po.repo.id is None:
+                po.repo.id = "TestRepository"
+            po.repoid = po.repo.id
             self.depsolver._pkgSack.addPackage(po)
 
         self.depsolver.basecmd = args[0]

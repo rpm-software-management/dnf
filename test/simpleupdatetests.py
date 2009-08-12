@@ -694,3 +694,73 @@ class SimpleUpdateTests(OperationsTests):
                                      [pa1, pa2, pa3])
         self.assert_(res=='ok', msg)
         self.assertResult((pa1, pa2, pa3))
+
+    #  What I was trying to model here is a problem where the Fedora builders
+    # tried to install "ncurses-libs" and got a choice of:
+    # ncurses-libs-1.x86_64, ncurses-libs-1.i586, ncurses-libs-1.x86_64
+    # ...and the we should have picked one of the .x86_64 packages in
+    # _compare_providers(), but we picked the .i586 one.
+    #  However that didn't happen, as the testcases "just worked".
+    #  But from experimenting it was observed that if you just had one .x86_64
+    # and one .i586 then _compare_providers() got the right answer. So these
+    # testcases model that problem in _compare_providers(), kinda.
+    #  Then we can fix that problem, which should also fix the original problem
+    # whatever the hell that was.
+    def testUpdateMultiAvailPkgs1(self):
+        pa1 = FakePackage('A', '1', '1', '0', 'x86_64')
+        pa1.addRequires('blah', 'EQ', ('0', '1', '1'))
+        pa2 = FakePackage('B', '1', '1', '0', 'i586')
+        pa2.addProvides('blah', 'EQ', ('0', '1', '1'))
+        pa3 = FakePackage('B', '1', '1', '0', 'x86_64', repo=FakeRepo('one'))
+        pa3.addProvides('blah', 'EQ', ('0', '1', '1'))
+        pa4 = FakePackage('B', '1', '1', '0', 'x86_64', repo=FakeRepo('two'))
+        pa4.addProvides('blah', 'EQ', ('0', '1', '1'))
+
+        res, msg = self.runOperation(['install', 'A'],
+                                     [],
+                                     [pa1, pa2, pa3, pa4])
+        self.assert_(res=='ok', msg)
+        self.assertResult((pa1, pa3))
+
+    def testUpdateMultiAvailPkgs2(self):
+        pa1 = FakePackage('A', '1', '1', '0', 'x86_64')
+        pa1.addRequires('blah', 'EQ', ('0', '1', '1'))
+        pa2 = FakePackage('B', '1', '1', '0', 'i586')
+        pa2.addProvides('blah', 'EQ', ('0', '1', '1'))
+        pa3 = FakePackage('B', '1', '1', '0', 'x86_64', repo=FakeRepo('one'))
+        pa3.addProvides('blah', 'EQ', ('0', '1', '1'))
+        pa4 = FakePackage('B', '1', '1', '0', 'x86_64', repo=FakeRepo('two'))
+        pa4.addProvides('blah', 'EQ', ('0', '1', '1'))
+
+        res, msg = self.runOperation(['install', 'A'],
+                                     [],
+                                     [pa1, pa2, pa4, pa3])
+        self.assert_(res=='ok', msg)
+        self.assertResult((pa1, pa3))
+
+    def testUpdateMultiAvailPkgs3(self):
+        pa1 = FakePackage('A', '1', '1', '0', 'x86_64')
+        pa1.addRequires('B', 'EQ', ('0', '1', '1'))
+        pa2 = FakePackage('B', '1', '1', '0', 'i386')
+        pa3 = FakePackage('B', '1', '1', '0', 'x86_64', repo=FakeRepo('one'))
+        pa4 = FakePackage('B', '1', '1', '0', 'x86_64', repo=FakeRepo('two'))
+
+        res, msg = self.runOperation(['install', 'A'],
+                                     [],
+                                     [pa1, pa2, pa3, pa4])
+        self.assert_(res=='ok', msg)
+        self.assertResult((pa1, pa3))
+
+
+    def testUpdateMultiAvailPkgs4(self):
+        pa1 = FakePackage('A', '1', '1', '0', 'x86_64')
+        pa1.addRequires('B', 'EQ', ('0', '1', '1'))
+        pa2 = FakePackage('B', '1', '1', '0', 'i386')
+        pa3 = FakePackage('B', '1', '1', '0', 'x86_64', repo=FakeRepo('one'))
+        pa4 = FakePackage('B', '1', '1', '0', 'x86_64', repo=FakeRepo('two'))
+
+        res, msg = self.runOperation(['install', 'A'],
+                                     [],
+                                     [pa1, pa2, pa4, pa3])
+        self.assert_(res=='ok', msg)
+        self.assertResult((pa1, pa3))
