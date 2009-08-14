@@ -475,7 +475,12 @@ class YumRepository(Repository, config.RepoConf):
                                     timeout=self.timeout,
                                     copy_local=self.copy_local,
                                     http_headers=headers,
-                                    reget='simple')
+                                    reget='simple',
+                                    ssl_verify_peer=self.sslverify,
+                                    ssl_verify_host=self.sslverify,
+                                    ssl_ca_cert=self.sslcacert,
+                                    ssl_cert=self.sslclientcert,
+                                    ssl_key=self.sslclientkey)
 
         self._grabfunc.opts.user_agent = default_grabber.opts.user_agent
 
@@ -667,7 +672,12 @@ class YumRepository(Repository, config.RepoConf):
                                     retry = self.retries,
                                     throttle = self.throttle,
                                     progress_obj = self.callback,
-                                    proxies=self.proxy_dict)
+                                    proxies=self.proxy_dict,
+                                    ssl_verify_peer=self.sslverify,
+                                    ssl_verify_host=self.sslverify,
+                                    ssl_ca_cert=self.sslcacert,
+                                    ssl_cert=self.sslclientcert,
+                                    ssl_key=self.sslclientkey)
                     ug.opts.user_agent = default_grabber.opts.user_agent
                     result = ug.urlgrab(url, local, text=self.id + "/metalink")
 
@@ -770,6 +780,11 @@ class YumRepository(Repository, config.RepoConf):
                             timeout=self.timeout,
                             checkfunc=checkfunc,
                             http_headers=headers,
+                            ssl_verify_peer=self.sslverify,
+                            ssl_verify_host=self.sslverify,
+                            ssl_ca_cert=self.sslcacert,
+                            ssl_cert=self.sslclientcert,
+                            ssl_key=self.sslclientkey                            
                             )
 
             ug.opts.user_agent = default_grabber.opts.user_agent

@@ -698,6 +698,12 @@ class YumConf(StartupConf):
 
     color_search_match = Option('bold')
     
+    sslcacert = Option()
+    sslverify = BoolOption(True)
+    sslclientcert = Option()
+    sslclientkey = Option()
+
+
     _reposlist = []
 
 class RepoConf(BaseConfig):
@@ -750,6 +756,12 @@ class RepoConf(BaseConfig):
     #       checksumming of the repomd.xml.
     mdpolicy = Inherit(YumConf.mdpolicy)
     cost = IntOption(1000)
+    
+    sslcacert = Inherit(YumConf.sslcacert)
+    sslverify = Inherit(YumConf.sslverify)
+    sslclientcert = Inherit(YumConf.sslclientcert)
+    sslclientkey = Inherit(YumConf.sslclientkey)
+
     
 def readStartupConfig(configfile, root):
     '''
