@@ -1481,12 +1481,12 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
                 else:
                     tmp.append((pat, '='))
             if not need_full and not need_glob and patterns:
-                return (need_full, patterns, True)
+                return (need_full, patterns, fields, True)
             patterns = tmp
-        return (need_full, patterns, False)
+        return (need_full, patterns, fields, False)
 
     @catchSqliteException
-    def _yieldSQLDataList(self, repoid=None, patterns=None, ignore_case=False):
+    def _yieldSQLDataList(self, repoid, patterns, fields, ignore_case):
         """Yields all the package data for the given params. Excludes are done
            at this stage. """
 
@@ -1518,12 +1518,13 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
 
         returnList = []
 
-        (need_full, patterns, names) = self._setupPkgObjList(repoid, patterns,
-                                                             ignore_case)
+        data = self._setupPkgObjList(repoid, patterns, ignore_case)
+        (need_full, patterns, fields, names) = data
         if names:
             return self.searchNames(patterns)
 
-        for (repo, x) in self._yieldSQLDataList(repoid, patterns, ignore_case):
+        for (repo, x) in self._yieldSQLDataList(repoid, patterns, fields,
+                                                ignore_case):
             po = self._packageByKeyData(repo, x['pkgKey'], x)
             if po is None:
                 continue
@@ -1587,9 +1588,10 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
         repoid = None
         returnList = []
         # Haven't loaded everything, so _just_ get the pkgtups...
-        (need_full, patterns, names) = self._setupPkgObjList(repoid, patterns,
-                                                             ignore_case)
-        for (repo, x) in self._yieldSQLDataList(repoid, patterns, ignore_case):
+        data = self._setupPkgObjList(repoid, patterns, ignore_case)
+        (need_full, patterns, fields, names) = data
+        for (repo, x) in self._yieldSQLDataList(repoid, patterns, fields,
+                                                ignore_case):
             # NOTE: Can't unexclude things...
             pkgtup = self._pkgtupByKeyData(repo, x['pkgKey'], x)
             if pkgtup is None:
