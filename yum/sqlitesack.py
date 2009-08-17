@@ -1473,16 +1473,9 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
         return (need_full, patterns, False)
 
     @catchSqliteException
-    def _buildPkgObjList(self, repoid=None, patterns=None, ignore_case=False):
-        """Builds a list of packages, only containing nevra information. No
-           excludes are done at this stage. """
-
-        returnList = []
-
-        (need_full, patterns, names) = self._setupPkgObjList(repoid, patterns,
-                                                             ignore_case)
-        if names:
-            return self.searchNames(patterns)
+    def _yieldSQLDataList(self, repoid=None, patterns=None, ignore_case=False):
+        """Yields all the package data for the given params. Excludes are done
+           at this stage. """
 
         for (repo,cache) in self.primarydb.items():
             if (repoid == None or repoid == repo.id):
@@ -1506,6 +1499,20 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
                 #  Note: If we are building the pkgobjlist, we don't exclude
                 # here, so that we can un-exclude later on ... if that matters.
                 for x in cur:
+                    yield (repo, x)
+
+    def _buildPkgObjList(self, repoid=None, patterns=None, ignore_case=False):
+        """Builds a list of packages, only containing nevra information. No
+           excludes are done at this stage. """
+
+        returnList = []
+
+        (need_full, patterns, names) = self._setupPkgObjList(repoid, patterns,
+                                                             ignore_case)
+        if names:
+            return self.searchNames(patterns)
+
+        for (repo, x) in self._yieldSQLDataList(repoid, patterns, ignore_case):
                     exclude = not patterns
                     if True: # NOTE: Can't unexclude things...
                         exclude = True
