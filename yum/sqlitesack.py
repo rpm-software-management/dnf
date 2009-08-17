@@ -1448,7 +1448,7 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
         return exactmatch, matched, unmatched
 
     def _setupPkgObjList(self, repoid=None, patterns=None, ignore_case=False):
-        """Setup need_full and patterns for _buildPkgObjList, also see if
+        """Setup need_full and patterns for _yieldSQLDataList, also see if
            we can get away with just using searchNames(). """
 
         if patterns is None:
@@ -1570,6 +1570,31 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
                 continue
             returnList.append(po)
 
+        return returnList
+
+    def simplePkgList(self, patterns=None, ignore_case=False):
+        """Returns a list of pkg tuples (n, a, e, v, r), optionally from a
+           single repoid. """
+
+        if self._skip_all():
+            return []
+
+        internal_pkgoblist = hasattr(self, 'pkgobjlist')
+        if internal_pkgoblist:
+            return yumRepo.YumPackageSack.simplePkgList(self, patterns,
+                                                        ignore_case)
+
+        repoid = None
+        returnList = []
+        # Haven't loaded everything, so _just_ get the pkgtups...
+        (need_full, patterns, names) = self._setupPkgObjList(repoid, patterns,
+                                                             ignore_case)
+        for (repo, x) in self._yieldSQLDataList(repoid, patterns, ignore_case):
+            # NOTE: Can't unexclude things...
+            pkgtup = self._pkgtupByKeyData(repo, x['pkgKey'], x)
+            if pkgtup is None:
+                continue
+            returnList.append(pkgtup)
         return returnList
 
     @catchSqliteException
