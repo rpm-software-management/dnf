@@ -725,6 +725,19 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
             pkgkeys.append(pkgKey)
         return self._key2pkg[repo][data['pkgKey']]
 
+    def _pkgtupByKeyData(self, repo, pkgKey, data):
+        """ Like _packageByKeyData() but we don't create the package, we just
+            return the pkgtup. """
+        if self._pkgExcludedRKD(repo, pkgKey, data):
+            return None
+        if repo not in self._key2pkg:
+            self._key2pkg[repo] = {}
+            self._pkgname2pkgkeys[repo] = {}
+        if data['pkgKey'] in self._key2pkg.get(repo, {}):
+            return self._key2pkg[repo][data['pkgKey']].pkgtup
+        return (data['name'], data['arch'],
+                data['epoch'], data['version'], data['release'])
+
     def _packagesByName(self, pkgname):
         """ Load all pkgnames from cache, with a given name. """
         ret = []
