@@ -1496,14 +1496,12 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
                 if pat_sqls:
                     qsql = _FULL_PARSE_QUERY_BEG + " OR ".join(pat_sqls)
                 executeSQL(cur, qsql, pat_data)
-                #  Note: If we are building the pkgobjlist, we don't exclude
-                # here, so that we can un-exclude later on ... if that matters.
                 for x in cur:
                     yield (repo, x)
 
     def _buildPkgObjList(self, repoid=None, patterns=None, ignore_case=False):
-        """Builds a list of packages, only containing nevra information. No
-           excludes are done at this stage. """
+        """Builds a list of packages, only containing nevra information.
+           Excludes are done at this stage. """
 
         returnList = []
 
@@ -1513,14 +1511,10 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
             return self.searchNames(patterns)
 
         for (repo, x) in self._yieldSQLDataList(repoid, patterns, ignore_case):
-                    exclude = not patterns
-                    if True: # NOTE: Can't unexclude things...
-                        exclude = True
-                    po = self._packageByKeyData(repo, x['pkgKey'], x,
-                                                exclude=exclude)
-                    if po is None:
-                        continue
-                    returnList.append(po)
+            po = self._packageByKeyData(repo, x['pkgKey'], x)
+            if po is None:
+                continue
+            returnList.append(po)
         if not patterns and repoid is None:
             self.pkgobjlist = returnList
             self._pkgnames_loaded = set() # Save memory
