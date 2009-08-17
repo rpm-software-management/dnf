@@ -1434,16 +1434,13 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
         unmatched = misc.unique(unmatched)
         return exactmatch, matched, unmatched
 
-    @catchSqliteException
-    def _buildPkgObjList(self, repoid=None, patterns=None, ignore_case=False):
-        """Builds a list of packages, only containing nevra information. No
-           excludes are done at this stage. """
+    def _setupPkgObjList(self, repoid=None, patterns=None, ignore_case=False):
+        """Setup need_full and patterns for _buildPkgObjList, also see if
+           we can get away with just using searchNames(). """
 
         if patterns is None:
             patterns = []
 
-        returnList = []
-        
         fields = ['name', 'sql_nameArch', 'sql_nameVerRelArch',
                   'sql_nameVer', 'sql_nameVerRel',
                   'sql_envra', 'sql_nevra']
@@ -1471,8 +1468,21 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
                 else:
                     tmp.append((pat, '='))
             if not need_full and not need_glob and patterns:
-                return self.searchNames(patterns)
+                return (need_full, patterns, True)
             patterns = tmp
+        return (need_full, patterns, False)
+
+    @catchSqliteException
+    def _buildPkgObjList(self, repoid=None, patterns=None, ignore_case=False):
+        """Builds a list of packages, only containing nevra information. No
+           excludes are done at this stage. """
+
+        returnList = []
+
+        (need_full, patterns, names) = self._setupPkgObjList(repoid, patterns,
+                                                             ignore_case)
+        if names:
+            return self.searchNames(patterns)
 
         for (repo,cache) in self.primarydb.items():
             if (repoid == None or repoid == repo.id):
