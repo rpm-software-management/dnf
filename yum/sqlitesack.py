@@ -1540,8 +1540,8 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
                 
     def returnPackages(self, repoid=None, patterns=None, ignore_case=False):
         """Returns a list of packages, only containing nevra information. The
-           packages are processed for excludes. Note that patterns is just
-           a hint, we are free it ignore it. """
+           packages are processed for excludes. Note that the packages are
+           always filtered to those matching the patterns/case. """
 
         if self._skip_all():
             return []
@@ -1575,7 +1575,8 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
 
     def simplePkgList(self, patterns=None, ignore_case=False):
         """Returns a list of pkg tuples (n, a, e, v, r), optionally from a
-           single repoid. """
+           single repoid. Note that the packages are always filtered to those
+           matching the patterns/case. """
 
         if self._skip_all():
             return []

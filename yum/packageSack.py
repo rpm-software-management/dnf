@@ -443,7 +443,9 @@ class MetaSack(PackageSackBase):
 
 
     def returnPackages(self, repoid=None, patterns=None, ignore_case=False):
-        """return list of all packages, takes optional repoid"""
+        """Returns a list of packages. Note that the packages are
+           always filtered to those matching the patterns/case. An optional
+           repoid allows you to easily get data for a specific repo. """
         if not repoid:
             return self._computeAggregateListResult("returnPackages",
                                                     None, patterns, ignore_case)

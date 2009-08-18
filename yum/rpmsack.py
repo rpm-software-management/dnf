@@ -323,6 +323,9 @@ class RPMDBPackageSack(PackageSackBase):
         return False
 
     def returnPackages(self, repoid=None, patterns=None, ignore_case=False):
+        """Returns a list of packages. Note that the packages are
+           always filtered to those matching the patterns/case. repoid is
+           ignored, and is just here for compatibility with non-rpmdb sacks. """
         if not self._completely_loaded:
             rpats = self._compile_patterns(patterns, ignore_case)
             for hdr, idx in self._all_packages():
