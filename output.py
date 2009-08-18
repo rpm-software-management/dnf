@@ -1161,6 +1161,8 @@ to exit.
         tl = urlgrabber.progress.TerminalLine(8)
         self.verbose_logger.log(logginglevels.INFO_2, "-" * tl.rest())
         dl_time = time.time() - download_start_timestamp
+        if dl_time <= 0: # This stops divide by zero, among other problems
+            dl_time = 0.01
         ui_size = tl.add(' | %5sB' % self.format_number(remote_size))
         ui_time = tl.add(' %9s' % self.format_time(dl_time))
         ui_end  = tl.add(' ' * 5)

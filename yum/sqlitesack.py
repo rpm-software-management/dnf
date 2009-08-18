@@ -725,6 +725,19 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
             pkgkeys.append(pkgKey)
         return self._key2pkg[repo][data['pkgKey']]
 
+    def _pkgtupByKeyData(self, repo, pkgKey, data):
+        """ Like _packageByKeyData() but we don't create the package, we just
+            return the pkgtup. """
+        if self._pkgExcludedRKD(repo, pkgKey, data):
+            return None
+        if repo not in self._key2pkg:
+            self._key2pkg[repo] = {}
+            self._pkgname2pkgkeys[repo] = {}
+        if data['pkgKey'] in self._key2pkg.get(repo, {}):
+            return self._key2pkg[repo][data['pkgKey']].pkgtup
+        return (data['name'], data['arch'],
+                data['epoch'], data['version'], data['release'])
+
     def _packagesByName(self, pkgname):
         """ Load all pkgnames from cache, with a given name. """
         ret = []
@@ -1434,16 +1447,13 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
         unmatched = misc.unique(unmatched)
         return exactmatch, matched, unmatched
 
-    @catchSqliteException
-    def _buildPkgObjList(self, repoid=None, patterns=None, ignore_case=False):
-        """Builds a list of packages, only containing nevra information. No
-           excludes are done at this stage. """
+    def _setupPkgObjList(self, repoid=None, patterns=None, ignore_case=False):
+        """Setup need_full and patterns for _yieldSQLDataList, also see if
+           we can get away with just using searchNames(). """
 
         if patterns is None:
             patterns = []
 
-        returnList = []
-        
         fields = ['name', 'sql_nameArch', 'sql_nameVerRelArch',
                   'sql_nameVer', 'sql_nameVerRel',
                   'sql_envra', 'sql_nevra']
@@ -1471,8 +1481,14 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
                 else:
                     tmp.append((pat, '='))
             if not need_full and not need_glob and patterns:
-                return self.searchNames(patterns)
+                return (need_full, patterns, fields, True)
             patterns = tmp
+        return (need_full, patterns, fields, False)
+
+    @catchSqliteException
+    def _yieldSQLDataList(self, repoid, patterns, fields, ignore_case):
+        """Yields all the package data for the given params. Excludes are done
+           at this stage. """
 
         for (repo,cache) in self.primarydb.items():
             if (repoid == None or repoid == repo.id):
@@ -1493,17 +1509,26 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
                 if pat_sqls:
                     qsql = _FULL_PARSE_QUERY_BEG + " OR ".join(pat_sqls)
                 executeSQL(cur, qsql, pat_data)
-                #  Note: If we are building the pkgobjlist, we don't exclude
-                # here, so that we can un-exclude later on ... if that matters.
                 for x in cur:
-                    exclude = not patterns
-                    if True: # NOTE: Can't unexclude things...
-                        exclude = True
-                    po = self._packageByKeyData(repo, x['pkgKey'], x,
-                                                exclude=exclude)
-                    if po is None:
-                        continue
-                    returnList.append(po)
+                    yield (repo, x)
+
+    def _buildPkgObjList(self, repoid=None, patterns=None, ignore_case=False):
+        """Builds a list of packages, only containing nevra information.
+           Excludes are done at this stage. """
+
+        returnList = []
+
+        data = self._setupPkgObjList(repoid, patterns, ignore_case)
+        (need_full, patterns, fields, names) = data
+        if names:
+            return self.searchNames(patterns)
+
+        for (repo, x) in self._yieldSQLDataList(repoid, patterns, fields,
+                                                ignore_case):
+            po = self._packageByKeyData(repo, x['pkgKey'], x)
+            if po is None:
+                continue
+            returnList.append(po)
         if not patterns and repoid is None:
             self.pkgobjlist = returnList
             self._pkgnames_loaded = set() # Save memory
@@ -1546,6 +1571,32 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
                 continue
             returnList.append(po)
 
+        return returnList
+
+    def simplePkgList(self, patterns=None, ignore_case=False):
+        """Returns a list of pkg tuples (n, a, e, v, r), optionally from a
+           single repoid. """
+
+        if self._skip_all():
+            return []
+
+        internal_pkgoblist = hasattr(self, 'pkgobjlist')
+        if internal_pkgoblist:
+            return yumRepo.YumPackageSack.simplePkgList(self, patterns,
+                                                        ignore_case)
+
+        repoid = None
+        returnList = []
+        # Haven't loaded everything, so _just_ get the pkgtups...
+        data = self._setupPkgObjList(repoid, patterns, ignore_case)
+        (need_full, patterns, fields, names) = data
+        for (repo, x) in self._yieldSQLDataList(repoid, patterns, fields,
+                                                ignore_case):
+            # NOTE: Can't unexclude things...
+            pkgtup = self._pkgtupByKeyData(repo, x['pkgKey'], x)
+            if pkgtup is None:
+                continue
+            returnList.append(pkgtup)
         return returnList
 
     @catchSqliteException
