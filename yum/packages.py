@@ -907,7 +907,7 @@ class YumAvailablePackage(PackageObject, RpmBase):
         for (name, flags, (e,v,r)) in mylist:
             pcostring = '''      <rpm:entry name="%s"''' % misc.to_xml(name, attrib=True)
             if flags:
-                pcostring += ''' flags="%s"''' % flags
+                pcostring += ''' flags="%s"''' % misc.to_xml(flags, attrib=True)
                 if e:
                     pcostring += ''' epoch="%s"''' % misc.to_xml(e, attrib=True)
                 if v:
@@ -978,7 +978,7 @@ class YumAvailablePackage(PackageObject, RpmBase):
                 continue
             prcostring = '''      <rpm:entry name="%s"''' % misc.to_xml(name, attrib=True)
             if flags:
-                prcostring += ''' flags="%s"''' % flags
+                prcostring += ''' flags="%s"''' % misc.to_xml(flags, attrib=True)
                 if e:
                     prcostring += ''' epoch="%s"''' % misc.to_xml(e, attrib=True)
                 if v:
