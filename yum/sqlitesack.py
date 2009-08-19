@@ -585,6 +585,9 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
             self._delPackageRK(repo, pkgKey)
             return True
 
+        if not self._pkgExcluder:
+            return False
+
         data = {'n' : n.lower(), 'pkgtup' : (n, a, e, v, r), 'marked' : False}
         e = e.lower()
         v = v.lower()
