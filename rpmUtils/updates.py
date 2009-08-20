@@ -56,7 +56,7 @@ class Updates:
 
         # make some dicts from installed and available
         self.installdict = self.makeNADict(self.installed, 1)
-        self.availdict = self.makeNADict(self.available, 1)
+        self.availdict = self.makeNADict(self.available, 0) # Done in doUpdate
 
         # holder for our updates dict
         self.updatesdict = {}
@@ -293,19 +293,10 @@ class Updates:
                         # make the new ones a list b/c while we _shouldn't_
                         # have multiple updaters, we might and well, it needs
                         # to be solved one way or the other <sigh>
-        newpkgs = []
         newpkgs = self.availdict
         
         archlist = self._archlist 
         for (n, a) in newpkgs.keys():
-            # remove stuff not in our archdict
-            # high log here
-            if a is None:
-                for (arch, e,v,r) in newpkgs[(n, a)]:
-                    if arch not in archlist:
-                        newpkgs[(n, a)].remove((arch, e,v,r))
-                continue
-                
             if a not in archlist:
                 # high log here
                 del newpkgs[(n, a)]
@@ -314,19 +305,12 @@ class Updates:
         # remove the older stuff - if we're doing an update we only want the
         # newest evrs                
         for (n, a) in newpkgs:
-            if a is None:
-                continue
-
             (new_e,new_v,new_r) = self.returnNewest(newpkgs[(n, a)])
-            for (e, v, r) in newpkgs[(n, a)]:
+            for (e, v, r) in newpkgs[(n, a)][:]:
                 if (new_e, new_v, new_r) != (e, v, r):
                     newpkgs[(n, a)].remove((e, v, r))
 
-                
         for (n, a) in newpkgs:
-            if a is None: # the None archs are only for lookups
-                continue
-           
             # simple ones - look for exact matches or older stuff
             if self.installdict.has_key((n, a)):
                 for (rpm_e, rpm_v, rpm_r) in self.installdict[(n, a)]:
@@ -341,6 +325,11 @@ class Updates:
                                 newpkgs[(n, a)].remove((e, v, r))
                             except ValueError:
                                 pass
+
+        # Now we add the (n, None) entries back...
+        for na in newpkgs.keys():
+            all_arches = map(lambda x: (na[1], x[0], x[1], x[2]), newpkgs[na])
+            newpkgs.setdefault((na[0], None), []).extend(all_arches)
 
         # get rid of all the empty dict entries:
         for nakey in newpkgs.keys():
