@@ -218,13 +218,9 @@ class YumAvailablePackageSqlite(YumAvailablePackage, PackageObject, RpmBase):
             except (IndexError, KeyError):
                 pass
 
-        for item in ['pkgId']:
-            try:
-                setattr(self, item, db_obj[item])
-            except (IndexError, KeyError):
-                pass
-
         try:
+            self.pkgId = db_obj['pkgId']
+
             checksum_type = _share_data(db_obj['checksum_type'])
             check_sum = (checksum_type, db_obj['pkgId'], True)
             self._checksums = [ check_sum ]
@@ -467,7 +463,6 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
         for repo in self.excludes:
             exclude_num += len(self.excludes[repo])
         pkg_num = 0
-        sql = "SELECT count(pkgId) FROM packages"
         for repo in self.primarydb:
             pkg_num += self._sql_MD_pkg_num('primary', repo)
         return pkg_num - exclude_num
