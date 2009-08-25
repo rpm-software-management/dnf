@@ -797,6 +797,21 @@ def unlink_f(filename):
         if e.errno != errno.ENOENT:
             raise
 
+def getloginuid():
+    """ Get the audit-uid/login-uid, if available. None is returned if there
+        was a problem. Note that no caching is done here. """
+    #  We might normally call audit.audit_getloginuid(), except that requires
+    # importing all of the audit module. And it doesn't work anyway: BZ 518721
+    try:
+        fo = open("/proc/self/loginuid")
+    except IOError:
+        return None
+    data = fo.read()
+    try:
+        return int(data)
+    except ValueError:
+        return None
+
 # ---------- i18n ----------
 import locale
 import sys
