@@ -57,6 +57,7 @@ import plugins
 import logginglevels
 import yumRepo
 import callbacks
+import yum.history
 
 import warnings
 warnings.simplefilter("ignore", Errors.YumFutureDeprecationWarning)
@@ -137,6 +138,7 @@ class YumBase(depsolve.Depsolve):
         self._rpmdb = None
         self._up = None
         self._comps = None
+        self._history = None
         self._pkgSack = None
         self._lockfile = None
         self.skipped_packages = []   # packages skip by the skip-broken code
@@ -694,6 +696,13 @@ class YumBase(depsolve.Depsolve):
         self._comps.compile(self.rpmdb.simplePkgList())
         self.verbose_logger.debug('group time: %0.3f' % (time.time() - group_st))                
         return self._comps
+
+    def _getHistory(self):
+        """auto create the history object that to acess/append the transaction
+           history information. """
+        if self._history is None:
+            self._history = yum.history.YumHistory(self.rpmdb)
+        return self._history
     
     # properties so they auto-create themselves with defaults
     repos = property(fget=lambda self: self._getRepos(),
@@ -718,6 +727,9 @@ class YumBase(depsolve.Depsolve):
     comps = property(fget=lambda self: self._getGroups(),
                      fset=lambda self, value: self._setGroups(value),
                      fdel=lambda self: setattr(self, "_comps", None))
+    history = property(fget=lambda self: self._getHistory(),
+                       fset=lambda self, value: setattr(self, "_history",value),
+                       fdel=lambda self: setattr(self, "_history", None))
     
     
     def doSackFilelistPopulate(self):
@@ -1029,6 +1041,12 @@ class YumBase(depsolve.Depsolve):
 
         self.plugins.run('pretrans')
 
+        using_pkgs_pats = ['yum', 'rpm', 'python', 'yum-metadata-parser',
+                           'yum-rhn-plugin']
+        using_pkgs = self.rpmdb.returnPackages(patterns=using_pkgs_pats)
+        self.history.beg(self.rpmdb.simpleVersion()[0], using_pkgs,
+                         list(self.tsInfo))
+
         errors = self.ts.run(cb.callback, '')
         # ts.run() exit codes are, hmm, "creative": None means all ok, empty 
         # list means some errors happened in the transaction and non-empty 
@@ -1060,10 +1078,10 @@ class YumBase(depsolve.Depsolve):
         self.rpmdb.dropCachedData() # drop out the rpm cache so we don't step on bad hdr indexes
         self.plugins.run('posttrans')
         # sync up what just happened versus what is in the rpmdb
-        self.verifyTransaction()
+        self.verifyTransaction(resultobject)
         return resultobject
 
-    def verifyTransaction(self):
+    def verifyTransaction(self, resultobject=None):
         """checks that the transaction did what we expected it to do. Also 
            propagates our external yumdb info"""
         
@@ -1131,6 +1149,10 @@ class YumBase(depsolve.Depsolve):
             else:
                 self.verbose_logger.log(logginglevels.DEBUG_2, 'What is this? %s' % txmbr.po)
 
+        ret = -1
+        if resultobject is not None:
+            ret = resultobject.return_code
+        self.history.end(self.rpmdb.simpleVersion()[0], ret)
         self.rpmdb.dropCachedData()
 
     def costExcludePackages(self):
@@ -3450,6 +3472,7 @@ class YumBase(depsolve.Depsolve):
         if not apkgs:
             # Do we still want to return errors here?
             # We don't in the cases below, so I didn't here...
+            pkgs = []
             if 'pattern' in kwargs:
                 pkgs = self.rpmdb.returnPackages(patterns=[kwargs['pattern']],
                                                  ignore_case=False)
