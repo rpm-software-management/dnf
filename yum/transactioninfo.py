@@ -271,6 +271,7 @@ class TransactionData:
                     
             elif txmbr.output_state in (TS_INSTALL, TS_TRUEINSTALL):
                 if include_reinstall and self.rpmdb.contains(po=txmbr.po):
+                    txmbr.reinstall = True
                     self.reinstalled.append(txmbr)
                     continue
 
