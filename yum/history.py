@@ -290,6 +290,19 @@ class YumHistory:
             obj.trans_with = sorted(self._old_with_pkgs(obj.tid))
             obj.trans_data = sorted(self._old_data_pkgs(obj.tid))
             ret.append(obj)
+
+        # Go through backwards, and see if the rpmdb versions match
+        last_rv = None
+        for obj in reversed(ret):
+            cur_rv = obj.beg_rpmdbversion
+            if last_rv is None or cur_rv is None:
+                obj.altered_rpmdb = None
+            elif last_rv != cur_rv:
+                obj.altered_rpmdb = True
+            else:
+                obj.altered_rpmdb = False
+            last_rv = obj.end_rpmdbversion
+
         return ret
 
     def _create_db_file(self):

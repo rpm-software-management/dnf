@@ -1182,10 +1182,11 @@ to exit.
         except ValueError:
             pass
 
-        fmt = "%-8s | %-16s | %-38s | %-8s"
+        fmt = "%-8s | %-16s | %-35s | %-11s"
         print fmt % ("ID", "Login user", "Start time", "Altered")
         print "-" * 79
-        fmt = "%8u | %-16.16s | %-38.38s | %8u"
+        fmt = "%8u | %-16.16s | %-35.35s | %8u"
+        last_rv = None
         for old in self.history.old(tid):
             name = old.loginuid
             try:
@@ -1194,7 +1195,11 @@ to exit.
             except KeyError:
                 pass
             tm = time.ctime(old.beg_timestamp)
-            print fmt % (old.tid, name, tm, len(old.trans_data))
+            if old.altered_rpmdb:
+                print fmt % (old.tid, name, tm, len(old.trans_data)), "**"
+            else:
+                print fmt % (old.tid, name, tm, len(old.trans_data))
+            last_rv = old.end_rpmdbversion
 
     def _history_get_transaction(self, extcmds):
         if len(extcmds) < 2:
