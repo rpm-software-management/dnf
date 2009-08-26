@@ -835,6 +835,22 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
         return skip_all
 
     @catchSqliteException
+    def _search_primary_files(self, name):
+        querytype = 'glob'
+        if not misc.re_glob(name):
+            querytype = '='        
+        results = []
+        
+        for (rep,cache) in self.primarydb.items():
+            if rep in self._all_excludes:
+                continue
+            cur = cache.cursor()
+            executeSQL(cur, "select DISTINCT pkgKey from files where name %s ?" % querytype, (name,))
+            self._sql_pkgKey2po(rep, cur, results)
+
+        return misc.unique(results)
+        
+    @catchSqliteException
     def searchFiles(self, name, strict=False):
         """search primary if file will be in there, if not, search filelists, use globs, if possible"""
         
@@ -863,28 +879,10 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
        
         pkgs = []
 
-        # ultra simple optimization - no globs and one of the primary files
-        sql_params = []
-        name_check = ""
-        if not glob and not file_glob and misc.re_primary_filename(name):
-            (pattern, esc) = self._sql_esc(name)
-            name_check = "name = ?"
-            sql_params.append(name)
-            
-            for (rep,cache) in self.primarydb.items():
-                if rep in self._all_excludes:
-                    continue
-
-                cur = cache.cursor()
-
-                executeSQL(cur, "select pkgKey from files where \
-                             %s" % (name_check), sql_params)
-                self._sql_pkgKey2po(rep, cur, pkgs)
-            pkgs = misc.unique(pkgs)
-            return pkgs
-        
-        # FIXME - easy optimization fileglob but still a primary_filename/dirname
-        
+        # ultra simple optimization 
+        if misc.re_primary_filename(name):
+            if not misc.re_glob(dirname): # is the dirname a glob?
+                return self._search_primary_files(name)
         
         if len(self.filelistsdb) == 0:
             # grab repo object from primarydb and force filelists population in this sack using repo
@@ -1201,18 +1199,10 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
             return result
 
         # If it is a filename, search the primary.xml file info
-        for (rep,cache) in self.primarydb.items():
-            if rep in self._all_excludes:
-                continue
-
-            cur = cache.cursor()
-            executeSQL(cur, "select DISTINCT pkgKey from files where name = ?", (name,))
-            for ob in cur:
-                pkg = self._packageByKey(rep, ob['pkgKey'])
-                if pkg is None:
-                    continue
-                result[pkg] = [(name, None, None)]
-        self._search_cache[prcotype][req] = result
+        
+        for pkg in self._search_primary_files(name):
+            result[pkg] = [(name, None, None)]
+            self._search_cache[prcotype][req] = result
         return result
 
     def getProvides(self, name, flags=None, version=(None, None, None)):
@@ -1293,10 +1283,7 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
             return results
 
         # If it is a filename, search the primary.xml file info
-        for (rep,cache) in self.primarydb.items():
-            cur = cache.cursor()
-            executeSQL(cur, "select DISTINCT pkgKey from files where name %s ?" % querytype, (name,))
-            self._sql_pkgKey2po(rep, cur, results)
+        results.extend(self._search_primary_files(name))
 
         # if its in the primary.xml files then skip the other check
         if misc.re_primary_filename(name) and not glob:
