@@ -862,6 +862,30 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
             name = name[:-1]
        
         pkgs = []
+
+        # ultra simple optimization - no globs and one of the primary files
+        sql_params = []
+        name_check = ""
+        if not glob and not file_glob and misc.re_primary_filename(name):
+            (pattern, esc) = self._sql_esc(name)
+            name_check = "name = ?"
+            sql_params.append(name)
+            
+            for (rep,cache) in self.primarydb.items():
+                if rep in self._all_excludes:
+                    continue
+
+                cur = cache.cursor()
+
+                executeSQL(cur, "select pkgKey from files where \
+                             %s" % (name_check), sql_params)
+                self._sql_pkgKey2po(rep, cur, pkgs)
+            pkgs = misc.unique(pkgs)
+            return pkgs
+        
+        # FIXME - easy optimization fileglob but still a primary_filename/dirname
+        
+        
         if len(self.filelistsdb) == 0:
             # grab repo object from primarydb and force filelists population in this sack using repo
             # sack.populate(repo, mdtype, callback, cacheonly)
