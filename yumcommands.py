@@ -1154,34 +1154,9 @@ class HistoryCommand(YumCommand):
         if old is None:
             return 1, ['Failed history repeat']
         tm = time.ctime(old.beg_timestamp)
-        print "Repeating transaction %u, from %s" % (old.tid, tm)
-        # This is basic atm.
-        done = False
-        for pkg in old.trans_data:
-            if pkg.state == 'Reinstall':
-                if base.reinstall(pkgtup=pkg.pkgtup):
-                    done = True
-        for pkg in old.trans_data:
-            if pkg.state == 'Downgrade':
-                try:
-                    if base.downgrade(pkgtup=pkg.pkgtup):
-                        done = True
-                except yum.Errors.DowngradeError:
-                    base.logger.critical(_('Failed to downgrade: %s'), pkg)
-        for pkg in old.trans_data:
-            if pkg.state == 'Update':
-                if base.update(pkgtup=pkg.pkgtup):
-                    done = True
-        for pkg in old.trans_data:
-            if pkg.state in ('Install', 'True-Install'):
-                if base.install(pkgtup=pkg.pkgtup):
-                    done = True
-        for pkg in old.trans_data:
-            if pkg.state == 'Erase':
-                if base.remove(pkgtup=pkg.pkgtup):
-                    done = True
-        if done:
-            return 2, ["Repeating transaction %u" % (old.tid,)]
+        print "Repeating transaction %u, from %s" % (transaction.tid, tm)
+        if base.history_repeat(old):
+            return 2, ["Repeating transaction %u" % (transaction.tid,)]
 
     def _hcmd_undo(self, base, extcmds):
         old = base._history_get_transaction(base, extcmds)
@@ -1189,32 +1164,7 @@ class HistoryCommand(YumCommand):
             return 1, ['Failed history undo']
         tm = time.ctime(old.beg_timestamp)
         print "Undoing transaction %u, from %s" % (old.tid, tm)
-        # FIXME: This is __horribley__ basic atm.
-        done = False
-        for pkg in old.trans_data:
-            if pkg.state == 'Reinstall':
-                if base.reinstall(pkgtup=pkg.pkgtup):
-                    done = True
-        for pkg in old.trans_data:
-            if pkg.state == 'Updated':
-                try:
-                    if base.downgrade(pkgtup=pkg.pkgtup):
-                        done = True
-                except yum.Errors.DowngradeError:
-                    base.logger.critical(_('Failed to downgrade: %s'), pkg)
-        for pkg in old.trans_data:
-            if pkg.state == 'Downgraded':
-                if base.update(pkgtup=pkg.pkgtup):
-                    done = True
-        for pkg in old.trans_data:
-            if pkg.state in ('Install', 'True-Install'):
-                if base.remove(pkgtup=pkg.pkgtup):
-                    done = True
-        for pkg in old.trans_data:
-            if pkg.state == 'Erase':
-                if base.install(pkgtup=pkg.pkgtup):
-                    done = True
-        if done:
+        if base.history_undo(old):
             return 2, ["Undoing transaction %u" % (old.tid,)]
 
     def _hcmd_new(self, base, extcmds):

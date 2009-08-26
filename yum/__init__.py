@@ -3581,6 +3581,66 @@ class YumBase(depsolve.Depsolve):
 
         return returndict
 
+    def history_repeat(self, transaction):
+        """ Given a valid historical transaction object, try and repeat
+            that transaction. """
+        # This is basic atm.
+        done = False
+        for pkg in transaction.trans_data:
+            if pkg.state == 'Reinstall':
+                if self.reinstall(pkgtup=pkg.pkgtup):
+                    done = True
+        for pkg in transaction.trans_data:
+            if pkg.state == 'Downgrade':
+                try:
+                    if self.downgrade(pkgtup=pkg.pkgtup):
+                        done = True
+                except yum.Errors.DowngradeError:
+                    self.logger.critical(_('Failed to downgrade: %s'), pkg)
+        for pkg in transaction.trans_data:
+            if pkg.state == 'Update':
+                if self.update(pkgtup=pkg.pkgtup):
+                    done = True
+        for pkg in transaction.trans_data:
+            if pkg.state in ('Install', 'True-Install'):
+                if self.install(pkgtup=pkg.pkgtup):
+                    done = True
+        for pkg in transaction.trans_data:
+            if pkg.state == 'Erase':
+                if self.remove(pkgtup=pkg.pkgtup):
+                    done = True
+        return done
+
+    def history_undo(self, transaction):
+        """ Given a valid historical transaction object, try and undo
+            that transaction. """
+        # FIXME: This is basic atm.
+        done = False
+        for pkg in transaction.trans_data:
+            if pkg.state == 'Reinstall':
+                if self.reinstall(pkgtup=pkg.pkgtup):
+                    done = True
+        for pkg in transaction.trans_data:
+            if pkg.state == 'Updated':
+                try:
+                    if self.downgrade(pkgtup=pkg.pkgtup):
+                        done = True
+                except yum.Errors.DowngradeError:
+                    self.logger.critical(_('Failed to downgrade: %s'), pkg)
+        for pkg in transaction.trans_data:
+            if pkg.state == 'Downgraded':
+                if self.update(pkgtup=pkg.pkgtup):
+                    done = True
+        for pkg in transaction.trans_data:
+            if pkg.state in ('Install', 'True-Install'):
+                if self.remove(pkgtup=pkg.pkgtup):
+                    done = True
+        for pkg in transaction.trans_data:
+            if pkg.state == 'Erase':
+                if self.install(pkgtup=pkg.pkgtup):
+                    done = True
+        return done
+
     def _retrievePublicKey(self, keyurl, repo=None):
         """
         Retrieve a key file
