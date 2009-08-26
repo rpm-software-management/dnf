@@ -1358,18 +1358,13 @@ class HistoryCommand(YumCommand):
     def _hcmd_new(self, base, extcmds):
         base.history._create_db_file()
 
-    def _hcmd_dump(self, base, extcmds):
-        rpmdb_ver = base.rpmdb.simpleVersion()[0]
-        base.history.beg(rpmdb_ver, base.rpmdb.returnPackages(), [])
-        base.history.end(rpmdb_ver, 0)
-
     def doCheck(self, base, basecmd, extcmds):
-        cmds = ('list', 'info', 'summary', 'repeat', 'undo', 'dump', 'new')
+        cmds = ('list', 'info', 'summary', 'repeat', 'undo', 'new')
         if extcmds and extcmds[0] not in cmds:
             base.logger.critical(_('Invalid history sub-command, use: %s.'),
                                  ", ".join(cmds))
             raise cli.CliError
-        if extcmds and extcmds[0] in ('repeat', 'undo', 'dump', 'new'):
+        if extcmds and extcmds[0] in ('repeat', 'undo', 'new'):
             checkRootUID(base)
             checkGPGKey(base)
 
@@ -1389,8 +1384,6 @@ class HistoryCommand(YumCommand):
             ret = self._hcmd_undo(base, extcmds)
         elif vcmd == 'repeat':
             ret = self._hcmd_repeat(base, extcmds)
-        elif vcmd == 'dump':
-            ret = self._hcmd_dump(base, extcmds)
         elif vcmd == 'new':
             ret = self._hcmd_new(base, extcmds)
 

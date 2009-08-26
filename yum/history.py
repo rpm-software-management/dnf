@@ -175,7 +175,7 @@ class YumHistory:
     def trans_data_pid_end(self, pid, state):
         cur = self._get_cursor()
         res = executeSQL(cur,
-                         """UPDATE trans_data_pkgs SET done = TRUE
+                         """UPDATE trans_data_pkgs SET done = 'TRUE'
                          WHERE tid = ? AND pkgtupid = ? AND state = ?
                          """, (self._tid, pid, state))
         return cur.lastrowid
@@ -220,6 +220,12 @@ class YumHistory:
                                                   str(rpmdb_version),
                                                   return_code))
         self._commit()
+        if not return_code:
+            # Simple hack, if the transaction finished
+            executeSQL(cur,
+                       """UPDATE trans_data_pkgs SET done = 'TRUE'
+                          WHERE tid = ?""", (self._tid,))
+            self._commit()
         del self._tid
 
     def _old_with_pkgs(self, tid):
