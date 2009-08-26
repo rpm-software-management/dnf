@@ -22,6 +22,7 @@ import time
 import logging
 import types
 import gettext
+import pwd
 import rpm
 
 import re # For YumTerm
@@ -1171,6 +1172,143 @@ to exit.
         msg = "%s%s%s%s%s" % (utf8_width_fill(_("Total"), tl.rest(), tl.rest()),
                               ui_bs, ui_size, ui_time, ui_end)
         self.verbose_logger.log(logginglevels.INFO_2, msg)
+
+    def historyListCmd(self, extcmds):
+        """ Shows the user a list of data about the history. """
+        tid = None
+        try:
+            if len(extcmds) > 1:
+                tid = int(extcmds[1])
+        except ValueError:
+            pass
+
+        fmt = "%-8s | %-16s | %-38s | %-8s"
+        print fmt % ("ID", "Login user", "Start time", "Altered")
+        print "-" * 79
+        fmt = "%8u | %-16.16s | %-38.38s | %8u"
+        for old in self.history.old(tid):
+            name = old.loginuid
+            try:
+                usertup = pwd.getpwuid(old.loginuid)
+                name = usertup[0]
+            except KeyError:
+                pass
+            tm = time.ctime(old.beg_timestamp)
+            print fmt % (old.tid, name, tm, len(old.trans_data))
+
+    def _history_get_transaction(self, extcmds):
+        if len(extcmds) < 2:
+            self.logger.critical(_('No transaction ID given'))
+            return None
+
+        try:
+            tid = int(extcmds[1])
+        except ValueError:
+            self.logger.critical(_('Bad transaction ID given'))
+            return None
+
+        old = self.history.old(tid)
+        if not old:
+            self.logger.critical(_('Not found given transaction ID'))
+            return None
+        if len(old) > 1:
+            self.logger.critical(_('Found more than one transaction ID!'))
+        return old[0]
+
+    def historyInfoCmd(self, extcmds):
+        old = self._history_get_transaction(extcmds)
+        if old is None:
+            return 1, ['Failed history info']
+
+        name = old.loginuid
+        try:
+            usertup = pwd.getpwuid(old.loginuid)
+            name = usertup[0]
+        except KeyError:
+            pass
+
+        print _("Transaction ID:"), old.tid
+        print _("Begin time    :"), time.ctime(old.beg_timestamp)
+        print _("Begin rpmdb   :"), old.beg_rpmdbversion
+        print _("End time      :"), time.ctime(old.end_timestamp)
+        print _("End rpmdb     :"), old.end_rpmdbversion
+        print _("User          :"), name
+        print _("Return-Code   :"), old.return_code
+        print _("Packages Used :")
+        for hpkg in old.trans_with:
+            prefix = " " * 4
+            if not self.rpmdb.contains(po=hpkg):
+                prefix = " ** "
+            if hpkg.epoch == '0':
+                print "%s%s" % (prefix, hpkg)
+
+        print _("Packages Altered:")
+        for hpkg in old.trans_data:
+            prefix = " " * 4
+            if not hpkg.done:
+                prefix = " ** "
+
+            if False: pass
+            elif hpkg.state == 'Update':
+                ln = len(hpkg.name) + 1
+                cn = (" " * ln) + str(hpkg)[ln:]
+                print "%s%-12s %s" % (prefix, hpkg.state, cn)
+            elif hpkg.state == 'Downgraded':
+                ln = len(hpkg.name) + 1
+                cn = (" " * ln) + str(hpkg)[ln:]
+                print "%s%-12s %s" % (prefix, hpkg.state, cn)
+            else:
+                print "%s%-12s %s" % (prefix, hpkg.state, hpkg)
+
+    def historySummaryCmd(self, extcmds):
+        fmt = "%-16s | %-38s | %-8s"
+        print fmt % ("Login user", "Time (seconds taken)", "Altered")
+        print "-" * 79
+        fmt = "%-16.16s | %-38.38s | %8u"
+        data = {'day' : {}, 'week' : {},
+                'fortnight' : {}, 'quarter' : {}, 'half' : {}, 
+                'year' : {}, 'all' : {}}
+        for old in self.history.old():
+            name = old.loginuid
+            try:
+                usertup = pwd.getpwuid(old.loginuid)
+                name = usertup[0]
+            except KeyError:
+                pass
+            period = 'all'
+            now = time.time()
+            if False: pass
+            elif old.beg_timestamp > (now - (24 * 60 * 60)):
+                period = 'day'
+            elif old.beg_timestamp > (now - (24 * 60 * 60 *  7)):
+                period = 'week'
+            elif old.beg_timestamp > (now - (24 * 60 * 60 * 14)):
+                period = 'fortnight'
+            elif old.beg_timestamp > (now - (24 * 60 * 60 *  7 * 13)):
+                period = 'quarter'
+            elif old.beg_timestamp > (now - (24 * 60 * 60 *  7 * 26)):
+                period = 'half'
+            elif old.beg_timestamp > (now - (24 * 60 * 60 * 365)):
+                period = 'year'
+            data[period].setdefault(name, []).append(old)
+        _period2user = {'day' : _("Last day"),
+                        'week' : _("Last week"),
+                        'fortnight' : _("Last 2 weeks"), # US default :p
+                        'quarter' : _("Last 3 months"),
+                        'half' : _("Last 6 months"),
+                        'year' : _("Last year"),
+                       'all' : _("Over a year ago")}
+        for period in ('day', 'week', 'fortnight', 'quarter', 'half', 'year',
+                       'all'):
+            if not data[period]:
+                continue
+            for name in sorted(data[period]):
+                tm   = sum(map(lambda x: x.end_timestamp - x.beg_timestamp,
+                               data[period][name]))
+                pkgs = sum(map(lambda x: len(x.trans_data), data[period][name]))
+                uperiod = _period2user[period]
+                uperiod += (" (%u)" % tm)
+                print fmt % (name, uperiod, pkgs)
 
 
 class DepSolveProgressCallBack:
