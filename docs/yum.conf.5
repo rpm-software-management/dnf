@@ -254,6 +254,26 @@ with the \fBthrottle\fR option (above). If \fBthrottle\fR is a percentage and
 ignored. Default is `0' (no bandwidth throttling). 
 
 .IP
+\fBsslcacert \fR
+Path to the directory containing the databases of the certificate authorities
+yum should use to verify ssl certificates. Defaults to none - uses system
+default
+
+.IP
+\fBsslverify \fR
+Boolean - should yum verify ssl certificates/hosts at all. Defaults to True
+
+.IP
+\fBsslclientcert \fR
+Path to the ssl client certificate yum should use to connect to repos/remote sites
+Defaults to none.
+
+.IP
+\fBsslclientkey \fR
+Path to the ssl client key yum should use to connect to repos/remote sites
+Defaults to none.
+
+.IP
 \fBcommands\fR
 List of functional commands to run if no functional commands are specified
 on the command line (eg. "update foo bar baz quux").  None of the short options
@@ -604,6 +624,28 @@ repository.
 \fBbandwidth\fR
 Overrides the \fBbandwidth\fR option from the [main] section for this
 repository.
+
+
+.IP
+\fBsslcacert \fR
+Overrides the \fBsslcacert\fR option from the [main] section for this
+repository.
+
+.IP
+\fBsslverify \fR
+Overrides the \fBsslverify\fR option from the [main] section for this
+repository.
+
+.IP
+\fBsslclientcert \fR
+Overrides the \fBsslclientcert\fR option from the [main] section for this
+repository.
+
+.IP
+\fBsslclientkey \fR
+Overrides the \fBsslclientkey\fR option from the [main] section for this
+repository.
+
 
 .IP
 \fBmetadata_expire \fR
