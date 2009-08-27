@@ -2802,6 +2802,11 @@ class YumBase(depsolve.Depsolve):
                     self._add_prob_flags(rpm.RPMPROB_FILTER_REPLACEPKG,
                                          rpm.RPMPROB_FILTER_REPLACENEWFILES,
                                          rpm.RPMPROB_FILTER_REPLACEOLDFILES)
+                    #  Yum needs the remove to happen before we allow the
+                    # install of the same version. But rpm doesn't like that
+                    # as it then has an install which removes the old version
+                    # and a remove, which also tries to remove the old version.
+                    self.tsInfo.remove(ipkg.pkgtup)
                     break
                 if ipkg.verGT(po):
                     self._add_prob_flags(rpm.RPMPROB_FILTER_OLDPACKAGE)

@@ -1160,24 +1160,13 @@ class YumHeaderPackage(YumAvailablePackage):
                 if not self.__mode_cache.has_key(mode):
                     self.__mode_cache[mode] = stat.S_ISDIR(mode)
           
+                fkey = 'file'
                 if self.__mode_cache[mode]:
-                    if not self.files.has_key('dir'):
-                        self.files['dir'] = []
-                    self.files['dir'].append(fn)
-                else:
-                    if flag is None:
-                        if not self.files.has_key('file'):
-                            self.files['file'] = []
-                        self.files['file'].append(fn)
-                    else:
-                        if (flag & 64):
-                            if not self.files.has_key('ghost'):
-                                self.files['ghost'] = []
-                            self.files['ghost'].append(fn)
-                            continue
-                        if not self.files.has_key('file'):
-                            self.files['file'] = []
-                        self.files['file'].append(fn)
+                    fkey = 'dir'
+                elif flag is not None and (flag & 64):
+                    fkey = 'ghost'
+                self.files.setdefault(fkey, []).append(fn)
+
             self._loadedfiles = True
             
     def returnFileEntries(self, ftype='file'):

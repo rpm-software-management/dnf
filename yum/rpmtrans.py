@@ -510,6 +510,9 @@ class RPMTransaction:
             # right behavior should be
                 
     def _scriptError(self, bytes, total, h):
+        if not isinstance(h, types.TupleType):
+            # fun with install/erase transactions, see rhbz#484729
+            h = (h, None)
         hdr, rpmloc = h[0], h[1]
         remove_hdr = False # if we're in a clean up/remove then hdr will not be an rpm.hdr
         if not isinstance(hdr, rpm.hdr):

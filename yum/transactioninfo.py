@@ -262,14 +262,6 @@ class TransactionData:
         self.downgraded = []
         self.failed = []
 
-        if include_reinstall:
-            pkgtups = {'up' : set(), 'in' : set(), 'rm' : set()}
-            for txmbr in self.getMembers():
-                if txmbr.output_state in (TS_INSTALL, TS_TRUEINSTALL):
-                    pkgtups['in'].add(txmbr.po.pkgtup)
-                if txmbr.output_state ==  TS_ERASE:
-                    pkgtups['rm'].add(txmbr.po.pkgtup)
-
         for txmbr in self.getMembers():
             if txmbr.output_state == TS_UPDATE:
                 if txmbr.isDep:
@@ -278,7 +270,7 @@ class TransactionData:
                     self.updated.append(txmbr)
                     
             elif txmbr.output_state in (TS_INSTALL, TS_TRUEINSTALL):
-                if include_reinstall and txmbr.po.pkgtup in pkgtups['rm']:
+                if include_reinstall and self.rpmdb.contains(po=txmbr.po):
                     self.reinstalled.append(txmbr)
                     continue
 
@@ -296,9 +288,6 @@ class TransactionData:
                     self.installed.append(txmbr)
             
             elif txmbr.output_state == TS_ERASE:
-                if include_reinstall and txmbr.po.pkgtup in pkgtups['in']:
-                    continue
-
                 if include_downgrade and txmbr.downgraded_by:
                     continue
 

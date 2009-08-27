@@ -760,10 +760,7 @@ class PackageSack(PackageSackBase):
         repoid = obj.repoid
         (name, arch, epoch, ver, rel) = obj.pkgtup
         
-        if self.compatarchs:
-            if self.compatarchs.has_key(arch):
-                self._addToDictAsList(self.pkgsByRepo, repoid, obj)
-        else:
+        if not self.compatarchs or arch in self.compatarchs:
             self._addToDictAsList(self.pkgsByRepo, repoid, obj)
         if self.indexesBuilt:
             self._addPackageToIndex(obj)
