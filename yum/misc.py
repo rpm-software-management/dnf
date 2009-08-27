@@ -10,6 +10,7 @@ import base64
 import struct
 import re
 import errno
+import Errors
 import pgpmsg
 import tempfile
 import glob
@@ -629,8 +630,13 @@ def bunzipFile(source,dest):
             break
         
         if not data: break
-        destination.write(data)
 
+        try:
+            destination.write(data)
+        except (OSError, IOError), e:
+            msg = "Error writing to file %s: %s" % (dest, str(e))
+            raise Errors.MiscError, msg
+    
     destination.close()
     s_fn.close()
 

@@ -46,6 +46,8 @@ def main(args):
     def exIOError(e):
         if e.errno == 32:
             logger.critical(_('\n\nExiting on Broken Pipe'))
+        else:
+            logger.critical(_('\n\n%s') % str(e))
         if unlock(): return 200
         return 1
 
