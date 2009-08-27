@@ -41,6 +41,7 @@ from yum.constants import *
 from yum import logginglevels, _
 from yum.rpmtrans import RPMBaseCallback
 from yum.packageSack import packagesNewestByNameArch
+import yum.packages
 
 from yum.i18n import utf8_width, utf8_width_fill, utf8_text_fill
 
@@ -1173,113 +1174,224 @@ to exit.
                               ui_bs, ui_size, ui_time, ui_end)
         self.verbose_logger.log(logginglevels.INFO_2, msg)
 
+    def _history_uiactions(self, hpkgs):
+        actions = set()
+        count = 0
+        for hpkg in hpkgs:
+            st = hpkg.state
+            if st == 'True-Install':
+                st = 'Install'
+            if st in ('Install', 'Update', 'Erase', 'Reinstall', 'Downgrade',
+                      'Obsoleting', 'Obsoleted'):
+                actions.add(st)
+                count += 1
+        assert len(actions) <= 6
+        if len(actions) > 1:
+            return count, ", ".join([x[0] for x in sorted(actions)])
+
+        # So empty transactions work, although that "shouldn't" really happen
+        return count, "".join(list(actions))
+
+    def _pwd_ui_username(self, uid, limit=None):
+        try:
+            user = pwd.getpwuid(uid)
+            fullname = user.pw_gecos.split(';', 2)[0]
+            name = "%s <%s>" % (fullname, user.pw_name)
+            if limit is not None and len(name) > limit:
+                name = "%s ... <%s>" % (fullname.split()[0], user.pw_name)
+                if len(name) > limit:
+                    name = "<%s>" % user.pw_name
+            return name
+        except KeyError:
+            return str(uid)
+
+    def _history_list_transactions(self, extcmds):
+        tids = set()
+        pats = []
+        usertids = extcmds[1:]
+        printall = False
+        if usertids:
+            printall = True
+            if usertids[0] == 'all':
+                usertids.pop(0)
+        for tid in usertids:
+            try:
+                int(tid)
+                tids.add(tid)
+            except ValueError:
+                pats.append(tid)
+        if pats:
+            tids.update(self.history.search(pats))
+
+        if not tids and usertids:
+            self.logger.critical(_('Bad transaction IDs, or package(s), given'))
+            return None, None
+        return tids, printall
+
     def historyListCmd(self, extcmds):
         """ Shows the user a list of data about the history. """
-        tid = None
-        try:
-            if len(extcmds) > 1:
-                tid = int(extcmds[1])
-        except ValueError:
-            pass
 
-        fmt = "%-8s | %-16s | %-35s | %-11s"
-        print fmt % ("ID", "Login user", "Start time", "Altered")
+        tids, printall = self._history_list_transactions(extcmds)
+        if tids is None:
+            return 1, ['Failed history info']
+
+        fmt = "%-6s | %-22s | %-16s | %-14s | %-7s"
+        print fmt % ("ID", "Login user", "Date and time", "Action(s)","Altered")
         print "-" * 79
-        fmt = "%8u | %-16.16s | %-35.35s | %8u"
-        last_rv = None
-        for old in self.history.old(tid):
-            name = old.loginuid
-            try:
-                usertup = pwd.getpwuid(old.loginuid)
-                name = usertup[0]
-            except KeyError:
-                pass
-            tm = time.ctime(old.beg_timestamp)
-            if old.altered_rpmdb:
-                print fmt % (old.tid, name, tm, len(old.trans_data)), "**"
-            else:
-                print fmt % (old.tid, name, tm, len(old.trans_data))
-            last_rv = old.end_rpmdbversion
+        fmt = "%6u | %-22.22s | %-16s | %-14s | %4u"
+        done = 0
+        for old in self.history.old(tids):
+            if not printall and done > 19:
+                break
 
-    def _history_get_transaction(self, extcmds):
+            done += 1
+            name = self._pwd_ui_username(old.loginuid, 22)
+            tm = time.strftime("%Y-%m-%d %H:%M",
+                               time.localtime(old.beg_timestamp))
+            num, uiacts = self._history_uiactions(old.trans_data)
+            if old.altered_rpmdb:
+                print fmt % (old.tid, name, tm, uiacts, num), "**"
+            else:
+                print fmt % (old.tid, name, tm, uiacts, num)
+
+    def _history_get_transactions(self, extcmds):
         if len(extcmds) < 2:
             self.logger.critical(_('No transaction ID given'))
             return None
 
+        tids = []
         try:
-            tid = int(extcmds[1])
+            int(extcmds[1])
+            tids.append(extcmds[1])
         except ValueError:
             self.logger.critical(_('Bad transaction ID given'))
             return None
 
-        old = self.history.old(tid)
+        old = self.history.old(tids)
         if not old:
             self.logger.critical(_('Not found given transaction ID'))
+            return None
+        return old
+    def _history_get_transaction(self, extcmds):
+        old = self._history_get_transactions(extcmds)
+        if old is None:
             return None
         if len(old) > 1:
             self.logger.critical(_('Found more than one transaction ID!'))
         return old[0]
 
     def historyInfoCmd(self, extcmds):
-        old = self._history_get_transaction(extcmds)
-        if old is None:
+        tids = set()
+        pats = []
+        for tid in extcmds[1:]:
+            try:
+                int(tid)
+                tids.add(tid)
+            except ValueError:
+                pats.append(tid)
+        if pats:
+            tids.update(self.history.search(pats))
+
+        if not tids:
+            self.logger.critical(_('No transaction ID, or package, given'))
             return 1, ['Failed history info']
 
-        name = old.loginuid
-        try:
-            usertup = pwd.getpwuid(old.loginuid)
-            name = usertup[0]
-        except KeyError:
-            pass
+        done = False
+        for tid in self.history.old(tids):
+            if done:
+                print "-" * 79
+            done = True
+            self._historyInfoCmd(tid, pats)
 
-        print _("Transaction ID:"), old.tid
-        print _("Begin time    :"), time.ctime(old.beg_timestamp)
-        print _("Begin rpmdb   :"), old.beg_rpmdbversion
-        print _("End time      :"), time.ctime(old.end_timestamp)
-        print _("End rpmdb     :"), old.end_rpmdbversion
-        print _("User          :"), name
-        print _("Return-Code   :"), old.return_code
-        print _("Packages Used :")
+    def _historyInfoCmd(self, old, pats=[]):
+        name = self._pwd_ui_username(old.loginuid)
+
+        print _("Transaction ID :"), old.tid
+        begtm = time.ctime(old.beg_timestamp)
+        print _("Begin time     :"), begtm
+        if old.beg_rpmdbversion is not None:
+            print _("Begin rpmdb    :"), old.beg_rpmdbversion
+        endtm = time.ctime(old.end_timestamp)
+        endtms = endtm.split()
+        if begtm.startswith(endtms[0]): # Chop uninteresting prefix
+            begtms = begtm.split()
+            sofar = 0
+            for i in range(len(endtms)):
+                if i > len(begtms):
+                    break
+                if begtms[i] != endtms[i]:
+                    break
+                sofar += len(begtms[i]) + 1
+            endtm = (' ' * sofar) + endtm[sofar:]
+        print _("End time       :"), endtm
+        if old.end_rpmdbversion is not None:
+            print _("End rpmdb      :"), old.end_rpmdbversion
+        print _("User           :"), name
+        if old.return_code:
+            print _("Return-Code    :"), _("Failure:"), old.return_code
+        else:
+            print _("Return-Code    :"), _("Success")
+        print _("Packages Used  :")
         for hpkg in old.trans_with:
             prefix = " " * 4
-            if not self.rpmdb.contains(po=hpkg):
-                prefix = " ** "
-            if hpkg.epoch == '0':
-                print "%s%s" % (prefix, hpkg)
-
+            state  = _('Installed')
+            ipkgs = self.rpmdb.searchNames([hpkg.name])
+            ipkgs.sort()
+            if not ipkgs:
+                state  = _('Erased')
+            elif hpkg.pkgtup in (ipkg.pkgtup for ipkg in ipkgs):
+                pass
+            elif ipkgs[-1] > hpkg:
+                state  = _('Updated')
+            elif ipkgs[0] < hpkg:
+                state  = _('Downgraded')
+            else: # multiple versions installed, both older and newer
+                state  = _('Weird')
+            print "%s%-12s %s" % (prefix, state, hpkg)
         print _("Packages Altered:")
+        self.historyInfoCmdPkgsAltered(old, pats)
+
+    def historyInfoCmdPkgsAltered(self, old, pats=[]):
         for hpkg in old.trans_data:
             prefix = " " * 4
             if not hpkg.done:
                 prefix = " ** "
 
+            highlight = 'normal'
+            if pats:
+                x,m,u = yum.packages.parsePackages([hpkg], pats)
+                if x or m:
+                    highlight = 'bold'
+            (hibeg, hiend) = self._highlight(highlight)
+
             if False: pass
             elif hpkg.state == 'Update':
                 ln = len(hpkg.name) + 1
                 cn = (" " * ln) + str(hpkg)[ln:]
-                print "%s%-12s %s" % (prefix, hpkg.state, cn)
+                print "%s%s%-12s%s %s" % (prefix, hibeg, hpkg.state, hiend, cn)
             elif hpkg.state == 'Downgraded':
                 ln = len(hpkg.name) + 1
                 cn = (" " * ln) + str(hpkg)[ln:]
-                print "%s%-12s %s" % (prefix, hpkg.state, cn)
+                print "%s%s%-12s%s %s" % (prefix, hibeg, hpkg.state, hiend, cn)
+            elif hpkg.state == 'True-Install':
+                print "%s%s%-12s%s %s" % (prefix, hibeg, "Install", hiend, hpkg)
             else:
-                print "%s%-12s %s" % (prefix, hpkg.state, hpkg)
+                print "%s%s%-12s%s %s" % (prefix, hibeg, hpkg.state, hiend,hpkg)
 
     def historySummaryCmd(self, extcmds):
-        fmt = "%-16s | %-38s | %-8s"
-        print fmt % ("Login user", "Time (seconds taken)", "Altered")
+        tids, printall = self._history_list_transactions(extcmds)
+        if tids is None:
+            return 1, ['Failed history info']
+
+        fmt = "%-26s | %-19s | %-16s | %-8s"
+        print fmt % ("Login user", "Time", "Action(s)", "Altered")
         print "-" * 79
-        fmt = "%-16.16s | %-38.38s | %8u"
+        fmt = "%-26.26s | %-19.19s | %-16s | %8u"
         data = {'day' : {}, 'week' : {},
                 'fortnight' : {}, 'quarter' : {}, 'half' : {}, 
                 'year' : {}, 'all' : {}}
-        for old in self.history.old():
-            name = old.loginuid
-            try:
-                usertup = pwd.getpwuid(old.loginuid)
-                name = usertup[0]
-            except KeyError:
-                pass
+        for old in self.history.old(tids):
+            name = self._pwd_ui_username(old.loginuid, 26)
             period = 'all'
             now = time.time()
             if False: pass
@@ -1296,24 +1408,29 @@ to exit.
             elif old.beg_timestamp > (now - (24 * 60 * 60 * 365)):
                 period = 'year'
             data[period].setdefault(name, []).append(old)
-        _period2user = {'day' : _("Last day"),
-                        'week' : _("Last week"),
+        _period2user = {'day'       : _("Last day"),
+                        'week'      : _("Last week"),
                         'fortnight' : _("Last 2 weeks"), # US default :p
-                        'quarter' : _("Last 3 months"),
-                        'half' : _("Last 6 months"),
-                        'year' : _("Last year"),
-                       'all' : _("Over a year ago")}
+                        'quarter'   : _("Last 3 months"),
+                        'half'      : _("Last 6 months"),
+                        'year'      : _("Last year"),
+                        'all'       : _("Over a year ago")}
+        done = 0
         for period in ('day', 'week', 'fortnight', 'quarter', 'half', 'year',
                        'all'):
             if not data[period]:
                 continue
             for name in sorted(data[period]):
-                tm   = sum(map(lambda x: x.end_timestamp - x.beg_timestamp,
-                               data[period][name]))
-                pkgs = sum(map(lambda x: len(x.trans_data), data[period][name]))
+                if not printall and done > 19:
+                    break
+                done += 1
+
+                hpkgs = []
+                for old in data[period][name]:
+                    hpkgs.extend(old.trans_data)
+                count, uiacts = self._history_uiactions(hpkgs)
                 uperiod = _period2user[period]
-                uperiod += (" (%u)" % tm)
-                print fmt % (name, uperiod, pkgs)
+                print fmt % (name, uperiod, uiacts, count)
 
 
 class DepSolveProgressCallBack:

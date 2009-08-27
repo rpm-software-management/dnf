@@ -1150,20 +1150,22 @@ class HistoryCommand(YumCommand):
         return _("Display, or use, the transaction history")
 
     def _hcmd_repeat(self, base, extcmds):
-        old = base._history_get_transaction(base, extcmds)
+        old = base._history_get_transaction(extcmds)
         if old is None:
             return 1, ['Failed history repeat']
         tm = time.ctime(old.beg_timestamp)
-        print "Repeating transaction %u, from %s" % (transaction.tid, tm)
+        print "Repeating transaction %u, from %s" % (old.tid, tm)
+        base.historyInfoCmdPkgsAltered(old)
         if base.history_repeat(old):
-            return 2, ["Repeating transaction %u" % (transaction.tid,)]
+            return 2, ["Repeating transaction %u" % (old.tid,)]
 
     def _hcmd_undo(self, base, extcmds):
-        old = base._history_get_transaction(base, extcmds)
+        old = base._history_get_transaction(extcmds)
         if old is None:
             return 1, ['Failed history undo']
         tm = time.ctime(old.beg_timestamp)
         print "Undoing transaction %u, from %s" % (old.tid, tm)
+        base.historyInfoCmdPkgsAltered(old)
         if base.history_undo(old):
             return 2, ["Undoing transaction %u" % (old.tid,)]
 

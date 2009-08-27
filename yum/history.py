@@ -48,6 +48,71 @@ _sttxt2stcode = {'Update' : TS_UPDATE,
                  'Obsoleted' : TS_OBSOLETED,
                  'Obsoleting' : TS_OBSOLETING}
 
+# ---- horrible Copy and paste from sqlitesack ----
+def _sql_esc(pattern):
+    """ Apply SQLite escaping, if needed. Returns pattern and esc. """
+    esc = ''
+    if "_" in pattern or "%" in pattern:
+        esc = ' ESCAPE "!"'
+        pattern = pattern.replace("!", "!!")
+        pattern = pattern.replace("%", "!%")
+        pattern = pattern.replace("_", "!_")
+    return (pattern, esc)
+
+def _sql_esc_glob(patterns):
+    """ Converts patterns to SQL LIKE format, if required (or gives up if
+        not possible). """
+    ret = []
+    for pattern in patterns:
+        if '[' in pattern: # LIKE only has % and _, so [abc] can't be done.
+            return []      # So Load everything
+
+        # Convert to SQL LIKE format
+        (pattern, esc) = _sql_esc(pattern)
+        pattern = pattern.replace("*", "%")
+        pattern = pattern.replace("?", "_")
+        ret.append((pattern, esc))
+    return ret
+
+def _setupHistorySearchSQL(patterns=None, ignore_case=False):
+    """Setup need_full and patterns for _yieldSQLDataList, also see if
+       we can get away with just using searchNames(). """
+
+    if patterns is None:
+        patterns = []
+
+    fields = ['name', 'sql_nameArch', 'sql_nameVerRelArch',
+              'sql_nameVer', 'sql_nameVerRel',
+              'sql_envra', 'sql_nevra']
+    need_full = False
+    for pat in patterns:
+        if yum.misc.re_full_search_needed(pat):
+            need_full = True
+            break
+
+    pat_max = PATTERNS_MAX
+    if not need_full:
+        fields = ['name']
+        pat_max = PATTERNS_INDEXED_MAX
+    if len(patterns) > pat_max:
+        patterns = []
+    if ignore_case:
+        patterns = _sql_esc_glob(patterns)
+    else:
+        tmp = []
+        need_glob = False
+        for pat in patterns:
+            if misc.re_glob(pat):
+                tmp.append((pat, 'glob'))
+                need_glob = True
+            else:
+                tmp.append((pat, '='))
+        if not need_full and not need_glob and patterns:
+            return (need_full, patterns, fields, True)
+        patterns = tmp
+    return (need_full, patterns, fields, False)
+# ---- horrible Copy and paste from sqlitesack ----
+
 class YumHistoryPackage(PackageObject):
 
     def __init__(self, name, arch, epoch, version, release, checksum):
@@ -262,7 +327,7 @@ class YumHistory:
             ret.append(obj)
         return ret
 
-    def old(self, tid=None):
+    def old(self, tids=[]):
         cur = self._get_cursor()
         sql =  """SELECT tid,
                          trans_beg.timestamp AS beg_ts,
@@ -272,9 +337,10 @@ class YumHistory:
                          loginuid, return_code
                   FROM trans_beg OUTER JOIN trans_end USING(tid)"""
         params = None
-        if tid is not None:
-            sql += " WHERE tid = ?"
-            params = (tid,)
+        if tids:
+            tids = set(tids)
+            sql += " WHERE tid IN (%s)" % ", ".join(['?'] * len(tids))
+            params = list(tids)
         sql += " ORDER BY beg_ts DESC, tid ASC"
         res = executeSQL(cur, sql, params)
         ret = []
@@ -292,18 +358,64 @@ class YumHistory:
             ret.append(obj)
 
         # Go through backwards, and see if the rpmdb versions match
-        last_rv = None
+        last_rv  = None
+        last_tid = None
         for obj in reversed(ret):
             cur_rv = obj.beg_rpmdbversion
-            if last_rv is None or cur_rv is None:
+            if last_rv is None or cur_rv is None or (last_tid + 1) != obj.tid:
                 obj.altered_rpmdb = None
             elif last_rv != cur_rv:
                 obj.altered_rpmdb = True
             else:
                 obj.altered_rpmdb = False
-            last_rv = obj.end_rpmdbversion
+            last_rv  = obj.end_rpmdbversion
+            last_tid = obj.tid
 
         return ret
+
+    def _yieldSQLDataList(self, patterns, fields, ignore_case):
+        """Yields all the package data for the given params. """
+
+        cur = self._get_cursor()
+        qsql = _FULL_PARSE_QUERY_BEG
+
+        pat_sqls = []
+        pat_data = []
+        for (pattern, rest) in patterns:
+            for field in fields:
+                if ignore_case:
+                    pat_sqls.append("%s LIKE ?%s" % (field, rest))
+                else:
+                    pat_sqls.append("%s %s ?" % (field, rest))
+                pat_data.append(pattern)
+        assert pat_sqls
+
+        qsql += " OR ".join(pat_sqls)
+        executeSQL(cur, qsql, pat_data)
+        for x in cur:
+            yield x
+
+    def search(self, patterns, ignore_case=True):
+        """ Search for history transactions which contain specified
+            packages al. la. "yum list". Returns transaction ids. """
+        # Search packages ... kind of sucks that it's search not list, pkglist?
+
+        data = _setupHistorySearchSQL(patterns, ignore_case)
+        (need_full, patterns, fields, names) = data
+
+        ret = []
+        pkgtupids = set()
+        for row in self._yieldSQLDataList(patterns, fields, ignore_case):
+            pkgtupids.add(row[0])
+
+        cur = self._get_cursor()
+        sql =  """SELECT tid FROM trans_data_pkgs WHERE pkgtupid IN """
+        sql += "(%s)" % ",".join(['?'] * len(pkgtupids))
+        params = list(pkgtupids)
+        tids = set()
+        for row in executeSQL(cur, sql, params):
+            tids.add(row[0])
+        return tids
 
     def _create_db_file(self):
         """ Create a new history DB file, populating tables etc. """
@@ -361,3 +473,16 @@ class YumHistory:
         for op in ops:
             cur.execute(op)
         self._commit()
+
+# Pasted from sqlitesack
+_FULL_PARSE_QUERY_BEG = """
+SELECT pkgtupid,name,epoch,version,release,arch,
+  name || "." || arch AS sql_nameArch,
+  name || "-" || version || "-" || release || "." || arch AS sql_nameVerRelArch,
+  name || "-" || version AS sql_nameVer,
+  name || "-" || version || "-" || release AS sql_nameVerRel,
+  epoch || ":" || name || "-" || version || "-" || release || "." || arch AS sql_envra,
+  name || "-" || epoch || ":" || version || "-" || release || "." || arch AS sql_nevra
+  FROM pkgtups
+  WHERE 
+"""
