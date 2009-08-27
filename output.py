@@ -903,7 +903,6 @@ class YumOutput:
         """returns a string rep of the  transaction in an easy-to-read way."""
         
         self.tsInfo.makelists(True, True)
-        out = u""
         pkglist_lines = []
         data  = {'n' : {}, 'v' : {}, 'r' : {}}
         a_wid = 0 # Arch can't get "that big" ... so always use the max.
@@ -957,7 +956,9 @@ class YumOutput:
 
             pkglist_lines.append((action, lines))
 
-        if data['n']:
+        if not data['n']:
+            return u''
+        else:
             data    = [data['n'],    {}, data['v'], data['r'], {}]
             columns = [1,         a_wid,         1,         1,  5]
             columns = self.calcColumns(data, indent="  ", columns=columns,
