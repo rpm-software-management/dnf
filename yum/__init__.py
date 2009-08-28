@@ -2395,19 +2395,20 @@ class YumBase(depsolve.Depsolve):
         """Pass in a generic [build]require string and this function will 
            pass back the best(or first) package it finds providing that dep."""
         
+        # we get all sorts of randomness here
+        errstring = depstring
+        if type(depstring) not in types.StringTypes:
+            errtring = str(depstring)
+        
         try:
             pkglist = self.returnPackagesByDep(depstring)
         except Errors.YumBaseError:
-            if type(depstring) not in types.StringTypes:
-                depstring = str(depstring)
-            raise Errors.YumBaseError, _('No Package found for %s') % depstring
+            raise Errors.YumBaseError, _('No Package found for %s') % errstring
         
         ps = ListPackageSack(pkglist)
         result = self._bestPackageFromList(ps.returnNewestByNameArch())
         if result is None:
-            if type(depstring) not in types.StringTypes:
-                depstring = str(depstring)
-            raise Errors.YumBaseError, _('No Package found for %s') % depstring
+            raise Errors.YumBaseError, _('No Package found for %s') % errstring
         
         return result
 
