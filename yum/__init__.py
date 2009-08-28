@@ -2949,7 +2949,11 @@ class YumBase(depsolve.Depsolve):
             #  Always look for available packages, it doesn't seem to do any
             # harm (apart from some time). And it fixes weird edge cases where
             # "update a" (which requires a new b) is different from "update b"
-            m =self.pkgSack.returnNewestByNameArch(patterns=[kwargs['pattern']])
+            try:
+                pats = [kwargs['pattern']]
+                m = self.pkgSack.returnNewestByNameArch(patterns=pats)
+            except Errors.PackageSackError:
+                m = []
             availpkgs.extend(m)
 
             if not availpkgs and not instpkgs:
