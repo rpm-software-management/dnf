@@ -2398,11 +2398,15 @@ class YumBase(depsolve.Depsolve):
         try:
             pkglist = self.returnPackagesByDep(depstring)
         except Errors.YumBaseError:
+            if type(depstring) not in types.StringTypes:
+                depstring = str(depstring)
             raise Errors.YumBaseError, _('No Package found for %s') % depstring
         
         ps = ListPackageSack(pkglist)
         result = self._bestPackageFromList(ps.returnNewestByNameArch())
         if result is None:
+            if type(depstring) not in types.StringTypes:
+                depstring = str(depstring)
             raise Errors.YumBaseError, _('No Package found for %s') % depstring
         
         return result
