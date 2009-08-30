@@ -1044,7 +1044,7 @@ class YumBase(depsolve.Depsolve):
         using_pkgs_pats = ['yum', 'rpm', 'python', 'yum-metadata-parser',
                            'yum-rhn-plugin']
         using_pkgs = self.rpmdb.returnPackages(patterns=using_pkgs_pats)
-        rpmdbv  = self.rpmdb.simpleVersion()[0]
+        rpmdbv  = self.rpmdb.simpleVersion(main_only=True)[0]
         lastdbv = self.history.last().end_rpmdbversion
         if lastdbv is not None and rpmdbv != lastdbv:
             errstring = _('Warning: RPMDB has been altered since the last yum transaction.')
@@ -1156,7 +1156,7 @@ class YumBase(depsolve.Depsolve):
         ret = -1
         if resultobject is not None:
             ret = resultobject.return_code
-        self.history.end(self.rpmdb.simpleVersion()[0], ret)
+        self.history.end(self.rpmdb.simpleVersion(main_only=True)[0], ret)
         self.rpmdb.dropCachedData()
 
     def costExcludePackages(self):

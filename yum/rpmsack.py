@@ -339,7 +339,7 @@ class RPMDBPackageSack(PackageSackBase):
             pkgobjlist = pkgobjlist[0] + pkgobjlist[1]
         return pkgobjlist
 
-    def simpleVersion(self):
+    def simpleVersion(self, main_only=False):
         """ Return a simple version for all installed packages. """
         main = PackageSackVersion()
         irepos = {}
@@ -349,6 +349,9 @@ class RPMDBPackageSack(PackageSackBase):
             if 'checksum_type' in ydbi and 'checksum_data' in ydbi:
                 csum = (ydbi.checksum_type, ydbi.checksum_data)
             main.update(pkg, csum)
+
+            if main_only:
+                continue
 
             repoid = 'installed'
             rev = None

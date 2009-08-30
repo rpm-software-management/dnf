@@ -1101,11 +1101,13 @@ class VersionCommand(YumCommand):
         cols = []
         if vcmd in ('installed', 'all'):
             try:
-                data = base.rpmdb.simpleVersion()
+                main_only = True
+                if base.verbose_logger.isEnabledFor(logginglevels.DEBUG_3):
+                    main_only = False
+                data = base.rpmdb.simpleVersion(main_only)
                 cols.append(("%s %s/%s" % (_("Installed:"), rel, ba),
                              str(data[0])))
-                if base.verbose_logger.isEnabledFor(logginglevels.DEBUG_3):
-                    _append_repos(cols, data[1])
+                _append_repos(cols, data[1])
             except yum.Errors.YumBaseError, e:
                 return 1, [str(e)]
         if vcmd in ('available', 'all'):
