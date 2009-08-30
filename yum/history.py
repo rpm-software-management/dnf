@@ -129,6 +129,45 @@ class YumHistoryPackage(PackageObject):
             chk = checksum.split(':')
             self._checksums = [(chk[0], chk[1], 0)] # (type, checksum, id(0,1))
 
+class YumHistoryTransaction:
+    """ Holder for a history transaction. """
+
+    def __init__(self, history, row):
+        self._history = weakref(history)
+
+        self.tid              = row[0]
+        self.beg_timestamp    = row[1]
+        self.beg_rpmdbversion = row[2]
+        self.end_timestamp    = row[3]
+        self.end_rpmdbversion = row[4]
+        self.loginuid         = row[5]
+        self.return_code      = row[6]
+
+        self._loaded_TW = None
+        self._loaded_TD = None
+
+    def __cmp__(self, other):
+        if other is None:
+            return 1
+        ret = cmp(self.beg_timestamp, other.beg_timestamp)
+        if ret: return -ret
+        ret = cmp(self.end_timestamp, other.end_timestamp)
+        if ret: return ret
+        ret = cmp(self.tid, other.tid)
+        return -ret
+
+    def _getTransWith(self):
+        if self._loaded_TW is None:
+            self._loaded_TW = sorted(self._history._old_with_pkgs(self.tid))
+        return self._loaded_TW
+    def _getTransData(self):
+        if self._loaded_TD is None:
+            self._loaded_TD = sorted(self._history._old_data_pkgs(self.tid))
+        return self._loaded_TD
+
+    trans_with = property(fget=lambda self: self._getTransWith())
+    trans_data = property(fget=lambda self: self._getTransData())
+
 class YumHistory:
     """ API for accessing the history sqlite data. """
 
@@ -345,17 +384,7 @@ class YumHistory:
         res = executeSQL(cur, sql, params)
         ret = []
         for row in res:
-            obj = yum.misc.GenericHolder()
-            obj.tid              = row[0]
-            obj.beg_timestamp    = row[1]
-            obj.beg_rpmdbversion = row[2]
-            obj.end_timestamp    = row[3]
-            obj.end_rpmdbversion = row[4]
-            obj.loginuid         = row[5]
-            obj.return_code      = row[6]
-            obj.trans_with = sorted(self._old_with_pkgs(obj.tid))
-            obj.trans_data = sorted(self._old_data_pkgs(obj.tid))
-            ret.append(obj)
+            ret.append(YumHistoryTransaction(self, row))
 
         # Go through backwards, and see if the rpmdb versions match
         last_rv  = None
@@ -372,6 +401,22 @@ class YumHistory:
             last_tid = obj.tid
 
         return ret
+
+    def last(self):
+        cur = self._get_cursor()
+        sql =  """SELECT tid,
+                         trans_beg.timestamp AS beg_ts,
+                         trans_beg.rpmdb_version AS beg_rv,
+                         trans_end.timestamp AS end_ts,
+                         trans_end.rpmdb_version AS end_rv,
+                         loginuid, return_code
+                  FROM trans_beg OUTER JOIN trans_end USING(tid)
+                  ORDER BY beg_ts DESC, tid ASC
+                  LIMIT 1"""
+        res = executeSQL(cur, sql)
+        for row in res:
+            return YumHistoryTransaction(self, row)
+        return None
 
     def _yieldSQLDataList(self, patterns, fields, ignore_case):
         """Yields all the package data for the given params. """
