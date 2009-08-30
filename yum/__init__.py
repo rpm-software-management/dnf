@@ -1044,8 +1044,12 @@ class YumBase(depsolve.Depsolve):
         using_pkgs_pats = ['yum', 'rpm', 'python', 'yum-metadata-parser',
                            'yum-rhn-plugin']
         using_pkgs = self.rpmdb.returnPackages(patterns=using_pkgs_pats)
-        self.history.beg(self.rpmdb.simpleVersion()[0], using_pkgs,
-                         list(self.tsInfo))
+        rpmdbv  = self.rpmdb.simpleVersion()[0]
+        lastdbv = self.history.last().end_rpmdbversion
+        if lastdbv is not None and rpmdbv != lastdbv:
+            errstring = _('Warning: RPMDB has been altered since the last yum transaction.')
+            self.logger.warning(errstring)
+        self.history.beg(rpmdbv, using_pkgs, list(self.tsInfo))
 
         errors = self.ts.run(cb.callback, '')
         # ts.run() exit codes are, hmm, "creative": None means all ok, empty 

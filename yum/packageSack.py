@@ -35,6 +35,8 @@ class PackageSackVersion:
 
     def __eq__(self, other):
         if other is None: return False
+        if type(other) in (type(''), type(u'')):
+            return str(self) == other
         if self._num != other._num: return False
         if self._chksum.digest() != other._chksum.digest(): return False
         return True
