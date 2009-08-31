@@ -1105,6 +1105,12 @@ class VersionCommand(YumCommand):
                 if base.verbose_logger.isEnabledFor(logginglevels.DEBUG_3):
                     main_only = False
                 data = base.rpmdb.simpleVersion(main_only)
+                lastdbv = base.history.last()
+                if lastdbv is not None:
+                    lastdbv = lastdbv.end_rpmdbversion
+                if lastdbv is not None and data[0] != lastdbv:
+                    errstring = _('Warning: RPMDB has been altered since the last yum transaction.')
+                    base.logger.warning(errstring)
                 cols.append(("%s %s/%s" % (_("Installed:"), rel, ba),
                              str(data[0])))
                 _append_repos(cols, data[1])
