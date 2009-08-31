@@ -1240,11 +1240,24 @@ to exit.
         print "-" * 79
         fmt = "%6u | %-22.22s | %-16s | %-14s | %4u"
         done = 0
+        lastdbv = self.history.last()
+        if lastdbv is not None:
+            lasttid = lastdbv.tid
+            lastdbv = lastdbv.end_rpmdbversion
         for old in self.history.old(tids):
             if not printall and done > 19:
                 break
 
             done += 1
+            if lastdbv is not None and not old.altered_rpmdb:
+                #  If this is the last transaction, is good and it doesn't
+                # match the current rpmdb ... then mark it as bad.
+                if old.tid == lasttid:
+                    rpmdbv  = self.rpmdb.simpleVersion(main_only=True)[0]
+                    if lastdbv != rpmdbv:
+                        old.altered_rpmdb = True
+            lastdbv = None
+
             name = self._pwd_ui_username(old.loginuid, 22)
             tm = time.strftime("%Y-%m-%d %H:%M",
                                time.localtime(old.beg_timestamp))
@@ -1292,12 +1305,31 @@ to exit.
         if pats:
             tids.update(self.history.search(pats))
 
+        if not tids and len(extcmds) < 2:
+            old = self.history.last()
+            if old is not None:
+                tids.add(old.tid)
+
         if not tids:
             self.logger.critical(_('No transaction ID, or package, given'))
             return 1, ['Failed history info']
 
+        lastdbv = self.history.last()
+        if lastdbv is not None:
+            lasttid = lastdbv.tid
+            lastdbv = lastdbv.end_rpmdbversion
+
         done = False
         for tid in self.history.old(tids):
+            if lastdbv is not None and not tid.altered_rpmdb:
+                #  If this is the last transaction, is good and it doesn't
+                # match the current rpmdb ... then mark it as bad.
+                if tid.tid == lasttid:
+                    rpmdbv  = self.rpmdb.simpleVersion(main_only=True)[0]
+                    if lastdbv != rpmdbv:
+                        tid.altered_rpmdb = True
+            lastdbv = None
+
             if done:
                 print "-" * 79
             done = True
