@@ -291,7 +291,7 @@ def getCanonX86_64Arch(arch):
     if vendor is None:
         return arch
 
-    if vendor.find("Authentic AMD") != -1:
+    if vendor.find("Authentic AMD") != -1 or vendor.find("AuthenticAMD") != -1:
         return "amd64"
     if vendor.find("GenuineIntel") != -1:
         return "ia32e"
