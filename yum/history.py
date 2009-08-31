@@ -315,7 +315,16 @@ class YumHistory:
         
         self._commit()
 
-    def end(self, rpmdb_version, return_code):
+    def _log_errors(self, errors):
+        cur = self._get_cursor()
+        for error in errors:
+            executeSQL(cur,
+                       """INSERT INTO trans_error
+                          (tid, msg) VALUES (?, ?)""", (self._tid, error))
+        self._commit()
+
+    def end(self, rpmdb_version, return_code, errors=None):
+        assert return_code or not errors
         cur = self._get_cursor()
         res = executeSQL(cur,
                          """INSERT INTO trans_end
@@ -330,6 +339,8 @@ class YumHistory:
                        """UPDATE trans_data_pkgs SET done = 'TRUE'
                           WHERE tid = ?""", (self._tid,))
             self._commit()
+        if errors is not None:
+            self._log_errors(errors)
         del self._tid
 
     def _old_with_pkgs(self, tid):
@@ -414,6 +425,8 @@ class YumHistory:
                   ORDER BY beg_ts DESC, tid ASC
                   LIMIT 1"""
         res = executeSQL(cur, sql)
+        if res is None:
+            res = []
         for row in res:
             return YumHistoryTransaction(self, row)
         return None

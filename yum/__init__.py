@@ -1045,7 +1045,9 @@ class YumBase(depsolve.Depsolve):
                            'yum-rhn-plugin']
         using_pkgs = self.rpmdb.returnPackages(patterns=using_pkgs_pats)
         rpmdbv  = self.rpmdb.simpleVersion(main_only=True)[0]
-        lastdbv = self.history.last().end_rpmdbversion
+        lastdbv = self.history.last()
+        if lastdbv is not None:
+            lastdbv = lastdbv.end_rpmdbversion
         if lastdbv is not None and rpmdbv != lastdbv:
             errstring = _('Warning: RPMDB has been altered since the last yum transaction.')
             self.logger.warning(errstring)
@@ -1066,6 +1068,7 @@ class YumBase(depsolve.Depsolve):
             self.verbose_logger.debug(errstring)
             resultobject.return_code = 1
         else:
+            self.history.end(rpmdbv, 2, errors=errors)
             raise Errors.YumBaseError, errors
                           
         if not self.conf.keepcache:
