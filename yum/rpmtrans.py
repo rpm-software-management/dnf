@@ -252,11 +252,10 @@ class RPMTransaction:
         if self.test: return
     
         if not hasattr(self, '_ts_done'):
-            # need config variable to put this in a better path/name
-            te_fn = '%s/transaction-done.%s' % (self.base.conf.persistdir, self._ts_time)
-            self.ts_done_fn = te_fn
+            self.ts_done_fn = '%s/transaction-done.%s' % (self.base.conf.persistdir, self._ts_time)
+            
             try:
-                self._ts_done = open(te_fn, 'w')
+                self._ts_done = open(self.ts_done_fn, 'w')
             except (IOError, OSError), e:
                 self.display.errorlog('could not open ts_done file: %s' % e)
                 return
@@ -336,9 +335,14 @@ class RPMTransaction:
         self._ts_time = time.strftime('%Y-%m-%d.%H:%M.%S')
         tsfn = '%s/transaction-all.%s' % (self.base.conf.persistdir, self._ts_time)
         self.ts_all_fn = tsfn
-        if not os.path.exists(self.base.conf.persistdir):
-            os.makedirs(self.base.conf.persistdir) # make the dir,
+        # to handle us being inside a chroot at this point
+        # we hand back the right path to those 'outside' of the chroot() calls
+        # but we're using the right path inside.
+        if self.base.conf.installroot != '/':
+            tsfn = tsfn.replace(self.base.conf.installroot,'')
         try:
+            if not os.path.exists(os.path.dirname(tsfn)):
+                os.makedirs(os.path.dirname(tsfn)) # make the dir,
             fo = open(tsfn, 'w')
         except (IOError, OSError), e:
             self.display.errorlog('could not open ts_all file: %s' % e)
@@ -353,7 +357,7 @@ class RPMTransaction:
         except (IOError, OSError), e:
             #  Having incomplete transactions is probably worse than having
             # nothing.
-            misc.unlink_f(self.ts_all_fn)
+            misc.unlink_f(tsfn)
 
     def callback( self, what, bytes, total, h, user ):
         if what == rpm.RPMCALLBACK_TRANS_START:
