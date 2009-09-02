@@ -79,7 +79,7 @@ def re_glob(s):
     # re.match('.*[\*\?\[\]].*', name)
     global _re_compiled_glob_match
     if _re_compiled_glob_match is None:
-        _re_compiled_glob_match = re.compile('.*[\*\?\[\]].*')
+        _re_compiled_glob_match = re.compile('.*([*?]|\[.+\])')
     return _re_compiled_glob_match.match(s)
 
 _re_compiled_pri_fnames_match = None
