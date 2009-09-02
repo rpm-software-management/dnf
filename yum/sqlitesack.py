@@ -836,7 +836,7 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
     def _search_primary_files(self, name):
         querytype = 'glob'
         if not misc.re_glob(name):
-            querytype = '='        
+            querytype = '='
         results = []
         
         for (rep,cache) in self.primarydb.items():
@@ -845,6 +845,16 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
             cur = cache.cursor()
             executeSQL(cur, "select DISTINCT pkgKey from files where name %s ?" % querytype, (name,))
             self._sql_pkgKey2po(rep, cur, results)
+
+            # https://bugzilla.redhat.com/show_bug.cgi?id=520810
+            # just b/c it looks like a glob doesn't mean it IS a glob:
+            # /usr/bin/[ is a legit file in coreutils but it looks (and acts) 
+            # just like a glob - so we need to do an ='s search even if it looks
+            # like a glob. This makes me cranky.
+            if querytype == 'glob':
+                querytype = '='
+                executeSQL(cur, "select DISTINCT pkgKey from files where name %s ?" % querytype, (name,))
+                self._sql_pkgKey2po(rep, cur, results)
 
         return misc.unique(results)
         
