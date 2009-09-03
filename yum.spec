@@ -1,6 +1,6 @@
 Summary: RPM installer/updater
 Name: yum
-Version: 3.2.23
+Version: 3.2.24
 Release: 0
 License: GPLv2+
 Group: System Environment/Base
@@ -15,7 +15,7 @@ BuildRequires: intltool
 Requires: python >= 2.4
 Requires: rpm-python, rpm >= 0:4.4.2
 Requires: python-sqlite
-Requires: urlgrabber
+Requires: urlgrabber >= 3.9.0
 Requires: yum-metadata-parser >= 1.1.0
 Requires: python-iniparse
 Requires: pygpgme
@@ -101,6 +101,9 @@ exit 0
 %{_mandir}/man*/yum-updatesd*
 
 %changelog
+* Thu Sep  3 2009 Seth Vidal <skvidal at fedoraproject.org>
+- 3.2.24
+
 * Tue May 19 2009 Seth Vidal <skvidal at fedoraproject.org>
 - 3.2.23
 
