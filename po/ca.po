@@ -5,6 +5,7 @@
 #
 # Josep Maria Brunetti Fernández <josepb@gmail.com>, 2008
 # Xavier Conde Rueda <xavi.conde@gmail.com>, 2008
+# Josep Torné Llavall <josep.torne@gmail.com>, 2009
 #
 # This file is translated according to the glossary and style guide of
 #   Softcatalà. If you plan to modify this file, please read first the page
@@ -21,8 +22,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: yum\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-03-27 19:24+0000\n"
-"PO-Revision-Date: 2009-03-31 22:25+0100\n"
+"POT-Creation-Date: 2009-09-05 08:55+0000\n"
+"PO-Revision-Date: 2009-09-06 22:25+0100\n"
 "Last-Translator: Agustí Grau <fedora@softcatala.org>\n"
 "Language-Team: Catalan <fedora@softcatala.net>\n"
 "MIME-Version: 1.0\n"
@@ -31,46 +32,32 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
 "X-Poedit-Language: Catalan\n"
 
-#: ../callback.py:48
-#: ../output.py:922
-#: ../yum/rpmtrans.py:71
+#: ../callback.py:48 ../output.py:938 ../yum/rpmtrans.py:71
 msgid "Updating"
 msgstr "Actualitzant"
 
-#: ../callback.py:49
-#: ../yum/rpmtrans.py:72
+#: ../callback.py:49 ../yum/rpmtrans.py:72
 msgid "Erasing"
-msgstr "S'està esborrant"
+msgstr "Suprimint"
 
-#: ../callback.py:50
-#: ../callback.py:51
-#: ../callback.py:53
-#: ../output.py:921
-#: ../yum/rpmtrans.py:73
-#: ../yum/rpmtrans.py:74
-#: ../yum/rpmtrans.py:76
+#: ../callback.py:50 ../callback.py:51 ../callback.py:53 ../output.py:937
+#: ../yum/rpmtrans.py:73 ../yum/rpmtrans.py:74 ../yum/rpmtrans.py:76
 msgid "Installing"
 msgstr "Instal·lant"
 
-#: ../callback.py:52
-#: ../callback.py:58
-#: ../yum/rpmtrans.py:75
+#: ../callback.py:52 ../callback.py:58 ../yum/rpmtrans.py:75
 msgid "Obsoleted"
 msgstr "Obsolet"
 
-#: ../callback.py:54
-#: ../output.py:1029
+#: ../callback.py:54 ../output.py:1061
 msgid "Updated"
 msgstr "Actualitzat"
 
 #: ../callback.py:55
 msgid "Erased"
-msgstr "Esborrat"
+msgstr "Suprimit"
 
-#: ../callback.py:56
-#: ../callback.py:57
-#: ../callback.py:59
-#: ../output.py:1027
+#: ../callback.py:56 ../callback.py:57 ../callback.py:59 ../output.py:1059
 msgid "Installed"
 msgstr "Instal·lat"
 
@@ -90,75 +77,70 @@ msgstr "Error: estat de sortida invàlid: %s per a %s"
 #: ../callback.py:212
 #, python-format
 msgid "Erased: %s"
-msgstr "Esborrat: %s"
+msgstr "Suprimit: %s"
 
-#: ../callback.py:217
-#: ../output.py:923
+#: ../callback.py:217 ../output.py:939
 msgid "Removing"
-msgstr "S'està esborrant"
+msgstr "Suprimint"
 
-#: ../callback.py:219
-#: ../yum/rpmtrans.py:77
+#: ../callback.py:219 ../yum/rpmtrans.py:77
 msgid "Cleanup"
 msgstr "Neteja"
 
-#: ../cli.py:106
+#: ../cli.py:107
 #, python-format
 msgid "Command \"%s\" already defined"
 msgstr "L'ordre «%s» ja està definida"
 
-#: ../cli.py:118
+#: ../cli.py:119
 msgid "Setting up repositories"
 msgstr "Configurant repositoris"
 
-#: ../cli.py:129
+#: ../cli.py:130
 msgid "Reading repository metadata in from local files"
 msgstr "S'estan llegint les metadades de repositoris des de fitxers locals"
 
-#: ../cli.py:192
-#: ../utils.py:79
+#: ../cli.py:193 ../utils.py:87
 #, python-format
 msgid "Config Error: %s"
 msgstr "Error de configuració: %s"
 
-#: ../cli.py:195
-#: ../cli.py:1224
-#: ../utils.py:82
+#: ../cli.py:196 ../cli.py:1253 ../utils.py:90
 #, python-format
 msgid "Options Error: %s"
 msgstr "Error d'opcions: %s"
 
-#: ../cli.py:223
+#: ../cli.py:225
 #, python-format
 msgid "  Installed: %s-%s at %s"
 msgstr "  Instal·lat: %s-%s a %s"
 
-#: ../cli.py:225
+#: ../cli.py:227
 #, python-format
 msgid "  Built    : %s at %s"
 msgstr "  Muntat    : %s a %s"
 
-#: ../cli.py:227
+#: ../cli.py:229
 #, python-format
 msgid "  Committed: %s at %s"
 msgstr "  Pujat: %s a %s"
 
-#: ../cli.py:266
+#: ../cli.py:268
 msgid "You need to give some command"
 msgstr "Cal que doneu alguna ordre"
 
-#: ../cli.py:309
+#: ../cli.py:311
 msgid "Disk Requirements:\n"
 msgstr "Requeriments de disc:\n"
 
-#: ../cli.py:311
+#: ../cli.py:313
 #, python-format
 msgid "  At least %dMB needed on the %s filesystem.\n"
 msgstr "  Es necessiten almenys %dMB al sistema de fitxers %s.\n"
 
 #. TODO: simplify the dependency errors?
 #. Fixup the summary
-#: ../cli.py:316
+#: ../cli.py:318
 msgid ""
 "Error Summary\n"
 "-------------\n"
@@ -166,58 +148,66 @@ msgstr ""
 "Resum d'errors\n"
 "-------------\n"
 
-#: ../cli.py:359
+#: ../cli.py:361
 msgid "Trying to run the transaction but nothing to do. Exiting."
-msgstr "S'ha intentat executar la transacció però no hi ha cap tasca a fer. S'està sortint."
+msgstr ""
+"S'ha intentat executar la transacció però no hi ha cap tasca a fer. S'està "
+"sortint."
 
-#: ../cli.py:395
+#: ../cli.py:397
 msgid "Exiting on user Command"
 msgstr "S'està sortint de l'ordre de l'usuari"
 
-#: ../cli.py:399
+#: ../cli.py:401
 msgid "Downloading Packages:"
-msgstr "S'estan descarregant els següents paquets:"
+msgstr "S'estan baixant els següents paquets:"
 
-#: ../cli.py:404
+#: ../cli.py:406
 msgid "Error Downloading Packages:\n"
-msgstr "S'ha produït un error descarregant els següents paquets:\n"
+msgstr "S'ha produït un error baixant els següents paquets:\n"
 
-#: ../cli.py:418
-#: ../yum/__init__.py:3520
+#: ../cli.py:420 ../yum/__init__.py:3854
 msgid "Running rpm_check_debug"
 msgstr "S'està executant rpm_check_debug"
 
-#: ../cli.py:421
-#: ../yum/__init__.py:3523
+#: ../cli.py:429 ../yum/__init__.py:3863
+msgid "ERROR You need to update rpm to handle:"
+msgstr "S'ha produït un error. Necessiteu actualitzar el gestor rpm:"
+
+#: ../cli.py:431 ../yum/__init__.py:3866
 msgid "ERROR with rpm_check_debug vs depsolve:"
 msgstr "S'ha produït un error amb rpm_check_debug contra depsolve:"
 
-#: ../cli.py:425
+#: ../cli.py:437
+msgid "RPM needs to be updated"
+msgstr "Cal actualitzar l'RPM"
+
+#: ../cli.py:438
 #, python-format
 msgid "Please report this error in %s"
 msgstr "Siusplau, informeu d'aquest error a %s"
 
-#: ../cli.py:431
+#: ../cli.py:444
 msgid "Running Transaction Test"
 msgstr "S'està executant la transacció de prova"
 
-#: ../cli.py:447
+#: ../cli.py:460
 msgid "Finished Transaction Test"
 msgstr "Ha acabat la transacció de prova"
 
-#: ../cli.py:449
+#: ../cli.py:462
 msgid "Transaction Check Error:\n"
 msgstr "S'ha produït un error en la transacció de prova:\n"
 
-#: ../cli.py:456
+#: ../cli.py:469
 msgid "Transaction Test Succeeded"
 msgstr "La transacció de prova ha acabat amb èxit"
 
-#: ../cli.py:477
+#: ../cli.py:491
 msgid "Running Transaction"
 msgstr "S'està executant la transacció"
 
-#: ../cli.py:507
+#: ../cli.py:521
 msgid ""
 "Refusing to automatically import keys when running unattended.\n"
 "Use \"-y\" to override."
@@ -225,184 +215,191 @@ msgstr ""
 "No s'importaran automàticament les claus en una execució desatesa.\n"
 "Feu servir \"-y\" per a importar les claus."
 
-#: ../cli.py:526
-#: ../cli.py:560
+#: ../cli.py:540 ../cli.py:574
 msgid "  * Maybe you meant: "
 msgstr "  * Potser volíeu dir: "
 
-#: ../cli.py:543
-#: ../cli.py:551
+#: ../cli.py:557 ../cli.py:565
 #, python-format
 msgid "Package(s) %s%s%s available, but not installed."
 msgstr "Paquets %s%s%s disponibles, però no instal·lats."
 
-#: ../cli.py:557
-#: ../cli.py:588
-#: ../cli.py:668
+#: ../cli.py:571 ../cli.py:602 ../cli.py:680
 #, python-format
 msgid "No package %s%s%s available."
 msgstr "El paquet %s%s%s no està disponible."
 
-#: ../cli.py:593
-#: ../cli.py:695
+#: ../cli.py:607 ../cli.py:740
 msgid "Package(s) to install"
 msgstr "Paquets a instal·lar"
 
-#: ../cli.py:594
-#: ../cli.py:674
-#: ../cli.py:696
-#: ../yumcommands.py:159
-#: ../yumcommands.py:1013
+#: ../cli.py:608 ../cli.py:686 ../cli.py:719 ../cli.py:741
+#: ../yumcommands.py:157
 msgid "Nothing to do"
 msgstr "Res a fer"
 
-#: ../cli.py:627
+#: ../cli.py:641
 #, python-format
 msgid "%d packages marked for Update"
 msgstr "%d paquets marcats per a actualitzar"
 
-#: ../cli.py:630
+#: ../cli.py:644
 msgid "No Packages marked for Update"
 msgstr "No hi ha cap paquet marcat per a actualitzar"
 
-#: ../cli.py:644
+#: ../cli.py:658
 #, python-format
 msgid "%d packages marked for removal"
-msgstr "%d paquets marcats per a esborrar"
+msgstr "%d paquets marcats per a suprimir"
 
-#: ../cli.py:647
+#: ../cli.py:661
 msgid "No Packages marked for removal"
-msgstr "No hi ha cap paquet marcat per a esborrar"
+msgstr "No hi ha cap paquet marcat per a suprimir"
 
-#: ../cli.py:673
+#: ../cli.py:685
 msgid "Package(s) to downgrade"
 msgstr "Paquets per a desactualitzar"
 
-#: ../cli.py:686
+#: ../cli.py:709
+#, python-format
+msgid " (from %s)"
+msgstr " (des de %s)"
+
+#: ../cli.py:711
+#, python-format
+msgid "Installed package %s%s%s%s not available."
+msgstr "El paquet instal·lat %s%s%s%s no està disponible."
+
+#: ../cli.py:718
+msgid "Package(s) to reinstall"
+msgstr "Paquets a reinstal·lar"
+
+#: ../cli.py:731
 msgid "No Packages Provided"
 msgstr "No s'ha proporcionat cap paquet"
 
-#: ../cli.py:741
-msgid "Matching packages for package list to user args"
-msgstr "S'està comparant els paquets per a la llista de paquets amb els arguments de l'usuari"
-
-#: ../cli.py:790
+#: ../cli.py:815
 #, python-format
 msgid "Warning: No matches found for: %s"
 msgstr "Avís: no s'ha trobat cap coincidència per a: %s"
 
-#: ../cli.py:793
+#: ../cli.py:818
 msgid "No Matches found"
 msgstr "No s'ha trobat cap coincidència"
 
-#: ../cli.py:832
+#: ../cli.py:857
 #, python-format
 msgid ""
 "Warning: 3.0.x versions of yum would erroneously match against filenames.\n"
 " You can use \"%s*/%s%s\" and/or \"%s*bin/%s%s\" to get that behaviour"
 msgstr ""
-"Avís: les versions 3.0.x del yum comproven incorrectament els noms de fitxer.\n"
+"Avís: les versions 3.0.x del yum comproven incorrectament els noms de "
+"fitxer.\n"
 " Podeu usar \"%s*/%s%s\" i/o \"%s*bin/%s%s\" per obtenir aquest comportament"
 
-#: ../cli.py:848
+#: ../cli.py:873
 #, python-format
 msgid "No Package Found for %s"
 msgstr "No s'ha trobat cap paquet per a %s"
 
-#: ../cli.py:860
+#: ../cli.py:885
 msgid "Cleaning up Everything"
 msgstr "S'està netejant tot"
 
-#: ../cli.py:874
+#: ../cli.py:899
 msgid "Cleaning up Headers"
 msgstr "S'estan netejant les capçaleres"
 
-#: ../cli.py:877
+#: ../cli.py:902
 msgid "Cleaning up Packages"
 msgstr "S'estan netejant els paquets"
 
-#: ../cli.py:880
+#: ../cli.py:905
 msgid "Cleaning up xml metadata"
 msgstr "S'estan netejant les metadades xml"
 
-#: ../cli.py:883
+#: ../cli.py:908
 msgid "Cleaning up database cache"
 msgstr "S'està netejant la memòria cau de la base de dades"
 
-#: ../cli.py:886
+#: ../cli.py:911
 msgid "Cleaning up expire-cache metadata"
 msgstr "S'està netejant la memòria cau de metadades que han vençut"
 
-#: ../cli.py:889
+#: ../cli.py:914
 msgid "Cleaning up plugins"
 msgstr "S'estan netejant els connectors"
 
-#: ../cli.py:914
+#: ../cli.py:939
 msgid "Installed Groups:"
 msgstr "Grups instal·lats:"
 
-#: ../cli.py:926
+#: ../cli.py:951
 msgid "Available Groups:"
 msgstr "Grups disponibles:"
 
-#: ../cli.py:936
+#: ../cli.py:961
 msgid "Done"
 msgstr "Fet"
 
-#: ../cli.py:947
-#: ../cli.py:965
-#: ../cli.py:971
-#: ../yum/__init__.py:2421
+#: ../cli.py:972 ../cli.py:990 ../cli.py:996 ../yum/__init__.py:2560
 #, python-format
 msgid "Warning: Group %s does not exist."
 msgstr "Avís: El grup %s no existeix."
 
-#: ../cli.py:975
+#: ../cli.py:1000
 msgid "No packages in any requested group available to install or update"
-msgstr "No hi ha cap paquet disponible per a instal·lar o actualitzar en els grups sol·licitats"
+msgstr ""
+"No hi ha cap paquet disponible per a instal·lar o actualitzar en els grups "
+"sol·licitats"
 
-#: ../cli.py:977
+#: ../cli.py:1002
 #, python-format
 msgid "%d Package(s) to Install"
 msgstr "%d paquets a instal·lar"
 
-#: ../cli.py:987
-#: ../yum/__init__.py:2433
+#: ../cli.py:1012 ../yum/__init__.py:2572
 #, python-format
 msgid "No group named %s exists"
 msgstr "No existeix cap grup anomenat %s"
 
-#: ../cli.py:993
+#: ../cli.py:1018
 msgid "No packages to remove from groups"
-msgstr "No hi ha cap paquet a esborrar dels grups"
+msgstr "No hi ha cap paquet a suprimir dels grups"
 
-#: ../cli.py:995
+#: ../cli.py:1020
 #, python-format
 msgid "%d Package(s) to remove"
-msgstr "%d paquets a esborrar"
+msgstr "%d paquets a suprimir"
 
-#: ../cli.py:1037
+#: ../cli.py:1062
 #, python-format
 msgid "Package %s is already installed, skipping"
 msgstr "El paquet %s ja està instal·lat, s'ometrà"
 
-#: ../cli.py:1048
+#: ../cli.py:1073
 #, python-format
 msgid "Discarding non-comparable pkg %s.%s"
 msgstr "S'està descartant el paquet no comparable %s.%s"
 
 #. we've not got any installed that match n or n+a
-#: ../cli.py:1074
+#: ../cli.py:1099
 #, python-format
 msgid "No other %s installed, adding to list for potential install"
-msgstr "No hi ha cap altre %s instal·lat, s'afegeix a la llista per a una possible instal·lació"
+msgstr ""
+"No hi ha cap altre %s instal·lat, s'afegeix a la llista per a una possible "
+"instal·lació"
 
-#: ../cli.py:1093
+#: ../cli.py:1119
+msgid "Plugin Options"
+msgstr "Opcions del connector"
+
+#: ../cli.py:1127
 #, python-format
 msgid "Command line error: %s"
 msgstr "Error en la línia d'ordres: %s"
 
-#: ../cli.py:1106
+#: ../cli.py:1140
 #, python-format
 msgid ""
 "\n"
@@ -413,253 +410,259 @@ msgstr ""
 "\n"
 "%s: l'opció %s necessita un argument"
 
-#: ../cli.py:1164
+#: ../cli.py:1193
 msgid "--color takes one of: auto, always, never"
 msgstr "--color pren un valor d'entre: auto, always, never"
 
-#: ../cli.py:1266
+#: ../cli.py:1300
 msgid "show this help message and exit"
 msgstr "mostra el missatge d'ajuda i surt"
 
-#: ../cli.py:1270
+#: ../cli.py:1304
 msgid "be tolerant of errors"
 msgstr "sigues tolerant amb els errors"
 
-#: ../cli.py:1272
+#: ../cli.py:1306
 msgid "run entirely from cache, don't update cache"
 msgstr "executa totalment des de la memòria cau, no l'actualitzis"
 
-#: ../cli.py:1274
+#: ../cli.py:1308
 msgid "config file location"
 msgstr "ubicació del fitxer de configuració"
 
-#: ../cli.py:1276
+#: ../cli.py:1310
 msgid "maximum command wait time"
 msgstr "temps màxim d'espera d'ordres"
 
-#: ../cli.py:1278
+#: ../cli.py:1312
 msgid "debugging output level"
 msgstr "nivell de sortida de depuració"
 
-#: ../cli.py:1282
+#: ../cli.py:1316
 msgid "show duplicates, in repos, in list/search commands"
 msgstr "mostra duplicats, en repositoris, en les ordres per llistar i cercar"
 
-#: ../cli.py:1284
+#: ../cli.py:1318
 msgid "error output level"
 msgstr "nivell de sortida d'error"
 
-#: ../cli.py:1287
+#: ../cli.py:1321
 msgid "quiet operation"
 msgstr "operació silenciosa"
 
-#: ../cli.py:1289
+#: ../cli.py:1323
 msgid "verbose operation"
 msgstr "operació descriptiva"
 
-#: ../cli.py:1291
+#: ../cli.py:1325
 msgid "answer yes for all questions"
 msgstr "respon sí a totes les preguntes"
 
-#: ../cli.py:1293
+#: ../cli.py:1327
 msgid "show Yum version and exit"
 msgstr "mostra la versió del Yum i surt"
 
-#: ../cli.py:1294
+#: ../cli.py:1328
 msgid "set install root"
 msgstr "estableix l'arrel de la instal·lació"
 
-#: ../cli.py:1298
+#: ../cli.py:1332
 msgid "enable one or more repositories (wildcards allowed)"
 msgstr "habilita un o més repositoris (es permeten caràcters de reemplaçament)"
 
-#: ../cli.py:1302
+#: ../cli.py:1336
 msgid "disable one or more repositories (wildcards allowed)"
-msgstr "deshabilita un o més repositoris (es permeten caràcters de reemplaçament)"
+msgstr ""
+"deshabilita un o més repositoris (es permeten caràcters de reemplaçament)"
 
-#: ../cli.py:1305
+#: ../cli.py:1339
 msgid "exclude package(s) by name or glob"
 msgstr "exclou els paquets per nom o expressió regular del glob"
 
-#: ../cli.py:1307
+#: ../cli.py:1341
 msgid "disable exclude from main, for a repo or for everything"
 msgstr "inhabilita l'exclusió des de l'inici, per a un repositori o per a tot"
 
-#: ../cli.py:1310
+#: ../cli.py:1344
 msgid "enable obsoletes processing during updates"
 msgstr "habilita el processament d'obsolets durant les actualitzacions"
 
-#: ../cli.py:1312
+#: ../cli.py:1346
 msgid "disable Yum plugins"
 msgstr "inhabilita els connectors de Yum"
 
-#: ../cli.py:1314
+#: ../cli.py:1348
 msgid "disable gpg signature checking"
 msgstr "inhabilita la comprobació de signatures gpg"
 
-#: ../cli.py:1316
+#: ../cli.py:1350
 msgid "disable plugins by name"
 msgstr "inhabilita els connectors pel seu nom"
 
-#: ../cli.py:1319
+#: ../cli.py:1353
 msgid "enable plugins by name"
 msgstr "habilita els connectors pel seu nom"
 
-#: ../cli.py:1322
+#: ../cli.py:1356
 msgid "skip packages with depsolving problems"
 msgstr "omet paquets amb problemes de resolució de dependències"
 
-#: ../cli.py:1324
+#: ../cli.py:1358
 msgid "control whether color is used"
 msgstr "controla sempre que s'usi color"
 
-#: ../output.py:298
+#: ../output.py:303
 msgid "Jan"
 msgstr "Gen"
 
-#: ../output.py:298
+#: ../output.py:303
 msgid "Feb"
 msgstr "Feb"
 
-#: ../output.py:298
+#: ../output.py:303
 msgid "Mar"
 msgstr "Mar"
 
-#: ../output.py:298
+#: ../output.py:303
 msgid "Apr"
 msgstr "Abr"
 
-#: ../output.py:298
+#: ../output.py:303
 msgid "May"
 msgstr "Mai"
 
-#: ../output.py:298
+#: ../output.py:303
 msgid "Jun"
 msgstr "Jun"
 
-#: ../output.py:299
+#: ../output.py:304
 msgid "Jul"
 msgstr "Jul"
 
-#: ../output.py:299
+#: ../output.py:304
 msgid "Aug"
 msgstr "Ago"
 
-#: ../output.py:299
+#: ../output.py:304
 msgid "Sep"
 msgstr "Set"
 
-#: ../output.py:299
+#: ../output.py:304
 msgid "Oct"
 msgstr "Oct"
 
-#: ../output.py:299
+#: ../output.py:304
 msgid "Nov"
 msgstr "Nov"
 
-#: ../output.py:299
+#: ../output.py:304
 msgid "Dec"
 msgstr "Des"
 
-#: ../output.py:309
+#: ../output.py:314
 msgid "Trying other mirror."
 msgstr "S'està intentant un altre servidor rèplica."
 
-#: ../output.py:525
+#: ../output.py:536
 #, python-format
 msgid "Name       : %s%s%s"
 msgstr "Nom        : %s%s%s"
 
-#: ../output.py:526
+#: ../output.py:537
 #, python-format
 msgid "Arch       : %s"
 msgstr "Arq        : %s"
 
-#: ../output.py:528
+#: ../output.py:539
 #, python-format
 msgid "Epoch      : %s"
 msgstr "Època      : %s"
 
-#: ../output.py:529
+#: ../output.py:540
 #, python-format
 msgid "Version    : %s"
 msgstr "Versió     : %s"
 
-#: ../output.py:530
+#: ../output.py:541
 #, python-format
 msgid "Release    : %s"
 msgstr "Release    : %s"
 
-#: ../output.py:531
+#: ../output.py:542
 #, python-format
 msgid "Size       : %s"
 msgstr "Mida       : %s"
 
-#: ../output.py:532
+#: ../output.py:543
 #, python-format
 msgid "Repo       : %s"
 msgstr "Repo       : %s"
 
-#: ../output.py:534
+#: ../output.py:545
+#, python-format
+msgid "From repo  : %s"
+msgstr "Des del repo  : %s"
+
+#: ../output.py:547
 #, python-format
 msgid "Committer  : %s"
 msgstr "Desenvolupador  : %s"
 
-#: ../output.py:535
+#: ../output.py:548
 #, python-format
 msgid "Committime : %s"
 msgstr "Pujat      : %s"
 
-#: ../output.py:536
+#: ../output.py:549
 #, python-format
 msgid "Buildtime  : %s"
 msgstr "Temps de creació  : %s"
 
-#: ../output.py:538
+#: ../output.py:551
 #, python-format
 msgid "Installtime: %s"
 msgstr "Temps d'instal·lació: %s"
 
-#: ../output.py:539
+#: ../output.py:552
 msgid "Summary    : "
 msgstr "Resum      : "
 
-#: ../output.py:541
+#: ../output.py:554
 #, python-format
 msgid "URL        : %s"
 msgstr "URL        : %s"
 
-#: ../output.py:542
+#: ../output.py:555
 #, python-format
 msgid "License    : %s"
 msgstr "Llicència  : %s"
 
-#: ../output.py:543
+#: ../output.py:556
 msgid "Description: "
 msgstr "Descripció: "
 
-#: ../output.py:611
+#: ../output.py:624
 msgid "y"
 msgstr "s"
 
-#: ../output.py:611
+#: ../output.py:624
 msgid "yes"
 msgstr "sí"
 
-#: ../output.py:612
+#: ../output.py:625
 msgid "n"
 msgstr "n"
 
-#: ../output.py:612
+#: ../output.py:625
 msgid "no"
 msgstr "no"
 
 # REMEMBER to Translate [Y/N] to the current locale
-#: ../output.py:616
+#: ../output.py:629
 msgid "Is this ok [y/N]: "
 msgstr "És correcte [s/N]: "
 
-#: ../output.py:704
+#: ../output.py:720
 #, python-format
 msgid ""
 "\n"
@@ -668,134 +671,142 @@ msgstr ""
 "\n"
 "Grup: %s"
 
-#: ../output.py:708
+#: ../output.py:724
 #, python-format
 msgid " Group-Id: %s"
 msgstr " Id de Grup: %s"
 
-#: ../output.py:713
+#: ../output.py:729
 #, python-format
 msgid " Description: %s"
 msgstr " Descripció: %s"
 
-#: ../output.py:715
+#: ../output.py:731
 msgid " Mandatory Packages:"
 msgstr " Paquets obligatoris:"
 
-#: ../output.py:716
+#: ../output.py:732
 msgid " Default Packages:"
 msgstr " Paquets per defecte:"
 
-#: ../output.py:717
+#: ../output.py:733
 msgid " Optional Packages:"
 msgstr " Paquets opcionals:"
 
-#: ../output.py:718
+#: ../output.py:734
 msgid " Conditional Packages:"
 msgstr " Paquets condicionals:"
 
-#: ../output.py:738
+#: ../output.py:754
 #, python-format
 msgid "package: %s"
 msgstr "paquet: %s"
 
-#: ../output.py:740
+#: ../output.py:756
 msgid "  No dependencies for this package"
 msgstr "  No hi ha dependències per a aquest paquet"
 
-#: ../output.py:745
+#: ../output.py:761
 #, python-format
 msgid "  dependency: %s"
 msgstr "  dependència: %s"
 
-#: ../output.py:747
+#: ../output.py:763
 msgid "   Unsatisfied dependency"
 msgstr "   Dependència insatisfeta"
 
-#: ../output.py:819
+#: ../output.py:835
 #, python-format
 msgid "Repo        : %s"
 msgstr "Repo        : %s"
 
-#: ../output.py:820
+#: ../output.py:836
 msgid "Matched from:"
 msgstr "Coincidències amb:"
 
-#: ../output.py:828
+#: ../output.py:845
 msgid "Description : "
 msgstr "Descripció  : "
 
-#: ../output.py:831
+#: ../output.py:848
 #, python-format
 msgid "URL         : %s"
 msgstr "URL         : %s"
 
-#: ../output.py:834
+#: ../output.py:851
 #, python-format
 msgid "License     : %s"
 msgstr "Llicència   : %s"
 
-#: ../output.py:837
+#: ../output.py:854
 #, python-format
 msgid "Filename    : %s"
 msgstr "Fitxer      : %s"
 
-#: ../output.py:841
+#: ../output.py:858
 msgid "Other       : "
 msgstr "Altre       : "
 
-#: ../output.py:874
+#: ../output.py:891
 msgid "There was an error calculating total download size"
 msgstr "S'ha produït un error en calcular la mida total de la descàrrega"
 
-#: ../output.py:879
+#: ../output.py:896
 #, python-format
 msgid "Total size: %s"
 msgstr "Mida total: %s"
 
-#: ../output.py:882
+#: ../output.py:899
 #, python-format
 msgid "Total download size: %s"
 msgstr "Mida total de la descàrrega: %s"
 
-#: ../output.py:924
+#: ../output.py:940
+#, 
+msgid "Reinstalling"
+msgstr "Tornant a instal·lar"
+
+#: ../output.py:941
+msgid "Downgrading"
+msgstr "Desfent l'actualització"
+
+#: ../output.py:942
 msgid "Installing for dependencies"
 msgstr "S'està instal·lant per dependències"
 
-#: ../output.py:925
+#: ../output.py:943
 msgid "Updating for dependencies"
 msgstr "S'està actualitzant degut a les dependències"
 
-#: ../output.py:926
+#: ../output.py:944
 msgid "Removing for dependencies"
-msgstr "S'està esborrant degut a les dependències"
+msgstr "S'està suprimint degut a les dependències"
 
-#: ../output.py:933
-#: ../output.py:1031
+#: ../output.py:951 ../output.py:1063
 msgid "Skipped (dependency problems)"
 msgstr "Ignorat degut a problemes de dependències:"
 
-#: ../output.py:954
+#: ../output.py:974
 msgid "Package"
 msgstr "Paquet"
 
-#: ../output.py:954
+#: ../output.py:974
 msgid "Arch"
 msgstr "Arq"
 
-#: ../output.py:955
+#: ../output.py:975
 msgid "Version"
 msgstr "Versió"
 
-#: ../output.py:955
+#: ../output.py:975
 msgid "Repository"
 msgstr "Repositori"
 
-#: ../output.py:956
+#: ../output.py:976
 msgid "Size"
 msgstr "Mida"
 
-#: ../output.py:968
+#: ../output.py:988
 #, python-format
 msgid ""
 "     replacing  %s%s%s.%s %s\n"
@@ -804,135 +815,164 @@ msgstr ""
 "     s'està reemplaçant  %s%s%s.%s %s\n"
 "\n"
 
-#: ../output.py:977
+#: ../output.py:997
 #, python-format
 msgid ""
 "\n"
 "Transaction Summary\n"
 "%s\n"
-"Install  %5.5s Package(s)         \n"
-"Update   %5.5s Package(s)         \n"
-"Remove   %5.5s Package(s)         \n"
 msgstr ""
 "\n"
-"Resum de transaccions\n"
+"Resum de la transacció\n"
 "%s\n"
-"Instal·la  %5.5s paquets         \n"
-"Actualitza %5.5s paquets         \n"
-"Esborra    %5.5s paquets         \n"
 
-#: ../output.py:1025
+#: ../output.py:1004
+#, python-format
+msgid ""
+"Install   %5.5s Package(s)\n"
+"Upgrade   %5.5s Package(s)\n"
+msgstr ""
+"Instal·la     %5.5s paquets\n"
+"Actualitza    %5.5s paquets\n"
+
+
+#: ../output.py:1013
+#, python-format //paraula downgrade
+msgid ""
+"Remove    %5.5s Package(s)\n"
+"Reinstall %5.5s Package(s)\n"
+"Downgrade %5.5s Package(s)\n"
+msgstr ""
+"Suprimeix     %5.5s paquets\n"
+"Reinstal·la   %5.5s paquets\n"
+"Desactualitza %5.5s paquets\n"
+
+#: ../output.py:1057
 msgid "Removed"
-msgstr "Esborrat"
+msgstr "Suprimit"
 
-#: ../output.py:1026
+#: ../output.py:1058
 msgid "Dependency Removed"
-msgstr "Dependència esborrada"
+msgstr "Dependència suprimida"
 
-#: ../output.py:1028
+#: ../output.py:1060
 msgid "Dependency Installed"
 msgstr "Dependència instal·lada"
 
-#: ../output.py:1030
+#: ../output.py:1062
 msgid "Dependency Updated"
 msgstr "Dependència actualitzada"
 
-#: ../output.py:1032
+#: ../output.py:1064
 msgid "Replaced"
 msgstr "Reemplaçat"
 
-#: ../output.py:1033
+#: ../output.py:1065
 msgid "Failed"
 msgstr "Ha fallat"
 
 #. Delta between C-c's so we treat as exit
-#: ../output.py:1099
+#: ../output.py:1131
 msgid "two"
 msgstr "dos"
 
-#: ../output.py:1106
+#. For translators: This is output like:
+#. Current download cancelled, interrupt (ctrl-c) again within two seconds
+#. to exit.
+#. Where "interupt (ctrl-c) again" and "two" are highlighted.
+#: ../output.py:1142
 #, python-format
 msgid ""
 "\n"
-" Current download cancelled, %sinterrupt (ctrl-c) again%s within %s%s%s seconds to exit.\n"
+" Current download cancelled, %sinterrupt (ctrl-c) again%s within %s%s%s "
+"seconds\n"
+"to exit.\n"
 msgstr ""
 "\n"
-" S'ha cancel·lat la descàrrega actual, %sinterromp (crtl-c) de nou%s en %s%s%s segons per a sortir.\n"
+" S'ha cancel·lat la descàrrega actual, %sinterromp (crtl-c) de nou%s en %s%s%s "
+"segons\n"
+"per a sortir.\n"
 
-#: ../output.py:1116
+#: ../output.py:1153
 msgid "user interrupt"
 msgstr "interrupció de l'usuari"
 
-#: ../output.py:1132
+#: ../output.py:1171
 msgid "Total"
 msgstr "Total"
 
-#: ../output.py:1146
+#: ../output.py:1186
 msgid "installed"
 msgstr "instal·lat"
 
-#: ../output.py:1147
+#: ../output.py:1187
 msgid "updated"
 msgstr "actualitzat"
 
-#: ../output.py:1148
+#: ../output.py:1188
 msgid "obsoleted"
 msgstr "obsolet"
 
-#: ../output.py:1149
+#: ../output.py:1189
 msgid "erased"
-msgstr "esborrat"
+msgstr "suprimit"
 
-#: ../output.py:1153
+#: ../output.py:1193
 #, python-format
 msgid "---> Package %s.%s %s:%s-%s set to be %s"
 msgstr "---> Paquet %s.%s %s:%s-%s passarà a ser %s"
 
-#: ../output.py:1160
+#: ../output.py:1200
 msgid "--> Running transaction check"
 msgstr "--> S'està executant la transacció de prova"
 
-#: ../output.py:1165
+#: ../output.py:1205
 msgid "--> Restarting Dependency Resolution with new changes."
-msgstr "--> Tornant a calcular la resolució de dependències amb els nous canvis."
+msgstr ""
+"--> Tornant a calcular la resolució de dependències amb els nous canvis."
 
-#: ../output.py:1170
+#: ../output.py:1210
 msgid "--> Finished Dependency Resolution"
 msgstr "--> Ha finalitzat la resolució de dependències"
 
-#: ../output.py:1175
+#: ../output.py:1215 ../output.py:1220
 #, python-format
 msgid "--> Processing Dependency: %s for package: %s"
 msgstr "--> S'està processant la dependència %s per al paquet: %s"
 
-#: ../output.py:1180
+#: ../output.py:1224
 #, python-format
 msgid "--> Unresolved Dependency: %s"
 msgstr "--> Dependència no resolta: %s"
 
-#: ../output.py:1186
+#: ../output.py:1230 ../output.py:1235
 #, python-format
 msgid "--> Processing Conflict: %s conflicts %s"
 msgstr "--> S'està processant el conflicte: %s té un conflicte amb %s"
 
-#: ../output.py:1189
+#: ../output.py:1239
 msgid "--> Populating transaction set with selected packages. Please wait."
-msgstr "--> S'està poblant la transacció amb els paquets sel·leccionats. Si us plau, espereu."
+msgstr ""
+"--> S'està poblant la transacció amb els paquets sel·leccionats. Si us plau, "
+"espereu."
 
-#: ../output.py:1193
+#: ../output.py:1243
 #, python-format
 msgid "---> Downloading header for %s to pack into transaction set."
-msgstr "---> S'està descarregant la capçalera per a %s per a empaquetar dins de la transacció de prova."
+msgstr ""
+"---> S'està baixant la capçalera per a %s per a empaquetar dins de la "
+"transacció de prova."
 
-#: ../yumcommands.py:41
+#: ../yumcommands.py:40
 msgid "You need to be root to perform this command."
 msgstr "Heu de ser root per a executar aquesta ordre."
 
-#: ../yumcommands.py:48
+#: ../yumcommands.py:47
 msgid ""
 "\n"
 "You have enabled checking of packages via GPG keys. This is a good thing. \n"
-"However, you do not have any GPG public keys installed. You need to download\n"
+"However, you do not have any GPG public keys installed. You need to "
+"download\n"
 "the keys for packages you wish to install and install them.\n"
 "You can do that by running the command:\n"
 "    rpm --import public.gpg.key\n"
@@ -945,8 +985,10 @@ msgid ""
 "For more information contact your distribution or package provider.\n"
 msgstr ""
 "\n"
-"Heu habilitat la comprovació de paquets utilitzant claus GPG. És una bona opció. \n"
-"No obstant, no teniu cap clau pública GPG instal·lada. Necessiteu descarregar\n"
+"Heu habilitat la comprovació de paquets utilitzant claus GPG. És una bona "
+"opció. \n"
+"No obstant, no teniu cap clau pública GPG instal·lada. Necessiteu "
+"baixar\n"
 "les claus per als paquets que desitgeu instal·lar i instal·lar-les.\n"
 "Podeu fer-ho executant l'ordre:\n"
 "    rpm --import clau.pública.gpg\n"
@@ -956,163 +998,164 @@ msgstr ""
 "per a un repositori en l'opció 'gpgkey' en la secció d'un repositori i yum \n"
 "la instal·larà per vosaltres.\n"
 "\n"
-"Per a més informació contacteu el vostre distribuïdor o proveïdor de paquets.\n"
+"Per a més informació contacteu el vostre distribuïdor o proveïdor de "
+"paquets.\n"
 
-#: ../yumcommands.py:68
+#: ../yumcommands.py:67
 #, python-format
 msgid "Error: Need to pass a list of pkgs to %s"
 msgstr "Error: es necessita passar una llista de paquets a %s"
 
-#: ../yumcommands.py:74
+#: ../yumcommands.py:73
 msgid "Error: Need an item to match"
 msgstr "Error: es necessita algun element per comparar"
 
-#: ../yumcommands.py:80
+#: ../yumcommands.py:79
 msgid "Error: Need a group or list of groups"
 msgstr "Error: es necessita un grup o una llista de grups"
 
-#: ../yumcommands.py:89
+#: ../yumcommands.py:88
 #, python-format
 msgid "Error: clean requires an option: %s"
 msgstr "Error: la neteja requereix una opció: %s"
 
-#: ../yumcommands.py:94
+#: ../yumcommands.py:93
 #, python-format
 msgid "Error: invalid clean argument: %r"
 msgstr "Error: argument invàlid per a la neteja: %r"
 
-#: ../yumcommands.py:107
+#: ../yumcommands.py:106
 msgid "No argument to shell"
 msgstr "No hi ha arguments per a l'intèrpret d'ordres"
 
-#: ../yumcommands.py:110
+#: ../yumcommands.py:108
 #, python-format
 msgid "Filename passed to shell: %s"
 msgstr "Nom del fitxer passat a l'intèrpret d'ordres: %s"
 
-#: ../yumcommands.py:114
+#: ../yumcommands.py:112
 #, python-format
 msgid "File %s given as argument to shell does not exist."
 msgstr "El fitxer %s donat com a argument a l'intèrpret d'ordres no existeix."
 
-#: ../yumcommands.py:120
+#: ../yumcommands.py:118
 msgid "Error: more than one file given as argument to shell."
-msgstr "Error: s'ha donat més d'un fitxer com a argument per a l'intèrpret d'ordres."
+msgstr ""
+"Error: s'ha donat més d'un fitxer com a argument per a l'intèrpret d'ordres."
 
-#: ../yumcommands.py:169
+#: ../yumcommands.py:167
 msgid "PACKAGE..."
 msgstr "PAQUET..."
 
-#: ../yumcommands.py:172
+#: ../yumcommands.py:170
 msgid "Install a package or packages on your system"
 msgstr "Instal·la un o més paquets al vostre sistema"
 
-#: ../yumcommands.py:180
+#: ../yumcommands.py:178
 msgid "Setting up Install Process"
 msgstr "S'està preparant el procés d'instal·lació"
 
-#: ../yumcommands.py:191
+#: ../yumcommands.py:189
 msgid "[PACKAGE...]"
 msgstr "[PAQUET...]"
 
-#: ../yumcommands.py:194
+#: ../yumcommands.py:192
 msgid "Update a package or packages on your system"
 msgstr "S'ha actualitzat un o més paquets al vostre sistema"
 
-#: ../yumcommands.py:201
+#: ../yumcommands.py:199
 msgid "Setting up Update Process"
 msgstr "S'està preparant el procés d'actualització"
 
-#: ../yumcommands.py:243
+#: ../yumcommands.py:244
 msgid "Display details about a package or group of packages"
 msgstr "Mostra detalls sobre un paquet o un grup de paquets"
 
-#: ../yumcommands.py:292
+#: ../yumcommands.py:293
 msgid "Installed Packages"
 msgstr "Paquets instal·lats"
 
-#: ../yumcommands.py:300
+#: ../yumcommands.py:301
 msgid "Available Packages"
 msgstr "Paquets disponibles"
 
-#: ../yumcommands.py:304
+#: ../yumcommands.py:305
 msgid "Extra Packages"
 msgstr "Paquets extra"
 
-#: ../yumcommands.py:308
+#: ../yumcommands.py:309
 msgid "Updated Packages"
 msgstr "Paquets actualitzats"
 
 #. This only happens in verbose mode
-#: ../yumcommands.py:316
-#: ../yumcommands.py:323
-#: ../yumcommands.py:600
+#: ../yumcommands.py:317 ../yumcommands.py:324 ../yumcommands.py:600
 msgid "Obsoleting Packages"
 msgstr "Paquets obsolets"
 
-#: ../yumcommands.py:325
+#: ../yumcommands.py:326
 msgid "Recently Added Packages"
 msgstr "Paquets recentment afegits"
 
-#: ../yumcommands.py:332
+#: ../yumcommands.py:333
 msgid "No matching Packages to list"
 msgstr "No hi ha paquets coincidents per llistar"
 
-#: ../yumcommands.py:346
+#: ../yumcommands.py:347
 msgid "List a package or groups of packages"
 msgstr "Llista un paquet o un grup de paquets"
 
-#: ../yumcommands.py:358
+#: ../yumcommands.py:359
 msgid "Remove a package or packages from your system"
-msgstr "Esborra un o més paquets del vostre sistema"
+msgstr "Suprimeix un o més paquets del vostre sistema"
 
-#: ../yumcommands.py:365
+#: ../yumcommands.py:366
 msgid "Setting up Remove Process"
-msgstr "S'està preparant el procés d'esborrat"
+msgstr "S'està preparant el procés de supressió"
 
-#: ../yumcommands.py:379
+#: ../yumcommands.py:380
 msgid "Setting up Group Process"
 msgstr "S'està preparant el procés de grup"
 
-#: ../yumcommands.py:385
+#: ../yumcommands.py:386
 msgid "No Groups on which to run command"
 msgstr "No hi ha cap grup on executar l'ordre"
 
-#: ../yumcommands.py:398
+#: ../yumcommands.py:399
 msgid "List available package groups"
 msgstr "Llista els grups de paquets disponibles"
 
-#: ../yumcommands.py:415
+#: ../yumcommands.py:416
 msgid "Install the packages in a group on your system"
 msgstr "Instal·la els paquets en un grup en el vostre sistema"
 
-#: ../yumcommands.py:437
+#: ../yumcommands.py:438
 msgid "Remove the packages in a group from your system"
-msgstr "Esborra els paquets en un grup en el vostre sistema"
+msgstr "Suprimeix els paquets en un grup en el vostre sistema"
 
-#: ../yumcommands.py:464
+#: ../yumcommands.py:465
 msgid "Display details about a package group"
 msgstr "Mostra detalls sobre un grup de paquets"
 
-#: ../yumcommands.py:488
+#: ../yumcommands.py:489
 msgid "Generate the metadata cache"
 msgstr "Genera les metadades de la memòria cau"
 
-#: ../yumcommands.py:494
-msgid "Making cache files for all metadata files."
-msgstr "S'estan fent els fitxers de memòria cau per a tots els fitxers de metadades."
-
 #: ../yumcommands.py:495
+msgid "Making cache files for all metadata files."
+msgstr ""
+"S'estan fent els fitxers de memòria cau per a tots els fitxers de metadades."
+
+#: ../yumcommands.py:496
 msgid "This may take a while depending on the speed of this computer"
 msgstr "Això pot trigar una estona depenent de la velocitat d'aquest ordinador"
 
-#: ../yumcommands.py:516
+#: ../yumcommands.py:517
 msgid "Metadata Cache Created"
 msgstr "S'han creat les metadades per a la memòria cau"
 
-#: ../yumcommands.py:530
+#: ../yumcommands.py:531
 msgid "Remove cached data"
-msgstr "S'han esborrat les dades de la memòria cau"
+msgstr "S'han suprimit les dades de la memòria cau"
 
 #: ../yumcommands.py:551
 msgid "Find what package provides the given value"
@@ -1174,99 +1217,122 @@ msgstr "S'estan trobant dependències: "
 msgid "Display the configured software repositories"
 msgstr "Mostra els repositoris de programari configurats"
 
-#: ../yumcommands.py:803
-#: ../yumcommands.py:804
+#: ../yumcommands.py:803 ../yumcommands.py:804
 msgid "enabled"
 msgstr "habilitat"
 
-#: ../yumcommands.py:812
-#: ../yumcommands.py:813
+#: ../yumcommands.py:812 ../yumcommands.py:813
 msgid "disabled"
 msgstr "deshabilitat"
 
 #: ../yumcommands.py:827
-msgid "Repo-id     : "
-msgstr "Id-repo         : "
+msgid "Repo-id      : "
+msgstr "Id-repo           : "
 
 #: ../yumcommands.py:828
-msgid "Repo-name   : "
-msgstr "Nom-repo        : "
+msgid "Repo-name    : "
+msgstr "Nom-repo          : "
 
 #: ../yumcommands.py:829
-msgid "Repo-status : "
-msgstr "Estat-repo      : "
+msgid "Repo-status  : "
+msgstr "Estat-repo        : "
 
 #: ../yumcommands.py:831
 msgid "Repo-revision: "
-msgstr "Repo-revisió    : "
+msgstr "Repo-revisió      : "
 
 #: ../yumcommands.py:835
-msgid "Repo-tags   : "
-msgstr "Repo-etiquetes  : "
+msgid "Repo-tags    : "
+msgstr "Repo-etiquetes    : "
 
 #: ../yumcommands.py:841
 msgid "Repo-distro-tags: "
-msgstr "Repo-etiq-dist  : "
+msgstr "Repo-etiq-dist    : "
 
 #: ../yumcommands.py:846
-msgid "Repo-updated: "
-msgstr "Repo-actualitzat: "
+msgid "Repo-updated : "
+msgstr "Repo-actualitzat  : "
 
 #: ../yumcommands.py:848
-msgid "Repo-pkgs   : "
-msgstr "Paquets-repo    : "
+msgid "Repo-pkgs    : "
+msgstr "Paquets-repo      : "
 
 #: ../yumcommands.py:849
-msgid "Repo-size   : "
-msgstr "Mida-repo       : "
+msgid "Repo-size    : "
+msgstr "Mida-repo         : "
 
 #: ../yumcommands.py:856
-msgid "Repo-baseurl: "
-msgstr "URL-base-repo   : "
+msgid "Repo-baseurl : "
+msgstr "URL-base-repo     : "
 
-#: ../yumcommands.py:860
+#: ../yumcommands.py:864
 msgid "Repo-metalink: "
-msgstr "Repo-metaenllaç : "
+msgstr "Repo-metaenllaç   : "
 
-#: ../yumcommands.py:863
-msgid "Repo-mirrors: "
-msgstr "Miralls-repo    : "
-
-#: ../yumcommands.py:867
-msgid "Repo-exclude: "
-msgstr "Repo-exclou     : "
+#: ../yumcommands.py:868
+#,
+msgid "  Updated    : "
+msgstr "  Actualitzat     : "
 
 #: ../yumcommands.py:871
-msgid "Repo-include: "
-msgstr "Repo-inclou     : "
+msgid "Repo-mirrors : "
+msgstr "Miralls-repo      : "
+
+#: ../yumcommands.py:875 ../yummain.py:133
+msgid "Unknown"
+msgstr "Desconegut"
+
+#: ../yumcommands.py:881
+#, python-format
+msgid "Never (last: %s)"
+msgstr "Mai (últim: %s)"
+
+#: ../yumcommands.py:883
+#, python-format
+msgid "Instant (last: %s)"
+msgstr "Temps d'instal·lació (últim: %s)"
+
+#: ../yumcommands.py:886
+#, python-format
+msgid "%s second(s) (last: %s)"
+msgstr "%s segons (últim: %s)"
+
+#: ../yumcommands.py:888
+msgid "Repo-expire  : "
+msgstr "Venç-repo   : "
+
+#: ../yumcommands.py:891
+msgid "Repo-exclude : "
+msgstr "Repo-exclou : "
+
+#: ../yumcommands.py:895
+msgid "Repo-include : "
+msgstr "Repo-inclou : "
 
 #. Work out the first (id) and last (enabled/disalbed/count),
 #. then chop the middle (name)...
-#: ../yumcommands.py:881
-#: ../yumcommands.py:907
+#: ../yumcommands.py:905 ../yumcommands.py:931
 msgid "repo id"
 msgstr "id repo"
 
-#: ../yumcommands.py:895
-#: ../yumcommands.py:896
-#: ../yumcommands.py:910
+#: ../yumcommands.py:919 ../yumcommands.py:920 ../yumcommands.py:934
 msgid "status"
 msgstr "estat"
 
-#: ../yumcommands.py:908
+#: ../yumcommands.py:932
 msgid "repo name"
 msgstr "nom repo"
 
-#: ../yumcommands.py:934
+#: ../yumcommands.py:958
 msgid "Display a helpful usage message"
 msgstr "Mostra un missatge d'ajuda d'ús"
 
-#: ../yumcommands.py:968
+#: ../yumcommands.py:992
 #, python-format
 msgid "No help available for %s"
 msgstr "No hi ha ajuda disponible per a %s"
 
-#: ../yumcommands.py:973
+#: ../yumcommands.py:997
 msgid ""
 "\n"
 "\n"
@@ -1276,7 +1342,7 @@ msgstr ""
 "\n"
 "àlies: "
 
-#: ../yumcommands.py:975
+#: ../yumcommands.py:999
 msgid ""
 "\n"
 "\n"
@@ -1286,25 +1352,35 @@ msgstr ""
 "\n"
 "àlies: "
 
-#: ../yumcommands.py:1003
+#: ../yumcommands.py:1027
 msgid "Setting up Reinstall Process"
 msgstr "S'està preparant el procés de reinstal·lació"
 
-#: ../yumcommands.py:1012
-msgid "Package(s) to reinstall"
-msgstr "Paquets a reinstal·lar"
-
-#: ../yumcommands.py:1019
+#: ../yumcommands.py:1035
 msgid "reinstall a package"
 msgstr "reinstal·la un paquet"
 
-#: ../yumcommands.py:1037
+#: ../yumcommands.py:1053
 msgid "Setting up Downgrade Process"
 msgstr "S'està preparant el procés de desactualització"
 
-#: ../yumcommands.py:1044
+#: ../yumcommands.py:1060
 msgid "downgrade a package"
 msgstr "desactualitza un paquet"
+
+#: ../yumcommands.py:1074
+msgid "Display a version for the machine and/or available repos."
+msgstr "Mostra una versió per a la màquina i/o repositoris disponibles"
+
+#: ../yumcommands.py:1101
+#,
+msgid "Installed:"
+msgstr "Instal·lat:"
+
+#: ../yumcommands.py:1110
+#, 
+msgid "Available:"
+msgstr "Disponible:"
 
 #: ../yummain.py:42
 msgid ""
@@ -1326,80 +1402,87 @@ msgstr ""
 "\n"
 "S'està sortint en trobar la canonada trencada"
 
-#: ../yummain.py:126
+#: ../yummain.py:50
+#, python-format
+msgid ""
+"\n"
+"\n"
+"%s"
+msgstr ""
+"\n"
+"\n"
+"%s"
+
+#: ../yummain.py:128
 msgid "Running"
 msgstr "S'està executant"
 
-#: ../yummain.py:127
+#: ../yummain.py:129
 msgid "Sleeping"
 msgstr "Està dormint"
 
-#: ../yummain.py:128
+#: ../yummain.py:130
 msgid "Uninteruptable"
 msgstr "Ininterrumpible"
 
-#: ../yummain.py:129
+#: ../yummain.py:131
 msgid "Zombie"
 msgstr "Zombi"
 
-#: ../yummain.py:130
+#: ../yummain.py:132
 msgid "Traced/Stopped"
 msgstr "Traçat/aturat"
 
-#: ../yummain.py:131
-msgid "Unknown"
-msgstr "Desconegut"
-
-#: ../yummain.py:135
+#: ../yummain.py:137
 msgid "  The other application is: PackageKit"
 msgstr "  L'altre aplicatiu és: PackageKit"
 
-#: ../yummain.py:137
+#: ../yummain.py:139
 #, python-format
 msgid "  The other application is: %s"
 msgstr "  L'altre aplicatiu és: %s"
 
-#: ../yummain.py:140
+#: ../yummain.py:142
 #, python-format
 msgid "    Memory : %5s RSS (%5sB VSZ)"
 msgstr "    Memòria : %5s RSS (%5sB VSZ)"
 
-#: ../yummain.py:144
+#: ../yummain.py:146
 #, python-format
 msgid "    Started: %s - %s ago"
 msgstr "    Iniciat: fa %s-%s"
 
-#: ../yummain.py:146
+#: ../yummain.py:148
 #, python-format
 msgid "    State  : %s, pid: %d"
 msgstr "    Estat  : %s, pid: %d"
 
-#: ../yummain.py:171
-msgid "Another app is currently holding the yum lock; waiting for it to exit..."
-msgstr "Alguna altra aplicació té el bloqueig del yum; s'està esperant a que surti..."
+#: ../yummain.py:173
+msgid ""
+"Another app is currently holding the yum lock; waiting for it to exit..."
+msgstr ""
+"Alguna altra aplicació té el bloqueig del yum; s'està esperant a que surti..."
 
-#: ../yummain.py:199
-#: ../yummain.py:238
+#: ../yummain.py:201 ../yummain.py:240
 #, python-format
 msgid "Error: %s"
 msgstr "Error: %s"
 
-#: ../yummain.py:209
-#: ../yummain.py:250
+#: ../yummain.py:211 ../yummain.py:253
 #, python-format
 msgid "Unknown Error(s): Exit Code: %d:"
 msgstr "Errors desconeguts: Codi de sortida: %d:"
 
 #. Depsolve stage
-#: ../yummain.py:216
+#: ../yummain.py:218
 msgid "Resolving Dependencies"
 msgstr "S'estan resolent dependències"
 
-#: ../yummain.py:240
+#: ../yummain.py:242
 msgid " You could try using --skip-broken to work around the problem"
 msgstr " Hauríeu de provar utilitzant --skip-broken per evitar el problema"
 
-#: ../yummain.py:241
+#: ../yummain.py:243
 msgid ""
 " You could try running: package-cleanup --problems\n"
 "                        package-cleanup --dupes\n"
@@ -1409,7 +1492,7 @@ msgstr ""
 "                        package-cleanup --dupes\n"
 "                        rpm -Va --nofiles --nodigest"
 
-#: ../yummain.py:256
+#: ../yummain.py:259
 msgid ""
 "\n"
 "Dependencies Resolved"
@@ -1417,11 +1500,11 @@ msgstr ""
 "\n"
 "Dependències resoltes"
 
-#: ../yummain.py:270
+#: ../yummain.py:273
 msgid "Complete!"
 msgstr "Completat!"
 
-#: ../yummain.py:317
+#: ../yummain.py:320
 msgid ""
 "\n"
 "\n"
@@ -1431,201 +1514,205 @@ msgstr ""
 "\n"
 "S'està sortint de l'ordre de l'usuari."
 
-#: ../yum/depsolve.py:84
+#: ../yum/depsolve.py:83
 msgid "doTsSetup() will go away in a future version of Yum.\n"
 msgstr "doTsSetup() desapareixerà en una futura versió de Yum.\n"
 
-#: ../yum/depsolve.py:99
+#: ../yum/depsolve.py:98
 msgid "Setting up TransactionSets before config class is up"
-msgstr "S'està configurant TransactionSets abans que la classe de configuració estigui iniciada"
+msgstr ""
+"S'està configurant TransactionSets abans que la classe de configuració "
+"estigui iniciada"
 
-#: ../yum/depsolve.py:150
+#: ../yum/depsolve.py:149
 #, python-format
 msgid "Invalid tsflag in config file: %s"
 msgstr "Tsflag invàlid en el fitxer de configuració: %s"
 
-#: ../yum/depsolve.py:161
+#: ../yum/depsolve.py:160
 #, python-format
 msgid "Searching pkgSack for dep: %s"
 msgstr "S'està buscant pkgSack per a la dependència: %s"
 
-#: ../yum/depsolve.py:184
+#: ../yum/depsolve.py:183
 #, python-format
 msgid "Potential match for %s from %s"
 msgstr "Coincidència potencial per a %s de %s"
 
-#: ../yum/depsolve.py:192
+#: ../yum/depsolve.py:191
 #, python-format
 msgid "Matched %s to require for %s"
 msgstr "La coincidència %s es requereix per a %s"
 
-#: ../yum/depsolve.py:233
+#: ../yum/depsolve.py:232
 #, python-format
 msgid "Member: %s"
 msgstr "Membre: %s"
 
-#: ../yum/depsolve.py:247
-#: ../yum/depsolve.py:739
+#: ../yum/depsolve.py:246 ../yum/depsolve.py:756
 #, python-format
 msgid "%s converted to install"
 msgstr "%s convertits per a instal·lar"
 
-#: ../yum/depsolve.py:254
+#: ../yum/depsolve.py:253
 #, python-format
 msgid "Adding Package %s in mode %s"
 msgstr "S'està afegint el paquet %s en mode %s"
 
-#: ../yum/depsolve.py:264
+#: ../yum/depsolve.py:263
 #, python-format
 msgid "Removing Package %s"
-msgstr "S'està esborrant el paquet %s"
+msgstr "S'està suprimint el paquet %s"
 
-#: ../yum/depsolve.py:275
+#: ../yum/depsolve.py:285
 #, python-format
 msgid "%s requires: %s"
 msgstr "%s requereix: %s"
 
-#: ../yum/depsolve.py:333
-msgid "Needed Require has already been looked up, cheating"
-msgstr "El requeriment necessari ja s'ha buscat anteriorment, s'estan fent trampes"
-
 #: ../yum/depsolve.py:343
+msgid "Needed Require has already been looked up, cheating"
+msgstr ""
+"El requeriment necessari ja s'ha buscat anteriorment, s'estan fent trampes"
+
+#: ../yum/depsolve.py:353
 #, python-format
 msgid "Needed Require is not a package name. Looking up: %s"
 msgstr "El requeriment necessari no és un nom de paquet. S'està buscant: %s"
 
-#: ../yum/depsolve.py:350
+#: ../yum/depsolve.py:360
 #, python-format
 msgid "Potential Provider: %s"
 msgstr "Proveïdor potencial: %s"
 
-#: ../yum/depsolve.py:373
+#: ../yum/depsolve.py:383
 #, python-format
 msgid "Mode is %s for provider of %s: %s"
 msgstr "El mode és %s per al proveïdor de %s: %s"
 
-#: ../yum/depsolve.py:377
+#: ../yum/depsolve.py:387
 #, python-format
 msgid "Mode for pkg providing %s: %s"
 msgstr "Mode per al paquet que proporciona %s: %s"
 
-#: ../yum/depsolve.py:381
+#: ../yum/depsolve.py:391
 #, python-format
 msgid "TSINFO: %s package requiring %s marked as erase"
-msgstr "TSINFO: el paquet %s requereix %s marcat per a esborrar"
+msgstr "TSINFO: el paquet %s requereix %s marcat per a suprimir"
 
-#: ../yum/depsolve.py:394
+#: ../yum/depsolve.py:404
 #, python-format
 msgid "TSINFO: Obsoleting %s with %s to resolve dep."
-msgstr "TSINFO: S'està marcant com a obsolet %s amb %s per resoldre dependències."
+msgstr ""
+"TSINFO: S'està marcant com a obsolet %s amb %s per resoldre dependències."
 
-#: ../yum/depsolve.py:397
+#: ../yum/depsolve.py:407
 #, python-format
 msgid "TSINFO: Updating %s to resolve dep."
 msgstr "TSINFO: S'està actualitzant %s per a resoldre dependències."
 
-#: ../yum/depsolve.py:405
+#: ../yum/depsolve.py:415
 #, python-format
 msgid "Cannot find an update path for dep for: %s"
 msgstr "No es pot trobar un camí d'actualització de dependències per a: %s"
 
-#: ../yum/depsolve.py:415
+#: ../yum/depsolve.py:425
 #, python-format
 msgid "Unresolvable requirement %s for %s"
 msgstr "No es pot resoldre el requeriment %s per a %s"
 
-#: ../yum/depsolve.py:438
+#: ../yum/depsolve.py:448
 #, python-format
 msgid "Quick matched %s to require for %s"
 msgstr "La coincidència %s es requereix per a %s"
 
 #. is it already installed?
-#: ../yum/depsolve.py:480
+#: ../yum/depsolve.py:490
 #, python-format
 msgid "%s is in providing packages but it is already installed, removing."
-msgstr "%s es troba en els paquets proporcionats però ja es troba instal·lat, s'està esborrant."
+msgstr ""
+"%s es troba en els paquets proporcionats però ja es troba instal·lat, s'està "
+"suprimint."
 
-#: ../yum/depsolve.py:496
+#: ../yum/depsolve.py:506
 #, python-format
 msgid "Potential resolving package %s has newer instance in ts."
-msgstr "El paquet potencial que resol dependències %s té una instància nova a ts"
+msgstr ""
+"El paquet potencial que resol dependències %s té una instància nova a ts"
 
-#: ../yum/depsolve.py:507
+#: ../yum/depsolve.py:517
 #, python-format
 msgid "Potential resolving package %s has newer instance installed."
-msgstr "El paquet potencial que resol dependències %s té una nova instància insta·lada."
+msgstr ""
+"El paquet potencial que resol dependències %s té una nova instància "
+"insta·lada."
 
-#: ../yum/depsolve.py:515
-#: ../yum/depsolve.py:564
+#: ../yum/depsolve.py:525 ../yum/depsolve.py:571
 #, python-format
 msgid "Missing Dependency: %s is needed by package %s"
 msgstr "Manca una dependència: %s es necessita per al paquet %s"
 
-#: ../yum/depsolve.py:528
+#: ../yum/depsolve.py:538
 #, python-format
 msgid "%s already in ts, skipping this one"
 msgstr "%s ja es troba en ts, s'està ometent"
 
-#: ../yum/depsolve.py:574
+#: ../yum/depsolve.py:581
 #, python-format
 msgid "TSINFO: Marking %s as update for %s"
 msgstr "TSINFO: S'està marcant %s com a actualització per a %s"
 
-#: ../yum/depsolve.py:582
+#: ../yum/depsolve.py:589
 #, python-format
 msgid "TSINFO: Marking %s as install for %s"
 msgstr "TSINFO: S'està marcant %s com a instal·lació per a %s"
 
-#: ../yum/depsolve.py:675
-#: ../yum/depsolve.py:757
+#: ../yum/depsolve.py:692 ../yum/depsolve.py:774
 msgid "Success - empty transaction"
 msgstr "Èxit - transacció buida"
 
-#: ../yum/depsolve.py:714
-#: ../yum/depsolve.py:729
+#: ../yum/depsolve.py:731 ../yum/depsolve.py:746
 msgid "Restarting Loop"
 msgstr "S'està recomençant el bucle"
 
-#: ../yum/depsolve.py:745
+#: ../yum/depsolve.py:762
 msgid "Dependency Process ending"
 msgstr "Està acabant el procés de dependències"
 
-#: ../yum/depsolve.py:751
+#: ../yum/depsolve.py:768
 #, python-format
 msgid "%s from %s has depsolving problems"
 msgstr "%s de %s té problemes resolent dependències"
 
-#: ../yum/depsolve.py:758
+#: ../yum/depsolve.py:775
 msgid "Success - deps resolved"
 msgstr "Èxit - dependències resoltes"
 
-#: ../yum/depsolve.py:772
+#: ../yum/depsolve.py:789
 #, python-format
 msgid "Checking deps for %s"
 msgstr "S'estan comprobant les dependències per a %s"
 
-#: ../yum/depsolve.py:855
+#: ../yum/depsolve.py:872
 #, python-format
 msgid "looking for %s as a requirement of %s"
 msgstr "s'està buscant %s com a requeriment de %s"
 
-#: ../yum/depsolve.py:997
+#: ../yum/depsolve.py:1014
 #, python-format
 msgid "Running compare_providers() for %s"
 msgstr "S'està executant compare_providers() per a %s"
 
-#: ../yum/depsolve.py:1025
-#: ../yum/depsolve.py:1031
+#: ../yum/depsolve.py:1048 ../yum/depsolve.py:1054
 #, python-format
 msgid "better arch in po %s"
 msgstr "millor arq en el po %s"
 
-#: ../yum/depsolve.py:1092
+#: ../yum/depsolve.py:1140
 #, python-format
 msgid "%s obsoletes %s"
 msgstr "%s fa obsolet %s"
 
-#: ../yum/depsolve.py:1108
+#: ../yum/depsolve.py:1152
 #, python-format
 msgid ""
 "archdist compared %s to %s on %s\n"
@@ -1634,112 +1721,121 @@ msgstr ""
 "archdist ha comparat %s amb %s a %s\n"
 "  Ha guanyat: %s"
 
-#: ../yum/depsolve.py:1115
+#: ../yum/depsolve.py:1159
 #, python-format
 msgid "common sourcerpm %s and %s"
 msgstr "rpm font comú %s i %s"
 
-#: ../yum/depsolve.py:1121
+#: ../yum/depsolve.py:1165
 #, python-format
 msgid "common prefix of %s between %s and %s"
 msgstr "prefix comú de %s entre %s i %s"
 
-#: ../yum/depsolve.py:1129
+#: ../yum/depsolve.py:1173
 #, python-format
 msgid "Best Order: %s"
 msgstr "Millor ordre: %s"
 
-#: ../yum/__init__.py:158
+#: ../yum/__init__.py:180
 msgid "doConfigSetup() will go away in a future version of Yum.\n"
 msgstr "doConfigsetup() desapareixerà en una futura versió de Yum.\n"
 
-#: ../yum/__init__.py:367
+#: ../yum/__init__.py:401
 #, python-format
 msgid "Repository %r is missing name in configuration, using id"
 msgstr "Falta el nom del repositori %r en la configuració, s'utilitzarà l'id"
 
-#: ../yum/__init__.py:405
+#: ../yum/__init__.py:439
 msgid "plugins already initialised"
 msgstr "els connectors ja estan inicialitzats"
 
-#: ../yum/__init__.py:412
+#: ../yum/__init__.py:446
 msgid "doRpmDBSetup() will go away in a future version of Yum.\n"
 msgstr "doRpmDBSetup() desapareixerà en una futura versió de Yum.\n"
 
-#: ../yum/__init__.py:423
+#: ../yum/__init__.py:457
 msgid "Reading Local RPMDB"
 msgstr "S'està llegint un RPMDB local"
 
-#: ../yum/__init__.py:441
+#: ../yum/__init__.py:478
 msgid "doRepoSetup() will go away in a future version of Yum.\n"
 msgstr "doRepoSetup() desapareixerà en una futura versió de Yum.\n"
 
-#: ../yum/__init__.py:461
+#: ../yum/__init__.py:498
 msgid "doSackSetup() will go away in a future version of Yum.\n"
 msgstr "doSackSetup() desapareixerà en una versió futura de Yum.\n"
 
-#: ../yum/__init__.py:478
+#: ../yum/__init__.py:528
 msgid "Setting up Package Sacks"
 msgstr "S'estan configurant els sacs de paquets"
 
-#: ../yum/__init__.py:521
+#: ../yum/__init__.py:573
 #, python-format
 msgid "repo object for repo %s lacks a _resetSack method\n"
 msgstr "l'objecte repositori per al repositori %s no té un mètode _resetSack\n"
 
-#: ../yum/__init__.py:522
+#: ../yum/__init__.py:574
 msgid "therefore this repo cannot be reset.\n"
 msgstr "Aquest repositori no es pot reiniciar.\n"
 
-#: ../yum/__init__.py:527
+#: ../yum/__init__.py:579
 msgid "doUpdateSetup() will go away in a future version of Yum.\n"
 msgstr "doUpdateSetup() desapareixerà en una futura versió de Yum.\n"
 
-#: ../yum/__init__.py:539
+#: ../yum/__init__.py:591
 msgid "Building updates object"
 msgstr "S'està construint l'objecte d'actualitzacions"
 
-#: ../yum/__init__.py:570
+#: ../yum/__init__.py:626
 msgid "doGroupSetup() will go away in a future version of Yum.\n"
 msgstr "doGroupSetup() desapareixerà en una futura versió de Yum.\n"
 
-#: ../yum/__init__.py:595
+#: ../yum/__init__.py:651
 msgid "Getting group metadata"
 msgstr "S'estan obtenint les metadades del grup"
 
-#: ../yum/__init__.py:621
+#: ../yum/__init__.py:677
 #, python-format
 msgid "Adding group file from repository: %s"
 msgstr "S'està afegint el fitxer del grup des del repositori: %s"
 
-#: ../yum/__init__.py:630
+#: ../yum/__init__.py:686
 #, python-format
 msgid "Failed to add groups file for repository: %s - %s"
 msgstr "No s'ha pogut afegir el fitxer dels grups des del repositori: %s - %s"
 
-#: ../yum/__init__.py:636
+#: ../yum/__init__.py:692
 msgid "No Groups Available in any repository"
 msgstr "No hi ha cap grup disponible en cap repositori"
 
-#: ../yum/__init__.py:686
+#: ../yum/__init__.py:742
 msgid "Importing additional filelist information"
 msgstr "S'està important informació adicional de la llista de fitxers"
 
-#: ../yum/__init__.py:695
-msgid "There are unfinished transactions remaining. You might consider running yum-complete-transaction first to finish them."
-msgstr "Encara hi ha transaccions sense acabar. Hauríeu de considerar executar yum-complete-transaction abans per acabar-les."
+#: ../yum/__init__.py:756
+#, python-format
+msgid "The program %s%s%s is found in the yum-utils package."
+msgstr "El programa %s%s%s es troba en el paquet yum-utils."
 
-#: ../yum/__init__.py:761
+#: ../yum/__init__.py:764
+msgid ""
+"There are unfinished transactions remaining. You might consider running yum-"
+"complete-transaction first to finish them."
+msgstr ""
+"Encara hi ha transaccions sense acabar. Hauríeu de considerar executar yum-"
+"complete-transaction abans per acabar-les."
+
+#: ../yum/__init__.py:832
 #, python-format
 msgid "Skip-broken round %i"
 msgstr "Intent %i d'omissió dels paquets trencats"
 
-#: ../yum/__init__.py:813
+#: ../yum/__init__.py:884
 #, python-format
 msgid "Skip-broken took %i rounds "
 msgstr "L'omissió dels paquets trencats ha necessitat %i intents"
 
-#: ../yum/__init__.py:814
+#: ../yum/__init__.py:885
 msgid ""
 "\n"
 "Packages skipped because of dependency problems:"
@@ -1747,89 +1843,74 @@ msgstr ""
 "\n"
 "Paquets omesos degut a problemes de dependències:"
 
-#: ../yum/__init__.py:818
+#: ../yum/__init__.py:889
 #, python-format
 msgid "    %s from %s"
 msgstr "    %s des de %s"
 
-#: ../yum/__init__.py:958
-msgid "Warning: scriptlet or other non-fatal errors occurred during transaction."
-msgstr "Avís: ha fallat l'scriptlet o s'han produït altre tipus d'errors no fatals durant la transacció."
+#: ../yum/__init__.py:1027
+msgid ""
+"Warning: scriptlet or other non-fatal errors occurred during transaction."
+msgstr ""
+"Avís: ha fallat l'scriptlet o s'han produït altre tipus d'errors no fatals "
+"durant la transacció."
 
-#: ../yum/__init__.py:973
+#: ../yum/__init__.py:1042
 #, python-format
 msgid "Failed to remove transaction file %s"
-msgstr "No s'ha pogut esborrar el fitxer de transaccions %s"
+msgstr "No s'ha pogut suprimir el fitxer de transaccions %s"
 
-#: ../yum/__init__.py:1015
+#. maybe a file log here, too
+#. but raising an exception is not going to do any good
+#: ../yum/__init__.py:1071
 #, python-format
-msgid "excluding for cost: %s from %s"
-msgstr "s'està excloent per cost: %s de %s"
+msgid "%s was supposed to be installed but is not!"
+msgstr "S'havia d'instal·lar %s però no s'ha realitzat!"
 
-#: ../yum/__init__.py:1046
-msgid "Excluding Packages in global exclude list"
-msgstr "S'estan excloent paquets en la llista global d'exclusió"
-
-#: ../yum/__init__.py:1048
+#. maybe a file log here, too
+#. but raising an exception is not going to do any good
+#: ../yum/__init__.py:1110
 #, python-format
-msgid "Excluding Packages from %s"
-msgstr "S'estan excloent paquets de %s"
-
-#: ../yum/__init__.py:1077
-#, python-format
-msgid "Reducing %s to included packages only"
-msgstr "S'està reduint %s únicament a paquets inclosos."
-
-#: ../yum/__init__.py:1083
-#, python-format
-msgid "Keeping included package %s"
-msgstr "S'està mantenint el paquet inclòs %s"
-
-#: ../yum/__init__.py:1089
-#, python-format
-msgid "Removing unmatched package %s"
-msgstr "S'està esborrant el paquet sense coincidències %s"
-
-#: ../yum/__init__.py:1092
-msgid "Finished"
-msgstr "Finalitzat"
+msgid "%s was supposed to be removed but is not!"
+msgstr "S'havia de suprimir %s però no s'ha realitzat!"
 
 #. Whoa. What the heck happened?
-#: ../yum/__init__.py:1122
+#: ../yum/__init__.py:1225
 #, python-format
 msgid "Unable to check if PID %s is active"
 msgstr "No s'ha pogut comprovar si el PID %s es troba actiu"
 
 #. Another copy seems to be running.
-#: ../yum/__init__.py:1126
+#: ../yum/__init__.py:1229
 #, python-format
 msgid "Existing lock %s: another copy is running as pid %s."
 msgstr "Bloqueig existent %s: una altra còpia s'està executant amb pid %s."
 
-#: ../yum/__init__.py:1196
+#: ../yum/__init__.py:1306
 msgid "Package does not match intended download"
 msgstr "El paquet no coincideix amb la descàrrega intentada"
 
-#: ../yum/__init__.py:1211
+#: ../yum/__init__.py:1321
 msgid "Could not perform checksum"
 msgstr "No s'ha pogut realitzar la suma de verificació"
 
-#: ../yum/__init__.py:1214
+#: ../yum/__init__.py:1324
 msgid "Package does not match checksum"
 msgstr "No coincideix la suma de verificació del paquet"
 
-#: ../yum/__init__.py:1257
+#: ../yum/__init__.py:1366
 #, python-format
 msgid "package fails checksum but caching is enabled for %s"
-msgstr "la suma de verificació del paquet falla però l'ús de memòria cau està habilitat per a %s"
+msgstr ""
+"la suma de verificació del paquet falla però l'ús de memòria cau està "
+"habilitat per a %s"
 
-#: ../yum/__init__.py:1260
-#: ../yum/__init__.py:1289
+#: ../yum/__init__.py:1369 ../yum/__init__.py:1398
 #, python-format
 msgid "using local copy of %s"
 msgstr "s'està utilitzant la còpia local de %s"
 
-#: ../yum/__init__.py:1301
+#: ../yum/__init__.py:1410
 #, python-format
 msgid ""
 "Insufficient space in download directory %s\n"
@@ -1840,441 +1921,462 @@ msgstr ""
 "    * lliure    %s\n"
 "    * necessari %s"
 
-#: ../yum/__init__.py:1348
+#: ../yum/__init__.py:1459
 msgid "Header is not complete."
 msgstr "La capçalera no està completa."
 
-#: ../yum/__init__.py:1385
+#: ../yum/__init__.py:1496
 #, python-format
-msgid "Header not in local cache and caching-only mode enabled. Cannot download %s"
-msgstr "La capçalera no es troba en la memòria cau local i està habilitat el mode de només memòria cau. No es pot descarregar %s"
+msgid ""
+"Header not in local cache and caching-only mode enabled. Cannot download %s"
+msgstr ""
+"La capçalera no es troba en la memòria cau local i està habilitat el mode de "
+"només memòria cau. No es pot baixar %s"
 
-#: ../yum/__init__.py:1440
+#: ../yum/__init__.py:1551
 #, python-format
 msgid "Public key for %s is not installed"
 msgstr "La clau pública per a %s no està instal·lada"
 
-#: ../yum/__init__.py:1444
+#: ../yum/__init__.py:1555
 #, python-format
 msgid "Problem opening package %s"
 msgstr "Hi ha hagut un problema obrint el paquet %s"
 
-#: ../yum/__init__.py:1452
+#: ../yum/__init__.py:1563
 #, python-format
 msgid "Public key for %s is not trusted"
 msgstr "La clau pública per a %s no és de confiança"
 
-#: ../yum/__init__.py:1456
+#: ../yum/__init__.py:1567
 #, python-format
 msgid "Package %s is not signed"
 msgstr "El paquet %s no està signat"
 
-#: ../yum/__init__.py:1494
+#: ../yum/__init__.py:1605
 #, python-format
 msgid "Cannot remove %s"
-msgstr "No es pot esborrar %s"
-
-#: ../yum/__init__.py:1498
-#, python-format
-msgid "%s removed"
-msgstr "S'ha esborrat %s"
-
-#: ../yum/__init__.py:1534
-#, python-format
-msgid "Cannot remove %s file %s"
-msgstr "No es pot esborrar %s fitxer %s"
-
-#: ../yum/__init__.py:1538
-#, python-format
-msgid "%s file %s removed"
-msgstr "%s fitxer %s esborrat"
-
-#: ../yum/__init__.py:1540
-#, python-format
-msgid "%d %s files removed"
-msgstr "%d %s fitxers esborrats"
+msgstr "No es pot suprimir %s"
 
 #: ../yum/__init__.py:1609
+#, python-format
+msgid "%s removed"
+msgstr "S'ha suprimit %s"
+
+#: ../yum/__init__.py:1645
+#, python-format
+msgid "Cannot remove %s file %s"
+msgstr "No es pot suprimir %s fitxer %s"
+
+#: ../yum/__init__.py:1649
+#, python-format
+msgid "%s file %s removed"
+msgstr "%s fitxer %s suprimit"
+
+#: ../yum/__init__.py:1651
+#, python-format
+msgid "%d %s files removed"
+msgstr "%d %s fitxers suprimits"
+
+#: ../yum/__init__.py:1720
 #, python-format
 msgid "More than one identical match in sack for %s"
 msgstr "Hi ha més d'una coincidència idèntica en el sac per a %s"
 
-#: ../yum/__init__.py:1615
+#: ../yum/__init__.py:1726
 #, python-format
 msgid "Nothing matches %s.%s %s:%s-%s from update"
 msgstr "No hi ha coincidències %s.%s-%s:%s-%s de l'actualització"
 
-#: ../yum/__init__.py:1833
-msgid "searchPackages() will go away in a future version of Yum.                      Use searchGenerator() instead. \n"
-msgstr "searchPackages() desapareixerà en una futura versió de Yum.                      Useu searchGenerator(). \n"
+#: ../yum/__init__.py:1959
+msgid ""
+"searchPackages() will go away in a future version of "
+"Yum.                      Use searchGenerator() instead. \n"
+msgstr ""
+"searchPackages() desapareixerà en una futura versió de "
+"Yum.                      Useu searchGenerator(). \n"
 
-#: ../yum/__init__.py:1875
+#: ../yum/__init__.py:2001
 #, python-format
 msgid "Searching %d packages"
 msgstr "S'estan buscant %d paquets"
 
-#: ../yum/__init__.py:1879
+#: ../yum/__init__.py:2005
 #, python-format
 msgid "searching package %s"
 msgstr "s'està buscant el paquet %s"
 
-#: ../yum/__init__.py:1891
+#: ../yum/__init__.py:2017
 msgid "searching in file entries"
 msgstr "s'està buscant en les entrades de fitxers"
 
-#: ../yum/__init__.py:1898
+#: ../yum/__init__.py:2024
 msgid "searching in provides entries"
 msgstr "s'està buscant en les entrades proporcionades"
 
-#: ../yum/__init__.py:1931
+#: ../yum/__init__.py:2057
 #, python-format
 msgid "Provides-match: %s"
 msgstr "Proporciona-coincideix: %s"
 
-#: ../yum/__init__.py:1980
+#: ../yum/__init__.py:2106
 msgid "No group data available for configured repositories"
 msgstr "No hi ha dades de grup disponibles en cap dels repositoris configurats"
 
-#: ../yum/__init__.py:2011
-#: ../yum/__init__.py:2030
-#: ../yum/__init__.py:2061
-#: ../yum/__init__.py:2067
-#: ../yum/__init__.py:2146
-#: ../yum/__init__.py:2150
-#: ../yum/__init__.py:2447
+#: ../yum/__init__.py:2137 ../yum/__init__.py:2156 ../yum/__init__.py:2187
+#: ../yum/__init__.py:2193 ../yum/__init__.py:2272 ../yum/__init__.py:2276
+#: ../yum/__init__.py:2586
 #, python-format
 msgid "No Group named %s exists"
 msgstr "No existeix cap grup anomenat %s"
 
-#: ../yum/__init__.py:2042
-#: ../yum/__init__.py:2163
+#: ../yum/__init__.py:2168 ../yum/__init__.py:2289
 #, python-format
 msgid "package %s was not marked in group %s"
 msgstr "el paquet %s no estava marcat en el grup %s"
 
-#: ../yum/__init__.py:2089
+#: ../yum/__init__.py:2215
 #, python-format
 msgid "Adding package %s from group %s"
 msgstr "S'està afegint el paquet %s del grup %s"
 
-#: ../yum/__init__.py:2093
+#: ../yum/__init__.py:2219
 #, python-format
 msgid "No package named %s available to be installed"
 msgstr "No hi ha cap paquet anomenat %s disponible per a ser instal·lat"
 
-#: ../yum/__init__.py:2190
+#: ../yum/__init__.py:2316
 #, python-format
 msgid "Package tuple %s could not be found in packagesack"
 msgstr "No s'ha pogut trobar la tupla de paquets %s al sac de paquets"
 
-#: ../yum/__init__.py:2205
-msgid "getInstalledPackageObject() will go away, use self.rpmdb.searchPkgTuple().\n"
-msgstr "getInstalledPackageObject() desapareixarà, useu self.rpmdb.searchPkgTuple().\n"
+#: ../yum/__init__.py:2330
+msgid ""
+"getInstalledPackageObject() will go away, use self.rpmdb.searchPkgTuple().\n"
+msgstr ""
+"getInstalledPackageObject() desapareixarà, useu self.rpmdb.searchPkgTuple"
+"().\n"
 
-#: ../yum/__init__.py:2261
-#: ../yum/__init__.py:2305
+#: ../yum/__init__.py:2386 ../yum/__init__.py:2436
 msgid "Invalid version flag"
 msgstr "Marcador de versió invàlid"
 
-#: ../yum/__init__.py:2276
-#: ../yum/__init__.py:2280
+#: ../yum/__init__.py:2406 ../yum/__init__.py:2411
 #, python-format
 msgid "No Package found for %s"
 msgstr "No s'ha trobat cap paquet per a %s"
 
-#: ../yum/__init__.py:2480
+#: ../yum/__init__.py:2627
 msgid "Package Object was not a package object instance"
 msgstr "L'objecte paquet no era una instància d'objecte paquet"
 
-#: ../yum/__init__.py:2484
+#: ../yum/__init__.py:2631
 msgid "Nothing specified to install"
 msgstr "No hi ha res especificat per a instal·lar"
 
-#: ../yum/__init__.py:2500
-#: ../yum/__init__.py:3127
+#: ../yum/__init__.py:2647 ../yum/__init__.py:3411
 #, python-format
 msgid "Checking for virtual provide or file-provide for %s"
-msgstr "S'està verificant si hi ha un proveïdor virtual o un fitxer proveïdor per a %s"
+msgstr ""
+"S'està verificant si hi ha un proveïdor virtual o un fitxer proveïdor per a %"
+"s"
 
-#: ../yum/__init__.py:2506
-#: ../yum/__init__.py:2783
-#: ../yum/__init__.py:2943
-#: ../yum/__init__.py:3133
+#: ../yum/__init__.py:2653 ../yum/__init__.py:2960 ../yum/__init__.py:3127
+#: ../yum/__init__.py:3417
 #, python-format
 msgid "No Match for argument: %s"
 msgstr "No hi ha cap coincidència per a l'argument: %s"
 
-#: ../yum/__init__.py:2580
+#: ../yum/__init__.py:2729
 #, python-format
 msgid "Package %s installed and not available"
 msgstr "El paquet %s es troba instal·lat però no és disponible"
 
-#: ../yum/__init__.py:2583
+#: ../yum/__init__.py:2732
 msgid "No package(s) available to install"
 msgstr "No hi ha cap paquet disponible per a instal·lar"
 
-#: ../yum/__init__.py:2595
+#: ../yum/__init__.py:2744
 #, python-format
 msgid "Package: %s  - already in transaction set"
 msgstr "El paquet: %s  - ja està en la transacció"
 
-#: ../yum/__init__.py:2610
+#: ../yum/__init__.py:2770
+#, python-format
+msgid "Package %s is obsoleted by %s which is already installed"
+msgstr "El paquet %s és obsolet degut a %s, que ja està instal·lat"
+
+#: ../yum/__init__.py:2773
 #, python-format
 msgid "Package %s is obsoleted by %s, trying to install %s instead"
-msgstr "El paquet %s és obsolet degut a %s, es provarà d'instal·lar %s"
+msgstr "El paquet %s és obsolet degut a %s, es provarà d'instal·lar %s en el seu lloc"
 
-#: ../yum/__init__.py:2618
+#: ../yum/__init__.py:2781
 #, python-format
 msgid "Package %s already installed and latest version"
 msgstr "El paquet %s ja es troba instal·lat i en l'última versió."
 
-#: ../yum/__init__.py:2632
+#: ../yum/__init__.py:2795
 #, python-format
 msgid "Package matching %s already installed. Checking for update."
-msgstr "El paquet coincident %s ja es troba instal·lat. S'està buscant una actualització."
+msgstr ""
+"El paquet coincident %s ja es troba instal·lat. S'està buscant una "
+"actualització."
 
 #. update everything (the easy case)
-#: ../yum/__init__.py:2718
+#: ../yum/__init__.py:2889
 msgid "Updating Everything"
 msgstr "S'està actualitzant tot"
 
-#: ../yum/__init__.py:2736
-#: ../yum/__init__.py:2845
-#: ../yum/__init__.py:2866
-#: ../yum/__init__.py:2892
+#: ../yum/__init__.py:2910 ../yum/__init__.py:3025 ../yum/__init__.py:3054
+#: ../yum/__init__.py:3081
 #, python-format
 msgid "Not Updating Package that is already obsoleted: %s.%s %s:%s-%s"
 msgstr "No s'actualitzarà el paquet obsolet: %s.%s %s:%s-%s"
 
-#: ../yum/__init__.py:2771
-#: ../yum/__init__.py:2940
+#: ../yum/__init__.py:2945 ../yum/__init__.py:3124
 #, python-format
 msgid "%s"
 msgstr "%s"
 
-#: ../yum/__init__.py:2836
+#: ../yum/__init__.py:3016
 #, python-format
 msgid "Package is already obsoleted: %s.%s %s:%s-%s"
 msgstr "El paquet és obsolet: %s.%s %s:%s-%s"
 
-#: ../yum/__init__.py:2869
-#: ../yum/__init__.py:2895
+#: ../yum/__init__.py:3049
+#, python-format
+msgid "Not Updating Package that is obsoleted: %s"
+msgstr "No s'actualitzarà el paquet obsolet: %s"
+
+#: ../yum/__init__.py:3058 ../yum/__init__.py:3085
 #, python-format
 msgid "Not Updating Package that is already updated: %s.%s %s:%s-%s"
 msgstr "No s'actualitzarà el paquet actualitzat: %s.%s %s:%s-%s"
 
-#: ../yum/__init__.py:2956
+#: ../yum/__init__.py:3140
 msgid "No package matched to remove"
-msgstr "No hi ha cap paquet coincident per a esborrar"
+msgstr "No hi ha cap paquet coincident per a suprimir"
 
-#: ../yum/__init__.py:2990
+#: ../yum/__init__.py:3173 ../yum/__init__.py:3277 ../yum/__init__.py:3366
 #, python-format
 msgid "Cannot open file: %s. Skipping."
 msgstr "No es pot obrir el fitxer %s. S'ometrà."
 
-#: ../yum/__init__.py:2993
+#: ../yum/__init__.py:3176 ../yum/__init__.py:3280 ../yum/__init__.py:3369
 #, python-format
 msgid "Examining %s: %s"
 msgstr "S'està examinant %s: %s"
 
-#: ../yum/__init__.py:3001
+#: ../yum/__init__.py:3184 ../yum/__init__.py:3283 ../yum/__init__.py:3372
 #, python-format
 msgid "Cannot add package %s to transaction. Not a compatible architecture: %s"
-msgstr "No s'ha pogut afegir el paquet %s a la transacció. No és una arquitectura compatible: %s"
+msgstr ""
+"No s'ha pogut afegir el paquet %s a la transacció. No és una arquitectura "
+"compatible: %s"
 
-#: ../yum/__init__.py:3009
+#: ../yum/__init__.py:3192
 #, python-format
-msgid "Package %s not installed, cannot update it. Run yum install to install it instead."
-msgstr "El paquet %s no està instal·lat; no es pot actualitzar. Executeu «yum install» per a instal·lar-lo."
+msgid ""
+"Package %s not installed, cannot update it. Run yum install to install it "
+"instead."
+msgstr ""
+"El paquet %s no està instal·lat; no es pot actualitzar. Executeu «yum "
+"install» per a instal·lar-lo."
 
-#: ../yum/__init__.py:3044
+#: ../yum/__init__.py:3227 ../yum/__init__.py:3294 ../yum/__init__.py:3383
 #, python-format
 msgid "Excluding %s"
 msgstr "S'està excloent %s"
 
-#: ../yum/__init__.py:3049
+#: ../yum/__init__.py:3232
 #, python-format
 msgid "Marking %s to be installed"
 msgstr "S'està marcant %s per a ser instal·lat"
 
-#: ../yum/__init__.py:3055
+#: ../yum/__init__.py:3238
 #, python-format
 msgid "Marking %s as an update to %s"
 msgstr "S'està marcant %s com a actualització de %s"
 
-#: ../yum/__init__.py:3062
+#: ../yum/__init__.py:3245
 #, python-format
 msgid "%s: does not update installed package."
 msgstr "%s no actualitza el paquet instal·lat."
 
-#: ../yum/__init__.py:3077
+#: ../yum/__init__.py:3313
 msgid "Problem in reinstall: no package matched to remove"
-msgstr "Hi ha un problema en reinstal·lar: no hi ha cap paquet marcat per a esborrar"
+msgstr ""
+"Hi ha un problema en reinstal·lar: no hi ha cap paquet marcat per a suprimir"
 
-#: ../yum/__init__.py:3089
-#: ../yum/__init__.py:3160
+#: ../yum/__init__.py:3326 ../yum/__init__.py:3444
 #, python-format
 msgid "Package %s is allowed multiple installs, skipping"
 msgstr "El paquet %s permet múltiples instal·lacions, s'està ometent"
 
-#: ../yum/__init__.py:3098
-msgid "Problem in reinstall: no package matched to install"
-msgstr "Hi ha un problema en reinstal·lar: no hi ha cap paquet marcat per a instal·lar"
+#: ../yum/__init__.py:3347
+#, python-format
+msgid "Problem in reinstall: no package %s matched to install"
+msgstr ""
+"Hi ha un problema en reinstal·lar: no hi ha cap paquet %s marcat per a "
+"instal·lar"
 
-#: ../yum/__init__.py:3152
+#: ../yum/__init__.py:3436
 msgid "No package(s) available to downgrade"
 msgstr "No hi ha cap paquet disponible per a desactualitzar"
 
-#: ../yum/__init__.py:3183
+#: ../yum/__init__.py:3480
 #, python-format
 msgid "No Match for available package: %s"
 msgstr "No hi ha cap paquet disponible que coincideixi: %s"
 
-#: ../yum/__init__.py:3189
+#: ../yum/__init__.py:3486
 #, python-format
 msgid "Only Upgrade available on package: %s"
 msgstr "Només hi ha una actualització disponible per al paquet: %s"
 
-#: ../yum/__init__.py:3241
+#: ../yum/__init__.py:3545
 #, python-format
 msgid "Retrieving GPG key from %s"
 msgstr "S'està recuperant la clau GPG des de %s"
 
-#: ../yum/__init__.py:3261
+#: ../yum/__init__.py:3565
 msgid "GPG key retrieval failed: "
 msgstr "La recuperació de la clau GPG ha fallat: "
 
-#: ../yum/__init__.py:3272
+#: ../yum/__init__.py:3576
 #, python-format
 msgid "GPG key parsing failed: key does not have value %s"
 msgstr "L'ànalisi de la clau GPG ha fallat: la clau no té el valor %s"
 
-#: ../yum/__init__.py:3304
+#: ../yum/__init__.py:3608
 #, python-format
 msgid "GPG key at %s (0x%s) is already installed"
 msgstr "La clau GPG de %s (0x%s) ja està instal·lada"
 
 #. Try installing/updating GPG key
-#: ../yum/__init__.py:3309
-#: ../yum/__init__.py:3371
+#: ../yum/__init__.py:3613 ../yum/__init__.py:3675
 #, python-format
 msgid "Importing GPG key 0x%s \"%s\" from %s"
 msgstr "S'està important la clau GPG 0x%s \"%s\" des de %s"
 
-#: ../yum/__init__.py:3326
+#: ../yum/__init__.py:3630
 msgid "Not installing key"
 msgstr "No s'està instal·lant la clau"
 
-#: ../yum/__init__.py:3332
+#: ../yum/__init__.py:3636
 #, python-format
 msgid "Key import failed (code %d)"
 msgstr "La importació de la clau ha fallat (codi %d)"
 
-#: ../yum/__init__.py:3333
-#: ../yum/__init__.py:3392
+#: ../yum/__init__.py:3637 ../yum/__init__.py:3696
 msgid "Key imported successfully"
 msgstr "La clau s'ha importat amb èxit"
 
-#: ../yum/__init__.py:3338
-#: ../yum/__init__.py:3397
+#: ../yum/__init__.py:3642 ../yum/__init__.py:3701
 #, python-format
 msgid ""
-"The GPG keys listed for the \"%s\" repository are already installed but they are not correct for this package.\n"
+"The GPG keys listed for the \"%s\" repository are already installed but they "
+"are not correct for this package.\n"
 "Check that the correct key URLs are configured for this repository."
 msgstr ""
-"Les claus GPG llistades per al repositori \"%s\" ja estan instal·lades però no són correctes per a aquest paquet.\n"
-"Comproveu que les URL de claus correctes estan configurades per a aquest repositori."
+"Les claus GPG llistades per al repositori \"%s\" ja estan instal·lades però "
+"no són correctes per a aquest paquet.\n"
+"Comproveu que les URL de claus correctes estan configurades per a aquest "
+"repositori."
 
-#: ../yum/__init__.py:3347
+#: ../yum/__init__.py:3651
 msgid "Import of key(s) didn't help, wrong key(s)?"
 msgstr "La importació de claus no ha ajudat, eren claus incorrectes?"
 
-#: ../yum/__init__.py:3366
+#: ../yum/__init__.py:3670
 #, python-format
 msgid "GPG key at %s (0x%s) is already imported"
 msgstr "La clau GPG a %s (0x%s) ja ha estat importada"
 
-#: ../yum/__init__.py:3386
+#: ../yum/__init__.py:3690
 #, python-format
 msgid "Not installing key for repo %s"
 msgstr "No s'està instal·lant la clau per al repositori %s"
 
-#: ../yum/__init__.py:3391
+#: ../yum/__init__.py:3695
 msgid "Key import failed"
 msgstr "Ha fallat la importació de la clau"
 
-#: ../yum/__init__.py:3482
+#: ../yum/__init__.py:3816
 msgid "Unable to find a suitable mirror."
 msgstr "No s'ha pogut trobar un servidor rèplica vàlid."
 
-#: ../yum/__init__.py:3484
+#: ../yum/__init__.py:3818
 msgid "Errors were encountered while downloading packages."
-msgstr "S'han trobat errors descarregant paquets."
+msgstr "S'han trobat errors baixant paquets."
 
-#: ../yum/__init__.py:3525
+#: ../yum/__init__.py:3868
 #, python-format
 msgid "Please report this error at %s"
 msgstr "Siusplau, informeu d'aquest error al %s"
 
-#: ../yum/__init__.py:3549
+#: ../yum/__init__.py:3892
 msgid "Test Transaction Errors: "
 msgstr "Errors en la transacció de prova: "
 
 #. Mostly copied from YumOutput._outKeyValFill()
-#: ../yum/plugins.py:204
+#: ../yum/plugins.py:202
 msgid "Loaded plugins: "
 msgstr "Connectors carregats: "
 
-#: ../yum/plugins.py:218
-#: ../yum/plugins.py:224
+#: ../yum/plugins.py:216 ../yum/plugins.py:222
 #, python-format
 msgid "No plugin match for: %s"
 msgstr "No hi ha cap connector que coincideixi amb: %s"
 
-#: ../yum/plugins.py:254
+#: ../yum/plugins.py:252
 #, python-format
 msgid "Not loading \"%s\" plugin, as it is disabled"
 msgstr "No s'està carregant el connector \"%s\", ja que està deshabilitat"
 
 #. Give full backtrace:
-#: ../yum/plugins.py:266
+#: ../yum/plugins.py:264
 #, python-format
 msgid "Plugin \"%s\" can't be imported"
 msgstr "No s'ha pogut importar el connector \"%s\""
 
-#: ../yum/plugins.py:273
+#: ../yum/plugins.py:271
 #, python-format
 msgid "Plugin \"%s\" doesn't specify required API version"
 msgstr "El connector \"%s\" no especifica la versió de l'API requerida."
 
-#: ../yum/plugins.py:278
+#: ../yum/plugins.py:276
 #, python-format
 msgid "Plugin \"%s\" requires API %s. Supported API is %s."
 msgstr "El connector \"%s\" requereix l'API %s. L'API disponible és %s"
 
-#: ../yum/plugins.py:311
+#: ../yum/plugins.py:309
 #, python-format
 msgid "Loading \"%s\" plugin"
 msgstr "S'està carregant el connector \"%s\""
 
-#: ../yum/plugins.py:318
+#: ../yum/plugins.py:316
 #, python-format
-msgid "Two or more plugins with the name \"%s\" exist in the plugin search path"
-msgstr "Existeixen dos o més connectors amb el mateix nom \"%s\" en el camí de cerca de connectors"
+msgid ""
+"Two or more plugins with the name \"%s\" exist in the plugin search path"
+msgstr ""
+"Existeixen dos o més connectors amb el mateix nom \"%s\" en el camí de cerca "
+"de connectors"
 
-#: ../yum/plugins.py:338
+#: ../yum/plugins.py:336
 #, python-format
 msgid "Configuration file %s not found"
 msgstr "No s'ha trobat el fitxer de configuració %s"
 
 #. for
 #. Configuration files for the plugin not found
-#: ../yum/plugins.py:341
+#: ../yum/plugins.py:339
 #, python-format
 msgid "Unable to find configuration file for plugin %s"
 msgstr "No s'ha pogut trobar un fitxer de configuració per al connector %s"
 
-#: ../yum/plugins.py:495
+#: ../yum/plugins.py:497
 msgid "registration of commands not supported"
 msgstr "l'enregistrament d'ordres no està suportat"
 
@@ -2282,44 +2384,87 @@ msgstr "l'enregistrament d'ordres no està suportat"
 msgid "Repackaging"
 msgstr "Reempaquetant"
 
-#: ../rpmUtils/oldUtils.py:31
+#: ../rpmUtils/oldUtils.py:33
 #, python-format
 msgid "Header cannot be opened or does not match %s, %s."
 msgstr "La capçalera no es pot obrir o no coincideix amb %s, %s"
 
-#: ../rpmUtils/oldUtils.py:51
+#: ../rpmUtils/oldUtils.py:53
 #, python-format
 msgid "RPM %s fails md5 check"
 msgstr "Falla la comprobació md5 per al RPM %s"
 
-#: ../rpmUtils/oldUtils.py:149
+#: ../rpmUtils/oldUtils.py:151
 msgid "Could not open RPM database for reading. Perhaps it is already in use?"
-msgstr "No s'ha pogut obrir la base de dades RPM per a llegir-la. Potser ja està en ús?"
+msgstr ""
+"No s'ha pogut obrir la base de dades RPM per a llegir-la. Potser ja està en "
+"ús?"
 
-#: ../rpmUtils/oldUtils.py:181
+#: ../rpmUtils/oldUtils.py:183
 msgid "Got an empty Header, something has gone wrong"
 msgstr "S'ha obtingut una capçalera buida, alguna cosa ha anat malament"
 
-#: ../rpmUtils/oldUtils.py:251
-#: ../rpmUtils/oldUtils.py:258
-#: ../rpmUtils/oldUtils.py:261
-#: ../rpmUtils/oldUtils.py:264
+#: ../rpmUtils/oldUtils.py:253 ../rpmUtils/oldUtils.py:260
+#: ../rpmUtils/oldUtils.py:263 ../rpmUtils/oldUtils.py:266
 #, python-format
 msgid "Damaged Header %s"
 msgstr "Capçalera malmesa %s"
 
-#: ../rpmUtils/oldUtils.py:279
+#: ../rpmUtils/oldUtils.py:281
 #, python-format
 msgid "Error opening rpm %s - error %s"
-msgstr "S'ha produïut un error en obrir rpm %s - error %s"
+msgstr "S'ha produït un error en obrir l'rpm %s - error %s"
+
+#~ msgid "Matching packages for package list to user args"
+#~ msgstr ""
+#~ "S'està comparant els paquets per a la llista de paquets amb els arguments "
+#~ "de l'usuari"
+
+#~ msgid ""
+#~ "\n"
+#~ "Transaction Summary\n"
+#~ "%s\n"
+#~ "Install  %5.5s Package(s)         \n"
+#~ "Update   %5.5s Package(s)         \n"
+#~ "Remove   %5.5s Package(s)         \n"
+#~ msgstr ""
+#~ "\n"
+#~ "Resum de transaccions\n"
+#~ "%s\n"
+#~ "Instal·la  %5.5s paquets         \n"
+#~ "Actualitza %5.5s paquets         \n"
+#~ "Esborra    %5.5s paquets         \n"
+
+#~ msgid "excluding for cost: %s from %s"
+#~ msgstr "s'està excloent per cost: %s de %s"
+
+#~ msgid "Excluding Packages in global exclude list"
+#~ msgstr "S'estan excloent paquets en la llista global d'exclusió"
+
+#~ msgid "Excluding Packages from %s"
+#~ msgstr "S'estan excloent paquets de %s"
+
+#~ msgid "Reducing %s to included packages only"
+#~ msgstr "S'està reduint %s únicament a paquets inclosos."
+
+#~ msgid "Keeping included package %s"
+#~ msgstr "S'està mantenint el paquet inclòs %s"
+
+#~ msgid "Removing unmatched package %s"
+#~ msgstr "S'està esborrant el paquet sense coincidències %s"
+
+#~ msgid "Finished"
+#~ msgstr "Finalitzat"
 
 #~ msgid "Entering rpm code"
 #~ msgstr "S'està entrant en codi rpm"
+
 #~ msgid "Leaving rpm code"
 #~ msgstr "Deixant codi rpm"
+
 #~ msgid "Parsing package install arguments"
 #~ msgstr "S'estan analitzant els arguments del paquet a instal·lar"
+
 #~ msgid "Invalid versioned dependency string, try quoting it."
 #~ msgstr ""
 #~ "La cadena de versió de dependència és invàlida, proveu-ho entre cometes."
-
