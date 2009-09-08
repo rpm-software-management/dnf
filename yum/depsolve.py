@@ -1083,7 +1083,16 @@ class Depsolve(object):
                 # could play a part ... this probably needs a better fix.
                 newest = sorted(rpmdbpkgs)[-1]
                 if newest.verLT(pkg):
-                    ipkgresults[pkg] = 0
+                    # give pkgs which are updates just a SLIGHT edge
+                    # we should also make sure that any pkg
+                    # we are giving an edge to is not obsoleted by
+                    # something else in the transaction. :(
+                    # there are many ways I hate this - this is but one
+                    ipkgresults[pkg] = 5
+            else:
+                # just b/c they're not installed pkgs doesn't mean they should
+                # be ignored entirely. Just not preferred
+                ipkgresults[pkg] = 0
 
         #  This is probably only for "renames". What happens is that pkgA-1 gets
         # obsoleted by pkgB but pkgB requires pkgA-2, now _if_ the pkgA txmbr
