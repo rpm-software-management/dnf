@@ -1259,7 +1259,10 @@ class YumBase(depsolve.Depsolve):
                 os.makedirs(lockdir, mode=0755)
             fd = os.open(filename, os.O_EXCL|os.O_CREAT|os.O_WRONLY, mode)    
         except OSError, msg:
-            if not msg.errno == errno.EEXIST: raise msg
+            if not msg.errno == errno.EEXIST: 
+                # Whoa. What the heck happened?
+                errmsg = _('Could not create lock at %s: %s ') % (filename, str(msg))
+                raise Errors.LockError(msg.errno, errmsg, contents)
             return 0
         else:
             os.write(fd, contents)
