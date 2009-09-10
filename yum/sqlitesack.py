@@ -929,15 +929,19 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
             if file_glob:
                 name_re = re.compile(fnmatch.translate(name))
             def filelist_globber(sql_dirname, sql_filenames):
+                # Note: Can't return bool, because sqlite doesn't like it in
+                #       weird ways. Test:
+                #                         install '*bin/autoheader'
+                #                         provides /lib/security/pam_loginuid.so
                 files = sql_filenames.split('/')
                 if not file_glob:
-                    return filename in files
+                    return int(filename in files)
 
                 fns = map(lambda f: '%s/%s' % (sql_dirname, f), files)
                 for match in fns:
                     if name_re.match(match):
-                        return True
-                return False
+                        return 1
+                return 0
 
             cache.create_function("filelist_globber", 2, filelist_globber)
             # for all the ones where filenames is multiple files, 
