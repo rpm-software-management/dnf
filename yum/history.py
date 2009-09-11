@@ -236,7 +236,8 @@ class YumHistory:
             res = executeSQL(cur,
                              """INSERT INTO pkgtups
                                 (name, arch, epoch, version, release, checksum)
-                                VALUES (?,?,?,?,?,?)""", (n,a,e,v,r, checksum))
+                                VALUES (?, ?, ?, ?, ?, ?)""", (n,a,e,v,r,
+                                                               checksum))
         else:
             res = executeSQL(cur,
                              """INSERT INTO pkgtups
@@ -279,9 +280,9 @@ class YumHistory:
     def trans_data_pid_end(self, pid, state):
         cur = self._get_cursor()
         res = executeSQL(cur,
-                         """UPDATE trans_data_pkgs SET done = 'TRUE'
+                         """UPDATE trans_data_pkgs SET done = ?
                          WHERE tid = ? AND pkgtupid = ? AND state = ?
-                         """, (self._tid, pid, state))
+                         """, ('TRUE', self._tid, pid, state))
         return cur.lastrowid
 
     def beg(self, rpmdb_version, using_pkgs, txmbrs):
@@ -289,9 +290,9 @@ class YumHistory:
         res = executeSQL(cur,
                          """INSERT INTO trans_beg
                             (timestamp, rpmdb_version, loginuid)
-                            VALUES (?,?,?)""", (int(time.time()),
-                                                str(rpmdb_version),
-                                                yum.misc.getloginuid()))
+                            VALUES (?, ?, ?)""", (int(time.time()),
+                                                    str(rpmdb_version),
+                                                    yum.misc.getloginuid()))
         self._tid = cur.lastrowid
 
         for pkg in using_pkgs:
@@ -329,15 +330,15 @@ class YumHistory:
         res = executeSQL(cur,
                          """INSERT INTO trans_end
                             (tid, timestamp, rpmdb_version, return_code)
-                            VALUES (?,?,?,?)""", (self._tid, int(time.time()),
-                                                  str(rpmdb_version),
-                                                  return_code))
+                            VALUES (?, ?, ?, ?)""", (self._tid,int(time.time()),
+                                                     str(rpmdb_version),
+                                                     return_code))
         self._commit()
         if not return_code:
             # Simple hack, if the transaction finished
             executeSQL(cur,
-                       """UPDATE trans_data_pkgs SET done = 'TRUE'
-                          WHERE tid = ?""", (self._tid,))
+                       """UPDATE trans_data_pkgs SET done = ?
+                          WHERE tid = ?""", ('TRUE', self._tid,))
             self._commit()
         if errors is not None:
             self._log_errors(errors)
@@ -345,27 +346,26 @@ class YumHistory:
 
     def _old_with_pkgs(self, tid):
         cur = self._get_cursor()
-        res = executeSQL(cur,
-                         """SELECT name, arch, epoch, version, release, checksum
-                            FROM trans_with_pkgs JOIN pkgtups USING(pkgtupid)
-                            WHERE tid = ?
-                            ORDER BY name ASC, epoch ASC""", (tid,))
+        executeSQL(cur,
+                   """SELECT name, arch, epoch, version, release, checksum
+                      FROM trans_with_pkgs JOIN pkgtups USING(pkgtupid)
+                      WHERE tid = ?
+                      ORDER BY name ASC, epoch ASC""", (tid,))
         ret = []
-        for row in res:
+        for row in cur:
             obj = YumHistoryPackage(row[0],row[1],row[2],row[3],row[4], row[5])
             ret.append(obj)
         return ret
     def _old_data_pkgs(self, tid):
         cur = self._get_cursor()
-        res = executeSQL(cur,
-                         """SELECT name, arch, epoch, version, release,
-                                   checksum, done, state
-                            FROM trans_data_pkgs JOIN pkgtups USING(pkgtupid)
-                            WHERE tid = ?
-                            ORDER BY name ASC, epoch ASC, state DESC""",
-                         (tid,))
+        executeSQL(cur,
+                   """SELECT name, arch, epoch, version, release,
+                             checksum, done, state
+                      FROM trans_data_pkgs JOIN pkgtups USING(pkgtupid)
+                      WHERE tid = ?
+                      ORDER BY name ASC, epoch ASC, state DESC""", (tid,))
         ret = []
-        for row in res:
+        for row in cur:
             obj = YumHistoryPackage(row[0],row[1],row[2],row[3],row[4], row[5])
             obj.done     = row[6] == 'TRUE'
             obj.state    = row[7]
@@ -392,9 +392,9 @@ class YumHistory:
             sql += " WHERE tid IN (%s)" % ", ".join(['?'] * len(tids))
             params = list(tids)
         sql += " ORDER BY beg_ts DESC, tid ASC"
-        res = executeSQL(cur, sql, params)
+        executeSQL(cur, sql, params)
         ret = []
-        for row in res:
+        for row in cur:
             ret.append(YumHistoryTransaction(self, row))
 
         # Go through backwards, and see if the rpmdb versions match
@@ -424,10 +424,8 @@ class YumHistory:
                   FROM trans_beg OUTER JOIN trans_end USING(tid)
                   ORDER BY beg_ts DESC, tid ASC
                   LIMIT 1"""
-        res = executeSQL(cur, sql)
-        if res is None:
-            res = []
-        for row in res:
+        executeSQL(cur, sql)
+        for row in cur:
             return YumHistoryTransaction(self, row)
         return None
 

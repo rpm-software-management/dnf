@@ -121,6 +121,11 @@ def QmarkToPyformat(query, params):
         if token.endswith("?"):
             output.append(token[:-1] + "%%(param%d)s" % count)
             count+=1
+        elif token.endswith("?,") or token.endswith("?)"):
+            ntoken = token[:-2] + "%%(param%d)s" % count
+            ntoken += token[-1]
+            output.append(ntoken)
+            count+=1
         else:
             output.append(token)
 
