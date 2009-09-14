@@ -1152,19 +1152,19 @@ class HistoryCommand(YumCommand):
         return ['history']
 
     def getUsage(self):
-        return "[info|list|summary|repeat|undo|new]"
+        return "[info|list|summary|redo|undo|new]"
 
     def getSummary(self):
         return _("Display, or use, the transaction history")
 
-    def _hcmd_repeat(self, base, extcmds):
+    def _hcmd_redo(self, base, extcmds):
         old = base._history_get_transaction(extcmds)
         if old is None:
-            return 1, ['Failed history repeat']
+            return 1, ['Failed history redo']
         tm = time.ctime(old.beg_timestamp)
         print "Repeating transaction %u, from %s" % (old.tid, tm)
         base.historyInfoCmdPkgsAltered(old)
-        if base.history_repeat(old):
+        if base.history_redo(old):
             return 2, ["Repeating transaction %u" % (old.tid,)]
 
     def _hcmd_undo(self, base, extcmds):
@@ -1181,12 +1181,12 @@ class HistoryCommand(YumCommand):
         base.history._create_db_file()
 
     def doCheck(self, base, basecmd, extcmds):
-        cmds = ('list', 'info', 'summary', 'repeat', 'undo', 'new')
+        cmds = ('list', 'info', 'summary', 'repeat', 'redo', 'undo', 'new')
         if extcmds and extcmds[0] not in cmds:
             base.logger.critical(_('Invalid history sub-command, use: %s.'),
                                  ", ".join(cmds))
             raise cli.CliError
-        if extcmds and extcmds[0] in ('repeat', 'undo', 'new'):
+        if extcmds and extcmds[0] in ('repeat', 'redo', 'undo', 'new'):
             checkRootUID(base)
             checkGPGKey(base)
 
@@ -1204,8 +1204,8 @@ class HistoryCommand(YumCommand):
             ret = base.historySummaryCmd(extcmds)
         elif vcmd == 'undo':
             ret = self._hcmd_undo(base, extcmds)
-        elif vcmd == 'repeat':
-            ret = self._hcmd_repeat(base, extcmds)
+        elif vcmd in ('redo', 'repeat'):
+            ret = self._hcmd_redo(base, extcmds)
         elif vcmd == 'new':
             ret = self._hcmd_new(base, extcmds)
 
@@ -1217,4 +1217,4 @@ class HistoryCommand(YumCommand):
         vcmd = 'list'
         if extcmds:
             vcmd = extcmds[0]
-        return vcmd in ('repeat', 'undo')
+        return vcmd in ('repeat', 'redo', 'undo')

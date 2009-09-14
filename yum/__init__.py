@@ -3588,7 +3588,7 @@ class YumBase(depsolve.Depsolve):
 
         return returndict
 
-    def history_repeat(self, transaction):
+    def history_redo(self, transaction):
         """ Given a valid historical transaction object, try and repeat
             that transaction. """
         # This is basic atm.
@@ -3609,7 +3609,7 @@ class YumBase(depsolve.Depsolve):
                 if self.update(pkgtup=pkg.pkgtup):
                     done = True
         for pkg in transaction.trans_data:
-            if pkg.state in ('Install', 'True-Install'):
+            if pkg.state in ('Install', 'True-Install', 'Obsoleting'):
                 if self.install(pkgtup=pkg.pkgtup):
                     done = True
         for pkg in transaction.trans_data:
@@ -3639,9 +3639,20 @@ class YumBase(depsolve.Depsolve):
                 if self.update(pkgtup=pkg.pkgtup):
                     done = True
         for pkg in transaction.trans_data:
+            if pkg.state == 'Obsoleting':
+                if self.remove(pkgtup=pkg.pkgtup):
+                    done = True
+        for pkg in transaction.trans_data:
             if pkg.state in ('Install', 'True-Install'):
                 if self.remove(pkgtup=pkg.pkgtup):
                     done = True
+        for pkg in transaction.trans_data:
+            if pkg.state == 'Obsoleted':
+                old_conf_obs = self.conf.obsoletes
+                self.conf.obsoletes = False
+                if self.install(pkgtup=pkg.pkgtup):
+                    done = True
+                self.conf.obsoletes = old_conf_obs
         for pkg in transaction.trans_data:
             if pkg.state == 'Erase':
                 if self.install(pkgtup=pkg.pkgtup):
