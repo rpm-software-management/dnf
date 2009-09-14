@@ -320,6 +320,8 @@ class TransactionData:
         self.depremoved.sort()
         self.instgroups.sort()
         self.removedgroups.sort()
+        self.reinstalled.sort()
+        self.downgraded.sort()
         self.failed.sort()
 
     
