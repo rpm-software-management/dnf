@@ -339,7 +339,7 @@ class RPMTransaction:
         # we hand back the right path to those 'outside' of the chroot() calls
         # but we're using the right path inside.
         if self.base.conf.installroot != '/':
-            tsfn = tsfn.replace(self.base.conf.installroot,'')
+            tsfn = tsfn.replace(os.path.normpath(self.base.conf.installroot),'')
         try:
             if not os.path.exists(os.path.dirname(tsfn)):
                 os.makedirs(os.path.dirname(tsfn)) # make the dir,
