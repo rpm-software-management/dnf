@@ -1181,8 +1181,11 @@ to exit.
             st = hpkg.state
             if st == 'True-Install':
                 st = 'Install'
+            if st == 'Obsoleted': #  This is just a UI tweak, as we can't have
+                                  # just one but we need to count them all.
+                st = 'Obsoleting'
             if st in ('Install', 'Update', 'Erase', 'Reinstall', 'Downgrade',
-                      'Obsoleting', 'Obsoleted'):
+                      'Obsoleting'):
                 actions.add(st)
                 count += 1
         assert len(actions) <= 6
@@ -1240,24 +1243,11 @@ to exit.
         print "-" * 79
         fmt = "%6u | %-22.22s | %-16s | %-14s | %4u"
         done = 0
-        lastdbv = self.history.last()
-        if lastdbv is not None:
-            lasttid = lastdbv.tid
-            lastdbv = lastdbv.end_rpmdbversion
         for old in self.history.old(tids):
             if not printall and done > 19:
                 break
 
             done += 1
-            if lastdbv is not None and not old.altered_rpmdb:
-                #  If this is the last transaction, is good and it doesn't
-                # match the current rpmdb ... then mark it as bad.
-                if old.tid == lasttid:
-                    rpmdbv  = self.rpmdb.simpleVersion(main_only=True)[0]
-                    if lastdbv != rpmdbv:
-                        old.altered_rpmdb = True
-            lastdbv = None
-
             name = self._pwd_ui_username(old.loginuid, 22)
             tm = time.strftime("%Y-%m-%d %H:%M",
                                time.localtime(old.beg_timestamp))
@@ -1266,6 +1256,14 @@ to exit.
                 print fmt % (old.tid, name, tm, uiacts, num), "**"
             else:
                 print fmt % (old.tid, name, tm, uiacts, num)
+        lastdbv = self.history.last()
+        if lastdbv is not None:
+            #  If this is the last transaction, is good and it doesn't
+            # match the current rpmdb ... then mark it as bad.
+            rpmdbv  = self.rpmdb.simpleVersion(main_only=True)[0]
+            if lastdbv.end_rpmdbversion != rpmdbv:
+                errstring = _('Warning: RPMDB has been altered since the last yum transaction.')
+                base.logger.warning(errstring)
 
     def _history_get_transactions(self, extcmds):
         if len(extcmds) < 2:
@@ -1396,19 +1394,27 @@ to exit.
                     highlight = 'bold'
             (hibeg, hiend) = self._highlight(highlight)
 
+            # To chop the name off we need nevra strings, str(pkg) gives envra
+            # so we have to do it by hand ... *sigh*.
+            if hpkg.epoch == '0':
+                cn = str(hpkg)
+            else:
+                cn = "%s-%s:%s-%s.%s" % (hpkg.name, hpkg.epoch,
+                                         hpkg.version, hpkg.release, hpkg.arch)
+
             if False: pass
             elif hpkg.state == 'Update':
                 ln = len(hpkg.name) + 1
-                cn = (" " * ln) + str(hpkg)[ln:]
+                cn = (" " * ln) + cn[ln:]
                 print "%s%s%-12s%s %s" % (prefix, hibeg, hpkg.state, hiend, cn)
             elif hpkg.state == 'Downgraded':
                 ln = len(hpkg.name) + 1
-                cn = (" " * ln) + str(hpkg)[ln:]
+                cn = (" " * ln) + cn[ln:]
                 print "%s%s%-12s%s %s" % (prefix, hibeg, hpkg.state, hiend, cn)
             elif hpkg.state == 'True-Install':
-                print "%s%s%-12s%s %s" % (prefix, hibeg, "Install", hiend, hpkg)
+                print "%s%s%-12s%s %s" % (prefix, hibeg, "Install", hiend,  cn)
             else:
-                print "%s%s%-12s%s %s" % (prefix, hibeg, hpkg.state, hiend,hpkg)
+                print "%s%s%-12s%s %s" % (prefix, hibeg, hpkg.state, hiend, cn)
 
     def historySummaryCmd(self, extcmds):
         tids, printall = self._history_list_transactions(extcmds)
