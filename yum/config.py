@@ -893,7 +893,13 @@ def _getsysver(installroot, distroverpkg):
         idx = ts.dbMatch('provides', distroverpkg)
     except TypeError, e:
         # This is code for "cannot open rpmdb"
-        raise Errors.YumBaseError("Error: " + e.message)
+        # this is for pep 352 compliance on python 2.6 and above :(
+        if sys.hexversion < 0x02050000:
+            if hasattr(e,'message'):
+                raise Errors.YumBaseError("Error: " + str(e.message))
+            else:
+                raise Errors.YumBaseError("Error: " + str(e))
+        raise Errors.YumBaseError("Error: " + str(e))
     # we're going to take the first one - if there is more than one of these
     # then the user needs a beating
     if idx.count() == 0:
