@@ -255,6 +255,7 @@ def getCanonPPCArch(arch):
 
 def getCanonSPARCArch(arch):
     # Deal with sun4v, sun4u, sun4m cases
+    SPARCtype = None
     f = open("/proc/cpuinfo", "r")
     lines = f.readlines()
     f.close()
@@ -262,6 +263,9 @@ def getCanonSPARCArch(arch):
         if line.startswith("type"):
             SPARCtype = line.split(':')[1]
             break
+    if SPARCtype is None:
+        return arch
+
     if SPARCtype.find("sun4v") != -1:
         if arch.startswith("sparc64"):
             return "sparc64v"
