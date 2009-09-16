@@ -18,10 +18,14 @@ import time
 
 import yum
 from cli import *
+from yum import Errors
 from yum import _
+from yum import logginglevels
 from optparse import OptionGroup
 
 import yum.plugins as plugins
+
+
 
 class YumUtilBase(YumBaseCli):
     def __init__(self,name,ver,usage):
@@ -46,7 +50,7 @@ class YumUtilBase(YumBaseCli):
         while True:
             try:
                 self.doLock()
-            except yum.Errors.LockError, e:
+            except Errors.LockError, e:
                 if "%s" %(e.msg,) != lockerr:
                     lockerr = "%s" %(e.msg,)
                     self.logger.critical(lockerr)
@@ -83,7 +87,7 @@ class YumUtilBase(YumBaseCli):
                 pc.enabled_plugins = self._parser._splitArg(opts.enableplugins)
             self.conf
 
-        except yum.Errors.ConfigError, e:
+        except Errors.ConfigError, e:
             self.logger.critical(_('Config Error: %s'), e)
             sys.exit(1)
         except ValueError, e:
@@ -108,10 +112,63 @@ class YumUtilBase(YumBaseCli):
             self._getRpmDB()
             self._getRepos(doSetup = True)
             self._getSacks()
-        except yum.Errors.YumBaseError, msg:
+        except Errors.YumBaseError, msg:
             self.logger.critical(str(msg))
             sys.exit(1)
-            
+    
+    def doUtilTransaction(self):
+        def exUserCancel():
+            self.logger.critical(_('\n\nExiting on user cancel'))
+            if unlock(): return 200
+            return 1
+
+        def exIOError(e):
+            if e.errno == 32:
+                self.logger.critical(_('\n\nExiting on Broken Pipe'))
+            else:
+                self.logger.critical(_('\n\n%s') % str(e))
+            if unlock(): return 200
+            return 1
+
+        def exPluginExit(e):
+            '''Called when a plugin raises PluginYumExit.
+
+            Log the plugin's exit message if one was supplied.
+            ''' # ' xemacs hack
+            exitmsg = str(e)
+            if exitmsg:
+                self.logger.warn('\n\n%s', exitmsg)
+            if unlock(): return 200
+            return 1
+
+        def exFatal(e):
+            self.logger.critical('\n\n%s', to_unicode(e.value))
+            if unlock(): return 200
+            return 1
+
+        def unlock():
+            try:
+                self.closeRpmDB()
+                self.doUnlock()
+            except Errors.LockError, e:
+                return 200
+            return 0
+
+        try:
+            return_code = self.doTransaction()
+        except plugins.PluginYumExit, e:
+            return exPluginExit(e)
+        except Errors.YumBaseError, e:
+            return exFatal(e)
+        except KeyboardInterrupt:
+            return exUserCancel()
+        except IOError, e:
+            return exIOError(e)
+
+        self.verbose_logger.log(logginglevels.INFO_2, _('Complete!'))
+        if unlock(): return 200
+        return return_code
+        
 def main():
     name = 'testutil'
     ver  = '0.1'
