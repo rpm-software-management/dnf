@@ -582,6 +582,24 @@ class SkipBrokenTests(DepsolveTests):
         self.assertEquals('empty', *self.resolveCode(skip=True))
         self.assertResult([c1,d1,r1,r2,r3,r4])
         
+    def testDualPackageUpdate(self):    
+        '''
+        RHBZ #522112
+        two version of the same package installed on the system
+        and update will update both, but if it fail some dep only
+        One of the updated packages will be removed from the
+        transaction.
+        '''
+        i1 = self.instPackage('xorg-x11-server-Xorg','1.6.99.900')
+        i2 = self.instPackage('xorg-x11-server-Xorg','1.6.3')
+        u1 = self.repoPackage('xorg-x11-server-Xorg', '1.6.99.901')
+        u1.addRequires("notfound")
+        self.tsInfo.addUpdate(u1, oldpo=i1)
+        self.tsInfo.addUpdate(u1, oldpo=i2)
+        self.assertEquals('empty', *self.resolveCode(skip=True))
+        self.assertResult([i1,i2])
+        
+    
     
     def resolveCode(self,skip = False):
         solver = YumBase()

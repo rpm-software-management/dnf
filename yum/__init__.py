@@ -879,6 +879,7 @@ class YumBase(depsolve.Depsolve):
                 self.verbose_logger.debug('SKIPBROKEN: sanity check the current transaction' )
                 self.tsInfo.resetResolved(hard=True)
                 self._checkMissingObsoleted() # This is totally insane, but needed :(
+                self._checkUpdatedLeftovers() # Cleanup updated leftovers
                 rescode, restring = self.resolveDeps()
         if rescode != 1:
             self.verbose_logger.debug(_("Skip-broken took %i rounds "), count)
@@ -912,6 +913,21 @@ class YumBase(depsolve.Depsolve):
                 # it clean out some really wierd cases
                 if not self.tsInfo.exists(pkg.pkgtup):
                     self.verbose_logger.debug('SKIPBROKEN: Remove extra obsoleted %s (%s)' % (txmbr.po,pkg) )
+                    self.tsInfo.remove(txmbr.po.pkgtup)
+
+    def _checkUpdatedLeftovers(self):
+        """ 
+        If multiple packages is updated the same package
+        and this package get removed because of an dep issue
+        then make sure that all the TS_UPDATED get removed.
+        """
+        for txmbr in self.tsInfo.getMembersWithState(None, [TS_UPDATED]):
+            for pkg in txmbr.updated_by:
+                # check if the updating txmbr is in the transaction
+                # else remove the updated txmbr
+                # it clean out some really wierd cases with dupes installed on the system
+                if not self.tsInfo.exists(pkg.pkgtup):
+                    self.verbose_logger.debug('SKIPBROKEN: Remove extra updated %s (%s)' % (txmbr.po,pkg) )
                     self.tsInfo.remove(txmbr.po.pkgtup)
 
     def _getPackagesToRemoveAllArch(self,po):
