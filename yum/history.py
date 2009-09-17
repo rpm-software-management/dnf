@@ -24,6 +24,7 @@ from weakref import proxy as weakref
 
 from sqlutils import sqlite, executeSQL
 import yum.misc
+import yum.constants
 from yum.constants import *
 from yum.packages import YumInstalledPackage, YumAvailablePackage, PackageObject
 
@@ -477,7 +478,16 @@ class YumHistory:
         sql += "(%s)" % ",".join(['?'] * len(pkgtupids))
         params = list(pkgtupids)
         tids = set()
-        for row in executeSQL(cur, sql, params):
+        if len(params) > yum.constants.PATTERNS_INDEXED_MAX:
+            executeSQL(cur, """SELECT tid FROM trans_data_pkgs""")
+            for row in cur:
+                if row[0] in params:
+                    tids.add(row[0])
+            return tids
+        if not params:
+            return tids
+        executeSQL(cur, sql, params)
+        for row in cur:
             tids.add(row[0])
         return tids
 
