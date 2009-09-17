@@ -902,7 +902,7 @@ class YumBase(depsolve.Depsolve):
         then the TS_OBSOLETED can get removed from the transaction
         so we must make sure that they, exist and else create them
         """
-        for txmbr in self.tsInfo:
+        for txmbr in self.tsInfo.getMembersWithState(None, [TS_OBSOLETING,TS_OBSOLETED]):
             for pkg in txmbr.obsoletes:
                 if not self.tsInfo.exists(pkg.pkgtup):
                     obs = self.tsInfo.addObsoleted(pkg,txmbr.po)
