@@ -457,6 +457,10 @@ class PluginConduit:
         '''
         return config.getOption(self._conf, section, opt, config.BoolOption(default))
 
+    def registerPackageName(self, name):
+        self._base.run_with_package_names.add(name)
+
+
 class ConfigPluginConduit(PluginConduit):
 
     def registerOpt(self, name, valuetype, where, default):

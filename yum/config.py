@@ -703,7 +703,7 @@ class YumConf(StartupConf):
     sslclientcert = Option()
     sslclientkey = Option()
 
-
+    history_record = BoolOption(True)
     history_record_packages = ListOption(['yum', 'rpm', 'yum-metadata-parser'])
 
     _reposlist = []

@@ -207,8 +207,7 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
 
         if opts.version:
             self.conf.cache = 1
-            yum_progs = ['yum', 'yum-metadata-parser', 'rpm',
-                         'yum-rhn-plugin']
+            yum_progs = self.run_with_package_names
             done = False
             def sm_ui_time(x):
                 return time.strftime("%Y-%m-%d %H:%M", time.gmtime(x))

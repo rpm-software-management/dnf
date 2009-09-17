@@ -155,6 +155,7 @@ class YumBase(depsolve.Depsolve):
         self.arch = ArchStorage()
         self.preconf = _YumPreBaseConf()
 
+        self.run_with_package_names = set()
 
     def __del__(self):
         self.close()
@@ -273,6 +274,10 @@ class YumBase(depsolve.Depsolve):
         #  We don't want people accessing/altering preconf after it becomes
         # worthless. So we delete it, and thus. it'll raise AttributeError
         del self.preconf
+
+        # Packages used to run yum...
+        for pkgname in self.conf.history_record_packages:
+            self.run_with_package_names.add(pkgname)
 
         # run the postconfig plugin hook
         self.plugins.run('postconfig')
@@ -1041,8 +1046,7 @@ class YumBase(depsolve.Depsolve):
 
         self.plugins.run('pretrans')
 
-        using_pkgs_pats = ['yum', 'rpm', 'python', 'yum-metadata-parser',
-                           'yum-rhn-plugin']
+        using_pkgs_pats = list(self.run_with_package_names)
         using_pkgs = self.rpmdb.returnPackages(patterns=using_pkgs_pats)
         rpmdbv  = self.rpmdb.simpleVersion(main_only=True)[0]
         lastdbv = self.history.last()
@@ -1051,7 +1055,8 @@ class YumBase(depsolve.Depsolve):
         if lastdbv is not None and rpmdbv != lastdbv:
             errstring = _('Warning: RPMDB has been altered since the last yum transaction.')
             self.logger.warning(errstring)
-        self.history.beg(rpmdbv, using_pkgs, list(self.tsInfo))
+        if self.conf.history_record:
+            self.history.beg(rpmdbv, using_pkgs, list(self.tsInfo))
 
         errors = self.ts.run(cb.callback, '')
         # ts.run() exit codes are, hmm, "creative": None means all ok, empty 
@@ -1068,7 +1073,8 @@ class YumBase(depsolve.Depsolve):
             self.verbose_logger.debug(errstring)
             resultobject.return_code = 1
         else:
-            self.history.end(rpmdbv, 2, errors=errors)
+            if self.conf.history_record:
+                self.history.end(rpmdbv, 2, errors=errors)
             raise Errors.YumBaseError, errors
                           
         if not self.conf.keepcache:
@@ -1156,10 +1162,11 @@ class YumBase(depsolve.Depsolve):
             else:
                 self.verbose_logger.log(logginglevels.DEBUG_2, 'What is this? %s' % txmbr.po)
 
-        ret = -1
-        if resultobject is not None:
-            ret = resultobject.return_code
-        self.history.end(self.rpmdb.simpleVersion(main_only=True)[0], ret)
+        if self.conf.history_record:
+            ret = -1
+            if resultobject is not None:
+                ret = resultobject.return_code
+            self.history.end(self.rpmdb.simpleVersion(main_only=True)[0], ret)
         self.rpmdb.dropCachedData()
 
     def costExcludePackages(self):
