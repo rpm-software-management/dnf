@@ -31,6 +31,18 @@ from yum import _
 from yum.i18n import to_unicode
 import yum.misc
 import cli
+import exceptions
+
+def suppress_keyboard_interrupt_message():
+    old_excepthook = sys.excepthook
+
+    def new_hook(type, value, traceback):
+        if type != exceptions.KeyboardInterrupt:
+            old_excepthook(type, value, traceback)
+        else:
+            pass
+
+    sys.excepthook = new_hook
 
 
 def main(args):
@@ -307,11 +319,17 @@ def user_main(args, exit_code=False):
             errcode = cprof(main, args)
         if os.environ['YUM_PROF'] == 'hotshot':
             errcode = hotshot(main, args)
+    if 'YUM_PDB' in os.environ:
+        import pdb
+        pdb.run(main(args))
+
     if errcode is None:
         errcode = main(args)
     if exit_code:
         sys.exit(errcode)
     return errcode
+
+suppress_keyboard_interrupt_message()
 
 if __name__ == "__main__":
     try:
