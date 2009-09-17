@@ -377,7 +377,9 @@ class YumHistory:
             ret.append(obj)
         return ret
 
-    def old(self, tids=[]):
+    def old(self, tids=[], limit=None):
+        """ Return a list of the last transactions, note that this includes
+            partial transactions (ones without an end transaction). """
         cur = self._get_cursor()
         sql =  """SELECT tid,
                          trans_beg.timestamp AS beg_ts,
@@ -385,13 +387,17 @@ class YumHistory:
                          trans_end.timestamp AS end_ts,
                          trans_end.rpmdb_version AS end_rv,
                          loginuid, return_code
-                  FROM trans_beg OUTER JOIN trans_end USING(tid)"""
+                  FROM trans_beg JOIN trans_end USING(tid)"""
+        # FIXME: Stupid sqlite doesn't do outer joins yet, so if yum dies
+        #        before creating a trans_end entry we miss it atm.
         params = None
         if tids:
             tids = set(tids)
             sql += " WHERE tid IN (%s)" % ", ".join(['?'] * len(tids))
             params = list(tids)
         sql += " ORDER BY beg_ts DESC, tid ASC"
+        if limit is not None:
+            sql += " LIMIT " + str(limit)
         executeSQL(cur, sql, params)
         ret = []
         for row in cur:
@@ -414,6 +420,8 @@ class YumHistory:
         return ret
 
     def last(self):
+        """ This is the last full transaction. So any imcomplete transactions
+            do not count. """
         cur = self._get_cursor()
         sql =  """SELECT tid,
                          trans_beg.timestamp AS beg_ts,
@@ -421,7 +429,7 @@ class YumHistory:
                          trans_end.timestamp AS end_ts,
                          trans_end.rpmdb_version AS end_rv,
                          loginuid, return_code
-                  FROM trans_beg OUTER JOIN trans_end USING(tid)
+                  FROM trans_beg JOIN trans_end USING(tid)
                   ORDER BY beg_ts DESC, tid ASC
                   LIMIT 1"""
         executeSQL(cur, sql)

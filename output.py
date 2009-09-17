@@ -1243,8 +1243,11 @@ to exit.
         print "-" * 79
         fmt = "%6u | %-22.22s | %-16s | %-14s | %4u"
         done = 0
-        for old in self.history.old(tids):
-            if not printall and done > 19:
+        limit = 20
+        if printall:
+            limit = None
+        for old in self.history.old(tids, limit=limit):
+            if not printall and done >= limit:
                 break
 
             done += 1
