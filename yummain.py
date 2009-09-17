@@ -31,19 +31,7 @@ from yum import _
 from yum.i18n import to_unicode
 import yum.misc
 import cli
-import exceptions
-
-def suppress_keyboard_interrupt_message():
-    old_excepthook = sys.excepthook
-
-    def new_hook(type, value, traceback):
-        if type != exceptions.KeyboardInterrupt:
-            old_excepthook(type, value, traceback)
-        else:
-            pass
-
-    sys.excepthook = new_hook
-
+from utils import suppress_keyboard_interrupt_message
 
 def main(args):
     """This does all the real work"""
