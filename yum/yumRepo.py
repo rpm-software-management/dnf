@@ -1034,6 +1034,8 @@ class YumRepository(Repository, config.RepoConf):
             old_local = local + '.old.tmp' # locked, so this is ok
             shutil.copy2(local, old_local)
             xml = self._parseRepoXML(old_local, True)
+            if xml is None:
+                return None
             self._oldRepoMDData = {'old_repo_XML' : xml, 'local' : local,
                                    'old_local' : old_local, 'new_MD_files' : []}
             return xml
