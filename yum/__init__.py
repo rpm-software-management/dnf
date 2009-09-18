@@ -706,7 +706,7 @@ class YumBase(depsolve.Depsolve):
         """auto create the history object that to acess/append the transaction
            history information. """
         if self._history is None:
-            self._history = yum.history.YumHistory(self.rpmdb)
+            self._history = yum.history.YumHistory(root=self.conf.installroot)
         return self._history
     
     # properties so they auto-create themselves with defaults

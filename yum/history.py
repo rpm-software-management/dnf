@@ -172,12 +172,11 @@ class YumHistoryTransaction:
 class YumHistory:
     """ API for accessing the history sqlite data. """
 
-    def __init__(self, rpmdb, db_path=_history_dir):
-        self._rpmdb = weakref(rpmdb)
+    def __init__(self, root='/', db_path=_history_dir):
         self._conn = None
         
         self.conf = yum.misc.GenericHolder()
-        self.conf.db_path = db_path
+        self.conf.db_path  = os.path.normpath(root + '/' + db_path)
         self.conf.writable = False
 
         if not os.path.exists(self.conf.db_path):
