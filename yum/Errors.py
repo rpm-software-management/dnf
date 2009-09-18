@@ -101,6 +101,9 @@ class RepoMDError(YumBaseError):
 class PackageSackError(YumBaseError):
     pass
 
+class RpmDBError(YumBaseError):
+    pass
+
 class CompsException(YumBaseError):
     pass
 

@@ -1087,7 +1087,7 @@ class YumBase(depsolve.Depsolve):
                     self.logger.critical(_('%s was supposed to be installed' \
                                            ' but is not!' % txmbr.po))
                     continue
-                po = self.rpmdb.searchPkgTuple(txmbr.pkgtup)[0]
+                po = self.getInstalledPackageObject(txmbr.pkgtup)
                 rpo = txmbr.po
                 po.yumdb_info.from_repo = rpo.repoid
                 po.yumdb_info.reason = txmbr.reason
@@ -1802,7 +1802,7 @@ class YumBase(depsolve.Depsolve):
             for (pkgtup, instTup) in self.up.getObsoletesTuples():
                 (n,a,e,v,r) = pkgtup
                 pkgs = self.pkgSack.searchNevra(name=n, arch=a, ver=v, rel=r, epoch=e)
-                instpo = self.rpmdb.searchPkgTuple(instTup)[0] # the first one
+                instpo = self.getInstalledPackageObject(instTup)
                 for po in pkgs:
                     obsoletes.append(po)
                     obsoletesTuples.append((po, instpo))
@@ -2345,11 +2345,16 @@ class YumBase(depsolve.Depsolve):
         return result
 
     def getInstalledPackageObject(self, pkgtup):
-        """returns a YumInstallPackage object for the pkgtup specified"""
-        warnings.warn(_('getInstalledPackageObject() will go away, use self.rpmdb.searchPkgTuple().\n'),
-                Errors.YumFutureDeprecationWarning, stacklevel=2)
-        
-        po = self.rpmdb.searchPkgTuple(pkgtup)[0] # take the first one
+        """ Returns a YumInstallPackage object for the pkgtup specified, or
+            raises an exception. You should use this instead of
+            searchPkgTuple() if you are assuming there is a value. """
+
+        pkgs = self.rpmdb.searchPkgTuple(pkgtup)
+        if len(pkgs) == 0:
+            raise Errors.RpmDBError, _('Package tuple %s could not be found in rpmdb') % str(pkgtup)
+
+        # Dito. FIXME from getPackageObject() for len() > 1 ... :)
+        po = pkgs[0] # take the first one
         return po
         
     def gpgKeyCheck(self):
@@ -2613,7 +2618,7 @@ class YumBase(depsolve.Depsolve):
         if not isinstance(po, YumLocalPackage):
             for (obstup, inst_tup) in self.up.getObsoletersTuples(name=po.name):
                 if po.pkgtup == obstup:
-                    installed_pkg =  self.rpmdb.searchPkgTuple(inst_tup)[0]
+                    installed_pkg =  self.getInstalledPackageObject(inst_tup)
                     yield installed_pkg
         else:
             for (obs_n, obs_f, (obs_e, obs_v, obs_r)) in po.obsoletes:
@@ -2917,7 +2922,7 @@ class YumBase(depsolve.Depsolve):
                 topkg = self._test_loop(obsoleting_pkg, self._pkg2obspkg)
                 if topkg is not None:
                     obsoleting_pkg = topkg
-                installed_pkg =  self.rpmdb.searchPkgTuple(installed)[0]
+                installed_pkg =  self.getInstalledPackageObject(installed)
                 txmbr = self.tsInfo.addObsoleting(obsoleting_pkg, installed_pkg)
                 self.tsInfo.addObsoleted(installed_pkg, obsoleting_pkg)
                 if requiringPo:
@@ -3078,7 +3083,7 @@ class YumBase(depsolve.Depsolve):
                                             updated)
                 
                 else:
-                    updated_pkg =  self.rpmdb.searchPkgTuple(updated)[0]
+                    updated_pkg =  self.getInstalledPackageObject(updated)
                     txmbr = self.tsInfo.addUpdate(available_pkg, updated_pkg)
                     if requiringPo:
                         txmbr.setAsDep(requiringPo)
