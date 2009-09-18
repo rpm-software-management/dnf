@@ -147,6 +147,9 @@ class YumHistoryTransaction:
         self._loaded_TW = None
         self._loaded_TD = None
 
+        self.altered_lt_rpmdb = None
+        self.altered_gt_rpmdb = None
+
     def __cmp__(self, other):
         if other is None:
             return 1
@@ -255,12 +258,27 @@ class YumHistory:
         if 'checksum_type' in yumdb and 'checksum_type' in yumdb:
             csum = "%s:%s" % (yumdb.checksum_type, yumdb.checksum_data)
         return self._pkgtup2pid(po.pkgtup, csum)
-    def _pkg2pid(self, po):
+    def pkg2pid(self, po):
         if isinstance(po, YumInstalledPackage):
             return self._ipkg2pid(po)
         if isinstance(po, YumAvailablePackage):
             return self._apkg2pid(po)
         return self._pkgtup2pid(po.pkgtup, None)
+
+    @staticmethod
+    def txmbr2state(txmbr):
+        state = None
+        if txmbr.output_state in (TS_INSTALL, TS_TRUEINSTALL):
+            if hasattr(txmbr, 'reinstall'):
+                state = 'Reinstall'
+            elif txmbr.downgrades:
+                state = 'Downgrade'
+        if txmbr.output_state == TS_ERASE:
+            if txmbr.downgraded_by:
+                state = 'Downgraded'
+        if state is None:
+            state = _stcode2sttxt[txmbr.output_state]
+        return state
 
     def trans_with_pid(self, pid):
         cur = self._get_cursor()
@@ -271,6 +289,8 @@ class YumHistory:
         return cur.lastrowid
 
     def trans_data_pid_beg(self, pid, state):
+        if not hasattr(self, '_tid'):
+            return # Not configured to run
         cur = self._get_cursor()
         res = executeSQL(cur,
                          """INSERT INTO trans_data_pkgs
@@ -278,11 +298,15 @@ class YumHistory:
                          VALUES (?, ?, ?)""", (self._tid, pid, state))
         return cur.lastrowid
     def trans_data_pid_end(self, pid, state):
+        if not hasattr(self, '_tid'):
+            return # Not configured to run
+
         cur = self._get_cursor()
         res = executeSQL(cur,
                          """UPDATE trans_data_pkgs SET done = ?
                          WHERE tid = ? AND pkgtupid = ? AND state = ?
                          """, ('TRUE', self._tid, pid, state))
+        self._commit()
         return cur.lastrowid
 
     def beg(self, rpmdb_version, using_pkgs, txmbrs):
@@ -300,18 +324,8 @@ class YumHistory:
             self.trans_with_pid(pid)
         
         for txmbr in txmbrs:
-            pid   = self._pkg2pid(txmbr.po)
-            state = None
-            if txmbr.output_state in (TS_INSTALL, TS_TRUEINSTALL):
-                if hasattr(txmbr, 'reinstall'):
-                    state = 'Reinstall'
-                elif txmbr.downgrades:
-                    state = 'Downgrade'
-            if txmbr.output_state == TS_ERASE:
-                if txmbr.downgraded_by:
-                    state = 'Downgraded'
-            if state is None:
-                state = _stcode2sttxt[txmbr.output_state]
+            pid   = self.pkg2pid(txmbr.po)
+            state = self.txmbr2state(txmbr)
             self.trans_data_pid_beg(pid, state)
         
         self._commit()
@@ -322,6 +336,18 @@ class YumHistory:
             executeSQL(cur,
                        """INSERT INTO trans_error
                           (tid, msg) VALUES (?, ?)""", (self._tid, error))
+        self._commit()
+
+    def log_scriptlet_output(self, data, msg):
+        """ Note that data can be either a real pkg. ... or not. """
+        if msg is None or not hasattr(self, '_tid'):
+            return # Not configured to run
+
+        cur = self._get_cursor()
+        for error in msg.split('\n'):
+            executeSQL(cur,
+                       """INSERT INTO trans_script_stdout
+                          (tid, line) VALUES (?, ?)""", (self._tid, error))
         self._commit()
 
     def end(self, rpmdb_version, return_code, errors=None):
@@ -335,7 +361,9 @@ class YumHistory:
                                                      return_code))
         self._commit()
         if not return_code:
-            # Simple hack, if the transaction finished
+            #  Simple hack, if the transaction finished. Note that this
+            # catches the erase cases (as we still don't get pkgtups for them),
+            # Eg. Updated elements.
             executeSQL(cur,
                        """UPDATE trans_data_pkgs SET done = ?
                           WHERE tid = ?""", ('TRUE', self._tid,))
@@ -404,18 +432,18 @@ class YumHistory:
             ret.append(YumHistoryTransaction(self, row))
 
         # Go through backwards, and see if the rpmdb versions match
-        last_rv  = None
-        last_tid = None
+        las = None
         for obj in reversed(ret):
             cur_rv = obj.beg_rpmdbversion
-            if last_rv is None or cur_rv is None or (last_tid + 1) != obj.tid:
-                obj.altered_rpmdb = None
-            elif last_rv != cur_rv:
-                obj.altered_rpmdb = True
+            if las is None or cur_rv is None or (las.tid + 1) != obj.tid:
+                pass
+            elif las.end_rpmdbversion != cur_rv:
+                obj.altered_lt_rpmdb = True
+                las.altered_gt_rpmdb = True
             else:
-                obj.altered_rpmdb = False
-            last_rv  = obj.end_rpmdbversion
-            last_tid = obj.tid
+                obj.altered_lt_rpmdb = False
+                las.altered_gt_rpmdb = False
+            las = obj
 
         return ret
 

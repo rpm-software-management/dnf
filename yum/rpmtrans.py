@@ -230,6 +230,11 @@ class RPMTransaction:
         except IOError:
             pass
 
+    def _scriptout(self, data):
+        msgs = self._scriptOutput()
+        self.display.scriptout(data, msgs)
+        self.base.history.log_scriptlet_output(data, msgs)
+
     def __del__(self):
         self._shutdownOutputLogging()
         
@@ -439,10 +444,14 @@ class RPMTransaction:
                 txmbrs = self.base.tsInfo.getMembers(pkgtup=pkgtup)
                 for txmbr in txmbrs:
                     self.display.filelog(txmbr.po, txmbr.output_state)
-                    self.display.scriptout(txmbr.po, self._scriptOutput())
+                    self._scriptout(txmbr.po)
+                    # NOTE: We only do this for install, not erase atm.
+                    #       because we don't get pkgtup data for erase (this 
+                    #       includes "Updated" pkgs).
+                    pid   = self.base.history.pkg2pid(txmbr.po)
+                    state = self.base.history.txmbr2state(txmbr)
+                    self.base.history.trans_data_pid_end(pid, state)
                     self.ts_done(txmbr.po, txmbr.output_state)
-                
-                
     
     def _instProgress(self, bytes, total, h):
         if h is not None:
@@ -477,7 +486,7 @@ class RPMTransaction:
         
         self.display.event(h, action, 100, 100, self.complete_actions,
                             self.total_actions)
-        self.display.scriptout(h, self._scriptOutput())
+        self._scriptout(h)
         
         if self.test: return # and we're done
         self.ts_done(h, action)
