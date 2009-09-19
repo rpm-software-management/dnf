@@ -405,7 +405,7 @@ class YumHistory:
             ret.append(obj)
         return ret
 
-    def old(self, tids=[], limit=None):
+    def old(self, tids=[], limit=None, complete_transactions_only=False):
         """ Return a list of the last transactions, note that this includes
             partial transactions (ones without an end transaction). """
         cur = self._get_cursor()
@@ -416,28 +416,61 @@ class YumHistory:
                          trans_end.rpmdb_version AS end_rv,
                          loginuid, return_code
                   FROM trans_beg JOIN trans_end USING(tid)"""
-        # FIXME: Stupid sqlite doesn't do outer joins yet, so if yum dies
-        #        before creating a trans_end entry we miss it atm.
+        # NOTE: sqlite doesn't do OUTER JOINs ... *sigh*. So we have to do it
+        #       ourself.
+        if not complete_transactions_only:
+            sql =  """SELECT tid,
+                             trans_beg.timestamp AS beg_ts,
+                             trans_beg.rpmdb_version AS beg_rv,
+                             NULL, NULL,
+                             loginuid, NULL
+                      FROM trans_beg"""
         params = None
-        if tids:
-            tids = set(tids)
+        if tids and len(tids) <= yum.constants.PATTERNS_INDEXED_MAX:
+            params = tids = list(set(tids))
             sql += " WHERE tid IN (%s)" % ", ".join(['?'] * len(tids))
-            params = list(tids)
         sql += " ORDER BY beg_ts DESC, tid ASC"
         if limit is not None:
             sql += " LIMIT " + str(limit)
         executeSQL(cur, sql, params)
         ret = []
+        tid2obj = {}
         for row in cur:
-            ret.append(YumHistoryTransaction(self, row))
+            if tids and len(tids) > yum.constants.PATTERNS_INDEXED_MAX:
+                if row[0] not in tids:
+                    continue
+            obj = YumHistoryTransaction(self, row)
+            tid2obj[row[0]] = obj
+            ret.append(obj)
+
+        sql =  """SELECT tid,
+                         trans_end.timestamp AS end_ts,
+                         trans_end.rpmdb_version AS end_rv,
+                         return_code
+                  FROM trans_end"""
+        params = tid2obj.keys()
+        if len(params) > yum.constants.PATTERNS_INDEXED_MAX:
+            executeSQL(cur, sql)
+        else:
+            sql += " WHERE tid IN (%s)" % ", ".join(['?'] * len(params))
+            executeSQL(cur, sql, params)
+        for row in cur:
+            if row[0] not in tid2obj:
+                continue
+            tid2obj[row[0]].end_timestamp    = row[1]
+            tid2obj[row[0]].end_rpmdbversion = row[2]
+            tid2obj[row[0]].return_code      = row[3]
 
         # Go through backwards, and see if the rpmdb versions match
         las = None
         for obj in reversed(ret):
             cur_rv = obj.beg_rpmdbversion
-            if las is None or cur_rv is None or (las.tid + 1) != obj.tid:
+            las_rv = None
+            if las is not None:
+                las_rv = las.end_rpmdbversion
+            if las_rv is None or cur_rv is None or (las.tid + 1) != obj.tid:
                 pass
-            elif las.end_rpmdbversion != cur_rv:
+            elif las_rv != cur_rv:
                 obj.altered_lt_rpmdb = True
                 las.altered_gt_rpmdb = True
             else:

@@ -1257,6 +1257,8 @@ to exit.
             num, uiacts = self._history_uiactions(old.trans_data)
             if old.altered_lt_rpmdb and old.altered_gt_rpmdb:
                 print fmt % (old.tid, name, tm, uiacts, num), "><"
+            elif old.return_code is None:
+                print fmt % (old.tid, name, tm, uiacts, num), "**"
             elif old.altered_lt_rpmdb:
                 print fmt % (old.tid, name, tm, uiacts, num), " <"
             elif old.altered_gt_rpmdb:
@@ -1270,7 +1272,7 @@ to exit.
             rpmdbv  = self.rpmdb.simpleVersion(main_only=True)[0]
             if lastdbv.end_rpmdbversion != rpmdbv:
                 errstring = _('Warning: RPMDB has been altered since the last yum transaction.')
-                base.logger.warning(errstring)
+                self.logger.warning(errstring)
 
     def _history_get_transactions(self, extcmds):
         if len(extcmds) < 2:
@@ -1350,27 +1352,30 @@ to exit.
                 print _("Begin rpmdb    :"), old.beg_rpmdbversion, "**"
             else:
                 print _("Begin rpmdb    :"), old.beg_rpmdbversion
-        endtm = time.ctime(old.end_timestamp)
-        endtms = endtm.split()
-        if begtm.startswith(endtms[0]): # Chop uninteresting prefix
-            begtms = begtm.split()
-            sofar = 0
-            for i in range(len(endtms)):
-                if i > len(begtms):
-                    break
-                if begtms[i] != endtms[i]:
-                    break
-                sofar += len(begtms[i]) + 1
-            endtm = (' ' * sofar) + endtm[sofar:]
-        diff = _("(%s seconds)") % (old.end_timestamp - old.beg_timestamp)
-        print _("End time       :"), endtm, diff
+        if old.end_timestamp is not None:
+            endtm = time.ctime(old.end_timestamp)
+            endtms = endtm.split()
+            if begtm.startswith(endtms[0]): # Chop uninteresting prefix
+                begtms = begtm.split()
+                sofar = 0
+                for i in range(len(endtms)):
+                    if i > len(begtms):
+                        break
+                    if begtms[i] != endtms[i]:
+                        break
+                    sofar += len(begtms[i]) + 1
+                endtm = (' ' * sofar) + endtm[sofar:]
+            diff = _("(%s seconds)") % (old.end_timestamp - old.beg_timestamp)
+            print _("End time       :"), endtm, diff
         if old.end_rpmdbversion is not None:
             if old.altered_gt_rpmdb:
                 print _("End rpmdb      :"), old.end_rpmdbversion, "**"
             else:
                 print _("End rpmdb      :"), old.end_rpmdbversion
         print _("User           :"), name
-        if old.return_code:
+        if old.return_code is None:
+            print _("Return-Code    :"), "**", _("Aborted"), "**"
+        elif old.return_code:
             print _("Return-Code    :"), _("Failure:"), old.return_code
         else:
             print _("Return-Code    :"), _("Success")

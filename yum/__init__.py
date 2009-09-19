@@ -3598,7 +3598,9 @@ class YumBase(depsolve.Depsolve):
     def history_redo(self, transaction):
         """ Given a valid historical transaction object, try and repeat
             that transaction. """
-        # This is basic atm.
+        # NOTE: This is somewhat basic atm. ... see comment in undo.
+        old_conf_obs = self.conf.obsoletes
+        self.conf.obsoletes = False
         done = False
         for pkg in transaction.trans_data:
             if pkg.state == 'Reinstall':
@@ -3623,12 +3625,19 @@ class YumBase(depsolve.Depsolve):
             if pkg.state == 'Erase':
                 if self.remove(pkgtup=pkg.pkgtup):
                     done = True
+        self.conf.obsoletes = old_conf_obs
         return done
 
     def history_undo(self, transaction):
         """ Given a valid historical transaction object, try and undo
             that transaction. """
-        # FIXME: This is basic atm.
+        # NOTE: This is somewhat basic atm. ... for instance we don't check
+        #       that we are going from the old new version. However it's still
+        #       better than the RHN rollback code, and people pay for that :).
+        #  We turn obsoletes off because we want the specific versions of stuff
+        # from history ... even if they've been obsoleted since then.
+        old_conf_obs = self.conf.obsoletes
+        self.conf.obsoletes = False
         done = False
         for pkg in transaction.trans_data:
             if pkg.state == 'Reinstall':
@@ -3655,15 +3664,13 @@ class YumBase(depsolve.Depsolve):
                     done = True
         for pkg in transaction.trans_data:
             if pkg.state == 'Obsoleted':
-                old_conf_obs = self.conf.obsoletes
-                self.conf.obsoletes = False
                 if self.install(pkgtup=pkg.pkgtup):
                     done = True
-                self.conf.obsoletes = old_conf_obs
         for pkg in transaction.trans_data:
             if pkg.state == 'Erase':
                 if self.install(pkgtup=pkg.pkgtup):
                     done = True
+        self.conf.obsoletes = old_conf_obs
         return done
 
     def _retrievePublicKey(self, keyurl, repo=None):
