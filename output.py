@@ -1196,6 +1196,14 @@ to exit.
         return count, "".join(list(actions))
 
     def _pwd_ui_username(self, uid, limit=None):
+        # loginuid is set to -1 on init.
+        if uid is None or uid == 0xFFFFFFFF:
+            loginid = _("<unset>")
+            name = _("System") + " " + loginid
+            if limit is not None and len(name) > limit:
+                name = loginid
+            return name
+
         try:
             user = pwd.getpwuid(uid)
             fullname = user.pw_gecos.split(';', 2)[0]
