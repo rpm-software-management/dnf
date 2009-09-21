@@ -1387,7 +1387,7 @@ to exit.
             print _("Return-Code    :"), _("Failure:"), old.return_code
         else:
             print _("Return-Code    :"), _("Success")
-        print _("Packages Used  :")
+        print _("Transaction performed with  :")
         for hpkg in old.trans_with:
             prefix = " " * 4
             state  = _('Installed')
