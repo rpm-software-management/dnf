@@ -778,13 +778,17 @@ class RepoListCommand(YumCommand):
             arg = 'enabled'
         extcmds = map(lambda x: x.lower(), extcmds)
 
-        # Setup so len(repo.sack) is correct
-        base.repos.populateSack()
+        verbose = base.verbose_logger.isEnabledFor(logginglevels.DEBUG_3)
+        try:
+            # Setup so len(repo.sack) is correct
+            base.repos.populateSack()
+        except yum.Errors.RepoError:
+            if verbose:
+                raise
 
         repos = base.repos.repos.values()
         repos.sort()
         enabled_repos = base.repos.listEnabled()
-        verbose = base.verbose_logger.isEnabledFor(logginglevels.DEBUG_3)
         if arg == 'all':
             ehibeg = base.term.FG_COLOR['green'] + base.term.MODE['bold']
             dhibeg = base.term.FG_COLOR['red']
