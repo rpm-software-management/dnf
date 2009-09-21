@@ -128,6 +128,9 @@ Number of packages listed in installonlypkgs to keep installed at the same
 time. Setting to 0 disables this feature. Default is '0'. Note that this
 functionality used to be in the "installonlyn" plugin, where this option was
 altered via. tokeep.
+Note that as of version 3.2.24, yum will now look in the yumdb for a installonly
+attribute on installed packages. If that attribute is "keep", then they will
+never be removed.
 
 .IP
 \fBkernelpkgnames \fR

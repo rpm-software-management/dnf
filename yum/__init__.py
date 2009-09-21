@@ -3865,6 +3865,7 @@ class YumBase(depsolve.Depsolve):
 
                 if True: # Don't to magic sorting, yet
                     ret_mid.append(pkg)
+                    continue
 
                 if pkg.yumdb_info.installonly == 'remove-first':
                     ret_beg.append(pkg)
