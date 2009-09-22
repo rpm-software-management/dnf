@@ -174,7 +174,7 @@ class Depsolve(object):
         for po in pkgs:
             self.verbose_logger.log(logginglevels.DEBUG_2,
                 _('Potential match for %s from %s'), name, po)
-            if (name[0] == '/' or misc.re_glob(name[0])) and r_v is None:
+            if misc.re_filename(name) and r_v is None:
                 # file dep add all matches to the defSack
                 defSack.addPackage(po)
                 continue

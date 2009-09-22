@@ -76,14 +76,25 @@ def unshare_data():
 _re_compiled_glob_match = None
 def re_glob(s):
     """ Tests if a string is a shell wildcard. """
-    # re.match('.*[\*\?\[\]].*', name)
     global _re_compiled_glob_match
     if _re_compiled_glob_match is None:
         _re_compiled_glob_match = re.compile('.*([*?]|\[.+\])')
     return _re_compiled_glob_match.match(s)
 
+_re_compiled_filename_match = None
+def re_filename(s):
+    """ Tests if a string could be a filename. We still get negated character
+        classes wrong (are they supported), and ranges in character classes. """
+    global _re_compiled_filename_match
+    if _re_compiled_filename_match is None:
+        _re_compiled_filename_match = re.compile('^(/|[*?]|\[[^]]*/[^]]*\])')
+    return _re_compiled_filename_match.match(s)
+
 _re_compiled_pri_fnames_match = None
 def re_primary_filename(filename):
+    """ Tests if a filename string, can be matched against just primary.
+        Note that this can produce false negatives (but not false
+        positives). """
     global _re_compiled_pri_fnames_match
     if _re_compiled_pri_fnames_match is None:
         one   = re.compile('.*bin\/.*')
@@ -97,6 +108,7 @@ def re_primary_filename(filename):
 
 _re_compiled_pri_dnames_match = None
 def re_primary_dirname(dirname):
+    """ Tests if a dirname string, can be matched against just primary. """
     global _re_compiled_pri_dnames_match
     if _re_compiled_pri_dnames_match is None:
         one   = re.compile('.*bin\/.*')

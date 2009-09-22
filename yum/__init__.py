@@ -2041,10 +2041,7 @@ class YumBase(depsolve.Depsolve):
                     canBeFile = True
             else:
                 isglob = True
-                if arg[0] != '/' and not misc.re_glob(arg[0]):
-                    canBeFile = False
-                else:
-                    canBeFile = True
+                canBeFile = misc.re_filename(arg)
                 
             if not isglob:
                 usedDepString = True
