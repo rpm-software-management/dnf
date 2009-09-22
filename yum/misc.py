@@ -90,33 +90,24 @@ def re_filename(s):
         _re_compiled_filename_match = re.compile('^(/|[*?]|\[[^]]*/[^]]*\])')
     return _re_compiled_filename_match.match(s)
 
-_re_compiled_pri_fnames_match = None
 def re_primary_filename(filename):
     """ Tests if a filename string, can be matched against just primary.
         Note that this can produce false negatives (but not false
         positives). """
-    global _re_compiled_pri_fnames_match
-    if _re_compiled_pri_fnames_match is None:
-        one   = re.compile('.*bin\/.*')
-        two   = re.compile('^\/etc\/.*')
-        three = re.compile('^\/usr\/lib\/sendmail$')
-        _re_compiled_pri_fnames_match = (one, two, three)
-    for rec in _re_compiled_pri_fnames_match:
-        if rec.match(filename):
-            return True
+    if 'bin/' in filename:
+        return True
+    if filename.startswith('/etc/'):
+        return True
+    if filename == '/usr/lib/sendmail':
+        return True
     return False
 
-_re_compiled_pri_dnames_match = None
 def re_primary_dirname(dirname):
     """ Tests if a dirname string, can be matched against just primary. """
-    global _re_compiled_pri_dnames_match
-    if _re_compiled_pri_dnames_match is None:
-        one   = re.compile('.*bin\/.*')
-        two   = re.compile('^\/etc\/.*')
-        _re_compiled_pri_dnames_match = (one, two)
-    for rec in _re_compiled_pri_dnames_match:
-        if rec.match(dirname):
-            return True
+    if 'bin/' in dirname:
+        return True
+    if dirname.startswith('/etc/'):
+        return True
     return False
 
 _re_compiled_full_match = None

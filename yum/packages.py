@@ -617,7 +617,10 @@ class YumAvailablePackage(PackageObject, RpmBase):
         # ignoring "bad" chars.
         val = _nf2ascii(val)
         # Hacky way to get rid of version numbers...
-        self._committer_ret = re.sub("""> .*""", '>', val)
+        ix = val.find('> ')
+        if ix != -1:
+            val = val[0:ix+1]
+        self._committer_ret = val
         return self._committer_ret
 
     committer  = property(_committer)

@@ -1607,8 +1607,8 @@ class YumRepository(Repository, config.RepoConf):
             for line in content:
                 if re.match('^\s*\#.*', line) or re.match('^\s*$', line):
                     continue
-                mirror = re.sub('\n$', '', line) # no more trailing \n's
-                (mirror, count) = re.subn('\$ARCH', '$BASEARCH', mirror)
+                mirror = line.rstrip() # no more trailing \n's
+                mirror = mirror.replace('$ARCH', '$BASEARCH')
                 returnlist.append(mirror)
 
         return (returnlist, content)
@@ -1809,8 +1809,8 @@ def getMirrorList(mirrorlist, pdict = None):
         for line in content:
             if re.match('^\s*\#.*', line) or re.match('^\s*$', line):
                 continue
-            mirror = re.sub('\n$', '', line) # no more trailing \n's
-            (mirror, count) = re.subn('\$ARCH', '$BASEARCH', mirror)
+            mirror = line.rstrip() # no more trailing \n's
+            mirror = mirror.replace('$ARCH', '$BASEARCH')
             returnlist.append(mirror)
 
     return returnlist
