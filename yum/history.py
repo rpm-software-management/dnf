@@ -30,6 +30,9 @@ from yum.packages import YumInstalledPackage, YumAvailablePackage, PackageObject
 
 _history_dir = '/var/lib/yum/history'
 
+# NOTE: That we don't list TS_FAILED, because pkgs shouldn't go into the
+#       transaction with that. And if they come out with that we don't want to
+#       match them to anything anyway.
 _stcode2sttxt = {TS_UPDATE : 'Update',
                  TS_UPDATED : 'Updated', 
                  TS_ERASE: 'Erase',
@@ -277,7 +280,7 @@ class YumHistory:
             if txmbr.downgraded_by:
                 state = 'Downgraded'
         if state is None:
-            state = _stcode2sttxt[txmbr.output_state]
+            state = _stcode2sttxt.get(txmbr.output_state)
         return state
 
     def trans_with_pid(self, pid):
@@ -289,7 +292,8 @@ class YumHistory:
         return cur.lastrowid
 
     def trans_data_pid_beg(self, pid, state):
-        if not hasattr(self, '_tid'):
+        assert state is not None
+        if not hasattr(self, '_tid') or state is None:
             return # Not configured to run
         cur = self._get_cursor()
         res = executeSQL(cur,
@@ -298,7 +302,8 @@ class YumHistory:
                          VALUES (?, ?, ?)""", (self._tid, pid, state))
         return cur.lastrowid
     def trans_data_pid_end(self, pid, state):
-        if not hasattr(self, '_tid'):
+        # State can be none here, Eg. TS_FAILED from rpmtrans
+        if not hasattr(self, '_tid') or state is None:
             return # Not configured to run
 
         cur = self._get_cursor()
