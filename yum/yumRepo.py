@@ -233,6 +233,7 @@ class YumRepository(Repository, config.RepoConf):
         Repository.__init__(self, repoid)
 
         self.repofile = None
+        self.mirrorurls = []
         self._urls = []
         self.enablegroups = 0
         self.groupsfilename = 'yumgroups.xml' # something some freaks might
