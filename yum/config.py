@@ -765,6 +765,11 @@ class RepoConf(BaseConfig):
     sslclientkey = Inherit(YumConf.sslclientkey)
 
     
+class VersionGroupConf(BaseConfig):
+    pkglist = ListOption()
+    run_with_packages = BoolOption(False)
+
+
 def readStartupConfig(configfile, root):
     '''
     Parse Yum's main configuration file and return a StartupConf instance.
@@ -850,6 +855,20 @@ def readMainConfig(startupconf):
     yumconf.errorlevel = startupconf.errorlevel
     
     return yumconf
+
+def readVersionGroupsConfig(configfile="/etc/yum/version-groups.conf"):
+    parser = ConfigParser()
+    confpp_obj = ConfigPreProcessor(configfile)
+    try:
+        parser.readfp(confpp_obj)
+    except ParsingError, e:
+        raise Errors.ConfigError("Parsing file failed: %s" % e)
+    ret = {}
+    for section in parser.sections():
+        ret[section] = VersionGroupConf()
+        ret[section].populate(parser, section)
+    return ret
+
 
 def getOption(conf, section, name, option):
     '''Convenience function to retrieve a parsed and converted value from a

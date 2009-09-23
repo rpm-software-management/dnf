@@ -1,3 +1,5 @@
+YUMETC=$(DESTDIR)/etc/yum
+
 all:
 	echo "Nothing to do"
 
@@ -8,7 +10,9 @@ install:
 	mkdir -p $(DESTDIR)/etc/yum/
 	mkdir -p $(DESTDIR)/etc/yum/repos.d
 
-	install -m 644 yum.conf $(DESTDIR)/etc/yum/yum.conf
+	install -m 644 yum.conf $(YUMETC)/yum.conf
+
+	install -m 644 version-groups.conf $(YUMETC)/version-groups.conf
 
 	mkdir -p $(DESTDIR)/etc/logrotate.d
 	install -m 644 yum.logrotate $(DESTDIR)/etc/logrotate.d/yum

@@ -67,7 +67,7 @@ gnome\-packagekit application\&.
 .br
 .I \fR * repolist [all|enabled|disabled] 
 .br
-.I \fR * version [all] 
+.I \fR * version [all|installed|available|group-*|grouplist|groupinfo]
 .br
 .I \fR * history [info|list|summary|redo|undo|new] 
 .br
@@ -231,7 +231,8 @@ listed.
 .IP
 .IP "\fBversion\fP"
 Produces a "version" of the rpmdb, and of the enabled repositories if "all" is
-given as the first argument. If you pass \-v, for verbose mode, more
+given as the first argument. You can also specify version groups in the
+version-groups config. file. If you pass \-v, for verbose mode, more
 information is listed. The version is calculated by taking a sha1 hash of the
 packages (in sorted order), and the checksum_type/checksum_data entries from
 the yumdb. Note that this rpmdb version is now also used significantly within
@@ -474,6 +475,7 @@ configuration options.
 .SH "FILES"
 .nf
 /etc/yum/yum.conf
+/etc/yum/version-groups.conf
 /etc/yum/repos.d/
 /etc/yum/pluginconf.d/
 /var/cache/yum/

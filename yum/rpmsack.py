@@ -339,16 +339,33 @@ class RPMDBPackageSack(PackageSackBase):
             pkgobjlist = pkgobjlist[0] + pkgobjlist[1]
         return pkgobjlist
 
-    def simpleVersion(self, main_only=False):
+    def simpleVersion(self, main_only=False, groups={}):
         """ Return a simple version for all installed packages. """
+        def _up_revs(irepos, repoid, rev, pkg, csum):
+            irevs = irepos.setdefault(repoid, {})
+            rpsv = irevs.setdefault(None, PackageSackVersion())
+            rpsv.update(pkg, csum)
+            if rev is not None:
+                rpsv = irevs.setdefault(rev, PackageSackVersion())
+                rpsv.update(pkg, csum)
+
         main = PackageSackVersion()
         irepos = {}
+        main_grps = {}
+        irepos_grps = {}
         for pkg in sorted(self.returnPackages()):
             ydbi = pkg.yumdb_info
             csum = None
             if 'checksum_type' in ydbi and 'checksum_data' in ydbi:
                 csum = (ydbi.checksum_type, ydbi.checksum_data)
             main.update(pkg, csum)
+
+            for group in groups:
+                if pkg.name in groups[group]:
+                    if group not in main_grps:
+                        main_grps[group] = PackageSackVersion()
+                        irepos_grps[group] = {}
+                    main_grps[group].update(pkg, csum)
 
             if main_only:
                 continue
@@ -359,13 +376,14 @@ class RPMDBPackageSack(PackageSackBase):
                 repoid = '@' + pkg.yumdb_info.from_repo
                 if 'from_repo_revision' in pkg.yumdb_info:
                     rev = pkg.yumdb_info.from_repo_revision
-            irevs = irepos.setdefault(repoid, {})
-            rpsv = irevs.setdefault(None, PackageSackVersion())
-            rpsv.update(pkg, csum)
-            if rev is not None:
-                rpsv = irevs.setdefault(rev, PackageSackVersion())
-                rpsv.update(pkg, csum)
 
+            _up_revs(irepos, repoid, rev, pkg, csum)
+            for group in groups:
+                if pkg.name in groups[group]:
+                    _up_revs(irepos_grps[group], repoid, rev, pkg, csum)
+
+        if groups:
+            return [main, irepos, main_grps, irepos_grps]
         return [main, irepos]
 
     @staticmethod

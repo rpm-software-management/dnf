@@ -30,6 +30,8 @@ import fnmatch
 import time
 from yum.i18n import utf8_width, utf8_width_fill, to_unicode
 
+import yum.config
+
 def checkRootUID(base):
     """
     Verify that the program is being run by the root user.
@@ -1096,33 +1098,80 @@ class VersionCommand(YumCommand):
                     cols.append(("    %s" % repoid, str(cur[None])))
                 cols.extend(ncols)
 
+        verbose = base.verbose_logger.isEnabledFor(logginglevels.DEBUG_3)
+        groups = {}
+        gconf = yum.config.readVersionGroupsConfig()
+        for group in gconf:
+            groups[group] = set(gconf[group].pkglist)
+            if gconf[group].run_with_packages:
+                groups[group].update(base.run_with_package_names)
+
+        if vcmd in ('grouplist'):
+            print _(" Yum version groups:")
+            for group in sorted(groups):
+                print "   ", group
+
+            return 0, ['version grouplist']
+
+        if vcmd in ('groupinfo'):
+            for group in groups:
+                if group not in extcmds[1:]:
+                    continue
+                print _(" Group   :"), group
+                print _(" Packages:")
+                if not verbose:
+                    for pkgname in sorted(groups[group]):
+                        print "   ", pkgname
+                else:
+                    data = {'envra' : {}, 'rid' : {}}
+                    pkg_names = groups[group]
+                    pkg_names2pkgs = base._group_names2aipkgs(pkg_names)
+                    base._calcDataPkgColumns(data, pkg_names, pkg_names2pkgs)
+                    data = [data['envra'], data['rid']]
+                    columns = base.calcColumns(data)
+                    columns = (-columns[0], -columns[1])
+                    base._displayPkgsFromNames(pkg_names, True, pkg_names2pkgs,
+                                               columns=columns)
+
+            return 0, ['version groupinfo']
+
         rel = base.yumvar['releasever']
         ba  = base.yumvar['basearch']
         cols = []
-        if vcmd in ('installed', 'all'):
+        if vcmd in ('installed', 'all', 'group-installed', 'group-all'):
             try:
-                main_only = True
-                if base.verbose_logger.isEnabledFor(logginglevels.DEBUG_3):
-                    main_only = False
-                data = base.rpmdb.simpleVersion(main_only)
+                data = base.rpmdb.simpleVersion(not verbose, groups=groups)
                 lastdbv = base.history.last()
                 if lastdbv is not None:
                     lastdbv = lastdbv.end_rpmdbversion
                 if lastdbv is not None and data[0] != lastdbv:
                     errstring = _('Warning: RPMDB has been altered since the last yum transaction.')
                     base.logger.warning(errstring)
-                cols.append(("%s %s/%s" % (_("Installed:"), rel, ba),
-                             str(data[0])))
-                _append_repos(cols, data[1])
+                if vcmd not in ('group-installed', 'group-all'):
+                    cols.append(("%s %s/%s" % (_("Installed:"), rel, ba),
+                                 str(data[0])))
+                    _append_repos(cols, data[1])
+                if groups:
+                    for grp in sorted(data[2]):
+                        cols.append(("%s %s" % (_("Group-Installed:"), grp),
+                                     str(data[2][grp])))
+                        _append_repos(cols, data[3][grp])
             except yum.Errors.YumBaseError, e:
                 return 1, [str(e)]
-        if vcmd in ('available', 'all'):
+        if vcmd in ('available', 'all', 'group-available', 'group-all'):
             try:
-                data = base.pkgSack.simpleVersion()
-                cols.append(("%s %s/%s" % (_("Available:"), rel, ba),
-                             str(data[0])))
-                if base.verbose_logger.isEnabledFor(logginglevels.DEBUG_3):
-                    _append_repos(cols, data[1])
+                data = base.pkgSack.simpleVersion(not verbose, groups=groups)
+                if vcmd not in ('group-available', 'group-all'):
+                    cols.append(("%s %s/%s" % (_("Available:"), rel, ba),
+                                 str(data[0])))
+                    if verbose:
+                        _append_repos(cols, data[1])
+                if groups:
+                    for grp in sorted(data[2]):
+                        cols.append(("%s %s" % (_("Group-Available:"), grp),
+                                     str(data[2][grp])))
+                        if verbose:
+                            _append_repos(cols, data[3][grp])
             except yum.Errors.YumBaseError, e:
                 return 1, [str(e)]
 
@@ -1144,7 +1193,10 @@ class VersionCommand(YumCommand):
         vcmd = 'installed'
         if extcmds:
             vcmd = extcmds[0]
-        return vcmd in ('available', 'all')
+        verbose = base.verbose_logger.isEnabledFor(logginglevels.DEBUG_3)
+        if vcmd == 'groupinfo' and verbose:
+            return True
+        return vcmd in ('available', 'all', 'group-available', 'group-all')
 
 
 class HistoryCommand(YumCommand):
