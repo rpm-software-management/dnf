@@ -215,12 +215,20 @@ class YumHistory:
         if self._db_file is None:
             self._create_db_file()
 
+    def __del__(self):
+        self.close()
+
     def _get_cursor(self):
         if self._conn is None:
             self._conn = sqlite.connect(self._db_file)
         return self._conn.cursor()
     def _commit(self):
         return self._conn.commit()
+
+    def close(self):
+        if self._conn is not None:
+            self._conn.close()
+            self._conn = None
 
     def _pkgtup2pid(self, pkgtup, checksum=None):
         cur = self._get_cursor()

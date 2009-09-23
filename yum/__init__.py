@@ -163,6 +163,10 @@ class YumBase(depsolve.Depsolve):
         self.doUnlock()
 
     def close(self):
+        # We don't want to create the object, so we test if it's been created
+        if self._history is not None:
+            self.history.close()
+
         if self._repos:
             self._repos.close()
 
