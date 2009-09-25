@@ -293,7 +293,8 @@ def checksum(sumtype, file, CHUNK=2**16, datasize=None):
 
         data = Checksums([sumtype])
         while data.read(fo, CHUNK):
-            pass
+            if datasize is not None and len(data) > datasize:
+                break
 
         if type(file) is types.StringType:
             fo.close()
@@ -301,7 +302,7 @@ def checksum(sumtype, file, CHUNK=2**16, datasize=None):
             
         # This screws up the length, but that shouldn't matter. We only care
         # if this checksum == what we expect.
-        if datasize is not None and datasize > len(data):
+        if datasize is not None and datasize != len(data):
             return '!%u!%s' % (datasize, data.hexdigest(sumtype))
 
         return data.hexdigest(sumtype)
