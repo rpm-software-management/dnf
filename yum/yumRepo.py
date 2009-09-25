@@ -713,7 +713,8 @@ class YumRepository(Repository, config.RepoConf):
                              fdel=lambda self: setattr(self, "_metalink", None))
 
     def _getFile(self, url=None, relative=None, local=None, start=None, end=None,
-            copy_local=None, checkfunc=None, text=None, reget='simple', cache=True):
+            copy_local=None, checkfunc=None, text=None, reget='simple', 
+            cache=True, size=None):
         """retrieve file from the mirrorgroup for the repo
            relative to local, optionally get range from
            start to end, also optionally retrieve from a specific baseurl"""
@@ -785,7 +786,8 @@ class YumRepository(Repository, config.RepoConf):
                             ssl_verify_host=self.sslverify,
                             ssl_ca_cert=self.sslcacert,
                             ssl_cert=self.sslclientcert,
-                            ssl_key=self.sslclientkey                            
+                            ssl_key=self.sslclientkey,
+                            size=size
                             )
 
             ug.opts.user_agent = default_grabber.opts.user_agent
@@ -817,6 +819,7 @@ class YumRepository(Repository, config.RepoConf):
                                            reget = reget,
                                            checkfunc=checkfunc,
                                            http_headers=headers,
+                                           size=size
                                            )
             except URLGrabError, e:
                 errstr = "failure: %s from %s: %s" % (relative, self.id, e)
@@ -828,7 +831,7 @@ class YumRepository(Repository, config.RepoConf):
         return result
     __get = _getFile
 
-    def getPackage(self, package, checkfunc = None, text = None, cache = True):
+    def getPackage(self, package, checkfunc=None, text=None, cache=True):
         remote = package.relativepath
         local = package.localPkg()
         basepath = package.basepath
@@ -843,7 +846,8 @@ class YumRepository(Repository, config.RepoConf):
                         local=local,
                         checkfunc=checkfunc,
                         text=text,
-                        cache=cache
+                        cache=cache,
+                        size=package.size,
                         )
 
     def getHeader(self, package, checkfunc = None, reget = 'simple',
@@ -853,6 +857,7 @@ class YumRepository(Repository, config.RepoConf):
         local =  package.localHdr()
         start = package.hdrstart
         end = package.hdrend
+        size = end-start
         basepath = package.basepath
         # yes, I know, don't ask
         if not os.path.exists(self.hdrdir):
@@ -860,7 +865,7 @@ class YumRepository(Repository, config.RepoConf):
 
         return self._getFile(url=basepath, relative=remote, local=local, start=start,
                         reget=None, end=end, checkfunc=checkfunc, copy_local=1,
-                        cache=cache,
+                        cache=cache, size=size,
                         )
 
     def metadataCurrent(self):
@@ -989,7 +994,8 @@ class YumRepository(Repository, config.RepoConf):
                                    text=text,
                                    reget=None,
                                    checkfunc=checkfunc,
-                                   cache=self.http_caching == 'all')
+                                   cache=self.http_caching == 'all',
+                                   size=102400) # setting max size as 100K
 
         except URLGrabError, e:
             misc.unlink_f(tfname)
@@ -1422,7 +1428,8 @@ class YumRepository(Repository, config.RepoConf):
                                        text='%s/signature' % self.id,
                                        reget=None,
                                        checkfunc=None,
-                                       cache=self.http_caching == 'all')
+                                       cache=self.http_caching == 'all',
+                                       size=102400)
             except URLGrabError, e:
                 raise URLGrabError(-1, 'Error finding signature for repomd.xml for %s: %s' % (self, e))
 
@@ -1536,9 +1543,14 @@ class YumRepository(Repository, config.RepoConf):
         try:
             checkfunc = (self.checkMD, (mdtype,), {})
             text = "%s/%s" % (self.id, mdtype)
-            local = self._getFile(relative=remote, local=local, copy_local=1,
-                             checkfunc=checkfunc, reget=None, text=text,
-                             cache=self.http_caching == 'all')
+            local = self._getFile(relative=remote,
+                                  local=local, 
+                                  copy_local=1,
+                                  checkfunc=checkfunc, 
+                                  reget=None, 
+                                  text=text,
+                                  cache=self.http_caching == 'all',
+                                  size=thisdata.size)
         except (Errors.NoMoreMirrorsRepoError, Errors.RepoError):
             if retrieve_can_fail:
                 return None
