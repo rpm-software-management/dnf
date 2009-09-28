@@ -27,6 +27,7 @@ import yum.misc
 import yum.constants
 from yum.constants import *
 from yum.packages import YumInstalledPackage, YumAvailablePackage, PackageObject
+from yum.i18n import to_unicode
 
 _history_dir = '/var/lib/yum/history'
 
@@ -245,8 +246,10 @@ class YumHistory:
             if checksum == sql_checksum:
                 return sql_pkgtupid
         
+        (n,a,e,v,r) = pkgtup
+        (n,a,e,v,r) = (to_unicode(n),to_unicode(a),
+                       to_unicode(e),to_unicode(v),to_unicode(r))
         if checksum is not None:
-            (n,a,e,v,r) = pkgtup
             res = executeSQL(cur,
                              """INSERT INTO pkgtups
                                 (name, arch, epoch, version, release, checksum)
@@ -256,7 +259,7 @@ class YumHistory:
             res = executeSQL(cur,
                              """INSERT INTO pkgtups
                                 (name, arch, epoch, version, release)
-                                VALUES (?, ?, ?, ?, ?)""", pkgtup)
+                                VALUES (?, ?, ?, ?, ?)""", (n,a,e,v,r))
         return cur.lastrowid
     def _apkg2pid(self, po):
         csum = po.returnIdSum()
@@ -346,6 +349,7 @@ class YumHistory:
     def _log_errors(self, errors):
         cur = self._get_cursor()
         for error in errors:
+            error = to_unicode(error)
             executeSQL(cur,
                        """INSERT INTO trans_error
                           (tid, msg) VALUES (?, ?)""", (self._tid, error))
@@ -358,6 +362,7 @@ class YumHistory:
 
         cur = self._get_cursor()
         for error in msg.split('\n'):
+            error = to_unicode(error)
             executeSQL(cur,
                        """INSERT INTO trans_script_stdout
                           (tid, line) VALUES (?, ?)""", (self._tid, error))
