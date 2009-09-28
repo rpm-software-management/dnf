@@ -24,10 +24,10 @@ Update metadata (updateinfo.xml) parsing.
 import sys
 import gzip
 
-from yum.i18n import utf8_text_wrap, to_utf8
-from yum.yumRepo import YumRepository
-from yum.packages import FakeRepository
-from yum.misc import to_xml
+from i18n import utf8_text_wrap, to_utf8
+from yumRepo import YumRepository
+from packages import FakeRepository
+from misc import to_xml
 import Errors
 
 import rpmUtils.miscutils

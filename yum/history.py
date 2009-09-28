@@ -23,11 +23,10 @@ import glob
 from weakref import proxy as weakref
 
 from sqlutils import sqlite, executeSQL
-import yum.misc
-import yum.constants
-from yum.constants import *
-from yum.packages import YumInstalledPackage, YumAvailablePackage, PackageObject
-from yum.i18n import to_unicode
+import misc
+from constants import *
+from packages import YumInstalledPackage, YumAvailablePackage, PackageObject
+from i18n import to_unicode
 
 _history_dir = '/var/lib/yum/history'
 

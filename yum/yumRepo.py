@@ -32,9 +32,9 @@ from repos import Repository
 import parser
 import sqlitecachec
 import sqlitesack
-from yum import config
-from yum import misc
-from yum import comps
+import config
+import misc
+import comps
 from constants import *
 import metalink
 
