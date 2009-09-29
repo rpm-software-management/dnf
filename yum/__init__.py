@@ -65,7 +65,7 @@ warnings.simplefilter("ignore", Errors.YumFutureDeprecationWarning)
 from packages import parsePackages, YumAvailablePackage, YumLocalPackage, YumInstalledPackage, comparePoEVR
 from constants import *
 from rpmtrans import RPMTransaction,SimpleCliCallBack
-from i18n import to_unicode
+from i18n import to_unicode, to_str
 
 import string
 
@@ -1078,7 +1078,8 @@ class YumBase(depsolve.Depsolve):
             resultobject.return_code = 1
         else:
             if self.conf.history_record:
-                self.history.end(rpmdbv, 2, errors=errors)
+                herrors = [to_unicode(to_str(x)) for x in errors]
+                self.history.end(rpmdbv, 2, errors=herrors)
             raise Errors.YumBaseError, errors
                           
         if not self.conf.keepcache:
