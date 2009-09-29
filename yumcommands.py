@@ -577,7 +577,8 @@ class CheckUpdateCommand(YumCommand):
         result = 0
         try:
             ypl = base.returnPkgLists(extcmds)
-            if base.verbose_logger.isEnabledFor(logginglevels.DEBUG_3):
+            if (base.conf.obsoletes or
+                base.verbose_logger.isEnabledFor(logginglevels.DEBUG_3)):
                 typl = base.returnPkgLists(['obsoletes'])
                 ypl.obsoletes = typl.obsoletes
                 ypl.obsoletesTuples = typl.obsoletesTuples
