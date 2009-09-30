@@ -387,7 +387,7 @@ class YumRepository(Repository, config.RepoConf):
             config.writeRawRepoFile(self,only=['enabled'])
         except IOError, e:
             if e.errno == errno.EACCES:
-                self.logger.warning(e)
+                logger.warning(e)
             else:
                 raise IOError, str(e)
 
@@ -398,7 +398,7 @@ class YumRepository(Repository, config.RepoConf):
             config.writeRawRepoFile(self,only=['enabled'])
         except IOError, e:
             if e.errno == errno.EACCES:
-                self.logger.warning(e)
+                logger.warning(e)
             else:
                 raise IOError, str(e)
 
