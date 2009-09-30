@@ -32,9 +32,9 @@ import logging.config
 import operator
 import gzip
 
-import i18n
-_ = i18n._
-P_ = i18n.P_
+import yum.i18n
+_ = yum.i18n._
+P_ = yum.i18n.P_
 
 import config
 from config import ParsingError, ConfigParser
@@ -57,15 +57,15 @@ import plugins
 import logginglevels
 import yumRepo
 import callbacks
-import history
+import yum.history
 
 import warnings
 warnings.simplefilter("ignore", Errors.YumFutureDeprecationWarning)
 
 from packages import parsePackages, YumAvailablePackage, YumLocalPackage, YumInstalledPackage, comparePoEVR
 from constants import *
-from rpmtrans import RPMTransaction,SimpleCliCallBack
-from i18n import to_unicode, to_str
+from yum.rpmtrans import RPMTransaction,SimpleCliCallBack
+from yum.i18n import to_unicode, to_str
 
 import string
 

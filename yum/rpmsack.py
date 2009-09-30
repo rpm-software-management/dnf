@@ -31,7 +31,7 @@ from packageSack import PackageSackBase, PackageSackVersion
 import fnmatch
 import re
 
-from i18n import to_unicode
+from yum.i18n import to_unicode
 import constants
 
 class RPMInstalledPackage(YumInstalledPackage):

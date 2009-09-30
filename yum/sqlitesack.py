@@ -33,8 +33,8 @@ import rpmUtils.miscutils
 import sqlutils
 import constants
 import operator
-from misc import seq_max_split
-from i18n import to_utf8, to_unicode
+from yum.misc import seq_max_split
+from yum.i18n import to_utf8, to_unicode
 import sys
 import re
 

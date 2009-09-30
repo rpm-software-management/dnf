@@ -23,7 +23,7 @@ import time
 import logging
 import types
 import sys
-from constants import *
+from yum.constants import *
 from yum import _
 import misc
 
