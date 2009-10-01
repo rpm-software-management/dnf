@@ -310,7 +310,7 @@ class YumPlugins:
                                 modname)
 
         # Store the plugin module and its configuration file
-        if not self._plugins.has_key(modname):
+        if modname not in self._plugins:
             self._plugins[modname] = (module, conf)
         else:
             raise Errors.ConfigError(_('Two or more plugins with the name "%s" ' \

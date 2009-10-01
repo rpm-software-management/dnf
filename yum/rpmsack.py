@@ -500,7 +500,7 @@ class RPMDBPackageSack(PackageSackBase):
     def _search(self, name=None, epoch=None, ver=None, rel=None, arch=None):
         '''List of matching packages, to zero or more of NEVRA.'''
         pkgtup = (name, arch, epoch, ver, rel)
-        if self._tup2pkg.has_key(pkgtup):
+        if pkgtup in self._tup2pkg:
             return [self._tup2pkg[pkgtup]]
 
         loc = locals()
@@ -544,7 +544,7 @@ class RPMDBPackageSack(PackageSackBase):
         return ret
 
     def _makePackageObject(self, hdr, index):
-        if self._idx2pkg.has_key(index):
+        if index in self._idx2pkg:
             return self._idx2pkg[index]
         po = RPMInstalledPackage(hdr, index, self)
         self._idx2pkg[index] = po

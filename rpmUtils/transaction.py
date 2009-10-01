@@ -128,7 +128,7 @@ class TransactionWrapper:
                 continue
             tup = miscutils.pkgTupleFromHeader(h)    
             for r in h[rpm.RPMTAG_REQUIRENAME]:
-                if not req.has_key(r):
+                if r not in req:
                     req[r] = set()
                 req[r].add(tup)
      

@@ -95,7 +95,7 @@ class UpdateNotice(object):
         if len(bzs):
             buglist = "       Bugs :"
             for bz in bzs:
-                buglist += " %s%s\n\t    :" % (bz['id'], bz.has_key('title')
+                buglist += " %s%s\n\t    :" % (bz['id'], 'title' in bz
                                                and ' - %s' % bz['title'] or '')
             head += buglist[: - 1].rstrip() + '\n'
 
@@ -201,7 +201,7 @@ class UpdateNotice(object):
         """
         for collection in elem:
             data = { 'packages' : [] }
-            if collection.attrib.has_key('short'):
+            if 'short' in collection.attrib:
                 data['short'] = collection.attrib.get('short')
             for item in collection:
                 if item.tag == 'name':
@@ -383,7 +383,7 @@ class UpdateMetadata(object):
                     print >> sys.stderr, "An update notice is broken, skipping."
                     # what else should we do?
                     continue
-                if not self._notices.has_key(un['update_id']):
+                if un['update_id'] not in self._notices:
                     self._notices[un['update_id']] = un
                     for pkg in un['pkglist']:
                         for file in pkg['packages']:

@@ -368,7 +368,7 @@ def map_to_str(m, vals) :
     if type(vals) != types.ListType and type(vals) != types.TupleType :
         vals = list((vals,))
     for i in vals :
-        if m.has_key(i) :
+        if i in m :
             slist.append(m[i])
         else :
             slist.append('unknown(' + str(i) + ')')

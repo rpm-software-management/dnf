@@ -110,7 +110,7 @@ def parsePackages(pkgs, usercommands, casematch=0,
     for command in usercommands:
         if not casematch:
             command = command.lower()
-        if pkgdict.has_key(command):
+        if command in pkgdict:
             exactmatch.extend(pkgdict[command])
             del pkgdict[command]
         else:
@@ -368,7 +368,7 @@ class RpmBase(object):
     def checkPrco(self, prcotype, prcotuple):
         """returns 1 or 0 if the pkg contains the requested tuple/tuple range"""
         # get rid of simple cases - nothing
-        if not self.prco.has_key(prcotype):
+        if prcotype not in self.prco:
             return 0
 
         # First try and exact match, then search
@@ -447,7 +447,7 @@ class RpmBase(object):
         """return list of files based on type, you can pass primary_only=True
            to limit to those files in the primary repodata"""
         if self.files:
-            if self.files.has_key(ftype):
+            if ftype in self.files:
                 if primary_only:
                     if ftype == 'dir':
                         match = misc.re_primary_dirname
@@ -477,7 +477,7 @@ class RpmBase(object):
         warnings.warn('simpleFiles() will go away in a future version of Yum.'
                       'Use returnFileEntries(primary_only=True)\n',
                       Errors.YumDeprecationWarning, stacklevel=2)
-        if self.files and self.files.has_key(ftype):
+        if self.files and ftype in self.files:
             return self.files[ftype]
         return []
     
@@ -1177,7 +1177,7 @@ class YumHeaderPackage(YumAvailablePackage):
                         self.files['file'] = []
                     self.files['file'].append(fn)
                     continue
-                if not self.__mode_cache.has_key(mode):
+                if mode not in self.__mode_cache:
                     self.__mode_cache[mode] = stat.S_ISDIR(mode)
           
                 fkey = 'file'

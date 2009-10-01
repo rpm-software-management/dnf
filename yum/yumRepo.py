@@ -730,7 +730,7 @@ class YumRepository(Repository, config.RepoConf):
         headers = self.__headersListFromDict()
 
         # We will always prefer to send no-cache.
-        if not (cache or self.http_headers.has_key('Pragma')):
+        if not (cache or 'Pragma' in self.http_headers):
             headers.append(('Pragma', 'no-cache'))
 
         headers = tuple(headers)
@@ -1244,7 +1244,7 @@ class YumRepository(Repository, config.RepoConf):
     def _check_db_version(self, mdtype, repoXML=None):
         if repoXML is None:
             repoXML = self.repoXML
-        if repoXML.repoData.has_key(mdtype):
+        if mdtype in repoXML.repoData:
             if DBVERSION == repoXML.repoData[mdtype].dbversion:
                 return True
         return False

@@ -223,7 +223,7 @@ class TransactionData:
         for oldpo in txmember.updates:
             self.addUpdated(oldpo, txmember.po)
 
-        if not self.pkgdict.has_key(txmember.pkgtup):
+        if txmember.pkgtup not in self.pkgdict:
             self.pkgdict[txmember.pkgtup] = []
         else:
             self.debugprint("Package: %s.%s - %s:%s-%s already in ts" % txmember.pkgtup)
@@ -252,7 +252,7 @@ class TransactionData:
 
     def remove(self, pkgtup):
         """remove a package from the transaction"""
-        if not self.pkgdict.has_key(pkgtup):
+        if pkgtup not in self.pkgdict:
             self.debugprint("Package: %s not in ts" %(pkgtup,))
             return
         for txmbr in self.pkgdict[pkgtup]:

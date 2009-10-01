@@ -87,14 +87,14 @@ class CompsObj(object):
     def nameByLang(self, lang):
 
         for langcode in self._expand_languages(lang):
-            if self.translated_name.has_key(langcode):
+            if langcode in self.translated_name:
                 return to_unicode(self.translated_name[langcode])
 
         return to_unicode(self.name)
 
     def descriptionByLang(self, lang):
         for langcode in self._expand_languages(lang):
-            if self.translated_description.has_key(langcode):
+            if langcode in self.translated_description:
                 return to_unicode(self.translated_description[langcode])
         return to_unicode(self.description)
 
@@ -461,7 +461,7 @@ class Comps(object):
 
         for item in pattern.split(','):
             item = item.strip()
-            if self._categories.has_key(item):
+            if item in self._categories:
                 cat = self._categories[item]
                 returns[cat.categoryid] = cat
                 continue
@@ -547,7 +547,7 @@ class Comps(object):
             if len(group.mandatory_packages) > 0:
                 group.installed = True
                 for pkgname in group.mandatory_packages:
-                    if not inst_pkg_names.has_key(pkgname):
+                    if pkgname not in inst_pkg_names:
                         group.installed = False
                         break
             # if it doesn't have any of those then see if it has ANY of the

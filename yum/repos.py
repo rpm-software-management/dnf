@@ -93,7 +93,7 @@ class RepoStorage:
             repo.close()
 
     def add(self, repoobj):
-        if self.repos.has_key(repoobj.id):
+        if repoobj.id in self.repos:
             raise Errors.DuplicateRepoError, 'Repository %s is listed more than once in the configuration' % (repoobj.id)
         self.repos[repoobj.id] = repoobj
         if hasattr(repoobj, 'quick_enable_disable'):
