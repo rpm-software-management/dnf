@@ -22,6 +22,9 @@ except ImportError:
 iterparse = cElementTree.iterparse
 
 from cStringIO import StringIO
+import warnings
+
+import Errors
 
 #TODO: document everything here
 
@@ -79,7 +82,12 @@ class BaseEntry:
         return self._p.values()
 
     def has_key(self, k):
-        return self._p.has_key(k)
+        warnings.warn('has_key() will go away in a future version of Yum.\n'
+                      Errors.YumFutureDeprecationWarning, stacklevel=2)
+        return k in self._p
+
+    def __iter__(self):
+        return iter(self._p)
 
     def __str__(self):
         out = StringIO()
