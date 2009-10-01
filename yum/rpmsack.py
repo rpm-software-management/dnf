@@ -434,7 +434,11 @@ class RPMDBPackageSack(PackageSackBase):
 
     def excludeArchs(self, archlist):
         pass
-
+    
+    def returnLeafNodes(self, repoid=None):
+        ts = self.readOnlyTS()
+        return [ self._makePackageObject(h, mi) for (h, mi) in ts.returnLeafNodes(headers=True) ]
+        
     # Helper functions
     def _all_packages(self):
         '''Generator that yield (header, index) for all packages
