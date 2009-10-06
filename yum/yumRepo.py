@@ -1650,7 +1650,7 @@ class YumRepository(Repository, config.RepoConf):
             try:
                 fo = urlgrabber.grabber.urlopen(url, proxies=self.proxy_dict)
             except urlgrabber.grabber.URLGrabError, e:
-                print "Could not retrieve mirrorlist %s error was\n%s" % (url, e)
+                print "Could not retrieve mirrorlist %s error was\n%s: %s" % (url, e.args[0], misc.to_unicode(e.args[1]))
                 fo = None
 
         (returnlist, content) = self._readMirrorList(fo, url)
