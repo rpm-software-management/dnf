@@ -667,9 +667,8 @@ class YumConf(StartupConf):
     skip_broken = BoolOption(False)
     #  Note that "instant" is the old behaviour, but group:primary is very
     # similar but better :).
-    mdpolicy = SelectionOption('group:primary',
-                               ('instant', 'group:all', 'group:main',
-                                'group:small', 'group:primary'))
+    mdpolicy = ListOption(['group:primary'])
+    #  ('instant', 'group:all', 'group:main', 'group:small', 'group:primary'))
     multilib_policy = SelectionOption('all',('best', 'all'))
                  # all == install any/all arches you can
                  # best == use the 'best  arch' for the system

@@ -1355,13 +1355,6 @@ class YumRepository(Repository, config.RepoConf):
         self._doneOldRepoXML()
         return True
 
-    def _instantLoadRepoXML(self, text=None):
-        """ Retrieve the new repomd.xml from the repository, then check it
-            and parse it. If it fails revert.
-            Mostly traditional behaviour. """
-        if self._commonLoadRepoXML(text):
-            self._commonRetrieveDataMD([])
-
     def _groupLoadRepoXML(self, text=None, mdtypes=None):
         """ Retrieve the new repomd.xml from the repository, then check it
             and parse it. If it fails we revert to the old version and pretend
@@ -1375,19 +1368,25 @@ class YumRepository(Repository, config.RepoConf):
 
     def _loadRepoXML(self, text=None):
         """retrieve/check/read in repomd.xml from the repository"""
+        md_groups = {'instant'       : [],
+                     'group:primary' : ['primary'],
+                     'group:small'   : ["primary", "updateinfo"],
+                     'group:main'    : ["primary", "group", "filelists",
+                                        "updateinfo", "prestodelta"]}
+        mdtypes = set()
+        if type(self.mdpolicy) in types.StringTypes:
+            mdtypes.update(md_groups.get(self.mdpolicy, [self.mdpolicy]))
+        else:
+            for mdpolicy in self.mdpolicy:
+                mdtypes.update(md_groups.get(mdpolicy, [mdpolicy]))
+
+        if not mdtypes or 'group:all' in mdtypes:
+            mdtypes = None
+        else:
+            mdtypes = sorted(list(mdtypes))
+
         try:
-            if self.mdpolicy in ["instant"]:
-                return self._instantLoadRepoXML(text)
-            if self.mdpolicy in ["group:all"]:
-                return self._groupLoadRepoXML(text)
-            if self.mdpolicy in ["group:main"]:
-                return self._groupLoadRepoXML(text, ["primary", "group",
-                                                     "filelists", "updateinfo",
-                                                     "prestodelta"])
-            if self.mdpolicy in ["group:small"]:
-                return self._groupLoadRepoXML(text, ["primary", "updateinfo"])
-            if self.mdpolicy in ["group:primary"]:
-                return self._groupLoadRepoXML(text, ["primary"])
+            return self._groupLoadRepoXML(text, mdtypes)
         except KeyboardInterrupt:
             self._revertOldRepoXML() # Undo metadata cookie?
             raise
