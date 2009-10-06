@@ -584,6 +584,7 @@ class Depsolve(object):
             # FIXME: Don't we want .install() here, so obsoletes get done?
             txmbr = self.tsInfo.addInstall(best)
             txmbr.setAsDep(po=requiringPo)
+            txmbr.reason = "dep"
             self._last_req = best
 
             # if we had other packages with this name.arch that we found

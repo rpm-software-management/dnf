@@ -2932,6 +2932,14 @@ class YumBase(depsolve.Depsolve):
                 self.tsInfo.remove(txmbr.po.pkgtup)
         return found
 
+    def _add_up_txmbr(self, requiringPo, upkg, ipkg):
+        txmbr = self.tsInfo.addUpdate(upkg, ipkg)
+        if requiringPo:
+            txmbr.setAsDep(requiringPo)
+        if ('reason' in ipkg.yumdb_info and ipkg.yumdb_info.reason == 'dep'):
+            txmbr.reason = 'dep'
+        return txmbr
+
     def update(self, po=None, requiringPo=None, **kwargs):
         """try to mark for update the item(s) specified. 
             po is a package object - if that is there, mark it for update,
@@ -3097,9 +3105,7 @@ class YumBase(depsolve.Depsolve):
                         self.tsInfo.addObsoleted(obsoletee, po)
                         tx_return.append(txmbr)
                 else:
-                    txmbr = self.tsInfo.addUpdate(po, installed_pkg)
-                    if requiringPo:
-                        txmbr.setAsDep(requiringPo)
+                    txmbr = self._add_up_txmbr(requiringPo, po, installed_pkg)
                     tx_return.append(txmbr)
                         
         for available_pkg in availpkgs:
@@ -3122,9 +3128,8 @@ class YumBase(depsolve.Depsolve):
                 
                 else:
                     updated_pkg =  self.getInstalledPackageObject(updated)
-                    txmbr = self.tsInfo.addUpdate(available_pkg, updated_pkg)
-                    if requiringPo:
-                        txmbr.setAsDep(requiringPo)
+                    txmbr = self._add_up_txmbr(requiringPo,
+                                               available_pkg, updated_pkg)
                     tx_return.append(txmbr)
                     
             # check to see if the pkg we want to install is not _quite_ the newest
@@ -3147,9 +3152,7 @@ class YumBase(depsolve.Depsolve):
                     self.verbose_logger.log(logginglevels.DEBUG_2, _('Not Updating Package that is already updated: %s.%s %s:%s-%s'), 
                                             ipkg.pkgtup)
                 elif ipkg.verLT(available_pkg):
-                    txmbr = self.tsInfo.addUpdate(available_pkg, ipkg)
-                    if requiringPo:
-                        txmbr.setAsDep(requiringPo)
+                    txmbr = self._add_up_txmbr(requiringPo, available_pkg, ipkg)
                     tx_return.append(txmbr)
 
         return tx_return
