@@ -79,6 +79,7 @@ class FakePackage(packages.YumAvailablePackage):
         self.epoch = epoch
         self.arch = arch
         self.pkgtup = (self.name, self.arch, self.epoch, self.version, self.release)
+        self.yumdb_info = {}
 
         self.prco['provides'].append((name, 'EQ', (epoch, version, release)))
 
