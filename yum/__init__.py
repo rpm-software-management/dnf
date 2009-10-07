@@ -3154,7 +3154,13 @@ class YumBase(depsolve.Depsolve):
                 elif ipkg.verLT(available_pkg):
                     txmbr = self._add_up_txmbr(requiringPo, available_pkg, ipkg)
                     tx_return.append(txmbr)
-
+        
+        for txmbr in tx_return:
+            for i_pkg in self.rpmdb.searchNevra(name=txmbr.name):
+                if i_pkg not in txmbr.updates:
+                    if self.doesthisUpdate(txmbr.po, i_pkg):
+                        self.tsInfo.addUpdated(i_pkg, txmbr.po)
+                        
         return tx_return
         
     def remove(self, po=None, **kwargs):
@@ -4138,3 +4144,18 @@ class YumBase(depsolve.Depsolve):
 
         return True # We got a new cache dir
 
+    def doesthisUpdate(self, pkg1, pkg2):
+        """returns True if pkg1 can update pkg2, False if not"""
+        
+        if pkg1.name != pkg2.name:
+            return False
+        if not pkg1.EVR  > pkg2.EVR:
+            return False
+        if pkg1.arch not in self.arch.archlist:
+            return False
+        if rpmUtils.arch.canCoinstall(pkg1.arch, pkg2.arch):
+            return False
+        if self.allowedMultipleInstalls(pkg1):
+            return False
+            
+        return True    
