@@ -689,7 +689,7 @@ class YumRepository(Repository, config.RepoConf):
                         raise Errors.RepoError, msg
                     #  Now, we have an old usable metalink, so we can't move to
                     # a newer repomd.xml ... or checksums won't match.
-                    print "Could not get metalink %s error was \n%s" %(url, e)
+                    print "Could not get metalink %s error was\n%s: %s" % (url, e.args[0], misc.to_unicode(e.args[1]))                    
                     self._metadataCurrent = True
 
             if not self._metadataCurrent:
@@ -1813,7 +1813,7 @@ def getMirrorList(mirrorlist, pdict = None):
     try:
         fo = urlresolver.urlopen(url, proxies=pdict)
     except urlgrabber.grabber.URLGrabError, e:
-        print "Could not retrieve mirrorlist %s error was\n%s" % (url, e)
+        print "Could not retrieve mirrorlist %s error was\n%s: %s" % (url, e.args[0], misc.to_unicode(e.args[1]))
         fo = None
 
     if fo is not None:
