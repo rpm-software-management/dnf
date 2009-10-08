@@ -667,9 +667,8 @@ class YumConf(StartupConf):
     skip_broken = BoolOption(False)
     #  Note that "instant" is the old behaviour, but group:primary is very
     # similar but better :).
-    mdpolicy = SelectionOption('group:primary',
-                               ('instant', 'group:all', 'group:main',
-                                'group:small', 'group:primary'))
+    mdpolicy = ListOption(['group:primary'])
+    #  ('instant', 'group:all', 'group:main', 'group:small', 'group:primary'))
     multilib_policy = SelectionOption('all',('best', 'all'))
                  # all == install any/all arches you can
                  # best == use the 'best  arch' for the system
@@ -703,6 +702,8 @@ class YumConf(StartupConf):
     sslclientcert = Option()
     sslclientkey = Option()
 
+    history_record = BoolOption(True)
+    history_record_packages = ListOption(['yum', 'rpm', 'yum-metadata-parser'])
 
     _reposlist = []
 
@@ -763,6 +764,11 @@ class RepoConf(BaseConfig):
     sslclientkey = Inherit(YumConf.sslclientkey)
 
     
+class VersionGroupConf(BaseConfig):
+    pkglist = ListOption()
+    run_with_packages = BoolOption(False)
+
+
 def readStartupConfig(configfile, root):
     '''
     Parse Yum's main configuration file and return a StartupConf instance.
@@ -848,6 +854,20 @@ def readMainConfig(startupconf):
     yumconf.errorlevel = startupconf.errorlevel
     
     return yumconf
+
+def readVersionGroupsConfig(configfile="/etc/yum/version-groups.conf"):
+    parser = ConfigParser()
+    confpp_obj = ConfigPreProcessor(configfile)
+    try:
+        parser.readfp(confpp_obj)
+    except ParsingError, e:
+        raise Errors.ConfigError("Parsing file failed: %s" % e)
+    ret = {}
+    for section in parser.sections():
+        ret[section] = VersionGroupConf()
+        ret[section].populate(parser, section)
+    return ret
+
 
 def getOption(conf, section, name, option):
     '''Convenience function to retrieve a parsed and converted value from a

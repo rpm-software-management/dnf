@@ -57,6 +57,7 @@ import plugins
 import logginglevels
 import yumRepo
 import callbacks
+import yum.history
 
 import warnings
 warnings.simplefilter("ignore", Errors.YumFutureDeprecationWarning)
@@ -64,7 +65,7 @@ warnings.simplefilter("ignore", Errors.YumFutureDeprecationWarning)
 from packages import parsePackages, YumAvailablePackage, YumLocalPackage, YumInstalledPackage, comparePoEVR
 from constants import *
 from yum.rpmtrans import RPMTransaction,SimpleCliCallBack
-from yum.i18n import to_unicode
+from yum.i18n import to_unicode, to_str
 
 import string
 
@@ -137,6 +138,7 @@ class YumBase(depsolve.Depsolve):
         self._rpmdb = None
         self._up = None
         self._comps = None
+        self._history = None
         self._pkgSack = None
         self._lockfile = None
         self.skipped_packages = []   # packages skip by the skip-broken code
@@ -153,6 +155,7 @@ class YumBase(depsolve.Depsolve):
         self.arch = ArchStorage()
         self.preconf = _YumPreBaseConf()
 
+        self.run_with_package_names = set()
 
     def __del__(self):
         self.close()
@@ -160,6 +163,10 @@ class YumBase(depsolve.Depsolve):
         self.doUnlock()
 
     def close(self):
+        # We don't want to create the object, so we test if it's been created
+        if self._history is not None:
+            self.history.close()
+
         if self._repos:
             self._repos.close()
 
@@ -271,6 +278,10 @@ class YumBase(depsolve.Depsolve):
         #  We don't want people accessing/altering preconf after it becomes
         # worthless. So we delete it, and thus. it'll raise AttributeError
         del self.preconf
+
+        # Packages used to run yum...
+        for pkgname in self.conf.history_record_packages:
+            self.run_with_package_names.add(pkgname)
 
         # run the postconfig plugin hook
         self.plugins.run('postconfig')
@@ -694,6 +705,13 @@ class YumBase(depsolve.Depsolve):
         self._comps.compile(self.rpmdb.simplePkgList())
         self.verbose_logger.debug('group time: %0.3f' % (time.time() - group_st))                
         return self._comps
+
+    def _getHistory(self):
+        """auto create the history object that to acess/append the transaction
+           history information. """
+        if self._history is None:
+            self._history = yum.history.YumHistory(root=self.conf.installroot)
+        return self._history
     
     # properties so they auto-create themselves with defaults
     repos = property(fget=lambda self: self._getRepos(),
@@ -718,6 +736,9 @@ class YumBase(depsolve.Depsolve):
     comps = property(fget=lambda self: self._getGroups(),
                      fset=lambda self, value: self._setGroups(value),
                      fdel=lambda self: setattr(self, "_comps", None))
+    history = property(fget=lambda self: self._getHistory(),
+                       fset=lambda self, value: setattr(self, "_history",value),
+                       fdel=lambda self: setattr(self, "_history", None))
     
     
     def doSackFilelistPopulate(self):
@@ -1029,6 +1050,18 @@ class YumBase(depsolve.Depsolve):
 
         self.plugins.run('pretrans')
 
+        using_pkgs_pats = list(self.run_with_package_names)
+        using_pkgs = self.rpmdb.returnPackages(patterns=using_pkgs_pats)
+        rpmdbv  = self.rpmdb.simpleVersion(main_only=True)[0]
+        lastdbv = self.history.last()
+        if lastdbv is not None:
+            lastdbv = lastdbv.end_rpmdbversion
+        if lastdbv is not None and rpmdbv != lastdbv:
+            errstring = _('Warning: RPMDB has been altered since the last yum transaction.')
+            self.logger.warning(errstring)
+        if self.conf.history_record:
+            self.history.beg(rpmdbv, using_pkgs, list(self.tsInfo))
+
         errors = self.ts.run(cb.callback, '')
         # ts.run() exit codes are, hmm, "creative": None means all ok, empty 
         # list means some errors happened in the transaction and non-empty 
@@ -1044,6 +1077,9 @@ class YumBase(depsolve.Depsolve):
             self.verbose_logger.debug(errstring)
             resultobject.return_code = 1
         else:
+            if self.conf.history_record:
+                herrors = [to_unicode(to_str(x)) for x in errors]
+                self.history.end(rpmdbv, 2, errors=herrors)
             raise Errors.YumBaseError, errors
                           
         if not self.conf.keepcache:
@@ -1060,10 +1096,10 @@ class YumBase(depsolve.Depsolve):
         self.rpmdb.dropCachedData() # drop out the rpm cache so we don't step on bad hdr indexes
         self.plugins.run('posttrans')
         # sync up what just happened versus what is in the rpmdb
-        self.verifyTransaction()
+        self.verifyTransaction(resultobject)
         return resultobject
 
-    def verifyTransaction(self):
+    def verifyTransaction(self, resultobject=None):
         """checks that the transaction did what we expected it to do. Also 
            propagates our external yumdb info"""
         
@@ -1087,7 +1123,7 @@ class YumBase(depsolve.Depsolve):
                     self.logger.critical(_('%s was supposed to be installed' \
                                            ' but is not!' % txmbr.po))
                     continue
-                po = self.rpmdb.searchPkgTuple(txmbr.pkgtup)[0]
+                po = self.getInstalledPackageObject(txmbr.pkgtup)
                 rpo = txmbr.po
                 po.yumdb_info.from_repo = rpo.repoid
                 po.yumdb_info.reason = txmbr.reason
@@ -1131,6 +1167,11 @@ class YumBase(depsolve.Depsolve):
             else:
                 self.verbose_logger.log(logginglevels.DEBUG_2, 'What is this? %s' % txmbr.po)
 
+        if self.conf.history_record:
+            ret = -1
+            if resultobject is not None:
+                ret = resultobject.return_code
+            self.history.end(self.rpmdb.simpleVersion(main_only=True)[0], ret)
         self.rpmdb.dropCachedData()
 
     def costExcludePackages(self):
@@ -1802,7 +1843,7 @@ class YumBase(depsolve.Depsolve):
             for (pkgtup, instTup) in self.up.getObsoletesTuples():
                 (n,a,e,v,r) = pkgtup
                 pkgs = self.pkgSack.searchNevra(name=n, arch=a, ver=v, rel=r, epoch=e)
-                instpo = self.rpmdb.searchPkgTuple(instTup)[0] # the first one
+                instpo = self.getInstalledPackageObject(instTup)
                 for po in pkgs:
                     obsoletes.append(po)
                     obsoletesTuples.append((po, instpo))
@@ -2005,10 +2046,7 @@ class YumBase(depsolve.Depsolve):
                     canBeFile = True
             else:
                 isglob = True
-                if arg[0] != '/' and not misc.re_glob(arg[0]):
-                    canBeFile = False
-                else:
-                    canBeFile = True
+                canBeFile = misc.re_filename(arg)
                 
             if not isglob:
                 usedDepString = True
@@ -2345,11 +2383,16 @@ class YumBase(depsolve.Depsolve):
         return result
 
     def getInstalledPackageObject(self, pkgtup):
-        """returns a YumInstallPackage object for the pkgtup specified"""
-        warnings.warn(_('getInstalledPackageObject() will go away, use self.rpmdb.searchPkgTuple().\n'),
-                Errors.YumFutureDeprecationWarning, stacklevel=2)
-        
-        po = self.rpmdb.searchPkgTuple(pkgtup)[0] # take the first one
+        """ Returns a YumInstallPackage object for the pkgtup specified, or
+            raises an exception. You should use this instead of
+            searchPkgTuple() if you are assuming there is a value. """
+
+        pkgs = self.rpmdb.searchPkgTuple(pkgtup)
+        if len(pkgs) == 0:
+            raise Errors.RpmDBError, _('Package tuple %s could not be found in rpmdb') % str(pkgtup)
+
+        # Dito. FIXME from getPackageObject() for len() > 1 ... :)
+        po = pkgs[0] # take the first one
         return po
         
     def gpgKeyCheck(self):
@@ -2613,7 +2656,7 @@ class YumBase(depsolve.Depsolve):
         if not isinstance(po, YumLocalPackage):
             for (obstup, inst_tup) in self.up.getObsoletersTuples(name=po.name):
                 if po.pkgtup == obstup:
-                    installed_pkg =  self.rpmdb.searchPkgTuple(inst_tup)[0]
+                    installed_pkg =  self.getInstalledPackageObject(inst_tup)
                     yield installed_pkg
         else:
             for (obs_n, obs_f, (obs_e, obs_v, obs_r)) in po.obsoletes:
@@ -2889,6 +2932,14 @@ class YumBase(depsolve.Depsolve):
                 self.tsInfo.remove(txmbr.po.pkgtup)
         return found
 
+    def _add_up_txmbr(self, requiringPo, upkg, ipkg):
+        txmbr = self.tsInfo.addUpdate(upkg, ipkg)
+        if requiringPo:
+            txmbr.setAsDep(requiringPo)
+        if ('reason' in ipkg.yumdb_info and ipkg.yumdb_info.reason == 'dep'):
+            txmbr.reason = 'dep'
+        return txmbr
+
     def update(self, po=None, requiringPo=None, **kwargs):
         """try to mark for update the item(s) specified. 
             po is a package object - if that is there, mark it for update,
@@ -2917,7 +2968,7 @@ class YumBase(depsolve.Depsolve):
                 topkg = self._test_loop(obsoleting_pkg, self._pkg2obspkg)
                 if topkg is not None:
                     obsoleting_pkg = topkg
-                installed_pkg =  self.rpmdb.searchPkgTuple(installed)[0]
+                installed_pkg =  self.getInstalledPackageObject(installed)
                 txmbr = self.tsInfo.addObsoleting(obsoleting_pkg, installed_pkg)
                 self.tsInfo.addObsoleted(installed_pkg, obsoleting_pkg)
                 if requiringPo:
@@ -3054,9 +3105,7 @@ class YumBase(depsolve.Depsolve):
                         self.tsInfo.addObsoleted(obsoletee, po)
                         tx_return.append(txmbr)
                 else:
-                    txmbr = self.tsInfo.addUpdate(po, installed_pkg)
-                    if requiringPo:
-                        txmbr.setAsDep(requiringPo)
+                    txmbr = self._add_up_txmbr(requiringPo, po, installed_pkg)
                     tx_return.append(txmbr)
                         
         for available_pkg in availpkgs:
@@ -3078,10 +3127,9 @@ class YumBase(depsolve.Depsolve):
                                             updated)
                 
                 else:
-                    updated_pkg =  self.rpmdb.searchPkgTuple(updated)[0]
-                    txmbr = self.tsInfo.addUpdate(available_pkg, updated_pkg)
-                    if requiringPo:
-                        txmbr.setAsDep(requiringPo)
+                    updated_pkg =  self.getInstalledPackageObject(updated)
+                    txmbr = self._add_up_txmbr(requiringPo,
+                                               available_pkg, updated_pkg)
                     tx_return.append(txmbr)
                     
             # check to see if the pkg we want to install is not _quite_ the newest
@@ -3104,9 +3152,7 @@ class YumBase(depsolve.Depsolve):
                     self.verbose_logger.log(logginglevels.DEBUG_2, _('Not Updating Package that is already updated: %s.%s %s:%s-%s'), 
                                             ipkg.pkgtup)
                 elif ipkg.verLT(available_pkg):
-                    txmbr = self.tsInfo.addUpdate(available_pkg, ipkg)
-                    if requiringPo:
-                        txmbr.setAsDep(requiringPo)
+                    txmbr = self._add_up_txmbr(requiringPo, available_pkg, ipkg)
                     tx_return.append(txmbr)
 
         return tx_return
@@ -3445,6 +3491,7 @@ class YumBase(depsolve.Depsolve):
         if not apkgs:
             # Do we still want to return errors here?
             # We don't in the cases below, so I didn't here...
+            pkgs = []
             if 'pattern' in kwargs:
                 pkgs = self.rpmdb.returnPackages(patterns=[kwargs['pattern']],
                                                  ignore_case=False)
@@ -3552,6 +3599,84 @@ class YumBase(depsolve.Depsolve):
             returndict['release'] = kwargs.get('rel')
 
         return returndict
+
+    def history_redo(self, transaction):
+        """ Given a valid historical transaction object, try and repeat
+            that transaction. """
+        # NOTE: This is somewhat basic atm. ... see comment in undo.
+        old_conf_obs = self.conf.obsoletes
+        self.conf.obsoletes = False
+        done = False
+        for pkg in transaction.trans_data:
+            if pkg.state == 'Reinstall':
+                if self.reinstall(pkgtup=pkg.pkgtup):
+                    done = True
+        for pkg in transaction.trans_data:
+            if pkg.state == 'Downgrade':
+                try:
+                    if self.downgrade(pkgtup=pkg.pkgtup):
+                        done = True
+                except yum.Errors.DowngradeError:
+                    self.logger.critical(_('Failed to downgrade: %s'), pkg)
+        for pkg in transaction.trans_data:
+            if pkg.state == 'Update':
+                if self.update(pkgtup=pkg.pkgtup):
+                    done = True
+        for pkg in transaction.trans_data:
+            if pkg.state in ('Install', 'True-Install', 'Obsoleting'):
+                if self.install(pkgtup=pkg.pkgtup):
+                    done = True
+        for pkg in transaction.trans_data:
+            if pkg.state == 'Erase':
+                if self.remove(pkgtup=pkg.pkgtup):
+                    done = True
+        self.conf.obsoletes = old_conf_obs
+        return done
+
+    def history_undo(self, transaction):
+        """ Given a valid historical transaction object, try and undo
+            that transaction. """
+        # NOTE: This is somewhat basic atm. ... for instance we don't check
+        #       that we are going from the old new version. However it's still
+        #       better than the RHN rollback code, and people pay for that :).
+        #  We turn obsoletes off because we want the specific versions of stuff
+        # from history ... even if they've been obsoleted since then.
+        old_conf_obs = self.conf.obsoletes
+        self.conf.obsoletes = False
+        done = False
+        for pkg in transaction.trans_data:
+            if pkg.state == 'Reinstall':
+                if self.reinstall(pkgtup=pkg.pkgtup):
+                    done = True
+        for pkg in transaction.trans_data:
+            if pkg.state == 'Updated':
+                try:
+                    if self.downgrade(pkgtup=pkg.pkgtup):
+                        done = True
+                except yum.Errors.DowngradeError:
+                    self.logger.critical(_('Failed to downgrade: %s'), pkg)
+        for pkg in transaction.trans_data:
+            if pkg.state == 'Downgraded':
+                if self.update(pkgtup=pkg.pkgtup):
+                    done = True
+        for pkg in transaction.trans_data:
+            if pkg.state == 'Obsoleting':
+                if self.remove(pkgtup=pkg.pkgtup):
+                    done = True
+        for pkg in transaction.trans_data:
+            if pkg.state in ('Install', 'True-Install'):
+                if self.remove(pkgtup=pkg.pkgtup):
+                    done = True
+        for pkg in transaction.trans_data:
+            if pkg.state == 'Obsoleted':
+                if self.install(pkgtup=pkg.pkgtup):
+                    done = True
+        for pkg in transaction.trans_data:
+            if pkg.state == 'Erase':
+                if self.install(pkgtup=pkg.pkgtup):
+                    done = True
+        self.conf.obsoletes = old_conf_obs
+        return done
 
     def _retrievePublicKey(self, keyurl, repo=None):
         """
@@ -3745,6 +3870,7 @@ class YumBase(depsolve.Depsolve):
 
                 if True: # Don't to magic sorting, yet
                     ret_mid.append(pkg)
+                    continue
 
                 if pkg.yumdb_info.installonly == 'remove-first':
                     ret_beg.append(pkg)

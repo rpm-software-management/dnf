@@ -159,13 +159,6 @@ class Depsolve(object):
 
         self.verbose_logger.log(logginglevels.DEBUG_1, _('Searching pkgSack for dep: %s'),
             name)
-        # we need to check the name - if it doesn't match:
-        # /etc/* bin/* or /usr/lib/sendmail then we should fetch the 
-        # filelists.xml for all repos to make the searchProvides more complete.
-        if name[0] == '/':
-            if not misc.re_primary_filename(name):
-                self.doSackFilelistPopulate()
-            
         pkgs = self.pkgSack.searchProvides(name)
         
         
@@ -181,7 +174,7 @@ class Depsolve(object):
         for po in pkgs:
             self.verbose_logger.log(logginglevels.DEBUG_2,
                 _('Potential match for %s from %s'), name, po)
-            if name[0] == '/' and r_v is None:
+            if misc.re_filename(name) and r_v is None:
                 # file dep add all matches to the defSack
                 defSack.addPackage(po)
                 continue
@@ -591,6 +584,7 @@ class Depsolve(object):
             # FIXME: Don't we want .install() here, so obsoletes get done?
             txmbr = self.tsInfo.addInstall(best)
             txmbr.setAsDep(po=requiringPo)
+            txmbr.reason = "dep"
             self._last_req = best
 
             # if we had other packages with this name.arch that we found

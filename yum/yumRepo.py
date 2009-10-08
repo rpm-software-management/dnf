@@ -233,6 +233,7 @@ class YumRepository(Repository, config.RepoConf):
         Repository.__init__(self, repoid)
 
         self.repofile = None
+        self.mirrorurls = []
         self._urls = []
         self.enablegroups = 0
         self.groupsfilename = 'yumgroups.xml' # something some freaks might
@@ -386,7 +387,7 @@ class YumRepository(Repository, config.RepoConf):
             config.writeRawRepoFile(self,only=['enabled'])
         except IOError, e:
             if e.errno == errno.EACCES:
-                self.logger.warning(e)
+                logger.warning(e)
             else:
                 raise IOError, str(e)
 
@@ -397,7 +398,7 @@ class YumRepository(Repository, config.RepoConf):
             config.writeRawRepoFile(self,only=['enabled'])
         except IOError, e:
             if e.errno == errno.EACCES:
-                self.logger.warning(e)
+                logger.warning(e)
             else:
                 raise IOError, str(e)
 
@@ -688,7 +689,7 @@ class YumRepository(Repository, config.RepoConf):
                         raise Errors.RepoError, msg
                     #  Now, we have an old usable metalink, so we can't move to
                     # a newer repomd.xml ... or checksums won't match.
-                    print "Could not get metalink %s error was \n%s" %(url, e)
+                    print "Could not get metalink %s error was\n%s: %s" % (url, e.args[0], misc.to_unicode(e.args[1]))                    
                     self._metadataCurrent = True
 
             if not self._metadataCurrent:
@@ -712,7 +713,8 @@ class YumRepository(Repository, config.RepoConf):
                              fdel=lambda self: setattr(self, "_metalink", None))
 
     def _getFile(self, url=None, relative=None, local=None, start=None, end=None,
-            copy_local=None, checkfunc=None, text=None, reget='simple', cache=True):
+            copy_local=None, checkfunc=None, text=None, reget='simple', 
+            cache=True, size=None):
         """retrieve file from the mirrorgroup for the repo
            relative to local, optionally get range from
            start to end, also optionally retrieve from a specific baseurl"""
@@ -784,7 +786,8 @@ class YumRepository(Repository, config.RepoConf):
                             ssl_verify_host=self.sslverify,
                             ssl_ca_cert=self.sslcacert,
                             ssl_cert=self.sslclientcert,
-                            ssl_key=self.sslclientkey                            
+                            ssl_key=self.sslclientkey,
+                            size=size
                             )
 
             ug.opts.user_agent = default_grabber.opts.user_agent
@@ -816,6 +819,7 @@ class YumRepository(Repository, config.RepoConf):
                                            reget = reget,
                                            checkfunc=checkfunc,
                                            http_headers=headers,
+                                           size=size
                                            )
             except URLGrabError, e:
                 errstr = "failure: %s from %s: %s" % (relative, self.id, e)
@@ -827,7 +831,7 @@ class YumRepository(Repository, config.RepoConf):
         return result
     __get = _getFile
 
-    def getPackage(self, package, checkfunc = None, text = None, cache = True):
+    def getPackage(self, package, checkfunc=None, text=None, cache=True):
         remote = package.relativepath
         local = package.localPkg()
         basepath = package.basepath
@@ -842,7 +846,8 @@ class YumRepository(Repository, config.RepoConf):
                         local=local,
                         checkfunc=checkfunc,
                         text=text,
-                        cache=cache
+                        cache=cache,
+                        size=package.size,
                         )
 
     def getHeader(self, package, checkfunc = None, reget = 'simple',
@@ -852,6 +857,7 @@ class YumRepository(Repository, config.RepoConf):
         local =  package.localHdr()
         start = package.hdrstart
         end = package.hdrend
+        size = end-start
         basepath = package.basepath
         # yes, I know, don't ask
         if not os.path.exists(self.hdrdir):
@@ -859,7 +865,7 @@ class YumRepository(Repository, config.RepoConf):
 
         return self._getFile(url=basepath, relative=remote, local=local, start=start,
                         reget=None, end=end, checkfunc=checkfunc, copy_local=1,
-                        cache=cache,
+                        cache=cache, size=size,
                         )
 
     def metadataCurrent(self):
@@ -988,7 +994,8 @@ class YumRepository(Repository, config.RepoConf):
                                    text=text,
                                    reget=None,
                                    checkfunc=checkfunc,
-                                   cache=self.http_caching == 'all')
+                                   cache=self.http_caching == 'all',
+                                   size=102400) # setting max size as 100K
 
         except URLGrabError, e:
             misc.unlink_f(tfname)
@@ -1034,6 +1041,8 @@ class YumRepository(Repository, config.RepoConf):
             old_local = local + '.old.tmp' # locked, so this is ok
             shutil.copy2(local, old_local)
             xml = self._parseRepoXML(old_local, True)
+            if xml is None:
+                return None
             self._oldRepoMDData = {'old_repo_XML' : xml, 'local' : local,
                                    'old_local' : old_local, 'new_MD_files' : []}
             return xml
@@ -1346,13 +1355,6 @@ class YumRepository(Repository, config.RepoConf):
         self._doneOldRepoXML()
         return True
 
-    def _instantLoadRepoXML(self, text=None):
-        """ Retrieve the new repomd.xml from the repository, then check it
-            and parse it. If it fails revert.
-            Mostly traditional behaviour. """
-        if self._commonLoadRepoXML(text):
-            self._commonRetrieveDataMD([])
-
     def _groupLoadRepoXML(self, text=None, mdtypes=None):
         """ Retrieve the new repomd.xml from the repository, then check it
             and parse it. If it fails we revert to the old version and pretend
@@ -1366,19 +1368,25 @@ class YumRepository(Repository, config.RepoConf):
 
     def _loadRepoXML(self, text=None):
         """retrieve/check/read in repomd.xml from the repository"""
+        md_groups = {'instant'       : [],
+                     'group:primary' : ['primary'],
+                     'group:small'   : ["primary", "updateinfo"],
+                     'group:main'    : ["primary", "group", "filelists",
+                                        "updateinfo", "prestodelta"]}
+        mdtypes = set()
+        if type(self.mdpolicy) in types.StringTypes:
+            mdtypes.update(md_groups.get(self.mdpolicy, [self.mdpolicy]))
+        else:
+            for mdpolicy in self.mdpolicy:
+                mdtypes.update(md_groups.get(mdpolicy, [mdpolicy]))
+
+        if not mdtypes or 'group:all' in mdtypes:
+            mdtypes = None
+        else:
+            mdtypes = sorted(list(mdtypes))
+
         try:
-            if self.mdpolicy in ["instant"]:
-                return self._instantLoadRepoXML(text)
-            if self.mdpolicy in ["group:all"]:
-                return self._groupLoadRepoXML(text)
-            if self.mdpolicy in ["group:main"]:
-                return self._groupLoadRepoXML(text, ["primary", "group",
-                                                     "filelists", "updateinfo",
-                                                     "prestodelta"])
-            if self.mdpolicy in ["group:small"]:
-                return self._groupLoadRepoXML(text, ["primary", "updateinfo"])
-            if self.mdpolicy in ["group:primary"]:
-                return self._groupLoadRepoXML(text, ["primary"])
+            return self._groupLoadRepoXML(text, mdtypes)
         except KeyboardInterrupt:
             self._revertOldRepoXML() # Undo metadata cookie?
             raise
@@ -1419,7 +1427,8 @@ class YumRepository(Repository, config.RepoConf):
                                        text='%s/signature' % self.id,
                                        reget=None,
                                        checkfunc=None,
-                                       cache=self.http_caching == 'all')
+                                       cache=self.http_caching == 'all',
+                                       size=102400)
             except URLGrabError, e:
                 raise URLGrabError(-1, 'Error finding signature for repomd.xml for %s: %s' % (self, e))
 
@@ -1533,9 +1542,14 @@ class YumRepository(Repository, config.RepoConf):
         try:
             checkfunc = (self.checkMD, (mdtype,), {})
             text = "%s/%s" % (self.id, mdtype)
-            local = self._getFile(relative=remote, local=local, copy_local=1,
-                             checkfunc=checkfunc, reget=None, text=text,
-                             cache=self.http_caching == 'all')
+            local = self._getFile(relative=remote,
+                                  local=local, 
+                                  copy_local=1,
+                                  checkfunc=checkfunc, 
+                                  reget=None, 
+                                  text=text,
+                                  cache=self.http_caching == 'all',
+                                  size=thisdata.size)
         except (Errors.NoMoreMirrorsRepoError, Errors.RepoError):
             if retrieve_can_fail:
                 return None
@@ -1605,8 +1619,8 @@ class YumRepository(Repository, config.RepoConf):
             for line in content:
                 if re.match('^\s*\#.*', line) or re.match('^\s*$', line):
                     continue
-                mirror = re.sub('\n$', '', line) # no more trailing \n's
-                (mirror, count) = re.subn('\$ARCH', '$BASEARCH', mirror)
+                mirror = line.rstrip() # no more trailing \n's
+                mirror = mirror.replace('$ARCH', '$BASEARCH')
                 returnlist.append(mirror)
 
         return (returnlist, content)
@@ -1635,7 +1649,7 @@ class YumRepository(Repository, config.RepoConf):
             try:
                 fo = urlgrabber.grabber.urlopen(url, proxies=self.proxy_dict)
             except urlgrabber.grabber.URLGrabError, e:
-                print "Could not retrieve mirrorlist %s error was\n%s" % (url, e)
+                print "Could not retrieve mirrorlist %s error was\n%s: %s" % (url, e.args[0], misc.to_unicode(e.args[1]))
                 fo = None
 
         (returnlist, content) = self._readMirrorList(fo, url)
@@ -1799,7 +1813,7 @@ def getMirrorList(mirrorlist, pdict = None):
     try:
         fo = urlresolver.urlopen(url, proxies=pdict)
     except urlgrabber.grabber.URLGrabError, e:
-        print "Could not retrieve mirrorlist %s error was\n%s" % (url, e)
+        print "Could not retrieve mirrorlist %s error was\n%s: %s" % (url, e.args[0], misc.to_unicode(e.args[1]))
         fo = None
 
     if fo is not None:
@@ -1807,8 +1821,8 @@ def getMirrorList(mirrorlist, pdict = None):
         for line in content:
             if re.match('^\s*\#.*', line) or re.match('^\s*$', line):
                 continue
-            mirror = re.sub('\n$', '', line) # no more trailing \n's
-            (mirror, count) = re.subn('\$ARCH', '$BASEARCH', mirror)
+            mirror = line.rstrip() # no more trailing \n's
+            mirror = mirror.replace('$ARCH', '$BASEARCH')
             returnlist.append(mirror)
 
     return returnlist

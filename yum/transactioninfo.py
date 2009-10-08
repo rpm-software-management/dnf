@@ -271,6 +271,7 @@ class TransactionData:
                     
             elif txmbr.output_state in (TS_INSTALL, TS_TRUEINSTALL):
                 if include_reinstall and self.rpmdb.contains(po=txmbr.po):
+                    txmbr.reinstall = True
                     self.reinstalled.append(txmbr)
                     continue
 
@@ -319,6 +320,8 @@ class TransactionData:
         self.depremoved.sort()
         self.instgroups.sort()
         self.removedgroups.sort()
+        self.reinstalled.sort()
+        self.downgraded.sort()
         self.failed.sort()
 
     

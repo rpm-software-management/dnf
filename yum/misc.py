@@ -76,35 +76,38 @@ def unshare_data():
 _re_compiled_glob_match = None
 def re_glob(s):
     """ Tests if a string is a shell wildcard. """
-    # re.match('.*[\*\?\[\]].*', name)
     global _re_compiled_glob_match
     if _re_compiled_glob_match is None:
         _re_compiled_glob_match = re.compile('.*([*?]|\[.+\])')
     return _re_compiled_glob_match.match(s)
 
-_re_compiled_pri_fnames_match = None
+_re_compiled_filename_match = None
+def re_filename(s):
+    """ Tests if a string could be a filename. We still get negated character
+        classes wrong (are they supported), and ranges in character classes. """
+    global _re_compiled_filename_match
+    if _re_compiled_filename_match is None:
+        _re_compiled_filename_match = re.compile('^(/|[*?]|\[[^]]*/[^]]*\])')
+    return _re_compiled_filename_match.match(s)
+
 def re_primary_filename(filename):
-    global _re_compiled_pri_fnames_match
-    if _re_compiled_pri_fnames_match is None:
-        one   = re.compile('.*bin\/.*')
-        two   = re.compile('^\/etc\/.*')
-        three = re.compile('^\/usr\/lib\/sendmail$')
-        _re_compiled_pri_fnames_match = (one, two, three)
-    for rec in _re_compiled_pri_fnames_match:
-        if rec.match(filename):
-            return True
+    """ Tests if a filename string, can be matched against just primary.
+        Note that this can produce false negatives (but not false
+        positives). """
+    if 'bin/' in filename:
+        return True
+    if filename.startswith('/etc/'):
+        return True
+    if filename == '/usr/lib/sendmail':
+        return True
     return False
 
-_re_compiled_pri_dnames_match = None
 def re_primary_dirname(dirname):
-    global _re_compiled_pri_dnames_match
-    if _re_compiled_pri_dnames_match is None:
-        one   = re.compile('.*bin\/.*')
-        two   = re.compile('^\/etc\/.*')
-        _re_compiled_pri_dnames_match = (one, two)
-    for rec in _re_compiled_pri_dnames_match:
-        if rec.match(dirname):
-            return True
+    """ Tests if a dirname string, can be matched against just primary. """
+    if 'bin/' in dirname:
+        return True
+    if dirname.startswith('/etc/'):
+        return True
     return False
 
 _re_compiled_full_match = None
@@ -290,7 +293,8 @@ def checksum(sumtype, file, CHUNK=2**16, datasize=None):
 
         data = Checksums([sumtype])
         while data.read(fo, CHUNK):
-            pass
+            if datasize is not None and len(data) > datasize:
+                break
 
         if type(file) is types.StringType:
             fo.close()
@@ -298,7 +302,7 @@ def checksum(sumtype, file, CHUNK=2**16, datasize=None):
             
         # This screws up the length, but that shouldn't matter. We only care
         # if this checksum == what we expect.
-        if datasize is not None and datasize > len(data):
+        if datasize is not None and datasize != len(data):
             return '!%u!%s' % (datasize, data.hexdigest(sumtype))
 
         return data.hexdigest(sumtype)
@@ -796,6 +800,21 @@ def unlink_f(filename):
     except OSError, e:
         if e.errno != errno.ENOENT:
             raise
+
+def getloginuid():
+    """ Get the audit-uid/login-uid, if available. None is returned if there
+        was a problem. Note that no caching is done here. """
+    #  We might normally call audit.audit_getloginuid(), except that requires
+    # importing all of the audit module. And it doesn't work anyway: BZ 518721
+    try:
+        fo = open("/proc/self/loginuid")
+    except IOError:
+        return None
+    data = fo.read()
+    try:
+        return int(data)
+    except ValueError:
+        return None
 
 # ---------- i18n ----------
 import locale

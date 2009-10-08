@@ -67,6 +67,10 @@ gnome\-packagekit application\&.
 .br
 .I \fR * repolist [all|enabled|disabled] 
 .br
+.I \fR * version [all|installed|available|group-*|grouplist|groupinfo]
+.br
+.I \fR * history [info|list|summary|redo|undo|new] 
+.br
 .I \fR * help [command] 
 .br
 .PP 
@@ -225,6 +229,26 @@ Produces a list of configured repositories. The default is to list all
 enabled repositories. If you pass \-v, for verbose mode, more information is
 listed.
 .IP
+.IP "\fBversion\fP"
+Produces a "version" of the rpmdb, and of the enabled repositories if "all" is
+given as the first argument. You can also specify version groups in the
+version-groups config. file. If you pass \-v, for verbose mode, more
+information is listed. The version is calculated by taking a sha1 hash of the
+packages (in sorted order), and the checksum_type/checksum_data entries from
+the yumdb. Note that this rpmdb version is now also used significantly within
+yum (esp. in yum history).
+.IP
+.IP "\fBhistory\fP"
+The history command allows the user to view what has happened in past
+transactions (assuming the history_record config. option is set). You can use
+info/list/summary to view what happend, undo/redo to act on that information
+and new to start a new history file.
+
+The info/list/summary commands take either a transactions id or a package (with
+wildcards, as in \fBSpecifying package names\fP), all three can also be passed
+no arguments. list can be passed the keyword "all" to list all the transactions.
+undo/redo just take a transaction id.
+.IP
 .IP "\fBhelp\fP"
 Produces help, either for all commands or if given a command name then the help
 for that particular command\&.
@@ -266,7 +290,8 @@ Sets the maximum amount of time yum will wait before performing a command \- it 
 Tells yum to run entirely from cache - does not download or update any
 headers unless it has to to perform the requested action.
 .IP "\fB\-\-version\fP" 
-Reports the \fByum\fP version number and exits.
+Reports the \fByum\fP version number and installed package versions for
+everything in history_record_packages (can be added to by plugins).
 .IP "\fB\-\-showduplicates\fP" 
 Doesn't limit packages to their latest versions in the info, list and search
 commands (will also affect plugins which use the doPackageLists() API).
@@ -450,6 +475,7 @@ configuration options.
 .SH "FILES"
 .nf
 /etc/yum/yum.conf
+/etc/yum/version-groups.conf
 /etc/yum/repos.d/
 /etc/yum/pluginconf.d/
 /var/cache/yum/
@@ -466,8 +492,8 @@ configuration options.
 .I yum-complete-transaction (1)
 .I yumdownloader (1)
 .I yum-utils (1)
-http://linux.duke.edu/yum/
-http://wiki.linux.duke.edu/YumFaq
+http://yum.baseurl.org/
+http://yum.baseurl.org/wiki/Faq
 yum search yum
 .fi
 
@@ -481,5 +507,5 @@ See the Authors file included with this program.
 .SH "BUGS"
 There of course aren't any bugs, but if you find any, you should first
 consult the Faq mentioned above and then email the mailing list:
-yum@lists.linux.duke.edu or filed in bugzilla.
+yum@lists.baseurl.org or filed in bugzilla.
 .fi

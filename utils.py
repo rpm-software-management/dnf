@@ -15,6 +15,7 @@
 
 import sys
 import time
+import exceptions
 
 import yum
 from cli import *
@@ -26,6 +27,16 @@ from optparse import OptionGroup
 import yum.plugins as plugins
 
 
+def suppress_keyboard_interrupt_message():
+    old_excepthook = sys.excepthook
+
+    def new_hook(type, value, traceback):
+        if type != exceptions.KeyboardInterrupt:
+            old_excepthook(type, value, traceback)
+        else:
+            pass
+
+    sys.excepthook = new_hook
 
 class YumUtilBase(YumBaseCli):
     def __init__(self,name,ver,usage):
@@ -36,7 +47,7 @@ class YumUtilBase(YumBaseCli):
         self._utilVer = ver
         self._option_group = OptionGroup(self._parser, "%s options" % self._utilName,"")
         self._parser.add_option_group(self._option_group)
-
+        suppress_keyboard_interrupt_message()
         
     def getOptionParser(self):
         return self._parser        

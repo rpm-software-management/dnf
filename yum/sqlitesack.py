@@ -911,6 +911,20 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
             dirname_check = "dirname GLOB ? and filenames LIKE ? %s and " % esc
             sql_params.append(dirname)
             sql_params.append('%' + pattern + '%')
+        elif filename == '*':
+            # We only care about matching on dirname...
+            for (rep,cache) in self.filelistsdb.items():
+                if rep in self._all_excludes:
+                    continue
+
+                cur = cache.cursor()
+                sql_params.append(dirname)
+                executeSQL(cur, """SELECT pkgKey FROM filelist
+                                   WHERE dirname %s ?""" % (querytype,),
+                           sql_params)
+                self._sql_pkgKey2po(rep, cur, pkgs)
+
+            return misc.unique(pkgs)
 
         for (rep,cache) in self.filelistsdb.items():
             if rep in self._all_excludes:
@@ -1281,7 +1295,7 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
         # If it's not a provides or a filename, we are done
         if prcotype != "provides":
             return results
-        if name[0] != '/' and (not glob or not misc.re_glob(name[0])):
+        if not misc.re_filename(name):
             return results
 
         # If it is a filename, search the primary.xml file info

@@ -30,6 +30,8 @@ import fnmatch
 import time
 from yum.i18n import utf8_width, utf8_width_fill, to_unicode
 
+import yum.config
+
 def checkRootUID(base):
     """
     Verify that the program is being run by the root user.
@@ -575,7 +577,8 @@ class CheckUpdateCommand(YumCommand):
         result = 0
         try:
             ypl = base.returnPkgLists(extcmds)
-            if base.verbose_logger.isEnabledFor(logginglevels.DEBUG_3):
+            if (base.conf.obsoletes or
+                base.verbose_logger.isEnabledFor(logginglevels.DEBUG_3)):
                 typl = base.returnPkgLists(['obsoletes'])
                 ypl.obsoletes = typl.obsoletes
                 ypl.obsoletesTuples = typl.obsoletesTuples
@@ -778,13 +781,17 @@ class RepoListCommand(YumCommand):
             arg = 'enabled'
         extcmds = map(lambda x: x.lower(), extcmds)
 
-        # Setup so len(repo.sack) is correct
-        base.repos.populateSack()
+        verbose = base.verbose_logger.isEnabledFor(logginglevels.DEBUG_3)
+        try:
+            # Setup so len(repo.sack) is correct
+            base.repos.populateSack()
+        except yum.Errors.RepoError:
+            if verbose:
+                raise
 
         repos = base.repos.repos.values()
         repos.sort()
         enabled_repos = base.repos.listEnabled()
-        verbose = base.verbose_logger.isEnabledFor(logginglevels.DEBUG_3)
         if arg == 'all':
             ehibeg = base.term.FG_COLOR['green'] + base.term.MODE['bold']
             dhibeg = base.term.FG_COLOR['red']
@@ -1061,7 +1068,7 @@ class DowngradeCommand(YumCommand):
 
     def needTs(self, base, basecmd, extcmds):
         return False
-        
+
 
 class VersionCommand(YumCommand):
     def getNames(self):
@@ -1092,25 +1099,80 @@ class VersionCommand(YumCommand):
                     cols.append(("    %s" % repoid, str(cur[None])))
                 cols.extend(ncols)
 
+        verbose = base.verbose_logger.isEnabledFor(logginglevels.DEBUG_3)
+        groups = {}
+        gconf = yum.config.readVersionGroupsConfig()
+        for group in gconf:
+            groups[group] = set(gconf[group].pkglist)
+            if gconf[group].run_with_packages:
+                groups[group].update(base.run_with_package_names)
+
+        if vcmd in ('grouplist'):
+            print _(" Yum version groups:")
+            for group in sorted(groups):
+                print "   ", group
+
+            return 0, ['version grouplist']
+
+        if vcmd in ('groupinfo'):
+            for group in groups:
+                if group not in extcmds[1:]:
+                    continue
+                print _(" Group   :"), group
+                print _(" Packages:")
+                if not verbose:
+                    for pkgname in sorted(groups[group]):
+                        print "   ", pkgname
+                else:
+                    data = {'envra' : {}, 'rid' : {}}
+                    pkg_names = groups[group]
+                    pkg_names2pkgs = base._group_names2aipkgs(pkg_names)
+                    base._calcDataPkgColumns(data, pkg_names, pkg_names2pkgs)
+                    data = [data['envra'], data['rid']]
+                    columns = base.calcColumns(data)
+                    columns = (-columns[0], -columns[1])
+                    base._displayPkgsFromNames(pkg_names, True, pkg_names2pkgs,
+                                               columns=columns)
+
+            return 0, ['version groupinfo']
+
         rel = base.yumvar['releasever']
         ba  = base.yumvar['basearch']
         cols = []
-        if vcmd in ('installed', 'all'):
+        if vcmd in ('installed', 'all', 'group-installed', 'group-all'):
             try:
-                data = base.rpmdb.simpleVersion()
-                cols.append(("%s %s/%s" % (_("Installed:"), rel, ba),
-                             str(data[0])))
-                if base.verbose_logger.isEnabledFor(logginglevels.DEBUG_3):
+                data = base.rpmdb.simpleVersion(not verbose, groups=groups)
+                lastdbv = base.history.last()
+                if lastdbv is not None:
+                    lastdbv = lastdbv.end_rpmdbversion
+                if lastdbv is not None and data[0] != lastdbv:
+                    errstring = _('Warning: RPMDB has been altered since the last yum transaction.')
+                    base.logger.warning(errstring)
+                if vcmd not in ('group-installed', 'group-all'):
+                    cols.append(("%s %s/%s" % (_("Installed:"), rel, ba),
+                                 str(data[0])))
                     _append_repos(cols, data[1])
+                if groups:
+                    for grp in sorted(data[2]):
+                        cols.append(("%s %s" % (_("Group-Installed:"), grp),
+                                     str(data[2][grp])))
+                        _append_repos(cols, data[3][grp])
             except yum.Errors.YumBaseError, e:
                 return 1, [str(e)]
-        if vcmd in ('available', 'all'):
+        if vcmd in ('available', 'all', 'group-available', 'group-all'):
             try:
-                data = base.pkgSack.simpleVersion()
-                cols.append(("%s %s/%s" % (_("Available:"), rel, ba),
-                             str(data[0])))
-                if base.verbose_logger.isEnabledFor(logginglevels.DEBUG_3):
-                    _append_repos(cols, data[1])
+                data = base.pkgSack.simpleVersion(not verbose, groups=groups)
+                if vcmd not in ('group-available', 'group-all'):
+                    cols.append(("%s %s/%s" % (_("Available:"), rel, ba),
+                                 str(data[0])))
+                    if verbose:
+                        _append_repos(cols, data[1])
+                if groups:
+                    for grp in sorted(data[2]):
+                        cols.append(("%s %s" % (_("Group-Available:"), grp),
+                                     str(data[2][grp])))
+                        if verbose:
+                            _append_repos(cols, data[3][grp])
             except yum.Errors.YumBaseError, e:
                 return 1, [str(e)]
 
@@ -1126,10 +1188,86 @@ class VersionCommand(YumCommand):
         for line in cols:
             print base.fmtColumns(zip(line, columns))
 
-        return 0, []
+        return 0, ['version']
 
     def needTs(self, base, basecmd, extcmds):
         vcmd = 'installed'
         if extcmds:
             vcmd = extcmds[0]
-        return vcmd in ('available', 'all')
+        verbose = base.verbose_logger.isEnabledFor(logginglevels.DEBUG_3)
+        if vcmd == 'groupinfo' and verbose:
+            return True
+        return vcmd in ('available', 'all', 'group-available', 'group-all')
+
+
+class HistoryCommand(YumCommand):
+    def getNames(self):
+        return ['history']
+
+    def getUsage(self):
+        return "[info|list|summary|redo|undo|new]"
+
+    def getSummary(self):
+        return _("Display, or use, the transaction history")
+
+    def _hcmd_redo(self, base, extcmds):
+        old = base._history_get_transaction(extcmds)
+        if old is None:
+            return 1, ['Failed history redo']
+        tm = time.ctime(old.beg_timestamp)
+        print "Repeating transaction %u, from %s" % (old.tid, tm)
+        base.historyInfoCmdPkgsAltered(old)
+        if base.history_redo(old):
+            return 2, ["Repeating transaction %u" % (old.tid,)]
+
+    def _hcmd_undo(self, base, extcmds):
+        old = base._history_get_transaction(extcmds)
+        if old is None:
+            return 1, ['Failed history undo']
+        tm = time.ctime(old.beg_timestamp)
+        print "Undoing transaction %u, from %s" % (old.tid, tm)
+        base.historyInfoCmdPkgsAltered(old)
+        if base.history_undo(old):
+            return 2, ["Undoing transaction %u" % (old.tid,)]
+
+    def _hcmd_new(self, base, extcmds):
+        base.history._create_db_file()
+
+    def doCheck(self, base, basecmd, extcmds):
+        cmds = ('list', 'info', 'summary', 'repeat', 'redo', 'undo', 'new')
+        if extcmds and extcmds[0] not in cmds:
+            base.logger.critical(_('Invalid history sub-command, use: %s.'),
+                                 ", ".join(cmds))
+            raise cli.CliError
+        if extcmds and extcmds[0] in ('repeat', 'redo', 'undo', 'new'):
+            checkRootUID(base)
+            checkGPGKey(base)
+
+    def doCommand(self, base, basecmd, extcmds):
+        vcmd = 'list'
+        if extcmds:
+            vcmd = extcmds[0]
+
+        if False: pass
+        elif vcmd == 'list':
+            ret = base.historyListCmd(extcmds)
+        elif vcmd == 'info':
+            ret = base.historyInfoCmd(extcmds)
+        elif vcmd == 'summary':
+            ret = base.historySummaryCmd(extcmds)
+        elif vcmd == 'undo':
+            ret = self._hcmd_undo(base, extcmds)
+        elif vcmd in ('redo', 'repeat'):
+            ret = self._hcmd_redo(base, extcmds)
+        elif vcmd == 'new':
+            ret = self._hcmd_new(base, extcmds)
+
+        if ret is None:
+            return 0, ['history %s' % (vcmd,)]
+        return ret
+
+    def needTs(self, base, basecmd, extcmds):
+        vcmd = 'list'
+        if extcmds:
+            vcmd = extcmds[0]
+        return vcmd in ('repeat', 'redo', 'undo')

@@ -35,6 +35,8 @@ class PackageSackVersion:
 
     def __eq__(self, other):
         if other is None: return False
+        if type(other) in (type(''), type(u'')):
+            return str(self) == other
         if self._num != other._num: return False
         if self._chksum.digest() != other._chksum.digest(): return False
         return True
@@ -182,23 +184,42 @@ class PackageSackBase(object):
             then it's still not a huge wart. """
         raise NotImplementedError()
 
-    def simpleVersion(self):
+    def simpleVersion(self, main_only=False, groups={}):
         """ Return a simple version for all available packages. """
+        def _up_revs(arepos, repoid, rev, pkg, csum):
+            arevs = arepos.setdefault(repoid, {})
+            rpsv = arevs.setdefault(None, PackageSackVersion())
+            rpsv.update(pkg, csum)
+            if rev is not None:
+                rpsv = arevs.setdefault(rev, PackageSackVersion())
+                rpsv.update(pkg, csum)
+
         main = PackageSackVersion()
         arepos = {}
+        main_grps = {}
+        arepos_grps = {}
         for pkg in sorted(self.returnPackages()):
             csum = pkg.returnIdSum()
             main.update(pkg, csum)
 
-            arevs = arepos.setdefault(pkg.repoid, {})
-            rpsv = arevs.setdefault(None, PackageSackVersion())
-            rpsv.update(pkg, csum)
+            for group in groups:
+                if pkg.name in groups[group]:
+                    if group not in main_grps:
+                        main_grps[group] = PackageSackVersion()
+                        arepos_grps[group] = {}
+                    main_grps[group].update(pkg, csum)
 
-            if pkg.repo.repoXML.revision is not None:
-                rev = pkg.repo.repoXML.revision
-                rpsv = arevs.setdefault(rev, PackageSackVersion())
-                rpsv.update(pkg, csum)
+            if main_only:
+                continue
 
+            rev = pkg.repo.repoXML.revision
+            _up_revs(arepos, pkg.repoid, rev, pkg, csum)
+            for group in groups:
+                if pkg.name in groups[group]:
+                    _up_revs(arepos_grps[group], pkg.repoid, rev, pkg, csum)
+
+        if groups:
+            return [main, arepos, main_grps, arepos_grps]
         return [main, arepos]
 
     def returnNewestByNameArch(self, naTup=None,

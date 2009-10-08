@@ -128,6 +128,9 @@ Number of packages listed in installonlypkgs to keep installed at the same
 time. Setting to 0 disables this feature. Default is '0'. Note that this
 functionality used to be in the "installonlyn" plugin, where this option was
 altered via. tokeep.
+Note that as of version 3.2.24, yum will now look in the yumdb for a installonly
+attribute on installed packages. If that attribute is "keep", then they will
+never be removed.
 
 .IP
 \fBkernelpkgnames \fR
@@ -272,6 +275,21 @@ Defaults to none.
 \fBsslclientkey \fR
 Path to the ssl client key yum should use to connect to repos/remote sites
 Defaults to none.
+
+.IP
+\fBhistory_record \fR
+Boolean - should yum record history entries for transactions. This takes some
+disk space, and some extra time in the transactions. But it allos how to know a
+lot of information about what has happened before, and display it to the user
+with the history info/list/summary commands. yum also provides the
+history undo/redo commands. Defaults to True.
+
+.IP
+\fBhistory_record_packages \fR
+This is a list of package names that should be recorded as having helped the
+transaction. yum plugins have an API to add themself to this, so it should not
+normally be necessary to add packages here. Not that this is also used for the
+packages to look for in --version. Defaults to rpm, yum, yum-metadata-parser.
 
 .IP
 \fBcommands\fR

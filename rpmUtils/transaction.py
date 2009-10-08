@@ -107,9 +107,11 @@ class TransactionWrapper:
         return reserrors
             
         
-    def returnLeafNodes(self):
+    def returnLeafNodes(self, headers=False):
         """returns a list of package tuples (n,a,e,v,r) that are not required by
-           any other package on the system"""
+           any other package on the system
+           If headers is True then it will return a list of (header, index) tuples
+           """
         
         req = {}
         orphan = []
@@ -143,7 +145,10 @@ class TransactionWrapper:
                         preq = preq + 1
         
             if preq == 0:
-                orphan.append(tup)
+                if headers:
+                    orphan.append((h, mi.instance()))
+                else:
+                    orphan.append(tup)
         
         return orphan
 
