@@ -3158,7 +3158,7 @@ class YumBase(depsolve.Depsolve):
         for txmbr in tx_return:
             for i_pkg in self.rpmdb.searchNevra(name=txmbr.name):
                 if i_pkg not in txmbr.updates:
-                    if self.does_this_update(txmbr.po, i_pkg):
+                    if self._does_this_update(txmbr.po, i_pkg):
                         self.tsInfo.addUpdated(i_pkg, txmbr.po)
                         
         return tx_return
@@ -4144,8 +4144,10 @@ class YumBase(depsolve.Depsolve):
 
         return True # We got a new cache dir
 
-    def does_this_update(self, pkg1, pkg2):
-        """returns True if pkg1 can update pkg2, False if not"""
+    def _does_this_update(self, pkg1, pkg2):
+        """returns True if pkg1 can update pkg2, False if not. 
+           This only checks if it can be an update it does not check if
+           it is obsoleting or anything else."""
         
         if pkg1.name != pkg2.name:
             return False
