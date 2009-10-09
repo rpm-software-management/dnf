@@ -82,6 +82,11 @@ class YumUtilBase(YumBaseCli):
             sys.exit(0)
         # get the install root to use
         root = self._parser.getRoot(opts)
+        if opts.quiet:
+            opts.debuglevel = 0
+        if opts.verbose:
+            opts.debuglevel = opts.errorlevel = 6
+        
         # Read up configuration options and initialise plugins
         try:
             pc = self.preconf
