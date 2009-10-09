@@ -3287,14 +3287,8 @@ class YumBase(depsolve.Depsolve):
                 donothingpkgs.append(po)
 
         # handle excludes for a localinstall
-        toexc = []
-        if len(self.conf.exclude) > 0:
-            exactmatch, matched, unmatched = \
-                   parsePackages(installpkgs + map(lambda x: x[0], updatepkgs),
-                                 self.conf.exclude, casematch=1)
-            toexc = exactmatch + matched
-
-        if po in toexc:
+        check_pkgs = installpkgs + map(lambda x: x[0], updatepkgs)
+        if self._is_local_exclude(po, check_pkgs):
             self.verbose_logger.debug(_('Excluding %s'), po)
             return tx_return
 
@@ -3355,13 +3349,7 @@ class YumBase(depsolve.Depsolve):
             return []
 
         # handle excludes for a local reinstall
-        toexc = []
-        if len(self.conf.exclude) > 0:
-            exactmatch, matched, unmatched = \
-                   parsePackages([po], self.conf.exclude, casematch=1)
-            toexc = exactmatch + matched
-
-        if po in toexc:
+        if self._is_local_exclude(po, [po]):
             self.verbose_logger.debug(_('Excluding %s'), po)
             return []
 
@@ -3444,18 +3432,30 @@ class YumBase(depsolve.Depsolve):
             return []
 
         # handle excludes for a local downgrade
-        toexc = []
-        if len(self.conf.exclude) > 0:
-            exactmatch, matched, unmatched = \
-                   parsePackages([po], self.conf.exclude, casematch=1)
-            toexc = exactmatch + matched
-
-        if po in toexc:
+        if self._is_local_exclude(po, [po]):
             self.verbose_logger.debug(_('Excluding %s'), po)
             return []
 
         return self.downgrade(po=po)
 
+    def _is_local_exclude(self, po, pkglist):
+        """returns True if the local pkg should be excluded"""
+        
+        if "all" in self.conf.disable_excludes or \
+           "main" in self.conf.disable_excludes:
+            return False
+        
+        toexc = []
+        if len(self.conf.exclude) > 0:
+            exactmatch, matched, unmatched = \
+                   parsePackages(pkglist, self.conf.exclude, casematch=1)
+            toexc = exactmatch + matched
+
+        if po in toexc:
+            return True
+
+        return False
+        
     def downgrade(self, po=None, **kwargs):
         """ Try to downgrade a package. Works like:
             % yum shell <<EOL
