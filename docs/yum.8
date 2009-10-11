@@ -108,7 +108,7 @@ changes, for example: upgrading from somelinux 8.0 to somelinux 9.
 .IP "\fBcheck\-update\fP"
 Implemented so you could know if your machine had any updates that needed to
 be applied without running it interactively. Returns exit value of 100 if
-there are packages available for an update. Also returns a list of the pkgs
+there are packages available for an update. Also returns a list of the packages
 to be updated in list format. Returns 0 if no packages are available for
 update. Returns 1 if an error occurred.
 Running in verbose mode also shows obsoletes.
@@ -171,7 +171,7 @@ have any mandatory packages then it is installed if any of the optional or
 default package are installed.
 The optional "hidden" argument will also list groups marked as not being
 "user visible". If you pass the \-v option, to enable verbose mode, then the
-groupid's are displayed.
+groupids are displayed.
 .IP 
 .IP "\fBgroupremove\fP"
 Is used to remove all of the packages in a group, unlike "groupinstall" this
@@ -241,7 +241,7 @@ yum (esp. in yum history).
 .IP "\fBhistory\fP"
 The history command allows the user to view what has happened in past
 transactions (assuming the history_record config. option is set). You can use
-info/list/summary to view what happend, undo/redo to act on that information
+info/list/summary to view what happened, undo/redo to act on that information
 and new to start a new history file.
 
 The info/list/summary commands take either a transactions id or a package (with
@@ -267,7 +267,7 @@ is yes\&.
 .br
 Configuration Option: \fBassumeyes\fP
 .IP "\fB\-c [config file]\fP" 
-Specifies the config file location - can take http, ftp urls and local file
+Specifies the config file location - can take HTTP and FTP URLs and local file
 paths\&.
 .br
 .IP "\fB\-q, \-\-quiet\fP" 
@@ -342,7 +342,7 @@ Run with all plugins disabled.
 .br
 Configuration Option: \fBplugins\fP
 .IP "\fB\-\-nogpgcheck\fP"
-Run with gpg signature checking disabled.
+Run with GPG signature checking disabled.
 .br
 Configuration Option: \fBgpgcheck\fP
 .IP "\fB\-\-skip\-broken\fP"
@@ -506,6 +506,6 @@ See the Authors file included with this program.
 .PP
 .SH "BUGS"
 There of course aren't any bugs, but if you find any, you should first
-consult the Faq mentioned above and then email the mailing list:
+consult the FAQ mentioned above and then email the mailing list:
 yum@lists.baseurl.org or filed in bugzilla.
 .fi

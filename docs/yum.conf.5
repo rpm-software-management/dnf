@@ -259,27 +259,27 @@ ignored. Default is `0' (no bandwidth throttling).
 .IP
 \fBsslcacert \fR
 Path to the directory containing the databases of the certificate authorities
-yum should use to verify ssl certificates. Defaults to none - uses system
+yum should use to verify SSL certificates. Defaults to none - uses system
 default
 
 .IP
 \fBsslverify \fR
-Boolean - should yum verify ssl certificates/hosts at all. Defaults to True
+Boolean - should yum verify SSL certificates/hosts at all. Defaults to True
 
 .IP
 \fBsslclientcert \fR
-Path to the ssl client certificate yum should use to connect to repos/remote sites
+Path to the SSL client certificate yum should use to connect to repos/remote sites
 Defaults to none.
 
 .IP
 \fBsslclientkey \fR
-Path to the ssl client key yum should use to connect to repos/remote sites
+Path to the SSL client key yum should use to connect to repos/remote sites
 Defaults to none.
 
 .IP
 \fBhistory_record \fR
 Boolean - should yum record history entries for transactions. This takes some
-disk space, and some extra time in the transactions. But it allos how to know a
+disk space, and some extra time in the transactions. But it allows how to know a
 lot of information about what has happened before, and display it to the user
 with the history info/list/summary commands. yum also provides the
 history undo/redo commands. Defaults to True.
@@ -287,7 +287,7 @@ history undo/redo commands. Defaults to True.
 .IP
 \fBhistory_record_packages \fR
 This is a list of package names that should be recorded as having helped the
-transaction. yum plugins have an API to add themself to this, so it should not
+transaction. yum plugins have an API to add themselves to this, so it should not
 normally be necessary to add packages here. Not that this is also used for the
 packages to look for in --version. Defaults to rpm, yum, yum-metadata-parser.
 
@@ -307,7 +307,7 @@ XXX not implemented yet
 
 .IP
 \fBproxy \fR
-url to the proxy server that yum should use.
+URL to the proxy server that yum should use.
 
 .IP
 \fBproxy_username \fR
@@ -395,7 +395,7 @@ if it is available. Best means install the best arch for this platform, only.
 
 .IP
 \fBbugtracker_url \fR
-Url where bugs should be filed for yum. Configurable for local versions or distro-specific
+URL where bugs should be filed for yum. Configurable for local versions or distro-specific
 bugtrackers.
 
 .IP
@@ -677,7 +677,7 @@ repository.
 
 .IP
 \fBproxy \fR
-url to the proxy server for this repository. Set to '_none_' to disable the 
+URL to the proxy server for this repository. Set to '_none_' to disable the 
 global proxy setting for this repository. If this is unset it 
 inherits it from the global setting
 
