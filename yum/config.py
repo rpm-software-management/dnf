@@ -21,6 +21,7 @@ Configuration parser and default values for yum.
 _use_iniparse = True
 
 import os
+import sys
 import warnings
 import rpm
 import copy

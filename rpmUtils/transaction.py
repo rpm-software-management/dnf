@@ -120,10 +120,11 @@ class TransactionWrapper:
         if mi is None: # this is REALLY unlikely but let's just say it for the moment
             return orphan    
             
+        # prebuild the req dict
         for h in mi:
-            tup = miscutils.pkgTupleFromHeader(h)    
             if not h[rpm.RPMTAG_REQUIRENAME]:
                 continue
+            tup = miscutils.pkgTupleFromHeader(h)    
             for r in h[rpm.RPMTAG_REQUIRENAME]:
                 if not req.has_key(r):
                     req[r] = set()
@@ -133,17 +134,26 @@ class TransactionWrapper:
         mi = self.dbMatch()
         if mi is None:
             return orphan
-     
+
+        def _return_all_provides(hdr):
+            """ Return all the provides, via yield. """
+            # These are done one by one, so that we get lazy loading
+            for prov in hdr[rpm.RPMTAG_PROVIDES]:
+                yield prov
+            for prov in hdr[rpm.RPMTAG_FILENAMES]:
+                yield prov
+
         for h in mi:
             preq = 0
             tup = miscutils.pkgTupleFromHeader(h)
-            for p in h[rpm.RPMTAG_PROVIDES] + h[rpm.RPMTAG_FILENAMES]:
+            for p in _return_all_provides(h):
                 if req.has_key(p):
                     # Don't count a package that provides its require
                     s = req[p]
                     if len(s) > 1 or tup not in s:
                         preq = preq + 1
-        
+                        break
+
             if preq == 0:
                 if headers:
                     orphan.append((h, mi.instance()))
