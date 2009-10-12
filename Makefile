@@ -56,10 +56,10 @@ test-skipbroken:
 check: test
 
 pylint:
-	@pylint --rcfile=test/yum-pylintrc --ignore=$(PYLINT_IGNORE) $(PYLINT_MODULES)
+	@pylint --rcfile=test/yum-pylintrc --ignore=$(PYLINT_IGNORE) $(PYLINT_MODULES) 2>/dev/null
 
 pylint-short:
-	@pylint -r n --rcfile=test/yum-pylintrc --ignore=$(PYLINT_IGNORE) $(PYLINT_MODULES)
+	@pylint -r n --rcfile=test/yum-pylintrc --ignore=$(PYLINT_IGNORE) $(PYLINT_MODULES) 2>/dev/null
 
 changelog:
 	git log --since=2007-05-16 --pretty --numstat --summary | git2cl  > ChangeLog

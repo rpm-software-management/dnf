@@ -89,7 +89,7 @@ disable-msg=E1101,F0401,W0704,W0612,W0212,W0613,W0602,W0511,W0401,W0614,W0232,W0
 
 # set the output format. Available formats are text, parseable, colorized, msvs
 # (visual studio) and html
-output-format=text
+output-format=colorized
 
 # Include message's id in output
 include-ids=yes
