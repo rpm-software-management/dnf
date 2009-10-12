@@ -47,6 +47,7 @@ _sttxt2stcode = {'Update' : TS_UPDATE,
                  'Erase' : TS_ERASE,
                  'Install' : TS_INSTALL, 
                  'True-Install' : TS_TRUEINSTALL,
+                 'Dep-Install' : TS_INSTALL,
                  'Reinstall' : TS_INSTALL, # Broken
                  'Downgrade' : TS_INSTALL, # Broken
                  'Downgraded' : TS_INSTALL, # Broken
@@ -292,6 +293,8 @@ class YumHistory:
                 state = 'Downgraded'
         if state is None:
             state = _stcode2sttxt.get(txmbr.output_state)
+            if state == 'Install' and txmbr.isDep:
+                state = 'Dep-Install'
         return state
 
     def trans_with_pid(self, pid):

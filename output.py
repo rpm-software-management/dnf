@@ -1181,6 +1181,8 @@ to exit.
             st = hpkg.state
             if st == 'True-Install':
                 st = 'Install'
+            if st == 'Dep-Install': # Mask these at the higher levels
+                st = 'Install'
             if st == 'Obsoleted': #  This is just a UI tweak, as we can't have
                                   # just one but we need to count them all.
                 st = 'Obsoleting'

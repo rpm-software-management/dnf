@@ -3610,6 +3610,8 @@ class YumBase(depsolve.Depsolve):
         """ Given a valid historical transaction object, try and repeat
             that transaction. """
         # NOTE: This is somewhat basic atm. ... see comment in undo.
+        #  Also note that redo doesn't force install Dep-Install packages,
+        # which is probably what is wanted the majority of the time.
         old_conf_obs = self.conf.obsoletes
         self.conf.obsoletes = False
         done = False
@@ -3670,7 +3672,7 @@ class YumBase(depsolve.Depsolve):
                 if self.remove(pkgtup=pkg.pkgtup):
                     done = True
         for pkg in transaction.trans_data:
-            if pkg.state in ('Install', 'True-Install'):
+            if pkg.state in ('Dep-Install', 'Install', 'True-Install'):
                 if self.remove(pkgtup=pkg.pkgtup):
                     done = True
         for pkg in transaction.trans_data:
