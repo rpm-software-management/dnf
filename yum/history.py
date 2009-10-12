@@ -152,6 +152,9 @@ class YumHistoryTransaction:
         self._loaded_TW = None
         self._loaded_TD = None
 
+        self._loaded_ER = None
+        self._loaded_OT = None
+
         self.altered_lt_rpmdb = None
         self.altered_gt_rpmdb = None
 
@@ -176,6 +179,18 @@ class YumHistoryTransaction:
 
     trans_with = property(fget=lambda self: self._getTransWith())
     trans_data = property(fget=lambda self: self._getTransData())
+
+    def _getErrors(self):
+        if self._loaded_ER is None:
+            self._loaded_ER = self._history._load_errors(self.tid)
+        return self._loaded_ER
+    def _getOutput(self):
+        if self._loaded_OT is None:
+            self._loaded_OT = self._history._load_output(self.tid)
+        return self._loaded_OT
+
+    errors     = property(fget=lambda self: self._getErrors())
+    output     = property(fget=lambda self: self._getOutput())
 
 class YumHistory:
     """ API for accessing the history sqlite data. """
@@ -370,6 +385,28 @@ class YumHistory:
                        """INSERT INTO trans_script_stdout
                           (tid, line) VALUES (?, ?)""", (self._tid, error))
         self._commit()
+
+    def _load_errors(self, tid):
+        cur = self._get_cursor()
+        executeSQL(cur,
+                   """SELECT msg FROM trans_error
+                      WHERE tid = ?
+                      ORDER BY mid ASC""", (tid,))
+        ret = []
+        for row in cur:
+            ret.append(row[0])
+        return ret
+
+    def _load_output(self, tid):
+        cur = self._get_cursor()
+        executeSQL(cur,
+                   """SELECT line FROM trans_script_stdout
+                      WHERE tid = ?
+                      ORDER BY lid ASC""", (tid,))
+        ret = []
+        for row in cur:
+            ret.append(row[0])
+        return ret
 
     def end(self, rpmdb_version, return_code, errors=None):
         assert return_code or not errors
