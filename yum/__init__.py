@@ -3287,7 +3287,7 @@ class YumBase(depsolve.Depsolve):
                 donothingpkgs.append(po)
 
         # handle excludes for a localinstall
-        check_pkgs = installpkgs + map(lambda x: x[0], updatepkgs)
+        check_pkgs = installpkgs + [x[0] for x in updatepkgs]
         if self._is_local_exclude(po, check_pkgs):
             self.verbose_logger.debug(_('Excluding %s'), po)
             return tx_return
