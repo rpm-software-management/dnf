@@ -332,15 +332,18 @@ class PackageSackBase(object):
             for r in po.requires_names:
                 if not req.has_key(r):
                     req[r] = set()
-                req[r].add(po)
+                if len(req[r]) > 1: #  We only need to know if another pkg.
+                    continue        # reqs. the provide. So 2 pkgs. is enough.
+                req[r].add(po.name)
      
         for po in self.returnPackages(repoid=repoid):
             preq = 0
             for p in _return_all_provides(po):
                 if req.has_key(p):
-                    # Don't count a package that provides its require
-                    s = req[p]
-                    if len(s) > 1 or po not in s:
+                    #  If this pkg provides something that is required by
+                    # anything but itself (or another version of itself) it
+                    # isn't an orphan.
+                    if len(req[p]) > 1 or po.name not in req[p]:
                         preq += 1
                         break
         
