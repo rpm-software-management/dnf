@@ -1380,7 +1380,7 @@ class YumInstalledPackage(YumHeaderPackage):
 
             # do check of file status on system
             problems = []
-            if os.path.exists(fn):
+            if os.path.lexists(fn):
                 # stat
                 my_st = os.lstat(fn)
                 my_st_size = my_st.st_size
