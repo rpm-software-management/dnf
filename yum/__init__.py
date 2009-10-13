@@ -384,7 +384,7 @@ class YumBase(depsolve.Depsolve):
 
         for reposdir in self.conf.reposdir:
             # this check makes sure that our dirs exist properly.
-            # if they aren't in the installroot then don't prepent the installroot path
+            # if they aren't in the installroot then don't prepend the installroot path
             # if we don't do this then anaconda likes to not  work.
             if os.path.exists(self.conf.installroot+'/'+reposdir):
                 reposdir = self.conf.installroot + '/' + reposdir
@@ -435,7 +435,7 @@ class YumBase(depsolve.Depsolve):
 
         @param optparser: The OptionParser instance for this run (optional)
         @param plugin_types: A sequence specifying the types of plugins to load.
-            This should be sequnce containing one or more of the
+            This should be a sequence containing one or more of the
             yum.plugins.TYPE_...  constants. If None (the default), all plugins
             will be loaded.
         @param searchpath: A list of directories to look in for plugins. A
@@ -707,7 +707,7 @@ class YumBase(depsolve.Depsolve):
         return self._comps
 
     def _getHistory(self):
-        """auto create the history object that to acess/append the transaction
+        """auto create the history object that to access/append the transaction
            history information. """
         if self._history is None:
             self._history = yum.history.YumHistory(root=self.conf.installroot)
@@ -831,7 +831,7 @@ class YumBase(depsolve.Depsolve):
 
         def _remove_from_sack(po):
             # get all compatible arch packages from pkgSack
-            # we need to remove them to so a i386 paqckages is not 
+            # we need to remove them too so i386 packages are not 
             # dragged in when a x86_64 is skipped.
             pkgs = self._getPackagesToRemoveAllArch(po)
             for pkg in pkgs:
@@ -876,7 +876,7 @@ class YumBase(depsolve.Depsolve):
                 if looping > 2:
                     break # Bail out
                 else:
-                    self.verbose_logger.debug('SKIPBROKEN: resetting already resovled packages (no packages to skip)' )
+                    self.verbose_logger.debug('SKIPBROKEN: resetting already resolved packages (no packages to skip)' )
                     self.tsInfo.resetResolved(hard=True)
             rescode, restring = self.resolveDeps(True)
             endTs = set(self.tsInfo)
@@ -889,12 +889,12 @@ class YumBase(depsolve.Depsolve):
                 if looping > 2:
                     break # Bail out
                 else:
-                    self.verbose_logger.debug('SKIPBROKEN: resetting already resovled packages (transaction not changed)' )
+                    self.verbose_logger.debug('SKIPBROKEN: resetting already resolved packages (transaction not changed)' )
                     self.tsInfo.resetResolved(hard=True)
                     
-            # if we are alel clear, then we have to check that the whole current transaction 
+            # if we are all clear, then we have to check that the whole current transaction 
             # can complete the depsolve without error, because the packages skipped
-            # can have broken something that passed the tests earliere.
+            # can have broken something that passed the tests earlier.
             # FIXME: We need do this in a better way.
             if rescode != 1:
                 self.verbose_logger.debug('SKIPBROKEN: sanity check the current transaction' )
@@ -1591,7 +1591,7 @@ class YumBase(depsolve.Depsolve):
             - 0 - GPG signature verifies ok or verification is not required.
             - 1 - GPG verification failed but installation of the right GPG key
                   might help.
-            - 2 - Fatal GPG verifcation error, give up.
+            - 2 - Fatal GPG verification error, give up.
         '''
         if hasattr(po, 'pkgtype') and po.pkgtype == 'local':
             check = self.conf.gpgcheck
@@ -2390,7 +2390,7 @@ class YumBase(depsolve.Depsolve):
         return result
 
     def getInstalledPackageObject(self, pkgtup):
-        """ Returns a YumInstallPackage object for the pkgtup specified, or
+        """ Returns a YumInstalledPackage object for the pkgtup specified, or
             raises an exception. You should use this instead of
             searchPkgTuple() if you are assuming there is a value. """
 
