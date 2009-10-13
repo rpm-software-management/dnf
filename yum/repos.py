@@ -285,6 +285,7 @@ class Repository:
         self.id = repoid
         self.quick_enable_disable = {}
         self.disable()
+        self._xml2sqlite_local = False
 
     def __cmp__(self, other):
         """ Sort base class repos. by alphanumeric on their id, also

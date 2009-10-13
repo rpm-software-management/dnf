@@ -180,6 +180,7 @@ class YumPackageSack(packageSack.PackageSack):
                 dobj = repo.cacheHandler.open_database(db_un_fn)
 
             else:
+                repo._xml2sqlite_local = True
                 xml = repo_get_function()
                 xmldata = repo.repoXML.getData(mymdtype)
                 (ctype, csum) = xmldata.checksum

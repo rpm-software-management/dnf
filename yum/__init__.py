@@ -1050,6 +1050,13 @@ class YumBase(depsolve.Depsolve):
 
         self.plugins.run('pretrans')
 
+        #  We may want to put this other places, eventually, but for now it's
+        # good as long as we get it right for history.
+        for repo in self.repos.listEnabled():
+            if repo._xml2sqlite_local:
+                self.run_with_package_names.add('yum-metadata-parser')
+                break
+
         using_pkgs_pats = list(self.run_with_package_names)
         using_pkgs = self.rpmdb.returnPackages(patterns=using_pkgs_pats)
         rpmdbv  = self.rpmdb.simpleVersion(main_only=True)[0]
