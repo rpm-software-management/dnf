@@ -121,10 +121,9 @@ msgstr "你需要给出命令"
 msgid "Disk Requirements:\n"
 msgstr "磁盘要求：\n"
 
-#: ../cli.py:313
 #, python-format
 msgid "  At least %dMB needed on the %s filesystem.\n"
-msgstr "在 %s 文件系统中仍需要%dMB 空间。\n"
+msgstr "  At least %dMB needed on the %s filesystem.\n"
 
 #. TODO: simplify the dependency errors?
 #. Fixup the summary
@@ -2084,7 +2083,7 @@ msgstr "%d %s 文件已删除"
 #: ../yum/__init__.py:1779
 #, python-format
 msgid "More than one identical match in sack for %s"
-msgstr "群集中有超过一个相同的匹配"
+msgstr "群集中有超过一个相同的匹配 %s"
 
 #: ../yum/__init__.py:1785
 #, python-format
