@@ -478,6 +478,7 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
         self._key2pkg = {}
         self._pkgname2pkgkeys = {}
         self._pkgnames_loaded = set()
+        self._pkgtup2pkgs = {}
         self._search_cache = {
             'provides' : { },
             'requires' : { },
