@@ -1389,7 +1389,7 @@ to exit.
             print _("Return-Code    :"), _("Failure:"), old.return_code
         else:
             print _("Return-Code    :"), _("Success")
-        print _("Transaction performed with  :")
+        print _("Transaction performed with:")
         for hpkg in old.trans_with:
             prefix = " " * 4
             state  = _('Installed')
@@ -1408,6 +1408,18 @@ to exit.
             print "%s%-12s %s" % (prefix, state, hpkg)
         print _("Packages Altered:")
         self.historyInfoCmdPkgsAltered(old, pats)
+        if old.output:
+            print _("Scriptlet output:")
+            num = 0
+            for line in old.output:
+                num += 1
+                print "%4d" % num, line
+        if old.errors:
+            print _("Errors:")
+            num = 0
+            for line in old.errors:
+                num += 1
+                print "%4d" % num, line
 
     def historyInfoCmdPkgsAltered(self, old, pats=[]):
         for hpkg in old.trans_data:
