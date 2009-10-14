@@ -36,7 +36,6 @@ import logginglevels
 import Errors
 import warnings
 warnings.simplefilter("ignore", Errors.YumFutureDeprecationWarning)
-from operator import itemgetter
 
 from yum import _
 
@@ -591,7 +590,7 @@ class Depsolve(object):
             # before, they're not going to be installed anymore, so we
             # should mark them to be re-checked
             if upgraded.has_key(best.pkgtup):
-                map(lambda x: self.tsInfo.remove(x), upgraded[best.pkgtup])
+                map(self.tsInfo.remove, upgraded[best.pkgtup])
 
         checkdeps = 1
         
