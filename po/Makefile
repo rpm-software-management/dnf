@@ -70,3 +70,11 @@ install:	all
 
 %.mo: %.po
 	msgfmt -o $@ $< -c
+
+
+test:
+	for n in $(CATALOGS); do \
+	msgfmt -c $$n; \
+	done
+
+ 
