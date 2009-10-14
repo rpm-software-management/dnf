@@ -62,8 +62,6 @@ def _share_data(value):
     return misc.share_data(value)
 
 # FIXME: parsePackages()
-import re
-import fnmatch
 def _parse_pkg_n(match, regexp_match, n):
     if match == n:
         return True

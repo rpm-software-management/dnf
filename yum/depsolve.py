@@ -36,7 +36,6 @@ import logginglevels
 import Errors
 import warnings
 warnings.simplefilter("ignore", Errors.YumFutureDeprecationWarning)
-from operator import itemgetter
 
 from yum import _
 

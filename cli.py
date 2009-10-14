@@ -38,8 +38,6 @@ import yum.logginglevels
 import yum.misc
 import yum.plugins
 from rpmUtils.arch import isMultiLibArch
-import rpmUtils.miscutils
-from yum.packages import parsePackages
 from yum import _
 from yum.rpmtrans import RPMTransaction
 import signal
