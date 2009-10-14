@@ -568,7 +568,7 @@ class signature(pgp_packet) :
             idx = idx + sublen - 1
             return (subtype, expr), idx
         if subtype == SIG_SUB_TYPE_PREF_SYMM_ALGO or subtype == SIG_SUB_TYPE_PREF_HASH_ALGO or subtype == SIG_SUB_TYPE_PREF_COMP_ALGO or subtype == SIG_SUB_TYPE_KEY_FLAGS :
-            algo_list = map(lambda x : ord(x), list(msg[idx:idx+sublen-1]))
+            algo_list = map(ord, list(msg[idx:idx+sublen-1]))
             idx = idx + sublen - 1
             return (subtype, algo_list), idx
         if subtype == SIG_SUB_TYPE_REVOKE_KEY : # revocation key

@@ -3924,7 +3924,7 @@ class YumBase(depsolve.Depsolve):
                             toremove.append(po)
                             numleft -= 1
                         
-        map(lambda x: self.tsInfo.addErase(x), toremove)
+        map(self.tsInfo.addErase, toremove)
 
     def processTransaction(self, callback=None,rpmTestDisplay=None, rpmDisplay=None):
         '''
