@@ -1213,20 +1213,21 @@ class YumRepository(Repository, config.RepoConf):
         else:
             caching = False
             if self._latestRepoXML(local):
-                self._revertOldRepoXML()
-                self.setMetadataCookie()
-                return False
-
-            result = self._getFileRepoXML(local, text)
-            if result is None:
-                # Ignore this as we have a copy
-                self._revertOldRepoXML()
-                return False
+                result = local
+                old_data = self._oldRepoMDData
+                self._repoXML = old_data['old_repo_XML']
+            else:
+                result = self._getFileRepoXML(local, text)
+                if result is None:
+                    # Ignore this as we have a copy
+                    self._revertOldRepoXML()
+                    return False
 
             # if we have a 'fresh' repomd.xml then update the cookie
             self.setMetadataCookie()
 
-        self._repoXML = self._parseRepoXML(result)
+        if self._repoXML is None:
+            self._repoXML = self._parseRepoXML(result)
         if self._repoXML is None:
             self._revertOldRepoXML()
             return False
@@ -1314,6 +1315,8 @@ class YumRepository(Repository, config.RepoConf):
 
         # Inited twice atm. ... sue me
         self._oldRepoMDData['new_MD_files'] = []
+        downloading_with_size = []
+        downloading_no_size   = []
         for mdtype in all_mdtypes:
             (nmdtype, ndata) = self._get_mdtype_data(mdtype)
 
@@ -1341,10 +1344,36 @@ class YumRepository(Repository, config.RepoConf):
             if self._groupCheckDataMDValid(ndata, nmdtype, mdtype):
                 continue
 
+            if ndata.size is None:
+                downloading_no_size.append((ndata, nmdtype))
+            else:
+                downloading_with_size.append((ndata, nmdtype))
+
+        if len(downloading_with_size) == 1:
+            downloading_no_size.update(downloading_with_size)
+            downloading_with_size = []
+
+        remote_size = 0
+        local_size  = 0
+        for (ndata, nmdtype) in downloading_with_size: # Get total size...
+            if ndata.size is None:
+                download_no_size.append((ndata, nmdtype))
+                continue
+            remote_size += int(ndata.size)
+
+        for (ndata, nmdtype) in downloading_with_size:
+            urlgrabber.progress.text_meter_total_size(remote_size, local_size)
+            if not self._retrieveMD(nmdtype, retrieve_can_fail=True):
+                self._revertOldRepoXML()
+                return False
+            local_size += int(ndata.size)
+        urlgrabber.progress.text_meter_total_size(0)
+        for (ndata, nmdtype) in downloading_no_size:
             if not self._retrieveMD(nmdtype, retrieve_can_fail=True):
                 self._revertOldRepoXML()
                 return False
 
+        for (ndata, nmdtype) in downloading_with_size + downloading_no_size:
             local = self._get_mdtype_fname(ndata, False)
             if nmdtype.endswith("_db"): # Uncompress any .sqlite.bz2 files
                 dl_local = local
@@ -1367,8 +1396,7 @@ class YumRepository(Repository, config.RepoConf):
         if self._commonLoadRepoXML(text):
             self._commonRetrieveDataMD(mdtypes)
 
-    def _loadRepoXML(self, text=None):
-        """retrieve/check/read in repomd.xml from the repository"""
+    def _mdpolicy2mdtypes(self):
         md_groups = {'instant'       : [],
                      'group:primary' : ['primary'],
                      'group:small'   : ["primary", "updateinfo"],
@@ -1385,9 +1413,12 @@ class YumRepository(Repository, config.RepoConf):
             mdtypes = None
         else:
             mdtypes = sorted(list(mdtypes))
+        return mdtypes
 
+    def _loadRepoXML(self, text=None):
+        """retrieve/check/read in repomd.xml from the repository"""
         try:
-            return self._groupLoadRepoXML(text, mdtypes)
+            return self._groupLoadRepoXML(text, self._mdpolicy2mdtypes())
         except KeyboardInterrupt:
             self._revertOldRepoXML() # Undo metadata cookie?
             raise
