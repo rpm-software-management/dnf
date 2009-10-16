@@ -1350,7 +1350,7 @@ class YumRepository(Repository, config.RepoConf):
                 downloading_with_size.append((ndata, nmdtype))
 
         if len(downloading_with_size) == 1:
-            downloading_no_size.update(downloading_with_size)
+            downloading_no_size.extend(downloading_with_size)
             downloading_with_size = []
 
         remote_size = 0
