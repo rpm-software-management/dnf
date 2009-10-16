@@ -912,7 +912,10 @@ class YumOutput:
         def _add_line(lines, data, a_wid, po, obsoletes=[]):
             (n,a,e,v,r) = po.pkgtup
             evr = po.printVer()
-            repoid = po.repoid
+            if po.repoid == 'installed' and 'from_repo' in po.yumdb_info:
+                repoid = "@%s" % po.yumdb_info.from_repo
+            else:
+                repoid = po.repoid
             pkgsize = float(po.size)
             size = self.format_number(pkgsize)
 
