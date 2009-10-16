@@ -1167,7 +1167,11 @@ class Depsolve(object):
                         _('common prefix of %s between %s and %s' % (cpl, po, reqpo)))
                 
                     pkgresults[po] += cpl*2
-            
+                
+                # if a provider is from the same repo as the reqpo
+                # give it a slight nudge
+                if reqpo.repoid == po.repoid:
+                    pkgresults[po] += 2
             pkgresults[po] += (len(po.name)*-1)
 
         bestorder = sorted(pkgresults.items(), cmp=_cmp_best_providers)
