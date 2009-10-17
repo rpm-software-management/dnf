@@ -138,7 +138,7 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         """
         usage = 'yum [options] COMMAND\n\nList of Commands:\n\n'
         commands = yum.misc.unique(self.yum_cli_commands.values())
-        commands.sort(cmp=lambda x,y : cmp(x.getNames()[0], y.getNames()[0]))
+        commands.sort(key=lambda x: x.getNames()[0])
         for command in commands:
             # XXX Remove this when getSummary is common in plugins
             try:

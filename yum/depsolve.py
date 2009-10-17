@@ -812,18 +812,15 @@ class Depsolve(object):
         return CheckDeps, CheckInstalls, CheckRemoves, any_missing
 
     @staticmethod
-    def _sort_reqs(pkgtup1, pkgtup2):
-        """ Sort the requires for a package from most "narrow" to least,
+    def _sort_req_key(pkgtup):
+        """ Get a sort key for a package requires from most "narrow" to least,
             this tries to ensure that if we have two reqs like
             "libfoo = 1.2.3-4" and "foo-api" (which is also provided by
             libxyz-foo) that we'll get just libfoo.
             There are other similar cases this "handles"."""
 
-        mapper = {'EQ' : 1, 'LT' : 2, 'LE' : 3, 'GT' : 4, 'GE' : 5,
-                  None : 99}
-        ret = mapper.get(pkgtup1[1], 10) - mapper.get(pkgtup2[1], 10)
-        if ret:
-            return ret
+        mapper = {'EQ' : 1, 'LT' : 2, 'LE' : 3, 'GT' : 4, 'GE' : 5, None : 99}
+        flagscore = mapper.get(pkgtup[1], 10)
 
         # This is pretty magic, basically we want an explicit:
         #
@@ -835,12 +832,13 @@ class Depsolve(object):
         #
         # ...because sometimes the libfoo.so.0() is provided by multiple
         # packages. Do we need more magic for other implicit deps. here?
-        def _req_name2val(name):
-            if (name.startswith("lib") and
-                (name.endswith("()") or name.endswith("()(64bit)"))):
-                return 99 # Processes these last
-            return 0
-        return _req_name2val(pkgtup1[0]) - _req_name2val(pkgtup2[0])
+
+        namescore = 0
+        if pkgtup[0].startswith("lib") and \
+                (pkgtup[0].endswith("()") or pkgtup[0].endswith("()(64bit)")):
+            namescore = 99 # Processes these last
+
+        return (flagscore, namescore)
 
     def _checkInstall(self, txmbr):
         txmbr_reqs = txmbr.po.returnPrco('requires')
@@ -854,7 +852,7 @@ class Depsolve(object):
         oldreqs = set(oldreqs)
 
         ret = []
-        for req in sorted(txmbr_reqs, cmp=self._sort_reqs):
+        for req in sorted(txmbr_reqs, key=self._sort_req_key):
             if req[0].startswith('rpmlib('):
                 continue
             if req in txmbr_provs:
@@ -1006,13 +1004,6 @@ class Depsolve(object):
            return a dictionary of po=score"""
         self.verbose_logger.log(logginglevels.DEBUG_4,
               _("Running compare_providers() for %s") %(str(pkgs)))
-
-        def _cmp_best_providers(x, y):
-            """ Compare first by score, and then compare the pkgs if the score
-                is the same. Note that this sorts in reverse. """
-            ret = cmp(y[1], x[1])
-            if ret: return ret
-            return cmp(y[0], x[0])
         
         def _common_prefix_len(x, y, minlen=2):
             num = min(len(x), len(y))
@@ -1181,7 +1172,8 @@ class Depsolve(object):
                     pkgresults[po] += 8
             pkgresults[po] += (len(po.name)*-1)
 
-        bestorder = sorted(pkgresults.items(), cmp=_cmp_best_providers)
+        bestorder = sorted(pkgresults.items(),
+                           key=lambda x: (x[1], x[0]), reverse=True)
         self.verbose_logger.log(logginglevels.DEBUG_4,
                 _('Best Order: %s' % str(bestorder)))
 
