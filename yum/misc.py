@@ -116,7 +116,7 @@ def re_full_search_needed(s):
     global _re_compiled_full_match
     if _re_compiled_full_match is None:
         one   = re.compile('.*[-\.\*\?\[\]].*.$') # Any wildcard or - seperator
-        two   = re.compile('^[0-9]')        # Any epoch, for envra
+        two   = re.compile('^[0-9]+:')            # Any epoch, for envra
         _re_compiled_full_match = (one, two)
     for rec in _re_compiled_full_match:
         if rec.match(s):
