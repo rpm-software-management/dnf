@@ -25,7 +25,7 @@ from yum import logginglevels
 from optparse import OptionGroup
 
 import yum.plugins as plugins
-
+from urlgrabber.progress import format_number
 
 def suppress_keyboard_interrupt_message():
     old_excepthook = sys.excepthook
@@ -38,6 +38,88 @@ def suppress_keyboard_interrupt_message():
 
     sys.excepthook = new_hook
 
+def jiffies_to_seconds(jiffies):
+    Hertz = 100 # FIXME: Hack, need to get this, AT_CLKTCK elf note *sigh*
+    return int(jiffies) / Hertz
+
+def seconds_to_ui_time(seconds):
+    if seconds >= 60 * 60 * 24:
+        return "%d day(s) %d:%02d:%02d" % (seconds / (60 * 60 * 24),
+                                           (seconds / (60 * 60)) % 24,
+                                           (seconds / 60) % 60,
+                                           seconds % 60)
+    if seconds >= 60 * 60:
+        return "%d:%02d:%02d" % (seconds / (60 * 60), (seconds / 60) % 60,
+                                 (seconds % 60))
+    return "%02d:%02d" % ((seconds / 60), seconds % 60)
+
+def get_process_info(pid):
+    if not pid:
+        return
+
+    # Maybe true if /proc isn't mounted, or not Linux ... or something.
+    if (not os.path.exists("/proc/%d/status" % pid) or
+        not os.path.exists("/proc/stat") or
+        not os.path.exists("/proc/%d/stat" % pid)):
+        return
+
+    ps = {}
+    for line in open("/proc/%d/status" % pid):
+        if line[-1] != '\n':
+            continue
+        data = line[:-1].split(':\t', 1)
+        if len(data) < 2:
+            continue
+        if data[1].endswith(' kB'):
+            data[1] = data[1][:-3]
+        ps[data[0].strip().lower()] = data[1].strip()
+    if 'vmrss' not in ps:
+        return
+    if 'vmsize' not in ps:
+        return
+    boot_time = None
+    for line in open("/proc/stat"):
+        if line.startswith("btime "):
+            boot_time = int(line[len("btime "):-1])
+            break
+    if boot_time is None:
+        return
+    ps_stat = open("/proc/%d/stat" % pid).read().split()
+    ps['utime'] = jiffies_to_seconds(ps_stat[13])
+    ps['stime'] = jiffies_to_seconds(ps_stat[14])
+    ps['cutime'] = jiffies_to_seconds(ps_stat[15])
+    ps['cstime'] = jiffies_to_seconds(ps_stat[16])
+    ps['start_time'] = boot_time + jiffies_to_seconds(ps_stat[21])
+    ps['state'] = {'R' : _('Running'),
+                   'S' : _('Sleeping'),
+                   'D' : _('Uninteruptable'),
+                   'Z' : _('Zombie'),
+                   'T' : _('Traced/Stopped')
+                   }.get(ps_stat[2], _('Unknown'))
+                   
+    return ps
+
+def show_lock_owner(pid, logger):
+    if not pid:
+        return
+
+    ps = get_process_info(pid)
+    # This yumBackend isn't very friendly, so...
+    if ps['name'] == 'yumBackend.py':
+        nmsg = _("  The other application is: PackageKit")
+    else:
+        nmsg = _("  The other application is: %s") % ps['name']
+
+    logger.critical("%s", nmsg)
+    logger.critical(_("    Memory : %5s RSS (%5sB VSZ)") %
+                    (format_number(int(ps['vmrss']) * 1024),
+                     format_number(int(ps['vmsize']) * 1024)))
+    
+    ago = seconds_to_ui_time(int(time.time()) - ps['start_time'])
+    logger.critical(_("    Started: %s - %s ago") %
+                    (time.ctime(ps['start_time']), ago))
+    logger.critical(_("    State  : %s, pid: %d") % (ps['state'], pid))
+
 class YumUtilBase(YumBaseCli):
     def __init__(self,name,ver,usage):
         YumBaseCli.__init__(self)
@@ -48,6 +130,9 @@ class YumUtilBase(YumBaseCli):
         self._option_group = OptionGroup(self._parser, "%s options" % self._utilName,"")
         self._parser.add_option_group(self._option_group)
         suppress_keyboard_interrupt_message()
+        logger = logging.getLogger("yum.util")
+        verbose_logger = logging.getLogger("yum.verbose.util")
+        
         
     def getOptionParser(self):
         return self._parser        
@@ -66,6 +151,7 @@ class YumUtilBase(YumBaseCli):
                     lockerr = "%s" %(e.msg,)
                     self.logger.critical(lockerr)
                 self.logger.critical("Another app is currently holding the yum lock; waiting for it to exit...")  
+                show_lock_owner(e.pid, self.logger)
                 time.sleep(2)
             else:
                 break
@@ -124,6 +210,7 @@ class YumUtilBase(YumBaseCli):
            really just a shorthand for testing"""
         # FIXME - we need another way to do this, I think.
         try:
+            self.waitForLock()
             self._getTs()
             self._getRpmDB()
             self._getRepos(doSetup = True)
