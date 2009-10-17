@@ -1005,7 +1005,7 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
             return result
         
         # NOTE: I can't see any reason not to use this all the time, speed
-        # comparison shows them as baiscally equal.
+        # comparison shows them as basically equal.
         if len(searchstrings) > (constants.PATTERNS_MAX / len(fields)):
             tot = {}
             for searchstring in searchstrings:
@@ -1100,7 +1100,6 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
         for (rep,cache) in self.primarydb.items():
             cur = cache.cursor()
             executeSQL(cur, "select * from packages where pkgId in %s" %(pkgid_query,))
-            #executeSQL(cur, "select * from packages where pkgId in %s" %(pkgid_query,))            
             for ob in cur:
                 pkgs.append(ob)
         
