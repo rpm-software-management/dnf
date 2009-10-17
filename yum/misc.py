@@ -115,7 +115,7 @@ def re_full_search_needed(s):
     """ Tests if a string needs a full nevra match, instead of just name. """
     global _re_compiled_full_match
     if _re_compiled_full_match is None:
-        one   = re.compile('.*[-.*?[\]].*.$')     # Any wildcard or - separator
+        one   = re.compile('.*([-.*?]|\[.+\]).*.$') # Any wildcard, "." or "-"
         two   = re.compile('^[0-9]+:')            # Any epoch, for envra
         _re_compiled_full_match = (one, two)
     for rec in _re_compiled_full_match:
@@ -615,7 +615,7 @@ def refineSearchPattern(arg):
     """Takes a search string from the cli for Search or Provides
        and cleans it up so it doesn't make us vomit"""
     
-    if re.search('[*[\]{}?+]', arg):
+    if re.search('[*{}?+]|\[.+\]', arg):
         restring = fnmatch.translate(arg)
     else:
         restring = re.escape(arg)
