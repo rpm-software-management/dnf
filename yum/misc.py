@@ -78,8 +78,8 @@ def re_glob(s):
     """ Tests if a string is a shell wildcard. """
     global _re_compiled_glob_match
     if _re_compiled_glob_match is None:
-        _re_compiled_glob_match = re.compile('.*([*?]|\[.+\])')
-    return _re_compiled_glob_match.match(s)
+        _re_compiled_glob_match = re.compile('[*?]|\[.+\]').search
+    return _re_compiled_glob_match(s)
 
 _re_compiled_filename_match = None
 def re_filename(s):
@@ -87,8 +87,8 @@ def re_filename(s):
         classes wrong (are they supported), and ranges in character classes. """
     global _re_compiled_filename_match
     if _re_compiled_filename_match is None:
-        _re_compiled_filename_match = re.compile('[/*?]|\[[^]]*/[^]]*\]')
-    return _re_compiled_filename_match.match(s)
+        _re_compiled_filename_match = re.compile('[/*?]|\[[^]]*/[^]]*\]').match
+    return _re_compiled_filename_match(s)
 
 def re_primary_filename(filename):
     """ Tests if a filename string, can be matched against just primary.
@@ -115,11 +115,13 @@ def re_full_search_needed(s):
     """ Tests if a string needs a full nevra match, instead of just name. """
     global _re_compiled_full_match
     if _re_compiled_full_match is None:
-        one   = re.compile('.*([-.*?]|\[.+\]).*.$') # Any wildcard, "." or "-"
-        two   = re.compile('^[0-9]+:')            # Any epoch, for envra
+        # A glob, or a "." or "-" separator
+        one = re.compile('.*([-.*?]|\[.+\]).*.$').match
+        # Any epoch, for envra
+        two = re.compile('[0-9]+:').match
         _re_compiled_full_match = (one, two)
     for rec in _re_compiled_full_match:
-        if rec.match(s):
+        if rec(s):
             return True
     return False
 
