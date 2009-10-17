@@ -1646,7 +1646,7 @@ class YumRepository(Repository, config.RepoConf):
                 print "Could not read mirrorlist %s, error was \n%s" %(url, e)
                 content = []
             for line in content:
-                if re.match('^\s*\#.*', line) or re.match('^\s*$', line):
+                if re.match('\s*(#|$)', line):
                     continue
                 mirror = line.rstrip() # no more trailing \n's
                 mirror = mirror.replace('$ARCH', '$BASEARCH')
@@ -1848,7 +1848,7 @@ def getMirrorList(mirrorlist, pdict = None):
     if fo is not None:
         content = fo.readlines()
         for line in content:
-            if re.match('^\s*\#.*', line) or re.match('^\s*$', line):
+            if re.match('\s*(#|$)', line):
                 continue
             mirror = line.rstrip() # no more trailing \n's
             mirror = mirror.replace('$ARCH', '$BASEARCH')

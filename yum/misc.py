@@ -87,7 +87,7 @@ def re_filename(s):
         classes wrong (are they supported), and ranges in character classes. """
     global _re_compiled_filename_match
     if _re_compiled_filename_match is None:
-        _re_compiled_filename_match = re.compile('^(/|[*?]|\[[^]]*/[^]]*\])')
+        _re_compiled_filename_match = re.compile('[/*?]|\[[^]]*/[^]]*\]')
     return _re_compiled_filename_match.match(s)
 
 def re_primary_filename(filename):
@@ -115,7 +115,7 @@ def re_full_search_needed(s):
     """ Tests if a string needs a full nevra match, instead of just name. """
     global _re_compiled_full_match
     if _re_compiled_full_match is None:
-        one   = re.compile('.*[-\.\*\?\[\]].*.$') # Any wildcard or - seperator
+        one   = re.compile('.*[-.*?[\]].*.$')     # Any wildcard or - separator
         two   = re.compile('^[0-9]+:')            # Any epoch, for envra
         _re_compiled_full_match = (one, two)
     for rec in _re_compiled_full_match:
@@ -354,7 +354,7 @@ def procgpgkey(rawkey):
     # TODO: CRC checking? (will RPM do this anyway?)
     
     # Normalise newlines
-    rawkey = re.compile('(\n|\r\n|\r)').sub('\n', rawkey)
+    rawkey = re.sub('\r\n?', '\n', rawkey)
 
     # Extract block
     block = StringIO()
@@ -615,7 +615,7 @@ def refineSearchPattern(arg):
     """Takes a search string from the cli for Search or Provides
        and cleans it up so it doesn't make us vomit"""
     
-    if re.match('.*[\*,\[,\],\{,\},\?,\+].*', arg):
+    if re.search('[*[\]{}?+]', arg):
         restring = fnmatch.translate(arg)
     else:
         restring = re.escape(arg)
