@@ -1160,6 +1160,10 @@ class Depsolve(object):
                 self.verbose_logger.log(logginglevels.DEBUG_4,
                     _('common sourcerpm %s and %s' % (po, reqpo)))
                 pkgresults[po] += 20
+            if self.isPackageInstalled(po.base_package_name):
+                self.verbose_logger.log(logginglevels.DEBUG_4,
+                    _('base package %s is installed for %s' % (po.base_package_name, po)))
+                pkgresults[po] += 5 # Same as ipkgresults above.
             if reqpo:
                 cpl = _common_prefix_len(po.name, reqpo.name)
                 if cpl > 2:
@@ -1171,7 +1175,9 @@ class Depsolve(object):
                 # if a provider is from the same repo as the reqpo
                 # give it a slight nudge
                 if reqpo.repoid == po.repoid:
-                    pkgresults[po] += 2
+                    self.verbose_logger.log(logginglevels.DEBUG_4,
+                        _('common repoid of %s between %s and %s' % (po.repoid, po, reqpo)))
+                    pkgresults[po] += 8
             pkgresults[po] += (len(po.name)*-1)
 
         bestorder = sorted(pkgresults.items(), cmp=_cmp_best_providers)
