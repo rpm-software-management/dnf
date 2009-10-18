@@ -985,19 +985,20 @@ class Depsolve(object):
 
 
     def isPackageInstalled(self, pkgname):
-        installed = False
-        if self.rpmdb.contains(name=pkgname):
-            installed = True
-
         lst = self.tsInfo.matchNaevr(name = pkgname)
         for txmbr in lst:
             if txmbr.output_state in TS_INSTALL_STATES:
                 return True
-        if installed and len(lst) > 0:
-            # if we get here, then it was installed, but it's in the tsInfo
-            # for an erase or obsoleted --> not going to be installed at end
+
+        if len(lst) > 0:
+            # if we get here then it's in the tsInfo for an erase or obsoleted
+            #  --> not going to be installed
             return False
-        return installed
+
+        if not self.rpmdb.contains(name=pkgname):
+            return False
+
+        return True
     _isPackageInstalled = isPackageInstalled
 
     def _compare_providers(self, pkgs, reqpo):
