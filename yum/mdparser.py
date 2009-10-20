@@ -82,7 +82,7 @@ class BaseEntry:
         return self._p.values()
 
     def has_key(self, k):
-        warnings.warn('has_key() will go away in a future version of Yum.\n'
+        warnings.warn('has_key() will go away in a future version of Yum.\n',
                       Errors.YumFutureDeprecationWarning, stacklevel=2)
         return k in self._p
 
