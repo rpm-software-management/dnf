@@ -31,8 +31,7 @@ from yum import _
 from yum.i18n import to_unicode
 import yum.misc
 import cli
-from utils import suppress_keyboard_interrupt_message, get_process_info, seconds_to_ui_time, \
-                  show_lock_owner
+from utils import suppress_keyboard_interrupt_message, show_lock_owner
 
 def main(args):
     """This does all the real work"""
