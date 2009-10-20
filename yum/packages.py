@@ -488,6 +488,25 @@ class RpmBase(object):
     changelog = property(fget=lambda self: self.returnChangelog())
     EVR = property(fget=lambda self: self.returnEVR())
     
+    def _getBaseName(self):
+        """ Return the "base name" of the package, atm. we can only look at
+            the sourcerpm. """
+        if hasattr(self, '_base_package_name_ret'):
+            return self._base_package_name_ret
+
+        if hasattr(self, 'sourcerpm') and self.sourcerpm:
+            (n, v, r, e, a) = rpmUtils.miscutils.splitFilename(self.sourcerpm)
+            if n != self.name:
+                self._base_package_name_ret = n
+                return n
+
+        # If there is no sourcerpm, or sourcerpm == us, use .name
+        self._base_package_name_ret = self.name
+        return self._base_package_name_ret
+
+    base_package_name = property(fget=lambda self: self._getBaseName())
+
+
 class PackageEVR:
 
     """
@@ -1570,7 +1589,6 @@ class YumLocalPackage(YumHeaderPackage):
         self.pkgtup = (self.name, self.arch, self.epoch, self.ver, self.rel)
         self._hdrstart = None
         self._hdrend = None
-        self.arch = self.isSrpm()
         self.checksum_type = misc._default_checksums[0]
 
         # these can be set by callers that need these features (ex: createrepo)

@@ -389,23 +389,14 @@ class Comps(object):
                               # lists, yet.
 
 
-    def __sort_order(self, item1, item2):
-        """ This sorts for machines, so is the same in all locales. """
-        if item1.display_order > item2.display_order:
-            return 1
-        elif item1.display_order == item2.display_order:
-            return cmp(item1.name, item2.name)
-        else:
-            return -1
-    
     def get_groups(self):
         grps = self._groups.values()
-        grps.sort(self.__sort_order)
+        grps.sort(key=lambda x: (x.display_order, x.name))
         return grps
         
     def get_categories(self):
         cats = self._categories.values()
-        cats.sort(self.__sort_order)
+        cats.sort(key=lambda x: (x.display_order, x.name))
         return cats
     
     groups = property(get_groups)

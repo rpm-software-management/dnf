@@ -475,7 +475,7 @@ class RPMDBPackageSack(PackageSackBase):
             else:
                 pkgs = self.returnPkgs()
             for po in pkgs:
-                for tag in ('name', 'epoch', 'ver', 'rel', 'arch'):
+                for tag in ('arch', 'rel', 'ver', 'epoch'):
                     if loc[tag] is not None and loc[tag] != getattr(po, tag):
                         break
                 else:
@@ -493,7 +493,7 @@ class RPMDBPackageSack(PackageSackBase):
 
         for hdr in mi:
             po = self._makePackageObject(hdr, mi.instance())
-            for tag in ('name', 'epoch', 'ver', 'rel', 'arch'):
+            for tag in ('arch', 'rel', 'ver', 'epoch'):
                 if loc[tag] is not None and loc[tag] != getattr(po, tag):
                     break
             else:
