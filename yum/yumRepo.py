@@ -1357,7 +1357,7 @@ class YumRepository(Repository, config.RepoConf):
         local_size  = 0
         for (ndata, nmdtype) in downloading_with_size: # Get total size...
             if ndata.size is None:
-                download_no_size.append((ndata, nmdtype))
+                downloading_no_size.append((ndata, nmdtype))
                 continue
             remote_size += int(ndata.size)
 
