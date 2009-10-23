@@ -1616,6 +1616,9 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
         # Haven't loaded everything, so _just_ get the pkgtups...
         data = self._setupPkgObjList(repoid, patterns, ignore_case)
         (need_full, patterns, fields, names) = data
+        if names:
+            return [pkg.pkgtup for pkg in self.searchNames(patterns)]
+
         for (repo, x) in self._yieldSQLDataList(repoid, patterns, fields,
                                                 ignore_case):
             # NOTE: Can't unexclude things...
