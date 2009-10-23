@@ -122,7 +122,6 @@ _yum()
         group*)
             local IFS=$'\n'
             # TODO: add -d 0 when http://yum.baseurl.org/ticket/29 is fixed
-            # TODO: add -C when http://yum.baseurl.org/ticket/310 is fixed
             COMPREPLY=( $( compgen -W "$( $yum -C grouplist 2>/dev/null | \
                 sed -ne 's/^[[:space:]]\+\(.\+\)/\1/p' )" -- "$cur" ) )
             return 0
