@@ -25,4 +25,5 @@ install:
 
 	install -m 755 yum-updatesd.conf $(DESTDIR)/etc/yum/yum-updatesd.conf
 
-
+	mkdir -p $(DESTDIR)/etc/bash_completion.d
+	install -m 644 yum.bash $(DESTDIR)/etc/bash_completion.d

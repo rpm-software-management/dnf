@@ -82,6 +82,7 @@ exit 0
 %dir %{_sysconfdir}/%{name}
 %dir %{_sysconfdir}/yum/repos.d
 %config %{_sysconfdir}/logrotate.d/%{name}
+%{_sysconfdir}/bash_completion.d
 %{_datadir}/yum-cli/*
 %exclude %{_datadir}/yum-cli/yumupd.py*
 %{_bindir}/yum
