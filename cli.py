@@ -1301,7 +1301,7 @@ class YumOptionParser(OptionParser):
         group.add_option("-t", "--tolerant", action="store_true",
                 help=_("be tolerant of errors"))
         group.add_option("-C", dest="cacheonly", action="store_true",
-                help=_("run entirely from cache, don't update cache"))
+                help=_("run entirely from system cache, don't update cache"))
         group.add_option("-c", dest="conffile", default='/etc/yum/yum.conf',
                 help=_("config file location"), metavar=' [config file]')
         group.add_option("-R", dest="sleeptime", type='int', default=None,
