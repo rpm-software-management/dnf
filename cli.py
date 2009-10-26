@@ -805,7 +805,7 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
                     print ""
                 # Print them in the order they were passed
                 used_keys = [arg for arg in args if arg in keys]
-                print self.fmtSection("Matched: " + ", ".join(used_keys))
+                print self.fmtSection(_('Matched: %s') % ", ".join(used_keys))
                 okeys = keys
                 akeys.update(keys)
             self.matchcallback(po, matched_value, args)
