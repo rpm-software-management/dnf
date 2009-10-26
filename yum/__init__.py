@@ -1953,8 +1953,6 @@ class YumBase(depsolve.Depsolve):
             else:
                 sql_fields.append(f)
 
-        matched_values = {}
-
         # yield the results in order of most terms matched first
         sorted_lists = {}
         tmpres = []
