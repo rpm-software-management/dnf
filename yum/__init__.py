@@ -1957,13 +1957,17 @@ class YumBase(depsolve.Depsolve):
         sorted_lists = {}
         tmpres = []
         real_crit = []
-        for s in criteria:
-            real_crit.append(s)
         real_crit_lower = [] # Take the s.lower()'s out of the loop
         rcl2c = {}
+        # weigh terms in given order (earlier = more relevant)
+        critweight = 0
+        critweights = {}
         for s in criteria:
+            real_crit.append(s)
             real_crit_lower.append(s.lower())
             rcl2c[s.lower()] = s
+            critweights.setdefault(s, critweight)
+            critweight -= 1
 
         for sack in self.pkgSack.sacks.values():
             tmpres.extend(sack.searchPrimaryFieldsMultipleStrings(sql_fields, real_crit))
@@ -1998,8 +2002,10 @@ class YumBase(depsolve.Depsolve):
         # By default just sort using package sorting
         sort_func = operator.itemgetter(0)
         if keys:
-            # Take into account the keys found, as well
-            sort_func = lambda x: "%s%s" % ("\0".join(sorted(x[1])), str(x[0]))
+            # Take into account the keys found, their original order,
+            # and number of fields hit as well
+            sort_func = lambda x: (-sum((critweights[y] for y in x[1])),
+                                   "\0".join(sorted(x[1])), -len(x[2]), x[0])
         yielded = {}
         for val in reversed(sorted(sorted_lists)):
             for (po, ks, vs) in sorted(sorted_lists[val], key=sort_func):
