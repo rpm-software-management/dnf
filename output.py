@@ -1207,7 +1207,7 @@ to exit.
             name = _("System") + " " + loginid
             if limit is not None and len(name) > limit:
                 name = loginid
-            return name
+            return to_unicode(name)
 
         try:
             user = pwd.getpwuid(uid)
@@ -1217,9 +1217,9 @@ to exit.
                 name = "%s ... <%s>" % (fullname.split()[0], user.pw_name)
                 if len(name) > limit:
                     name = "<%s>" % user.pw_name
-            return name
+            return to_unicode(name)
         except KeyError:
-            return str(uid)
+            return to_unicode(str(uid))
 
     def _history_list_transactions(self, extcmds):
         tids = set()
