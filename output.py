@@ -1195,7 +1195,14 @@ to exit.
                 count += 1
         assert len(actions) <= 6
         if len(actions) > 1:
-            return count, ", ".join([x[0] for x in sorted(actions)])
+            large2small = {'Install'      : _('I'),
+                           'Obsoleting'   : _('O'),
+                           'Erase'        : _('E'),
+                           'Reinstall'    : _('R'),
+                           'Downgrade'    : _('D'),
+                           'Update'       : _('U'),
+                           }
+            return count, ", ".join([large2small[x] for x in sorted(actions)])
 
         # So empty transactions work, although that "shouldn't" really happen
         return count, "".join(list(actions))
@@ -1251,10 +1258,14 @@ to exit.
         if tids is None:
             return 1, ['Failed history info']
 
-        fmt = "%-6s | %-22s | %-16s | %-14s | %-7s"
-        print fmt % ("ID", "Login user", "Date and time", "Action(s)","Altered")
+        fmt = "%s | %s | %s | %s | %s"
+        print fmt % (utf8_width_fill(_("ID"), 6, 6),
+                     utf8_width_fill(_("Login user"), 22, 22),
+                     utf8_width_fill(_("Date and time"), 16, 16),
+                     utf8_width_fill(_("Action(s)"), 14, 14),
+                     utf8_width_fill(_("Altered"), 7, 7))
         print "-" * 79
-        fmt = "%6u | %-22.22s | %-16s | %-14s | %4u"
+        fmt = "%6u | %s | %-16.16s | %s | %4u"
         done = 0
         limit = 20
         if printall:
@@ -1268,6 +1279,8 @@ to exit.
             tm = time.strftime("%Y-%m-%d %H:%M",
                                time.localtime(old.beg_timestamp))
             num, uiacts = self._history_uiactions(old.trans_data)
+            name   = utf8_width_fill(name,   22, 22)
+            uiacts = utf8_width_fill(uiacts, 14, 14)
             if old.altered_lt_rpmdb and old.altered_gt_rpmdb:
                 print fmt % (old.tid, name, tm, uiacts, num), "><"
             elif old.return_code is None:
@@ -1408,7 +1421,7 @@ to exit.
                 state  = _('Downgraded')
             else: # multiple versions installed, both older and newer
                 state  = _('Weird')
-            print "%s%-12s %s" % (prefix, state, hpkg)
+            print "%s%s %s" % (prefix, utf8_width_fill(state, 12), hpkg)
         print _("Packages Altered:")
         self.historyInfoCmdPkgsAltered(old, pats)
         if old.output:
@@ -1445,29 +1458,44 @@ to exit.
                 cn = "%s-%s:%s-%s.%s" % (hpkg.name, hpkg.epoch,
                                          hpkg.version, hpkg.release, hpkg.arch)
 
+            uistate = {'True-Install' : _('Install'),
+                       'Install'      : _('Install'),
+                       'Dep-Install'  : _('Dep-Install'),
+                       'Obsoleted'    : _('Obsoleted'),
+                       'Obsoleting'   : _('Obsoleting'),
+                       'Erase'        : _('Erase'),
+                       'Reinstall'    : _('Reinstall'),
+                       'Downgrade'    : _('Downgrade'),
+                       'Downgraded'   : _('Downgraded'),
+                       'Update'       : _('Update'),
+                       'Updated'      : _('Updated'),
+                       }.get(hpkg.state, hpkg.state)
+            uistate = utf8_width_fill(uistate, 12, 12)
+            # Should probably use columns here...
             if False: pass
             elif hpkg.state == 'Update':
                 ln = len(hpkg.name) + 1
                 cn = (" " * ln) + cn[ln:]
-                print "%s%s%-12s%s %s" % (prefix, hibeg, hpkg.state, hiend, cn)
+                print "%s%s%s%s %s" % (prefix, hibeg, uistate, hiend, cn)
             elif hpkg.state == 'Downgraded':
                 ln = len(hpkg.name) + 1
                 cn = (" " * ln) + cn[ln:]
-                print "%s%s%-12s%s %s" % (prefix, hibeg, hpkg.state, hiend, cn)
-            elif hpkg.state == 'True-Install':
-                print "%s%s%-12s%s %s" % (prefix, hibeg, "Install", hiend,  cn)
+                print "%s%s%s%s %s" % (prefix, hibeg, uistate, hiend, cn)
             else:
-                print "%s%s%-12s%s %s" % (prefix, hibeg, hpkg.state, hiend, cn)
+                print "%s%s%s%s %s" % (prefix, hibeg, uistate, hiend, cn)
 
     def historySummaryCmd(self, extcmds):
         tids, printall = self._history_list_transactions(extcmds)
         if tids is None:
             return 1, ['Failed history info']
 
-        fmt = "%-26s | %-19s | %-16s | %-8s"
-        print fmt % ("Login user", "Time", "Action(s)", "Altered")
+        fmt = "%s | %s | %s | %s"
+        print fmt % (utf8_width_fill(_("Login user"), 26, 26),
+                     utf8_width_fill(_("Time"), 19, 19),
+                     utf8_width_fill(_("Action(s)"), 16, 16),
+                     utf8_width_fill(_("Altered"), 8, 8))
         print "-" * 79
-        fmt = "%-26.26s | %-19.19s | %-16s | %8u"
+        fmt = "%s | %s | %s | %8u"
         data = {'day' : {}, 'week' : {},
                 'fortnight' : {}, 'quarter' : {}, 'half' : {}, 
                 'year' : {}, 'all' : {}}
@@ -1511,7 +1539,10 @@ to exit.
                     hpkgs.extend(old.trans_data)
                 count, uiacts = self._history_uiactions(hpkgs)
                 uperiod = _period2user[period]
-                print fmt % (name, uperiod, uiacts, count)
+                # Should probably use columns here, esp. for uiacts?
+                print fmt % (utf8_width_fill(name, 22, 22),
+                             utf8_width_fill(uperiod, 19, 19),
+                             utf8_width_fill(uiacts, 16, 16), count)
 
 
 class DepSolveProgressCallBack:
