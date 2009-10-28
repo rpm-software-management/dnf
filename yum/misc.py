@@ -115,8 +115,8 @@ def re_full_search_needed(s):
     """ Tests if a string needs a full nevra match, instead of just name. """
     global _re_compiled_full_match
     if _re_compiled_full_match is None:
-        # A glob, or a "." or "-" separator
-        one = re.compile('.*([-.*?]|\[.+\]).*.$').match
+        # A glob, or a "." or "-" separator, followed by something (the ".")
+        one = re.compile('.*([-.*?]|\[.+\]).').match
         # Any epoch, for envra
         two = re.compile('[0-9]+:').match
         _re_compiled_full_match = (one, two)
