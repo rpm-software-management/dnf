@@ -188,13 +188,14 @@ class Depsolve(object):
         """takes a packageObject, returns 1 or 0 depending on if the package 
            should/can be installed multiple times with different vers
            like kernels and kernel modules, for example"""
-           
-        if po.name in self.conf.installonlypkgs:
+
+        iopkgs = set(self.conf.installonlypkgs)
+        if po.name in iopkgs:
             return True
         
-        provides = po.provides_names
-        if filter (lambda prov: prov in self.conf.installonlypkgs, provides):
-            return True
+        for prov in po.provides_names:
+            if prov in iopkgs:
+                return True
         
         return False
 

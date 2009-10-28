@@ -454,11 +454,10 @@ class RpmBase(object):
         return self.files.keys()
 
     def returnPrcoNames(self, prcotype):
-        results = []
-        lists = self.returnPrco(prcotype)
-        for (name, flag, vertup) in lists:
-            results.append(name)
-        return results
+        if not hasattr(self, '_cache_prco_names_' + prcotype):
+            data = [n for (n, f, v) in self.returnPrco(prcotype)]
+            setattr(self, '_cache_prco_names_' + prcotype, data)
+        return getattr(self, '_cache_prco_names_' + prcotype)
 
     def getProvidesNames(self):
         warnings.warn('getProvidesNames() will go away in a future version of Yum.\n',
