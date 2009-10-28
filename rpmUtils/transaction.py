@@ -122,6 +122,8 @@ class TransactionWrapper:
             
         # prebuild the req dict
         for h in mi:
+            if h['name'] == 'gpg-pubkey':
+                continue
             if not h[rpm.RPMTAG_REQUIRENAME]:
                 continue
             tup = miscutils.pkgTupleFromHeader(h)    
@@ -144,6 +146,8 @@ class TransactionWrapper:
                 yield prov
 
         for h in mi:
+            if h['name'] == 'gpg-pubkey':
+                continue
             preq = 0
             tup = miscutils.pkgTupleFromHeader(h)
             for p in _return_all_provides(h):
