@@ -410,7 +410,10 @@ class RpmBase(object):
         # find the named entry in pkgobj, do the comparsion
         result = []
         for (n, f, (e, v, r)) in self.returnPrco(prcotype):
-            if reqn != n:
+            if isinstance(reqn, unicode) == isinstance(n, unicode):
+                if reqn != n: # stupid python...
+                    continue
+            elif misc.to_utf8(reqn) != misc.to_utf8(n):
                 continue
 
             if f == '=':
