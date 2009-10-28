@@ -998,6 +998,15 @@ class YumAvailablePackage(PackageObject, RpmBase):
         for (name, flags, (e,v,r),pre) in mylist:
             if name.startswith('rpmlib('):
                 continue
+            # this drops out requires that the pkg provides for itself.
+            if name in self.provides_names:
+                if not flags:
+                    print 'skipping req %s' % name
+                    continue
+                else:
+                    if self.checkPrco('provides', (name, flags, (e,v,r))):
+                        print 'skipping req w/flags %s' % name
+                        continue
             prcostring = '''      <rpm:entry name="%s"''' % misc.to_xml(name, attrib=True)
             if flags:
                 prcostring += ''' flags="%s"''' % misc.to_xml(flags, attrib=True)
