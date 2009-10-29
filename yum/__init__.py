@@ -3732,7 +3732,7 @@ class YumBase(depsolve.Depsolve):
             keys_info = misc.getgpgkeyinfo(rawkey, multiple=True)
         except ValueError, e:
             raise Errors.YumBaseError(_('Invalid GPG Key from %s: %s') % 
-                                      (keyurl, str(e)))
+                                      (url, to_unicide(str(e))))
         keys = []
         for keyinfo in keys_info:
             thiskey = {}
