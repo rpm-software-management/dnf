@@ -336,7 +336,6 @@ class YumAvailablePackageSqlite(YumAvailablePackage, PackageObject, RpmBase):
                 result.append((c_date, _share_data(c_author), c_log))
             self._changelog = result
             return
-    
         
     def returnIdSum(self):
         return (self.checksum_type, self.pkgId)
@@ -345,15 +344,23 @@ class YumAvailablePackageSqlite(YumAvailablePackage, PackageObject, RpmBase):
         self._loadChangelog()
         return self._changelog
     
-    def returnFileEntries(self, ftype='file'):
+    def returnFileEntries(self, ftype='file', primary_only=False):
+        if primary_only and not self._loadedfiles:
+            sql = "SELECT name as fname FROM files WHERE pkgKey = ? and type = ?"
+            cur = self._sql_MD('primary', sql, (self.pkgKey, ftype))
+            return map(lambda x: x['fname'], cur)
+
         self._loadFiles()
-        return RpmBase.returnFileEntries(self,ftype)
+        return RpmBase.returnFileEntries(self,ftype,primary_only)
     
     def returnFileTypes(self):
         self._loadFiles()
         return RpmBase.returnFileTypes(self)
 
     def simpleFiles(self, ftype='file'):
+        warnings.warn('simpleFiles() will go away in a future version of Yum.'
+                      'Use returnFileEntries(primary_only=True)\n',
+                      Errors.YumDeprecationWarning, stacklevel=2)
         sql = "SELECT name as fname FROM files WHERE pkgKey = ? and type = ?"
         cur = self._sql_MD('primary', sql, (self.pkgKey, ftype))
         return map(lambda x: x['fname'], cur)
