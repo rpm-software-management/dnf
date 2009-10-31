@@ -39,6 +39,17 @@ _yum_repolist()
 }
 
 # arguments:
+#   1 = argument to "yum grouplist" (usually empty (""), or hidden)
+#   2 = current word to be completed
+_yum_grouplist()
+{
+    local IFS=$'\n'
+    # TODO: add -d 0 when http://yum.baseurl.org/ticket/29 is fixed
+    COMPREPLY=( $( compgen -W "$( ${yum:-yum} -C grouplist $1 "$2*" \
+        2>/dev/null | sed -ne 's/^[[:space:]]\+\(.\+\)/\1/p' )" -- "$2" ) )
+}
+
+# arguments:
 #   1 = 1 or 0 to list enabled or disabled plugins
 #   2 = current word to be completed
 _yum_plugins()
@@ -120,10 +131,7 @@ _yum()
             ;;
 
         group*)
-            local IFS=$'\n'
-            # TODO: add -d 0 when http://yum.baseurl.org/ticket/29 is fixed
-            COMPREPLY=( $( compgen -W "$( $yum -C grouplist 2>/dev/null | \
-                sed -ne 's/^[[:space:]]\+\(.\+\)/\1/p' )" -- "$cur" ) )
+            _yum_grouplist "" "$cur"
             return 0
             ;;
 
