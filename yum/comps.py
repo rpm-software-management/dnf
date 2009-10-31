@@ -435,11 +435,10 @@ class Comps(object):
                 match = re.compile(fnmatch.translate(item), flags=re.I).match
 
             for group in self.groups:
-                names = [ group.name, group.groupid ]
-                names.extend(group.translated_name.values())
-                for name in names:                
+                for name in group.name, group.groupid, group.ui_name:
                     if match(name):
                         returns[group.groupid] = group
+                        break
 
         return returns.values()
 
@@ -462,11 +461,10 @@ class Comps(object):
                 match = re.compile(fnmatch.translate(item), flags=re.I).match
 
             for cat in self.categories:
-                names = [ cat.name, cat.categoryid ]
-                names.extend(cat.translated_name.values())
-                for name in names:
+                for name in cat.name, cat.categoryid, cat.ui_name:
                     if match(name):
                         returns[cat.categoryid] = cat
+                        break
 
         return returns.values()
 
