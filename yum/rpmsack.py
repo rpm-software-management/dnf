@@ -106,6 +106,7 @@ class RPMDBPackageSack(PackageSackBase):
         self._simple_pkgtup_list = []
         self._get_pro_cache = {}
         self._get_req_cache  = {}
+        self._loaded_gpg_keys = False
         self.ts = None
         self.auto_close = False # this forces a self.ts.close() after
                                      # most operations so it doesn't leave
@@ -180,6 +181,8 @@ class RPMDBPackageSack(PackageSackBase):
         mi = ts.dbMatch()
         mi.pattern(tag, rpm.RPMMIRE_GLOB, name)
         for hdr in mi:
+            if hdr['name'] == 'gpg-pubkey':
+                continue
             pkg = self._makePackageObject(hdr, mi.instance())
             if not result.has_key(pkg.pkgid):
                 result[pkg.pkgid] = pkg
@@ -203,6 +206,8 @@ class RPMDBPackageSack(PackageSackBase):
         
         mi = ts.dbMatch('basenames', name)
         for hdr in mi:
+            if hdr['name'] == 'gpg-pubkey':
+                continue
             pkg = self._makePackageObject(hdr, mi.instance())
             if not result.has_key(pkg.pkgid):
                 result[pkg.pkgid] = pkg
@@ -226,6 +231,8 @@ class RPMDBPackageSack(PackageSackBase):
         tag = self.DEP_TABLE[prcotype][0]
         mi = ts.dbMatch(tag, misc.to_utf8(name))
         for hdr in mi:
+            if hdr['name'] == 'gpg-pubkey':
+                continue
             po = self._makePackageObject(hdr, mi.instance())
             result[po.pkgid] = po
         del mi
@@ -334,10 +341,23 @@ class RPMDBPackageSack(PackageSackBase):
             self._completely_loaded = patterns is None
 
         pkgobjlist = self._idx2pkg.values()
+        # Remove gpg-pubkeys, as no sane callers expects/likes them...
+        if self._loaded_gpg_keys:
+            pkgobjlist = [pkg for pkg in pkgobjlist if pkg.name != 'gpg-pubkey']
         if patterns:
             pkgobjlist = parsePackages(pkgobjlist, patterns, not ignore_case)
             pkgobjlist = pkgobjlist[0] + pkgobjlist[1]
         return pkgobjlist
+
+    def returnGPGPubkeyPackages(self):
+        """ Return packages of the gpg-pubkeys ... hacky. """
+        ts = self.readOnlyTS()
+        mi = ts.dbMatch('name', 'gpg-pubkey')
+        ret = []
+        for hdr in mi:
+            self._loaded_gpg_keys = True
+            ret.append(self._makePackageObject(hdr, mi.instance()))
+        return ret
 
     def simpleVersion(self, main_only=False, groups={}):
         """ Return a simple version for all installed packages. """
@@ -492,6 +512,8 @@ class RPMDBPackageSack(PackageSackBase):
             self._completely_loaded = True
 
         for hdr in mi:
+            if hdr['name'] == 'gpg-pubkey':
+                continue
             po = self._makePackageObject(hdr, mi.instance())
             for tag in ('arch', 'rel', 'ver', 'epoch'):
                 if loc[tag] is not None and loc[tag] != getattr(po, tag):

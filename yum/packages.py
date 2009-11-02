@@ -410,7 +410,10 @@ class RpmBase(object):
         # find the named entry in pkgobj, do the comparsion
         result = []
         for (n, f, (e, v, r)) in self.returnPrco(prcotype):
-            if reqn != n:
+            if isinstance(reqn, unicode) == isinstance(n, unicode):
+                if reqn != n: # stupid python...
+                    continue
+            elif misc.to_utf8(reqn) != misc.to_utf8(n):
                 continue
 
             if f == '=':
@@ -440,11 +443,17 @@ class RpmBase(object):
         """return changelog entries"""
         return self._changelog
         
-    def returnFileEntries(self, ftype='file'):
-        """return list of files based on type"""
-        # fixme - maybe should die - use direct access to attribute
+    def returnFileEntries(self, ftype='file', primary_only=False):
+        """return list of files based on type, you can pass primary_only=True
+           to limit to those files in the primary repodata"""
         if self.files:
             if self.files.has_key(ftype):
+                if primary_only:
+                    if ftype == 'dir':
+                        match = misc.re_primary_dirname
+                    else:
+                        match = misc.re_primary_filename
+                    return [fn for fn in self.files[ftype] if match(fn)]
                 return self.files[ftype]
         return []
             
@@ -454,11 +463,10 @@ class RpmBase(object):
         return self.files.keys()
 
     def returnPrcoNames(self, prcotype):
-        results = []
-        lists = self.returnPrco(prcotype)
-        for (name, flag, vertup) in lists:
-            results.append(name)
-        return results
+        if not hasattr(self, '_cache_prco_names_' + prcotype):
+            data = [n for (n, f, v) in self.returnPrco(prcotype)]
+            setattr(self, '_cache_prco_names_' + prcotype, data)
+        return getattr(self, '_cache_prco_names_' + prcotype)
 
     def getProvidesNames(self):
         warnings.warn('getProvidesNames() will go away in a future version of Yum.\n',
@@ -466,6 +474,9 @@ class RpmBase(object):
         return self.provides_names
 
     def simpleFiles(self, ftype='files'):
+        warnings.warn('simpleFiles() will go away in a future version of Yum.'
+                      'Use returnFileEntries(primary_only=True)\n',
+                      Errors.YumDeprecationWarning, stacklevel=2)
         if self.files and self.files.has_key(ftype):
             return self.files[ftype]
         return []
@@ -943,27 +954,6 @@ class YumAvailablePackage(PackageObject, RpmBase):
         if mylist: msg += "    </rpm:%s>" % pcotype
         return msg
     
-    def _return_primary_files(self, list_of_files=None):
-        returns = {}
-        if list_of_files is None:
-            list_of_files = self.returnFileEntries('file')
-        for item in list_of_files:
-            if item is None:
-                continue
-            if misc.re_primary_filename(item):
-                returns[item] = 1
-        return returns.keys()
-
-    def _return_primary_dirs(self):
-        returns = {}
-        for item in self.returnFileEntries('dir'):
-            if item is None:
-                continue
-            if misc.re_primary_dirname(item):
-                returns[item] = 1
-        return returns.keys()
-        
-        
     def _dump_files(self, primary=False):
         msg =""
         if not primary:
@@ -971,9 +961,9 @@ class YumAvailablePackage(PackageObject, RpmBase):
             dirs = self.returnFileEntries('dir')
             ghosts = self.returnFileEntries('ghost')
         else:
-            files = self._return_primary_files()
-            ghosts = self._return_primary_files(list_of_files = self.returnFileEntries('ghost'))
-            dirs = self._return_primary_dirs()
+            files = self.returnFileEntries('file', primary_only=True)
+            dirs = self.returnFileEntries('dir', primary_only=True)
+            ghosts = self.returnFileEntries('ghost', primary_only=True)
                 
         for fn in files:
             msg += """    <file>%s</file>\n""" % misc.to_xml(fn)
@@ -1199,10 +1189,10 @@ class YumHeaderPackage(YumAvailablePackage):
 
             self._loadedfiles = True
             
-    def returnFileEntries(self, ftype='file'):
+    def returnFileEntries(self, ftype='file', primary_only=False):
         """return list of files based on type"""
         self._loadFiles()
-        return YumAvailablePackage.returnFileEntries(self,ftype)
+        return YumAvailablePackage.returnFileEntries(self,ftype,primary_only)
     
     def returnChangelog(self):
         # note - if we think it is worth keeping changelogs in memory

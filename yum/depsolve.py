@@ -188,13 +188,14 @@ class Depsolve(object):
         """takes a packageObject, returns 1 or 0 depending on if the package 
            should/can be installed multiple times with different vers
            like kernels and kernel modules, for example"""
-           
-        if po.name in self.conf.installonlypkgs:
+
+        iopkgs = set(self.conf.installonlypkgs)
+        if po.name in iopkgs:
             return True
         
-        provides = po.provides_names
-        if filter (lambda prov: prov in self.conf.installonlypkgs, provides):
-            return True
+        for prov in po.provides_names:
+            if prov in iopkgs:
+                return True
         
         return False
 
@@ -842,7 +843,6 @@ class Depsolve(object):
 
     def _checkInstall(self, txmbr):
         txmbr_reqs = txmbr.po.returnPrco('requires')
-        txmbr_provs = set(txmbr.po.returnPrco('provides'))
 
         # if this is an update, we should check what the old
         # requires were to make things faster
@@ -854,8 +854,6 @@ class Depsolve(object):
         ret = []
         for req in sorted(txmbr_reqs, key=self._sort_req_key):
             if req[0].startswith('rpmlib('):
-                continue
-            if req in txmbr_provs:
                 continue
             if req in oldreqs and self.rpmdb.getProvides(*req):
                 continue
@@ -883,7 +881,7 @@ class Depsolve(object):
         # if this is an update, we should check what the new package
         # provides to make things faster
         newpoprovs = {}
-        for newpo in txmbr.updated_by:
+        for newpo in txmbr.updated_by + txmbr.obsoleted_by:
             for p in newpo.provides:
                 newpoprovs[p] = 1
         ret = []
@@ -898,7 +896,22 @@ class Depsolve(object):
             # FIXME: This is probably the best place to fix the postfix rename
             # problem long term (post .21) ... see compare_providers.
             for pkg, hits in self.tsInfo.getRequires(*prov).iteritems():
-                for rn, rf, rv in hits:
+                for hit in hits:
+                    # See if the update solves the problem...
+                    found = False
+                    for newpo in txmbr.updated_by:
+                        if newpo.checkPrco('provides', hit):
+                            found = True
+                            break
+                    if found: continue
+                    for newpo in txmbr.obsoleted_by:
+                        if newpo.checkPrco('provides', hit):
+                            found = True
+                            break
+                    if found: continue
+
+                    # It doesn't, so see what else might...
+                    rn, rf, rv = hit
                     if not self.tsInfo.getProvides(rn, rf, rv):
                         ret.append( (pkg, self._prco_req_nfv2req(rn, rf, rv)) )
         return ret
