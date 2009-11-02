@@ -1177,12 +1177,6 @@ class Depsolve(object):
                 
                     pkgresults[po] += cpl*2
                 
-                # if a provider is from the same repo as the reqpo
-                # give it a slight nudge
-                if reqpo.repoid == po.repoid:
-                    self.verbose_logger.log(logginglevels.DEBUG_4,
-                        _('common repoid of %s between %s and %s' % (po.repoid, po, reqpo)))
-                    pkgresults[po] += 8
             pkgresults[po] += (len(po.name)*-1)
 
         bestorder = sorted(pkgresults.items(),
