@@ -168,7 +168,7 @@ msgstr "Je potřeba aktualizovat RPM"
 #: ../cli.py:436
 #, python-format
 msgid "Please report this error in %s"
-msgstr "Prosím nahlašte tuto chybu v %s"
+msgstr "Oznamte prosím tuto chybu v %s"
 
 #: ../cli.py:442
 msgid "Running Transaction Test"
@@ -210,7 +210,7 @@ msgstr "Balíček(y) %s%s%s dostupný/é, ale nenainstalovaný/é."
 #: ../cli.py:569 ../cli.py:600 ../cli.py:678
 #, python-format
 msgid "No package %s%s%s available."
-msgstr "Žádné dostupné balíčky %s%s%s."
+msgstr "Balíček %s%s%s není dostupný."
 
 #: ../cli.py:605 ../cli.py:738
 msgid "Package(s) to install"
@@ -332,7 +332,7 @@ msgstr "Varování: skupina %s neexistuje."
 #: ../cli.py:998
 msgid "No packages in any requested group available to install or update"
 msgstr ""
-"V žádné s požadovaných skupin nejsou balíčky k instalaci nebo aktualizaci"
+"V žádné z požadovaných skupin nejsou balíčky k instalaci nebo aktualizaci"
 
 #: ../cli.py:1000
 #, python-format
@@ -395,7 +395,7 @@ msgstr "--color přijímá jeden z: auto, always, never"
 
 #: ../cli.py:1298
 msgid "show this help message and exit"
-msgstr "ukázat tuto nápovedu a skončit"
+msgstr "ukázat tuto nápovědu a skončit"
 
 #: ../cli.py:1302
 msgid "be tolerant of errors"
@@ -459,7 +459,7 @@ msgstr "vyřadit balíček(y) podle jména nebo globálně"
 
 #: ../cli.py:1339
 msgid "disable exclude from main, for a repo or for everything"
-msgstr "zakázat vyřazení z hlavní části pro repozitář nebo pro vše"
+msgstr "zakázat vyřazení z hlavní části, pro repozitář nebo pro vše"
 
 #: ../cli.py:1342
 msgid "enable obsoletes processing during updates"
@@ -726,7 +726,7 @@ msgstr "Další       : "
 
 #: ../output.py:893
 msgid "There was an error calculating total download size"
-msgstr "Pří výpočtu celkové velikosti stahování nastala chyba"
+msgstr "Při výpočtu celkové velikosti stahování nastala chyba"
 
 #: ../output.py:898
 #, python-format
@@ -1060,7 +1060,7 @@ msgstr "--> Zpracování konfliktu: %s je v konfliktu s %s"
 
 #: ../output.py:1577
 msgid "--> Populating transaction set with selected packages. Please wait."
-msgstr "--> Přidávají se do transakce vybrané balíčky. Prosím čekejte."
+msgstr "--> Do transakční sady se přidávají vybrané balíčky. Čekejte prosím."
 
 #: ../output.py:1581
 #, python-format
@@ -1127,15 +1127,15 @@ msgstr ""
 "Povolili jste kontrolu balíčků pomocí GPG klíčů, což je dobrá věc.\n"
 "Bohužel nemáte ale nainstalován žádný veřejný GPG klíč. Musíte stáhnout "
 "klíč\n"
-"pro blíček, který si přejete nainstalovat a přidat jej příkazem.\n"
+"pro balíček, který si přejete nainstalovat a přidat jej příkazem\n"
 "    rpm --import public.gpg.key\n"
 "\n"
 "\n"
 "Jako druhou možnost můžete uvést URL ke klíči, který chcete použít\n"
-"pro repozitář ve volbě 'gpgkey' v nastavení repozitáře a yum\n"
+"pro repozitář ve volbě 'gpgkey' v nastavení repozitáře, a yum\n"
 "jej nainstaluje.\n"
 "\n"
-"Pro více informací kontaktujte vašeho distributora nebo správce balíčku.\n"
+"Více informací získáte u svého distributora nebo správce balíčku.\n"
 
 #: ../yumcommands.py:69
 #, python-format
@@ -1281,7 +1281,7 @@ msgstr "Vytváří se skladištní soubory pro všechna metadata "
 
 #: ../yumcommands.py:498
 msgid "This may take a while depending on the speed of this computer"
-msgstr "Může to chvíli trvat v závislosti na rychosti tohoto počítače"
+msgstr "Může to chvíli trvat v závislosti na rychlosti tohoto počítače"
 
 #: ../yumcommands.py:519
 msgid "Metadata Cache Created"
@@ -1755,12 +1755,12 @@ msgstr ""
 #: ../yum/depsolve.py:498
 #, python-format
 msgid "Potential resolving package %s has newer instance in ts."
-msgstr "Balíček %s, který může být řešení má v ts novější verzi."
+msgstr "Balíček %s, který může být řešení, má v ts novější verzi."
 
 #: ../yum/depsolve.py:509
 #, python-format
 msgid "Potential resolving package %s has newer instance installed."
-msgstr "Balíček %s, který může být řešení je nainstalován v novější verzi."
+msgstr "Balíček %s, který může být řešení, je nainstalován v novější verzi."
 
 #: ../yum/depsolve.py:517 ../yum/depsolve.py:563
 #, python-format
@@ -1863,7 +1863,7 @@ msgstr "Repozitáři %r chybí jméno v konfiguraci, používá se id"
 
 #: ../yum/__init__.py:450
 msgid "plugins already initialised"
-msgstr "zásuvný modul již inicializován"
+msgstr "zásuvný modul je již inicializován"
 
 #: ../yum/__init__.py:457
 msgid "doRpmDBSetup() will go away in a future version of Yum.\n"
@@ -1892,7 +1892,7 @@ msgstr "objekt repozitáře pro repo %s postrádá metodu _resetSack\n"
 
 #: ../yum/__init__.py:585
 msgid "therefore this repo cannot be reset.\n"
-msgstr "proto nemůže toto repo být resetován.\n"
+msgstr "proto nemůže toto repo být resetováno.\n"
 
 #: ../yum/__init__.py:590
 msgid "doUpdateSetup() will go away in a future version of Yum.\n"
@@ -1931,7 +1931,7 @@ msgstr "Importuji informace z dodatečného seznamu souborů"
 #: ../yum/__init__.py:777
 #, python-format
 msgid "The program %s%s%s is found in the yum-utils package."
-msgstr "Program %s %s %s byl nalezen v balíčku yum-utils."
+msgstr "Program %s%s%s byl nalezen v balíčku yum-utils."
 
 #: ../yum/__init__.py:785
 msgid ""
@@ -1980,20 +1980,20 @@ msgstr "Selhalo odstranění transakčního souboru %s."
 #: ../yum/__init__.py:1130
 #, python-format
 msgid "%s was supposed to be installed but is not!"
-msgstr "%s mělo být nainstalováno ale neni!"
+msgstr "%s mělo být nainstalováno, ale není!"
 
 #. maybe a file log here, too
 #. but raising an exception is not going to do any good
 #: ../yum/__init__.py:1169
 #, python-format
 msgid "%s was supposed to be removed but is not!"
-msgstr "%s mělo být odstraněno ale nenneni"
+msgstr "%s mělo být odstraněno, ale není!"
 
 #. Whoa. What the heck happened?
 #: ../yum/__init__.py:1289
 #, python-format
 msgid "Unable to check if PID %s is active"
-msgstr "Nedá se zkontrolovat zda je PID %s aktivní."
+msgstr "Nedá se zkontrolovat, zda je PID %s aktivní."
 
 #. Another copy seems to be running.
 #: ../yum/__init__.py:1293
@@ -2080,7 +2080,7 @@ msgstr "Nemohu odstranit %s"
 #: ../yum/__init__.py:1676
 #, python-format
 msgid "%s removed"
-msgstr "%s odstraňen"
+msgstr "%s odstraněn"
 
 #: ../yum/__init__.py:1712
 #, python-format
@@ -2112,8 +2112,8 @@ msgid ""
 "searchPackages() will go away in a future version of "
 "Yum.                      Use searchGenerator() instead. \n"
 msgstr ""
-"searchPackages() bude odstraněno v příští verzi Yumu.                      "
-"Používejte místo ní searchGenerator(). \n"
+"searchPackages() bude odstraněn v příští verzi Yumu.                      "
+"Používejte místo něj searchGenerator(). \n"
 
 #: ../yum/__init__.py:2065
 #, python-format
@@ -2162,7 +2162,7 @@ msgstr "Přidává se balíček %s pro skupinu %s"
 #: ../yum/__init__.py:2283
 #, python-format
 msgid "No package named %s available to be installed"
-msgstr "Neexistuje žádný balíček pojmenovaný %s dostupný k instalaci"
+msgstr "Žádný balíček pojmenovaný %s není dostupný pro instalaci"
 
 #: ../yum/__init__.py:2380
 #, python-format
@@ -2205,7 +2205,7 @@ msgstr "Nenalezena shoda pro argument: %s"
 #: ../yum/__init__.py:2798
 #, python-format
 msgid "Package %s installed and not available"
-msgstr "Balíček %s nainstalován ale není dostupný"
+msgstr "Balíček %s je nainstalován, ale není dostupný"
 
 #: ../yum/__init__.py:2801
 msgid "No package(s) available to install"
@@ -2214,7 +2214,7 @@ msgstr "Žádný balíček/ky dostupný pro instalaci"
 #: ../yum/__init__.py:2813
 #, python-format
 msgid "Package: %s  - already in transaction set"
-msgstr "Balíček: %s - již je v transakci"
+msgstr "Balíček: %s - již je v transakční sadě"
 
 #: ../yum/__init__.py:2839
 #, python-format
@@ -2229,7 +2229,7 @@ msgstr "Balíček %s je zastaralý balíčkem %s, zkouší se místo něj instal
 #: ../yum/__init__.py:2850
 #, python-format
 msgid "Package %s already installed and latest version"
-msgstr "Balíček %s již nainstalován a v poslední verzi"
+msgstr "Balíček %s je již nainstalován a v poslední verzi"
 
 #: ../yum/__init__.py:2864
 #, python-format
@@ -2313,7 +2313,7 @@ msgstr "Označuje se %s jako aktualizace %s"
 #: ../yum/__init__.py:3317
 #, python-format
 msgid "%s: does not update installed package."
-msgstr "%s: není aktualizací instalovaného balíčku"
+msgstr "%s: není aktualizací instalovaného balíčku."
 
 #: ../yum/__init__.py:3379
 msgid "Problem in reinstall: no package matched to remove"
@@ -2355,7 +2355,7 @@ msgstr "Získává se GPG klíč pro %s"
 
 #: ../yum/__init__.py:3724
 msgid "GPG key retrieval failed: "
-msgstr "Získání GPG klíč selhalo: "
+msgstr "Získání GPG klíče selhalo: "
 
 #: ../yum/__init__.py:3735
 #, python-format
@@ -2375,7 +2375,7 @@ msgstr "Importuje se GPG klíč 0x%s \"%s\" z %s"
 
 #: ../yum/__init__.py:3789
 msgid "Not installing key"
-msgstr "Neinstaluji klíč"
+msgstr "Neinstaluje se klíč"
 
 #: ../yum/__init__.py:3795
 #, python-format
@@ -2426,7 +2426,7 @@ msgstr "Při stahování balíčků došlo k chybě."
 #: ../yum/__init__.py:4028
 #, python-format
 msgid "Please report this error at %s"
-msgstr "Prosím ohlaste tuto chybu na %s"
+msgstr "Oznamte prosím tuto chybu na %s"
 
 #: ../yum/__init__.py:4052
 msgid "Test Transaction Errors: "
@@ -2506,7 +2506,7 @@ msgstr "Pro RPM %s selhala kontrola md5"
 
 #: ../rpmUtils/oldUtils.py:151
 msgid "Could not open RPM database for reading. Perhaps it is already in use?"
-msgstr "Nelze otevřít databázi RPM pro čtení. Možná je jíž používána?"
+msgstr "Nelze otevřít databázi RPM pro čtení. Možná je již používána?"
 
 #: ../rpmUtils/oldUtils.py:183
 msgid "Got an empty Header, something has gone wrong"
