@@ -434,8 +434,19 @@ class Comps(object):
             else:
                 match = re.compile(fnmatch.translate(item), flags=re.I).match
 
+            done = False
             for group in self.groups:
                 for name in group.name, group.groupid, group.ui_name:
+                    if match(name):
+                        done = True
+                        returns[group.groupid] = group
+                        break
+            if done:
+                continue
+
+            # If we didn't match to anything in the current locale, try others
+            for group in self.groups:
+                for name in group.translated_name.values():
                     if match(name):
                         returns[group.groupid] = group
                         break
@@ -460,8 +471,18 @@ class Comps(object):
             else:
                 match = re.compile(fnmatch.translate(item), flags=re.I).match
 
+            done = False
             for cat in self.categories:
                 for name in cat.name, cat.categoryid, cat.ui_name:
+                    if match(name):
+                        done = True
+                        returns[cat.categoryid] = cat
+                        break
+            if done:
+                continue
+
+            for cat in self.categories:
+                for name in cat.translated_name.values():
                     if match(name):
                         returns[cat.categoryid] = cat
                         break
