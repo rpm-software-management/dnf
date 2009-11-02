@@ -646,9 +646,9 @@ def bunzipFile(source,dest):
     destination.close()
     s_fn.close()
 
-def get_running_kernel_version_release(ts):
-    """This takes the output of uname and figures out the (version, release)
-    tuple for the running kernel."""
+def get_running_kernel_pkgtup(ts):
+    """This takes the output of uname and figures out the pkgtup of the running
+       kernel (name, arch, epoch, version, release)."""
     ver = os.uname()[2]
 
     # we glob for the file that MIGHT have this kernel
@@ -657,10 +657,20 @@ def get_running_kernel_version_release(ts):
     for fn in fns:
         mi = ts.dbMatch('basenames', fn)
         for h in mi:
-            return (h['version'], h['release'])
+            e = h['epoch']
+            if h['epoch'] is None:
+                e = '0'
+            return (h['name'], h['arch'], e, h['version'], h['release'])
     
-    return (None, None)
+    return (None, None, None, None, None)
  
+def get_running_kernel_version_release(ts):
+    """This takes the output of uname and figures out the (version, release)
+    tuple for the running kernel."""
+    pkgtup = get_running_kernel_pkgtup(ts)
+    if pkgtup[0] is not None:
+        (pkgtup[3], pkgtup[4])
+    return (None, None)
 
 def find_unfinished_transactions(yumlibpath='/var/lib/yum'):
     """returns a list of the timestamps from the filenames of the unfinished 
