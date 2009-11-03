@@ -34,7 +34,7 @@ _yum_repolist()
     COMPREPLY=( "${COMPREPLY[@]}"
         $( compgen -W "$( ${yum:-yum} --noplugins -C repolist $1 \
             2>/dev/null | \
-            sed -ne '/^repo\(\s\+id\|list:\)/d' -e 's/[[:space:]].*//p' )" \
+            sed -ne '/^repo\(\s\{1,\}id\|list:\)/d' -e 's/[[:space:]].*//p' )" \
             -- "$2" ) )
 }
 
@@ -46,7 +46,8 @@ _yum_grouplist()
     local IFS=$'\n'
     # TODO: add -d 0 when http://yum.baseurl.org/ticket/29 is fixed
     COMPREPLY=( $( compgen -W "$( ${yum:-yum} -C grouplist $1 "$2*" \
-        2>/dev/null | sed -ne 's/^[[:space:]]\+\(.\+\)/\1/p' )" -- "$2" ) )
+        2>/dev/null | sed -ne 's/^[[:space:]]\{1,\}\(.\{1,\}\)/\1/p' )" \
+        -- "$2" ) )
 }
 
 # arguments:
@@ -59,7 +60,7 @@ _yum_plugins()
     COMPREPLY=( "${COMPREPLY[@]}"
         $( compgen -W '$( command grep -il "^\s*enabled\s*=\s*$val" \
             /etc/yum/pluginconf.d/*.conf 2>/dev/null \
-            | sed -ne "s|^.*/\([^/]\+\)\.conf$|\1|p" )' -- "$2" ) )
+            | sed -ne "s|^.*/\([^/]\{1,\}\)\.conf$|\1|p" )' -- "$2" ) )
 }
 
 # arguments:
@@ -151,7 +152,7 @@ _yum()
                 undo|redo)
                     COMPREPLY=( $( compgen -W "$( $yum -d 0 -C history \
                         2>/dev/null | \
-                        sed -ne 's/^[[:space:]]*\([0-9]\+\).*/\1/p' )" \
+                        sed -ne 's/^[[:space:]]*\([0-9]\{1,\}\).*/\1/p' )" \
                         -- "$cur" ) )
                     ;;
             esac
