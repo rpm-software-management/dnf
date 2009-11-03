@@ -338,7 +338,7 @@ class RPMDBPackageSack(PackageSackBase):
                 return True
             if repat.match("%(name)s-%(version)s-%(release)s" % hdr):
                 return True
-            if repat.match("%(epoch)s:%(name)s-%(version)s-%(release)s.%(arch)s"
+            if repat.match(epoch + ":%(name)s-%(version)s-%(release)s.%(arch)s"
                            % hdr):
                 return True
             if repat.match("%(name)s-%(epoch)s:%(version)s-%(release)s.%(arch)s"
