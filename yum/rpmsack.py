@@ -300,17 +300,34 @@ class RPMDBPackageSack(PackageSackBase):
             return None
         ret = []
         for pat in patterns:
+            if not pat:
+                continue
+            qpat = pat[0]
+            if qpat in ('?', '*'):
+                qpat = None
             if ignore_case:
-                ret.append(re.compile(fnmatch.translate(pat), re.I))
+                if qpat is not None:
+                    qpat = qpat.lower()
+                ret.append((qpat, re.compile(fnmatch.translate(pat), re.I)))
             else:
-                ret.append(re.compile(fnmatch.translate(pat)))
+                ret.append((qpat, re.compile(fnmatch.translate(pat))))
         return ret
     @staticmethod
-    def _match_repattern(repatterns, hdr):
+    def _match_repattern(repatterns, hdr, ignore_case):
         if repatterns is None:
             return True
 
-        for repat in repatterns:
+        for qpat, repat in repatterns:
+            epoch = hdr['epoch']
+            if epoch is None:
+                epoch = '0'
+            else:
+                epoch = str(epoch)
+            qname = hdr['name'][0]
+            if ignore_case:
+                qname = qname.lower()
+            if qpat is not None and qpat != qname and qpat != epoch[0]:
+                continue
             if repat.match(hdr['name']):
                 return True
             if repat.match("%(name)s-%(version)s-%(release)s.%(arch)s" % hdr):
@@ -336,7 +353,7 @@ class RPMDBPackageSack(PackageSackBase):
         if not self._completely_loaded:
             rpats = self._compile_patterns(patterns, ignore_case)
             for hdr, idx in self._all_packages():
-                if self._match_repattern(rpats, hdr):
+                if self._match_repattern(rpats, hdr, ignore_case):
                     self._makePackageObject(hdr, idx)
             self._completely_loaded = patterns is None
 
