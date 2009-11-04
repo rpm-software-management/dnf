@@ -420,7 +420,7 @@ class RPMTransaction:
             try:
                 fd = os.open(rpmloc, os.O_RDONLY)
             except OSError, e:
-                self.displaylog.errorlog("Error: Cannot open file %s: %s" % (rpmloc, e))
+                self.display.errorlog("Error: Cannot open file %s: %s" % (rpmloc, e))
             else:
                 self.filehandles[handle]=fd
                 if self.trans_running:
