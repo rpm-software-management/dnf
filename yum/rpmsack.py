@@ -117,6 +117,7 @@ class RPMDBPackageSack(PackageSackBase):
             cachedir = misc.getCacheDir()
         self._cachedir = cachedir + "/rpmdb-cache/"
         self._have_cached_rpmdbv_data = None
+        self._use_cached_file_requires = True
         self.ts = None
         self.releasever = releasever
         self.auto_close = False # this forces a self.ts.close() after
@@ -387,6 +388,141 @@ class RPMDBPackageSack(PackageSackBase):
             self._loaded_gpg_keys = True
             ret.append(self._makePackageObject(hdr, mi.instance()))
         return ret
+
+    def _read_file_requires(self):
+        def _read_str(fo):
+            return fo.readline()[:-1]
+
+        assert self.__cache_rpmdb__
+        if not os.path.exists(self._cachedir + '/file-requires'):
+            return None, None
+
+        rpmdbv = self.simpleVersion(main_only=True)[0]
+        fo = open(self._cachedir + '/file-requires')
+        frpmdbv = fo.readline()
+        if not frpmdbv or rpmdbv != frpmdbv[:-1]:
+            return None, None
+
+        iFR = {}
+        iFP = {}
+        try:
+            # Read the requires...
+            pkgtups_num = int(_read_str(fo))
+            while pkgtups_num > 0:
+                pkgtups_num -= 1
+
+                # n, a, e, v, r
+                pkgtup = (_read_str(fo), _read_str(fo),
+                          _read_str(fo), _read_str(fo), _read_str(fo))
+                int(pkgtup[2]) # Check epoch is valid
+
+                files_num = int(_read_str(fo))
+                while files_num > 0:
+                    files_num -= 1
+
+                    fname = _read_str(fo)
+
+                    iFR.setdefault(pkgtup, []).append(fname)
+
+            # Read the provides...
+            files_num = int(_read_str(fo))
+            while files_num > 0:
+                files_num -= 1
+                fname = _read_str(fo)
+                pkgtups_num = int(_read_str(fo))
+                while pkgtups_num > 0:
+                    pkgtups_num -= 1
+
+                    # n, a, e, v, r
+                    pkgtup = (_read_str(fo), _read_str(fo),
+                              _read_str(fo), _read_str(fo), _read_str(fo))
+                    int(pkgtup[2]) # Check epoch is valid
+
+                    iFP.setdefault(fname, []).append(pkgtup)
+
+            if fo.readline() != '': # Should be EOF
+                return None, None
+        except ValueError:
+            return None, None
+
+        return iFR, iFP
+
+    def _get_file_requires(self):
+        print "JDBG:", 'BEG: _all_file_requires', self._use_cached_file_requires
+        if self.__cache_rpmdb__ and self._use_cached_file_requires:
+            iFR, iFP = self._read_file_requires()
+            if iFR is not None:
+                print "JDBG:", 'CACHE'
+                return iFR, set(), iFP
+
+        print "JDBG:", '** no CACHE'
+        installedFileRequires = {}
+        installedUnresolvedFileRequires = set()
+        resolved = set()
+        for pkg in self.returnPackages():
+            for name, flag, evr in pkg.requires:
+                if not name.startswith('/'):
+                    continue
+                installedFileRequires.setdefault(pkg.pkgtup, []).append(name)
+                if name not in resolved:
+                    dep = self.getProvides(name, flag, evr)
+                    resolved.add(name)
+                    if not dep:
+                        installedUnresolvedFileRequires.add(name)
+
+        if self.__cache_rpmdb__:
+            self._write_file_requires(installedFileRequires,
+                                      installedUnresolvedFileRequires,
+                                      {}, [])
+            self._rename_file_requires(self.simpleVersion(main_only=True)[0])
+        return installedFileRequires, installedUnresolvedFileRequires, {}
+
+    def _write_file_requires(self, installedFileRequires,
+                             installedUnresolvedFileRequires,
+                             installedFileProvides,
+                             problems):
+        if not self.__cache_rpmdb__:
+            return
+
+        if not self._use_cached_file_requires:
+            return
+        if installedUnresolvedFileRequires or problems:
+            return
+        # FIXME: ... real tmp. file
+        fo = open(self._cachedir + '/file-requires.un.tmp', 'w')
+        fo.write("%u\n" % len(installedFileRequires))
+        for pkgtup in sorted(installedFileRequires):
+            for var in pkgtup:
+                fo.write("%s\n" % var)
+            filenames = set(installedFileRequires[pkgtup])
+            fo.write("%u\n" % len(filenames))
+            for fname in sorted(filenames):
+                fo.write("%s\n" % fname)
+
+        fo.write("%u\n" % len(installedFileProvides))
+        for fname in sorted(installedFileProvides):
+            fo.write("%s\n" % fname)
+
+            pkgtups = set(installedFileProvides[fname])
+            fo.write("%u\n" % len(pkgtups))
+            for pkgtup in sorted(pkgtups):
+                for var in pkgtup:
+                    fo.write("%s\n" % var)
+        fo.close()
+
+    def _rename_file_requires(self, rpmdbversion):
+        if not os.path.exists(self._cachedir + '/file-requires.un.tmp'):
+            return
+
+        rfo = open(self._cachedir + '/file-requires.un.tmp')
+        wfo = open(self._cachedir + '/file-requires.tmp', 'w')
+        wfo.write("%s\n" % rpmdbversion)
+        wfo.write(rfo.read())
+        rfo.close()
+        wfo.close()
+        os.rename(self._cachedir + '/file-requires.tmp',
+                  self._cachedir + '/file-requires')
+        os.unlink(self._cachedir + '/file-requires.un.tmp')
 
     def _get_cached_simpleVersion_main(self):
         """ Return the cached string of the main rpmdbv. """

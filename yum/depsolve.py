@@ -923,26 +923,21 @@ class Depsolve(object):
 
         # generate list of file requirement in rpmdb
         if self.installedFileRequires is None:
-            self.installedFileRequires = {}
-            self.installedUnresolvedFileRequires = set()
-            resolved = set()
-            for pkg in self.rpmdb.returnPackages():
-                for name, flag, evr in pkg.requires:
-                    if not name.startswith('/'):
-                        continue
-                    self.installedFileRequires.setdefault(pkg, []).append(name)
-                    if name not in resolved:
-                        dep = self.rpmdb.getProvides(name, flag, evr)
-                        resolved.add(name)
-                        if not dep:
-                            self.installedUnresolvedFileRequires.add(name)
+            self.installedFileRequires, \
+              self.installedUnresolvedFileRequires, \
+              self.installedFileProviders = self.rpmdb._get_file_requires()
 
         # get file requirements from packages not deleted
-        for po, files in self.installedFileRequires.iteritems():
-            if not self._tsInfo.getMembersWithState(po.pkgtup, output_states=TS_REMOVE_STATES):
+        todel = []
+        for pkgtup, files in self.installedFileRequires.iteritems():
+            if self._tsInfo.getMembersWithState(pkgtup, output_states=TS_REMOVE_STATES):
+                todel.append(pkgtup)
+            else:
                 fileRequires.update(files)
                 for filename in files:
-                    reverselookup.setdefault(filename, []).append(po)
+                    reverselookup.setdefault(filename, []).append(pkgtup)
+        for pkgtup in todel:
+            del self.installedFileRequires[pkgtup]
 
         fileRequires -= self.installedUnresolvedFileRequires
 
@@ -950,6 +945,8 @@ class Depsolve(object):
         for txmbr in self._tsInfo.getMembersWithState(output_states=TS_INSTALL_STATES):
             for name, flag, evr in txmbr.po.requires:
                 if name.startswith('/'):
+                    pt = txmbr.po.pkgtup
+                    self.installedFileRequires.setdefault(pt, []).append(name)
                     # check if file requires was already unresolved in update
                     if name in self.installedUnresolvedFileRequires:
                         already_broken = False
@@ -960,13 +957,49 @@ class Depsolve(object):
                         if already_broken:
                             continue
                     fileRequires.add(name)
-                    reverselookup.setdefault(name, []).append(txmbr.po)
+                    reverselookup.setdefault(name, []).append(txmbr.po.pkgtup)
+
+        todel = []
+        for fname in self.installedFileProviders:
+            niFP_fname = []
+            for pkgtup in self.installedFileProviders[fname]:
+                if self._tsInfo.getMembersWithState(pkgtup, output_states=TS_REMOVE_STATES):
+                    continue
+                niFP_fname.append(pkgtup)
+
+            if not niFP_fname:
+                todel.append(fname)
+                continue
+
+            self.installedFileProviders[fname] = niFP_fname
+        for fname in todel:
+            del self.installedFileProviders[fname]
 
         # check the file requires
         for filename in fileRequires:
-            if not self.tsInfo.getOldProvides(filename) and not self.tsInfo.getNewProvides(filename):
-                for po in reverselookup[filename]:
-                    ret.append( (po, (filename, 0, '')) )
+            nprov = self.tsInfo.getNewProvides(filename)
+            if nprov:
+                pkgtups = [po.pkgtup for po in nprov]
+                self.installedFileProviders[filename] = pkgtups
+                continue
+
+            if filename in self.installedFileProviders:
+                continue 
+
+            oprov = self.tsInfo.getOldProvides(filename)
+            if oprov:
+                pkgtups = [po.pkgtup for po in oprov]
+                self.installedFileProviders[filename] = pkgtups
+                continue
+
+            for pkgtup in reverselookup[filename]:
+                po = self.getInstalledPackageObject(pkgtup)
+                ret.append( (po, (filename, 0, '')) )
+
+        self.rpmdb._write_file_requires(self.installedFileRequires, 
+                                        self.installedUnresolvedFileRequires,
+                                        self.installedFileProviders,
+                                        ret)
 
         return ret
 
