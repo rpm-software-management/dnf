@@ -498,7 +498,9 @@ class TransactionData:
         """return dict { packages -> list of matching provides }
         searches in packages to be installed"""
         result = { }
-        if self._inSack is None:
+        if not self.pkgSackPackages:
+            pass
+        elif self._inSack is None:
             for pkg, hits in self.pkgSack.getProvides(name, flag, version).iteritems():
                 if self.getMembersWithState(pkg.pkgtup, TS_INSTALL_STATES):
                     result[pkg] = hits
@@ -527,7 +529,9 @@ class TransactionData:
         """return dict { packages -> list of matching provides }
         searches in packages to be installed"""
         result = { }
-        if self._inSack is None:
+        if not self.pkgSackPackages:
+            pass
+        elif self._inSack is None:
             for pkg, hits in self.pkgSack.getRequires(name, flag, version).iteritems():
                 if self.getMembersWithState(pkg.pkgtup, TS_INSTALL_STATES):
                     result[pkg] = hits
