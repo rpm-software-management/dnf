@@ -100,7 +100,7 @@ class RPMDBPackageSack(PackageSackBase):
                            rpm.RPMTAG_OBSOLETEFLAGS)
             }
 
-    def __init__(self, root='/', releasever=None):
+    def __init__(self, root='/', releasever=None, cachedir=None):
         self.root = root
         self._idx2pkg = {}
         self._name2pkg = {}
@@ -110,6 +110,9 @@ class RPMDBPackageSack(PackageSackBase):
         self._get_pro_cache = {}
         self._get_req_cache  = {}
         self._loaded_gpg_keys = False
+        if cachedir is None:
+            cachedir = misc.getCacheDir()
+        self._cachedir = cachedir + "/rpmdb-cache/"
         self.ts = None
         self.releasever = releasever
         self.auto_close = False # this forces a self.ts.close() after
