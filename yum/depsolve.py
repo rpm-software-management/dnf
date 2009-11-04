@@ -1003,10 +1003,9 @@ class Depsolve(object):
 
         return ret
 
-
     def _checkConflicts(self):
         ret = [ ]
-        for po in self.rpmdb.returnPackages():
+        for po in self.rpmdb.returnConflictPackages():
             if self.tsInfo.getMembersWithState(po.pkgtup, output_states=TS_REMOVE_STATES):
                 continue
             for conflict in po.returnPrco('conflicts'):

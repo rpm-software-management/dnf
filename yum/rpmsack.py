@@ -118,6 +118,7 @@ class RPMDBPackageSack(PackageSackBase):
         self._cachedir = cachedir + "/rpmdb-cache/"
         self._have_cached_rpmdbv_data = None
         self._use_cached_file_requires = True
+        self._cached_conflicts_data = None
         self.ts = None
         self.releasever = releasever
         self.auto_close = False # this forces a self.ts.close() after
@@ -165,6 +166,7 @@ class RPMDBPackageSack(PackageSackBase):
             'obsoletes' : { },
             }
         self._have_cached_rpmdbv_data = None
+        self._cached_conflicts_data = None
 
     def readOnlyTS(self):
         if not self.ts:
@@ -378,6 +380,76 @@ class RPMDBPackageSack(PackageSackBase):
             pkgobjlist = parsePackages(pkgobjlist, patterns, not ignore_case)
             pkgobjlist = pkgobjlist[0] + pkgobjlist[1]
         return pkgobjlist
+
+    def _uncached_returnConflictPackages(self):
+        if self._cached_conflicts_data is None:
+            ret = []
+            for pkg in self.returnPackages():
+                if len(pkg.conflicts):
+                    ret.append(pkg)
+            self._cached_conflicts_data = ret
+        return self._cached_conflicts_data
+
+    def _write_conflicts(self, pkgs):
+        if not self.__cache_rpmdb__:
+            return
+
+        conflicts_fname = self._cachedir + '/conflicts'
+        rpmdbv = self.simpleVersion(main_only=True)[0]
+        fo = open(conflicts_fname + '.tmp', 'w')
+        fo.write("%s\n" % rpmdbv)
+        fo.write("%u\n" % len(pkgs))
+        for pkg in sorted(pkgs):
+            for var in pkg.pkgtup:
+                fo.write("%s\n" % var)
+        fo.close()
+        os.rename(conflicts_fname + '.tmp', conflicts_fname)
+
+    def _read_conflicts(self):
+        if not self.__cache_rpmdb__:
+            return None
+
+        def _read_str(fo):
+            return fo.readline()[:-1]
+
+        conflict_fname = self._cachedir + '/conflicts'
+        if not os.path.exists(conflict_fname):
+            return None
+
+        fo = open(conflict_fname)
+        frpmdbv = fo.readline()
+        rpmdbv = self.simpleVersion(main_only=True)[0]
+        if not frpmdbv or rpmdbv != frpmdbv[:-1]:
+            return None
+
+        ret = []
+        try:
+            # Read the conflicts...
+            pkgtups_num = int(_read_str(fo))
+            while pkgtups_num > 0:
+                pkgtups_num -= 1
+
+                # n, a, e, v, r
+                pkgtup = (_read_str(fo), _read_str(fo),
+                          _read_str(fo), _read_str(fo), _read_str(fo))
+                int(pkgtup[2]) # Check epoch is valid
+                ret.extend(self.searchPkgTuple(pkgtup))
+            if fo.readline() != '': # Should be EOF
+                return None
+        except ValueError:
+            return None
+
+        self._cached_conflicts_data = ret
+        return self._cached_conflicts_data
+
+    def returnConflictPackages(self):
+        """ Return a list of packages that have conflicts. """
+        pkgs = self._read_conflicts()
+        if pkgs is None:
+            pkgs = self._uncached_returnConflictPackages()
+            self._write_conflicts(pkgs)
+
+        return pkgs
 
     def returnGPGPubkeyPackages(self):
         """ Return packages of the gpg-pubkeys ... hacky. """

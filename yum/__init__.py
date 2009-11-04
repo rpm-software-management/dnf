@@ -1217,6 +1217,7 @@ class YumBase(depsolve.Depsolve):
             if resultobject is not None:
                 ret = resultobject.return_code
             self.history.end(self.rpmdb.simpleVersion(main_only=True)[0], ret)
+        self.rpmdb.returnConflictPackages() # Cache it for next time :o
         self.rpmdb.dropCachedData()
 
     def costExcludePackages(self):
