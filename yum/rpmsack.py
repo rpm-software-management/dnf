@@ -100,6 +100,9 @@ class RPMDBPackageSack(PackageSackBase):
                            rpm.RPMTAG_OBSOLETEFLAGS)
             }
 
+    # Do we want to cache rpmdb data in a file, for later use?
+    __cache_rpmdb__ = True
+
     def __init__(self, root='/', releasever=None, cachedir=None):
         self.root = root
         self._idx2pkg = {}
@@ -113,6 +116,7 @@ class RPMDBPackageSack(PackageSackBase):
         if cachedir is None:
             cachedir = misc.getCacheDir()
         self._cachedir = cachedir + "/rpmdb-cache/"
+        self._have_cached_rpmdbv_data = None
         self.ts = None
         self.releasever = releasever
         self.auto_close = False # this forces a self.ts.close() after
@@ -159,6 +163,7 @@ class RPMDBPackageSack(PackageSackBase):
             'conflicts' : { },
             'obsoletes' : { },
             }
+        self._have_cached_rpmdbv_data = None
 
     def readOnlyTS(self):
         if not self.ts:
@@ -383,6 +388,51 @@ class RPMDBPackageSack(PackageSackBase):
             ret.append(self._makePackageObject(hdr, mi.instance()))
         return ret
 
+    def _get_cached_simpleVersion_main(self):
+        """ Return the cached string of the main rpmdbv. """
+        if self._have_cached_rpmdbv_data is not None:
+            return self._have_cached_rpmdbv_data
+
+        if not self.__cache_rpmdb__:
+            return None
+
+        #  This test is "obvious" and the only thing to come out of:
+        # http://lists.rpm.org/pipermail/rpm-maint/2007-November/001719.html
+        # ...if anything gets implemented, we should change.
+        rpmdbvfname = self._cachedir + "/version"
+        rpmdbfname  = "/var/lib/rpm/Packages"
+
+        if os.path.exists(rpmdbvfname) and os.path.exists(rpmdbfname):
+            # See if rpmdb has "changed" ...
+            nmtime = os.path.getmtime(rpmdbvfname)
+            omtime = os.path.getmtime(rpmdbfname)
+            if omtime <= nmtime:
+                rpmdbv = open(rpmdbvfname).readline()[:-1]
+                self._have_cached_rpmdbv_data  = rpmdbv
+        return self._have_cached_rpmdbv_data
+
+    def _put_cached_simpleVersion_main(self, rpmdbv):
+        self._have_cached_rpmdbv_data  = str(rpmdbv)
+
+        if not self.__cache_rpmdb__:
+            return
+
+        rpmdbvfname = self._cachedir + "/version"
+        if not os.access(self._cachedir, os.W_OK):
+            if os.path.exists(self._cachedir):
+                return
+
+            try:
+                os.makedirs(self._cachedir)
+            except (IOError, OSError), e:
+                return
+
+        fo = open(rpmdbvfname + ".tmp", "w")
+        fo.write(self._have_cached_rpmdbv_data)
+        fo.write('\n')
+        fo.close()
+        os.rename(rpmdbvfname + ".tmp", rpmdbvfname)
+
     def simpleVersion(self, main_only=False, groups={}):
         """ Return a simple version for all installed packages. """
         def _up_revs(irepos, repoid, rev, pkg, csum):
@@ -392,6 +442,11 @@ class RPMDBPackageSack(PackageSackBase):
             if rev is not None:
                 rpsv = irevs.setdefault(rev, PackageSackVersion())
                 rpsv.update(pkg, csum)
+
+        if main_only and not groups:
+            rpmdbv = self._get_cached_simpleVersion_main()
+            if rpmdbv is not None:
+                return [rpmdbv, {}]
 
         main = PackageSackVersion()
         irepos = {}
@@ -425,6 +480,9 @@ class RPMDBPackageSack(PackageSackBase):
             for group in groups:
                 if pkg.name in groups[group]:
                     _up_revs(irepos_grps[group], repoid, rev, pkg, csum)
+
+        if self._have_cached_rpmdbv_data is None:
+            self._put_cached_simpleVersion_main(main)
 
         if groups:
             return [main, irepos, main_grps, irepos_grps]
