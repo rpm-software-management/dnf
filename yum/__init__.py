@@ -1107,6 +1107,13 @@ class YumBase(depsolve.Depsolve):
         if self.conf.history_record:
             self.history.beg(rpmdbv, using_pkgs, list(self.tsInfo))
 
+        #  Just before we update the transaction, update what we think the
+        # rpmdb will look like. This needs to be done before the run, so that if
+        # "something" happens and the rpmdb is different from what we think it
+        # will be we store what we thought, not what happened (so it'll be an
+        # invalid cache).
+        self.rpmdb.transactionResultVersion(self.tsInfo.futureRpmDBVersion())
+
         errors = self.ts.run(cb.callback, '')
         # ts.run() exit codes are, hmm, "creative": None means all ok, empty 
         # list means some errors happened in the transaction and non-empty 
@@ -1217,7 +1224,6 @@ class YumBase(depsolve.Depsolve):
             if resultobject is not None:
                 ret = resultobject.return_code
             self.history.end(self.rpmdb.simpleVersion(main_only=True)[0], ret)
-        self.rpmdb.returnConflictPackages() # Cache it for next time :o
         self.rpmdb.dropCachedData()
 
     def costExcludePackages(self):

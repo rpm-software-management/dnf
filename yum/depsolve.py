@@ -1005,9 +1005,11 @@ class Depsolve(object):
 
     def _checkConflicts(self):
         ret = [ ]
+        cpkgs = []
         for po in self.rpmdb.returnConflictPackages():
             if self.tsInfo.getMembersWithState(po.pkgtup, output_states=TS_REMOVE_STATES):
                 continue
+            cpkgs.append(po)
             for conflict in po.returnPrco('conflicts'):
                 (r, f, v) = conflict
                 for conflicting_po in self.tsInfo.getNewProvides(r, f, v):
@@ -1017,15 +1019,19 @@ class Depsolve(object):
                                  conflicting_po) )
         for txmbr in self.tsInfo.getMembersWithState(output_states=TS_INSTALL_STATES):
             po = txmbr.po
+            done = False
             for conflict in txmbr.po.returnPrco('conflicts'):
+                if not done:
+                    cpkgs.append(txmbr.po)
+                    done = True
                 (r, f, v) = conflict
                 for conflicting_po in self.tsInfo.getProvides(r, f, v):
                     if conflicting_po.pkgtup[0] == po.pkgtup[0] and conflicting_po.pkgtup[2:] == po.pkgtup[2:]:
                         continue
                     ret.append( (po, self._prco_req_nfv2req(r, f, v),
                                  conflicting_po) )
+        self.rpmdb.transactionCacheConflictPackages(cpkgs)
         return ret
-
 
     def isPackageInstalled(self, pkgname):
         lst = self.tsInfo.matchNaevr(name = pkgname)
