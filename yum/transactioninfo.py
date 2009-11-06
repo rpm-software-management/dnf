@@ -26,7 +26,7 @@ to rpm.
 """
 
 from constants import *
-from packageSack import PackageSack
+from packageSack import PackageSack, PackageSackVersion
 from packages import YumInstalledPackage
 from sqlitesack import YumAvailablePackageSqlite
 import Errors
@@ -564,6 +564,42 @@ class TransactionData:
         result.update(self.getNewRequires(name, flag, version))
         return result
 
+    def futureRpmDBVersion(self):
+        """ Return a simple version for the future rpmdb. Works like
+            rpmdb.simpleVersion(main_only=True)[0], but for the state the rpmdb
+            will be in after the transaction. """
+        pkgs = self.rpmdb.returnPackages()
+        _reinstalled_pkgtups = {}
+        for txmbr in self.getMembersWithState(None, TS_INSTALL_STATES):
+            # reinstalls have to use their "new" checksum data, in case it's
+            # different.
+            if hasattr(txmbr, 'reinstall') and txmbr.reinstall:
+                _reinstalled_pkgtups[txmbr.po.pkgtup] = txmbr.po
+            pkgs.append(txmbr.po)
+
+        main = PackageSackVersion()
+        for pkg in sorted(pkgs):
+            if pkg.repoid != 'installed':
+                # Paste from PackageSackBase.simpleVersion()
+                csum = pkg.returnIdSum()
+                main.update(pkg, csum)
+                continue
+
+            # Installed pkg, see if it's about to die
+            if self.getMembersWithState(pkg.pkgtup, TS_REMOVE_STATES):
+                continue
+            # ...or die and be risen again (Zombie!)
+            if pkg.pkgtup in _reinstalled_pkgtups:
+                continue
+
+            # Paste from rpmdb.simpleVersion()
+            ydbi = pkg.yumdb_info
+            csum = None
+            if 'checksum_type' in ydbi and 'checksum_data' in ydbi:
+                csum = (ydbi.checksum_type, ydbi.checksum_data)
+            main.update(pkg, csum)
+        return main
+
 class ConditionalTransactionData(TransactionData):
     """A transaction data implementing conditional package addition"""
     def __init__(self):
@@ -620,6 +656,7 @@ class SortableTransactionData(TransactionData):
                 self._visit(txmbr)
         self._sorted.reverse()
         return self._sorted
+
 
 class TransactionMember:
     """Class to describe a Transaction Member (a pkg to be installed/
