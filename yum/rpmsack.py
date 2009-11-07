@@ -115,7 +115,7 @@ class RPMDBPackageSack(PackageSackBase):
         self._loaded_gpg_keys = False
         if cachedir is None:
             cachedir = misc.getCacheDir()
-        self._cachedir = cachedir + "/rpmdb-cache/"
+        self.setCacheDir(cachedir)
         self._have_cached_rpmdbv_data = None
         self._cached_conflicts_data = None
         # Store the result of what happens, if a transaction completes.
@@ -168,6 +168,11 @@ class RPMDBPackageSack(PackageSackBase):
             }
         self._have_cached_rpmdbv_data = None
         self._cached_conflicts_data = None
+
+    def setCacheDir(self, cachedir):
+        """ Sets the internal cachedir value for the rpmdb, to be the
+            "rpmdb-cache" directory from this parent. """
+        self._cachedir = cachedir + "/rpmdb-cache/"
 
     def readOnlyTS(self):
         if not self.ts:
@@ -392,7 +397,7 @@ class RPMDBPackageSack(PackageSackBase):
         return self._cached_conflicts_data
 
     def _write_conflicts_new(self, pkgs, rpmdbv):
-        if not self.__cache_rpmdb__:
+        if not os.access(self._cachedir, os.W_OK):
             return
 
         conflicts_fname = self._cachedir + '/conflicts'
@@ -447,14 +452,16 @@ class RPMDBPackageSack(PackageSackBase):
         return self._cached_conflicts_data
 
     def transactionCacheConflictPackages(self, pkgs):
-        self._trans_cache_store['conflicts'] = pkgs
+        if self.__cache_rpmdb__:
+            self._trans_cache_store['conflicts'] = pkgs
 
     def returnConflictPackages(self):
         """ Return a list of packages that have conflicts. """
         pkgs = self._read_conflicts()
         if pkgs is None:
             pkgs = self._uncached_returnConflictPackages()
-            self._write_conflicts(pkgs)
+            if self.__cache_rpmdb__:
+                self._write_conflicts(pkgs)
 
         return pkgs
 
@@ -462,6 +469,10 @@ class RPMDBPackageSack(PackageSackBase):
         """ We are going to do a transaction, and the parameter will be the
             rpmdb version when we finish. The idea being we can update all
             our rpmdb caches for that rpmdb version. """
+
+        if not self.__cache_rpmdb__:
+            self._trans_cache_store = {}
+            return
 
         if 'conflicts' in self._trans_cache_store:
             pkgs = self._trans_cache_store['conflicts']
@@ -569,8 +580,13 @@ class RPMDBPackageSack(PackageSackBase):
             pkgtups = [pkg.pkgtup for pkg in self.getProvides(fname)]
             installedFileProviders[fname] = pkgtups
 
-        return (installedFileRequires, installedUnresolvedFileRequires,
+        ret =  (installedFileRequires, installedUnresolvedFileRequires,
                 installedFileProviders)
+        if self.__cache_rpmdb__:
+            rpmdbv = self.simpleVersion(main_only=True)[0]
+            self._write_file_requires(rpmdbv, ret)
+
+        return ret
 
     def transactionCacheFileRequires(self, installedFileRequires,
                                      installedUnresolvedFileRequires,
@@ -589,6 +605,9 @@ class RPMDBPackageSack(PackageSackBase):
         self._trans_cache_store['file-requires'] = data
 
     def _write_file_requires(self, rpmdbversion, data):
+        if not os.access(self._cachedir, os.W_OK):
+            return
+
         (installedFileRequires,
          installedUnresolvedFileRequires,
          installedFileProvides) = data

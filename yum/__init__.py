@@ -1741,6 +1741,11 @@ class YumBase(depsolve.Depsolve):
         exts = ['cachecookie', 'mirrorlist.txt']
         return self._cleanFiles(exts, 'cachedir', 'metadata')
 
+    def cleanRpmDB(self):
+        cachedir = self.conf.cachedir + "/rpmdb-cache/"
+        filelist = misc.getFileList(cachedir, '', [])
+        return self._cleanFilelist('rpmdb', filelist)
+
     def _cleanFiles(self, exts, pathattr, filetype):
         filelist = []
         removed = 0
@@ -1749,7 +1754,9 @@ class YumBase(depsolve.Depsolve):
                 path = getattr(repo, pathattr)
                 if os.path.exists(path) and os.path.isdir(path):
                     filelist = misc.getFileList(path, ext, filelist)
+        self._cleanFilelist(filetype, filelist)
 
+    def _cleanFilelist(self, filetype, filelist):
         for item in filelist:
             try:
                 misc.unlink_f(item)
@@ -4218,7 +4225,9 @@ class YumBase(depsolve.Depsolve):
         if cachedir is None:
             return False # Tried, but failed, to get a "user" cachedir
 
-        self.repos.setCacheDir(cachedir + varReplace(suffix, self.yumvar))
+        cachedir += varReplace(suffix, self.yumvar)
+        self.repos.setCacheDir(cachedir)
+        self.rpmdb.setCacheDir(cachedir)
 
         return True # We got a new cache dir
 

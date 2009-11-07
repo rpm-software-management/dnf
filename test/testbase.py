@@ -14,6 +14,7 @@ from yum import packages
 from yum import packageSack
 from yum.constants import TS_INSTALL_STATES, TS_REMOVE_STATES
 from cli import YumBaseCli
+from yum.rpmsack import RPMDBPackageSack as _rpmdbsack
 import inspect
 from rpmUtils import arch
 
@@ -232,6 +233,50 @@ class FakeRpmDb(packageSack.PackageSack):
     '''
     def __init__(self):
         packageSack.PackageSack.__init__(self)
+
+    # Need to mock out rpmdb caching... copy&paste. Gack.
+    def returnConflictPackages(self):
+        ret = []
+        for pkg in self.returnPackages():
+            if len(pkg.conflicts):
+                ret.append(pkg)
+        return ret
+    def fileRequiresData(self):
+        installedFileRequires = {}
+        installedUnresolvedFileRequires = set()
+        resolved = set()
+        for pkg in self.returnPackages():
+            for name, flag, evr in pkg.requires:
+                if not name.startswith('/'):
+                    continue
+                installedFileRequires.setdefault(pkg.pkgtup, []).append(name)
+                if name not in resolved:
+                    dep = self.getProvides(name, flag, evr)
+                    resolved.add(name)
+                    if not dep:
+                        installedUnresolvedFileRequires.add(name)
+
+        fileRequires = set()
+        for fnames in installedFileRequires.itervalues():
+            fileRequires.update(fnames)
+        installedFileProviders = {}
+        for fname in fileRequires:
+            pkgtups = [pkg.pkgtup for pkg in self.getProvides(fname)]
+            installedFileProviders[fname] = pkgtups
+
+        ret =  (installedFileRequires, installedUnresolvedFileRequires,
+                installedFileProviders)
+
+        return ret
+    def transactionCacheFileRequires(self, installedFileRequires,
+                                     installedUnresolvedFileRequires,
+                                     installedFileProvides,
+                                     problems):
+        return
+    def transactionCacheConflictPackages(self, pkgs):
+        return
+    def transactionResultVersion(self, rpmdbv):
+        return
 
     def getProvides(self, name, flags=None, version=(None, None, None)):
         """return dict { packages -> list of matching provides }"""

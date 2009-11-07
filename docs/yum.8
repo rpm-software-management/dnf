@@ -35,7 +35,7 @@ gnome\-packagekit application\&.
 .br 
 .I \fR * provides  | whatprovides feature1 [feature2] [\&.\&.\&.]
 .br  
-.I \fR * clean [ packages | headers | metadata | dbcache | all ]
+.I \fR * clean [ packages | metadata | expire-cache | rpmdb | plugins | all ]
 .br
 .I \fR * makecache
 .br
@@ -439,7 +439,8 @@ Eliminate the local data saying when the metadata and mirrorlists were downloade
 Eliminate any cached packages from the system.  Note that packages are not automatically deleted after they are downloaded.
 
 .IP "\fByum clean headers\fP"
-Eliminate all of the header files which yum uses for dependency resolution.
+Eliminate all of the header files, which old versions of yum used for
+dependency resolution.
 
 .IP "\fByum clean metadata\fP"
 Eliminate all of the files which yum uses to determine the remote
@@ -448,11 +449,22 @@ metadata the next time it is run.
 
 .IP "\fByum clean dbcache\fP"
 Eliminate the sqlite cache used for faster access to metadata.
-Using this option will force yum to recreate the cache the next time
-it is run.
+Using this option will force yum to download the sqlite metadata the next time
+it is run, or recreate the sqlite metadata if using an older repo.
+
+.IP "\fByum clean dbcache\fP"
+Eliminate the sqlite cache used for faster access to metadata.
+Using this option will force yum to download the sqlite metadata the next time
+it is run, or recreate the sqlite metadata if using an older repo.
+
+.IP "\fByum clean rpmdb\fP"
+Eliminate any cached data from the local rpmdb.
+
+.IP "\fByum clean plugins\fP"
+Tell any enabled plugins to eliminate their cached data.
 
 .IP "\fByum clean all\fP"
-Runs \fByum clean packages\fP and \fByum clean headers\fP, \fByum clean metadata\fP and \fByum clean dbcache\fP as above.
+Does all of the above.
 
 .PP
 .SH "MISC"

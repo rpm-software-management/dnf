@@ -893,10 +893,12 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
             hdrcode, hdrresults = self.cleanHeaders()
             xmlcode, xmlresults = self.cleanMetadata()
             dbcode, dbresults = self.cleanSqlite()
+            rpmcode, rpmresults = self.cleanRpmDB()
             self.plugins.run('clean')
             
-            code = hdrcode + pkgcode + xmlcode + dbcode
-            results = hdrresults + pkgresults + xmlresults + dbresults
+            code = hdrcode + pkgcode + xmlcode + dbcode + rpmdb
+            results = (hdrresults + pkgresults + xmlresults + dbresults +
+                       rpmresults)
             for msg in results:
                 self.logger.debug(msg)
             return code, []
@@ -916,6 +918,9 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         if 'expire-cache' in userlist or 'metadata' in userlist:
             self.logger.debug(_('Cleaning up expire-cache metadata'))
             expccode, expcresults = self.cleanExpireCache()
+        if 'rpmdb' in userlist:
+            self.logger.debug(_('Cleaning up cached rpmdb data'))
+            expccode, expcresults = self.cleanRpmDB()
         if 'plugins' in userlist:
             self.logger.debug(_('Cleaning up plugins'))
             self.plugins.run('clean')
