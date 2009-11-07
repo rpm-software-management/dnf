@@ -918,6 +918,7 @@ class Depsolve(object):
 
     def _checkFileRequires(self):
         fileRequires = set()
+        nfileRequires = set() # These need to be looked up in the rpmdb.
         reverselookup = {}
         ret = []
 
@@ -925,7 +926,7 @@ class Depsolve(object):
         if self.installedFileRequires is None:
             self.installedFileRequires, \
               self.installedUnresolvedFileRequires, \
-              self.installedFileProviders = self.rpmdb._get_file_requires()
+              self.installedFileProviders = self.rpmdb.fileRequiresData()
 
         # get file requirements from packages not deleted
         todel = []
@@ -956,6 +957,8 @@ class Depsolve(object):
                                 break
                         if already_broken:
                             continue
+                    if name not in fileRequires:
+                        nfileRequires.add(name)
                     fileRequires.add(name)
                     reverselookup.setdefault(name, []).append(txmbr.po.pkgtup)
 
@@ -976,27 +979,30 @@ class Depsolve(object):
             del self.installedFileProviders[fname]
 
         # check the file requires
+        iFP = self.installedFileProviders
         for filename in fileRequires:
             nprov = self.tsInfo.getNewProvides(filename)
             if nprov:
-                pkgtups = [po.pkgtup for po in nprov]
-                self.installedFileProviders[filename] = pkgtups
-                continue
+                iFP.setdefault(filename, []).extend([po.pkgtup for po in nprov])
 
-            if filename in self.installedFileProviders:
+            #  If we've got a result, and we've seen this before (and thus. have
+            # the rpmdb results) ... we are done.
+            if (filename in self.installedFileProviders and
+                filename not in nfileRequires):
                 continue 
 
             oprov = self.tsInfo.getOldProvides(filename)
             if oprov:
-                pkgtups = [po.pkgtup for po in oprov]
-                self.installedFileProviders[filename] = pkgtups
+                iFP.setdefault(filename, []).extend([po.pkgtup for po in oprov])
+
+            if filename in self.installedFileProviders:
                 continue
 
             for pkgtup in reverselookup[filename]:
                 po = self.getInstalledPackageObject(pkgtup)
                 ret.append( (po, (filename, 0, '')) )
 
-        self.rpmdb._write_file_requires(self.installedFileRequires, 
+        self.rpmdb.transactionCacheFileRequires(self.installedFileRequires, 
                                         self.installedUnresolvedFileRequires,
                                         self.installedFileProviders,
                                         ret)

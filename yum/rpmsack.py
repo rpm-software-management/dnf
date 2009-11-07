@@ -117,7 +117,6 @@ class RPMDBPackageSack(PackageSackBase):
             cachedir = misc.getCacheDir()
         self._cachedir = cachedir + "/rpmdb-cache/"
         self._have_cached_rpmdbv_data = None
-        self._use_cached_file_requires = True
         self._cached_conflicts_data = None
         # Store the result of what happens, if a transaction completes.
         self._trans_cache_store = {}
@@ -468,6 +467,10 @@ class RPMDBPackageSack(PackageSackBase):
             pkgs = self._trans_cache_store['conflicts']
             self._write_conflicts_new(pkgs, rpmdbv)
 
+        if 'file-requires' in self._trans_cache_store:
+            data = self._trans_cache_store['file-requires']
+            self._write_file_requires(rpmdbv, data)
+
         self._trans_cache_store = {}
 
     def returnGPGPubkeyPackages(self):
@@ -538,15 +541,12 @@ class RPMDBPackageSack(PackageSackBase):
 
         return iFR, iFP
 
-    def _get_file_requires(self):
-        print "JDBG:", 'BEG: _all_file_requires', self._use_cached_file_requires
-        if self.__cache_rpmdb__ and self._use_cached_file_requires:
+    def fileRequiresData(self):
+        if self.__cache_rpmdb__:
             iFR, iFP = self._read_file_requires()
             if iFR is not None:
-                print "JDBG:", 'CACHE'
                 return iFR, set(), iFP
 
-        print "JDBG:", '** no CACHE'
         installedFileRequires = {}
         installedUnresolvedFileRequires = set()
         resolved = set()
@@ -561,26 +561,41 @@ class RPMDBPackageSack(PackageSackBase):
                     if not dep:
                         installedUnresolvedFileRequires.add(name)
 
-        if self.__cache_rpmdb__:
-            self._write_file_requires(installedFileRequires,
-                                      installedUnresolvedFileRequires,
-                                      {}, [])
-            self._rename_file_requires(self.simpleVersion(main_only=True)[0])
-        return installedFileRequires, installedUnresolvedFileRequires, {}
+        fileRequires = set()
+        for fnames in installedFileRequires.itervalues():
+            fileRequires.update(fnames)
+        installedFileProviders = {}
+        for fname in fileRequires:
+            pkgtups = [pkg.pkgtup for pkg in self.getProvides(fname)]
+            installedFileProviders[fname] = pkgtups
 
-    def _write_file_requires(self, installedFileRequires,
-                             installedUnresolvedFileRequires,
-                             installedFileProvides,
-                             problems):
+        return (installedFileRequires, installedUnresolvedFileRequires,
+                installedFileProviders)
+
+    def transactionCacheFileRequires(self, installedFileRequires,
+                                     installedUnresolvedFileRequires,
+                                     installedFileProvides,
+                                     problems):
         if not self.__cache_rpmdb__:
             return
 
-        if not self._use_cached_file_requires:
-            return
         if installedUnresolvedFileRequires or problems:
             return
-        # FIXME: ... real tmp. file
-        fo = open(self._cachedir + '/file-requires.un.tmp', 'w')
+
+        data = (installedFileRequires,
+                installedUnresolvedFileRequires,
+                installedFileProvides)
+
+        self._trans_cache_store['file-requires'] = data
+
+    def _write_file_requires(self, rpmdbversion, data):
+        (installedFileRequires,
+         installedUnresolvedFileRequires,
+         installedFileProvides) = data
+
+        fo = open(self._cachedir + '/file-requires.tmp', 'w')
+        fo.write("%s\n" % rpmdbversion)
+
         fo.write("%u\n" % len(installedFileRequires))
         for pkgtup in sorted(installedFileRequires):
             for var in pkgtup:
@@ -600,20 +615,8 @@ class RPMDBPackageSack(PackageSackBase):
                 for var in pkgtup:
                     fo.write("%s\n" % var)
         fo.close()
-
-    def _rename_file_requires(self, rpmdbversion):
-        if not os.path.exists(self._cachedir + '/file-requires.un.tmp'):
-            return
-
-        rfo = open(self._cachedir + '/file-requires.un.tmp')
-        wfo = open(self._cachedir + '/file-requires.tmp', 'w')
-        wfo.write("%s\n" % rpmdbversion)
-        wfo.write(rfo.read())
-        rfo.close()
-        wfo.close()
         os.rename(self._cachedir + '/file-requires.tmp',
                   self._cachedir + '/file-requires')
-        os.unlink(self._cachedir + '/file-requires.un.tmp')
 
     def _get_cached_simpleVersion_main(self):
         """ Return the cached string of the main rpmdbv. """
