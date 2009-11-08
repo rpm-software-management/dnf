@@ -1116,20 +1116,29 @@ class VersionCommand(YumCommand):
 
         verbose = base.verbose_logger.isEnabledFor(logginglevels.DEBUG_3)
         groups = {}
-        gconf = yum.config.readVersionGroupsConfig()
+        if vcmd in ('nogroups', 'nogroups-installed', 'nogroups-available',
+                    'nogroups-all'):
+            gconf = []
+            if vcmd == 'nogroups':
+                vcmd = 'installed'
+            else:
+                vcmd = vcmd[len('nogroups-'):]
+        else:
+            gconf = yum.config.readVersionGroupsConfig()
+
         for group in gconf:
             groups[group] = set(gconf[group].pkglist)
             if gconf[group].run_with_packages:
                 groups[group].update(base.run_with_package_names)
 
-        if vcmd in ('grouplist'):
+        if vcmd == 'grouplist':
             print _(" Yum version groups:")
             for group in sorted(groups):
                 print "   ", group
 
             return 0, ['version grouplist']
 
-        if vcmd in ('groupinfo'):
+        if vcmd == 'groupinfo':
             for group in groups:
                 if group not in extcmds[1:]:
                     continue
