@@ -3,13 +3,16 @@
 import sys
 import yum
 
+__provides_of_requires_exact__ = False
+
 yb1 = yum.YumBase()
 yb1.conf.cache = True
 yb2 = yum.YumBase()
 yb2.conf.cache = True
 
-if len(sys.argv) > 1 and sys.argv[1].lower() == 'setcachedir':
-    yb2.setCacheDir()
+if len(sys.argv) > 1 and sys.argv[1].lower() == 'full':
+    print "Doing full test"
+    __provides_of_requires_exact__ = True
 
 assert hasattr(yb1.rpmdb, '__cache_rpmdb__')
 yb1.rpmdb.__cache_rpmdb__ = False
@@ -58,13 +61,17 @@ for pkgtup in frd2:
             print >>sys.stderr, ("Error: FileReq[%s] cache extra" % (pkgtup,),
                                  name)
 
-# File Provides (of requires)
+# File Provides (of requires) -- not exact
 if len(fpd1) != len(fpd2):
     print >>sys.stderr, "Error: FileProv len mismatch:", len(fpd1), len(fpd2)
 for name in fpd1:
     if name not in fpd2:
         print >>sys.stderr, "Error: FileProv cache missing", name
         continue
+
+    if not __provides_of_requires_exact__:
+        continue # We might be missing some providers
+
     if len(fpd1[name]) != len(fpd2[name]):
         print >>sys.stderr, ("Error: FileProv[%s] len mismatch:" % (pkgtup,),
                              len(fpd1[name]), len(fpd2[name]))

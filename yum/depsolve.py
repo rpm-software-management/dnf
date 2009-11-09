@@ -981,22 +981,32 @@ class Depsolve(object):
         # check the file requires
         iFP = self.installedFileProviders
         for filename in fileRequires:
-            nprov = self.tsInfo.getNewProvides(filename)
-            if nprov:
-                iFP.setdefault(filename, []).extend([po.pkgtup for po in nprov])
-
-            #  If we've got a result, and we've seen this before (and thus. have
-            # the rpmdb results) ... we are done.
-            if (filename in self.installedFileProviders and
-                filename not in nfileRequires):
-                continue 
+            # In theory we need this to be:
+            #
+            # nprov, filename in iFP (or new), oprov
+            #
+            # ...this keeps the cache exactly the same as the non-cached data.
+            # However that also means that we'll always need the filelists, so
+            # we do:
+            #
+            # filename in iFP (if found return), oprov (if found return),
+            # nprov
+            #
+            # ...this means we'll always get the same _result_ (as we only need
+            # to know if _something_ provides), but our cache will be off on
+            # what does/doesn't provide the file.
+            if filename in self.installedFileProviders:
+                continue
 
             oprov = self.tsInfo.getOldProvides(filename)
             if oprov:
                 iFP.setdefault(filename, []).extend([po.pkgtup for po in oprov])
-
-            if filename in self.installedFileProviders:
                 continue
+
+            nprov = self.tsInfo.getNewProvides(filename)
+            if nprov:
+                iFP.setdefault(filename, []).extend([po.pkgtup for po in nprov])
+                continue 
 
             for pkgtup in reverselookup[filename]:
                 po = self.getInstalledPackageObject(pkgtup)

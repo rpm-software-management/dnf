@@ -553,6 +553,10 @@ class RPMDBPackageSack(PackageSackBase):
         return iFR, iFP
 
     def fileRequiresData(self):
+        """ Get a cached copy of the fileRequiresData for
+            depsolving/checkFileRequires, note the giant comment in that
+            function about how we don't keep this perfect for the providers of
+            the requires. """
         if self.__cache_rpmdb__:
             iFR, iFP = self._read_file_requires()
             if iFR is not None:
