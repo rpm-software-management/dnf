@@ -712,9 +712,9 @@ class YumConf(StartupConf):
     def dump(self):
         output = '[main]\n'
         # we exclude all vars which start with _ or are in this list:
-        excluded_vars = ['cfg', 'uid', 'yumvar', 'progress_obj', 'failure_obj',
+        excluded_vars = ('cfg', 'uid', 'yumvar', 'progress_obj', 'failure_obj',
                          'disable_excludes', 'config_file_age', 'config_file_path',
-                         ]
+                         )
         for attr in dir(self):
             if attr.startswith('_'):
                 continue
@@ -726,7 +726,7 @@ class YumConf(StartupConf):
             if not res:
                 res = ''
             if type(res) == types.ListType:
-                res = ', '.join(res)
+                res = ',\n   '.join(res)
             output = output + '%s = %s\n' % (attr, res)
 
         return output

@@ -367,7 +367,7 @@ class YumRepository(Repository, config.RepoConf):
     def dump(self):
         output = '[%s]\n' % self.id
         # we exclude all vars which start with _ or are in this list:
-        excluded_vars = ['mediafunc', 'sack', 'metalink_data', 'grab', 
+        excluded_vars = ('mediafunc', 'sack', 'metalink_data', 'grab', 
                          'grabfunc', 'repoXML', 'cfg', 'retrieved',
                         'mirrorlistparsed', 'gpg_import_func', 'failure_obj',
                         'callback', 'confirm_func', 'groups_added', 
@@ -376,7 +376,7 @@ class YumRepository(Repository, config.RepoConf):
                         'basecachedir', 'http_headers', 'metadata_cookie',
                         'metadata_cookie_fn', 'quick_enable_disable',
                         'repoMDFile', 'timestamp_check', 'urls', 'mirrorurls',
-                        'yumvar', 'repofile']
+                        'yumvar', 'repofile')
         for attr in dir(self):
             if attr.startswith('_'):
                 continue
@@ -388,7 +388,7 @@ class YumRepository(Repository, config.RepoConf):
             if not res:
                 res = ''
             if type(res) == types.ListType:
-                res = ', '.join(res)
+                res = ',\n   '.join(res)
             output = output + '%s = %s\n' % (attr, res)
 
         return output
