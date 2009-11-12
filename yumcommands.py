@@ -1009,7 +1009,7 @@ class HelpCommand(YumCommand):
         return help_output
 
     def doCommand(self, base, basecmd, extcmds):
-        if base.yum_cli_commands.has_key(extcmds[0]):
+        if extcmds[0] in base.yum_cli_commands:
             command = base.yum_cli_commands[extcmds[0]]
             base.verbose_logger.log(logginglevels.INFO_2,
                     self._makeOutput(command))

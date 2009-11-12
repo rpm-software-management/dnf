@@ -112,7 +112,7 @@ def canCoinstall(arch1, arch2):
 def archDifference(myarch, targetarch):
     if myarch == targetarch:
         return 1
-    if arches.has_key(myarch):
+    if myarch in arches:
         ret = archDifference(arches[myarch], targetarch)
         if ret != 0:
             return ret + 1
@@ -127,13 +127,13 @@ def isMultiLibArch(arch=None):
     if arch is None:
         arch = canonArch
 
-    if not arches.has_key(arch): # or we could check if it is noarch
+    if arch not in arches: # or we could check if it is noarch
         return 0
     
-    if multilibArches.has_key(arch):
+    if arch in multilibArches:
         return 1
         
-    if multilibArches.has_key(arches[arch]):
+    if arches[arch] in multilibArches:
         return 1
     
     return 0
@@ -188,7 +188,7 @@ def getArchList(thisarch=None):
         thisarch = canonArch
     
     archlist = [thisarch]
-    while arches.has_key(thisarch):
+    while thisarch in arches:
         thisarch = arches[thisarch]
         archlist.append(thisarch)
 
@@ -330,9 +330,9 @@ canonArch = getCanonArch()
 
 # this gets you the "compat" arch of a biarch pair
 def getMultiArchInfo(arch = canonArch):
-    if multilibArches.has_key(arch):
+    if arch in multilibArches:
         return multilibArches[arch]
-    if arches.has_key(arch) and arches[arch] != "noarch":
+    if arch in arches and arches[arch] != "noarch":
         return getMultiArchInfo(arch = arches[arch])
     return None
 
@@ -361,7 +361,7 @@ def getBaseArch(myarch=None):
     if not myarch:
         myarch = canonArch
 
-    if not arches.has_key(myarch): # this is dumb, but <shrug>
+    if myarch not in arches: # this is dumb, but <shrug>
         return myarch
 
     if myarch.startswith("sparc64"):
@@ -370,12 +370,12 @@ def getBaseArch(myarch=None):
         return "ppc"
         
     if isMultiLibArch(arch=myarch):
-        if multilibArches.has_key(myarch):
+        if myarch in multilibArches:
             return myarch
         else:
             return arches[myarch]
     
-    if arches.has_key(myarch):
+    if myarch in arches:
         basearch = myarch
         value = arches[basearch]
         while value != 'noarch':

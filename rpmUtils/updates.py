@@ -67,7 +67,7 @@ class Updates:
 
     def _delFromDict(self, dict_, keys, value):
         for key in keys:
-            if not dict_.has_key(key):
+            if key not in dict_:
                 continue
             dict_[key] = filter(value.__ne__, dict_[key])
             if not dict_[key]:
@@ -343,7 +343,7 @@ class Updates:
             if a is None: # the None archs are only for lookups
                 continue
     
-            if self.installdict.has_key((n, None)):
+            if (n, None) in self.installdict:
                 installarchs = []
                 availarchs = []
                 for (a, e, v ,r) in newpkgs[(n, None)]:
@@ -440,7 +440,7 @@ class Updates:
                     hapdict = self.makeNADict(highestavailablepkgs, 0)
 
                     for (n, a) in hipdict:
-                        if hapdict.has_key((n, a)):
+                        if (n, a) in hapdict:
                             self.debugprint('processing %s.%s' % (n, a))
                             # we've got a match - get our versions and compare
                             (rpm_e, rpm_v, rpm_r) = hipdict[(n, a)][0] # only ever going to be first one
@@ -674,7 +674,7 @@ class Updates:
             inst[pkgtup] = 1
             
         for pkgtup in self.available:
-            if not updates.has_key(pkgtup) and not inst.has_key(pkgtup):
+            if pkgtup not in updates and pkgtup not in inst:
                 tmplist.append(pkgtup)
 
         returnlist = self.reduceListByNameArch(tmplist, name, arch)

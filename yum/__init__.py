@@ -1501,7 +1501,7 @@ class YumBase(depsolve.Depsolve):
                 adderror(po, str(e))
             else:
                 po.localpath = mylocal
-                if errors.has_key(po):
+                if po in errors:
                     del errors[po]
 
         if hasattr(urlgrabber.progress, 'text_meter_total_size'):
@@ -1646,7 +1646,7 @@ class YumBase(depsolve.Depsolve):
                 continue
             if txmbr.po.repoid == "installed":
                 continue
-            if not self.repos.repos.has_key(txmbr.po.repoid):
+            if txmbr.po.repoid not in self.repos.repos:
                 continue
             
             # make sure it's not a local file
@@ -2596,7 +2596,7 @@ class YumBase(depsolve.Depsolve):
         """ Given a package return the package it's obsoleted by and so
             we should install instead. Or None if there isn't one. """
         thispkgobsdict = self.up.checkForObsolete([po.pkgtup])
-        if thispkgobsdict.has_key(po.pkgtup):
+        if po.pkgtup in thispkgobsdict:
             obsoleting = thispkgobsdict[po.pkgtup][0]
             obsoleting_pkg = self.getPackageObject(obsoleting)
             return obsoleting_pkg
@@ -2703,7 +2703,7 @@ class YumBase(depsolve.Depsolve):
             if not kwargs:
                 raise Errors.InstallError, _('Nothing specified to install')
 
-            if kwargs.has_key('pattern'):
+            if 'pattern' in kwargs:
                 if kwargs['pattern'][0] == '@':
                     return self._at_groupinstall(kwargs['pattern'])
 
@@ -2819,7 +2819,7 @@ class YumBase(depsolve.Depsolve):
                     continue
             
             # make sure this shouldn't be passed to update:
-            if self.up.updating_dict.has_key(po.pkgtup):
+            if po.pkgtup in self.up.updating_dict:
                 txmbrs = self.update(po=po)
                 tx_return.extend(txmbrs)
                 continue
@@ -3009,7 +3009,7 @@ class YumBase(depsolve.Depsolve):
                 availpkgs.append(po)
                 
                 
-        elif kwargs.has_key('pattern'):
+        elif 'pattern' in kwargs:
             if kwargs['pattern'][0] == '@':
                 return self._at_groupinstall(kwargs['pattern'])
 
@@ -3190,7 +3190,7 @@ class YumBase(depsolve.Depsolve):
         if po:
             pkgs = [po]  
         else:
-            if kwargs.has_key('pattern'):
+            if 'pattern' in kwargs:
                 if kwargs['pattern'][0] == '@':
                     return self._at_groupremove(kwargs['pattern'])
 
@@ -3738,7 +3738,7 @@ class YumBase(depsolve.Depsolve):
             thiskey = {}
             for info in ('keyid', 'timestamp', 'userid', 
                          'fingerprint', 'raw_key'):
-                if not keyinfo.has_key(info):
+                if info not in keyinfo:
                     raise Errors.YumBaseError, \
                       _('GPG key parsing failed: key does not have value %s') + info
                 thiskey[info] = keyinfo[info]

@@ -102,7 +102,7 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
 
     def registerCommand(self, command):
         for name in command.getNames():
-            if self.yum_cli_commands.has_key(name):
+            if name in self.yum_cli_commands:
                 raise yum.Errors.ConfigError(_('Command "%s" already defined') % name)
             self.yum_cli_commands[name] = command
             
@@ -276,7 +276,7 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
             for arg in self.extcmds:
                 self.verbose_logger.log(yum.logginglevels.DEBUG_4, '   %s', arg)
         
-        if not self.yum_cli_commands.has_key(self.basecmd):
+        if self.basecmd not in self.yum_cli_commands:
             self.usage()
             raise CliError
     

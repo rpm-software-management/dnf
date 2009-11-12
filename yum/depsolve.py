@@ -142,7 +142,7 @@ class Depsolve(object):
         self._ts.setFlags(0) # reset everything.
         
         for flag in self.conf.tsflags:
-            if ts_flags_to_rpm.has_key(flag):
+            if flag in ts_flags_to_rpm:
                 self._ts.addTsFlag(ts_flags_to_rpm[flag])
             else:
                 self.logger.critical(_('Invalid tsflag in config file: %s'), flag)
@@ -224,7 +224,7 @@ class Depsolve(object):
         for txmbr in self.tsInfo.getMembers():
             self.verbose_logger.log(logginglevels.DEBUG_3, _('Member: %s'), txmbr)
             if txmbr.ts_state in ['u', 'i']:
-                if ts_elem.has_key((txmbr.pkgtup, 'i')):
+                if (txmbr.pkgtup, 'i') in ts_elem:
                     continue
                 rpmfile = txmbr.po.localPkg()
                 if os.path.exists(rpmfile):
@@ -248,7 +248,7 @@ class Depsolve(object):
                     self.dsCallback.pkgAdded(txmbr.pkgtup, txmbr.ts_state)
             
             elif txmbr.ts_state in ['e']:
-                if ts_elem.has_key((txmbr.pkgtup, txmbr.ts_state)):
+                if (txmbr.pkgtup, txmbr.ts_state) in ts_elem:
                     continue
                 self.ts.addErase(txmbr.po.idx)
                 if self.dsCallback: self.dsCallback.pkgAdded(txmbr.pkgtup, 'e')
@@ -332,7 +332,7 @@ class Depsolve(object):
         needpo = None
         providers = []
         
-        if self.cheaterlookup.has_key((needname, needflags, needversion)):
+        if (needname, needflags, needversion) in self.cheaterlookup:
             self.verbose_logger.log(logginglevels.DEBUG_2, _('Needed Require has already been looked up, cheating'))
             cheater_po = self.cheaterlookup[(needname, needflags, needversion)]
             providers = [cheater_po]
@@ -590,7 +590,7 @@ class Depsolve(object):
             # if we had other packages with this name.arch that we found
             # before, they're not going to be installed anymore, so we
             # should mark them to be re-checked
-            if upgraded.has_key(best.pkgtup):
+            if best.pkgtup in upgraded:
                 map(self.tsInfo.remove, upgraded[best.pkgtup])
 
         checkdeps = 1

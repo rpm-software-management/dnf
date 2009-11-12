@@ -330,7 +330,7 @@ class PackageSackBase(object):
             if not po.requires_names:
                 continue
             for r in po.requires_names:
-                if not req.has_key(r):
+                if r not in req:
                     req[r] = set()
                 if len(req[r]) > 1: #  We only need to know if another pkg.
                     continue        # reqs. the provide. So 2 pkgs. is enough.
@@ -643,7 +643,7 @@ class PackageSack(PackageSackBase):
     def searchNevra(self, name=None, epoch=None, ver=None, rel=None, arch=None):
         """return list of pkgobjects matching the nevra requested"""
         self._checkIndexes(failure='build')
-        if self.nevra.has_key((name, epoch, ver, rel, arch)):
+        if (name, epoch, ver, rel, arch) in self.nevra:
             return self.nevra[(name, epoch, ver, rel, arch)]
         elif name is not None:
             pkgs = self.nevra.get((name, None, None, None, None), [])
@@ -767,7 +767,7 @@ class PackageSack(PackageSackBase):
         dict[key].append(data)
 
     def _delFromListOfDict(self, dict, key, data):
-        if not dict.has_key(key):
+        if key not in dict:
             return
         try:
             dict[key].remove(data)
@@ -902,7 +902,7 @@ class PackageSack(PackageSackBase):
                     highdict[(pkg.name, pkg.arch)] = pkg
         
         if naTup:
-            if highdict.has_key(naTup):
+            if naTup in highdict:
                 return [highdict[naTup]]
             else:
                 raise PackageSackError, 'No Package Matching %s.%s' % naTup
@@ -927,7 +927,7 @@ class PackageSack(PackageSackBase):
                     highdict[pkg.name].append(pkg)
                 
         if name:
-            if highdict.has_key(name):
+            if name in highdict:
                 return highdict[name]
             else:
                 raise PackageSackError, 'No Package Matching  %s' % name

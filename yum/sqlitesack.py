@@ -316,7 +316,7 @@ class YumAvailablePackageSqlite(YumAvailablePackage, PackageObject, RpmBase):
     def _loadChangelog(self):
         result = []
         if not self._changelog:
-            if not self.sack.otherdb.has_key(self.repo):
+            if self.repo not in self.sack.otherdb:
                 try:
                     self.sack.populate(self.repo, mdtype='otherdata')
                 except Errors.RepoError:
@@ -695,10 +695,10 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
         if exclude and self._pkgKeyExcluded(repo, pkgKey):
             return None
 
-        if not self._key2pkg.has_key(repo):
+        if repo not in self._key2pkg:
             self._key2pkg[repo] = {}
             self._pkgname2pkgkeys[repo] = {}
-        if not self._key2pkg[repo].has_key(pkgKey):
+        if pkgKey not in self._key2pkg[repo]:
             sql = "SELECT pkgKey, pkgId, name, epoch, version, release, arch " \
                   "FROM packages WHERE pkgKey = ?"
             data = self._sql_MD('primary', repo, sql, (pkgKey,)).fetchone()
@@ -1152,7 +1152,7 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
 
         prcotype = _share_data(prcotype)
         req      = _share_data(req)
-        if self._search_cache[prcotype].has_key(req):
+        if req in self._search_cache[prcotype]:
             return self._search_cache[prcotype][req]
 
         result = { }
@@ -1349,7 +1349,7 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
                 
                 #~ # If it matches the dirname, that doesnt mean it matches
                 #~ # the filename, check if it does
-                #~ if filename and not quicklookup.has_key(filename):
+                #~ if filename and filename not in quicklookup:
                     #~ continue
                 
                 #~ matching_ids.append(str(res['pkgId']))

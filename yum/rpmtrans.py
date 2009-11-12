@@ -112,7 +112,7 @@ class RPMBaseCallback:
     def filelog(self, package, action):
         # If the action is not in the fileaction list then dump it as a string
         # hurky but, sadly, not much else 
-        if self.fileaction.has_key(action):
+        if action in self.fileaction:
             msg = '%s: %s' % (self.fileaction[action], package)
         else:
             msg = '%s: %s' % (package, action)

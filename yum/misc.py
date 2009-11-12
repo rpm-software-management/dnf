@@ -669,7 +669,7 @@ def get_running_kernel_version_release(ts):
     tuple for the running kernel."""
     pkgtup = get_running_kernel_pkgtup(ts)
     if pkgtup[0] is not None:
-        (pkgtup[3], pkgtup[4])
+        return (pkgtup[3], pkgtup[4])
     return (None, None)
 
 def find_unfinished_transactions(yumlibpath='/var/lib/yum'):

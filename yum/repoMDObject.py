@@ -134,7 +134,7 @@ class RepoMD:
         return self.repoData.keys()
     
     def getData(self, type):
-        if self.repoData.has_key(type):
+        if type in self.repoData:
             return self.repoData[type]
         else:
             raise RepoMDError, "requested datatype %s not available" % type
