@@ -366,18 +366,30 @@ class YumRepository(Repository, config.RepoConf):
 
     def dump(self):
         output = '[%s]\n' % self.id
-        vars = ['name', 'bandwidth', 'enabled', 'enablegroups',
-                'gpgcheck', 'repo_gpgcheck', # FIXME: gpgcheck => pkgs_gpgcheck
-                'includepkgs', 'keepalive', 'proxy',
-                'proxy_password', 'proxy_username', 'exclude',
-                'retries', 'throttle', 'timeout', 'mirrorlist', 'metalink',
-                'cachedir', 'gpgkey', 'pkgdir', 'hdrdir']
-        vars.sort()
-        for attr in vars:
-            output = output + '%s = %s\n' % (attr, getattr(self, attr))
-        output = output + 'baseurl ='
-        for url in self.urls:
-            output = output + ' %s\n' % url
+        # we exclude all vars which start with _ or are in this list:
+        excluded_vars = ['mediafunc', 'sack', 'metalink_data', 'grab', 
+                         'grabfunc', 'repoXML', 'cfg', 'retrieved',
+                        'mirrorlistparsed', 'gpg_import_func', 'failure_obj',
+                        'callback', 'confirm_func', 'groups_added', 
+                        'interrupt_callback', 'id', 'mirror_failure_obj',
+                        'repo_config_age', 'groupsfilename', 'copy_local', 
+                        'basecachedir', 'http_headers', 'metadata_cookie',
+                        'metadata_cookie_fn', 'quick_enable_disable',
+                        'repoMDFile', 'timestamp_check', 'urls', 'mirrorurls',
+                        'yumvar', 'repofile']
+        for attr in dir(self):
+            if attr.startswith('_'):
+                continue
+            if attr in excluded_vars:
+                continue
+            if isinstance(getattr(self, attr), types.MethodType):
+                continue
+            res = getattr(self, attr)
+            if not res:
+                res = ''
+            if type(res) == types.ListType:
+                res = ', '.join(res)
+            output = output + '%s = %s\n' % (attr, res)
 
         return output
 

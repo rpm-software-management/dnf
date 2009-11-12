@@ -39,6 +39,7 @@ if not _use_iniparse:
     from ConfigParser import ConfigParser
 import rpmUtils.transaction
 import Errors
+import types
 
 # Alter/patch these to change the default checking...
 __pkgs_gpgcheck_default__ = False
@@ -707,6 +708,28 @@ class YumConf(StartupConf):
     history_record_packages = ListOption(['yum', 'rpm'])
 
     _reposlist = []
+
+    def dump(self):
+        output = '[main]\n'
+        # we exclude all vars which start with _ or are in this list:
+        excluded_vars = ['cfg', 'uid', 'yumvar', 'progress_obj', 'failure_obj',
+                         'disable_excludes', 'config_file_age', 'config_file_path',
+                         ]
+        for attr in dir(self):
+            if attr.startswith('_'):
+                continue
+            if attr in excluded_vars:
+                continue
+            if isinstance(getattr(self, attr), types.MethodType):
+                continue
+            res = getattr(self, attr)
+            if not res:
+                res = ''
+            if type(res) == types.ListType:
+                res = ', '.join(res)
+            output = output + '%s = %s\n' % (attr, res)
+
+        return output
 
 class RepoConf(BaseConfig):
     '''
