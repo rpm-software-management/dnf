@@ -186,6 +186,7 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
             pc.errorlevel = opts.errorlevel
             pc.disabled_plugins = self.optparser._splitArg(opts.disableplugins)
             pc.enabled_plugins  = self.optparser._splitArg(opts.enableplugins)
+            pc.releasever = opts.releasever
             self.conf
                     
         except yum.Errors.ConfigError, e:
@@ -1133,7 +1134,7 @@ class YumOptionParser(OptionParser):
             args = _filtercmdline(
                         ('--noplugins','--version','-q', '-v', "--quiet", "--verbose"), 
                         ('-c', '-d', '-e', '--installroot',
-                         '--disableplugin', '--enableplugin'), 
+                         '--disableplugin', '--enableplugin', '--releasever'), 
                         args)
         except ValueError, arg:
             self.base.usage()
@@ -1356,6 +1357,8 @@ class YumOptionParser(OptionParser):
                 help=_("skip packages with depsolving problems"))
         group.add_option("", "--color", dest="color", default=None, 
                 help=_("control whether color is used"))
+        group.add_option("", "--releasever", dest="releasever", default=None, 
+                help=_("set value of $releasever in yum config and repo files"))
 
 
         
