@@ -38,6 +38,7 @@ from constants import *
 
 import urlparse
 urlparse.uses_fragment.append("media")
+from urlgrabber.grabber import URLGrabber, URLGrabError
 
 # For verify
 import pwd
@@ -1693,3 +1694,39 @@ class YumLocalPackage(YumHeaderPackage):
         return msg
 
 
+class YumUrlPackage(YumLocalPackage):
+    """Class to handle an arbitrary package from a URL
+       this inherits most things from YumLocalPackage, but will download a
+       remote package to make it local.
+       init takes a YumBase, a ts instance and a url to the package."""
+
+    def __init__(self, yb=None, ts=None, url=None, ua=None):
+        if url.startswith("file:"):
+            result = url[len("file:"):]
+        elif not misc.re_remote_url(url):
+            result = url
+        else:
+            cb = None
+            pd = {}
+            for repo in yb.repos.listEnabled():
+                cb = repo.callback # Hacky, but these are "always" the same
+                if (repo.proxy == yb.conf.proxy and
+                    repo.proxy_username == yb.conf.proxy_username and
+                    repo.proxy_password == yb.conf.proxy_password):
+                    # Even more hacky...
+                    pd = repo.proxy_dict
+                    break
+            fname = os.path.basename(url)
+            local = "%s/%s" % (yb.conf.cachedir, fname)
+            try:
+                ug = URLGrabber(bandwidth = yb.conf.bandwidth,
+                                retry = yb.conf.retries,
+                                throttle = yb.conf.throttle,
+                                progress_obj = cb,
+                                proxies=pd)
+                if ua is not None:
+                    ug.opts.user_agent = ua
+                result = ug.urlgrab(url, local, text=fname)
+            except URLGrabError, e:
+                raise Errors.MiscError("Cannot download %s: %s" % (url, e))
+        YumLocalPackage.__init__(self, ts, result)
