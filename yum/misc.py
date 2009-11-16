@@ -125,6 +125,11 @@ def re_full_search_needed(s):
             return True
     return False
 
+def re_remote_url(s):
+    """ Tests if a string is a "remote" URL, http, https, ftp. """
+    return (s.startswith("http://") or s.startswith("https://") or
+            s.startswith("ftp://"))
+
 ###########
 # Title: Remove duplicates from a sequence
 # Submitter: Tim Peters 
