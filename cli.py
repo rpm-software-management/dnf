@@ -278,7 +278,8 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
                 self.verbose_logger.log(yum.logginglevels.DEBUG_4, '   %s', arg)
         
         if self.basecmd not in self.yum_cli_commands:
-            self.usage()
+            self.logger.critical(_('No such command: %s. Please use %s --help'),
+                                  self.basecmd, sys.argv[0])
             raise CliError
     
         self.yum_cli_commands[self.basecmd].doCheck(self, self.basecmd, self.extcmds)
