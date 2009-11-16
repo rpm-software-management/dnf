@@ -261,7 +261,7 @@ _yum()
             return 0
             ;;
 
-        -R|-x|--exclude|-h|--help|--version)
+        -R|-x|--exclude|-h|--help|--version|--releasever)
             return 0
             ;;
     esac
@@ -272,7 +272,7 @@ _yum()
         --showduplicates -e --quiet --verbose -y --version --installroot
         --enablerepo --disablerepo --exclude --disableexcludes --obsoletes
         --noplugins --nogpgcheck --disableplugin --enableplugin
-        --skip-broken --color ${cmds[@]}' -- "$cur" ) )
+        --skip-broken --color --releasever ${cmds[@]}' -- "$cur" ) )
 } &&
 complete -F _yum -o filenames yum yummain.py
 
