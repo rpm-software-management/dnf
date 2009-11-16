@@ -683,6 +683,8 @@ def find_unfinished_transactions(yumlibpath='/var/lib/yum'):
     tsdones = glob.glob(tsdoneg)
 
     for fn in tsalls:
+        if fn.endswith('disabled'):
+            continue
         trans = os.path.basename(fn)
         timestamp = trans.replace('transaction-all.','')
         timestamps.append(timestamp)
