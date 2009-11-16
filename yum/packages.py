@@ -1701,7 +1701,7 @@ class YumUrlPackage(YumLocalPackage):
        init takes a YumBase, a ts instance and a url to the package."""
 
     def __init__(self, yb=None, ts=None, url=None, ua=None):
-        if url.startswith("file:"):
+        if url.lower().startswith("file:"):
             result = url[len("file:"):]
         elif not misc.re_remote_url(url):
             result = url
