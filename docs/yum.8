@@ -350,6 +350,12 @@ Resolve depsolve problems by removing packages that are causing problems
 from the transaction.
 .br
 Configuration Option: \fBskip_broken\fP
+.br
+.IP "\fB\-\-releasever=version\fP"
+Pretend the current release version is the given string. This is very useful
+when combined with --installroot. Note that with the default upstream cachedir,
+of /var/cache/yum, using this option will corrupt your cache (and you can use
+$releasever in your cachedir configuration to stop this).
 .PP 
 .IP "\fB\-t, --tolerant\fP"
 This option currently does nothing.
