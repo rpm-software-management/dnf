@@ -215,12 +215,12 @@ _yum()
 
     case $prev in
 
-        -d|-e)
+        -d|--debuglevel|-e|--errorlevel)
             COMPREPLY=( $( compgen -W '0 1 2 3 4 5 6 7 8 9 10' -- "$cur" ) )
             return 0
             ;;
 
-        -c)
+        -c|--config)
             COMPREPLY=( $( compgen -f -o plusdirs -X "!*.conf" -- "$cur" ) )
             return 0
             ;;
@@ -261,18 +261,19 @@ _yum()
             return 0
             ;;
 
-        -R|-x|--exclude|-h|--help|--version|--releasever)
+        -R|--randomwait|-x|--exclude|-h|--help|--version|--releasever)
             return 0
             ;;
     esac
 
     $split && return 0
 
-    COMPREPLY=( $( compgen -W '--help --tolerant -C -c -R -d
-        --showduplicates -e --quiet --verbose -y --version --installroot
-        --enablerepo --disablerepo --exclude --disableexcludes --obsoletes
-        --noplugins --nogpgcheck --disableplugin --enableplugin
-        --skip-broken --color --releasever ${cmds[@]}' -- "$cur" ) )
+    COMPREPLY=( $( compgen -W '--help --tolerant --cacheonly --config
+        --randomwait --debuglevel --showduplicates --errorlevel --quiet
+        --verbose --assumeyes --version --installroot --enablerepo
+        --disablerepo --exclude --disableexcludes --obsoletes --noplugins
+        --nogpgcheck --disableplugin --enableplugin --skip-broken --color
+        --releasever ${cmds[@]}' -- "$cur" ) )
 } &&
 complete -F _yum -o filenames yum yummain.py
 

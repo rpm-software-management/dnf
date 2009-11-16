@@ -1303,27 +1303,30 @@ class YumOptionParser(OptionParser):
 
         group.add_option("-t", "--tolerant", action="store_true",
                 help=_("be tolerant of errors"))
-        group.add_option("-C", dest="cacheonly", action="store_true",
+        group.add_option("-C", "--cacheonly", dest="cacheonly",
+                action="store_true",
                 help=_("run entirely from system cache, don't update cache"))
-        group.add_option("-c", dest="conffile", default='/etc/yum/yum.conf',
-                help=_("config file location"), metavar=' [config file]')
-        group.add_option("-R", dest="sleeptime", type='int', default=None,
-                help=_("maximum command wait time"), metavar=' [minutes]')
-        group.add_option("-d", dest="debuglevel", default=None,
+        group.add_option("-c", "--config", dest="conffile",
+                default='/etc/yum/yum.conf',
+                help=_("config file location"), metavar='[config file]')
+        group.add_option("-R", "--randomwait", dest="sleeptime", type='int',
+                default=None,
+                help=_("maximum command wait time"), metavar='[minutes]')
+        group.add_option("-d", "--debuglevel", dest="debuglevel", default=None,
                 help=_("debugging output level"), type='int',
-                metavar=' [debug level]')
+                metavar='[debug level]')
         group.add_option("--showduplicates", dest="showdupesfromrepos",
                         action="store_true",
                 help=_("show duplicates, in repos, in list/search commands"))
-        group.add_option("-e", dest="errorlevel", default=None,
+        group.add_option("-e", "--errorlevel", dest="errorlevel", default=None,
                 help=_("error output level"), type='int',
-                metavar=' [error level]')
+                metavar='[error level]')
         group.add_option("-q", "--quiet", dest="quiet", action="store_true",
                         help=_("quiet operation"))
         group.add_option("-v", "--verbose", dest="verbose", action="store_true",
                         help=_("verbose operation"))
-        group.add_option("-y", dest="assumeyes", action="store_true",
-                help=_("answer yes for all questions"))
+        group.add_option("-y", "--assumeyes", dest="assumeyes",
+                action="store_true", help=_("answer yes for all questions"))
         group.add_option("--version", action="store_true", 
                 help=_("show Yum version and exit"))
         group.add_option("--installroot", help=_("set install root"), 

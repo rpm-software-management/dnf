@@ -261,12 +261,12 @@ to set\&.
 .PP 
 .IP "\fB\-h, \-\-help\fP"
 Help; display a help message and then quit\&.
-.IP "\fB\-y\fP"
+.IP "\fB\-y, \-\-assumeyes\fP"
 Assume yes; assume that the answer to any question which would be asked 
 is yes\&.
 .br
 Configuration Option: \fBassumeyes\fP
-.IP "\fB\-c [config file]\fP" 
+.IP "\fB\-c, \-\-config=[config file]\fP" 
 Specifies the config file location - can take HTTP and FTP URLs and local file
 paths\&.
 .br
@@ -276,17 +276,17 @@ Run without output.  Note that you likely also want to use \-y\&.
 .IP "\fB\-v, \-\-verbose\fP" 
 Run with a lot of debugging output\&.
 .br
-.IP "\fB\-d [number]\fP" 
+.IP "\fB\-d, \-\-debuglevel=[number]\fP" 
 Sets the debugging level to [number] \- turns up or down the amount of things that are printed\&. Practical range: 0 - 10
 .br
 Configuration Option: \fBdebuglevel\fP
-.IP "\fB\-e [number]\fP" 
+.IP "\fB\-e, \-\-errorlevel=[number]\fP" 
 Sets the error level to [number] Practical range 0 \- 10. 0 means print only critical errors about which you must be told. 1 means print all errors, even ones that are not overly important. 1+ means print more errors (if any) \-e 0 is good for cron jobs.
 .br
 Configuration Option: \fBerrorlevel\fP
-.IP "\fB\-R [time in minutes]\fP" 
+.IP "\fB\-R, \-\-randomwait=[time in minutes]\fP" 
 Sets the maximum amount of time yum will wait before performing a command \- it randomizes over the time.
-.IP "\fB\-C\fP" 
+.IP "\fB\-C, \-\-cacheonly\fP" 
 Tells yum to run entirely from system cache - does not download or
 update any headers unless it has to to perform the requested action.
 .IP "\fB\-\-version\fP" 
