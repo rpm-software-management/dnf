@@ -554,7 +554,7 @@ class YumOutput:
         print self.fmtKeyValFill(_("Summary    : "), self._enc(pkg.summary))
         if pkg.url:
             print _("URL        : %s") % to_unicode(pkg.url)
-        print _("License    : %s") % to_unicode(pkg.license)
+        print self.fmtKeyValFill(_("License    : "), to_unicode(pkg.license))
         print self.fmtKeyValFill(_("Description: "), self._enc(pkg.description))
         print ""
     

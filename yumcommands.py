@@ -23,6 +23,7 @@ import os
 import cli
 from yum import logginglevels
 from yum import _
+from yum import misc
 import yum.Errors
 import operator
 import locale
@@ -890,7 +891,7 @@ class RepoListCommand(YumCommand):
                         num = _("Instant (last: %s)") % last
                     else:
                         num = locale.format("%d", repo.metadata_expire, True)
-                        num = _("%s second(s) (last: %s)") % (num, last)
+                        num = _("%s second(s) (last: %s)") % (misc.to_unicode(num), last)
 
                     out += [base.fmtKeyValFill(_("Repo-expire  : "), num)]
 
@@ -904,7 +905,7 @@ class RepoListCommand(YumCommand):
 
                     base.verbose_logger.log(logginglevels.DEBUG_3,
                                             "%s\n",
-                                            "\n".join(out))
+                                            "\n".join(map(misc.to_unicode, out)))
 
         if not verbose and cols:
             #  Work out the first (id) and last (enabled/disalbed/count),

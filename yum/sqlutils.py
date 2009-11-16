@@ -104,7 +104,7 @@ def QmarkToPyformat(query, params):
     """Convert from qmark to pyformat parameter style.
 
     The python DB-API 2.0 specifies four different possible parameter
-    styles that can be used by drivers. This function convers from the
+    styles that can be used by drivers. This function converts from the
     qmark style to pyformat style.
 
     @param  query: SQL query to transform

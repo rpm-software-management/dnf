@@ -1,0 +1,1 @@
+XGETTEXT_OPTIONS = --keyword=P_:1,2
