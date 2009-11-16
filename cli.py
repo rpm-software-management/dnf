@@ -590,7 +590,8 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         oldcount = len(self.tsInfo)
         
         for arg in userlist:
-            if arg.endswith('.rpm') and os.path.exists(arg): # this is hurky, deal w/it
+            if (arg.endswith('.rpm') and (yum.misc.re_remote_url(arg) or
+                                          os.path.exists(arg))):
                 self.localInstall(filelist=[arg])
                 continue # it was something on disk and it ended in rpm 
                          # no matter what we don't go looking at repos
@@ -623,7 +624,8 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
             # pass them off to localInstall() and then move on
             localupdates = []
             for item in userlist:
-                if item.endswith('.rpm') and os.path.exists(item): # this is hurky, deal w/it
+                if (item.endswith('.rpm') and (yum.misc.re_remote_url(item) or
+                                               os.path.exists(item))):
                     localupdates.append(item)
             
             if len(localupdates) > 0:
@@ -667,7 +669,8 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         oldcount = len(self.tsInfo)
         
         for arg in userlist:
-            if arg.endswith('.rpm') and os.path.exists(arg):
+            if (arg.endswith('.rpm') and (yum.misc.re_remote_url(arg) or
+                                          os.path.exists(arg))):
                 self.downgradeLocal(arg)
                 continue # it was something on disk and it ended in rpm 
                          # no matter what we don't go looking at repos
@@ -691,7 +694,8 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         oldcount = len(self.tsInfo)
 
         for arg in userlist:
-            if arg.endswith('.rpm') and os.path.exists(arg):
+            if (arg.endswith('.rpm') and (yum.misc.re_remote_url(arg) or
+                                          os.path.exists(arg))):
                 self.reinstallLocal(arg)
                 continue # it was something on disk and it ended in rpm
                          # no matter what we don't go looking at repos
@@ -825,8 +829,9 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
 
         pkgs = []
         for arg in args:
-            if arg.endswith('.rpm') and os.path.exists(arg): # this is hurky, deal w/it
-                thispkg = yum.packages.YumLocalPackage(self.ts, arg)
+            if (arg.endswith('.rpm') and (yum.misc.re_remote_url(arg) or
+                                          os.path.exists(arg))):
+                thispkg = yum.packages.YumUrlPackage(self, self.ts, arg)
                 pkgs.append(thispkg)
             else:                
                 ematch, match, unmatch = self.pkgSack.matchPackageNames([arg])

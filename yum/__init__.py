@@ -62,7 +62,9 @@ import yum.history
 import warnings
 warnings.simplefilter("ignore", Errors.YumFutureDeprecationWarning)
 
-from packages import parsePackages, YumAvailablePackage, YumLocalPackage, YumInstalledPackage, comparePoEVR
+from packages import parsePackages, comparePoEVR
+from packages import YumAvailablePackage, YumLocalPackage, YumInstalledPackage
+from packages import YumUrlPackage
 from constants import *
 from yum.rpmtrans import RPMTransaction,SimpleCliCallBack
 from yum.i18n import to_unicode, to_str
@@ -3250,9 +3252,10 @@ class YumBase(depsolve.Depsolve):
 
         if not po:
             try:
-                po = YumLocalPackage(ts=self.rpmdb.readOnlyTS(), filename=pkg)
+                po = YumUrlPackage(self, ts=self.rpmdb.readOnlyTS(), url=pkg,
+                                   ua=default_grabber.opts.user_agent)
             except Errors.MiscError:
-                self.logger.critical(_('Cannot open file: %s. Skipping.'), pkg)
+                self.logger.critical(_('Cannot open: %s. Skipping.'), pkg)
                 return tx_return
             self.verbose_logger.log(logginglevels.INFO_2,
                 _('Examining %s: %s'), po.localpath, po)
@@ -3348,7 +3351,8 @@ class YumBase(depsolve.Depsolve):
 
         if not po:
             try:
-                po = YumLocalPackage(ts=self.rpmdb.readOnlyTS(), filename=pkg)
+                po = YumUrlPackage(self, ts=self.rpmdb.readOnlyTS(), url=pkg,
+                                   ua=default_grabber.opts.user_agent)
             except Errors.MiscError:
                 self.logger.critical(_('Cannot open file: %s. Skipping.'), pkg)
                 return []
@@ -3431,7 +3435,8 @@ class YumBase(depsolve.Depsolve):
 
         if not po:
             try:
-                po = YumLocalPackage(ts=self.rpmdb.readOnlyTS(), filename=pkg)
+                po = YumUrlPackage(self, ts=self.rpmdb.readOnlyTS(), url=pkg,
+                                   ua=default_grabber.opts.user_agent)
             except Errors.MiscError:
                 self.logger.critical(_('Cannot open file: %s. Skipping.'), pkg)
                 return []
