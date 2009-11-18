@@ -605,6 +605,12 @@ class YumAvailablePackage(PackageObject, RpmBase):
             self.rel = self.release
         self.pkgtup = (self.name, self.arch, self.epoch, self.version, self.release)
 
+    def _ui_from_repo(self):
+        if self.repoid == 'installed' and 'from_repo' in self.yumdb_info:
+            return '@' + self.yumdb_info.from_repo
+        return self.repoid
+    ui_from_repo = property(fget=lambda self: self._ui_from_repo())
+
     def exclude(self):
         """remove self from package sack"""
         self.repo.sack.delPackage(self)
