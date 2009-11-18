@@ -473,9 +473,7 @@ class YumOutput:
         ver = pkg.printVer()
         na = '%s%s.%s' % (indent, pkg.name, pkg.arch)
         hi_cols = [highlight, 'normal', 'normal']
-        rid = pkg.repoid
-        if pkg.repoid == 'installed' and 'from_repo' in pkg.yumdb_info:
-            rid = '@' + pkg.yumdb_info.from_repo
+        rid = pkg.ui_from_repo
         columns = zip((na, ver, rid), columns, hi_cols)
         print self.fmtColumns(columns)
 
@@ -488,9 +486,7 @@ class YumOutput:
             columns = (-63, -16) # Old default
         envra = '%s%s' % (indent, str(pkg))
         hi_cols = [highlight, 'normal', 'normal']
-        rid = pkg.repoid
-        if pkg.repoid == 'installed' and 'from_repo' in pkg.yumdb_info:
-            rid = '@' + pkg.yumdb_info.from_repo
+        rid = pkg.ui_from_repo
         columns = zip((envra, rid), columns, hi_cols)
         print self.fmtColumns(columns)
 
@@ -688,10 +684,7 @@ class YumOutput:
             for (apkg, ipkg) in pkg_names2pkgs[item]:
                 pkg = ipkg or apkg
                 envra = utf8_width(str(pkg)) + utf8_width(indent)
-                if pkg.repoid == 'installed' and 'from_repo' in pkg.yumdb_info:
-                    rid = len(pkg.yumdb_info.from_repo) + 1
-                else:
-                    rid   = len(pkg.repoid)
+                rid = len(pkg.ui_from_repo)
                 for (d, v) in (('envra', envra), ('rid', rid)):
                     data[d].setdefault(v, 0)
                     data[d][v] += 1
@@ -912,10 +905,7 @@ class YumOutput:
         def _add_line(lines, data, a_wid, po, obsoletes=[]):
             (n,a,e,v,r) = po.pkgtup
             evr = po.printVer()
-            if po.repoid == 'installed' and 'from_repo' in po.yumdb_info:
-                repoid = "@%s" % po.yumdb_info.from_repo
-            else:
-                repoid = po.repoid
+            repoid = po.ui_from_repo
             pkgsize = float(po.size)
             size = self.format_number(pkgsize)
 
@@ -1452,11 +1442,7 @@ to exit.
 
             # To chop the name off we need nevra strings, str(pkg) gives envra
             # so we have to do it by hand ... *sigh*.
-            if hpkg.epoch == '0':
-                cn = str(hpkg)
-            else:
-                cn = "%s-%s:%s-%s.%s" % (hpkg.name, hpkg.epoch,
-                                         hpkg.version, hpkg.release, hpkg.arch)
+            cn = hpkg.ui_nevra
 
             uistate = {'True-Install' : _('Install'),
                        'Install'      : _('Install'),
