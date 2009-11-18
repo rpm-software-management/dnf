@@ -224,7 +224,7 @@ class PackageObject(object):
         # self.pkgtup = (self.name, self.arch, self.epoch, self.version, self.release)
         self._checksums = [] # (type, checksum, id(0,1)
         
-    def __str__(self):
+    def _ui_envra(self):
         if self.epoch == '0':
             out = '%s-%s-%s.%s' % (self.name, 
                                    self.version,
@@ -237,6 +237,25 @@ class PackageObject(object):
                                       self.release, 
                                       self.arch)
         return out
+    ui_envra = property(fget=lambda self: self._ui_envra())
+
+    def _ui_nevra(self):
+        if self.epoch == '0':
+            out = '%s-%s-%s.%s' % (self.name,
+                                   self.version,
+                                   self.release,
+                                   self.arch)
+        else:
+            out = '%s-%s:%s-%s.%s' % (self.name,
+                                      self.epoch,
+                                      self.version,
+                                      self.release,
+                                      self.arch)
+        return out
+    ui_nevra = property(fget=lambda self: self._ui_nevra())
+
+    def __str__(self):
+        return self.ui_envra
 
     def verCMP(self, other):
         """ Compare package to another one, only rpm-version ordering. """
