@@ -29,6 +29,7 @@ from yum.constants import *
 from yum.packages import YumInstalledPackage, YumAvailablePackage, PackageObject
 from yum.i18n import to_unicode
 
+from rpmUtils.arch import getBaseArch
 
 _history_dir = '/var/lib/yum/history'
 
@@ -122,7 +123,7 @@ def _setupHistorySearchSQL(patterns=None, ignore_case=False):
 
 class YumHistoryPackage(PackageObject):
 
-    def __init__(self, name, arch, epoch, version, release, checksum):
+    def __init__(self, name, arch, epoch, version, release, checksum=None):
         self.name    = name
         self.version = version
         self.release = release
@@ -135,6 +136,15 @@ class YumHistoryPackage(PackageObject):
         else:
             chk = checksum.split(':')
             self._checksums = [(chk[0], chk[1], 0)] # (type, checksum, id(0,1))
+        # Needed for equality comparisons in PackageObject
+        self.repoid = "<history>"
+
+class YumHistoryPackageState(YumHistoryPackage):
+    def __init__(self, name,arch, epoch,version,release, state, checksum=None):
+        YumHistoryPackage.__init__(self, name,arch, epoch,version,release,
+                                   checksum)
+        self.done  = None
+        self.state = state
 
 class YumHistoryTransaction:
     """ Holder for a history transaction. """
@@ -192,6 +202,304 @@ class YumHistoryTransaction:
 
     errors     = property(fget=lambda self: self._getErrors())
     output     = property(fget=lambda self: self._getOutput())
+
+class YumMergedHistoryTransaction(YumHistoryTransaction):
+    def __init__(self, obj):
+        self._merged_tids = set([obj.tid])
+        self._merged_objs = [obj]
+
+        self.beg_timestamp    = obj.beg_timestamp
+        self.beg_rpmdbversion = obj.beg_rpmdbversion
+        self.end_timestamp    = obj.end_timestamp
+        self.end_rpmdbversion = obj.end_rpmdbversion
+
+        self._loaded_TW = None
+        self._loaded_TD = None
+
+        self._loaded_ER = None
+        self._loaded_OT = None
+
+        self.altered_lt_rpmdb = None
+        self.altered_gt_rpmdb = None
+
+    def _getAllTids(self):
+        return sorted(self._merged_tids)
+    tid         = property(fget=lambda self: self._getAllTids())
+
+    def _getLoginUIDs(self):
+        ret = set((tid.loginuid for tid in self._merged_objs))
+        if len(ret) == 1:
+            return list(ret)[0]
+        return sorted(ret)
+    loginuid    = property(fget=lambda self: self._getLoginUIDs())
+
+    def _getReturnCodes(self):
+        ret_codes = set((tid.return_code for tid in self._merged_objs))
+        if len(ret_codes) == 1 and 0 in ret_codes:
+            return 0
+        if 0 in ret_codes:
+            ret_codes.remove(0)
+        return sorted(ret_codes)
+    return_code = property(fget=lambda self: self._getReturnCodes())
+
+    def _getTransWith(self):
+        ret = []
+        filt = set()
+        for obj in self._merged_objs:
+            for pkg in obj.trans_with:
+                if pkg.pkgtup in filt:
+                    continue
+                filt.add(pkg.pkgtup)
+                ret.append(pkg)
+        return sorted(ret)
+
+    # This is the real tricky bit, we want to "merge" so that:
+    #     pkgA-1 => pkgA-2
+    #     pkgA-2 => pkgA-3
+    #     pkgB-1 => pkgB-2
+    #     pkgB-2 => pkgB-1
+    # ...becomes:
+    #     pkgA-1 => pkgA-3
+    #     pkgB-1 => pkgB-1 (reinstall)
+    # ...note that we just give up if "impossible" things happen, Eg.
+    #     pkgA-1 => pkgA-2
+    #     pkgA-4 => pkgA-5
+    @staticmethod
+    def _p2sk(pkg, state=None):
+        """ Take a pkg and return the key for it's state lookup. """
+        if state is None:
+            state = pkg.state
+        #  Arch is needed so multilib. works, dito. getBaseArch() -- (so .i586
+        # => .i686 moves are seen)
+        return (pkg.name, getBaseArch(pkg.arch), state)
+
+    @staticmethod
+    def _list2dict(pkgs):
+        pkgtup2pkg   = {}
+        pkgstate2pkg = {}
+        for pkg in pkgs:
+            key = YumMergedHistoryTransaction._p2sk(pkg)
+            pkgtup2pkg[pkg.pkgtup] = pkg
+            pkgstate2pkg[key]      = pkg
+        return pkgtup2pkg, pkgstate2pkg
+    @staticmethod
+    def _conv_pkg_state(pkg, state):
+        npkg = YumHistoryPackageState(pkg.name, pkg.arch,
+                                      pkg.epoch,pkg.version,pkg.release, state)
+        npkg._checksums = pkg._checksums
+        npkg.done = pkg.done
+        if _sttxt2stcode[npkg.state] in TS_INSTALL_STATES:
+            npkg.state_installed = True
+        if _sttxt2stcode[npkg.state] in TS_REMOVE_STATES:
+            npkg.state_installed = False
+        return npkg
+    @staticmethod
+    def _get_pkg(sk, pkgstate2pkg):
+        if type(sk) != type((0,1)):
+            sk = YumMergedHistoryTransaction._p2sk(sk)
+        if sk not in pkgstate2pkg:
+            return None
+        return pkgstate2pkg[sk]
+    def _move_pkg(self, sk, nstate, pkgtup2pkg, pkgstate2pkg):
+        xpkg = self._get_pkg(sk, pkgstate2pkg)
+        if xpkg is None:
+            return
+        del pkgstate2pkg[self._p2sk(xpkg)]
+        xpkg = self._conv_pkg_state(xpkg, nstate)
+        pkgtup2pkg[xpkg.pkgtup] = xpkg
+        pkgstate2pkg[self._p2sk(xpkg)] = xpkg
+
+    def _getTransData(self):
+        def _get_pkg_f(sk):
+            return self._get_pkg(sk, fpkgstate2pkg)
+        def _get_pkg_n(sk):
+            return self._get_pkg(sk, npkgstate2pkg)
+        def _move_pkg_f(sk, nstate):
+            self._move_pkg(sk, nstate, fpkgtup2pkg, fpkgstate2pkg)
+        def _move_pkg_n(sk, nstate):
+            self._move_pkg(sk, nstate, npkgtup2pkg, npkgstate2pkg)
+        def _del1_n(pkg):
+            del npkgtup2pkg[pkg.pkgtup]
+            del npkgstate2pkg[self._p2sk(pkg)]
+        def _del1_f(pkg):
+            del fpkgtup2pkg[pkg.pkgtup]
+            del fpkgstate2pkg[self._p2sk(pkg)]
+        def _del2(fpkg, npkg):
+            assert fpkg.pkgtup == npkg.pkgtup
+            _del1_f(fpkg)
+            _del1_n(npkg)
+        fpkgtup2pkg   = {}
+        fpkgstate2pkg = {}
+        #  We need to go from oldest to newest here, so we can see what happened
+        # in the correct chronological order.
+        for obj in self._merged_objs:
+            npkgtup2pkg, npkgstate2pkg = self._list2dict(obj.trans_data)
+
+            # Handle Erase => Install, as update/reinstall/downgrade
+            for key in list(fpkgstate2pkg.keys()):
+                (name, arch, state) = key
+                if state not in  ('Obsoleted', 'Erase'):
+                    continue
+                fpkg = fpkgstate2pkg[key]
+                for xstate in ('Install', 'True-Install', 'Dep-Install',
+                               'Obsoleting'):
+                    npkg = _get_pkg_n(self._p2sk(fpkg, xstate))
+                    if npkg is not None:
+                        break
+                else:
+                    continue
+
+                if False: pass
+                elif fpkg > npkg:
+                    _move_pkg_f(fpkg, 'Downgraded')
+                    if xstate != 'Obsoleting':
+                        _move_pkg_n(npkg, 'Downgrade')
+                elif fpkg < npkg:
+                    _move_pkg_f(fpkg, 'Updated')
+                    if xstate != 'Obsoleting':
+                        _move_pkg_n(npkg, 'Update')
+                else:
+                    _del1_f(fpkg)
+                    if xstate != 'Obsoleting':
+                        _move_pkg_n(npkg, 'Reinstall')
+
+            sametups = set(npkgtup2pkg.keys()).intersection(fpkgtup2pkg.keys())
+            for pkgtup in sametups:
+                if pkgtup not in fpkgtup2pkg or pkgtup not in npkgtup2pkg:
+                    continue
+                fpkg = fpkgtup2pkg[pkgtup]
+                npkg = npkgtup2pkg[pkgtup]
+                if False: pass
+                elif fpkg.state == 'Reinstall':
+                    if npkg.state in ('Reinstall', 'Erase', 'Obsoleted',
+                                      'Downgraded', 'Updated'):
+                        _del1_f(fpkg)
+                elif fpkg.state in ('Obsoleted', 'Erase'):
+                    #  Should be covered by above loop which deals with
+                    # all goood state changes.
+                    good_states = ('Install', 'True-Install', 'Dep-Install',
+                                   'Obsoleting')
+                    assert npkg.state not in good_states
+
+                elif fpkg.state in ('Install', 'True-Install', 'Dep-Install'):
+                    if False: pass
+                    elif npkg.state in ('Erase', 'Obsoleted'):
+                        _del2(fpkg, npkg)
+                    elif npkg.state == 'Updated':
+                        _del2(fpkg, npkg)
+                        #  Move '*Install' state along to newer pkg. (not for
+                        # obsoletes).
+                        _move_pkg_n(self._p2sk(fpkg, 'Update'), fpkg.state)
+                    elif npkg.state == 'Downgraded':
+                        _del2(fpkg, npkg)
+                        #  Move '*Install' state along to newer pkg. (not for
+                        # obsoletes).
+                        _move_pkg_n(self._p2sk(fpkg, 'Downgrade'), fpkg.state)
+
+                elif fpkg.state in ('Downgrade', 'Update', 'Obsoleting'):
+                    if False: pass
+                    elif npkg.state == 'Reinstall':
+                        _del1_n(npkg)
+                    elif npkg.state in ('Erase', 'Obsoleted'):
+                        _del2(fpkg, npkg)
+
+                        # Move 'Erase'/'Obsoleted' state to orig. pkg.
+                        _move_pkg_f(self._p2sk(fpkg, 'Updated'),    npkg.state)
+                        _move_pkg_f(self._p2sk(fpkg, 'Downgraded'), npkg.state)
+
+                    elif npkg.state in ('Downgraded', 'Updated'):
+                        xfpkg = _get_pkg_f(self._p2sk(fpkg, 'Updated'))
+                        if xfpkg is None:
+                            xfpkg = _get_pkg_f(self._p2sk(fpkg, 'Downgraded'))
+                        if xfpkg is None:
+                            if fpkg.state != 'Obsoleting':
+                                continue
+                            # Was an Install*/Reinstall with Obsoletes
+                            xfpkg = fpkg
+                        xnpkg = _get_pkg_n(self._p2sk(npkg, 'Update'))
+                        if xnpkg is None:
+                            xnpkg = _get_pkg_n(self._p2sk(npkg, 'Downgrade'))
+                        if xnpkg is None:
+                            xnpkg = _get_pkg_n(self._p2sk(npkg, 'Obsoleting'))
+                        if xnpkg is None:
+                            continue
+
+                        #  Now we have 4 pkgs, f1, f2, n1, n2, and 3 pkgtups
+                        # f2.pkgtup == n1.pkgtup. So we need to find out if
+                        # f1 => n2 is an Update or a Downgrade.
+                        _del2(fpkg, npkg)
+                        if xfpkg == xnpkg:
+                            nfstate = 'Reinstall'
+                            if 'Obsoleting' in (fpkg.state, xnpkg.state):
+                                nfstate = 'Obsoleting'
+                            if xfpkg != fpkg:
+                                _move_pkg_f(xfpkg, nfstate)
+                            _del1_n(xnpkg)
+                        elif xfpkg < xnpkg:
+                            # Update...
+                            nfstate = 'Updated'
+                            nnstate = 'Update'
+                            if 'Obsoleting' in (fpkg.state, xnpkg.state):
+                                nnstate = 'Obsoleting'
+                            if xfpkg != fpkg:
+                                _move_pkg_f(xfpkg, nfstate)
+                            _move_pkg_n(xnpkg, nnstate)
+                        else:
+                            # Downgrade...
+                            nfstate = 'Downgraded'
+                            nnstate = 'Downgrade'
+                            if 'Obsoleting' in (fpkg.state, xnpkg.state):
+                                nnstate = 'Obsoleting'
+                            if xfpkg != fpkg:
+                                _move_pkg_f(xfpkg, nfstate)
+                            _move_pkg_n(xnpkg, nnstate)
+
+            for x in npkgtup2pkg:
+                fpkgtup2pkg[x] = npkgtup2pkg[x]
+            for x in npkgstate2pkg:
+                fpkgstate2pkg[x] = npkgstate2pkg[x]
+        if True:
+            return sorted(fpkgstate2pkg.values())
+
+        # This just dumps "everything", and is thus. pretty crappy
+        ret = []
+        filt = set()
+        for obj in self._merged_objs:
+            for pkg in obj.trans_data:
+                key = (pkg.state, pkg.pkgtup)
+                if key in filt:
+                    continue
+                filt.add(key)
+                ret.append(pkg)
+        return sorted(ret)
+
+    def _getErrors(self):
+        ret = []
+        for obj in self._merged_objs:
+            ret.extend(obj.errors)
+        return ret
+    def _getOutput(self):
+        ret = []
+        for obj in self._merged_objs:
+            ret.extend(obj.output)
+        return ret
+
+    def merge(self, obj):
+        if obj.tid in self._merged_tids:
+            return # Already done, signal an error?
+
+        self._merged_tids.add(obj.tid)
+        self._merged_objs.append(obj)
+        # Oldest first...
+        self._merged_objs.sort(reverse=True)
+
+        if self.beg_timestamp > obj.beg_timestamp:
+            self.beg_timestamp    = obj.beg_timestamp
+            self.beg_rpmdbversion = obj.beg_rpmdbversion
+        if self.end_timestamp < obj.end_timestamp:
+            self.end_timestamp    = obj.end_timestamp
+            self.end_rpmdbversion = obj.end_rpmdbversion
+
 
 class YumHistory:
     """ API for accessing the history sqlite data. """
@@ -453,9 +761,9 @@ class YumHistory:
                       ORDER BY name ASC, epoch ASC, state DESC""", (tid,))
         ret = []
         for row in cur:
-            obj = YumHistoryPackage(row[0],row[1],row[2],row[3],row[4], row[5])
+            obj = YumHistoryPackageState(row[0],row[1],row[2],row[3],row[4],
+                                         row[7], row[5])
             obj.done     = row[6] == 'TRUE'
-            obj.state    = row[7]
             obj.state_installed = None
             if _sttxt2stcode[obj.state] in TS_INSTALL_STATES:
                 obj.state_installed = True
