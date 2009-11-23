@@ -468,7 +468,8 @@ class YumBase(depsolve.Depsolve):
             rpmdb_st = time.time()
             self.verbose_logger.log(logginglevels.DEBUG_4,
                                     _('Reading Local RPMDB'))
-            self._rpmdb = rpmsack.RPMDBPackageSack(root=self.conf.installroot)
+            self._rpmdb = rpmsack.RPMDBPackageSack(root=self.conf.installroot,
+                                                   releasever=self.yumvar['releasever'])
             self.verbose_logger.debug('rpmdb time: %0.3f' % (time.time() - rpmdb_st))
         return self._rpmdb
 

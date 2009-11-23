@@ -97,7 +97,7 @@ class RPMDBPackageSack(PackageSackBase):
                            rpm.RPMTAG_OBSOLETEFLAGS)
             }
 
-    def __init__(self, root='/'):
+    def __init__(self, root='/', releasever=None):
         self.root = root
         self._idx2pkg = {}
         self._name2pkg = {}
@@ -108,6 +108,7 @@ class RPMDBPackageSack(PackageSackBase):
         self._get_req_cache  = {}
         self._loaded_gpg_keys = False
         self.ts = None
+        self.releasever = releasever
         self.auto_close = False # this forces a self.ts.close() after
                                      # most operations so it doesn't leave
                                      # any lingering locks.
