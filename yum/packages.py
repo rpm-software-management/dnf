@@ -606,6 +606,14 @@ class YumAvailablePackage(PackageObject, RpmBase):
         self.pkgtup = (self.name, self.arch, self.epoch, self.version, self.release)
 
     def _ui_from_repo(self):
+        """ This reports the repo the package is from, we integrate YUMDB info.
+            for RPM packages so a package from "fedora" that is installed has a
+            ui_from_repo of "@fedora". Note that, esp. with the --releasever
+            option, "fedora" or "rawhide" isn't authoritive.
+            So we also check against the current releasever and if it is
+            different we also print the YUMDB releasever. This means that
+            installing from F12 fedora, while running F12, would report as
+            "@fedora/13". """
         if self.repoid == 'installed' and 'from_repo' in self.yumdb_info:
             end = ''
             if (self.rpmdb.releasever is not None and
