@@ -509,9 +509,9 @@ class MergeHistTransTests(unittest.TestCase):
         self.assertEquals(pkgs[3], opkg3)
         self.assertEquals(pkgs[3].state, opkg3.state)
 
-    def testInRmMerge1(self, xstate='Install'):
+    def testInRmMerge1(self, xstate='Install', estate='Erase'):
         npkg1 = self._pkg_new('foo', state=xstate)
-        npkg2 = self._pkg_new('foo', state='Erase')
+        npkg2 = self._pkg_new('foo', state=estate)
         npkg3 = self._pkg_new('bar', version='6', state='True-Install')
 
         trans = []
@@ -524,6 +524,36 @@ class MergeHistTransTests(unittest.TestCase):
         self.assertEquals(len(pkgs), 1)
         self.assertEquals(pkgs[0], npkg3)
         self.assertEquals(pkgs[0].state, npkg3.state)
+
+    def testInRmMerge2(self, xstate='Install'):
+        self.testInRmMerge1(xstate, 'Obsoleted')
+
+    def testInRmInonlyMerge1(self, xstate='True-Install', estate='Erase'):
+        npkg1 = self._pkg_new('foo', state=xstate)
+        npkg2 = self._pkg_new('foo', version='2', state=xstate)
+        npkg3 = self._pkg_new('foo', version='3', state=xstate)
+        npkg4 = self._pkg_new('foo', state=estate)
+        npkg5 = self._pkg_new('foo', version='2', state=estate)
+        npkg6 = self._pkg_new('foo', version='3', state=estate)
+        npkg9 = self._pkg_new('bar', version='6', state=xstate)
+
+        trans = []
+        trans.append(self._trans_new([npkg1]))
+        trans.append(self._trans_new([npkg2]))
+        trans.append(self._trans_new([npkg3]))
+        trans.append(self._trans_new([npkg4]))
+        trans.append(self._trans_new([npkg5]))
+        trans.append(self._trans_new([npkg6]))
+        trans.append(self._trans_new([npkg9]))
+        merged = self._merge_new(trans)
+        self.assertMergedMain(merged, trans)
+        pkgs = merged.trans_data
+        self.assertEquals(len(pkgs), 1)
+        self.assertEquals(pkgs[0], npkg9)
+        self.assertEquals(pkgs[0].state, npkg9.state)
+
+    def testInRmInonlyMerge2(self, xstate='True-Install'):
+        self.testInRmInonlyMerge1(xstate, 'Obsoleted')
 
     def testUpRmMerge1(self, xstate='Update'):
         npkg1 = self._pkg_new('foo')
@@ -664,6 +694,37 @@ class MergeHistTransTests(unittest.TestCase):
     def testUpRmInuMerge2(self, xstate='Update', ystate='Install'):
         self.testUpRmInuMerge1(xstate, ystate, 'Obsoleted')
 
+    def testBrokenUpMerge1(self, xstate='Update', estate='Erase'):
+        # This is "broken", so as long as we don't die it's all good.
+        # The below test basically documents what we do.
+        opkg1 = self._pkg_new('foo', version='1',   state='Updated')
+        npkg1 = self._pkg_new('foo', version='2',   state=xstate)
+        opkg2 = self._pkg_new('foo', version='11',  state='Updated')
+        npkg2 = self._pkg_new('foo', version='21',  state=xstate)
+        opkg3 = self._pkg_new('foo', version='110', state='Updated')
+        npkg3 = self._pkg_new('foo', version='210', state=xstate)
+        npkg4 = self._pkg_new('foo', version='2',   state=estate)
+        npkg5 = self._pkg_new('foo', version='21',  state=estate)
+        npkg6 = self._pkg_new('foo', version='210', state=estate)
+
+        trans = []
+        trans.append(self._trans_new([opkg1, npkg1]))
+        trans.append(self._trans_new([opkg2, npkg2]))
+        trans.append(self._trans_new([opkg3, npkg3]))
+        trans.append(self._trans_new([npkg4]))
+        trans.append(self._trans_new([npkg5]))
+        trans.append(self._trans_new([npkg6]))
+        merged = self._merge_new(trans)
+        self.assertMergedMain(merged, trans)
+        pkgs = merged.trans_data
+        self.assertEquals(len(pkgs), 3)
+        self.assertEquals(pkgs[0], opkg1)
+        self.assertEquals(pkgs[0].state, 'Updated')
+        self.assertEquals(pkgs[1], opkg2)
+        self.assertEquals(pkgs[1].state, 'Updated')
+        self.assertEquals(pkgs[2], opkg3)
+        self.assertEquals(pkgs[2].state, estate)
+
     #  Obsoleting is the _painful_ one because it really should be a state, but
     # an attribute. So "Obsoleting" can be any of:
     #     Install*, Reinstall, Update, Downgrade
@@ -697,6 +758,12 @@ class MergeHistTransTests(unittest.TestCase):
         self.testDownUpMerge5(xstate='Obsoleting')
     def testObsIRM1(self):
         self.testInRmMerge1(xstate='Obsoleting')
+    def testObsIRM2(self):
+        self.testInRmMerge2(xstate='Obsoleting')
+    def testObsIRMM1(self):
+        self.testInRmInonlyMerge1(xstate='Obsoleting')
+    def testObsIRMM2(self):
+        self.testInRmInonlyMerge1(xstate='Obsoleting')
     def testObsURM1(self):
         self.testUpRmMerge1(xstate='Obsoleting')
     def testObsURM2(self):

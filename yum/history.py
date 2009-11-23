@@ -320,10 +320,14 @@ class YumMergedHistoryTransaction(YumHistoryTransaction):
             self._move_pkg(sk, nstate, npkgtup2pkg, npkgstate2pkg)
         def _del1_n(pkg):
             del npkgtup2pkg[pkg.pkgtup]
-            del npkgstate2pkg[self._p2sk(pkg)]
+            key = self._p2sk(pkg)
+            if key in npkgstate2pkg: # For broken rpmdbv's and installonly
+                del npkgstate2pkg[key]
         def _del1_f(pkg):
             del fpkgtup2pkg[pkg.pkgtup]
-            del fpkgstate2pkg[self._p2sk(pkg)]
+            key = self._p2sk(pkg)
+            if key in fpkgstate2pkg: # For broken rpmdbv's and installonly
+                del fpkgstate2pkg[key]
         def _del2(fpkg, npkg):
             assert fpkg.pkgtup == npkg.pkgtup
             _del1_f(fpkg)
@@ -458,20 +462,7 @@ class YumMergedHistoryTransaction(YumHistoryTransaction):
                 fpkgtup2pkg[x] = npkgtup2pkg[x]
             for x in npkgstate2pkg:
                 fpkgstate2pkg[x] = npkgstate2pkg[x]
-        if True:
-            return sorted(fpkgstate2pkg.values())
-
-        # This just dumps "everything", and is thus. pretty crappy
-        ret = []
-        filt = set()
-        for obj in self._merged_objs:
-            for pkg in obj.trans_data:
-                key = (pkg.state, pkg.pkgtup)
-                if key in filt:
-                    continue
-                filt.add(key)
-                ret.append(pkg)
-        return sorted(ret)
+        return sorted(fpkgtup2pkg.values())
 
     def _getErrors(self):
         ret = []
