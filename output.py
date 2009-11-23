@@ -43,6 +43,8 @@ from yum.rpmtrans import RPMBaseCallback
 from yum.packageSack import packagesNewestByNameArch
 import yum.packages
 
+import yum.history
+
 from yum.i18n import utf8_width, utf8_width_fill, utf8_text_fill
 
 def _term_width():
@@ -1198,6 +1200,9 @@ to exit.
         return count, "".join(list(actions))
 
     def _pwd_ui_username(self, uid, limit=None):
+        if type(uid) == type([]):
+            return [self._pwd_ui_username(u, limit) for u in uid]
+
         # loginuid is set to -1 on init.
         if uid is None or uid == 0xFFFFFFFF:
             loginid = _("<unset>")
@@ -1317,21 +1322,58 @@ to exit.
         return old[0]
 
     def historyInfoCmd(self, extcmds):
-        tids = set()
-        pats = []
-        for tid in extcmds[1:]:
+        def str2int(x):
             try:
-                int(tid)
-                tids.add(tid)
+                return int(x)
             except ValueError:
-                pats.append(tid)
+                return None
+
+        tids = set()
+        mtids = set()
+        pats = []
+        old = self.history.last()
+        if old is None:
+            self.logger.critical(_('No transactions'))
+            return 1, ['Failed history info']
+
+        for tid in extcmds[1:]:
+            if '..' in tid:
+                btid, etid = tid.split('..', 2)
+                btid = str2int(btid)
+                if btid > old.tid:
+                    btid = None
+                elif btid <= 0:
+                    btid = None
+                etid = str2int(etid)
+                if etid > old.tid:
+                    etid = None
+                if btid is not None and etid is not None:
+                    # Have a range ... do a "merged" transaction.
+                    if btid > etid:
+                        btid, etid = etid, btid
+                    mtids.add((btid, etid))
+                    continue
+            elif str2int(tid) is not None:
+                tids.add(str2int(tid))
+                continue
+            pats.append(tid)
         if pats:
             tids.update(self.history.search(pats))
+        utids = tids.copy()
+        if mtids:
+            mtids = sorted(mtids)
+            last_end = -1 # This just makes displaying it easier...
+            for mtid in mtids:
+                if mtid[0] < last_end:
+                    self.logger.warn(_('Skipping merged transaction %d to %d, as it overlaps', mtid[0], mtid[1]))
+                    continue # Don't do overlapping
+                last_end = mtid[1]
+                for num in range(mtid[0], mtid[1] + 1):
+                    tids.add(num)
 
         if not tids and len(extcmds) < 2:
-            old = self.history.last()
-            if old is not None:
-                tids.add(old.tid)
+            tids.add(old.tid)
+            utids.add(old.tid)
 
         if not tids:
             self.logger.critical(_('No transaction ID, or package, given'))
@@ -1343,6 +1385,10 @@ to exit.
             lastdbv = lastdbv.end_rpmdbversion
 
         done = False
+        bmtid, emtid = -1, -1
+        mobj = None
+        if mtids:
+            bmtid, emtid = mtids.pop(0)
         for tid in self.history.old(tids):
             if lastdbv is not None and tid.tid == lasttid:
                 #  If this is the last transaction, is good and it doesn't
@@ -1352,15 +1398,43 @@ to exit.
                     tid.altered_gt_rpmdb = True
             lastdbv = None
 
+            if tid.tid >= bmtid and tid.tid <= emtid:
+                if mobj is None:
+                    mobj = yum.history.YumMergedHistoryTransaction(tid)
+                else:
+                    mobj.merge(tid)
+            elif mobj is not None:
+                if done:
+                    print "-" * 79
+                done = True
+
+                self._historyInfoCmd(mobj)
+                mobj = None
+                if mtids:
+                    bmtid, emtid = mtids.pop(0)
+                    if tid.tid >= bmtid and tid.tid <= emtid:
+                        mobj = yum.history.YumMergedHistoryTransaction(tid)
+
+            if tid.tid in utids:
+                if done:
+                    print "-" * 79
+                done = True
+
+                self._historyInfoCmd(tid, pats)
+
+        if mobj is not None:
             if done:
                 print "-" * 79
-            done = True
-            self._historyInfoCmd(tid, pats)
+
+            self._historyInfoCmd(mobj)
 
     def _historyInfoCmd(self, old, pats=[]):
         name = self._pwd_ui_username(old.loginuid)
 
-        print _("Transaction ID :"), old.tid
+        if type(old.tid) == type([]):
+            print _("Transaction ID :"), "%u..%u" % (old.tid[0], old.tid[-1])
+        else:
+            print _("Transaction ID :"), old.tid
         begtm = time.ctime(old.beg_timestamp)
         print _("Begin time     :"), begtm
         if old.beg_rpmdbversion is not None:
@@ -1381,15 +1455,34 @@ to exit.
                         break
                     sofar += len(begtms[i]) + 1
                 endtm = (' ' * sofar) + endtm[sofar:]
-            diff = _("(%s seconds)") % (old.end_timestamp - old.beg_timestamp)
+            diff = old.end_timestamp - old.beg_timestamp
+            if diff < 5 * 60:
+                diff = _("(%u seconds)") % diff
+            elif diff < 5 * 60 * 60:
+                diff = _("(%u minutes)") % (diff / 60)
+            elif diff < 5 * 60 * 60 * 24:
+                diff = _("(%u hours)") % (diff / (60 * 60))
+            else:
+                diff = _("(%u days)") % (diff / (60 * 60 * 24))
             print _("End time       :"), endtm, diff
         if old.end_rpmdbversion is not None:
             if old.altered_gt_rpmdb:
                 print _("End rpmdb      :"), old.end_rpmdbversion, "**"
             else:
                 print _("End rpmdb      :"), old.end_rpmdbversion
-        print _("User           :"), name
-        if old.return_code is None:
+        if type(name) == type([]):
+            for name in name:
+                print _("User           :"), name
+        else:
+            print _("User           :"), name
+        if type(old.return_code) == type([]):
+            codes = old.return_code
+            if codes[0] is None:
+                print _("Return-Code    :"), "**", _("Aborted"), "**"
+                codes = codes[1:]
+            if codes:
+                print _("Return-Code    :"), _("Failures:"), ", ".join(codes)
+        elif old.return_code is None:
             print _("Return-Code    :"), "**", _("Aborted"), "**"
         elif old.return_code:
             print _("Return-Code    :"), _("Failure:"), old.return_code

@@ -247,7 +247,14 @@ and new to start a new history file.
 The info/list/summary commands take either a transactions id or a package (with
 wildcards, as in \fBSpecifying package names\fP), all three can also be passed
 no arguments. list can be passed the keyword "all" to list all the transactions.
-undo/redo just take a transaction id.
+undo/redo just take a transaction id\&.
+
+The info command can also take ranges of transaction ids, of the form
+start..end, which will then display a merged history as if all the
+transactions in the range had happened at once\&.
+.br
+Eg. "history info 1..4" will merge the first four transactions and display them
+as a single transaction.
 .IP
 .IP "\fBhelp\fP"
 Produces help, either for all commands or if given a command name then the help
