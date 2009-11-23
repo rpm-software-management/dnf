@@ -607,7 +607,12 @@ class YumAvailablePackage(PackageObject, RpmBase):
 
     def _ui_from_repo(self):
         if self.repoid == 'installed' and 'from_repo' in self.yumdb_info:
-            return '@' + self.yumdb_info.from_repo
+            end = ''
+            if (self.rpmdb.releasever is not None and
+                'releasever' in self.yumdb_info and
+                self.yumdb_info.releasever != self.rpmdb.releasever):
+                end = '/' + self.yumdb_info.releasever
+            return '@' + self.yumdb_info.from_repo + end
         return self.repoid
     ui_from_repo = property(fget=lambda self: self._ui_from_repo())
 
