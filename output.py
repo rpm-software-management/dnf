@@ -1428,6 +1428,7 @@ to exit.
                 print "%4d" % num, line
 
     def historyInfoCmdPkgsAltered(self, old, pats=[]):
+        last = None
         for hpkg in old.trans_data:
             prefix = " " * 4
             if not hpkg.done:
@@ -1459,15 +1460,22 @@ to exit.
             uistate = utf8_width_fill(uistate, 12, 12)
             # Should probably use columns here...
             if False: pass
-            elif hpkg.state == 'Update':
+            elif (last is not None and
+                  last.state == 'Updated' and last.name == hpkg.name and
+                  hpkg.state == 'Update'):
                 ln = len(hpkg.name) + 1
                 cn = (" " * ln) + cn[ln:]
                 print "%s%s%s%s %s" % (prefix, hibeg, uistate, hiend, cn)
-            elif hpkg.state == 'Downgraded':
+            elif (last is not None and
+                  last.state == 'Downgrade' and last.name == hpkg.name and
+                  hpkg.state == 'Downgraded'):
                 ln = len(hpkg.name) + 1
                 cn = (" " * ln) + cn[ln:]
                 print "%s%s%s%s %s" % (prefix, hibeg, uistate, hiend, cn)
             else:
+                last = None
+                if hpkg.state in ('Updated', 'Downgrade'):
+                    last = hpkg
                 print "%s%s%s%s %s" % (prefix, hibeg, uistate, hiend, cn)
 
     def historySummaryCmd(self, extcmds):
