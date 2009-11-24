@@ -102,8 +102,8 @@ _yum()
 
         clean)
             if [ "$prev" = clean ] ; then
-                COMPREPLY=( $( compgen -W 'packages headers metadata cache
-                    dbcache all' -- "$cur" ) )
+                COMPREPLY=( $( compgen -W 'expire-cache packages headers
+                    metadata cache dbcache all' -- "$cur" ) )
             fi
             return 0
             ;;
