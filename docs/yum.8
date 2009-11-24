@@ -394,7 +394,9 @@ List the packages installed on the system that are obsoleted by packages
 in any yum repository listed in the config file.
 .IP
 .IP "\fByum list recent\fP"
-List packages recently added into the repositories. 
+List packages recently added into the repositories. This is often not helpful,
+but what you may really want to use is "yum list-updateinfo new" from the
+security yum plugin.
 .IP
 .IP "\fBSpecifying package names\fP"
 All the list options mentioned above take file-glob-syntax wildcards or package
