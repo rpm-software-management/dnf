@@ -803,10 +803,14 @@ class RepoListCommand(YumCommand):
         for repo in repos:
             if len(extcmds) and not _repo_match(repo, extcmds):
                 continue
+            if arg != 'all':
+                ui_enabled = ''
+                ui_endis_wid = 0
             if repo in enabled_repos:
                 enabled = True
-                ui_enabled = ehibeg + _('enabled') + hiend + ": "
-                ui_endis_wid = utf8_width(_('enabled')) + 2
+                if arg == 'all':
+                    ui_enabled = ehibeg + _('enabled') + hiend + ": "
+                    ui_endis_wid = utf8_width(_('enabled')) + 2
                 num        = len(repo.sack)
                 tot_num   += num
                 ui_num     = to_unicode(locale.format("%d", num, True))
@@ -921,7 +925,9 @@ class RepoListCommand(YumCommand):
                     ct_len = ui_endis_wid
                 if ui_len < len(ui_num):
                     ui_len = len(ui_num)
-            if utf8_width(_('status')) > ct_len + ui_len:
+            if arg == 'disabled': # Don't output a status column.
+                left = base.term.columns - (id_len + 1)
+            elif utf8_width(_('status')) > ct_len + ui_len:
                 left = base.term.columns - (id_len + utf8_width(_('status')) +2)
             else:
                 left = base.term.columns - (id_len + ct_len + ui_len + 2)
@@ -935,9 +941,20 @@ class RepoListCommand(YumCommand):
 
             txt_rid  = utf8_width_fill(_('repo id'), id_len)
             txt_rnam = utf8_width_fill(_('repo name'), nm_len, nm_len)
-            base.verbose_logger.log(logginglevels.INFO_2,"%s %s %s",
-                                    txt_rid, txt_rnam, _('status'))
+            if arg == 'disabled': # Don't output a status column.
+                base.verbose_logger.log(logginglevels.INFO_2,"%s %s",
+                                        txt_rid, txt_rnam)
+            else:
+                base.verbose_logger.log(logginglevels.INFO_2,"%s %s %s",
+                                        txt_rid, txt_rnam, _('status'))
             for (rid, rname, (ui_enabled, ui_endis_wid), ui_num) in cols:
+                if arg == 'disabled': # Don't output a status column.
+                    base.verbose_logger.log(logginglevels.INFO_2, "%s %s",
+                                            utf8_width_fill(rid, id_len),
+                                            utf8_width_fill(rname, nm_len,
+                                                            nm_len))
+                    continue
+
                 if ui_num:
                     ui_num = utf8_width_fill(ui_num, ui_len, left=False)
                 base.verbose_logger.log(logginglevels.INFO_2, "%s %s %s%s",
