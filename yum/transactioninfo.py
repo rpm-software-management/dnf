@@ -487,6 +487,12 @@ class TransactionData:
         txmbr.relatedto.append((obsoleting_po, 'obsoletedby'))
         txmbr.obsoleted_by.append(obsoleting_po)
         self.add(txmbr)
+        for otxmbr in self.getMembersWithState(obsoleting_po.pkgtup,
+                                               [TS_OBSOLETING]):
+            if po in otxmbr.obsoletes:
+                continue
+            otxmbr.relatedto.append((po, 'obsoletes'))
+            otxmbr.obsoletes.append(po)
         return txmbr
 
 
