@@ -1748,15 +1748,15 @@ class YumBase(depsolve.Depsolve):
 
     def _cleanFiles(self, exts, pathattr, filetype):
         filelist = []
-        removed = 0
         for ext in exts:
             for repo in self.repos.listEnabled():
                 path = getattr(repo, pathattr)
                 if os.path.exists(path) and os.path.isdir(path):
                     filelist = misc.getFileList(path, ext, filelist)
-        self._cleanFilelist(filetype, filelist)
+        return self._cleanFilelist(filetype, filelist)
 
     def _cleanFilelist(self, filetype, filelist):
+        removed = 0
         for item in filelist:
             try:
                 misc.unlink_f(item)

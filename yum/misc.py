@@ -340,7 +340,7 @@ def getFileList(path, ext, filelist):
         if os.path.isdir(path + '/' + d):
             filelist = getFileList(path + '/' + d, ext, filelist)
         else:
-            if d[-extlen:].lower() == '%s' % (ext):
+            if not ext or d[-extlen:].lower() == '%s' % (ext):
                 newpath = os.path.normpath(path + '/' + d)
                 filelist.append(newpath)
                     

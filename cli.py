@@ -896,7 +896,7 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
             rpmcode, rpmresults = self.cleanRpmDB()
             self.plugins.run('clean')
             
-            code = hdrcode + pkgcode + xmlcode + dbcode + rpmdb
+            code = hdrcode + pkgcode + xmlcode + dbcode + rpmcode
             results = (hdrresults + pkgresults + xmlresults + dbresults +
                        rpmresults)
             for msg in results:
