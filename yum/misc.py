@@ -873,3 +873,33 @@ def get_my_lang_code():
     
     return mylang
     
+def return_running_pids():
+    """return list of running processids, excluding this one"""
+    mypid = os.getpid()
+    pids = []
+    for fn in glob.glob('/proc/[0123456789]*'):
+        if mypid == os.path.basename(fn):
+            continue
+        pids.append(os.path.basename(fn))
+    return pids
+
+def get_open_files(pid):
+    """returns files open from this pid"""
+    files = []
+    smaps = '/proc/%s/smaps' % pid
+    try:
+        maps = open(smaps, 'r')
+    except (IOError, OSError), e:
+        return files
+
+    for line in maps.readlines():
+        if line.find('fd:') == -1:
+            continue
+        line = line.replace('\n', '')
+        slash = line.find('/')
+        filename = line[slash:]
+        filename = filename.replace('(deleted)', '') #only mildly retarded
+        filename = filename.strip()
+        if filename not in files:
+            files.append(filename)
+    return files
