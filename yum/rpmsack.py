@@ -173,8 +173,8 @@ class RPMDBPackageSack(PackageSackBase):
 
     def setCacheDir(self, cachedir):
         """ Sets the internal cachedir value for the rpmdb, to be the
-            "rpmdb-cache" directory from this parent. """
-        self._cachedir = self.root + '/' + cachedir + "/rpmdb-cache/"
+            "installed" directory from this parent. """
+        self._cachedir = self.root + '/' + cachedir + "/installed/"
 
     def readOnlyTS(self):
         if not self.ts:
