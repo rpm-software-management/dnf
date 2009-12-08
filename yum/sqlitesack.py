@@ -37,6 +37,7 @@ from yum.misc import seq_max_split
 from yum.i18n import to_utf8, to_unicode
 import sys
 import re
+import warnings
 
 def catchSqliteException(func):
     """This decorator converts sqlite exceptions into RepoError"""
