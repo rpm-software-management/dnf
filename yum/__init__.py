@@ -719,29 +719,39 @@ class YumBase(depsolve.Depsolve):
     # properties so they auto-create themselves with defaults
     repos = property(fget=lambda self: self._getRepos(),
                      fset=lambda self, value: setattr(self, "_repos", value),
-                     fdel=lambda self: self._delRepos())
+                     fdel=lambda self: self._delRepos(),
+                     doc="Repo Storage object - object of yum repositories")
     pkgSack = property(fget=lambda self: self._getSacks(),
                        fset=lambda self, value: setattr(self, "_pkgSack", value),
-                       fdel=lambda self: self._delSacks())
+                       fdel=lambda self: self._delSacks(),
+                       doc="Package sack object - object of yum package objects")
     conf = property(fget=lambda self: self._getConfig(),
                     fset=lambda self, value: setattr(self, "_conf", value),
-                    fdel=lambda self: setattr(self, "_conf", None))
+                    fdel=lambda self: setattr(self, "_conf", None),
+                    doc="Yum Config Object")
     rpmdb = property(fget=lambda self: self._getRpmDB(),
                      fset=lambda self, value: setattr(self, "_rpmdb", value),
-                     fdel=lambda self: setattr(self, "_rpmdb", None))
+                     fdel=lambda self: setattr(self, "_rpmdb", None),
+                     doc="RpmSack object")
     tsInfo = property(fget=lambda self: self._getTsInfo(), 
                       fset=lambda self,value: self._setTsInfo(value), 
-                      fdel=lambda self: self._delTsInfo())
-    ts = property(fget=lambda self: self._getActionTs(), fdel=lambda self: self._deleteTs())
+                      fdel=lambda self: self._delTsInfo(),
+                      doc="Transaction Set information object")
+    ts = property(fget=lambda self: self._getActionTs(), 
+                  fdel=lambda self: self._deleteTs(),
+                  doc="TransactionSet object")
     up = property(fget=lambda self: self._getUpdates(),
                   fset=lambda self, value: setattr(self, "_up", value),
-                  fdel=lambda self: setattr(self, "_up", None))
+                  fdel=lambda self: setattr(self, "_up", None),
+                  doc="Updates Object")
     comps = property(fget=lambda self: self._getGroups(),
                      fset=lambda self, value: self._setGroups(value),
-                     fdel=lambda self: setattr(self, "_comps", None))
+                     fdel=lambda self: setattr(self, "_comps", None),
+                     doc="Yum Component/groups object")
     history = property(fget=lambda self: self._getHistory(),
                        fset=lambda self, value: setattr(self, "_history",value),
-                       fdel=lambda self: setattr(self, "_history", None))
+                       fdel=lambda self: setattr(self, "_history", None),
+                       doc="Yum History Object")
     
     
     def doSackFilelistPopulate(self):
@@ -4184,3 +4194,14 @@ class YumBase(depsolve.Depsolve):
             return False
             
         return True    
+
+    def return_running_packages(self):
+        """returns a list of yum installed package objects which own a file
+           that are currently running or in use."""
+        pkgs = {}
+        for pid in misc.return_running_pids():
+            for fn in misc.get_open_files(pid):
+                for pkg in self.rpmdb.searchFiles(fn):
+                    pkgs[pkg] = 1
+
+        return sorted(pkgs.keys())
