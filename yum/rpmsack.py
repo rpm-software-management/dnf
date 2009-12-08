@@ -103,7 +103,8 @@ class RPMDBPackageSack(PackageSackBase):
     # Do we want to cache rpmdb data in a file, for later use?
     __cache_rpmdb__ = True
 
-    def __init__(self, root='/', releasever=None, cachedir=None):
+    def __init__(self, root='/', releasever=None, cachedir=None,
+                 persistdir='/var/lib/yum'):
         self.root = root
         self._idx2pkg = {}
         self._name2pkg = {}
@@ -116,6 +117,7 @@ class RPMDBPackageSack(PackageSackBase):
         if cachedir is None:
             cachedir = misc.getCacheDir()
         self.setCacheDir(cachedir)
+        self._persistdir = root +  '/' + persistdir
         self._have_cached_rpmdbv_data = None
         self._cached_conflicts_data = None
         # Store the result of what happens, if a transaction completes.
@@ -133,7 +135,7 @@ class RPMDBPackageSack(PackageSackBase):
             'obsoletes' : { },
             }
         
-        addldb_path = os.path.normpath(root + '/' + '/var/lib/yum/yumdb')
+        addldb_path = os.path.normpath(self._persistdir + '/yumdb')
         self.yumdb = RPMDBAdditionalData(db_path=addldb_path)
 
     def _get_pkglist(self):
@@ -172,7 +174,7 @@ class RPMDBPackageSack(PackageSackBase):
     def setCacheDir(self, cachedir):
         """ Sets the internal cachedir value for the rpmdb, to be the
             "rpmdb-cache" directory from this parent. """
-        self._cachedir = cachedir + "/rpmdb-cache/"
+        self._cachedir = self.root + '/' + cachedir + "/rpmdb-cache/"
 
     def readOnlyTS(self):
         if not self.ts:
@@ -653,7 +655,7 @@ class RPMDBPackageSack(PackageSackBase):
         # http://lists.rpm.org/pipermail/rpm-maint/2007-November/001719.html
         # ...if anything gets implemented, we should change.
         rpmdbvfname = self._cachedir + "/version"
-        rpmdbfname  = "/var/lib/rpm/Packages"
+        rpmdbfname  = self.root + "/var/lib/rpm/Packages"
 
         if os.path.exists(rpmdbvfname) and os.path.exists(rpmdbfname):
             # See if rpmdb has "changed" ...

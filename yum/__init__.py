@@ -470,6 +470,7 @@ class YumBase(depsolve.Depsolve):
                                     _('Reading Local RPMDB'))
             self._rpmdb = rpmsack.RPMDBPackageSack(root=self.conf.installroot,
                                                    releasever=self.yumvar['releasever'],
+                                                   persistdir=self.conf.persistdir,
                                                    cachedir=self.conf.cachedir)
             self.verbose_logger.debug('rpmdb time: %0.3f' % (time.time() - rpmdb_st))
         return self._rpmdb
@@ -714,7 +715,9 @@ class YumBase(depsolve.Depsolve):
         """auto create the history object that to access/append the transaction
            history information. """
         if self._history is None:
-            self._history = yum.history.YumHistory(root=self.conf.installroot)
+            pdb_path = self.conf.persistdir + "/history"
+            self._history = yum.history.YumHistory(root=self.conf.installroot,
+                                                   db_path=pdb_path)
         return self._history
     
     # properties so they auto-create themselves with defaults
