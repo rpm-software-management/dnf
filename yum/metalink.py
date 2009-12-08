@@ -55,6 +55,7 @@ class MetaLinkFile:
     """ Parse the file metadata out of a metalink file. """
 
     def __init__(self, elem):
+        # We aren't "using" any of these, just storing them.
         chksums = set(["md5", 'sha1', 'sha256', 'sha512'])
 
         for celem in elem:
