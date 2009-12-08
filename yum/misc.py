@@ -210,7 +210,7 @@ class Checksums:
     """ Generate checksum(s), on given pieces of data. Producing the
         Length and the result(s) when complete. """
 
-    def __init__(self, checksums=None, ignore_missing=False):
+    def __init__(self, checksums=None, ignore_missing=False, ignore_none=False):
         if checksums is None:
             checksums = _default_checksums
         self._sumalgos = []
@@ -233,7 +233,7 @@ class Checksums:
             done.add(sumtype)
             self._sumtypes.append(sumtype)
             self._sumalgos.append(sumalgo)
-        if not done:
+        if not done and not ignore_none:
             raise MiscError, 'Error Checksumming, no valid checksum type'
 
     def __len__(self):
@@ -257,6 +257,8 @@ class Checksums:
 
     def hexdigest(self, checksum=None):
         if checksum is None:
+            if not self._sumtypes:
+                return None
             checksum = self._sumtypes[0]
         if checksum == 'sha':
             checksum = 'sha1'
@@ -270,6 +272,8 @@ class Checksums:
 
     def digest(self, checksum=None):
         if checksum is None:
+            if not self._sumtypes:
+                return None
             checksum = self._sumtypes[0]
         if checksum == 'sha':
             checksum = 'sha1'
@@ -280,9 +284,9 @@ class AutoFileChecksums:
     """ Generate checksum(s), on given file/fileobject. Pretending to be a file
         object (overrrides read). """
 
-    def __init__(self, fo, checksums, ignore_missing=False):
+    def __init__(self, fo, checksums, ignore_missing=False, ignore_none=False):
         self._fo       = fo
-        self.checksums = Checksums(checksums, ignore_missing)
+        self.checksums = Checksums(checksums, ignore_missing, ignore_none)
 
     def __getattr__(self, attr):
         return getattr(self._fo, attr)
