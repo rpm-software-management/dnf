@@ -890,7 +890,7 @@ def return_running_pids():
 def get_open_files(pid):
     """returns files open from this pid"""
     files = []
-    smaps = '/proc/%s/smaps' % pid
+    smaps = '/proc/%s/maps' % pid
     try:
         maps = open(smaps, 'r')
     except (IOError, OSError), e:
