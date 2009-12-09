@@ -716,6 +716,18 @@ class RPMDBPackageSack(PackageSackBase):
         # XXX deprecate?
         return [po.pkgtup for po in self.getRequires(name, flags, version)]
 
+    def return_running_packages(self):
+        """returns a list of yum installed package objects which own a file
+           that are currently running or in use."""
+        pkgs = {}
+        for pid in misc.return_running_pids():
+            for fn in misc.get_open_files(pid):
+                for pkg in self.searchFiles(fn):
+                    pkgs[pkg] = 1
+
+        return sorted(pkgs.keys())
+
+
 def _sanitize(path):
     return path.replace('/', '').replace('~', '')
 
