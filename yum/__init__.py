@@ -4168,8 +4168,12 @@ class YumBase(depsolve.Depsolve):
 
         if not force and os.geteuid() == 0:
             return True # We are root, not forced, so happy with the global dir.
-
-        cachedir = misc.getCacheDir(tmpdir, reuse)
+        try:
+            cachedir = misc.getCacheDir(tmpdir, reuse)
+        except (IOError, OSError), e:
+            self.logger.critical(_('Could not set cachedir: %s') % str(e))
+            cachedir = None
+            
         if cachedir is None:
             return False # Tried, but failed, to get a "user" cachedir
 
