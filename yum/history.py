@@ -620,6 +620,12 @@ class YumHistory:
         if self._db_file == _db_file:
             os.rename(_db_file, _db_file + '.old')
         self._db_file = _db_file
+        
+        if self.conf.writable and not os.path.exists(self._db_file):
+            # make them default to 0600 - sysadmin can change it later
+            # if they want
+            fo = os.open(self._db_file, os.O_CREAT, 0600)
+            os.close(fo)
                 
         cur = self._get_cursor()
         ops = ['''\
