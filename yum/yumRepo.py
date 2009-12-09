@@ -1145,22 +1145,16 @@ class YumRepository(Repository, config.RepoConf):
         if repoXML.length != repomd.size:
             return False
 
-        #  MirrorManager isn't generating sha256 yet, and we should probably
-        # not require all of the checksums we produce.
-        done = set()
         for checksum in repoXML.checksums:
             if checksum not in repomd.chksums:
                 continue
 
             if repoXML.checksums[checksum] != repomd.chksums[checksum]:
                 return False
-            done.add(checksum)
 
-        #  Only allow approved checksums, might want to not "approve" of
-        # sha1/md5
-        for checksum in ('sha512', 'sha256', 'sha1', 'md5'):
-            if checksum in done:
-                return True
+            #  If we don't trust the checksum, then don't generate it in
+            # repoMDObject().
+            return True
 
         return False
 

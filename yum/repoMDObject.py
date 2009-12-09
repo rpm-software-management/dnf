@@ -94,9 +94,10 @@ class RepoMD:
         else:
             # srcfile is a file object
             infile = srcfile
-        
-        infile = AutoFileChecksums(infile, ['md5', 'sha1', 'sha256'],
-                                   ignore_missing=True)
+
+        # We trust any of these to mean the repomd.xml is valid.
+        infile = AutoFileChecksums(infile, ['sha256', 'sha512'],
+                                   ignore_missing=True, ignore_none=True)
         parser = iterparse(infile)
         
         try:

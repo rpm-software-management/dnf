@@ -666,7 +666,7 @@ class TransactionMember:
         return object.__hash__(self)
             
     def __str__(self):
-        return "%s.%s %s-%s-%s - %s" % (self.name, self.arch, self.epoch,
+        return "%s.%s %s:%s-%s - %s" % (self.name, self.arch, self.epoch,
                                         self.version, self.release, self.ts_state)
 
     def __repr__(self):
