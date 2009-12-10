@@ -141,3 +141,96 @@ class KernelTests(OperationsTests):
         p = self.pkgs
         res, msg = self.runOperation(['install','kernel-2.6.23.8'], p.inst, p.avail)
         self.assertResult(p.inst)
+
+class MultiLibTests(OperationsTests):
+
+    @staticmethod
+    def buildPkgs(pkgs, *args):
+        pkgs.inst = []
+        pkgs.i_foo_1_12_x = FakePackage('foo', '1', '12',arch='x86_64')
+        pkgs.i_wbar_1_12_i = FakePackage('wbar', '1', '12', arch='i586')
+        pkgs.inst.append(pkgs.i_foo_1_12_x)
+        pkgs.inst.append(pkgs.i_wbar_1_12_i)
+
+        pkgs.avail = []
+        pkgs.a_foo_0_2_x = FakePackage('foo', '0',  '2', arch='x86_64')
+        pkgs.a_foo_0_2_i = FakePackage('foo', '0',  '2', arch='i686')
+        pkgs.a_foo_1_12_x = FakePackage('foo', '1', '12', arch='x86_64')
+        pkgs.a_foo_1_12_i = FakePackage('foo', '1', '12', arch='i686')
+        pkgs.a_foo_2_22_x = FakePackage('foo', '2', '22', arch='x86_64')
+        pkgs.a_foo_2_22_i = FakePackage('foo', '2', '22', arch='i686')
+        pkgs.a_bar_1_12_x = FakePackage('bar', '1', '12', arch='x86_64')
+        pkgs.a_bar_1_12_i = FakePackage('bar', '1', '12', arch='i686')
+        pkgs.a_bar_2_22_x = FakePackage('bar', '2', '22', arch='x86_64')
+        pkgs.a_bar_2_22_i = FakePackage('bar', '2', '22', arch='i686')
+
+        # ibar is .i?86 older
+        pkgs.a_ibar_2_22_x = FakePackage('ibar', '2', '22', arch='x86_64')
+        pkgs.a_ibar_1_12_i = FakePackage('ibar', '1', '12', arch='i686')
+
+        # xbar is .x86_64 older
+        pkgs.a_xbar_1_12_x = FakePackage('xbar', '1', '12', arch='x86_64')
+        pkgs.a_xbar_2_22_i = FakePackage('xbar', '2', '22', arch='i686')
+
+        # wbar is arch changing update/downgrade
+        pkgs.a_wbar_0_2_i = FakePackage('wbar', '0', '2', arch='i386')
+        pkgs.a_wbar_2_22_i = FakePackage('wbar', '2', '22', arch='i686')
+
+        for i in ('a_foo_0_2', 'a_foo_1_12', 'a_foo_2_22',
+                  'a_bar_1_12', 'a_bar_2_22'):
+            pkgs.avail.append(getattr(pkgs, i + '_x'))
+            pkgs.avail.append(getattr(pkgs, i + '_i'))
+        pkgs.avail.append(pkgs.a_ibar_2_22_x)
+        pkgs.avail.append(pkgs.a_ibar_1_12_i)
+        pkgs.avail.append(pkgs.a_xbar_1_12_x)
+        pkgs.avail.append(pkgs.a_xbar_2_22_i)
+        pkgs.avail.append(pkgs.a_wbar_0_2_i)
+        pkgs.avail.append(pkgs.a_wbar_2_22_i)
+    
+    def testBestInstall1(self):
+        p = self.pkgs
+        ninst = p.inst[:]
+        ninst.append(p.a_bar_2_22_x)
+        res, msg = self.runOperation(['install', 'bar'], p.inst, p.avail)
+        self.assertResult(ninst)
+
+    def testBestInstall2(self):
+        p = self.pkgs
+        ninst = p.inst[:]
+        ninst.append(p.a_bar_1_12_x)
+        res, msg = self.runOperation(['install', 'bar-1'], p.inst, p.avail)
+        self.assertResult(ninst)
+
+    def testAllInstall1(self):
+        p = self.pkgs
+        ninst = p.inst[:]
+        ninst.append(p.a_bar_2_22_x)
+        ninst.append(p.a_bar_2_22_i)
+        res, msg = self.runOperation(['install', 'bar'], p.inst, p.avail,
+                                     {'multilib_policy' : 'all'})
+        self.assertResult(ninst)
+
+    def testAllInstall2(self):
+        p = self.pkgs
+        ninst = p.inst[:]
+        ninst.append(p.a_bar_1_12_x)
+        ninst.append(p.a_bar_1_12_i)
+        res, msg = self.runOperation(['install', 'bar-1'], p.inst, p.avail,
+                                     {'multilib_policy' : 'all'})
+        self.assertResult(ninst)
+
+    def testAllInstall3(self):
+        p = self.pkgs
+        ninst = p.inst[:]
+        ninst.append(p.a_ibar_2_22_x)
+        res, msg = self.runOperation(['install', 'ibar'], p.inst, p.avail,
+                                     {'multilib_policy' : 'all'})
+        self.assertResult(ninst)
+
+    def testAllInstall4(self):
+        p = self.pkgs
+        ninst = p.inst[:]
+        ninst.append(p.a_xbar_2_22_i)
+        res, msg = self.runOperation(['install', 'xbar'], p.inst, p.avail,
+                                     {'multilib_policy' : 'all'})
+        self.assertResult(ninst)

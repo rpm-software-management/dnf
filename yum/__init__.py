@@ -51,7 +51,7 @@ import transactioninfo
 import urlgrabber
 from urlgrabber.grabber import URLGrabber, URLGrabError
 from urlgrabber.progress import format_number
-from packageSack import packagesNewestByName, ListPackageSack
+from packageSack import packagesNewestByName, packagesNewestByNameArch, ListPackageSack
 import depsolve
 import plugins
 import logginglevels
@@ -2339,7 +2339,7 @@ class YumBase(depsolve.Depsolve):
                                         use.append(pkg)
                                 pkgs = use
                                
-                        pkgs = packagesNewestByName(pkgs)
+                        pkgs = packagesNewestByNameArch(pkgs)
 
                         if not self.tsInfo.conditionals.has_key(cond):
                             self.tsInfo.conditionals[cond] = []
@@ -2782,7 +2782,7 @@ class YumBase(depsolve.Depsolve):
                            
                             pkgs = use
                            
-                pkgs = packagesNewestByName(pkgs)
+                pkgs = packagesNewestByNameArch(pkgs)
 
                 pkgbyname = {}
                 for pkg in pkgs:
@@ -3097,7 +3097,7 @@ class YumBase(depsolve.Depsolve):
                 # This is done so we don't have to returnObsoletes(newest=True)
                 # It's a minor UI problem for RHEL, but might as well dtrt.
                 obs_pkgs = [self.getPackageObject(tup) for tup in obs_tups]
-                for obsoleting_pkg in packagesNewestByName(obs_pkgs):
+                for obsoleting_pkg in packagesNewestByNameArch(obs_pkgs):
                     tx_return.extend(self.install(po=obsoleting_pkg))
             for available_pkg in availpkgs:
                 for obsoleted in self.up.obsoleting_dict.get(available_pkg.pkgtup, []):

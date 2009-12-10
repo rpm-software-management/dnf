@@ -332,7 +332,8 @@ class OperationsTests(_DepsolveTestsBase):
     buildPkg code.
     """
 
-    def runOperation(self, args, installed=[], available=[]):
+    def runOperation(self, args, installed=[], available=[],
+                     confs={}):
         """Sets up and runs the depsolver. args[0] must be a valid yum command
         ("install", "update", ...). It might be followed by pkg names as on the
         yum command line. The pkg objects in installed are added to self.rpmdb and
@@ -345,6 +346,8 @@ class OperationsTests(_DepsolveTestsBase):
         self.xsack = depsolver._pkgSack  = packageSack.PackageSack()
         self.repo = depsolver.repo = FakeRepo("installed")
         depsolver.conf = FakeConf()
+        for conf in confs:
+            setattr(depsolver.conf, conf, confs[conf])
         # We are running nosetest, so we want to see some yum output
         # if a testcase if failing
         depsolver.doLoggingSetup(9,9)
