@@ -1011,7 +1011,7 @@ class Depsolve(object):
             for pkgtup in reverselookup[filename]:
                 po = self.tsInfo.getMembersWithState(pkgtup, TS_INSTALL_STATES)
                 if po:
-                    po = po[0] # Should only have one
+                    po = po[0].po # Should only have one
                 else:
                     po = self.getInstalledPackageObject(pkgtup)
                 ret.append( (po, (filename, 0, '')) )
