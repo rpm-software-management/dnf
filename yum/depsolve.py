@@ -1009,7 +1009,11 @@ class Depsolve(object):
                 continue 
 
             for pkgtup in reverselookup[filename]:
-                po = self.getInstalledPackageObject(pkgtup)
+                po = self.tsInfo.getMembersWithState(pkgtup, TS_INSTALL_STATES)
+                if po:
+                    po = po[0] # Should only have one
+                else:
+                    po = self.getInstalledPackageObject(pkgtup)
                 ret.append( (po, (filename, 0, '')) )
 
         self.rpmdb.transactionCacheFileRequires(self.installedFileRequires, 
