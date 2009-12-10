@@ -890,13 +890,13 @@ def return_running_pids():
 def get_open_files(pid):
     """returns files open from this pid"""
     files = []
-    smaps = '/proc/%s/maps' % pid
+    maps_f = '/proc/%s/maps' % pid
     try:
-        maps = open(smaps, 'r')
+        maps = open(maps_f, 'r')
     except (IOError, OSError), e:
         return files
 
-    for line in maps.readlines():
+    for line in maps.readline():
         if line.find('fd:') == -1:
             continue
         line = line.replace('\n', '')
@@ -906,4 +906,18 @@ def get_open_files(pid):
         filename = filename.strip()
         if filename not in files:
             files.append(filename)
+    
+    cli_f = '/proc/%s/cmdline' % pid
+    try:
+        cli = open(cli_f, 'r')
+    except (IOError, OSError), e:
+        return files
+    
+    cmdline = cli.read()
+    if cmdline.find('\00') != -1:
+        cmds = cmdline.split('\00')
+        for i in cmds:
+            if i.startswith('/'):
+                files.append(i)
+
     return files
