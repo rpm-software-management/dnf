@@ -896,7 +896,7 @@ def get_open_files(pid):
     except (IOError, OSError), e:
         return files
 
-    for line in maps.readline():
+    for line in maps.xreadlines():
         if line.find('fd:') == -1:
             continue
         line = line.replace('\n', '')
