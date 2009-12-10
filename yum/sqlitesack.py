@@ -1427,6 +1427,11 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
 
     @catchSqliteException
     def returnNewestByName(self, name=None, patterns=None, ignore_case=False):
+        """return list of newest packages based on name matching
+           this means(in name.arch form): foo.i386 and foo.noarch will
+           be compared to each other for highest version.
+           Note that given: foo-1.i386; foo-2.i386 and foo-3.x86_64
+           The last _two_ pkgs will be returned, not just one of them. """
         # If name is set do it from the database otherwise use our parent's
         # returnNewestByName
         if self._skip_all():
