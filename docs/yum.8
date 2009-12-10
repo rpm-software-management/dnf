@@ -248,6 +248,19 @@ The info/list/summary commands take either a transactions id or a package (with
 wildcards, as in \fBSpecifying package names\fP), all three can also be passed
 no arguments. list can be passed the keyword "all" to list all the transactions.
 undo/redo just take a transaction id.
+
+In "history list" output the Altered column also gives some extra information
+if there was something not good with the transaction.
+
+.I \fB>\fR - The rpmdb was changed, outside yum, after the transaction.
+.br
+.I \fB<\fR - The rpmdb was changed, outside yum, before the transaction.
+.br
+.I \fB*\fR - The transaction aborted before completion.
+.br
+.I \fB#\fR - The transaction completed, but with a non-zero status.
+.br
+
 .IP
 .IP "\fBhelp\fP"
 Produces help, either for all commands or if given a command name then the help

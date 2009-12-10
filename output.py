@@ -1271,16 +1271,16 @@ to exit.
             num, uiacts = self._history_uiactions(old.trans_data)
             name   = utf8_width_fill(name,   22, 22)
             uiacts = utf8_width_fill(uiacts, 14, 14)
-            if old.altered_lt_rpmdb and old.altered_gt_rpmdb:
-                print fmt % (old.tid, name, tm, uiacts, num), "><"
-            elif old.return_code is None:
-                print fmt % (old.tid, name, tm, uiacts, num), "**"
-            elif old.altered_lt_rpmdb:
-                print fmt % (old.tid, name, tm, uiacts, num), " <"
-            elif old.altered_gt_rpmdb:
-                print fmt % (old.tid, name, tm, uiacts, num), "> "
-            else:
-                print fmt % (old.tid, name, tm, uiacts, num)
+            rmark = lmark = ' '
+            if old.return_code is None:
+                rmark = lmark = '*'
+            elif old.return_code:
+                rmark = lmark = '#'
+            if old.altered_lt_rpmdb:
+                rmark = '<'
+            if old.altered_gt_rpmdb:
+                lmark = '>'
+            print fmt % (old.tid, name, tm, uiacts, num), "%s%s" % (lmark,rmark)
         lastdbv = self.history.last()
         if lastdbv is not None:
             #  If this is the last transaction, is good and it doesn't
