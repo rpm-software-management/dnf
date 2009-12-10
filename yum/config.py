@@ -92,8 +92,8 @@ class Option(object):
                 value = self.parse(value)
             except ValueError, e:
                 # Add the field name onto the error
-                raise ValueError('Error parsing %r: %s' % (value, str(e)))
-
+                raise ValueError('Error parsing "%s = %r": %s' % (self._optname,
+                                                                 value, str(e)))
         setattr(obj, self._attrname, value)
 
     def setup(self, obj, name):
@@ -103,6 +103,7 @@ class Option(object):
         @param obj: BaseConfig (or subclass) instance.
         @param name: Name of the option.
         '''
+        self._optname = name
         setattr(obj, self._attrname, copy.copy(self.default))
 
     def clone(self):
