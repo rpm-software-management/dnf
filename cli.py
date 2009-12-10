@@ -455,9 +455,7 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         self.populateTs(keepold=0) # sigh
         tserrors = self.ts.test(testcb)
         del testcb
-        
-        self.verbose_logger.log(yum.logginglevels.INFO_2,
-            _('Finished Transaction Test'))
+
         if len(tserrors) > 0:
             errstring = _('Transaction Check Error:\n')
             for descr in tserrors:
