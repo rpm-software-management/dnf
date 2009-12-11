@@ -453,12 +453,14 @@ class YumRepository(Repository, config.RepoConf):
             self._proxy_dict['https'] = proxy_string
             self._proxy_dict['ftp'] = proxy_string
 
-    def __headersListFromDict(self):
+    def __headersListFromDict(self, cache=True):
         """Convert our dict of headers to a list of 2-tuples for urlgrabber."""
         headers = []
 
         for key in self.http_headers:
             headers.append((key, self.http_headers[key]))
+        if not (cache or 'Pragma' in self.http_headers):
+            headers.append(('Pragma', 'no-cache'))
 
         return headers
 
@@ -476,30 +478,33 @@ class YumRepository(Repository, config.RepoConf):
         else:
             mgclass = urlgrabber.mirror.MirrorGroup
 
-        headers = tuple(self.__headersListFromDict())
-
-        self._grabfunc = URLGrabber(keepalive=self.keepalive,
-                                    bandwidth=self.bandwidth,
-                                    retry=self.retries,
-                                    throttle=self.throttle,
-                                    progress_obj=self.callback,
-                                    proxies = self.proxy_dict,
+        ugopts = self._default_grabopts()
+        self._grabfunc = URLGrabber(progress_obj=self.callback,
                                     failure_callback=self.failure_obj,
                                     interrupt_callback=self.interrupt_callback,
-                                    timeout=self.timeout,
                                     copy_local=self.copy_local,
-                                    http_headers=headers,
                                     reget='simple',
-                                    ssl_verify_peer=self.sslverify,
-                                    ssl_verify_host=self.sslverify,
-                                    ssl_ca_cert=self.sslcacert,
-                                    ssl_cert=self.sslclientcert,
-                                    ssl_key=self.sslclientkey)
-
-        self._grabfunc.opts.user_agent = default_grabber.opts.user_agent
+                                    **ugopts)
 
         self._grab = mgclass(self._grabfunc, self.urls,
                              failure_callback=self.mirror_failure_obj)
+
+    def _default_grabopts(self, cache=True):
+        opts = { 'keepalive': self.keepalive,
+                 'bandwidth': self.bandwidth,
+                 'retry': self.retries,
+                 'throttle': self.throttle,
+                 'proxies': self.proxy_dict,
+                 'timeout': self.timeout,
+                 'http_headers': tuple(self.__headersListFromDict(cache=cache)),
+                 'ssl_verify_peer': self.sslverify,
+                 'ssl_verify_host': self.sslverify,
+                 'ssl_ca_cert': self.sslcacert,
+                 'ssl_cert': self.sslclientcert,
+                 'ssl_key': self.sslclientkey,
+                 'user_agent': default_grabber.opts.user_agent,
+                 }
+        return opts
 
     def _getgrabfunc(self):
         if not self._grabfunc or self._callbacks_changed:
@@ -681,18 +686,9 @@ class YumRepository(Repository, config.RepoConf):
             local = self.metalink_filename + '.tmp'
             if not self._metalinkCurrent():
                 url = misc.to_utf8(self.metalink)
+                ugopts = self._default_grabopts()
                 try:
-                    ug = URLGrabber(bandwidth = self.bandwidth,
-                                    retry = self.retries,
-                                    throttle = self.throttle,
-                                    progress_obj = self.callback,
-                                    proxies=self.proxy_dict,
-                                    ssl_verify_peer=self.sslverify,
-                                    ssl_verify_host=self.sslverify,
-                                    ssl_ca_cert=self.sslcacert,
-                                    ssl_cert=self.sslclientcert,
-                                    ssl_key=self.sslclientkey)
-                    ug.opts.user_agent = default_grabber.opts.user_agent
+                    ug = URLGrabber(progress_obj = self.callback, **ugopts)
                     result = ug.urlgrab(url, local, text=self.id + "/metalink")
 
                 except urlgrabber.grabber.URLGrabError, e:
@@ -738,15 +734,6 @@ class YumRepository(Repository, config.RepoConf):
         # if url is None do a grab via the mirror group/grab for the repo
         # return the path to the local file
 
-        # Turn our dict into a list of 2-tuples
-        headers = self.__headersListFromDict()
-
-        # We will always prefer to send no-cache.
-        if not (cache or 'Pragma' in self.http_headers):
-            headers.append(('Pragma', 'no-cache'))
-
-        headers = tuple(headers)
-
         # if copylocal isn't specified pickup the repo-defined attr
         if copy_local is None:
             copy_local = self.copy_local
@@ -782,28 +769,15 @@ class YumRepository(Repository, config.RepoConf):
                 verbose_logger.log(logginglevels.DEBUG_2, "Error getting package from media; falling back to url %s" %(e,))
 
         if url and scheme != "media":
-            ug = URLGrabber(keepalive = self.keepalive,
-                            bandwidth = self.bandwidth,
-                            retry = self.retries,
-                            throttle = self.throttle,
-                            progress_obj = self.callback,
+            ugopts = self._default_grabopts(cache=cache)
+            ug = URLGrabber(progress_obj = self.callback,
                             copy_local = copy_local,
                             reget = reget,
-                            proxies = self.proxy_dict,
                             failure_callback = self.failure_obj,
                             interrupt_callback=self.interrupt_callback,
-                            timeout=self.timeout,
                             checkfunc=checkfunc,
-                            http_headers=headers,
-                            ssl_verify_peer=self.sslverify,
-                            ssl_verify_host=self.sslverify,
-                            ssl_ca_cert=self.sslcacert,
-                            ssl_cert=self.sslclientcert,
-                            ssl_key=self.sslclientkey,
-                            size=size
-                            )
-
-            ug.opts.user_agent = default_grabber.opts.user_agent
+                            size=size,
+                            **ugopts)
 
             remote = url + '/' + relative
 
@@ -824,6 +798,7 @@ class YumRepository(Repository, config.RepoConf):
 
 
         else:
+            headers = tuple(self.__headersListFromDict(cache=cache))
             try:
                 result = self.grab.urlgrab(misc.to_utf8(relative), local,
                                            text = misc.to_utf8(text),
@@ -1681,8 +1656,9 @@ class YumRepository(Repository, config.RepoConf):
             scheme = urlparse.urlparse(url)[0]
             if scheme == '':
                 url = 'file://' + url
+            ugopts = self._default_grabopts()
             try:
-                fo = urlgrabber.grabber.urlopen(url, proxies=self.proxy_dict)
+                fo = urlgrabber.grabber.urlopen(url, **ugopts)
             except urlgrabber.grabber.URLGrabError, e:
                 print "Could not retrieve mirrorlist %s error was\n%s: %s" % (url, e.args[0], misc.to_unicode(e.args[1]))
                 fo = None
