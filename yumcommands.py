@@ -1160,8 +1160,8 @@ class VersionCommand(YumCommand):
                 lastdbv = base.history.last()
                 if lastdbv is not None:
                     lastdbv = lastdbv.end_rpmdbversion
-                if lastdbv is not None and data[0] != lastdbv:
-                    base._rpmdb_warn_checks()
+                if lastdbv is None or data[0] != lastdbv:
+                    base._rpmdb_warn_checks(warn=lastdbv is not None)
                 if vcmd not in ('group-installed', 'group-all'):
                     cols.append(("%s %s/%s" % (_("Installed:"), rel, ba),
                                  str(data[0])))

@@ -1101,8 +1101,8 @@ class YumBase(depsolve.Depsolve):
         lastdbv = self.history.last()
         if lastdbv is not None:
             lastdbv = lastdbv.end_rpmdbversion
-        if lastdbv is not None and rpmdbv != lastdbv:
-            self._rpmdb_warn_checks()
+        if lastdbv is None or rpmdbv != lastdbv:
+            self._rpmdb_warn_checks(warn=lastdbv is not None)
         if self.conf.history_record:
             self.history.beg(rpmdbv, using_pkgs, list(self.tsInfo))
 
