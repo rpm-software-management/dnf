@@ -1902,6 +1902,15 @@ class YumBase(depsolve.Depsolve):
                         continue
                     nobsoletesTuples.append((po, instpo))
                 obsoletesTuples = nobsoletesTuples
+            if not showdups:
+                obsoletes = packagesNewestByName(obsoletes)
+                filt = set(obsoletes)
+                nobsoletesTuples = []
+                for po, instpo in obsoletesTuples:
+                    if po not in filt:
+                        continue
+                    nobsoletesTuples.append((po, instpo))
+                obsoletesTuples = nobsoletesTuples
         
         # packages recently added to the repositories
         elif pkgnarrow == 'recent':
