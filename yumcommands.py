@@ -1285,3 +1285,31 @@ class HistoryCommand(YumCommand):
         if extcmds:
             vcmd = extcmds[0]
         return vcmd in ('repeat', 'redo', 'undo')
+
+
+class CheckRpmdbCommand(YumCommand):
+    def getNames(self):
+        return ['check', 'check-rpmdb']
+
+    def getUsage(self):
+        return "[dependencies|duplicates|all]"
+
+    def getSummary(self):
+        return _("Check for problems in the rpmdb")
+
+    def doCommand(self, base, basecmd, extcmds):
+        chkcmd = 'all'
+        if extcmds:
+            chkcmd = extcmds[0]
+
+        def _out(x):
+            print x
+
+        rc = 0
+        if base._rpmdb_warn_checks(_out, False, chkcmd):
+            rc = 1
+        return rc, ['%s %s' % (basecmd, chkcmd)]
+
+    def needTs(self, base, basecmd, extcmds):
+        return False
+
