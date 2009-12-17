@@ -1065,7 +1065,7 @@ class YumBase(depsolve.Depsolve):
             out(_('Warning: RPMDB altered outside of yum.'))
 
         rc = 0
-        if chkcmd in ('all', 'duplicates'):
+        if chkcmd in ('all', 'dependencies'):
             prob2ui = {'requires' : _('missing requires'),
                        'conflicts' : _('installed conflict')}
             for (pkg, prob, ver, opkgs) in self.rpmdb.check_dependencies():
