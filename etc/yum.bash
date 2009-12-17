@@ -80,20 +80,27 @@ _yum()
     local cur
     type _get_cword &>/dev/null && cur=`_get_cword` || cur=$2
     local prev=$3
-    local cmds=( check-update clean deplist downgrade groupinfo groupinstall
-        grouplist groupremove help history info install list localinstall
-        makecache provides reinstall remove repolist resolvedep search shell
-        update upgrade version )
+    local cmds=( check check-update clean deplist downgrade groupinfo
+        groupinstall grouplist groupremove help history info install list
+        localinstall makecache provides reinstall remove repolist resolvedep
+        search shell update upgrade version )
 
     local i c cmd
     for (( i=0; i < ${#COMP_WORDS[@]}-1; i++ )) ; do
-        for c in ${cmds[@]} erase groupupdate grouperase whatprovides ; do
+        for c in ${cmds[@]} check-rpmdb erase groupupdate grouperase \
+            whatprovides ; do
             [ ${COMP_WORDS[i]} = $c ] && cmd=$c && break
         done
         [ -z $cmd ] || break
     done
 
     case $cmd in
+
+        check|check-rpmdb)
+            COMPREPLY=( $( compgen -W 'dependencies duplicates all' \
+                -- "$cur" ) )
+            return 0
+            ;;
 
         check-update|grouplist|makecache|provides|whatprovides|resolvedep|\
         search|version)
