@@ -198,7 +198,7 @@ def main(args):
         return exIOError(e)
 
     # rpm_check_debug failed.
-    if type(return_code) == type(,) and len(return_code) == 2:
+    if type(return_code) == type((0,)) and len(return_code) == 2:
         (result, resultmsgs) = return_code
         for msg in resultmsgs:
             logger.critical("%s", msg)
