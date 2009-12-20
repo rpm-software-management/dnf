@@ -1746,7 +1746,10 @@ class YumBase(depsolve.Depsolve):
 
     def cleanRpmDB(self):
         cachedir = self.conf.cachedir + "/installed/"
-        filelist = misc.getFileList(cachedir, '', [])
+        if not os.path.exists(cachedir):
+            filelist = []
+        else:
+            filelist = misc.getFileList(cachedir, '', [])
         return self._cleanFilelist('rpmdb', filelist)
 
     def _cleanFiles(self, exts, pathattr, filetype):
