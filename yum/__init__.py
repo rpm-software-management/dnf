@@ -1058,6 +1058,31 @@ class YumBase(depsolve.Depsolve):
             toRemove.add(dep)
             self._getDepsToRemove(dep, deptree, toRemove)
 
+    def _rpmdb_warn_checks(self, out=None, warn=True, chkcmd='all'):
+        if out is None:
+            out = self.logger.warning
+        if warn:
+            out(_('Warning: RPMDB altered outside of yum.'))
+
+        rc = 0
+        if chkcmd in ('all', 'dependencies'):
+            prob2ui = {'requires' : _('missing requires'),
+                       'conflicts' : _('installed conflict')}
+            for (pkg, prob, ver, opkgs) in self.rpmdb.check_dependencies():
+                rc += 1
+                if opkgs:
+                    opkgs = ": " + ', '.join(map(str, opkgs))
+                else:
+                    opkgs = ''
+                out("%s %s %s%s" % (pkg, prob2ui[prob], ver, opkgs))
+
+        if chkcmd in ('all', 'duplicates'):
+            iopkgs = set(self.conf.installonlypkgs)
+            for (pkg, prob, opkg) in self.rpmdb.check_duplicates(iopkgs):
+                rc += 1
+                out(_("%s is a duplicate of %s") % (pkg, opkg))
+        return rc
+
     def runTransaction(self, cb):
         """takes an rpm callback object, performs the transaction"""
 
@@ -1076,9 +1101,8 @@ class YumBase(depsolve.Depsolve):
         lastdbv = self.history.last()
         if lastdbv is not None:
             lastdbv = lastdbv.end_rpmdbversion
-        if lastdbv is not None and rpmdbv != lastdbv:
-            errstring = _('Warning: RPMDB has been altered since the last yum transaction.')
-            self.logger.warning(errstring)
+        if lastdbv is None or rpmdbv != lastdbv:
+            self._rpmdb_warn_checks(warn=lastdbv is not None)
         if self.conf.history_record:
             self.history.beg(rpmdbv, using_pkgs, list(self.tsInfo))
 
@@ -1878,6 +1902,15 @@ class YumBase(depsolve.Depsolve):
                         continue
                     nobsoletesTuples.append((po, instpo))
                 obsoletesTuples = nobsoletesTuples
+            if not showdups:
+                obsoletes = packagesNewestByName(obsoletes)
+                filt = set(obsoletes)
+                nobsoletesTuples = []
+                for po, instpo in obsoletesTuples:
+                    if po not in filt:
+                        continue
+                    nobsoletesTuples.append((po, instpo))
+                obsoletesTuples = nobsoletesTuples
         
         # packages recently added to the repositories
         elif pkgnarrow == 'recent':
@@ -2339,7 +2372,7 @@ class YumBase(depsolve.Depsolve):
                                         use.append(pkg)
                                 pkgs = use
                                
-                        pkgs = packagesNewestByNameArch(pkgs)
+                        pkgs = packagesNewestByName(pkgs)
 
                         if not self.tsInfo.conditionals.has_key(cond):
                             self.tsInfo.conditionals[cond] = []
@@ -2782,7 +2815,7 @@ class YumBase(depsolve.Depsolve):
                            
                             pkgs = use
                            
-                pkgs = packagesNewestByNameArch(pkgs)
+                pkgs = packagesNewestByName(pkgs)
 
                 pkgbyname = {}
                 for pkg in pkgs:
@@ -3097,7 +3130,7 @@ class YumBase(depsolve.Depsolve):
                 # This is done so we don't have to returnObsoletes(newest=True)
                 # It's a minor UI problem for RHEL, but might as well dtrt.
                 obs_pkgs = [self.getPackageObject(tup) for tup in obs_tups]
-                for obsoleting_pkg in packagesNewestByNameArch(obs_pkgs):
+                for obsoleting_pkg in packagesNewestByName(obs_pkgs):
                     tx_return.extend(self.install(po=obsoleting_pkg))
             for available_pkg in availpkgs:
                 for obsoleted in self.up.obsoleting_dict.get(available_pkg.pkgtup, []):

@@ -1282,13 +1282,14 @@ to exit.
                 lmark = '>'
             print fmt % (old.tid, name, tm, uiacts, num), "%s%s" % (lmark,rmark)
         lastdbv = self.history.last()
-        if lastdbv is not None:
+        if lastdbv is None:
+            self._rpmdb_warn_checks(warn=False)
+        else:
             #  If this is the last transaction, is good and it doesn't
             # match the current rpmdb ... then mark it as bad.
             rpmdbv  = self.rpmdb.simpleVersion(main_only=True)[0]
             if lastdbv.end_rpmdbversion != rpmdbv:
-                errstring = _('Warning: RPMDB has been altered since the last yum transaction.')
-                self.logger.warning(errstring)
+                self._rpmdb_warn_checks()
 
     def _history_get_transactions(self, extcmds):
         if len(extcmds) < 2:

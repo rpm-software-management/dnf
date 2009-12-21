@@ -71,6 +71,8 @@ gnome\-packagekit application\&.
 .br
 .I \fR * history [info|list|summary|redo|undo|new] 
 .br
+.I \fR * check
+.br 
 .I \fR * help [command] 
 .br
 .PP 
@@ -261,6 +263,11 @@ if there was something not good with the transaction.
 .I \fB#\fR - The transaction completed, but with a non-zero status.
 .br
 
+.IP
+.IP "\fBcheck\fP"
+Checks the local rpmdb and produces information on any problems it finds. You
+can pass the check command the arguments "dependencies" or "duplicates", to
+limit the checking that is performed (the default is "all" which does both).
 .IP
 .IP "\fBhelp\fP"
 Produces help, either for all commands or if given a command name then the help

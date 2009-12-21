@@ -1160,9 +1160,8 @@ class VersionCommand(YumCommand):
                 lastdbv = base.history.last()
                 if lastdbv is not None:
                     lastdbv = lastdbv.end_rpmdbversion
-                if lastdbv is not None and data[0] != lastdbv:
-                    errstring = _('Warning: RPMDB has been altered since the last yum transaction.')
-                    base.logger.warning(errstring)
+                if lastdbv is None or data[0] != lastdbv:
+                    base._rpmdb_warn_checks(warn=lastdbv is not None)
                 if vcmd not in ('group-installed', 'group-all'):
                     cols.append(("%s %s/%s" % (_("Installed:"), rel, ba),
                                  str(data[0])))
@@ -1286,3 +1285,31 @@ class HistoryCommand(YumCommand):
         if extcmds:
             vcmd = extcmds[0]
         return vcmd in ('repeat', 'redo', 'undo')
+
+
+class CheckRpmdbCommand(YumCommand):
+    def getNames(self):
+        return ['check', 'check-rpmdb']
+
+    def getUsage(self):
+        return "[dependencies|duplicates|all]"
+
+    def getSummary(self):
+        return _("Check for problems in the rpmdb")
+
+    def doCommand(self, base, basecmd, extcmds):
+        chkcmd = 'all'
+        if extcmds:
+            chkcmd = extcmds[0]
+
+        def _out(x):
+            print x
+
+        rc = 0
+        if base._rpmdb_warn_checks(_out, False, chkcmd):
+            rc = 1
+        return rc, ['%s %s' % (basecmd, chkcmd)]
+
+    def needTs(self, base, basecmd, extcmds):
+        return False
+

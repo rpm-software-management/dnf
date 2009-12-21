@@ -21,6 +21,7 @@ import os
 import os.path
 
 from rpmUtils import miscutils
+from rpmUtils import arch
 from rpmUtils.transaction import initReadOnlyTransaction
 import misc
 import Errors
@@ -33,6 +34,8 @@ import re
 
 from yum.i18n import to_unicode
 import constants
+
+import yum.depsolve
 
 class RPMInstalledPackage(YumInstalledPackage):
 
@@ -726,6 +729,67 @@ class RPMDBPackageSack(PackageSackBase):
                     pkgs[pkg] = 1
 
         return sorted(pkgs.keys())
+
+    def check_dependencies(self, pkgs=None):
+        """ Checks for any missing dependencies. """
+
+        if pkgs is None:
+            pkgs = self.returnPackages()
+
+        providers = set() # Speedup, as usual :)
+        problems = []
+        for pkg in sorted(pkgs): # The sort here is mainly for "UI"
+            for rreq in pkg.requires:
+                if rreq[0].startswith('rpmlib'): continue
+                if rreq in providers:            continue
+
+                (req, flags, ver) = rreq
+                if self.getProvides(req, flags, ver):
+                    providers.add(rreq)
+                    continue
+                flags = yum.depsolve.flags.get(flags, flags)
+                missing = miscutils.formatRequire(req, ver, flags)
+                problems.append((pkg, "requires", missing, []))
+
+            for creq in pkg.conflicts:
+                if creq[0].startswith('rpmlib'): continue
+
+                (req, flags, ver) = creq
+                res = self.getProvides(req, flags, ver)
+                if not res:
+                    continue
+                flags = yum.depsolve.flags.get(flags, flags)
+                found = miscutils.formatRequire(req, ver, flags)
+                problems.append((pkg, "conflicts", found, res))
+        return problems
+
+    def _iter_two_pkgs(self, ignore):
+        last = None
+        for pkg in sorted(self.returnPackages()):
+            if pkg.name in ignore:
+                continue
+            if last is None:
+                last = pkg
+                continue
+            yield last, pkg
+            last = pkg
+
+    def check_duplicates(self, ignore=[]):
+        """ Checks for any missing dependencies. """
+
+        problems = []
+        for last, pkg in self._iter_two_pkgs(ignore):
+            if pkg.name != last.name:
+                continue
+            if pkg.verEQ(last) and pkg != last:
+                if arch.isMultiLibArch(pkg.arch) and last.arch != 'noarch':
+                    continue
+                if arch.isMultiLibArch(last.arch) and pkg.arch != 'noarch':
+                    continue
+
+            # More than one pkg, they aren't version equal, or aren't multiarch
+            problems.append((pkg, "dup", last))
+        return problems
 
 
 def _sanitize(path):

@@ -169,10 +169,8 @@ def main(args):
             logger.critical(_('Error: %s'), msg)
         if not base.conf.skip_broken:
             verbose_logger.info(_(" You could try using --skip-broken to work around the problem"))
-        verbose_logger.info(_(" You could try running: package-cleanup --problems\n"
-                              "                        package-cleanup --dupes\n"
-                              "                        rpm -Va --nofiles --nodigest"))
-        base.yumUtilsMsg(verbose_logger.info, "package-cleanup")
+        if not base._rpmdb_warn_checks(out=verbose_logger.info, warn=False):
+            verbose_logger.info(_(" You could try running: rpm -Va --nofiles --nodigest"))
         if unlock(): return 200
         return 1
     elif result == 2:
@@ -199,7 +197,17 @@ def main(args):
     except IOError, e:
         return exIOError(e)
 
-    verbose_logger.log(logginglevels.INFO_2, _('Complete!'))
+    # rpm_check_debug failed.
+    if type(return_code) == type((0,)) and len(return_code) == 2:
+        (result, resultmsgs) = return_code
+        for msg in resultmsgs:
+            logger.critical("%s", msg)
+        if not base._rpmdb_warn_checks(out=verbose_logger.info, warn=False):
+            verbose_logger.info(_(" You could try running: rpm -Va --nofiles --nodigest"))
+        return_code = result
+    else:
+        verbose_logger.log(logginglevels.INFO_2, _('Complete!'))
+
     if unlock(): return 200
     return return_code
 
