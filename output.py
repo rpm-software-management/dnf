@@ -864,10 +864,11 @@ class YumOutput:
     def matchcallback_verbose(self, po, values, matchfor=None):
         return self.matchcallback(po, values, matchfor, verbose=True)
         
-    def reportDownloadSize(self, packages):
+    def reportDownloadSize(self, packages, installonly=False):
         """Report the total download size for a set of packages"""
         totsize = 0
         locsize = 0
+        insize  = 0
         error = False
         for pkg in packages:
             # Just to be on the safe side, if for some reason getting
@@ -881,6 +882,15 @@ class YumOutput:
                         locsize += size
                 except:
                     pass
+
+                if not installonly:
+                    continue
+
+                try:
+                    size = int(pkg.installedsize)
+                except:
+                    pass
+                insize += size
             except:
                 error = True
                 self.logger.error(_('There was an error calculating total download size'))
@@ -893,6 +903,10 @@ class YumOutput:
             if locsize != totsize:
                 self.verbose_logger.log(logginglevels.INFO_1, _("Total download size: %s"), 
                                         self.format_number(totsize - locsize))
+            if installonly:
+                self.verbose_logger.log(logginglevels.INFO_1,
+                                        _("Installed size: %s"),
+                                        self.format_number(insize))
             
     def listTransaction(self):
         """returns a string rep of the  transaction in an easy-to-read way."""
