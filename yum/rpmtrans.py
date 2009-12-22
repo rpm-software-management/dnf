@@ -233,6 +233,8 @@ class RPMTransaction:
     def _scriptOutput(self):
         try:
             out = self._readpipe.read()
+            if not out:
+                return None
             return out
         except IOError:
             pass
