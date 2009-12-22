@@ -157,7 +157,7 @@ _yum()
                         new' -- "$cur" ) )
                     ;;
                 undo|redo)
-                    COMPREPLY=( $( compgen -W "$( $yum -d 0 -C history \
+                    COMPREPLY=( $( compgen -W "last $( $yum -d 0 -C history \
                         2>/dev/null | \
                         sed -ne 's/^[[:space:]]*\([0-9]\{1,\}\).*/\1/p' )" \
                         -- "$cur" ) )
@@ -227,6 +227,12 @@ _yum()
             return 0
             ;;
 
+        --rpmverbosity)
+            COMPREPLY=( $( compgen -W 'info critical emergency error warn
+                debug' -- "$cur" ) )
+            return 0
+            ;;
+
         -c|--config)
             COMPREPLY=( $( compgen -f -o plusdirs -X "!*.conf" -- "$cur" ) )
             return 0
@@ -276,8 +282,8 @@ _yum()
     $split && return 0
 
     COMPREPLY=( $( compgen -W '--help --tolerant --cacheonly --config
-        --randomwait --debuglevel --showduplicates --errorlevel --quiet
-        --verbose --assumeyes --version --installroot --enablerepo
+        --randomwait --debuglevel --showduplicates --errorlevel --rpmverbosity
+        --quiet --verbose --assumeyes --version --installroot --enablerepo
         --disablerepo --exclude --disableexcludes --obsoletes --noplugins
         --nogpgcheck --disableplugin --enableplugin --skip-broken --color
         --releasever ${cmds[@]}' -- "$cur" ) )
