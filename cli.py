@@ -1231,6 +1231,9 @@ class YumOptionParser(OptionParser):
                     self.base.usage()
                     sys.exit(1)
 
+            if opts.rpmverbosity is not None:
+                self.base.conf.rpmverbosity = opts.rpmverbosity
+
             # setup the progress bars/callbacks
             self.base.setupProgressCallbacks()
             # setup the callbacks to import gpg pubkeys and confirm them
@@ -1331,6 +1334,9 @@ class YumOptionParser(OptionParser):
         group.add_option("-e", "--errorlevel", dest="errorlevel", default=None,
                 help=_("error output level"), type='int',
                 metavar='[error level]')
+        group.add_option("", "--rpmverbosity", default=None,
+                help=_("debugging output level for rpm"),
+                metavar='[debug level name]')
         group.add_option("-q", "--quiet", dest="quiet", action="store_true",
                         help=_("quiet operation"))
         group.add_option("-v", "--verbose", dest="verbose", action="store_true",

@@ -708,6 +708,8 @@ class YumConf(StartupConf):
     history_record = BoolOption(True)
     history_record_packages = ListOption(['yum', 'rpm'])
 
+    rpmverbosity = Option('info')
+
     _reposlist = []
 
     def dump(self):

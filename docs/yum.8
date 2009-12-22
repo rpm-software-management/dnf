@@ -307,6 +307,11 @@ Configuration Option: \fBdebuglevel\fP
 Sets the error level to [number] Practical range 0 \- 10. 0 means print only critical errors about which you must be told. 1 means print all errors, even ones that are not overly important. 1+ means print more errors (if any) \-e 0 is good for cron jobs.
 .br
 Configuration Option: \fBerrorlevel\fP
+.IP "\fB\-e, \-\-rpmverbosity=[name]\fP" 
+Sets the debug level to [name] for rpm scriplets. 'info' is the default, other
+options are: 'critical', 'emergency', 'error', 'warn' and 'debug'.
+.br
+Configuration Option: \fBrpmverbosity\fP
 .IP "\fB\-R, \-\-randomwait=[time in minutes]\fP" 
 Sets the maximum amount of time yum will wait before performing a command \- it randomizes over the time.
 .IP "\fB\-C, \-\-cacheonly\fP" 

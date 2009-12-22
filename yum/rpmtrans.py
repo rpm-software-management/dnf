@@ -183,7 +183,7 @@ class RPMTransaction:
         self.logger = logging.getLogger('yum.filelogging.RPMInstallCallback')
         self.filelog = False
 
-        self._setupOutputLogging()
+        self._setupOutputLogging(base.conf.rpmverbosity)
         if not os.path.exists(self.base.conf.persistdir):
             os.makedirs(self.base.conf.persistdir) # make the dir, just in case
 
@@ -204,14 +204,22 @@ class RPMTransaction:
             return
         fcntl.fcntl(fd, fcntl.F_SETFD, current_flags | flag)
 
-    def _setupOutputLogging(self):
+    def _setupOutputLogging(self, rpmverbosity="info"):
         # UGLY... set up the transaction to record output from scriptlets
         io_r = tempfile.TemporaryFile()
         w = os.dup(io_r.fileno())
         self._readpipe = io_r
         self._writepipe = os.fdopen(w, 'w+b')
         self.base.ts.scriptFd = self._writepipe.fileno()
-        rpm.setVerbosity(rpm.RPMLOG_INFO)
+        rpmverbosity = {'critical' : 'crit',
+                        'emergency' : 'emerg',
+                        'error' : 'err',
+                        'information' : 'info',
+                        'warn' : 'warning'}.get(rpmverbosity, rpmverbosity)
+        rpmverbosity = 'RPMLOG_' + rpmverbosity.upper()
+        if not hasattr(rpm, rpmverbosity):
+            rpmverbosity = 'RPMLOG_INFO'
+        rpm.setVerbosity(getattr(rpm, rpmverbosity))
         rpm.setLogFile(self._writepipe)
 
     def _shutdownOutputLogging(self):
