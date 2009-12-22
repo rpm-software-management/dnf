@@ -1755,7 +1755,10 @@ class YumUrlPackage(YumLocalPackage):
                     pd = repo.proxy_dict
                     break
             fname = os.path.basename(url)
-            local = "%s/%s" % (yb.conf.cachedir, fname)
+            local = misc.getCacheDir()
+            if local is None: # bugger...
+                local = "%s/../" % repo.cachedir
+            local = "%s/%s" % (local, fname)
             try:
                 ug = URLGrabber(bandwidth = yb.conf.bandwidth,
                                 retry = yb.conf.retries,
