@@ -1297,12 +1297,30 @@ to exit.
             return None
 
         tids = []
-        try:
-            int(extcmds[1])
-            tids.append(extcmds[1])
-        except ValueError:
-            self.logger.critical(_('Bad transaction ID given'))
-            return None
+        last = None
+        for extcmd in extcmds[1:]:
+            try:
+                if extcmd == 'last' or extcmd.startswith('last-'):
+                    if last is None:
+                        cto = False
+                        last = self.history.last(complete_transactions_only=cto)
+                        if last is None:
+                            int("z")
+                    tid = last.tid
+                    if extcmd.startswith('last-'):
+                        off = int(extcmd[len('last-'):])
+                        if off <= 0:
+                            int("z")
+                        tid -= off
+                    tids.append(str(tid))
+                    continue
+
+                if int(extcmd) <= 0:
+                    int("z")
+                tids.append(extcmd)
+            except ValueError:
+                self.logger.critical(_('Bad transaction ID given'))
+                return None
 
         old = self.history.old(tids)
         if not old:
@@ -1330,7 +1348,7 @@ to exit.
             tids.update(self.history.search(pats))
 
         if not tids and len(extcmds) < 2:
-            old = self.history.last()
+            old = self.history.last(complete_transactions_only=False)
             if old is not None:
                 tids.add(old.tid)
 

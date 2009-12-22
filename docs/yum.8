@@ -246,10 +246,13 @@ transactions (assuming the history_record config. option is set). You can use
 info/list/summary to view what happened, undo/redo to act on that information
 and new to start a new history file.
 
-The info/list/summary commands take either a transactions id or a package (with
+The info/list/summary commands take either a transaction id or a package (with
 wildcards, as in \fBSpecifying package names\fP), all three can also be passed
 no arguments. list can be passed the keyword "all" to list all the transactions.
-undo/redo just take a transaction id.
+
+The undo/redo commands take either a transaction id or the keyword last and
+an offset from the last transaction (Eg. if you've done 250 transactions,
+"last" refers to transaction 250, and "last-4" refers to transaction 246).
 
 In "history list" output the Altered column also gives some extra information
 if there was something not good with the transaction.
