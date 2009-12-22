@@ -206,10 +206,9 @@ class RPMTransaction:
 
     def _setupOutputLogging(self, rpmverbosity="info"):
         # UGLY... set up the transaction to record output from scriptlets
-        io_r = tempfile.TemporaryFile()
-        w = os.dup(io_r.fileno())
+        io_r = tempfile.NamedTemporaryFile()
         self._readpipe = io_r
-        self._writepipe = os.fdopen(w, 'w+b')
+        self._writepipe = open(io_r.name, 'w+b')
         self.base.ts.scriptFd = self._writepipe.fileno()
         rpmverbosity = {'critical' : 'crit',
                         'emergency' : 'emerg',
