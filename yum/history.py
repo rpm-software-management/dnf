@@ -539,23 +539,14 @@ class YumHistory:
 
         return ret
 
-    def last(self):
-        """ This is the last full transaction. So any imcomplete transactions
-            do not count. """
-        cur = self._get_cursor()
-        sql =  """SELECT tid,
-                         trans_beg.timestamp AS beg_ts,
-                         trans_beg.rpmdb_version AS beg_rv,
-                         trans_end.timestamp AS end_ts,
-                         trans_end.rpmdb_version AS end_rv,
-                         loginuid, return_code
-                  FROM trans_beg JOIN trans_end USING(tid)
-                  ORDER BY beg_ts DESC, tid ASC
-                  LIMIT 1"""
-        executeSQL(cur, sql)
-        for row in cur:
-            return YumHistoryTransaction(self, row)
-        return None
+    def last(self, complete_transactions_only=True):
+        """ This is the last full transaction. So any incomplete transactions
+            do not count, by default. """
+        ret = self.old([], 1, complete_transactions_only)
+        if not ret:
+            return None
+        assert len(ret) == 1
+        return ret[0]
 
     def _yieldSQLDataList(self, patterns, fields, ignore_case):
         """Yields all the package data for the given params. """
