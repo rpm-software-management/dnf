@@ -381,11 +381,11 @@ Configuration Option: \fBskip_broken\fP
 .br
 .IP "\fB\-\-releasever=version\fP"
 Pretend the current release version is the given string. This is very useful
-when combined with --installroot. Note that with the default upstream cachedir,
+when combined with \-\-installroot. Note that with the default upstream cachedir,
 of /var/cache/yum, using this option will corrupt your cache (and you can use
 $releasever in your cachedir configuration to stop this).
 .PP 
-.IP "\fB\-t, --tolerant\fP"
+.IP "\fB\-t, \-\-tolerant\fP"
 This option currently does nothing.
 .br
 .SH "LIST OPTIONS"
@@ -398,7 +398,7 @@ version of the package\&.
 
 The format of the output of yum list is:
 
-name.arch \[epoch\:\]version-release  repo or \@installed-from-repo
+name.arch [epoch:]version-release  repo or \@installed-from-repo
 
 .IP "\fByum list [all | glob_exp1] [glob_exp2] [\&.\&.\&.]\fP"
 List all available and installed packages\&.
@@ -438,7 +438,7 @@ The following are the ways which you can invoke \fByum\fP in clean
 mode. Note that "all files" in the commands below means 
 "all files in currently enabled repositories". 
 If you want to also clean any (temporarily) disabled repositories you need to
-use \fB--enablerepo='*'\fP option.
+use \fB\-\-enablerepo='*'\fP option.
 
 .IP "\fByum clean expire-cache\fP"
 Eliminate the local data saying when the metadata and mirrorlists were downloaded for each repo. This means yum will revalidate the cache for each repo. next time it is used. However if the cache is still valid, nothing significant was deleted.
