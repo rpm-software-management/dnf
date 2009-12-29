@@ -6,7 +6,7 @@ msgstr ""
 "Project-Id-Version: pl\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2009-10-15 15:45+0200\n"
-"PO-Revision-Date: 2009-10-03 16:51+0200\n"
+"PO-Revision-Date: 2009-12-19 09:43+0100\n"
 "Last-Translator: Piotr Drąg <piotrdrag@gmail.com>\n"
 "Language-Team: Polish <fedora-trans-pl@redhat.com>\n"
 "MIME-Version: 1.0\n"
@@ -960,7 +960,6 @@ msgid "Success"
 msgstr "Powodzenie"
 
 #: ../output.py:1392
-#, fuzzy
 msgid "Transaction performed with:"
 msgstr "Wykonano transakcję za pomocą:"
 
@@ -979,12 +978,11 @@ msgstr "Zmienione pakiety:"
 
 #: ../output.py:1412
 msgid "Scriptlet output:"
-msgstr ""
+msgstr "Wyjście skryptu:"
 
 #: ../output.py:1418
-#, fuzzy
 msgid "Errors:"
-msgstr "Błąd: %s"
+msgstr "Błędy:"
 
 #: ../output.py:1489
 msgid "Last day"
