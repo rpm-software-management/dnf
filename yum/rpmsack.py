@@ -486,6 +486,13 @@ class RPMDBPackageSack(PackageSackBase):
 
         self._trans_cache_store = {}
 
+    def transactionReset(self):
+        """ We are going to reset the transaction, because the data we've added
+            already might now be invalid (Eg. skip-broken, or splitting a
+            transaction). """
+
+        self._trans_cache_store = {}
+
     def returnGPGPubkeyPackages(self):
         """ Return packages of the gpg-pubkeys ... hacky. """
         ts = self.readOnlyTS()
