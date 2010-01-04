@@ -3610,49 +3610,56 @@ class YumBase(depsolve.Depsolve):
 
         latest_installed_na = {}
         latest_installed_n  = {}
-        for pkg in ipkgs:
-            latest_installed_n[pkg.name] = pkg
+        for pkg in sorted(ipkgs):
+            if (pkg.name not in latest_installed_n or
+                pkg.verGT(latest_installed_n[pkg.name][0])):
+                latest_installed_n[pkg.name] = [pkg]
+            elif pkg.verEQ(latest_installed_n[pkg.name][0]):
+                latest_installed_n[pkg.name].append(pkg)
             latest_installed_na[(pkg.name, pkg.arch)] = pkg
 
         #  Find "latest downgrade", ie. latest available pkg before
-        # installed version.
+        # installed version. Indexed fromn the latest installed pkgtup.
         downgrade_apkgs = {}
         for pkg in sorted(apkgs):
             na  = (pkg.name, pkg.arch)
 
             # Here we allow downgrades from .i386 => .noarch, or .i586 => .i386
             # but not .i386 => .x86_64 (similar to update).
-            key = na
-            latest_installed = latest_installed_na
-            if pkg.name in latest_installed_n and na not in latest_installed_na:
-                if not canCoinstall(pkg.arch,latest_installed_n[pkg.name].arch):
-                    key = pkg.name
-                    latest_installed = latest_installed_n
+            lipkg = None
+            if na in latest_installed_na:
+                lipkg = latest_installed_na[na]
+            elif pkg.name in latest_installed_n:
+                for tlipkg in latest_installed_n[pkg.name]:
+                    if not canCoinstall(pkg.arch, tlipkg.arch):
+                        lipkg = tlipkg
+                        break
 
-            if key not in latest_installed:
+            if lipkg is None:
                 if na not in warned_nas and not doing_group_pkgs:
                     msg = _('No Match for available package: %s') % pkg
                     self.logger.critical(msg)
                 warned_nas.add(na)
                 continue
-            if pkg.verGE(latest_installed[key]):
+
+            if pkg.verGE(lipkg):
                 if na not in warned_nas:
                     msg = _('Only Upgrade available on package: %s') % pkg
                     self.logger.critical(msg)
                 warned_nas.add(na)
                 continue
+
             warned_nas.add(na)
-            if (na in downgrade_apkgs and
-                pkg.verLE(downgrade_apkgs[na])):
+            if (lipkg.pkgtup in downgrade_apkgs and
+                pkg.verLE(downgrade_apkgs[lipkg.pkgtup])):
                 continue # Skip older than "latest downgrade"
-            downgrade_apkgs[na] = pkg
+            downgrade_apkgs[lipkg.pkgtup] = pkg
 
         tx_return = []
-        for po in ipkgs:
-            na = (po.name, po.arch)
-            if na not in downgrade_apkgs:
+        for ipkg in ipkgs:
+            if ipkg.pkgtup not in downgrade_apkgs:
                 continue
-            txmbrs = self.tsInfo.addDowngrade(downgrade_apkgs[na], po)
+            txmbrs = self.tsInfo.addDowngrade(downgrade_apkgs[ipkg.pkgtup],ipkg)
             if not txmbrs: # Fail?
                 continue
             self._add_prob_flags(rpm.RPMPROB_FILTER_OLDPACKAGE)
