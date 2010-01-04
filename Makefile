@@ -78,8 +78,8 @@ _archive:
 	@rm -rf ${PKGNAME}-%{VERSION}.tar.gz
 	@rm -rf /tmp/${PKGNAME}-$(VERSION) /tmp/${PKGNAME}
 	@dir=$$PWD; cd /tmp; cp -a $$dir ${PKGNAME}
-	lynx -dump 'http://wiki.linux.duke.edu/WritingYumPlugins?action=print' > /tmp/${PKGNAME}/PLUGINS
-	lynx -dump 'http://wiki.linux.duke.edu/YumFaq?action=print' > /tmp/${PKGNAME}/FAQ
+	lynx -dump 'http://yum.baseurl.org/wiki/WritingYumPlugins?format=txt' > /tmp/${PKGNAME}/PLUGINS
+	lynx -dump 'http://yum.baseurl.org/wiki/Faq?format=txt' > /tmp/${PKGNAME}/FAQ
 	@rm -f /tmp/${PKGNAME}/$(remove_spec)
 	@rm -rf /tmp/${PKGNAME}/.git
 	@mv /tmp/${PKGNAME} /tmp/${PKGNAME}-$(VERSION)

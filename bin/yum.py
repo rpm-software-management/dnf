@@ -18,7 +18,7 @@ current version of Python, which is:
 
 If you cannot solve this problem yourself, please go to 
 the yum faq at:
-  http://wiki.linux.duke.edu/YumFaq
+  http://yum.baseurl.org/wiki/Faq
   
 """ % (sys.exc_value, sys.version)
     sys.exit(1)
