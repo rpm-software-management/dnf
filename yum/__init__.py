@@ -2954,7 +2954,8 @@ class YumBase(depsolve.Depsolve):
                     # and a remove, which also tries to remove the old version.
                     self.tsInfo.remove(ipkg.pkgtup)
                     break
-                if ipkg.verGT(po):
+            for ipkg in self.rpmdb.searchNevra(name=po.name):
+                if ipkg.verGT(po) and not canCoinstall(ipkg.arch, po.arch):
                     self._add_prob_flags(rpm.RPMPROB_FILTER_OLDPACKAGE)
                     break
             
