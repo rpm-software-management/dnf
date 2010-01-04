@@ -1073,23 +1073,20 @@ class YumBase(depsolve.Depsolve):
             out(_('Warning: RPMDB altered outside of yum.'))
 
         rc = 0
+        probs = []
         if chkcmd in ('all', 'dependencies'):
             prob2ui = {'requires' : _('missing requires'),
                        'conflicts' : _('installed conflict')}
-            for (pkg, prob, ver, opkgs) in self.rpmdb.check_dependencies():
-                rc += 1
-                if opkgs:
-                    opkgs = ": " + ', '.join(map(str, opkgs))
-                else:
-                    opkgs = ''
-                out("%s %s %s%s" % (pkg, prob2ui[prob], ver, opkgs))
+            probs.extend(self.rpmdb.check_dependencies())
 
         if chkcmd in ('all', 'duplicates'):
             iopkgs = set(self.conf.installonlypkgs)
-            for (pkg, prob, opkg) in self.rpmdb.check_duplicates(iopkgs):
-                rc += 1
-                out(_("%s is a duplicate of %s") % (pkg, opkg))
-        return rc
+            probs.extend(self.rpmdb.check_duplicates(iopkgs))
+
+        for prob in sorted(probs):
+            out(prob)
+
+        return len(probs)
 
     def runTransaction(self, cb):
         """takes an rpm callback object, performs the transaction"""
