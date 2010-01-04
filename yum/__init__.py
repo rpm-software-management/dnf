@@ -868,8 +868,8 @@ class YumBase(depsolve.Depsolve):
         while (len(self.po_with_problems) > 0 and rescode == 1):
             count += 1
             #  Remove all the rpmdb cache data, this is somewhat heavy handed
-            # but easier than removing it ... and skip-broken shouldn't care
-            # too much about speed.
+            # but easier than removing/altering specific bits of the cache ...
+            # and skip-broken shouldn't care too much about speed.
             self.rpmdb.transactionReset()
             self.verbose_logger.debug(_("Skip-broken round %i"), count)
             self._printTransaction()        
