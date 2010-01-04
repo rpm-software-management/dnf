@@ -1,4 +1,4 @@
-##Copyright (C) 2003,2005  Jens B. Jorgensen <jbj1@ultraemail.net>
+##Copyright (C) 2003,2005,2009  Jens B. Jorgensen <jbj1@ultraemail.net>
 ##
 ##This program is free software; you can redistribute it and/or
 ##modify it under the terms of the GNU General Public License
@@ -61,6 +61,9 @@ CTB_PKT_LIT = 11         # 1011 - literal data packet
 CTB_PKT_TRUST = 12       # 1100 - trust packet
 CTB_PKT_USER_ID = 13     # 1101 - user id packet
 CTB_PKT_PK_SUB = 14      # 1110 - public subkey packet
+CTB_PKT_USER_ATTR = 17   # 10001 - user attribute packet
+CTB_PKT_SYM_ENC_INT = 18 # 10010 - symmetric encrypted integrity packet
+CTB_PKT_MOD_DETECT = 19  # 10011 - modification detection code packet
 
 ctb_pkt_to_str = {
     CTB_PKT_PK_ENC : 'public-key encrypted session packet',
@@ -76,7 +79,10 @@ ctb_pkt_to_str = {
     CTB_PKT_LIT : 'literal data packet',
     CTB_PKT_TRUST : 'trust packet',
     CTB_PKT_USER_ID : 'user id packet',
-    CTB_PKT_PK_SUB : 'public subkey packet'
+    CTB_PKT_PK_SUB : 'public subkey packet',
+    CTB_PKT_USER_ATTR : 'user attribute packet',
+    CTB_PKT_SYM_ENC_INT : 'symmetric encrypted integrity packet',
+    CTB_PKT_MOD_DETECT : 'modification detection code packet'
 }
 
 
@@ -124,6 +130,7 @@ ALGO_SK_DES_SK = 6 # DES/SK
 ALGO_SK_AES_128 = 7 # AES 128-bit
 ALGO_SK_AES_192 = 8 # AES 192-bit
 ALGO_SK_AES_256 = 9 # AES 256-bit
+ALGO_SK_TWOFISH_256 = 10 # Twofish 256
 
 algo_sk_to_str = {
     ALGO_SK_PLAIN : 'Plaintext or unencrypted data',
@@ -135,18 +142,21 @@ algo_sk_to_str = {
     ALGO_SK_DES_SK : 'DES/SK',
     ALGO_SK_AES_128 : 'AES 128-bit',
     ALGO_SK_AES_192 : 'AES 192-bit',
-    ALGO_SK_AES_256 : 'AES 256-bit'
+    ALGO_SK_AES_256 : 'AES 256-bit',
+    ALGO_SK_TWOFISH_256 : 'Twofish 256-bit'
 }
 
 # Compression Algorithms
 ALGO_COMP_UNCOMP = 0 # Uncompressed
-ALGO_COMP_ZIP = 1 # ZIP
-ALGO_COMP_ZLIB = 2 # ZLIB
+ALGO_COMP_ZIP = 1    # ZIP
+ALGO_COMP_ZLIB = 2   # ZLIB
+ALGO_COMP_BZIP2 = 3  # BZip2
 
 algo_comp_to_str = {
     ALGO_COMP_UNCOMP : 'Uncompressed',
     ALGO_COMP_ZIP : 'ZIP',
-    ALGO_COMP_ZLIB : 'ZLIB'
+    ALGO_COMP_ZLIB : 'ZLIB',
+    ALGO_COMP_BZIP2 : 'BZip2'
 }
 
 # Hash Algorithms
@@ -157,6 +167,10 @@ ALGO_HASH_SHA_DBL = 4              # double-width SHA
 ALGO_HASH_MD2 = 5                  # MD2
 ALGO_HASH_TIGER192 = 6             # TIGER192
 ALGO_HASH_HAVAL_5_160 = 7          # HAVAL-5-160
+ALGO_HASH_SHA256 = 8               # SHA256
+ALGO_HASH_SHA384 = 9               # SHA384
+ALGO_HASH_SHA512 = 10              # SHA512
+ALGO_HASH_SHA224 = 11              # SHA224
 
 algo_hash_to_str = {
     ALGO_HASH_MD5 : 'MD5',
@@ -165,7 +179,11 @@ algo_hash_to_str = {
     ALGO_HASH_SHA_DBL : 'double-width SHA',
     ALGO_HASH_MD2 : 'MD2',
     ALGO_HASH_TIGER192 : 'TIGER192',
-    ALGO_HASH_HAVAL_5_160 : 'HAVAL-5-160'
+    ALGO_HASH_HAVAL_5_160 : 'HAVAL-5-160',
+    ALGO_HASH_SHA256 : 'SHA256',
+    ALGO_HASH_SHA384 : 'SHA384',
+    ALGO_HASH_SHA512 : 'SHA512',
+    ALGO_HASH_SHA224 : 'SHA224'
 }
 
 # Signature types
@@ -217,10 +235,13 @@ SIG_SUB_TYPE_PREF_COMP_ALGO = 22    # preferred compression algorithms
 SIG_SUB_TYPE_KEY_SRV_PREF = 23      # key server preferences
 SIG_SUB_TYPE_PREF_KEY_SRVR = 24     # preferred key server
 SIG_SUB_TYPE_PRIM_USER_ID = 25      # primary user id
-SIG_SUB_TYPE_POLICY_URL = 26        # policy URL
+SIG_SUB_TYPE_POLICY_URI = 26        # policy URI
 SIG_SUB_TYPE_KEY_FLAGS = 27         # key flags
 SIG_SUB_TYPE_SGNR_USER_ID = 28      # signer's user id
 SIG_SUB_TYPE_REVOKE_REASON = 29     # reason for revocation
+SIG_SUB_TYPE_FEATURES = 30          # features
+SIG_SUB_TYPE_SIG_TARGET = 31        # signature target
+SIG_SUB_TYPE_EMBEDDED_SIG = 32      # embedded signature
 
 sig_sub_type_to_str = {
     SIG_SUB_TYPE_CREATE_TIME : 'signature creation time',
@@ -240,10 +261,13 @@ sig_sub_type_to_str = {
     SIG_SUB_TYPE_KEY_SRV_PREF : 'key server preferences',
     SIG_SUB_TYPE_PREF_KEY_SRVR : 'preferred key server',
     SIG_SUB_TYPE_PRIM_USER_ID : 'primary user id',
-    SIG_SUB_TYPE_POLICY_URL : 'policy URL',
+    SIG_SUB_TYPE_POLICY_URI : 'policy URI',
     SIG_SUB_TYPE_KEY_FLAGS : 'key flags',
     SIG_SUB_TYPE_SGNR_USER_ID : "signer's user id",
-    SIG_SUB_TYPE_REVOKE_REASON : 'reason for revocation'
+    SIG_SUB_TYPE_REVOKE_REASON : 'reason for revocation',
+    SIG_SUB_TYPE_FEATURES : 'features',
+    SIG_SUB_TYPE_SIG_TARGET : 'signature target',
+    SIG_SUB_TYPE_EMBEDDED_SIG : 'embedded signature'
 }
 
 # in a signature subpacket there may be a revocation reason, these codes indicate
@@ -273,6 +297,13 @@ KEY_FLAGS1_GROUP = 0x80 # Private component may be among group
 # A revocation key subpacket has these class values
 REVOKE_KEY_CLASS_MAND = 0x80 # this bit must always be set
 REVOKE_KEY_CLASS_SENS = 0x40 # sensitive
+
+# Features may be indicated in a signature hashed subpacket
+PGP_FEATURE_1_MOD_DETECT = 0x01 # Modification detection
+
+pgp_feature_to_str = {
+    PGP_FEATURE_1_MOD_DETECT : 'Modification Detectiobn'
+}
 
 def get_whole_number(msg, idx, numlen) :
     """get_whole_number(msg, idx, numlen)
@@ -368,13 +399,13 @@ def map_to_str(m, vals) :
     if type(vals) != types.ListType and type(vals) != types.TupleType :
         vals = list((vals,))
     for i in vals :
-        if i in m :
+        if m.has_key(i) :
             slist.append(m[i])
         else :
             slist.append('unknown(' + str(i) + ')')
     return ', '.join(slist)
 
-class pgp_packet :
+class pgp_packet(object) :
     def __init__(self) :
         self.pkt_typ = None
 
@@ -449,7 +480,7 @@ class public_key(pgp_packet) :
         idx_save = idx
         self.version, idx = get_whole_int(msg, idx, 1)
         if self.version != 2 and self.version != 3 and self.version != 4 :
-            raise RuntimeError('unknown public key packet version %d at %d' % (self.version, idx_save))
+            raise 'unknown public key packet version %d at %d' % (self.version, idx_save)
         if self.version == 2 : # map v2 into v3 for coding simplicity since they're structurally the same
             self.version = 3
         self.timestamp, idx = get_whole_number(msg, idx, 4)
@@ -471,7 +502,7 @@ class public_key(pgp_packet) :
             self.pk_elgamal_grp_gen_g, idx = get_mpi(msg, idx)
             self.pk_elgamal_pub_key, idx = get_mpi(msg, idx)
         else :
-            raise RuntimeError("unknown public key algorithm %d at %d" % (self.pk_algo, idx_save))
+            raise "unknown public key algorithm %d at %d" % (self.pk_algo, idx_save)
 
     def __str__(self) :
         sio = cStringIO.StringIO()
@@ -506,6 +537,20 @@ class user_id(pgp_packet) :
     def __str__(self) :
         return pgp_packet.__str__(self) + "\n" + "id: " + self.id + "\n"
 
+class user_attribute(pgp_packet) :
+    def __init__(self) :
+        pgp_packet.__init__(self)
+        self.sub_type = None
+        self.data = None
+
+    def deserialize(self, msg, idx, pkt_len) :
+        self.sub_type, idx = get_whole_int(msg, idx, 1)
+        pkt_len = pkt_len - 1
+        self.data = msg[idx:idx + pkt_len]
+
+    def __str__(self) :
+        return pgp_packet.__str__(self) + "\n" + "sub_type: " + str(self.sub_type) + "\ndata: " + str_to_hex(self.data)
+
 class signature(pgp_packet) :
     def __init__(self) :
         pgp_packet.__init__(self)
@@ -526,6 +571,13 @@ class signature(pgp_packet) :
             if i :
                 return i[1]
             return None
+
+    def creation_time(self) :
+        if self.version == 3 :
+            return self.timestamp
+        else :
+            i = self.get_hashed_subpak(SIG_SUB_TYPE_CREATE_TIME)
+            return i[1]
 
     def expiration(self) :
         if self.version != 4 :
@@ -568,7 +620,7 @@ class signature(pgp_packet) :
             idx = idx + sublen - 1
             return (subtype, expr), idx
         if subtype == SIG_SUB_TYPE_PREF_SYMM_ALGO or subtype == SIG_SUB_TYPE_PREF_HASH_ALGO or subtype == SIG_SUB_TYPE_PREF_COMP_ALGO or subtype == SIG_SUB_TYPE_KEY_FLAGS :
-            algo_list = map(ord, list(msg[idx:idx+sublen-1]))
+            algo_list = map(lambda x : ord(x), list(msg[idx:idx+sublen-1]))
             idx = idx + sublen - 1
             return (subtype, algo_list), idx
         if subtype == SIG_SUB_TYPE_REVOKE_KEY : # revocation key
@@ -604,10 +656,10 @@ class signature(pgp_packet) :
         if subtype == SIG_SUB_TYPE_PRIM_USER_ID : # primary user id
             bool, idx = get_whole_int(msg, idx, 1)
             return (subtype, bool), idx
-        if subtype == SIG_SUB_TYPE_POLICY_URL : # policy URL
-            url = msg[idx:idx+sublen-1]
+        if subtype == SIG_SUB_TYPE_POLICY_URI : # policy URI
+            uri = msg[idx:idx+sublen-1]
             idx = idx + sublen - 1
-            return (subtype, url), idx
+            return (subtype, uri), idx
         if subtype == SIG_SUB_TYPE_SGNR_USER_ID : # signer's user id
             signer_id = msg[idx:idx+sublen-1]
             idx = idx + sublen - 1
@@ -618,6 +670,26 @@ class signature(pgp_packet) :
             reas = msg[idx:idx+reas_len]
             idx = idx + reas_len
             return (subtype, rev_code, reas), idx
+        if subtype == SIG_SUB_TYPE_FEATURES : # features
+            sublen = sublen - 1
+            l = [subtype]
+            while sublen > 0 :
+                oct, idx = get_whole_int(msg, idx, 1)
+                l.append(oct)
+                sublen = sublen - 1
+            return tuple(l), idx
+        if subtype == SIG_SUB_TYPE_SIG_TARGET : # signature target
+            public_key_algo, idx = get_whole_int(msg, idx, 1)
+            hash_algo, idx = get_whole_int(msg, idx, 1)
+            hash = msg[idx:idx+sublen-3]
+            idx = idx + sublen - 3
+            return (subtype, public_key_algo, hash_algo, hash), idx
+        if subtype == SIG_SUB_TYPE_EMBEDDED_SIG : # embedded signature
+            # don't do anything fancy, just the raw bits
+            dat = msg[idx:idx+sublen-1]
+            idx = idx + sublen - 1
+            return (subtype, dat), idx
+
         # otherwise the subpacket is an unknown type, so we just pack the data in it
         dat = msg[idx:idx+sublen-1]
         idx = idx + sublen - 1
@@ -686,7 +758,7 @@ class signature(pgp_packet) :
                 return 'is primary user id'
             else :
                 return 'is not primary user id'
-        if sp[0] == SIG_SUB_TYPE_POLICY_URL : # policy URL
+        if sp[0] == SIG_SUB_TYPE_POLICY_URI : # policy URL
             return 'policy url: %s' % sp[1]
         if sp[0] == SIG_SUB_TYPE_KEY_FLAGS : # key flags
             flags = []
@@ -713,6 +785,18 @@ class signature(pgp_packet) :
             if revoke_reason_to_str.has_key(sp[1]) :
                 reas = revoke_reason_to_str[sp[1]]
             return 'reason for revocation: %s, %s' % (reas, sp[2])
+        if sp[0] == SIG_SUB_TYPE_FEATURES : # featues
+            features = []
+            if len(sp) > 1 :
+                val = sp[1]
+                if val & PGP_FEATURE_1_MOD_DETECT :
+                    features.append('Modification Detection')
+                val = val & ~PGP_FEATURE_1_MOD_DETECT
+                if val != 0 :
+                    features.append('[0]=0x%x' % val)
+            for i in range(2, len(sp)) :
+                features.append('[%d]=0x%x' % (i-1,sp[i]))
+            return 'features: ' + ', '.join(features)
         # this means we don't know what the thing is so we just have raw data
         return 'unknown(%d): %s' % (sp[0], str_to_hex(sp[1]))
 
@@ -746,7 +830,7 @@ class signature(pgp_packet) :
                 sp, idx = self.deserialize_subpacket(msg, idx)
                 self.unhashed_subpaks.append(sp)
         else :
-            raise RuntimeError('unknown signature packet version %d at %d' % (self.version, idx))
+            raise 'unknown signature packet version %d at %d' % (self.version, idx)
         self.hash_frag, idx = get_whole_number(msg, idx, 2)
         if self.pk_algo == ALGO_PK_RSA_ENC_OR_SIGN or self.pk_algo == ALGO_PK_RSA_SIGN_ONLY :
             self.rsa_sig, idx = get_mpi(msg, idx)
@@ -754,7 +838,7 @@ class signature(pgp_packet) :
             self.dsa_sig_r, idx = get_mpi(msg, idx)
             self.dsa_sig_s, idx = get_mpi(msg, idx)
         else :
-            raise RuntimeError('unknown public-key algorithm (%d) in signature at %d' % (self.pk_algo, idx))
+            raise 'unknown public-key algorithm (%d) in signature at %d' % (self.pk_algo, idx)
         return idx
 
     def __str__(self) :
@@ -792,27 +876,33 @@ class pgp_certificate(object):
     def __init__(self) :
         self.version = None
         self.public_key = None
-        self.revocation = None
-        #self.user_id = None
+        self.revocations = []
         self.user_ids = []
-        self.rvkd_user_ids = []
+        self.primary_user_id = -1 # index of the primary user id
 
     def __str__(self) :
         sio = cStringIO.StringIO()
         sio.write("PGP Public Key Certificate v%d\n" % self.version)
+        sio.write("Cert ID: %s\n" % str_to_hex(self.public_key.key_id()))
         sio.write("Primary ID: %s\n" % self.user_id)
         sio.write(str(self.public_key))
         for uid in self.user_ids :
             sio.write(str(uid[0]))
             for sig in uid[1:] :
                 sio.write("   " + str(sig))
+        if hasattr(self, 'user_attrs') :
+            for uattr in self.user_attrs :
+                sio.write(' ')
+                sio.write(str(uattr[0]))
+                for sig in uattr[1:] :
+                    sio.write("   " + str(sig))
         return sio.getvalue()
     
     def get_user_id(self):
         # take the LAST one in the list, not first
         # they appear to be ordered FIFO from the key and that means if you
         # added a key later then it won't show the one you expect
-        return self.user_ids[-1][0].id
+        return self.user_ids[self.primary_user_id][0].id
         
     user_id = property(get_user_id)
     
@@ -856,8 +946,8 @@ be scanned to make sure they are valid for a pgp certificate."""
         if self.version == 3 :
             pkt_idx = 1
 
-            # second packet could be a revocation
-            if pkts[pkt_idx].pkt_typ == CTB_PKT_SIG :
+            # zero or more revocations
+            while pkts[pkt_idx].pkt_typ == CTB_PKT_SIG :
                 if pkts[pkt_idx].version != 3 :
                     raise ValueError('version 3 cert has version %d signature' % pkts[pkt_idx].version)
                 if pkts[pkt_idx].sig_type != SIG_TYPE_KEY_REVOKE :
@@ -865,7 +955,7 @@ be scanned to make sure they are valid for a pgp certificate."""
 
                 # ok, well at least the type is good, we'll assume the cert is
                 # revoked
-                self.revocation = pkts[pkt_idx]
+                self.revocations.append(pkts[pkt_idx])
 
                 # increment the pkt_idx to go to the next one
                 pkt_idx = pkt_idx + 1
@@ -874,7 +964,10 @@ be scanned to make sure they are valid for a pgp certificate."""
             while pkt_idx < len(pkts) :
                 # this packet is supposed to be a user id
                 if pkts[pkt_idx].pkt_typ != CTB_PKT_USER_ID :
-                    raise ValueError('pgp packet %d is not user id, is %s' % (pkt_idx, map_to_str(ctb_pkt_to_str, pkts[pkt_idx].pkt_typ)))
+                    if len(self.user_ids) == 0 :
+                        raise ValueError('pgp packet %d is not user id, is %s' % (pkt_idx, map_to_str(ctb_pkt_to_str, pkts[pkt_idx].pkt_typ)))
+                    else :
+                        break
 
                 user_id = [pkts[pkt_idx]]
                 pkt_idx = pkt_idx + 1
@@ -887,60 +980,43 @@ be scanned to make sure they are valid for a pgp certificate."""
                     if pkts[pkt_idx].sig_type not in (SIG_TYPE_PK_USER_GEN, SIG_TYPE_PK_USER_PER, SIG_TYPE_PK_USER_CAS, SIG_TYPE_PK_USER_POS, SIG_TYPE_CERT_REVOKE) :
                         raise ValueError('signature %d doesn\'t bind user_id to key, is %s' % (pkt_idx, map_to_str(sig_type_to_str, pkts[pkt_idx].sig_typ)))
 
-                    if pkts[pkt_idx].version != 3 :
-                        raise ValueError('version 3 cert has version %d signature' % pkts[pkt_idx].version)
-
                     user_id.append(pkts[pkt_idx])
 
-                    # was the a revocation?
-                    if pkts[pkt_idx].sig_type == SIG_TYPE_CERT_REVOKE :
-                        is_revoked = 1
-
-                    # is this a primary user id?
-                    if not self.cert_id and pkts[pkt_idx].sig_type == SIG_TYPE_PK_USER_GEN :
-                        is_primary_user_id = pkt_idx
                     pkt_idx = pkt_idx + 1
 
-                # we get the cert id from the first sig that's a candidate for being
-                # the primary user id
-                if not self.cert_id and is_primary_user_id and not is_revoked :
-                    # the cert type must be generic pubkey and user id
-                    self.user_id = user_id[0].id
-
                 # append the user ID and signature(s) onto a list
-                if is_revoked :
-                    self.rvkd_user_ids.append(user_id)
-                else :
-                    self.user_ids.append(user_id)
+                self.user_ids.append(user_id)
 
         else : # self.version == 4
             pkt_idx = 1
             self.direct_key_sigs = []
             self.subkeys = []
             self.rvkd_subkeys = []
+            self.user_attrs = []
+
+            cert_id = self.public_key.key_id()
 
             # second packet could be a revocation (or a direct key self signature)
-            if pkts[pkt_idx].pkt_typ == CTB_PKT_SIG :
+            while pkt_idx < len(pkts) and pkts[pkt_idx].pkt_typ == CTB_PKT_SIG :
                 if pkts[pkt_idx].version != 4 :
                     raise ValueError('version 4 cert has version %d signature' % pkts[pkt_idx].version)
                 if pkts[pkt_idx].sig_type == SIG_TYPE_KEY_REVOKE :
-                    # ok, well at least the type is good, we'll assume the cert is
-                    # revoked
-                    self.revocation = pkts[pkt_idx]
+                    self.revocations.append(pkts[pkt_idx])
+                elif pkts[pkt_idx].sig_type == SIG_TYPE_KEY :
+                    self.direct_key_sigs.append(pkts[pkt_idx])
+                else :
+                    raise ValueError('v4 cert signature has type %s, supposed to be revocation signature or direct key signature' % map_to_str(sig_type_to_str, pkts[pkt_idx].sig_type))
 
-                    # increment the pkt_idx to go to the next one
-                    pkt_idx = pkt_idx + 1
-
-            # there can then be a sequence of direct key signatures
-            while pkt_idx < len(pkts) and pkts[pkt_idx].pkt_typ == CTB_PKT_SIG :
-                if pkts[pkt_idx].sig_type != SIG_TYPE_KEY :
-                    raise ValueError('v4 cert signature has type %s, supposed to be direct key' % map_to_str(sig_type_to_str, pkts[pkt_idx].sig_type))
-                self.direct_key_sigs.append(pkts[pkt_idx])
+                # increment the pkt_idx to go to the next one
                 pkt_idx = pkt_idx + 1
                 
-            # the following packets are User ID, Signature... sets or subkey, signature... sets
+            # the following packets are:
+            # User ID, signature... sets or
+            # subkey, signature... sets or
+            # user attribute, signature... sets
+            prim_user_id_sig_time = 0
+
             while pkt_idx < len(pkts) :
-                
                 # this packet is supposed to be a user id
                 if pkts[pkt_idx].pkt_typ == CTB_PKT_USER_ID :
                     user_id = [pkts[pkt_idx]]
@@ -953,41 +1029,59 @@ be scanned to make sure they are valid for a pgp certificate."""
                     # bind it to the key
                     while pkt_idx < len(pkts) and pkts[pkt_idx].pkt_typ == CTB_PKT_SIG :
                         if pkts[pkt_idx].sig_type not in (SIG_TYPE_PK_USER_GEN, SIG_TYPE_PK_USER_PER, SIG_TYPE_PK_USER_CAS, SIG_TYPE_PK_USER_POS, SIG_TYPE_CERT_REVOKE) :
-                            raise ValueError('signature %d doesn\'t bind user_id to key, is %s' % (pkt_idx, map_to_str(sig_type_to_str, pkts[pkt_idx].sig_typ)))
+                            raise ValueError('signature %d doesn\'t bind user_id to key, is %s' % (pkt_idx, map_to_str(sig_type_to_str, pkts[pkt_idx].sig_type)))
                         user_id.append(pkts[pkt_idx])
 
-                        # was the a revocation?
-                        if pkts[pkt_idx].sig_type == SIG_TYPE_CERT_REVOKE :
-                            is_revoked = 1
-
                         # is this the primary user id?
-                        if pkts[pkt_idx].version == 4 and pkts[pkt_idx].is_primary_user_id() :
-                            is_primary_user_id = 1
+                        if pkts[pkt_idx].key_id() == cert_id :
+                            if pkts[pkt_idx].is_primary_user_id() :
+                                ct = pkts[pkt_idx].creation_time()
+                                if ct > prim_user_id_sig_time :
+                                    self.primary_user_id = len(self.user_ids)
+                                    prim_user_id_sig_time = ct
+
                         pkt_idx = pkt_idx + 1
 
                     # append the user ID and signature(s) onto the list
-                    if is_revoked :
-                        self.rvkd_user_ids.append(user_id)
-                    else :
-                        self.user_ids.append(user_id)
+                    self.user_ids.append(user_id)
 
-                elif pkts[pkt_idx].pkt_typ == CTB_PKT_PK_SUB :
-                    # collect this list of subkey + signatures
-                    subkey = [pkts[pkt_idx]]
-                    pkt_idx = pkt_idx + 1
+                # this packet is supposed to be a user id
+                elif pkts[pkt_idx].pkt_typ == CTB_PKT_USER_ATTR :
+                    user_attr = [pkts[pkt_idx]]
                     is_revoked = 0
+
+                    pkt_idx = pkt_idx + 1
 
                     # there may be a sequence of signatures following the user id which
                     # bind it to the key
                     while pkt_idx < len(pkts) and pkts[pkt_idx].pkt_typ == CTB_PKT_SIG :
-                        if pkts[pkt_idx].sig_type not in (SIG_TYPE_SUBKEY_BIND, SIG_TYPE_SUBKEY_REVOKE) :
-                            raise ValueError('signature %d doesn\'t bind subkey to key, is %s' % (pkt_idx, map_to_str(sig_type_to_str, pkts[pkt_idx].sig_typ)))
+                        if pkts[pkt_idx].sig_type not in (SIG_TYPE_PK_USER_GEN, SIG_TYPE_PK_USER_PER, SIG_TYPE_PK_USER_CAS, SIG_TYPE_PK_USER_POS, SIG_TYPE_CERT_REVOKE) :
+                            raise ValueError('signature %d doesn\'t bind user_attr to key, is %s' % (pkt_idx, map_to_str(sig_type_to_str, pkts[pkt_idx].sig_type)))
+                        user_attr.append(pkts[pkt_idx])
+                        pkt_idx = pkt_idx + 1
+
+                    # append the user ID and signature(s) onto the list
+                    self.user_attrs.append(user_attr)
+
+                elif pkts[pkt_idx].pkt_typ == CTB_PKT_PK_SUB :
+                    # collect this list of subkey + signature [ + revocation ]
+                    subkey = [pkts[pkt_idx]]
+                    pkt_idx = pkt_idx + 1
+                    is_revoked = 0
+
+                    # there must be one signature following the subkey that binds it to the main key
+                    if pkt_idx >= len(pkts) :
+                        raise ValueError('subkey at index %d was not followed by a signature' % (pkt_idx-1))
+                    if pkts[pkt_idx].pkt_typ != CTB_PKT_SIG or pkts[pkt_idx].sig_type != SIG_TYPE_SUBKEY_BIND :
+                            raise ValueError('signature %d doesn\'t bind subkey to key, type is %s' % (pkt_idx, map_to_str(sig_type_to_str, pkts[pkt_idx].sig_typ)))
+                    subkey.append(pkts[pkt_idx])
+
+                    pkt_idx = pkt_idx + 1
+
+                    # there may optionally be a revocation
+                    if pkt_idx < len(pkts) and pkts[pkt_idx].pkt_typ == CTB_PKT_SIG and pkts[pkt_idx].sig_type == SIG_TYPE_SUBKEY_REVOKE :
+                        is_revoked = 1
                         subkey.append(pkts[pkt_idx])
-
-                        # was this a revocation?
-                        if pkts[pkt_idx].sig_type == SIG_TYPE_SUBKEY_REVOKE :
-                            is_revoked = 1
-
                         pkt_idx = pkt_idx + 1
 
                     # append the user ID and signature(s) onto the list
@@ -996,14 +1090,14 @@ be scanned to make sure they are valid for a pgp certificate."""
                     else :
                         self.subkeys.append(subkey)
                 else :
-                    raise ValueError('pgp packet %d is not user id or subkey, is %s' % (pkt_idx, map_to_str(ctb_pkt_to_str, pkts[pkt_idx].pkt_typ)))
+                    break
 
         # did we get all the things we needed?
         #if not self.user_id :
         # just take the first valid user id we encountered then
         if len(self.user_ids) == 0 :
-            raise ValueError('no user id packet was present in the cert')
-
+            raise ValueError('no user id packet was present in the cert %s' % str_to_hex(self.public_key.key_id()))
+        return pkt_idx
 
 
 def get_ctb(msg, idx) :
@@ -1073,13 +1167,16 @@ def decode(msg) :
         elif pkt_typ == CTB_PKT_SIG :
             pkt = signature()
 
+        elif pkt_typ == CTB_PKT_USER_ATTR :
+            pkt = user_attribute()
+
         if pkt :
             pkt.pkt_typ = pkt_typ
             pkt.deserialize(msg, idx, pkt_len)
             if debug :
                 debug.write(pkt.__str__() + "\n")
         else :
-            raise RuntimeError('unknown pgp packet type %d at %d' % (pkt_typ, idx))
+            raise ValueError('unexpected pgp packet type %s at %d' % (map_to_str(ctb_pkt_to_str, pkt_typ), idx))
 
         pkt_list.append(pkt)
 
@@ -1087,6 +1184,14 @@ def decode(msg) :
     return pkt_list
 
 def decode_msg(msg) :
+    """decode_msg(msg) ==> list of OpenPGP "packet" objects
+Takes an ascii-armored PGP block and returns a list of objects each of which
+corresponds to a PGP "packets".
+
+A PGP message is a series of packets. You need to understand how packets are
+to be combined together in order to know what to do with them. For example
+a PGP "certificate" includes a public key, user id(s), and signature. 
+"""
     # first we'll break the block up into lines and trim each line of any 
     # carriage return chars
     pgpkey_lines = map(lambda x : x.rstrip(), msg.split('\n'))
@@ -1127,16 +1232,18 @@ def decode_msg(msg) :
             pkt_list = decode(cert_msg)
 
             # turn it into a real cert
-            cert = pgp_certificate()
-            cert.load(pkt_list)
-            cert.raw_key = msg
-            return cert
+            cert_list = []
+            while len(pkt_list) > 0 :
+                cert = pgp_certificate()
+                pkt_idx = cert.load(pkt_list)
+                cert_list.append(cert)
+                pkt_list[0:pkt_idx] = []
+            return cert_list
         
         # add the data to our buffer then
         block_buf.write(l)
 
-    return None
-
+    return []
 
 def decode_multiple_keys(msg):
     #ditto of above - but handling multiple certs/keys per file
@@ -1155,10 +1262,15 @@ def decode_multiple_keys(msg):
         block += '%s\n' % l
         if l == '-----END PGP PUBLIC KEY BLOCK-----':
             in_block = 0
-            cert = decode_msg(block)
-            if cert:
-                certs.append(cert)
+            thesecerts = decode_msg(block)
+            if thesecerts:
+                certs.extend(thesecerts)
             block = ''
             continue
-
     return certs
+
+
+if __name__ == '__main__' :
+    import sys
+    for pgp_cert in decode_msg(open(sys.argv[1]).read()) :
+        print pgp_cert
