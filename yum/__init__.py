@@ -3634,6 +3634,9 @@ class YumBase(depsolve.Depsolve):
                 for tlipkg in latest_installed_n[pkg.name]:
                     if not canCoinstall(pkg.arch, tlipkg.arch):
                         lipkg = tlipkg
+                        #  Use this so we don't get confused when we have
+                        # different versions with different arches.
+                        na = (pkg.name, lipkg.arch)
                         break
 
             if lipkg is None:
