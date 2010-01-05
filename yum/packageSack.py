@@ -643,7 +643,6 @@ class PackageSack(PackageSackBase):
     def setCompatArchs(self, compatarchs):
         self.compatarchs = compatarchs
 
-        
     def searchNevra(self, name=None, epoch=None, ver=None, rel=None, arch=None):
         """return list of pkgobjects matching the nevra requested"""
         self._checkIndexes(failure='build')
@@ -667,6 +666,18 @@ class PackageSack(PackageSackBase):
             result.append(po)
         return result
         
+    def searchNames(self, names=[]):
+        """return list of pkgobjects matching the names requested"""
+        self._checkIndexes(failure='build')
+        result = []
+        done = set()
+        for name in names:
+            if name in done:
+                continue
+            done.add(name)
+            result.extend(self.nevra.get((name, None, None, None, None), []))
+        return result
+
     def getProvides(self, name, flags=None, version=(None, None, None)):
         """return dict { packages -> list of matching provides }"""
         self._checkIndexes(failure='build')
