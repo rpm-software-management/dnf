@@ -4170,7 +4170,10 @@ class YumBase(depsolve.Depsolve):
         self.populateTs(test=1)
         self.ts.check()
         for prob in self.ts.problems():
-            results.append(prob)
+            #  Newer rpm (4.8.0+) has problem objects, older have just strings.
+            #  Should probably move to using the new objects, when we can. For
+            # now just be compatible.
+            results.append(to_str(prob))
 
         self.dsCallback = dscb
         return results
