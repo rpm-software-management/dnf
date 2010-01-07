@@ -287,6 +287,10 @@ class YumBase(depsolve.Depsolve):
 
         # run the postconfig plugin hook
         self.plugins.run('postconfig')
+        #  Note that Pungi has historically replaced _getConfig(), and it sets
+        # up self.conf.yumvar but not self.yumvar ... and AFAIK nothing needs
+        # to use YumBase.yumvar, so it's probably easier to just semi-deprecate
+        # this (core now only uses YumBase.conf.yumvar).
         self.yumvar = self.conf.yumvar
 
         self.getReposFromConfig()
@@ -323,7 +327,7 @@ class YumBase(depsolve.Depsolve):
         if repo_age is None:
             repo_age = os.stat(repofn)[8]
         
-        confpp_obj = ConfigPreProcessor(repofn, vars=self.yumvar)
+        confpp_obj = ConfigPreProcessor(repofn, vars=self.conf.yumvar)
         parser = ConfigParser()
         try:
             parser.readfp(confpp_obj)
@@ -469,7 +473,7 @@ class YumBase(depsolve.Depsolve):
             self.verbose_logger.log(logginglevels.DEBUG_4,
                                     _('Reading Local RPMDB'))
             self._rpmdb = rpmsack.RPMDBPackageSack(root=self.conf.installroot,
-                                                   releasever=self.yumvar['releasever'],
+                                                   releasever=self.conf.yumvar['releasever'],
                                                    persistdir=self.conf.persistdir,
                                                    cachedir=self.conf.cachedir)
             self.verbose_logger.debug('rpmdb time: %0.3f' % (time.time() - rpmdb_st))
@@ -1183,7 +1187,7 @@ class YumBase(depsolve.Depsolve):
                 rpo = txmbr.po
                 po.yumdb_info.from_repo = rpo.repoid
                 po.yumdb_info.reason = txmbr.reason
-                po.yumdb_info.releasever = self.yumvar['releasever']
+                po.yumdb_info.releasever = self.conf.yumvar['releasever']
                 if hasattr(self, 'cmds') and self.cmds:
                     po.yumdb_info.command_line = ' '.join(self.cmds)
                 csum = rpo.returnIdSum()
@@ -4246,7 +4250,7 @@ class YumBase(depsolve.Depsolve):
         if cachedir is None:
             return False # Tried, but failed, to get a "user" cachedir
 
-        cachedir += varReplace(suffix, self.yumvar)
+        cachedir += varReplace(suffix, self.conf.yumvar)
         self.repos.setCacheDir(cachedir)
         self.rpmdb.setCacheDir(cachedir)
 
