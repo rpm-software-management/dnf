@@ -993,8 +993,8 @@ class YumOutput:
                            (evr, -v_wid), (repoid, -r_wid), (size, s_wid))
                 msg = self.fmtColumns(columns, u" ", u"\n")
                 hibeg, hiend = self._highlight(self.conf.color_update_installed)
-                for obspo in obsoletes:
-                    appended = _('     replacing  %s%s%s.%s %s\n\n')
+                for obspo in sorted(obsoletes):
+                    appended = _('     replacing  %s%s%s.%s %s\n')
                     appended %= (hibeg, obspo.name, hiend,
                                  obspo.arch, obspo.printVer())
                     msg = msg+appended
