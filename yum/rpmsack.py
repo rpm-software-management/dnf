@@ -32,7 +32,7 @@ from packageSack import PackageSackBase, PackageSackVersion
 import fnmatch
 import re
 
-from yum.i18n import to_unicode
+from yum.i18n import to_unicode, _
 import constants
 
 import yum.depsolve
@@ -78,6 +78,40 @@ class RPMInstalledPackage(YumInstalledPackage):
                                # Also note that pkg.no_value raises KeyError.
 
         return val
+
+
+class RPMDBProblem:
+    '''
+    Represents a problem in the rpmdb, from the check_*() functions.
+    '''
+    def __init__(self, pkg, problem, **kwargs):
+        self.pkg = pkg
+        self.problem = problem
+        for kwarg in kwargs:
+            setattr(self, kwarg, kwargs[kwarg])
+
+    def __cmp__(self, other):
+        if other is None:
+            return 1
+        return cmp(self.pkg, other.pkg) or cmp(self.problem, problem)
+
+
+class RPMDBProblemDependency(RPMDBProblem):
+    def __str__(self):
+        if self.problem == 'requires':
+            return "%s %s %s" % (self.pkg, _('has missing requires of'),
+                                 self.missing)
+
+        return "%s %s %s: %s" % (self.pkg, _('has installed conflicts'),
+                                 self.found,', '.join(map(str, self.conflicts)))
+
+
+class RPMDBProblemDuplicate(RPMDBProblem):
+    def __init__(self, pkg, **kwargs):
+        RPMDBProblem.__init__(self, pkg, "duplicate", **kwargs)
+
+    def __str__(self):
+        return _("%s is a duplicate with %s") % (self.pkg, self.duplicate)
 
 
 class RPMDBPackageSack(PackageSackBase):
@@ -1072,7 +1106,8 @@ class RPMDBPackageSack(PackageSackBase):
                     continue
                 flags = yum.depsolve.flags.get(flags, flags)
                 missing = miscutils.formatRequire(req, ver, flags)
-                problems.append((pkg, "requires", missing, []))
+                prob = RPMDBProblemDependency(pkg, "requires", missing=missing)
+                problems.append(prob)
 
             for creq in pkg.conflicts:
                 if creq[0].startswith('rpmlib'): continue
@@ -1083,7 +1118,9 @@ class RPMDBPackageSack(PackageSackBase):
                     continue
                 flags = yum.depsolve.flags.get(flags, flags)
                 found = miscutils.formatRequire(req, ver, flags)
-                problems.append((pkg, "conflicts", found, res))
+                prob = RPMDBProblemDependency(pkg, "conflicts", found=found,
+                                              conflicts=res)
+                problems.append(prob)
         return problems
 
     def _iter_two_pkgs(self, ignore):
@@ -1111,7 +1148,7 @@ class RPMDBPackageSack(PackageSackBase):
                     continue
 
             # More than one pkg, they aren't version equal, or aren't multiarch
-            problems.append((pkg, "dup", last))
+            problems.append(RPMDBProblemDuplicate(pkg, duplicate=last))
         return problems
 
 

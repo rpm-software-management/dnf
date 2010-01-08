@@ -287,6 +287,10 @@ class YumBase(depsolve.Depsolve):
 
         # run the postconfig plugin hook
         self.plugins.run('postconfig')
+        #  Note that Pungi has historically replaced _getConfig(), and it sets
+        # up self.conf.yumvar but not self.yumvar ... and AFAIK nothing needs
+        # to use YumBase.yumvar, so it's probably easier to just semi-deprecate
+        # this (core now only uses YumBase.conf.yumvar).
         self.yumvar = self.conf.yumvar
 
         self.getReposFromConfig()
@@ -323,7 +327,7 @@ class YumBase(depsolve.Depsolve):
         if repo_age is None:
             repo_age = os.stat(repofn)[8]
         
-        confpp_obj = ConfigPreProcessor(repofn, vars=self.yumvar)
+        confpp_obj = ConfigPreProcessor(repofn, vars=self.conf.yumvar)
         parser = ConfigParser()
         try:
             parser.readfp(confpp_obj)
@@ -469,7 +473,7 @@ class YumBase(depsolve.Depsolve):
             self.verbose_logger.log(logginglevels.DEBUG_4,
                                     _('Reading Local RPMDB'))
             self._rpmdb = rpmsack.RPMDBPackageSack(root=self.conf.installroot,
-                                                   releasever=self.yumvar['releasever'],
+                                                   releasever=self.conf.yumvar['releasever'],
                                                    persistdir=self.conf.persistdir,
                                                    cachedir=self.conf.cachedir)
             self.verbose_logger.debug('rpmdb time: %0.3f' % (time.time() - rpmdb_st))
@@ -868,8 +872,8 @@ class YumBase(depsolve.Depsolve):
         while (len(self.po_with_problems) > 0 and rescode == 1):
             count += 1
             #  Remove all the rpmdb cache data, this is somewhat heavy handed
-            # but easier than removing it ... and skip-broken shouldn't care
-            # too much about speed.
+            # but easier than removing/altering specific bits of the cache ...
+            # and skip-broken shouldn't care too much about speed.
             self.rpmdb.transactionReset()
             self.verbose_logger.debug(_("Skip-broken round %i"), count)
             self._printTransaction()        
@@ -1073,23 +1077,20 @@ class YumBase(depsolve.Depsolve):
             out(_('Warning: RPMDB altered outside of yum.'))
 
         rc = 0
+        probs = []
         if chkcmd in ('all', 'dependencies'):
             prob2ui = {'requires' : _('missing requires'),
                        'conflicts' : _('installed conflict')}
-            for (pkg, prob, ver, opkgs) in self.rpmdb.check_dependencies():
-                rc += 1
-                if opkgs:
-                    opkgs = ": " + ', '.join(map(str, opkgs))
-                else:
-                    opkgs = ''
-                out("%s %s %s%s" % (pkg, prob2ui[prob], ver, opkgs))
+            probs.extend(self.rpmdb.check_dependencies())
 
         if chkcmd in ('all', 'duplicates'):
             iopkgs = set(self.conf.installonlypkgs)
-            for (pkg, prob, opkg) in self.rpmdb.check_duplicates(iopkgs):
-                rc += 1
-                out(_("%s is a duplicate of %s") % (pkg, opkg))
-        return rc
+            probs.extend(self.rpmdb.check_duplicates(iopkgs))
+
+        for prob in sorted(probs):
+            out(prob)
+
+        return len(probs)
 
     def runTransaction(self, cb):
         """takes an rpm callback object, performs the transaction"""
@@ -1186,7 +1187,7 @@ class YumBase(depsolve.Depsolve):
                 rpo = txmbr.po
                 po.yumdb_info.from_repo = rpo.repoid
                 po.yumdb_info.reason = txmbr.reason
-                po.yumdb_info.releasever = self.yumvar['releasever']
+                po.yumdb_info.releasever = self.conf.yumvar['releasever']
                 if hasattr(self, 'cmds') and self.cmds:
                     po.yumdb_info.command_line = ' '.join(self.cmds)
                 csum = rpo.returnIdSum()
@@ -2957,7 +2958,8 @@ class YumBase(depsolve.Depsolve):
                     # and a remove, which also tries to remove the old version.
                     self.tsInfo.remove(ipkg.pkgtup)
                     break
-                if ipkg.verGT(po):
+            for ipkg in self.rpmdb.searchNevra(name=po.name):
+                if ipkg.verGT(po) and not canCoinstall(ipkg.arch, po.arch):
                     self._add_prob_flags(rpm.RPMPROB_FILTER_OLDPACKAGE)
                     break
             
@@ -3613,49 +3615,59 @@ class YumBase(depsolve.Depsolve):
 
         latest_installed_na = {}
         latest_installed_n  = {}
-        for pkg in ipkgs:
-            latest_installed_n[pkg.name] = pkg
+        for pkg in sorted(ipkgs):
+            if (pkg.name not in latest_installed_n or
+                pkg.verGT(latest_installed_n[pkg.name][0])):
+                latest_installed_n[pkg.name] = [pkg]
+            elif pkg.verEQ(latest_installed_n[pkg.name][0]):
+                latest_installed_n[pkg.name].append(pkg)
             latest_installed_na[(pkg.name, pkg.arch)] = pkg
 
         #  Find "latest downgrade", ie. latest available pkg before
-        # installed version.
+        # installed version. Indexed fromn the latest installed pkgtup.
         downgrade_apkgs = {}
         for pkg in sorted(apkgs):
             na  = (pkg.name, pkg.arch)
 
             # Here we allow downgrades from .i386 => .noarch, or .i586 => .i386
             # but not .i386 => .x86_64 (similar to update).
-            key = na
-            latest_installed = latest_installed_na
-            if pkg.name in latest_installed_n and na not in latest_installed_na:
-                if not canCoinstall(pkg.arch,latest_installed_n[pkg.name].arch):
-                    key = pkg.name
-                    latest_installed = latest_installed_n
+            lipkg = None
+            if na in latest_installed_na:
+                lipkg = latest_installed_na[na]
+            elif pkg.name in latest_installed_n:
+                for tlipkg in latest_installed_n[pkg.name]:
+                    if not canCoinstall(pkg.arch, tlipkg.arch):
+                        lipkg = tlipkg
+                        #  Use this so we don't get confused when we have
+                        # different versions with different arches.
+                        na = (pkg.name, lipkg.arch)
+                        break
 
-            if key not in latest_installed:
+            if lipkg is None:
                 if na not in warned_nas and not doing_group_pkgs:
                     msg = _('No Match for available package: %s') % pkg
                     self.logger.critical(msg)
                 warned_nas.add(na)
                 continue
-            if pkg.verGE(latest_installed[key]):
+
+            if pkg.verGE(lipkg):
                 if na not in warned_nas:
                     msg = _('Only Upgrade available on package: %s') % pkg
                     self.logger.critical(msg)
                 warned_nas.add(na)
                 continue
+
             warned_nas.add(na)
-            if (na in downgrade_apkgs and
-                pkg.verLE(downgrade_apkgs[na])):
+            if (lipkg.pkgtup in downgrade_apkgs and
+                pkg.verLE(downgrade_apkgs[lipkg.pkgtup])):
                 continue # Skip older than "latest downgrade"
-            downgrade_apkgs[na] = pkg
+            downgrade_apkgs[lipkg.pkgtup] = pkg
 
         tx_return = []
-        for po in ipkgs:
-            na = (po.name, po.arch)
-            if na not in downgrade_apkgs:
+        for ipkg in ipkgs:
+            if ipkg.pkgtup not in downgrade_apkgs:
                 continue
-            txmbrs = self.tsInfo.addDowngrade(downgrade_apkgs[na], po)
+            txmbrs = self.tsInfo.addDowngrade(downgrade_apkgs[ipkg.pkgtup],ipkg)
             if not txmbrs: # Fail?
                 continue
             self._add_prob_flags(rpm.RPMPROB_FILTER_OLDPACKAGE)
@@ -4162,7 +4174,10 @@ class YumBase(depsolve.Depsolve):
         self.populateTs(test=1)
         self.ts.check()
         for prob in self.ts.problems():
-            results.append(prob)
+            #  Newer rpm (4.8.0+) has problem objects, older have just strings.
+            #  Should probably move to using the new objects, when we can. For
+            # now just be compatible.
+            results.append(to_str(prob))
 
         self.dsCallback = dscb
         return results
@@ -4235,7 +4250,7 @@ class YumBase(depsolve.Depsolve):
         if cachedir is None:
             return False # Tried, but failed, to get a "user" cachedir
 
-        cachedir += varReplace(suffix, self.yumvar)
+        cachedir += varReplace(suffix, self.conf.yumvar)
         self.repos.setCacheDir(cachedir)
         self.rpmdb.setCacheDir(cachedir)
 

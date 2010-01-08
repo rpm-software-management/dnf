@@ -1160,8 +1160,8 @@ class VersionCommand(YumCommand):
 
             return 0, ['version groupinfo']
 
-        rel = base.yumvar['releasever']
-        ba  = base.yumvar['basearch']
+        rel = base.conf.yumvar['releasever']
+        ba  = base.conf.yumvar['basearch']
         cols = []
         if vcmd in ('installed', 'all', 'group-installed', 'group-all'):
             try:

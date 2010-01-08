@@ -277,6 +277,8 @@ class FakeRpmDb(packageSack.PackageSack):
         return
     def transactionResultVersion(self, rpmdbv):
         return
+    def transactionReset(self):
+        return
 
     def getProvides(self, name, flags=None, version=(None, None, None)):
         """return dict { packages -> list of matching provides }"""

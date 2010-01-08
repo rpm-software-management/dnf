@@ -234,3 +234,40 @@ class MultiLibTests(OperationsTests):
         res, msg = self.runOperation(['install', 'xbar'], p.inst, p.avail,
                                      {'multilib_policy' : 'all'})
         self.assertResult(ninst)
+
+    def testDowngrade1(self):
+        p = self.pkgs
+        ninst = [p.i_foo_1_12_x, p.a_wbar_0_2_i]
+        res, msg = self.runOperation(['downgrade', 'wbar'], p.inst, p.avail)
+        self.assertResult(ninst)
+
+    def testDowngrade2(self):
+        p = self.pkgs
+        oinst = [p.i_foo_1_12_x, p.a_wbar_2_22_i]
+        ninst = [p.i_foo_1_12_x, p.i_wbar_1_12_i]
+        p.avail.append(p.i_wbar_1_12_i)
+        res, msg = self.runOperation(['downgrade', 'wbar'], oinst, p.avail)
+        self.assertResult(ninst)
+
+    def testDowngrade3(self):
+        p = self.pkgs
+        oinst = [p.i_foo_1_12_x, p.a_wbar_2_22_i]
+        ninst = [p.i_foo_1_12_x, p.a_wbar_0_2_i]
+        res, msg = self.runOperation(['downgrade', 'wbar'], oinst, p.avail)
+        self.assertResult(ninst)
+
+    def testDowngrade4(self):
+        p = self.pkgs
+        oinst = p.inst[:] + [p.a_ibar_2_22_x]
+        p.a_ibar_1_12_i.arch = 'noarch'
+        ninst = p.inst[:] + [p.a_ibar_1_12_i]
+        res, msg = self.runOperation(['downgrade', 'ibar'], oinst, p.avail)
+        self.assertResult(ninst)
+
+    def testDowngrade5(self):
+        p = self.pkgs
+        ninst = p.inst[:] + [p.a_xbar_1_12_x]
+        p.a_xbar_2_22_i.arch = 'noarch'
+        oinst = p.inst[:] + [p.a_xbar_2_22_i]
+        res, msg = self.runOperation(['downgrade', 'xbar'], oinst, p.avail)
+        self.assertResult(ninst)
