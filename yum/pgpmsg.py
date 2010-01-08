@@ -480,7 +480,7 @@ class public_key(pgp_packet) :
         idx_save = idx
         self.version, idx = get_whole_int(msg, idx, 1)
         if self.version != 2 and self.version != 3 and self.version != 4 :
-            raise 'unknown public key packet version %d at %d' % (self.version, idx_save)
+            raise RuntimeError('unknown public key packet version %d at %d' % (self.version, idx_save))
         if self.version == 2 : # map v2 into v3 for coding simplicity since they're structurally the same
             self.version = 3
         self.timestamp, idx = get_whole_number(msg, idx, 4)
@@ -502,7 +502,7 @@ class public_key(pgp_packet) :
             self.pk_elgamal_grp_gen_g, idx = get_mpi(msg, idx)
             self.pk_elgamal_pub_key, idx = get_mpi(msg, idx)
         else :
-            raise "unknown public key algorithm %d at %d" % (self.pk_algo, idx_save)
+            raise RuntimeError("unknown public key algorithm %d at %d" % (self.pk_algo, idx_save))
 
     def __str__(self) :
         sio = cStringIO.StringIO()
@@ -830,7 +830,7 @@ class signature(pgp_packet) :
                 sp, idx = self.deserialize_subpacket(msg, idx)
                 self.unhashed_subpaks.append(sp)
         else :
-            raise 'unknown signature packet version %d at %d' % (self.version, idx)
+            raise RuntimeError('unknown signature packet version %d at %d' % (self.version, idx))
         self.hash_frag, idx = get_whole_number(msg, idx, 2)
         if self.pk_algo == ALGO_PK_RSA_ENC_OR_SIGN or self.pk_algo == ALGO_PK_RSA_SIGN_ONLY :
             self.rsa_sig, idx = get_mpi(msg, idx)
@@ -838,7 +838,7 @@ class signature(pgp_packet) :
             self.dsa_sig_r, idx = get_mpi(msg, idx)
             self.dsa_sig_s, idx = get_mpi(msg, idx)
         else :
-            raise 'unknown public-key algorithm (%d) in signature at %d' % (self.pk_algo, idx)
+            raise RuntimeError('unknown public-key algorithm (%d) in signature at %d' % (self.pk_algo, idx))
         return idx
 
     def __str__(self) :
