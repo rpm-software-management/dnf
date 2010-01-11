@@ -84,10 +84,10 @@ Repository configuration is honored in all operations.
 .IP "\fBinstall\fP"
 Is used to install the latest version of a package or
 group of packages while ensuring that all dependencies are
-satisfied\&.  If no package matches the given package name(s), they are
-assumed to be a shell glob and any matches are then installed\&. If the
-name starts with an @ character the rest of the name is used as though
-passed to the groupinstall command\&. If the name is a file, then install works
+satisfied\&.  (See \fBSpecifying package names\fP for more information) 
+If no package matches the given package name(s), they are assumed to be a shell 
+glob and any matches are then installed\&. If the name starts with an 
+@ character the rest of the name is used as though passed to the groupinstall command\&. If the name is a file, then install works
 like localinstall\&. If the name doesn't match a package, then package
 "provides" are searched (Eg. "_sqlitecache.so()(64bit)") as are
 filelists (Eg. "/usr/bin/yum"). Also note that for filelists, wildcards will
@@ -97,8 +97,8 @@ match multiple packages\&.
 If run without any packages, update will update every currently
 installed package.  If one or more packages or package globs are specified, Yum will
 only update the listed packages\&.  While updating packages, \fByum\fP
-will ensure that all dependencies are satisfied\&. If the packages or globs
-specified match to packages which are not currently installed then update will
+will ensure that all dependencies are satisfied\&. (See \fBSpecifying package names\fP for more information) 
+If the packages or globs specified match to packages which are not currently installed then update will
 not install them\&. update operates on groups, files, provides and filelists
 just like the "install" command\&.
 
@@ -123,7 +123,7 @@ for more details.
 Are used to remove the specified packages from the system
 as well as removing any packages which depend on the package being
 removed\&. remove operates on groups, files, provides and filelists just like
-the "install" command\&.
+the "install" command\&.(See \fBSpecifying package names\fP for more information) 
 .IP 
 .IP "\fBlist\fP"
 Is used to list various information about available
@@ -426,11 +426,32 @@ List packages recently added into the repositories. This is often not helpful,
 but what you may really want to use is "yum list-updateinfo new" from the
 security yum plugin.
 .IP
-.IP "\fBSpecifying package names\fP"
-All the list options mentioned above take file-glob-syntax wildcards or package
-names as arguments, for example \fByum list available 'foo*'\fP will list
-all available packages that match 'foo*'. (The single quotes will keep your
-shell from expanding the globs.)
+
+.PP
+.SH "SPECIFYING PACKAGE NAMES"
+A package can be referred to for install, update, remove, list, info etc 
+with any of the following as well as globs of any of the following:
+.IP
+.br
+\fBname\fP
+.br
+\fBname.arch\fP
+.br
+\fBname-ver\fP
+.br
+\fBname-ver-rel\fP
+.br
+\fBname-ver-rel.arch\fP
+.br
+\fBname-epoch:ver-rel.arch\fP
+.br
+\fBepoch:name-ver-rel.arch\fP
+.IP
+For example: \fByum remove kernel-2.4.1-10.i686\fP
+     this will remove this specific kernel-ver-rel.arch.
+.IP
+Or:          \fByum list available 'foo*'\fP 
+     will list all available packages that match 'foo*'. (The single quotes will keep your shell from expanding the globs.)
 .IP
 .PP 
 .SH "CLEAN OPTIONS"
@@ -473,29 +494,6 @@ Tell any enabled plugins to eliminate their cached data.
 
 .IP "\fByum clean all\fP"
 Does all of the above.
-
-.PP
-.SH "MISC"
-.IP "\fBSpecifying package names\fP"
-A package can be referred to for install,update,list,remove etc with any 
-of the following:
-.IP
-.br
-\fBname\fP
-.br
-\fBname.arch\fP
-.br
-\fBname-ver\fP
-.br
-\fBname-ver-rel\fP
-.br
-\fBname-ver-rel.arch\fP
-.br
-\fBname-epoch:ver-rel.arch\fP
-.br
-\fBepoch:name-ver-rel.arch\fP
-.IP
-For example: \fByum remove kernel-2.4.1-10.i686\fP
 
 .PP 
 .SH "PLUGINS"
