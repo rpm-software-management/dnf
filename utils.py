@@ -203,6 +203,9 @@ class YumUtilBase(YumBaseCli):
         # Now parse the command line for real and 
         # apply some of the options to self.conf
         (opts, self.cmds) = self._parser.setupYumConfig()
+        self.basecmd = self.cmds[0] # our base command
+        self.extcmds = self.cmds[1:] # out extended arguments/commands
+
         return opts
 
     def doUtilYumSetup(self):
