@@ -93,7 +93,7 @@ class RPMDBProblem:
     def __cmp__(self, other):
         if other is None:
             return 1
-        return cmp(self.pkg, other.pkg) or cmp(self.problem, problem)
+        return cmp(self.pkg, other.pkg) or cmp(self.problem, other.problem)
 
 
 class RPMDBProblemDependency(RPMDBProblem):
