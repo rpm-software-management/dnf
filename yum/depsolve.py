@@ -317,6 +317,24 @@ class Depsolve(object):
         ui_req = rpmUtils.miscutils.formatRequire(needname, needversion,
                                                   needflags)
         msg += _('\n    Requires: %s') % (ui_req,)
+        ipkgs = set()
+        for pkg in sorted(self.rpmdb.getProvides(needname)):
+            ipkgs.add(pkg.pkgtup)
+            action = _('Installed')
+            if self.tsInfo.getMembersWithState(pkg.pkgtup, TS_REMOVE_STATES):
+                action = _('Removing')
+            msg += _('\n    %s: %s (%s)') % (action, pkg, pkg.ui_from_repo)
+        last = None
+        for pkg in sorted(self.pkgSack.getProvides(needname)):
+            #  We don't want to see installed packages, or N packages of the
+            # same version, from different repos.
+            if pkg.pkgtup in ipkgs or pkg.verEQ(last):
+                continue
+            last = pkg
+            action = _('Available')
+            if self.tsInfo.getMembersWithState(pkg.pkgtup, TS_INSTALL_STATES):
+                action = _('Installing')
+            msg += _('\n    %s: %s (%s)') % (action, pkg, pkg.repoid)
         return msg
 
     def _requiringFromInstalled(self, requiringPo, requirement, errorlist):
@@ -763,9 +781,18 @@ class Depsolve(object):
         self.tsInfo.changed = False
         if len(errors) > 0:
             errors = unique(errors)
+            #  We immediately display this in cli, so don't show it twice.
+            # Plus skip-broken can get here N times. Might be worth keeping
+            # around for debugging?
+            done = set() # Same as the unique above
             for po,wpo,err in self.po_with_problems:
-                self.verbose_logger.info(_("%s from %s has depsolving problems") % (po,po.repoid))
-                self.verbose_logger.info("  --> %s" % (err.replace('\n', '\n  --> ')))
+                if (po,err) in done:
+                    continue
+                done.add((po, err))
+                self.verbose_logger.log(logginglevels.DEBUG_4,
+                    _("%s from %s has depsolving problems") % (po, po.repoid))
+                err = err.replace('\n', '\n  --> ')
+                self.verbose_logger.log(logginglevels.DEBUG_4,"  --> %s" % err)
             return (1, errors)
 
         if len(self.tsInfo) > 0:
