@@ -28,7 +28,7 @@ from yum import Errors
 from yum import plugins
 from yum import logginglevels
 from yum import _
-from yum.i18n import to_unicode
+from yum.i18n import to_unicode, utf8_width
 import yum.misc
 import cli
 from utils import suppress_keyboard_interrupt_message, show_lock_owner
@@ -166,7 +166,9 @@ def main(args):
     elif result == 1:
         # Fatal error
         for msg in resultmsgs:
-            logger.critical(_('Error: %s'), msg)
+            prefix = _('Error: %s')
+            prefix2nd = (' ' * (utf8_width(prefix) - 2))
+            logger.critical(prefix, msg.replace('\n', '\n' + prefix2nd))
         if not base.conf.skip_broken:
             verbose_logger.info(_(" You could try using --skip-broken to work around the problem"))
         if not base._rpmdb_warn_checks(out=verbose_logger.info, warn=False):

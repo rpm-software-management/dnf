@@ -308,6 +308,17 @@ class Depsolve(object):
     def _prco_req2req(self, req):
         return self._prco_req_nfv2req(req[0], req[1], req[2])
             
+    def _err_missing_requires(self, reqPo, reqTup):
+        """ Create a message for errorlist. """
+        needname, needflags, needversion = reqTup
+
+        prob_pkg = "%s (%s)" % (reqPo, reqPo.ui_from_repo)
+        msg = _('Package: %s') % (prob_pkg,)
+        ui_req = rpmUtils.miscutils.formatRequire(needname, needversion,
+                                                  needflags)
+        msg += _('\n    Requires: %s') % (ui_req,)
+        return msg
+
     def _requiringFromInstalled(self, requiringPo, requirement, errorlist):
         """processes the dependency resolution for a dep where the requiring 
            package is installed"""
@@ -414,9 +425,7 @@ class Depsolve(object):
             if self.pkgSack is None:
                 return self._requiringFromTransaction(requiringPo, requirement, errorlist)
             else:
-                prob_pkg = "%s (%s)" % (requiringPo,requiringPo.repoid)
-                msg = _('Unresolvable requirement %s for %s') % (niceformatneed,
-                                                               prob_pkg)
+                msg = self._err_missing_requires(requiringPo, requirement)
                 self.verbose_logger.log(logginglevels.DEBUG_2, msg)
                 checkdeps = 0
                 missingdep = 1
@@ -514,10 +523,7 @@ class Depsolve(object):
 
         if len(provSack) == 0: # unresolveable
             missingdep = 1
-            prob_pkg = "%s (%s)" % (requiringPo,requiringPo.repoid)
-            msg = _('Missing Dependency: %s is needed by package %s') % \
-            (rpmUtils.miscutils.formatRequire(needname, needversion, needflags),
-                                                                   prob_pkg)
+            msg = self._err_missing_requires(requiringPo, requirement)
             errorlist.append(msg)
             return checkdeps, missingdep
         
@@ -560,8 +566,7 @@ class Depsolve(object):
         if self.rpmdb.contains(po=best): # is it already installed?
             missingdep = 1
             checkdeps = 0
-            prob_pkg = "%s (%s)" % (requiringPo,requiringPo.repoid)
-            msg = _('Missing Dependency: %s is needed by package %s') % (needname, prob_pkg)
+            msg = self._err_missing_requires(requiringPo, requirement)
             errorlist.append(msg)
             return checkdeps, missingdep
         
@@ -760,7 +765,7 @@ class Depsolve(object):
             errors = unique(errors)
             for po,wpo,err in self.po_with_problems:
                 self.verbose_logger.info(_("%s from %s has depsolving problems") % (po,po.repoid))
-                self.verbose_logger.info("  --> %s" % (err))
+                self.verbose_logger.info("  --> %s" % (err.replace('\n', '\n  --> ')))
             return (1, errors)
 
         if len(self.tsInfo) > 0:
