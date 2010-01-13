@@ -35,7 +35,7 @@ from urlgrabber.grabber import URLGrabError
 from yum.misc import prco_tuple_to_string
 from yum.i18n import to_str, to_utf8, to_unicode
 import yum.misc
-from rpmUtils.miscutils import checkSignals
+from rpmUtils.miscutils import checkSignals, formatRequire
 from yum.constants import *
 
 from yum import logginglevels, _
@@ -1623,6 +1623,36 @@ class DepSolveProgressCallBack:
         self.verbose_logger.log(logginglevels.INFO_2, _('--> Unresolved Dependency: %s'),
             msg)
 
+    def format_missing_requires(self, reqPo, reqTup):
+        """ Create a message for errorlist, non-cli users could also store this
+            data somewhere and not print errorlist. """
+        needname, needflags, needversion = reqTup
+
+        yb = self.ayum
+
+        prob_pkg = "%s (%s)" % (reqPo, reqPo.ui_from_repo)
+        msg = _('Package: %s') % (prob_pkg,)
+        ui_req = formatRequire(needname, needversion, needflags)
+        msg += _('\n    Requires: %s') % (ui_req,)
+        ipkgs = set()
+        for pkg in sorted(yb.rpmdb.getProvides(needname)):
+            ipkgs.add(pkg.pkgtup)
+            action = _('Installed')
+            if yb.tsInfo.getMembersWithState(pkg.pkgtup, TS_REMOVE_STATES):
+                action = _('Removing')
+            msg += _('\n    %s: %s (%s)') % (action, pkg, pkg.ui_from_repo)
+        last = None
+        for pkg in sorted(yb.pkgSack.getProvides(needname)):
+            #  We don't want to see installed packages, or N packages of the
+            # same version, from different repos.
+            if pkg.pkgtup in ipkgs or pkg.verEQ(last):
+                continue
+            last = pkg
+            action = _('Available')
+            if yb.tsInfo.getMembersWithState(pkg.pkgtup, TS_INSTALL_STATES):
+                action = _('Installing')
+            msg += _('\n    %s: %s (%s)') % (action, pkg, pkg.repoid)
+        return msg
     
     def procConflict(self, name, confname):
         self.verbose_logger.log(logginglevels.INFO_2,

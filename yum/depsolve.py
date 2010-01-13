@@ -309,33 +309,14 @@ class Depsolve(object):
         return self._prco_req_nfv2req(req[0], req[1], req[2])
             
     def _err_missing_requires(self, reqPo, reqTup):
-        """ Create a message for errorlist. """
-        needname, needflags, needversion = reqTup
+        if hasattr(self.dsCallback, 'format_missing_requires'):
+            msg = self.dsCallback.format_missing_requires(reqPo, reqTup)
+            if msg is not None: # PK
+                return self.dsCallback.format_missing_requires(reqPo, reqTup)
 
-        prob_pkg = "%s (%s)" % (reqPo, reqPo.ui_from_repo)
-        msg = _('Package: %s') % (prob_pkg,)
         ui_req = rpmUtils.miscutils.formatRequire(needname, needversion,
                                                   needflags)
-        msg += _('\n    Requires: %s') % (ui_req,)
-        ipkgs = set()
-        for pkg in sorted(self.rpmdb.getProvides(needname)):
-            ipkgs.add(pkg.pkgtup)
-            action = _('Installed')
-            if self.tsInfo.getMembersWithState(pkg.pkgtup, TS_REMOVE_STATES):
-                action = _('Removing')
-            msg += _('\n    %s: %s (%s)') % (action, pkg, pkg.ui_from_repo)
-        last = None
-        for pkg in sorted(self.pkgSack.getProvides(needname)):
-            #  We don't want to see installed packages, or N packages of the
-            # same version, from different repos.
-            if pkg.pkgtup in ipkgs or pkg.verEQ(last):
-                continue
-            last = pkg
-            action = _('Available')
-            if self.tsInfo.getMembersWithState(pkg.pkgtup, TS_INSTALL_STATES):
-                action = _('Installing')
-            msg += _('\n    %s: %s (%s)') % (action, pkg, pkg.repoid)
-        return msg
+        return _('%s requires %s') % (reqPo, ui_req)
 
     def _requiringFromInstalled(self, requiringPo, requirement, errorlist):
         """processes the dependency resolution for a dep where the requiring 
