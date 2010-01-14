@@ -274,8 +274,14 @@ class RepoStorage:
          
         for repo in myrepos:
             sack = repo.getPackageSack()
-            sack.populate(repo, mdtype, callback, cacheonly)
-            self.pkgSack.addSack(repo.id, sack)
+            try:
+                sack.populate(repo, mdtype, callback, cacheonly)
+            except Errors.RepoError, e:
+                if not repo.skip_if_unavailable:
+                    
+                    raise
+            else:
+                self.pkgSack.addSack(repo.id, sack)
 
 
 class Repository:

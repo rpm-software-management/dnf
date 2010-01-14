@@ -790,6 +790,7 @@ class RepoConf(BaseConfig):
     sslclientcert = Inherit(YumConf.sslclientcert)
     sslclientkey = Inherit(YumConf.sslclientkey)
 
+    skip_if_unavailable = BoolOption(False)
     
 class VersionGroupConf(BaseConfig):
     pkglist = ListOption()
