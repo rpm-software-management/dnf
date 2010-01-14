@@ -277,8 +277,9 @@ class RepoStorage:
             try:
                 sack.populate(repo, mdtype, callback, cacheonly)
             except Errors.RepoError, e:
-                if not repo.skip_if_unavailable:
-                    
+                if mdtype in ['all', 'metadata'] and repo.skip_if_unavailable:
+                    self.disableRepo(repo.id)
+                else:
                     raise
             else:
                 self.pkgSack.addSack(repo.id, sack)
