@@ -1043,10 +1043,10 @@ class YumBase(depsolve.Depsolve):
                   TS_UPDATED    : "updated"}
 
         self.verbose_logger.log(logginglevels.DEBUG_2,"TSINFO: Current Transaction : %i member(s) " % len(self.tsInfo))
-        for txmbr in self.tsInfo:
+        for txmbr in sorted(self.tsInfo):
             msg = "  %-11s : %s " % (state[txmbr.output_state],txmbr.po)
             self.verbose_logger.log(logginglevels.DEBUG_2, msg)
-            for po,rel in txmbr.relatedto:
+            for po,rel in sorted(txmbr.relatedto):
                 msg = "                   %s : %s" % (rel,po)
                 self.verbose_logger.log(logginglevels.DEBUG_2, msg)
                 
