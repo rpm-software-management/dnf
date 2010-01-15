@@ -313,7 +313,7 @@ class Depsolve(object):
             msg = self.dsCallback.format_missing_requires(reqPo, reqTup)
             if msg is not None: # PK
                 return self.dsCallback.format_missing_requires(reqPo, reqTup)
-
+        (needname, needflags, needversion) = reqTup
         ui_req = rpmUtils.miscutils.formatRequire(needname, needversion,
                                                   needflags)
         return _('%s requires %s') % (reqPo, ui_req)
