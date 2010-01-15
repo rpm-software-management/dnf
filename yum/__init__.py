@@ -875,6 +875,7 @@ class YumBase(depsolve.Depsolve):
             # but easier than removing/altering specific bits of the cache ...
             # and skip-broken shouldn't care too much about speed.
             self.rpmdb.transactionReset()
+            self.installedFileRequires = None # Kind of hacky
             self.verbose_logger.debug(_("Skip-broken round %i"), count)
             self._printTransaction()        
             depTree = self._buildDepTree()
