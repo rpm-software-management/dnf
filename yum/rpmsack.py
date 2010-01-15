@@ -1123,22 +1123,27 @@ class RPMDBPackageSack(PackageSackBase):
                 problems.append(prob)
         return problems
 
-    def _iter_two_pkgs(self, ignore):
+    def _iter_two_pkgs(self, ignore_provides):
         last = None
         for pkg in sorted(self.returnPackages()):
-            if pkg.name in ignore:
+            if pkg.name in ignore_provides:
                 continue
+            if ignore_provides.intersection(set(pkg.provides_names)):
+                continue
+
             if last is None:
                 last = pkg
                 continue
             yield last, pkg
             last = pkg
 
-    def check_duplicates(self, ignore=[]):
-        """ Checks for any missing dependencies. """
-
+    def check_duplicates(self, ignore_provides=[]):
+        """ Checks for any "duplicate packages" (those with multiple versions
+            installed), we ignore any packages with a provide in the passed
+            provide list (this is how installonlyworks, so we do the same). """
+        ignore_provides = set(ignore_provides)
         problems = []
-        for last, pkg in self._iter_two_pkgs(ignore):
+        for last, pkg in self._iter_two_pkgs(ignore_provides):
             if pkg.name != last.name:
                 continue
             if pkg.verEQ(last) and pkg != last:
