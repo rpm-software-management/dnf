@@ -599,6 +599,29 @@ class SkipBrokenTests(DepsolveTests):
         self.assertEquals('empty', *self.resolveCode(skip=True))
         self.assertResult([i1,i2])
         
+
+    def testMissingfileReqIptabes(self):    
+        '''
+        RHBZ #555528
+        iptables-0:1.4.5-1.fc12.i686 provides /usr/lib/libxtables.so.2
+        is updated to
+        iptables-0:1.4.6-1.fc13.i686 provides /usr/lib/libxtables.so.4
+        so libguestfs-1:1.0.81-1.fc13.i686 that requires /usr/lib/libxtables.so.2
+        breaks because /usr/lib/libxtables.so.2 no longer exists.
+        
+        It fails in real life but not in the testcase :(
+        
+        '''
+        i1 = self.instPackage('iptables','1.4.5', arch='x86_64')
+        i1.addFile("/usr/lib64/libxtables.so.2")
+        i2 = self.instPackage('libguestfs','1.0.81', arch='x86_64')
+        i2.addRequires("/usr/lib64/libxtables.so.2")
+        u1 = self.repoPackage('iptables','1.4.6', arch='x86_64')
+        u1.addFile("/usr/lib64/libxtables.so.4")
+        self.tsInfo.addUpdate(u1, oldpo=i1)
+        self.assertEquals('empty', *self.resolveCode(skip=True))
+        self.assertResult([i1,i2])
+        
     
     
     def resolveCode(self,skip = False):
