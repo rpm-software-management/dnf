@@ -229,7 +229,17 @@ dependencies for the given packages.
 .IP "\fBrepolist\fP"
 Produces a list of configured repositories. The default is to list all
 enabled repositories. If you pass \-v, for verbose mode, more information is
-listed.
+listed. If the first argument is 'enabled', 'disabled' or 'all' then the command
+will list those types of repos.
+
+You can pass repo id or name arguments, or wildcards which to match against
+both of those. However if the ir or name matches exactly then the repo will
+be listed even if you are listing enabled repos. and it is disabled.
+
+In non-verbose mode the first column will start with a '*' if the repo. has
+metalink data and the latest metadata is not local. For non-verbose mode the
+last column will also display the number of packages in the repo. and (if there
+are any user specified excludes) the number of packages excluded.
 .IP
 .IP "\fBversion\fP"
 Produces a "version" of the rpmdb, and of the enabled repositories if "all" is

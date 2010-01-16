@@ -772,6 +772,9 @@ class RepoListCommand(YumCommand):
                     return True
             return False
 
+        def _num2ui_num(num):
+            return to_unicode(locale.format("%d", num, True))
+
         if len(extcmds) >= 1 and extcmds[0] in ('all', 'disabled', 'enabled'):
             arg = extcmds[0]
             extcmds = extcmds[1:]
@@ -790,42 +793,69 @@ class RepoListCommand(YumCommand):
         repos = base.repos.repos.values()
         repos.sort()
         enabled_repos = base.repos.listEnabled()
-        if arg == 'all':
-            ehibeg = base.term.FG_COLOR['green'] + base.term.MODE['bold']
-            dhibeg = base.term.FG_COLOR['red']
-            hiend  = base.term.MODE['normal']
-        else:
-            ehibeg = ''
-            dhibeg = ''
-            hiend  = ''
+        on_ehibeg = base.term.FG_COLOR['green'] + base.term.MODE['bold']
+        on_dhibeg = base.term.FG_COLOR['red']
+        on_hiend  = base.term.MODE['normal']
         tot_num = 0
         cols = []
+        if arg != 'disabled' or verbose:
+            base.pkgSack # Need to setup the pkgSack, so excludes work
         for repo in repos:
             if len(extcmds) and not _repo_match(repo, extcmds):
                 continue
-            if arg != 'all':
-                ui_enabled = ''
-                ui_endis_wid = 0
+            (ehibeg, dhibeg, hiend)  = '', '', ''
+            ui_enabled      = ''
+            ui_endis_wid    = 0
+            ui_num          = ""
+            ui_excludes_num = ''
+            force_show = False
+            if arg == 'all' or repo.id in extcmds or repo.name in extcmds:
+                force_show = True
+                (ehibeg, dhibeg, hiend) = (on_ehibeg, on_dhibeg, on_hiend)
             if repo in enabled_repos:
                 enabled = True
-                if arg == 'all':
-                    ui_enabled = ehibeg + _('enabled') + hiend + ": "
-                    ui_endis_wid = utf8_width(_('enabled')) + 2
-                num        = len(repo.sack)
-                tot_num   += num
-                ui_num     = to_unicode(locale.format("%d", num, True))
+                if arg == 'enabled':
+                    force_show = False
+                elif arg == 'disabled' and not force_show:
+                    continue
+                if force_show or verbose:
+                    ui_enabled = ehibeg + _('enabled') + hiend
+                    ui_endis_wid = utf8_width(_('enabled'))
+                    if not verbose:
+                        ui_enabled += ": "
+                        ui_endis_wid += 2
                 if verbose:
                     ui_size = _repo_size(repo)
+                # We don't show status for list disabled
+                if arg != 'disabled' or verbose:
+                    if verbose or base.conf.exclude or repo.exclude:
+                        num        = len(repo.sack.simplePkgList())
+                    else:
+                        num        = len(repo.sack)
+                    ui_num     = _num2ui_num(num)
+                    excludes   = repo.sack._excludes
+                    excludes   = len([pid for r,pid in excludes if r == repo])
+                    if excludes:
+                        ui_excludes_num = _num2ui_num(excludes)
+                        if not verbose:
+                            ui_num += "+%s" % ui_excludes_num
+                    tot_num   += num
             else:
                 enabled = False
+                if arg == 'disabled':
+                    force_show = False
+                elif arg == 'enabled' and not force_show:
+                    continue
                 ui_enabled = dhibeg + _('disabled') + hiend
                 ui_endis_wid = utf8_width(_('disabled'))
-                ui_num     = ""
-                
-            if (arg == 'all' or
-                (arg == 'enabled' and enabled) or
-                (arg == 'disabled' and not enabled)):
+
+            if True: # Here to make patch smaller, TODO: rm
                 if not verbose:
+                    rid = str(repo)
+                    if enabled and repo.metalink:
+                        mdts = repo.metalink_data.repomd.timestamp
+                        if mdts > repo.repoXML.timestamp:
+                            rid = '*' + rid
                     cols.append((str(repo), repo.name,
                                  (ui_enabled, ui_endis_wid), ui_num))
                 else:
@@ -834,8 +864,11 @@ class RepoListCommand(YumCommand):
                     else:
                         md = None
                     out = [base.fmtKeyValFill(_("Repo-id      : "), repo),
-                           base.fmtKeyValFill(_("Repo-name    : "), repo.name),
-                           base.fmtKeyValFill(_("Repo-status  : "), ui_enabled)]
+                           base.fmtKeyValFill(_("Repo-name    : "), repo.name)]
+
+                    if force_show or extcmds:
+                        out += [base.fmtKeyValFill(_("Repo-status  : "),
+                                                   ui_enabled)]
                     if md and md.revision is not None:
                         out += [base.fmtKeyValFill(_("Repo-revision: "),
                                                    md.revision)]
@@ -891,8 +924,8 @@ class RepoListCommand(YumCommand):
                     elif not repo.metadata_expire:
                         num = _("Instant (last: %s)") % last
                     else:
-                        num = locale.format("%d", repo.metadata_expire, True)
-                        num = _("%s second(s) (last: %s)") % (misc.to_unicode(num), last)
+                        num = _num2ui_num(repo.metadata_expire)
+                        num = _("%s second(s) (last: %s)") % (num, last)
 
                     out += [base.fmtKeyValFill(_("Repo-expire  : "), num)]
 
@@ -904,6 +937,10 @@ class RepoListCommand(YumCommand):
                         out += [base.fmtKeyValFill(_("Repo-include : "),
                                                    ", ".join(repo.includepkgs))]
 
+                    if ui_excludes_num:
+                        out += [base.fmtKeyValFill(_("Repo-excluded: "),
+                                                   ui_excludes_num)]
+
                     base.verbose_logger.log(logginglevels.DEBUG_3,
                                             "%s\n",
                                             "\n".join(map(misc.to_unicode, out)))
@@ -913,7 +950,7 @@ class RepoListCommand(YumCommand):
             # then chop the middle (name)...
             id_len = utf8_width(_('repo id'))
             nm_len = 0
-            ct_len = 0
+            st_len = 0
             ui_len = 0
 
             for (rid, rname, (ui_enabled, ui_endis_wid), ui_num) in cols:
@@ -921,16 +958,17 @@ class RepoListCommand(YumCommand):
                     id_len = utf8_width(rid)
                 if nm_len < utf8_width(rname):
                     nm_len = utf8_width(rname)
-                if ct_len < ui_endis_wid:
-                    ct_len = ui_endis_wid
+                if st_len < (ui_endis_wid + len(ui_num)):
+                    st_len = (ui_endis_wid + len(ui_num))
+                # Need this as well as above for: utf8_width_fill()
                 if ui_len < len(ui_num):
                     ui_len = len(ui_num)
             if arg == 'disabled': # Don't output a status column.
                 left = base.term.columns - (id_len + 1)
-            elif utf8_width(_('status')) > ct_len + ui_len:
+            elif utf8_width(_('status')) > st_len:
                 left = base.term.columns - (id_len + utf8_width(_('status')) +2)
             else:
-                left = base.term.columns - (id_len + ct_len + ui_len + 2)
+                left = base.term.columns - (id_len + st_len + 2)
 
             if left < nm_len: # Name gets chopped
                 nm_len = left
