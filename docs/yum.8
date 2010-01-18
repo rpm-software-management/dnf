@@ -240,6 +240,11 @@ In non-verbose mode the first column will start with a '*' if the repo. has
 metalink data and the latest metadata is not local. For non-verbose mode the
 last column will also display the number of packages in the repo. and (if there
 are any user specified excludes) the number of packages excluded.
+
+One last special feature of repolist, is that if you are in non-verbose mode
+then yum will ignore any repo errors and output the information it can get
+(Eg. "yum clean all; yum -C repolist" will output something, although the
+package counts/etc. will be zeroed out).
 .IP
 .IP "\fBversion\fP"
 Produces a "version" of the rpmdb, and of the enabled repositories if "all" is

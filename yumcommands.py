@@ -783,12 +783,14 @@ class RepoListCommand(YumCommand):
         extcmds = map(lambda x: x.lower(), extcmds)
 
         verbose = base.verbose_logger.isEnabledFor(logginglevels.DEBUG_3)
-        try:
-            # Setup so len(repo.sack) is correct
-            base.repos.populateSack()
-        except yum.Errors.RepoError:
-            if verbose:
-                raise
+        if arg != 'disabled' or extcmds:
+            try:
+                # Setup so len(repo.sack) is correct
+                base.repos.populateSack()
+                base.pkgSack # Need to setup the pkgSack, so excludes work
+            except yum.Errors.RepoError:
+                if verbose:
+                    raise
 
         repos = base.repos.repos.values()
         repos.sort()
@@ -798,8 +800,6 @@ class RepoListCommand(YumCommand):
         on_hiend  = base.term.MODE['normal']
         tot_num = 0
         cols = []
-        if arg != 'disabled' or verbose:
-            base.pkgSack # Need to setup the pkgSack, so excludes work
         for repo in repos:
             if len(extcmds) and not _repo_match(repo, extcmds):
                 continue
