@@ -763,7 +763,7 @@ class YumOutput:
 
     def format_number(self, number, SI=0, space=' '):
         """Turn numbers into human-readable metric-like numbers"""
-        symbols = ['',  # (none)
+        symbols = [ ' ', # (none)
                     'k', # kilo
                     'M', # mega
                     'G', # giga
