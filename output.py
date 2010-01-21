@@ -763,7 +763,7 @@ class YumOutput:
 
     def format_number(self, number, SI=0, space=' '):
         """Turn numbers into human-readable metric-like numbers"""
-        symbols = ['',  # (none)
+        symbols = [ ' ', # (none)
                     'k', # kilo
                     'M', # mega
                     'G', # giga
@@ -1905,6 +1905,18 @@ def progressbar(current, total, name=None):
         
 
 if __name__ == "__main__":
+    if len(sys.argv) > 1 and sys.argv[1] == "format_number":
+        print ""
+        print " Doing format_number tests, right column should align"
+        print ""
+
+        x = YumOutput()
+        for i in (0, 0.0, 0.1, 1, 1.0, 1.1, 10, 11, 11.1, 100, 111.1,
+                  1000, 1111, 1024 * 2, 10000, 11111, 99999, 999999,
+                  10**19, 10**20, 10**35):
+            out = x.format_number(i)
+            print "%36s <%s> %s <%5s>" % (i, out, ' ' * (14 - len(out)), out)
+
     if len(sys.argv) > 1 and sys.argv[1] == "progress":
         print ""
         print " Doing progress, small name"

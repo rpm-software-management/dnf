@@ -209,7 +209,8 @@ class RPMTransaction:
         io_r = tempfile.NamedTemporaryFile()
         self._readpipe = io_r
         self._writepipe = open(io_r.name, 'w+b')
-        self.base.ts.scriptFd = self._writepipe.fileno()
+        # This is dark magic, it really needs to be "base.ts.ts".
+        self.base.ts.ts.scriptFd = self._writepipe.fileno()
         rpmverbosity = {'critical' : 'crit',
                         'emergency' : 'emerg',
                         'error' : 'err',
