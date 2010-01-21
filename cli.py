@@ -311,7 +311,7 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         if disk:
             summary += _('Disk Requirements:\n')
             for k in disk:
-                summary += _('  At least %dMB needed on the %s filesystem.\n') % (disk[k], k)
+                summary += _('  At least %dMB more space needed on the %s filesystem.\n') % (disk[k], k)
 
         # TODO: simplify the dependency errors?
 
