@@ -238,7 +238,7 @@ _yum()
             return 0
             ;;
 
-        --installroot)
+        --installroot|--downloaddir)
             COMPREPLY=( $( compgen -d -- "$cur" ) )
             return 0
             ;;
@@ -274,7 +274,24 @@ _yum()
             return 0
             ;;
 
-        -R|--randomwait|-x|--exclude|-h|--help|--version|--releasever)
+        -R|--randomwait|-x|--exclude|-h|--help|--version|--releasever|--cve|\
+        --bz|--advisory|--tmprepo|--verify-filenames)
+            return 0
+            ;;
+
+        --download-order)
+            COMPREPLY=( $( compgen -W 'default smallestfirst largestfirst' \
+                -- "$cur" ) )
+            return 0
+            ;;
+
+        --override-protection)
+            _yum_list installed "$cur"
+            return 0
+            ;;
+
+        --verify-configuration-files)
+            COMPREPLY=( $( compgen -W '1 0' -- "$cur" ) )
             return 0
             ;;
     esac
