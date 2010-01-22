@@ -110,6 +110,9 @@ class CompsException(YumBaseError):
 class MediaError(YumBaseError):
     pass
     
+class PkgTagsError(YumBaseError):
+    pass
+    
 class YumDeprecationWarning(DeprecationWarning):
     """
     Used to mark a method as deprecated.
