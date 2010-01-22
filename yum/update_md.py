@@ -75,6 +75,9 @@ class UpdateNotice(object):
         """ Allows scriptable metadata access (ie: un['update_id']). """
         return self._md.has_key(item) and self._md[item] or None
 
+    def __setitem__(self, item, val):
+       self._md[item] = val
+
     def __str__(self):
         head = """
 ===============================================================================
