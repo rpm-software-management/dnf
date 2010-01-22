@@ -11,7 +11,7 @@ _yum_list()
         # for English :P
         COMPREPLY=( "${COMPREPLY[@]}"
             $( ${yum:-yum} -d 0 -C list $1 "$2*" 2>/dev/null | \
-                sed -ne '/^\(Available\|Installed\|Updated\) /d' \
+                sed -ne '/^Available /d' -e '/^Installed /d' -e '/^Updated /d' \
                 -e 's/[[:space:]].*//p' ) )
     else
         # Drop first line (e.g. "Updated Packages") - would be nice if e.g.
@@ -32,10 +32,9 @@ _yum_repolist()
     # Drop first ("repo id      repo name") and last ("repolist: ...") rows -
     # would be nice if e.g. -d 0 did that for us.
     COMPREPLY=( "${COMPREPLY[@]}"
-        $( compgen -W "$( ${yum:-yum} --noplugins -C repolist $1 \
-            2>/dev/null | \
-            sed -ne '/^repo\(\s\{1,\}id\|list:\)/d' -e 's/[[:space:]].*//p' )" \
-            -- "$2" ) )
+        $( compgen -W "$( ${yum:-yum} --noplugins -C repolist $1 2>/dev/null | \
+            sed -ne '/^repo\s\{1,\}id/d' -e '/^repolist:/d' \
+            -e 's/[[:space:]].*//p' )" -- "$2" ) )
 }
 
 # arguments:
