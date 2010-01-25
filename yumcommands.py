@@ -856,7 +856,7 @@ class RepoListCommand(YumCommand):
                         mdts = repo.metalink_data.repomd.timestamp
                         if mdts > repo.repoXML.timestamp:
                             rid = '*' + rid
-                    cols.append((str(repo), repo.name,
+                    cols.append((rid, repo.name,
                                  (ui_enabled, ui_endis_wid), ui_num))
                 else:
                     if enabled:
