@@ -360,6 +360,21 @@ class UpdateMetadata(object):
         ret.sort(cmp=_rpm_tup_vercmp, key=lambda x: x[0], reverse=True)
         return ret
 
+    def add_notice(self, un):
+        """ Add an UpdateNotice object. This should be fully populated with
+            data, esp. update_id and pkglist/packages. """
+        if not un or not un["update_id"] or un['update_id'] in self._notices:
+            return
+
+        self._notices[un['update_id']] = un
+        for pkg in un['pkglist']:
+            for filedata in pkg['packages']:
+                self._cache['%s-%s-%s' % (filedata['name'],
+                                          filedata['version'],
+                                          filedata['release'])] = un
+                no = self._no_cache.setdefault(filedata['name'], set())
+                no.add(un)
+
     def add(self, obj, mdtype='updateinfo'):
         """ Parse a metadata from a given YumRepository, file, or filename. """
         if not obj:
@@ -386,15 +401,7 @@ class UpdateMetadata(object):
                     print >> sys.stderr, "An update notice is broken, skipping."
                     # what else should we do?
                     continue
-                if un['update_id'] not in self._notices:
-                    self._notices[un['update_id']] = un
-                    for pkg in un['pkglist']:
-                        for file in pkg['packages']:
-                            self._cache['%s-%s-%s' % (file['name'],
-                                                      file['version'],
-                                                      file['release'])] = un
-                            no = self._no_cache.setdefault(file['name'], set())
-                            no.add(un)
+                self.add_notice(un)
 
     def __unicode__(self):
         ret = u''
