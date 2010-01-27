@@ -659,6 +659,11 @@ class RPMDBPackageSack(PackageSackBase):
          installedUnresolvedFileRequires,
          installedFileProvides) = data
 
+        #  Have to do this here, as well as in transactionCacheFileRequires,
+        # because fileRequiresData() calls us directly.
+        if installedUnresolvedFileRequires:
+            return
+
         fo = open(self._cachedir + '/file-requires.tmp', 'w')
         fo.write("%s\n" % rpmdbversion)
 
