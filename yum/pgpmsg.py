@@ -1235,6 +1235,7 @@ a PGP "certificate" includes a public key, user id(s), and signature.
             cert_list = []
             while len(pkt_list) > 0 :
                 cert = pgp_certificate()
+                cert.raw_key = msg
                 pkt_idx = cert.load(pkt_list)
                 cert_list.append(cert)
                 pkt_list[0:pkt_idx] = []
