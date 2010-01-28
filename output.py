@@ -1634,6 +1634,12 @@ class DepSolveProgressCallBack:
         msg = _('Package: %s') % (prob_pkg,)
         ui_req = formatRequire(needname, needversion, needflags)
         msg += _('\n    Requires: %s') % (ui_req,)
+        
+        # if DepSolveProgressCallback() is used instead of DepSolveProgressCallback(ayum=<YumBase Object>)
+        # then ayum has no value and we can't continue to find details about the missing requirements
+        if not yb:
+            return msg
+        
         ipkgs = set()
         for pkg in sorted(yb.rpmdb.getProvides(needname)):
             ipkgs.add(pkg.pkgtup)
