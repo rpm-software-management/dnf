@@ -2544,7 +2544,7 @@ class YumBase(depsolve.Depsolve):
         # we get all sorts of randomness here
         errstring = depstring
         if type(depstring) not in types.StringTypes:
-            errtring = str(depstring)
+            errstring = str(depstring)
         
         try:
             pkglist = self.returnPackagesByDep(depstring)
