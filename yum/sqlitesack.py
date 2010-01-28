@@ -564,10 +564,10 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
         return False
 
     def _pkgKeyExcluded(self, repo, pkgKey):
-        if repo in self._all_excludes:
+        if self._all_excludes and repo in self._all_excludes:
             return True
 
-        return (repo, pkgKey) in self._excludes
+        return self._excludes and (repo, pkgKey) in self._excludes
 
     def _pkgExcludedRKNEVRA(self, repo,pkgKey, n,e,v,r,a):
         ''' Main function to use for "can we use this package" question.
@@ -577,7 +577,7 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
                 . Tests addPackageExcluder() calls.
         '''
 
-        if (repo, pkgKey) in self._exclude_whitelist:
+        if self._exclude_whitelist and (repo,pkgKey) in self._exclude_whitelist:
             return False
 
         if self._pkgKeyExcluded(repo, pkgKey):
@@ -735,11 +735,12 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
             return the pkgtup. """
         if self._pkgExcludedRKD(repo, pkgKey, data):
             return None
-        if repo not in self._key2pkg:
+        prepo = self._key2pkg.get(repo)
+        if prepo is None:
             self._key2pkg[repo] = {}
             self._pkgname2pkgkeys[repo] = {}
-        if data['pkgKey'] in self._key2pkg.get(repo, {}):
-            return self._key2pkg[repo][data['pkgKey']].pkgtup
+        elif data['pkgKey'] in prepo:
+            return prepo[data['pkgKey']].pkgtup
         return (data['name'], data['arch'],
                 data['epoch'], data['version'], data['release'])
 
