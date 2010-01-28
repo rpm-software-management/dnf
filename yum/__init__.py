@@ -2406,8 +2406,11 @@ class YumBase(depsolve.Depsolve):
                         self.tsInfo.conditionals[cond].extend(pkgs)
         return txmbrs_used
 
-    def deselectGroup(self, grpid):
-        """de-mark all the packages in the group for install"""
+    def deselectGroup(self, grpid, force=False):
+        """ Without the force option set, this removes packages from being
+            installed that were added as part of installing one of the
+            group(s). If the force option is set, then all installing packages
+            in the group(s) are force removed from the transaction. """
         
         if not self.comps.has_group(grpid):
             raise Errors.GroupsError, _("No Group named %s exists") % grpid
@@ -2420,9 +2423,12 @@ class YumBase(depsolve.Depsolve):
             thisgroup.selected = False
             
             for pkgname in thisgroup.packages:
-            
-                for txmbr in self.tsInfo:
-                    if txmbr.po.name == pkgname and txmbr.po.state in TS_INSTALL_STATES:
+                txmbrs = self.tsInfo.getMembersWithState(None,TS_INSTALL_STATES)
+                for txmbr in txmbrs:
+                    if txmbr.po.name != pkgname:
+                        continue
+
+                    if not force:
                         try: 
                             txmbr.groups.remove(grpid)
                         except ValueError:
@@ -2431,13 +2437,12 @@ class YumBase(depsolve.Depsolve):
                                 grpid)
                             continue
                         
-                        # if there aren't any other groups mentioned then remove the pkg
-                        if len(txmbr.groups) == 0:
-                            self.tsInfo.remove(txmbr.po.pkgtup)
-                            
-                            for pkg in self.tsInfo.conditionals.get(txmbr.name, []):
-                                self.tsInfo.remove(pkg.pkgtup)
-
+                    # If the pkg isn't part of any group, or the group is
+                    # being forced out ... then remove the pkg
+                    if force or len(txmbr.groups) == 0:
+                        self.tsInfo.remove(txmbr.po.pkgtup)
+                        for pkg in self.tsInfo.conditionals.get(txmbr.name, []):
+                            self.tsInfo.remove(pkg.pkgtup)
         
     def getPackageObject(self, pkgtup):
         """retrieves a packageObject from a pkgtuple - if we need
