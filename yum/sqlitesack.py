@@ -1528,24 +1528,24 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
         """Yields all the package data for the given params. Excludes are done
            at this stage. """
 
+        pat_sqls = []
+        pat_data = []
+        for (pattern, rest) in patterns:
+            for field in fields:
+                if ignore_case:
+                    pat_sqls.append("%s LIKE ?%s" % (field, rest))
+                else:
+                    pat_sqls.append("%s %s ?" % (field, rest))
+                pat_data.append(pattern)
+        if pat_sqls:
+            qsql = _FULL_PARSE_QUERY_BEG + " OR ".join(pat_sqls)
+        else:
+            qsql = """select pkgId, pkgKey, name,epoch,version,release,arch
+                      from packages"""
+
         for (repo,cache) in self.primarydb.items():
             if (repoid == None or repoid == repo.id):
                 cur = cache.cursor()
-
-                qsql = """select pkgId, pkgKey, name,epoch,version,release,arch 
-                          from packages"""
-
-                pat_sqls = []
-                pat_data = []
-                for (pattern, rest) in patterns:
-                    for field in fields:
-                        if ignore_case:
-                            pat_sqls.append("%s LIKE ?%s" % (field, rest))
-                        else:
-                            pat_sqls.append("%s %s ?" % (field, rest))
-                        pat_data.append(pattern)
-                if pat_sqls:
-                    qsql = _FULL_PARSE_QUERY_BEG + " OR ".join(pat_sqls)
                 executeSQL(cur, qsql, pat_data)
                 for x in cur:
                     yield (repo, x)
