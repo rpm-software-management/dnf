@@ -635,20 +635,20 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
         return False
 
     def _pkgExcludedRKT(self, repo,pkgKey, pkgtup):
-        ''' Helper function to call _pkgRKNEVRAExcluded.
+        ''' Helper function to call _pkgExcludedRKNEVRA.
             Takes a repo, pkgKey and a package tuple'''
         (n,a,e,v,r) = pkgtup
         return self._pkgExcludedRKNEVRA(repo, pkgKey, n,e,v,r,a)
 
     def _pkgExcludedRKD(self, repo,pkgKey, data):
-        ''' Helper function to call _pkgRKNEVRAExcluded.
+        ''' Helper function to call _pkgExcludedRKNEVRA.
             Takes a repo, pkgKey and a dict of package data'''
         (n,a,e,v,r) = (data['name'], data['arch'],
                        data['epoch'], data['version'], data['release'])
         return self._pkgExcludedRKNEVRA(repo, pkgKey, n,e,v,r,a)
 
     def _pkgExcluded(self, po):
-        ''' Helper function to call _pkgRKNEVRAExcluded.
+        ''' Helper function to call _pkgExcludedRKNEVRA.
             Takes a package object. '''
         return self._pkgExcludedRKT(po.repo, po.pkgKey, po.pkgtup)
 
