@@ -331,7 +331,14 @@ class YumAvailablePackageSqlite(YumAvailablePackage, PackageObject, RpmBase):
             # Check count(pkgId) here, the same way we do in searchFiles()?
             # Failure mode is much less of a problem.
             for ob in cur:
-                c_date = ob['date']
+                # Note: Atm. rpm only does days, where (60 * 60 * 24) == 86400
+                #       and we have the hack in _dump_changelog() to keep the
+                #       order the same, so this is a quick way to get rid of
+                #       any extra "seconds".
+                #       We still leak the seconds if there are 100 updates in
+                #       a day ... but don't do that. It also breaks if rpm ever
+                #       gets fixed (but that is unlikely).
+                c_date = 100 * (ob['date'] / 100)
                 c_author = to_utf8(ob['author'])
                 c_log = to_utf8(ob['changelog'])
                 result.append((c_date, _share_data(c_author), c_log))
