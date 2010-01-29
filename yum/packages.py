@@ -1062,7 +1062,15 @@ class YumAvailablePackage(PackageObject, RpmBase):
             clogs = self.changelog
         else:
             clogs = self.changelog[:clog_limit]
+        last_ts = 0
+        hack_ts = 0
         for (ts, author, content) in reversed(clogs):
+            if ts != last_ts:
+                hack_ts = 0
+            else:
+                hack_ts += 1
+            last_ts = ts
+            ts += hack_ts
             msg += """<changelog author="%s" date="%s">%s</changelog>\n""" % (
                         misc.to_xml(author, attrib=True), misc.to_xml(str(ts)), 
                         misc.to_xml(content))
