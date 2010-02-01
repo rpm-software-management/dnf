@@ -195,8 +195,10 @@ class YumUtilBase(YumBaseCli):
         except ValueError, e:
             self.logger.critical(_('Options Error: %s'), e)
             sys.exit(1)
-
-
+        except plugins.PluginYumExit, e:
+            self.logger.critical(_('PluginExit Error: %s'), e)
+            sys.exit(1)
+            
         # update usage in case plugins have added commands
         self._parser.set_usage(self._usage)
         
