@@ -602,7 +602,8 @@ class StartupConf(BaseConfig):
     gaftonmode = BoolOption(False)
     syslog_ident = Option()
     syslog_facility = Option('LOG_DAEMON')
-
+    persistdir = Option('/var/lib/yum')
+    
 class YumConf(StartupConf):
     '''
     Configuration option definitions for yum.conf\'s [main] section.
@@ -613,7 +614,7 @@ class YumConf(StartupConf):
     recent = IntOption(7, range_min=0)
 
     cachedir = Option('/var/cache/yum')
-    persistdir = Option('/var/lib/yum')
+
     keepcache = BoolOption(True)
     logfile = Option('/var/log/yum.log')
     reposdir = ListOption(['/etc/yum/repos.d', '/etc/yum.repos.d'])
@@ -833,7 +834,8 @@ def readStartupConfig(configfile, root):
     startupconf._parser = parser
     # setup the release ver here
     startupconf.releasever = _getsysver(startupconf.installroot, startupconf.distroverpkg)
-    startupconf.uuid = get_uuid(startupconf.installroot + '/var/lib/yum/uuid')
+    uuidfile = '%s/%s/uuid' % (startupconf.installroot, startupconf.persistdir)
+    startupconf.uuid = get_uuid(uuidfile)
 
     return startupconf
 
