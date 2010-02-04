@@ -104,6 +104,7 @@ class _YumPreBaseConf:
         self.syslog_device = '/dev/log'
         self.arch = None
         self.releasever = None
+        self.uuid = None
 
 class _YumCostExclude:
     """ This excludes packages that are in repos. of lower cost than the passed
@@ -236,7 +237,8 @@ class YumBase(depsolve.Depsolve):
         syslog_device   = self.preconf.syslog_device
         releasever = self.preconf.releasever
         arch = self.preconf.arch
-
+        uuid = self.preconf.uuid
+        
         if arch: # if preconf is setting an arch we need to pass that up
             self.arch.setup_arch(arch)
         else:
@@ -251,7 +253,9 @@ class YumBase(depsolve.Depsolve):
         startupconf = config.readStartupConfig(fn, root)
         startupconf.arch = arch
         startupconf.basearch = self.arch.basearch
-
+        if uuid:
+            startupconf.uuid = uuid
+        
         if startupconf.gaftonmode:
             global _
             _ = yum.i18n.dummy_wrapper

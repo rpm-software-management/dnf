@@ -40,6 +40,7 @@ if not _use_iniparse:
 import rpmUtils.transaction
 import Errors
 import types
+from misc import get_uuid
 
 # Alter/patch these to change the default checking...
 __pkgs_gpgcheck_default__ = False
@@ -832,6 +833,7 @@ def readStartupConfig(configfile, root):
     startupconf._parser = parser
     # setup the release ver here
     startupconf.releasever = _getsysver(startupconf.installroot, startupconf.distroverpkg)
+    startupconf.uuid = get_uuid(startupconf.installroot + '/var/lib/yum/uuid')
 
     return startupconf
 
@@ -850,7 +852,8 @@ def readMainConfig(startupconf):
     yumvars['basearch'] = startupconf.basearch
     yumvars['arch'] = startupconf.arch
     yumvars['releasever'] = startupconf.releasever
-
+    yumvars['uuid'] = startupconf.uuid
+    
     # Read [main] section
     yumconf = YumConf()
     yumconf.populate(startupconf._parser, 'main')

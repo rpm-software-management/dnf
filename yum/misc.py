@@ -921,3 +921,27 @@ def get_open_files(pid):
                 files.append(i)
 
     return files
+
+def get_uuid(savepath):
+    """create, store and return a uuid. If a stored one exists, report that
+       if it cannot be stored, return a random one"""
+    if os.path.exists(savepath):
+        return open(savepath, 'r').read()
+    else:
+        try:
+            from uuid import uuid4
+        except ImportError:
+            myid = open('/proc/sys/kernel/random/uuid', 'r').read()
+        else:
+            myid = str(uuid4())
+        
+        try:
+            sf = open(savepath, 'w')
+            sf.write(myid)
+            sf.flush()
+            sf.close()
+        except (IOError, OSError), e:
+            pass
+        
+        return myid
+        
