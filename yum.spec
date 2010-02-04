@@ -21,6 +21,7 @@ Requires: python-iniparse
 Requires: pygpgme
 Prereq: /sbin/chkconfig, /sbin/service, coreutils
 Conflicts: yum-skip-broken
+Conflicts: rpm >= 5-0
 Obsoletes: yum-basearchonly
 Obsoletes: yum-allow-downgrade < 1.1.20-0
 Obsoletes: yum-plugin-allow-downgrade < 1.1.22-0
