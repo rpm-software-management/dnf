@@ -1555,8 +1555,9 @@ class YumInstalledPackage(YumHeaderPackage):
                         (ig, fp, er) = (p.stdin, p.stdout, p.stderr)
                         # er.read(1024 * 1024) # Try and get most of the stderr
                         fp = _CountedReadFile(fp)
-                        my_csum = misc.checksum(csum_type, fp)
-                        my_st_size = fp.read_size
+                        if fp.read_size: # If prelink worked
+                            my_csum = misc.checksum(csum_type, fp)
+                            my_st_size = fp.read_size
 
                     if (csum and vflags & _RPMVERIFY_DIGEST and gen_csum and
                         my_csum != csum):
@@ -1571,7 +1572,7 @@ class YumInstalledPackage(YumHeaderPackage):
                     my_st_size != size):
                     prob = _PkgVerifyProb('size', 'size does not match', ftypes)
                     prob.database_value = size
-                    prob.disk_value     = my_st.st_size
+                    prob.disk_value     = my_st_size
                     problems.append(prob)
 
             else:
