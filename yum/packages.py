@@ -1062,7 +1062,15 @@ class YumAvailablePackage(PackageObject, RpmBase):
             clogs = self.changelog
         else:
             clogs = self.changelog[:clog_limit]
+        last_ts = 0
+        hack_ts = 0
         for (ts, author, content) in reversed(clogs):
+            if ts != last_ts:
+                hack_ts = 0
+            else:
+                hack_ts += 1
+            last_ts = ts
+            ts += hack_ts
             msg += """<changelog author="%s" date="%s">%s</changelog>\n""" % (
                         misc.to_xml(author, attrib=True), misc.to_xml(str(ts)), 
                         misc.to_xml(content))
@@ -1547,8 +1555,9 @@ class YumInstalledPackage(YumHeaderPackage):
                         (ig, fp, er) = (p.stdin, p.stdout, p.stderr)
                         # er.read(1024 * 1024) # Try and get most of the stderr
                         fp = _CountedReadFile(fp)
-                        my_csum = misc.checksum(csum_type, fp)
-                        my_st_size = fp.read_size
+                        if fp.read_size: # If prelink worked
+                            my_csum = misc.checksum(csum_type, fp)
+                            my_st_size = fp.read_size
 
                     if (csum and vflags & _RPMVERIFY_DIGEST and gen_csum and
                         my_csum != csum):
@@ -1563,7 +1572,7 @@ class YumInstalledPackage(YumHeaderPackage):
                     my_st_size != size):
                     prob = _PkgVerifyProb('size', 'size does not match', ftypes)
                     prob.database_value = size
-                    prob.disk_value     = my_st.st_size
+                    prob.disk_value     = my_st_size
                     problems.append(prob)
 
             else:

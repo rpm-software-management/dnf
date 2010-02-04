@@ -211,6 +211,8 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
             done = False
             def sm_ui_time(x):
                 return time.strftime("%Y-%m-%d %H:%M", time.gmtime(x))
+            def sm_ui_date(x): # For changelogs, there is no time
+                return time.strftime("%Y-%m-%d", time.gmtime(x))
             for pkg in sorted(self.rpmdb.returnPackages(patterns=yum_progs)):
                 # We should only have 1 version of each...
                 if done: print ""
@@ -227,7 +229,7 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
                 print _("  Built    : %s at %s") % (pkg.packager,
                                                     sm_ui_time(pkg.buildtime))
                 print _("  Committed: %s at %s") % (pkg.committer,
-                                                    sm_ui_time(pkg.committime))
+                                                    sm_ui_date(pkg.committime))
             sys.exit(0)
 
         if opts.sleeptime is not None:
