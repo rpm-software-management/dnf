@@ -1550,13 +1550,14 @@ class YumInstalledPackage(YumHeaderPackage):
                         #  This is how rpm -V works, try and if that fails try
                         # again with prelink.
                         p = Popen([prelink_cmd, "-y", fn], 
-                            shell=True, bufsize=-1, stdin=PIPE, 
+                            bufsize=-1, stdin=PIPE,
                             stdout=PIPE, stderr=PIPE, close_fds=True)
                         (ig, fp, er) = (p.stdin, p.stdout, p.stderr)
                         # er.read(1024 * 1024) # Try and get most of the stderr
                         fp = _CountedReadFile(fp)
+                        tcsum = misc.checksum(csum_type, fp)
                         if fp.read_size: # If prelink worked
-                            my_csum = misc.checksum(csum_type, fp)
+                            my_csum = tcsum
                             my_st_size = fp.read_size
 
                     if (csum and vflags & _RPMVERIFY_DIGEST and gen_csum and
