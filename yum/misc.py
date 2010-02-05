@@ -17,6 +17,7 @@ import glob
 import pwd
 import fnmatch
 import bz2
+import gzip
 from stat import *
 try:
     import gpgme
@@ -945,3 +946,27 @@ def get_uuid(savepath):
         
         return myid
         
+def decompress(filename):
+    """take a filename and decompress it into the same relative location.
+       if the file is not compressed just return the file"""
+    out = filename
+    if filename.endswith('.gz'):
+        out = filename.replace('.gz', '')
+        decom = gzip.open(filename)
+        fo = open(out, 'w')
+        fo.write(decom.read())
+        fo.flush()
+        fo.close()
+        decom.close() 
+    elif filename.endswith('.bz') or filename.endswith('.bz2'):
+        if filename.endswith('.bz'):
+            out = filename.replace('.bz','')
+        else:
+            out = filename.replace('.bz2', '')
+        bunzipFile(filename, out)
+
+    #add magical lzma/xz trick here
+    
+    return out
+    
+    

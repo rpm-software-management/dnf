@@ -44,6 +44,7 @@ import rpmUtils.updates
 from rpmUtils.arch import canCoinstall, ArchStorage, isMultiLibArch
 import rpmUtils.transaction
 import comps
+import pkgtag_db
 from repos import RepoStorage
 import misc
 from parser import ConfigPreProcessor, varReplace
@@ -144,6 +145,7 @@ class YumBase(depsolve.Depsolve):
         self._history = None
         self._pkgSack = None
         self._lockfile = None
+        self._tags = None
         self.skipped_packages = []   # packages skip by the skip-broken code
         self.logger = logging.getLogger("yum.YumBase")
         self.verbose_logger = logging.getLogger("yum.verbose.YumBase")
@@ -719,6 +721,38 @@ class YumBase(depsolve.Depsolve):
         self.verbose_logger.debug('group time: %0.3f' % (time.time() - group_st))                
         return self._comps
 
+    def _getTags(self):
+        """ create the tags object used to search/report from the pkgtags 
+            metadata"""
+        
+        tag_st = time.time()
+        self.verbose_logger.log(logginglevels.DEBUG_4,
+                                _('Getting pkgtags metadata'))
+        
+        if self._tags is None:
+            self._tags = yum.pkgtag_db.PackageTags()
+           
+            for repo in self.repos.listEnabled():
+                if 'pkgtags' not in repo.repoXML.fileTypes():
+                    continue
+
+                self.verbose_logger.log(logginglevels.DEBUG_4,
+                    _('Adding tags from repository: %s'), repo)
+                
+                # fetch the sqlite tagdb
+                try:
+                    tag_md = repo.retrieveMD('pkgtags')
+                    tag_sqlite  = yum.misc.decompress(tag_md)
+                    # feed it into _tags.add()
+                    self._tags.add(repo.id, tag_sqlite)
+                except (Errors.RepoError, Errors.PkgTagsError), e:
+                    msg = _('Failed to add Pkg Tags for repository: %s - %s') % (repo, str(e))
+                    self.logger.critical(msg)
+                    
+                
+        self.verbose_logger.debug('tags time: %0.3f' % (time.time() - tag_st))
+        return self._tags
+        
     def _getHistory(self):
         """auto create the history object that to access/append the transaction
            history information. """
@@ -764,6 +798,11 @@ class YumBase(depsolve.Depsolve):
                        fset=lambda self, value: setattr(self, "_history",value),
                        fdel=lambda self: setattr(self, "_history", None),
                        doc="Yum History Object")
+
+    pkgtags = property(fget=lambda self: self._getTags(),
+                       fset=lambda self, value: setattr(self, "_tags",value),
+                       fdel=lambda self: setattr(self, "_tags", None),
+                       doc="Yum Package Tags Object")
     
     
     def doSackFilelistPopulate(self):
@@ -2076,6 +2115,22 @@ class YumBase(depsolve.Depsolve):
         results2sorted_lists(tmpres, sorted_lists)
         del tmpres
 
+        tmpres = self.searchPackageTags(real_crit_lower)
+        for pkg in tmpres:
+            count = 0
+            matchkeys = []
+            tagresults = []
+            for (match, taglist) in tmpres[pkg]:
+                count += len(taglist)
+                matchkeys.append(rcl2c[match])
+                tagresults.extend(taglist)
+
+
+            if count not in sorted_lists: sorted_lists[count] = []
+            sorted_lists[count].append((pkg, matchkeys, tagresults))
+        
+        del tmpres
+        
         # By default just sort using package sorting
         sort_func = operator.itemgetter(0)
         if keys:
@@ -2097,7 +2152,22 @@ class YumBase(depsolve.Depsolve):
                 if not showdups:
                     yielded[(po.name, po.arch)] = 1
 
-
+    def searchPackageTags(self, criteria):
+        results = {} # name = [(criteria, taglist)]
+        for c in criteria:
+            c = c.lower()
+            res = self.pkgtags.search_tags(c)
+            for (name, taglist) in res.items():
+                pkgs = self.pkgSack.searchNevra(name=name)
+                if not pkgs:
+                    continue
+                pkg = pkgs[0]
+                if pkg not in results:
+                    results[pkg] = []
+                results[pkg].append((c, taglist))
+        
+        return results
+        
     def searchPackages(self, fields, criteria, callback=None):
         """Search specified fields for matches to criteria
            optional callback specified to print out results
