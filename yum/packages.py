@@ -1348,7 +1348,7 @@ class YumInstalledPackage(YumHeaderPackage):
             self.yumdb_info = yumdb.get_package(self)
 
     def verify(self, patterns=[], deps=False, script=False,
-               fake_problems=True, all=False):
+               fake_problems=True, all=False, fast=False):
         """verify that the installed files match the packaged checksum
            optionally verify they match only if they are in the 'pattern' list
            returns a tuple """
@@ -1526,11 +1526,15 @@ class YumInstalledPackage(YumHeaderPackage):
                     prob.disk_value     = my_st.st_mode
                     problems.append(prob)
 
+                if fast and not problems and (my_st_size == size):
+                    vflags &= ~_RPMVERIFY_DIGEST
+
                 # Note that because we might get the _size_ from prelink,
                 # we need to do the checksum, even if we just throw it away,
                 # just so we get the size correct.
                 if (check_content and
-                    ((have_prelink and vflags & _RPMVERIFY_FILESIZE) or
+                    ((have_prelink and (vflags & _RPMVERIFY_FILESIZE) and
+                      (my_st_size != size)) or
                      (csum and vflags & _RPMVERIFY_DIGEST))):
                     try:
                         my_csum = misc.checksum(csum_type, fn)
