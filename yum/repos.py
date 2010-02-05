@@ -205,7 +205,8 @@ class RepoStorage:
 
     def setCacheDir(self, cachedir):
         """sets the cachedir value in all repos"""
-
+        
+        self.repos._cachedir = cachedir
         for repo in self.repos.values():
             repo.old_base_cache_dir = repo.basecachedir
             repo.basecachedir = cachedir

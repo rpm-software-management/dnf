@@ -4263,7 +4263,7 @@ class YumBase(depsolve.Depsolve):
         cachedir += varReplace(suffix, self.conf.yumvar)
         self.repos.setCacheDir(cachedir)
         self.rpmdb.setCacheDir(cachedir)
-
+        self.conf.cachedir = cachedir
         return True # We got a new cache dir
 
     def _does_this_update(self, pkg1, pkg2):
