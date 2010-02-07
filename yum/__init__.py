@@ -4097,10 +4097,14 @@ class YumBase(depsolve.Depsolve):
                                 continue
                             if numleft == 0:
                                 break
-                            toremove.append(po)
+                            toremove.append([po,m])
                             numleft -= 1
                         
-        map(self.tsInfo.addErase, toremove)
+        for po,rel in toremove:
+            txmbr = self.tsInfo.addErase(toremove)
+            # Add a dep relation to the new version of the package, causing this one to be erased
+            # this way skipbroken, should clean out the old one, if the new one is skipped
+            txmbr.depends_on.append(rel)
 
     def processTransaction(self, callback=None,rpmTestDisplay=None, rpmDisplay=None):
         '''
