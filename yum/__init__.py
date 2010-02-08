@@ -2070,7 +2070,9 @@ class YumBase(depsolve.Depsolve):
                 sql_fields.append(f)
 
         # yield the results in order of most terms matched first
-        sorted_lists = {}
+        sorted_lists = {} # count_of_matches = [(pkgobj, 
+                          #                     [search strings which matched], 
+                          #                     [results that matched])]
         tmpres = []
         real_crit = []
         real_crit_lower = [] # Take the s.lower()'s out of the loop
