@@ -1556,7 +1556,6 @@ class YumRepository(Repository, config.RepoConf):
                                   local=local, 
                                   copy_local=1,
                                   checkfunc=checkfunc, 
-                                  reget=None, 
                                   text=text,
                                   cache=self.http_caching == 'all',
                                   size=thisdata.size)
