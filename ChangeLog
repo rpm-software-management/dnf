@@ -1,3 +1,1375 @@
+2010-02-09  Seth Vidal <skvidal@fedoraproject.org>
+
+	* yum.spec, yum/__init__.py: mark as 3.2.26
+
+2010-02-09  Tim Lauridsen <timlau@fedoraproject.org>
+
+	* yum/__init__.py: list -> tuple
+
+2010-02-07  Tim Lauridsen <timlau@fedoraproject.org>
+
+	* yum/__init__.py: make old installonly packages been erased by
+	installonly_limit depend on the new one, so they will get pulled by
+	skipbroken if the new installonly is pulled because of dep problems
+	(rhbz #561928)
+
+2010-02-08  Seth Vidal <skvidal@fedoraproject.org>
+
+	* yum/yumRepo.py: make metadata use the default reget setting
+	(simple) instead of turning off regets for metadata.
+
+2010-02-08  Seth Vidal <skvidal@fedoraproject.org>
+
+	* yum/__init__.py: add a little bit more documentation for the
+	sorted_lists format in searchGenerator so I don't have to relearn it
+	everytime I look at it
+
+2010-02-05  Seth Vidal <skvidal@fedoraproject.org>
+
+	* yum/pkgtag_db.py: actually add the pkgtag classes
+
+2010-02-05  Seth Vidal <skvidal@fedoraproject.org>
+
+	* yum/__init__.py, yum/misc.py, yum/repos.py: pkgtags db - searching
+	this patch adds the pkgtags metatadata and the integrates it into
+	our search mechanism. Completely optional repodata format.  Also
+	adds a decompress() function from yum.misc that allows for us to
+	pass files to it and not care what compression mechanism they are
+	using it's a bit simplistic at the moment but can easily be
+	enhanced.
+
+2010-02-05  Seth Vidal <skvidal@fedoraproject.org>
+
+	Merge branch 'yum-3_2_X' of
+	ssh://yum.baseurl.org/srv/projects/yum/git/yum into yum-3_2_X  *
+	'yum-3_2_X' of ssh://yum.baseurl.org/srv/projects/yum/git/yum:   Add
+	a fast mode to pkg.verify(), don't verify the digest if others pass
+
+
+2010-02-05  Seth Vidal <skvidal@fedoraproject.org>
+
+	* yum/__init__.py, yum/repos.py: when we run setCacheDir() we
+	should, you know, actually SET the cachedir
+
+2010-02-04  James Antill <james@and.org>
+
+	* yum/packages.py: Add a fast mode to pkg.verify(), don't verify the
+	digest if others pass
+
+2010-02-04  Seth Vidal <skvidal@fedoraproject.org>
+
+	* yum.spec: conflict with rpm5 b/c the rpm-pythons are diverging
+	enough
+
+2010-02-04  Seth Vidal <skvidal@fedoraproject.org>
+
+	Merge branch 'yum-3_2_X' of
+	ssh://yum.baseurl.org/srv/projects/yum/git/yum into yum-3_2_X  *
+	'yum-3_2_X' of ssh://yum.baseurl.org/srv/projects/yum/git/yum:
+	Another fix for verify, shell=True doesn't work with array args.
+
+2010-02-04  Seth Vidal <skvidal@fedoraproject.org>
+
+	* yum/config.py: make persistdir a startupconf option  so we don't
+	have to hardcode the path to it in yumvar options.
+
+2010-02-04  James Antill <james@and.org>
+
+	* yum/packages.py: Another fix for verify, shell=True doesn't work
+	with array args.
+
+2010-02-04  Seth Vidal <skvidal@fedoraproject.org>
+
+	Merge branch 'yum-3_2_X' of
+	ssh://yum.baseurl.org/srv/projects/yum/git/yum into yum-3_2_X  *
+	'yum-3_2_X' of ssh://yum.baseurl.org/srv/projects/yum/git/yum:   Fix
+	a couple of typos for pkg.verify(), sizes are weird in edge cases:
+	catch YumBaseErrors in utils (rhbz #523145)   Remove the extra
+	seconds in the .sqlite loading (sucks to be apt ;)   Only show dates
+	for commits, in --version   Hack the changelog timestamps, so that
+	ordering by timestamps alone
+
+2010-02-04  Seth Vidal <skvidal@fedoraproject.org>
+
+	* docs/yum.conf.5, yum/__init__.py, yum/config.py, yum/misc.py: add
+	uuid functionality so we can have additional info to work from
+	trivially.
+
+2010-02-04  James Antill <james@and.org>
+
+	* yum/packages.py: Fix a couple of typos for pkg.verify(), sizes are
+	weird in edge cases:  . We always use my_st.st_size instead of
+	my_st_size, when reporting   errors (but not for the tests!).  . We
+	update to the prelink values, even if prelink didn't work.
+
+2010-02-01  Tim Lauridsen <timlau@fedoraproject.org>
+
+	* utils.py: catch YumBaseErrors in utils (rhbz #523145)
+
+2010-01-29  James Antill <james@and.org>
+
+	* yum/sqlitesack.py: Remove the extra seconds in the .sqlite loading
+	(sucks to be apt ;)
+
+2010-01-29  James Antill <james@and.org>
+
+	* cli.py: Only show dates for commits, in --version
+
+2010-01-29  James Antill <james@and.org>
+
+	* yum/packages.py:  Hack the changelog timestamps, so that ordering by timestamps alone
+	 will always preserve the original rpm order.   Atm. if you have:
+	 * Thu Jan 28 2010 Michael Schwendt <mschwendt@fedoraproject.org> -
+	 2.2-10  - Fix tuple_copy() further (it was completely broken as the
+	 mowgli   * Thu Jan 28 2010 Michael Schwendt
+	 <mschwendt@fedoraproject.org> - 2.2-9  - Let set_tuple_cb() work on
+	 a copied tuple  ...it can come out in any order (and often comes
+	 out backwards atm.) this hacks the changelog timestamps so the time
+	 is one second later for the 2.2-10 update.   Fixes trac ticket 7,
+	 at least one BZ and lots of annoying threads on f-d-l.   Not 100%
+	 on what this will do on the output side, but it's very likely to be
+	 fine adding a couple of seconds (and everything should just be
+	 printing the date).
+
+2010-02-01  Seth Vidal <skvidal@fedoraproject.org>
+
+	* utils.py: catch pluginexit sanely in utils, too: fixes rh bug
+	https://bugzilla.redhat.com/show_bug.cgi?id=560341
+
+2010-01-28  Ville Skyttä <ville.skytta@iki.fi>
+
+	* yum/sqlitesack.py: Call repo.__hash__() less.  On my (typicalish)
+	Fedora 11 box, brings down number of those calls in a check-update
+	run from ~146k to ~27k and speeds it up by ~7%.
+
+2010-01-28  Ville Skyttä <ville.skytta@iki.fi>
+
+	* yum/sqlitesack.py: Build SQL to execute only once in
+	_yieldSQLDataList().
+
+2010-01-28  James Antill <james@and.org>
+
+	* yum/__init__.py:  Add force arg. to deselectGroup(), to force removal of packages in
+	 the group(s).  Needed for kickstart "-@blah" functionlaity, BZ
+	 558516
+
+2010-01-28  Ville Skyttä <ville.skytta@iki.fi>
+
+	* yum/sqlitesack.py: Docstring fixes.
+
+2010-01-28  James Antill <james@and.org>
+
+	Merge branch 'yum-3_2_X' of
+	ssh://yum.baseurl.org/srv/projects/yum/git/yum into yum-3_2_X  *
+	'yum-3_2_X' of ssh://yum.baseurl.org/srv/projects/yum/git/yum:
+	stop format_missing_requires from exploding, if ayum is not set
+	(current yumex uses DepSolveProgressCallback(), fixed upstream to
+	use DepSolveProgressCallback(ayum=self), but other users can hit
+	this too) (rhbz #558770)
+
+2010-01-28  Tim Lauridsen <timlau@fedoraproject.org>
+
+	* output.py: stop format_missing_requires from exploding, if ayum is
+	not set (current yumex uses DepSolveProgressCallback(), fixed
+	upstream to use DepSolveProgressCallback(ayum=self), but other users
+	can hit this too) (rhbz #558770)
+
+2010-01-27  Josh Stone <jistone@redhat.com>
+
+	* yum/__init__.py: Fix typo for errsting, in returnPackageByDep()
+
+2010-01-27  James Antill <james@and.org>
+
+	* yum/pgpmsg.py: Fix API break from pgpmsg update, can't import new
+	keys without this
+
+2010-01-27  James Antill <james@and.org>
+
+	* yum/rpmsack.py:  Don't cache fileRequires when the user has butchered their rpmdb
+	 Basically if something in the rpmdb has missing file requires, then
+	 don't bother caching the file requires data ... we could actually
+	 save the Unresolved data too, but I figured it wouldn't be common
+	 and we'd just tell people to not do that (hint, tim ;).  We did
+	 this at the entry point which we'd never hit, but missed the one we
+	 can "easily" hit with rpm --nodeps ... oops.
+
+2010-01-25  James Antill <james@and.org>
+
+	* yum/update_md.py: Add add_notice() API to UpdateMetadata class
+
+2010-01-25  James Antill <james@and.org>
+
+	* yumcommands.py: Fix stupid typo, use rid which we change instead
+	of str(repo)
+
+2010-01-22  Mark Rappoport <yum-devel@mark.org.il>
+
+	* yum/update_md.py: allow setting values in an update notice
+
+2010-01-22  James Antill <james@and.org>
+
+	* utils.py: Fix utils basecmd setup, when we don't have any
+	commands, BZ 557680
+
+2010-01-21  James Antill <james@and.org>
+
+	* etc/version-groups.conf:  Add yum-metadata-parser to the yum version group.   We had left it
+	 out because it was in run_with_packages, but it's only added to
+	 that when it's used (so it doesn't clutter history, when it's not
+	 used) but that means "yum version" doesn't see it.
+
+2010-01-22  Seth Vidal <skvidal@fedoraproject.org>
+
+	* yum/Errors.py: add new exception for pkgtags metadata handling
+
+2010-01-22  Ville Skyttä <ville.skytta@iki.fi>
+
+	* etc/yum.bash: sed portability fixes.
+
+2010-01-22  Ville Skyttä <ville.skytta@iki.fi>
+
+	* etc/yum.bash: Add option argument completions for a bunch of known
+	plugin options.
+
+2010-01-21  Seth Vidal <skvidal@fedoraproject.org>
+
+	Merge branch 'yum-3_2_X' of
+	ssh://yum.baseurl.org/srv/projects/yum/git/yum into yum-3_2_X  *
+	'yum-3_2_X' of ssh://yum.baseurl.org/srv/projects/yum/git/yum:   Add
+	manual tests for format_number.   Fix no script output from
+	transaction, BZ 554462   Make sizes without trailing k, M etc
+	symbols line up with others.   Speed up __utf8_ucp_width().
+
+2010-01-21  Seth Vidal <skvidal@fedoraproject.org>
+
+	* cli.py: change disk space needed message for rh bug: #557145
+
+2010-01-18  James Antill <james@and.org>
+
+	* output.py: Add manual tests for format_number.
+
+2010-01-18  James Antill <james@and.org>
+
+	* yum/rpmtrans.py: Fix no script output from transaction, BZ 554462
+
+
+2010-01-19  Ville Skyttä <ville.skytta@iki.fi>
+
+	* output.py: Make sizes without trailing k, M etc symbols line up
+	with others.
+
+2010-01-19  Ville Skyttä <ville.skytta@iki.fi>
+
+	* yum/i18n.py: Speed up __utf8_ucp_width().  $ time ./yummain.py
+	list available >/dev/null  Before: real    0m16.644s user
+	0m15.722s sys     0m0.500s  After: real    0m12.393s user
+	0m11.552s sys     0m0.519s
+
+2010-01-18  Seth Vidal <skvidal@fedoraproject.org>
+
+	* docs/yum.conf.5: add docs for skip_if_unavailable
+
+2010-01-18  James Antill <james@and.org>
+
+	* yum/history.py:  Fix yumdb.checksum_data access in history using yumdb. BZ 555928
+	 Having checksum_type but not checksum_data is really weird though.
+
+
+2010-01-18  James Antill <james@and.org>
+
+	* docs/yum.8, yumcommands.py: Fix the repolist cacheonly feature,
+	document it
+
+2010-01-16  James Antill <james@and.org>
+
+	* docs/yum.8, yumcommands.py:  A few minor tweaks to repolist output:  . Don't output "stats:
+	 enabled:" with repolist -v  . Output a * for metalink repos. which
+	 don't have the latest MD, in normal repolist.  . Allow user to do:
+	 "yum repolist rawhide" and it'll be displayed even if rawhide isn't
+	 enabled. Instead of having to do:  yum repolist all rawhide  .
+	 Output something close to real package numbers, and number of
+	 excluded packages. It's not 100% because we skip it when there are
+	 no user configured excludes so 'src' packages etc. don't count
+	 then. But this should help with "BUG: yum can't update foo" =>
+	 "oops. foo was excluded".  . Tweak column sizing for "yum repolist
+	 all updates rawhide".  . Update man page.
+
+2010-01-16  Tim Lauridsen <timlau@fedoraproject.org>
+
+	* test/skipbroken-tests.py: Add skip-broken testcase for rhbz
+	#555528
+
+2010-01-15  James Antill <james@and.org>
+
+	* yum/__init__.py:  Make installedFileRequires None, when we reset the rpmdb
+	 transaction.   Without this although we drop the cache from rpmdb,
+	 we've kept a copy the depsolver uses internally ... so we now drop
+	 that too.
+
+2010-01-15  James Antill <james@and.org>
+
+	* yum/rpmsack.py: Fix check_dups() to use provides as installonly
+	does, Eg. kernel-PAE-devel
+
+2010-01-15  Tim Lauridsen <timlau@fedoraproject.org>
+
+	* yum/depsolve.py: fix error caused by refactoring of
+	_err_missing_requires than brake test suite
+
+2010-01-14  James Antill <james@and.org>
+
+	* yum/__init__.py: Sort output in printTransaction() -- skip-broken
+	debug output
+
+2010-01-14  Seth Vidal <skvidal@fedoraproject.org>
+
+	* yum/repos.py: make sure we're only skipping the exception if we
+	are doing a primary or global setup of the repos/sacks and disable
+	it if it falls over.
+
+2010-01-14  Seth Vidal <skvidal@fedoraproject.org>
+
+	* yum/config.py, yum/repos.py: complete CRACK -- allow repos to be
+	explicitly set to be skipped if for any reason they cannot be
+	located.  I know I know - I said I would never do this but I gave up
+	on it given how horribly broken a number of commonly enabled repos
+	are.
+
+2010-01-13  James Antill <james@and.org>
+
+	* output.py, yum/depsolve.py: Move all the formtting for missing
+	requires into output/cb
+
+2010-01-13  James Antill <james@and.org>
+
+	* yum/depsolve.py:  Lookup package information, when we get requires fail. This makes
+	 it _much_ easier for the user to see wtf. is going on.  Don't
+	 output failure information from depsolving by default, just from
+	 yummain (duplicated for no reason, AFAICS). This was esp. bad with
+	 skip-broken which would output the info. N times. Also unique the
+	 errors from po_with_problems, as we do with errors.
+
+2010-01-13  James Antill <james@and.org>
+
+	* yum/depsolve.py, yummain.py: Combine the code for "requires dep.
+	problems". Make it nicer/easier to read.
+
+2010-01-12  Seth Vidal <skvidal@fedoraproject.org>
+
+	* utils.py: add basecmd and extcmds to utils base so the yumutils
+	have those attributes for doTransaction() and others to molest:
+	https://bugzilla.redhat.com/show_bug.cgi?id=550010
+
+2010-01-12  Michael Babej <mbabej@redhat.com>
+
+	* yum/rpmsack.py: Fix namerror/typo missing value in rpm problem
+	comparisons
+
+2010-01-11  Seth Vidal <skvidal@fedoraproject.org>
+
+	* docs/yum.8: make specifying package names more clear and refer to
+	it properly throughout
+
+2010-01-08  Ville Skyttä <ville.skytta@iki.fi>
+
+	* output.py: Sort obsoleted packages in transaction listings, remove
+	extra newline between.  Before:  | foo
+	x86_64   [...] | obsing                        x86_64   [...] |
+	replacing  obs2.x86_64 1.0-1.fc11 | |     replacing  obs1.x86_64
+	1.0-1.fc11 | | quux                          x86_64   [...]  After:
+	| foo                           x86_64   [...] | obsing
+	x86_64   [...] |     replacing  obs1.x86_64 1.0-1.fc11 |
+	replacing  obs2.x86_64 1.0-1.fc11 | quux
+	x86_64   [...]
+
+2010-01-08  Seth Vidal <skvidal@fedoraproject.org>
+
+	* yum/pgpmsg.py: fix up raising a string as an exception in
+	pgpmsg.py
+
+2010-01-08  Seth Vidal <skvidal@fedoraproject.org>
+
+	Merge branch 'yum-3_2_X' of
+	ssh://yum.baseurl.org/srv/projects/yum/git/yum into yum-3_2_X  *
+	'yum-3_2_X' of ssh://yum.baseurl.org/srv/projects/yum/git/yum:   Use
+	YumBase.conf.yumvar, for Pungi (and maybe others) ... convert all of
+	core   Workaround slight rpm bindings API change, BZ 552178   Don't
+	emit extra warnings due to multiple cross arch pkgs, fix by   Add
+	searchNames() to packageSack so it can be used from unittests   Add
+	tests for cross arch downgrades   Add transactionReset() to
+	FakeRpmDb, so tests don't fail   Fix cross arch downgrades via.
+	remove + install   Allow downgrades to go across arch changes better
+	Return objects from the rpmdb.check_* functions, so it's easier to
+	add more   Cleanup the comment about the fix for skip-broken and
+	rpmdb-cache
+
+2010-01-07  James Antill <james@and.org>
+
+	* yum/__init__.py, yumcommands.py: Use YumBase.conf.yumvar, for
+	Pungi (and maybe others) ... convert all of core
+
+2010-01-06  James Antill <james@and.org>
+
+	* yum/__init__.py: Workaround slight rpm bindings API change, BZ
+	552178
+
+2010-01-05  James Antill <james@and.org>
+
+	* yum/__init__.py:  Don't emit extra warnings due to multiple cross arch pkgs, fix by
+	 always using the installed pkg arch.
+
+2010-01-05  James Antill <james@and.org>
+
+	* yum/packageSack.py: Add searchNames() to packageSack so it can be
+	used from unittests
+
+2010-01-05  James Antill <james@and.org>
+
+	* test/operationstests.py: Add tests for cross arch downgrades
+
+2010-01-05  James Antill <james@and.org>
+
+	* test/testbase.py: Add transactionReset() to FakeRpmDb, so tests
+	don't fail
+
+2010-01-04  James Antill <james@and.org>
+
+	* yum/__init__.py: Fix cross arch downgrades via. remove + install
+
+2010-01-04  James Antill <james@and.org>
+
+	* yum/__init__.py: Allow downgrades to go across arch changes better
+
+
+2010-01-04  James Antill <james@and.org>
+
+	* yum/__init__.py, yum/rpmsack.py: Return objects from the
+	rpmdb.check_* functions, so it's easier to add more
+
+2010-01-04  James Antill <james@and.org>
+
+	* yum/__init__.py: Cleanup the comment about the fix for skip-broken
+	and rpmdb-cache
+
+2010-01-04  Jens B. Jorgensen <jbj1@ultraemail.net>
+
+	* yum/pgpmsg.py: make pgpmsg.py comply with rfc and handle multiple
+	keys per stanza gracefully.
+
+2010-01-04  Seth Vidal <skvidal@fedoraproject.org>
+
+	* Makefile, bin/yum.py: move some wiki.linux.duke.edu references to
+	baseurl.org
+
+2010-01-03  James Antill <james@and.org>
+
+	* yum/__init__.py, yum/rpmsack.py:  Add transactionReset() to the rpmdb API. Hopefully fixes BZ 550246
+	 This lets us clear out the data for the transaction that is about
+	 to happen ... Eg. skip-broken, or maybe transaction splitting in
+	 the future.   I haven't seen the failure in 550246, but I think
+	 this will fix it.
+
+2009-12-29  Piotr Drąg <piotrdrag@gmail.com>
+
+	* po/pl.po: l10n: Updates to Polish (pl) translation
+	Transmitted-via: Transifex (www.transifex.net)
+
+2009-12-26  James Antill <james@and.org>
+
+	* docs/yum.8, docs/yum.conf.5: Fix debian man warnings
+
+2009-12-22  James Antill <james@and.org>
+
+	* docs/yum.8: Remove the copy and paste -e from the man page
+
+2009-12-22  James Antill <james@and.org>
+
+	* cli.py, output.py: If we are only installing, display the amount
+	of disk space used. BZ 487623
+
+2009-12-22  James Antill <james@and.org>
+
+	* yum/packages.py:  Store downloaded packages in a temp. dir. (non-root is happy, and
+	 clenaup is done for us).
+
+2009-12-23  Ville Skyttä <ville.skytta@iki.fi>
+
+	* etc/yum.bash: Add --rpmverbosity and history undo/redo last
+	completions.
+
+2009-12-22  James Antill <james@and.org>
+
+	* yum/rpmtrans.py: 2nd fix for reading rpm logging from files, "" ==
+	raise IOError on pipe()
+
+2009-12-22  James Antill <james@and.org>
+
+	* yum/rpmtrans.py: Use different fds for Tempfile rpm logging, so we
+	get different off_t's
+
+2009-12-22  James Antill <james@and.org>
+
+	* cli.py, docs/yum.8, docs/yum.conf.5, yum/config.py,
+	yum/rpmtrans.py: Add rpmverbosity config. and cmd-line-option
+
+2009-12-22  James Antill <james@and.org>
+
+	* docs/yum.8, output.py:  Change "history info" to display the last transaction, even aborted
+	 ones.   Let undo/redo refer to the last transaction, without the
+	 user having to look it up manually.
+
+2009-12-22  James Antill <james@and.org>
+
+	* yum/history.py: Reuse .old() in .last(), and get
+	complete_transactions_only for free
+
+2009-12-20  James Antill <james@and.org>
+
+	* yum/__init__.py: Don't throw an error when the rpmdb cache
+	directory doesn't exist
+
+2009-12-10  James Antill <james@and.org>
+
+	* yum/depsolve.py: getMembers returns txmbrs not POs ... *sigh*
+
+2009-12-10  James Antill <james@and.org>
+
+	* yum/depsolve.py: Fix when we have file require(s) from just to be
+	installed pkgs. The mash bug
+
+2009-12-07  James Antill <james@and.org>
+
+	* yum/__init__.py, yum/rpmsack.py: Rename rpmdb-cache to installed,
+	as that's taken
+
+2009-12-07  James Antill <james@and.org>
+
+	* yum/__init__.py, yum/rpmsack.py: Use persistdir instead of
+	/var/lib/yum and use root for rpmdb loc.
+
+2009-12-04  James Antill <james@and.org>
+
+	* cli.py, yum/__init__.py, yum/misc.py, yumcommands.py:  Fixes for clean functions, BZ 544173   When nothing to be done, set
+	 removed.  When doing "clean all" fix the var. name.  When doing
+	 anything but clean rpmdb, fix the return.  Allow rpmdb as a valid
+	 arg.  Fix getFileList() with ext == ''
+
+2009-11-09  James Antill <james@and.org>
+
+	* test/rpmdb-cache.py, yum/depsolve.py, yum/rpmsack.py: Fix filelist
+	always being required, by being lax on recording all providers
+
+2009-11-08  James Antill <james@and.org>
+
+	* yumcommands.py: Add "version nogroups*" to version command, to
+	ignore version groups data
+
+2009-11-07  James Antill <james@and.org>
+
+	* cli.py, docs/yum.8, test/rpmdb-cache.py, test/testbase.py,
+	yum/__init__.py, yum/rpmsack.py:  Add .cleanRpmDB(), so the user can manually clean. And other minor
+	 fixes.   Adds the "clean rpmdb" command.  Fixes the clean
+	 documentation.   Adds a rpmdb-cache.py testcase, which should show
+	 if the cache does not == the rpmdb.   Also minor fixes for writting
+	 the caches to disk, as non-root etc.   Adds a .setCacheDir() to the
+	 rpmdb, for setting the cachedir.   Also fix "YumBase.setCacheDir()"
+	 to use rpmdb.setCacheDir()   Also fix the mock class FakeRpmDb, to
+	 have the new methods rpmdb does.
+
+2009-11-07  James Antill <james@and.org>
+
+	* yum/depsolve.py, yum/rpmsack.py:  Add transactionCacheFileRequires() and fileRequiresData()   This is
+	 the most scarey part of the rpmdb caching. I think it's good. But
+	 it's somewhat complicated, and if we screw it up (it isn't in sync.
+	 with the rpmdb) bad things will likely result.  We are protected
+	 from rpm doing crazy things due to the way
+	 transactionResultVersion() works, so all that matters is that our
+	 logic is right for what is in the transaction.  Both
+	 installedFileRequires and installedFileProviders should always be
+	 updated for the transaction, and thus. be identical to rm'ing the
+	 cache.   And I've tested it, and it seems to work :).
+
+2009-11-06  James Antill <james@and.org>
+
+	* yum/__init__.py, yum/depsolve.py, yum/rpmsack.py: Add
+	transactionResultVersion() and transactionCacheConflictPackages()
+
+2009-11-06  James Antill <james@and.org>
+
+	* yum/transactioninfo.py: Add tsInfo.futureRpmDBVersion, so we can
+	do better quality rpmdb caching
+
+2009-11-04  James Antill <james@and.org>
+
+	* yum/__init__.py, yum/depsolve.py, yum/rpmsack.py: Cache "conflict
+	packages", store the pkgtups of the packages with conflicts
+
+2009-11-04  James Antill <james@and.org>
+
+	* yum/depsolve.py, yum/rpmsack.py: Cache checkFileRequires data
+
+2009-11-04  James Antill <james@and.org>
+
+	* yum/rpmsack.py: Add simpleVersion() results to the rpmdb-cache
+
+2009-11-04  James Antill <james@and.org>
+
+	* yum/__init__.py, yum/rpmsack.py: Add cachedir to rpmdb, so we can
+	get calculated data quickly
+
+2009-03-12  James Antill <james@and.org>
+
+	* yum/rpmtrans.py: Use a tempfile instead of a pipe for scriplet
+	errors, fixes BZ 465766
+
+2009-12-21  Seth Vidal <skvidal@fedoraproject.org>
+
+	* yum/misc.py: as ville suggested for python 3.0 compat
+
+2009-12-21  Seth Vidal <skvidal@fedoraproject.org>
+
+	Merge branch 'yum-3_2_X' of
+	ssh://yum.baseurl.org/srv/projects/yum/git/yum into yum-3_2_X  *
+	'yum-3_2_X' of ssh://yum.baseurl.org/srv/projects/yum/git/yum:   Add
+	bash completion for the check command.   Fix tuple typo, stupid
+	language syntax   Add check command, like smart/apt   Call
+	rpmdb.check_*() directly, now that we can instead of asking the
+	Remove unnecessary 'Finished Transaction Test' from CLI output.
+	l10n: Initial commit of Finnish translation   Fix accidental revert
+	in 0a2be676, which I was using to test   Fix moved code typo, dups
+	=> deps for deps :)   Do rpmdb checks when we have no history   Use
+	showdups for obsoletes, so "list obsoletes" is sane for RHEL like
+	repos   Create a _rpmdb_warn_checks function, and use that when we
+	find an   Add check_*() APIs to rpmdb, for when version doesn't
+	match etc.
+
+2009-12-17  Ville Skyttä <ville.skytta@iki.fi>
+
+	* etc/yum.bash: Add bash completion for the check command.
+
+2009-12-17  James Antill <james@and.org>
+
+	* yummain.py: Fix tuple typo, stupid language syntax
+
+2009-12-16  James Antill <james@and.org>
+
+	* cli.py, docs/yum.8, yumcommands.py: Add check command, like
+	smart/apt
+
+2009-12-16  James Antill <james@and.org>
+
+	* yummain.py:  Call rpmdb.check_*() directly, now that we can instead of asking
+	 the user to do it.  Also call for rpm transaction test failures,
+	 Eg. kmods.
+
+2009-12-10  Ville Skyttä <ville.skytta@iki.fi>
+
+	* cli.py: Remove unnecessary 'Finished Transaction Test' from CLI
+	output.  The outcome of the test is printed immediately after that
+	anyway which should be a good enough hint that the test finished.
+
+2009-12-17  Ville-Pekka Vainio <vpivaini@cs.helsinki.fi>
+
+	* po/fi.po: l10n: Initial commit of Finnish translation
+	Transmitted-via: Transifex (www.transifex.net)
+
+2009-12-17  James Antill <james@and.org>
+
+	* yum/__init__.py: Fix accidental revert in 0a2be676, which I was
+	using to test
+
+2009-12-17  James Antill <james@and.org>
+
+	* yum/__init__.py: Fix moved code typo, dups => deps for deps :)
+
+2009-12-11  James Antill <james@and.org>
+
+	* output.py, yum/__init__.py, yumcommands.py: Do rpmdb checks when
+	we have no history
+
+2009-12-11  James Antill <james@and.org>
+
+	* yum/__init__.py: Use showdups for obsoletes, so "list obsoletes"
+	is sane for RHEL like repos
+
+2009-12-11  James Antill <james@and.org>
+
+	* output.py, yum/__init__.py, yumcommands.py:  Create a _rpmdb_warn_checks function, and use that when we find an
+	 rpmdb version warning.   Change the text on the warning, hopefully
+	 Panu will be happier :).   Use the rpmdb.check_* functions, to see
+	 if we find any problems.
+
+2009-12-11  James Antill <james@and.org>
+
+	* yum/rpmsack.py: Add check_*() APIs to rpmdb, for when version
+	doesn't match etc.
+
+2009-12-11  Seth Vidal <skvidal@fedoraproject.org>
+
+	Merge branch 'yum-3_2_X' of
+	ssh://yum.baseurl.org/srv/projects/yum/git/yum into yum-3_2_X  *
+	'yum-3_2_X' of ssh://yum.baseurl.org/srv/projects/yum/git/yum:
+	Move default urlgrabber options into _default_grabopts(), apply them
+
+
+2009-12-10  Seth Vidal <skvidal@fedoraproject.org>
+
+	Merge branch 'yum-3_2_X' of
+	ssh://yum.baseurl.org/srv/projects/yum/git/yum into yum-3_2_X  *
+	'yum-3_2_X' of ssh://yum.baseurl.org/srv/projects/yum/git/yum:
+	Tell git to ignore Pydev project files.
+
+2009-12-10  Seth Vidal <skvidal@fedoraproject.org>
+
+	* yum/misc.py: use xreadlines() not readline()
+
+2009-12-08  Ville Skyttä <ville.skytta@iki.fi>
+
+	* yum/yumRepo.py: Move default urlgrabber options into
+	_default_grabopts(), apply them to mirrorlist grabs.  This started
+	off from noticing that our timeout doesn't get passed to mirrorlist
+	grabs, but while at it there was a bunch of other useful options
+	missing from that call and the options were unnecessarily copied in
+	several places.
+
+2009-12-10  Ville Skyttä <ville.skytta@iki.fi>
+
+	* .gitignore: Tell git to ignore Pydev project files.
+
+2009-12-10  Seth Vidal <skvidal@fedoraproject.org>
+
+	* yum/misc.py: get cmdline and parse out files on it to look for
+	other items running  this handles pygtk and lots of python apps, too
+
+
+2009-12-10  James Antill <james@and.org>
+
+	* docs/yum.8, output.py: Document the secret end column of history
+	list, giving away all our sekretz!
+
+2009-12-10  James Antill <james@and.org>
+
+	* test/operationstests.py, test/testbase.py, yum/__init__.py: Test
+	cases for previous change
+
+2009-12-10  James Antill <james@and.org>
+
+	* yum/__init__.py, yum/packageSack.py, yum/sqlitesack.py:  Fix bugs where we want to install old versions of multiarch
+	 packages, which just upsets everything.   This is mostly a revert
+	 of:   commit f6317aabb2734357311b6103286a76054c3cd0e9  Author:
+	 James Antill <james@and.org>  Date:   Sat May 31 17:08:44 2008
+	 -0400   We want to keep other arches in the multilib_policy=all
+	 case. bug#449056  ...but that was because of the confusing name,
+	 and the fact we had another bug which caused the problem, which we
+	 fixed a few weeks later:   commit
+	 40471d1d681f62415487def517ac90f253fafa9b  Author: James Antill
+	 <james@and.org>  Date:   Tue Jun 24 17:21:26 2008 -0400        Fix
+	 packagesNewestByName() to use comparePoEVR as pkg.__cmp__ uses
+	 .arch in         thus we'd only get one pkg from the alph sorted
+	 arch.         kind of a weird interface, not quite the "same" as
+	 packageNewestByNameArch  ...with that fix I believe the original
+	 bug#449056 wouldn't have happened.
+
+2009-12-10  Seth Vidal <skvidal@fedoraproject.org>
+
+	* yum/config.py: output the variable name you're attempting to set
+	when we encounter an option error
+
+2009-12-09  Seth Vidal <skvidal@fedoraproject.org>
+
+	* yum/misc.py: use maps instead of smaps trivial fix
+
+2009-12-09  Seth Vidal <skvidal@fedoraproject.org>
+
+	Merge branch 'yum-3_2_X' of
+	ssh://yum.baseurl.org/srv/projects/yum/git/yum into yum-3_2_X  *
+	'yum-3_2_X' of ssh://yum.baseurl.org/srv/projects/yum/git/yum:
+	Don't die if sha2+ is not available, and we aren't using metalink
+	Fix md5 == abort() code path, only generate/trust sha2+ for
+	metalink=>repomd   Output txmbr evr as e:v-r instead of e-v-r
+
+2009-12-09  Seth Vidal <skvidal@fedoraproject.org>
+
+	* yum/__init__.py: make sure we behave correctly if we cannot get
+	the cachedir setup  if someone sets the perms on the tmpdir/cachedir
+	VERY wrong make sure we emit an error and do something sensible
+	about it.  rh bug:
+	https://bugzilla.redhat.com/show_bug.cgi?id=543768
+
+2009-12-09  Seth Vidal <skvidal@fedoraproject.org>
+
+	* yum/__init__.py, yum/rpmsack.py: move return_running_packages to
+	rpmsack from yumbase b/c it belongs there :)
+
+2009-12-09  Seth Vidal <skvidal@fedoraproject.org>
+
+	* yum/history.py: make sure history dbs are readable only by root -
+	suggested by Josh Bressers
+
+2009-12-08  Seth Vidal <skvidal@fedoraproject.org>
+
+	* yum/__init__.py: - add docstrings to properties - return_running_packages method to
+	YumBase to return list of pkgs   which currently have a file opened
+	by a running process
+
+2009-12-08  Seth Vidal <skvidal@fedoraproject.org>
+
+	* yum/misc.py: add two functions to get list of processes and return
+	the files the processes have open
+
+2009-12-08  Seth Vidal <skvidal@fedoraproject.org>
+
+	* yum/sqlitesack.py: add missing warnings import
+
+2009-12-08  James Antill <james@and.org>
+
+	* yum/misc.py, yum/repoMDObject.py: Don't die if sha2+ is not
+	available, and we aren't using metalink
+
+2009-12-07  James Antill <james@and.org>
+
+	* yum/metalink.py, yum/repoMDObject.py, yum/yumRepo.py: Fix md5 ==
+	abort() code path, only generate/trust sha2+ for metalink=>repomd
+
+2009-12-04  James Antill <james@and.org>
+
+	* yum/transactioninfo.py: Output txmbr evr as e:v-r instead of e-v-r
+
+
+2009-12-01  James Antill <james@and.org>
+
+	* yumcommands.py: Make status output nicer for repolist
+	disabled/all/enabled, BZ 540489
+
+2009-11-30  James Antill <james@and.org>
+
+	* yum/transactioninfo.py: Add obsoleted packages to obsoleting
+	txmbrs
+
+2009-11-30  James Antill <james@and.org>
+
+	* docs/yum.8: Add yum-security link to yum man page
+
+2009-11-24  James Antill <james@and.org>
+
+	* docs/yum.8: Tell people looking for list recent, about
+	list-updateinfo new
+
+2009-11-23  James Antill <james@and.org>
+
+	* output.py: Fix the chopping name output in "history info", when we
+	obsolete
+
+2009-11-24  Ville Skyttä <ville.skytta@iki.fi>
+
+	* etc/yum.bash: Add expire-cache to clean completions.
+
+2009-11-23  James Antill <james@and.org>
+
+	* yum/packages.py: Add documentation about why we output releasever
+	in ui_from_repo
+
+2009-11-23  James Antill <james@and.org>
+
+	* yum/packages.py: Change ui_from_repo to compare releasever, and
+	print if it's different
+
+2009-11-23  James Antill <james@and.org>
+
+	* yum/__init__.py, yum/rpmsack.py: Add releasever to rpmdb, so we
+	can locally compare it to yumdb etc.
+
+2009-11-23  James Antill <james@and.org>
+
+	* yumcommands.py: Convert missed direct usage of from_repo to use
+	ui_from_repo
+
+2009-11-18  James Antill <james@and.org>
+
+	* output.py: Cleanup code using ui_nevra and ui_from_repo
+
+2009-11-18  James Antill <james@and.org>
+
+	* yum/packages.py: Add ui_from_repo to POs
+
+2009-11-18  James Antill <james@and.org>
+
+	* yum/packages.py: Add ui_nevra and ui_envra to POs
+
+2009-11-16  Seth Vidal <skvidal@fedoraproject.org>
+
+	* cli.py: don't output usage() when the user fatfingers a command
+
+2009-11-16  James Antill <james@and.org>
+
+	* yum/misc.py, yum/packages.py: Allow HTTP:// as well as http://,
+	and split the tests for re_remote_url
+
+2009-11-16  James Antill <james@and.org>
+
+	* cli.py, yum/__init__.py: Have localInstall()/etc. use
+	YumUrlPackage(), so we act more like rpm.
+
+2009-11-16  James Antill <james@and.org>
+
+	* yum/packages.py: Add YumUrlPackage(), to download packages and use
+	YumLocalPackage on them
+
+2009-11-16  James Antill <james@and.org>
+
+	* yum/misc.py: Add "re_remote_url()" for testing if a url is
+	"remote"
+
+2009-11-16  Ville Skyttä <ville.skytta@iki.fi>
+
+	* cli.py, docs/yum.8, etc/yum.bash: Add long variants for all
+	command line options.
+
+2009-11-16  Ville Skyttä <ville.skytta@iki.fi>
+
+	* etc/yum.bash: Add --releasever to bash completion.
+
+2009-11-16  Seth Vidal <skvidal@fedoraproject.org>
+
+	Merge branch 'yum-3_2_X' of
+	ssh://yum.baseurl.org/srv/projects/yum/git/yum into yum-3_2_X  *
+	'yum-3_2_X' of ssh://yum.baseurl.org/srv/projects/yum/git/yum:
+	Document --releasever   Fix UnicodeDecodeErrors in yumcommands.py
+	Docstring typo fix.   Add po/Makevars for gettext plural handling
+	Wrap License field, due to 100+ char. joy in Fedora
+
+2009-11-16  James Antill <james@and.org>
+
+	* docs/yum.8: Document --releasever
+
+2009-11-16  Ville-Pekka Vainio <vpivaini@cs.helsinki.fi>
+
+	* yumcommands.py: Fix UnicodeDecodeErrors in yumcommands.py  Fix two
+	UnicodeDecodeErrors which were raised when running 'yum -v repolist'
+	in fi_FI.utf8 with the yet uncommitted Finnish translation.
+
+2009-11-16  Seth Vidal <skvidal@fedoraproject.org>
+
+	* yum/misc.py: ignore transaction files which end with 'disabled' -
+	so we can keep ones which are wonky around for debugging but not
+	pester the user with them.
+
+2009-11-16  Ville Skyttä <ville.skytta@iki.fi>
+
+	* yum/sqlutils.py: Docstring typo fix.
+
+2009-11-13  Ville-Pekka Vainio <vpivaini@cs.helsinki.fi>
+
+	* po/Makevars: Add po/Makevars for gettext plural handling  Add the
+	po/Makevars file including XGETTEXT_OPTIONS = --keyword=P_:1,2 so
+	that the P_ calls will be recognized as plurals by xgettext and
+	intltool.
+
+2009-11-13  James Antill <james@and.org>
+
+	* output.py: Wrap License field, due to 100+ char. joy in Fedora
+
+2009-11-13  Seth Vidal <skvidal@fedoraproject.org>
+
+	* cli.py: add --releasever option so users can bump from (for
+	example) 11 to 12 w/o having to grab the fedora-release pkg from 12
+	manually.
+
+2009-11-12  Seth Vidal <skvidal@fedoraproject.org>
+
+	* yum/config.py, yum/yumRepo.py: just to make james happy :)
+
+2009-11-12  Seth Vidal <skvidal@fedoraproject.org>
+
+	Merge branch 'yum-3_2_X' of
+	ssh://yum.baseurl.org/srv/projects/yum/git/yum into yum-3_2_X  *
+	'yum-3_2_X' of ssh://yum.baseurl.org/srv/projects/yum/git/yum:
+	Trivial has_key() to "in" changes.   Fix for callers that rely on
+	.pkgSackPackages protecting .pkgSack.get*   Fix
+	get_running_kernel_version_release   Fix epoch matching in
+	rpmdb.returnPackages()   Test the first char of a pattern match, if
+	we can
+
+2009-11-12  Seth Vidal <skvidal@fedoraproject.org>
+
+	* yum/config.py, yum/yumRepo.py: updating yumRepo dump() method and
+	adding YumConf.dump() method to output nicer lists of all of our
+	config settings
+
+2009-10-02  Ville Skyttä <ville.skytta@iki.fi>
+
+	* cli.py, rpmUtils/arch.py, rpmUtils/transaction.py,
+	rpmUtils/updates.py, yum/__init__.py, yum/comps.py,
+	yum/depsolve.py, yum/packageSack.py, yum/packages.py,
+	yum/pgpmsg.py, yum/plugins.py, yum/repoMDObject.py, yum/repos.py,
+	yum/rpmsack.py, yum/rpmtrans.py, yum/sqlitesack.py,
+	yum/transactioninfo.py, yum/update_md.py, yum/yumRepo.py,
+	yumcommands.py: Trivial has_key() to "in" changes.  This is the
+	first one in set of has_key() avoidance changesets.
+
+2009-11-03  James Antill <james@and.org>
+
+	* yum/transactioninfo.py: Fix for callers that rely on
+	.pkgSackPackages protecting .pkgSack.get*
+
+2009-11-03  James Antill <james@and.org>
+
+	* yum/misc.py: Fix get_running_kernel_version_release
+
+2009-11-03  James Antill <james@and.org>
+
+	* yum/rpmsack.py: Fix epoch matching in rpmdb.returnPackages()
+
+2009-11-03  James Antill <james@and.org>
+
+	* yum/rpmsack.py: Test the first char of a pattern match, if we can
+
+
+2009-11-04  Seth Vidal <skvidal@fedoraproject.org>
+
+	* yum/rpmtrans.py: fix typo in rpmtrans - fixes rh bug #532933
+
+2009-11-03  Ville Skyttä <ville.skytta@iki.fi>
+
+	* etc/yum.bash: sed usage portability fixes.
+
+2009-11-02  James Antill <james@and.org>
+
+	* yum/misc.py: Expand get_running_kernel_version_release into
+	*_pkgtup, to use it elsewhere
+
+2009-11-02  James Antill <james@and.org>
+
+	Merge commit '6edfd8428a6d424db8dd0ca641875d466d391b1b' into
+	yum-3_2_X  * commit '6edfd8428a6d424db8dd0ca641875d466d391b1b':
+	Remove the repoid check, the base name check is "better" and this
+	kills it   Only search through non-locale group names, if we didn't
+	match anything   Match only current language instead of all in
+	group/category searches.
+
+2009-11-02  James Antill <james@and.org>
+
+	* yum/comps.py: Only search through non-locale group names, if we
+	didn't match anything
+
+2009-10-31  Ville Skyttä <ville.skytta@iki.fi>
+
+	* yum/comps.py: Match only current language instead of all in
+	group/category searches.
+
+2009-11-02  Adam Pribyl <pribyl@lowlevel.cz>
+
+	* po/cs.po: update czech translation
+
+2009-11-02  Igor Pires Soares <igor@projetofedora.org>
+
+	* po/pt_BR.po: update brazillian translation
+
+2009-11-02  Seth Vidal <skvidal@fedoraproject.org>
+
+	Merge branch 'yum-3_2_X' of
+	ssh://yum.baseurl.org/srv/projects/yum/git/yum into yum-3_2_X  *
+	'yum-3_2_X' of ssh://yum.baseurl.org/srv/projects/yum/git/yum:   Big
+	speed boost for depsolving "large" transactions.   Move group name
+	bash completion to separate function so it can be used in other
+	tools.   Fix: Unicode unequal comparison failed to convert both
+	arguments to Unicode   A couple of minor opts for depsolving, in
+	checkInstall and checkRemove   Minor opt. for
+	allowedMultipleInstalls() and pkg.*_names callers   Fix
+	rpmdb.simpleVersion() to ignore gpg-pubkeys, dito. returnPackages()
+	Add utf8* calls for history, which is the minimum for real i18n
+	there.
+
+2009-11-02  Seth Vidal <skvidal@fedoraproject.org>
+
+	* yum/depsolve.py: remove the repoid check as it seems to be causing
+	more problems than it solves
+
+2009-11-02  James Antill <james@and.org>
+
+	* yum/depsolve.py: Remove the repoid check, the base name check is
+	"better" and this kills it
+
+2009-11-02  James Antill <james@and.org>
+
+	* yum/comps.py: Only search through non-locale group names, if we
+	didn't match anything
+
+2009-10-31  Ville Skyttä <ville.skytta@iki.fi>
+
+	* yum/comps.py: Match only current language instead of all in
+	group/category searches.
+
+2009-10-30  James Antill <james@and.org>
+
+	* yum/packages.py, yum/sqlitesack.py, yum/transactioninfo.py:  Big speed boost for depsolving "large" transactions.   We keep a
+	 PackageSack() of what was added to the transaction, so we don't
+	 have to query everything in all pkgSacks for every
+	 getProvides()/getRequires().   So that we don't have to download
+	 filelists, we create our own PackageSack() and use .simpleFiles()
+	 ... however in sqlitesack .simpleFiles() doesn't have an index, so
+	 we have to create one or perf. goes out the window (simple patch to
+	 y-m-p to fix that though).   This are the differences on my box:
+	 before  ------  yum up tzdata                        =  4.132 yum
+	 upD glibc                        =  5.889 yum upD
+	 = 25.964 yum upD --disablerepo=fedora,updates = 18.628 yum upT
+	 =  7.326   after  -----  yum up tzdata                        =
+	 3.996 =  ~2.5% yum upD glibc                        =  5.590 =  ~5%
+	 yum upD                              = 19.550 = ~25% yum upD
+	 --disablerepo=fedora,updates = 16.830 = ~10% yum upT
+	 =  6.537 = ~10%   Currently keeping the old code as default, until
+	 pkgfiles index makes it out there.
+
+2009-10-31  Ville Skyttä <ville.skytta@iki.fi>
+
+	* etc/yum.bash: Move group name bash completion to separate function
+	so it can be used in other tools.
+
+2009-10-28  James Antill <james@and.org>
+
+	* yum/packages.py: Fix: Unicode unequal comparison failed to convert
+	both arguments to Unicode
+
+2009-10-28  James Antill <james@and.org>
+
+	* yum/depsolve.py:  A couple of minor opts for depsolving, in checkInstall and
+	 checkRemove   checkInstall: Don't filter out requires that we
+	 provide, as it's done at createrepo time now.   checkRemove: If we
+	 have a req. we don't provide, check the things that update/obsolete
+	 us for it first.
+
+2009-10-28  James Antill <james@and.org>
+
+	* yum/depsolve.py, yum/packages.py: Minor opt. for
+	allowedMultipleInstalls() and pkg.*_names callers
+
+2009-10-27  James Antill <james@and.org>
+
+	* rpmUtils/transaction.py, yum/rpmsack.py:  Fix rpmdb.simpleVersion() to ignore gpg-pubkeys, dito.
+	 returnPackages()   Dito. searchPrco() etc.   Add a new rpmdb only
+	 method: rpmdb.returnGPGPubkeyPackages() ... so that keys-remove can
+	 work.
+
+2009-10-27  James Antill <james@and.org>
+
+	* output.py: Add utf8* calls for history, which is the minimum for
+	real i18n there.
+
+2009-10-29  Seth Vidal <skvidal@fedoraproject.org>
+
+	* yum/__init__.py: not unicide, unicode - though sometimes it makes
+	me feel like that
+
+2009-10-29  Seth Vidal <skvidal@fedoraproject.org>
+
+	* yum/__init__.py: and make sure the url and exception are using the
+	'proper' ones.
+
+2009-10-29  Seth Vidal <skvidal@fedoraproject.org>
+
+	* yum/__init__.py: fix for
+	https://bugzilla.redhat.com/show_bug.cgi?id=531781  when grabbing
+	gpg keys - if they are not what they should be don't traceback throw
+	up a yumbaserror like we would if they are not found.
+
+2009-10-28  Ville Skyttä <ville.skytta@iki.fi>
+
+	* yum/misc.py: Simplify re_full_search_needed "primary" regex.
+
+2009-10-17  Ville Skyttä <ville.skytta@iki.fi>
+
+	* yum/misc.py: Cache regex match/search function instead of the
+	regex for a small speedup.
+
+2009-10-17  Ville Skyttä <ville.skytta@iki.fi>
+
+	* yum/misc.py: Treat square brackets same way in
+	re_full_search_needed and refineSearchPattern as in re_glob.
+
+2009-10-17  Ville Skyttä <ville.skytta@iki.fi>
+
+	* yum/misc.py, yum/yumRepo.py: Simplify some regexps.
+
+2009-10-28  Seth Vidal <skvidal@fedoraproject.org>
+
+	* yum/packages.py: cleanup a few debug prints and check against
+	ghostlists as well.
+
+2009-10-28  Seth Vidal <skvidal@fedoraproject.org>
+
+	* yum/packages.py: also remove filerequires if we have the file
+
+2009-10-28  Seth Vidal <skvidal@fedoraproject.org>
+
+	* yum/packages.py: - don't include requirements in the metadata when the pkg provides
+	it   for itself.
+
+2009-10-27  James Antill <james@and.org>
+
+	* output.py: Usernames can contain unicode, so make them unicode.
+	Fixes BZ 531338
+
+2009-10-27  Ville Skyttä <ville.skytta@iki.fi>
+
+	* cli.py: Make 'Matched:' section markers translatable.
+
+2009-10-26  Ville Skyttä <ville.skytta@iki.fi>
+
+	* cli.py: Print search strings in the order they were passed.
+
+2009-10-26  Ville Skyttä <ville.skytta@iki.fi>
+
+	* yum/__init__.py: Improve relevance ordering of search results.
+	Weigh criteria descending based on order they're given in, and take
+	into account the number of fields hit by each combination as well.
+
+2009-10-20  James Antill <james@and.org>
+
+	* yum/yumRepo.py: Get rid of unused block of code
+
+2009-10-26  Ville Skyttä <ville.skytta@iki.fi>
+
+	* yum/__init__.py: Remove unused variable.
+
+2009-10-23  Ville Skyttä <ville.skytta@iki.fi>
+
+	* cli.py, docs/yum.8: Clarify that -C uses the system cache, not the
+	user one.  http://yum.baseurl.org/ticket/310
+
+2009-10-23  Ville Skyttä <ville.skytta@iki.fi>
+
+	* etc/yum.bash: Remove stale TODO.
+
+2009-10-23  Ville Skyttä <ville.skytta@iki.fi>
+
+	* yum/sqlitesack.py: Fix SQLite names-only simplePkgList.  Thanks to
+	James Antill for pointing out a return type issue in the original
+	patch.
+
+2009-10-23  Ville Skyttä <ville.skytta@iki.fi>
+
+	* etc/Makefile, etc/yum.bash, yum.spec: Add bash completion.  Should
+	work with bash >= 3; does not require bash-completion but uses a few
+	functions from it if available.
+
+2009-10-23  Ville Skyttä <ville.skytta@iki.fi>
+
+	* .gitignore: Tell git to ignore tarballs.
+
+2009-10-20  Tim Lauridsen <timlau@fedoraproject.org>
+
+	* yum/yumRepo.py: fix pylint error ************* Module yum.yumRepo
+	E0602:1360:YumRepository._commonRetrieveDataMD: Undefined variable
+	'download_no_size'
+
+2009-10-20  Tim Lauridsen <timlau@fedoraproject.org>
+
+	* yum/mdparser.py: pylint: fix syntax error (missing comma)
+
+2009-10-20  Tim Lauridsen <timlau@fedoraproject.org>
+
+	* yummain.py: fixed unused imports
+
+2009-10-20  Tim Lauridsen <timlau@fedoraproject.org>
+
+	Merge branch 'yum-3_2_X' of
+	ssh://yum.baseurl.org/srv/projects/yum/git/yum into yum-3_2_X
+
+2009-10-17  Ville Skyttä <ville.skytta@iki.fi>
+
+	* cli.py, yum/comps.py, yum/depsolve.py: Replace some cmp based
+	sorts with key based ones.
+
+2009-10-18  James Antill <james@and.org>
+
+	* yum/depsolve.py: Minor speedup/cleanup for isPkgInstalled().
+
+2009-10-17  James Antill <james@and.org>
+
+	* yum/depsolve.py:  Is base package name installed, added as a compare_providers test
+	 Should fix the problem that ticket/296 has   Also add debug output
+	 for reqpo common repoid comparison.   Also bump the nudge from 2 to
+	 8, so it should nudge past shortest   name.
+
+2009-10-17  James Antill <james@and.org>
+
+	* yum/packages.py:  Add .base_package_name, which parses .sourcerpm or uses .name
+	 This is added to RpmBase, so we can do it for installed pkgs too,
+	 we could move it even higher as it only actually needs .name to
+	 work.   Also get rid of an extra .isSrpm() call.
+
+2009-10-17  Ville Skyttä <ville.skytta@iki.fi>
+
+	* po/.gitignore: Ignore *.mo.
+
+2009-10-16  James Antill <james@and.org>
+
+	* output.py: Use yumdb_info.from_repo in listTransaction for removes
+
+
+2009-10-15  James Antill <james@and.org>
+
+	* yum/rpmsack.py:  Minor speedup in rpmdb._search().   Don't compare name, because
+	 we've already done it if it's not None.   Reorder the rest of the
+	 pkgtup comparison to fail quicker.
+
+2009-10-17  Ville Skyttä <ville.skytta@iki.fi>
+
+	* yum/misc.py: Don't trigger a full search for everything starting
+	with a digit.
+
+2009-10-17  Ville Skyttä <ville.skytta@iki.fi>
+
+	* yum/sqlitesack.py: Comment spelling fix, remove another stale one.
+
+
+2009-10-17  Tim Lauridsen <timlau@fedoraproject.org>
+
+	* utils.py, yummain.py:  Add yum locking to YumUtilsBase  move the locking process
+	 information from yummain.py into utils.py, so we  can't share it
+	 and have the same output for both yum-cli and yum-utils tools
+	 using YumUtilsBase.
+
+2009-10-17  Tim Lauridsen <timlau@fedoraproject.org>
+
+	* po/ca.po, po/cs.po, po/da.po, po/de.po, po/es.po, po/fr.po,
+	po/it.po, po/ja.po, po/ms.po, po/nb.po, po/pl.po, po/pt.po,
+	po/pt_BR.po, po/ru.po, po/sr.po, po/sr@latin.po, po/sv.po,
+	po/yum.pot, po/zh_CN.po: Refreshed po and pot files
+
+2009-10-16  Ville Skyttä <ville.skytta@iki.fi>
+
+	* yum/yumRepo.py: Fix traceback when downloading one MD w/size.
+
+2009-10-02  Ville Skyttä <ville.skytta@iki.fi>
+
+	* yum/mdparser.py: Deprecate has_key() in favour of "in" for
+	metadata entries.  As a side effect, entries are now iterable.
+
+2009-10-16  Seth Vidal <skvidal@fedoraproject.org>
+
+	* yum/depsolve.py: bump the score of a provider in compare_provider
+	if the reqpo pkg and it have the same repository.
+
+2009-10-15  James Antill <james@and.org>
+
+	Merge branch 'group-md-downloads' into yum-3_2_X  *
+	group-md-downloads:   Group MD downloads, and use the length to give
+	total size.
+
+2009-10-15  James Antill <james@and.org>
+
+	* yum/rpmsack.py: Remove rpmdb version of contains(), the
+	PackageSackBase one is identical
+
+2009-10-15  Tim Lauridsen <timlau@fedoraproject.org>
+
+	* po/cs.po: cz translation update by Adam Pribyl
+
+2009-10-14  Seth Vidal <skvidal@fedoraproject.org>
+
+	* ChangeLog: merge changelog
+
 2009-10-14  Seth Vidal <skvidal@fedoraproject.org>
 
 	* yum.spec, yum/__init__.py: mark as 3.2.25
@@ -84,6 +1456,16 @@
 2009-10-13  Tim Lauridsen <timlau@fedoraproject.org>
 
 	* yum/history.py: fix pylint error (misc. used in line #111)
+
+2009-10-12  James Antill <james@and.org>
+
+	* yum/yumRepo.py:  Group MD downloads, and use the length to give total size.   1. We
+	 group all MD that has a size, and report the total size to the
+	 user. This is more code than you'd think due to some entries not
+	 having size.   2. We now also check mdpolicy, even if the
+	 repomd.xml is the latest     according to metalink.  ...this is
+	 mainly UI atm., but is also one step on the road to doing multiple
+	 MD downloads at once.
 
 2009-10-12  Seth Vidal <skvidal@fedoraproject.org>
 
@@ -10251,16 +11633,5 @@
 
 2007-05-16  Seth Vidal <skvidal@linux.duke.edu>
 
-	* yum.spec, yum/__init__.py: mark as 3.2.0
-
-2007-05-16  Seth Vidal <skvidal@linux.duke.edu>
-
-	* fix from Christoph Thiel and Jan Matejek "The problem is that when
-	precompiling python files, the compiler needs to know their "base
-	path" which will be used in debug outputs (such as the backtrace).
-	Without this patch, makefile sets $(PYDIR) as the base path, but
-	$(PYDIR) isn't defined and the base path stays empty. (some of our
-	python builds apparently can't deal with it and use PIL's base path
-	instead) The patch replaces $(PYDIR) with correct value, $(PKGDIR)."
-
+	* mark as 3.2.0
 
