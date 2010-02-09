@@ -4097,7 +4097,7 @@ class YumBase(depsolve.Depsolve):
                                 continue
                             if numleft == 0:
                                 break
-                            toremove.append([po,m])
+                            toremove.append((po,m))
                             numleft -= 1
                         
         for po,rel in toremove:
