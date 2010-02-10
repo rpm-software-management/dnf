@@ -92,7 +92,7 @@ def get_process_info(pid):
     ps['start_time'] = boot_time + jiffies_to_seconds(ps_stat[21])
     ps['state'] = {'R' : _('Running'),
                    'S' : _('Sleeping'),
-                   'D' : _('Uninteruptable'),
+                   'D' : _('Uninterruptible'),
                    'Z' : _('Zombie'),
                    'T' : _('Traced/Stopped')
                    }.get(ps_stat[2], _('Unknown'))
