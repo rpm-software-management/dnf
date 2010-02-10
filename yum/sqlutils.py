@@ -173,3 +173,27 @@ else:
     executeSQL = executeSQLPyFormat
 
 
+def sql_esc(pattern):
+    """ Apply SQLite escaping, if needed. Returns pattern and esc. """
+    esc = ''
+    if "_" in pattern or "%" in pattern:
+        esc = ' ESCAPE "!"'
+        pattern = pattern.replace("!", "!!")
+        pattern = pattern.replace("%", "!%")
+        pattern = pattern.replace("_", "!_")
+    return (pattern, esc)
+
+def sql_esc_glob(patterns):
+    """ Converts patterns to SQL LIKE format, if required (or gives up if
+        not possible). """
+    ret = []
+    for pattern in patterns:
+        if '[' in pattern: # LIKE only has % and _, so [abc] can't be done.
+            return []      # So Load everything
+
+        # Convert to SQL LIKE format
+        (pattern, esc) = sql_esc(pattern)
+        pattern = pattern.replace("*", "%")
+        pattern = pattern.replace("?", "_")
+        ret.append((pattern, esc))
+    return ret

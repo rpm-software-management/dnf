@@ -18,7 +18,7 @@
 # parse sqlite tag database
 # return pkgnames and tag that was matched
 import sqlite3 as sqlite
-from sqlutils import executeSQL
+from sqlutils import executeSQL, sql_esc, sql_esc_glob
 from Errors import PkgTagsError
 import sqlutils
 import sys
@@ -68,8 +68,9 @@ class PackageTagDB(object):
         """Search by tag name/glob
            Return dict of dict[packagename] = [stringmatched, stringmatched, ...]"""
         res = {}
-        tag = '%%%s%%' % tag
-        query = "SELECT name, tag, score FROM packagetags where tag like ?"
+        (tag, esc) = sql_esc(tag)
+        query = "SELECT name, tag, score FROM packagetags where tag like ? %s" % esc
+        tag = '%' + tag + '%' 
         rows = self._sql_exec(query, (tag,))
         for (name, tag, score) in rows:
             if name not in res:
@@ -82,8 +83,9 @@ class PackageTagDB(object):
         """Search by package name/glob.
            Return dict of dict[packagename] = [tag1, tag2, tag3, tag4, ...]"""
         res = {}
-        name = '%%%s%%' % name
-        query = "SELECT name, tag, score FROM packagetags where name like ?"
+        (name, esc) = sql_esc(tag)
+        query = "SELECT name, tag, score FROM packagetags where name like ?%s " % esc
+        name = '%' + name + '%' 
         rows = self._sql_exec(query, (name,))
         for (name, tag, score) in rows:
             if name not in res:

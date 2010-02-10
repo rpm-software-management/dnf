@@ -22,7 +22,7 @@ import os, os.path
 import glob
 from weakref import proxy as weakref
 
-from sqlutils import sqlite, executeSQL
+from sqlutils import sqlite, executeSQL, sql_esc, sql_esc_glob
 import yum.misc as misc
 import yum.constants
 from yum.constants import *
@@ -55,31 +55,6 @@ _sttxt2stcode = {'Update' : TS_UPDATE,
                  'Obsoleted' : TS_OBSOLETED,
                  'Obsoleting' : TS_OBSOLETING}
 
-# ---- horrible Copy and paste from sqlitesack ----
-def _sql_esc(pattern):
-    """ Apply SQLite escaping, if needed. Returns pattern and esc. """
-    esc = ''
-    if "_" in pattern or "%" in pattern:
-        esc = ' ESCAPE "!"'
-        pattern = pattern.replace("!", "!!")
-        pattern = pattern.replace("%", "!%")
-        pattern = pattern.replace("_", "!_")
-    return (pattern, esc)
-
-def _sql_esc_glob(patterns):
-    """ Converts patterns to SQL LIKE format, if required (or gives up if
-        not possible). """
-    ret = []
-    for pattern in patterns:
-        if '[' in pattern: # LIKE only has % and _, so [abc] can't be done.
-            return []      # So Load everything
-
-        # Convert to SQL LIKE format
-        (pattern, esc) = _sql_esc(pattern)
-        pattern = pattern.replace("*", "%")
-        pattern = pattern.replace("?", "_")
-        ret.append((pattern, esc))
-    return ret
 
 def _setupHistorySearchSQL(patterns=None, ignore_case=False):
     """Setup need_full and patterns for _yieldSQLDataList, also see if
@@ -104,7 +79,7 @@ def _setupHistorySearchSQL(patterns=None, ignore_case=False):
     if len(patterns) > pat_max:
         patterns = []
     if ignore_case:
-        patterns = _sql_esc_glob(patterns)
+        patterns = sql_esc_glob(patterns)
     else:
         tmp = []
         need_glob = False

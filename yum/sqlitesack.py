@@ -28,7 +28,7 @@ from packages import PackageObject, RpmBase, YumAvailablePackage, parsePackages
 import Errors
 import misc
 
-from sqlutils import executeSQL
+from sqlutils import executeSQL, sql_esc, sql_esc_glob
 import rpmUtils.miscutils
 import sqlutils
 import constants
@@ -812,32 +812,6 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
             pkgs.append(pkg)
         return pkgs
 
-    @staticmethod
-    def _sql_esc(pattern):
-        """ Apply SQLite escaping, if needed. Returns pattern and esc. """
-        esc = ''
-        if "_" in pattern or "%" in pattern:
-            esc = ' ESCAPE "!"'
-            pattern = pattern.replace("!", "!!")
-            pattern = pattern.replace("%", "!%")
-            pattern = pattern.replace("_", "!_")
-        return (pattern, esc)
-
-    def _sql_esc_glob(self, patterns):
-        """ Converts patterns to SQL LIKE format, if required (or gives up if
-            not possible). """
-        ret = []
-        for pattern in patterns:
-            if '[' in pattern: # LIKE only has % and _, so [abc] can't be done.
-                return []      # So Load everything
-
-            # Convert to SQL LIKE format
-            (pattern, esc) = self._sql_esc(pattern)
-            pattern = pattern.replace("*", "%")
-            pattern = pattern.replace("?", "_")
-            ret.append((pattern, esc))
-        return ret
-
     def _skip_all(self):
         """ Are we going to skip every package in all our repos? """
         skip_all = True
@@ -917,12 +891,12 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
         sql_params = []
         dirname_check = ""
         if not glob:
-            (pattern, esc) = self._sql_esc(filename)
+            (pattern, esc) = sql_esc(filename)
             dirname_check = "dirname = ? and filenames LIKE ? %s and " % esc
             sql_params.append(dirname)
             sql_params.append('%' + pattern + '%')
         elif not file_glob:
-            (pattern, esc) = self._sql_esc(filename)
+            (pattern, esc) = sql_esc(filename)
             dirname_check = "dirname GLOB ? and filenames LIKE ? %s and " % esc
             sql_params.append(dirname)
             sql_params.append('%' + pattern + '%')
@@ -996,7 +970,7 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
             return result
         
         searchstring = searchstring.replace("'", "''")
-        (searchstring, esc) = self._sql_esc(searchstring)
+        (searchstring, esc) = sql_esc(searchstring)
         sql = "select DISTINCT pkgKey from packages where %s like '%%%s%%'%s " % (fields[0], searchstring, esc)
         
         for f in fields[1:]:
@@ -1042,7 +1016,7 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
         
         for s in searchstrings:         
             s = s.replace("'", "''")
-            (s, esc) = self._sql_esc(s)
+            (s, esc) = sql_esc(s)
             sql="select pkgKey,1 AS cumul from packages where %s like '%%%s%%'%s " % (fields[0], s, esc)
             for f in fields[1:]:
                 sql = "%s or %s like '%%%s%%'%s " % (sql, f, s, esc)
@@ -1516,7 +1490,7 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
         if len(patterns) > pat_max:
             patterns = []
         if ignore_case:
-            patterns = self._sql_esc_glob(patterns)
+            patterns = sql_esc_glob(patterns)
         else:
             tmp = []
             need_glob = False
