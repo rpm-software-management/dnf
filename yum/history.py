@@ -55,6 +55,7 @@ _sttxt2stcode = {'Update' : TS_UPDATE,
                  'Obsoleted' : TS_OBSOLETED,
                  'Obsoleting' : TS_OBSOLETING}
 
+# ---- horrible Copy and paste from sqlitesack ----
 
 def _setupHistorySearchSQL(patterns=None, ignore_case=False):
     """Setup need_full and patterns for _yieldSQLDataList, also see if
