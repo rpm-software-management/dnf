@@ -1467,7 +1467,7 @@ class YumBase(depsolve.Depsolve):
                     os.unlink(fo)
 
             if raiseError:
-                msg = _(_('Package does not match intended download. Suggestion: run yum clean metadata'))
+                msg = _('Package does not match intended download. Suggestion: run yum clean metadata')
                 raise URLGrabError(-1, msg)
             else:
                 return False
