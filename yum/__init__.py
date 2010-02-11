@@ -4101,7 +4101,7 @@ class YumBase(depsolve.Depsolve):
                             numleft -= 1
                         
         for po,rel in toremove:
-            txmbr = self.tsInfo.addErase(toremove)
+            txmbr = self.tsInfo.addErase(po)
             # Add a dep relation to the new version of the package, causing this one to be erased
             # this way skipbroken, should clean out the old one, if the new one is skipped
             txmbr.depends_on.append(rel)
