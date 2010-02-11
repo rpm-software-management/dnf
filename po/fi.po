@@ -1,49 +1,48 @@
 # Finnish translation of yum.
 # Copyright (C) 2009 yum's COPYRIGHT HOLDER
 # This file is distributed under the same license as the yum package.
-# Ville-Pekka Vainio <vpivaini@cs.helsinki.fi>, 2009.
+# Ville-Pekka Vainio <vpivaini@cs.helsinki.fi>, 2009, 2010.
 msgid ""
 msgstr ""
 "Project-Id-Version: yum\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-10-15 15:45+0200\n"
-"PO-Revision-Date: 2009-11-11 01:39+0200\n"
+"POT-Creation-Date: 2010-02-10 10:43-0500\n"
+"PO-Revision-Date: 2010-02-11 21:50+0200\n"
 "Last-Translator: Ville-Pekka Vainio <vpivaini@cs.helsinki.fi>\n"
 "Language-Team: Finnish <laatu@lokalisointi.org>\n"
-"Language: fi\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Virtaal 0.4.1\n"
 
-#: ../callback.py:48 ../output.py:940 ../yum/rpmtrans.py:71
+#: ../callback.py:48 ../output.py:947 ../yum/rpmtrans.py:72
 msgid "Updating"
 msgstr "Päivitetään"
 
-#: ../callback.py:49 ../yum/rpmtrans.py:72
+#: ../callback.py:49 ../yum/rpmtrans.py:73
 msgid "Erasing"
 msgstr "Poistetaan"
 
-#: ../callback.py:50 ../callback.py:51 ../callback.py:53 ../output.py:939
-#: ../yum/rpmtrans.py:73 ../yum/rpmtrans.py:74 ../yum/rpmtrans.py:76
+#: ../callback.py:50 ../callback.py:51 ../callback.py:53 ../output.py:946
+#: ../output.py:1659 ../yum/rpmtrans.py:74 ../yum/rpmtrans.py:75
+#: ../yum/rpmtrans.py:77
 msgid "Installing"
 msgstr "Asennetaan"
 
-#: ../callback.py:52 ../callback.py:58 ../yum/rpmtrans.py:75
+#: ../callback.py:52 ../callback.py:58 ../output.py:1484 ../yum/rpmtrans.py:76
 msgid "Obsoleted"
 msgstr "Vanhennettu"
 
-#: ../callback.py:54 ../output.py:1063 ../output.py:1403
+#: ../callback.py:54 ../output.py:1070 ../output.py:1442 ../output.py:1491
 msgid "Updated"
 msgstr "Päivitetty"
 
-#: ../callback.py:55 ../output.py:1399
+#: ../callback.py:55 ../output.py:1438
 msgid "Erased"
 msgstr "Poistettu"
 
-#: ../callback.py:56 ../callback.py:57 ../callback.py:59 ../output.py:1061
-#: ../output.py:1395
+#: ../callback.py:56 ../callback.py:57 ../callback.py:59 ../output.py:1068
+#: ../output.py:1434 ../output.py:1646
 msgid "Installed"
 msgstr "Asennettu"
 
@@ -65,69 +64,74 @@ msgstr "Virhe: virheellinen tulostetila: %s, paketti %s"
 msgid "Erased: %s"
 msgstr "Poistettiin: %s"
 
-#: ../callback.py:217 ../output.py:941
+#: ../callback.py:217 ../output.py:948 ../output.py:1648
 msgid "Removing"
 msgstr "Poistetaan"
 
-#: ../callback.py:219 ../yum/rpmtrans.py:77
+#: ../callback.py:219 ../yum/rpmtrans.py:78
 msgid "Cleanup"
 msgstr "Siivotaan"
 
-#: ../cli.py:106
+#: ../cli.py:107
 #, python-format
 msgid "Command \"%s\" already defined"
 msgstr "Komento ”%s” on jo määritelty"
 
-#: ../cli.py:118
+#: ../cli.py:119
 msgid "Setting up repositories"
 msgstr "Tehdään asennuslähdeasetuksia"
 
-#: ../cli.py:129
+#: ../cli.py:130
 msgid "Reading repository metadata in from local files"
 msgstr "Luetaan asennuslähteiden metadataa paikallisista tiedostoista"
 
-#: ../cli.py:192 ../utils.py:107
+#: ../cli.py:194 ../utils.py:193
 #, python-format
 msgid "Config Error: %s"
 msgstr "Asetusvirhe: %s"
 
-#: ../cli.py:195 ../cli.py:1251 ../utils.py:110
+#: ../cli.py:197 ../cli.py:1272 ../utils.py:196
 #, python-format
 msgid "Options Error: %s"
 msgstr "Valitsinvirhe: %s"
 
-#: ../cli.py:223
+#: ../cli.py:227
 #, python-format
 msgid "  Installed: %s-%s at %s"
 msgstr "  Asennettiin : %s-%s ajassa %s"
 
-#: ../cli.py:225
+#: ../cli.py:229
 #, python-format
 msgid "  Built    : %s at %s"
 msgstr "  Käännettiin : %s ajassa %s"
 
 # mitä on "commit" suomeksi?
-#: ../cli.py:227
+#: ../cli.py:231
 #, python-format
 msgid "  Committed: %s at %s"
 msgstr "  Suoritettiin: %s ajassa %s"
 
-#: ../cli.py:266
+#: ../cli.py:270
 msgid "You need to give some command"
 msgstr "Jokin komento on annettava"
 
-#: ../cli.py:309
+#: ../cli.py:284
+#, python-format
+msgid "No such command: %s. Please use %s --help"
+msgstr "Komentoa %s ei ole olemassa. Käytä komentoa %s --help"
+
+#: ../cli.py:314
 msgid "Disk Requirements:\n"
 msgstr "Vaadittu levytila:\n"
 
-#: ../cli.py:311
+#: ../cli.py:316
 #, python-format
-msgid "  At least %dMB needed on the %s filesystem.\n"
+msgid "  At least %dMB more space needed on the %s filesystem.\n"
 msgstr "  Vähintään %d Mt levytilaa tarvitaan tiedostojärjestelmällä %s.\n"
 
 #. TODO: simplify the dependency errors?
 #. Fixup the summary
-#: ../cli.py:316
+#: ../cli.py:321
 msgid ""
 "Error Summary\n"
 "-------------\n"
@@ -135,65 +139,61 @@ msgstr ""
 "Yhteenveto virheistä\n"
 "--------------------\n"
 
-#: ../cli.py:359
+#: ../cli.py:364
 msgid "Trying to run the transaction but nothing to do. Exiting."
 msgstr ""
 "Yritettiin suorittaa transaktio, mutta ei ole mitään tehtävää. Lopetetaan."
 
-#: ../cli.py:395
+#: ../cli.py:403
 msgid "Exiting on user Command"
 msgstr "Lopetetaan, käyttäjä antoi lopetuskomennon"
 
-#: ../cli.py:399
+#: ../cli.py:407
 msgid "Downloading Packages:"
 msgstr "Ladataan paketteja:"
 
-#: ../cli.py:404
+#: ../cli.py:412
 msgid "Error Downloading Packages:\n"
 msgstr "Virhe pakettien latauksessa:\n"
 
-#: ../cli.py:418 ../yum/__init__.py:4014
+#: ../cli.py:426 ../yum/__init__.py:4194
 msgid "Running rpm_check_debug"
 msgstr "Suoritetaan rpm_check_debug"
 
-#: ../cli.py:427 ../yum/__init__.py:4023
+#: ../cli.py:435 ../yum/__init__.py:4203
 msgid "ERROR You need to update rpm to handle:"
 msgstr "VIRHE RPM on päivitettävä, jotta se osaa käsitellä:"
 
-#: ../cli.py:429 ../yum/__init__.py:4026
+#: ../cli.py:437 ../yum/__init__.py:4206
 msgid "ERROR with rpm_check_debug vs depsolve:"
 msgstr "VIRHE rpm_check_debugin ja riippuvuuksien tarkistuksen välillä:"
 
-#: ../cli.py:435
+#: ../cli.py:443
 msgid "RPM needs to be updated"
 msgstr "RPM on päivitettävä"
 
-#: ../cli.py:436
+#: ../cli.py:444
 #, python-format
 msgid "Please report this error in %s"
 msgstr "Ilmoita tästä ongelmasta osoitteeseen %s"
 
-#: ../cli.py:442
+#: ../cli.py:450
 msgid "Running Transaction Test"
 msgstr "Suoritetaan transaktiotestiä"
 
-#: ../cli.py:458
-msgid "Finished Transaction Test"
-msgstr "Transaktiotesti valmistui"
-
-#: ../cli.py:460
+#: ../cli.py:466
 msgid "Transaction Check Error:\n"
 msgstr "Transaktiotarkistuksen virhe:\n"
 
-#: ../cli.py:467
+#: ../cli.py:473
 msgid "Transaction Test Succeeded"
 msgstr "Transaktiotesti onnistui"
 
-#: ../cli.py:489
+#: ../cli.py:495
 msgid "Running Transaction"
 msgstr "Suoritetaan transaktiota"
 
-#: ../cli.py:519
+#: ../cli.py:525
 msgid ""
 "Refusing to automatically import keys when running unattended.\n"
 "Use \"-y\" to override."
@@ -201,80 +201,85 @@ msgstr ""
 "Avaimia ei tuoda automaattisesti, kun yumia suoritetaan ilman valvontaa.\n"
 "Käytä valitsinta ”-y” tämän muuttamiseksi."
 
-#: ../cli.py:538 ../cli.py:572
+#: ../cli.py:544 ../cli.py:578
 msgid "  * Maybe you meant: "
 msgstr "  * Tarkoititko: "
 
-#: ../cli.py:555 ../cli.py:563
+#: ../cli.py:561 ../cli.py:569
 #, python-format
 msgid "Package(s) %s%s%s available, but not installed."
 msgstr ""
 "Paketti tai paketit %s%s%s ovat saatavilla, mutta niitä ei ole asennettu."
 
-#: ../cli.py:569 ../cli.py:600 ../cli.py:678
+#: ../cli.py:575 ../cli.py:607 ../cli.py:687
 #, python-format
 msgid "No package %s%s%s available."
 msgstr "Pakettia %s%s%s ei ole saatavilla."
 
-#: ../cli.py:605 ../cli.py:738
+#: ../cli.py:612 ../cli.py:748
 msgid "Package(s) to install"
 msgstr "Asennettavat paketit"
 
-#: ../cli.py:606 ../cli.py:684 ../cli.py:717 ../cli.py:739
-#: ../yumcommands.py:159
+#: ../cli.py:613 ../cli.py:693 ../cli.py:727 ../cli.py:749
+#: ../yumcommands.py:160
 msgid "Nothing to do"
 msgstr "Ei mitään tehtävää"
 
-#: ../cli.py:639
+#: ../cli.py:647
 #, python-format
 msgid "%d packages marked for Update"
 msgstr "%d pakettia merkitty päivitettäväksi"
 
-#: ../cli.py:642
+#: ../cli.py:650
 msgid "No Packages marked for Update"
 msgstr "Yhtään pakettia ei ole merkitty päivitettäväksi"
 
-#: ../cli.py:656
+#: ../cli.py:664
 #, python-format
 msgid "%d packages marked for removal"
 msgstr "%d pakettia merkitty poistettavaksi"
 
-#: ../cli.py:659
+#: ../cli.py:667
 msgid "No Packages marked for removal"
 msgstr "Yhtään pakettia ei ole merkitty poistettavaksi"
 
-#: ../cli.py:683
+#: ../cli.py:692
 msgid "Package(s) to downgrade"
 msgstr "Vanhennettavat paketit"
 
-#: ../cli.py:707
+#: ../cli.py:717
 #, python-format
 msgid " (from %s)"
 msgstr " (versiosta %s)"
 
-#: ../cli.py:709
+#: ../cli.py:719
 #, python-format
 msgid "Installed package %s%s%s%s not available."
 msgstr "Asennettua pakettia %s%s%s%s ei ole saatavilla."
 
-#: ../cli.py:716
+#: ../cli.py:726
 msgid "Package(s) to reinstall"
 msgstr "Uudelleenasennettavat paketit"
 
-#: ../cli.py:729
+#: ../cli.py:739
 msgid "No Packages Provided"
 msgstr "Yhtään pakettia ei annettu"
 
-#: ../cli.py:813
+#: ../cli.py:818
+#, python-format
+msgid "Matched: %s"
+msgstr "Löytyi: %s"
+
+#: ../cli.py:825
 #, python-format
 msgid "Warning: No matches found for: %s"
 msgstr "Varoitus: hakutuloksia ei löytynyt hakusanalle %s"
 
-#: ../cli.py:816
+#: ../cli.py:828
 msgid "No Matches found"
 msgstr "Hakutuloksia ei löytynyt"
 
-#: ../cli.py:855
+#: ../cli.py:868
 #, python-format
 msgid ""
 "Warning: 3.0.x versions of yum would erroneously match against filenames.\n"
@@ -285,109 +290,113 @@ msgstr ""
 " Hakusanoilla ”%s*/%s%s” ja/tai ”%s*bin/%s%s” saadaan niitä vastaava "
 "toiminta."
 
-#: ../cli.py:871
+#: ../cli.py:884
 #, python-format
 msgid "No Package Found for %s"
 msgstr "Hakusanalla %s ei löytynyt pakettia"
 
-#: ../cli.py:883
+#: ../cli.py:896
 msgid "Cleaning up Everything"
 msgstr "Siivotaan kaikki"
 
-#: ../cli.py:897
+#: ../cli.py:912
 msgid "Cleaning up Headers"
 msgstr "Siivotaan otsakkeet"
 
-#: ../cli.py:900
+#: ../cli.py:915
 msgid "Cleaning up Packages"
 msgstr "Siivotaan paketit"
 
-#: ../cli.py:903
+#: ../cli.py:918
 msgid "Cleaning up xml metadata"
 msgstr "Siivotaan XML-metadata"
 
-#: ../cli.py:906
+#: ../cli.py:921
 msgid "Cleaning up database cache"
 msgstr "Siivotaan tiedokannan välimuisti"
 
-#: ../cli.py:909
+#: ../cli.py:924
 msgid "Cleaning up expire-cache metadata"
 msgstr "Siivotaan välimuistin vanhentumiseen liittyvä metadata"
 
-#: ../cli.py:912
+#: ../cli.py:927
+msgid "Cleaning up cached rpmdb data"
+msgstr "Siivotaan välimuistissa oleva rpm-tietokannan data"
+
+#: ../cli.py:930
 msgid "Cleaning up plugins"
 msgstr "Siivotaan liitännäiset"
 
-#: ../cli.py:937
+#: ../cli.py:955
 msgid "Installed Groups:"
 msgstr "Asennetut ryhmät:"
 
-#: ../cli.py:949
+#: ../cli.py:967
 msgid "Available Groups:"
 msgstr "Saatavilla olevat ryhmät:"
 
-#: ../cli.py:959
+#: ../cli.py:977
 msgid "Done"
 msgstr "Valmis"
 
-#: ../cli.py:970 ../cli.py:988 ../cli.py:994 ../yum/__init__.py:2629
+#: ../cli.py:988 ../cli.py:1006 ../cli.py:1012 ../yum/__init__.py:2787
 #, python-format
 msgid "Warning: Group %s does not exist."
 msgstr "Varoitus: Ryhmää %s ei ole olemassa."
 
-#: ../cli.py:998
+#: ../cli.py:1016
 msgid "No packages in any requested group available to install or update"
 msgstr ""
 "Missään pyydetyssä ryhmässä ei ole yhtään asennettavaa tai päivitettävää "
 "pakettia"
 
-#: ../cli.py:1000
+#: ../cli.py:1018
 #, python-format
 msgid "%d Package(s) to Install"
 msgstr "%d pakettia asennettavana"
 
-#: ../cli.py:1010 ../yum/__init__.py:2641
+#: ../cli.py:1028 ../yum/__init__.py:2799
 #, python-format
 msgid "No group named %s exists"
 msgstr "Ryhmää nimeltä %s ei ole olemassa"
 
-#: ../cli.py:1016
+#: ../cli.py:1034
 msgid "No packages to remove from groups"
 msgstr "Ei yhtään poistettavaa pakettia ryhmien perusteella"
 
-#: ../cli.py:1018
+#: ../cli.py:1036
 #, python-format
 msgid "%d Package(s) to remove"
 msgstr "%d poistettavaa pakettia"
 
-#: ../cli.py:1060
+#: ../cli.py:1078
 #, python-format
 msgid "Package %s is already installed, skipping"
 msgstr "Paketti %s on jo asennettu, ohitetaan"
 
-#: ../cli.py:1071
+#: ../cli.py:1089
 #, python-format
 msgid "Discarding non-comparable pkg %s.%s"
 msgstr "Hylätään paketti %s.%s, jota ei voi verrata"
 
 #. we've not got any installed that match n or n+a
-#: ../cli.py:1097
+#: ../cli.py:1115
 #, python-format
 msgid "No other %s installed, adding to list for potential install"
 msgstr ""
 "Toista pakettia nimeltä %s ei ole asennettuna, lisätään mahdollisesti "
 "asennettavien luetteloon"
 
-#: ../cli.py:1117
+#: ../cli.py:1135
 msgid "Plugin Options"
 msgstr "Liitännäisten valitsimet"
 
-#: ../cli.py:1125
+#: ../cli.py:1143
 #, python-format
 msgid "Command line error: %s"
 msgstr "Komentorivivirhe: %s"
 
-#: ../cli.py:1138
+#: ../cli.py:1156
 #, python-format
 msgid ""
 "\n"
@@ -398,109 +407,119 @@ msgstr ""
 "\n"
 "%s: valitsin %s vaatii argumentin"
 
-#: ../cli.py:1191
+#: ../cli.py:1209
 msgid "--color takes one of: auto, always, never"
 msgstr "--color vaatii yhden seuraavista argumenteista: auto, always, never"
 
-#: ../cli.py:1298
+#: ../cli.py:1319
 msgid "show this help message and exit"
 msgstr "näytä tämä ohjeviesti ja lopeta"
 
-#: ../cli.py:1302
+#: ../cli.py:1323
 msgid "be tolerant of errors"
 msgstr "hyväksy virheet"
 
-#: ../cli.py:1304
-msgid "run entirely from cache, don't update cache"
+#: ../cli.py:1326
+msgid "run entirely from system cache, don't update cache"
 msgstr "toimi kokonaan välimuistista, älä päivitä sitä"
 
-#: ../cli.py:1306
+#: ../cli.py:1329
 msgid "config file location"
 msgstr "asetustiedoston sijainti"
 
-#: ../cli.py:1308
+#: ../cli.py:1332
 msgid "maximum command wait time"
 msgstr "komennon suurin odotusaika"
 
-#: ../cli.py:1310
+#: ../cli.py:1334
 msgid "debugging output level"
 msgstr "virheenjäljitystulosteiden taso"
 
-#: ../cli.py:1314
+#: ../cli.py:1338
 msgid "show duplicates, in repos, in list/search commands"
 msgstr "näytä duplikaatit asennuslähteissä ja list/search-komennoissa"
 
-#: ../cli.py:1316
+#: ../cli.py:1340
 msgid "error output level"
 msgstr "virhetulostustaso"
 
-#: ../cli.py:1319
+#: ../cli.py:1343
+msgid "debugging output level for rpm"
+msgstr "rpm:n virheenjäljitystulosteiden taso"
+
+#: ../cli.py:1346
 msgid "quiet operation"
 msgstr "hiljainen toiminta"
 
-#: ../cli.py:1321
+#: ../cli.py:1348
 msgid "verbose operation"
 msgstr "yksityiskohtaset tulosteet"
 
-#: ../cli.py:1323
+#: ../cli.py:1350
 msgid "answer yes for all questions"
 msgstr "vastaa kyllä kaikkiin kysymyksiin"
 
-#: ../cli.py:1325
+#: ../cli.py:1352
 msgid "show Yum version and exit"
 msgstr "näytä Yumin versio ja lopeta"
 
-#: ../cli.py:1326
+#: ../cli.py:1353
 msgid "set install root"
 msgstr "aseta asennusjuuri"
 
-#: ../cli.py:1330
+#: ../cli.py:1357
 msgid "enable one or more repositories (wildcards allowed)"
 msgstr ""
 "ota käyttöön yksi tai usempi asennuslähde (jokerimerkit ovat sallittuja)"
 
-#: ../cli.py:1334
+#: ../cli.py:1361
 msgid "disable one or more repositories (wildcards allowed)"
 msgstr ""
 "poista käytöstä yksi tai usempi asennuslähde (jokerimerkit ovat sallittuja)"
 
-#: ../cli.py:1337
+#: ../cli.py:1364
 msgid "exclude package(s) by name or glob"
 msgstr "jätä pois paketteja nimen tai jokerimerkkien perusteella"
 
-#: ../cli.py:1339
+#: ../cli.py:1366
 msgid "disable exclude from main, for a repo or for everything"
 msgstr ""
 "ota pakettien pois jättäminen pois käytöstä pääasetuksille, jollekin "
 "asennuslähteelle tai kaikelle"
 
-#: ../cli.py:1342
+#: ../cli.py:1369
 msgid "enable obsoletes processing during updates"
 msgstr "ota käyttöön vanhentuneiden pakettien käsittely päivitysten aikana"
 
-#: ../cli.py:1344
+#: ../cli.py:1371
 msgid "disable Yum plugins"
 msgstr "poista Yumin liitännäiset käytöstä"
 
-#: ../cli.py:1346
+#: ../cli.py:1373
 msgid "disable gpg signature checking"
 msgstr "poista GPG-allekirjoitusten tarkistus käytöstä"
 
-#: ../cli.py:1348
+#: ../cli.py:1375
 msgid "disable plugins by name"
 msgstr "poista liitännäisiä käytöstä nimen perusteella"
 
-#: ../cli.py:1351
+#: ../cli.py:1378
 msgid "enable plugins by name"
 msgstr "ota liitännäisiä käyttöön nimen perusteella"
 
-#: ../cli.py:1354
+#: ../cli.py:1381
 msgid "skip packages with depsolving problems"
 msgstr "ohita paketit, joilla on riippuvuusongelmia"
 
-#: ../cli.py:1356
+#: ../cli.py:1383
 msgid "control whether color is used"
 msgstr "käytetäänkö värejä"
+
+#: ../cli.py:1385
+msgid "set value of $releasever in yum config and repo files"
+msgstr ""
+"aseta $releasever-muuttujan arvo yumin asetuksissa ja "
+"asennuslähdetiedostoissa"
 
 #: ../output.py:305
 msgid "Jan"
@@ -554,105 +573,104 @@ msgstr "joulu"
 msgid "Trying other mirror."
 msgstr "Kokeillaan toista peilipalvelinta."
 
-#: ../output.py:538
+#: ../output.py:534
 #, python-format
 msgid "Name       : %s%s%s"
 msgstr "Nimi            : %s%s%s"
 
-#: ../output.py:539
+#: ../output.py:535
 #, python-format
 msgid "Arch       : %s"
 msgstr "Arkkitehtuuri   : %s"
 
-#: ../output.py:541
+#: ../output.py:537
 #, python-format
 msgid "Epoch      : %s"
 msgstr "Epoch           : %s"
 
-#: ../output.py:542
+#: ../output.py:538
 #, python-format
 msgid "Version    : %s"
 msgstr "Versio          : %s"
 
-#: ../output.py:543
+#: ../output.py:539
 #, python-format
 msgid "Release    : %s"
 msgstr "Julkaisu        : %s"
 
-#: ../output.py:544
+#: ../output.py:540
 #, python-format
 msgid "Size       : %s"
 msgstr "Koko            : %s"
 
-#: ../output.py:545
+#: ../output.py:541
 #, python-format
 msgid "Repo       : %s"
 msgstr "Asennuslähde    : %s"
 
-#: ../output.py:547
+#: ../output.py:543
 #, python-format
 msgid "From repo  : %s"
 msgstr "Asennuslähteestä: %s"
 
-#: ../output.py:549
+#: ../output.py:545
 #, python-format
 msgid "Committer  : %s"
 msgstr "Tekijä          : %s"
 
-#: ../output.py:550
+#: ../output.py:546
 #, python-format
 msgid "Committime : %s"
 msgstr "Tekoaika        : %s"
 
-#: ../output.py:551
+#: ../output.py:547
 #, python-format
 msgid "Buildtime  : %s"
 msgstr "Käännösaika     : %s"
 
-#: ../output.py:553
+#: ../output.py:549
 #, python-format
 msgid "Installtime: %s"
 msgstr "Asennusaika     : %s"
 
-#: ../output.py:554
+#: ../output.py:550
 msgid "Summary    : "
 msgstr "Yhteenveto      : "
 
-#: ../output.py:556
+#: ../output.py:552
 #, python-format
 msgid "URL        : %s"
 msgstr "URL             : %s"
 
-#: ../output.py:557
-#, python-format
-msgid "License    : %s"
-msgstr "Lisenssi        : %s"
+#: ../output.py:553
+msgid "License    : "
+msgstr "Lisenssi        : "
 
-#: ../output.py:558
+#: ../output.py:554
 msgid "Description: "
 msgstr "Kuvaus: "
 
-#: ../output.py:626
+#: ../output.py:622
 msgid "y"
 msgstr "k"
 
-#: ../output.py:626
+#: ../output.py:622
 msgid "yes"
 msgstr "kyllä"
 
-#: ../output.py:627
+#: ../output.py:623
 msgid "n"
 msgstr "e"
 
-#: ../output.py:627
+#: ../output.py:623
 msgid "no"
 msgstr "ei"
 
-#: ../output.py:631
+#: ../output.py:627
 msgid "Is this ok [y/N]: "
 msgstr "Onko tämä ok [k/E]: "
 
-#: ../output.py:722
+#: ../output.py:715
 #, python-format
 msgid ""
 "\n"
@@ -661,150 +679,151 @@ msgstr ""
 "\n"
 "Ryhmä: %s"
 
-#: ../output.py:726
+#: ../output.py:719
 #, python-format
 msgid " Group-Id: %s"
 msgstr " Ryhmätunnus: %s"
 
-#: ../output.py:731
+#: ../output.py:724
 #, python-format
 msgid " Description: %s"
 msgstr " Kuvaus: %s"
 
-#: ../output.py:733
+#: ../output.py:726
 msgid " Mandatory Packages:"
 msgstr " Pakolliset paketit:"
 
-#: ../output.py:734
+#: ../output.py:727
 msgid " Default Packages:"
 msgstr " Oletuspaketit:"
 
-#: ../output.py:735
+#: ../output.py:728
 msgid " Optional Packages:"
 msgstr " Valinnaiset paketit:"
 
-#: ../output.py:736
+#: ../output.py:729
 msgid " Conditional Packages:"
 msgstr " Ehdolliset paketit:"
 
-#: ../output.py:756
+#: ../output.py:749
 #, python-format
 msgid "package: %s"
 msgstr "paketti: %s"
 
-#: ../output.py:758
+#: ../output.py:751
 msgid "  No dependencies for this package"
 msgstr "  Tällä paketilla ei ole riippuvuuksia"
 
-#: ../output.py:763
+#: ../output.py:756
 #, python-format
 msgid "  dependency: %s"
 msgstr "  riippuvuus: %s"
 
-#: ../output.py:765
+#: ../output.py:758
 msgid "   Unsatisfied dependency"
 msgstr "   Toteutumaton riippuvuus"
 
-#: ../output.py:837
+#: ../output.py:830
 #, python-format
 msgid "Repo        : %s"
 msgstr "Asennuslähde: %s"
 
-#: ../output.py:838
+#: ../output.py:831
 msgid "Matched from:"
 msgstr "Vastaavuus  :"
 
-#: ../output.py:847
+#: ../output.py:840
 msgid "Description : "
 msgstr "Kuvaus      : "
 
-#: ../output.py:850
+#: ../output.py:843
 #, python-format
 msgid "URL         : %s"
 msgstr "URL         : %s"
 
-#: ../output.py:853
+#: ../output.py:846
 #, python-format
 msgid "License     : %s"
 msgstr "Lisenssi    : %s"
 
-#: ../output.py:856
+#: ../output.py:849
 #, python-format
 msgid "Filename    : %s"
 msgstr "Tiedostonimi: %s"
 
-#: ../output.py:860
+#: ../output.py:853
 msgid "Other       : "
 msgstr "Muuta       : "
 
-#: ../output.py:893
+#: ../output.py:896
 msgid "There was an error calculating total download size"
 msgstr "Kokonaislatausmäärää laskettaessa tapahtui virhe"
 
-#: ../output.py:898
+#: ../output.py:901
 #, python-format
 msgid "Total size: %s"
 msgstr "Koko yhteensä: %s"
 
-#: ../output.py:901
+#: ../output.py:904
 #, python-format
 msgid "Total download size: %s"
 msgstr "Latausmäärä yhteensä: %s"
 
-#: ../output.py:942
+#: ../output.py:908
+#, python-format
+msgid "Installed size: %s"
+msgstr "Koko asennettuna: %s"
+
+#: ../output.py:949
 msgid "Reinstalling"
 msgstr "Asennetaan uudelleen"
 
-#: ../output.py:943
+#: ../output.py:950
 msgid "Downgrading"
 msgstr "Varhennetaan"
 
-#: ../output.py:944
+#: ../output.py:951
 msgid "Installing for dependencies"
 msgstr "Asennetaan riippuvuuksien vuoksi"
 
-#: ../output.py:945
+#: ../output.py:952
 msgid "Updating for dependencies"
 msgstr "Päivitetään riippuvuuksien vuoksi"
 
-#: ../output.py:946
+#: ../output.py:953
 msgid "Removing for dependencies"
 msgstr "Poistetaan riippuvuuksien vuoksi"
 
-#: ../output.py:953 ../output.py:1065
+#: ../output.py:960 ../output.py:1072
 msgid "Skipped (dependency problems)"
 msgstr "Ohitettiin (riippuvuusongelmia)"
 
-#: ../output.py:976
+#: ../output.py:983
 msgid "Package"
 msgstr "Paketti"
 
-#: ../output.py:976
+#: ../output.py:983
 msgid "Arch"
 msgstr "Arkkitehtuuri"
 
-#: ../output.py:977
+#: ../output.py:984
 msgid "Version"
 msgstr "Versio"
 
-#: ../output.py:977
+#: ../output.py:984
 msgid "Repository"
 msgstr "Asennuslähde"
 
-#: ../output.py:978
+#: ../output.py:985
 msgid "Size"
 msgstr "Koko"
 
-#: ../output.py:990
+#: ../output.py:997
 #, python-format
-msgid ""
-"     replacing  %s%s%s.%s %s\n"
-"\n"
-msgstr ""
-"     korvaa  %s%s%s.%s %s\n"
-"\n"
+msgid "     replacing  %s%s%s.%s %s\n"
+msgstr "     korvaa  %s%s%s.%s %s\n"
 
-#: ../output.py:999
+#: ../output.py:1006
 #, python-format
 msgid ""
 "\n"
@@ -815,7 +834,7 @@ msgstr ""
 "Transaktion yhteenveto\n"
 "%s\n"
 
-#: ../output.py:1006
+#: ../output.py:1013
 #, python-format
 msgid ""
 "Install   %5.5s Package(s)\n"
@@ -824,7 +843,7 @@ msgstr ""
 "Asennetaan           %5.5s paketti(a)\n"
 "Päivitetään          %5.5s paketti(a)\n"
 
-#: ../output.py:1015
+#: ../output.py:1022
 #, python-format
 msgid ""
 "Remove    %5.5s Package(s)\n"
@@ -835,32 +854,32 @@ msgstr ""
 "Asennetaan uudelleen %5.5s paketti(a)\n"
 "Varhennetaan         %5.5s paketti(a)\n"
 
-#: ../output.py:1059
+#: ../output.py:1066
 msgid "Removed"
 msgstr "Poistettu"
 
-#: ../output.py:1060
+#: ../output.py:1067
 msgid "Dependency Removed"
 msgstr "Poistettu riippuvuuksia"
 
-#: ../output.py:1062
+#: ../output.py:1069
 msgid "Dependency Installed"
 msgstr "Asennettu riippuvuuksia"
 
-#: ../output.py:1064
+#: ../output.py:1071
 msgid "Dependency Updated"
 msgstr "Päivitetty riippuvuuksia"
 
-#: ../output.py:1066
+#: ../output.py:1073
 msgid "Replaced"
 msgstr "Korvattu"
 
-#: ../output.py:1067
+#: ../output.py:1074
 msgid "Failed"
 msgstr "Epäonnistui"
 
 #. Delta between C-c's so we treat as exit
-#: ../output.py:1133
+#: ../output.py:1140
 msgid "two"
 msgstr "kahden"
 
@@ -868,7 +887,7 @@ msgstr "kahden"
 #. Current download cancelled, interrupt (ctrl-c) again within two seconds
 #. to exit.
 #. Where "interupt (ctrl-c) again" and "two" are highlighted.
-#: ../output.py:1144
+#: ../output.py:1151
 #, python-format
 msgid ""
 "\n"
@@ -881,209 +900,365 @@ msgstr ""
 "aikana\n"
 "ohjelman lopettamiseksi.\n"
 
-#: ../output.py:1155
+#: ../output.py:1162
 msgid "user interrupt"
 msgstr "käyttäjä keskeytti"
 
-#: ../output.py:1173
+#: ../output.py:1180
 msgid "Total"
 msgstr "Yhteensä"
 
+#: ../output.py:1202
+msgid "I"
+msgstr "A"
+
 #: ../output.py:1203
+msgid "O"
+msgstr "Vanh."
+
+#: ../output.py:1204
+msgid "E"
+msgstr "P"
+
+#: ../output.py:1205
+msgid "R"
+msgstr "U"
+
+#: ../output.py:1206
+msgid "D"
+msgstr "Varh."
+
+#: ../output.py:1207
+msgid "U"
+msgstr "P"
+
+#: ../output.py:1217
 msgid "<unset>"
 msgstr "<ei asetettu>"
 
-#: ../output.py:1204
+#: ../output.py:1218
 msgid "System"
 msgstr "Järjestelmä"
 
-#: ../output.py:1240
+#: ../output.py:1254
 msgid "Bad transaction IDs, or package(s), given"
 msgstr "Annettu virheellinen transaktiotunnus tai paketit"
 
-#: ../output.py:1284 ../yumcommands.py:1149 ../yum/__init__.py:1067
-msgid "Warning: RPMDB has been altered since the last yum transaction."
-msgstr ""
-"Varoitus: RPM-tietokantaa on muutettu edellisen yum-transaktion jälkeen."
+#: ../output.py:1266
+msgid "ID"
+msgstr "Tunniste"
 
-#: ../output.py:1289
+#: ../output.py:1267 ../output.py:1520
+msgid "Login user"
+msgstr "Kirjautunut käyttäjä"
+
+#: ../output.py:1268
+msgid "Date and time"
+msgstr "﻿Päivämäärä ja kellonaika"
+
+#: ../output.py:1269 ../output.py:1522
+msgid "Action(s)"
+msgstr "Toiminnot"
+
+#: ../output.py:1270 ../output.py:1523
+msgid "Altered"
+msgstr "Muutettu"
+
+#: ../output.py:1310
 msgid "No transaction ID given"
 msgstr "Transaktiotunnusta ei annettu"
 
-#: ../output.py:1297
+#: ../output.py:1336
 msgid "Bad transaction ID given"
 msgstr "Annettiin virheellinen transaktiotunnus"
 
-#: ../output.py:1302
+#: ../output.py:1341
 msgid "Not found given transaction ID"
 msgstr "Annettua transaktiotunnusta ei löytynyt"
 
-#: ../output.py:1310
+#: ../output.py:1349
 msgid "Found more than one transaction ID!"
 msgstr "Löytyi useampi kuin yksi transaktiotunnus!"
 
-#: ../output.py:1331
+#: ../output.py:1370
 msgid "No transaction ID, or package, given"
 msgstr "Transaktiotunnusta tai pakettia ei annettu"
 
-#: ../output.py:1357
+#: ../output.py:1396
 msgid "Transaction ID :"
 msgstr "Transaktiotunnus      :"
 
-#: ../output.py:1359
+#: ../output.py:1398
 msgid "Begin time     :"
 msgstr "Aloitusaika           :"
 
-#: ../output.py:1362 ../output.py:1364
+#: ../output.py:1401 ../output.py:1403
 msgid "Begin rpmdb    :"
 msgstr "RPM-tietokanta alussa :"
 
-#: ../output.py:1378
+#: ../output.py:1417
 #, python-format
 msgid "(%s seconds)"
 msgstr "(%s sekuntia)"
 
-#: ../output.py:1379
+#: ../output.py:1418
 msgid "End time       :"
 msgstr "Lopetusaika           :"
 
-#: ../output.py:1382 ../output.py:1384
+#: ../output.py:1421 ../output.py:1423
 msgid "End rpmdb      :"
 msgstr "RPM-tietokanta lopussa:"
 
-#: ../output.py:1385
+#: ../output.py:1424
 msgid "User           :"
 msgstr "Käyttäjä              :"
 
-#: ../output.py:1387 ../output.py:1389 ../output.py:1391
+#: ../output.py:1426 ../output.py:1428 ../output.py:1430
 msgid "Return-Code    :"
 msgstr "Lopetuskoodi          :"
 
-#: ../output.py:1387
+#: ../output.py:1426
 msgid "Aborted"
 msgstr "Keskeytetty"
 
-#: ../output.py:1389
+#: ../output.py:1428
 msgid "Failure:"
 msgstr "Epäonnistui:"
 
-#: ../output.py:1391
+#: ../output.py:1430
 msgid "Success"
 msgstr "Onnistui"
 
-#: ../output.py:1392
+#: ../output.py:1431
 msgid "Transaction performed with:"
 msgstr "Transaktio suoritettiin:"
 
-#: ../output.py:1405
+#: ../output.py:1444 ../output.py:1489
 msgid "Downgraded"
 msgstr "Varhennettu"
 
 #. multiple versions installed, both older and newer
-#: ../output.py:1407
+#: ../output.py:1446
 msgid "Weird"
 msgstr "Omituinen"
 
-#: ../output.py:1409
+#: ../output.py:1448
 msgid "Packages Altered:"
 msgstr "Muutetut paketit:"
 
-#: ../output.py:1412
+#: ../output.py:1451
 msgid "Scriptlet output:"
 msgstr "Sovelman tuloste:"
 
-#: ../output.py:1418
+#: ../output.py:1457
 msgid "Errors:"
 msgstr "Virheet:"
 
-#: ../output.py:1489
+#: ../output.py:1481 ../output.py:1482
+msgid "Install"
+msgstr "Asennus"
+
+#: ../output.py:1483
+msgid "Dep-Install"
+msgstr "Riippuvuuden asennus"
+
+#: ../output.py:1485
+msgid "Obsoleting"
+msgstr "Vanhentava"
+
+#: ../output.py:1486
+msgid "Erase"
+msgstr "Poisto"
+
+#: ../output.py:1487
+msgid "Reinstall"
+msgstr "Uudelleenasennus"
+
+#: ../output.py:1488
+msgid "Downgrade"
+msgstr "Varhennus"
+
+#: ../output.py:1490
+msgid "Update"
+msgstr "Päivitys"
+
+#: ../output.py:1521
+msgid "Time"
+msgstr "﻿Aika"
+
+#: ../output.py:1547
 msgid "Last day"
 msgstr "Eilen"
 
-#: ../output.py:1490
+#: ../output.py:1548
 msgid "Last week"
 msgstr "Viime viikolla"
 
-#: ../output.py:1491
+#: ../output.py:1549
 msgid "Last 2 weeks"
 msgstr "Viimeisen kahden viikon aikana"
 
 #. US default :p
-#: ../output.py:1492
+#: ../output.py:1550
 msgid "Last 3 months"
 msgstr "Viimeisen kolmen kuukauden aikana"
 
-#: ../output.py:1493
+#: ../output.py:1551
 msgid "Last 6 months"
 msgstr "Viimeisen kuuden kuukauden aikana"
 
-#: ../output.py:1494
+#: ../output.py:1552
 msgid "Last year"
 msgstr "Viime vuonna"
 
-#: ../output.py:1495
+#: ../output.py:1553
 msgid "Over a year ago"
 msgstr "Yli vuosi sitten"
 
-#: ../output.py:1524
+#: ../output.py:1585
 msgid "installed"
 msgstr "asennettavaksi"
 
-#: ../output.py:1525
+#: ../output.py:1586
 msgid "updated"
 msgstr "päivitettäväksi"
 
-#: ../output.py:1526
+#: ../output.py:1587
 msgid "obsoleted"
 msgstr "vanhennettavaksi"
 
-#: ../output.py:1527
+#: ../output.py:1588
 msgid "erased"
 msgstr "poistettavaksi"
 
-#: ../output.py:1531
+#: ../output.py:1592
 #, python-format
 msgid "---> Package %s.%s %s:%s-%s set to be %s"
 msgstr "---> Paketti %s.%s %s:%s-%s asetettu %s"
 
-#: ../output.py:1538
+#: ../output.py:1599
 msgid "--> Running transaction check"
 msgstr "--> Suoritetaan transaktiotarkistusta"
 
-#: ../output.py:1543
+#: ../output.py:1604
 msgid "--> Restarting Dependency Resolution with new changes."
 msgstr ""
 "--> Aloitetaan riippuvuuksien tarkistus uudelleen uusien muutosten kanssa."
 
-#: ../output.py:1548
+#: ../output.py:1609
 msgid "--> Finished Dependency Resolution"
 msgstr "--> Riippuvuuksien tarkistus valmistui"
 
-#: ../output.py:1553 ../output.py:1558
+#: ../output.py:1614 ../output.py:1619
 #, python-format
 msgid "--> Processing Dependency: %s for package: %s"
 msgstr "--> Käsitellään riipuvuutta: %s paketille: %s"
 
-#: ../output.py:1562
+#: ../output.py:1623
 #, python-format
 msgid "--> Unresolved Dependency: %s"
 msgstr "--> Ratkaisematon riippuvuus: %s"
 
-#: ../output.py:1568 ../output.py:1573
+#: ../output.py:1634
+#, python-format
+msgid "Package: %s"
+msgstr "Paketti: %s"
+
+#: ../output.py:1636
+#, python-format
+msgid ""
+"\n"
+"    Requires: %s"
+msgstr ""
+"\n"
+"    Vaatii: %s"
+
+#: ../output.py:1649 ../output.py:1660
+#, python-format
+msgid ""
+"\n"
+"    %s: %s (%s)"
+msgstr ""
+"\n"
+"    %s: %s (%s)"
+
+#: ../output.py:1657
+msgid "Available"
+msgstr "Saatavilla"
+
+#: ../output.py:1665 ../output.py:1670
 #, python-format
 msgid "--> Processing Conflict: %s conflicts %s"
 msgstr "--> Käsitellään ristiriitaa: %s on ristiriidassa paketin %s kanssa"
 
-#: ../output.py:1577
+#: ../output.py:1674
 msgid "--> Populating transaction set with selected packages. Please wait."
 msgstr "--> Täytetään transaktiojoukkoa valituilla paketeilla. Odota hetki."
 
-#: ../output.py:1581
+#: ../output.py:1678
 #, python-format
 msgid "---> Downloading header for %s to pack into transaction set."
 msgstr "---> Ladataan paketin %s otsaketta transaktiojoukkoon lisäämseksi."
 
-#: ../utils.py:137 ../yummain.py:42
+#: ../utils.py:93
+msgid "Running"
+msgstr "Suoritetaan"
+
+#: ../utils.py:94
+msgid "Sleeping"
+msgstr "Unessa"
+
+#: ../utils.py:95
+msgid "Uninterruptible"
+msgstr "Ei voi keskeyttää"
+
+#: ../utils.py:96
+msgid "Zombie"
+msgstr "Zombi"
+
+#: ../utils.py:97
+msgid "Traced/Stopped"
+msgstr "Jäljitetään/Pysäytetty"
+
+#: ../utils.py:98 ../yumcommands.py:917
+msgid "Unknown"
+msgstr "Tuntematon"
+
+#: ../utils.py:109
+msgid "  The other application is: PackageKit"
+msgstr "  Toinen ohjelma on: PackageKit"
+
+#: ../utils.py:111
+#, python-format
+msgid "  The other application is: %s"
+msgstr "  Toinen ohjelma on: %s"
+
+#: ../utils.py:114
+#, python-format
+msgid "    Memory : %5s RSS (%5sB VSZ)"
+msgstr "    Muisti    : %5s RSS (%5sB VSZ)"
+
+#: ../utils.py:119
+#, python-format
+msgid "    Started: %s - %s ago"
+msgstr "    Aloitettu : %s - %s sitten"
+
+#: ../utils.py:121
+#, python-format
+msgid "    State  : %s, pid: %d"
+msgstr "    Tila      : %s, pid: %d"
+
+#: ../utils.py:199
+#, python-format
+msgid "PluginExit Error: %s"
+msgstr "﻿PluginExit-virhe: %s"
+
+#: ../utils.py:202
+#, python-format
+msgid "Yum Error: %s"
+msgstr "﻿Yum-virhe: %s"
+
+#: ../utils.py:235 ../yummain.py:42
 msgid ""
 "\n"
 "\n"
@@ -1093,7 +1268,7 @@ msgstr ""
 "\n"
 "Lopetetaan käyttäjän peruttua"
 
-#: ../utils.py:143 ../yummain.py:48
+#: ../utils.py:241 ../yummain.py:48
 msgid ""
 "\n"
 "\n"
@@ -1103,7 +1278,7 @@ msgstr ""
 "\n"
 "Lopetetaan putken katkettua"
 
-#: ../utils.py:145 ../yummain.py:50
+#: ../utils.py:243 ../yummain.py:50
 #, python-format
 msgid ""
 "\n"
@@ -1114,15 +1289,15 @@ msgstr ""
 "\n"
 "%s"
 
-#: ../utils.py:184 ../yummain.py:273
+#: ../utils.py:282 ../yummain.py:211
 msgid "Complete!"
 msgstr "Valmis!"
 
-#: ../yumcommands.py:42
+#: ../yumcommands.py:43
 msgid "You need to be root to perform this command."
 msgstr "Vain pääkäyttäjä voi suorittaa tämän komennon."
 
-#: ../yumcommands.py:49
+#: ../yumcommands.py:50
 msgid ""
 "\n"
 "You have enabled checking of packages via GPG keys. This is a good thing. \n"
@@ -1152,336 +1327,336 @@ msgstr ""
 "\n"
 "Lisätietoja saattaa olla jakelun tai pakettien tarjoajan ohjeissa.\n"
 
-#: ../yumcommands.py:69
+#: ../yumcommands.py:70
 #, python-format
 msgid "Error: Need to pass a list of pkgs to %s"
 msgstr "Virhe: komennolle %s on annettava luettelo paketeista"
 
-#: ../yumcommands.py:75
+#: ../yumcommands.py:76
 msgid "Error: Need an item to match"
 msgstr "Virhe: Tarvitaan vastaava kohta"
 
-#: ../yumcommands.py:81
+#: ../yumcommands.py:82
 msgid "Error: Need a group or list of groups"
 msgstr "Virhe: Tarvitaan ryhmä tai ryhmäluettelo"
 
-#: ../yumcommands.py:90
+#: ../yumcommands.py:91
 #, python-format
 msgid "Error: clean requires an option: %s"
 msgstr "Virhe: clean vaatii valitsimen: %s"
 
-#: ../yumcommands.py:95
+#: ../yumcommands.py:96
 #, python-format
 msgid "Error: invalid clean argument: %r"
 msgstr "Virhe: virheellinen clean-argumentti: %r"
 
-#: ../yumcommands.py:108
+#: ../yumcommands.py:109
 msgid "No argument to shell"
 msgstr "shellille ei annettu argumenttia"
 
-#: ../yumcommands.py:110
+#: ../yumcommands.py:111
 #, python-format
 msgid "Filename passed to shell: %s"
 msgstr "Tiedostonimi välitettiin shellille: %s"
 
-#: ../yumcommands.py:114
+#: ../yumcommands.py:115
 #, python-format
 msgid "File %s given as argument to shell does not exist."
 msgstr ""
 "Tiedosto %s annettiin argumenttina shellille, mutta sitä ei ole olemassa."
 
-#: ../yumcommands.py:120
+#: ../yumcommands.py:121
 msgid "Error: more than one file given as argument to shell."
 msgstr "Virhe: useampi kuin yksi tiedosto annettiin argumenttina shellille."
 
-#: ../yumcommands.py:169
+#: ../yumcommands.py:170
 msgid "PACKAGE..."
 msgstr "PAKETTI..."
 
-#: ../yumcommands.py:172
+#: ../yumcommands.py:173
 msgid "Install a package or packages on your system"
 msgstr "Asenna paketti tai paketteja järjestelmään"
 
-#: ../yumcommands.py:180
+#: ../yumcommands.py:181
 msgid "Setting up Install Process"
 msgstr "Aloitetaan asennusprosessi"
 
-#: ../yumcommands.py:191
+#: ../yumcommands.py:192
 msgid "[PACKAGE...]"
 msgstr "[PAKETTI...]"
 
-#: ../yumcommands.py:194
+#: ../yumcommands.py:195
 msgid "Update a package or packages on your system"
 msgstr "Päivitä paketti tai paketteja järjestelmään"
 
-#: ../yumcommands.py:201
+#: ../yumcommands.py:202
 msgid "Setting up Update Process"
 msgstr "Aloitetaan päivitysprosessi"
 
-#: ../yumcommands.py:246
+#: ../yumcommands.py:244
 msgid "Display details about a package or group of packages"
 msgstr "Näytä tietoja paketista tai pakettiryhmästä"
 
-#: ../yumcommands.py:295
+#: ../yumcommands.py:293
 msgid "Installed Packages"
 msgstr "Asennetut paketit"
 
-#: ../yumcommands.py:303
+#: ../yumcommands.py:301
 msgid "Available Packages"
 msgstr "Saatavilla olevat paketit"
 
-#: ../yumcommands.py:307
+#: ../yumcommands.py:305
 msgid "Extra Packages"
 msgstr "Lisäpaketit"
 
-#: ../yumcommands.py:311
+#: ../yumcommands.py:309
 msgid "Updated Packages"
 msgstr "Päivitetyt paketit"
 
 #. This only happens in verbose mode
-#: ../yumcommands.py:319 ../yumcommands.py:326 ../yumcommands.py:603
+#: ../yumcommands.py:317 ../yumcommands.py:324 ../yumcommands.py:601
 msgid "Obsoleting Packages"
 msgstr "Vanhentavat paketit"
 
-#: ../yumcommands.py:328
+#: ../yumcommands.py:326
 msgid "Recently Added Packages"
 msgstr "Äskettäin lisätyt paketit"
 
-#: ../yumcommands.py:335
+#: ../yumcommands.py:333
 msgid "No matching Packages to list"
 msgstr "Ei yhtään vastaavaa pakettia lueteltavaksi"
 
-#: ../yumcommands.py:349
+#: ../yumcommands.py:347
 msgid "List a package or groups of packages"
 msgstr "Luettele paketti tai pakettiryhmä"
 
-#: ../yumcommands.py:361
+#: ../yumcommands.py:359
 msgid "Remove a package or packages from your system"
 msgstr "Poista paketti tai paketteja järjestelmästä"
 
-#: ../yumcommands.py:368
+#: ../yumcommands.py:366
 msgid "Setting up Remove Process"
 msgstr "Aloitetaan poistoprosessi"
 
-#: ../yumcommands.py:382
+#: ../yumcommands.py:380
 msgid "Setting up Group Process"
 msgstr "Aloitetaan ryhmäprosessi"
 
-#: ../yumcommands.py:388
+#: ../yumcommands.py:386
 msgid "No Groups on which to run command"
 msgstr "Ei ryhmiä joille suorittaa komentoa"
 
-#: ../yumcommands.py:401
+#: ../yumcommands.py:399
 msgid "List available package groups"
 msgstr "Luettele saatavilla olevat pakettiryhmät"
 
-#: ../yumcommands.py:418
+#: ../yumcommands.py:416
 msgid "Install the packages in a group on your system"
 msgstr "Asenna ryhmään kuuluvat paketit järjestelmään"
 
-#: ../yumcommands.py:440
+#: ../yumcommands.py:438
 msgid "Remove the packages in a group from your system"
 msgstr "Poista ryhmään kuuluvat paketit järjestelmästä"
 
-#: ../yumcommands.py:467
+#: ../yumcommands.py:465
 msgid "Display details about a package group"
 msgstr "Näytä tietoja pakettiryhmästä"
 
-#: ../yumcommands.py:491
+#: ../yumcommands.py:489
 msgid "Generate the metadata cache"
 msgstr "Luo metadatavälimuisti"
 
-#: ../yumcommands.py:497
+#: ../yumcommands.py:495
 msgid "Making cache files for all metadata files."
 msgstr "Luodaan välimuistitiedostoja kaikille metadatatiedostoille"
 
-#: ../yumcommands.py:498
+#: ../yumcommands.py:496
 msgid "This may take a while depending on the speed of this computer"
 msgstr "Tämä voi kestää jonkin aikaa riippuen tietokoneen nopeudesta"
 
-#: ../yumcommands.py:519
+#: ../yumcommands.py:517
 msgid "Metadata Cache Created"
 msgstr "Metadatavälimuisti on luotu"
 
-#: ../yumcommands.py:533
+#: ../yumcommands.py:531
 msgid "Remove cached data"
 msgstr "Poista välimuistissa oleva data"
 
-#: ../yumcommands.py:553
+#: ../yumcommands.py:551
 msgid "Find what package provides the given value"
 msgstr "Etsi annetun arvon tarjoava paketti"
 
-#: ../yumcommands.py:573
+#: ../yumcommands.py:571
 msgid "Check for available package updates"
 msgstr "Etsi saatavilla olevia pakettipäivityksiä"
 
-#: ../yumcommands.py:623
+#: ../yumcommands.py:621
 msgid "Search package details for the given string"
 msgstr "Etsi pakettitiedoista annettua merkkijonoa"
 
-#: ../yumcommands.py:629
+#: ../yumcommands.py:627
 msgid "Searching Packages: "
 msgstr "Etsitään paketteja: "
 
-#: ../yumcommands.py:646
+#: ../yumcommands.py:644
 msgid "Update packages taking obsoletes into account"
 msgstr "Päivitä paketit ottaen vanhennukset huomioon"
 
-#: ../yumcommands.py:654
+#: ../yumcommands.py:652
 msgid "Setting up Upgrade Process"
 msgstr "Aloitetaan päivitysprosessi"
 
-#: ../yumcommands.py:668
+#: ../yumcommands.py:666
 msgid "Install a local RPM"
 msgstr "Asenna paikallinen RPM-tiedosto"
 
-#: ../yumcommands.py:676
+#: ../yumcommands.py:674
 msgid "Setting up Local Package Process"
 msgstr "Aloitetaan paikallinen pakettiprosessi"
 
-#: ../yumcommands.py:695
+#: ../yumcommands.py:693
 msgid "Determine which package provides the given dependency"
 msgstr "Selvitä mikä paketti tarjoaa annetun riippuvuuden"
 
-#: ../yumcommands.py:698
+#: ../yumcommands.py:696
 msgid "Searching Packages for Dependency:"
 msgstr "Etsitään riippuvuutta paketeista:"
 
-#: ../yumcommands.py:712
+#: ../yumcommands.py:710
 msgid "Run an interactive yum shell"
 msgstr "Suorita interaktiivinen yum-komentorivi"
 
-#: ../yumcommands.py:718
+#: ../yumcommands.py:716
 msgid "Setting up Yum Shell"
 msgstr "Asetetaan Yum-komentoriviä"
 
-#: ../yumcommands.py:736
+#: ../yumcommands.py:734
 msgid "List a package's dependencies"
 msgstr "Luettele paketin riippuvuudet"
 
-#: ../yumcommands.py:742
+#: ../yumcommands.py:740
 msgid "Finding dependencies: "
 msgstr "Etsitään riippuvuuksia: "
 
-#: ../yumcommands.py:758
+#: ../yumcommands.py:756
 msgid "Display the configured software repositories"
 msgstr "Näytä asetetut asennuslähteet"
 
-#: ../yumcommands.py:810 ../yumcommands.py:811
+#: ../yumcommands.py:822 ../yumcommands.py:823
 msgid "enabled"
 msgstr "käytössä"
 
-#: ../yumcommands.py:819 ../yumcommands.py:820
+#: ../yumcommands.py:849 ../yumcommands.py:850
 msgid "disabled"
 msgstr "poissa käytöstä"
 
-#: ../yumcommands.py:834
+#: ../yumcommands.py:866
 msgid "Repo-id      : "
 msgstr "Lähdetunnus        : "
 
-#: ../yumcommands.py:835
+#: ../yumcommands.py:867
 msgid "Repo-name    : "
 msgstr "Lähdenimi          : "
 
-#: ../yumcommands.py:836
+#: ../yumcommands.py:870
 msgid "Repo-status  : "
 msgstr "Lähteen tila       : "
 
-#: ../yumcommands.py:838
+#: ../yumcommands.py:873
 msgid "Repo-revision: "
 msgstr "Lähderevisio      : "
 
-#: ../yumcommands.py:842
+#: ../yumcommands.py:877
 msgid "Repo-tags    : "
 msgstr "Lähteen tagit      : "
 
-#: ../yumcommands.py:848
+#: ../yumcommands.py:883
 msgid "Repo-distro-tags: "
 msgstr "Lähteen jakelutagit: "
 
-#: ../yumcommands.py:853
+#: ../yumcommands.py:888
 msgid "Repo-updated : "
 msgstr "Lähde päivitetty   : "
 
-#: ../yumcommands.py:855
+#: ../yumcommands.py:890
 msgid "Repo-pkgs    : "
 msgstr "Lähteen paketit    : "
 
-#: ../yumcommands.py:856
+#: ../yumcommands.py:891
 msgid "Repo-size    : "
 msgstr "Lähteen koko       : "
 
-#: ../yumcommands.py:863
+#: ../yumcommands.py:898
 msgid "Repo-baseurl : "
 msgstr "Lähteen baseurl    : "
 
-#: ../yumcommands.py:871
+#: ../yumcommands.py:906
 msgid "Repo-metalink: "
 msgstr "Lähteen metalink   : "
 
-#: ../yumcommands.py:875
+#: ../yumcommands.py:910
 msgid "  Updated    : "
 msgstr "  Päivitetty       : "
 
-#: ../yumcommands.py:878
+#: ../yumcommands.py:913
 msgid "Repo-mirrors : "
 msgstr "Lähteen peilit     : "
 
-#: ../yumcommands.py:882 ../yummain.py:133
-msgid "Unknown"
-msgstr "Tuntematon"
-
-#: ../yumcommands.py:888
+#: ../yumcommands.py:923
 #, python-format
 msgid "Never (last: %s)"
 msgstr "Ei koskaan (viimeksi: %s)"
 
-#: ../yumcommands.py:890
+#: ../yumcommands.py:925
 #, python-format
 msgid "Instant (last: %s)"
 msgstr "Heti (viimeksi: %s)"
 
-#: ../yumcommands.py:893
+#: ../yumcommands.py:928
 #, python-format
 msgid "%s second(s) (last: %s)"
 msgstr "%s sekunti(a) (viimeksi: %s)"
 
-#: ../yumcommands.py:895
+#: ../yumcommands.py:930
 msgid "Repo-expire  : "
 msgstr "Lähde vanhentuu    : "
 
-#: ../yumcommands.py:898
+#: ../yumcommands.py:933
 msgid "Repo-exclude : "
 msgstr "Lähde ohittaa      : "
 
-#: ../yumcommands.py:902
+#: ../yumcommands.py:937
 msgid "Repo-include : "
 msgstr "Lähde sisältää     : "
 
+#: ../yumcommands.py:941
+msgid "Repo-excluded: "
+msgstr "Lähde ohitettu     : "
+
 #. Work out the first (id) and last (enabled/disalbed/count),
 #. then chop the middle (name)...
-#: ../yumcommands.py:912 ../yumcommands.py:938
+#: ../yumcommands.py:951 ../yumcommands.py:980
 msgid "repo id"
 msgstr "lähdetunnus"
 
-#: ../yumcommands.py:926 ../yumcommands.py:927 ../yumcommands.py:941
+#: ../yumcommands.py:968 ../yumcommands.py:969 ../yumcommands.py:987
 msgid "status"
 msgstr "tila"
 
-#: ../yumcommands.py:939
+#: ../yumcommands.py:981
 msgid "repo name"
 msgstr "lähdenimi"
 
-#: ../yumcommands.py:965
+#: ../yumcommands.py:1018
 msgid "Display a helpful usage message"
 msgstr "Näytä käyttöohjeviesti"
 
-#: ../yumcommands.py:999
+#: ../yumcommands.py:1052
 #, python-format
 msgid "No help available for %s"
 msgstr "Ei ohjeita komennolle %s"
 
-#: ../yumcommands.py:1004
+#: ../yumcommands.py:1057
 msgid ""
 "\n"
 "\n"
@@ -1491,7 +1666,7 @@ msgstr ""
 "\n"
 "muut nimet: "
 
-#: ../yumcommands.py:1006
+#: ../yumcommands.py:1059
 msgid ""
 "\n"
 "\n"
@@ -1501,145 +1676,100 @@ msgstr ""
 "\n"
 "toinen nimi: "
 
-#: ../yumcommands.py:1034
+#: ../yumcommands.py:1087
 msgid "Setting up Reinstall Process"
 msgstr "Aloitetaan uudelleenasennusprosessi"
 
-#: ../yumcommands.py:1042
+#: ../yumcommands.py:1095
 msgid "reinstall a package"
 msgstr "asenna paketti uudelleen"
 
-#: ../yumcommands.py:1060
+#: ../yumcommands.py:1113
 msgid "Setting up Downgrade Process"
 msgstr "Aloitetaan varhennusprosessi"
 
-#: ../yumcommands.py:1067
+#: ../yumcommands.py:1120
 msgid "downgrade a package"
 msgstr "varhenna paketti"
 
-#: ../yumcommands.py:1081
+#: ../yumcommands.py:1134
 msgid "Display a version for the machine and/or available repos."
 msgstr ""
 "Näytä koneella ja/tai käytettävissä olevissa asennuslähteissä oleva versio"
 
-#: ../yumcommands.py:1111
+#: ../yumcommands.py:1173
 msgid " Yum version groups:"
 msgstr " Yum-versioryhmät:"
 
-#: ../yumcommands.py:1121
+#: ../yumcommands.py:1183
 msgid " Group   :"
 msgstr " Ryhmä:"
 
-#: ../yumcommands.py:1122
+#: ../yumcommands.py:1184
 msgid " Packages:"
 msgstr " Paketit:"
 
-#: ../yumcommands.py:1152
+#: ../yumcommands.py:1213
 msgid "Installed:"
 msgstr "Asennettu:"
 
-#: ../yumcommands.py:1157
+#: ../yumcommands.py:1218
 msgid "Group-Installed:"
 msgstr "Asennettu ryhmässä:"
 
-#: ../yumcommands.py:1166
+#: ../yumcommands.py:1227
 msgid "Available:"
 msgstr "Saatavilla:"
 
-#: ../yumcommands.py:1172
+#: ../yumcommands.py:1233
 msgid "Group-Available:"
 msgstr "Saatavilla ryhmässä:"
 
-#: ../yumcommands.py:1211
+#: ../yumcommands.py:1272
 msgid "Display, or use, the transaction history"
 msgstr "Näytä tai käytä transaktiohistoriaa"
 
-#: ../yumcommands.py:1239
+#: ../yumcommands.py:1300
 #, python-format
 msgid "Invalid history sub-command, use: %s."
 msgstr "Virheellinen historyn alikomento, käytä: %s."
 
-#: ../yummain.py:128
-msgid "Running"
-msgstr "Suoritetaan"
+#: ../yumcommands.py:1345
+msgid "Check for problems in the rpmdb"
+msgstr "Etsi ongelmia rpm-tietokannasta"
 
-#: ../yummain.py:129
-msgid "Sleeping"
-msgstr "Unessa"
-
-#: ../yummain.py:130
-msgid "Uninteruptable"
-msgstr "Ei voi keskeyttää"
-
-#: ../yummain.py:131
-msgid "Zombie"
-msgstr "Zombi"
-
-#: ../yummain.py:132
-msgid "Traced/Stopped"
-msgstr "Jäljitetään/Pysäytetty"
-
-#: ../yummain.py:137
-msgid "  The other application is: PackageKit"
-msgstr "  Toinen ohjelma on: PackageKit"
-
-#: ../yummain.py:139
-#, python-format
-msgid "  The other application is: %s"
-msgstr "  Toinen ohjelma on: %s"
-
-#: ../yummain.py:142
-#, python-format
-msgid "    Memory : %5s RSS (%5sB VSZ)"
-msgstr "    Muisti    : %5s RSS (%5sB VSZ)"
-
-#: ../yummain.py:146
-#, python-format
-msgid "    Started: %s - %s ago"
-msgstr "    Aloitettu : %s - %s sitten"
-
-#: ../yummain.py:148
-#, python-format
-msgid "    State  : %s, pid: %d"
-msgstr "    Tila      : %s, pid: %d"
-
-#: ../yummain.py:173
+#: ../yummain.py:102
 msgid ""
 "Another app is currently holding the yum lock; waiting for it to exit..."
 msgstr ""
 "Toinen ohjelma pitää tällä hetkellä yumin lukkoa, odotetaan että se "
 "lopettaa..."
 
-#: ../yummain.py:201 ../yummain.py:240
+#: ../yummain.py:130 ../yummain.py:169
 #, python-format
 msgid "Error: %s"
 msgstr "Virhe: %s"
 
-#: ../yummain.py:211 ../yummain.py:253
+#: ../yummain.py:140 ../yummain.py:182
 #, python-format
 msgid "Unknown Error(s): Exit Code: %d:"
 msgstr "Tuntematon virhe: lopetuskoodi: %d:"
 
 #. Depsolve stage
-#: ../yummain.py:218
+#: ../yummain.py:147
 msgid "Resolving Dependencies"
 msgstr "Ratkaistaan riippuvuuksia"
 
-#: ../yummain.py:242
+#: ../yummain.py:173
 msgid " You could try using --skip-broken to work around the problem"
 msgstr " Ongelman pystyy ehkä kiertämään valitsimella --skip-broken"
 
-#: ../yummain.py:243
-msgid ""
-" You could try running: package-cleanup --problems\n"
-"                        package-cleanup --dupes\n"
-"                        rpm -Va --nofiles --nodigest"
+#: ../yummain.py:175 ../yummain.py:208
+msgid " You could try running: rpm -Va --nofiles --nodigest"
 msgstr ""
-" Kokeile komentoja:     package-cleanup --problems\n"
-"                        package-cleanup --dupes\n"
-"                        rpm -Va --nofiles --nodigest"
+" Kannattaa myös kokeilla komennon rpm -Va --nofiles --nodigest suorittamista"
 
-#: ../yummain.py:259
+#: ../yummain.py:188
 msgid ""
 "\n"
 "Dependencies Resolved"
@@ -1647,7 +1777,7 @@ msgstr ""
 "\n"
 "Riippuvuudet on ratkaistu"
 
-#: ../yummain.py:326
+#: ../yummain.py:265
 msgid ""
 "\n"
 "\n"
@@ -1685,171 +1815,166 @@ msgstr "Mahdollinen vastaavuus haulle %s paketissa %s"
 msgid "Matched %s to require for %s"
 msgstr "%s vastaa vaatimusta %s"
 
-#: ../yum/depsolve.py:224
+#: ../yum/depsolve.py:225
 #, python-format
 msgid "Member: %s"
 msgstr "Jäsen: %s"
 
-#: ../yum/depsolve.py:238 ../yum/depsolve.py:749
+#: ../yum/depsolve.py:239 ../yum/depsolve.py:754
 #, python-format
 msgid "%s converted to install"
 msgstr "%s muutettu asennukseksi"
 
-#: ../yum/depsolve.py:245
+#: ../yum/depsolve.py:246
 #, python-format
 msgid "Adding Package %s in mode %s"
 msgstr "Lisätään paketti %s tilassa %s"
 
-#: ../yum/depsolve.py:255
+#: ../yum/depsolve.py:256
 #, python-format
 msgid "Removing Package %s"
 msgstr "Poistetaan paketti %s"
 
-#: ../yum/depsolve.py:277
+#: ../yum/depsolve.py:278
 #, python-format
 msgid "%s requires: %s"
 msgstr "%s vaatii: %s"
 
-#: ../yum/depsolve.py:335
+#: ../yum/depsolve.py:319
+#, python-format
+msgid "%s requires %s"
+msgstr "%s vaatii %s"
+
+#: ../yum/depsolve.py:346
 msgid "Needed Require has already been looked up, cheating"
 msgstr "Tarvittava vaatimus on jo etsitty, huijataan"
 
-#: ../yum/depsolve.py:345
+#: ../yum/depsolve.py:356
 #, python-format
 msgid "Needed Require is not a package name. Looking up: %s"
 msgstr "Tarvittava vaatimus ei ole pakettinimi. Etsitään: %s"
 
-#: ../yum/depsolve.py:352
+#: ../yum/depsolve.py:363
 #, python-format
 msgid "Potential Provider: %s"
 msgstr "Mahdollinen tarjoaja: %s"
 
-#: ../yum/depsolve.py:375
+#: ../yum/depsolve.py:386
 #, python-format
 msgid "Mode is %s for provider of %s: %s"
 msgstr "Tila %s riippuvuuden %s: %s tarjoajalla"
 
-#: ../yum/depsolve.py:379
+#: ../yum/depsolve.py:390
 #, python-format
 msgid "Mode for pkg providing %s: %s"
 msgstr "Riippuvuuden %s: %s tarjoavan paketin tila"
 
-#: ../yum/depsolve.py:383
+#: ../yum/depsolve.py:394
 #, python-format
 msgid "TSINFO: %s package requiring %s marked as erase"
 msgstr ""
 "TSINFO: paketti %s, joka vaatii riippuvuuden %s on merkitty poistettavaksi"
 
-#: ../yum/depsolve.py:396
+#: ../yum/depsolve.py:407
 #, python-format
 msgid "TSINFO: Obsoleting %s with %s to resolve dep."
 msgstr ""
 "TSINFO: Vanhennetaan paketti %s paketilla %s riippuvuuden ratkaisemiseksi."
 
-#: ../yum/depsolve.py:399
+#: ../yum/depsolve.py:410
 #, python-format
 msgid "TSINFO: Updating %s to resolve dep."
 msgstr "TSINFO: Päivitetään paketti %s riippuvuuden ratkaisemiseksi."
 
-#: ../yum/depsolve.py:407
+#: ../yum/depsolve.py:418
 #, python-format
 msgid "Cannot find an update path for dep for: %s"
 msgstr "Päivityspolkua ei löydetty riippuvuudelle: %s"
 
-#: ../yum/depsolve.py:417
-#, python-format
-msgid "Unresolvable requirement %s for %s"
-msgstr "Ratkaisematon riippuvuus %s paketille %s"
-
-#: ../yum/depsolve.py:440
+#: ../yum/depsolve.py:449
 #, python-format
 msgid "Quick matched %s to require for %s"
 msgstr "Pikavastaavuus %s vaatimukselle %s"
 
 #. is it already installed?
-#: ../yum/depsolve.py:482
+#: ../yum/depsolve.py:491
 #, python-format
 msgid "%s is in providing packages but it is already installed, removing."
 msgstr "%s on tarjoavissa paketeissa, mutta se on jo asennettuna, poistetaan."
 
-#: ../yum/depsolve.py:498
+#: ../yum/depsolve.py:507
 #, python-format
 msgid "Potential resolving package %s has newer instance in ts."
 msgstr "Mahdollisella ratkaisevalla paketilla %s on uudempi instanssi ts:ssä."
 
-#: ../yum/depsolve.py:509
+#: ../yum/depsolve.py:518
 #, python-format
 msgid "Potential resolving package %s has newer instance installed."
 msgstr ""
 "Mahdollisella ratkaisevalla paketilla %s on uudempi instanssi asennettuna."
 
-#: ../yum/depsolve.py:517 ../yum/depsolve.py:563
-#, python-format
-msgid "Missing Dependency: %s is needed by package %s"
-msgstr "Puuttuva riippuvuus: %s tarvitaan paketille %s"
-
-#: ../yum/depsolve.py:530
+#: ../yum/depsolve.py:536
 #, python-format
 msgid "%s already in ts, skipping this one"
 msgstr "paketti %s on jo ts:ssä, ohitetaan"
 
-#: ../yum/depsolve.py:573
+#: ../yum/depsolve.py:578
 #, python-format
 msgid "TSINFO: Marking %s as update for %s"
 msgstr "TSINFO: Merkitään paketti %s päivitykseksi paketille %s"
 
-#: ../yum/depsolve.py:581
+#: ../yum/depsolve.py:586
 #, python-format
 msgid "TSINFO: Marking %s as install for %s"
 msgstr "TSINFO: Merkitään %s asennukseksi paketille %s"
 
-#: ../yum/depsolve.py:685 ../yum/depsolve.py:767
+#: ../yum/depsolve.py:690 ../yum/depsolve.py:781
 msgid "Success - empty transaction"
 msgstr "Onnistui - tyhjä transaktio"
 
-#: ../yum/depsolve.py:724 ../yum/depsolve.py:739
+#: ../yum/depsolve.py:729 ../yum/depsolve.py:744
 msgid "Restarting Loop"
 msgstr "Käynnistetään silmukka uudelleen"
 
-#: ../yum/depsolve.py:755
+#: ../yum/depsolve.py:760
 msgid "Dependency Process ending"
 msgstr "Riippuvuuksien käsittely päättyy"
 
-#: ../yum/depsolve.py:761
+#: ../yum/depsolve.py:774
 #, python-format
 msgid "%s from %s has depsolving problems"
 msgstr "paketilla %s asennuslähteestä %s on riippuvuusongelmia"
 
-#: ../yum/depsolve.py:768
+#: ../yum/depsolve.py:782
 msgid "Success - deps resolved"
 msgstr "Onnistui – riippuvuudet on ratkaistu"
 
-#: ../yum/depsolve.py:782
+#: ../yum/depsolve.py:796
 #, python-format
 msgid "Checking deps for %s"
 msgstr "Tarkistetaan paketin %s riippuvuuksia"
 
-#: ../yum/depsolve.py:865
+#: ../yum/depsolve.py:874
 #, python-format
 msgid "looking for %s as a requirement of %s"
 msgstr "etsitään riippuvuutta %s paketille %s"
 
-#: ../yum/depsolve.py:1007
+#: ../yum/depsolve.py:1090
 #, python-format
 msgid "Running compare_providers() for %s"
 msgstr "Suoritetaan compare_providers() paketeille %s"
 
-#: ../yum/depsolve.py:1041 ../yum/depsolve.py:1047
+#: ../yum/depsolve.py:1117 ../yum/depsolve.py:1123
 #, python-format
 msgid "better arch in po %s"
 msgstr "po:ssa %s on parempi arkkitehtuuri"
 
-#: ../yum/depsolve.py:1142
+#: ../yum/depsolve.py:1218
 #, python-format
 msgid "%s obsoletes %s"
 msgstr "paketti %s vanhentaa paketin %s"
 
-#: ../yum/depsolve.py:1154
+#: ../yum/depsolve.py:1230
 #, python-format
 msgid ""
 "archdist compared %s to %s on %s\n"
@@ -1858,103 +1983,122 @@ msgstr ""
 "archdist vertasi paketteja %s ja %s arkkitehtuurilla %s\n"
 "  Voittaja: %s"
 
-#: ../yum/depsolve.py:1161
+#: ../yum/depsolve.py:1237
 #, python-format
 msgid "common sourcerpm %s and %s"
 msgstr "paketeilla %s ja %s on yhteinen lähde-RPM"
 
-#: ../yum/depsolve.py:1167
+#: ../yum/depsolve.py:1241
+#, python-format
+msgid "base package %s is installed for %s"
+msgstr "peruspaketti %s on asennettu paketille %s"
+
+#: ../yum/depsolve.py:1247
 #, python-format
 msgid "common prefix of %s between %s and %s"
 msgstr "yhteinen %s merkin mittainen etuliite paketeilla %s ja %s"
 
-#: ../yum/depsolve.py:1175
+#: ../yum/depsolve.py:1256
 #, python-format
 msgid "Best Order: %s"
 msgstr "Paras järjestys %s"
 
-#: ../yum/__init__.py:187
+#: ../yum/__init__.py:192
 msgid "doConfigSetup() will go away in a future version of Yum.\n"
 msgstr "doConfigSetup() poistetaan jossakin Yumin tulevassa versiossa.\n"
 
-#: ../yum/__init__.py:412
+#: ../yum/__init__.py:424
 #, python-format
 msgid "Repository %r is missing name in configuration, using id"
 msgstr "Asennuslähteen %r asetuksista puuttuu nimi, käytetään tunnistetta"
 
-#: ../yum/__init__.py:450
+#: ../yum/__init__.py:462
 msgid "plugins already initialised"
 msgstr "liitännäiset on jo alustettu"
 
-#: ../yum/__init__.py:457
+#: ../yum/__init__.py:469
 msgid "doRpmDBSetup() will go away in a future version of Yum.\n"
 msgstr "doRpmSetup() poistetaan jossakin Yumin tulevassa versiossa.\n"
 
-#: ../yum/__init__.py:468
+#: ../yum/__init__.py:480
 msgid "Reading Local RPMDB"
 msgstr "Luetaan paikallista RPM-tietokantaa"
 
-#: ../yum/__init__.py:489
+#: ../yum/__init__.py:504
 msgid "doRepoSetup() will go away in a future version of Yum.\n"
 msgstr "doRepoSetup() poistetaan jossakin Yumin tulevassa versiossa.\n"
 
-#: ../yum/__init__.py:509
+#: ../yum/__init__.py:524
 msgid "doSackSetup() will go away in a future version of Yum.\n"
 msgstr "doSackSetup() poistetaan jossakin Yumin tulevassa versiossa.\n"
 
-#: ../yum/__init__.py:539
+#: ../yum/__init__.py:554
 msgid "Setting up Package Sacks"
 msgstr "Asetetaan pakettisäkkejä"
 
-#: ../yum/__init__.py:584
+#: ../yum/__init__.py:599
 #, python-format
 msgid "repo object for repo %s lacks a _resetSack method\n"
 msgstr "asennuslähteen %s oliosta puuttuu _resetSack-metodi\n"
 
-#: ../yum/__init__.py:585
+#: ../yum/__init__.py:600
 msgid "therefore this repo cannot be reset.\n"
 msgstr "siksi tätä asennuslähdettä ei voi palauttaa alkutilaan.\n"
 
-#: ../yum/__init__.py:590
+#: ../yum/__init__.py:605
 msgid "doUpdateSetup() will go away in a future version of Yum.\n"
 msgstr "doUpdateSetup() poistetaan jossakin Yumin tulevassa versiossa.\n"
 
-#: ../yum/__init__.py:602
+#: ../yum/__init__.py:617
 msgid "Building updates object"
 msgstr "Rakennetaan päivitysoliota"
 
-#: ../yum/__init__.py:637
+#: ../yum/__init__.py:652
 msgid "doGroupSetup() will go away in a future version of Yum.\n"
 msgstr "doGroupSetup() poistetaan jossakin Yumin tulevassa versiossa.\n"
 
-#: ../yum/__init__.py:662
+#: ../yum/__init__.py:677
 msgid "Getting group metadata"
 msgstr "Haetaan ryhmien metadataa"
 
-#: ../yum/__init__.py:688
+#: ../yum/__init__.py:703
 #, python-format
 msgid "Adding group file from repository: %s"
 msgstr "Lisätään ryhmätiedosto asennuslähteestä: %s"
 
-#: ../yum/__init__.py:697
+#: ../yum/__init__.py:712
 #, python-format
 msgid "Failed to add groups file for repository: %s - %s"
 msgstr "Ryhmätiedoston lisääminen asennuslähteelle epäonnistui: %s - %s"
 
-#: ../yum/__init__.py:703
+#: ../yum/__init__.py:718
 msgid "No Groups Available in any repository"
 msgstr "Yhtään ryhmää ei ole saatavilla mistään asennuslähteestä"
 
-#: ../yum/__init__.py:763
+#: ../yum/__init__.py:730
+msgid "Getting pkgtags metadata"
+msgstr "Haetaan pakettitagien metadataa"
+
+#: ../yum/__init__.py:740
+#, python-format
+msgid "Adding tags from repository: %s"
+msgstr "Lisätään tagit asennuslähteestä: %s"
+
+#: ../yum/__init__.py:749
+#, python-format
+msgid "Failed to add Pkg Tags for repository: %s - %s"
+msgstr "Pakettitagien lisääminen asennuslähteelle epäonnistui: %s - %s"
+
+#: ../yum/__init__.py:827
 msgid "Importing additional filelist information"
 msgstr "Tuodaan lisää tiedostoluettelotietoa"
 
-#: ../yum/__init__.py:777
+#: ../yum/__init__.py:841
 #, python-format
 msgid "The program %s%s%s is found in the yum-utils package."
 msgstr "Ohjelma %s%s%s on paketissa yum-utils."
 
-#: ../yum/__init__.py:785
+#: ../yum/__init__.py:849
 msgid ""
 "There are unfinished transactions remaining. You might consider running yum-"
 "complete-transaction first to finish them."
@@ -1962,17 +2106,18 @@ msgstr ""
 "Keskeneräisiä transaktioita on jäljellä. Niiden päättämiseksi on suositeltua "
 "suorittaa ensin yum-complete-transaction."
 
-#: ../yum/__init__.py:853
+#. Kind of hacky
+#: ../yum/__init__.py:922
 #, python-format
 msgid "Skip-broken round %i"
 msgstr "Skip-broken, kierros %i"
 
-#: ../yum/__init__.py:906
+#: ../yum/__init__.py:975
 #, python-format
 msgid "Skip-broken took %i rounds "
 msgstr "Skip-broken vaati %i kierrosta"
 
-#: ../yum/__init__.py:907
+#: ../yum/__init__.py:976
 msgid ""
 "\n"
 "Packages skipped because of dependency problems:"
@@ -1980,79 +2125,91 @@ msgstr ""
 "\n"
 "Riippuvuusongelmien vuoksi ohitetut paketit:"
 
-#: ../yum/__init__.py:911
+#: ../yum/__init__.py:980
 #, python-format
 msgid "    %s from %s"
 msgstr "    %s asennuslähteestä %s"
 
-#: ../yum/__init__.py:1083
+#: ../yum/__init__.py:1121
+msgid "Warning: RPMDB altered outside of yum."
+msgstr "Varoitus: RPM-tietokantaa on muutettu yumin ulkopuolella."
+
+#: ../yum/__init__.py:1126
+msgid "missing requires"
+msgstr "puuttuvia riippuvuuksia"
+
+#: ../yum/__init__.py:1127
+msgid "installed conflict"
+msgstr "asennettu konflikti"
+
+#: ../yum/__init__.py:1180
 msgid ""
 "Warning: scriptlet or other non-fatal errors occurred during transaction."
 msgstr ""
 "Varoitus: sovelmien virheitä tai muita virheitä, jotka eivät ole vakavia, "
 "tapahtui transaktion aikana."
 
-#: ../yum/__init__.py:1101
+#: ../yum/__init__.py:1198
 #, python-format
 msgid "Failed to remove transaction file %s"
 msgstr "Transaktiotiedoston %s poistaminen epäonnistui"
 
 #. maybe a file log here, too
 #. but raising an exception is not going to do any good
-#: ../yum/__init__.py:1130
+#: ../yum/__init__.py:1227
 #, python-format
 msgid "%s was supposed to be installed but is not!"
 msgstr "%s piti olla asennettuna, mutta se ei ole!"
 
 #. maybe a file log here, too
 #. but raising an exception is not going to do any good
-#: ../yum/__init__.py:1169
+#: ../yum/__init__.py:1266
 #, python-format
 msgid "%s was supposed to be removed but is not!"
 msgstr "%s piti olla poistettu, mutta se ei ole!"
 
 #. Whoa. What the heck happened?
-#: ../yum/__init__.py:1289
+#: ../yum/__init__.py:1386
 #, python-format
 msgid "Unable to check if PID %s is active"
 msgstr "Ei voida tarkistaa onko PID %s aktiivinen"
 
 #. Another copy seems to be running.
-#: ../yum/__init__.py:1293
+#: ../yum/__init__.py:1390
 #, python-format
 msgid "Existing lock %s: another copy is running as pid %s."
 msgstr "Lukko %s on olemassa: toinen kopio on suorituksessa pidillä %s."
 
 #. Whoa. What the heck happened?
-#: ../yum/__init__.py:1328
+#: ../yum/__init__.py:1425
 #, python-format
 msgid "Could not create lock at %s: %s "
 msgstr "Ei voitu luoda lukkoa sijaintiin %s: %s"
 
-#: ../yum/__init__.py:1373
+#: ../yum/__init__.py:1470
 msgid "Package does not match intended download"
 msgstr "Paketti ei vastaa aiottua latausta"
 
-#: ../yum/__init__.py:1388
+#: ../yum/__init__.py:1485
 msgid "Could not perform checksum"
 msgstr "Ei voitu laskea tarkistussummaa"
 
-#: ../yum/__init__.py:1391
+#: ../yum/__init__.py:1488
 msgid "Package does not match checksum"
 msgstr "Paketti ei vastaa tarkistussummaa"
 
-#: ../yum/__init__.py:1433
+#: ../yum/__init__.py:1530
 #, python-format
 msgid "package fails checksum but caching is enabled for %s"
 msgstr ""
 "paketti ei vastaa tarkistussummaa, mutta välimuisti on käytössä kohteelle %s"
 
-#: ../yum/__init__.py:1436 ../yum/__init__.py:1465
+#: ../yum/__init__.py:1533 ../yum/__init__.py:1562
 #, python-format
 msgid "using local copy of %s"
 msgstr "käytetään paikallista kopiota paketista %s"
 
-#: ../yum/__init__.py:1477
+#: ../yum/__init__.py:1574
 #, python-format
 msgid ""
 "Insufficient space in download directory %s\n"
@@ -2063,11 +2220,11 @@ msgstr ""
 "    * vapaana   %s\n"
 "    * tarvitaan %s"
 
-#: ../yum/__init__.py:1526
+#: ../yum/__init__.py:1623
 msgid "Header is not complete."
 msgstr "Otsake ei ole täydellinen."
 
-#: ../yum/__init__.py:1563
+#: ../yum/__init__.py:1660
 #, python-format
 msgid ""
 "Header not in local cache and caching-only mode enabled. Cannot download %s"
@@ -2075,62 +2232,62 @@ msgstr ""
 "Otsake ei ole paikallisessa välimuistissa ja pelkästä välimuistista toimiva "
 "tila on käytössä. Ei voida ladata otsaketta %s"
 
-#: ../yum/__init__.py:1618
+#: ../yum/__init__.py:1715
 #, python-format
 msgid "Public key for %s is not installed"
 msgstr "Julkista avainta pakettia %s varten ei ole asennettu"
 
-#: ../yum/__init__.py:1622
+#: ../yum/__init__.py:1719
 #, python-format
 msgid "Problem opening package %s"
 msgstr "Ongelma paketin %s avaamisessa"
 
-#: ../yum/__init__.py:1630
+#: ../yum/__init__.py:1727
 #, python-format
 msgid "Public key for %s is not trusted"
 msgstr "Paketin %s julkiseen avaimeen ei luoteta"
 
-#: ../yum/__init__.py:1634
+#: ../yum/__init__.py:1731
 #, python-format
 msgid "Package %s is not signed"
 msgstr "Pakettia %s ei ole allekirjoitettu"
 
-#: ../yum/__init__.py:1672
+#: ../yum/__init__.py:1769
 #, python-format
 msgid "Cannot remove %s"
 msgstr "Ei voida poistaa tiedostoa %s"
 
-#: ../yum/__init__.py:1676
+#: ../yum/__init__.py:1773
 #, python-format
 msgid "%s removed"
 msgstr "tiedosto %s on poistettu"
 
-#: ../yum/__init__.py:1712
+#: ../yum/__init__.py:1819
 #, python-format
 msgid "Cannot remove %s file %s"
 msgstr "Ei voida poistaa %s-tyyppistä tiedostoa %s"
 
-#: ../yum/__init__.py:1716
+#: ../yum/__init__.py:1823
 #, python-format
 msgid "%s file %s removed"
 msgstr "%s-tyyppinen tiedosto %s on poistettu"
 
-#: ../yum/__init__.py:1718
+#: ../yum/__init__.py:1825
 #, python-format
 msgid "%d %s files removed"
 msgstr "%d %s-tyyppistä tiedostoa on poistettu"
 
-#: ../yum/__init__.py:1787
+#: ../yum/__init__.py:1894
 #, python-format
 msgid "More than one identical match in sack for %s"
 msgstr "Säkissä on useampi kuin yksi identtinen vastaavuus haulle %s"
 
-#: ../yum/__init__.py:1793
+#: ../yum/__init__.py:1900
 #, python-format
 msgid "Nothing matches %s.%s %s:%s-%s from update"
 msgstr "Mikään ei vastaa päivityksen pakettia %s.%s %s:%s-%s"
 
-#: ../yum/__init__.py:2026
+#: ../yum/__init__.py:2179
 msgid ""
 "searchPackages() will go away in a future version of "
 "Yum.                      Use searchGenerator() instead. \n"
@@ -2138,181 +2295,181 @@ msgstr ""
 "searchPackages() poistetaan jossakin Yumin tulevassa versiossa. Käytä sen "
 "sijaan searchGenerator()-metodia.\n"
 
-#: ../yum/__init__.py:2065
+#: ../yum/__init__.py:2218
 #, python-format
 msgid "Searching %d packages"
 msgstr "Etsitään %d pakettia"
 
-#: ../yum/__init__.py:2069
+#: ../yum/__init__.py:2222
 #, python-format
 msgid "searching package %s"
 msgstr "etsitään pakettia %s"
 
-#: ../yum/__init__.py:2081
+#: ../yum/__init__.py:2234
 msgid "searching in file entries"
 msgstr "etsitään tiedostoista"
 
-#: ../yum/__init__.py:2088
+#: ../yum/__init__.py:2241
 msgid "searching in provides entries"
 msgstr "etsitään tarjoajista"
 
-#: ../yum/__init__.py:2121
+#: ../yum/__init__.py:2274
 #, python-format
 msgid "Provides-match: %s"
 msgstr "Tarjoajavastaavuus: %s"
 
-#: ../yum/__init__.py:2170
+#: ../yum/__init__.py:2323
 msgid "No group data available for configured repositories"
 msgstr "Asetetuille asennuslähteille ei ole saatavilla ryhmädataa"
 
-#: ../yum/__init__.py:2201 ../yum/__init__.py:2220 ../yum/__init__.py:2251
-#: ../yum/__init__.py:2257 ../yum/__init__.py:2336 ../yum/__init__.py:2340
-#: ../yum/__init__.py:2655
+#: ../yum/__init__.py:2354 ../yum/__init__.py:2373 ../yum/__init__.py:2404
+#: ../yum/__init__.py:2410 ../yum/__init__.py:2492 ../yum/__init__.py:2496
+#: ../yum/__init__.py:2813
 #, python-format
 msgid "No Group named %s exists"
 msgstr "Ryhmää nimeltä %s ei ole olemassa"
 
-#: ../yum/__init__.py:2232 ../yum/__init__.py:2353
+#: ../yum/__init__.py:2385 ../yum/__init__.py:2512
 #, python-format
 msgid "package %s was not marked in group %s"
 msgstr "pakettia %s ei ollut merkitty kuuluvaksi ryhmään %s"
 
-#: ../yum/__init__.py:2279
+#: ../yum/__init__.py:2432
 #, python-format
 msgid "Adding package %s from group %s"
 msgstr "Lisätään paketti %s ryhmästä %s"
 
-#: ../yum/__init__.py:2283
+#: ../yum/__init__.py:2436
 #, python-format
 msgid "No package named %s available to be installed"
 msgstr "Pakettia nimeltä %s ei ole saatavilla asennusta varten"
 
-#: ../yum/__init__.py:2380
+#: ../yum/__init__.py:2538
 #, python-format
 msgid "Package tuple %s could not be found in packagesack"
 msgstr "Paketti-tuplea %s ei löytynyt pakettisäkistä"
 
-#: ../yum/__init__.py:2399
+#: ../yum/__init__.py:2557
 #, python-format
 msgid "Package tuple %s could not be found in rpmdb"
 msgstr "Paketti-tuplea %s ei löytynyt RPM-tietokannasta"
 
-#: ../yum/__init__.py:2455 ../yum/__init__.py:2505
+#: ../yum/__init__.py:2613 ../yum/__init__.py:2663
 msgid "Invalid version flag"
 msgstr "Virheellinen versiolippu"
 
-#: ../yum/__init__.py:2475 ../yum/__init__.py:2480
+#: ../yum/__init__.py:2633 ../yum/__init__.py:2638
 #, python-format
 msgid "No Package found for %s"
 msgstr "Riippuvuudelle %s ei löytynyt pakettia"
 
-#: ../yum/__init__.py:2696
+#: ../yum/__init__.py:2854
 msgid "Package Object was not a package object instance"
 msgstr "Pakettiolio ei ollutkaan pakettiolioinstanssi"
 
-#: ../yum/__init__.py:2700
+#: ../yum/__init__.py:2858
 msgid "Nothing specified to install"
 msgstr "Mitään ei määritelty asennettavaksi"
 
-#: ../yum/__init__.py:2716 ../yum/__init__.py:3489
+#: ../yum/__init__.py:2874 ../yum/__init__.py:3651
 #, python-format
 msgid "Checking for virtual provide or file-provide for %s"
 msgstr "Etsitään virtuaalista tai tiedostotarjoajaa argumentille %s"
 
-#: ../yum/__init__.py:2722 ../yum/__init__.py:3037 ../yum/__init__.py:3205
-#: ../yum/__init__.py:3495
+#: ../yum/__init__.py:2880 ../yum/__init__.py:3196 ../yum/__init__.py:3364
+#: ../yum/__init__.py:3657
 #, python-format
 msgid "No Match for argument: %s"
 msgstr "Mikään ei vastaa argumenttia: %s"
 
-#: ../yum/__init__.py:2798
+#: ../yum/__init__.py:2956
 #, python-format
 msgid "Package %s installed and not available"
 msgstr "Paketti %s on asennettu, mutta ei saatavilla"
 
-#: ../yum/__init__.py:2801
+#: ../yum/__init__.py:2959
 msgid "No package(s) available to install"
 msgstr "Yhtään pakettia ei ole saatavilla asennettavaksi"
 
-#: ../yum/__init__.py:2813
+#: ../yum/__init__.py:2971
 #, python-format
 msgid "Package: %s  - already in transaction set"
 msgstr "Paketti: %s – on jo transaktiojoukossa"
 
-#: ../yum/__init__.py:2839
+#: ../yum/__init__.py:2997
 #, python-format
 msgid "Package %s is obsoleted by %s which is already installed"
 msgstr "Paketin %s vanhentaa paketti %s, joka on jo asennettuna"
 
-#: ../yum/__init__.py:2842
+#: ../yum/__init__.py:3000
 #, python-format
 msgid "Package %s is obsoleted by %s, trying to install %s instead"
 msgstr "Paketin %s vanhentaa paketti %s, yritetään paketti %s sen sijaan"
 
-#: ../yum/__init__.py:2850
+#: ../yum/__init__.py:3008
 #, python-format
 msgid "Package %s already installed and latest version"
 msgstr "Paketti %s on jo asennettuna ja uusin versio"
 
-#: ../yum/__init__.py:2864
+#: ../yum/__init__.py:3022
 #, python-format
 msgid "Package matching %s already installed. Checking for update."
 msgstr ""
 "Pakettia %s vastaava paketti on jo asennettuna. Tarkistetaan päivitykset."
 
 #. update everything (the easy case)
-#: ../yum/__init__.py:2966
+#: ../yum/__init__.py:3125
 msgid "Updating Everything"
 msgstr "Päivitetään kaikki"
 
-#: ../yum/__init__.py:2987 ../yum/__init__.py:3102 ../yum/__init__.py:3129
-#: ../yum/__init__.py:3155
+#: ../yum/__init__.py:3146 ../yum/__init__.py:3261 ../yum/__init__.py:3288
+#: ../yum/__init__.py:3314
 #, python-format
 msgid "Not Updating Package that is already obsoleted: %s.%s %s:%s-%s"
 msgstr "Vanhennettua pakettia ei päivitetä: %s.%s %s:%s-%s"
 
-#: ../yum/__init__.py:3022 ../yum/__init__.py:3202
+#: ../yum/__init__.py:3181 ../yum/__init__.py:3361
 #, python-format
 msgid "%s"
 msgstr "%s"
 
-#: ../yum/__init__.py:3093
+#: ../yum/__init__.py:3252
 #, python-format
 msgid "Package is already obsoleted: %s.%s %s:%s-%s"
 msgstr "Paketti on jo vanhennettu: %s.%s %s:%s-%s"
 
-#: ../yum/__init__.py:3124
+#: ../yum/__init__.py:3283
 #, python-format
 msgid "Not Updating Package that is obsoleted: %s"
 msgstr "Ei päivitetä vanhennettua pakettia: %s"
 
-#: ../yum/__init__.py:3133 ../yum/__init__.py:3159
+#: ../yum/__init__.py:3292 ../yum/__init__.py:3318
 #, python-format
 msgid "Not Updating Package that is already updated: %s.%s %s:%s-%s"
 msgstr "Jo päivitettyä pakettia ei enää päivitetä: %s.%s %s:%s-%s"
 
-#: ../yum/__init__.py:3218
+#: ../yum/__init__.py:3377
 msgid "No package matched to remove"
 msgstr "Yhtään poistopyyntöä vastaavaa pakettia ei ole"
 
-#: ../yum/__init__.py:3251 ../yum/__init__.py:3349 ../yum/__init__.py:3432
+#: ../yum/__init__.py:3411
 #, python-format
-msgid "Cannot open file: %s. Skipping."
-msgstr "Ei voida avata tiedostoa: %s. Ohitetaan."
+msgid "Cannot open: %s. Skipping."
+msgstr "Ei voida avata pakettia: %s. Ohitetaan."
 
-#: ../yum/__init__.py:3254 ../yum/__init__.py:3352 ../yum/__init__.py:3435
+#: ../yum/__init__.py:3414 ../yum/__init__.py:3513 ../yum/__init__.py:3597
 #, python-format
 msgid "Examining %s: %s"
 msgstr "Tutkitaan %s: %s"
 
-#: ../yum/__init__.py:3262 ../yum/__init__.py:3355 ../yum/__init__.py:3438
+#: ../yum/__init__.py:3422 ../yum/__init__.py:3516 ../yum/__init__.py:3600
 #, python-format
 msgid "Cannot add package %s to transaction. Not a compatible architecture: %s"
 msgstr ""
 "Pakettia %s ei voida lisätä transaktioon. Arkkitehtuuri ei ole yhteensopiva: "
 "%s"
 
-#: ../yum/__init__.py:3270
+#: ../yum/__init__.py:3430
 #, python-format
 msgid ""
 "Package %s not installed, cannot update it. Run yum install to install it "
@@ -2321,99 +2478,109 @@ msgstr ""
 "Pakettia %s ei ole asennettu, sitä ei voida päivittää. Suorita yum install -"
 "komento paketin asentamiseksi."
 
-#: ../yum/__init__.py:3299 ../yum/__init__.py:3360 ../yum/__init__.py:3443
+#: ../yum/__init__.py:3459 ../yum/__init__.py:3521 ../yum/__init__.py:3605
 #, python-format
 msgid "Excluding %s"
 msgstr "Ohitetaan paketti %s"
 
-#: ../yum/__init__.py:3304
+#: ../yum/__init__.py:3464
 #, python-format
 msgid "Marking %s to be installed"
 msgstr "Merkitään paketti %s asennettavaksi"
 
-#: ../yum/__init__.py:3310
+#: ../yum/__init__.py:3470
 #, python-format
 msgid "Marking %s as an update to %s"
 msgstr "Merkitään paketti %s päivitykseksi paketille %s"
 
-#: ../yum/__init__.py:3317
+#: ../yum/__init__.py:3477
 #, python-format
 msgid "%s: does not update installed package."
 msgstr "%s: ei päivitä asennettua pakettia"
 
-#: ../yum/__init__.py:3379
+#: ../yum/__init__.py:3510 ../yum/__init__.py:3594
+#, python-format
+msgid "Cannot open file: %s. Skipping."
+msgstr "Ei voida avata tiedostoa: %s. Ohitetaan."
+
+#: ../yum/__init__.py:3540
 msgid "Problem in reinstall: no package matched to remove"
 msgstr "Ongelma uudelleenasennuksessa: poistopyyntöä vastaavaa pakettia ei ole"
 
-#: ../yum/__init__.py:3392 ../yum/__init__.py:3523
+#: ../yum/__init__.py:3553 ../yum/__init__.py:3685
 #, python-format
 msgid "Package %s is allowed multiple installs, skipping"
 msgstr "Paketille %s sallitaan useita asennuksia, ohitetaan."
 
-#: ../yum/__init__.py:3413
+#: ../yum/__init__.py:3574
 #, python-format
 msgid "Problem in reinstall: no package %s matched to install"
 msgstr ""
 "Ongelma uudelleenasennuksessa: asennuspyyntöä vastaavaa pakettia %s ei ole"
 
-#: ../yum/__init__.py:3515
+#: ../yum/__init__.py:3677
 msgid "No package(s) available to downgrade"
 msgstr "Yhtään pakettia ei ole saatavilla varhennettavaksi"
 
-#: ../yum/__init__.py:3559
+#: ../yum/__init__.py:3730
 #, python-format
 msgid "No Match for available package: %s"
 msgstr "Ei vastaavuutta saatavilla olevalle paketille: %s"
 
-#: ../yum/__init__.py:3565
+#: ../yum/__init__.py:3737
 #, python-format
 msgid "Only Upgrade available on package: %s"
 msgstr "Vain päivitys saatavilla paketille: %s"
 
-#: ../yum/__init__.py:3635 ../yum/__init__.py:3672
+#: ../yum/__init__.py:3807 ../yum/__init__.py:3844
 #, python-format
 msgid "Failed to downgrade: %s"
 msgstr "Varhentaminen epäonnistui: %s"
 
-#: ../yum/__init__.py:3704
+#: ../yum/__init__.py:3876
 #, python-format
 msgid "Retrieving GPG key from %s"
 msgstr "Noudetaan GPG-avain osoitteesta %s"
 
-#: ../yum/__init__.py:3724
+#: ../yum/__init__.py:3896
 msgid "GPG key retrieval failed: "
 msgstr "GPG-avaimen nouto epäonnistui: "
 
-#: ../yum/__init__.py:3735
+#: ../yum/__init__.py:3902
+#, python-format
+msgid "Invalid GPG Key from %s: %s"
+msgstr "Virheellinen GPG-avain osoitteesta %s: %s"
+
+#: ../yum/__init__.py:3911
 #, python-format
 msgid "GPG key parsing failed: key does not have value %s"
 msgstr "GPG-avaimen jäsentäminen epäonnistui: avaimessa ei ole arvoa %s"
 
-#: ../yum/__init__.py:3767
+#: ../yum/__init__.py:3943
 #, python-format
 msgid "GPG key at %s (0x%s) is already installed"
 msgstr "Osoitteesta %s ladattu GPG-avain (0x%s) on jo asennetuna"
 
 #. Try installing/updating GPG key
-#: ../yum/__init__.py:3772 ../yum/__init__.py:3834
+#: ../yum/__init__.py:3948 ../yum/__init__.py:4010
 #, python-format
 msgid "Importing GPG key 0x%s \"%s\" from %s"
 msgstr "Tuodaan GPG-avain 0x%s ”%s” osoitteesta %s"
 
-#: ../yum/__init__.py:3789
+#: ../yum/__init__.py:3965
 msgid "Not installing key"
 msgstr "Avainta ei asenneta"
 
-#: ../yum/__init__.py:3795
+#: ../yum/__init__.py:3971
 #, python-format
 msgid "Key import failed (code %d)"
 msgstr "Avaimen tuonti epäonnistui (koodi %d)"
 
-#: ../yum/__init__.py:3796 ../yum/__init__.py:3855
+#: ../yum/__init__.py:3972 ../yum/__init__.py:4031
 msgid "Key imported successfully"
 msgstr "Avaimen tuonti onnistui"
 
-#: ../yum/__init__.py:3801 ../yum/__init__.py:3860
+#: ../yum/__init__.py:3977 ../yum/__init__.py:4036
 #, python-format
 msgid ""
 "The GPG keys listed for the \"%s\" repository are already installed but they "
@@ -2424,40 +2591,45 @@ msgstr ""
 "vastaa tätä pakettia.\n"
 "Tarkista että tälle asennuslähteelle on asetettu oikeat avainten URL:t."
 
-#: ../yum/__init__.py:3810
+#: ../yum/__init__.py:3986
 msgid "Import of key(s) didn't help, wrong key(s)?"
 msgstr "Avainten tuonti ei auttanut, ovatko avaimet vääriä?"
 
-#: ../yum/__init__.py:3829
+#: ../yum/__init__.py:4005
 #, python-format
 msgid "GPG key at %s (0x%s) is already imported"
 msgstr "Osoitteesta %s ladattu GPG-avain (0x%s) on jo tuotu"
 
-#: ../yum/__init__.py:3849
+#: ../yum/__init__.py:4025
 #, python-format
 msgid "Not installing key for repo %s"
 msgstr "Ei asenneta avainta asennuslähteelle %s"
 
-#: ../yum/__init__.py:3854
+#: ../yum/__init__.py:4030
 msgid "Key import failed"
 msgstr "Avaimen tuonti epäonnistui"
 
-#: ../yum/__init__.py:3976
+#: ../yum/__init__.py:4156
 msgid "Unable to find a suitable mirror."
 msgstr "Sopivaa peilipalvelinta ei löytynyt."
 
-#: ../yum/__init__.py:3978
+#: ../yum/__init__.py:4158
 msgid "Errors were encountered while downloading packages."
 msgstr "Paketteja ladatessa tapahtui virheitä."
 
-#: ../yum/__init__.py:4028
+#: ../yum/__init__.py:4208
 #, python-format
 msgid "Please report this error at %s"
 msgstr "Ilmoita tästä ongelmasta: %s"
 
-#: ../yum/__init__.py:4052
+#: ../yum/__init__.py:4232
 msgid "Test Transaction Errors: "
 msgstr "Testitransaktion virheitä: "
+
+#: ../yum/__init__.py:4333
+#, python-format
+msgid "Could not set cachedir: %s"
+msgstr "Välimuistihakemiston asettaminen epäonnistui %s"
 
 #. Mostly copied from YumOutput._outKeyValFill()
 #: ../yum/plugins.py:202
@@ -2517,7 +2689,20 @@ msgstr "Liitännäisen %s asetustiedostoa ei löytynyt"
 msgid "registration of commands not supported"
 msgstr "komentojen rekisteröintiä ei tueta"
 
-#: ../yum/rpmtrans.py:78
+#: ../yum/rpmsack.py:102
+msgid "has missing requires of"
+msgstr "on puuttuvia riippuvuuksia"
+
+#: ../yum/rpmsack.py:105
+msgid "has installed conflicts"
+msgstr "on asennettuja konflikteja"
+
+#: ../yum/rpmsack.py:114
+#, python-format
+msgid "%s is a duplicate with %s"
+msgstr "paketti %s on paketin %s duplikaatti"
+
+#: ../yum/rpmtrans.py:79
 msgid "Repackaging"
 msgstr "Paketoidaan uudelleen"
 
@@ -2549,6 +2734,24 @@ msgstr "Vioittunut otsake %s"
 #, python-format
 msgid "Error opening rpm %s - error %s"
 msgstr "Virhe avattaessa RPM:ää %s – virhe %s"
+
+#~ msgid "Finished Transaction Test"
+#~ msgstr "Transaktiotesti valmistui"
+
+#~ msgid ""
+#~ " You could try running: package-cleanup --problems\n"
+#~ "                        package-cleanup --dupes\n"
+#~ "                        rpm -Va --nofiles --nodigest"
+#~ msgstr ""
+#~ " Kokeile komentoja:     package-cleanup --problems\n"
+#~ "                        package-cleanup --dupes\n"
+#~ "                        rpm -Va --nofiles --nodigest"
+
+#~ msgid "Unresolvable requirement %s for %s"
+#~ msgstr "Ratkaisematon riippuvuus %s paketille %s"
+
+#~ msgid "Missing Dependency: %s is needed by package %s"
+#~ msgstr "Puuttuva riippuvuus: %s tarvitaan paketille %s"
 
 #~ msgid ""
 #~ "getInstalledPackageObject() will go away, use self.rpmdb.searchPkgTuple"
