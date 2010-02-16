@@ -6,14 +6,15 @@
 # Thomas Canniot <mrtom@fedoraproject.org>, 2008, 2009.
 # Michaël Ughetto <telimektar1er@gmail.com>, 2008.
 # Thomas Canniot <thomas.canniot@mrtomlinux.org>, 2009.
+# Pablo Martin-Gomez <pablo.martin-gomez@laposte.net>, 2010.
 msgid ""
 msgstr ""
 "Project-Id-Version: yum.master\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2009-10-15 15:45+0200\n"
-"PO-Revision-Date: 2009-10-06 20:36+0100\n"
-"Last-Translator: Michel Duquaine <michelduquaine@gmail.com>\n"
-"Language-Team: French <fedora-trans-fr@redhat.com>\n"
+"PO-Revision-Date: 2010-01-19 20:03+0100\n"
+"Last-Translator: Pablo Martin-Gomez <pablo.martin-gomez@laposte.net>\n"
+"Language-Team: Français <fedora-trans-fr@redhat.com>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -974,7 +975,6 @@ msgid "Success"
 msgstr "Réussi"
 
 #: ../output.py:1392
-#, fuzzy
 msgid "Transaction performed with:"
 msgstr "Transaction effectuée avec :"
 
@@ -993,12 +993,11 @@ msgstr "Paquets modifiés :"
 
 #: ../output.py:1412
 msgid "Scriptlet output:"
-msgstr ""
+msgstr "Sortie du scriplet :"
 
 #: ../output.py:1418
-#, fuzzy
 msgid "Errors:"
-msgstr "Erreur : %s"
+msgstr "Erreurs :"
 
 #: ../output.py:1489
 msgid "Last day"
