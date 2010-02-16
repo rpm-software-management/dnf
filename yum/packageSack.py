@@ -702,42 +702,50 @@ class PackageSack(PackageSackBase):
                 result[po] = hits
         return result
 
+    def searchPrco(self, name, prcotype):
+        self._checkIndexes(failure='build')
+        prcodict = getattr(self, prcotype)
+        (n,f,(e,v,r)) = misc.string_to_prco_tuple(name)
+        
+        basic_results = []
+        results = []
+        if n in prcodict:
+            basic_results.extend(prcodict[n])
+
+        for po in basic_results:
+            if po.checkPrco(prcotype, (n, f, (e,v,r))):
+                results.append(po)
+
+        if prcotype != "provides":
+            return results
+            
+        if not misc.re_filename(n):
+            return results
+
+        results.extend(self.searchFiles(n))
+        return misc.unique(results)
+
+            
     def searchRequires(self, name):
-        """return list of package requiring the name (any evr and flag)"""
-        self._checkIndexes(failure='build')        
-        if self.requires.has_key(name):
-            return self.requires[name]
-        else:
-            return []
+        """return list of package requiring the item requested"""
+
+        return self.searchPrco(name, 'requires')
 
     def searchProvides(self, name):
-        """return list of package providing the name (any evr and flag)"""
-        # FIXME - should this do a pkgobj.checkPrco((name, flag, (e,v,r,))??
-        # has to do a searchFiles and a searchProvides for things starting with /
-        self._checkIndexes(failure='build')        
-        returnList = []
-        if name[0] == '/':
-            returnList.extend(self.searchFiles(name))
-        if self.provides.has_key(name):
-            returnList.extend(self.provides[name])
-        return returnList
+        """return list of package providing the item requested"""
+        
+        return self.searchPrco(name, 'provides')
 
     def searchConflicts(self, name):
-        """return list of package conflicting with the name (any evr and flag)"""
-        self._checkIndexes(failure='build')        
-        if self.conflicts.has_key(name):
-            return self.conflicts[name]
-        else:
-            return []
-
+        """return list of package conflicting with item requested"""
+        
+        return self.searchPrco(name, 'conflicts')
+        
     def searchObsoletes(self, name):
-        """return list of package obsoleting the name (any evr and flag)"""
-        self._checkIndexes(failure='build')        
-        if self.obsoletes.has_key(name):
-            return self.obsoletes[name]
-        else:
-            return []
+        """return list of package obsoleting the item requested"""
 
+        return self.searchPrco(name, 'obsoletes')
+        
     def returnObsoletes(self, newest=False):
         """returns a dict of obsoletes dict[obsoleting pkgtuple] = [list of obs]"""
         obs = {}

@@ -2592,30 +2592,7 @@ class YumBase(depsolve.Depsolve):
         """Pass in a generic [build]require string and this function will 
            pass back the packages it finds providing that dep."""
         
-        results = []
-        # parse the string out
-        #  either it is 'dep (some operator) e:v-r'
-        #  or /file/dep
-        #  or packagename
-        # or a full dep tuple
-        if type(depstring) == types.TupleType:
-            (depname, depflags, depver) = depstring
-        else:
-            depname = depstring
-            depflags = None
-            depver = None
-        
-            if depstring[0] != '/':
-                # not a file dep - look at it for being versioned
-                dep_split = depstring.split()
-                if len(dep_split) == 3:
-                    depname, flagsymbol, depver = dep_split
-                    if not flagsymbol in SYMBOLFLAGS:
-                        raise Errors.YumBaseError, _('Invalid version flag')
-                    depflags = SYMBOLFLAGS[flagsymbol]
-                
-        sack = self.whatProvides(depname, depflags, depver)
-        results = sack.returnPackages()
+        results = self.pkgSack.searchProvides(depstring)
         return results
         
 

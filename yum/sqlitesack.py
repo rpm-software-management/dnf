@@ -1263,38 +1263,58 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
  
     @catchSqliteException
     def searchPrco(self, name, prcotype):
-        """return list of packages having prcotype name (any evr and flag)"""
+        """return list of packages matching name and prcotype """
+        # we take name to be a string of some kind
+        # we parse the string to see if it is a foo > 1.1 or if it is just 'foo'
+        # or what - so we can answer correctly
+        
         if self._skip_all():
             return []
+        try:
+            (n,f,(e,v,r)) = misc.string_to_prco_tuple(name)
+        except Errors.MiscError, e:
+            raise Errors.PackageSackError, to_unicode(e)
         
-        name = to_unicode(name)
+        n = to_unicode(n)
+
         glob = True
         querytype = 'glob'
-        if not misc.re_glob(name):
+        if not misc.re_glob(n):
             glob = False
             querytype = '='
 
+        basic_results = []
         results = []
         for (rep,cache) in self.primarydb.items():
             cur = cache.cursor()
-            executeSQL(cur, "select DISTINCT pkgKey from %s where name %s ?" % (prcotype,querytype), (name,))
-            self._sql_pkgKey2po(rep, cur, results)
+            executeSQL(cur, "select DISTINCT pkgKey from %s where name %s ?" % (prcotype,querytype), (n,))
+            self._sql_pkgKey2po(rep, cur, basic_results)
         
+        # now we have a list of items matching just the name - let's match them out
+        for po in basic_results:
+            if misc.re_filename(n) and v is None:
+                # file dep add all matches to the results
+                results.append(po)
+                continue
+
+            if po.checkPrco(prcotype, (n, f, (e,v,r))):
+                results.append(po)
+
         # If it's not a provides or a filename, we are done
         if prcotype != "provides":
             return results
-        if not misc.re_filename(name):
+        if not misc.re_filename(n):
             return results
 
         # If it is a filename, search the primary.xml file info
-        results.extend(self._search_primary_files(name))
+        results.extend(self._search_primary_files(n))
 
         # if its in the primary.xml files then skip the other check
-        if misc.re_primary_filename(name) and not glob:
+        if misc.re_primary_filename(n) and not glob:
             return misc.unique(results)
 
         # If it is a filename, search the files.xml file info
-        results.extend(self.searchFiles(name))
+        results.extend(self.searchFiles(n))
         return misc.unique(results)
         
         

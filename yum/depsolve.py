@@ -158,30 +158,7 @@ class Depsolve(object):
 
         self.verbose_logger.log(logginglevels.DEBUG_1, _('Searching pkgSack for dep: %s'),
             name)
-        pkgs = self.pkgSack.searchProvides(name)
-        
-        
-        if flags == 0:
-            flags = None
-        if type(version) in (types.StringType, types.NoneType, types.UnicodeType):
-            (r_e, r_v, r_r) = rpmUtils.miscutils.stringToVersion(version)
-        elif type(version) in (types.TupleType, types.ListType): # would this ever be a ListType?
-            (r_e, r_v, r_r) = version
-        
-        defSack = ListPackageSack() # holder for items definitely providing this dep
-        
-        for po in pkgs:
-            self.verbose_logger.log(logginglevels.DEBUG_2,
-                _('Potential match for %s from %s'), name, po)
-            if misc.re_filename(name) and r_v is None:
-                # file dep add all matches to the defSack
-                defSack.addPackage(po)
-                continue
-
-            if po.checkPrco('provides', (name, flags, (r_e, r_v, r_r))):
-                defSack.addPackage(po)
-                self.verbose_logger.debug(_('Matched %s to require for %s'), po, name)
-        
+        defSack = ListPackageSack(self.pkgSack.searchProvides((name, flags, version)))
         return defSack
         
     def allowedMultipleInstalls(self, po):

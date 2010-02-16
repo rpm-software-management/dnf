@@ -282,17 +282,20 @@ class RPMDBPackageSack(PackageSackBase):
         result = self._cache[prcotype].get(name)
         if result is not None:
             return result
-
+        (n,f,(e,v,r)) = misc.string_to_prco_tuple(name)
+        
         ts = self.readOnlyTS()
         result = {}
         tag = self.DEP_TABLE[prcotype][0]
-        mi = ts.dbMatch(tag, misc.to_utf8(name))
+        mi = ts.dbMatch(tag, misc.to_utf8(n))
         for hdr in mi:
             if hdr['name'] == 'gpg-pubkey':
                 continue
             po = self._makePackageObject(hdr, mi.instance())
-            result[po.pkgid] = po
+            if po.checkPrco(prcotype, (n, f, (e,v,r))):
+                result[po.pkgid] = po
         del mi
+
 
         # If it's not a provides or filename, we are done
         if prcotype == 'provides' and name[0] == '/':
