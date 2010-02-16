@@ -651,7 +651,7 @@ def string_to_prco_tuple(prcoString):
         if f not in constants.SYMBOLFLAGS:
             try:
                 f = flagToString(int(f))
-            except TypeError, e:
+            except (ValueError,TypeError), e:
                 raise Errors.MiscError, 'Invalid version flag: %s' % f
         else:
             f = constants.SYMBOLFLAGS[f]
