@@ -414,6 +414,7 @@ class RpmBase(object):
                 return self.inPrcoRange(prcotype, prcotuple)
             else:
                 for (n, f, (e, v, r)) in self.returnPrco(prcotype):
+                    n = misc.to_unicode(n)
                     if reqn == n:
                         return 1
 

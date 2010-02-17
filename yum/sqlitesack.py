@@ -1296,10 +1296,13 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
                 # file dep add all matches to the results
                 results.append(po)
                 continue
-
-            if po.checkPrco(prcotype, (n, f, (e,v,r))):
+            
+            if not glob:
+                if po.checkPrco(prcotype, (n, f, (e,v,r))):
+                    results.append(po)
+            else:
+                # if it is a glob we can't really get any closer to checking it
                 results.append(po)
-
         # If it's not a provides or a filename, we are done
         if prcotype != "provides":
             return results

@@ -283,7 +283,11 @@ class RPMDBPackageSack(PackageSackBase):
         if result is not None:
             return result
         (n,f,(e,v,r)) = misc.string_to_prco_tuple(name)
+        glob = False
         
+        if misc.re_glob(n) or misc.re_glob(e) or misc.re_glob(r), or misc.re_glob(v):
+            glob = True
+            
         ts = self.readOnlyTS()
         result = {}
         tag = self.DEP_TABLE[prcotype][0]
@@ -292,8 +296,11 @@ class RPMDBPackageSack(PackageSackBase):
             if hdr['name'] == 'gpg-pubkey':
                 continue
             po = self._makePackageObject(hdr, mi.instance())
-            if po.checkPrco(prcotype, (n, f, (e,v,r))):
-                result[po.pkgid] = po
+            if not glob:
+                if po.checkPrco(prcotype, (n, f, (e,v,r))):
+                    result[po.pkgid] = po
+                else:
+                    result[po.pkgid] = po
         del mi
 
 
