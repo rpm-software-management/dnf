@@ -23,6 +23,7 @@ import rpm
 import os
 import os.path
 import misc
+import i18n
 import re
 import fnmatch
 import stat
@@ -414,8 +415,7 @@ class RpmBase(object):
                 return self.inPrcoRange(prcotype, prcotuple)
             else:
                 for (n, f, (e, v, r)) in self.returnPrco(prcotype):
-                    n = misc.to_unicode(n)
-                    if reqn == n:
+                    if i18n.str_eq(reqn, n):
                         return 1
 
         return 0
@@ -431,10 +431,7 @@ class RpmBase(object):
         # find the named entry in pkgobj, do the comparsion
         result = []
         for (n, f, (e, v, r)) in self.returnPrco(prcotype):
-            if isinstance(reqn, unicode) == isinstance(n, unicode):
-                if reqn != n: # stupid python...
-                    continue
-            elif misc.to_utf8(reqn) != misc.to_utf8(n):
+            if not i18n.str_eq(reqn, n):
                 continue
 
             if f == '=':

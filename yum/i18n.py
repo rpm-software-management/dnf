@@ -452,7 +452,16 @@ def to_str(obj):
         obj = str(obj)
     return obj
 
-
+def str_eq(a, b):
+    """ convert between unicode and not and compare them, w/o warning or being annoying"""
+    if isinstance(a, unicode) == isinstance(b, unicode):
+        if a == b: # stupid python...
+            return True
+    elif to_utf8(a) == to_utf8(b):
+        return True
+    
+    return False
+    
 try: 
     '''
     Setup the yum translation domain and make _() and P_() translation wrappers

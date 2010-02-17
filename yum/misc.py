@@ -79,6 +79,8 @@ def unshare_data():
 _re_compiled_glob_match = None
 def re_glob(s):
     """ Tests if a string is a shell wildcard. """
+    # TODO/FIXME maybe consider checking if it is a stringsType before going on - otherwise
+    # returning None
     global _re_compiled_glob_match
     if _re_compiled_glob_match is None:
         _re_compiled_glob_match = re.compile('[*?]|\[.+\]').search
@@ -647,7 +649,7 @@ def string_to_prco_tuple(prcoString):
                 n, f, v = prco_split
     
     # now we have 'n, f, v' where f and v could be None and None
-    if f is not None:
+    if f is not None and f not in constants.LETTERFLAGS:
         if f not in constants.SYMBOLFLAGS:
             try:
                 f = flagToString(int(f))

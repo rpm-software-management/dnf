@@ -285,7 +285,7 @@ class RPMDBPackageSack(PackageSackBase):
         (n,f,(e,v,r)) = misc.string_to_prco_tuple(name)
         glob = False
         
-        if misc.re_glob(n) or misc.re_glob(e) or misc.re_glob(r), or misc.re_glob(v):
+        if misc.re_glob(n):
             glob = True
             
         ts = self.readOnlyTS()
