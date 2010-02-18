@@ -1515,6 +1515,16 @@ class YumBase(depsolve.Depsolve):
         def adderror(po, msg):
             errors.setdefault(po, []).append(msg)
 
+        #  We close the history DB here because some plugins (presto) use
+        # threads. And sqlite really doesn't like threads. And while I don't
+        # think it should matter, we've had some reports of history DB
+        # corruption, and it was implied that it happened just after C-c
+        # at download time and this is a safe thing to do.
+        #  Note that manual testing shows that history is not connected by
+        # this point, from the cli with no plugins. So this really does
+        # nothing *sigh*.
+        self.history.close()
+
         self.plugins.run('predownload', pkglist=pkglist)
         repo_cached = False
         remote_pkgs = []
