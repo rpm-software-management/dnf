@@ -255,7 +255,6 @@ class PackageSackBase(object):
     def searchAll(self, arg, query_type):
         raise NotImplementedError()
     
-    # FIXME: This needs to be merged with how "yum list" works.
     def matchPackageNames(self, pkgspecs):
         """take a list strings and match the packages in the sack against it
            this will match against:
@@ -281,8 +280,11 @@ class PackageSackBase(object):
                 specs[p] = re.compile(restring)
             else:
                 specs[p] = p
-         
-        for pkgtup in self.simplePkgList():
+
+        #  We don't use simplePkgList() here because that loads all of the
+        # rpmdb, if we are Eg. doing a "remove PackageKit".
+        pkgs = self.returnPackages(patterns=unmatched)
+        for pkgtup in [pkg.pkgtup for pkg in pkgs]:
             (n,a,e,v,r) = pkgtup
             names = set((
                 n, 
