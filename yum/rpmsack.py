@@ -1200,7 +1200,10 @@ class RPMDBAdditionalData(object):
         else:
             if os.access(self.conf.db_path, os.W_OK):
                 self.conf.writable = True
+        #  Don't call _load_all_package_paths to preload, as it's expensive
+        # if the dirs. aren't in cache.
                 
+    def _load_all_package_paths(self):
         # glob the path and get a dict of pkgs to their subdir
         glb = '%s/*/*/' % self.conf.db_path
         pkgdirs = glob.glob(glb)
