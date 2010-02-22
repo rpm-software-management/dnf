@@ -528,6 +528,10 @@ class RPMDBPackageSack(PackageSackBase):
             data = self._trans_cache_store['file-requires']
             self._write_file_requires(rpmdbv, data)
 
+        if 'yumdb-package-checksums' in self._trans_cache_store:
+            data = self._trans_cache_store['yumdb-package-checksums']
+            self._write_package_checksums(rpmdbv, data)
+
         self._trans_cache_store = {}
 
     def transactionReset(self):
@@ -698,6 +702,80 @@ class RPMDBPackageSack(PackageSackBase):
         fo.close()
         os.rename(self._cachedir + '/file-requires.tmp',
                   self._cachedir + '/file-requires')
+
+    def preloadPackageChecksums(self):
+        """ As simpleVersion() et. al. requires it, we "cache" this yumdb data
+            as part of our rpmdb cache. We cache it with rpmdb data, even
+            though someone _could_ use yumdb to alter it without changing the
+            rpmdb ... don't do that. """
+        if not self.__cache_rpmdb__:
+            return
+
+        if not os.path.exists(self._cachedir + '/yumdb-package-checksums'):
+            return
+
+        def _read_str(fo):
+            return fo.readline()[:-1]
+
+        rpmdbv = self.simpleVersion(main_only=True)[0]
+        fo = open(self._cachedir + '/yumdb-package-checksums')
+        frpmdbv = fo.readline()
+        if not frpmdbv or rpmdbv != frpmdbv[:-1]:
+            return
+
+        checksum_data = {}
+        try:
+            # Read the checksums...
+            pkgtups_num = int(_read_str(fo))
+            while pkgtups_num > 0:
+                pkgtups_num -= 1
+
+                # n, a, e, v, r
+                pkgtup = (_read_str(fo), _read_str(fo),
+                          _read_str(fo), _read_str(fo), _read_str(fo))
+                int(pkgtup[2]) # Check epoch is valid
+
+                T = _read_str(fo)
+                D = _read_str(fo)
+                checksum_data[pkgtup] = (T, D)
+
+            if fo.readline() != '': # Should be EOF
+                return
+        except ValueError:
+            return
+
+        for pkgtup in checksum_data:
+            (n, a, e, v, r) = pkgtup
+            pkg = self.searchNevra(n, e, v, r, a)[0]
+            (T, D) = checksum_data[pkgtup]
+            if ('checksum_type' in pkg.yumdb_info._read_cached_data or
+                'checksum_data' in pkg.yumdb_info._read_cached_data):
+                continue
+            pkg.yumdb_info._read_cached_data['checksum_type'] = T
+            pkg.yumdb_info._read_cached_data['checksum_data'] = D
+
+    def transactionCachePackageChecksums(self, pkg_checksum_tups):
+        if not self.__cache_rpmdb__:
+            return
+
+        self._trans_cache_store['yumdb-package-checksums'] = pkg_checksum_tups
+
+    def _write_package_checksums(self, rpmdbversion, data):
+        if not os.access(self._cachedir, os.W_OK):
+            return
+
+        pkg_checksum_tups = data
+        fo = open(self._cachedir + '/yumdb-package-checksums.tmp', 'w')
+        fo.write("%s\n" % rpmdbversion)
+        fo.write("%u\n" % len(pkg_checksum_tups))
+        for pkgtup, TD in sorted(pkg_checksum_tups):
+            for var in pkgtup:
+                fo.write("%s\n" % var)
+            for var in TD:
+                fo.write("%s\n" % var)
+        fo.close()
+        os.rename(self._cachedir + '/yumdb-package-checksums.tmp',
+                  self._cachedir + '/yumdb-package-checksums')
 
     def _get_cached_simpleVersion_main(self):
         """ Return the cached string of the main rpmdbv. """

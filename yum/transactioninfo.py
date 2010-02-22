@@ -577,12 +577,15 @@ class TransactionData:
                 _reinstalled_pkgtups[txmbr.po.pkgtup] = txmbr.po
             pkgs.append(txmbr.po)
 
+        self.rpmdb.preloadPackageChecksums()
         main = PackageSackVersion()
+        pkg_checksum_tups = []
         for pkg in sorted(pkgs):
             if pkg.repoid != 'installed':
                 # Paste from PackageSackBase.simpleVersion()
                 csum = pkg.returnIdSum()
                 main.update(pkg, csum)
+                pkg_checksum_tups.append((pkg.pkgtup, csum))
                 continue
 
             # Installed pkg, see if it's about to die
@@ -597,7 +600,11 @@ class TransactionData:
             csum = None
             if 'checksum_type' in ydbi and 'checksum_data' in ydbi:
                 csum = (ydbi.checksum_type, ydbi.checksum_data)
+                pkg_checksum_tups.append((pkg.pkgtup, csum))
             main.update(pkg, csum)
+
+        self.rpmdb.transactionCachePackageChecksums(pkg_checksum_tups)
+
         return main
 
 class ConditionalTransactionData(TransactionData):
