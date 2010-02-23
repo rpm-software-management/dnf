@@ -432,22 +432,20 @@ class MetaSack(PackageSackBase):
         if not newest:
             return self._computeAggregateDictResult("returnObsoletes")
         
-        # FIXME - this is slooooooooooooooooooooooooooooooow
-        # get the dict back
         obsdict = self._computeAggregateDictResult("returnObsoletes")
 
-        newest_tups = set((pkg.pkgtup for pkg in self.returnNewestByName()))
-        
-        # go through each of the keys of the obs dict and see if it is in the
-        # sack of newest pkgs - if it is not - remove the entry
-        togo = []
-        for obstup in obsdict:
-            if obstup not in newest_tups:
-                togo.append(obstup)
-        for obstup in togo:
-            del obsdict[obstup]
-        
-        return obsdict
+        names = set((obstup[0] for obstup in obsdict))
+        nobsdict = {}
+        last_name = ''
+        last_pkg = None
+        for pkg in reversed(sorted(self.searchNames(names))):
+            if last_name == pkg.name and not pkg.verEQ(last_pkg):
+                continue
+            last_name = pkg.name
+            last_pkg = pkg
+            if pkg.pkgtup in obsdict:
+                nobsdict[pkg.pkgtup] = obsdict[pkg.pkgtup]
+        return nobsdict
         
     def searchFiles(self, name):
         """return list of packages by filename"""
