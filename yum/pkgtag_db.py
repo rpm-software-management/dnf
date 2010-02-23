@@ -17,8 +17,7 @@
 
 # parse sqlite tag database
 # return pkgnames and tag that was matched
-import sqlite3 as sqlite
-from sqlutils import executeSQL, sql_esc, sql_esc_glob
+from sqlutils import sqlite, executeSQL, sql_esc, sql_esc_glob
 from Errors import PkgTagsError
 import sqlutils
 import sys
