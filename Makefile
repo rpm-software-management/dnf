@@ -8,6 +8,8 @@ VERSION=$(shell awk '/Version:/ { print $$2 }' ${PKGNAME}.spec)
 RELEASE=$(shell awk '/Release:/ { print $$2 }' ${PKGNAME}.spec)
 CVSTAG=yum-$(subst .,_,$(VERSION)-$(RELEASE))
 PYTHON=python
+WEBHOST = yum.baseurl.org
+WEB_DOC_PATH = /srv/projects/yum/web/docs/yum-api/
 
 all: subdirs
 
@@ -38,10 +40,16 @@ install:
 
 .PHONY: docs test
 
-DOCS = yum rpmUtils callback.py yumcommands.py shell.py output.py cli.py \
-	   yummain.py
+DOCS = yum rpmUtils callback.py yumcommands.py shell.py output.py cli.py utils.py\
+	   yummain.py 
+
+# packages needed for docs : yum install epydoc graphviz
 docs:
-	epydoc -n yum -o docs/epydoc -u http://linux.duke.edu/projects/yum $(DOCS) --graph all
+	@rm -rf docs/epydoc/$(VERSION)
+	@mkdir -p docs/epydoc/$(VERSION)
+	@epydoc -o docs/epydoc/$(VERSION) -u http://yum.baseurl.org --name "Yum" --graph all $(DOCS)
+# Upload to yum website
+#	@scp -R docs/epydoc/$(VERSION) $(WEBHOST):$(WEB_DOC_PATH)/${VERSION}
 
 doccheck:
 	epydoc --check $(DOCS)
