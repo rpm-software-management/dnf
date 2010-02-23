@@ -9,7 +9,7 @@ RELEASE=$(shell awk '/Release:/ { print $$2 }' ${PKGNAME}.spec)
 CVSTAG=yum-$(subst .,_,$(VERSION)-$(RELEASE))
 PYTHON=python
 WEBHOST = yum.baseurl.org
-WEB_DOC_PATH = /srv/projects/yum/web/docs/yum-api/
+WEB_DOC_PATH = /srv/projects/yum/web/download/docs/yum-api/
 
 all: subdirs
 
@@ -48,8 +48,15 @@ docs:
 	@rm -rf docs/epydoc/$(VERSION)
 	@mkdir -p docs/epydoc/$(VERSION)
 	@epydoc -o docs/epydoc/$(VERSION) -u http://yum.baseurl.org --name "Yum" --graph all $(DOCS)
+
+upload-docs: docs
 # Upload to yum website
-#	@scp -R docs/epydoc/$(VERSION) $(WEBHOST):$(WEB_DOC_PATH)/${VERSION}
+	@rm -rf yum-apidoc-$(VERSION).tar.gz
+	@dir=$$PWD; cd $$dir/docs/epydoc; tar zcf $$dir/yum-apidoc-$(VERSION).tar.gz $(VERSION)
+	@scp yum-apidoc-$(VERSION).tar.gz $(WEBHOST):$(WEB_DOC_PATH)/.
+	@ssh $(WEBHOST) "cd $(WEB_DOC_PATH); tar zxvf yum-apidoc-$(VERSION).tar.gz; rm yum-apidoc-$(VERSION).tar.gz"
+	@rm -rf yum-apidoc-$(VERSION).tar.gz
+
 
 doccheck:
 	epydoc --check $(DOCS)
