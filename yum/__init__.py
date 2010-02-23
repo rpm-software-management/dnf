@@ -624,7 +624,11 @@ class YumBase(depsolve.Depsolve):
         
         if self.conf.obsoletes:
             obs_init = time.time()    
-            self._up.rawobsoletes = self.pkgSack.returnObsoletes()
+            #  Note: newest=True here is semi-required for repos. with multiple
+            # versions. The problem is that if pkgA-2 _accidentally_ obsoletes
+            # pkgB-1, and we keep all versions, we want to release a pkgA-3
+            # that doesn't do the obsoletes ... and thus. not obsolete pkgB-1.
+            self._up.rawobsoletes = self.pkgSack.returnObsoletes(newest=True)
             self.verbose_logger.debug('up:Obs Init time: %0.3f' % (time.time() - obs_init))
 
         self._up.myarch = self.arch.canonarch
