@@ -866,26 +866,37 @@ class YumBase(depsolve.Depsolve):
         # works for downloads / mirror failover etc.
         self.rpmdb.ts = None
 
-        # if depsolve failed and skipbroken is enabled
-        # The remove the broken packages from the transactions and
-        # Try another depsolve
-        if self.conf.skip_broken and rescode==1:
-            self.skipped_packages = []    # reset the public list of skipped packages.
-            sb_st = time.time()
-            rescode, restring = self._skipPackagesWithProblems(rescode, restring)
-            self._printTransaction()        
-            self.verbose_logger.debug('Skip-Broken time: %0.3f' % (time.time() - sb_st))
+        # do the skip broken magic, if enabled and problems exist
+        (rescode, restring) = self._doSkipBroken(rescode, restring)
 
         self.plugins.run('postresolve', rescode=rescode, restring=restring)
 
         if self.tsInfo.changed:
             (rescode, restring) = self.resolveDeps(rescode == 1)
+            # If transaction was changed by postresolve plugins then we should run skipbroken again
+            (rescode, restring) = self._doSkipBroken(rescode, restring, clear_skipped=False )
+
         if self.tsInfo.pkgSack is not None: # rm Transactions don't have pkgSack
             self.tsInfo.pkgSack.dropCachedData()
         self.rpmdb.dropCachedData()
 
         self.verbose_logger.debug('Depsolve time: %0.3f' % (time.time() - ds_st))
         return rescode, restring
+
+    def _doSkipBroken(self,rescode, restring, clear_skipped=True):
+        ''' do skip broken if it is enabled '''
+        # if depsolve failed and skipbroken is enabled
+        # The remove the broken packages from the transactions and
+        # Try another depsolve
+        if self.conf.skip_broken and rescode==1:
+            if clear_skipped:
+               self.skipped_packages = []    # reset the public list of skipped packages.
+            sb_st = time.time()
+            rescode, restring = self._skipPackagesWithProblems(rescode, restring)
+            self._printTransaction()        
+            self.verbose_logger.debug('Skip-Broken time: %0.3f' % (time.time() - sb_st))
+        return (rescode, restring)
+            
 
     def _skipPackagesWithProblems(self, rescode, restring):
         ''' Remove the packages with depsolve errors and depsolve again '''
@@ -983,7 +994,7 @@ class YumBase(depsolve.Depsolve):
             for po in skipped_list:
                 msg = _("    %s from %s") % (str(po),po.repo.id)
                 self.verbose_logger.info(msg)
-            self.skipped_packages = skipped_list    # make the skipped packages public
+            self.skipped_packages.extend(skipped_list)   # make the skipped packages public
         else:
             # If we cant solve the problems the show the original error messages.
             self.verbose_logger.info("Skip-broken could not solve problems")
