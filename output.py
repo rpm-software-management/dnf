@@ -392,6 +392,11 @@ class YumOutput:
                                                          total_width)
                 if not thelps:
                     continue
+                #  We prefer to overflow: the last column, and then earlier
+                # columns. This is so that in the best case (just overflow the
+                # last) ... grep still "works", and then we make it prettier.
+                if helps and (d == (cols - 1)) and (thelps / 2) < helps:
+                    continue
                 if thelps < helps:
                     continue
                 helps = thelps
