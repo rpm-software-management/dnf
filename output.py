@@ -410,6 +410,21 @@ class YumOutput:
                 total_width  -= diff
                 continue
 
+            overflowed_columns = 0
+            for d in xrange(0, cols):
+                if not data[d]:
+                    continue
+                overflowed_columns += 1
+            if overflowed_columns:
+                #  Split the remaining spaces among each overflowed column
+                # equally
+                norm = total_width / overflowed_columns
+                for d in xrange(0, cols):
+                    if not data[d]:
+                        continue
+                    columns[d] += norm
+                    total_width -= norm
+
             #  Split the remaining spaces among each column equally, except the
             # last one. And put the rest into the remainder column
             cols -= 1
