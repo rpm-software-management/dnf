@@ -3729,7 +3729,8 @@ class YumBase(depsolve.Depsolve):
                         break
 
             if lipkg is None:
-                if na not in warned_nas and not doing_group_pkgs:
+                if (na not in warned_nas and not doing_group_pkgs and
+                    pkg.name not in latest_installed_n):
                     msg = _('No Match for available package: %s') % pkg
                     self.logger.critical(msg)
                 warned_nas.add(na)
