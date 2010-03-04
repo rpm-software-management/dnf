@@ -205,6 +205,28 @@ class UpdateCommand(YumCommand):
         except yum.Errors.YumBaseError, e:
             return 1, [str(e)]
 
+class DistroSyncCommand(YumCommand):
+    def getNames(self):
+        return ['distribution-synchronization', 'distro-sync']
+
+    def getUsage(self):
+        return _("[PACKAGE...]")
+
+    def getSummary(self):
+        return _("Synchronize installed packages to the latest available versions")
+
+    def doCheck(self, base, basecmd, extcmds):
+        checkRootUID(base)
+        checkGPGKey(base)
+
+    def doCommand(self, base, basecmd, extcmds):
+        self.doneCommand(base, _("Setting up Distribution Synchronization Process"))
+        try:
+            base.conf.obsoletes = 1
+            return base.distroSyncPkgs(extcmds)
+        except yum.Errors.YumBaseError, e:
+            return 1, [str(e)]
+
 def _add_pkg_simple_list_lens(data, pkg, indent=''):
     """ Get the length of each pkg's column. Add that to data.
         This "knows" about simpleList and printVer. """

@@ -100,6 +100,7 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         self.registerCommand(yumcommands.VersionCommand())
         self.registerCommand(yumcommands.HistoryCommand())
         self.registerCommand(yumcommands.CheckRpmdbCommand())
+        self.registerCommand(yumcommands.DistroSyncCommand())
 
     def registerCommand(self, command):
         for name in command.getNames():
@@ -648,6 +649,68 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
             return 2, [msg]
         else:
             return 0, [_('No Packages marked for Update')]
+
+    #  Note that we aren't in __init__ yet for a couple of reasons, but we 
+    # probably will get there for 3.2.28.
+    def distroSyncPkgs(self, userlist):
+        """ This does either upgrade/downgrade, depending on if the latest
+            installed version is older or newer. We allow "selection" but not
+            local packages (use tmprepo, or something). """
+
+        dupdates = []
+        ipkgs = {}
+        for pkg in sorted(self.rpmdb.returnPackages(patterns=userlist)):
+            ipkgs[pkg.name] = pkg
+
+        obsoletes = []
+        if self.conf.obsoletes:
+            obsoletes = self.up.getObsoletesTuples(newest=1)
+
+        for (obsoleting, installed) in obsoletes:
+            if installed[0] not in ipkgs:
+                continue
+            dupdates.extend(self.update(pkgtup=installed))
+        for (obsoleting, installed) in obsoletes:
+            if installed[0] not in ipkgs:
+                continue
+            del ipkgs[installed[0]]
+
+        apkgs = {}
+        for pkg in self.pkgSack.returnNewestByName():
+            if pkg.name not in ipkgs:
+                continue
+            apkgs[pkg.name] = pkg
+
+        for ipkgname in ipkgs:
+            if ipkgname not in apkgs:
+                continue
+
+            ipkg = ipkgs[ipkgname]
+            apkg = apkgs[ipkgname]
+            if ipkg.verEQ(apkg):
+                continue
+            if self.allowedMultipleInstalls(apkg):
+                found = False
+                for napkg in self.rpmdb.searchNames([apkg.name]):
+                    if napkg.verEQ(apkg):
+                        found = True
+                    elif napkg.verGT(apkg):
+                        dupdates.extend(self.remove(po=napkg))
+                if found:
+                    continue
+                dupdates.extend(self.install(pattern=apkg.name))
+            elif ipkg.verLT(apkg):
+                n,a,e,v,r = apkg.pkgtup
+                dupdates.extend(self.update(name=n, epoch=e, ver=v, rel=r))
+            else:
+                n,a,e,v,r = apkg.pkgtup
+                dupdates.extend(self.downgrade(name=n, epoch=e, ver=v, rel=r))
+
+        if dupdates:
+            msg = _('%d packages marked for Distribution Synchronization') % len(dupdates)
+            return 2, [msg]
+        else:
+            return 0, [_('No Packages marked for Distribution Synchronization')]
 
     def erasePkgs(self, userlist):
         """take user commands and populate a transaction wrapper with packages
