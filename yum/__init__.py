@@ -2144,6 +2144,9 @@ class YumBase(depsolve.Depsolve):
         del tmpres
 
         tmpres = self.searchPackageTags(real_crit_lower)
+        
+        results_by_pkg = {} # pkg=[list_of_tuples_of_values]
+        
         for pkg in tmpres:
             count = 0
             matchkeys = []
@@ -2152,13 +2155,37 @@ class YumBase(depsolve.Depsolve):
                 count += len(taglist)
                 matchkeys.append(rcl2c[match])
                 tagresults.extend(taglist)
+                if pkg not in results_by_pkg:
+                    results_by_pkg[pkg] = []
+                results_by_pkg[pkg].append((matchkeys, tagresults))
 
-
-            if count not in sorted_lists: sorted_lists[count] = []
-            sorted_lists[count].append((pkg, matchkeys, tagresults))
-        
         del tmpres
-        
+
+        # do the ones we already have
+        for item in sorted_lists.values():
+            for pkg, keys, values in item:
+                if pkg not in results_by_pkg:
+                    results_by_pkg[pkg] = []
+                results_by_pkg[pkg].append((keys,values))
+
+        # take our existing dict-by-pkg and make the dict-by-count for 
+        # this bizarro sorted_lists format
+        # FIXME - stab sorted_lists in the chest at some later date
+        sorted_lists = {}
+        for pkg in results_by_pkg:
+            totkeys = []
+            totvals = []
+            for (keys, values) in results_by_pkg[pkg]:
+                totkeys.extend(keys)
+                totvals.extend(values)
+            
+            totkeys = misc.unique(totkeys)
+            totvals = misc.unique(totvals)
+            count = len(totkeys)
+            if count not in sorted_lists:
+                sorted_lists[count] = []
+            sorted_lists[count].append((pkg, totkeys, totvals))
+
         # By default just sort using package sorting
         sort_func = operator.itemgetter(0)
         if keys:
