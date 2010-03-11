@@ -335,13 +335,15 @@ class UpdateMetadata(object):
     # has a BZ fix notice. All you can see is the BZ notice for the new "pkg-3"
     # with the above.
     #  So now instead you lookup based on the _installed_ pkg.pkgtup, and get
-    # two notices, in order: [(pkg-3, notice), (pkg-2, notice)]
+    # two notices, in order: [(pkgtup-3, notice), (pkgtup-2, notice)]
     # the reason for the sorting order is that the first match will give you
     # the minimum pkg you need to move to.
     def get_applicable_notices(self, pkgtup):
         """
         Retrieve any update notices which are newer than a
         given std. pkgtup (name, arch, epoch, version, release) tuple.
+        Returns: list of (pkgtup, notice) that are newer than the given pkgtup,
+                 in the order of newest pkgtups first.
         """
         oldpkgtup = pkgtup
         name = oldpkgtup[0]
