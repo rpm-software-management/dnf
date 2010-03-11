@@ -595,6 +595,7 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         
         oldcount = len(self.tsInfo)
         
+        done = False
         for arg in userlist:
             if (arg.endswith('.rpm') and (yum.misc.re_remote_url(arg) or
                                           os.path.exists(arg))):
@@ -609,8 +610,13 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
                                         self.term.MODE['bold'], arg,
                                         self.term.MODE['normal'])
                 self._maybeYouMeant(arg)
+            else:
+                done = True
         if len(self.tsInfo) > oldcount:
             return 2, [_('Package(s) to install')]
+
+        if not done:
+            return 1, [_('Nothing to do')]
         return 0, [_('Nothing to do')]
         
     def updatePkgs(self, userlist, quiet=0):
