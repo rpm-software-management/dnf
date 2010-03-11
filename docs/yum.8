@@ -27,6 +27,8 @@ gnome\-packagekit application\&.
 .br 
 .I \fR * upgrade [package1] [package2] [\&.\&.\&.] 
 .br
+.I \fR * distribution-synchronization [package1] [package2] [\&.\&.\&.] 
+.br
 .I \fR * remove | erase package1 [package2] [\&.\&.\&.]
 .br 
 .I \fR * list [\&.\&.\&.]
@@ -118,6 +120,13 @@ Running in verbose mode also shows obsoletes.
 .IP "\fBupgrade\fP"
 Is the same as the update command with the \-\-obsoletes flag set. See update 
 for more details.
+.IP 
+.IP "\fBdistribution-synchronization\fP" "\fBdistro-sync\fP"
+Synchronizes the installed package set with the latest packages available, this
+is done by either obsoleting, upgrading or downgrading as appropriate. This will
+"normally" do the same thing as the upgrade command however if you have the
+package FOO installed at version 4, and the latest available is only
+version 3, then this command will \fBdowngrade\fP FOO to version 3.
 .IP 
 .IP "\fBremove\fP or \fBerase\fP"
 Are used to remove the specified packages from the system
