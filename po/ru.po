@@ -10,7 +10,7 @@ msgstr ""
 "Project-Id-Version: yum\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2010-02-11 10:54-0500\n"
-"PO-Revision-Date: 2010-03-12 23:17+0300\n"
+"PO-Revision-Date: 2010-03-14 11:58+0300\n"
 "Last-Translator: Timur Malikin <sora_tm@mail.ru>\n"
 "Language-Team: ru <fedora-localization@www.russianfedora.ru>\n"
 "MIME-Version: 1.0\n"
@@ -55,7 +55,7 @@ msgstr "Нет заголовка?"
 
 #: ../callback.py:168
 msgid "Repackage"
-msgstr "Перепаковка"
+msgstr "Переупаковка"
 
 #: ../callback.py:189
 #, python-format
@@ -82,11 +82,11 @@ msgstr "Команда \"%s\" уже используется"
 
 #: ../cli.py:119
 msgid "Setting up repositories"
-msgstr "Настройка репозиторий"
+msgstr "Настройка репозиториев"
 
 #: ../cli.py:130
 msgid "Reading repository metadata in from local files"
-msgstr "Чтение метаданных репозитория с локальных файлов "
+msgstr "Чтение метаданных репозиториев с локальных файлов "
 
 #: ../cli.py:194 ../utils.py:193
 #, python-format
@@ -180,7 +180,7 @@ msgstr "Пожалуйста, сообщите об этой ошибке %s"
 
 #: ../cli.py:450
 msgid "Running Transaction Test"
-msgstr "Запуск тестовой транзакции"
+msgstr "Проверка транзакций"
 
 #: ../cli.py:466
 msgid "Transaction Check Error:\n"
@@ -188,7 +188,7 @@ msgstr "Ошибка проверки транзакции:\n"
 
 #: ../cli.py:473
 msgid "Transaction Test Succeeded"
-msgstr "Тестовая транзакция успешна"
+msgstr "Проверка прошла успешно"
 
 #: ../cli.py:495
 msgid "Running Transaction"
@@ -428,7 +428,7 @@ msgstr "максимальное время ожидания команды"
 
 #: ../cli.py:1334
 msgid "debugging output level"
-msgstr "отладка выходного уровня"
+msgstr "уровень отладочных сообщений"
 
 #: ../cli.py:1338
 msgid "show duplicates, in repos, in list/search commands"
@@ -436,19 +436,19 @@ msgstr "отобразить дубликаты в репозиториях, в 
 
 #: ../cli.py:1340
 msgid "error output level"
-msgstr "ошибка выходного уровня"
+msgstr "уровень сообщений об ошибках"
 
 #: ../cli.py:1343
 msgid "debugging output level for rpm"
-msgstr "отладка выходного уровня для rpm"
+msgstr "уровень отладочных сообщений для rpm"
 
 #: ../cli.py:1346
 msgid "quiet operation"
-msgstr "завершение операции"
+msgstr "работать без вывода сообщений"
 
 #: ../cli.py:1348
 msgid "verbose operation"
-msgstr "Подробная операция"
+msgstr "подробно описывать действия"
 
 #: ../cli.py:1350
 msgid "answer yes for all questions"
@@ -460,7 +460,7 @@ msgstr "показать версию Yum и выйти"
 
 #: ../cli.py:1353
 msgid "set install root"
-msgstr "настройка корневой установки"
+msgstr "настройка корневой папки"
 
 #: ../cli.py:1357
 msgid "enable one or more repositories (wildcards allowed)"
@@ -478,7 +478,7 @@ msgstr "исключение пакета(ов) по имени или регу�
 
 #: ../cli.py:1366
 msgid "disable exclude from main, for a repo or for everything"
-msgstr "отключает исключения для основного, для репозитория или для всего"
+msgstr "отключает исключения для конкретного репозитория или для всех"
 
 #: ../cli.py:1369
 msgid "enable obsoletes processing during updates"
@@ -490,7 +490,7 @@ msgstr "отключить плагины Yum"
 
 #: ../cli.py:1373
 msgid "disable gpg signature checking"
-msgstr "отключить проверку сигнатуры gpg"
+msgstr "отключить проверку подписи gpg"
 
 #: ../cli.py:1375
 msgid "disable plugins by name"
@@ -502,17 +502,17 @@ msgstr "включить плагин по имени"
 
 #: ../cli.py:1381
 msgid "skip packages with depsolving problems"
-msgstr "пропускать пакеты при решении проблем зависимостей"
+msgstr "пропускать пакеты, с проблемами с зависимостями"
 
 #: ../cli.py:1383
 msgid "control whether color is used"
-msgstr "Контролирует использование цветов"
+msgstr "Использовать ли цветовые схемы"
 
 #: ../cli.py:1385
 msgid "set value of $releasever in yum config and repo files"
 msgstr ""
-"установите значение $releasever в конфигурационном файле yum и в файле "
-"репозиторий (repo)"
+"установите значение $releasever в конфигурационном файле yum и в файлах "
+"репозиториев (repo)"
 
 #: ../output.py:305
 msgid "Jan"
@@ -684,7 +684,7 @@ msgstr " Описание: %s"
 
 #: ../output.py:726
 msgid " Mandatory Packages:"
-msgstr " Принудительные пакеты"
+msgstr " Обязательные пакеты"
 
 #: ../output.py:727
 msgid " Default Packages:"
@@ -824,7 +824,7 @@ msgid ""
 "%s\n"
 msgstr ""
 "\n"
-"Суммарная транзакция\n"
+"Итог\n"
 "%s\n"
 
 #: ../output.py:1013
@@ -1012,7 +1012,7 @@ msgstr "Код возврата:"
 
 #: ../output.py:1426
 msgid "Aborted"
-msgstr "Пропущено"
+msgstr "Прекращено"
 
 #: ../output.py:1428
 msgid "Failure:"
@@ -1033,7 +1033,7 @@ msgstr "Возвращено к предыдущей версии"
 #. multiple versions installed, both older and newer
 #: ../output.py:1446
 msgid "Weird"
-msgstr "Предопределено"
+msgstr "Странный"
 
 #: ../output.py:1448
 msgid "Packages Altered:"
@@ -1203,7 +1203,7 @@ msgstr "Ожидание"
 
 #: ../utils.py:95
 msgid "Uninterruptible"
-msgstr "Не прерываемый"
+msgstr "Непрерываемый"
 
 #: ../utils.py:96
 msgid "Zombie"
@@ -1404,7 +1404,7 @@ msgstr "Доступные пакеты"
 
 #: ../yumcommands.py:305
 msgid "Extra Packages"
-msgstr "Экстра пакеты"
+msgstr "Дополнительные пакеты"
 
 #: ../yumcommands.py:309
 msgid "Updated Packages"
@@ -1445,7 +1445,7 @@ msgstr "Нет групп для запуска команды"
 
 #: ../yumcommands.py:399
 msgid "List available package groups"
-msgstr "Список доступных пакетов"
+msgstr "Список доступных групп пакетов"
 
 #: ../yumcommands.py:416
 msgid "Install the packages in a group on your system"
@@ -1469,7 +1469,7 @@ msgstr "Создание кэша для всех метаданных файл�
 
 #: ../yumcommands.py:496
 msgid "This may take a while depending on the speed of this computer"
-msgstr "Это займёт немного времени, зависит от скорости компьютера"
+msgstr "Это займёт немного времени, в зависимости от скорости компьютера"
 
 #: ../yumcommands.py:517
 msgid "Metadata Cache Created"
@@ -1477,7 +1477,7 @@ msgstr "Кэш метаданных создан"
 
 #: ../yumcommands.py:531
 msgid "Remove cached data"
-msgstr "Удаление данных кэша"
+msgstr "Удаление закэшированных данных"
 
 #: ../yumcommands.py:551
 msgid "Find what package provides the given value"
@@ -1489,7 +1489,7 @@ msgstr "Проверка доступных обновлений пакетов"
 
 #: ../yumcommands.py:621
 msgid "Search package details for the given string"
-msgstr "Поиск информации о пакете по заданной строковой переменной"
+msgstr "Поиск информации о пакете по заданной строке"
 
 #: ../yumcommands.py:627
 msgid "Searching Packages: "
@@ -1497,11 +1497,11 @@ msgstr "Поиск пакетов:"
 
 #: ../yumcommands.py:644
 msgid "Update packages taking obsoletes into account"
-msgstr "Пакеты обновлений, включая устаревшие"
+msgstr "Обновить пакеты, учитывая замены"
 
 #: ../yumcommands.py:652
 msgid "Setting up Upgrade Process"
-msgstr "Настройка перехода к следующей версии"
+msgstr "Приготовления к процессу обновления"
 
 #: ../yumcommands.py:666
 msgid "Install a local RPM"
@@ -1840,12 +1840,12 @@ msgstr "%s требуется %s"
 
 #: ../yum/depsolve.py:346
 msgid "Needed Require has already been looked up, cheating"
-msgstr "Необходимое требование уже было заблокировано, обход"
+msgstr "Необходимое требование уже было было уже найдено, сжульничаем"
 
 #: ../yum/depsolve.py:356
 #, python-format
 msgid "Needed Require is not a package name. Looking up: %s"
-msgstr "Обязательный зависимость не является именем пакета. Поиск: %s"
+msgstr "Требуемая зависимость не является именем пакета. Поиск: %s"
 
 #: ../yum/depsolve.py:363
 #, python-format
@@ -1860,7 +1860,7 @@ msgstr "Режим %s для поставщика %s: %s"
 #: ../yum/depsolve.py:390
 #, python-format
 msgid "Mode for pkg providing %s: %s"
-msgstr "Режим для поставщика пакета %s: %s"
+msgstr "Режим для пакета, предоставяющего %s: %s"
 
 #: ../yum/depsolve.py:394
 #, python-format
@@ -2036,7 +2036,7 @@ msgstr "Объект репозитория %s не имеет метода _res
 
 #: ../yum/__init__.py:600
 msgid "therefore this repo cannot be reset.\n"
-msgstr "поэтому этот репозиторий не может быть восстановлен.\n"
+msgstr "поэтому этот репозиторий не может быть сброшен.\n"
 
 #: ../yum/__init__.py:605
 msgid "doUpdateSetup() will go away in a future version of Yum.\n"
@@ -2139,7 +2139,7 @@ msgstr "установлен в конфликте"
 msgid ""
 "Warning: scriptlet or other non-fatal errors occurred during transaction."
 msgstr ""
-"Внимание: во время транзакции был вызван сценарий или произошла\n"
+"Внимание: во время транзакции была вызвана ошибка сценария или произошла\n"
 " иная не критичная ошибка"
 
 #: ../yum/__init__.py:1198
@@ -2184,7 +2184,7 @@ msgid ""
 "Package does not match intended download. Suggestion: run yum clean metadata"
 msgstr ""
 "Пакет не соответствует предназначенному для загрузки. Предложение: "
-"Пожалуйста, запустите Yum чистой метаданных"
+"Пожалуйста, запустите yum clean metadata"
 
 #: ../yum/__init__.py:1486
 msgid "Could not perform checksum"
@@ -2192,7 +2192,7 @@ msgstr "Невозможно проверить контрольную сумм�
 
 #: ../yum/__init__.py:1489
 msgid "Package does not match checksum"
-msgstr "Пакет несовпадает с контрольной суммой"
+msgstr "Пакет не совпадает с контрольной суммой"
 
 #: ../yum/__init__.py:1531
 #, python-format
@@ -2302,11 +2302,11 @@ msgstr "поиск пакета %s"
 
 #: ../yum/__init__.py:2235
 msgid "searching in file entries"
-msgstr "поиск в данных файла"
+msgstr "поиск среди файлов"
 
 #: ../yum/__init__.py:2242
 msgid "searching in provides entries"
-msgstr "поиск в присвоенных данных"
+msgstr "Поиск среди предоставлений"
 
 #: ../yum/__init__.py:2275
 #, python-format
@@ -2404,7 +2404,7 @@ msgstr "Пакет %s был заменён на %s, попытка устано
 #: ../yum/__init__.py:3009
 #, python-format
 msgid "Package %s already installed and latest version"
-msgstr "Пакет %s уже установлен и это последняя версия."
+msgstr "Пакет %s уже установлен, и это последняя версия."
 
 #: ../yum/__init__.py:3023
 #, python-format
@@ -2498,12 +2498,12 @@ msgstr "Невозможно открыть файл %s. Пропуск."
 
 #: ../yum/__init__.py:3541
 msgid "Problem in reinstall: no package matched to remove"
-msgstr "Проблема при перестановке: не найден пакет для удаления"
+msgstr "Проблема при переустановке: не найден пакет для удаления"
 
 #: ../yum/__init__.py:3554 ../yum/__init__.py:3686
 #, python-format
 msgid "Package %s is allowed multiple installs, skipping"
-msgstr "Пакет %s может будет повторно установлен, пропуск"
+msgstr "Пакет %s может быть повторно установлен, пропуск"
 
 #: ../yum/__init__.py:3575
 #, python-format
@@ -2699,7 +2699,7 @@ msgstr "%s совпадает с %s"
 
 #: ../yum/rpmtrans.py:79
 msgid "Repackaging"
-msgstr "Перепаковка"
+msgstr "Переупаковка"
 
 #: ../rpmUtils/oldUtils.py:33
 #, python-format
