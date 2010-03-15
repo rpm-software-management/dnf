@@ -10,7 +10,7 @@ msgstr ""
 "Project-Id-Version: yum\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2010-02-11 10:54-0500\n"
-"PO-Revision-Date: 2010-03-14 11:58+0300\n"
+"PO-Revision-Date: 2010-03-15 21:44+0300\n"
 "Last-Translator: Timur Malikin <sora_tm@mail.ru>\n"
 "Language-Team: ru <fedora-localization@www.russianfedora.ru>\n"
 "MIME-Version: 1.0\n"
@@ -138,7 +138,7 @@ msgid ""
 "Error Summary\n"
 "-------------\n"
 msgstr ""
-"Суммарные ошибки\n"
+"Обзор ошибок\n"
 "---------------\n"
 
 #: ../cli.py:364
@@ -1372,7 +1372,7 @@ msgstr "ПАКЕТ..."
 
 #: ../yumcommands.py:173
 msgid "Install a package or packages on your system"
-msgstr "Установка пакета(пакетов) в Вашей системе"
+msgstr "Установка пакета(пакетов) в вашей системе"
 
 #: ../yumcommands.py:181
 msgid "Setting up Install Process"
@@ -1384,7 +1384,7 @@ msgstr "[ПАКЕТ...]"
 
 #: ../yumcommands.py:195
 msgid "Update a package or packages on your system"
-msgstr "Обновление пакета(ов) в Вашей системе"
+msgstr "Обновление пакета(ов) в вашей системе"
 
 #: ../yumcommands.py:202
 msgid "Setting up Update Process"
@@ -1429,7 +1429,7 @@ msgstr "Список пакетов или группы пакетов"
 
 #: ../yumcommands.py:359
 msgid "Remove a package or packages from your system"
-msgstr "Удаление пакета(пакетов) с Вашей системы"
+msgstr "Удаление пакета(пакетов) с вашей системы"
 
 #: ../yumcommands.py:366
 msgid "Setting up Remove Process"
@@ -1449,7 +1449,7 @@ msgstr "Список доступных групп пакетов"
 
 #: ../yumcommands.py:416
 msgid "Install the packages in a group on your system"
-msgstr "Установка пакетов из группы в Вашу систему"
+msgstr "Установка пакетов из группы в вашу систему"
 
 #: ../yumcommands.py:438
 msgid "Remove the packages in a group from your system"
@@ -1886,13 +1886,13 @@ msgstr "Не удаётся найти путь обновления завис�
 #: ../yum/depsolve.py:449
 #, python-format
 msgid "Quick matched %s to require for %s"
-msgstr "Быстрое совпадение %s требуется для %s"
+msgstr "Быстро подобран пакет %s в качестве требуемого для %s"
 
 #. is it already installed?
 #: ../yum/depsolve.py:491
 #, python-format
 msgid "%s is in providing packages but it is already installed, removing."
-msgstr "%s в предоставляемых пакетах, но он уже установлен, удаление."
+msgstr "Зависимый пакет %s уже установлен и будет пропущен"
 
 #: ../yum/depsolve.py:507
 #, python-format
@@ -2709,7 +2709,7 @@ msgstr "Заголовок не открывается или не совпад�
 #: ../rpmUtils/oldUtils.py:53
 #, python-format
 msgid "RPM %s fails md5 check"
-msgstr "Ошибка проверки md5 суммы пакета %s "
+msgstr "Контрольная сумма md5 пакета %s не совпадает с действительной"
 
 #: ../rpmUtils/oldUtils.py:151
 msgid "Could not open RPM database for reading. Perhaps it is already in use?"
