@@ -1660,24 +1660,52 @@ class DepSolveProgressCallBack:
         if not yb:
             return msg
         
+        def _msg_pkg(action, pkg, needname):
+            " Add a package to the message, including any provides matches. "
+            msg = _('\n    %s: %s (%s)') % (action, pkg, pkg.ui_from_repo)
+            needtup = (needname, None, (None, None, None))
+            done = False
+            for pkgtup in pkg.matchingPrcos('provides', needtup):
+                done = True
+                msg += _('\n        %s') % yum.misc.prco_tuple_to_string(pkgtup)
+            if not done:
+                msg += _('\n        Not found')
+            return msg
+
         ipkgs = set()
         for pkg in sorted(yb.rpmdb.getProvides(needname)):
-            ipkgs.add(pkg.pkgtup)
+            nevr = (pkg.name, pkg.epoch, pkg.version, pkg.release)
+            ipkgs.add(nevr)
             action = _('Installed')
-            if yb.tsInfo.getMembersWithState(pkg.pkgtup, TS_REMOVE_STATES):
+            rmed = yb.tsInfo.getMembersWithState(pkg.pkgtup, TS_REMOVE_STATES)
+            if rmed:
                 action = _('Removing')
-            msg += _('\n    %s: %s (%s)') % (action, pkg, pkg.ui_from_repo)
+            msg += _msg_pkg(action, pkg, needname)
+            # These should be the only three things we care about:
+            relmap = {'updatedby' : _('Updated By'),
+                      'downgradedby' : _('Downgraded By'),
+                      'obsoletedby' :  _('Obsoleted By'),
+                      }
+            for txmbr in rmed:
+                for (rpkg, rtype) in txmbr.relatedto:
+                    if rtype not in relmap:
+                        continue
+                    nevr = (rpkg.name, rpkg.epoch, rpkg.version, rpkg.release)
+                    ipkgs.add(nevr)
+                    msg += _msg_pkg(relmap[rtype], rpkg, needname)
+
         last = None
         for pkg in sorted(yb.pkgSack.getProvides(needname)):
             #  We don't want to see installed packages, or N packages of the
             # same version, from different repos.
-            if pkg.pkgtup in ipkgs or pkg.verEQ(last):
+            nevr = (pkg.name, pkg.epoch, pkg.version, pkg.release)
+            if nevr in ipkgs or (pkg.verEQ(last) and pkg.arch == last.arch):
                 continue
             last = pkg
             action = _('Available')
             if yb.tsInfo.getMembersWithState(pkg.pkgtup, TS_INSTALL_STATES):
                 action = _('Installing')
-            msg += _('\n    %s: %s (%s)') % (action, pkg, pkg.repoid)
+            msg += _msg_pkg(action, pkg, needname)
         return msg
     
     def procConflict(self, name, confname):
