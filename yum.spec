@@ -1,6 +1,6 @@
 Summary: RPM installer/updater
 Name: yum
-Version: 3.2.26
+Version: 3.2.27
 Release: 0
 License: GPLv2+
 Group: System Environment/Base
@@ -104,6 +104,9 @@ exit 0
 %{_mandir}/man*/yum-updatesd*
 
 %changelog
+* Thu Mar 18 2010 Seth Vidal <skvidal at fedoraproject.org>
+- 3.2.27
+
 * Tue Feb  9 2010 Seth Vidal <skvidal at fedoraproject.org>
 - 3.2.26
 
