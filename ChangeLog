@@ -1,3 +1,261 @@
+2010-03-18  Seth Vidal <skvidal@fedoraproject.org>
+
+	* yum.spec, yum/__init__.py: mark as 3.2.27
+
+2010-03-18  Ville Skyttä <ville.skytta@iki.fi>
+
+	* test/skipbroken-tests.py: Docstring fix.
+
+2010-03-15  Timur Malikin <sora_tm@mail.ru>
+
+	* po/ru.po: l10n: Updates to Russian (ru) translation
+	Transmitted-via: Transifex (www.transifex.net)
+
+2010-03-14  Timur Malikin <sora_tm@mail.ru>
+
+	* po/ru.po: l10n: Updates to Russian (ru) translation
+	Transmitted-via: Transifex (www.transifex.net)
+
+2010-03-14  Timur Malikin <sora_tm@mail.ru>
+
+	* po/ru.po: l10n: Updates to Russian (ru) translation
+	Transmitted-via: Transifex (www.transifex.net)
+
+2010-03-11  Seth Vidal <skvidal@fedoraproject.org>
+
+	* yum/__init__.py: make sure when we return items we sort the counts
+	of things matched from the tagsdb into the rest of the matches.
+	FIXME added to get rid of the silly sorting list as it appears to
+	only want to make me cry
+
+2010-03-04  James Antill <james@and.org>
+
+	* yum/packages.py: Make pkgs scriptable: ("%(ui_nevra)s -
+	%(ui_from_repo)s" % pkg). BZ 570615
+
+2010-03-04  James Antill <james@and.org>
+
+	* yum/__init__.py: Don't issue warning on yum downgrade, for single
+	uinstalled multilib packages
+
+2010-03-04  James Antill <james@and.org>
+
+	* output.py: First split any equal remaining space among overflowed
+	columns
+
+2010-03-04  James Antill <james@and.org>
+
+	* output.py: Prefer to overflow the last column, as then grep still
+	works
+
+2010-03-02  Tim Lauridsen <timlau@fedoraproject.org>
+
+	* yum/__init__.py: Make skipbroken run again if packages has been
+	added to transaction by a postresolve plugin
+
+2010-03-01  elf <elf@elf.no-ip.org>
+
+	* po/ja.po: l10n: Updates to Japanese (ja) translation
+	Transmitted-via: Transifex (www.transifex.net)
+
+2010-02-23  James Antill <james@and.org>
+
+	* yum/pkgtag_db.py: Allow pkgtag_db to be loaded on RHEL-5, should
+	work too
+
+2010-02-23  James Antill <james@and.org>
+
+	* yum/packageSack.py: Much faster limiting obsoletes to the newest
+	versions of packages
+
+2010-02-23  James Antill <james@and.org>
+
+	* yum/__init__.py: Do process obsoletes for newest packages only.
+
+2010-02-22  James Antill <james@and.org>
+
+	* yum/rpmsack.py, yum/transactioninfo.py: Add package checksums from
+	yumdb to the data we store in the rpmdb cache
+
+2010-02-23  Tim Lauridsen <timlau@fedoraproject.org>
+
+	* Makefile: created upload-docs Makefile target to generate epydoc
+	and upload it to yum web page
+
+2010-02-23  Tim Lauridsen <timlau@fedoraproject.org>
+
+	* Makefile: update epydoc building code in Makefile
+
+2010-02-20  A S Alam <apreet.alam@gmail.com>
+
+	* po/pa.po: l10n: Adding Punjabi Translation after correcting error
+	Transmitted-via: Transifex (www.transifex.net)
+
+2010-02-19  James Antill <james@and.org>
+
+	Merge branch 'yum-3_2_X' of
+	ssh://yum.baseurl.org/srv/projects/yum/git/yum into yum-3_2_X  *
+	'yum-3_2_X' of ssh://yum.baseurl.org/srv/projects/yum/git/yum:
+	l10n: Updates to Spanish (Castilian) (es) translation
+
+2010-02-19  James Antill <james@and.org>
+
+	* yum/rpmsack.py:  Don't preload all the package paths for yumdb on init. Moved to
+	 function.   This is fine as _get_dir_name will still do it
+	 manually, and the only thing that needs to know more is
+	 sync_with_rpmdb ... and that can call
+	 _load_all_package_paths(self) when it gets written.  This does a
+	 _lot_ of open/stat calls, so is really noticable if the yumdb isn't
+	 in cache.
+
+2010-02-19  Héctor Daniel Cabrera <logan@fedoraproject.org>
+
+	* po/es.po: l10n: Updates to Spanish (Castilian) (es) translation
+	Transmitted-via: Transifex (www.transifex.net)
+
+2010-02-18  James Antill <james@and.org>
+
+	* yum/packageSack.py: Don't load all of the rpmdb in
+	matchPackageNames(), used by at least rm.
+
+2010-02-18  James Antill <james@and.org>
+
+	* yum/__init__.py: Close history before downloads (maybe stop presto
+	doing any damage).
+
+2010-02-17  Seth Vidal <skvidal@fedoraproject.org>
+
+	Merge branch 'yum-3_2_X' of
+	ssh://yum.baseurl.org/srv/projects/yum/git/yum into yum-3_2_X  *
+	'yum-3_2_X' of ssh://yum.baseurl.org/srv/projects/yum/git/yum:
+	l10n: Updates to Italian (it) translation   l10n: Updates to French
+	(fr) translation   l10n: Updates to Italian (it) translation
+
+2010-02-17  Seth Vidal <skvidal@fedoraproject.org>
+
+	* yum/i18n.py, yum/misc.py, yum/packages.py, yum/rpmsack.py: - fix up more spots where we were converting the version flags
+	wrongly - add i18n.str_eq for doing equality checks against strings
+	of dubious types and content - fix a lot of bad provides checks -
+	but only with versioned deps.
+
+2010-02-17  Seth Vidal <skvidal@fedoraproject.org>
+
+	* yum/packages.py, yum/rpmsack.py, yum/sqlitesack.py: if we're
+	searching for globs (like from repoquery) we have to take whatever
+	we get from the sql results b/c we can't rangecheck globs :(  also
+	convert the items coming out of the provides to unicode before
+	comparing them b/c frequently they can't convert on their own  boo.
+
+
+2010-02-17  Guido Grazioli <guido.grazioli@gmail.com>
+
+	* po/it.po: l10n: Updates to Italian (it) translation
+	Transmitted-via: Transifex (www.transifex.net)
+
+2010-02-16  Martin-Gomez Pablo <pablo.martin-gomez@laposte.net>
+
+	* po/fr.po: l10n: Updates to French (fr) translation
+	Transmitted-via: Transifex (www.transifex.net)
+
+2010-02-16  Guido Grazioli <guido.grazioli@gmail.com>
+
+	* po/it.po: l10n: Updates to Italian (it) translation
+	Transmitted-via: Transifex (www.transifex.net)
+
+2010-02-16  Seth Vidal <skvidal@fedoraproject.org>
+
+	* yum/misc.py: can also raise ValueError, when attempting to pass
+	non-int-able strings to int() and FlagtoString catch it
+
+2010-02-15  Seth Vidal <skvidal@fedoraproject.org>
+
+	Merge branch 'yum-3_2_X' of
+	ssh://yum.baseurl.org/srv/projects/yum/git/yum into yum-3_2_X  *
+	'yum-3_2_X' of ssh://yum.baseurl.org/srv/projects/yum/git/yum:
+	l10n: Updates to Spanish (Castilian) (es) translation   l10n:
+	Updates to Italian (it) translation   l10n: Updates to Polish (pl)
+	translation   l10n: Updates to Finnish (fi) translation
+
+2010-02-15  Seth Vidal <skvidal@fedoraproject.org>
+
+	* yum/__init__.py, yum/depsolve.py, yum/misc.py,
+	yum/packageSack.py, yum/rpmsack.py, yum/sqlitesack.py: - make searchPrco do completely specific results - not just matches
+	against name  - this required fixing a lot of code but the results
+	are now more correct and whatProvides() is   dramatically reduced in
+	terms of what it does. - adds searchPrco to the PackageSack object -
+	adds misc.string_to_prco_tuple() which combines the partial
+	conversions of 'foo > 1.1' that   returnPackagesByDep() and
+	whatProvides() had been doing, badly.   this is also a reversal of
+	misc.prco_tuple_to_string()
+
+2010-02-12  Héctor Daniel Cabrera <logan@fedoraproject.org>
+
+	* po/es.po: l10n: Updates to Spanish (Castilian) (es) translation
+	Transmitted-via: Transifex (www.transifex.net)
+
+2010-02-12  Guido Grazioli <guido.grazioli@gmail.com>
+
+	* po/it.po: l10n: Updates to Italian (it) translation
+	Transmitted-via: Transifex (www.transifex.net)
+
+2010-02-11  Piotr Drąg <piotrdrag@gmail.com>
+
+	* po/pl.po: l10n: Updates to Polish (pl) translation
+	Transmitted-via: Transifex (www.transifex.net)
+
+2010-02-11  Ville-Pekka Vainio <vpivaini@cs.helsinki.fi>
+
+	* po/fi.po: l10n: Updates to Finnish (fi) translation
+	Transmitted-via: Transifex (www.transifex.net)
+
+2010-02-11  Seth Vidal <skvidal@fedoraproject.org>
+
+	* yum/__init__.py: don't translate it twice (whoops)
+
+2010-02-11  Seth Vidal <skvidal@fedoraproject.org>
+
+	* po/yum.pot, yum/__init__.py: If we hit the 'package does not match
+	intended download error then chances  are REALLY good that you have
+	outdated metadata on gpg-re-signed pkgs. A yum clean metadata will
+	fix things - so say that
+
+2010-02-10  Seth Vidal <skvidal@fedoraproject.org>
+
+	Merge branch 'yum-3_2_X' of
+	ssh://yum.baseurl.org/srv/projects/yum/git/yum into yum-3_2_X  *
+	'yum-3_2_X' of ssh://yum.baseurl.org/srv/projects/yum/git/yum:
+	l10n: Updates to Polish (pl) translation
+
+2010-02-10  Seth Vidal <skvidal@fedoraproject.org>
+
+	* yum/__init__.py: fix typo which makes all kernel updates die :(
+
+2010-02-10  Piotr Drąg <piotrdrag@gmail.com>
+
+	* po/pl.po: l10n: Updates to Polish (pl) translation
+	Transmitted-via: Transifex (www.transifex.net)
+
+2010-02-10  Seth Vidal <skvidal@fedoraproject.org>
+
+	* yum/history.py: put back comment about horrible cutting and
+	pasting
+
+2010-02-10  Seth Vidal <skvidal@fedoraproject.org>
+
+	* po/yum.pot, utils.py: spell uninterruptible properly - and remaky
+	pot file. - yum ticket 279
+
+2010-02-10  Seth Vidal <skvidal@fedoraproject.org>
+
+	* yum/history.py, yum/pkgtag_db.py, yum/sqlitesack.py,
+	yum/sqlutils.py: cleanup sql_esc[_glob]  move sql_esc and
+	sql_esc_glob to sqlutils from sqlitesack add sql_esc'ing to pkgtag
+	db calls remove sql_esc duplication from history.py
+
+2010-02-09  Seth Vidal <skvidal@fedoraproject.org>
+
+	* ChangeLog: merge changelog
+
 2010-02-09  Seth Vidal <skvidal@fedoraproject.org>
 
 	* yum.spec, yum/__init__.py: mark as 3.2.26
