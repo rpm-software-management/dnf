@@ -345,9 +345,9 @@ class SkipBrokenTests(DepsolveTests):
 
     def testMultiLibUpdate(self):
         '''
-        foo-1.i386 & foo-1.xf86_64 is updated by foo-2.i386 & foo-2.xf86_64
-        foo-2.xf86_64 has a missing req, and get skipped, foo-2.i386 has to be skipped to
-        or it will fail in the rpm test transaction
+        foo-1.i386 & foo-1.x86_64 is updated by foo-2.i386 & foo-2.x86_64
+        foo-2.x86_64 has a missing req, and gets skipped, foo-2.i386 has to be
+        skipped too or it will fail in the rpm test transaction
         '''
         ipo1 = self.instPackage('foo', '1',arch='i386')
         ipo2 = self.instPackage('foo', '1',arch='x86_64')
