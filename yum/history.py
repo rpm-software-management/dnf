@@ -178,6 +178,7 @@ class YumHistory:
         self.conf = yum.misc.GenericHolder()
         self.conf.db_path  = os.path.normpath(root + '/' + db_path)
         self.conf.writable = False
+        self.conf.readable = True
 
         if not os.path.exists(self.conf.db_path):
             try:
@@ -214,7 +215,15 @@ class YumHistory:
 
     def _get_cursor(self):
         if self._conn is None:
-            self._conn = sqlite.connect(self._db_file)
+            if not self.conf.readable:
+                return None
+
+            try:
+                self._conn = sqlite.connect(self._db_file)
+            except sqlite.OperationalError:
+                self.conf.readable = False
+                return None
+
         return self._conn.cursor()
     def _commit(self):
         return self._conn.commit()
@@ -291,6 +300,8 @@ class YumHistory:
 
     def trans_with_pid(self, pid):
         cur = self._get_cursor()
+        if cur is None:
+            return None
         res = executeSQL(cur,
                          """INSERT INTO trans_with_pkgs
                          (tid, pkgtupid)
@@ -302,6 +313,8 @@ class YumHistory:
         if not hasattr(self, '_tid') or state is None:
             return # Not configured to run
         cur = self._get_cursor()
+        if cur is None:
+            return # Should never happen, due to above
         res = executeSQL(cur,
                          """INSERT INTO trans_data_pkgs
                          (tid, pkgtupid, state)
@@ -313,6 +326,8 @@ class YumHistory:
             return # Not configured to run
 
         cur = self._get_cursor()
+        if cur is None:
+            return # Should never happen, due to above
         res = executeSQL(cur,
                          """UPDATE trans_data_pkgs SET done = ?
                          WHERE tid = ? AND pkgtupid = ? AND state = ?
@@ -322,6 +337,8 @@ class YumHistory:
 
     def beg(self, rpmdb_version, using_pkgs, txmbrs):
         cur = self._get_cursor()
+        if cur is None:
+            return
         res = executeSQL(cur,
                          """INSERT INTO trans_beg
                             (timestamp, rpmdb_version, loginuid)
@@ -343,6 +360,8 @@ class YumHistory:
 
     def _log_errors(self, errors):
         cur = self._get_cursor()
+        if cur is None:
+            return
         for error in errors:
             error = to_unicode(error)
             executeSQL(cur,
@@ -356,6 +375,8 @@ class YumHistory:
             return # Not configured to run
 
         cur = self._get_cursor()
+        if cur is None:
+            return # Should never happen, due to above
         for error in msg.split('\n'):
             error = to_unicode(error)
             executeSQL(cur,
@@ -387,7 +408,11 @@ class YumHistory:
 
     def end(self, rpmdb_version, return_code, errors=None):
         assert return_code or not errors
+        if not hasattr(self, '_tid'):
+            return # Failed at beg() time
         cur = self._get_cursor()
+        if cur is None:
+            return # Should never happen, due to above
         res = executeSQL(cur,
                          """INSERT INTO trans_end
                             (tid, timestamp, rpmdb_version, return_code)
@@ -444,6 +469,8 @@ class YumHistory:
         """ Return a list of the last transactions, note that this includes
             partial transactions (ones without an end transaction). """
         cur = self._get_cursor()
+        if cur is None:
+            return []
         sql =  """SELECT tid,
                          trans_beg.timestamp AS beg_ts,
                          trans_beg.rpmdb_version AS beg_rv,
@@ -551,6 +578,10 @@ class YumHistory:
             packages al. la. "yum list". Returns transaction ids. """
         # Search packages ... kind of sucks that it's search not list, pkglist?
 
+        cur = self._get_cursor()
+        if cur is None:
+            return set()
+
         data = _setupHistorySearchSQL(patterns, ignore_case)
         (need_full, patterns, fields, names) = data
 
@@ -559,7 +590,6 @@ class YumHistory:
         for row in self._yieldSQLDataList(patterns, fields, ignore_case):
             pkgtupids.add(row[0])
 
-        cur = self._get_cursor()
         sql =  """SELECT tid FROM trans_data_pkgs WHERE pkgtupid IN """
         sql += "(%s)" % ",".join(['?'] * len(pkgtupids))
         params = list(pkgtupids)
