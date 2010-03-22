@@ -601,7 +601,7 @@ class StartupConf(BaseConfig):
     pluginconfpath = ListOption(['/etc/yum/pluginconf.d'])
     gaftonmode = BoolOption(False)
     syslog_ident = Option()
-    syslog_facility = Option('LOG_DAEMON')
+    syslog_facility = Option('LOG_USER')
     persistdir = Option('/var/lib/yum')
     
 class YumConf(StartupConf):
