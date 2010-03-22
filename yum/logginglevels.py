@@ -75,7 +75,7 @@ def syslogFacilityMap(facility):
     elif (facility.upper().startswith("LOG_") and
           facility[4:].upper() in _syslog_facility_map):
         return _syslog_facility_map[facility[4:].upper()]
-    return syslog.LOG_USER
+    return syslog_module.LOG_USER
 
 def logLevelFromErrorLevel(error_level):
     """ Convert an old-style error logging level to the new style. """
