@@ -29,7 +29,7 @@ Obsoletes: yum-plugin-allow-downgrade < 1.1.22-0
 %description
 Yum is a utility that can check for and automatically download and
 install updated RPM packages. Dependencies are obtained and downloaded 
-automatically prompting the user as necessary.
+automatically, prompting the user for permission as necessary.
 
 %package updatesd
 Summary: Update notification daemon
