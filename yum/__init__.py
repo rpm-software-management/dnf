@@ -2163,10 +2163,10 @@ class YumBase(depsolve.Depsolve):
 
         # do the ones we already have
         for item in sorted_lists.values():
-            for pkg, keys, values in item:
+            for pkg, k, v in item:
                 if pkg not in results_by_pkg:
                     results_by_pkg[pkg] = []
-                results_by_pkg[pkg].append((keys,values))
+                results_by_pkg[pkg].append((k,v))
 
         # take our existing dict-by-pkg and make the dict-by-count for 
         # this bizarro sorted_lists format
@@ -2175,9 +2175,9 @@ class YumBase(depsolve.Depsolve):
         for pkg in results_by_pkg:
             totkeys = []
             totvals = []
-            for (keys, values) in results_by_pkg[pkg]:
-                totkeys.extend(keys)
-                totvals.extend(values)
+            for (k, v) in results_by_pkg[pkg]:
+                totkeys.extend(k)
+                totvals.extend(v)
             
             totkeys = misc.unique(totkeys)
             totvals = misc.unique(totvals)
