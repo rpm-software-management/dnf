@@ -102,7 +102,7 @@ class _YumPreBaseConf:
         self.enabled_plugins = None
         self.syslog_ident = None
         self.syslog_facility = None
-        self.syslog_device = '/dev/log'
+        self.syslog_device = None
         self.arch = None
         self.releasever = None
         self.uuid = None
@@ -270,12 +270,15 @@ class YumBase(depsolve.Depsolve):
             startupconf.syslog_ident = syslog_ident
         if syslog_facility != None:
             startupconf.syslog_facility = syslog_facility
+        if syslog_device != None:
+            startupconf.syslog_device = syslog_device
         if releasever != None:
             startupconf.releasever = releasever
 
         self.doLoggingSetup(startupconf.debuglevel, startupconf.errorlevel,
                             startupconf.syslog_ident,
-                            startupconf.syslog_facility, syslog_device)
+                            startupconf.syslog_facility,
+                            startupconf.syslog_device)
 
         if init_plugins and startupconf.plugins:
             self.doPluginSetup(optparser, plugin_types, startupconf.pluginpath,

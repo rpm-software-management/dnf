@@ -311,6 +311,12 @@ Identification (program name) for syslog messages.
 Facility name for syslog messages, see syslog(3).  Default is `LOG_USER'.
 
 .IP
+\fBsyslog_device \fR
+Where to log syslog messages. Can be a local device (path) or a host:port
+string to use a remote syslog.  If empty or points to a nonexistent device,
+syslog logging is disabled.  Default is `/dev/log'.
+
+.IP
 \fBproxy \fR
 URL to the proxy server that yum should use.
 

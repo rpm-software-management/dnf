@@ -602,6 +602,7 @@ class StartupConf(BaseConfig):
     gaftonmode = BoolOption(False)
     syslog_ident = Option()
     syslog_facility = Option('LOG_USER')
+    syslog_device = Option('/dev/log')
     persistdir = Option('/var/lib/yum')
     
 class YumConf(StartupConf):
