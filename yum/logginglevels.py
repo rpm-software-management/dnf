@@ -158,16 +158,23 @@ def doLoggingSetup(debuglevel, errorlevel,
     filelogger.propagate = False
 
     global syslog
-    if os.path.exists(syslog_device):
-        try:
-            facil = syslogFacilityMap(syslog_facility or "USER")
-            syslog = logging.handlers.SysLogHandler(syslog_device, facil)
-        except socket.error:
-            if syslog is not None:
-                syslog.close()
-        else:
-            setLoggingApp(syslog_ident or "yum")
-            filelogger.addHandler(syslog)
+    if syslog_device:
+        address = None
+        if ":" in syslog_device:
+            address = syslog_device.rsplit(":", 1)
+            address = (address[0], int(address[1]))
+        elif os.path.exists(syslog_device):
+            address = syslog_device
+        if address:
+            try:
+                facil = syslogFacilityMap(syslog_facility or "USER")
+                syslog = logging.handlers.SysLogHandler(address, facil)
+            except socket.error:
+                if syslog is not None:
+                    syslog.close()
+            else:
+                setLoggingApp(syslog_ident or "yum")
+                filelogger.addHandler(syslog)
     _added_handlers = True
 
     if debuglevel is not None:
