@@ -45,7 +45,7 @@ logging.addLevelName(DEBUG_4, "DEBUG_4")
 __NO_LOGGING = 100
 logging.raiseExceptions = False
 
-import syslog as syslog_module
+from logging.handlers import SysLogHandler as syslog_module
 
 syslog = None
 
@@ -75,7 +75,7 @@ def syslogFacilityMap(facility):
     elif (facility.upper().startswith("LOG_") and
           facility[4:].upper() in _syslog_facility_map):
         return _syslog_facility_map[facility[4:].upper()]
-    return syslog_module.LOG_USER
+    return _syslog_facility_map["USER"]
 
 def logLevelFromErrorLevel(error_level):
     """ Convert an old-style error logging level to the new style. """
@@ -140,7 +140,6 @@ def doLoggingSetup(debuglevel, errorlevel,
         return
 
     plainformatter = logging.Formatter("%(message)s")
-    syslogformatter = logging.Formatter("yum: %(message)s")
     
     console_stdout = logging.StreamHandler(sys.stdout)
     console_stdout.setFormatter(plainformatter)
@@ -158,20 +157,17 @@ def doLoggingSetup(debuglevel, errorlevel,
     filelogger.setLevel(logging.INFO)
     filelogger.propagate = False
 
-    log_dev = syslog_device
     global syslog
-    if os.path.exists(log_dev):
+    if os.path.exists(syslog_device):
         try:
-            syslog = logging.handlers.SysLogHandler(log_dev)
-            syslog.setFormatter(syslogformatter)
-            filelogger.addHandler(syslog)
-            if syslog_ident is not None or syslog_facility is not None:
-                ident = syslog_ident    or ''
-                facil = syslog_facility or 'LOG_USER'
-                syslog_module.openlog(ident, 0, syslogFacilityMap(facil))
+            facil = syslogFacilityMap(syslog_facility or "USER")
+            syslog = logging.handlers.SysLogHandler(syslog_device, facil)
         except socket.error:
             if syslog is not None:
                 syslog.close()
+        else:
+            setLoggingApp(syslog_ident or "yum")
+            filelogger.addHandler(syslog)
     _added_handlers = True
 
     if debuglevel is not None:
@@ -201,5 +197,5 @@ def setFileLog(uid, logfile):
 
 def setLoggingApp(app):
     if syslog:
-        syslogformatter = logging.Formatter("yum(%s): "% (app,) + "%(message)s")
+        syslogformatter = logging.Formatter(app + "[%(process)d]: %(message)s")
         syslog.setFormatter(syslogformatter)
