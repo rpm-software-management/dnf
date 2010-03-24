@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: yum\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-02-10 10:43-0500\n"
-"PO-Revision-Date: 2010-02-11 21:50+0200\n"
+"POT-Creation-Date: 2010-02-11 10:54-0500\n"
+"PO-Revision-Date: 2010-03-24 14:36+0200\n"
 "Last-Translator: Ville-Pekka Vainio <vpivaini@cs.helsinki.fi>\n"
 "Language-Team: Finnish <laatu@lokalisointi.org>\n"
 "MIME-Version: 1.0\n"
@@ -156,15 +156,15 @@ msgstr "Ladataan paketteja:"
 msgid "Error Downloading Packages:\n"
 msgstr "Virhe pakettien latauksessa:\n"
 
-#: ../cli.py:426 ../yum/__init__.py:4194
+#: ../cli.py:426 ../yum/__init__.py:4195
 msgid "Running rpm_check_debug"
 msgstr "Suoritetaan rpm_check_debug"
 
-#: ../cli.py:435 ../yum/__init__.py:4203
+#: ../cli.py:435 ../yum/__init__.py:4204
 msgid "ERROR You need to update rpm to handle:"
 msgstr "VIRHE RPM on päivitettävä, jotta se osaa käsitellä:"
 
-#: ../cli.py:437 ../yum/__init__.py:4206
+#: ../cli.py:437 ../yum/__init__.py:4207
 msgid "ERROR with rpm_check_debug vs depsolve:"
 msgstr "VIRHE rpm_check_debugin ja riippuvuuksien tarkistuksen välillä:"
 
@@ -339,7 +339,7 @@ msgstr "Saatavilla olevat ryhmät:"
 msgid "Done"
 msgstr "Valmis"
 
-#: ../cli.py:988 ../cli.py:1006 ../cli.py:1012 ../yum/__init__.py:2787
+#: ../cli.py:988 ../cli.py:1006 ../cli.py:1012 ../yum/__init__.py:2788
 #, python-format
 msgid "Warning: Group %s does not exist."
 msgstr "Varoitus: Ryhmää %s ei ole olemassa."
@@ -355,7 +355,7 @@ msgstr ""
 msgid "%d Package(s) to Install"
 msgstr "%d pakettia asennettavana"
 
-#: ../cli.py:1028 ../yum/__init__.py:2799
+#: ../cli.py:1028 ../yum/__init__.py:2800
 #, python-format
 msgid "No group named %s exists"
 msgstr "Ryhmää nimeltä %s ei ole olemassa"
@@ -767,7 +767,7 @@ msgstr "Koko yhteensä: %s"
 #: ../output.py:904
 #, python-format
 msgid "Total download size: %s"
-msgstr "Latausmäärä yhteensä: %s"
+msgstr "Ladattavaa yhteensä: %s"
 
 #: ../output.py:908
 #, python-format
@@ -2187,29 +2187,32 @@ msgid "Could not create lock at %s: %s "
 msgstr "Ei voitu luoda lukkoa sijaintiin %s: %s"
 
 #: ../yum/__init__.py:1470
-msgid "Package does not match intended download"
-msgstr "Paketti ei vastaa aiottua latausta"
+msgid ""
+"Package does not match intended download. Suggestion: run yum clean metadata"
+msgstr ""
+"Paketti ei vastaa aiottua latausta. Kannattaa ehkä suorittaa komento yum "
+"clean metadata"
 
-#: ../yum/__init__.py:1485
+#: ../yum/__init__.py:1486
 msgid "Could not perform checksum"
 msgstr "Ei voitu laskea tarkistussummaa"
 
-#: ../yum/__init__.py:1488
+#: ../yum/__init__.py:1489
 msgid "Package does not match checksum"
 msgstr "Paketti ei vastaa tarkistussummaa"
 
-#: ../yum/__init__.py:1530
+#: ../yum/__init__.py:1531
 #, python-format
 msgid "package fails checksum but caching is enabled for %s"
 msgstr ""
 "paketti ei vastaa tarkistussummaa, mutta välimuisti on käytössä kohteelle %s"
 
-#: ../yum/__init__.py:1533 ../yum/__init__.py:1562
+#: ../yum/__init__.py:1534 ../yum/__init__.py:1563
 #, python-format
 msgid "using local copy of %s"
 msgstr "käytetään paikallista kopiota paketista %s"
 
-#: ../yum/__init__.py:1574
+#: ../yum/__init__.py:1575
 #, python-format
 msgid ""
 "Insufficient space in download directory %s\n"
@@ -2220,11 +2223,11 @@ msgstr ""
 "    * vapaana   %s\n"
 "    * tarvitaan %s"
 
-#: ../yum/__init__.py:1623
+#: ../yum/__init__.py:1624
 msgid "Header is not complete."
 msgstr "Otsake ei ole täydellinen."
 
-#: ../yum/__init__.py:1660
+#: ../yum/__init__.py:1661
 #, python-format
 msgid ""
 "Header not in local cache and caching-only mode enabled. Cannot download %s"
@@ -2232,62 +2235,62 @@ msgstr ""
 "Otsake ei ole paikallisessa välimuistissa ja pelkästä välimuistista toimiva "
 "tila on käytössä. Ei voida ladata otsaketta %s"
 
-#: ../yum/__init__.py:1715
+#: ../yum/__init__.py:1716
 #, python-format
 msgid "Public key for %s is not installed"
 msgstr "Julkista avainta pakettia %s varten ei ole asennettu"
 
-#: ../yum/__init__.py:1719
+#: ../yum/__init__.py:1720
 #, python-format
 msgid "Problem opening package %s"
 msgstr "Ongelma paketin %s avaamisessa"
 
-#: ../yum/__init__.py:1727
+#: ../yum/__init__.py:1728
 #, python-format
 msgid "Public key for %s is not trusted"
 msgstr "Paketin %s julkiseen avaimeen ei luoteta"
 
-#: ../yum/__init__.py:1731
+#: ../yum/__init__.py:1732
 #, python-format
 msgid "Package %s is not signed"
 msgstr "Pakettia %s ei ole allekirjoitettu"
 
-#: ../yum/__init__.py:1769
+#: ../yum/__init__.py:1770
 #, python-format
 msgid "Cannot remove %s"
 msgstr "Ei voida poistaa tiedostoa %s"
 
-#: ../yum/__init__.py:1773
+#: ../yum/__init__.py:1774
 #, python-format
 msgid "%s removed"
 msgstr "tiedosto %s on poistettu"
 
-#: ../yum/__init__.py:1819
+#: ../yum/__init__.py:1820
 #, python-format
 msgid "Cannot remove %s file %s"
 msgstr "Ei voida poistaa %s-tyyppistä tiedostoa %s"
 
-#: ../yum/__init__.py:1823
+#: ../yum/__init__.py:1824
 #, python-format
 msgid "%s file %s removed"
 msgstr "%s-tyyppinen tiedosto %s on poistettu"
 
-#: ../yum/__init__.py:1825
+#: ../yum/__init__.py:1826
 #, python-format
 msgid "%d %s files removed"
 msgstr "%d %s-tyyppistä tiedostoa on poistettu"
 
-#: ../yum/__init__.py:1894
+#: ../yum/__init__.py:1895
 #, python-format
 msgid "More than one identical match in sack for %s"
 msgstr "Säkissä on useampi kuin yksi identtinen vastaavuus haulle %s"
 
-#: ../yum/__init__.py:1900
+#: ../yum/__init__.py:1901
 #, python-format
 msgid "Nothing matches %s.%s %s:%s-%s from update"
 msgstr "Mikään ei vastaa päivityksen pakettia %s.%s %s:%s-%s"
 
-#: ../yum/__init__.py:2179
+#: ../yum/__init__.py:2180
 msgid ""
 "searchPackages() will go away in a future version of "
 "Yum.                      Use searchGenerator() instead. \n"
@@ -2295,181 +2298,181 @@ msgstr ""
 "searchPackages() poistetaan jossakin Yumin tulevassa versiossa. Käytä sen "
 "sijaan searchGenerator()-metodia.\n"
 
-#: ../yum/__init__.py:2218
+#: ../yum/__init__.py:2219
 #, python-format
 msgid "Searching %d packages"
 msgstr "Etsitään %d pakettia"
 
-#: ../yum/__init__.py:2222
+#: ../yum/__init__.py:2223
 #, python-format
 msgid "searching package %s"
 msgstr "etsitään pakettia %s"
 
-#: ../yum/__init__.py:2234
+#: ../yum/__init__.py:2235
 msgid "searching in file entries"
 msgstr "etsitään tiedostoista"
 
-#: ../yum/__init__.py:2241
+#: ../yum/__init__.py:2242
 msgid "searching in provides entries"
 msgstr "etsitään tarjoajista"
 
-#: ../yum/__init__.py:2274
+#: ../yum/__init__.py:2275
 #, python-format
 msgid "Provides-match: %s"
 msgstr "Tarjoajavastaavuus: %s"
 
-#: ../yum/__init__.py:2323
+#: ../yum/__init__.py:2324
 msgid "No group data available for configured repositories"
 msgstr "Asetetuille asennuslähteille ei ole saatavilla ryhmädataa"
 
-#: ../yum/__init__.py:2354 ../yum/__init__.py:2373 ../yum/__init__.py:2404
-#: ../yum/__init__.py:2410 ../yum/__init__.py:2492 ../yum/__init__.py:2496
-#: ../yum/__init__.py:2813
+#: ../yum/__init__.py:2355 ../yum/__init__.py:2374 ../yum/__init__.py:2405
+#: ../yum/__init__.py:2411 ../yum/__init__.py:2493 ../yum/__init__.py:2497
+#: ../yum/__init__.py:2814
 #, python-format
 msgid "No Group named %s exists"
 msgstr "Ryhmää nimeltä %s ei ole olemassa"
 
-#: ../yum/__init__.py:2385 ../yum/__init__.py:2512
+#: ../yum/__init__.py:2386 ../yum/__init__.py:2513
 #, python-format
 msgid "package %s was not marked in group %s"
 msgstr "pakettia %s ei ollut merkitty kuuluvaksi ryhmään %s"
 
-#: ../yum/__init__.py:2432
+#: ../yum/__init__.py:2433
 #, python-format
 msgid "Adding package %s from group %s"
 msgstr "Lisätään paketti %s ryhmästä %s"
 
-#: ../yum/__init__.py:2436
+#: ../yum/__init__.py:2437
 #, python-format
 msgid "No package named %s available to be installed"
 msgstr "Pakettia nimeltä %s ei ole saatavilla asennusta varten"
 
-#: ../yum/__init__.py:2538
+#: ../yum/__init__.py:2539
 #, python-format
 msgid "Package tuple %s could not be found in packagesack"
 msgstr "Paketti-tuplea %s ei löytynyt pakettisäkistä"
 
-#: ../yum/__init__.py:2557
+#: ../yum/__init__.py:2558
 #, python-format
 msgid "Package tuple %s could not be found in rpmdb"
 msgstr "Paketti-tuplea %s ei löytynyt RPM-tietokannasta"
 
-#: ../yum/__init__.py:2613 ../yum/__init__.py:2663
+#: ../yum/__init__.py:2614 ../yum/__init__.py:2664
 msgid "Invalid version flag"
 msgstr "Virheellinen versiolippu"
 
-#: ../yum/__init__.py:2633 ../yum/__init__.py:2638
+#: ../yum/__init__.py:2634 ../yum/__init__.py:2639
 #, python-format
 msgid "No Package found for %s"
 msgstr "Riippuvuudelle %s ei löytynyt pakettia"
 
-#: ../yum/__init__.py:2854
+#: ../yum/__init__.py:2855
 msgid "Package Object was not a package object instance"
 msgstr "Pakettiolio ei ollutkaan pakettiolioinstanssi"
 
-#: ../yum/__init__.py:2858
+#: ../yum/__init__.py:2859
 msgid "Nothing specified to install"
 msgstr "Mitään ei määritelty asennettavaksi"
 
-#: ../yum/__init__.py:2874 ../yum/__init__.py:3651
+#: ../yum/__init__.py:2875 ../yum/__init__.py:3652
 #, python-format
 msgid "Checking for virtual provide or file-provide for %s"
 msgstr "Etsitään virtuaalista tai tiedostotarjoajaa argumentille %s"
 
-#: ../yum/__init__.py:2880 ../yum/__init__.py:3196 ../yum/__init__.py:3364
-#: ../yum/__init__.py:3657
+#: ../yum/__init__.py:2881 ../yum/__init__.py:3197 ../yum/__init__.py:3365
+#: ../yum/__init__.py:3658
 #, python-format
 msgid "No Match for argument: %s"
 msgstr "Mikään ei vastaa argumenttia: %s"
 
-#: ../yum/__init__.py:2956
+#: ../yum/__init__.py:2957
 #, python-format
 msgid "Package %s installed and not available"
 msgstr "Paketti %s on asennettu, mutta ei saatavilla"
 
-#: ../yum/__init__.py:2959
+#: ../yum/__init__.py:2960
 msgid "No package(s) available to install"
 msgstr "Yhtään pakettia ei ole saatavilla asennettavaksi"
 
-#: ../yum/__init__.py:2971
+#: ../yum/__init__.py:2972
 #, python-format
 msgid "Package: %s  - already in transaction set"
 msgstr "Paketti: %s – on jo transaktiojoukossa"
 
-#: ../yum/__init__.py:2997
+#: ../yum/__init__.py:2998
 #, python-format
 msgid "Package %s is obsoleted by %s which is already installed"
 msgstr "Paketin %s vanhentaa paketti %s, joka on jo asennettuna"
 
-#: ../yum/__init__.py:3000
+#: ../yum/__init__.py:3001
 #, python-format
 msgid "Package %s is obsoleted by %s, trying to install %s instead"
 msgstr "Paketin %s vanhentaa paketti %s, yritetään paketti %s sen sijaan"
 
-#: ../yum/__init__.py:3008
+#: ../yum/__init__.py:3009
 #, python-format
 msgid "Package %s already installed and latest version"
 msgstr "Paketti %s on jo asennettuna ja uusin versio"
 
-#: ../yum/__init__.py:3022
+#: ../yum/__init__.py:3023
 #, python-format
 msgid "Package matching %s already installed. Checking for update."
 msgstr ""
 "Pakettia %s vastaava paketti on jo asennettuna. Tarkistetaan päivitykset."
 
 #. update everything (the easy case)
-#: ../yum/__init__.py:3125
+#: ../yum/__init__.py:3126
 msgid "Updating Everything"
 msgstr "Päivitetään kaikki"
 
-#: ../yum/__init__.py:3146 ../yum/__init__.py:3261 ../yum/__init__.py:3288
-#: ../yum/__init__.py:3314
+#: ../yum/__init__.py:3147 ../yum/__init__.py:3262 ../yum/__init__.py:3289
+#: ../yum/__init__.py:3315
 #, python-format
 msgid "Not Updating Package that is already obsoleted: %s.%s %s:%s-%s"
 msgstr "Vanhennettua pakettia ei päivitetä: %s.%s %s:%s-%s"
 
-#: ../yum/__init__.py:3181 ../yum/__init__.py:3361
+#: ../yum/__init__.py:3182 ../yum/__init__.py:3362
 #, python-format
 msgid "%s"
 msgstr "%s"
 
-#: ../yum/__init__.py:3252
+#: ../yum/__init__.py:3253
 #, python-format
 msgid "Package is already obsoleted: %s.%s %s:%s-%s"
 msgstr "Paketti on jo vanhennettu: %s.%s %s:%s-%s"
 
-#: ../yum/__init__.py:3283
+#: ../yum/__init__.py:3284
 #, python-format
 msgid "Not Updating Package that is obsoleted: %s"
 msgstr "Ei päivitetä vanhennettua pakettia: %s"
 
-#: ../yum/__init__.py:3292 ../yum/__init__.py:3318
+#: ../yum/__init__.py:3293 ../yum/__init__.py:3319
 #, python-format
 msgid "Not Updating Package that is already updated: %s.%s %s:%s-%s"
 msgstr "Jo päivitettyä pakettia ei enää päivitetä: %s.%s %s:%s-%s"
 
-#: ../yum/__init__.py:3377
+#: ../yum/__init__.py:3378
 msgid "No package matched to remove"
 msgstr "Yhtään poistopyyntöä vastaavaa pakettia ei ole"
 
-#: ../yum/__init__.py:3411
+#: ../yum/__init__.py:3412
 #, python-format
 msgid "Cannot open: %s. Skipping."
 msgstr "Ei voida avata pakettia: %s. Ohitetaan."
 
-#: ../yum/__init__.py:3414 ../yum/__init__.py:3513 ../yum/__init__.py:3597
+#: ../yum/__init__.py:3415 ../yum/__init__.py:3514 ../yum/__init__.py:3598
 #, python-format
 msgid "Examining %s: %s"
 msgstr "Tutkitaan %s: %s"
 
-#: ../yum/__init__.py:3422 ../yum/__init__.py:3516 ../yum/__init__.py:3600
+#: ../yum/__init__.py:3423 ../yum/__init__.py:3517 ../yum/__init__.py:3601
 #, python-format
 msgid "Cannot add package %s to transaction. Not a compatible architecture: %s"
 msgstr ""
 "Pakettia %s ei voida lisätä transaktioon. Arkkitehtuuri ei ole yhteensopiva: "
 "%s"
 
-#: ../yum/__init__.py:3430
+#: ../yum/__init__.py:3431
 #, python-format
 msgid ""
 "Package %s not installed, cannot update it. Run yum install to install it "
@@ -2478,109 +2481,109 @@ msgstr ""
 "Pakettia %s ei ole asennettu, sitä ei voida päivittää. Suorita yum install -"
 "komento paketin asentamiseksi."
 
-#: ../yum/__init__.py:3459 ../yum/__init__.py:3521 ../yum/__init__.py:3605
+#: ../yum/__init__.py:3460 ../yum/__init__.py:3522 ../yum/__init__.py:3606
 #, python-format
 msgid "Excluding %s"
 msgstr "Ohitetaan paketti %s"
 
-#: ../yum/__init__.py:3464
+#: ../yum/__init__.py:3465
 #, python-format
 msgid "Marking %s to be installed"
 msgstr "Merkitään paketti %s asennettavaksi"
 
-#: ../yum/__init__.py:3470
+#: ../yum/__init__.py:3471
 #, python-format
 msgid "Marking %s as an update to %s"
 msgstr "Merkitään paketti %s päivitykseksi paketille %s"
 
-#: ../yum/__init__.py:3477
+#: ../yum/__init__.py:3478
 #, python-format
 msgid "%s: does not update installed package."
 msgstr "%s: ei päivitä asennettua pakettia"
 
-#: ../yum/__init__.py:3510 ../yum/__init__.py:3594
+#: ../yum/__init__.py:3511 ../yum/__init__.py:3595
 #, python-format
 msgid "Cannot open file: %s. Skipping."
 msgstr "Ei voida avata tiedostoa: %s. Ohitetaan."
 
-#: ../yum/__init__.py:3540
+#: ../yum/__init__.py:3541
 msgid "Problem in reinstall: no package matched to remove"
 msgstr "Ongelma uudelleenasennuksessa: poistopyyntöä vastaavaa pakettia ei ole"
 
-#: ../yum/__init__.py:3553 ../yum/__init__.py:3685
+#: ../yum/__init__.py:3554 ../yum/__init__.py:3686
 #, python-format
 msgid "Package %s is allowed multiple installs, skipping"
 msgstr "Paketille %s sallitaan useita asennuksia, ohitetaan."
 
-#: ../yum/__init__.py:3574
+#: ../yum/__init__.py:3575
 #, python-format
 msgid "Problem in reinstall: no package %s matched to install"
 msgstr ""
 "Ongelma uudelleenasennuksessa: asennuspyyntöä vastaavaa pakettia %s ei ole"
 
-#: ../yum/__init__.py:3677
+#: ../yum/__init__.py:3678
 msgid "No package(s) available to downgrade"
 msgstr "Yhtään pakettia ei ole saatavilla varhennettavaksi"
 
-#: ../yum/__init__.py:3730
+#: ../yum/__init__.py:3731
 #, python-format
 msgid "No Match for available package: %s"
 msgstr "Ei vastaavuutta saatavilla olevalle paketille: %s"
 
-#: ../yum/__init__.py:3737
+#: ../yum/__init__.py:3738
 #, python-format
 msgid "Only Upgrade available on package: %s"
 msgstr "Vain päivitys saatavilla paketille: %s"
 
-#: ../yum/__init__.py:3807 ../yum/__init__.py:3844
+#: ../yum/__init__.py:3808 ../yum/__init__.py:3845
 #, python-format
 msgid "Failed to downgrade: %s"
 msgstr "Varhentaminen epäonnistui: %s"
 
-#: ../yum/__init__.py:3876
+#: ../yum/__init__.py:3877
 #, python-format
 msgid "Retrieving GPG key from %s"
 msgstr "Noudetaan GPG-avain osoitteesta %s"
 
-#: ../yum/__init__.py:3896
+#: ../yum/__init__.py:3897
 msgid "GPG key retrieval failed: "
 msgstr "GPG-avaimen nouto epäonnistui: "
 
-#: ../yum/__init__.py:3902
+#: ../yum/__init__.py:3903
 #, python-format
 msgid "Invalid GPG Key from %s: %s"
 msgstr "Virheellinen GPG-avain osoitteesta %s: %s"
 
-#: ../yum/__init__.py:3911
+#: ../yum/__init__.py:3912
 #, python-format
 msgid "GPG key parsing failed: key does not have value %s"
 msgstr "GPG-avaimen jäsentäminen epäonnistui: avaimessa ei ole arvoa %s"
 
-#: ../yum/__init__.py:3943
+#: ../yum/__init__.py:3944
 #, python-format
 msgid "GPG key at %s (0x%s) is already installed"
 msgstr "Osoitteesta %s ladattu GPG-avain (0x%s) on jo asennetuna"
 
 #. Try installing/updating GPG key
-#: ../yum/__init__.py:3948 ../yum/__init__.py:4010
+#: ../yum/__init__.py:3949 ../yum/__init__.py:4011
 #, python-format
 msgid "Importing GPG key 0x%s \"%s\" from %s"
 msgstr "Tuodaan GPG-avain 0x%s ”%s” osoitteesta %s"
 
-#: ../yum/__init__.py:3965
+#: ../yum/__init__.py:3966
 msgid "Not installing key"
 msgstr "Avainta ei asenneta"
 
-#: ../yum/__init__.py:3971
+#: ../yum/__init__.py:3972
 #, python-format
 msgid "Key import failed (code %d)"
 msgstr "Avaimen tuonti epäonnistui (koodi %d)"
 
-#: ../yum/__init__.py:3972 ../yum/__init__.py:4031
+#: ../yum/__init__.py:3973 ../yum/__init__.py:4032
 msgid "Key imported successfully"
 msgstr "Avaimen tuonti onnistui"
 
-#: ../yum/__init__.py:3977 ../yum/__init__.py:4036
+#: ../yum/__init__.py:3978 ../yum/__init__.py:4037
 #, python-format
 msgid ""
 "The GPG keys listed for the \"%s\" repository are already installed but they "
@@ -2591,42 +2594,42 @@ msgstr ""
 "vastaa tätä pakettia.\n"
 "Tarkista että tälle asennuslähteelle on asetettu oikeat avainten URL:t."
 
-#: ../yum/__init__.py:3986
+#: ../yum/__init__.py:3987
 msgid "Import of key(s) didn't help, wrong key(s)?"
 msgstr "Avainten tuonti ei auttanut, ovatko avaimet vääriä?"
 
-#: ../yum/__init__.py:4005
+#: ../yum/__init__.py:4006
 #, python-format
 msgid "GPG key at %s (0x%s) is already imported"
 msgstr "Osoitteesta %s ladattu GPG-avain (0x%s) on jo tuotu"
 
-#: ../yum/__init__.py:4025
+#: ../yum/__init__.py:4026
 #, python-format
 msgid "Not installing key for repo %s"
 msgstr "Ei asenneta avainta asennuslähteelle %s"
 
-#: ../yum/__init__.py:4030
+#: ../yum/__init__.py:4031
 msgid "Key import failed"
 msgstr "Avaimen tuonti epäonnistui"
 
-#: ../yum/__init__.py:4156
+#: ../yum/__init__.py:4157
 msgid "Unable to find a suitable mirror."
 msgstr "Sopivaa peilipalvelinta ei löytynyt."
 
-#: ../yum/__init__.py:4158
+#: ../yum/__init__.py:4159
 msgid "Errors were encountered while downloading packages."
 msgstr "Paketteja ladatessa tapahtui virheitä."
 
-#: ../yum/__init__.py:4208
+#: ../yum/__init__.py:4209
 #, python-format
 msgid "Please report this error at %s"
 msgstr "Ilmoita tästä ongelmasta: %s"
 
-#: ../yum/__init__.py:4232
+#: ../yum/__init__.py:4233
 msgid "Test Transaction Errors: "
 msgstr "Testitransaktion virheitä: "
 
-#: ../yum/__init__.py:4333
+#: ../yum/__init__.py:4334
 #, python-format
 msgid "Could not set cachedir: %s"
 msgstr "Välimuistihakemiston asettaminen epäonnistui %s"
