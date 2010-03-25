@@ -1590,7 +1590,7 @@ to exit.
                 count, uiacts = self._history_uiactions(hpkgs)
                 uperiod = _period2user[period]
                 # Should probably use columns here, esp. for uiacts?
-                print fmt % (utf8_width_fill(name, 22, 22),
+                print fmt % (utf8_width_fill(name, 26, 26),
                              utf8_width_fill(uperiod, 19, 19),
                              utf8_width_fill(uiacts, 16, 16), count)
 
