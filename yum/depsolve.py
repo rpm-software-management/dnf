@@ -886,6 +886,17 @@ class Depsolve(object):
             # FIXME: This is probably the best place to fix the postfix rename
             # problem long term (post .21) ... see compare_providers.
             for pkg, hits in self.tsInfo.getRequires(*prov).iteritems():
+                # See the docs, this is to make groupremove "more useful".
+                if (self.conf.groupremove_leaf_only and txmbr.groups and
+                    txmbr.output_state == TS_ERASE):
+                    cb = self.dsCallback
+                    if cb and hasattr(cb, 'groupRemoveReq'):
+                        cb.groupRemoveReq(pkg, hits)
+                    #  We don't undo anything else here ... hopefully that's
+                    # fine.
+                    self.tsInfo.remove(txmbr.pkgtup)
+                    return []
+
                 for hit in hits:
                     # See if the update solves the problem...
                     found = False

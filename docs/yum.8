@@ -189,6 +189,9 @@ Is used to remove all of the packages in a group, unlike "groupinstall" this
 will remove everything regardless of group_package_types. It is worth pointing
 out that packages can be in more than one group, so "groupinstall X Y" followed
 by "groupremove Y" does not do give you the same result as "groupinstall X".
+
+The groupremove_leaf_only configuration changes the behaviour of this command
+to only remove packages which aren't required by something else.
 .IP 
 .IP "\fBgroupinfo\fP"
 Is used to give the description and package list of a group (and which type

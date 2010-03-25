@@ -1642,6 +1642,10 @@ class DepSolveProgressCallBack:
             _('--> Processing Dependency: %s for package: %s'), formatted_req,
             po)
     
+    def groupRemoveReq(self, po, hits):
+        self.verbose_logger.log(logginglevels.INFO_2,
+            _('---> Keeping package: %s'), po)
+
     def unresolved(self, msg):
         self.verbose_logger.log(logginglevels.INFO_2, _('--> Unresolved Dependency: %s'),
             msg)

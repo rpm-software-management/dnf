@@ -167,6 +167,14 @@ repository will be used. If \fBoverwrite_groups\fR is `0' then the groups
 from all matching repositories will be merged together as one large group.
 
 .IP
+\fBgroupremove_leaf_only \fR
+Either `0' or `1'. Used to determine yum's behaviour when the groupremove
+command is run.  If \fBgroupremove_leaf_only\fR is `0' (default) then
+all packages in the group will be removed.  If \fBgroupremove_leaf_only\fR is
+`1' then only those packages in the group that aren't required by another
+package will be removed.
+
+.IP
 \fBenable_group_conditionals\fR
 Either `0' or `1'. Determines whether yum will allow the use of conditionals
 packages. Default is `1' (package conditionals are allowed).
