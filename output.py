@@ -1310,6 +1310,9 @@ to exit.
                 rmark = lmark = '*'
             elif old.return_code:
                 rmark = lmark = '#'
+                # We don't check .errors, because return_code will be non-0
+            elif old.output:
+                rmark = lmark = 'E'
             if old.altered_lt_rpmdb:
                 rmark = '<'
             if old.altered_gt_rpmdb:
