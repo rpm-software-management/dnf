@@ -82,12 +82,12 @@ _yum()
     local cmds=( check check-update clean deplist downgrade groupinfo
         groupinstall grouplist groupremove help history info install list
         localinstall makecache provides reinstall remove repolist resolvedep
-        search shell update upgrade version )
+        search shell update upgrade version distro-sync )
 
     local i c cmd
     for (( i=0; i < ${#COMP_WORDS[@]}-1; i++ )) ; do
         for c in ${cmds[@]} check-rpmdb erase groupupdate grouperase \
-            whatprovides ; do
+            whatprovides distribution-synchronization ; do
             [ ${COMP_WORDS[i]} = $c ] && cmd=$c && break
         done
         [ -z $cmd ] || break
@@ -132,7 +132,7 @@ _yum()
             return 0
             ;;
 
-        erase|remove)
+        erase|remove|distro-sync|distribution-synchronization)
             _yum_list installed "$cur"
             return 0
             ;;
