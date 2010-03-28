@@ -10,7 +10,7 @@ msgstr ""
 "Project-Id-Version: yum\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2010-02-11 10:54-0500\n"
-"PO-Revision-Date: 2010-03-28 18:55+0400\n"
+"PO-Revision-Date: 2010-03-28 18:58+0400\n"
 "Last-Translator: Timur Malikin <sora_tm@mail.ru>\n"
 "Language-Team: ru <fedora-localization@www.russianfedora.ru>\n"
 "MIME-Version: 1.0\n"
@@ -1127,7 +1127,7 @@ msgstr "удалён"
 #: ../output.py:1592
 #, python-format
 msgid "---> Package %s.%s %s:%s-%s set to be %s"
-msgstr "---> Пакет %s.%s %s:%s-%s должен быть%s"
+msgstr "---> Пакет %s.%s %s:%s-%s должен быть %s"
 
 #: ../output.py:1599
 msgid "--> Running transaction check"
