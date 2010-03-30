@@ -150,7 +150,34 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
                 usage += "%s\n" % command.getNames()[0]
 
         return usage
+    
+    def _parseSetOpts(self, setopts):
+        """parse the setopts list handed to us and saves the results as
+           repo_setopts and main_setopts in the yumbase object"""
 
+        repoopts = {}
+        mainopts = yum.misc.GenericHolder()
+        mainopts.items = []
+
+        for item in setopts:
+            k,v = item.split('=')
+            period = k.find('.') 
+            if period != -1:
+                repo = k[:period]
+                k = k[period+1:]
+                if repo not in repoopts:
+                   repoopts[repo] = yum.misc.GenericHolder()
+                   repoopts[repo].items = []
+                setattr(repoopts[repo], k, v)
+                repoopts[repo].items.append(k)
+            else:
+                setattr(mainopts, k, v)
+                mainopts.items.append(k)
+        
+        self.main_setopts = mainopts
+        self.repo_setopts = repoopts
+        
+        
     def getOptionsConfig(self, args):
         """parses command line arguments, takes cli args:
         sets up self.conf and self.cmds as well as logger objects 
@@ -167,6 +194,13 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
             opts.quiet = True
             opts.verbose = False
 
+        # go through all the setopts and set the global ones
+        self._parseSetOpts(opts.setopts)
+        
+        if self.main_setopts:
+            for opt in self.main_setopts.items:
+                setattr(opts, opt, getattr(self.main_setopts, opt))
+            
         # get the install root to use
         root = self.optparser.getRoot(opts)
 
@@ -190,7 +224,12 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
             pc.enabled_plugins  = self.optparser._splitArg(opts.enableplugins)
             pc.releasever = opts.releasever
             self.conf
-                    
+            
+            # now set  all the non-first-start opts from main from our setopts
+            if self.main_setopts:
+                for opt in self.main_setopts.items:
+                    setattr(self.conf, opt, getattr(self.main_setopts, opt))
+
         except yum.Errors.ConfigError, e:
             self.logger.critical(_('Config Error: %s'), e)
             sys.exit(1)
@@ -1218,7 +1257,8 @@ class YumOptionParser(OptionParser):
             args = _filtercmdline(
                         ('--noplugins','--version','-q', '-v', "--quiet", "--verbose"), 
                         ('-c', '-d', '-e', '--installroot',
-                         '--disableplugin', '--enableplugin', '--releasever'), 
+                         '--disableplugin', '--enableplugin', '--releasever',
+                         '--setopt'), 
                         args)
         except ValueError, arg:
             self.base.usage()
@@ -1452,7 +1492,8 @@ class YumOptionParser(OptionParser):
                 help=_("control whether color is used"))
         group.add_option("", "--releasever", dest="releasever", default=None, 
                 help=_("set value of $releasever in yum config and repo files"))
-
+        group.add_option("", "--setopt", dest="setopts", default=[],
+                action="append", help=_("set arbitrary config and repo options"))
 
         
 def _filtercmdline(novalopts, valopts, args):

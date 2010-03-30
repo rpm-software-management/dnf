@@ -417,6 +417,11 @@ $releasever in your cachedir configuration to stop this).
 .IP "\fB\-t, \-\-tolerant\fP"
 This option currently does nothing.
 .br
+.IP "\fB\-\-setopt=option=value\fP"
+Set any config option in yum config or repo files. For options in the global 
+config just use: \-\-setopt=option=value for repo options use: \-\-setopt=repoid.option=value
+.PP
+
 .SH "LIST OPTIONS"
 The following are the ways which you can invoke \fByum\fP in list
 mode\&.  Note that all \fBlist\fP commands include information on the
