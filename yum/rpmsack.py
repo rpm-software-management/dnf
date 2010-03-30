@@ -142,6 +142,7 @@ class RPMDBPackageSack(PackageSackBase):
         self.root = root
         self._idx2pkg = {}
         self._name2pkg = {}
+        self._pkgnames_loaded = set()
         self._tup2pkg = {}
         self._completely_loaded = False
         self._pkgmatch_fails = set()
@@ -188,6 +189,7 @@ class RPMDBPackageSack(PackageSackBase):
     def dropCachedData(self):
         self._idx2pkg = {}
         self._name2pkg = {}
+        self._pkgnames_loaded = set()
         self._tup2pkg = {}
         self._completely_loaded = False
         self._pkgmatch_fails = set()
@@ -321,7 +323,12 @@ class RPMDBPackageSack(PackageSackBase):
         return result
 
     def searchProvides(self, name):
-        return self.searchPrco(name, 'provides')
+        if name in self._pkgmatch_fails:
+            return []
+        ret = self.searchPrco(name, 'provides')
+        if not ret:
+            self._pkgmatch_fails.add(name)
+        return ret
 
     def searchRequires(self, name):
         return self.searchPrco(name, 'requires')
@@ -364,7 +371,7 @@ class RPMDBPackageSack(PackageSackBase):
         return misc.newestInList(allpkgs)
 
     @staticmethod
-    def _compile_patterns(self, patterns, ignore_case=False):
+    def _compile_patterns(patterns, ignore_case=False):
         if not patterns or len(patterns) > constants.PATTERNS_MAX:
             return None
         ret = []
@@ -421,15 +428,19 @@ class RPMDBPackageSack(PackageSackBase):
         """Returns a list of packages. Note that the packages are
            always filtered to those matching the patterns/case. repoid is
            ignored, and is just here for compatibility with non-rpmdb sacks. """
+        ret = []
         if patterns and not ignore_case:
             tpats = []
             for pat in patterns:
                 if pat in self._pkgmatch_fails:
                     continue
+                if pat in self._pkgnames_loaded:
+                    ret.extend(self._name2pkg[pat])
+                    continue
                 tpats.append(pat)
             patterns = tpats
             if not patterns:
-                return []
+                return ret
 
         if not self._completely_loaded:
             rpats = self._compile_patterns(patterns, ignore_case)
@@ -445,7 +456,14 @@ class RPMDBPackageSack(PackageSackBase):
         if patterns:
             pkgobjlist = parsePackages(pkgobjlist, patterns, not ignore_case)
             self._pkgmatch_fails.update(pkgobjlist[2])
-            pkgobjlist = pkgobjlist[0] + pkgobjlist[1]
+            if ret:
+                pkgobjlist = pkgobjlist[0] + pkgobjlist[1] + ret
+            else:
+                pkgobjlist = pkgobjlist[0] + pkgobjlist[1]
+            for pkg in pkgobjlist:
+                for pat in patterns:
+                    if pkg.name == pat:
+                            self._pkgnames_loaded.add(pkg.name)
         return pkgobjlist
 
     def _uncached_returnConflictPackages(self):
@@ -975,7 +993,7 @@ class RPMDBPackageSack(PackageSackBase):
         loc = locals()
         ret = []
 
-        if self._completely_loaded:
+        if self._completely_loaded or name in self._pkgnames_loaded:
             if name is not None:
                 pkgs = self._name2pkg.get(name, [])
             else:
@@ -991,6 +1009,9 @@ class RPMDBPackageSack(PackageSackBase):
         ts = self.readOnlyTS()
         if name is not None:
             mi = ts.dbMatch('name', name)
+            #  We create POs out of all matching names, even if we don't return
+            # them.
+            self._pkgnames_loaded.add(name)
         elif arch is not None:
             mi = ts.dbMatch('arch', arch)
         else:
