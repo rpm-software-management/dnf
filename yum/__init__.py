@@ -377,7 +377,7 @@ class YumBase(depsolve.Depsolve):
                 thisrepo.repo_config_age = repo_age
                 thisrepo.repofile = repofn
 
-            if thisrepo.id in self.repo_setopts:
+            if hasattr(self, 'repo_setopts') and thisrepo.id in self.repo_setopts:
                 for opt in self.repo_setopts[thisrepo.id].items:
                     setattr(thisrepo, opt, getattr(self.repo_setopts[thisrepo.id], opt))
                     
