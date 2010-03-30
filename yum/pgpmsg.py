@@ -1214,7 +1214,7 @@ a PGP "certificate" includes a public key, user id(s), and signature.
             continue
         
         # are we at the checksum line?
-        if l[0] == '=' :
+        if l and l[0] == '=' :
             # get the checksum number
             csum = base64.decodestring(l[1:5])
             i = 0
