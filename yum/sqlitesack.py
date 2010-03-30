@@ -1374,7 +1374,12 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
 
     def searchProvides(self, name):
         """return list of packages providing name (any evr and flag)"""
-        return self.searchPrco(name, "provides")
+        if name in self._pkgmatch_fails:
+            return []
+        ret = self.searchPrco(name, "provides")
+        if not ret:
+            self._pkgmatch_fails.add(name)
+        return ret
                 
     def searchRequires(self, name):
         """return list of packages requiring name (any evr and flag)"""
