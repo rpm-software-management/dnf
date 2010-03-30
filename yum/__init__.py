@@ -150,6 +150,9 @@ class YumBase(depsolve.Depsolve):
         self.logger = logging.getLogger("yum.YumBase")
         self.verbose_logger = logging.getLogger("yum.verbose.YumBase")
         self._repos = RepoStorage(self)
+        self.repo_setopts = {} # since we have to use repo_setopts in base and 
+                               # not in cli - set it up as empty so no one
+                               # trips over it later
 
         # Start with plugins disabled
         self.disablePlugins()
@@ -377,7 +380,7 @@ class YumBase(depsolve.Depsolve):
                 thisrepo.repo_config_age = repo_age
                 thisrepo.repofile = repofn
 
-            if hasattr(self, 'repo_setopts') and thisrepo.id in self.repo_setopts:
+            if thisrepo.id in self.repo_setopts:
                 for opt in self.repo_setopts[thisrepo.id].items:
                     setattr(thisrepo, opt, getattr(self.repo_setopts[thisrepo.id], opt))
                     
