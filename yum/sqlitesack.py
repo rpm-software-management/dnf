@@ -428,6 +428,7 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
         self._pkgname2pkgkeys = {}
         self._pkgtup2pkgs = {}
         self._pkgnames_loaded = set()
+        self._pkgmatch_fails = set()
         self._arch_allowed = None
         self._pkgExcluder = []
         self._pkgExcludeIds = {}
@@ -491,6 +492,7 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
         self._key2pkg = {}
         self._pkgname2pkgkeys = {}
         self._pkgnames_loaded = set()
+        self._pkgmatch_fails = set()
         self._pkgtup2pkgs = {}
         self._search_cache = {
             'provides' : { },
@@ -1228,6 +1230,9 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
         user_names = set(names)
         names = []
         for pkgname in user_names:
+            if pkgname in self._pkgmatch_fails:
+                continue
+
             if loaded_all_names or pkgname in self._pkgnames_loaded:
                 returnList.extend(self._packagesByName(pkgname))
             else:
@@ -1502,7 +1507,8 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
                   'sql_envra', 'sql_nevra']
         need_full = False
         for pat in patterns:
-            if misc.re_full_search_needed(pat):
+            if (misc.re_full_search_needed(pat) and
+                (ignore_case or pat not in self._pkgnames_loaded)):
                 need_full = True
                 break
 
@@ -1536,12 +1542,18 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
         pat_sqls = []
         pat_data = []
         for (pattern, rest) in patterns:
+            if not ignore_case and pattern in self._pkgmatch_fails:
+                continue
+
             for field in fields:
                 if ignore_case:
                     pat_sqls.append("%s LIKE ?%s" % (field, rest))
                 else:
                     pat_sqls.append("%s %s ?" % (field, rest))
                 pat_data.append(pattern)
+        if patterns and not pat_sqls:
+            return
+
         if pat_sqls:
             qsql = _FULL_PARSE_QUERY_BEG + " OR ".join(pat_sqls)
         else:
@@ -1578,6 +1590,18 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
         if not need_full and repoid is None:
             # Mark all the processed pkgnames as fully loaded
             self._pkgnames_loaded.update([po.name for po in returnList])
+        if need_full:
+            for (pat, rest) in patterns:
+                if rest == 'glob':
+                    continue
+                assert rest == '='
+                for pkg in returnList:
+                    if pkg.name == pat:
+                        self._pkgnames_loaded.add(pkg.name)
+                        break
+        if not returnList:
+            for (pat, rest) in patterns:
+                self._pkgmatch_fails.add(pat)
 
         return returnList
                 

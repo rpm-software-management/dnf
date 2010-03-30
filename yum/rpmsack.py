@@ -144,6 +144,7 @@ class RPMDBPackageSack(PackageSackBase):
         self._name2pkg = {}
         self._tup2pkg = {}
         self._completely_loaded = False
+        self._pkgmatch_fails = set()
         self._simple_pkgtup_list = []
         self._get_pro_cache = {}
         self._get_req_cache  = {}
@@ -189,6 +190,7 @@ class RPMDBPackageSack(PackageSackBase):
         self._name2pkg = {}
         self._tup2pkg = {}
         self._completely_loaded = False
+        self._pkgmatch_fails = set()
         self._simple_pkgtup_list = []
         self._get_pro_cache = {}
         self._get_req_cache = {}
@@ -362,13 +364,14 @@ class RPMDBPackageSack(PackageSackBase):
         return misc.newestInList(allpkgs)
 
     @staticmethod
-    def _compile_patterns(patterns, ignore_case=False):
+    def _compile_patterns(self, patterns, ignore_case=False):
         if not patterns or len(patterns) > constants.PATTERNS_MAX:
             return None
         ret = []
         for pat in patterns:
             if not pat:
                 continue
+
             qpat = pat[0]
             if qpat in ('?', '*'):
                 qpat = None
@@ -381,6 +384,7 @@ class RPMDBPackageSack(PackageSackBase):
         return ret
     @staticmethod
     def _match_repattern(repatterns, hdr, ignore_case):
+        """ This is basically parsePackages() but for rpm hdr objects. """
         if repatterns is None:
             return True
 
@@ -417,6 +421,16 @@ class RPMDBPackageSack(PackageSackBase):
         """Returns a list of packages. Note that the packages are
            always filtered to those matching the patterns/case. repoid is
            ignored, and is just here for compatibility with non-rpmdb sacks. """
+        if patterns and not ignore_case:
+            tpats = []
+            for pat in patterns:
+                if pat in self._pkgmatch_fails:
+                    continue
+                tpats.append(pat)
+            patterns = tpats
+            if not patterns:
+                return []
+
         if not self._completely_loaded:
             rpats = self._compile_patterns(patterns, ignore_case)
             for hdr, idx in self._all_packages():
@@ -430,6 +444,7 @@ class RPMDBPackageSack(PackageSackBase):
             pkgobjlist = [pkg for pkg in pkgobjlist if pkg.name != 'gpg-pubkey']
         if patterns:
             pkgobjlist = parsePackages(pkgobjlist, patterns, not ignore_case)
+            self._pkgmatch_fails.update(pkgobjlist[2])
             pkgobjlist = pkgobjlist[0] + pkgobjlist[1]
         return pkgobjlist
 
