@@ -274,7 +274,7 @@ _yum()
             ;;
 
         -R|--randomwait|-x|--exclude|-h|--help|--version|--releasever|--cve|\
-        --bz|--advisory|--tmprepo|--verify-filenames)
+        --bz|--advisory|--tmprepo|--verify-filenames|--setopt)
             return 0
             ;;
 
@@ -302,7 +302,7 @@ _yum()
         --quiet --verbose --assumeyes --version --installroot --enablerepo
         --disablerepo --exclude --disableexcludes --obsoletes --noplugins
         --nogpgcheck --disableplugin --enableplugin --skip-broken --color
-        --releasever ${cmds[@]}' -- "$cur" ) )
+        --releasever --setopt ${cmds[@]}' -- "$cur" ) )
 } &&
 complete -F _yum -o filenames yum yummain.py
 
