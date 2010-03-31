@@ -1552,9 +1552,17 @@ class YumRepository(Repository, config.RepoConf):
         try:
             checkfunc = (self.checkMD, (mdtype,), {})
             text = "%s/%s" % (self.id, mdtype)
+            if thisdata.size is None:
+                reget = None
+            else:
+                reget = 'simple'
+                if os.path.exists(local):
+                    if os.stat(local).st_size >= int(thisdata.size):
+                        misc.unlink_f(local)
             local = self._getFile(relative=remote,
                                   local=local, 
                                   copy_local=1,
+                                  reget=reget,
                                   checkfunc=checkfunc, 
                                   text=text,
                                   cache=self.http_caching == 'all',
