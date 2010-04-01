@@ -227,15 +227,15 @@ class PackageSackBase(object):
         """return list of newest packages based on name, arch matching
            this means(in name.arch form): foo.i386 and foo.noarch are not
            compared to each other for highest version only foo.i386 and
-           foo.i386 will be compared"""
+           foo.i386 will be compared
+           Note that given: foo-1.i386; foo-2.i386 and foo-3.x86_64
+           The last _two_ pkgs will be returned, not just one of them. """
         raise NotImplementedError()
 
     def returnNewestByName(self, name=None, patterns=None, ignore_case=False):
         """return list of newest packages based on name matching
            this means(in name.arch form): foo.i386 and foo.noarch will
-           be compared to each other for highest version.
-           Note that given: foo-1.i386; foo-2.i386 and foo-3.x86_64
-           The last _two_ pkgs will be returned, not just one of them. """
+           be compared to each other for highest version."""
         raise NotImplementedError()
 
     def simplePkgList(self, patterns=None, ignore_case=False):
@@ -497,7 +497,9 @@ class MetaSack(PackageSackBase):
         """return list of newest packages based on name, arch matching
            this means(in name.arch form): foo.i386 and foo.noarch are not
            compared to each other for highest version only foo.i386 and
-           foo.i386 will be compared"""
+           foo.i386 will be compared.
+           Note that given: foo-1.i386; foo-2.i386 and foo-3.x86_64
+           The last _two_ pkgs will be returned, not just one of them. """
         calr = self._computeAggregateListResult
         pkgs = calr("returnNewestByNameArch", naTup, patterns, ignore_case)
         pkgs = packagesNewestByNameArch(pkgs)
@@ -509,9 +511,7 @@ class MetaSack(PackageSackBase):
     def returnNewestByName(self, name=None, patterns=None, ignore_case=False):
         """return list of newest packages based on name matching
            this means(in name.arch form): foo.i386 and foo.noarch will
-           be compared to each other for highest version.
-           Note that given: foo-1.i386; foo-2.i386 and foo-3.x86_64
-           The last _two_ pkgs will be returned, not just one of them. """
+           be compared to each other for highest version."""
         pkgs = self._computeAggregateListResult("returnNewestByName", name,
                                                 patterns, ignore_case)
         pkgs = packagesNewestByName(pkgs)
@@ -903,7 +903,10 @@ class PackageSack(PackageSackBase):
         """return list of newest packages based on name, arch matching
            this means(in name.arch form): foo.i386 and foo.noarch are not 
            compared to each other for highest version only foo.i386 and 
-           foo.i386 will be compared"""
+           foo.i386 will be compared
+           Note that given: foo-1.i386; foo-2.i386 and foo-3.x86_64
+           The last _two_ pkgs will be returned, not just one of them. """
+
         highdict = {}
         # If naTup is set, only iterate through packages that match that
         # name
@@ -935,9 +938,7 @@ class PackageSack(PackageSackBase):
     def returnNewestByName(self, name=None, patterns=None, ignore_case=False):
         """return list of newest packages based on name matching
            this means(in name.arch form): foo.i386 and foo.noarch will
-           be compared to each other for highest version.
-           Note that given: foo-1.i386; foo-2.i386 and foo-3.x86_64
-           The last _two_ pkgs will be returned, not just one of them. """
+           be compared to each other for highest version."""
 
         highdict = {}
         for pkg in self.returnPackages(patterns=patterns,
@@ -1002,8 +1003,7 @@ class PackageSack(PackageSackBase):
 
 def packagesNewestByName(pkgs):
     """ Does the same as PackageSack.returnNewestByName().
-        Note that given: foo-1.i386; foo-2.i386 and foo-3.x86_64
-        The last _two_ pkgs will be returned, not just one of them. """
+        Note that given: foo-1.i386; foo-2.i386 and foo-3.x86_64"""
     newest = {}
     for pkg in pkgs:
         key = pkg.name
@@ -1021,7 +1021,8 @@ def packagesNewestByName(pkgs):
         ret.extend(vals)
     return ret
 def packagesNewestByNameArch(pkgs):
-    """ Does the same as PackageSack.returnNewestByNameArch() """
+    """ Does the same as PackageSack.returnNewestByNameArch()
+        The last _two_ pkgs will be returned, not just one of them."""
     newest = {}
     for pkg in pkgs:
         key = (pkg.name, pkg.arch)
