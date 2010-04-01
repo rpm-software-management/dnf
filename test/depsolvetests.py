@@ -1197,3 +1197,18 @@ class DepsolveTests(DepsolveTests):
         self.assertEquals('ok', *self.resolveCode())
         self.assertResult((po, po2))
            
+    def testRL_dcbd1(self):
+        xpo = FakePackage('dcbd-devel', version='1', arch='i386')
+        xpo.addRequires('dcbd', None, (None, None, None))
+        self.tsInfo.addInstall(xpo)
+
+        po1 = FakePackage('dcbd', version='1')
+        po1.addProvides('dcbd', 'EQ', ('0', '1', '0'))
+        po2 = FakePackage('lldpad', version='2')
+        po2.addObsoletes('dcbd', 'LT', ('0', '2', '0'))
+        po3 = FakePackage('lldpad-devel', version='2')
+        self.xsack.addPackage(po3)
+        self.xsack.addPackage(po2)
+        self.xsack.addPackage(po1)
+
+        self.assertEquals('err', *self.resolveCode())
