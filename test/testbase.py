@@ -44,6 +44,7 @@ class FakeConf(object):
         self.persistdir = '/should-not-exist-bad-test!'
         self.showdupesfromrepos = False
         self.uid = 0
+        self.groupremove_leaf_only = False
 
 class FakeRepo(object):
 

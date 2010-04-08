@@ -4361,13 +4361,17 @@ class YumBase(depsolve.Depsolve):
         self.repos.enableRepo(newrepo.id)
         return newrepo
 
-    def setCacheDir(self, force=False, tmpdir='/var/tmp', reuse=True,
+    def setCacheDir(self, force=False, tmpdir=None, reuse=True,
                     suffix='/$basearch/$releasever'):
         ''' Set a new cache dir, using misc.getCacheDir() and var. replace
             on suffix. '''
 
         if not force and os.geteuid() == 0:
             return True # We are root, not forced, so happy with the global dir.
+        if tmpdir is None:
+            tmpdir = os.getenv('TMPDIR')
+        if tmpdir is None: # Note that TMPDIR isn't exported by default :(
+            tmpdir = '/var/tmp'
         try:
             cachedir = misc.getCacheDir(tmpdir, reuse)
         except (IOError, OSError), e:

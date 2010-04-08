@@ -105,7 +105,7 @@ def show_lock_owner(pid, logger):
 
     ps = get_process_info(pid)
     # This yumBackend isn't very friendly, so...
-    if ps['name'] == 'yumBackend.py':
+    if ps is not None and ps['name'] == 'yumBackend.py':
         nmsg = _("  The other application is: PackageKit")
     else:
         nmsg = _("  The other application is: %s") % ps['name']
