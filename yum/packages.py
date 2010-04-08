@@ -438,7 +438,6 @@ class RpmBase(object):
                 continue
 
             if f == '=':
-                print 'hmm'
                 f = 'EQ'
             if f != 'EQ' and prcotype == 'provides':
                 # isn't this odd, it's not 'EQ' and it is a provides
@@ -468,7 +467,15 @@ class RpmBase(object):
             return True
         
         if reqtuple[0].startswith('/'):
-            if reqtuple[0] in self.filelist + self.dirlist + self.ghostlist:
+            if misc.re_primary_filename(reqtuple[0]) or misc.re_primary_dirname(reqtuple[0]):
+                pri_only = True
+            else:
+                pri_only = False
+
+            files = self.returnFileEntries('file', pri_only) + \
+                    self.returnFileEntries('dir', pri_only) + \
+                    self.returnFileEntries('ghost', pri_only)
+            if reqtuple[0] in files:
                 return True
         
         return False
