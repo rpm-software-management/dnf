@@ -170,45 +170,45 @@ def rangeCompare(reqtuple, provtuple):
 
     # does not match unless
     if rc >= 1:
-        if reqf in ['GT', 'GE', 4, 12]:
+        if reqf in ['GT', 'GE', 4, 12, '>', '>=']:
             return 1
-        if reqf in ['EQ', 8]:
-            if f in ['LE', 10, 'LT', 2]:
-                return 1                
-        if reqf in ['LE', 'LT', 'EQ', 10, 2, 8]:
-            if f in ['LE', 'LT', 10, 2]:
+        if reqf in ['EQ', 8, '=']:
+            if f in ['LE', 10, 'LT', 2,'<=', '<']:
+                return 1
+        if reqf in ['LE', 'LT', 'EQ', 10, 2, 8, '<=', '<', '=']:
+            if f in ['LE', 'LT', 10, 2, '<=', '<']:
                 return 1
 
     if rc == 0:
-        if reqf in ['GT', 4]:
-            if f in ['GT', 'GE', 4, 12]:
+        if reqf in ['GT', 4, '>']:
+            if f in ['GT', 'GE', 4, 12, '>', '>=']:
                 return 1
-        if reqf in ['GE', 12]:
-            if f in ['GT', 'GE', 'EQ', 'LE', 4, 12, 8, 10]:
+        if reqf in ['GE', 12, '>=']:
+            if f in ['GT', 'GE', 'EQ', 'LE', 4, 12, 8, 10, '>', '>=', '=', '<=']:
                 return 1
-        if reqf in ['EQ', 8]:
-            if f in ['EQ', 'GE', 'LE', 8, 12, 10]:
+        if reqf in ['EQ', 8, '=']:
+            if f in ['EQ', 'GE', 'LE', 8, 12, 10, '=', '>=', '<=']:
                 return 1
-        if reqf in ['LE', 10]:
-            if f in ['EQ', 'LE', 'LT', 'GE', 8, 10, 2, 12]:
+        if reqf in ['LE', 10, '<=']:
+            if f in ['EQ', 'LE', 'LT', 'GE', 8, 10, 2, 12, '=', '<=', '<' , '>=']:
                 return 1
-        if reqf in ['LT', 2]:
-            if f in ['LE', 'LT', 10, 2]:
+        if reqf in ['LT', 2, '<']:
+            if f in ['LE', 'LT', 10, 2, '<=', '<']:
                 return 1
     if rc <= -1:
-        if reqf in ['GT', 'GE', 'EQ', 4, 12, 8]:
-            if f in ['GT', 'GE', 4, 12]:
+        if reqf in ['GT', 'GE', 'EQ', 4, 12, 8, '>', '>=', '=']:
+            if f in ['GT', 'GE', 4, 12, '>', '>=']:
                 return 1
-        if reqf in ['LE', 'LT', 10, 2]:
+        if reqf in ['LE', 'LT', 10, 2, '<=', '<']:
             return 1
 #                if rc >= 1:
-#                    if reqf in ['GT', 'GE', 4, 12]:
+#                    if reqf in ['GT', 'GE', 4, 12, '>', '>=']:
 #                        return 1
 #                if rc == 0:
-#                    if reqf in ['GE', 'LE', 'EQ', 8, 10, 12]:
+#                    if reqf in ['GE', 'LE', 'EQ', 8, 10, 12, '>=', '<=', '=']:
 #                        return 1
 #                if rc <= -1:
-#                    if reqf in ['LT', 'LE', 2, 10]:
+#                    if reqf in ['LT', 'LE', 2, 10, '<', '<=']:
 #                        return 1
 
     return 0
