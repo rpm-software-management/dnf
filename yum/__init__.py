@@ -3037,8 +3037,13 @@ class YumBase(depsolve.Depsolve):
                     self.verbose_logger.warning(_('Package %s is obsoleted by %s which is already installed'), 
                                                 po, already_obs)
                 else:
+                    if 'provides_for' in kwargs:
+                        if not obsoleting_pkg.provides_for(kwargs['provides_for']):
+                            self.verbose_logger.warning(_('Package %s is obsoleted by %s, but obsoleting package does not provide for requirements'),
+                                                  po.name, obsoleting_pkg.name)
+                            continue
                     self.verbose_logger.warning(_('Package %s is obsoleted by %s, trying to install %s instead'),
-                        po.name, obsoleting_pkg.name, obsoleting_pkg)               
+                        po.name, obsoleting_pkg.name, obsoleting_pkg)
                     tx_return.extend(self.install(po=obsoleting_pkg))
                 continue
             

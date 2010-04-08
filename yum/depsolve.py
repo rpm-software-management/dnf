@@ -562,19 +562,25 @@ class Depsolve(object):
         else:
             self.verbose_logger.debug(_('TSINFO: Marking %s as install for %s'), best,
                 requiringPo)
-            # FIXME: Don't we want .install() here, so obsoletes get done?
-            txmbr = self.tsInfo.addInstall(best)
-            txmbr.setAsDep(po=requiringPo)
-            txmbr.reason = "dep"
-            self._last_req = best
+            reqtuple = misc.string_to_prco_tuple(needname + str(needflags) + needversion)
+            txmbrs = self.install(best, provides_for=reqtuple)
+            for txmbr in txmbrs:
+                txmbr.setAsDep(po=requiringPo)
+                txmbr.reason = "dep"
+                self._last_req = txmbr.po
 
-            # if we had other packages with this name.arch that we found
-            # before, they're not going to be installed anymore, so we
-            # should mark them to be re-checked
-            if best.pkgtup in upgraded:
-                map(self.tsInfo.remove, upgraded[best.pkgtup])
-
-        checkdeps = 1
+                # if we had other packages with this name.arch that we found
+                # before, they're not going to be installed anymore, so we
+                # should mark them to be re-checked
+                if txmbr.pkgtup in upgraded:
+                    map(self.tsInfo.remove, upgraded[txmbr.pkgtup])
+            if not txmbrs:
+                missingdep = 1
+                checkdeps = 0
+                msg = self._err_missing_requires(requiringPo, requirement)
+                errorlist.append(msg)
+            else:
+                checkdeps = 1
         
         return checkdeps, missingdep
 
