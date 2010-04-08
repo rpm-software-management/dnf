@@ -438,6 +438,7 @@ class RpmBase(object):
                 continue
 
             if f == '=':
+                print 'hmm'
                 f = 'EQ'
             if f != 'EQ' and prcotype == 'provides':
                 # isn't this odd, it's not 'EQ' and it is a provides
@@ -458,7 +459,19 @@ class RpmBase(object):
 
         return result
 
-
+    def provides_for(self, reqtuple):
+        """check to see if the package object provides for the requirement
+           passed, including searching filelists if the requirement is a file
+           dep"""
+        
+        if self.checkPrco('provides', reqtuple):
+            return True
+        
+        if reqtuple[0].startswith('/'):
+            if reqtuple[0] in self.filelist + self.dirlist + self.ghostlist:
+                return True
+        
+        return False
         
     def returnChangelog(self):
         """return changelog entries"""
