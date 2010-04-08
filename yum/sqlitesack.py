@@ -1196,7 +1196,7 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
             return result
 
         if not misc.re_primary_filename(name):
-            # if its not in the primary.xml files
+            # If it is not in the primary.xml files
             # search the files.xml file info
             for pkg in self.searchFiles(name, strict=True):
                 result[pkg] = [(name, None, None)]
@@ -1317,7 +1317,7 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
         # If it is a filename, search the primary.xml file info
         results.extend(self._search_primary_files(n))
 
-        # if its in the primary.xml files then skip the other check
+        # If it is in the primary.xml files then skip the other check
         if misc.re_primary_filename(n) and not glob:
             return misc.unique(results)
 

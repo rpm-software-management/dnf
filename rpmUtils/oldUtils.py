@@ -35,7 +35,7 @@ def checkheader(headerfile, name, arch):
     
 
 def checkRpmMD5(package, urlgraberror=0):
-    """take a package, check it out by trying to open it, return 1 if its good
+    """take a package, check it out by trying to open it, return 1 if it's good
        return 0 if it's not"""
     ts.sigChecking('md5')
     fdno = os.open(package, os.O_RDONLY)

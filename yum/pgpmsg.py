@@ -302,7 +302,7 @@ REVOKE_KEY_CLASS_SENS = 0x40 # sensitive
 PGP_FEATURE_1_MOD_DETECT = 0x01 # Modification detection
 
 pgp_feature_to_str = {
-    PGP_FEATURE_1_MOD_DETECT : 'Modification Detectiobn'
+    PGP_FEATURE_1_MOD_DETECT : 'Modification Detection'
 }
 
 def get_whole_number(msg, idx, numlen) :
@@ -785,7 +785,7 @@ class signature(pgp_packet) :
             if revoke_reason_to_str.has_key(sp[1]) :
                 reas = revoke_reason_to_str[sp[1]]
             return 'reason for revocation: %s, %s' % (reas, sp[2])
-        if sp[0] == SIG_SUB_TYPE_FEATURES : # featues
+        if sp[0] == SIG_SUB_TYPE_FEATURES : # features
             features = []
             if len(sp) > 1 :
                 val = sp[1]

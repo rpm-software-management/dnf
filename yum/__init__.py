@@ -2524,8 +2524,8 @@ class YumBase(depsolve.Depsolve):
                             txmbr.groups.append(thisgroup.groupid)
                             self.tsInfo.conditionals[cond].append(txmbr.po)
                         continue
-                    # Otherwise we hook into tsInfo.add to make 
-                    # sure we'll catch it if its added later in this transaction
+                    # Otherwise we hook into tsInfo.add to make sure
+                    # we'll catch it if it's added later in this transaction
                     pkgs = self.pkgSack.searchNevra(name=condreq)
                     if pkgs:
                         if self.arch.multilib:

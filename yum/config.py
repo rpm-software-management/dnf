@@ -87,7 +87,7 @@ class Option(object):
         @param value: The value to set the option to.
         @return: Nothing.
         '''
-        # Only try to parse if its a string
+        # Only try to parse if it's a string
         if isinstance(value, basestring):
             try:
                 value = self.parse(value)
