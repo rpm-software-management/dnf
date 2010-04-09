@@ -882,8 +882,12 @@ def readMainConfig(startupconf):
     except OSError:
         fsvars = []
     for fsvar in fsvars:
+        if os.path.link(dir_fsvars + fsvar):
+            continue
         try:
-            val = open(dir_fsvars + fsvar).read().replace('\n', '')
+            val = open(dir_fsvars + fsvar).readline()
+            if val and val[-1] == '\n':
+                val = val[:-1]
         except (OSError, IOError):
             continue
         yumvars[fsvar] = val

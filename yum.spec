@@ -91,6 +91,11 @@ exit 0
 /usr/lib/python?.?/site-packages/rpmUtils
 %dir /var/cache/yum
 %dir /var/lib/yum
+%dir /var/lib/yum/vars
+%ghost /var/lib/yum/uuid
+%ghost /var/lib/yum/history
+%ghost /var/lib/yum/plugins
+%ghost /var/lib/yum/yumdb
 %{_mandir}/man*/yum.*
 %{_mandir}/man*/yum-shell*
 
