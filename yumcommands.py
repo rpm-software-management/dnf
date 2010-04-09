@@ -1237,6 +1237,9 @@ class VersionCommand(YumCommand):
                     _append_repos(cols, data[1])
                 if groups:
                     for grp in sorted(data[2]):
+                        if (vcmd.startswith("group-") and
+                            len(extcmds) > 1 and grp not in extcmds[1:]):
+                            continue
                         cols.append(("%s %s" % (_("Group-Installed:"), grp),
                                      str(data[2][grp])))
                         _append_repos(cols, data[3][grp])
@@ -1252,6 +1255,9 @@ class VersionCommand(YumCommand):
                         _append_repos(cols, data[1])
                 if groups:
                     for grp in sorted(data[2]):
+                        if (vcmd.startswith("group-") and
+                            len(extcmds) > 1 and grp not in extcmds[1:]):
+                            continue
                         cols.append(("%s %s" % (_("Group-Available:"), grp),
                                      str(data[2][grp])))
                         if verbose:
