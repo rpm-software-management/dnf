@@ -69,7 +69,7 @@ gnome\-packagekit application\&.
 .br
 .I \fR * repolist [all|enabled|disabled] 
 .br
-.I \fR * version [all|installed|available|group-*|grouplist|groupinfo]
+.I \fR * version [ all | installed | available | group-* | nogroups* | grouplist | groupinfo ]
 .br
 .I \fR * history [info|list|summary|redo|undo|new] 
 .br
@@ -266,6 +266,24 @@ information is listed. The version is calculated by taking a sha1 hash of the
 packages (in sorted order), and the checksum_type/checksum_data entries from
 the yumdb. Note that this rpmdb version is now also used significantly within
 yum (esp. in yum history).
+
+The version command will now show "groups" of packages as a separate version,
+and so takes sub-commands:
+
+"version grouplist" - List the defined version groups.
+
+"version groupinfo" - Get the complete list of packages within one or more version groups.
+
+"version installed" - This is the default, only show the version information for installed packages.
+
+"version available" - Only show the version information for available packages.
+
+"version all" - Show the version information for installed and available packages.
+
+"version nogroups | nogroups-*" - Just show the main version information.
+
+"version group-*" - Just show the grouped version information, if more arguments are given then only show the data for those groups.
+
 .IP
 .IP "\fBhistory\fP"
 The history command allows the user to view what has happened in past
