@@ -98,17 +98,16 @@ def re_filename(s):
 def re_primary_filename(filename):
     """ Tests if a filename string, can be matched against just primary.
         Note that this can produce false negatives (but not false
-        positives). """
-    if 'bin/' in filename:
-        return True
-    if filename.startswith('/etc/'):
+        positives). Note that this is a superset of re_primary_dirname(). """
+    if re_primary_dirname(filename):
         return True
     if filename == '/usr/lib/sendmail':
         return True
     return False
 
 def re_primary_dirname(dirname):
-    """ Tests if a dirname string, can be matched against just primary. """
+    """ Tests if a dirname string, can be matched against just primary. Note
+        that this is a subset of re_primary_filename(). """
     if 'bin/' in dirname:
         return True
     if dirname.startswith('/etc/'):

@@ -467,7 +467,7 @@ class RpmBase(object):
             return True
         
         if reqtuple[0].startswith('/'):
-            if misc.re_primary_filename(reqtuple[0]) or misc.re_primary_dirname(reqtuple[0]):
+            if misc.re_primary_filename(reqtuple[0]):
                 pri_only = True
             else:
                 pri_only = False
