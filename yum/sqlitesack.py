@@ -1599,7 +1599,6 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
             for (pat, rest) in patterns:
                 if rest == 'glob':
                     continue
-                assert rest == '='
                 for pkg in returnList:
                     if pkg.name == pat:
                         self._pkgnames_loaded.add(pkg.name)
