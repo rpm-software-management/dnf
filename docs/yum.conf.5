@@ -769,6 +769,18 @@ These will be replaced with the value of the shell environment variable of
 the same name. If the shell environment variable does not exist then the
 configuration file variable will not be replaced.
 
+.LP
+As of 3.2.28, any file in <installroot>/<persistdir>/vars is turned into
+a variable named after the filename (or overrides any of the above varaibles).
+The obvious exception is that you cannot use these variables in the definition
+of persistdir itself.
+
+Note that no warnings/errors are given if the files are unreadable, so creating
+files that only root can read may be confusing for users.
+
+Also note that all new line characters are removed, as a convienience, but no
+other checking is performed on the data. This means it's possible to have bad
+character data in baseurl etc.
 
 .SH "FILES"
 .nf

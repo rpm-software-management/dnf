@@ -857,13 +857,15 @@ def readMainConfig(startupconf):
     yumvars['arch'] = startupconf.arch
     yumvars['releasever'] = startupconf.releasever
     yumvars['uuid'] = startupconf.uuid
+    # Note: We don't setup the FS yumvars here, because we want to be able to
+    #       use the core yumvars in persistdir. Which is the base of FS yumvars.
     
     # Read [main] section
     yumconf = YumConf()
     yumconf.populate(startupconf._parser, 'main')
 
     # Apply the installroot to directory options
-    for option in ('cachedir', 'logfile', 'persistdir'):
+    def _apply_installroot(yumconf, option):
         path = getattr(yumconf, option)
         ir_path = yumconf.installroot + path
         ir_path = ir_path.replace('//', '/') # os.path.normpath won't fix this and
@@ -871,6 +873,25 @@ def readMainConfig(startupconf):
         ir_path = varReplace(ir_path, yumvars)
         setattr(yumconf, option, ir_path)
     
+    _apply_installroot(yumconf, 'persistdir')
+
+    # Read the FS yumvars
+    try:
+        dir_fsvars = yumconf.persistdir + "/vars/"
+        fsvars = os.listdir(dir_fsvars)
+    except OSError:
+        fsvars = []
+    for fsvar in fsvars:
+        try:
+            val = open(dir_fsvars + fsvar).read().replace('\n', '')
+        except (OSError, IOError):
+            continue
+        yumvars[fsvar] = val
+
+    # These can use the above FS yumvars
+    for option in ('cachedir', 'logfile'):
+        _apply_installroot(yumconf, option)
+
     # Add in some extra attributes which aren't actually configuration values 
     yumconf.yumvar = yumvars
     yumconf.uid = 0
