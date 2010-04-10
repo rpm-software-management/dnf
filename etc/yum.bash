@@ -102,7 +102,7 @@ _yum()
             ;;
 
         check-update|grouplist|makecache|provides|whatprovides|resolvedep|\
-        search|version)
+        search)
             return 0
             ;;
 
@@ -211,6 +211,13 @@ _yum()
                 _yum_binrpmfiles "$cur"
             else
                 _yum_list updates "$cur"
+            fi
+            return 0
+            ;;
+        version)
+            if [ "$prev" = version ] ; then
+                COMPREPLY=( $( compgen -W 'all installed available nogroups
+                    grouplist groupinfo' -- "$cur" ) )
             fi
             return 0
             ;;
