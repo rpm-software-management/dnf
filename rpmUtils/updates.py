@@ -75,14 +75,11 @@ class Updates:
 
     def _delFromNADict(self, dict_, pkgtup):
         (n, a, e, v, r) = pkgtup
-        if dict_.has_key((n, a)):
-            dict_[(n, a)] = filter((e,v,r).__ne__, dict_[(n, a)])
-            if not dict_[(n, a)]:
-                del dict_[(n, a)]
-        if dict_.has_key((n, None)):
-            dict_[(n, None)] = filter((e,v,r).__ne__, dict_[(n, None)])
-            if not dict_[(n, None)]:
-                del dict_[(n, None)]
+        for aa in (a, None):
+            if (n, aa) in dict_:
+                dict_[(n, aa)] = filter((e,v,r).__ne__, dict_[(n, aa)])
+                if not dict_[(n, aa)]:
+                    del dict_[(n, aa)]
 
     def delPackage(self, pkgtup):
         """remove available pkgtup that is no longer available"""

@@ -2022,7 +2022,6 @@ class YumBase(depsolve.Depsolve):
         elif pkgnarrow == 'recent':
             now = time.time()
             recentlimit = now-(self.conf.recent*86400)
-            ftimehash = {}
             if showdups:
                 avail = self.pkgSack.returnPackages(patterns=patterns,
                                                     ignore_case=ic)
@@ -2034,15 +2033,7 @@ class YumBase(depsolve.Depsolve):
                     avail = []
             
             for po in avail:
-                ftime = int(po.filetime)
-                if ftime > recentlimit:
-                    if not ftimehash.has_key(ftime):
-                        ftimehash[ftime] = [po]
-                    else:
-                        ftimehash[ftime].append(po)
-
-            for sometime in ftimehash:
-                for po in ftimehash[sometime]:
+                if int(po.filetime) > recentlimit:
                     recent.append(po)
         
         
