@@ -986,6 +986,9 @@ class RPMDBPackageSack(PackageSackBase):
 
     def _search(self, name=None, epoch=None, ver=None, rel=None, arch=None):
         '''List of matching packages, to zero or more of NEVRA.'''
+        if name is not None and name in self._pkgmatch_fails:
+            return []
+
         pkgtup = (name, arch, epoch, ver, rel)
         if pkgtup in self._tup2pkg:
             return [self._tup2pkg[pkgtup]]
@@ -996,6 +999,8 @@ class RPMDBPackageSack(PackageSackBase):
         if self._completely_loaded or name in self._pkgnames_loaded:
             if name is not None:
                 pkgs = self._name2pkg.get(name, [])
+                if not pkgs:
+                    self._pkgmatch_fails.add(name)
             else:
                 pkgs = self.returnPkgs()
             for po in pkgs:
@@ -1015,6 +1020,7 @@ class RPMDBPackageSack(PackageSackBase):
             mi = ts.dbMatch()
             self._completely_loaded = True
 
+        done = False
         for hdr in mi:
             if hdr['name'] == 'gpg-pubkey':
                 continue
@@ -1022,6 +1028,7 @@ class RPMDBPackageSack(PackageSackBase):
             #  We create POs out of all matching names, even if we don't return
             # them.
             self._pkgnames_loaded.add(po.name)
+            done = True
 
             for tag in ('arch', 'rel', 'ver', 'epoch'):
                 if loc[tag] is not None and loc[tag] != getattr(po, tag):
@@ -1031,6 +1038,9 @@ class RPMDBPackageSack(PackageSackBase):
 
         if self.auto_close:
             self.ts.close()
+
+        if not done and name is not None:
+            self._pkgmatch_fails.add(name)
 
         return ret
 
