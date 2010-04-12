@@ -1009,9 +1009,6 @@ class RPMDBPackageSack(PackageSackBase):
         ts = self.readOnlyTS()
         if name is not None:
             mi = ts.dbMatch('name', name)
-            #  We create POs out of all matching names, even if we don't return
-            # them.
-            self._pkgnames_loaded.add(name)
         elif arch is not None:
             mi = ts.dbMatch('arch', arch)
         else:
@@ -1022,6 +1019,10 @@ class RPMDBPackageSack(PackageSackBase):
             if hdr['name'] == 'gpg-pubkey':
                 continue
             po = self._makePackageObject(hdr, mi.instance())
+            #  We create POs out of all matching names, even if we don't return
+            # them.
+            self._pkgnames_loaded.add(po.name)
+
             for tag in ('arch', 'rel', 'ver', 'epoch'):
                 if loc[tag] is not None and loc[tag] != getattr(po, tag):
                     break
