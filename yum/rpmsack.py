@@ -146,6 +146,7 @@ class RPMDBPackageSack(PackageSackBase):
         self._tup2pkg = {}
         self._completely_loaded = False
         self._pkgmatch_fails = set()
+        self._provmatch_fails = set()
         self._simple_pkgtup_list = []
         self._get_pro_cache = {}
         self._get_req_cache  = {}
@@ -193,6 +194,7 @@ class RPMDBPackageSack(PackageSackBase):
         self._tup2pkg = {}
         self._completely_loaded = False
         self._pkgmatch_fails = set()
+        self._provmatch_fails = set()
         self._simple_pkgtup_list = []
         self._get_pro_cache = {}
         self._get_req_cache = {}
@@ -323,11 +325,11 @@ class RPMDBPackageSack(PackageSackBase):
         return result
 
     def searchProvides(self, name):
-        if name in self._pkgmatch_fails:
+        if name in self._provmatch_fails:
             return []
         ret = self.searchPrco(name, 'provides')
         if not ret:
-            self._pkgmatch_fails.add(name)
+            self._provmatch_fails.add(name)
         return ret
 
     def searchRequires(self, name):
