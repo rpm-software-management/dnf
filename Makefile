@@ -34,7 +34,7 @@ install:
 	install -m 755 bin/yum-updatesd.py $(DESTDIR)/usr/sbin/yum-updatesd
 
 	mkdir -p $(DESTDIR)/var/cache/yum
-	mkdir -p $(DESTDIR)/var/lib/yum/vars
+	mkdir -p $(DESTDIR)/var/lib/yum
 
 	for d in $(SUBDIRS); do make PYTHON=$(PYTHON) DESTDIR=`cd $(DESTDIR); pwd` -C $$d install; [ $$? = 0 ] || exit 1; done
 

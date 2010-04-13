@@ -873,11 +873,9 @@ def readMainConfig(startupconf):
         ir_path = varReplace(ir_path, yumvars)
         setattr(yumconf, option, ir_path)
     
-    _apply_installroot(yumconf, 'persistdir')
-
     # Read the FS yumvars
     try:
-        dir_fsvars = yumconf.persistdir + "/vars/"
+        dir_fsvars = yumconf.installroot + "/etc/yum/vars/"
         fsvars = os.listdir(dir_fsvars)
     except OSError:
         fsvars = []
@@ -893,7 +891,7 @@ def readMainConfig(startupconf):
         yumvars[fsvar] = val
 
     # These can use the above FS yumvars
-    for option in ('cachedir', 'logfile'):
+    for option in ('cachedir', 'logfile', 'persistdir'):
         _apply_installroot(yumconf, option)
 
     # Add in some extra attributes which aren't actually configuration values 

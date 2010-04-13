@@ -80,8 +80,9 @@ exit 0
 %doc README AUTHORS COPYING TODO INSTALL ChangeLog PLUGINS
 %config(noreplace) %{_sysconfdir}/yum/yum.conf
 %config(noreplace) %{_sysconfdir}/yum/version-groups.conf
-%dir %{_sysconfdir}/%{name}
+%dir %{_sysconfdir}/yum
 %dir %{_sysconfdir}/yum/repos.d
+%dir %{_sysconfdir}/yum/vars
 %config %{_sysconfdir}/logrotate.d/%{name}
 %{_sysconfdir}/bash_completion.d
 %{_datadir}/yum-cli/*
@@ -91,7 +92,6 @@ exit 0
 /usr/lib/python?.?/site-packages/rpmUtils
 %dir /var/cache/yum
 %dir /var/lib/yum
-%dir /var/lib/yum/vars
 %ghost /var/lib/yum/uuid
 %ghost /var/lib/yum/history
 %ghost /var/lib/yum/plugins
