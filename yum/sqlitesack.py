@@ -1599,7 +1599,7 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
             self._pkgnames_loaded.update([po.name for po in returnList])
         if need_full:
             for (pat, rest) in patterns:
-                if rest == 'glob':
+                if rest not in ('=', ''): # Wildcards: 'glob' or ' ESCAPE "!"'
                     continue
                 for pkg in returnList:
                     if pkg.name == pat:
