@@ -941,8 +941,13 @@ class PackageSack(PackageSackBase):
            be compared to each other for highest version."""
 
         highdict = {}
-        for pkg in self.returnPackages(patterns=patterns,
-                                       ignore_case=ignore_case):
+        if patterns is None and name is not None:
+            pkgs = self.searchNevra(name=name)
+        else:
+            pkgs = self.returnPackages(patterns=patterns,
+                                       ignore_case=ignore_case)
+
+        for pkg in pkgs:
             if not highdict.has_key(pkg.name):
                 highdict[pkg.name] = []
                 highdict[pkg.name].append(pkg)
