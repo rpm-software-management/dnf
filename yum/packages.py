@@ -159,6 +159,9 @@ class FakeSack:
     def __init__(self):
         pass # This is fake, so do nothing
     
+    def have_fastSearchFiles(self):
+        return True
+
     def delPackage(self, obj):
         """delete a pkgobject, do nothing, but make localpackages work with --skip-broken"""
         pass # This is fake, so do nothing

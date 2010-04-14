@@ -46,10 +46,21 @@ class FakeConf(object):
         self.uid = 0
         self.groupremove_leaf_only = False
 
+class FakeSack:
+    """ Fake PackageSack to use with FakeRepository"""
+    def __init__(self):
+        pass # This is fake, so do nothing
+    
+    def have_fastSearchFiles(self):
+        return True
+
 class FakeRepo(object):
 
+    __fake_sack = FakeSack()
     def __init__(self, id=None,sack=None):
         self.id = id
+        if sack is None:
+            sack = self.__fake_sack
         self.sack = sack
         self.cost = 1000
 

@@ -842,6 +842,30 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
         return misc.unique(results)
         
     @catchSqliteException
+    def _have_fastSearchFiles(self):
+        """ Return true if searchFiles() is always fast, basically relies on
+            "CREATE INDEX pkgfiles ON files (pkgKey);" existing. """
+
+        for (rep,cache) in self.primarydb.items():
+            if rep in self._all_excludes:
+                continue
+            cur = cache.cursor()
+            executeSQL(cur, "PRAGMA index_info(pkgfiles)")
+            #  If we get anything, we're fine. There might be a better way of
+            # saying "anything" but this works.
+            for ob in cur:
+                break
+            else:
+                return False
+
+        return True
+
+    def have_fastSearchFiles(self):
+        if not hasattr(self, '_cached_have_fastSearchFiles'):
+            self._cached_have_fastSearchFiles = self._have_fastSearchFiles()
+        return self._cached_have_fastSearchFiles
+
+    @catchSqliteException
     def searchFiles(self, name, strict=False):
         """search primary if file will be in there, if not, search filelists, use globs, if possible"""
         

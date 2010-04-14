@@ -89,9 +89,7 @@ class TransactionData:
         self.pkgSack = None
         self.pkgSackPackages = 0
         self.localSack = PackageSack()
-        # FIXME: This is turned off atm. ... it'll be turned on when
-        #        the new yum-metadata-parser with the "pkgfiles" index is std.
-        self._inSack = None # GetProvReqOnlyPackageSack()
+        self._inSack = GetProvReqOnlyPackageSack()
 
         # lists of txmbrs in their states - just placeholders
         self.instgroups = []
@@ -239,7 +237,11 @@ class TransactionData:
         elif isinstance(txmember.po, YumAvailablePackageSqlite):
             self.pkgSackPackages += 1
         if self._inSack is not None and txmember.output_state in TS_INSTALL_STATES:
-            self._inSack.addPackage(txmember.po)
+            if not txmember.po.repo.sack.have_fastSearchFiles():
+                # In theory we could keep this on if a "small" repo. fails
+                self._inSack = None
+            else:
+                self._inSack.addPackage(txmember.po)
 
         if self.conditionals.has_key(txmember.name):
             for pkg in self.conditionals[txmember.name]:

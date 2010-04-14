@@ -152,6 +152,10 @@ class PackageSackBase(object):
         """returns a dict of obsoletes dict[obsoleting pkgtuple] = [list of obs]"""
         raise NotImplementedError()
 
+    def have_fastSearchFiles(self):
+        """ Is calling searchFiles() faster than using """
+        raise NotImplementedError()
+
     def searchFiles(self, name):
         """return list of packages by filename"""
         raise NotImplementedError()
@@ -772,10 +776,11 @@ class PackageSack(PackageSackBase):
             
         return obs
         
+    def have_fastSearchFiles(self):
+        return True
+
     def searchFiles(self, name):
-        """return list of packages by filename
-           FIXME - need to add regex match against keys in file list
-        """
+        """ Return list of packages by filename. """
         self._checkIndexes(failure='build')
         if self.filenames.has_key(name):
             return self.filenames[name]
