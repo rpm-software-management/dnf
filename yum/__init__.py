@@ -1139,9 +1139,14 @@ class YumBase(depsolve.Depsolve):
             toRemove.add(dep)
             self._getDepsToRemove(dep, deptree, toRemove)
 
-    def _rpmdb_warn_checks(self, out=None, warn=True, chkcmd='all'):
+    def _rpmdb_warn_checks(self, out=None, warn=True, chkcmd='all',header=None):
         if out is None:
             out = self.logger.warning
+        if header is None:
+            # FIXME: _N()
+            msg = _("** Found %d pre-existing rpmdb problem(s),"
+                    " 'yum check' output follows:")
+            header = lambda problems: not problems or out(msg % problems)
         if warn:
             out(_('Warning: RPMDB altered outside of yum.'))
 
@@ -1156,6 +1161,7 @@ class YumBase(depsolve.Depsolve):
             iopkgs = set(self.conf.installonlypkgs)
             probs.extend(self.rpmdb.check_duplicates(iopkgs))
 
+        header(len(probs))
         for prob in sorted(probs):
             out(prob)
 

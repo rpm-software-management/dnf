@@ -1381,7 +1381,8 @@ class CheckRpmdbCommand(YumCommand):
             print x
 
         rc = 0
-        if base._rpmdb_warn_checks(_out, False, chkcmd):
+        if base._rpmdb_warn_checks(out=_out, warn=False, chkcmd=chkcmd,
+                                   header=lambda x: None):
             rc = 1
         return rc, ['%s %s' % (basecmd, chkcmd)]
 
