@@ -159,7 +159,9 @@ class FakeSack:
     def __init__(self):
         pass # This is fake, so do nothing
     
-    def have_fastSearchFiles(self):
+    def have_fastReturnFileEntries(self):
+        """ Is calling pkg.returnFileEntries(primary_only=True) faster than
+            using searchFiles(). """
         return True
 
     def delPackage(self, obj):
@@ -213,8 +215,10 @@ class FakeRepository:
         return self.id
 
 
-# goal for the below is to have a packageobject that can be used by generic
+#  Goal for the below is to have a packageobject that can be used by generic
 # functions independent of the type of package - ie: installed or available
+#  Note that this is also used to history etc. ... so it's more a nevra+checksum
+# holder than a base for things which are actual packages.
 class PackageObject(object):
     """Base Package Object - sets up the default storage dicts and the
        most common returns"""
@@ -299,11 +303,16 @@ class PackageObject(object):
     def verEQ(self, other):
         """ Compare package to another one, only rpm-version equality. """
         if not other:
-            return False
+            return None
         ret = cmp(self.name, other.name)
         if ret != 0:
             return False
         return comparePoEVREQ(self, other)
+    def verNE(self, other):
+        """ Compare package to another one, only rpm-version inequality. """
+        if not other:
+            return None
+        return not self.verEQ(other)
     def verLT(self, other):
         """ Uses verCMP, tests if the other _rpm-version_ is <  ours. """
         return self.verCMP(other) <  0
@@ -335,6 +344,10 @@ class PackageObject(object):
             if csumid:
                 return (csumtype, csum)
 
+#  This is the virtual base class of actual packages, it basically requires a
+# repo. even though it doesn't set one up in it's __init__. It also doesn't have
+# PackageObject methods ... so is basically unusable on it's own
+# see: YumAvailablePackage.
 class RpmBase(object):
     """return functions and storage for rpm-specific data"""
 
@@ -561,11 +574,18 @@ class RpmBase(object):
 
     base_package_name = property(fget=lambda self: self._getBaseName())
 
+    def have_fastReturnFileEntries(self):
+        """ Is calling pkg.returnFileEntries(primary_only=True) faster than
+            using searchFiles(). """
+        return self.repo.sack.have_fastReturnFileEntries()
 
+
+# This is kind of deprecated
 class PackageEVR:
 
     """
-    A comparable epoch, version, and release representation.
+    A comparable epoch, version, and release representation. Note that you
+    almost certainly want to use pkg.verEQ() or pkg.verGT() etc. instead.
     """
     
     def __init__(self,e,v,r):
@@ -608,7 +628,8 @@ class PackageEVR:
         return False
     
 
-
+#  This is the real base class of actual packages, it has a repo. and is
+# usable on it's own, in theory (but in practise see sqlitesack).
 class YumAvailablePackage(PackageObject, RpmBase):
     """derived class for the  packageobject and RpmBase packageobject yum
        uses this for dealing with packages in a repository"""
@@ -1124,7 +1145,8 @@ class YumAvailablePackage(PackageObject, RpmBase):
 
 
 
-
+#  This is a tweak on YumAvailablePackage() and is a base class for packages
+# which are actual rpms.
 class YumHeaderPackage(YumAvailablePackage):
     """Package object built from an rpm header"""
     def __init__(self, repo, hdr):
@@ -1364,6 +1386,7 @@ _RPMVERIFY_RDEV     = (1 << 7)
 
 _installed_repo = FakeRepository('installed')
 _installed_repo.cost = 0
+# This is a tweak on YumHeaderPackage() for installed rpm packages.
 class YumInstalledPackage(YumHeaderPackage):
     """super class for dealing with packages in the rpmdb"""
     def __init__(self, hdr, yumdb=None):
@@ -1627,6 +1650,7 @@ class YumInstalledPackage(YumHeaderPackage):
         return results
         
                              
+# This is a tweak on YumHeaderPackage() for rpm packages which are on disk.
 class YumLocalPackage(YumHeaderPackage):
     """Class to handle an arbitrary package from a file path
        this inherits most things from YumInstalledPackage because
@@ -1770,6 +1794,8 @@ class YumLocalPackage(YumHeaderPackage):
         return msg
 
 
+#  This is a tweak on YumLocalPackage() to download rpm packages to disk, and
+# then use them directly.
 class YumUrlPackage(YumLocalPackage):
     """Class to handle an arbitrary package from a URL
        this inherits most things from YumLocalPackage, but will download a

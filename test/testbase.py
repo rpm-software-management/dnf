@@ -51,7 +51,7 @@ class FakeSack:
     def __init__(self):
         pass # This is fake, so do nothing
     
-    def have_fastSearchFiles(self):
+    def have_fastReturnFileEntries(self):
         return True
 
 class FakeRepo(object):

@@ -237,7 +237,7 @@ class TransactionData:
         elif isinstance(txmember.po, YumAvailablePackageSqlite):
             self.pkgSackPackages += 1
         if self._inSack is not None and txmember.output_state in TS_INSTALL_STATES:
-            if not txmember.po.repo.sack.have_fastSearchFiles():
+            if not txmember.po.have_fastReturnFileEntries():
                 # In theory we could keep this on if a "small" repo. fails
                 self._inSack = None
             else:

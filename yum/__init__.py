@@ -4409,7 +4409,7 @@ class YumBase(depsolve.Depsolve):
         
         if pkg1.name != pkg2.name:
             return False
-        if not pkg1.EVR  > pkg2.EVR:
+        if pkg1.verLE(pkg2):
             return False
         if pkg1.arch not in self.arch.archlist:
             return False

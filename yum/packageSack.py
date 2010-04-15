@@ -152,8 +152,9 @@ class PackageSackBase(object):
         """returns a dict of obsoletes dict[obsoleting pkgtuple] = [list of obs]"""
         raise NotImplementedError()
 
-    def have_fastSearchFiles(self):
-        """ Is calling searchFiles() faster than using """
+    def have_fastReturnFileEntries(self):
+        """ Is calling pkg.returnFileEntries(primary_only=True) faster than
+            using searchFiles(). """
         raise NotImplementedError()
 
     def searchFiles(self, name):
@@ -776,7 +777,9 @@ class PackageSack(PackageSackBase):
             
         return obs
         
-    def have_fastSearchFiles(self):
+    def have_fastReturnFileEntries(self):
+        """ Is calling pkg.returnFileEntries(primary_only=True) faster than
+            using searchFiles(). """
         return True
 
     def searchFiles(self, name):

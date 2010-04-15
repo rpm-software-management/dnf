@@ -842,9 +842,9 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
         return misc.unique(results)
         
     @catchSqliteException
-    def _have_fastSearchFiles(self):
-        """ Return true if searchFiles() is always fast, basically relies on
-            "CREATE INDEX pkgfiles ON files (pkgKey);" existing. """
+    def _have_fastReturnFileEntries(self):
+        """ Return true if pkg.returnFileEntries(primary_only=True) is fast.
+            basically does "CREATE INDEX pkgfiles ON files (pkgKey);" exist. """
 
         for (rep,cache) in self.primarydb.items():
             if rep in self._all_excludes:
@@ -860,10 +860,12 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
 
         return True
 
-    def have_fastSearchFiles(self):
-        if not hasattr(self, '_cached_have_fastSearchFiles'):
-            self._cached_have_fastSearchFiles = self._have_fastSearchFiles()
-        return self._cached_have_fastSearchFiles
+    def have_fastReturnFileEntries(self):
+        """ Is calling pkg.returnFileEntries(primary_only=True) faster than
+            using searchFiles(). """
+        if not hasattr(self, '_cached_fRFE'):
+            self._cached_fRFE = self._have_fastReturnFileEntries()
+        return self._cached_fRFE
 
     @catchSqliteException
     def searchFiles(self, name, strict=False):
