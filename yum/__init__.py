@@ -1139,9 +1139,11 @@ class YumBase(depsolve.Depsolve):
             toRemove.add(dep)
             self._getDepsToRemove(dep, deptree, toRemove)
 
-    def _rpmdb_warn_checks(self, out=None, warn=True, chkcmd='all',header=None):
+    def _rpmdb_warn_checks(self, out=None, warn=True, chkcmd=None, header=None):
         if out is None:
             out = self.logger.warning
+        if chkcmd is None:
+            chkcmd = ['dependencies', 'duplicates']
         if header is None:
             # FIXME: _N()
             msg = _("** Found %d pre-existing rpmdb problem(s),"
@@ -1150,16 +1152,27 @@ class YumBase(depsolve.Depsolve):
         if warn:
             out(_('Warning: RPMDB altered outside of yum.'))
 
+        if type(chkcmd) in (type([]), type(set())):
+            chkcmd = set(chkcmd)
+        else:
+            chkcmd = set([chkcmd])
+
         rc = 0
         probs = []
-        if chkcmd in ('all', 'dependencies'):
+        if chkcmd.intersection(set(('all', 'dependencies'))):
             prob2ui = {'requires' : _('missing requires'),
                        'conflicts' : _('installed conflict')}
             probs.extend(self.rpmdb.check_dependencies())
 
-        if chkcmd in ('all', 'duplicates'):
+        if chkcmd.intersection(set(('all', 'duplicates'))):
             iopkgs = set(self.conf.installonlypkgs)
             probs.extend(self.rpmdb.check_duplicates(iopkgs))
+
+        if chkcmd.intersection(set(('all', 'obsoleted'))):
+            probs.extend(self.rpmdb.check_obsoleted())
+
+        if chkcmd.intersection(set(('all', 'provides'))):
+            probs.extend(self.rpmdb.check_provides())
 
         header(len(probs))
         for prob in sorted(probs):

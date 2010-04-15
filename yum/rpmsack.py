@@ -114,6 +114,23 @@ class RPMDBProblemDuplicate(RPMDBProblem):
         return _("%s is a duplicate with %s") % (self.pkg, self.duplicate)
 
 
+class RPMDBProblemObsoleted(RPMDBProblem):
+    def __init__(self, pkg, **kwargs):
+        RPMDBProblem.__init__(self, pkg, "obsoleted", **kwargs)
+
+    def __str__(self):
+        return _("%s is obsoleted by %s") % (self.pkg, self.obsoleter)
+
+
+class RPMDBProblemProvides(RPMDBProblem):
+    def __init__(self, pkg, **kwargs):
+        RPMDBProblem.__init__(self, pkg, "provides", **kwargs)
+
+    def __str__(self):
+        return _("%s provides %s but it cannot be found") % (self.pkg,
+                                                             self.provide)
+
+
 class RPMDBPackageSack(PackageSackBase):
     '''
     Represent rpmdb as a packagesack
@@ -1298,6 +1315,32 @@ class RPMDBPackageSack(PackageSackBase):
             problems.append(RPMDBProblemDuplicate(pkg, duplicate=last))
         return problems
 
+    def check_obsoleted(self):
+        """ Checks for any packages which are obsoleted by other packages. """
+        obsoleters = []
+        problems = []
+        for pkg in sorted(self.returnPackages()):
+            if not pkg.obsoletes:
+                continue
+            obsoleters.append(pkg)
+        for pkg in sorted(self.returnPackages()):
+            provtup = (pkg.name, 'EQ', (pkg.epoch, pkg.version, pkg.release))
+            for obspo in obsoleters:
+                if obspo.inPrcoRange('obsoletes', provtup):
+                    problems.append(RPMDBProblemObsoleted(pkg, obsoleter=obspo))
+        return problems
+
+    def check_provides(self):
+        """ For each package, check that a provides search for it's name (and
+            everything it provides) finds it. """
+        problems = []
+        for pkg in sorted(self.returnPackages()):
+            for provtup in pkg.provides:
+                name, flags, version = provtup
+                if pkg not in self.getProvides(name, flags, version):
+                    problems.append(RPMDBProblemProvides(pkg, provide=provtup))
+                    break
+        return problems
 
 def _sanitize(path):
     return path.replace('/', '').replace('~', '')
