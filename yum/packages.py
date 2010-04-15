@@ -514,9 +514,26 @@ class RpmBase(object):
                 return self.files[ftype]
         return []
             
-    def returnFileTypes(self):
-        """return list of types of files in the package"""
-        # maybe should die - use direct access to attribute
+    def returnFileTypes(self, primary_only=False):
+        """return list of types of files in the package, you can pass
+           primary_only=True to limit to those files in the primary repodata"""
+        if primary_only:
+            ret = [] # We only return the types for the primary files.
+            for ftype in self.files.keys():
+                if ftype == 'dir':
+                    match = misc.re_primary_dirname
+                else:
+                    match = misc.re_primary_filename
+                #  As soon as we find a primary file of this type, we can
+                # return it.
+                for fn in self.files[ftype]:
+                    if match(fn):
+                        break
+                else:
+                    continue
+                ret.append(ftype)
+            return ret
+
         return self.files.keys()
 
     def returnPrcoNames(self, prcotype):

@@ -39,7 +39,7 @@ class GetProvReqOnlyPackageSack(PackageSack):
         self._need_index_files = need_files
 
     def __addPackageToIndex_primary_files(self, obj):
-        for ftype in obj.returnFileTypes():
+        for ftype in obj.returnFileTypes(primary_only=True):
             for file in obj.returnFileEntries(ftype, primary_only=True):
                 self._addToDictAsList(self.filenames, file, obj)
     def __addPackageToIndex_files(self, obj):

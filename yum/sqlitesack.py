@@ -353,6 +353,8 @@ class YumAvailablePackageSqlite(YumAvailablePackage, PackageObject, RpmBase):
         return self._changelog
     
     def returnFileEntries(self, ftype='file', primary_only=False):
+        """return list of files based on type, you can pass primary_only=True
+           to limit to those files in the primary repodata"""
         if primary_only and not self._loadedfiles:
             sql = "SELECT name as fname FROM files WHERE pkgKey = ? and type = ?"
             cur = self._sql_MD('primary', sql, (self.pkgKey, ftype))
@@ -361,7 +363,14 @@ class YumAvailablePackageSqlite(YumAvailablePackage, PackageObject, RpmBase):
         self._loadFiles()
         return RpmBase.returnFileEntries(self,ftype,primary_only)
     
-    def returnFileTypes(self):
+    def returnFileTypes(self, primary_only=False):
+        """return list of types of files in the package, you can pass
+           primary_only=True to limit to those files in the primary repodata"""
+        if primary_only and not self._loadedfiles:
+            sql = "SELECT DISTINCT type as ftype FROM files WHERE pkgKey = ?"
+            cur = self._sql_MD('primary', sql, (self.pkgKey,))
+            return map(lambda x: x['ftype'], cur)
+
         self._loadFiles()
         return RpmBase.returnFileTypes(self)
 
