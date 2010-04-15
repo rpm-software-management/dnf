@@ -1203,8 +1203,7 @@ class Depsolve(object):
                     pkgresults[po] -= 1024
 
                 obsoleted = False
-                poprovtup = (po.name, 'EQ', (po.epoch, po.ver, po.release))
-                if nextpo.inPrcoRange('obsoletes', poprovtup):
+                if po.filterObsoleters([nextpo]):
                     obsoleted = True
                     pkgresults[po] -= 1024
                                 

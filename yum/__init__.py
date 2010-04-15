@@ -2874,11 +2874,9 @@ class YumBase(depsolve.Depsolve):
                     installed_pkg =  self.getInstalledPackageObject(inst_tup)
                     yield installed_pkg
         else:
-            for (obs_n, obs_f, (obs_e, obs_v, obs_r)) in po.obsoletes:
+            for obs_n in po.obsoletes_names:
                 for pkg in self.rpmdb.searchNevra(name=obs_n):
-                    installedtup = (pkg.name, 'EQ', (pkg.epoch, 
-                                   pkg.ver, pkg.release))
-                    if po.inPrcoRange('obsoletes', installedtup):
+                    if pkg.filterObsoleters([po]):
                         yield pkg
 
     def _add_prob_flags(self, *flags):
@@ -3037,11 +3035,11 @@ class YumBase(depsolve.Depsolve):
                 # pull in foo.i586 when foo.x86_64 already obsoletes the pkg and
                 # is already installed
                 already_obs = None
-                poprovtup = (po.name, 'EQ', (po.epoch, po.ver, po.release))
-                for pkg in self.rpmdb.searchNevra(name=obsoleting_pkg.name):
-                    if pkg.inPrcoRange('obsoletes', poprovtup):
-                        already_obs = pkg
-                        continue
+                pkgs = self.rpmdb.searchNevra(name=obsoleting_pkg.name)
+                pkgs = po.filterObsoleters(pkgs, limit=1)
+                if pkgs:
+                    already_obs = pkgs[0]
+                    continue
 
                 if already_obs:
                     self.verbose_logger.warning(_('Package %s is obsoleted by %s which is already installed'), 

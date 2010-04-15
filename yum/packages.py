@@ -596,6 +596,20 @@ class RpmBase(object):
             using searchFiles(). """
         return self.repo.sack.have_fastReturnFileEntries()
 
+    def filterObsoleters(self, obsoleters, limit=0):
+        """ Returns list of obsoleters that obsolete this package. Note that we
+            don't do obsoleting loops. If limit is != 0, then we stop after
+            finding that many. """
+        provtup = (self.name, 'EQ', (self.epoch, self.version, self.release))
+        ret = []
+        for obspo in obsoleters:
+            if obspo.inPrcoRange('obsoletes', provtup):
+                ret.append(obspo)
+                if limit and len(ret) > limit:
+                    break
+        return ret
+
+
 
 # This is kind of deprecated
 class PackageEVR:

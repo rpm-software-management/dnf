@@ -1324,10 +1324,8 @@ class RPMDBPackageSack(PackageSackBase):
                 continue
             obsoleters.append(pkg)
         for pkg in sorted(self.returnPackages()):
-            provtup = (pkg.name, 'EQ', (pkg.epoch, pkg.version, pkg.release))
-            for obspo in obsoleters:
-                if obspo.inPrcoRange('obsoletes', provtup):
-                    problems.append(RPMDBProblemObsoleted(pkg, obsoleter=obspo))
+            for obspo in pkg.filterObsoleters(obsoleters):
+                problems.append(RPMDBProblemObsoleted(pkg, obsoleter=obspo))
         return problems
 
     def check_provides(self):
