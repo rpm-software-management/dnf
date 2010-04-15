@@ -322,8 +322,8 @@ class RPMDBPackageSack(PackageSackBase):
             if not glob:
                 if po.checkPrco(prcotype, (n, f, (e,v,r))):
                     result[po.pkgid] = po
-                else:
-                    result[po.pkgid] = po
+            else:
+                result[po.pkgid] = po
         del mi
 
 
