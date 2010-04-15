@@ -31,7 +31,7 @@ def ns_cleanup(qn):
 
 class RepoData:
     """represents anything beneath a <data> tag"""
-    def __init__(self, elem):
+    def __init__(self, elem=None):
         self.type = None
         if elem:
             self.type = elem.attrib.get('type')
@@ -218,7 +218,7 @@ class RepoMD:
 <repomd xmlns="http://linux.duke.edu/metadata/repo" xmlns:rpm="http://linux.duke.edu/metadata/rpm">\n"""
         msg += top
         if self.revision:
-            rev = """ <revision>%s</revision>\n""" % self.revision
+            rev = """ <revision>%s</revision>\n""" % to_xml(self.revision)
             msg += rev
         
         if self.tags['content'] or self.tags['distro'] or self.tags['repo']:
