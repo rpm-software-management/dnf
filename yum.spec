@@ -57,6 +57,12 @@ make DESTDIR=$RPM_BUILD_ROOT install
 # install -m 644 %{SOURCE1} $RPM_BUILD_ROOT/etc/yum/yum.conf
 # install -m 755 %{SOURCE2} $RPM_BUILD_ROOT/etc/cron.daily/yum.cron
 
+# Ghost files:
+mkdir -p $RPM_BUILD_ROOT/var/lib/yum/history
+mkdir -p $RPM_BUILD_ROOT/var/lib/yum/plugins
+mkdir -p $RPM_BUILD_ROOT/var/lib/yum/yumdb
+touch $RPM_BUILD_ROOT/var/lib/yum/uuid
+
 %find_lang %name
 
 %clean
