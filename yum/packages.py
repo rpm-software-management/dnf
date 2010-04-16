@@ -596,7 +596,7 @@ class RpmBase(object):
             using searchFiles(). """
         return self.repo.sack.have_fastReturnFileEntries()
 
-    def filterObsoleters(self, obsoleters, limit=0):
+    def obsoletedBy(self, obsoleters, limit=0):
         """ Returns list of obsoleters that obsolete this package. Note that we
             don't do obsoleting loops. If limit is != 0, then we stop after
             finding that many. """

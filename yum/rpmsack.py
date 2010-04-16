@@ -1324,7 +1324,7 @@ class RPMDBPackageSack(PackageSackBase):
                 continue
             obsoleters.append(pkg)
         for pkg in sorted(self.returnPackages()):
-            for obspo in pkg.filterObsoleters(obsoleters):
+            for obspo in pkg.obsoletedBy(obsoleters):
                 problems.append(RPMDBProblemObsoleted(pkg, obsoleter=obspo))
         return problems
 

@@ -2876,7 +2876,7 @@ class YumBase(depsolve.Depsolve):
         else:
             for obs_n in po.obsoletes_names:
                 for pkg in self.rpmdb.searchNevra(name=obs_n):
-                    if pkg.filterObsoleters([po]):
+                    if pkg.obsoletedBy([po]):
                         yield pkg
 
     def _add_prob_flags(self, *flags):
@@ -3036,7 +3036,7 @@ class YumBase(depsolve.Depsolve):
                 # is already installed
                 already_obs = None
                 pkgs = self.rpmdb.searchNevra(name=obsoleting_pkg.name)
-                pkgs = po.filterObsoleters(pkgs, limit=1)
+                pkgs = po.obsoletedBy(pkgs, limit=1)
                 if pkgs:
                     already_obs = pkgs[0]
                     continue

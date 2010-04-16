@@ -1206,7 +1206,7 @@ class Depsolve(object):
                     pkgresults[po] -= 1024
 
                 obsoleted = False
-                if po.filterObsoleters([nextpo]):
+                if po.obsoletedBy([nextpo]):
                     obsoleted = True
                     pkgresults[po] -= 1024
                                 
