@@ -721,7 +721,14 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
             del ipkgs[installed[0]]
 
         apkgs = {}
-        for pkg in self.pkgSack.returnNewestByName():
+        pkgs = []
+        if ipkgs:
+            try:
+                pkgs = self.pkgSack.returnNewestByName(patterns=ipkgs.keys())
+            except Errors.PackageSackError:
+                pkgs = []
+
+        for pkg in pkgs:
             if pkg.name not in ipkgs:
                 continue
             apkgs[pkg.name] = pkg
