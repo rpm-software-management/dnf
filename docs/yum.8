@@ -89,7 +89,9 @@ group of packages while ensuring that all dependencies are
 satisfied\&.  (See \fBSpecifying package names\fP for more information) 
 If no package matches the given package name(s), they are assumed to be a shell 
 glob and any matches are then installed\&. If the name starts with an 
-@ character the rest of the name is used as though passed to the groupinstall command\&. If the name is a file, then install works
+@ character the rest of the name is used as though passed to the groupinstall
+command\&. If the name starts with a - character, then a search is done within
+the transaction and any matches are removed. If the name is a file, then install works
 like localinstall\&. If the name doesn't match a package, then package
 "provides" are searched (Eg. "_sqlitecache.so()(64bit)") as are
 filelists (Eg. "/usr/bin/yum"). Also note that for filelists, wildcards will
@@ -127,6 +129,9 @@ is done by either obsoleting, upgrading or downgrading as appropriate. This will
 "normally" do the same thing as the upgrade command however if you have the
 package FOO installed at version 4, and the latest available is only
 version 3, then this command will \fBdowngrade\fP FOO to version 3.
+
+This command does not perform operations on groups, local packages or negative
+selections.
 .IP 
 .IP "\fBremove\fP or \fBerase\fP"
 Are used to remove the specified packages from the system

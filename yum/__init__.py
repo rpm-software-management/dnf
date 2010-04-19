@@ -2663,7 +2663,9 @@ class YumBase(depsolve.Depsolve):
     def returnPackagesByDep(self, depstring):
         """Pass in a generic [build]require string and this function will 
            pass back the packages it finds providing that dep."""
-        
+
+        if not depstring:
+            return []
         results = self.pkgSack.searchProvides(depstring)
         return results
         
@@ -2693,6 +2695,9 @@ class YumBase(depsolve.Depsolve):
         """Pass in a generic [build]require string and this function will 
            pass back the installed packages it finds providing that dep."""
         
+        if not depstring:
+            return []
+
         # parse the string out
         #  either it is 'dep (some operator) e:v-r'
         #  or /file/dep
@@ -2866,6 +2871,17 @@ class YumBase(depsolve.Depsolve):
             pkgnames.update(thisgroup.packages)
         return self.pkgSack.searchNames(pkgnames)
 
+    def _minus_deselect(self, pattern):
+        """ Remove things from the transaction, like kickstart. """
+        assert pattern[0] == '-'
+        pat = pattern[1:]
+
+        if pat and pat[0] == '@':
+            pat = pat[1:]
+            return self.deselectGroup(pat)
+
+        return self.tsInfo.deselect(pat)
+
     def _find_obsoletees(self, po):
         """ Return the pkgs. that are obsoleted by the po we pass in. """
         if not isinstance(po, YumLocalPackage):
@@ -2906,7 +2922,10 @@ class YumBase(depsolve.Depsolve):
                 raise Errors.InstallError, _('Nothing specified to install')
 
             if 'pattern' in kwargs:
-                if kwargs['pattern'][0] == '@':
+                if kwargs['pattern'] and kwargs['pattern'][0] == '-':
+                    return self._minus_deselect(kwargs['pattern'])
+
+                if kwargs['pattern'] and kwargs['pattern'][0] == '@':
                     return self._at_groupinstall(kwargs['pattern'])
 
                 was_pattern = True
@@ -3218,7 +3237,10 @@ class YumBase(depsolve.Depsolve):
                 
                 
         elif 'pattern' in kwargs:
-            if kwargs['pattern'][0] == '@':
+            if kwargs['pattern'] and kwargs['pattern'][0] == '-':
+                return self._minus_deselect(kwargs['pattern'])
+
+            if kwargs['pattern'] and kwargs['pattern'][0] == '@':
                 return self._at_groupinstall(kwargs['pattern'])
 
             (e, m, u) = self.rpmdb.matchPackageNames([kwargs['pattern']])
@@ -3399,7 +3421,10 @@ class YumBase(depsolve.Depsolve):
             pkgs = [po]  
         else:
             if 'pattern' in kwargs:
-                if kwargs['pattern'][0] == '@':
+                if kwargs['pattern'] and kwargs['pattern'][0] == '-':
+                    return self._minus_deselect(kwargs['pattern'])
+
+                if kwargs['pattern'] and kwargs['pattern'][0] == '@':
                     return self._at_groupremove(kwargs['pattern'])
 
                 (e,m,u) = self.rpmdb.matchPackageNames([kwargs['pattern']])
@@ -3693,7 +3718,10 @@ class YumBase(depsolve.Depsolve):
         if po:
             apkgs = [po]
         elif 'pattern' in kwargs:
-            if kwargs['pattern'][0] == '@':
+            if kwargs['pattern'] and kwargs['pattern'][0] == '-':
+                return self._minus_deselect(kwargs['pattern'])
+
+            if kwargs['pattern'] and kwargs['pattern'][0] == '@':
                 apkgs = self._at_groupdowngrade(kwargs['pattern'])
                 doing_group_pkgs = True # Don't warn. about some things
             else:
