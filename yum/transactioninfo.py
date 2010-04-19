@@ -193,6 +193,38 @@ class TransactionData:
 
         return result
 
+    def deselect(self, pattern):
+        """ Remove these packages from the transaction. This is more user
+            orientated than .remove(). Used from kickstart/install -blah. """
+
+        #  We don't have a returnPackages() here, so just try the "simple" 
+        # specifications. Pretty much 100% hit rate on kickstart.
+        txmbrs = self.matchNaevr(pattern)
+        if not txmbrs:
+            na = pattern.rsplit('.', 2)
+            txmbrs = self.matchNaevr(na[0], na[1])
+
+        if not txmbrs:
+            if self.pkgSack is not None:
+                pkgs = []
+            else:
+                pkgs = self.pkgSack.returnPackages(pattern)
+            if not pkgs:
+                pkgs = self.rpmdb.returnPackages(pattern)
+
+            for pkg in pkgs:
+                txmbrs.extend(self.getMembers(pkg.pkgtup))
+                #  Now we need to do conditional group packages, so they don't
+                # get added later on. This is hacky :(
+                for req, cpkgs in self.conditionals.iteritems():
+                    if pkg in cpkgs:
+                        cpkgs.remove(pkg)
+                        self.conditionals[req] = cpkgs
+
+        for txmbr in txmbrs:
+            self.remove(txmbr.pkgtup)
+        return txmbrs
+
     def _isLocalPackage(self, txmember):
         # Is this the right criteria?
         # FIXME: This is kinda weird, we really want all local pkgs to be in a
