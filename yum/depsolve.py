@@ -27,6 +27,7 @@ import rpmUtils.miscutils
 from rpmUtils.arch import archDifference, canCoinstall
 import misc
 from misc import unique, version_tuple_to_string
+from transactioninfo import TransactionMember
 import rpm
 
 from packageSack import ListPackageSack
@@ -859,7 +860,11 @@ class Depsolve(object):
             
             self.verbose_logger.log(logginglevels.DEBUG_2, _("looking for %s as a requirement of %s"), req, txmbr)
             provs = self.tsInfo.getProvides(*req)
-            if not provs:
+            #  The self provides should mostly be caught before here now, but
+            # at least config() crack still turns up, it's not that
+            # expensive to just do it, and we really don't want "false positive"
+            # requires for compare_providers().
+            if not provs and not txmbr.po.inPrcoRange('provides', req):
                 ret.append( (txmbr.po, self._prco_req2req(req)) )
                 continue
 
@@ -1228,6 +1233,7 @@ class Depsolve(object):
                     if res == po:
                         pkgresults[po] += 5
 
+            # End of O(N*N): for nextpo in pkgs:
             if _common_sourcerpm(po, reqpo):
                 self.verbose_logger.log(logginglevels.DEBUG_4,
                     _('common sourcerpm %s and %s' % (po, reqpo)))
@@ -1244,6 +1250,53 @@ class Depsolve(object):
                 
                     pkgresults[po] += cpl*2
                 
+        #  If we have more than one "best", see what would happen if we picked
+        # each package ... ie. what things do they require that _aren't_ already
+        # installed/to-be-installed. In theory this can screw up due to:
+        #   pkgA => requires pkgX
+        #   pkgB => requires pkgY, requires pkgZ
+        # ...but pkgX requires 666 other things. Going recursive is
+        # "non-trivial" though, python != prolog. This seems to do "better"
+        # from simple testing though.
+        bestnum = max(pkgresults.values())
+        rec_depsolve = {}
+        for po in pkgs:
+            if pkgresults[po] != bestnum:
+                continue
+            rec_depsolve[po] = 0
+        if len(rec_depsolve) > 1:
+            for po in rec_depsolve:
+                fake_txmbr = TransactionMember(po)
+
+                #  Note that this is just requirements, so you could also have
+                # 4 requires for a single package. This might be fixable, if
+                # needed, but given the above it's probably better to leave it
+                # like this.
+                reqs = self._checkInstall(fake_txmbr)
+                rec_depsolve[po] = len(reqs)
+
+            bestnum = min(rec_depsolve.values())
+            self.verbose_logger.log(logginglevels.DEBUG_4,
+                                    _('requires minimal: %d') % bestnum)
+            for po in rec_depsolve:
+                if rec_depsolve[po] == bestnum:
+                    self.verbose_logger.log(logginglevels.DEBUG_4,
+                            _(' Winner: %s') % po)
+                    pkgresults[po] += 1
+                else:
+                    num = rec_depsolve[po]
+                    self.verbose_logger.log(logginglevels.DEBUG_4,
+                            _(' Loser(with %d): %s') % (num, po))
+
+        #  We don't want to decide to use a "shortest first", if something else
+        # has told us to pick something else. But we want to pick between
+        # multiple "best" packages. So we spike all the best packages (so
+        # only those can win) and then bump them down by package name length.
+        bestnum = max(pkgresults.values())
+        for po in pkgs:
+            if pkgresults[po] != bestnum:
+                continue
+            pkgresults[po] += 1000
             pkgresults[po] += (len(po.name)*-1)
 
         bestorder = sorted(pkgresults.items(),

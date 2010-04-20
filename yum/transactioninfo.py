@@ -402,7 +402,6 @@ class TransactionData:
         self.downgraded.sort()
         self.failed.sort()
 
-    
     def addInstall(self, po):
         """adds a package as an install but in mode 'u' to the ts
            takes a packages object and returns a TransactionMember Object"""
