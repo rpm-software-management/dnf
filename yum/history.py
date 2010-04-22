@@ -128,6 +128,7 @@ class YumHistoryTransaction:
 
         self._loaded_TW = None
         self._loaded_TD = None
+        self._loaded_TS = None
 
         self._loaded_ER = None
         self._loaded_OT = None
@@ -153,9 +154,14 @@ class YumHistoryTransaction:
         if self._loaded_TD is None:
             self._loaded_TD = sorted(self._history._old_data_pkgs(self.tid))
         return self._loaded_TD
+    def _getTransSkip(self):
+        if self._loaded_TS is None:
+            self._loaded_TS = sorted(self._history._old_skip_pkgs(self.tid))
+        return self._loaded_TS
 
     trans_with = property(fget=lambda self: self._getTransWith())
     trans_data = property(fget=lambda self: self._getTransData())
+    trans_skip = property(fget=lambda self: self._getTransSkip())
 
     def _getErrors(self):
         if self._loaded_ER is None:
@@ -311,6 +317,17 @@ class YumHistory:
                          VALUES (?, ?)""", (self._tid, pid))
         return cur.lastrowid
 
+    def trans_skip_pid(self, pid):
+        cur = self._get_cursor()
+        if cur is None or not self._update_db_file_2():
+            return None
+        
+        res = executeSQL(cur,
+                         """INSERT INTO trans_skip_pkgs
+                         (tid, pkgtupid)
+                         VALUES (?, ?)""", (self._tid, pid))
+        return cur.lastrowid
+
     def trans_data_pid_beg(self, pid, state):
         assert state is not None
         if not hasattr(self, '_tid') or state is None:
@@ -338,7 +355,7 @@ class YumHistory:
         self._commit()
         return cur.lastrowid
 
-    def beg(self, rpmdb_version, using_pkgs, txmbrs):
+    def beg(self, rpmdb_version, using_pkgs, txmbrs, skip_packages=[]):
         cur = self._get_cursor()
         if cur is None:
             return
@@ -359,6 +376,10 @@ class YumHistory:
             state = self.txmbr2state(txmbr)
             self.trans_data_pid_beg(pid, state)
         
+        for pkg in skip_packages:
+            pid   = self.pkg2pid(pkg)
+            self.trans_skip_pid(pid)
+
         self._commit()
 
     def _log_errors(self, errors):
@@ -465,6 +486,20 @@ class YumHistory:
                 obj.state_installed = True
             if _sttxt2stcode[obj.state] in TS_REMOVE_STATES:
                 obj.state_installed = False
+            ret.append(obj)
+        return ret
+    def _old_skip_pkgs(self, tid):
+        cur = self._get_cursor()
+        if cur is None or not self._update_db_file_2():
+            return []
+        executeSQL(cur,
+                   """SELECT name, arch, epoch, version, release, checksum
+                      FROM trans_skip_pkgs JOIN pkgtups USING(pkgtupid)
+                      WHERE tid = ?
+                      ORDER BY name ASC, epoch ASC""", (tid,))
+        ret = []
+        for row in cur:
+            obj = YumHistoryPackage(row[0],row[1],row[2],row[3],row[4], row[5])
             ret.append(obj)
         return ret
 
@@ -610,6 +645,37 @@ class YumHistory:
             tids.add(row[0])
         return tids
 
+    _update_ops_2 = ['''\
+\
+ CREATE TABLE trans_skip_pkgs (
+     tid INTEGER NOT NULL REFERENCES trans_beg,
+     pkgtupid INTEGER NOT NULL REFERENCES pkgtups);
+''']
+
+    def _update_db_file_2(self):
+        """ Update to version 2 of history, includes trans_skip_pkgs. """
+        if not self.conf.writable:
+            return False
+
+        if hasattr(self, '_cached_updated_2'):
+            return self._cached_updated_2
+
+        cur = self._get_cursor()
+        if cur is None:
+            return False
+
+        executeSQL(cur, "PRAGMA table_info(trans_skip_pkgs)")
+        #  If we get anything, we're fine. There might be a better way of
+        # saying "anything" but this works.
+        for ob in cur:
+            break
+        else:
+            for op in self._update_ops_2:
+                cur.execute(op)
+            self._commit()
+        self._cached_updated_2 = True
+        return True
+
     def _create_db_file(self):
         """ Create a new history DB file, populating tables etc. """
 
@@ -670,6 +736,8 @@ class YumHistory:
  CREATE INDEX i_pkgtup_naevr ON pkgtups (name, arch, epoch, version, release);
 ''']
         for op in ops:
+            cur.execute(op)
+        for op in self._update_ops_2:
             cur.execute(op)
         self._commit()
 

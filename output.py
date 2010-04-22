@@ -1333,6 +1333,8 @@ to exit.
                 # We don't check .errors, because return_code will be non-0
             elif old.output:
                 rmark = lmark = 'E'
+            elif old.trans_skip:
+                rmark = lmark = 's'
             if old.altered_lt_rpmdb:
                 rmark = '<'
             if old.altered_gt_rpmdb:
@@ -1485,11 +1487,29 @@ to exit.
                 state  = _('Updated')
             elif ipkgs[0] < hpkg:
                 state  = _('Downgraded')
-            else: # multiple versions installed, both older and newer
-                state  = _('Weird')
+            else:
+                assert False, "Impossible, installed not newer and not older"
             print "%s%s %s" % (prefix, utf8_width_fill(state, 12), hpkg)
         print _("Packages Altered:")
         self.historyInfoCmdPkgsAltered(old, pats)
+        if old.trans_skip:
+            print _("Packages Skipped:")
+        for hpkg in old.trans_skip:
+            prefix = " " * 4
+            state  = _('Installed')
+            ipkgs = self.rpmdb.searchNames([hpkg.name])
+            ipkgs.sort()
+            if not ipkgs:
+                state  = _('Not installed')
+            elif hpkg.pkgtup in (ipkg.pkgtup for ipkg in ipkgs):
+                pass
+            elif ipkgs[-1] > hpkg:
+                state  = _('Older')
+            elif ipkgs[0] < hpkg:
+                state  = _('Newer')
+            else:
+                assert False, "Impossible, installed not newer and not older"
+            print "%s%s %s" % (prefix, utf8_width_fill(state, 12), hpkg)
         if old.output:
             print _("Scriptlet output:")
             num = 0

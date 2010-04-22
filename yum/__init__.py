@@ -1269,7 +1269,9 @@ class YumBase(depsolve.Depsolve):
                 ignore_pkgs = [txmbr.po for txmbr in txmbrs]
                 self._rpmdb_warn_checks(warn=lastdbv is not None,
                                         ignore_pkgs=ignore_pkgs)
-            self.history.beg(rpmdbv, using_pkgs, list(self.tsInfo))
+            self.history.beg(rpmdbv, using_pkgs, list(self.tsInfo),
+            self.history.beg(rpmdbv, using_pkgs, list(self.tsInfo),
+                             self.skipped_packages)
 
         #  Just before we update the transaction, update what we think the
         # rpmdb will look like. This needs to be done before the run, so that if
