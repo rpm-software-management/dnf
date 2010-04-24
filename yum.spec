@@ -87,6 +87,7 @@ exit 0
 %config(noreplace) %{_sysconfdir}/yum/yum.conf
 %config(noreplace) %{_sysconfdir}/yum/version-groups.conf
 %dir %{_sysconfdir}/yum
+%dir %{_sysconfdir}/yum/protected.d
 %dir %{_sysconfdir}/yum/repos.d
 %dir %{_sysconfdir}/yum/vars
 %config %{_sysconfdir}/logrotate.d/%{name}

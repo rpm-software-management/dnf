@@ -888,6 +888,45 @@ class YumBase(depsolve.Depsolve):
 
         if self.tsInfo.pkgSack is not None: # rm Transactions don't have pkgSack
             self.tsInfo.pkgSack.dropCachedData()
+
+        #  This is a version of the old "protect-packages" plugin, it allows
+        # you to erase duplicates and do remove+install.
+        #  But we don't allow you to turn it off!:)
+        protect_states = [TS_OBSOLETED, TS_ERASE]
+        txmbrs = []
+        if rescode == 2 and self.conf.protected_packages:
+            protected = set(self.conf.protected_packages)
+            txmbrs = self.tsInfo.getMembersWithState(None, protect_states)
+        bad_togo = {}
+        for txmbr in txmbrs:
+            if txmbr.name not in protected:
+                continue
+            if txmbr.name not in bad_togo:
+                bad_togo[txmbr.name] = []
+            bad_togo[txmbr.name].append(txmbr.pkgtup)
+        for ipkg in self.rpmdb.searchNames(bad_togo.keys()):
+            if ipkg.name not in bad_togo:
+                continue
+            # If there is at least one version not being removed, allow it
+            if ipkg.pkgtup not in bad_togo[ipkg.name]:
+                del bad_togo[ipkg.name]
+        for pkgname in bad_togo.keys():
+            for txmbr in self.tsInfo.matchNaevr(name=pkgname):
+                if txmbr.name not in bad_togo:
+                    continue
+                if txmbr.pkgtup in bad_togo[ipkg.name]:
+                    continue
+                # If we are installing one version we aren't removing, allow it
+                if txmbr.output_state in TS_INSTALL_STATES:
+                    del bad_togo[ipkg.name]
+
+        if bad_togo:
+            rescode = 1
+            restring = []
+            for pkgname in sorted(bad_togo):
+                restring.append(_('Trying to remove "%s", which is protected') %
+                                pkgname)
+
         self.rpmdb.dropCachedData()
 
         self.verbose_logger.debug('Depsolve time: %0.3f' % (time.time() - ds_st))

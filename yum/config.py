@@ -55,9 +55,11 @@ class Option(object):
     definition easy and consise.
     '''
 
-    def __init__(self, default=None):
+    def __init__(self, default=None, parse_default=False):
         self._setattrname()
         self.inherit = False
+        if parse_default:
+            default = self.parse(default)
         self.default = default
 
     def _setattrname(self):
@@ -155,10 +157,10 @@ class ListOption(Option):
     An option containing a list of strings.
     """
 
-    def __init__(self, default=None):
+    def __init__(self, default=None, parse_default=False):
         if default is None:
             default = []
-        super(ListOption, self).__init__(default)
+        super(ListOption, self).__init__(default, parse_default)
 
     def parse(self, s):
         """Converts a string from the config file to a workable list, parses
@@ -226,8 +228,9 @@ class UrlListOption(ListOption):
     Option for handling lists of URLs with validation of the URL scheme.
     '''
 
-    def __init__(self, default=None, schemes=('http', 'ftp', 'file', 'https')):
-        super(UrlListOption, self).__init__(default)
+    def __init__(self, default=None, schemes=('http', 'ftp', 'file', 'https'),
+                 parse_default=False):
+        super(UrlListOption, self).__init__(default, parse_default)
 
         # Hold a UrlOption instance to assist with parsing
         self._urloption = UrlOption(schemes=schemes)
@@ -729,6 +732,9 @@ class YumConf(StartupConf):
     history_record_packages = ListOption(['yum', 'rpm'])
 
     rpmverbosity = Option('info')
+
+    protected_packages = ListOption("yum, glob:/etc/yum/protected.d/*.conf",
+                                    parse_default=True)
 
     _reposlist = []
 

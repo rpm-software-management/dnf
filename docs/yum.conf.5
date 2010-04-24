@@ -62,6 +62,14 @@ Debug scriptlet output level. 'info' is the default, other
 options are: 'critical', 'emergency', 'error', 'warn' and 'debug'.
 
 .IP
+\fBprotected_packages\fR
+This is a list of packages that yum should never completely remove. They are
+protected via. Obsoletes as well as user/plugin removals.
+
+The default is: yum glob:/etc/yum/protected.d/*.conf
+So any packages which should be protected can do so by including a file in 
+/etc/yum/protected.d with their package name in it.
+.IP
 \fBlogfile\fR
 Full directory and file name for where yum should write its log file.
 

@@ -138,6 +138,9 @@ Are used to remove the specified packages from the system
 as well as removing any packages which depend on the package being
 removed\&. remove operates on groups, files, provides and filelists just like
 the "install" command\&.(See \fBSpecifying package names\fP for more information) 
+
+Note that "yum" is included in the protected_packages configuration, by default.
+So you can't accidentally remove yum itself.
 .IP 
 .IP "\fBlist\fP"
 Is used to list various information about available

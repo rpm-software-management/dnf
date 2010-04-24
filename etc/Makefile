@@ -8,6 +8,7 @@ clean:
 
 install:
 	mkdir -p $(DESTDIR)/etc/yum/
+	mkdir -p $(DESTDIR)/etc/yum/protected.d
 	mkdir -p $(DESTDIR)/etc/yum/repos.d
 	mkdir -p $(DESTDIR)/etc/yum/vars
 
