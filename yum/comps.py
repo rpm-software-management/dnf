@@ -32,10 +32,7 @@ from misc import get_my_lang_code
 lang_attr = '{http://www.w3.org/XML/1998/namespace}lang'
 
 def parse_boolean(strng):
-    if BOOLEAN_STATES.has_key(strng.lower()):
-        return BOOLEAN_STATES[strng.lower()]
-    else:
-        return False
+    return BOOLEAN_STATES.get(strng.lower(), False)
 
 def parse_number(strng):
     return int(strng)
@@ -235,11 +232,11 @@ class Group(CompsObj):
             
         # name and description translations
         for lang in obj.translated_name:
-            if not self.translated_name.has_key(lang):
+            if lang not in self.translated_name:
                 self.translated_name[lang] = obj.translated_name[lang]
         
         for lang in obj.translated_description:
-            if not self.translated_description.has_key(lang):
+            if lang not in self.translated_description:
                 self.translated_description[lang] = obj.translated_description[lang]
         
     def xml(self):
@@ -348,11 +345,11 @@ class Category(CompsObj):
         
         # name and description translations
         for lang in obj.translated_name:
-            if not self.translated_name.has_key(lang):
+            if lang not in self.translated_name:
                 self.translated_name[lang] = obj.translated_name[lang]
         
         for lang in obj.translated_description:
-            if not self.translated_description.has_key(lang):
+            if lang not in self.translated_description:
                 self.translated_description[lang] = obj.translated_description[lang]
 
     def xml(self):
@@ -424,7 +421,7 @@ class Comps(object):
 
         for item in group_pattern.split(','):
             item = item.strip()
-            if self._groups.has_key(item):
+            if item in self._groups:
                 thisgroup = self._groups[item]
                 returns[thisgroup.groupid] = thisgroup
                 continue
@@ -490,14 +487,14 @@ class Comps(object):
         return returns.values()
 
     def add_group(self, group):
-        if self._groups.has_key(group.groupid):
+        if group.groupid in self._groups:
             thatgroup = self._groups[group.groupid]
             thatgroup.add(group)
         else:
             self._groups[group.groupid] = group
 
     def add_category(self, category):
-        if self._categories.has_key(category.categoryid):
+        if category.categoryid in self._categories:
             thatcat = self._categories[category.categoryid]
             thatcat.add(category)
         else:
@@ -557,7 +554,7 @@ class Comps(object):
                 check_pkgs = group.optional_packages.keys() + group.default_packages.keys() + group.conditional_packages.keys()
                 group.installed = False
                 for pkgname in check_pkgs:
-                    if inst_pkg_names.has_key(pkgname):
+                    if pkgname in inst_pkg_names:
                         group.installed = True
                         break
         

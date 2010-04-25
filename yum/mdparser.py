@@ -132,7 +132,7 @@ class PrimaryEntry(BaseEntry):
             elif name in ('checksum', 'location'): 
                 p.update(self._prefixprops(child, name))
                 p[name + '_value'] = child.text
-                if name == 'location' and not p.has_key("location_base"):
+                if name == 'location' and "location_base" not in p:
                     p["location_base"] = None
             
             elif name == 'format': 

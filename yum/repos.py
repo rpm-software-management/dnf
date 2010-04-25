@@ -103,7 +103,7 @@ class RepoStorage:
             self._cache_enabled_repos = None
 
     def delete(self, repoid):
-        if self.repos.has_key(repoid):
+        if repoid in self.repos:
             thisrepo = self.repos[repoid]
             thisrepo.close()
             del self.repos[repoid]

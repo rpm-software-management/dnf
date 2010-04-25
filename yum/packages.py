@@ -91,7 +91,7 @@ def buildPkgRefDict(pkgs, casematch=True):
         envra = '%s:%s-%s-%s.%s' % (e, n, v, r, a)
         nevra = '%s-%s:%s-%s.%s' % (n, e, v, r, a)
         for item in [name, nameArch, nameVerRelArch, nameVer, nameVerRel, envra, nevra]:
-            if not pkgdict.has_key(item):
+            if item not in pkgdict:
                 pkgdict[item] = []
             pkgdict[item].append(pkg)
             
@@ -393,9 +393,7 @@ class RpmBase(object):
     def returnPrco(self, prcotype, printable=False):
         """return list of provides, requires, conflicts or obsoletes"""
         
-        prcos = []
-        if self.prco.has_key(prcotype):
-            prcos = self.prco[prcotype]
+        prcos = self.prco.get(prcotype, [])
 
         if printable:
             results = []
@@ -913,12 +911,9 @@ class YumAvailablePackage(PackageObject, RpmBase):
             self.installedsize = pkgdict.size['installed']
         
         if hasattr(pkgdict, 'location'):
-            if not pkgdict.location.has_key('base'):
+            url = pkgdict.location.get('base')
+            if url == '':
                 url = None
-            elif pkgdict.location['base'] == '':
-                url = None
-            else:
-                url = pkgdict.location['base']
 
             self.basepath = url
             self.relativepath = pkgdict.location['href']
@@ -938,7 +933,7 @@ class YumAvailablePackage(PackageObject, RpmBase):
         if hasattr(pkgdict, 'files'):
             for fn in pkgdict.files:
                 ftype = pkgdict.files[fn]
-                if not self.files.has_key(ftype):
+                if ftype not in self.files:
                     self.files[ftype] = []
                 self.files[ftype].append(fn)
         
@@ -946,19 +941,17 @@ class YumAvailablePackage(PackageObject, RpmBase):
             for rtype in pkgdict.prco:
                 for rdict in pkgdict.prco[rtype]:
                     name = rdict['name']
-                    f = e = v = r  = None
-                    if rdict.has_key('flags'): f = rdict['flags']
-                    if rdict.has_key('epoch'): e = rdict['epoch']
-                    if rdict.has_key('ver'): v = rdict['ver']
-                    if rdict.has_key('rel'): r = rdict['rel']
+                    f = rdict.get('flags')
+                    e = rdict.get('epoch')
+                    v = rdict.get('ver')
+                    r = rdict.get('rel')
                     self.prco[rtype].append((name, f, (e,v,r)))
 
         if hasattr(pkgdict, 'changelog'):
             for cdict in pkgdict.changelog:
-                date = text = author = None
-                if cdict.has_key('date'): date = cdict['date']
-                if cdict.has_key('value'): text = cdict['value']
-                if cdict.has_key('author'): author = cdict['author']
+                date = cdict.get('date')
+                text = cdict.get('value')
+                author = cdict.get('author')
                 self._changelog.append((date, author, text))
         
         if hasattr(pkgdict, 'checksum'):
@@ -1297,7 +1290,7 @@ class YumHeaderPackage(YumAvailablePackage):
             for (fn, mode, flag) in filetuple:
                 #garbage checks
                 if mode is None or mode == '':
-                    if not self.files.has_key('file'):
+                    if 'file' not in self.files:
                         self.files['file'] = []
                     self.files['file'].append(fn)
                     continue

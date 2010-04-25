@@ -345,7 +345,7 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         p = re.compile('needs (\d+)MB on the (\S+) filesystem')
         disk = {}
         for m in p.finditer(errstring):
-            if not disk.has_key(m.group(2)):
+            if m.group(2) not in disk:
                 disk[m.group(2)] = int(m.group(1))
             if disk[m.group(2)] < int(m.group(1)):
                 disk[m.group(2)] = int(m.group(1))

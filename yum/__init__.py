@@ -2110,10 +2110,7 @@ class YumBase(depsolve.Depsolve):
            the search keys in the results. """
         sql_fields = []
         for f in fields:
-            if RPM_TO_SQLITE.has_key(f):
-                sql_fields.append(RPM_TO_SQLITE[f])
-            else:
-                sql_fields.append(f)
+            sql_fields.append(RPM_TO_SQLITE.get(f, f))
 
         # yield the results in order of most terms matched first
         sorted_lists = {} # count_of_matches = [(pkgobj, 
@@ -2258,7 +2255,7 @@ class YumBase(depsolve.Depsolve):
         for (po, matched_strings) in match_gen:
             if callback:
                 callback(po, matched_strings)
-            if not matches.has_key(po):
+            if po not in matches:
                 matches[po] = []
             
             matches[po].extend(matched_strings)
@@ -2550,7 +2547,7 @@ class YumBase(depsolve.Depsolve):
                                
                         pkgs = packagesNewestByName(pkgs)
 
-                        if not self.tsInfo.conditionals.has_key(cond):
+                        if cond not in self.tsInfo.conditionals:
                             self.tsInfo.conditionals[cond] = []
                         self.tsInfo.conditionals[cond].extend(pkgs)
         return txmbrs_used
@@ -2994,7 +2991,7 @@ class YumBase(depsolve.Depsolve):
 
                 pkgbyname = {}
                 for pkg in pkgs:
-                    if not pkgbyname.has_key(pkg.name):
+                    if pkg.name not in pkgbyname:
                         pkgbyname[pkg.name] = [ pkg ]
                     else:
                         pkgbyname[pkg.name].append(pkg)
@@ -4363,9 +4360,7 @@ class YumBase(depsolve.Depsolve):
         newrepo = yumRepo.YumRepository(repoid)
         newrepo.name = repoid
         newrepo.basecachedir = self.conf.cachedir
-        var_convert = True
-        if kwargs.has_key('variable_convert') and not kwargs['variable_convert']:
-            var_convert = False
+        var_convert = kwargs.get('variable_convert', True)
         
         if baseurls:
             replaced = []

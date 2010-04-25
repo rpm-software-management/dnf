@@ -399,7 +399,7 @@ def map_to_str(m, vals) :
     if type(vals) != types.ListType and type(vals) != types.TupleType :
         vals = list((vals,))
     for i in vals :
-        if m.has_key(i) :
+        if i in m :
             slist.append(m[i])
         else :
             slist.append('unknown(' + str(i) + ')')
@@ -781,9 +781,7 @@ class signature(pgp_packet) :
         if sp[0] == SIG_SUB_TYPE_SGNR_USER_ID : # signer's user id
             return 'signer id: ' + sp[1]
         if sp[0] == SIG_SUB_TYPE_REVOKE_REASON : # reason for revocation
-            reas = ''
-            if revoke_reason_to_str.has_key(sp[1]) :
-                reas = revoke_reason_to_str[sp[1]]
+            reas = revoke_reason_to_str.get(sp[1], '')
             return 'reason for revocation: %s, %s' % (reas, sp[2])
         if sp[0] == SIG_SUB_TYPE_FEATURES : # features
             features = []

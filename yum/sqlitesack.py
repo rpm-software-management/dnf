@@ -259,9 +259,7 @@ class YumAvailablePackageSqlite(YumAvailablePackage, PackageObject, RpmBase):
         if varname.startswith('__') and varname.endswith('__'):
             raise AttributeError, varname
         
-        dbname = varname
-        if db2simplemap.has_key(varname):
-            dbname = db2simplemap[varname]
+        dbname = db2simplemap.get(varname, varname)
         try:
             r = self._sql_MD('primary',
                          "SELECT %s FROM packages WHERE pkgId = ?" % dbname,
@@ -556,7 +554,7 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
     # Because we don't want to remove a package from the database we just
     # add it to the exclude list
     def delPackage(self, obj):
-        if not self.excludes.has_key(obj.repo):
+        if obj.repo not in self.excludes:
             self.excludes[obj.repo] = {}
         self.excludes[obj.repo][obj.pkgId] = 1
         if (obj.repo, obj.pkgKey) in self._exclude_whitelist:
@@ -780,13 +778,13 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
         return ret
 
     def addDict(self, repo, datatype, dataobj, callback=None):
-        if self.added.has_key(repo):
+        if repo in self.added:
             if datatype in self.added[repo]:
                 return
         else:
             self.added[repo] = []
 
-        if not self.excludes.has_key(repo): 
+        if repo not in self.excludes:
             self.excludes[repo] = {}
 
         if dataobj is None:

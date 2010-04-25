@@ -895,7 +895,7 @@ class Depsolve(object):
         for prov in provs:
             if prov[0].startswith('rpmlib('): # ignore rpmlib() provides
                 continue
-            if newpoprovs.has_key(prov):
+            if prov in newpoprovs:
                 continue
             # FIXME: This is probably the best place to fix the postfix rename
             # problem long term (post .21) ... see compare_providers.

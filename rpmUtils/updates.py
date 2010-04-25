@@ -91,7 +91,7 @@ class Updates:
         self._delFromDict(self.updating_dict, self.updatesdict.get(pkgtup, []), pkgtup)
         self._delFromDict(self.updatesdict, self.updating_dict.get(pkgtup, []), pkgtup)
 
-        if self.rawobsoletes.has_key(pkgtup):
+        if pkgtup in self.rawobsoletes:
             if self._obsoletes_by_name:
                 for name, flag, version in self.rawobsoletes[pkgtup]:
                     self._delFromDict(self._obsoletes_by_name, [name], (flag, version, pkgtup))
@@ -111,12 +111,12 @@ class Updates:
             
         returndict = {}
         for (n, a, e, v, r) in pkglist:
-            if not returndict.has_key((n, a)):
+            if (n, a) not in returndict:
                 returndict[(n, a)] = []
             returndict[(n, a)].append((e,v,r))
 
             if Nonelists:
-                if not returndict.has_key((n, None)):
+                if (n, None) not in returndict:
                     returndict[(n, None)] = []
                 returndict[(n, None)].append((a, e, v, r))
             
@@ -199,7 +199,7 @@ class Updates:
         returndict = {}
         for new in obslist:
             for old in obsdict[new]:
-                if not returndict.has_key(old):
+                if old not in returndict:
                     returndict[old] = []
                 returndict[old].append(new)
         
@@ -221,21 +221,21 @@ class Updates:
         # 
         obs_arches = {}
         for (n, a, e, v, r) in self.rawobsoletes:
-            if not obs_arches.has_key(n):
+            if n not in obs_arches:
                 obs_arches[n] = []
             obs_arches[n].append(a)
 
         for pkgtup in self.rawobsoletes:
             (name, arch, epoch, ver, rel) = pkgtup
             for (obs_n, flag, (obs_e, obs_v, obs_r)) in self.rawobsoletes[(pkgtup)]:
-                if self.installdict.has_key((obs_n, None)):
+                if (obs_n, None) in self.installdict:
                     for (rpm_a, rpm_e, rpm_v, rpm_r) in self.installdict[(obs_n, None)]:
                         if flag in [None, 0] or \
                                 rpmUtils.miscutils.rangeCheck((obs_n, flag, (obs_e, obs_v, obs_r)),
                                                               (obs_n, rpm_a, rpm_e, rpm_v, rpm_r)):
                             # make sure the obsoleting pkg is not already installed
                             willInstall = 1
-                            if self.installdict.has_key((name, None)):
+                            if (name, None) in self.installdict:
                                 for (ins_a, ins_e, ins_v, ins_r) in self.installdict[(name, None)]:
                                     pkgver = (epoch, ver, rel)
                                     installedver = (ins_e, ins_v, ins_r)
@@ -245,7 +245,7 @@ class Updates:
                             if rpm_a != arch and rpm_a in obs_arches[name]:
                                 willInstall = 0
                             if willInstall:
-                                if not obsdict.has_key(pkgtup):
+                                if pkgtup not in obsdict:
                                     obsdict[pkgtup] = []
                                 obsdict[pkgtup].append((obs_n, rpm_a, rpm_e, rpm_v, rpm_r))
         self.obsoletes = obsdict
@@ -258,7 +258,7 @@ class Updates:
         self.obsoleted_dict = {}
         for new in self.obsoletes:
             for old in self.obsoletes[new]:
-                if not self.obsoleted_dict.has_key(old):
+                if old not in self.obsoleted_dict:
                     self.obsoleted_dict[old] = []
                 self.obsoleted_dict[old].append(new)
         self.obsoleting_dict = {}
@@ -309,7 +309,7 @@ class Updates:
 
         for (n, a) in newpkgs:
             # simple ones - look for exact matches or older stuff
-            if self.installdict.has_key((n, a)):
+            if (n, a) in self.installdict:
                 for (rpm_e, rpm_v, rpm_r) in self.installdict[(n, a)]:
                     try:
                         (e, v, r) = self.returnNewest(newpkgs[(n,a)])
@@ -362,14 +362,14 @@ class Updates:
         for (n, a) in simpleupdate:
             # try to be as precise as possible
             if n in self.exactarchlist:
-                if self.installdict.has_key((n, a)):
+                if (n, a) in self.installdict:
                     (rpm_e, rpm_v, rpm_r) = self.returnNewest(self.installdict[(n, a)])
-                    if newpkgs.has_key((n,a)):
+                    if (n, a) in newpkgs:
                         (e, v, r) = self.returnNewest(newpkgs[(n, a)])
                         rc = rpmUtils.miscutils.compareEVR((e, v, r), (rpm_e, rpm_v, rpm_r))
                         if rc > 0:
                             # this is definitely an update - put it in the dict
-                            if not updatedict.has_key((n, a, rpm_e, rpm_v, rpm_r)):
+                            if (n, a, rpm_e, rpm_v, rpm_r) not in updatedict:
                                 updatedict[(n, a, rpm_e, rpm_v, rpm_r)] = []
                             updatedict[(n, a, rpm_e, rpm_v, rpm_r)].append((n, a, e, v, r))
     
@@ -379,12 +379,12 @@ class Updates:
                 # we just need to find the arch of the installed pkg so we can 
                 # check it's (e, v, r)
                 (rpm_a, rpm_e, rpm_v, rpm_r) = self.installdict[(n, None)][0]
-                if newpkgs.has_key((n, None)):
+                if (n, None) in newpkgs:
                     for (a, e, v, r) in newpkgs[(n, None)]:
                         rc = rpmUtils.miscutils.compareEVR((e, v, r), (rpm_e, rpm_v, rpm_r))
                         if rc > 0:
                             # this is definitely an update - put it in the dict
-                            if not updatedict.has_key((n, rpm_a, rpm_e, rpm_v, rpm_r)):
+                            if (n, rpm_a, rpm_e, rpm_v, rpm_r) not in updatedict:
                                 updatedict[(n, rpm_a, rpm_e, rpm_v, rpm_r)] = []
                             updatedict[(n, rpm_a, rpm_e, rpm_v, rpm_r)].append((n, a, e, v, r))
 
@@ -400,7 +400,7 @@ class Updates:
         
         archlists = []
         if self._is_multilib:
-            if rpmUtils.arch.multilibArches.has_key(self.myarch):
+            if self.myarch in rpmUtils.arch.multilibArches:
                 biarches = [self.myarch]
             else:
                 biarches = [self.myarch, rpmUtils.arch.arches[self.myarch]]
@@ -445,7 +445,7 @@ class Updates:
                             rc = rpmUtils.miscutils.compareEVR((e, v, r), (rpm_e, rpm_v, rpm_r))
                             if rc > 0:
                                 # this is definitely an update - put it in the dict
-                                if not updatedict.has_key((n, a, rpm_e, rpm_v, rpm_r)):
+                                if (n, a, rpm_e, rpm_v, rpm_r) not in updatedict:
                                     updatedict[(n, a, rpm_e, rpm_v, rpm_r)] = []
                                 updatedict[(n, a, rpm_e, rpm_v, rpm_r)].append((n, a, e, v, r))
                 else:
@@ -479,7 +479,7 @@ class Updates:
                     rc = rpmUtils.miscutils.compareEVR((e, v, r), (rpm_e, rpm_v, rpm_r))
                     if rc > 0:
                         # this is definitely an update - put it in the dict
-                        if not updatedict.has_key((n, rpm_a, rpm_e, rpm_v, rpm_r)):
+                        if (n, rpm_a, rpm_e, rpm_v, rpm_r) not in updatedict:
                             updatedict[(n, rpm_a, rpm_e, rpm_v, rpm_r)] = []
                         updatedict[(n, rpm_a, rpm_e, rpm_v, rpm_r)].append((n, a, e, v, r))
                    
@@ -493,7 +493,7 @@ class Updates:
         self.updating_dict = {}
         for old in self.updatesdict:
             for new in self.updatesdict[old]:
-                if not self.updating_dict.has_key(new):
+                if new not in self.updating_dict:
                     self.updating_dict[new] = []
                 self.updating_dict[new].append(old)
 
@@ -688,7 +688,7 @@ class Updates:
         highdict = {}
         for pkgtup in tuplelist:
             (n, a, e, v, r) = pkgtup
-            if not highdict.has_key((n, a)):
+            if (n, a) not in highdict:
                 highdict[(n, a)] = pkgtup
             else:
                 pkgtup2 = highdict[(n, a)]

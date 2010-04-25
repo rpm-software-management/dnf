@@ -118,9 +118,7 @@ class SyslogUpdateEmitter(UpdateEmitter):
                       "DEBUG": syslog.LOG_DEBUG }
         if type(lvl) == int:
             return lvl
-        if level_map.has_key(lvl.upper()):
-            return level_map[lvl.upper()]
-        return syslog.LOG_INFO
+        return level_map.get(lvl.upper(), syslog.LOG_INFO)
 
     def _facilityMap(self, facility):
         facility_map = { "KERN": syslog.LOG_KERN,
@@ -142,9 +140,7 @@ class SyslogUpdateEmitter(UpdateEmitter):
                          "LOCAL7": syslog.LOG_LOCAL7,}
         if type(facility) == int:
             return facility
-        elif facility_map.has_key(facility.upper()):
-            return facility_map[facility.upper()]
-        return syslog.LOG_DAEMON
+        return facility_map.get(facility.upper(), syslog.LOG_DAEMON)
 
 
 class EmailUpdateEmitter(UpdateEmitter):

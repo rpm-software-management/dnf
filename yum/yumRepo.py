@@ -78,7 +78,7 @@ class YumPackageSack(packageSack.PackageSack):
         self.added = {}
 
     def addDict(self, repo, datatype, dataobj, callback=None):
-        if self.added.has_key(repo):
+        if repo in self.added:
             if datatype in self.added[repo]:
                 return
 
@@ -94,14 +94,14 @@ class YumPackageSack(packageSack.PackageSack):
                 self._addToDictAsList(self.pkgsByID, pkgid, po)
                 self.addPackage(po)
 
-            if not self.added.has_key(repo):
+            if repo not in self.added:
                 self.added[repo] = []
             self.added[repo].append('metadata')
             # indexes will need to be rebuilt
             self.indexesBuilt = 0
 
         elif datatype in ['filelists', 'otherdata']:
-            if self.added.has_key(repo):
+            if repo in self.added:
                 if 'metadata' not in self.added[repo]:
                     raise Errors.RepoError, '%s md for %s imported before primary' \
                            % (datatype, repo.id)
@@ -110,7 +110,7 @@ class YumPackageSack(packageSack.PackageSack):
                 current += 1
                 if callback: callback.progressbar(current, total, repo)
                 pkgdict = dataobj[pkgid]
-                if self.pkgsByID.has_key(pkgid):
+                if pkgid in self.pkgsByID:
                     for po in self.pkgsByID[pkgid]:
                         po.importFromDict(pkgdict)
 
@@ -134,7 +134,7 @@ class YumPackageSack(packageSack.PackageSack):
                 callback=callback,
                 )
         for item in data:
-            if self.added.has_key(repo):
+            if repo in self.added:
                 if item in self.added[repo]:
                     continue
 
@@ -1082,9 +1082,7 @@ class YumRepository(Repository, config.RepoConf):
             self._check_db_version(mdtype + '_db', repoXML=repoXML)):
             mdtype += '_db'
 
-        if repoXML.repoData.has_key(mdtype):
-            return (mdtype, repoXML.getData(mdtype))
-        return (mdtype, None)
+        return (mdtype, repoXML.repoData.get(mdtype))
 
     def _get_mdtype_fname(self, data, compressed=False):
         (r_base, remote) = data.location
@@ -1524,9 +1522,9 @@ class YumRepository(Repository, config.RepoConf):
         fname = os.path.basename(remote)
         local = self.cachedir + '/' + fname
 
-        if self.retrieved.has_key(mdtype):
-            if self.retrieved[mdtype]: # got it, move along
-                return local
+        if self.retrieved.get(mdtype):
+            # got it, move along
+            return local
 
         if self.cache == 1:
             if os.path.exists(local):

@@ -264,14 +264,12 @@ class RPMDBPackageSack(PackageSackBase):
             if hdr['name'] == 'gpg-pubkey':
                 continue
             pkg = self._makePackageObject(hdr, mi.instance())
-            if not result.has_key(pkg.pkgid):
-                result[pkg.pkgid] = pkg
+            result.setdefault(pkg.pkgid, pkg)
         del mi
 
         fileresults = self.searchFiles(name)
         for pkg in fileresults:
-            if not result.has_key(pkg.pkgid):
-                result[pkg.pkgid] = pkg
+            result.setdefault(pkg.pkgid, pkg)
         
         if self.auto_close:
             self.ts.close()
@@ -289,8 +287,7 @@ class RPMDBPackageSack(PackageSackBase):
             if hdr['name'] == 'gpg-pubkey':
                 continue
             pkg = self._makePackageObject(hdr, mi.instance())
-            if not result.has_key(pkg.pkgid):
-                result[pkg.pkgid] = pkg
+            result.setdefault(pkg.pkgid, pkg)
         del mi
 
         result = result.values()

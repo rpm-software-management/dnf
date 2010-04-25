@@ -348,7 +348,7 @@ class PackageSackBase(object):
         for po in self.returnPackages(repoid=repoid):
             preq = 0
             for p in _return_all_provides(po):
-                if req.has_key(p):
+                if p in req:
                     #  If this pkg provides something that is required by
                     # anything but itself (or another version of itself) it
                     # isn't an orphan.
@@ -785,13 +785,13 @@ class PackageSack(PackageSackBase):
     def searchFiles(self, name):
         """ Return list of packages by filename. """
         self._checkIndexes(failure='build')
-        if self.filenames.has_key(name):
+        if name in self.filenames:
             return self.filenames[name]
         else:
             return []
 
     def _addToDictAsList(self, dict, key, data):
-        if not dict.has_key(key):
+        if key not in dict:
             dict[key] = []
         #if data not in dict[key]: - if I enable this the whole world grinds to a halt
         # need a faster way of looking for the object in any particular list
@@ -928,7 +928,7 @@ class PackageSack(PackageSackBase):
                                         ignore_case=ignore_case)
 
         for pkg in where:
-            if not highdict.has_key((pkg.name, pkg.arch)):
+            if (pkg.name, pkg.arch) not in highdict:
                 highdict[(pkg.name, pkg.arch)] = pkg
             else:
                 pkg2 = highdict[(pkg.name, pkg.arch)]
@@ -956,9 +956,8 @@ class PackageSack(PackageSackBase):
                                        ignore_case=ignore_case)
 
         for pkg in pkgs:
-            if not highdict.has_key(pkg.name):
-                highdict[pkg.name] = []
-                highdict[pkg.name].append(pkg)
+            if pkg.name not in highdict:
+                highdict[pkg.name] = [pkg]
             else:
                 pkg2 = highdict[pkg.name][0]
                 if pkg.verGT(pkg2):
