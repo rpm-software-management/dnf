@@ -880,7 +880,7 @@ def readMainConfig(startupconf):
     except OSError:
         fsvars = []
     for fsvar in fsvars:
-        if os.path.link(dir_fsvars + fsvar):
+        if os.path.islink(dir_fsvars + fsvar):
             continue
         try:
             val = open(dir_fsvars + fsvar).readline()
