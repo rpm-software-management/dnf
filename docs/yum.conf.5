@@ -734,6 +734,14 @@ The configuration file will be inserted at the position of the "include=" line.
 Included files may contain further include lines. Yum will abort with an error
 if an inclusion loop is detected.
 
+.SH "GLOBDIR FOR LIST OPTIONS"
+.LP
+Any of the configurations options which are a list of items can be specfied
+using the globdir syntax: \fBglobdir:/etc/path/somewhere.d/*.conf\fR. This
+will read in all files matching that glob and include all lines in each file
+(excluding comments and blank lines) as items in the list.
+.LP
+
 .SH "VARIABLES"
 .LP
 There are a number of variables you can use to ease maintenance of yum's
