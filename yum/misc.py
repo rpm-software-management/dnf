@@ -1005,4 +1005,27 @@ def decompress(filename):
     
     return out
     
-    
+def read_in_items_from_dot_dir(thisglob, line_as_list=True):
+    """takes a glob of a dir (like /etc/foo.d/*.foo)
+       returns a list of all the lines in all the files matching
+       that glob, ignores comments and blank lines,
+       optional paramater 'line_as_list tells whether to
+       treat each line as a space or comma-separated list, defaults to True"""
+    results = []
+    for fname in glob.glob(thisglob):
+        for line in open(fname):
+            if re.match('\s*(#|$)', line):
+                continue
+            line = line.rstrip() # no more trailing \n's
+            line = line.lstrip() # be nice
+            if not line:
+                continue
+            if line_as_list:
+                line = line.replace('\n', ' ')
+                line = line.replace(',', ' ')
+                results.extend(line.split())
+                continue
+            results.append(line)
+    return results
+
+

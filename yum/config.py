@@ -40,7 +40,7 @@ if not _use_iniparse:
 import rpmUtils.transaction
 import Errors
 import types
-from misc import get_uuid
+from misc import get_uuid, read_in_items_from_dot_dir
 
 # Alter/patch these to change the default checking...
 __pkgs_gpgcheck_default__ = False
@@ -161,7 +161,8 @@ class ListOption(Option):
         super(ListOption, self).__init__(default)
 
     def parse(self, s):
-        """Converts a string from the config file to a workable list
+        """Converts a string from the config file to a workable list, parses
+           globdir: paths as foo.d-style dirs
 
         Commas and spaces are used as separators for the list
         """
@@ -169,7 +170,15 @@ class ListOption(Option):
         # to sub the \n with a space and then read the lines
         s = s.replace('\n', ' ')
         s = s.replace(',', ' ')
-        return s.split()
+        results = []
+        for item in s.split():
+            if item.startswith('globdir:'):
+                globdir = item.replace('globdir:', '')
+                results.extend(read_in_items_from_dot_dir(globdir))
+                continue
+            results.append(item)
+
+        return results
 
     def tostring(self, value):
         return '\n '.join(value)
@@ -228,8 +237,15 @@ class UrlListOption(ListOption):
         s = s.replace('\n', ' ')
         s = s.replace(',', ' ')
         items = [ item.replace(' ', '%20') for item in shlex.split(s) ]
-        s = ' '.join(items)
-        for url in super(UrlListOption, self).parse(s):
+        tmp = []
+        for item in items:
+            if item.startswith('globdir:'):
+                globdir = item.replace('globdir:', '')
+                tmp.extend(read_in_items_from_dot_dir(globdir))
+                continue
+            tmp.append(item)
+
+        for url in super(UrlListOption, self).parse(' '.join(tmp)):
             out.append(self._urloption.parse(url))
         return out
 
