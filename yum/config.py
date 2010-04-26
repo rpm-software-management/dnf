@@ -172,9 +172,9 @@ class ListOption(Option):
         s = s.replace(',', ' ')
         results = []
         for item in s.split():
-            if item.startswith('globdir:'):
-                globdir = item.replace('globdir:', '')
-                results.extend(read_in_items_from_dot_dir(globdir))
+            if item.startswith('glob:'):
+                thisglob = item.replace('glob:', '')
+                results.extend(read_in_items_from_dot_dir(thisglob))
                 continue
             results.append(item)
 
@@ -239,9 +239,9 @@ class UrlListOption(ListOption):
         items = [ item.replace(' ', '%20') for item in shlex.split(s) ]
         tmp = []
         for item in items:
-            if item.startswith('globdir:'):
-                globdir = item.replace('globdir:', '')
-                tmp.extend(read_in_items_from_dot_dir(globdir))
+            if item.startswith('glob:'):
+                thisglob = item.replace('glob:', '')
+                tmp.extend(read_in_items_from_dot_dir(thisglob))
                 continue
             tmp.append(item)
 
