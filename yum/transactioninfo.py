@@ -130,7 +130,7 @@ class TransactionData:
         if pkgtup is None:
             for members in self.pkgdict.itervalues():
                 returnlist.extend(members)            
-        elif self.pkgdict.has_key(pkgtup):
+        elif pkgtup in self.pkgdict:
             returnlist.extend(self.pkgdict[pkgtup])
         return returnlist
             
@@ -275,7 +275,7 @@ class TransactionData:
             else:
                 self._inSack.addPackage(txmember.po)
 
-        if self.conditionals.has_key(txmember.name):
+        if txmember.name in self.conditionals:
             for pkg in self.conditionals[txmember.name]:
                 if self.rpmdb.contains(po=pkg):
                     continue
@@ -307,7 +307,7 @@ class TransactionData:
     
     def exists(self, pkgtup):
         """tells if the pkg is in the class"""
-        if self.pkgdict.has_key(pkgtup):
+        if pkgtup in self.pkgdict:
             if len(self.pkgdict[pkgtup]) != 0:
                 return 1
         

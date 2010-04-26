@@ -73,7 +73,7 @@ class UpdateNotice(object):
 
     def __getitem__(self, item):
         """ Allows scriptable metadata access (ie: un['update_id']). """
-        return self._md.has_key(item) and self._md[item] or None
+        return self._md.get(item) or None
 
     def __setitem__(self, item, val):
        self._md[item] = val
@@ -328,7 +328,7 @@ class UpdateMetadata(object):
         """
         if type(nvr) in (type([]), type(())):
             nvr = '-'.join(nvr)
-        return self._cache.has_key(nvr) and self._cache[nvr] or None
+        return self._cache.get(nvr) or None
 
     #  The problem with the above "get_notice" is that not everyone updates
     # daily. So if you are at pkg-1, pkg-2 has a security notice, and pkg-3

@@ -94,9 +94,8 @@ class TransactionWrapper:
         self.addTsFlag(rpm.RPMTRANS_FLAG_TEST)
         # FIXME GARBAGE - remove once this is reimplemented elsehwere
         # KEEPING FOR API COMPLIANCE ONLY
-        if conf.has_key('diskspacecheck'):
-            if conf['diskspacecheck'] == 0:
-                self.ts.setProbFilter(rpm.RPMPROB_FILTER_DISKSPACE)
+        if conf.get('diskspacecheck') == 0:
+            self.ts.setProbFilter(rpm.RPMPROB_FILTER_DISKSPACE)
         tserrors = self.ts.run(cb.callback, '')
     
         reserrors = []
@@ -151,7 +150,7 @@ class TransactionWrapper:
             preq = 0
             tup = miscutils.pkgTupleFromHeader(h)
             for p in _return_all_provides(h):
-                if req.has_key(p):
+                if p in req:
                     # Don't count a package that provides its require
                     s = req[p]
                     if len(s) > 1 or tup not in s:
