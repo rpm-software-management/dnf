@@ -1,6 +1,6 @@
 #! /usr/bin/python -tt
 
-import yum, os, time, gc
+import yum, os, time, gc, sys
 from urlgrabber.progress import format_number
 
 def out_mem(pid):
@@ -17,8 +17,12 @@ def out_mem(pid):
                     (format_number(int(ps['vmrss']) * 1024),
                      format_number(int(ps['vmsize']) * 1024))
 
-out_mem(os.getpid())
-while True:
+print "Running:", yum.__version__
+
+def _leak_tst_yb():
+ print "Doing YumBase leak test. "
+ out_mem(os.getpid())
+ while True:
     yb = yum.YumBase()
     yb.repos.setCacheDir(yum.misc.getCacheDir())
     yb.rpmdb.returnPackages()
@@ -33,3 +37,47 @@ while True:
            print gc.garbage[0]
            print gc.get_referrers(gc.garbage[0])
     # print "DBG:", gc.get_referrers(yb)
+
+def _leak_tst_ir():
+    print "Doing install/remove leak test. "
+
+    sys.path.insert(0, '/usr/share/yum-cli')
+    import cli
+    out_mem(os.getpid())
+    yb = cli.YumBaseCli() # Need doTransaction() etc.
+    yb.preconf.debuglevel = 0
+    yb.preconf.errorlevel = 0
+    yb.repos.setCacheDir(yum.misc.getCacheDir())
+    yb.conf.assumeyes = True
+
+    def _run(yb):
+        print "  Run"
+        (code, msgs) = yb.buildTransaction()
+        if code == 1:
+            print "ERROR:", core, msgs
+            sys.exit(1)
+        returnval = yb.doTransaction()
+        if returnval != 0: # We could allow 1 too, but meh.
+            print "ERROR:", returnval
+            sys.exit(1)
+        yb.closeRpmDB()
+
+    last = None
+    while True:
+        out_mem(os.getpid())
+        print "  Install:", sys.argv[1:]
+        for pat in sys.argv[1:]:
+            yb.install(pattern=pat)
+        out_mem(os.getpid())
+        _run(yb)
+
+        print "  Remove:", sys.argv[1:]
+        for pat in sys.argv[1:]:
+            yb.remove(pattern=pat)
+        out_mem(os.getpid())
+        _run(yb)
+
+if sys.argv[1:]:
+    _leak_tst_ir()
+else:
+    _leak_tst_yb()
