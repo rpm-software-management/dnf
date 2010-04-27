@@ -643,7 +643,7 @@ class PackageSack(PackageSackBase):
 
     def dropCachedData(self):
         """ Do nothing, mainly for the testing code. """
-        pass
+        self.clearIndexes()
 
     def setCompatArchs(self, compatarchs):
         self.compatarchs = compatarchs
