@@ -1,5 +1,9 @@
 #! /usr/bin/python -tt
 
+# Do either:
+# ./yum-leak-test.py
+# ./yum-leak-test.py zip
+
 import yum, os, time, gc, sys
 from urlgrabber.progress import format_number
 
@@ -24,6 +28,8 @@ def _leak_tst_yb():
  out_mem(os.getpid())
  while True:
     yb = yum.YumBase()
+    yb.preconf.debuglevel = 0
+    yb.preconf.errorlevel = 0
     yb.repos.setCacheDir(yum.misc.getCacheDir())
     yb.rpmdb.returnPackages()
     yb.pkgSack.returnPackages()
@@ -38,17 +44,48 @@ def _leak_tst_yb():
            print gc.get_referrers(gc.garbage[0])
     # print "DBG:", gc.get_referrers(yb)
 
-def _leak_tst_ir():
-    print "Doing install/remove leak test. "
-
-    sys.path.insert(0, '/usr/share/yum-cli')
-    import cli
-    out_mem(os.getpid())
-    yb = cli.YumBaseCli() # Need doTransaction() etc.
+def _leak_tst_cl():
+    print "Doing closeRpmDB and .up test. "
+    yb = yum.YumBase()
     yb.preconf.debuglevel = 0
     yb.preconf.errorlevel = 0
     yb.repos.setCacheDir(yum.misc.getCacheDir())
-    yb.conf.assumeyes = True
+    while True:
+        out_mem(os.getpid())
+        print "up:",
+        yb.up
+        print "done"
+        out_mem(os.getpid())
+
+        print "rpmdb pkgs:",
+        yb.rpmdb.returnPackages()
+        print "done"
+        out_mem(os.getpid())
+
+        print "pkgSack pkgs:",
+        yb.pkgSack.returnPackages()
+        print "done"
+        out_mem(os.getpid())
+
+        print "close:",
+        yb.closeRpmDB()
+        print "done"
+
+def _leak_tst_ir():
+    print "Doing install/remove leak test. "
+
+    def _init():
+        yb = cli.YumBaseCli() # Need doTransaction() etc.
+        yb.preconf.debuglevel = 0
+        yb.preconf.errorlevel = 0
+        yb.repos.setCacheDir(yum.misc.getCacheDir())
+        yb.conf.assumeyes = True
+        return yb
+
+    sys.path.append('/usr/share/yum-cli')
+    import cli
+    yb = _init()
+    out_mem(os.getpid())
 
     def _run(yb):
         print "  Run"
@@ -64,12 +101,15 @@ def _leak_tst_ir():
 
     last = None
     while True:
+        if True:
+            yb = _init()
         out_mem(os.getpid())
         print "  Install:", sys.argv[1:]
         for pat in sys.argv[1:]:
             yb.install(pattern=pat)
         out_mem(os.getpid())
         _run(yb)
+        out_mem(os.getpid())
 
         print "  Remove:", sys.argv[1:]
         for pat in sys.argv[1:]:
@@ -77,7 +117,9 @@ def _leak_tst_ir():
         out_mem(os.getpid())
         _run(yb)
 
-if sys.argv[1:]:
+if len(sys.argv) == 2 and sys.argv[1] == 'closeRpmDB':
+    _leak_tst_cl()
+elif sys.argv[1:]:
     _leak_tst_ir()
 else:
     _leak_tst_yb()
