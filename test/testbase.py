@@ -45,6 +45,7 @@ class FakeConf(object):
         self.showdupesfromrepos = False
         self.uid = 0
         self.groupremove_leaf_only = False
+        self.protected_packages = []
 
 class FakeSack:
     """ Fake PackageSack to use with FakeRepository"""
