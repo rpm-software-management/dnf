@@ -76,7 +76,7 @@ class UpdateNotice(object):
         return self._md.get(item) or None
 
     def __setitem__(self, item, val):
-       self._md[item] = val
+        self._md[item] = val
 
     def __str__(self):
         head = """

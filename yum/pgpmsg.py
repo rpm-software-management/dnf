@@ -18,6 +18,11 @@ import struct, time, cStringIO, base64, types
 #  We use this so that we can work on python-2.4 and python-2.6, and thus.
 # use import md5/import sha on the older one and import hashlib on the newer.
 #  Stupid deprecation warnings.
+
+# pylint: disable-msg=W0108 
+# Ignore :W0108: *Lambda may not be necessary*
+
+
 try:
     import hashlib
 except ImportError:
@@ -1071,7 +1076,7 @@ be scanned to make sure they are valid for a pgp certificate."""
                     if pkt_idx >= len(pkts) :
                         raise ValueError('subkey at index %d was not followed by a signature' % (pkt_idx-1))
                     if pkts[pkt_idx].pkt_typ != CTB_PKT_SIG or pkts[pkt_idx].sig_type != SIG_TYPE_SUBKEY_BIND :
-                            raise ValueError('signature %d doesn\'t bind subkey to key, type is %s' % (pkt_idx, map_to_str(sig_type_to_str, pkts[pkt_idx].sig_typ)))
+                        raise ValueError('signature %d doesn\'t bind subkey to key, type is %s' % (pkt_idx, map_to_str(sig_type_to_str, pkts[pkt_idx].sig_typ)))
                     subkey.append(pkts[pkt_idx])
 
                     pkt_idx = pkt_idx + 1

@@ -900,7 +900,7 @@ class YumBase(depsolve.Depsolve):
         # Try another depsolve
         if self.conf.skip_broken and rescode==1:
             if clear_skipped:
-               self.skipped_packages = []    # reset the public list of skipped packages.
+                self.skipped_packages = []    # reset the public list of skipped packages.
             sb_st = time.time()
             rescode, restring = self._skipPackagesWithProblems(rescode, restring)
             self._printTransaction()        

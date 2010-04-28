@@ -22,7 +22,7 @@ import os, os.path
 import glob
 from weakref import proxy as weakref
 
-from sqlutils import sqlite, executeSQL, sql_esc, sql_esc_glob
+from sqlutils import sqlite, executeSQL, sql_esc_glob
 import yum.misc as misc
 import yum.constants
 from yum.constants import *

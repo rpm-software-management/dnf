@@ -166,8 +166,8 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
                 repo = k[:period]
                 k = k[period+1:]
                 if repo not in repoopts:
-                   repoopts[repo] = yum.misc.GenericHolder()
-                   repoopts[repo].items = []
+                    repoopts[repo] = yum.misc.GenericHolder()
+                    repoopts[repo].items = []
                 setattr(repoopts[repo], k, v)
                 repoopts[repo].items.append(k)
             else:
@@ -725,7 +725,7 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         if ipkgs:
             try:
                 pkgs = self.pkgSack.returnNewestByName(patterns=ipkgs.keys())
-            except Errors.PackageSackError:
+            except yum.Errors.PackageSackError:
                 pkgs = []
 
         for pkg in pkgs:

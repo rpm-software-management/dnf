@@ -479,7 +479,7 @@ class RPMDBPackageSack(PackageSackBase):
             for pkg in pkgobjlist:
                 for pat in patterns:
                     if pkg.name == pat:
-                            self._pkgnames_loaded.add(pkg.name)
+                        self._pkgnames_loaded.add(pkg.name)
         return pkgobjlist
 
     def _uncached_returnConflictPackages(self):
@@ -1467,7 +1467,7 @@ class RPMDBAdditionalDataPackage(object):
             try:
                 os.unlink(fn)
             except (IOError, OSError):
-                raise AttributeError, "Cannot delete attribute %s on " % (attr, self)
+                raise AttributeError, "Cannot delete attribute %s on %s " % (attr, self)
     
     def __getattr__(self, attr):
         return self._read(attr)
