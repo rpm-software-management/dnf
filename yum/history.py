@@ -650,6 +650,31 @@ class YumHistory:
  CREATE TABLE trans_skip_pkgs (
      tid INTEGER NOT NULL REFERENCES trans_beg,
      pkgtupid INTEGER NOT NULL REFERENCES pkgtups);
+''', '''\
+\
+ CREATE VIEW vtrans_data_pkgs AS
+     SELECT tid,name,epoch,version,release,arch,pkgtupid,
+            state,done,
+            name || '-' || epoch || ':' ||
+            version || '-' || release || '.' || arch AS nevra
+     FROM trans_data_pkgs JOIN pkgtups USING(pkgtupid)
+     ORDER BY name;
+''', '''\
+\
+ CREATE VIEW vtrans_with_pkgs AS
+     SELECT tid,name,epoch,version,release,arch,pkgtupid,
+            name || '-' || epoch || ':' ||
+            version || '-' || release || '.' || arch AS nevra
+     FROM trans_with_pkgs JOIN pkgtups USING(pkgtupid)
+     ORDER BY name;
+''', '''\
+\
+ CREATE VIEW vtrans_skip_pkgs AS
+     SELECT tid,name,epoch,version,release,arch,pkgtupid,
+            name || '-' || epoch || ':' ||
+            version || '-' || release || '.' || arch AS nevra
+     FROM trans_skip_pkgs JOIN pkgtups USING(pkgtupid)
+     ORDER BY name;
 ''']
 
     def _update_db_file_2(self):
