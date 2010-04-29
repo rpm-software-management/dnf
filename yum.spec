@@ -22,9 +22,17 @@ Requires: pygpgme
 Prereq: /sbin/chkconfig, /sbin/service, coreutils
 Conflicts: yum-skip-broken
 Conflicts: rpm >= 5-0
-Obsoletes: yum-basearchonly
+Obsoletes: yum-skip-broken <= 1.1.18
+Obsoletes: yum-basearchonly <= 1.1.9
 Obsoletes: yum-allow-downgrade < 1.1.20-0
 Obsoletes: yum-plugin-allow-downgrade < 1.1.22-0
+Obsoletes: yum-plugin-protect-packages < 1.1.27-0
+Provides: yum-skip-broken
+Provides: yum-basearchonly
+Provides: yum-allow-downgrade
+Provides: yum-plugin-allow-downgrade
+Provides: yum-protect-packages
+Provides: yum-plugin-protect-packages
 
 %description
 Yum is a utility that can check for and automatically download and
