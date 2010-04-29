@@ -1000,6 +1000,9 @@ def _getsysver(installroot, distroverpkg):
             else:
                 raise Errors.YumBaseError("Error: " + str(e))
         raise Errors.YumBaseError("Error: " + str(e))
+    except rpm.error, e:
+        # This is the "new" code for "cannot open rpmdb", 4.8.0 ish
+        raise Errors.YumBaseError("Error: " + str(e))
     # we're going to take the first one - if there is more than one of these
     # then the user needs a beating
     if idx.count() == 0:
