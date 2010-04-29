@@ -416,12 +416,18 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         
         # Check which packages have to be downloaded
         downloadpkgs = []
+        rmpkgs = []
         stuff_to_download = False
         install_only = True
+        remove_only  = True
         for txmbr in self.tsInfo.getMembers():
             if txmbr.ts_state not in ('i', 'u'):
                 install_only = False
+                po = txmbr.po
+                if po:
+                    rmpkgs.append(po)
             else:
+                remove_only = False
                 stuff_to_download = True
                 po = txmbr.po
                 if po:
@@ -434,7 +440,9 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
 
         # Report the total download size to the user, so he/she can base
         # the answer on this info
-        if stuff_to_download:
+        if not stuff_to_download:
+            self.reportRemoveSize(rmpkgs)
+        else:
             self.reportDownloadSize(downloadpkgs, install_only)
         
         # confirm with user

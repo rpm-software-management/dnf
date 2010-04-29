@@ -927,6 +927,26 @@ class YumOutput:
                 self.verbose_logger.log(logginglevels.INFO_1,
                                         _("Installed size: %s"),
                                         self.format_number(insize))
+
+    def reportRemoveSize(self, packages):
+        """Report the total size of packages being removed. """
+        totsize = 0
+        error = False
+        for pkg in packages:
+            # Just to be on the safe side, if for some reason getting
+            # the package size fails, log the error and don't report download
+            # size
+            try:
+                size = int(pkg.size)
+                totsize += size
+            except:
+                error = True
+                self.logger.error(_('There was an error calculating installed size'))
+                break
+        if (not error):
+            self.verbose_logger.log(logginglevels.INFO_1,
+                                    _("Installed size: %s"),
+                                    self.format_number(totsize))
             
     def listTransaction(self):
         """returns a string rep of the  transaction in an easy-to-read way."""
