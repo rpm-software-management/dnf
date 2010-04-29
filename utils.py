@@ -132,6 +132,10 @@ class YumUtilBase(YumBaseCli):
         suppress_keyboard_interrupt_message()
         logger = logging.getLogger("yum.util")
         verbose_logger = logging.getLogger("yum.verbose.util")
+        # Add yum-utils version to history records.
+        if hasattr(self, 'run_with_package_names'):
+            self.run_with_package_names.add("yum-utils")
+        
         
         
     def getOptionParser(self):
