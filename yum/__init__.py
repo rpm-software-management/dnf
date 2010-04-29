@@ -1178,7 +1178,8 @@ class YumBase(depsolve.Depsolve):
             toRemove.add(dep)
             self._getDepsToRemove(dep, deptree, toRemove)
 
-    def _rpmdb_warn_checks(self, out=None, warn=True, chkcmd=None, header=None):
+    def _rpmdb_warn_checks(self, out=None, warn=True, chkcmd=None, header=None,
+                           ignore_pkgs=[]):
         if out is None:
             out = self.logger.warning
         if chkcmd is None:
@@ -1196,22 +1197,48 @@ class YumBase(depsolve.Depsolve):
         else:
             chkcmd = set([chkcmd])
 
+        ignore_pkgtups = set((pkg.pkgtup for pkg in ignore_pkgs))
+
         rc = 0
         probs = []
         if chkcmd.intersection(set(('all', 'dependencies'))):
             prob2ui = {'requires' : _('missing requires'),
                        'conflicts' : _('installed conflict')}
-            probs.extend(self.rpmdb.check_dependencies())
+            for prob in self.rpmdb.check_dependencies():
+                if prob.pkg.pkgtup in ignore_pkgtups:
+                    continue
+                if prob.problem == 'conflicts':
+                    found = True # all the conflicting pkgs have to be ignored
+                    for res in prob.res:
+                        if res.pkgtup not in ignore_pkgtups:
+                            found = False
+                            break
+                    if found:
+                        continue
+                probs.append(prob)
 
         if chkcmd.intersection(set(('all', 'duplicates'))):
             iopkgs = set(self.conf.installonlypkgs)
-            probs.extend(self.rpmdb.check_duplicates(iopkgs))
+            for prob in self.rpmdb.check_duplicates(iopkgs):
+                if prob.pkg.pkgtup in ignore_pkgtups:
+                    continue
+                if prob.duplicate.pkgtup in ignore_pkgtups:
+                    continue
+                probs.append(prob)
 
         if chkcmd.intersection(set(('all', 'obsoleted'))):
-            probs.extend(self.rpmdb.check_obsoleted())
+            for prob in self.rpmdb.check_obsoleted():
+                if prob.pkg.pkgtup in ignore_pkgtups:
+                    continue
+                probs.append(prob)
 
         if chkcmd.intersection(set(('all', 'provides'))):
-            probs.extend(self.rpmdb.check_provides())
+            for prob in self.rpmdb.check_provides():
+                if prob.pkg.pkgtup in ignore_pkgtups:
+                    continue
+                if prob.obsoleter.pkgtup in ignore_pkgtups:
+                    continue
+                probs.append(prob)
 
         header(len(probs))
         for prob in sorted(probs):
@@ -1238,7 +1265,10 @@ class YumBase(depsolve.Depsolve):
         if lastdbv is not None:
             lastdbv = lastdbv.end_rpmdbversion
         if lastdbv is None or rpmdbv != lastdbv:
-            self._rpmdb_warn_checks(warn=lastdbv is not None)
+            txmbrs = self.tsInfo.getMembersWithState(None, TS_REMOVE_STATES)
+            ignore_pkgs = [txmbr.po for txmbr in txmbrs]
+            self._rpmdb_warn_checks(warn=lastdbv is not None,
+                                    ignore_pkgs=ignore_pkgs)
         if self.conf.history_record:
             self.history.beg(rpmdbv, using_pkgs, list(self.tsInfo))
 
