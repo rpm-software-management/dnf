@@ -1297,7 +1297,12 @@ class YumBase(depsolve.Depsolve):
             if self.conf.history_record:
                 herrors = [to_unicode(to_str(x)) for x in errors]
                 self.history.end(rpmdbv, 2, errors=herrors)
-            raise Errors.YumBaseError, errors
+            
+            self.logger.critical(_("Transaction couldn't start:"))
+            for e in errors:
+                self.logger.critical(e[0]) # should this be 'to_unicoded'?
+            raise Errors.YumBaseError, _("Could not run transaction.")
+
                           
         if not self.conf.keepcache:
             self.cleanUsedHeadersPackages()
