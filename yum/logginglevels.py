@@ -192,7 +192,12 @@ def setFileLog(uid, logfile):
             logdir = os.path.dirname(logfile)
             if not os.path.exists(logdir):
                 os.makedirs(logdir, mode=0755)
-
+            
+            if not os.path.exists(logfile):
+                f = open(logfile, 'w')
+                os.chmod(logfile, 0600) # making sure umask doesn't catch us up
+                f.close()
+                
             filelogger = logging.getLogger("yum.filelogging")
             filehandler = logging.FileHandler(logfile)
             formatter = logging.Formatter("%(asctime)s %(message)s",
