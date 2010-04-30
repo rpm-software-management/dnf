@@ -176,7 +176,10 @@ class YumHistory:
         self._conn = None
         
         self.conf = yum.misc.GenericHolder()
-        self.conf.db_path  = os.path.normpath(root + '/' + db_path)
+        if not os.path.normpath(db_path).startswith(root):
+            self.conf.db_path  = os.path.normpath(root + '/' + db_path)
+        else:
+            self.conf.db_path = os.path.normpath('/' + db_path)
         self.conf.writable = False
         self.conf.readable = True
 
