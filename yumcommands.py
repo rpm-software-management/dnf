@@ -1375,7 +1375,7 @@ class CheckRpmdbCommand(YumCommand):
     def doCommand(self, base, basecmd, extcmds):
         chkcmd = 'all'
         if extcmds:
-            chkcmd = extcmds[0]
+            chkcmd = extcmds
 
         def _out(x):
             print x
