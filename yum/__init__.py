@@ -1209,7 +1209,7 @@ class YumBase(depsolve.Depsolve):
                     continue
                 if prob.problem == 'conflicts':
                     found = True # all the conflicting pkgs have to be ignored
-                    for res in prob.res:
+                    for res in prob.conflicts:
                         if res.pkgtup not in ignore_pkgtups:
                             found = False
                             break
