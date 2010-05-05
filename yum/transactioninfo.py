@@ -202,15 +202,16 @@ class TransactionData:
         txmbrs = self.matchNaevr(pattern)
         if not txmbrs:
             na = pattern.rsplit('.', 2)
-            txmbrs = self.matchNaevr(na[0], na[1])
+            if len(na) == 2:
+                txmbrs = self.matchNaevr(na[0], na[1])
 
         if not txmbrs:
-            if self.pkgSack is not None:
+            if self.pkgSack is None:
                 pkgs = []
             else:
-                pkgs = self.pkgSack.returnPackages(pattern)
+                pkgs = self.pkgSack.returnPackages(patterns=[pattern])
             if not pkgs:
-                pkgs = self.rpmdb.returnPackages(pattern)
+                pkgs = self.rpmdb.returnPackages(patterns=[pattern])
 
             for pkg in pkgs:
                 txmbrs.extend(self.getMembers(pkg.pkgtup))
