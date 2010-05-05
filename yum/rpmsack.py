@@ -847,11 +847,9 @@ class RPMDBPackageSack(PackageSackBase):
         rpmdbfname  = self.root + "/var/lib/rpm/Packages"
 
         if os.path.exists(rpmdbvfname) and os.path.exists(rpmdbfname):
-            #  See if rpmdb has "changed" ... NOTE that we need to use ctime
-            # due to mock, because it will save and restore arbitrary rpmdb's
-            # on us and will helpfully reset the mtime!
+            # See if rpmdb has "changed" ...
             nmtime = os.path.getmtime(rpmdbvfname)
-            omtime = os.path.getctime(rpmdbfname)
+            omtime = os.path.getmtime(rpmdbfname)
             if omtime <= nmtime:
                 rpmdbv = open(rpmdbvfname).readline()[:-1]
                 self._have_cached_rpmdbv_data  = rpmdbv
