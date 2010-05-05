@@ -1257,18 +1257,18 @@ class YumBase(depsolve.Depsolve):
                 self.run_with_package_names.add('yum-metadata-parser')
                 break
 
-        using_pkgs_pats = list(self.run_with_package_names)
-        using_pkgs = self.rpmdb.returnPackages(patterns=using_pkgs_pats)
-        rpmdbv  = self.rpmdb.simpleVersion(main_only=True)[0]
-        lastdbv = self.history.last()
-        if lastdbv is not None:
-            lastdbv = lastdbv.end_rpmdbversion
-        if lastdbv is None or rpmdbv != lastdbv:
-            txmbrs = self.tsInfo.getMembersWithState(None, TS_REMOVE_STATES)
-            ignore_pkgs = [txmbr.po for txmbr in txmbrs]
-            self._rpmdb_warn_checks(warn=lastdbv is not None,
-                                    ignore_pkgs=ignore_pkgs)
         if self.conf.history_record:
+            using_pkgs_pats = list(self.run_with_package_names)
+            using_pkgs = self.rpmdb.returnPackages(patterns=using_pkgs_pats)
+            rpmdbv  = self.rpmdb.simpleVersion(main_only=True)[0]
+            lastdbv = self.history.last()
+            if lastdbv is not None:
+                lastdbv = lastdbv.end_rpmdbversion
+            if lastdbv is None or rpmdbv != lastdbv:
+                txmbrs = self.tsInfo.getMembersWithState(None, TS_REMOVE_STATES)
+                ignore_pkgs = [txmbr.po for txmbr in txmbrs]
+                self._rpmdb_warn_checks(warn=lastdbv is not None,
+                                        ignore_pkgs=ignore_pkgs)
             self.history.beg(rpmdbv, using_pkgs, list(self.tsInfo))
 
         #  Just before we update the transaction, update what we think the
