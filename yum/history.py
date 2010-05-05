@@ -223,7 +223,7 @@ class YumHistory:
 
             try:
                 self._conn = sqlite.connect(self._db_file)
-            except sqlite.OperationalError:
+            except (sqlite.OperationalError, sqlite.DatabaseError):
                 self.conf.readable = False
                 return None
 
