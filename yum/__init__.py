@@ -490,8 +490,7 @@ class YumBase(depsolve.Depsolve):
                                     _('Reading Local RPMDB'))
             self._rpmdb = rpmsack.RPMDBPackageSack(root=self.conf.installroot,
                                                    releasever=self.conf.yumvar['releasever'],
-                                                   persistdir=self.conf.persistdir,
-                                                   cachedir=self.conf.cachedir)
+                                                   persistdir=self.conf.persistdir)
             self.verbose_logger.debug('rpmdb time: %0.3f' % (time.time() - rpmdb_st))
         return self._rpmdb
 
@@ -1923,7 +1922,7 @@ class YumBase(depsolve.Depsolve):
         return self._cleanFiles(exts, 'cachedir', 'metadata')
 
     def cleanRpmDB(self):
-        cachedir = self.conf.cachedir + "/installed/"
+        cachedir = self.conf.persistdir + "/rpmdb-indexes/"
         if not os.path.exists(cachedir):
             filelist = []
         else:
@@ -4493,7 +4492,6 @@ class YumBase(depsolve.Depsolve):
 
         cachedir += varReplace(suffix, self.conf.yumvar)
         self.repos.setCacheDir(cachedir)
-        self.rpmdb.setCacheDir(cachedir)
         self.conf.cachedir = cachedir
         return True # We got a new cache dir
 

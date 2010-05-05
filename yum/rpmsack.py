@@ -169,7 +169,7 @@ class RPMDBPackageSack(PackageSackBase):
         self._get_req_cache  = {}
         self._loaded_gpg_keys = False
         if cachedir is None:
-            cachedir = misc.getCacheDir()
+            cachedir = persistdir + "/rpmdb-indexes"
         self.setCacheDir(cachedir)
         if not os.path.normpath(persistdir).startswith(self.root):
             self._persistdir = root +  '/' + persistdir
@@ -233,11 +233,11 @@ class RPMDBPackageSack(PackageSackBase):
 
     def setCacheDir(self, cachedir):
         """ Sets the internal cachedir value for the rpmdb, to be the
-            "installed" directory from this parent. """
+            "rpmdb-indexes" directory in the persisent yum storage. """
         if not os.path.normpath(cachedir).startswith(self.root):
-            self._cachedir = self.root + '/' + cachedir + "/installed/"
+            self._cachedir = self.root + '/' + cachedir
         else:
-            self._cachedir = '/' + cachedir + "/installed/"
+            self._cachedir = '/' + cachedir
 
     def readOnlyTS(self):
         if not self.ts:
