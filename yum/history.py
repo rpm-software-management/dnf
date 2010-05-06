@@ -431,10 +431,14 @@ class YumHistory:
 
         for pkg in pkgs.values():
             pid = self.pkg2pid(pkg)
+            if pkg.pkgtup == problem.pkg.pkgtup:
+                main = 'TRUE'
+            else:
+                main = 'FALSE'
             res = executeSQL(cur,
                              """INSERT INTO trans_prob_pkgs
-                             (rpid, pkgtupid)
-                             VALUES (?, ?)""", (rpid, pid))
+                             (rpid, pkgtupid, main)
+                             VALUES (?, ?, ?)""", (rpid, pid, main))
 
         return rpid
 
@@ -609,13 +613,14 @@ class YumHistory:
         if cur is None or not self._update_db_file_2():
             return []
         executeSQL(cur,
-                   """SELECT name, arch, epoch, version, release, checksum
+                   """SELECT name, arch, epoch, version, release, checksum, main
                       FROM trans_prob_pkgs JOIN pkgtups USING(pkgtupid)
                       WHERE rpid = ?
                       ORDER BY name ASC, epoch ASC""", (rpid,))
         ret = []
         for row in cur:
             obj = YumHistoryPackage(row[0],row[1],row[2],row[3],row[4], row[5])
+            obj.main = row[6] == 'TRUE'
             ret.append(obj)
         return ret
 
@@ -809,7 +814,8 @@ class YumHistory:
 \
  CREATE TABLE trans_prob_pkgs (
      rpid INTEGER NOT NULL REFERENCES trans_rpmdb_problems,
-     pkgtupid INTEGER NOT NULL REFERENCES pkgtups);
+     pkgtupid INTEGER NOT NULL REFERENCES pkgtups,
+     main BOOL NOT NULL DEFAULT FALSE);
 ''', '''\
 \
  CREATE VIEW vtrans_data_pkgs AS
@@ -839,6 +845,7 @@ class YumHistory:
 \
  CREATE VIEW vtrans_prob_pkgs AS
      SELECT tid,rpid,name,epoch,version,release,arch,pkgtupid,
+            main,
             name || '-' || epoch || ':' ||
             version || '-' || release || '.' || arch AS nevra
      FROM (trans_prob_pkgs JOIN trans_rpmdb_problems USING(rpid))

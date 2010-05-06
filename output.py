@@ -1440,7 +1440,7 @@ to exit.
     def _historyInfoCmd(self, old, pats=[]):
         name = self._pwd_ui_username(old.loginuid)
 
-        def _simple_pkg(pkg, prefix_len):
+        def _simple_pkg(pkg, prefix_len, highlight=False):
             prefix = " " * prefix_len
             state  = _('Installed')
             ipkgs = self.rpmdb.searchNames([hpkg.name])
@@ -1455,7 +1455,13 @@ to exit.
                 state  = _('Newer')
             else:
                 assert False, "Impossible, installed not newer and not older"
-            print "%s%s %s" % (prefix, utf8_width_fill(state, 12), hpkg)
+            if highlight:
+                (hibeg, hiend) = self._highlight('bold')
+            else:
+                (hibeg, hiend) = self._highlight('normal')
+            print "%s%s %s%s%s" % (prefix,
+                                   hibeg, utf8_width_fill(state, 12), hiend,
+                                   hpkg)
 
         print _("Transaction ID :"), old.tid
         begtm = time.ctime(old.beg_timestamp)
@@ -1526,7 +1532,7 @@ to exit.
             key = "%s%s: " % (" " * 4, prob.problem)
             print self.fmtKeyValFill(key, prob.text)
             for hpkg in prob.packages:
-                _simple_pkg(hpkg, 8)
+                _simple_pkg(hpkg, 8, highlight=hpkg.main)
 
         if old.output:
             print _("Scriptlet output:")
