@@ -131,7 +131,7 @@ class YumHistoryRpmdbProblem(PackageObject):
         ret = cmp(self.problem, other.problem)
         if ret: return -ret
         ret = cmp(self.rpid, other.rpid)
-        return -ret
+        return ret
 
     def _getProbPkgs(self):
         if self._loaded_P is None:
