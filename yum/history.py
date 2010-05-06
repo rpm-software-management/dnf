@@ -112,6 +112,35 @@ class YumHistoryPackage(PackageObject):
             chk = checksum.split(':')
             self._checksums = [(chk[0], chk[1], 0)] # (type, checksum, id(0,1))
 
+class YumHistoryRpmdbProblem(PackageObject):
+    """ Class representing an rpmdb problem that existed at the time of the
+        transaction. """
+
+    def __init__(self, history, rpid, problem, text):
+        self._history = weakref(history)
+
+        self.rpid = rpid
+        self.problem = problem
+        self.text = text
+
+        self._loaded_P = None
+
+    def __cmp__(self, other):
+        if other is None:
+            return 1
+        ret = cmp(self.problem, other.problem)
+        if ret: return -ret
+        ret = cmp(self.rpid, other.rpid)
+        return -ret
+
+    def _getProbPkgs(self):
+        if self._loaded_P is None:
+            self._loaded_P = sorted(self._history._old_prob_pkgs(self.rpid))
+        return self._loaded_P
+
+    packages = property(fget=lambda self: self._getProbPkgs())
+
+
 class YumHistoryTransaction:
     """ Holder for a history transaction. """
 
@@ -129,6 +158,11 @@ class YumHistoryTransaction:
         self._loaded_TW = None
         self._loaded_TD = None
         self._loaded_TS = None
+
+        self._loaded_PROB = None
+
+        self._have_loaded_CMD = False # cmdline can validly be None
+        self._loaded_CMD = None
 
         self._loaded_ER = None
         self._loaded_OT = None
@@ -162,6 +196,21 @@ class YumHistoryTransaction:
     trans_with = property(fget=lambda self: self._getTransWith())
     trans_data = property(fget=lambda self: self._getTransData())
     trans_skip = property(fget=lambda self: self._getTransSkip())
+
+    def _getProblems(self):
+        if self._loaded_PROB is None:
+            self._loaded_PROB = sorted(self._history._old_problems(self.tid))
+        return self._loaded_PROB
+
+    rpmdb_problems = property(fget=lambda self: self._getProblems())
+
+    def _getCmdline(self):
+        if not self._have_loaded_CMD:
+            self._have_loaded_CMD = True
+            self._loaded_CMD = self._history._old_cmdline(self.tid)
+        return self._loaded_CMD
+
+    cmdline = property(fget=lambda self: self._getCmdline())
 
     def _getErrors(self):
         if self._loaded_ER is None:
@@ -355,7 +404,54 @@ class YumHistory:
         self._commit()
         return cur.lastrowid
 
-    def beg(self, rpmdb_version, using_pkgs, txmbrs, skip_packages=[]):
+    def _trans_rpmdb_problem(self, problem):
+        if not hasattr(self, '_tid'):
+            return # Not configured to run
+        cur = self._get_cursor()
+        if cur is None or not self._update_db_file_2():
+            return None
+        res = executeSQL(cur,
+                         """INSERT INTO trans_rpmdb_problems
+                         (tid, problem, msg)
+                         VALUES (?, ?, ?)""", (self._tid,
+                                               problem.problem, str(problem)))
+        rpid = cur.lastrowid
+
+        if not rpid:
+            return rpid
+
+        pkgs = {}
+        pkg = problem.pkg
+        pkgs[pkg.pkgtup] = pkg
+        if problem.problem == 'conflicts':
+            for pkg in problem.conflicts:
+                pkgs[pkg.pkgtup] = pkg
+        if problem.problem == 'duplicates':
+            pkgs[problem.duplicate.pkgtup] = problem.duplicate
+
+        for pkg in pkgs.values():
+            pid = self.pkg2pid(pkg)
+            res = executeSQL(cur,
+                             """INSERT INTO trans_prob_pkgs
+                             (rpid, pkgtupid)
+                             VALUES (?, ?)""", (rpid, pid))
+
+        return rpid
+
+    def _trans_cmdline(self, cmdline):
+        if not hasattr(self, '_tid'):
+            return # Not configured to run
+        cur = self._get_cursor()
+        if cur is None or not self._update_db_file_2():
+            return None
+        res = executeSQL(cur,
+                         """INSERT INTO trans_cmdline
+                         (tid, cmdline)
+                         VALUES (?, ?)""", (self._tid, cmdline))
+        return cur.lastrowid
+
+    def beg(self, rpmdb_version, using_pkgs, txmbrs, skip_packages=[],
+            rpmdb_problems=[], cmdline=None):
         cur = self._get_cursor()
         if cur is None:
             return
@@ -379,6 +475,12 @@ class YumHistory:
         for pkg in skip_packages:
             pid   = self.pkg2pid(pkg)
             self.trans_skip_pid(pid)
+
+        for problem in rpmdb_problems:
+            self._trans_rpmdb_problem(problem)
+
+        if cmdline:
+            self._trans_cmdline(cmdline)
 
         self._commit()
 
@@ -502,6 +604,48 @@ class YumHistory:
             obj = YumHistoryPackage(row[0],row[1],row[2],row[3],row[4], row[5])
             ret.append(obj)
         return ret
+    def _old_prob_pkgs(self, rpid):
+        cur = self._get_cursor()
+        if cur is None or not self._update_db_file_2():
+            return []
+        executeSQL(cur,
+                   """SELECT name, arch, epoch, version, release, checksum
+                      FROM trans_prob_pkgs JOIN pkgtups USING(pkgtupid)
+                      WHERE rpid = ?
+                      ORDER BY name ASC, epoch ASC""", (rpid,))
+        ret = []
+        for row in cur:
+            obj = YumHistoryPackage(row[0],row[1],row[2],row[3],row[4], row[5])
+            ret.append(obj)
+        return ret
+
+    def _old_problems(self, tid):
+        cur = self._get_cursor()
+        if cur is None or not self._update_db_file_2():
+            return []
+        executeSQL(cur,
+                   """SELECT rpid, problem, msg
+                      FROM trans_rpmdb_problems
+                      WHERE tid = ?
+                      ORDER BY problem ASC, rpid ASC""", (tid,))
+        ret = []
+        for row in cur:
+            obj = YumHistoryRpmdbProblem(self, row[0], row[1], row[2])
+            ret.append(obj)
+        return ret
+
+    def _old_cmdline(self, tid):
+        cur = self._get_cursor()
+        if cur is None or not self._update_db_file_2():
+            return None
+        executeSQL(cur,
+                   """SELECT cmdline
+                      FROM trans_cmdline
+                      WHERE tid = ?""", (tid,))
+        ret = []
+        for row in cur:
+            return row[0]
+        return None
 
     def old(self, tids=[], limit=None, complete_transactions_only=False):
         """ Return a list of the last transactions, note that this includes
@@ -652,6 +796,22 @@ class YumHistory:
      pkgtupid INTEGER NOT NULL REFERENCES pkgtups);
 ''', '''\
 \
+ CREATE TABLE trans_cmdline (
+     tid INTEGER NOT NULL REFERENCES trans_beg,
+     cmdline TEXT NOT NULL);
+''', '''\
+\
+ CREATE TABLE trans_rpmdb_problems (
+     rpid INTEGER PRIMARY KEY,
+     tid INTEGER NOT NULL REFERENCES trans_beg,
+     problem TEXT NOT NULL, msg TEXT NOT NULL);
+''', '''\
+\
+ CREATE TABLE trans_prob_pkgs (
+     rpid INTEGER NOT NULL REFERENCES trans_rpmdb_problems,
+     pkgtupid INTEGER NOT NULL REFERENCES pkgtups);
+''', '''\
+\
  CREATE VIEW vtrans_data_pkgs AS
      SELECT tid,name,epoch,version,release,arch,pkgtupid,
             state,done,
@@ -674,6 +834,15 @@ class YumHistory:
             name || '-' || epoch || ':' ||
             version || '-' || release || '.' || arch AS nevra
      FROM trans_skip_pkgs JOIN pkgtups USING(pkgtupid)
+     ORDER BY name;
+''', '''\
+\
+ CREATE VIEW vtrans_prob_pkgs AS
+     SELECT tid,rpid,name,epoch,version,release,arch,pkgtupid,
+            name || '-' || epoch || ':' ||
+            version || '-' || release || '.' || arch AS nevra
+     FROM (trans_prob_pkgs JOIN trans_rpmdb_problems USING(rpid))
+                           JOIN pkgtups USING(pkgtupid)
      ORDER BY name;
 ''']
 
