@@ -1333,6 +1333,8 @@ to exit.
                 # We don't check .errors, because return_code will be non-0
             elif old.output:
                 rmark = lmark = 'E'
+            elif old.rpmdb_problems:
+                rmark = lmark = 'P'
             elif old.trans_skip:
                 rmark = lmark = 's'
             if old.altered_lt_rpmdb:
