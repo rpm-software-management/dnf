@@ -1438,6 +1438,23 @@ to exit.
     def _historyInfoCmd(self, old, pats=[]):
         name = self._pwd_ui_username(old.loginuid)
 
+        def _simple_pkg(pkg, prefix_len):
+            prefix = " " * prefix_len
+            state  = _('Installed')
+            ipkgs = self.rpmdb.searchNames([hpkg.name])
+            ipkgs.sort()
+            if not ipkgs:
+                state  = _('Not installed')
+            elif hpkg.pkgtup in (ipkg.pkgtup for ipkg in ipkgs):
+                pass
+            elif ipkgs[-1] > hpkg:
+                state  = _('Older')
+            elif ipkgs[0] < hpkg:
+                state  = _('Newer')
+            else:
+                assert False, "Impossible, installed not newer and not older"
+            print "%s%s %s" % (prefix, utf8_width_fill(state, 12), hpkg)
+
         print _("Transaction ID :"), old.tid
         begtm = time.ctime(old.beg_timestamp)
         print _("Begin time     :"), begtm
@@ -1473,6 +1490,9 @@ to exit.
             print _("Return-Code    :"), _("Failure:"), old.return_code
         else:
             print _("Return-Code    :"), _("Success")
+        if old.cmdline is not None:
+            print _("Command Line   :"), old.cmdline
+
         print _("Transaction performed with:")
         for hpkg in old.trans_with:
             prefix = " " * 4
@@ -1492,24 +1512,20 @@ to exit.
             print "%s%s %s" % (prefix, utf8_width_fill(state, 12), hpkg)
         print _("Packages Altered:")
         self.historyInfoCmdPkgsAltered(old, pats)
+
         if old.trans_skip:
             print _("Packages Skipped:")
         for hpkg in old.trans_skip:
-            prefix = " " * 4
-            state  = _('Installed')
-            ipkgs = self.rpmdb.searchNames([hpkg.name])
-            ipkgs.sort()
-            if not ipkgs:
-                state  = _('Not installed')
-            elif hpkg.pkgtup in (ipkg.pkgtup for ipkg in ipkgs):
-                pass
-            elif ipkgs[-1] > hpkg:
-                state  = _('Older')
-            elif ipkgs[0] < hpkg:
-                state  = _('Newer')
-            else:
-                assert False, "Impossible, installed not newer and not older"
-            print "%s%s %s" % (prefix, utf8_width_fill(state, 12), hpkg)
+            _simple_pkg(hpkg, 4)
+
+        if old.rpmdb_problems:
+            print _("Rpmdb Problems:")
+        for prob in old.rpmdb_problems:
+            key = "%s%s: " % (" " * 4, prob.problem)
+            print self.fmtKeyValFill(key, prob.text)
+            for hpkg in prob.packages:
+                _simple_pkg(hpkg, 8)
+
         if old.output:
             print _("Scriptlet output:")
             num = 0
