@@ -1229,13 +1229,13 @@ class YumBase(depsolve.Depsolve):
             for prob in self.rpmdb.check_obsoleted():
                 if prob.pkg.pkgtup in ignore_pkgtups:
                     continue
+                if prob.obsoleter.pkgtup in ignore_pkgtups:
+                    continue
                 probs.append(prob)
 
         if chkcmd.intersection(set(('all', 'provides'))):
             for prob in self.rpmdb.check_provides():
                 if prob.pkg.pkgtup in ignore_pkgtups:
-                    continue
-                if prob.obsoleter.pkgtup in ignore_pkgtups:
                     continue
                 probs.append(prob)
 
