@@ -844,7 +844,7 @@ class YumHistory:
 ''', '''\
 \
  CREATE VIEW vtrans_prob_pkgs AS
-     SELECT tid,rpid,name,epoch,version,release,arch,pkgtupid,
+     SELECT tid,rpid,name,epoch,version,release,arch,pkgtups.pkgtupid,
             main,
             name || '-' || epoch || ':' ||
             version || '-' || release || '.' || arch AS nevra
