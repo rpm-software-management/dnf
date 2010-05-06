@@ -1243,7 +1243,7 @@ class YumBase(depsolve.Depsolve):
         for prob in sorted(probs):
             out(prob)
 
-        return len(probs)
+        return probs
 
     def runTransaction(self, cb):
         """takes an rpm callback object, performs the transaction"""
@@ -1264,14 +1264,18 @@ class YumBase(depsolve.Depsolve):
             lastdbv = self.history.last()
             if lastdbv is not None:
                 lastdbv = lastdbv.end_rpmdbversion
+            rpmdb_problems = []
             if lastdbv is None or rpmdbv != lastdbv:
                 txmbrs = self.tsInfo.getMembersWithState(None, TS_REMOVE_STATES)
                 ignore_pkgs = [txmbr.po for txmbr in txmbrs]
-                self._rpmdb_warn_checks(warn=lastdbv is not None,
-                                        ignore_pkgs=ignore_pkgs)
+                output_warn = lastdbv is not None
+                rpmdb_problems = self._rpmdb_warn_checks(warn=output_warn,
+                                                        ignore_pkgs=ignore_pkgs)
+            cmdline = None
+            if hasattr(self, 'cmds') and self.cmds:
+                cmdline = ' '.join(self.cmds)
             self.history.beg(rpmdbv, using_pkgs, list(self.tsInfo),
-            self.history.beg(rpmdbv, using_pkgs, list(self.tsInfo),
-                             self.skipped_packages)
+                             self.skipped_packages, rpmdb_problems, cmdline)
 
         #  Just before we update the transaction, update what we think the
         # rpmdb will look like. This needs to be done before the run, so that if
