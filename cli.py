@@ -1014,11 +1014,9 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
     def cleanCli(self, userlist):
         hdrcode = pkgcode = xmlcode = dbcode = expccode = 0
         pkgresults = hdrresults = xmlresults = dbresults = expcresults = []
-        self.verbose_logger.log(yum.logginglevels.INFO_2,
-            _('Cleaning requested data in enabled repos:'))
-        for repo in self.repos.listEnabled():
-            self.verbose_logger.log(yum.logginglevels.INFO_2,
-                      _('  %s') % repo.id )
+        msg = self.fmtKeyValFill(_('Cleaning repos: '), 
+                        ' '.join([ x.id for x in self.repos.listEnabled()]))
+        self.verbose_logger.log(yum.logginglevels.INFO_2, msg)
         if 'all' in userlist:
             self.verbose_logger.log(yum.logginglevels.INFO_2,
                 _('Cleaning up Everything'))
