@@ -764,3 +764,43 @@ class SimpleUpdateTests(OperationsTests):
                                      [pa1, pa2, pa4, pa3])
         self.assert_(res=='ok', msg)
         self.assertResult((pa1, pa3))
+
+    def testUpdateRLEvince1(self):
+        pi1 = FakePackage('evince', '1', '1', '0', 'x86_64')
+        pi1.addRequires('evince-libs', 'EQ', ('0', '1', '1'))
+        pi2 = FakePackage('evince-libs', '1', '1', '0', 'x86_64')
+        pi3 = FakePackage('evince-djvu', '1', '1', '0', 'x86_64')
+        pi3.addRequires('evince-libs', 'EQ', ('0', '1', '1'))
+
+        pa1 = FakePackage('evince', '2', '1', '0', 'x86_64')
+        pa1.addRequires('evince-libs', 'EQ', ('0', '2', '1'))
+        pa2i = FakePackage('evince-libs', '2', '1', '0', 'i686')
+        pa2x = FakePackage('evince-libs', '2', '1', '0', 'x86_64')
+        pa3 = FakePackage('evince-djvu', '2', '1', '0', 'x86_64')
+        pa3.addRequires('evince-libs', 'EQ', ('0', '2', '1'))
+
+        res, msg = self.runOperation(['update', 'evince'],
+                                     [pi1, pi2, pi3],
+                                     [pa1, pa2x, pa2i, pa3])
+        self.assert_(res=='ok', msg)
+        self.assertResult((pa1, pa2x, pa3))
+
+    def testUpdateRLEvince2(self):
+        pi1 = FakePackage('evince', '1', '1', '0', 'x86_64')
+        pi1.addRequires('evince-libs', 'EQ', ('0', '1', '1'))
+        pi2 = FakePackage('evince-libs', '1', '1', '0', 'x86_64')
+        pi3 = FakePackage('evince-djvu', '1', '1', '0', 'x86_64')
+        pi3.addRequires('evince-libs', 'EQ', ('0', '1', '1'))
+
+        pa1 = FakePackage('evince', '2', '1', '0', 'x86_64')
+        pa1.addRequires('evince-libs', 'EQ', ('0', '2', '1'))
+        pa2i = FakePackage('evince-libs', '2', '1', '0', 'i686')
+        pa2x = FakePackage('evince-libs', '2', '1', '0', 'x86_64')
+        pa3 = FakePackage('evince-djvu', '2', '1', '0', 'x86_64')
+        pa3.addRequires('evince-libs', 'EQ', ('0', '2', '1'))
+
+        res, msg = self.runOperation(['update', 'evince'],
+                                     [pi1, pi2, pi3],
+                                     [pa1, pa2i, pa2x, pa3])
+        self.assert_(res=='ok', msg)
+        self.assertResult((pa1, pa2x, pa3))
