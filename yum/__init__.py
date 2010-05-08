@@ -3291,7 +3291,7 @@ class YumBase(depsolve.Depsolve):
                 
             for (new, old) in updates:
                 if self.tsInfo.isObsoleted(pkgtup=old):
-                    self.verbose_logger.log(logginglevels.DEBUG_2, _('Not Updating Package that is already obsoleted: %s.%s %s:%s-%s'), 
+                    self.verbose_logger.log(logginglevels.DEBUG_2, _('Not Updating Package that is already obsoleted: %s.%s %s:%s-%s') %
                         old)
                 else:
                     tx_return.extend(self.update(po=self.getPackageObject(new)))
@@ -3400,7 +3400,7 @@ class YumBase(depsolve.Depsolve):
                         txmbr.setAsDep(requiringPo)
                     tx_return.append(txmbr)
                     if self.tsInfo.isObsoleted(obsoleted):
-                        self.verbose_logger.log(logginglevels.DEBUG_2, _('Package is already obsoleted: %s.%s %s:%s-%s'), obsoleted)
+                        self.verbose_logger.log(logginglevels.DEBUG_2, _('Package is already obsoleted: %s.%s %s:%s-%s') % obsoleted)
                     else:
                         txmbr = self.tsInfo.addObsoleted(obsoleted_pkg, available_pkg)
                         tx_return.append(txmbr)
@@ -3409,7 +3409,7 @@ class YumBase(depsolve.Depsolve):
             for updating in self.up.updatesdict.get(installed_pkg.pkgtup, []):
                 po = self.getPackageObject(updating)
                 if self.tsInfo.isObsoleted(installed_pkg.pkgtup):
-                    self.verbose_logger.log(logginglevels.DEBUG_2, _('Not Updating Package that is already obsoleted: %s.%s %s:%s-%s'), 
+                    self.verbose_logger.log(logginglevels.DEBUG_2, _('Not Updating Package that is already obsoleted: %s.%s %s:%s-%s') %
                                             installed_pkg.pkgtup)                                               
                 # at this point we are going to mark the pkg to be installed, make sure
                 # it doesn't obsolete anything. If it does, mark that in the tsInfo, too
@@ -3436,11 +3436,11 @@ class YumBase(depsolve.Depsolve):
                 continue
             for updated in self.up.updating_dict.get(available_pkg.pkgtup, []):
                 if self.tsInfo.isObsoleted(updated):
-                    self.verbose_logger.log(logginglevels.DEBUG_2, _('Not Updating Package that is already obsoleted: %s.%s %s:%s-%s'), 
+                    self.verbose_logger.log(logginglevels.DEBUG_2, _('Not Updating Package that is already obsoleted: %s.%s %s:%s-%s') %
                                             updated)
                 elif self._newer_update_in_trans(updated, available_pkg,
                                                  tx_return):
-                    self.verbose_logger.log(logginglevels.DEBUG_2, _('Not Updating Package that is already updated: %s.%s %s:%s-%s'), 
+                    self.verbose_logger.log(logginglevels.DEBUG_2, _('Not Updating Package that is already updated: %s.%s %s:%s-%s') %
                                             updated)
                 
                 else:
@@ -3462,11 +3462,11 @@ class YumBase(depsolve.Depsolve):
 
             for ipkg in pot_updated:
                 if self.tsInfo.isObsoleted(ipkg.pkgtup):
-                    self.verbose_logger.log(logginglevels.DEBUG_2, _('Not Updating Package that is already obsoleted: %s.%s %s:%s-%s'), 
+                    self.verbose_logger.log(logginglevels.DEBUG_2, _('Not Updating Package that is already obsoleted: %s.%s %s:%s-%s') %
                                             ipkg.pkgtup)
                 elif self._newer_update_in_trans(ipkg.pkgtup, available_pkg,
                                                  tx_return):
-                    self.verbose_logger.log(logginglevels.DEBUG_2, _('Not Updating Package that is already updated: %s.%s %s:%s-%s'), 
+                    self.verbose_logger.log(logginglevels.DEBUG_2, _('Not Updating Package that is already updated: %s.%s %s:%s-%s') %
                                             ipkg.pkgtup)
                 elif ipkg.verLT(available_pkg):
                     txmbr = self._add_up_txmbr(requiringPo, available_pkg, ipkg)
