@@ -515,8 +515,6 @@ class Depsolve(object):
             if pkgmode in ['i', 'u']:
                 self.verbose_logger.log(logginglevels.DEBUG_2,
                     _('%s already in ts, skipping this one'), pkg)
-                # FIXME: Remove this line, if it is not needed ?
-                # checkdeps = 1
                 self._last_req = pkg
                 return checkdeps, missingdep
 
@@ -527,6 +525,14 @@ class Depsolve(object):
             results = self.update(requiringPo=requiringPo, name=pkg.name,
                                   epoch=pkg.epoch, version=pkg.version,
                                   rel=pkg.rel)
+            #  Note that this does "interesting" things with multilib. We can
+            # have say A.i686 and A.x86_64, and if we hit "A.i686" first,
+            # .update() will actually update "A.x86_64" which will then fail
+            # the pkg == txmbr.po test below, but then they'll be nothing to
+            # update when we get around to A.x86_64 ... so this entire loop
+            # fails.
+            #  Keeping results through the loop and thus. testing each pkg
+            # against all txmbr's from previous runs "fixes" this.
             for txmbr in results:
                 if pkg == txmbr.po:
                     checkdeps = True
@@ -551,7 +557,6 @@ class Depsolve(object):
             return checkdeps, missingdep
         
                 
-            
         # FIXME - why can't we look up in the transaction set for the requiringPkg
         # and know what needs it that way and provide a more sensible dep structure in the txmbr
         inst = self.rpmdb.searchNevra(name=best.name, arch=best.arch)
@@ -562,6 +567,7 @@ class Depsolve(object):
             txmbr = self.tsInfo.addUpdate(best, inst[0])
             txmbr.setAsDep(po=requiringPo)
             txmbr.reason = "dep"
+            checkdeps = True
             self._last_req = best
         else:
             self.verbose_logger.debug(_('TSINFO: Marking %s as install for %s'), best,
