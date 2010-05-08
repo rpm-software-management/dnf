@@ -521,10 +521,11 @@ class Depsolve(object):
         # find the best one 
 
         # try updating the already install pkgs
+        results = []
         for pkg in provSack.returnNewestByName():
-            results = self.update(requiringPo=requiringPo, name=pkg.name,
-                                  epoch=pkg.epoch, version=pkg.version,
-                                  rel=pkg.rel)
+            tresults = self.update(requiringPo=requiringPo, name=pkg.name,
+                                   epoch=pkg.epoch, version=pkg.version,
+                                   rel=pkg.rel)
             #  Note that this does "interesting" things with multilib. We can
             # have say A.i686 and A.x86_64, and if we hit "A.i686" first,
             # .update() will actually update "A.x86_64" which will then fail
@@ -533,6 +534,7 @@ class Depsolve(object):
             # fails.
             #  Keeping results through the loop and thus. testing each pkg
             # against all txmbr's from previous runs "fixes" this.
+            results.extend(tresults)
             for txmbr in results:
                 if pkg == txmbr.po:
                     checkdeps = True
