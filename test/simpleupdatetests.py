@@ -766,6 +766,8 @@ class SimpleUpdateTests(OperationsTests):
         self.assertResult((pa1, pa3))
 
     def testUpdateRLEvince1(self):
+        """ This tests a dep. upgrade from a dep. upgrade, with a multilib. pkg.
+            where only half of the multilib. is installed. """
         pi1 = FakePackage('evince', '1', '1', '0', 'x86_64')
         pi1.addRequires('evince-libs', 'EQ', ('0', '1', '1'))
         pi2 = FakePackage('evince-libs', '1', '1', '0', 'x86_64')
@@ -786,6 +788,9 @@ class SimpleUpdateTests(OperationsTests):
         self.assertResult((pa1, pa2x, pa3))
 
     def testUpdateRLEvince2(self):
+        """ Dito. testUpdateRLEvince1, except here pa2i is before pa2x, and
+            thus. will be seen first by .update() when it does an
+            archless "find". """
         pi1 = FakePackage('evince', '1', '1', '0', 'x86_64')
         pi1.addRequires('evince-libs', 'EQ', ('0', '1', '1'))
         pi2 = FakePackage('evince-libs', '1', '1', '0', 'x86_64')
