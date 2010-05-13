@@ -1686,8 +1686,10 @@ class YumLocalPackage(YumHeaderPackage):
 
     def __init__(self, ts=None, filename=None):
         if ts is None:
-            raise Errors.MiscError, \
-                 'No Transaction Set Instance for YumLocalPackage instance creation'
+            #  This shouldn't be used "normally" within yum, but is very useful
+            # for small scripts and debugging/etc.
+            ts = rpmUtils.transaction.initReadOnlyTransaction()
+
         if filename is None:
             raise Errors.MiscError, \
                  'No Filename specified for YumLocalPackage instance creation'
