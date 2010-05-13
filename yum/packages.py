@@ -398,6 +398,8 @@ class RpmBase(object):
         if printable:
             results = []
             for prco in prcos:
+                if not prco[0]: # empty or none or whatever, doesn't matter
+                    continue
                 results.append(misc.prco_tuple_to_string(prco))
             return results
 

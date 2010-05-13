@@ -388,6 +388,8 @@ class YumAvailablePackageSqlite(YumAvailablePackage, PackageObject, RpmBase):
             cur = self._sql_MD('primary', sql, (self.pkgKey,))
             self.prco[prcotype] = [ ]
             for ob in cur:
+                if not ob['name']:
+                    continue
                 prco_set = (_share_data(ob['name']), _share_data(ob['flags']),
                             (_share_data(ob['epoch']),
                              _share_data(ob['version']),
