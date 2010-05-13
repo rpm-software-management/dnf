@@ -1233,7 +1233,7 @@ class YumHeaderPackage(YumAvailablePackage):
         for tag in tag2prco:
             name = hdr[getattr(rpm, 'RPMTAG_%sNAME' % tag)]
             name = map(misc.share_data, name)
-            if name is None:
+            if not name: # empty or none or whatever, doesn't matter
                 continue
 
             lst = hdr[getattr(rpm, 'RPMTAG_%sFLAGS' % tag)]
