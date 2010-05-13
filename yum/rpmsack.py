@@ -184,6 +184,7 @@ class RPMDBPackageSack(PackageSackBase):
         self.auto_close = False # this forces a self.ts.close() after
                                      # most operations so it doesn't leave
                                      # any lingering locks.
+        self._cached_rpmdb_mtime = None
 
         self._cache = {
             'provides' : { },
@@ -230,6 +231,8 @@ class RPMDBPackageSack(PackageSackBase):
             }
         self._have_cached_rpmdbv_data = None
         self._cached_conflicts_data = None
+        self.transactionReset() # Should do nothing, but meh...
+        self._cached_rpmdb_mtime = None
 
     def setCacheDir(self, cachedir):
         """ Sets the internal cachedir value for the rpmdb, to be the
@@ -861,6 +864,19 @@ class RPMDBPackageSack(PackageSackBase):
         if not self.__cache_rpmdb__:
             return
 
+        if self._cached_rpmdb_mtime is None:
+            return # We haven't loaded any packages!!!
+
+        rpmdbfname  = self.root + "/var/lib/rpm/Packages"
+        if not os.path.exists(rpmdbfname):
+            return # haha
+
+        _cached_rpmdb_mtime = os.path.getmtime(rpmdbfname)
+        if self._cached_rpmdb_mtime != _cached_rpmdb_mtime:
+            #  Something altered the rpmdb since we loaded our first package,
+            # so don't save the rpmdb version as who knows what happened.
+            return
+
         rpmdbvfname = self._cachedir + "/version"
         if not os.access(self._cachedir, os.W_OK):
             if os.path.exists(self._cachedir):
@@ -1073,6 +1089,10 @@ class RPMDBPackageSack(PackageSackBase):
         self._idx2pkg[index] = po
         self._name2pkg.setdefault(po.name, []).append(po)
         self._tup2pkg[po.pkgtup] = po
+        if self.__cache_rpmdb__ and self._cached_rpmdb_mtime is None:
+            rpmdbfname  = self.root + "/var/lib/rpm/Packages"
+            self._cached_rpmdb_mtime = os.path.getmtime(rpmdbfname)
+
         return po
         
     def _hdr2pkgTuple(self, hdr):
