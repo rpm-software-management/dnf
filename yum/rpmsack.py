@@ -518,6 +518,27 @@ class RPMDBPackageSack(PackageSackBase):
         rpmdbv = self.simpleVersion(main_only=True)[0]
         self._write_conflicts_new(pkgs, rpmdbv)
 
+    def _deal_with_bad_rpmdbcache(self, caller):
+        """ This shouldn't be called, but people are hitting weird stuff so
+            we want to deal with it so it doesn't stay broken "forever". """
+        misc.unlink_f(self._cachedir + "/version")
+        misc.unlink_f(self._cachedir + '/conflicts')
+        misc.unlink_f(self._cachedir + '/file-requires')
+        misc.unlink_f(self._cachedir + '/yumdb-package-checksums')
+        #  We have a couple of options here, we can:
+        #
+        # . Ignore it and continue - least invasive, least likely to get any
+        #   bugs fixed.
+        #
+        # . Ignore it and continue, when not in debug mode - Helps users doing
+        #   weird things (and we won't know), but normal bugs will be seen by
+        #   anyone not running directly from a package.
+        #
+        # . Always throw - but at least it shouldn't happen again.
+        #
+        if __debug__:
+            raise Errors.PackageSackError, 'Rpmdb checksum is invalid: %s' % caller
+
     def _read_conflicts(self):
         if not self.__cache_rpmdb__:
             return None
@@ -550,6 +571,7 @@ class RPMDBPackageSack(PackageSackBase):
             if fo.readline() != '': # Should be EOF
                 return None
         except ValueError:
+            self._deal_with_bad_rpmdbcache("conflicts")
             return None
 
         self._cached_conflicts_data = ret
@@ -663,6 +685,7 @@ class RPMDBPackageSack(PackageSackBase):
             if fo.readline() != '': # Should be EOF
                 return None, None
         except ValueError:
+            self._deal_with_bad_rpmdbcache("file requires")
             return None, None
 
         return iFR, iFP
@@ -800,11 +823,16 @@ class RPMDBPackageSack(PackageSackBase):
             if fo.readline() != '': # Should be EOF
                 return
         except ValueError:
+            self._deal_with_bad_rpmdbcache("pkg checksums")
             return
 
         for pkgtup in checksum_data:
             (n, a, e, v, r) = pkgtup
-            pkg = self.searchNevra(n, e, v, r, a)[0]
+            pkg = self.searchNevra(n, e, v, r, a)
+            if not pkg:
+                self._deal_with_bad_rpmdbcache("pkg checksums")
+                continue
+            pkg = pkg[0]
             (T, D) = checksum_data[pkgtup]
             if ('checksum_type' in pkg.yumdb_info._read_cached_data or
                 'checksum_data' in pkg.yumdb_info._read_cached_data):
