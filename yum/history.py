@@ -841,7 +841,9 @@ class YumHistory:
             version || '-' || release || '.' || arch AS nevra
      FROM trans_skip_pkgs JOIN pkgtups USING(pkgtupid)
      ORDER BY name;
-''', '''\
+''', # NOTE: Old versions of sqlite don't like this next view, they are only
+     #       there for debugging anyway ... but it's worth remembering.
+'''\
 \
  CREATE VIEW vtrans_prob_pkgs AS
      SELECT tid,rpid,name,epoch,version,release,arch,pkgtups.pkgtupid,
