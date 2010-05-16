@@ -3389,7 +3389,12 @@ class YumBase(depsolve.Depsolve):
                 obs_tups = self.up.obsoleted_dict.get(installed_pkg.pkgtup, [])
                 # This is done so we don't have to returnObsoletes(newest=True)
                 # It's a minor UI problem for RHEL, but might as well dtrt.
-                obs_pkgs = [self.getPackageObject(tup) for tup in obs_tups]
+                obs_pkgs = []
+                for pkgtup in obs_tups:
+                    opkgs = self.pkgSack.searchPkgTuple(pkgtup)
+                    if not opkgs: #  Could have been be excluded after
+                        continue  # obsoleted_dict was setup.
+                    obs_pkgs.append(opkgs[0])
                 for obsoleting_pkg in packagesNewestByName(obs_pkgs):
                     tx_return.extend(self.install(po=obsoleting_pkg))
             for available_pkg in availpkgs:
