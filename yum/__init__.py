@@ -1024,6 +1024,10 @@ class YumBase(depsolve.Depsolve):
                 else:
                     self.verbose_logger.debug('SKIPBROKEN: resetting already resolved packages (transaction not changed)' )
                     self.tsInfo.resetResolved(hard=True)
+            else: 
+                # Reset the looping counter, because it is only a loop if the same transaction is
+                # unchanged two times in row, not if it has been unchanged in a early stage.
+                looping = 0 
                     
             # if we are all clear, then we have to check that the whole current transaction 
             # can complete the depsolve without error, because the packages skipped
