@@ -2882,7 +2882,18 @@ class YumBase(depsolve.Depsolve):
             we should install instead. Or None if there isn't one. """
         thispkgobsdict = self.up.checkForObsolete([po.pkgtup])
         if po.pkgtup in thispkgobsdict:
-            obsoleting = thispkgobsdict[po.pkgtup][0]
+            obsoleting  = thispkgobsdict[po.pkgtup]
+            oobsoleting = []
+            # We want to keep the arch. of the obsoleted pkg. if possible.
+            for opkgtup in obsoleting:
+                if not canCoinstall(po.arch, opkgtup[1]):
+                    oobsoleting.append(opkgtup)
+            if oobsoleting:
+                obsoleting = oobsoleting
+            # NOTE: if we move from noarch => multilib. then the ordering
+            #       here seems to always prefer i386 over x86_64 which is wrong.
+            #       Need to sort by arch?
+            obsoleting = obsoleting[0]
             obsoleting_pkg = self.getPackageObject(obsoleting)
             return obsoleting_pkg
         return None
