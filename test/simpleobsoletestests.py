@@ -157,11 +157,27 @@ class SimpleObsoletesTests(OperationsTests):
         self.assert_(res=='ok', msg)
         self.assertResult((p.obsoletes_x86_64, p.requires_obsoletes))
 
-    def testObsoletex86_64ToMultiarch(self):
+    def testObsoletex86_64ToMultiarch1(self):
         p = self.pkgs
         res, msg = self.runOperation(['update'], [p.installed_x86_64], [p.obsoletes_i386, p.obsoletes_x86_64])
         self.assert_(res=='ok', msg)
         self.assertResult((p.obsoletes_x86_64,))
+    def testObsoletex86_64ToMultiarch2(self):
+        p = self.pkgs
+        res, msg = self.runOperation(['update'], [p.installed_x86_64], [p.obsoletes_x86_64, p.obsoletes_i386])
+        self.assert_(res=='ok', msg)
+        self.assertResult((p.obsoletes_x86_64,))
+    def testInstallObsoletex86_64ToMultiarch1(self):
+        # Found by BZ 593349, libgfortran43/44
+        p = self.pkgs
+        res, msg = self.runOperation(['install', 'zsh.x86_64'], [], [p.installed_x86_64, p.installed_i386, p.obsoletes_x86_64, p.obsoletes_i386])
+        self.assert_(res=='ok', msg)
+        self.assertResult((p.obsoletes_x86_64,))
+    def testInstallObsoletex86_64ToMultiarch2(self):
+        p = self.pkgs
+        res, msg = self.runOperation(['install', 'zsh.i386'], [], [p.installed_x86_64, p.installed_i386, p.obsoletes_x86_64, p.obsoletes_i386])
+        self.assert_(res=='ok', msg)
+        self.assertResult((p.obsoletes_i386,))
     def testObsoletex86_64ToMultiarchForDependency(self):
         p = self.pkgs
         res, msg = self.runOperation(['install', 'superzippy'],
