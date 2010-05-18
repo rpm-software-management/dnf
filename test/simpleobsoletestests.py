@@ -178,6 +178,11 @@ class SimpleObsoletesTests(OperationsTests):
         res, msg = self.runOperation(['install', 'zsh.i386'], [], [p.installed_x86_64, p.installed_i386, p.obsoletes_x86_64, p.obsoletes_i386])
         self.assert_(res=='ok', msg)
         self.assertResult((p.obsoletes_i386,))
+    def testInstallObsoletex86_64ToMultiarch3(self):
+        p = self.pkgs
+        res, msg = self.runOperation(['install', 'zsh'], [], [p.installed_noarch, p.obsoletes_x86_64, p.obsoletes_i386])
+        self.assert_(res=='ok', msg)
+        self.assertResult((p.obsoletes_x86_64,))
     def testObsoletex86_64ToMultiarchForDependency(self):
         p = self.pkgs
         res, msg = self.runOperation(['install', 'superzippy'],
