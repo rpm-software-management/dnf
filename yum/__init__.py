@@ -41,7 +41,8 @@ from config import ParsingError, ConfigParser
 import Errors
 import rpmsack
 import rpmUtils.updates
-from rpmUtils.arch import canCoinstall, ArchStorage, isMultiLibArch
+from rpmUtils.arch import archDifference, canCoinstall, ArchStorage, isMultiLibArch
+from rpmUtils.miscutils import compareEVR
 import rpmUtils.transaction
 import comps
 import pkgtag_db
@@ -2890,9 +2891,40 @@ class YumBase(depsolve.Depsolve):
                     oobsoleting.append(opkgtup)
             if oobsoleting:
                 obsoleting = oobsoleting
-            # NOTE: if we move from noarch => multilib. then the ordering
-            #       here seems to always prefer i386 over x86_64 which is wrong.
-            #       Need to sort by arch?
+            if len(obsoleting) > 1:
+                # Pick the first name, and run with it...
+                first = obsoleting[0]
+                obsoleting = [pkgtup for pkgtup in obsoleting
+                              if first[0] == pkgtup[0]]
+            if len(obsoleting) > 1:
+                # Lock to the latest version...
+                def _sort_ver(x, y):
+                    n1,a1,e1,v1,r1 = x
+                    n2,a2,e2,v2,r2 = y
+                    return compareEVR((e1,v1,r1), (e2,v2,r2))
+                obsoleting.sort(_sort_ver)
+                first = obsoleting[0]
+                obsoleting = [pkgtup for pkgtup in obsoleting
+                              if not _sort_ver(first, pkgtup)]
+            if len(obsoleting) > 1:
+                # Now do arch distance (see depsolve:compare_providers)...
+                def _sort_arch_i(carch, a1, a2):
+                    res1 = archDifference(carch, a1)
+                    if not res1:
+                        return 0
+                    res2 = archDifference(carch, a2)
+                    if not res2:
+                        return 0
+                    return res1 - res2
+                def _sort_arch(x, y):
+                    n1,a1,e1,v1,r1 = x
+                    n2,a2,e2,v2,r2 = y
+                    ret = _sort_arch_i(po.arch,            a1, a2)
+                    if ret:
+                        return ret
+                    ret = _sort_arch_i(self.arch.bestarch, a1, a2)
+                    return ret
+                obsoleting.sort(_sort_arch)
             obsoleting = obsoleting[0]
             obsoleting_pkg = self.getPackageObject(obsoleting)
             return obsoleting_pkg
