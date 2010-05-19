@@ -10,7 +10,7 @@ msgstr ""
 "Project-Id-Version: yum\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2010-02-11 10:54-0500\n"
-"PO-Revision-Date: 2010-05-17 16:44+0200\n"
+"PO-Revision-Date: 2010-05-19 22:57+0200\n"
 "Last-Translator: Göran Uddeborg <goeran@uddeborg.se>\n"
 "Language-Team: Swedish <tp-sv@listor.tp-sv.se>\n"
 "MIME-Version: 1.0\n"
@@ -1078,32 +1078,32 @@ msgstr "Tid"
 
 #: ../output.py:1547
 msgid "Last day"
-msgstr "Senaste dag"
+msgstr "Senaste dagen"
 
 #: ../output.py:1548
 msgid "Last week"
-msgstr "Senaste vecka"
+msgstr "Senaste veckan"
 
 #: ../output.py:1549
 msgid "Last 2 weeks"
-msgstr ""
+msgstr "Senaste 2 veckorna"
 
 #. US default :p
 #: ../output.py:1550
 msgid "Last 3 months"
-msgstr ""
+msgstr "Senaste 3 månaderna"
 
 #: ../output.py:1551
 msgid "Last 6 months"
-msgstr ""
+msgstr "Senaste 6 månaderna"
 
 #: ../output.py:1552
 msgid "Last year"
-msgstr ""
+msgstr "Senaste året"
 
 #: ../output.py:1553
 msgid "Over a year ago"
-msgstr ""
+msgstr "Mer än ett år tillbaka"
 
 #: ../output.py:1585
 msgid "installed"
@@ -1617,9 +1617,8 @@ msgid "Repo-include : "
 msgstr "Förråd inkluderar: "
 
 #: ../yumcommands.py:941
-#, fuzzy
 msgid "Repo-excluded: "
-msgstr "Förråd utesluter : "
+msgstr "Förråd uteslutet : "
 
 #. Work out the first (id) and last (enabled/disalbed/count),
 #. then chop the middle (name)...
@@ -1686,48 +1685,44 @@ msgstr "Visa en version för maskinen och/eller tillgängliga förråd."
 
 #: ../yumcommands.py:1173
 msgid " Yum version groups:"
-msgstr ""
+msgstr " Yum versionsgrupper:"
 
 #: ../yumcommands.py:1183
-#, fuzzy
 msgid " Group   :"
-msgstr " Grupp-id: %s"
+msgstr " Grupp:"
 
 #: ../yumcommands.py:1184
-#, fuzzy
 msgid " Packages:"
-msgstr "Paket"
+msgstr " Paket:"
 
 #: ../yumcommands.py:1213
 msgid "Installed:"
 msgstr "Installerade:"
 
 #: ../yumcommands.py:1218
-#, fuzzy
 msgid "Group-Installed:"
-msgstr "Installerade:"
+msgstr "Gruppinstallerade:"
 
 #: ../yumcommands.py:1227
 msgid "Available:"
 msgstr "Tillgängliga:"
 
 #: ../yumcommands.py:1233
-#, fuzzy
 msgid "Group-Available:"
-msgstr "Tillgängliga:"
+msgstr "Grupptillgängliga:"
 
 #: ../yumcommands.py:1272
 msgid "Display, or use, the transaction history"
-msgstr ""
+msgstr "Visa, eller använd, transaktionshistorien"
 
 #: ../yumcommands.py:1300
 #, python-format
 msgid "Invalid history sub-command, use: %s."
-msgstr ""
+msgstr "Ogiltigt underkommando till history, använd: %s."
 
 #: ../yumcommands.py:1345
 msgid "Check for problems in the rpmdb"
-msgstr ""
+msgstr "Kontrollera om det finns problem i rpmdb:n"
 
 #: ../yummain.py:102
 msgid ""
@@ -1757,7 +1752,7 @@ msgstr " Du kan försöka använda --skip-broken för att gå runt problemet"
 
 #: ../yummain.py:175 ../yummain.py:208
 msgid " You could try running: rpm -Va --nofiles --nodigest"
-msgstr ""
+msgstr " Du kan försöka köra: rpm -Va --nofiles --nodigest"
 
 #: ../yummain.py:188
 msgid ""
@@ -1831,9 +1826,9 @@ msgid "%s requires: %s"
 msgstr "%s behöver: %s"
 
 #: ../yum/depsolve.py:319
-#, fuzzy, python-format
+#, python-format
 msgid "%s requires %s"
-msgstr "%s behöver: %s"
+msgstr "%s behöver %s"
 
 #: ../yum/depsolve.py:346
 msgid "Needed Require has already been looked up, cheating"
@@ -1978,9 +1973,9 @@ msgid "common sourcerpm %s and %s"
 msgstr "samma käll-rpm %s och %s"
 
 #: ../yum/depsolve.py:1241
-#, fuzzy, python-format
+#, python-format
 msgid "base package %s is installed for %s"
-msgstr "TSINFO: Noterar %s som en installation av %s"
+msgstr "baspaket %s är installerat för %s"
 
 #: ../yum/depsolve.py:1247
 #, python-format
@@ -2065,19 +2060,18 @@ msgid "No Groups Available in any repository"
 msgstr "Inga grupper tillgängliga i något förråd"
 
 #: ../yum/__init__.py:730
-#, fuzzy
 msgid "Getting pkgtags metadata"
-msgstr "Hämtar gruppmetadata"
+msgstr "Hämtar pakettaggsmetadata"
 
 #: ../yum/__init__.py:740
-#, fuzzy, python-format
+#, python-format
 msgid "Adding tags from repository: %s"
-msgstr "Lägger till gruppfil från förrådet: %s"
+msgstr "Lägger till taggar från förrådet: %s"
 
 #: ../yum/__init__.py:749
-#, fuzzy, python-format
+#, python-format
 msgid "Failed to add Pkg Tags for repository: %s - %s"
-msgstr "Kunde inte lägga till gruppfil för förrådet: %s - %s"
+msgstr "Kunde inte lägga till pakettaggar för förrådet: %s - %s"
 
 #: ../yum/__init__.py:827
 msgid "Importing additional filelist information"
