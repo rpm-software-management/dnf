@@ -1538,6 +1538,12 @@ class RPMDBAdditionalDataPackage(object):
         else:
             object.__delattr__(self, attr)
 
+    def __contains__(self, attr):
+        #  This is faster than __iter__ and it makes things fail in a much more
+        # obvious way in weird FS corruption cases like: BZ 593436
+        x = self.get(attr)
+        return x is not None
+
     def __iter__(self, show_hidden=False):
         for item in self._read_cached_data:
             yield item
