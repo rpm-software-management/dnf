@@ -710,9 +710,13 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
         if excluderid is not None:
             self._pkgExcludeIds[excluderid] = len(self._pkgExcluder)
 
+        self._exclude_whitelist = set()
+        self._pkgobjlist_dirty  = True
+
     def _packageByKey(self, repo, pkgKey, exclude=True):
         """ Lookup a pkg by it's pkgKey, if we don't have it load it """
         # Speed hack, so we don't load the pkg. if the pkgKey is dead.
+        assert exclude
         if exclude and self._pkgKeyExcluded(repo, pkgKey):
             return None
 
@@ -733,10 +737,14 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
             self._pkgtup2pkgs.setdefault(po.pkgtup, []).append(po)
             pkgkeys = self._pkgname2pkgkeys[repo].setdefault(data['name'], [])
             pkgkeys.append(pkgKey)
+        elif exclude and self._pkgExcluded(self._key2pkg[repo][pkgKey]):
+            self._delPackageRK(repo, pkgKey)
+            return None
         return self._key2pkg[repo][pkgKey]
         
     def _packageByKeyData(self, repo, pkgKey, data, exclude=True):
         """ Like _packageByKey() but we already have the data for .pc() """
+        assert exclude
         if exclude and self._pkgExcludedRKD(repo, pkgKey, data):
             return None
         if repo not in self._key2pkg:
@@ -1622,6 +1630,7 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
 
         for (repo, x) in self._yieldSQLDataList(repoid, patterns, fields,
                                                 ignore_case):
+            # Can't use: _sql_pkgKey2po because we change repos.
             po = self._packageByKeyData(repo, x['pkgKey'], x)
             if po is None:
                 continue
