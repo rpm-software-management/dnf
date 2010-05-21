@@ -3,14 +3,14 @@
 # This file is distributed under the same license as the yum package.
 # Göran Uddeborg <goeran@uddeborg.se>, 2009-2010.
 #
-# $Id: yum.po,v 1.11 2010-05-12 21:51:18+02 göran Exp göran $
+# $Id: yum.po,v 1.12 2010-05-22 00:30:21+02 göran Exp $
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: yum\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2010-02-11 10:54-0500\n"
-"PO-Revision-Date: 2010-05-19 22:57+0200\n"
+"PO-Revision-Date: 2010-05-22 00:30+0200\n"
 "Last-Translator: Göran Uddeborg <goeran@uddeborg.se>\n"
 "Language-Team: Swedish <tp-sv@listor.tp-sv.se>\n"
 "MIME-Version: 1.0\n"
@@ -1149,28 +1149,27 @@ msgid "--> Unresolved Dependency: %s"
 msgstr "--> Ej upplöst beroende: %s"
 
 #: ../output.py:1634
-#, fuzzy, python-format
+#, python-format
 msgid "Package: %s"
-msgstr "paket: %s"
+msgstr "Paket: %s"
 
 #: ../output.py:1636
-#, fuzzy, python-format
+#, python-format
 msgid ""
 "\n"
 "    Requires: %s"
-msgstr "%s behöver: %s"
+msgstr "\n    Behöver: %s"
 
 #: ../output.py:1649 ../output.py:1660
-#, fuzzy, python-format
+#, python-format
 msgid ""
 "\n"
 "    %s: %s (%s)"
-msgstr "    %s från %s"
+msgstr "\n    %s: %s (%s)"
 
 #: ../output.py:1657
-#, fuzzy
 msgid "Available"
-msgstr "Tillgängliga:"
+msgstr "Tillgängliga"
 
 #: ../output.py:1665 ../output.py:1670
 #, python-format
@@ -1195,7 +1194,6 @@ msgid "Sleeping"
 msgstr "Sover"
 
 #: ../utils.py:95
-#, fuzzy
 msgid "Uninterruptible"
 msgstr "Oavbrytbar"
 
@@ -1236,14 +1234,14 @@ msgid "    State  : %s, pid: %d"
 msgstr "    Status  : %s, pid: %d"
 
 #: ../utils.py:199
-#, fuzzy, python-format
+#, python-format
 msgid "PluginExit Error: %s"
-msgstr "Konfigurationsfel: %s"
+msgstr "Insticksmodulsavslutsfel: %s"
 
 #: ../utils.py:202
-#, fuzzy, python-format
+#, python-format
 msgid "Yum Error: %s"
-msgstr "Fel: %s"
+msgstr "Yum-fel: %s"
 
 #: ../utils.py:235 ../yummain.py:42
 msgid ""
@@ -2116,17 +2114,15 @@ msgstr "    %s från %s"
 
 #: ../yum/__init__.py:1121
 msgid "Warning: RPMDB altered outside of yum."
-msgstr ""
+msgstr "Varning: RPMDB ändrad utanför yum."
 
 #: ../yum/__init__.py:1126
-#, fuzzy
 msgid "missing requires"
-msgstr "%s behöver: %s"
+msgstr "saknade behov"
 
 #: ../yum/__init__.py:1127
-#, fuzzy
 msgid "installed conflict"
-msgstr "installeras"
+msgstr "installerade konflikter"
 
 #: ../yum/__init__.py:1180
 msgid ""
@@ -2170,13 +2166,12 @@ msgstr "Existerande lås %s: en annan kopia kör som pid %s."
 #: ../yum/__init__.py:1425
 #, python-format
 msgid "Could not create lock at %s: %s "
-msgstr ""
+msgstr "Kunde inte skapa lås av %s: %s "
 
 #: ../yum/__init__.py:1470
-#, fuzzy
 msgid ""
 "Package does not match intended download. Suggestion: run yum clean metadata"
-msgstr "Paketet matchar inte avsedd det avsett att laddas ner"
+msgstr "Paketet matchar inte den avsedda hämtningen.  Förslag: kör yum clean metadata"
 
 #: ../yum/__init__.py:1486
 msgid "Could not perform checksum"
@@ -2339,9 +2334,9 @@ msgid "Package tuple %s could not be found in packagesack"
 msgstr "Pakettupel %s fanns inte i paketsäcken"
 
 #: ../yum/__init__.py:2558
-#, fuzzy, python-format
+#, python-format
 msgid "Package tuple %s could not be found in rpmdb"
-msgstr "Pakettupel %s fanns inte i paketsäcken"
+msgstr "Pakettupel %s fanns inte i rpmdb"
 
 #: ../yum/__init__.py:2614 ../yum/__init__.py:2664
 msgid "Invalid version flag"
@@ -2516,14 +2511,14 @@ msgid "No Match for available package: %s"
 msgstr "Ingen matchning för tillgängliga paket: %s"
 
 #: ../yum/__init__.py:3738
-#, fuzzy, python-format
+#, python-format
 msgid "Only Upgrade available on package: %s"
-msgstr "Endast uppdatering tillgängliga för paket: %s"
+msgstr "Endast uppgradering tillgängliga för paket: %s"
 
 #: ../yum/__init__.py:3808 ../yum/__init__.py:3845
-#, fuzzy, python-format
+#, python-format
 msgid "Failed to downgrade: %s"
-msgstr "Paket att nedgradera"
+msgstr "Misslyckades nedgradera: %s"
 
 #: ../yum/__init__.py:3877
 #, python-format
@@ -2535,9 +2530,9 @@ msgid "GPG key retrieval failed: "
 msgstr "Hämtandet av GPG-nyckeln misslyckades: "
 
 #: ../yum/__init__.py:3903
-#, fuzzy, python-format
+#, python-format
 msgid "Invalid GPG Key from %s: %s"
-msgstr "Hämtar GPG-nyckel från %s"
+msgstr "Ogiltig GPG-nyckel från %s: %s"
 
 #: ../yum/__init__.py:3912
 #, python-format
@@ -2615,9 +2610,9 @@ msgid "Test Transaction Errors: "
 msgstr "Transaktionstestfel: "
 
 #: ../yum/__init__.py:4334
-#, fuzzy, python-format
+#, python-format
 msgid "Could not set cachedir: %s"
-msgstr "Kunde inte utföra kontrollsummering"
+msgstr "Kunde inte sätta cache-katalog: %s"
 
 #. Mostly copied from YumOutput._outKeyValFill()
 #: ../yum/plugins.py:202
@@ -2681,17 +2676,16 @@ msgstr "registrering av kommandon stöds inte"
 
 #: ../yum/rpmsack.py:102
 msgid "has missing requires of"
-msgstr ""
+msgstr "har ett saknat beroende på"
 
 #: ../yum/rpmsack.py:105
-#, fuzzy
 msgid "has installed conflicts"
-msgstr "ange installationsrot"
+msgstr "har installerad konflikt"
 
 #: ../yum/rpmsack.py:114
-#, fuzzy, python-format
+#, python-format
 msgid "%s is a duplicate with %s"
-msgstr "Noterar %s som en uppdatering av %s"
+msgstr "%s är en dubblett med %s"
 
 #: ../yum/rpmtrans.py:79
 msgid "Repackaging"
@@ -2726,28 +2720,3 @@ msgstr "Trasigt huvud %s"
 #, python-format
 msgid "Error opening rpm %s - error %s"
 msgstr "Fel när rpm %s öppnades - fel %s"
-
-#~ msgid "Finished Transaction Test"
-#~ msgstr "Avslutade transaktionstest"
-
-#~ msgid ""
-#~ " You could try running: package-cleanup --problems\n"
-#~ "                        package-cleanup --dupes\n"
-#~ "                        rpm -Va --nofiles --nodigest"
-#~ msgstr ""
-#~ " Du kan försöka köra: package-cleanup --problems\n"
-#~ "                      package-cleanup --dupes\n"
-#~ "                      rpm -Va --nofiles --nodigest"
-
-#~ msgid "Unresolvable requirement %s for %s"
-#~ msgstr "Ej upplösbart behov %s för %s"
-
-#~ msgid "Missing Dependency: %s is needed by package %s"
-#~ msgstr "Saknat beroende: %s behövs av paketet %s"
-
-#~ msgid ""
-#~ "getInstalledPackageObject() will go away, use self.rpmdb.searchPkgTuple"
-#~ "().\n"
-#~ msgstr ""
-#~ "getInstalledPackageObject() kommer att försvinna, använd self.rpmdb."
-#~ "searchPkgTuple().\n"
