@@ -166,6 +166,14 @@ class YumUtilBase(YumBaseCli):
     def doUtilConfigSetup(self,args = sys.argv[1:],pluginsTypes=(plugins.TYPE_CORE,)):
         # Parse only command line options that affect basic yum setup
         opts = self._parser.firstParse(args)
+
+        # go through all the setopts and set the global ones
+        self._parseSetOpts(opts.setopts)
+
+        if self.main_setopts:
+            for opt in self.main_setopts.items:
+                setattr(opts, opt, getattr(self.main_setopts, opt))
+
         # Just print out the version if that's what the user wanted
         if opts.version:
             self._printUtilVersion()
@@ -192,6 +200,11 @@ class YumUtilBase(YumBaseCli):
             if hasattr(opts, "enableplugins"):
                 pc.enabled_plugins = self._parser._splitArg(opts.enableplugins)
             self.conf
+
+            # now set  all the non-first-start opts from main from our setopts
+            if self.main_setopts:
+                for opt in self.main_setopts.items:
+                    setattr(self.conf, opt, getattr(self.main_setopts, opt))
 
         except Errors.ConfigError, e:
             self.logger.critical(_('Config Error: %s'), e)
