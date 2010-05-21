@@ -507,7 +507,7 @@ class YumHistory:
         cur = self._get_cursor()
         if cur is None:
             return # Should never happen, due to above
-        for error in msg.split('\n'):
+        for error in msg.splitlines():
             error = to_unicode(error)
             executeSQL(cur,
                        """INSERT INTO trans_script_stdout
