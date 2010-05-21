@@ -385,7 +385,7 @@ class YumRepository(Repository, config.RepoConf):
             if isinstance(getattr(self, attr), types.MethodType):
                 continue
             res = getattr(self, attr)
-            if not res:
+            if not res and type(res) not in (type(False), type(0)):
                 res = ''
             if type(res) == types.ListType:
                 res = ',\n   '.join(res)
