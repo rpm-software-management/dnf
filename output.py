@@ -1252,8 +1252,9 @@ to exit.
         return count, "".join(list(actions))
 
     def _pwd_ui_username(self, uid, limit=None):
-        # loginuid is set to -1 on init.
-        if uid is None or uid == 0xFFFFFFFF:
+        # loginuid is set to      -1 (0xFFFF_FFFF) on init, in newer kernels.
+        # loginuid is set to INT_MAX (0x7FFF_FFFF) on init, in older kernels.
+        if uid is None or uid in (0xFFFFFFFF, 0x7FFFFFFF):
             loginid = _("<unset>")
             name = _("System") + " " + loginid
             if limit is not None and len(name) > limit:
