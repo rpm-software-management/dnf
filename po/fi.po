@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: yum\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2010-02-11 10:54-0500\n"
-"PO-Revision-Date: 2010-03-24 14:36+0200\n"
+"PO-Revision-Date: 2010-05-27 21:23+0300\n"
 "Last-Translator: Ville-Pekka Vainio <vpivaini@cs.helsinki.fi>\n"
 "Language-Team: Finnish <laatu@lokalisointi.org>\n"
 "MIME-Version: 1.0\n"
@@ -250,7 +250,7 @@ msgstr "Vanhennettavat paketit"
 #: ../cli.py:717
 #, python-format
 msgid " (from %s)"
-msgstr " (versiosta %s)"
+msgstr " (asennuslähteestä %s)"
 
 #: ../cli.py:719
 #, python-format
