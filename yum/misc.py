@@ -1005,7 +1005,7 @@ def get_uuid(savepath):
         
         return myid
         
-def decompress(filename, dest=None):
+def decompress(filename, dest=None, fn_only=False):
     """take a filename and decompress it into the same relative location.
        if the file is not compressed just return the file"""
     
@@ -1035,7 +1035,7 @@ def decompress(filename, dest=None):
         out = filename # returning the same file since it is not compressed
         ztype = None
     
-    if ztype:
+    if ztype and not fn_only:
         _decompress_chunked(filename, out, ztype)
         
     return out

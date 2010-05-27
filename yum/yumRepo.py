@@ -19,7 +19,6 @@ import time
 import types
 import urlparse
 urlparse.uses_fragment.append("media")
-import gzip
 
 import Errors
 from urlgrabber.grabber import URLGrabber
@@ -163,7 +162,7 @@ class YumPackageSack(packageSack.PackageSack):
 
             if self._check_db_version(repo, mydbtype):
                 # see if we have the uncompressed db and check it's checksum vs the openchecksum
-                # if not download the bz2 file
+                # if not download the compressed file
                 # decompress it
                 # unlink it
 
@@ -171,9 +170,8 @@ class YumPackageSack(packageSack.PackageSack):
                 if not db_un_fn:
                     db_fn = repo._retrieveMD(mydbtype)
                     if db_fn:
-                        db_un_fn = db_fn.replace('.bz2', '')
                         if not repo.cache:
-                            misc.bunzipFile(db_fn, db_un_fn)
+                            db_un_fn = misc.decompress(db_fn)
                             misc.unlink_f(db_fn)
                             db_un_fn = self._check_uncompressed_db(repo, mydbtype)
 
@@ -199,8 +197,8 @@ class YumPackageSack(packageSack.PackageSack):
         mydbdata = repo.repoXML.getData(mdtype)
         (r_base, remote) = mydbdata.location
         fname = os.path.basename(remote)
-        bz2_fn = repo.cachedir + '/' + fname
-        db_un_fn = bz2_fn.replace('.bz2', '')
+        compressed_fn = repo.cachedir + '/' + fname
+        db_un_fn = misc.decompress(compressed_fn, fn_only=True)
 
         result = None
 
@@ -1089,7 +1087,7 @@ class YumRepository(Repository, config.RepoConf):
         local = self.cachedir + '/' + os.path.basename(remote)
 
         if compressed: # DB file, we need the uncompressed version
-            local = local.replace('.bz2', '')
+            local = misc.decompress(local, fn_only=True)
         return local
 
     def _groupCheckDataMDNewer(self):
@@ -1244,7 +1242,7 @@ class YumRepository(Repository, config.RepoConf):
             compressed = False
             local = self._get_mdtype_fname(data, False)
             if not os.path.exists(local):
-                local = local.replace('.bz2', '')
+                local = misc.decompress(local, fn_only=True)
                 compressed = True
         #  If we can, make a copy of the system-wide-cache version of this file,
         # note that we often don't get here. So we also do this in
@@ -1351,10 +1349,9 @@ class YumRepository(Repository, config.RepoConf):
 
         for (ndata, nmdtype) in downloading_with_size + downloading_no_size:
             local = self._get_mdtype_fname(ndata, False)
-            if nmdtype.endswith("_db"): # Uncompress any .sqlite.bz2 files
+            if nmdtype.endswith("_db"): # Uncompress any compressed files
                 dl_local = local
-                local = local.replace('.bz2', '')
-                misc.bunzipFile(dl_local, local)
+                local = misc.decompress(dl_local)
                 misc.unlink_f(dl_local)
             self._oldRepoMDData['new_MD_files'].append(local)
 
@@ -1516,6 +1513,8 @@ class YumRepository(Repository, config.RepoConf):
         """ Internal function, use .retrieveMD() from outside yum. """
         #  Note that this can raise Errors.RepoMDError if mdtype doesn't exist
         # for this repo.
+        # FIXME - maybe retrieveMD should call decompress() after we've checked
+        # the checksum by default? since we're never acting on compressed MD
         thisdata = self.repoXML.getData(mdtype)
 
         (r_base, remote) = thisdata.location
@@ -1768,9 +1767,9 @@ class YumRepository(Repository, config.RepoConf):
 
         grpfile = self.getGroups()
 
-        # open it up as a file object so iterparse can cope with our gz file
-        if grpfile is not None and grpfile.endswith('.gz'):
-            grpfile = gzip.open(grpfile)
+        # open it up as a file object so iterparse can cope with our compressed file
+        if grpfile is not None:
+            grpfile = misc.decompress(grpfile)
         try:
             c = comps.Comps()
             c.add(grpfile)

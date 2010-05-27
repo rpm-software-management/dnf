@@ -22,12 +22,11 @@ Update metadata (updateinfo.xml) parsing.
 """
 
 import sys
-import gzip
 
 from yum.i18n import utf8_text_wrap, to_utf8
 from yum.yumRepo import YumRepository
 from yum.packages import FakeRepository
-from yum.misc import to_xml
+from yum.misc import to_xml, decompress
 import Errors
 
 import rpmUtils.miscutils
@@ -382,14 +381,17 @@ class UpdateMetadata(object):
         if not obj:
             raise UpdateNoticeException
         if type(obj) in (type(''), type(u'')):
-            infile = obj.endswith('.gz') and gzip.open(obj) or open(obj, 'rt')
+            unfile = decompress(obj)
+            infile = open(unfile, 'rt')
+
         elif isinstance(obj, YumRepository):
             if obj.id not in self._repos:
                 self._repos.append(obj.id)
                 md = obj.retrieveMD(mdtype)
                 if not md:
                     raise UpdateNoticeException()
-                infile = gzip.open(md)
+                unfile = decompress(md)
+                infile = open(unfile, 'rt')
         elif isinstance(obj, FakeRepository):
             raise Errors.RepoMDError, "No updateinfo for local pkg"
         else:   # obj is a file object

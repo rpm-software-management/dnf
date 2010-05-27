@@ -30,7 +30,7 @@ import fnmatch
 import logging
 import logging.config
 import operator
-import gzip
+
 
 import yum.i18n
 _ = yum.i18n._
@@ -716,9 +716,9 @@ class YumBase(depsolve.Depsolve):
             self.verbose_logger.log(logginglevels.DEBUG_4,
                 _('Adding group file from repository: %s'), repo)
             groupfile = repo.getGroups()
-            # open it up as a file object so iterparse can cope with our gz file
-            if groupfile is not None and groupfile.endswith('.gz'):
-                groupfile = gzip.open(groupfile)
+            # open it up as a file object so iterparse can cope with our compressed file
+            if groupfile:
+                groupfile = misc.decompress(groupfile)
                 
             try:
                 self._comps.add(groupfile)
