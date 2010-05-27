@@ -19,6 +19,13 @@ import pwd
 import fnmatch
 import bz2
 import gzip
+_available_compression = ['gz', 'bz2']
+try:
+    import lzma
+    _available_compression.append('xz')
+except ImportError:
+    lzma = None
+
 from rpmUtils.miscutils import stringToVersion, flagToString
 from stat import *
 try:
@@ -675,10 +682,22 @@ def refineSearchPattern(arg):
         restring = re.escape(arg)
         
     return restring
+
+
+def _decompress_chunked(source, dest, ztype):
+
+    if ztype not in _available_compression:
+        msg = "%s compression not available" % ztype
+        raise Errors.MiscError, msg
     
-def bunzipFile(source,dest):
-    """ Extract the bzipped contents of source to dest. """
-    s_fn = bz2.BZ2File(source, 'r')
+    if ztype == 'bz2':
+        s_fn = bz2.BZ2File(source, 'r')
+    elif ztype == 'xz':
+        s_fn = lzma.LZMAFile(source, 'r')
+    elif ztype == 'gz':
+        s_fn = gzip.GzipFile(source, 'r')
+    
+    
     destination = open(dest, 'w')
 
     while True:
@@ -697,7 +716,11 @@ def bunzipFile(source,dest):
     
     destination.close()
     s_fn.close()
-
+    
+def bunzipFile(source,dest):
+    """ Extract the bzipped contents of source to dest. """
+    _decompress_chunked(source, dest, ztype='bz2')
+    
 def get_running_kernel_pkgtup(ts):
     """This takes the output of uname and figures out the pkgtup of the running
        kernel (name, arch, epoch, version, release)."""
@@ -982,28 +1005,41 @@ def get_uuid(savepath):
         
         return myid
         
-def decompress(filename):
+def decompress(filename, dest=None):
     """take a filename and decompress it into the same relative location.
        if the file is not compressed just return the file"""
-    out = filename
-    if filename.endswith('.gz'):
-        out = filename.replace('.gz', '')
-        decom = gzip.open(filename)
-        fo = open(out, 'w')
-        fo.write(decom.read())
-        fo.flush()
-        fo.close()
-        decom.close() 
-    elif filename.endswith('.bz') or filename.endswith('.bz2'):
-        if filename.endswith('.bz'):
-            out = filename.replace('.bz','')
-        else:
-            out = filename.replace('.bz2', '')
-        bunzipFile(filename, out)
-
-    #add magical lzma/xz trick here
     
+    out = dest
+    if not dest:
+        out = filename
+        
+    if filename.endswith('.gz'):
+        ztype='gz'
+        if not dest: 
+            out = filename.replace('.gz', '')
+
+    elif filename.endswith('.bz') or filename.endswith('.bz2'):
+        ztype='bz2'
+        if not dest:
+            if filename.endswith('.bz'):
+                out = filename.replace('.bz','')
+            else:
+                out = filename.replace('.bz2', '')
+    
+    elif filename.endswith('.xz'):
+        ztype='xz'
+        if not dest:
+            out = filename.replace('.xz', '')
+        
+    else:
+        out = filename # returning the same file since it is not compressed
+        ztype = None
+    
+    if ztype:
+        _decompress_chunked(filename, out, ztype)
+        
     return out
+    
     
 def read_in_items_from_dot_dir(thisglob, line_as_list=True):
     """takes a glob of a dir (like /etc/foo.d/*.foo)
