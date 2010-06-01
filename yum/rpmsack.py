@@ -162,6 +162,7 @@ class RPMDBPackageSack(PackageSackBase):
         self._pkgnames_loaded = set()
         self._tup2pkg = {}
         self._completely_loaded = False
+        self._pkgname_fails = set()
         self._pkgmatch_fails = set()
         self._provmatch_fails = set()
         self._simple_pkgtup_list = []
@@ -215,6 +216,7 @@ class RPMDBPackageSack(PackageSackBase):
         self._tup2pkg = {}
         self._completely_loaded = False
         self._pkgmatch_fails = set()
+        self._pkgname_fails = set()
         self._provmatch_fails = set()
         self._simple_pkgtup_list = []
         self._get_pro_cache = {}
@@ -463,6 +465,8 @@ class RPMDBPackageSack(PackageSackBase):
             else:
                 ret = []
                 for pat in patterns:
+                    #  We aren't wasting anything here, because the next bit
+                    # will pick up any loads :)
                     pkgs = self.searchNames([pat])
                     if not pkgs:
                         break
@@ -1069,7 +1073,7 @@ class RPMDBPackageSack(PackageSackBase):
 
     def _search(self, name=None, epoch=None, ver=None, rel=None, arch=None):
         '''List of matching packages, to zero or more of NEVRA.'''
-        if name is not None and name in self._pkgmatch_fails:
+        if name is not None and name in self._pkgname_fails:
             return []
 
         pkgtup = (name, arch, epoch, ver, rel)
@@ -1083,7 +1087,7 @@ class RPMDBPackageSack(PackageSackBase):
             if name is not None:
                 pkgs = self._name2pkg.get(name, [])
                 if not pkgs:
-                    self._pkgmatch_fails.add(name)
+                    self._pkgname_fails.add(name)
             else:
                 pkgs = self.returnPkgs()
             for po in pkgs:
@@ -1123,7 +1127,7 @@ class RPMDBPackageSack(PackageSackBase):
             self.ts.close()
 
         if not done and name is not None:
-            self._pkgmatch_fails.add(name)
+            self._pkgname_fails.add(name)
 
         return ret
 
