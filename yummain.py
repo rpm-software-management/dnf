@@ -99,9 +99,13 @@ def main(args):
             if "%s" %(e.msg,) != lockerr:
                 lockerr = "%s" %(e.msg,)
                 logger.critical(lockerr)
-            logger.critical(_("Another app is currently holding the yum lock; waiting for it to exit..."))
-            show_lock_owner(e.pid, logger)
-            time.sleep(2)
+            if not base.conf.exit_on_lock:
+                logger.critical(_("Another app is currently holding the yum lock; waiting for it to exit..."))
+                show_lock_owner(e.pid, logger)
+                time.sleep(2)
+            else:
+                logger.critical(_("Another app is currently holding the yum lock; exiting as configured by exit_on_lock"))
+                return 1
         else:
             break
 

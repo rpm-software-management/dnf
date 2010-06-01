@@ -154,9 +154,12 @@ class YumUtilBase(YumBaseCli):
                 if "%s" %(e.msg,) != lockerr:
                     lockerr = "%s" %(e.msg,)
                     self.logger.critical(lockerr)
-                self.logger.critical("Another app is currently holding the yum lock; waiting for it to exit...")  
-                show_lock_owner(e.pid, self.logger)
-                time.sleep(2)
+                if not self.conf.exit_on_lock:
+                    self.logger.critical("Another app is currently holding the yum lock; waiting for it to exit...")  
+                    show_lock_owner(e.pid, self.logger)
+                    time.sleep(2)
+                else:
+                    raise Errors.YumBaseError, _("Another app is currently holding the yum lock; exiting as configured by exit_on_lock")
             else:
                 break
         

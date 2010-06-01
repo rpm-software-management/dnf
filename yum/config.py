@@ -735,7 +735,8 @@ class YumConf(StartupConf):
 
     protected_packages = ListOption("yum, glob:/etc/yum/protected.d/*.conf",
                                     parse_default=True)
-
+    exit_on_lock = BoolOption(False)
+    
     _reposlist = []
 
     def dump(self):
