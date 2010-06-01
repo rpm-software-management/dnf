@@ -351,7 +351,7 @@ def formatRequire (name, version, flags):
     '''
     s = name
     
-    if flags and type(flags) == type(0): # Flag must be set and a int
+    if flags and (type(flags) == type(0) or type(flags) == type(0L)): # Flag must be set and a int (or a long, now)
         if flags & (rpm.RPMSENSE_LESS | rpm.RPMSENSE_GREATER |
                     rpm.RPMSENSE_EQUAL):
             s = s + " "
