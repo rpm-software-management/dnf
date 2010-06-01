@@ -2674,7 +2674,7 @@ class YumBase(depsolve.Depsolve):
                         for pkg in self.tsInfo.conditionals.get(txmbr.name, []):
                             self.tsInfo.remove(pkg.pkgtup)
         
-    def getPackageObject(self, pkgtup):
+    def getPackageObject(self, pkgtup, allow_missing=False):
         """retrieves a packageObject from a pkgtuple - if we need
            to pick and choose which one is best we better call out
            to some method from here to pick the best pkgobj if there are
@@ -2689,6 +2689,8 @@ class YumBase(depsolve.Depsolve):
         pkgs = self.pkgSack.searchPkgTuple(pkgtup)
 
         if len(pkgs) == 0:
+            if allow_missing: #  This can happen due to excludes after .up has
+                return None   # happened.
             raise Errors.DepError, _('Package tuple %s could not be found in packagesack') % str(pkgtup)
             
         if len(pkgs) > 1: # boy it'd be nice to do something smarter here FIXME
@@ -2929,9 +2931,11 @@ class YumBase(depsolve.Depsolve):
                     ret = _sort_arch_i(self.arch.bestarch, a1, a2)
                     return ret
                 obsoleting.sort(_sort_arch)
-            obsoleting = obsoleting[0]
-            obsoleting_pkg = self.getPackageObject(obsoleting)
-            return obsoleting_pkg
+            for pkgtup in obsoleting:
+                pkg = self.getPackageObject(pkgtup, allow_missing=True)
+                if pkg is not None:
+                    return pkg
+            return None
         return None
 
     def _test_loop(self, node, next_func):
@@ -3325,7 +3329,10 @@ class YumBase(depsolve.Depsolve):
                 obsoletes = []
 
             for (obsoleting, installed) in obsoletes:
-                obsoleting_pkg = self.getPackageObject(obsoleting)
+                obsoleting_pkg = self.getPackageObject(obsoleting,
+                                                       allow_missing=True)
+                if obsoleting_pkg is None:
+                    continue
                 topkg = self._test_loop(obsoleting_pkg, self._pkg2obspkg)
                 if topkg is not None:
                     obsoleting_pkg = topkg
@@ -3341,7 +3348,10 @@ class YumBase(depsolve.Depsolve):
                     self.verbose_logger.log(logginglevels.DEBUG_2, _('Not Updating Package that is already obsoleted: %s.%s %s:%s-%s') %
                         old)
                 else:
-                    tx_return.extend(self.update(po=self.getPackageObject(new)))
+                    new = self.getPackageObject(new, allow_missing=True)
+                    if new is None:
+                        continue
+                    tx_return.extend(self.update(po=new))
             
             return tx_return
 
@@ -3438,10 +3448,11 @@ class YumBase(depsolve.Depsolve):
                 # It's a minor UI problem for RHEL, but might as well dtrt.
                 obs_pkgs = []
                 for pkgtup in obs_tups:
-                    opkgs = self.pkgSack.searchPkgTuple(pkgtup)
-                    if not opkgs: #  Could have been be excluded after
-                        continue  # obsoleted_dict was setup.
-                    obs_pkgs.append(opkgs[0])
+                    obsoleting_pkg = self.getPackageObject(pkgtup,
+                                                           allow_missing=True)
+                    if obsoleting_pkg is None:
+                        continue
+                    obs_pkgs.append(obsoleting_pkg)
                 for obsoleting_pkg in packagesNewestByName(obs_pkgs):
                     tx_return.extend(self.install(po=obsoleting_pkg))
             for available_pkg in availpkgs:
@@ -3459,7 +3470,9 @@ class YumBase(depsolve.Depsolve):
 
         for installed_pkg in instpkgs:
             for updating in self.up.updatesdict.get(installed_pkg.pkgtup, []):
-                po = self.getPackageObject(updating)
+                po = self.getPackageObject(updating, allow_missing=True)
+                if po is None:
+                    continue
                 if self.tsInfo.isObsoleted(installed_pkg.pkgtup):
                     self.verbose_logger.log(logginglevels.DEBUG_2, _('Not Updating Package that is already obsoleted: %s.%s %s:%s-%s') %
                                             installed_pkg.pkgtup)                                               
