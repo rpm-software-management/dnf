@@ -1168,6 +1168,10 @@ class Depsolve(object):
                     # something else in the transaction. :(
                     # there are many ways I hate this - this is but one
                     ipkgresults[pkg] = 5
+                elif newest.verEQ(pkg):
+                    #  We get here from bestPackagesFromList(), give a giant
+                    # bump to stuff that is already installed.
+                    ipkgresults[pkg] = 1000
             else:
                 # just b/c they're not installed pkgs doesn't mean they should
                 # be ignored entirely. Just not preferred
