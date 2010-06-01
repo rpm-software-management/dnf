@@ -453,6 +453,23 @@ class RPMDBPackageSack(PackageSackBase):
         """Returns a list of packages. Note that the packages are
            always filtered to those matching the patterns/case. repoid is
            ignored, and is just here for compatibility with non-rpmdb sacks. """
+
+        #  See if we can load the "patterns" via. dbMatch('name', ...) because
+        # that's basically instant and walking the entire rpmdb isn't.
+        if not self._completely_loaded and patterns and not ignore_case:
+            for pat in patterns:
+                if '?' in pat or '*' in pat:
+                    break
+            else:
+                ret = []
+                for pat in patterns:
+                    pkgs = self.searchNames([pat])
+                    if not pkgs:
+                        break
+                    ret.extend(pkgs)
+                else:
+                    return ret
+
         ret = []
         if patterns and not ignore_case:
             tpats = []
