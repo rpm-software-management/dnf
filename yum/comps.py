@@ -16,11 +16,6 @@
 import types
 import sys
 from constants import *
-try:
-    from xml.etree import cElementTree
-except ImportError:
-    import cElementTree
-iterparse = cElementTree.iterparse
 from Errors import CompsException
 #FIXME - compsexception isn't caught ANYWHERE so it's pointless to raise it
 # switch all compsexceptions to grouperrors after api break
@@ -28,6 +23,7 @@ import fnmatch
 import re
 from yum.i18n import to_unicode
 from misc import get_my_lang_code
+from yum.misc import cElementTree_iterparse as iterparse 
 
 lang_attr = '{http://www.w3.org/XML/1998/namespace}lang'
 

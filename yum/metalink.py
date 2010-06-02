@@ -26,11 +26,7 @@ from urlgrabber.progress import format_number
 
 import Errors
 
-try:
-    from xml.etree import cElementTree
-except ImportError:
-    import cElementTree
-xmlparse = cElementTree.parse
+from yum.misc import cElementTree_xmlparse as xmlparse
 
 class MetaLinkRepoErrorParseFail(Errors.RepoError):
     """ An exception thrown for an unparsable MetaLinkRepoMD file. """

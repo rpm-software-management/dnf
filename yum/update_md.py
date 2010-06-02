@@ -27,16 +27,10 @@ from yum.i18n import utf8_text_wrap, to_utf8
 from yum.yumRepo import YumRepository
 from yum.packages import FakeRepository
 from yum.misc import to_xml, decompress
+from yum.misc import cElementTree_iterparse as iterparse 
 import Errors
 
 import rpmUtils.miscutils
-
-try:
-    from xml.etree import cElementTree
-except ImportError:
-    import cElementTree
-iterparse = cElementTree.iterparse
-
 
 class UpdateNoticeException(Exception):
     """ An exception thrown for bad UpdateNotice data. """

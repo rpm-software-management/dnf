@@ -1064,4 +1064,24 @@ def read_in_items_from_dot_dir(thisglob, line_as_list=True):
             results.append(line)
     return results
 
+__cached_cElementTree = None
+def _cElementTree_import():
+    """ Importing xElementTree all the time, when we often don't need it, is a
+        huge timesink. This makes python -c 'import yum' suck. So we hide it
+        behind this function. And have accessors. """
+    global __cached_cElementTree
+    if __cached_cElementTree is None:
+        try:
+            from xml.etree import cElementTree
+        except ImportError:
+            import cElementTree
+        __cached_cElementTree = cElementTree
 
+def cElementTree_iterparse(filename):
+    """ Lazily load/run: cElementTree.iterparse """
+    _cElementTree_import()
+    return __cached_cElementTree.iterparse(filename)
+
+def cElementTree_xmlparse(filename):
+    """ Lazily load/run: cElementTree.xmlparse """
+    return __cached_cElementTree.parse(filename)
