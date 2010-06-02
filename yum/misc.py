@@ -870,15 +870,20 @@ def _ugly_utf8_string_hack(item):
             newitem = newitem + char
     return newitem
 
+__cached_saxutils = None
 def to_xml(item, attrib=False):
-    import xml.sax.saxutils
+    global __cached_saxutils
+    if __cached_saxutils is None:
+        import xml.sax.saxutils
+        __cached_saxutils = xml.sax.saxutils
+
     item = _ugly_utf8_string_hack(item)
     item = to_utf8(item)
     item = item.rstrip()
     if attrib:
-        item = xml.sax.saxutils.escape(item, entities={'"':"&quot;"})
+        item = __cached_saxutils.escape(item, entities={'"':"&quot;"})
     else:
-        item = xml.sax.saxutils.escape(item)
+        item = __cached_saxutils.escape(item)
     return item
 
 def unlink_f(filename):
