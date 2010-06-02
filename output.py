@@ -1141,19 +1141,31 @@ Downgrade %5.5s Package(s)
         # progress bars - this is hacky - I'm open to other options
         # One of these is a download
         if self.conf.debuglevel < 2 or not sys.stdout.isatty():
-            self.repos.setProgressBar(None)
-            self.repos.callback = None
+            progressbar = None
+            callback = None
         else:
-            self.repos.setProgressBar(YumTextMeter(fo=sys.stdout))
-            self.repos.callback = CacheProgressCallback()
+            progressbar = YumTextMeter(fo=sys.stdout)
+            callback = CacheProgressCallback()
 
         # setup our failure report for failover
         freport = (self.failureReport,(),{})
-        self.repos.setFailureCallback(freport)
+        failure_callback = freport
 
         # setup callback for CTRL-C's
-        self.repos.setInterruptCallback(self.interrupt_callback)
-        
+        interrupt_callback = self.interrupt_callback
+        if hasattr(self, 'prerepoconf'):
+            self.prerepoconf.progressbar = progressbar
+            self.prerepoconf.callback = callback
+            self.prerepoconf.failure_callback = failure_callback
+            self.prerepoconf.interrupt_callback = interrupt_callback
+        else:
+            #  Just in case some API user decides to do self.repos before
+            # calling us.
+            self.repos.setProgressBar(progressbar)
+            self.repos.callback = callback
+            self.repos.setFailureCallback(failure_callback)
+            self.repos.setInterruptCallback(interrupt_callback)
+
         # setup our depsolve progress callback
         dscb = DepSolveProgressCallBack(weakref(self))
         self.dsCallback = dscb
@@ -1163,8 +1175,14 @@ Downgrade %5.5s Package(s)
         self.setupProgressCallbacks()
     
     def setupKeyImportCallbacks(self):
-        self.repos.confirm_func = self._cli_confirm_gpg_key_import
-        self.repos.gpg_import_func = self.getKeyForRepo
+        confirm_func = self._cli_confirm_gpg_key_import
+        gpg_import_func = self.getKeyForRepo
+        if hasattr(self, 'prerepoconf'):
+            self.prerepoconf.confirm_func = confirm_func
+            self.prerepoconf.gpg_import_func = gpg_import_func
+        else:
+            self.repos.confirm_func = confirm_func
+            self.repos.gpg_import_func = gpg_import_func
 
     def interrupt_callback(self, cbobj):
         '''Handle CTRL-C's during downloads

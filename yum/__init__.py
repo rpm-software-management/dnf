@@ -108,6 +108,23 @@ class _YumPreBaseConf:
         self.releasever = None
         self.uuid = None
 
+
+class _YumPreRepoConf:
+    """This is the configuration interface for the repos configuration.
+       So if you want to change callbacks etc. you tweak it here, and when
+       yb.repos does it's thing ... it happens. """
+
+    def __init__(self):
+        self.progressbar = None
+        self.callback = None
+        self.failure_callback = None
+        self.interrupt_callback = None
+        self.confirm_func = None
+        self.gpg_import_func = None
+        self.cachedir = None
+        self.cache = None
+
+
 class _YumCostExclude:
     """ This excludes packages that are in repos. of lower cost than the passed
         repo. """
@@ -163,6 +180,7 @@ class YumBase(depsolve.Depsolve):
         self.mediagrabber = None
         self.arch = ArchStorage()
         self.preconf = _YumPreBaseConf()
+        self.prerepoconf = _YumPreRepoConf()
 
         self.run_with_package_names = set()
 
@@ -306,11 +324,8 @@ class YumBase(depsolve.Depsolve):
         # this (core now only uses YumBase.conf.yumvar).
         self.yumvar = self.conf.yumvar
 
-        self.getReposFromConfig()
-
         # who are we:
         self.conf.uid = os.geteuid()
-        
         
         self.doFileLogSetup(self.conf.uid, self.conf.logfile)
         self.verbose_logger.debug('Config time: %0.3f' % (time.time() - conf_st))
@@ -518,7 +533,26 @@ class YumBase(depsolve.Depsolve):
 
     def _getRepos(self, thisrepo=None, doSetup = False):
         """ For each enabled repository set up the basics of the repository. """
-        self.conf # touch the config class first
+        if hasattr(self, 'prerepoconf'):
+            self.conf # touch the config class first
+
+            self.getReposFromConfig()
+
+            # Recursion
+            prerepoconf = self.prerepoconf
+            del self.prerepoconf
+
+            self.repos.setProgressBar(prerepoconf.progressbar)
+            self.repos.callback = prerepoconf.callback
+            self.repos.setFailureCallback(prerepoconf.failure_callback)
+            self.repos.setInterruptCallback(prerepoconf.interrupt_callback)
+            self.repos.confirm_func = prerepoconf.confirm_func
+            self.repos.gpg_import_func = prerepoconf.gpg_import_func
+            if prerepoconf.cachedir is not None:
+                self.repos.setCacheDir(prerepoconf.cachedir)
+            if prerepoconf.cache is not None:
+                self.repos.setCache(prerepoconf.cache)
+
 
         if doSetup:
             repo_st = time.time()        
@@ -4562,7 +4596,10 @@ class YumBase(depsolve.Depsolve):
             return False # Tried, but failed, to get a "user" cachedir
 
         cachedir += varReplace(suffix, self.conf.yumvar)
-        self.repos.setCacheDir(cachedir)
+        if hasattr(self, 'prerepoconf'):
+            self.prerepoconf.cachedir = cachedir
+        else:
+            self.repos.setCacheDir(cachedir)
         self.conf.cachedir = cachedir
         return True # We got a new cache dir
 
