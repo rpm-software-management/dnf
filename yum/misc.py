@@ -804,7 +804,11 @@ def find_ts_remaining(timestamp, yumlibpath='/var/lib/yum'):
         item = item.replace('\n', '')
         if item == '':
             continue
-        (action, pkgspec) = item.split()
+        try:
+            (action, pkgspec) = item.split()
+        except ValueError, e:
+            msg = "Transaction journal  file %s is corrupt." % (tsallpath)
+            raise Errors.MiscError, msg
         to_complete_items.append((action, pkgspec))
     
     return to_complete_items
