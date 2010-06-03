@@ -407,7 +407,7 @@ class RPMDBPackageSack(PackageSackBase):
                 continue
 
             qpat = pat[0]
-            if qpat in ('?', '*'):
+            if qpat in ('?', '*', '['):
                 qpat = None
             if ignore_case:
                 if qpat is not None:
@@ -459,20 +459,16 @@ class RPMDBPackageSack(PackageSackBase):
         #  See if we can load the "patterns" via. dbMatch('name', ...) because
         # that's basically instant and walking the entire rpmdb isn't.
         if not self._completely_loaded and patterns and not ignore_case:
+            ret = []
             for pat in patterns:
-                if '?' in pat or '*' in pat:
+                #  We aren't wasting anything here, because the next bit
+                # will pick up any loads :)
+                pkgs = self.searchNames([pat])
+                if not pkgs:
                     break
+                ret.extend(pkgs)
             else:
-                ret = []
-                for pat in patterns:
-                    #  We aren't wasting anything here, because the next bit
-                    # will pick up any loads :)
-                    pkgs = self.searchNames([pat])
-                    if not pkgs:
-                        break
-                    ret.extend(pkgs)
-                else:
-                    return ret
+                return ret
 
         ret = []
         if patterns and not ignore_case:
