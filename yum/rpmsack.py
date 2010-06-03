@@ -407,7 +407,7 @@ class RPMDBPackageSack(PackageSackBase):
                 continue
 
             qpat = pat[0]
-            if qpat in ('?', '*'):
+            if qpat in ('?', '*', '['):
                 qpat = None
             if ignore_case:
                 if qpat is not None:
