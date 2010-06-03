@@ -1088,5 +1088,6 @@ def cElementTree_iterparse(filename):
     return __cached_cElementTree.iterparse(filename)
 
 def cElementTree_xmlparse(filename):
-    """ Lazily load/run: cElementTree.xmlparse """
+    """ Lazily load/run: cElementTree.parse """
+    _cElementTree_import()
     return __cached_cElementTree.parse(filename)
