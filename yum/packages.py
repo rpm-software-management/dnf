@@ -1039,7 +1039,10 @@ class YumAvailablePackage(PackageObject, RpmBase):
         msg += self._dump_pco('conflicts')         
         msg += self._dump_pco('obsoletes')         
         msg += self._dump_files(True)
-        msg += """\n  </format>"""
+        if msg[-1] != '\n':
+            msg += """\n"""
+        msg += """  </format>"""
+        
         return msg
 
     def _dump_pco(self, pcotype):
@@ -1065,7 +1068,7 @@ class YumAvailablePackage(PackageObject, RpmBase):
         return msg
     
     def _dump_files(self, primary=False):
-        msg =""
+        msg ="\n"
         if not primary:
             files = self.returnFileEntries('file')
             dirs = self.returnFileEntries('dir')
