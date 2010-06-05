@@ -37,10 +37,16 @@ def compareEVR((e1, v1, r1), (e2, v2, r2)):
     # return 1: a is newer than b
     # 0: a and b are the same version
     # -1: b is newer than a
-    e1 = str(e1)
+    if e1 is None:
+        e1 = '0'
+    else:
+        e1 = str(e1)
     v1 = str(v1)
     r1 = str(r1)
-    e2 = str(e2)
+    if e2 is None:
+        e2 = '0'
+    else:
+        e2 = str(e2)
     v2 = str(v2)
     r2 = str(r2)
     #print '%s, %s, %s vs %s, %s, %s' % (e1, v1, r1, e2, v2, r2)
