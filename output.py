@@ -1705,7 +1705,8 @@ class DepSolveProgressCallBack:
         modedict = { 'i': _('installed'),
                      'u': _('updated'),
                      'o': _('obsoleted'),
-                     'e': _('erased')}
+                     'e': _('erased'),
+                     'd': _('downgraded')}
         (n, a, e, v, r) = pkgtup
         modeterm = modedict[mode]
         self.verbose_logger.log(logginglevels.INFO_2,
