@@ -808,6 +808,14 @@ class Depsolve(object):
 
             missing_in_pkg = False
             for po, dep in thisneeds:
+                if txmbr.downgraded_by: # Don't try to chain remove downgrades
+                    msg = self._err_missing_requires(po, dep)
+                    self.verbose_logger.log(logginglevels.DEBUG_2, msg)
+                    errors.append(msg)
+                    self.po_with_problems.add((po,self._working_po,errors[-1]))
+                    missing_in_pkg = 1
+                    continue
+
                 (checkdep, missing, errormsgs) = self._processReq(po, dep)
                 CheckDeps |= checkdep
                 errors += errormsgs
