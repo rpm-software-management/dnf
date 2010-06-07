@@ -1369,53 +1369,6 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
         # If it is a filename, search the files.xml file info
         results.extend(self.searchFiles(n))
         return misc.unique(results)
-        
-        
-        #~ #FIXME - comment this all out below here
-        #~ for (rep,cache) in self.filelistsdb.items():
-            #~ cur = cache.cursor()
-            #~ (dirname,filename) = os.path.split(name)
-            #~ # FIXME: why doesn't this work???
-            #~ if 0: # name.find('%') == -1: # no %'s in the thing safe to LIKE
-                #~ executeSQL(cur, "select packages.pkgId as pkgId,\
-                    #~ filelist.dirname as dirname,\
-                    #~ filelist.filetypes as filetypes,\
-                    #~ filelist.filenames as filenames \
-                    #~ from packages,filelist where \
-                    #~ (filelist.dirname LIKE ? \
-                    #~ OR (filelist.dirname LIKE ? AND\
-                    #~ filelist.filenames LIKE ?))\
-                    #~ AND (filelist.pkgKey = packages.pkgKey)", (name,dirname,filename))
-            #~ else: 
-                #~ executeSQL(cur, "select packages.pkgId as pkgId,\
-                    #~ filelist.dirname as dirname,\
-                    #~ filelist.filetypes as filetypes,\
-                    #~ filelist.filenames as filenames \
-                    #~ from filelist,packages where dirname = ? AND filelist.pkgKey = packages.pkgKey" , (dirname,))
-
-            #~ matching_ids = []
-            #~ for res in cur:
-                #~ if self._excluded(rep, res['pkgId']):
-                    #~ continue
-                
-                #~ #FIXME - optimize the look up here by checking for single-entry filenames
-                #~ quicklookup = {}
-                #~ for fn in decodefilenamelist(res['filenames']):
-                    #~ quicklookup[fn] = 1
-                
-                #~ # If it matches the dirname, that doesnt mean it matches
-                #~ # the filename, check if it does
-                #~ if filename and filename not in quicklookup:
-                    #~ continue
-                
-                #~ matching_ids.append(str(res['pkgId']))
-                
-            
-            #~ pkgs = self._getListofPackageDetails(matching_ids)
-            #~ for pkg in pkgs:
-                #~ results.append(self.pc(rep,pkg))
-        
-        #~ return results
 
     def searchProvides(self, name):
         """return list of packages providing name (any evr and flag)"""
