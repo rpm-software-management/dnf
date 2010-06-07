@@ -452,8 +452,10 @@ class YumOutput:
             (hibeg, hiend) = self._highlight(highlight)
         return (val, width, hibeg, hiend)
 
-    def fmtColumns(self, columns, msg=u'', end=u''):
-        """ Return a string for columns of data, which can overflow."""
+    def fmtColumns(self, columns, msg=u'', end=u'', text_width=utf8_width):
+        """ Return a string for columns of data, which can overflow.
+            text_width parameter finds the width of columns, this defaults to
+            utf8 but can be changed to len() if you know it'll be fine. """
 
         total_width = len(msg)
         data = []
@@ -466,11 +468,16 @@ class YumOutput:
                 continue
 
             (align, width) = self._fmt_column_align_width(width)
-            if utf8_width(val) <= width:
-                msg += u"%s "
-                val = utf8_width_fill(val, width, left=(align == u'-'),
-                                      prefix=hibeg, suffix=hiend)
-                data.append(val)
+            val_width = text_width(val)
+            if val_width <= width:
+                #  Don't use utf8_width_fill() because it sucks performance
+                # wise for 1,000s of rows. Also allows us to use len(), when
+                # we can.
+                msg += u"%s%s%s%s "
+                if (align == u'-'):
+                    data.extend([hibeg, val, " " * (width - val_width), hiend])
+                else:
+                    data.extend([hibeg, " " * (width - val_width), val, hiend])
             else:
                 msg += u"%s%s%s\n" + " " * (total_width + width + 1)
                 data.extend([hibeg, val, hiend])
@@ -495,7 +502,7 @@ class YumOutput:
         hi_cols = [highlight, 'normal', 'normal']
         rid = pkg.ui_from_repo
         columns = zip((na, ver, rid), columns, hi_cols)
-        print self.fmtColumns(columns)
+        print self.fmtColumns(columns, text_width=len)
 
     def simpleEnvraList(self, pkg, ui_overflow=False,
                         indent='', highlight=False, columns=None):
@@ -508,7 +515,7 @@ class YumOutput:
         hi_cols = [highlight, 'normal', 'normal']
         rid = pkg.ui_from_repo
         columns = zip((envra, rid), columns, hi_cols)
-        print self.fmtColumns(columns)
+        print self.fmtColumns(columns, text_width=len)
 
     def fmtKeyValFill(self, key, val):
         """ Return a key value pair in the common two column output format. """

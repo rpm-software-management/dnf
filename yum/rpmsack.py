@@ -458,7 +458,9 @@ class RPMDBPackageSack(PackageSackBase):
 
         #  See if we can load the "patterns" via. dbMatch('name', ...) because
         # that's basically instant and walking the entire rpmdb isn't.
-        if not self._completely_loaded and patterns and not ignore_case:
+        #  We assume that if we get "Yum" and _something_ matches, that we have
+        # _all_ the matches. IOW there can be either Yum or yum, but not BOTH.
+        if not self._completely_loaded and patterns:
             ret = []
             for pat in patterns:
                 #  We aren't wasting anything here, because the next bit
