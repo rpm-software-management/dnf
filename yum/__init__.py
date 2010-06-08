@@ -3490,8 +3490,8 @@ class YumBase(depsolve.Depsolve):
                 for obsoleting_pkg in packagesNewestByName(obs_pkgs):
                     tx_return.extend(self.install(po=obsoleting_pkg))
             for available_pkg in availpkgs:
-                for obsoleted in self.up.obsoleting_dict.get(available_pkg.pkgtup, []):
-                    obsoleted_pkg = self.getInstalledPackageObject(obsoleted)
+                for obsoleted_pkg in self._find_obsoletees(available_pkg):
+                    obsoleted = obsoleted_pkg.pkgtup
                     txmbr = self.tsInfo.addObsoleting(available_pkg, obsoleted_pkg)
                     if requiringPo:
                         txmbr.setAsDep(requiringPo)
@@ -3736,7 +3736,9 @@ class YumBase(depsolve.Depsolve):
         # be fixed later but a fair bit of that is a pebkac and should be
         # said as "don't do that". potential 'fixme'
         for txmbr in tx_return:
-            if txmbr.po.obsoletes:
+            #  We don't want to do this twice, so only bother if the txmbr
+            # doesn't already obsolete anything.
+            if txmbr.po.obsoletes and not txmbr.obsoletes:
                 for obs_pkg in self._find_obsoletees(txmbr.po):
                     self.tsInfo.addObsoleted(obs_pkg, txmbr.po)
                     txmbr.obsoletes.append(obs_pkg)
