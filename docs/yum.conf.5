@@ -305,6 +305,17 @@ lot of information about what has happened before, and display it to the user
 with the history info/list/summary commands. yum also provides the
 history undo/redo commands. Defaults to True.
 
+Note that if history is recorded, yum uses that information to see if any
+modifications to the rpmdb have been done outside of yum. These are always bad,
+from yum's point of view, and so yum will issue a warning and automatically
+run some of "yum check" to try and find some of the worst problems altering
+the rpmdb might have caused.
+.IP
+This means that turning this option off will stop yum from being able to
+detect when the rpmdb has changed and thus. it will never warn you or
+automatically run "yum check". The problems will likely still be there, and
+yumdb etc. will still be wrong but yum will not warn you about it.
+
 .IP
 \fBhistory_record_packages \fR
 This is a list of package names that should be recorded as having helped the
