@@ -1381,6 +1381,7 @@ class YumBase(depsolve.Depsolve):
         # and the install reason
 
         self.rpmdb.dropCachedData()
+        self.plugins.run('preverifytrans')
         for txmbr in self.tsInfo:
             if txmbr.output_state in TS_INSTALL_STATES:
                 if not self.rpmdb.contains(po=txmbr.po):
@@ -1433,6 +1434,7 @@ class YumBase(depsolve.Depsolve):
             else:
                 self.verbose_logger.log(logginglevels.DEBUG_2, 'What is this? %s' % txmbr.po)
 
+        self.plugins.run('postverifytrans')
         if self.conf.history_record:
             ret = -1
             if resultobject is not None:
