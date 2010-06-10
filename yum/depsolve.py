@@ -225,10 +225,10 @@ class Depsolve(object):
                 self.verbose_logger.log(logginglevels.DEBUG_1,
                     _('Adding Package %s in mode %s'), txmbr.po, txmbr.ts_state)
                 if self.dsCallback:
-                    ts_state = txmbr.ts_state
-                    if ts_state == 'u' and txmbr.downgrades:
-                        ts_state = 'd'
-                    self.dsCallback.pkgAdded(txmbr.pkgtup, ts_state)
+                    dscb_ts_state = txmbr.ts_state
+                    if dscb_ts_state == 'u' and txmbr.downgrades:
+                        dscb_ts_state = 'd'
+                    self.dsCallback.pkgAdded(txmbr.pkgtup, dscb_ts_state)
             
             elif txmbr.ts_state in ['e']:
                 if (txmbr.pkgtup, txmbr.ts_state) in ts_elem:
@@ -791,12 +791,12 @@ class Depsolve(object):
         for txmbr in self.tsInfo.getUnresolvedMembers():
 
             if self.dsCallback and txmbr.ts_state:
-                ts_state = txmbr.ts_state
+                dscb_ts_state = txmbr.ts_state
                 if txmbr.downgrades:
-                    ts_state = 'd'
-                if ts_state == 'u' and not txmbr.updates:
-                    ts_state = 'i'
-                self.dsCallback.pkgAdded(txmbr.pkgtup, ts_state)
+                    dscb_ts_state = 'd'
+                if dscb_ts_state == 'u' and not txmbr.updates:
+                    dscb_ts_state = 'i'
+                self.dsCallback.pkgAdded(txmbr.pkgtup, dscb_ts_state)
             self.verbose_logger.log(logginglevels.DEBUG_2,
                                     _("Checking deps for %s") %(txmbr,))
 
