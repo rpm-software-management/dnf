@@ -899,7 +899,7 @@ def unlink_f(filename):
         if e.errno != errno.ENOENT:
             raise
 
-def getloginuid():
+def _getloginuid():
     """ Get the audit-uid/login-uid, if available. None is returned if there
         was a problem. Note that no caching is done here. """
     #  We might normally call audit.audit_getloginuid(), except that requires
@@ -913,6 +913,16 @@ def getloginuid():
         return int(data)
     except ValueError:
         return None
+
+_cached_getloginuid = None
+def getloginuid():
+    """ Get the audit-uid/login-uid, if available. None is returned if there
+        was a problem. The value is cached, so you don't have to save it. """
+    global _cached_getloginuid
+    if _cached_getloginuid is None:
+        _cached_getloginuid = _getloginuid()
+    return _cached_getloginuid
+
 
 # ---------- i18n ----------
 import locale
