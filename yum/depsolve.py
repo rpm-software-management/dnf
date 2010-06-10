@@ -66,7 +66,6 @@ class Depsolve(object):
     """
 
     def __init__(self):
-        packages.base = self
         self._ts = None
         self._tsInfo = None
         self.dsCallback = None
