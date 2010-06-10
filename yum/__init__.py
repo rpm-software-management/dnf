@@ -1419,7 +1419,29 @@ class YumBase(depsolve.Depsolve):
                     po.yumdb_info.from_repo_revision  = str(md.revision)
                 if md:
                     po.yumdb_info.from_repo_timestamp = str(md.timestamp)
-            
+
+                loginuid = misc.getloginuid()
+                if loginuid is None:
+                    continue
+                loginuid = str(loginuid)
+                if (txmbr.updates or txmbr.downgrades or
+                    (hasattr(txmbr, 'reinstall') and txmbr.reinstall)):
+                    if txmbr.updates:
+                        opo = txmbr.updates[0]
+                    elif txmbr.downgrades:
+                        opo = txmbr.downgrades[0]
+                    else:
+                        opo = po
+                    if 'installed_by' in opo.yumdb_info:
+                        po.yumdb_info.installed_by = opo.yumdb_info.installed_by
+                    po.yumdb_info.changed_by = loginuid
+                else:
+                    po.yumdb_info.installed_by = loginuid
+
+        # Remove old ones after installing new ones, so we can copy values.
+        for txmbr in self.tsInfo:
+            if txmbr.output_state in TS_INSTALL_STATES:
+                pass
             elif txmbr.output_state in TS_REMOVE_STATES:
                 if self.rpmdb.contains(po=txmbr.po):
                     if not self.tsInfo.getMembersWithState(pkgtup=txmbr.pkgtup,
