@@ -1424,8 +1424,7 @@ class YumBase(depsolve.Depsolve):
                 if loginuid is None:
                     continue
                 loginuid = str(loginuid)
-                if (txmbr.updates or txmbr.downgrades or
-                    (hasattr(txmbr, 'reinstall') and txmbr.reinstall)):
+                if txmbr.updates or txmbr.downgrades or txmbr.reinstall:
                     if txmbr.updates:
                         opo = txmbr.updates[0]
                     elif txmbr.downgrades:

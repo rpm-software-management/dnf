@@ -349,8 +349,7 @@ class TransactionData:
                     self.updated.append(txmbr)
                     
             elif txmbr.output_state in (TS_INSTALL, TS_TRUEINSTALL):
-                if include_reinstall and self.rpmdb.contains(po=txmbr.po):
-                    txmbr.reinstall = True
+                if include_reinstall and txmbr.reinstall:
                     self.reinstalled.append(txmbr)
                     continue
 
@@ -416,6 +415,10 @@ class TransactionData:
         txmbr.po.state = TS_INSTALL        
         txmbr.ts_state = 'u'
         txmbr.reason = 'user'
+
+        if self.rpmdb.contains(po=txmbr.po):
+            txmbr.reinstall = True
+
         self.add(txmbr)
         return txmbr
 
@@ -506,6 +509,10 @@ class TransactionData:
         txmbr.ts_state = 'u'
         txmbr.relatedto.append((oldpo, 'obsoletes'))
         txmbr.obsoletes.append(oldpo)
+
+        if self.rpmdb.contains(po=txmbr.po):
+            txmbr.reinstall = True
+
         self.add(txmbr)
         return txmbr
 
@@ -607,7 +614,7 @@ class TransactionData:
         for txmbr in self.getMembersWithState(None, TS_INSTALL_STATES):
             # reinstalls have to use their "new" checksum data, in case it's
             # different.
-            if hasattr(txmbr, 'reinstall') and txmbr.reinstall:
+            if txmbr.reinstall:
                 _reinstalled_pkgtups[txmbr.po.pkgtup] = txmbr.po
             pkgs.append(txmbr.po)
 
@@ -720,6 +727,7 @@ class TransactionMember:
         self.updated_by = []
         self.downgrades = []
         self.downgraded_by = []
+        self.reinstall = False
         self.groups = [] # groups it's in
         self._poattr = ['pkgtup', 'repoid', 'name', 'arch', 'epoch', 'version',
                         'release']
