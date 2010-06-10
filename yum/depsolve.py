@@ -794,6 +794,8 @@ class Depsolve(object):
                 dscb_ts_state = txmbr.ts_state
                 if txmbr.downgrades:
                     dscb_ts_state = 'd'
+                if dscb_ts_state == 'u' and txmbr.reinstall:
+                    dscb_ts_state = 'r'
                 if dscb_ts_state == 'u' and not txmbr.updates:
                     dscb_ts_state = 'i'
                 self.dsCallback.pkgAdded(txmbr.pkgtup, dscb_ts_state)

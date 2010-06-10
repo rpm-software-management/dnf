@@ -1706,6 +1706,7 @@ class DepSolveProgressCallBack:
                      'u': _('updated'),
                      'o': _('obsoleted'),
                      'e': _('erased'),
+                     'r': _('reinstalled'),
                      'd': _('downgraded')}
         (n, a, e, v, r) = pkgtup
         modeterm = modedict[mode]
