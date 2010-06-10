@@ -794,6 +794,8 @@ class Depsolve(object):
                 ts_state = txmbr.ts_state
                 if txmbr.downgrades:
                     ts_state = 'd'
+                if ts_state == 'u' and not txmbr.updates:
+                    ts_state = 'i'
                 self.dsCallback.pkgAdded(txmbr.pkgtup, ts_state)
             self.verbose_logger.log(logginglevels.DEBUG_2,
                                     _("Checking deps for %s") %(txmbr,))
