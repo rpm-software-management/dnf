@@ -776,10 +776,9 @@ class Depsolve(object):
                 self.verbose_logger.log(logginglevels.DEBUG_4,"  --> %s" % err)
             return (1, errors)
 
-        if len(self.tsInfo) > 0:
-            if not len(self.tsInfo):
-                return (0, [_('Success - empty transaction')])
-            return (2, [_('Success - deps resolved')])
+        if not len(self.tsInfo):
+            return (0, [_('Success - empty transaction')])
+        return (2, [_('Success - deps resolved')])
 
     def _resolveRequires(self, errors):
         any_missing = False
