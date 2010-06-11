@@ -1333,7 +1333,7 @@ to exit.
 
         tids, printall = self._history_list_transactions(extcmds)
         if tids is None:
-            return 1, ['Failed history info']
+            return 1, ['Failed history list']
 
         fmt = "%s | %s | %s | %s | %s"
         print fmt % (utf8_width_fill(_("ID"), 6, 6),
