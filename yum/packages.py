@@ -1098,6 +1098,17 @@ class YumAvailablePackage(PackageObject, RpmBase):
         msg = ""
 
         if mylist: msg = "\n    <rpm:requires>\n"
+        if hasattr(self, '_collapse_libc_requires') and self._collapse_libc_requires:
+            libc_requires = filter(lambda x: x[0].startswith('libc.so.6'), mylist)
+            if libc_requires:
+                best = sorted(libc_requires)[-1]
+                newlist = []
+                for i in mylist:
+                    if i[0].startswith('libc.so.6') and i != best:
+                        continue
+                    newlist.append(i)
+                mylist = newlist
+        
         for (name, flags, (e,v,r),pre) in mylist:
             if name.startswith('rpmlib('):
                 continue
