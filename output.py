@@ -558,27 +558,41 @@ class YumOutput:
 
     def infoOutput(self, pkg, highlight=False):
         (hibeg, hiend) = self._highlight(highlight)
-        print _("Name       : %s%s%s") % (hibeg, to_unicode(pkg.name), hiend)
-        print _("Arch       : %s") % to_unicode(pkg.arch)
+        print _("Name        : %s%s%s") % (hibeg, to_unicode(pkg.name), hiend)
+        print _("Arch        : %s") % to_unicode(pkg.arch)
         if pkg.epoch != "0":
-            print _("Epoch      : %s") % to_unicode(pkg.epoch)
-        print _("Version    : %s") % to_unicode(pkg.version)
-        print _("Release    : %s") % to_unicode(pkg.release)
-        print _("Size       : %s") % self.format_number(float(pkg.size))
-        print _("Repo       : %s") % to_unicode(pkg.repoid)
+            print _("Epoch       : %s") % to_unicode(pkg.epoch)
+        print _("Version     : %s") % to_unicode(pkg.version)
+        print _("Release     : %s") % to_unicode(pkg.release)
+        print _("Size        : %s") % self.format_number(float(pkg.size))
+        print _("Repo        : %s") % to_unicode(pkg.repoid)
         if pkg.repoid == 'installed' and 'from_repo' in pkg.yumdb_info:
-            print _("From repo  : %s") % to_unicode(pkg.yumdb_info.from_repo)
+            print _("From repo   : %s") % to_unicode(pkg.yumdb_info.from_repo)
         if self.verbose_logger.isEnabledFor(logginglevels.DEBUG_3):
-            print _("Committer  : %s") % to_unicode(pkg.committer)
-            print _("Committime : %s") % time.ctime(pkg.committime)
-            print _("Buildtime  : %s") % time.ctime(pkg.buildtime)
+            print _("Committer   : %s") % to_unicode(pkg.committer)
+            print _("Committime  : %s") % time.ctime(pkg.committime)
+            print _("Buildtime   : %s") % time.ctime(pkg.buildtime)
             if hasattr(pkg, 'installtime'):
-                print _("Installtime: %s") % time.ctime(pkg.installtime)
-        print self.fmtKeyValFill(_("Summary    : "), self._enc(pkg.summary))
+                print _("Install time: %s") % time.ctime(pkg.installtime)
+            uid = None
+            if 'installed_by' in pkg.yumdb_info:
+                try:
+                    uid = int(pkg.yumdb_info.installed_by)
+                except ValueError: # In case int() fails
+                    uid = None
+            print _("Installed by: %s") % self._pwd_ui_username(uid)
+            uid = None
+            if 'changed_by' in pkg.yumdb_info:
+                try:
+                    uid = int(pkg.yumdb_info.changed_by)
+                except ValueError: # In case int() fails
+                    uid = None
+            print _("Changed by  : %s") % self._pwd_ui_username(uid)
+        print self.fmtKeyValFill(_("Summary     : "), self._enc(pkg.summary))
         if pkg.url:
-            print _("URL        : %s") % to_unicode(pkg.url)
-        print self.fmtKeyValFill(_("License    : "), to_unicode(pkg.license))
-        print self.fmtKeyValFill(_("Description: "), self._enc(pkg.description))
+            print _("URL         : %s") % to_unicode(pkg.url)
+        print self.fmtKeyValFill(_("License     : "), to_unicode(pkg.license))
+        print self.fmtKeyValFill(_("Description : "),self._enc(pkg.description))
         print ""
     
     def updatesObsoletesList(self, uotup, changetype, columns=None):
@@ -1333,7 +1347,7 @@ to exit.
 
         tids, printall = self._history_list_transactions(extcmds)
         if tids is None:
-            return 1, ['Failed history info']
+            return 1, ['Failed history list']
 
         fmt = "%s | %s | %s | %s | %s"
         print fmt % (utf8_width_fill(_("ID"), 6, 6),
@@ -1706,6 +1720,7 @@ class DepSolveProgressCallBack:
                      'u': _('updated'),
                      'o': _('obsoleted'),
                      'e': _('erased'),
+                     'r': _('reinstalled'),
                      'd': _('downgraded')}
         (n, a, e, v, r) = pkgtup
         modeterm = modedict[mode]

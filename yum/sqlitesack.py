@@ -1324,8 +1324,14 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
             (n,f,(e,v,r)) = misc.string_to_prco_tuple(name)
         except Errors.MiscError, e:
             raise Errors.PackageSackError, to_unicode(e)
-        
-        n = to_unicode(n)
+
+        # The _b means this is a byte string
+        # The _u means this is a unicode string
+        # A bare n is used when, it's unicode but hasn't been evaluated
+        # whether that's actually the right thing to do
+        n_b = n
+        n_u = to_unicode(n)
+        n = n_u
 
         glob = True
         querytype = 'glob'
@@ -1346,9 +1352,9 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
                 # file dep add all matches to the results
                 results.append(po)
                 continue
-            
+
             if not glob:
-                if po.checkPrco(prcotype, (n, f, (e,v,r))):
+                if po.checkPrco(prcotype, (n_b, f, (e,v,r))):
                     results.append(po)
             else:
                 # if it is a glob we can't really get any closer to checking it
