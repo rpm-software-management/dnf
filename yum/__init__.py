@@ -1381,6 +1381,7 @@ class YumBase(depsolve.Depsolve):
         # and the install reason
 
         self.rpmdb.dropCachedData()
+        self.plugins.run('preverifytrans')
         for txmbr in self.tsInfo:
             if txmbr.output_state in TS_INSTALL_STATES:
                 if not self.rpmdb.contains(po=txmbr.po):
@@ -1433,6 +1434,7 @@ class YumBase(depsolve.Depsolve):
             else:
                 self.verbose_logger.log(logginglevels.DEBUG_2, 'What is this? %s' % txmbr.po)
 
+        self.plugins.run('postverifytrans')
         if self.conf.history_record:
             ret = -1
             if resultobject is not None:
@@ -3490,8 +3492,8 @@ class YumBase(depsolve.Depsolve):
                 for obsoleting_pkg in packagesNewestByName(obs_pkgs):
                     tx_return.extend(self.install(po=obsoleting_pkg))
             for available_pkg in availpkgs:
-                for obsoleted in self.up.obsoleting_dict.get(available_pkg.pkgtup, []):
-                    obsoleted_pkg = self.getInstalledPackageObject(obsoleted)
+                for obsoleted_pkg in self._find_obsoletees(available_pkg):
+                    obsoleted = obsoleted_pkg.pkgtup
                     txmbr = self.tsInfo.addObsoleting(available_pkg, obsoleted_pkg)
                     if requiringPo:
                         txmbr.setAsDep(requiringPo)
@@ -3736,7 +3738,9 @@ class YumBase(depsolve.Depsolve):
         # be fixed later but a fair bit of that is a pebkac and should be
         # said as "don't do that". potential 'fixme'
         for txmbr in tx_return:
-            if txmbr.po.obsoletes:
+            #  We don't want to do this twice, so only bother if the txmbr
+            # doesn't already obsolete anything.
+            if txmbr.po.obsoletes and not txmbr.obsoletes:
                 for obs_pkg in self._find_obsoletees(txmbr.po):
                     self.tsInfo.addObsoleted(obs_pkg, txmbr.po)
                     txmbr.obsoletes.append(obs_pkg)

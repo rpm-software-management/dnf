@@ -89,6 +89,8 @@ SLOT_TO_CONDUIT = {
     'clean': 'PluginConduit',
     'pretrans': 'MainPluginConduit',
     'posttrans': 'MainPluginConduit',
+    'preverifytrans': 'MainPluginConduit',
+    'postverifytrans': 'MainPluginConduit',
     'exclude': 'MainPluginConduit',
     'preresolve': 'DepsolvePluginConduit',
     'postresolve': 'DepsolvePluginConduit',

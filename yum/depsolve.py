@@ -66,7 +66,6 @@ class Depsolve(object):
     """
 
     def __init__(self):
-        packages.base = self
         self._ts = None
         self._tsInfo = None
         self.dsCallback = None
@@ -225,14 +224,20 @@ class Depsolve(object):
                 self.ts.addInstall(hdr, (hdr, rpmfile), txmbr.ts_state)
                 self.verbose_logger.log(logginglevels.DEBUG_1,
                     _('Adding Package %s in mode %s'), txmbr.po, txmbr.ts_state)
-                if self.dsCallback: 
-                    self.dsCallback.pkgAdded(txmbr.pkgtup, txmbr.ts_state)
+                if self.dsCallback:
+                    dscb_ts_state = txmbr.ts_state
+                    if dscb_ts_state == 'u' and txmbr.downgrades:
+                        dscb_ts_state = 'd'
+                    self.dsCallback.pkgAdded(txmbr.pkgtup, dscb_ts_state)
             
             elif txmbr.ts_state in ['e']:
                 if (txmbr.pkgtup, txmbr.ts_state) in ts_elem:
                     continue
                 self.ts.addErase(txmbr.po.idx)
-                if self.dsCallback: self.dsCallback.pkgAdded(txmbr.pkgtup, 'e')
+                if self.dsCallback:
+                    if txmbr.downgraded_by:
+                        continue
+                    self.dsCallback.pkgAdded(txmbr.pkgtup, 'e')
                 self.verbose_logger.log(logginglevels.DEBUG_1,
                     _('Removing Package %s'), txmbr.po)
 
@@ -786,7 +791,12 @@ class Depsolve(object):
         for txmbr in self.tsInfo.getUnresolvedMembers():
 
             if self.dsCallback and txmbr.ts_state:
-                self.dsCallback.pkgAdded(txmbr.pkgtup, txmbr.ts_state)
+                dscb_ts_state = txmbr.ts_state
+                if txmbr.downgrades:
+                    dscb_ts_state = 'd'
+                if dscb_ts_state == 'u' and not txmbr.updates:
+                    dscb_ts_state = 'i'
+                self.dsCallback.pkgAdded(txmbr.pkgtup, dscb_ts_state)
             self.verbose_logger.log(logginglevels.DEBUG_2,
                                     _("Checking deps for %s") %(txmbr,))
 
@@ -808,6 +818,14 @@ class Depsolve(object):
 
             missing_in_pkg = False
             for po, dep in thisneeds:
+                if txmbr.downgraded_by: # Don't try to chain remove downgrades
+                    msg = self._err_missing_requires(po, dep)
+                    self.verbose_logger.log(logginglevels.DEBUG_2, msg)
+                    errors.append(msg)
+                    self.po_with_problems.add((po,self._working_po,errors[-1]))
+                    missing_in_pkg = 1
+                    continue
+
                 (checkdep, missing, errormsgs) = self._processReq(po, dep)
                 CheckDeps |= checkdep
                 errors += errormsgs

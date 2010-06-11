@@ -1057,22 +1057,29 @@ Transaction Summary
         out.append(summary)
         num_in = len(self.tsInfo.installed + self.tsInfo.depinstalled)
         num_up = len(self.tsInfo.updated + self.tsInfo.depupdated)
-        summary = _("""\
-Install   %5.5s Package(s)
-Upgrade   %5.5s Package(s)
-""") % (num_in, num_up,)
-        if num_in or num_up: # Always do this?
-            out.append(summary)
         num_rm = len(self.tsInfo.removed + self.tsInfo.depremoved)
         num_re = len(self.tsInfo.reinstalled)
         num_dg = len(self.tsInfo.downgraded)
-        summary = _("""\
+        if num_in:
+            out.append(_("""\
+Install   %5.5s Package(s)
+""") % num_in)
+        if num_up:
+            out.append(_("""\
+Upgrade   %5.5s Package(s)
+""") % num_up)
+        if num_rm:
+            out.append(_("""\
 Remove    %5.5s Package(s)
+""") % num_rm)
+        if num_re:
+            out.append(_("""\
 Reinstall %5.5s Package(s)
+""") % num_re)
+        if num_dg:
+            out.append(_("""\
 Downgrade %5.5s Package(s)
-""") % (num_rm, num_re, num_dg)
-        if num_rm or num_re or num_dg:
-            out.append(summary)
+""") % num_dg)
         
         return ''.join(out)
         
@@ -1698,7 +1705,8 @@ class DepSolveProgressCallBack:
         modedict = { 'i': _('installed'),
                      'u': _('updated'),
                      'o': _('obsoleted'),
-                     'e': _('erased')}
+                     'e': _('erased'),
+                     'd': _('downgraded')}
         (n, a, e, v, r) = pkgtup
         modeterm = modedict[mode]
         self.verbose_logger.log(logginglevels.INFO_2,
