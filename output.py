@@ -574,20 +574,21 @@ class YumOutput:
             print _("Buildtime   : %s") % time.ctime(pkg.buildtime)
             if hasattr(pkg, 'installtime'):
                 print _("Install time: %s") % time.ctime(pkg.installtime)
-            uid = None
-            if 'installed_by' in pkg.yumdb_info:
-                try:
-                    uid = int(pkg.yumdb_info.installed_by)
-                except ValueError: # In case int() fails
-                    uid = None
-            print _("Installed by: %s") % self._pwd_ui_username(uid)
-            uid = None
-            if 'changed_by' in pkg.yumdb_info:
-                try:
-                    uid = int(pkg.yumdb_info.changed_by)
-                except ValueError: # In case int() fails
-                    uid = None
-            print _("Changed by  : %s") % self._pwd_ui_username(uid)
+            if pkg.repoid == 'installed':
+                uid = None
+                if 'installed_by' in pkg.yumdb_info:
+                    try:
+                        uid = int(pkg.yumdb_info.installed_by)
+                    except ValueError: # In case int() fails
+                        uid = None
+                print _("Installed by: %s") % self._pwd_ui_username(uid)
+                uid = None
+                if 'changed_by' in pkg.yumdb_info:
+                    try:
+                        uid = int(pkg.yumdb_info.changed_by)
+                    except ValueError: # In case int() fails
+                        uid = None
+                print _("Changed by  : %s") % self._pwd_ui_username(uid)
         print self.fmtKeyValFill(_("Summary     : "), self._enc(pkg.summary))
         if pkg.url:
             print _("URL         : %s") % to_unicode(pkg.url)
