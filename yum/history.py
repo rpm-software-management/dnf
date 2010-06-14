@@ -414,7 +414,8 @@ class YumHistory:
                          """INSERT INTO trans_rpmdb_problems
                          (tid, problem, msg)
                          VALUES (?, ?, ?)""", (self._tid,
-                                               problem.problem, str(problem)))
+                                               problem.problem,
+                                               to_unicode(str(problem))))
         rpid = cur.lastrowid
 
         if not rpid:
