@@ -134,6 +134,8 @@ class MetaLinkURL:
         self.preference = int(elem.get("preference", -1))
         self.protocol   = elem.get("type") # This is the "std" attribute name
         self.location   = elem.get("location")
+        self.private    = elem.get("{%s}private" % __XML_NS_MM__, "false")
+        self.private    = self.private.lower() == "true"
 
         if self.protocol is None: # Try for the old MM protocol attribute
             self.protocol   = elem.get("protocol")
@@ -145,8 +147,9 @@ Preference:      %d
 Max-Connections: %d
 Protocol:        %s
 Location:        %s
+Private:         %s
 """ % (self.url, self.preference, self.max_connections,
-       self.protocol, self.location)
+       self.protocol, self.location, self.private)
 
     def __cmp__(self, other):
         if other is None:
