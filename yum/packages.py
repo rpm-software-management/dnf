@@ -198,6 +198,7 @@ class FakeRepository:
 
     def __init__(self, repoid):
         self._set_cleanup_repoid(repoid)
+        self.name = self.id
         self.sack = FakeSack()
 
     def __cmp__(self, other):
