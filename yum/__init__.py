@@ -3698,6 +3698,11 @@ class YumBase(depsolve.Depsolve):
             self.logger.critical(_('Cannot add package %s to transaction. Not a compatible architecture: %s'), pkg, po.arch)
             return tx_return
         
+        obsoleters = po.obsoletedBy(self.rpmdb.searchObsoletes(po.name))
+        if obsoleters:
+            self.logger.critical(_('Cannot install package %s. It is obsoleted by installed package %s'), po, obsoleters[0])
+            return tx_return
+            
         # everything installed that matches the name
         installedByKey = self.rpmdb.searchNevra(name=po.name)
         # go through each package
