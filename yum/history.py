@@ -343,7 +343,7 @@ class YumHistory:
     def txmbr2state(txmbr):
         state = None
         if txmbr.output_state in (TS_INSTALL, TS_TRUEINSTALL):
-            if hasattr(txmbr, 'reinstall'):
+            if txmbr.reinstall:
                 state = 'Reinstall'
             elif txmbr.downgrades:
                 state = 'Downgrade'
