@@ -1,135 +1,134 @@
-# Copyright (C) 2010 Yum's copyright holder
-# This file is distributed under the same license as the yum package.
-#
-# Adam Pribyl <pribyl@lowlevel.cz>, 2009, 2010.
-# Petr Pisar <ppisar@redhat.com>, 2010.
-#
+# British English translation of yum
+# Copyright (C) 2010 yum's COPYRIGHT HOLDER
+# This file is distributed under the same licence as the yum package.
+# Bruce Cowan <bruce@bcowan.me.uk>, 2010.
 msgid ""
 msgstr ""
-"Project-Id-Version: yum 3.2.x\n"
+"Project-Id-Version: yum\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2010-02-11 10:54-0500\n"
-"PO-Revision-Date: 2010-06-14 10:55+0200\n"
-"Last-Translator: Petr Pisar <ppisar@redhat.com>\n"
-"Language-Team: Czech Fedora <diskuse@lists.l10n.cz>\n"
+"PO-Revision-Date: 2010-06-15 16:09+0100\n"
+"Last-Translator: Bruce Cowan <bruce@bcowan.me.uk>\n"
+"Language-Team: British English <en@li.org>\n"
+"Language: en_GB\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Lokalize 1.0\n"
-"Plural-Forms: nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2;\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Virtaal 0.6.1\n"
 
 #: ../callback.py:48 ../output.py:947 ../yum/rpmtrans.py:72
 msgid "Updating"
-msgstr "Aktualizuje se"
+msgstr "Updating"
 
 #: ../callback.py:49 ../yum/rpmtrans.py:73
 msgid "Erasing"
-msgstr "Maže se"
+msgstr "Erasing"
 
 #: ../callback.py:50 ../callback.py:51 ../callback.py:53 ../output.py:946
 #: ../output.py:1659 ../yum/rpmtrans.py:74 ../yum/rpmtrans.py:75
 #: ../yum/rpmtrans.py:77
 msgid "Installing"
-msgstr "Instaluje se"
+msgstr "Installing"
 
 #: ../callback.py:52 ../callback.py:58 ../output.py:1484 ../yum/rpmtrans.py:76
 msgid "Obsoleted"
-msgstr "Zastaralé"
+msgstr "Obsoleted"
 
 #: ../callback.py:54 ../output.py:1070 ../output.py:1442 ../output.py:1491
 msgid "Updated"
-msgstr "Aktualizováno"
+msgstr "Updated"
 
 #: ../callback.py:55 ../output.py:1438
 msgid "Erased"
-msgstr "Smazáno"
+msgstr "Erased"
 
 #: ../callback.py:56 ../callback.py:57 ../callback.py:59 ../output.py:1068
 #: ../output.py:1434 ../output.py:1646
 msgid "Installed"
-msgstr "Nainstalováno"
+msgstr "Installed"
 
 #: ../callback.py:130
 msgid "No header - huh?"
-msgstr "Bez hlavičky???"
+msgstr "No header - huh?"
 
 #: ../callback.py:168
 msgid "Repackage"
-msgstr "Přebalit"
+msgstr "Repackage"
 
 #: ../callback.py:189
 #, python-format
 msgid "Error: invalid output state: %s for %s"
-msgstr "Chyba: neplatný výstupní stav: %s pro %s"
+msgstr "Error: invalid output state: %s for %s"
 
 #: ../callback.py:212
 #, python-format
 msgid "Erased: %s"
-msgstr "Smazáno: %s"
+msgstr "Erased: %s"
 
 #: ../callback.py:217 ../output.py:948 ../output.py:1648
 msgid "Removing"
-msgstr "Odstraňuje se"
+msgstr "Removing"
 
 #: ../callback.py:219 ../yum/rpmtrans.py:78
 msgid "Cleanup"
-msgstr "Čistí se"
+msgstr "Cleanup"
 
 #: ../cli.py:107
 #, python-format
 msgid "Command \"%s\" already defined"
-msgstr "Příkaz „%s“ již definován"
+msgstr "Command \"%s\" already defined"
 
 #: ../cli.py:119
 msgid "Setting up repositories"
-msgstr "Nastavují se repozitáře"
+msgstr "Setting up repositories"
 
 #: ../cli.py:130
 msgid "Reading repository metadata in from local files"
-msgstr "Načítají se metadata repozitářů z lokálních souborů"
+msgstr "Reading repository metadata in from local files"
 
 #: ../cli.py:194 ../utils.py:193
 #, python-format
 msgid "Config Error: %s"
-msgstr "Chyba konfigurace: %s"
+msgstr "Config Error: %s"
 
 #: ../cli.py:197 ../cli.py:1272 ../utils.py:196
 #, python-format
 msgid "Options Error: %s"
-msgstr "Chybná volba: %s"
+msgstr "Options Error: %s"
 
 #: ../cli.py:227
 #, python-format
 msgid "  Installed: %s-%s at %s"
-msgstr "  Nainstalováno: %s-%s na %s"
+msgstr "  Installed: %s-%s at %s"
 
 #: ../cli.py:229
 #, python-format
 msgid "  Built    : %s at %s"
-msgstr "  Sestaveno    : %s na %s"
+msgstr "  Built    : %s at %s"
 
 #: ../cli.py:231
 #, python-format
 msgid "  Committed: %s at %s"
-msgstr "  Odesláno     : %s na %s"
+msgstr "  Committed: %s at %s"
 
 #: ../cli.py:270
 msgid "You need to give some command"
-msgstr "Musíte zadat nějaký příkaz"
+msgstr "You need to give some command"
 
 #: ../cli.py:284
 #, python-format
 msgid "No such command: %s. Please use %s --help"
-msgstr "Neexistující příkaz: %s. Použijte %s --help"
+msgstr "No such command: %s. Please use %s --help"
 
 #: ../cli.py:314
 msgid "Disk Requirements:\n"
-msgstr "Diskové požadavky:\n"
+msgstr "Disk Requirements:\n"
 
 #: ../cli.py:316
 #, python-format
 msgid "  At least %dMB more space needed on the %s filesystem.\n"
-msgstr "  Je potřeba alespoň o %dMB více místa na souborovém systému %s.\n"
+msgstr "  At least %dMB more space needed on the %s filesystem.\n"
 
 #. TODO: simplify the dependency errors?
 #. Fixup the summary
@@ -138,146 +137,146 @@ msgid ""
 "Error Summary\n"
 "-------------\n"
 msgstr ""
-"Přehled chyb\n"
-"------------\n"
+"Error Summary\n"
+"-------------\n"
 
 #: ../cli.py:364
 msgid "Trying to run the transaction but nothing to do. Exiting."
-msgstr "Pokus o spuštění transakce, ale není co dělat. Ukončeno."
+msgstr "Trying to run the transaction but nothing to do. Exiting."
 
 #: ../cli.py:403
 msgid "Exiting on user Command"
-msgstr "Ukončeno na příkaz uživatele"
+msgstr "Exiting on user Command"
 
 #: ../cli.py:407
 msgid "Downloading Packages:"
-msgstr "Stahují se balíčky:"
+msgstr "Downloading Packages:"
 
 #: ../cli.py:412
 msgid "Error Downloading Packages:\n"
-msgstr "Chyba stahování balíčků:\n"
+msgstr "Error Downloading Packages:\n"
 
 #: ../cli.py:426 ../yum/__init__.py:4195
 msgid "Running rpm_check_debug"
-msgstr "Spouští se rpm_check_debug"
+msgstr "Running rpm_check_debug"
 
 #: ../cli.py:435 ../yum/__init__.py:4204
 msgid "ERROR You need to update rpm to handle:"
-msgstr "CHYBA Je potřeba aktualizovat rpm k provedení:"
+msgstr "ERROR You need to update rpm to handle:"
 
 #: ../cli.py:437 ../yum/__init__.py:4207
 msgid "ERROR with rpm_check_debug vs depsolve:"
-msgstr "CHYBA v rpm_check_debug vs depsolve:"
+msgstr "ERROR with rpm_check_debug vs depsolve:"
 
 #: ../cli.py:443
 msgid "RPM needs to be updated"
-msgstr "Je potřeba aktualizovat RPM"
+msgstr "RPM needs to be updated"
 
 #: ../cli.py:444
 #, python-format
 msgid "Please report this error in %s"
-msgstr "Oznamte prosím tuto chybu v %s"
+msgstr "Please report this error in %s"
 
 #: ../cli.py:450
 msgid "Running Transaction Test"
-msgstr "Spouští se test transakcí"
+msgstr "Running Transaction Test"
 
 #: ../cli.py:466
 msgid "Transaction Check Error:\n"
-msgstr "Chyba při kontrole transakcí:\n"
+msgstr "Transaction Check Error:\n"
 
 #: ../cli.py:473
 msgid "Transaction Test Succeeded"
-msgstr "Test transakcí uspěl"
+msgstr "Transaction Test Succeeded"
 
 #: ../cli.py:495
 msgid "Running Transaction"
-msgstr "Spouští se transakce"
+msgstr "Running Transaction"
 
 #: ../cli.py:525
 msgid ""
 "Refusing to automatically import keys when running unattended.\n"
 "Use \"-y\" to override."
 msgstr ""
-"Nelze automaticky importovat klíče při spuštění bez obsluhy.\n"
-"Použijte \"-y\" k potlačení."
+"Refusing to automatically import keys when running unattended.\n"
+"Use \"-y\" to override."
 
 #: ../cli.py:544 ../cli.py:578
 msgid "  * Maybe you meant: "
-msgstr "  * Možná jste myslel: "
+msgstr "  * Maybe you meant: "
 
 #: ../cli.py:561 ../cli.py:569
 #, python-format
 msgid "Package(s) %s%s%s available, but not installed."
-msgstr "Balíček(y) %s%s%s dostupný/é, ale nenainstalovaný/é."
+msgstr "Package(s) %s%s%s available, but not installed."
 
 #: ../cli.py:575 ../cli.py:607 ../cli.py:687
 #, python-format
 msgid "No package %s%s%s available."
-msgstr "Balíček %s%s%s není dostupný."
+msgstr "No package %s%s%s available."
 
 #: ../cli.py:612 ../cli.py:748
 msgid "Package(s) to install"
-msgstr "Balíček(y) k instalaci"
+msgstr "Package(s) to install"
 
 #: ../cli.py:613 ../cli.py:693 ../cli.py:727 ../cli.py:749
 #: ../yumcommands.py:160
 msgid "Nothing to do"
-msgstr "Není co dělat"
+msgstr "Nothing to do"
 
 #: ../cli.py:647
 #, python-format
 msgid "%d packages marked for Update"
-msgstr "%d balíčků označeno k aktualizaci"
+msgstr "%d packages marked for Update"
 
 #: ../cli.py:650
 msgid "No Packages marked for Update"
-msgstr "Žádné balíčky označené k aktualizaci"
+msgstr "No Packages marked for Update"
 
 #: ../cli.py:664
 #, python-format
 msgid "%d packages marked for removal"
-msgstr "%d balíčků označeno ke smazání"
+msgstr "%d packages marked for removal"
 
 #: ../cli.py:667
 msgid "No Packages marked for removal"
-msgstr "Žádné balíčky označené k odstranění"
+msgstr "No Packages marked for removal"
 
 #: ../cli.py:692
 msgid "Package(s) to downgrade"
-msgstr "Balíček(y) ke snížení verze"
+msgstr "Package(s) to downgrade"
 
 #: ../cli.py:717
 #, python-format
 msgid " (from %s)"
-msgstr " (z %s)"
+msgstr " (from %s)"
 
 #: ../cli.py:719
 #, python-format
 msgid "Installed package %s%s%s%s not available."
-msgstr "Instalované balíčky  %s%s%s%s nejsou dostupné"
+msgstr "Installed package %s%s%s%s not available."
 
 #: ../cli.py:726
 msgid "Package(s) to reinstall"
-msgstr "Balíček(y) k reinstalaci"
+msgstr "Package(s) to reinstall"
 
 #: ../cli.py:739
 msgid "No Packages Provided"
-msgstr "Žádný balíček neposkytuje"
+msgstr "No Packages Provided"
 
 #: ../cli.py:818
 #, python-format
 msgid "Matched: %s"
-msgstr "Shoda: %s"
+msgstr "Matched: %s"
 
 #: ../cli.py:825
 #, python-format
 msgid "Warning: No matches found for: %s"
-msgstr "Varování: Žádný balíček odpovídající: %s"
+msgstr "Warning: No matches found for: %s"
 
 #: ../cli.py:828
 msgid "No Matches found"
-msgstr "Nebyla nalezena shoda"
+msgstr "No Matches found"
 
 #: ../cli.py:868
 #, python-format
@@ -285,111 +284,110 @@ msgid ""
 "Warning: 3.0.x versions of yum would erroneously match against filenames.\n"
 " You can use \"%s*/%s%s\" and/or \"%s*bin/%s%s\" to get that behaviour"
 msgstr ""
-"Varování: 3.0.x verze yumu by chybně hledala shodu se jménem souboru.\n"
-" Můžete použít \"%s*/%s%s\" a/nebo \"%s*bin/%s%s\" k dosažení tohoto chování"
+"Warning: 3.0.x versions of yum would erroneously match against filenames.\n"
+" You can use \"%s*/%s%s\" and/or \"%s*bin/%s%s\" to get that behaviour"
 
 #: ../cli.py:884
 #, python-format
 msgid "No Package Found for %s"
-msgstr "Nebyly nalezeny balíčky pro %s"
+msgstr "No Package Found for %s"
 
 #: ../cli.py:896
 msgid "Cleaning up Everything"
-msgstr "Čistí se vše"
+msgstr "Cleaning up Everything"
 
 #: ../cli.py:912
 msgid "Cleaning up Headers"
-msgstr "Čistí se hlavičky"
+msgstr "Cleaning up Headers"
 
 #: ../cli.py:915
 msgid "Cleaning up Packages"
-msgstr "Čistí se balíčky"
+msgstr "Cleaning up Packages"
 
 #: ../cli.py:918
 msgid "Cleaning up xml metadata"
-msgstr "Čistí se XML metadata"
+msgstr "Cleaning up xml metadata"
 
 #: ../cli.py:921
 msgid "Cleaning up database cache"
-msgstr "Čistí se skladiště databáze"
+msgstr "Cleaning up database cache"
 
 #: ../cli.py:924
 msgid "Cleaning up expire-cache metadata"
-msgstr "Ze skladiště se odstraňují zastaralá metadata"
+msgstr "Cleaning up expire-cache metadata"
 
 #: ../cli.py:927
 msgid "Cleaning up cached rpmdb data"
-msgstr "Čistí se skladiště rpmdb dat"
+msgstr "Cleaning up cached rpmdb data"
 
 #: ../cli.py:930
 msgid "Cleaning up plugins"
-msgstr "Čistí se zásuvné moduly"
+msgstr "Cleaning up plugins"
 
 #: ../cli.py:955
 msgid "Installed Groups:"
-msgstr "Nainstalované skupiny:"
+msgstr "Installed Groups:"
 
 #: ../cli.py:967
 msgid "Available Groups:"
-msgstr "Dostupné skupiny:"
+msgstr "Available Groups:"
 
 #: ../cli.py:977
 msgid "Done"
-msgstr "Dokončeno"
+msgstr "Done"
 
 #: ../cli.py:988 ../cli.py:1006 ../cli.py:1012 ../yum/__init__.py:2788
 #, python-format
 msgid "Warning: Group %s does not exist."
-msgstr "Varování: skupina %s neexistuje."
+msgstr "Warning: Group %s does not exist."
 
 #: ../cli.py:1016
 msgid "No packages in any requested group available to install or update"
-msgstr ""
-"V žádné z požadovaných skupin nejsou balíčky k instalaci nebo aktualizaci"
+msgstr "No packages in any requested group available to install or update"
 
 #: ../cli.py:1018
 #, python-format
 msgid "%d Package(s) to Install"
-msgstr "%d balíček(ů) k instalaci"
+msgstr "%d Package(s) to Install"
 
 #: ../cli.py:1028 ../yum/__init__.py:2800
 #, python-format
 msgid "No group named %s exists"
-msgstr "Neexistuje skupina se jménem %s"
+msgstr "No group named %s exists"
 
 #: ../cli.py:1034
 msgid "No packages to remove from groups"
-msgstr "Žádné balíčky k odstranění ve skupině"
+msgstr "No packages to remove from groups"
 
 #: ../cli.py:1036
 #, python-format
 msgid "%d Package(s) to remove"
-msgstr "%d balíček(ů) k odstranění"
+msgstr "%d Package(s) to remove"
 
 #: ../cli.py:1078
 #, python-format
 msgid "Package %s is already installed, skipping"
-msgstr "Balíček %s je již nainstalován, přeskakuje se"
+msgstr "Package %s is already installed, skipping"
 
 #: ../cli.py:1089
 #, python-format
 msgid "Discarding non-comparable pkg %s.%s"
-msgstr "Skartuje se neporovnatelný balíček %s.%s"
+msgstr "Discarding non-comparable pkg %s.%s"
 
 #. we've not got any installed that match n or n+a
 #: ../cli.py:1115
 #, python-format
 msgid "No other %s installed, adding to list for potential install"
-msgstr "Žádný jiný %s nainstalován, přidán do seznamu k potenciální instalaci"
+msgstr "No other %s installed, adding to list for potential install"
 
 #: ../cli.py:1135
 msgid "Plugin Options"
-msgstr "Možnosti zásuvného modulu"
+msgstr "Plugin Options"
 
 #: ../cli.py:1143
 #, python-format
 msgid "Command line error: %s"
-msgstr "Chyba příkazové řádky: %s"
+msgstr "Command line error: %s"
 
 #: ../cli.py:1156
 #, python-format
@@ -400,173 +398,172 @@ msgid ""
 msgstr ""
 "\n"
 "\n"
-"%s: %s volba vyžaduje argument"
+"%s: %s option requires an argument"
 
 #: ../cli.py:1209
 msgid "--color takes one of: auto, always, never"
-msgstr "--color přijímá jeden z: auto, always, never"
+msgstr "--color takes one of: auto, always, never"
 
 #: ../cli.py:1319
 msgid "show this help message and exit"
-msgstr "ukázat tuto nápovědu a skončit"
+msgstr "show this help message and exit"
 
 #: ../cli.py:1323
 msgid "be tolerant of errors"
-msgstr "tolerovat chyby"
+msgstr "be tolerant of errors"
 
 #: ../cli.py:1326
 msgid "run entirely from system cache, don't update cache"
-msgstr "spustit vše ze systémového skladiště, bez jeho aktualizace"
+msgstr "run entirely from system cache, don't update cache"
 
 #: ../cli.py:1329
 msgid "config file location"
-msgstr "umístění konfiguračního souboru"
+msgstr "config file location"
 
 #: ../cli.py:1332
 msgid "maximum command wait time"
-msgstr "maximální čas čekání na příkaz"
+msgstr "maximum command wait time"
 
 #: ../cli.py:1334
 msgid "debugging output level"
-msgstr "úroveň výstupních ladících informací"
+msgstr "debugging output level"
 
 #: ../cli.py:1338
 msgid "show duplicates, in repos, in list/search commands"
-msgstr "ukázat duplikáty v repozitářích, v list/search příkazech"
+msgstr "show duplicates, in repos, in list/search commands"
 
 #: ../cli.py:1340
 msgid "error output level"
-msgstr "úroveň výstupu chyb"
+msgstr "error output level"
 
 #: ../cli.py:1343
 msgid "debugging output level for rpm"
-msgstr "úroveň výstupních ladících informací pro rpm"
+msgstr "debugging output level for rpm"
 
 #: ../cli.py:1346
 msgid "quiet operation"
-msgstr "tichý chod"
+msgstr "quiet operation"
 
 #: ../cli.py:1348
 msgid "verbose operation"
-msgstr "užvaněný chod"
+msgstr "verbose operation"
 
 #: ../cli.py:1350
 msgid "answer yes for all questions"
-msgstr "odpovědět ano na všechny otázky"
+msgstr "answer yes for all questions"
 
 #: ../cli.py:1352
 msgid "show Yum version and exit"
-msgstr "ukázat verzi yumu a skončit"
+msgstr "show Yum version and exit"
 
 #: ../cli.py:1353
 msgid "set install root"
-msgstr "nastavit kořen instalace "
+msgstr "set install root"
 
 #: ../cli.py:1357
 msgid "enable one or more repositories (wildcards allowed)"
-msgstr "povolit jeden nebo více repozitářů (zástupné znaky povoleny)"
+msgstr "enable one or more repositories (wildcards allowed)"
 
 #: ../cli.py:1361
 msgid "disable one or more repositories (wildcards allowed)"
-msgstr "zakázat jeden nebo více repozitářů (zástupné znaky povoleny)"
+msgstr "disable one or more repositories (wildcards allowed)"
 
 #: ../cli.py:1364
 msgid "exclude package(s) by name or glob"
-msgstr "vyřadit balíček(y) podle jména nebo globálně"
+msgstr "exclude package(s) by name or glob"
 
 #: ../cli.py:1366
 msgid "disable exclude from main, for a repo or for everything"
-msgstr "zakázat vyřazení z hlavní části, pro repozitář nebo pro vše"
+msgstr "disable exclude from main, for a repo or for everything"
 
 #: ../cli.py:1369
 msgid "enable obsoletes processing during updates"
-msgstr "povolit zpracování zastaralých během aktualizací"
+msgstr "enable obsoletes processing during updates"
 
 #: ../cli.py:1371
 msgid "disable Yum plugins"
-msgstr "zakázat zásuvné moduly yumu"
+msgstr "disable Yum plugins"
 
 #: ../cli.py:1373
 msgid "disable gpg signature checking"
-msgstr "zakázat kontrolu GPG podpisů"
+msgstr "disable gpg signature checking"
 
 #: ../cli.py:1375
 msgid "disable plugins by name"
-msgstr "zakázat zásuvné moduly podle jména"
+msgstr "disable plugins by name"
 
 #: ../cli.py:1378
 msgid "enable plugins by name"
-msgstr "povolit zásuvné moduly podle jména"
+msgstr "enable plugins by name"
 
 #: ../cli.py:1381
 msgid "skip packages with depsolving problems"
-msgstr "přeskočit balíčky s problémy v závislostech"
+msgstr "skip packages with depsolving problems"
 
 #: ../cli.py:1383
 msgid "control whether color is used"
-msgstr "kontrola zda jsou použity barvy"
+msgstr "control whether colour is used"
 
 #: ../cli.py:1385
 msgid "set value of $releasever in yum config and repo files"
-msgstr "nastavte hodnotu $releasever v konfiguraci yumu a repo souborech"
+msgstr "set value of $releasever in yum config and repo files"
 
-# FIXME: Do not hardoce month abbreviations, use glibc instead
 #: ../output.py:305
 msgid "Jan"
-msgstr "Led"
+msgstr "Jan"
 
 #: ../output.py:305
 msgid "Feb"
-msgstr "Úno"
+msgstr "Feb"
 
 #: ../output.py:305
 msgid "Mar"
-msgstr "Bře"
+msgstr "Mar"
 
 #: ../output.py:305
 msgid "Apr"
-msgstr "Dub"
+msgstr "Apr"
 
 #: ../output.py:305
 msgid "May"
-msgstr "Kvě"
+msgstr "May"
 
 #: ../output.py:305
 msgid "Jun"
-msgstr "Čer"
+msgstr "Jun"
 
 #: ../output.py:306
 msgid "Jul"
-msgstr "Čec"
+msgstr "Jul"
 
 #: ../output.py:306
 msgid "Aug"
-msgstr "Srp"
+msgstr "Aug"
 
 #: ../output.py:306
 msgid "Sep"
-msgstr "Zář"
+msgstr "Sep"
 
 #: ../output.py:306
 msgid "Oct"
-msgstr "Říj"
+msgstr "Oct"
 
 #: ../output.py:306
 msgid "Nov"
-msgstr "Lis"
+msgstr "Nov"
 
 #: ../output.py:306
 msgid "Dec"
-msgstr "Pro"
+msgstr "Dec"
 
 #: ../output.py:316
 msgid "Trying other mirror."
-msgstr "Zkouší se jiné zrcadlo"
+msgstr "Trying other mirror."
 
 #: ../output.py:534
 #, python-format
 msgid "Name       : %s%s%s"
-msgstr "Jméno      : %s%s%s"
+msgstr "Name       : %s%s%s"
 
 #: ../output.py:535
 #, python-format
@@ -576,22 +573,22 @@ msgstr "Arch       : %s"
 #: ../output.py:537
 #, python-format
 msgid "Epoch      : %s"
-msgstr "Epocha     : %s"
+msgstr "Epoch      : %s"
 
 #: ../output.py:538
 #, python-format
 msgid "Version    : %s"
-msgstr "Verze      : %s"
+msgstr "Version    : %s"
 
 #: ../output.py:539
 #, python-format
 msgid "Release    : %s"
-msgstr "Vydání     : %s"
+msgstr "Release    : %s"
 
 #: ../output.py:540
 #, python-format
 msgid "Size       : %s"
-msgstr "Velikost   : %s"
+msgstr "Size       : %s"
 
 #: ../output.py:541
 #, python-format
@@ -601,31 +598,31 @@ msgstr "Repo       : %s"
 #: ../output.py:543
 #, python-format
 msgid "From repo  : %s"
-msgstr "Z repa     : %s"
+msgstr "From repo  : %s"
 
 #: ../output.py:545
 #, python-format
 msgid "Committer  : %s"
-msgstr "Vloženo    : %s"
+msgstr "Committer  : %s"
 
 #: ../output.py:546
 #, python-format
 msgid "Committime : %s"
-msgstr "Čas vložení : %s"
+msgstr "Committime : %s"
 
 #: ../output.py:547
 #, python-format
 msgid "Buildtime  : %s"
-msgstr "Sestaveno  : %s"
+msgstr "Buildtime  : %s"
 
 #: ../output.py:549
 #, python-format
 msgid "Installtime: %s"
-msgstr "Instalováno: %s"
+msgstr "Installtime: %s"
 
 #: ../output.py:550
 msgid "Summary    : "
-msgstr "Souhrn     : "
+msgstr "Summary    : "
 
 #: ../output.py:552
 #, python-format
@@ -638,15 +635,15 @@ msgstr "Licence    : "
 
 #: ../output.py:554
 msgid "Description: "
-msgstr "Popis      : "
+msgstr "Description: "
 
 #: ../output.py:622
 msgid "y"
-msgstr "a"
+msgstr "y"
 
 #: ../output.py:622
 msgid "yes"
-msgstr "ano"
+msgstr "yes"
 
 #: ../output.py:623
 msgid "n"
@@ -654,11 +651,11 @@ msgstr "n"
 
 #: ../output.py:623
 msgid "no"
-msgstr "ne"
+msgstr "no"
 
 #: ../output.py:627
 msgid "Is this ok [y/N]: "
-msgstr "V pořádku [a/N]: "
+msgstr "Is this ok [y/N]: "
 
 #: ../output.py:715
 #, python-format
@@ -667,51 +664,51 @@ msgid ""
 "Group: %s"
 msgstr ""
 "\n"
-"Skupina: %s"
+"Group: %s"
 
 #: ../output.py:719
 #, python-format
 msgid " Group-Id: %s"
-msgstr " ID skupiny: %s"
+msgstr " Group-Id: %s"
 
 #: ../output.py:724
 #, python-format
 msgid " Description: %s"
-msgstr " Popis: %s"
+msgstr " Description: %s"
 
 #: ../output.py:726
 msgid " Mandatory Packages:"
-msgstr " Povinné balíčky:"
+msgstr " Mandatory Packages:"
 
 #: ../output.py:727
 msgid " Default Packages:"
-msgstr " Výchozí balíčky:"
+msgstr " Default Packages:"
 
 #: ../output.py:728
 msgid " Optional Packages:"
-msgstr " Volitelné balíčky:"
+msgstr " Optional Packages:"
 
 #: ../output.py:729
 msgid " Conditional Packages:"
-msgstr " Podmínečné balíčky:"
+msgstr " Conditional Packages:"
 
 #: ../output.py:749
 #, python-format
 msgid "package: %s"
-msgstr "balíčky: %s"
+msgstr "package: %s"
 
 #: ../output.py:751
 msgid "  No dependencies for this package"
-msgstr "  Pro tento balíček nejsou žádné závislosti"
+msgstr "  No dependencies for this package"
 
 #: ../output.py:756
 #, python-format
 msgid "  dependency: %s"
-msgstr "  závislosti: %s"
+msgstr "  dependency: %s"
 
 #: ../output.py:758
 msgid "   Unsatisfied dependency"
-msgstr "   Neuspokojené závislosti"
+msgstr "   Unsatisfied dependency"
 
 #: ../output.py:830
 #, python-format
@@ -720,11 +717,11 @@ msgstr "Repo        : %s"
 
 #: ../output.py:831
 msgid "Matched from:"
-msgstr "Shoda s:"
+msgstr "Matched from:"
 
 #: ../output.py:840
 msgid "Description : "
-msgstr "Popis       : "
+msgstr "Description : "
 
 #: ../output.py:843
 #, python-format
@@ -739,58 +736,58 @@ msgstr "Licence     : %s"
 #: ../output.py:849
 #, python-format
 msgid "Filename    : %s"
-msgstr "Soubor      : %s"
+msgstr "Filename    : %s"
 
 #: ../output.py:853
 msgid "Other       : "
-msgstr "Další       : "
+msgstr "Other       : "
 
 #: ../output.py:896
 msgid "There was an error calculating total download size"
-msgstr "Při výpočtu celkové velikosti stahování nastala chyba"
+msgstr "There was an error calculating total download size"
 
 #: ../output.py:901
 #, python-format
 msgid "Total size: %s"
-msgstr "Celková velikost: %s"
+msgstr "Total size: %s"
 
 #: ../output.py:904
 #, python-format
 msgid "Total download size: %s"
-msgstr "Celková velikost stahování: %s"
+msgstr "Total download size: %s"
 
 #: ../output.py:908
 #, python-format
 msgid "Installed size: %s"
-msgstr "Nainstalovaná velikost: %s"
+msgstr "Installed size: %s"
 
 #: ../output.py:949
 msgid "Reinstalling"
-msgstr "Přeinstalovává se"
+msgstr "Reinstalling"
 
 #: ../output.py:950
 msgid "Downgrading"
-msgstr "Snižuje se verze"
+msgstr "Downgrading"
 
 #: ../output.py:951
 msgid "Installing for dependencies"
-msgstr "Instaluje se kvůli závislostem"
+msgstr "Installing for dependencies"
 
 #: ../output.py:952
 msgid "Updating for dependencies"
-msgstr "Aktualizuje se kvůli závislostem"
+msgstr "Updating for dependencies"
 
 #: ../output.py:953
 msgid "Removing for dependencies"
-msgstr "Odstraňuje se kvůli závislostem"
+msgstr "Removing for dependencies"
 
 #: ../output.py:960 ../output.py:1072
 msgid "Skipped (dependency problems)"
-msgstr "Přeskočeno (problémy se závislostmi)"
+msgstr "Skipped (dependency problems)"
 
 #: ../output.py:983
 msgid "Package"
-msgstr "Balíček"
+msgstr "Package"
 
 #: ../output.py:983
 msgid "Arch"
@@ -798,20 +795,20 @@ msgstr "Arch"
 
 #: ../output.py:984
 msgid "Version"
-msgstr "Verze"
+msgstr "Version"
 
 #: ../output.py:984
 msgid "Repository"
-msgstr "Repozitář"
+msgstr "Repository"
 
 #: ../output.py:985
 msgid "Size"
-msgstr "Vel."
+msgstr "Size"
 
 #: ../output.py:997
 #, python-format
 msgid "     replacing  %s%s%s.%s %s\n"
-msgstr "     nahrazuje se  %s%s%s.%s %s\n"
+msgstr "     replacing  %s%s%s.%s %s\n"
 
 #: ../output.py:1006
 #, python-format
@@ -821,7 +818,7 @@ msgid ""
 "%s\n"
 msgstr ""
 "\n"
-"Shrnutí transakce\n"
+"Transaction Summary\n"
 "%s\n"
 
 #: ../output.py:1013
@@ -830,8 +827,8 @@ msgid ""
 "Install   %5.5s Package(s)\n"
 "Upgrade   %5.5s Package(s)\n"
 msgstr ""
-"Instalace     %5.5s balíčku/ů\n"
-"Aktualizace   %5.5s balíčku/ů\n"
+"Install   %5.5s Package(s)\n"
+"Upgrade   %5.5s Package(s)\n"
 
 #: ../output.py:1022
 #, python-format
@@ -840,40 +837,39 @@ msgid ""
 "Reinstall %5.5s Package(s)\n"
 "Downgrade %5.5s Package(s)\n"
 msgstr ""
-"Odstranění    %5.5s balíčku/ů\n"
-"Reinstalace   %5.5s balíčku/ů\n"
-"Snížení verze %5.5s balíčku/ů\n"
+"Remove    %5.5s Package(s)\n"
+"Reinstall %5.5s Package(s)\n"
+"Downgrade %5.5s Package(s)\n"
 
 #: ../output.py:1066
 msgid "Removed"
-msgstr "Odstraněno"
+msgstr "Removed"
 
 #: ../output.py:1067
 msgid "Dependency Removed"
-msgstr "Odstraněné závislosti"
+msgstr "Dependency Removed"
 
 #: ../output.py:1069
 msgid "Dependency Installed"
-msgstr "Nainstalované závislosti"
+msgstr "Dependency Installed"
 
 #: ../output.py:1071
 msgid "Dependency Updated"
-msgstr "Aktualizované závislosti"
+msgstr "Dependency Updated"
 
 #: ../output.py:1073
 msgid "Replaced"
-msgstr "Nahrazeno"
+msgstr "Replaced"
 
 #: ../output.py:1074
 msgid "Failed"
-msgstr "Selhalo"
+msgstr "Failed"
 
 #. Delta between C-c's so we treat as exit
 #: ../output.py:1140
 msgid "two"
-msgstr "dvě"
+msgstr "two"
 
-# FIXME: plurals
 #. For translators: This is output like:
 #. Current download cancelled, interrupt (ctrl-c) again within two seconds
 #. to exit.
@@ -887,17 +883,17 @@ msgid ""
 "to exit.\n"
 msgstr ""
 "\n"
-"Aktuální stahování zrušeno, běh lze ukončit %sopakovaným přerušením "
-"(ctrl-c)%s\n"
-"během %s%s%s sekund.\n"
+" Current download cancelled, %sinterrupt (ctrl-c) again%s within %s%s%s "
+"seconds\n"
+"to exit.\n"
 
 #: ../output.py:1162
 msgid "user interrupt"
-msgstr "Přerušeno uživatelem"
+msgstr "user interrupt"
 
 #: ../output.py:1180
 msgid "Total"
-msgstr "Celkem"
+msgstr "Total"
 
 #: ../output.py:1202
 msgid "I"
@@ -925,15 +921,15 @@ msgstr "U"
 
 #: ../output.py:1217
 msgid "<unset>"
-msgstr "<nenastaveno>"
+msgstr "<unset>"
 
 #: ../output.py:1218
 msgid "System"
-msgstr "Systém"
+msgstr "System"
 
 #: ../output.py:1254
 msgid "Bad transaction IDs, or package(s), given"
-msgstr "Zadáno špatné ID transakce nebo balíčku/ů"
+msgstr "Bad transaction IDs, or package(s), given"
 
 #: ../output.py:1266
 msgid "ID"
@@ -941,218 +937,218 @@ msgstr "ID"
 
 #: ../output.py:1267 ../output.py:1520
 msgid "Login user"
-msgstr "Přihlášení uživatele"
+msgstr "Login user"
 
 #: ../output.py:1268
 msgid "Date and time"
-msgstr "Datum a čas"
+msgstr "Date and time"
 
 #: ../output.py:1269 ../output.py:1522
 msgid "Action(s)"
-msgstr "Akce"
+msgstr "Action(s)"
 
 #: ../output.py:1270 ../output.py:1523
 msgid "Altered"
-msgstr "Pozměněno"
+msgstr "Altered"
 
 #: ../output.py:1310
 msgid "No transaction ID given"
-msgstr "Nezadáno ID transakce"
+msgstr "No transaction ID given"
 
 #: ../output.py:1336
 msgid "Bad transaction ID given"
-msgstr "Špatné ID transakce"
+msgstr "Bad transaction ID given"
 
 #: ../output.py:1341
 msgid "Not found given transaction ID"
-msgstr "Zadané ID transakce nenalezeno"
+msgstr "Not found given transaction ID"
 
 #: ../output.py:1349
 msgid "Found more than one transaction ID!"
-msgstr "Nalezeno více než jedno ID transakce!"
+msgstr "Found more than one transaction ID!"
 
 #: ../output.py:1370
 msgid "No transaction ID, or package, given"
-msgstr "Nebylo zadáno ID transakce nebo balíčku/ů"
+msgstr "No transaction ID, or package, given"
 
 #: ../output.py:1396
 msgid "Transaction ID :"
-msgstr "ID transakce:"
+msgstr "Transaction ID :"
 
 #: ../output.py:1398
 msgid "Begin time     :"
-msgstr "Počáteční čas  :"
+msgstr "Begin time     :"
 
 #: ../output.py:1401 ../output.py:1403
 msgid "Begin rpmdb    :"
-msgstr "Začátek rpmdb  :"
+msgstr "Begin rpmdb    :"
 
 #: ../output.py:1417
 #, python-format
 msgid "(%s seconds)"
-msgstr "(%s sekund)"
+msgstr "(%s seconds)"
 
 #: ../output.py:1418
 msgid "End time       :"
-msgstr "Konečný čas    :"
+msgstr "End time       :"
 
 #: ../output.py:1421 ../output.py:1423
 msgid "End rpmdb      :"
-msgstr "Konec rpmdb    :"
+msgstr "End rpmdb      :"
 
 #: ../output.py:1424
 msgid "User           :"
-msgstr "Uživatel       :"
+msgstr "User           :"
 
 #: ../output.py:1426 ../output.py:1428 ../output.py:1430
 msgid "Return-Code    :"
-msgstr "Návratový kód  :"
+msgstr "Return-Code    :"
 
 #: ../output.py:1426
 msgid "Aborted"
-msgstr "Přerušeno"
+msgstr "Aborted"
 
 #: ../output.py:1428
 msgid "Failure:"
-msgstr "Selhalo:"
+msgstr "Failure:"
 
 #: ../output.py:1430
 msgid "Success"
-msgstr "Úspěch"
+msgstr "Success"
 
 #: ../output.py:1431
 msgid "Transaction performed with:"
-msgstr "Transakce proběhla s:"
+msgstr "Transaction performed with:"
 
 #: ../output.py:1444 ../output.py:1489
 msgid "Downgraded"
-msgstr "Snížena verze"
+msgstr "Downgraded"
 
 #. multiple versions installed, both older and newer
 #: ../output.py:1446
 msgid "Weird"
-msgstr "Divné"
+msgstr "Weird"
 
 #: ../output.py:1448
 msgid "Packages Altered:"
-msgstr "Pozměněné balíčky:"
+msgstr "Packages Altered:"
 
 #: ../output.py:1451
 msgid "Scriptlet output:"
-msgstr "Výstup skriptletu:"
+msgstr "Scriptlet output:"
 
 #: ../output.py:1457
 msgid "Errors:"
-msgstr "Chyby:"
+msgstr "Errors:"
 
 #: ../output.py:1481 ../output.py:1482
 msgid "Install"
-msgstr "Instalovat"
+msgstr "Install"
 
 #: ../output.py:1483
 msgid "Dep-Install"
-msgstr "Instalovat závislosti"
+msgstr "Dep-Install"
 
 #: ../output.py:1485
 msgid "Obsoleting"
-msgstr "Zastaralé"
+msgstr "Obsoleting"
 
 #: ../output.py:1486
 msgid "Erase"
-msgstr "Smazat"
+msgstr "Erase"
 
 #: ../output.py:1487
 msgid "Reinstall"
-msgstr "Přeinstalovat"
+msgstr "Reinstall"
 
 #: ../output.py:1488
 msgid "Downgrade"
-msgstr "Snížit verzi"
+msgstr "Downgrade"
 
 #: ../output.py:1490
 msgid "Update"
-msgstr "Aktualizovat"
+msgstr "Update"
 
 #: ../output.py:1521
 msgid "Time"
-msgstr "Čas"
+msgstr "Time"
 
 #: ../output.py:1547
 msgid "Last day"
-msgstr "Poslední den"
+msgstr "Last day"
 
 #: ../output.py:1548
 msgid "Last week"
-msgstr "Poslední týden"
+msgstr "Last week"
 
 #: ../output.py:1549
 msgid "Last 2 weeks"
-msgstr "Poslední 2 týdny"
+msgstr "Last 2 weeks"
 
 #. US default :p
 #: ../output.py:1550
 msgid "Last 3 months"
-msgstr "Poslední 3 měsíce"
+msgstr "Last 3 months"
 
 #: ../output.py:1551
 msgid "Last 6 months"
-msgstr "Posledních 6 měsíců"
+msgstr "Last 6 months"
 
 #: ../output.py:1552
 msgid "Last year"
-msgstr "Poslední rok"
+msgstr "Last year"
 
 #: ../output.py:1553
 msgid "Over a year ago"
-msgstr "Více než rok"
+msgstr "Over a year ago"
 
 #: ../output.py:1585
 msgid "installed"
-msgstr "instalaci"
+msgstr "installed"
 
 #: ../output.py:1586
 msgid "updated"
-msgstr "aktualizaci"
+msgstr "updated"
 
 #: ../output.py:1587
 msgid "obsoleted"
-msgstr "zastarání"
+msgstr "obsoleted"
 
 #: ../output.py:1588
 msgid "erased"
-msgstr "smazání"
+msgstr "erased"
 
 #: ../output.py:1592
 #, python-format
 msgid "---> Package %s.%s %s:%s-%s set to be %s"
-msgstr "---> Balíček %s.%s %s:%s-%s nastaven k %s"
+msgstr "---> Package %s.%s %s:%s-%s set to be %s"
 
 #: ../output.py:1599
 msgid "--> Running transaction check"
-msgstr "--> Spouští se kontrola transakce"
+msgstr "--> Running transaction check"
 
 #: ../output.py:1604
 msgid "--> Restarting Dependency Resolution with new changes."
-msgstr "--> Restartuje se řešení závislostí s novými změnami."
+msgstr "--> Restarting Dependency Resolution with new changes."
 
 #: ../output.py:1609
 msgid "--> Finished Dependency Resolution"
-msgstr "--> Řešení závislostí dokončeno"
+msgstr "--> Finished Dependency Resolution"
 
 #: ../output.py:1614 ../output.py:1619
 #, python-format
 msgid "--> Processing Dependency: %s for package: %s"
-msgstr "--> Zpracování závislosti: %s pro balíček: %s"
+msgstr "--> Processing Dependency: %s for package: %s"
 
 #: ../output.py:1623
 #, python-format
 msgid "--> Unresolved Dependency: %s"
-msgstr "--> Nevyřešená závislost: %s"
+msgstr "--> Unresolved Dependency: %s"
 
 #: ../output.py:1634
 #, python-format
 msgid "Package: %s"
-msgstr "Balíček: %s"
+msgstr "Package: %s"
 
 #: ../output.py:1636
 #, python-format
@@ -1161,7 +1157,7 @@ msgid ""
 "    Requires: %s"
 msgstr ""
 "\n"
-"    Vyžaduje: %s"
+"    Requires: %s"
 
 #: ../output.py:1649 ../output.py:1660
 #, python-format
@@ -1174,33 +1170,33 @@ msgstr ""
 
 #: ../output.py:1657
 msgid "Available"
-msgstr "Dostupné"
+msgstr "Available"
 
 #: ../output.py:1665 ../output.py:1670
 #, python-format
 msgid "--> Processing Conflict: %s conflicts %s"
-msgstr "--> Zpracování konfliktu: %s je v konfliktu s %s"
+msgstr "--> Processing Conflict: %s conflicts %s"
 
 #: ../output.py:1674
 msgid "--> Populating transaction set with selected packages. Please wait."
-msgstr "--> Do transakční sady se přidávají vybrané balíčky. Čekejte prosím."
+msgstr "--> Populating transaction set with selected packages. Please wait."
 
 #: ../output.py:1678
 #, python-format
 msgid "---> Downloading header for %s to pack into transaction set."
-msgstr "---> Stahují se hlavičky %s pro přidání do transakce."
+msgstr "---> Downloading header for %s to pack into transaction set."
 
 #: ../utils.py:93
 msgid "Running"
-msgstr "Běží"
+msgstr "Running"
 
 #: ../utils.py:94
 msgid "Sleeping"
-msgstr "Spí"
+msgstr "Sleeping"
 
 #: ../utils.py:95
 msgid "Uninterruptible"
-msgstr "Nepřerušitelné"
+msgstr "Uninterruptible"
 
 #: ../utils.py:96
 msgid "Zombie"
@@ -1208,45 +1204,45 @@ msgstr "Zombie"
 
 #: ../utils.py:97
 msgid "Traced/Stopped"
-msgstr "Trasován/Zastaven"
+msgstr "Traced/Stopped"
 
 #: ../utils.py:98 ../yumcommands.py:917
 msgid "Unknown"
-msgstr "Neznámý"
+msgstr "Unknown"
 
 #: ../utils.py:109
 msgid "  The other application is: PackageKit"
-msgstr "  Další aplikace je: PackageKit"
+msgstr "  The other application is: PackageKit"
 
 #: ../utils.py:111
 #, python-format
 msgid "  The other application is: %s"
-msgstr "  Další aplikace je: %s"
+msgstr "  The other application is: %s"
 
 #: ../utils.py:114
 #, python-format
 msgid "    Memory : %5s RSS (%5sB VSZ)"
-msgstr "    Paměť  : %5s RSS (%5sB VSZ)"
+msgstr "    Memory : %5s RSS (%5sB VSZ)"
 
 #: ../utils.py:119
 #, python-format
 msgid "    Started: %s - %s ago"
-msgstr "    Spuštěn: %s - %s nazpět"
+msgstr "    Started: %s - %s ago"
 
 #: ../utils.py:121
 #, python-format
 msgid "    State  : %s, pid: %d"
-msgstr "    Stav   : %s, pid: %d"
+msgstr "    State  : %s, pid: %d"
 
 #: ../utils.py:199
 #, python-format
 msgid "PluginExit Error: %s"
-msgstr "Chyba PluginExit: %s"
+msgstr "PluginExit Error: %s"
 
 #: ../utils.py:202
 #, python-format
 msgid "Yum Error: %s"
-msgstr "Chyba Yumu: %s"
+msgstr "Yum Error: %s"
 
 #: ../utils.py:235 ../yummain.py:42
 msgid ""
@@ -1256,7 +1252,7 @@ msgid ""
 msgstr ""
 "\n"
 "\n"
-"Ukončeno na základě pokynu uživatele"
+"Exiting on user cancel"
 
 #: ../utils.py:241 ../yummain.py:48
 msgid ""
@@ -1266,7 +1262,7 @@ msgid ""
 msgstr ""
 "\n"
 "\n"
-"Ukončeno kvůli nefunkční rouře"
+"Exiting on Broken Pipe"
 
 #: ../utils.py:243 ../yummain.py:50
 #, python-format
@@ -1281,11 +1277,11 @@ msgstr ""
 
 #: ../utils.py:282 ../yummain.py:211
 msgid "Complete!"
-msgstr "Hotovo!"
+msgstr "Complete!"
 
 #: ../yumcommands.py:43
 msgid "You need to be root to perform this command."
-msgstr "Pro spuštění tohoto příkazu potřebujete být root."
+msgstr "You need to be root to perform this command."
 
 #: ../yumcommands.py:50
 msgid ""
@@ -1305,240 +1301,240 @@ msgid ""
 "For more information contact your distribution or package provider.\n"
 msgstr ""
 "\n"
-"Povolili jste kontrolu balíčků pomocí GPG klíčů, což je dobrá věc.\n"
-"Bohužel nemáte ale nainstalován žádný veřejný GPG klíč. Musíte stáhnout "
-"klíč\n"
-"pro balíček, který si přejete nainstalovat a přidat jej příkazem\n"
+"You have enabled checking of packages via GPG keys. This is a good thing. \n"
+"However, you do not have any GPG public keys installed. You need to download\n"
+"the keys for packages you wish to install and install them.\n"
+"You can do that by running the command:\n"
 "    rpm --import public.gpg.key\n"
 "\n"
 "\n"
-"Jako druhou možnost můžete uvést URL ke klíči, který chcete použít\n"
-"pro repozitář ve volbě 'gpgkey' v nastavení repozitáře, a yum\n"
-"jej nainstaluje.\n"
+"Alternatively you can specify the url to the key you would like to use\n"
+"for a repository in the 'gpgkey' option in a repository section and yum \n"
+"will install it for you.\n"
 "\n"
-"Více informací získáte u svého distributora nebo správce balíčku.\n"
+"For more information contact your distribution or package provider.\n"
 
 #: ../yumcommands.py:70
 #, python-format
 msgid "Error: Need to pass a list of pkgs to %s"
-msgstr "Chyba: Je potřeba předat seznam balíčků do %s"
+msgstr "Error: Need to pass a list of pkgs to %s"
 
 #: ../yumcommands.py:76
 msgid "Error: Need an item to match"
-msgstr "Chyba: K nalezení shody je potřeba předmět"
+msgstr "Error: Need an item to match"
 
 #: ../yumcommands.py:82
 msgid "Error: Need a group or list of groups"
-msgstr "Chyba: Je potřeba skupina nebo seznam skupin"
+msgstr "Error: Need a group or list of groups"
 
 #: ../yumcommands.py:91
 #, python-format
 msgid "Error: clean requires an option: %s"
-msgstr "Chyba: clean vyžaduje volbu: %s"
+msgstr "Error: clean requires an option: %s"
 
 #: ../yumcommands.py:96
 #, python-format
 msgid "Error: invalid clean argument: %r"
-msgstr "Chyba: Neplatný argument pro clean: %r"
+msgstr "Error: invalid clean argument: %r"
 
 #: ../yumcommands.py:109
 msgid "No argument to shell"
-msgstr "Shell nemá žádný argument"
+msgstr "No argument to shell"
 
 #: ../yumcommands.py:111
 #, python-format
 msgid "Filename passed to shell: %s"
-msgstr "Jméno souboru předané shellu: %s"
+msgstr "Filename passed to shell: %s"
 
 #: ../yumcommands.py:115
 #, python-format
 msgid "File %s given as argument to shell does not exist."
-msgstr "Soubor %s předaný jako argument shellu neexistuje."
+msgstr "File %s given as argument to shell does not exist."
 
 #: ../yumcommands.py:121
 msgid "Error: more than one file given as argument to shell."
-msgstr "Chyba: Více než jeden soubor předán shellu jako argument."
+msgstr "Error: more than one file given as argument to shell."
 
 #: ../yumcommands.py:170
 msgid "PACKAGE..."
-msgstr "Balíček..."
+msgstr "PACKAGE..."
 
 #: ../yumcommands.py:173
 msgid "Install a package or packages on your system"
-msgstr "Instalovat balíček nebo balíčky do vašeho systému"
+msgstr "Install a package or packages on your system"
 
 #: ../yumcommands.py:181
 msgid "Setting up Install Process"
-msgstr "Uspořádává se průběh instalace"
+msgstr "Setting up Install Process"
 
 #: ../yumcommands.py:192
 msgid "[PACKAGE...]"
-msgstr "[Balíček...]"
+msgstr "[PACKAGE...]"
 
 #: ../yumcommands.py:195
 msgid "Update a package or packages on your system"
-msgstr "Aktualizovat balíček nebo balíčky na vašem systému"
+msgstr "Update a package or packages on your system"
 
 #: ../yumcommands.py:202
 msgid "Setting up Update Process"
-msgstr "Uspořádává se průběh aktualizace"
+msgstr "Setting up Update Process"
 
 #: ../yumcommands.py:244
 msgid "Display details about a package or group of packages"
-msgstr "Zobrazit detaily o balíčku nebo skupině balíčků"
+msgstr "Display details about a package or group of packages"
 
 #: ../yumcommands.py:293
 msgid "Installed Packages"
-msgstr "Nainstalované balíčky"
+msgstr "Installed Packages"
 
 #: ../yumcommands.py:301
 msgid "Available Packages"
-msgstr "Dostupné balíčky"
+msgstr "Available Packages"
 
 #: ../yumcommands.py:305
 msgid "Extra Packages"
-msgstr "Dodatečné balíčky"
+msgstr "Extra Packages"
 
 #: ../yumcommands.py:309
 msgid "Updated Packages"
-msgstr "Aktualizované balíčky"
+msgstr "Updated Packages"
 
 #. This only happens in verbose mode
 #: ../yumcommands.py:317 ../yumcommands.py:324 ../yumcommands.py:601
 msgid "Obsoleting Packages"
-msgstr "Zastaralé balíčky"
+msgstr "Obsoleting Packages"
 
 #: ../yumcommands.py:326
 msgid "Recently Added Packages"
-msgstr "Nově přidané balíčky"
+msgstr "Recently Added Packages"
 
 #: ../yumcommands.py:333
 msgid "No matching Packages to list"
-msgstr "Nenalezeny shodné balíčky"
+msgstr "No matching Packages to list"
 
 #: ../yumcommands.py:347
 msgid "List a package or groups of packages"
-msgstr "Vypsat balíček nebo skupiny balíčků"
+msgstr "List a package or groups of packages"
 
 #: ../yumcommands.py:359
 msgid "Remove a package or packages from your system"
-msgstr "Odstranit balíček nebo balíčky ze systému"
+msgstr "Remove a package or packages from your system"
 
 #: ../yumcommands.py:366
 msgid "Setting up Remove Process"
-msgstr "Uspořádává se průběh odstranění"
+msgstr "Setting up Remove Process"
 
 #: ../yumcommands.py:380
 msgid "Setting up Group Process"
-msgstr "Uspořádává se zpracování skupiny"
+msgstr "Setting up Group Process"
 
 #: ../yumcommands.py:386
 msgid "No Groups on which to run command"
-msgstr "Nenalezeny skupiny, na které by šlo příkaz aplikovat"
+msgstr "No Groups on which to run command"
 
 #: ../yumcommands.py:399
 msgid "List available package groups"
-msgstr "Vypsat dostupné skupiny balíčků"
+msgstr "List available package groups"
 
 #: ../yumcommands.py:416
 msgid "Install the packages in a group on your system"
-msgstr "Instalovat balíčky ze skupiny do systému"
+msgstr "Install the packages in a group on your system"
 
 #: ../yumcommands.py:438
 msgid "Remove the packages in a group from your system"
-msgstr "Odstranit balíčky ze skupiny ze systému"
+msgstr "Remove the packages in a group from your system"
 
 #: ../yumcommands.py:465
 msgid "Display details about a package group"
-msgstr "Zobrazit detaily o skupině balíčků"
+msgstr "Display details about a package group"
 
 #: ../yumcommands.py:489
 msgid "Generate the metadata cache"
-msgstr "Vygenerovat skladiště metadat"
+msgstr "Generate the metadata cache"
 
 #: ../yumcommands.py:495
 msgid "Making cache files for all metadata files."
-msgstr "Vytváří se skladištní soubory pro všechna metadata "
+msgstr "Making cache files for all metadata files."
 
 #: ../yumcommands.py:496
 msgid "This may take a while depending on the speed of this computer"
-msgstr "Může to chvíli trvat v závislosti na rychlosti tohoto počítače"
+msgstr "This may take a while depending on the speed of this computer"
 
 #: ../yumcommands.py:517
 msgid "Metadata Cache Created"
-msgstr "Skladiště metadat vytvořeno"
+msgstr "Metadata Cache Created"
 
 #: ../yumcommands.py:531
 msgid "Remove cached data"
-msgstr "Odstranit data ze skladiště"
+msgstr "Remove cached data"
 
 #: ../yumcommands.py:551
 msgid "Find what package provides the given value"
-msgstr "Nalézt balíček, který poskytuje danou hodnotu"
+msgstr "Find what package provides the given value"
 
 #: ../yumcommands.py:571
 msgid "Check for available package updates"
-msgstr "Zkontrolovat dostupné aktualizace balíčků"
+msgstr "Check for available package updates"
 
 #: ../yumcommands.py:621
 msgid "Search package details for the given string"
-msgstr "Nalézt detaily balíčku pro daný řetězec"
+msgstr "Search package details for the given string"
 
 #: ../yumcommands.py:627
 msgid "Searching Packages: "
-msgstr "Prohledávají se balíčky: "
+msgstr "Searching Packages: "
 
 #: ../yumcommands.py:644
 msgid "Update packages taking obsoletes into account"
-msgstr "Aktualizovat balíčky a brát v úvahu zastaralé"
+msgstr "Update packages taking obsoletes into account"
 
 #: ../yumcommands.py:652
 msgid "Setting up Upgrade Process"
-msgstr "Uspořádává se průběh aktualizace"
+msgstr "Setting up Upgrade Process"
 
 #: ../yumcommands.py:666
 msgid "Install a local RPM"
-msgstr "Instalovat lokální RPM"
+msgstr "Install a local RPM"
 
 #: ../yumcommands.py:674
 msgid "Setting up Local Package Process"
-msgstr "Uspořádává se zpracování lokálního balíčku"
+msgstr "Setting up Local Package Process"
 
 #: ../yumcommands.py:693
 msgid "Determine which package provides the given dependency"
-msgstr "Určit který balíček poskytuje danou závislost"
+msgstr "Determine which package provides the given dependency"
 
 #: ../yumcommands.py:696
 msgid "Searching Packages for Dependency:"
-msgstr "Prohledávají se balíčky kvůli závislostem:"
+msgstr "Searching Packages for Dependency:"
 
 #: ../yumcommands.py:710
 msgid "Run an interactive yum shell"
-msgstr "Spustit interaktivní shell yum"
+msgstr "Run an interactive yum shell"
 
 #: ../yumcommands.py:716
 msgid "Setting up Yum Shell"
-msgstr "Nastavuje se yum shell"
+msgstr "Setting up Yum Shell"
 
 #: ../yumcommands.py:734
 msgid "List a package's dependencies"
-msgstr "Zobrazit závislosti balíčku"
+msgstr "List a package's dependencies"
 
 #: ../yumcommands.py:740
 msgid "Finding dependencies: "
-msgstr "Hledají se závislosti: "
+msgstr "Finding dependencies: "
 
 #: ../yumcommands.py:756
 msgid "Display the configured software repositories"
-msgstr "Zobrazit nastavené repozitáře softwaru"
+msgstr "Display the configured software repositories"
 
 #: ../yumcommands.py:822 ../yumcommands.py:823
 msgid "enabled"
-msgstr "povoleno"
+msgstr "enabled"
 
 #: ../yumcommands.py:849 ../yumcommands.py:850
 msgid "disabled"
-msgstr "zakázáno"
+msgstr "disabled"
 
 #: ../yumcommands.py:866
 msgid "Repo-id      : "
@@ -1546,7 +1542,7 @@ msgstr "Repo-id      : "
 
 #: ../yumcommands.py:867
 msgid "Repo-name    : "
-msgstr "Repo-jméno   : "
+msgstr "Repo-name    : "
 
 #: ../yumcommands.py:870
 msgid "Repo-status  : "
@@ -1554,27 +1550,27 @@ msgstr "Repo-status  : "
 
 #: ../yumcommands.py:873
 msgid "Repo-revision: "
-msgstr "Repo-revize  : "
+msgstr "Repo-revision: "
 
 #: ../yumcommands.py:877
 msgid "Repo-tags    : "
-msgstr "Repo-tagy    : "
+msgstr "Repo-tags    : "
 
 #: ../yumcommands.py:883
 msgid "Repo-distro-tags: "
-msgstr "Repo-distro-tagy: "
+msgstr "Repo-distro-tags: "
 
 #: ../yumcommands.py:888
 msgid "Repo-updated : "
-msgstr "Repo-aktuální: "
+msgstr "Repo-updated : "
 
 #: ../yumcommands.py:890
 msgid "Repo-pkgs    : "
-msgstr "Repo-bal.    : "
+msgstr "Repo-pkgs    : "
 
 #: ../yumcommands.py:891
 msgid "Repo-size    : "
-msgstr "Repo-velikost: "
+msgstr "Repo-size    : "
 
 #: ../yumcommands.py:898
 msgid "Repo-baseurl : "
@@ -1586,42 +1582,42 @@ msgstr "Repo-metalink: "
 
 #: ../yumcommands.py:910
 msgid "  Updated    : "
-msgstr "  Aktualizováno: "
+msgstr "  Updated    : "
 
 #: ../yumcommands.py:913
 msgid "Repo-mirrors : "
-msgstr "Repo-zrcadla : "
+msgstr "Repo-mirrors : "
 
 #: ../yumcommands.py:923
 #, python-format
 msgid "Never (last: %s)"
-msgstr "Nikdy (poslední: %s)"
+msgstr "Never (last: %s)"
 
 #: ../yumcommands.py:925
 #, python-format
 msgid "Instant (last: %s)"
-msgstr "Okamžitě (naposledy: %s)"
+msgstr "Instant (last: %s)"
 
 #: ../yumcommands.py:928
 #, python-format
 msgid "%s second(s) (last: %s)"
-msgstr "%s sekund (naposledy: %s)"
+msgstr "%s second(s) (last: %s)"
 
 #: ../yumcommands.py:930
 msgid "Repo-expire  : "
-msgstr "Repo-vyprší  : "
+msgstr "Repo-expire  : "
 
 #: ../yumcommands.py:933
 msgid "Repo-exclude : "
-msgstr "Repo-vyřazeno: "
+msgstr "Repo-exclude : "
 
 #: ../yumcommands.py:937
 msgid "Repo-include : "
-msgstr "Repo-zahrnuto: "
+msgstr "Repo-include : "
 
 #: ../yumcommands.py:941
 msgid "Repo-excluded: "
-msgstr "Repo-vyřazeno: "
+msgstr "Repo-excluded: "
 
 #. Work out the first (id) and last (enabled/disalbed/count),
 #. then chop the middle (name)...
@@ -1635,16 +1631,16 @@ msgstr "status"
 
 #: ../yumcommands.py:981
 msgid "repo name"
-msgstr "jméno repa"
+msgstr "repo name"
 
 #: ../yumcommands.py:1018
 msgid "Display a helpful usage message"
-msgstr "Zobrazit užitečnou nápovědu"
+msgstr "Display a helpful usage message"
 
 #: ../yumcommands.py:1052
 #, python-format
 msgid "No help available for %s"
-msgstr "Není dostupná nápověda pro %s"
+msgstr "No help available for %s"
 
 #: ../yumcommands.py:1057
 msgid ""
@@ -1654,7 +1650,7 @@ msgid ""
 msgstr ""
 "\n"
 "\n"
-"aliasy: "
+"aliases: "
 
 #: ../yumcommands.py:1059
 msgid ""
@@ -1668,92 +1664,93 @@ msgstr ""
 
 #: ../yumcommands.py:1087
 msgid "Setting up Reinstall Process"
-msgstr "Uspořádává se průběh reinstalace"
+msgstr "Setting up Reinstall Process"
 
 #: ../yumcommands.py:1095
 msgid "reinstall a package"
-msgstr "Reinstalace balíčku"
+msgstr "reinstall a package"
 
 #: ../yumcommands.py:1113
 msgid "Setting up Downgrade Process"
-msgstr "Uspořádává se průběh snížení verze"
+msgstr "Setting up Downgrade Process"
 
 #: ../yumcommands.py:1120
 msgid "downgrade a package"
-msgstr "Snížení verze balíčku"
+msgstr "downgrade a package"
 
 #: ../yumcommands.py:1134
 msgid "Display a version for the machine and/or available repos."
-msgstr "Zobrazit verzi pro tento počítač a/nebo dostupné repozitáře."
+msgstr "Display a version for the machine and/or available repos."
 
 #: ../yumcommands.py:1173
 msgid " Yum version groups:"
-msgstr " Verze yum skupin:"
+msgstr " Yum version groups:"
 
 #: ../yumcommands.py:1183
 msgid " Group   :"
-msgstr " Skupina :"
+msgstr " Group   :"
 
 #: ../yumcommands.py:1184
 msgid " Packages:"
-msgstr " Balíčky :"
+msgstr " Packages:"
 
 #: ../yumcommands.py:1213
 msgid "Installed:"
-msgstr "Nainstalováno:"
+msgstr "Installed:"
 
 #: ../yumcommands.py:1218
 msgid "Group-Installed:"
-msgstr "Nainstalované skupiny:"
+msgstr "Group-Installed:"
 
 #: ../yumcommands.py:1227
 msgid "Available:"
-msgstr "Dostupné:"
+msgstr "Available:"
 
 #: ../yumcommands.py:1233
 msgid "Group-Available:"
-msgstr "Dostupné skupiny:"
+msgstr "Group-Available:"
 
 #: ../yumcommands.py:1272
 msgid "Display, or use, the transaction history"
-msgstr "Zobrazit nebo používat transakční historii"
+msgstr "Display, or use, the transaction history"
 
 #: ../yumcommands.py:1300
 #, python-format
 msgid "Invalid history sub-command, use: %s."
-msgstr "Neplatný pod-příkaz historie, použijte: %s."
+msgstr "Invalid history sub-command, use: %s."
 
 #: ../yumcommands.py:1345
 msgid "Check for problems in the rpmdb"
-msgstr "Zkontrolovat problémy v rpmdb"
+msgstr "Check for problems in the rpmdb"
 
 #: ../yummain.py:102
 msgid ""
 "Another app is currently holding the yum lock; waiting for it to exit..."
-msgstr "Zámek yumu je obsazen jinou aplikací; čeká se na její ukončení..."
+msgstr ""
+"Another app is currently holding the yum lock; waiting for it to exit..."
 
 #: ../yummain.py:130 ../yummain.py:169
 #, python-format
 msgid "Error: %s"
-msgstr "Chyba: %s"
+msgstr "Error: %s"
 
 #: ../yummain.py:140 ../yummain.py:182
 #, python-format
 msgid "Unknown Error(s): Exit Code: %d:"
-msgstr "Neznámá chyba/y: Výstupní kód: %d:"
+msgstr "Unknown Error(s): Exit Code: %d:"
 
 #. Depsolve stage
 #: ../yummain.py:147
 msgid "Resolving Dependencies"
-msgstr "Řeší se závislosti"
+msgstr "Resolving Dependencies"
 
 #: ../yummain.py:173
 msgid " You could try using --skip-broken to work around the problem"
-msgstr " Můžete zkusit volbu --skip-broken k překonání tohoto problému"
+msgstr " You could try using --skip-broken to work around the problem"
 
 #: ../yummain.py:175 ../yummain.py:208
 msgid " You could try running: rpm -Va --nofiles --nodigest"
-msgstr " Můžete zkusit spustit: rpm -Va --nofiles --nodigest"
+msgstr " You could try running: rpm -Va --nofiles --nodigest"
 
 #: ../yummain.py:188
 msgid ""
@@ -1761,7 +1758,7 @@ msgid ""
 "Dependencies Resolved"
 msgstr ""
 "\n"
-"Závislosti vyřešeny"
+"Dependencies Resolved"
 
 #: ../yummain.py:265
 msgid ""
@@ -1771,192 +1768,191 @@ msgid ""
 msgstr ""
 "\n"
 "\n"
-"Ukončeno na pokyn uživatele."
+"Exiting on user cancel."
 
 #: ../yum/depsolve.py:82
 msgid "doTsSetup() will go away in a future version of Yum.\n"
-msgstr "doTsSetup() bude v následujících verzích yumu odstraněno.\n"
+msgstr "doTsSetup() will go away in a future version of Yum.\n"
 
 #: ../yum/depsolve.py:97
 msgid "Setting up TransactionSets before config class is up"
-msgstr "Uspořádává se TransactionSet před tím než bude připravena třída config"
+msgstr "Setting up TransactionSets before config class is up"
 
 #: ../yum/depsolve.py:148
 #, python-format
 msgid "Invalid tsflag in config file: %s"
-msgstr "Neplatný tsflag v konfiguračním souboru: %s"
+msgstr "Invalid tsflag in config file: %s"
 
 #: ../yum/depsolve.py:159
 #, python-format
 msgid "Searching pkgSack for dep: %s"
-msgstr "Hledá se pkgSack pro závislost: %s"
+msgstr "Searching pkgSack for dep: %s"
 
 #: ../yum/depsolve.py:175
 #, python-format
 msgid "Potential match for %s from %s"
-msgstr "Potenciálně shodné pro %s z %s"
+msgstr "Potential match for %s from %s"
 
 #: ../yum/depsolve.py:183
 #, python-format
 msgid "Matched %s to require for %s"
-msgstr "Shoda %s vyžadovaná pro %s"
+msgstr "Matched %s to require for %s"
 
 #: ../yum/depsolve.py:225
 #, python-format
 msgid "Member: %s"
-msgstr "Prvek: %s"
+msgstr "Member: %s"
 
 #: ../yum/depsolve.py:239 ../yum/depsolve.py:754
 #, python-format
 msgid "%s converted to install"
-msgstr "%s zkonvertován na instalaci"
+msgstr "%s converted to install"
 
 #: ../yum/depsolve.py:246
 #, python-format
 msgid "Adding Package %s in mode %s"
-msgstr "Přidává se balíček %s v módu %s"
+msgstr "Adding Package %s in mode %s"
 
 #: ../yum/depsolve.py:256
 #, python-format
 msgid "Removing Package %s"
-msgstr "Odstraňuje se balíček %s"
+msgstr "Removing Package %s"
 
 #: ../yum/depsolve.py:278
 #, python-format
 msgid "%s requires: %s"
-msgstr "%s vyžaduje: %s"
+msgstr "%s requires: %s"
 
 #: ../yum/depsolve.py:319
 #, python-format
 msgid "%s requires %s"
-msgstr "%s vyžaduje %s"
+msgstr "%s requires %s"
 
 #: ../yum/depsolve.py:346
 msgid "Needed Require has already been looked up, cheating"
-msgstr "Závazné požadavky již byly prohledány, švindluje se"
+msgstr "Needed Require has already been looked up, cheating"
 
 #: ../yum/depsolve.py:356
 #, python-format
 msgid "Needed Require is not a package name. Looking up: %s"
-msgstr "Závazný požadavek není jméno balíčku. Hledá se: %s"
+msgstr "Needed Require is not a package name. Looking up: %s"
 
 #: ../yum/depsolve.py:363
 #, python-format
 msgid "Potential Provider: %s"
-msgstr "Možný poskytovatel: %s"
+msgstr "Potential Provider: %s"
 
 #: ../yum/depsolve.py:386
 #, python-format
 msgid "Mode is %s for provider of %s: %s"
-msgstr "Mód je %s pro poskytovatele %s: %s"
+msgstr "Mode is %s for provider of %s: %s"
 
 #: ../yum/depsolve.py:390
 #, python-format
 msgid "Mode for pkg providing %s: %s"
-msgstr "Mód pro bal. poskytující %s: %s"
+msgstr "Mode for pkg providing %s: %s"
 
 #: ../yum/depsolve.py:394
 #, python-format
 msgid "TSINFO: %s package requiring %s marked as erase"
-msgstr "TSINFO: %s balíček požaduje %s označený ke smazání"
+msgstr "TSINFO: %s package requiring %s marked as erase"
 
 #: ../yum/depsolve.py:407
 #, python-format
 msgid "TSINFO: Obsoleting %s with %s to resolve dep."
-msgstr "TSINFO: Zastarává se %s s %s k vyřešení závislostí."
+msgstr "TSINFO: Obsoleting %s with %s to resolve dep."
 
 #: ../yum/depsolve.py:410
 #, python-format
 msgid "TSINFO: Updating %s to resolve dep."
-msgstr "TSINFO: Aktualizuji %s k vyřešení závislostí."
+msgstr "TSINFO: Updating %s to resolve dep."
 
 #: ../yum/depsolve.py:418
 #, python-format
 msgid "Cannot find an update path for dep for: %s"
-msgstr "Nelze nalézt cestu aktualizací pro závislost pro: %s"
+msgstr "Cannot find an update path for dep for: %s"
 
 #: ../yum/depsolve.py:449
 #, python-format
 msgid "Quick matched %s to require for %s"
-msgstr "Rychlá shoda %s vyžadovaného pro %s"
+msgstr "Quick matched %s to require for %s"
 
 #. is it already installed?
 #: ../yum/depsolve.py:491
 #, python-format
 msgid "%s is in providing packages but it is already installed, removing."
-msgstr ""
-"%s je v poskytujících balíčcích, ale je již nainstalován, odstraňuje se."
+msgstr "%s is in providing packages but it is already installed, removing."
 
 #: ../yum/depsolve.py:507
 #, python-format
 msgid "Potential resolving package %s has newer instance in ts."
-msgstr "Balíček %s, který může být řešení, má v ts novější verzi."
+msgstr "Potential resolving package %s has newer instance in ts."
 
 #: ../yum/depsolve.py:518
 #, python-format
 msgid "Potential resolving package %s has newer instance installed."
-msgstr "Balíček %s, který může být řešení, je nainstalován v novější verzi."
+msgstr "Potential resolving package %s has newer instance installed."
 
 #: ../yum/depsolve.py:536
 #, python-format
 msgid "%s already in ts, skipping this one"
-msgstr "%s je již v ts, vynechává se"
+msgstr "%s already in ts, skipping this one"
 
 #: ../yum/depsolve.py:578
 #, python-format
 msgid "TSINFO: Marking %s as update for %s"
-msgstr "TSINFO: Označuji %s jako aktualizaci %s"
+msgstr "TSINFO: Marking %s as update for %s"
 
 #: ../yum/depsolve.py:586
 #, python-format
 msgid "TSINFO: Marking %s as install for %s"
-msgstr "TSINFO: Označuji %s jako instalaci %s"
+msgstr "TSINFO: Marking %s as install for %s"
 
 #: ../yum/depsolve.py:690 ../yum/depsolve.py:781
 msgid "Success - empty transaction"
-msgstr "Úspěch - prázdná transakce"
+msgstr "Success - empty transaction"
 
 #: ../yum/depsolve.py:729 ../yum/depsolve.py:744
 msgid "Restarting Loop"
-msgstr "Restartuje se smyčka"
+msgstr "Restarting Loop"
 
 #: ../yum/depsolve.py:760
 msgid "Dependency Process ending"
-msgstr "Proces zpracování závislostí končí"
+msgstr "Dependency Process ending"
 
 #: ../yum/depsolve.py:774
 #, python-format
 msgid "%s from %s has depsolving problems"
-msgstr "%s z %s má problémy se závislostmi"
+msgstr "%s from %s has depsolving problems"
 
 #: ../yum/depsolve.py:782
 msgid "Success - deps resolved"
-msgstr "Úspěch - závislosti vyřešeny"
+msgstr "Success - deps resolved"
 
 #: ../yum/depsolve.py:796
 #, python-format
 msgid "Checking deps for %s"
-msgstr "Kontroluji závislosti pro %s"
+msgstr "Checking deps for %s"
 
 #: ../yum/depsolve.py:874
 #, python-format
 msgid "looking for %s as a requirement of %s"
-msgstr "hledá se %s jako požadavek od %s"
+msgstr "looking for %s as a requirement of %s"
 
 #: ../yum/depsolve.py:1090
 #, python-format
 msgid "Running compare_providers() for %s"
-msgstr "Spouští se compare_providers() pro %s"
+msgstr "Running compare_providers() for %s"
 
 #: ../yum/depsolve.py:1117 ../yum/depsolve.py:1123
 #, python-format
 msgid "better arch in po %s"
-msgstr "lepší architektura v po %s"
+msgstr "better arch in po %s"
 
 #: ../yum/depsolve.py:1218
 #, python-format
 msgid "%s obsoletes %s"
-msgstr "%s zastarává %s"
+msgstr "%s obsoletes %s"
 
 #: ../yum/depsolve.py:1230
 #, python-format
@@ -1964,142 +1960,142 @@ msgid ""
 "archdist compared %s to %s on %s\n"
 "  Winner: %s"
 msgstr ""
-"archdist porovnán pro %s k %s na %s\n"
-"  Vítěz: %s"
+"archdist compared %s to %s on %s\n"
+"  Winner: %s"
 
 #: ../yum/depsolve.py:1237
 #, python-format
 msgid "common sourcerpm %s and %s"
-msgstr "společné zdrojové rpm %s a %s"
+msgstr "common sourcerpm %s and %s"
 
 #: ../yum/depsolve.py:1241
 #, python-format
 msgid "base package %s is installed for %s"
-msgstr "základní balíček %s je nainstalován pro %s"
+msgstr "base package %s is installed for %s"
 
 #: ../yum/depsolve.py:1247
 #, python-format
 msgid "common prefix of %s between %s and %s"
-msgstr "společný prefix %s mezi %s a %s"
+msgstr "common prefix of %s between %s and %s"
 
 #: ../yum/depsolve.py:1256
 #, python-format
 msgid "Best Order: %s"
-msgstr "Nejlepší pořádek: %s"
+msgstr "Best Order: %s"
 
 #: ../yum/__init__.py:192
 msgid "doConfigSetup() will go away in a future version of Yum.\n"
-msgstr "doConfigSetup() bude odstraněn v příští verzi Yumu.\n"
+msgstr "doConfigSetup() will go away in a future version of Yum.\n"
 
 #: ../yum/__init__.py:424
 #, python-format
 msgid "Repository %r is missing name in configuration, using id"
-msgstr "Repozitáři %r chybí jméno v konfiguraci, používá se id"
+msgstr "Repository %r is missing name in configuration, using id"
 
 #: ../yum/__init__.py:462
 msgid "plugins already initialised"
-msgstr "zásuvný modul je již inicializován"
+msgstr "plugins already initialised"
 
 #: ../yum/__init__.py:469
 msgid "doRpmDBSetup() will go away in a future version of Yum.\n"
-msgstr "doRpmDBSetup() bude odstraněn v příští verzi Yumu.\n"
+msgstr "doRpmDBSetup() will go away in a future version of Yum.\n"
 
 #: ../yum/__init__.py:480
 msgid "Reading Local RPMDB"
-msgstr "Načítá se lokální RPMDB"
+msgstr "Reading Local RPMDB"
 
 #: ../yum/__init__.py:504
 msgid "doRepoSetup() will go away in a future version of Yum.\n"
-msgstr "doRepoSetup() bude odstraněn v příští verzi Yumu.\n"
+msgstr "doRepoSetup() will go away in a future version of Yum.\n"
 
 #: ../yum/__init__.py:524
 msgid "doSackSetup() will go away in a future version of Yum.\n"
-msgstr "doSackSetup() bude odstraněn v příští verzi Yumu.\n"
+msgstr "doSackSetup() will go away in a future version of Yum.\n"
 
 #: ../yum/__init__.py:554
 msgid "Setting up Package Sacks"
-msgstr "Připravuje se pytel balíčků"
+msgstr "Setting up Package Sacks"
 
 #: ../yum/__init__.py:599
 #, python-format
 msgid "repo object for repo %s lacks a _resetSack method\n"
-msgstr "objekt repozitáře pro repo %s postrádá metodu _resetSack\n"
+msgstr "repo object for repo %s lacks a _resetSack method\n"
 
 #: ../yum/__init__.py:600
 msgid "therefore this repo cannot be reset.\n"
-msgstr "proto nemůže toto repo být resetováno.\n"
+msgstr "therefore this repo cannot be reset.\n"
 
 #: ../yum/__init__.py:605
 msgid "doUpdateSetup() will go away in a future version of Yum.\n"
-msgstr "doUpdateSetup() bude odstraněn v příští verzi Yumu.\n"
+msgstr "doUpdateSetup() will go away in a future version of Yum.\n"
 
 #: ../yum/__init__.py:617
 msgid "Building updates object"
-msgstr "Sestavuje se objekt aktualizací"
+msgstr "Building updates object"
 
 #: ../yum/__init__.py:652
 msgid "doGroupSetup() will go away in a future version of Yum.\n"
-msgstr "doGroupSetup() bude odstraněn v příští verzi Yumu.\n"
+msgstr "doGroupSetup() will go away in a future version of Yum.\n"
 
 #: ../yum/__init__.py:677
 msgid "Getting group metadata"
-msgstr "Získávají se metadata skupin"
+msgstr "Getting group metadata"
 
 #: ../yum/__init__.py:703
 #, python-format
 msgid "Adding group file from repository: %s"
-msgstr "Přidává se skupinový soubor pro repozitář: %s"
+msgstr "Adding group file from repository: %s"
 
 #: ../yum/__init__.py:712
 #, python-format
 msgid "Failed to add groups file for repository: %s - %s"
-msgstr "Selhalo přidání skupinového souboru pro repozitář: %s - %s"
+msgstr "Failed to add groups file for repository: %s - %s"
 
 #: ../yum/__init__.py:718
 msgid "No Groups Available in any repository"
-msgstr "V žádném repozitáři nejsou dostupné skupiny"
+msgstr "No Groups Available in any repository"
 
 #: ../yum/__init__.py:730
 msgid "Getting pkgtags metadata"
-msgstr "Získávají se pkgtags metadata"
+msgstr "Getting pkgtags metadata"
 
 #: ../yum/__init__.py:740
 #, python-format
 msgid "Adding tags from repository: %s"
-msgstr "Přidávají se tagy z repozitáře: %s"
+msgstr "Adding tags from repository: %s"
 
 #: ../yum/__init__.py:749
 #, python-format
 msgid "Failed to add Pkg Tags for repository: %s - %s"
-msgstr "Selhalo přidání Pkg Tagů pro repozitář: %s - %s"
+msgstr "Failed to add Pkg Tags for repository: %s - %s"
 
 #: ../yum/__init__.py:827
 msgid "Importing additional filelist information"
-msgstr "Importuji informace z dodatečného seznamu souborů"
+msgstr "Importing additional filelist information"
 
 #: ../yum/__init__.py:841
 #, python-format
 msgid "The program %s%s%s is found in the yum-utils package."
-msgstr "Program %s%s%s byl nalezen v balíčku yum-utils."
+msgstr "The program %s%s%s is found in the yum-utils package."
 
 #: ../yum/__init__.py:849
 msgid ""
 "There are unfinished transactions remaining. You might consider running yum-"
 "complete-transaction first to finish them."
 msgstr ""
-"Existují nedokončené transakce. Měli byste zvážit možnost nejdříve spustit "
-"yum-complete-transaction k jejich dokončení."
+"There are unfinished transactions remaining. You might consider running yum-"
+"complete-transaction first to finish them."
 
 #. Kind of hacky
 #: ../yum/__init__.py:922
 #, python-format
 msgid "Skip-broken round %i"
-msgstr "Přeskočení rozpadlých - kolo %i"
+msgstr "Skip-broken round %i"
 
 #: ../yum/__init__.py:975
 #, python-format
 msgid "Skip-broken took %i rounds "
-msgstr "Přeskočení rozpadlých trvalo %i kol "
+msgstr "Skip-broken took %i rounds "
 
 #: ../yum/__init__.py:976
 msgid ""
@@ -2107,92 +2103,91 @@ msgid ""
 "Packages skipped because of dependency problems:"
 msgstr ""
 "\n"
-" Balíčky přeskočené kvůli problémům se závislostmi:"
+"Packages skipped because of dependency problems:"
 
 #: ../yum/__init__.py:980
 #, python-format
 msgid "    %s from %s"
-msgstr "    %s z %s"
+msgstr "    %s from %s"
 
 #: ../yum/__init__.py:1121
 msgid "Warning: RPMDB altered outside of yum."
-msgstr "Varování: RPMDB byla změněna mimo yum."
+msgstr "Warning: RPMDB altered outside of yum."
 
 #: ../yum/__init__.py:1126
 msgid "missing requires"
-msgstr "chybějící požadavek"
+msgstr "missing requires"
 
 #: ../yum/__init__.py:1127
 msgid "installed conflict"
-msgstr "konflikt nainstalovaného"
+msgstr "installed conflict"
 
 #: ../yum/__init__.py:1180
 msgid ""
 "Warning: scriptlet or other non-fatal errors occurred during transaction."
 msgstr ""
-"Varování: Během transakce došlo k chybě skriptletu nebo jiné nefatální chybě."
+"Warning: scriptlet or other non-fatal errors occurred during transaction."
 
 #: ../yum/__init__.py:1198
 #, python-format
 msgid "Failed to remove transaction file %s"
-msgstr "Selhalo odstranění transakčního souboru %s."
+msgstr "Failed to remove transaction file %s"
 
 #. maybe a file log here, too
 #. but raising an exception is not going to do any good
 #: ../yum/__init__.py:1227
 #, python-format
 msgid "%s was supposed to be installed but is not!"
-msgstr "%s mělo být nainstalováno, ale není!"
+msgstr "%s was supposed to be installed but is not!"
 
 #. maybe a file log here, too
 #. but raising an exception is not going to do any good
 #: ../yum/__init__.py:1266
 #, python-format
 msgid "%s was supposed to be removed but is not!"
-msgstr "%s mělo být odstraněno, ale není!"
+msgstr "%s was supposed to be removed but is not!"
 
 #. Whoa. What the heck happened?
 #: ../yum/__init__.py:1386
 #, python-format
 msgid "Unable to check if PID %s is active"
-msgstr "Nedá se zkontrolovat, zda je PID %s aktivní."
+msgstr "Unable to check if PID %s is active"
 
 #. Another copy seems to be running.
 #: ../yum/__init__.py:1390
 #, python-format
 msgid "Existing lock %s: another copy is running as pid %s."
-msgstr "Existující zámek %s: jiná kopie běží s pid %s."
+msgstr "Existing lock %s: another copy is running as pid %s."
 
 #. Whoa. What the heck happened?
 #: ../yum/__init__.py:1425
 #, python-format
 msgid "Could not create lock at %s: %s "
-msgstr "Nelze vytvořit zámek na %s: %s "
+msgstr "Could not create lock at %s: %s "
 
 #: ../yum/__init__.py:1470
 msgid ""
 "Package does not match intended download. Suggestion: run yum clean metadata"
 msgstr ""
-"Balíček se neshoduje se zamýšleným stahováním. Návrh: spusťte yum clean "
-"metadata"
+"Package does not match intended download. Suggestion: run yum clean metadata"
 
 #: ../yum/__init__.py:1486
 msgid "Could not perform checksum"
-msgstr "Nelze zkontrolovat kontrolní součet"
+msgstr "Could not perform checksum"
 
 #: ../yum/__init__.py:1489
 msgid "Package does not match checksum"
-msgstr "Balíček neodpovídá kontrolnímu součtu"
+msgstr "Package does not match checksum"
 
 #: ../yum/__init__.py:1531
 #, python-format
 msgid "package fails checksum but caching is enabled for %s"
-msgstr "balíček neprošel kontrolním součtem ale skladiště je povoleno pro %s"
+msgstr "package fails checksum but caching is enabled for %s"
 
 #: ../yum/__init__.py:1534 ../yum/__init__.py:1563
 #, python-format
 msgid "using local copy of %s"
-msgstr "používá se lokální kopie %s"
+msgstr "using local copy of %s"
 
 #: ../yum/__init__.py:1575
 #, python-format
@@ -2201,216 +2196,214 @@ msgid ""
 "    * free   %s\n"
 "    * needed %s"
 msgstr ""
-"Nedostatek diskového prostoru ve stahovacím adresáři %s\n"
-"    * volno   %s\n"
-"    * potřeba %s"
+"Insufficient space in download directory %s\n"
+"    * free   %s\n"
+"    * needed %s"
 
 #: ../yum/__init__.py:1624
 msgid "Header is not complete."
-msgstr "Hlavička není kompletní."
+msgstr "Header is not complete."
 
 #: ../yum/__init__.py:1661
 #, python-format
 msgid ""
 "Header not in local cache and caching-only mode enabled. Cannot download %s"
 msgstr ""
-"Hlavička není v lokálním skladišti, ale je povoleno používat pouze "
-"skladiště. Nemohu stáhnout %s"
+"Header not in local cache and caching-only mode enabled. Cannot download %s"
 
 #: ../yum/__init__.py:1716
 #, python-format
 msgid "Public key for %s is not installed"
-msgstr "Veřejný klíč %s není nainstalován"
+msgstr "Public key for %s is not installed"
 
 #: ../yum/__init__.py:1720
 #, python-format
 msgid "Problem opening package %s"
-msgstr "Problém s otevřením balíčku %s"
+msgstr "Problem opening package %s"
 
 #: ../yum/__init__.py:1728
 #, python-format
 msgid "Public key for %s is not trusted"
-msgstr "Veřejný klíč %s není důvěryhodný"
+msgstr "Public key for %s is not trusted"
 
 #: ../yum/__init__.py:1732
 #, python-format
 msgid "Package %s is not signed"
-msgstr "Balíček %s není podepsán"
+msgstr "Package %s is not signed"
 
 #: ../yum/__init__.py:1770
 #, python-format
 msgid "Cannot remove %s"
-msgstr "Nemohu odstranit %s"
+msgstr "Cannot remove %s"
 
 #: ../yum/__init__.py:1774
 #, python-format
 msgid "%s removed"
-msgstr "%s odstraněn"
+msgstr "%s removed"
 
 #: ../yum/__init__.py:1820
 #, python-format
 msgid "Cannot remove %s file %s"
-msgstr "Nemohu odstranit %s soubor %s"
+msgstr "Cannot remove %s file %s"
 
 #: ../yum/__init__.py:1824
 #, python-format
 msgid "%s file %s removed"
-msgstr "%s soubor %s odstraněn"
+msgstr "%s file %s removed"
 
 #: ../yum/__init__.py:1826
 #, python-format
 msgid "%d %s files removed"
-msgstr "%d %s soubor odstraněn"
+msgstr "%d %s files removed"
 
 #: ../yum/__init__.py:1895
 #, python-format
 msgid "More than one identical match in sack for %s"
-msgstr "Více než jedna identická shoda v pytli pro %s"
+msgstr "More than one identical match in sack for %s"
 
 #: ../yum/__init__.py:1901
 #, python-format
 msgid "Nothing matches %s.%s %s:%s-%s from update"
-msgstr "Nic se neshoduje s %s.%s %s:%s-%s z aktualizace"
+msgstr "Nothing matches %s.%s %s:%s-%s from update"
 
 #: ../yum/__init__.py:2180
 msgid ""
 "searchPackages() will go away in a future version of "
 "Yum.                      Use searchGenerator() instead. \n"
-msgstr ""
-"searchPackages() bude odstraněn v příští verzi Yumu.                      "
-"Používejte místo něj searchGenerator(). \n"
+msgstr "searchPackages() will go away in a future version of Yum. "
+"                     Use searchGenerator() instead. \n"
 
 #: ../yum/__init__.py:2219
 #, python-format
 msgid "Searching %d packages"
-msgstr "Prohledává se %d balíčků"
+msgstr "Searching %d packages"
 
 #: ../yum/__init__.py:2223
 #, python-format
 msgid "searching package %s"
-msgstr "prohledává se balíček %s"
+msgstr "searching package %s"
 
 #: ../yum/__init__.py:2235
 msgid "searching in file entries"
-msgstr "hledá se v souborových položkách"
+msgstr "searching in file entries"
 
 #: ../yum/__init__.py:2242
 msgid "searching in provides entries"
-msgstr "hledá se v položkách poskytovatelů"
+msgstr "searching in provides entries"
 
 #: ../yum/__init__.py:2275
 #, python-format
 msgid "Provides-match: %s"
-msgstr "Poskytovatel-shoda: %s"
+msgstr "Provides-match: %s"
 
 #: ../yum/__init__.py:2324
 msgid "No group data available for configured repositories"
-msgstr "Pro nastavený repozitář nejsou žádná dostupná skupinová data"
+msgstr "No group data available for configured repositories"
 
 #: ../yum/__init__.py:2355 ../yum/__init__.py:2374 ../yum/__init__.py:2405
 #: ../yum/__init__.py:2411 ../yum/__init__.py:2493 ../yum/__init__.py:2497
 #: ../yum/__init__.py:2814
 #, python-format
 msgid "No Group named %s exists"
-msgstr "Neexistuje skupina pojmenovaná %s"
+msgstr "No Group named %s exists"
 
 #: ../yum/__init__.py:2386 ../yum/__init__.py:2513
 #, python-format
 msgid "package %s was not marked in group %s"
-msgstr "balíček %s nebyl označen ve skupině %s"
+msgstr "package %s was not marked in group %s"
 
 #: ../yum/__init__.py:2433
 #, python-format
 msgid "Adding package %s from group %s"
-msgstr "Přidává se balíček %s pro skupinu %s"
+msgstr "Adding package %s from group %s"
 
 #: ../yum/__init__.py:2437
 #, python-format
 msgid "No package named %s available to be installed"
-msgstr "Žádný balíček pojmenovaný %s není dostupný pro instalaci"
+msgstr "No package named %s available to be installed"
 
 #: ../yum/__init__.py:2539
 #, python-format
 msgid "Package tuple %s could not be found in packagesack"
-msgstr "Uspořádaný seznam balíčků %s nenalezen v pytli balíčků"
+msgstr "Package tuple %s could not be found in packagesack"
 
 #: ../yum/__init__.py:2558
 #, python-format
 msgid "Package tuple %s could not be found in rpmdb"
-msgstr "Uspořádaný seznam balíčků %s nenalezen v rpmdb"
+msgstr "Package tuple %s could not be found in rpmdb"
 
 #: ../yum/__init__.py:2614 ../yum/__init__.py:2664
 msgid "Invalid version flag"
-msgstr "Chybný příznak verze"
+msgstr "Invalid version flag"
 
 #: ../yum/__init__.py:2634 ../yum/__init__.py:2639
 #, python-format
 msgid "No Package found for %s"
-msgstr "Nebyl nalezen balíček pro %s"
+msgstr "No Package found for %s"
 
 #: ../yum/__init__.py:2855
 msgid "Package Object was not a package object instance"
-msgstr "Objekt balíčku nebyl instancí balíčkového objektu"
+msgstr "Package Object was not a package object instance"
 
 #: ../yum/__init__.py:2859
 msgid "Nothing specified to install"
-msgstr "Nebylo určeno nic k instalaci"
+msgstr "Nothing specified to install"
 
 #: ../yum/__init__.py:2875 ../yum/__init__.py:3652
 #, python-format
 msgid "Checking for virtual provide or file-provide for %s"
-msgstr "Hledá se virtuální poskytovatel nebo soubor poskytující %s"
+msgstr "Checking for virtual provide or file-provide for %s"
 
 #: ../yum/__init__.py:2881 ../yum/__init__.py:3197 ../yum/__init__.py:3365
 #: ../yum/__init__.py:3658
 #, python-format
 msgid "No Match for argument: %s"
-msgstr "Nenalezena shoda pro argument: %s"
+msgstr "No Match for argument: %s"
 
 #: ../yum/__init__.py:2957
 #, python-format
 msgid "Package %s installed and not available"
-msgstr "Balíček %s je nainstalován, ale není dostupný"
+msgstr "Package %s installed and not available"
 
 #: ../yum/__init__.py:2960
 msgid "No package(s) available to install"
-msgstr "Žádný balíček/ky dostupný pro instalaci"
+msgstr "No package(s) available to install"
 
 #: ../yum/__init__.py:2972
 #, python-format
 msgid "Package: %s  - already in transaction set"
-msgstr "Balíček: %s - již je v transakční sadě"
+msgstr "Package: %s  - already in transaction set"
 
 #: ../yum/__init__.py:2998
 #, python-format
 msgid "Package %s is obsoleted by %s which is already installed"
-msgstr "Balíček %s je zastaralý balíčkem %s, který je již nainstalován"
+msgstr "Package %s is obsoleted by %s which is already installed"
 
 #: ../yum/__init__.py:3001
 #, python-format
 msgid "Package %s is obsoleted by %s, trying to install %s instead"
-msgstr "Balíček %s je zastaralý balíčkem %s, zkouší se místo něj instalovat %s"
+msgstr "Package %s is obsoleted by %s, trying to install %s instead"
 
 #: ../yum/__init__.py:3009
 #, python-format
 msgid "Package %s already installed and latest version"
-msgstr "Balíček %s je již nainstalován a v poslední verzi"
+msgstr "Package %s already installed and latest version"
 
 #: ../yum/__init__.py:3023
 #, python-format
 msgid "Package matching %s already installed. Checking for update."
-msgstr "Balíček odpovídající %s je již nainstalován. Hledají se aktualizace."
+msgstr "Package matching %s already installed. Checking for update."
 
 #. update everything (the easy case)
 #: ../yum/__init__.py:3126
 msgid "Updating Everything"
-msgstr "Aktualizuje se vše"
+msgstr "Updating Everything"
 
 #: ../yum/__init__.py:3147 ../yum/__init__.py:3262 ../yum/__init__.py:3289
 #: ../yum/__init__.py:3315
 #, python-format
 msgid "Not Updating Package that is already obsoleted: %s.%s %s:%s-%s"
-msgstr "Neaktualizuje se balíček, který je již zastaralý: %s.%s %s:%s-%s"
+msgstr "Not Updating Package that is already obsoleted: %s.%s %s:%s-%s"
 
 #: ../yum/__init__.py:3182 ../yum/__init__.py:3362
 #, python-format
@@ -2420,36 +2413,36 @@ msgstr "%s"
 #: ../yum/__init__.py:3253
 #, python-format
 msgid "Package is already obsoleted: %s.%s %s:%s-%s"
-msgstr "Balíček je již zastaralý: %s.%s %s:%s-%s"
+msgstr "Package is already obsoleted: %s.%s %s:%s-%s"
 
 #: ../yum/__init__.py:3284
 #, python-format
 msgid "Not Updating Package that is obsoleted: %s"
-msgstr "Neaktualizuje se balíček, který je zastaralý: %s"
+msgstr "Not Updating Package that is obsoleted: %s"
 
 #: ../yum/__init__.py:3293 ../yum/__init__.py:3319
 #, python-format
 msgid "Not Updating Package that is already updated: %s.%s %s:%s-%s"
-msgstr "Neaktualizuje se balíček, který jej již aktuální: %s.%s %s:%s-%s"
+msgstr "Not Updating Package that is already updated: %s.%s %s:%s-%s"
 
 #: ../yum/__init__.py:3378
 msgid "No package matched to remove"
-msgstr "Nenalezen žádný shodný balíček pro odstranění"
+msgstr "No package matched to remove"
 
 #: ../yum/__init__.py:3412
 #, python-format
 msgid "Cannot open: %s. Skipping."
-msgstr "Nelze otevřít: %s. Přeskakuje se."
+msgstr "Cannot open: %s. Skipping."
 
 #: ../yum/__init__.py:3415 ../yum/__init__.py:3514 ../yum/__init__.py:3598
 #, python-format
 msgid "Examining %s: %s"
-msgstr "Zkoumá se %s: %s"
+msgstr "Examining %s: %s"
 
 #: ../yum/__init__.py:3423 ../yum/__init__.py:3517 ../yum/__init__.py:3601
 #, python-format
 msgid "Cannot add package %s to transaction. Not a compatible architecture: %s"
-msgstr "Nelze přidat balíček %s do transakce. Nekompatibilní architektura: %s"
+msgstr "Cannot add package %s to transaction. Not a compatible architecture: %s"
 
 #: ../yum/__init__.py:3431
 #, python-format
@@ -2457,109 +2450,109 @@ msgid ""
 "Package %s not installed, cannot update it. Run yum install to install it "
 "instead."
 msgstr ""
-"Balíček %s není nainstalován, nelze jej aktualizovat. Spusťte místo toho yum "
-"install a nainstalujte jej."
+"Package %s not installed, cannot update it. Run yum install to install it "
+"instead."
 
 #: ../yum/__init__.py:3460 ../yum/__init__.py:3522 ../yum/__init__.py:3606
 #, python-format
 msgid "Excluding %s"
-msgstr "Vynechává se %s"
+msgstr "Excluding %s"
 
 #: ../yum/__init__.py:3465
 #, python-format
 msgid "Marking %s to be installed"
-msgstr "Označuje se %s k instalaci"
+msgstr "Marking %s to be installed"
 
 #: ../yum/__init__.py:3471
 #, python-format
 msgid "Marking %s as an update to %s"
-msgstr "Označuje se %s jako aktualizace %s"
+msgstr "Marking %s as an update to %s"
 
 #: ../yum/__init__.py:3478
 #, python-format
 msgid "%s: does not update installed package."
-msgstr "%s: není aktualizací instalovaného balíčku."
+msgstr "%s: does not update installed package."
 
 #: ../yum/__init__.py:3511 ../yum/__init__.py:3595
 #, python-format
 msgid "Cannot open file: %s. Skipping."
-msgstr "Nelze otevřít soubor: %s. Přeskakuje se."
+msgstr "Cannot open file: %s. Skipping."
 
 #: ../yum/__init__.py:3541
 msgid "Problem in reinstall: no package matched to remove"
-msgstr "Problém při reinstalaci: žádný shodný balíček k odstranění"
+msgstr "Problem in reinstall: no package matched to remove"
 
 #: ../yum/__init__.py:3554 ../yum/__init__.py:3686
 #, python-format
 msgid "Package %s is allowed multiple installs, skipping"
-msgstr "Balíček %s má dovoleno vícero instalací, přeskakuje se"
+msgstr "Package %s is allowed multiple installs, skipping"
 
 #: ../yum/__init__.py:3575
 #, python-format
 msgid "Problem in reinstall: no package %s matched to install"
-msgstr "Problém při reinstalaci: žádný shodný balíček %s k instalaci"
+msgstr "Problem in reinstall: no package %s matched to install"
 
 #: ../yum/__init__.py:3678
 msgid "No package(s) available to downgrade"
-msgstr "Žádný balíček/ky dostupné ke snížení verze"
+msgstr "No package(s) available to downgrade"
 
 #: ../yum/__init__.py:3731
 #, python-format
 msgid "No Match for available package: %s"
-msgstr "Neexistuje shoda pro dostupný balíček: %s"
+msgstr "No Match for available package: %s"
 
 #: ../yum/__init__.py:3738
 #, python-format
 msgid "Only Upgrade available on package: %s"
-msgstr "Pouze aktualizace dostupná pro balíček: %s"
+msgstr "Only Upgrade available on package: %s"
 
 #: ../yum/__init__.py:3808 ../yum/__init__.py:3845
 #, python-format
 msgid "Failed to downgrade: %s"
-msgstr "Nepodařilo se snížit verzi: %s"
+msgstr "Failed to downgrade: %s"
 
 #: ../yum/__init__.py:3877
 #, python-format
 msgid "Retrieving GPG key from %s"
-msgstr "Získává se GPG klíč pro %s"
+msgstr "Retrieving GPG key from %s"
 
 #: ../yum/__init__.py:3897
 msgid "GPG key retrieval failed: "
-msgstr "Získání GPG klíče selhalo: "
+msgstr "GPG key retrieval failed: "
 
 #: ../yum/__init__.py:3903
 #, python-format
 msgid "Invalid GPG Key from %s: %s"
-msgstr "Neplatný GPG klíč pro %s: %s"
+msgstr "Invalid GPG Key from %s: %s"
 
 #: ../yum/__init__.py:3912
 #, python-format
 msgid "GPG key parsing failed: key does not have value %s"
-msgstr "Zpracování GPG klíče selhalo: klíč nemá žádnou hodnotu %s"
+msgstr "GPG key parsing failed: key does not have value %s"
 
 #: ../yum/__init__.py:3944
 #, python-format
 msgid "GPG key at %s (0x%s) is already installed"
-msgstr "GPG klíč %s (0x%s) je již nainstalován"
+msgstr "GPG key at %s (0x%s) is already installed"
 
 #. Try installing/updating GPG key
 #: ../yum/__init__.py:3949 ../yum/__init__.py:4011
 #, python-format
 msgid "Importing GPG key 0x%s \"%s\" from %s"
-msgstr "Importuje se GPG klíč 0x%s „%s“ z %s"
+msgstr "Importing GPG key 0x%s \"%s\" from %s"
 
 #: ../yum/__init__.py:3966
 msgid "Not installing key"
-msgstr "Neinstaluje se klíč"
+msgstr "Not installing key"
 
 #: ../yum/__init__.py:3972
 #, python-format
 msgid "Key import failed (code %d)"
-msgstr "Import klíče selhal (kód %d)"
+msgstr "Key import failed (code %d)"
 
 #: ../yum/__init__.py:3973 ../yum/__init__.py:4032
 msgid "Key imported successfully"
-msgstr "Import klíče proběhl úspěšně"
+msgstr "Key imported successfully"
 
 #: ../yum/__init__.py:3978 ../yum/__init__.py:4037
 #, python-format
@@ -2568,175 +2561,150 @@ msgid ""
 "are not correct for this package.\n"
 "Check that the correct key URLs are configured for this repository."
 msgstr ""
-"GPG klíč určený pro repozitář „%s“ je již nainstalován, ale není správný pro "
-"tento balíček.\n"
-"Zkontrolujte, že URL klíče jsou pro repozitář správně nastavena."
+"The GPG keys listed for the \"%s\" repository are already installed but they "
+"are not correct for this package.\n"
+"Check that the correct key URLs are configured for this repository."
 
 #: ../yum/__init__.py:3987
 msgid "Import of key(s) didn't help, wrong key(s)?"
-msgstr "Import klíče/ů nepomohl, špatný klíč(e)?"
+msgstr "Import of key(s) didn't help, wrong key(s)?"
 
 #: ../yum/__init__.py:4006
 #, python-format
 msgid "GPG key at %s (0x%s) is already imported"
-msgstr "GPG klíč %s (0x%s) je již naimportován"
+msgstr "GPG key at %s (0x%s) is already imported"
 
 #: ../yum/__init__.py:4026
 #, python-format
 msgid "Not installing key for repo %s"
-msgstr "Neinstaluji klíč pro repozitář %s"
+msgstr "Not installing key for repo %s"
 
 #: ../yum/__init__.py:4031
 msgid "Key import failed"
-msgstr "Import klíče selhal"
+msgstr "Key import failed"
 
 #: ../yum/__init__.py:4157
 msgid "Unable to find a suitable mirror."
-msgstr "Nemohu nalézt vhodné zrcadlo"
+msgstr "Unable to find a suitable mirror."
 
 #: ../yum/__init__.py:4159
 msgid "Errors were encountered while downloading packages."
-msgstr "Při stahování balíčků došlo k chybě."
+msgstr "Errors were encountered while downloading packages."
 
 #: ../yum/__init__.py:4209
 #, python-format
 msgid "Please report this error at %s"
-msgstr "Oznamte prosím tuto chybu na %s"
+msgstr "Please report this error at %s"
 
 #: ../yum/__init__.py:4233
 msgid "Test Transaction Errors: "
-msgstr "Chyby testu transakce: "
+msgstr "Test Transaction Errors: "
 
 #: ../yum/__init__.py:4334
 #, python-format
 msgid "Could not set cachedir: %s"
-msgstr "Nelze vytvořit skladiště: %s "
+msgstr "Could not set cachedir: %s"
 
 #. Mostly copied from YumOutput._outKeyValFill()
 #: ../yum/plugins.py:202
 msgid "Loaded plugins: "
-msgstr "Zavedeny zásuvné moduly: "
+msgstr "Loaded plugins: "
 
 #: ../yum/plugins.py:216 ../yum/plugins.py:222
 #, python-format
 msgid "No plugin match for: %s"
-msgstr "Neexistuje zásuvný modul pro: %s"
+msgstr "No plugin match for: %s"
 
 #: ../yum/plugins.py:252
 #, python-format
 msgid "Not loading \"%s\" plugin, as it is disabled"
-msgstr "Nezavádí se „%s“ modul, protože je zakázán"
+msgstr "Not loading \"%s\" plugin, as it is disabled"
 
 #. Give full backtrace:
 #: ../yum/plugins.py:264
 #, python-format
 msgid "Plugin \"%s\" can't be imported"
-msgstr "Modul „%s“ nemůže být importován"
+msgstr "Plugin \"%s\" can't be imported"
 
 #: ../yum/plugins.py:271
 #, python-format
 msgid "Plugin \"%s\" doesn't specify required API version"
-msgstr "Modul „%s“ neuvádí požadovanou verzi API"
+msgstr "Plugin \"%s\" doesn't specify required API version"
 
 #: ../yum/plugins.py:276
 #, python-format
 msgid "Plugin \"%s\" requires API %s. Supported API is %s."
-msgstr "Modul „%s“ požaduje API %s. Podporované API je %s."
+msgstr "Plugin \"%s\" requires API %s. Supported API is %s."
 
 #: ../yum/plugins.py:309
 #, python-format
 msgid "Loading \"%s\" plugin"
-msgstr "Zavádí se zásuvný modul „%s“"
+msgstr "Loading \"%s\" plugin"
 
 #: ../yum/plugins.py:316
 #, python-format
 msgid ""
 "Two or more plugins with the name \"%s\" exist in the plugin search path"
-msgstr "V prohledávaných cestách jsou dva nebo více modulů se jménem „%s“"
+msgstr "Two or more plugins with the name \"%s\" exist in the plugin search path"
 
 #: ../yum/plugins.py:336
 #, python-format
 msgid "Configuration file %s not found"
-msgstr "Konfigurační soubor %s nenalezen"
+msgstr "Configuration file %s not found"
 
 #. for
 #. Configuration files for the plugin not found
 #: ../yum/plugins.py:339
 #, python-format
 msgid "Unable to find configuration file for plugin %s"
-msgstr "Nelze nalézt konfigurační soubor pro modul %s"
+msgstr "Unable to find configuration file for plugin %s"
 
 #: ../yum/plugins.py:501
 msgid "registration of commands not supported"
-msgstr "registrace příkazů není podporována"
+msgstr "registration of commands not supported"
 
 #: ../yum/rpmsack.py:102
 msgid "has missing requires of"
-msgstr "má chybějící požadavky"
+msgstr "has missing requires of"
 
 #: ../yum/rpmsack.py:105
 msgid "has installed conflicts"
-msgstr "má konflikty v instalaci"
+msgstr "has installed conflicts"
 
 #: ../yum/rpmsack.py:114
 #, python-format
 msgid "%s is a duplicate with %s"
-msgstr "%s je duplicitní s %s"
+msgstr "%s is a duplicate with %s"
 
 #: ../yum/rpmtrans.py:79
 msgid "Repackaging"
-msgstr "Přebaluje se"
+msgstr "Repackaging"
 
 #: ../rpmUtils/oldUtils.py:33
 #, python-format
 msgid "Header cannot be opened or does not match %s, %s."
-msgstr "Hlavička nemůže být otevřena nebo neodpovídá %s, %s."
+msgstr "Header cannot be opened or does not match %s, %s."
 
 #: ../rpmUtils/oldUtils.py:53
 #, python-format
 msgid "RPM %s fails md5 check"
-msgstr "Pro RPM %s selhala kontrola md5"
+msgstr "RPM %s fails md5 check"
 
 #: ../rpmUtils/oldUtils.py:151
 msgid "Could not open RPM database for reading. Perhaps it is already in use?"
-msgstr "Nelze otevřít databázi RPM pro čtení. Možná je již používána?"
+msgstr "Could not open RPM database for reading. Perhaps it is already in use?"
 
 #: ../rpmUtils/oldUtils.py:183
 msgid "Got an empty Header, something has gone wrong"
-msgstr "Vrátila se prázdná hlavička. Něco se stalo špatně."
+msgstr "Got an empty Header, something has gone wrong"
 
 #: ../rpmUtils/oldUtils.py:253 ../rpmUtils/oldUtils.py:260
 #: ../rpmUtils/oldUtils.py:263 ../rpmUtils/oldUtils.py:266
 #, python-format
 msgid "Damaged Header %s"
-msgstr "Poškozená hlavička %s"
+msgstr "Damaged Header %s"
 
 #: ../rpmUtils/oldUtils.py:281
 #, python-format
 msgid "Error opening rpm %s - error %s"
-msgstr "Chyba při otevření rpm %s - chyba %s"
-
-#~ msgid "Finished Transaction Test"
-#~ msgstr "Test transakcí dokončen"
-
-#~ msgid ""
-#~ " You could try running: package-cleanup --problems\n"
-#~ "                        package-cleanup --dupes\n"
-#~ "                        rpm -Va --nofiles --nodigest"
-#~ msgstr ""
-#~ " Můžete zkusit spustit: package-cleanup --problems\n"
-#~ "                        package-cleanup --dupes\n"
-#~ "                        rpm -Va --nofiles --nodigest"
-
-#~ msgid "Unresolvable requirement %s for %s"
-#~ msgstr "Neřešitelný požadavek %s pro %s"
-
-#~ msgid "Missing Dependency: %s is needed by package %s"
-#~ msgstr "Chybí závislost: %s je vyžadován balíčkem %s"
-
-#~ msgid ""
-#~ "getInstalledPackageObject() will go away, use self.rpmdb.searchPkgTuple"
-#~ "().\n"
-#~ msgstr ""
-#~ "getInstalledPackageObject() bude odstraněno, používejte self.rpmdb."
-#~ "searchPkgTuple().\n"
+msgstr "Error opening rpm %s - error %s"
