@@ -1496,28 +1496,40 @@ to exit.
     def _historyInfoCmd(self, old, pats=[]):
         name = self._pwd_ui_username(old.loginuid)
 
-        def _simple_pkg(pkg, prefix_len, highlight=False):
+        _pkg_states_installed = {'i' : _('Installed'), 'e' : _('Erased'),
+                                 'o' : _('Updated'), 'n' : _('Downgraded')}
+        _pkg_states_available = {'i' : _('Installed'), 'e' : _('Not installed'),
+                                 'o' : _('Older'), 'n' : _('Newer')}
+        # max() only in 2.5.z
+        maxlen = sorted([len(x) for x in (_pkg_states_installed.values() +
+                                          _pkg_states_available.values())])[-1]
+        _pkg_states_installed['maxlen'] = maxlen
+        _pkg_states_available['maxlen'] = maxlen
+        def _simple_pkg(pkg, prefix_len, was_installed=False, highlight=False):
             prefix = " " * prefix_len
-            state  = _('Installed')
+            if was_installed:
+                _pkg_states = _pkg_states_installed
+            else:
+                _pkg_states = _pkg_states_available
+            state  = _pkg_states['i']
             ipkgs = self.rpmdb.searchNames([hpkg.name])
             ipkgs.sort()
             if not ipkgs:
-                state  = _('Not installed')
+                state  = _pkg_states['e']
             elif hpkg.pkgtup in (ipkg.pkgtup for ipkg in ipkgs):
                 pass
             elif ipkgs[-1] > hpkg:
-                state  = _('Older')
+                state  = _pkg_states['o']
             elif ipkgs[0] < hpkg:
-                state  = _('Newer')
+                state  = _pkg_states['n']
             else:
                 assert False, "Impossible, installed not newer and not older"
             if highlight:
                 (hibeg, hiend) = self._highlight('bold')
             else:
                 (hibeg, hiend) = self._highlight('normal')
-            print "%s%s %s%s%s" % (prefix,
-                                   hibeg, utf8_width_fill(state, 12), hiend,
-                                   hpkg)
+            state = utf8_width_fill(state, _pkg_states['maxlen'])
+            print "%s%s%s%s %s" % (prefix, hibeg, state, hiend, hpkg)
 
         print _("Transaction ID :"), old.tid
         begtm = time.ctime(old.beg_timestamp)
@@ -1559,21 +1571,7 @@ to exit.
 
         print _("Transaction performed with:")
         for hpkg in old.trans_with:
-            prefix = " " * 4
-            state  = _('Installed')
-            ipkgs = self.rpmdb.searchNames([hpkg.name])
-            ipkgs.sort()
-            if not ipkgs:
-                state  = _('Erased')
-            elif hpkg.pkgtup in (ipkg.pkgtup for ipkg in ipkgs):
-                pass
-            elif ipkgs[-1] > hpkg:
-                state  = _('Updated')
-            elif ipkgs[0] < hpkg:
-                state  = _('Downgraded')
-            else:
-                assert False, "Impossible, installed not newer and not older"
-            print "%s%s %s" % (prefix, utf8_width_fill(state, 12), hpkg)
+            _simple_pkg(hpkg, 4, was_installed=True)
         print _("Packages Altered:")
         self.historyInfoCmdPkgsAltered(old, pats)
 
@@ -1588,7 +1586,7 @@ to exit.
             key = "%s%s: " % (" " * 4, prob.problem)
             print self.fmtKeyValFill(key, prob.text)
             for hpkg in prob.packages:
-                _simple_pkg(hpkg, 8, highlight=hpkg.main)
+                _simple_pkg(hpkg, 8, was_installed=True, highlight=hpkg.main)
 
         if old.output:
             print _("Scriptlet output:")
@@ -1605,6 +1603,27 @@ to exit.
 
     def historyInfoCmdPkgsAltered(self, old, pats=[]):
         last = None
+        #  Note that these don't use _simple_pkg() because we are showing what
+        # happened to them in the transaction ... not the difference between the
+        # version in the transaction and now.
+        all_uistates = {'True-Install' : _('Install'),
+                        'Install'      : _('Install'),
+                        'Dep-Install'  : _('Dep-Install'),
+                        'Obsoleted'    : _('Obsoleted'),
+                        'Obsoleting'   : _('Obsoleting'),
+                        'Erase'        : _('Erase'),
+                        'Reinstall'    : _('Reinstall'),
+                        'Downgrade'    : _('Downgrade'),
+                        'Downgraded'   : _('Downgraded'),
+                        'Update'       : _('Update'),
+                        'Updated'      : _('Updated'),
+                        }
+        maxlen = 0
+        for hpkg in old.trans_data:
+            uistate = all_uistates.get(hpkg.state, hpkg.state)
+            if maxlen < len(uistate):
+                maxlen = len(uistate)
+
         for hpkg in old.trans_data:
             prefix = " " * 4
             if not hpkg.done:
@@ -1621,19 +1640,8 @@ to exit.
             # so we have to do it by hand ... *sigh*.
             cn = hpkg.ui_nevra
 
-            uistate = {'True-Install' : _('Install'),
-                       'Install'      : _('Install'),
-                       'Dep-Install'  : _('Dep-Install'),
-                       'Obsoleted'    : _('Obsoleted'),
-                       'Obsoleting'   : _('Obsoleting'),
-                       'Erase'        : _('Erase'),
-                       'Reinstall'    : _('Reinstall'),
-                       'Downgrade'    : _('Downgrade'),
-                       'Downgraded'   : _('Downgraded'),
-                       'Update'       : _('Update'),
-                       'Updated'      : _('Updated'),
-                       }.get(hpkg.state, hpkg.state)
-            uistate = utf8_width_fill(uistate, 12, 12)
+            uistate = all_uistates.get(hpkg.state, hpkg.state)
+            uistate = utf8_width_fill(uistate, maxlen)
             # Should probably use columns here...
             if False: pass
             elif (last is not None and
