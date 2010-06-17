@@ -1308,12 +1308,20 @@ to exit.
                 name = loginid
             return to_unicode(name)
 
+        def _safe_split_0(text, *args):
+            """ Split gives us a [0] for everything _but_ '', this function
+                returns '' in that case. """
+            ret = text.split(*args)
+            if not ret:
+                return ''
+            return ret[0]
+
         try:
             user = pwd.getpwuid(uid)
-            fullname = user.pw_gecos.split(';', 2)[0]
+            fullname = _safe_split_0(user.pw_gecos, ';', 2)
             name = "%s <%s>" % (fullname, user.pw_name)
             if limit is not None and len(name) > limit:
-                name = "%s ... <%s>" % (fullname.split()[0], user.pw_name)
+                name = "%s ... <%s>" % (_safe_split_0(fullname), user.pw_name)
                 if len(name) > limit:
                     name = "<%s>" % user.pw_name
             return to_unicode(name)
