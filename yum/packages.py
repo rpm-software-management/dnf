@@ -1588,11 +1588,11 @@ class YumInstalledPackage(YumHeaderPackage):
                     check_perms = False
 
                 if (check_content and vflags & _RPMVERIFY_MTIME and
-                    my_st.st_mtime != mtime):
+                    int(my_st.st_mtime) != int(mtime)):
                     prob = _PkgVerifyProb('mtime', 'mtime does not match',
                                           ftypes)
                     prob.database_value = mtime
-                    prob.disk_value     = my_st.st_mtime
+                    prob.disk_value     = int(my_st.st_mtime)
                     problems.append(prob)
 
                 if check_perms and vflags & _RPMVERIFY_USER and my_user != user:

@@ -83,6 +83,15 @@ class TransactionWrapper:
         curflags = self.ts.setFlags(0)
         self.ts.setFlags(curflags | flag)
 
+    def getTsFlags(self):
+        curflags = self.ts.setFlags(0)
+        self.ts.setFlags(curflags)
+        return curflags
+    
+    def isTsFlagSet(self, flag):
+        val = self.getTsFlags()
+        return bool(flag & val)
+        
 #    def addProblemFilter(self, filt):
 #        curfilter = self.ts.setProbFilter(0)
 #        self.ts.setProbFilter(cutfilter | filt)    
