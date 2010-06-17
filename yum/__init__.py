@@ -1296,7 +1296,7 @@ class YumBase(depsolve.Depsolve):
                 self.run_with_package_names.add('yum-metadata-parser')
                 break
 
-        if self.conf.history_record:
+        if self.conf.history_record and not self.ts.isTsFlagSet(rpm.RPMTRANS_FLAG_TEST):
             using_pkgs_pats = list(self.run_with_package_names)
             using_pkgs = self.rpmdb.returnPackages(patterns=using_pkgs_pats)
             rpmdbv  = self.rpmdb.simpleVersion(main_only=True)[0]
@@ -1338,7 +1338,7 @@ class YumBase(depsolve.Depsolve):
             self.verbose_logger.debug(errstring)
             resultobject.return_code = 1
         else:
-            if self.conf.history_record:
+            if self.conf.history_record and not self.ts.isTsFlagSet(rpm.RPMTRANS_FLAG_TEST):
                 herrors = [to_unicode(to_str(x)) for x in errors]
                 self.history.end(rpmdbv, 2, errors=herrors)
             
@@ -1362,7 +1362,8 @@ class YumBase(depsolve.Depsolve):
         self.rpmdb.dropCachedData() # drop out the rpm cache so we don't step on bad hdr indexes
         self.plugins.run('posttrans')
         # sync up what just happened versus what is in the rpmdb
-        self.verifyTransaction(resultobject)
+        if not self.ts.isTsFlagSet(rpm.RPMTRANS_FLAG_TEST):
+            self.verifyTransaction(resultobject)
         return resultobject
 
     def verifyTransaction(self, resultobject=None):
@@ -1456,7 +1457,7 @@ class YumBase(depsolve.Depsolve):
                 self.verbose_logger.log(logginglevels.DEBUG_2, 'What is this? %s' % txmbr.po)
 
         self.plugins.run('postverifytrans')
-        if self.conf.history_record:
+        if self.conf.history_record and not self.ts.isTsFlagSet(rpm.RPMTRANS_FLAG_TEST):
             ret = -1
             if resultobject is not None:
                 ret = resultobject.return_code
