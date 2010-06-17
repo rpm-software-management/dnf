@@ -1028,13 +1028,21 @@ def writeRawRepoFile(repo,only=None):
         return
 
     ini = INIConfig(open(repo.repofile))
+    # b/c repoids can have $values in them we need to map both ways to figure
+    # out which one is which
+    section_id = repo.id
+    if repo.id not in ini._sections:
+        for sect in ini._sections.keys():
+            if varReplace(sect, repo.yumvar) == repo.id:
+                section_id = sect
+    
     # Updated the ConfigParser with the changed values    
     cfgOptions = repo.cfg.options(repo.id)
     for name,value in repo.iteritems():
         option = repo.optionobj(name)
         if option.default != value or name in cfgOptions :
             if only == None or name in only:
-                ini[repo.id][name] = option.tostring(value)
+                ini[section_id][name] = option.tostring(value)
     fp =file(repo.repofile,"w")               
     fp.write(str(ini))
     fp.close()
