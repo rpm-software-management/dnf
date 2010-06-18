@@ -379,10 +379,24 @@ class YumOutput:
         for d in range(0, cols):
             data[d] = sorted(pdata[d].items())
 
+        #  We start allocating 1 char to everything but the last column, and a
+        # space between each (again, except for the last column). Because
+        # at worst we are better with:
+        # |one two three|
+        # | four        |
+        # ...than:
+        # |one two three|
+        # |            f|
+        # |our          |
+        # ...the later being what we get if we pre-allocate the last column, and
+        # thus. the space, due to "three" overflowing it's column by 2 chars.
         if columns is None:
-            columns = [1] * cols
+            columns = [1] * (cols - 1)
+            columns.append(0)
 
         total_width -= (sum(columns) + (cols - 1) + utf8_width(indent))
+        if not columns[-1]:
+            total_width += 1
         while total_width > 0:
             # Find which field all the spaces left will help best
             helps = 0
@@ -406,6 +420,10 @@ class YumOutput:
             # that column and start again with any remaining space.
             if helps:
                 diff = data[val].pop(0)[0] - columns[val]
+                if not columns[val] and (val == (cols - 1)):
+                    #  If we are going from 0 => N on the last column, take 1
+                    # for the space before the column.
+                    total_width  -= 1
                 columns[val] += diff
                 total_width  -= diff
                 continue
