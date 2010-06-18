@@ -3829,16 +3829,6 @@ class YumBase(depsolve.Depsolve):
         new_members = []
         failed = []
         for item in tx_mbrs[:]:
-            #FIXME future - if things in the rpm transaction handling get
-            # a bit finer-grained, then we should allow reinstalls of kernels
-            # for now, banned and dropped.
-            if self.allowedMultipleInstalls(item.po):
-                self.tsInfo.remove(item.pkgtup)
-                tx_mbrs.remove(item)
-                msg = _("Package %s is allowed multiple installs, skipping") % item.po
-                self.verbose_logger.log(logginglevels.INFO_2, msg)
-                continue
-            
             #  Make sure obsoletes processing is off, so we can reinstall()
             # pkgs that are obsolete.
             old_conf_obs = self.conf.obsoletes
@@ -4372,22 +4362,31 @@ class YumBase(depsolve.Depsolve):
         # so self.rpmdb.ts should be valid.
         ts = self.rpmdb.readOnlyTS()
         (cur_kernel_v, cur_kernel_r) = misc.get_running_kernel_version_release(ts)
-        for instpkg in self.conf.installonlypkgs:
-            for m in self.tsInfo.getMembers():
-                if (m.name == instpkg or instpkg in m.po.provides_names) \
-                       and m.ts_state in ('i', 'u'):
-                    installed = self.rpmdb.searchNevra(name=m.name)
-                    installed = _sort_and_filter_installonly(installed)
-                    if len(installed) >= self.conf.installonly_limit - 1: # since we're adding one
-                        numleft = len(installed) - self.conf.installonly_limit + 1
-                        for po in installed:
-                            if (po.version, po.release) == (cur_kernel_v, cur_kernel_r): 
-                                # don't remove running
-                                continue
-                            if numleft == 0:
-                                break
-                            toremove.append((po,m))
-                            numleft -= 1
+        install_only_names = set(self.conf.installonlypkgs)
+        for m in self.tsInfo.getMembers():
+            if m.ts_state not in ('i', 'u'):
+                continue
+            if m.reinstall:
+                continue
+
+            po_names = set([m.name] + m.po.provides_names)
+            if not po_names.intersection(install_only_names):
+                continue
+
+            installed = self.rpmdb.searchNevra(name=m.name)
+            installed = _sort_and_filter_installonly(installed)
+            if len(installed) < self.conf.installonly_limit - 1:
+                continue # we're adding one
+
+            numleft = len(installed) - self.conf.installonly_limit + 1
+            for po in installed:
+                if (po.version, po.release) == (cur_kernel_v, cur_kernel_r): 
+                    # don't remove running
+                    continue
+                if numleft == 0:
+                    break
+                toremove.append((po,m))
+                numleft -= 1
                         
         for po,rel in toremove:
             txmbr = self.tsInfo.addErase(po)
