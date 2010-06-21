@@ -3653,7 +3653,12 @@ class YumBase(depsolve.Depsolve):
                     if not kwargs.get('silence_warnings', False):
                         self.logger.warning(_("No package matched to remove"))
 
+        ts = self.rpmdb.readOnlyTS()
+        kern_pkgtup = misc.get_running_kernel_pkgtup(ts)
         for po in pkgs:
+            if self.conf.protected_packages and po.pkgtup == kern_pkgtup:
+                self.logger.warning(_("Skipping the running kernel: %s") % po)
+                continue
             txmbr = self.tsInfo.addErase(po)
             tx_return.append(txmbr)
         
