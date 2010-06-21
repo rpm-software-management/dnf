@@ -94,6 +94,8 @@ SLOT_TO_CONDUIT = {
     'exclude': 'MainPluginConduit',
     'preresolve': 'DepsolvePluginConduit',
     'postresolve': 'DepsolvePluginConduit',
+    'historybegin': 'HistoryPluginConduit',
+    'historyend': 'HistoryPluginConduit',
     }
 
 # Enumerate all slot names
@@ -608,6 +610,11 @@ class DepsolvePluginConduit(MainPluginConduit):
         self.resultcode = rescode
         self.resultstring = restring
 
+
+class HistoryPluginConduit(MainPluginConduit):
+    def __init__(self, parent, base, conf, rescode=None, restring=[]):
+        MainPluginConduit.__init__(self, parent, base, conf)
+        self.history = self._base.history
 
 def parsever(apiver):
     maj, min = apiver.split('.')

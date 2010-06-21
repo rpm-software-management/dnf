@@ -262,11 +262,26 @@ class YumHistory:
             except ValueError:
                 continue
 
+            self._db_date = '%s-%s-%s' % (pieces[0], pieces[1], pieces[2])
             self._db_file = d
             break
 
         if self._db_file is None:
             self._create_db_file()
+        
+        # make an addon path for where we're going to stick 
+        # random additional history info - probably from plugins and what-not
+        self.conf.addon_path = self.conf.db_path + '/' + self._db_date
+        if not os.path.exists(self.conf.addon_path):
+            try:
+                os.makedirs(self.conf.addon_path)
+            except (IOError, OSError), e:
+                # some sort of useful thing here? A warning?
+                return
+        else:
+            if os.access(self.conf.addon_path, os.W_OK):
+                self.conf.writable = True
+
 
     def __del__(self):
         self.close()
@@ -562,6 +577,42 @@ class YumHistory:
         if errors is not None:
             self._log_errors(errors)
         del self._tid
+
+    def write_addon_data(dataname, data):
+        """append data to an arbitrary-named file in the history 
+           addon_path/transaction id location"""
+        
+        if not hasattr(self, '_tid'):
+            # maybe we should raise an exception or a warning here?
+            return False
+        
+        # make sure the tid dir exists
+        tid_dir = self.conf.addon_path + '/' + self._tid)
+
+        if self.conf.writable and not os.path.exists(tid_dir):
+            try:
+                os.makedirs(tid_dir, mode=0700)
+            except (IOError, OSError), e:
+                # emit a warning/raise an exception?
+                return False
+        
+        # cleanup dataname
+        safename = dataname.replace('/', '_')
+        data_fn = tid_dir + '/' + safename
+        try:
+            # open file in append
+            fo = open(data_fn, 'w+')
+            # write data
+            fo.write(data)
+            # flush data
+            fo.flush()
+            fo.close()
+        except (IOError, OSError), e:
+            return False
+        # return
+        return True
+        
+            
 
     def _old_with_pkgs(self, tid):
         cur = self._get_cursor()
@@ -883,9 +934,10 @@ class YumHistory:
     def _create_db_file(self):
         """ Create a new history DB file, populating tables etc. """
 
+        self._db_date = time.strftime('%Y-%m-%d')
         _db_file = '%s/%s-%s.%s' % (self.conf.db_path,
                                     'history',
-                                    time.strftime('%Y-%m-%d'),
+                                    self._db_date,
                                     'sqlite')
         if self._db_file == _db_file:
             os.rename(_db_file, _db_file + '.old')

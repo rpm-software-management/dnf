@@ -1315,7 +1315,7 @@ class YumBase(depsolve.Depsolve):
                 cmdline = ' '.join(self.cmds)
             self.history.beg(rpmdbv, using_pkgs, list(self.tsInfo),
                              self.skipped_packages, rpmdb_problems, cmdline)
-
+            self.plugins.run('historybegin')
         #  Just before we update the transaction, update what we think the
         # rpmdb will look like. This needs to be done before the run, so that if
         # "something" happens and the rpmdb is different from what we think it
@@ -1341,7 +1341,8 @@ class YumBase(depsolve.Depsolve):
             if self.conf.history_record and not self.ts.isTsFlagSet(rpm.RPMTRANS_FLAG_TEST):
                 herrors = [to_unicode(to_str(x)) for x in errors]
                 self.history.end(rpmdbv, 2, errors=herrors)
-            
+                self.plugins.run('historyend')
+                
             self.logger.critical(_("Transaction couldn't start:"))
             for e in errors:
                 self.logger.critical(e[0]) # should this be 'to_unicoded'?
