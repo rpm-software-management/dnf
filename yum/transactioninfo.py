@@ -432,6 +432,10 @@ class TransactionData:
         txmbr.po.state = TS_INSTALL        
         txmbr.ts_state = 'i'
         txmbr.reason = 'user'
+
+        if self.rpmdb.contains(po=txmbr.po):
+            txmbr.reinstall = True
+
         self.add(txmbr)
         return txmbr
     

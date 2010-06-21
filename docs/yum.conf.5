@@ -69,6 +69,9 @@ protected via. Obsoletes as well as user/plugin removals.
 The default is: yum glob:/etc/yum/protected.d/*.conf
 So any packages which should be protected can do so by including a file in 
 /etc/yum/protected.d with their package name in it.
+
+Also if this configuration is set to anything, then yum will protect the
+package corresponding to the running version of the kernel.
 .IP
 \fBlogfile\fR
 Full directory and file name for where yum should write its log file.
