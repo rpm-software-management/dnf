@@ -908,6 +908,9 @@ class YumBase(depsolve.Depsolve):
         
         #  We _must_ get rid of all the used tses before we go on, so that C-c
         # works for downloads / mirror failover etc.
+        kern_pkgtup = None
+        if rescode == 2 and self.conf.protected_packages:
+            kern_pkgtup = misc.get_running_kernel_pkgtup(self.rpmdb.ts)
         self.rpmdb.ts = None
 
         # do the skip broken magic, if enabled and problems exist
@@ -933,18 +936,26 @@ class YumBase(depsolve.Depsolve):
             txmbrs = self.tsInfo.getMembersWithState(None, protect_states)
         bad_togo = {}
         for txmbr in txmbrs:
-            if txmbr.name not in protected:
+            if kern_pkgtup is not None and txmbr.pkgtup == kern_pkgtup:
+                pass
+            elif txmbr.name not in protected:
                 continue
             if txmbr.name not in bad_togo:
                 bad_togo[txmbr.name] = []
             bad_togo[txmbr.name].append(txmbr.pkgtup)
         for ipkg in self.rpmdb.searchNames(bad_togo.keys()):
+            if (kern_pkgtup is not None and ipkg.name == kern_pkgtup[0] and
+                kern_pkgtup in bad_togo[kern_pkgtup[0]]):
+                continue # If "running kernel" matches, it's always bad.
             if ipkg.name not in bad_togo:
                 continue
             # If there is at least one version not being removed, allow it
             if ipkg.pkgtup not in bad_togo[ipkg.name]:
                 del bad_togo[ipkg.name]
         for pkgname in bad_togo.keys():
+            if (kern_pkgtup is not None and pkgname == kern_pkgtup[0] and
+                kern_pkgtup in bad_togo[kern_pkgtup[0]]):
+                continue # If "running kernel" matches, it's always bad.
             for txmbr in self.tsInfo.matchNaevr(name=pkgname):
                 if txmbr.name not in bad_togo:
                     continue
