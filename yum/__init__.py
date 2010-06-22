@@ -4289,13 +4289,13 @@ class YumBase(depsolve.Depsolve):
                 self.logger.info(_('Key imported successfully'))
                 key_installed = True
 
-                if not key_installed:
-                    raise Errors.YumBaseError, \
-                          _('The GPG keys listed for the "%s" repository are ' \
-                          'already installed but they are not correct for this ' \
-                          'package.\n' \
-                          'Check that the correct key URLs are configured for ' \
-                          'this repository.') % (repo.name)
+        if not key_installed:
+            raise Errors.YumBaseError, \
+                  _('The GPG keys listed for the "%s" repository are ' \
+                  'already installed but they are not correct for this ' \
+                  'package.\n' \
+                  'Check that the correct key URLs are configured for ' \
+                  'this repository.') % (repo.name)
 
         # Check if the newly installed keys helped
         result, errmsg = self.sigCheckPkg(po)
@@ -4345,14 +4345,12 @@ class YumBase(depsolve.Depsolve):
                 self.logger.info(_('Key imported successfully'))
                 key_installed = True
 
-                if not key_installed:
-                    raise Errors.YumBaseError, \
-                          _('The GPG keys listed for the "%s" repository are ' \
-                          'already installed but they are not correct for this ' \
-                          'package.\n' \
-                          'Check that the correct key URLs are configured for ' \
-                          'this repository.') % (repo.name)
-
+        if not key_installed:
+            raise Errors.YumBaseError, \
+                  _('The GPG keys listed for the "%s" repository are ' \
+                  'already installed but they are not correct.\n' \
+                  'Check that the correct key URLs are configured for ' \
+                  'this repository.') % (repo.name)
 
     def _limit_installonly_pkgs(self):
         """ Limit packages based on conf.installonly_limit, if any of the
