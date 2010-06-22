@@ -4213,6 +4213,28 @@ class YumBase(depsolve.Depsolve):
         
         return keys
 
+    def _getKeyImportMessage(self, info, keyurl):
+        msg = None
+        if keyurl.startswith("file:"):
+            fname = keyurl[len("file:"):]
+            pkgs = self.rpmdb.searchFiles(fname)
+            if pkgs:
+                pkgs = sorted(pkgs)[-1]
+                msg = (_('Importing GPG key 0x%s:\n'
+                         ' Userid : %s\n'
+                         ' Package: %s (%s)\n'
+                         ' From   : %s') %
+                       (info['hexkeyid'], to_unicode(info['userid']),
+                        pkgs, pkgs.ui_from_repo,
+                        keyurl.replace("file://","")))
+        if msg is None:
+            msg = (_('Importing GPG key 0x%s:\n'
+                     ' Userid: "%s"\n'
+                     ' From  : %s') %
+                   (info['hexkeyid'], to_unicode(info['userid']),
+                    keyurl.replace("file://","")))
+        self.logger.critical("%s", msg)
+
     def getKeyForPackage(self, po, askcb = None, fullaskcb = None):
         """
         Retrieve a key for a package. If needed, prompt for if the key should
@@ -4243,10 +4265,7 @@ class YumBase(depsolve.Depsolve):
                     continue
 
                 # Try installing/updating GPG key
-                self.logger.critical(_('Importing GPG key 0x%s "%s" from %s') %
-                                     (info['hexkeyid'], 
-                                      to_unicode(info['userid']),
-                                      keyurl.replace("file://","")))
+                self._getKeyImportMessage(info, keyurl)
                 rc = False
                 if self.conf.assumeyes:
                     rc = True
@@ -4305,10 +4324,7 @@ class YumBase(depsolve.Depsolve):
                     continue
 
                 # Try installing/updating GPG key
-                self.logger.critical(_('Importing GPG key 0x%s "%s" from %s') %
-                                     (info['hexkeyid'], 
-                                     to_unicode(info['userid']),
-                                     keyurl.replace("file://","")))
+                self._getKeyImportMessage(info, keyurl)
                 rc = False
                 if self.conf.assumeyes:
                     rc = True
