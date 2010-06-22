@@ -580,14 +580,21 @@ class YumHistory:
 
     def write_addon_data(dataname, data):
         """append data to an arbitrary-named file in the history 
-           addon_path/transaction id location"""
+           addon_path/transaction id location,
+           returns True if write succeeded, False if not"""
         
         if not hasattr(self, '_tid'):
             # maybe we should raise an exception or a warning here?
             return False
         
+        if not dataname:
+            return False
+        
+        if not data:
+            return False
+            
         # make sure the tid dir exists
-        tid_dir = self.conf.addon_path + '/' + self._tid)
+        tid_dir = self.conf.addon_path + '/' + self._tid
 
         if self.conf.writable and not os.path.exists(tid_dir):
             try:
@@ -612,7 +619,6 @@ class YumHistory:
         # return
         return True
         
-            
 
     def _old_with_pkgs(self, tid):
         cur = self._get_cursor()

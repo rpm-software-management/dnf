@@ -1351,8 +1351,9 @@ class YumBase(depsolve.Depsolve):
         else:
             if self.conf.history_record and not self.ts.isTsFlagSet(rpm.RPMTRANS_FLAG_TEST):
                 herrors = [to_unicode(to_str(x)) for x in errors]
+                self.plugins.run('historyend')                
                 self.history.end(rpmdbv, 2, errors=herrors)
-                self.plugins.run('historyend')
+
                 
             self.logger.critical(_("Transaction couldn't start:"))
             for e in errors:
@@ -1473,6 +1474,7 @@ class YumBase(depsolve.Depsolve):
             ret = -1
             if resultobject is not None:
                 ret = resultobject.return_code
+            self.plugins.run('historyend')
             self.history.end(self.rpmdb.simpleVersion(main_only=True)[0], ret)
         self.rpmdb.dropCachedData()
 
