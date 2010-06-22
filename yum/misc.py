@@ -648,7 +648,9 @@ def string_to_prco_tuple(prcoString):
         n = prcoString
         f = v = None
         
-        if n[0] != '/':
+        # We love GPG keys as packages, esp. awesome provides like:
+        #  gpg(Fedora (13) <fedora@fedoraproject.org>)
+        if n[0] != '/' and not n.startswith("gpg("):
             # not a file dep - look at it for being versioned
             prco_split = n.split()
             if len(prco_split) == 3:
