@@ -863,6 +863,10 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
 
         installing = False
         for pkg in filelist:
+            if not pkg.endswith('.rpm'):
+                self.verbose_logger.log(yum.logginglevels.INFO_2,
+                   "Skipping: %s, filename does not end in .rpm.", pkg)
+                continue
             txmbrs = self.installLocal(pkg, updateonly=updateonly)
             if txmbrs:
                 installing = True

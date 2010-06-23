@@ -3709,6 +3709,11 @@ class YumBase(depsolve.Depsolve):
             self.verbose_logger.log(logginglevels.INFO_2,
                 _('Examining %s: %s'), po.localpath, po)
 
+        # apparently someone wanted to try to install a drpm as an rpm :(
+        if po.hdr['payloadformat'] == 'drpm':
+            self.logger.critical(_('Cannot localinstall deltarpm: %s. Skipping.'), pkg)
+            return tx_return
+
         # if by any chance we're a noncompat arch rpm - bail and throw out an error
         # FIXME -our archlist should be stored somewhere so we don't have to
         # do this: but it's not a config file sort of thing
