@@ -113,11 +113,15 @@ class Updates:
         for (n, a, e, v, r) in pkglist:
             if (n, a) not in returndict:
                 returndict[(n, a)] = []
+            if (e,v,r) in returndict[(n, a)]:
+                continue
             returndict[(n, a)].append((e,v,r))
 
             if Nonelists:
                 if (n, None) not in returndict:
                     returndict[(n, None)] = []
+                if (a,e,v,r) in returndict[(n, None)]:
+                    continue
                 returndict[(n, None)].append((a, e, v, r))
             
         return returndict
