@@ -17,6 +17,7 @@ from cli import YumBaseCli
 from yum.rpmsack import RPMDBPackageSack as _rpmdbsack
 import inspect
 from rpmUtils import arch
+from rpmUtils.transaction import initReadOnlyTransaction
 
 #############################################################
 ### Helper classes ##########################################
@@ -292,6 +293,11 @@ class FakeRpmDb(packageSack.PackageSack):
         return
     def transactionReset(self):
         return
+
+    def readOnlyTS(self):
+        #  Should probably be able to "fake" this, so we can provide different
+        # get_running_kernel_pkgtup(). Bah.
+        return initReadOnlyTransaction("/")
 
     def getProvides(self, name, flags=None, version=(None, None, None)):
         """return dict { packages -> list of matching provides }"""

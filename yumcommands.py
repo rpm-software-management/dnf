@@ -1331,6 +1331,9 @@ class HistoryCommand(YumCommand):
         if extcmds and extcmds[0] in ('repeat', 'redo', 'undo', 'new'):
             checkRootUID(base)
             checkGPGKey(base)
+        elif not os.access(base.history._db_file, os.R_OK):
+            base.logger.critical(_("You don't have access to the history DB."))
+            raise cli.CliError
 
     def doCommand(self, base, basecmd, extcmds):
         vcmd = 'list'
