@@ -578,7 +578,7 @@ class YumHistory:
             self._log_errors(errors)
         del self._tid
 
-    def write_addon_data(dataname, data):
+    def write_addon_data(self, dataname, data):
         """append data to an arbitrary-named file in the history 
            addon_path/transaction id location,
            returns True if write succeeded, False if not"""
@@ -594,7 +594,7 @@ class YumHistory:
             return False
             
         # make sure the tid dir exists
-        tid_dir = self.conf.addon_path + '/' + self._tid
+        tid_dir = self.conf.addon_path + '/' + str(self._tid)
 
         if self.conf.writable and not os.path.exists(tid_dir):
             try:
