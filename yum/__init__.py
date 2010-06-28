@@ -1326,6 +1326,9 @@ class YumBase(depsolve.Depsolve):
                 cmdline = ' '.join(self.cmds)
             self.history.beg(rpmdbv, using_pkgs, list(self.tsInfo),
                              self.skipped_packages, rpmdb_problems, cmdline)
+            # write out our config and repo data to additional history info
+            self._store_config_in_history()
+            
             self.plugins.run('historybegin')
         #  Just before we update the transaction, update what we think the
         # rpmdb will look like. This needs to be done before the run, so that if
@@ -4690,3 +4693,12 @@ class YumBase(depsolve.Depsolve):
             
         return True    
 
+    def _store_config_in_history(self):
+        myconf += self.conf.dump()
+        self.history.write_addon_data('activeconfig', myconf)
+        myrepos = ''
+        for repo in self.repos.listEnabled():
+            myrepos += repo.dump()
+            myrepos += '\n'
+        self.history.write_addon_data('enabled-repos', myrepos)
+        
