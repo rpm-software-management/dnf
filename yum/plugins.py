@@ -99,7 +99,7 @@ SLOT_TO_CONDUIT = {
     }
 
 # Enumerate all slot names
-SLOTS = SLOT_TO_CONDUIT.keys()
+SLOTS = sorted(SLOT_TO_CONDUIT.keys())
 
 class PluginYumExit(Exception):
     '''Used by plugins to signal that yum should stop
