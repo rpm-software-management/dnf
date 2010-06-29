@@ -1322,7 +1322,9 @@ class YumBase(depsolve.Depsolve):
                 rpmdb_problems = self._rpmdb_warn_checks(warn=output_warn,
                                                         ignore_pkgs=ignore_pkgs)
             cmdline = None
-            if hasattr(self, 'cmds') and self.cmds:
+            if hasattr(self, 'args') and self.args:
+                cmdline = ' '.join(self.args)
+            elif hasattr(self, 'cmds') and self.cmds:
                 cmdline = ' '.join(self.cmds)
             self.history.beg(rpmdbv, using_pkgs, list(self.tsInfo),
                              self.skipped_packages, rpmdb_problems, cmdline)
@@ -1412,7 +1414,9 @@ class YumBase(depsolve.Depsolve):
                 po.yumdb_info.from_repo = rpo.repoid
                 po.yumdb_info.reason = txmbr.reason
                 po.yumdb_info.releasever = self.conf.yumvar['releasever']
-                if hasattr(self, 'cmds') and self.cmds:
+                if hasattr(self, 'args') and self.args:
+                    po.yumdb_info.command_line = ' '.join(self.args)
+                elif hasattr(self, 'cmds') and self.cmds:
                     po.yumdb_info.command_line = ' '.join(self.cmds)
                 csum = rpo.returnIdSum()
                 if csum is not None:
