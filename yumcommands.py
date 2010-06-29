@@ -1323,7 +1323,7 @@ class HistoryCommand(YumCommand):
         base.history._create_db_file()
 
     def doCheck(self, base, basecmd, extcmds):
-        cmds = ('list', 'info', 'summary', 'repeat', 'redo', 'undo', 'new')
+        cmds = ('list', 'info', 'summary', 'repeat', 'redo', 'undo', 'new', 'addon-info')
         if extcmds and extcmds[0] not in cmds:
             base.logger.critical(_('Invalid history sub-command, use: %s.'),
                                  ", ".join(cmds))
@@ -1347,6 +1347,8 @@ class HistoryCommand(YumCommand):
             ret = base.historyInfoCmd(extcmds)
         elif vcmd == 'summary':
             ret = base.historySummaryCmd(extcmds)
+        elif vcmd == 'addon-info':
+            ret = base.historyAddonInfoCmd(extcmds)
         elif vcmd == 'undo':
             ret = self._hcmd_undo(base, extcmds)
         elif vcmd in ('redo', 'repeat'):

@@ -1584,8 +1584,18 @@ to exit.
             print _("Return-Code    :"), _("Failure:"), old.return_code
         else:
             print _("Return-Code    :"), _("Success")
+            
         if old.cmdline is not None:
             print _("Command Line   :"), old.cmdline
+
+        addon_info = self.history.return_addon_data(old.tid)
+        
+        # for the ones we create by default - don't display them as there
+        default_addons = set(['activeconfig', 'enabled-repos'])
+        non_default = set(addon_info).difference(default_addons)
+        if len(non_default) > 0:
+                print _("Additional non-default information stored: %d" 
+                            % len(non_default))
 
         print _("Transaction performed with:")
         for hpkg in old.trans_with:
@@ -1739,6 +1749,40 @@ to exit.
                 print fmt % (utf8_width_fill(name, 26, 26),
                              utf8_width_fill(uperiod, 19, 19),
                              utf8_width_fill(uiacts, 16, 16), count)
+
+    def historyAddonInfoCmd(self, extcmds):
+        tid = extcmds[1]
+        try:
+            int(tid)
+        except ValueError:
+            self.logger.critical(_('No transaction ID given'))
+            return 1, ['Failed history addon-info']
+
+        old = self.history.old(tids=[tid])
+        if old is None:
+            self.logger.critical(_('No Transaction %s found') % tid)
+            return 1, ['Failed history addon-info']
+            
+        hist_data = old[0]
+        addon_info = self.history.return_addon_data(hist_data.tid)
+        if len(extcmds) <= 2:
+            print 'Available additional history information:'
+            for itemname in self.history.return_addon_data(hist_data.tid):
+                print '  %s' % itemname
+            print ''
+            
+            return 0, ['history addon-info']
+            
+        
+        for item in extcmds[2:]:
+            if item in addon_info:
+                print '%s:' % item
+                print self.history.return_addon_data(hist_data.tid, item)
+            else:
+                print '%s: No additional data found by this name' % item
+
+            print ''
+
 
 
 class DepSolveProgressCallBack:

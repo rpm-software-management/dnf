@@ -619,7 +619,22 @@ class YumHistory:
         # return
         return True
         
-
+    def return_addon_data(self, tid, item=None):
+        hist_and_tid = self.conf.addon_path + '/' + str(tid) + '/'
+        addon_info = glob.glob(hist_and_tid + '*')
+        addon_names = [ i.replace(hist_and_tid, '') for i in addon_info ]
+        if not item:
+            return addon_names
+        
+        if item not in addon_names:
+            # XXX history needs SOME kind of exception, or warning, I think?
+            return None
+        
+        fo = open(hist_and_tid + item, 'r')
+        data = fo.read()
+        fo.close()
+        return data
+        
     def _old_with_pkgs(self, tid):
         cur = self._get_cursor()
         executeSQL(cur,
