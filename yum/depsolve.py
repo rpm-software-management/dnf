@@ -1200,15 +1200,6 @@ class Depsolve(object):
                 # be ignored entirely. Just not preferred
                 pass
 
-        #  This is probably only for "renames". What happens is that pkgA-1 gets
-        # obsoleted by pkgB but pkgB requires pkgA-2, now _if_ the pkgA txmbr
-        # gets processed before pkgB then we'll process the "checkRemove" of
-        # pkgA ... so any deps. on pkgA-1 will look for a new provider, one of
-        # which is pkgA-2 in that case we want to choose that pkg over any
-        # others. This works for multiple cases too, but who'd do that right?:)
-        #  FIXME: A good long term. fix here is to just not get into this
-        # problem, but that's too much for .21. This is much safer.
-        
         pkgs = pkgresults.keys()
             
         # go through each pkg and compare to others
@@ -1275,7 +1266,7 @@ class Depsolve(object):
             if self.isPackageInstalled(po.base_package_name):
                 self.verbose_logger.log(logginglevels.DEBUG_4,
                     _('base package %s is installed for %s' % (po.base_package_name, po)))
-                pkgresults[po] += 5 # Same as ipkgresults above.
+                pkgresults[po] += 5 # Same as before - - but off of base package name
             if reqpo:
                 cpl = _common_prefix_len(po.name, reqpo.name)
                 if cpl > 2:
