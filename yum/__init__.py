@@ -899,7 +899,11 @@ class YumBase(depsolve.Depsolve):
             self.logger.critical(msg)
             self.yumUtilsMsg(self.logger.critical, "yum-complete-transaction")
             time.sleep(3)
-
+        
+        # XXX - we could add a conditional here to avoid running the plugins and 
+        # limit_installonly_pkgs, etc - if we're being run from yum-complete-transaction
+        # and don't want it to happen. - skv
+        
         self.plugins.run('preresolve')
         ds_st = time.time()
 
