@@ -1751,35 +1751,46 @@ to exit.
                              utf8_width_fill(uiacts, 16, 16), count)
 
     def historyAddonInfoCmd(self, extcmds):
-        tid = extcmds[1]
+        tid = None
+        if len(extcmds) > 1:
+            tid = extcmds[1]
         try:
             int(tid)
         except ValueError:
             self.logger.critical(_('No transaction ID given'))
             return 1, ['Failed history addon-info']
+        except TypeError:
+            pass # No tid arg. passed, use last...
 
-        old = self.history.old(tids=[tid])
-        if old is None:
+        if tid is not None:
+            old = self.history.old(tids=[tid])
+        else:
+            old = [self.history.last(complete_transactions_only=False)]
+            if old[0] is None:
+                self.logger.critical(_('No transaction ID, or package, given'))
+                return 1, ['Failed history addon-info']
+
+        if not old:
             self.logger.critical(_('No Transaction %s found') % tid)
             return 1, ['Failed history addon-info']
             
         hist_data = old[0]
         addon_info = self.history.return_addon_data(hist_data.tid)
         if len(extcmds) <= 2:
-            print 'Available additional history information:'
+            print _("Transaction ID:"), hist_data.tid
+            print _('Available additional history information:')
             for itemname in self.history.return_addon_data(hist_data.tid):
                 print '  %s' % itemname
             print ''
             
             return 0, ['history addon-info']
-            
         
         for item in extcmds[2:]:
             if item in addon_info:
                 print '%s:' % item
                 print self.history.return_addon_data(hist_data.tid, item)
             else:
-                print '%s: No additional data found by this name' % item
+                print _('%s: No additional data found by this name') % item
 
             print ''
 
