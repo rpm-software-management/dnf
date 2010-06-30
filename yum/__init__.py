@@ -4694,11 +4694,10 @@ class YumBase(depsolve.Depsolve):
         return True    
 
     def _store_config_in_history(self):
-        myconf += self.conf.dump()
-        self.history.write_addon_data('activeconfig', myconf)
+        self.history.write_addon_data('config-main', self.conf.dump())
         myrepos = ''
         for repo in self.repos.listEnabled():
             myrepos += repo.dump()
             myrepos += '\n'
-        self.history.write_addon_data('enabled-repos', myrepos)
+        self.history.write_addon_data('config-repos', myrepos)
         
