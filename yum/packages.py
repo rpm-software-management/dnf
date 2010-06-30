@@ -1420,7 +1420,7 @@ class _PkgVerifyProb:
         return ret
 
 # From: lib/rpmvf.h ... not in rpm *sigh*
-_RPMVERIFY_DIGEST     = (1 << 0)
+_RPMVERIFY_DIGEST   = (1 << 0)
 _RPMVERIFY_FILESIZE = (1 << 1)
 _RPMVERIFY_LINKTO   = (1 << 2)
 _RPMVERIFY_USER     = (1 << 3)
@@ -1428,6 +1428,186 @@ _RPMVERIFY_GROUP    = (1 << 4)
 _RPMVERIFY_MTIME    = (1 << 5)
 _RPMVERIFY_MODE     = (1 << 6)
 _RPMVERIFY_RDEV     = (1 << 7)
+_RPMVERIFY_CAPS     = (1 << 8)
+_RPMVERIFY_CONTEXTS = (1 << 15)
+
+class YUMVerifyPackageFile(object):
+    def __init__(self, filename):
+        self.filename = filename
+
+        self.readlink = None
+        self.mtime    = None
+        self.dev      = None
+        self.user     = None
+        self.group    = None
+        self.mode     = None
+        self.digest   = None
+        self.size     = None
+
+        self.verify_ftype  = False
+
+        self.rpmfile_type  = set()
+        self.rpmfile_state = None
+
+    def _setVerifiedAttr(self, attr, val, vattr=None):
+        if vattr is None:
+            vattr = "verify_" + attr
+        attr = "_" + attr
+        setattr(self, attr, val)
+        setattr(self, vattr, val is not None)
+
+    readlink = property(fget=lambda x: x._readlink,
+                        fdel=lambda x: setattr(x, 'readlink', None),
+                        fset=lambda x,y: x._setVerifiedAttr("readlink", y))
+    mtime    = property(fget=lambda x: x._mtime,
+                        fdel=lambda x: setattr(x, 'mtime', None),
+                        fset=lambda x,y: x._setVerifiedAttr("mtime", y))
+    dev      = property(fget=lambda x: x._dev,
+                        fdel=lambda x: setattr(x, 'dev', None),
+                        fset=lambda x,y: x._setVerifiedAttr("dev", y))
+    user     = property(fget=lambda x: x._user,
+                        fdel=lambda x: setattr(x, 'user', None),
+                        fset=lambda x,y: x._setVerifiedAttr("user", y))
+    group    = property(fget=lambda x: x._group,
+                        fdel=lambda x: setattr(x, 'group', None),
+                        fset=lambda x,y: x._setVerifiedAttr("group", y))
+    # Mode is special, because it's shared with ftype.
+    digest   = property(fget=lambda x: x._digest,
+                        fdel=lambda x: setattr(x, 'digest', None),
+                        fset=lambda x,y: x._setVerifiedAttr("digest", y))
+    size     = property(fget=lambda x: x._size,
+                        fdel=lambda x: setattr(x, 'size', None),
+                        fset=lambda x,y: x._setVerifiedAttr("size", y))
+
+    def _setVerifiedMode(self, attr, val):
+        self.verify_mode  = val is not None
+        self.verify_ftype = val is not None
+        attr = "_" + attr
+        setattr(self, attr, val)
+
+    mode = property(fget=lambda x: x._mode,
+                    fdel=lambda x: setattr(x, 'mode', None),
+                    fset=lambda x,y: x._setVerifiedMode("mode", y))
+
+    @staticmethod
+    def _ftype(mode):
+        """ Given a "mode" return the name of the type of file. """
+        if stat.S_ISREG(mode):  return "file"
+        if stat.S_ISDIR(mode):  return "directory"
+        if stat.S_ISLNK(mode):  return "symlink"
+        if stat.S_ISFIFO(mode): return "fifo"
+        if stat.S_ISCHR(mode):  return "character device"
+        if stat.S_ISBLK(mode):  return "block device"
+        return "<unknown>"
+
+    ftype = property(fget=lambda x: x._ftype(x.mode))
+
+
+class _RPMVerifyPackageFile(YUMVerifyPackageFile):
+    def __init__(self, fi, filetuple, csum_type, override_vflags=False):
+        YUMVerifyPackageFile.__init__(self, filetuple[0])
+
+        flags          = filetuple[4]
+        if override_vflags:
+            vflags = -1
+        else:
+            vflags = filetuple[9]
+
+        if vflags & _RPMVERIFY_FILESIZE:
+            self.size      = filetuple[1]
+
+        if vflags & _RPMVERIFY_RDEV|_RPMVERIFY_MODE:
+            mode           = filetuple[2]
+            if mode < 0:
+                # Stupid rpm, should be unsigned value but is signed ...
+                # so we "fix" it via. this hack
+                mode = (mode & 0xFFFF)
+
+            self.mode = mode
+            if not (vflags & _RPMVERIFY_MODE):
+                self.verify_mode  = False
+            if not (vflags & _RPMVERIFY_RDEV):
+                self.verify_ftype = False
+
+        if vflags & _RPMVERIFY_MTIME:
+            self.mtime     = filetuple[3]
+        if vflags & _RPMVERIFY_RDEV:
+            self.dev       = filetuple[5]
+
+        self.rpmfile_types = rpmfile_types = set()
+        if flags & rpm.RPMFILE_CONFIG:
+            rpmfile_types.add('configuration')
+        if flags & rpm.RPMFILE_DOC:
+            rpmfile_types.add('documentation')
+        if flags & rpm.RPMFILE_GHOST:
+            rpmfile_types.add('ghost')
+        if flags & rpm.RPMFILE_LICENSE:
+            rpmfile_types.add('license')
+        if flags & rpm.RPMFILE_PUBKEY:
+            rpmfile_types.add('public key')
+        if flags & rpm.RPMFILE_README:
+            rpmfile_types.add('README')
+        if flags & rpm.RPMFILE_MISSINGOK:
+            rpmfile_types.add('missing ok')
+
+        # 6 == inode
+        # 7 == link
+        state = filetuple[8]
+        statemap = {rpm.RPMFILE_STATE_NORMAL : 'normal',
+                    rpm.RPMFILE_STATE_REPLACED : 'replaced',
+                    rpm.RPMFILE_STATE_NOTINSTALLED : 'not installed',
+                    rpm.RPMFILE_STATE_WRONGCOLOR : 'wrong color',
+                    rpm.RPMFILE_STATE_NETSHARED : 'netshared'}
+
+        if state in statemap:
+            self.rpmfile_state = statemap[state]
+        else:
+            self.rpmfile_state = "<unknown>"
+
+        if vflags & _RPMVERIFY_USER:
+            self.user      = filetuple[10]
+        if vflags & _RPMVERIFY_GROUP:
+            self.group     = filetuple[11]
+        if vflags & _RPMVERIFY_DIGEST:
+            self.digest    = (csum_type, filetuple[12])
+
+        if self.ftype == 'symlnk' and vflags & _RPMVERIFY_LINKTO:
+            self.readlink = fi.FLink() # fi.foo is magic, don't think about it
+        elif vflags & _RPMVERIFY_LINKTO:
+            self.readlink = ''
+
+
+class YUMVerifyPackage:
+    def __init__(self):
+        self.files = set()
+
+    def __contains__(self, fname):
+        return fname in self.files
+
+    def __iter__(self):
+        for pf in self.files:
+            yield pf
+
+    def add(self, *args, **kwargs):
+        return self.files.add(*args, **kwargs)
+
+
+class _RPMVerifyPackage(YUMVerifyPackage):
+    def __init__(self, fi, def_csum_type, patterns, all):
+        self.files = set()
+        for ft in fi:
+            fn = ft[0]
+            if patterns:
+                matched = False
+                for p in patterns:
+                    if fnmatch.fnmatch(fn, p):
+                        matched = True
+                        break
+                if not matched: 
+                    continue
+
+            self.add(_RPMVerifyPackageFile(fi, ft, def_csum_type, all))
+
 
 _installed_repo = FakeRepository('installed')
 _installed_repo.cost = 0
@@ -1444,21 +1624,6 @@ class YumInstalledPackage(YumHeaderPackage):
         """verify that the installed files match the packaged checksum
            optionally verify they match only if they are in the 'pattern' list
            returns a tuple """
-        def _ftype(mode):
-            """ Given a "mode" return the name of the type of file. """
-            if stat.S_ISREG(mode):  return "file"
-            if stat.S_ISDIR(mode):  return "directory"
-            if stat.S_ISLNK(mode):  return "symlink"
-            if stat.S_ISFIFO(mode): return "fifo"
-            if stat.S_ISCHR(mode):  return "character device"
-            if stat.S_ISBLK(mode):  return "block device"
-            return "<unknown>"
-
-        statemap = {rpm.RPMFILE_STATE_REPLACED : 'replaced',
-                    rpm.RPMFILE_STATE_NOTINSTALLED : 'not installed',
-                    rpm.RPMFILE_STATE_WRONGCOLOR : 'wrong color',
-                    rpm.RPMFILE_STATE_NETSHARED : 'netshared'}
-
         fi = self.hdr.fiFromHeader()
         results = {} # fn = problem_obj?
 
@@ -1475,70 +1640,36 @@ class YumInstalledPackage(YumHeaderPackage):
                     csum_type = RPM_CHECKSUM_TYPES[csum_num]
                 # maybe an else with an error code here? or even a verify issue?
 
-        for filetuple in fi:
-            #tuple is: (filename, fsize, mode, mtime, flags, frdev?, inode, link,
-            #           state, vflags?, user, group, checksum(or none for dirs) 
-            (fn, size, mode, mtime, flags, dev, inode, link, state, vflags, 
-                       user, group, csum) = filetuple
-            if patterns:
-                matched = False
-                for p in patterns:
-                    if fnmatch.fnmatch(fn, p):
-                        matched = True
-                        break
-                if not matched: 
-                    continue
+        pfs = _RPMVerifyPackage(fi, csum_type, patterns, all)
 
-            ftypes = []
-            if flags & rpm.RPMFILE_CONFIG:
-                ftypes.append('configuration')
-            if flags & rpm.RPMFILE_DOC:
-                ftypes.append('documentation')
-            if flags & rpm.RPMFILE_GHOST:
-                ftypes.append('ghost')
-            if flags & rpm.RPMFILE_LICENSE:
-                ftypes.append('license')
-            if flags & rpm.RPMFILE_PUBKEY:
-                ftypes.append('public key')
-            if flags & rpm.RPMFILE_README:
-                ftypes.append('README')
-            if flags & rpm.RPMFILE_MISSINGOK:
-                ftypes.append('missing ok')
-            # not in python rpm bindings yet
-            # elif flags & rpm.RPMFILE_POLICY:
-            #    ftypes.append('policy')
-                
-            if all:
-                vflags = -1
-
-            if state != rpm.RPMFILE_STATE_NORMAL:
-                if state in statemap:
-                    ftypes.append("state=" + statemap[state])
-                else:
-                    ftypes.append("state=<unknown>")
+        for pf in pfs:
+            fn = pf.filename
+            ftypes = list(pf.rpmfile_types)
+            if pf.rpmfile_state != "normal":
+                ftypes.append("state=" + pf.rpmfile_state)
                 if fake_problems:
                     results[fn] = [_PkgVerifyProb('state',
                                                   'state is not normal',
                                                   ftypes, fake=True)]
                 continue
 
-            if flags & rpm.RPMFILE_MISSINGOK and fake_problems:
+            if 'missing ok' in pf.rpmfile_types and fake_problems:
                 results[fn] = [_PkgVerifyProb('missingok', 'missing but ok',
                                               ftypes, fake=True)]
-            if flags & rpm.RPMFILE_MISSINGOK and not all:
+            if 'missing ok' in pf.rpmfile_types and not all:
                 continue # rpm just skips missing ok, so we do too
 
-            if flags & rpm.RPMFILE_GHOST and fake_problems:
+            if 'ghost' in pf.rpmfile_types and fake_problems:
                 results[fn] = [_PkgVerifyProb('ghost', 'ghost file', ftypes,
                                               fake=True)]
-            if flags & rpm.RPMFILE_GHOST and not all:
+            if 'ghost' in pf.rpmfile_types and not all:
                 continue
 
             # do check of file status on system
             problems = []
-            if os.path.lexists(fn):
+            if os.path.lexists(pf.filename):
                 # stat
-                my_st = os.lstat(fn)
+                my_st = os.lstat(pf.filename)
                 my_st_size = my_st.st_size
                 try:
                     my_user  = pwd.getpwuid(my_st[stat.ST_UID])[0]
@@ -1549,115 +1680,128 @@ class YumInstalledPackage(YumHeaderPackage):
                 except KeyError, e:
                     my_group = 'gid %s not found' % my_st[stat.ST_GID]
 
-                if mode < 0:
-                    # Stupid rpm, should be unsigned value but is signed ...
-                    # so we "fix" it via. this hack
-                    mode = (mode & 0xFFFF)
+                my_ftype = YUMVerifyPackageFile._ftype(my_st.st_mode)
 
-                ftype    = _ftype(mode)
-                my_ftype = _ftype(my_st.st_mode)
+                verify_dev = False
+                if (pf.verify_dev and (pf.ftype.endswith("device") or
+                                       my_ftype.endswith("device"))):
+                    verify_dev = True
+                if verify_dev:
+                    if pf.ftype != my_ftype:
+                        prob = _PkgVerifyProb('type','file type does not match',
+                                              ftypes)
+                        prob.database_value = pf.ftype
+                        prob.disk_value = my_ftype
+                        problems.append(prob)
+                    elif (pf.dev & 0xFFFF) != (my_st.st_dev & 0xFFFF):
+                        prob =_PkgVerifyProb('type','dev does not match',ftypes)
+                        prob.database_value = hex(pf.dev & 0xffff)
+                        prob.disk_value = hex(my_st.st_dev & 0xffff)
+                        problems.append(prob)
 
-                if vflags & _RPMVERIFY_RDEV and ftype != my_ftype:
-                    prob = _PkgVerifyProb('type', 'file type does not match',
-                                          ftypes)
-                    prob.database_value = ftype
-                    prob.disk_value = my_ftype
-                    problems.append(prob)
-
-                if (ftype == "symlink" and my_ftype == "symlink" and
-                    vflags & _RPMVERIFY_LINKTO):
-                    fnl    = fi.FLink() # fi.foo is magic, don't think about it
-                    my_fnl = os.readlink(fn)
-                    if my_fnl != fnl:
+                if pf.verify_readlink:
+                    my_fnl = ''
+                    if my_ftype == "symlink":
+                        my_fnl = os.readlink(pf.filename)
+                    if my_fnl != pf.readlink:
                         prob = _PkgVerifyProb('symlink',
                                               'symlink does not match', ftypes)
-                        prob.database_value = fnl
+                        prob.database_value = pf.readlink
                         prob.disk_value     = my_fnl
                         problems.append(prob)
 
                 check_content = True
                 if 'ghost' in ftypes:
                     check_content = False
-                if my_ftype == "symlink" and ftype == "file":
+                if my_ftype == "symlink" and pf.ftype == "file":
                     # Don't let things hide behind symlinks
-                    my_st_size = os.stat(fn).st_size
+                    my_st_size = os.stat(pf.filename).st_size
                 elif my_ftype != "file":
                     check_content = False
                 check_perms = True
                 if my_ftype == "symlink":
+                    #  No, rpm doesn't check user/group on the dst. of the
+                    # symlink ... so we don't.
                     check_perms = False
 
-                if (check_content and vflags & _RPMVERIFY_MTIME and
-                    int(my_st.st_mtime) != int(mtime)):
+                if (check_content and pf.verify_mtime and
+                    int(my_st.st_mtime) != int(pf.mtime)):
                     prob = _PkgVerifyProb('mtime', 'mtime does not match',
                                           ftypes)
-                    prob.database_value = mtime
+                    prob.database_value = pf.mtime
                     prob.disk_value     = int(my_st.st_mtime)
                     problems.append(prob)
 
-                if check_perms and vflags & _RPMVERIFY_USER and my_user != user:
+                if check_perms and pf.verify_user and my_user != pf.user:
                     prob = _PkgVerifyProb('user', 'user does not match', ftypes)
-                    prob.database_value = user
+                    prob.database_value = pf.user
                     prob.disk_value = my_user
                     problems.append(prob)
-                if (check_perms and vflags & _RPMVERIFY_GROUP and
-                    my_group != group):
+                if check_perms and pf.verify_group and my_group != pf.group:
                     prob = _PkgVerifyProb('group', 'group does not match',
                                           ftypes)
-                    prob.database_value = group
+                    prob.database_value = pf.group
                     prob.disk_value     = my_group
                     problems.append(prob)
 
                 my_mode = my_st.st_mode
-                if 'ghost' in ftypes: # This is what rpm does
-                    my_mode &= 0777
+                if 'ghost' in ftypes: #  This is what rpm does, although it
+                    my_mode &= 0777   # doesn't usually get here.
                     mode    &= 0777
-                if check_perms and vflags & _RPMVERIFY_MODE and my_mode != mode:
+                if check_perms and pf.verify_mode and my_mode != pf.mode:
                     prob = _PkgVerifyProb('mode', 'mode does not match', ftypes)
-                    prob.database_value = mode
+                    prob.database_value = pf.mode
                     prob.disk_value     = my_st.st_mode
                     problems.append(prob)
 
-                if fast and not problems and (my_st_size == size):
-                    vflags &= ~_RPMVERIFY_DIGEST
+                verify_digest = pf.verify_digest
+                if fast and not problems and (my_st_size == pf.size):
+                    verify_digest = False
+                if not pf.digest:
+                    verify_digest = False
 
                 # Note that because we might get the _size_ from prelink,
                 # we need to do the checksum, even if we just throw it away,
                 # just so we get the size correct.
                 if (check_content and
-                    ((have_prelink and (vflags & _RPMVERIFY_FILESIZE) and
-                      (my_st_size != size)) or
-                     (csum and vflags & _RPMVERIFY_DIGEST))):
+                    (verify_digest or (pf.verify_size and have_prelink and 
+                                       my_st_size != pf.size))):
+                    if pf.digest:
+                        digest_type = pf.digest[0]
+                        csum = pf.digest[0] + ':' + pf.digest[1]
+                    else:
+                        digest_type = csum_type
+                        csum = ''
                     try:
-                        my_csum = misc.checksum(csum_type, fn)
-                        gen_csum = True
+                        my_csum = misc.checksum(digest_type, pf.filename)
+                        my_csum = digest_type + ':' + my_csum
                     except Errors.MiscError:
                         # Don't have permission?
-                        gen_csum = False
+                        my_csum = None
 
-                    if csum and vflags & _RPMVERIFY_DIGEST and not gen_csum:
+                    if pf.verify_digest and my_csum is None:
                         prob = _PkgVerifyProb('genchecksum',
                                               'checksum not available', ftypes)
                         prob.database_value = csum
                         prob.disk_value     = None
                         problems.append(prob)
                         
-                    if gen_csum and my_csum != csum and have_prelink:
+                    if my_csum != csum and have_prelink:
                         #  This is how rpm -V works, try and if that fails try
                         # again with prelink.
-                        p = Popen([prelink_cmd, "-y", fn], 
+                        p = Popen([prelink_cmd, "-y", pf.filename], 
                             bufsize=-1, stdin=PIPE,
                             stdout=PIPE, stderr=PIPE, close_fds=True)
                         (ig, fp, er) = (p.stdin, p.stdout, p.stderr)
                         # er.read(1024 * 1024) # Try and get most of the stderr
                         fp = _CountedReadFile(fp)
-                        tcsum = misc.checksum(csum_type, fp)
+                        tcsum = misc.checksum(digest_type, fp)
                         if fp.read_size: # If prelink worked
                             my_csum = tcsum
+                            my_csum = digest_type + ':' + my_csum
                             my_st_size = fp.read_size
 
-                    if (csum and vflags & _RPMVERIFY_DIGEST and gen_csum and
-                        my_csum != csum):
+                    if pf.verify_digest and my_csum != csum:
                         prob = _PkgVerifyProb('checksum',
                                               'checksum does not match', ftypes)
                         prob.database_value = csum
@@ -1665,16 +1809,15 @@ class YumInstalledPackage(YumHeaderPackage):
                         problems.append(prob)
 
                 # Size might be got from prelink ... *sigh*.
-                if (check_content and vflags & _RPMVERIFY_FILESIZE and
-                    my_st_size != size):
+                if check_content and pf.verify_size and my_st_size != pf.size:
                     prob = _PkgVerifyProb('size', 'size does not match', ftypes)
-                    prob.database_value = size
+                    prob.database_value = pf.size
                     prob.disk_value     = my_st_size
                     problems.append(prob)
 
             else:
                 try:
-                    os.stat(fn)
+                    os.stat(pf.filename)
                     perms_ok = True # Shouldn't happen
                 except OSError, e:
                     perms_ok = True
@@ -1690,7 +1833,7 @@ class YumInstalledPackage(YumHeaderPackage):
                 problems.append(prob)
 
             if problems:
-                results[fn] = problems
+                results[pf.filename] = problems
                 
         return results
         
