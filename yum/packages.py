@@ -1578,23 +1578,46 @@ class _RPMVerifyPackageFile(YUMVerifyPackageFile):
 
 
 class YUMVerifyPackage:
+    """ A holder for YUMVerifyPackageFile objects. """
     def __init__(self):
-        self.files = set()
+        self._files = {}
 
     def __contains__(self, fname):
-        return fname in self.files
+        """ Note that this checks if a filename is part of the package, and
+            not a full YUMVerifyPackageFile(). """
+        return fname in self._files
 
     def __iter__(self):
-        for pf in self.files:
-            yield pf
+        for fn in self._files:
+            yield self._files[fn]
 
-    def add(self, *args, **kwargs):
-        return self.files.add(*args, **kwargs)
+    def add(self, vpf):
+        self._files[vpf.filename] = vpf
+
+    def remove(self, vpf):
+        del self._files[vpf.filename]
+
+    def discard(self, vpf):
+        if vpf.filename not in self:
+            return
+        self.remove(vpf)
+
+    def clear(self):
+        self._files = {}
 
 
 class _RPMVerifyPackage(YUMVerifyPackage):
     def __init__(self, fi, def_csum_type, patterns, all):
-        self.files = set()
+        YUMVerifyPackage.__init__(self)
+
+        self._presetup = (fi, def_csum_type, patterns, all)
+    def _setup(self):
+        if not hasattr(self, '_presetup'):
+            return
+
+        (fi, def_csum_type, patterns, all) = self._presetup
+        del self._presetup
+
         for ft in fi:
             fn = ft[0]
             if patterns:
@@ -1608,6 +1631,24 @@ class _RPMVerifyPackage(YUMVerifyPackage):
 
             self.add(_RPMVerifyPackageFile(fi, ft, def_csum_type, all))
 
+    def __contains__(self, *args, **kwargs):
+        self._setup()
+        return YUMVerifyPackage.__contains__(self, *args, **kwargs)
+    def __iter__(self, *args, **kwargs):
+        self._setup()
+        return YUMVerifyPackage.__iter__(self, *args, **kwargs)
+    def add(self, *args, **kwargs):
+        self._setup()
+        return YUMVerifyPackage.add(self, *args, **kwargs)
+    def remove(self, *args, **kwargs):
+        self._setup()
+        return YUMVerifyPackage.remove(self, *args, **kwargs)
+    # discard uses contains...
+    def clear(self, *args, **kwargs):
+        if hasattr(self, '_presetup'):
+            del self._presetup
+        return YUMVerifyPackage.clear(self, *args, **kwargs)
+
 
 _installed_repo = FakeRepository('installed')
 _installed_repo.cost = 0
@@ -1620,7 +1661,7 @@ class YumInstalledPackage(YumHeaderPackage):
             self.yumdb_info = yumdb.get_package(self)
 
     def verify(self, patterns=[], deps=False, script=False,
-               fake_problems=True, all=False, fast=False):
+               fake_problems=True, all=False, fast=False, callback=None):
         """verify that the installed files match the packaged checksum
            optionally verify they match only if they are in the 'pattern' list
            returns a tuple """
@@ -1641,6 +1682,9 @@ class YumInstalledPackage(YumHeaderPackage):
                 # maybe an else with an error code here? or even a verify issue?
 
         pfs = _RPMVerifyPackage(fi, csum_type, patterns, all)
+
+        if callback is not None:
+            pfs = callback(pfs)
 
         for pf in pfs:
             fn = pf.filename
