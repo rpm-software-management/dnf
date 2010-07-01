@@ -4705,3 +4705,8 @@ class YumBase(depsolve.Depsolve):
             myrepos += '\n'
         self.history.write_addon_data('config-repos', myrepos)
         
+    def verify_plugins_cb(self, verify_package):
+        """ Callback to call a plugin hook for pkg.verify(). """
+        self.plugins.run('verify_package', verify_package=verify_package)
+        return verify_package
+

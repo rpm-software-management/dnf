@@ -96,6 +96,7 @@ SLOT_TO_CONDUIT = {
     'postresolve': 'DepsolvePluginConduit',
     'historybegin': 'HistoryPluginConduit',
     'historyend': 'HistoryPluginConduit',
+    'verify_package': 'VerifyPluginConduit',
     }
 
 # Enumerate all slot names
@@ -615,6 +616,11 @@ class HistoryPluginConduit(MainPluginConduit):
     def __init__(self, parent, base, conf, rescode=None, restring=[]):
         MainPluginConduit.__init__(self, parent, base, conf)
         self.history = self._base.history
+
+class VerifyPluginConduit(MainPluginConduit):
+    def __init__(self, parent, base, conf, verify_package):
+        MainPluginConduit.__init__(self, parent, base, conf)
+        self.verify_package = verify_package
 
 def parsever(apiver):
     maj, min = apiver.split('.')
