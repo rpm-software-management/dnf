@@ -96,6 +96,7 @@ SLOT_TO_CONDUIT = {
     'postresolve': 'DepsolvePluginConduit',
     'historybegin': 'HistoryPluginConduit',
     'historyend': 'HistoryPluginConduit',
+    'compare_providers': 'CompareProvidersPluginConduit',
     'verify_package': 'VerifyPluginConduit',
     }
 
@@ -611,6 +612,11 @@ class DepsolvePluginConduit(MainPluginConduit):
         self.resultcode = rescode
         self.resultstring = restring
 
+class CompareProvidersPluginConduit(MainPluginConduit):
+    def __init__(self, parent, base, conf, providers_dict={}, reqpo=None):
+        MainPluginConduit.__init__(self, parent, base, conf)
+        self.packages = providers_dict
+        self.reqpo = reqpo
 
 class HistoryPluginConduit(MainPluginConduit):
     def __init__(self, parent, base, conf, rescode=None, restring=[]):

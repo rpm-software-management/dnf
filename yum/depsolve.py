@@ -1168,11 +1168,15 @@ class Depsolve(object):
         pkgs = unique_nevra_pkgs.values()
             
         pkgresults = {}
-        ipkgresults = {}
 
         for pkg in pkgs:
             pkgresults[pkg] = 0
-
+        
+        # hand this off to our plugins
+        self.plugins.run("compare_providers", providers_dict=pkgresults, 
+                                      reqpo=reqpo)
+        
+        for pkg in pkgresults.keys():
             rpmdbpkgs = self.rpmdb.searchNevra(name=pkg.name)
             if rpmdbpkgs:
                 #  We only want to count things as "installed" if they are
@@ -1186,27 +1190,17 @@ class Depsolve(object):
                     # we are giving an edge to is not obsoleted by
                     # something else in the transaction. :(
                     # there are many ways I hate this - this is but one
-                    ipkgresults[pkg] = 5
+                    pkgresults[pkg] += 5
                 elif newest.verEQ(pkg):
                     #  We get here from bestPackagesFromList(), give a giant
                     # bump to stuff that is already installed.
-                    ipkgresults[pkg] = 1000
+                    pkgresults[pkg] += 1000
             else:
                 # just b/c they're not installed pkgs doesn't mean they should
                 # be ignored entirely. Just not preferred
-                ipkgresults[pkg] = 0
+                pass
 
-        #  This is probably only for "renames". What happens is that pkgA-1 gets
-        # obsoleted by pkgB but pkgB requires pkgA-2, now _if_ the pkgA txmbr
-        # gets processed before pkgB then we'll process the "checkRemove" of
-        # pkgA ... so any deps. on pkgA-1 will look for a new provider, one of
-        # which is pkgA-2 in that case we want to choose that pkg over any
-        # others. This works for multiple cases too, but who'd do that right?:)
-        #  FIXME: A good long term. fix here is to just not get into this
-        # problem, but that's too much for .21. This is much safer.
-        if ipkgresults:
-            pkgresults = ipkgresults
-            pkgs = ipkgresults.keys()
+        pkgs = pkgresults.keys()
             
         # go through each pkg and compare to others
         # if it is same skip it
@@ -1272,7 +1266,7 @@ class Depsolve(object):
             if self.isPackageInstalled(po.base_package_name):
                 self.verbose_logger.log(logginglevels.DEBUG_4,
                     _('base package %s is installed for %s' % (po.base_package_name, po)))
-                pkgresults[po] += 5 # Same as ipkgresults above.
+                pkgresults[po] += 5 # Same as before - - but off of base package name
             if reqpo:
                 cpl = _common_prefix_len(po.name, reqpo.name)
                 if cpl > 2:
