@@ -289,9 +289,9 @@ class YumUtilBase(YumBaseCli):
             self.logger.critical(str(msg))
             sys.exit(1)
 
-    def doUtilBuildTransaction(self):
+    def doUtilBuildTransaction(self, unfinished_transactions_check=True):
         try:
-            (result, resultmsgs) = self.buildTransaction() 
+            (result, resultmsgs) = self.buildTransaction(unfinished_transactions_check = unfinished_transactions_check)
         except plugins.PluginYumExit, e:
             return self.exPluginExit(e)
         except Errors.YumBaseError, e:
