@@ -3863,6 +3863,7 @@ class YumBase(depsolve.Depsolve):
         # then we really shouldn't go on
         new_members = []
         failed = []
+        failed_pkgs = []
         for item in tx_mbrs[:]:
             #  Make sure obsoletes processing is off, so we can reinstall()
             # pkgs that are obsolete.
@@ -3877,11 +3878,12 @@ class YumBase(depsolve.Depsolve):
                 self.tsInfo.remove(item.pkgtup)
                 tx_mbrs.remove(item)
                 failed.append(str(item.po))
+                failed_pkgs.append(item.po)
                 continue
             new_members.extend(members)
 
         if failed and not tx_mbrs:
-            raise Errors.ReinstallInstallError, _("Problem in reinstall: no package %s matched to install") % ", ".join(failed)
+            raise Errors.ReinstallInstallError(_("Problem in reinstall: no package %s matched to install") % ", ".join(failed), failed_pkgs=failed_pkgs)
         tx_mbrs.extend(new_members)
         return tx_mbrs
         

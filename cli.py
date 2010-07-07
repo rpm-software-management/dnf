@@ -833,15 +833,15 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
             except yum.Errors.ReinstallRemoveError:
                 self._checkMaybeYouMeant(arg, always_output=False)
             except yum.Errors.ReinstallInstallError, e:
-                ipkg = self.rpmdb.returnPackages(patterns=[arg])[0]
-                xmsg = ''
-                if 'from_repo' in ipkg.yumdb_info:
-                    xmsg = ipkg.yumdb_info.from_repo
-                    xmsg = _(' (from %s)') % xmsg
-                self.verbose_logger.log(yum.logginglevels.INFO_2,
-                                        _('Installed package %s%s%s%s not available.'),
-                                        self.term.MODE['bold'], ipkg,
-                                        self.term.MODE['normal'], xmsg)
+                for ipkg in e.failed_pkgs:
+                    xmsg = ''
+                    if 'from_repo' in ipkg.yumdb_info:
+                        xmsg = ipkg.yumdb_info.from_repo
+                        xmsg = _(' (from %s)') % xmsg
+                    msg = _('Installed package %s%s%s%s not available.')
+                    self.verbose_logger.log(yum.logginglevels.INFO_2, msg,
+                                            self.term.MODE['bold'], ipkg,
+                                            self.term.MODE['normal'], xmsg)
             except yum.Errors.ReinstallError, e:
                 assert False, "Shouldn't happen, but just in case"
                 self.verbose_logger.log(yum.logginglevels.INFO_2, e)
