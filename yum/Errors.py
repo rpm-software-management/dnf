@@ -90,7 +90,9 @@ class ReinstallRemoveError(ReinstallError):
     pass
 
 class ReinstallInstallError(ReinstallError):
-    pass
+    def __init__(self, value=None, failed_pkgs=[]):
+        ReinstallError.__init__(self, value)
+        self.failed_pkgs = failed_pkgs
 
 class DowngradeError(YumBaseError):
     pass
