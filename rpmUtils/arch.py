@@ -406,7 +406,7 @@ class ArchStorage(object):
         self.basearch = getBaseArch(myarch=self.canonarch)
         self.archlist = getArchList(thisarch=self.canonarch)
         
-        if not archlist_includes_compat: # - do we bother including i686 and below on x86_64
+        if not archlist_includes_compat_arch: # - do we bother including i686 and below on x86_64
             limit_archlist = []
             for a in self.archlist:
                 if isMultiLibArch(a) or a == 'noarch':
