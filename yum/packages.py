@@ -1579,7 +1579,8 @@ class _RPMVerifyPackageFile(YUMVerifyPackageFile):
 
 class YUMVerifyPackage:
     """ A holder for YUMVerifyPackageFile objects. """
-    def __init__(self):
+    def __init__(self, po):
+        self.po = po
         self._files = {}
 
     def __contains__(self, fname):
@@ -1607,8 +1608,8 @@ class YUMVerifyPackage:
 
 
 class _RPMVerifyPackage(YUMVerifyPackage):
-    def __init__(self, fi, def_csum_type, patterns, all):
-        YUMVerifyPackage.__init__(self)
+    def __init__(self, po, fi, def_csum_type, patterns, all):
+        YUMVerifyPackage.__init__(self, po)
 
         self._presetup = (fi, def_csum_type, patterns, all)
     def _setup(self):
@@ -1681,7 +1682,7 @@ class YumInstalledPackage(YumHeaderPackage):
                     csum_type = RPM_CHECKSUM_TYPES[csum_num]
                 # maybe an else with an error code here? or even a verify issue?
 
-        pfs = _RPMVerifyPackage(fi, csum_type, patterns, all)
+        pfs = _RPMVerifyPackage(self, fi, csum_type, patterns, all)
 
         if callback is not None:
             pfs = callback(pfs)
