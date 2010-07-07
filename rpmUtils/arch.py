@@ -397,7 +397,7 @@ class ArchStorage(object):
         self.multilib = False
         self.setup_arch()
 
-    def setup_arch(self, arch=None):
+    def setup_arch(self, arch=None, archlist_includes_compat_arch=True):
         if arch:
             self.canonarch = arch
         else:
@@ -405,6 +405,14 @@ class ArchStorage(object):
         
         self.basearch = getBaseArch(myarch=self.canonarch)
         self.archlist = getArchList(thisarch=self.canonarch)
+        
+        if not archlist_includes_compat: # - do we bother including i686 and below on x86_64
+            limit_archlist = []
+            for a in self.archlist:
+                if isMultiLibArch(a) or a == 'noarch':
+                    limit_archlist.append(a)
+            self.archlist = limit_archlist
+            
         self.bestarch = getBestArch(myarch=self.canonarch)
         self.compatarches = getMultiArchInfo(arch=self.canonarch)
         self.multilib = isMultiLibArch(arch=self.canonarch)
