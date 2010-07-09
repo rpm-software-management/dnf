@@ -130,7 +130,10 @@ def doLoggingSetup(debuglevel, errorlevel,
     """
     global _added_handlers
 
-    logging.basicConfig()
+    #logging.basicConfig() # this appears to not change anything in our 
+    # logging setup - disabling this b/c of the behaviors in yum ticket 525
+    # -skvidal
+    
 
     if _added_handlers:
         if debuglevel is not None:
