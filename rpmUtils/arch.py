@@ -202,15 +202,19 @@ def getArchList(thisarch=None):
         archlist.append('noarch')
     return archlist
     
-        
+def _try_read_cpuinfo():
+    """ Try to read /proc/cpuinfo ... if we can't ignore errors (ie. proc not
+        mounted). """
+    try:
+        lines = open("/proc/cpuinfo", "r").readlines()
+        return lines
+    except:
+        return []
 
 def getCanonX86Arch(arch):
     # 
     if arch == "i586":
-        f = open("/proc/cpuinfo", "r")
-        lines = f.readlines()
-        f.close()
-        for line in lines:
+        for line in _try_read_cpuinfo():
             if line.startswith("model name") and line.find("Geode(TM)") != -1:
                 return "geode"
         return arch
@@ -219,10 +223,7 @@ def getCanonX86Arch(arch):
         return arch
 
     # if we're i686 and AuthenticAMD, then we should be an athlon
-    f = open("/proc/cpuinfo", "r")
-    lines = f.readlines()
-    f.close()
-    for line in lines:
+    for line in _try_read_cpuinfo():
         if line.startswith("vendor") and line.find("AuthenticAMD") != -1:
             return "athlon"
         # i686 doesn't guarantee cmov, but we depend on it
@@ -237,10 +238,7 @@ def getCanonPPCArch(arch):
         return arch
 
     machine = None
-    f = open("/proc/cpuinfo", "r")
-    lines = f.readlines()
-    f.close()
-    for line in lines:
+    for line in _try_read_cpuinfo():
         if line.find("machine") != -1:
             machine = line.split(':')[1]
             break
@@ -256,10 +254,7 @@ def getCanonPPCArch(arch):
 def getCanonSPARCArch(arch):
     # Deal with sun4v, sun4u, sun4m cases
     SPARCtype = None
-    f = open("/proc/cpuinfo", "r")
-    lines = f.readlines()
-    f.close()
-    for line in lines:
+    for line in _try_read_cpuinfo():
         if line.startswith("type"):
             SPARCtype = line.split(':')[1]
             break
@@ -285,10 +280,7 @@ def getCanonX86_64Arch(arch):
         return arch
 
     vendor = None
-    f = open("/proc/cpuinfo", "r")
-    lines = f.readlines()
-    f.close()
-    for line in lines:
+    for line in _try_read_cpuinfo():
         if line.startswith("vendor_id"):
             vendor = line.split(':')[1]
             break
