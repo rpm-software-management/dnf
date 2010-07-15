@@ -1367,7 +1367,8 @@ class YumBase(depsolve.Depsolve):
             self.logger.critical(_("Transaction couldn't start:"))
             for e in errors:
                 self.logger.critical(e[0]) # should this be 'to_unicoded'?
-            raise Errors.YumBaseError, _("Could not run transaction.")
+            raise Errors.YumRPMTransError(msg=_("Could not run transaction."),
+                                          errors=errors)
 
                           
         if not self.conf.keepcache:
