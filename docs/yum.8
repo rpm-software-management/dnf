@@ -58,8 +58,10 @@ gnome\-packagekit application\&.
 .I \fR * resolvedep dep1 [dep2] [\&.\&.\&.] 
 .br
 .I \fR * localinstall rpmfile1 [rpmfile2] [\&.\&.\&.] 
+    (maintained for legacy reasons only - use install)
 .br
-.I \fR * localupdate rpmfile1 [rpmfile2] [\&.\&.\&.] 
+.I \fR * localupdate rpmfile1 [rpmfile2] [\&.\&.\&.]
+    (maintained for legacy reasons only - use update)
 .br
 .I \fR * reinstall package1 [package2] [\&.\&.\&.] 
 .br
@@ -220,14 +222,16 @@ package is listed per dependency.
 .IP "\fBlocalinstall\fP"
 Is used to install a set of local rpm files. If required the enabled 
 repositories will be used to resolve dependencies. Note that the install command
-will do a local install, if given a filename.
+will do a local install, if given a filename. This option is maintained for legacy
+reasons only.
 .IP
 .IP "\fBlocalupdate\fP"
 Is used to update the system by specifying local rpm files. Only the specified 
 rpm files of which an older version is already installed will be installed,
 the remaining specified packages will be ignored.
 If required the enabled repositories will be used to resolve dependencies. Note
-that the update command will do a local install, if given a filename.
+that the update command will do a local update, if given a filename. This option is maintained for
+legacy reasons only.
 .IP
 .IP "\fBreinstall\fP"
 Will reinstall the identically versioned package as is currently installed. 
@@ -240,7 +244,7 @@ previously highest version (or the specified version).
 The depsolver will not necessarily work, but if you specify all the packages it
 should work (and thus. all the simple cases will work). Also this does not
 work for "installonly" packages, like Kernels. downgrade operates
-on groups, files, provides and filelists just like the "install" command\&.
+on groups, files, provides, filelists and rpm files just like the "install" command\&.
 .IP
 .IP "\fBdeplist\fP"
 Produces a list of all dependencies and what packages provide those
