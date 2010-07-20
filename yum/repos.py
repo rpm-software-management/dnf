@@ -78,7 +78,11 @@ class RepoStorage:
         for repo in repos:
             repo.setup(self.ayum.conf.cache, self.ayum.mediagrabber,
                    gpg_import_func = self.gpg_import_func, confirm_func=self.confirm_func)
-
+            # if we come back from setup NOT enabled then mark as disabled
+            # so nothing else touches us
+            if not repo.enabled:
+                self.disableRepo(repo.id)
+                
         self._setup = True
         self.ayum.plugins.run('postreposetup')
         

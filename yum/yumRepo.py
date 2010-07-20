@@ -955,6 +955,7 @@ class YumRepository(Repository, config.RepoConf):
         if not self.mediafunc and self.mediaid and not self.mirrorlist and not self.baseurl:
             verbose_logger.log(logginglevels.DEBUG_2, "Disabling media repo for non-media-aware frontend")
             self.enabled = False
+            self.skip_if_unavailable = True
 
     def _cachingRepoXML(self, local):
         """ Should we cache the current repomd.xml """
