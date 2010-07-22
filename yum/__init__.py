@@ -1580,7 +1580,12 @@ class YumBase(depsolve.Depsolve):
         
         mypid=str(os.getpid())    
         while not self._lock(lockfile, mypid, 0644):
-            fd = open(lockfile, 'r')
+            try:
+                fd = open(lockfile, 'r')
+            except (IOError, OSError), e:
+                msg = _("Could not open lock %s: %s") % (lockfile, e)
+                raise Errors.LockError(1, msg)
+                
             try: oldpid = int(fd.readline())
             except ValueError:
                 # bogus data in the pid file. Throw away.
