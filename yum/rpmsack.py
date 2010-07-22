@@ -1533,7 +1533,7 @@ class RPMDBAdditionalDataPackage(object):
         if info is None:
             raise AttributeError, "%s has no attribute %s" % (self, attr)
 
-        if self._yumdb_cache is not None:
+        if info.st_nlink > 1 and self._yumdb_cache is not None:
             key = (info.st_dev, info.st_ino)
             if key in self._yumdb_cache:
                 self._read_cached_data[attr] = self._yumdb_cache[key]
@@ -1544,7 +1544,7 @@ class RPMDBAdditionalDataPackage(object):
         fo.close()
         del fo
 
-        if self._yumdb_cache is not None:
+        if info.st_nlink > 1 and self._yumdb_cache is not None:
             self._yumdb_cache[key] = self._read_cached_data[attr]
 
         return self._read_cached_data[attr]
