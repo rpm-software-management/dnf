@@ -1440,7 +1440,8 @@ class RPMDBAdditionalData(object):
                 self.conf.writable = True
         #  Don't call _load_all_package_paths to preload, as it's expensive
         # if the dirs. aren't in cache.
-                
+        self.yumdb_cache = {}
+
     def _load_all_package_paths(self):
         # glob the path and get a dict of pkgs to their subdir
         glb = '%s/*/*/' % self.conf.db_path
@@ -1468,7 +1469,8 @@ class RPMDBAdditionalData(object):
         else:
             raise ValueError,"Pass something to RPMDBAdditionalData.get_package"
         
-        return RPMDBAdditionalDataPackage(self.conf, thisdir)
+        return RPMDBAdditionalDataPackage(self.conf, thisdir,
+                                          yumdb_cache=self.yumdb_cache)
 
     def sync_with_rpmdb(self, rpmdbobj):
         """populate out the dirs and remove all the items no longer in the rpmd
@@ -1482,11 +1484,18 @@ class RPMDBAdditionalData(object):
         pass
 
 class RPMDBAdditionalDataPackage(object):
-    def __init__(self, conf, pkgdir):
+    def __init__(self, conf, pkgdir, yumdb_cache=None):
         self._conf = conf
         self._mydir = pkgdir
         # FIXME needs some intelligent caching beyond the FS cache
         self._read_cached_data = {}
+
+        #  'from_repo' is the most often requested piece of data, and is often
+        # the same for a huge number of packages. So we use hardlinks to share
+        # data, and try to optimize for that.
+        #  It's useful for other keys too (installed_by/changed_by/reason/etc.)
+        # so we make it generic.
+        self._yumdb_cache = yumdb_cache
 
     def _write(self, attr, value):
         # check for self._conf.writable before going on?
@@ -1520,13 +1529,24 @@ class RPMDBAdditionalDataPackage(object):
             return self._read_cached_data[attr]
 
         fn = self._mydir + '/' + attr
-        if not os.path.exists(fn):
+        info = misc.stat_f(fn)
+        if info is None:
             raise AttributeError, "%s has no attribute %s" % (self, attr)
+
+        if self._yumdb_cache is not None:
+            key = (info.st_dev, info.st_ino)
+            if key in self._yumdb_cache:
+                self._read_cached_data[attr] = self._yumdb_cache[key]
+                return self._read_cached_data[attr]
 
         fo = open(fn, 'r')
         self._read_cached_data[attr] = fo.read()
         fo.close()
         del fo
+
+        if self._yumdb_cache is not None:
+            self._yumdb_cache[key] = self._read_cached_data[attr]
+
         return self._read_cached_data[attr]
     
     def _delete(self, attr):
