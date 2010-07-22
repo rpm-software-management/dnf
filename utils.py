@@ -241,6 +241,8 @@ class YumUtilBase(YumBaseCli):
                 pc.disabled_plugins =self._parser._splitArg(opts.disableplugins)
             if hasattr(opts, "enableplugins"):
                 pc.enabled_plugins = self._parser._splitArg(opts.enableplugins)
+            if hasattr(opts, "releasever"):
+                pc.releasever = opts.releasever
             self.conf
 
             # now set  all the non-first-start opts from main from our setopts
