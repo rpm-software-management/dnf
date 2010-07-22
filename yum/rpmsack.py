@@ -1440,7 +1440,7 @@ class RPMDBAdditionalData(object):
                 self.conf.writable = True
         #  Don't call _load_all_package_paths to preload, as it's expensive
         # if the dirs. aren't in cache.
-        self.yumdb_cache = {}
+        self.yumdb_cache = {'attr' : {}}
 
     def _load_all_package_paths(self):
         # glob the path and get a dict of pkgs to their subdir
@@ -1484,10 +1484,18 @@ class RPMDBAdditionalData(object):
         pass
 
 class RPMDBAdditionalDataPackage(object):
+
+    # We do auto hardlink on these attributes
+    _auto_hardlink_attrs = set(['checksum_type', 'reason',
+                                'installed_by', 'changed_by',
+                                'from_repo', 'from_repo_revision',
+                                'from_repo_timestamp', 'releasever',
+                                'command_line'])
+
     def __init__(self, conf, pkgdir, yumdb_cache=None):
         self._conf = conf
         self._mydir = pkgdir
-        # FIXME needs some intelligent caching beyond the FS cache
+
         self._read_cached_data = {}
 
         #  'from_repo' is the most often requested piece of data, and is often
@@ -1497,6 +1505,75 @@ class RPMDBAdditionalDataPackage(object):
         # so we make it generic.
         self._yumdb_cache = yumdb_cache
 
+    def _auto_cache(self, attr, value, fn, info=None):
+        """ Create caches for the attr. We have a per. object read cache so at
+            worst we only have to read a single attr once. Then we expand that
+            with (dev, ino) cache, so hardlink data can be read once for
+            multiple packages. """
+        self._read_cached_data[attr] = value
+        if self._yumdb_cache is None:
+            return
+
+        nlinks = 1
+        if info is not None:
+            nlinks = info.st_nlink
+        if nlinks <= 1 and attr not in self._auto_hardlink_attrs:
+            return
+
+        if value in self._yumdb_cache['attr']:
+            sinfo = self._yumdb_cache['attr'][value][1]
+            if info is not None and sinfo is not None:
+                if (info.st_dev, info.st_ino) == (sinfo.st_dev, sinfo.st_ino):
+                    self._yumdb_cache['attr'][value][2].add(fn)
+                    self._yumdb_cache[fn] = value
+                    return
+            if self._yumdb_cache['attr'][value][0] >= nlinks:
+                # We already have a better cache file.
+                return
+
+        self._yumdb_cache['attr'][value] = (nlinks, info, set([fn]))
+        self._yumdb_cache[fn]            = value
+
+    def _unlink_yumdb_cache(self, fn):
+        """ Remove old values from the link cache. """
+        if fn in self._yumdb_cache:
+            ovalue = self._yumdb_cache[fn]
+            if ovalue in self._yumdb_cache['attr']:
+                self._yumdb_cache['attr'][ovalue][2].discard(fn)
+                if not self._yumdb_cache['attr'][ovalue][2]:
+                    del self._yumdb_cache['attr'][ovalue]
+            del self._yumdb_cache[fn]
+
+    def _link_yumdb_cache(self, fn, value):
+        """ If we have a matching yumdb cache, link() to it instead of having
+            to open()+write(). """
+        if self._yumdb_cache is None:
+            return False
+
+        self._unlink_yumdb_cache(fn)
+
+        if value not in self._yumdb_cache['attr']:
+            return False
+
+        assert self._yumdb_cache['attr'][value][2]
+        try:
+            lfn = iter(self._yumdb_cache['attr'][value][2]).next()
+            misc.unlink_f(fn + '.tmp')
+            os.link(lfn, fn + '.tmp')
+            os.rename(fn + '.tmp', fn)
+        except:
+            return False
+
+        self._yumdb_cache['attr'][value][2].add(fn)
+        self._yumdb_cache[fn] = value
+        self._read_cached_data['attr'] = value
+
+        return True
+
+    def _attr2fn(self, attr):
+        """ Given an attribute, return the filename. """
+        return os.path.normpath(self._mydir + '/' + attr)
+
     def _write(self, attr, value):
         # check for self._conf.writable before going on?
         if not os.path.exists(self._mydir):
@@ -1505,8 +1582,17 @@ class RPMDBAdditionalDataPackage(object):
         attr = _sanitize(attr)
         if attr in self._read_cached_data:
             del self._read_cached_data[attr]
-        fn = self._mydir + '/' + attr
-        fn = os.path.normpath(fn)
+        fn = self._attr2fn(attr)
+
+        if attr.endswith('.tmp'):
+            raise AttributeError, "Cannot set attribute %s on %s" % (attr, self)
+
+        # Auto hardlink some of the attrs...
+        if self._link_yumdb_cache(fn, value):
+            return
+
+        # Default write()+rename()... hardlink -c can still help.
+        misc.unlink_f(fn + '.tmp')
         fo = open(fn + '.tmp', 'w')
         try:
             fo.write(value)
@@ -1517,18 +1603,19 @@ class RPMDBAdditionalDataPackage(object):
         fo.close()
         del fo
         os.rename(fn +  '.tmp', fn) # even works on ext4 now!:o
-        self._read_cached_data[attr] = value
+
+        self._auto_cache(attr, value, fn)
     
     def _read(self, attr):
         attr = _sanitize(attr)
 
+        if attr in self._read_cached_data:
+            return self._read_cached_data[attr]
+        fn = self._attr2fn(attr)
+
         if attr.endswith('.tmp'):
             raise AttributeError, "%s has no attribute %s" % (self, attr)
 
-        if attr in self._read_cached_data:
-            return self._read_cached_data[attr]
-
-        fn = self._mydir + '/' + attr
         info = misc.stat_f(fn)
         if info is None:
             raise AttributeError, "%s has no attribute %s" % (self, attr)
@@ -1536,26 +1623,28 @@ class RPMDBAdditionalDataPackage(object):
         if info.st_nlink > 1 and self._yumdb_cache is not None:
             key = (info.st_dev, info.st_ino)
             if key in self._yumdb_cache:
-                self._read_cached_data[attr] = self._yumdb_cache[key]
+                self._auto_cache(attr, self._yumdb_cache[key], fn, info)
                 return self._read_cached_data[attr]
 
         fo = open(fn, 'r')
-        self._read_cached_data[attr] = fo.read()
+        value = fo.read()
         fo.close()
         del fo
 
         if info.st_nlink > 1 and self._yumdb_cache is not None:
-            self._yumdb_cache[key] = self._read_cached_data[attr]
+            self._yumdb_cache[key] = value
+        self._auto_cache(attr, value, fn, info)
 
-        return self._read_cached_data[attr]
+        return value
     
     def _delete(self, attr):
         """remove the attribute file"""
 
         attr = _sanitize(attr)
-        fn = self._mydir + '/' + attr
+        fn = self._attr2fn(attr)
         if attr in self._read_cached_data:
             del self._read_cached_data[attr]
+        self._unlink_yumdb_cache(fn)
         if os.path.exists(fn):
             try:
                 os.unlink(fn)
