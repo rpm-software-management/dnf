@@ -740,6 +740,14 @@ class TransactionMember:
             val = getattr(self.po, attr)
             setattr(self, attr, val)
 
+        if po.repoid == 'installed':
+            #  We want to load these so that we can auto hardlink in the same
+            # new values. Because of the hardlinks it should be really cheap
+            # to load them ... although it's still a minor hack.
+            po.yumdb_info.get('from_repo')
+            po.yumdb_info.get('releasever')
+            po.yumdb_info.get('changed_by')
+
     def setAsDep(self, po=None):
         """sets the transaction member as a dependency and maps the dep into the
            relationship list attribute"""
