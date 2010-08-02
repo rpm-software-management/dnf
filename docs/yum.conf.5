@@ -134,9 +134,13 @@ an i686 package to update an i386 package. Default is `1'.
 
 .IP
 \fBinstallonlypkgs \fR
-List of packages that should only ever be installed, never updated. Kernels
-in particular fall into this category. Defaults to kernel, kernel-smp,
-kernel-bigmem, kernel-enterprise, kernel-debug, kernel-unsupported.
+List of package provides that should only ever be installed, never updated.
+Kernels in particular fall into this category. Defaults to kernel,
+kernel-bigmem, kernel-enterprise, kernel-smp, kernel-modules, kernel-debug, 
+kernel-unsupported, kernel-source, kernel-devel, kernel-PAE, kernel-PAE-debug.
+
+Note that because these are provides, and not just package names, kernel-devel
+will also apply to kernel-debug-devel, etc.
 
 .IP
 \fBinstallonly_limit \fR
