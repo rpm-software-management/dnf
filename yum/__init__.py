@@ -294,6 +294,11 @@ class YumBase(depsolve.Depsolve):
             startupconf.syslog_facility = syslog_facility
         if syslog_device != None:
             startupconf.syslog_device = syslog_device
+        if releasever == '/':
+            if startupconf.installroot == '/':
+                releasever = None
+            else:
+                releasever = yum.config._getsysver("/",startupconf.distroverpkg)
         if releasever != None:
             startupconf.releasever = releasever
 
