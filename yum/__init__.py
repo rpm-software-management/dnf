@@ -447,7 +447,11 @@ class YumBase(depsolve.Depsolve):
         @return: YumRepository instance.
         '''
         repo = yumRepo.YumRepository(section)
-        repo.populate(parser, section, self.conf)
+        try:
+            repo.populate(parser, section, self.conf)
+        except ValueError, e:
+            msg = _('Repository %r: Error parsing config: %s' % (section,e))
+            raise Errors.ConfigError, msg
 
         # Ensure that the repo name is set
         if not repo.name:
