@@ -1408,7 +1408,8 @@ class YumBase(depsolve.Depsolve):
         #    that there is not also an install of this pkg in the tsInfo (reinstall)
         # for any kind of install add from_repo to the yumdb, and the cmdline
         # and the install reason
-
+        
+        vt_st = time.time()
         self.rpmdb.dropCachedData()
         self.plugins.run('preverifytrans')
         for txmbr in self.tsInfo:
@@ -1494,6 +1495,7 @@ class YumBase(depsolve.Depsolve):
             self.plugins.run('historyend')
             self.history.end(self.rpmdb.simpleVersion(main_only=True)[0], ret)
         self.rpmdb.dropCachedData()
+        self.verbose_logger.debug('VerifyTransaction time: %0.3f' % (time.time() - vt_st))
 
     def costExcludePackages(self):
         """ Create an excluder for repos. with higher cost. Eg.
