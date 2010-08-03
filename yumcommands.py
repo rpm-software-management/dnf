@@ -122,6 +122,25 @@ def checkShellArg(base, basecmd, extcmds):
         base.usage()
         raise cli.CliError
 
+def checkEnabledRepo(base, possible_local_files=[]):
+    """
+    Verify that there is at least one enabled repo.
+
+    @param base: a YumBase object.
+    """
+    if base.repos.listEnabled():
+        return
+
+    for lfile in possible_local_files:
+        if lfile.endswith(".rpm") and os.path.exists(lfile):
+            return
+
+    msg = _('There are no enabled repos.\n'
+            ' Run "yum repolist all" to see the repos you have.\n'
+            ' You can enable repos with yum-config-manager --enable <repo>')
+    base.logger.critical(msg)
+    raise cli.CliError
+
 class YumCommand:
         
     def __init__(self):
@@ -176,6 +195,7 @@ class InstallCommand(YumCommand):
         checkRootUID(base)
         checkGPGKey(base)
         checkPackageArg(base, basecmd, extcmds)
+        checkEnabledRepo(base, extcmds)
 
     def doCommand(self, base, basecmd, extcmds):
         self.doneCommand(base, _("Setting up Install Process"))
@@ -197,6 +217,7 @@ class UpdateCommand(YumCommand):
     def doCheck(self, base, basecmd, extcmds):
         checkRootUID(base)
         checkGPGKey(base)
+        checkEnabledRepo(base, extcmds)
 
     def doCommand(self, base, basecmd, extcmds):
         self.doneCommand(base, _("Setting up Update Process"))
@@ -218,6 +239,7 @@ class DistroSyncCommand(YumCommand):
     def doCheck(self, base, basecmd, extcmds):
         checkRootUID(base)
         checkGPGKey(base)
+        checkEnabledRepo(base, extcmds)
 
     def doCommand(self, base, basecmd, extcmds):
         self.doneCommand(base, _("Setting up Distribution Synchronization Process"))
@@ -420,6 +442,9 @@ class GroupListCommand(GroupCommand):
     def getSummary(self):
         return _("List available package groups")
     
+    def doCheck(self, base, basecmd, extcmds):
+        checkEnabledRepo(base)
+
     def doCommand(self, base, basecmd, extcmds):
         GroupCommand.doCommand(self, base, basecmd, extcmds)
         return base.returnGroupLists(extcmds)
@@ -441,6 +466,7 @@ class GroupInstallCommand(GroupCommand):
         checkRootUID(base)
         checkGPGKey(base)
         checkGroupArg(base, basecmd, extcmds)
+        checkEnabledRepo(base)
 
     def doCommand(self, base, basecmd, extcmds):
         GroupCommand.doCommand(self, base, basecmd, extcmds)
@@ -462,6 +488,7 @@ class GroupRemoveCommand(GroupCommand):
     def doCheck(self, base, basecmd, extcmds):
         checkRootUID(base)
         checkGroupArg(base, basecmd, extcmds)
+        checkEnabledRepo(base)
 
     def doCommand(self, base, basecmd, extcmds):
         GroupCommand.doCommand(self, base, basecmd, extcmds)
@@ -488,6 +515,7 @@ class GroupInfoCommand(GroupCommand):
 
     def doCheck(self, base, basecmd, extcmds):
         checkGroupArg(base, basecmd, extcmds)
+        checkEnabledRepo(base)
 
     def doCommand(self, base, basecmd, extcmds):
         GroupCommand.doCommand(self, base, basecmd, extcmds)
@@ -511,7 +539,7 @@ class MakeCacheCommand(YumCommand):
         return _("Generate the metadata cache")
 
     def doCheck(self, base, basecmd, extcmds):
-        pass
+        checkEnabledRepo(base)
 
     def doCommand(self, base, basecmd, extcmds):
         base.logger.debug(_("Making cache files for all metadata files."))
@@ -554,6 +582,7 @@ class CleanCommand(YumCommand):
 
     def doCheck(self, base, basecmd, extcmds):
         checkCleanArg(base, basecmd, extcmds)
+        checkEnabledRepo(base)
         
     def doCommand(self, base, basecmd, extcmds):
         base.conf.cache = 1
@@ -591,6 +620,9 @@ class CheckUpdateCommand(YumCommand):
 
     def getSummary(self):
         return _("Check for available package updates")
+
+    def doCheck(self, base, basecmd, extcmds):
+        checkEnabledRepo(base)
 
     def doCommand(self, base, basecmd, extcmds):
         base.extcmds.insert(0, 'updates')
@@ -668,6 +700,7 @@ class UpgradeCommand(YumCommand):
     def doCheck(self, base, basecmd, extcmds):
         checkRootUID(base)
         checkGPGKey(base)
+        checkEnabledRepo(base, extcmds)
 
     def doCommand(self, base, basecmd, extcmds):
         base.conf.obsoletes = 1
@@ -1104,6 +1137,7 @@ class ReInstallCommand(YumCommand):
         checkRootUID(base)
         checkGPGKey(base)
         checkPackageArg(base, basecmd, extcmds)
+        checkEnabledRepo(base, extcmds)
 
     def doCommand(self, base, basecmd, extcmds):
         self.doneCommand(base, _("Setting up Reinstall Process"))
@@ -1130,6 +1164,7 @@ class DowngradeCommand(YumCommand):
         checkRootUID(base)
         checkGPGKey(base)
         checkPackageArg(base, basecmd, extcmds)
+        checkEnabledRepo(base, extcmds)
 
     def doCommand(self, base, basecmd, extcmds):
         self.doneCommand(base, _("Setting up Downgrade Process"))
