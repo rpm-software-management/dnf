@@ -1186,7 +1186,7 @@ def decode(msg) :
         idx = idx + pkt_len
     return pkt_list
 
-def decode_msg(msg) :
+def decode_msg(msg, multi=False) :
     """decode_msg(msg) ==> list of OpenPGP "packet" objects
 Takes an ascii-armored PGP block and returns a list of objects each of which
 corresponds to a PGP "packets".
@@ -1242,11 +1242,17 @@ a PGP "certificate" includes a public key, user id(s), and signature.
                 pkt_idx = cert.load(pkt_list)
                 cert_list.append(cert)
                 pkt_list[0:pkt_idx] = []
+            if not multi:
+                if not cert_list:
+                    return None
+                return cert_list[0]
             return cert_list
         
         # add the data to our buffer then
         block_buf.write(l)
 
+    if not multi:
+        return None
     return []
 
 def decode_multiple_keys(msg):
