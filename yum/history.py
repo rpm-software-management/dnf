@@ -425,12 +425,15 @@ class YumHistory:
         cur = self._get_cursor()
         if cur is None or not self._update_db_file_2():
             return None
+        # str(problem) doesn't work if problem contains unicode(),
+        # unicode(problem) doesn't work in python 2.4.x ... *sigh*.
+        uproblem = to_unicode(problem.__str__())
         res = executeSQL(cur,
                          """INSERT INTO trans_rpmdb_problems
                          (tid, problem, msg)
                          VALUES (?, ?, ?)""", (self._tid,
                                                problem.problem,
-                                               to_unicode(str(problem))))
+                                               uproblem))
         rpid = cur.lastrowid
 
         if not rpid:
