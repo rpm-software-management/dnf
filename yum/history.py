@@ -610,7 +610,7 @@ class YumHistory:
             # open file in append
             fo = open(data_fn, 'w+')
             # write data
-            fo.write(data)
+            fo.write(to_unicode(data))
             # flush data
             fo.flush()
             fo.close()
