@@ -3680,6 +3680,7 @@ class YumBase(depsolve.Depsolve):
                         self.logger.critical(_('%s') % e)
                     
                     if not depmatches:
+                        arg = to_unicode(arg)
                         self.logger.critical(_('No Match for argument: %s') % arg)
                     else:
                         pkgs.extend(depmatches)
