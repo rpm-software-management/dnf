@@ -914,17 +914,19 @@ class YumHistory:
             version || '-' || release || '.' || arch AS nevra
      FROM trans_skip_pkgs JOIN pkgtups USING(pkgtupid)
      ORDER BY name;
-''', # NOTE: Old versions of sqlite don't like this next view, they are only
-     #       there for debugging anyway ... but it's worth remembering.
+''', # NOTE: Old versions of sqlite don't like the normal way to do the next
+     #       view. So we do it with the select. It's for debugging only, so
+     #       no big deal.
 '''\
 \
- CREATE VIEW vtrans_prob_pkgs AS
+ CREATE VIEW vtrans_prob_pkgs2 AS
      SELECT tid,rpid,name,epoch,version,release,arch,pkgtups.pkgtupid,
-            main,
+            main,problem,msg,
             name || '-' || epoch || ':' ||
             version || '-' || release || '.' || arch AS nevra
-     FROM (trans_prob_pkgs JOIN trans_rpmdb_problems USING(rpid))
-                           JOIN pkgtups USING(pkgtupid)
+     FROM (SELECT * FROM trans_prob_pkgs,trans_rpmdb_problems WHERE
+           trans_prob_pkgs.rpid=trans_rpmdb_problems.rpid)
+           JOIN pkgtups USING(pkgtupid)
      ORDER BY name;
 ''']
 
