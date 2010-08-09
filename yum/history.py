@@ -27,7 +27,7 @@ import yum.misc as misc
 import yum.constants
 from yum.constants import *
 from yum.packages import YumInstalledPackage, YumAvailablePackage, PackageObject
-from yum.i18n import to_unicode
+from yum.i18n import to_unicode, to_utf8
 
 
 _history_dir = '/var/lib/yum/history'
@@ -610,7 +610,7 @@ class YumHistory:
             # open file in append
             fo = open(data_fn, 'w+')
             # write data
-            fo.write(to_unicode(data))
+            fo.write(to_utf8(data))
             # flush data
             fo.flush()
             fo.close()
