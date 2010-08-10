@@ -3702,6 +3702,14 @@ class YumBase(depsolve.Depsolve):
             if self.conf.protected_packages and po.pkgtup == kern_pkgtup:
                 self.logger.warning(_("Skipping the running kernel: %s") % po)
                 continue
+
+            if self.tsInfo.getMembers(po.pkgtup):
+                # This allows multiple reinstalls and update/downgrade "cancel"
+                for txmbr in self.tsInfo.matchNaevr(po.name):
+                    self.logger.warning(_("Removing %s from the transaction") %
+                                        txmbr)
+                    self.tsInfo.remove(txmbr.pkgtup)
+                # Now start the remove/reinstall
             txmbr = self.tsInfo.addErase(po)
             tx_return.append(txmbr)
         
