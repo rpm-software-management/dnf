@@ -470,7 +470,7 @@ class YumHistory:
         res = executeSQL(cur,
                          """INSERT INTO trans_cmdline
                          (tid, cmdline)
-                         VALUES (?, ?)""", (self._tid, cmdline))
+                         VALUES (?, ?)""", (self._tid, to_unicode(cmdline)))
         return cur.lastrowid
 
     def beg(self, rpmdb_version, using_pkgs, txmbrs, skip_packages=[],
