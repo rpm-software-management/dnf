@@ -1882,10 +1882,12 @@ class DepSolveProgressCallBack:
                 msg += _('\n        Not found')
             return msg
 
-        ipkgs = set()
-        for pkg in sorted(yb.rpmdb.getProvides(needname)):
+        def _run_inst_pkg(pkg, msg):
             nevr = (pkg.name, pkg.epoch, pkg.version, pkg.release)
-            ipkgs.add(nevr)
+            if nevr in seen_pkgs or (pkg.verEQ(last) and pkg.arch == last.arch):
+                return msg
+
+            seen_pkgs.add(nevr)
             action = _('Installed')
             rmed = yb.tsInfo.getMembersWithState(pkg.pkgtup, TS_REMOVE_STATES)
             if rmed:
@@ -1901,21 +1903,40 @@ class DepSolveProgressCallBack:
                     if rtype not in relmap:
                         continue
                     nevr = (rpkg.name, rpkg.epoch, rpkg.version, rpkg.release)
-                    ipkgs.add(nevr)
+                    seen_pkgs.add(nevr)
                     msg += _msg_pkg(relmap[rtype], rpkg, needname)
+            return msg
 
-        last = None
-        for pkg in sorted(yb.pkgSack.getProvides(needname)):
+        def _run_avail_pkg(pkg, msg):
             #  We don't want to see installed packages, or N packages of the
             # same version, from different repos.
             nevr = (pkg.name, pkg.epoch, pkg.version, pkg.release)
-            if nevr in ipkgs or (pkg.verEQ(last) and pkg.arch == last.arch):
-                continue
-            last = pkg
+            if nevr in seen_pkgs or (pkg.verEQ(last) and pkg.arch == last.arch):
+                return False, last, msg
+            seen_pkgs.add(nevr)
             action = _('Available')
             if yb.tsInfo.getMembersWithState(pkg.pkgtup, TS_INSTALL_STATES):
                 action = _('Installing')
             msg += _msg_pkg(action, pkg, needname)
+            return True, pkg, msg
+
+        last = None
+        seen_pkgs = set()
+        for pkg in sorted(yb.rpmdb.getProvides(needname)):
+            msg = _run_inst_pkg(pkg, msg)
+
+        available_names = set()
+        for pkg in sorted(yb.pkgSack.getProvides(needname)):
+            tst, last, msg = _run_avail_pkg(pkg, msg)
+            if tst:
+                available_names.add(pkg.name)
+
+        last = None
+        for pkg in sorted(yb.rpmdb.searchNames(available_names)):
+            msg = _run_inst_pkg(pkg, msg)
+        last = None
+        for pkg in sorted(yb.pkgSack.searchNames(available_names)):
+            tst, last, msg = _run_avail_pkg(pkg, msg)
         return msg
     
     def procConflict(self, name, confname):
