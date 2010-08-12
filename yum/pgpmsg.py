@@ -1272,7 +1272,7 @@ def decode_multiple_keys(msg):
         block += '%s\n' % l
         if l == '-----END PGP PUBLIC KEY BLOCK-----':
             in_block = 0
-            thesecerts = decode_msg(block)
+            thesecerts = decode_msg(block, multi=True)
             if thesecerts:
                 certs.extend(thesecerts)
             block = ''
