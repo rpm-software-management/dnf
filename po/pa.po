@@ -7,9 +7,9 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2010-02-11 10:54-0500\n"
-"PO-Revision-Date: 2010-02-20 08:37+0530\n"
+"PO-Revision-Date: 2010-08-16 08:37+0530\n"
 "Last-Translator: A S Alam <aalam@users.sf.net>\n"
-"Language-Team: Punjabi/Panjabi <kde-i18n-doc@kde.org>\n"
+"Language-Team: Punjabi/Panjabi <punjabi-users@lists.sf.net>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -32,7 +32,7 @@ msgstr "ਇੰਸਟਾਲ ਕੀਤਾ ਜਾ ਰਿਹਾ ਹੈ"
 
 #: ../callback.py:52 ../callback.py:58 ../output.py:1484 ../yum/rpmtrans.py:76
 msgid "Obsoleted"
-msgstr "ਬਰਤਰਫ਼ ਕੀਤਾ"
+msgstr "ਬਰਤਰਫ਼ ਕੀਤੇ"
 
 #: ../callback.py:54 ../output.py:1070 ../output.py:1442 ../output.py:1491
 msgid "Updated"
@@ -49,7 +49,7 @@ msgstr "ਇੰਸਟਾਲ ਕੀਤੇ"
 
 #: ../callback.py:130
 msgid "No header - huh?"
-msgstr "ਹੈੱਡ ਨਹੀਂ - ਓਹ?"
+msgstr "ਹੈੱਡਰ ਨਹੀਂ - ਓਹ?"
 
 #: ../callback.py:168
 msgid "Repackage"
@@ -118,7 +118,7 @@ msgstr "ਤੁਹਾਨੂੰ ਕੁਝ ਕਮਾਂਡ ਦੇਣ ਦੀ ਲੋ�
 #: ../cli.py:284
 #, python-format
 msgid "No such command: %s. Please use %s --help"
-msgstr ""
+msgstr "ਇੰਝ ਦੀ ਕੋਈ ਕਮਾਂਡ ਨਹੀਂ ਹੈ: %s। %s --help ਵਰਤੋਂ ਜੀ"
 
 #: ../cli.py:314
 msgid "Disk Requirements:\n"
@@ -142,6 +142,8 @@ msgstr ""
 #: ../cli.py:364
 msgid "Trying to run the transaction but nothing to do. Exiting."
 msgstr ""
+"ਟਰਾਂਸੈਕਸ਼ਨ ਚਲਾਉਣ ਦੀ ਕੋਸ਼ਿਸ਼ ਕੀਤੀ, ਪਰ ਕੁਝ ਵੀ ਕਰਨ ਲਈ ਨਹੀਂ ਹੈ। ਬੰਦ ਕੀਤਾ ਜਾ ਰਿਹਾ "
+"ਹੈ।"
 
 #: ../cli.py:403
 msgid "Exiting on user Command"
@@ -157,11 +159,11 @@ msgstr "ਪੈਕੇਜ ਡਾਊਨਲੋਡ ਕਰਨ ਦੌਰਾਨ ਗਲ�
 
 #: ../cli.py:426 ../yum/__init__.py:4195
 msgid "Running rpm_check_debug"
-msgstr ""
+msgstr "rpm_check_debug ਚਲਾਇਆ ਜਾ ਰਿਹਾ ਹੈ"
 
 #: ../cli.py:435 ../yum/__init__.py:4204
 msgid "ERROR You need to update rpm to handle:"
-msgstr ""
+msgstr "ਗਲਤੀ, ਤੁਹਾਨੂੰ ਹੈਂਡਲ ਕਰਨ ਲਈ rpm ਅੱਪਡੇਟ ਕਰਨ ਦੀ ਲੋੜ ਹੈ:"
 
 #: ../cli.py:437 ../yum/__init__.py:4207
 msgid "ERROR with rpm_check_debug vs depsolve:"
@@ -269,7 +271,7 @@ msgstr "ਮਿਲਦੇ: %s"
 #: ../cli.py:825
 #, python-format
 msgid "Warning: No matches found for: %s"
-msgstr ""
+msgstr "ਚੇਤਾਵਨੀ: %s :ਲਈ ਕੋਈ ਮੇਲ ਨਹੀਂ ਲੱਭਿਆ"
 
 #: ../cli.py:828
 msgid "No Matches found"
@@ -409,7 +411,7 @@ msgstr ""
 
 #: ../cli.py:1326
 msgid "run entirely from system cache, don't update cache"
-msgstr ""
+msgstr "ਪੂਰੀ ਤਰ੍ਹਾਂ ਸਿਸਟਮ ਕੈਸ਼ ਤੋਂ ਚਲਾਓ, ਕੈਸ਼ ਅੱਪਡੇਟ ਨਾ ਕਰੋ"
 
 #: ../cli.py:1329
 msgid "config file location"
@@ -433,7 +435,7 @@ msgstr "ਗਲਤੀ ਆਉਟਪੁੱਟ ਲੈਵਲ"
 
 #: ../cli.py:1343
 msgid "debugging output level for rpm"
-msgstr "rpm ਲਈ ਡੀੱਬੱਗ ਆਉਟਪੁੱਟ ਲੈਵਲ"
+msgstr "rpm ਲਈ ਡੀਬੱਗ ਆਉਟਪੁੱਟ ਲੈਵਲ"
 
 #: ../cli.py:1346
 msgid "quiet operation"
@@ -453,7 +455,7 @@ msgstr "ਯੱਮ ਵਰਜਨ ਵੇਖਾਓ ਅਤੇ ਬੰਦ ਕਰੋ"
 
 #: ../cli.py:1353
 msgid "set install root"
-msgstr ""
+msgstr "install root ਸੈੱਟ ਕਰੋ"
 
 #: ../cli.py:1357
 msgid "enable one or more repositories (wildcards allowed)"
@@ -461,7 +463,7 @@ msgstr "ਇੱਕ ਜਾਂ ਵੱਧ ਰਿਪੋਜ਼ਟਰੀਆਂ ਚਾ�
 
 #: ../cli.py:1361
 msgid "disable one or more repositories (wildcards allowed)"
-msgstr ""
+msgstr "ਇੱਕ ਜਾਂ ਵੱਧ ਰਿਪੋਜ਼ਟਰੀਆਂ ਬੰਦ (ਵਾਇਲਡਕਾਰਡ ਮਨਜ਼ੂਰ)"
 
 #: ../cli.py:1364
 msgid "exclude package(s) by name or glob"
@@ -473,7 +475,7 @@ msgstr ""
 
 #: ../cli.py:1369
 msgid "enable obsoletes processing during updates"
-msgstr ""
+msgstr "ਅੱਪਡੇਟ ਦੇ ਦੌਰਾਨ ਬਰਤਰਫ਼ ਕਾਰਵਾਈਆਂ ਚਾਲੂ"
 
 #: ../cli.py:1371
 msgid "disable Yum plugins"
@@ -481,7 +483,7 @@ msgstr "ਯੱਮ ਪਲੱਗਇਨ ਬੰਦ ਕਰੋ"
 
 #: ../cli.py:1373
 msgid "disable gpg signature checking"
-msgstr ""
+msgstr "gpg ਦਸਤਖਤ ਚੈੱਕ ਕਰਨਾ ਬੰਦ"
 
 #: ../cli.py:1375
 msgid "disable plugins by name"
@@ -497,11 +499,11 @@ msgstr "ਨਿਰਭਰਤਾ ਸਮੱਸਿਆਵਾਂ ਵਾਲੇ ਪੈਕ
 
 #: ../cli.py:1383
 msgid "control whether color is used"
-msgstr ""
+msgstr "ਕੰਟਰੋਲ ਕਰੋ ਕਿ ਕੀ ਰੰਗ ਵਰਤਣੇ ਹਨ"
 
 #: ../cli.py:1385
 msgid "set value of $releasever in yum config and repo files"
-msgstr ""
+msgstr "ਯੱਮ ਸੰਰਚਨਾ ਤੇ ਰਿਪੋ ਫਾਇਲਾਂ 'ਚ $releasever ਦਾ ਮੁੱਲ ਸੈੱਟ ਕਰੋ"
 
 #: ../output.py:305
 msgid "Jan"
@@ -603,7 +605,7 @@ msgstr "ਕਮਿੱਟਰ  : %s"
 #: ../output.py:546
 #, python-format
 msgid "Committime : %s"
-msgstr ""
+msgstr "ਕਮਿਟ-ਸਮਾਂ : %s"
 
 #: ../output.py:547
 #, python-format
@@ -703,7 +705,7 @@ msgstr " ਨਿਰਭਰਤਾ: %s"
 
 #: ../output.py:758
 msgid "   Unsatisfied dependency"
-msgstr ""
+msgstr " ਨਾ-ਹੱਲ ਹੋਈ ਨਿਰਭਰਤਾ"
 
 #: ../output.py:830
 #, python-format
@@ -712,7 +714,7 @@ msgstr "ਰਿਪੋ        : %s"
 
 #: ../output.py:831
 msgid "Matched from:"
-msgstr ""
+msgstr "ਇਸ ਤੋਂ ਮੇਲ:"
 
 #: ../output.py:840
 msgid "Description : "
@@ -739,7 +741,7 @@ msgstr "ਹੋਰ       : "
 
 #: ../output.py:896
 msgid "There was an error calculating total download size"
-msgstr ""
+msgstr "ਕੁੱਲ ਡਾਊਨਲੋਡ ਆਕਾਰ ਲੱਭਣ ਦੌਰਾਨ ਗਲਤੀ"
 
 #: ../output.py:901
 #, python-format
@@ -924,7 +926,7 @@ msgstr "ਸਿਸਟਮ"
 
 #: ../output.py:1254
 msgid "Bad transaction IDs, or package(s), given"
-msgstr ""
+msgstr "ਖ਼ਰਾਬ ਟਰਾਂਸੈਕਸ਼ਨ ID, ਜਾਂ ਪੈਕੇਜ ਦਿੱਤਾ"
 
 #: ../output.py:1266
 msgid "ID"
@@ -952,19 +954,19 @@ msgstr "ਕੋਈ ਟਰਾਂਸੈਕਸ਼ਨ ID ਦਿੱਤਾ"
 
 #: ../output.py:1336
 msgid "Bad transaction ID given"
-msgstr ""
+msgstr "ਖ਼ਰਾਬ ਟਰਾਂਸੈਕਸ਼ਨ ID ਦਿੱਤਾ"
 
 #: ../output.py:1341
 msgid "Not found given transaction ID"
-msgstr ""
+msgstr "ਦਿੱਤਾ ਟਰਾਂਸੈਕਸ਼ਨ ID ਨਹੀਂ ਲੱਭਿਆ"
 
 #: ../output.py:1349
 msgid "Found more than one transaction ID!"
-msgstr ""
+msgstr "ਇੱਕ ਤੋਂ ਵੱਧ ਟਰਾਂਸੈਕਸ਼ਨ ID ਲੱਭਿਆ!"
 
 #: ../output.py:1370
 msgid "No transaction ID, or package, given"
-msgstr ""
+msgstr "ਕੋਈ ਟਰਾਂਸੈਕਸ਼ਨ ID, ਜਾਂ ਪੈਕੇਜ ਨਹੀਂ ਦਿੱਤਾ"
 
 #: ../output.py:1396
 msgid "Transaction ID :"
@@ -997,7 +999,7 @@ msgstr "ਯੂਜ਼ਰ           :"
 
 #: ../output.py:1426 ../output.py:1428 ../output.py:1430
 msgid "Return-Code    :"
-msgstr ""
+msgstr "ਰੀਟਰਨ-ਕੋਡ  :"
 
 #: ../output.py:1426
 msgid "Aborted"
@@ -1013,7 +1015,7 @@ msgstr "ਸਫ਼ਲ"
 
 #: ../output.py:1431
 msgid "Transaction performed with:"
-msgstr ""
+msgstr "ਟਰਾਂਸੈਕਸ਼ਨ ਕੀਤੀ ਗਈ ਇਸ ਨਾਲ:"
 
 #: ../output.py:1444 ../output.py:1489
 msgid "Downgraded"
@@ -1022,7 +1024,7 @@ msgstr "ਡਾਊਨਗਰੇਡ ਕੀਤੇ"
 #. multiple versions installed, both older and newer
 #: ../output.py:1446
 msgid "Weird"
-msgstr ""
+msgstr "ਸਮੱਸਿਆ"
 
 #: ../output.py:1448
 msgid "Packages Altered:"
@@ -1030,7 +1032,7 @@ msgstr "ਪੈਕੇਜ ਬਦਲੇ:"
 
 #: ../output.py:1451
 msgid "Scriptlet output:"
-msgstr ""
+msgstr "Scriptlet ਆਉਟਪੁੱਟ:"
 
 #: ../output.py:1457
 msgid "Errors:"
@@ -1120,7 +1122,7 @@ msgstr "---> ਪੈਕੇਜ %s.%s %s:%s-%s ਨੂੰ ਸੈੱਟ ਕੀਤਾ 
 
 #: ../output.py:1599
 msgid "--> Running transaction check"
-msgstr "--> ਟਰਾਂਸੈਕਸ਼ਨ ਚੈੱਕ ਜਾਰੀ ਹੈ"
+msgstr "--> ਟਰਾਂਸੈਕਸ਼ਨ ਚੈੱਕ ਕੀਤਾ ਜਾ ਰਿਹਾ ਹੈ"
 
 #: ../output.py:1604
 msgid "--> Restarting Dependency Resolution with new changes."
@@ -1179,7 +1181,8 @@ msgstr "--> ਚੁਣੇ ਪੈਕੇਜਾਂ ਲਈ ਟਰਾਂਸੈਕਸ�
 #: ../output.py:1678
 #, python-format
 msgid "---> Downloading header for %s to pack into transaction set."
-msgstr "---> Downloading header for %s to pack into transaction set."
+msgstr ""
+"---> ਟਰਾਂਸੈਕਸ਼ਨ ਸੈੱਟ 'ਚ ਪੈਕ ਕਰਨ ਲਈ %s ਵਾਸਤੇ ਹੈੱਡਰ ਡਾਊਨਲੋਡ ਕੀਤਾ ਜਾ ਰਿਹਾ ਹੈ।"
 
 #: ../utils.py:93
 msgid "Running"
@@ -1191,7 +1194,7 @@ msgstr "ਸਲੀਪਿੰਗ"
 
 #: ../utils.py:95
 msgid "Uninterruptible"
-msgstr ""
+msgstr "ਗ਼ੈਰ-ਰੁਕਾਵਟ-ਯੋਗ"
 
 #: ../utils.py:96
 msgid "Zombie"
@@ -1199,7 +1202,7 @@ msgstr "ਜੋਮਬਿਈ"
 
 #: ../utils.py:97
 msgid "Traced/Stopped"
-msgstr ""
+msgstr "ਟਰੇਸ ਕੀਤਾ/ਰੋਕਿਆ"
 
 #: ../utils.py:98 ../yumcommands.py:917
 msgid "Unknown"
@@ -1300,7 +1303,7 @@ msgstr ""
 
 #: ../yumcommands.py:76
 msgid "Error: Need an item to match"
-msgstr ""
+msgstr "ਗਲਤੀ: ਮਿਲਦੀ ਆਈਟਮ ਦੀ ਲੋੜ ਹੈ"
 
 #: ../yumcommands.py:82
 msgid "Error: Need a group or list of groups"
@@ -1309,12 +1312,12 @@ msgstr "ਗਲਤੀ: ਗਰੁੱਪ ਜਾਂ ਗਰੁੱਪਾਂ ਦੀ ਲ
 #: ../yumcommands.py:91
 #, python-format
 msgid "Error: clean requires an option: %s"
-msgstr ""
+msgstr "ਗਲਤੀ: ਸਾਫ਼ ਕਰਨ (clean) ਲਈ ਕੋਈ ਚੋਣ ਦਿੱਤੀ ਜਾਣੀ ਚਾਹੀਦੀ ਹੈ: %s"
 
 #: ../yumcommands.py:96
 #, python-format
 msgid "Error: invalid clean argument: %r"
-msgstr ""
+msgstr "ਗਲਤੀ: ਗਲਤ clean ਆਰਗੂਮੈਂਟ: %r"
 
 #: ../yumcommands.py:109
 msgid "No argument to shell"
@@ -1465,7 +1468,7 @@ msgstr "ਪੈਕੇਜਾਂ ਲਈ ਖੋਜ ਜਾਰੀ: "
 
 #: ../yumcommands.py:644
 msgid "Update packages taking obsoletes into account"
-msgstr ""
+msgstr "ਪੈਕੇਜ ਅੱਪਡੇਟ ਕਰਨ ਲਈ ਬਰਤਰਫ਼ ਨੂੰ ਧਿਆਨ 'ਚ ਰੱਖਿਆ ਜਾ ਰਿਹਾ ਹੈ"
 
 #: ../yumcommands.py:652
 msgid "Setting up Upgrade Process"
@@ -1481,7 +1484,7 @@ msgstr "ਲੋਕਲ ਪੈਕੇਜ ਕਾਰਵਾਈ ਲਈ ਸੈੱਟਅ�
 
 #: ../yumcommands.py:693
 msgid "Determine which package provides the given dependency"
-msgstr ""
+msgstr "ਦੱਸੋ ਕਿ ਕਿਹੜਾ ਪੈਕੇਜ ਦਿੱਤੀ ਨਿਰਭਰਤਾ ਦਿੰਦਾ ਹੈ"
 
 #: ../yumcommands.py:696
 msgid "Searching Packages for Dependency:"
@@ -1489,7 +1492,7 @@ msgstr "ਨਿਰਭਰਤਾ ਲਈ ਪੈਕੇਜਾਂ ਦੀ ਖੋਜ ਜ�
 
 #: ../yumcommands.py:710
 msgid "Run an interactive yum shell"
-msgstr ""
+msgstr "ਇੰਟਰ-ਐਕਟਿਵ ਯੱਮ ਸ਼ੈੱਲ ਚਲਾਓ"
 
 #: ../yumcommands.py:716
 msgid "Setting up Yum Shell"
@@ -1553,11 +1556,11 @@ msgstr "ਰਿਪੋ-ਸਾਈਜ਼     : "
 
 #: ../yumcommands.py:898
 msgid "Repo-baseurl : "
-msgstr ""
+msgstr "ਰਿਪੋ-baseurl : "
 
 #: ../yumcommands.py:906
 msgid "Repo-metalink: "
-msgstr ""
+msgstr "ਰਿਪੋ-metalink: "
 
 #: ../yumcommands.py:910
 msgid "  Updated    : "
@@ -1565,7 +1568,7 @@ msgstr "  ਅੱਪਡੇਟ   : "
 
 #: ../yumcommands.py:913
 msgid "Repo-mirrors : "
-msgstr ""
+msgstr "ਰਿਪੋ-mirrors : "
 
 #: ../yumcommands.py:923
 #, python-format
@@ -1584,7 +1587,7 @@ msgstr "%s ਸਕਿੰਟ (ਆਖਰੀ: %s)"
 
 #: ../yumcommands.py:930
 msgid "Repo-expire  : "
-msgstr ""
+msgstr "ਰਿਪੋ-expire  : "
 
 #: ../yumcommands.py:933
 msgid "Repo-exclude : "
@@ -1659,7 +1662,7 @@ msgstr "ਪੈਕੇਜ ਡਾਊਨਗਰੇਡ ਕਰੋ"
 
 #: ../yumcommands.py:1134
 msgid "Display a version for the machine and/or available repos."
-msgstr ""
+msgstr "ਮਸ਼ੀਨ ਤੇ / ਜਾਂ ਉਪਲੱਬਧ ਰਿਪੋ ਲਈ ਵਰਜਨ ਵੇਖੋ।"
 
 #: ../yumcommands.py:1173
 msgid " Yum version groups:"
@@ -1691,7 +1694,7 @@ msgstr "ਉਪਲੱਬਧ-ਗਰੁੱਪ:"
 
 #: ../yumcommands.py:1272
 msgid "Display, or use, the transaction history"
-msgstr ""
+msgstr "ਟਰਾਂਸੈਕਸ਼ਨ ਅਤੀਤ ਵੇਖੋ ਜਾਂ ਵਰਤੋਂ"
 
 #: ../yumcommands.py:1300
 #, python-format
@@ -1785,7 +1788,7 @@ msgstr "ਮੈਂਬਰ: %s"
 #: ../yum/depsolve.py:239 ../yum/depsolve.py:754
 #, python-format
 msgid "%s converted to install"
-msgstr ""
+msgstr "ਇੰਸਟਾਲ ਕਰਨ ਲਈ %s ਬਦਲਿਆ"
 
 #: ../yum/depsolve.py:246
 #, python-format
@@ -1943,7 +1946,7 @@ msgstr ""
 #: ../yum/depsolve.py:1237
 #, python-format
 msgid "common sourcerpm %s and %s"
-msgstr ""
+msgstr "ਆਮ sourcerpm %s ਅਤੇ %s"
 
 #: ../yum/depsolve.py:1241
 #, python-format
@@ -2000,7 +2003,7 @@ msgstr ""
 
 #: ../yum/__init__.py:600
 msgid "therefore this repo cannot be reset.\n"
-msgstr ""
+msgstr "ਇਸਕਰਕੇ ਇਹ ਰਿਪੋ ਮੁੜ-ਸੈੱਟ ਨਹੀਂ ਕੀਤੀ ਜਾ ਸਕਦੀ।\n"
 
 #: ../yum/__init__.py:605
 msgid "doUpdateSetup() will go away in a future version of Yum.\n"
@@ -2053,13 +2056,15 @@ msgstr "ਵਾਧੂ ਫਾਇਲ-ਲਿਸਟ ਜਾਣਕਾਰੀ ਲਈ ਜ�
 #: ../yum/__init__.py:841
 #, python-format
 msgid "The program %s%s%s is found in the yum-utils package."
-msgstr ""
+msgstr "ਪਰੋਗਰਾਮ %s%s%s ਨੂੰ yum-utils ਪੈਕੇਜ 'ਚ ਲੱਭਿਆ ਜਾ ਸਕਦਾ ਹੈ।"
 
 #: ../yum/__init__.py:849
 msgid ""
 "There are unfinished transactions remaining. You might consider running yum-"
 "complete-transaction first to finish them."
 msgstr ""
+"ਅਧੂਰੀਆਂ ਟਰਾਂਸੈਕਸ਼ਨ ਬਾਕੀ ਹਨ। ਤੁਹਾਨੂੰ ਉਹਨਾਂ ਨੂੰ ਪੂਰਾ ਕਰਨ ਵਾਸਤੇ "
+"yum-complete-transaction ਚਲਾਉ ਬਾਰੇ ਸੋਚਣਾ ਚਾਹੀਦਾ ਹੈ।"
 
 #. Kind of hacky
 #: ../yum/__init__.py:922
@@ -2077,6 +2082,8 @@ msgid ""
 "\n"
 "Packages skipped because of dependency problems:"
 msgstr ""
+"\n"
+"ਪੈਕੇਜ ਨਿਰਭਰਤਾ ਸਮੱਸਿਆ ਕਰਕੇ ਛੱਡੇ ਗਏ:"
 
 #: ../yum/__init__.py:980
 #, python-format
@@ -2085,7 +2092,7 @@ msgstr "   %s %s ਤੋਂ"
 
 #: ../yum/__init__.py:1121
 msgid "Warning: RPMDB altered outside of yum."
-msgstr ""
+msgstr "ਚੇਤਾਵਨੀ: RPMDB ਨੂੰ ਯੱਮ ਤੋਂ ਬਿਨਾਂ ਬਦਲਿਆ ਗਿਆ।"
 
 #: ../yum/__init__.py:1126
 msgid "missing requires"
@@ -2110,14 +2117,14 @@ msgstr "ਟਰਾਂਸੈਕਸ਼ਨ ਫਾਇਲ %s ਹਟਾਉਣ ਲਈ �
 #: ../yum/__init__.py:1227
 #, python-format
 msgid "%s was supposed to be installed but is not!"
-msgstr ""
+msgstr "%s ਇੰਸਟਾਲ ਹੋਣਾ ਚਾਹੀਦਾ ਹੈ, ਪਰ ਇਹ ਨਹੀਂ ਹੈ!"
 
 #. maybe a file log here, too
 #. but raising an exception is not going to do any good
 #: ../yum/__init__.py:1266
 #, python-format
 msgid "%s was supposed to be removed but is not!"
-msgstr ""
+msgstr "%s ਹਟਾਇਆ ਗਿਆ ਹੋਣਾ ਚਾਹੀਦਾ ਸੀ, ਪਰ ਨਹੀਂ ਗਿਆ!"
 
 #. Whoa. What the heck happened?
 #: ../yum/__init__.py:1386
@@ -2144,7 +2151,7 @@ msgstr ""
 
 #: ../yum/__init__.py:1486
 msgid "Could not perform checksum"
-msgstr ""
+msgstr "checksum ਨਹੀਂ ਕੀਤਾ ਜਾ ਸਕਿਆ"
 
 #: ../yum/__init__.py:1489
 msgid "Package does not match checksum"
@@ -2258,7 +2265,7 @@ msgstr "ਫਾਇਲ ਐਂਟਰੀਆਂ ਲਈ ਖੋਜ ਜਾਰੀ ਹੈ"
 
 #: ../yum/__init__.py:2242
 msgid "searching in provides entries"
-msgstr ""
+msgstr "ਪਰੋਵਾਇਡਰ ਐਂਟਰੀਆਂ ਵਿੱਚ ਖੋਜ ਜਾਰੀ"
 
 #: ../yum/__init__.py:2275
 #, python-format
@@ -2303,7 +2310,7 @@ msgstr ""
 
 #: ../yum/__init__.py:2614 ../yum/__init__.py:2664
 msgid "Invalid version flag"
-msgstr ""
+msgstr "ਗਲਤ ਵਰਜਨ ਫਲੈਗ"
 
 #: ../yum/__init__.py:2634 ../yum/__init__.py:2639
 #, python-format
@@ -2341,7 +2348,7 @@ msgstr "ਇੰਸਟਾਲ ਕਰਨ ਲਈ ਕੋਈ ਪੈਕੇਜ ਉਪਲ�
 #: ../yum/__init__.py:2972
 #, python-format
 msgid "Package: %s  - already in transaction set"
-msgstr ""
+msgstr "ਪੈਕੇਜ: %s  - ਪਹਿਲਾਂ ਹੀ ਟਰਾਂਸੈਕਸ਼ਨ ਸੈੱਟ 'ਚ ਹੈ"
 
 #: ../yum/__init__.py:2998
 #, python-format
@@ -2352,6 +2359,8 @@ msgstr "ਪੈਕੇਜ %s ਨੂੰ %s ਵਲੋਂ ਬਰਤਰਫ਼ ਕੀ�
 #, python-format
 msgid "Package %s is obsoleted by %s, trying to install %s instead"
 msgstr ""
+"%s ਪੈਕੇਜ %s ਨਾਲ ਬਰਤਰਫ਼ ਕੀਤਾ ਗਿਆ, %s ਇੰਸਟਾਲ ਕਰਨ ਦੀ ਕੋਸ਼ਿਸ਼ "
+"ਕੀਤੀ ਜਾ ਰਹੀ ਹੈ"
 
 #: ../yum/__init__.py:3009
 #, python-format
@@ -2387,12 +2396,13 @@ msgstr "ਪੈਕੇਜ ਪਹਿਲਾਂ ਹੀ ਬਰਤਰਫ਼ ਕੀਤ�
 #: ../yum/__init__.py:3284
 #, python-format
 msgid "Not Updating Package that is obsoleted: %s"
-msgstr ""
+msgstr "ਪੈਕੇਜ ਅੱਪਡੇਟ ਨਹੀਂ ਕੀਤਾ ਜਾ ਰਿਹਾ, ਜੋ ਬਰਤਰਫ਼ ਹੈ: %s"
 
 #: ../yum/__init__.py:3293 ../yum/__init__.py:3319
 #, python-format
 msgid "Not Updating Package that is already updated: %s.%s %s:%s-%s"
 msgstr ""
+"ਪੈਕੇਜ ਅੱਪਡੇਟ ਨਹੀਂ ਕੀਤਾ ਜਾ ਰਿਹਾ ਹੈ, ਇਹ ਪਹਿਲਾਂ ਹੀ ਅੱਪਡੇਟ ਹੈ: %s.%s %s:%s-%s"
 
 #: ../yum/__init__.py:3378
 msgid "No package matched to remove"
@@ -2401,17 +2411,18 @@ msgstr "ਹਟਾਉਣ ਲਈ ਕੋਈ ਪੈਕੇਜ ਨਹੀਂ ਮਿਲ�
 #: ../yum/__init__.py:3412
 #, python-format
 msgid "Cannot open: %s. Skipping."
-msgstr ""
+msgstr "ਖੋਲ੍ਹਿਆ ਨਹੀਂ ਜਾ ਸਕਦਾ: %s। ਛੱਡਿਆ ਜਾ ਰਿਹਾ ਹ।"
 
 #: ../yum/__init__.py:3415 ../yum/__init__.py:3514 ../yum/__init__.py:3598
 #, python-format
 msgid "Examining %s: %s"
-msgstr ""
+msgstr "%s ਪੜਤਾਲ ਜਾਰੀ: %s"
 
 #: ../yum/__init__.py:3423 ../yum/__init__.py:3517 ../yum/__init__.py:3601
 #, python-format
 msgid "Cannot add package %s to transaction. Not a compatible architecture: %s"
 msgstr ""
+"ਟਰਾਂਸੈਕਸ਼ਨ ਲਈ %s ਪੈਕੇਜ ਜੋੜਿਆ ਨਹੀਂ ਜਾ ਸਕਦਾ। %s: ਢਾਂਚੇ ਨਾਲ ਅਨੁਕੂਲ ਨਹੀਂ ਹੈ"
 
 #: ../yum/__init__.py:3431
 #, python-format
@@ -2446,21 +2457,21 @@ msgstr "%s: ਇੰਸਟਾਲ ਹੋਏ ਪੈਕੇਜ ਅੱਪਡੇਟ ਨ�
 #: ../yum/__init__.py:3511 ../yum/__init__.py:3595
 #, python-format
 msgid "Cannot open file: %s. Skipping."
-msgstr ""
+msgstr "%s: ਫਾਇਲ ਖੋਲ੍ਹੀ ਨਹੀਂ ਜਾ ਸਕਦੀ। ਛੱਡਿਆ ਜਾ ਰਿਹਾ ਹੈ।"
 
 #: ../yum/__init__.py:3541
 msgid "Problem in reinstall: no package matched to remove"
-msgstr ""
+msgstr "ਮੁੜ-ਇੰਸਟਾਲ ਕਰਨ ਦੌਰਾਨ ਸਮੱਸਿਆ: ਹਟਾਉਣ ਲਈ ਕੋਈ ਪੈਕੇਜ ਨਹੀਂ ਮਿਲਦਾ"
 
 #: ../yum/__init__.py:3554 ../yum/__init__.py:3686
 #, python-format
 msgid "Package %s is allowed multiple installs, skipping"
-msgstr ""
+msgstr "%s ਪੈਕੇਜ ਕਈ ਇੰਸਟਾਲ ਲਈ ਮਨਜ਼ੂਰ ਹੈ, ਛੱਡਿਆ ਜਾ ਰਿਹਾ ਹੈ"
 
 #: ../yum/__init__.py:3575
 #, python-format
 msgid "Problem in reinstall: no package %s matched to install"
-msgstr ""
+msgstr "ਮੜ-ਇੰਸਟਾਲ ਕਰਨ ਦੌਰਾਨ ਸਮੱਸਿਆ: ਇੰਸਟਾਲ ਕਰਨ ਲਈ %s ਪੈਕੇਜ ਨਾਲ ਕੋਈ ਨਹੀਂ ਮਿਲਦਾ"
 
 #: ../yum/__init__.py:3678
 msgid "No package(s) available to downgrade"
@@ -2484,16 +2495,16 @@ msgstr "ਡਾਊਨਗਰੇਡ ਕਰਨ ਲਈ ਫੇਲ੍ਹ: %s"
 #: ../yum/__init__.py:3877
 #, python-format
 msgid "Retrieving GPG key from %s"
-msgstr ""
+msgstr "%s ਤੋਂ GPG ਕੁੰਜੀ ਲਈ ਜਾ ਰਹੀ ਹੈ"
 
 #: ../yum/__init__.py:3897
 msgid "GPG key retrieval failed: "
-msgstr ""
+msgstr "GPG ਕੁੰਜੀ ਲੈਣ ਲਈ ਫੇਲ੍ਹ: "
 
 #: ../yum/__init__.py:3903
 #, python-format
 msgid "Invalid GPG Key from %s: %s"
-msgstr ""
+msgstr "%s ਤੋਂ ਗਲਤ GPG ਕੁੰਜੀ: %s"
 
 #: ../yum/__init__.py:3912
 #, python-format
@@ -2513,16 +2524,16 @@ msgstr ""
 
 #: ../yum/__init__.py:3966
 msgid "Not installing key"
-msgstr ""
+msgstr "ਕੁੰਜੀ ਇੰਸਟਾਲ ਨਹੀਂ ਕੀਤੀ ਜਾ ਰਹੀ ਹੈ"
 
 #: ../yum/__init__.py:3972
 #, python-format
 msgid "Key import failed (code %d)"
-msgstr ""
+msgstr "ਕੁੰਜੀ ਇੰਪੋਰਟ ਕਰਨ ਲਈ ਫੇਲ੍ਹ (ਕੋਡ %d)"
 
 #: ../yum/__init__.py:3973 ../yum/__init__.py:4032
 msgid "Key imported successfully"
-msgstr ""
+msgstr "ਕੁੰਜੀ ਠੀਕ ਤਰ੍ਹਾਂ ਇੰਪੋਰਟ ਕੀਤੀ ਗਈ"
 
 #: ../yum/__init__.py:3978 ../yum/__init__.py:4037
 #, python-format
@@ -2544,7 +2555,7 @@ msgstr ""
 #: ../yum/__init__.py:4026
 #, python-format
 msgid "Not installing key for repo %s"
-msgstr ""
+msgstr "ਰਿਪੋ %s ਲਈ ਕੁੰਜੀ ਨਹੀਂ ਇੰਸਟਾਲ ਕੀਤੀ ਜਾ ਰਹੀ"
 
 #: ../yum/__init__.py:4031
 msgid "Key import failed"
@@ -2552,11 +2563,11 @@ msgstr "ਕੁੰਜੀ ਇੰਪੋਰਟ ਫੇਲ੍ਹ"
 
 #: ../yum/__init__.py:4157
 msgid "Unable to find a suitable mirror."
-msgstr ""
+msgstr "ਢੁੱਕਵਾਂ ਮਿੱਰਰ ਲੱਭਣ ਲਈ ਅਸਮਰੱਥ ਹੈ।"
 
 #: ../yum/__init__.py:4159
 msgid "Errors were encountered while downloading packages."
-msgstr ""
+msgstr "ਪੈਕੇਜ ਡਾਊਨਲੋਡ ਕਰਨ ਦੌਰਾਨ ਗਲਤੀਆਂ ਆਈਆਂ ਹਨ।"
 
 #: ../yum/__init__.py:4209
 #, python-format
@@ -2585,13 +2596,13 @@ msgstr ""
 #: ../yum/plugins.py:252
 #, python-format
 msgid "Not loading \"%s\" plugin, as it is disabled"
-msgstr ""
+msgstr "\"%s\" ਪਲੱਗਇਨ ਲੋਡ ਨਹੀਂ ਕੀਤੀ ਜਾ ਰਹੀ, ਕਿਉਂਕਿ ਇਹ ਬੰਦ ਹੈ"
 
 #. Give full backtrace:
 #: ../yum/plugins.py:264
 #, python-format
 msgid "Plugin \"%s\" can't be imported"
-msgstr ""
+msgstr "ਪਲੱਗਇਨ \"%s\" ਇੰਪੋਰਟ ਨਹੀਂ ਕੀਤੀ ਜਾ ਸਕਦੀ"
 
 #: ../yum/plugins.py:271
 #, python-format
@@ -2617,18 +2628,18 @@ msgstr ""
 #: ../yum/plugins.py:336
 #, python-format
 msgid "Configuration file %s not found"
-msgstr ""
+msgstr "ਸੰਰਚਨਾ ਫਾਇਲ %s ਨਹੀਂ ਲੱਭੀ"
 
 #. for
 #. Configuration files for the plugin not found
 #: ../yum/plugins.py:339
 #, python-format
 msgid "Unable to find configuration file for plugin %s"
-msgstr ""
+msgstr "ਪਲੱਗਇਨ %s ਲਈ ਸੰਰਚਨਾ ਫਾਇਲ ਲੱਭਣ ਲਈ ਅਸਮਰੱਥ"
 
 #: ../yum/plugins.py:501
 msgid "registration of commands not supported"
-msgstr ""
+msgstr "ਕਮਾਂਡਾਂ ਲਈ ਰਜਿਸਟਰੇਸਨ ਲਈ ਸਹਾਇਕ ਨਹੀਂ"
 
 #: ../yum/rpmsack.py:102
 msgid "has missing requires of"
@@ -2645,7 +2656,7 @@ msgstr "%s %s ਨਾਲ ਡੁਪਲੀਕੇਟ ਹੈ"
 
 #: ../yum/rpmtrans.py:79
 msgid "Repackaging"
-msgstr ""
+msgstr "ਮੁੜ-ਪੈਕ ਕੀਤਾ ਜਾ ਰਿਹਾ ਹੈ"
 
 #: ../rpmUtils/oldUtils.py:33
 #, python-format
@@ -2660,10 +2671,11 @@ msgstr ""
 #: ../rpmUtils/oldUtils.py:151
 msgid "Could not open RPM database for reading. Perhaps it is already in use?"
 msgstr ""
+"RPM ਡਾਟਾਬੇਸ ਪੜ੍ਹਨ ਲਈ ਖੋਲ੍ਹਿਆ ਨਹੀਂ ਜਾ ਸਕਿਆ। ਸ਼ਾਇਦ ਪਹਿਲਾਂ ਹੀ ਵਰਤਿਆ ਜਾ ਰਿਹਾ ਹੈ?"
 
 #: ../rpmUtils/oldUtils.py:183
 msgid "Got an empty Header, something has gone wrong"
-msgstr ""
+msgstr "ਖਾਲੀ ਹੈੱਡਰ ਮਿਲਿਆ ਹੈ, ਕੁਝ ਗਲਤ ਹੋ ਗਿਆ ਹੈ"
 
 #: ../rpmUtils/oldUtils.py:253 ../rpmUtils/oldUtils.py:260
 #: ../rpmUtils/oldUtils.py:263 ../rpmUtils/oldUtils.py:266
@@ -2674,5 +2686,6 @@ msgstr "ਖਰਾਬ ਹੋਇਆ ਹੈੱਡਰ %s"
 #: ../rpmUtils/oldUtils.py:281
 #, python-format
 msgid "Error opening rpm %s - error %s"
-msgstr ""
+msgstr "rpm %s ਖੋਲ੍ਹਣ ਦੌਰਾਨ ਗਲਤੀ - ਗਲਤੀ %s"
+
 
