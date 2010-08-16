@@ -74,7 +74,7 @@ class UpdateNotice(object):
     def __setitem__(self, item, val):
         self._md[item] = val
 
-    def __str__(self):
+    def text(self, skip_data=('files',)):
         head = """
 ===============================================================================
   %(title)s
@@ -91,7 +91,7 @@ class UpdateNotice(object):
 
         # Add our bugzilla references
         bzs = filter(lambda r: r['type'] == 'bugzilla', self._md['references'])
-        if len(bzs):
+        if len(bzs) and 'bugs' not in skip_data:
             buglist = "       Bugs :"
             for bz in bzs:
                 buglist += " %s%s\n\t    :" % (bz['id'], 'title' in bz
@@ -100,31 +100,34 @@ class UpdateNotice(object):
 
         # Add our CVE references
         cves = filter(lambda r: r['type'] == 'cve', self._md['references'])
-        if len(cves):
+        if len(cves) and 'cves' not in skip_data:
             cvelist = "       CVEs :"
             for cve in cves:
                 cvelist += " %s\n\t    :" % cve['id']
             head += cvelist[: - 1].rstrip() + '\n'
 
-        if self._md['summary']:
+        if self._md['summary'] and 'summary' not in skip_data:
             data = utf8_text_wrap(self._md['summary'], width=64,
                                   subsequent_indent=' ' * 12 + ': ')
             head += "    Summary : %s\n" % '\n'.join(data)
 
-        if self._md['description']:
+        if self._md['description'] and 'description' not in skip_data:
             desc = utf8_text_wrap(self._md['description'], width=64,
                                   subsequent_indent=' ' * 12 + ': ')
             head += "Description : %s\n" % '\n'.join(desc)
 
-        if self._md['solution']:
+        if self._md['solution'] and 'solution' not in skip_data:
             data = utf8_text_wrap(self._md['solution'], width=64,
                                   subsequent_indent=' ' * 12 + ': ')
             head += "   Solution : %s\n" % '\n'.join(data)
 
-        if self._md['rights']:
+        if self._md['rights'] and 'rights' not in skip_data:
             data = utf8_text_wrap(self._md['rights'], width=64,
                                   subsequent_indent=' ' * 12 + ': ')
             head += "     Rights : %s\n" % '\n'.join(data)
+
+        if 'files' in skip_data:
+            return head[:-1] # chop the last '\n'
 
         #  Get a list of arches we care about:
         #XXX ARCH CHANGE - what happens here if we set the arch - we need to
@@ -140,6 +143,9 @@ class UpdateNotice(object):
         head += filelist[: - 1].rstrip()
 
         return head
+
+    def __str__(self):
+        return to_utf8(self.text())
 
     def get_metadata(self):
         """ Return the metadata dict. """
