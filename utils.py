@@ -103,7 +103,7 @@ def get_process_info(pid):
 def show_lock_owner(pid, logger):
     ps = get_process_info(pid)
     if not ps:
-        return
+        return None
 
     # This yumBackend isn't very friendly, so...
     if ps['name'] == 'yumBackend.py':
@@ -121,6 +121,7 @@ def show_lock_owner(pid, logger):
                     (time.ctime(ps['start_time']), ago))
     logger.critical(_("    State  : %s, pid: %d") % (ps['state'], pid))
 
+    return ps
 
 
 class YumUtilBase(YumBaseCli):
