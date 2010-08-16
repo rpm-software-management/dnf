@@ -56,6 +56,9 @@ class UpdateNotice(object):
             'issued'           : '',
             'updated'          : '',
             'description'      : '',
+            'rights'           : '',
+            'summary'          : '',
+            'solution'         : '',
             'references'       : [],
             'pkglist'          : [],
             'reboot_suggested' : False
@@ -103,10 +106,25 @@ class UpdateNotice(object):
                 cvelist += " %s\n\t    :" % cve['id']
             head += cvelist[: - 1].rstrip() + '\n'
 
-        if self._md['description'] is not None:
+        if self._md['summary']:
+            data = utf8_text_wrap(self._md['summary'], width=64,
+                                  subsequent_indent=' ' * 12 + ': ')
+            head += "    Summary : %s\n" % '\n'.join(data)
+
+        if self._md['description']:
             desc = utf8_text_wrap(self._md['description'], width=64,
                                   subsequent_indent=' ' * 12 + ': ')
             head += "Description : %s\n" % '\n'.join(desc)
+
+        if self._md['solution']:
+            data = utf8_text_wrap(self._md['solution'], width=64,
+                                  subsequent_indent=' ' * 12 + ': ')
+            head += "   Solution : %s\n" % '\n'.join(data)
+
+        if self._md['rights']:
+            data = utf8_text_wrap(self._md['rights'], width=64,
+                                  subsequent_indent=' ' * 12 + ': ')
+            head += "     Rights : %s\n" % '\n'.join(data)
 
         #  Get a list of arches we care about:
         #XXX ARCH CHANGE - what happens here if we set the arch - we need to
@@ -132,7 +150,7 @@ class UpdateNotice(object):
         Parse an update element::
 
             <!ELEMENT update (id, synopsis?, issued, updated,
-                              references, description, pkglist)>
+                              references, description, rights?, summary?, solution?, pkglist)>
                 <!ATTLIST update type (errata|security) "errata">
                 <!ATTLIST update status (final|testing) "final">
                 <!ATTLIST update version CDATA #REQUIRED>
@@ -156,6 +174,12 @@ class UpdateNotice(object):
                     self._parse_references(child)
                 elif child.tag == 'description':
                     self._md['description'] = child.text
+                elif child.tag == 'rights':
+                    self._md['rights'] = child.text
+                elif child.tag == 'summary':
+                    self._md['summary'] = child.text
+                elif child.tag == 'solution':
+                    self._md['solution'] = child.text
                 elif child.tag == 'pkglist':
                     self._parse_pkglist(child)
                 elif child.tag == 'title':
@@ -172,7 +196,7 @@ class UpdateNotice(object):
             <!ELEMENT references (reference*)>
             <!ELEMENT reference>
                 <!ATTLIST reference href CDATA #REQUIRED>
-                <!ATTLIST reference type (self|cve|bugzilla) "self">
+                <!ATTLIST reference type (self|other|cve|bugzilla) "self">
                 <!ATTLIST reference id CDATA #IMPLIED>
                 <!ATTLIST reference title CDATA #IMPLIED>
         """
@@ -254,7 +278,13 @@ class UpdateNotice(object):
                 to_xml(self._md['title']), to_xml(self._md['release']),
                 to_xml(self._md['issued'], attrib=True),
                 to_xml(self._md['description']))
-        
+
+        if self._md['summary']:
+            msg += """  <summary>%s</summary>\n""" % (to_xml(self._md['summary']))
+        if self._md['solution']:
+            msg += """  <solution>%s</solution>\n""" % (to_xml(self._md['solution']))
+        if self._md['rights']:
+            msg += """  <rights>%s</rights>\n""" % (to_xml(self._md['rights']))        
         if self._md['references']:
             msg += """  <references>\n"""
             for ref in self._md['references']:
