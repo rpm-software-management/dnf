@@ -225,6 +225,12 @@ class UpdateNotice(object):
         package = {}
         for pkgfield in ('arch', 'epoch', 'name', 'version', 'release', 'src'):
             package[pkgfield] = elem.attrib.get(pkgfield)
+
+        #  Bad epoch and arch data is the most common (missed) screwups.
+        # Deal with bad epoch data.
+        if not package['epoch'] or package['epoch'][0] not in '0123456789':
+            package['epoch'] = None
+
         for child in elem:
             if child.tag == 'filename':
                 package['filename'] = child.text
