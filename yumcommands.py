@@ -1418,7 +1418,7 @@ class CheckRpmdbCommand(YumCommand):
             chkcmd = extcmds
 
         def _out(x):
-            print x
+            print to_unicode(x.__str__())
 
         rc = 0
         if base._rpmdb_warn_checks(out=_out, warn=False, chkcmd=chkcmd,
