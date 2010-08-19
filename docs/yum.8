@@ -155,9 +155,14 @@ or file. Just use a specific name or a file-glob-syntax wildcards to list
 the packages available or installed that provide that feature or file\&.
 .IP 
 .IP "\fBsearch\fP"
-Is used to find any packages matching a string in the description, summary
-and package name fields of an rpm. Useful for finding a package
-you do not know by name but know by some word related to it. 
+This is used to find packages when you know something about the package but
+aren't sure of it's name. By default search will try searching just package
+names and summaries, but if that "fails" it will then try descriptions and url.
+
+Yum search orders the results so that those packages matching more terms will
+appear first.
+
+You can force searching everything by specifying "all" as the first argument.
 .IP 
 .IP "\fBinfo\fP"
 Is used to list a description and summary information about available

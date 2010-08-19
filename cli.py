@@ -931,21 +931,70 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         searchlist = ['name', 'summary', 'description', 'url']
         dups = self.conf.showdupesfromrepos
         args = map(to_unicode, args)
+
+        okeys = set()
+        akeys = set() # All keys, used to see if nothing matched
+        mkeys = set() # "Main" set of keys for N/S search (biggest term. hit).
+        pos   = set()
+
+        def _print_match_section(text):
+            # Print them in the order they were passed
+            used_keys = [arg for arg in args if arg in keys]
+            print self.fmtSection(text % ", ".join(used_keys))
+
+        #  First try just the name/summary fields, and if we get any hits
+        # don't do the other stuff. Unless the user overrides via. "all".
+        if len(args) > 1 and args[0] == 'all':
+            args.pop(0)
+        else:
+            matching = self.searchGenerator(['name', 'summary'], args,
+                                            showdups=dups, keys=True)
+            for (po, keys, matched_value) in matching:
+                if keys != okeys:
+                    if akeys:
+                        if len(mkeys) == len(args):
+                            break
+                        print ""
+                    else:
+                        mkeys = set(keys)
+                    _print_match_section(_('N/S Matched: %s'))
+                    okeys = keys
+                pos.add(po)
+                akeys.update(keys)
+                self.matchcallback(po, matched_value, args)
+
         matching = self.searchGenerator(searchlist, args,
                                         showdups=dups, keys=True)
-        
+
         okeys = set()
-        akeys = set()
+
+        #  If we got a hit with just name/summary then we only care about hits
+        # with _more_ search terms. Thus. if we hit all our search terms. do
+        # nothing.
+        if len(mkeys) == len(args):
+            print ""
+            if len(args) == 1:
+                msg = _('  Name and summary matches %sonly%s, use "search all" for everything.')
+            else:
+                msg = _('  Full name and summary matches %sonly%s, use "search all" for everything.')
+            print msg % (self.term.MODE['bold'], self.term.MODE['normal'])
+            matching = []
+
         for (po, keys, matched_value) in matching:
+            if len(keys) <= len(mkeys) or po in pos:
+                continue # Don't print stuff from N/S...
+
             if keys != okeys:
                 if akeys:
                     print ""
-                # Print them in the order they were passed
-                used_keys = [arg for arg in args if arg in keys]
-                print self.fmtSection(_('Matched: %s') % ", ".join(used_keys))
+                _print_match_section(_('Matched: %s'))
                 okeys = keys
                 akeys.update(keys)
             self.matchcallback(po, matched_value, args)
+
+        if mkeys and len(mkeys) != len(args):
+            print ""
+            print _('  Name and summary matches %smostly%s, use "search all" for everything.') % (self.term.MODE['bold'], self.term.MODE['normal'])
 
         for arg in args:
             if arg not in akeys:
