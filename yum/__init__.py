@@ -3111,6 +3111,9 @@ class YumBase(depsolve.Depsolve):
 
     def _find_obsoletees(self, po):
         """ Return the pkgs. that are obsoleted by the po we pass in. """
+        if not self.conf.obsoletes:
+            return
+
         if not isinstance(po, YumLocalPackage):
             for (obstup, inst_tup) in self.up.getObsoletersTuples(name=po.name):
                 if po.pkgtup == obstup:
