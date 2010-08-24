@@ -1195,6 +1195,10 @@ class Depsolve(object):
                     #  We get here from bestPackagesFromList(), give a giant
                     # bump to stuff that is already installed.
                     pkgresults[pkg] += 1000
+                elif newest.verGT(pkg):
+                    # if the version we're looking at is older than what we have installed
+                    # score it down like we would an obsoleted pkg
+                    pkgresults[pkg] -= 1024
             else:
                 # just b/c they're not installed pkgs doesn't mean they should
                 # be ignored entirely. Just not preferred
