@@ -3174,7 +3174,7 @@ class YumBase(depsolve.Depsolve):
                     try:
                         mypkgs = self.returnPackagesByDep(arg)
                     except yum.Errors.YumBaseError, e:
-                        self.logger.critical(_('No Match for argument: %s') % arg)
+                        self.logger.critical(_('No Match for argument: %s') % to_unicode(arg))
                     else:
                         # install MTA* == fail, because provides don't do globs
                         # install /usr/kerberos/bin/* == success (and we want
@@ -3504,7 +3504,7 @@ class YumBase(depsolve.Depsolve):
             availpkgs.extend(m)
 
             if not availpkgs and not instpkgs:
-                self.logger.critical(_('No Match for argument: %s') % arg)
+                self.logger.critical(_('No Match for argument: %s') % to_unicode(arg))
         
         else: # we have kwargs, sort them out.
             nevra_dict = self._nevra_kwarg_parse(kwargs)
@@ -3684,7 +3684,7 @@ class YumBase(depsolve.Depsolve):
                     
                     if not depmatches:
                         arg = to_unicode(arg)
-                        self.logger.critical(_('No Match for argument: %s') % arg)
+                        self.logger.critical(_('No Match for argument: %s') % to_unicode(arg))
                     else:
                         pkgs.extend(depmatches)
                 
@@ -3998,7 +3998,7 @@ class YumBase(depsolve.Depsolve):
                     try:
                         apkgs = self.returnPackagesByDep(arg)
                     except yum.Errors.YumBaseError, e:
-                        self.logger.critical(_('No Match for argument: %s') % arg)
+                        self.logger.critical(_('No Match for argument: %s') % to_unicode(arg))
 
         else:
             nevra_dict = self._nevra_kwarg_parse(kwargs)
