@@ -365,6 +365,14 @@ username to use for proxy
 password for this proxy
 
 .IP
+\fBusername \fR
+username to use for basic authentication to a repo or really any url.
+
+.IP
+\fBpassword \fR
+password to use with the username for basic authentication.
+
+.IP
 \fBplugins \fR
 Either `0' or `1'. Global switch to enable or disable yum plugins. Default is
 `0' (plugins disabled). See the \fBPLUGINS\fR section of the \fByum(8)\fR man
@@ -736,6 +744,17 @@ If this is unset it inherits it from the global setting
 .IP
 \fBproxy_password \fR
 password for this proxy.
+If this is unset it inherits it from the global setting
+
+
+.IP
+\fBusername \fR
+username to use for basic authentication to a repo or really any url.
+If this is unset it inherits it from the global setting
+
+.IP
+\fBpassword \fR
+password to use with the username for basic authentication.
 If this is unset it inherits it from the global setting
 
 .IP

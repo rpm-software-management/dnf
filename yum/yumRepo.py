@@ -501,6 +501,8 @@ class YumRepository(Repository, config.RepoConf):
                  'ssl_cert': self.sslclientcert,
                  'ssl_key': self.sslclientkey,
                  'user_agent': default_grabber.opts.user_agent,
+                 'username': self.username,
+                 'password': self.password,
                  }
         return opts
 

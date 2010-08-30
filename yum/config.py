@@ -645,6 +645,8 @@ class YumConf(StartupConf):
     proxy = UrlOption(schemes=('http', 'ftp', 'https'), allow_none=True)
     proxy_username = Option()
     proxy_password = Option()
+    username = Option()
+    password = Option()
     installonlypkgs = ListOption(['kernel', 'kernel-bigmem',
             'kernel-enterprise','kernel-smp', 'kernel-modules', 'kernel-debug',
             'kernel-unsupported', 'kernel-source', 'kernel-devel', 'kernel-PAE',
@@ -794,6 +796,8 @@ class RepoConf(BaseConfig):
     proxy_password = Inherit(YumConf.proxy_password)
     retries = Inherit(YumConf.retries)
     failovermethod = Inherit(YumConf.failovermethod)
+    username = Inherit(YumConf.username)
+    password = Inherit(YumConf.password)
 
     # FIXME: rename gpgcheck to pkgs_gpgcheck
     gpgcheck = Inherit(YumConf.gpgcheck)
