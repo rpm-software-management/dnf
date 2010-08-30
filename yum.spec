@@ -15,7 +15,7 @@ BuildRequires: intltool
 Requires: python >= 2.4
 Requires: rpm-python, rpm >= 0:4.4.2
 Requires: python-sqlite
-Requires: urlgrabber >= 3.9.0
+Requires: urlgrabber >= 3.9.2
 Requires: yum-metadata-parser >= 1.1.0
 Requires: python-iniparse
 Requires: pygpgme
