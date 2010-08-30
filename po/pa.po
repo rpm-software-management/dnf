@@ -1,17 +1,17 @@
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
-# 
+#
 # A S Alam <aalam@users.sf.net>, 2010.
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2010-08-17 10:15-0400\n"
-"PO-Revision-Date: 2010-08-29 21:25+0530\n"
+"PO-Revision-Date: 2010-08-31 01:00+0530\n"
 "Last-Translator: A S Alam <aalam@users.sf.net>\n"
 "Language-Team: Punjabi/Panjabi <punjabi-users@lists.sf.net>\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=utf-8\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
 "X-Generator: Lokalize 1.0\n"
@@ -40,12 +40,12 @@ msgstr "ਅੱਪਡੇਟ ਕੀਤੇ"
 
 #: ../callback.py:55 ../output.py:1517
 msgid "Erased"
-msgstr "ਸਾਫ਼ ਕੀਤੇ"
+msgstr "ਸਾਫ਼ ਕੀਤਾ"
 
 #: ../callback.py:56 ../callback.py:57 ../callback.py:59 ../output.py:1155
 #: ../output.py:1517 ../output.py:1519 ../output.py:1891
 msgid "Installed"
-msgstr "ਇੰਸਟਾਲ ਕੀਤੇ"
+msgstr "ਇੰਸਟਾਲ ਕੀਤਾ"
 
 #: ../callback.py:130
 msgid "No header - huh?"
@@ -63,7 +63,7 @@ msgstr ""
 #: ../callback.py:212
 #, python-format
 msgid "Erased: %s"
-msgstr "ਸਾਫ਼ ਕੀਤੇ: %s"
+msgstr "ਸਾਫ਼ ਕੀਤਾ: %s"
 
 #: ../callback.py:217 ../output.py:1028 ../output.py:1894
 msgid "Removing"
@@ -71,7 +71,7 @@ msgstr "ਹਟਾਇਆ ਜਾ ਰਿਹਾ ਹੈ"
 
 #: ../callback.py:219 ../yum/rpmtrans.py:78
 msgid "Cleanup"
-msgstr "ਸਾਫ਼ ਕਰੋ"
+msgstr "ਸਾਫ਼"
 
 #: ../cli.py:108
 #, python-format
@@ -210,7 +210,7 @@ msgstr "ਪੈਕੇਜ %s%s%s ਉਪਲੱਬਧ ਹਨ, ਪਰ ਇੰਸਟਾ
 #: ../cli.py:623 ../cli.py:656 ../cli.py:810
 #, python-format
 msgid "No package %s%s%s available."
-msgstr "%s%s%s ਪੈਕੇਜ ਉਪਲੱਬਧ ਨਹੀਂ ਹੈ।"
+msgstr "ਕੋਈ %s%s%s ਪੈਕੇਜ ਉਪਲੱਬਧ ਨਹੀਂ ਹੈ।"
 
 #: ../cli.py:663 ../cli.py:875
 msgid "Package(s) to install"
@@ -231,14 +231,13 @@ msgid "No Packages marked for Update"
 msgstr "ਅੱਪਡੇਟ ਲਈ ਕੋਈ ਪੈਕੇਜ ਨਹੀਂ"
 
 #: ../cli.py:770
-#, fuzzy, python-format
+#, python-format
 msgid "%d packages marked for Distribution Synchronization"
-msgstr "ਹਟਾਉਣ ਲਈ %d ਪੈਕੇਜ ਚੁਣੇ ਗਏ"
+msgstr "ਡਿਸਟਰੀਬਿਊਸ਼ਨ ਸਿੰਕਰੋਨਾਈਜ਼ ਕਰਨ ਲਈ %d ਪੈਕੇਜ ਚੁਣੇ ਗਏ"
 
 #: ../cli.py:773
-#, fuzzy
 msgid "No Packages marked for Distribution Synchronization"
-msgstr "ਹਟਾਉਣ ਲਈ ਕੋਈ ਪੈਕੇਜ ਨਹੀਂ"
+msgstr "ਡਿਸਟਰੀਬਿਊਸ਼ਨ ਸਿੰਕਰੋਨਾਈਜ਼ ਕਰਨ ਲਈ ਕੋਈ ਪੈਕੇਜ ਮਾਰਕ ਨਹੀਂ ਕੀਤਾ"
 
 #: ../cli.py:787
 #, python-format
@@ -298,9 +297,8 @@ msgid "No Package Found for %s"
 msgstr "%s ਲਈ ਕੋਈ ਪੈਕੇਜ ਨਹੀਂ ਲੱਭਿਆ"
 
 #: ../cli.py:1021
-#, fuzzy
 msgid "Cleaning repos: "
-msgstr "ਹੈੱਡਰ ਸਾਫ਼ ਕੀਤੇ ਜਾ ਰਹੇ ਹਨ"
+msgstr "ਰੈਪੋ ਸਾਫ਼ ਕੀਤੀਆਂ ਜਾਂਦੀਆਂ ਹਨ: "
 
 #: ../cli.py:1026
 msgid "Cleaning up Everything"
@@ -576,32 +574,32 @@ msgid "Trying other mirror."
 msgstr "ਹੋਰ ਮਿੱਰਰ ਨਾਲ ਕੋਸ਼ਿਸ਼ ਜਾਰੀ"
 
 #: ../output.py:579
-#, fuzzy, python-format
+#, python-format
 msgid "Name        : %s%s%s"
-msgstr "ਨਾਂ       : %s%s%s"
+msgstr "ਨਾਂ        : %s%s%s"
 
 #: ../output.py:580
-#, fuzzy, python-format
+#, python-format
 msgid "Arch        : %s"
-msgstr "ਢਾਂਚਾ       : %s"
+msgstr "ਢਾਂਚਾ        : %s"
 
 #: ../output.py:582
-#, fuzzy, python-format
+#, python-format
 msgid "Epoch       : %s"
-msgstr "ਢਾਂਚਾ       : %s"
+msgstr "Epoch       : %s"
 
 #: ../output.py:583
-#, fuzzy, python-format
+#, python-format
 msgid "Version     : %s"
-msgstr "ਵਰਜਨ    : %s"
+msgstr "ਵਰਜਨ     : %s"
 
 #: ../output.py:584
-#, fuzzy, python-format
+#, python-format
 msgid "Release     : %s"
-msgstr "ਰੀਲਿਜ਼    : %s"
+msgstr "ਰੀਲਿਜ਼     : %s"
 
 #: ../output.py:585
-#, fuzzy, python-format
+#, python-format
 msgid "Size        : %s"
 msgstr "ਸਾਈਜ਼       : %s"
 
@@ -611,42 +609,41 @@ msgid "Repo        : %s"
 msgstr "ਰਿਪੋ        : %s"
 
 #: ../output.py:588
-#, fuzzy, python-format
+#, python-format
 msgid "From repo   : %s"
-msgstr "ਰਿਪੋ ਤੋਂ  : %s"
+msgstr "ਰਿਪੋ ਤੋਂ   : %s"
 
 #: ../output.py:590
-#, fuzzy, python-format
+#, python-format
 msgid "Committer   : %s"
-msgstr "ਕਮਿੱਟਰ  : %s"
+msgstr "ਕਮਿੱਟਰ   : %s"
 
 #: ../output.py:591
-#, fuzzy, python-format
+#, python-format
 msgid "Committime  : %s"
-msgstr "ਕਮਿਟ-ਸਮਾਂ : %s"
+msgstr "ਕਮਿਟ-ਸਮਾਂ  : %s"
 
 #: ../output.py:592
-#, fuzzy, python-format
+#, python-format
 msgid "Buildtime   : %s"
-msgstr "ਬਿਲਡ ਸਮਾਂ  : %s"
+msgstr "ਬਿਲਡ ਸਮਾਂ   : %s"
 
 #: ../output.py:594
-#, fuzzy, python-format
+#, python-format
 msgid "Install time: %s"
 msgstr "ਇੰਸਟਾਲ ਸਮਾਂ: %s"
 
 #: ../output.py:602
-#, fuzzy, python-format
+#, python-format
 msgid "Installed by: %s"
-msgstr "ਇੰਸਟਾਲ ਦਾ ਸਾਈਜ਼: %s"
+msgstr "ਇੰਸਟਾਲ ਇਸ ਵਲੋਂ: %s"
 
 #: ../output.py:609
 #, python-format
 msgid "Changed by  : %s"
-msgstr ""
+msgstr "ਇਸ ਵਲੋਂ ਬਦਲਿਆ  : %s"
 
 #: ../output.py:610
-#, fuzzy
 msgid "Summary     : "
 msgstr "ਸੰਖੇਪ   : "
 
@@ -656,7 +653,6 @@ msgid "URL         : %s"
 msgstr "URL         : %s"
 
 #: ../output.py:613
-#, fuzzy
 msgid "License     : "
 msgstr "ਲਾਈਸੈਂਸ    : "
 
@@ -775,9 +771,8 @@ msgid "Installed size: %s"
 msgstr "ਇੰਸਟਾਲ ਦਾ ਸਾਈਜ਼: %s"
 
 #: ../output.py:984
-#, fuzzy
 msgid "There was an error calculating installed size"
-msgstr "ਕੁੱਲ ਡਾਊਨਲੋਡ ਆਕਾਰ ਲੱਭਣ ਦੌਰਾਨ ਗਲਤੀ"
+msgstr "ਇੰਸਟਾਲ ਆਕਾਰ ਗਿਣਨ ਦੌਰਾਨ ਗਲਤੀ"
 
 #: ../output.py:1029
 msgid "Reinstalling"
@@ -836,35 +831,33 @@ msgid ""
 "%s\n"
 msgstr ""
 "\n"
-"ਟਰਾਂਸੈਕਸ਼ਨ ਸੰਖੇਪ\n"
+"ਟਰਾਂਸੈਕਸ਼ਨ ਸੰਖੇਪ ਜਾਣਕਾਰੀ\n"
 "%s\n"
 
 #: ../output.py:1097
-#, fuzzy, python-format
+#, python-format
 msgid "Install   %5.5s Package(s)\n"
-msgstr "ਇੰਸਟਾਲ ਹੋਏ ਪੈਕੇਜ"
+msgstr "ਇੰਸਟਾਲ %5.5s ਪੈਕੇਜ\n"
 
 #: ../output.py:1101
-#, fuzzy, python-format
+#, python-format
 msgid "Upgrade   %5.5s Package(s)\n"
-msgstr ""
-"ਇੰਸਟਾਲ   %5.5s ਪੈਕੇਜ\n"
-"ਅੱਪਗਰੇਡ   %5.5s ਪੈਕੇਜ\n"
+msgstr "ਅੱਪਗਰੇਡ   %5.5s ਪੈਕੇਜ\n"
 
 #: ../output.py:1105
-#, fuzzy, python-format
+#, python-format
 msgid "Remove    %5.5s Package(s)\n"
-msgstr "ਪੈਕੇਜ %s ਹਟਾਇਆ ਜਾ ਰਿਹਾ ਹੈ"
+msgstr "ਹਟਾਉਣੇ    %5.5s ਪੈਕੇਜ\n"
 
 #: ../output.py:1109
-#, fuzzy, python-format
+#, python-format
 msgid "Reinstall %5.5s Package(s)\n"
-msgstr "ਪੈਕੇਜ ਮੁੜ-ਇੰਸਟਾਲ ਕੀਤਾ ਜਾ ਰਿਹਾ ਹੈ"
+msgstr "ਮੁੜ-ਇੰਸਟਾਲ %5.5s ਪੈਕੇਜ\n"
 
 #: ../output.py:1113
-#, fuzzy, python-format
+#, python-format
 msgid "Downgrade %5.5s Package(s)\n"
-msgstr "ਪੈਕੇਜ ਡਾਊਨਗਰੇਡ ਕਰੋ"
+msgstr "ਡਾਊਨਗਰੇਡ %5.5s ਪੈਕੇਜ\n"
 
 #: ../output.py:1153
 msgid "Removed"
@@ -876,11 +869,11 @@ msgstr "ਨਿਰਭਰਤਾ ਹਟਾਈ"
 
 #: ../output.py:1156
 msgid "Dependency Installed"
-msgstr "ਨਿਰਭਰਤਾ ਇੰਸਟਾਲ"
+msgstr "ਨਿਰਭਰਤਾ ਇੰਸਟਾਲ ਕੀਤੀ"
 
 #: ../output.py:1158
 msgid "Dependency Updated"
-msgstr "ਨਿਰਭਰਤਾ ਅੱਪਡੇਟ"
+msgstr "ਨਿਰਭਰਤਾ ਅੱਪਡੇਟ ਕੀਤੀ"
 
 #: ../output.py:1160
 msgid "Replaced"
@@ -999,9 +992,8 @@ msgid "Downgraded"
 msgstr "ਡਾਊਨਗਰੇਡ ਕੀਤੇ"
 
 #: ../output.py:1519
-#, fuzzy
 msgid "Not installed"
-msgstr "ਇੰਸਟਾਲ ਕੀਤੇ"
+msgstr "ਇੰਸਟਾਲ ਨਹੀਂ"
 
 #: ../output.py:1520
 msgid "Older"
@@ -1057,9 +1049,8 @@ msgid "Success"
 msgstr "ਸਫ਼ਲ"
 
 #: ../output.py:1589
-#, fuzzy
 msgid "Command Line   :"
-msgstr "ਕਮਾਂਡ ਲਾਈਨ ਗਲਤੀ: %s"
+msgstr "ਕਮਾਂਡ ਲਾਈਨ  :"
 
 #: ../output.py:1597
 #, python-format
@@ -1075,13 +1066,12 @@ msgid "Packages Altered:"
 msgstr "ਪੈਕੇਜ ਬਦਲੇ:"
 
 #: ../output.py:1607
-#, fuzzy
 msgid "Packages Skipped:"
-msgstr "ਪੈਕੇਜ ਬਦਲੇ:"
+msgstr "ਪੈਕੇਜ ਛੱਡੇ ਗਏ:"
 
 #: ../output.py:1612
 msgid "Rpmdb Problems:"
-msgstr ""
+msgstr "Rpmdb ਸਮੱਸਿਆਵਾਂ:"
 
 #: ../output.py:1620
 msgid "Scriptlet output:"
@@ -1104,7 +1094,7 @@ msgstr "ਨਿਰਭ-ਇੰਸਟਾਲ"
 
 #: ../output.py:1641
 msgid "Obsoleting"
-msgstr "ਬਰਤਰਫ਼ ਕੀਤੇ ਜਾ ਰਹੇ ਹਨ"
+msgstr "ਬਰਤਰਫ਼ ਕੀਤੇ"
 
 #: ../output.py:1642
 msgid "Erase"
@@ -1156,24 +1146,22 @@ msgid "Over a year ago"
 msgstr "ਲਗਭਗ ਸਾਲ ਪਹਿਲਾਂ"
 
 #: ../output.py:1774
-#, fuzzy, python-format
+#, python-format
 msgid "No Transaction %s found"
-msgstr "ਕੋਈ ਟਰਾਂਸੈਕਸ਼ਨ ID ਦਿੱਤਾ"
+msgstr "ਕੋਈ ਟਰਾਂਸੈਕਸ਼ਨ %s ਨਹੀਂ ਲੱਭੀ"
 
 #: ../output.py:1780
-#, fuzzy
 msgid "Transaction ID:"
 msgstr "ਟਰਾਂਸੈਕਸ਼ਨ ID:"
 
 #: ../output.py:1781
-#, fuzzy
 msgid "Available additional history information:"
-msgstr "ਵਾਧੂ ਫਾਇਲ-ਲਿਸਟ ਜਾਣਕਾਰੀ ਲਈ ਜਾ ਰਹੀ ਹੈ"
+msgstr "ਉਪਲੱਬਧ ਹੋਰ ਅਤੀਤ ਜਾਣਕਾਰੀ:"
 
 #: ../output.py:1793
 #, python-format
 msgid "%s: No additional data found by this name"
-msgstr ""
+msgstr "%s: ਇਸ ਨਾਂ ਨਾਲ ਕੋਈ ਹੋਰ ਵਾਧੂ ਡਾਟਾ ਨਹੀਂ ਲੱਭਿਆ"
 
 #: ../output.py:1809
 msgid "installed"
@@ -1192,12 +1180,10 @@ msgid "erased"
 msgstr "ਸਾਫ਼ ਕੀਤੇ"
 
 #: ../output.py:1813
-#, fuzzy
 msgid "reinstalled"
-msgstr "ਇੰਸਟਾਲ ਕੀਤੇ"
+msgstr "ਮੁੜ-ਇੰਸਟਾਲ ਕੀਤੇ"
 
 #: ../output.py:1814
-#, fuzzy
 msgid "downgraded"
 msgstr "ਡਾਊਨਗਰੇਡ ਕੀਤੇ"
 
@@ -1224,9 +1210,9 @@ msgid "--> Processing Dependency: %s for package: %s"
 msgstr "--> ਨਿਰਭਰਤਾ ਲਈ ਕਾਰਵਾਈ ਜਾਰੀ: %s ਪੈਕੇਜ ਲਈ: %s"
 
 #: ../output.py:1850
-#, fuzzy, python-format
+#, python-format
 msgid "---> Keeping package: %s"
-msgstr "ਪੈਕੇਜ %s ਲਈ ਖੋਜ ਜਾਰੀ ਹੈ"
+msgstr "---> ਪੈਕੇਜ ਰੱਖਿਆ ਜਾਂਦਾ ਹੈ: %s"
 
 #: ../output.py:1853
 #, python-format
@@ -1257,33 +1243,34 @@ msgstr ""
 "    %s: %s (%s)"
 
 #: ../output.py:1880
-#, fuzzy, python-format
+#, python-format
 msgid ""
 "\n"
 "        %s"
-msgstr "ਢਾਂਚਾ       : %s"
+msgstr ""
+"\n"
+"        %s"
 
 #: ../output.py:1882
 msgid ""
 "\n"
 "        Not found"
 msgstr ""
+"\n"
+"        ਨਹੀਂ ਲੱਭਾ"
 
 #. These should be the only three things we care about:
 #: ../output.py:1897
-#, fuzzy
 msgid "Updated By"
-msgstr "ਅੱਪਡੇਟ ਕੀਤੇ"
+msgstr "ਅੱਪਡੇਟ ਕੀਤਾ"
 
 #: ../output.py:1898
-#, fuzzy
 msgid "Downgraded By"
-msgstr "ਡਾਊਨਗਰੇਡ ਕੀਤੇ"
+msgstr "ਡਾਊਨਗਰੇਡ ਕੀਤਾ"
 
 #: ../output.py:1899
-#, fuzzy
 msgid "Obsoleted By"
-msgstr "ਬਰਤਰਫ਼ ਕੀਤੇ"
+msgstr "ਬਰਤਰਫ਼ ਕੀਤਾ"
 
 #: ../output.py:1917
 msgid "Available"
@@ -1367,6 +1354,9 @@ msgid ""
 "\n"
 "Exiting on Broken Pipe"
 msgstr ""
+"\n"
+"\n"
+"ਖਰਾਬ ਪਾਈਪ ਉੱਤੇ ਬੰਦ"
 
 #: ../utils.py:151 ../yummain.py:50
 #, python-format
@@ -1380,9 +1370,8 @@ msgstr ""
 "%s"
 
 #: ../utils.py:201 ../yummain.py:107
-#, fuzzy
 msgid "Another app is currently holding the yum lock; exiting as configured by exit_on_lock"
-msgstr "ਹਾਲੇ ਕੋਈ ਹੋਰ ਐਪਲੀਕੇਸ਼ਣ ਯੱਮ ਲਾਕ ਵਰਤ ਰਹੀ ਹੈ; ਉਸ ਨੂੰ ਬੰਦ ਹੋਣ ਤੱਕ ਉਡੀਕ ਜਾਰੀ..."
+msgstr "ਹਾਲੇ ਕੋਈ ਹੋਰ ਐਪਲੀਕੇਸ਼ਨ ਯੱਮ ਲਾਕ ਵਰਤ ਰਹੀ ਹੈ;  exit_on_lock ਵਲੋਂ ਸੰਰਚਨਾ ਮੁਤਾਬਕ ਬੰਦ ਕੀਤਾ ਜਾ ਰਿਹਾ ਹੈ"
 
 #: ../utils.py:260
 #, python-format
@@ -1519,12 +1508,11 @@ msgstr "ਅੱਪਡੇਟ ਕਾਰਵਾਈ ਸੈੱਟਅੱਪ ਕੀਤੀ
 
 #: ../yumcommands.py:237
 msgid "Synchronize installed packages to the latest available versions"
-msgstr ""
+msgstr "ਸਭ ਇੰਸਟਾਲ ਕੀਤੇ ਪੈਕੇਜਾਂ ਨੂੰ ਸਭ ਤੋਂ ਨਵੇਂ ਉਪਲੱਬਧ ਵਰਜਨਾਂ ਨਾਲ ਸਿੰਕਰੋਨਾਈਜ਼ ਕਰੋ"
 
 #: ../yumcommands.py:245
-#, fuzzy
 msgid "Setting up Distribution Synchronization Process"
-msgstr "ਡਾਊਨਗਰੇਡ ਕਾਰਵਾਈ ਲਈ ਸੈੱਟਅੱਪ ਕੀਤਾ ਜਾ ਰਿਹਾ ਹੈ"
+msgstr "ਡਿਸਟਰੀਬਿਊਸ਼ਨ ਸਿੰਕਰੋਨਾਈਜ਼ ਕਾਰਵਾਈ ਸੈਟਅੱਪ ਕੀਤੀ ਜਾ ਰਹੀ ਹੈ"
 
 #: ../yumcommands.py:288
 msgid "Display details about a package or group of packages"
@@ -1705,7 +1693,7 @@ msgstr "ਰਿਪੋ-ਟੈਗ    : "
 
 #: ../yumcommands.py:938
 msgid "Repo-distro-tags: "
-msgstr ""
+msgstr "Repo-distro-tags: "
 
 #: ../yumcommands.py:943
 msgid "Repo-updated : "
@@ -1756,11 +1744,11 @@ msgstr "ਰਿਪੋ-expire  : "
 
 #: ../yumcommands.py:988
 msgid "Repo-exclude : "
-msgstr ""
+msgstr "Repo-ਨਾ-ਸ਼ਾਮਲ : "
 
 #: ../yumcommands.py:992
 msgid "Repo-include : "
-msgstr ""
+msgstr "Repo-ਸ਼ਾਮਲ : "
 
 #: ../yumcommands.py:996
 msgid "Repo-excluded: "
@@ -2090,19 +2078,19 @@ msgid "common prefix of %s between %s and %s"
 msgstr ""
 
 #: ../yum/depsolve.py:1305
-#, fuzzy, python-format
+#, python-format
 msgid "requires minimal: %d"
-msgstr "%s ਚਾਹੀਦਾ ਹੈ: %s"
+msgstr "ਘੱਟੋ-ਘੱਟ ਲੋੜ ਹੈ: %d"
 
 #: ../yum/depsolve.py:1309
 #, python-format
 msgid " Winner: %s"
-msgstr ""
+msgstr " ਜੇਤੂ: %s"
 
 #: ../yum/depsolve.py:1314
 #, python-format
 msgid " Loser(with %d): %s"
-msgstr ""
+msgstr " ਹਾਰਿਆ(%d ਨਾਲ): %s"
 
 #: ../yum/depsolve.py:1330
 #, python-format
@@ -2216,7 +2204,7 @@ msgstr "ਅਧੂਰੀਆਂ ਟਰਾਂਸੈਕਸ਼ਨ ਬਾਕੀ ਹਨ
 #: ../yum/__init__.py:985
 #, python-format
 msgid "Trying to remove \"%s\", which is protected"
-msgstr ""
+msgstr "\"%s\" ਹਟਾਉਣ ਦੀ ਕੋਸ਼ਿਸ਼, ਜੋ ਕਿ ਸੁਰੱਖਿਅਤ ਹੈ"
 
 #. Kind of hacky
 #: ../yum/__init__.py:1044
@@ -2246,7 +2234,7 @@ msgstr "   %s %s ਤੋਂ"
 #: ../yum/__init__.py:1251
 #, python-format
 msgid "** Found %d pre-existing rpmdb problem(s), 'yum check' output follows:"
-msgstr ""
+msgstr "** %d ਪਹਿਲਾਂ ਹੀ ਮੌਜੂਦਾ rpmdb ਸਮੱਸਿਆਵਾਂ ਲੱਭੀਆਂ, 'yum check' ਆਉਟਪੁੱਟ ਅੱਗੇ ਦਿੱਤੀ ਹੈ:"
 
 #: ../yum/__init__.py:1255
 msgid "Warning: RPMDB altered outside of yum."
@@ -2265,15 +2253,13 @@ msgid "Warning: scriptlet or other non-fatal errors occurred during transaction.
 msgstr ""
 
 #: ../yum/__init__.py:1376
-#, fuzzy
 msgid "Transaction couldn't start:"
-msgstr "ਟਰਾਂਸੈਕਸ਼ਨ ID:"
+msgstr "ਟਰਾਂਸੈਕਸ਼ਨ ਸ਼ੁਰੂ ਨਹੀਂ ਕੀਤੀ ਜਾ ਸਕੀ:"
 
 #. should this be 'to_unicoded'?
 #: ../yum/__init__.py:1379
-#, fuzzy
 msgid "Could not run transaction."
-msgstr "ਇੱਕ ਤੋਂ ਵੱਧ ਟਰਾਂਸੈਕਸ਼ਨ ID ਲੱਭਿਆ!"
+msgstr "ਟਰਾਂਸੈਕਸ਼ਨ ਚਲਾਈ ਨਹੀਂ ਜਾ ਸਕੀ।"
 
 #: ../yum/__init__.py:1392
 #, python-format
@@ -2295,9 +2281,9 @@ msgid "%s was supposed to be removed but is not!"
 msgstr "%s ਹਟਾਇਆ ਗਿਆ ਹੋਣਾ ਚਾਹੀਦਾ ਸੀ, ਪਰ ਨਹੀਂ ਗਿਆ!"
 
 #: ../yum/__init__.py:1597
-#, fuzzy, python-format
+#, python-format
 msgid "Could not open lock %s: %s"
-msgstr "%s ਲਈ ਲਾਕ ਬਣਾਇਆ ਨਹੀਂ ਜਾ ਸਕਿਆ: %s "
+msgstr "%s ਲਾਕ ਖੋਲ੍ਹਿਆ ਨਹੀਂ ਜਾ ਸਕਿਆ: %s "
 
 #. Whoa. What the heck happened?
 #: ../yum/__init__.py:1614
@@ -2528,9 +2514,9 @@ msgid "Package %s is obsoleted by %s which is already installed"
 msgstr "ਪੈਕੇਜ %s ਨੂੰ %s ਵਲੋਂ ਬਰਤਰਫ਼ ਕੀਤਾ ਗਿਆ ਹੈ, ਜੋ ਪਹਿਲਾਂ ਹੀ ਇੰਸਟਾਲ ਹੈ"
 
 #: ../yum/__init__.py:3296
-#, fuzzy, python-format
+#, python-format
 msgid "Package %s is obsoleted by %s, but obsoleting package does not provide for requirements"
-msgstr "%s ਪੈਕੇਜ %s ਨਾਲ ਬਰਤਰਫ਼ ਕੀਤਾ ਗਿਆ, %s ਇੰਸਟਾਲ ਕਰਨ ਦੀ ਕੋਸ਼ਿਸ਼ ਕੀਤੀ ਜਾ ਰਹੀ ਹੈ"
+msgstr "%s ਪੈਕੇਜ %s ਨਾਲ ਬਦਲ ਦਿੱਤਾ ਗਿਆ, ਪਰ ਬਦਲਿਆ ਗਿਆ ਪੈਕੇਜ ਲੋੜ ਪੂਰੀ ਨਹੀਂ ਕਰਦਾ"
 
 #: ../yum/__init__.py:3299
 #, python-format
@@ -2585,12 +2571,12 @@ msgstr "ਹਟਾਉਣ ਲਈ ਕੋਈ ਪੈਕੇਜ ਨਹੀਂ ਮਿਲ�
 #: ../yum/__init__.py:3703
 #, python-format
 msgid "Skipping the running kernel: %s"
-msgstr ""
+msgstr "ਚੱਲਦਾ ਕਰਨਲ ਛੱਡਿਆ ਜਾ ਰਿਹਾ ਹੈ: %s"
 
 #: ../yum/__init__.py:3709
 #, python-format
 msgid "Removing %s from the transaction"
-msgstr ""
+msgstr "ਟਰਾਂਸੈਕਸ਼ਨ ਤੋਂ %s ਹਟਾਇਆ ਜਾ ਰਿਹਾ ਹੈ"
 
 #: ../yum/__init__.py:3744
 #, python-format
@@ -2603,9 +2589,9 @@ msgid "Examining %s: %s"
 msgstr "%s ਪੜਤਾਲ ਜਾਰੀ: %s"
 
 #: ../yum/__init__.py:3751
-#, fuzzy, python-format
+#, python-format
 msgid "Cannot localinstall deltarpm: %s. Skipping."
-msgstr "%s: ਫਾਇਲ ਖੋਲ੍ਹੀ ਨਹੀਂ ਜਾ ਸਕਦੀ। ਛੱਡਿਆ ਜਾ ਰਿਹਾ ਹੈ।"
+msgstr "deltarpm localinstall ਨਹੀਂ ਕੀਤਾ ਜਾ ਸਕਦਾ: %s। ਛੱਡਿਆ ਜਾਂਦਾ ਹੈ।"
 
 #: ../yum/__init__.py:3760 ../yum/__init__.py:3862 ../yum/__init__.py:3938
 #, python-format
@@ -2796,7 +2782,7 @@ msgstr "ਲੋਡ ਕੀਤੀਆਂ ਪਲੱਗਇਨ: "
 #: ../yum/plugins.py:222 ../yum/plugins.py:228
 #, python-format
 msgid "No plugin match for: %s"
-msgstr ""
+msgstr "%s: ਨਾਲ ਮਿਲਦੀ ਕੋਈ ਪਲੱਗਇਨ ਨਹੀਂ ਹੈ"
 
 #: ../yum/plugins.py:258
 #, python-format
@@ -2859,9 +2845,9 @@ msgid "%s is a duplicate with %s"
 msgstr "%s %s ਨਾਲ ਡੁਪਲੀਕੇਟ ਹੈ"
 
 #: ../yum/rpmsack.py:122
-#, fuzzy, python-format
+#, python-format
 msgid "%s is obsoleted by %s"
-msgstr "%s ਨੇ %s ਬਰਤਰਫ਼ ਕੀਤਾ"
+msgstr "%s ਨੂੰ %s ਨਾਲ ਬਦਲਿਆ ਜਾਂਦਾ ਹੈ"
 
 #: ../yum/rpmsack.py:130
 #, python-format
