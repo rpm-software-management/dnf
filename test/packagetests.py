@@ -8,7 +8,6 @@ class InPrcoRangePackageTests(unittest.TestCase):
 
     def setUp(self):
         self.po = packages.RpmBase()
-        self.po.rel = 10
         self.po.prco['provides'].append(("seth", "EQ", (1, 2, 3)))
         self.po.prco['requires'].append(("foo", "GE", (4, 5, None)))
 
