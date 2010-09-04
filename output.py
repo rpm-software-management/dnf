@@ -1754,13 +1754,14 @@ to exit.
         tid = None
         if len(extcmds) > 1:
             tid = extcmds[1]
-        try:
-            int(tid)
-        except ValueError:
-            self.logger.critical(_('No transaction ID given'))
-            return 1, ['Failed history addon-info']
-        except TypeError:
-            pass # No tid arg. passed, use last...
+            if tid == 'last':
+                tid = None
+        if tid is not None:
+            try:
+                int(tid)
+            except ValueError:
+                self.logger.critical(_('Bad transaction ID given'))
+                return 1, ['Failed history addon-info']
 
         if tid is not None:
             old = self.history.old(tids=[tid])
