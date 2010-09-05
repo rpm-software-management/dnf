@@ -12,7 +12,7 @@ msgstr ""
 "Project-Id-Version: yum.master\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2010-08-17 10:15-0400\n"
-"PO-Revision-Date: 2010-09-04 22:03+0200\n"
+"PO-Revision-Date: 2010-09-05 11:02+0200\n"
 "Last-Translator: Thomas Canniot <mrtom@fedoraproject.org>\n"
 "Language-Team: French <trans-fr@lists.fedoraproject.org>\n"
 "MIME-Version: 1.0\n"
@@ -41,16 +41,16 @@ msgstr "Obsolète"
 
 #: ../callback.py:54 ../output.py:1157 ../output.py:1518 ../output.py:1647
 msgid "Updated"
-msgstr "Mis à jour"
+msgstr "Mis à jour "
 
 #: ../callback.py:55 ../output.py:1517
 msgid "Erased"
-msgstr "Supprimé"
+msgstr "Supprimé(s) "
 
 #: ../callback.py:56 ../callback.py:57 ../callback.py:59 ../output.py:1155
 #: ../output.py:1517 ../output.py:1519 ../output.py:1891
 msgid "Installed"
-msgstr "Installé"
+msgstr "Installés"
 
 #: ../callback.py:130
 msgid "No header - huh?"
@@ -104,7 +104,7 @@ msgstr "Erreur d'options : %s"
 #: ../cli.py:267
 #, python-format
 msgid "  Installed: %s-%s at %s"
-msgstr "  Installé : %s-%s à %s"
+msgstr "  Installés : %s-%s à %s"
 
 #: ../cli.py:269
 #, python-format
@@ -123,7 +123,7 @@ msgstr "Vous devez spécifier des commandes"
 #: ../cli.py:324
 #, python-format
 msgid "No such command: %s. Please use %s --help"
-msgstr "Aucune commande : %s. Veuillez utiliser %s --help"
+msgstr "Aucune commande telle que : %s. Veuillez utiliser %s --help"
 
 #: ../cli.py:354
 msgid "Disk Requirements:\n"
@@ -270,7 +270,7 @@ msgstr "(depuis %s)"
 #: ../cli.py:841
 #, python-format
 msgid "Installed package %s%s%s%s not available."
-msgstr "Paquet installé %s%s%s%s indisponible."
+msgstr "Paquets installés %s%s%s%s indisponibles."
 
 #: ../cli.py:849
 msgid "Package(s) to reinstall"
@@ -312,7 +312,7 @@ msgstr "Aucun paquet trouvé pour %s"
 
 #: ../cli.py:1021
 msgid "Cleaning repos: "
-msgstr "Nettoyage des dépôts :"
+msgstr "Nettoyage des dépôts : "
 
 #: ../cli.py:1026
 msgid "Cleaning up Everything"
@@ -656,7 +656,7 @@ msgstr "Date d'installation : %s"
 #: ../output.py:602
 #, python-format
 msgid "Installed by: %s"
-msgstr "Installé par : %s"
+msgstr "Installés par : %s"
 
 #: ../output.py:609
 #, python-format
@@ -844,7 +844,7 @@ msgstr "Taille"
 #: ../output.py:1077
 #, python-format
 msgid "     replacing  %s%s%s.%s %s\n"
-msgstr "     remplacement  %s%s%s.%s %s\n"
+msgstr "     remplacement de  %s%s%s.%s %s\n"
 
 #: ../output.py:1086
 #, python-format
@@ -860,27 +860,27 @@ msgstr ""
 #: ../output.py:1097
 #, python-format
 msgid "Install   %5.5s Package(s)\n"
-msgstr "Installation   %5.5s Paquet(s)\n"
+msgstr "Installation de %5.5s paquet(s)\n"
 
 #: ../output.py:1101
 #, python-format
 msgid "Upgrade   %5.5s Package(s)\n"
-msgstr "Mise à niveau   %5.5s Paquet(s)\n"
+msgstr "Mise à jour de %5.5s paquet(s)\n"
 
 #: ../output.py:1105
 #, python-format
 msgid "Remove    %5.5s Package(s)\n"
-msgstr "Suppression    %5.5s Paquet(s)\n"
+msgstr "Suppression de %5.5s paquet(s)\n"
 
 #: ../output.py:1109
 #, python-format
 msgid "Reinstall %5.5s Package(s)\n"
-msgstr "Réinstallation %5.5s Paquet(s)\n"
+msgstr "Réinstallation de %5.5s paquet(s)\n"
 
 #: ../output.py:1113
 #, python-format
 msgid "Downgrade %5.5s Package(s)\n"
-msgstr "Rétrogradage %5.5s Paquet(s)\n"
+msgstr "Rétrogradage de %5.5s paquet(s)\n"
 
 #: ../output.py:1153
 msgid "Removed"
@@ -892,7 +892,7 @@ msgstr "Dépendance supprimée"
 
 #: ../output.py:1156
 msgid "Dependency Installed"
-msgstr "Dépendance installée"
+msgstr "Dépendance(s) installée(s) "
 
 #: ../output.py:1158
 msgid "Dependency Updated"
@@ -1111,11 +1111,11 @@ msgstr "Erreurs :"
 #. version in the transaction and now.
 #: ../output.py:1637 ../output.py:1638
 msgid "Install"
-msgstr "Installé"
+msgstr "Installation"
 
 #: ../output.py:1639
 msgid "Dep-Install"
-msgstr "Dep-Install"
+msgstr "Dep-Installées"
 
 #: ../output.py:1641
 msgid "Obsoleting"
@@ -1404,7 +1404,7 @@ msgid ""
 "exit_on_lock"
 msgstr ""
 "Une autre application verrouille actuellement l'utilisation de yum ; "
-"fermeture en cours comme la configuration de exit_on_lock le demande"
+"fermeture en cours conformément à la configuration de exit_on_lock"
 
 #: ../utils.py:260
 #, python-format
@@ -1570,7 +1570,7 @@ msgstr ""
 
 #: ../yumcommands.py:245
 msgid "Setting up Distribution Synchronization Process"
-msgstr "Configuration du processus de synchronisation de distribution"
+msgstr "Configuration du processus de synchronisation de la distribution"
 
 #: ../yumcommands.py:288
 msgid "Display details about a package or group of packages"
@@ -1889,7 +1889,7 @@ msgstr "Paquets :"
 
 #: ../yumcommands.py:1270
 msgid "Installed:"
-msgstr "Installé :"
+msgstr "Installés :"
 
 #: ../yumcommands.py:1278
 msgid "Group-Installed:"
@@ -2172,7 +2172,7 @@ msgstr "doConfigSetup() sera supprimé dans une future version de Yum.\n"
 #: ../yum/__init__.py:453
 #, python-format
 msgid "Repository %r: Error parsing config: %s"
-msgstr "Dépôt %r : Erreur lors de l'analyse de la configuration : %s"
+msgstr "Dépôt %r : erreur lors de l'analyse de la configuration : %s"
 
 #: ../yum/__init__.py:459
 #, python-format
@@ -2309,7 +2309,7 @@ msgstr "    %s depuis %s"
 #, python-format
 msgid "** Found %d pre-existing rpmdb problem(s), 'yum check' output follows:"
 msgstr ""
-"** Problèmes RPMDB pré-existants trouvés %d, la sortie de « yum check » est "
+"** %d problèmes RPMDB pré-existants trouvés, la sortie de « yum check » est "
 "la suivante :"
 
 #: ../yum/__init__.py:1255
@@ -2709,7 +2709,7 @@ msgstr ""
 msgid "Cannot install package %s. It is obsoleted by installed package %s"
 msgstr ""
 "Impossible d'installer le paquet %s. Il est rendu obsolète par le paquet "
-"installé %s"
+"%s installé"
 
 #: ../yum/__init__.py:3774
 #, python-format
@@ -2774,7 +2774,7 @@ msgstr "Aucune correspondance pour le paquet disponible : %s"
 #: ../yum/__init__.py:4079
 #, python-format
 msgid "Only Upgrade available on package: %s"
-msgstr "Mise à niveau uniquement disponible pour le paquet : %s"
+msgstr "Mise à jour uniquement disponible pour le paquet : %s"
 
 #: ../yum/__init__.py:4149 ../yum/__init__.py:4186
 #, python-format
