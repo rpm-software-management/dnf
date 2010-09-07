@@ -153,9 +153,9 @@ _yum()
             case $prev in
                 history)
                     COMPREPLY=( $( compgen -W 'info list summary undo redo
-                        new' -- "$cur" ) )
+                        new addon-info' -- "$cur" ) )
                     ;;
-                undo|redo)
+                undo|redo|addon-info)
                     COMPREPLY=( $( compgen -W "last $( $yum -d 0 -C history \
                         2>/dev/null | \
                         sed -ne 's/^[[:space:]]*\([0-9]\{1,\}\).*/\1/p' )" \
