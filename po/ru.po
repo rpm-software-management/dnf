@@ -2717,21 +2717,28 @@ msgid "GPG key parsing failed: key does not have value %s"
 msgstr "Ошибка обработки GPG ключа: ключ не имеет значения %s"
 
 #: ../yum/__init__.py:4267
-#, fuzzy, python-format
+#, python-format
 msgid ""
 "Importing GPG key 0x%s:\n"
 " Userid : %s\n"
 " Package: %s (%s)\n"
 " From   : %s"
-msgstr "Импорт GPG ключа 0x%s \"%s\" из %s"
+msgstr ""
+"Импорт ключа GPG 0x%s:\n"
+" Владелец: %s\n"
+" Пакет   : %s (%s)\n"
+" Из      : %s"
 
 #: ../yum/__init__.py:4275
-#, fuzzy, python-format
+#, python-format
 msgid ""
 "Importing GPG key 0x%s:\n"
 " Userid: \"%s\"\n"
 " From  : %s"
-msgstr "Импорт GPG ключа 0x%s \"%s\" из %s"
+msgstr ""
+"Импорт ключа GPG 0x%s:\n"
+" Владелец: «%s»\n"
+" Из      : %s"
 
 #: ../yum/__init__.py:4307
 #, python-format
