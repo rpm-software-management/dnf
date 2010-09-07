@@ -2449,9 +2449,8 @@ msgid "searching in file entries"
 msgstr "поиск среди файлов"
 
 #: ../yum/__init__.py:2495
-#, fuzzy
 msgid "searching in provides entries"
-msgstr "Поиск среди предоставлений"
+msgstr "поиск по содержимому"
 
 #: ../yum/__init__.py:2528
 #, python-format
@@ -2786,13 +2785,14 @@ msgid "Key import failed"
 msgstr "Импорт ключа неудачен"
 
 #: ../yum/__init__.py:4394
-#, fuzzy, python-format
+#, python-format
 msgid ""
 "The GPG keys listed for the \"%s\" repository are already installed but they are not correct.\n"
 "Check that the correct key URLs are configured for this repository."
 msgstr ""
-"GPG ключи включены для репозитория \"%s\", но они не является правильными для данного пакета.\n"
-"Пожалуйста, проверьте правильно ли настроены URL ключей для данного репозитория."
+"Ключи подписей GPG для источника «%s» уже установлены, но они неверные.\n"
+"\r\n"
+"Убедитесь в правильности заданных URL с ключами для этого источника."
 
 #: ../yum/__init__.py:4521
 msgid "Unable to find a suitable mirror."
