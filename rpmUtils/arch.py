@@ -5,8 +5,8 @@ import os
 
 # dict mapping arch -> ( multicompat, best personality, biarch personality )
 multilibArches = { "x86_64":  ( "athlon", "x86_64", "athlon" ),
-                   "sparc64v": ( "sparc", "sparcv9v", "sparc64v" ),
-                   "sparc64": ( "sparc", "sparcv9", "sparc64" ),
+                   "sparc64v": ( "sparcv9v", "sparcv9v", "sparc64v" ),
+                   "sparc64": ( "sparcv9", "sparcv9", "sparc64" ),
                    "ppc64":   ( "ppc", "ppc", "ppc64" ),
                    "s390x":   ( "s390", "s390x", "s390" ),
                    }

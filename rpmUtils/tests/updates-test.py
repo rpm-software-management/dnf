@@ -1,5 +1,6 @@
 
 import rpmUtils.updates
+import rpmUtils.arch
 
 instlist = [('foo', 'i386', '0', '1', '1'),
             ('do', 'i386', '0', '2', '3'),
@@ -7,7 +8,8 @@ instlist = [('foo', 'i386', '0', '1', '1'),
             ('bar', 'noarch', '0', '2', '1'),
             ('baz', 'i686', '0', '2', '3'),
             ('baz', 'x86_64', '0','1','4'),
-            ('foo', 'i686', '0', '1', '1')]
+            ('foo', 'i686', '0', '1', '1'),
+            ('cyrus-sasl','sparcv9', '0', '1', '1')]
 
 availlist = [('foo', 'i686', '0', '1', '3'),
              ('do', 'noarch', '0', '3', '3'), 
@@ -20,7 +22,9 @@ availlist = [('foo', 'i686', '0', '1', '3'),
              ('baz', 'noarch', '0', '2', '4'),
              ('baz', 'i686', '0', '2', '4'),
              ('baz', 'x86_64', '0', '1', '5'),
-             ('baz', 'ppc', '0', '1', '5')]
+             ('baz', 'ppc', '0', '1', '5'),
+             ('cyrus-sasl','sparcv9', '0', '1', '2'),
+             ('cyrus-sasl','sparc64', '0', '1', '2'),]
 
 obslist = {('quux', 'noarch', '0', '1', '3'): [('bar', None, (None, None, None))],
 
@@ -30,9 +34,12 @@ obslist = {('quux', 'noarch', '0', '1', '3'): [('bar', None, (None, None, None))
 
 up = rpmUtils.updates.Updates(instlist, availlist)
 up.debug=1
-up.exactarch=0
-up.exactarchlist.append('foo')
-#up.myarch = 'x86_64'
+up.exactarch=1
+#up.myarch = 'sparc64'
+up._is_multilib = rpmUtils.arch.isMultiLibArch(up.myarch)
+up._archlist = rpmUtils.arch.getArchList(up.myarch)
+print up._archlist
+up._multilib_compat_arches = rpmUtils.arch.getMultiArchInfo(up.myarch)
 up.doUpdates()
 up.condenseUpdates()
 
