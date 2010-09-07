@@ -12,7 +12,7 @@ msgstr ""
 "Project-Id-Version: yum\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2010-08-17 10:15-0400\n"
-"PO-Revision-Date: 2010-09-07 01:46+0800\n"
+"PO-Revision-Date: 2010-09-07 10:36+0800\n"
 "Last-Translator: Misha Shnurapet <shnurapet@fedoraproject.org>\n"
 "Language-Team: ru <fedora-localization@www.russianfedora.ru>\n"
 "MIME-Version: 1.0\n"
@@ -1222,9 +1222,8 @@ msgid "Transaction ID:"
 msgstr "Код операции:"
 
 #: ../output.py:1781
-#, fuzzy
 msgid "Available additional history information:"
-msgstr "Импорт дополнительной информации о списке файлов"
+msgstr "Имеется информация о ранних действиях:"
 
 #: ../output.py:1793
 #, python-format
@@ -1249,12 +1248,11 @@ msgstr "для удаления"
 
 #: ../output.py:1813
 msgid "reinstalled"
-msgstr "переустановлен"
+msgstr "для переустановки"
 
 #: ../output.py:1814
-#, fuzzy
 msgid "downgraded"
-msgstr "возвращен"
+msgstr "для отката"
 
 #: ../output.py:1818
 #, python-format
