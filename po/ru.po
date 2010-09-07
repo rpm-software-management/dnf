@@ -2235,12 +2235,12 @@ msgstr "Попытка удаления защищенного «%s»"
 
 #. Kind of hacky
 #: ../yum/__init__.py:1044
-#, fuzzy, python-format
+#, python-format
 msgid "Skip-broken round %i"
 msgstr "Проход с пропуском нарушенных связей %i"
 
 #: ../yum/__init__.py:1101
-#, fuzzy, python-format
+#, python-format
 msgid "Skip-broken took %i rounds "
 msgstr "Пропуск нарушенных связей завершен в %i проход(а,ов)"
 
@@ -2268,14 +2268,12 @@ msgid "Warning: RPMDB altered outside of yum."
 msgstr "ПРЕДУПРЕЖДЕНИЕ: база данных RPM была изменена вне yum."
 
 #: ../yum/__init__.py:1267
-#, fuzzy
 msgid "missing requires"
-msgstr "не требуется"
+msgstr "недостающие зависимости"
 
 #: ../yum/__init__.py:1268
-#, fuzzy
 msgid "installed conflict"
-msgstr "установлен в конфликте"
+msgstr "установленный конфликтующий пакет"
 
 #: ../yum/__init__.py:1366
 msgid "Warning: scriptlet or other non-fatal errors occurred during transaction."
@@ -2547,9 +2545,9 @@ msgid "Package %s is obsoleted by %s which is already installed"
 msgstr "Пакет %s недействителен из-за установленного %s"
 
 #: ../yum/__init__.py:3296
-#, fuzzy, python-format
+#, python-format
 msgid "Package %s is obsoleted by %s, but obsoleting package does not provide for requirements"
-msgstr "Пакет %s недействителен из-за %s, попытка установки %s взамен"
+msgstr "Пакет %s заменен %s, но последний не отвечает зависимостям"
 
 #: ../yum/__init__.py:3299
 #, python-format
@@ -2622,9 +2620,9 @@ msgid "Examining %s: %s"
 msgstr "Проверка %s: %s"
 
 #: ../yum/__init__.py:3751
-#, fuzzy, python-format
+#, python-format
 msgid "Cannot localinstall deltarpm: %s. Skipping."
-msgstr "Невозможно открыть файл %s. Пропуск."
+msgstr "Нельзя произвести localinstall deltarpm %s. Пропуск."
 
 #: ../yum/__init__.py:3760 ../yum/__init__.py:3862 ../yum/__init__.py:3938
 #, python-format
@@ -2869,9 +2867,8 @@ msgid "registration of commands not supported"
 msgstr "регистрация команд не поддерживается"
 
 #: ../yum/rpmsack.py:102
-#, fuzzy
 msgid "has missing requires of"
-msgstr "не пройдены требования"
+msgstr "имеет недостающие зависимости от"
 
 #: ../yum/rpmsack.py:105
 msgid "has installed conflicts"
@@ -2883,9 +2880,9 @@ msgid "%s is a duplicate with %s"
 msgstr "%s совпадает с %s"
 
 #: ../yum/rpmsack.py:122
-#, fuzzy, python-format
+#, python-format
 msgid "%s is obsoleted by %s"
-msgstr "%s исключен %s"
+msgstr "%s заменен на %s"
 
 #: ../yum/rpmsack.py:130
 #, python-format
