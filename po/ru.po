@@ -2872,7 +2872,7 @@ msgstr "имеет недостающие зависимости от"
 
 #: ../yum/rpmsack.py:105
 msgid "has installed conflicts"
-msgstr "конфликты были установлены"
+msgstr "конфликтует с установленными"
 
 #: ../yum/rpmsack.py:114
 #, python-format
