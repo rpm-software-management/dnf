@@ -36,7 +36,6 @@ arches = {
     "s390": "noarch",
     
     # sparc
-    "sparc64v": "sparc64",
     "sparc64v": "sparcv9v",
     "sparc64": "sparcv9",
     "sparcv9v": "sparcv9",
