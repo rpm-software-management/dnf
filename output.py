@@ -1813,8 +1813,9 @@ to exit.
                      utf8_width_fill(_("Package"), 53, 53))
         print "-" * 79
         fmt = "%6u | %s | %-50s"
-        last = None
         for old in self.history.old(tids):
+            last = None
+
             # Copy and paste from list ... uh.
             rmark = lmark = ' '
             if old.return_code is None:
