@@ -1378,7 +1378,7 @@ to exit.
 
         fmt = "%s | %s | %s | %s | %s"
         print fmt % (utf8_width_fill(_("ID"), 6, 6),
-                     utf8_width_fill(_("Login user"), 22, 22),
+                     utf8_width_fill(_("Login user"), 24, 24),
                      utf8_width_fill(_("Date and time"), 16, 16),
                      utf8_width_fill(_("Action(s)"), 14, 14),
                      utf8_width_fill(_("Altered"), 7, 7))
@@ -1393,11 +1393,11 @@ to exit.
                 break
 
             done += 1
-            name = self._pwd_ui_username(old.loginuid, 22)
+            name = self._pwd_ui_username(old.loginuid, 24)
             tm = time.strftime("%Y-%m-%d %H:%M",
                                time.localtime(old.beg_timestamp))
             num, uiacts = self._history_uiactions(old.trans_data)
-            name   = utf8_width_fill(name,   22, 22)
+            name   = utf8_width_fill(name,   24, 24)
             uiacts = utf8_width_fill(uiacts, 14, 14)
             rmark = lmark = ' '
             if old.return_code is None:
@@ -1629,23 +1629,24 @@ to exit.
                 num += 1
                 print "%4d" % num, line
 
+    _history_state2uistate = {'True-Install' : _('Install'),
+                              'Install'      : _('Install'),
+                              'Dep-Install'  : _('Dep-Install'),
+                              'Obsoleted'    : _('Obsoleted'),
+                              'Obsoleting'   : _('Obsoleting'),
+                              'Erase'        : _('Erase'),
+                              'Reinstall'    : _('Reinstall'),
+                              'Downgrade'    : _('Downgrade'),
+                              'Downgraded'   : _('Downgraded'),
+                              'Update'       : _('Update'),
+                              'Updated'      : _('Updated'),
+                              }
     def historyInfoCmdPkgsAltered(self, old, pats=[]):
         last = None
         #  Note that these don't use _simple_pkg() because we are showing what
         # happened to them in the transaction ... not the difference between the
         # version in the transaction and now.
-        all_uistates = {'True-Install' : _('Install'),
-                        'Install'      : _('Install'),
-                        'Dep-Install'  : _('Dep-Install'),
-                        'Obsoleted'    : _('Obsoleted'),
-                        'Obsoleting'   : _('Obsoleting'),
-                        'Erase'        : _('Erase'),
-                        'Reinstall'    : _('Reinstall'),
-                        'Downgrade'    : _('Downgrade'),
-                        'Downgraded'   : _('Downgraded'),
-                        'Update'       : _('Update'),
-                        'Updated'      : _('Updated'),
-                        }
+        all_uistates = self._history_state2uistate
         maxlen = 0
         for hpkg in old.trans_data:
             uistate = all_uistates.get(hpkg.state, hpkg.state)
@@ -1795,6 +1796,84 @@ to exit.
 
             print ''
 
+    def historyPackageListCmd(self, extcmds):
+        """ Shows the user a list of data about the history, from the point
+            of a package(s) instead of via. transactions. """
+        tids = self.history.search(extcmds)
+        if not tids:
+            self.logger.critical(_('Bad package(s), given (nothing found)'))
+            return 1, ['Failed history package-list']
+
+        all_uistates = self._history_state2uistate
+
+        fmt = "%s | %s | %s"
+        # REALLY Needs to use columns!
+        print fmt % (utf8_width_fill(_("ID"), 6, 6),
+                     utf8_width_fill(_("Action(s)"), 14, 14),
+                     utf8_width_fill(_("Package"), 53, 53))
+        print "-" * 79
+        fmt = "%6u | %s | %-50s"
+        last = None
+        for old in self.history.old(tids):
+            # Copy and paste from list ... uh.
+            rmark = lmark = ' '
+            if old.return_code is None:
+                rmark = lmark = '*'
+            elif old.return_code:
+                rmark = lmark = '#'
+                # We don't check .errors, because return_code will be non-0
+            elif old.output:
+                rmark = lmark = 'E'
+            elif old.rpmdb_problems:
+                rmark = lmark = 'P'
+            elif old.trans_skip:
+                rmark = lmark = 's'
+            if old.altered_lt_rpmdb:
+                rmark = '<'
+            if old.altered_gt_rpmdb:
+                lmark = '>'
+
+            for hpkg in old.trans_data: # Find a pkg to go with each cmd...
+                x,m,u = yum.packages.parsePackages([hpkg], extcmds)
+                if not x and not m:
+                    continue
+
+                uistate = all_uistates.get(hpkg.state, hpkg.state)
+                uistate = utf8_width_fill(uistate, 14)
+
+                #  To chop the name off we need nevra strings, str(pkg) gives
+                # envra so we have to do it by hand ... *sigh*.
+                cn = hpkg.ui_nevra
+
+                # Should probably use columns here...
+                if False: pass
+                elif (last is not None and
+                      last.state == 'Updated' and last.name == hpkg.name and
+                      hpkg.state == 'Update'):
+                    ln = len(hpkg.name) + 1
+                    cn = (" " * ln) + cn[ln:]
+                elif (last is not None and
+                      last.state == 'Downgrade' and last.name == hpkg.name and
+                      hpkg.state == 'Downgraded'):
+                    ln = len(hpkg.name) + 1
+                    cn = (" " * ln) + cn[ln:]
+                else:
+                    last = None
+                    if hpkg.state in ('Updated', 'Downgrade'):
+                        last = hpkg
+
+                print fmt % (old.tid, uistate, cn), "%s%s" % (lmark,rmark)
+
+        # And, again, copy and paste...
+        lastdbv = self.history.last()
+        if lastdbv is None:
+            self._rpmdb_warn_checks(warn=False)
+        else:
+            #  If this is the last transaction, is good and it doesn't
+            # match the current rpmdb ... then mark it as bad.
+            rpmdbv  = self.rpmdb.simpleVersion(main_only=True)[0]
+            if lastdbv.end_rpmdbversion != rpmdbv:
+                self._rpmdb_warn_checks()
 
 
 class DepSolveProgressCallBack:
