@@ -1329,7 +1329,7 @@ class HistoryCommand(YumCommand):
         return ['history']
 
     def getUsage(self):
-        return "[info|list|summary|redo|undo|new]"
+        return "[info|list|summary|addon-info|redo|undo|new]"
 
     def getSummary(self):
         return _("Display, or use, the transaction history")
