@@ -290,8 +290,9 @@ class PackageObject(object):
             return False
         if self.pkgtup != other.pkgtup:
             return False
-        if self.repoid != other.repoid:
-            return False
+        if hasattr(self, 'repoid') and hasattr(other, 'repoid'):
+            if self.repoid != other.repoid:
+                return False
         return True
     def __ne__(self, other):
         if not (self == other):
