@@ -1314,6 +1314,16 @@ class YumRepository(Repository, config.RepoConf):
                     os.rename(local, local + '.old.tmp')
                     reverts.append(local)
 
+                    #  This is the super easy way. We just to see if a generated
+                    # file is there for all files, but it should always work.
+                    #  And anyone who is giving us MD with blah and blah.sqlite
+                    # which are different types, can play a game I like to call
+                    # "come here, ouch".
+                    gen_local = local + '.sqlite'
+                    if os.path.exists(gen_local):
+                        os.rename(gen_local, gen_local + '.old.tmp')
+                        reverts.append(gen_local)
+
             if ndata is None: # Doesn't exist in this repo
                 continue
 
