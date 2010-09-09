@@ -327,14 +327,34 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
     
         self.yum_cli_commands[self.basecmd].doCheck(self, self.basecmd, self.extcmds)
 
+    def _shell_history_write(self):
+        if not hasattr(self, '_shell_history_cmds'):
+            return
+        if not self._shell_history_cmds:
+            return
+
+        data = self._shell_history_cmds
+        # Turn: [["a", "b"], ["c", "d"]] => "a b\nc d\n"
+        data = [" ".join(cmds) for cmds in data]
+        data.append('')
+        data = "\n".join(data)
+        self.history.write_addon_data('shell-cmds', data)
+
     def doShell(self):
         """do a shell-like interface for yum commands"""
 
         yumshell = shell.YumShell(base=self)
+
+        # We share this array...
+        self._shell_history_cmds = yumshell._shell_history_cmds
+
         if len(self.extcmds) == 0:
             yumshell.cmdloop()
         else:
             yumshell.script()
+
+        del self._shell_history_cmds
+
         return yumshell.result, yumshell.resultmsgs
 
     def errorSummary(self, errstring):

@@ -50,6 +50,14 @@ class YumShell(cmd.Cmd):
         self.logger = logging.getLogger("yum.cli")
         self.verbose_logger = logging.getLogger("yum.verbose.cli")
 
+        # NOTE: This is shared with self.base ... so don't reassign.
+        self._shell_history_cmds = []
+
+    def _shell_history_add_cmds(self, cmds):
+        if not self.base.conf.history_record:
+            return
+
+        self._shell_history_cmds.append(cmds)
 
     def _shlex_split(self, input_string):
         """split the input using shlex rules, and error or exit accordingly"""
@@ -97,6 +105,8 @@ class YumShell(cmd.Cmd):
             self.base.cmdstring = self.base.cmdstring.replace('\n', '')
             self.base.cmds = self._shlex_split(self.base.cmdstring)
             self.base.plugins.run('args', args=self.base.cmds)
+
+            self._shell_history_add_cmds(self.base.cmds)
 
             try:
                 self.base.parseCommands()
@@ -265,6 +275,8 @@ class YumShell(cmd.Cmd):
                 cmds = ['enabled']
             cmds.insert(0, 'repolist')
             self.base.cmds = cmds
+
+            self._shell_history_add_cmds(self.base.cmds)
 
             try:
                 self.base.parseCommands()

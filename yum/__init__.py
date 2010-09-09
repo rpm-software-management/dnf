@@ -1343,6 +1343,8 @@ class YumBase(depsolve.Depsolve):
                              self.skipped_packages, rpmdb_problems, cmdline)
             # write out our config and repo data to additional history info
             self._store_config_in_history()
+            if hasattr(self, '_shell_history_write'): # Only in cli...
+                self._shell_history_write()
             
             self.plugins.run('historybegin')
         #  Just before we update the transaction, update what we think the
