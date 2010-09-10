@@ -112,6 +112,9 @@ class YumHistoryPackage(PackageObject):
             chk = checksum.split(':')
             self._checksums = [(chk[0], chk[1], 0)] # (type, checksum, id(0,1))
 
+        self.repoid = '<history>'
+
+
 class YumHistoryRpmdbProblem(PackageObject):
     """ Class representing an rpmdb problem that existed at the time of the
         transaction. """
