@@ -12,7 +12,7 @@ msgstr ""
 "Project-Id-Version: yum.master\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2010-08-17 10:15-0400\n"
-"PO-Revision-Date: 2010-09-05 11:02+0200\n"
+"PO-Revision-Date: 2010-09-11 18:55+0200\n"
 "Last-Translator: Thomas Canniot <mrtom@fedoraproject.org>\n"
 "Language-Team: French <trans-fr@lists.fedoraproject.org>\n"
 "MIME-Version: 1.0\n"
@@ -132,7 +132,7 @@ msgstr "Besoins en espace disque :\n"
 #: ../cli.py:356
 #, python-format
 msgid "  At least %dMB more space needed on the %s filesystem.\n"
-msgstr "  Au moins %dMio requis sur le système de fichiers %s.\n"
+msgstr "  Au moins %d Mio requis sur le système de fichiers %s.\n"
 
 #. TODO: simplify the dependency errors?
 #. Fixup the summary
