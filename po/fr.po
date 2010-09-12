@@ -1,7 +1,7 @@
 # translation of yum.master.po to fr_FR
 # Copyright (C) 2008 THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
-# 
+#
 # Johan Cwiklinski <johan@x-tnd.be>, 2008.
 # Thomas Canniot <mrtom@fedoraproject.org>, 2008, 2009, 2010.
 # Michaël Ughetto <telimektar1er@gmail.com>, 2008.
@@ -12,7 +12,7 @@ msgstr ""
 "Project-Id-Version: yum.master\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2010-08-17 10:15-0400\n"
-"PO-Revision-Date: 2010-09-11 18:55+0200\n"
+"PO-Revision-Date: 2010-09-12 18:34+0200\n"
 "Last-Translator: Thomas Canniot <mrtom@fedoraproject.org>\n"
 "Language-Team: French <trans-fr@lists.fedoraproject.org>\n"
 "MIME-Version: 1.0\n"
@@ -771,7 +771,7 @@ msgstr "Taille totale : %s"
 #: ../output.py:964
 #, python-format
 msgid "Total download size: %s"
-msgstr "Taille totale des téléchargement : %s"
+msgstr "Taille totale des téléchargements : %s"
 
 #: ../output.py:968 ../output.py:988
 #, python-format
