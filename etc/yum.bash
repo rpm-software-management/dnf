@@ -81,8 +81,8 @@ _yum()
     local prev=$3
     local cmds=( check check-update clean deplist downgrade groupinfo
         groupinstall grouplist groupremove help history info install list
-        localinstall localupdate makecache provides reinstall remove repolist resolvedep
-        search shell update upgrade version distro-sync )
+        localinstall localupdate makecache provides reinstall remove repolist
+        resolvedep search shell update upgrade version distro-sync )
 
     local i c cmd
     for (( i=0; i < ${#COMP_WORDS[@]}-1; i++ )) ; do
