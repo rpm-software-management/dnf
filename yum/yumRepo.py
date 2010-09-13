@@ -1119,6 +1119,7 @@ class YumRepository(Repository, config.RepoConf):
         if repoXML.length != repomd.size:
             return False
 
+        done = False
         for checksum in repoXML.checksums:
             if checksum not in repomd.chksums:
                 continue
@@ -1126,11 +1127,11 @@ class YumRepository(Repository, config.RepoConf):
             if repoXML.checksums[checksum] != repomd.chksums[checksum]:
                 return False
 
-            #  If we don't trust the checksum, then don't generate it in
-            # repoMDObject().
-            return True
+            #  All checksums should be trusted, but if we have more than one
+            # then we might as well check them all ... paranoia is good.
+            done = True
 
-        return False
+        return done
 
     def _checkRepoMetalink(self, repoXML=None, metalink_data=None):
         """ Check the repomd.xml against the metalink data, if we have it. """
