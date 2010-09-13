@@ -84,13 +84,13 @@ _yum()
         localinstall localupdate makecache provides reinstall remove repolist
         resolvedep search shell update upgrade version distro-sync )
 
-    local i c cmd
-    for (( i=0; i < ${#COMP_WORDS[@]}-1; i++ )) ; do
+    local i c cmd subcmd
+    for (( i=1; i < ${#COMP_WORDS[@]}-1; i++ )) ; do
+        [[ -n $cmd ]] && subcmd=${COMP_WORDS[i]} && break
         for c in ${cmds[@]} check-rpmdb erase groupupdate grouperase \
             whatprovides distribution-synchronization ; do
             [ ${COMP_WORDS[i]} = $c ] && cmd=$c && break
         done
-        [ -z $cmd ] || break
     done
 
     case $cmd in
@@ -153,13 +153,19 @@ _yum()
             case $prev in
                 history)
                     COMPREPLY=( $( compgen -W 'info list summary undo redo
-                        new addon-info' -- "$cur" ) )
+                        new addon-info package-list' -- "$cur" ) )
                     ;;
                 undo|redo|addon|addon-info)
                     COMPREPLY=( $( compgen -W "last $( $yum -d 0 -C history \
                         2>/dev/null | \
                         sed -ne 's/^[[:space:]]*\([0-9]\{1,\}\).*/\1/p' )" \
                         -- "$cur" ) )
+                    ;;
+            esac
+            case $subcmd in
+                package-list|pkg|pkgs|pkg-list|pkgs-list|package|packages|\
+                packages-list)
+                    _yum_list installed "$cur"
                     ;;
             esac
             return 0
