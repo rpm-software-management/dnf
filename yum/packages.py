@@ -806,7 +806,10 @@ class YumAvailablePackage(PackageObject, RpmBase):
     def returnHeaderFromPackage(self):
         rpmfile = self.localPkg()
         ts = rpmUtils.transaction.initReadOnlyTransaction()
-        hdr = rpmUtils.miscutils.hdrFromPackage(ts, rpmfile)
+        try:
+            hdr = rpmUtils.miscutils.hdrFromPackage(ts, rpmfile)
+        except rpmUtils.RpmUtilsError:
+            raise Errors.RepoError, 'Package Header %s: RPM Cannot open' % self
         return hdr
         
     def returnLocalHeader(self):
@@ -818,9 +821,9 @@ class YumAvailablePackage(PackageObject, RpmBase):
                 hlist = rpm.readHeaderListFromFile(self.localHdr())
                 hdr = hlist[0]
             except (rpm.error, IndexError):
-                raise Errors.RepoError, 'Cannot open package header'
+                raise Errors.RepoError, 'Package Header %s: Cannot open' % self
         else:
-            raise Errors.RepoError, 'Package Header Not Available'
+            raise Errors.RepoError, 'Package Header %s: Not Available' % self
 
         return hdr
 
