@@ -4301,12 +4301,11 @@ class YumBase(depsolve.Depsolve):
         keyurls = repo.gpgkey
         key_installed = False
 
-        ts = self.rpmdb.readOnlyTS()
-
         for keyurl in keyurls:
             keys = self._retrievePublicKey(keyurl, repo)
 
             for info in keys:
+                ts = self.rpmdb.readOnlyTS()
                 # Check if key is already installed
                 if misc.keyInstalled(ts, info['keyid'], info['timestamp']) >= 0:
                     self.logger.info(_('GPG key at %s (0x%s) is already installed') % (
@@ -4331,6 +4330,7 @@ class YumBase(depsolve.Depsolve):
                     raise Errors.YumBaseError, _("Not installing key")
                 
                 # Import the key
+                ts = self.rpmdb.readOnlyTS()
                 result = ts.pgpImportPubkey(misc.procgpgkey(info['raw_key']))
                 if result != 0:
                     raise Errors.YumBaseError, \
