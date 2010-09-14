@@ -1,3 +1,4 @@
+#! /usr/bin/python -tt
 ##Copyright (C) 2003,2005,2009  Jens B. Jorgensen <jbj1@ultraemail.net>
 ##
 ##This program is free software; you can redistribute it and/or
