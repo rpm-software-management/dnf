@@ -57,6 +57,7 @@ class UpdateNotice(object):
             'updated'          : '',
             'description'      : '',
             'rights'           : '',
+            'severity'         : '',
             'summary'          : '',
             'solution'         : '',
             'references'       : [],
@@ -126,6 +127,11 @@ class UpdateNotice(object):
                                   subsequent_indent=' ' * 12 + ': ')
             head += "     Rights : %s\n" % '\n'.join(data)
 
+        if self._md['severity'] and 'severity' not in skip_data:
+            data = utf8_text_wrap(self._md['severity'], width=64,
+                                  subsequent_indent=' ' * 12 + ': ')
+            head += "   Severity : %s\n" % '\n'.join(data)
+
         if 'files' in skip_data:
             return head[:-1] # chop the last '\n'
 
@@ -156,7 +162,8 @@ class UpdateNotice(object):
         Parse an update element::
 
             <!ELEMENT update (id, synopsis?, issued, updated,
-                              references, description, rights?, summary?, solution?, pkglist)>
+                              references, description, rights?,
+                              severity?, summary?, solution?, pkglist)>
                 <!ATTLIST update type (errata|security) "errata">
                 <!ATTLIST update status (final|testing) "final">
                 <!ATTLIST update version CDATA #REQUIRED>
@@ -182,6 +189,8 @@ class UpdateNotice(object):
                     self._md['description'] = child.text
                 elif child.tag == 'rights':
                     self._md['rights'] = child.text
+                elif child.tag == 'severity':
+                    self._md[child.tag] = child.text
                 elif child.tag == 'summary':
                     self._md['summary'] = child.text
                 elif child.tag == 'solution':
@@ -291,6 +300,9 @@ class UpdateNotice(object):
             msg += """  <solution>%s</solution>\n""" % (to_xml(self._md['solution']))
         if self._md['rights']:
             msg += """  <rights>%s</rights>\n""" % (to_xml(self._md['rights']))        
+        if self._md['severity']:
+            msg += """  <severity>%s</severity>\n""" % (to_xml(self._md['severity']))
+
         if self._md['references']:
             msg += """  <references>\n"""
             for ref in self._md['references']:
