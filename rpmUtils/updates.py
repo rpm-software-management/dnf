@@ -56,7 +56,8 @@ class Updates:
 
         # make some dicts from installed and available
         self.installdict = self.makeNADict(self.installed, 1)
-        self.availdict = self.makeNADict(self.available, 0) # Done in doUpdate
+        self.availdict = self.makeNADict(self.available, 0, # Done in doUpdate
+                                         filter=self.installdict)
 
         # holder for our updates dict
         self.updatesdict = {}
@@ -104,13 +105,15 @@ class Updates:
         if self.debug:
             print msg
 
-    def makeNADict(self, pkglist, Nonelists):
+    def makeNADict(self, pkglist, Nonelists, filter=None):
         """return lists of (e,v,r) tuples as value of a dict keyed on (n, a)
             optionally will return a (n, None) entry with all the a for that
             n in tuples of (a,e,v,r)"""
             
         returndict = {}
         for (n, a, e, v, r) in pkglist:
+            if filter and (n, None) not in filter:
+                continue
             if (n, a) not in returndict:
                 returndict[(n, a)] = []
             if (e,v,r) in returndict[(n, a)]:
