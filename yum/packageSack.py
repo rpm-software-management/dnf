@@ -444,13 +444,26 @@ class MetaSack(PackageSackBase):
         nobsdict = {}
         last_name = ''
         last_pkg = None
-        for pkg in reversed(sorted(self.searchNames(names))):
-            if last_name == pkg.name and not pkg.verEQ(last_pkg):
+        #  It takes about 0.2 of a second to convert these into packages, just
+        # so we can sort them, which is ~40% of this functions time. So we sort
+        # the pkgtups "by hand".
+        def _pkgtup_nevr_cmp(x, y):
+            """ Compare two pkgtup's (ignore arch): n, a, e, v, r. """
+            ret = cmp(x[0], y[0])
+            if ret: return ret
+            # This is negated so we get higher versions first, in the list.
+            return -compareEVR((x[2], x[3], x[4]), (y[2], y[3], y[4]))
+        def _pkgtup_nevr_eq(x, y):
+            return _pkgtup_nevr_cmp(x, y) == 0
+        for pkgtup in sorted(self.searchNames(names, return_pkgtups=True),
+                             cmp=_pkgtup_nevr_cmp):
+            name = pkgtup[0]
+            if last_name == name and not _pkgtup_nevr_eq(last_pkgtup, pkgtup):
                 continue
-            last_name = pkg.name
-            last_pkg = pkg
-            if pkg.pkgtup in obsdict:
-                nobsdict[pkg.pkgtup] = obsdict[pkg.pkgtup]
+            last_name = name
+            last_pkgtup = pkgtup
+            if pkgtup in obsdict:
+                nobsdict[pkgtup] = obsdict[pkgtup]
         return nobsdict
         
     def searchFiles(self, name):
