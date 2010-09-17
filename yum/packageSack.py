@@ -24,6 +24,7 @@ import re
 import fnmatch
 import misc
 from packages import parsePackages
+from rpmUtils.miscutils import compareEVR
 
 class PackageSackVersion:
     def __init__(self):
@@ -98,7 +99,7 @@ class PackageSackBase(object):
         """return list of pkgobjects matching the nevra requested"""
         raise NotImplementedError()
 
-    def searchNames(self, names=[]):
+    def searchNames(self, names=[], return_pkgtups=False):
         raise NotImplementedError()
 
     def searchPO(self, po):
@@ -405,8 +406,8 @@ class MetaSack(PackageSackBase):
         """return list of pkgobjects matching the nevra requested"""
         return self._computeAggregateListResult("searchNevra", name, epoch, ver, rel, arch)
 
-    def searchNames(self, names=[]):
-        return self._computeAggregateListResult("searchNames", names)
+    def searchNames(self, names=[], return_pkgtups=False):
+        return self._computeAggregateListResult("searchNames", names, return_pkgtups)
 
     def getProvides(self, name, flags=None, version=(None, None, None)):
         """return dict { packages -> list of matching provides }"""
@@ -671,7 +672,7 @@ class PackageSack(PackageSackBase):
             result.append(po)
         return result
         
-    def searchNames(self, names=[]):
+    def searchNames(self, names=[], return_pkgtups=False):
         """return list of pkgobjects matching the names requested"""
         self._checkIndexes(failure='build')
         result = []
@@ -681,6 +682,8 @@ class PackageSack(PackageSackBase):
                 continue
             done.add(name)
             result.extend(self.nevra.get((name, None, None, None, None), []))
+        if return_pkgtups:
+            return [pkg.pkgtup for pkg in result]
         return result
 
     def getProvides(self, name, flags=None, version=(None, None, None)):

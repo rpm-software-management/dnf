@@ -1263,7 +1263,7 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
         return self._search("requires", name, flags, version)
 
     @catchSqliteException
-    def searchNames(self, names=[]):
+    def searchNames(self, names=[], return_pkgtups=False):
         """return a list of packages matching any of the given names. This is 
            only a match on package name, nothing else"""
         
@@ -1283,6 +1283,8 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
             else:
                 names.append(pkgname)
 
+        if return_pkgtups:
+            returnList = [pkg.pkgtup for pkg in returnList]
         if not names:
             return returnList
 
@@ -1290,7 +1292,7 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
         if len(names) > max_entries:
             # Unique is done at user_names time, above.
             for names in seq_max_split(names, max_entries):
-                returnList.extend(self.searchNames(names))
+                returnList.extend(self.searchNames(names, return_pkgtups))
             return returnList
 
         pat_sqls = []
@@ -1304,10 +1306,19 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
             cur = cache.cursor()
             executeSQL(cur, qsql, names)
 
+            if return_pkgtups:
+                for ob in cur:
+                    pkgtup = self._pkgtupByKeyData(repo, ob['pkgKey'], ob)
+                    if pkgtup is None:
+                        continue
+                    returnList.append(pkgtup)
+                continue
+
             self._sql_pkgKey2po(repo, cur, returnList, have_data=True)
 
-        # Mark all the processed pkgnames as fully loaded
-        self._pkgnames_loaded.update([name for name in names])
+        if not return_pkgtups:
+            # Mark all the processed pkgnames as fully loaded
+            self._pkgnames_loaded.update([name for name in names])
 
         return returnList
  
