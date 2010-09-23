@@ -799,7 +799,8 @@ class YumBase(depsolve.Depsolve):
                 # fetch the sqlite tagdb
                 try:
                     tag_md = repo.retrieveMD('pkgtags')
-                    tag_sqlite  = yum.misc.decompress(tag_md)
+                    tag_sqlite  = misc.repo_gen_decompress(tag_md,
+                                                           'pkgtags.sqlite')
                     # feed it into _tags.add()
                     self._tags.add(repo.id, tag_sqlite)
                 except (Errors.RepoError, Errors.PkgTagsError), e:
