@@ -761,7 +761,7 @@ class YumBase(depsolve.Depsolve):
             groupfile = repo.getGroups()
             # open it up as a file object so iterparse can cope with our compressed file
             if groupfile:
-                groupfile = misc.decompress(groupfile)
+                groupfile = misc.repo_gen_decompress(groupfile, 'groups.xml')
                 
             try:
                 self._comps.add(groupfile)
