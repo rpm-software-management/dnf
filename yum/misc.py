@@ -1036,7 +1036,7 @@ def get_uuid(savepath):
         
         return myid
         
-def decompress(filename, dest=None, fn_only=False):
+def decompress(filename, dest=None, fn_only=False, check_timestamps=False):
     """take a filename and decompress it into the same relative location.
        if the file is not compressed just return the file"""
     
@@ -1067,10 +1067,26 @@ def decompress(filename, dest=None, fn_only=False):
         ztype = None
     
     if ztype and not fn_only:
+        if check_timestamps:
+            fi = stat_f(filename)
+            fo = stat_f(out)
+            if fi and fo and fo.st_mtime > fi.st_mtime:
+                return out
+
         _decompress_chunked(filename, out, ztype)
         
     return out
     
+def repo_gen_decompress(filename, generated_name):
+    """ This is a wrapper around decompress, where we work out a cached
+        generated name, and use check_timestamps. filename _must_ be from
+        a repo. and generated_name is the type of the file. """
+    dest = os.path.dirname(filename)
+    dest += '/gen'
+    if not os.path.exists(dest):
+        os.makedirs(dest, mode=0755)
+    dest += '/' + generated_name
+    return decompress(filename, dest=dest, check_timestamps=True)
     
 def read_in_items_from_dot_dir(thisglob, line_as_list=True):
     """takes a glob of a dir (like /etc/foo.d/*.foo)
