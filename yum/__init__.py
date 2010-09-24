@@ -986,8 +986,6 @@ class YumBase(depsolve.Depsolve):
                 restring.append(_('Trying to remove "%s", which is protected') %
                                 pkgname)
 
-        self.rpmdb.dropCachedData()
-
         self.verbose_logger.debug('Depsolve time: %0.3f' % (time.time() - ds_st))
         return rescode, restring
 
@@ -1321,7 +1319,10 @@ class YumBase(depsolve.Depsolve):
                 self.run_with_package_names.add('yum-metadata-parser')
                 break
 
-        if self.conf.history_record and not self.ts.isTsFlagSet(rpm.RPMTRANS_FLAG_TEST):
+        if (not self.conf.history_record or
+            self.ts.isTsFlagSet(rpm.RPMTRANS_FLAG_TEST)):
+            frpmdbv = self.tsInfo.futureRpmDBVersion()
+        else:
             using_pkgs_pats = list(self.run_with_package_names)
             using_pkgs = self.rpmdb.returnPackages(patterns=using_pkgs_pats)
             rpmdbv  = self.rpmdb.simpleVersion(main_only=True)[0]
@@ -1340,6 +1341,8 @@ class YumBase(depsolve.Depsolve):
                 cmdline = ' '.join(self.args)
             elif hasattr(self, 'cmds') and self.cmds:
                 cmdline = ' '.join(self.cmds)
+
+            frpmdbv = self.tsInfo.futureRpmDBVersion()
             self.history.beg(rpmdbv, using_pkgs, list(self.tsInfo),
                              self.skipped_packages, rpmdb_problems, cmdline)
             # write out our config and repo data to additional history info
@@ -1353,7 +1356,7 @@ class YumBase(depsolve.Depsolve):
         # "something" happens and the rpmdb is different from what we think it
         # will be we store what we thought, not what happened (so it'll be an
         # invalid cache).
-        self.rpmdb.transactionResultVersion(self.tsInfo.futureRpmDBVersion())
+        self.rpmdb.transactionResultVersion(frpmdbv)
 
         errors = self.ts.run(cb.callback, '')
         # ts.run() exit codes are, hmm, "creative": None means all ok, empty 
@@ -1394,7 +1397,8 @@ class YumBase(depsolve.Depsolve):
                 except (IOError, OSError), e:
                     self.logger.critical(_('Failed to remove transaction file %s') % fn)
 
-        self.rpmdb.dropCachedData() # drop out the rpm cache so we don't step on bad hdr indexes
+        # drop out the rpm cache so we don't step on bad hdr indexes
+        self.rpmdb.dropCachedDataPostTransaction(list(self.tsInfo))
         self.plugins.run('posttrans')
         # sync up what just happened versus what is in the rpmdb
         if not self.ts.isTsFlagSet(rpm.RPMTRANS_FLAG_TEST):
@@ -1417,7 +1421,6 @@ class YumBase(depsolve.Depsolve):
         # and the install reason
         
         vt_st = time.time()
-        self.rpmdb.dropCachedData()
         self.plugins.run('preverifytrans')
         for txmbr in self.tsInfo:
             if txmbr.output_state in TS_INSTALL_STATES:
@@ -1495,12 +1498,13 @@ class YumBase(depsolve.Depsolve):
                 self.verbose_logger.log(logginglevels.DEBUG_2, 'What is this? %s' % txmbr.po)
 
         self.plugins.run('postverifytrans')
+        rpmdbv = self.rpmdb.simpleVersion(main_only=True)[0]
         if self.conf.history_record and not self.ts.isTsFlagSet(rpm.RPMTRANS_FLAG_TEST):
             ret = -1
             if resultobject is not None:
                 ret = resultobject.return_code
             self.plugins.run('historyend')
-            self.history.end(self.rpmdb.simpleVersion(main_only=True)[0], ret)
+            self.history.end(rpmdbv, ret)
         self.rpmdb.dropCachedData()
         self.verbose_logger.debug('VerifyTransaction time: %0.3f' % (time.time() - vt_st))
 
