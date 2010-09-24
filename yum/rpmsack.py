@@ -195,7 +195,9 @@ class RPMDBPackageSack(PackageSackBase):
             }
         
         addldb_path = os.path.normpath(self._persistdir + '/yumdb')
-        self.yumdb = RPMDBAdditionalData(db_path=addldb_path)
+        version_path = os.path.normpath(cachedir + '/version')
+        self.yumdb = RPMDBAdditionalData(db_path=addldb_path,
+                                         version_path=version_path)
 
     def _get_pkglist(self):
         '''Getter for the pkglist property. 
@@ -314,6 +316,10 @@ class RPMDBPackageSack(PackageSackBase):
             self._cachedir = self.root + '/' + cachedir
         else:
             self._cachedir = '/' + cachedir
+
+        if hasattr(self, 'yumdb'): # Need to keep this upto date, after init.
+            version_path = os.path.normpath(self._cachedir + '/version')
+            self.yumdb.conf.version_path = version_path
 
     def readOnlyTS(self):
         if not self.ts:
@@ -1493,9 +1499,10 @@ class RPMDBAdditionalData(object):
     # dirs have files per piece of info we're keeping
     #    repoid, install reason, status, blah, (group installed for?), notes?
     
-    def __init__(self, db_path='/var/lib/yum/yumdb'):
+    def __init__(self, db_path='/var/lib/yum/yumdb', version_path=None):
         self.conf = misc.GenericHolder()
         self.conf.db_path = db_path
+        self.conf.version_path = version_path
         self.conf.writable = False
         
         self._packages = {} # pkgid = dir
@@ -1656,6 +1663,11 @@ class RPMDBAdditionalDataPackage(object):
 
         if attr.endswith('.tmp'):
             raise AttributeError, "Cannot set attribute %s on %s" % (attr, self)
+
+        #  These two are special, as they have an index and are used as our
+        # cache-breaker.
+        if attr in ('checksum_type', 'checksum_data'):
+            misc.unlink_f(self._conf.version_path)
 
         # Auto hardlink some of the attrs...
         if self._link_yumdb_cache(fn, value):
