@@ -339,6 +339,13 @@ if there was something not good with the transaction.
 Checks the local rpmdb and produces information on any problems it finds. You
 can pass the check command the arguments "dependencies" or "duplicates", to
 limit the checking that is performed (the default is "all" which does both).
+
+The info command can also take ranges of transaction ids, of the form
+start..end, which will then display a merged history as if all the
+transactions in the range had happened at once\&.
+.br
+Eg. "history info 1..4" will merge the first four transactions and display them
+as a single transaction.
 .IP
 .IP "\fBhelp\fP"
 Produces help, either for all commands or if given a command name then the help
