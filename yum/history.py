@@ -249,6 +249,15 @@ class YumMergedHistoryTransaction(YumHistoryTransaction):
 
         self._loaded_TW = None
         self._loaded_TD = None
+        #  Hack, this is difficult ... not sure if we want to list everything
+        # that was skipped. Just those things which were skipped and then not
+        # updated later ... or nothing. Nothing is much easier.
+        self._loaded_TS = []
+
+        self._loaded_PROB = None
+
+        self._have_loaded_CMD = False # cmdline can validly be None
+        self._loaded_CMD = None
 
         self._loaded_ER = None
         self._loaded_OT = None
@@ -497,6 +506,25 @@ class YumMergedHistoryTransaction(YumHistoryTransaction):
             for x in npkgstate2pkg:
                 fpkgstate2pkg[x] = npkgstate2pkg[x]
         return sorted(fpkgtup2pkg.values())
+
+    def _getProblems(self):
+        probs = set()
+        for tid in self._merged_objs:
+            for prob in tid.rpmdb_problems:
+                probs.add(prob)
+        return sorted(probs)
+
+    def _getCmdline(self):
+        cmdlines = []
+        for tid in self._merged_objs:
+            if not tid.cmdline:
+                continue
+            if cmdlines and cmdlines[-1] == tid.cmdline:
+                continue
+            cmdlines.append(tid.cmdline)
+        if not cmdlines:
+            return None
+        return cmdlines
 
     def _getErrors(self):
         ret = []

@@ -1681,16 +1681,21 @@ to exit.
             print _("Return-Code    :"), _("Success")
             
         if old.cmdline is not None:
-            print _("Command Line   :"), old.cmdline
+            if type(old.cmdline) == type([]):
+                for cmdline in old.cmdline:
+                    print _("Command Line   :"), cmdline
+            else:
+                print _("Command Line   :"), old.cmdline
 
-        addon_info = self.history.return_addon_data(old.tid)
-        
-        # for the ones we create by default - don't display them as there
-        default_addons = set(['config-main', 'config-repos'])
-        non_default = set(addon_info).difference(default_addons)
-        if len(non_default) > 0:
-                print _("Additional non-default information stored: %d" 
-                            % len(non_default))
+        if type(old.tid) != type([]):
+            addon_info = self.history.return_addon_data(old.tid)
+
+            # for the ones we create by default - don't display them as there
+            default_addons = set(['config-main', 'config-repos'])
+            non_default = set(addon_info).difference(default_addons)
+            if len(non_default) > 0:
+                    print _("Additional non-default information stored: %d" 
+                                % len(non_default))
 
         print _("Transaction performed with:")
         for hpkg in old.trans_with:
