@@ -210,6 +210,10 @@ class RPMDBPackageSack(PackageSackBase):
     pkglist = property(_get_pkglist, None)
 
     def dropCachedData(self):
+        """ Drop all cached data, this is a big perf. hit if we need to load
+            the data back in again. Also note that if we ever call this while
+            a transaction is ongoing we'll have multiple copies of packages
+            which is _bad_. """
         self._idx2pkg = {}
         self._name2pkg = {}
         self._pkgnames_loaded = set()
@@ -235,6 +239,73 @@ class RPMDBPackageSack(PackageSackBase):
         self._cached_conflicts_data = None
         self.transactionReset() # Should do nothing, but meh...
         self._cached_rpmdb_mtime = None
+
+    def dropCachedDataPostTransaction(self, txmbrs):
+        """ Drop cached data that is assocciated with the given transaction,
+            this tries to keep as much data as possible and even does a
+            "preload" on the checksums. This should be called once, when a
+            transaction is complete. """
+        # -- Below -- self._idx2pkg = {}
+        # -- Below -- self._name2pkg = {}
+        # -- Below -- self._pkgnames_loaded = set()
+        # -- Below -- self._tup2pkg = {}
+        self._completely_loaded = False
+        self._pkgmatch_fails = set()
+        # -- Below -- self._pkgname_fails = set()
+        self._provmatch_fails = set()
+        self._simple_pkgtup_list = []
+        self._get_pro_cache = {}
+        self._get_req_cache = {}
+        #  We can be called on python shutdown (due to yb.__del__), at which
+        # point other modules might not be available.
+        if misc is not None:
+            misc.unshare_data()
+        self._cache = {
+            'provides' : { },
+            'requires' : { },
+            'conflicts' : { },
+            'obsoletes' : { },
+            }
+        self._have_cached_rpmdbv_data = None
+        self._cached_conflicts_data = None
+        self.transactionReset() # Should do nothing, but meh...
+
+        #  We are keeping some data from before, and sometimes (Eg. remove only)
+        # we never open the rpmdb again ... so get the mtime now.
+        rpmdbfname  = self.root + "/var/lib/rpm/Packages"
+        self._cached_rpmdb_mtime = os.path.getmtime(rpmdbfname)
+
+        precache = []
+        for txmbr in txmbrs:
+            self._pkgnames_loaded.discard(txmbr.name)
+            if txmbr.name in self._name2pkg:
+                del self._name2pkg[txmbr.name]
+
+            if txmbr.output_state in constants.TS_INSTALL_STATES:
+                self._pkgname_fails.discard(txmbr.name)
+                precache.append(txmbr)
+            if txmbr.output_state in constants.TS_REMOVE_STATES:
+                del self._idx2pkg[txmbr.po.idx]
+                del self._tup2pkg[txmbr.pkgtup]
+
+        for txmbr in precache:
+            (n, a, e, v, r) = txmbr.pkgtup
+            pkg = self.searchNevra(n, e, v, r, a)
+            if not pkg:
+                # Wibble?
+                self._deal_with_bad_rpmdbcache("dCDPT(pkg checksums)")
+
+            pkg = pkg[0]
+            csum = txmbr.po.returnIdSum()
+            if csum is None:
+                continue
+
+            (T, D) = (str(csum[0]), str(csum[1]))
+            if ('checksum_type' in pkg.yumdb_info._read_cached_data or
+                'checksum_data' in pkg.yumdb_info._read_cached_data):
+                continue
+            pkg.yumdb_info._read_cached_data['checksum_type'] = T
+            pkg.yumdb_info._read_cached_data['checksum_data'] = D
 
     def setCacheDir(self, cachedir):
         """ Sets the internal cachedir value for the rpmdb, to be the
@@ -1566,7 +1637,6 @@ class RPMDBAdditionalDataPackage(object):
 
         self._yumdb_cache['attr'][value][2].add(fn)
         self._yumdb_cache[fn] = value
-        self._read_cached_data['attr'] = value
 
         return True
 
