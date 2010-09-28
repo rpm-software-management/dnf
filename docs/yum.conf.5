@@ -293,7 +293,11 @@ default
 
 .IP
 \fBsslverify \fR
-Boolean - should yum verify SSL certificates/hosts at all. Defaults to True
+Boolean - should yum verify SSL certificates/hosts at all. Defaults to True.
+
+Note that the plugin yum-rhn-plugin will force this value to true, and may
+alter other ssl settings (like hostname checking), even if it the machine
+is not registered.
 
 .IP
 \fBsslclientcert \fR
