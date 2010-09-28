@@ -1396,6 +1396,7 @@ class YumOptionParser(OptionParser):
                 self.base.conf.obsoletes = 1
 
             if opts.installroot:
+                self._checkAbsInstallRoot(opts)
                 self.base.conf.installroot = opts.installroot
                 
             if opts.skipbroken:
@@ -1475,7 +1476,18 @@ class YumOptionParser(OptionParser):
          
         return opts, cmds
 
+    def _checkAbsInstallRoot(self, opts):
+        if not opts.installroot:
+            return
+        if opts.installroot[0] == '/':
+            return
+        # We have a relative installroot ... haha
+        self.logger.critical(_('--installroot must be an absolute path: %s'),
+                             opts.installroot)
+        sys.exit(1)
+
     def getRoot(self,opts):
+        self._checkAbsInstallRoot(opts)
         # If the conf file is inside the  installroot - use that.
         # otherwise look for it in the normal root
         if opts.installroot:
