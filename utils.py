@@ -58,6 +58,11 @@ def get_process_info(pid):
     if not pid:
         return
 
+    try:
+        pid = int(pid)
+    except ValueError, e:
+        return
+        
     # Maybe true if /proc isn't mounted, or not Linux ... or something.
     if (not os.path.exists("/proc/%d/status" % pid) or
         not os.path.exists("/proc/stat") or
