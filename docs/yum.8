@@ -391,7 +391,9 @@ Configuration Option: \fBrpmverbosity\fP
 Sets the maximum amount of time yum will wait before performing a command \- it randomizes over the time.
 .IP "\fB\-C, \-\-cacheonly\fP" 
 Tells yum to run entirely from system cache - does not download or
-update any headers unless it has to to perform the requested action.
+update any headers unless it has to to perform the requested action. If you're
+using this as a user yum will not use the tempcache for the user but will only
+use the system cache in the system cachedir.
 .IP "\fB\-\-version\fP" 
 Reports the \fByum\fP version number and installed package versions for
 everything in history_record_packages (can be added to by plugins).
