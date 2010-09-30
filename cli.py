@@ -1465,6 +1465,7 @@ class YumOptionParser(OptionParser):
             if opts.nogpgcheck:
                 self.base.conf.gpgcheck      = False
                 self.base.conf.repo_gpgcheck = False
+                self.base.conf.localpkg_gpgcheck = False                
                 for repo in self.base.repos.listEnabled():
                     repo.gpgcheck      = False
                     repo.repo_gpgcheck = False

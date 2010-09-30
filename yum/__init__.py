@@ -1937,7 +1937,7 @@ class YumBase(depsolve.Depsolve):
             - 2 - Fatal GPG verification error, give up.
         '''
         if hasattr(po, 'pkgtype') and po.pkgtype == 'local':
-            check = self.conf.gpgcheck
+            check = self.conf.localpkg_gpgcheck
             hasgpgkey = 0
         else:
             repo = self.repos.getRepo(po.repoid)

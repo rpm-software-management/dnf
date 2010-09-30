@@ -80,9 +80,13 @@ Full directory and file name for where yum should write its log file.
 \fBgpgcheck\fR
 Either `1' or `0'. This tells yum whether or not it should perform a GPG
 signature check on packages. When this is set in the [main] section it sets the
-default for all repositories. This option also determines whether or not an
-install of a package from a local RPM file will be GPG signature checked. The
-default is `0'.
+default for all repositories. 
+The default is `0'.
+
+\fBlocalpkg_gpgcheck\fR
+Either `1' or `0'. This tells yum whether or not it should perform a GPG
+signature check on local packages (packages in a file, not in a repositoy).
+The default is `0'.
 
 .IP
 \fBrepo_gpgcheck\fR
