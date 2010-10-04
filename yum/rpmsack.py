@@ -204,6 +204,11 @@ class RPMDBPackageSack(PackageSackBase):
         Returns a list of package tuples.
         '''
         if not self._simple_pkgtup_list:
+            csumpkgtups = self.preloadPackageChecksums(load_packages=False)
+            if csumpkgtups is not None:
+                self._simple_pkgtup_list = csumpkgtups.keys()
+
+        if not self._simple_pkgtup_list:
             for (hdr, mi) in self._all_packages():
                 self._simple_pkgtup_list.append(self._hdr2pkgTuple(hdr))
             
@@ -880,7 +885,7 @@ class RPMDBPackageSack(PackageSackBase):
         os.rename(self._cachedir + '/file-requires.tmp',
                   self._cachedir + '/file-requires')
 
-    def preloadPackageChecksums(self):
+    def preloadPackageChecksums(self, load_packages=True):
         """ As simpleVersion() et. al. requires it, we "cache" this yumdb data
             as part of our rpmdb cache. We cache it with rpmdb data, even
             though someone _could_ use yumdb to alter it without changing the
@@ -921,6 +926,9 @@ class RPMDBPackageSack(PackageSackBase):
         except ValueError:
             self._deal_with_bad_rpmdbcache("pkg checksums")
             return
+
+        if not load_packages:
+             return checksum_data
 
         for pkgtup in checksum_data:
             (n, a, e, v, r) = pkgtup
