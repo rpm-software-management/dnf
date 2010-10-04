@@ -115,20 +115,14 @@ _yum()
             ;;
 
         deplist)
-            if [[ "$cur" == */* ]] ; then
-                _yum_binrpmfiles "$cur"
-            else
-                _yum_list all "$cur"
-            fi
+            _yum_binrpmfiles "$cur"
+            [[ "$cur" == */* ]] || _yum_list all "$cur"
             return 0
             ;;
 
         downgrade|reinstall)
-            if [[ "$cur" == */* ]] ; then
-                _yum_binrpmfiles "$cur"
-            else
-                _yum_list installed "$cur"
-            fi
+            _yum_binrpmfiles "$cur"
+            [[ "$cur" == */* ]] || _yum_list installed "$cur"
             return 0
             ;;
 
@@ -177,11 +171,8 @@ _yum()
             ;;
 
         install)
-            if [[ "$cur" == */* ]] ; then
-                _yum_binrpmfiles "$cur"
-            else
-                _yum_list available "$cur"
-            fi
+            _yum_binrpmfiles "$cur"
+            [[ "$cur" == */* ]] || _yum_list available "$cur"
             return 0
             ;;
 
@@ -213,11 +204,8 @@ _yum()
             ;;
 
         update|upgrade)
-            if [[ "$cur" == */* ]] ; then
-                _yum_binrpmfiles "$cur"
-            else
-                _yum_list updates "$cur"
-            fi
+            _yum_binrpmfiles "$cur"
+            [[ "$cur" == */* ]] || _yum_list updates "$cur"
             return 0
             ;;
         version)
