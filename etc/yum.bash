@@ -115,7 +115,7 @@ _yum()
             ;;
 
         deplist)
-            _yum_binrpmfiles "$cur"
+            COMPREPLY=( $( compgen -f -o plusdirs -X '!*.[rs]pm' -- "$cur" ) )
             [[ "$cur" == */* ]] || _yum_list all "$cur"
             return 0
             ;;
