@@ -79,16 +79,18 @@ _yum()
     local cur
     type _get_cword &>/dev/null && cur=`_get_cword` || cur=$2
     local prev=$3
-    local cmds=( check check-update clean deplist downgrade groupinfo
-        groupinstall grouplist groupremove help history info install list
-        localinstall localupdate makecache provides reinstall remove repolist
-        resolvedep search shell update upgrade version distro-sync )
+    # Commands offered as completions
+    local cmds=( check check-update clean deplist distro-sync downgrade
+        groupinfo groupinstall grouplist groupremove help history info install
+        list localinstall localupdate makecache provides reinstall remove
+        repolist resolvedep search shell update upgrade version )
 
     local i c cmd subcmd
     for (( i=1; i < ${#COMP_WORDS[@]}-1; i++ )) ; do
         [[ -n $cmd ]] && subcmd=${COMP_WORDS[i]} && break
-        for c in ${cmds[@]} check-rpmdb erase groupupdate grouperase \
-            whatprovides distribution-synchronization ; do
+        # Recognize additional commands and aliases
+        for c in ${cmds[@]} check-rpmdb distribution-synchronization erase \
+            groupupdate grouperase whatprovides ; do
             [ ${COMP_WORDS[i]} = $c ] && cmd=$c && break
         done
     done
