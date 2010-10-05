@@ -145,6 +145,7 @@ class YumCommand:
         
     def __init__(self):
         self.done_command_once = False
+        self.hidden = False
 
     def doneCommand(self, base, msg, *args):
         if not self.done_command_once:
@@ -711,6 +712,10 @@ class UpgradeCommand(YumCommand):
             return 1, [str(e)]
 
 class LocalInstallCommand(YumCommand):
+    def __init__(self):
+        YumCommand.__init__(self)
+        self.hidden = True
+
     def getNames(self):
         return ['localinstall', 'localupdate']
 

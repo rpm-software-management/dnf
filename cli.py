@@ -139,7 +139,8 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         names and summary usages.
         """
         usage = 'yum [options] COMMAND\n\nList of Commands:\n\n'
-        commands = yum.misc.unique(self.yum_cli_commands.values())
+        commands = yum.misc.unique([x for x in self.yum_cli_commands.values()
+                                    if not (hasattr(x, 'hidden') and x.hidden)])
         commands.sort(key=lambda x: x.getNames()[0])
         for command in commands:
             # XXX Remove this when getSummary is common in plugins
