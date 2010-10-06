@@ -3982,7 +3982,7 @@ class YumBase(depsolve.Depsolve):
             EOL """
 
         if not po and not kwargs:
-            raise Errors.DowngradeError, 'Nothing specified to remove'
+            raise Errors.DowngradeError, 'Nothing specified to downgrade'
 
         doing_group_pkgs = False
         if po:
