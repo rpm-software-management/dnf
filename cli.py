@@ -798,14 +798,16 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
            to be erased/removed"""
         
         oldcount = len(self.tsInfo)
-        
+
+        all_rms = []
         for arg in userlist:
-            if not self.remove(pattern=arg):
+            rms = self.remove(pattern=arg)
+            if not rms:
                 self._checkMaybeYouMeant(arg, always_output=False)
+            all_rms.extend(rms)
         
-        if len(self.tsInfo) > oldcount:
-            change = len(self.tsInfo) - oldcount
-            msg = _('%d packages marked for removal') % change
+        if all_rms:
+            msg = _('%d packages marked for removal') % len(all_rms)
             return 2, [msg]
         else:
             return 0, [_('No Packages marked for removal')]

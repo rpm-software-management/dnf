@@ -809,3 +809,65 @@ class SimpleUpdateTests(OperationsTests):
                                      [pa1, pa2i, pa2x, pa3])
         self.assert_(res=='ok', msg)
         self.assertResult((pa1, pa2x, pa3))
+
+    def testShellRmUp1(self):
+        """ Do an rm for a package, and then update it. """
+        pi1 = FakePackage('foo', '1', '1', '0', 'x86_64')
+
+        pa1 = FakePackage('foo', '2', '1', '0', 'x86_64')
+
+        res, msg = self.runOperation((['remove', 'foo'],
+                                      ['update', 'foo'],
+                                      ),
+                                     [pi1],
+                                     [pa1], multi_cmds=True)
+        self.assert_(res=='ok', msg)
+        self.assertResult((pa1,))
+
+    def testShellRmUp2(self):
+        """ Do an rm for a package, and then update it. """
+        pi1 = FakePackage('foo', '1', '1', '0', 'x86_64')
+        pi2 = FakePackage('foo', '1', '1', '0', 'i686')
+
+        pa1 = FakePackage('foo', '2', '1', '0', 'x86_64')
+        pa2 = FakePackage('foo', '2', '1', '0', 'i686')
+
+        res, msg = self.runOperation((['remove', 'foo.i686'],
+                                      ['update', 'foo'],
+                                      ),
+                                     [pi1, pi2],
+                                     [pa1, pa2], multi_cmds=True)
+        self.assert_(res=='ok', msg)
+        self.assertResult((pa1, pa2))
+
+    def testShellRmUp3(self):
+        """ Do an rm for a package, and then update it. """
+        pi1 = FakePackage('foo', '1', '1', '0', 'x86_64')
+        pi2 = FakePackage('foo', '1', '1', '0', 'i686')
+
+        pa1 = FakePackage('foo', '2', '1', '0', 'x86_64')
+        pa2 = FakePackage('foo', '2', '1', '0', 'i686')
+
+        res, msg = self.runOperation((['remove', 'foo.x86_64'],
+                                      ['update', 'foo'],
+                                      ),
+                                     [pi1, pi2],
+                                     [pa1, pa2], multi_cmds=True)
+        self.assert_(res=='ok', msg)
+        self.assertResult((pa1, pa2))
+
+    def testShellRmUp4(self):
+        """ Do an rm for a package, and then update it. """
+        pi1 = FakePackage('foo', '1', '1', '0', 'x86_64')
+        pi2 = FakePackage('foo', '1', '1', '0', 'i686')
+
+        pa1 = FakePackage('foo', '2', '1', '0', 'x86_64')
+        pa2 = FakePackage('foo', '2', '1', '0', 'i686')
+
+        res, msg = self.runOperation((['remove', 'foo.i686'],
+                                      ['update', 'foo-2-1'],
+                                      ),
+                                     [pi1, pi2],
+                                     [pa1, pa2], multi_cmds=True)
+        self.assert_(res=='ok', msg)
+        self.assertResult((pa1, pa2))
