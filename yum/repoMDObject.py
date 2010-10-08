@@ -225,7 +225,7 @@ class RepoMD:
             for item in self.tags['repo']:
                 tag = """   <repo>%s</repo>\n""" % (to_xml(item))
                 tags += tag
-            for (cpeid, item) in self.tags['distro'].items():
+            for (cpeid, item) in self.tags['distro']:
                 itemlist = list(item) # frellingsets.
                 if cpeid:
                     tag = """   <distro cpeid="%s">%s</distro>\n""" % (
