@@ -1854,6 +1854,10 @@ class YumBase(depsolve.Depsolve):
 
         self.plugins.run('postdownload', pkglist=pkglist, errors=errors)
 
+        # Close curl object after we've downloaded everything.
+        if hasattr(urlgrabber.grabber, 'reset_curl_obj'):
+            urlgrabber.grabber.reset_curl_obj()
+
         return errors
 
     def verifyHeader(self, fo, po, raiseError):
